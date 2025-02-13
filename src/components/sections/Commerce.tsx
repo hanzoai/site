@@ -1,11 +1,11 @@
 
 import { motion } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, CreditCard, DollarSign, BarChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Commerce = () => {
   return (
-    <section className="py-20 bg-black">
+    <section className="py-20 bg-gradient-to-b from-black to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -14,14 +14,70 @@ const Commerce = () => {
           className="text-center mb-16"
         >
           <div className="inline-flex items-center space-x-2 bg-white/10 px-4 py-1 rounded-full mb-6">
-            <ShoppingCart className="h-4 w-4 text-green-400" />
-            <span className="text-sm text-green-400">E-commerce Platform</span>
+            <ShoppingCart className="h-4 w-4 text-white" />
+            <span className="text-sm text-white">E-commerce Platform</span>
           </div>
           <h2 className="text-4xl font-display text-white mb-4">Complete Commerce Stack</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Everything you need to build and scale your e-commerce business.
           </p>
         </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-br from-white/5 to-transparent p-8 rounded-xl ring-1 ring-white/10"
+          >
+            <h3 className="text-2xl font-semibold text-white mb-6">One-Line Integration</h3>
+            <div className="bg-black/50 p-6 rounded-lg mb-6">
+              <pre className="text-sm text-gray-300">
+                <code>{`import { createStore } from '@hanzo/commerce';
+
+// Complete store in one line
+const store = createStore();`}</code>
+              </pre>
+            </div>
+            <p className="text-gray-300">Launch your store with just one line of code. Includes products, cart, checkout, and more.</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 gap-4"
+          >
+            <div className="p-6 bg-gradient-to-br from-white/5 to-transparent rounded-xl ring-1 ring-white/10">
+              <CreditCard className="h-8 w-8 text-white mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Payments</h4>
+              <p className="text-gray-300">Global payment processing with 100+ methods</p>
+            </div>
+            <div className="p-6 bg-gradient-to-br from-white/5 to-transparent rounded-xl ring-1 ring-white/10">
+              <ShoppingCart className="h-8 w-8 text-white mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Store</h4>
+              <p className="text-gray-300">Product management and inventory tracking</p>
+            </div>
+            <div className="p-6 bg-gradient-to-br from-white/5 to-transparent rounded-xl ring-1 ring-white/10">
+              <DollarSign className="h-8 w-8 text-white mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Pricing</h4>
+              <p className="text-gray-300">Flexible pricing and subscription management</p>
+            </div>
+            <div className="p-6 bg-gradient-to-br from-white/5 to-transparent rounded-xl ring-1 ring-white/10">
+              <BarChart className="h-8 w-8 text-white mb-4" />
+              <h4 className="text-lg font-semibold text-white mb-2">Analytics</h4>
+              <p className="text-gray-300">Real-time sales and customer insights</p>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="text-center">
+          <Button 
+            className="bg-white/5 hover:bg-white/10 text-white px-8 py-6 text-lg rounded-xl border border-white/10 hover:border-white/20"
+          >
+            Start Building with Commerce
+          </Button>
+        </div>
       </div>
     </section>
   );
