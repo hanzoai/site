@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
+import Products from "@/components/Products";
+import Testimonials from "@/components/Testimonials";
 
 const Index = () => {
   useEffect(() => {
@@ -35,6 +37,8 @@ const Index = () => {
       <main>
         <Hero />
         <Features />
+        <Products />
+        <Testimonials />
       </main>
     </div>
   );
