@@ -1,6 +1,5 @@
-
 import { motion } from "framer-motion";
-import { Database, Brain, ShoppingCart, CreditCard, Megaphone, Users, Share2, Github, Zap, Lock, Globe, Cpu, Cloud, Blocks, Target, BarChart } from "lucide-react";
+import { Database, Brain, ShoppingCart, CreditCard, Megaphone, Users, Share2, Github, Zap, Lock, Globe, Cpu, Cloud, Blocks, Target, BarChart, Rocket } from "lucide-react";
 import { Button } from "./ui/button";
 
 const products = [
@@ -90,6 +89,18 @@ const products = [
       { icon: <BarChart className="h-4 w-4" />, text: "Flexible Plans – Start small, scale to millions of users" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-people"
+  },
+  {
+    icon: <Rocket className="h-8 w-8" />,
+    title: "Hanzo Deploy",
+    description: "One-click deployment for your AI applications across any infrastructure.",
+    features: [
+      { icon: <Zap className="h-4 w-4" />, text: "Multi-Cloud Support – Deploy to AWS, GCP, Azure, or on-prem" },
+      { icon: <Lock className="h-4 w-4" />, text: "Zero-Downtime Updates – Rolling deployments by default" },
+      { icon: <Globe className="h-4 w-4" />, text: "Edge Ready – Global CDN and load balancing built-in" },
+      { icon: <BarChart className="h-4 w-4" />, text: "Infrastructure as Code – Version control your deployments" }
+    ],
+    github: "https://github.com/hanzo-ai/hanzo-deploy"
   }
 ];
 
@@ -175,7 +186,48 @@ const Products = () => {
           ))}
         </div>
 
-        {/* Key Metrics */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: products.length * 0.1 }}
+          className="group col-span-1 md:col-span-2 lg:col-span-3 p-8 bg-gradient-to-r from-gray-900 via-black to-gray-900 rounded-xl ring-1 ring-white/10 hover:ring-white/30 transition-all duration-300"
+        >
+          <div className="max-w-3xl mx-auto text-center">
+            <h3 className="text-2xl font-semibold text-white mb-4">Ready to Shape the Future?</h3>
+            <p className="text-gray-300 mb-8">
+              Join the revolution in AI-powered development. Start building unstoppable applications today with our comprehensive suite of tools.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <a href="https://docs.hanzo.ai" target="_blank" rel="noopener noreferrer">
+                  <Button 
+                    variant="outline" 
+                    className="w-full sm:w-auto bg-transparent text-white hover:bg-white hover:text-black border-2 border-white group-hover:translate-y-[-2px] transition-transform duration-300"
+                  >
+                    Read the Docs
+                  </Button>
+                </a>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <a href="https://app.hanzo.ai/signup" target="_blank" rel="noopener noreferrer">
+                  <Button 
+                    className="w-full sm:w-auto bg-white text-black hover:bg-gray-100 group-hover:translate-y-[-2px] transition-transform duration-300"
+                  >
+                    Get Started Free
+                  </Button>
+                </a>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
