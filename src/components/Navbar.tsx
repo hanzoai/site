@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown, Brain, Database, ShoppingCart, Code, Settings, Globe, Book, MessageSquare, HelpCircle, Users } from "lucide-react";
@@ -6,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { products, solutions, resources } from "@/constants/navigation";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -48,84 +50,22 @@ const Navbar = () => {
               </PopoverTrigger>
               <PopoverContent className="w-[720px] p-6 bg-black/95 backdrop-blur-xl border-gray-800">
                 <div className="grid grid-cols-3 gap-8">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">DX Platform</h3>
-                    <div className="space-y-4">
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Brain className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">AI</div>
-                          <div className="text-sm text-gray-500">Powering breakthroughs</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Database className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Base</div>
-                          <div className="text-sm text-gray-500">Modern backend platform</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <ShoppingCart className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Commerce</div>
-                          <div className="text-sm text-gray-500">Enhancing online profitability</div>
-                        </div>
-                      </a>
+                  {products.map(category => (
+                    <div key={category.title}>
+                      <h3 className="text-lg font-semibold text-white mb-4">{category.title}</h3>
+                      <div className="space-y-4">
+                        {category.items.map(item => (
+                          <a href="#" key={item} className="flex items-start space-x-3 group">
+                            <Brain className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                            <div>
+                              <div className="text-gray-300 group-hover:text-white font-medium">{item}</div>
+                              <div className="text-sm text-gray-500">Description for {item}</div>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Managed Infrastructure</h3>
-                    <div className="space-y-4">
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Analytics</div>
-                          <div className="text-sm text-gray-500">Powering breakthroughs</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Settings className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Marketing</div>
-                          <div className="text-sm text-gray-500">Branding & market penetration</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Code className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Payments</div>
-                          <div className="text-sm text-gray-500">Seamless transactions</div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">OpenSource</h3>
-                    <div className="space-y-4">
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Code className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo.js</div>
-                          <div className="text-sm text-gray-500">Powering breakthroughs</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Engine</div>
-                          <div className="text-sm text-gray-500">Decentralized application</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <ShoppingCart className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Shop.js</div>
-                          <div className="text-sm text-gray-500">Powerful UI components</div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </PopoverContent>
             </Popover>
@@ -139,51 +79,22 @@ const Navbar = () => {
               </PopoverTrigger>
               <PopoverContent className="w-[480px] p-6 bg-black/95 backdrop-blur-xl border-gray-800">
                 <div className="grid grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Apps</h3>
-                    <div className="space-y-4">
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Brain className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">AI Chat</div>
-                          <div className="text-sm text-gray-500">Virtual assistance</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Database className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Blockchain Apps</div>
-                          <div className="text-sm text-gray-500">Decentralized application</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <ShoppingCart className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">ECommerce Apps</div>
-                          <div className="text-sm text-gray-500">Seamless online shopping</div>
-                        </div>
-                      </a>
+                  {solutions.map(category => (
+                    <div key={category.title}>
+                      <h3 className="text-lg font-semibold text-white mb-4">{category.title}</h3>
+                      <div className="space-y-4">
+                        {category.items.map(item => (
+                          <a href="#" key={item} className="flex items-start space-x-3 group">
+                            <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                            <div>
+                              <div className="text-gray-300 group-hover:text-white font-medium">{item}</div>
+                              <div className="text-sm text-gray-500">Description for {item}</div>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Industries</h3>
-                    <div className="space-y-4">
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Crowdfunding</div>
-                          <div className="text-sm text-gray-500">Public sale bootstrap</div>
-                        </div>
-                      </a>
-                      <a href="#" className="flex items-start space-x-3 group">
-                        <Settings className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Platform</div>
-                          <div className="text-sm text-gray-500">Backend management</div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </PopoverContent>
             </Popover>
@@ -197,58 +108,36 @@ const Navbar = () => {
               </PopoverTrigger>
               <PopoverContent className="w-[480px] p-6 bg-black/95 backdrop-blur-xl border-gray-800">
                 <div className="grid grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Community</h3>
-                    <div className="space-y-4">
-                      <a href="https://hanzo.forum" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group">
-                        <MessageSquare className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo Forum</div>
-                          <div className="text-sm text-gray-500">Discuss with the community</div>
-                        </div>
-                      </a>
-                      <a href="https://hanzo.community" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group">
-                        <Users className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo Community</div>
-                          <div className="text-sm text-gray-500">Join our community</div>
-                        </div>
-                      </a>
-                      <a href="https://hanzo.help" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group">
-                        <HelpCircle className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo Help</div>
-                          <div className="text-sm text-gray-500">Get support</div>
-                        </div>
-                      </a>
+                  {resources.map(category => (
+                    <div key={category.title}>
+                      <h3 className="text-lg font-semibold text-white mb-4">{category.title}</h3>
+                      <div className="space-y-4">
+                        {category.items.map(item => {
+                          const Icon = item.name.includes('Forum') ? MessageSquare :
+                                     item.name.includes('Community') ? Users :
+                                     item.name.includes('Help') ? HelpCircle :
+                                     item.name.includes('Documentation') ? Book :
+                                     item.name.includes('API') ? Code : Globe;
+                          
+                          return (
+                            <a 
+                              key={item.name}
+                              href={item.url}
+                              target={item.url.startsWith('http') ? '_blank' : undefined}
+                              rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                              className="flex items-start space-x-3 group"
+                            >
+                              <Icon className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                              <div>
+                                <div className="text-gray-300 group-hover:text-white font-medium">{item.name}</div>
+                                <div className="text-sm text-gray-500">Description for {item.name}</div>
+                              </div>
+                            </a>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Documentation</h3>
-                    <div className="space-y-4">
-                      <a href="/docs" className="flex items-start space-x-3 group">
-                        <Book className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Documentation</div>
-                          <div className="text-sm text-gray-500">Guides and references</div>
-                        </div>
-                      </a>
-                      <a href="/api" className="flex items-start space-x-3 group">
-                        <Code className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">API Reference</div>
-                          <div className="text-sm text-gray-500">API documentation</div>
-                        </div>
-                      </a>
-                      <a href="/examples" className="flex items-start space-x-3 group">
-                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
-                        <div>
-                          <div className="text-gray-300 group-hover:text-white font-medium">Examples</div>
-                          <div className="text-sm text-gray-500">Sample projects</div>
-                        </div>
-                      </a>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </PopoverContent>
             </Popover>
@@ -283,7 +172,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-black/90 backdrop-blur-md border-b border-gray-800">
