@@ -1,7 +1,12 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Brain, Database, ShoppingCart, Code, Settings, Globe } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -35,18 +40,155 @@ const Navbar = () => {
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
-            <div className="relative group">
-              <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
-                Products
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
-            </div>
-            <div className="relative group">
-              <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
-                Solutions
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
+                  Products
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[720px] p-6 bg-black/95 backdrop-blur-xl border-gray-800">
+                <div className="grid grid-cols-3 gap-8">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">DX Platform</h3>
+                    <div className="space-y-4">
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Brain className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">AI</div>
+                          <div className="text-sm text-gray-500">Powering breakthroughs</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Database className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Base</div>
+                          <div className="text-sm text-gray-500">Modern backend platform</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <ShoppingCart className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Commerce</div>
+                          <div className="text-sm text-gray-500">Enhancing online profitability</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">Managed Infrastructure</h3>
+                    <div className="space-y-4">
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Analytics</div>
+                          <div className="text-sm text-gray-500">Powering breakthroughs</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Settings className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Marketing</div>
+                          <div className="text-sm text-gray-500">Branding & market penetration</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Code className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Payments</div>
+                          <div className="text-sm text-gray-500">Seamless transactions</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">OpenSource</h3>
+                    <div className="space-y-4">
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Code className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo.js</div>
+                          <div className="text-sm text-gray-500">Powering breakthroughs</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Engine</div>
+                          <div className="text-sm text-gray-500">Decentralized application</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <ShoppingCart className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Shop.js</div>
+                          <div className="text-sm text-gray-500">Powerful UI components</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
+                  Solutions
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[480px] p-6 bg-black/95 backdrop-blur-xl border-gray-800">
+                <div className="grid grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">Apps</h3>
+                    <div className="space-y-4">
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Brain className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">AI Chat</div>
+                          <div className="text-sm text-gray-500">Virtual assistance</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Database className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Blockchain Apps</div>
+                          <div className="text-sm text-gray-500">Decentralized application</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <ShoppingCart className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">ECommerce Apps</div>
+                          <div className="text-sm text-gray-500">Seamless online shopping</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">Industries</h3>
+                    <div className="space-y-4">
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Crowdfunding</div>
+                          <div className="text-sm text-gray-500">Public sale bootstrap</div>
+                        </div>
+                      </a>
+                      <a href="#" className="flex items-start space-x-3 group">
+                        <Settings className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Platform</div>
+                          <div className="text-sm text-gray-500">Backend management</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
             <div className="relative group">
               <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
                 Resources
