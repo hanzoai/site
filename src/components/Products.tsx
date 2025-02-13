@@ -14,6 +14,7 @@ const products = [
       { icon: <Globe className="h-4 w-4" />, text: "Edge Optimized – Deploy globally for near-zero latency" },
       { icon: <Github className="h-4 w-4" />, text: "Open Source – No vendor lock-in, self-host or let us do it" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/base",
     github: "https://github.com/hanzo-ai/hanzo-base"
   },
   {
@@ -27,6 +28,7 @@ const products = [
       { icon: <Blocks className="h-4 w-4" />, text: "Decentralized Ready – Perfect for unstoppable, mesh-based solutions" },
       { icon: <Target className="h-4 w-4" />, text: "Easy SDK – Seamlessly integrate advanced AI calls in your code" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/ai",
     github: "https://github.com/hanzo-ai/hanzo-ai"
   },
   {
@@ -40,6 +42,7 @@ const products = [
       { icon: <Globe className="h-4 w-4" />, text: "E2E Analytics – Real-time data on sales and behavior" },
       { icon: <Github className="h-4 w-4" />, text: "Web2 & Web3 – Plug into traditional or decentralized payment rails" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/commerce",
     github: "https://github.com/hanzo-ai/hanzo-commerce"
   },
   {
@@ -52,6 +55,7 @@ const products = [
       { icon: <Lock className="h-4 w-4" />, text: "Fraud Detection – Machine learning insights reduce disputes" },
       { icon: <BarChart className="h-4 w-4" />, text: "Flexible Pricing – Transparent pay-as-you-grow structure" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/payments",
     github: "https://github.com/hanzo-ai/hanzo-payments"
   },
   {
@@ -64,6 +68,7 @@ const products = [
       { icon: <Blocks className="h-4 w-4" />, text: "Contextual Analytics – Understand user actions in real-time" },
       { icon: <Target className="h-4 w-4" />, text: "Affiliate & Referral Modules – Tap into influencer networks" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/marketing",
     github: "https://github.com/hanzo-ai/hanzo-marketing"
   },
   {
@@ -76,6 +81,7 @@ const products = [
       { icon: <Globe className="h-4 w-4" />, text: "Cross-Platform Integration – Seamless AI automation" },
       { icon: <Github className="h-4 w-4" />, text: "Community Building – Chat & moderation tools in one place" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/social",
     github: "https://github.com/hanzo-ai/hanzo-social"
   },
   {
@@ -88,6 +94,7 @@ const products = [
       { icon: <Globe className="h-4 w-4" />, text: "Behavior Tracking – Understand user journeys deeply" },
       { icon: <BarChart className="h-4 w-4" />, text: "Flexible Plans – Start small, scale to millions of users" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/people",
     github: "https://github.com/hanzo-ai/hanzo-people"
   },
   {
@@ -100,7 +107,21 @@ const products = [
       { icon: <Globe className="h-4 w-4" />, text: "Edge Ready – Global CDN and load balancing built-in" },
       { icon: <BarChart className="h-4 w-4" />, text: "Infrastructure as Code – Version control your deployments" }
     ],
+    productUrl: "https://docs.hanzo.ai/products/deploy",
     github: "https://github.com/hanzo-ai/hanzo-deploy"
+  },
+  {
+    icon: <Globe className="h-8 w-8" />,
+    title: "Hanzo Network",
+    description: "Join the decentralized AI network powering the next generation of autonomous applications.",
+    features: [
+      { icon: <Cpu className="h-4 w-4" />, text: "Decentralized Computing – Contribute and earn rewards" },
+      { icon: <Cloud className="h-4 w-4" />, text: "AI-Native Infrastructure – Built for next-gen applications" },
+      { icon: <Blocks className="h-4 w-4" />, text: "Mesh Network – Resilient and unstoppable" },
+      { icon: <Target className="h-4 w-4" />, text: "Green Energy – Sustainable compute at scale" }
+    ],
+    productUrl: "https://network.hanzo.ai",
+    github: "https://github.com/hanzo-ai/hanzo-network"
   }
 ];
 
@@ -173,7 +194,7 @@ const Products = () => {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <a href="https://docs.hanzo.ai" target="_blank" rel="noopener noreferrer">
+                <a href={product.productUrl} target="_blank" rel="noopener noreferrer">
                   <Button 
                     variant="outline" 
                     className="w-full bg-white text-black hover:bg-gray-100 border-2 border-white group-hover:translate-y-[-2px] transition-transform duration-300"
@@ -191,7 +212,7 @@ const Products = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: products.length * 0.1 }}
-          className="group col-span-1 md:col-span-2 lg:col-span-3 p-8 bg-gradient-to-r from-gray-900 via-black to-gray-900 rounded-xl ring-1 ring-white/10 hover:ring-white/30 transition-all duration-300"
+          className="mt-20 p-8 bg-gradient-to-r from-gray-900 via-black to-gray-900 rounded-xl ring-1 ring-white/10 hover:ring-white/30 transition-all duration-300"
         >
           <div className="max-w-3xl mx-auto text-center">
             <h3 className="text-2xl font-semibold text-white mb-4">Ready to Shape the Future?</h3>
@@ -221,52 +242,6 @@ const Products = () => {
                     className="w-full sm:w-auto bg-white text-black hover:bg-gray-100 group-hover:translate-y-[-2px] transition-transform duration-300"
                   >
                     Get Started Free
-                  </Button>
-                </a>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-20 p-8 bg-gradient-to-r from-purple-900/50 via-black to-blue-900/50 rounded-xl ring-1 ring-white/10"
-        >
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center space-x-2 bg-white/10 px-4 py-1 rounded-full mb-6">
-              <Globe className="h-4 w-4 text-purple-400" />
-              <span className="text-sm text-purple-400">Now in Public Beta</span>
-            </div>
-            <h3 className="text-3xl font-display text-white mb-4">Introducing Hanzo Network</h3>
-            <p className="text-xl text-gray-300 mb-8">
-              Join the decentralized AI network powering the next generation of autonomous applications. 
-              Earn rewards by contributing compute, build unstoppable apps, and shape the future of AI.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <a href="https://network.hanzo.ai" target="_blank" rel="noopener noreferrer">
-                  <Button 
-                    className="w-full sm:w-auto bg-white text-black hover:bg-gray-100"
-                  >
-                    Join the Network
-                  </Button>
-                </a>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              >
-                <a href="https://docs.network.hanzo.ai" target="_blank" rel="noopener noreferrer">
-                  <Button 
-                    variant="outline"
-                    className="w-full sm:w-auto border-white text-white hover:bg-white hover:text-black"
-                  >
-                    Read the Whitepaper
                   </Button>
                 </a>
               </motion.div>
