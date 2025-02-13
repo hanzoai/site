@@ -228,6 +228,52 @@ const Products = () => {
           </div>
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-20 p-8 bg-gradient-to-r from-purple-900/50 via-black to-blue-900/50 rounded-xl ring-1 ring-white/10"
+        >
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center space-x-2 bg-white/10 px-4 py-1 rounded-full mb-6">
+              <Globe className="h-4 w-4 text-purple-400" />
+              <span className="text-sm text-purple-400">Now in Public Beta</span>
+            </div>
+            <h3 className="text-3xl font-display text-white mb-4">Introducing Hanzo Network</h3>
+            <p className="text-xl text-gray-300 mb-8">
+              Join the decentralized AI network powering the next generation of autonomous applications. 
+              Earn rewards by contributing compute, build unstoppable apps, and shape the future of AI.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <a href="https://network.hanzo.ai" target="_blank" rel="noopener noreferrer">
+                  <Button 
+                    className="w-full sm:w-auto bg-white text-black hover:bg-gray-100"
+                  >
+                    Join the Network
+                  </Button>
+                </a>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <a href="https://docs.network.hanzo.ai" target="_blank" rel="noopener noreferrer">
+                  <Button 
+                    variant="outline"
+                    className="w-full sm:w-auto border-white text-white hover:bg-white hover:text-black"
+                  >
+                    Read the Whitepaper
+                  </Button>
+                </a>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
