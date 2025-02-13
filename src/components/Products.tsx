@@ -7,12 +7,13 @@ const products = [
   {
     icon: <Database className="h-8 w-8" />,
     title: "Hanzo Base",
-    description: "One-file backend with real-time DB, auth, and file storage—built for next-gen AI applications.",
+    description: "A one-file backend with real-time DB, auth, and file storage—built for next-gen AI applications.",
+    code: "import { createClient } from '@hanzo/base';",
     features: [
-      { icon: <Zap className="h-4 w-4" />, text: "One-Line Spin-Up" },
-      { icon: <Lock className="h-4 w-4" />, text: "Realtime & Authentication" },
-      { icon: <Globe className="h-4 w-4" />, text: "Edge Optimized" },
-      { icon: <Github className="h-4 w-4" />, text: "Open Source" }
+      { icon: <Zap className="h-4 w-4" />, text: "One-Line Spin-Up – Paste a single import, get an entire backend" },
+      { icon: <Lock className="h-4 w-4" />, text: "Realtime & Authentication – Stay in sync effortlessly" },
+      { icon: <Globe className="h-4 w-4" />, text: "Edge Optimized – Deploy globally for near-zero latency" },
+      { icon: <Github className="h-4 w-4" />, text: "Open Source – No vendor lock-in, self-host or let us do it" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-base"
   },
@@ -20,11 +21,12 @@ const products = [
     icon: <Brain className="h-8 w-8" />,
     title: "Hanzo AI",
     description: "Transform your app with advanced ML, vector search, and self-learning automation.",
+    code: "import { useAI } from '@hanzo/ai';",
     features: [
-      { icon: <Cpu className="h-4 w-4" />, text: "LLM & Vector Search" },
-      { icon: <Cloud className="h-4 w-4" />, text: "Autonomous Operations" },
-      { icon: <Blocks className="h-4 w-4" />, text: "Decentralized Ready" },
-      { icon: <Target className="h-4 w-4" />, text: "Easy SDK" }
+      { icon: <Cpu className="h-4 w-4" />, text: "LLM & Vector Search – Deep text analysis and semantic lookup" },
+      { icon: <Cloud className="h-4 w-4" />, text: "Autonomous Operations – Automated workflows that evolve over time" },
+      { icon: <Blocks className="h-4 w-4" />, text: "Decentralized Ready – Perfect for unstoppable, mesh-based solutions" },
+      { icon: <Target className="h-4 w-4" />, text: "Easy SDK – Seamlessly integrate advanced AI calls in your code" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-ai"
   },
@@ -32,11 +34,12 @@ const products = [
     icon: <ShoppingCart className="h-8 w-8" />,
     title: "Hanzo Commerce",
     description: "Sell anything—physical, digital, or tokenized. Scale from day one with built-in intelligence.",
+    code: "import { useCommerce } from '@hanzo/commerce';",
     features: [
-      { icon: <CreditCard className="h-4 w-4" />, text: "One-Line Checkout" },
-      { icon: <BarChart className="h-4 w-4" />, text: "Subscriptions & Promotions" },
-      { icon: <Globe className="h-4 w-4" />, text: "E2E Analytics" },
-      { icon: <Github className="h-4 w-4" />, text: "Web2 & Web3" }
+      { icon: <CreditCard className="h-4 w-4" />, text: "One-Line Checkout – Quick deployment of cart and payment flows" },
+      { icon: <BarChart className="h-4 w-4" />, text: "Subscriptions & Promotions – Auto-manage recurring revenue" },
+      { icon: <Globe className="h-4 w-4" />, text: "E2E Analytics – Real-time data on sales and behavior" },
+      { icon: <Github className="h-4 w-4" />, text: "Web2 & Web3 – Plug into traditional or decentralized payment rails" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-commerce"
   },
@@ -45,10 +48,10 @@ const products = [
     title: "Hanzo Payments",
     description: "Secure, AI-enhanced transactions across fiat, crypto, and beyond.",
     features: [
-      { icon: <Zap className="h-4 w-4" />, text: "Instant Onboarding" },
-      { icon: <Globe className="h-4 w-4" />, text: "Global Coverage" },
-      { icon: <Lock className="h-4 w-4" />, text: "Fraud Detection" },
-      { icon: <BarChart className="h-4 w-4" />, text: "Flexible Pricing" }
+      { icon: <Zap className="h-4 w-4" />, text: "Instant Onboarding – Start accepting payments in minutes" },
+      { icon: <Globe className="h-4 w-4" />, text: "Global Coverage – Handle multiple currencies and networks" },
+      { icon: <Lock className="h-4 w-4" />, text: "Fraud Detection – Machine learning insights reduce disputes" },
+      { icon: <BarChart className="h-4 w-4" />, text: "Flexible Pricing – Transparent pay-as-you-grow structure" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-payments"
   },
@@ -57,10 +60,10 @@ const products = [
     title: "Hanzo Marketing",
     description: "Supercharge your growth engine—automated ads, funnels, and engagement.",
     features: [
-      { icon: <Cpu className="h-4 w-4" />, text: "AI-Optimized Campaigns" },
-      { icon: <Cloud className="h-4 w-4" />, text: "Multi-Channel Outreach" },
-      { icon: <Blocks className="h-4 w-4" />, text: "Contextual Analytics" },
-      { icon: <Target className="h-4 w-4" />, text: "Affiliate & Referral Modules" }
+      { icon: <Cpu className="h-4 w-4" />, text: "AI-Optimized Campaigns – Launch targeted ads with minimal effort" },
+      { icon: <Cloud className="h-4 w-4" />, text: "Multi-Channel Outreach – Facebook, Google Ads, email, affiliates" },
+      { icon: <Blocks className="h-4 w-4" />, text: "Contextual Analytics – Understand user actions in real-time" },
+      { icon: <Target className="h-4 w-4" />, text: "Affiliate & Referral Modules – Tap into influencer networks" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-marketing"
   },
@@ -69,10 +72,10 @@ const products = [
     title: "Hanzo Social",
     description: "One-stop management for all your social channels.",
     features: [
-      { icon: <Zap className="h-4 w-4" />, text: "Scheduled Posts" },
-      { icon: <Lock className="h-4 w-4" />, text: "Social Insights" },
-      { icon: <Globe className="h-4 w-4" />, text: "Cross-Platform Integration" },
-      { icon: <Github className="h-4 w-4" />, text: "Community Building" }
+      { icon: <Zap className="h-4 w-4" />, text: "Scheduled Posts – Plan content across platforms at once" },
+      { icon: <Lock className="h-4 w-4" />, text: "Social Insights – Track engagement, discover top content" },
+      { icon: <Globe className="h-4 w-4" />, text: "Cross-Platform Integration – Seamless AI automation" },
+      { icon: <Github className="h-4 w-4" />, text: "Community Building – Chat & moderation tools in one place" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-social"
   },
@@ -81,10 +84,10 @@ const products = [
     title: "Hanzo People",
     description: "Bring user data, CRM, and authentication together.",
     features: [
-      { icon: <Zap className="h-4 w-4" />, text: "Unified Identity" },
-      { icon: <Lock className="h-4 w-4" />, text: "CRM Tools" },
-      { icon: <Globe className="h-4 w-4" />, text: "Behavior Tracking" },
-      { icon: <BarChart className="h-4 w-4" />, text: "Flexible Plans" }
+      { icon: <Zap className="h-4 w-4" />, text: "Unified Identity – Manage logins, roles, and permissions" },
+      { icon: <Lock className="h-4 w-4" />, text: "CRM Tools – Keep track of users, leads, and conversions" },
+      { icon: <Globe className="h-4 w-4" />, text: "Behavior Tracking – Understand user journeys deeply" },
+      { icon: <BarChart className="h-4 w-4" />, text: "Flexible Plans – Start small, scale to millions of users" }
     ],
     github: "https://github.com/hanzo-ai/hanzo-people"
   }
@@ -101,7 +104,7 @@ const Products = () => {
             viewport={{ once: true }}
             className="text-3xl font-display text-white"
           >
-            The Heroku of AI (and Beyond)
+            The Last Software You'll Ever Use
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -110,7 +113,7 @@ const Products = () => {
             transition={{ delay: 0.1 }}
             className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto"
           >
-            Redefining modern application development with AI-powered tooling and cloud infrastructure—all running on sustainable energy.
+            A single platform to build, run, and grow AI-powered apps—centralized or decentralized, fully autonomous, ever-learning, and unstoppable. Join us in shaping the future of mesh-networked decentralized super intelligence.
           </motion.p>
         </div>
 
@@ -141,6 +144,11 @@ const Products = () => {
               </div>
               <h3 className="mt-4 text-xl font-semibold text-white">{product.title}</h3>
               <p className="mt-2 text-gray-300">{product.description}</p>
+              {product.code && (
+                <pre className="mt-4 p-3 bg-white/5 rounded-lg overflow-x-auto">
+                  <code className="text-sm text-gray-300">{product.code}</code>
+                </pre>
+              )}
               <ul className="mt-4 space-y-3">
                 {product.features.map((feature) => (
                   <li key={feature.text} className="text-gray-400 flex items-center space-x-2">
