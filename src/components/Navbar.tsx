@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown, Brain, Database, ShoppingCart, Code, Settings, Globe } from "lucide-react";
+import { Menu, X, ChevronDown, Brain, Database, ShoppingCart, Code, Settings, Globe, Book, MessageSquare, HelpCircle, Users } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -189,12 +188,71 @@ const Navbar = () => {
               </PopoverContent>
             </Popover>
 
-            <div className="relative group">
-              <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
-                Resources
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
+                  Resources
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[480px] p-6 bg-black/95 backdrop-blur-xl border-gray-800">
+                <div className="grid grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">Community</h3>
+                    <div className="space-y-4">
+                      <a href="https://hanzo.forum" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group">
+                        <MessageSquare className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo Forum</div>
+                          <div className="text-sm text-gray-500">Discuss with the community</div>
+                        </div>
+                      </a>
+                      <a href="https://hanzo.community" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group">
+                        <Users className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo Community</div>
+                          <div className="text-sm text-gray-500">Join our community</div>
+                        </div>
+                      </a>
+                      <a href="https://hanzo.help" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-3 group">
+                        <HelpCircle className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Hanzo Help</div>
+                          <div className="text-sm text-gray-500">Get support</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white mb-4">Documentation</h3>
+                    <div className="space-y-4">
+                      <a href="/docs" className="flex items-start space-x-3 group">
+                        <Book className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Documentation</div>
+                          <div className="text-sm text-gray-500">Guides and references</div>
+                        </div>
+                      </a>
+                      <a href="/api" className="flex items-start space-x-3 group">
+                        <Code className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">API Reference</div>
+                          <div className="text-sm text-gray-500">API documentation</div>
+                        </div>
+                      </a>
+                      <a href="/examples" className="flex items-start space-x-3 group">
+                        <Globe className="h-6 w-6 text-gray-400 group-hover:text-white mt-1" />
+                        <div>
+                          <div className="text-gray-300 group-hover:text-white font-medium">Examples</div>
+                          <div className="text-sm text-gray-500">Sample projects</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
             <a href="/docs" className="text-gray-300 hover:text-white transition-colors">
               Docs
             </a>

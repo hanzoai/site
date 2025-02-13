@@ -1,4 +1,3 @@
-
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -29,10 +28,22 @@ const solutions = [
 ];
 
 const resources = [
-  "Documentation",
-  "API Reference",
-  "Guides",
-  "Examples"
+  {
+    title: "Community",
+    items: [
+      { name: "Hanzo Forum", url: "https://hanzo.forum" },
+      { name: "Hanzo Community", url: "https://hanzo.community" },
+      { name: "Hanzo Help", url: "https://hanzo.help" }
+    ]
+  },
+  {
+    title: "Documentation",
+    items: [
+      { name: "Documentation", url: "/docs" },
+      { name: "API Reference", url: "/api" },
+      { name: "Examples", url: "/examples" }
+    ]
+  }
 ];
 
 const company = [
@@ -47,7 +58,6 @@ const Footer = () => {
     <footer className="border-t border-gray-800 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-          {/* Logo and Status */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
               <img 
@@ -63,7 +73,6 @@ const Footer = () => {
             </a>
           </div>
 
-          {/* Products */}
           <div>
             <h3 className="text-white font-semibold mb-3">Products</h3>
             <ul className="space-y-2">
@@ -84,7 +93,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Solutions */}
           <div>
             <h3 className="text-white font-semibold mb-3">Solutions</h3>
             <ul className="space-y-2">
@@ -105,21 +113,31 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Resources */}
           <div>
             <h3 className="text-white font-semibold mb-3">Resources</h3>
-            <ul className="space-y-2">
-              {resources.map(item => (
-                <li key={item}>
-                  <a href="#" className="text-gray-500 hover:text-white text-sm">
-                    {item}
-                  </a>
+            <ul className="space-y-4">
+              {resources.map(category => (
+                <li key={category.title}>
+                  <span className="text-gray-400 font-medium">{category.title}</span>
+                  <ul className="mt-1 space-y-1">
+                    {category.items.map(item => (
+                      <li key={item.name}>
+                        <a 
+                          href={item.url} 
+                          target={item.url.startsWith('http') ? '_blank' : undefined}
+                          rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          className="text-gray-500 hover:text-white text-sm"
+                        >
+                          {item.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Company */}
           <div>
             <h3 className="text-white font-semibold mb-3">Company</h3>
             <ul className="space-y-2">
@@ -134,7 +152,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-gray-500 text-sm">
