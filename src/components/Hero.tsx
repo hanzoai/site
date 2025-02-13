@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
@@ -17,9 +16,9 @@ const Hero = () => {
             transition={{ duration: 0.5 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display tracking-tight text-white"
           >
-            Build Better Apps
+            The Vercel for AI
             <span className="block bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
-              with AI-Powered Tools
+              Developer-First DX Platform
             </span>
           </motion.h1>
 
@@ -29,9 +28,8 @@ const Hero = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-6 text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto"
           >
-            Transform your development workflow with our AI code editor, analytics
-            integration, and powerful app builder. Build, deploy, and scale faster
-            than ever.
+            Build, deploy, and manage AI-powered applications with our comprehensive platform. 
+            From code assistance to autonomous agents, powered by 100% green energy.
           </motion.p>
 
           <motion.div
