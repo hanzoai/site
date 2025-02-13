@@ -12,6 +12,7 @@ import Code from "@/components/sections/Code";
 import Dev from "@/components/sections/Dev";
 import Products from "@/components/Products";
 import Testimonials from "@/components/Testimonials";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   useEffect(() => {
@@ -54,6 +55,7 @@ const Index = () => {
         <Products />
         <Testimonials />
       </main>
+      <Footer />
     </div>
   );
 };
