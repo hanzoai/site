@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,7 +28,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/28d53ec4-328f-4812-862b-b9a760bbabae.png" 
-              alt="Hanzo AI" 
+              alt="Hanzo" 
               className="h-8 w-8"
             />
             <span className="text-white font-bold text-xl">Hanzo</span>
@@ -36,35 +36,38 @@ const Navbar = () => {
           
           <div className="hidden md:flex items-center space-x-8">
             <div className="relative group">
-              <a href="#products" className="text-gray-300 hover:text-white transition-colors">
+              <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
                 Products
-              </a>
-              <div className="absolute hidden group-hover:block w-48 bg-black/90 backdrop-blur-md border border-gray-800 rounded-lg mt-2 p-2">
-                <a href="#hanzo-base" className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg">Hanzo Base</a>
-                <a href="#hanzo-ai" className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg">Hanzo AI</a>
-                <a href="#hanzo-commerce" className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg">Commerce</a>
-                <a href="#hanzo-payments" className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg">Payments</a>
-              </div>
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </button>
             </div>
             <div className="relative group">
-              <a href="#solutions" className="text-gray-300 hover:text-white transition-colors">
+              <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
                 Solutions
-              </a>
-              <div className="absolute hidden group-hover:block w-48 bg-black/90 backdrop-blur-md border border-gray-800 rounded-lg mt-2 p-2">
-                <a href="#enterprise" className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg">Enterprise</a>
-                <a href="#startups" className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg">Startups</a>
-                <a href="#agencies" className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg">Agencies</a>
-              </div>
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </button>
             </div>
-            <a href="#case-studies" className="text-gray-300 hover:text-white transition-colors">
-              Case Studies
+            <div className="relative group">
+              <button className="text-gray-300 hover:text-white transition-colors inline-flex items-center">
+                Resources
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </button>
+            </div>
+            <a href="/docs" className="text-gray-300 hover:text-white transition-colors">
+              Docs
             </a>
-            <a href="https://network.hanzo.ai" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
-              Hanzo Network
+            <a href="/pricing" className="text-gray-300 hover:text-white transition-colors">
+              Pricing
             </a>
-            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-black">
-              Get Started
-            </Button>
+            
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" className="text-white hover:bg-white/10">
+                Login
+              </Button>
+              <Button className="bg-white text-black hover:bg-gray-100">
+                Signup
+              </Button>
+            </div>
           </div>
 
           <div className="md:hidden">
@@ -97,20 +100,29 @@ const Navbar = () => {
               Solutions
             </a>
             <a
-              href="#case-studies"
+              href="#resources"
               className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white"
             >
-              Case Studies
+              Resources
             </a>
             <a
-              href="https://network.hanzo.ai"
+              href="/docs"
               className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white"
             >
-              Hanzo Network
+              Docs
             </a>
-            <div className="px-3 py-2">
+            <a
+              href="/pricing"
+              className="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white"
+            >
+              Pricing
+            </a>
+            <div className="px-3 py-2 space-y-2">
+              <Button variant="ghost" className="w-full text-white hover:bg-white/10">
+                Login
+              </Button>
               <Button className="w-full bg-white text-black hover:bg-gray-100">
-                Get Started
+                Signup
               </Button>
             </div>
           </div>
