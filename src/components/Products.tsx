@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { Database, Brain, ShoppingCart, CreditCard, Megaphone, Users, Share2, Github, Zap, Lock, Globe, Cpu, Cloud, Blocks, Target, BarChart } from "lucide-react";
 import { Button } from "./ui/button";
@@ -196,7 +197,7 @@ const Products = () => {
             transition={{ delay: 0.2 }}
             className="p-6 bg-black rounded-xl ring-1 ring-white/10"
           >
-            <Leaf className="h-8 w-8 text-white mb-4" />
+            <Globe className="h-8 w-8 text-white mb-4" />
             <h3 className="text-3xl font-bold text-white">1GW</h3>
             <p className="mt-2 text-gray-300">Green energy at 3.0 cent/kWh</p>
           </motion.div>
