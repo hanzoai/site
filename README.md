@@ -8,7 +8,7 @@
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use Hanzo App**
 
 Simply visit the [Hanzo App](https://hanzo.app/projects/ee887e68-a27e-43a1-88d1-813320af7a8c) and start prompting.
 
@@ -52,7 +52,8 @@ npm run dev
 
 ## What technologies are used for this project?
 
-This project is built with .
+This project is built with Hanzo App, powered by Hanzo AI as well as these
+excellent Open Source projects:
 
 - Vite
 - TypeScript
@@ -62,8 +63,8 @@ This project is built with .
 
 ## How can I deploy this project?
 
-Simply open [Hanzo](https://hanzo.app/projects/ee887e68-a27e-43a1-88d1-813320af7a8c) and click on Share -> Publish.
+Simply open [Hanzo](https://hanzo.app/projects/hanzo-ai) and click on Share -> Publish.
 
 ## I want to use a custom domain - is that possible?
 
-Yes! If you want this let us know. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Yes! Visit our docs for more details: [Custom domains](https://docs.hanzo.ai/custom-domain/)
