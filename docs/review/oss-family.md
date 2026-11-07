@@ -1,4 +1,5 @@
 # /oss/* (template) — James-eye review
+Ready: 2026-11-07, slice D — the unverified arrow-link hover (315f000d) checked and kept: "On Hanzo Forge" and "Every organization" draw a rule and nudge the arrow (the site's default underline no longer doubles it); the lead's digits rise and the strip's playhead or ticker runs at both sizes; card and proof moved to oss-family
 
 Reviewed: main, page files at `4fa3ca0` (second review; the first, at `483255a`, scored 5/10). Members walked: `/oss/hanzo-app` and `/oss/crowdstart`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 

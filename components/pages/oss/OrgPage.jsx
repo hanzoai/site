@@ -20,7 +20,7 @@
    that drags with inertia; state, the row that opens into its card, the sort pill, rows re-flowing as you filter;
    arrival, the name arriving large and settling, the lead's digits rising; scroll, the lead growing as it passes.
    Colour: none of our own (MASTER.md 3.1); organizations differ by their contour, figures and repositories.
-   V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask. */
+   V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask.; slice D: the two text links ("On Hanzo Forge", "Every organization") draw a rule and nudge their arrow on hover, one rule only */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import useCalm from '../../v2/useCalm';

@@ -72,8 +72,8 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos .x-arrow > span::before, .xos .x-arrow > span::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor; pointer-events: none; }
 .xos .x-arrow > span::before { opacity: .2; }
 .xos .x-arrow > span::after { transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--out); }
-.xos .x-arrow svg { margin-left: 6px; transition: transform .4s var(--out); }
-@media (hover: hover) { .xos .x-arrow:hover > span::after { transform: scaleX(1); } .xos .x-arrow:hover svg { transform: translateX(6px); } }
+.xos .x-arrow svg { transition: transform .4s var(--out); }
+@media (hover: hover) { .xos .x-arrow:hover > span { text-decoration: none; } .xos .x-arrow:hover > span::after { transform: scaleX(1); } .xos .x-arrow:hover svg { transform: translateX(6px); } }
 .xos .x-arrow:focus-visible > span::after { transform: scaleX(1); }
 .xos-row-figs { grid-column: 7 / span 6; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gut); }
 .xos-row-figs div { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 10px; border-top: 1px solid var(--hair); }
