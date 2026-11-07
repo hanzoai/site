@@ -1,4 +1,7 @@
 'use client';
+// Persona: a developer who already uses an SDK, framework or editor and wants Hanzo behind it (arrives from the header, docs or a guide)
+// Goal: see that one base URL is all it takes, find their tool's guide, and get an API key
+// CTA: Get an API key -> https://platform.hanzo.ai/api-keys (hero, sticky AskBar and thumb bar) · metric cta_click (data-cta="get-api-key")
 /* Integrations. Its idea is the hub: one base URL, and every tool Hanzo has a guide for already speaks to it.
    V2: 8/10 Catalogue rebuilt: the hub turning by itself as the hero, the starter as a big editor that switches language on its own, 19 numbered tool cards behind family chips with a gliding pill, each opening into its guide, the agent prompt in the one dark room; greys only, one ask.
    Signature: cards that open. Nineteen numbered tool cards (01 / 19), filtered by family chips whose pill glides and
@@ -171,12 +174,12 @@ export default function IntegrationsIndex({ doc }) {
       <section className="xii-hero" aria-labelledby="xin-h1">
         <div className="pf-wrap pf-grid xii-hero-g">
           <div className="xii-hero-a">
-            <h1 id="xin-h1" className="pf-display xii-h1 xii-in" style={{ '--i': 1 }} data-morph-target>{doc.title}</h1>
+            <div data-morph-target><MaskLines as="h1" id="xin-h1" className="pf-display xii-h1" lines={doc.title.split(/ (?=everything)/)} delay={0.05} amount={0.1} /></div>
             <p className="pf-lede xii-lede xii-in" style={{ '--i': 2 }}><Loose nodes={doc.lede} /></p>
             <div className="xii-acts xii-in" style={{ '--i': 3 }}>
               {doc.actions.map((a, i) => (i
                 ? <More key={a.label} to={a.href}>{a.label}</More>
-                : <A key={a.label} to={a.href} className="pf-btn solid xii-ask" data-thumb={a.label}>{a.label}</A>))}
+                : <A key={a.label} to={a.href} className="pf-btn solid xii-ask" data-thumb={a.label} data-cta="get-api-key">{a.label}</A>))}
             </div>
           </div>
           <div className="xii-hero-b">
@@ -209,7 +212,7 @@ export default function IntegrationsIndex({ doc }) {
           </div>
         </SceneWipe>
       )}
-      <AskBar title={doc.label || 'Integrations'} label={doc.actions[0].label} to={doc.actions[0].href} />
+      <AskBar title={doc.label || 'Integrations'} label={doc.actions[0].label} to={doc.actions[0].href} cta="get-api-key" />
     </main>
   );
 }

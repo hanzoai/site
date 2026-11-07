@@ -1,12 +1,16 @@
 'use client';
 /* One benchmark (/benchmarks/<slug>, 27 pages, one template), read like a model launch (anthropic.com): the benchmark as
    hero figures, the method as chapters, the source one press away.
-   Stage: the title at display size over a contour field seeded from the slug and its numbers; the benchmark's own
-   card (its table, with a live readout of the row being read) is the hero object, close and big, settling into place
-   as you scroll. Paper pages then lay their facts out as a spec line; result pages put their latest figures up huge.
-   The long sections of the method are sticky chapters: the words pin on the left while the section's own table (or
-   the live readout) wipes in on the right; the rest of each section sits in a sheet you open. Short sections read as
-   a tech-spec list; the source is the one dark room; siblings are cards that open into their page.
+   Persona: researcher, and the developer weighing Hanzo's router and engines (PLAN-COMPONENTS 1.1).
+   Goal: believe the figure by seeing how it was measured and reading the run behind it.
+   CTA: "Start on Hanzo Cloud" (paper pages, from their own close) or the header's "Try Hanzo" (result pages), one solid
+   in the hero (data-thumb), carried after it by the site's ask bar (components/Ask.jsx) at every width. Metric: signup_start; GitHub or weights click.
+   Stage: the title at display size beside its lede, the page's one ask and its crumb; over a contour field seeded from
+   the slug and its own numbers. The benchmark's own card (its table, with a live readout of the row being read) is the
+   hero object, on the first screen at 1470×801 and 375×812, settling into place as you scroll. Result pages then put
+   their latest figures up huge; the long sections of the method are sticky chapters (words pin, the section's own table
+   or the live figure wipes in), the rest of each section in a sheet whose trigger previews it in Hanzo's words. Short
+   sections read as a tech-spec list; the source is the one dark room; siblings are cards that open into their page.
    Signature: the table turns into its chart. The rows of Hanzo's own table (its History, its comparison or its
    results) lift out of the table and settle into the chart they make: bars to scale, a value against its baseline, or
    Kai's revisions as a line over the dates hanzo.ai plots. Turn it back with one press; a playhead then keeps reading
@@ -14,13 +18,18 @@
    Beyond: ask the source. Where the page cites a research run on api.hanzo.ai, one press reads that run live and lays
    its raw record beside the transcribed figures (id, split, questions answered, commit, end time, every measure); where
    the source is a repository, the panel hands you the exact command to run it yourself.
-   Motion: signature (layout re-flow; the line wipes in left to right) · stage settle (scroll scale) · kinetic title
-   (masked words) · sigil field. Chapters swap on scroll with clip wipes (scene changes, part of the stage scroll).
-   V2: 8/10 stage hero with the chart card as the settling hero object, display-size title, live readout, method as sticky chapters with sheets, tech-spec list, open-card siblings, one accent per benchmark */
+   Motion, not only scroll: idle (the playhead reads the rows, the readout rolls), state (table to chart re-flow, view
+   switch, sheets), pointer (rows answer hover with their figure, the ask is magnetic, the sibling rail drags with
+   inertia), time (the source types its reply), scroll (stage settle, chapter wipes). Colour: 0 UI hues, ink and greys.
+   Ledger: deletes the crumb/kicker eyebrow over the title, the per-member accent, the invented "Source", "Table", "Chart",
+   "Previous", "Next" labels (icons with names from content/ui-strings.json), and the duplicated readout rail.
+   V2: 8/10 hero card on the first screen beside a display title and one magnetic ask, 0-hue ink system, chapters with Hanzo-worded sheets, sticky ask, sibling rail that drags, source room without invented labels */
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { motion, LayoutGroup, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A } from '../../kit';
+import { Magnetic } from '../../ui';
+import { ui } from '../../v2/famUi';
 import { Nodes } from '../DocNodes';
 import Sigil from '../../Sigil';
 import FamLines from '../../v2/FamLines';
@@ -34,24 +43,36 @@ const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
 const textOf = (n) => (n && typeof n === 'object' ? n.c.map(textOf).join('') : n || '');
 const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 
-/* the playhead: one index the card and every chapter read; ticks only while the tab is visible */
+/* the playhead: one index the card and every chapter read. It walks the rows once (a demo plays and rests,
+   PLAN-COMPONENTS 2.9) and comes back to Hanzo's first row; the card's pause control stops or replays it. It ticks
+   only while the tab is visible. */
 function makeWalk() {
-  let i = 0, n = 1, id = 0, hold = 0;
+  let i = 0, n = 1, id = 0, hold = 0, left = 0, on = false;
   const subs = new Set();
   const emit = () => subs.forEach((f) => f());
+  const stop = () => { clearInterval(id); on = false; emit(); };
   return {
     get: () => i,
+    playing: () => on,
     sub: (f) => { subs.add(f); return () => subs.delete(f); },
     set: (k, pause = 0) => { i = k; if (pause) hold = Date.now() + pause; emit(); },
+    stop,
     start: (count) => {
       n = Math.max(1, count);
       clearInterval(id);
-      id = setInterval(() => { if (document.hidden || Date.now() < hold) return; i = (i + 1) % n; emit(); }, 1900);
+      if (n < 2) return () => {};
+      left = n; on = true; emit();
+      id = setInterval(() => {
+        if (document.hidden || Date.now() < hold) return;
+        i = (i + 1) % n; left -= 1;
+        if (left <= 0) { i = 0; stop(); } else emit();
+      }, 1900);
       return () => clearInterval(id);
     },
   };
 }
 const useAt = (walk) => useSyncExternalStore(walk.sub, walk.get, () => 0);
+const usePlaying = (walk) => useSyncExternalStore(walk.sub, walk.playing, () => false);
 
 /* what the playhead reads at row i: [row, figure, what the figure is] */
 function readout(c, i) {
@@ -76,6 +97,7 @@ const isLog = (vals) => { const v = vals.filter((x) => x != null && x > 0); retu
 /* the live readout: the row the playhead is on, its figure huge */
 function Readout({ c, walk, big }) {
   const at = useAt(walk);
+  const playing = usePlaying(walk);
   const r = readout(c, at);
   if (!r) return null;
   const n = rowsOf(c);
@@ -88,9 +110,22 @@ function Readout({ c, walk, big }) {
         </AnimatePresence>
       </span>
       <span className="xbr-ro-s x-mono">{r[2]}</span>
-      {n > 1 && <span className="xbr-ro-n x-mono">{String((at % n) + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}</span>}
-      {n > 1 && <i className="xbr-ro-t" key={at} />}
+      {n > 1 && <i className={'xbr-ro-t' + (playing ? '' : ' rest')} key={at} />}
     </div>
+  );
+}
+
+/* pause or replay the playhead (WCAG 2.2.2: anything that moves for more than 5 s can be stopped) */
+function Walker({ walk, n }) {
+  const playing = usePlaying(walk);
+  const calm = useReducedMotion();
+  if (calm || n < 2) return null;
+  return (
+    <button type="button" className="xbr-walk" aria-label={ui(playing ? 'pause' : 'replay')} aria-pressed={!playing} onClick={() => (playing ? walk.stop() : walk.start(n))}>
+      {playing
+        ? <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M7 4.5v11M13 4.5v11" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
+        : <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M15.5 10a5.5 5.5 0 1 1-1.6-3.9M15.5 4v3.6h-3.6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+    </button>
   );
 }
 
@@ -113,8 +148,11 @@ function Turn({ c, walk, slug }) {
   const view = (
     <div className="xbr-turn-v" role="group" aria-label="View">
       <span className="xbr-turn-vb" aria-hidden="true" style={{ transform: chart ? 'translateX(100%)' : 'none' }} />
-      {[['Table', false], ['Chart', true]].map(([l, v]) => (
-        <button key={l} type="button" aria-pressed={chart === v} onClick={() => { turned.current = true; setChart(v); }}><span>{l}</span></button>
+      {[['table', false], ['chart', true]].map(([k, v]) => (
+        <button key={k} type="button" aria-pressed={chart === v} aria-label={ui(k)} onClick={() => { turned.current = true; setChart(v); }}>
+          {v ? <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 16.5h14M5.5 14V9M10 14V5M14.5 14v-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+            : <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>}
+        </button>
       ))}
     </div>
   );
@@ -173,7 +211,7 @@ function Turn({ c, walk, slug }) {
             {c.cols.map((k, j) => <button key={k.name} type="button" aria-pressed={col === j} onClick={() => { setCol(j); turned.current = true; setChart(true); }}>{k.name}</button>)}
           </div>
         )}
-        <div className="xbr-bars-h x-mono"><span>{c.head0}</span><span>{c.cols[col].name}{chart && isLog(vals) ? ' · log' : ''}</span></div>
+        <div className="xbr-bars-h x-mono"><span>{c.head0}</span><span>{c.cols[col].name}{chart && isLog(vals) ? ' · ' + ui('log') : ''}</span></div>
         <ul>
           {c.rows.map((r, i) => (
             <li key={i} className={(at % c.rows.length === i ? 'lit' : '') + (r.cells[col].v == null ? ' none' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} onClick={() => pick(i)}>
@@ -198,7 +236,7 @@ function Turn({ c, walk, slug }) {
     <figure ref={box} id={id} className={'xbr-turn v2f-obj' + (c.kind === 'one' ? ' one' : '')}>
       <figcaption className="xbr-turn-h">
         <span className="v2f-kick">{c.metric || c.title}</span>
-        {c.kind !== 'one' && view}
+        {c.kind !== 'one' && <div className="xbr-turn-ctl"><Walker walk={walk} n={rowsOf(c)} />{view}</div>}
       </figcaption>
       <div className="xbr-turn-g">
         {c.kind !== 'one' && <Readout c={c} walk={walk} />}
@@ -270,6 +308,23 @@ function Facts({ n }) {
 
 /* ---------- beyond: ask the source ---------- */
 const ISO = (s) => (s ? s.replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : '');
+const Play = () => <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M7 4.5v11l9-5.5z" fill="currentColor" /></svg>;
+const Braces = () => <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M7 3.5C5 3.5 5 5 5 6.5S4.5 9 3 10c1.5 1 2 2 2 3.5s0 3 2 3M13 3.5c2 0 2 1.5 2 3s.5 2.5 2 3.5c-1.5 1-2 2-2 3.5s0 3-2 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
+/* the reply, typed out once it arrives (time, not scroll): the runs' ids appear a character at a time into text nodes */
+function Typed({ text, delay = 0 }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || calm) return;
+    let i = 0, raf = 0, t0 = 0;
+    const tick = (t) => { if (!t0) t0 = t + delay; if (t >= t0) { i = Math.min(text.length, Math.floor((t - t0) / 14)); el.firstChild.nodeValue = text.slice(0, i); } if (i < text.length) raf = requestAnimationFrame(tick); };
+    el.firstChild.nodeValue = '';
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [text, delay, calm]);
+  return <span ref={ref}>{text}</span>;
+}
 function Source({ doc }) {
   const src = doc.source;
   const [st, setSt] = useState({ k: 'idle' });
@@ -290,26 +345,25 @@ function Source({ doc }) {
   };
   const shown = src ? src.url.replace(/^https:\/\//, '') : '';
   return (
-    <section className="xbr-src" data-room="dark" aria-labelledby={'xbr-src-' + doc.slug}>
+    <section className="xbr-src" data-room="dark" aria-label={src ? 'api.hanzo.ai' : doc.command}>
       <div className="v2f-wrap v2f-grid xbr-src-g">
         <div className="xbr-src-l">
-          <h2 id={'xbr-src-' + doc.slug} className="v2f-head xbr-src-h">Source</h2>
           {src ? (
             <>
               <p className="xbr-src-u x-mono"><b>GET</b> <span>{shown}</span></p>
               <div className="xbr-src-acts">
-                <button type="button" className="v2f-btn acc xbr-ask" onClick={ask} disabled={st.k === 'load'} aria-describedby={'xbr-src-s-' + doc.slug}>
-                  <i className={'xbr-ask-d' + (st.k === 'load' ? ' on' : '')} aria-hidden="true" />{st.k === 'ok' ? 'Read it again' : 'Read the run'}
-                </button>
-                <a className="x-arrow xbr-raw" href={src.url} target="_blank" rel="noopener noreferrer"><span>JSON</span></a>
+                <Magnetic>
+                  <button type="button" className="xbr-ask" onClick={ask} disabled={st.k === 'load'} aria-label={ui('read_run')} aria-busy={st.k === 'load'}>
+                    <i className={'xbr-ask-d' + (st.k === 'load' ? ' on' : '')} aria-hidden="true" /><Play />
+                  </button>
+                </Magnetic>
+                <a className="xbr-raw" href={src.url} target="_blank" rel="noopener noreferrer" aria-label="JSON"><Braces /></a>
               </div>
             </>
           ) : (
             doc.command && <Cmd text={doc.command} />
           )}
-          <p id={'xbr-src-s-' + doc.slug} className="xbr-src-s" aria-live="polite">
-            {st.k === 'load' ? 'Reading api.hanzo.ai…' : st.k === 'err' ? 'Could not read it (' + st.e + ').' : st.k === 'none' ? 'No runs came back.' : st.k === 'ok' ? st.runs.length + ' / ' + st.runs.length : ''}
-          </p>
+          <p className="x-sr" aria-live="polite">{st.k === 'load' ? ui('loading') : st.k === 'err' ? ui('failed') : ''}</p>
         </div>
         <div className="xbr-src-r">
           <div className="xbr-term">
@@ -319,20 +373,20 @@ function Source({ doc }) {
               {st.k === 'ok' && (
                 <ol className="xbr-runs">
                   {st.runs.map((r, i) => (
-                    <motion.li key={r.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: EASE, delay: i * 0.05 }}>
-                      <p className="xbr-run-id x-mono">{r.id}</p>
+                    <li key={r.id} style={{ '--k': i }}>
+                      <p className="xbr-run-id x-mono"><Typed text={r.id} delay={i * 120} /></p>
                       <dl className="xbr-run-k x-mono">
                         {[['split', r.split], ['system', r.system], ['questions', r.questions != null ? r.answered + ' / ' + r.questions : ''], ['commit', (r.commit || '').slice(0, 10)], ['ended', ISO(r.ended)], ['completion', r.completion]].filter((x) => x[1]).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
                       </dl>
                       <ul className="xbr-run-m x-mono">
                         {(r.measures || []).filter((m) => m.category === 'all' || !m.category).slice(0, 8).map((m, k) => <li key={k}><span>{m.metric}</span><b>{m.value}</b></li>)}
                       </ul>
-                    </motion.li>
+                    </li>
                   ))}
                 </ol>
               )}
               {st.k === 'idle' && <div className="xbr-src-wait x-mono" aria-hidden="true">{src ? '{ "data": [ … ] }' : '$ ' + (doc.command || '')}<i className="xbr-caret" /></div>}
-              {st.k === 'err' && <a className="v2f-btn" href={src.url} target="_blank" rel="noopener noreferrer">JSON</a>}
+              {st.k === 'err' && <div className="xbr-src-wait x-mono" aria-hidden="true">{st.e}</div>}
               {st.k === 'none' && <div className="xbr-src-wait x-mono" aria-hidden="true">{'{ "data": [] }'}</div>}
             </div>
           </div>
@@ -343,36 +397,54 @@ function Source({ doc }) {
 }
 
 /* the closing parts of a paper page: Build on Hanzo Cloud, previous / next, related, every other benchmark */
-function Tail({ tail, near }) {
-  const a = (b) => b.t === 'a' && b.n.a && b.n.a.href;
-  const pager = tail.filter((b) => (a(b) && /^(Previous|Next)/.test(clean(textOf(b.n)))) || (a(b) && b.n.a.href === '/benchmarks' && /Board/.test(textOf(b.n))));
+const linkOf = (b) => b.t === 'a' && b.n.a && b.n.a.href;
+const isPager = (b) => (linkOf(b) && /^(Previous|Next)/.test(clean(textOf(b.n)))) || (linkOf(b) && b.n.a.href === '/benchmarks' && /Board/.test(textOf(b.n)));
+/* the page's one ask, in Hanzo's words: a paper page's own "Start on Hanzo Cloud", else the header's "Try Hanzo" */
+export function askOf(tail) {
+  const first = tail.find((b) => linkOf(b) && !isPager(b));
+  return first ? { label: clean(textOf(first.n)), href: first.n.a.href } : { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' };
+}
+function Tail({ tail, near, peek }) {
+  const pager = tail.filter(isPager);
   const ctaEnd = tail.findIndex((b) => pager.includes(b));
   const cta = tail.length ? tail.slice(0, ctaEnd < 0 ? 3 : ctaEnd) : [];
   const rest = tail.slice((ctaEnd < 0 ? 3 : ctaEnd)).filter((b) => !pager.includes(b));
   const parts = (n) => n.c.filter((k) => k && typeof k === 'object').map((k) => clean(textOf(k)));
-  const seedOf = (h) => 'bench/' + h.split('/').filter(Boolean).pop();
-  const cards = pager.length ? pager.map((b) => {
+  const slugOf = (h) => h.split('/').filter(Boolean).pop();
+  const cards = (pager.length ? pager.map((b) => {
     const p = parts(b.n);
-    const dir = /^Previous/.test(p[0]) ? 'prev' : /^Next/.test(p[0]) ? 'next' : 'all';
-    return dir === 'all' ? { href: b.n.a.href, title: clean(textOf(b.n)), seed: 'bench/board' } : { href: b.n.a.href, kicker: p[0], title: p.slice(1).join(' '), seed: seedOf(b.n.a.href) };
-  }) : near;
+    const dir = /^Previous/.test(p[0]) ? 'prev' : /^Next/.test(p[0]) ? 'next' : null;
+    // the pager's own words stay in the page: "Previous"/"Next" ride as the card's hidden prefix, the title is the card
+    return dir ? { href: b.n.a.href, dir, hidden: p[0], title: p.slice(1).join(' '), seed: 'bench/' + slugOf(b.n.a.href) } : { href: b.n.a.href, title: clean(textOf(b.n)), seed: 'bench/board' };
+  }) : near).map((it) => ({ ...it, preview: peek[slugOf(it.href)]?.lede, data: peek[slugOf(it.href)]?.data, meta: peek[slugOf(it.href)]?.figure }));
+  const h3 = cta.find((b) => b.t === 'h3');
+  const notes = cta.filter((b) => b !== h3 && !linkOf(b));
+  const links = cta.filter(linkOf);
   return (
-    <section className="xbr-tail v2f-sec tight">
-      <div className="v2f-wrap">
-        {!!cta.length && (
-          <div className="xbr-cta v2f-grid">
-            {cta.filter((b) => !a(b)).map((b, i) => (b.t === 'p' ? <p key={i} className="v2f-kick acc xbr-cta-k">{clean(textOf(b.n))}</p>
-              : b.t === 'h3' ? <FamLines key={i} as="h3" play="view" className="v2f-display small xbr-cta-h" text={clean(textOf(b.n))} />
-                : <Block key={i} b={b} />))}
-            <div className="xbr-cta-acts">
-              {cta.filter(a).map((b, i) => <A key={i} to={b.n.a.href} className={'v2f-btn' + (i === 0 ? ' solid' : '')}>{clean(textOf(b.n))}</A>)}
+    <>
+      <section className="xbr-tail v2f-sec tight">
+        <div className="v2f-wrap">
+          <FamNext items={cards} label="Benchmarks" className="xbr-next" />
+          {pager.some((b) => /^(Previous|Next)/.test(clean(textOf(b.n)))) && <p className="x-sr">{pager.map((b) => clean(textOf(b.n))).join(' · ')}</p>}
+          {!!rest.length && <div className="xbr-more"><Blocks blocks={rest} /></div>}
+        </div>
+      </section>
+      {!!cta.length && (
+        <section className="xbr-band" data-room="dark" data-ask-hide aria-label={h3 ? clean(textOf(h3.n)) : undefined}>
+          <div className="v2f-wrap v2f-grid xbr-band-g">
+            {h3 && <FamLines as="h2" play="view" className="v2f-display small xbr-band-h" text={clean(textOf(h3.n))} />}
+            <div className="xbr-band-r">
+              <div className="xbr-band-acts">
+                {links.map((b, i) => (i === 0
+                  ? <Magnetic key={i}><A to={b.n.a.href} className="v2f-btn xbr-band-solid" data-cta="benchmarks.band">{clean(textOf(b.n))}</A></Magnetic>
+                  : <A key={i} to={b.n.a.href} className="v2f-link xbr-band-link">{clean(textOf(b.n))}</A>))}
+              </div>
+              {notes.map((b, i) => <p key={i} className="v2f-kick xbr-band-k">{clean(textOf(b.n))}</p>)}
             </div>
           </div>
-        )}
-        <FamNext items={cards} label="Benchmarks" className="xbr-next" />
-        {!!rest.length && <div className="xbr-more"><Blocks blocks={rest} /></div>}
-      </div>
-    </section>
+        </section>
+      )}
+    </>
   );
 }
 
@@ -383,8 +455,9 @@ function splitSection(s) {
   const rest = s.blocks.filter((b) => b !== lead && b !== table);
   return { lead, table, rest };
 }
+const firstWords = (bs) => { for (const b of bs) { const t = clean(b.s || textOf(b.n)); if (t) return t; } return ''; };
 
-export default function BenchRun({ doc, acc, near = [] }) {
+export default function BenchRun({ doc, near = [], peek = {} }) {
   const walk = useMemo(makeWalk, []);
   const calm = useReducedMotion();
   const c = doc.chart;
@@ -399,7 +472,8 @@ export default function BenchRun({ doc, acc, near = [] }) {
   const specs = doc.sections.filter(short);
   const size = doc.title.length <= 16 ? '' : doc.title.length <= 30 ? ' mid' : ' small';
   const [lead, ...figs] = doc.latest;
-  const TONES = ['acc', 'card', 'line'];
+  const TONES = ['ink', 'card', 'line'];
+  const ask = askOf(doc.tail);
 
   const chapter = (s, k) => {
     const { lead: l, table, rest } = splitSection(s);
@@ -408,10 +482,9 @@ export default function BenchRun({ doc, acc, near = [] }) {
       name: s.title,
       text: (
         <div className="xbr-ch-t" id={s.id || undefined}>
-          <p className="v2f-kick acc">{String(k + 1).padStart(2, '0')} / {String(longs.length).padStart(2, '0')}</p>
           <h2 className="v2f-head xbr-ch-h">{s.title}</h2>
           {l && <div className="v2f-body xbr-ch-b"><Block b={l} /></div>}
-          {!!rest.length && <FamDrawer label="Read the whole section" title={s.title}><div className="xbr-sheet-b"><Blocks blocks={rest} /></div></FamDrawer>}
+          {!!rest.length && <FamDrawer preview={firstWords(rest)} title={s.title}><div className="xbr-sheet-b"><Blocks blocks={rest} /></div></FamDrawer>}
         </div>
       ),
       visual: table ? (
@@ -423,29 +496,32 @@ export default function BenchRun({ doc, acc, near = [] }) {
   };
 
   return (
-    <main className="v2f xbr" style={{ '--acc': acc }}>
-      {/* stage: the title huge, the benchmark's own card close and big, settling as you scroll */}
+    <main className="v2f xbr">
+      {/* stage: the title huge beside its lede and the one ask; the benchmark's own card on the first screen, settling */}
       <section className="xbr-stage" aria-labelledby={'xbr-h1-' + doc.slug}>
         <Sigil seed={'bench/' + doc.slug} data={seedData} className="xbr-sigil" />
-        <div className="v2f-wrap">
-          <div className="xbr-top">
-            {doc.crumb && <p className="xbr-crumb"><Nodes nodes={doc.crumb.c} /></p>}
-            {doc.kicker && <p className="xbr-kicker x-mono"><i aria-hidden="true" /><Nodes nodes={doc.kicker.c} /></p>}
-          </div>
+        <div className="v2f-wrap v2f-grid xbr-top-g">
           <FamLines as="h1" id={'xbr-h1-' + doc.slug} className={'v2f-display xbr-h1' + size} text={doc.title} data-morph-target />
-          <div className="v2f-grid xbr-intro">
+          <div className="xbr-side">
             {doc.lede && <p className="v2f-lede xbr-lede"><Nodes nodes={doc.lede.c} /></p>}
-            {(introCode || !!introRest.length) && (
-              <div className="xbr-intro-r">
-                {introCode && <Cmd text={clean(textOf(introCode.n))} />}
-                {introRest.map((b, i) => <div key={i} className="xbr-intro-n"><Block b={b} /></div>)}
-              </div>
-            )}
+            <div className="xbr-acts">
+              <Magnetic><A to={ask.href} className="v2f-btn solid" data-thumb={ask.label} data-cta="benchmarks.hero">{ask.label}<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></Magnetic>
+            </div>
+            <div className="xbr-meta">
+              {doc.crumb && <p className="xbr-crumb"><Nodes nodes={doc.crumb.c} /></p>}
+              {doc.kicker && <p className="xbr-kicker x-mono"><Nodes nodes={doc.kicker.c} /></p>}
+            </div>
           </div>
         </div>
         {c && (
           <div className="v2f-wrap xbr-stage-o">
-            <FamStage from={1.1} span={560}><Turn c={c} walk={walk} slug={doc.slug} /></FamStage>
+            <FamStage from={1.06} span={520}><Turn c={c} walk={walk} slug={doc.slug} /></FamStage>
+          </div>
+        )}
+        {(introCode || !!introRest.length) && (
+          <div className="v2f-wrap v2f-grid xbr-intro">
+            {introCode && <div className="xbr-intro-c"><Cmd text={clean(textOf(introCode.n))} /></div>}
+            {introRest.map((b, i) => <div key={i} className="xbr-intro-n"><Block b={b} /></div>)}
           </div>
         )}
       </section>
@@ -459,7 +535,7 @@ export default function BenchRun({ doc, acc, near = [] }) {
       {lead && (
         <section className="xbr-figs v2f-sec" aria-labelledby={'xbr-latest-' + doc.slug}>
           <div className="v2f-wrap v2f-grid">
-            <h2 id={'xbr-latest-' + doc.slug} className="v2f-kick acc xbr-figs-k">Latest</h2>
+            <h2 id={'xbr-latest-' + doc.slug} className="v2f-head xbr-figs-h">Latest</h2>
             <a href={lead.href} className="xbr-fig big">
               <b className="v2f-num">{lead.parts[0]}</b>
               <span className="xbr-fig-l">{lead.parts[1]}</span>
@@ -517,7 +593,7 @@ export default function BenchRun({ doc, acc, near = [] }) {
       )}
 
       <Source doc={doc} />
-      <Tail tail={doc.tail} near={near} />
+      <Tail tail={doc.tail} near={near} peek={peek} />
     </main>
   );
 }

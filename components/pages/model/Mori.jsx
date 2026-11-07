@@ -1,5 +1,5 @@
 'use client';
-/* Mori: build worlds, not just images. v2 launch page (Creative on Launch + Chapters, accent forest). The film
+/* Mori: build worlds, not just images. v2 launch page (Creative on Launch + Chapters, Hanzo's black and white). The film
    settles into a cube seen from above (a hexagon whose three near edges draw in); the viewport is the one dark room.
    Signature: a point cloud that turns. Points scattered through space settle onto a surface (SDF to mesh), then the
    shape keeps turning 360°; drag it to orbit (it carries your throw), and switch the view between wireframe, shaded
@@ -154,25 +154,16 @@ export default function Mori() {
   return (
     <Creative
       slug="mori"
-      accent="#1f9d55"
-      ink="#137a3f"
       shape={HEX}
-      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.6, W / 2, H * 0.25, 1.3)(W, H))}
+      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.6, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46])(W, H))}
       over={EDGES}
       headClass="mr-v2"
       first="chapters"
       flip
       demo={
-        <section className="lv-room mr-room" aria-labelledby="mr-sc">
+        <section className="lv-room mr-room" data-room="dark" aria-label="Mori">
           <div className="mr-stage">
             <Viewport />
-            <div className="mr-headwrap x-wrap">
-              <div className="mr-sh">
-                <p className="lv-kick"><span className="mb-live">Live viewport</span></p>
-                <h2 id="mr-sc" className="lv-h">Turn the shape.</h2>
-                <p className="lv-p">Points settle onto a surface, SDF to mesh, then the shape keeps turning. Drag it to orbit, and switch between wireframe, shaded and normals.</p>
-              </div>
-            </div>
           </div>
           <div className="mr-below x-wrap">
             <div className="mr-specs"><Specs rows={[['Topology Quality', 'Quad-Dominant', 'Animation Ready'], ['UV Unwrapping', 'Automatic Atlas', 'On'], ['Geometry Engine', 'Hanzo Mori-1 Engine', 'SDF to mesh']]} /></div>

@@ -1,40 +1,80 @@
-/* v2 launch type and space (VISION.md "The v2 system"). Imported by every components/v2/Launch-kit piece, and usable on
-   any page: give the page root `lx` and an accent `--acc` taken from its own product (one accent per page).
+/* v2 launch type and space (VISION.md "The v2 system", JAMES.md, PLAN-COMPONENTS CANON 0.7). Imported by every Cloud 3
+   kit piece; give the page root `lx`.
    Display 128/96/80 → 56/48 phone · Headline 56 → 36 · Title 28 · Lede 24/21 · Body 19/17 · Kicker Zen Mono 13 caps.
-   Sections breathe 200–260px on desktop, 120px on phones; headlines run 12–18ch. Prefix lx- is owned by Cloud 3. */
-.lx { --acc: #0a0a0a; --acc-soft: color-mix(in srgb, var(--acc) 12%, #fff); --lx-ease: cubic-bezier(.16, 1, .3, 1); --lx-head: 60px; }
+   Colour (JAMES 7, overrides VISION's accent): 0 UI hues. Ink, greys, silvers and white; colour arrives only through
+   Hanzo's own media. `--acc` is kept as a name so pages read cleanly, but it is ink. Text on white never uses
+   #86868b (3.5:1): `--faint` is the 5:1 muted grey here and is only lighter inside dark rooms.
+   Prefix lx- is owned by Cloud 3. */
+.lx { --ink: #1d1d1f; --acc: #1d1d1f; --acc-soft: #f2f2f4; --muted: #6e6e73; --faint: #6e6e73; --silver: #c7c7cc; --lx-ease: cubic-bezier(.16, 1, .3, 1); --lx-head: 60px; }
 .lx-display { font-weight: 600; font-size: clamp(56px, 8.9vw, 128px); line-height: .92; letter-spacing: -.05em; margin: 0; text-wrap: balance; color: var(--ink); }
 .lx-display.m { font-size: clamp(48px, 6.7vw, 96px); }
-.lx-display.s { font-size: clamp(44px, 5.6vw, 80px); }
+.lx-display.s { font-size: clamp(44px, 5.6vw, 80px); line-height: .96; }
 .lx-headline { font-weight: 600; font-size: clamp(36px, 3.9vw, 56px); line-height: 1.02; letter-spacing: -.042em; margin: 0; max-width: 16ch; text-wrap: balance; color: var(--ink); }
 .lx-title { font-weight: 560; font-size: clamp(22px, 1.95vw, 28px); line-height: 1.15; letter-spacing: -.025em; margin: 0; text-wrap: balance; color: var(--ink); }
-.lx-lede { font-size: clamp(19px, 1.67vw, 24px); line-height: 1.42; letter-spacing: -.012em; color: var(--soft); margin: 0; max-width: 38ch; text-wrap: pretty; }
-.lx-body { font-size: clamp(17px, 1.32vw, 19px); line-height: 1.55; color: var(--soft); margin: 0; max-width: 64ch; text-wrap: pretty; }
-.lx-kick { font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin: 0; }
-.lx-kick b { color: var(--acc); font-weight: 500; }
+.lx-lede { font-size: clamp(19px, 1.67vw, 24px); line-height: 1.42; letter-spacing: -.012em; color: var(--muted); margin: 0; max-width: 38ch; text-wrap: pretty; }
+.lx-body { font-size: clamp(17px, 1.32vw, 19px); line-height: 1.55; color: var(--muted); margin: 0; max-width: 64ch; text-wrap: pretty; }
+.lx-kick { font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.lx-kick b { color: var(--ink); font-weight: 500; }
 .lx-num { font-family: var(--mono); font-feature-settings: 'tnum'; letter-spacing: -.04em; }
 .lx-sec { padding: clamp(120px, 15vw, 240px) 0; position: relative; }
 .lx-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
 .lx-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
-.lx-dark { background: #0a0a0a; color: #f5f5f7; --ink: #f5f5f7; --soft: #a1a1a6; --faint: #8e8e93; --line: rgba(255, 255, 255, .12); --card: #161618; }
-/* line-masked reveal (LineMask) */
+.lx-dark { background: #0a0a0a; color: #f5f5f7; --ink: #f5f5f7; --acc: #f5f5f7; --acc-soft: #1c1c1f; --muted: #a1a1a6; --soft: #a1a1a6; --faint: #8e8e93; --line: rgba(255, 255, 255, .12); --card: #161618; }
+
+/* the line-masked cut-in (LineMask): CSS, so it starts at first paint and ends visible without JS */
 .lx-line { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
-.lx-line > span { display: block; will-change: auto; }
-/* a quiet primary action */
-.lx-cta { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 999px; background: var(--ink); color: var(--bg, #fff); font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; }
+.lx-line > span { display: block; }
+.lx-lm[data-lm='armed'] .lx-line > span { transform: translateY(108%); }
+.lx-lm[data-lm='play'] .lx-line > span { animation: lx-cut 1s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes lx-cut { from { transform: translateY(108%); } }
+
+/* the one solid ask, and quiet secondaries. Hover changes ink and nudges the arrow (never opacity); press is .98 */
+.lx-cta { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color .22s var(--lx-ease), transform .12s var(--lx-ease); touch-action: manipulation; }
 .lx-dark .lx-cta { background: #f5f5f7; color: #0a0a0a; }
 .lx-cta svg { transition: transform .3s var(--lx-ease); }
-.lx-cta:hover svg { transform: translateX(3px); }
-.lx-ghost { display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; }
+.lx-cta:active { transform: scale(.98); }
+.lx-ghost { display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 22px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); color: var(--ink); background: none; font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: border-color .22s, background-color .22s, transform .12s var(--lx-ease); touch-action: manipulation; }
+.lx-dark .lx-ghost { border-color: rgba(255, 255, 255, .22); }
+.lx-ghost:active { transform: scale(.98); }
+.lx-text { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); font: 500 16px/1 var(--sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; text-decoration-color: rgba(0, 0, 0, .3); transition: text-decoration-color .2s; }
+.lx-dark .lx-text { text-decoration-color: rgba(255, 255, 255, .35); }
+@media (hover: hover) {
+  .lx-cta:hover { background: #3a3a3c; }
+  .lx-dark .lx-cta:hover { background: #fff; }
+  .lx-cta:hover svg { transform: translateX(4px); }
+  .lx-ghost:hover { border-color: var(--ink); background: rgba(0, 0, 0, .03); }
+  .lx-dark .lx-ghost:hover { background: rgba(255, 255, 255, .06); }
+  .lx-text:hover { text-decoration-color: currentColor; }
+}
+
+/* Frame's shared pieces, inside a Cloud 3 page: no hues, 14px floor, 44px targets */
+.lx .cf-api i { background: #ececf0 !important; color: var(--ink) !important; }
+.lx .cf-paste.dark .cf-api i, .lx-dark .cf-api i { background: #2c2c2e !important; color: #f5f5f7 !important; }
+.lx .cf-paste-k, .lx .cf-api { font-size: 13px; color: #a1a1a6; }
+.lx .cf-code .k, .lx .cf-code .s, .lx .cf-mark { color: inherit !important; }
+.lx .cf-code .s { color: #c7c7cc !important; }
+.lx .cf-code.light .s { color: #424245 !important; }
+.lx .cf-code .c { color: #98989d !important; }
+.lx .cf-dot.b { background: #8e8e93 !important; box-shadow: none !important; }
+.lx .cf-dot.r { background: var(--ink) !important; }
+.lx .x-copy { min-height: 44px; }
+.lx .x-copy-t, .lx .cf-code-k { font-size: 13px; }
+/* Frame's Paste arrives with Rise (opacity 0 until JS): Hanzo's words must read with JS off, so it simply sits */
+.lx .cf-paste { opacity: 1 !important; transform: none !important; }
+/* Frame's "Paste and ship" stacked for a narrow column: pass className="lx-paste" */
+.lx .cf-paste.lx-paste { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+.lx .lx-paste .cf-paste-t { font-size: clamp(22px, 1.95vw, 28px); font-weight: 560; letter-spacing: -.025em; }
+.lx .lx-paste .cf-paste-d { font-size: 15px; }
+
 @media (max-width: 900px) {
   .lx-wrap { width: calc(100% - 40px); }
   .lx-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 16px; }
   .lx-sec { padding: 120px 0; }
   .lx-lede { font-size: 19px; }
   .lx-body { font-size: 17px; }
-  .lx-cta, .lx-ghost { height: 50px; }
+  .lx-cta, .lx-ghost { height: 50px; min-height: 50px; }
+  .lx-kick, .lx .cf-paste-k, .lx .cf-api, .lx .x-copy-t, .lx .cf-code-k { font-size: 14px; }
 }
-/* Frame's "Paste and ship" stacked for a narrow column: pass className="lx-paste" */
-.lx .cf-paste.lx-paste { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-.lx .lx-paste .cf-paste-t { font-size: clamp(22px, 1.95vw, 28px); font-weight: 560; letter-spacing: -.025em; }
-.lx .lx-paste .cf-paste-d { font-size: 15px; }
+@media (prefers-reduced-motion: reduce) {
+  .lx-lm .lx-line > span { animation: none !important; transform: none !important; }
+}

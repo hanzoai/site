@@ -14,7 +14,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Words, Rise, Magnetic } from './ui';
+import { EASE, Words, Rise, Magnetic, Copy } from './ui';
 import { href } from '../lib/route';
 import { SPRING } from '../lib/motion';
 
@@ -56,23 +56,52 @@ export function SecHead({ kicker, title, lede, center, dark, id }) {
   );
 }
 
-/* Questions that open in place; one open at a time. */
-export function Faq({ items, dark }) {
-  const [open, setOpen] = useState(0);
+/* Questions that open in place. One open at a time (multi to allow several); the first is open (first={-1} for none).
+   Closed answers stay in the HTML as hidden="until-found", so search engines read them and the browser's Find in page
+   opens the one it finds. Each question has an address (#q-what-does-a-plan-cost) that opens it on arrival. */
+const qslug = (q) => (typeof q === 'string' ? 'q-' + q.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) : undefined);
+export function Faq({ items, dark, multi = false, first = 0 }) {
+  const [open, setOpen] = useState(() => new Set(first >= 0 ? [first] : []));
+  const [shut, setShut] = useState(() => new Set(items.map((_, i) => i).filter((i) => i !== first)));
+  const bodies = useRef([]);
+  const show = useCallback((i) => {
+    setShut((s) => { const n = new Set(s); n.delete(i); return n; });
+    setOpen((o) => (multi ? new Set(o).add(i) : new Set([i])));
+  }, [multi]);
+  const toggle = (i) => (open.has(i) ? setOpen((o) => { const n = new Set(o); n.delete(i); return n; }) : show(i));
+  // React treats `hidden` as a boolean, so "until-found" is set by hand once the answer has fully closed
+  useEffect(() => {
+    bodies.current.forEach((el, i) => { if (!el) return; if (shut.has(i) && !open.has(i)) el.setAttribute('hidden', 'until-found'); else el.removeAttribute('hidden'); });
+  }, [shut, open]);
+  useEffect(() => {
+    const offs = bodies.current.map((el, i) => { if (!el) return null; const f = () => show(i); el.addEventListener('beforematch', f); return () => el.removeEventListener('beforematch', f); });
+    const h = decodeURIComponent(location.hash.slice(1));
+    const at = items.findIndex(([q]) => qslug(q) === h);
+    if (at >= 0) { show(at); setTimeout(() => document.getElementById(h)?.scrollIntoView({ block: 'center' }), 120); }
+    return () => offs.forEach((f) => f && f());
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <ul className={'x-faq' + (dark ? ' dark' : '')}>
-      {items.map(([q, a], i) => (
-        <Rise as="li" key={q} delay={i * 0.04} y={16}>
-          <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
-            <span>{q}</span>
-            <motion.i animate={{ rotate: open === i ? 45 : 0 }} transition={{ duration: 0.35, ease: EASE }} aria-hidden="true">+</motion.i>
-          </button>
-          {/* every answer stays in the page (search engines, find-in-page); closed ones are collapsed */}
-          <motion.div className="x-faq-a" initial={false} animate={open === i ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.45, ease: EASE }} aria-hidden={open !== i} inert={open !== i}>
-            <div>{a}</div>
-          </motion.div>
-        </Rise>
-      ))}
+      {items.map(([q, a], i) => {
+        const on = open.has(i);
+        return (
+          <Rise as="li" key={typeof q === 'string' ? q : i} delay={Math.min(i, 4) * 0.04} y={16} id={qslug(q)}>
+            <button type="button" aria-expanded={on} aria-controls={`${qslug(q) || 'q' + i}-a`} onClick={() => toggle(i)}>
+              <span>{q}</span>
+              <motion.i animate={{ rotate: on ? 45 : 0 }} transition={{ duration: 0.35, ease: EASE }} aria-hidden="true">+</motion.i>
+            </button>
+            <motion.div
+              className="x-faq-a"
+              initial={false}
+              animate={on ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.45, ease: EASE }}
+              onAnimationComplete={() => { if (!on) setShut((s) => new Set(s).add(i)); }}
+            >
+              <div id={`${qslug(q) || 'q' + i}-a`} ref={(el) => { bodies.current[i] = el; }}>{a}</div>
+            </motion.div>
+          </Rise>
+        );
+      })}
     </ul>
   );
 }
@@ -357,5 +386,167 @@ export function Film({ src, poster, w, h, label, className = '', loop = true, ..
     >
       {near && <source src={src} />}
     </video>
+  );
+}
+
+/* ---------- Cta: the one button ----------
+   kind: 'solid' (the one per screen) | 'quiet' (outlined) | 'link' (text with a chevron). size: 'sm' 36 | 'md' 44 | 'lg' 52.
+   to: a link (internal pages stay in the site); without `to` it is a <button> (onClick). id: the analytics id, sent as
+   a cta_click event and written as data-cta. thumb: true makes it the page's ask (the ask bar carries its words).
+   busy / disabled as on Btn. Leaving for another site (hanzo.ai/signup, the console) shows a short pressed state. */
+export function Cta({ to, onClick, children, kind = 'solid', size = 'md', id, thumb, busy, disabled, className = '', ...rest }) {
+  const [leaving, setLeaving] = useState(false);
+  const cls = kind === 'link' ? 'x-arrow' : 'x-btn' + (kind === 'solid' ? ' solid' : '') + (size === 'lg' ? ' lg' : size === 'sm' ? ' sm' : '');
+  const fire = (e) => {
+    dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'cta_click', id, label: typeof children === 'string' ? children : undefined, path: location.pathname } }));
+    if (to && /^https?:/.test(href(to) || '') && !e.metaKey && !e.ctrlKey) { setLeaving(true); setTimeout(() => setLeaving(false), 2500); }
+    onClick?.(e);
+  };
+  const props = {
+    className: cls + ' ' + className,
+    'data-cta': id,
+    'data-thumb': thumb ? (typeof children === 'string' ? children : '') : undefined,
+    'aria-busy': busy || leaving || undefined,
+    'aria-disabled': disabled || undefined,
+    onClick: disabled ? (e) => e.preventDefault() : fire,
+    ...rest,
+  };
+  const body = kind === 'link'
+    ? <><span>{children}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></>
+    : children;
+  if (to && !disabled) return <A to={to} {...props}>{body}</A>;
+  return <button type="button" disabled={disabled} {...props}>{body}</button>;
+}
+
+/* ---------- Field: Hanzo's own input ----------
+   <Field label="Work email" name="email" type="email" required autoComplete="email" hint="…" />
+   48 px, 16 px text (no zoom on phones), a real <label>, hint and error tied by aria-describedby, checked on blur
+   (the browser's own message), aria-invalid while wrong. as="textarea" for long answers. */
+export function Field({ label, name, type = 'text', as, hint, error, required, className = '', onBlur, ...rest }) {
+  const id = useId();
+  const [msg, setMsg] = useState('');
+  const shown = error || msg;
+  const Tag = as === 'textarea' ? 'textarea' : 'input';
+  const im = type === 'email' ? 'email' : type === 'tel' ? 'tel' : type === 'url' ? 'url' : undefined;
+  return (
+    <div className={'x-field ' + className}>
+      <label htmlFor={id}>{label}{required && <span aria-hidden="true"> *</span>}</label>
+      <Tag
+        id={id}
+        name={name}
+        type={Tag === 'input' ? type : undefined}
+        inputMode={im}
+        required={required}
+        aria-invalid={shown ? true : undefined}
+        aria-describedby={hint || shown ? id + '-m' : undefined}
+        className="x-input2"
+        onBlur={(e) => { setMsg(e.target.checkValidity() ? '' : e.target.validationMessage); onBlur?.(e); }}
+        onInput={(e) => { if (msg && e.target.checkValidity()) setMsg(''); }}
+        {...rest}
+      />
+      <span id={id + '-m'} className="x-field-msg" aria-live="polite">{shown || hint || ''}</span>
+    </div>
+  );
+}
+
+/* ---------- DataTable: the one table ----------
+   cols: [{ key, label, num, subject }]; rows: objects keyed the same. The first column is the row header (sticky).
+   subject: the column being compared gets a grey tint (never a hue). A missing value renders an honest "—" with
+   gap (an accessible name for it, from content/ui-strings.json when approved). caption is required (it names the table). */
+export function DataTable({ caption, cols, rows, gap = 'No value', className = '' }) {
+  const id = useId();
+  return (
+    <div className={'x-table-wrap ' + className} role="region" aria-labelledby={id} tabIndex={0}>
+      <table className="x-table">
+        <caption id={id}>{caption}</caption>
+        <thead>
+          <tr>{cols.map((c) => <th key={c.key} scope="col" className={c.num ? 'num' : undefined} data-subject={c.subject || undefined}>{c.label}</th>)}</tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i}>
+              {cols.map((c, j) => {
+                const v = r[c.key];
+                const cell = v === undefined || v === null || v === '' ? <span className="x-gap" aria-label={gap}>—</span> : v;
+                return j === 0
+                  ? <th key={c.key} scope="row" data-subject={c.subject || undefined}>{cell}</th>
+                  : <td key={c.key} className={c.num ? 'num' : undefined} data-subject={c.subject || undefined}>{cell}</td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ---------- CodeBlock: the one code surface ----------
+   <CodeBlock code={'curl -fsSL https://hanzo.sh | sh'} prompt label="Install" />
+   13.5/1.65 mono on a dark plate; scrolls on its own (keyboard reachable); lines starting with # or // are dimmed.
+   prompt draws a "$ " that is not selectable and not copied. Copy copies exactly the displayed code, and says
+   Copied only if it really copied. */
+export function CodeBlock({ code, label, prompt = false, copy = true, className = '' }) {
+  const lines = String(code).replace(/\n$/, '').split('\n');
+  return (
+    <figure className={'x-codeblock ' + className} data-room="dark">
+      {(label || copy) && (
+        <figcaption className="x-codeblock-h">
+          <span>{label}</span>
+          {copy && <Copy text={lines.join('\n')} />}
+        </figcaption>
+      )}
+      <pre tabIndex={0} aria-label={label || 'Code'}><code>
+        {lines.map((l, i) => (
+          <span key={i} className={'x-codeblock-l' + (/^\s*(#|\/\/)/.test(l) ? ' c' : '')}>
+            {prompt && l.trim() && !/^\s*(#|\/\/)/.test(l) && <span className="x-codeblock-p" aria-hidden="true">$ </span>}
+            {l || ' '}{'\n'}
+          </span>
+        ))}
+      </code></pre>
+    </figure>
+  );
+}
+
+/* ---------- Stat: a figure exactly as Hanzo prints it ----------
+   <Stat value="1,600+" label="open repositories" />  value is a string and is shown byte for byte; if it starts
+   with a number and sits below the fold, it counts up to it once (same separators and decimals) when it arrives.
+   Tabular figures and a fixed width, so nothing shifts while it counts. */
+export function Stat({ value, label, note, as = 'div', className = '' }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(value);
+  const calm = useReducedMotion();
+  const m = /^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/.exec(value || '');
+  useEffect(() => {
+    const el = ref.current;
+    if (!m || calm || !el) return;
+    if (el.getBoundingClientRect().top < innerHeight) return; // already on screen: never rewind what was read
+    const [, pre, num, post] = m;
+    const target = parseFloat(num.replace(/,/g, ''));
+    const dec = (num.split('.')[1] || '').length;
+    const commas = num.includes(',');
+    const fmt = (v) => pre + (commas ? v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : v.toFixed(dec)) + post;
+    setShown(fmt(0));
+    let raf = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now();
+      const tick = (t) => {
+        const k = Math.min(1, (t - t0) / 1200), ease = 1 - Math.pow(1 - k, 4);
+        setShown(k < 1 ? fmt(target * ease) : value);
+        if (k < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, { threshold: 0.6 });
+    io.observe(el);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }, [value, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  const Tag = as;
+  return (
+    <Tag className={'x-stat ' + className}>
+      <span ref={ref} className="x-stat-v" style={{ minWidth: value.length + 'ch' }} aria-label={value}><span aria-hidden="true">{shown}</span></span>
+      {label && <span className="x-stat-l">{label}</span>}
+      {note && <span className="x-stat-n">{note}</span>}
+    </Tag>
   );
 }

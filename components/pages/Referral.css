@@ -1,86 +1,90 @@
-/* ---------- referral ---------- */
-.xrf-hero { padding: clamp(48px, 7vw, 104px) 0 clamp(72px, 9vw, 136px); }
-.xrf-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
-.xrf-h1 { margin: 0; font-size: clamp(2.8rem, 5.8vw, 5.8rem); font-weight: 560; letter-spacing: -.05em; line-height: .96; text-wrap: balance; }
-.xrf-lede { margin: 24px 0 0; max-width: 40ch; font-size: clamp(1.1rem, 1.5vw, 1.35rem); line-height: 1.5; color: var(--soft); }
-.xrf-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+/* ---------- referral (v2) ---------- */
+.xrf { --xp-accent: #737373; }
+.xrf-hero { padding: clamp(48px, 7vw, 112px) 0 clamp(96px, 11vw, 168px); }
+.xrf-hero .xp-grid { align-items: center; row-gap: 56px; }
+.xrf-words { grid-column: 1 / span 7; }
+.xrf-card { grid-column: 8 / span 5; }
+.xrf-lede { margin-top: 36px; }
+.xrf-acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 40px; }
 
 /* the signed-out card */
-.xrf-win { border-radius: 24px; border: 1px solid var(--line); background: #fff; box-shadow: 0 60px 100px -60px rgba(0, 0, 0, .35); overflow: hidden; }
+.xrf-win { overflow: hidden; }
 .xrf-win-top { display: flex; align-items: center; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--card); }
 .xrf-win-top i { width: 10px; height: 10px; border-radius: 50%; background: rgba(0, 0, 0, .12); }
 .xrf-win-top span { margin-left: 8px; font-size: 13px; letter-spacing: .06em; color: var(--soft); }
 .xrf-win-in { display: grid; gap: 18px; padding: clamp(18px, 2.4vw, 26px); }
 .xrf-link { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 6px 0 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); }
 .xrf-url { flex: 1; min-width: 0; font-size: 15px; color: var(--soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xrf-copy { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--ink); color: #fff; font: 500 14px/1 var(--sans); opacity: .4; cursor: not-allowed; transition: opacity .2s, transform .2s var(--ease); }
+.xrf-copy { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--ink); color: #fff; font: 500 14px/1 var(--sans); opacity: .4; cursor: not-allowed; transition: opacity .2s, transform .2s var(--xp-ease); }
 .xrf-copy:hover { opacity: .55; }
 .xrf-copy:active { transform: scale(.96); }
 .xrf-ways { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.xrf-ways li { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--faint); animation: xrf-way 7s var(--ease) infinite; animation-delay: calc(var(--i) * .35s); }
+.xrf-ways li { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--faint); animation: xrf-way 7s var(--xp-ease) infinite; animation-delay: calc(var(--i) * .35s); }
 @keyframes xrf-way { 0%, 100% { color: var(--faint); border-color: var(--line); transform: none; } 6% { color: var(--ink); border-color: rgba(0, 0, 0, .35); transform: translateY(-2px); } 14% { color: var(--faint); border-color: var(--line); transform: none; } }
 .xrf-counts { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .xrf-count { position: relative; z-index: 1; display: grid; gap: 4px; padding: 12px 14px; border-radius: 14px; background: rgba(245, 245, 247, .92); }
-.xrf-count span:first-child { font-size: 24px; font-weight: 600; font-feature-settings: 'tnum'; }
+.xrf-count span:first-child { font-size: 40px; letter-spacing: -.04em; font-weight: 600; font-feature-settings: 'tnum'; }
 .xrf-count span:last-child { font-size: 14px; color: var(--soft); }
 /* builders on their way: dots ride from the link through the three counts */
 .xrf-flow { position: absolute; inset: auto 14px 50% 14px; height: 2px; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .14) 0 4px, transparent 4px 8px); }
 .xrf-flow b { position: absolute; inset: 0; z-index: 2; animation: xrf-ride 6s cubic-bezier(.45, 0, .2, 1) infinite; animation-delay: calc(var(--k) * -1.2s); }
-.xrf-flow b::before { content: ''; position: absolute; top: -3px; left: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.xrf-flow b::before { content: ''; position: absolute; top: -4px; left: -5px; width: 10px; height: 10px; border-radius: 50%; background: var(--xp-accent); }
 /* the wrapper is as wide as the track, so its own 100% is the whole way */
 @keyframes xrf-ride { 0% { transform: translateX(0); opacity: 0; } 8% { opacity: 1; } 30%, 42% { transform: translateX(50%); } 72% { transform: translateX(100%); opacity: 1; } 82%, 100% { transform: translateX(100%); opacity: 0; } }
 .xrf-q { margin: 0; font-size: 14px; color: var(--soft); }
 .xrf-signin { margin: 0; padding: 12px 14px; border-radius: 12px; background: var(--card); font-size: 14px; line-height: 1.45; color: var(--ink); }
-.xrf-signin.on { background: var(--ink); color: #fff; }
+.xrf-signin.on { background: var(--xp-accent); color: #fff; }
 
-/* how it works: four steps on one wire */
-.xrf-how { background: var(--card); }
-.xrf-steps { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
-.xrf-wire { position: absolute; left: 32px; right: 32px; top: 31px; height: 1px; background: rgba(0, 0, 0, .14); }
-.xrf-wire b { position: absolute; inset: 0; animation: xrf-wire 5s var(--ease) infinite; }
-.xrf-wire b::before { content: ''; position: absolute; top: -3px; left: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
-@keyframes xrf-wire { 0% { transform: translateX(0); opacity: 0; } 10%, 85% { opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
-.xrf-steps li { position: relative; display: grid; gap: 14px; align-content: start; }
-.xrf-glyph { position: relative; z-index: 1; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px; background: #fff; border: 1px solid var(--line); transition: transform .3s var(--ease); }
-.xrf-steps li:hover .xrf-glyph { transform: translateY(-4px); }
-.xrf-n { font-size: 13px; color: var(--faint); }
-.xrf-steps p { margin: 0; max-width: 26ch; font-size: clamp(1.1rem, 1.5vw, 1.3rem); line-height: 1.4; font-weight: 500; letter-spacing: -.015em; }
 
-/* referral or affiliate: the one dark room */
-.xrf-which { background: var(--ink); color: #f5f5f7; }
-.xrf-which .x-kick { color: #86868b; }
-.xrf-which-in { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
-.xrf-which-h { margin: 0 0 32px; font-size: clamp(2rem, 3.6vw, 3.4rem); font-weight: 560; letter-spacing: -.04em; line-height: 1.05; text-wrap: balance; }
-.xrf-which-h span { color: #86868b; }
-.xrf-which .x-arrow { color: #f5f5f7; }
-.xrf-tabs { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: rgba(255, 255, 255, .08); }
-.xrf-tabs button { position: relative; height: 40px; padding: 0 20px; border: 0; border-radius: 999px; background: none; font: 500 14px/1 var(--sans); color: #a1a1a6; cursor: pointer; transition: color .2s; }
-.xrf-tabs button:hover, .xrf-tabs button[aria-selected='true'] { color: var(--ink); }
-.xrf-tabs button:hover:not([aria-selected='true']) { color: #fff; }
-.xrf-tabs button span { position: relative; }
-.xrf-tab-bg { position: absolute; inset: 0; border-radius: 999px; background: #f5f5f7; }
-.xrf-rows { display: grid; gap: 2px; margin-top: 20px; }
-.xrf-row { display: grid; grid-template-columns: 80px 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid rgba(255, 255, 255, .12); }
-.xrf-row span { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #86868b; padding-top: 4px; }
-.xrf-row p { margin: 0; font-size: 17px; line-height: 1.5; }
-[data-off] .xrf-ways li, [data-off] .xrf-flow b, [data-off] .xrf-wire b { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) { .xrf-ways li, .xrf-flow b, .xrf-wire b { animation: none; } .xrf-flow b { display: none; } }
+/* every way out: rails */
+.xrf-rails { padding: clamp(32px, 4vw, 64px) 0; display: grid; gap: clamp(8px, 1.4vw, 20px); overflow: hidden; border-block: 1px solid var(--line); }
+.xrf-rail { overflow: hidden; }
+.xrf-run { display: flex; width: max-content; animation: xrf-run 40s linear infinite; }
+.xrf-rail.b .xrf-run { animation-direction: reverse; animation-duration: 34s; }
+.xrf-rail.slow .xrf-run { animation-duration: 56s; }
+@keyframes xrf-run { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.xrf-rw { display: inline-flex; align-items: center; gap: clamp(20px, 3vw, 48px); padding-right: clamp(20px, 3vw, 48px); font: 600 clamp(3.5rem, 8.9vw, 8rem)/1 var(--sans); letter-spacing: -.05em; color: var(--ink); white-space: nowrap; }
+.xrf-rw i { width: .32em; height: .32em; border-radius: 50%; background: var(--xp-accent); }
+.xrf-rl { display: inline-flex; align-items: center; margin-right: 24px; padding: 0 28px; height: clamp(56px, 6vw, 88px); border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-size: clamp(1.25rem, 2.4vw, 2.25rem); color: var(--soft); white-space: nowrap; }
+.xrf-rc { display: inline-flex; align-items: center; gap: 24px; padding-right: 24px; font: 400 clamp(2rem, 4vw, 3.5rem)/1 var(--sans); letter-spacing: -.04em; color: var(--faint); white-space: nowrap; }
+.xrf-rc i { font-style: normal; color: var(--xp-accent); }
+[data-off] .xrf-run, [data-off] .xrf-ways li, [data-off] .xrf-flow b { animation-play-state: paused; }
 
+/* how it works */
+.xrf-how-head { margin-bottom: clamp(56px, 6vw, 96px); }
+.xrf-how-head .xp-head { grid-column: 1 / span 6; }
+.xrf-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; border-top: 1px solid var(--ink); }
+.xrf-steps li { display: grid; gap: 18px; align-content: start; padding-top: 32px; }
+.xrf-glyph { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 22px; background: var(--card); color: var(--xp-accent); }
+.xrf-n { font-size: 14px; color: var(--faint); }
+.xrf-steps .xp-title { font-weight: 500; max-width: 18ch; }
+
+/* referral or affiliate: the dark room */
+.xrf-which-h { max-width: 22ch; }
+.xrf-which-h span { color: #6e6e73; }
+.xrf-which-h a { color: #f5f5f7; text-decoration: underline; text-decoration-color: var(--xp-accent); text-underline-offset: .1em; text-decoration-thickness: .06em; }
+.xrf-sides { margin-top: clamp(56px, 6vw, 96px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.xrf-side { display: grid; gap: 24px; align-content: start; justify-items: start; padding: clamp(28px, 3.2vw, 48px); border-radius: 28px; background: #161617; border: 1px solid rgba(255, 255, 255, .08); }
+.xrf-side.s1 { border-color: rgba(115, 115, 115, .5); }
+.xrf-side .xp-title { font-size: clamp(2rem, 3.4vw, 3rem); letter-spacing: -.045em; }
+.xrf-side dl { margin: 0; width: 100%; }
+.xrf-side dl > div { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid rgba(255, 255, 255, .1); }
+.xrf-side dt { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #6e6e73; padding-top: 4px; }
+.xrf-side dd { margin: 0; font-size: clamp(1.0625rem, 1.4vw, 1.25rem); line-height: 1.45; color: #f5f5f7; }
+.xrf-more { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font: 500 17px/1 var(--sans); color: #f5f5f7; text-decoration: none; }
+.xrf-more::after { content: '→'; color: var(--xp-accent); transition: transform .3s var(--xp-ease); }
+.xrf-more:hover::after { transform: translateX(4px); }
+
+@media (prefers-reduced-motion: reduce) { .xrf-run, .xrf-ways li, .xrf-flow b { animation: none; } }
 @media (max-width: 900px) {
-  .xrf-grid, .xrf-which-in { grid-template-columns: 1fr; }
-  .xrf-h1 { font-size: clamp(2.6rem, 12.5vw, 4rem); }
-  .xrf-acts .x-btn { height: 48px; }
-  .xrf-count { padding: 10px; }
-  .xrf-count span:first-child { font-size: 20px; }
-  .xrf-steps { grid-template-columns: 1fr; gap: 26px; }
-  .xrf-steps li { grid-template-columns: 64px 1fr; align-items: center; column-gap: 16px; }
-  .xrf-n { display: none; }
-  .xrf-wire { left: 32px; right: auto; top: 0; bottom: 0; width: 1px; height: auto; }
-  .xrf-wire b { animation-name: xrf-wire-y; }
-  @keyframes xrf-wire-y { 0% { transform: translateY(0); opacity: 0; } 10%, 85% { opacity: 1; } 100% { transform: translateY(100%); opacity: 0; } }
-  .xrf-steps p { font-size: 1.1rem; }
-  .xrf-tabs button { height: 44px; }
-  .xrf-row { grid-template-columns: 64px 1fr; }
-  .xrf-row p { font-size: 16px; }
-  .xrf-win-top span, .xrf-ways li, .xrf-n, .xrf-row span { font-size: 14px; }
+  .xrf-hero { padding: 32px 0 72px; }
+  .xrf-acts > a { flex: 1 1 auto; }
+  .xrf-rw { font-size: 3.25rem; }
+  .xrf-rc { font-size: 2rem; }
+  .xrf-steps { grid-template-columns: 1fr; gap: 0; }
+  .xrf-steps li { grid-template-columns: 56px 1fr; padding: 24px 0; border-bottom: 1px solid var(--line); }
+  .xrf-glyph { width: 56px; height: 56px; border-radius: 16px; grid-row: span 2; }
+  .xrf-sides { grid-template-columns: 1fr; gap: 16px; }
+  .xrf-side { border-radius: 22px; }
+  .xrf-side dl > div { grid-template-columns: 1fr; gap: 6px; }
 }

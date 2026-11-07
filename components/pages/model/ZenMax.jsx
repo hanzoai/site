@@ -42,6 +42,8 @@ function Stage() {
   const lift = useTransform(k, [0.32, 0.06], [24, 0]);
   return (
     <section className="zx-stage" ref={box} aria-labelledby="zx-h">
+      {/* JS off: what starts hidden for the scroll and arrival motion is simply shown, the stage settled (common gate item 5) */}
+      <noscript><style>{'.zx-card{--k:0!important}.zx-stage{height:auto!important}.zx-stage-more,.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}'}</style></noscript>
       <div className="zx-stage-pin">
         <motion.div className="zx-card" style={{ '--k': ke }}>
           <video className="zx-film" src={media('zen', 'webm')} poster={media('zen', 'webp')} autoPlay muted loop playsInline aria-hidden="true" />

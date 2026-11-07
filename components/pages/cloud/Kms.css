@@ -1,65 +1,101 @@
-/* ---------- kms (km-) ---------- */
-.km-vault { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: auto auto; gap: 12px; }
-.km-secret { grid-row: span 2; padding: 26px; border-radius: 24px; background: #0b0b0c; color: #f5f5f7; box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .6); display: flex; flex-direction: column; }
-.km-path { margin: 0; display: flex; align-items: center; gap: 10px; font: 500 14px/1 var(--mono); }
-.km-path span { padding: 5px 8px; border-radius: 6px; background: #1d1d21; font-size: 13px; color: #a1a1a6; }
-.km-val { margin: 34px 0 30px; min-height: 2.4em; font: 400 clamp(20px, 2.2vw, 28px)/1.2 var(--mono); letter-spacing: .02em; color: #f5f5f7; word-break: break-all; transition: color .5s; }
-.km-val.sealed { color: #30d158; }
-.km-chain { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-.km-chain span { position: relative; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .12); font: 500 13px/1 var(--mono); color: #6e6e73; transition: color .35s, background .35s, border-color .35s; }
-.km-chain span + span::before { content: '→'; position: absolute; left: -12px; top: 50%; translate: 0 -50%; font-size: 10px; color: #3a3a3e; }
-.km-chain span.on { color: #0a0a0a; background: #f5f5f7; border-color: #f5f5f7; }
-.km-client { margin: 16px 0 0; font-size: 13.5px; color: #86868b; }
-.km-vers { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 20px; background: var(--card); min-height: 196px; }
-.km-ver { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 12px; background: #fff; border: 1px solid var(--line); font: 500 13px/1 var(--mono); }
-.km-ver b { font-weight: 600; }
-.km-ver span { color: var(--faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.km-ver em { margin-left: auto; font-style: normal; padding: 4px 7px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 13px; }
-.km-ver.cur { border-color: var(--ink); }
-.km-stale { position: absolute; left: 16px; right: 16px; bottom: 12px; padding: 10px 12px; border-radius: 10px; background: #fff1f0; color: #d70015; font: 500 13px/1.2 var(--mono); }
-.km-stale b { font-weight: 600; }
-.km-log { list-style: none; margin: 0; padding: 14px 16px; border-radius: 20px; border: 1px solid var(--line); background: #fff; font: 500 13px/1 var(--mono); color: var(--soft); display: flex; flex-direction: column; gap: 0; min-height: 120px; }
-.km-log li { display: flex; align-items: center; gap: 8px; padding: 6px 0; overflow: hidden; }
-.km-log i { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); flex: none; }
-.km-log i.a { background: #bf5af2; }
+/* KMS v2. Accent: gold (the key). One dark room: Nothing lands on disk. */
+.km { --acc: #0a0a0a; --glow: #525252; }
+.km .v2-dark, .km [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
 
-.km-con { padding: clamp(64px, 8vw, 112px) 0 0; }
-.km-con-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
-.km-con-note { margin: 0 0 28px; font-size: 14px; color: var(--faint); }
-.km-paste { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+/* hero: the name, and the vault rising over it */
+.km-hero { padding: clamp(104px, 9vw, 136px) 0 clamp(96px, 10vw, 160px); background: radial-gradient(50% 40% at 50% 70%, rgba(212, 212, 212, .10), transparent 70%); }
+.km-hero-t { text-align: center; }
+.km-h1 { margin-top: 18px; font-size: clamp(76px, 13.4vw, 200px); line-height: .86; white-space: nowrap; }
+.km-hero-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 32px; margin-top: 28px; }
+.km-sub { color: var(--ink); }
+.km-lift { margin-top: clamp(48px, 5vw, 72px); max-width: 1180px; position: relative; z-index: 2; }
 
-/* editorial rules */
-.km-rules { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: clamp(32px, 5vw, 80px); }
-.km-rules li { break-inside: avoid; display: grid; grid-template-columns: 54px 1fr; gap: 8px; padding: 0 0 40px; }
-.km-rule-n { font: 300 34px/1 var(--sans); letter-spacing: -.04em; color: var(--faint); font-feature-settings: 'tnum'; }
-.km-rules h3 { margin: 4px 0 0; font-size: clamp(1.2rem, 1.7vw, 1.45rem); font-weight: 560; letter-spacing: -.02em; }
-.km-rules p { margin: 10px 0 0; font-size: 16px; line-height: 1.65; color: var(--soft); }
+.km-vault { display: grid; grid-template-columns: 7fr 5fr; gap: 16px; padding: 16px; border-radius: 32px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 60px 120px -50px rgba(115, 115, 115, .45), 0 30px 60px -40px rgba(0, 0, 0, .25); }
+.km-secret { display: flex; flex-direction: column; gap: 22px; padding: clamp(24px, 3vw, 44px); border-radius: 22px; background: #0a0a0a; color: #f5f5f7; }
+.km-path { margin: 0; font: 600 clamp(16px, 1.4vw, 20px)/1 var(--mono); }
+.km-path span { margin-left: 10px; padding: 4px 8px; border-radius: 6px; background: rgba(212, 212, 212, .18); color: var(--glow); font-weight: 500; font-size: 13px; }
+.km-val { margin: 0; min-height: 2.4em; font: 500 clamp(22px, 2.4vw, 34px)/1.2 var(--mono); letter-spacing: .06em; color: #f5f5f7; word-break: break-all; transition: color .4s; }
+.km-val.sealed { color: var(--glow); letter-spacing: 0; }
+.km-chain { display: flex; flex-wrap: wrap; gap: 8px; }
+.km-chain span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(255, 255, 255, .06); font: 500 14px/1 var(--mono); color: #737373; transition: background .4s, color .4s; }
+.km-chain span i { width: 8px; height: 8px; border-radius: 99px; background: currentColor; }
+.km-chain span.on { background: rgba(212, 212, 212, .16); color: var(--glow); }
+.km-client { margin: 0; font: 500 13px/1 var(--mono); color: #737373; }
+.km-side { display: flex; flex-direction: column; gap: 12px; }
+.km-vers { position: relative; display: grid; gap: 8px; padding: 16px; border-radius: 22px; background: #f5f5f5; }
+.km-ver { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; border-radius: 14px; background: #fff; font: 500 14px/1 var(--mono); color: var(--soft); }
+.km-ver b { font: 600 20px/1 var(--sans); letter-spacing: -.03em; color: var(--ink); }
+.km-ver em { margin-left: auto; font-style: normal; color: var(--acc); }
+.km-ver.cur { box-shadow: 0 0 0 2px var(--glow); }
+.km-stale { position: absolute; right: 12px; bottom: -18px; padding: 10px 14px; border-radius: 12px; background: #f2f2f2; color: #262626; font: 500 13px/1 var(--mono); box-shadow: 0 10px 30px -14px rgba(38, 38, 38, .5); }
+.km-stale b { font-weight: 700; }
+.km-log { list-style: none; margin: 0; padding: 16px; border-radius: 22px; background: #f5f5f7; display: grid; gap: 8px; flex: 1; align-content: start; }
+.km-log li { display: flex; align-items: center; gap: 10px; font: 500 13px/1.3 var(--mono); color: var(--soft); }
+.km-log li.in { animation: km-in .5s cubic-bezier(.16, 1, .3, 1); color: var(--ink); }
+@keyframes km-in { from { opacity: 0; transform: translateY(-6px); } }
+.km-log i { width: 8px; height: 8px; border-radius: 99px; background: #d4d4d4; }
+.km-log i.a { background: var(--glow); }
 
-/* dark room */
-.km-disk { background: #050506; color: #f5f5f7; }
-.km-figs { list-style: none; margin: 0 0 clamp(64px, 8vw, 112px); padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid rgba(255, 255, 255, .16); }
-.km-figs li { padding: 26px 24px 0 0; display: flex; flex-direction: column; gap: 10px; }
-.km-figs li + li { padding-left: 24px; border-left: 1px solid rgba(255, 255, 255, .1); }
-.km-figs b { font-size: clamp(1.7rem, 3vw, 2.8rem); font-weight: 400; letter-spacing: -.04em; line-height: 1.05; }
-.km-figs span { font-size: 14.5px; color: #a1a1a6; }
-.km-disk-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
-.km-disk-h { margin: 0; font-size: clamp(2.4rem, 4.8vw, 4.4rem); font-weight: 560; letter-spacing: -.045em; line-height: 1; max-width: 10ch; }
-.km-out { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .14); }
-.km-out h3 { margin: 0; font-size: 20px; font-weight: 560; }
-.km-out p { margin: 10px 0 22px; max-width: 46ch; font-size: 16px; line-height: 1.6; color: #a1a1a6; }
-.km-out-acts { display: flex; flex-wrap: wrap; gap: 10px; }
-.km-disk .x-btn { background: transparent; color: #f5f5f7; border-color: rgba(255, 255, 255, .2); }
-.km-disk .x-btn.solid { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
-.km-disk .cf-code { border: 1px solid rgba(255, 255, 255, .08); }
-.km-rel { padding: clamp(56px, 6vw, 88px) 0; }
+/* seal one yourself */
+.km-seal .v2-grid { align-items: center; }
+.km-seal-l { grid-column: 1 / span 5; }
+.km-seal-l .v2-headline { margin: 20px 0 22px; }
+.km-seal-box { grid-column: 7 / -1; padding: clamp(24px, 3vw, 44px); }
+.km-seal-k { display: block; margin: 0 0 10px; font: 500 13px/1 var(--mono); color: var(--faint); }
+.km-seal-k span { margin-left: 8px; color: var(--soft); word-break: break-all; }
+.km-seal-box input { width: 100%; box-sizing: border-box; min-height: 56px; padding: 0 18px; border-radius: 16px; border: 1px solid rgba(0, 0, 0, .14); font: 500 clamp(18px, 1.6vw, 22px)/1 var(--sans); color: var(--ink); outline: none; }
+.km-seal-box input:focus { border-color: var(--acc); box-shadow: 0 0 0 4px rgba(212, 212, 212, .25); }
+.km-seal-chain { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 22px 0; font: 500 13px/1 var(--mono); }
+.km-seal-chain span { padding: 8px 12px; border-radius: 999px; background: #f6f6f6; color: var(--acc); }
+.km-seal-chain span.off { background: transparent; color: var(--faint); box-shadow: inset 0 0 0 1px var(--line); text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .25); }
+.km-seal-chain i { width: 18px; height: 1px; background: var(--faint); }
+.km-ct { margin: 0 0 22px; min-height: 3em; padding: 16px 18px; border-radius: 14px; background: #0a0a0a; color: var(--glow); font: 500 15px/1.5 var(--mono); word-break: break-all; }
+
+/* the six rules past a pinned numeral */
+.km-holds { background: #fafafa; }
+.km-holds .v2-grid { align-items: start; }
+.km-holds-l { grid-column: 1 / span 5; height: 100%; }
+.km-pin { position: sticky; top: 120px; }
+.km-holds-h { max-width: 16ch; }
+.km-num { margin: 12px 0 16px; font-weight: 600; font-size: clamp(160px, 20vw, 300px); line-height: .85; letter-spacing: -.07em; color: var(--glow); -webkit-text-stroke: 1px var(--acc); }
+.km-holds-lede { max-width: 36ch; }
+.km-rules { grid-column: 7 / -1; list-style: none; margin: 0; padding: 0; }
+.km-rule { min-height: 62svh; display: flex; flex-direction: column; justify-content: center; border-top: 1px solid var(--line); padding: 48px 0; }
+.km-rule-n { font: 500 13px/1 var(--mono); color: var(--acc); letter-spacing: .12em; }
+.km-rule .v2-headline { margin: 20px 0 22px; }
+
+/* the dark room */
+.km-disk { padding: clamp(120px, 16vw, 240px) 0; }
+.km-figs { list-style: none; margin: 0 0 clamp(80px, 9vw, 140px); padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.km-figs li { display: grid; gap: 12px; align-content: start; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .16); }
+.km-figs b { font-weight: 600; font-size: clamp(32px, 3.6vw, 56px); line-height: 1; letter-spacing: -.045em; color: var(--glow); }
+.km-figs span { font-size: 17px; color: #a3a3a3; }
+.km-disk-g { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 4vw, 72px); align-items: center; }
+.km-out-h { margin: 32px 0 14px; color: #f5f5f7; }
+.km-disk-l .v2-acts { margin-top: 32px; }
+.km-cli { border-radius: 24px; }
+
+/* example project */
+.km-proj .v2-grid { align-items: center; }
+.km-proj-c { grid-column: 1 / span 7; }
+.km-proj-t { grid-column: 9 / -1; }
+.km-proj-t .v2-title { margin-top: 18px; }
 
 @media (max-width: 900px) {
-  .km-vault { grid-template-columns: minmax(0, 1fr); }
-  .km-secret { grid-row: auto; padding: 20px; }
-  .km-val { margin: 22px 0; }
-  .km-con-grid, .km-disk-grid { grid-template-columns: minmax(0, 1fr); }
-  .km-rules { columns: 1; }
-  .km-figs { grid-template-columns: 1fr 1fr; row-gap: 24px; }
-  .km-figs li + li { padding-left: 0; border-left: 0; }
-  .km-figs li:nth-child(even) { padding-left: 16px; border-left: 1px solid rgba(255, 255, 255, .1); }
+  .km-hero { padding: 100px 0 88px; }
+  .km-h1 { font-size: 72px; white-space: normal; }
+  .km-vault { grid-template-columns: minmax(0, 1fr); padding: 10px; border-radius: 24px; }
+  .km-secret { padding: 20px; gap: 16px; }
+  .km-val { font-size: 18px; }
+  .km-chain span { font-size: 12px; padding: 8px 10px; }
+  .km-stale { right: 8px; bottom: -14px; }
+  .km-holds-l { height: auto; }
+  .km-pin { position: static; }
+  .km-num { font-size: 120px; }
+  .km-rule { min-height: 0; padding: 32px 0; }
+  .km-disk { padding: 120px 0; }
+  .km-figs { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .km-disk-g { grid-template-columns: minmax(0, 1fr); }
 }
+/* greys only: the vault and the ciphertext are dark objects inside a light room */
+.km-secret, .km-ct { --glow: #e5e5e5; }

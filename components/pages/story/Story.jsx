@@ -30,6 +30,11 @@ import { useArrival } from '../doorway';
 import './Story.css';
 
 const c01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+// with scripts off, everything that starts hidden or offset for its entrance is shown, and the chapters stand in a column
+const NOJS = '.xst .x-line-in,.xst-cover-in,.xst-scene-t,.xst-scene-pic img,.xst-shot{transform:none!important;opacity:1!important}'
+  + '.xst-scenes{height:auto!important}.xst-stage{position:relative!important;height:auto!important;overflow:visible!important}'
+  + '.xst-scene{position:relative!important;inset:auto!important;display:block!important;clip-path:none!important;padding:clamp(96px,10vw,160px) 0!important}'
+  + '.xst-scene-pic,.xst-tile .xst-pic{clip-path:none!important}.xst-reel{display:none!important}';
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const travel = (y) => { if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.4 }); else window.scrollTo({ top: y, behavior: calm() ? 'auto' : 'smooth' }); };
 const marked = (text, m) => {
@@ -209,6 +214,7 @@ export default function Story({ doc, next }) {
   };
   return (
     <main className="xst" ref={root}>
+      <noscript><style>{NOJS}</style></noscript>
       <Hero doc={doc} ask={ask} />
 
       <section className="xst-intro" aria-label={doc.name}>

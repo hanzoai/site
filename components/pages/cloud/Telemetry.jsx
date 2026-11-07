@@ -1,18 +1,23 @@
 'use client';
 /* Telemetry (v2, Cloud 4 chat). Archetype A, Launch: an editorial split Stage with the live collector → the six facts as
-   chapters over the collector's own config (the one dark room) → close with a config you assemble. Accent: OTel amber.
+   chapters over the collector's own config (the one dark room) → Get Telemetry with a config you assemble → closing band.
+   Ink, greys and white only.
+   Persona: a platform engineer who wants one collector between apps and backends. Goal: open the repo.
+   CTA: "View on GitHub" (hero, ask bar, close). Metric: cta_click:telemetry.primary.
    V2: 8/10 the live collector rising under an editorial split hero, the six facts scrolled through its own config file, a config you assemble and copy
    Signature: read the collector's config as you scroll. A config file pins on the left; each fact lights the block that
    does it (receivers, pipelines, batch, memory_limiter, the builder manifest, exporters) while the pipeline strip above
    it lights the same stage.
    Beyond: "Your config". Choose the signals, the protocols and the processors and the collector config writes itself,
    ready to copy, from the parts Hanzo names (OTLP over gRPC and HTTP, batching, a memory ceiling, OTLP out).
-   Motion: pinned chapters (signature) + the hero's running collector + magnetic primary. Every word and link is Hanzo's;
+   Motion: pinned chapters (signature, scroll) + the hero's running collector (idle, with Pause) + the config builder
+   (state) + the stage settle (scroll). Every word and link is Hanzo's;
    the config is a standard OpenTelemetry collector config with placeholders, not a Hanzo default. */
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { useLive, useEvery } from './Frame';
+import { useEvery } from './Frame';
+import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale from '../../v2/Finale';
@@ -34,12 +39,13 @@ export function tick(s) {
 
 /* Stage object: spans in one at a time, out in batches, under a memory ceiling. */
 function Pipe() {
-  const [ref, live] = useLive(0.25);
+  const [ref, live, , paused, toggle] = useDemo(0.05);
   const [s, setS] = useState({ t: 0, held: 3, out: [{ id: -1, n: 6 }, { id: -2, n: 6 }], mem: 0.5, refused: false });
   useEvery(420, live, () => setS(tick));
   return (
-    <div className="l2-obj tl2-pipe" ref={ref} aria-hidden="true">
-      <div className="tl2-col">
+    <div className="l2-obj tl2-pipe" ref={ref}>
+      <PauseBtn paused={paused} onClick={toggle} />
+      <div className="tl2-col" aria-hidden="true">
         <p className="tl2-k l2-mono">OTLP in · gRPC · HTTP</p>
         <div className="tl2-lane">
           <AnimatePresence>
@@ -49,7 +55,7 @@ function Pipe() {
         </div>
         <ul className="tl2-sig l2-mono"><li className="trace">traces</li><li className="metric">metrics</li><li className="log">logs</li></ul>
       </div>
-      <div className="tl2-col core">
+      <div className="tl2-col core" aria-hidden="true">
         <p className="tl2-k l2-mono">collector</p>
         <div className="tl2-batch">{Array.from({ length: 6 }).map((_, i) => <i key={i} className={i < s.held ? 'on' : ''} />)}</div>
         <p className="tl2-sub l2-mono">batching</p>
@@ -58,7 +64,7 @@ function Pipe() {
           <i><b style={{ transform: `scaleX(${s.mem})` }} className={s.mem > 0.85 ? 'hot' : ''} /><em /></i>
         </div>
       </div>
-      <div className="tl2-col">
+      <div className="tl2-col" aria-hidden="true">
         <p className="tl2-k l2-mono">OTLP out</p>
         <ul className="tl2-out">
           <AnimatePresence initial={false}>
@@ -148,12 +154,12 @@ function YourConfig() {
 
 export default function Telemetry() {
   return (
-    <main className="l2-page tl2" style={{ '--ac': '#f2a900' }}>
+    <main className="l2-page tl2">
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>
       <PinScenes dark flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <p key="k" className="tl2-key l2-mono">{k}:</p>])} visual={(at) => <Config at={at} />} />
-      <Finale name="Telemetry" head="Put it in front of your backend" prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest">
+      <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest">
         <YourConfig />
       </Finale>
     </main>

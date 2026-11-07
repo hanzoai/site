@@ -3,7 +3,8 @@
    - Headlines: <Lines as="h1" lines={['Smarter, Faster,', 'Pick all three.']} /> is the line-mask reveal (each line
      rises out of its own mask, 1.1 s, once; the words are in the server HTML). <Words> is the older word-by-word blur.
    - Arrival: <Rise> (max two fade-ups per page). Figures: <Count to={3.02} decimals={2} suffix="x" />.
-   - Pointer: useTilt(), <Magnetic>. Controls: <Btn href solid small busy disabled selected>, <Arrow>, <Copy text>.
+   - Pointer: useTilt(), <Magnetic>. Controls: <Btn href solid small busy disabled selected>, <Arrow>, <Copy text>;
+     copyText(str) → true only if the copy happened; useCalm() → true under reduced motion (live, follows changes).
    - Tokens: EASE and SPRING here, or the full set in lib/motion.js. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -12,6 +13,18 @@ import {
 } from 'motion/react';
 
 export const EASE = [0.16, 1, 0.3, 1];
+
+/* true when the visitor asks for less motion; follows the setting live (server and first render: false) */
+export function useCalm() {
+  const [calm, setCalm] = useState(false);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-reduced-motion: reduce)');
+    const on = () => setCalm(mq.matches);
+    on(); mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return calm;
+}
 export const SPRING = { type: 'spring', stiffness: 260, damping: 26, mass: 0.8 };
 export const mod = (a, n) => ((a % n) + n) % n;
 export const fine = (e) => e.pointerType === 'mouse' || e.pointerType === 'pen';
@@ -191,7 +204,21 @@ export function Arrow({ href, children, className = '' }) {
   );
 }
 
-/* Copy to clipboard; the icon turns into a drawn tick. */
+/* Copies text and says so only when it truly did (clipboard API, then a select-and-copy fallback). Returns true/false.
+   Use it for any copy button: copyText(cmd).then((ok) => ok && showTick()). Never confirm a copy that failed. */
+export async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; } catch { /* blocked or insecure: try the old way */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  } catch { return false; }
+}
+
+/* Copy to clipboard; the icon turns into a drawn tick, only when the copy really happened. */
 export function Copy({ text, label = 'Copy', className = '' }) {
   const [ok, setOk] = useState(false);
   const t = useRef(0);
@@ -202,7 +229,7 @@ export function Copy({ text, label = 'Copy', className = '' }) {
       whileTap={{ scale: 0.92 }}
       aria-label={ok ? 'Copied' : label}
       onClick={async () => {
-        try { await navigator.clipboard.writeText(text); } catch { /* clipboard blocked: the tick still confirms the press */ }
+        if (!(await copyText(text))) return; // a failed copy never says "Copied"
         setOk(true);
         clearTimeout(t.current);
         t.current = setTimeout(() => setOk(false), 1600);

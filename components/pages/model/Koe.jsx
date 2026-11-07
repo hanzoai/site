@@ -1,5 +1,5 @@
 'use client';
-/* Koe: performance in every word. v2 launch page (Creative on Launch + Chapters, accent violet). The film settles
+/* Koe: performance in every word. v2 launch page (Creative on Launch + Chapters, Hanzo's black and white). The film settles
    into a tall capsule left of the headline.
    Signature: a voice waveform with its transcript. The waveform streams out of the playhead while the phonemes of
    "Hanzo" (/h/ /æ/ /n/ /z/ /oʊ/) light in step; each acting preset re-performs the same word (dramatic is slow and
@@ -81,7 +81,7 @@ function Booth() {
       g.fillStyle = s.t - t < 0.25 ? '#ffffff' : 'rgba(245,245,247,.78)';
       g.fillRect(x, mid - a, bwid, Math.max(2 * d, a * 2));
     }
-    g.fillStyle = '#ff453a';
+    g.fillStyle = '#f5f5f5';
     g.fillRect(Math.min(w - 2 * d, (s.t / LEN) * w), 0, 2 * d, h);
     const sec = Math.floor(s.t), cs = Math.floor((s.t % 1) * 100);
     if (sEl.current) sEl.current.textContent = String(Math.min(5, sec));
@@ -128,14 +128,12 @@ export default function Koe() {
   return (
     <Creative
       slug="koe"
-      accent="#7b4dff"
-      ink="#5b32d6"
       shape={CAPSULE}
-      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.5))(W, H)}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.35, [20, H * 0.07, W - 20, H * 0.37]))(W, H)}
       headClass="ko-v2"
       first="chapters"
       demo={
-        <Scene slug="koe" className="ko-scene" k="Live booth" title="One word, four performances." lede="The waveform streams out of the playhead while the phonemes of “Hanzo” light in step. Each acting preset re-performs the same word; tap the waveform to seek.">
+        <Scene slug="koe" className="ko-scene">
           <Studio slug="koe" engine="" specs={[['Zero-Shot Cloning', 'Reference Audio', '3.0s Clean Sample'], ['Sub-Second Latency', 'First Token', '< 200ms'], ['Synthesis Engine', 'Hanzo Koe-1 Engine', 'Neural Flow-Matching']]}>
             <Booth />
           </Studio>

@@ -1,5 +1,6 @@
 /* HSM v2. Accent: copper (the module). One dark room: the exploded chapters. */
-.hs { --acc: #a3561f; --glow: #e8955a; }
+.hs { --acc: #0a0a0a; --glow: #525252; }
+.hs .v2-dark, .hs [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
 
 /* the module: five plates in one isometric stack */
 .hm { --s: clamp(200px, 21vw, 300px); --plate: #fff; --edge: rgba(0, 0, 0, .08); --ink2: #0a0a0a; --gk: 1; position: relative; width: 100%; height: 100%; }
@@ -9,16 +10,16 @@
 .hm-handle { background: rgba(255, 255, 255, .55); }
 .hm-key { display: grid; place-items: center; background: #1d1d1f; border-color: #1d1d1f; }
 .hm-core { position: relative; width: 44%; height: 44%; }
-.hm-core i { position: absolute; inset: 0; border-radius: 999px; background: radial-gradient(circle at 40% 40%, #ffd2ad, var(--glow) 45%, var(--acc)); box-shadow: 0 0 40px 6px rgba(232, 149, 90, .55); transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
+.hm-core i { position: absolute; inset: 0; border-radius: 999px; background: radial-gradient(circle at 40% 40%, #d4d4d4, var(--glow) 45%, var(--acc)); box-shadow: 0 0 40px 6px rgba(163, 163, 163, .55); transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
 .hm-core.split i { transform: scale(.48); }
 .hm-core.split i:nth-child(1) { transform: translate(-62%, -40%) scale(.48); }
 .hm-core.split i:nth-child(2) { transform: translate(62%, -40%) scale(.48); }
 .hm-core.split i:nth-child(3) { transform: translate(0, 66%) scale(.48); }
 .hm-grid { position: absolute; inset: 14%; border-radius: 12px; background-image: linear-gradient(var(--edge) 1px, transparent 1px), linear-gradient(90deg, var(--edge) 1px, transparent 1px); background-size: 18px 18px; }
-.hm-module { display: grid; place-items: center; background: linear-gradient(135deg, #f5f5f7, #e8e8ed); }
+.hm-module { display: grid; place-items: center; background: linear-gradient(135deg, #f5f5f7, #e9e9e9); }
 .hm-name { font: 600 clamp(15px, 1.5vw, 22px)/1.1 var(--sans); letter-spacing: -.02em; color: var(--ink2); text-align: center; padding: 0 12%; }
-.hm-plate.lit { border-color: var(--glow); box-shadow: 0 0 0 1px var(--glow), 0 0 60px -6px rgba(232, 149, 90, .6); }
-.hm-boundary.lit { box-shadow: 0 0 60px -10px rgba(232, 149, 90, .5); }
+.hm-plate.lit { border-color: var(--glow); box-shadow: 0 0 0 1px var(--glow), 0 0 60px -6px rgba(163, 163, 163, .6); }
+.hm-boundary.lit { box-shadow: 0 0 60px -10px rgba(163, 163, 163, .5); }
 .hm-labels { position: absolute; inset: 0; list-style: none; margin: 0; padding: 0; pointer-events: none; }
 .hm-labels li { position: absolute; left: calc(50% + var(--s) * .62); top: calc(50% - var(--z) * var(--gap) * var(--gk) * .848); transform: translateY(-50%); display: flex; align-items: center; gap: 12px; max-width: 240px; font: 500 clamp(13px, 1vw, 15px)/1.3 var(--mono); color: var(--soft); transition: top .95s cubic-bezier(.16, 1, .3, 1), color .4s; animation: hm-in .7s cubic-bezier(.16, 1, .3, 1) both .25s; }
 .hm-labels li i { flex: none; width: 40px; height: 1px; background: currentColor; opacity: .6; }
@@ -33,7 +34,7 @@
 .hs-lede { margin-bottom: 36px; max-width: 44ch; }
 .hs-hero-obj { grid-column: 6 / -1; height: clamp(440px, 46vw, 640px); }
 .hs-hero-obj > div { height: 100%; }
-.hs-sign { position: relative; height: 100%; border-radius: 28px; background: radial-gradient(60% 60% at 50% 55%, rgba(232, 149, 90, .16), transparent 70%), #f5f5f7; overflow: hidden; }
+.hs-sign { position: relative; height: 100%; border-radius: 28px; background: radial-gradient(60% 60% at 50% 55%, rgba(163, 163, 163, .16), transparent 70%), #f5f5f7; overflow: hidden; }
 .hs-sign .hm { --s: clamp(200px, 21vw, 300px); }
 .hs-io { position: absolute; top: 50%; margin: 0; padding: 12px 16px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 14px 30px -14px rgba(0, 0, 0, .25); font: 500 14px/1 var(--mono); white-space: nowrap; }
 .hs-io.in { left: 6%; transform: translateY(-160%); }
@@ -50,7 +51,7 @@
 .hs-ch .hm-module { background: linear-gradient(135deg, #2c2c2e, #1c1c1e); }
 .hs-ch .hm-key { background: #000; border-color: rgba(255, 255, 255, .12); }
 .hs-ch .hm-plate { box-shadow: 0 30px 40px -24px rgba(0, 0, 0, .8); }
-.hs-ch .hm-plate.lit { box-shadow: 0 0 0 1px var(--glow), 0 0 70px -6px rgba(232, 149, 90, .55); }
+.hs-ch .hm-plate.lit { box-shadow: 0 0 0 1px var(--glow), 0 0 70px -6px rgba(163, 163, 163, .55); }
 .hs-ch .pc-dots button[aria-current] i { background: var(--glow); }
 .hs-exp { position: relative; height: 100%; }
 .hs-exp .hm { transform: translateX(-10%); }

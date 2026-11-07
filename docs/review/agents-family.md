@@ -1,37 +1,26 @@
 # /agents/* (template) — James-eye review
 
-Reviewed: branch `claude/inspiring-lamport-6re0ay`, page files at `dd80650` (7 Nov 13:25), before it reached main. Members walked: `/agents/crew` and `/agents/sdk`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks).
+Reviewed: main, page files at `fca5513` (third review; earlier: 5/10 at `dd80650`, 7/10 at `c0b5968`). Members walked: `/agents/crew` and `/agents/sdk`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 5/10 (the lower member; /agents/crew alone would be 6)
+Verdict: 8/10 — ready
 
-First complaint: "There's a little label over the headline again, and one page is orange and green, the other blue and pink. Hanzo is black and white. It looks like every other AI site."
+First complaint: "This is right now. One small thing: on my phone, once I scroll past the top, the black button at the top says 'Try Hanzo', not 'Launch a bot'."
+
+## What changed since the last review
+Fixed: "Launch a bot" now answers on hover (the fill lightens) and on press (scale), the SDK console sits inside the grid with no cut corner, the phone no longer stacks a bar on top of the close's own button, and the SDK "parts" section and both closes now carry an object.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Crew: yes on both sizes, the ring of agents turns by itself (Antje, Des, Dev…). SDK desktop: yes, the console types a request and the agent answers. **SDK phone: no.** Nothing moves on the first screen; the console sits below the buttons, still.
-2. **One in, one out?** Crew: yes, the ring pins while "People and agents. One workspace." replaces the hero text, then the dark Bots room takes over. SDK: the 01 / 02 / 03 cards stack over each other while the text pins. After that, SDK becomes a document: a six-item list of parts, then code.
-3. **A real object in every section?** Crew: yes (ring, ring, Bots console). SDK: the "parts" list has no object, and the close is text only.
-4. **One ask, sticky after the hero?** No. Crew has no ask of its own on desktop until "Launch a bot" in the dark room; the close is a text row. SDK asks four different things: "Read the docs", "View on GitHub", "Deploy to Cloud", plus the header's "Try Hanzo". At the top of SDK there are two solid buttons at once (header "Try Hanzo" and "Read the docs"). Phone gets a bottom bar, but it says "Launch a bot" on one page and "Read the docs" on the other, under a header still saying "Try Hanzo".
-5. **Every hover and press answers?** No. "Read the docs", the pip / cargo tabs and Copy do nothing on hover; half the ring's agents answer, half do not. No press state on any of them.
-6. **Overlap, font swap, layout shift?** No overlap or shift (layout shift 0 on both). **SDK on the phone throws a hydration error** ("server rendered HTML didn't match the client"); the dev badge shows over the bottom bar. On desktop the SDK console runs off the right edge of the screen, cutting its corner and the "you / agent" switch.
-7. **Which reference, and is its motion there?** apple.com: pinned chapters, and it is there on desktop for both. Nothing of synchronized.studio (no card opens into a page) or osply.
-8. **Different from its neighbours?** Yes: crew has the ring, SDK the console and stacked cards. The two members feel like different sites, though, because each picked its own colour.
-9. **All 18 parts covered?** See below. `docs/PLAN-COMPONENTS.md` is not on main yet, so this is checked against the parts the brief names.
-10. **Banned tells?** Yes:
-    - Eyebrow above the h1 on both ("AGENTS", "HANZO AGENT · SDK").
-    - UI colour: orange ring and arrow plus **green** "done" chips and live dot (crew); blue numerals, blue outline card, pink and mint code (SDK). JAMES.md allows 0 UI hues and bans green outright.
-    - Header "Try Hanzo" fades on hover (shared header; reported once here).
-11. **Copy untouched?** Yes, all of Hanzo's words are there (crew 31/31, SDK 94/94). One added label on crew: "Find an agent".
+1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: the crew ring passes the turn (Maya → Nora → Vi) and the SDK console runs a real request ("Add rate limiting to the payments API." → "Read 14 files…" → "Wrote gateway/limit.go…").
+2. **One in, one out?** Yes: the ring pins while chapter two replaces the hero words, then the dark Bots room, then "Or build your own."; SDK stacks its 01 / 02 / 03 cards, then parts, code and the close.
+3. **A real object in every section?** Yes.
+4. **One ask, sticky after the hero?** Desktop yes ("Launch a bot" / "Read the docs" follow you; the header outlines). Phone: the header's "Try Hanzo" turns solid after the hero instead of the page's ask.
+5. **Every hover and press answers?** Yes on the asks (checked frame by frame on "Launch a bot"), the seats and the links.
+6. **Overlap, font swap, layout shift?** None; layout shift 0 on all four walks.
+7. **Which reference, and is its motion there?** apple.com pinned chapters; calm, greyscale, product first.
+8. **Different from its neighbours?** Yes: ring vs console.
+9. **All 18 parts covered?** `docs/coverage/agents-family.md` exists; text reads with JavaScript off (0 hidden blocks).
+10. **Banned tells?** None.
+11. **Copy untouched?** Yes (crew 31/31, SDK 94/94).
 
-## Missing from the 18 parts
-- One sticky ask, the same in header, hero, bottom bar and close.
-- Press states on every button.
-- An object in SDK's "parts" section and in both closes.
-- Phone: SDK's first screen has no live object.
-
-## Fixes
-1. Remove the eyebrow above both h1s.
-2. Take every hue out of the UI: ring, arrows, done chips, numerals, outline card and code tokens go to the ink and grey ladder. Colour may only come from Hanzo's media.
-3. Pick one ask per member and use it everywhere: hero, sticky header button after the hero, phone bar and close. On SDK, "Read the docs" solid and "View on GitHub" as a text link; drop "Deploy to Cloud" as a second solid.
-4. SDK phone: start the console demo on the first screen (move it above or beside the buttons) and fix the hydration mismatch.
-5. Give every button and tab a hover that changes something and a press (scale 0.98 or 1px down).
-6. SDK: keep the console inside the screen on desktop, or bleed it on purpose to the edge with no visible cut corner.
+## Fixes (polish, not blocking)
+1. Phone: mark each member's hero button with `data-thumb` so the ask bar carries "Launch a bot" / "Read the docs" instead of the header's "Try Hanzo".

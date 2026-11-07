@@ -1,23 +1,34 @@
 'use client';
-/* Blog, v2 (Story archetype, editorial: a magazine's front page and its contents). Accent: press red.
+/* Blog, v3 (Story archetype, editorial: a magazine's front page and its contents). Ink, greys and silvers only
+   (JAMES.md 7); colour comes only from Hanzo's own model art.
    First screen: the masthead "News & Guides." on one display line, and under it the cover story.
    Signature: the cover turns itself. The six latest posts take the cover in turn: the headline wipes up out of view and
-   the next wipes in, a curtain crosses the art plate, and the plate redraws its contour field from the new post's own
-   title. The issue's six headlines sit beside it as an index with a hairline timing the current one; hover or tap any
-   of them to bring it to the cover.
-   Supporting (three): every picture is a living contour field drawn from its own post's title (Sigil); the publishing
-   strip's bars rise once when reached; the month you are reading pins at the left of the contents as you scroll.
+   the next wipes in, a brushed-silver curtain crosses the art plate, and the plate changes behind it: Hanzo's own Kai
+   art for the Kai posts, otherwise a contour field drawn from the post's own title. The issue's six headlines sit beside
+   it as an index with a hairline timing the current one; hover or tap any of them to bring it to the cover.
+   Supporting (three): every picture is a living contour field from its own post's title that leans toward the pointer
+   (Sigil); the publishing strip's bars rise once when reached; the month you are reading pins at the left of the
+   contents as you scroll. A hand on the issue index cuts straight to that story (no curtain); the timer keeps the curtain.
    Beyond: the publishing strip. Every month Hanzo has published in, from its own post dates, as a bar of its count;
    tap a month and the contents close up to just that month.
    Every word and date is Hanzo's (content/live/blog.json). */
+// Persona: a developer or buyer following what Hanzo ships (arrives from the header's Learn menu, search or hanzo.blog)
+// Goal: find the post worth reading now and open it
+// CTA: Read the latest (the newest post) in the masthead and the ask bar; the close is the kit Band, Every post (hanzo.blog)
+// Metric: post opens (data-cta="blog.*")
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A } from '../kit';
+import { A, Img } from '../kit';
 import Sigil from '../Sigil';
-import Lines from '../v2/x-feynman/Lines';
-import '../v2/Story.css';
+import StoryClose from './StoryClose';
+import Lines from '../v2/Lines';
+import '../v2/system.css';
+import './story.css';
 import './BlogIndex.css';
 
+const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+/* a post whose tag names a Hanzo model shows that model's own art; the rest draw their own contour field */
+const ART = { kai: '/models/kai.webp', enso: '/models/enso.webp', zen: '/models/zen.webp' };
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const EASE = [0.16, 1, 0.3, 1];
 const B = 'https://hanzo.blog/';
@@ -58,17 +69,20 @@ function Cover() {
   const [at, setAt] = useState(0);
   const [art, setArt] = useState(0);
   const [hold, setHold] = useState(false);
+  const how = useRef('auto'); // the timer turns the page with the curtain; a hand cuts straight to its story
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.35 });
   const calm = useReducedMotion();
   const run = seen && !hold && !calm;
   useEffect(() => {
     if (!run) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % COVER.length), HOLD * 1000);
+    const t = setTimeout(() => { how.current = 'auto'; setAt((v) => (v + 1) % COVER.length); }, HOLD * 1000);
     return () => clearTimeout(t);
   }, [at, run]);
   // the plate redraws behind the curtain, when it is fully closed
-  useEffect(() => { if (calm) { setArt(at); return; } const t = setTimeout(() => setArt(at), 480); return () => clearTimeout(t); }, [at, calm]);
+  useEffect(() => { if (calm || how.current === 'hand') { setArt(at); return; } const t = setTimeout(() => setArt(at), 480); return () => clearTimeout(t); }, [at, calm]);
+  const pick = (i) => { how.current = 'hand'; setAt(i); setHold(true); };
+  const hand = how.current === 'hand';
   const p = COVER[art];
   return (
     <div className="xbl-cover" ref={box} onPointerLeave={() => setHold(false)} aria-roledescription="carousel" aria-label="Latest posts">
@@ -78,28 +92,28 @@ function Cover() {
             const on = i === at;
             return (
               <article key={s.to} className={'xbl-story' + (on ? ' on' : '')} aria-hidden={!on} inert={!on ? true : undefined}>
-                <motion.p className="xbl-story-m" initial={false} animate={{ opacity: on ? 1 : 0 }} transition={{ duration: on ? 0.5 : 0.2, delay: on ? 0.3 : 0 }}>
-                  <span className="v2s-acc">{s.tag}</span><time>{s.date}</time>
-                </motion.p>
                 <a href={s.to} target="_blank" rel="noopener noreferrer" className="xbl-story-a" tabIndex={on ? 0 : -1}>
-                  <motion.h3 className="v2s-headline xbl-story-t" initial={false} animate={on ? { clipPath: 'inset(-10% 0% -10% 0%)', y: 0 } : { clipPath: 'inset(-10% 0% 110% 0%)', y: -14 }} transition={on ? { duration: 1, ease: EASE, delay: 0.32 } : { duration: 0.3, ease: [0.7, 0, 0.84, 0] }} style={{ clipPath: on ? 'inset(-10% 0% -10% 0%)' : 'inset(-10% 0% 110% 0%)' }}>{s.title}</motion.h3>
+                  <motion.h3 className="v2s-headline xbl-story-t" initial={false} animate={on ? { clipPath: 'inset(-10% 0% -10% 0%)', y: 0 } : { clipPath: 'inset(-10% 0% 110% 0%)', y: -14 }} transition={on ? (hand ? { duration: 0.25, ease: EASE, delay: 0.12 } : { duration: 1, ease: EASE, delay: 0.32 }) : { duration: hand ? 0.12 : 0.3, ease: [0.7, 0, 0.84, 0] }} style={{ clipPath: on ? 'inset(-10% 0% -10% 0%)' : 'inset(-10% 0% 110% 0%)' }}>{s.title}</motion.h3>
                 </a>
-                <motion.p className="v2s-lede xbl-story-d" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }} transition={on ? { duration: 0.6, ease: EASE, delay: 0.5 } : { duration: 0.2 }}>{`${s.date}. ${s.desc}`}</motion.p>
+                <motion.p className="xbl-story-m" initial={false} animate={{ opacity: on ? 1 : 0 }} transition={{ duration: on ? 0.4 : 0.12, delay: on ? (hand ? 0.15 : 0.4) : 0 }}>
+                  <span className="xbl-tag">{s.tag}</span><time>{s.date}</time>
+                </motion.p>
+                <motion.p className="v2s-lede xbl-story-d" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }} transition={on ? { duration: hand ? 0.25 : 0.6, ease: EASE, delay: hand ? 0.15 : 0.5 } : { duration: hand ? 0.1 : 0.2 }}>{`${s.date}. ${s.desc}`}</motion.p>
               </article>
             );
           })}
         </div>
       </div>
       <a href={p.to} target="_blank" rel="noopener noreferrer" className="xbl-plate" tabIndex={-1} aria-hidden="true">
-        <Sigil seed={p.title} className="xbl-plate-art" />
+        {ART[p.tag.toLowerCase()] ? <Img key={p.to} src={ART[p.tag.toLowerCase()]} w={1200} h={1500} className="xbl-plate-img" /> : <Sigil seed={p.title} className="xbl-plate-art" />}
         <span className="xbl-plate-k v2s-num">{pad(art + 1)} / {pad(COVER.length)}</span>
         {/* reduced motion: MotionConfig skips the move, so the curtain simply stays off the plate */}
-        <motion.i key={'c' + at} className="xbl-curtain" initial={{ x: '-101%' }} animate={{ x: ['-101%', '0%', '0%', '101%'] }} transition={{ duration: 1.15, times: [0, 0.4, 0.52, 1], ease: [0.76, 0, 0.24, 1] }} />
+        {!hand && <motion.i key={'c' + at} className="xbl-curtain" initial={{ x: '-101%' }} animate={{ x: ['-101%', '0%', '0%', '101%'] }} transition={{ duration: 1.15, times: [0, 0.4, 0.52, 1], ease: [0.76, 0, 0.24, 1] }} />}
       </a>
       <ol className="xbl-index" aria-label="In this issue">
         {COVER.map((s, i) => (
           <li key={s.to} className={i === at ? 'on' : ''}>
-            <button type="button" aria-pressed={i === at} onClick={() => { setAt(i); setHold(true); }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setAt(i); setHold(true); } }} onFocus={() => { setAt(i); setHold(true); }}>
+            <button type="button" aria-pressed={i === at} onClick={() => pick(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') pick(i); }} onFocus={() => pick(i)}>
               <span className="v2s-num">{pad(i + 1)}</span>
               <b>{s.title}</b>
               {i === at && run && <i key={'t' + at} className="xbl-timer" style={{ '--hold': HOLD + 's' }} aria-hidden="true" />}
@@ -113,18 +127,17 @@ function Cover() {
 
 function Hero() {
   return (
-    <section className="xbl-hero" aria-labelledby="xbl-h1">
+    <section className="xbl-hero" aria-labelledby="xbl-h1" data-ask-name="Blog">
       <div className="v2s-wrap">
         <div className="xbl-mast">
           <div className="xbl-mast-l">
-            <p className="v2s-kick">Blog</p>
-            <Lines as="h1" id="xbl-h1" className="v2s-display xbl-h1" delay={0.05} lines={[<>News <span className="v2s-it">&amp;</span> Guides.</>]} />
+            <Lines as="h1" id="xbl-h1" className="v2s-display xbl-h1" now delay={0.05} lines={['News & Guides.']} />
           </div>
           <motion.div className="xbl-mast-r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>
-            <p className="v2s-lede">Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform.</p>
+            <p className="v2s-lede"><span className="v2s-label xbl-runin">Blog</span> Product launches, architecture deep dives, and how-to guides from the team building the AI workforce platform.</p>
             <div className="v2s-acts">
-              <A to={POSTS[0].to} className="v2s-btn solid" data-thumb="Read the latest">Read the latest</A>
-              <A to="https://hanzo.blog" className="v2s-btn">hanzo.blog</A>
+              <A to={POSTS[0].to} className="v2s-btn solid" data-thumb="Read the latest" data-cta="blog.hero">Read the latest</A>
+              <A to="https://hanzo.blog" className="v2s-tlink">hanzo.blog<Chev /></A>
             </div>
           </motion.div>
         </div>
@@ -144,9 +157,7 @@ function Here() {
             <li key={to} className={i ? 'small' : 'big'}>
               <A to={to} className="xbl-here-a">
                 <span className="xbl-here-art"><Sigil seed={to} /></span>
-                <span className="xbl-here-n v2s-num" aria-hidden="true">{pad(i + 1)}</span>
-                <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')} data-morph>{t}</span>
-                <span className="xbl-here-go" aria-hidden="true"><Arr /></span>
+                <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph>{t}</span> <Arr /></span>
               </A>
             </li>
           ))}
@@ -157,7 +168,7 @@ function Here() {
 }
 
 /* ---------- 3. the contents, with the publishing strip (Beyond) ---------- */
-function Strip({ m, setM, months, top }) {
+function Strip({ m, setM, months, top, all }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
@@ -172,7 +183,7 @@ function Strip({ m, setM, months, top }) {
           </Tag>
         );
       })}
-      <button type="button" className={'xbl-allbtn' + (m ? '' : ' on')} aria-pressed={!m} onClick={() => setM(null)}>All {POSTS.length}</button>
+      <button type="button" className={'xbl-allbtn' + (!m && all ? ' on' : '')} aria-pressed={!m && all} onClick={() => setM(null)}>All {POSTS.length}</button>
     </div>
   );
 }
@@ -190,20 +201,27 @@ function Contents() {
     POSTS.forEach((p) => { const last = g[g.length - 1]; if (last && last[0] === p.month) last[1].push(p); else g.push([p.month, [p]]); });
     return g;
   }, []);
+  const [all, setAll] = useState(false);
+  const top0 = useRef(null);
   const shown = m ? groups.filter(([k]) => k === m) : groups;
+  // a month from the strip: the contents close up to it and come into view
+  const choose = (k) => {
+    setM(k);
+    if (k == null) setAll(true);
+    const el = top0.current;
+    if (el && el.getBoundingClientRect().top > innerHeight * 0.6) { const y = el.getBoundingClientRect().top + scrollY - 120; window.__lenis ? window.__lenis.scrollTo(y, { duration: 0.9 }) : scrollTo({ top: y, behavior: 'smooth' }); }
+  };
   return (
     <section className="v2s-sec xbl-contents" aria-labelledby="xbl-c-h">
       <div className="v2s-wrap">
-        <div className="v2s-grid xbl-c-head">
-          <div className="v2s-c-1-7">
-            <p className="v2s-kick">Every post</p>
-            <h2 id="xbl-c-h" className="v2s-display xbl-c-h">Contents</h2>
-          </div>
-          <div className="v2s-c-8-12"><Strip m={m} setM={setM} months={months} top={top} /></div>
+        <div className="v2s-head xbl-c-head">
+          <p className="v2s-label">Every post</p>
+          <h2 id="xbl-c-h" className="v2s-display xbl-c-h">Contents</h2>
+          <div className="xbl-c-strip"><Strip m={m} setM={choose} months={months} top={top} all={all} /></div>
         </div>
-        <div className="xbl-toc">
-          {shown.map(([k, list]) => (
-            <motion.section key={k} className="xbl-month" initial={m ? { opacity: 0, y: 12 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} aria-label={`${k} 2026`}>
+        <div className="xbl-toc" ref={top0}>
+          {shown.map(([k, list], gi) => (
+            <motion.section key={k} hidden={!m && !all && gi > 1 ? true : undefined} className="xbl-month" initial={m ? { opacity: 0, y: 12 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} aria-label={`${k} 2026`}>
               <div className="xbl-month-h" aria-hidden="true">
                 <b>{k}</b>
                 <span className="v2s-num">2026 · {pad(list.length)}</span>
@@ -223,24 +241,7 @@ function Contents() {
               </ol>
             </motion.section>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- 4. the close: the one dark room ---------- */
-function Close() {
-  return (
-    <section className="v2s-sec xbl-close" data-room="dark" aria-labelledby="xbl-close-h">
-      <div className="v2s-wrap v2s-grid">
-        <h2 id="xbl-close-h" className="v2s-display v2s-c-1-8">Build with <span className="v2s-it">Hanzo</span></h2>
-        <div className="v2s-c-9-12 xbl-close-r">
-          <p className="v2s-lede">Deploy AI agents that code, market, and operate — starting free.</p>
-          <div className="v2s-acts">
-            <A to="https://hanzo.blog" className="v2s-btn solid">Every post <Arr /></A>
-          </div>
-          <p className="xbl-close-n"><A to="https://docs.hanzo.ai">Read the docs</A></p>
+          {!m && !all && <button type="button" className="xbl-more" onClick={() => setAll(true)} aria-expanded="false">All {POSTS.length} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
         </div>
       </div>
     </section>
@@ -250,10 +251,12 @@ function Close() {
 export default function BlogIndex() {
   return (
     <main className="xbl v2s">
+      {/* JavaScript off: the masthead and the first cover story show at rest */}
+      <noscript><style>{'.xbl .v2-line>span,.xbl-mast-r,.xbl-story.on *{transform:none!important;opacity:1!important;clip-path:none!important}'}</style></noscript>
       <Hero />
       <Here />
       <Contents />
-      <Close />
+      <StoryClose title="Build with Hanzo" lede="Deploy AI agents that code, market, and operate — starting free." action="Every post" to="https://hanzo.blog" cta="blog.band" note={<p className="x-band-note"><A to="https://docs.hanzo.ai">Read the docs</A></p>} />
     </main>
   );
 }

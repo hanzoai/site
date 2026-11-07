@@ -1,5 +1,5 @@
 /* ---------- skills (v2): paper, ink and a highlighter ---------- */
-.xsk { --paper: #fbfaf6; --hl: color-mix(in srgb, var(--acc) 70%, #fff); }
+.xsk { --paper: #fafafa; --hl: color-mix(in srgb, var(--acc) 70%, #fff); }
 .xsk mark { background-color: transparent; color: inherit; }
 
 /* hero */
@@ -18,10 +18,10 @@
 .xsk-file-top { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 13px; color: var(--faint); }
 .xsk-file-top span:first-child { color: var(--ink); font-weight: 500; }
 .xsk-fm { margin: 0 0 18px; font-size: 14.5px; line-height: 1.9; color: var(--ink); }
-.xsk-fm .d { color: var(--faint); } .xsk-fm .k { color: #8a6d00; }
-.xsk-fm i { display: inline-block; height: 9px; border-radius: 5px; background: #e6e2d6; vertical-align: middle; }
+.xsk-fm .d { color: var(--faint); } .xsk-fm .k { color: #707070; }
+.xsk-fm i { display: inline-block; height: 9px; border-radius: 5px; background: #e5e5e5; vertical-align: middle; }
 .xsk-prose { display: grid; gap: 10px; }
-.xsk-prose i { display: block; height: 8px; border-radius: 4px; background: #e9e6dc; }
+.xsk-prose i { display: block; height: 8px; border-radius: 4px; background: #e5e5e5; }
 .xsk-links { display: grid; gap: 6px; margin-top: 20px; font-size: 13px; color: var(--soft); }
 .xsk-agent { display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: var(--r-hero); background: #0b0b0c; color: #f5f5f7; }
 .xsk-say { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 16px; border-radius: 14px; background: #1c1c1f; font-size: 17px; }
@@ -45,14 +45,14 @@
 .xsk-bars { display: grid; gap: 28px; margin-top: clamp(64px, 7vw, 112px); }
 .xsk-bar-row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: 24px; align-items: center; }
 .xsk-bar-row .x-mono { font-size: 14px; color: var(--soft); }
-.xsk-mono { display: block; height: 56px; border-radius: 14px; background: #d9d4c4; transform-origin: 0 50%; }
+.xsk-mono { display: block; height: 56px; border-radius: 14px; background: #d4d4d4; transform-origin: 0 50%; }
 .xsk-five { display: flex; gap: 8px; height: 56px; }
 .xsk-five b { width: 7%; border-radius: 14px; background: var(--acc); transform: translateY(calc((1 - var(--f)) * 40px)) scale(var(--f)); opacity: var(--f); transition-delay: calc(var(--k) * 60ms); }
 
 /* the essay */
 .xsk-points { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(96px, 11vw, 180px); }
 .xsk-pt { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
-.xsk-num { grid-column: 1 / span 3; font-size: clamp(96px, 12vw, 200px); color: #ece8dc; line-height: .8; }
+.xsk-num { grid-column: 1 / span 3; font-size: clamp(96px, 12vw, 200px); color: #ededed; line-height: .8; }
 .xsk-pt-copy { grid-column: 5 / span 7; }
 .xsk-pt:nth-child(even) .xsk-num { grid-column: 10 / span 3; grid-row: 1; text-align: right; }
 .xsk-pt:nth-child(even) .xsk-pt-copy { grid-column: 2 / span 7; grid-row: 1; }
@@ -107,3 +107,16 @@
   .xsk *, .xsk *::before, .xsk *::after { animation: none !important; transition: none !important; }
   .xsk-hl { background-size: 100% 82%; }
 }
+
+/* 0 UI hues (James 7 Nov 14:20): the accent is ink in light rooms and #f5f5f7 in dark panels */
+.xsk { --hl: #e4e4e9; }
+.xsk-agent { --acc: #f5f5f7; }
+.xsk-get-card { background: var(--ink); color: #fff; }
+.xsk-get-card h2 { color: #fff; }
+.xsk-get-meta a { color: #fff; }
+.xsk-get-card .x-btn.solid { background: #fff; color: #000; border-color: #fff; }
+
+/* the skill file in Hanzo's own words */
+.xsk-fm { white-space: pre-wrap; }
+.xsk-prose { display: grid; gap: 10px; font-size: 14.5px; line-height: 1.55; color: var(--soft); }
+.xsk-prose b { font-weight: 600; color: var(--ink); font-family: var(--mono); font-size: 14px; }

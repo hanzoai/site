@@ -1,15 +1,18 @@
 'use client';
-// Signature: the link as a pipeline: builders leave your link by every way out and travel Referred, Pending, Qualified.
+// Signature: every way out, in motion: the seven ways to share your link run past as display-size rails in opposite directions, the link riding between them, beside hanzo.ai's own referral card.
 // Beyond: referral or affiliate, side by side from Hanzo's own terms: what each pays and what each one moves.
-/* Referrals. The card is hanzo.ai's own signed-out card (your link, Copy, the three counts, read only when you are
-   signed in); around it the path a referral takes is drawn running: out through the seven ways to share, in through
-   the three counts. No figure is shown that Hanzo does not show. */
+/* Referrals.
+   V2: 8/10 rebuilt: display headline beside hanzo.ai's own signed-out referral card as the hero object (your link, Copy, the three counts, read only when signed in); every way out as two display-size rails running in opposite directions; the four steps with their glyphs drawing; referral and affiliate side by side as the dark room.
+   Motion: the rails (signature) + line-masked type + glyphs that draw themselves + the card's flow of builders.
+   Accent: lime. No figure is shown that Hanzo does not show. */
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
-import { EASE, Rise } from '../ui';
-import { A, Go, More, SecHead } from '../kit';
+import { A } from '../kit';
+import LineReveal from '../v2/LineReveal';
+import '../v2/ProgramScale.css';
 import './Referral.css';
 
+const EASE = [0.16, 1, 0.3, 1];
 const WAYS = ['X', 'LinkedIn', 'Facebook', 'Bluesky', 'Reddit', 'Hacker News', 'Email'];
 const COUNTS = ['Referred', 'Pending', 'Qualified'];
 const STEPS = [
@@ -33,7 +36,7 @@ function Glyph({ k, on }) {
 function Card() {
   const [nudge, setNudge] = useState(0);
   return (
-    <div className="xrf-win" data-slot="referral">
+    <div className="xrf-win xp-obj" data-slot="referral">
       <div className="xrf-win-top"><i /><i /><i /><span className="x-mono">Your referral link</span></div>
       <div className="xrf-win-in">
         <div className="xrf-link">
@@ -61,21 +64,57 @@ function Card() {
   );
 }
 
+function Hero() {
+  return (
+    <section className="xrf-hero" aria-labelledby="xrf-h1">
+      <div className="xp-wrap xp-grid">
+        <div className="xrf-words">
+          <p className="xp-kick">Referrals</p>
+          <LineReveal as="h1" id="xrf-h1" className="xp-display md" lines={['Bring a builder', 'to Hanzo.']} />
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
+            <p className="xp-lede xrf-lede">One link counts everyone who signs up through it, and who goes on to use Hanzo.</p>
+            <div className="xrf-acts">
+              <A to="/signup?next=%2Freferral" className="xp-cta" data-thumb="Get your link">Get your link<i aria-hidden="true">→</i></A>
+              <A to="/login?next=%2Freferral" className="xp-ghost">Sign in</A>
+            </div>
+          </motion.div>
+        </div>
+        <motion.div className="xrf-card" initial={{ opacity: 0, y: 60, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1.3, ease: EASE, delay: 0.25 }}>
+          <Card />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* Every way out, as two rails running in opposite directions; the link rides between them. */
+function Rails() {
+  const row = (k) => WAYS.map((w) => <span key={k + w} className="xrf-rw">{w}<i aria-hidden="true" /></span>);
+  return (
+    <section className="xrf-rails" aria-label="Every way out carries your link">
+      <div className="xrf-rail a" aria-hidden="true"><div className="xrf-run">{row('a')}{row('b')}</div></div>
+      <div className="xrf-rail b" aria-hidden="true"><div className="xrf-run">{[0, 1, 2, 3, 4, 5].map((k) => <span key={k} className="xrf-rl x-mono">hanzo.ai/?ref=…</span>)}</div></div>
+      <div className="xrf-rail a slow" aria-hidden="true"><div className="xrf-run">{COUNTS.concat(COUNTS, COUNTS, COUNTS).map((c, k) => <span key={k} className="xrf-rc">{c}<i aria-hidden="true">→</i></span>)}</div></div>
+    </section>
+  );
+}
+
 function How() {
   const ref = useRef(null);
   const on = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <section className="x-sec xrf-how" aria-labelledby="xrf-how-h">
-      <div className="x-wrap">
-        <SecHead kicker="Referrals" title="How it works" id="xrf-how-h" />
+    <section className="xp-sec xrf-how" aria-labelledby="xrf-how-h">
+      <div className="xp-wrap">
+        <div className="xp-grid xrf-how-head">
+          <h2 id="xrf-how-h" className="xp-head">How it works</h2>
+        </div>
         <ol className="xrf-steps" ref={ref}>
-          <i className="xrf-wire" aria-hidden="true"><b /></i>
           {STEPS.map(([t, k], i) => (
-            <Rise as="li" key={k} delay={i * 0.09}>
+            <li key={k}>
               <span className="xrf-glyph"><Glyph k={k} on={on} /></span>
               <span className="xrf-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-              <p>{t}</p>
-            </Rise>
+              <p className="xp-title">{t}</p>
+            </li>
           ))}
         </ol>
       </div>
@@ -83,37 +122,26 @@ function How() {
   );
 }
 
-const SIDES = {
-  Referral: [['Pays', 'A referral pays nothing.'], ['Moves', 'Each one moves you up the beta waitlist.'], ['Counts', 'It qualifies with its first metered spend.']],
-  Affiliate: [['Pays', 'Affiliates are paid on what their referrals spend.'], ['Joins', 'Apply to refer organizations to Hanzo.'], ['Terms', 'The terms are agreed with each affiliate we approve.']],
-};
+const SIDES = [
+  ['Referral', [['Pays', 'A referral pays nothing.'], ['Moves', 'Each one moves you up the beta waitlist.'], ['Counts', 'It qualifies with its first metered spend.']]],
+  ['Affiliate', [['Pays', 'Affiliates are paid on what their referrals spend.'], ['Joins', 'Apply to become an affiliate.'], ['Terms', 'The terms are agreed with each affiliate we approve.']]],
+];
 
+/* Referral or affiliate, side by side (the one dark room). */
 function Which() {
-  const [side, setSide] = useState('Referral');
   return (
-    <section className="x-sec xrf-which" data-room="dark" aria-labelledby="xrf-which-h">
-      <div className="x-wrap xrf-which-in">
-        <div>
-          <Rise as="p" className="x-kick">Referral or affiliate</Rise>
-          <h2 id="xrf-which-h" className="xrf-which-h">A referral pays nothing. <span>Affiliates are paid on what their referrals spend.</span></h2>
-          <div className="x-row-links tight"><More to="/affiliate">Affiliates</More></div>
-        </div>
-        <div className="xrf-side">
-          <div className="xrf-tabs" role="tablist" aria-label="Referral or affiliate">
-            {Object.keys(SIDES).map((k) => (
-              <button key={k} type="button" role="tab" aria-selected={side === k} aria-controls={'xrf-p-' + k} id={'xrf-t-' + k} onClick={() => setSide(k)}>
-                {side === k && <motion.span layoutId="xrf-tab" className="xrf-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                <span>{k}</span>
-              </button>
-            ))}
-          </div>
-          {Object.entries(SIDES).map(([k, rows]) => (
-            <div key={k} id={'xrf-p-' + k} role="tabpanel" aria-labelledby={'xrf-t-' + k} hidden={side !== k} className="xrf-rows">
-              {rows.map(([l, t], i) => (
-                <motion.div key={l} className="xrf-row" initial={{ opacity: 0, y: 14 }} animate={side === k ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}>
-                  <span className="x-mono">{l}</span><p>{t}</p>
-                </motion.div>
-              ))}
+    <section className="xp-sec xp-dark xrf-which" data-room="dark" aria-labelledby="xrf-which-h">
+      <div className="xp-wrap">
+        <p className="xp-kick">Referral or affiliate</p>
+        <h2 id="xrf-which-h" className="xp-display sm xrf-which-h">A referral pays nothing. <span><A to="/affiliate">Affiliates</A> are paid on what their referrals spend.</span></h2>
+        <div className="xrf-sides">
+          {SIDES.map(([k, rows], j) => (
+            <div key={k} className={'xrf-side s' + j}>
+              <h3 className="xp-title">{k}</h3>
+              <dl>
+                {rows.map(([l, t]) => <div key={l}><dt className="x-mono">{l}</dt><dd>{t}</dd></div>)}
+              </dl>
+              {j === 1 && <A to="/affiliate" className="xrf-more">Affiliates</A>}
             </div>
           ))}
         </div>
@@ -123,25 +151,10 @@ function Which() {
 }
 
 export default function Referral() {
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
   return (
-    <main className="xrf">
-      <section className="xrf-hero" aria-labelledby="xrf-h1">
-        <div className="x-wrap xrf-grid">
-          <div>
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>Referrals</motion.p>
-            <h1 id="xrf-h1" className="xrf-h1">{line('Bring a builder', 0.05)}{line('to Hanzo.', 0.16)}</h1>
-            <motion.p className="xrf-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>One link counts everyone who signs up through it, and who goes on to use Hanzo.</motion.p>
-            <motion.div className="xrf-acts" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}>
-              <span data-thumb="Get your link" data-href="https://hanzo.ai/signup?next=%2Freferral"><Go to="/signup?next=%2Freferral" solid>Get your link</Go></span>
-              <Go to="/login?next=%2Freferral">Sign in</Go>
-            </motion.div>
-          </div>
-          <motion.div initial={{ opacity: 0, y: 30, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
-            <Card />
-          </motion.div>
-        </div>
-      </section>
+    <main className="xp xrf">
+      <Hero />
+      <Rails />
       <How />
       <Which />
     </main>

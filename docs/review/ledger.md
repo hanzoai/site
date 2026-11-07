@@ -1,48 +1,90 @@
 # /ledger: James-eye review
 
-Verdict: 5/10
-First complaint: "It's green. Green accents are on my reject list, and the whole book is emerald, with red on top. Then on my phone the first screen is a label, a title and a paragraph of small text, with no ledger in sight. That's a document, not a product."
+Verdict: 6/10
+First complaint: "The top is right now: the ledger moves and it's all grey. But as soon as I scroll there are two 'Read the docs' buttons stuck on top of each other at the bottom. It looks broken. In the black section the first tab is just an empty pill, and 'See the request' opens in green, blue and yellow."
 
-Reviewed: branch `claude/friendly-mccarthy-g2d3no` @ `981cd30` (not on main yet). Files hash: `f86c86c3d263`
-Walked 7 Nov 13:39–13:45 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
+Reviewed: main @ `069c088` (last page commit `4e4b1b1`). Files hash: `506a34f8904e`
+Walked 7 Nov 14:16–14:18 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
 Proof: `img/ledger.jpg` (desktop first screen | phone first screen).
 
+## Since the last review
+- **Done: the emerald, the red and the eyebrow.** No hues on the page at either width (it was emerald and red). Nothing sits above the h1 (it was the 23px "DOUBLE-ENTRY LEDGER" label). **Still open:** the "See the request" sheet. Its code has green strings (#1a7f37), blue keywords (#0a58ca) and a yellow highlight on the Idempotency-Key line (phone film at 26 s). The walk's hue count missed it because the sheet was open for only about a second.
+- **Done: the book is on the first screen at both widths.** At 1470×801 the whole book sits beside the title: four balances (−10,000 / 0 / 9,500 / 500), the journal and the note. At 375×812 it starts at about 450px with all four balances above the fold. On phone 21 of 25 frames move in the first second.
+- **Half done: one ask.** "Read the docs" is now the solid button in the hero, the phone bar and the close. "GitHub", "View on GitHub" and "Deploy to Cloud" are text, and there are 3 `data-cta`. But on desktop the page's own sticky pill sits on top of the site's ask bar. That makes two fixed, solid "Read the docs" buttons at y 726 and 734 on every screen from s2 to s8, a few pixels apart, so the edges of both show. At the close (s9) the site's bar steps aside, but the page's pill stays on beside the close's own solid button.
+- **Done: buttons answer, pause, coverage.** The hero's "Read the docs" now answers on hover and presses to 0.98 (it was dead). The book has a 44px pause button (`aria-pressed`), and the tap works on phone. No phone targets are under 44px now (before: 21px links and a 40px chip). `docs/coverage/ledger.md` exists, and the header has Persona, Goal and CTA.
+- **Half done: the dark room.** Each capability now has an object: the Numscript with its result, "10000 USD/2 → 100.00 USD", and the balances list. Tapping "USD/2" switches to it. But the selected tab is invisible. Its pill never draws, so "send" measures 1.2:1 and looks like an empty outline at both widths, and its hover is dead.
+
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Desktop: the title cuts in by line mask, so it moves. But the self-balancing book, the page's best idea, sits on the fold: at 801 high you see only its toolbar ("POST /v2/main/transactions · Balanced by construction · 01 / 03"). The rest of the first screen is a 4-line paragraph. Phone: no object at all on the first screen. The book starts below it.
-2. **One in, one out, or a document?** The three sticky chapters (posting, chain, retry) work: one scene changes while the text holds, with a 01–03 progress line. The dark room "What the API gives you" is four stacked items with paragraphs, which reads as a list. The close is three text blocks.
-3. **A real object in every section?** Hero: yes, the book (accounts, journal, Σ 0 seals, idempotency key), but it is below the first screen. Chapters: yes. The splitter: yes, the best Beyond so far. Dark room: big mono glyphs ("send", "USD/2", "Σ users:*") stand in for objects; that is type, not a thing. Close: no object.
-4. **One ask, sticky after the hero?** No. The hero has "Read the docs" (solid) and "GitHub" (outlined). The phone bottom bar carries "Read the docs" while the header shows a solid "Try Hanzo": two solid asks on every phone screen. The close's solid button is a third verb, "Deploy to Cloud". On desktop no page ask follows you after the hero; only the header's "Try Hanzo" does.
-5. **Every hover and press answers?** No. "Read the docs" (hero) and "Deploy to Cloud" (close): the hover only changes the border colour, which is invisible on a black button, and there is no press state. The split slider shows no hover. "See the request" answers well (press 0.97). The close's text links answer. Nothing responds to the pointer otherwise (no magnetic ask, tilt or preview).
-6. **Overlap, font swap, layout shift?** None found. CLS 0 on both, h1 box steady, no horizontal scroll at 375.
-7. **Which reference, and is its motion there?** apple.com product page: sticky chapters, yes. synchronized.studio card-open: no; "See the request" opens a sheet, which is the nearest. There is no hero figure for the anthropic-launch feel, even though the balances (−10,000 / 10,000 / 9,500 / 500) could be one.
-8. **Different from its neighbours?** No. Same first screen as /metrics and the Cloud kit: a two-line 128px "Hanzo X" left, lede and buttons right, product strip on the fold, numbered chapters, one dark room, a "Get X" block.
-9. **All 18 parts covered?** No; see below. `docs/coverage/ledger.md` is missing.
+1. **Sells in 5 seconds, moves within 1 second?** Yes, now.
+   - Desktop: everything fits inside 801: "Hanzo / Ledger" at 96px (line height 0.92), "A double-entry ledger you post to over HTTP.", the ask, and the live book beside them.
+   - The title cuts in by line mask (5/25 moving frames in the first second). Then the book posts by itself (15/45 moving frames in the rest of the 3 s): new money from world, the split as one transaction, an overdraft "refused whole", then "Nothing is edited" with the sha256 chain and the reversal.
+   - Phone: title, line, ask and the book's four balances are all on the first screen, with 21/25 moving frames in the first second.
+2. **One in, one out, or a document?** Mostly one in, one out. The hero book leads into "Every cent lands somewhere" and its three pinned chapters (01–03, one lit at a time, with a progress line). Then come the dark room's tabs and the splitter. On phone the three chapters swap in turn: the posting with a dot running down the arrow, the chain, then the retries. The close is still a block of text: "Get Ledger", two chips, "Get started with Ledger", "Paste and ship", an agent prompt and the "Deploy to Cloud" row.
+   - Evidence caveat: the desktop film froze from about 10 s to 19 s and again from 22 s to 27 s, while the page kept changing underneath. Each stop logged 18–55 DOM changes, and the sticky bar measured on at s1 but does not appear in the frames.
+   - So the STILL readings at desktop s1, s2 and s4 come from the recording, not the page, and chapter 01 was never filmed lit on desktop.
+   - Every phone screen moves, down to the footer.
+3. **A real object in every section?** Yes, apart from the close.
+   - Hero: the book.
+   - Chapters: the posting (source → destination, 9500, USD/2, Σ 0), the chain (tx 1–3, "sha256 of tx 2") and the retries ("the original — tx 2", "different postings — caught", "1 transaction 2, posted once").
+   - Dark room: one object per tab.
+   - Numscript: the splitter, which rewrites the postings and the Numscript as you drag. 95% → 75% gave 7,500 / 2,500 at both widths.
+   - Close: only the shared agent prompt box.
+4. **One ask, sticky after the hero?** The verb is right, but desktop doubles it.
+   - Phone gets it right: the thumb bar carries "Read the docs" from s2 to s7 and steps aside for the close's button at s8.
+   - Desktop, s2 to s8: the page's pill ("Hanzo Ledger | Read the docs") sits over the site's own ask bar (search icon + "Read the docs →"). Both are fixed, both are solid, both sit bottom centre.
+   - With the header, that makes three fixed layers. PLAN 0.9 allows two.
+   - At s9 the site's bar steps aside for the close's button, but the page's pill stays on next to it.
+5. **Every hover and press answers?** Mostly.
+   - Hero "Read the docs": the hover answers, and it presses to 0.98.
+   - "GitHub": the hover answers, and it presses 1px.
+   - Pause: it lifts 1px on hover, which the walker logs as a jump (it is the lift, not a layout move), and presses to 0.94.
+   - "Σ users:*": the hover answers, and it presses to 0.98.
+   - "See the request": the hover answers, it presses to 0.97, and the sheet rises on phone.
+   - The chips, "View on GitHub" and Copy answer (Copy presses to 0.92).
+   - Dead: the selected tab "send" (no hover, and its label is gone) and the amount field (no hover).
+   - Nothing follows the pointer: no magnetic ask, no tilt, no hover preview (JAMES rule 9).
+6. **Overlap, font swap, layout shift?**
+   - The two sticky asks overlap each other on desktop. They are fixed, so the overlap count misses them, but a crop of the film at 32 s shows two pills, one behind the other.
+   - At s9 the page's pill also sits on top of the "Get started with Ledger" heading.
+   - CLS is 0 at both widths, the h1 box is steady (one reading each), and there is no horizontal scroll at 375 or 320.
+7. **Which reference, and is its motion there?**
+   - apple.com product page: yes. The product is the hero and the chapters pin.
+   - motion.dev: the balances roll on a spring and the sheet rises. The gliding pill (layoutId) is in the code but never draws.
+   - synchronized.studio card-open: absent.
+   - anthropic launch: the balances are big, but there is no hero figure.
+8. **Different from its neighbours?** Only the hero is its own now.
+   - The book beside the title is not /telemetry's strip on the fold, and /metrics (same commit) has moved to a one-line title over a full-bleed chart.
+   - Everything after the hero is the shared Business 1 kit:
+     - the same `BizChapters` (stage left, 01/0N right, progress line) as /payments, /console, /flow, /dataroom and /captable;
+     - the same "Hanzo X | ask" pill as /payments, /flow, /console, /jin and /captable;
+     - the same two-line `bz-display md` "Hanzo / X" title as /dataroom;
+     - the same "Get X" close (licence chip, hanzoai chip, Paste and ship, Deploy to Cloud row) as every Cloud page.
+   - James: "It's not just a template."
+9. **All 18 parts covered?** No; see below. The coverage file exists now, but two of its claims fail the walk.
 10. **Banned tells?** Yes:
-   - Green accent (balances, Σ seals, chain highlight, slider, the dark room's mono glyphs), declared in the file as "accent emerald". This is a JAMES.md reject.
-   - Red in "same key, different postings — caught".
-   - A "DOUBLE-ENTRY LEDGER" eyebrow 23px above the h1.
-   - Dead hover on the two solid buttons.
-11. **Copy untouched?** Yes. Parity 55/55 text and 3/3 links. Additions are demo data (accounts, amounts, hashes, Numscript) plus labels such as "may go below zero", "a reversing transaction points back at the original" and "transaction 2, posted once". They paraphrase Hanzo's own sentences on the page, and none is a new claim.
+    - UI hues in the "See the request" sheet: green strings (a green accent), blue keywords and a yellow highlight.
+    - Two buttons overlapping: the stacked sticky asks on desktop.
+
+    The page itself is clean: no hues, nothing above the h1, no opacity-only hover, no title tooltips, no sound.
+11. **Copy untouched?** Yes. Parity is 55/55 text and 3/3 links. The 26 added strings are demo data (accounts, amounts, hashes, Numscript) and labels. The closest to a new sentence is the splitter's "10,000 in USD/2, the smallest unit: whole numbers, nothing rounds on the way in". It repeats Hanzo's own sentence from the "USD/2" tab and adds no claim or number.
 
 ## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy / 4 Common gate:** no `Persona:`, `Goal:`, `CTA:` or metric id in the page header. More than one solid button shows per viewport.
-- **2.3 First impression:** with JS off, the hero lede, the "Money here only ever moves…" paragraph and the "Read the docs" button are invisible (15 hidden runs), which fails a P1 row. The phone fold has no product peeking (plan: ≥80px of app within 660px). The close is not a Band that repeats the hero ask.
-- **2.4 Conversion:** 0 `data-cta`. The thumb bar's verb ("Read the docs") differs from the close ("Deploy to Cloud").
-- **2.5 Proof:** no figure is staged, even though the balances could be one.
-- **2.6 Content:** 51 text runs under 14px on phone (journal rows, labels).
-- **2.7 Visual system:** emerald and red break the 0-hue override. The override's "status colour only with a shape or text cue" does not cover a whole-page accent.
-- **2.8 Components:** 10 bare `:hover` rules. The solid buttons have no press state, and their hover changes only an invisible border.
-- **2.9 Motion:** 2 `setInterval` timers. The self-posting book has no pause control (2.12, WCAG 2.2.2). Reduced motion settles.
-- **2.11 Mobile:** the close's "Read the docs" and "View on GitHub" text links are 21px tall (plan: 44px), and the "hanzoai" chip is 40px.
-- **2.12 Accessibility:** green figures "10,000" and "Σ 0" measure 4.1:1, under 4.5:1.
-- **2.17 States:** no loading or failure state for the book or the splitter.
-- **Coverage:** `docs/coverage/ledger.md` is missing.
-- Passing: one h1, one main, no horizontal scroll at 320, no raw img/video/table, CLS 0.
+- **2.1 Strategy / 4 Common gate:** two solid buttons per desktop viewport from s2 to s9 (the stacked bars, then the pill beside the close). The metric id sits inside the Persona line ("metric docs_click"), not on its own line, so the check finds none. There are 6 raw `.x-btn` uses, which gate line 2 bans.
+- **2.3 First impression:** with JS off, 12 text runs are hidden, all of them rows in the chapter 02 and 03 scenes (the chain and the retries). Hanzo's own words all show (before: 15 hidden, the lede among them). The close is not a `Band`.
+- **2.4 Conversion / 0.9 Sticky layers:** desktop shows the header plus two fixed ask bars (the plan allows the header plus one). The page's `AskBar` does not step aside for the close's button.
+- **2.6 Content:** 22 text runs at 13px on phone ("source", "destination", "amount", "asset", "01"), under the 14px floor. On desktop, "Agent prompt" and "Copy" are 12.5px.
+- **2.7 Visual system:** the sheet's code colours and its yellow highlight break the 0-hue override.
+- **2.8 Components:** 14 bare `:hover` rules (before: 10). The selected capability tab has no hover and no visible state. The amount field has no hover.
+- **2.9 Motion:** nothing answers the pointer (rule 9). The shared Frame file has 2 `setInterval` timers. Reduced motion settles (0 running after 3 s).
+- **2.11 Mobile:** on phone the chapter stage pins at the top while the chapters scroll under it. The plan says no big sticky at 900px and under: stack them. At 375 the code panes in the dark room and the splitter are cut at the right edge ("@merchants:(").
+- **2.12 Accessibility:** the selected tab's label "send" measures 1.2:1.
+- **Coverage:** `docs/coverage/ledger.md` exists, but two of its claims fail. It says "one solid button per screen" (desktop shows two) and "text is 14px or larger" at 375 (22 runs are 13px).
+- Passing: one h1, visible with JS off; one main; CLS 0 at both widths; no horizontal scroll at 320; no tiny targets; 0 title tooltips; 3 `data-cta` and 1 `data-thumb`; no raw img, video or table; a pause control on the book; an empty-amount state on the splitter; parity 55/55.
 
 ## Fixes (in order)
-1. **Strip the emerald and the red.** Use ink for balances and Σ 0, grey for the chain highlight and the slider, and an inverted ink chip for "caught". Contrast and weight do the work that colour did.
-2. **Delete the "DOUBLE-ENTRY LEDGER" eyebrow above the h1.**
-3. **Put the book on the first screen at both widths.** On desktop, bring it up beside or directly under the title so its four balances are visible at 801 high. On phone, show the title, one line, the ask and then the book. The long "Money here only ever moves…" paragraph moves behind the book or into chapter 1.
-4. **One ask.** Use "Read the docs" in the hero, in a desktop sticky bar after the hero, in the phone bar, and as the one solid button in the close. "Deploy to Cloud" and "View on GitHub" become the text row.
-5. **Make the solid buttons answer.** Give the hover a fill or ink shift plus an arrow nudge, and give the press scale 0.98. Give the slider thumb a hover state.
-6. **Give the dark room an object.** For example, the book's journal row expanding per capability, instead of four stacked text items.
+1. **One sticky bar on desktop.** Delete `<AskBar>` from `Ledger.jsx`. The site's ask bar already carries "Read the docs" from the hero's `data-thumb`, and it already steps aside for the close's button (it did at s9). The page's pill is the one that stays on.
+2. **Take the colour out of "See the request".** Drop the `mark` prop, or scope `.ld .cf-mark` to a grey wash (`--hz-100`). Set `.ld .cf-code.light .s` and `.k` to ink and grey, and let weight tell them apart.
+3. **Draw the dark room's pill.** The rule `.ld-caps-tabs button span { position: relative }` also catches the pill and collapses it. Scope it to the label (`button > span:not(.ld-caps-pill)`). Then the white pill shows and glides, and "send" reads black on white. Give the selected tab a hover.
+4. **Make the hero answer the pointer.** Hovering a journal row lights the accounts it touched (the `hot` state already exists), and hovering an account lights its postings. That tells the visitor something and needs no new words.
+5. **Floors and hovers.** Raise the phone chapter labels and the "01 / 03" meta to 14px, and "Agent prompt" and "Copy" to 13px. Wrap the 14 bare `:hover` rules in `@media (hover: hover)`.
+6. **Stack the chapters on phone.** Under 900px, render each chapter's own scene above its text instead of pinning one stage on top. Every word and scene stays.

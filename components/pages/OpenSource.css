@@ -139,7 +139,8 @@
 .xos-total-h .pf-body { margin-top: 24px; }
 .xos-grants { margin: 28px 0 0; font-size: 17px; }
 .xos-grants a { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: rgba(0, 0, 0, .25); transition: text-decoration-color .25s; }
-.xos-grants a:hover { text-decoration-color: var(--ink); }
+.xos-grants a { display: inline-block; transition: text-decoration-color .25s, transform .35s var(--ease); }
+.xos-grants a:hover { text-decoration-color: var(--ink); transform: translate3d(4px, 0, 0); }
 .xos-total-n { grid-column: 6 / span 7; list-style: none; margin: 0; padding: 0; }
 .xos-total-n li { display: flex; flex-direction: column; gap: 16px; padding: 40px 0; border-top: 1px solid var(--line); }
 .xos-total-n li:first-child { padding-top: 0; border-top: 0; }

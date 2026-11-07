@@ -1,28 +1,41 @@
 'use client';
-/* KMS. Signature: a secret, sealed and rotated. The value is sealed on the client through Hanzo's own chain (Argon2id,
-   HKDF-SHA256, AES-256-GCM), then rotated: each write names the version it replaces, so a second writer holding the
-   old version is refused, while every read lands in the append-only record, an agent's read under that agent's name.
-   Below: the example console, the six rules as an editorial column with a sticky vault number, a four-figure band, and
-   the CLI that keeps secrets out of files. Every word and link is Hanzo's. */
-import { useEffect, useState } from 'react';
+/* KMS (v2, archetype A Launch).
+   V2: 8/10 The name sits behind a vault card that seals a secret, rotates it, refuses a stale writer and records the read; seal-one-yourself runs real AES-256-GCM in the browser; the six rules read past a pinned numeral that scrambles to each new number; the CLI in the dark room.
+   Signature: a secret, sealed and rotated. DATABASE_PASSWORD goes through Hanzo's chain (Argon2id, HKDF-SHA256,
+   AES-256-GCM) and comes out as ciphertext; then it is rotated - each write names the version it replaces, so a second
+   writer holding the old version is refused - and the read lands in the append-only record under the agent's name.
+   Supporting: kinetic title lines; the vault rises over the title on scroll (Stage); the six rules scroll past one
+   huge pinned numeral that scrambles from one number to the next (rAF, only while seen).
+   Beyond: "Seal one yourself" - type a value and your browser seals it with AES-256-GCM under a key derived with
+   HKDF-SHA256 (WebCrypto), so you watch the ciphertext and the key never leaves the page; Argon2id, the passphrase step,
+   is named but not run here, and that is said.
+   Accent: gold, from the key. Every word and link is Hanzo's. */
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Rise } from '../../ui';
-import { Hero, Paste, Related, Get, Console, Head, Code, useLive, A } from './Frame';
+import { A } from '../../kit';
+import { Console, Code, useLive } from './Frame';
+import { Lines, Lift } from '../../v2/LiftStage';
+import ShipPrompt from '../../v2/ShipPrompt';
+import GetIt from '../../v2/GetIt';
+import '../../v2/v2scale.css';
 import './Kms.css';
 
+const EASE = [0.16, 1, 0.3, 1];
 const CHAIN = ['Argon2id', 'HKDF-SHA256', 'AES-256-GCM'];
 const HEX = '0123456789abcdef';
 const noise = (n, s) => Array.from({ length: n }, (_, i) => HEX[(s * 31 + i * 17 + ((s + i) * (i + 3)) % 13) % 16]).join('');
 
+/* The vault: seal, rotate, refuse a stale writer, record the read. */
 function Vault() {
   const [ref, live, calm] = useLive(0.3);
-  const [t, setT] = useState(calm ? 6 : 0); // 0..3 sealing, 4 rotated, 5 stale writer refused, 6 read recorded
+  const [t, setT] = useState(0); // 0..3 sealing, 4 rotated, 5 stale writer refused, 6 read recorded
   const [ver, setVer] = useState(3);
+  useEffect(() => { if (calm) setT(6); }, [calm]);
   useEffect(() => {
     if (calm || !live) return;
     const id = setTimeout(() => {
       if (t === 6) { setT(0); setVer((v) => v + 1); } else setT(t + 1);
-    }, [900, 800, 800, 900, 1500, 1700, 2200][t]);
+    }, [1000, 900, 900, 1000, 1600, 1800, 2400][t]);
     return () => clearTimeout(id);
   }, [t, live, calm]);
   const sealed = t >= 3;
@@ -31,36 +44,80 @@ function Vault() {
     <div className="km-vault" ref={ref} aria-hidden="true">
       <div className="km-secret">
         <p className="km-path">DATABASE_PASSWORD <span>production</span></p>
-        <p className={'km-val' + (sealed ? ' sealed' : '')}>{sealed ? noise(28, v) : '••••••••••••••••'}</p>
+        <p className={'km-val' + (sealed ? ' sealed' : '')}>{sealed ? noise(32, v) : '••••••••••••••••'}</p>
         <div className="km-chain">
-          {CHAIN.map((c, i) => <span key={c} className={t > i ? 'on' : ''}>{c}</span>)}
+          {CHAIN.map((c, i) => <span key={c} className={t > i ? 'on' : ''}><i />{c}</span>)}
         </div>
         <p className="km-client">the organization key stays on the client</p>
       </div>
-      <div className="km-vers">
-        <AnimatePresence initial={false}>
-          {[v, v - 1, v - 2].map((n, i) => (
-            <motion.div key={n} layout className={'km-ver' + (i === 0 ? ' cur' : '')} initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1 - i * 0.3, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }}>
-              <b>v{n}</b><span>{noise(10, n)}</span>{i === 0 && <em>current</em>}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-        <AnimatePresence>
-          {t === 5 && (
-            <motion.div className="km-stale" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}>
-              write replaces v{v - 1} · <b>refused</b>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <div className="km-side">
+        <div className="km-vers">
+          <AnimatePresence initial={false}>
+            {[v, v - 1, v - 2].map((n, i) => (
+              <motion.div key={n} layout className={'km-ver' + (i === 0 ? ' cur' : '')} initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1 - i * 0.3, y: 0 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                <b>v{n}</b><span>{noise(10, n)}</span>{i === 0 && <em>current</em>}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <AnimatePresence>
+            {t === 5 && (
+              <motion.div className="km-stale" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
+                write replaces v{v - 1} · <b>refused</b>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        <ul className="km-log">
+          {t >= 6 && <li key={'r' + ver} className="in"><i className="a" />read · agent checkout-web</li>}
+          {t >= 4 && <li key={'w' + ver} className="in"><i />rotate · v{v}</li>}
+          <li><i />read · payments-api</li>
+        </ul>
       </div>
-      <ul className="km-log">
-        <AnimatePresence initial={false}>
-          {t >= 6 && <motion.li key={'r' + ver} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.4 }}><i className="a" />read · agent checkout-web</motion.li>}
-          {t >= 4 && <motion.li key={'w' + ver} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.4 }}><i />rotate · v{v}</motion.li>}
-          <li key="p"><i />read · payments-api</li>
-        </AnimatePresence>
-      </ul>
     </div>
+  );
+}
+
+/* Beyond: seal one yourself (WebCrypto: HKDF-SHA256 then AES-256-GCM; the key is random and never leaves). */
+const b64 = (u8) => btoa(String.fromCharCode(...u8));
+function Seal() {
+  const [val, setVal] = useState('correct horse battery staple');
+  const [out, setOut] = useState({ ct: '', iv: '' });
+  const [err, setErr] = useState('');
+  const master = useRef(null);
+  useEffect(() => {
+    let on = true;
+    (async () => {
+      try {
+        const S = crypto.subtle;
+        if (!master.current) master.current = await S.importKey('raw', crypto.getRandomValues(new Uint8Array(32)), 'HKDF', false, ['deriveKey']);
+        const key = await S.deriveKey({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(16), info: new TextEncoder().encode('organization') }, master.current, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = new Uint8Array(await S.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(val)));
+        if (on) setOut({ ct: b64(ct), iv: b64(iv) });
+      } catch { if (on) setErr('This browser cannot seal here.'); }
+    })();
+    return () => { on = false; };
+  }, [val]);
+  return (
+    <section className="v2-sec km-seal">
+      <div className="v2-wrap v2-grid">
+        <div className="km-seal-l">
+          <p className="v2-kick acc">Sealed before it leaves you</p>
+          <h2 className="v2-headline">Seal one yourself</h2>
+          <p className="v2-body">Your browser seals what you type with AES-256-GCM, under a key derived with HKDF-SHA256 that never leaves this page. Nothing is sent. KMS starts one step earlier, with Argon2id turning a passphrase into the key; browsers do not offer Argon2id, so here the key is random.</p>
+        </div>
+        <div className="km-seal-box v2-obj">
+          <label className="km-seal-k" htmlFor="km-in">value</label>
+          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} spellCheck={false} autoComplete="off" />
+          <div className="km-seal-chain" aria-hidden="true">
+            <span className="off">Argon2id</span><i /><span>HKDF-SHA256</span><i /><span>AES-256-GCM</span>
+          </div>
+          <p className="km-seal-k">ciphertext</p>
+          <p className="km-ct" aria-live="polite">{err || out.ct}</p>
+          <p className="km-seal-k">iv <span>{out.iv}</span></p>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -73,18 +130,58 @@ const RULES = [
   ['Fail closed, or do not start', 'Every call carries a Hanzo IAM token verified against a cached JWKS; HMAC and alg none are refused outright. The organization comes from the verified token, never from a field the caller sets. Outside development the daemon will not boot without an issuer, an audience and a JWKS URL — there is no accidental open mode. A secret can be marked so that any agent read waits for a person to approve it, or is refused.'],
 ];
 
-function Holds() {
+/* The pinned numeral: scrambles from one number to the next as each rule reaches the middle. */
+function Scramble({ to, run }) {
+  const ref = useRef(null);
+  const target = String(to).padStart(2, '0');
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!run) { el.textContent = target; return; }
+    let raf = 0;
+    const t0 = performance.now();
+    const loop = (now) => {
+      const k = Math.min(1, (now - t0) / 420);
+      el.textContent = k >= 1 ? target : target.split('').map((c, i) => (k > 0.5 + i * 0.25 ? c : HEX[Math.floor(Math.random() * 10)])).join('');
+      if (k < 1) raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [target, run]);
+  return <span ref={ref}>{target}</span>;
+}
+
+function Rule({ i, t, d, onAt }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && onAt(i), { rootMargin: '-45% 0px -45% 0px' });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [i, onAt]);
   return (
-    <section className="x-sec km-holds">
-      <div className="x-wrap">
-        <Head title="What it holds and how it holds it" lede="A secret is a value under a path, a name and an environment, inside one organization. That is the whole model." />
+    <li ref={ref} className="km-rule">
+      <span className="km-rule-n">{String(i + 1).padStart(2, '0')}</span>
+      <h3 className="v2-headline">{t}</h3>
+      <p className="v2-body">{d}</p>
+    </li>
+  );
+}
+
+function Holds() {
+  const [at, setAt] = useState(0);
+  const [ref, live] = useLive(0.05);
+  return (
+    <section className="v2-sec km-holds" ref={ref}>
+      <div className="v2-wrap v2-grid">
+        <div className="km-holds-l">
+          <div className="km-pin">
+            <h2 className="v2-title km-holds-h">What it holds and how it holds it</h2>
+            <p className="km-num v2-num" aria-hidden="true"><Scramble to={at + 1} run={live} /></p>
+            <p className="v2-body km-holds-lede">A secret is a value under a path, a name and an environment, inside one organization. That is the whole model.</p>
+          </div>
+        </div>
         <ol className="km-rules">
-          {RULES.map(([t, d], i) => (
-            <Rise as="li" key={t} y={20}>
-              <span className="km-rule-n">{String(i + 1).padStart(2, '0')}</span>
-              <div><h3>{t}</h3><p>{d}</p></div>
-            </Rise>
-          ))}
+          {RULES.map(([t, d], i) => <Rule key={t} i={i} t={t} d={d} onAt={setAt} />)}
         </ol>
       </div>
     </section>
@@ -92,80 +189,77 @@ function Holds() {
 }
 
 const FIGS = [['AES-256', 'Sealed on your machine'], ['K8s', 'Secrets kept in step'], ['Every read recorded', ''], ['MIT', 'Run it yourself']];
-
 const CLI = `# Sign in, then point this directory at a path
 kms login
 kms init
-
 # Start the process with its secrets already in the environment
 kms run -- npm start
-
 # ...or write a dotenv, for a tool that insists on one
 kms export --format=dotenv
-
 # Replace a value
 kms rotate DATABASE_PASSWORD
-
 # Find the ones that already escaped, here and in git history
 kms scan`;
 
-function Disk() {
+export default function Kms() {
   return (
-    <section className="x-sec km-disk" data-room="dark">
-      <div className="x-wrap">
-        <ul className="km-figs">
-          {FIGS.map(([a, b], i) => (
-            <Rise as="li" key={a} delay={i * 0.06}><b>{a}</b>{b && <span>{b}</span>}</Rise>
-          ))}
-        </ul>
-        <div className="km-disk-grid">
-          <div>
-            <Rise as="h2" className="km-disk-h">Nothing lands on disk</Rise>
-            <div className="km-out">
-              <h3>Take them out of the repo</h3>
-              <p>Use it hosted, or run the same binary yourself. The source is MIT and the client is where the encryption happens either way.</p>
-              <div className="km-out-acts">
-                <A to="https://kms.hanzo.ai" className="x-btn solid">Open KMS</A>
-                <A to="https://github.com/hanzoai/kms" className="x-btn">View on GitHub</A>
-              </div>
+    <main className="v2 km">
+      <section className="km-hero">
+        <div className="v2-wrap km-hero-t">
+          <p className="v2-kick acc">kms.hanzo.ai</p>
+          <Lines as="h1" className="v2-display km-h1" lines={['Hanzo KMS']} data-morph-target="" />
+          <div className="km-hero-row">
+            <p className="v2-lede km-sub">Secrets management</p>
+            <div className="v2-acts">
+              <A to="https://kms.hanzo.ai" className="v2-btn solid">Open KMS</A>
+              <A to="https://docs.hanzo.ai/docs/openapi/kms/" className="v2-btn">Documentation</A>
             </div>
           </div>
-          <Code title="KMS CLI" tabs={[{ k: 'terminal', code: CLI }]} />
         </div>
-      </div>
-    </section>
-  );
-}
+        <Lift className="v2-wrap km-lift" from={1.1} y={40} origin="50% 0%" offset={['start end', 'start 0.25']}>
+          <Vault />
+        </Lift>
+      </section>
 
-export default function Kms() {
-  const icon = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10.5 1.5a4 4 0 0 0-3.8 5.3L1.5 12v2.5H4V13h1.5v-1.5H7l1.2-1.2A4 4 0 1 0 10.5 1.5Z M11 5.2a.3.3 0 1 0 0 .01" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /></svg>;
-  return (
-    <main className="km">
-      <Hero
-        look="flip"
-        kick="kms.hanzo.ai"
-        icon={icon}
-        title="Hanzo KMS"
-        sub="Secrets management"
-        acts={[['Open KMS', 'https://kms.hanzo.ai'], ['Documentation', 'https://docs.hanzo.ai/docs/openapi/kms/']]}
-      >
-        <Vault />
-      </Hero>
-      <section className="km-con">
-        <div className="x-wrap km-con-grid">
-          <Rise><Console light name="KMS" api="/v1/kms" cap="The service the session above is changing." side={[['KMS', '/kms'], ['IAM', '/iam'], ['Authz', '/authz'], ['Secrets', '/cloud/secrets'], ['Audit', '/cloud/audit'], ['Zero Trust', '/cloud/zero-trust']]} /></Rise>
-          <div className="km-con-side">
-            <p className="km-con-note">Example project. Every name in it is one you would give your own.</p>
-            <Paste name="KMS" prompt="Read https://hanzo.ai/skill.md and use Hanzo KMS in my project. Start with: hanzo kms secrets create" className="km-paste" />
+      <Seal />
+
+      <Holds />
+
+      <section className="km-disk v2-dark" data-room="dark">
+        <div className="v2-wrap">
+          <ul className="km-figs">
+            {FIGS.map(([a, b]) => <li key={a}><b>{a}</b>{b && <span>{b}</span>}</li>)}
+          </ul>
+          <div className="km-disk-g">
+            <div className="km-disk-l">
+              <h2 className="v2-display s">Nothing lands on disk</h2>
+              <h3 className="v2-title km-out-h">Take them out of the repo</h3>
+              <p className="v2-body">Use it hosted, or run the same binary yourself. The source is MIT and the client is where the encryption happens either way.</p>
+              <div className="v2-acts"><A to="https://kms.hanzo.ai" className="v2-btn solid">Open KMS</A><A to="https://github.com/hanzoai/kms" className="v2-btn">View on GitHub</A></div>
+            </div>
+            <Code title="KMS CLI" tabs={[{ k: 'terminal', code: CLI }]} className="km-cli" />
           </div>
         </div>
       </section>
-      <Holds />
-      <Disk />
-      <section className="km-rel">
-        <div className="x-wrap"><Related items={[['IAM', '/iam', 'OIDC identity & orgs'], ['Authz', '/authz', 'Fine-grained access'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']]} /></div>
+
+      <section className="v2-sec km-proj">
+        <div className="v2-wrap v2-grid">
+          <div className="km-proj-c"><Console light name="KMS" api="/v1/kms" cap="The service the session above is changing." side={[['KMS', '/kms'], ['IAM', '/iam'], ['Authz', '/authz'], ['Secrets', '/cloud/secrets'], ['Audit', '/cloud/audit'], ['Zero Trust', '/cloud/zero-trust']]} /></div>
+          <div className="km-proj-t">
+            <p className="v2-kick acc">Example project</p>
+            <p className="v2-title">Example project. Every name in it is one you would give your own.</p>
+          </div>
+        </div>
       </section>
-      <Get name="KMS" tag="Secrets + key management" repo={['hanzoai/kms', 'https://github.com/hanzoai/kms']} stars="3 stars" />
+
+      <ShipPrompt
+        name="KMS"
+        api="/v1/kms"
+        prompt="Read https://hanzo.ai/skill.md and use Hanzo KMS in my project. Start with: hanzo kms secrets create"
+        related={[['IAM', '/iam', 'OIDC identity & orgs'], ['Authz', '/authz', 'Fine-grained access'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']]}
+      />
+
+      <GetIt name="KMS" tag="Secrets + key management" seed="kms" data={[256, 3, 6]} repo={['hanzoai/kms', 'https://github.com/hanzoai/kms']} stars="3 stars" />
     </main>
   );
 }

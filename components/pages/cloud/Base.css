@@ -1,5 +1,5 @@
 /* Base (v2): see Base.jsx. Built on components/v2/Keynote*. */
-.bs { --ac-t: rgba(255, 149, 0, .1); --ac-l: rgba(255, 149, 0, .38); --ac-d: #c76a00; }
+.bs { --ac-t: rgba(163, 163, 163, .1); --ac-l: rgba(163, 163, 163, .38); --ac-d: #737373; }
 .bs-k { margin: 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 .bs-chip { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border-radius: 999px; background: var(--ac-t); color: var(--ac-d); font: 500 14px/1 var(--mono); white-space: nowrap; }
 .bs-chip.ink { background: var(--ink); color: #fff; }
@@ -20,7 +20,7 @@
 .bs-adm-side span.on { background: #fff; color: var(--ink); box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 6px 16px -8px rgba(0, 0, 0, .16); }
 .bs-adm-side span.on i { background: var(--ac); border-color: var(--ac); }
 .bs-adm-live { margin: auto 8px 0; display: flex; align-items: center; gap: 8px; font: 500 13px/1 var(--mono); color: var(--soft); }
-.bs-adm-live i { width: 8px; height: 8px; border-radius: 50%; background: #30d158; animation: bs-beat 1.6s ease-in-out infinite; }
+.bs-adm-live i { width: 8px; height: 8px; border-radius: 50%; background: #a3a3a3; animation: bs-beat 1.6s ease-in-out infinite; }
 @keyframes bs-beat { 50% { opacity: .35; } }
 .bs-adm-main { display: flex; flex-direction: column; min-width: 0; padding: 24px clamp(20px, 9vw, 140px) 24px 28px; }
 .bs-adm-h { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
@@ -45,7 +45,7 @@
 .bs-tr.new { animation: bs-flash 2.2s var(--ease) both; }
 .bs-tr.new code { color: var(--ac-d); }
 @keyframes bs-push { from { transform: translateY(-52px); } to { transform: none; } }
-@keyframes bs-flash { 0% { background: rgba(255, 149, 0, .16); } 100% { background: #fff; } }
+@keyframes bs-flash { 0% { background: rgba(163, 163, 163, .16); } 100% { background: #fff; } }
 .bs-sch { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .bs-sch li { display: flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--line); }
 .bs-sch code { font: 500 16px/1 var(--mono); }
@@ -92,7 +92,7 @@
 .bs-dec-v { grid-column: 6 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: repeat(3, auto); grid-template-areas: 'schema prom' 'schema api' 'iam live'; gap: 14px; }
 .bs-tile { position: relative; display: flex; flex-direction: column; gap: 14px; padding: clamp(18px, 1.8vw, 26px); border-radius: 22px; border: 1px solid var(--line); background: #fff; opacity: .28; transform: scale(.975); transition: opacity .6s var(--ease), transform .7s var(--ease), border-color .4s, box-shadow .6s var(--ease); }
 .bs-tile.on { opacity: 1; transform: none; }
-.bs-tile.now { border-color: var(--ac-l); box-shadow: 0 30px 60px -36px rgba(199, 106, 0, .55); }
+.bs-tile.now { border-color: var(--ac-l); box-shadow: 0 30px 60px -36px rgba(115, 115, 115, .55); }
 .bs-t-schema { grid-area: schema; }
 .bs-t-prom { grid-area: prom; }
 .bs-t-api { grid-area: api; }

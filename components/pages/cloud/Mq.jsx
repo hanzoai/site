@@ -1,28 +1,40 @@
 'use client';
 /* MQ, v2 launch page (Cloud 3).
-   V2: 8/10 Centred launch: a live job conveyor settles under a huge title, six facts pin over one job inspector that changes per chapter, worker.ts in the one dark room, the free tier as a spec sheet.
+   V2: 8/10 Centred launch in grey: the title and its one ask over a live job conveyor that fits the first screen (its own
+   toolbar carries "Job queue", a pause and the job under your pointer); the statement opens six pinned chapters over one
+   job inspector whose tabs you can press; worker.ts in the one dark room; the free tier as a giant figure over the spec.
    Signature: jobs on a conveyor. Tickets ride in by priority and the urgent one cuts ahead; two workers take them up to
    their concurrency under a limiter; one fails, waits out its backoff, retries, and after its last attempt lands in the
    failed set with its error rather than vanishing, while QueueEvents prints each life as it happens.
    Beyond: the job inspector. Each fact is shown working on one queue (a schedule held through a process restart, a
    limiter window filling, a priority-1 job cutting ahead, backoff gaps widening, events streaming, a failed job you can
    retry), so you see the behaviour before you pick a queue.
-   Motion: signature = the conveyor (FLIP between lanes); supporting = Stage settle and pinned chapters (scroll), the clip
-   wipe into the dark room, the line-masked title. Every word, figure and link is Hanzo's; job names are examples. */
-import { useState } from 'react';
+   Persona: Developer. Goal: try Hanzo MQ (read the source, then deploy it).
+   CTA: "GitHub" → https://github.com/hanzoai (data-cta mq.hero, mq.close; the site's sticky ask carries the same words).
+   Metric: api_key_created.
+   Motion: idle = the conveyor and the inspector's panels (each with a pause); pointer = a job under the cursor shows
+   its options in the conveyor's toolbar, the inspector's tabs, the magnetic ask at the close; state = the tab bar
+   morphs, Retry puts the failed job back; arrival = the cut-in title, the timed wipe into the dark room, the free tier
+   cutting in (the real figure, never counted through numbers that are not Hanzo's); scroll = the stage settle and the pinned chapters only.
+   States differ by fill, weight, dash and a shape cue, never by hue. Every word, figure and link is Hanzo's; job names
+   are examples. */
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
-import { Paste, Code, useLive, useEvery } from './Frame';
+import { Paste, Code, useLive } from './Frame';
 import SettleStage from '../../v2/SettleStage';
 import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
 import SpecDrawer from '../../v2/SpecDrawer';
-import LaunchClose from '../../v2/LaunchClose';
+import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
+import LivePause, { usePause } from '../../v2/LivePause';
 import './Mq.css';
 
+const GH = 'https://github.com/hanzoai';
 const EASE = [0.16, 1, 0.3, 1];
 const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
+const SNAP = { type: 'spring', stiffness: 420, damping: 34 };
 const NAMES = ['welcome', 'invoice', 'resize', 'digest', 'sync', 'export'];
 
 /* One tick of the queue, as a pure step: finish, retry or fail; then a worker takes the most urgent waiting job. */
@@ -39,65 +51,92 @@ export function step(s) {
   const sorted = wait.sort((x, y) => x.p - y.p); // stable: first in, first out inside one priority
   let started = 0;
   while (active.length < 2 && sorted.length) { const j = sorted.shift(); ev.push(['progress', j.n]); active.push({ ...j, age: 0, attempt: j.attempt || 1 }); started++; }
-  if (sorted.length < 4) sorted.push({ id: id++, n: NAMES[t % NAMES.length], p: t % 4 === 0 ? 1 : 2, fail: t % 5 === 0 });
+  if (sorted.length < 4) sorted.push({ id: id++, n: NAMES[t % NAMES.length], p: t % 4 === 0 ? 1 : 2, fail: t % 5 === 0, born: t });
   const win = t % 6 === 0 ? started : Math.min(6, s.win + started);
   return { t, id, win, wait: sorted, active, done: done.slice(0, 4), events: [...ev.map((e, k) => ({ k: t * 10 + k, e })), ...s.events].slice(0, 4) };
 }
 const START = { t: 0, id: 4, win: 0, wait: [0, 1, 2, 3].map((i) => ({ id: i, n: NAMES[i], p: i === 2 ? 1 : 2 })), active: [], done: [], events: [] };
 const WARM = [1, 2, 3, 4].reduce((x) => step(x), START); // the first frame already has every lane at work
 
-function Ticket({ j, kind, children }) {
+/* where a job is, in the words the conveyor already uses */
+const where = (j, kind) => (kind === 'ok' ? 'completed' : kind === 'bad' ? 'failed set' : kind ? 'worker' : j.back ? 'backoff · exponential' : 'waiting');
+
+/* A ticket keeps its layoutId from lane to lane, so a move is one FLIP glide from where it was (no AnimatePresence:
+   the copy it leaves goes at once, so a lane closes up while the glide runs). Only a job just added slides in. */
+function Ticket({ j, kind, t, onPeek, children }) {
   return (
-    <motion.div layoutId={'mq' + j.id} className={'mq-tk ' + (kind || '') + (j.p === 1 ? ' hi' : '') + (j.back ? ' back' : '')} initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={SPRING}>
+    <motion.div layoutId={'mq' + j.id} className={'mq-tk ' + (kind || '') + (j.p === 1 ? ' hi' : '') + (j.back ? ' back' : '')}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && onPeek({ ...j, at: where(j, kind) })}
+      initial={!kind && j.born === t ? { opacity: 0, x: -24 } : false} animate={{ opacity: 1, x: 0 }} transition={SNAP}>
       <b>{j.n}</b>{children}
     </motion.div>
   );
 }
 
+/* ---------- the hero object: the queue at work ---------- */
 function Conveyor() {
   const [ref, live] = useLive(0.3);
+  const [paused, pause] = usePause();
+  const run = live && !paused;
   const [s, setS] = useState(WARM);
-  useEvery(1150, live, () => setS(step));
+  const [peek, setPeek] = useState(null);
+  useEffect(() => {
+    if (!run) return;
+    const t = setTimeout(() => setS(step), 1300);
+    return () => clearTimeout(t);
+  }, [s, run]);
   const { wait, active, done, events, win } = s;
   return (
-    <div className="mq-conv" ref={ref} aria-label="A job queue at work: waiting, workers, completed and failed" role="img">
-      <div className="mq-lane">
-        <p className="mq-k">waiting</p>
-        <div className="mq-stack">
-          <AnimatePresence initial={false} mode="popLayout">
-            {[...wait].sort((a, b) => a.p - b.p).map((j) => <Ticket key={j.id} j={j}><span>{j.back ? 'backoff · exponential' : j.p === 1 ? 'priority 1' : 'priority 2'}</span></Ticket>)}
+    <div className="mq-conv" ref={ref} onPointerLeave={() => setPeek(null)} data-paused={paused || undefined}>
+      <LivePause paused={paused} onToggle={pause} className="mq-pause" />
+      <div className="mq-bar">
+        <p className="mq-bar-k"><i aria-hidden="true" />Job queue</p>
+        <span className="mq-chip">emails</span>
+        <p className="mq-peek" aria-hidden="true">
+          <AnimatePresence mode="wait" initial={false}>
+            {peek && (
+              <motion.span key={peek.id + peek.at} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }} transition={{ duration: 0.3, ease: EASE }}>
+                <b>{peek.n}</b> priority {peek.p} · attempt {peek.attempt || 1} / 3 · {peek.at}
+              </motion.span>
+            )}
           </AnimatePresence>
-        </div>
+        </p>
       </div>
-      <div className="mq-lane work">
-        <p className="mq-k">workers · concurrency</p>
-        {[0, 1].map((k) => {
-          const j = active[k];
-          return (
-            <div key={k} className="mq-slot">
-              <AnimatePresence mode="popLayout">{j && <Ticket key={j.id} j={j} kind={'run' + (j.fail ? ' risky' : '')}><span>attempt {j.attempt}</span><i /></Ticket>}</AnimatePresence>
-            </div>
-          );
-        })}
-        <div className="mq-lim">
-          <span>limiter · max per window</span>
-          <span className="mq-cells">{[0, 1, 2, 3, 4, 5].map((c) => <i key={c} className={c < win ? 'on' : ''} />)}</span>
+      <div className="mq-lanes" role="img" aria-label="A job queue at work: waiting, workers, completed and failed">
+        <div className="mq-lane">
+          <p className="mq-k">waiting</p>
+          <div className="mq-stack">
+            {[...wait].sort((a, b) => a.p - b.p).map((j) => <Ticket key={j.id} j={j} t={s.t} onPeek={setPeek}><span>{j.back ? 'backoff · exponential' : j.p === 1 ? 'priority 1' : 'priority 2'}</span></Ticket>)}
+          </div>
         </div>
-      </div>
-      <div className="mq-lane">
-        <p className="mq-k">completed · failed</p>
-        <div className="mq-stack">
-          <AnimatePresence initial={false} mode="popLayout">
-            {done.map((j) => <Ticket key={j.id + (j.ok ? 'c' : 'f')} j={j} kind={j.ok ? 'ok' : 'bad'}><span>{j.ok ? 'completed' : 'error · stack kept'}</span></Ticket>)}
-          </AnimatePresence>
+        <div className="mq-lane work">
+          <p className="mq-k">workers · concurrency</p>
+          {[0, 1].map((k) => {
+            const j = active[k];
+            return (
+              <div key={k} className="mq-slot">
+                {j && <Ticket key={j.id} j={j} onPeek={setPeek} kind={'run' + (j.fail ? ' risky' : '')}><span>attempt {j.attempt}</span><i /></Ticket>}
+              </div>
+            );
+          })}
+          <div className="mq-lim">
+            <span>limiter · max per window</span>
+            <span className="mq-cells">{[0, 1, 2, 3, 4, 5].map((c) => <i key={c} className={c < win ? 'on' : ''} />)}</span>
+          </div>
         </div>
-      </div>
-      <div className="mq-ev">
-        <p className="mq-k">QueueEvents</p>
-        <div className="mq-ev-row">
-          <AnimatePresence initial={false} mode="popLayout">
-            {events.map(({ k, e: [type, what] }) => <motion.p key={k} layout className={type} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}><b>{type}</b> {what}</motion.p>)}
-          </AnimatePresence>
+        <div className="mq-lane">
+          <p className="mq-k">completed · failed</p>
+          <div className="mq-stack">
+            {done.map((j) => <Ticket key={j.id + (j.ok ? 'c' : 'f')} j={j} onPeek={setPeek} kind={j.ok ? 'ok' : 'bad'}><span>{j.ok ? 'completed' : 'error · stack kept'}</span></Ticket>)}
+          </div>
+        </div>
+        <div className="mq-ev">
+          <p className="mq-k">QueueEvents</p>
+          <div className="mq-ev-row">
+            <AnimatePresence initial={false} mode="popLayout">
+              {events.map(({ k, e: [type, what] }) => <motion.p key={k} layout className={type} initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}><b>{type}</b> {what}</motion.p>)}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
@@ -108,6 +147,28 @@ function Conveyor() {
 const TABS = ['schedule', 'limiter', 'priority', 'retries', 'events', 'failed set'];
 const PRI = [['invoice', 2, 1], ['digest', 2, 2], ['resize', 2, 3], ['sync', 2, 4], ['welcome', 1, 5]];
 const STREAM = [['completed', 'welcome'], ['progress', 'resize'], ['failed', 'sync · attempt 1'], ['stalled', 'digest'], ['completed', 'invoice'], ['progress', 'export']];
+/* the intro: the queue as rows of data, and the two workers that are yours */
+const ROWS = [['welcome', 'waiting', 'priority 1', ''], ['invoice', 'worker a', 'attempt 1', 'a'], ['resize', 'worker b', 'attempt 2', 'b'], ['digest', 'completed', 'attempt 1', ''], ['sync', 'failed set', 'attempts 3 / 3', '']];
+
+function Overview({ n }) {
+  const lit = n % 2 ? 'b' : 'a';
+  return (
+    <div className="mq-p">
+      <ul className="mq-rows">
+        {ROWS.map(([name, st, d, w], i) => (
+          <li key={name} className={(w ? 'w' : '') + (w === lit ? ' on' : '') + (st === 'failed set' ? ' bad' : '')}>
+            <span className="mq-ord">#{i + 41}</span><b>{name}</b><span className="mq-st">{st}</span><span>{d}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mq-held">
+        <span className={'mq-proc' + (lit === 'a' ? '' : ' down')}><i />worker a</span>
+        <span className={'mq-proc' + (lit === 'b' ? '' : ' down')}><i />worker b</span>
+        <span className="mq-store"><i />emails · held in the store</span>
+      </div>
+    </div>
+  );
+}
 
 function Panel({ step, n }) {
   if (step === 0) {
@@ -162,7 +223,7 @@ function Panel({ step, n }) {
         <p className="mq-pk">attempts · backoff · exponential</p>
         <div className="mq-tl">
           <i className="mq-tl-line" />
-          {[[0, 'x', 'attempt 1'], [24, 'x', 'attempt 2'], [72, 'ok', 'attempt 3']].map(([x, r, l], i) => (
+          {[[0, 'x', 'attempt 1'], [30, 'x', 'attempt 2'], [78, 'ok', 'attempt 3']].map(([x, r, l], i) => (
             <span key={l} className={'mq-at ' + r + (k > i ? ' on' : '')} style={{ left: x + '%' }}><i />{l}</span>
           ))}
         </div>
@@ -196,25 +257,50 @@ function Failed() {
       <div className={'mq-fail' + (back ? ' back' : '')}>
         <p className="mq-fail-h"><b>sync</b><span>{back ? 'back in waiting' : 'attempts 3 / 3'}</span></p>
         <pre>{'Error: request failed\n    at sendEmail (worker.ts)\n    at Worker.process'}</pre>
-        <button type="button" onClick={() => setBack((b) => !b)}>{back ? 'Undo' : 'Retry'}</button>
+        <button type="button" className="mq-retry" aria-pressed={back} onClick={() => setBack((b) => !b)}>{back ? 'Undo' : 'Retry'}</button>
       </div>
     </div>
   );
 }
 
-function Inspector({ step }) {
+function Inspector({ step, intro }) {
   const [ref, live] = useLive(0.3);
+  const [paused, pause] = usePause();
+  const run = live && !paused;
   const [n, setN] = useState(0);
-  useEvery(1000, live, () => setN((v) => v + 1));
+  useEffect(() => {
+    if (!run) return;
+    const t = setTimeout(() => setN((v) => v + 1), 1000);
+    return () => clearTimeout(t);
+  }, [n, run]);
+  const cur = intro ? -1 : step;
+  // a tab takes you to its chapter: the same scroll the chapter rail makes
+  const go = (i) => {
+    const el = ref.current?.closest('.lx-pin');
+    if (!el || !el.hasAttribute('data-live')) return;
+    const total = el.querySelectorAll('.lx-pin-step').length;
+    const lead = total - TABS.length;
+    const y = el.getBoundingClientRect().top + scrollY + ((i + lead + 0.5) / total) * (el.offsetHeight - innerHeight);
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) }) : scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
+  };
   return (
     <div className="mq-ins" ref={ref}>
+      <LivePause paused={paused} onToggle={pause} className="mq-pause" />
       <div className="mq-ins-bar">
-        <span className="mq-q"><i />emails</span>
-        <span className="mq-tabs">{TABS.map((t, i) => <span key={t} className={i === step ? 'on' : ''}>{t}</span>)}</span>
+        <span className="mq-chip"><i aria-hidden="true" />emails</span>
+        <nav className="mq-tabs" aria-label="emails">
+          {TABS.map((t, i) => (
+            <button key={t} type="button" aria-current={i === cur ? 'step' : undefined} onClick={() => go(i)}>
+              {i === cur && <motion.span layoutId="mq-tab" className="mq-tab-u" transition={SNAP} />}
+              {t}
+            </button>
+          ))}
+        </nav>
       </div>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={step} className="mq-ins-body" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.18 } }} transition={{ duration: 0.45, ease: EASE }}>
-          <Panel step={step} n={n} />
+        <motion.div key={cur} className="mq-ins-body" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.18 } }} transition={{ duration: 0.45, ease: EASE }}>
+          {cur < 0 ? <Overview n={n} /> : <Panel step={cur} n={n} />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -257,23 +343,21 @@ export default function Mq() {
   const steps = FACTS.map(([t, d]) => ({ t, d }));
   return (
     <main className="lx mq">
-      <section className="mq-hero" data-morph-target>
+      <section className="mq-hero" data-morph-target data-ask-name="Hanzo MQ">
         <div className="lx-wrap mq-hero-c">
-          <p className="lx-kick"><b>●</b> Job queue</p>
           <LineMask as="h1" className="lx-display mq-h1" lines={['Hanzo MQ']} />
-          <p className="lx-lede mq-sub">Background work, done later</p>
-          <A to="https://github.com/hanzoai" className="lx-cta" data-thumb="GitHub">GitHub</A>
+          <div className="mq-lead">
+            <p className="lx-lede mq-sub">Background work, done later</p>
+            <A to={GH} className="lx-cta" data-thumb="GitHub" data-cta="mq.hero">GitHub<Arr /></A>
+          </div>
         </div>
-        <div className="lx-wrap"><SettleStage from={1.05} className="mq-stage"><Conveyor /></SettleStage></div>
+        <div className="lx-wrap"><SettleStage from={1.04} lift={24} className="mq-stage"><Conveyor /></SettleStage></div>
       </section>
 
-      <section className="lx-sec mq-state">
-        <div className="lx-wrap">
-          <LineMask as="h2" className="lx-display m mq-state-h" lines={['The queue is data,', 'the workers are yours']} inView />
-        </div>
-      </section>
-
-      <PinnedChapters flip label="The queue is data, the workers are yours" steps={steps} per={80} visual={(at) => <Inspector step={at} />} />
+      <PinnedChapters flip label="The queue is data, the workers are yours" per={80}
+        intro={{ title: ['The queue is data,', 'the workers are yours'] }}
+        steps={steps}
+        visual={(at, intro) => <Inspector step={at} intro={intro} />} />
 
       <ClipWipe dark className="mq-room">
         <div className="lx-wrap mq-room-grid">
@@ -287,15 +371,21 @@ export default function Mq() {
 
       <section className="lx-sec mq-walk">
         <div className="lx-wrap">
-          <div className="mq-walk-h">
-            <h2 className="lx-display s">Add a job and walk away</h2>
-            <A to="https://github.com/hanzoai" className="lx-ghost">View on GitHub</A>
+          <div className="mq-walk-top">
+            <div className="mq-walk-l">
+              <h2 className="lx-display s">Add a job and walk away</h2>
+              <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
+            </div>
+            <div className="mq-walk-r">
+              <LineMask as="p" className="mq-fig" aria-hidden="true" lines={['10K']} inView />
+              <p className="mq-free">Free tier includes 10K jobs/month. No job size limits.</p>
+            </div>
           </div>
-          <SpecDrawer className="mq-spec" rows={[{ v: 'Library', l: 'No broker to run' }, { v: 'Cron', l: '' }, { v: 'Retries', l: 'With backoff' }, { v: 'At-least-once', l: 'Delivery' }]} note="Free tier includes 10K jobs/month. No job size limits." />
+          <SpecDrawer className="mq-spec" rows={[{ v: 'Library', l: 'No broker to run' }, { v: 'Cron', l: '' }, { v: 'Retries', l: 'With backoff' }, { v: 'At-least-once', l: 'Delivery' }]} />
         </div>
       </section>
 
-      <LaunchClose name="MQ" tag="Message queue" seed="mq" data={[6379, 10, 100, 60000]} repo={['hanzoai', 'https://github.com/hanzoai']} />
+      <LaunchClose name="MQ" tag="Message queue" seed="mq" data={[6379, 10, 100, 60000]} ask={['GitHub', GH]} cta="mq.close" repo={['hanzoai', GH]} />
     </main>
   );
 }

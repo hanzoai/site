@@ -49,8 +49,8 @@
 .xbg-rail { grid-column: 1 / 4; position: sticky; top: var(--xbg-top); display: flex; flex-direction: column; gap: 22px; }
 .xbg-text { grid-column: 5 / -1; min-width: 0; font-size: 19px; line-height: 1.68; }
 .xbg-ch + .xbg-ch { margin-top: clamp(120px, 14vw, 220px); }
-.xbg-ch-h { display: grid; gap: 22px; margin: 0 0 clamp(32px, 3.4vw, 48px); padding-top: 22px; border-top: 1px solid var(--line); }
-.xbg-num { font-size: 13px; letter-spacing: .12em; color: var(--faint); }
+.xbg-ch-h { display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 16px; align-items: baseline; margin: 0 0 clamp(32px, 3.4vw, 48px); padding-top: 22px; border-top: 1px solid var(--line); }
+.xbg-num { font-size: 13px; letter-spacing: .12em; color: var(--faint); transform: translateY(-.35em); }
 .xbg-h2 { margin: 0; max-width: 16ch; font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; line-height: 1; letter-spacing: -.045em; text-wrap: balance; scroll-margin-top: var(--xbg-top); outline: none; }
 .xbg-p { margin: 0 0 1.15em; max-width: 66ch; color: #1d1d1f; text-wrap: pretty; }
 .xbg-a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(0, 0, 0, .25); text-underline-offset: 4px; text-decoration-thickness: 1px; border-radius: 4px; transition: text-decoration-color .2s, background-color .2s; }
@@ -99,7 +99,7 @@
 .xbg-code pre { margin: 0; padding: 20px 22px 24px; overflow-x: auto; font: 14px/1.7 var(--mono); outline: none; }
 .xbg-code pre:focus-visible { box-shadow: inset 0 0 0 2px #fff; }
 .xbg-ln { display: block; min-height: 1.7em; white-space: pre; }
-.xbg [data-k='keyword'] { color: #ff9ecf; } .xbg [data-k='string'] { color: #a8e6c2; } .xbg [data-k='key'] { color: #c7b9ff; } .xbg [data-k='bright'] { color: #fff; }
+.xbg [data-k='keyword'] { color: #a3a3a3; } .xbg [data-k='string'] { color: #d4d4d4; } .xbg [data-k='key'] { color: #d4d4d4; } .xbg [data-k='bright'] { color: #fff; }
 .xbg [data-k='punctuation'] { color: #86868b; } .xbg [data-k='comment'] { color: #86868b; font-style: italic; }
 
 /* Game of Life */
@@ -158,14 +158,18 @@
 .xbg-row span { background: linear-gradient(var(--acc), var(--acc)) 0 100% / 0 2px no-repeat; transition: background-size .45s var(--ease); padding-bottom: 2px; }
 .xbg-row:hover span, .xbg-row:focus-visible span { background-size: 100% 2px; }
 .xbg-arr { flex: none; transition: transform .35s var(--ease); }
-.xbg-row:hover .xbg-arr { transform: translateX(6px); }
+.xbg-row:hover .xbg-arr { transform: translate(4px, -4px); }
+.xbg-row:active { transform: translateY(1px); }
+.xbg-card:active, .xbg-back:active, .xbg-knots button:active, .xbg-tabs button:active, .xbg-bar-b:active, .xbg-chips button:active, .xbg-life-bar .x-btn:active { transform: scale(.98); }
+.xbg-card, .xbg-back, .xbg-knots button, .xbg-tabs button, .xbg-chips button, .xbg-row { transition-property: color, background-color, border-color, transform; transition-duration: .2s; }
 .xbg-src { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; margin: clamp(72px, 8vw, 120px) 0 0; }
 .xbg-src > p { grid-column: 1 / 7; margin: 0; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
 .xbg-src ol { grid-column: 8 / -1; margin: 0; padding-left: 1.4em; display: grid; gap: 10px; font-size: 17px; line-height: 1.5; color: var(--soft); }
 .xbg-next { list-style: none; margin: clamp(120px, 14vw, 200px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 48px; align-items: end; }
 .xbg-next li { grid-column: span 5; }
 .xbg-next li.big { grid-column: span 7; }
-.xbg-card { display: flex; flex-direction: column; gap: 18px; color: var(--ink); text-decoration: none; }
+.xbg-card { display: flex; flex-direction: column; gap: 14px; color: var(--ink); text-decoration: none; }
+.xbg-card-art { margin-bottom: 6px; }
 .xbg-card-art { position: relative; display: block; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: #0a0a0a; color: rgba(245, 245, 247, .5); }
 .xbg-card-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 45%; transition: transform .7s var(--ease); }
 .xbg-card:hover .xbg-card-art img { transform: scale(1.04); }

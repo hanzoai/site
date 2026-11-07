@@ -1,54 +1,82 @@
 'use client';
-/* History, v2 (Story archetype, editorial). Accent: archive gold.
-   First screen: "Sovereign intelligence since 2014." at display size, the lede to its right, and the four eras laid out
-   as a strip a playhead keeps crossing, lighting each era as it passes.
-   Signature: the timeline scrub. The year-by-year history is one pinned scene: your scroll turns a giant year like an
-   odometer (only the digits that change roll), and each year's story comes in as the last one goes out, its plate (the
-   customer's picture or logo, or its figure where Hanzo has none) beside it. A rail of thirteen years tracks where you
-   are; any year is one click away. On a phone the years simply stack.
-   Supporting (three): the era playhead; the press clippings as a rail you throw sideways (drag with inertia); the
-   split-flap board in "Your year".
-   Beyond: "Your year": type the year you started and the board turns to what Hanzo was building then, with its posts.
+/* History, v3 (Story archetype, editorial). Ink, greys and silvers only (JAMES.md 7); colour comes from Hanzo's own media.
+   First screen: "Sovereign intelligence since 2014." at display size with the lede and one ask under it; beside it, the
+   object: a giant year that runs from 2014 to 2026 by itself while the four eras' bars fill in turn.
+   Signature: the timeline scrub. The year-by-year history is one pinned scene: your scroll cuts a giant year into its
+   line (the old year rises out, the new one rises in), and each year's story comes in as the last one goes out, its
+   plate (the customer's picture or logo, or its figure where Hanzo has none) beside it. A rail of thirteen years tracks
+   where you are; any year is one click away. On a phone the years simply stack.
+   Supporting (three): the hero's years run by themselves, each era's bar filling as the giant year is cut in (time);
+   the press clippings as a rail you throw sideways (pointer, drag with inertia); "Your year" cuts its year in (state).
+   Beyond: "Your year": type the year you started and the card cuts to what Hanzo was building then, with its posts.
    Every word, figure and link is Hanzo's (content/live/history.json). */
-import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react';
-import { A, Flap } from '../kit';
-import Lines from '../v2/x-feynman/Lines';
+// Persona: a buyer or investor checking Hanzo's record (arrives from /about, the footer or search)
+// Goal: see twelve years of shipped work, year by year, and trust it
+// CTA: Explore Our History (#timeline) in the hero; Talk to Hanzo FDE in the sticky ask bar and the closing Band
+// Metric: contact_sales_submit via the Band (data-cta="history.*")
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { A, Img, Film } from '../kit';
+import StoryClose from './StoryClose';
+import Lines from '../v2/Lines';
+import '../v2/system.css';
 import { YEARS, ERAS } from './historyData';
-import '../v2/Story.css';
+import './story.css';
 import './History.css';
 
+const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const TL = ({ to, children }) => <A to={to} className="v2s-tlink">{children}<Chev /></A>;
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const N = YEARS.length;
 
 /* ---------- 1. the first screen ---------- */
+function EraBar({ t, k }) {
+  const sx = useTransform(t, [k / ERAS.length, (k + 1) / ERAS.length], [0, 1]);
+  return <i className="xhi-era-bar" aria-hidden="true"><motion.b style={{ scaleX: sx }} /></i>;
+}
+
+/* the hero's object: the twelve years run by themselves, the giant year cut in as each era's bar fills (time) */
 function Hero() {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.3 });
+  const calm = useReducedMotion();
+  const t = useMotionValue(0); // the same on server and client; reduced motion jumps it to the end before first paint
+  const [at, setAt] = useState(0);
+  useLayoutEffect(() => { if (calm) { t.set(1); setAt(N - 1); } }, [calm, t]);
+  useMotionValueEvent(t, 'change', (v) => { const k = Math.min(N - 1, Math.floor(v * N)); setAt((a) => (a === k ? a : k)); });
+  useEffect(() => {
+    if (calm || !seen) return;
+    const c = animate(t, [0, 1], { duration: 15, ease: 'linear', repeat: Infinity, repeatDelay: 1.6 });
+    return () => c.stop();
+  }, [seen, calm, t]);
+  const era = ERAS.reduce((a, e, k) => (at >= e[3] ? k : a), 0);
   return (
-    <section className="xhi-hero" aria-labelledby="xhi-h1">
-      <div className="v2s-wrap">
-        <div className="xhi-hero-g">
-          <motion.p className="xhi-badge" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>Techstars ’17</motion.p>
-          <Lines as="h1" id="xhi-h1" className="v2s-display xhi-h1" delay={0.05} lines={['Sovereign', 'intelligence', <>since <span className="v2s-acc">2014.</span></>]} />
+    <section className="xhi-hero" aria-labelledby="xhi-h1" data-ask-name="History" ref={box}>
+      <div className="v2s-wrap xhi-hero-g">
+        <div className="xhi-hero-l">
+          <Lines as="h1" id="xhi-h1" className="v2s-display xhi-h1" now delay={0.05} lines={['Sovereign', 'intelligence', 'since 2014.']} />
           <motion.div className="xhi-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}>
             <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today.</p>
             <div className="v2s-acts">
-              <a href="#timeline" className="v2s-btn solid" data-thumb="Explore Our History">Explore Our History</a>
-              <A to="/about" className="v2s-btn">About Hanzo</A>
-              <A to="/open-source" className="v2s-btn">Open Source</A>
+              <a href="#timeline" className="v2s-btn solid" data-cta="history.hero">Explore Our History</a>
+              <TL to="/about">About Hanzo</TL>
+              <TL to="/open-source">Open Source</TL>
             </div>
           </motion.div>
         </div>
-        <ol className="xhi-eras">
-          <i className="xhi-play" aria-hidden="true" />
-          {ERAS.map(([span, t, d], k) => (
-            <li key={span} style={{ '--k': k }}>
-              <i className="xhi-era-bar" aria-hidden="true"><b /></i>
-              <span className="xhi-era-s">{span}</span>
-              <h2 className="xhi-era-t">{t}</h2>
-              <p>{d}</p>
-            </li>
-          ))}
-        </ol>
+        <div className="xhi-hero-r">
+          <YearCut at={at} className="hero" />
+          <ol className="xhi-eras">
+            {ERAS.map(([span, title, d], k) => (
+              <li key={span} className={k === era ? 'on' : ''}>
+                <EraBar t={t} k={k} />
+                <h2 className="xhi-era-t">{title}</h2>
+                <span className="xhi-era-s">{span}</span>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );
@@ -90,11 +118,9 @@ function Record() {
   };
   return (
     <section className="v2s-sec xhi-rec" aria-labelledby="xhi-rec-h">
-      <div className="v2s-wrap v2s-grid xhi-rec-head">
-        <div className="v2s-c-1-8">
-          <p className="v2s-kick">Track record</p>
-          <h2 id="xhi-rec-h" className="v2s-headline">Shipping for venture-funded companies since 2014</h2>
-        </div>
+      <div className="v2s-wrap v2s-head xhi-rec-head">
+        <p className="v2s-label">Track record</p>
+        <h2 id="xhi-rec-h" className="v2s-headline">Shipping for venture-funded companies since 2014</h2>
       </div>
       <div className={'xhi-rail' + (hand ? ' hand' : '')} ref={rail} data-drag={hand ? '' : undefined} data-swipe-own="" onFocusCapture={reveal}>
         <motion.ol className="xhi-clips" style={{ x }} drag={hand ? 'x' : false} dragConstraints={rail} dragElastic={0.06} dragTransition={{ power: 0.3, timeConstant: 280 }} onDragStart={() => { moved.current = Date.now(); }} onClickCapture={(e) => { if (Date.now() - moved.current < 250) e.preventDefault(); }}>
@@ -115,14 +141,11 @@ function Record() {
 }
 
 /* ---------- 3. the journey: one pinned scene, scrubbed year by year (Signature) ---------- */
-function Odometer({ year }) {
+/* the year, cut into its line: the old year rises out of the mask as the new one rises in (no rolling digits) */
+function YearCut({ at, className = '' }) {
   return (
-    <span className="xhi-odo" aria-hidden="true">
-      {[...year].map((d, k) => (
-        <span key={k} className="xhi-odo-c" style={{ '--d': +d, '--k': 3 - k }}>
-          <span className="xhi-odo-s">{'0123456789'.split('').map((n) => <span key={n}>{n}</span>)}</span>
-        </span>
-      ))}
+    <span className={'xhi-cut ' + className} aria-hidden="true">
+      {YEARS.map((y, i) => <span key={y.year} className={i === at ? 'on' : i < at ? 'past' : ''}>{y.year}</span>)}
     </span>
   );
 }
@@ -136,9 +159,9 @@ function Plate({ y, on }) {
   return (
     <div className={'xhi-plate' + (p.photo ? ' photo' : p.logo ? ' logo' : ' fig') + (ok ? ' ok' : '')} aria-hidden="true">
       <span className="xhi-plate-f">{y.metric}</span>
-      {src && <img ref={img} src={src} alt="" loading="lazy" onLoad={() => setOk(true)} onError={() => setOk(false)} />}
-      {p.logo2 && ok && <img className="two" src={p.logo2} alt="" loading="lazy" />}
-      {p.video && on && <video src={p.video} autoPlay muted loop playsInline />}
+      {src && <Img ref={img} src={src} alt="" w={1200} h={750} onLoad={() => setOk(true)} onError={() => setOk(false)} />}
+      {p.logo2 && ok && <Img className="two" src={p.logo2} alt="" w={480} h={160} />}
+      {p.video && on && <Film src={p.video} poster={p.photo} w={1200} h={750} />}
     </div>
   );
 }
@@ -150,14 +173,14 @@ function Year({ y, i, at }) {
       <p className="xhi-yr-n v2s-num">{y.year}</p>
       <Plate y={y} on={on} />
       <div className="xhi-yr-t">
-        <span className="xhi-yr-b">{y.badge}</span>
         <h3 id={'xhi-y' + y.year} className="v2s-headline">{y.title}</h3>
+        <span className="xhi-yr-b">{y.badge}</span>
         {y.lines.map((l) => <p key={l} className="xhi-yr-l">{l}</p>)}
         <div className="xhi-hl">
-          <span className="xhi-hl-tag">{y.tag}</span>
-          <b className="v2s-acc">{y.metric}</b>
+          <b>{y.metric}</b>
           <strong>{y.htitle}</strong>
           <span>{y.desc}</span>
+          <span className="xhi-hl-tag">{y.tag}</span>
         </div>
         <p className="xhi-posts">{(y.posts || []).map(([l, to]) => <A key={l + to} to={to}>{l} →</A>)}</p>
       </div>
@@ -183,12 +206,10 @@ function Journey() {
   return (
     <>
       <section className="v2s-sec tight xhi-j-intro" aria-labelledby="xhi-tl">
-        <div className="v2s-wrap v2s-grid">
-          <div className="v2s-c-1-7">
-            <p className="v2s-kick">Full History</p>
-            <h2 id="xhi-tl" className="v2s-headline">Year by year: 2014 to today</h2>
-          </div>
-          <p className="v2s-lede v2s-c-8-12 xhi-j-l">Built with hundreds of venture-funded startups: billions in client revenue and two that went public on Nasdaq in 2024, from our first customer SKULLY to the sovereign AI cloud today.</p>
+        <div className="v2s-wrap v2s-head side">
+          <p className="v2s-label">Full History</p>
+          <h2 id="xhi-tl" className="v2s-headline">Year by year: 2014 to today</h2>
+          <p className="v2s-lede xhi-j-l">Built with hundreds of venture-funded startups: billions in client revenue and two that went public on Nasdaq in 2024, from our first customer SKULLY to the sovereign AI cloud today.</p>
         </div>
       </section>
       <section className="xhi-scrub" id="timeline" ref={ref} style={{ '--n': N }} aria-label="Year by year">
@@ -196,11 +217,11 @@ function Journey() {
           <div className="v2s-wrap xhi-stage-g">
             {pinned && (
               <div className="xhi-odo-w">
-                <Odometer year={YEARS[at].year} />
+                <YearCut at={at} />
                 <span className="xhi-odo-era">{ERAS[era][1]}</span>
               </div>
             )}
-            <div className="xhi-years">
+            <div className="xhi-years" data-swipe-own="">
               {YEARS.map((y, i) => <Year key={y.year} y={y} i={i} at={pinned ? at : i} />)}
             </div>
           </div>
@@ -231,8 +252,8 @@ function Yours() {
     <section className="v2s-sec xhi-you" aria-labelledby="xhi-you-h">
       <div className="v2s-wrap v2s-grid xhi-you-g">
         <div className="v2s-c-1-6">
-          <p className="v2s-kick">Your year</p>
           <h2 id="xhi-you-h" className="v2s-headline">When did you start?</h2>
+          <p className="v2s-label xhi-you-l">Your year</p>
           <div className="xhi-you-in">
             <button type="button" aria-label="Year before" onClick={() => step(-1)}>−</button>
             <input value={raw} onChange={(e) => setRaw(e.target.value.replace(/\D/g, '').slice(0, 4))} inputMode="numeric" aria-label="Year" />
@@ -242,7 +263,7 @@ function Yours() {
         <div className="v2s-c-8-12 xhi-you-a" aria-live="polite">
           {y ? (
             <>
-              <Flap value={y.year} className="xhi-you-y" />
+              <YearCut at={YEARS.indexOf(y)} className="you" />
               <h3 className="v2s-title">{y.title}</h3>
               <p className="xhi-you-b">{y.badge}</p>
               <p className="v2s-body">{y.lines[0]}</p>
@@ -270,10 +291,10 @@ function Principles() {
     <section className="v2s-sec xhi-prin" aria-labelledby="xhi-prin-h">
       <div className="v2s-wrap v2s-grid">
         <div className="v2s-c-1-5 xhi-prin-h">
-          <p className="v2s-kick">Operating Principles</p>
           <h2 id="xhi-prin-h" className="v2s-headline">The Zen of Hanzo</h2>
+          <p className="v2s-label">Operating Principles</p>
           <p className="v2s-lede">The principles the company argues from when a decision is close.</p>
-          <A to="/philosophy" className="v2s-link"><span>Explore the full Zen manifesto</span><Arr /></A>
+          <TL to="/philosophy">Explore the full Zen manifesto</TL>
         </div>
         <ol className="v2s-c-6-12 xhi-prin-l">
           {PRINCIPLES.map(([t, d], i) => (
@@ -292,44 +313,45 @@ function Principles() {
 /* ---------- 6. the dark room: Hanzo FDE ---------- */
 const FDE = [['Embedded', 'Engineers join your team, in your tools and on your cadence.'], ['On your data', 'They build against your real systems, inside your security boundary.'], ['Shipped', 'Every engagement ends in working software in production.'], ['Handed over', 'Your team owns the code, the runbooks and the platform.']];
 
+/* the close: Hanzo FDE, its four steps under the ask, and the way back to /about; it carries the page's sticky ask */
 function Fde() {
   return (
-    <section className="v2s-sec xhi-fde" data-room="dark" aria-labelledby="xhi-fde-h">
-      <div className="v2s-wrap">
-        <div className="v2s-grid xhi-fde-head">
-          <h2 id="xhi-fde-h" className="v2s-display v2s-c-1-7">Hanzo FDE</h2>
-          <p className="v2s-lede v2s-c-8-12">Forward deployed engineers who work from inside your team: your people, your systems, your data, on Hanzo’s platform.</p>
-        </div>
-        <ol className="xhi-fde-l">
-          {FDE.map(([t, d], i) => (
-            <li key={t}>
-              <span className="v2s-num">{String(i + 1).padStart(2, '0')}</span>
-              <h3 className="v2s-title">{t}</h3>
-              <p>{d}</p>
-            </li>
-          ))}
-        </ol>
-        <div className="xhi-fde-a"><A to="/contact-sales" className="v2s-btn solid">Talk to Hanzo FDE <Arr /></A></div>
-      </div>
-    </section>
+    <StoryClose
+      title="Hanzo FDE"
+      lede="Forward deployed engineers who work from inside your team: your people, your systems, your data, on Hanzo’s platform."
+      action="Talk to Hanzo FDE"
+      to="/contact-sales"
+      thumb
+      cta="history.band"
+      note={
+        <>
+          <ol className="xhi-fde-l">
+            {FDE.map(([t, d], i) => (
+              <li key={t}>
+                <span className="v2s-num">{String(i + 1).padStart(2, '0')}</span>
+                <h3 className="v2s-title">{t}</h3>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="xhi-back">Want to learn more about our current leadership, research, and models? <A to="/about" className="xhi-back-a"><span data-morph>Return to About Hanzo</span> <span aria-hidden="true">→</span></A></p>
+        </>
+      }
+    />
   );
 }
 
 export default function History() {
   return (
     <main className="xhi v2s">
+      {/* JavaScript off: every line shows at rest, and the years stack */}
+      <noscript><style>{'.xhi .v2-line>span,.xhi-hero-side{transform:none!important;opacity:1!important}.xhi-era-bar b{transform:none!important}.xhi-scrub{height:auto!important}.xhi-stage{position:static!important;height:auto!important;overflow:visible!important;display:block!important}.xhi-years{gap:96px}.xhi-yr{grid-area:auto!important}.xhi-yr .xhi-yr-t,.xhi-yr .xhi-plate{opacity:1!important;transform:none!important}.xhi-yr-n{display:block!important}.xhi-odo-w,.xhi-rail2{display:none!important}'}</style></noscript>
       <Hero />
       <Record />
       <Journey />
       <Yours />
       <Principles />
       <Fde />
-      <section className="xhi-back">
-        <div className="v2s-wrap">
-          <p className="v2s-lede">Want to learn more about our current leadership, research, and models?</p>
-          <A to="/about" className="xhi-back-a"><span data-morph>Return to About Hanzo</span> <span aria-hidden="true">→</span></A>
-        </div>
-      </section>
     </main>
   );
 }
