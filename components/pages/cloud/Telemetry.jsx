@@ -169,9 +169,12 @@ function GraphRoom() {
   const [ref, inn] = useEnter(0.2);
   const [held, toggle] = useContext(Hold);
   return (
-    <section className="l2-dark tl2-gsec" data-room="dark" aria-label="The collector's pipeline" ref={ref} data-in={inn} style={INK}>
-      <div className="l2-wrap"><Graph held={held} onHold={toggle} /></div>
-    </section>
+    // the in-view switch watches an unclipped wrapper: a clipped box never reports itself in view
+    <div className="tl2-ink" ref={ref} data-in={inn} style={INK}>
+      <section className="l2-dark tl2-gsec" data-room="dark" aria-label="The collector's pipeline">
+        <div className="l2-wrap"><Graph held={held} onHold={toggle} /></div>
+      </section>
+    </div>
   );
 }
 

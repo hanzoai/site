@@ -91,6 +91,7 @@
   /* the cards ride a narrow track: the ledger rows keep a gap between account and amount */
   .ts-card { padding: 18px 14px; }
   .ts-card .ts-v { padding: 14px; }
+  .ts-card .ts-v-row { font-size: 14px; gap: 8px; }
   .ts-card .ts-v-row b { font-size: 17px; }
   .ts-card .ts-v-row.post > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ts-v-sum { flex-wrap: wrap; gap: 4px 12px; }
