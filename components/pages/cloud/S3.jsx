@@ -1,6 +1,6 @@
 'use client';
 /* Object Storage, v2 launch page (Cloud 3), round 2 to JAMES.md.
-   V2: 8/10 The object comes first: a full-width stage where an object breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the rest, huge type beneath it; four facts open on the section's own title and play on one pinned diagram of the binary's four roles; one dark room where the figures count up beside the agent prompt; ink and greys only.
+   V2: 8/10 The object comes first: a full-width stage where an object breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the rest, huge type beneath it; four facts open on the section's own title and play on one pinned diagram of the binary's four roles; one dark room where the figures cut in beside the agent prompt; ink and greys only.
    Signature: an object, kept. An object breaks into ten data shards and four parity shards that fly to fourteen volume
    servers; any four go dark and the object still reads, back from the ten that are left. It loops by itself while seen
    (pause in the stage's own legend).
@@ -12,12 +12,11 @@
    the same label from data-thumb). Metric: api_key_created.
    Motion: idle = the shards flying out, four volumes going dark, the object reading back (pausable); pointer = a volume
    you point at lifts its shard and names it, the magnetic close; state = tapping volumes dark (spring ✕), Replay;
-   arrival = the cut-in title, the timed wipe into the dark room and the figures counting up there; scroll = the pinned
+   arrival = the cut-in title, the timed wipe into the dark room and the figures cutting in there (never counted); scroll = the pinned
    diagram only. Every word and link is Hanzo's. */
 import { useEffect, useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
 import { A } from '../../kit';
-import { Count } from '../../ui';
 import { Paste, useLive } from './Frame';
 import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
@@ -180,7 +179,7 @@ export default function S3() {
 
       <ClipWipe dark className="s3-room">
         <div className="lx-wrap">
-          <SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <Count to={v} duration={1.3} delay={0.35 + i * 0.08} />, l }))} />
+          <SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <LineMask as="span" lines={[String(v)]} delay={i * 0.08} inView />, l }))} />
           <Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" />
         </div>
       </ClipWipe>

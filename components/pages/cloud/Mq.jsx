@@ -15,13 +15,12 @@
    Motion: idle = the conveyor and the inspector's panels (each with a pause); pointer = a job under the cursor shows
    its options in the conveyor's toolbar, the inspector's tabs, the magnetic ask at the close; state = the tab bar
    morphs, Retry puts the failed job back; arrival = the cut-in title, the timed wipe into the dark room, the free tier
-   counting up; scroll = the stage settle and the pinned chapters only.
+   cutting in (the real figure, never counted through numbers that are not Hanzo's); scroll = the stage settle and the pinned chapters only.
    States differ by fill, weight, dash and a shape cue, never by hue. Every word, figure and link is Hanzo's; job names
    are examples. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
-import { Count } from '../../ui';
 import { Paste, Code, useLive } from './Frame';
 import SettleStage from '../../v2/SettleStage';
 import PinnedChapters from '../../v2/PinnedChapters';
@@ -378,7 +377,7 @@ export default function Mq() {
               <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
             </div>
             <div className="mq-walk-r">
-              <p className="mq-fig" aria-hidden="true"><Count to={10} suffix="K" duration={1.4} /></p>
+              <LineMask as="p" className="mq-fig" aria-hidden="true" lines={['10K']} inView />
               <p className="mq-free">Free tier includes 10K jobs/month. No job size limits.</p>
             </div>
           </div>
