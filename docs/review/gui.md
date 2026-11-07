@@ -1,32 +1,45 @@
 # /gui — James-eye review
-7 Nov, walked at 1470x801 and 375x812 (isMobile, hasTouch) with Playwright: frames at 0/1/3 s untouched, wheel-scrolled a screen at a time with 1.5 s dwell, hover/press on desktop and taps on phone, 320 px overflow check, prefers-reduced-motion run.
+7 Nov, round 2, walked at 1470x801 and 375x812 (isMobile, hasTouch), plus 320 and reduced motion. Playwright from node: frames at 0, 1 and 3 s, wheel-scrolled a screen at a time with 1.5 s dwell, hovered and pressed or tapped the main controls, opened a platform card, used Copy and the hero pause, and collected the console. Screenshots re-taken with `caret: 'initial'`.
 
 Verdict: 6/10
 
-First complaint: "It's the same four little boxes saying 'Hello, Hanzo' over and over. Hero, the scroll bit, the dark bit, the cards, the popup, it's one picture five times. And there's a big empty white hole after the hero where nothing happens."
+First complaint: "Why is 'Build it once. Ship it everywhere.' jammed against the left edge of the screen? Then the phones scroll straight through it. That's the main scene on the page and it looks broken."
 
 ## The 11 answers
-1. Mostly. "Hanzo GUI / One UI kit. Every platform." and the four devices sell it in 5 s. Something moves within 1 s: the h1 cuts in, and the `<YStack p= bg= rounded=>` strip rolls its token values about every 1.5 s and restyles the device cards. The device row is cut off at the fold at 1470x801, so the iOS and Android labels sit below it.
-2. Half. The pinned chapter stage (01 to 05, scrub rail) does one thing in, one thing out. Around it the page is a document. There is about 400 px of blank white between the hero and "Build it once. Ship it everywhere.", and that h2 scrolls away alone before the stage pins. Below about 120 px of the closing Band there is another empty band before the footer.
-3. Every section has an object, but it is the same one: the iOS/Android/Web/Desktop quad with a "Hello, Hanzo / Get started" card appears in the hero, all 5 chapter steps, the dark room, the 4-card grid and the dialog. On phone it shows up 7 or more times. Install and Get GUI have real code panels.
-4. Not quite. The header ask swaps to "View on GitHub" once you scroll (good). On phone, though, a solid "Try Hanzo" in the header and a solid "View on GitHub" in the hero share the first screen: two solid fills with two different labels. On desktop the header "Try Hanzo" is also solid for the first ~1 s. Scale is flat: every h2 is 26 px, the h1 52 px is the biggest thing, and nothing grows into a moment. The 44 px closing heading is the only change of pace. There is no figure, no big/medium/small rhythm.
-5. No. The hero CTA, pause, token chips, repo pill and Deploy row answer (fill change plus 0.97 to 0.98 press). The platform cards in the grid show no visible hover change (only the cursor), the terminal "Copy" button has no hover, and the "Get started" mock buttons inside every device look clickable but have no hover and no press anywhere on the page. The card opens as a dialog, not into its page, with a 250 ms opacity fade where the inner card is visibly clipped by the phone frame.
-6. Yes, there are faults. The Next.js red "1 Issue" badge shows at both sizes: a hydration mismatch ("server rendered HTML didn't match the client properties"). Inside the grid cards and the dark-room Android frame, the "Hello, Hanzo" card overflows and is clipped by the device's right edge. There is no font swap and no h1 shift. No horizontal scroll at 375 or 320 (scrollWidth equals innerWidth). The cookie card covers the Band lede and CTA at 1470x801 until dismissed.
-7. It feels like apple.com's pinned stage (chapters scrubbing one panel) plus a motion.dev-style props playground in the dark room. The pinned scrub is really there. The props playground is the best thing on the page. Nothing from synchronized.studio: the card opens a modal, not its page.
-8. Not proven from the render. The centred h1, mono lede, solid pill and a device row below is the stock Launch anatomy. The signature (rolling token strip restyling devices) is its own, but it is undercut by repeating the same art everywhere.
-9. Most parts are visible: one h1, a Band, sticky ask, Copy with "Copied" confirmation, a pause control on the moving strip, reduced motion showing the final state (0 running animations), a dialog that closes on Esc. Proof is thin ("License: Apache-2.0", "hanzoai/gui 4 stars"). The red issue badge fails part 17/"It works". The chapter count reads "01 / 06" in the caption but "01 ... 05" on the rail.
-10. No hue, no gradient text, no Inter, no eyebrow above a headline. The tells are plain boxes (thick 6 px black device outlines with white rectangles, a "lazy" look), dead mock buttons, and the floating cookie card sitting over the closing ask.
-11. Yes. parity.py /gui: text 70/70, links 2/2.
+1. **First screen sells, and it moves.** Yes. The h1 cuts in by line, and the black code pill cycles real token values (`p="$4"` to `"$6"`, `bg="$background"` to `"$color2"`). The four device frames under it restyle live to match, all within 1 s with no input. It is a centred stack (h1, mono line, ask, pill, devices), so it reads as a lot at once, but there is one big thing (the h1) and the rest is medium and small.
+2. **One in, one out.** Mostly. Section 2 is a pinned stage. The devices stay put while chapters 01 to 05 scroll past on the right, and the stage answers each one: padding grows, tags appear ("Native", "Atomic CSS"), outlines show YStack/Text/Button, and a counter and progress hairline track it. That is the Apple move and it works. After it, the page turns back into a document: install code, a 4-card rail, then "Get GUI" with an agent prompt, then the close. Two large dead gaps (about 250 px of white below the platform cards, and about 160 px of empty black at the bottom of the shorthands room) make it feel like it stops.
+3. **Real visual in every section.** Yes. Device frames, a live props editor with a preview, a terminal, platform cards with screen UIs, the agent-prompt card. No icon-only sections.
+4. **One ask, nothing floating, scale rhythm.**
+   - **Ask:** one ask in the sticky header. It swaps from "Try Hanzo" to "View on GitHub" once you pass the hero, which is in Hanzo's words. Nothing of the page's own floats over content; the cookie card is shared chrome.
+   - **Scale:** too flat. The h1 is 52 px and every other heading, h2 and h3 alike, is 26 px, up to a 44 px close. Nothing grows while it is the moment; the pinned stage would be the place for it. Small type is used well (mono counters, chips).
+5. **Hover and press.**
+   - **Answers:** the token chips (`$2`, `$color2`, …) restyle the preview at once, which is the best moment on the page. Platform cards open into a sheet with the device enlarged. Copy answers. Pause turns into Play and the cycle stops. The GitHub button changes from black to graphite on hover, not just fading.
+   - **Jumps:** none seen.
+6. **Overlaps, font swap, layout shift.**
+   - **Overlap at 1470:** **FAIL.** The pinned chapter head (`.bz-wrap.gu-ch-head`, 1152 px wide) is laid out at `left: 0` instead of centred in the container. So "Build it once. Ship it everywhere." sits flush against the viewport edge with no gutter (h2 left = 0 px; every other heading starts at 159 px). When the stage un-pins, the phone frames and "Hello, Hanzo" scroll straight through the still-pinned h2 (frame desk-s05).
+   - **Phone:** on one cycle state the demo card turns mid-grey and "Hello, Hanzo" all but disappears on it (frame phone-s00). It is a demo state, but it reads as broken.
+   - **No font swap:** the h1 renders in Zen and the box does not move.
+   - **Hero labels:** under the hero devices, iOS/Android sit about 30 px lower than Web/Desktop, a ragged baseline.
+   - **Overflow:** none at 375 (the platform rail scrolls inside itself). At 320 the only overflow is the shared header's "Try Hanzo".
+   - **Console:** the red "1 Issue" badge in the first walk came from my own screenshot taken before hydration. Re-walked with `caret: 'initial'` and with no early screenshot: zero console errors at both sizes. Not counted.
+7. **Reference.** apple.com: a pinned stage where one panel changes, with the product as the hero. It is genuinely there. The cards open in place as a sheet, not the synchronized.studio card that becomes the next page's hero. There is no count-up or marquee; the ambient motion is the self-running token cycle, which is fine.
+8. **Different from its neighbours.** Yes. A live props demo across four device frames is its own hero medium and signature.
+9. **18 parts.**
+   - **Covered:** strategy (one ask), narrative, conversion (GitHub, Deploy to Cloud), trust (license and stars chips), states (pause), mobile, and reduced motion, which shows the final state with every chapter visible.
+   - **Thin:** the end of the page rhythm (parts 3 and 6), and spacing consistency (part 7: the missing gutter and the dead gaps).
+10. **Banned tells.**
+    - **Overlap at 1470x801:** yes, the pinned h2 against the device frames. That alone fails the page.
+    - **Inconsistent spacing:** the h2 at 0 px against 159 px everywhere else, and the dead gaps.
+    - **Clean:** no hue (the main-content scan found no chroma), no Inter, no eyebrow above a headline, no browser-default controls, no gradient text.
+11. **Copy untouched.** It reads as Hanzo's copy; nothing looks rewritten. The iOS sheet reuses the chapter 01 sentence, which is fine.
 
 ## Fixes, in order
-1. Fix the hydration mismatch so the red "1 Issue" badge is gone at both sizes. Usually this is a client-only value such as a clock "9:41", a random token or a `typeof window` branch rendered on the server. Render the server value and update it in an effect.
-2. Stop repeating the device quad. Keep it as the hero and the pinned chapter object only. Give the dark room a single large device (one web window at about 560 px) that the chips restyle. Give each grid card its own content, not the same card four times: iOS a sheet rising, Android a list, Web a form, Desktop a split pane. The modal should then show that platform's richer screen, not a bigger copy of the thumbnail.
-3. Close the ~400 px blank between the hero and the chapter stage. Pin "Build it once. Ship it everywhere." as the stage's heading, top-left and visible throughout the pin, and start the pin directly under the hero so the hero devices hand off into the stage (40 px overlap per MASTER part 3). Cut the empty space under the closing Band too.
-4. Make the "Get started" and "Hello, Hanzo" mocks answer. On hover the mock button darkens to `#262626` and presses at scale 0.97 (90 ms) on pointerdown. A tap on phone does the same. On a UI-kit page the kit's own button must feel like a button.
-5. Give the grid cards a hover that tells you something: a 2.5° tilt plus the platform's token line ("p $4 · bg $background") sliding up 8 px under the title, on fine pointers only. Add a hover to the terminal "Copy" (border to black 30%, like the repo pill).
-6. Fix the clipping: the "Hello, Hanzo" card must fit inside the iOS and Android frames in the grid, the dark room and the opening dialog. Shrink the inner card's max-width to the screen width minus 16 px, or scale the whole screen contents. During the dialog open, animate transform on the whole frame, not a fading clip.
-7. Phone first screen: one solid fill. While the hero "View on GitHub" is in view, the header "Try Hanzo" must render quiet or outlined, as desktop already does after 1 s. Do it from the first paint on desktop too, not after 1 s.
-8. Give the page rhythm: one moment that grows. For example, the chapter stage's active device scales from 0.9 to 1.0 as its step arrives, or the "4 stars / Apache-2.0" proof becomes one Zen Mono figure at 64 px in the Get GUI section. Leave the other h2s at 26 px.
-9. Desktop hero: lift the device row so the iOS/Android/Web/Desktop labels sit inside 801 px. Tighten the gap between the CTA and the code strip (about 50 px to 27 px) and between the strip and the devices.
-10. Make the chapter counters agree: caption "01 / 06" against rail "01 ... 05". Either the rail runs to 06 (the dark room step) or the caption counts out of 05.
-11. Turn the closing Band's "Deploy to Cloud" row and the Band into one composed end. The lone hairline row floating 150 px under the CTA reads as leftover. Put it as the text secondary beside "View on GitHub".
+1. **Centre the pinned chapter head.** Put `.gu-ch-head` inside the 1152 px container with `margin-inline: auto` and the gutter, so its left edge lines up at 159 px like every other heading. The cause is likely sticky or fixed positioning with `left: 0`, or the wrapper's auto margins being lost.
+2. **Stop the un-pin collision.** Release the pinned h2 at the same scroll point as the device stage, or fade or clip it before the frames reach it. Nothing may pass under it at 1470x801.
+3. **Fix the unreadable phone demo state.** On the `$accent`/grey state, either keep the demo card light or invert its text to white, so "Hello, Hanzo" stays legible at every cycle step.
+4. **Close the dead gaps.**
+   - Below the platform rail (about 250 px of white): cut to one section pad.
+   - At the bottom of the shorthands black room (about 160 px of empty black): end the room after the editor.
+5. **Give scale some rhythm.** Let the active chapter title or the stage counter grow while it is the moment, then settle back to 26 px. As it is, everything after the h1 rests at exactly 26 px.
+6. **Align the hero device labels.** iOS/Android and Web/Desktop captions should sit on one baseline (bottom-align the frames, or give the captions a shared row).
+7. **Optional, to reach 8.** Make the platform card open into its page (the synchronized.studio card-to-hero) rather than a centred sheet, or add one more non-scroll moment after the pinned stage, so the second half isn't a document.
