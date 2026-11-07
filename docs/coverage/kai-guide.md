@@ -34,5 +34,5 @@
   - curl, Python and TypeScript tabs, each with Copy equal to the displayed code.
   - The limits checker shows the 200 or 422 a request would get, and its input price.
   - The Jev migration is a single diff.
-- **2.17 States and resilience:** JS-off shows the complete request and response shape, all tab code (hidden panels in HTML), all limits and the diff in its final state. The checker has its 200, extrapolated and 422 states. No page-specific error boundary.
+- **2.17 States and resilience:** JS-off was checked with a `javaScriptEnabled:false` screenshot at 1470×801: the h1 is visible (a `<noscript>` style inside the h1 lifts the line masks, shows the checker's verdict figure and hides Replay), and the benchmark bars render full because they only hide once the script arms them. JS-off shows the complete request and response shape, all tab code (hidden panels in HTML), all limits and the diff in its final state. The checker has its 200, extrapolated and 422 states. No page-specific error boundary.
 - **2.18 Measurement and handover:** Gap: no analytics events wired (no `data-cta`, no `install_copy` or `api_key_created` hook on the Copy buttons or the ask). Proof film and phone stills are in `docs/gallery/kai/guide/`, and the `V2:` line is in the file header.

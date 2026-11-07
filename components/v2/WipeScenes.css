@@ -1,0 +1,17 @@
+/* WipeScenes (owner: Cloud 2 chat). See WipeScenes.jsx. */
+.ws { position: relative; height: calc(var(--n) * 100svh); }
+.ws-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.ws-layer { position: absolute; inset: 0; }
+.ws-clip, .ws-in { height: 100%; }
+@media (max-width: 900px) {
+  .ws { height: auto; }
+  .ws-stage { position: static; height: auto; overflow: visible; }
+  .ws-layer { position: relative; }
+  .ws-clip { clip-path: none !important; }
+  .ws-in { transform: none !important; }
+}
+.ws-calm { height: auto; }
+.ws-calm .ws-stage { position: static; height: auto; overflow: visible; }
+.ws-calm .ws-layer { position: relative; }
+.ws-calm .ws-clip { clip-path: none !important; }
+.ws-calm .ws-in { transform: none !important; }

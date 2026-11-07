@@ -1,3 +1,5 @@
+// Signature: the timeline scrub: one pinned scene where your scroll rolls a giant year like an odometer and each year's story comes in as the last goes out
+// Beyond: your year: type the year you started and a split-flap board turns to what Hanzo was building then, with its posts
 import History from '../../components/pages/History';
 import JsonLd from '../../components/JsonLd';
 

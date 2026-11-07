@@ -5,15 +5,18 @@
      and every new page starting at its top.
    - Progress, Header, Footer: the scroll bar and Hanzo's own header and footer. Mark a dark section with
      data-room="dark" and the header turns dark over it.
-   - Marquee: <Marquee items={[{ name, src, href }]} label="Trusted by" reverse /> an endless logo strip. */
+   - Marquee: <Marquee items={[{ name, src, href }]} label="Trusted by" reverse /> an endless logo strip (it stands still
+     under reduced motion and rests under the pointer or focus).
+   - After every in-site navigation, focus moves to the new page's <main> h1 (tabindex -1, no ring, no scroll). */
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
-import { motion, MotionConfig, useAnimationFrame, useInView, useMotionValue, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
+import { motion, MotionConfig, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
 import { animate, scroll } from 'motion';
 import C from '../content';
 import Nav from './Nav';
 import HeaderTools from './HeaderTools';
+import { onDomChange } from '../lib/domwatch';
 
 /* Smooth, weighted scrolling (Lenis) and one motion policy for the whole page. */
 export function Smooth({ children }) {
@@ -28,8 +31,8 @@ export function Smooth({ children }) {
     const io = new IntersectionObserver((es) => es.forEach((e) => e.target.toggleAttribute('data-off', !e.isIntersecting)), { rootMargin: '10% 0px' });
     const watch = () => document.querySelectorAll('main > section, main > div > section').forEach((s) => io.observe(s));
     watch();
-    const t = setInterval(watch, 1500);
-    return () => { io.disconnect(); clearInterval(t); };
+    const off = onDomChange(watch); // new pages bring new sections; observing twice is harmless
+    return () => { io.disconnect(); off(); };
   }, []);
   // a new page starts at its top (the open and close transitions place the scroll themselves)
   const path = usePathname();
@@ -37,7 +40,21 @@ export function Smooth({ children }) {
   useEffect(() => {
     if (first.current) { first.current = false; return; }
     if (window.__hzHold) return; // a close transition is restoring the previous scroll
+    if (window.__hzPop) { window.__hzPop = false; return; } // Back/Forward: the browser restores where you were
     window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0);
+    // focus moves to the new page's h1 (screen readers hear where they are; the next Tab starts in the page), unless
+    // something on the page already took focus
+    let n = 0;
+    const land = () => {
+      const a = document.activeElement;
+      if (a && a !== document.body && !a.closest('header, nav, .x-ask') && a.isConnected) return;
+      const h = document.querySelector('main h1');
+      if (!h) { if (n++ < 30) setTimeout(land, 100); return; }
+      if (!h.hasAttribute('tabindex')) h.setAttribute('tabindex', '-1');
+      h.focus({ preventScroll: true });
+    };
+    const t = setTimeout(land, 120);
+    return () => clearTimeout(t);
   }, [path]);
   // reduced motion: Motion skips transform and layout animations for people who ask for less movement (DESIGN rule 6).
   // It decides when each element mounts, after hydration, so the server HTML and the first client render still match.
@@ -67,10 +84,8 @@ export function Header() {
     }, { rootMargin: '-30px 0px -99% 0px' });
     const watch = () => document.querySelectorAll('[data-room=dark]').forEach((r) => io.observe(r));
     watch();
-    const mo = new MutationObserver(watch);
-    mo.observe(document.body, { childList: true, subtree: false });
-    const t = setInterval(watch, 1500); // new pages bring new rooms; observing twice is harmless
-    return () => { removeEventListener('scroll', on); io.disconnect(); mo.disconnect(); clearInterval(t); };
+    const off = onDomChange(watch); // new pages bring new rooms; observing twice is harmless
+    return () => { removeEventListener('scroll', on); io.disconnect(); off(); };
   }, []);
   return (
     <>
@@ -109,9 +124,10 @@ export function Marquee({ items, label, reverse = false }) {
   const [rest, setRest] = useState(false);
   const box = useRef(null);
   const seen = useInView(box);
+  const calm = useReducedMotion(); // reduced motion: the strip stands still (WCAG 2.2.2)
   const x = useTransform(base, (b) => `${wrap(-50, 0, b)}%`);
   useAnimationFrame((_, delta) => {
-    if (rest || !seen) return;
+    if (rest || !seen || calm) return;
     let by = dir.current * -1.6 * (delta / 1000);
     const f = factor.get();
     if (f < 0) dir.current = reverse ? 1 : -1;
@@ -123,7 +139,7 @@ export function Marquee({ items, label, reverse = false }) {
   const row = (k) => items.map((l) => {
     const hidden = k > 0;
     return (
-      <a key={k + l.name} href={l.href} className="x-logo" aria-hidden={hidden || undefined} tabIndex={hidden ? -1 : undefined} title={l.name}>
+      <a key={k + l.name} href={l.href} className="x-logo" aria-hidden={hidden || undefined} tabIndex={hidden ? -1 : undefined} inert={hidden || undefined} title={l.name}>
         <img src={l.src} alt={hidden ? '' : l.name} loading="lazy" />
       </a>
     );

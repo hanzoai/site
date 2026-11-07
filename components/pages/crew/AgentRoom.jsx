@@ -26,6 +26,10 @@ import './AgentRoom.css';
 
 const ASSET = (p) => p; // Hanzo's own pictures, by their own paths (live dev fetches files this repo lacks from hanzo.ai)
 const INK = { type: 'spring', stiffness: 300, damping: 30 };
+/* JavaScript off: show what starts hidden for its entrance (line masks, ledes, code lines, the hub's name) and unpin the stage */
+const NOJS = '.xag .x-line-in,.xag-lede,.xag-ln,.xag-hub b,.xag-hub span,.xag-shot{transform:none!important;opacity:1!important}'
+  + '@media (min-width:901px){.xag-stage{height:auto!important}.xag-pin{position:relative!important;height:auto!important;display:block!important;overflow:visible!important}'
+  + '.xag-stage-g{padding:150px 0 96px!important;row-gap:80px!important}.xag-one{grid-row:1!important}.xag-two{grid-row:2!important;opacity:1!important;transform:none!important}.xag-obj{grid-row:1/span 2!important;transform:none!important}}';
 const fade = (v, from, to) => Math.min(1, Math.max(0, (v - from) / (to - from))); // 0 at `from`, 1 at `to`
 
 /* client-only facts, read after mount so the server HTML and the first client render agree */
@@ -91,6 +95,7 @@ function Title({ f }) {
   return (
     <>
       <h1 id="xag-h1" className={'xag-h1' + (f.h1.length > 34 ? ' long' : '')} data-morph-target>
+        <noscript><style>{NOJS}</style></noscript>
         <span className="x-line"><motion.span className="x-line-in" initial={{ y: '106%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{f.h1}</motion.span></span>
       </h1>
       {f.label && <p className="xag-meta">{f.label}</p>}

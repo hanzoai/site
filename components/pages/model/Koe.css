@@ -1,4 +1,4 @@
-/* Koe (ko-): the booth across the top, the head beneath it */
+/* Koe (ko-): the capsule left of the headline, then the booth */
 .ko-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 14px 18px; }
 .ko-top .mb-mono { margin: 0 auto 0 0; }
 .ko-tc { margin: 0; font: 500 16px var(--mono); color: #f5f5f7; }
@@ -15,8 +15,9 @@
 .ko-word span[data-s='done'], .ko-word span[data-s='on'] { color: #f5f5f7; }
 .ko-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 22px 20px; }
 .ko-presets .mb-mono { margin: 0; }
-.ko-head { margin-top: clamp(56px, 7vw, 96px); }
+.ko-v2 { left: auto; right: max(24px, calc((100% - var(--wrap)) / 2)); width: min(50%, 620px); }
 @media (max-width: 900px) {
+  .ko-v2 { left: 20px; right: 20px; width: auto; }
   .ko-wave { height: 160px; margin: 0 12px; }
   .ko-top { padding: 12px 14px; }
   .ko-script { padding: 20px 14px 6px; }

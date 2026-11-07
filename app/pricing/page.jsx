@@ -1,3 +1,5 @@
+// Signature: rolling prices: every price is an odometer, and the Pro card walks its own ladder until you take over
+// Beyond: the compare sheet: every personal plan's own lines side by side with what each inherits, opened out of the card you clicked
 import Pricing from '../../components/pages/Pricing';
 import JsonLd from '../../components/JsonLd';
 

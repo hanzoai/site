@@ -76,6 +76,7 @@ function Stage() {
           <video ref={film} className="zc-film" src="/models/zen.webm" poster="/models/zen.webp" muted loop playsInline preload="metadata" aria-hidden="true" />
           <div className="zc-frame-in">
             <h1 id="zc-h" className="zc-h1">
+              <noscript><style>{'.zc-h1 .x-line-in,.zc-cell{transform:none!important;opacity:1!important}'}</style></noscript>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>Zen Models</motion.span></span>
               <span className="x-line zc-h1-2"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.22 }}>Complete API Catalog</motion.span></span>
             </h1>

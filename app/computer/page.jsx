@@ -1,4 +1,4 @@
-// Signature: A virtual desktop with an agent cursor working software that has no API, playing pixels, OCR, Set-of-Mark and voice
+// Signature: A black stage where a virtual desktop settles in under the headline and an agent cursor works software with no API, the desktop switching between reading pixels, OCR boxes, Set-of-Mark labels, voice and running as you
 // Beyond: A pre-flight checklist built only from Hanzo's own warnings: a fresh account or VM, the two macOS permissions, page-text redirects
 import ComputerPage from '../../components/pages/ComputerPage';
 import JsonLd from '../../components/JsonLd';
