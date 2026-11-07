@@ -4,6 +4,8 @@ Reviewed: main, page files at `6d77b65`. Members walked: `/customers/damon-motor
 
 **Not verified:** Hanzo's own campaign pictures. They are fetched from hanzo.ai, which this cloud machine cannot reach, so every picture frame showed its fallback (a grey plate with Hanzo's caption) and the hero showed only its contour. Judge the imagery on localhost before signing off.
 
+Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page.
+
 Verdict: 6/10
 
 First complaint: "The numbers spin through figures that aren't ours. I saw '963,741 users' and '$3.74' flash up before it landed on 150,000 and $1.50. Every number on the page has to be Hanzo's."
@@ -14,7 +16,7 @@ First complaint: "The numbers spin through figures that aren't ours. I saw '963,
 3. **A real object in every section?** By design yes (campaign frames per chapter, a media wall). Unverified here because the pictures did not load.
 4. **One ask, sticky after the hero?** Yes: a floating pill carries "The original case study (PDF)" after the hero on both sizes, and the header's "Try Hanzo" turns outlined. It is Hanzo's own link, but it sends a buyer to a PDF rather than to Hanzo; that is James's call.
 5. **Every hover and press answers?** Yes on the controls tested ("← Customers", the PDF link): both hover and press.
-6. **Overlap, font swap, layout shift?** None; layout shift under 0.001. A hydration error fires on load of Damon (both sizes); KANOA is clean.
+6. **Overlap, font swap, layout shift?** None; layout shift under 0.001.
 7. **Which reference, and is its motion there?** apple.com scene changes (chapters wiping over each other) and osply editorial type. Both present.
 8. **Different from its neighbours?** Yes, and each launch has its own contour seed.
 9. **All 18 parts covered?** See below.
@@ -25,12 +27,10 @@ First complaint: "The numbers spin through figures that aren't ours. I saw '963,
 - **2.6 Stat:** the plan's count-up "never rounds" and shows Hanzo's value; here it scrambles through invented values.
 - **2.10 Media:** 14 (Damon) and 7 (KANOA) images without width and height; pictures unverified (see above).
 - **2.9 / 2.12 Reduced motion:** 1 animation still running after 3 s with reduced motion on.
-- **2.13:** hydration error on Damon.
 - **2.4:** 0 `data-cta`.
 
 ## Fixes
 1. Make every figure count up from 0 to Hanzo's value (or not count at all); never pass through other numbers, and never overshoot.
 2. Give every image its width and height (or aspect ratio) so frames cannot jump when the pictures arrive.
 3. Stop the contour (and any loop) under reduced motion.
-4. Fix the hydration mismatch on Damon.
-5. Check on localhost that each launch's own picture fills the first screen; if it does not, the dark hero with only a contour is too empty and needs the plate in view.
+4. Check on localhost that each launch's own picture fills the first screen; if it does not, the dark hero with only a contour is too empty and needs the plate in view.
