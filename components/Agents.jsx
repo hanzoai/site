@@ -64,8 +64,10 @@ function Steps({ open }) {
     if (calm || !open) { el.textContent = full; return; }
     let i = 0;
     el.textContent = '';
-    const t = setInterval(() => { i++; el.textContent = full.slice(0, i); if (i >= full.length) clearInterval(t); }, 24);
-    return () => clearInterval(t);
+    let t = 0;
+    const step = () => { i++; el.textContent = full.slice(0, i); if (i < full.length) t = setTimeout(step, 24); };
+    t = setTimeout(step, 24);
+    return () => clearTimeout(t);
   }, [on, calm, open]);
   useEffect(() => {
     if (mine || !seen || calm || !open) return;
