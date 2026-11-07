@@ -327,6 +327,22 @@ function Reports() {
   const ask = REPORTS.flatMap((r, i) => r.ask.map((t) => [t, i]));
   const open = (k, i) => { setQ(k); grid.current?.querySelectorAll('.kno-card')[i]?.click(); };
   const [en, on] = useEnter(0.12);
+  // idle: while the cards are seen and nobody points at them, each one plays its picture in turn, one round, then rests
+  const seen = useInView(grid, { amount: 0.3 });
+  const calm = useReducedMotion();
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    const cards = grid.current ? [...grid.current.querySelectorAll('.kno-card')] : [];
+    if (!seen || held || calm || !cards.length) return;
+    let k = 0, t;
+    const step = () => {
+      cards.forEach((c, j) => c.classList.toggle('an-walk', j === k));
+      k += 1;
+      t = setTimeout(k <= cards.length ? step : () => cards.forEach((c) => c.classList.remove('an-walk')), 2400);
+    };
+    t = setTimeout(step, 500);
+    return () => { clearTimeout(t); cards.forEach((c) => c.classList.remove('an-walk')); };
+  }, [seen, held, calm]);
   return (
     <section ref={en} data-en={on} className="kn-sec an-rep en-focus">
       <div className="kn-wrap">
@@ -347,7 +363,7 @@ function Reports() {
             <p className="kn-kick">Ask it as a question</p>
           </div>
         </div>
-        <div ref={grid} className="an-rep-grid">
+        <div ref={grid} className="an-rep-grid" onPointerEnter={() => setHeld(true)} onFocus={() => setHeld(true)}>
           <KeynoteOpen
             cols={3}
             items={REPORTS.map((r, i) => {
@@ -366,15 +382,15 @@ function Reports() {
 /* progress for a chapter picture: the scroll through it on desktop (p); on phones it builds once when seen */
 function useBuild(p, on) {
   const calm = useReducedMotion();
-  const own = useMotionValue(calm ? 1 : 0);
-  const full = useMotionValue(1);
+  // the first render matches the server's (empty) picture; reduced motion completes it right after, never by scroll
+  const own = useMotionValue(0);
   useEffect(() => {
-    if (p || calm || !on) return;
+    if (calm) { own.set(1); return; }
+    if (p || !on) return;
     const c = animate(own, 1, { duration: 1.4, ease: EASE });
     return () => c.stop();
   }, [p, on, calm, own]);
-  if (calm) return full;
-  return p || own;
+  return calm ? own : p || own;
 }
 /* map the build onto a sub-range so the picture is complete well before the chapter ends */
 function useSpan(src, a, b) {

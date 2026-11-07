@@ -9,7 +9,7 @@
 .an .x-codeblock-h { color: #a3a3a3; font-size: 13px; border-bottom-color: rgba(255, 255, 255, .1); }
 .an .x-codeblock .x-copy { background: transparent; border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .78); height: 44px; min-width: 44px; justify-content: center; }
 .an .x-codeblock-l.c, .an .x-codeblock-p { color: rgba(255, 255, 255, .55); }
-@media (hover: hover) { .an .x-codeblock .x-copy:hover { border-color: rgba(255, 255, 255, .55); color: #fafafa; box-shadow: none; } }
+@media (hover: hover), (pointer: none) { .an .x-codeblock .x-copy:hover { border-color: rgba(255, 255, 255, .55); color: #fafafa; box-shadow: none; } }
 
 /* ---------- motion map (7 Nov): the shared reveals stand still on this page ----------
    The line-mask cut-in on the h1 and on "Get Analytics", the Stage's fade-rise and its scroll-scrubbed settle are
@@ -50,7 +50,7 @@
 .an-fb-row { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 6px 10px 6px 8px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: inherit; cursor: pointer; text-align: left; transition: background-color .2s var(--e-out), border-color .2s var(--e-out); }
 .an-fb-row .an-fb-ref { margin-left: auto; }
 .an-fb-dot { position: relative; flex: none; width: 6px; height: 6px; border-radius: 50%; background: #525252; transition: background-color .2s var(--e-out), transform .2s var(--e-out); }
-@media (hover: hover) { .an-fb-row:hover { background: rgba(255, 255, 255, .06); } }
+@media (hover: hover), (pointer: none) { .an-fb-row:hover { background: rgba(255, 255, 255, .06); } }
 .an-fb-row.held { border-color: rgba(255, 255, 255, .55); }
 .an-fb-row.held .an-fb-dot { background: #fafafa; transform: scale(1.4); }
 .an-fb-row[aria-pressed='true'] { background: rgba(255, 255, 255, .1); }
@@ -63,7 +63,7 @@
 .an .x-arrow { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; }
 .an .x-arrow > span { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; padding-bottom: 2px; transition: background-size .3s var(--e-move); }
 .an .x-arrow > svg { transition: transform .3s var(--e-move); }
-@media (hover: hover) {
+@media (hover: hover), (pointer: none) {
   .an .x-arrow:hover > span { background-size: 100% 1px; text-decoration: none; }
   .an .x-arrow:hover > svg { transform: translateX(5px); }
 }
@@ -95,7 +95,7 @@
 .an-bar-k { margin: 0 6px 0 auto; text-align: right; }
 .an-live-btn { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: border-color .2s var(--e-out), background-color .2s var(--e-out), transform .1s var(--e-out); position: relative; }
 .an-live-btn::before { content: ''; position: absolute; inset: -4px; }
-@media (hover: hover) { .an-live-btn:hover { border-color: var(--ink); background: #f5f5f5; } }
+@media (hover: hover), (pointer: none) { .an-live-btn:hover { border-color: var(--ink); background: #f5f5f5; } }
 .an-live-btn:active { transform: scale(.94); }
 .an-live-btn[aria-pressed='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
 .an-live-btn:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
@@ -254,7 +254,7 @@
 .an-ask-q { display: flex; flex-wrap: wrap; gap: 8px; }
 .an-ask-q button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 400 16px/1.3 var(--sans); text-align: left; cursor: pointer; transition: border-color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
 .an-ask-q button svg { flex: none; color: var(--faint); transition: transform .3s var(--e-move), color .15s var(--e-out); }
-@media (hover: hover) {
+@media (hover: hover), (pointer: none) {
   .an-ask-q button:hover { border-color: var(--ink); background: #f5f5f5; }
   .an-ask-q button:hover svg { transform: translateX(4px); color: var(--ink); }
 }
@@ -271,7 +271,7 @@
 .an-rep-grid .kno-card .kno-art { aspect-ratio: auto; height: clamp(220px, 20vw, 300px); }
 /* a card answers the pointer: it lifts, its hairline turns ink, and its little picture starts playing */
 .an-rep-grid .kno-card { transition: border-color .2s var(--e-out), translate .3s var(--e-move), scale .15s var(--e-out); }
-@media (hover: hover) {
+@media (hover: hover), (pointer: none) {
   .an-rep-grid .kno-card:hover { border-color: var(--ink); translate: 0 -4px; }
   .an-rep-grid .kno-card:hover .kno-plus { transform: rotate(90deg); }
   .kno-card:hover .an-art-rt p, .kno-card:hover .an-art-e p { animation: an-wipe .4s var(--e-in) both; animation-delay: calc(var(--an-i) * 60ms); }
@@ -281,6 +281,13 @@
   .kno-card:hover .an-art-f i { animation: an-fbar .5s var(--e-in) both; animation-delay: calc(var(--an-i) * 60ms); }
   .kno-card:hover .an-a-bar span { animation: an-grow .5s var(--e-in) both; animation-delay: calc(var(--an-i) * 60ms); }
 }
+/* the idle walk plays the same pictures, one card at a time, with the hairline in ink (no lift) */
+.an-rep-grid .kno-card.an-walk { border-color: var(--ink); }
+.kno-card.an-walk .an-art-rt p, .kno-card.an-walk .an-art-e p { animation: an-wipe .4s var(--e-in) both; animation-delay: calc(var(--an-i) * 60ms); }
+.kno-card.an-walk .an-j-hot { animation: an-path 1s var(--e-in) both; }
+.kno-card.an-walk .an-art-j circle.hot { animation: an-pop .4s var(--e-in) .8s both; }
+.kno-card.an-walk .an-art-f i { animation: an-fbar .5s var(--e-in) both; animation-delay: calc(var(--an-i) * 60ms); }
+.kno-card.an-walk .an-a-bar span { animation: an-grow .5s var(--e-in) both; animation-delay: calc(var(--an-i) * 60ms); }
 @keyframes an-pop { from { transform: scale(0); } }
 .an-art-j circle.hot { transform-box: fill-box; transform-origin: 50% 50%; }
 
@@ -330,6 +337,8 @@
 .an-ch-head .kn-headline { grid-column: 1 / span 6; }
 .an-ch-r { grid-column: 8 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 17px; }
 .an-more { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font: 497 16px/1.2 var(--sans); color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: transform 90ms var(--e-out); }
+.an-more { padding: 0 10px; margin: 0 -10px; border-radius: 10px; transition: transform 90ms var(--e-out), background-color .15s var(--e-out); }
+@media (hover: hover), (pointer: none) { .an-more:hover { background: #f5f5f5; text-decoration-thickness: 2px; } }
 .an-more:active { transform: translateY(1px); }
 
 .an-sc { position: relative; height: 100%; display: flex; flex-direction: column; gap: 24px; padding: clamp(24px, 3vw, 44px); }
@@ -433,7 +442,7 @@
 /* a demo control, not an ask: an outline that gains a tick when applied (status by shape, the width never moves) */
 .an-apply { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px 0 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .3); background: transparent; color: #fafafa; font: 497 16px/1 var(--sans); cursor: pointer; transition: border-color .15s var(--e-out), transform .15s var(--e-out); }
 .an-apply svg { flex: none; transform: scale(0); transition: transform .3s var(--e-in); }
-@media (hover: hover) { .an-apply:hover { border-color: rgba(255, 255, 255, .55); } }
+@media (hover: hover), (pointer: none) { .an-apply:hover { border-color: rgba(255, 255, 255, .55); } }
 .an-apply:active { transform: scale(.97); transition-duration: 90ms; }
 .an-apply.done { border-color: #fafafa; }
 .an-apply.done svg { transform: none; }
@@ -451,7 +460,7 @@
 .an-disc { margin-top: -8px; padding-top: 17px; border-top: 1px solid var(--line); }
 .an-disc .kfs-open { min-height: 44px; padding: 0; border: 0; border-radius: 0; background: none; gap: 10px; font-size: 16px; }
 .an-disc .kfs-open svg { width: 22px; height: 22px; padding: 4px; border-radius: 50%; border: 1px solid var(--line); box-sizing: border-box; transition: transform .35s var(--e-move), background-color .15s var(--e-out), color .15s var(--e-out), border-color .15s var(--e-out); }
-@media (hover: hover) {
+@media (hover: hover), (pointer: none) {
   .an-disc .kfs-open:hover { background: none; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
   .an-disc .kfs-open:hover svg { background: var(--ink); border-color: var(--ink); color: #fff; }
 }
@@ -487,7 +496,7 @@
 .an-spec .kfs-h { margin-bottom: clamp(32px, 4vw, 56px); }
 /* rows keep to the gutter: the hover fill sits inside the row box, the words inset 16px within it */
 .an-spec .kfs-row { padding: 28px 16px; transition: background-color .2s var(--e-out); }
-@media (hover: hover) { .an-spec .kfs-row:hover { background: #fafafa; } }
+@media (hover: hover), (pointer: none) { .an-spec .kfs-row:hover { background: #fafafa; } }
 .an-spec .kfs-row dd { min-width: 0; }
 /* the features, drawn as the settings panel they would be: each one a switch that turns on when the panel is seen */
 .kfs-row dd ul.an-feats { width: min(100%, 640px); gap: 0; padding: 8px; border: 1px solid var(--line); border-radius: 20px; background: #fff; }
@@ -502,14 +511,14 @@
 .an-feats[data-touched] .an-sw, .an-feats[data-touched] .an-sw::after { transition-delay: 0s; }
 .an-feats li { position: relative; }
 .an-feats li + li::before { content: ''; position: absolute; left: 16px; right: 16px; top: 0; height: 1px; background: var(--line); transition: opacity .2s var(--e-out); }
-@media (hover: hover) { .an-feats button:hover { background: #f5f5f5; } .an-feats li:hover::before, .an-feats li:hover + li::before { opacity: 0; } }
+@media (hover: hover), (pointer: none) { .an-feats button:hover { background: #f5f5f5; } .an-feats li:hover::before, .an-feats li:hover + li::before { opacity: 0; } }
 .an-sw { position: relative; flex: none; width: 40px; height: 24px; border-radius: 999px; background: var(--ink); transition: background-color .3s var(--e-out); transition-delay: calc(.2s + var(--an-i) * 70ms); }
 .an-sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transform: translateX(16px); transition: transform .35s var(--e-in); transition-delay: calc(.2s + var(--an-i) * 70ms); }
 .js .an-feats:not([data-in]) .an-sw { background: #d4d4d4; }
 .js .an-feats:not([data-in]) .an-sw::after { transform: none; }
 /* the audit: a report, as a document card */
 .an-doc { display: flex; align-items: center; gap: 20px; padding: 16px 24px 16px 16px; border-radius: 16px; background: #f5f5f5; transition: transform .3s var(--e-move); }
-@media (hover: hover) { .an-spec .kfs-row:hover .an-doc { transform: translateY(-3px); } .an-spec .kfs-row:hover .an-doc-pg { transform: rotate(-3deg); } }
+@media (hover: hover), (pointer: none) { .an-spec .kfs-row:hover .an-doc { transform: translateY(-3px); } .an-spec .kfs-row:hover .an-doc-pg { transform: rotate(-3deg); } }
 .an-doc-pg { flex: none; width: 64px; height: 80px; padding: 10px 10px 0; border-radius: 6px 14px 6px 6px; background: #fff; border: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; color: var(--ink); transition: transform .3s var(--e-move); }
 .an-doc-pg svg { margin-bottom: 2px; }
 .an-doc-pg span { display: block; height: 3px; border-radius: 2px; background: #d4d4d4; }
@@ -537,7 +546,7 @@
 .an-repo-g i[data-l='2'] { background: #525252; }
 .an-repo-g i[data-l='3'] { background: var(--ink); }
 .js .an-repo-g:not([data-in]) i { background: #ededed; }
-@media (hover: hover) {
+@media (hover: hover), (pointer: none) {
   .an-repo:hover { translate: 0 -4px; border-color: var(--ink); }
   .an-repo:hover .an-repo-h svg:last-child { background: var(--ink); border-color: var(--ink); color: #fff; transform: rotate(-45deg); }
 }
@@ -550,7 +559,7 @@
 .an-r b { font-size: 21px; font-weight: 497; letter-spacing: -.015em; transition: transform .3s var(--e-move); }
 .an-r span { grid-row: 2; font-size: 16px; color: var(--soft); transition: transform .3s var(--e-move); }
 .an-r svg { grid-column: 2; grid-row: 1 / span 2; align-self: center; width: 44px; height: 44px; padding: 13px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); transition: transform .3s var(--e-move), background-color .15s var(--e-out), color .15s var(--e-out), border-color .15s var(--e-out); }
-@media (hover: hover) {
+@media (hover: hover), (pointer: none) {
   .an-r:hover b, .an-r:hover span { transform: translateX(8px); }
   .an-r:hover svg { background: var(--ink); border-color: var(--ink); color: #fff; transform: rotate(-45deg); }
 }
