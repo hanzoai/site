@@ -1,6 +1,7 @@
-/* Playground v2 (Cloud 3). Grey only (JAMES 7): the UI is ink, greys and white; the only colour on the page is Hanzo's
-   own model media inside the window (Iro, Koma, Kai). States read by fill, weight, dash and outline. Hover lives in
-   (hover: hover); press is .98 or 1px. */
+/* Playground v2 (Cloud 3). Grey only (JAMES 7): the UI is ink, greys and white; colour comes only through Hanzo's own
+   model media. Motion map (7 Nov): signature drag-canvas; the five sections enter by glitch-in (hero), tile-flip (the
+   canvas), cover-slide (related), scramble (the dark room) and swing-door (the close). Entrances key off
+   [data-enter=armed|in] set by components/pages/playground/enter.js, so JS off and reduced motion show the final state. */
 
 /* the header's "Try Hanzo" stays solid on this page (SYSTEM.md 5): nothing here outlines it */
 
@@ -15,8 +16,21 @@
 /* the hero stage: arrives once from first paint (CSS, so server and client agree), radius 24, a hairline drawn above
    the window's own fills so its right and bottom edges show against the page */
 .pg-stage { position: relative; }
-.pg-stage-in { transform-origin: 50% 0; animation: pg-arrive .9s cubic-bezier(.16, 1, .3, 1) .15s both; }
-@keyframes pg-arrive { from { transform: translateY(24px) scale(1.04); } }
+.pg-stage-in { transform-origin: 50% 0; }
+/* entrance 1, glitch-in: the hero tears in horizontal slices, flashes inverted twice, then holds still (CSS from first
+   paint, so it needs no JS and always ends on the final frame) */
+.pg-hero-grid { animation: pg-glitch .72s steps(1, end) .12s both; }
+@keyframes pg-glitch {
+  0% { clip-path: inset(0 0 100% 0); }
+  8% { clip-path: inset(12% 0 58% 0); transform: translateX(-14px); filter: invert(1); }
+  16% { clip-path: inset(46% 0 18% 0); transform: translateX(11px); filter: none; }
+  24% { clip-path: inset(0 0 72% 0); transform: translateX(-7px) skewX(-6deg); }
+  32% { clip-path: inset(62% 0 0 0); transform: translateX(9px); filter: invert(1); }
+  40% { clip-path: inset(0 0 30% 0); transform: translateX(-4px); filter: none; }
+  52% { clip-path: inset(20% 0 0 0); transform: translateX(3px) skewX(3deg); }
+  64% { clip-path: inset(0); transform: translateX(-2px); }
+  76%, 100% { clip-path: none; transform: none; filter: none; }
+}
 .pg-win { position: relative; background: #fff; border-radius: 24px; overflow: hidden; isolation: isolate; }
 .pg-win::after { content: ''; position: absolute; inset: 0; z-index: 5; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); pointer-events: none; }
 .pg-bar { display: flex; align-items: center; gap: 7px; height: 56px; padding: 0 8px 0 18px; border-bottom: 1px solid var(--line); background: #fafafa; }
@@ -98,46 +112,89 @@
 .pg-box { position: absolute; border: 2px solid #fff; border-radius: 8px; box-shadow: 0 0 0 999px rgba(0, 0, 0, .3); }
 .pg-box span { position: absolute; left: -2px; top: -30px; padding: 6px 9px; border-radius: 6px; background: #fff; color: var(--ink); font: 500 13px/1 var(--mono); }
 
-/* the first request: JS off it is an ordinary section, both panes in order; JS on it pins and scrubs */
-.pg-first { position: relative; background: var(--card); padding: clamp(96px, 10vw, 160px) 0; }
-.pg-first[data-live] { height: 240svh; padding: 0; }
-.pg-first[data-live] .pg-first-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; }
-.pg-first-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 5vw, 96px); align-items: start; padding-top: 60px; }
-.pg-first-h { margin: 0; font-size: 26px; }
-.pg-anat { margin: 32px 0 0; font-size: clamp(32px, 3vw, 44px); line-height: 1.12; letter-spacing: -.03em; font-weight: 497; color: #737373; text-wrap: balance; }
+/* the signature, drag to explore: an endless dotted board the visitor pans (pointer: both ways; finger: sideways, so
+   the page still scrolls), throws with inertia, or steers with the arrow keys; parts wrap around it */
+.pg-ex { position: relative; background: var(--card); padding: clamp(72px, 8vw, 120px) 0 clamp(96px, 10vw, 150px); }
+.pg-ex-head { margin-bottom: 24px; }
+.pg-ex-h { margin: 0; font-size: 26px; }
+.pg-cv-view { position: relative; height: min(640px, 76svh); border-radius: 24px; overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; background: #fafafa radial-gradient(circle, rgba(0, 0, 0, .1) 1px, transparent 1.5px) 0 0 / 24px 24px; box-shadow: inset 0 0 0 1px var(--line); outline: none; }
+.pg-cv-view[data-drag] { cursor: grabbing; }
+.pg-cv-view:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); }
+.pg-cv-item { position: absolute; left: 0; top: 0; will-change: transform; }
+.pg-cv-view img { -webkit-user-drag: none; pointer-events: none; }
+/* the sentence card */
+.pg-say { width: 460px; padding: 28px 30px 32px; border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.pg-anat { margin: 0; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.12; letter-spacing: -.03em; font-weight: 497; color: #737373; text-wrap: balance; }
 .pg-g { white-space: nowrap; }
 .pg-g + .pg-g::before { content: ' '; white-space: normal; }
-/* a lit phrase: ink, heavier, and underlined by a bar that draws in (never a colour) */
-.pg-ph { position: relative; border: 0; padding: 4px 0; margin: -4px 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; cursor: pointer; text-align: left; transition: color .3s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: manipulation; }
+/* a lit phrase: ink and underlined by a bar that draws in (never a colour, never a weight change) */
+.pg-ph { position: relative; border: 0; padding: 4px 0; margin: -4px 0; background: none; font: inherit; letter-spacing: inherit; color: inherit; cursor: pointer; text-align: left; transition: color .3s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: pan-y; }
 .pg-ph::after { content: ''; position: absolute; left: 0; right: 0; bottom: .02em; height: .07em; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
 @media (hover: hover) { .pg-ph:not(.on):hover { color: #404040; } .pg-ph:not(.on):hover::after { transform: scaleX(.35); } }
 .pg-ph:active { transform: translateY(1px); transition-duration: 90ms; }
+.pg-ph:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 6px; }
 .pg-ph.on { color: var(--ink); }
 .pg-ph.on:not(:last-child)::after { transform: scaleX(1); }
 .pg-ph.all, .pg-anat[data-at='3'] { color: var(--ink); }
-.pg-req { background: #fff; border-radius: 28px; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
-.pg-req-bar { display: flex; align-items: center; gap: 7px; height: 60px; padding: 0 10px 0 20px; border-bottom: 1px solid var(--line); }
+/* the two code cards */
+.pg-req { background: #fff; border-radius: 24px; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+.pg-req-curl { width: 640px; }
+.pg-req-py { width: 540px; }
+.pg-req-bar { display: flex; align-items: center; gap: 7px; height: 56px; padding: 0 10px 0 20px; border-bottom: 1px solid var(--line); }
 .pg-req-bar > i { width: 11px; height: 11px; border-radius: 50%; background: #e4e4e7; }
-.pg-req-tabs { display: inline-flex; margin: 0 auto 0 14px; padding: 3px; border-radius: 999px; background: #f2f2f2; }
-.pg-req-tabs button { min-height: 38px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font: 500 14px/1 var(--mono); color: var(--muted); cursor: pointer; touch-action: manipulation; transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
-.pg-req-tabs button:active { transform: scale(.97); transition-duration: 90ms; }
-.pg-req-tabs button.on { background: #fff; color: var(--ink); }
-@media (hover: hover) { .pg-req-tabs button:not(.on):hover { color: var(--ink); background: rgba(0, 0, 0, .05); } }
-.pg-req-panes { position: relative; }
-.pg-req-pane { padding: 22px 28px 30px; }
-.pg-first[data-live] .pg-req-pane { position: absolute; inset: 0 0 auto 0; opacity: 0; transform: translateY(12px); transition: opacity .35s, transform .55s cubic-bezier(.16, 1, .3, 1); }
-.pg-first[data-live] .pg-req-pane[data-on] { position: relative; opacity: 1; transform: none; }
-/* the request is live: a caret blinks after the last line, like the terminal it is pasted into */
+.pg-req-n { margin: 0 auto 0 12px; font: 500 14px/1 var(--mono); color: var(--muted); }
+.pg-req-pane { padding: 20px 26px 26px; }
+/* the request is live: a caret pulses after the last line, like the terminal it is pasted into */
 .pg-caret { display: inline-block; width: .55em; height: 1.1em; margin-left: 2px; vertical-align: -.18em; background: var(--ink); animation: pg-caret .8s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
-.pg-req-pane:not([data-on]) .pg-caret { animation: none; }
 @keyframes pg-caret { to { opacity: .12; } }
 .pg-req-l { margin: 0 0 14px; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.pg-req pre { margin: 0; font: 400 clamp(14px, 1.1vw, 16px)/1.7 var(--mono); color: var(--ink); white-space: pre-wrap; word-break: break-word; }
+.pg-req pre { margin: 0; font: 400 15px/1.7 var(--mono); color: var(--ink); white-space: pre-wrap; word-break: break-word; }
 .pg-ln.c { color: var(--muted); }
 .pg-req mark { background: var(--ink); color: #fff; border-radius: 6px; padding: 1px 3px; margin: 0 -3px; box-decoration-break: clone; animation: pg-mark .5s cubic-bezier(.16, 1, .3, 1); }
 @keyframes pg-mark { from { background: transparent; color: inherit; } }
+/* the eight kinds, each with its own drawing or its model's render */
+.pg-kind { width: 170px; padding: 8px 8px 12px; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
+.pg-kind-art { position: relative; height: 120px; border-radius: 12px; overflow: hidden; background: #f2f2f2; }
+.pg-kind-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pg-kind-mini { position: absolute; left: 0; top: 0; width: 308px; height: 240px; display: grid; place-items: center; transform: scale(.5); transform-origin: 0 0; }
+.pg-kind-n { display: flex; justify-content: space-between; align-items: baseline; margin: 10px 4px 0; font-size: 14px; color: var(--ink); }
+.pg-kind-n b { font: 500 13px/1 var(--mono); color: var(--muted); }
+/* the models: each opens its page */
+.pg-cv-model { display: block; width: 140px; border-radius: 16px; overflow: hidden; background: #171717; color: #fafafa; text-decoration: none; transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.pg-cv-model img { display: block; width: 100%; height: 150px; object-fit: cover; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+.pg-cv-model span { display: block; padding: 10px 12px 12px; font: 500 14px/1 var(--sans); }
+@media (hover: hover) {
+  .pg-kind:hover { box-shadow: inset 0 0 0 1px #a3a3a3; }
+  .pg-cv-model:hover img { transform: scale(1.06); }
+  .pg-cv-view:not([data-drag]) .pg-cv-model:hover span { text-decoration: underline; text-underline-offset: 3px; }
+}
+.pg-cv-model:active { transform: scale(.98); transition-duration: 90ms; }
+/* JS off: the board is an ordinary wrapped list, every part in reading order */
+html:not(.js) .pg-cv-view { height: auto; display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; }
+html:not(.js) .pg-cv-item { position: static; transform: none !important; }
 
-/* the dark room: the agent prompt. Hanzo's words are in the server HTML, so the shared fade-up never hides them */
+/* entrance 2, tile-flip: a grid of brand-tone tiles over the board flips edge-on, corner to corner, to form it */
+.pg-flip { position: absolute; inset: 0; z-index: 3; display: grid; grid-template-columns: repeat(var(--c), 1fr); perspective: 900px; pointer-events: none; }
+.pg-flip i { background: #e4e4e7; box-shadow: inset 0 0 0 1px #fafafa; backface-visibility: hidden; }
+.pg-ex[data-enter='in'] .pg-flip i { animation: pg-flip .62s cubic-bezier(.4, 0, .2, 1) var(--d) both; }
+@keyframes pg-flip { 0% { transform: rotateY(0); } 100% { transform: rotateY(-90deg); visibility: hidden; } }
+
+/* entrance 3, cover-slide: related is a white sheet that rides up over the bottom of the board */
+.pg-cover { position: relative; z-index: 2; margin-top: -88px; background: #fff; border-radius: 28px 28px 0 0; }
+.pg-cover[data-enter='armed'] { transform: translateY(220px); }
+.pg-cover[data-enter='in'] { animation: pg-cover .9s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes pg-cover { from { transform: translateY(220px); } }
+
+/* entrance 5, swing-door: the close swings in on a vertical hinge at its left edge */
+.pg-door { perspective: 1800px; overflow-x: clip; }
+.pg-door > * { transform-origin: 0 50%; }
+.pg-door[data-enter='armed'] > * { transform: rotateY(68deg); opacity: .15; }
+.pg-door[data-enter='in'] > * { animation: pg-door 1.15s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes pg-door { from { transform: rotateY(68deg); opacity: .15; } 60% { opacity: 1; } }
+
+/* the dark room: the agent prompt and the wall. Hanzo's words are in the server HTML; entrance 4 (scramble) decodes
+   them in place as the room arrives */
+.pg-room { background: #000; color: #fafafa; }
 .pg-paste { padding: clamp(160px, 17vw, 260px) 0; }
 .pg .cf-paste { opacity: 1 !important; transform: none !important; }
 .pg .x-copy-t { font-size: 13px; }
@@ -172,7 +229,6 @@
   .pg .pg-acts .lx-cta:hover svg { transform: translateX(4px); }
   .pg .pg-req .x-copy:hover { background: #f5f5f5; }
   .pg .lx-close-repo:hover svg { transform: translateX(2px) rotate(-8deg); }
-  .pg-req-tabs button.on:hover { background: #fafafa; }
 }
 
 /* related: each card's Sigil drifts slowly, so the row is never dead (art drift, well under 140px) */
@@ -204,20 +260,23 @@
   .pg-run { border-left: 0; border-top: 1px solid var(--line); padding: 16px 18px 18px; gap: 12px; }
   .pg-model { padding-bottom: 10px; }
   .pg-meter { grid-template-columns: 1fr 1fr; column-gap: 16px; gap: 10px 16px; }
-  .pg-first[data-live] { height: 340svh; }
-  .pg-first[data-live] .pg-first-stick { align-items: flex-start; }
-  .pg-first-grid { grid-template-columns: minmax(0, 1fr); gap: 22px; padding-top: 76px; }
-  .pg-anat { margin-top: 14px; font-size: 32px; }
+  .pg-ex { padding: 64px 0 120px; }
+  .pg-ex-head { margin-bottom: 16px; }
+  .pg-cv-view { height: 560px; border-radius: 20px; }
+  .pg-say { width: 316px; padding: 20px 20px 22px; }
+  .pg-anat { font-size: 26px; }
   .pg-ph { padding: 5px 0; margin: -5px 0; }
-  .pg-req { border-radius: 24px; }
+  .pg-req-curl { width: 520px; }
+  .pg-req-py { width: 460px; }
   .pg-req-bar { padding-left: 14px; }
-  .pg-req-tabs button { min-height: 44px; }
   .pg-req-pane { padding: 16px 16px 20px; }
   .pg-req pre { font-size: 14px; line-height: 1.6; }
-  .pg-first[data-live] .pg-req-pane:last-child pre { max-height: 190px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 75%, transparent); mask-image: linear-gradient(#000 75%, transparent); }
-  /* the clipped Python client reads itself: the code rolls slowly up through the window and back */
-  .pg-first[data-live] .pg-req-pane:last-child[data-on] pre code { display: block; animation: pg-read 9s cubic-bezier(.4, 0, .2, 1) 1s infinite alternate; }
-  @keyframes pg-read { 0%, 12% { transform: none; } 88%, 100% { transform: translateY(calc(-100% + 150px)); } }
+  .pg-kind { width: 136px; }
+  .pg-kind-art { height: 96px; }
+  .pg-kind-mini { width: 256px; height: 192px; }
+  .pg-cv-model { width: 124px; }
+  .pg-cv-model img { height: 128px; }
+  .pg-cover { margin-top: -64px; border-radius: 24px 24px 0 0; }
   .pg-paste { padding: 120px 0; }
   .pg-paste-grid { grid-template-columns: minmax(0, 1fr); gap: 48px; }
   .pg-wall-pause { top: -54px; }
@@ -231,6 +290,7 @@
   .pg-rel .lx-rel-grid[data-n='3'] > li:not(:first-child) .lx-rel-art { height: 100px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pg-stage-in, .pg-caret, .pg-req-pane pre code, .pg-rel .lx-rel-sigil, .pg-wave i, .pg-mode-t, .pg-head::after, .pg-meter li b, .pg-req mark, .pg-ph::after { animation: none; transition: none; }
-  .pg-tiles { display: none; }
+  .pg-hero-grid, .pg-flip, .pg-caret, .pg-rel .lx-rel-sigil, .pg-wave i, .pg-mode-t, .pg-head::after, .pg-meter li b, .pg-req mark, .pg-ph::after { animation: none; transition: none; }
+  .pg-tiles, .pg-flip { display: none; }
+  .pg-cover, .pg-door > * { transform: none !important; opacity: 1 !important; animation: none !important; }
 }

@@ -530,3 +530,32 @@
 .rk-art.ab { margin-right: 52px; }
 .rk-hero-g > .w2-settle { transform-origin: 100% 0 !important; }
 .rk-vis-i { align-items: flex-start !important; }
+
+/* v5 motion map: signature `decode` + entrances orbit-in, ink-spread, squash-land, velocity-skew, depth-parallax */
+.rk-dc { position: relative; }
+.rk-dc[data-on] > .rk-dc-t { color: transparent; text-decoration-color: transparent; }
+.rk-dc-fx { position: absolute; left: 0; top: 0; right: 0; pointer-events: none; color: inherit; white-space: inherit; }
+span.rk-dc { display: inline-block; }
+.rk-dc-lines .rk-dc-line { display: block; }
+.rk-action-box .rk-dc { display: inline-block; }
+.rk-action b.hot .rk-dc-t { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; }
+.rk-action b.hot { text-decoration: none !important; }
+.rk-ep.rk-dc { display: inline-block; }
+@media (hover: hover) { h2.rk-dc, .rk-dc-line, .rk-ep.rk-dc, .rk-action-box .rk-dc { cursor: default; } }
+/* the three chapters, plain: words beside their object, alternating sides (no pinned stage) */
+.rk-ch-list { display: flex; flex-direction: column; gap: clamp(72px, 9vw, 140px); }
+.rk-ch-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(40px, 6vw, 112px); align-items: center; }
+.rk-ch-row.flip .rk-ch-t { order: 2; }
+.rk-ch-t { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.rk-ch-n { font-size: 13px; letter-spacing: .04em; color: #737373; }
+.rk-ch-b { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.rk-ch-b > p { margin: 0; font-size: 17px; line-height: 1.6; color: #525252; max-width: 46ch; }
+.rk-ch .rk-vis { position: relative; display: block; }
+.rk-ch .rk-vis > .w2-object { width: 100%; }
+.rk.gx .rk-ch.w2-sec { padding-top: clamp(40px, 5vw, 72px) !important; }
+@media (max-width: 899px) {
+  .rk-ch-row, .rk-ch-row.flip { grid-template-columns: minmax(0, 1fr); }
+  .rk-ch-row.flip .rk-ch-t { order: 0; }
+  .rk-ch-b > p { font-size: 16px; }
+}
+.rk-en-orbit, .rk-en-squash, .rk-en-depth { position: relative; }

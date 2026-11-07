@@ -207,9 +207,10 @@ export function Scene({ slug, dark, className = '', children }) {
    Optional, per page (defaults keep every other member as it is): capArt(i, on, base) (each chapter's own picture),
    fitsArt(seen) (replaces the fits picture), map={false} (no studio map), band (a page's own closing band),
    first='tail' (the demo sits between the studio map and the model cards). */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band }) {
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band, renderCaps }) {
   const d = C[slug];
-  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  // renderCaps(d) (opt-in): the model draws its own capabilities section in place of the pinned chapters
+  const caps = renderCaps ? renderCaps(d) : <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
   const tail = first === 'tail';
   return (
     <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>

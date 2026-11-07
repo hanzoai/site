@@ -40,28 +40,35 @@
 .xpe-icon.dk { background: transparent; border-color: rgba(255, 255, 255, .3); color: #fafafa; }
 @media (hover: hover) { .xpe-icon:not(.dk):hover { background: var(--xi); border-color: var(--xi); color: #fff; } .xpe-icon.dk:hover { background: rgba(255, 255, 255, .1); color: #fff; } }
 
-/* the one fade-up: the lede and asks rise once after the h1 starts (CSS; plays with JS off, waits behind the curtain) */
-@keyframes xpe-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-.xpe-in { animation: xpe-up .8s cubic-bezier(.16, 1, .3, 1) .95s both; }
-html.x-arriving .xpe-in { animation-play-state: paused; }
-
-/* 1. the hero and the kit, one pinned stage: the stack beside the headline fans out into the three plates */
-.xpe-hk { position: relative; height: 230svh; }
-.xpe-hk-st { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-.xpe-hk-in { position: relative; padding-top: clamp(112px, 19svh, 168px); row-gap: 64px; align-items: start; }
-.xpe-hero-c { grid-column: 1 / 8; display: flex; flex-direction: column; gap: 32px; }
+/* 1. hero: headline and asks beside the signature (the magnet grid), riding in on one conveyor */
+.xpe-hero { padding: clamp(112px, 17svh, 160px) 0 clamp(48px, 6vw, 96px); overflow-x: clip; }
+.xpe-hero-g { position: relative; align-items: center; row-gap: 40px; }
+.xpe-hero-g > .xen-cv-i:nth-child(1) { grid-column: 1 / 7; }
+.xpe-hero-g > .xen-cv-i:nth-child(2) { grid-column: 7 / 13; }
+.xpe-hero-c { display: flex; flex-direction: column; gap: 32px; }
 .xpe-hero-f { display: flex; flex-direction: column; gap: 28px; }
 .xpe-hero-f .vc-lede { max-width: 34ch; }
+/* the belt: a dashed hairline that runs under the pieces while they ride, then fades */
+.xen-belt { position: absolute; left: 0; right: 0; bottom: -24px; height: 1px; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .22) 0 10px, transparent 10px 20px); background-size: 20px 1px; animation: xen-belt .4s linear infinite; pointer-events: none; }
+@keyframes xen-belt { to { background-position: -20px 0; } }
+/* the signature field: the quiet tile the dots sit on */
+.xmg { position: relative; aspect-ratio: 6 / 5; border-radius: 24px; background: var(--xr); overflow: hidden; touch-action: pan-y; cursor: crosshair; }
+.xmg-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.xmg-fb { position: absolute; inset: 0; display: grid; place-items: center; color: #0a0a0a; }
+
+/* 2. the kit: three plates in a row, pulled back from a close-up of the dark plate */
+.xpe-kit { padding: clamp(24px, 3vw, 48px) 0 clamp(48px, 6vw, 96px); }
+.xen-pb { overflow: hidden; border-radius: 24px; }
+.xpe-kit-g > .xen { grid-column: 1 / -1; display: grid; row-gap: 32px; }
 .xpe-plates { position: relative; grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr); column-gap: 24px; align-items: end; }
 .xpe-kitc-w { position: relative; display: flex; flex-direction: column; gap: 16px; }
-.xpe-kp { position: relative; display: block; aspect-ratio: 4 / 3.2; border-radius: 24px; overflow: hidden; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); text-decoration: none; transform-origin: 50% 50%; transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
+.xpe-kp { position: relative; display: block; aspect-ratio: 4 / 3.2; border-radius: 24px; overflow: hidden; text-decoration: none; transform-origin: 50% 50%; transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
 .xpe-plate { display: flex; align-items: center; justify-content: center; gap: 14px; width: 100%; height: 100%; color: #fff; background: #0a0a0a; font-size: 22px; }
 .xpe-plate b { font-size: 1.6em; font-weight: 497; letter-spacing: -.035em; }
 /* idle: a soft sheen crosses the dark plate three times after arrival, then rests (finite, so no pause control) */
 .xpe-kitc-w.dark .xpe-plate { position: relative; overflow: hidden; }
 .xpe-kitc-w.dark .xpe-plate::after { content: ''; position: absolute; inset: -20% auto -20% 0; width: 40%; background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .1), rgba(255, 255, 255, 0)); transform: translateX(-120%) skewX(-12deg); animation: xpe-sheen 4.8s cubic-bezier(.4, 0, .2, 1) .9s 3 both; pointer-events: none; }
 @keyframes xpe-sheen { 0% { transform: translateX(-120%) skewX(-12deg); } 90%, 100% { transform: translateX(320%) skewX(-12deg); } }
-html.x-arriving .xpe-kitc-w.dark .xpe-plate::after { animation-play-state: paused; }
 .xpe-plate.light { background: #fff; color: #0a0a0a; }
 .xpe-plate.icon { background: var(--xk); color: #0a0a0a; }
 .xpe-kitc-w.dark .xpe-plate { font-size: 30px; }
@@ -73,11 +80,12 @@ html.x-arriving .xpe-kitc-w.dark .xpe-plate::after { animation-play-state: pause
 @media (hover: hover) { .xpe-kp:hover .xpe-plate { transform: scale(1.04); } .xpe-kp:hover .xpe-fmt i { background: #0a0a0a; color: #fff; } .xpe-kitc-w.dark .xpe-kp:hover .xpe-fmt i { background: #fff; color: #0a0a0a; } }
 .xpe-kitc-t { display: flex; flex-direction: column; gap: 6px; }
 .xpe-kitc-t span { font-size: 16px; line-height: 1.45; color: var(--xs); }
-.xpe-zip { grid-column: 1 / -1; margin: -32px 0 0; display: flex; gap: 18px; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--xm); }
+.xpe-zip { grid-column: 1 / -1; margin: 0; display: flex; gap: 18px; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--xm); }
 .xpe-zip span:first-child { color: var(--xi); text-transform: none; letter-spacing: 0; font-size: 13px; }
 
 /* 2. about: the belief line read word by word, the facts settling once */
 .xpe-about-g { row-gap: 64px; }
+.xpe-about-g { transform-origin: 50% 50%; }
 .xpe-about-h { grid-column: 1 / 5; display: flex; flex-direction: column; align-items: flex-start; gap: 32px; }
 .xpe-boiler { grid-column: 5 / 13; margin: 0; font-size: 21px; line-height: 1.45; letter-spacing: -.02em; font-weight: 497; color: var(--xi); text-wrap: pretty; }
 .xpe-facts { grid-column: 1 / -1; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid rgba(0, 0, 0, .1); }
@@ -129,7 +137,10 @@ html.x-arriving .xpe-kitc-w.dark .xpe-plate::after { animation-play-state: pause
 /* 4. press contact: the one black room. The email cuts in by line mask, its copy button beside it, its label under it */
 .xpe-contact { position: relative; overflow: hidden; background: #000; color: #fafafa; padding: clamp(120px, 15vw, 188px) 0; }
 .xpe-contact-g { position: relative; row-gap: 56px; align-items: end; }
-.xpe-contact-h { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 18px; }
+.xpe-contact-g > .xen-sd:nth-child(1) { grid-column: 1 / -1; }
+.xpe-contact-g > .xen-sd:nth-child(2) { grid-column: 1 / 9; }
+.xpe-contact-g > .xen-sd:nth-child(3) { grid-column: 9 / 13; }
+.xpe-contact-h { display: flex; flex-direction: column; gap: 18px; }
 .xpe-contact .vc-headline { color: #fafafa; }
 .xpe-contact .vc-lede { color: rgba(255, 255, 255, .78); }
 .xpe-contact .vc-kick { color: #a3a3a3; margin: 0; }
@@ -228,9 +239,10 @@ html.x-arriving .xpe-kitc-w.dark .xpe-plate::after { animation-play-state: pause
 .xpe-face-t > span { font: 606 12px/1 var(--mono); letter-spacing: .14em; color: var(--xs); }
 
 @media (max-width: 899px) {
-  .xpe-hk { height: auto; }
-  .xpe-hk-st { position: static; height: auto; overflow: visible; }
-  .xpe-hk-in { padding-top: 96px; row-gap: 40px; }
+  .xpe-hero { padding-top: 96px; }
+  .xpe-hero-g > .xen-cv-i:nth-child(1), .xpe-hero-g > .xen-cv-i:nth-child(2) { grid-column: 1 / -1; }
+  .xmg { aspect-ratio: 4 / 3; }
+  .xpe-contact-g > .xen-sd:nth-child(n) { grid-column: 1 / -1; }
   .xpe-hero-c, .xpe-hero-f { gap: 22px; }
   .xpe-plates { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
   .xpe-kitc-w.dark { grid-column: 1 / -1; }
@@ -283,7 +295,7 @@ html.x-arriving .xpe-kitc-w.dark .xpe-plate::after { animation-play-state: pause
   .xpe-faces li.f1 { transform: translateY(32px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xpe-in { animation: none; }
+  .xen-belt { display: none; }
   .xpe-fig span, .xpe-mail-i { transform: none; transition: none; }
   .xpe-kitc-w.dark .xpe-plate::after { animation: none; display: none; }
   .xpe-caret { display: none; }

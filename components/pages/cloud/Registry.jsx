@@ -20,10 +20,10 @@
    and the struck heading, pause and replay; arrival = the cut-in title, the timed wipe into the dark room; scroll = the
    Stage settle and the pinned layer stack (where the intro's token runs out on its own).
    Every word and link is Hanzo's; repository and people names are examples. */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { Paste, Code, useLive } from './Frame';
 import SettleStage from '../../v2/SettleStage';
-import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
@@ -148,6 +148,41 @@ function Repo({ step, intro }) {
   );
 }
 
+/* ---------- entrances: each main section arrives its own way, once, when it enters view (motion map, 7 Nov) ----------
+   html.js scopes every start state, so with JS off (or before the observer fires) nothing is hidden. */
+function useEnter(amount = 0.18) {
+  const ref = useRef(null);
+  const [inn, setIn] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setIn(true); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setIn(true); io.disconnect(); } }, { threshold: amount });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [amount]);
+  return [ref, inn];
+}
+
+/* 1 tilt-3d-hover: the hero window arrives tipped back and levels toward the pointer, then keeps leaning to it */
+function TiltHero({ children }) {
+  const [ref, inn] = useEnter(0.1);
+  const move = (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const el = ref.current, r = el.getBoundingClientRect();
+    el.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -6).toFixed(2) + 'deg');
+    el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 8).toFixed(2) + 'deg');
+  };
+  const leave = () => { ref.current?.style.setProperty('--rx', '0deg'); ref.current?.style.setProperty('--ry', '0deg'); };
+  return <div ref={ref} className="rg-tilt" data-in={inn || undefined} onPointerMove={move} onPointerLeave={leave}>{children}</div>;
+}
+
+/* ---------- the signature: zoom into the system ----------
+   The first frame is the whole system around one registry: Hanzo IAM mints the tokens, Builds pushes the images, the
+   org owns the repositories, every OCI client pulls from /v2/, Hanzo Cloud holds the people. Scrolling zooms into the
+   registry itself: the map flies past the edges, the image's layer stack grows to fill the screen, and the six facts
+   arrive under it as one row; each fact acts on the stack (hover, tap or arrow keys; it walks on by itself while you
+   watch). The pendulum entrance swings the whole map in from its top edge. */
 const FACTS = [
   ['IAM Token Auth', 'An unauthenticated pull gets a 401 naming Hanzo IAM. Your client fetches a token there, the registry checks its signature against a certificate it holds, and the push goes through. No password is stored at either end.'],
   ['Org-Scoped Repos', 'A repository name begins with your org, and what a token may do with it is decided by IAM at the moment the token is minted. Adding a teammate is one grant in one place, not a secret copied into a second.'],
@@ -156,6 +191,99 @@ const FACTS = [
   ['Tags come off cleanly', 'Deletes are enabled, so a tag you pushed by mistake goes away and the blobs behind it are reclaimed. A registry you can only add to is one that only grows.'],
   ['The same account as everything else', 'Whoever signs into Hanzo Cloud is who pushes an image. One directory of people, one place to revoke someone — and no separate registry account to remember when they leave.'],
 ];
+
+const NODES = [
+  ['Hanzo IAM', 'token', 18, 26, 1],
+  ['acme', 'org', 82, 22, 0],
+  ['Builds', 'Source to signed image', 16, 76, 3],
+  ['docker · podman · buildkit · skopeo · crane', '/v2/', 82, 70, 2],
+  ['Hanzo Cloud', 'one directory of people', 50, 92, 4],
+];
+
+function ZoomMap() {
+  const ref = useRef(null);
+  const [eref, inn] = useEnter(0.08);
+  const calm = useReducedMotion();
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const mapS = useTransform(p, [0.06, 0.55], [1, 3.4]);
+  const mapO = useTransform(p, [0.2, 0.5], [1, 0]);
+  const stkS = useTransform(p, [0.06, 0.55], [0.42, 1]);
+  const facO = useTransform(p, [0.46, 0.62], [0, 1]);
+  const facY = useTransform(p, [0.46, 0.62], [40, 0]);
+  const [open, setOpen] = useState(false);
+  useEffect(() => { if (calm) setOpen(true); }, [calm]);
+  useMotionValueEvent(p, 'change', (v) => setOpen(!!calm || v > 0.5));
+  const [sel, setSel] = useState(0);
+  const [held, setHeld] = useState(false);
+  // once the registry fills the screen, the facts walk on by themselves until the visitor picks one
+  useEffect(() => {
+    if (!open || held || calm) return;
+    const id = setTimeout(() => setSel((s) => (s + 1) % FACTS.length), 4200);
+    return () => clearTimeout(id);
+  }, [open, held, sel, calm]);
+  const pick = (i) => { setHeld(true); setSel(i); };
+  const key = (e) => {
+    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    const n = (sel + d + FACTS.length) % FACTS.length;
+    pick(n);
+    e.currentTarget.parentElement.children[n]?.focus();
+  };
+  return (
+    <section ref={ref} className={'rg-zm' + (open ? ' open' : '')} aria-labelledby="rg-zm-h">
+      <div className="rg-zm-stick">
+        <div className="lx-wrap rg-zm-in" ref={eref} data-in={inn || undefined}>
+          <div className="rg-zm-head">
+            <h2 className="rg-zm-h" id="rg-zm-h">Built on Hanzo IAM</h2>
+            <p className="rg-zm-l">The credential expires on its own, so there is nothing to rotate and nothing to leak</p>
+          </div>
+          <div className="rg-zm-stage">
+            <motion.div className="rg-zm-map" aria-hidden="true" style={{ scale: mapS, opacity: mapO }}>
+              <svg className="rg-zm-wires" viewBox="0 0 100 100" preserveAspectRatio="none">
+                {NODES.map(([n, , x, y]) => <line key={n} x1="50" y1="50" x2={x} y2={y} />)}
+              </svg>
+              {NODES.map(([n, d, x, y]) => (
+                <span key={n} className="rg-zm-node" style={{ left: x + '%', top: y + '%' }}><b>{n}</b><em>{d}</em></span>
+              ))}
+            </motion.div>
+            <motion.div className="rg-zm-stack" style={{ scale: stkS }}>
+              <Repo step={sel} intro={false} />
+            </motion.div>
+          </div>
+          <motion.div className="rg-zm-facts" style={{ opacity: facO, y: facY }}>
+            <div className="rg-zm-tabs" role="tablist" aria-label="Built on Hanzo IAM">
+              {FACTS.map(([t], i) => (
+                <button key={t} type="button" role="tab" id={'rg-ft-' + i} aria-selected={sel === i} aria-controls={'rg-fp-' + i} tabIndex={sel === i ? 0 : -1}
+                  onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && open && pick(i)} onKeyDown={key}>
+                  <span className="rg-zm-n">{String(i + 1).padStart(2, '0')}</span><h3>{t}</h3>
+                </button>
+              ))}
+            </div>
+            {FACTS.map(([t, d], i) => (
+              <p key={t} className="rg-zm-p" role="tabpanel" id={'rg-fp-' + i} aria-labelledby={'rg-ft-' + i} hidden={sel !== i}>{d}</p>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* 3 opposite-drift: the dark room's words and its terminal drift in from opposite sides as you scroll into it */
+function Drift({ children }) {
+  const ref = useRef(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 25%'] });
+  const l = useTransform(p, [0, 1], ['-140px', '0px']);
+  const r = useTransform(p, [0, 1], ['140px', '0px']);
+  return <motion.div ref={ref} className="rg-drift" style={{ '--dl': l, '--dr': r }}>{children}</motion.div>;
+}
+
+/* 4 fold-out and 5 invert-flash: one-shot entrances on the console and the related cards */
+function Enter({ kind, className = '', children }) {
+  const [ref, inn] = useEnter(0.2);
+  return <div ref={ref} className={'rg-en rg-en-' + kind + ' ' + className} data-in={inn || undefined}>{children}</div>;
+}
 
 // [row, the dockerconfigjson way, the IAM way]: both sides are Hanzo's phrases from this page
 const SWAP = [
@@ -290,6 +418,7 @@ function Related() {
     <section className="rg-rel">
       <div className="lx-wrap">
         <h2 className="rg-rel-h">Related capabilities</h2>
+        <Enter kind="flash">
         <ul className="rg-rel-grid">
           {REL.map(([t, to, d]) => (
             <li key={t}>
@@ -302,6 +431,7 @@ function Related() {
             </li>
           ))}
         </ul>
+        </Enter>
       </div>
     </section>
   );
@@ -312,7 +442,7 @@ export default function Registry() {
     <main className="lx rg">
       <section className="rg-hero" data-morph-target data-ask-name="Hanzo Registry">
         <div className="lx-wrap rg-hero-grid">
-          <SettleStage from={1.06} className="rg-stage"><Push /></SettleStage>
+          <SettleStage from={1.06} className="rg-stage"><TiltHero><Push /></TiltHero></SettleStage>
           <div className="rg-hero-copy">
             <LineMask as="h1" className="lx-display m rg-h1" lines={['Hanzo', 'Registry']} />
             <p className="lx-body rg-lede">A private registry for your container images at oci.hanzo.ai. It serves the OCI distribution API, so docker, podman, buildkit, skopeo and crane already know how to talk to it — and the credential is a short-lived token minted by your Hanzo IAM login, not a password living in a dockerconfigjson secret.</p>
@@ -321,22 +451,18 @@ export default function Registry() {
         </div>
       </section>
 
-      <ClipWipe dark className="rg-del">
-        <DelRoom />
-      </ClipWipe>
+      <ZoomMap />
 
-      <PinnedChapters
-        label="Built on Hanzo IAM"
-        per={46}
-        intro={{ title: ['Built on', 'Hanzo IAM'], lede: 'The credential expires on its own, so there is nothing to rotate and nothing to leak' }}
-        steps={FACTS.map(([t, d], i) => ({ t, d, k: String(i + 1).padStart(2, '0') }))}
-        visual={(at, intro) => <Repo step={at} intro={intro} />}
-      />
+      <ClipWipe dark className="rg-del">
+        <Drift><DelRoom /></Drift>
+      </ClipWipe>
 
       <section className="lx-sec rg-con">
         <div className="lx-wrap rg-con-in">
-          <RegConsole />
-          <p className="rg-note">Example project. Every name in it is one you would give your own.</p>
+          <Enter kind="fold">
+            <RegConsole />
+            <p className="rg-note">Example project. Every name in it is one you would give your own.</p>
+          </Enter>
         </div>
       </section>
 
