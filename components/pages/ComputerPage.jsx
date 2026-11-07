@@ -185,7 +185,7 @@ function Hero() {
           <span className="cp-dom x-mono">computer.hanzo.ai</span>
         </div>
       </div>
-      <Settle className="cp-stage" data-morph-target="">
+      <Settle className="cp-stage" from={1.04} lift={24} data-morph-target="">
         <Machine />
       </Settle>
     </section>
@@ -257,16 +257,17 @@ function Hands({ on }) {
 
 const Sub = ({ t, d }) => <div className="cp-sub"><p className="cp-sub-t">{t}</p><p className="av-body">{d}</p></div>;
 const LENSES = [
-  { kick: 'Pixels', title: SLIDES[0][0], body: <p className="av-body cp-sc-b">{SLIDES[0][1]}</p>, visual: (on) => <Pixels on={on} /> },
+  { title: SLIDES[0][0], body: <p className="av-body cp-sc-b">{SLIDES[0][1]}</p>, visual: (on) => <Pixels on={on} /> },
   { kick: '-with-ocr · -with-som', title: SLIDES[2][0], body: <><p className="av-body cp-sc-b">{SLIDES[2][1]}</p><Sub t={SLIDES[3][0]} d={SLIDES[3][1]} /></>, visual: (on) => <Marks on={on} /> },
-  { kick: 'Hands and voice', title: SLIDES[1][0], body: <><p className="av-body cp-sc-b">{SLIDES[1][1]}</p><Sub t={SLIDES[4][0]} d={SLIDES[4][1]} /></>, visual: (on) => <Hands on={on} /> },
+  { kick: 'operate --voice', title: SLIDES[1][0], body: <><p className="av-body cp-sc-b">{SLIDES[1][1]}</p><Sub t={SLIDES[4][0]} d={SLIDES[4][1]} /></>, visual: (on) => <Hands on={on} /> },
 ];
 
 /* ---------- Beyond: the pre-flight, three of Hanzo's own warnings, ticked off by you ---------- */
+// each item is Hanzo's own words, cut from the two paragraphs above it (no new copy)
 const CHECKS = [
-  ['A fresh user account or a VM', 'Give it a fresh user account or a VM before you give it anything that matters.'],
-  ['Screen Recording and Accessibility', 'On macOS the terminal asks for Screen Recording and Accessibility the first time, because those are exactly the permissions this needs.'],
-  ['Text on a web page can redirect it', 'Remember that text on a web page can try to redirect it.'],
+  'a fresh user account or a VM',
+  'Screen Recording and Accessibility',
+  'text on a web page can try to redirect it',
 ];
 
 function Preflight() {
@@ -282,26 +283,27 @@ function Preflight() {
       <div className="av-wrap av-grid">
         <div className="cp-pre-l">
           <h2 id="cp-pre-h" className="av-head">{SLIDES[5][0]}</h2>
-          <span className="cp-note x-mono">Before you run it</span>
           <p className="av-body">{SLIDES[5][1]}</p>
           <div className="cp-meter">
             <span className="cp-meter-n av-num"><b>{done.length}</b> / {CHECKS.length}</span>
             <span className="cp-meter-bar"><motion.i animate={{ scaleX: done.length / CHECKS.length }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></span>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span key={all ? 'y' : 'n'} className={'cp-meter-t x-mono' + (all ? ' ok' : '')} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3 }}>
-                {all ? 'Start with: hanzo desktop' : 'Tick each one'}
-              </motion.span>
+            <AnimatePresence initial={false}>
+              {all && (
+                <motion.span key="y" className="cp-meter-t x-mono ok" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3 }}>
+                  Start with: hanzo desktop
+                </motion.span>
+              )}
             </AnimatePresence>
           </div>
         </div>
         <ul className="cp-checks">
-          {CHECKS.map(([t, d], i) => {
+          {CHECKS.map((t, i) => {
             const on = done.includes(i);
             return (
               <li key={t}>
                 <button type="button" role="checkbox" data-sound="tick" aria-checked={on} className={'cp-check' + (on ? ' on' : '')} onClick={() => flip(i)}>
                   <span className="cp-check-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="cp-check-t"><b>{t}</b><span>{d}</span></span>
+                  <span className="cp-check-t"><b>{t}</b></span>
                   <span className="cp-box" aria-hidden="true">
                     <svg viewBox="0 0 24 24" width="24" height="24"><path className="cp-tick" d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </span>
@@ -348,16 +350,16 @@ function Ship() {
           <div className="cp-prompt">
             <span className="cp-note x-mono">Agent prompt</span>
             <code className="x-mono">{PASTE}</code>
-            <Copy text={PASTE} label="Copy the agent prompt" />
+            <Copy text={PASTE} label="Copy" />
           </div>
         </div>
         <div className="cp-get">
           <p className="av-title">Get Computer</p>
           <p className="av-body">Computer-use for AI</p>
-          <dl className="cp-meta">
-            <div><dt>License:</dt><dd>Apache-2.0</dd></div>
-            <div><dt>Source</dt><dd><A to="https://github.com/hanzoai/computer" className="cp-src">hanzoai/computer</A> <span className="x-mono">3 stars</span></dd></div>
-          </dl>
+          <div className="cp-meta">
+            <p><span className="cp-meta-k">License:</span> Apache-2.0</p>
+            <p><A to="https://github.com/hanzoai/computer" className="cp-src">hanzoai/computer</A> <span className="x-mono">3 stars</span></p>
+          </div>
           {/* the first command, from the agent prompt above, waiting at a prompt */}
           <div className="cp-term" aria-hidden="true">
             <span className="cp-term-bar"><i /><i /><i /></span>
@@ -374,7 +376,7 @@ export default function ComputerPage() {
   return (
     <main className="av cp" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
-      <Scenes label="How it sees and acts" items={LENSES} tone={['#ffffff', '#f5f5f5', '#ffffff']} className="cp-sc" />
+      <Scenes label="If a person can click it, so can this" items={LENSES} tone={['#ffffff', '#f5f5f5', '#ffffff']} className="cp-sc" />
       <Preflight />
       <Ship />
       <Band />
