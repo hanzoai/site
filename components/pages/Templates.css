@@ -308,6 +308,9 @@
   .xtp-hero-g .xtp-top { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; margin: 0 !important; }
   .xtp-hero-g .xtp-h1 { font-size: clamp(52px, 5.4vw, 84px); }
   .xtp-hero-g .xtp-top-r { padding: 0; }
+  /* the fanned windows stay inside the column (3 back windows × 48px), and the deck, its readout and arrows fit 801 */
+  .xtp-hero-g .xtp-deck { aspect-ratio: 1.95; }
+  .xtp-hero-g .xtp-slot { right: 150px; top: 92px; }
 }
 .xtp-stage { background: transparent !important; padding: 0 !important; border-radius: 0; }
 .xtp-stage .xtp-deckwrap { max-width: none; }
@@ -326,6 +329,7 @@
 
 /* the terminal types: the untyped rest is in the HTML in transparent ink, so the block never changes size */
 .xtp-rest { color: transparent; }
+.xtp-pre .xtp-caret { margin-right: -8px; } /* the caret takes no room, so the line never moves while it types */
 .xtp-l[data-wait] .xtp-ps { color: transparent; }
 .xtp-term-t { animation: xtp-cut .3s var(--ease) both; }
 @keyframes xtp-cut { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
@@ -348,4 +352,6 @@
 }
 @media (max-width: 899px) and (hover: hover) { .xtp .w2-cta:hover { background: rgba(0, 0, 0, .04) !important; } }
 @media (max-width: 399px) { .xtp-bar .xtp-kind { display: none; } .xtp-url { text-overflow: clip; } }
+/* JS off: the window in front only (the back windows have no fan without script), and no pause with nothing to pause */
+html:not(.js) .xtp-card:not(.front), html:not(.js) .xtp-pause { display: none; }
 @media (prefers-reduced-motion: reduce) { .xtp-shelf .xtp-tile-img :is(img, .xtp-ghost), .xtp-band-win :is(img, .xtp-ghost), .xtp-term-t { animation: none; } }

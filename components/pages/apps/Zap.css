@@ -338,7 +338,9 @@ html:not(.js) .zp-dia-l { clip-path: none; }
 .zp-dia-row.srv { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
 .zp-dia-row em, .zp-dia-row.srv em { position: static; align-self: center; padding: 0 2px; font-size: 14px; }
 /* the band meets the footer: no white strip under it */
-.zp-point { padding-bottom: clamp(16px, 2vw, 24px); }
+.gx .zp-point.w2-sec { padding-bottom: clamp(16px, 2vw, 24px) !important; }
+/* the copy button is a full 44px target */
+.zp-term-bar .x-copy { height: 44px; padding: 0 14px; }
 /* one solid per screen: on phones the shared header keeps its solid "Try Hanzo", so the page's own asks are outlined
    there (and on desktop with JS off, where the header cannot step aside) */
 @media (max-width: 899px) {
@@ -346,9 +348,10 @@ html:not(.js) .zp-dia-l { clip-path: none; }
   .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgba(250, 250, 250, .8); }
   .zp-word span { font-size: 14px; }
   .zp-lane-k, .zp-pick > span, .zp-term-bar > span, .zp-dia-row.srv b, .zp-term-bar .x-copy { font-size: 14px; }
-  .zp-hero .zp-acts { gap: 8px 10px; }
-  .zp-hero .zp-tlink { font-size: 15px; padding: 0 2px; }
-  .zp-dia-row em { font-size: 13px; }
+  .zp-hero .zp-acts { gap: 8px 16px; }
+  .zp-hero .zp-acts > :first-child { flex-basis: 100%; } /* the ask on its own row; the two text links share the next */
+  .zp-why-at { font-size: 14px; }
+  .zp-dia-row em { font-size: 14px; }
 }
 html:not(.js) .zp .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .9); }
 html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgba(250, 250, 250, .8); }

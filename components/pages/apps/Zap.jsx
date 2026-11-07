@@ -300,6 +300,19 @@ function Fleet() {
   useEvery(1100, live && !mine && !paused, () => setN((v) => (v >= 16 ? 1 : v + 1)));
   const side = n * SERVERS.length;
   const box = (k, cls) => Array.from({ length: k }).map((_, i) => <i key={i} className={cls} style={{ '--s': i % 3 }} />);
+  // the sidecar squares take the largest size at which every process still fits the box (108px tall), so a small
+  // fleet fills it with big squares and a large one packs small ones; the box itself never changes height
+  const procs = useRef(null);
+  const [bw, setBw] = useState(480);
+  useEffect(() => {
+    const el = procs.current; if (!el) return;
+    const ro = new ResizeObserver(([e]) => setBw(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  // four sizes only, so the squares re-pack at a few counts rather than on every step
+  let sz = 10;
+  for (const s of [48, 30, 20, 14]) { const cols = Math.max(1, Math.floor((bw + 4) / (s + 4))); if (Math.ceil(Math.min(side, 300) / cols) * (s + 4) - 4 <= 108) { sz = s; break; } }
   return (
     <div className="zp-fleet w2-object" ref={ref}>
       <div className="zp-fleet-k">
@@ -312,7 +325,7 @@ function Fleet() {
         <div className="zp-topo">
           <p className="zp-topo-k">An MCP server beside every agent</p>
           {/* few agents: big squares fill the box; many: they shrink to fit (the box keeps one height, nothing moves) */}
-          <div className="zp-procs" aria-hidden="true" style={{ '--sz': side <= 6 ? '40px' : side <= 12 ? '28px' : side <= 27 ? '19px' : side <= 60 ? '13px' : '10px' }}>{box(Math.min(side, 300), 'p')}</div>
+          <div className="zp-procs" ref={procs} aria-hidden="true" style={{ '--sz': sz + 'px' }}>{box(Math.min(side, 300), 'p')}</div>
           <p className="zp-topo-n x-mono"><b>{side}</b> tool-server processes · {n - 1} more of each</p>
         </div>
         <div className="zp-topo one">
