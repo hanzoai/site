@@ -129,8 +129,10 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
           <label key={val} className={'xcs-size' + (v.size === val ? ' on' : '')} onClick={(e) => { if (e.detail > 0) setTimeout(() => setAt(4), 320); }}>
             <input type="radio" name="size" value={val} checked={v.size === val} required
               onChange={() => { setV({ ...v, size: val }); setBad(-1); }}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); setV({ ...v, size: val }); setBad(-1); setAt(4); } }}
-              ref={(el) => { if (val === '1-49') refs.current.size = el; }} />
+              // Enter keeps the answer you chose; it only picks the focused size when none is chosen yet
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); if (!v.size) setV({ ...v, size: val }); setBad(-1); setAt(4); } }}
+              // Back to this step focuses the chosen size (roving focus), never the first one
+              ref={(el) => { if (v.size ? val === v.size : val === '1-49') refs.current.size = el; }} />
             <span>{l}</span>
           </label>
         ))}
