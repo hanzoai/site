@@ -305,7 +305,7 @@ export default function Gateway() {
 
       <Say />
 
-      <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} total={RULES.length} />} />
+      <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} />} />
 
       <Forge />
 

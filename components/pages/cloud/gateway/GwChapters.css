@@ -30,27 +30,38 @@
   .gwc-dots button:hover .gwc-tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
 }
 
-/* each chapter's own scene: phone only (desktop keeps the one pinned window) */
-.gwc-vis-m { display: none; }
 .gwc-dots button { transition: transform 90ms cubic-bezier(0, 0, .2, 1), background-color .15s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .gwc-dots button:hover { background: #f5f5f5; } }
+/* a dot previewing another chapter's scene: the window takes a hairline ink ring, so the preview reads as a preview */
+.gwc-vis { border-radius: 24px; transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
+.gwc-vis[data-peek] { box-shadow: 0 0 0 1.5px #0a0a0a; }
 
-/* phone: nothing pinned over the words; every chapter is its own scene, heading, caption and sentence */
+/* phone: the same pinned stage, stacked. A short scene at the top (about 40svh, inside the gutters) and the chapter's
+   words below it, swapped in place as the section scrolls, so no words ever slide under the scene. With scripts off the
+   chapters simply stack. */
 @media (max-width: 900px) {
   .gwc { height: auto; }
   .gwc-stage { position: static; height: auto; }
   .gwc-in { display: block; padding: 0; width: min(100% - 32px, 1440px); }
-  .gwc-vis { display: none; }
+  .gwc-vis { height: 40svh; min-height: 220px; margin-bottom: 20px; }
   .gwc-copy { padding: 0; }
-  .js .gwc-arts, .gwc-arts { display: block; }
-  .gwc-art, .js .gwc-art { opacity: 1; transform: none; pointer-events: auto; padding: 40px 0 8px; box-sizing: border-box; }
-  .gwc-art:first-child { padding-top: 8px; }
-  .gwc-vis-m { display: block; height: 232px; margin-bottom: 22px; }
-  /* a scene waits on its first frame until its chapter reaches the middle of the screen, then plays once */
-  .js .gwc-art:not([data-on]):not([data-past]) .gwc-vis-m *, .js .gwc-art:not([data-on]):not([data-past]) .gwc-vis-m *::after { animation-play-state: paused; }
+  .gwc-art { padding: 28px 0 0; }
   .gwc-t { font-size: 21px; }
-  .js .gwc-t > span { clip-path: none; }
+  .gwc .gwc-n { margin: 10px 0 12px; }
+  .gwc-d { font-size: 15px; line-height: 1.55; }
   .gwc-dots { display: none; }
+  .js .gwc { height: calc(var(--n) * 72svh + 28svh); }
+  .js .gwc-stage { position: sticky; top: 0; height: 100svh; }
+  .js .gwc-in { display: flex; flex-direction: column; height: 100%; box-sizing: border-box; padding: 72px 0 16px; }
+  .js .gwc-vis { flex: none; }
+  .js .gwc-copy { flex: 1; min-height: 0; overflow: hidden; }
+  .js .gwc-art { padding: 0; }
+  .js .gwc-t > span { clip-path: none; }
+}
+@media (max-width: 400px) {
+  .gwc-vis { height: 36svh; }
+  .gwc-d { font-size: 14px; line-height: 1.5; }
+  .gwc-t { font-size: 19px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .js .gwc-art, .js .gwc-t > span { transition: none !important; transform: none !important; }

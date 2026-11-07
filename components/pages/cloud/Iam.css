@@ -9,11 +9,14 @@
 .ia-sub { margin: 20px 0 32px; color: var(--ink); }
 .ia-stage { grid-column: 7 / -1; }
 .ia .x-btn.solid:hover { background: #262626; }
+/* text links ("Source", "Deploy to Cloud"): an underline draws in under the words and the arrow moves */
+.ia a.x-arrow > span { text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; padding-bottom: 2px; transition: background-size 150ms var(--ia-out); }
+.ia a.x-arrow > svg { transition: transform 150ms var(--ia-out); }
+.ia a.x-arrow:active { transform: translateY(1px); }
 @media (hover: hover) {
-  .ia a.x-arrow span { text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: 4px; transition: text-decoration-color 150ms var(--ia-out); }
-  .ia a.x-arrow svg { transition: transform 150ms var(--ia-out); }
-  .ia a.x-arrow:hover span { text-decoration-color: currentColor; }
-  .ia a.x-arrow:hover svg { transform: translateX(4px); }
+  .ia a.x-arrow:hover > span { background-size: 100% 1px; }
+  .ia a.x-arrow:hover > svg { transform: translateX(4px); }
+  .ia .ia-pause:not([aria-pressed='true']):hover { box-shadow: 0 0 0 1.5px #0a0a0a; color: #0a0a0a; }
   .ia .gi-acts .x-btn.solid { transition: background-color 150ms var(--ia-out), transform 150ms var(--ia-out); }
   .ia .gi-acts .x-btn.solid:hover { background: #262626; transform: translateY(-1px); }
 }
@@ -26,8 +29,8 @@
 .ia-si-ways { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .ia-si-way { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); font: 500 15px/1 var(--sans); color: #525252; transition: background-color 300ms var(--ia-out), color 300ms var(--ia-out), box-shadow 300ms var(--ia-out), transform 300ms var(--ia-em); }
 .ia-si-way svg { flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.ia-si-way.pick { background: #0a0a0a; color: #fafafa; box-shadow: inset 0 0 0 1px #0a0a0a; transform: scale(1.02); }
-.ia-si[data-s='0'] .ia-si-way.pick, .ia-si[data-s='1'] .ia-si-way.pick { transform: scale(.98); }
+.ia-si:not([data-s='0']) .ia-si-way.pick { background: #0a0a0a; color: #fafafa; box-shadow: inset 0 0 0 1px #0a0a0a; transform: scale(1.02); }
+.ia-si[data-s='1'] .ia-si-way.pick { transform: scale(.98); }
 .ia-si-flow { display: flex; flex-wrap: wrap; gap: 8px; min-height: 36px; }
 .ia-si-chip { margin: 0; display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; background: #f5f5f5; font: 500 13px/1 var(--mono); color: #0a0a0a; opacity: 0; transform: translateY(6px); transition: opacity 300ms var(--ia-em), transform 300ms var(--ia-em); }
 .ia-si-chip.on { opacity: 1; transform: none; }
@@ -59,13 +62,39 @@
 .ia-st.on .ia-lab { color: #0a0a0a; }
 .ia-w + .ia-w::before { content: '·'; margin: 0 .5em; }
 .ia-pause { top: 20px; right: 20px; z-index: 2; }
+
+/* the finished sign-in, by CSS alone: shown with reduced motion and with scripts off, so the server's first frame never
+   has to flip after hydration (the demo itself starts from its first frame) */
+@media (prefers-reduced-motion: reduce) {
+  .ia .ia-si .ia-si-way.pick { background: #0a0a0a; color: #fafafa; box-shadow: inset 0 0 0 1px #0a0a0a; transform: none; }
+  .ia .ia-si-chip { opacity: 1; transform: none; }
+  .ia .ia-si-tok i::after { transform: none; }
+  .ia .ia-si-alg { opacity: 1; }
+  .ia .ia-si-key { background: #0a0a0a; color: #fafafa; }
+  .ia .ia-si-key svg path { stroke-dashoffset: 0; }
+  .ia .ia-dot { background: #0a0a0a; box-shadow: inset 0 0 0 1.5px #0a0a0a; }
+  .ia .ia-seg i { transform: scaleX(1); }
+  .ia .ia-lab { color: #0a0a0a; }
+  .ia .ia-pause { display: none; }
+}
+html:not(.js) .ia .ia-si .ia-si-way.pick { background: #0a0a0a; color: #fafafa; box-shadow: inset 0 0 0 1px #0a0a0a; }
+html:not(.js) .ia .ia-si-chip { opacity: 1; transform: none; }
+html:not(.js) .ia .ia-si-tok i::after { transform: none; }
+html:not(.js) .ia .ia-si-alg { opacity: 1; }
+html:not(.js) .ia .ia-si-key { background: #0a0a0a; color: #fafafa; }
+html:not(.js) .ia .ia-si-key svg path { stroke-dashoffset: 0; }
+html:not(.js) .ia .ia-dot { background: #0a0a0a; box-shadow: inset 0 0 0 1.5px #0a0a0a; }
+html:not(.js) .ia .ia-seg i { transform: scaleX(1); }
+html:not(.js) .ia .ia-lab { color: #0a0a0a; }
+html:not(.js) .ia .ia-pause { display: none; }
+.ia-sr { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 /* paused: the play control stays full ink, also under the pointer */
 .ia .ia-pause[aria-pressed='true'], .ia .ia-pause[aria-pressed='true']:hover { background: #0a0a0a; color: #fff; border-color: #0a0a0a; }
 
 /* the eight facts: pinned for about two and a half screens; the lit card and the counter follow the scroll, and the rail
    starts on the first card at the left of the container and ends on the last at its right */
-.ia-fr { position: relative; height: 250svh; background: #fff; }
-.ia-fr-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 32px; padding-top: 32px; box-sizing: border-box; }
+.ia-fr { position: relative; height: 250svh; margin-bottom: -14svh; background: #fff; }
+.ia-fr-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; gap: 28px; padding-top: clamp(64px, 9svh, 88px); box-sizing: border-box; }
 .ia-rail-h { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; }
 .ia-count { font-variant-numeric: tabular-nums; min-width: 7ch; text-align: right; color: #0a0a0a; }
 .ia-fr-view { overflow: visible; }
@@ -99,19 +128,22 @@
 
 /* paste and ship: related capabilities as one list of rows; each row fills, its arrow moves and its page's path shows */
 .ia .sp.v2-sec { padding-top: clamp(44px, 5vw, 72px); }
+.ia-rel { padding: 0 0 clamp(72px, 8vw, 116px); }
 .ia .sp-rel ul { grid-template-columns: minmax(0, 1fr); }
 .ia .sp-rel-a { position: relative; flex-wrap: nowrap; align-items: center; gap: 24px; padding: 18px 12px; border-radius: 12px; transition: background-color 150ms var(--ia-out); }
 .ia .sp-rel-a b { flex: none; min-width: 6ch; }
 .ia .sp-rel-a span { flex-basis: auto; order: 0; transition: color 150ms var(--ia-out); }
-.ia .sp-rel-a::after { content: attr(href); margin-left: auto; font: 500 12px/1 var(--mono); color: #737373; opacity: 0; transform: translateX(-6px); transition: opacity 150ms var(--ia-out), transform 150ms var(--ia-out); }
-.ia .sp-rel-a svg { transition: transform 150ms var(--ia-out); }
+/* the arrow sits on one line at the right edge of every row; the page's path shows beside it on hover */
+.ia-rel-to { margin-left: auto; font-style: normal; }
+.ia-rel-to::after { content: attr(data-to); font: 500 12px/1 var(--mono); color: #737373; opacity: 0; display: inline-block; transform: translateX(-6px); transition: opacity 150ms var(--ia-out), transform 150ms var(--ia-out); }
+.ia .sp-rel-a svg { flex: none; margin-left: 0; transition: transform 150ms var(--ia-out); }
 .ia .x-codeblock .x-copy { color: rgba(255, 255, 255, .78); min-height: 44px; height: 44px; }
 .ia .sp-code { transition: transform 150ms var(--ia-out); }
 @media (hover: hover) {
   .ia .sp-rel-a:hover { background: #f5f5f5; }
   .ia .sp-rel-a:hover b { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
   .ia .sp-rel-a:hover span { color: #0a0a0a; }
-  .ia .sp-rel-a:hover::after { opacity: 1; transform: none; }
+  .ia .sp-rel-a:hover .ia-rel-to::after { opacity: 1; transform: none; }
   .ia .sp-rel-a:hover svg { transform: translateX(4px); }
   .ia .sp-code:hover { transform: translateY(-2px); }
   .ia .x-codeblock .x-copy:hover { color: #fafafa; }
@@ -120,7 +152,7 @@
 }
 
 /* the dark room: enters as a rounded card inside the gutters and opens to full width (clip-path, from the scroll) */
-.ia-room { padding: clamp(96px, 10vw, 144px) 0; scroll-margin-top: 64px; }
+.ia-room { position: relative; z-index: 1; padding: clamp(72px, 8vw, 116px) 0; scroll-margin-top: 64px; }
 .ia-fam-grid { align-items: center; row-gap: 32px; }
 .ia-fam-copy { grid-column: 1 / span 5; }
 .ia-fam-copy .v2-headline { margin: 0 0 16px; color: #fafafa; }
@@ -164,11 +196,17 @@ button.ia-tok:disabled { cursor: default; }
 .ia-fam-key i.dead { box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .3); }
 .ia-fam-key i.dead::after { content: ''; position: absolute; left: -3px; right: -3px; top: 50%; height: 1.5px; background: #a3a3a3; transform: rotate(-45deg); }
 
-/* the close: Get IAM rests at the section head size; the signed-in card at rest is its object */
+/* the close: Get IAM rests at the section head size; the token at rest is its object, inside the container */
 .ia .gi-h { font-size: 26px; line-height: 1.15; letter-spacing: -.025em; }
-.ia-close { padding: clamp(72px, 9vw, 132px) 0; }
-.ia-close-art { grid-column: 8 / -1; }
-.ia-close-art .ia-si { transform: rotate(-2deg); }
+.ia-close { padding: clamp(72px, 9vw, 132px) 0 clamp(44px, 5vw, 72px); }
+.ia-close-art { grid-column: 8 / -1; align-self: center; min-width: 0; }
+.ia-ct { display: block; width: 100%; max-width: 420px; height: auto; margin-left: auto; }
+.ia-ct .p { fill: #ededed; }
+.ia-ct .s, .ia-ct .k { fill: #0a0a0a; }
+.ia-ct .d { fill: #a3a3a3; }
+.ia-ct .l { fill: none; stroke: #a3a3a3; stroke-width: 1.5; }
+.ia-ct .t { fill: none; stroke: #fafafa; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ia-ct .h { stroke: rgba(0, 0, 0, .1); stroke-width: 1; }
 
 @media (max-width: 900px) {
   .ia-hero { padding: 24px 0 0; }
@@ -187,12 +225,12 @@ button.ia-tok:disabled { cursor: default; }
   .ia-st.now .ia-lab { opacity: 1; }
   .ia-pause { top: 14px; right: 14px; }
   /* the facts: a snap rail with the next card peeking; the counter follows the swipe */
-  .ia-fr { height: auto; padding: 72px 0 24px; }
+  .ia-fr { height: auto; margin-bottom: 0; padding: 72px 0 24px; }
   .ia-fr-stage { position: static; height: auto; overflow: visible; display: block; padding-top: 0; }
   .ia-rail-h { padding-bottom: 20px; }
   .ia-fr-view { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; }
   .ia-fr-view::-webkit-scrollbar { display: none; }
-  .ia-fr-rail { --cw: 84vw; gap: 12px; padding: 0 16px; transform: none !important; }
+  .ia-fr-rail { --cw: calc(100vw - 68px); gap: 12px; padding: 0 16px; transform: none !important; }
   .ia-fr-rail > li { scroll-snap-align: start; }
   .ia-card { height: auto; min-height: 380px; transform: none; }
   .ia-card-big { font-size: 32px; overflow-wrap: anywhere; }
@@ -201,18 +239,20 @@ button.ia-tok:disabled { cursor: default; }
   .ia .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   .ia .sp-rel-a { flex-wrap: wrap; gap: 4px 12px; }
   .ia .sp-rel-a span { flex-basis: 100%; order: 3; }
-  .ia .sp-rel-a::after { display: none; }
+  .ia-rel-to { display: none; }
+  .ia .sp-rel-a svg { margin-left: auto; }
   .ia-room { padding: 96px 0; }
   .ia-fam-box { padding: 68px 16px 24px; }
   .ia-fam-track { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .ia-fam-track li:nth-child(5) .ia-fam-seg { display: none; }
   .ia-close-art { margin-top: 44px; }
-  .ia-close-art .ia-si { transform: none; }
+  .ia-ct { margin: 0 auto; max-width: 320px; }
+  html:not(.js) .ia .ia-st:last-child .ia-lab { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ia-sign, .ia-recede { transform: none !important; }
   .ia-room { clip-path: none !important; }
-  .ia-fr { height: auto; padding: 72px 0; }
+  .ia-fr { height: auto; margin-bottom: 0; padding: 72px 0; }
   .ia-fr-stage { position: static; height: auto; overflow: visible; display: block; }
   .ia-rail-h { padding-bottom: 24px; }
   .ia-count { visibility: hidden; }
@@ -220,7 +260,7 @@ button.ia-tok:disabled { cursor: default; }
   .ia-fr-rail { flex-wrap: wrap; width: auto; padding: 0 24px; max-width: 1488px; margin-inline: auto; transform: none !important; }
   .ia-card, .ia-card[data-on] { transform: none; height: auto; min-height: 380px; }
   .ia-card-d { opacity: 1; transform: none; }
-  .ia-obj, .ia-card-big { color: #0a0a0a; }
+  /* only the current card's word and object in ink; the rest rest grey */
   .ia-card[data-on] .ia-card-big span { transform: none; }
   .ia-obj path { stroke-dashoffset: 0; transition: none; }
   li.live .ia-tok i { animation: none; }
@@ -228,4 +268,5 @@ button.ia-tok:disabled { cursor: default; }
 @media (prefers-reduced-motion: reduce) and (max-width: 900px) {
   .ia-fr-rail { flex-direction: column; padding: 0 16px; }
   .ia-card { width: 100%; }
+  .ia .ia-st:last-child .ia-lab { opacity: 1; }
 }

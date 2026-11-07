@@ -269,7 +269,7 @@ function Close() {
           </div>
         </div>
         <ul className="hs-names">
-          {MODULES.map((v, i) => <li key={v} data-on={i === k ? '' : undefined}>{v}</li>)}
+          {MODULES.map((v, i) => <li key={v} data-on={i === k ? '' : undefined}><span>{v}</span></li>)}
         </ul>
       </div>
     </section>
