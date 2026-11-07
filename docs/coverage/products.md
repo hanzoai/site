@@ -33,7 +33,7 @@ Done here: agents links 21/21, memory 19/19, models 18/18 (`scripts/parity.py`).
 - [x] Ends in the docs and site links, quietly, then one dark `Band` (Hanzo's name, line and the one ask), then the footer
 - [x] Card-to-page links use Morph (`data-morph` on each layer name, `data-morph-target` on the h1); the other layers are prefetched while you read and each page mounts fresh (keyed by slug)
 
-Done here: at 1470×801 the name, line, ask and the whole console (470px panes) sit on the first screen and the first sentence peeks under it; the request starts typing 250 ms after arrival. The console then pins and Hanzo's paragraph scrubs past beneath it, a sentence at a time, lighting the operations it names; then Measured (memory), Hanzo OS, the docs and a dark closing band with the one ask. JS off: 0 of 34 text blocks hidden (measured); the paragraph is in the HTML whole.
+Done here: at 1470×801 the name, line, ask and the whole console (470px panes) with its step bar ("Try it", 01, 02...) sit on the first screen; the request starts typing 250 ms after arrival, then the console steps through Hanzo's sentences by itself. Nothing pins: after the console come Measured (memory), Hanzo OS, the docs and a dark closing band with the one ask. JS off: the step bar is hidden and the console shows the request and every sentence in full (measured: console 783px tall, nothing clipped); the paragraph is in the HTML whole.
 
 ## 4. Conversion system
 - [x] Kit buttons (`v2f-btn`) only; no raw `.x-btn`
@@ -57,16 +57,16 @@ Done here: the operation counts are the row counts of Hanzo's own API table; the
 - [x] Hanzo's API table is said once, inside the console (method, path, what it does), as an accessible `role=table` (no raw `<table>`); code scrolls sideways and never breaks mid-URL; paths break only after a slash
 - [x] `python3 scripts/parity.py`: 0 missing
 
-Done here: parity agents 60/60, memory 59/59, models 54/54. Sizes: h1 52 at rest (arrives at 72, measured), section heads 44 as a decision (each is the one big word of its screen, above JAMES.md's 26px rest; noted per MASTER §0.6), sentences 32, table 14, body 16, figures 64; pane labels and table heads are 12px mono capitals.
+Done here: parity agents 60/60, memory 59/59, models 54/54, record 53/53. Sizes: h1 52 at rest (arrives at 72, measured), section heads 44 as a decision (each is the one big word of its screen, above JAMES.md's 26px rest; noted per MASTER §0.6), sentences 26 in the console (17 on phones), table 14, body 16, figures 64; pane labels and table heads are 12px mono capitals.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii and sizes from the kit tokens; objects outlined, never box plus shadow
 - [x] One icon set (two inline strokes: arrow, replay); no icon in a rounded box
-- [x] Differs from neighbours: a light, page-wide console under the name and a scrubbed sentence strip (oss and solutions lead with a black card beside the title)
+- [x] Differs from neighbours: a light, page-wide console under the name whose step bar morphs it through Hanzo's sentences (oss and solutions lead with a black card beside the title; /pricing's morph panel is a plan rail beside a growing plan sheet, this one a fixed-size two-pane console)
 
-Done here: ink, greys and white only; GET and POST differ by outline against fill. The console is light and outlined (1px black 10%, no shadow); the one dark room is the closing band. Its own layout: name over a wide light console and a scrubbed sentence strip, not the title-left / black-card-right layout /oss and /solutions use.
+Done here: ink, greys and white only; GET and POST differ by outline against fill; an operation a sentence does not name steps back to grey #737373, the named ones sit on a #ededed light. The console is light and outlined (1px black 10%, no shadow); the one dark room is the closing band. Its own layout: name over a wide light console with its own step bar, not the title-left / black-card-right layout /oss and /solutions use.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press (scale .97, 90 ms), focus-visible
@@ -84,7 +84,7 @@ Done here: replay, copy, asks, layer rows and Measured cards all press at .97; h
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`): Copy and the solid asks sound by themselves; the console calls `play('done')` once when its walk ends
 
-Done here: time (the request types, rows land, each operation lights once, then it rests), state (a sentence lights the operations it names; replay), pointer (magnetic ask; a row fills under the pointer; layer counts on hover), arrival (the name cut in large and settling), scroll (the pinned console and the scrubbing strip; the first measured figure grows past 64px only at its moment).
+Done here: the signature is `morph-panel` (MOTION-MAP, 7 Nov): the console is ONE panel whose states are Hanzo's "Try it" and each of its sentences, picked from the console's own step bar (a pill slides between the steps; arrow keys move it). "Try it": the request types itself and the API table lands row by row. Each sentence step morphs the same panel in place: the left pane's request lifts away as the sentence rises into its seat (300 ms out, 400 ms in, 120 ms apart, all states stacked in one grid cell so the pane never changes size), its label turns from "Try it" to "02 / 03", and the light in the API table (one fill per named operation, placed by transform only) slides 500 ms in-out onto the operations the sentence names while the others step back to grey; on a phone the table's own box scrolls a named row into view. Once the request has landed the console walks the sentences by itself (3.4 s each) and rests back on "Try it" with `play('done')`; Pause holds it, any step takes over, Replay runs it all again. Removed: the pinned Stage (console pinned over a scroll-scrubbed sentence strip, the phone swipe rail) and the line-mask cut-in on the section headings (the h1's cut-in is the page's one reveal). Other movement: pointer (magnetic ask; a row fills under the pointer; layer counts on hover), arrival (the name cut in large and settling), scroll (only the first measured figure growing past 64px at its moment). Measured: untouched CLS during the whole walk 0.0002 desktop, 0.001 phone; 0 console errors on agents, memory, models, record at 1470×801 and 375×812, and with reduced motion (steps then change at once, no walk, no typing).
 
 ## 10. Media
 - [x] n/a: Hanzo has no film or photograph for these pages
@@ -100,16 +100,16 @@ Done here: each member is told apart by its own contour (seed `/products/<slug>`
 - [x] Every target 44px or more; every hover has a tap path (tap an operation for its line)
 - [x] Primary ask above the fold at 375×667
 
-Done here: on phones the name, line and both asks come first and the console starts under them; the request pane is 200px and the API table at most 340px, each scrolling inside, so the sentence rail arrives within a screen; strip cards are white with a hairline so they part from the grey Measured section; the Hanzo OS rows keep their label beside the count (no layout shift as rows land: measured CLS 0.001); the sentences are a swipe rail; doc links are 44px tall. Sideways swipe turns to the previous or next product (tested memory → models, agents → record; the code pane keeps its own sideways scroll).
+Done here: on phones the name, line and both asks come first and the console starts under them; the console's step bar takes its own row (40px steps, the full width) under the host, Copy and Replay; the left pane is 240px (request or sentence, 17px) and the API table at most 340px, each scrolling inside; the Hanzo OS rows keep their label beside the count (no layout shift as rows land: measured CLS 0.001); doc links are 44px tall. Sideways swipe turns to the previous or next product (tested memory → models, agents → record; the code pane keeps its own sideways scroll).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: muted #525252 on white 7.8:1; console text #a1a1a6 on #0b0b0c about 7.9:1
-- [x] Nothing moves for more than 5 s untouched (the console runs once; the hero contour is still)
+- [x] Moving content past 5 s has a pause: the console's walk through the sentences (about 12 s, once) shows Pause in place of Replay while it runs; the hero contour is still
 - [x] n/a: no form
 - [x] One h1; h2 per section; the replay control's name comes from `content/ui-strings.json`
 - [x] Keyboard reaches every control
 
-Done here: the API table is read once, in the console, with column headers; the paragraph is read whole once (the on-screen strip is its picture, `aria-hidden`).
+Done here: the API table is read once, in the console, with column headers; the paragraph is read whole once (the console's sentence pane is its picture, `aria-hidden`); the step bar is a `tablist` whose sentence steps are named "Chapter 2 of 3" from `content/ui-strings.json`, and the console body is its `tabpanel`; Pause and Replay take their names from the same register.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP in server HTML

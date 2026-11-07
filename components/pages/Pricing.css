@@ -45,51 +45,56 @@
 .xpr-seg .xpr-seg-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; }
 .xpr-seg button:active { transform: scale(.97); transition: transform 90ms var(--eo); }
 
-/* plan cards: every card's rows sit on the grid's shared rows, so names, prices and asks line up */
-.xpr-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(8, auto); column-gap: 0; row-gap: 0; align-items: start; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; }
-.xpr-plans.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.xpr-plan { grid-row: span 8; align-self: stretch; display: grid; grid-template-rows: subgrid; row-gap: 0; min-width: 0; padding: clamp(24px, 2.4vw, 36px); background: #fff; }
-.xpr-plan + .xpr-plan { border-left: 1px solid var(--line); }
-/* the picker: pointing previews, the selected column carries the one solid ask */
-.xpr-plan { cursor: default; transition: background-color .15s var(--eo); }
-.xpr-plans:not(.two) .xpr-plan, .xpr-team, .xpr-ent { cursor: pointer; }
-@media (hover: hover) { .xpr-plans:not(.api) .xpr-plan:hover { background: #fbfbfb; } }
-.xpr-plan[data-selected] { background: #f7f7f7; }
-@media (hover: hover) { .xpr-plan[data-selected]:hover { background: #f7f7f7; } }
-.xpr-plan > * { min-width: 0; }
+/* the signature: ONE plan panel. The rail (left) picks a plan of the set; the frame (right) eases its height to the plan,
+   and every block inside glides to its new place while words cross over. One outlined surface, no shadow. */
+.xpr-morph { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 9fr); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; background: #fff; }
+.xpr-rail { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 12px; background: var(--card); border-right: 1px solid var(--line); }
+.xpr-rail-i { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-height: 92px; padding: 18px 20px; border: 0; border-radius: 16px; background: none; color: var(--soft); text-align: left; cursor: pointer; font: inherit; transition: color .15s var(--eo); }
+.xpr-rail-i > span:not(.xpr-rail-bg) { position: relative; }
+.xpr-rail-bg { position: absolute; inset: 0; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.xpr-rail-i[aria-checked='true'] { color: var(--ink); }
+@media (hover: hover) { .xpr-rail-i[aria-checked='false']:hover { color: var(--ink); background: #ededed; } }
+.xpr-rail-i:active { transform: scale(.98); transition: transform 90ms var(--eo); }
+.xpr-rail-i:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+.xpr-rail-n { display: block; min-width: 5ch; font-size: 17px; font-weight: 497; letter-spacing: -.015em; line-height: 1.2; }
+.xpr-rail-p { font-size: 13.5px; line-height: 1.35; }
+.xpr-rail-p.fig { font-size: 26px; font-weight: 220; line-height: 1; letter-spacing: -.03em; font-feature-settings: 'tnum'; }
+.xpr-frame { overflow: hidden; min-width: 0; }
+.xpr-detail { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(32px, 3.4vw, 48px); align-items: start; padding: clamp(24px, 2.6vw, 40px); }
+.xpr-pa, .xpr-pb { min-width: 0; }
+.xpr-swap { position: relative; display: block; }
+.xpr-swap-i, .xpr-line { display: block; }
 .xpr-r-name { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; }
-.xpr-plan h2 { margin: 0; font-size: var(--s-t); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; color: var(--ink); }
+.xpr-pname { margin: 0; min-width: 6ch; font-size: var(--s-h); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; color: var(--ink); }
 .xpr-d { margin: 12px 0 0; max-width: 46ch; font-size: 15px; line-height: 1.5; color: var(--soft); text-wrap: pretty; }
-.xpr-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 24px 0 0; font-size: var(--s-fig); font-weight: 220; line-height: 1; letter-spacing: -.04em; color: var(--ink); font-feature-settings: 'tnum'; }
-.xpr-price.word { font-size: var(--s-h); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
-.xpr-free { font-size: var(--s-h); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
+/* the price row keeps the figure's height, so a price said in words never moves the ask */
+.xpr-price { position: relative; display: flex; align-items: flex-end; min-height: var(--s-fig); margin: 24px 0 0; color: var(--ink); }
+.xpr-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; font-size: var(--s-fig); font-weight: 220; line-height: 1; letter-spacing: -.04em; font-feature-settings: 'tnum'; }
+.xpr-word { display: block; font-size: var(--s-h); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
 .xpr-u { font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--soft); }
 .xpr-sub { margin: 10px 0 0; font-size: 14px; line-height: 1.45; color: var(--soft); }
-.xpr-sub p { margin: 0; }
 .xpr-r-cta { margin-top: 24px; }
 .xpr-cta { width: 100%; }
 .xpr-note { margin: 12px 0 0; font-size: 13.5px; line-height: 1.4; color: var(--soft); text-align: center; }
 .xpr-alt { color: var(--ink); text-underline-offset: 4px; }
-.xpr-inc { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+.xpr-inc { padding-top: 6px; }
 .xpr-inc-h { margin: 0; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--soft); }
 .xpr-head { margin: 14px 0 0; font-size: 14.5px; font-weight: 600; color: var(--ink); }
-.xpr-list { list-style: none; margin: 10px 0 0; padding: 0; }
+.xpr-list { position: relative; list-style: none; margin: 10px 0 0; padding: 0; }
 .xpr-list li { display: flex; gap: 10px; padding: 6px 0; font-size: 15px; line-height: 1.45; color: var(--ink); }
 .xpr-ck { flex: none; margin-top: 3px; color: var(--ink); }
-.xpr-more { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; margin-top: 22px; padding: 14px 0 0; align-self: end; border: 0; border-top: 1px solid var(--line); background: none; color: var(--ink); font: 500 15px/1.3 var(--sans); text-align: left; cursor: pointer; }
+.xpr-more { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; margin-top: 22px; padding: 14px 0 0; border: 0; border-top: 1px solid var(--line); background: none; color: var(--ink); font: 500 15px/1.3 var(--sans); text-align: left; cursor: pointer; }
 .xpr-more span:last-child { transition: transform .15s var(--eo); }
 @media (hover: hover) { .xpr-more:hover span:last-child { transform: translateX(6px); } }
 .xpr-more:active { transform: translateY(1px); transition: transform 90ms var(--eo); }
+.xpr-pb { position: relative; }
 
-/* the Pro card: its own ladder; each row holds all four variants so the card never changes height */
-.xpr-pro-name { position: relative; display: block; height: 1.15em; overflow: hidden; min-width: 4ch; }
-.xpr-pro-name > span { display: block; }
-.xpr-vars { display: grid; }
-.xpr-var { grid-area: 1 / 1; display: flex; flex-direction: column; }
-.js .xpr-var { opacity: 0; visibility: hidden; transition: opacity .3s var(--ee), visibility 0s .3s; }
-.js .xpr-var.on { opacity: 1; visibility: visible; transition-delay: 0s; }
-html:not(.js) .xpr-var:not(:first-child) { display: none; }
-.xpr-vars.r-d .xpr-d { margin-top: 12px; }
+/* the plan index: every plan whole; hidden while the panel runs, shown when JavaScript is off */
+.xpr-all { gap: 24px; margin-top: 28px; }
+.xpr-all-t { margin: 0; font-size: var(--s-h); font-weight: 497; }
+.xpr-all-p { padding: 24px; border: 1px solid var(--line); border-radius: 24px; }
+.xpr-all-p h3 { margin: 0; font-size: var(--s-t); font-weight: 497; }
+.xpr-all-f { margin: 12px 0 0; font-size: var(--s-h); font-weight: 497; }
 
 /* Hanzo's trust links beside the asks */
 .xpr-trust { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
@@ -120,6 +125,13 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
 .xpr-seats > div > span { margin-top: 4px; font-size: 14.5px; line-height: 1.45; color: var(--soft); }
 .xpr-seat-p { margin: 18px 0 0; font-size: 44px; font-weight: 220; line-height: 1; letter-spacing: -.04em; color: var(--ink); }
 .xpr-seats small { margin-top: 8px; font-size: 13.5px; line-height: 1.45; color: var(--soft); }
+/* in the panel each seat is one compact row: its name and line, its rolling price, its own note and stepper */
+.xpr-morph .xpr-seats { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.xpr-morph .xpr-seats > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; align-items: center; padding: 16px 18px; }
+.xpr-morph .xpr-seats > div > * { grid-column: 1; }
+.xpr-morph .xpr-seats .xpr-seat-p { grid-column: 2; grid-row: 1 / span 2; margin: 0; font-size: 32px; }
+.xpr-morph .xpr-seats small { grid-column: 1 / -1; }
+.xpr-morph .xpr-seats .xpr-step { grid-column: 1 / -1; justify-self: start; margin-top: 12px; }
 .xpr-step { display: inline-flex; align-items: center; gap: 4px; margin-top: 18px; padding: 4px; border-radius: 999px; background: #fff; border: 1px solid var(--line); }
 .xpr-step button { width: 40px; height: 40px; border: 0; border-radius: 50%; background: none; color: var(--ink); font: 400 21px/1 var(--sans); cursor: pointer; transition: background .15s var(--eo), transform 90ms var(--eo); }
 @media (hover: hover) { .xpr-step button:hover:not(:disabled) { background: #ededed; } }
@@ -127,8 +139,10 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
 .xpr-step button:disabled { color: #a3a3a3; cursor: default; }
 .xpr-step output { min-width: 3ch; text-align: center; font: 600 17px/1 var(--sans); font-feature-settings: 'tnum'; }
 
-/* api */
-.xpr-vol { background: var(--card); }
+/* api: its reading arrives under the panel when the API set is picked */
+.xpr-api:not([hidden]) { animation: xpr-api-in .4s var(--ee) both; }
+@keyframes xpr-api-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .xpr-api:not([hidden]) { animation: none; } }
 .xpr-ch { margin-top: var(--pad); }
 /* two-part layouts on the 13-column grid: heading 5, lead 8 (38.2 / 61.8) */
 .xpr-split { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
@@ -229,11 +243,8 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
 .xpr-band-note a { color: #f5f5f7; text-underline-offset: 4px; }
 
 @media (max-width: 1199px) {
-  .xpr-plans { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; row-gap: 0; }
-  .xpr-plan { grid-row: auto; display: flex; flex-direction: column; }
-  .xpr-plans > .xpr-pro { grid-column: span 2; border-left: 0; border-top: 1px solid var(--line); }
-  .xpr-more { margin-top: auto; padding-top: 14px; }
-  .xpr-plan .xpr-inc { margin-bottom: 22px; }
+  .xpr-detail { grid-template-columns: minmax(0, 1fr); }
+  .xpr-pb { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
 }
 @media (max-width: 899px) {
   .xpr { --s-h1: 40px; --s-h: 21px; --s-t: 17px; --s-fig: 44px; --s-lede: 17px; }
@@ -247,10 +258,15 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
   .xpr-tabs { padding: 10px 0; }
   .xpr-tabs .x-tablist { display: flex; width: 100%; }
   .xpr-tabs .x-tab { flex: 1; }
-  .xpr-plans, .xpr-plans.two { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .xpr-plans > .xpr-pro { grid-column: auto; }
-  .xpr-plan { padding: 24px 20px; }
-  .xpr-plan + .xpr-plan { border-left: 0; border-top: 1px solid var(--line); }
+  /* phones: the rail sits across the top of the panel, one column per plan of the set */
+  .xpr-morph { grid-template-columns: minmax(0, 1fr); border-radius: 20px; }
+  .xpr-rail { flex-direction: row; gap: 4px; padding: 6px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .xpr-rail-i { flex: 1 1 0; min-width: 0; min-height: 76px; gap: 6px; padding: 12px; border-radius: 14px; }
+  .xpr-rail-bg { border-radius: 14px; }
+  .xpr-rail-n { min-width: 0; font-size: 15px; }
+  .xpr-rail-p { font-size: 12.5px; }
+  .xpr-rail-p.fig { font-size: 21px; }
+  .xpr-detail { padding: 24px 20px; }
   .xpr-ch > .xpr-sh { display: block; }
   .xpr-ch > .xpr-sh > p { margin-top: 12px; }
   .xpr-seg button { height: 36px; padding: 0 12px; }

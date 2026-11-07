@@ -13,7 +13,7 @@ Forks this page deleted: the dark "recommended" Pro and Team cards, three solid 
 - [x] No dead or self-looping button; n/a for `lib/plans.js` (not merged yet)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Plan columns work as a picker. The lowest plan (Free) is selected by default and is the page's only solid ask; pointing previews a column, and a click or focus selects it. On desktop the shared header ask drops to an outline while it shows; on phones the shared header keeps its solid "Try Hanzo" (shared header, not this file), so the phone's first screen shows two solid fills until the shared owner changes it. Only the visible tab's asks carry `data-thumb`; measured on the first screen: Personal 1 solid (Free) at 1470 and 375, Team 1 at 1470; the API tab at 1470 shows 2 (header and "Get API Key") because the shared `Ask.jsx` reads the page ask once per route (requested, `docs/requests/pricing.md` item 3).
+Done here: The plan rail is the picker: the lowest plan of each set (Free, Team, Pay as you go) is selected by default, and the one panel carries the one solid ask of the selected plan. On desktop the shared header ask drops to an outline while it shows; on phones the shared header keeps its solid "Try Hanzo" (shared header, not this file), so the phone's first screen shows two solid fills until the shared owner changes it. Only the visible tab's asks carry `data-thumb`; measured on the first screen: Personal 1 solid (Free) at 1470 and 375, Team 1 at 1470; the API tab at 1470 shows 2 (header and "Get API Key") because the shared `Ask.jsx` reads the page ask once per route (requested, `docs/requests/pricing.md` item 3).
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the shell's `#main` mark sits before the page's `<main>`)
@@ -31,7 +31,7 @@ Done here: Parity shows 5/5 links. Kit `Tabs` (Personal, Team, API) sync to `#te
 - [x] Ends in `Band`, then the footer
 - [x] Card-to-page: the plan's "Compare plans" grows a sheet out of its column (the page's Morph moment)
 
-Done here: Prices are visible at once with no roll from 0. Within 0.2 s at both sizes Hanzo's model art (Enso, Zen, Kai) deals in beside the lede ("every model on one bill"), then each card lifts once in turn and rests on Enso by 4.3 s; the Pro column takes its first step at 1 s. JS off: 0 invisible text blocks (checked), and the Pro column shows only Pro (no misprice).
+Done here: Prices are visible at once with no roll from 0. Within 0.2 s at both sizes Hanzo's model art (Enso, Zen, Kai) deals in beside the lede ("every model on one bill"), then each card lifts once in turn and rests on Enso by 4.3 s; the Pro row of the rail takes its first ladder step at 1 s. JS off: the morph panel is hidden and the plan index shows every plan whole (each Pro rung with its own price, so no misprice).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -62,11 +62,11 @@ Done here: Parity is 100/100 text. Kit `Faq` shows the first three questions ope
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii, shadows and sizes from the deck; never box plus shadow (the plan sheet is one outlined surface)
 - [x] One icon set; no icon in a rounded box
-- [x] Differs from neighbours: a sheet of columns with rolling figures, no hero object or film
+- [x] Differs from neighbours: one morphing plan panel with a rail and rolling figures, no hero object or film
 
 Done here:
 - **Scale with rhythm:** h1 52px; section headings 26px Book 497; prices 64px Air 220 (the one big thing per screen); body 15–16px.
-- **Plans:** columns of one sheet, divided by hairlines.
+- **Plans:** one outlined panel: a quiet rail of the set's plans on the left (across the top on phones), the selected plan on white beside it.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading (kit `Cta`)
@@ -87,10 +87,11 @@ Done here: Every control has its states:
 - [x] Reduced motion shows the final state; the ladder uses one timeout plus an interval that ends after one lap
 - [x] n/a: sound kit not merged (shared)
 
-Done here: The signature is the odometer: 300 ms, rolling only between real prices, and announced politely. The other movement:
-- **Idle:** the Pro ladder runs one lap within 4.3 s and stops on pointer or focus.
-- **State:** the tab pill, the sheet growing out of its column, and the details opening.
-- **Arrival:** the h1 cut-in.
+Done here: The signature is `morph-panel` (MOTION-MAP, 7 Nov): the Personal / Team / API tabs and the plan rail drive ONE plan panel (`PlanPanel` in `Pricing.jsx`) that never remounts. Picking a plan or a tab eases the panel's height to the new plan (500 ms in-out), the name lifts out as the next rises in (300 ms emphasis), the price odometer stays mounted and rolls between real prices (Go $8 to Pro $15 to the Team total), prices said in words cross over in a row that keeps the figure's height, Hanzo's included lines slide to their new places while the lines that differ leave and arrive in a 60 ms stagger, and the usage ladder, the billing switch and the seat mixer grow in only for the plan that has them. The three swapped tab panels of cards are gone. The other movement:
+- **Idle:** the Pro row of the rail walks its ladder (Pro, Dev, Max, Ultra, back to Pro) once within 4.3 s and stops on pointer or focus on the panel.
+- **State:** the tab pill, the rail's selected tile sliding between plans, the sheet growing out of the panel, the details opening.
+- **Arrival:** the h1 cut-in (the page's one reveal); the API set's reading fades in under the panel when API is picked.
+- Measured: 0 console errors at 1470×801 and 375×812 (normal and reduced motion); CLS while scrolling 0.0002 desktop, 0 phone; no horizontal scroll. Reduced motion: no slides and no height ease, words still cross over. JS off: the panel is hidden and the plan index shows every plan whole.
 
 ## 10. Media
 - [x] Kit `Img` only, sized (320×240 and 192×240), Enso with `priority`
@@ -125,7 +126,7 @@ Done here: Prices sit in `aria-live="polite"`. The steppers are named groups. Th
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop (filmed in the cloud)
 
-Done here: Motion is transform and opacity only. The ladder's timers live only while the card is on screen. The page's only images are the three hero model-art webp files (Enso with `priority`), sized; they answer the plan picker (Free lights Enso and Zen, every other plan all three).
+Done here: Motion is transform and opacity only. The ladder's timers live only while the panel is on screen; the panel's height ease is the one layout animation, and it runs only after a hand has touched the panel (the first paint and a #team link land still). The page's only images are the three hero model-art webp files (Enso with `priority`), sized; they answer the plan picker (Free lights Enso and Zen, every other plan all three).
 
 ## 14. SEO and machine files
 - [x] Title and description match `content/pages.json`

@@ -3,43 +3,53 @@
    itself is the big thing. The name (it arrives large and settles to its 52px rest) and its one line and ask sit over
    a light api.hanzo.ai console, centred low and nearly the width of the page, whole on the first screen. The console
    is the one place the API is listed: Hanzo's own request types itself on the left, and Hanzo's API table answers on the
-   right, every operation once, with what it does. Then the console pins and Hanzo's paragraph scrubs past beneath it,
-   one sentence at a time, each lighting the operations it names. Measured figures (memory), the seven layers of Hanzo
-   OS, the docs, and a dark closing band with the one ask end the page. Ink, greys and white; each product is told apart
-   by its own contour (Sigil seeded with its slug), request and operations.
+   right, every operation once, with what it does. The console is ONE panel with states: its step bar holds Hanzo's
+   "Try it" and one step per sentence of Hanzo's paragraph, and each step morphs the same panel in place. Measured
+   figures (memory), the seven layers of Hanzo OS, the docs, and a dark closing band with the one ask end the page. Ink,
+   greys and white; each product is told apart by its own contour (Sigil seeded with its slug), request and operations.
    Persona: Developer (and the founder wiring a company of agents)
    Goal: make the first call to this layer of the API
    CTA: the hero's ask, Hanzo's words ("Try Hanzo"), again in the closing band
    Metric: signup_start (then api_key_created)
-   Signature: the console runs itself. The request types out of Hanzo's own "Try it", the API table lands row by row,
-   then each operation lights once in turn and the console rests with the sound kit's faint 'done' (Replay runs it
-   again).
-   Beyond: the paragraph points at the product. As each of Hanzo's sentences passes under the pinned console, the
-   operations it names light up in the table, so the words and the API read as one thing.
-   Motion (not only scroll): time (the request types itself, rows land, a one-pass walk), state (a sentence lights its operations;
-   replay), pointer (magnetic ask; a row fills under the pointer), arrival (the name cut in, large, settling), scroll
-   (the pinned console and the sentence strip).
+   Signature (morph-panel, MOTION-MAP 7 Nov): one console, many states. Step "Try it": the request types itself out of
+   Hanzo's own block and the API table lands row by row. Step 01, 02...: the same left pane turns from the request into
+   that sentence (the code lifts away as the words rise into its place, the pane label turns from "Try it" to "01 / 03"),
+   and the light in the API table slides from row to row onto the operations the sentence names (one fill per
+   operation, moving by transform, never cutting). After the request lands the console steps through the sentences once
+   by itself and comes back to rest on "Try it" with the sound kit's faint 'done'; Pause holds it, a step takes over,
+   Replay runs it again. Nothing pins and nothing scrubs: the console is a plain section and keeps its size in every state.
+   Beyond: the paragraph points at the product. Each of Hanzo's sentences, stepped in the console, lights the
+   operations it names in the table, so the words and the API read as one thing.
+   Motion (not only scroll): time (the request types itself, rows land, the one-pass walk through the sentences),
+   state (the steps morph the console; replay; pause), pointer (magnetic ask; a row fills under the pointer), arrival
+   (the name cut in, large, settling; the page's one reveal), scroll (the first measured figure grows at its moment).
    Scale (MASTER 3.1, review 15:05): the product is the big thing of the first screen; h1 52 at rest (arrives up to
-   84); section heads 44; sentences 32; table 15–16; figures 64, the first measured one growing at its moment.
-   Ledger: deleted the dark console card, the pinned word+card chapters, the separate spec sheet (raw <table>), the
-   repeated operation lists, the thin count, the empty no-figure card, the link-list ending and the console's colour.
-   V2: 8/10 Apple launch layout of its own: name over a light, wide console that holds the API once; the paragraph
-   scrubs under the pinned console lighting its operations; measured figures; Hanzo OS; dark closing band. */
+   84); section heads 44; sentences 26 in the console; table 14–16; figures 64, the first measured one growing at its moment.
+   Ledger: deleted the pinned Stage (console pinned over a scroll-scrubbed sentence strip; the phone swipe rail), the
+   line-mask cut-in on every section heading, the dark console card, the pinned word+card chapters, the separate spec
+   sheet, the repeated operation lists, the thin count, the empty no-figure card, the link-list ending and the colour.
+   V2: 8/10 Apple launch layout of its own: name over a light, wide console that holds the API once and morphs through
+   the paragraph's sentences; measured figures; Hanzo OS; dark closing band. */
+// Signature: one console, many states: Hanzo's "Try it" and each sentence are steps of the same panel; the request types itself, then each step turns the pane into that sentence and slides the light onto the operations it names
+// Beyond: the paragraph points at the product: each sentence lights the operations it names in Hanzo's API table
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent, motion } from 'motion/react';
+import { useInView, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { Copy, Magnetic } from '../ui';
+import { Copy, Magnetic, useCalm } from '../ui';
 import { A, More } from '../kit';
 import Sigil from '../Sigil';
 import FamLines from '../v2/FamLines';
 import FamGrow from '../v2/FamGrow';
+import NoJs from '../NoJs';
 import { ui } from '../v2/famUi';
 import { play } from '../../lib/sound';
 import '../v2/fam.css';
 import './ProductPage.css';
 
 const CPS = 110; // characters a second
+const READ = 3400; // how long the walk holds each sentence, ms
 const slugOf = (h) => h.replace(/\/$/, '').split('/').pop();
+const nn = (k) => String(k).padStart(2, '0');
 /* a path breaks only after a slash, never mid-word (no characters added: <wbr> only) */
 const wb = (path) => path.split('/').map((seg, i, a) => <span key={i}>{seg}{i < a.length - 1 ? <>/<wbr /></> : null}</span>);
 
@@ -52,24 +62,53 @@ function opsFor(sentence, ops) {
   return ops.map((o, i) => [i, [...stems(o[1].replace(/[{}/]/g, ' ') + ' ' + o[2])].filter((w) => a.has(w)).length]).filter((x) => x[1] > 0).sort((x, y) => y[1] - x[1]).slice(0, 2).map((x) => x[0]);
 }
 
-/* ---------- the signature: the light console, the one place the API is listed ---------- */
-function Console({ p, lit }) {
+/* the light in the API table: one fill per operation a sentence names, sliding between rows by transform only, so the
+   table never reflows (it is drawn under the rows; a row's own hover fill still answers the pointer) */
+function Light({ group, lit }) {
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    const g = group.current;
+    if (!g) return;
+    const read = () => setRows([...g.querySelectorAll('[data-row]')].map((r) => [r.offsetTop, r.offsetHeight]));
+    read();
+    const ro = new ResizeObserver(read);
+    ro.observe(g);
+    return () => ro.disconnect();
+  }, [group]);
+  const last = useRef([0, 0]); // a light with nothing to show stays where it was and fades, so the next one slides from there
+  return [0, 1].map((k) => {
+    const i = lit[k] ?? -1;
+    if (i >= 0 && rows[i]) last.current[k] = i;
+    const r = rows[last.current[k]] || [0, 0];
+    return <span key={k} className="xpd-light" aria-hidden="true" data-on={i >= 0 && rows[i] ? '' : undefined} style={{ transform: `translateY(${r[0]}px) scaleY(${r[1]})` }} />;
+  });
+}
+
+/* ---------- the signature: the light console, ONE panel whose states are Hanzo's "Try it" and each sentence ---------- */
+function Console({ p, sents }) {
   const root = useRef(null);
+  const group = useRef(null);
   const seen = useInView(root, { amount: 0.3 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const [run, setRun] = useState(0);
-  const [walk, setWalk] = useState(-1); // the one-pass walk through the operations once they have landed
+  const [done, setDone] = useState(false); // the request has typed and the table has landed
+  const [step, setStep] = useState(0); // 0: Try it; k: Hanzo's k-th sentence
+  const [held, setHeld] = useState(false); // a hand (a step, or Pause) holds the console where it is
+  const [walking, setWalking] = useState(false);
   const full = p.tryIt.toks.map((t) => t[1]);
   const code = full.join('');
   const { heads, ops } = p.api;
+  const n = sents.length;
+  const lit = step > 0 ? opsFor(sents[step - 1], ops) : [];
 
   // from here the browser takes over: the request is cleared and the answer held back until it is typed
   useLayoutEffect(() => {
     if (calm || !root.current) return;
     root.current.dataset.armed = '';
-    root.current.querySelectorAll('[data-t]').forEach((n) => { n.textContent = ''; });
+    root.current.querySelectorAll('[data-t]').forEach((x) => { x.textContent = ''; });
   }, [calm]);
 
+  // the request types itself; the answer lands while it types
   useEffect(() => {
     if (calm || !seen) return;
     const el = root.current;
@@ -78,9 +117,9 @@ function Console({ p, lit }) {
     const pane = el.querySelector('.xpd-req-b');
     if (pane) { pane.scrollTop = 0; pane.scrollLeft = 0; }
     delete el.dataset.done;
-    setWalk(-1);
+    setDone(false);
     rows.forEach((r) => r.removeAttribute('data-in'));
-    toks.forEach((n) => { n.textContent = ''; });
+    toks.forEach((x) => { x.textContent = ''; });
     const timers = [];
     let raf = 0;
     const t0 = performance.now() + 150;
@@ -89,13 +128,13 @@ function Console({ p, lit }) {
     const cps = Math.max(CPS, code.length / 1.8);
     rows.forEach((r, i) => timers.push(setTimeout(() => r.setAttribute('data-in', ''), 500 + i * 140)));
     const tick = (now) => {
-      let n = Math.max(0, Math.floor(((now - t0) / 1000) * cps));
+      let m = Math.max(0, Math.floor(((now - t0) / 1000) * cps));
       let cur = -1;
       for (let i = 0; i < toks.length; i++) {
-        const take = Math.max(0, Math.min(full[i].length, n));
+        const take = Math.max(0, Math.min(full[i].length, m));
         if (toks[i].textContent.length !== take) toks[i].textContent = full[i].slice(0, take);
         if (take > 0) cur = i;
-        n -= take;
+        m -= take;
       }
       toks.forEach((t, i) => (i === cur ? t.setAttribute('data-cur', '') : t.removeAttribute('data-cur')));
       // the pane follows the cursor, only once it would leave the view (the code never wraps mid-URL; it scrolls)
@@ -108,32 +147,74 @@ function Console({ p, lit }) {
       toks.forEach((t, i) => { t.textContent = full[i]; t.removeAttribute('data-cur'); });
       if (pane) pane.scrollLeft = 0;
       rows.forEach((r) => r.setAttribute('data-in', ''));
-      const landed = 200;
-      timers.push(setTimeout(() => { el.dataset.done = ''; }, landed));
-      // one pass: each operation lights in turn, then the console rests
-      rows.forEach((_, i) => timers.push(setTimeout(() => setWalk(i), landed + 400 + i * 700)));
-      timers.push(setTimeout(() => { setWalk(-1); play('done'); }, landed + 400 + rows.length * 700)); // the demo rests: a faint chime
+      timers.push(setTimeout(() => { el.dataset.done = ''; setDone(true); }, 200));
     };
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); timers.forEach(clearTimeout); };
   }, [seen, run, calm]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const on = (i) => walk === i || (walk < 0 && lit && lit.includes(i));
+  // the walk: once the answer has landed, the console steps through Hanzo's sentences once by itself, then rests on
+  // "Try it" with the faint 'done'. Pause, or picking a step, holds it; Replay runs the whole console again.
+  useEffect(() => {
+    if (!done || held || calm) return;
+    setWalking(true);
+    const timers = sents.map((_, k) => setTimeout(() => setStep(k + 1), 1200 + k * READ));
+    timers.push(setTimeout(() => { setStep(0); setWalking(false); play('done'); }, 1200 + n * READ));
+    return () => { timers.forEach(clearTimeout); setWalking(false); };
+  }, [done, held, calm, run]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // on a phone the table scrolls inside its own box: a lit operation below the fold is brought into that box
+  useEffect(() => {
+    const box = root.current?.querySelector('.xpd-ops');
+    const row = lit.length && group.current?.querySelectorAll('[data-row]')[lit[0]];
+    if (!box || !row || box.scrollHeight <= box.clientHeight) return;
+    const y = row.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 40;
+    if (y < box.scrollTop || y + row.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTo({ top: Math.max(0, y), behavior: calm ? 'auto' : 'smooth' });
+  }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const pick = (k) => { setHeld(true); setStep(k); };
+  const keys = (e) => {
+    const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    const k = (step + d + n + 1) % (n + 1);
+    pick(k);
+    root.current?.querySelector('#xpd-step-' + p.slug + '-' + k)?.focus();
+  };
+  const replay = () => { setHeld(false); setStep(0); setRun((r) => r + 1); };
+  const labels = [p.tryIt.title, ...sents.map((_, k) => nn(k + 1))];
   return (
-    <div className="xpd-con" ref={root} data-done={calm ? '' : undefined}>
+    <div className="xpd-con" ref={root} data-done={calm ? '' : undefined} data-step={step}>
       <div className="xpd-con-bar">
-        <span className="x-mono">api.hanzo.ai</span>
+        <span className="x-mono xpd-host">api.hanzo.ai</span>
+        <div className="xpd-steps" role="tablist" aria-label={p.api.title} onKeyDown={keys}>
+          {labels.map((l, k) => (
+            <button key={k} type="button" role="tab" id={'xpd-step-' + p.slug + '-' + k} aria-selected={step === k} aria-controls={'xpd-body-' + p.slug} tabIndex={step === k ? 0 : -1}
+              aria-label={k ? `${ui('chapter')} ${k} ${ui('of')} ${n}` : undefined} className="xpd-step x-mono" onClick={() => pick(k)}>
+              {step === k && <motion.span layoutId={'xpd-step-bg-' + p.slug} className="xpd-step-bg" transition={{ duration: calm ? 0 : 0.4, ease: [0.4, 0, 0.2, 1] }} />}
+              <span>{l}</span>
+            </button>
+          ))}
+        </div>
         <span className="xpd-con-sp" />
         <Copy text={code} />
-        <button type="button" className="xpd-replay" onClick={() => setRun((r) => r + 1)} aria-label={ui('replay')}>
-          <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </button>
+        {walking
+          ? <button type="button" className="xpd-replay" onClick={() => setHeld(true)} aria-label={ui('pause')}><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M5.5 3.5v9M10.5 3.5v9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg></button>
+          : <button type="button" className="xpd-replay" onClick={replay} aria-label={ui('replay')}><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
       </div>
-      <div className="xpd-con-g">
+      <div className="xpd-con-g" id={'xpd-body-' + p.slug} role="tabpanel" aria-labelledby={'xpd-step-' + p.slug + '-' + step}>
         <div className="xpd-req">
-          <h2 className="xpd-pane-h x-mono">{p.tryIt.title}</h2>
-          <div className="xpd-req-b" tabIndex={0} data-lenis-prevent data-swipe-own>
-            <pre><code>{p.tryIt.toks.map(([k, t], i) => <span key={i} data-t data-k={k}>{t}</span>)}</code></pre>
+          {/* the pane's label: "Try it", or the sentence's number */}
+          <div className="xpd-stack xpd-pane-l">
+            <h2 className="xpd-pane-h x-mono" data-on={step === 0 ? '' : undefined}>{p.tryIt.title}</h2>
+            <span className="xpd-pane-h x-mono" aria-hidden="true" data-on={step > 0 ? '' : undefined}>{nn(Math.max(1, step))} / {nn(n)}</span>
+          </div>
+          {/* the pane's body: the request, or one of Hanzo's sentences, in the same place (the paragraph is read whole below) */}
+          <div className="xpd-stack xpd-req-s">
+            <div className="xpd-req-b" tabIndex={step === 0 ? 0 : -1} data-lenis-prevent data-swipe-own data-on={step === 0 ? '' : undefined} aria-hidden={step !== 0 || undefined}>
+              <pre><code>{p.tryIt.toks.map(([k, t], i) => <span key={i} data-t data-k={k}>{t}</span>)}</code></pre>
+            </div>
+            {sents.map((t, k) => <p key={k} className="xpd-sent" aria-hidden="true" data-on={step === k + 1 ? '' : undefined}>{t}</p>)}
           </div>
         </div>
         <div className="xpd-res">
@@ -144,9 +225,10 @@ function Console({ p, lit }) {
           {/* Hanzo's API table, once: method, path and what it does (an accessible table without a raw <table>) */}
           <div className="xpd-ops" role="table" aria-labelledby={'xpd-api-' + p.slug}>
             <div className="xpd-ops-h" role="row">{heads.map((h) => <span key={h} role="columnheader" className="x-mono">{h}</span>)}</div>
-            <div role="rowgroup">
+            <div role="rowgroup" className="xpd-rows" ref={group}>
+              <Light group={group} lit={lit} />
               {ops.map((r, i) => (
-                <div key={i} className="xpd-op" role="row" data-row data-lit={on(i) ? '' : undefined}>
+                <div key={i} className="xpd-op" role="row" data-row data-lit={lit.includes(i) ? '' : undefined}>
                   <span role="cell"><b className="xpd-m x-mono" data-m={r[0]}>{r[0]}</b></span>
                   <span role="cell"><code className="xpd-path">{wb(r[1])}</code></span>
                   <span role="cell" className="xpd-what">{r[2]}</span>
@@ -157,45 +239,6 @@ function Console({ p, lit }) {
         </div>
       </div>
     </div>
-  );
-}
-
-/* the console pins, and Hanzo's paragraph scrubs past beneath it, a sentence at a time, lighting what it names */
-function Stage({ p, intro }) {
-  const ref = useRef(null);
-  const calm = useReducedMotion();
-  const sents = split(intro);
-  const n = sents.length;
-  const [at, setAt] = useState(-1);
-  const [desk, setDesk] = useState(null); // unknown until mounted, so neither the desktop scrub nor the phone rail lights early
-  useEffect(() => { const m = matchMedia('(min-width: 901px)'); const f = () => setDesk(m.matches && !calm); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, [calm]);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 72px', 'end end'] });
-  const F = 0.6; // each sentence takes 60% of the strip's view, so the next one peeks in
-  const x = useTransform(scrollYProgress, [0, 1], ['0%', -((n - 1) * F / n) * 100 + '%']);
-  useMotionValueEvent(scrollYProgress, 'change', (v) => { if (!desk) return; const k = v <= 0.001 ? -1 : Math.min(n - 1, Math.round(v * (n - 1))); if (k !== at) setAt(k); });
-  // phones: the strip is a swipe rail; the sentence in view lights its operations
-  const rail = useRef(null);
-  useEffect(() => {
-    if (desk !== false || !rail.current) return;
-    const cards = [...rail.current.querySelectorAll('[data-s]')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.s); }), { root: rail.current, threshold: 0.6 });
-    cards.forEach((c) => io.observe(c));
-    return () => io.disconnect();
-  }, [desk]);
-  const lit = at >= 0 ? opsFor(sents[at], p.api.ops) : null;
-  return (
-    <section ref={ref} className="xpd-stage" style={{ '--n': n }} aria-label={p.api.title}>
-      <div className="xpd-pin">
-        <div className="v2f-wrap"><Console p={p} lit={lit} /></div>
-        {/* the paragraph is read whole once (screen readers, search, JS off); the strip is its picture */}
-        <p className="x-sr">{intro}</p>
-        <div className="xpd-strip-v" ref={rail} data-swipe-own aria-hidden="true">
-          <motion.ol className="xpd-strip" style={desk ? { x, width: n * 100 + '%' } : undefined} data-desk={desk ? '' : undefined}>
-            {sents.map((t, k) => <li key={k} data-s={k} data-on={k === at ? '' : undefined}><span className="xpd-strip-n x-mono">{String(k + 1).padStart(2, '0')}</span><span>{t}</span></li>)}
-          </motion.ol>
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -213,7 +256,7 @@ function Measured({ m }) {
   return (
     <section className="xpd-meas v2f-sec" aria-labelledby="xpd-meas-h">
       <div className="v2f-wrap">
-        <FamLines as="h2" play="view" id="xpd-meas-h" text={m.title} className="xpd-sec-h" />
+        <h2 id="xpd-meas-h" className="xpd-sec-h">{m.title}</h2>
         <ul className="xpd-meas-g">
           {figs.map((l, k) => (
             <li key={l.href}>
@@ -237,7 +280,8 @@ function Measured({ m }) {
 export default function ProductPage({ p, peek = {} }) {
   const router = useRouter();
   const nums = [p.api.ops.length, p.os.length, ...(p.measured ? p.measured.links.flatMap((l) => (l.text.match(/\d[\d,]*(?:\.\d+)?/g) || []).map((x) => +x.replace(/,/g, ''))) : [])];
-  const intro = (function flat(ns) { return ns.map((n) => (typeof n === 'string' ? n : flat(n.c || []))).join(''); })(p.intro).replace(/\s+/g, ' ').trim();
+  const intro = (function flat(ns) { return ns.map((x) => (typeof x === 'string' ? x : flat(x.c || []))).join(''); })(p.intro).replace(/\s+/g, ' ').trim();
+  const sents = split(intro);
   // the other layers are fetched while you read, so a row opens its page at once (the title flies into its h1)
   useEffect(() => {
     const t = setTimeout(() => p.os.filter((o) => !o.current).forEach((o) => router.prefetch(o.href)), 1500);
@@ -261,13 +305,19 @@ export default function ProductPage({ p, peek = {} }) {
         </div>
       </section>
 
-      <Stage p={p} intro={intro} />
+      {/* the console: one panel, its states stepped from its own bar (not pinned, not scrubbed) */}
+      <section className="xpd-stage" aria-label={p.api.title}>
+        <div className="v2f-wrap"><Console p={p} sents={sents} /></div>
+        {/* the paragraph, read whole once (screen readers, search, JS off); the console's sentence pane is its picture */}
+        <p className="x-sr">{intro}</p>
+      </section>
+      <NoJs css=".xpd-stack>*{opacity:1!important;visibility:visible!important;transform:none!important;position:static!important}.xpd-stack{display:block!important}.xpd-pane-l>span{display:none}.xpd-sent{margin-top:20px}.xpd-steps{display:none}.xpd-con-g{height:auto!important}" />
 
       {p.measured && <Measured m={p.measured} />}
 
       <section className="xpd-os v2f-sec" aria-labelledby="xpd-os-h">
         <div className="v2f-wrap">
-          <FamLines as="h2" play="view" id="xpd-os-h" text={p.osTitle} className="xpd-sec-h" />
+          <h2 id="xpd-os-h" className="xpd-sec-h">{p.osTitle}</h2>
           <nav aria-label={p.osTitle}>
             <ol className="xpd-os-l">
               {p.os.map((o, i) => {
@@ -275,7 +325,7 @@ export default function ProductPage({ p, peek = {} }) {
                 return (
                   <li key={o.href}>
                     <A to={o.href} className="xpd-os-c" aria-current={o.current ? 'page' : undefined}>
-                      <span className="xpd-os-i x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="xpd-os-i x-mono" aria-hidden="true">{nn(i + 1)}</span>
                       <b className="xpd-os-n" data-morph={o.current ? undefined : ''}>{o.name}</b>
                       <span className="xpd-os-d">{o.desc}</span>
                       {q && <span className="xpd-os-k" aria-hidden="true"><b className="v2f-num">{q.ops}</b><span className="x-mono">{p.api.title}</span></span>}
@@ -310,7 +360,7 @@ export default function ProductPage({ p, peek = {} }) {
       {/* the close: one dark room, Hanzo's own name and line, the one ask */}
       <section className="x-band xpd-band" data-room="dark" aria-labelledby="xpd-band-h">
         <div className="v2f-wrap xpd-band-g">
-          <FamLines as="h2" play="view" id="xpd-band-h" text={p.title} className="xpd-band-h" />
+          <h2 id="xpd-band-h" className="xpd-band-h">{p.title}</h2>
           <p className="xpd-band-l">{p.lede}</p>
           <div className="xpd-band-a">
             <Magnetic strength={0.22}><A to={p.acts[0].href} className="v2f-btn xpd-band-btn" data-cta="products.close">{p.acts[0].text}</A></Magnetic>
