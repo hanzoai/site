@@ -36,8 +36,9 @@
   .w2-pin-rail li:not(.w2-pin-title) { display: none; }
   .w2-pin-title { margin: 0; }
   .w2-pin-title span { width: auto; writing-mode: horizontal-tb; transform: none; font-size: 14px; color: var(--soft); }
-  .w2-pin-texts { order: 1; }
-  .w2-pin-texts { display: flex; flex-direction: column; gap: 0; }
+  .w2-pin-texts { order: 1; display: contents; }
+  .w2-pin-t.lead { order: -3; min-height: 0; padding: 0 0 24px; border-top: 0; }
+  .w2-pin-texts { display: contents; }
   .w2-pin-t { grid-area: auto; min-height: 62svh; padding: 40px 0; opacity: 1 !important; transform: none !important; pointer-events: auto; border-top: 1px solid var(--line); }
   .w2-pin-t:first-child { border-top: 0; }
 }

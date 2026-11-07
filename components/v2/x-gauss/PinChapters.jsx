@@ -9,6 +9,8 @@
    - title (optional): the section's own heading, set once at the top of the numbered rail (never above a chapter headline).
    - The numbered rail glides to a chapter. Phones: the visual pins on top and the chapters scroll under it.
    - c.k is a mono meta line under the words (never an eyebrow above the headline).
+   - c.node replaces the headline and body with your own block (for example the page's hero: its h1, lede and ask), and
+     c.rail === false keeps that chapter out of the numbered rail; it then leads on phones too (before the visual).
    - Reduced motion: chapters swap without travel. JS off: <NoJs/> stacks every chapter. Owned by the Business 2 chat. */
 import { useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
@@ -37,10 +39,10 @@ export default function PinChapters({ id, label, title, chapters, visual, classN
           <div className="w2-pin-words">
             <ol className="w2-pin-rail" aria-label={title || 'Chapters'}>
               {title && <li className="w2-pin-title" aria-hidden="true"><span className="x-mono">{title}</span></li>}
-              {chapters.map((c, i) => (
+              {chapters.map((c, i) => c.rail === false ? null : (
                 <li key={i}>
                   <button type="button" aria-current={at === i ? 'step' : undefined} onClick={() => go(i)}>
-                    <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="x-mono">{String(i + 1 - chapters.slice(0, i).filter((x) => x.rail === false).length).padStart(2, '0')}</span>
                     <i aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at > i ? 1 : at === i ? 0.5 : 0 }} transition={{ duration: 0.5, ease: EASE }} /></i>
                   </button>
                 </li>
@@ -48,11 +50,10 @@ export default function PinChapters({ id, label, title, chapters, visual, classN
             </ol>
             <div className="w2-pin-texts">
               {chapters.map((c, i) => (
-                <motion.article key={i} className={'w2-pin-t' + (at === i ? ' on' : '')} initial={false}
+                <motion.article key={i} className={'w2-pin-t' + (at === i ? ' on' : '') + (c.rail === false ? ' lead' : '')} initial={false}
                   animate={calm ? { opacity: at === i ? 1 : 0 } : { opacity: at === i ? 1 : 0, y: at === i ? 0 : at > i ? -48 : 48 }}
                   transition={{ duration: at === i ? 0.55 : 0.16, ease: EASE, delay: at === i ? 0.16 : 0 }}>
-                  <h2 className="w2-headline">{c.t}</h2>
-                  <div className="w2-pin-b">{c.b}</div>
+                  {c.node || <><h2 className="w2-headline">{c.t}</h2><div className="w2-pin-b">{c.b}</div></>}
                   {c.k && <p className="w2-pin-meta x-mono">{c.k}</p>}
                 </motion.article>
               ))}
