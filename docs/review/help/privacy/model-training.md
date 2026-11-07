@@ -1,43 +1,51 @@
 # /help/privacy/model-training — James-eye review
-7 Nov, round 2, walked at 1470x801 and 375x812 (isMobile, hasTouch) with Playwright: frames at 0, 1 and 3 s untouched, a wheel scroll one screen at a time with 1.5 s dwell, hover and press on every main control (tap on phone), overflow checked at 375 and 320, prefers-reduced-motion loaded, console read on every load.
+7 Nov, round 3, walked at 1470x801, 375x812 and 320x640 (phone: isMobile, hasTouch) with Playwright: frames at 0, 1 and 3 s with no input, a wheel or smooth scroll one screen at a time with 1.5 s dwell, hover and press on desktop, taps on phone, console capture, overflow probe, and a prefers-reduced-motion load at 1470 and 375.
 
 Verdict: 7/10
 
-First complaint: "The little settings demo is the best thing on the page, but it contradicts itself: the picture switches it off and the switch underneath still says on. And on my phone it shows a mouse pointer, the grey bars spill off the phone screen and at the small size 'Mobile' is cut off. It looks unfinished."
+First complaint: "On my phone the demo is a big grey slab that takes more than a whole screen before I even reach the contents, and the buttons are squashed onto two lines. And on the laptop the little counter says 04 of 04, then 03 of 05. Which is it?"
+
+Clean on the basics: 0 console errors and 0 hydration diffs in any load, including reduced motion. The Next.js portal is present but carries no issue. No horizontal overflow at 1470, 375 or 320. No hue: every computed colour is neutral.
 
 ## The 11 answers
-1. **Sells in 5 s, moves in 1 s?** Yes. The question is the h1 (52px) with the lede under it, and a self-running settings demo on the right: within 1 s a cursor walks to the avatar, then Settings, then Privacy, then the switch, with a 01/04 counter and progress dashes. The h1 cuts in after first paint into a reserved box, so nothing moves. At t0 the demo cursor sits half outside the window frame, on the card edge.
-2. **One in, one out, or a document?** On desktop, mostly yes. The demo card pins on the right and changes with each section (03/05 shows a timeline with the switch flipped off, 04/05 shows the Privacy pane with the switch off and a highlighted row). On phone it is a document: the demo sits once under the lede, and sections 03, 04 and 05 are plain text rows with nothing changing as you scroll.
-3. **Every section holds a real object?** Desktop: 01 to 04 have the pinned stage, and 02 also has its own web and mobile step cards. 05 "More" is a quiet grey band holding one sentence of links, with no object. Phone: only the hero demo and the 02 step cards. 03, 04 and 05 are text only.
-4. **One ask in the header, nothing floating, scale rhythm?** The header ask ("Try Hanzo") is shared chrome. Nothing on the page floats over content (the cookie bar and dev badge are shared). Scale rhythm is right on desktop: one 52px h1, a 21px lede, a medium demo card, small mono contents. Two things are off: the "05 More" h2 is 32px on desktop while the other h2s are 26px, and on phone the demo takes about 1.3 screens straight after the lede, so the contents list is pushed below two folds.
-5. **Every hover and press answers, no jumps?** Mostly. Contents rows get a #f5f5f5 fill and the label nudges right. The demo tabs and pause button press to scale 0.97, and the demo switch presses to 0.98. The "Help center" breadcrumb link shows no change at all on hover. The demo card grows about 11px whenever a step caption wraps to two lines ("Switch Help improve Hanzo's models off (or on)."), so its bottom edge jumps on every loop.
-6. **Overlap, font swap, layout shift?** No font swap, and the h1 box holds. Problems:
-   - At 320 the demo's segment control is wider than its card (to 338px), so "Mobile" is clipped at the card edge, and the panes run to about 406px inside the clip.
-   - In both mock windows the skeleton bars run past the right edge of the frame, and one bar starts flush against the left edge.
-   - On phone the breadcrumb wraps so that a lone "/" starts the second line, with a large gap after it.
-   - The card-height jump from answer 5.
+1. **Does the first screen sell in 5 seconds, and does something move within 1 s?** Yes on desktop. A self-running settings demo sits on the right: a cursor clicks the avatar, then Settings, then Privacy, and flips the switch, with 01/04 progress ticks, and it is moving by 1 s. The h1 cuts in by line. At t0 the title slot is still empty between the breadcrumb and the lede for a beat, which reads as a hole rather than an arrival. On the 375 phone the demo starts below the lede and then runs taller than a screen (tabs, phone mock, caption, toggle row, body text), so the contents list doesn't arrive until the second screen.
+2. **Does one thing come in as one goes out, or is it a document?** On desktop, mostly the first. The right-hand stage is pinned and its panel changes with the section: the settings flow, a before/after timeline of dots for 03, and the privacy panel with a highlighted row for 04. On the left it is still an article, which is fine for a help page. On phone the stage breaks into inline figures per section (the timeline draws in, the dots fill), which is good. Sections 01 and 05 get no figure on phone, so 01 is an 8-line text block.
+3. **Does every section hold a real visual object?** Desktop yes, through the pinned stage. Phone: 02, 03 and 04 yes; 01 and 05 no. The 04 object reuses the step-3 privacy panel with one grey bar lit, so it says nothing about "what it does not change".
+4. **One ask, nothing floating, scale rhythm?** There is one ask, Try Hanzo, in the sticky header. The closing Help center row is a quiet link, not a competing ask. Nothing of the page floats over content; the cookie card is shared chrome. Scale on desktop is right: h1 52, lede about 21, h2 26, body 16, mono labels 12. On phone the stage is the biggest thing on the first screen and a half, so everything sits large at once there.
+5. **Does every hover and press answer, with no jumps?** The stage tabs, pause/play, step rows and the steps tab all answer: hover darkens or tints them and press scales to 0.97 or 0.98, with no jumps. Pause really stops the demo and shows a play glyph. The contents rows only change their background on hover and do nothing on press (transform none), and the hover tells you nothing. Taps on phone answer: the contents rows scroll to their anchor and the tabs switch.
+6. **Overlaps, font swap, layout shift?** No overlap of page elements at 1470, 375 or 320, and no font swap. Smaller issues:
+   - The pinned stage ends flush against the grey "More" band as it releases, with 0 px of air.
+   - Hairlines are inconsistent: the contents and ledger rows hang about 10 px left of the text column (149 vs 159 on desktop, 6 vs 16 on phone), while the last contents rule and the 03 list rules sit on the column.
+   - The mono label "ON THE WEB AND THE DESKTOP APP" wraps to 2 lines inside its step card at 1470.
+   - On 375 and 320 the "Web and the desktop app" and "On the web and the desktop app" pills wrap to 2 lines next to a 1-line "Mobile" pill.
+7. **Which reference does it feel like, and is its motion there?** Apple's pinned stage where one panel changes is there on desktop. A live self-running demo answers the "time / idle" motion rule. Calm trust, in the chatgpt enterprise sense, comes through the quiet ledger in 04. Scroll is not the only motion: the demo, the cut-in and the stateful tabs carry the rest.
+8. **Different from its neighbours, with its own hero and signature?** The signature is the settings demo with a live switch, and it is specific to this article. Not verified against sibling help articles. The `xhp-` structure suggests a shared help template, so the demo has to stay this article's own.
+9. **All 18 parts covered?** For a support page:
+   - IA: breadcrumb, numbered contents, anchors, and a closing route back to the Help center.
+   - States: pause, and reduced motion lands on the final state (switch off, "saves to your account" tick).
+   - Mobile: its own inline figures.
+   - Not covered: no "was this helpful" or related-articles exit beyond the single Help center row, and no copy-link for the anchors.
+10. **Banned tells?** None found:
+    - The "HELP · PRIVACY" mono label sits under the lede, not above the h1.
+    - No gradient text, hue, Inter or three equal boxes; the two step cards are a pair.
+    - The h1 font stack lists "Noto Kufi Arabic" before Zen, which only matters for Arabic glyphs; Latin renders in Zen.
+11. **Is the copy untouched?** No visible rewrite. The text reads as plain help copy. "HELP · PRIVACY" and "CONTENTS" are interface labels. I did not check the copy against a source.
 
-   The red "Issue" badge seen during the walk was a hydration diff in the root layout's FooterHTML (`data-x-shell="footer"`). It came from a screenshot taken before hydration and is shared chrome. I re-ran at both sizes with `caret: 'initial'` and the console was clean, so it is not counted.
-7. **Which reference, and is its motion there?** Apple product page: a pinned stage where one panel changes per section, and it is really there on desktop. It is also calm like chatgpt.com/business/enterprise, with proof listed quietly in ruled rows. The Apple behaviour is missing on phone.
-8. **Different from its neighbours?** Yes in its own right. A scripted settings walkthrough with a web and mobile toggle and a timeline scene is this page's idea, not a template hero. I did not walk the neighbouring help pages.
-9. **18 parts covered?**
-   - Present: breadcrumb, contents, anchors, sectioned IA, reduced motion (the demo lands on its final 04/04 state, paused with a play button), states (pause and play), no horizontal page scroll at 375 or 320.
-   - Gaps: the closing section has no next step or related article, phone motion is thin, and the 320 component clips.
-10. **Banned tells?**
-    - No hue: the main palette is the neutral ramp only.
-    - No gradient text, no Inter, no stripe, and no eyebrow above the h1. "HELP · PRIVACY" sits under the lede, which is allowed.
-    - The computed h1 stack starts with "Noto Kufi Arabic" before Zen. It renders as Zen, but it is worth confirming that the Arabic face is unicode-range limited, so there is never a third face.
-    - A desktop mouse cursor is drawn inside the phone-sized "Mobile" walkthrough. It is not a banned tell, but it is a wrong-device tell.
-11. **Copy untouched?** It reads as Hanzo's own help copy, with no rewrites seen. I did not diff it against source.
+Shared chrome, noted but not counted:
+- On phone the translucent sticky header lets text ghost through under the logo.
+- At 320 the header's Try Hanzo button is cut at the right edge.
+- At 320 the cookie card covers about 40% of the screen.
 
 ## Fixes, in order
-1. **Make the demo state consistent.** The panel's own "Help improve Hanzo's models" switch under the stage must follow the scene: when the stage shows it off (03/05, 04/05, and the end of the 04/04 loop), the switch and its caption flip to off. The 4-step loop should end with the switch actually turning off, not resting on "on".
-2. **Fix the 320 clip.** Let the segment control shrink or wrap, or shorten the hit areas, so "Web and the desktop app" and "Mobile" both fit inside the card at 320. Keep the panes inside the frame.
-3. **Keep the skeleton bars inside the mock frames.** Pad them on both sides in the web window and the phone screen. No bar should touch or cross the frame edge.
-4. **On touch devices, replace the arrow cursor with a tap ripple or dot.** Also start the cursor inside the window, not on the card edge at t0.
-5. **Stop the demo card's height jump.** Reserve two caption lines, or give the caption row a fixed min-height, so the card never resizes between steps.
-6. **Give phone a scroll moment for 03 and 04.** Show a compact version of the stage (the timeline scene for 03, the Privacy pane with the switch off for 04) inline above each list, scrubbed or arriving as the section enters. Then phone is one in, one out, not a document.
-7. **Shorten the phone hero demo** to roughly one screen. Shrink the mock and drop the long caption block under it, so the contents list sits within reach of the first scroll.
-8. **Hold the breadcrumb together on phone.** Keep "/" attached to the following crumb (no orphaned separator), or truncate the last crumb with an ellipsis.
-9. **Set the "05 More" h2 to 26px** like the other section heads. Give the closing band a small object or a next step (for example the related privacy articles as quiet rows) so it is not a dead grey strip.
-10. **Give the "Help center" breadcrumb link a real hover** (for example the underline offset moves, or the ink darkens and the underline thickens), not nothing.
+1. **Phone hero weight.** At 375 and 320, cap the hero stage at about 60% of the screen:
+   - show only the device mock and the step caption;
+   - move the toggle row and its body text into section 02 or drop them on phone;
+   - put the contents list (or at least its first rows) inside the first screen and a half.
+2. **One counter on the desktop stage.** Pick one counting system. Either show step progress only inside the 02 scene and the section index elsewhere, labelled differently (for example "Step 04 / 04" versus a section caption with no fraction), or drop the "/ 05". While section 01 is in view the stage should show the 01 scene, not the finished 04/04 step, and it should not snap back to 04/04 as it releases above "More".
+3. **Tab pills on phone.** Keep "Web and the desktop app" and "On the web and the desktop app" on one line at 375 and 320: smaller tab type (14 px), tighter padding, or a 1fr/auto split so Mobile takes only its own width. Do the same for the 2-line mono label in the desktop step card. Shorten nothing in the copy.
+4. **Give 01 and 05 an object on phone.** In 01, show a small inline switch (the stage's own toggle) that flips once when it arrives. In 05, the Help center row can carry a small preview, or the lit switch can settle into its final state.
+5. **Make the 04 scene say something.** Mark the four ledger rows on the privacy panel as staying put while the switch goes off: for example, the switch flips and the four rows stay solid ink, tied to which ledger row is in view. That beats a single grey bar.
+6. **Contents rows answer.** On hover, nudge the arrow or number (for example the number goes to ink and the row's rule darkens or draws), and on press translateY(1px), matching the rest of the page.
+7. **Air at the stage release.** End the sticky stage 44 to 72 px above the grey "More" band, so the card bottom doesn't kiss the band edge.
+8. **One hairline edge.** Put the contents rules, ledger rules and highlighted-row backgrounds on the text column (159 desktop, 16 phone), or hang all of them by the same amount, the 03 list included.
+9. **h1 at t0.** Hold the title's first line visible from the first paint (cut-in from a partial mask, or start the mask under 150 ms) so the hero never shows an empty title slot.
