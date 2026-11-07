@@ -7,7 +7,9 @@
    deck has become the full grid. A counter keeps how many are out. Phones read the grid as it is.
    Beyond: "Your chain". Pick any chain Hanzo lists across its Web3 products and see at once whether this product
    names it, and which of the other products do (each one a link), from every product page's own Supported Chains.
-   V2: 8/10 Stage key card settling under a display headline, capabilities as a scroll-dealt exploded deck, code as the developer hero, editorial Built For rows, sibling products as cards that open, one accent per member. */
+   A product line without a key card (the exchange) puts its products up as the hero object instead: a console that
+   walks through them by itself.
+   V2: 8/10 Stage key card (or product console) settling under a display headline, capabilities as a scroll-dealt exploded deck, code as the developer hero, editorial Built For rows, sibling products as cards that open, one accent per member. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
@@ -183,6 +185,53 @@ function YourChain({ here, all, self }) {
   );
 }
 
+/* a product line without a key card (the exchange): its products become the hero object, a console that walks
+   through them by itself (pausing when touched); every product's words stay in the page, the others hidden */
+function Console({ b }) {
+  const calm = useReducedMotion();
+  const box = useRef(null);
+  const [at, setAt] = useState(0);
+  const [held, setHeld] = useState(false);
+  const n = b.items.length;
+  useEffect(() => {
+    if (calm || held) return;
+    let seen = true;
+    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; });
+    box.current && io.observe(box.current);
+    const t = setInterval(() => { if (seen && !document.hidden) setAt((k) => (k + 1) % n); }, 3600);
+    return () => { clearInterval(t); io.disconnect(); };
+  }, [calm, held, n]);
+  const it = b.items[at];
+  return (
+    <div ref={box} className="xb2-con v2f-obj" onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)}>
+      <div className="xb2-con-l">
+        {b.title && <h2 className="v2f-title xb2-con-h">{b.title}</h2>}
+        {b.lede && <p className="xb2-con-lede">{b.lede}</p>}
+        <div className="xb2-con-tabs" role="tablist" aria-label={b.title}>
+          {b.items.map((x, i) => (
+            <button key={x.title} type="button" role="tab" id={'xb2-tab-' + i} aria-controls={'xb2-pan-' + i} aria-selected={i === at} onClick={() => { setAt(i); setHeld(true); }}>
+              <span className="x-mono">{pad(i + 1)}</span><b>{x.title}</b>
+              {i === at && !calm && !held && <i className="xb2-con-t" aria-hidden="true" />}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="xb2-con-r">
+        {b.items.map((x, i) => (
+          <div key={x.title} role="tabpanel" id={'xb2-pan-' + i} aria-labelledby={'xb2-tab-' + i} hidden={i !== at} className="xb2-con-p">
+            <p className="xb2-con-n v2f-num" aria-hidden="true">{pad(i + 1)}</p>
+            <h3 className="v2f-head">{x.title}</h3>
+            {x.text && <p className="v2f-lede">{x.text}</p>}
+            {x.bullets.length > 0 && <ul className="xbc-bul xb2-con-b">{x.bullets.map((y) => <li key={y}>{y}</li>)}</ul>}
+            {x.link && <A to={x.link.href} className="x-arrow">{x.link.label}</A>}
+          </div>
+        ))}
+        <span className="x-sr" aria-live="polite">{it.title}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function BlockPage({ doc, all }) {
   const h = doc.hero;
   const key = doc.key;
@@ -190,6 +239,8 @@ export default function BlockPage({ doc, all }) {
   // the hero's four features repeat the first capabilities word for word on most pages: show them once
   const capText = new Set(doc.blocks.filter((b) => b.items).flatMap((b) => b.items.map((it) => it.title + '|' + it.text)));
   const feats = h.features.filter((f) => !capText.has(f.title + '|' + f.text));
+  // no key card: the first list of products with their bullets becomes the hero object
+  const conAt = key ? -1 : doc.blocks.findIndex((b) => b.kind === 'items' && b.items.some((it) => it.bullets.length));
   const deckAt = doc.blocks.findIndex((b) => b.kind === 'items' && b.items.length >= 6 && !b.items.some((it) => it.bullets.length));
   // the products after this one, in the family's order, as cards that open into their page
   const at = all.findIndex((p) => p.slug === doc.slug);
@@ -230,6 +281,11 @@ export default function BlockPage({ doc, all }) {
             </FamStage>
           </div>
         )}
+        {conAt >= 0 && (
+          <div className="v2f-wrap">
+            <FamStage className="xb2-stage" from={1.08}><Console b={doc.blocks[conAt]} /></FamStage>
+          </div>
+        )}
         {feats.length > 0 && (
           <div className="v2f-wrap">
             <ul className="xb2-feat">{feats.map((f) => <li key={f.title}><b>{f.title}</b><span>{f.text}</span></li>)}</ul>
@@ -238,6 +294,7 @@ export default function BlockPage({ doc, all }) {
       </section>
 
       {doc.blocks.map((b, i) => {
+        if (i === conAt) return null;
         if (b.kind === 'items') {
           if (i === deckAt) return <Explode key={i} b={b} />;
           if (b.items.some((it) => it.bullets.length)) return <Tiles key={i} b={b} />;
