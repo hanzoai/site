@@ -35,17 +35,25 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const size = (name) => (name.length <= 9 ? 'xl' : name.length <= 14 ? 'l' : 'm'); // 112 · 84 · 64px while they are the moment
 const Arrow = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Check = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+/* each family gets its own first screen, so neighbouring groups differ in hero medium and move (MASTER 3.2 rule 7):
+   stage, the console on a lid that settles flat; wide, the console full-bleed, growing from small as you arrive;
+   path, the product's own API path as the giant object; field, the product's own Sigil as a tall stage. */
+const VARIANT = { Compute: 'stage', Infrastructure: 'stage', AI: 'wide', Apps: 'wide', Observe: 'wide', Dev: 'wide', Science: 'path', Web3: 'path', Data: 'path', Security: 'field', Network: 'field', Local: 'stage' };
+const POSE = { stage: { rotateX: 10, scale: 1.03, y: 0 }, wide: { rotateX: 0, scale: 0.9, y: 0 }, path: { rotateX: 0, scale: 1, y: 24 }, field: { rotateX: 0, scale: 0.96, y: 32 } };
+
 /* status told by shape, not colour: Generally available is a filled dot, Beta a half dot, a family name a ring */
 const shape = (label) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
 
-/* the typing: text goes into a text node a character at a time (no React state per character); resolves when done */
-function typing(el, text, cps, alive) {
+/* the typing: the whole prompt is always in flow (faint), and each character moves from the faint part into the
+   white part, so the lines wrap the same from first paint to last character (no React state per character) */
+function typing(el, rest, text, cps, alive) {
   return new Promise((done) => {
     let i = 0;
     el.textContent = '';
     const step = () => {
       if (!alive()) return done(false);
       el.textContent = text.slice(0, ++i);
+      rest.textContent = text.slice(i);
       if (i < text.length) setTimeout(step, 1000 / cps); else done(true);
     };
     setTimeout(step, 1000 / cps);
@@ -60,6 +68,8 @@ function Console({ doc }) {
   const w = doc.window;
   const box = useRef(null);
   const typed = useRef(null);
+  const ghost = useRef(null);
+  const full = () => { if (typed.current) typed.current.textContent = prompt; if (ghost.current) ghost.current.textContent = ''; };
   const seen = useInView(box, { amount: 0.12 }); // starts on the first screen, phones included, within a second
   const calm = useReducedMotion();
   const kind = w.rows.length ? 'rows' : w.turns.length ? 'turns' : 'lines';
@@ -74,20 +84,20 @@ function Console({ doc }) {
 
   // type the prompt once, then play the example; it only runs while the console is on screen and not paused
   useEffect(() => {
-    if (calm || !run) { setPhase('done'); setAt(kind === 'rows' ? 0 : count); if (typed.current) typed.current.textContent = prompt; return; }
+    if (calm || !run) { setPhase('done'); setAt(kind === 'rows' ? 0 : count); full(); return; }
     if (typedOnce.current) { setPhase('play'); return; }
     if (!seen) return;
     let alive = true;
     (async () => {
       setPhase('typing');
-      if (kind !== 'rows') setAt(0);
+      if (kind !== 'rows') setAt(1); // the first turn or line is already there while the prompt types
       await wait(250);
-      if (typed.current && prompt && !(await typing(typed.current, prompt, 44, () => alive))) return;
+      if (typed.current && ghost.current && prompt && !(await typing(typed.current, ghost.current, prompt, 44, () => alive))) return;
       if (!alive) return;
       typedOnce.current = true;
       setPhase('play');
     })();
-    return () => { alive = false; if (!typedOnce.current && typed.current) typed.current.textContent = prompt; };
+    return () => { alive = false; if (!typedOnce.current) full(); };
   }, [seen, calm, run]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the walk: rows light in turn; turns and lines arrive one by one, rest two beats, then the session replays
@@ -106,7 +116,7 @@ function Console({ doc }) {
   const pick = (i) => { hold.current = Date.now() + 9000; setAt(i); };
   const note = doc.live[0];
   return (
-    <figure ref={box} className="xcf-con" data-ask-hide>
+    <figure ref={box} className="xcf-con">
       <div className="xcf-win" data-room="dark">
         <div className="xcf-bar">
           <span className="xcf-dots" aria-hidden="true"><i /><i /><i /></span>
@@ -116,7 +126,7 @@ function Console({ doc }) {
         {prompt && (
           <div className={'xcf-sess' + (phase === 'typing' ? ' typing' : '')}>
             <span className="xcf-sess-g" aria-hidden="true">›</span>
-            <p className="xcf-sess-t"><span className="xcf-ghost" aria-hidden="true">{prompt}<i className="xcf-caret" /></span><span className="xcf-typed"><span ref={typed}>{prompt}</span><i className="xcf-caret" aria-hidden="true" /></span></p>
+            <p className="xcf-sess-t"><span ref={typed} className="xcf-typed" />{phase !== 'done' && <i className="xcf-caret" aria-hidden="true" />}<span ref={ghost} className="xcf-ghost">{prompt}</span></p>
             {note && <p className={'xcf-sess-n' + (phase === 'typing' ? '' : ' on')}>{note}</p>}
           </div>
         )}
@@ -229,10 +239,11 @@ function Finder({ pairs, here }) {
     const all = [...pairs].sort((a, b) => (b.slug === here) - (a.slug === here));
     return k ? all.filter((p) => (p.google + ' ' + p.name + ' ' + p.api).toLowerCase().includes(k)) : all;
   }, [q, pairs, here]);
+  const SHOWN = 6; // with no query: this page's pair and five more; every row stays in the HTML, the rest hidden
   // idle scan: the rows are read one after another until you type or point at the list
   useEffect(() => {
     if (calm || !seen || q || held) return;
-    const id = setInterval(() => setLit((i) => (i + 1) % Math.max(1, list.length)), 1700);
+    const id = setInterval(() => setLit((i) => (i + 1) % Math.max(1, Math.min(SHOWN, list.length))), 1700);
     return () => clearInterval(id);
   }, [calm, seen, q, held, list.length]);
   // the black room (MASTER 3.1): a rounded card inside the gutters that opens past the edges as it is reached (transform only)
@@ -242,7 +253,7 @@ function Finder({ pairs, here }) {
   const head = 'Google Cloud';
   const clear = <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
   return (
-    <section ref={box} className="xcf-gc" data-room="dark" data-ask-hide aria-labelledby="xcf-gc-h">
+    <section ref={box} className="xcf-gc" data-room="dark" aria-labelledby="xcf-gc-h">
       <motion.span className="xcf-gc-bg" style={calm ? undefined : { scale: roomS }} aria-hidden="true" />
       <div className="xcf-wrap xcf-gc-g">
         <div className="xcf-gc-l">
@@ -258,7 +269,7 @@ function Finder({ pairs, here }) {
         <ul className="xcf-gc-list" onPointerEnter={() => setHeld(true)} onPointerLeave={() => setHeld(false)}>
           <AnimatePresence initial={false}>
             {list.map((p, i) => (
-              <motion.li key={p.slug} layout={!calm} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>
+              <motion.li key={p.slug} layout={!calm} hidden={!q && i >= SHOWN} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}>
                 <A to={'/cloud/' + p.slug} className={'xcf-gc-row' + (p.slug === here ? ' here' : '') + (!q && !held && i === lit ? ' lit' : '')} aria-current={p.slug === here ? 'page' : undefined}>
                   <span className="xcf-gc-from">{p.google}</span>
                   <i className="xcf-gc-ar" aria-hidden="true" />
@@ -279,8 +290,8 @@ function Finder({ pairs, here }) {
   );
 }
 
-/* the one variable-weight moment: Hanzo's line starts small and light (Air) and grows to 44px Book, sentence by
-   sentence, once, as you reach it (time, not scroll); its object is Hanzo's own mark, in silver */
+/* Hanzo's genesis line, a quiet strip before the close (it is on every product page, so it never takes a screen): its
+   two sentences move from Air to Book weight once as you reach it; its object is Hanzo's own mark */
 function Motto({ text }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
@@ -288,8 +299,8 @@ function Motto({ text }) {
   return (
     <section ref={ref} className="xcf-motto" data-seen={seen}>
       <div className="xcf-wrap xcf-motto-g">
+        <span className="xcf-mark" aria-hidden="true"><Mark size={28} /></span>
         <p className="xcf-motto-t">{parts.map((s, i) => <span key={i} style={{ '--i': i }}>{s}{i < parts.length - 1 ? ' ' : ''}</span>)}</p>
-        <span className="xcf-mark" aria-hidden="true"><Mark size={200} /></span>
       </div>
     </section>
   );
@@ -316,24 +327,24 @@ function Prompt({ text }) {
   return <>{text.slice(0, at)}<span className="xcf-pr-k">Start with: </span><b>{text.slice(at + 12)}</b></>;
 }
 
-const Acts = ({ list }) => (
+const Acts = ({ list, slug }) => (
   <div className="xcf-acts">
     {list.map((a, i) => (i
-      ? <Cta key={a.href} to={a.href} kind="quiet" id={'cloud.hero.' + i}>{a.label}</Cta>
-      : <Cta key={a.href} to={a.href} id="cloud.hero" thumb>{a.label}</Cta>))}
+      ? <Cta key={a.href} to={a.href} kind="quiet" id={'cloud.' + slug + '.hero-' + i}>{a.label}</Cta>
+      : <Cta key={a.href} to={a.href} id={'cloud.' + slug + '.hero'} thumb>{a.label}</Cta>))}
   </div>
 );
 
 /* JS off: every line of every session shown, the genesis line at full weight (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important;opacity:1!important;transform:none!important}.xcf-sess-n{opacity:1!important;transform:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}';
+const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important}.xcf-mask>span{animation:none!important}.xcf-sess-n{opacity:1!important;transform:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}';
 
 /* the product's name is the hero's moment: it starts large and settles to 52px as the stage settles (scroll) */
-function Name({ name }) {
+function Name({ name, rest }) {
   const calm = useReducedMotion();
   const { scrollY } = useScroll();
-  const k = { xl: 52 / 112, l: 52 / 84, m: 52 / 64 }[size(name)];
+  const k = rest ? 1 : { xl: 52 / 112, l: 52 / 84, m: 52 / 64 }[size(name)];
   const s = useTransform(scrollY, (v) => 1 - (1 - k) * Math.min(1, Math.max(0, v / 560)));
-  return <motion.h1 id="xcf-h1" className={'xcf-display s-' + size(name)} style={calm ? undefined : { scale: s }}>{name}</motion.h1>;
+  return <motion.h1 id="xcf-h1" className={'xcf-display s-' + (rest ? 'r' : size(name))} style={calm || rest ? undefined : { scale: s }}><span className="xcf-mask"><span>{name}</span></span></motion.h1>;
 }
 
 export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
@@ -342,31 +353,37 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
   const sibs = doc.window ? doc.window.siblings : [];
   const source = !isLocal && doc.actions.find((a) => /github\.com/.test(a.href));
   const ask = isLocal ? doc.boot.actions[doc.boot.actions.length - 1] : doc.actions[0];
+  const v = VARIANT[group] || 'stage';
   const rest = isLocal ? doc.boot.actions.filter((a) => a !== ask) : doc.actions.slice(1);
   return (
-    <main className={'xcf k-' + kind} data-ask-name={doc.name}>
+    <main className={'xcf k-' + kind + ' v-' + v} data-ask-name={doc.name}>
       <noscript><style>{NOJS}</style></noscript>
       <section className="xcf-hero" aria-labelledby="xcf-h1">
         <div className="xcf-band" data-morph-target>
           <Sigil seed={sigil.seed} data={sigil.data} className="xcf-sigil" />
           <div className="xcf-wrap xcf-head">
-            <Name name={doc.name} />
+            <Name name={doc.name} rest={v === 'path'} />
             <div className="xcf-head-r">
               {doc.lede && <p className="xcf-lede">{doc.lede}</p>}
-              <Acts list={isLocal ? [ask, ...rest] : doc.actions} />
+              <Acts list={isLocal ? [ask, ...rest] : doc.actions} slug={doc.slug} />
               <div className="xcf-meta">
                 {!!(doc.crumb && doc.crumb.length) && (
                   <nav className="xcf-crumb" aria-label="Breadcrumb">
                     {doc.crumb.map((c, i) => <span key={i}>{i > 0 && <i aria-hidden="true">/</i>}{c.href ? <A to={c.href} className="x-link">{c.label}</A> : <span>{c.label}</span>}</span>)}
                   </nav>
                 )}
-                <p className={'xcf-label ' + shape(doc.label)}><i aria-hidden="true" />{doc.label}</p>
+                <p className={'xcf-label ' + shape(doc.label) + (shape(doc.label) === 'fam' && (doc.crumb || []).some((c) => c.label === doc.label) ? ' x-sr' : '')}><i aria-hidden="true" />{doc.label}</p>
               </div>
             </div>
           </div>
         </div>
+        {v === 'path' && doc.window && (
+          <div className="xcf-wrap">
+            <p className="xcf-path-hero" aria-hidden="true">{doc.window.host.map((h, i) => <span key={i} className={i ? 'b' : ''}>{h}</span>)}<i className="xcf-pulse" /></p>
+          </div>
+        )}
         <div className="xcf-wrap xcf-stage-w">
-          <StageSettle className="xcf-stage" over={620} from={{ rotateX: 24, scale: 1.04, y: 0 }}>
+          <StageSettle className="xcf-stage" over={560} from={POSE[v]}>
             {isLocal ? <Boot boot={doc.boot} /> : doc.window && <Console doc={doc} />}
           </StageSettle>
         </div>
@@ -422,7 +439,6 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
         </section>
       )}
 
-      {!isLocal && doc.motto && <Motto text={doc.motto} />}
 
       {!isLocal && (
         <section className="xcf-sec xcf-specs" aria-labelledby="xcf-sp-h">
@@ -450,7 +466,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
         </section>
       )}
 
-      <Finder pairs={pairs} here={doc.slug} />
+      {pairs.some((p) => p.slug === doc.slug) && <Finder pairs={pairs} here={doc.slug} />}
 
       {doc.related && (
         <section className="xcf-sec xcf-rel" aria-labelledby="xcf-rel-h">
@@ -478,6 +494,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
         </section>
       )}
 
+      {!isLocal && doc.motto && <Motto text={doc.motto} />}
       <Band
         title={doc.name}
         lede={doc.lede || undefined}
