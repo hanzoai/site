@@ -1,13 +1,16 @@
 'use client';
-/* Iro's first screen: the head on the left, the canvas on the right.
+/* Iro: imagine without limits. v2 launch page (Creative on Launch + Chapters, accent magenta).
+   V2: 8/10 the film lands full-bleed and settles into a square canvas beside the headline; the live canvas comes first, then four pinned capability chapters on Iro's own film, a tile grid of where it fits, the studio map and the preview
    Signature: an image resolves out of noise. The canvas runs flow matching for real, x = t·image + (1−t)·noise,
    coarse shapes first and detail last, step 1 to 50; then a fresh seed starts again. Scrub the steps, pause, reseed,
-   or reframe it at 16:9, 1:1 or 21:9. (The picture is Hanzo's own Iro illustration, not Iro's output.) */
+   or reframe it at 16:9, 1:1 or 21:9. (The picture is Hanzo's own Iro illustration, not Iro's output.)
+   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
-import { media } from '../../../lib/models';
-import { CHead, Studio } from './Studio';
+import { Studio } from './Studio';
+import Creative, { Scene } from './Creative';
+import { box as frame, film } from '../../v2/Launch';
 import { useLoop, rng } from './live';
 import './Iro.css';
 
@@ -71,7 +74,7 @@ function Canvas() {
 
   useEffect(() => {
     const img = new Image();
-    img.src = media('iro', 'webp');
+    img.src = film('iro', 'webp');
     img.decode().then(() => { S.current.img = img; prep(); draw(calm ? STEPS : S.current.step); if (calm) setDone(true); }).catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (S.current.img) { prep(); draw(S.current.step); } }, [a]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -98,7 +101,7 @@ function Canvas() {
         <AnimatePresence initial={false}>
           <motion.div key={a} className="ir-pic" style={box(ASPECTS[a][1])} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.02 }} transition={{ duration: 0.6, ease: EASE }}>
             <canvas data-a={a} ref={(el) => { if (el && +el.dataset.a === aNow.current) cv.current = el; }} aria-label="An image resolving from noise, step by step" role="img" />
-            <img src={media('iro', 'webp')} alt="" data-on={done ? '' : undefined} />
+            <img src={film('iro', 'webp')} alt="" data-on={done ? '' : undefined} />
           </motion.div>
         </AnimatePresence>
         <p className="ir-tag ir-tl mb-mono">CANVAS: 2048 × 2048 · 16-BIT FLOAT</p>
@@ -119,15 +122,29 @@ function Canvas() {
   );
 }
 
+// the film settles into a square canvas beside the headline
+const SQUARE = frame((W, H, wide) => {
+  const z = wide ? Math.min(H * 0.76, W * 0.4) : Math.min(W * 0.8, H * 0.42);
+  return wide ? { l: W * 0.7 - z / 2, t: (H - z) / 2, w: z, h: z, r: 16 } : { l: (W - z) / 2, t: H * 0.09, w: z, h: z, r: 16 };
+});
+
 export default function Iro() {
   return (
-    <section className="ir-intro mb-sec" aria-label="Iro">
-      <div className="x-wrap ir-split">
-        <CHead slug="iro" />
-        <Studio slug="iro" engine="Hanzo Iro-1 · Flow-matching DiT" specs={[['Typography Exactness', 'Font Locking', 'Locked'], ['Color Space', 'Wide Gamut', 'Display P3'], ['Prompt Adherence', 'Semantic Flow', 'High Precision']]}>
-          <Canvas />
-        </Studio>
-      </div>
-    </section>
+    <Creative
+      slug="iro"
+      accent="#e6337a"
+      ink="#c2185b"
+      shape={SQUARE}
+      headClass="ir-head"
+      aim={(W, H, wide) => (wide ? null : [-0.12 * W, -0.25 * H])}
+      first="demo"
+      demo={
+        <Scene slug="iro" className="ir-scene" k="Live canvas" title="Watch an image resolve." lede="Flow matching, step 1 to 50: coarse shapes first, detail last. Scrub the steps, pause, reseed, or reframe it at 16:9, 1:1 or 21:9.">
+          <Studio slug="iro" engine="Hanzo Iro-1 · Flow-matching DiT" specs={[['Typography Exactness', 'Font Locking', 'Locked'], ['Color Space', 'Wide Gamut', 'Display P3'], ['Prompt Adherence', 'Semantic Flow', 'High Precision']]}>
+            <Canvas />
+          </Studio>
+        </Scene>
+      }
+    />
   );
 }

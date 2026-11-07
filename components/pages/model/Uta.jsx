@@ -1,5 +1,6 @@
 'use client';
-/* Uta's first screen: the studio on the left, the head on the right.
+/* Uta: compose beyond imagination. v2 launch page (Creative on Launch + Chapters, accent marigold). The film splits
+   into four stems, faders of different heights, beside the headline.
    Signature: a piano roll that plays. Two bars in D minor at 96 BPM loop by themselves across Uta's four stems
    (timpani, low strings and tuba, horns and strings, choir and cello); the playhead lights each note as it sounds.
    Solo a stem, switch the composition preset (each one re-voices the same score), tap the roll to add or remove a
@@ -7,8 +8,9 @@
    Beyond: "Take it to your DAW". Download MIDI writes the roll as you left it, your notes included, into a Standard
    MIDI File at the same 96 BPM, one channel per stem, so the sketch opens in any music app. Nothing leaves the page. */
 import { useEffect, useRef, useState } from 'react';
-import { media } from '../../../lib/models';
-import { CHead, Studio } from './Studio';
+import { Studio } from './Studio';
+import Creative, { Scene } from './Creative';
+import { lerp, film, focus } from '../../v2/Launch';
 import { useLoop, fit, audio, tone, burst, hush, arrows } from './live';
 import { midi } from './Uta.midi.mjs';
 import './Uta.css';
@@ -137,7 +139,7 @@ function Roll() {
       </div>
       <div className="ut-cue">
         <figure className="ut-mon">
-          <video src={media('uta', 'webm')} poster={media('uta', 'webp')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+          <video src={film('uta', 'webm')} poster={film('uta', 'webp')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
           <figcaption><span className="mb-mono mb-live">PLAYING · 4K 60FPS</span><span className="mb-mono">CINEMA SCORE</span><span className="mb-mono">SURROUND 7.1.4</span></figcaption>
         </figure>
         <div className="ut-cue-t">
@@ -150,15 +152,36 @@ function Roll() {
   );
 }
 
+// the film splits into Uta's four stems: four faders of different heights, rising from one floor
+const STEMS = (t, W, H, wide) => {
+  const x0 = wide ? W * 0.5 : W * 0.06, x1 = wide ? W * 0.94 : W * 0.94, B = wide ? H * 0.9 : H * 0.47, gap = wide ? 18 : 10;
+  const tops = wide ? [0.24, 0.42, 0.1, 0.33] : [0.14, 0.25, 0.06, 0.19];
+  const bw = (x1 - x0 - 3 * gap) / 4, M = Math.max(W, H) * 0.5;
+  const pts = [];
+  tops.forEach((f, i) => {
+    const a = x0 + i * (bw + gap), b = a + bw, a0 = (i * W) / 4, b0 = ((i + 1) * W) / 4, T = H * f;
+    pts.push([lerp(a0, a, t), lerp(H + M, B, t)], [lerp(a0, a, t), lerp(-M, T, t)], [lerp(b0, b, t), lerp(-M, T, t)], [lerp(b0, b, t), lerp(H + M, B, t)]);
+  });
+  return `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(',')})`;
+};
+
 export default function Uta() {
   return (
-    <section className="ut-intro mb-sec" aria-label="Uta">
-      <div className="x-wrap ut-split">
-        <Studio slug="uta" specs={[['Arrangement Span', 'Full Compositions', 'Up to 4 Minutes'], ['Stem Separation', 'Isolated Codebooks', '4 Master Stems'], ['Score Synchronization', 'Frame-Accurate', 'Zero Cue Drift']]}>
-          <Roll />
-        </Studio>
-        <CHead slug="uta" className="ut-head" />
-      </div>
-    </section>
+    <Creative
+      slug="uta"
+      accent="#e0a106"
+      ink="#8f6500"
+      shape={STEMS}
+      aim={(W, H, wide) => (wide ? focus(0.8, 0.55, W * 0.72, H * 0.55, 1.2) : focus(0.8, 0.55, W / 2, H * 0.3, 1.6))(W, H)}
+      headClass="ut-v2"
+      first="demo"
+      demo={
+        <Scene slug="uta" className="ut-scene" k="Live roll" title="Two bars that play." lede="D minor at 96 BPM across Uta's four stems. Solo a stem, switch the preset, tap the roll to add a melody note, turn on Sound, then take it to your DAW.">
+          <Studio slug="uta" specs={[['Arrangement Span', 'Full Compositions', 'Up to 4 Minutes'], ['Stem Separation', 'Isolated Codebooks', '4 Master Stems'], ['Score Synchronization', 'Frame-Accurate', 'Zero Cue Drift']]}>
+            <Roll />
+          </Studio>
+        </Scene>
+      }
+    />
   );
 }

@@ -1,11 +1,15 @@
 'use client';
-/* Koe's first screen: the voice speaks first. The recording booth runs across the top, the head sits under it.
+/* Koe: performance in every word. v2 launch page (Creative on Launch + Chapters, accent violet). The film settles
+   into a tall capsule left of the headline.
    Signature: a voice waveform with its transcript. The waveform streams out of the playhead while the phonemes of
    "Hanzo" (/h/ /æ/ /n/ /z/ /oʊ/) light in step; each acting preset re-performs the same word (dramatic is slow and
    wide, documentary breathy and soft, gritty rough, commercial brisk and even). Tap the waveform to seek, pick a
-   preset, or pause. (A drawn illustration of a performance, not Koe's audio.) */
+   preset, or pause. (A drawn illustration of a performance, not Koe's audio.)
+   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useMemo, useRef, useState } from 'react';
-import { CHead, Studio } from './Studio';
+import { Studio } from './Studio';
+import Creative, { Scene } from './Creative';
+import { box as frame, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
 import './Koe.css';
 
@@ -114,15 +118,29 @@ function Booth() {
   );
 }
 
+// the film closes into a tall capsule on the left (a horizontal one on phones); the headline sits right of it
+const CAPSULE = frame((W, H, wide) => {
+  if (wide) { const w = Math.min(W * 0.2, H * 0.4), h = H * 0.84; return { l: W * 0.26 - w / 2, t: (H - h) / 2, w, h, r: w / 2 }; }
+  const h = H * 0.3; return { l: 20, t: H * 0.07, w: W - 40, h, r: h / 2 };
+});
+
 export default function Koe() {
   return (
-    <section className="ko-intro mb-sec" aria-label="Koe">
-      <div className="x-wrap">
-        <Studio slug="koe" engine="" specs={[['Zero-Shot Cloning', 'Reference Audio', '3.0s Clean Sample'], ['Sub-Second Latency', 'First Token', '< 200ms'], ['Synthesis Engine', 'Hanzo Koe-1 Engine', 'Neural Flow-Matching']]}>
-          <Booth />
-        </Studio>
-        <CHead slug="koe" split className="ko-head" />
-      </div>
-    </section>
+    <Creative
+      slug="koe"
+      accent="#7b4dff"
+      ink="#5b32d6"
+      shape={CAPSULE}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.5))(W, H)}
+      headClass="ko-v2"
+      first="chapters"
+      demo={
+        <Scene slug="koe" className="ko-scene" k="Live booth" title="One word, four performances." lede="The waveform streams out of the playhead while the phonemes of “Hanzo” light in step. Each acting preset re-performs the same word; tap the waveform to seek.">
+          <Studio slug="koe" engine="" specs={[['Zero-Shot Cloning', 'Reference Audio', '3.0s Clean Sample'], ['Sub-Second Latency', 'First Token', '< 200ms'], ['Synthesis Engine', 'Hanzo Koe-1 Engine', 'Neural Flow-Matching']]}>
+            <Booth />
+          </Studio>
+        </Scene>
+      }
+    />
   );
 }

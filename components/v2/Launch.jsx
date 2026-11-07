@@ -9,8 +9,9 @@
      the poster decodes), and as you scroll it settles into the page's own shape (clip-path only, the camera feel is
      scale + clip) while the page's headline reveals beside it, line by line, once.
    - shape(t, W, H, wide) returns a CSS clip-path for t in 0..1 (0 = full-bleed). Helpers below: ring, box, poly.
-   - aim(W, H, wide) (optional) returns [dx, dy]: how far the camera pans the film by the time it settles, so the
-     subject sits inside the shape (the film is zoomed 1.14 by then, which gives it a little margin).
+   - over(W, H, wide) (optional) draws a layer over the settled film (e.g. a cube's edges); it fades in with the headline.
+   - aim(W, H, wide) (optional) returns [dx, dy, zoom?]: how far the camera pans (and zooms, default 1.14) the film by
+     the time it settles, so the subject sits inside the shape. focus(fx, fy, tx, ty, z) works it out for you.
    - The page's accent is set as --ac (fills) and --ac-ink (text on white) on the root; the film itself is a duotone in
      that accent (public/models/v2, made by scripts/tint.py), so colour arrives through the picture, not tinted boxes.
    - Close runs the film back into the card it opened from; the page ends on the next model's card, which opens the
@@ -59,6 +60,13 @@ export const poly = (pts) => (t, W, H, wide) => {
   });
   return `polygon(${out.join(',')})`;
 };
+// aim helper: the film's subject sits at (fx, fy) of the 4:5 frame (fractions); land it on (tx, ty) px at zoom z.
+// Returns [dx, dy, z] for Launch's aim. Keep the settled shape inside the zoomed, panned film.
+export const focus = (fx, fy, tx, ty, z = 1.14) => (W, H) => {
+  const s0 = Math.max(W / 1200, H / 1500), iw = 1200 * s0, ih = 1500 * s0;
+  const px = fx * iw - (iw - W) / 2, py = fy * ih - (ih - H) / 2, cx = W / 2, cy = H / 2;
+  return [tx - (cx + (px - cx) * z), ty - (cy + (py - cy) * z), z];
+};
 // densify a closed outline so the opening frame stays a full cover (n points per edge)
 export const dense = (V, n = 6) => V.flatMap((a, i) => { const b = V[(i + 1) % V.length]; return Array.from({ length: n }, (_, k) => [lerp(a[0], b[0], k / n), lerp(a[1], b[1], k / n)]); });
 
@@ -74,7 +82,7 @@ export function Lines({ as: T = 'h2', id, className = '', lines, reveal }) {
   );
 }
 
-export default function Launch({ slug, accent, ink, shape, aim, head, headClass = '', label, children }) {
+export default function Launch({ slug, accent, ink, shape, aim, over, head, headClass = '', label, children }) {
   const m = bySlug[slug];
   const opener = useOpener();
   const root = useRef(null), stage = useRef(null), pin = useRef(null);
@@ -88,7 +96,7 @@ export default function Launch({ slug, accent, ink, shape, aim, head, headClass 
   const { scrollYProgress: p } = useScroll({ target: stage, offset: ['start 60px', 'end end'] });
   const t = useTransform(p, (v) => (calm ? 1 : clamp01(v / 0.8)));
   const clip = useTransform(t, (v) => (!size || v <= 0.002 ? 'none' : shape(settle(v), size.W, size.H, size.wide)));
-  const zoom = useTransform(t, [0, 1], [1, calm ? 1 : 1.14]);
+  const zoom = useTransform(t, (v) => { const a = size && aim ? aim(size.W, size.H, size.wide) : null; return 1 + (((a && a[2]) || 1.14) - 1) * v; });
   // aim: the camera pans the film so its subject sits inside the settled shape ([dx, dy] px at t = 1, per layout)
   const pan = (k) => (v) => { if (!size || !aim) return 0; const a = aim(size.W, size.H, size.wide); return (a ? a[k] : 0) * settle(v); };
   const panX = useTransform(t, pan(0));
@@ -128,6 +136,7 @@ export default function Launch({ slug, accent, ink, shape, aim, head, headClass 
             <p className="lv-name-d" data-on={ready ? '' : undefined}>{m.desc}</p>
             <p className="x-mtags static lv-name-t" data-on={ready ? '' : undefined}>{m.tags.map((x) => <span key={x}>{x}</span>)}</p>
           </motion.div>
+          {over && size && <div className="lv-over" data-on={on ? '' : undefined} aria-hidden="true">{over(size.W, size.H, size.wide)}</div>}
           <div className={'lv-head ' + headClass} data-on={on ? '' : undefined}>{head}</div>
           <motion.a
             href="/"

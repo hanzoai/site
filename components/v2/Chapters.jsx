@@ -7,7 +7,7 @@
      <Chapters id="eo-ch" label="Three tiers" flip={false} items={[
        { k: 'Enso Flash', title: 'At volume.', body: <p>…</p>, art: <MyPicture /> }, …
      ]} />
-   - items: k (kicker), title (heading text), body (node), art (node drawn inside a 28px frame; it may move by itself,
+   - items: k (kicker), rail (optional short label for the chapter rail, else k), title (heading text), body (node), art (node drawn inside a 28px frame; it may move by itself,
      or a function (on) => node, where on is true while its chapter is the one being read).
    - flip puts the picture on the left. The chapter rail on the side jumps to a chapter (buttons, keyboard).
    - Phones and reduced motion get a plain vertical story (picture, then words); every word is always in the HTML. */
@@ -72,7 +72,7 @@ export default function Chapters({ id, label, items, flip, className = '' }) {
                 <motion.i className="lv-ch-bar" style={{ scaleY: bar }} aria-hidden="true" />
                 {items.map((c, i) => (
                   <button key={c.title} type="button" aria-current={i === at ? 'step' : undefined} onClick={() => go(i)}>
-                    <span className="mb-tnum">{String(i + 1).padStart(2, '0')}</span>{c.k}
+                    <span className="mb-tnum">{String(i + 1).padStart(2, '0')}</span>{c.rail || c.k}
                   </button>
                 ))}
               </nav>
