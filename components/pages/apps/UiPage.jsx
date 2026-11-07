@@ -436,7 +436,8 @@ function Init() {
           <div className="ui-render" data-sent={sent ? '' : undefined}>
             <p className="x-mono">Hello()</p>
             {/* the rendered button answers: pressed, it ships (a tick lands beside it and the card rings once) */}
-            <AnimatePresence>{k > RET && <motion.button key="ship" type="button" className="ui-ship" aria-pressed={sent} onClick={ship} initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} whileTap={{ scale: 0.98 }}>Ship it<span className="ui-ship-ok" aria-hidden="true">✓</span></motion.button>}</AnimatePresence>
+            {/* the slot is always there, so Hello() never moves; a quiet outline waits where the button will render */}
+            <div className={'ui-slot' + (k > RET ? ' in' : '')}><AnimatePresence>{k > RET && <motion.button key="ship" type="button" className="ui-ship" aria-pressed={sent} onClick={ship} initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} whileTap={{ scale: 0.98 }}>Ship it<span className="ui-ship-ok" aria-hidden="true">✓</span></motion.button>}</AnimatePresence></div>
           </div>
         </div>
       </div>
