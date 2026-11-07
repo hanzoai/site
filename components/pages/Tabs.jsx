@@ -11,7 +11,7 @@
    magnetic primary. Colour: none (0 UI hues; no terminal green). Pause buttons on the self-running tree and chapter
    visuals. One dark room: "What you get". Every word is Hanzo's. */
 import { useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A } from '../kit';
 import { useLive, useEvery } from './cloud/Frame';
@@ -57,18 +57,20 @@ function Panes({ t, n, doomed, hand }) {
   if (isLeaf(t)) return <Pane p={t} act={n} doomed={doomed === t.id} hand={hand} />;
   return (
     <div className={'xtb-split ' + t.dir}>
-      <Panes t={t.a} n={n} doomed={doomed} hand={hand} />
-      <Panes t={t.b} n={n} doomed={doomed} hand={hand} />
+      <Panes key={t.a.id} t={t.a} n={n} doomed={doomed} hand={hand} />
+      <Panes key={t.b.id} t={t.b} n={n} doomed={doomed} hand={hand} />
     </div>
   );
 }
 
 function Tree({ t }) {
-  if (isLeaf(t)) return <motion.li layout="position" layoutId={'xtb-t-' + t.id} className="xtb-leaf"><span className="x-mono">{t.name}</span></motion.li>;
+  // keyed by id, no shared layoutId: a new split node fades in on its own and nothing is reused mid-flight
+  const enter = { initial: { opacity: 0, scale: 0.9 }, animate: { opacity: 1, scale: 1 }, transition: { duration: 0.3, ease: EASE } };
+  if (isLeaf(t)) return <motion.li layout="position" className="xtb-leaf" {...enter}><span className="x-mono">{t.name}</span></motion.li>;
   return (
-    <motion.li layout="position" layoutId={'xtb-t-' + t.id} className="xtb-node">
+    <motion.li layout="position" className="xtb-node" {...enter}>
       <span className="x-mono">{t.dir === 'row' ? 'split ⇄' : 'split ⇅'}</span>
-      <ul><Tree t={t.a} /><Tree t={t.b} /></ul>
+      <ul><Tree key={t.a.id} t={t.a} /><Tree key={t.b.id} t={t.b} /></ul>
     </motion.li>
   );
 }
@@ -102,8 +104,8 @@ function Phone({ list }) {
 }
 
 function Hero() {
-  const [ref, live] = useLive(0.3);
-  const [paused, pauseBtn] = usePause({ right: 16, top: 16 });
+  const [ref, live] = useLive(0.12);
+  const [paused, pauseBtn] = usePause({ right: 8, top: 6 });
   const [t, setT] = useState(START);
   const [n, setN] = useState(0);
   const [mine, setMine] = useState(false);
@@ -119,59 +121,63 @@ function Hero() {
     setMine(true); setWarn(false);
     if (fn === close) return setT((v) => close(v, pid));
     const k = ++id.current;
-    setT((v) => (leaves(v).length >= 6 ? v : split(v, pid, dir, leaf('p' + k, 'shell ' + (leaves(v).length + 1)), 's' + k)));
+    const cap = typeof window !== 'undefined' && innerWidth < 900 ? 4 : 6; // a phone keeps panes wide enough to close
+    setT((v) => (leaves(v).length >= cap ? v : split(v, pid, dir, leaf('p' + k, 'shell ' + (leaves(v).length + 1)), 's' + k)));
   };
   const list = leaves(t);
   return (
     <section className="xtb-hero" aria-labelledby="xtb-h1" data-morph-target>
       <div className="w2-wrap">
         <div className="xtb-top">
-          <div>
-            <LineMask as="h1" id="xtb-h1" now className="w2-display xtb-h1" lines={['Keep tabs on', 'your agents.']} />
-          </div>
+          <LineMask as="h1" id="xtb-h1" now className="w2-display xtb-h1" lines={['Keep tabs on your agents.']} />
           <motion.div className="xtb-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
-            <p className="w2-lede">Your coding agents work in shells on real machines. Tabs puts every one of those shells in front of you — split, tiled, and reachable from anywhere you can open a browser.</p>
             <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs" data-cta="tabs.hero">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
           </motion.div>
         </div>
         <div ref={ref}>
-          <Settle from={1.06} lift={60}>
-            <div className={'xtb-stage w2-object' + (paused ? ' paused' : '')}>
-              {pauseBtn}
-              <div className="xtb-bar">
-                <p className="xtb-name x-mono">Hanzo Tabs</p>
-                <div className="xtb-seg" role="radiogroup" aria-label="Show it on">
-                  {['Browser', 'Phone'].map((k, i) => (
-                    <button key={k} type="button" role="radio" aria-checked={phone === !!i} onClick={() => setPhone(!!i)}><span>{k}</span></button>
-                  ))}
+          <Settle from={1.02} lift={20}>
+            <LayoutGroup>
+              <div className={'xtb-stage' + (paused ? ' paused' : '')}>
+                <div className="xtb-win-bar">
+                  <i /><i /><i />
+                  <b className="xtb-name">Hanzo Tabs</b>
+                  <span className="x-mono xtb-url">tabs.hanzo.ai</span>
+                  <div className="xtb-seg" role="radiogroup" aria-label="Show it on" onKeyDown={(e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { setPhone((p) => !p); } }}>
+                    {['Browser', 'Phone'].map((k, i) => (
+                      <button key={k} type="button" role="radio" aria-checked={phone === !!i} aria-label={k} tabIndex={phone === !!i ? 0 : -1} onClick={() => setPhone(!!i)}>
+                        {i ? <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x="4.5" y="1.5" width="7" height="13" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M7 12.5h2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
+                          : <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M1.5 5.5h13" stroke="currentColor" strokeWidth="1.4" /></svg>}
+                      </button>
+                    ))}
+                  </div>
+                  {mine && <button type="button" className="xtb-reset" aria-label="Reset" onClick={() => { setT(START); setN(0); setMine(false); }}><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3.5 8a4.5 4.5 0 1 0 1.4-3.3M3.5 2.5v2.4h2.4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
+                  <span className="xtb-pause">{pauseBtn}</span>
                 </div>
-                {mine && <button type="button" className="xtb-reset" onClick={() => { setT(START); setN(0); setMine(false); }}>Reset</button>}
-              </div>
-              <div className="xtb-room">
-                <AnimatePresence mode="wait" initial={false}>
-                  {phone ? (
-                    <motion.div key="p" className="xtb-room-in" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}><Phone list={list} /></motion.div>
-                  ) : (
-                    <motion.div key="b" className="xtb-room-in" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
-                      <div className="xtb-win">
-                        <div className="xtb-win-bar"><i /><i /><i /><span className="x-mono">tabs.hanzo.ai</span></div>
-                        <div className="xtb-win-body"><Panes t={t} n={list.length} doomed={warn ? DOOMED[n] : null} hand={hand} /></div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                <div className="xtb-tree" aria-label="The layout as a tree">
-                  <p className="x-mono">layout</p>
-                  <ul><Tree t={t} /></ul>
+                <div className="xtb-room">
+                  <AnimatePresence mode="wait" initial={false}>
+                    {phone ? (
+                      <motion.div key="p" className="xtb-room-in" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}><Phone list={list} /></motion.div>
+                    ) : (
+                      <motion.div key="b" className="xtb-room-in xtb-win-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
+                        <Panes t={t} n={list.length} doomed={warn ? DOOMED[n] : null} hand={hand} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <div className="xtb-tree" aria-label="The layout as a tree">
+                    <p className="x-mono">layout</p>
+                    <ul><Tree t={t} /></ul>
+                  </div>
                 </div>
               </div>
-            </div>
+            </LayoutGroup>
           </Settle>
         </div>
+        <p className="w2-lede xtb-lede">Your coding agents work in shells on real machines. Tabs puts every one of those shells in front of you — split, tiled, and reachable from anywhere you can open a browser.</p>
       </div>
     </section>
   );
 }
+
 
 const WHY = [
   ['There is no backend', 'Not a small one — none. Running hanzo link on a machine publishes a terminal over a zero-trust tunnel, already authenticated and already gated, and the browser frames it directly. A server here would be a third party to a conversation that has two.', 'none'],
@@ -222,7 +228,7 @@ function SpaceTree({ on }) {
 
 function Why() {
   const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause();
+  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
   return (
     <div ref={ref}>
       <PinChapters id="xtb-why" label="Why it is shaped this way" className="xtb-pin"
@@ -281,23 +287,26 @@ function What() {
   return (
     <section className="w2-sec xtb-what w2-dark" data-room="dark" aria-labelledby="xtb-what">
       <div className="w2-wrap">
-        <div className="xtb-what-top">
-          <h2 id="xtb-what" className="w2-display s">What you get</h2>
-          <div className="xtb-acts"><A to="https://tabs.hanzo.ai" className="w2-cta" data-cta="tabs.close">Open Tabs</A><A to="https://github.com/hanzo-apps/tabs" className="w2-ghost">Read the source</A></div>
-        </div>
+        <LineMask as="h2" id="xtb-what" className="w2-display s xtb-what-h" lines={['What you get']} inView />
         <div className="xtb-tiles">
           {GET.map(([t, d, k]) => (
             <article key={t} className={'xtb-tile ' + k}>
-              <div className="xtb-tile-v" aria-hidden="true">
-                {k === 'term' && <span className="x-mono"><b>$</b><em /></span>}
-                {k === 'keep' && <><i /><i /><i /></>}
-                {k === 'phone' && KEYS.map((x) => <b key={x} className="x-mono">{x}</b>)}
-                {k === 'mit' && <b className="x-mono">MIT</b>}
-              </div>
+              {k === 'mit' ? (
+                <A to="https://github.com/hanzo-apps/tabs" className="xtb-tile-v xtb-src" data-cta="tabs.source"><b className="x-mono">MIT</b><span>Read the source <i aria-hidden="true">↗</i></span></A>
+              ) : (
+                <div className="xtb-tile-v" aria-hidden="true">
+                  {k === 'term' && <div className="xtb-sb">{[62, 80, 45, 70, 90, 38, 66, 84, 52, 74, 40, 88].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}<span className="x-mono"><b>$</b><em /></span></div>}
+                  {k === 'keep' && <div className="xtb-keep"><i><span className="x-mono">build</span></i><i className="go"><span className="x-mono">work</span></i><i><span className="x-mono">shell 3</span></i></div>}
+                  {k === 'phone' && <div className="xtb-mphone"><div className="xtb-mphone-s"><i /><i /><i /></div><div className="xtb-mphone-k">{KEYS.map((x, i) => <b key={x} className="x-mono" style={{ '--i': i }}>{x}</b>)}</div></div>}
+                </div>
+              )}
               <h3 className="w2-title">{t}</h3>
               <p>{d}</p>
             </article>
           ))}
+        </div>
+        <div className="xtb-what-ask">
+          <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs" data-cta="tabs.close">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
         </div>
       </div>
     </section>
