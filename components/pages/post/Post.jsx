@@ -11,6 +11,9 @@
    next, and a spine that fills as you read, each chapter a knot, the one you are in ringed (on a phone, a reading bar that opens the contents).
    Beyond: minutes left. The post's own stated read time counts down as you read, and any chapter is one press away.
    V2: 8.5/10 chaptered editorial rebuild: display cover (no eyebrow over the h1), a plate with the post's own model film or Sigil that opens to full bleed with hero figures, chapter openers, model films on the parts, next posts that open into their page; monochrome; Flap and decor sparks removed (5 → 4 techniques). */
+// Persona: a developer or founder reading Hanzo's thinking (arrives from /blog, search or a shared link)
+// Goal: finish the post, understand the one idea, take the post's own next step
+// CTA: the post's own closing links (first one is the phone thumb bar's ask); the header keeps Try Hanzo
 // Signature: the reading thread: a rail whose chapter numeral hands over as you read and a spine that fills, each chapter a knot
 // Beyond: minutes left: the post's own read time counting down as you read, with a jump to any chapter
 import { Fragment, useEffect, useRef, useState } from 'react';
