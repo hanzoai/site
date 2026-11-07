@@ -11,14 +11,15 @@
 .js .id-layer { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 36px, 0); pointer-events: none; transition: opacity .4s var(--e), transform .85s var(--e); }
 .js .id-layer[data-past] { transform: translate3d(0, -36px, 0); }
 .js .id-layer[data-on] { opacity: 1; transform: none; pointer-events: auto; transition-delay: .08s; }
-.id-h1 { font-size: clamp(64px, 8.6vw, 128px); }
+.id-h1 { }
 .id-sub { margin: 28px 0 36px; color: var(--ink); font-size: clamp(22px, 2vw, 28px); }
-.id-stage .v2-headline { margin: 22px 0 24px; font-size: clamp(44px, 4.8vw, 72px); }
+.id-stage .v2-headline { margin: 18px 0 18px; font-size: 32px; }
 .id-stage .v2-headline span { display: block; padding-bottom: .08em; }
 .js .id-stage .v2-headline span { clip-path: inset(0 0 100% 0); transition: clip-path .9s var(--e) .12s; }
 .js .id-stage[data-on] .v2-headline span { clip-path: inset(0 0 0 0); }
 .id-stage .v2-body { font-size: clamp(19px, 1.6vw, 23px); max-width: 30ch; }
 .id-card-wrap { grid-column: 8 / span 4; display: flex; justify-content: center; }
+.id-card-m { display: none; }
 
 /* the hosted card */
 .id-card { width: min(100%, 400px); aspect-ratio: 4 / 6; display: flex; flex-direction: column; border-radius: 36px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 60px 100px -40px rgba(64, 64, 64, .35), 0 30px 60px -30px rgba(0, 0, 0, .25); overflow: hidden; }
@@ -49,7 +50,7 @@
 .id-code i { height: 46px; border-radius: 10px; border: 1px solid rgba(0, 0, 0, .14); position: relative; }
 .id-code i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -4.5px; border-radius: 99px; background: var(--ink); transform: scale(0); transition: transform .3s cubic-bezier(.16, 1, .3, 1); transition-delay: inherit; }
 .id-code.on i::after { transform: scale(1); }
-.id-ok { align-self: center; margin-top: 10px; font: 600 15px/1 var(--mono); color: #737373; opacity: 0; transform: translateY(6px); transition: opacity .4s, transform .5s var(--e); }
+.id-ok { align-self: center; margin-top: 10px; font: 600 15px/1 var(--mono); color: #525252; opacity: 0; transform: translateY(6px); transition: opacity .4s, transform .5s var(--e); }
 .id-ok.on { opacity: 1; transform: none; }
 .id-token { width: 100%; display: grid; gap: 10px; }
 .id-token p:not(.id-t) { margin: 0; display: flex; justify-content: space-between; align-items: center; min-height: 64px; padding: 0 18px; border-radius: 14px; background: #f5f5f7; font: 500 15px/1 var(--mono); }
@@ -163,12 +164,11 @@
   .js .id-layer { grid-area: auto; }
   .js .id-layer { transform: none !important; pointer-events: auto; }
   .js .id-hero, .id-hero { order: 0; opacity: 1; padding-bottom: 32px; }
-  .id-h1 { font-size: 64px; }
-  .id-card-wrap { order: 1; position: sticky; top: 60px; z-index: 2; padding: 8px 0 12px; background: #fff; }
-  .id-stage { order: 2; padding: 12svh 0; }
-  .js .id-stage { opacity: .3; transition: opacity .35s; }
-  .js .id-stage[data-on] { opacity: 1; }
-  .id-stage .v2-headline { font-size: 34px; }
+  .id-card-wrap { order: 1; padding: 8px 0 24px; justify-content: flex-start; }
+  .id-card-m { display: flex; margin-top: 24px; }
+  .id-stage { order: 2; padding: 48px 0; border-top: 1px solid var(--line); }
+  .js .id-stage { opacity: 1; }
+  .id-stage .v2-headline { font-size: 21px; }
   .js .id-stage .v2-headline span { clip-path: none; }
   .id-card { width: min(100%, 300px); aspect-ratio: 5 / 6; border-radius: 28px; }
   .id-url { padding: 12px 18px; }
@@ -191,3 +191,9 @@
   .id-card.wear { min-height: 0; }
   .id-three li { padding: 20px; }
 }
+
+/* the live object's pause control */
+.id-pause { top: 6px; right: 6px; }
+.id-card .id-url { padding-right: 60px; }
+.id-card-wrap .lp-host, .id-card-m .lp-host { width: min(100%, 400px); }
+@media (max-width: 900px) { .id-card-wrap .lp-host, .id-card-m .lp-host { width: min(100%, 300px); } }
