@@ -233,5 +233,42 @@
 }
 @media (prefers-reduced-motion: reduce) { .tn2-facts-at > span { animation: none; } }
 
-/* a white breath between the hero's terminal band and the dark room, so the top is not one long black block */
-.tn2-scene { margin-top: clamp(44px, 7vw, 116px); }
+/* round 3 (7 Nov): the dark room follows the hero's terminal band with a hairline breath, entering as a rounded room,
+   instead of a dead white strip */
+.tn2-scene { margin-top: 6.5px; border-radius: 24px 24px 0 0; }
+.tn2-scene:not(.pin) { overflow: hidden; }
+
+/* phones: the shared header keeps its solid "Try Hanzo" below 900px and never hands over (requested), so the page's
+   own "View Source" is outlined there: one solid per screen */
+@media (max-width: 900px) {
+  .tn2 .x-btn.solid[data-cta='tunnel.hero'] { background: transparent; color: var(--ink); border-color: rgba(10, 10, 10, .3); }
+  /* the hero's share line keeps "→ sharing 3000" and the arriving request on their own reserved rows */
+  .tn2-share { display: grid; gap: 4px; }
+  .tn2-hits { display: block; height: 1.5em; }
+}
+@media (max-width: 900px) and (hover: hover) { .tn2 .x-btn.solid[data-cta='tunnel.hero']:hover { background: rgba(10, 10, 10, .06); border-color: var(--ink); } }
+
+/* the modes' description holds two lines at 375, so the auto-step never moves "One command" */
+.tn2-modes p { min-height: 2.9em; line-height: 1.45; }
+/* the builder: the domain always has its own line; the note's two sentences each keep theirs */
+.tn2-name-d { display: block; }
+.tn2-name-note > span { display: block; }
+.tn2-name-note { min-height: 3em; }
+/* flags and the output arrow never break inside */
+.tn2-nb { white-space: nowrap; }
+/* one command: block lines, the typed text's caret is its ::after */
+.tn2-one-code .tn2-ln { display: block; }
+.tn2-typed.on::after { content: ''; display: inline-block; width: .6em; height: 1.1em; margin-left: 4px; vertical-align: -.15em; background: #f5f5f5; animation: tn2-blink 1s steps(1) 4; }
+@media (max-width: 900px) { .tn2-one-code pre { font-size: 13.5px; } }
+/* the phone's address fades into its edge instead of cutting off */
+.tn2-bar { -webkit-mask-image: linear-gradient(90deg, #000 78%, transparent); mask-image: linear-gradient(90deg, #000 78%, transparent); }
+/* fact 03: the first share prints its URL */
+.tn2-print { margin-top: 24px; padding: 18px 22px; border-radius: 20px; background: #0a0a0a; color: #d4d4d4; }
+.tn2-print p { margin: 0; font-size: 16px; }
+.tn2-print span { color: #a3a3a3; user-select: none; }
+.tn2-print-u { margin-top: 8px !important; color: #f5f5f5; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .35); text-underline-offset: 3px; overflow-wrap: anywhere; opacity: 0; transform: translateY(8px); transition: opacity .5s var(--ease), transform .6s var(--ease-emphasis, cubic-bezier(.16, 1, .3, 1)) .2s; }
+.tn2-print.on .tn2-print-u, html:not(.js) .tn2-print-u { opacity: 1; transform: none; }
+@media (max-width: 900px) { .tn2-print p { font-size: 14px; } }
+/* Copy in the terminal answers the pointer */
+@media (hover: hover) { .tn2-one .x-copy:hover { background: rgba(255, 255, 255, .14); color: #fafafa; } }
+@media (prefers-reduced-motion: reduce) { .tn2-typed.on::after { animation: none; } .tn2-print-u { transition: none; } }

@@ -579,6 +579,31 @@
 .xmf-me-l { position: absolute; z-index: 3; margin: -9px 0 0 18px; padding: 3px 8px; border-radius: 6px; background: #0a0a0a; color: #fafafa; font-size: 13px; font-weight: 500; line-height: 1.3; white-space: nowrap; pointer-events: none; }
 .xmf-me-l.l { translate: calc(-100% - 36px) 0; }
 
+/* Copy and the pause answer the pointer with a fill as well as the rule */
+.xmf .x-copy, .xmf .v2-mpause { transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+.xmf .x-copy:hover, .xmf .v2-mpause:hover { background-color: #ededed; }
+.xmf-quick .x-copy:hover, .xmf-term .x-copy:hover { background-color: rgba(255, 255, 255, .08); }
+
+/* idle life where a screen sat still: a light runs along the drawn rates, the shelf's light band sweeps Hanzo's other
+   cards, the quick start's code waits on a caret. One pause stops all three; reduced motion drops them. */
+.xmf-rb-r i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .55), rgba(255, 255, 255, 0)) -60px 0 / 60px 100% no-repeat; animation: xmf-rb-light 4.5s linear infinite; }
+.xmf-rb-r + .xmf-rb-r i::after { animation-delay: .6s; }
+@keyframes xmf-rb-light { to { background-position: calc(100% + 60px) 0; } }
+.xmf-also { position: relative; isolation: isolate; }
+.xmf-also::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .045) 50%, rgba(0, 0, 0, 0)) 0 -240px / 100% 240px no-repeat; animation: xmf-shelf-light 7s linear infinite; }
+.xmf-code .x-codeblock-l:last-child::after { content: ''; display: inline-block; width: 8px; height: 1.1em; margin-left: 3px; vertical-align: -2px; background: #a3a3a3; animation: xmf-caret 1.1s steps(2, jump-none) infinite; }
+@keyframes xmf-caret { 50% { opacity: 0; } }
+.xmf-live { display: inline-block; width: 7px; height: 7px; margin-right: 10px; border-radius: 50%; background: #fafafa; vertical-align: 1px; animation: xmf-live 2s cubic-bezier(0, 0, .2, 1) infinite; }
+@keyframes xmf-live { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .5); } 70%, 100% { box-shadow: 0 0 0 7px rgba(255, 255, 255, 0); } }
+[data-mpaused] .xmf-live { animation-play-state: paused; }
+@media (min-width: 900px) { .xmf-quick .xmf-sh { position: sticky; top: 148px; } }
+@media (prefers-reduced-motion: reduce) { .xmf-live { animation: none; } }
+[data-mpaused] .xmf-rb-r i::after, [data-mpaused] .xmf-also::before, [data-mpaused] .xmf-code .x-codeblock-l:last-child::after { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .xmf-rb-r i::after, .xmf-also::before, .xmf-code .x-codeblock-l:last-child::after { animation: none; background: none; } }
+
+/* the quick start shows its whole sample: no inner vertical scroll that traps the wheel (the kit's pre contains overscroll) */
+.xmf-pane pre, .xmf-quick .xmf-pane pre { max-height: none; overflow-y: hidden; overscroll-behavior-y: auto; }
+
 /* the rail: six siblings at most, all pages of this site */
 .xmf-rail.few { grid-auto-columns: minmax(280px, calc((100% - 28px) / 3)); }
 @media (hover: hover) and (min-width: 900px) { .xmf-rail .sc-card.hush { min-height: 176px; } }
@@ -590,8 +615,10 @@
 .xmf-also-a b i { display: inline-block; margin-left: 8px; font-style: normal; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .xmf-also-c { grid-column: 3; grid-row: 1; font-size: 13px; color: var(--soft); }
 .xmf-also-d { grid-column: 2; grid-row: 1; font-size: 13px; line-height: 18px; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0; transform: translateY(4px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xmf-also-a:hover { background: #f5f5f5; }
+.xmf-pick button:not([aria-pressed='true']):hover { background: #f5f5f5; }
+.xmf-pick button { transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) {
-  .xmf-also-a:hover { background: #f5f5f5; }
   .xmf-also-a:hover b i { transform: translateX(4px); }
   .xmf-also-a.far:hover b i { transform: translate(3px, -3px); }
   .xmf-also-a:hover .xmf-also-d { opacity: 1; transform: none; }
@@ -605,6 +632,12 @@
 .xmf-maker-n b { font-size: 64px; }
 .xmf-prov .xmf-grid { display: block; border-top: 1px solid var(--ink); }
 .xmf-prov .xmf-grid > li { border-bottom: 1px solid var(--line); }
+/* the field's light carries on down the shelf: a faint band sweeps the rows, top to bottom, by itself */
+.xmf-prov .xmf-grid { position: relative; isolation: isolate; }
+.xmf-prov .xmf-grid::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .045) 50%, rgba(0, 0, 0, 0)) 0 -360px / 100% 360px no-repeat; animation: xmf-shelf-light 9s linear infinite; }
+@keyframes xmf-shelf-light { to { background-position: 0 calc(100% + 360px); } }
+[data-mpaused] .xmf-prov .xmf-grid::before { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .xmf-prov .xmf-grid::before { animation: none; background: none; } }
 .xmf-prov .sc-card.xmf-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) 132px; align-items: center; gap: 0 24px; min-height: 72px; height: auto; padding: 12px 16px; border-radius: 12px; background: transparent; color: var(--ink); transform: none !important; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
 .xmf-row .sc-top { display: contents; }
 .xmf-row .sc-t { grid-column: 1; grid-row: 1; font-size: 17px; line-height: 24px; letter-spacing: -.01em; color: var(--ink); transition: transform .3s cubic-bezier(.2, .8, .2, 1); }

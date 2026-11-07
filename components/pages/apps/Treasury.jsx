@@ -252,9 +252,9 @@ function Chapter({ i, t, d, paused }) {
 }
 
 function Parts() {
-  const [ref, live] = useLive(0.05);
   // wide screens pin the chapters beside one changing card; that pin mounts after hydration, so the server and the
-  // first client render are the same stacked markup in every motion mode (no reduced-motion hydration mismatch)
+  // first client render are the same stacked markup in every motion mode (no reduced-motion hydration mismatch).
+  // Each branch owns its own in-view watcher, so the pinned branch never watches the detached stacked section.
   const [wide, setWide] = useState(false);
   useEffect(() => {
     const m = matchMedia('(min-width: 900px)');
@@ -263,9 +263,13 @@ function Parts() {
     m.addEventListener('change', on);
     return () => m.removeEventListener('change', on);
   }, []);
-  const [paused, pauseBtn] = usePause(wide ? { right: 0, bottom: 0, top: 'auto' } : { position: 'relative', right: 'auto', top: 'auto' });
-  const lead = { rail: false, node: <LineMask as="p" className="gx-say ts-say-p" lines={SAY} /> };
-  if (!wide) return (
+  return wide ? <PinnedParts /> : <StackedParts />;
+}
+
+function StackedParts() {
+  const [ref] = useLive(0.05);
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+  return (
     <section className="ts-stack" aria-label="What it is made of" ref={ref}>
       <div className="w2-wrap">
         <div className="ts-stack-top">
@@ -278,6 +282,12 @@ function Parts() {
       </div>
     </section>
   );
+}
+
+function PinnedParts() {
+  const [ref, live] = useLive(0.05);
+  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
+  const lead = { rail: false, node: <LineMask as="p" className="gx-say ts-say-p" lines={SAY} /> };
   return (
     <div ref={ref}>
       <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"
@@ -308,6 +318,12 @@ function Total() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.8 });
   const [v, setV] = useState(10000);
+  // the server paints the true 10,000; if the figure is still below the fold after hydration, it rests at 0 out of
+  // sight and counts up when it arrives, so it never visibly drops and climbs back
+  useEffect(() => {
+    const r = ref.current?.getBoundingClientRect();
+    if (r && r.top > innerHeight && !matchMedia('(prefers-reduced-motion: reduce)').matches) setV(0);
+  }, []);
   useEffect(() => {
     if (!seen || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const c = animate(0, 10000, { duration: 1.1, ease: EASE, onUpdate: (x) => setV(Math.round(x / 100) * 100) });

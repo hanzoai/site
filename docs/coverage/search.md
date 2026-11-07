@@ -41,7 +41,7 @@ Done here: Hero is rise (centred title, the object big and low, settling up); th
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, primary-2, plan-build, plan-scale, plan-enterprise, close*, close-view-on-github, deploy (* = solid). Desktop: the sticky header's button carries "Read the docs" after the hero and steps to an outline while another "Read the docs" is on screen. Phone: the shared header keeps its solid "Try Hanzo", so the first screen shows two solids (hero "Read the docs" and header "Try Hanzo"); that is the shared header's phone rule, requested in `docs/requests/search.md`. No page bar (`data-ask="off"`): nothing floats over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
+Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, primary-2, plan-build, plan-scale, plan-enterprise, close*, close-view-on-github, deploy (* = solid). `data-ask="off"` is gone, so the shared `Ask.jsx` reads the hero's `data-thumb="Read the docs"`. Desktop (measured): on the first screen the header's "Try Hanzo" is quiet (`html[data-ask=quiet]`) and the hero's "Read the docs" is the one solid; after the hero the header button reads "Read the docs", solid (`data-cta="header-ask"`). Phone (≤700px): the header keeps its solid "Try Hanzo", so the page sets the hero "Read the docs" quiet (outlined) and the shared slim bar carries it after the hero; first-screen solids measured: 1. The close band carries `data-ask-hide` (Finale). Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 6.67:1 (0 runs flagged). Headings 12333
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /search/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone). CLS over a full walk: 0.0045 desktop, 0.0040 phone (the streamed answer reserves its full height with a hidden copy; the close's list keeps a 234px floor on phone).
+Done here: `curl /search/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone). The plan sliders' fill (`--p`) is rendered inline, so server and client HTML agree (no hydration warning; 0 console errors or warnings over 4 fresh loads). CLS over a full walk: 0.0045 desktop, 0.0040 phone (the streamed answer reserves its full height with a hidden copy; the close's list keeps a 234px floor on phone).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)

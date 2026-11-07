@@ -27,6 +27,15 @@
 .xag-cap { font: 400 13px/1.4 var(--mono); color: var(--quiet); margin: 17px 0 0; }
 .xag-head .xag-lede { margin-top: 17px; }
 
+/* arrival, in CSS so it runs from the first paint: the server HTML is set and readable (JS off, or before hydration);
+   only with html.js does the headline start under its mask and cut in, and the lede follow it up */
+@media (prefers-reduced-motion: no-preference) {
+  .js .xag-cut { animation: xag-cut 1.1s var(--e-in) .08s both; }
+  .js .xag-after { animation: xag-after .9s var(--e-in) var(--d, .35s) both; }
+}
+@keyframes xag-cut { from { transform: translateY(110%); } to { transform: none; } }
+@keyframes xag-after { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
 /* actions: one solid ask (the kit Cta), the rest text links whose chevron nudges */
 .xag-acts { display: flex; flex-wrap: wrap; gap: 10px 17px; margin-top: 27px; align-items: center; }
 .xag-ask { gap: 10px; }
@@ -49,6 +58,10 @@
   .js .xag-stage-g { padding: 60px 0 0; row-gap: 0; }
   .js .xag-one, .js .xag-two, .js .xag-obj { grid-row: 1; align-self: center; }
   .js .xag-two { opacity: 0; }
+  /* the object's start pose (big and low), the same one Motion's scroll scrub begins from, so hydration moves nothing */
+  .js .xag-obj { transform: translateY(var(--low, 0%)) scale(var(--from, 1)); }
+  /* the stage's last screen keeps air under the ring; the black room rises into it instead of waiting below */
+  .js .xag-stage + .xag-room { margin-top: -9svh; }
 }
 .xag-art { position: absolute; inset: -12% -10%; color: var(--quiet); opacity: .4; pointer-events: none; z-index: 0; }
 .xag-sigil { width: 100%; height: 100%; display: block; }
@@ -58,10 +71,16 @@
 .xag-ring { --R: clamp(160px, 15vw, 214px); --s: clamp(60px, 5.4vw, 76px); position: relative; width: calc(var(--R) * 2 + var(--s)); aspect-ratio: 1; }
 .xag-orbit { position: absolute; inset: calc(var(--s) / 2); border-radius: 50%; border: 1px solid var(--line); }
 .xag-seat { position: absolute; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); border-radius: 50%; transform: rotate(var(--a)) translateY(calc(var(--R) * -1)) rotate(calc(var(--a) * -1)); transition: opacity var(--t-base) var(--e-out); }
-.xag-face { position: relative; display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; flex: none; background: var(--tile-2); color: var(--muted); box-shadow: 0 0 0 3px #fff; transition: transform var(--t-slow) var(--e-move), box-shadow var(--t-fast) var(--e-out); }
-.xag-face b { font-size: 26px; font-weight: 497; line-height: 1; }
+.xag-face { --fs: 100%; position: relative; display: grid; place-items: center; align-content: center; width: var(--fs); height: var(--fs); border-radius: 50%; overflow: hidden; flex: none; background: var(--tile-2); color: var(--ink); box-shadow: 0 0 0 3px #fff; transition: transform var(--t-slow) var(--e-move), box-shadow var(--t-fast) var(--e-out), background-color var(--t-base) var(--e-out), color var(--t-base) var(--e-out); }
+.xag-face[data-tone='b'] { background: #e5e5e5; }
+.xag-face b { font-size: 26px; font-weight: 497; line-height: 1; letter-spacing: -.02em; }
+.xag-face small { font: 500 9px/1 var(--mono); letter-spacing: .08em; color: var(--quiet); margin-top: 3px; transition: color var(--t-base) var(--e-out); }
+.xag-face-m { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1; opacity: .28; transition: opacity var(--t-base) var(--e-out); }
+.xag-face-dot { fill: currentColor; stroke: none; }
 .xag-face i { position: absolute; inset: 0; background-size: cover; background-position: center; }
-.xag-seat[data-on] .xag-face { transform: scale(1.12); box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
+.xag-seat[data-on] .xag-face { transform: scale(1.12); background: var(--ink); color: #fff; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
+.xag-seat[data-on] .xag-face small { color: var(--on-black-3); }
+.xag-seat[data-on] .xag-face-m { opacity: .5; }
 @media (hover: hover) { .xag-seat:hover .xag-face { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); } }
 .xag-seat:active .xag-face { transform: scale(.97); transition-duration: var(--t-press); }
 .xag-seat[data-dim] { opacity: .22; }
@@ -75,9 +94,18 @@
 
 .xag-find { margin-top: 27px; max-width: 420px; }
 .xag-find .x-field { margin: 0; }
+.xag-find-box { position: relative; }
+.xag-find-box .x-input2 { width: 100%; padding-right: 52px; }
+.xag-find-box .x-input2::-webkit-search-cancel-button, .xag-find-box .x-input2::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
+.xag-clear { position: absolute; right: 2px; top: 50%; width: 44px; height: 44px; margin-top: -22px; display: grid; place-items: center; border: 0; border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; transition: background-color var(--t-fast) var(--e-out), color var(--t-fast) var(--e-out); }
+.xag-clear[hidden] { display: none; }
+@media (hover: hover) { .xag-clear:hover { background: var(--tile); color: var(--ink); } }
+.xag-clear:active { transform: scale(.97); transition: transform var(--t-press); }
+.xag-clear:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
 .xag-find-n { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 6px; font-size: 16px; font-weight: 606; }
-.xag-find-n .xag-face { --s: 28px; box-shadow: none; }
+.xag-find-n .xag-face { --fs: 28px; box-shadow: none; }
 .xag-find-n .xag-face b { font-size: 13px; }
+.xag-find-n .xag-face small, .xag-sk .xag-face small { display: none; }
 .xag-find-n em { font-style: normal; font-weight: 400; color: var(--muted); }
 .xag-find-n kbd { margin-left: auto; font: 500 12px/1 var(--mono); padding: 5px 8px; border-radius: 6px; background: var(--tile); color: var(--muted); }
 
@@ -108,11 +136,15 @@
 .xag-sk aside { display: flex; flex-direction: column; gap: 4px; padding: 4% 3%; border-right: 1px solid var(--on-black-line); }
 .xag-sk aside span { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--on-black-3); }
 .xag-sk aside span[data-on] { background: var(--on-black-line); color: var(--on-black); }
-.xag-sk .xag-face { --s: 22px; box-shadow: none; }
-.xag-sk .xag-face b { font-size: 12px; }
+.xag-sk .xag-face { --fs: 22px; box-shadow: none; }
+.xag-sk .xag-face b { font-size: 11px; }
+.xag-shot[data-night] .xag-sk .xag-face { background: #404040; color: var(--on-black); }
+.xag-shot[data-night] .xag-sk .xag-face[data-tone='b'] { background: #262626; }
 .xag-sk-m { padding: 4% 6%; display: flex; flex-direction: column; }
 .xag-sk-h { display: flex; align-items: center; gap: 12px; margin: 0 0 5%; font-size: 26px; font-weight: 497; }
-.xag-sk-h .xag-face { --s: 34px; }
+.xag-sk-h .xag-face { --fs: 34px; box-shadow: none; }
+.xag-sk-h .xag-face b { font-size: 15px; }
+.xag-sk-h .xag-face small { display: none; }
 .xag-sk ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .xag-sk li { display: flex; justify-content: space-between; align-items: center; padding: 14px 17px; border-radius: 12px; background: var(--on-black-line); }
 .xag-sk li em { font-style: normal; font-size: 12px; color: var(--on-black-3); letter-spacing: .14em; text-transform: uppercase; }
@@ -133,8 +165,13 @@
 .xag-build-g .xag-acts { margin: 0; }
 .xag-mates { list-style: none; margin: 0; padding: 0 0 28px; display: flex; }
 .xag-mates li + li { margin-left: -12px; }
-.xag-mate { --s: 64px; position: relative; display: block; width: 64px; height: 64px; text-decoration: none; color: var(--ink); }
-@media (hover: hover) { .xag-mate:hover .xag-face { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); } .xag-mate:hover { z-index: 2; } .xag-mate:hover .xag-mate-n { opacity: 1; } }
+.xag-mate { position: relative; display: block; width: 64px; height: 64px; text-decoration: none; color: var(--ink); transition: transform var(--t-base) var(--e-move); }
+@media (hover: hover) {
+  .xag-mate:hover { z-index: 2; transform: translateY(-6px); }
+  .xag-mate:hover .xag-face { background: var(--ink); color: #fff; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
+  .xag-mate:hover .xag-face small { color: var(--on-black-3); }
+  .xag-mate:hover .xag-mate-n { opacity: 1; }
+}
 .xag-mate:focus-visible { outline: none; z-index: 2; }
 .xag-mate:focus-visible .xag-face { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--ink); }
 .xag-mate:focus-visible .xag-mate-n { opacity: 1; }
@@ -204,8 +241,12 @@ a.xag-win-t:active { transform: translateY(1px); }
 .xag-sheets { background: var(--tile); }
 .xag-sheets-h { grid-column: 1 / span 5; align-self: start; position: sticky; top: 116px; }
 .xag-sheets-l { grid-column: 6 / span 8; list-style: none; margin: 0; padding: 0; display: grid; gap: 17px; }
-.xag-sheets-l li { position: sticky; top: calc(116px + var(--i) * 27px); min-height: 52svh; display: grid; grid-template-rows: 1fr auto; gap: 27px; padding: 44px; border-radius: 24px; background: #fff; }
-.xag-sheet-n { font: 220 64px/1 var(--mono); letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
+/* each sheet's top strip (its figure and title) stays in view when the next one covers it */
+.xag-sheets-l li { position: sticky; top: calc(116px + var(--i) * 108px); min-height: 48svh; display: grid; grid-template-rows: auto 1fr; gap: 27px; padding: 28px 44px 44px; border-radius: 24px; background: #fff; box-shadow: 0 -1px 0 var(--line); }
+.xag-sheet-top { display: flex; align-items: baseline; gap: 27px; min-height: 64px; }
+.xag-sheet-top .xag-h3 { margin: 0; }
+.xag-sheets-l .xag-body { align-self: end; }
+.xag-sheet-n { flex: none; font: 220 64px/1 var(--mono); letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
 
 /* parts: a spec sheet beside the SDK's Sigil */
 .xag-spec-h { grid-column: 1 / span 5; align-self: start; position: sticky; top: 116px; }
@@ -221,7 +262,8 @@ a.xag-win-t:active { transform: translateY(1px); }
 .xag-code .xag-kick { color: var(--on-black-3); }
 .xag-code .xag-h2 { color: var(--on-black); }
 .xag-code .xag-tl { color: var(--on-black); }
-.xag-code-h { grid-column: 1 / span 5; align-self: end; }
+.xag-code-h { grid-column: 1 / span 5; align-self: start; position: sticky; top: 116px; } /* the heading opens level with the code's top */
+.xag-code-h .xag-h2 { margin-top: -4px; }
 .xag-pre { grid-column: 6 / span 8; margin: 0; border-radius: 20px; }
 
 /* close */
@@ -257,7 +299,6 @@ a.xag-chip:active { transform: translateY(1px); }
   .xag-baton i { height: calc(var(--R) - var(--s) - 52px); }
   .xag-hub { width: 140px; }
   .xag-hub b { font-size: 26px; }
-  .xag-face b { font-size: 21px; }
   .xag-con { width: 100%; }
   .xag-win-g { grid-template-columns: 1fr; }
   .xag-win-nav { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px; }
@@ -277,14 +318,27 @@ a.xag-chip:active { transform: translateY(1px); }
   .xag-night-t { display: none; }
   .xag-sheets-h, .xag-spec-h { position: static; margin-bottom: 44px; }
   .xag-sheets-l li { position: relative; top: auto; min-height: 0; padding: 27px; }
-  .xag-spec-l { grid-template-columns: 1fr; }
-  .xag-spec-art { max-width: 240px; margin-top: 27px; }
-  .xag-code-h { margin-bottom: 27px; }
+  .xag-sheet-top { gap: 17px; min-height: 0; align-items: center; }
+  .xag-sheet-n { font-size: 44px; }
+  /* the six parts become a rail of tiles you swipe, the next one peeking, under the SDK's contour */
+  .xag-spec-l { display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); margin-inline: calc(var(--gut) * -1); padding: 0 var(--gut) 6px; scrollbar-width: none; }
+  .xag-spec-l::-webkit-scrollbar { display: none; }
+  .xag-spec-l > div { flex: 0 0 82%; scroll-snap-align: start; padding: 24px; border-top: 0; border-radius: 24px; background: var(--tile); }
+  .xag-spec-h { margin-bottom: 27px; }
+  .xag-spec-art { max-width: none; aspect-ratio: 16 / 9; margin-top: 27px; }
+  .xag-code-h { margin-bottom: 27px; position: static; }
   .xag-close-t, .xag-build-t { font-size: 32px; }
   .xag-build-a svg { width: 32px; }
-  .xag-mates { flex-wrap: wrap; row-gap: 10px; }
-  .xag-mate { --s: 48px; width: 48px; height: 48px; }
+  /* ten faces on one line inside the gutters at 375: 10 x 40 - 9 x 8 = 328 of 343 */
+  .xag-build-g { margin-top: 27px; }
+  .xag-mates { flex-wrap: nowrap; max-width: 100%; }
+  .xag-mate { width: 40px; height: 40px; }
   .xag-mates li + li { margin-left: -8px; }
+  .xag-mate .xag-face { box-shadow: 0 0 0 2px #fff; }
+  .xag-mate .xag-face b { font-size: 16px; }
+  .xag-mate .xag-face small { display: none; }
+  .xag-seat .xag-face b { font-size: 21px; }
+  .xag-seat .xag-face small { font-size: 8px; margin-top: 2px; }
   .xag-get { margin-top: 72px; }
 }
 

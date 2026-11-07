@@ -1,6 +1,6 @@
 'use client';
 /* /investors. Story page (MASTER 4.4), Hanzo's deck only.
-   V2: 8/10 After review: the hero arrives after the curtain and reads with JS off; the thesis and the results are
+   V2: 7/10 critic round 2 (7 Nov): the commit stats render on one line again (a selector had caught the rolling digits), bars keep their true lengths on phones and under reduced motion, 44px counter steps, links press. Before that: the hero arrives after the curtain and reads with JS off; the thesis and the results are
    pinned scenes where one thing replaces the last (the outgoing title clears first) and each figure rolls in with a
    true object beside it (16 of 16 tasks lit, 152 of 159 dots, LiveCodeBench and Kai bars on a zero baseline, Dev's
    interval, 200x against 400x at twice the length); the stack's slabs layer as you scroll with Hanzo's 03 / 02 / 01 as
@@ -197,7 +197,7 @@ const THESIS = [['Smarter', 'Frontier intelligence on a measured Pareto frontier
 const Times = ({ v, w, on }) => (
   <div className="xin-big-f" aria-hidden="true">
     <b className="vc-num">{v}</b>
-    <span className="xin-big-bar"><i className="one" /><span><motion.i initial={false} animate={{ scaleX: on ? w : 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }} /></span></span>
+    <span className="xin-big-bar"><i className="one" /><span><motion.i style={{ '--xin-s': w }} initial={false} animate={{ scaleX: on ? w : 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }} /></span></span>
   </div>
 );
 const THESIS_V = [
@@ -260,7 +260,7 @@ const Bars = ({ rows, max, on, fmt }) => (
     {rows.map(([nm, v], i) => (
       <li key={nm} className={i ? '' : 'me'}>
         <span>{nm}</span>
-        <i><motion.b initial={false} animate={{ scaleX: on ? v / max : 0 }} transition={{ duration: 0.8, ease: EASE, delay: on ? 0.3 + i * 0.06 : 0 }} /></i>
+        <i><motion.b style={{ '--xin-s': v / max }} initial={false} animate={{ scaleX: on ? v / max : 0 }} transition={{ duration: 0.8, ease: EASE, delay: on ? 0.3 + i * 0.06 : 0 }} /></i>
         <b>{fmt(v)}</b>
       </li>
     ))}
@@ -480,7 +480,7 @@ function Close() {
 export default function Investors() {
   usePhoneAsk();
   return (
-    <main className="vc xin" style={{ '--acc': '#1d1d1f' }}>
+    <main className="vc xin" style={{ '--acc': '#0a0a0a' }}>
       <Hero />
       <Thesis />
       <Stack />

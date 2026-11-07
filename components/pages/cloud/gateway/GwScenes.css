@@ -5,7 +5,7 @@
 .gws-dots { display: flex; gap: 6px; }
 .gws-dots i { width: 10px; height: 10px; border-radius: 999px; background: #e4e4e7; }
 .gws-bar b { margin-left: auto; color: #0a0a0a; font-weight: 600; }
-.gws-body { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; padding: clamp(20px, 3vw, 48px); font: 500 clamp(13px, 1.15vw, 17px)/1.2 var(--mono); color: #262626; }
+.gws-body { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; padding: clamp(20px, 2.4vw, 40px); font: 500 clamp(14px, 1.45vw, 21px)/1.2 var(--mono); color: #262626; }
 .gws-body > * { width: 100%; }
 
 /* shared parts */
@@ -43,7 +43,7 @@
 .gws-row.struck { background: #f5f5f5; color: #737373; }
 .gws-row.struck span { position: relative; }
 .gws-row.struck span::after { content: ''; position: absolute; left: 0; right: 0; top: 52%; height: 1.5px; background: #0a0a0a; transform-origin: left center; animation: gws-draw .45s var(--io) both; animation-delay: calc(.35s + var(--i) * .22s); }
-.gws-row.struck b { font-weight: 500; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #737373; }
+.gws-row.struck b { font-weight: 500; font-size: .78em; color: #737373; }
 .gws-row.set { background: #0a0a0a; color: #fafafa; justify-content: flex-start; }
 .gws-row.set em { font-style: normal; color: #a3a3a3; }
 
@@ -102,8 +102,10 @@
   .gws-body { padding: 14px 12px; font-size: 12px; }
   .gws-pill, .gws-stamp, .gws-end { padding: 8px 11px; }
   .gws-lanes { gap: 14px; }
-  .gws-lane { min-height: 44px; grid-template-columns: minmax(0, 1fr) 2px minmax(16px, .6fr) auto; }
-  .gws-lane .gws-pill { margin-right: 10px; }
+  /* the pill sizes to its words and the lane's tail takes what is left, so "API key" is never cut at the left edge */
+  .gws-lane { min-height: 44px; grid-template-columns: auto 2px minmax(12px, 1fr) minmax(0, auto); }
+  .gws-lane .gws-pill { justify-self: start; margin-right: 10px; }
+  .gws-end { white-space: normal; max-width: 15ch; line-height: 1.25; }
   .gws-lane .gws-gate { height: 44px; }
   .gws-two { column-gap: 8px; }
   .gws-gate.v { min-height: 150px; }

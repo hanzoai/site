@@ -185,6 +185,9 @@ function Boundary() {
   const introY = useTransform(p, (v) => -40 * ramp(v, 0, 0.08));
   const chO = useTransform(p, (v) => ramp(v, 0.07, 0.13));
   const chY = useTransform(p, (v) => 24 * (1 - ramp(v, 0.07, 0.14)));
+  // a faded column takes no pointer: the hero's links stop answering once they have gone, the place tabs until they arrive
+  const introPE = useTransform(p, (v) => (v < 0.05 ? 'auto' : 'none'));
+  const chPE = useTransform(p, (v) => (v > 0.1 ? 'auto' : 'none'));
 
   useMotionValueEvent(p, 'change', (v) => {
     if (!scrub) return;
@@ -218,7 +221,7 @@ function Boundary() {
   return (
     <section className="xe-stage" ref={ref} aria-labelledby="xe-h1">
       <div className="xe-pin">
-        <motion.div className="xe-intro xe-w" ref={intro} style={{ opacity: introO, y: introY }}>
+        <motion.div className="xe-intro xe-w" ref={intro} style={{ opacity: introO, y: introY, pointerEvents: introPE }}>
           <h1 id="xe-h1" className="xe-d">{line('Give every team AI.', 0)}{line('Run it where you choose.', 0.06)}</h1>
           <div className="xe-intro-row">
             <p className="xe-lede">
@@ -251,7 +254,7 @@ function Boundary() {
           </div>
         </motion.div>
 
-        <motion.div className="xe-ch" style={{ opacity: chO, y: chY }} data-ask-hide>
+        <motion.div className="xe-ch" style={{ opacity: chO, y: chY, pointerEvents: chPE }} data-ask-hide>
           <h2 className="xe-h">Run it where your data lives.</h2>
           <p className="xe-b xe-soft">One platform, four places to run it. Choose one, or start in our cloud and move when you are ready.</p>
           <p className="xe-k xe-tag">Deployment</p>
@@ -427,10 +430,10 @@ function Rack({ name, total, specs, guide, to }) {
   );
 }
 
-// four 8-GPU servers, drawn: the 32 GPUs light one by one the first time the card is reached
+// four 8-GPU servers, drawn: the 32 GPUs light one by one each time the card comes fully into view
 function RackGlyph() {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.6 });
+  const seen = useInView(ref, { amount: 1, margin: '0px 0px -20% 0px' });
   return (
     <span ref={ref} className={'xe-rackglyph' + (seen ? ' on' : '')} aria-hidden="true">
       {Array.from({ length: 4 }, (_, s) => <span key={s}>{Array.from({ length: 8 }, (__, k) => <i key={k} style={{ '--k': s * 8 + k }} />)}</span>)}
@@ -505,11 +508,11 @@ function Gpus() {
 
 /* ---------- proof, on a split-flap board ---------- */
 // a figure that rises out of its own mask once, showing only Hanzo's own value at every frame
-function Fig({ value, className = '' }) {
+function Fig({ value, className = '', delay = 0 }) {
   return (
     // the frame is watched (the moving figure starts clipped, so it can never be "seen" itself)
     <motion.span className={'xe-fig ' + className} initial="h" whileInView="s" viewport={{ once: true, amount: 0.6 }}>
-      <motion.span variants={{ h: { y: '105%' }, s: { y: '0%', transition: { duration: 0.5, ease: EASE } } }}>{value}</motion.span>
+      <motion.span variants={{ h: { y: '105%' }, s: { y: '0%', transition: { duration: 0.5, ease: EASE, delay } } }}>{value}</motion.span>
     </motion.span>
   );
 }
@@ -536,7 +539,7 @@ function Mark({ src }) {
 // sixteen marks, one per task of the suite, filled one by one the first time the figure is reached
 function Tally({ n }) {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const seen = useInView(ref, { once: true, amount: 1, margin: '0px 0px -25% 0px' });
   return (
     <span ref={ref} className={'xe-tally' + (seen ? ' on' : '')} aria-hidden="true">
       {Array.from({ length: n }, (_, i) => <i key={i} style={{ '--k': i }} />)}
@@ -563,10 +566,10 @@ function Proof() {
       </div>
       <div className="xe-w">
         <ol className="xe-ledger">
-          {PROOF.map(([fig, what, who, how, to, logo]) => (
+          {PROOF.map(([fig, what, who, how, to, logo], i) => (
             <li key={who}>
               <A to={to} className="xe-led">
-                <Fig value={fig} />
+                <Fig value={fig} delay={i * 0.12} />
                 <span className="xe-what">{what}</span>
                 <span className="xe-who"><Mark src={logo} /><b>{who}</b><span className="xe-dot">·</span><span>{how}</span></span>
                 <span className="xe-led-go" aria-hidden="true">→</span>

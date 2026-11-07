@@ -240,15 +240,27 @@ function Two() {
 }
 
 function Official() {
-  const [k, setK] = useState(0);
+  const [k, setK0] = useState(0);
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [mine, setMine] = useState(false); // the first touch takes over for good
+  const setK = (v) => { setMine(true); setK0(v); };
+  // once on arrival the picker walks Hanzo's six languages by itself (one lap, then rests on the first)
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    if (!seen || mine || calm) return;
+    const t = setTimeout(() => { const i = step + 1; setStep(i); setK0(i % 6); if (i >= 6) setMine(true); }, 1400);
+    return () => clearTimeout(t);
+  }, [seen, mine, calm, step]);
   return (
-    <section className="a2-sec xsd-off" aria-labelledby="xsd-off-h">
+    <section className="a2-sec xsd-off" aria-labelledby="xsd-off-h" ref={ref}>
       <div className="a2-wrap">
         <Head kicker="SDKs & Libraries" title="Official Cloud SDKs" lede="Use our official SDKs to integrate Cloud into your application" id="xsd-off-h" />
         <div className="xsd-pick">
           <div className="xsd-pick-l" role="tablist" aria-label="Language" aria-orientation="vertical">
             {OFFICIAL.map(([n], i) => (
-              <button key={n} type="button" role="tab" id={'xsd-ot' + i} aria-controls={'xsd-op' + i} aria-selected={k === i} onClick={() => setK(i)} onKeyDown={(e) => { if (e.key === 'ArrowDown') setK((k + 1) % 6); if (e.key === 'ArrowUp') setK((k + 5) % 6); }}>
+              <button key={n} type="button" role="tab" id={'xsd-ot' + i} aria-controls={'xsd-op' + i} aria-selected={k === i} onClick={() => setK(i)} onKeyDown={(e) => { if (e.key === 'ArrowDown') setK((k + 1) % 6); if (e.key === 'ArrowUp') setK((k + 5) % 6); }} onPointerEnter={() => setMine(true)}>
                 {k === i && <motion.span layoutId="xsd-pick" className="xsd-pick-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                 <span>{n}</span>
               </button>
@@ -361,7 +373,7 @@ function Mods() {
           ))}
         </ul>
         {!shown.length && <p className="xsd-none">No module at that path.</p>}
-        <div className="x-row-links"><More to="https://docs.hanzo.ai/docs/sdks">SDKs docs →</More></div>
+        <div className="x-row-links"><A to="https://docs.hanzo.ai/docs/sdks" className="x-arrow"><span>SDKs docs →</span></A></div>
       </div>
     </section>
   );
@@ -373,7 +385,7 @@ function Close() {
     <section className="a2-sec xsd-close" aria-label="API reference">
       <div className="a2-wrap xsd-close-in">
         <p className="a2-display xsd-close-h" aria-hidden="true">SDKs for every language</p>
-        <div className="a2-acts"><Cta to="https://docs.hanzo.ai/docs/openapi/" id="sdks.close">API reference</Cta><More to="https://docs.hanzo.ai/docs/sdks">SDKs docs →</More></div>
+        <div className="a2-acts"><Cta to="https://docs.hanzo.ai/docs/openapi/" id="sdks.close">API reference</Cta><A to="https://docs.hanzo.ai/docs/sdks" className="x-arrow"><span>SDKs docs →</span></A></div>
       </div>
     </section>
   );

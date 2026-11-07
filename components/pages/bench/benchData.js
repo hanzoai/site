@@ -159,6 +159,17 @@ function chartOf(blocks, liveText, slug) {
   return null;
 }
 
+/* a page's one headline figure, as Hanzo wrote it: its latest result, else its card's figure on Hanzo's own row
+   (the first row naming Hanzo or one of its models, else the first row) */
+export function figureOf(d) {
+  if (d.latest[0]) return d.latest[0].parts[0] || '';
+  const c = d.chart;
+  if (!c) return '';
+  if (c.kind === 'one') return c.s;
+  const rows = c.kind === 'trend' ? c.points.map((p) => [p.who, p.val]) : c.kind === 'versus' ? c.rows.map((r) => [r.label, r.a.s]) : c.rows.map((r) => [r.label, r.cells[0].s]);
+  return (rows.find((r) => /hanzo|\bzen|enso|\bkai/i.test(String(r[0]))) || rows[0] || [])[1] || '';
+}
+
 const DOCS = {};
 export function benchDoc(slug) {
   if (DOCS[slug]) return DOCS[slug];

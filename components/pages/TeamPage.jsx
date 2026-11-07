@@ -324,7 +324,34 @@ const TOGETHER = [
   ['Docs & Specs', 'Shared specifications stay linked to issues, pull requests, and channel decisions without drifting out of date.', ['doc', 'dev']],
   ['Release Ops', 'Changelogs, CI status, and rollout checks post straight to the room where your engineers coordinate deploys.', ['opera', 'dev']],
 ];
+/* the work being handed over: the row crossing the middle of the screen sends its relay from one face to the other */
+function useMid(box, sel) {
+  const [mid, setMid] = useState(-1);
+  useEffect(() => {
+    if (!box.current || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setMid(+e.target.dataset.k); }), { rootMargin: '-42% 0px -42% 0px' });
+    box.current.querySelectorAll(sel).forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [box, sel]);
+  return mid;
+}
+/* a scripted run while the section is in view and untouched: steps through n states every ms, once or looping */
+function useRun(box, n, ms, loop) {
+  const seen = useInView(box, { amount: 0.15 });
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || mine || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!loop && at >= n - 1) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
+    return () => clearTimeout(t);
+  }, [seen, mine, at, n, ms, loop]);
+  return [at, (v) => { setMine(true); setAt(v); }];
+}
+
 function Together() {
+  const box = useRef(null);
+  const mid = useMid(box, 'li');
   return (
     <section className="vc-sec xtm-tog" aria-label="Together">
       <div className="vc-grid">
@@ -332,9 +359,9 @@ function Together() {
           <h2 id="xtm-tog" className="vc-headline">Humans and agents, on the same work</h2>
           <Lk to="https://hanzo.team/agents">Meet the AI teammates</Lk>
         </header>
-        <ul className="xtm-tog-l">
-          {TOGETHER.map(([t, d, [a, b]]) => (
-            <li key={t}>
+        <ul className="xtm-tog-l" ref={box}>
+          {TOGETHER.map(([t, d, [a, b]], k) => (
+            <li key={t} data-k={k} className={mid === k ? 'on' : ''}>
               <div className="xtm-hand" aria-hidden="true"><Face n={a} size={40} /><i /><Face n={b} size={40} /></div>
               <h3 className="vc-title">{t}</h3>
               <p className="vc-body">{d}</p>
@@ -456,10 +483,12 @@ function Bugfix() {
 }
 
 function Flows() {
-  const [at, setAt] = useState(0);
   const n = FLOWS.length;
+  const box = useRef(null);
+  // the channel list walks itself while the room is in view (one channel every 3.2 s) until you pick one
+  const [at, setAt] = useRun(box, n, 3200, true);
   return (
-    <section className="vc-sec xtm-flows" data-room="dark" aria-labelledby="xtm-fl">
+    <section className="vc-sec xtm-flows" data-room="dark" aria-labelledby="xtm-fl" ref={box}>
       <div className="vc-grid">
         <header className="xtm-flows-h">
           <h2 id="xtm-fl" className="vc-headline">Ten everyday workflows your team hands off in a single mention.</h2>
@@ -511,10 +540,16 @@ const STEP6 = ['1. Code trace', '2. Loop in design', '3. Decision', '4. Canvas s
 const DIFF = [['12', '12', '', '.cta-button {'], ['13', '13', '', 'display: inline-flex;'], ['14', '14', '', 'align-items: center;'], ['15', '', 'del', `- color: #${'e5e7eb'};`], ['16', '', 'del', `- background: #${'ec4899'};`], ['', '15', 'add', `+ color: #${'1a1a1a'};`], ['', '16', 'add', `+ background: #${'f472b6'};`], ['', '17', 'add', '+ font-weight: 600;'], ['17', '18', '', 'border-radius: 8px;'], ['18', '19', '', '}']];
 
 function Channel() {
-  const [s, setS] = useState(6);
+  const box = useRef(null);
+  // the session plays once when the window is reached (step 1 → 6, 1.6 s each), then rests complete; a press takes over
+  const [r, setR] = useRun(box, 6, 1600, false);
+  const [hyd, setHyd] = useState(false);
+  useEffect(() => setHyd(true), []);
+  const s = hyd ? r + 1 : 6; // the server and JS-off render the finished session
+  const setS = (v) => setR(v - 1);
   const show = (k) => (s >= k ? ' on' : '');
   return (
-    <section className="vc-sec xtm-code" aria-label="CODE CHANNELS &amp; ARTIFACTS">
+    <section className="vc-sec xtm-code" aria-label="CODE CHANNELS &amp; ARTIFACTS" ref={box}>
       <div className="vc-grid">
         <header className="xtm-code-h">
           <h2 id="xtm-code" className="vc-headline">Code channels where engineers, designers, and agents ship together.</h2>

@@ -2,4 +2,7 @@
 
 1. **Header ask fades on hover** (`components/HeaderTools.jsx` / the masthead's "Try Hanzo" link, class `_o-0hover-0--88`). Its hover is opacity 0.88, which is a banned "button that fades on hover" (MASTER 3.3). Asked: a fill change instead (ink → `#262626` on hover, outline → `#f5f5f5` fill while `html[data-ask=quiet]`), and the 1px press.
 2. **Phones: the header never steps back** (`components/Ask.jsx` returns early under 701px, so `html[data-ask=quiet]` is never set on phones). /mori sets it page-locally (`usePhoneAsk` in `Mori.jsx`) so that Mori's own "Request access" is the one solid while it is on screen; a shared version would let every page do the same.
+4. **Phones: the header's sticky ask should carry the page's own words** once the hero ask has gone (as desktop does: "Request access" on /mori), with one solid at a time; today the phone header keeps "Try Hanzo" while the bottom bar carries "Request access".
+5. **Band "Request access" hover** (kit `Band`): #f5f5f7 → #fff is barely visible; a clearer fill step (e.g. → `#e4e4e7`) would answer.
+6. **Footer hydration mismatch** raises the dev error badge site-wide (critic note); shared footer owner.
 3. **Ask.jsx re-checks only on scroll and DOM changes.** An ask that fades in by CSS transition after the last scroll leaves the header holding a stale label (a second solid "Request access" beside the page's own). /mori re-dispatches `scroll` on `transitionend` of its stage; a shared `transitionend` listener in Ask.jsx would fix it everywhere.

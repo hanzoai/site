@@ -82,15 +82,27 @@ function Card({ r, onClose }) {
     html.classList.add('x-lock');
     window.__lenis && window.__lenis.stop();
     close.current && close.current.focus({ preventScroll: true });
-    const esc = (e) => { if (e.key === 'Escape') onClose(); };
+    // Esc closes; Tab and Shift+Tab stay inside the card (a modal keeps focus until it is closed)
+    const esc = (e) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab') return;
+      const box = document.querySelector('.xos-card');
+      const f = box ? [...box.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null) : [];
+      if (!f.length) return;
+      const [first, last] = [f[0], f[f.length - 1]];
+      if (e.shiftKey && (document.activeElement === first || !box.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !box.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+    };
     addEventListener('keydown', esc);
     return () => {
       removeEventListener('keydown', esc);
       html.classList.remove('x-lock');
       window.__lenis && window.__lenis.start();
-      back && back.focus && back.focus({ preventScroll: true });
+      // focus goes back to the row that opened the card (found by its name: the row may have re-rendered meanwhile)
+      const row = document.querySelector('.xos-open[data-row="' + CSS.escape(r.name) + '"]');
+      (row || back) && (row || back).focus && (row || back).focus({ preventScroll: true });
     };
-  }, [onClose]);
+  }, [onClose, r.name]);
   const url = src === 'gh' ? r.href : r.forge;
   const cmd = url ? `git clone ${url}.git` : '';
   return (
@@ -163,7 +175,7 @@ function Year({ doc, lead }) {
       <p className="xos-year-h x-mono"><span>{doc.org}</span><span>{when}</span></p>
       {lead && (
         <div className="xos-lead">
-          <FamGrow to={1.5}>
+          <FamGrow to={1.25}>
             <b className="v2f-num v2f-fig xos-dgs" aria-label={lead.value}>
               {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
             </b>
@@ -269,9 +281,10 @@ export default function OrgPage({ doc }) {
   // GitHub's figures, minus the lead, in one small row; the forge's own, minus the lead, as rows (zeros in a line)
   const ghFigs = ghC ? ghC.figures.filter((f) => f !== lead) : [];
   const commits = doc.counts.flatMap((c) => c.figures).find((f) => /^commits/.test(f.label));
-  const forgeFigs = forgeC ? forgeC.figures.filter((f) => f !== lead) : [];
-  const forgeRows = forgeFigs.filter((f) => f.n > 0);
-  const forgeZero = forgeFigs.filter((f) => !(f.n > 0));
+  // a forge figure that says the lead's number again ("11" public repositories, then "11" repositories) drops to the small line
+  const forgeFigs = forgeC ? forgeC.figures.filter((f) => f !== lead).map((f) => (lead && f.value === lead.value && f.n > 0 ? { ...f, again: true } : f)) : [];
+  const forgeRows = forgeFigs.filter((f) => f.n > 0 && !f.again);
+  const forgeZero = forgeFigs.filter((f) => !(f.n > 0) || f.again);
   const shareOf = (f) => {
     const m = /^repositories, ([\d,]+) of them private/.exec(f.label);
     if (m) return [num(m[1]), f.n];
@@ -328,7 +341,7 @@ export default function OrgPage({ doc }) {
       </section>
 
       {forgeC && (
-        <section className="xos-fg" aria-labelledby="xos-forge-h" ref={fgRef} data-in={fgIn}>
+        <section className={'xos-fg' + (forgeRows.length <= 1 ? ' thin' : '')} aria-labelledby="xos-forge-h" ref={fgRef} data-in={fgIn}>
           <div className="v2f-wrap v2f-grid xos-fg-g">
             <div className="xos-fg-l">
               <FamLines as="h2" id="xos-forge-h" play="view" text={forgeC.title} className="v2f-head" />
@@ -397,7 +410,7 @@ export default function OrgPage({ doc }) {
                     <motion.div layoutId={'xos-' + r.name} className="xos-row" transition={MORPH}>
                       <span className="xos-no x-mono" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
                       <div className="xos-row-m">
-                        <button type="button" className="xos-open" onClick={() => setOpen(r.name)} aria-haspopup="dialog">
+                        <button type="button" className="xos-open" data-row={r.name} onClick={() => setOpen(r.name)} aria-haspopup="dialog">
                           <span className="xos-name"><Name name={r.name} /></span>
                         </button>
                         {r.desc && <p className="xos-desc">{r.desc}</p>}
@@ -428,7 +441,7 @@ export default function OrgPage({ doc }) {
               )}
               <AnimatePresence>{cur && <Card key={cur.name} r={cur} onClose={() => setOpen(null)} />}</AnimatePresence>
             </LayoutGroup>
-            {paged && shown.length > PAGE ? (
+            {shown.length === 0 ? null : paged && shown.length > PAGE ? (
               <p className="xos-more">
                 {R.more
                   ? <button type="button" className="v2f-btn" onClick={showAll}>{R.more}</button>
@@ -446,7 +459,9 @@ export default function OrgPage({ doc }) {
       {doc.extra.map((e, i) => <section className="v2f-sec" key={i}><div className="v2f-wrap"><Loose nodes={e.nodes} /></div></section>)}
 
       {near.length > 0 && (
-        <section className="xos-near" aria-label={every ? every.label : doc.name}>
+        // the next organizations go straight to their page (the site's page-turn stage would hold a blank page with a
+        // card title that cannot land on a differently sized headline)
+        <section className="xos-near" aria-label={every ? every.label : doc.name} data-no-morph>
           <div className="v2f-wrap">
             {every && <p className="xos-near-h"><A to={every.href} className="x-arrow"><span>{every.label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></p>}
             <FamNext items={near} label={every ? every.label : doc.name} />

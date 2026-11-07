@@ -2,9 +2,9 @@
 
 Page file: `components/pages/cloud/Kms.jsx` · gallery: `docs/gallery/kms/` · metric id: `cta_click kms.hero`
 
-Open copy questions for James: none.
-Shared changes requested (`docs/requests/kms.md`): phone header ask label, header glass, FooterHTML hydration, solid-button hover token, `html:not(.js) .v2-in`, `.x-arrow` in v2 dark rooms; still waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero`.
-Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, the random-digit scramble, the 112px outlined numeral (now a masked `01 / 06` caption under a rule panel), the version stack's `layout` re-flow (rows now slide by transform in a fixed box), the second filled button in the dark room (GitHub is a text link), the hand-rolled shadows and the off-deck `#f5f5f7`, the Frame code pane (now the kit `CodeBlock`)
+Open copy questions for James: none. (Round 3, conductor rule: the Beyond block's own strings, "Seal one yourself", its paragraph, "value", "ciphertext", "iv" and the error sentence, were removed; it now uses only Hanzo's words: "Sealed on your machine", "The organization key stays on the client.", "DATABASE_PASSWORD", the chain names, and an em dash when WebCrypto is missing.)
+Shared changes requested (`docs/requests/kms.md`): phone header ask label (and its two solid fills at 375), header glass, FooterHTML hydration, solid-button hover token, `html:not(.js) .v2-in`, `.x-arrow` in v2 dark rooms, 44px phone targets in `Frame` Console and `GetIt`; still waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero`.
+Forks this page deleted: the shared three-part tail (the separate `km-proj` console section and `ShipPrompt`; now one page-local screen composed from `Console`, the kit `CodeBlock` and `A`), the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, the random-digit scramble, the 112px outlined numeral (now a masked `01 / 06` caption under a rule panel), the version stack's `layout` re-flow (rows now slide by transform in a fixed box), the second filled button in the dark room (GitHub is a text link), the hand-rolled shadows and the off-deck `#f5f5f7`, the Frame code pane (now the kit `CodeBlock`)
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
@@ -33,7 +33,7 @@ Done here: Parity 87/87 text and 12/12 links; Hanzo's header and footer are unto
 - [x] Ends in one close in Hanzo's words ("Get KMS" with the ask), then the footer
 - [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
 
-Done here: The first screen is the name, Hanzo's line (now under the h1, above the asks), the ask, and one live object: a vault where DATABASE_PASSWORD passes Argon2id, HKDF-SHA256 and AES-256-GCM, is rotated, refuses a stale writer and records the read under an agent's name. The h1 cuts in by CSS line mask at first paint. Round 2: JS off shows the lede (`html:not(.js) .km .v2-in`, opacity 1 measured); the hero's bottom padding is 56px so Seal follows the vault; "What it holds" is 6 rows at 44svh (about 2.6 screens, was 5) beside a pinned panel that redraws per rule, so no run of near-identical quiet screens.
+Done here: The first screen is the name, Hanzo's line (now under the h1, above the asks), the ask, and one live object: a vault where DATABASE_PASSWORD passes Argon2id, HKDF-SHA256 and AES-256-GCM, is rotated, refuses a stale writer and records the read under an agent's name. The h1 cuts in by CSS line mask at first paint. Round 2: JS off shows the lede (`html:not(.js) .km .v2-in`, opacity 1 measured); the hero's bottom padding is 56px so Seal follows the vault; "What it holds" is 6 rows at 44svh (about 2.6 screens, was 5) beside a pinned panel that redraws per rule, so no run of near-identical quiet screens. Round 3: the tail is one quiet-room screen (913px desktop, was 730 + 655 + 903 across three white sections): the example console with the vault's DATABASE_PASSWORD v4 docked under it and following the console's rows, the agent prompt beside it, the related links as one hairline row; then one quiet Get KMS.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` in the page
@@ -57,7 +57,7 @@ Done here: The only figures are Hanzo's own (AES-256, K8s, MIT, and the rule num
 - [x] Code uses the kit `CodeBlock`
 - [x] `python3 scripts/parity.py /kms`: 0 missing
 
-Done here: Parity 87/87 text and 12/12 links. Section labels sit under their headings as captions; phone labels raised to 14px (`components/pages/cloud/Kms.css`).
+Done here: Parity 87/87 text and 12/12 links. Section labels sit under their headings as captions; phone labels raised to 14px (`components/pages/cloud/Kms.css`). Round 3: the pinned chapter h2 is 26px over 21px rule h3s; the agent prompt wraps instead of clipping, and the phone terminal fades at its right edge to show it scrolls; no visible string outside `content/live/kms.json` in the Beyond block.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py` passes (deck greys only; no hue)
@@ -66,7 +66,7 @@ Done here: Parity 87/87 text and 12/12 links. Section labels sit under their hea
 - ~~One icon set~~ n/a: no icons beyond the kit's
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Greys from Hanzo's deck only, named once as `--km-*` tokens at the top of `Kms.css` (tokens.css is not on main) and used by name everywhere else; `#f5f5f7` is gone and shadows are the deck's floating shadow and a hairline. One dark room (Nothing lands on disk). "Sealed before it leaves you" and "Example project" now sit under their headings as captions.
+Done here: Greys from Hanzo's deck only, named once as `--km-*` tokens at the top of `Kms.css` (tokens.css is not on main) and used by name everywhere else; `#f5f5f7` is gone and shadows are the deck's floating shadow and a hairline. One dark room (Nothing lands on disk). "Example project" sits under its line as a caption. Round 3: one edge system, every section in the same 1152px container (159 to 1311 at 1470, hero stage included); the tail is a `#f5f5f5` quiet room, not a third white section.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
@@ -75,7 +75,7 @@ Done here: Greys from Hanzo's deck only, named once as `--km-*` tokens at the to
 - [x] Inputs 16px or larger; no bare `:hover` in the page CSS
 - [x] Forks this page deleted: listed above
 
-Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Round 2: `#km-in` takes the one 2px ink ring with a white halo; the six rule rows get a hairline fill that wipes in on hover (and the hovered rule takes the panel); Documentation's hover darkens its border; "View on GitHub" brightens from white 78% to `#fafafa`; the console title underlines.
+Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Round 2: `#km-in` takes the one 2px ink ring with a white halo; the six rule rows get a hairline fill that wipes in on hover (and the hovered rule takes the panel); Documentation's hover fills `#f5f5f5` with an ink edge and presses to .98 (round 3); related links fill white on hover, slide their arrow and press to .98; "View on GitHub" brightens from white 78% to `#fafafa`; the console title underlines.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups (`variety.py` OK)
@@ -84,7 +84,7 @@ Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Round 2: `#
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, tabs, radios and pause toggles tick (radios carry `data-sound="tick"`), copy chimes; the demos loop while seen and never finish, so no done chime
 
-Done here: Signature: a secret, sealed and rotated. Idle: the vault loops while on screen; a hairline crosses the rule panel every 4.8 s and the rule redraws. Pointer: the vault tilts up to 2.5 degrees to a mouse (fine pointers, not under reduced motion). State: Seal one yourself re-seals on every keystroke; the panel clip-swaps per rule and its `01 / 06` caption cuts in by mask. Scroll: the panel pins while rules pass; the dark room opens from a rounded card to full width. `variety.py` OK (useScroll, clip reveal); reduced motion: `getAnimations()` empty at 3 s, 3 log lines.
+Done here: Signature: a secret, sealed and rotated. Idle: the vault loops while on screen; a hairline crosses the rule panel every 4.8 s and the rule redraws. Round 3 tail: the secret strip under the example console steps through the four projects every 2.6 s while seen (pressing the console's own rows, so its highlight moves too), a hairline times each step, the project name cuts in by mask; hover holds it, a click or Enter takes it over, and it has its own `LivePause`. Pointer: the vault tilts up to 2.5 degrees to a mouse (fine pointers, not under reduced motion). State: Seal one yourself re-seals on every keystroke; the panel clip-swaps per rule and its `01 / 06` caption cuts in by mask. Scroll: the panel pins while rules pass; the dark room opens from a rounded card to full width. `variety.py` OK (useScroll, clip reveal); reduced motion: `getAnimations()` empty at 3 s, 3 log lines.
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -100,7 +100,7 @@ Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the clo
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: At 375: the vault stacks its secret above its versions and holds one height (625px across a 10 s loop, CLS 0.0016); each rule carries its own picture under its text; the dark room leads with "Every read recorded" then three rows; the Get KMS contour art sits right of the lede. Measured: ask bottom at 303 of 667, scrollWidth 375.
+Done here: At 375: the vault stacks its secret above its versions and holds one height (625px across a 10 s loop, CLS 0.0016); each rule carries its own picture under its text; the dark room leads with "Every read recorded" then three rows; the Get KMS contour art sits right of the lede. Measured: ask bottom at 303 of 667, scrollWidth 375. Round 3: the phone pause (369 to 414) clears the production tag (428) by 14px; the refused chip sits inside the version box; "Open in the console", the console side links and "Deploy to Cloud" are 44px; scrollWidth 320 at 320.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
@@ -117,7 +117,7 @@ Done here: The live object is `aria-hidden` with its pause button first in the D
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop (filmed in the cloud)
 
-Done here: Timers stop off screen and when paused (`useLive`). Round 2: the vault's version stack and log have fixed heights and rows move by transform only; walk CLS 0.0011 desktop and 0.0016 phone (was 0.023 / 0.020). Bundle size not measured.
+Done here: Timers stop off screen and when paused (`useLive`). Round 2: the vault's version stack and log have fixed heights and rows move by transform only; walk CLS 0.0011 desktop and 0.0016 phone (was 0.023 / 0.020). Round 3 walk: CLS 0.00095 desktop, 0.00004 phone (the console caption holds a fixed height so the stepping never moves it). Bundle size not measured.
 
 ## 14. SEO and machine files
 - [x] Title and description from `content/pages.json`
@@ -149,7 +149,7 @@ Done here: Hanzo's agent prompt and the CLI use the kit `CodeBlock`, whose Copy 
 - ~~A failed submit keeps its values~~ n/a: n/a: no form posts anywhere; the page's inputs are in-page demos and nothing is sent
 - [x] A thrown island leaves the page: the shared `app/error.jsx` keeps header and footer
 
-Done here: Seal one yourself says "This browser cannot seal here." without WebCrypto; nothing is sent. A headless JS-off pass shows every word.
+Done here: Sealed on your machine shows an em dash without WebCrypto; nothing is sent. A headless JS-off pass shows every word.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
@@ -157,4 +157,4 @@ Done here: Seal one yourself says "This browser cannot seal here." without WebCr
 - [x] `V2: 8/10` line in the page file's top comment
 - [x] Review read: `docs/review/kms.md` (round 1, 6/10), every fix answered
 
-Done here: `kms.hero` and `kms.close` on the asks. Gallery: `docs/gallery/kms/` (round 1 film and stills; round 2 `round2-desktop.jpg`, `round2-desktop-holds.jpg`, `round2-phone.jpg`). Review `docs/review/kms.md` (6/10) read and its fixes 1 to 9 done; fix 10 is shared chrome, filed in `docs/requests/kms.md`.
+Done here: `kms.hero` and `kms.close` on the asks. Gallery: `docs/gallery/kms/` (round 1 film and stills; round 2 `round2-desktop.jpg`, `round2-desktop-holds.jpg`, `round2-phone.jpg`). Review `docs/review/kms.md` (6/10) read and its fixes 1 to 9 done; fix 10 is shared chrome, filed in `docs/requests/kms.md`. Round 3: review (7/10) fixes 1 and 3 to 8 done page-locally, fix 2 done by the conductor's copy rule (Beyond strings removed, no copy questions), fix 9 filed; proof `round3-desktop-tail.jpg`, `round3-phone-tail.jpg`, `round3-phone-hero.jpg`.

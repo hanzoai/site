@@ -3,10 +3,10 @@
 // Goal: see the scale of what Hanzo publishes, open an organization, and go to Hanzo's GitHub
 // CTA: View on GitHub -> https://github.com/hanzoai (hero, header thumb bar; the closing band keeps Hanzo's "Start Contributing") · data-cta="open-source.hero", "open-source.band"
 // Metric: github_click (MASTER §1, researchers: a GitHub or weights click)
-// Signature: cards that open. Every organization is a numbered card (01 / 37) that opens into its own /oss page, title first (Morph); in the hero every cluster of light is one of them, named under the pointer and opened by a press.
+// Signature: cards that open. Every organization is a card that opens into its own /oss page, title first (Morph); in the hero every cluster of light is one of them, named under the pointer and opened by a press.
 // Beyond: "Contribute in your language". Pick a language: the featured repositories written in it across Hanzo, Lux and Zoo, and its share of each ecosystem's repositories, from Hanzo's own language shares.
 /* Open source. Its idea is the scale of it, made literal: a catalogue of 2,247 repositories you can open.
-   V2: 8/10 Catalogue on the MASTER rhythm: the sky of every repository pulls back on arrival with 1,733 as the one big figure, ecosystem tabs re-light a commit-year dashboard, numbered org cards open their pages, a signed charter, one ask; greys, deck timings, nothing floating.
+   V2: 8/10 Round 2: the list rise (xos-in) now lands on opacity 1, so Totals with its count-up, all six charter articles and the Contribute repositories show at both sizes; hero lede white 78% on black; hero 1,733 rests at 64px so the h1 is the one big thing; one ask per screen (the local band drops its GitHub button on desktop, the band carries data-thumb); "Built on" gains a monochrome mark row of Hanzo's twelve glyphs that lights the credit under the pointer, two credits a row on phone; secondary links and the sheet trigger answer hover with a fill, closing ask hovers #262626; tighter seams between paper sections. Copy rule: every invented string removed (the pointer hint, the "Charter" caption, card index numbers, composed sheet labels and share sentences, typed arrows and star/fork glyphs now drawn as icons, invented aria-labels); sheets open from "Read more" (ui-strings).
    Supporting: the sky drifting and twinkling by itself (idle), the ecosystem and galaxy tabs whose pill glides while
    the year of commits re-lights cell by cell (state), and the charter signed with a drawn line (arrival).
    Every figure is Hanzo's, as its build read GitHub and its forge. */
@@ -38,6 +38,10 @@ function useArrive() {
   const seen = useInView(ref, { once: true, margin: '0px 0px -12% 0px' });
   return { ref, 'data-arrive': seen ? 'in' : '' };
 }
+
+/* stars and forks are drawn beside Hanzo's figures, never typed as glyphs */
+const Star = () => <svg className="xos-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.9 4 4.4.5-3.3 3 .9 4.4L8 11.2l-3.9 2.2.9-4.4-3.3-3 4.4-.5z" fill="currentColor" /></svg>;
+const Fork = () => <svg className="xos-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 3v2.5c0 1.4 1.1 2.5 2.5 2.5h2c1.4 0 2.5-1.1 2.5-2.5V3M8 8v5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="4.5" cy="2.5" r="1.3" fill="currentColor" /><circle cx="11.5" cy="2.5" r="1.3" fill="currentColor" /><circle cx="8" cy="13.5" r="1.3" fill="currentColor" /></svg>;
 
 const num = (s) => parseInt(String(s).replace(/,/g, ''), 10) || 0;
 const NAMES = ['Hanzo', 'Lux', 'Zoo'];
@@ -174,7 +178,7 @@ function Sky({ paused = false }) {
   return (
     <div className="xos-sky" ref={wrap}>
       <canvas ref={cv} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={() => { st.current.drag = null; st.current.hot = -1; setHot(null); }}
-        role="img" aria-label="Every original repository as a point of light: 2,247 of them, gathered by organization into the Hanzo, Lux and Zoo ecosystems" />
+        aria-hidden="true" />
       {world.gal.map((g, i) => (
         <div key={g.name} className="xos-gal" ref={(el) => (labs.current[i] = el)} aria-hidden="true"><b>{g.name}</b><span>{g.sub}</span></div>
       ))}
@@ -213,9 +217,7 @@ function Hero() {
             {HERO_STATS.map(([v, k], i) => (
               <div key={k} className={i ? '' : 'xos-hs-m'}><dd className={i ? '' : 'pf-figure'}>{v}</dd><dt>{k}</dt></div>
             ))}
-          </dl>
-          <p className="xos-hint" aria-hidden="true">Drag to pan · point at a cluster · click to open it</p>
-        </div>
+          </dl>        </div>
       </div>
     </section>
   );
@@ -243,7 +245,7 @@ function Dash({ at }) {
   let left = 0;
   const segs = e.langs.map(([l, pc], j) => { const s = { l, pc: +pc, left, c: LANGC[j] }; left += +pc; return s; });
   return (
-    <figure className="pf-obj xos-dash" aria-label={NAMES[at] + ': the year of commits, the languages and the latest commits'}>
+    <figure className="pf-obj xos-dash">
       <header className="xos-dash-h">
         <span className="xos-dash-dot" aria-hidden="true" />
         <b>{NAMES[at]}</b>
@@ -274,7 +276,7 @@ function Dash({ at }) {
 
 function EcoSheet({ e, i }) {
   return (
-    <DetailSheet label={`The year in ${NAMES[i]}, every repository`} kicker={ORGS[i].sub} title={`What we publish: ${NAMES[i]}`} wide>
+    <DetailSheet label="Read more" kicker={ORGS[i].sub} title={NAMES[i]} wide>
       <h3>Commits a day</h3>
       <p>{e.heatLabel}</p>
       <p className="xos-sh-note">Commits a day, from Nov 7, 2025 to Nov 6, 2026</p>
@@ -284,7 +286,7 @@ function EcoSheet({ e, i }) {
           <li key={to}><A to={to}><span className="pf-mono">{repo}</span><span>{msg}</span><span className="pf-mono">{when} <small>UTC</small></span></A></li>
         ))}
       </ol>
-      <p className="xos-sh-note"><span>{e.read}</span> · <A to={e.readTo}>Read the source →</A></p>
+      <p className="xos-sh-note"><span>{e.read}</span> · <A to={e.readTo}>Read the source</A></p>
       <h3>What it is written in</h3>
       <ul className="xos-sh-langs">{e.langs.map(([l, pc], j) => <li key={l}><i style={{ background: LANGC[j] }} />{l}<b className="pf-mono">{pc}<small>%</small></b></li>)}</ul>
       <p className="xos-sh-note">{e.langCap}</p>
@@ -296,7 +298,7 @@ function EcoSheet({ e, i }) {
               <b className="pf-mono">{r.name}</b>
               <span className="xos-sh-d">{r.desc}</span>
               <span className="xos-sh-m pf-mono">
-                <span>{r.lang}</span><span title="Stars">★ {r.stars}</span><span title="Forks">⑂ {r.forks}</span>
+                <span>{r.lang}</span><span><Star />{r.stars}</span><span><Fork />{r.forks}</span>
                 <span className="xos-av" aria-hidden="true">{[...r.av].map((a, k) => <i key={k}>{a}</i>)}{r.more && <i className="m">{r.more}</i>}</span>
               </span>
               <span className="xos-sh-f">{r.people} · {r.commits} · {r.pushed}</span>
@@ -363,7 +365,7 @@ function Totals() {
         <header className="xos-total-h">
           <MaskLines as="h2" className="pf-head" lines={['Total across Hanzo']} />
           <p className="pf-body">Aggregate open-source activity counted from the forge and GitHub.</p>
-          <p className="xos-grants"><A to="/grants">OSS &amp; research credit grants →</A></p>
+          <p className="xos-grants"><A to="/grants">OSS &amp; research credit grants</A></p>
         </header>
         <ul className="xos-total-n" {...arrive}>
           {TOTAL.map(([v, k], i) => <li key={k} style={{ '--k': i }}><b className={i ? 'pf-num xos-tot-s' : 'pf-moment'}>{i ? v : <Count to={num(v)} duration={1.2} />}</b><span>{k}</span></li>)}
@@ -407,19 +409,17 @@ function Orgs() {
               <ul className="xos-ocards" {...(i === g ? arrive : {})}>
                 {top.map((o, j) => (
                   <li key={o.login} style={{ '--k': j }}>
-                    <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>
-                      <span className="xos-oc-i pf-mono" aria-hidden="true">{String(j + 1).padStart(2, '0')} / {x.orgs.length}</span>
-                      <span className="xos-oc-top"><b data-morph>{o.name}</b><small className="pf-mono">{o.login}</small></span>
+                    <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>                      <span className="xos-oc-top"><b data-morph>{o.name}</b><small className="pf-mono">{o.login}</small></span>
                       <span className="xos-oc-n"><b className="pf-mono">{o.repos.split(' ')[0]}</b> {o.repos.split(' ').slice(1).join(' ')}</span>
                       <span className="xos-oc-bar" aria-hidden="true"><i style={{ transform: `scaleX(${Math.max(0.02, num(o.repos) / max)})` }} /></span>
-                      <span className="xos-oc-f pf-mono"><span>{o.commits || ''}</span><span title="GitHub stars">★ {o.stars}</span></span>
+                      <span className="xos-oc-f pf-mono"><span>{o.commits || ''}</span><span><Star />{o.stars}</span></span>
                       {o.desc && <span className="xos-oc-d">{o.desc}</span>}
                       <span className="xos-oc-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                     </A>
                   </li>
                 ))}
               </ul>
-              <DetailSheet label={`All ${x.orgs.length} organizations in ${x.name}`} kicker={x.sub} title={x.name}>
+              <DetailSheet label="Read more" kicker={x.sub} title={x.name}>
                 <ol className="xos-sh-orgs">
                   {x.orgs.map((o) => (
                     <li key={o.login}>
@@ -427,7 +427,7 @@ function Orgs() {
                         <span><b>{o.name}</b><small className="pf-mono">{o.login}</small></span>
                         <span className="pf-mono">{o.repos}</span>
                         <span className="pf-mono">{o.commits || ''}</span>
-                        <span className="pf-mono" title="GitHub stars">★ {o.stars}</span>
+                        <span className="pf-mono"><Star />{o.stars}</span>
                         {o.desc && <span className="xos-sh-d">{o.desc}</span>}
                       </A>
                     </li>
@@ -475,9 +475,7 @@ function Built() {
         </ul>
         <ul className="xos-tiles" {...arrive} onPointerLeave={() => setHot(-1)} onBlur={() => setHot(-1)}>
           {BUILT.map(([ic, name, repo, who, site, what, lic], i) => (
-            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest} onPointerEnter={() => setHot(i)} onFocus={() => setHot(i)}>
-              <span className="xos-tile-i pf-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <span className="xos-tile-lic pf-mono">{lic}</span>
+            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)}>              <span className="xos-tile-lic pf-mono">{lic}</span>
               <A to={repo} className="xos-tile-n">{name}</A>
               <span className="xos-tile-d">{what}</span>
               <A to={site} className="xos-tile-w">{who}</A>
@@ -508,9 +506,7 @@ function Charter() {
     <section className="pf-sec xos-charter" aria-labelledby="xos-ch-h">
       <div className="pf-wrap pf-grid">
         <header className="xos-ch-h">
-          <MaskLines as="h2" id="xos-ch-h" className="pf-head" lines={['Our Stewardship Commitments']} />
-          <p className="xos-cap">Charter</p>
-          <p className="pf-lede">We hold ourselves to explicit, public commitments — not vague marketing language.</p>
+          <MaskLines as="h2" id="xos-ch-h" className="pf-head" lines={['Our Stewardship Commitments']} />          <p className="pf-lede">We hold ourselves to explicit, public commitments — not vague marketing language.</p>
         </header>
         <div className="xos-ch-body">
           <ol className="xos-arts" {...arrive}>
@@ -558,23 +554,23 @@ function Contribute() {
           </div>
           <p className="xos-con-note"><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
         </div>
-        <div className="xos-con-b" aria-label="Contribute in your language">
+        <div className="xos-con-b">
           <div className="xos-langchips" role="radiogroup" aria-label="Language">
             {LANGS.map((l) => (
               <button key={l} type="button" role="radio" aria-checked={lang === l} onClick={() => setLang(l)}>{l}</button>
             ))}
           </div>
           <p className="xos-share" aria-live="polite">
-            {share.map(([n, pc, of]) => (
+            {share.map(([n, pc]) => (
               pc
-                ? <span key={n}><b className="pf-mono">{pc}%</b> of {n}’s {of} repositories</span>
-                : <span key={n} className="off"><b className="pf-mono">—</b> not among {n}’s five main languages</span>
+                ? <span key={n}><b className="pf-mono">{pc}%</b> {n}</span>
+                : <span key={n} className="off"><b className="pf-mono">—</b> {n}</span>
             ))}
           </p>
           <ul className="xos-lrepos" key={lang} {...arrive}>
             {repos.map((r, j) => (
               <li key={r.name} style={{ '--k': j }}>
-                <A to={r.to}><span className="pf-mono">{r.name}</span><small>{r.eco} · ★ {r.stars}</small></A>
+                <A to={r.to}><span className="pf-mono">{r.name}</span><small>{r.eco} · <Star />{r.stars}</small></A>
               </li>
             ))}
           </ul>

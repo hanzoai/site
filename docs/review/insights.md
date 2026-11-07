@@ -1,95 +1,51 @@
 # /insights — James-eye review
 
-Verdict: 6/10
-First complaint: "Every ten seconds the headline jumps. The kill switch fires, the whole hero hops up 20px, then drops back. And the second you scroll past it there's a big empty white hole, so it feels like a document again, not premium."
+Verdict: 7/10
+First complaint: "It's the same trick three times in a row: click a pill, a grey drawing swaps. The flag pills, then six tabs, then ten more pills showing the same drawings and the same sentences again. It's boxes inside boxes, and half the black room is empty."
 
-Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (full scroll with the recorder at both sizes, idle a/b frames, 14 hovers, 16 clicks, a 14 s frame-by-frame watch of the hero tracking the h1 and field positions, layout-shift attribution, tab and chip clicks, CTA hover and press, a 24 s watch of the tour window's height on phone, reduced motion, JS off, palette sweep of computed colours, parity and taste scripts).
+Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (recorder walk at both sizes: every scroll stop a/b, first 0/1000/3000 ms, hovers, clicks, video; then my own Playwright probes: hero frames every 150 ms for 1.5 s and the hero state every 500 ms for 12 s, a click and hover on all six tour tabs and four finder pills, primary hover and press, the code Copy button with clipboard read-back, a 30-stop Tab crawl, reduced motion, JS off (screenshot after 2.5 s), phone tour rail over 5 s, 320 px width, `parity.py`, `taste.py`, and a look at the /analytics and /metrics heroes as neighbours).
 
-Frames:
-- `insights/d-hero-on.jpg`: the hero at 0 ms. h1 top at 404px.
-- `insights/d-hero-killed-h1-jumps.jpg`: the same hero 1.2 s later, after the kill switch. The flag card has lost a row, the field has jumped 42px and the h1 21px.
-- `insights/d-dead-gap-tour.jpg`: the second screen. About 330px of empty white, then figures that are bigger than their own heading.
-- `insights/p-question-wall.jpg`: the phone "Ask it a question" section, a wall of ten stacked pills with the answer pushed off screen.
+Frames: `insights/r2-d-hero-3s-pill-glide.jpg`, `insights/r2-d-finder-repeats-tour.jpg`, `insights/r2-d-dark-room-empty.jpg`.
 
 ## What works
-- **The hero object is real and alive.** A flag (`new-dashboard`) rolls out across a field of 120 people. It moves from a percentage (36 lit) to a cohort (28 lit) to one account (1 lit), then the kill switch drops all of them. It runs itself, has a pause button and stops when hidden. You can take it over with the switch or the three modes. The mode pill glides between them (layoutId, 300 ms ease-emphasis). This is a proper signature, and nothing on neighbouring pages does it.
-- **Arrival motion.** The h1 cuts in by line mask. It is a CSS animation, so it also plays with JS off and finishes legible (checked at 0 ms and 3 s with JS disabled). The event line ticks every 700 ms, so something moves inside the first second.
-- **The six tools as a product window** (`insights.hanzo.ai` chrome, `01 / 06` numbered tabs, a 5.2 s progress line, and a click stops the tour). Each panel has its own small drawing. Clicking tab 03 selects it and shows Session replay; checked.
-- **The dark room** sets the provider code beside the app it flips (`<NewDashboard />` and `<OldDashboard />` every 2.8 s, with a pause). The idea is clear and quiet.
-- **Reduced motion is clean:** 0 running animations after 3.5 s, and the field holds its final 36-lit state. JS off: the h1, lede, ask and one tab panel are all present.
-- **The primary ask is correct.** "Open Insights", 44px, `#0a0a0a`, `data-cta="insights.hero"`. Press is scale(0.98). No horizontal overflow at either size. The h1 is 52px / 497 desktop and 40px phone.
-- `parity.py /insights`: text 67/67, links 4/4. `taste.py` passes on Insights.jsx and Insights.css.
+- **A real signature with a point.** The hero is a flag you roll out: a 20x6 field of people (12x10 on phone) lights for "a percentage" (36 dots), "a cohort" (a block of 40), then "one account" (1 dot), then the kill switch drops everything to grey and the event line swaps to "turning a feature off should not require a deploy". It runs itself (a step every 2.4 s), pauses, and stops for good once you touch it. Hovering a mode ghosts the dots it would light, so the hover actually tells you something.
+- **Several kinds of motion, none of them scroll.** Arrival: the h1 cuts in by line mask (translateY 56.8 px to 0 within 500 ms). Idle: the rollout, the tour auto-advancing every 5.2 s with a progress line, the `showNewUI` app in the dark room flipping New/Old every 2.8 s. State: the mode pill glides (layoutId, 300 ms ease-emphasis). Pointer: the mode ghost. There are no scroll-linked effects at all.
+- **Clean engineering.** CLS 0.0002 on desktop and 0 on phone, no horizontal overflow at 375 or 320, no failed requests, `parity.py` OK (67/67 text, 4/4 links), `taste.py` OK. Under reduced motion `getAnimations()` is empty after 3.5 s and the hero holds a final state. With JS off everything is legible after 2.5 s (0 nodes left at opacity 0). Primary press is scale 0.98; every focus stop in the crawl draws a 2 px ring.
+- **Tabs and finder respond.** The recorder marked 5/6 tour tabs as "dead clicks". That is wrong: I clicked each one and each became `aria-selected=true`, and the panel swapped (tab 3 shows the replay drawing and "Session replay"). The finder swaps its drawing and Hanzo's full sentence, with its own clause in ink.
+- Desktop h1 is 52px/497 and its bottom sits at 302/801 (37.7%), so it lands on the 38% line. The next section peeks in at y=733.
 
 ## The 11 answers
-1. **Sells in 5 s, moves in 1 s?** Mostly. "Hanzo Insights / Product analytics and feature flags / Open Insights" is readable, and the field beside it explains flags without words. Motion inside 1 s comes from the h1 cut-in and the event line ticking at 700 ms. The field itself does not change until 3.3 s, so the big object looks still for the first 3 s.
+1. **Sells in 5 s, moves in 1 s?** Mostly. "Hanzo Insights / Product analytics and feature flags / Open Insights" reads at once. The h1 cut-in moves inside 500 ms. But the hero's own object is still at 1 s: at 1470x801 the field holds 36 lit dots from 0 to 2.5 s, the event line keeps opacity 1 until its first swap at about 1.4 s, and the field first changes at about 2.7 s (36 to 40 lit). Reading order is object first, h1 second: the field takes the left 820 px and the h1 sits at x=988.
+2. **One in, one out, or a document?** Halfway. The hero, the tour and the dark room each own a screen. Then the story repeats itself. The tour (six tabs, six drawings, six paragraphs) is followed straight away by the finder (ten pills), which reuses the tour's own drawings (`Pane k="funnel" / "replay" / "ab" / "flags" / "errors" / "events"`) and re-prints the tour's sentences. "Start with autocapture", "Paste and ship" and "Get Insights" then stack as three short template strips (the shared `ShipPrompt` and `GetIt`). That is a sequence of widgets, not one idea per screen.
+3. **A real visual object in every section?** Yes, but weak ones. Every section has something: the dot field, the window, a funnel, code beside the flipping app, the Sigil. Past the hero, though, the "objects" are grey placeholder shapes: four bars for a funnel, two rectangles for A/B, skeleton lines with a dashed path for replay, and grey tiles for `<NewDashboard />`. They read as wireframes, not Hanzo product UI. There is no real Hanzo media anywhere, so a 4-image block does not apply.
+4. **One ask in the header, nothing floating; scale rhythm?** The page gives one solid in the hero ("Open Insights") and one in the close. "Start with autocapture" uses two quiet buttons, which is correct. Shared chrome: on phone the header keeps a solid "Try Hanzo" beside the hero's solid "Open Insights", so there are two solid fills and two different labels on the first screen. On desktop the header swaps to "Open Insights" once the hero ask leaves. Scale rhythm is flat: h1 52, section heads 26 to 32, "Get Insights" 44, body 16. Nothing grows or shrinks, and the field is the only big thing on the page. No figure is ever the moment.
+5. **Every hover and press answers, no jumps?** Partly. Mode hover ghosts the dots (good). Tour tabs and finder pills only tint to grey at 14% on hover (rgba(128,128,128,.14)): a colour change, not information. The primary darkens to #262626 and presses to 0.98. The code Copy button never visibly confirms: it read "Copy" for all 900 ms after the click (innerText and aria-label), even though the clipboard did receive the code (kit `CodeBlock`). On phone, the auto-advancing tour rail leaves the active tab clipped at the right edge (frame p-features-5s: "02 / 06 Feature flags" runs off the edge). During the mode glide, the black pill passes under "a cohort" and "one account" before their text turns white, so for a frame grey text sits on black (r2-d-hero-3s-pill-glide.jpg). No layout jumps.
+6. **Overlap, font swap, layout shift?** No layout shift (CLS ≤ 0.0002) and no font swap seen. On phone the closing Sigil's contour lines run straight through "Get Insights" and the pills (screen-07). It is decorative art behind text, but it is busy where it sits. The cookie card (shared) covers the bottom 203 px of every phone screen.
+7. **Which reference, and is its motion there?** It wants to be an apple.com product page (the product doing the thing, one panel changing), and the auto-touring window gets close. There is no pinned scene, though; the window just sits in flow at 967 px tall. Nothing from osply, hamol or grubogrubo (asymmetry, editorial scale) shows, and no measured timing from `docs/refs/` is visible. The dark room is calm, like the chatgpt enterprise page, but empty: `.in-code` has `padding: clamp(120px,16vw,240px)` = 235 px at 1470, beyond the section token of `clamp(72px,11vw,188px)`, so about 250 px of black sits above the heading and about 240 px below the code (r2-d-dark-room-empty.jpg).
+8. **Different from its neighbours?** Yes on the hero: a dot field with the h1 on the right, against /analytics (a dashboard on the right, h1 on the left) and /metrics (a chart, h1 top-left). The idiom is shared, though: /metrics also has a segmented pill with a pause button, and the close (`GetIt` with a Sigil and pills) plus `ShipPrompt` are the same strips as on every cloud page.
+9. **18 parts covered?** Most are visible: header comment, one h1 with `data-morph-target`, `Cta` with ids, kit `CodeBlock`, pause controls on all three movers, 44 px targets (the only miss is "Deploy to Cloud" at 21 px tall on phone), reduced motion, JS off, focus ring. Gaps: the tour tabs carry no `data-sound="tick"` (the modes and the finder do); there is no proof or objection strip beyond "License: MIT · 4 stars"; and there is no Copy success state.
+10. **Banned tells?** No hue, gradient text, Inter, kicker above a headline or cursor glow. Close to the line: boxes inside boxes everywhere. The hero is a grey card (radius 32) holding white cards (radius 22). The tour window is `.v2-obj`, which carries both a 1px outline (`0 0 0 1px rgba(0,0,0,.06)`) and a floating shadow (`0 40px 80px -32px`). That is raised *and* outlined, and it sits in flow, not floating. The selected tab tile adds `box-shadow: var(--lift)`, a shadow on a tile. Radii 32, 22 and 14 are not deck tokens. The overall effect is the "plain boxes, lazy look" he rejects.
+11. **Copy untouched?** Yes: `parity.py /insights` reports 67/67 text and 4/4 links. The finder only re-shows Hanzo's own sentences; it does not cut or rewrite them.
 
-   The composition is weak. The h1 sits on the right with its bottom at 516px (64% of 801, against the 38% target). The hero object is 660px tall (192 to 853), so it runs off the fold. The next section never peeks: the hero section is 940px tall.
-2. **One in, one out, or a document?** Closer to a document. Between sections there are large dead white bands:
-   - about 330px between the hero object's bottom and "Ship it, then find out";
-   - about 280px between "Start with autocapture" and "Paste and ship".
-
-   No section is pinned or scrubbed. Each block simply sits there while you scroll past.
-3. **A real visual in every section?** Hero: yes (the field). Tour: yes (the window). Dark room: yes (code plus flipping app). Closing: yes (contour art). Two sections fail:
-   - "Ask it a question" has ten pills on the left and two lines of text on the right, with no object.
-   - "Start with autocapture" is a heading, a lede and two quiet buttons.
-4. **One ask in the sticky header, nothing floating, scale with rhythm?**
-   - Desktop header: it starts as "Try Hanzo" (outlined) and swaps to a solid "Open Insights" once the hero ask leaves view. Good.
-   - Phone header: it stays a solid black "Try Hanzo" throughout. On the first screen that makes two solid fills with two different labels ("Try Hanzo" in the header, "Open Insights" in the hero). This is shared chrome, noted.
-   - Nothing floats over content apart from the shared cookie card.
-   - Scale is off. The "Events / Flags / OSS" figures are 38px / 600, bigger than their own section heading at 32px. "Start with autocapture" is 44px, the Ask answer is 44px and the tour h3 is about 44px. That puts four 44px headings on the page, while section headings rest at 32px rather than 26px. Big, medium and small are not clearly separated.
-5. **Every hover and press answers, no jumps?** Partly.
-   - Kill switch: hover changes nothing.
-   - Tabs, chips and modes: hover is only a grey background fill (`rgba(128,128,128,.14)`). Nothing on hover tells you anything (no preview, no number).
-   - CTA: hover turns it `#2c2c2e`; press is scale .98.
-   - Phone: 14 of 14 hover probes show no change, which is expected on touch.
-   - The recorder logged 6 dead clicks on the desktop tabs. That is a false negative: a direct click selects the tab and swaps the panel.
-6. **Overlap, font swap or layout shift?** Yes, and this is the main fault.
-   - **Desktop, hero:** desktop CLS is 0.119 over the walk, above the 0.1 "good" line. Each kill-switch cycle (about every 10.5 s) logs a 0.039 shift. The sources are `.in-field`, `.in-hero-c`, `.in-pct`, `.in-flag-top` and `.in-events`. The h1 moves from 404px to 383px and back, and the field from 402px to 360px. Cause: in the killed state the events line is swapped and the mode row reflows from 2 lines to 1, so `.in-flag` gets shorter, the whole `.in-roll` gets shorter, and the vertically centred `.in-hero-c` moves with it.
-   - **Phone, tour window:** the window changes height every time it tours (761 → 661 → 662 → 651 → 718px), so everything below it jumps by up to 110px every 5.2 s. Phone CLS is 0.088.
-   - No overlaps, and no font swap was seen.
-7. **Which reference, and is its motion there?** Apple product page in spirit: the product as the hero, one idea per block, a self-running demo. Apple's pinned, scrubbed scene is not there. No section pins or scrubs, and the page's motion is all idle and state, with nothing tied to scroll. That is allowed, but it makes the scroll itself feel flat.
-8. **Different from neighbours?** The hero and signature are distinct from /analytics, /dashboards and /sentinel: a rollout field of people, with the object on the left and the h1 on the right. The last third is not. "Start with…", `ShipPrompt` and `GetIt` with the contour art make up the same closing used on 8 other cloud pages (Ingress, Hsm, Guard, Idv, Iam, Machines, Kms, Gateway). The last 1,500px look like a template.
-9. **All 18 parts?** Not met.
-   - Present: the header comment (Persona, Goal, CTA, Metric, Signature, Beyond), one h1, `<Cta>` with `data-cta` and thumb, the closing `Band` (GetIt), `CodeBlock` with Copy, pause controls on all three loops, reduced motion, JS off legible, and parity.
-   - Missing or failing:
-     - part 3: h1 baseline at 38%, the 56px peek, and "one thing in, one out";
-     - part 3 and part 4: no proof strip before the close beyond "License: MIT, 4 stars";
-     - part 1: no objection line near the primary;
-     - part 6: invented UI strings;
-     - part 7: literal hex values in page CSS, off-deck greys;
-     - part 10: CLS under 0.02 (desktop is 0.119);
-     - part 11: the phone composition of the Ask section.
-10. **Banned tells?**
-    - **Off-palette colour.** The page CSS uses Apple greys that are not on the deck ramp:
-      - `#fbfbfd` (tab rail) and `#e3e3e6` (window dots);
-      - `#f5f5f7` and `#161617` (Flip text and card);
-      - `#1d1d1f` (Flip app card background);
-      - `#f2f2f5` (replay SVG).
-
-      Computed text colours `#e8e8ed`, `#d2d2d7`, `#a1a1a6` and `#86868b` also appear in the dark room, and the CTA hover is `#2c2c2e`. Each has a faint blue cast. They pass taste.py's chroma threshold, but they break "deck ramp only" and "no literal hex in page CSS". The file header still says "Accent: violet".
-    - **Glow.** Lit dots carry `box-shadow: 0 0 12px rgba(115,115,115,.45)`, a soft grey glow. It is minor, but it is decoration.
-    - **Three equal boxes in a row:** "Events / Flags / OSS" are three equal columns with a 2px top rule. That is borderline.
-    - No gradient text, no purple, no eyebrow above an h1 or h2 ("Ask it a question" sits above the pills, not a heading).
-11. **Copy untouched?** Not fully. Parity shows 0 missing. However, "Ask it a question" adds about 10 invented question strings that are not in `content/` or `ui-strings.json` (for example "Where do people stop?", "Is the new version better?", "Can we turn it off, now?", "A chart cannot ask it."). Its answers are cut-down fragments of Hanzo's sentences, for example "Funnels show where people stop." taken from the longer funnels line. The pane captions are also new words: "why someone gave up", "where people stop", "a flag with a metric attached", "kill switch · no deploy". That breaks "nothing rewrites, cuts or merges copy" and "new UI strings only from ui-strings.json".
+Console: one hydration mismatch inside `FooterHTML` at both sizes (the known shared-chrome issue, not counted). The red "1 Issue" dev badge on phone is that same error.
 
 ## Fixes (in order)
-1. **Stop the hero from jumping** (`components/pages/cloud/Insights.css`, `Insights.jsx` `Rollout`). Give `.in-flag` a fixed height, or reserve the events row with a `min-height` equal to the "on" state, so the kill state never shortens it. Keep `.in-modes` on one line in both states: set `flex-wrap: nowrap` and size the pill row for "one account". Alternatively, top-align `.in-hero-c` (`align-self: start` plus a fixed offset) so the h1 can never follow the object. Target CLS under 0.02 after a 30 s idle watch at 1470x801.
-2. **Lock the tour window height on phone** (`Insights.css` `@media (max-width: 899px)`). Give `.in-panel` a fixed `min-height` equal to the tallest panel, or stack the panes in one grid cell (`grid-area: 1/1`) and use visibility, so touring never pushes the page.
-3. **Re-compose the hero** to the brief. Put the h1 baseline near 38% of 100svh and cap `.in-roll` so it ends inside the first screen at 1470x801; about 560px tall, for example by trimming the field to 6 rows or reducing the gaps. Let the tour section peek 56px. Remove the roughly 330px of dead white between the hero and "Ship it, then find out". Do the same for the roughly 280px gap between "Start with autocapture" and `ShipPrompt`: tighten `.in-start` padding, or merge the two into one 8/5 row.
-4. **Remove the invented copy in "Ask it a question"** (`ASK` in `Insights.jsx`), or rebuild it from Hanzo's words only. Use the tool names and their full sentences from the `LOG` copy as the choices, with no invented questions and no trimmed sentences. Give its right side a real object: reuse the matching `Pane` drawing so the answer is a picture, not two lines of text. On phone, turn the ten stacked pills into a horizontal snap rail (proximity, 14–18% peek), with the answer directly under it inside the same viewport.
-5. **Palette.**
-   - Replace `#fbfbfd` with `#fafafa` or `#f7f7f7`, `#e3e3e6` with `#e4e4e7`, `#f5f5f7` with `#f5f5f5`, `#161617` with `#171717`, `#1d1d1f` with `#171717` or `#262626`, and the SVG's `#f2f2f5` with `#f2f2f2`.
-   - Use tokens rather than literals throughout `Insights.css`.
-   - Drop the dot glow box-shadow; the scale and the ink fill are enough.
-   - Delete the stale "Accent: violet" comment.
-   - The `#2c2c2e` CTA hover and the dark-room `#e8e8ed` / `#86868b` text come from shared kit parts (`Cta`, `CodeBlock`). Write `docs/requests/insights.md` to bring them onto the ramp.
-6. **Scale rhythm.**
-   - Bring `.in-figs b` below the section heading: 21–26px Zen Mono figure-style, or the 64px Air 220 figure treatment as the one big thing on that screen.
-   - Set the section h2s (`v2-display s`, currently 32px) to the 26px resting size.
-   - Keep one 44px moment per screen, not four on the page. "Start with autocapture" and the Ask answer can drop to 32px.
-7. **Hovers that tell you something.**
-   - Kill switch: needs a hover (the knob nudges about 2px toward off, or the track darkens) and a press of scale .97.
-   - Tour tabs: the number `01 / 06` steps to ink and a hairline draws under the title.
-   - Mode buttons: hover lights a ghost preview of which dots that mode would light (the "hover tells you something" rule), without committing.
-8. **Make the closing third this page's own.** Keep `ShipPrompt` and `GetIt`, but seed the `GetIt` art from the Insights field (dots, not the shared contour rings). Put one quiet proof line from Hanzo's copy beside the ask, so the last screen is not identical to eight other cloud pages.
-9. **Shared chrome note (not scored):** on phone the header keeps a solid "Try Hanzo" beside the hero's solid "Open Insights" (two fills, two labels on screen one). Request that the header carry the page's hero label quietly at 375 width, as it does on desktop.
+1. **Stop repeating the trick** (`components/pages/cloud/Insights.jsx`). Keep the tour and make the finder a different kind of moment, or fold it into the tour. Copy must stay, so move the finder's ten tool names into the tour as the tab captions, or render the finder as a quiet ten-row list (row-hover fill, 1px hairlines) whose hover previews the tour panel, instead of a second pill-and-drawing block. Never draw the same `Pane` twice on the page.
+2. **Replace the wireframe drawings with real-looking product UI** (`Pane` in `Insights.jsx`, and `.in-p-*` in `Insights.css`). Build them from page words and true shapes only, with no figures Hanzo doesn't state. Ideas: a funnel as four labelled step rows with hairlines, the replay as a cursor moving along its dashed path once (an 800 to 1,400 ms line-art draw), the A/B as two bars that grow on selection, errors as a stacked trace. Each panel should animate in when its tab opens, not just cross-fade.
+3. **Flatten the boxes** (`Insights.css`, and request `docs/requests/insights.md` for `.v2-obj` in `v2scale.css`). Pick one: raise the tour window *or* outline it, not both. Drop `box-shadow: var(--lift)` from `.in-tabs button[aria-selected='true']` and mark the selection with the ink underline already there. Lose the hero's outer grey card, or the inner white cards, so there is one surface. Move radii to tokens (32 → 24 or 28, 22 → 24, 14 → 12 or 16).
+4. **Make the hero object move inside 1 s** (`Rollout` in `Insights.jsx`). Start the first event tick at about 300 ms and let the first 36 dots light in their stagger on arrival, not after the 2.4 s timer. Consider swapping the columns, or tightening the gap, so the read order is h1, then ask, then field.
+5. **Close the empty black room** (`Insights.css:148`). Set `.in-code` padding to the section token `clamp(72px, 11vw, 188px)`. Better, make it a pinned two-panel scene: the code scrolls under a fixed `showNewUI` app, and the flip fires as `useFeatureFlag` passes. That would give the page its one pinned, apple-style moment.
+6. **Give scale a moment.** One thing should grow past rest: the lit count of the field ("one account" shrinking to a single large dot), or the "Events / Flags / OSS" words, growing as the tour enters and settling back to 26 px.
+7. **Make the taps answer.**
+   - Tour tab and finder pill hovers should preview, not just tint: show the panel's drawing ghosted, or the tab's first clause.
+   - Add `data-sound="tick"` to the tour tabs.
+   - On phone, scroll the active tour tab fully into view on auto-advance (`scrollIntoView({inline:'nearest'})` on the rail).
+   - Turn the mode label text white at the start of the glide, not at the end.
+8. **Shared requests** (note only; not the page's fault):
+   - Kit `CodeBlock` Copy shows no "Copied" state.
+   - The phone header keeps a solid "Try Hanzo" beside the hero's solid "Open Insights".
+   - The phone cookie card is 203 px tall.
+   - The `FooterHTML` hydration mismatch.
+9. **Small things.**
+   - Raise "Deploy to Cloud" to a 44 px target on phone.
+   - On phone, move the closing Sigil behind the empty side of "Get Insights", not through the heading and pills.

@@ -382,10 +382,12 @@ function Tile({ m }) {
 }
 
 /* A family's head pins beside its cards while they pass; flagships carry their film and open from it. */
-function Head({ slug, title, children, link }) {
+function Head({ slug, title, children, link, art }) {
   return (
     <header className={'xmo-gh' + (slug ? ' film' : '')}>
       {slug && <span className="xmo-gh-film" data-card={slug + '-head'} data-cursor=""><Film slug={slug} /></span>}
+      {/* other labs have no Hanzo film: their head carries a drifting contour field instead */}
+      {art && <span className="xmo-gh-film art" aria-hidden="true">{art}</span>}
       <h2>{title}</h2>
       {children}
       {link}
@@ -425,6 +427,7 @@ function Catalogue({ at, makers }) {
     if (scrollY > top + 4) (window.__lenis ? window.__lenis.scrollTo(top, { duration: 0.5 }) : scrollTo({ top, behavior: 'smooth' }));
   };
   const open = useOpen();
+  const paused = usePaused();
   const show = (f) => fam === 'all' || fam === f;
   const card = (id, name, ctx, d, tags, to, f) => <li key={id}><Thumb fam={f} seed={id} /><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} /></li>;
   const groups = [
@@ -444,7 +447,7 @@ function Catalogue({ at, makers }) {
       <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><Thumb fam="kai" /><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} /></li>)}</ul>],
     ['creative', <Head title="Creative models" link={<Lk to="/design">Make something in Design</Lk>}><p>Video, images, 3D, sound effects, voice and music, each its own model, in research preview.</p></Head>,
       <ul className="xmo-cards tiles">{CREATIVE.map((m) => <li key={m[0]}><Tile m={m} /></li>)}</ul>],
-    ['labs', <Head title="Flagships from other labs" link={<Lk to="#priced">Every model, priced</Lk>} />,
+    ['labs', <Head title="Flagships from other labs" art={<Sigil seed="/models#labs" data={[LABS.length, 2e6, 164e3]} className="xmo-gh-sigil" still={paused} />} link={<Lk to="#priced">Every model, priced</Lk>} />,
       <ul className="xmo-cards">{LABS.map(([id, name, ctx, d]) => card(id, name, ctx, d, ['text'], '/models/' + id, null))}</ul>],
   ];
   return (
@@ -533,7 +536,7 @@ function Priced({ at }) {
                   </button>
                 ))}
               </div>
-              <p className="xmo-n x-mono" aria-live="polite">{`${n} models.`}</p>
+              <p className="xmo-n x-mono" aria-live="polite"><i className="xmo-n-dot" aria-hidden="true" />{`${n} models.`}</p>
             </div>
             <div className={'xmo-table' + (all ? ' all' : '')} id="xmo-prices">
               <table>
@@ -705,7 +708,7 @@ function First() {
             <Lk to="https://docs.hanzo.ai/docs/quickstart">The quickstart</Lk>
           </div>
         </header>
-        <div className="xmo-code">
+        <div className="xmo-code" data-caret="">
           <Tabs id="xmo-lang" tabs={CODE.map(([t]) => t)} value={k} onChange={setK} label="Language" />
           {CODE.map(([t, c], i) => (
             <TabPanel key={t} id="xmo-lang" i={i} value={k} className="xmo-pane">

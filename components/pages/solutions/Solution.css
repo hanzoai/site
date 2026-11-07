@@ -74,6 +74,15 @@
   .xs2-strip-v { scroll-padding-inline: 16px; }
   .xs2-names.plain { text-align: left; text-wrap: balance; display: block !important; font-size: 13px; }
 }
+/* no dead stretch after the rail: the sheet row tucks under the last panel, the next section follows close */
+.xs2-strip.pin { margin-bottom: -120px; }
+.xs2-after { position: relative; z-index: 1; padding-bottom: 24px; }
+.xs2-after + * { padding-top: clamp(40px, 4vw, 64px) !important; }
+@media (max-width: 899px) {
+  .xs2-strip.pin { margin-bottom: 0; }
+  .xs2-film { height: 45svh !important; }
+  .xs2-strip-v { scroll-snap-type: x proximity !important; }
+}
 /* deck rhythm: the headline rests at 52 */
 .xs2 .xs2-h1 { font-size: clamp(40px, 5vw, 52px) !important; }
 .xs2-more { padding-top: clamp(56px, 6vw, 96px); }

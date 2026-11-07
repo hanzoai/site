@@ -87,6 +87,7 @@
 .cli-prompt code { font: 500 21px/1.45 var(--mono); letter-spacing: -.02em; color: var(--ink); overflow-wrap: anywhere; }
 .cli-prompt .x-copy { height: 44px; padding: 0 18px; font-size: 14px; }
 .cli-prompt-k { grid-column: 1 / -1; font-size: 13px; color: var(--faint); }
+@media (min-width: 900px) { .cli-prompt-caret { display: none; } } /* phone only: there it is the one mover between the hero and the tree; on desktop the tree's caret is already in view */
 .cli-paste-r { grid-column: 10 / -1; display: flex; flex-direction: column; gap: 10px; }
 .cli-paste-r .av-body { font-size: 17px; }
 

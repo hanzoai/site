@@ -33,7 +33,7 @@ Done here: One `<main className="a2 xsk">` after the layout's `#main` marker and
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no card links to another page
 
-Done here: The prompt types "Postgres" from 0.5 s and discover-database lights; at 375×812 the agent panel now comes first in the hero object (`order:-1`, file prose hidden), so the typing prompt (y 472) and lit row (y ~555) sit inside the first screen. Nothing above the h1 (the repo kicker moved under the ask); PageHero kit part not yet shipped, hero is page-owned. h1 is 112px at 1470 (cap `clamp(64px, 7.6vw, 112px)`), 72px on phone. After the hero: trade (paper, short), the pinned essay stage, the black thread room, paste strip, close; ends in the close card then the footer, no Band (none on the live page).
+Done here: The prompt types "Postgres" from 0.5 s and discover-database lights; at 375×812 the agent panel now comes first in the hero object (`order:-1`, file prose hidden), so the typing prompt (y 472) and lit row (y ~555) sit inside the first screen. Nothing above the h1 (the repo kicker moved under the ask); PageHero kit part not yet shipped, hero is page-owned. h1 is 112px at rest at 1470 and settles to 84px (scale .75) over the first 200px of scroll; phone `clamp(52px, 14vw, 64px)` (52.5px at 375). Phone hero shows the agent alone (file card hidden, 3 shelf rows), hero object 290px (cap 45svh). No object repeats: stage scenes 01/02 are now the frontmatter close up and one gateway pulling two of five files, scene 05 is one file's links drawn out to two stubs (the room keeps the three cards), the close shows the install's done line instead of the shelf. Point 05's heading is printed once (as live); the thread room is labelled by it. After the hero: trade (paper, short), the pinned essay stage, the black thread room, paste strip, close; ends in the close card then the footer, no Band (none on the live page).
 
 ## 4. Conversion system
 - [ ] `<Cta>` only; no raw `.x-btn`
@@ -57,7 +57,7 @@ Done here: No figures, logos or seals. The trade bars and the stage's scene 04 a
 - ~~Tables, FAQ, tabs and code use the kit parts~~ n/a: no tables, FAQ or tabs; the one command uses kit `Copy`
 - [x] `python3 scripts/parity.py /skills`: 0 missing
 
-Done here: Sizes: h1 112 (72 phone), section headings 32/26, point headings 26 (22 phone), body 17-19, captions 12-13px mono (the `01 / 06` captions are 12px mono capitals-style figures). Parity `/skills: OK text 29/29 links 2/2`.
+Done here: Sizes: h1 112 settling to 84 (52.5 phone), section headings 32/26, point headings 26 (22 phone), body 17-19, captions 12-13px mono (the `01 / 06` captions are 12px mono capitals-style figures). Parity `/skills: OK text 29/29 links 2/2`.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -66,7 +66,7 @@ Done here: Sizes: h1 112 (72 phone), section headings 32/26, point headings 26 (
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py OK; every hex in Skills.css is a deck value (#000, #0a0a0a, #171717, #262626, #404040, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #e5e5e5, #ededed, #f5f5f5, #fafafa, #fff) and white alphas from the deck list. The `01 / 06` captions sit under their h2; the thread's "Follow a thread" label moved after its h2 (visually hidden). Only the dropping file card in scene 06 floats, so only it has the floating shadow. The two arrows are one 1.5px-stroke inline glyph.
+Done here: taste.py OK; every hex in Skills.css is a deck value (#000, #0a0a0a, #171717, #262626, #404040, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #e5e5e5, #ededed, #f5f5f5, #fafafa, #fff) and white alphas from the deck list. The `01 / 06` captions sit under their h2; the invented "Follow a thread" label and "The thread" aria-label are gone (the room and its pill group are labelled by point 05's h2). Only the dropping file card in scene 06 floats, so only it has the floating shadow. The two arrows are one 1.5px-stroke inline glyph.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +75,7 @@ Done here: taste.py OK; every hex in Skills.css is a deck value (#000, #0a0a0a, 
 - ~~Inputs 16px or larger; no bare `:hover`~~ n/a: no inputs; every hover sits inside `@media (hover: hover)`
 - [x] Forks this page deleted: listed below
 
-Done here: Hero ask: fill steps #0a0a0a to #262626 and the arrow nudges 3px up-right, press scale .98 (90 ms). Deploy: border white 30% to 60% plus the arrow nudge, press .98. Repo caption link and card `hanzoai` link: 1px underline offset 3px appears on hover. Thread pills: hover brightens the pill and previews its file card at full opacity before the click; press .97; white focus ring on the dark room. Hovering the close card lights its shelf's first row. Forks: see the list at the top.
+Done here: Hero ask: fill steps #0a0a0a to #262626 and the arrow nudges 3px up-right, press scale .98 (90 ms). Deploy: border white 30% to 60% plus the arrow nudge, press .98. Repo caption link and card `hanzoai` link: 1px underline offset 3px appears on hover. Thread pills: hover brightens the pill and always lifts its file 8px at scale 1.02 while the other two dim to .4 (measured on all three pills); a rail beside the pills fills as the thread advances; press .97; white focus ring on the dark room. Hovering the close card lifts its done row ("hanzo.md" tick) 8px and fills it white. Forks: see the list at the top.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hero ask: fill steps #0a0a0a to #262626 and the arrow nudges 3px up-r
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the page plays no sound of its own; the shared kit owns it
 
-Done here: variety.py OK (2 techniques: typing, useScroll). Kinds: idle (wake loop, thread auto-cycle), time (typing, terminal wipe), scroll (trade scrub, pinned stage swaps, highlighter), state (pills, peek), pointer (arrow nudges, card hover). Curves only ease-out / ease-in-out / ease-emphasis at 90/150/300/400/500 ms, scene moves 900 ms; the sheets' overshoot is gone. Reduced motion: `getAnimations()` 0, `.xsk .a2-ln-in{transform:none!important}` shows the two masked headings (0 hidden lines measured), every scene shows its after state; the thread cycle is a setTimeout chain.
+Done here: variety.py OK (2 techniques: typing, useScroll). Kinds: idle (wake loop, thread auto-cycle), time (typing, terminal wipe, frontmatter line wipes, gateway pull, link lines drawing, the close's done line), scroll (trade scrub, h1 settle, the room's rounded-card clip opening to full width, pinned stage swaps, highlighter), state (pills, rail, peek), pointer (arrow nudges, card hover). Tray sheets now drop clear of the CONTEXT label (label under the tray). Curves only ease-out / ease-in-out / ease-emphasis at 90/150/300/400/500 ms, scene moves 900 ms; the sheets' overshoot is gone. Reduced motion: `getAnimations()` 0, `.xsk .a2-ln-in{transform:none!important}` shows the two masked headings (0 hidden lines measured), every scene shows its after state; the thread cycle is a setTimeout chain.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or films; every visual is drawn in the DOM
@@ -92,7 +92,7 @@ Done here: variety.py OK (2 techniques: typing, useScroll). Kinds: idle (wake lo
 - ~~Budgets met; nothing missing; alt on every image~~ n/a: no images
 - ~~No dimmed or filtered photo; 4+ real visuals together where the page has them~~ n/a: Hanzo has no Skills media
 
-Done here: No media: the skill file, shelf, tray, terminal, bars, thread and new file are drawn with Hanzo's names and blank lines, all `aria-hidden`.
+Done here: No media: the skill file, shelf, tray, frontmatter close up, gateway, terminal, bars, link stubs, thread, new file and done line are drawn with Hanzo's names and blank lines, all `aria-hidden`.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: No media: the skill file, shelf, tray, terminal, bars, thread and new
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Walked both sizes in 400px notches (scratchpad fix-skills frames). Thread cards are now a staircase in normal flow (16px gaps), so no card covers another's text. scrollWidth equals the viewport at 320, 375, 768, 1024, 1470. Targets under 44px: 0 (Copy buttons and caption links raised to 44px). Ask bottom at y 370 on 375. Under 900px the pinned stage stacks: each point carries its own scene (point 03 keeps its command box).
+Done here: Walked both sizes (scratchpad fix-skills-2 frames). Phone page 10,591px to 9,239px (hero 731, essay 3,099, each point's object capped at 280px, no overflow). Stage ticks sit inside the panel's bottom edge and the essay's bottom padding is trimmed. Thread cards are a staircase in normal flow (16px gaps), so no card covers another's text. scrollWidth equals the viewport at 320, 375, 768, 1024, 1470. Targets under 44px: 0 (Copy buttons and caption links raised to 44px). Ask bottom at y 370 on 375. Under 900px the pinned stage stacks: each point carries its own scene (point 03 keeps its command box).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -157,4 +157,4 @@ Done here: No network calls. 0 console errors and no dev issue badge on 10 fresh
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/skills.md` verdict 8 or more
 
-Done here: `data-cta="skills.hero"` and `skills.close`; the page sends nothing itself. V2 line rewritten (yellow accent dropped). Review read (6/10, 7 Nov) and fixes 1-11 worked in order; awaiting a new verdict.
+Done here: `data-cta="skills.hero"` and `skills.close`; the page sends nothing itself. V2 line rewritten (yellow accent dropped). Review read (7/10, second critic, 7 Nov) and fixes 1-6 worked in order; awaiting a new verdict.

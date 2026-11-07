@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a for prices: none on the page)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Top comment names Persona, Goal, CTA, Metric (`studio.hero`, `studio.close`), Signature and Beyond, plus the `V2:` line. Solid fills measured: hero ask at y 269, the Studio-or-Design answer at y 1989 (only one of its two answers is visible, the other is `inert`), the close ask at y 7016; the close's solid now goes to studio.hanzo.ai, and both "Open Studio" links are quiet text links that scroll into the monitor (`#xst-cinema`) instead of reloading /studio.
+Done here: Top comment names Persona, Goal, CTA, Metric (`studio.hero`, `studio.close`), Signature and Beyond, plus the `V2:` line. Solid fills measured: hero ask at y 269, the Studio-or-Design answer at y 1989 (only one of its two answers is visible, the other is `inert`), the close ask; the close's solid goes to studio.hanzo.ai. The close now holds one solid and one text link ("Open Hanzo Design" is a kit `More`); "Open Studio" moved under the related list as a text link with an up arrow (it scrolls back into the monitor, `#xst-cinema`, and focuses the playhead), and "Deploy to Cloud" in the black card is a white `More` text link, so no outlined pills remain at the close.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -33,7 +33,7 @@ Done here: `<main className="a2 xst" id="main">`, one `a[href="#main"]` skip lin
 - ~~Ends in proof strip, `Band`, footer~~ n/a: no `Band` component merged; the page ends on its own close (director's chair + the dark "Get Studio" card) straight into the footer
 - [x] Card-to-page links use Morph (the film-strip frames open through the WebGL opener, `useOpener`)
 
-Done here: At 1470x801 the 52px h1 runs 140 to 306px (baseline at 38%), the monitor starts at 349px and the first timeline track ends at 791px, so the product and its first row are on the first screen; the timeline plays within 1 s. At 375x812 the 40px h1, lede and the inline ask row end at 543px and the monitor starts at 563px (90px of product inside 660px). JS off (Playwright, javaScriptEnabled false): every heading at opacity 1 / transform none, all six capability panes and both Studio-or-Design answers visible via a `noscript` rule.
+Done here: At 1470x801 the 52px h1 runs 140 to 306px (baseline at 38%), the monitor starts at 349px and the first timeline track ends at 791px, so the product and its first row are on the first screen; the timeline plays within 1 s. At 375x812 the h1 is 36px with `text-wrap: balance` and sets in 3 lines (108 to 222px); under MASTER's 40px on purpose, because at 40px Hanzo's copy wraps to 5 lines and pushed the monitor to 563px. With 48px top padding and a 16/1.45 lede the monitor now starts at 413px (about 250px of product inside 660px). Section gaps at 1470x801 (last content line to next first line): Paste rule to the Studio-or-Design card 56px, card to the reel frame 47px (the reel is pulled up 56px), reel captions to the graph heading about 120px at the end of the pin, graph to the strip heading about 119px, strip links to the close heading 116px (were 182, 231, 355). JS off (Playwright, javaScriptEnabled false): every heading at opacity 1 / transform none, all six capability panes and both Studio-or-Design answers visible via a `noscript` rule.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -84,7 +84,7 @@ Done here: Hover now tells you something: the hero/close ask slides its arrow 4p
 - [ ] Reduced motion shows the final state; no `setInterval` (final states yes; three `setInterval` timers remain: Which, Graph, Strip)
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: `variety.py`: OK with 3 techniques (useScroll reel = signature; rAF timeline; layoutId: the graph's active ring travels node to node in 400 ms ease-in-out). Kinds: idle (timeline, chip hop, render pass), pointer (scrub, opener warp, clip timecodes), state (rig tabs, graph tabs, pane clip-reveal), scroll (reel), arrival (h1 cut-in). Deck timings only (90/150/300/400/500 ms, three deck curves). Reduced motion: `getAnimations()` = 0 after 3 s at both sizes, the timeline holds a still at 60% of shot 1, the graph ring moves with duration 0. Sound comes from the shared kit on `[data-cta]`; the page adds none.
+Done here: `variety.py`: OK with 3 techniques (useScroll reel = signature; rAF timeline; layoutId: the graph's active ring travels node to node in 400 ms ease-in-out). Kinds: idle (timeline, chip hop, render pass), pointer (scrub, opener warp, clip timecodes), state (rig tabs, graph tabs, pane clip-reveal), scroll (reel), arrival (h1 cut-in). The reel is 240svh (was 360): the frame grows from .92 to 1 over the first 15% of the pin, and each pillar's move is bigger and framed on its still's subject (Dolly 1.25 to 1.7 about the right edge, Crane ±12% at 1.32, Orbit a 23% pan with ±2.5° tilt; object-position picks the subject's band). Changeovers never blend two texts: reel captions, the graph pane and the Studio-or-Design answer take the outgoing item out in 150 ms and bring the incoming one in after a 150 ms delay, its title cutting in through a line mask (translateY 105% to 0, 500 ms ease-emphasis). On phones the reel frame is a sticky 2.39:1 strip under the header that swaps still, rig and `0n / 03` as each pillar's title crosses it (IntersectionObserver, no pin). Reduced motion: frame and stills hold their framed rest state, masks at rest, `getAnimations()` running = 0. Deck timings only (90/150/300/400/500 ms, three deck curves). Reduced motion: `getAnimations()` = 0 after 3 s at both sizes, the timeline holds a still at 60% of shot 1, the graph ring moves with duration 0. Sound comes from the shared kit on `[data-cta]`; the page adds none.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (still raw `<img>`/`<video>`; swap when the kit's Film/Pic suit the timeline stills)
@@ -149,7 +149,7 @@ Done here: n/a throughout; the only copyable text is A2Paste's prompt, which cop
 - ~~A failed submit keeps its values and shows no success~~ n/a: no form
 - [x] A thrown island does not blank the page
 
-Done here: No live calls; default-motion console errors: 0 at 1470 and 375, and 0 during the interaction walk (hover, scrub, graph clicks/keys, strip, both "Open Studio" jumps). Under reduced motion the only remaining console error is the shared A2Lines style mismatch (requested). JS off is legible (part 3).
+Done here: No live calls; console errors: 0 over 12 fresh loads (1470 and 375, default and reduced motion, 3 each) and 0 during the walks. The empty voice-track gap clips no longer take the active outline. JS off is legible (part 3).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (cta_click is dispatched by the kit `Cta`)

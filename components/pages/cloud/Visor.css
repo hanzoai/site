@@ -1,26 +1,44 @@
 /* ---------- visor v2 (vs2-) ---------- */
 
-/* Hero: the one Cloud page whose console runs left to right as a pipeline under a left-set title (request → every
-   provider answers → one inventory → the console), rising into place; Sentinel and World sit beside their object,
-   Search centres, Telemetry and Billing split, Stream frames. */
+/* Hero: the title is set over the left of the fleet console, and the console bleeds off the right edge as one pipeline
+   (request → quote → every provider answers → one inventory → the console). No other Cloud page does this: Search
+   centres over its object, Sentinel and World sit beside theirs, Telemetry and Billing split, Stream frames. */
 .vs2-hero.rise .l2-stage-copy { text-align: left; align-items: flex-start; padding-top: clamp(28px, 5svh, 64px); }
 .vs2-hero.rise .l2-lede { margin-inline: 0; }
 .vs2-hero.rise .l2-acts { justify-content: flex-start; }
 .vs2-hero.rise .l2-stage-obj { padding-top: clamp(20px, 3.4svh, 40px); transform-origin: 0 0; }
 .vs2-hero .l2-stage-obj > * { width: min(100%, 1152px); }
+/* the repo caption is 12px mono capitals (the deck's eyebrow size), set at #525252 so it reads 4.5:1 on the grey console */
+.vs2-hero .l2-stage-kick { color: #525252; }
+.vs2-nw { white-space: nowrap; }
 @media (min-width: 901px) {
-  .vs2-hero .vs2-fleet { grid-template-columns: minmax(0, .95fr) minmax(0, .8fr) minmax(0, 1fr) minmax(0, .95fr);
-    grid-template-areas: 'req cat k con' 'req cat ul con' 'req cat ul audit'; grid-template-rows: auto 1fr auto; gap: 10px 12px; padding: 12px; }
-  .vs2-hero .vs2-req { grid-area: req; align-self: start; min-height: 180px; }
-  .vs2-hero .vs2-dry { grid-area: req; align-self: end; height: auto; padding: 0 4px 4px; text-wrap: balance; }
-  .vs2-hero .vs2-cat { grid-area: cat; grid-template-columns: minmax(0, 1fr); align-content: start; }
+  .vs2-hero .l2-stage-pin { display: block; }
+  .vs2-hero.rise .l2-stage-copy { position: absolute; left: 0; right: 0; top: calc(clamp(20px, 3.4svh, 40px) + 40px); z-index: 3; padding: 0 0 0 28px; pointer-events: none !important; }
+  .vs2-hero.rise .l2-stage-copy > * { pointer-events: auto; max-width: 300px; }
+  .vs2-hero.rise .l2-stage-obj { justify-content: flex-start; padding-left: max(var(--gut, 24px), calc((100% - 1152px) / 2)); }
+  .vs2-hero .l2-stage-obj > * { width: 100%; }
+  /* 72px right padding: the console still reads whole while the rise scales it 1.04 from its left edge */
+  .vs2-hero .vs2-fleet { min-height: calc(100svh - 240px); border-radius: 28px 0 0 28px; padding: 14px 72px 14px 14px; gap: 10px 12px;
+    grid-template-columns: 318px minmax(0, .9fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr);
+    grid-template-areas: 'copy req cat k con' 'copy req cat ul con' 'copy dry cat audit con'; grid-template-rows: auto 1fr auto; }
+  .vs2-hero .vs2-req { grid-area: req; display: flex; flex-direction: column; justify-content: space-between; }
+  .vs2-hero .vs2-req .vs2-cmd { font-size: 24px; line-height: 1.25; }
+  .vs2-hero .vs2-dry { grid-area: dry; display: block; align-self: start; height: auto; padding: 2px 4px 4px; }
+  .vs2-hero .vs2-inv > ul { gap: 8px; }
+  .vs2-hero .vs2-inv li { height: 48px; }
+  .vs2-hero .vs2-inv li span { white-space: nowrap; }
+  .vs2-hero .vs2-cat { grid-area: cat; grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(3, minmax(0, 1fr)); }
+  .vs2-hero .vs2-prov { justify-content: center; }
   .vs2-hero .vs2-inv { display: contents; }
   .vs2-hero .vs2-inv > .vs2-k { grid-area: k; margin: 0; padding: 6px 4px 0; }
   .vs2-hero .vs2-inv > ul { grid-area: ul; }
   .vs2-hero .vs2-inv li { background: #fff; }
-  .vs2-hero .vs2-con { grid-area: con; }
-  .vs2-hero .vs2-audit { grid-area: audit; margin: 0; padding: 0 4px; text-wrap: balance; }
-  .vs2-hero .vs2-cmd { font-size: 21px; line-height: 1.3; }
+  .vs2-hero .vs2-con { grid-area: con; align-self: stretch; display: flex; flex-direction: column; }
+  .vs2-hero .vs2-con code { flex: 1; height: auto; min-height: 96px; }
+  .vs2-hero .vs2-audit { grid-area: audit; margin: 0; padding: 0 4px 4px; align-self: end; }
+  .vs2-hero .vs2-pause.l2-pause { right: 84px; }
+  /* the dark room peeks 56px above the fold and slides up over the held hero as a rounded card */
+  .vs2-tiles { margin-top: calc(-50svh - 116px); z-index: 2; }
 }
 
 /* Stage object: the fleet console */
@@ -61,14 +79,16 @@ i.p { background: #0a0a0a; }
 i.k { background: #d4d4d4; }
 .vs2-inv li b, .vs2-inv2 li b { font-size: 14px; font-weight: 606; }
 .vs2-inv li span, .vs2-inv2 li span { margin-left: auto; font-size: 13px; color: var(--soft); }
-.vs2-con { align-self: start; border-radius: 14px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; opacity: .25; transform: scale(.96); transform-origin: 0 0; transition: opacity .4s, transform .6s var(--ease); }
-.vs2-con.on { opacity: 1; transform: none; }
+/* the console is a real terminal from the first frame (full contrast, an idle prompt); "opened" lights its tab and
+   starts the caret */
+.vs2-con { align-self: start; border-radius: 14px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; transform: scale(.985); transform-origin: 0 0; transition: transform .6s var(--ease); }
+.vs2-con.on { transform: none; }
 .vs2-con p { display: flex; gap: 2px; margin: 0; padding: 8px 8px 0; font-size: 13px; }
-.vs2-con p span { padding: 6px 10px; border-radius: 8px 8px 0 0; background: #171717; color: #a3a3a3; }
-.vs2-con p span:first-child { color: #a3a3a3; }
+.vs2-con p span { padding: 6px 10px; border-radius: 8px 8px 0 0; background: #171717; color: #a3a3a3; transition: background-color .4s, color .4s; }
 .vs2-con.on p span:first-child { background: #262626; color: #fafafa; }
+.vs2-idle { font-style: normal; color: #525252; }
 .vs2-con code { display: block; height: 96px; padding: 12px; background: #171717; font-size: 14px; }
-.vs2-audit { grid-column: 2; margin: 8px 0 0; font-size: 13px; color: #525252; opacity: 0; transition: opacity .4s; text-wrap: balance; }
+.vs2-audit { grid-column: 1 / -1; margin: 8px 0 0; font-size: 13px; color: #525252; opacity: 0; transition: opacity .4s; }
 .vs2-audit.on { opacity: 1; }
 
 /* signature: the one dark room. Phones (and reduced motion): the rows stack as cards, each with its own picture that
@@ -108,6 +128,7 @@ html:not(.js) .vs2-find[hidden] { display: block; } /* JS off: every paragraph r
   .vs2-stage { grid-column: 7 / span 6; display: flex; flex-direction: column; gap: 16px; }
   .vs2-sn { margin: 0; font-size: 13px; color: #a3a3a3; }
   .vs2-sn b { font-size: 64px; font-weight: 220; letter-spacing: -.04em; line-height: 1; color: #fafafa; }
+  .vs2-bigbox { min-height: 300px; }
   .vs2-big { display: flex; align-items: center; min-height: 300px; padding: 32px; border-radius: 24px; background: #171717; }
   .vs2-big > * { width: 100%; }
   .vs2-big .vs2-p0 b, .vs2-big .vs2-p1 span, .vs2-big .vs2-p2 span { font-size: 17px; }
@@ -121,6 +142,7 @@ html:not(.js) .vs2-find[hidden] { display: block; } /* JS off: every paragraph r
   .vs2-tiles.pin { height: 340svh; padding: 0; }
   .vs2-tiles.pin .vs2-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); display: grid; align-content: center; }
 }
+.vs2-sheet .vs2-cap { margin: -8px 0 16px; font-size: 13px; color: #525252; } /* the row number, under the title as a caption */
 .vs2-sheet .vs2-cp { display: flex; align-items: center; min-height: 220px; padding: 24px; border-radius: 20px; background: #0a0a0a; color: #fafafa; }
 .vs2-sheet .vs2-cp > * { width: 100%; }
 .vs2-sheet .vs2-cd { margin-top: 24px; }
@@ -165,22 +187,24 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 :is(li, .vs2-big)[data-on] .vs2-p0 i { animation: vs2-bar .7s var(--ease) var(--d, 0ms) both; }
 :is(li, .vs2-big)[data-on] :is(.vs2-p1 .vm, .vs2-p2 i, .vs2-p4 span, .vs2-p5 li) { animation: vs2-pop .5s cubic-bezier(.16, 1, .3, 1) calc(var(--d, 0ms) + 200ms) both; }
 :is(li, .vs2-big)[data-on] .vs2-p3 b { animation: vs2-cut .7s cubic-bezier(.16, 1, .3, 1) .25s both; }
-/* the close's inventory lands row by row once */
-.vs2-close { padding: 20px; border-radius: 20px; background: #171717; color: #fafafa; }
-.vs2-close .vs2-k { color: #a3a3a3; }
-.vs2-close .vs2-k b { color: #fafafa; }
-.vs2-close ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.vs2-close li { display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 14px; border-radius: 12px; background: rgba(255, 255, 255, .06); }
-.vs2-close li i { width: 10px; height: 10px; border-radius: 3px; }
-.vs2-close li i.m { background: #fafafa; } .vs2-close li i.p { background: #737373; } .vs2-close li i.k { background: #404040; }
-.vs2-close li b { font-size: 14px; font-weight: 606; }
-.vs2-close li span { margin-left: auto; font-size: 13px; color: #a3a3a3; }
-.vs2-close-con { display: flex; align-items: center; gap: 2px; margin: 12px 0 0; font-size: 13px; }
-.vs2-close-con span { padding: 6px 10px; border-radius: 8px; background: rgba(255, 255, 255, .08); color: #a3a3a3; }
-.vs2-close-con span:first-child { background: #fafafa; color: #0a0a0a; }
-.vs2-close-con code { margin-left: 10px; font-size: 14px; }
-.vs2-close[data-on] li { animation: vs2-pop .5s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms) both; }
-@media (prefers-reduced-motion: no-preference) { html.js .vs2-close:not([data-on]) li { opacity: 0; } }
+/* the close: the batch you named, as a console session. One tab per machine lands once, the prompt waits, the audit row
+   writes itself under it (clip reveal), and the last line says dry run or metered. */
+.vs2-close { border-radius: 20px; background: #0a0a0a; color: #fafafa; overflow: hidden; border: 1px solid rgba(255, 255, 255, .1); }
+.vs2-close-tabs { display: flex; flex-wrap: wrap; gap: 2px; margin: 0; padding: 10px 10px 0; background: #171717; font-size: 13px; }
+.vs2-close-tabs span { padding: 8px 12px; border-radius: 10px 10px 0 0; color: #a3a3a3; }
+.vs2-close-tabs .ssh { color: #fafafa; }
+.vs2-close-tabs span.on { background: #0a0a0a; color: #fafafa; }
+.vs2-close-body { display: flex; flex-direction: column; gap: 12px; min-height: 200px; padding: 20px; }
+.vs2-close-body code { flex: 1; font-size: 15px; }
+.vs2-close-audit, .vs2-close-out { margin: 0; font-size: 13px; color: #a3a3a3; }
+.vs2-close-audit { padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .1); color: #fafafa; }
+@keyframes vs2-write { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.vs2-close[data-on] .vs2-close-tabs span:not(.ssh) { animation: vs2-pop .5s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms) both; }
+.vs2-close[data-on] .vs2-close-audit { animation: vs2-write 1s steps(28, end) .7s both; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .vs2-close:not([data-on]) .vs2-close-tabs span:not(.ssh) { opacity: 0; }
+  html.js .vs2-close:not([data-on]) .vs2-close-audit { clip-path: inset(0 100% 0 0); }
+}
 @media (prefers-reduced-motion: no-preference) {
   html.js .vs2-grid li:not([data-on]) .vs2-p0 i { transform: scaleX(0); }
   html.js .vs2-grid li:not([data-on]) :is(.vs2-p1 .vm, .vs2-p2 i, .vs2-p4 span, .vs2-p5 li) { opacity: 0; }
@@ -219,6 +243,8 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 .vs2-name-r { grid-column: 7 / span 6; align-self: center; }
 .vs2-inv2 { padding: 26px; border-radius: 24px; background: #f5f5f5; }
 .vs2-inv2 .vs2-k b { color: var(--ac); }
+.vs2-inv2 ul { min-height: 244px; } /* five rows (three machines, the pool, the cluster) reserved: the arrival never moves the page */
+.vs2-out { min-height: 2.9em; }
 .vs2-inv2 li { background: #fff; }
 .vs2-inv2 li.dry { background: repeating-linear-gradient(135deg, #fff 0 10px, #fafafa 10px 20px); }
 .vs2-inv2 li.dry b { color: var(--soft); }

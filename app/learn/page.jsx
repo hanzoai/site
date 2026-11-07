@@ -4,7 +4,7 @@
 // Metric: api_key_created
 // Signature: the docs as a transit map: a train rides the Start-here line once, by itself, and stops at each station, whose guide opens beneath it.
 // Beyond: the documentation drawn as a line you ride: each station opens its own guide in place, linked by its own name, before you leave the page
-// V2: 8/10 after the map, three scenes with one big thing each (the 01–06 rail with 64px numerals that ink once, Hanzo University's Zen film, the 44px lead post with Kai's film in the dark room) and questions collapsed under a 64px question number; one solid per screen
+// V2: 8/10 round 2: no dead screen after the map; six rail cards with Hanzo model stills (one numeral big at a time); Uta and Kai films; full-width lead post; thinking as a hairline list; #q- hash sync; closes on "Get started"
 import Learn from '../../components/pages/Learn';
 import JsonLd from '../../components/JsonLd';
 

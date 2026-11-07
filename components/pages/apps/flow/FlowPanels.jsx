@@ -3,7 +3,8 @@
    own sentence, so the six steps never reprint the hero's pipeline. Every word here is a fragment of Hanzo's copy.
    01 The library: the palette of component kinds Hanzo lists, joining in turn; the one you write joins last, solid.
    02 Open any node: a node opened to its Python class; the parameter you need is added and it is live on the next run.
-   03 Step through it: six steps taken one at a time, received and returned ticked, until the node that caused it is found.
+   03 Step through it: a chain of ports run one at a time, and the node that caused it opened: received whole, returned
+      drawn broken (a strange answer). Not the six-step list: the hero and the playground already tell that.
    04 Multi-agent: several agents on one canvas, conversation state travelling between them, retrieval underneath.
    05 Publish it three ways: a flow, three outputs drawn out of it; the last becomes a tool your coding agent can call.
    06 Keys stay out of the flow: the graph references a variable by name; what you export carries the wiring, not the secrets.
@@ -38,19 +39,21 @@ function OpenNode() {
   );
 }
 
+/* 03: not the six-step list again (the hero and the playground tell that). A chain runs one node at a time as unnamed
+   ports; one of them is opened as a card, ringed: the node that caused it, with what it received (whole) and what it
+   returned (a strange answer, drawn broken) */
 function Steps() {
   return (
     <div className="flp flp-steps">
-      <ol>
-        {[0, 1, 2, 3, 4, 5].map((k) => (
-          <li key={k} style={{ '--i': k }} className={k === 4 ? 'bad' : ''}>
-            <b className="x-mono">{two(k + 1)}</b>
-            <span className="flp-tk" aria-hidden="true" /><span className="flp-tk" aria-hidden="true" />
-          </li>
-        ))}
-      </ol>
-      <p className="flp-steps-k x-mono"><span><i aria-hidden="true" />received</span><span><i aria-hidden="true" />returned</span></p>
-      <p className="flp-steps-found"><i aria-hidden="true" />the node that caused it</p>
+      <div className="flp-chain" aria-hidden="true">
+        {[0, 1, 2, 3].map((k) => <i key={k} style={{ '--i': k }} className={k === 3 ? 'at' : ''} />)}
+      </div>
+      <div className="flp-cause">
+        <p className="flp-cause-h"><i aria-hidden="true" />the node that caused it</p>
+        <p className="flp-cause-row x-mono"><span>received</span><b className="ok" aria-hidden="true" /></p>
+        <p className="flp-cause-row x-mono"><span>returned</span><b className="bad" aria-hidden="true"><i /><i /><i /></b></p>
+        <p className="flp-cause-k">a strange answer</p>
+      </div>
     </div>
   );
 }

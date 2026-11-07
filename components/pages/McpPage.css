@@ -5,6 +5,8 @@
 .mcp-hero-grid { align-items: start; row-gap: 48px; }
 .mcp-hero-copy { grid-column: 1 / span 7; }
 .mcp-h1 { max-width: none; }
+.mcp-h1-d { display: block; }
+.mcp-h1-p { display: none; }
 /* Hanzo's label lines sit under their headline as a caption, never over it */
 .mcp-cap.a2-kick.show { margin: 18px 0 0; color: #737373; text-wrap: balance; }
 .mcp-cfg .mcp-cap.a2-kick.show { color: #a3a3a3; }
@@ -31,6 +33,8 @@
 .mcp-via-l { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px 28px; }
 .mcp-via-l ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 28px; }
 .mcp-via-l li { font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: var(--ink); }
+.mcp-via.seen .mcp-via-l li { animation: mcp-client .9s calc(var(--k) * .75s) ease-in-out 1 both; }
+@keyframes mcp-client { 0%, 100% { color: var(--ink); transform: none; } 40%, 60% { color: #a3a3a3; transform: translateY(-3px); } }
 
 /* figures: 64px at rest; the row grows while it crosses the screen (A2Grow) */
 .mcp-figs { padding-bottom: clamp(72px, 8vw, 128px); }
@@ -38,7 +42,11 @@
 .mcp-f { display: grid; gap: 12px; justify-items: start; }
 .mcp-f .a2-fig { font-size: 64px; color: var(--ink); }
 .mcp-f > span:last-child { font-size: 16px; color: #525252; }
-.mcp-plus { font-size: 32px; font-weight: 300; line-height: 2; color: #a3a3a3; }
+.mcp-plus { display: inline-block; font-size: 32px; font-weight: 300; line-height: 2; color: #a3a3a3; }
+/* arrival: the two "+" breathe three times (under 5 s), then rest */
+.mcp-figs.seen .mcp-plus { animation: mcp-breathe 1.5s ease-in-out 3; }
+.mcp-figs.seen .mcp-plus:last-of-type { animation-delay: .4s; }
+@keyframes mcp-breathe { 50% { opacity: .35; transform: scale(.8); } }
 .mcp-fig { display: inline-block; overflow: hidden; padding-bottom: .06em; }
 .mcp-fig > span { display: inline-block; }
 
@@ -69,6 +77,8 @@
 .mcp-cmds span.stop b { background: #a3a3a3; animation-name: mcp-stop; }
 @keyframes mcp-pass { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 80% { transform: translateX(360%); opacity: 1; } 100% { transform: translateX(360%); opacity: 0; } }
 @keyframes mcp-stop { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 45%, 80% { transform: translateX(160%); opacity: 1; } 100% { transform: translateX(160%); opacity: 0; } }
+/* one mover per screen: only the sheet on top runs its art; the ones under it hold their frame */
+.mcp-sheet:not(.on) .mcp-art, .mcp-sheet:not(.on) .mcp-art * { animation-play-state: paused !important; }
 
 /* tool domains: a rail of cards that open */
 .mcp-doms { padding-top: clamp(56px, 6vw, 96px); padding-bottom: 96px; }
@@ -83,18 +93,34 @@
 .mcp-rail.grab { cursor: grabbing; scroll-snap-type: none; }
 .mcp-rail { scroll-padding-inline: max(var(--gut), (100% - 1152px) / 2); }
 .mcp-rail li { flex: none; scroll-snap-align: start; }
-.mcp-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; width: min(360px, 82vw); height: 440px; padding: 28px; border: 0; border-radius: var(--r-hero); background: var(--card); color: var(--ink); text-align: left; cursor: pointer; user-select: none; transition: transform .09s; }
+.mcp-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; width: min(360px, 82vw); height: 440px; padding: 28px; border: 0; border-radius: var(--r-hero); background: var(--card); color: var(--ink); text-align: left; cursor: pointer; user-select: none; transition: transform .09s, translate .35s var(--a2-ease); }
 .mcp-card:active { transform: scale(.98); }
 .mcp-card-n { position: absolute; left: 28px; top: 28px; font-size: 13px; color: #737373; }
 .mcp-card h3 { margin: 4px 64px 14px 0; font-size: 17px; font-weight: 500; line-height: 1.35; overflow-wrap: anywhere; }
 .mcp-card p { margin: 0; font-size: 15px; line-height: 1.55; color: #525252; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.mcp-card-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-.mcp-card-tools i { font-style: normal; padding: 7px 10px; border-radius: 8px; background: #fff; font-size: 13px; animation: mcp-chip 7.2s var(--cd, 0s) ease-in-out infinite; }
-/* idle: one tool on each card is called in turn, so the rail is alive before you touch it */
+.mcp-card-tools { position: relative; width: 100%; margin-top: auto; }
+.mcp-chips { display: flex; flex-wrap: wrap; gap: 6px; transition: opacity .25s, transform .35s var(--a2-ease); }
+.mcp-chips.peek { position: absolute; left: 0; right: 0; bottom: 0; opacity: 0; transform: translateY(8px); }
+.mcp-card-tools i { font-style: normal; padding: 7px 10px; border-radius: 8px; background: #fff; font-size: 13px; }
+/* idle: the card nearest the rail's centre calls its tools in turn (one mover on the rail) */
+.mcp-card.live .mcp-chips.rest i { animation: mcp-chip 7.2s var(--cd, 0s) ease-in-out infinite; }
 @keyframes mcp-chip { 0%, 6% { background: #0a0a0a; color: #fafafa; } 12%, 100% { background: #fff; color: var(--ink); } }
-.mcp-card.d5 .mcp-card-tools i { animation-name: mcp-chip-d; }
+.mcp-card.d5.live .mcp-chips.rest i { animation-name: mcp-chip-d; }
 @keyframes mcp-chip-d { 0%, 6% { background: #fafafa; color: #0a0a0a; } 12%, 100% { background: #262626; color: #fafafa; } }
-.mcp-card-tools i.more { animation: none; }
+.mcp-card.live .mcp-chips.rest i.more { animation: none; }
+.mcp-card.live .mcp-card-open { animation: mcp-ring 2.4s ease-out infinite; }
+@keyframes mcp-ring { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .28); } 70%, 100% { box-shadow: 0 0 0 12px rgba(10, 10, 10, 0); } }
+.mcp-card.d5.live .mcp-card-open { animation-name: mcp-ring-d; }
+@keyframes mcp-ring-d { 0% { box-shadow: 0 0 0 0 rgba(250, 250, 250, .35); } 70%, 100% { box-shadow: 0 0 0 12px rgba(250, 250, 250, 0); } }
+/* hover or keyboard focus previews the sheet: the card lifts 4px and two more of its tools slide in with what remains */
+.mcp-card:focus-visible { translate: 0 -4px; }
+.mcp-card:focus-visible .mcp-chips.rest:has(+ .peek) { opacity: 0; transform: translateY(-6px); }
+.mcp-card:focus-visible .mcp-chips.peek { opacity: 1; transform: none; }
+@media (hover: hover) {
+  .mcp-card:hover { translate: 0 -4px; }
+  .mcp-card:hover .mcp-chips.rest:has(+ .peek) { opacity: 0; transform: translateY(-6px); }
+  .mcp-card:hover .mcp-chips.peek { opacity: 1; transform: none; }
+}
 .mcp-card-open { position: absolute; top: 20px; right: 20px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 22px; line-height: 1; transition: transform .3s var(--a2-ease); }
 @media (hover: hover) { .mcp-card:hover .mcp-card-open { transform: rotate(90deg); } }
 .mcp-card.d5 { background: #0a0a0a; color: #fafafa; }
@@ -132,8 +158,21 @@
 .mcp-ref span { display: inline-block; transition: transform .3s var(--a2-ease); }
 .mcp-ref:active span { transform: translateX(2px); }
 @media (hover: hover) { .mcp-ref:hover span { transform: translateX(5px); } }
-.mcp-codes { grid-column: 7 / span 6; display: grid; gap: 24px; }
-.mcp-code-c { margin: 0 0 10px; font-size: 13px; color: #a3a3a3; }
+.mcp-codes { grid-column: 7 / span 6; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; min-width: 0; }
+.mcp-codes > div { min-width: 0; }
+.mcp-code-c { margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #a3a3a3; white-space: normal; overflow-wrap: anywhere; }
+/* the bash block: one row per command, each with its own Copy; "$ " and Hanzo's "#" notes are shown, never copied */
+.mcp-sh-rows { list-style: none; margin: 0; padding: 8px 6px; }
+.mcp-sh-rows li { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 6px 6px 12px; border-radius: 10px; }
+.mcp-sh-line { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; font-size: 14px; line-height: 1.5; color: #e5e5e5; }
+.mcp-sh-line code { font: inherit; white-space: nowrap; }
+.mcp-sh-p, .mcp-sh-note { color: #737373; user-select: none; -webkit-user-select: none; }
+.mcp-sh-cmd { white-space: nowrap; }
+.mcp-sh-note { color: #a3a3a3; }
+.mcp-sh .x-copy { flex: none; }
+.mcp-sh.go li { animation: mcp-sh-step 1.4s calc(var(--k) * 1.3s) ease-in-out 1 both; }
+@keyframes mcp-sh-step { 0%, 100% { background: transparent; } 30%, 70% { background: rgba(255, 255, 255, .07); } }
+main.mcp .x-copy { height: 44px; padding: 0 16px; }
 .mcp-cfg .x-codeblock pre { font-size: 14px; }
 
 /* the close: the one solid ask, light, beside the repository card (the dark room stays the config's alone) */
@@ -189,9 +228,24 @@
 }
 
 @media (max-width: 900px) {
-  .mcp-hero { padding-top: 104px; }
-  .mcp-h1 { font-size: clamp(24px, 7.4vw, 32px) !important; line-height: 1.1; }
-  .mcp-rows { height: 368px; }
+  /* phone hero, its own composition: the h1 at the deck's phone size in four lines, Hanzo's caption, then the live
+     stream (three rows, so the product is on screen inside 660px), then the lede and the asks */
+  .mcp-hero { padding-top: 80px; }
+  .mcp-h1-d { display: none; }
+  .mcp-h1-p { display: block; }
+  .mcp-h1 { font-size: 40px !important; line-height: 1.04; }
+  .mcp-hero-grid { row-gap: 0; }
+  .mcp-hero-copy { display: contents; }
+  .mcp-hero-grid > *, .mcp-hero-copy > * { grid-column: 1 / -1; }
+  .mcp-hero-copy > .mcp-h1 { order: 1; }
+  .mcp-hero-copy > .mcp-cap { order: 2; margin-top: 14px; }
+  .mcp-hero-obj { order: 3; margin-top: 20px; }
+  .mcp-hero-copy > .mcp-lede { order: 4; margin: 20px 0 20px; }
+  .mcp-hero-copy > .a2-acts { order: 5; }
+  .mcp-stream-top { height: 44px; }
+  .mcp-pause { top: 0; }
+  .mcp-rows { height: 136px; padding: 8px 0; }
+  .mcp-row { top: 8px; }
   .mcp-row { padding: 0 16px; height: 40px; }
   .mcp-via { grid-template-columns: minmax(0, 1fr); margin-top: 56px; }
   .mcp-via-l { justify-content: flex-start; }
@@ -202,7 +256,9 @@
   .mcp-parts-pause { position: static; margin: 0 0 16px auto; display: flex; }
   .mcp-sheet { position: relative; top: auto; grid-template-columns: minmax(0, 1fr); padding: 24px; gap: 24px; min-height: 0; }
   .mcp-stack { gap: 16px; }
-  .mcp-sheet-art { min-height: 220px; }
+  .mcp-sheet-art { min-height: 180px; }
+  .mcp-art.a0 { padding: 20px; gap: 8px; }
+  .mcp-art.a0 span { padding: 8px 12px; font-size: 13px; }
   .mcp-art.a1 { grid-template-columns: repeat(13, 10px); gap: 7px; }
   .mcp-art.a1 i { width: 10px; height: 10px; }
   .mcp-art.a2 { min-height: 220px; }
@@ -216,8 +272,16 @@
   .mcp-codes { grid-column: 1 / -1; }
   .mcp-repo { padding: 24px; }
   .mcp-close-copy, .mcp-repo { grid-column: 1 / -1; }
-  .mcp .x-codeblock .x-copy { height: 44px; padding: 0 16px; }
   .mcp-cfg { padding-top: 72px; }
+  .mcp-sh-rows li { padding-left: 10px; }
+}
+/* below 375 the four lines keep their breaks: the size follows the width (about 33px at 320) */
+@media (max-width: 374px) {
+  .mcp-h1 { font-size: calc((100vw - 32px) / 8.7) !important; }
+}
+@media (max-width: 360px) {
+  .mcp-art.a0 { padding: 16px 12px; gap: 6px; }
+  .mcp-art.a0 span { padding: 8px 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mcp *, .mcp *::before, .mcp *::after { animation: none !important; }

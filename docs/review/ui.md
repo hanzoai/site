@@ -1,189 +1,224 @@
-# /ui: James-eye review (third walk)
+# /ui: James-eye review (fourth walk)
 
-Reviewed: `main` @ `2586ae4b` (the page's own last change is `6967dabb`, "one real board drives the six chapters…"). Files: `components/pages/apps/UiPage.jsx`, `UiPage.css`, shared `components/v2/x-gauss/*`.
-Walked 7 Nov, about 15:45 to 16:30 UTC, on the running dev server, at 1470×801 and at 375×812 (touch, 2× DPR), plus 320 wide. The walk: slow wheel and touch scrolls of half a screen, with a 1.5 s dwell on each stop to see what moves untouched; a 150 ms state log for the first 5.5 s; hover and press probes on 12 controls; a 45-stop Tab crawl; keyboard runs on the Dialog, the menu and the sliders; a layout-shift PerformanceObserver; an h1 box log; console capture over 6 loads; reduced motion; JS off at both widths. `taste.py` OK, `parity.py /ui` text 59/59 and links 2/2, `variety.py` OK. I did not run `motion.mjs`; the frame logs above stand in for it.
+Reviewed: `main` @ `c7106d43`. The page's own last change is `788a0b2a`. Files: `components/pages/apps/UiPage.jsx`, `UiPage.css`, shared `components/v2/Settle.jsx` and `components/v2/x-gauss/*`.
+
+Walked 7 Nov, about 16:15 to 16:55 UTC, on the running dev server:
+- **Sizes:** 1470×801 (wheel), 375×812 (touch, 2× DPR), plus 320 and 375×667.
+- **Scrolling:** slow steps of 400px with a 2 s dwell at each stop, comparing the DOM at 0.5 s and 2 s to see what moves untouched. I took a screenshot at every stop.
+- **Logs:** a per-frame log of the board's state for the first 6 s, plus a log of the h1 box and the font-loading events.
+- **Probes:** hover and press on 17 controls, and the chapter-number preview.
+- **Keyboard:** two Tab crawls (fast, then at human pace with 600 to 900 ms between presses). I also tested the Dialog's keyboard behaviour.
+- **Phone rail:** I swiped the chapter rail through all 6 chapters.
+- **Checks:** a layout-shift PerformanceObserver, console capture over 10 cold loads, reduced motion at both widths, and JS off at both widths.
+- **Scripts:** `parity.py /ui` reports text 59/59 and links 2/2. `taste.py` OK. `variety.py` OK.
+- **Not run:** `motion.mjs`. The frame and state logs stand in for it.
 
 Verdict: 7/10
-First complaint: "Better. It moves, it's all greys, and nothing sits on top of anything now. But I scroll past the box of buttons and get the same box of buttons again, and all that changes is a little grey line at the bottom. After that it's a black room with a small headline in it, and the end is three grey strips. Nothing on the page is big. And on my phone there are still two black buttons on the first screen saying different things."
+First complaint: "Now it's alive. The 60 is a proper moment and the chapters actually change the board. But the first thing after the hero is the same box of buttons again, the end shows me the exact product list I saw one screen up, and the little window says 'chat' when it's clearly not chat. And when I tab through the board with the keyboard it throws a dialog at me and I can't get out."
 
-The cap applies: `docs/coverage/ui.md` makes claims that are false on the page (see answer 9), so this verdict cannot go above 7 until the card is true.
+The cap applies, and the walk lands at 7 on its own merits too:
+- **Cap.** One claim on `docs/coverage/ui.md` is false (part 1, "No dead button"; see answer 9).
+- **Merits.** A keyboard trap, and a red error badge for every reduced-motion visitor, keep it under 8 on their own.
 
-Fixed since the 6/10 at `c647368`, all re-checked:
-- The sliders are drawn (`role="slider"`; arrows, Page keys and drag move them; a hover ring on the thumb). The page has 0 `input[type=range]`.
-- The board's Dialog moves focus to Close, keeps Tab inside, closes on Esc and returns focus to "Ship it" (`aria-modal="true"`).
-- The menu takes Enter (focus goes to "button"), ArrowDown (to "dialog") and Esc (closes, focus goes back to "Options ▾").
-- The swatches are one tab stop with arrow keys.
-- The hero pause sits inside the token card (x 1368–1413, y 412–457, inside 973–1432).
-- On phone, the chapter pause sits beside the h2 with no overlap (h2 x 16–299, pause x 315–359).
-- The board's buttons hover (Ship it #525252 → #262626; Options border → ink). The stars chip is 44px and inverts on hover.
-- The dark room types once, then renders "Ship it" into the Hello() card. Copy copies only the two `npx` lines.
-- The chapters now act on one real board, not drawings.
+Fixed since the 7/10 walk, all re-checked:
+- **The board wakes.** The hero menu opens 1.1 s after load at 1470 and 0.9 s at 375. The Dialog opens about 2.4 s later, and the tokens retune after that.
+- **The chapters recompose the board.** Chapters 03 to 06 are real different views:
+  - 03: an 84px `--radius` readout that retunes;
+  - 04: chat, console and cloud layouts made of the same parts;
+  - 05: 45 cells filling, 9 at a time;
+  - 06: the three products, each lit in turn.
+- **"60" is a figure.** It is 112px Air at 1470 and 64px on the phone. It counts up once (32, 42, 51, 55, 58, 60) and the HTML carries 60.
+- **The close has an object.** "Stop reinventing buttons." is 64px (40px on the phone), with a board beside it.
+- **Phone: one solid per screen.** The page's GitHub asks are outlined, so only the header's "Try Hanzo" is solid.
+- **Hover says something.** A swatch under the pointer names its token ("steel #525252"). A chapter number under the pointer previews its chapter: hovering 05 while 01 was active moved the board to "05 / 06".
+- **Presses.** Swatches press at 0.97, and "Deploy to Cloud" presses with translateY(1px).
+- **Phone rail.** It is `proximity`. The board (y 70 to 438) and the chapter card (y 462 to 754) share one 812px screen in all 6 chapters.
+- **Hero table.** "every Hanzo dashboard" stays on one line at 375.
+- **Cold-load errors.** 0 console errors and no badge on 8 cold loads in default motion. The earlier hydration error only appears when a screenshot is taken while hydration is running (proved: 1 of 1 early-screenshot loads errored, 0 of 7 without).
 
 ## The 11 answers
 
 1. **Does it sell in 5 seconds, and does something move within 1 second?**
-   - **Sells: yes.** "Hanzo UI" (52px), "React Component Library" as a mono caption under it, the lede, an ink "GitHub ↗", and a real board of Button, Field, Panel and table beside a token panel.
-   - **Within 1 s: only just.** The h1 cut-in plays at first paint, and the right column drifts up 14px. The board, which is the page's idle object, does nothing for its first 1.5 s tick after hydration. In the state log the focus ring first moves at 3.66 s from navigation (FCP 0.87 s), so about 2.8 s after paint at 1470 and 2.1 s after paint at 375. The Dialog opens at about 4.2 s after paint. The menu waits a full cycle (about 9 s), because the script starts on `menu` at k=0 and its first tick lands on `idle`.
-   - **The first screen itself.** The h1 sits at y 234 under about 170px of empty white. The grey tray is scaled by Settle to x 10–1460, so its corners nearly touch the screen edges. It reads as a tray of boxes, not a hero.
+   - **It sells:** yes.
+     - "Hanzo UI" (52px) with "React Component Library" as a mono caption under it.
+     - The lede and an ink "GitHub ↗".
+     - A working board beside a token panel.
+   - **Something moves within 1 s:** yes.
+     - The h1 cut-in and the 14px drift of the right column play at first paint.
+     - The menu opens at 2375 ms from navigation (FCP 820 ms, load 1258 ms). On the phone it opens at 2293 ms (load 1380 ms).
+   - **It still reads as boxes.** The h1 sits at y 234 under about 170px of empty white. The object is three nested boxes: a grey tray, a white board and a white token card.
 
 2. **One thing in, one thing out, or a document?**
-   - **Hero to chapters.** The thing that comes in is the thing that just went out. The chapter board (`ShowBoard`) is the hero board again: the same Ship it, Options, Field, Panel and three "in production" rows.
-   - **Chapter by chapter.**
-     - 01 adds tags and the menu or Dialog. It is good.
-     - 02 walks the ring. It is fine.
-     - 03 retunes radius and grey. It is visible.
-     - 04 changes only a 13px word in the title bar ("chat → console → cloud"). The board does not change.
-     - 05 fills 18 tiny cells in the footer strip.
-     - 06 outlines one row.
-
-     From 03 to 06 the big object barely changes, and the chapter's change lives in a 56px footer line.
-   - **After the chapters.** The page turns back into a document: a dark room (it types once, then holds still), "Paste and ship", "Stop reinventing buttons.", then the "Get UI" strip. That makes 4 quiet blocks in a row.
+   - **Much better.** On desktop the chapter board sticks and its body recomposes as each chapter reaches the middle.
+   - **But the first thing in is the thing that just went out.**
+     - Chapter 01 is the hero board again (Ship it, Options, Field, Panel, three "in production" rows) with tags added.
+     - Chapter 02 is the same board with a ring walking.
+     - So the first two screens after the hero repeat it (desk s03).
+   - **The close repeats chapter 06.** It is the same `ShowBoard at={5}` product list, one screen later (desk s10 against s14).
+   - **The page trails off after its ending.** Under the closing band come "Paste and ship" (a black card, loud) and then the "Get UI" strip. The page does not end on its band.
 
 3. **Does every section hold a real visual object?**
-   - **Hero:** yes, a working board and token panel.
-   - **Chapters:** yes, but it is the same object as the hero.
-   - **Dark room:** yes, a terminal and a rendered button.
-   - **Paste:** a shared prompt card.
-   - **"Stop reinventing buttons." and "Get UI":** no object. A 26px line sits alone at the left of an empty 1470px band (screenshot at y 5415).
+   Yes, every section has one:
+   - the hero board and token panel;
+   - the chapter board;
+   - the terminal and the rendered button in the dark room;
+   - the closing board.
+
+   "Paste" is a shared prompt card. "Get UI" is a strip of chips with no object, which is fine as proof.
 
 4. **One ask in the sticky header, nothing floating over content? Does scale have rhythm?**
-   - **Desktop.**
-     - The header ask becomes an ink "GitHub" once the hero ask leaves, and it yields at the close: at y 5200 and 5600 only "View on GitHub" is solid. Good.
-     - For the first 1 to 2 s the header shows a solid "Try Hanzo" beside the hero's solid "GitHub" (frames at 0.3 s and 1 s), until it turns outlined.
-   - **Phone: fails.**
-     - The header ask stays a solid "Try Hanzo" for the whole page. It never becomes "GitHub".
-     - First screen: "Try Hanzo" (y 8) and "GitHub ↗" (y 345) are both solid.
-     - Close: "Try Hanzo" and "View on GitHub ↗" (y 275) are both solid. That is two verbs, which is the same complaint as last time.
-     - The "GitHub →" thumb bar shows at y 758 only around scroll 700 to 800, then leaves the DOM for the rest of the page. So for most of the phone walk the page's own ask is not in the bar.
-   - **Scale.**
-     - Measured sizes: h1 52px; every h2 and h3 26px (24 and 21px on phone); body 16px; mono 12 to 13px.
-     - Nothing on the page is big, and nothing grows or shrinks as you scroll. The "60" in "From init to UI in 60 seconds" is set inline at 26px, so the one figure Hanzo gives is not a figure.
-     - The dark room puts a 26px line in about 300px of black.
-     - The rhythm is all medium.
+   - **Desktop: yes.**
+     - The header's "Try Hanzo" is outlined while the hero's "GitHub" is solid.
+     - From y 360 the header carries a solid "GitHub".
+     - At the close (y 5040 and 5400) only "View on GitHub" is solid.
+   - **Phone: half.** One solid shows per screen, but it is the shared header's "Try Hanzo" for the whole page. The page's own ask never sits in the header, and the shared request is still open. Nothing floats over content apart from the shared cookie card, which covers about half of the phone's first screen. That card is shared chrome, not this page.
+   - **Scale: yes, now.** The sizes have rhythm:
+     - h1 52px;
+     - 26px section heads;
+     - the 84px radius readout in chapter 03;
+     - the 112px "60" in the dark room;
+     - the 64px closing line.
 
-5. **Does every hover and press answer, with no jump?** Mostly. With no layout jump (Δy 0 or ±1):
-   - hero "GitHub" (ink → #2c2c2e, 0.98);
-   - "View on GitHub" (same);
-   - board "Ship it" (→ #262626, 0.98);
-   - "Options ▾" (border → ink, 0.98);
-   - the chapter numbers (#f2f2f2 fill, 0.97);
-   - terminal Copy (veil and ring, 0.986);
-   - pnpm Copy;
-   - stars chip (inverts, 0.98);
-   - slider thumb (ring, 0.98);
-   - pause (inverts).
+     One big thing shows per screen.
 
-   These miss:
-   - **Accent swatches:** hover scale 1.08, and press does nothing (it stays 1.08).
-   - **"Deploy to Cloud":** the underline darkens on hover, and press does nothing.
-   - **Hover tells you nothing.** No hover shows a number or a preview: the swatches don't name their token, and the chapter numbers don't preview.
+5. **Does every hover and press answer, with no jumps?** Yes, all 17 probed controls answer, with Δy of 1px or less:
 
-6. **Overlap, font swap, layout shift?** Clean.
-   - **CLS:** 0.0010 over the full desktop walk and 0.0004 over the phone walk. The h1 box held at top 234 and height 60 from first sample to 4 s.
-   - **Fonts:** Zen and Zen Mono load, with no visible swap.
+   | Control | Hover | Press |
+   |---|---|---|
+   | Hero GitHub and View on GitHub | #0a0a0a → #262626 | 0.98 |
+   | Board "Ship it" | → #262626 | 0.98 |
+   | "Options" | border → ink | 0.98 |
+   | Swatches | 1.08, and the caption names the token | 0.97 |
+   | Field | fill darkens | focus ring |
+   | Chapter numbers | #f2f2f2 fill and a board preview | 0.97 |
+   | Pauses | invert | 0.94 |
+   | Terminal Copy | veil | 0.99; copies exactly the two `npx` lines, then shows "Copied" |
+   | pnpm and paste Copy | answer | answer |
+   | Stars chip | inverts | 0.98 |
+   | "Deploy to Cloud" | underline darkens | translateY(1px) |
+
+   - **The miss.** The rendered "Ship it" in the Hello() card is a real `<button>`, focusable (tabIndex 0) with a pointer cursor. Clicking it does nothing (URL and DOM unchanged). It is a dead button.
+   - **Smaller.** The shared Copy's hover ink is #48484a, which is not a deck value (shared `Paste`/`Copy`).
+
+6. **Overlap, font swap, layout shift?** Mostly clean.
+   - **CLS:** 0.0055 over the desktop walk and 0.0024 over the phone walk.
+   - **h1 box:** it held still (top 234, height 60 at desktop; top 164, height 46 at phone) from first sample to 5 s.
+   - **Fonts:** Zen and Zen Mono load by about 1.0 s with no visible swap.
    - **Width:** no horizontal scroll at 320, 375 or 1470.
-   - **Overlap:** no control overlaps a heading at either width.
-   - **Small overlaps inside the demo:**
-     - In chapter 01, the open menu covers the `.panel` tag (desktop).
-     - On phone, the scrim and Dialog cut through the `.field` tag ("f̶i̶e̶l̶d").
-   - **Phone wrap:** "every Hanzo dashboard" wraps to 2 lines in the hero board's table at 375 (row height 44 against 22).
+   - **Primary at 375×667:** the hero ask's bottom is at y 397.
+   - **Defects inside the demo:**
+     - In chapter 01 the open menu covers the `.panel` tag at desktop.
+     - On the phone, the closing board's fixed 268px body clips the third product tile. "every Hanzo dashboard" sits flush against the board's bottom with its corners cut (phone s08 and s09).
+     - Chapters 03 and 04 leave about 120 to 170px of blank white at the bottom of the 404px board body.
 
 7. **Which reference, and is its motion there?**
-   - **apple.com product page:** partly. A sticky board drives the chapters on desktop. But "one panel changes" is mostly a footer line changing.
-   - **motion.dev:** yes. The menu and Dialog open on ease-emphasis, the tokens morph radius over 0.5 s, and the asks are magnetic.
-   - **synchronized.studio:** absent. Nothing opens into its page.
-   - **anthropic launch:** absent. There is no hero figure, and the "60" is not used.
-   - **The real feel:** a tidy docs page.
+   - **apple.com product page: yes.** A pinned stage where one panel changes, and a big figure in the dark room.
+   - **motion.dev: yes.** The menu and Dialog open on ease-emphasis, the tokens morph radius over 0.5 s, the asks are magnetic, and the Tab key presses.
+   - **anthropic launch: partly.** "60" is now a hero figure.
+   - **synchronized.studio: absent.** It does not apply here; the card marks Morph n/a.
+   - **The feel:** a confident product demo, not a docs page.
 
-8. **Different from its neighbours?**
-   - **The hero idea is its own:** a board that uses itself, with tokens you can drag.
-   - **/gui is too close.** Its own top comment describes "five sticky chapters" and "the graphite room is the token editor". /ui has six sticky chapters and a token editor too, so the two library pages (both in PAGES.md group 5) share the same two ideas.
-   - **The close is shared.** The "Get UI" strip (License chip, stars chip, Deploy to Cloud) has the same shape as /zap, /treasury, /gui and about 25 other pages that render `License:` through the shared Frame.
+8. **Different from its neighbours?** Mostly.
+   - **Its own hero idea:** a board that uses itself, with tokens you can drag.
+   - **/gui shares the skeleton.** It has a live hero object, sticky chapters and a token editor, so the two library pages still share their structure. The hero media differ: four device frames on /gui, one component board here.
+   - **The "Get UI" strip is the shared Frame strip,** the same as on about 25 other pages.
 
-9. **Is every one of the 18 parts covered?** The card has 18 headings, but these claims are false on the page:
-   - **Part 1, "One solid fill per viewport":** false on phone. The first screen and the close both show "Try Hanzo" and a GitHub ask, both solid.
-   - **Part 3, "the board opens its menu and dialog by itself within 1.5 s":** false. The first change is about 2.8 s after paint, the Dialog about 4.2 s and the menu about 9 s.
-   - **Part 4, "Sticky ask 'GitHub'":** true on desktop only. On phone the header holds "Try Hanzo" and the bar is gone after about 800px.
-   - **Part 8, "press .98 … on every control":** false for the swatches and "Deploy to Cloud".
-   - **Part 17, "Blocked network: complete page, no console errors":** 1 of 6 cold loads logged a hydration mismatch ("A tree hydrated but some attributes of the server rendered HTML didn't match"), and the red "1 Issue" badge stayed on screen. The other 5 loads were clean, so the error is intermittent, but it is there.
+9. **Is every one of the 18 parts covered?** The card has 18 filled parts, and its other claims checked true on the walk:
+   - 1.0 s wake;
+   - 268px phone body, with board and card on one screen;
+   - no wrap at 375;
+   - copy equals display;
+   - "60" counts once;
+   - presses and hover labels;
+   - inert chapter boards;
+   - CLS under 0.01;
+   - parity 59/59.
+
+   Problems with the card:
+   - **False, part 1, "No dead button":** the Hello() "Ship it" is a focusable `<button>` with a pointer cursor and no action. MASTER part 1 says a button with no destination is hidden, never looped.
+   - **Incomplete, part 17:** the card says the old hydration error is "unverified" and comes from shared parts. It is now verified, and it is deterministic under reduced motion:
+     - Each reduced-motion load (2 of 2 at 1470, 1 of 1 at 375) logs "A tree hydrated but some attributes … didn't match".
+     - The diff is `transform: "none"` against `"translateY(10px)"`, `transform-origin: "50% 0%"`.
+     - It comes from `Settle`, which reads `useReducedMotion()` in render.
+     - The red "1 Issue" badge stays on screen.
+     - This page wraps its hero in `Settle`, so every reduced-motion visitor to /ui gets the error. That fails DONE item 3 in that mode.
+   - **Unclaimed, part 12:** "Keyboard reaches every control" is true only by luck of timing (answer 10b).
 
 10. **Banned tells?** None from the hard list:
-    - 0 hues (`taste.py` OK);
-    - no eyebrow above a headline (the mono caption is below the h1);
+    - 0 hues;
+    - no eyebrow above a headline;
     - no springs;
     - no Inter;
     - no gradient text;
     - no browser-default control;
     - nothing floating over content on desktop.
 
-    Near misses:
-    - **"In your face" is not the problem; flatness is.** Every heading is 26px.
-    - **Literal colours.** The page CSS uses hex values that are not in the deck: `#f5f5f7` (the render card), `#0a0a0b`, `#1d1d20`, `#2c2c2e` and `#86868b` (MASTER part 7: tokens only, no literal hex). They pass the chroma check but are Apple's greys, not Hanzo's.
+    Rule breaks that are not on the banned list:
+    - **a. The h1 has `white-space: nowrap`** (`.ui-h1`), which MASTER part 12 forbids. It fits at 320 today.
+    - **b. A keyboard trap in the hero board.** The self-running script keeps going while keyboard focus is on the board. At human Tab pace (600 ms), it went like this:
+      1. Tab reaches "Ship it". The script opens the Dialog by itself.
+      2. The next Tab lands on the Field. Its `onFocus` sets `mine`, and the Dialog's focus trap pulls focus into "Close".
+      3. The next 14 Tabs (about 8.4 s) all stay on "Close", until the 8 s `mine` timeout lets go.
+      4. The Field is skipped.
 
-11. **Is the copy untouched?** Yes. Parity is text 59/59 and links 2/2. The added strings are demo labels ("Field", "Panel", "Options ▾", the `.button`/`.panel` tags, "chat/console/cloud") and they are listed as copy questions on the card.
+      In the fast crawl, 55 Tab presses in a row stayed on "Close". A keyboard visitor who never asked for the Dialog gets it, and gets stuck in it.
+    - **c. The window title bar says "chat" when it isn't chat.** It reads "chat" in chapters 01, 02, 03, 05 and 06 and on the closing board. `APPS[0]` is the default; only chapter 04 changes it.
+    - **d. Literal hex values in the page CSS.** They are all deck values, but MASTER part 7 says tokens only.
+
+11. **Is the copy untouched?** Yes.
+    - Parity is text 59/59 and links 2/2.
+    - The demo labels are listed as copy questions on the card: "Field", "Panel", "Options ▾", the `.button`/`.panel` tags, "chat/console/cloud", "Tab", "/ 45".
 
 ## Missing from the 18 parts
-- **1 Strategy.** There are two solid fills on the phone's first screen and at its close.
+- **1 Strategy.** The dead "Ship it" button in the Hello() card.
 - **3 Narrative.**
-  - The hero is a hand-built `LineMask` block, not `PageHero`.
-  - The next idea repeats the hero object.
-  - The page ends on three blocks (Paste, Stop, Get UI), not one proof strip and one `Band`.
-  - The board's first idle act lands after 2 s.
-- **4 Conversion.**
-  - The phone header never carries the page's ask.
-  - The phone thumb bar appears for about 100px of scroll, then leaves the DOM.
-- **6 Content.** "every Hanzo dashboard" wraps in the hero table at 375.
+  - Chapters 01 and 02 repeat the hero composition.
+  - The closing board repeats chapter 06.
+  - The page ends Band → Paste (black card) → Get UI, not proof → Band → footer.
+  - About 170px of empty white sits above the h1 at desktop.
+- **4 Conversion.** On the phone the header never carries "GitHub". This is a shared request, still open.
 - **7 Visual.**
-  - Non-deck literal greys (#f5f5f7, #86868b, #1d1d20, #2c2c2e, #0a0a0b) and literal shadows in page CSS.
-  - The hero is still three nested boxes (grey tray, white board, white token card), with the tray scaled to within 10px of the screen edges at load.
-  - The page differs too little from /gui.
-- **8 Components.**
-  - The swatches and "Deploy to Cloud" have no press state.
-  - Hover never carries information.
-- **9 Motion.**
-  - The board's script starts on a wasted `idle` tick, so the menu waits about 9 s.
-  - In chapters 03 to 06 the change sits in the footer, not on the board.
-  - The dark room holds still after its one typing run.
-- **11 Mobile.**
-  - The swipe rail is `scroll-snap-type: x mandatory`, where MASTER part 8 says proximity.
-  - The board (y 209–730) and the chapter card (from y 754) do not fit on one 812px screen, so you swipe text you can't read while watching a board whose change you can't see. One of the two is always off screen.
-- **17 States.** There is an intermittent hydration mismatch with the red dev badge.
-- **18 Handover.** The card overclaims (answer 9), and the `V2: 7/10` line is self-scored.
+  - The hero is three nested boxes (tray, board, token card).
+  - The page CSS uses literal hex, not tokens.
+  - The "chat" title bar mislabels five of the six views.
+- **8 Components.** The rendered "Ship it" has no action. The shared Copy hover is #48484a.
+- **9 Motion.** The board's self-running script does not yield to keyboard focus.
+- **11 Mobile.** The closing board clips its third tile at 375.
+- **12 Accessibility.**
+  - The keyboard trap in the hero Dialog, and the Field skipped in the Tab order.
+  - `white-space: nowrap` on the h1.
+- **17 States.** Under reduced motion every load hydrates with a mismatch and shows the red badge (`Settle`).
+- **18 Handover.** The card overclaims part 1, and the `V2: 7/10` line is self-scored.
 - **Passing:**
-  - one h1 and one `main#main`;
-  - JS off at both widths (45 text nodes, 0 hidden, terminal at full opacity);
-  - under reduced motion, 0 animations after 3.5 s, the board still and the terminal's 12 of 12 lines with "Ship it" rendered;
-  - Tab crawl: 45 of 45 stops visible with a ring;
-  - CLS of 0.001 or less;
+  - one h1 and `main#main`;
+  - JS off at both widths (h1 present, 0 hidden or faint text nodes, no horizontal scroll);
+  - reduced motion: 0 running animations after 3.5 s, the board still, the terminal 12 of 12 lines with "Ship it", "60" as is;
+  - every Tab stop visible with a 2px ring once it scrolls into view (B crawl);
+  - CLS under 0.01;
   - no scroll at 320;
   - 44px targets;
   - `data-cta` and `data-thumb` on both asks;
   - parity, taste and variety pass.
 
 ## Fixes (in order)
-1. **Make the card true, then make the phone carry one ask.**
-   - On phone, the header ask must be the page's ask ("GitHub"), or outlined while a page solid is on screen. That way the first screen and the close each show one solid.
-   - Keep the thumb bar present after the hero ask leaves, not just for 100px.
-   - Correct the card's "1.5 s", "every control", "one solid" and "no console errors" lines to what the page does.
-2. **Stop showing the same box twice.** The chapter board must be a different view of the library, not the hero board again.
-   - One option: on desktop, pin the hero board itself and let the chapters act on it.
-   - Another: change the chapter board's composition so each chapter changes the board's body, not its footer.
-   - In 04, the board itself must become chat, console and cloud (three different real layouts made of the same parts), not a 13px word swap.
-   - In 05, let the stylesheet fill across the board.
-   - In 06, show the three products.
-3. **Give the page one big thing per screen.**
-   - Make "60" in "From init to UI in 60 seconds" a 64px figure that counts or settles once (the true value stays in the HTML, tabular numerals).
-   - Give the close an object, for example the hero board, settled small beside "Stop reinventing buttons.", so the page ends on the thing it sells.
-   - Merge Paste, Stop and Get UI into one closing `Band`, with the strip under it as quiet proof.
-4. **Wake the hero inside 1 s.**
-   - Start the script on its first real act (the menu) on the first tick, about 600 ms after hydration, then keep the 1.5 s rhythm.
-   - Let the tray settle inside the gutters at load (no edge-to-edge scale), so the first screen is not a tray of boxes.
-5. **Every tap answers, and says something.**
-   - Give the swatches a 0.97 press and a tooltip-free label on hover (the token name and value, e.g. "graphite #404040").
-   - Give "Deploy to Cloud" a translateY(1px) press.
-   - Let a chapter number's hover preview its chapter on the board.
-6. **Finish the edges.**
-   - Keep "every Hanzo dashboard" on one line at 375 (shorter row padding, or let the status drop under it by design).
-   - Make the rail `proximity`, and on phone show the board's changing part (the footer line or the tagged part) inside the chapter card, so both are on one screen.
-   - Swap the non-deck greys for deck tokens: #f5f5f7 → #f5f5f5, #86868b → #737373, #1d1d20 or #2c2c2e → #171717 or #262626, #0a0a0b → #0a0a0a.
-   - Find the intermittent hydration mismatch (attributes that differ server versus client on first load) so no load shows the red badge.
+1. **Stop the keyboard trap.**
+   - Freeze the hero board's script (`mine = true`) as soon as focus enters the board (`onFocusCapture` on `.ui-board` and `.ui-tok`).
+   - Only trap Tab inside the Dialog when the visitor opened it themselves (a click or Enter on "Ship it"). Never trap it when the script opened it.
+   - Re-crawl at human pace: Ship it → Options → Field → Pause → swatches → sliders, with no stop on "Close" unless you opened it.
+2. **Kill the reduced-motion hydration error on this page.**
+   - Render `Settle`'s reduced-motion branch only after mount (the same style on server and first client render), or drop `Settle` from the hero. It only lifts 10px here.
+   - File the fix to `Settle`'s owner in `docs/requests/ui.md`.
+   - Check that a reduced-motion cold load shows no badge at both widths.
+3. **No dead button.** In the Hello() card, make "Ship it" a non-interactive render: a `span` styled as the button, or `inert`/`aria-hidden` on the card. Otherwise give it a real answer, for example opening the same Dialog. Then correct part 1 on the card.
+4. **Stop showing the same thing twice.**
+   - Chapter 01 must not be the hero board again. Recompose its body the way 03 to 06 already are, for example the two real components open side by side with their tags, and the class-only parts as a quiet row.
+   - Chapter 02 should be the keyboard path drawn on a different arrangement.
+   - The closing board must not be chapter 06 again. Use a view the visitor has not seen, or the hero board itself, settled small with its tokens at rest.
+5. **End on the band.** Move "Paste and ship" and the "Get UI" strip above "Stop reinventing buttons.", so the order is proof, then the band, then the footer. Make the Paste card quiet: on paper, not a black card next to the ending.
+6. **Fix the craft edges.**
+   - Make the title bar name the view, or drop the word outside chapter 04 (no "chat" on a token readout).
+   - Give the phone's closing board body enough height or bottom padding that the third tile is whole.
+   - Trim the blank space at the bottom of chapters 03 and 04, or vertically centre their views.
+   - Remove `white-space: nowrap` from `.ui-h1`.
+   - Pull the h1 up so less than 170px of empty white sits above it.
+   - Flatten the hero to one surface: the tray, or the board and card, not both.

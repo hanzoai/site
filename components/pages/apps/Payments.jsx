@@ -380,7 +380,7 @@ function Move() {
           </div>
           <label className="pay-move-bar">
             <span className="bz-kick">Split by percentage</span>
-            <input type="range" min="0" max="100" step="5" value={pct} onChange={(e) => setPct(+e.target.value)} onPointerDown={() => setAct(true)} onPointerUp={() => setAct(false)} onPointerCancel={() => setAct(false)} onBlur={() => setAct(false)} style={{ '--f': pct / 100 }} aria-valuetext={pct + '% to the second processor'} />
+            <input type="range" min="0" max="100" step="5" value={pct} onChange={(e) => setPct(+e.target.value)} onPointerDown={() => setAct(true)} onPointerUp={() => setAct(false)} onPointerCancel={() => setAct(false)} onBlur={() => setAct(false)} style={{ '--f': String(pct / 100) }} aria-valuetext={pct + '% to the second processor'} />
           </label>
           <div className="pay-move-dots" aria-hidden="true">
             {RANK.map((r, i) => <i key={i} className={r < pct ? 'b' : ''} style={{ '--d': Math.min(600, Math.abs(r - from) * 14) + 'ms' }} />)}

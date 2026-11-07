@@ -58,6 +58,10 @@
 .pay-try { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45em; }
 .pay-try li { display: flex; justify-content: space-between; align-items: center; gap: .6em; min-height: 3.3em; padding: 0 1.05em; border-radius: 12px; border: 1px solid var(--bz-line); font-size: var(--t-m); }
 .pay-try li span { color: var(--bz-muted); white-space: nowrap; }
+/* the payoff never leaves its box: a row too narrow for label and chip puts the chip on its own line inside it */
+.pay-try li { flex-wrap: wrap; row-gap: .35em; padding-block: .55em; min-width: 0; }
+.pay-try li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pay-try li b { flex: none; max-width: 100%; }
 .pay-try b { font-size: var(--t-s); font-weight: 497; }
 .pay-try b.pay-chip-no { padding: 5px 9px; border-radius: 6px; background: var(--bz-ink); color: #fff; }
 .pay-try b.pay-chip-ok { padding: 4px 8px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--bz-ink); color: var(--bz-ink); font-weight: 606; }
@@ -321,7 +325,8 @@ a.pay-chip:active { transform: scale(.97); }
   .pay-move-bar input::-webkit-slider-thumb { height: 72px; }
   .pay-move-dots { grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 2px 0; margin-top: 28px; }
   .pay-move-acts { margin-top: 28px; }
-  .pay-move-key { flex-wrap: wrap; }
+  .pay-move-key { flex-wrap: nowrap; white-space: nowrap; letter-spacing: .06em; gap: 8px; }
+  .pay-api-code pre { white-space: pre; overflow-x: auto; }
 
   .pay-cases-top .bz-headline, .pay-cases-top .bz-lede { grid-column: 1 / -1; }
   .pay-cases-top .bz-lede { margin-top: 16px; }
@@ -351,7 +356,10 @@ a.pay-chip:active { transform: scale(.97); }
 /* the methods light one by one the first time the list is reached (JS on only; JS off they are ink) */
 html.js .pay-co-methods li { color: var(--bz-track); transition: color .4s var(--bz-out); transition-delay: calc(var(--i) * 110ms); }
 html.js .pay-co-methods.lit li { color: var(--bz-ink); }
-@media (hover: hover) { .pay-co-methods.lit li { transition-delay: 0s; } .pay-co-methods.lit li:hover { color: var(--bz-muted); } }
+.pay-co-methods li { text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 2px; text-underline-offset: 8px; }
+@media (hover: hover) { .pay-co-methods.lit li { transition: color .15s var(--bz-out), text-decoration-color .15s var(--bz-out); transition-delay: 0s; } .pay-co-methods.lit li:hover { color: var(--bz-ink); text-decoration-color: var(--bz-ink); } }
+/* fewer dead bands between the back-half sections */
+.pay-tax.bz-sec, .pay-cases.bz-sec, .pay-more.bz-sec { padding-top: clamp(48px, 6vw, 96px); }
 /* the four cases deal in as one list */
 html.js .pay-cases .pay-case { opacity: 0; transform: translate3d(0, 24px, 0); transition: opacity .5s var(--bz-emph), transform .5s var(--bz-emph); }
 html.js .pay-cases .pay-case.c1 { transition-delay: 60ms; } html.js .pay-cases .pay-case.c2 { transition-delay: 120ms; } html.js .pay-cases .pay-case.c3 { transition-delay: 180ms; }

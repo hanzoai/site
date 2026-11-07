@@ -6,4 +6,6 @@
 
 3. **Kit `Band` (kit.jsx / globals.css owner).** `Band` renders a black room (`.x-band`, `#000`) with `#f5f5f7` / `#a1a1a6` text (not deck values) and its action is a `Go` with no `data-cta`. On pages that already have two dark rooms it cannot be used without breaking "at most 2 black or graphite rooms". Request: a `light` (Quiet `#f5f5f5`) variant, deck greys, and a `ctaId` prop passed to the action as `data-cta`. Until then this page's close is page-local (`.kg-end`).
 
+5. **Deck `tokens.css` (globals owner).** The round-2 review asks this page to read its colours from `tokens.css` (MASTER part 7), but no such file exists, and the shared tokens in `app/system.css` / `app/globals.css` are off the deck ramp (`--hz-500: #6e6e73`, `--card: #f5f5f7`, `--soft: #6e6e73`). Request: a shared `tokens.css` with the deck ramp (`#0a0a0a`, `#525252`, `#737373`, `#a3a3a3`, `#d4d4d4`, `#e4e4e7`, `#ededed`, `#f2f2f2`, `#f5f5f5`, `#171717`, `#000`, and the white-on-black steps). Until then `KaiGuide.css` names every deck value once at the top of `.kg` and the rules read only those names.
+
 4. **FooterHTML hydration warning (shared shell).** Still logs one hydration mismatch on load at both sizes (the footer's `__html` differs between server and client).

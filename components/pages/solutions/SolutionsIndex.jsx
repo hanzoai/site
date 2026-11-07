@@ -17,7 +17,7 @@
    either; the hero reel shows the same jobs on phones, where there is no pointer.
    Deletes: the crimson accent, the "Solutions" kicker over the h1, the invented "All" chip, the group label on every
    tile, the endless reel loop, raw <img>/<video> (kit Img and Film), opacity:0 arrival states. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { A, Img, Film } from '../../kit';
@@ -124,6 +124,8 @@ export default function SolutionsIndex({ doc, data }) {
   const film = (data[cur.slug] || {}).film || doc.film;
   const [group, setGroup] = useState(null);
   const shown = all.filter((it) => !group || it.group === group);
+  // each solution keeps one picture wherever it appears (the filter never swaps it): assigned once, in the wall's order
+  const filmOf = useMemo(() => { const f = spread(all.map((it) => (data[it.slug] || {}).film)); return Object.fromEntries(all.map((it, i) => [it.href, f[i]])); }, [all.length]); // eslint-disable-line react-hooks/exhaustive-deps
   const words = doc.title.split(' ');
   const lines = [words.slice(0, 2).join(' '), words.slice(2, 4).join(' '), words.slice(4).join(' ')];
   const [ask, other] = doc.actions;
@@ -191,7 +193,7 @@ export default function SolutionsIndex({ doc, data }) {
           </div>
           <ul className="xso-grid">
             <AnimatePresence initial={false}>
-              {(() => { const films = spread(shown.map((it) => (data[it.slug] || {}).film)); return shown.map((it, i) => <Tile key={it.href} it={it} d={{ ...(data[it.slug] || {}), film: films[i] }} w={span(i, shown.length)} k={i} n={shown.length} />); })()}
+              {shown.map((it, i) => <Tile key={it.href} it={it} d={{ ...(data[it.slug] || {}), film: filmOf[it.href] }} w={span(i, shown.length)} k={i} n={shown.length} />)}
             </AnimatePresence>
           </ul>
         </div>

@@ -106,7 +106,10 @@ html.js .s3-strip { animation: s3-up .3s var(--lx-ease) both; }
 /* a refused fifth tap: the tile nudges sideways once; the ten that survive stay bright (never disabled-grey) */
 .s3-vol.no { animation: s3-no .3s cubic-bezier(.4, 0, .2, 1); }
 @keyframes s3-no { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-.s3-read { white-space: nowrap; }
+@media (max-width: 899px) { .s3-read { white-space: nowrap; } }
+.s3-read { max-width: 100%; }
+/* the black room: one figure is the moment, the other three rest at section size */
+.s3-spec .lx-spec-row:not(:first-child) .lx-spec-v, .s3-spec > *:not(:first-child) .lx-spec-v { font-size: 26px !important; }
 @media (prefers-reduced-motion: reduce) { .s3-cells i.x, .s3-cells b, .s3-vol.no { animation: none; } }
 
 /* the black room: the figures at their resting 64px (the room's one big thing), then the prompt */

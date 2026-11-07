@@ -4,9 +4,9 @@
 // CTA: Read the docs (gateway.hero, gateway.close).
 // Metric: cta_click gateway.hero
 // Signature: the gate, running: one request at a time checked, stripped, stamped or turned away (429) across a full-width lane.
-// Beyond: Forge one yourself: pick a credential and fake headers, see what the service behind the gate receives.
+// Beyond: chapter 02, opened: pick a credential and fake headers, see what every service behind the gate receives.
 /* Gateway (v2, archetype A Launch).
-   V2: 8/10 round 3: six chapters are six scenes that act their rule out (JWKS check, headers struck and written, an empty route map, buckets draining to a 429, a ping that stops at the process, the gateway sliding into the cloud binary); phone pins one short scene under the header while the words swap; dots name their chapter; reduced motion shows every final frame; Settle and the growing statement carry no inline style before mount (no hydration mismatch); prompt wraps under its api line; related rows preview where they go.
+   V2: 8/10 round 4: phone chapters carry their own scene above their words (nothing pinned over text); landed requests get their own lane so the card never crosses them; the lane leans 2.5° to a fine pointer; the statement cuts in by its line; the dark room is chapter 02 opened (no repeated heading or sentence, real switches); Paste and ship sits beside the console, Related capabilities closes the page; larger scenes, one section-padding step, hovers on console rows, icons and the close's links; Hanzo's case on every label.
    Signature: the gate, running across the whole screen. One request at a time arrives from the left carrying a token and
    a forged X-Org-Id; at the gate the token is checked against JWKS, the forged header is torn off, the real identity is
    stamped on from the claims and the request walks through to Hanzo Cloud. A token bucket on the gate drains with each
@@ -21,7 +21,7 @@
    CTA: Read the docs (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
-import { Cta } from '../../kit';
+import { A, Cta } from '../../kit';
 import { Console, useLive } from './Frame';
 import { Lines } from '../../v2/LiftStage';
 import GwChapters from './gateway/GwChapters';
@@ -35,78 +35,109 @@ import './Gateway.css';
 const EASE = [0.16, 1, 0.3, 1];
 const CALLERS = ['payments-api', 'checkout-web', 'docs-site'];
 
-/* The lane: one request at a time through the gate (arrive, token checked, forged header torn off, identity stamped,
-   through), or a 429 when the bucket is empty. Runs only while on screen. */
+/* The lane: one request at a time through the gate. It arrives at the line, its token is checked, the forged header is
+   torn off and identity is written at the line, then it crosses and lands as a trusted row in the Hanzo Cloud ledger on
+   the far side; or it gets a 429 at the line and goes back when the bucket is empty. Runs only while on screen.
+   First frame (server HTML, first client render and reduced motion alike): the finished check, at rest on the line. */
+const STEPS_OK = [1100, 950, 900, 1300, 1100];
+const STEPS_429 = [1000, 1500, 900];
+const LEDGER = [{ id: -1, w: 'docs-site' }, { id: 0, w: 'payments-api' }];
 function Lane() {
   const [ref, seen, calm] = useLive(0.25);
+  const [wd, setWd] = useState(1400); // the lane's width, for where the ledger sits on the far side
+  const [wide, setWide] = useState(true); // the ledger shows only above the 900px breakpoint (as the CSS has it)
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => { setWd(e.contentRect.width); setWide(innerWidth > 900); });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ref]);
+  // a fine pointer leans the lane toward it (2.5° at most), written straight to the element; flat on leave, none with
+  // reduced motion or touch
+  const tilt = (e) => {
+    const el = ref.current;
+    if (!el || calm || e.pointerType !== 'mouse') return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(1600px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 5).toFixed(2)}deg)`;
+  };
+  const flat = () => { if (ref.current) ref.current.style.transform = ''; };
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
-  const [n, setN] = useState(1); // one request has already landed, so the log is never empty
-  const [phase, setPhase] = useState(0);
+  const [n, setN] = useState(1);
+  const [phase, setPhase] = useState(3); // the first frame is the finished check (identity written, at rest on the line)
   const [bucket, setBucket] = useState(4);
+  const [log, setLog] = useState(LEDGER);
+  const boot = useRef(true); // the first card renders its finished parts with no entrance, so nothing jumps on hydration
   const limited = bucket === 0;
-  // reduced motion: the finished check, at rest at the gate (JWKS ticked, forged header gone, identity written)
-  useEffect(() => { if (calm) { setBucket(4); setPhase(3); } }, [calm]);
+  const who = CALLERS[n % CALLERS.length];
   useEffect(() => {
     if (!live) return;
-    const steps = limited ? [1000, 1500, 900] : [1100, 950, 900, 950, 1200];
+    const steps = limited ? STEPS_429 : STEPS_OK;
     if (phase >= steps.length) {
-      const t = setTimeout(() => { setN((v) => v + 1); setPhase(0); setBucket((b) => (b === 0 ? 4 : b - 1)); }, 120);
+      const t = setTimeout(() => {
+        boot.current = false;
+        if (!limited) setLog((l) => [{ id: n, w: who }, ...l].slice(0, 3)); // it lands as a trusted row on the far side
+        setN((v) => v + 1); setPhase(0); setBucket((b) => (b === 0 ? 4 : b - 1));
+      }, 60);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setPhase((p) => p + 1), steps[phase]);
     return () => clearTimeout(t);
-  }, [phase, live, limited]);
-  const who = CALLERS[n % CALLERS.length];
+  }, [phase, live, limited, n, who]);
   const left = limited ? bucket : bucket - (phase >= 1 ? 1 : 0);
-  const x = limited ? (phase >= 2 ? '-150%' : '-108%') : phase >= 4 ? '70%' : '-108%';
+  // where the card goes: onto the line (centred on the gate) to be checked; then, on a wide lane, across into the ledger
+  // on the Hanzo Cloud side (it shrinks into the ledger's top row); on a phone, on past the gate; a 429 goes back
+  const cw = 420;
+  const toLedger = `${Math.round(((wd / 2 - 32 - 130 - cw / 2) / cw) * 100)}%`;
+  const x = limited ? (phase >= 2 ? '-190%' : '-50%') : phase >= 4 ? (wide ? toLedger : '120%') : '-50%';
   const gone = limited ? phase >= 2 : phase >= 4;
+  const enter = (v) => (boot.current ? false : v);
   return (
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="gw-pause" />
-    <div className="gw-lane" ref={ref} aria-hidden="true">
+    <div className="gw-lane" ref={ref} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat}>
       <div className="gw-gate"><span className="gw-gate-k">Gateway</span><i /></div>
       <p className="gw-side l">client</p>
-      <p className="gw-side r">Hanzo Cloud <b>/v1</b></p>
       <ul className="gw-queue">{[1, 2, 3].map((k) => <li key={n + k} style={{ opacity: 1 - k * 0.22 }}>{CALLERS[(n + k) % CALLERS.length]}</li>)}</ul>
-      <ul className="gw-log">
-        <AnimatePresence initial={false}>
-          {Array.from({ length: Math.min(3, n) }).map((_, k) => {
-            const m = n - 1 - k;
-            const no = m % 5 === 4;
-            return (
-              <motion.li key={m} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1 - k * 0.3, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
-                <b>{CALLERS[m % CALLERS.length]}</b><span className={no ? 'x' : ''}>{no ? '429' : <>X-Org-Id <i className="gw-tk">✓</i></>}</span>
+      <div className="gw-cloud">
+        <p className="gw-side r">Hanzo Cloud <b>/v1</b></p>
+        <ul className="gw-log">
+          <AnimatePresence initial={false}>
+            {log.map((r, k) => (
+              <motion.li key={r.id} layout="position" initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1 - k * 0.3, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
+                <b>{r.w}</b><span>X-Org-Id <i className="gw-tk">✓</i></span>
               </motion.li>
-            );
-          })}
-        </AnimatePresence>
-      </ul>
+            ))}
+          </AnimatePresence>
+        </ul>
+      </div>
       <div className="gw-bucket">
         <span>Token-bucket</span>
-        <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ duration: 0.3, ease: EASE }} />)}</div>
+        <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} initial={false} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ duration: 0.3, ease: EASE }} />)}</div>
       </div>
       <AnimatePresence initial={false}>
         <motion.div
           key={n}
           className="gw-req"
-          initial={{ x: '-280%', opacity: 0 }}
-          animate={{ x, opacity: gone ? 0 : 1 }}
+          initial={{ x: '-260%', opacity: 0 }}
+          animate={{ x, opacity: gone ? 0 : 1, scale: !limited && phase >= 4 && wide ? 0.56 : 1 }}
           exit={{ opacity: 0, transition: { duration: 0.15 } }}
-          transition={{ x: { duration: phase === 0 ? 1.0 : 0.95, ease: EASE }, opacity: { duration: gone ? 0.7 : 0.4, delay: gone ? 0.25 : 0 } }}
+          transition={{ x: { duration: phase === 0 ? 1.0 : 1.0, ease: [0.4, 0, 0.2, 1] }, scale: { duration: 1.0, ease: [0.4, 0, 0.2, 1] }, opacity: { duration: gone ? 0.35 : 0.4, delay: gone ? 0.7 : 0 } }}
         >
           <p className="gw-req-top"><b>api.hanzo.ai</b> <i className="gw-tk">/*</i><span>{who}</span></p>
           <p className={'gw-h' + (phase >= 1 && !limited ? ' ok' : '')}><span><em>JWT</em></span>
-            {phase >= 1 && !limited && <motion.span className="gw-chip" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }}><i className="gw-tk">✓</i> JWKS</motion.span>}
+            {phase >= 1 && !limited && <motion.span className="gw-chip" initial={enter({ scale: 0.4, opacity: 0 })} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }}><i className="gw-tk">✓</i> JWKS</motion.span>}
           </p>
-          <AnimatePresence>
+          <AnimatePresence initial={false}>
             {(phase < 2 || limited) && (
               <motion.p className="gw-h forged" exit={{ opacity: 0, y: 40, rotate: -8, transition: { duration: 0.5, ease: [0.4, 0, 1, 1] } }}>X-Org-Id <em className="gw-tk">…</em></motion.p>
             )}
           </AnimatePresence>
           <div className="gw-stamps">
             {!limited && phase >= 3 && [['X-User-Id', 'sub'], ['X-Org-Id', 'owner'], ['X-Roles', 'roles']].map(([h, c], i) => (
-              <motion.p key={h} className="gw-h set" initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}>{h} <em>← {c}</em></motion.p>
+              <motion.p key={h} className="gw-h set" initial={enter({ opacity: 0, x: -14 })} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}>{h} <em>← {c}</em></motion.p>
             ))}
             {limited && phase >= 1 && (
               <motion.p className="gw-429" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE }}>429 <span>Retry-After</span></motion.p>
@@ -128,23 +159,25 @@ const RULES = [
   ['A hop, or no hop at all', "Run it as its own service in front of the API, or mount it inside the cloud binary with one call. Same checks either way — one less network hop when you don't want one."],
 ];
 
+const RELATED = [['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']];
+const ARROW = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
 const FAKE = [['X-User-Id', 'sub'], ['X-Org-Id', 'owner'], ['X-Roles', 'roles'], ['X-IAM-*', '']];
 // the three ways a request arrives, in Hanzo's words: a JWT, an opaque API key, or only what a curl flag sets
 const CRED = ['JWT', 'API key', 'curl'];
 
-/* Beyond: forge one yourself. What you send, and what the service behind the gate receives. */
+/* Beyond: chapter 02, opened. It has no heading of its own (the chapter's h3 names it, and its words are not repeated
+   here): pick how the request arrives and which identity headers the client fakes; the right pane shows what every
+   service behind the gate receives. Each switch really changes that pane. */
 function Forge() {
   const [cred, setCred] = useState(0);
   const [fake, setFake] = useState([true, true, false, false]);
   const jwt = cred === 0;
   return (
-    <section className="gw-forge v2-dark" data-room="dark">
+    <section className="gw-forge v2-dark" data-room="dark" aria-labelledby="gwc-t-1">
       <div className="v2-wrap">
-        <div className="gw-forge-head v2-grid">
-          <div className="gw-forge-hl">
-            <h2 className="v2-display s" id="gw-forge-h">Identity headers are written, not trusted</h2>
-          </div>
-          <div className="gw-forge-pick" role="radiogroup" aria-labelledby="gw-forge-h">
+        <div className="gw-forge-head">
+          <div className="gw-forge-pick" role="radiogroup" aria-labelledby="gwc-t-1">
             {CRED.map((c, i) => (
               <button key={c} type="button" role="radio" data-sound="tick" aria-checked={cred === i} onClick={() => setCred(i)}>
                 {cred === i && <motion.span layoutId="gw-pick" className="gw-pick-bg" transition={{ duration: 0.3, ease: EASE }} />}
@@ -159,12 +192,11 @@ function Forge() {
             <ul className="gw-forge-hs">
               {cred < 2 && <li className="gw-forge-auth"><span><em>{jwt ? 'JWT' : 'API key'}</em></span></li>}
               {FAKE.map(([h], i) => (
-                <li key={h}>
-                  <label className="gw-tog">
-                    <input type="checkbox" suppressHydrationWarning checked={fake[i]} onChange={() => setFake((f) => f.map((v, k) => (k === i ? !v : v)))} />
+                <li key={h} className={fake[i] ? 'on' : ''}>
+                  <button type="button" role="switch" aria-checked={fake[i]} data-sound="tick" className="gw-tog" onClick={() => setFake((f) => f.map((v, k) => (k === i ? !v : v)))}>
                     <span className="gw-tog-ui" aria-hidden="true" />
                     <span>{h} <em className="gw-tk">…</em></span>
-                  </label>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -182,11 +214,6 @@ function Forge() {
                 ))}
               </AnimatePresence>
             </ul>
-            <p className="gw-forge-why">{jwt
-              ? 'X-User-Id, X-Org-Id, X-Roles and every X-IAM-* variant are stripped from every inbound request, then written back from the verified claims — sub, owner, roles.'
-              : cred === 1
-                ? "Opaque API keys aren't JWTs, so they go on to the service that issued them and it decides."
-                : "A curl flag can't set them."}</p>
           </div>
         </div>
       </div>
@@ -222,6 +249,15 @@ function Say() {
   const head = useRef(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  // the line cuts in once as the statement arrives (a class added after mount, so the server HTML shows it whole)
+  useEffect(() => {
+    const el = head.current;
+    if (!el) return;
+    el.classList.add('cut');
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('in'); io.disconnect(); } }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   // 44px grows toward 64px on desktop; a phone grows a little (32px toward 38px). Written after mount, so the server
   // HTML and the first client render carry no transform.
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
@@ -234,7 +270,7 @@ function Say() {
   return (
     <section className="v2-sec gw-say" ref={ref}>
       <div className="v2-wrap v2-grid">
-        <h2 ref={head} className="v2-display m gw-say-h">Nothing downstream has to ask who is calling</h2>
+        <h2 ref={head} className="v2-display m gw-say-h"><span className="gw-say-in">Nothing downstream has to ask who is calling</span></h2>
         <p className="v2-lede gw-say-l">Gateway answers that once, at the edge, so every service behind it can read an org id and believe it.</p>
         <div className="gw-rail" aria-hidden="true">
           <span className="gw-rail-end">client</span>
@@ -271,17 +307,17 @@ export default function Gateway() {
 
       <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} total={RULES.length} />} />
 
+      <Forge />
+
       <ShipPrompt
         name="Gateway"
         api="/v1/gateway"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Gateway in my project. Start with: hanzo gateway config get"
-        related={[['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']]}
+        className="gw-ship"
       />
 
-      <Forge />
-
       <section className="v2-sec gw-proj">
-        <div className="v2-wrap v2-grid">
+        <div className="v2-wrap gw-proj-in">
           <div className="gw-proj-t">
             <p className="v2-title gw-proj-l">Example project. Every name in it is one you would give your own.</p>
           </div>
@@ -291,7 +327,28 @@ export default function Gateway() {
         </div>
       </section>
 
-      <GetIt name="Gateway" tag="API gateway" seed="gateway" data={[429, 6]} self="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" ask={['Read the docs', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway', 'gateway.close']} />
+      {/* the close leads with Deploy to Cloud (the docs are already the hero's and the header's ask); Self-host is the quiet link */}
+      <GetIt name="Gateway" tag="API gateway" seed="gateway" data={[429, 6]} deploy={null} self="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" ask={['Deploy to Cloud', 'https://platform.hanzo.ai/deploy', 'gateway.close']} />
+
+      {/* related capabilities: the last thing before the footer (ShipPrompt's own row, composed here so it can move) */}
+      <section className="sp v2-sec gw-relsec">
+        <div className="v2-wrap v2-grid sp-grid">
+          <nav className="sp-rel" aria-label="Related capabilities">
+            <p className="v2-kick">Related capabilities</p>
+            <ul>
+              {RELATED.map(([t, to, d]) => (
+                <li key={t}>
+                  <A to={to} className="sp-rel-a">
+                    {/* Hanzo's own "→" in "Gateway docs →" sits in the same right-hand slot as the other rows' arrows */}
+                    {t.endsWith('→') ? <b>{t.slice(0, -2)}<span className="gw-rel-arw"> →</span></b> : <b>{t}</b>}
+                    {d && <span>{d}</span>}{!t.endsWith('→') && ARROW}
+                  </A>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </section>
     </main>
   );
 }

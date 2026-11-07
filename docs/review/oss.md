@@ -1,51 +1,105 @@
 # /oss/* (template) — James-eye review
 Verdict: 6/10
-First complaint: "Why am I looking at a wall of zeros? Zero stars, zero commits, zero merges, zero, zero. The top moves a bit and then it's a spreadsheet with a grey box on it. There's no premium feel, it's a dead sort of page."
+First complaint: "I click one of the organisation cards and the page goes white, with a giant word sat at the bottom of the screen for two seconds, then it jumps to a different place. That's not the card opening into its page, that's a blank page. And everything above it reads like a spreadsheet."
 
-Walked 7 Nov, moving, on /oss/hanzo-app/ and /oss/crowdstart/ at 1470×801 and 375×812 (Playwright, DSF 1). Took frames every 250 ms for 8 s with no input, and while scrolling slowly in steps of 35% of the viewport. Probed hover and press on the hero ask, the Forge link, the ticker, rows, language chips, sort, search, the row sheet and the organisation cards (including the card-to-page open and Back). Also checked JS off, reduced motion and 320 px.
+Walked on 7 Nov, moving, at 1470×801 and 375×812, with Playwright on the dev server: `/oss/hanzoai/` (461 repositories, the full case) and `/oss/hanzo-app/` (11 repositories, mostly zeros, the sparse case). I took frames every 250 ms for 8 s with no input, then slow wheel scrolls (120 px every 90 ms) through to the footer. I probed hover, press and keyboard on the rows, filters, sort, search, the repository sheet and the org cards, then ran the card-to-page open frame by frame, JS off, reduced motion, and widths of 320, 375 and 1470.
 
-Measured: console errors on 5 fresh plain loads per member and size = **0** (20 loads). One later load picked up a Next compile error from `components/pages/DevPage.jsx`, which belongs to another page; the red "1 Issue" dev badge seen in some frames comes from that file, not from this template, and is not counted. CLS in the first 8 s is 0.0002 at 1470 and 0 at 375, all of it from the shared header's right cluster at about 1.4 s; after scrolling it is 0.0007. Horizontal overflow is 0 at 1470, 375 and 320. Reduced motion shows the final state with 0 running animations. JS off is legible at both sizes: the h1, figures and rows are all present, and nothing is at opacity 0.
+**Proof images** (`docs/review/oss/`; the filenames are the old ones, but the contents are new):
+- `1-hero-1470-badge.jpg`: `/oss/hanzoai/` at 1470×801, 7.75 s after load. The hero figure card has settled (568,900, contour field, monthly bars). The red Next "1 Issue" badge, caused by the hydration error below, sits bottom-left. The cookie card overlaps the "Counted from GitHub" stats.
+- `2-jsoff-375-clipped-h1-missing-figure.jpg`: `/oss/hanzoai/` at 375×812 with JS off. The earlier problem is fixed. The h1 is whole (y 76, 42 px tall, not clipped), 568,900 and the bar chart are in the static HTML, and 461 / 1,602 / 154 render.
+- `3-row01-misaligned-actions.jpg`: the row-01 action misalignment is fixed (the Forge pill and ↗ are both centred at y 467.1, which is the row's own centre). The image now shows the card-to-page open 900 ms after clicking the `hanzobot` org card. The page is blank white, and the stage title sits at 106 px at y≈581. The destination h1 lands at y 173, 52 px.
 
 ## The 11 questions
 
-**1. Sells in 5 s; moves within 1 s?** Half. The repo ticker is already moving at 0 ms, the Sigil lines drift and the figure "11" counts in by about 1 s, so the page is not still. It does not sell, though. The first screen is a 52 px h1, a lede, then a full-width grey framed box with a 100 px figure, a ticker of repo slugs and faint contour lines. On hanzo-app the lede says "[Legacy]… see github.com/hanzoai for current projects". The first thing below the box is "0 stars / 1 forks". The h1 baseline sits at about 31% of the height, not 38%. The cookie card (shared chrome) covers "Counted on Hanzo Forge" on every first screen.
+**1. Does the first screen sell in 5 s, and does something move within 1 s?**
+Yes, in part. Within 500 ms the figure card counts up (568,900 for hanzoai, 11 for hanzo-app), its bars grow left to right behind a scan line, and the contour field drifts. hanzo-app has a marquee of its repo names. So it is alive with no input. But the composition sells weakly. On desktop the h1 sits at y 230 under about 170 px of empty white on the left, while the lede and the ask float top-right. The left half of the first screen above the card is dead space. It looks like a document header with a chart under it, not a moment.
 
-**2. One thing in, one thing out, or a document?** It's a document. As you scroll: two stat blocks with a big empty left column (about 400 px of white beside "Counted on Hanzo Forge"), then a plain numbered list of 11 identical rows, then a rail of 4 cards, then the band. Nothing pins, nothing scrubs, nothing hands over to the next thing. Sections arrive already in place. The only scroll-linked motion is the shared header's progress hairline.
+**2. As you scroll, does one thing come in as one goes out, or is it a document?**
+It is mostly a document. After the hero card come two stat blocks ("Counted from GitHub", "Counted on Hanzo Forge"): a heading on the left, figures stacked on the right, each counting up once. Then 11 near-identical 130 px rows, then a rail of 4 org cards, then the Band. Nothing pins and no panel replaces another. The count-ups are the only scroll moments. On hanzo-app the GitHub block is one lonely figure ("1 forks") plus "0 stars", and about 60% of the row is empty. It looks unfinished.
 
-**3. A real visual object in every section?** No. The hero object is the Sigil contour field inside a grey box: generic, and the same drawing reused on the org cards and the closing band, so the page has one picture three times. "Counted from GitHub" and "Counted on Hanzo Forge" are bare numbers. The repositories list is text rows. No real Hanzo imagery or product UI anywhere, not even a README preview, language bar or commit sparkline in the open sheet.
+**3. Does every section hold a real visual object?**
+Mostly yes. The hero has the figure card with contours and monthly bars. The Forge block has progress bars (2,178 of 2,732 private; 159,289 of the commits). Each row has a 12-month sparkline. The org cards have contour art, and the Band has a contour field. The "Counted from GitHub" block has only three numbers and no object. On hanzo-app the rows have no sparkline (zero data), so the right 40% of every row is blank.
 
-**4. One ask in the sticky header, nothing floating; scale rhythm?** Mostly yes on desktop. The header ask turns into "hanzo-app on GitHub" once the hero ask leaves the view, which is good, but the swap visibly fades the button to grey for a frame (crowdstart frame s02). At the closing band, the solid header ask and the solid band ask show at the same time: 2 solid fills in one viewport, at both sizes. On phone the header keeps "Try Hanzo" solid next to the solid hero ask, so 2 solid fills on the first screen. Scale has some rhythm (52 / 100 / 26 / 13). But zeros take figure size: "0" stars is about 32 px, and "0 0" in the open sheet is about 40 px. MASTER says a zero never gets hero size.
+**4. Is there one ask in Hanzo's words, in the sticky header, with nothing floating over content? Does scale have rhythm?**
+Not quite. The header ask swaps to "hanzoai on GitHub" once the hero ask leaves view, which is right. But there are two solid fills in one viewport:
+- At 375×812 the header keeps a solid "Try Hanzo" above the solid hero "hanzoai on GitHub" the whole time.
+- On desktop both are solid for the first ~1.5 s, before the header ask turns outlined.
+- With the repository sheet open, the header's solid ask stays bright above the scrim, next to the sheet's own solid button.
 
-**5. Does every hover and press answer, without jumps?** Partly. The hero ask is good: it darkens to #262626 and presses at scale(.97) with no layout jump. Rows get a #f5f5f5 fill and the Forge pill fills, but the hover tells you nothing new (no description, no preview). "On Hanzo Forge" has **no hover change at all**: background, colour and transform are identical. Org cards only move from #f5f5f5 to #ededed, with no tilt. The language chips answer (ink pill, rows filter from 11 to 2). Search answers, and its empty state reads "No repository matches 'zzzz'" with an All-languages action, which is good. The sort buttons are icon-only, with no visible label or tooltip. On hanzo-app every repo has 0 stars, so pressing "Stars" changes nothing in the list. The ticker keeps moving under the pointer (translateX −270 → −320 → −370 px over 1.6 s of hover) and has no pause control.
+The header behaviour is shared chrome. The cookie card (shared) covers the stats at both sizes; at 375 it is about 200 px tall. Scale has rhythm: one big figure per screen (568,900 at about 84 px, then 159,289 lower down), medium headings at 26 px, small mono metadata.
 
-**6. Overlaps, font swap, layout shift?** No font swap. CLS is close to 0 (shared header only). On phone the open sheet clips the clone command at "git clone https://github.c" with no scroll cue (proof 2). Row 01 is 137 px tall against 101 px for every other row, at 1470 and with no description, which leaves a dead 36 px gap under it (proof 3). No overlap with the sticky header was found: the header is 60 px glass at 72% white. The cookie card (shared) sits over page content on every first screen at both sizes.
+**5. Does every hover and press answer, with no jumps?**
+Mostly. A row hover fills grey and darkens its sparkline. A press scales the row to 0.982. A click opens a sheet with the description, stars, forks, commits, a monthly chart, `git clone` with a GitHub/Forge toggle, and a copy that puts exactly `git clone https://github.com/hanzoai/ui.git` on the clipboard. Focus moves to Close and Tab is trapped. Filters, sort and search all work: Rust gives Rust repositories, Stars re-sorts, "mcp" leaves 1 row.
 
-**7. Which reference does it feel like, and is its motion there?** It feels like a tidy GitHub org page, not like synchronized.studio. The card-to-page open is the shared transition engine, not a Morph. Clicking "hanzo-community" fades in a huge blurred copy of the title over the rail. Then for at least 1 s it holds a blank white page with a 110 px "hanzo-community" low on the left, and only then shows the destination page, whose h1 sits at 52 px around y 230. The card's title and picture never travel, and the landing is nowhere near "within 12 px". Back works.
+Three things are wrong:
+- **Esc returns focus to the skip link at the top of the document, not to the row that opened the sheet.**
+- The sort and "All languages" controls are icon-only (clock, star, bars, grid). Hover gives no label or preview, so the hover tells you nothing.
+- Row 01's sparkline is drawn dark at rest, so the first row looks selected when nothing is.
 
-**8. Different from its neighbours?** Within the family, no: hanzo-app and crowdstart are the same page with different strings, as a template should be. Each member does get its own Sigil seed. Compared with other Catalogue pages, the grey-box figure plus hairline list is the generic catalogue look, and no signature move belongs to /oss.
+No layout jump on hover.
 
-**9. All 18 parts covered?** Not all. Strong: JS off, reduced motion, 0 errors, 0 overflow, 44 px targets on phone (0 targets under 44 px in main), 16 px search input, an Esc-closable modal that returns focus to the row, Back from a card. Weak or missing: a figure-led catalogue hero (the count is there, but search is 1,200 px down instead of in the hero as 4.3 requires); the language filter pill jumps instead of gliding; no pause control on the ticker; no Morph; the org rail has no scroll-snap (`scroll-snap-type: none`, 4th card cut at the edge with no peek logic); crowdstart's "Every organization" rail shows **two cards both titled "Hanzo Apps"** (hanzo-app, 11 repos, and hanzo-apps, 90 repos), and only the small caption tells them apart; on hanzo-app the rail's first card is the page itself.
+**6. Do overlaps, a font swap or layout shift appear anywhere?**
+- **Layout shift** is excellent: CLS 0.0007 over a full desktop walk and 0 on the phone. All three shifts come from the shared header's right cluster (`is_View _marginInlineStart-_lg_auto`), at about 1.1 s and on scroll.
+- **Overflow and font swap:** none at 320, 375 or 1470 (scrollWidth equals the viewport). The h1 box stays still.
+- **Overlaps:** the cookie card over content (shared chrome). The card-open stage puts a 106 px title over a blank page for about 2.2 s (question 7).
+- **Console:** `A tree hydrated but some attributes of the server rendered HTML didn't match the client properties`.
+  - It fired on 5 of 5 fresh loads at each size on both members (20 of 20). It did not appear on 10 loads that waited for network idle, so it depends on timing.
+  - The diff names the page's own search field, `<label className="xos-search"> <input type="search" placeholder="Search 461 repositories" … - style={{}}>`, under `v2f-grid > xos-tools`, and the shared `<FooterHTML> <div data-x-shell="footer" dangerouslySetInnerHTML={{__html: "<footer class=\"is_View _paddingInline-…"}}>`.
+  - The footer half is shared chrome; the search input half is this template's.
+  - It puts the red "1 Issue" badge on screen in dev.
 
-**10. Banned tells?** No hue, gradient text, Inter, emoji or cursor glow. Near misses: a framed or boxed hero object (the grey rounded box carrying the Sigil); the "OPEN SOURCE · HANZO" eyebrow sits beside the h1 and under the lede, so it's allowed, but the "HANZO-APP" mono label sits directly above the band's ask; a blur-and-opacity title reveal in the shared transition; the header ask fades during its swap. The cluttered strip of zero stats reads as "an explaining sentence under every tile".
+**7. Which reference does it feel like, and is that reference's motion actually there?**
+It aims at synchronized.studio (a card opens into its page) and an Apple-style figure moment. The figure moment is there. The card open is not, measured frame by frame after clicking `hanzobot`:
+- The URL changes within 200 ms.
+- Then a white stage holds a `P.x-stage-t` title at 105.84 px, y 581, until about 2.2–3.0 s. The cap is 700 ms.
+- The real h1 sits at y 173 and 52 px, about 400 px away. The brief says within 12 px.
+- One run took 1.5 s before the URL even changed.
 
-**11. Copy untouched?** As far as a visitor can see, yes: Hanzo's ledes, org descriptions and repo descriptions show verbatim. But on phone the repo descriptions ("Crowdstart is now part of Hanzo.", "Animation library.") and fork counts are dropped from the rows and only appear in the sheet, so a phone visitor sees less copy in the list.
+Back reverses correctly: you land on the org rail with scroll restored at y 3023. The transition engine is shared chrome, but the family's org cards trigger it and the family's hero is where it has to land.
 
-## Fixes (by impact)
+**8. Is it different from its neighbours, with its own hero medium and signature?**
+Within the family, members differ only by data and the contour seed, which the brief allows for families. hanzo-app swaps the bar chart for a repo-name marquee, which is a nice data-driven variation. Its signature, a live figure card plus rows that open into sheets, belongs to this family. I did not compare it against the /oss index in this walk.
 
-1. **Stop showing zeros as figures.** Any stat whose value is 0 drops to 14 px body text in a line, or is left out of the figure strip. Hero-size and 32 px+ figures only for values ≥ 1. Covers "0 stars", "0 commits / 0 merges / 0 of those" and the "0 0" in the sheet. Target: 0 elements at ≥ 26 px whose text is "0".
-2. **Give the page one thing-in, thing-out moment.** Pin the hero count box for one screen and scrub the ticker of slugs into the numbered list, so each slug lands as row 01 to N while the box shrinks to a 26 px heading. Phone: 3 static panels. Scroll-linked motion stays ≤ 50% of the page's motion. Verify that the frames at 0 / 40 / 80% of the pin differ.
-3. **Make the card open a real Morph.** The org card's title and Sigil travel to the destination h1 in 600 ms, landing within 12 px. Remove the blurred giant-title interstitial and the ≥ 1 s blank hold (cap 700 ms, no blur). Shared engine: request it from the chrome owner.
-4. **One solid fill per viewport.** At the closing band, set the header ask to quiet (outline) while the band ask is in view. On phone's first screen, make the header "Try Hanzo" quiet while the hero ask is visible. Remove the grey fade frame during the header swap (cut, or a 150 ms ease-out with no opacity dip). Target: 1 solid fill at every scroll stop, at both sizes.
-5. **Move search into the hero** (Catalogue 4.3: hero = exact count + search). Put the 56 px search field beside the count, and let the language chips get a gliding ink pill (300 ms ease-emphasis) instead of a jump.
-6. **Fix row 01 height.** All rows the same height within 1 px (101 px now against 137 px for row 01 at 1470).
-7. **Every hover tells something.** "On Hanzo Forge" gets an underline-draw or arrow nudge (it changes nothing now). Row hover shows the repo description or last-push line on desktop. Org cards get the 2.5° tilt on fine pointers. Sort buttons get a visible label or Tip ("Recently pushed / Stars / Commits this year"). On a member where every repo has 0 stars, hide or disable Stars.
-8. **Ticker:** pause on hover and focus, and add a 44 px pause control first in the DOM (it moves for more than 5 s). On crowdstart (3 repos) don't loop duplicates inside one viewport: show the 3 chips statically when they fit.
-9. **De-duplicate the org rail.** Never show the current org as a card, and when two orgs share a display name, show their id in the title ("Hanzo Apps · hanzo-apps"). Add `scroll-snap-type: x proximity` with a 14 to 18% peek.
-10. **Phone sheet:** the clone command scrolls horizontally inside a labelled region with a fade cue, or wraps; never clipped mid-URL. Show the row description in phone rows (one line, ellipsis) so the list keeps Hanzo's copy.
-11. **Fill the empty left column** beside "Counted on Hanzo Forge" (about 400 × 300 px of white), or collapse the two stat sections into one 8/5 strip so the page isn't padding.
-12. *(Shared chrome)* The cookie card covers the first-screen content at both sizes. Keep it at ≤ 220 px on phone (it is about 180 px now) but dock it so it doesn't cover the page's second section on desktop.
+**9. Is every one of the 18 parts covered?**
+No. Gaps:
+- **Part 2:** no breadcrumb at depth 2.
+- **Part 8:** focus is not returned when the sheet closes.
+- **Part 3:** Morph timing and landing are off.
+- **Part 4:** two solid fills.
+- **Part 13:** a console error.
+- **Part 15:** the phone rows are about 85 px, not 72 px.
 
-## Proof images (docs/review/oss/)
-- `1-hero-1470-badge.jpg`: hanzo-app first screen at 1470×801, 7.75 s after load. Shows the grey framed hero box with Sigil and ticker, "0 stars / 1 forks", and the cookie card over "Counted on Hanzo Forge". There is no dev badge in this frame; the name is kept from the earlier review.
-- `2-jsoff-375-clipped-h1-missing-figure.jpg`: hanzo-app at 375×812 with JS on, row 01 sheet open. Shows the clone command clipped at "git clone https://github.c" and "0 0" set as figures. The JS-off render was legible at 375, so the file name no longer describes a failure.
-- `3-row01-misaligned-actions.jpg`: hanzo-app repositories at 1470, hovering row 02. Shows row 01 at 137 px against 101 px for the others (dead gap under row 01), and the row hover being only a grey fill.
+What is covered:
+- Phone rows hide the description, commits and push date, but all of them appear in the tap sheet.
+- JS off is fully legible (figures are in static HTML).
+- Reduced motion shows the final state and leaves 0 running animations after 3.8 s.
+- 44 px targets hold on the phone.
+- Zeros are handled with restraint (hanzo-app's Forge zeros sit in a small sentence line, never at hero size).
+- The Band closes the page with the org name and the ask, straight into the footer.
+
+**10. Are there any banned tells?**
+None of the listed ones. There is no hue, gradient text, Inter, coloured stripe or three icon boxes. "OPEN SOURCE · HANZO" is set under the lede, not above the h1. Arguably "everything quiet, rows all the same" edges towards a dead look below the fold, but motion exists.
+
+**11. Is the copy untouched?**
+It appears so. Hanzo's own wording and figures are shown as given, including "1 forks", "1 public repositories" and "[Legacy] Hanzo app templates — see github.com/hanzoai for current projects". Nothing was rewritten that I could see. Descriptions are hidden on phone rows but present in the sheet.
+
+## Fixes (ordered by impact)
+
+1. **Fix the card-to-page open** (shared engine, triggered by the family's org cards). The stage hold should be 700 ms or less from click to the settled page, measured at 80 ms intervals. The flying title must end within 12 px of the destination h1 (currently y 581 at 106 px versus y 173 at 52 px). Never show a blank white page behind it: the destination hero should be visible under the title by 300 ms.
+2. **Remove the hydration mismatch.**
+   - Search input (this template): render the same `style` on server and client, or remove whatever writes inline style to `input[type=search]` before hydration.
+   - Footer (shared): make `FooterHTML` emit identical HTML on server and client.
+   - Target: 0 console errors over 5 fresh loads at both sizes, with the same timing as the walk (`waitUntil: 'commit'` plus screenshots every 250 ms).
+3. **Have one solid fill per viewport.**
+   - At 375 the header ask must be quiet or swapped while the hero ask is on screen.
+   - On desktop it must start quiet, not solid for 1.5 s.
+   - While the sheet is open, the header must sit under the scrim (z 60 or lower versus the sheet at 90).
+4. **Return focus to the row that opened the sheet** on Esc, Close and scrim click. The check: after Esc, `document.activeElement` is the row button.
+5. **Make the hero a composition, not a header block.** Close the roughly 170 px dead zone above the h1 on the left at 1470×801. Either put the h1 baseline near 38% of 100svh with the lede beside it, aligned to the bottom (brief part 3), or let the figure card rise into that space so the first screen has one object, not white space plus a strip.
+6. **Break the document below the hero.** Make the two "Counted" blocks one pinned stage at 900 px wide and above, where the GitHub figures hand over to the Forge figures (one in, one out), instead of two stacked text-left/numbers-right blocks. On sparse members (hanzo-app) collapse the lone "1 forks / 0 stars" into the small sentence line the Forge block already uses, so there is no 60% empty row.
+7. **Label the icon-only controls.** On hover and focus, show a `Tip` with the existing accessible name ("Recently pushed", "Stars", "Commits this year", "All languages") within 150 ms, or set the label beside the active icon. The hover must tell you something.
+8. **Draw row 01's sparkline at the resting grey** like the other rows; reserve the dark ink for hover and focus.
+9. **Sparse rows:** where a repository has no monthly data (all of hanzo-app), close the empty right 40% of the row, for example by letting the meta line span it. Do not leave a blank column.
+10. **Phone rows** at 72 px (currently about 85 px), per part 15. Put the sort pill on the same line as the search field at 375 so the controls take one row less.
+11. **Add the breadcrumb** at depth 2 ("Open source / Hanzo AI", using the nav's own labels, last item not a link).
+12. **Cookie card** (shared): 160 px or less at 375×812 (currently about 200 px), and it must not cover the first stat row at 1470×801.

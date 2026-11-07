@@ -61,7 +61,7 @@ Done here:
 - [ ] Copy button — n/a: none
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-thumb="Open Help Center"` drives the shared ask bar after the hero. `data-cta` is on support.answer.1–6. The Band's button is the kit's and takes no attributes (noted for the kit owner).
+Done here: `data-thumb="Open Help Center"` drives the shared header ask: after the hero the header's button reads "Open Help Center" (desktop, measured at 1470); the phone header keeps the shared "Try Hanzo". `data-cta` is on support.answer.1–6. The Band's button is the kit's and takes no attributes (noted for the kit owner).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

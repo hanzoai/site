@@ -2,8 +2,8 @@
 
 Page file: `components/pages/apps/Flow.jsx` · gallery: `docs/gallery/flow/` · metric id: `app_handoff`
 
-Open copy questions for James: "Step through it" is both a chapter heading and the playground's heading (kept both, live wording). Licence: Hanzo's live /flow copy says both "MIT" (the fact strip, "MIT · Self-hosted") and "License: Apache-2.0" (Get Flow); both are kept word for word, so which is true needs James. Shared request: the phone header keeps a solid "Try Hanzo" beside the hero's solid "Open Flow", and is clipped at 320 (shared chrome). Node names are Hanzo's own component list; "received"/"returned" and "in"/"out" are the playground's UI labels from Hanzo's "shows what each one received and returned").
-Shared changes requested (`docs/requests/<page>.md`): none; `lib/cta.js` is not on main yet, so the ask label is the live hero's own "Open Flow".
+Open copy questions for James: "Step through it" is used once as a heading (the chapter); live hanzo.ai also prints it as a small tab label, which this page does not repeat (the playground room takes no heading of its own). Licence: Hanzo's live /flow copy says both "MIT" (the fact strip, "MIT · Self-hosted") and "License: Apache-2.0" (Get Flow); both are kept word for word, so which is true needs James. Shared request: the phone header keeps a solid "Try Hanzo" beside the hero's solid "Open Flow", and is clipped at 320 (shared chrome). Node names are Hanzo's own component list, written as Hanzo writes them (lower case, with a CSS first capital); what a node "received" and "returned" is the node before and after it, and the last one returns "REST endpoint", all fragments of Hanzo's copy. The earlier invented demo data ("a file", "chunks", "an answer", "structured output", "running", "in"/"out") is gone; a copy audit of every visible string leaves only the kit dialog's composed "Open …" labels.
+Shared changes requested (`docs/requests/<page>.md`): Flow product media. The critic asked for real Flow canvas screenshots or screen film (part 10); `public/` holds none (searched for flow, langflow, canvas on 7 Nov), so none is invented and the page's objects stay drawn. Asked for: Hanzo's own Flow canvas frames (4+) or a short screen film, to place in the pinned stage and the fact strip. `lib/cta.js` is not on main yet, so the ask label is the live hero's own "Open Flow".
 Forks this page deleted: the v1 hand-written `Hero`, the props accordion, the `Get` block from cloud/Frame, `Rise` fade-ups, raw `.x-btn` asks and the wrapping data-thumb spans (now kit `Cta`), the duplicate desktop `AskBar`.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -84,7 +84,7 @@ Done here: Hovers live in `@media (hover: hover)` and fill (fact cards, step chi
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the run (idle; a tap on a hero node holds it there). Supporting: line-masked headings, chapters (scroll: a build-up on desktop, one pinned scene swapping one chapter at a time on phones), open cards (state); the playground is the hand, its returned value streaming in (time). No springs: the pulse rides the edge in 900ms ease-in-out (a scene move), arrivals 300–400ms ease-emphasis; the run is a `setTimeout` chain that stops off screen and on Pause. No page sounds.
+Done here: Signature: the run (idle; a tap on a hero node holds it there, hover lifts it and shows what it returns). Supporting: line-masked headings, chapters (scroll: six different objects, one per feature, each playing once as it arrives, from `flow/FlowPanels.jsx`; one pinned scene swapping one chapter at a time on phones), open cards (state); the playground is the hand, its returned value streaming in (time). No springs: the pulse rides the edge in 900ms ease-in-out (a scene move), arrivals 300–400ms ease-emphasis; the run is a `setTimeout` chain that stops off screen and on Pause. No page sounds.
 
 ## 10. Media
 - [ ] ~~`Film` and `Pic` only~~ n/a: no image or film for Flow
@@ -92,7 +92,7 @@ Done here: Signature: the run (idle; a tap on a hero node holds it there). Suppo
 - [ ] ~~Budgets met; alt~~ n/a
 - [ ] ~~No dimmed photo~~ n/a
 
-Done here: The objects are product UI drawn in HTML and SVG: the running canvas, the compact build-up diagram, the large playground inspector and the terminal. No Flow screenshots or film exist in `public/`, so there is no media block.
+Done here: The objects are product UI drawn in HTML and SVG: the running canvas (the one pipeline), six chapter objects (palette, opened Python class, stepped run, agents, three outputs, export without secrets), the large playground inspector and the terminal. No Flow screenshots or film exist in `public/`, so there is no media block.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: The objects are product UI drawn in HTML and SVG: the running canvas,
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Filmed at both sizes (width 375/375, 1470/1470); on phones the canvas re-lays as a two-column snake that keeps the 16px gutter at 320 (nodes at x 20–300), chapters become one pinned scene (mini-graph plus the current chapter, opaque, nothing behind it), the playground controls are 48px; the ask sits at 236px from the top at 375.
+Done here: Filmed at both sizes (width 375/375, 1470/1470); on phones the canvas re-lays as a two-column snake that keeps the 16px gutter at 320 (nodes at x 20–300), chapters become one pinned scene (the chapter's own object, compact, plus its words; opaque, nothing behind it); hero cards wrap at spaces only and short wires drop their port heads so they never fuse, the playground controls are 48px; the ask sits at 236px from the top at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: Filmed at both sizes (width 375/375, 1470/1470); on phones the canvas
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Pause sits on the hero inspector (44px, labelled) and Play/Pause leads the playground controls; hero nodes and playground steps are buttons with `aria-pressed`/`aria-current`; the run state is `aria-live` (the streaming value is not, so it is announced once).
+Done here: The run's Pause sits on the hero canvas (44px, icon only, named "Pause" from content/ui-strings.json, `aria-pressed` while held) and the playground's Pause leads its controls with Previous and Next (same register names); hero nodes and playground steps are buttons with `aria-pressed`/`aria-current`; the step counter is `aria-live`.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML

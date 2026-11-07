@@ -26,10 +26,11 @@
 .hm-labels li.lit { color: var(--glow); }
 @keyframes hm-in { from { opacity: 0; transform: translate(-10px, -50%); } }
 
-/* hero: light, copy left, the module signing on the right. Lede and ask are on screen from the first frame: they rise,
-   they never wait at opacity 0. */
-.hs-hero { padding: clamp(96px, 7.4vw, 116px) 0 clamp(44px, 5vw, 72px); }
-.hs-hero-grid { align-items: center; min-height: min(70svh, 640px); }
+/* hero: light, copy left, the module signing on the right as the one big object (no frame). The hero fills the first
+   screen less 56px, so the dark room peeks under it; the copy centres, which sets the h1 near 38% of the screen. Lede
+   and ask are on screen from the first frame: they rise, they never wait at opacity 0. */
+.hs-hero { padding: 0; }
+.hs-hero-grid { align-items: center; min-height: calc(100svh - var(--x-top, 64px) - 56px); padding-block: 44px; box-sizing: border-box; }
 .hs-hero-copy { grid-column: 1 / span 5; }
 .hs-h1 { margin: 0 0 24px; }
 .hs-lede { margin-bottom: 36px; max-width: 44ch; }
@@ -37,16 +38,23 @@
 @keyframes hs-rise { from { transform: translate3d(0, 16px, 0); } }
 .hs-hero-obj { grid-column: 6 / -1; height: clamp(420px, 38vw, 560px); }
 .hs-hero-obj > div { height: 100%; }
-.hs-sign { position: relative; height: 100%; border-radius: 28px; background: radial-gradient(60% 60% at 50% 55%, rgba(163, 163, 163, .16), transparent 70%), #f5f5f5; overflow: hidden; }
-.hs-sign .hm { --s: clamp(200px, 21vw, 300px); }
-.hs-io { position: absolute; top: 50%; margin: 0; padding: 12px 16px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 14px 30px -14px rgba(0, 0, 0, .25); font: 500 14px/1 var(--mono); white-space: nowrap; }
+.hs-sign { position: relative; height: 100%; }
+.hs-sign .hm { --s: clamp(240px, 25vw, 360px); }
+.hs-io { position: absolute; z-index: 40; top: 50%; margin: 0; padding: 12px 16px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 14px 30px -14px rgba(0, 0, 0, .25); font: 500 14px/1 var(--mono); white-space: nowrap; }
 .hs-io.in { left: 6%; transform: translateY(-160%); }
 .hs-io.out { right: 6%; transform: translateY(80%); color: var(--acc); }
-.hs-call { position: absolute; left: 0; right: 0; bottom: 28px; margin: 0; display: flex; justify-content: center; align-items: baseline; gap: 10px; font: 500 15px/1 var(--mono); color: var(--soft); }
-.hs-call span { color: var(--faint); }
-.hs-call b { color: var(--ink); font-weight: 600; display: inline-block; }
-/* a fine pointer tilts the module (2.5° at most); --tx/--ty are set on .hs-sign by the pointer */
+/* the call line, left-aligned after the docked pause; the module name keeps a fixed width so the line never moves */
+.hs-call { position: absolute; left: 60px; right: 0; bottom: 28px; margin: 0; display: flex; justify-content: flex-start; align-items: center; gap: 10px; font: 500 15px/1 var(--mono); color: var(--soft); }
+.hs-arr { flex: none; color: var(--faint); }
+.hs-call-m { display: inline-block; min-width: 16ch; }
+.hs-call b { color: var(--ink); font-weight: 600; display: inline-block; white-space: nowrap; }
+.hs-tk { flex: none; vertical-align: -2px; margin-left: 8px; color: var(--ink); }
+/* a fine pointer tilts the module (2.5° at most; --tx/--ty are set on .hs-sign by the pointer) and parts its plates
+   (each opens up to about 12px further) */
 .hs-sign .hm { transform: perspective(1400px) rotateX(var(--ty, 0deg)) rotateY(var(--tx, 0deg)); transition: transform .3s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hs-sign:hover .hm { --gk: 1.5; }
+}
 /* the signing pulse: a bead travels from the bytes chip into the module, the key plate answers, and it leaves as the
    signature, once per module (it restarts with each one); it starts within the first second */
 .hs-pulse { position: absolute; left: 0; top: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 999px; background: var(--ink); box-shadow: 0 0 0 4px rgba(10, 10, 10, .12); opacity: 0; pointer-events: none; z-index: 30; }
@@ -62,149 +70,152 @@
   100% { opacity: 0; transform: translate(78cqw, 60cqh) scale(.6); }
 }
 
-/* chapters: the black room. The "01 / 06" counter is a caption under the words (nothing sits above a heading), and the
-   room's name sits in one caption row beside the dots. */
-.hs-ch .pc-art { display: flex; flex-direction: column; }
-.hs-ch .pc-n { order: 3; margin: 20px 0 0; color: rgba(255, 255, 255, .55); }
-.hs-ch .pc-vis-m { order: 4; }
-.hs-ch .pc-copy { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 12px; }
-.hs-ch .pc-copy > * { grid-column: 1 / -1; }
-.hs-ch .pc-copy > .pc-dots { grid-column: 1; }
-.hs-ch .pc-copy > .hs-ch-k { grid-column: 2; margin: 40px 0 0; color: rgba(255, 255, 255, .55); }
-.hs-ch .pc-arts { margin-top: 0; }
+/* chapters: the black room. It enters as a rounded card inside the gutters and opens to full width (clip-path set by
+   scroll in Hsm.jsx). The chapters are in normal flow, so no two ever share a place, with or without motion. Desktop:
+   the words on the left, one chapter per stretch of scroll, and the drawing sticky on the right following the chapter
+   crossing the middle of the screen. The "0N / 06" counter is a caption under each h2. */
+.hc { position: relative; background: #000; color: #fafafa; }
+.hc-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 24px; }
+.hc-copy { padding: 18svh 0 22svh; }
+.hc-art { min-height: 70svh; display: flex; flex-direction: column; justify-content: center; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.js .hc-art:not([data-on]) { opacity: .32; }
+.hc-t { margin: 0; font-size: 32px; font-weight: 497; line-height: 1.12; letter-spacing: -.02em; color: #fafafa; text-wrap: balance; max-width: 18ch; }
+.hc-n { margin: 17px 0 0; color: rgba(255, 255, 255, .55); }
+/* the room's name, a caption beside the first counter */
+.hc-what { margin-left: 12px; padding-left: 12px; border-left: 1px solid rgba(255, 255, 255, .22); }
+/* scale rhythm: the chapter that has just become the one being read grows a little, then settles */
+.hc-t { transform-origin: 0 100%; }
+.js .hc-art[data-on] .hc-t { animation: hc-grow 1.1s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes hc-grow { 0% { transform: scale(1); } 35% { transform: scale(1.1); } 100% { transform: scale(1); } }
+.hc-d { margin: 17px 0 0; max-width: 46ch; font-size: 17px; line-height: 1.6; color: rgba(255, 255, 255, .78); text-wrap: pretty; }
+.hc-frame { display: contents; }
+.hc-vis { position: relative; }
+.hc-vis-in { position: sticky; top: var(--x-top, 64px); height: calc(100svh - var(--x-top, 64px)); }
+/* chapter 06: the modules Hanzo lists, as one segmented control; picking one changes the drawing only */
+.hs-vendors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 27px; max-width: 100%; }
+.hs-vendors button { position: relative; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); font: 500 14px/1 var(--sans); color: rgba(255, 255, 255, .55); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
+.hs-vendors button:active { transform: scale(.97); }
+.hs-vendors button[aria-selected='true'] { color: #0a0a0a; }
+.hs-vendors button:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
+@media (hover: hover) { .hs-vendors button:not([aria-selected='true']):hover { color: #fafafa; background: rgba(255, 255, 255, .08); } }
+.hs-vendor-bg { position: absolute; inset: 0; border-radius: 999px; background: #fafafa; }
+.hs-vendor-t { position: relative; }
 .hs-ch .hm { --plate: #171717; --edge: rgba(255, 255, 255, .16); --ink2: #f5f5f5; }
 .hs-ch .hm-handle { background: rgba(255, 255, 255, .05); }
 .hs-ch .hm-module { background: linear-gradient(135deg, #262626, #171717); }
 .hs-ch .hm-key { background: #000; border-color: rgba(255, 255, 255, .12); }
 .hs-ch .hm-plate { box-shadow: 0 30px 40px -24px rgba(0, 0, 0, .8); }
 .hs-ch .hm-plate.lit { box-shadow: 0 0 0 1px var(--glow), 0 0 70px -6px rgba(163, 163, 163, .55); }
-.hs-ch .pc-dots button { position: relative; }
-.hs-ch .pc-dots button[aria-current] i { background: var(--glow); }
-/* each dot names its step on hover, in the chapter's own title */
-/* the name drops below the dot row (into empty space), never over the "0N / 06" caption above it */
-.hs-ch .pc-dots button::after { content: attr(aria-label); position: absolute; left: 0; top: calc(100% + 8px); width: max-content; max-width: 240px; padding: 6px 10px; border-radius: 8px; background: #262626; color: #fafafa; font: 500 12px/1.3 var(--sans); text-align: left; opacity: 0; transform: translateY(-4px); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); pointer-events: none; z-index: 2; }
-.hs-ch .pc-dots button { transition: background-color .15s cubic-bezier(0, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
-.hs-ch .pc-dots button:active { transform: scale(.94); }
-@media (hover: hover) {
-  .hs-ch .pc-dots button:hover { background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
-  .hs-ch .pc-dots button:hover i { background: #fafafa; transform: scale(1.9); }
-  .hs-ch .pc-dots button:hover::after { opacity: 1; transform: none; }
-}
-.hs-ch .pc-dots button:focus-visible::after { opacity: 1; transform: none; }
 .hs-exp { position: relative; height: 100%; }
 .hs-exp .hm { transform: translateX(-10%); }
 
-/* paste and ship, then pick your module: one quiet stretch, no white band between them; both heads rest at 26px with a
-   step under them (only the stage and the close grow past it) */
-.hs .sp.v2-sec { padding-bottom: 0; }
+/* paste and ship: its own stage. The prompt keys in once in a graphite card; Copy answers when the line is whole. */
+.hs .sp.v2-sec { padding: clamp(72px, 8vw, 116px) 0 0; }
 .hs .sp-h { margin: 0 0 17px; font-size: 26px; line-height: 1.15; }
-.hs .hs-pick-hl .v2-display { margin: 0; font-size: 26px; line-height: 1.15; letter-spacing: -.02em; }
+.hs-ship-card { grid-column: 6 / -1; margin: 0; border-radius: 20px; background: #171717; color: #fafafa; overflow: hidden; }
+.hs-ship-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 20px; border-bottom: 1px solid rgba(255, 255, 255, .1); font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
+.hs-ship-card .x-copy { min-width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; border: 0; border-radius: 999px; font: 500 13px/1 var(--sans); letter-spacing: 0; text-transform: none; background: rgba(255, 255, 255, .08); color: #fafafa; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .hs-ship-card .x-copy:hover { background: rgba(255, 255, 255, .16); } }
+.hs-ship-card .x-copy:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
+.hs-ship-card.done .x-copy { animation: hs-ready .9s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes hs-ready { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .45); } 100% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0); } }
+.hs-ship-card pre { margin: 0; padding: 24px 20px 28px; font: 500 clamp(15px, 1.3vw, 19px)/1.6 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; color: #fafafa; }
+.hs-ship-card pre:focus-visible { outline: 2px solid #fafafa; outline-offset: -4px; }
+.hs-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.hs-rest { visibility: hidden; }
+.hs-caret { display: inline-block; width: .55em; height: 1.1em; margin: 0 1px -.2em; background: #fafafa; animation: hs-blink 1s steps(1) infinite; }
+.hs-caret.off { animation: hs-blink 1s steps(1) 2 forwards; }
+@keyframes hs-blink { 50% { opacity: 0; } 100% { opacity: 0; } }
+
+/* the close: the modules Hanzo names, set large, each taking the light in turn */
+.hs .gi.hs-close { padding: clamp(72px, 8vw, 116px) 0; border-top: 0; }
+.hs .gi-copy { grid-column: 1 / span 5; }
 .hs .gi-h { margin: 0 0 17px; }
 .hs .gi-lead { margin: 0 0 10.5px; }
 .hs .gi-tag { margin: 0 0 17px; }
-.hs .sp .x-copy { min-width: 84px; height: 36px; justify-content: center; }
-@media (hover: hover) { .hs .sp .x-copy:hover { background: rgba(255, 255, 255, .16); color: #fff; box-shadow: none; } }
-.hs .sp .x-codeblock pre { white-space: pre-wrap; overflow-wrap: anywhere; }
-.hs-pick.v2-sec { padding-top: 72px; }
-
-/* pick your module */
-.hs-pick-head { align-items: end; margin-bottom: 44px; row-gap: 24px; }
-.hs-pick-hl { grid-column: 1 / span 7; }
-.hs-pick-f { grid-column: 9 / -1; margin: 0; padding-bottom: 2px; }
-.hs-pick-tabs { display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: #f5f5f5; width: max-content; max-width: 100%; box-sizing: border-box; }
-.hs-pick-tabs button { position: relative; flex: none; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: none; font: 500 16px/1 var(--sans); color: var(--soft); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
-.hs-pick-tabs button:active { transform: scale(.97); }
-.hs-pick-tabs button[aria-selected='true'] { color: var(--ink); }
-.hs-pick-tabs button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
-@media (hover: hover) { .hs-pick-tabs button:not([aria-selected='true']):hover { color: var(--ink); background: rgba(0, 0, 0, .05); } }
-.hs-tab-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .12); }
-.hs-tab-t { position: relative; }
-
-/* the panel: one sheet, 8 to 5. The picked module on its own plate stack, the key in large type; the rest as rows. */
-.hs-pick-p { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); margin: 27px 0 0; border-radius: 24px; background: #f5f5f5; overflow: hidden; }
-.hs-pick-main { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; gap: 17px; padding: 27px 27px 27px 0; }
-.hs-pick-obj { position: relative; height: 300px; }
-.hs-pick-obj .hm { --s: 150px; --gk: 1.7; }
-.hs-pick-obj .hm-name { font-size: 14px; }
-/* the picker draws the module as line art (the hero's is solid silver, the stage's is dark): hollow plates, the layer
-   that answers for this module filled in ink */
-.hs-pick-obj .hm-plate { background: transparent; border: 1px solid rgba(0, 0, 0, .22); box-shadow: none; }
-.hs-pick-obj .hm-boundary { border: 1.5px dashed rgba(0, 0, 0, .3); }
-.hs-pick-obj .hm-key { background: transparent; }
-.hs-pick-obj .hm-core i { background: #0a0a0a; box-shadow: none; opacity: .18; }
-.hs-pick-obj .hm-plate.lit { background: #0a0a0a; border-color: #0a0a0a; box-shadow: 0 24px 40px -24px rgba(0, 0, 0, .35); }
-.hs-pick-obj .hm-plate.lit .hm-name { color: #fafafa; }
-.hs-pick-obj .hm-key.lit .hm-core i { background: #fafafa; opacity: 1; }
-.hs-pick-obj .hm-boundary.lit { background: rgba(10, 10, 10, .06); border-color: #0a0a0a; box-shadow: none; }
-.hs-pick-key { margin: 0; }
-.hs-pick-name { margin: 0 0 17px; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; color: var(--ink); }
-.hs-pick-key dt, .hs-pick-rows dt { margin-bottom: 10px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
-.hs-pick-key dd { margin: 0; font-size: 21px; line-height: 1.4; letter-spacing: -.015em; color: var(--ink); text-wrap: pretty; }
-.hs-pick-rows { margin: 0; padding: 10px 27px; border-left: 1px solid rgba(0, 0, 0, .1); display: grid; align-content: center; }
-.hs-pick-rows > div { padding: 22px 0; }
-.hs-pick-rows > div + div { border-top: 1px solid rgba(0, 0, 0, .1); }
-.hs-pick-rows dd { margin: 0; font-size: 16px; line-height: 1.55; color: #262626; text-wrap: pretty; }
-
-/* the close: the contour fills its room; the chips and the text link answer */
-.hs .gi { padding-bottom: clamp(72px, 8vw, 116px); }
-.hs .gi-art { transform: scale(1.12); }
+.hs-meta { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 4px; font: 500 13px/1 var(--mono); color: var(--soft); }
+.hs-names { grid-column: 6 / -1; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.hs-names li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: clamp(32px, 4.4vw, 64px); font-weight: 497; line-height: 1.05; letter-spacing: -.03em; color: #d4d4d4; white-space: nowrap; transition: color .4s cubic-bezier(0, 0, .2, 1); }
+.hs-names li span { display: inline-block; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+.hs-names li[data-on] { color: var(--ink); }
+.hs-names li[data-on] span { transform: translateX(10px); }
 @media (hover: hover) {
   .hs .gi-chip { transition: border-color .15s cubic-bezier(0, 0, .2, 1), background-color .15s cubic-bezier(0, 0, .2, 1); }
-  .hs a.gi-chip:hover { background: #f5f5f5; }
+  .hs .x-arrow span { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .15s cubic-bezier(0, 0, .2, 1); }
+  .hs .x-arrow:hover span { background-size: 100% 1px; }
   .hs .x-arrow svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
   .hs .x-arrow:hover svg { transform: translateX(4px); }
 }
+/* the solid ask leans toward a fine pointer and its hover is more than a darker fill */
+.hs .x-btn.solid { transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1), box-shadow .3s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hs .x-btn.solid:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0, 0, 0, .45); }
+}
+.hs .x-btn.solid:active { transform: translateY(1px); box-shadow: none; }
+/* the paused glyph keeps full ink on hover (the shared hover grey would hide the white play mark) */
+@media (hover: hover) { .hs .lx-pause[aria-pressed='true']:hover { background: #262626; color: #fff; } }
 
 @media (max-width: 900px) {
   .hm { --s: 150px; --gk: .62; }
   .hm-labels li { left: calc(50% + var(--s) * .5); max-width: 130px; font-size: 12px; gap: 6px; }
   .hm-labels li i { width: 16px; }
-  .hs-hero-grid { min-height: 0; }
-  .hs-hero-obj { height: 420px; }
+  .hs-hero-grid { min-height: 0; padding-block: 32px 44px; }
+  .hs-hero-obj { height: 400px; }
   .hs-sign .hm { --s: 170px; }
+  /* phone hero: the callouts sit on the stack's edges (bytes above its left shoulder, the signature below its right),
+     the stack centred at its true size */
   .hs-io { font-size: 12px; padding: 10px 12px; }
-  .hs-io.in { left: 4%; top: 18%; transform: none; }
-  .hs-io.out { right: 4%; top: auto; bottom: 74px; transform: none; }
-  /* phone: the stage stays one stage. The exploded module sticks under the header (a short band) and changes with the
-     chapter crossing the middle of the screen; the words scroll beneath it, the one being read at full strength. No
-     per-chapter copy of the drawing, so no black gaps between chapters. */
-  .hs-exp .hm { transform: translateX(-26%); }
-  .hs-ch .pc-in { display: flex; flex-direction: column; align-items: stretch; }
-  .hs-ch .pc-vis { display: block; order: 0; position: sticky; top: var(--x-top, 56px); z-index: 2; height: 34svh; min-height: 230px; margin: 0 -16px; background: #000; box-shadow: 0 1px 0 rgba(255, 255, 255, .1); }
-  .hs-ch .pc-copy { order: 1; display: block; }
-  .hs-ch .pc-copy > .hs-ch-k { display: none; }
-  .hs-ch .pc-vis-m { display: none; }
-  .hs-ch .pc-art, .js .hs-ch .pc-art { padding: 44px 0 52px; min-height: 42svh; box-sizing: border-box; border-top-color: rgba(255, 255, 255, .1); transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
-  .js .hs-ch .pc-art:not([data-on]) { opacity: .38; }
-  .hs-ch .pc-art:first-child { padding-top: 32px; }
-  .hs-ch .pc-art:last-child { padding-bottom: 72px; }
-  .hs-ch .hm { --s: 112px; --gk: .5; }
-  .hs-ch .hm-labels li { width: 118px; max-width: 118px; left: calc(50% + var(--s) * .55); font-size: 11px; line-height: 1.25; }
+  .hs-io.in { left: 2%; top: calc(50% - 150px); transform: none; }
+  .hs-io.out { right: 2%; top: calc(50% + 98px); bottom: auto; transform: none; }
+  .hs-call { left: 56px; font-size: 13px; gap: 8px; }
+  /* phone chapters. Plain list (reduced motion, scripts off): one drawing, then the six chapters in flow. */
+  .hc-in { display: block; }
+  .hc-frame { display: flex; flex-direction: column; }
+  .hc-vis { order: -1; height: clamp(220px, 36svh, 300px); }
+  .hc-vis-in { position: relative; top: auto; height: 100%; }
+  .hc-copy { padding: 24px 0 72px; }
+  .hc-art { min-height: 0; padding: 0 0 44px; justify-content: flex-start; }
+  .js .hc-art:not([data-on]) { opacity: 1; }
+  .hc-t { font-size: 26px; }
+  .hc-d { font-size: 15px; line-height: 1.55; }
+  .hs-exp .hm { transform: translateX(-18%); }
+  .hs-ch .hm { --s: 120px; --gk: .5; }
+  .hs-ch .hm-labels li { width: 96px; max-width: 96px; left: calc(50% + var(--s) * .55); font-size: 12px; line-height: 1.25; }
   .hs-ch .hm-labels li i { width: 12px; }
-  /* the tabs: one rail that scrolls sideways and snaps, the next tab peeking at the edge */
-  .hs-pick-tabs { width: auto; margin-inline: calc(var(--gutter, 16px) * -1); padding: 5px var(--gutter, 16px); border-radius: 0; background: none; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; }
-  .hs-pick-tabs::-webkit-scrollbar { display: none; }
-  .hs-pick-tabs { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); }
-  .hs-pick-tabs button { min-height: 44px; padding: 0 16px; font-size: 15px; scroll-snap-align: start; background: #f5f5f5; }
-  .hs-pick-p { grid-template-columns: minmax(0, 1fr); border-radius: 20px; }
-  .hs-pick-main { grid-template-columns: minmax(0, 1fr); padding: 0 20px 20px; gap: 0; }
-  .hs-pick-obj { height: 200px; }
-  .hs-pick-obj .hm { --s: 110px; --gk: 1.5; }
-  .hs-pick-name { font-size: 21px; }
-  .hs-pick-key dd { font-size: 17px; }
-  .hs-pick-rows { padding: 0 20px 10px; border-left: 0; }
-  .hs-pick-rows > div:first-child { border-top: 1px solid rgba(0, 0, 0, .1); }
-  .hs .gi-art { transform: none; }
+  /* the module pills: one row that scrolls sideways, the next one peeking */
+  .hs-vendors { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; margin-right: calc(-1 * var(--gutter, 16px)); padding-right: 16%; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 78%, transparent); mask-image: linear-gradient(90deg, #000 78%, transparent); }
+  .hs-vendors::-webkit-scrollbar { display: none; }
+  .hs-vendors button { min-height: 44px; padding: 0 14px; scroll-snap-align: start; flex: none; }
+  .hs-ship-card { margin-top: 0; }
+  .hs-names { margin-top: 44px; }
+  .hs-names li { font-size: clamp(30px, 9.5vw, 44px); }
+}
+/* phone with motion and scripts: one pinned frame for the room. The drawing sits on top, one chapter's words under
+   it; the room scrolls past behind the frame and the chapter swaps per stretch (Hsm.jsx reads the progress). Words
+   never move under the drawing: only one chapter is shown at a time, in the same place. */
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .js .hc-in { min-height: calc(100svh - var(--x-top, 64px) + 5 * 80svh); }
+  .js .hc-frame { position: sticky; top: var(--x-top, 64px); height: calc(100svh - var(--x-top, 64px)); }
+  .js .hc-vis { flex: none; }
+  .js .hc-copy { position: relative; flex: 1; min-height: 0; padding: 0; }
+  .js .hc-art { position: absolute; inset: 0; padding: 12px 0 0; opacity: 0; visibility: hidden; transition: opacity .3s cubic-bezier(0, 0, .2, 1), visibility 0s linear .3s; }
+  .js .hc-art[data-on] { opacity: 1; visibility: visible; transition-delay: 0s; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hs-ch .pc-dots button::after { transition: none; }
   .hs-settle { transform: none !important; }
   .hs-sign .hm { transform: none; transition: none; }
   .hs-pulse { display: none; }
-  .js .hs-ch .pc-art:not([data-on]) { opacity: 1; }
+  .hc { clip-path: none !important; }
+  .hc-art { transition: none; }
+  .js .hc-art:not([data-on]) { opacity: 1; }
+  .hm-plate, .hm-labels li, .hm-core i { transition: none; animation: none; }
+  .hs-pause { display: none; }
+  .hs-call { left: 0; }
+  .js .hc-art[data-on] .hc-t { animation: none; }
+  .hs-caret { display: none; }
+  .hs-names li, .hs-names li span { transition: none; }
 }
 
-/* the live object's pause control */
-.hs-pause { top: 16px; right: 16px; }
-.hs-hero-obj .lp-host { height: 100%; }
-.hs-tk { font-style: normal; }
+/* the live object's pause control, docked to the module: bottom-left, on the call line */
+.hs-hero-obj .lp-host { position: relative; height: 100%; }
+.hs .hs-pause { top: auto; right: auto; left: 0; bottom: 14px; }

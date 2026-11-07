@@ -5,13 +5,14 @@
    in turn; pick one by hand, or step through it yourself.
    Beyond: the trace is a chooser built only from Zen's own facts (local use, video, price), and the family tiles
    below lead to every Zen model, Zen 7 and Zen 6 Max with each one's living sigil.
-   V2: 6/10 trace fills fixed slots with Hanzo's card words (CLS 0), no-blur closing band, solid first-screen ask, fewer price repeats */
+   V2: 7/10 (critic) trace fills fixed slots with Hanzo's card words (CLS 0), no-blur closing band, solid first-screen ask, fewer price repeats */
 import { useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Magnetic } from '../../ui';
 import { A, More, Cta, Img, Stat } from '../../kit';
 import Sigil from '../../Sigil';
 import { arrows } from './live';
+import { play } from '../../../lib/sound';
 import Launch, { Lines, lerp, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
 import ModelFilm, { usePaused } from '../../v2/ModelFilm';
@@ -26,9 +27,9 @@ const CARDS = [
 // sentences); every need has three steps, so the trace keeps one fixed height and never moves the page.
 const NEEDS = [
   { tab: 'Open weights', steps: [
-    [-1, 'open', 'Download the weights, or call them on Hanzo Cloud.'],
     [0, 'desc', CARDS[0].desc, 'yes'],
     [0, 'size', CARDS[0].size],
+    [0, 'mods', CARDS[0].mods],
   ], pick: [0] },
   { tab: CARDS[1].mods, steps: [
     [0, 'mods', CARDS[0].mods, 'no'],
@@ -60,6 +61,7 @@ function Console() {
     if (!mine) { const t = setTimeout(() => { setN((n + 1) % NEEDS.length); setStep(0); }, 3600); return () => clearTimeout(t); }
   }, [paused, step, seen, calm, n, mine, len]);
   const pick = (i) => { setMine(true); setN(i); setStep(calm ? 9 : 0); };
+  useEffect(() => { if (step === len + 1 && seen) play('done'); }, [step, len, seen]); // the trace lands its answer: a faint settle (shared sound kit)
   const cur = step >= 1 && step <= len ? need.steps[step - 1] : null;
   const lit = (ci, row) => {
     if (cur && (cur[0] === ci || cur[0] === -1) && cur[1] === row) return 'on';
@@ -128,9 +130,11 @@ const ARCH = (t, W, H, wide) => {
 function CardArt({ ci, open, z, on }) {
   const c = CARDS[ci];
   return (
-    <div className="ze-art" style={{ '--z': z }}>
-      <Img src={film('zen', 'webp')} w={1200} h={1500} />
-      <ModelFilm slug="zen" play={on} />
+    <div className={'ze-art' + (open ? ' ze-art-sig' : '')} style={{ '--z': z }}>
+      {open ? <Sigil seed="/zen/open-weights" data={[6, 27.3, 5.95]} className="ze-sigart" /> : <>
+        <Img src={film('zen', 'webp')} w={1200} h={1500} />
+        <ModelFilm slug="zen" play={on} />
+      </>}
       {open ? (
         <div className="ze-open" aria-hidden="true">
           {CARDS.map((k) => <p key={k.code}><code>{k.code}</code><span>{k.name}</span></p>)}
@@ -159,6 +163,14 @@ const CHAPTERS = [
   { k: CARDS[1].name, title: CARDS[1].name, art: (on) => <CardArt ci={1} z={1.7} on={on} />, body: cardBody(CARDS[1]) },
 ];
 
+// keyboard: focus entering the settled headline's links scrolls the stage to its settled point, so they show
+const settleTo = () => {
+  const s = document.querySelector('.lv-stage[data-hero="zen"]');
+  if (!s || innerWidth <= 900) return;
+  const end = s.getBoundingClientRect().top + scrollY + s.offsetHeight - innerHeight;
+  if (scrollY < end - 2) scrollTo({ top: end, behavior: 'instant' });
+};
+
 export default function Zen() {
   return (
     <Launch
@@ -171,8 +183,8 @@ export default function Zen() {
         <>
           <Lines id="ze-h" lines={['Open models.', 'Yours to run.']} />
           <p className="lv-lede">The open-weight family behind Hanzo. Download the weights, or call them on Hanzo Cloud.</p>
-          <div className="lv-acts">
-            <Cta to="/login" id="zen.hero" thumb>Try Hanzo</Cta>
+          <div className="lv-acts" onFocus={settleTo}>
+            <Cta kind="quiet" to="/login" id="zen.hero">Try Hanzo</Cta>
             <Cta to="https://platform.hanzo.ai" kind="link" id="zen.hero-platform">API Platform</Cta>
             <More to="https://github.com/zenlm">Docs on GitHub</More>
           </div>

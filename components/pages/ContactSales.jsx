@@ -25,7 +25,7 @@
    the logos; raw <img>; the raw .x-btn submit; data-ask-hide on the rail; arrow keys that chose and advanced. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { A, More, Img, Band } from '../kit';
+import { A, More, Band } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import C from '../../content';
@@ -47,7 +47,7 @@ const STEPS = [
 ];
 const INCLUDES = ['Run Hanzo in your cloud, on your servers or fully offline', 'Dedicated compute, and your own models trained and hosted', 'Unlimited members, single sign-on, roles and an audit log', 'An uptime guarantee and security review in your contract', '24/7 engineering support and hands-on onboarding'];
 // JS off: every question, size and inclusion readable in order; the step controls (which need JS) step aside (PLAN 2.3)
-const NOJS = { __html: '<style>.xcs-stage{display:flex!important;flex-direction:column;gap:40px;min-height:0!important}.xcs-step{position:relative!important;opacity:1!important;transform:none!important}.xcs-top,.xcs-acts,.xcs-picks,.xcs-peek{display:none!important}.xcs-in,.xcs-up{animation:none!important}.xcs .x-band .x-word,.xcs .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
+const NOJS = { __html: '<style>.xcs-stage{display:flex!important;flex-direction:column;gap:40px;min-height:0!important;height:auto!important}.xcs-step{position:relative!important;opacity:1!important;transform:none!important}.xcs-top,.xcs-acts,.xcs-picks,.xcs-peek{display:none!important}.xcs-in,.xcs-up{animation:none!important}.xcs .x-band .x-word,.xcs .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
 const okEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const two = (n) => String(n).padStart(2, '0');
 
@@ -117,6 +117,16 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     return () => { io.disconnect(); timers.current.forEach(clearTimeout); timers.current = []; el.removeEventListener('pointerdown', stop); el.removeEventListener('focusin', stop); el.removeEventListener('keydown', stop); };
   }, [calm, hyd]); // eslint-disable-line react-hooks/exhaustive-deps
   const shown = demo ? demo.at : at; // the step on screen (the demo only moves pictures; focus and inert follow `at`)
+  // the card is sized to its one question: the stage takes the height of the step on screen and eases to the next one
+  const stepEls = useRef([]);
+  const [sh, setSh] = useState(null);
+  useEffect(() => {
+    const el = stepEls.current[shown];
+    if (!el) return;
+    const ro = new ResizeObserver(() => setSh(el.offsetHeight));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [shown, state]);
   useEffect(() => {
     if (first.current) { first.current = false; return; }
     const el = refs.current[STEPS[at].name];
@@ -219,9 +229,9 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
           <div className="xcs-top" aria-hidden="true">
             <i className="xcs-progress"><motion.b initial={false} animate={{ scaleX: (shown + 1) / STEPS.length }} transition={T} /></i>
           </div>
-          <div className="xcs-stage">
+          <motion.div className="xcs-stage" initial={false} animate={sh ? { height: sh } : undefined} transition={T}>
             {STEPS.map((s, i) => (
-              <motion.div key={s.name} className={'xcs-step' + (i === shown ? ' on' : '') + (bad === i ? ' bad' : '')} initial={false}
+              <motion.div key={s.name} ref={(el) => { stepEls.current[i] = el; }} className={'xcs-step' + (i === shown ? ' on' : '') + (bad === i ? ' bad' : '')} initial={false}
                 animate={i === shown ? { opacity: 1, y: 0 } : { opacity: 0, y: i < shown ? -16 : 16 }}
                 transition={{ duration: i === shown ? 0.3 : 0.15, ease: EASE, delay: i === shown ? 0.06 : 0 }}
                 {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
@@ -234,7 +244,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
                 {i === 0 && demo && <span className="xcs-ghost" aria-hidden="true">{demo.text}</span>}
               </motion.div>
             ))}
-          </div>
+          </motion.div>
           <div className="xcs-trap" aria-hidden="true">
             <label htmlFor="xcs-website">Leave this empty</label>
             <input id="xcs-website" name="website" tabIndex={-1} autoComplete="off" value={v.website} onChange={(e) => setV({ ...v, website: e.target.value })} />
@@ -268,21 +278,49 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
   );
 }
 
-function Logo({ l, ghost }) {
-  const [bad, setBad] = useState(false);
-  const box = useRef(null);
-  // an image that failed before the page woke up never fires onError for React: check it once
-  useEffect(() => { const i = box.current?.querySelector('img'); if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
+/* the launches as a type rail: Hanzo's own customer names set as type, each a real link. The logo files
+   (/logos/customers/*) are not in this repo, so none is requested (docs/requests/contact-sales.md asks for a mirror). */
+function Name({ l, ghost }) {
   return (
-    <A to={l.href} className={'xcs-logo' + (bad ? ' bad' : '')} ref={box} {...(ghost ? { tabIndex: -1, 'aria-hidden': true } : {})}>
-      <Img src={l.src} alt={ghost ? '' : l.name} w={128} h={30} onError={() => setBad(true)} />
-      {bad && <span aria-hidden="true">{l.name}</span>}
+    <A to={l.href} className="xcs-logo" {...(ghost ? { tabIndex: -1, 'aria-hidden': true } : {})}>
+      <span>{l.name}</span>
     </A>
   );
 }
 
 function Rail() {
   const [run, setRun] = useState(true);
+  const calm = useReducedMotion();
+  const box = useRef(null);
+  const track = useRef(null);
+  const live = useRef(true); // false while paused, hovered or focused
+  const held = useRef(false);
+  live.current = run && !held.current;
+  // a slow drift (40px/s) whose speed answers the scroll: scrolling either way adds up to 600px/s, easing back after
+  useEffect(() => {
+    if (calm) return;
+    const el = track.current, wrap = box.current;
+    if (!el || !wrap) return;
+    let x = 0, raf = 0, last = 0, lastY = window.scrollY, boost = 0;
+    const tick = (now) => {
+      raf = requestAnimationFrame(tick);
+      const dt = last ? Math.min(64, now - last) / 1000 : 0;
+      last = now;
+      const y = window.scrollY;
+      const speed = dt ? Math.abs(y - lastY) / dt : 0;
+      lastY = y;
+      boost += (Math.min(speed * 0.35, 600) - boost) * 0.08;
+      if (!live.current) return;
+      x -= (40 + boost) * dt;
+      const half = el.scrollWidth / 2;
+      if (half && -x >= half) x += half;
+      el.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
+    };
+    const io = new IntersectionObserver(([e]) => { cancelAnimationFrame(raf); last = 0; lastY = window.scrollY; if (e.isIntersecting) raf = requestAnimationFrame(tick); });
+    io.observe(wrap);
+    return () => { cancelAnimationFrame(raf); io.disconnect(); };
+  }, [calm]);
+  const hold = (h) => () => { held.current = h; live.current = run && !h; };
   return (
     <section className="xcs-logos" aria-labelledby="xcs-logos-h">
       <div className="vc-wrap xcs-logos-h">
@@ -293,10 +331,96 @@ function Rail() {
             : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.2v9.6L12.5 8z" fill="currentColor" /></svg>}
         </button>
       </div>
-      <div className="xcs-rail" data-rail>
-        <div className={'xcs-track' + (run ? '' : ' held')}>
-          {C.trusted.map((l) => <Logo key={l.name} l={l} />)}
-          {C.trusted.map((l) => <Logo key={'g' + l.name} l={l} ghost />)}
+      <div className="xcs-rail" data-rail ref={box} onPointerEnter={hold(true)} onPointerLeave={hold(false)} onFocus={hold(true)} onBlur={hold(false)}>
+        <div className="xcs-track" ref={track}>
+          {C.trusted.map((l) => <Name key={l.name} l={l} />)}
+          {C.trusted.map((l) => <Name key={'g' + l.name} l={l} ghost />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* What Enterprise includes, as one pinned scene (desktop, with motion): the heading stays, five numerals rest at 64px in a
+   column and the one you are on grows to 112px while its sentence rises in and the last one goes out, about 0.6 of a
+   screen of scroll per idea. Phones: five panels that stack as you scroll, the active numeral growing. Reduced motion
+   and JS off: the plain list. Every row still adds to your enquiry on a click or tap; a numeral jumps to its idea. */
+const SLOT = 68, GROW = 48; // a 64px numeral's slot, and the extra room the active (x1.75) one takes
+function Includes({ adds, toggle }) {
+  const sec = useRef(null);
+  const calm = useReducedMotion();
+  const [pin, setPin] = useState(false);
+  const [act, setAct] = useState(0);
+  const [lit, setLit] = useState(-1);
+  useEffect(() => {
+    const mq = matchMedia('(min-width: 900px)');
+    const set = () => setPin(mq.matches && !calm);
+    set();
+    mq.addEventListener('change', set);
+    return () => mq.removeEventListener('change', set);
+  }, [calm]);
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const s = sec.current;
+      if (!s) return;
+      let i = 0;
+      if (pin) {
+        const r = s.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - innerHeight)));
+        i = Math.min(INCLUDES.length - 1, Math.floor(p * INCLUDES.length));
+      } else {
+        s.querySelectorAll('.xcs-inc-l > li').forEach((li, k) => { if (li.getBoundingClientRect().top <= innerHeight * 0.5) i = k; });
+      }
+      setAct(i);
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(read); };
+    read();
+    addEventListener('scroll', on, { passive: true });
+    addEventListener('resize', on);
+    return () => { cancelAnimationFrame(raf); removeEventListener('scroll', on); removeEventListener('resize', on); };
+  }, [pin]);
+  const go = (i) => {
+    const s = sec.current;
+    if (!s || !pin) return;
+    const top = s.getBoundingClientRect().top + window.scrollY + ((i + 0.5) / INCLUDES.length) * (s.offsetHeight - innerHeight);
+    window.scrollTo({ top, behavior: 'smooth' });
+  };
+  return (
+    <section ref={sec} className={'vc-sec xcs-inc' + (pin ? ' pin' : '')} aria-labelledby="xcs-inc-h">
+      <div className="xcs-inc-stick">
+        <div className="vc-grid">
+          <header className="xcs-inc-h">
+            <MaskLines id="xcs-inc-h" lines={['What Enterprise includes']} className="vc-headline" />
+            <More to="/enterprise">See everything in Enterprise</More>
+          </header>
+          <ol className="xcs-inc-l">
+            {INCLUDES.map((t, i) => {
+              const on = adds.includes(i);
+              const cls = [on && 'on', lit === i && 'lit', i === act && 'act', i < act && 'past'].filter(Boolean).join(' ');
+              return (
+                // the whole row answers: a .98 press, and a click or tap on it adds it (the + stays the keyboard control)
+                <li key={t} className={cls} style={{ '--y': i * SLOT + (i > act ? GROW : 0) + 'px', '--ty': act * SLOT + 'px' }}
+                  onPointerEnter={() => setLit(i)} onPointerLeave={() => setLit(-1)}
+                  onClick={(e) => { if (e.target.closest('button')) return; if (pin && e.target.closest('.xcs-inc-n') && i !== act) go(i); else toggle(i); }}>
+                  <span className="xcs-inc-n vc-num" aria-hidden="true">{two(i + 1)}</span>
+                  <span className="xcs-inc-x">
+                    <span className="xcs-inc-t">{t}</span>
+                    {/* adds to the enquiry where you are: no focus move, no step change */}
+                    <button type="button" className="xcs-round" aria-pressed={on} aria-label={t}
+                      onFocus={() => { setLit(i); if (i !== act) go(i); }} onBlur={() => setLit(-1)} onClick={() => toggle(i)}>
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        <motion.span key={on ? 'y' : 'n'} className="xcs-g" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={T}>
+                          {on ? <Check /> : <Plus />}
+                        </motion.span>
+                      </AnimatePresence>
+                    </button>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </div>
     </section>
@@ -307,7 +431,6 @@ export default function ContactSales() {
   const [v, setV] = useState({ name: '', email: '', company: '', size: '', need: '', website: '' });
   const [at, setAt] = useState(0);
   const [adds, setAdds] = useState([]); // the inclusions you added, kept apart from your own words until you send
-  const [lit, setLit] = useState(-1);
   const toggle = (i) => setAdds((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i].sort()));
   // the draft survives a reload in this tab (PLAN 2.1); nothing leaves the browser until you press Talk to sales
   const loaded = useRef(false);
@@ -362,35 +485,7 @@ export default function ContactSales() {
         </div>
       </section>
 
-      <section className="vc-sec xcs-inc" aria-labelledby="xcs-inc-h">
-        <div className="vc-grid">
-          <header className="xcs-inc-h">
-            <MaskLines id="xcs-inc-h" lines={['What Enterprise includes']} className="vc-headline" />
-            <More to="/enterprise">See everything in Enterprise</More>
-          </header>
-          <ol className="xcs-inc-l">
-            {INCLUDES.map((t, i) => {
-              const on = adds.includes(i);
-              return (
-                // the whole row answers: a .98 press, and a click or tap anywhere on it adds it (the + stays the keyboard control)
-                <li key={t} className={(on ? 'on' : '') + (lit === i ? ' lit' : '')} onPointerEnter={() => setLit(i)} onPointerLeave={() => setLit(-1)}
-                  onClick={(e) => { if (!e.target.closest('button')) toggle(i); }}>
-                  <span className="xcs-inc-n vc-num" aria-hidden="true">{two(i + 1)}</span>
-                  <span className="xcs-inc-t">{t}</span>
-                  {/* adds to the enquiry where you are: no focus move, no step change */}
-                  <button type="button" className="xcs-round" aria-pressed={on} aria-label={t} onFocus={() => setLit(i)} onBlur={() => setLit(-1)} onClick={() => toggle(i)}>
-                    <AnimatePresence mode="popLayout" initial={false}>
-                      <motion.span key={on ? 'y' : 'n'} className="xcs-g" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={T}>
-                        {on ? <Check /> : <Plus />}
-                      </motion.span>
-                    </AnimatePresence>
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-      </section>
+      <Includes adds={adds} toggle={toggle} />
 
       <Rail />
       <Band title="Tell us what you want to build." action="Talk to sales" to="/contact-sales#xcs-form" />

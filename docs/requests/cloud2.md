@@ -51,6 +51,20 @@ Invented strings inside shared components (not this group's files):
   which is not a registered UI string. /gui stopped passing it, so the dialog now has no name. Asked for: name the dialog with
   `aria-labelledby` pointing at the card's own heading, or register "Open" in `content/ui-strings.json`.
 
+- `components/kit.jsx` `CodeBlock` (around line 491) marks itself `data-room="dark"`, so every small code card (e.g. the cloud
+  pages' "Paste and ship" prompt) turns the sticky header dark while it passes under it, over a white page. Asked for: only real
+  dark rooms carry `data-room="dark"`.
+
+- Missing route: `/aup` (Hanzo's "usage policy" link on /help/privacy/model-training, kept as Hanzo's href) returns 404 on this
+  server and lands on `/`. Asked for: the `/aup` page or a redirect owned by the legal/routes chat.
+
+- `components/v2/KeynoteRoom` (used by `KeynoteClose`): renders a clip-path on the server and none on a reduced-motion client, a
+  hydration mismatch on every page that uses it under reduced motion (owner: Cloud 1 chat). /functions now uses a page-local copy.
+
+- `components/kit.jsx` `CodeBlock`: its `pre` sets `overscroll-behavior: contain`, so under reduced motion (no smooth-scroll
+  wrapper) the page stops scrolling while the pointer is over a short code card such as "Paste and ship". Asked for: only
+  contain overscroll when the block actually scrolls.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its

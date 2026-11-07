@@ -70,19 +70,19 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 .km-seal { padding-top: 72px; }
 .km-seal .v2-grid { align-items: center; }
 .km-seal-l { grid-column: 1 / span 5; }
-.km-seal-l .km-cap { margin: 14px 0 22px; }
+.km-seal-d { margin-top: 14px; }
 .km-seal-box { grid-column: 7 / -1; padding: clamp(24px, 3vw, 44px); }
 .km-seal-k { display: block; margin: 0 0 10px; font: 500 13px/1 var(--mono); color: var(--km-body); }
-.km-seal-k span { margin-left: 8px; color: var(--km-body); word-break: break-all; }
 .km-seal-box input { width: 100%; box-sizing: border-box; min-height: 56px; padding: 0 18px; border-radius: 16px; border: 1px solid rgba(0, 0, 0, .14); background: var(--km-paper); font: 500 clamp(18px, 1.6vw, 22px)/1 var(--sans); color: var(--km-ink); caret-color: var(--km-ink); transition: border-color .15s var(--km-move); }
 @media (hover: hover) { .km-seal-box input:hover { border-color: rgba(0, 0, 0, .3); } }
 .km-seal-box input:focus { border-color: var(--km-ink); }
+.km-seal-box input::placeholder { color: var(--km-body); letter-spacing: .12em; }
 .km-seal-box input:focus-visible { outline: 2px solid var(--km-ink); outline-offset: 3px; box-shadow: 0 0 0 3px var(--km-paper); }
 .km-seal-chain { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 22px 0; font: 500 13px/1 var(--mono); }
 .km-seal-chain span { padding: 8px 12px; border-radius: 999px; background: var(--km-quiet); color: var(--km-ink); }
 .km-seal-chain span.off { background: transparent; color: var(--km-body); box-shadow: inset 0 0 0 1px var(--line); text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .25); }
 .km-seal-chain i { width: 18px; height: 1px; background: var(--km-body); }
-.km-ct { margin: 0 0 22px; min-height: 3em; padding: 16px 18px; border-radius: 12px; background: var(--km-ink); color: var(--km-silver); font: 500 15px/1.5 var(--mono); word-break: break-all; }
+.km-ct { margin: 0; min-height: 3em; padding: 16px 18px; border-radius: 12px; background: var(--km-ink); color: var(--km-silver); font: 500 15px/1.5 var(--mono); word-break: break-all; }
 
 /* what it holds: a pinned panel that redraws for the rule you are reading */
 .km-holds { background: var(--km-whisper); }
@@ -172,17 +172,18 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 /* the vault's secret, docked under the console: which project read it, at which version */
 .km-key { position: relative; display: flex; align-items: center; gap: 16px; margin-top: 12px; padding: 10px 10px 10px 22px; border-radius: 16px; background: var(--km-ink); color: var(--km-black-ink); }
 .km-key-pause { order: 2; flex: none; }
-.km-key-in { position: relative; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; min-height: 44px; font: 500 14px/1.2 var(--mono); }
+.km-key-in { position: relative; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; min-height: 44px; font: 500 14px/1.2 var(--mono); }
+/* one line on desktop whichever project reads it: the tag lives on the vault above, the read keeps its widest width */
+@media (min-width: 901px) { .km-key-in { flex-wrap: nowrap; } .km-key-name em { display: none; } .km-key-read { min-width: 16ch; justify-content: flex-start; } }
 .km-key-name em { margin-left: 10px; padding: 4px 8px; border-radius: 6px; background: var(--km-veil-dark-on); font-style: normal; font-size: 12px; color: var(--km-silver); }
 .km-key-v { display: inline-flex; align-items: baseline; gap: 10px; color: var(--km-on-black); }
 .km-key-v b { font: 600 17px/1 var(--sans); letter-spacing: -.02em; color: var(--km-black-ink); }
 .km-key-read { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; }
-.km-key-read > i { flex: none; width: 8px; height: 8px; border-radius: 99px; box-shadow: inset 0 0 0 1.5px var(--km-on-black); transition: background-color .3s var(--km-move); }
-.km-key-read > i.a { background: var(--km-black-ink); box-shadow: none; }
+.km-key-read > i { flex: none; width: 8px; height: 8px; border-radius: 99px; background: var(--km-black-ink); }
 .km-key-roll { color: var(--km-black-ink); }
 .km-key-roll > span { white-space: nowrap; }
 /* the one idle mover here: a hairline under the secret runs out the time until the next project reads it */
-.km-key-run { position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--km-line-dark); transform-origin: left; transform: scaleX(0); animation: km-run 2.6s linear both; }
+.km-key-run { position: absolute; left: 22px; right: 70px; bottom: 7px; height: 1px; background: var(--km-line-dark); transform-origin: left; transform: scaleX(0); animation: km-run 2.6s linear both; }
 .km-key-run.held { animation: none; }
 .km-ship-cap { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-top: 28px; }
 .km-ship-cap .v2-title { max-width: 30ch; }
@@ -246,7 +247,8 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
   .km-ship-p { order: -1; }
   .km-key { padding: 10px 10px 10px 16px; align-items: flex-start; }
   .km-key-in { gap: 8px 16px; padding: 4px 0; }
-  .km-key-read { margin-left: 0; }
+  .km-key-read { margin-left: 0; flex-basis: 100%; }
+  .km-key-run { left: 16px; right: 64px; bottom: 6px; }
   .km-rel { display: block; }
   .km-rel ul { display: block; }
   .km-rel li + li { border-left: 0; }
@@ -255,6 +257,8 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
   .km-rel-a svg { margin-left: auto; }
   /* 44px targets on the shared console and close */
   .km .cf-con-open { min-height: 44px; }
+  /* the project caption keeps a two-line height, so stepping projects never moves the console's foot */
+  .km .cf-cap { min-height: 84px; }
   .km .cf-con-side { padding: 8px 4px; }
   .km .cf-con-ico { min-width: 44px; }
   .km .cf-con-body { grid-template-columns: 54px 1fr; }
@@ -262,5 +266,6 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
   /* the closing contour art keeps to the right of the words */
   .km-get .gi-art { right: -62%; top: -14%; width: 88%; }
 }
+@media (max-width: 359px) { .km .cf-cap { min-height: 106px; } }
 /* phones: no text under 14px except 11-12px mono capitals */
-@media (max-width: 900px) { .km-seal-k, .km-seal-k span, .km-rule-n { font-size: 14px; } }
+@media (max-width: 900px) { .km-seal-k, .km-rule-n { font-size: 14px; } }

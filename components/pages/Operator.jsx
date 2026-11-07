@@ -16,6 +16,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Band } from '../kit';
+import { Copy } from '../ui';
+import MaskLines from './proof/MaskLines';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import useNarrow from '../v2/A2Narrow';
@@ -28,9 +30,16 @@ const GH = 'https://github.com/hanzoai';
 const KINDS = [['Service'], ['Datastore', 'SQL · KV · DocDB · S3'], ['Gateway'], ['Ingress'], ['DNS'], ['Base'], ['IAM'], ['KMS'], ['MPC'], ['KMSSecret', 'kms.hanzo.ai']];
 const SPRING = { duration: T.slower, ease: EMPH }; // a tween, not a spring (no overshoot)
 
-function Tile({ k, sub, i, mv, onDrift }) {
+/* drag only with a fine pointer: on touch a swipe must scroll the page, and a tap drifts the tile instead */
+function useFine() {
+  const [fine, setFine] = useState(false);
+  useEffect(() => { const m = matchMedia('(pointer: fine)'); const f = () => setFine(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
+  return fine;
+}
+
+function Tile({ k, sub, i, mv, onDrift, fine, box }) {
   return (
-    <motion.button type="button" className="xop-tile" style={{ x: mv.x, y: mv.y }} drag dragMomentum={false} dragElastic={0.2}
+    <motion.button type="button" className={'xop-tile' + (fine ? ' fine' : '')} style={{ x: mv.x, y: mv.y }} drag={fine} dragConstraints={box} dragMomentum={false} dragElastic={0}
       onDragEnd={() => onDrift(i)} onClick={() => { if (Math.abs(mv.x.get()) + Math.abs(mv.y.get()) < 2) { animate(mv.x, i % 2 ? 26 : -26, SPRING); animate(mv.y, 14, SPRING); onDrift(i); } }}
       aria-label={'Drift ' + k} whileDrag={{ scale: 1.05, zIndex: 5 }}>
       <span className="xop-tile-k">{k}</span>
@@ -53,6 +62,8 @@ function Board() {
   const [paused, setPaused] = useState(false);
   const drifted = useRef(new Set());
   const id = useRef(1);
+  const fine = useFine();
+  const box = useRef(null); // dragged tiles stay inside the board
   const say = (lines) => setLog((l) => [...lines.map(([t, k]) => ({ id: id.current++, t, k })).reverse(), ...l].slice(0, 7));
   const onDrift = (i) => { drifted.current.add(i); say([[KINDS[i][0], 'drift']]); };
   const sweep = (s) => {
@@ -83,8 +94,8 @@ function Board() {
   return (
     <div className={'xop-board' + (paused ? ' a2-paused' : '')} ref={ref}>
       <div className="xop-board-top"><A2Pause paused={paused} onChange={setPaused} label="Pause" /><span className="x-mono"><i className="xop-live" />sweep</span></div>
-      <div className="xop-grid">
-        {KINDS.map(([k, sub], i) => <Tile key={k} k={k} sub={sub} i={i} mv={{ x: xs[i], y: ys[i] }} onDrift={onDrift} />)}
+      <div className="xop-grid" ref={box}>
+        {KINDS.map(([k, sub], i) => <Tile key={k} k={k} sub={sub} i={i} mv={{ x: xs[i], y: ys[i] }} onDrift={onDrift} fine={fine} box={box} />)}
         <span className="xop-sweep" key={lit} aria-hidden="true" />
       </div>
       <ol className="xop-log x-mono" aria-live="polite" aria-label="Operator log">
@@ -99,7 +110,7 @@ function Hero() {
     <section className="a2-dark xop-hero" data-room="dark" aria-labelledby="xop-h1">
       <div className="a2-wrap a2-grid xop-hero-grid">
         <div className="xop-hero-copy">
-          <A2Lines as="h1" id="xop-h1" className="a2-display xop-h1" lines={['Hanzo', 'Operator']} now />
+          <MaskLines as="h1" id="xop-h1" className="a2-display xop-h1" lines={['Hanzo', 'Operator']} amount={0.1} />
           <p className="a2-lede">One binary that runs the stack on Kubernetes</p>
           <div className="a2-acts"><Cta to={GH} id="operator.hero" thumb>View on GitHub</Cta><A to={GH} className="xop-repo x-mono">hanzoai/operator</A></div>
         </div>
@@ -116,14 +127,18 @@ const LOOSE = Array.from({ length: 30 }, (_, i) => [((i * 47) % 100) - 50, ((i *
 
 function Declare() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.55'] });
-  const k = useTransform(p, (v) => (calm ? 1 : Math.min(1, Math.max(0, (v - 0.1) / 0.7))));
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // applied after hydration, so server and client markup match
+  useEffect(() => setCalm(!!rm), [rm]);
+  // pinned: the scene holds the screen while the thirty come together, centred, then lets go
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const kv = useTransform(p, (v) => Math.min(1, Math.max(0, (v - 0.08) / 0.7)));
+  const k = calm ? 1 : kv;
   return (
-    <section className="a2-sec xop-declare" ref={ref} aria-labelledby="xop-declare-h">
-      <div className="a2-wrap a2-grid">
+    <section className="xop-declare" ref={ref} aria-labelledby="xop-declare-h">
+      <div className="a2-wrap a2-grid xop-declare-stick">
         <div className="xop-declare-copy">
-          <A2Lines id="xop-declare-h" className="a2-headline" lines={['Declare the thing,', 'not the thirty objects']} />
+          <MaskLines id="xop-declare-h" className="a2-headline" lines={['Declare the thing,', 'not the thirty objects']} />
         </div>
         <motion.div className="xop-converge" style={{ '--k': k }} aria-hidden="true">
           {LOOSE.map(([x, y, r], i) => <i key={i} style={{ '--x': x, '--y': y, '--r': r + 'deg' }} />)}
@@ -187,7 +202,7 @@ function Get() {
             <p>K8s operator</p>
           </div>
           <p className="xop-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
-          <p className="xop-get-cmd x-mono" aria-hidden="true">operator up</p>
+          <p className="xop-get-cmd x-mono"><code>operator up</code><Copy text="operator up" /></p>
         </div>
       </div>
     </section>

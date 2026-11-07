@@ -123,7 +123,7 @@ function KitPlate({ i, t, p, m, tick }) {
         <Plate kind={kind} />
         <span className="xpe-fmt">{fmt.split(', ').map((f) => <i key={f}>{f}</i>)}<span className="x-sr">{fmt}</span></span>
       </motion.a>
-      <motion.span className="xpe-kitc-t" style={{ opacity: o }}><h3 className="vc-title">{title}</h3><span>{desc}</span></motion.span>
+      <motion.span className="xpe-kitc-t" style={{ opacity: o }}><h2 className="vc-title">{title}</h2><span>{desc}</span></motion.span>
     </li>
   );
 }
@@ -205,10 +205,10 @@ function Belief({ text }) {
   );
 }
 /* A fact that settles into its place once, out of its own mask. */
-function Fact({ v, k }) {
+function Fact({ v, k, big }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
-  return <div ref={ref}><dd className={'xpe-fig' + (seen ? ' in' : '')}><span>{v}</span></dd><dt className="vc-kick">{k}</dt></div>;
+  return <div ref={ref} className={big ? 'big' : ''}><dd className={'xpe-fig' + (seen ? ' in' : '')}><span>{v}</span></dd><dt className="vc-kick">{k}</dt></div>;
 }
 
 function About() {
@@ -221,7 +221,7 @@ function About() {
         </div>
         <Belief text={BOILER} />
         <dl className="xpe-facts">
-          {FACTS.map(([v, k]) => <Fact key={k} v={v} k={k} />)}
+          {FACTS.map(([v, k], i) => <Fact key={k} v={v} k={k} big={i === 0} />)}
         </dl>
       </div>
     </section>
@@ -317,7 +317,7 @@ function Contact() {
         </div>
         <div className="xpe-contact-m" ref={ref}>
           <div className="xpe-mail-row">
-            <a href={MAIL} className="xpe-mail" data-cta="press.mail"><span className={'xpe-mail-i' + (seen ? ' in' : '')}><span className="xpe-typed">{EMAIL.slice(0, k)}</span><span className="xpe-rest" aria-hidden="true">{EMAIL.slice(k)}</span>{!done && <i className="xpe-caret" aria-hidden="true" />}</span></a>
+            <a href={MAIL} className="xpe-mail" data-cta="press.mail"><span className={'xpe-mail-i' + (seen ? ' in' : '')}><span className="xpe-sizer" aria-hidden="true">{EMAIL}</span><span className="xpe-typed"><span className="x-sr">{EMAIL}</span><span aria-hidden="true">{EMAIL.slice(0, k)}</span>{!done && <i className="xpe-caret" aria-hidden="true" />}</span></span></a>
             <span className={'xpe-copy-w' + (done ? ' in' : '')}><CopyIt text="press@hanzo.ai" label="Copy" className="xpe-icon dk" /></span>
           </div>
           <h3 className="vc-kick">Media Inquiries</h3>
@@ -370,16 +370,28 @@ function Social() {
   const [k, done, ref] = useBeat(SOCIAL.length + 1, 420);
   const [held, setHeld] = useState(false);
   const lit = held || done ? -1 : k - 1;
+  const [hov, setHov] = useState(-1);
+  const show = lit >= 0 ? lit : hov >= 0 ? hov : 0;
   return (
     <section className="vc-sec tight xpe-social" aria-labelledby="xpe-soc-h">
       <div className="vc-grid xpe-soc-g">
         <div className="xpe-soc-h">
           <MaskLines id="xpe-soc-h" lines={['Connect With Us']} className="vc-headline" />
           <p className="vc-body">Follow us on social media for the latest updates.</p>
+          <div className="xpe-soc-big" aria-hidden="true">
+            <span className="xpe-soc-st">
+              {SOCIAL.map(([n, h]) => <span key={n} className="xpe-soc-z"><b>{h}</b><span>{n}</span></span>)}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span key={show} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3, ease: EASE }}>
+                  <b>{SOCIAL[show][1]}</b><span><i className="vc-num">{String(show + 1).padStart(2, '0')} / 09</i> {SOCIAL[show][0]}</span>
+                </motion.span>
+              </AnimatePresence>
+            </span>
+          </div>
         </div>
         <ul className="xpe-soc" ref={ref} onPointerEnter={() => setHeld(true)} onFocus={() => setHeld(true)}>
           {SOCIAL.map(([n, h, to], i) => (
-            <li key={n} className={i === lit ? 'lit' : ''}><A to={to}><span className="xpe-soc-n vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><b>{n}</b><span className="vc-num">{h}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>
+            <li key={n} className={i === lit ? 'lit' : ''} onPointerEnter={() => setHov(i)} onFocus={() => setHov(i)}><A to={to}><span className="xpe-soc-n vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><b>{n}</b><span className="vc-num">{h}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>
           ))}
         </ul>
       </div>
@@ -401,8 +413,8 @@ function Team() {
           </div>
           <p className="vc-lede">For executive bios and headshots, visit our team page or contact our press team.</p>
           <div className="xpe-acts">
-            <a href={MAIL} className="xpe-cta" data-thumb="Contact Press Team" data-cta="press.bios">Request Executive Bios</a>
-            <A to="https://hanzo.team" className="xpe-cta q" data-cta="press.team">View Team</A>
+            <a href={MAIL} className="xpe-cta q" data-cta="press.bios">Request Executive Bios</a>
+            <A to="https://hanzo.team" className="xpe-tl" data-cta="press.team">View Team <i aria-hidden="true">{ARROW}</i></A>
           </div>
         </div>
         <ul className="xpe-faces" ref={ref}>

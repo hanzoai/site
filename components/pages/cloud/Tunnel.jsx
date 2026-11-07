@@ -220,8 +220,9 @@ function Facts() {
             <li key={i} data-i={i} className={at === i ? 'on' : undefined}>
               <h3 className="l2-title">{FACTS[i][0]}</h3>
               <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
-              <p className="l2-body">{FACTS[i][1]}</p>
+              <p className="l2-body">{i === 1 ? FACTS[i][1].split('--name').flatMap((s, k) => (k ? [<span key={k} className="tn2-nb">--name</span>, s] : [s])) : FACTS[i][1]}</p>
               {i === 1 && <div className="tn2-name-in-list"><Name /></div>}
+              {i === 2 && <Print />}
               {i === 3 && <Gate />}
               {i === 5 && (
                 <div className="tn2-modes" ref={mref}>
@@ -241,6 +242,20 @@ function Facts() {
         </ol>
       </div>
     </section>
+  );
+}
+
+/* Fact 03's object: the first share, as it prints. Nothing to fill in between the command and the URL; the URL lands
+   once when the fact is read (it is in the HTML from the start, so the card never changes size). */
+function Print() {
+  const [ref, live, calm] = useLive(0.8);
+  const [on, setOn] = useState(false);
+  useEffect(() => { if (live || calm) setOn(true); }, [live, calm]);
+  return (
+    <div className={'tn2-print' + (on ? ' on' : '')} ref={ref} aria-hidden="true">
+      <p className="l2-mono"><span>$</span> {CMD}</p>
+      <p className="l2-mono tn2-print-u">{URL_}</p>
+    </div>
   );
 }
 
@@ -284,9 +299,10 @@ function Name() {
         <label><span>--name</span><input value={name} onChange={mine(setName)} onFocus={() => { typed.current = 'user'; }} placeholder="acme-callbacks" spellCheck="false" autoComplete="off" /></label>
         <label><span>target</span><input value={target} onChange={mine(setTarget)} placeholder="3000" spellCheck="false" autoComplete="off" /></label>
       </div>
-      <p className="tn2-name-cmd l2-mono" aria-live="polite">$ hanzo share {n ? `--name ${n} ` : ''}{t || '3000'}</p>
-      <p className="tn2-name-url">https://<b>{n || 'wispyfox7421'}</b><wbr /><span className="tn2-name-d">.share.hanzo.ai</span></p>
-      <p className="tn2-name-note">{n ? 'Yours to reuse.' : 'A random token by default.'} {kind ? `Target: ${kind}.` : t ? 'A port, a host:port, or a full URL.' : ''}</p>
+      {/* one text node per line, the domain and the note's second sentence on their own lines: typing never moves text */}
+      <p className="tn2-name-cmd l2-mono" aria-live="polite">{`$ hanzo share ${n ? `--name ${n} ` : ''}${t || '3000'}`}</p>
+      <p className="tn2-name-url">https://<b>{n || 'wispyfox7421'}</b><span className="tn2-name-d">.share.hanzo.ai</span></p>
+      <p className="tn2-name-note"><span>{n ? 'Yours to reuse.' : 'A random token by default.'}</span> <span>{kind ? `Target: ${kind}.` : t ? 'A port, a host:port, or a full URL.' : ''}</span></p>
     </div>
   );
 }
@@ -318,7 +334,9 @@ function One() {
           <div className="cf-code" ref={ref}>
             <div className="cf-code-bar"><i /><i /><i /><span className="cf-code-k">terminal</span><Copy text={CMD} /></div>
             <div className="cf-code-body tn2-one-code" tabIndex={0} role="region" aria-label="Tunnel terminal">
-              <pre><code><span className="cf-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span>{CMD.slice(0, n)}{!end && <i className="tn2-caret" aria-hidden="true" />}{'\n'}</span><span className={'cf-ln tn2-out' + (end ? '' : ' wait')}>{'→ sharing 3000\n'}</span><span className={'cf-ln tn2-out' + (end ? '' : ' wait')}>{URL_ + ' → localhost:3000'}</span><i className={'tn2-caret tn2-wait' + (end ? '' : ' hold')} aria-hidden="true" /></code></pre>
+              {/* each line is its own block and the typed command is the line's only text node (its caret is a ::after),
+                  so typing never moves anything; the output's arrow keeps "→ localhost:3000" together */}
+              <pre><code><span className="cf-ln tn2-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span><span className={'tn2-typed' + (end ? '' : ' on')}>{CMD.slice(0, n)}</span></span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>→ sharing 3000</span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>{URL_}<wbr /><span className="tn2-nb">{' → localhost:3000'}</span></span><i className={'tn2-caret tn2-wait' + (end ? '' : ' hold')} aria-hidden="true" /></code></pre>
             </div>
           </div>
         </div>

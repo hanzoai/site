@@ -1,29 +1,63 @@
 # /guard — James-eye review
-7 Nov, round 3, walked at 1470x801 and 375x812 (plus 320 and reduced motion) with Playwright: frames at 0, 1, 3 s, wheel/scroll a screen at a time with 1.5 s dwell, hover and press every main control on desktop, tap on phone, typed into the playground, CLS observer, console capture.
+7 Nov, round 5. Walked at 1470x801, 375x812 and 320x640 (phone: isMobile, hasTouch) with Playwright on the shared dev server. At each size: frames at 0, 1 and 3 s with no input, then the wheel a screen at a time with 1.5 s dwells. On desktop I hovered and pressed every stage tab, the pause control, Copy, the six detector chips and the three marker options; on the phones I tapped them. I typed into the playground at all three sizes, did reduced-motion loads at 1470 and 375, measured overflow and read the console. I dismissed the cookie card before judging. No console errors and no Next.js Issue badge at any size. Reduced motion logs only motion.dev's own warning. The header item over 320 is the shared ask button, so it is not counted.
 
 Verdict: 7/10
 
-First complaint: "The top's good, it's alive. But the middle is the same grey box six times, and the heading for it is a tiny line stuck at the bottom of the screen under the cookie thing. And on my phone it just turns into a long document: heading, paragraph, box, heading, paragraph, box."
+First complaint: "In 'You set the dials' there are switches I can't flip. I tried, nothing happened. And while that stage is pinned, the bottom third of my screen is blank white for three screens of scrolling, then there's another empty hole before 'Paste and ship'. Under that, the 'paste by accident' panel is two rows of three identical white boxes. Make it feel alive all the way down, not just in the hero."
 
 ## The 11 answers
-1. **First screen in 5 s, motion within 1 s:** Yes. The request types into the graphite demo by 1 s, the markers swap in and the confidence bar fills by 3 s, then the reply is read. "Guard" plus the one-line lede and the live demo sell it. The layout is the stock centred stack (h1, lede, button, card), but the demo does the work.
-2. **One in, one out:** On desktop, mostly yes. "What it looks for" is a pinned stage where the left headline, the 01/06 counter and the right panel change together, six times. Then Paste and ship, the marker playground and Get Guard each get a screen. On the phone the pin is dropped and all six chapters stack (h3, 6-line paragraph, grey panel, each time), about 4 screens of reading. That is a document.
-3. **A real visual in every section:** Yes. Live demo, six diagram panels, the code card, the interactive marker playground, and the drifting contour canvas in Get Guard. But the six stage panels are the same grey rounded box with white rows inside, and once arrived they are mostly static (chapter 4 is four "on" toggles that do nothing).
-4. **One ask in the header, nothing floating, scale rhythm:** The header ask changes from "Try Hanzo" to "View on GitHub" after the hero on desktop, but stays "Try Hanzo" on the phone. "View on GitHub" then appears three times (hero, header, Get Guard), one of them a duplicate. Nothing of the page's own floats over content. Scale has rhythm on desktop (52 h1, 32 stage heads, 44 closing, mono small). The hierarchy is upside down in the stage, though: the section's h2 "What it looks for" is 17px and sits under six 32px h3s, at the bottom of the frame.
-5. **Every hover and press answers:** Yes on desktop. Every button changes fill or ring and presses to about 0.97 scale with no layout jump. The tabs fill #f5f5f5 and jump the stage. Copy, chips and the format switch all answer. On the phone a tapped chip (EMAIL) stays in a grey sticky-hover state instead of settling to its off state.
-6. **Overlap, font swap, layout shift:** CLS is 0.0006 (the header and the demo caret only). No font swap seen, and no horizontal overflow at 375 or 320 apart from the shared header ask clipping at 320. Not counted, but noted: at 1470x801 the stage's tab rail and h2 sit at y 692 to 757, the bottom 100px of the frame, so the shared cookie card covers tabs 05 and 06 (my hover on them landed on the cookie card). With the card dismissed they still hug the bottom edge. Also, the heading font stack starts with "Noto Kufi Arabic" ahead of Zen. It is not loaded here, but on a machine with it installed the Latin headings would render in a third face. This is probably the shared token, so it needs checking.
-7. **Reference and its motion:** Apple product page: a pinned stage where one panel changes, and a scrubbed progress line in the header. That motion is there on desktop. motion.dev-style state changes (chips, format switch) are there. Nothing from synchronized.studio, and there is no card-to-page open.
-8. **Different from neighbours:** Its own hero object (the live request/reply demo), and the playground is a real signature. The centred black hero room with a graphite demo card is the same frame other developer and OSS pages use, though.
-9. **18 parts:** Hero, narrative, conversion (an ask in three places), proof (a scripted demo traced to the copy), developer prompt with copy, an interactive state, closing with licence and org chips, footer, reduced motion (shows the final state: the reply is complete and no text is hidden), no console errors. Weak on mobile narrative (part 11) and on the stage hierarchy (parts 3 and 7).
-10. **Banned tells:** No hue, gradient text, emoji, Inter, glow or fading buttons. "PASTE YOUR OWN" and "GET STARTED WITH GUARD" sit under their headings, not above, so they pass. The six identical grey panels come close to "the same box repeated". The em dash in body copy is Hanzo's copy.
-11. **Copy untouched:** Nothing reads as rewritten. The panel labels (each detector, token bucket, hash of the content) are lifted from the paragraphs.
+1. **5 s and 1 s: yes.** The black hero leads with "Guard" and Hanzo's line, and the demo is running before the first second: the request types out, `[card numbers]` and `[emails]` markers snap in, the confidence bar fills and the reply leg redacts. The lede cuts in by line mask. Two weak points:
+   - The next section doesn't peek at 801. The hero runs to 808.
+   - On phone the hero's own ask, View on GitHub, is a white outline on black, while the header's Try Hanzo is the solid. The page's ask looks secondary on its own first screen.
+2. **One in, one out: mostly.** The pinned "What it looks for" stage swaps one panel at a time across 01–06, with the tab underline and the top progress hairline moving. That part is right. But at 1470x801 the stage only fills the top ~500px. The lower ~300px stays empty white for the ~3,000px the pin lasts. When the pin releases, a ~270px blank band follows before "Paste and ship" (shot d-s07). On phone the stage becomes a snap rail with a 16% peek, which works.
+3. **A real object in every section: yes.**
+   - Hero: the live request/reply demo.
+   - Stage: six drawn panels (the injection list with a confidence bar, marker tiles, a request/reply route through GUARD, switches, the content/hash log, the proxy/CLI/MCP diagram).
+   - "Paste and ship": the black prompt block.
+   - The playground.
+   - The closing: contour line art beside "Get Guard".
+4. **One ask, nothing floating, scale rhythm: yes, with one gap.**
+   - On scroll the header swaps to the page's own "View on GitHub" as the solid, and nothing floats over content.
+   - Rhythm holds: h1 52, section heads 26, panel titles 21, mono 12. The hero is the one big thing; "Get Guard" at 44 closes.
+   - Gap: in the closing viewport both View on GitHub buttons (header and band) are outlined. No solid fill on that screen.
+5. **Every hover and press answers: no.**
+   - These answer: stage tabs (grey chip), the hero ask (fill and ring), the pause/play control, detector chips (the tick drops and the playground output re-redacts live), marker options (white thumb), and Copy → "✓ Copied".
+   - Fails:
+     - Panel 04's five switches and panel 03's "machine-learning classifier" switch are drawings. They look exactly like controls and do nothing when pressed or tapped.
+     - Copy widens 74→85px when it says Copied. It grows left, so nothing else moves, but it isn't fixed-width.
+6. **Overlap, font swap, layout shift: none on the page.**
+   - No horizontal scroll at 1470, 375 or 320 (scrollWidth equals clientWidth).
+   - No h1 movement, and the h1 is in Zen at 52 / 40.
+   - Fault: on the 375 and 320 rails, a card's h3 title stays blank (masked) until the card is near mid-screen. Its "01 / 06" counter and body are already showing, so for a moment each card is a hole with a number under it (p-s01, s-s02).
+7. **Reference: apple.com product page plus motion.dev.** The apple pinned scene is there: one panel changing, a persistent ask in the header. The motion.dev patterns are there too: line-mask cut-in, a self-running demo, live state toggles. The anthropic-launch "benchmarks as hero figures" doesn't apply. The apple scene loses its polish to the half-empty pinned viewport.
+8. **Different from neighbours: half.** The hero is its own: a centred black room with a running request/reply demo. /gateway and /hsm open on white with a left-set head. But section 2 has the same skeleton as /gateway's: a pinned six-step stage with a "01 / 06" counter, a picture card on one side and text on the other. Only the side and the tab style differ.
+9. **18 parts: largely covered.**
+   - Done:
+     - one h1;
+     - the header ask swaps;
+     - a pause control on the hero demo;
+     - reduced motion shows the final state: hero redacted, stage unpinned into a stacked list, `getAnimations()` empty after 3 s;
+     - 44px targets on the phone;
+     - no console errors;
+     - the phone rail uses "Read more" disclosure.
+   - Weak:
+     - the hero is centred, but section 3 allows centred heads only in the closing;
+     - there is no peek;
+     - fake controls (part 8: every control has states);
+     - a closing viewport with no solid fill.
+10. **Banned tells: one.** Panel 02 ("The things people paste by accident") is a 3x2 grid of six identical white tiles, which is "three equal boxes in a row" twice. The wrapped "[Social security numbers]" and "[provider API keys]" sit top-aligned while the others are centred, so the grid reads ragged as well. No hue: the stage rooms are all from the neutral ramp. No gradient text, no Inter, no glow, no kicker over the h1 (hanzoai/guard has moved into the demo's title bar, which is correct).
+11. **Copy untouched: yes, near enough.** Every sentence is Hanzo's, and "Get started with Guard" is kept as a caption under "Get Guard". The demo and panel labels are lifted word for word from Hanzo's sentences: request, reply, model, confidence, GUARD, hash, content, proxy, base URL, CLI tool, pseudo-terminal, MCP server, tool calls, token bucket, each detector, injection threshold, your own patterns, marker text, machine-learning classifier, Luhn. "Reset", "Read more", "Copy" and "Pause" are in ui-strings. The composed arrows ("request → model", "reply ← model", "→ model") are the only assembled labels, and they are borderline. The card number, the example.com address and 192.0.2.1 are data under the owner decision.
 
 ## Fixes, in order
-1. **Put the stage's navigation where the eye is.** Move "What it looks for" and the 01 to 06 rail above the pinned frame, or into the left column under the counter, so nothing sits in the bottom 120px of an 801 viewport. Make the h2 outrank the h3s (26px h2, 21px to 26px chapter heads, per the rest of the site), or make it the small mono caption it visually is and promote the chapter heads honestly.
-2. **Give the phone its own one-in-one-out stage.** Keep the pin, or use a horizontal snap rail of the six chapters with the same counter. Show one chapter per screen: the panel first, then the paragraph clamped to about 3 lines with the rest in a "more" disclosure. Don't stack six h3, paragraph, box blocks.
-3. **Make each stage panel do one live thing when it arrives**, not just appear. Chapter 1: the six shapes light in sequence as the confidence bar scrubs. Chapter 2: [CARD] gets a Luhn tick, then the others type in. Chapter 3: a token runs request to GUARD to model and back. Chapter 4: the toggles flip on in 60ms stagger and the token bucket drains. Chapter 5: "content" strikes through and the hash types out. Chapter 6: proxy lines draw to CLI and MCP. Vary the panel room too (one on graphite, one bare on white), so it isn't the same grey box six times.
-4. **One ask.** Keep the header ask as one consistent label at every width: either "View on GitHub" on desktop and phone, or "Try Hanzo" on both. Drop the duplicate black "View on GitHub" in Get Guard to a secondary treatment, or keep it and make the header quieter there.
-5. **Fix sticky hover on touch for the playground chips.** Gate the hover fill with `@media (hover:hover)` so a tapped-off chip shows its true off state.
-6. **Tighten the dead bands.** There is about 200px of empty white above each pinned chapter heading and about 170px between the stage end and Paste and ship. Pull the stage content up so the panel and headline sit optically centred in the frame.
-7. **Check the heading font stack.** Make sure "Noto Kufi Arabic" is only applied for `:lang(ar)` and never ahead of Zen for Latin text. If it comes from the shared token, flag it to the shell owner.
-8. **Optional signature lift:** let the closing contour canvas respond to the pointer (lines part up to 12px, per MASTER motion). It already drifts on its own, and a pointer response would give the end a pointer-aware moment like osply and hamol.
+1. Make the drawn switches real or stop drawing them as switches.
+   - Panel 04: wire the switches (each detector, injection threshold, your own patterns, marker text) to the same state the playground uses, with a press state and the toggle tick sound. Or render them as static status marks (filled/hollow) so they don't invite a click.
+   - Panel 03: give the machine-learning classifier switch the same treatment.
+2. Fill the pinned viewport at 1470x801. The stage (heading and tabs on the left, panel on the right) should sit vertically centred in 100svh, with the panel grown to ~70% of the viewport height. Then no white band sits under it during the pin.
+3. Close the ~270px blank band between the pin's release and "Paste and ship". The next section should overlap the outgoing stage by about 40px, per "one in, one out".
+4. Replace panel 02's 3x2 equal-tile grid. Options: a single redacted sentence where each typed marker replaces its value in turn (it's the demo's own idea, so reuse it), or an unequal list with the Luhn tick on card numbers. Fix the top/centre misalignment of wrapped tiles either way.
+5. Phone rail titles: start each card's h3 line-mask when the card itself enters the rail (horizontal IntersectionObserver on the card, threshold about 0.4). Today it waits until the card is near mid-screen vertically. Don't show the counter and body before the title. If needed, reveal title, counter and body as one group.
+6. Give section 2 its own signature so it stops sharing /gateway's pinned-stage skeleton. For example, let the hero demo's request line travel into the stage and get re-read by each panel, or switch the tabs to a vertical list on the right. It must stop being "picture card + 01 / 06 + six tabs".
+7. Phone hero: keep "View on GitHub" a solid fill in the hero on its first screen, as on desktop. Let the solid move to the header only once the hero ask has left view.
+8. Closing viewport: make the closing View on GitHub the solid, or keep the header's solid there, so there's one solid fill on that screen.
+9. Hero: let the next section peek 56px at 801. Consider the 8/5 left-set head the system asks for over the centred head, which is reserved for the closing.
+10. Give Copy a fixed width so "Copy" → "✓ Copied" doesn't resize the button.

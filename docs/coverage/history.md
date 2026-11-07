@@ -2,7 +2,7 @@
 
 Page file: `components/pages/History.jsx` (+ `History.css`, `historyData.js`, `story.css`, `StoryClose.jsx`, `StoryPause.jsx`) · gallery: `docs/gallery/history/` · metric id: `contact_sales_submit` (`data-cta="history.*"`)
 
-Open copy questions for James: none decided. Years beside customer figures appear only where Hanzo's own year copy has them.
+Open copy questions for James: none decided. Years beside customer figures appear only where Hanzo's own year copy has them. Question: the page says "1,600+ repositories" where other Hanzo copy says "1700+ repos" (kept as live).
 Shared changes requested (`docs/requests/about.md`, shared by the Story pages): kit Band word blur; v2/Lines timing; the floating ask bar.
 Forks this page deleted: the page's own buttons and text links (now kit `Cta`); the drag cursor label; the metric printed twice on picture-less plates (now a Sigil); the year cut reused for "Your year" (now the year's plate); the phone swipe rail of years (stacked again); the clippings' outline (shadow only); the badge above the h1; kickers above headlines, the pill above each year title and the tag above each metric (now captions after them); the gold accent; the odometer digits and the split-flap board (no invented digits); three equal hero buttons; the separate dark FDE room and back-link section (now in `StoryClose`); raw `<img>`/`<video>` on the plates.
 
@@ -35,7 +35,7 @@ Done here: h1 52px with lede and links under it; beside it the hero's one big th
 
 ## 4. Conversion system
 - [x] kit `Cta` only; no raw `.x-btn`
-- [x] Sticky ask: the shared bar carries "Talk to Hanzo FDE"
+- [ ] Sticky ask: on desktop the shared Ask carries the page's ask in the header after the hero; on phones "Talk to Hanzo FDE" is too long for the shared header, so it keeps "Try Hanzo" (outlined while a page ask shows, via `usePhoneAsk`); no ask bar on desktop by design (MASTER 3.3)
 - [x] n/a: no copy button
 - [x] `data-cta` and `data-thumb` on the primary
 
@@ -76,7 +76,7 @@ Done here: headings rest at 26px, the h1 52px, big years in Air 220 (one per scr
 Done here: rail buttons carry `aria-current`; the pause control is a 44px `aria-pressed` button named from the register ("Pause").
 
 ## 9. Motion and interaction
-- [x] One signature, 2 supporting by script (variety OK), 0 fade-ups
+- [x] One signature, 2 supporting by script (variety OK), 0 fade-ups (round 3: the hero side's 1 s opacity fade is now a 12px rise with no fade)
 - [x] Kinds: time (the running year), pointer (drag-throw clippings), state (Your year cut, rail jump), scroll (the scrub), arrival (h1)
 - [x] Something moves without input; every control answers
 - [x] Reduced motion final states; no `setInterval`
@@ -90,12 +90,12 @@ Done here: signature = the scrub; the old year leaves in 180 ms and the new one 
 - [x] Alt: decorative plates `alt=""`, the year's figure stands in
 - [x] No dimmed photo
 
-Done here: customer photos and logos from Hanzo's case studies; a year without a picture, or whose picture fails, gets a contour field seeded by its year (the figure is never printed twice).
+Done here: the plates point at Hanzo's own customer photos and logos (`/logos/customers/*`, `/customers/*`), but those files are not mirrored into `public/` and hanzo.ai is not reachable from the cloud session, so 12 of 13 years would show a placeholder; round 3 sets each such year's own customer and badge as a black wordmark plate instead (2026 shows the Zen film). Mirroring the images is filed in `docs/requests/history.md`.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass
 - [x] No horizontal scroll at 320
-- [x] 44px links; every hover has a tap path
+- [x] 44px links (round 3: the hero links and "Explore the full Zen manifesto" were 21px; now 44px boxes); every hover has a tap path
 - [x] Ask above the fold at 375×667
 
 Done here: phone stacks the hero, swipes the clippings, and stacks the 13 years (as the brief asks), each short: title, badge, figure, first line, links, and the rest behind its (+).

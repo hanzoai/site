@@ -5,7 +5,12 @@
 .xop-hero-grid { align-items: center; row-gap: 48px; }
 .xop-hero-copy { grid-column: 1 / span 5; }
 .xop-hero-copy .a2-lede { margin: 24px 0 32px; color: #d4d4d4; }
-.xop-hero .x-btn.solid { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+.xop-hero .x-btn.solid { background: #fafafa; border-color: #fafafa; color: #0a0a0a; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+.xop-hero .x-btn.solid:active { transform: scale(.97); transition-duration: 90ms; }
+@media (hover: hover) {
+  .xop-hero .x-btn.solid:hover { background: #e4e4e7; border-color: #e4e4e7; transform: translate3d(0, -1px, 0); }
+  .xop-board-top button:hover { background: rgba(255, 255, 255, .1); }
+}
 .xop-repo { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: #d4d4d4; text-decoration: none; }
 @media (hover: hover) { .xop-repo:hover { color: #fafafa; text-decoration: underline; text-underline-offset: 4px; } }
 .xop-hero-obj { grid-column: 6 / span 7; }
@@ -14,7 +19,8 @@
 .xop-board-top .x-mono { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #d4d4d4; }
 .xop-live { width: 8px; height: 8px; border-radius: 50%; background: #fafafa; }
 .xop-grid { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; padding: 12px; border-radius: 20px; background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px); background-size: 18px 18px; }
-.xop-tile { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 4px; min-height: 100px; padding: 14px; border-radius: var(--r-card); border: 1px solid rgba(255, 255, 255, .16); background: #171717; color: #fafafa; text-align: left; cursor: grab; touch-action: none; font: inherit; transition: border-color .15s; }
+.xop-tile { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 4px; min-height: 100px; padding: 14px; border-radius: var(--r-card); border: 1px solid rgba(255, 255, 255, .16); background: #171717; color: #fafafa; text-align: left; cursor: pointer; touch-action: manipulation; font: inherit; transition: border-color .15s; }
+.xop-tile.fine { cursor: grab; touch-action: none; }
 .xop-tile:active { cursor: grabbing; }
 @media (hover: hover) { .xop-tile:hover { border-color: rgba(255, 255, 255, .4); } }
 .xop-tile-k { font-size: 16px; font-weight: 497; letter-spacing: -.01em; }
@@ -31,14 +37,18 @@
 @keyframes xop-line { from { opacity: 0; transform: translateY(-8px); } }
 
 /* declare: thirty loose objects become one */
+/* pinned: 180svh of scroll holds one centred screen while the thirty come together */
+.xop-declare { position: relative; height: 180svh; }
+.xop-declare-stick { position: sticky; top: 0; min-height: 100svh; align-content: center; }
 .xop-declare .a2-grid { align-items: center; row-gap: 40px; }
 .xop-declare-copy { grid-column: 1 / span 5; }
 .xop-declare-copy .a2-headline { margin: 0; }
 .xop-converge { grid-column: 7 / span 6; position: relative; height: 480px; }
-.xop-converge i { position: absolute; left: 50%; top: 50%; width: 40px; height: 28px; margin: -14px -20px; border-radius: 8px; background: #f5f5f5; border: 1px solid rgba(0, 0, 0, .1); transform: translate(calc(var(--x) * 5.4px * (1 - var(--k))), calc(var(--y) * 6.4px * (1 - var(--k)))) rotate(calc(var(--r) * (1 - var(--k)))) scale(calc(1 - var(--k) * .6)); opacity: calc(1 - var(--k) * .9); }
+.xop-converge i { position: absolute; left: 50%; top: 50%; width: 40px; height: 28px; margin: -14px -20px; border-radius: 8px; background: #d4d4d4; border: 1px solid rgba(0, 0, 0, .18); transform: translate(calc(var(--x) * 5.4px * (1 - var(--k))), calc(var(--y) * 6.4px * (1 - var(--k)))) rotate(calc(var(--r) * (1 - var(--k)))) scale(calc(1 - var(--k) * .6)); opacity: calc(1 - var(--k) * .9); }
 .xop-one { position: absolute; left: 50%; top: 50%; display: grid; gap: 6px; width: 220px; padding: 24px 26px; translate: -50% -50%; border-radius: var(--r-hero); background: #0a0a0a; color: #fff; transform: scale(calc(.6 + var(--k) * .4)); opacity: var(--k); }
 .xop-one span { font-size: 13px; color: #a3a3a3; }
 .xop-one b { font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
+@media (min-width: 900px) { .xop-converge { height: 560px; } .xop-one { width: 280px; padding: 32px; } .xop-one b { font-size: 44px; } .xop-converge i { width: 52px; height: 36px; margin: -18px -26px; } }
 
 /* the track: vertical scroll drives a horizontal row */
 .xop-track { position: relative; height: calc(100svh + var(--span, 2400px)); }
@@ -60,8 +70,9 @@
 .xop-get-card .a2-headline { margin: 0; }
 .xop-get-card div > p { margin: 4px 0 0; font-size: 16px; color: #525252; }
 .xop-get-meta { display: flex; gap: 20px; margin: 0; font-size: 13px; }
-.xop-get-meta a { color: var(--ink); }
-.xop-get-cmd { margin: 0 !important; padding: 10px 14px; border-radius: 10px; background: #fff; font-size: 14px; }
+.xop-get-meta a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); }
+.xop-get-cmd { display: flex; align-items: center; gap: 12px; margin: 0 !important; padding: 6px 6px 6px 14px; border-radius: 10px; background: #fff; font-size: 14px; }
+.xop-get-cmd code { font: inherit; }
 
 @media (max-width: 900px) {
   .xop-hero { padding-top: 104px; }
@@ -70,6 +81,8 @@
   .xop-tile { min-height: 76px; padding: 12px; }
   .xop-log { height: 160px; }
   .xop-converge { height: 360px; }
+  .xop-declare { height: 160svh; }
+  .xop-declare-stick { display: flex; flex-direction: column; justify-content: center; }
   .xop-converge i { transform: translate(calc(var(--x) * 3.2px * (1 - var(--k))), calc(var(--y) * 5px * (1 - var(--k)))) rotate(calc(var(--r) * (1 - var(--k)))) scale(calc(1 - var(--k) * .6)); }
   .xop-track { height: auto; padding: 40px 0 72px; }
   .xop-track-stick { position: static; height: auto; overflow: visible; }
