@@ -65,17 +65,17 @@ function Machine() {
         <p className="bl2-zk l2-mono"><span>Meter</span><span>api_requests</span></p>
         <div className="bl2-num l2-fig" aria-hidden="true">
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span key={n} initial={{ y: '-55%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '55%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{n}</motion.span>
+            <motion.span key={n} initial={{ y: '-55%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '55%', opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{n}</motion.span>
           </AnimatePresence>
         </div>
         <p className="bl2-period l2-mono"><span>Period {period}</span><span>{phase === 'run' ? 'open' : 'closed'}</span></p>
         <i className="bl2-bar"><b style={{ transform: `scaleX(${Math.min(1, n / PERIOD)})` }} /></i>
       </div>
-      <div className="bl2-zone bl2-inv" data-cursor="Read">
+      <div className="bl2-zone bl2-inv">
         <div className="bl2-inv-h">
           <span><b>Invoice</b><em className="l2-mono">cus_abc123</em></span>
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span key={status} className={'bl2-chip l2-mono ' + status.toLowerCase()} initial={{ opacity: 0, scale: 1.25 }} animate={{ opacity: 1, scale: 1, rotate: status === 'Issued' ? -4 : 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: 'spring', stiffness: 300, damping: 22 }}>{status}</motion.span>
+            <motion.span key={status} className={'bl2-chip l2-mono ' + status.toLowerCase()} initial={{ opacity: 0, scale: 1.25 }} animate={{ opacity: 1, scale: 1, rotate: status === 'Issued' ? -4 : 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{status}</motion.span>
           </AnimatePresence>
         </div>
         <ul className="bl2-lines">
@@ -110,7 +110,7 @@ function Prices() {
         {Array.from({ length: prices }).map((_, v) => (
           <motion.li key={v} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} className={v === prices - 1 ? 'new' : ''}>
             <span className="bl2-pv-k l2-mono">Price {v + 1}</span>
-            <span className="bl2-pv-subs">{subs.map((p, i) => p === v && <motion.i key={i} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 18 }} />)}</span>
+            <span className="bl2-pv-subs">{subs.map((p, i) => p === v && <motion.i key={i} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />)}</span>
             <span className="bl2-pv-n l2-mono">{subs.filter((p) => p === v).length}</span>
           </motion.li>
         ))}
@@ -156,7 +156,7 @@ function Invoice({ at, p }) {
       </ul>
       <div className="bl2-doc-f">
         <span className="l2-mono">Preview one before it is issued.</span>
-        <AnimatePresence>{issued && <motion.b className="bl2-stamp" initial={{ opacity: 0, scale: 1.5, rotate: -16 }} animate={{ opacity: 1, scale: 1, rotate: -8 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 18 }}>Issued</motion.b>}</AnimatePresence>
+        <AnimatePresence>{issued && <motion.b className="bl2-stamp" initial={{ opacity: 0, scale: 1.5, rotate: -16 }} animate={{ opacity: 1, scale: 1, rotate: -8 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>Issued</motion.b>}</AnimatePresence>
       </div>
     </div>
   );

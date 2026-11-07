@@ -93,7 +93,7 @@ function Tiles() {
     window.__lenis?.stop();
     return () => { removeEventListener('keydown', k); window.__lenis?.start(); };
   }, [open]);
-  const spring = calm ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 30 };
+  const spring = calm ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
   return (
     <section className="l2-sec l2-dark vs2-tiles" data-room="dark">
       <div className="l2-wrap">
@@ -105,7 +105,7 @@ function Tiles() {
           <ul className="vs2-grid">
             {FACTS.map(([t, d], i) => (
               <li key={t}>
-                <motion.button type="button" layoutId={'vs2-t' + i} transition={spring} className={'vs2-tile' + (open === i ? ' gone' : '')} onClick={() => setOpen(i)} aria-haspopup="dialog" data-cursor="Open">
+                <motion.button type="button" layoutId={'vs2-t' + i} transition={spring} className={'vs2-tile' + (open === i ? ' gone' : '')} onClick={() => setOpen(i)} aria-haspopup="dialog">
                   <motion.span layoutId={'vs2-n' + i} transition={spring} className="vs2-n l2-mono">{String(i + 1).padStart(2, '0')} / 06</motion.span>
                   <span className="vs2-st l2-mono"><i />ready</span>
                   <motion.span layoutId={'vs2-pic' + i} transition={spring} className="vs2-tp" aria-hidden="true"><Pic i={i} /></motion.span>
