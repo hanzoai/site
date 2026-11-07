@@ -1,34 +1,34 @@
 # /enso — James-eye review
 
-Reviewed: main, page files at `d3752c2`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `25b197c` (page files at `f68c8e5`), 7 Nov 15:01 UTC, under MASTER.md. Earlier: 7/10 at `d3752c2`, `d37d413` and `1417fde`. Built on the shared model-launch template (`components/pages/model/`). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10
+Verdict: 6/10 (the pill floats over the chart; three big figures at once)
 
-First complaint: "There's a little 'FLAGSHIP MODEL' label over the name, and the red has crept out of the film into the labels, chips and the router. And there's no button on the first screen."
+First complaint: "That little bar at the bottom sits right on top of the chart. And the three percentages all shout at the same size."
+
+**Card:** `docs/coverage/enso.md` is now in MASTER format, 18/18 `Done here:` lines. The claims I could measure hold: CLS 0.0003 at 1470 and 0.0004 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, the Pause at the stage foot.
+
+**Floats over content (MASTER 3.2 rule 6, fail, cap 6):** at 1470×801 the shared pill ("Hanzo Enso · search · Try Hanzo") sits over the page from the GPQA screen to the tiers (screens 8–15 of my walk), over the Pareto chart's lower points. Part 4's card line says the shared ask bar carries "Try Hanzo" after the hero: true, and that is the problem. Turn it off on this page (`data-ask="off"` on `<main>`) and let the header carry the ask.
+
+**Scale (MASTER 3.1):** the stage passes ("Enso" 112px alone over the film, then the 44px headline). The GPQA screen sets three 64px figures side by side (98.0%, 96.5%, 95.5%) on desktop and stacks them on the phone: three big things at once. Let Enso Ultra's figure lead and set the other two at medium.
+
+## What changed since the last review
+Now on the MASTER card. The name rests at 112px (was 176px) and the headline settles at 44px. The phone keeps "Try Hanzo" on the first screen.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Moves, strongly: Hanzo's own Enso film (the red ring) fills the screen and plays, then closes into a circle that settles beside the next headline. Sells, mostly: "Enso" plus "Orchestrates every model for higher intelligence, faster and at lower cost." But the first screen has **no ask**; "Try Hanzo" arrives only after the film settles.
-2. **One in, one out?** Yes: the film settles into the ring, the three tiers (Flash, Pro, Ultra) pin one per screen with their prices, then the live router room where requests route to their tier, then GPQA figures and the Pareto chart. One of the best-paced pages in my scope.
-3. **A real object in every section?** Yes: film, tier cards, router, figures, chart.
-4. **One ask, sticky after the hero?** After the hero, yes: the shared ask bar carries "Try Hanzo" and the header's "Try Hanzo" turns outlined. On the tier screens three links sit under each tier ("Try Hanzo", "Open in Workbench", "Docs on GitHub"), which is fine as text links.
-5. **Every hover and press answers?** Tier and router controls were not exercised in the walk's first-screen pass; the close (×) answers.
-6. **Overlap, font swap, layout shift?** None; layout shift 0.001 and 0.014.
-7. **Which reference, and is its motion there?** synchronized.studio (the card opens into this page: the film lands full-bleed with a close button) and the anthropic launch page (GPQA as hero figures). Both visibly there.
-8. **Different from its neighbours?** Yes: the ring is Enso's own.
-9. **All 18 parts covered?** See below.
-10. **Banned tells?** Yes:
-    - An eyebrow above the h1 ("FLAGSHIP MODEL", mono caps).
-    - UI hue: vermilion on tier labels ("ENSO FLASH"), use-case chips, the router ring and its "COST / SPEED" pills, and "CHEAPER". The film may be red; the interface around it should not be. JAMES.md allows 0 UI hues.
-11. **Copy untouched?** Yes: parity 72/72 text, 11/11 links.
-
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.1 / 2.4:** no ask in the first screen; 0 `data-cta`.
-- **2.6 Type floor:** 33 pieces of text under 13px (the 11px "ROUTING / AGENTS / MULTI-MODAL" chips, tier meta).
-- **2.3 / 2.17 No-JS:** 5 of 48 blocks hidden with JavaScript off ("FLAGSHIP MODEL", the lede, the chips), hidden by the page's own CSS (SYSTEM.md §11b: scope to `html.js`).
+1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: the ring film, "Enso" and "Try Hanzo" on the first screen, settling into "The right intelligence. Every time."
+2. **One in, one out?** Yes: stage, tiers, live router room, GPQA figures, Pareto chart, table, close.
+3. **A real object in every section?** Yes.
+4. **One ask, sticky after the hero?** Through the floating pill on desktop (fail above); the header's "Try Hanzo" stays an outline.
+5. **Every hover and press answers?** "Try Hanzo" and Pause answer. The × close presses but shows no hover change.
+6. **Overlap, font swap, layout shift?** The pill over the chart (above). Layout shift 0.0003 and 0.0004.
+7. **Which reference, and is its motion there?** synchronized.studio (card opens into the page) and the anthropic launch (GPQA as hero figures). Both there.
+8. **Different from its neighbours?** Yes: router room and GPQA tour are its own.
+9. **All 18 parts covered?** Card 18/18; Part 4 fails MASTER 3.2 rule 6 as written.
+10. **Banned tells?** A floating pill over content.
+11. **Copy untouched?** Card states parity 72/72 text, 11/11 links; not contradicted.
 
 ## Fixes
-1. Remove "FLAGSHIP MODEL" from above the h1 (it can sit with the chips under the lede).
-2. Keep the red in the film only: tier labels, chips, router ring and pills in ink, white and greys.
-3. Put "Try Hanzo" (solid) on the first screen under the lede, so the hero sells and asks.
-4. Raise the chips and meta to 13px or more.
-5. Scope the hero's hidden states to `html.js` so the lede reads with JavaScript off.
+1. `data-ask="off"` on this page's `<main>` (or the shared header-only mode once it lands); "Try Hanzo" solid in the sticky header after the hero.
+2. GPQA row: one big figure (Enso Ultra 98.0%), the other two at medium.
+3. Give the × close the kit hover.

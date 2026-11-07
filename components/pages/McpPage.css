@@ -43,8 +43,8 @@
 .mcp-parts { padding-top: 0; }
 .mcp-stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 48px; }
 .mcp-sheet { position: sticky; top: calc(96px + var(--i) * 28px); display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 48px; align-items: center; min-height: min(620px, 72vh); padding: clamp(32px, 4vw, 64px); border-radius: var(--r-hero); background: #fff; border: 1px solid var(--line); box-shadow: 0 -30px 80px -40px rgba(0, 0, 0, .25); }
-.mcp-sheet:nth-child(2) { background: #fbfaf8; }
-.mcp-sheet:nth-child(3) { background: #f7f6f4; }
+.mcp-sheet:nth-child(2) { background: #fafafa; }
+.mcp-sheet:nth-child(3) { background: #f5f5f5; }
 .mcp-sheet-copy .a2-kick { display: block; margin-bottom: 24px; color: var(--acc); }
 .mcp-sheet-copy .a2-headline { margin-bottom: 24px; }
 .mcp-sheet-art { height: 100%; min-height: 360px; display: grid; place-items: center; border-radius: 20px; background: var(--card); overflow: hidden; }
@@ -82,7 +82,7 @@
 .mcp-card-tools i { font-style: normal; padding: 7px 10px; border-radius: 8px; background: #fff; font-size: 12.5px; }
 .mcp-card-tools i.more { color: var(--acc); }
 .mcp-card-open { position: absolute; top: 24px; right: 24px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 22px; line-height: 1; transition: transform .4s var(--a2-ease), background .3s; }
-.mcp-card:hover .mcp-card-open { transform: rotate(90deg); background: var(--acc); }
+@media (hover: hover) { .mcp-card:hover .mcp-card-open { transform: rotate(90deg); background: var(--acc); } }
 .mcp-card.d5 { background: #0b0b0c; color: #f5f5f7; }
 .mcp-card.d5 p { color: #a1a1a6; }
 .mcp-card.d5 .mcp-card-tools i { background: #1c1c1f; }
@@ -110,13 +110,13 @@
 .mcp-cfg-copy .a2-body { margin: 32px 0 28px; }
 .mcp-ref { font: 500 17px/1 var(--sans); color: #f5f5f7; text-decoration: none; }
 .mcp-ref span { display: inline-block; transition: transform .35s var(--a2-ease); color: var(--acc); }
-.mcp-ref:hover span { transform: translateX(5px); }
+@media (hover: hover) { .mcp-ref:hover span { transform: translateX(5px); } }
 .mcp-code { grid-column: 7 / span 6; border-radius: var(--r-hero); background: #141416; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
 .mcp-code-bar { display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 12px 0 24px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .mcp-code-bar .x-mono { font-size: 13px; color: #86868b; }
 .mcp-code-bar .x-copy { background: #1c1c1f; border-color: rgba(255, 255, 255, .12); color: #d1d1d6; }
 .mcp-code pre { margin: 0; padding: 28px; overflow-x: auto; font: 400 15.5px/1.8 var(--mono); color: #f5f5f7; }
-.mcp-code .c { color: #7c7c85; } .mcp-code .s { color: #c4c4c4; }
+.mcp-code .c { color: #737373; } .mcp-code .s { color: #c4c4c4; }
 
 /* add + repo */
 .mcp-add .a2-grid { align-items: end; row-gap: 48px; }
@@ -176,11 +176,24 @@
 .mcp-cfg { padding-top: clamp(96px, 10vw, 160px); }
 .mcp-codes { grid-column: 7 / span 6; display: grid; gap: 16px; }
 .mcp-codes .mcp-code { grid-column: auto; }
-.mcp-code-c { margin: 0; padding: 16px 28px 0; font-size: 13px; color: #7c7c85; }
+.mcp-code-c { margin: 0; padding: 16px 28px 0; font-size: 13px; color: #737373; }
 .mcp-code pre { padding-top: 14px; }
 @media (max-width: 900px) {
   .mcp-h1 { font-size: clamp(27px, 8vw, 31px) !important; line-height: 1.06; }
   .mcp-h1 .a2-ln, .mcp-h1 .a2-ln-in { display: inline; overflow: visible; } /* the sentence flows into three lines on a phone */
   .mcp-codes { grid-column: 1 / -1; }
   .mcp-code-c { padding: 14px 20px 0; }
+}
+
+.mcp-fig { display: inline-block; overflow: hidden; padding-bottom: .06em; }
+.mcp-fig > span { display: inline-block; }
+
+.mcp-card h3 { margin-top: 64px; }
+.mcp-card-n { position: absolute; left: 32px; top: 32px; }
+@media (max-width: 900px) {
+  .mcp-sheet { position: relative; top: auto; } /* on a phone a sheet can be taller than the screen, so the sheets read as a list */
+  .mcp-stack { gap: 16px; }
+}
+@media (max-width: 420px) {
+  .mcp-h1 { font-size: 26.5px !important; letter-spacing: -.045em; line-height: 1.1; text-wrap: wrap; } /* three lines at 375 (review, 7 Nov) */
 }

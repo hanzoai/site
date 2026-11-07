@@ -8,7 +8,7 @@
 .xov-top-r { grid-column: 8 / span 5; padding-bottom: 12px; }
 .xov-top-r .a2-lede { margin-bottom: 32px; }
 .xov-stage { margin-top: clamp(56px, 6vw, 88px); }
-.xov-crate { position: relative; padding: 14px; border-radius: 34px; background: linear-gradient(180deg, #eef2ff, #e9e9e9); box-shadow: inset 0 0 0 1px rgba(119, 119, 119, .14); }
+.xov-crate { position: relative; padding: 14px; border-radius: 34px; background: linear-gradient(180deg, #f2f2f2, #e9e9e9); box-shadow: inset 0 0 0 1px rgba(119, 119, 119, .14); }
 .xov-crate-tag { position: absolute; left: 32px; top: -11px; padding: 4px 10px; border-radius: 999px; background: var(--acc); color: #fff; font-size: 12px; z-index: 2; }
 .xov-desk { border-radius: 22px; overflow: hidden; background: #0b0b0c; box-shadow: var(--a2-shadow); }
 .xov-desk-bar { display: flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px; background: #1c1c1f; }
@@ -77,7 +77,7 @@
 .xov-oss a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .xov-stack { grid-column: 7 / span 6; position: relative; height: min(640px, 76vh); perspective: 1800px; }
 .xov-slab, .xov-base { position: absolute; left: 6%; right: 6%; top: 60%; height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 24px; transform-origin: 50% 50%; }
-.xov-slab { z-index: calc(10 - var(--i)); background: linear-gradient(180deg, #fff, #f3f6ff); border: 1px solid rgba(119, 119, 119, .22); box-shadow: 0 30px 60px -30px rgba(49, 49, 49, .4); transform: translateY(calc((var(--i) * -78px - 34px) * var(--e) - var(--i) * 5px)) rotateX(48deg); transition: background .4s, border-color .4s, box-shadow .4s; }
+.xov-slab { z-index: calc(10 - var(--i)); background: linear-gradient(180deg, #fff, #f5f5f5); border: 1px solid rgba(119, 119, 119, .22); box-shadow: 0 30px 60px -30px rgba(49, 49, 49, .4); transform: translateY(calc((var(--i) * -78px - 34px) * var(--e) - var(--i) * 5px)) rotateX(48deg); transition: background .4s, border-color .4s, box-shadow .4s; }
 .xov-slab span { font-size: clamp(17px, 1.5vw, 22px); font-weight: 600; letter-spacing: -.01em; color: var(--ink); transition: color .4s; }
 .xov-slab.on { background: var(--acc); border-color: var(--acc); box-shadow: 0 40px 80px -30px color-mix(in srgb, var(--acc) 70%, transparent); }
 .xov-slab.on span { color: #fff; font-weight: 500; }
@@ -185,7 +185,7 @@
 .xov-social li { border-bottom: 1px solid var(--line); }
 .xov-soc { display: flex; align-items: center; justify-content: space-between; min-height: 60px; font-size: 19px; font-weight: 560; letter-spacing: -.015em; color: var(--ink); text-decoration: none; }
 .xov-soc i { font-style: normal; color: var(--faint); transition: transform .35s var(--a2-ease), color .3s; }
-.xov-soc:hover i { transform: translate(3px, -3px); color: var(--acc); }
+@media (hover: hover) { .xov-soc:hover i { transform: translate(3px, -3px); color: var(--acc); } }
 .xov-end { margin-top: 120px; align-items: stretch; row-gap: 24px; }
 .xov-read-b { grid-column: 1 / span 6; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 40px; border-radius: var(--r-hero); background: var(--card); }
 .xov-get { grid-column: 7 / span 6; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 40px; border-radius: var(--r-hero); background: var(--acc); color: #fff; }
@@ -238,3 +238,15 @@
 .xov-hands button.on i { background: #fff; }
 .xov-hold[aria-pressed='true'], .xov-paused { color: #000; }
 .xov-get .x-btn.solid { background: #fff; color: #000; border-color: #fff; }
+
+/* the control page in Hanzo's words, not placeholder bars */
+.xov-win-body { gap: 12px; }
+.xov-win-h { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.02em; color: var(--ink); }
+.xov-win-p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--soft); }
+.xov-typed { width: auto !important; height: auto; max-width: 0; overflow: hidden; background: none !important; color: var(--ink); font-size: 14px; white-space: nowrap; transition: max-width 1.4s steps(9); }
+.xov-desk.h3 .xov-typed { max-width: 9ch; }
+.xov-read span { font-size: 13px; font-weight: 500; }
+@media (max-width: 900px) { .xov-win-p { display: none; } }
+
+.xov-card-h b { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.xov-rec { margin: 0 !important; font-size: 12px; letter-spacing: 0; vertical-align: middle; }

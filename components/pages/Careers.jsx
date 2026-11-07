@@ -1,13 +1,14 @@
 'use client';
-/* /careers. V2: 8/10 v3 to JAMES.md: no labels over headlines, ink and greys only, the hero and its one ask fit
+/* /careers. V2: 8/10 to MASTER.md (deck type and greys, kit Cta, no ask bar, still perks). Earlier: v3 to JAMES.md: no labels over headlines, ink and greys only, the hero and its one ask fit
    1470×801, one solid per screen with the ask sticky after the hero (the site's Ask bar, from data-thumb), every section holds an object, perks pinned.
    Persona: an engineer or researcher deciding whether to apply (PLAN 1.1 "one contact click").
    Goal: open a role and apply.  CTA: "View Open Positions" (careers.hero), the same ask in the site Ask bar (data-thumb) and the close.
    Metric: cta_click careers.* leading to a role page.
    Signature: the open roles are a deck of sheets. Scroll and each role rises over the last while the stack behind it
    settles back; click a sheet and its title flies into the role page's headline (Morph, synchronized.studio).
-   Supporting (3): masked kinetic headline, once; the How-we-hire card sliding its steps by itself; the perks pinned,
-   one in as the last goes out, each with its giant numeral and a Sigil field.
+   Supporting (3): masked kinetic headline, once; the How-we-hire card sliding its steps by itself; the perk list's
+   Sigil field redrawing for the perk you point at. A Utility page (MASTER 4.5): the deck is its one delight, no
+   sticky ask (careers has none), entries 0.4s.
    Beyond: match what you know. Tap the skills you have, taken word for word from the role descriptions (LLVM, RLHF,
    zero-knowledge, data visualization…): the roles that ask for them stay lit with the words marked, the rest step back.
    Deletes: the orange accent, the kicker over the h1 and over every headline, "Link" / "Copied" / "Clear" / "Match what
@@ -15,26 +16,27 @@
    hiring card, the second solid button in Academic, solid "Apply" on every sheet.
    The role pages (/careers/<slug>) keep Careers.css; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { A } from '../kit';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useRouter } from 'next/navigation';
+import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
-import PinScenes from './company/PinScenes';
 import useArrived from './company/useArrived';
-import { useArrival } from './doorway';
+import { openDoor, useArrival } from './doorway';
+import { href as hrefOf } from '../../lib/route';
 import '../v2/vc-type.css';
+import './company/deck.css';
 import './CareersBoard.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}</style>' }; // JS off: the hero is legible
-const ARROW = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* How we hire: the four steps slide through a mask by themselves (never two titles at once); tap a step to hold it. */
 function Hire({ how }) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const box = useRef(null);
-  const seen = useInView(box, { amount: 0.5 });
+  const seen = useInView(box, { amount: 0.15 });
   const calm = useReducedMotion();
   const n = how.steps.length;
   useEffect(() => {
@@ -53,7 +55,6 @@ function Hire({ how }) {
           <motion.div key={t} className="xcb-hire-s" initial={false} aria-hidden={i !== at}
             animate={{ y: i === at ? '0%' : i < at ? '-104%' : '104%' }}
             transition={{ duration: 0.8, ease: EASE }}>
-            <span className="xcb-hire-i vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <b>{t}</b>
             <p>{d}</p>
           </motion.div>
@@ -63,7 +64,7 @@ function Hire({ how }) {
         {how.steps.map(([t], i) => (
           <li key={t}>
             <button type="button" aria-pressed={i === at} onClick={() => { setMine(true); setAt(i); }}>
-              <i>{i < at && <u className="done" />}{i === at && <u key={at + (mine ? 'm' : '')} className={mine || calm ? 'done' : 'run'} />}</i>
+              <i>{i < at && <u className="done" />}{i === at && <u key={at + (mine ? 'm' : '')} className={mine || calm ? 'done' : seen ? 'run' : 'wait'} />}</i>
               <span>{t}</span>
             </button>
           </li>
@@ -104,22 +105,27 @@ function Marked({ text, know }) {
 }
 
 /* One role, one sheet. It sticks a little lower than the one before, and settles back as later sheets cover it. */
+/* The sheet opens into its page: its rectangle grows to fill the screen in the sheet's own grey, the role page
+   arrives, and the cover wipes away (doorway.js). The site Morph is skipped here (data-no-morph): it times out today. */
+const open = (e, to, router) => openDoor(e, hrefOf(to), router, '#f5f5f7');
+
 function Sheet({ r, i, n, know, progress }) {
+  const router = useRouter();
   const [where, kind, team] = r.chips;
   const miss = know.length > 0 && !know.some((k) => asks(r, k));
   const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.028]);
   return (
     <li id={r.id} className={'xcb-sheet' + (miss ? ' miss' : '')} style={{ '--i': i }}>
       <motion.div className="xcb-sheet-in" style={{ scale }}>
-        <A to={r.href} className="xcb-sheet-a">
+        <A to={r.href} className="xcb-sheet-a" data-no-morph onClick={(e) => open(e, r.href, router)}>
           <span className="xcb-sheet-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-          <span className="xcb-sheet-t" data-morph>{r.title}</span>
+          <span className="xcb-sheet-t">{r.title}</span>
           <span className="xcb-sheet-tags"><span>{team}</span><span>{where}</span><span>{kind}</span></span>
           <span className="xcb-sheet-d"><Marked text={r.desc} know={know} /></span>
         </A>
         <div className="xcb-sheet-act">
-          <A to={r.acts[0].href} className="x-btn xcb-big" data-cta={'careers.role.' + r.id}>{r.acts[0].text}</A>
-          <A to={r.acts[1].href} className="x-arrow xcb-tap"><span>{r.acts[1].text}</span>{ARROW}</A>
+          <Cta to={r.acts[0].href} kind="quiet" className="xcb-big" id={'careers.role.' + r.id} data-no-morph onClick={(e) => open(e, r.acts[0].href, router)}>{r.acts[0].text}</Cta>
+          <Cta to={r.acts[1].href} kind="link" className="xcb-tap" data-no-morph onClick={(e) => open(e, r.acts[1].href, router)}>{r.acts[1].text}</Cta>
           <CopyDirect id={r.id} title={r.title} />
         </div>
       </motion.div>
@@ -128,6 +134,7 @@ function Sheet({ r, i, n, know, progress }) {
 }
 
 function Deck({ roles, know, dont, dontA }) {
+  const router = useRouter();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const n = roles.length + 1;
@@ -138,19 +145,33 @@ function Deck({ roles, know, dont, dontA }) {
         <div className="xcb-sheet-in">
           <span className="xcb-sheet-sig" aria-hidden="true"><Sigil seed="careers/open" data={[n]} /></span>
           <p className="xcb-sheet-t">{dont}</p>
-          <div className="xcb-sheet-act"><A to={dontA.href} className="x-btn solid xcb-big" data-morph data-cta="careers.open">{dontA.text}</A></div>
+          <div className="xcb-sheet-act"><Cta to={dontA.href} className="xcb-big" id="careers.open" thumb data-no-morph onClick={(e) => open(e, dontA.href, router)}>{dontA.text}</Cta></div>
         </div>
       </li>
     </ul>
   );
 }
 
-/* A perk's object: its giant numeral over a Sigil field drawn from its own words. */
-function PerkArt({ i, t, p }) {
+/* How the team works: a still list (Utility pages keep scroll quiet, MASTER 4.5). Its object is one Sigil field drawn
+   from the perk you point at or focus; the field redraws as you move down the list. */
+function Perks({ perks }) {
+  const [at, setAt] = useState(0);
+  const [t, p] = perks.items[at];
   return (
-    <div className="xcb-perk-v">
-      <Sigil seed={'careers/' + t} data={[t.length, p.length, i + 1]} className="xcb-perk-sig" />
-      <span className="xcb-perk-big vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+    <div className="vc-grid xcb-perk-g">
+      <div className="xcb-perk-v" aria-hidden="true">
+        <Sigil seed={'careers/' + t} data={[t.length, p.length, at + 1]} className="xcb-perk-sig" />
+        <span className="xcb-perk-big vc-num">{String(at + 1).padStart(2, '0')}</span>
+      </div>
+      <ol className="xcb-perk-l">
+        {perks.items.map(([pt, pp], i) => (
+          <li key={pt} className={i === at ? 'on' : ''} tabIndex={0} onPointerEnter={() => setAt(i)} onFocus={() => setAt(i)} onClick={() => setAt(i)}>
+            <span className="xcb-perk-n vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 className="vc-title">{pt}</h3>
+            <p className="vc-body">{pp}</p>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
@@ -173,21 +194,21 @@ export default function Careers({ d }) {
   const ask = d.hacts[0];
   const arrived = useArrived();
   return (
-    <main className="vc xcb" style={{ '--acc': '#1d1d1f' }}>
+    <main className="vc xcb" style={{ '--acc': '#0a0a0a' }} data-ask="off">
       <noscript dangerouslySetInnerHTML={NOJS} />
       <section className="xcb-hero vc-scene" aria-label={d.kicker} data-ask-name={d.kicker}>
         <div className="vc-grid xcb-hero-g">
           <div className="xcb-hero-c">
             <MaskLines as="h1" id="xcb-h1" now delay={0.05} lines={lines} className="vc-display xcb-h1" />
-            <motion.div className="xcb-hero-f" initial={{ opacity: 0, y: 12 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.8, ease: EASE, delay: 0.55 }}>
+            <motion.div className="xcb-hero-f" initial={{ opacity: 0, y: 12 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.4, ease: EASE, delay: 0.45 }}>
               <p className="vc-lede">{d.lede}</p>
               <div className="xcb-acts">
-                <a className="x-btn solid xcb-big" href={ask.href} data-thumb={ask.text} data-cta="careers.hero">{ask.text}</a>
-                <A to={d.hacts[1].href} className="x-arrow xcb-tap"><span>{d.hacts[1].text}</span>{ARROW}</A>
+                <Cta to={'/careers' + ask.href} className="xcb-big" id="careers.hero" thumb>{ask.text}</Cta>
+                <Cta to={d.hacts[1].href} kind="link" className="xcb-tap" id="careers.history">{d.hacts[1].text}</Cta>
               </div>
             </motion.div>
           </div>
-          <motion.div className="xcb-hero-o" initial={{ opacity: 0, y: 48 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
+          <motion.div className="xcb-hero-o" initial={{ opacity: 0, y: 48 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
             <Hire how={d.how} />
           </motion.div>
         </div>
@@ -195,15 +216,10 @@ export default function Careers({ d }) {
 
       <section className="xcb-perks" aria-labelledby="xcb-perks-h">
         <div className="vc-grid xcb-perks-hd">
-          <MaskLines id="xcb-perks-h" lines={[d.perks.lede]} className="vc-display s" />
+          <MaskLines id="xcb-perks-h" lines={[d.perks.lede]} className="vc-headline" />
           <p className="xcb-meta">{d.perks.title}</p>
         </div>
-        <PinScenes label={d.perks.title} scenes={d.perks.items.map(([t, p], i) => ({
-          key: t,
-          title: <h3 className="vc-headline">{t}</h3>,
-          body: <p className="vc-body">{p}</p>,
-          visual: <PerkArt i={i} t={t} p={p} />,
-        }))} />
+        <Perks perks={d.perks} />
       </section>
 
       <section className="xcb-pos" id="open-positions" aria-labelledby="xcb-pos-h">
@@ -216,7 +232,7 @@ export default function Careers({ d }) {
             <div className="xcb-filter" role="group" aria-label="Filter by team">
               {[null, ...teams].map((t) => (
                 <button key={t || 'all'} type="button" aria-pressed={team === t} onClick={() => setTeam(t)}>
-                  {team === t && <motion.span layoutId="xcb-pill" className="xcb-pill" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {team === t && <motion.span layoutId="xcb-pill" className="xcb-pill" transition={{ duration: 0.3, ease: EASE }} />}
                   <span>{t || 'All'}</span>
                 </button>
               ))}
@@ -239,7 +255,11 @@ export default function Careers({ d }) {
           </div>
         </div>
         <div className="vc-wrap">
-          <Deck key={team || 'all'} roles={shown} know={know} dont={d.pos.dont} dontA={d.pos.dontA} />
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={team || 'all'} initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.36, ease: EASE }}>
+              <Deck roles={shown} know={know} dont={d.pos.dont} dontA={d.pos.dontA} />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 
@@ -252,19 +272,13 @@ export default function Careers({ d }) {
           {[intA, intB].map((l, k) => (
             <article key={l.title} className={'xcb-panel ' + (k ? 'b' : 'a')}>
               {k === 0 && <span className="xcb-panel-sig" aria-hidden="true"><Sigil seed={'careers/' + l.title} data={[l.desc.length]} /></span>}
-              <ul className="xcb-panel-p">
-                {l.perks.map((p) => {
-                  const m = fig(p);
-                  return m
-                    ? <li key={p} className="xcb-fig"><b className="vc-num">{m[1]}</b><span>{m[2]}</span></li>
-                    : <li key={p}>{p}</li>;
-                })}
-              </ul>
+              {l.perks.filter(fig).map((p) => { const m = fig(p); return <p key={p} className="xcb-fig"><b className="vc-num">{m[1]}</b><span>{m[2]}</span></p>; })}
               <h3 className="vc-title">{l.title}</h3>
+              <ul className="xcb-panel-p">{l.perks.filter((p) => !fig(p)).map((p) => <li key={p}>{p}</li>)}</ul>
               <p className="vc-body">{l.desc}</p>
               <div className="xcb-panel-a">
-                <A to={l.acts[0].href} className={'x-btn xcb-big' + (k ? '' : ' solid')} data-cta={'careers.' + (k ? 'grant' : 'intern')}>{l.acts[0].text}</A>
-                <A to={l.acts[1].href} className="x-arrow xcb-tap"><span>{l.acts[1].text}</span>{ARROW}</A>
+                <Cta to={l.acts[0].href} kind={k ? 'quiet' : 'solid'} className="xcb-big" id={'careers.' + (k ? 'grant' : 'intern')} thumb={!k}>{l.acts[0].text}</Cta>
+                <Cta to={l.acts[1].href} kind="link" className="xcb-tap">{l.acts[1].text}</Cta>
               </div>
             </article>
           ))}
@@ -277,7 +291,7 @@ export default function Careers({ d }) {
             <MaskLines id="xcb-close-h" lines={[d.close.title]} className="vc-display m" />
             <p className="vc-lede">{d.close.lede}</p>
             <div className="xcb-acts">
-              <a className="x-btn solid xcb-big" href={d.close.acts[0].href} data-cta="careers.close">{d.close.acts[0].text}</a>
+              <Cta to={'/careers' + d.close.acts[0].href} className="xcb-big" id="careers.close" thumb>{d.close.acts[0].text}</Cta>
               <a className="xcb-mail" href={d.close.acts[1].href}>{d.close.acts[1].text}</a>
             </div>
           </div>

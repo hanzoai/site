@@ -81,9 +81,9 @@ export const DIFF = {
     [13, 13, ' ', '  display: inline-flex;'],
     [14, 14, ' ', '  align-items: center;'],
     [15, null, '-', '  color: #e5e7eb;'],
-    [16, null, '-', '  background: #ec4899;'],
+    [16, null, '-', '  background: #737373;'],
     [null, 15, '+', '  color: #1a1a1a;'],
-    [null, 16, '+', '  background: #f472b6;'],
+    [null, 16, '+', '  background: #a3a3a3;'],
     [null, 17, '+', '  font-weight: 600;'],
     [17, 18, ' ', '  border-radius: 8px;'],
     [18, 19, ' ', '}'],
@@ -91,10 +91,11 @@ export const DIFF = {
 };
 
 export const VIEW = {
-  before: 'BEFORE (LOW CONTRAST · 1.9:1)', after: 'AFTER FIX (#1A1A1A ON #F472B6 · 8.9:1)', button: 'Buy Now — $49',
+  before: 'BEFORE (LOW CONTRAST · 1.9:1)', after: 'AFTER FIX (#1A1A1A ON #a3a3a3 · 8.9:1)', button: 'Buy Now — $49',
   note: 'Live preview sandboxes the branch build so design and engineering can approve visual changes directly inside the channel.',
-  // the two renders, in the colours of the diff
-  old: { color: '#e5e7eb', background: '#ec4899' }, fix: { color: '#1a1a1a', background: '#f472b6' },
+  // the two renders as the greys of equal luminance to the diff's colours, so the contrast they show is the same and no
+  // hue reaches the page (deck greys only); the diff itself keeps Hanzo's text
+  old: { color: '#e7e7e7', background: '#888888' }, fix: { color: '#1a1a1a', background: '#9f9f9f' },
 };
 
 export const WHAT = {

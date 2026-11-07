@@ -1,9 +1,9 @@
 'use client';
 /* Metrics, v2 launch page (Cloud 3).
-   V2: 8/10 The live chart is the first screen: it runs full-bleed behind the title, a crosshair follows the pointer, the spike opens its traces; six points as one pinned table opened by the section's own statement; one dark room; Logs as a card that opens; grey only.
-   Signature: the spike that opens. Three series stream full-bleed under the title, split by the label you pick; every
-   seven seconds a spike rises, the cursor lands on it and the traces for that window open beside it, because they were
-   never in a different system. Click the chart to hold a moment and keep its traces open.
+   V2: 8/10 MASTER: title, lede and ask on the 8/5 split with the query toolbar; the live chart and its traces side by side on one flat tile (nothing floats over anything); a crosshair reads the line under the pointer; six points as one pinned table opened by the section's own statement; one black room; Logs card opens; "Get Metrics" grows as you reach it; deck greys.
+   Signature: the spike that opens. Three series stream across the chart, split by the label you pick; every ten
+   seconds a spike rises, the cursor lands on it and the traces for that window open beside it, because they were never
+   in a different system. Click the chart to hold a moment and keep its traces open.
    Beyond: Label check. Tick per-model, per-route, per-tenant in chapter three: the table grows a column for each while
    a time-series database would multiply series, Hanzo's own cardinality point made concrete before you pick a store.
    Persona: Developer. Goal: try Hanzo Metrics (read the source, then deploy).
@@ -62,7 +62,7 @@ function Field({ lead }) {
     if (e.pointerType !== 'mouse' || calm) return;
     const r = el.current, box = e.currentTarget.getBoundingClientRect();
     const fx = Math.min(1, Math.max(0, (e.clientX - box.left) / box.width));
-    const y = Y(wave(r.t + fx * (N - 1) * STEP, 0)) / 100 * box.height;
+    const y = Y(wave(r.t + fx * (N - 1) * STEP, 0)) / 100 * (box.height - 24); // the svg sits 24px down
     r.x?.style.setProperty('transform', `translate3d(${e.clientX - box.left}px,0,0)`);
     r.dot?.style.setProperty('transform', `translate3d(0,${y}px,0)`);
     r.x?.setAttribute('data-on', '');
@@ -73,7 +73,7 @@ function Field({ lead }) {
   const p0 = pts(T0, 0);
   return (
     <div className="mt-live" ref={ref}>
-      <div className="lx-wrap mt-tools">
+      <div className="lx-wrap mt-top">
         {lead}
         <div className="mt-tool">
           <span className="mt-host">metrics.hanzo.ai</span>
@@ -82,12 +82,13 @@ function Field({ lead }) {
             {Object.keys(SPLIT).map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
           </div>
           <ul className="mt-legend" aria-label="Series">{series.map((s, k) => <li key={s} className={'s' + k}><i />{s}</li>)}</ul>
-          <LivePause paused={paused} onToggle={pause} className="mt-pause" />
+          <LivePause paused={paused} onToggle={pause} inline className="mt-pause" />
         </div>
       </div>
-      <button type="button" className="mt-field" aria-label={held ? 'Let the chart run again' : 'Hold this moment and open its traces'} aria-pressed={held} onClick={() => setHeld((h) => !h)} onPointerMove={move} onPointerLeave={out} data-cursor={held ? 'Run' : 'Hold'}>
+      <div className="lx-wrap mt-stage">
+      <button type="button" className="mt-field" aria-label={held ? 'Let the chart run again' : 'Hold this moment and open its traces'} aria-pressed={held} onClick={() => setHeld((h) => !h)} onPointerMove={move} onPointerLeave={out} data-cursor="">
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <defs><linearGradient id="mt-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1d1d1f" stopOpacity=".1" /><stop offset="1" stopColor="#1d1d1f" stopOpacity="0" /></linearGradient></defs>
+          <defs><linearGradient id="mt-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0a0a0a" stopOpacity=".1" /><stop offset="1" stopColor="#0a0a0a" stopOpacity="0" /></linearGradient></defs>
           {[40, 60, 80].map((y) => <line key={y} x1="0" x2="100" y1={y} y2={y} className="grid" />)}
           <path ref={(e) => (el.current.a = e)} className="fill" d={area(p0)} />
           {[2, 1, 0].map((k) => <path key={k} ref={(e) => (el.current.p[k] = e)} className={'s' + k} d={line(pts(T0, k))} />)}
@@ -96,7 +97,7 @@ function Field({ lead }) {
         <span className={'mt-flag' + (open ? ' on' : '')} style={{ left: CX + '%' }} aria-hidden="true">
           <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 2l9 6-4 1-2 4z" fill="currentColor" /></svg>spike · {series[0]}
         </span>
-        <span className="mt-x" ref={(e) => (el.current.x = e)} aria-hidden="true"><i ref={(e) => (el.current.dot = e)} /><b>{series.join(' · ')}</b></span>
+        <span className="mt-x" ref={(e) => (el.current.x = e)} aria-hidden="true"><i ref={(e) => (el.current.dot = e)} /></span>
       </button>
       <div className={'mt-traces' + (open ? ' on' : '')}>
         <p className="mt-tk" aria-live="polite">{open ? <>traces for that window · <b>{series[0]}</b></> : 'a spike is the start of a question'}</p>
@@ -105,6 +106,7 @@ function Field({ lead }) {
             <li key={n} style={{ '--i': i }}><span className="mt-sn">{n}</span><span className="mt-sb" aria-hidden="true"><b style={{ left: x + '%', width: w + '%' }} /></span></li>
           ))}
         </ol>
+      </div>
       </div>
     </div>
   );
@@ -205,11 +207,11 @@ export default function Metrics() {
   const [on, setOn] = useState([true, false, false]);
   const steps = POINTS.map(([t, d], i) => ({ t, d, extra: i === 2 ? <LabelCheck on={on} setOn={setOn} where="in-copy" /> : null }));
   return (
-    <main className="lx mt" data-ask-name="Hanzo Metrics">
-      <section className="mt-hero" data-morph-target>
-        <div className="lx-wrap"><LineMask as="h1" className="lx-display mt-h1" lines={['Hanzo Metrics']} /></div>
+    <main className="lx mt">
+      <section className="mt-hero" data-morph-target data-ask-name="Hanzo Metrics">
         <Field lead={(
           <div className="mt-lead">
+            <LineMask as="h1" className="lx-display mt-h1" lines={['Hanzo Metrics']} />
             <p className="lx-lede mt-sub">The metrics half of Hanzo O11y</p>
             <A to={GH} className="lx-cta" data-thumb="View on GitHub" data-cta="metrics.hero">View on GitHub<Arr /></A>
           </div>

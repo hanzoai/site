@@ -1,18 +1,18 @@
 /* Koe (ko-): the capsule left of the headline, then the booth */
 .ko-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 14px 18px; }
 .ko-top .mb-mono { margin: 0 auto 0 0; }
-.ko-tc { margin: 0; font: 500 16px var(--mono); color: #f5f5f7; }
-.ko-tc-of { color: #8e8e93; }
+.ko-tc { margin: 0; font: 500 16px var(--mono); color: #f5f5f5; }
+.ko-tc-of { color: #a3a3a3; }
 .ko-wave { position: relative; height: 220px; margin: 0 18px; border-radius: 16px; background: radial-gradient(ellipse at 50% 50%, #141417, #0a0a0a 70%); overflow: hidden; cursor: pointer; }
 .ko-wave canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; }
 .ko-script { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 40px; padding: 26px 22px 10px; }
 .ko-ph { list-style: none; margin: 0; padding: 0; display: flex; gap: clamp(10px, 2vw, 26px); }
-.ko-ph li { font: 500 clamp(1.6rem, 3.6vw, 3.2rem)/1 var(--mono); color: #3a3a3c; transition: color .25s, transform .4s var(--ease); }
-.ko-ph li[data-s='done'] { color: #8e8e93; }
+.ko-ph li { font: 500 clamp(1.6rem, 3.6vw, 3.2rem)/1 var(--mono); color: #404040; transition: color .25s, transform .4s var(--ease); }
+.ko-ph li[data-s='done'] { color: #a3a3a3; }
 .ko-ph li[data-s='on'] { color: #fff; transform: translateY(-6px); }
-.ko-word { margin: 0; display: flex; font-size: clamp(3rem, 7vw, 6rem); font-weight: 560; letter-spacing: -.05em; line-height: 1; }
-.ko-word span { color: #2c2c2e; transition: color .3s; }
-.ko-word span[data-s='done'], .ko-word span[data-s='on'] { color: #f5f5f7; }
+.ko-word { margin: 0; display: flex; font-size: clamp(3rem, 7vw, 6rem); font-weight: 497; letter-spacing: -.05em; line-height: 1; }
+.ko-word span { color: #262626; transition: color .3s; }
+.ko-word span[data-s='done'], .ko-word span[data-s='on'] { color: #f5f5f5; }
 .ko-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 14px 22px 20px; }
 .ko-presets .mb-mono { margin: 0; }
 .ko-v2 { left: auto; right: max(24px, calc((100% - var(--wrap)) / 2)); width: min(50%, 620px); }

@@ -16,7 +16,7 @@
 .ds-files { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; padding: clamp(24px, 2.6vw, 36px) clamp(28px, 8vw, 124px) 16px; }
 .ds-file { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 12px 8px 10px; border-radius: 14px; border: 1px solid var(--line); background: #fff; cursor: pointer; overflow: hidden; text-align: center; transition: border-color .3s, background .3s, box-shadow .4s var(--ease); }
 .ds-file:hover { border-color: rgba(0, 0, 0, .2); }
-.ds-file.on { border-color: var(--ac); background: #f7fbff; box-shadow: 0 16px 30px -22px rgba(115, 115, 115, .6); }
+.ds-file.on { border-color: var(--ac); background: #fafafa; box-shadow: 0 16px 30px -22px rgba(115, 115, 115, .6); }
 .ds-file.fixed { cursor: default; }
 .ds-file:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 .ds-name { font: 500 13px/1.1 var(--mono); color: var(--soft); overflow-wrap: anywhere; min-height: 2.2em; display: flex; align-items: center; justify-content: center; }
@@ -95,7 +95,7 @@
 .ds-time { display: flex; flex-direction: column; gap: 10px; }
 .ds-time span { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
 .ds-time i { height: 44px; border-radius: 8px; background: var(--ink); opacity: calc(.35 + var(--j) * .09); }
-.ds-mv { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--ac-l); background: #f7fbff; }
+.ds-mv { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--ac-l); background: #fafafa; }
 .ds-mv span { display: flex; align-items: flex-end; gap: 8px; height: 56px; }
 .ds-mv i { flex: 1; height: 100%; border-radius: 6px 6px 2px 2px; background: var(--ac); transform-origin: 50% 100%; transform: scaleY(var(--h)); }
 .knc-v[data-on] .ds-mv i { animation: ds-roll 2.4s var(--ease) infinite alternate; animation-delay: calc(var(--j) * .2s); }

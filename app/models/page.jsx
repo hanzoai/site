@@ -1,4 +1,4 @@
-// Signature: the wall that opens. Nine flagship films on the first screen; scroll flies into Enso, and every film and card opens into its own page.
+// Signature: a card opens into its page. Hanzo's exact model grid is the first screen; every film and card opens into its own page.
 // Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from /models.
 import ModelsPage from '../../components/pages/ModelsPage';
 import NoScript from '../../components/pages/models/NoScript';

@@ -18,6 +18,7 @@ import { OpenCards } from '../v2/OpenSheet';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
+import '../v2/x-gauss/Rhythm.css';
 import './Templates.css';
 
 // [slug, title, kind, what it is] — Hanzo's list (GET api.hanzo.ai/v1/templates, the ones with previews), by kind then title
@@ -81,7 +82,7 @@ function Card({ t, d, onPrev, onNext, calm }) {
       style={{ zIndex: 50 - Math.abs(d) }}
       initial={false}
       animate={pose}
-      transition={calm ? { duration: 0 } : { type: 'spring', stiffness: 170, damping: 24 }}
+      transition={calm ? { duration: 0 } : { duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       drag={front ? 'x' : false}
       dragSnapToOrigin
       dragElastic={0.5}
@@ -217,7 +218,7 @@ export default function Templates() {
   const list = useMemo(() => (kind === 'All' ? ALL : ALL.filter((t) => t[2] === kind)), [kind]);
   const front = list[Math.min(at, list.length - 1)];
   return (
-    <main className="xtp w2">
+    <main id="main" className="xtp w2 gx">
       <NoJs />
       <section className="xtp-hero" aria-labelledby="xtp-h1" data-morph-target>
         <div className="w2-wrap">
@@ -226,7 +227,7 @@ export default function Templates() {
               <LineMask as="h1" id="xtp-h1" now className="w2-display xtp-h1" lines={['Start from', 'a product.']} />
               <p className="xtp-kick x-mono">Templates</p>
             </div>
-            <motion.div className="xtp-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <motion.div className="xtp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
               <p className="w2-lede xtp-lede">Open one. Edit it in Hanzo.</p>
               <div className="xtp-front" aria-live="polite">
                 <AnimatePresence mode="wait" initial={false}>

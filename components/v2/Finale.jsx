@@ -1,16 +1,17 @@
 'use client';
-/* Finale — the v2 launch close (Cloud 4 chat): "Get X" with the agent prompt, then one dark closing band with the page's
-   one ask (PLAN-COMPONENTS 2.3 "Page endings": proof, then one Band; JAMES.md 5: one solid ask in Hanzo's words).
-   Usage:
-     <Finale name="Sentinel" prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." api="/v1/…"
+/* Finale — the v2 launch close (Cloud 4 chat): ONE ending, a dark closing band (PLAN-COMPONENTS 2.3 "Page endings";
+   JAMES.md 5: one solid ask in Hanzo's words). Usage:
+     <Finale name="Sentinel" head="Get started with Hanzo Sentinel" lede="…" small="…" ask={['Read the docs', url]}
+             links={[[label, href], …]} object={<YourSmallLiveObject />} prompt="Read https://hanzo.ai/skill.md …" api="/v1/…"
              tag="Error tracking" license="BSL-1.1" repo={['hanzoai', url]} stars="4 stars" deploy={url|null} self={url}
-             related={[[title, href, line], …]}
-             head="Get started with Hanzo Sentinel" lede="…" small="…" ask={['Read the docs', url]} links={[[label, href], …]} />
-   - The light part: "Get X" (display), its tag, licence and repo chips, Deploy to Cloud / Self-host as text links, and
-     Hanzo's "Paste and ship" prompt card; then related capabilities as cards that open into their pages (Morph).
-   - The band (class x-band, so the site's ask bar steps aside): head, lede, the one solid button (the hero's ask, same
-     words and href, data-cta="close"), and text links. With no head, the band is left out.
-   - children render under the prompt row (a page's own extra, e.g. a builder). The only idle mover is the prompt caret. */
+             related={[[title, href, line], …]} before={<section …/>} />
+   - Row 1: the page's own closing line (head, lede, small), the one solid button (the hero's ask, data-cta="close") and
+     text links; beside it the page's object (`object`, e.g. its product in miniature) or else Hanzo's "Paste and ship".
+   - Row 2: "Get X" with its tag, licence and repo chips and "Deploy to Cloud" / "Self-host" as text links, and the
+     prompt when the object took row 1.
+   - Row 3: related capabilities as one line of links that open into their pages (no row of equal boxes).
+   - `before` renders inside the light page above the band (a page's own extra section, e.g. a builder).
+   The band carries data-ask-hide, so the site's ask bar steps aside while it is on screen. The only idle mover is the prompt caret. */
 import { Copy } from '../ui';
 import { A, Cta } from '../kit';
 import './x-hamilton/Launch.css';
@@ -36,48 +37,46 @@ export function Prompt({ name, prompt, api, className = '' }) {
   );
 }
 
-export default function Finale({ name, prompt, api, head, lede, small, ask, links = [], tag, license = 'Apache-2.0', repo = ['hanzoai', 'https://github.com/hanzoai'], stars, deploy = 'https://platform.hanzo.ai/deploy', self, related, relTitle = 'Related capabilities', children, className = '' }) {
+export default function Finale({ name, prompt, api, head, lede, small, ask, links = [], object, tag, license = 'Apache-2.0', repo = ['hanzoai', 'https://github.com/hanzoai'], stars, deploy = 'https://platform.hanzo.ai/deploy', self, related, relTitle = 'Related capabilities', before, children, className = '' }) {
+  const pr = prompt && <Prompt name={name} prompt={prompt} api={api} />;
   return (
     <>
-      <section className={'l2-fin ' + className}>
+      {(before || children) && <section className="l2-fin-before">{before}{children && <div className="l2-wrap">{children}</div>}</section>}
+      <section className={'l2-band l2-dark ' + className} data-room="dark" data-ask-hide>
         <div className="l2-wrap">
-          <div className="l2-get">
+          <div className="l2-band-top">
+            <div className="l2-band-copy">
+              {head && <h2 className="l2-head l2-band-h">{head}</h2>}
+              {lede && <p className="l2-lede">{lede}</p>}
+              {small && <p className="l2-band-s">{small}</p>}
+              <div className="l2-band-acts">
+                {ask && <Cta to={ask[1]} id="close" size="lg">{ask[0]}</Cta>}
+                {links.map(([t, to]) => <Cta key={t} to={to} kind="link" id={'close-' + t.toLowerCase().replace(/\W+/g, '-')}>{t}</Cta>)}
+              </div>
+            </div>
+            <div className="l2-band-obj">{object || pr}</div>
+          </div>
+          <div className="l2-band-get">
             <div className="l2-get-h">
-              <h2 className="l2-display m">Get {name}</h2>
+              <h2 className="l2-get-name">Get {name}</h2>
               {tag && <p className="l2-get-tag">{tag}</p>}
               <div className="l2-get-meta">
                 {license && <span className="l2-chip"><span>License:</span> {license}</span>}
                 {repo && <A to={repo[1]} className="l2-chip"><Gh />{repo[0]}{stars && <em>{stars}</em>}</A>}
-              </div>
-              <div className="l2-get-links">
                 {deploy && <Cta to={deploy} kind="link" id="deploy">Deploy to Cloud</Cta>}
                 {self && <Cta to={self} kind="link" id="self-host">Self-host</Cta>}
               </div>
             </div>
-            {prompt && <div className="l2-get-pr"><Prompt name={name} prompt={prompt} api={api} /></div>}
+            {object && pr && <div className="l2-get-pr">{pr}</div>}
           </div>
-          {children && <div className="l2-fin-extra">{children}</div>}
           {related && (
-            <div className="l2-rel">
+            <nav className="l2-rel" aria-label={relTitle}>
               <p className="l2-kick">{relTitle}</p>
               <ul>{related.map(([t, to, d]) => <li key={t}><A to={to} className="l2-rel-a"><b data-morph>{t}</b>{d && <span>{d}</span>}<i aria-hidden="true">→</i></A></li>)}</ul>
-            </div>
+            </nav>
           )}
         </div>
       </section>
-      {head && (
-        <section className="x-band l2-band" data-room="dark">
-          <div className="l2-wrap">
-            <h2 className="l2-head l2-band-h">{head}</h2>
-            {lede && <p className="l2-lede">{lede}</p>}
-            {small && <p className="l2-band-s">{small}</p>}
-            <div className="l2-band-acts">
-              {ask && <Cta to={ask[1]} id="close" size="lg">{ask[0]}</Cta>}
-              {links.map(([t, to]) => <Cta key={t} to={to} kind="link" id={'close-' + t.toLowerCase().replace(/\W+/g, '-')}>{t}</Cta>)}
-            </div>
-          </div>
-        </section>
-      )}
     </>
   );
 }

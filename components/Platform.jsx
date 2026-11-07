@@ -43,8 +43,8 @@ export default function Platform() {
   return (
     <section className="hv-platform" id="products" aria-labelledby="products-h">
       <div className="v2-wrap hv-plat-head">
-        <Lines as="h2" id="products-h" className="v2-display-m" lines={['Hanzo is the AI-native', 'company platform.']} />
-        <p className="v2-lede">A vertically integrated agentic operating system for business — intelligence, applications, computer-use agents, developer tools, MCP, and cloud infrastructure designed together in one workspace.</p>
+        <Lines as="h2" id="products-h" className="hv-h2" lines={['Hanzo is the AI-native company platform.']} />
+        <p className="hv-lead">A vertically integrated agentic operating system for business — intelligence, applications, computer-use agents, developer tools, MCP, and cloud infrastructure designed together in one workspace.</p>
       </div>
       <Chapters label="Hanzo products" items={items} step={0.45} />
     </section>

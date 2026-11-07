@@ -7,6 +7,12 @@
 .w2-pin-rail { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .w2-pin-rail button { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 44px; min-height: 44px; padding: 8px 0; border: 0; background: none; cursor: pointer; color: var(--faint); }
 .w2-pin-rail button[aria-current] { color: var(--ink); }
+.w2-pin-rail button { transition: color .2s; }
+.w2-pin-rail button:active { transform: translateY(1px); }
+.w2-pin-rail i, .w2-pin-rail b { transition: transform .3s var(--ease); }
+@media (hover: hover) { .w2-pin-rail button:hover { color: var(--ink); } .w2-pin-rail button:hover i { transform: scaleX(1.25); transform-origin: 0 50%; } }
+.w2-pin-title { margin: 0 0 14px; }
+.w2-pin-title span { display: block; width: 44px; font-size: 13px; line-height: 1.3; letter-spacing: .04em; color: var(--ink); writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
 .w2-pin-rail span { font-size: 13px; }
 .w2-pin-rail i { display: block; width: 28px; height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; }
 .w2-pin-rail b { display: block; height: 100%; background: var(--acc); transform-origin: 0 50%; }
@@ -25,9 +31,14 @@
   .w2-pin-grid { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
   .w2-pin-visual { position: sticky; top: 60px; z-index: 2; order: -1; padding: 8px 0 16px; background: #fff; }
   .w2-pin.w2-dark .w2-pin-visual { background: #050506; }
-  .w2-pin-words { display: block; }
-  .w2-pin-rail { display: none; }
-  .w2-pin-texts { display: flex; flex-direction: column; gap: 0; }
-  .w2-pin-t { grid-area: auto; min-height: 62svh; padding: 40px 0; opacity: 1 !important; transform: none !important; pointer-events: auto; border-top: 1px solid var(--line); }
+  .w2-pin-words { display: contents; }
+  .w2-pin-rail { order: -2; display: block; margin: 0 0 8px; }
+  .w2-pin-rail li:not(.w2-pin-title) { display: none; }
+  .w2-pin-title { margin: 0; }
+  .w2-pin-title span { width: auto; writing-mode: horizontal-tb; transform: none; font-size: 14px; color: var(--soft); }
+  .w2-pin-texts { order: 1; display: contents; }
+  .w2-pin-t.lead { order: -3; min-height: 0; padding: 0 0 24px; border-top: 0; }
+  .w2-pin-texts { display: contents; }
+  .w2-pin-t { grid-area: auto; min-height: 0; padding: 40px 0; opacity: 1 !important; transform: none !important; pointer-events: auto; border-top: 1px solid var(--line); }
   .w2-pin-t:first-child { border-top: 0; }
 }

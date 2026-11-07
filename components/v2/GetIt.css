@@ -2,15 +2,21 @@
 .gi { position: relative; padding: clamp(120px, 15vw, 220px) 0 clamp(96px, 11vw, 160px); border-top: 1px solid var(--line); overflow: hidden; }
 .gi-in { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
 .gi-copy { grid-column: 1 / span 7; position: relative; z-index: 1; }
-.gi-lead { margin-bottom: 24px; }
+.gi-lead { margin-top: 22px; }
 .gi-h { color: var(--ink); }
 .gi-tag { margin-top: 24px; }
 .gi-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
 .gi-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 13px/1 var(--mono); color: var(--ink); text-decoration: none; }
 .gi-chip > span { color: var(--faint); }
 .gi-chip em { font-style: normal; color: var(--soft); padding-left: 8px; border-left: 1px solid var(--line); }
-a.gi-chip:hover { border-color: var(--ink); }
+@media (hover: hover) { a.gi-chip:hover { border-color: var(--ink); } }
+a.gi-chip:active { transform: translateY(1px); }
+.gi-chip { min-height: 44px; }
 .gi-acts { margin-top: 40px; }
+.gi-more { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 20px 0 0; }
+.gi-more .v2-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--ink); font-size: 17px; }
+.gi-more .v2-link svg { transition: transform .25s var(--e); }
+@media (hover: hover) { .gi-more .v2-link:hover svg { transform: translateX(3px); } }
 .gi-art { grid-column: 8 / -1; position: relative; aspect-ratio: 1; color: var(--acc); }
 .gi-sigil { position: absolute; inset: -10%; width: 120%; height: 120%; display: block; -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent); mask-image: radial-gradient(closest-side, #000 55%, transparent); }
 @media (max-width: 900px) {

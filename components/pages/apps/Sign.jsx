@@ -1,6 +1,6 @@
 'use client';
 /* Persona: teams that send contracts (ops, sales, HR) and developers who embed signing. Goal: start signing. CTA: "Try Hanzo" → /login. Metric: signup_start.
-   Sign, v2. V2: 8/10 Stage desk (the contract arrives huge and signs itself), five pinned chapters scrubbing the same page, parts as cards that open into sheets, a full-width signing pad, one dark room, ink-indigo accent
+   Sign. V2: 7/10 Stage desk (the contract arrives huge and signs itself), five pinned chapters scrubbing the same page, parts as cards that open into sheets, a full-width signing pad, one dark room, ink-indigo accent
    Signature: a contract that signs itself. A PDF page sits on a desk in the hero and goes through Hanzo's five steps by
    itself: the fields drop in, the link goes out, the signature writes itself in ink, the recipients tick from sent to
    signed, and the certificate stamps the page. Then the five steps become chapters you scroll through on that page.
@@ -10,7 +10,7 @@
    (PinChapters), Open (sheets). Colour: none (0 UI hues); ink and greys. Self-running demos carry a pause button.
    One dark room: "Send the first one". Every word and link is Hanzo's. */
 import { useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A, Tick, Img } from '../../kit';
 import { useLive, useEvery, useSteps } from '../cloud/Frame';
@@ -21,6 +21,7 @@ import { OpenCards } from '../../v2/OpenSheet';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
+import '../../v2/x-gauss/Rhythm.css';
 import './Sign.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/esign';
@@ -47,10 +48,10 @@ function Page({ at }) {
       <div className="sg-lines" aria-hidden="true">{Array.from({ length: 9 }).map((_, i) => <i key={i} style={{ width: [92, 86, 95, 70, 88, 94, 60, 82, 74][i] + '%' }} />)}</div>
       <div className="sg-fields">
         {FIELDS.map(([t, k], i) => (
-          <motion.div key={k} className={'sg-f ' + k} initial={false} animate={placed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -26, scale: 0.9 }} transition={{ type: 'spring', stiffness: 300, damping: 24, delay: placed ? i * 0.06 : 0 }}>
+          <motion.div key={k} className={'sg-f ' + k} initial={false} animate={placed ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: -26, scale: 0.9 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: placed ? i * 0.06 : 0 }}>
             <span>{t}</span>
             {k === 'sig' && (
-              <svg viewBox="0 0 160 60" aria-hidden="true"><motion.path d={INK} initial={false} animate={{ pathLength: signed ? 1 : 0 }} transition={{ duration: signed ? 1.8 : 0.2, ease: [0.45, 0, 0.2, 1], delay: signed ? 0.3 : 0 }} /></svg>
+              <svg viewBox="0 0 160 60" aria-hidden="true"><motion.path d={INK} initial={false} animate={{ pathLength: signed ? 1 : 0, opacity: signed ? 1 : 0 }} transition={{ duration: signed ? 1.8 : 0.2, ease: [0.45, 0, 0.2, 1], delay: signed ? 0.3 : 0 }} /></svg>
             )}
             {k === 'box' && signed && <Tick size={16} />}
           </motion.div>
@@ -58,7 +59,7 @@ function Page({ at }) {
       </div>
       <AnimatePresence>
         {at >= 4 && (
-          <motion.div className="sg-cert" initial={{ opacity: 0, scale: 1.4, rotate: -12 }} animate={{ opacity: 1, scale: 1, rotate: -6 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 18 }}>
+          <motion.div className="sg-cert" initial={{ opacity: 0, scale: 1.4, rotate: -12 }} animate={{ opacity: 1, scale: 1, rotate: -6 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
             <b>Certificate</b><span>signer · time · address</span>
           </motion.div>
         )}
@@ -68,69 +69,60 @@ function Page({ at }) {
 }
 
 /* Who has it: three recipients, their states moving as the page goes out. */
-function Track({ at }) {
+function Track({ at, run }) {
+  const [m, setM] = useState(0); // in "Watch it move" the three recipients advance one by one
+  useEvery(900, run && at === 3, () => setM((v) => (v + 1) % 7));
   return (
     <div className="sg-track" aria-hidden="true">
       {WHO.map((w, i) => {
-        const s = at < 2 ? '—' : at === 2 ? 'sent' : at === 3 ? STATE[i === 2 ? 1 : 2] : 'signed';
+        const s = at < 2 ? '—' : at === 2 ? 'sent' : at === 3 ? STATE[Math.max(0, Math.min(2, m - i))] : 'signed';
         return <p key={w}><i className={s} /><span>{w}</span><b className="x-mono">{s}</b></p>;
       })}
     </div>
   );
 }
 
-function Hero() {
-  const [ref, live] = useLive(0.25);
-  const [paused, pauseBtn] = usePause();
-  const [at] = useSteps(5, 2600, live && !paused);
-  return (
-    <section className="sg-hero" aria-labelledby="sg-h1" data-morph-target>
-      <div className="w2-wrap">
-        <div className="sg-hero-top">
-          <div>
-            <LineMask as="h1" id="sg-h1" now className="w2-display sg-h1" lines={['Hanzo Sign']} />
-          </div>
-          <motion.div className="sg-hero-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
-            <p className="w2-lede sg-lede">Upload a PDF, drop the fields where people need to sign, and send it.</p>
-            <div className="sg-acts">
-              <Magnetic strength={0.25}><A to="/login" className="w2-cta" data-thumb="Try Hanzo" data-cta="sign.hero">Try Hanzo <i aria-hidden="true">→</i></A></Magnetic>
-              <A to={DOCS} className="w2-ghost">Documentation</A>
-            </div>
-          </motion.div>
+/* The opening and the five steps are one pinned story: the desk under the title signs the contract by itself, then the
+   scroll walks that same page through the five steps (Hanzo's words beside it, one at a time). */
+function Story() {
+  const [ref, live] = useLive(0.05);
+  const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
+  const calm = useReducedMotion();
+  const [ch, setCh] = useState(0);
+  const [auto] = useSteps(5, 2600, live && !paused && ch === 0);
+  const hero = (
+    <div className="sg-lead">
+      <LineMask as="h1" id="sg-h1" now className="w2-display sg-h1" lines={['Hanzo Sign']} />
+      <motion.div className="sg-hero-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+        <p className="w2-lede sg-lede">Upload a PDF, drop the fields where people need to sign, and send it.</p>
+        <div className="sg-acts">
+          <Magnetic strength={0.25}><A to="/login" className="w2-cta" data-thumb="Try Hanzo" data-cta="sign.hero">Try Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+          <A to={DOCS} className="w2-ghost">Documentation</A>
         </div>
-        <div ref={ref}>
-          <Settle from={1.06} lift={30}>
-            <div className="sg-desk w2-object" data-cursor="Sign">
-              {pauseBtn}
-              <p className="sg-desk-k x-mono">Document signing</p>
-              <Track at={at} />
-              <Page at={at} />
-              <div className="sg-desk-r" aria-hidden="true">
-                <p className="x-mono">{String(at + 1).padStart(2, '0')} / 05</p>
-                <b>{STEPS[at][0]}</b>
-              </div>
-            </div>
-          </Settle>
-        </div>
-      </div>
-    </section>
+      </motion.div>
+    </div>
   );
-}
-
-/* The five steps as chapters; the page beside them is the same page, at that step. */
-function Steps() {
   return (
-    <PinChapters id="sg-steps" label="A document, signed" className="sg-pin"
-      chapters={STEPS.map(([t, d], i) => ({ k: `A document, signed · ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
-      visual={(at) => (
-        <div className="sg-pin-vis">
-          <Page at={at} />
-          <ol className="sg-flags" aria-hidden="true">
-            {STEPS.map(([t], i) => <li key={t} className={at === i ? 'on' : i < at ? 'past' : ''}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span>{t}</li>)}
-          </ol>
-          <p className="x-sr">01 / 05 02 / 05 03 / 05 04 / 05 05 / 05</p>
-        </div>
-      )} />
+    <div ref={ref} data-morph-target>
+      <PinChapters id="sg-steps" label="Hanzo Sign" title="A document, signed" className="sg-pin"
+        chapters={[{ rail: false, node: hero }, ...STEPS.map(([t, d]) => ({ t, b: <p>{d}</p> }))]}
+        visual={(at) => {
+          if (at !== ch) setTimeout(() => setCh(at), 0);
+          const step = calm ? 4 : at === 0 ? auto : at - 1;
+          return (
+            <div className="sg-desk w2-object">
+              <div className="sg-desk-bar"><p className="sg-desk-k x-mono">Document signing</p><span className="sg-pause">{pauseBtn}</span></div>
+              <Track at={step} run={live && !paused} />
+              <Page at={step} />
+              <div className="sg-desk-r" aria-hidden="true">
+                <p className="x-mono">{String(step + 1).padStart(2, '0')} / 05</p>
+                <b>{STEPS[step][0]}</b>
+              </div>
+              <p className="x-sr">01 / 05 02 / 05 03 / 05 04 / 05 05 / 05</p>
+            </div>
+          );
+        }} />
+    </div>
   );
 }
 
@@ -149,7 +141,7 @@ const LANGS = ['German', 'English', 'Spanish', 'French', 'Italian', 'Japanese', 
 /* Five people, one deal: their states move until one is left holding it up. */
 function Five() {
   const [ref, live] = useLive(0.4);
-  const [paused, pauseBtn] = usePause({ right: 10, top: 10 });
+  const [paused, pauseBtn] = usePause({ right: 12, top: 12 });
   const [k, setK] = useState(3);
   useEvery(1200, live && !paused, () => setK((v) => (v + 1) % 9));
   const st = (i) => (i === 3 ? (k > 1 ? 'opened' : 'sent') : k > i + 2 ? 'signed' : k > i ? 'opened' : 'sent'); // person 4 is the one holding it up
@@ -171,7 +163,7 @@ function Langs() {
     <div className="sg-langs" ref={ref}>
       {pauseBtn}
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.b key={i} initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.5, ease: EASE }}>{LANGS[i]}</motion.b>
+        <motion.b key={i} className={LANGS[i].length > 12 ? 'long' : ''} initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.5, ease: EASE }}>{LANGS[i]}</motion.b>
       </AnimatePresence>
       <span className="x-mono">{String(i + 1).padStart(2, '0')} / 12</span>
     </div>
@@ -183,13 +175,12 @@ function Parts() {
     <section className="w2-sec sg-parts">
       <div className="w2-wrap">
         <div className="sg-split">
-          <h2 className="w2-headline">What is in it</h2>
+          <LineMask as="h2" className="w2-headline" lines={['What is in it']} />
           <p className="w2-lede">The parts of signing that are actually work: placing the fields, chasing the signers, and proving afterwards that it happened.</p>
         </div>
         <div className="sg-bento">
           <div className="sg-tile">
             <div>
-              <span className="x-mono sg-tile-n">09</span>
               <h3 className="w2-title">Where it is right now</h3>
               <p className="w2-body">Sent, opened, signed, declined — per recipient, as it happens. You know which of five people is holding up a deal without asking any of them.</p>
             </div>
@@ -197,14 +188,13 @@ function Parts() {
           </div>
           <div className="sg-tile acc">
             <div>
-              <span className="x-mono sg-tile-n">10</span>
               <h3 className="w2-title">Twelve languages</h3>
               <p className="w2-body">German, English, Spanish, French, Italian, Japanese, Korean, Dutch, Polish, Brazilian Portuguese, Albanian and Chinese. The signer reads the page in theirs, not yours.</p>
             </div>
             <Langs />
           </div>
         </div>
-        <OpenCards cols={4} className="sg-cards" items={PARTS.map(([t, d], i) => ({ id: 'sg-' + i, k: String(i + 1).padStart(2, '0'), t, d: d.split(/(?<=\.)\s/)[0], body: <p>{d}</p> }))} />
+        <OpenCards cols={4} className="sg-cards" items={PARTS.map(([t, d], i) => ({ id: 'sg-' + i, k: String(i + 1).padStart(2, '0'), t, body: <p>{d}</p> }))} />
       </div>
     </section>
   );
@@ -227,33 +217,41 @@ function Pad() {
     last.current = p; if (!ink) setInk(true);
   };
   const upE = () => { last.current = null; };
+  // a keyboard user signs with Enter: the pad writes the same ink line the contract uses
+  const key = (e) => {
+    if (done || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    const c = cv.current.getContext('2d');
+    c.save(); c.translate(260, 40); c.scale(4.2, 4.2);
+    c.lineWidth = 1; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#1d1d1f';
+    c.stroke(new Path2D(INK)); c.restore(); setInk(true);
+  };
   const clear = () => { cv.current.getContext('2d').clearRect(0, 0, cv.current.width, cv.current.height); setInk(false); setDone(null); };
   const sign = () => setDone(new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }));
   return (
     <section className="w2-sec sg-try">
       <div className="w2-wrap">
         <div className="sg-try-head">
-          <h2 className="w2-display s sg-try-h">Each signer gets a link and signs in their browser.</h2>
-          <p className="sg-try-k x-mono">Try the signing page</p>
-          <p className="w2-lede">Nobody installs anything and nobody prints anything. Draw a signature in the field and press Sign. Nothing here is sent anywhere.</p>
+          <LineMask as="h2" className="w2-display s sg-try-h" lines={['Each signer gets a link and signs in their browser.']} />
+          <p className="w2-lede">Nobody installs anything and nobody prints anything.</p>
         </div>
         <div className={'sg-pad w2-object' + (done ? ' done' : '')}>
           <p className="sg-pad-k"><span>signature</span><span className="x-mono">{done ? 'signed' : ink ? 'ready to sign' : 'draw here'}</span></p>
           <div className="sg-pad-c">
-            <canvas ref={cv} width="1200" height="320" onPointerDown={down} onPointerMove={move} onPointerUp={upE} onPointerCancel={upE} aria-label="Signature pad: draw with your mouse, pen or finger" data-cursor="Draw" />
+            <canvas ref={cv} width="1200" height="320" tabIndex={0} onPointerDown={down} onPointerMove={move} onPointerUp={upE} onPointerCancel={upE} onKeyDown={key} aria-label="Signature pad: draw with your mouse, pen or finger" />
             {!ink && !done && <span className="sg-pad-hint" aria-hidden="true">Sign here</span>}
           </div>
-          <div className="sg-pad-foot">
+          <div className="sg-pad-foot" role="status">
             <AnimatePresence mode="wait" initial={false}>
               {done ? (
                 <motion.p key="c" className="sg-pad-cert" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}>
-                  <Tick size={18} /><span>Signed {done}. The certificate records each signer, the time, and the address they signed from.</span>
+                  <Tick size={18} /><span>Signed {done}</span>
                 </motion.p>
               ) : <motion.span key="n" />}
             </AnimatePresence>
             <div className="sg-pad-acts">
               <button type="button" className="w2-ghost" onClick={clear}>Clear</button>
-              <button type="button" className="w2-cta acc" onClick={sign} disabled={!ink || !!done}>Sign</button>
+              <button type="button" className="w2-cta solid" onClick={sign} disabled={!ink || !!done}>Sign</button>
             </div>
           </div>
         </div>
@@ -270,12 +268,12 @@ const PLANS = [
 ];
 
 function Cost() {
-  const [run, setRun] = useState(1); // 0: run it yourself, 1: we run it
+  const [run, setRun] = useState(null); // nothing dimmed until you choose: 0 run it yourself, 1 we run it
   return (
     <section className="w2-sec sg-cost">
       <div className="w2-wrap">
         <div className="sg-split">
-          <h2 className="w2-headline">What it costs</h2>
+          <LineMask as="h2" className="w2-headline" lines={['What it costs']} />
           <div>
             <p className="w2-lede">Run it yourself and pay nothing but your own hosting. Pay us and we run it, on the same code.</p>
             <div className="sg-run" role="group" aria-label="Who runs it">
@@ -287,7 +285,7 @@ function Cost() {
         </div>
         <div className="sg-plans">
           {PLANS.map(([t, price, per, d, [cta, to], li], i) => {
-            const lit = run === 0 ? i === 0 : i > 0;
+            const lit = run === null ? true : run === 0 ? i === 0 : i > 0;
             return (
               <div key={t} className={'sg-plan' + (i === 2 ? ' pop' : '') + (lit ? '' : ' dim')}>
                 {i === 2 && <span className="sg-pop">Most Popular</span>}
@@ -301,7 +299,7 @@ function Cost() {
           })}
         </div>
         <div className="sg-oss">
-          <h3 className="w2-headline">Built on Open Source</h3>
+          <LineMask as="h2" className="w2-headline" lines={['Built on Open Source']} />
           <div>
             <p className="w2-body">Hanzo Sign is built on <A to="https://documenso.com">Documenso</A>, an open-source document signing platform, under the AGPL.</p>
             <p className="w2-body">The upstream project is named here and in the licence, because naming what you forked is required and is a different act from branding yourself with it. Run our build, or run your own — the whole thing is a TypeScript application over Postgres, and you can read every line that touches a document before you trust it with one.</p>
@@ -318,19 +316,26 @@ function First() {
     <section className="w2-sec sg-first w2-dark" data-room="dark">
       <div className="w2-wrap">
         <div className="sg-split">
-          <h2 className="w2-display s">Send the first one</h2>
+          <LineMask as="h2" className="w2-display s" lines={['Send the first one']} />
           <p className="w2-lede">Upload a PDF and place a signature field. You will know inside five minutes whether this fits.</p>
         </div>
-        <div className="sg-first-grid">
-          {[['Start signing', 'Open the hosted app and send a document', 'Try Hanzo', '/login'], ['Documentation', 'Setup, self-hosting, and the API reference', 'View Docs', DOCS], ['The source', 'Read it before you trust a contract to it', 'View on GitHub', REPO]].map(([t, d, a, to], i) => (
-            <A key={t} to={to} className={'sg-first-a' + (i === 0 ? ' first' : '')} {...(i === 0 ? { 'data-cta': 'sign.close' } : {})}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><h3>{t}</h3><p>{d}</p><b>{a} →</b></A>
-          ))}
+        <div className="sg-first-row">
+          <div className="sg-first-main">
+            <h3 className="w2-title">Start signing</h3>
+            <p className="w2-body">Open the hosted app and send a document</p>
+            <A to="/login" className="w2-cta" data-cta="sign.close">Try Hanzo <i aria-hidden="true">→</i></A>
+          </div>
+          <ul className="sg-first-links">
+            {[['Documentation', 'Setup, self-hosting, and the API reference', 'View Docs', DOCS], ['The source', 'Read it before you trust a contract to it', 'View on GitHub', REPO]].map(([t, d, a, to]) => (
+              <li key={t}><h3>{t}</h3><p>{d}</p><A to={to} className="sg-tlink">{a} <i aria-hidden="true">→</i></A></li>
+            ))}
+          </ul>
         </div>
         <div className="sg-first-foot">
           <div className="sg-spec">
             <h3 className="w2-title">Something more specific</h3>
             <p className="w2-body">Signing inside your own product, a flow with approvals before the send, or running it on your infrastructure. Tell us the shape and we will tell you whether it fits.</p>
-            <A to="/contact-sales" className="w2-ghost">Contact Sales</A>
+            <A to="/contact-sales" className="sg-tlink">Contact Sales <i aria-hidden="true">→</i></A>
           </div>
           <div className="sg-gs">
             <h2 className="w2-title">Get started with Sign</h2>
@@ -345,7 +350,7 @@ function First() {
           <div className="sg-get-meta">
             <span className="sg-chip"><span>License:</span> AGPL-3.0</span>
             <A to="https://github.com/hanzoai" className="sg-chip">hanzoai</A>
-            <A to="https://platform.hanzo.ai/deploy" className="w2-ghost">Deploy to Cloud</A>
+            <A to="https://platform.hanzo.ai/deploy" className="sg-tlink">Deploy to Cloud <i aria-hidden="true">→</i></A>
           </div>
         </div>
       </div>
@@ -355,10 +360,9 @@ function First() {
 
 export default function Sign() {
   return (
-    <main className="sg w2">
+    <main id="main" className="sg w2 gx">
       <NoJs />
-      <Hero />
-      <Steps />
+      <Story />
       <Parts />
       <Pad />
       <Cost />

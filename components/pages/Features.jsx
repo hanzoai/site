@@ -22,6 +22,7 @@ import PinChapters from '../v2/x-gauss/PinChapters';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
+import '../v2/x-gauss/Rhythm.css';
 import './Features.css';
 
 const API = 'https://api.hanzo.ai/v1/chat/public';
@@ -131,7 +132,7 @@ function Hero() {
             <LineMask as="h1" id="xft-h1" now className="w2-display xft-h1" lines={['Everything you need to', 'chat, build and ship.']} />
             <p className="xft-kick x-mono">Platform Features</p>
           </div>
-          <motion.div className="xft-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="xft-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede xft-lede">Explore Hanzo Chat, Dev, and Studio — intelligent model routing, repo-scale coding agents, and unified cloud APIs.</p>
             <div className="xft-acts">
               <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta" data-thumb="Open Chat" data-cta="features.hero">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
@@ -309,7 +310,7 @@ function Ask() {
 
 export default function Features() {
   return (
-    <main className="xft w2">
+    <main id="main" className="xft w2 gx">
       <NoJs />
       <Hero />
       <Products />

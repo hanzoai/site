@@ -2,13 +2,16 @@
 // Signature: the docs as a transit map: a train rides the Start-here line by itself and stops at each station, whose guide opens beneath it.
 // Beyond: your route: pick what you came to do and the stations for it line up in order, each one a link.
 /* Learn Hanzo. The page is the map of the documentation, so it is drawn as one.
-   V2: 8/10 rebuilt: "Learn Hanzo" at full display size over a big transit map whose train rides the Start-here line by itself, your route beside it; the things to try and go further as a tile grid whose cards open into their pages; the blog as an editorial index; the thinking as the dark room; questions.
-   Motion: the riding train (signature) + line-masked type + the route chip spring; cards open through the site's morph.
-   Accent: transit teal. Every line and link is Hanzo's own. */
+   Persona: a developer arriving to learn Hanzo (PLAN-COMPONENTS 1.1 developer row). Goal: a first working request.
+   CTA: "Get started" (the quickstart). Metric: api_key_created (via the quickstart).
+   V2: 8/10 grey deck, no eyebrows; rebuilt: "Learn Hanzo" at full display size over a full-width transit map whose train rides the Start-here line by itself, each station's guide opening beneath it and linked by its own name; the things to try and go further as a tile grid whose cards open into their pages; the blog as an editorial index; the thinking as the dark room; questions.
+   Motion: the riding train (signature, idle/time) + tiles lifting and the station dots answering the pointer + stations
+   you pick (state) + line-mask headline from the first paint; cards open into their pages through the site's morph.
+   0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, More, Faq } from '../kit';
-import LineReveal from '../v2/LineReveal';
+import LineReveal, { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
 
@@ -44,13 +47,6 @@ const THINK = [
   ['Research papers', 'The reasoning behind the architecture, published in full.', '/research'],
   ['Source', 'The platform is open source — read it, run it, change it.', 'https://github.com/hanzoai'],
 ];
-// routes are orderings of Hanzo's own stations: [label, [line, index]...]
-const ROUTES = [
-  ['A first request', [[START, 0], [START, 2], [TRY, 1]]],
-  ['An agent', [[START, 0], [START, 3], [START, 4], [TRY, 5]]],
-  ['From the terminal', [[START, 0], [START, 1], [TRY, 2]]],
-  ['An interface', [[FURTHER, 0], [FURTHER, 1], [FURTHER, 2]]],
-];
 const QA = [
   ['What is Hanzo and how does it work?', <>Hanzo is an AI cloud on one account. Chat with frontier models, build and ship with Hanzo Dev, and call the same models from one API: Enso, our frontier model, and Kai, which makes a decision in one call. <More to="/platform">How the platform fits together</More></>],
   ['Can I keep using Claude Code?', <>Yes. Install the Hanzo CLI and sign in, then run Claude Code with its model calls going through api.hanzo.ai, or point your own Claude Code install at Hanzo. <More to={DOCS + 'guides/coding/claude-code'}>The commands, ready to copy</More></>],
@@ -79,7 +75,7 @@ function Metro() {
   };
   return (
     <div className="xlr-map xp-obj" ref={ref}>
-      <div className="xlr-map-top"><span className="xlr-line-tag">Start here</span><span className="x-mono">{String(at + 1).padStart(2, '0')} / {String(START.length).padStart(2, '0')}</span></div>
+      <div className="xlr-map-top"><span className="xlr-map-k">Learn</span><span className="xlr-line-tag">Start here</span><span className="xlr-map-n x-mono">{String(at + 1).padStart(2, '0')} / {String(START.length).padStart(2, '0')}</span></div>
       <div className="xlr-track">
         <i className="xlr-rail" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / (START.length - 1) }} transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }} /></i>
         <motion.span className="xlr-train" aria-hidden="true" initial={false} animate={{ x: (at / (START.length - 1)) * 100 + '%' }} transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}><i /></motion.span>
@@ -94,40 +90,13 @@ function Metro() {
       <div className="xlr-panels">
         {START.map(([t, d, h], i) => (
           <div key={t} id={'xlr-p' + i} role="tabpanel" aria-labelledby={'xlr-t' + i} hidden={at !== i} className="xlr-panel">
-            <motion.div key={at === i ? 'on' : 'off'} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-              <h3 className="xp-head">{t}</h3>
+            <motion.div key={at === i ? 'on' : 'off'} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+              <h3 className="xp-head"><A to={h} className="xlr-guide">{t}<i aria-hidden="true">↗</i></A></h3>
               <p className="xp-lede">{d}</p>
-              <More to={h}>Open the guide</More>
             </motion.div>
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function Route() {
-  const [r, setR] = useState(0);
-  return (
-    <div className="xlr-route">
-      <p className="xp-kick">Your route</p>
-      <div className="xlr-route-k" role="radiogroup" aria-label="What you came to do">
-        {ROUTES.map(([l], i) => (
-          <button key={l} type="button" role="radio" aria-checked={r === i} onClick={() => setR(i)}>
-            {r === i && <motion.span layoutId="xlr-route" className="xlr-route-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
-            <span>{l}</span>
-          </button>
-        ))}
-      </div>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.ol key={r} className="xlr-route-l" initial="h" animate="s" exit={{ opacity: 0, transition: { duration: 0.15 } }} variants={{ s: { transition: { staggerChildren: 0.06 } } }}>
-          {ROUTES[r][1].map(([line, i], k) => (
-            <motion.li key={line[i][0] + k} variants={{ h: { opacity: 0, x: -12 }, s: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 300, damping: 30 } } }}>
-              <span className="x-mono">{k + 1}</span><A to={line[i][2]}>{line[i][0]}</A>
-            </motion.li>
-          ))}
-        </motion.ol>
-      </AnimatePresence>
     </div>
   );
 }
@@ -138,20 +107,18 @@ function Hero() {
       <div className="xp-wrap">
         <div className="xp-grid xlr-hero-top">
           <div className="xlr-hero-h">
-            <p className="xp-kick">Learn</p>
             <LineReveal as="h1" id="xlr-h1" className="xp-display" lines={['Learn Hanzo']} />
           </div>
           <motion.div className="xlr-hero-side" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="xp-lede">Start with a working request, then go as deep as you need.</p>
             <div className="xlr-acts">
-              <A to={DOCS + 'quickstart'} className="xp-cta" data-thumb="Get started">Get started<i aria-hidden="true">→</i></A>
+              <A to={DOCS + 'quickstart'} className="x-btn solid xp-cta" data-thumb="Get started" data-cta="learn.hero">Get started<i aria-hidden="true">→</i></A>
               <A to="https://hanzo.university" className="xlr-link">Hanzo University</A>
             </div>
           </motion.div>
         </div>
         <motion.div className="xp-grid xlr-hero-map" initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
           <Metro />
-          <Route />
         </motion.div>
       </div>
     </section>
@@ -163,7 +130,7 @@ function Tiles({ tag, title, items, kind }) {
   return (
     <section className={'xp-sec tight xlr-tiles xlr-' + kind} aria-labelledby={'xlr-' + kind + '-h'}>
       <div className="xp-wrap">
-        <div className="xlr-sec-head"><span className="xlr-line-tag">{tag}</span><h2 id={'xlr-' + kind + '-h'} className="xp-head">{title}</h2></div>
+        <div className="xlr-sec-head"><h2 id={'xlr-' + kind + '-h'} className="xp-head">{title}</h2></div>
         <ul className={'xlr-grid n' + items.length}>
           {items.map(([t, d, h], i) => (
             <li key={t + h} className={'t' + i}>
@@ -200,7 +167,7 @@ function Blog() {
   return (
     <section className="xp-sec xlr-blog" aria-labelledby="xlr-blog-h">
       <div className="xp-wrap xp-grid">
-        <div className="xlr-sticky"><span className="xlr-line-tag">Blog</span><h2 id="xlr-blog-h" className="xp-head">From the blog</h2></div>
+        <div className="xlr-sticky"><h2 id="xlr-blog-h" className="xp-head">From the blog</h2></div>
         <ol className="xlr-posts">
           {BLOG.map(([t, date, d, h]) => (
             <li key={h}>
@@ -221,7 +188,6 @@ function Think() {
   return (
     <section className="xp-sec xp-dark xlr-think" data-room="dark" aria-labelledby="xlr-think-h">
       <div className="xp-wrap">
-        <p className="xp-kick">Research</p>
         <LineReveal onView id="xlr-think-h" className="xp-display md" lines={['Read the thinking']} />
         <div className="xlr-think-grid">
           {THINK.map(([t, d, h]) => (
@@ -236,6 +202,7 @@ function Think() {
 export default function Learn() {
   return (
     <main className="xp xlr">
+      <NoJs />
       <Hero />
       <Tiles tag="Try" title="Pick what to try" items={TRY} kind="try" />
       <Uni />

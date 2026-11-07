@@ -8,10 +8,12 @@
    longest-context model is one press away. */
 import { useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
-import { EASE, Copy, Count } from '../../ui';
+import { EASE, Copy } from '../../ui';
+import MaskFig from '../../v2/MaskFig';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
+import SpecCard from '../../v2/SpecCard';
 import { Field, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
@@ -46,9 +48,6 @@ export default function ProviderShelf({ doc }) {
         <div className="x-wrap xmf-launch-in">
           <div className="xmf-maker-g">
             <div className="xmf-launch-t">
-              <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
-                <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
-              </motion.nav>
               <h1 id="xmf-h1" className={'xmf-name ' + (doc.h1.length <= 24 ? 'm' : 'l')} data-morph-target>
                 <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
               </h1>
@@ -58,9 +57,14 @@ export default function ProviderShelf({ doc }) {
               </motion.div>
             </div>
             {/* the maker's count is the hero figure */}
-            <FilmPause className="xmf-maker-pause" />
+            <div className="xmf-maker-top">
+              <nav className="xmf-crumbs" aria-label="Breadcrumb">
+                <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
+              </nav>
+              <FilmPause />
+            </div>
             <motion.p className="xmf-maker-n" {...up(0.2)}>
-              <b>{Number.isFinite(n) ? <Count to={n} /> : null}</b>
+              <b>{Number.isFinite(n) ? <MaskFig>{n}</MaskFig> : null}</b>
               <span className="x-mono">{Number.isFinite(n) ? word : doc.count}</span>
             </motion.p>
           </div>
@@ -98,7 +102,7 @@ export default function ProviderShelf({ doc }) {
             <div className="xmf-seg" role="group" aria-label="Sort">
               {SORTS.map(([k, t]) => (
                 <button key={k} type="button" aria-pressed={sort === k} onClick={() => setSort(k)}>
-                  {sort === k && <motion.span layoutId="xmf-seg" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {sort === k && <motion.span layoutId="xmf-seg" className="xmf-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                   <span>{t}</span>
                 </button>
               ))}
@@ -107,7 +111,7 @@ export default function ProviderShelf({ doc }) {
               <div className="xmf-seg" role="group" aria-label="Modality">
                 {['all', ...mods].map((k) => (
                   <button key={k} type="button" aria-pressed={mod === k} onClick={() => setMod(k)}>
-                    {mod === k && <motion.span layoutId="xmf-mod" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                    {mod === k && <motion.span layoutId="xmf-mod" className="xmf-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                     <span>{k === 'all' ? 'All' : k}</span>
                   </button>
                 ))}
@@ -117,15 +121,8 @@ export default function ProviderShelf({ doc }) {
           <LayoutGroup>
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
-                <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ type: 'spring', stiffness: 260, damping: 30 }} hidden={hidden.has(c.href)}>
-                  <A to={c.href} className="xmf-card">
-                    <span className="xmf-card-t"><b data-morph>{c.name}</b>{c.ctx && <i className="x-mono">{c.ctx}</i>}</span>
-                    <span className="xmf-card-d">{c.desc}</span>
-                    <span className="xmf-card-f">
-                      {c.tags.map((t) => <em key={t} className="x-mono">{t}</em>)}
-                      <span className="x-mono">{c.rate ? `${money(c.rate.in)} → ${money(c.rate.out)}` : ''}</span>
-                    </span>
-                  </A>
+                <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} hidden={hidden.has(c.href)}>
+                  <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
                 </motion.li>
               ))}
             </ul>

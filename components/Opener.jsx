@@ -6,6 +6,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { animate } from 'motion';
+import { play } from '../lib/sound';
 
 const Ctx = createContext(null);
 export const useOpener = () => useContext(Ctx);
@@ -119,6 +120,7 @@ export function OpenerProvider({ children }) {
     if (off()) { router.push(href); return; }
     if (busy.current) return;
     busy.current = true;
+    play('whoosh'); // a card opening into its page (JAMES rule 10)
     try {
       router.prefetch(href);
       sessionStorage.setItem('hz:ret:' + key, JSON.stringify({ y: scrollY, from: location.pathname })); // close returns to the page and card it opened from

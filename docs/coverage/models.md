@@ -1,119 +1,184 @@
-# Coverage: /models — components/pages/ModelsPage.jsx (also served at /models/stealth)
+# /models coverage (MASTER.md part 2, the 18 parts)
 
-Header: `Persona:` Developer choosing a model (and the buyer comparing labs) · `Goal:` find the model, open its page · `CTA:` "Get API key" · metric `api_key_created`. `Signature:` the wall that opens · `Beyond:` every model reachable.
+Page file: `components/pages/ModelsPage.jsx` (+ `ModelsPage.css`; also served at `/models/stealth`) · gallery: `docs/gallery/models/` · metric id: `api_key_created`
 
-## §5.4 brief, line by line
-- **Thesis** (every model has a page, and the page opens from the card): every card is a real `<a href>`. Catalogue cards morph their name into the model page's h1 (`data-morph` → `data-morph-target`). The nine flagship films open through the WebGL opener (`data-card`), and Close flies back into the card.
-- **Order:** editorial families (the wall, Three families, Enso vs Zen, Kai's figures), then maker shelves (the catalogue: Enso, Zen, Kai, Creative, Other labs), then the collapsed link list of every model and maker (reachability).
-- **Hero object:** the model grid. All nine flagship films are on the first screen at 1470×801, 9 of them fully visible (≥6 required). A light moves through them by itself, and the lit one plays its film.
-- **Signature:** a card opens into the model page.
-- **Removed:**
-  - Per-item `whileInView` on cards (one list-level entrance per family group).
-  - The compare tray (deferred in §7).
-  - The auto-rotating quick start.
-  - The second solid in the Try panel.
-  - The vermilion accent.
+Open copy questions for James:
+- The catalogue's "Every model" disclosure reuses Hanzo's own "Every model" label. The hero link with the same words still goes to `#families`, as live. Should it open the full list instead?
 
-## The 18 areas
-- **2.1 Strategy and conversion:**
-  - One solid ask per viewport, in Hanzo's words: "Get API key" in the hero (`data-thumb`, `data-cta="models.hero"`). "Every model" is a text link.
-  - The Try section's own solid is "Get free API key" (`data-cta="models.try"`). "Sign up for free" in the composer is now outlined.
-  - The site Ask bar carries the hero ask after the hero, and the phone bar reads "Get API key".
-  - Gap: `lib/cta.js` is not on main, so labels are not checked against a table.
-- **2.2 Information architecture and navigation:**
-  - Hanzo's header and footer are unchanged.
-  - The hero link goes to `#families`. Chips filter the catalogue and scroll its top back under the header.
-  - "Every model" (a native `<details>`) links all 470 model pages and all 74 maker pages (the 73 makers plus `/models/stealth`). Checked: 544 of 544 `/models/*` routes in the server HTML. Find-in-page opens it.
-- **2.3 First impression and page narrative:**
-  - First screen: the h1 "Frontier AI families" (no eyebrow), the lede, one ask, and the wall of nine films with "Models" and the pause control under it.
-  - Then one idea per screen: the fly-in to Enso, Three families (pinned, one dark room), Enso vs Zen, Kai's figures, the catalogue, every model, prices, Try, the first request, Related.
-- **2.4 Conversion system:**
-  - One filled primary per viewport inside `main`.
-  - The header's own "Try Hanzo" turns outline while the Ask bar is on (shared Ask.jsx).
-  - Gap: no risk-reducer line (Hanzo has none on this page).
-- **2.5 Trust and proof:**
-  - Only Hanzo's figures: 11 suites, 84.4% against 76.6%, 100.0% against 44.2% (Kai vs Jev), and the price list as Hanzo prints it.
-  - No logos and no seals.
-- **2.6 Content presentation (copy untouched):**
-  - Parity on /models and /models/stealth: text 305/305, links 58/58.
-  - Eyebrows moved below their headlines ("Three families", "Enso vs Zen", "Decision Benchmarks", "Priced"). "Models" sits beside the pause under the wall.
-  - The price list folds to 10 rows. The rest stays in the HTML (`hidden`) and opens with an icon button.
-  - On phones the price list becomes 72px rows, with no table scroll.
-- **2.7 Visual design system:**
-  - 0 UI hues: ink, greys and white only. Colour arrives only through the films (Kai plays blue, for example).
-  - v2 type: display 128 (56 on phone), headline 56 (36), lede 24, body 19, Zen Mono 13 for figures and labels.
-  - Radii are 28px on objects and 16px on cards; 12 columns at a max of 1392px.
-  - Gap: no `tokens.css` on main, so the values sit in the page CSS.
-- **2.8 UI component library:**
-  - Kit `A`, `Copy` and `Count`, plus `Sigil`.
-  - New shared piece `components/v2/ModelFilm.jsx` (with `FilmPause` and `usePaused`).
-  - Gaps:
-    - Raw `<table>` (no `DataTable` in the kit) and raw `<pre>` (no `CodeBlock`).
-    - `.x-btn` (no `Cta`).
-    - The closing is not kit `Band`.
-    - ModelFilm holds a `<video>` because kit `Film` has no `play` prop and no page budget. **Request to the kit owner:** add `play` and a two-film budget to `Film`, then ModelFilm becomes a thin wrapper.
-- **2.9 Motion and interaction:**
-  - **Signature (state and scroll):** the wall flies into Enso; cards open into pages.
-  - **Idle:** the lit film plays and the light moves on every 2.6s; the request card switches models by itself; the Sigil drifts behind Related.
-  - **Pointer:** hovering a film tile or an Enso/Zen column plays that film; the Sigil leans to the cursor.
-  - **State:** chips re-flow with a layoutId pill (spring 300/30), tabs, the fold, the disclosure.
-  - **Arrival:** the h1 cuts in, and the figures count up once.
-  - **Scroll:** the fly-in and the pinned families. That is 2 of the 6 kinds.
-  - `variety.py`: 4 techniques, 0 fade-ups.
-  - Press is scale .98 or 1px down on every control. Hover is in `@media (hover:hover)`.
-- **2.10 Media:**
-  - ModelFilm has the poster at once, loads nothing until the film is near the screen, plays only on screen with the tab visible, and never under reduced motion or Data Saver.
-  - **At most 2 films play on the page** (a shared budget).
-  - Gaps: no AVIF or H.264 variants; the posters are Hanzo's 1200×1500 WebP.
-- **2.11 Mobile and responsive:**
-  - The wall becomes a swipe rail (Enso first) and the families stack. Chips and lenses scroll in their own rows, and the price list becomes rows.
-  - Targets are 44px. No sideways scroll at 375 (checked by `phone.mjs`).
-- **2.12 Accessibility (WCAG 2.2 AA):**
-  - One h1. Real buttons with `aria-pressed` and `aria-expanded`. Tabs with arrow keys.
-  - A pause for everything that moves by itself (WCAG 2.2.2): films, the moving light, the self-switching request.
-  - The request's live region speaks only after a person picks a model.
-  - Focus ring: 2px ink with a white halo (white with an ink halo in dark parts).
-  - Gaps: the CSS loops (live dot, caret) are not tied to the pause; no axe run.
-- **2.13 Performance and engineering:**
-  - Transform and opacity only. Two films at most. Wall tiles are laid out large and scaled down (always drawn smaller than laid out). Live rates are fetched once, near the catalogue.
-  - `motion.mjs`: 60 fps median (headless) and layout shift 0.030.
-  - Gap: no Lighthouse or `budgets.json`.
-- **2.14 SEO and machine files:**
-  - Title, description and JsonLd are unchanged.
-  - The server HTML now holds a real link to every model and maker page (reachability for crawlers and agents).
-- **2.15 Catalogue and product pages:**
-  - Reachability: 544 of 544.
-  - Every card is one tab stop, opens into its page, and shows Hanzo's rate.
-  - Group heads pin beside their cards. Chips show true counts.
-  - The phone catalogue uses rows, not a table.
-  - Deferred per §7: the compare tray (removed), facets, maker chip rail.
-- **2.16 Developer experience:**
-  - "Your first request" in cURL, Python, TypeScript and Go. Copy equals the displayed code.
-  - "Try any model" shows the real request shape with the model string swapping.
-- **2.17 States and resilience:**
-  - JS off: a `<noscript>` sheet (`components/pages/models/NoScript.jsx`) shows every entrance at its final state and lays the pinned scenes flat.
-  - Reduced motion: final states, no pin, no autoplay.
-  - Live rates fall back to the printed ones when api.hanzo.ai is unreachable (as in the cloud sandbox).
-- **2.18 Measurement and handover:**
-  - `data-cta` on both primaries.
-  - Gap: no `lib/track.js` on main, so no events fire.
-  - Proof films and stills are in `docs/gallery/models/`.
+Shared changes requested (`docs/requests/models.md`):
+- Kit `Film` needs a `play` prop and a two-film page budget (until then, `components/v2/ModelFilm.jsx`).
+- One `ModelCard` for every context. The flagship grid in `components/pages/model/ModelCards.jsx` and my `components/v2/SpecCard.jsx` carry the same `SPEC.md` values.
+- `DataTable` and `CodeBlock` are not in the kit yet.
 
-## §4 gate
-1. Header comments: yes.
-2. One h1: yes. `PageHero`/`Band`/kit-only: no (gaps above).
-3. One filled primary per viewport: yes. `data-thumb` and `data-cta`: yes. Tokens: page CSS (no tokens.css yet).
-4. Parity 0 missing, and no new visible strings. Control names are icon-only with an aria-label ("Pause", "Play", "Show all (27)") until James approves the register.
-5. Reduced motion and JS-off: yes.
-6. 375 and 1470 pass. 320 not separately checked.
-7. Contact sheet: `docs/gallery/models/`.
-8. Ledger: below.
+Forks this page deleted:
+- The compare tray.
+- Its own img+video film.
+- The white catalogue card (now Hanzo's black card).
+- Count-ups.
+- The page ask bar (the site Ask does it).
+- The 3×3 wall and its scale camera (now the exact `SPEC.md` grid).
+- Every spring.
 
-## Ledger (what this page deleted)
-- The compare tray (Tray, its buttons and CSS).
-- The page's own img+video `Film` (now ModelFilm).
-- The rounded-panel entry clip on the dark room.
-- The vermilion accent and every hue.
-- The "Show all N / Show fewer" visible strings.
-- The duplicate page ask bar (the site Ask bar does it).
-- The kicker above the h1.
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport ~~label and href from `lib/cta.js`~~ n/a: `lib/cta.js` is not on main; the label is Hanzo's own "Get API key"
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button ~~prices from `lib/plans.js`~~ n/a: no plan prices here; model rates come from Hanzo's printed list (`models/rates.js`)
+- [x] Open copy questions for James listed, none decided
+
+Done here:
+- One h1, "Frontier AI families", with one solid "Get API key" (`data-thumb`, `data-cta="models.hero"`) and a text link, "Every model".
+- The Try section's solid is the next one down the page. Its composer's "Sign up for free" is outlined.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it (site layout)
+- [x] Every link through `A` or a real `<a href>`; every card a real link
+- [x] ~~Breadcrumb at depth 2 or more~~ n/a: /models is depth 1
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here:
+- Parity shows links 58/58.
+- The collapsed "Every model" list links all 544 `/models/*` routes: 470 models, 73 makers and `/models/stealth` (checked against `content/pages.json`, 0 missing).
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] ~~`PageHero`~~ n/a: not in the kit yet (the hero is page-local) · nothing above the h1
+- [x] JS off: legible (`models/NoScript.jsx`); no `opacity:0` on the LCP element (the h1 is masked, not faded)
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in a proof strip ~~`Band`~~ (Related index over a drifting Sigil), then footer
+- [x] Card-to-page links use Morph (catalogue) and the WebGL opener (flagships)
+
+Done here:
+- First screen at 1470×801: the h1 cut in by line mask (700 ms), the lede and ask on the 8/5 split, and Hanzo's model grid with all nine cards. Enso's film plays at once.
+- Then come the pinned black room, Enso vs Zen, Kai's figures, the catalogue, every model priced, Try, the first request and Related.
+
+## 4. Conversion system
+- [ ] ~~`<Cta>` only~~ not in the kit yet; `.x-btn` with deck press and hover states
+- [x] Sticky ask in the header and the site Ask bar after the hero, with the hero's label (via `data-thumb`)
+- [x] Copy button copies exactly the displayed code (kit `Copy`)
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: `data-cta` is `models.hero` and `models.try`. The site Ask reads the hero's `data-thumb`, so the bar says "Get API key".
+
+## 5. Trust and proof
+- [x] No logo, no seal, no invented number
+- [x] Every figure traces to Hanzo's copy
+- [x] ~~Marquees~~ n/a: none
+- [x] ~~Privacy link beside every submit~~ n/a: no form
+
+Done here: 11 suites, 84.4% against 76.6% and 100.0% against 44.2% are Hanzo's Kai figures. They rise into their line (MaskFig), so no in-between number ever shows. Rates are Hanzo's printed list.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px except mono capitals (Zen Mono captions 12px, card pills 10px per `SPEC.md`)
+- [x] Measures held; headings balanced
+- [ ] ~~Tables, FAQ, tabs and code use the kit parts~~ the price table and code are page-local until `DataTable`/`CodeBlock` land; tabs are APG
+- [x] `parity.py /models`: 0 missing
+
+Done here: text 305/305 and links 58/58 (also `/models/stealth`). The price list folds to 10 rows with the rest `hidden` in the HTML. On phones it becomes 72px rows.
+
+## 7. Visual design system
+- [x] `taste.py` passes; deck neutrals only (scoped on `.xmo`)
+- [x] No label, tag, badge or pill above a headline. Captions ("Three families", "Enso vs Zen", "Decision Benchmarks", "Priced", "Models") sit below. Enso's "Flagship model" pill is `SPEC.md`'s exact card.
+- [x] Radii 6/16/20/24/28, no shadow on any tile or object
+- [x] No icon boxes
+- [x] Differs from neighbours: the home page uses the same grid as a section; here it is the hero, followed by the black-room chapters and a catalogue no other page has
+
+Done here: h1 52px, section headings 26px, figures 64px. The one moment that grows is Kai's "11" (×1.75 while centred). Tiles are flat #000 (art) and #f5f5f5 (quiet).
+
+## 8. UI component library
+- [x] Every control has hover (in `@media (hover:hover)`), press (scale .97/.98, 90 ms), focus-visible (2px ink with a white halo; reversed in the black room) and disabled
+- [x] Focus ring visible on a Tab crawl
+- [x] ~~Dialogs~~ n/a: none
+- [x] ~~Inputs~~ n/a: none
+- [x] Forks deleted: listed above
+
+Done here: chips and tabs glide on a layoutId pill (300 ms ease-emphasis, no spring). The disclosure and fold are native or icon-only with `aria-label`.
+
+## 9. Motion and interaction
+- [x] One signature (a card opens into its page) plus 3 supporting techniques (pinned families with a clip wipe, chip re-flow, the growing figure); 0 fade-ups
+- [x] At least 3 kinds of movement, scroll half or less:
+  - **Idle:** films, the light moving through the grid, the request switching models, the Sigil.
+  - **Pointer:** the measured tilt, hover plays a film, the Sigil leans.
+  - **State:** chips, tabs, the open.
+  - **Arrival:** the h1 cut-in and figures rising.
+  - **Scroll:** the pinned room and the growing 11.
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval` (one-step timeouts)
+- [x] Sound only through the kit (chips and tabs tick, the open whooshes, Copy chimes; the disclosure has `data-sound="tick"`)
+
+Done here: `variety.py` OK (4 techniques: scroll scrub, clip reveal, layout re-flow, Sigil).
+
+## 10. Media
+- [x] Films through ModelFilm (poster first, nothing loads until near, plays only on screen) ~~`Film`/`Pic` only~~ see the shared request
+- [x] At most 2 films playing (a page budget); one pause (`FilmPause`, 44px, `aria-pressed`) stops films, Sigil and CSS loops
+- [x] Posters are Hanzo's 1200×1500 WebP
+- [x] Never dimmed; 9 real films together in the hero
+
+Done here: Enso plays, plus the lit or hovered card, so two at most. The pause sits under the grid beside the "Models" caption.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 375 (`phone.mjs` OK)
+- [x] Every target 44px or more; hover previews have tap or focus paths
+- [x] Primary ask above the fold at 375×667
+
+Done here:
+- Phones follow `SPEC.md`'s phone layout: Enso full width (360px), then cards two by two (220px).
+- The black room stacks, the price list becomes rows and chip rows scroll in place.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast: text on white uses #0a0a0a, #525252 or #737373; on black, #fafafa, white 78% or #a3a3a3
+- [x] A pause control for everything that moves by itself
+- [x] ~~Forms~~ n/a
+- [x] One h1, h2 per section, h3 inside
+- [x] The keyboard reaches every control
+
+Done here: The request's live region speaks only after a person picks a model. Gap: axe has not been run here.
+
+## 13. Performance and engineering
+- [x] h1 and grid in server HTML
+- [x] Transform, opacity and clip only; `content-visibility` on the 544-link list
+- [x] No poller; live rates are fetched once, near the catalogue
+- [x] Heavy jobs in the cloud only
+
+Done here: `motion.mjs` shows layout shift 0.030 and 60 fps median (headless). Gap: no Lighthouse run.
+
+## 14. SEO and machine files
+- [x] Title and description match `content/pages.json`
+- [ ] ~~Canonical~~ shared layout owner
+- [x] `<JsonLd route="/models">` unchanged
+- [x] Every card is a real link
+
+Done here: 544 crawlable model and maker links are in the server HTML.
+
+## 15. Catalogue and product pages
+- [x] Model card matches `SPEC.md`: #000, 20px radius, 22/500 title with →, 13/18 description, 10px Zen Mono pills, Enso's 44px title and "Flagship model", the measured tilt
+- [x] Every card opens: Morph (catalogue name lands as the sheet's h1) or the WebGL opener (flagships)
+- [x] Every maker and model page linked in the DOM (544/544)
+- [x] One price figure everywhere (`models/rates.js` feeds cards, table and model pages)
+
+Done here: The hero is the `SPEC.md` grid (2fr + 4×1fr, rows 220px, gap 12px). Catalogue, creative and shelf cards share `components/v2/SpecCard.jsx`.
+
+## 16. Developer experience
+- [x] Copy equals the display
+- [x] ~~Config blocks~~ n/a
+- [x] ~~Terminal~~ n/a: the request card has no terminal
+- [x] No hand-typed version number
+
+Done here: "Your first request" has cURL, Python, TypeScript and Go, with the model in each, and the kit `Copy`.
+
+## 17. States and resilience
+- [x] Loading: posters and server-rendered figures; empty: n/a; error: rates fall back to the printed list
+- [x] Blocked live data leaves a complete page (api.hanzo.ai is blocked in the cloud sandbox and the page is complete)
+- [x] ~~Failed submit~~ n/a
+- [x] Islands degrade (the opener falls back to plain navigation)
+
+Done here: JS off shows every word (the `NoScript` sheet). Reduced motion shows final states with no pin.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary ~~events through `lib/track.js`~~ not on main yet
+- [x] Nothing identifier-bearing before consent
+- [x] `V2:` line in the page file
+- [ ] Review: waiting for a fresh critic (`docs/review/models.md`)
+
+Done here: Gallery films and stills are in `docs/gallery/models/` (to be refreshed after this round).

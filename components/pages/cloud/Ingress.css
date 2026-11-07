@@ -1,5 +1,6 @@
 /* Ingress v2. Accent: blue (the port light). One dark room: Chain your own pipeline. */
-.ig { --acc: #525252; --glow: #737373; }
+.ig { --acc: #0a0a0a; --glow: #525252; }
+.ig .v2-dark, .ig [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
 
 /* hero: the name, the two ports, the board */
 .ig-hero { padding: clamp(104px, 9vw, 132px) 0 clamp(80px, 8vw, 120px); }
@@ -13,7 +14,7 @@
 .ig-sub { color: var(--ink); max-width: none; }
 .ig-lift { margin-top: clamp(40px, 4vw, 56px); }
 
-.ig-board { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr) minmax(0, 1fr); gap: clamp(16px, 2vw, 32px); padding: clamp(24px, 2.8vw, 40px); border-radius: 28px; background: linear-gradient(180deg, #f5f8fc, #eef3fa); }
+.ig-board { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr) minmax(0, 1fr); gap: clamp(16px, 2vw, 32px); padding: clamp(24px, 2.8vw, 40px); border-radius: 28px; background: linear-gradient(180deg, #f7f7f7, #f2f2f2); }
 .ig-col { display: flex; flex-direction: column; gap: 10px; }
 .ig-col.mid { justify-content: center; }
 .ig-k { margin: 0 0 6px; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
@@ -42,7 +43,7 @@
 
 /* six scenes that wipe up */
 .ig-scene { height: 100%; display: flex; align-items: center; background: #fff; }
-.ig-scene.s1 { background: #f2f7fd; }
+.ig-scene.s1 { background: #f6f6f6; }
 .ig-scene.s2 { background: #fafafa; }
 .ig-scene-g { align-items: center; padding-top: 56px; }
 .ig-scene-l { grid-column: 1 / span 5; }
@@ -80,11 +81,11 @@
 .ig-pipe-l { grid-column: 1 / span 6; }
 .ig-pipe-l .v2-display { margin: 20px 0 22px; }
 .ig-pipe-pick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 36px; }
-.ig-pipe-pick button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); background: transparent; color: #a1a1a6; font: 500 15px/1 var(--sans); cursor: pointer; transition: background .2s, color .2s; }
-.ig-pipe-pick button[aria-pressed='true'] { background: var(--glow); border-color: var(--glow); color: #fff; }
+.ig-pipe-pick button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); background: transparent; color: #a3a3a3; font: 500 15px/1 var(--sans); cursor: pointer; transition: background .2s, color .2s; }
+.ig-pipe-pick button[aria-pressed='true'] { background: var(--glow); border-color: var(--glow); color: #000; }
 .ig-pipe-pick button:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
 .ig-pipe-run { grid-column: 8 / -1; position: relative; padding: 28px; border-radius: 28px; background: #161617; }
-.ig-pipe-end { margin: 0; padding: 10px 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #86868b; text-align: center; }
+.ig-pipe-end { margin: 0; padding: 10px 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #737373; text-align: center; }
 .ig-pipe-chain { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 8px; }
 .ig-pipe-chain li { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 0 10px 0 20px; border-radius: 16px; background: #2c2c2e; color: #f5f5f7; font: 500 18px/1 var(--sans); cursor: grab; touch-action: none; }
 .ig-pipe-n { font: 500 13px/1 var(--mono); color: var(--glow); }
@@ -92,7 +93,7 @@
 .ig-pipe-mv button { width: 44px; height: 44px; border-radius: 12px; border: 0; background: rgba(255, 255, 255, .06); color: #f5f5f7; font-size: 16px; cursor: pointer; }
 .ig-pipe-mv button:disabled { opacity: .25; cursor: default; }
 .ig-pipe-mv button:focus-visible { outline: 2px solid var(--glow); }
-.ig-pipe-none { margin: 12px 0; text-align: center; color: #a1a1a6; }
+.ig-pipe-none { margin: 12px 0; text-align: center; color: #a3a3a3; }
 .ig-pipe-walk { position: absolute; left: 14px; top: 56px; width: 6px; height: 6px; border-radius: 99px; background: var(--glow); box-shadow: 0 0 12px var(--glow); animation: ig-walk 1.6s cubic-bezier(.65, 0, .35, 1) forwards; }
 @keyframes ig-walk { from { transform: translateY(0); opacity: 1; } 90% { opacity: 1; } to { transform: translateY(calc(var(--h, 300px))); opacity: 0; } }
 

@@ -4,7 +4,7 @@
 //    or returns something unexpected keeps its last good file, and the run still exits 0 so a build never fails here.
 //    npm run build runs it first (prebuild). GITHUB_TOKEN, when set, lets it read GitHub (120 orgs > 60 requests an hour).
 // 2. --pages [/path ...]: render hanzo.ai pages in headless Chrome and keep what a visitor sees (content/live/<path>.json
-//    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/DESIGN.md).
+//    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/MASTER.md section 5).
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

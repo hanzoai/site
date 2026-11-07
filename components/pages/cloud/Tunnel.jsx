@@ -1,7 +1,10 @@
 'use client';
 /* Tunnel (v2, Cloud 4 chat). Archetype F/A: a terminal-first hero where the URL is the headline → one dark scene that opens
    localhost to the internet and closes it again → the other four facts, one with the four modes → one command → close.
-   Accent: share orange.
+   Ink, greys and white only.
+   Persona: a developer who needs a real URL for something on their laptop (a webhook, a demo, a phone test).
+   Goal: install the CLI and share a port. CTA: "View Source" (hero, ask bar) / "View on GitHub" (close), same href.
+   Metric: cta_click:tunnel.primary.
    V2: 8/10 the command types and the public URL lands as the headline, then a scroll-scrubbed wipe opens localhost to a phone on the internet and shuts it when the terminal closes
    Signature: the URL opens and closes. In a pinned dark room, `hanzo share 3000` types itself; a clip-path wipe grows from
    the URL and lights the open internet, a phone loads the page through the fabric while the café network still sees
@@ -9,13 +12,15 @@
    desktop, played when seen on phones.
    Beyond: "A name you can keep". Type a name and a target (a port, a host:port or a full URL) and read the share command
    and the URL that stays yours, from Hanzo's own --name rule.
-   Motion: clip-path wipe scrub (signature) + typing + magnetic primary. Every word and link is Hanzo's; the URL is the
+   Motion: clip-path wipe scrub (signature, scroll; plays by itself on phones, with Pause) + typing (time) + the mode
+   switch and name builder (state). Every word and link is Hanzo's; the URL is the
    example Hanzo prints. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
 import useCalm from '../../v2/useCalm';
-import { EASE, Magnetic } from '../../ui';
-import { A } from '../../kit';
+import { EASE } from '../../ui';
+import { Cta } from '../../kit';
+import { PauseBtn } from '../../v2/x-hamilton/Demo';
 import { Code, useLive } from './Frame';
 import Finale from '../../v2/Finale';
 import { useWide } from '../../v2/useWide';
@@ -28,7 +33,7 @@ const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0
 
 /* Hero: the command types into a text node; the URL lands as the headline's second act. */
 function Hero() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive(0.05);
   const calm = useCalm();
   const cmd = useRef(null);
   const [done, setDone] = useState(false);
@@ -42,11 +47,11 @@ function Hero() {
   return (
     <section className="tn2-hero" ref={ref}>
       <div className="l2-wrap">
-        <motion.p className="l2-kick tn2-kick" {...up(0)}><i aria-hidden="true" />hanzo share</motion.p>
         <h1 className="l2-display"><span className="l2-ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 }}>Hanzo Tunnel</motion.span></span></h1>
+        <motion.p className="l2-kick tn2-kick" {...up(0.2)}>hanzo share</motion.p>
         <div className="tn2-hero-row">
           <motion.p className="l2-lede" {...up(0.32)}>A public HTTPS URL for something running on your laptop. The port stays bound to localhost and the Hanzo fabric carries the traffic to it, so nothing is listening on whatever network the machine is sitting on.</motion.p>
-          <motion.div className="l2-acts" {...up(0.44)}><Magnetic strength={0.25}><A to={GH} className="x-btn solid" data-thumb="View Source">View Source</A></Magnetic></motion.div>
+          <motion.div className="l2-acts" {...up(0.44)}><Cta to={GH} id="primary" size="lg" thumb>View Source</Cta></motion.div>
         </div>
       </div>
       <motion.div className="tn2-term" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }} aria-hidden="true">
@@ -76,15 +81,16 @@ function Scene() {
   const wide = useWide();
   const pin = wide && !calm;
   const [ref, live] = useLive(0.3);
+  const [paused, setPaused] = useState(false);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
   const clock = useMotionValue(0);
   useEffect(() => { if (calm) clock.set(0.6); }, [calm, clock]);
   // phones: the scene plays by itself when seen, 9 s a loop
   useEffect(() => {
-    if (pin || calm || !live) return;
+    if (pin || calm || !live || paused) return;
     const c = animate(clock, [0, 1], { duration: 9, ease: 'linear', repeat: Infinity });
     return () => c.stop();
-  }, [pin, calm, live, clock]);
+  }, [pin, calm, live, clock, paused]);
   const p = pin ? scrollYProgress : clock;
   const [q, setQ] = useState(0);
   useEffect(() => { if (calm) setQ(60); }, [calm]);
@@ -98,13 +104,14 @@ function Scene() {
   const cap = q < 50 ? 0 : 4;
   return (
     <section ref={sec} className={'l2-dark tn2-scene' + (pin ? ' pin' : '')} data-room="dark" style={pin ? { height: '320svh' } : undefined}>
-      <div className="tn2-scene-pin" ref={ref}>
+      <div className={'tn2-scene-pin' + (paused ? ' still' : '')} ref={ref}>
+        <PauseBtn paused={paused} onClick={() => setPaused((v) => !v)} className="dk tn2-pause" />
         <div className="l2-wrap tn2-scene-in">
           <div className="tn2-cap">
             {[0, 4].map((i) => (
               <article key={i} className={'tn2-cap-i' + (cap === i ? ' on' : '')} aria-hidden={cap !== i && pin ? true : undefined}>
-                <p className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</p>
                 <h3 className="l2-head">{FACTS[i][0]}</h3>
+                <p className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</p>
                 <p className="l2-body">{FACTS[i][1]}</p>
               </article>
             ))}
@@ -150,9 +157,10 @@ function Facts() {
         <ol className="tn2-list">
           {[1, 2, 3, 5].map((i) => (
             <li key={i}>
-              <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
               <h3 className="l2-title">{FACTS[i][0]}</h3>
+              <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
               <p className="l2-body">{FACTS[i][1]}</p>
+              {i === 1 && <div className="tn2-name-in-list"><Name /></div>}
               {i === 5 && (
                 <div className="tn2-modes">
                   <div role="group" aria-label="Mode">{MODES.map(([m], k) => <button key={m} type="button" aria-pressed={mode === k} onClick={() => setMode(k)}>{m}</button>)}</div>
@@ -176,7 +184,7 @@ function Name() {
   const kind = /^\d{1,5}$/.test(t) ? 'a port' : /^https?:\/\//.test(t) ? 'a full URL' : /^[\w.-]+:\d{1,5}$/.test(t) ? 'a host:port' : t ? '' : '';
   return (
     <div className="tn2-name">
-      <p className="l2-kick ac">A name you can keep</p>
+      <p className="l2-kick">A name you can keep</p>
       <div className="tn2-name-in">
         <label><span>--name</span><input value={name} onChange={(e) => setName(e.target.value)} placeholder="acme-callbacks" spellCheck="false" autoComplete="off" /></label>
         <label><span>target</span><input value={target} onChange={(e) => setTarget(e.target.value)} placeholder="3000" spellCheck="false" autoComplete="off" /></label>
@@ -195,23 +203,33 @@ function One() {
         <div className="tn2-one-l">
           <h2 className="l2-head">One command, one URL</h2>
           <p className="l2-body">Install the CLI, sign in once, and name a port. It is the same sign-in that runs your agents and bills your usage, so there is nothing else to set up.</p>
-          <div className="l2-acts"><A to="https://docs.hanzo.ai/docs/cli" className="x-btn solid">Install the CLI</A><A to="/pricing" className="x-btn">See Pricing</A></div>
-          <div className="tn2-code"><Code title="Tunnel terminal" tabs={[{ k: 'terminal', code: '$ hanzo share 3000\n→ sharing 3000\nhttps://wispyfox7421.share.hanzo.ai → localhost:3000' }]} /></div>
+          <div className="l2-acts"><Cta to="https://docs.hanzo.ai/docs/cli" kind="quiet" id="install-cli">Install the CLI</Cta><Cta to="/pricing" kind="link" id="pricing">See Pricing</Cta></div>
         </div>
-        <div className="tn2-one-r"><Name /></div>
+        <div className="tn2-one-r"><Code title="Tunnel terminal" tabs={[{ k: 'terminal', code: '$ hanzo share 3000\n→ sharing 3000\nhttps://wispyfox7421.share.hanzo.ai → localhost:3000' }]} /></div>
       </div>
     </section>
   );
 }
 
+/* The close's object: the share as it stands while the terminal is open. */
+function Shared() {
+  return (
+    <div className="tn2-end" aria-hidden="true">
+      <p className="tn2-end-k l2-mono"><span>$</span> hanzo share 3000</p>
+      <p className="tn2-end-u"><i />wispyfox7421<b>.share.hanzo.ai</b></p>
+      <p className="tn2-end-t l2-mono"><span>→ localhost:3000</span><span>127.0.0.1:3000</span></p>
+    </div>
+  );
+}
+
 export default function Tunnel() {
   return (
-    <main className="l2-page tn2" style={{ '--ac': '#737373' }}>
+    <main className="l2-page tn2">
       <Hero />
       <Scene />
       <Facts />
       <One />
-      <Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
+      <Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} object={<Shared />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
     </main>
   );
 }

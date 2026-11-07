@@ -1,13 +1,18 @@
 # /affiliate — James-eye review
 
-Reviewed: main, page files at `501fb8c` (second review; the first, at `d6275ed`, scored 6/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Re-scored 7 Nov 14:47 under MASTER.md (card, scale, floating rules). Reviewed: main, page files at `501fb8c` (second review; the first, at `d6275ed`, scored 6/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 8/10 — ready
+Verdict: 7/10 (capped; page itself scores 8)
 
 First complaint: "Good. Now it looks like us. If I'm picky, the address bar is cut off at the bottom of my laptop screen, so the first thing I see is mostly white."
 
 ## What changed since the first review
 Fixed: no eyebrow over the h1, no orange (grey deck only), the invented step labels are gone (Hanzo's own sentences carry the steps), "Apply" is the one solid ask from hero to close and follows you after the hero, the address bar types the link once and rests, and "Apply" now answers on hover and press.
+
+
+**Cap: part card (MASTER section 6).** `docs/coverage/affiliate.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar also floats over content (see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1):** one big thing per screen on both sizes; the closing statement "An org that signs up through the link is attributed to you" is the one display moment. Passes. The h1 rests at 128px, well past live hanzo.ai's 52px; it reads as the hero moment, but it never settles back.
 
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** Yes. "Refer customers to Hanzo", Hanzo's line, "Apply", and the address bar typing `https://hanzo.ai/?aff=<code>` once.

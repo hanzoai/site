@@ -24,7 +24,7 @@
 .xpc-stage { position: relative; height: min(76svh, 720px); }
 .xpc-stage-in { position: absolute; inset: 0; }
 .xpc-story { display: none; }
-.xpc-t.st { max-width: 20ch; font-size: clamp(1.75rem, 2.8vw, 2.5rem); line-height: 1.12; letter-spacing: -.03em; font-weight: 560; }
+.xpc-t.st { max-width: 22ch; font-size: 26px; line-height: 1.25; letter-spacing: -.02em; font-weight: 497; }
 .xp-dark.xpc .xpc-rail button::before { background: #0a0a0a; border-color: rgba(255, 255, 255, .25); }
 .xp-dark.xpc .xpc-track { background: rgba(255, 255, 255, .12); }
 

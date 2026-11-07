@@ -1,117 +1,137 @@
-/* /contact-sales, v3 (prefix xcs-). Ink, greys and white only (JAMES.md 7). */
-.xcs { overflow-x: clip; --ink: #1d1d1f; }
-.xcs ::selection { background: rgba(0, 0, 0, .12); }
+/* /contact-sales (prefix xcs-). Hanzo's deck only (MASTER.md 3.1): the neutral ramp, Book 497 headings, 48px buttons,
+   56px fields with 16px text, ease curves and no springs, flat surfaces (a fill or a hairline, never both with a shadow).
+   Tokens come from components/pages/company/deck.css on .vc. */
+.xcs { overflow-x: clip; }
+.xcs ::selection { background: rgba(0, 0, 0, .1); }
 .xcs :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
-.xcs-big { height: 52px; padding: 0 26px; font-size: 16px; position: relative; }
-.xcs .x-btn { transition: background .2s, border-color .2s, transform .12s var(--ease); }
-.xcs .x-btn:active, .xcs-round:active, .xcs-size:active, .xcs-need button:active { transform: scale(.98); }
-@media (hover: hover) { .xcs .x-btn.solid:hover { background: #3a3a3c; } }
-.xcs-hide { visibility: hidden; }
-.xcs-ring { position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff; animation: xcs-spin .8s linear infinite; }
-@keyframes xcs-spin { to { transform: rotate(360deg); } }
-/* arrivals in CSS, so JS off still shows every word */
-.xcs-in { animation: xcs-in .9s var(--ease) .5s both; }
-.xcs-up { animation: xcs-up 1.2s var(--ease) .2s both; }
+.xcs .xcs-round:active, .xcs-size:active, .xcs-pick:active, .xcs-send:active { transform: scale(.98); }
+/* Utility entries, 0.4s (MASTER 4.5), in CSS so JS off still shows every word; held while the arrival curtain is up */
+.xcs-in { animation: xcs-in .4s var(--e-em) .3s both; }
+.xcs-up { animation: xcs-up .4s var(--e-em) .15s both; }
+html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused; }
 @keyframes xcs-in { from { opacity: 0; } }
-@keyframes xcs-up { from { opacity: 0; transform: translateY(48px); } }
+@keyframes xcs-up { from { opacity: 0; transform: translateY(24px); } }
 
-/* 1. the question, one at a time, on a card over a slow grey contour field */
+/* 1. the question, one at a time, on a card set into a grey contour field that answers the form */
 .xcs-hero { padding: 88px 0 64px; }
 .xcs-hero-g { align-items: start; row-gap: 40px; }
 .xcs-copy { grid-column: 1 / 7; grid-row: 1; align-self: end; display: flex; flex-direction: column; gap: 28px; }
-.xcs-copy .vc-display { font-size: clamp(56px, 8.2vw, 124px); }
 .xcs-more { grid-column: 1 / 7; grid-row: 2; display: flex; flex-direction: column; gap: 24px; }
 .xcs-routes { display: flex; flex-direction: column; border-top: 1px solid var(--line); max-width: 520px; }
-.xcs-route { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 52px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 17px; }
-.xcs-route span { color: #424245; }
-.xcs-route b { font-weight: 600; transition: transform .45s var(--ease); }
-@media (hover: hover) { .xcs-route:hover b { transform: translateX(-6px); text-decoration: underline; text-underline-offset: 4px; } }
-.xcs-alt { margin: 0; font-size: 15px; line-height: 1.5; color: #424245; max-width: 520px; }
-.xcs-ai { font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; white-space: nowrap; }
+.xcs-route { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 48px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 17px; }
+.xcs-route span { color: var(--ink2); transition: color var(--d-fast) var(--e-out); }
+.xcs-route b { display: inline-flex; font-weight: 606; transition: transform var(--d-base) var(--e-io); }
+@media (hover: hover) { .xcs-route:hover b { transform: translateX(-6px); } .xcs-route:hover span { color: var(--ink); } }
+.xcs-alt { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink2); max-width: 520px; }
+.xcs-ai { font-weight: 606; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; transition: text-underline-offset var(--d-base) var(--e-out); }
+@media (hover: hover) { .xcs-ai:hover { text-decoration-thickness: 2px; text-underline-offset: 6px; } }
+.xcs-ai:active { transform: translateY(1px); }
 
-.xcs-stagewrap { grid-column: 7 / 13; grid-row: 1 / span 2; position: relative; padding: clamp(24px, 3vw, 44px); border-radius: 36px; overflow: hidden; background: #f5f5f7; }
+.xcs-stagewrap { grid-column: 7 / 13; grid-row: 1 / span 2; position: relative; padding: 27px 27px 27px clamp(72px, 9vw, 116px); border-radius: 28px; overflow: hidden; background: var(--quiet); }
 .xcs-field { position: absolute; inset: 0; }
-.xcs-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .3); }
-.xcs-card { position: relative; background: #fff; padding: clamp(28px, 3vw, 40px); min-height: 440px; display: flex; flex-direction: column; scroll-margin-top: 96px; }
+.xcs-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .45); }
+.xcs-card { position: relative; background: #fff; border-radius: 24px; box-shadow: none; padding: clamp(27px, 2.6vw, 36px); display: flex; flex-direction: column; scroll-margin: 88px 0 96px; }
 .xcs-form { flex: 1; display: flex; flex-direction: column; }
-.xcs-top { display: flex; align-items: center; gap: 20px; }
-.xcs-top .vc-kick { color: #6e6e73; }
-.xcs-progress { flex: 1; display: block; height: 3px; border-radius: 3px; background: #ececf0; overflow: hidden; }
+.xcs-top { display: flex; align-items: center; }
+.xcs-progress { flex: 1; display: block; height: 3px; border-radius: 3px; background: #ededed; overflow: hidden; }
 .xcs-progress b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
-.xcs-stage { position: relative; margin-top: 44px; min-height: 196px; }
-.xcs-step { position: absolute; inset: 0 0 auto 0; }
-.xcs-step.on { position: relative; }
+/* every step shares one cell, so the stage is the tallest step's height from the start: nothing grows as you go */
+.xcs-stage { position: relative; display: grid; margin-top: 27px; }
+.xcs-step { grid-area: 1 / 1; align-self: start; }
 .xcs-step label { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; cursor: text; }
-.xcs-q { font-size: clamp(32px, 3vw, 44px); font-weight: 600; line-height: 1.05; letter-spacing: -.04em; color: var(--ink); text-wrap: balance; }
-.xcs-choose { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #6e6e73; }
+.xcs-q { font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; line-height: 1.1; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
+.xcs-choose { font-size: 17px; color: var(--muted); }
 .xcs-bang { display: inline-grid; color: var(--ink); }
-.xcs-step input, .xcs-step textarea { display: block; width: 100%; margin-top: 28px; padding: 10px 0 12px; border: 0; border-bottom: 2px solid rgba(0, 0, 0, .14); border-radius: 0; background: transparent; font: 400 clamp(24px, 2.2vw, 30px)/1.3 var(--sans); letter-spacing: -.02em; color: var(--ink); caret-color: var(--ink); outline: none; resize: none; transition: border-color .3s; }
-.xcs-step input:focus, .xcs-step textarea:focus { border-bottom-color: var(--ink); }
-.xcs-step.bad input, .xcs-step.bad textarea { border-bottom: 3px solid var(--ink); }
-.xcs-step textarea { font-size: clamp(19px, 1.6vw, 22px); }
-.xcs-sizes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
-.xcs-size { position: relative; display: inline-flex; align-items: center; min-height: 52px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .12); font-size: 17px; color: #424245; cursor: pointer; transition: background .25s var(--ease), color .25s, border-color .25s, transform .12s var(--ease); }
+/* fields: 56px, 16px text, a quiet fill; focus is the one ring (2px ink with a white halo), drawn inside so nothing doubles */
+.xcs-step input, .xcs-step textarea { display: block; width: 100%; height: 56px; margin-top: 17px; padding: 0 17px; border: 0; border-radius: 12px; background: var(--quiet); font: 400 16px/1.5 var(--sans); color: var(--ink); caret-color: var(--ink); outline: none; resize: none; box-shadow: none; transition: box-shadow var(--d-fast) var(--e-out); }
+.xcs-step textarea { height: auto; min-height: 104px; padding: 15px 17px; }
+.xcs .xcs-step input:focus-visible, .xcs .xcs-step textarea:focus-visible, .xcs-step input:focus, .xcs-step textarea:focus { outline: none; box-shadow: inset 0 0 0 2px var(--ink); }
+.xcs-step.bad input, .xcs-step.bad textarea { box-shadow: inset 0 0 0 2px var(--ink); }
+.xcs-sizes { display: flex; flex-wrap: wrap; gap: 6.5px; margin-top: 17px; }
+.xcs-size { position: relative; display: inline-flex; align-items: center; min-height: 48px; padding: 0 17px; border-radius: 999px; border: 1px solid var(--line); font-size: 16px; color: var(--ink2); cursor: pointer; transition: background var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
 @media (hover: hover) { .xcs-size:hover { color: var(--ink); border-color: rgba(0, 0, 0, .3); } }
 .xcs-size input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; padding: 0; }
 .xcs-size:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
 .xcs-size.on { background: var(--ink); color: #fff; border-color: var(--ink); }
-.xcs-need { display: flex; flex-direction: column; gap: 6px; margin-top: 18px; }
-.xcs-need button { display: grid; grid-template-columns: 28px minmax(0, 1fr) 20px; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(0, 0, 0, .1); background: #fff; font: 400 15px/1.35 var(--sans); color: #424245; text-align: left; cursor: pointer; transition: border-color .25s, color .25s, background .25s, transform .12s var(--ease); }
-@media (hover: hover) { .xcs-need button:hover { border-color: rgba(0, 0, 0, .3); color: var(--ink); } }
-.xcs-need button.on { background: #f5f5f7; border-color: var(--ink); color: var(--ink); }
-.xcs-need button i { font: 500 13px/1 var(--mono); font-style: normal; color: #6e6e73; }
-.xcs-need-g { display: grid; place-items: center; color: var(--ink); }
+/* the five inclusions on the last step: one row of numerals; the one you point at reads out below in Hanzo's words */
+.xcs-picks { display: flex; gap: 6.5px; margin-top: 10.5px; }
+.xcs-pick { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink2); font: 500 13px/1 var(--mono); cursor: pointer; transition: background var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+@media (hover: hover) { .xcs-pick:hover { border-color: var(--ink); color: var(--ink); } }
+.xcs-pick.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.xcs-peek { margin: 10.5px 0 0; min-height: 2.8em; font-size: 16px; line-height: 1.4; color: var(--ink2); }
 .xcs-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.xcs-fail { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 18px 0 0; font-size: 16px; color: var(--ink); }
-.xcs-fail a { font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
-.xcs-acts { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 28px; }
+.xcs-fail { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; font-size: 16px; color: var(--ink); }
+.xcs-fail a { font-weight: 606; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.xcs-acts { display: flex; align-items: center; gap: 10.5px; margin-top: auto; padding-top: 17px; }
 .xcs-chips { flex: 1; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; min-width: 0; }
-.xcs-chips li { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 999px; background: #f5f5f7; font: 500 14px/1 var(--sans); color: var(--ink); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xcs-chips li.n { font-family: var(--mono); background: var(--ink); color: #fff; }
-.xcs-round { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: background .2s, border-color .2s, color .2s, transform .12s var(--ease); }
-@media (hover: hover) { .xcs-round:hover { border-color: rgba(0, 0, 0, .4); } .xcs-round.solid:hover { background: #3a3a3c; } }
+.xcs-chips li { display: inline-block; height: 32px; padding: 0 12px; border-radius: 6px; background: var(--quiet); font: 400 14px/32px var(--sans); color: var(--ink); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xcs-btns { flex: none; display: flex; gap: 10px; }
+.xcs-round { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: background var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+@media (hover: hover) { .xcs-round:hover { border-color: rgba(0, 0, 0, .4); } .xcs-round.solid:hover { background: #262626; } }
 .xcs-round.solid { background: var(--ink); border-color: var(--ink); color: #fff; }
-.xcs-sent { margin: auto 0; display: flex; flex-direction: column; gap: 24px; }
-.xcs-sent-i { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--ink); color: #fff; }
-.xcs-sent-t { max-width: 20ch; font-size: clamp(30px, 2.8vw, 42px); }
+/* the submit: its own button, solid ink in every state; while sending, the label keeps its width and a white ring turns */
+.xcs-send { position: relative; display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 27px; border-radius: 999px; border: 0; background: var(--ink); color: #fff; font: 606 16px/1 var(--sans); cursor: pointer; transition: background var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+@media (hover: hover) { .xcs-send:hover { background: #262626; } }
+.xcs-send[aria-busy='true'] { cursor: progress; background: var(--ink); }
+.xcs-hide { visibility: hidden; }
+.xcs-ring { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 2.4px solid rgba(255, 255, 255, .3); border-top-color: #fff; animation: xcs-spin .75s linear infinite; }
+@keyframes xcs-spin { to { transform: rotate(360deg); } }
+.xcs-sent { margin: auto 0; display: flex; flex-direction: column; gap: 24px; outline: none; }
+.xcs-sent-i { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--ink); color: #fff; }
+.xcs .xcs-sent-t { max-width: 20ch; font-size: clamp(26px, 2.6vw, 32px); line-height: 1.15; letter-spacing: -.025em; }
 
-/* 2. what Enterprise includes: five giant numerals you light and add to your note */
+/* 2. what Enterprise includes: five giant numerals you light and add to your enquiry */
 .xcs-inc-h { grid-column: 1 / 5; align-self: start; position: sticky; top: 120px; display: flex; flex-direction: column; gap: 28px; }
 .xcs-inc-l { grid-column: 5 / 13; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-.xcs-inc-l li { display: grid; grid-template-columns: clamp(120px, 13vw, 200px) minmax(0, 1fr) auto; align-items: center; gap: 24px; padding: 28px 0; border-top: 1px solid var(--line); }
-.xcs-inc-n { font: 600 clamp(72px, 9vw, 136px)/.82 var(--sans); letter-spacing: -.06em; color: #d2d2d7; transition: color .4s var(--ease), transform .5s var(--ease); }
-.xcs-inc-l li.lit .xcs-inc-n { color: #6e6e73; transform: translateX(8px); }
+.xcs-inc-l li { display: grid; grid-template-columns: clamp(120px, 13vw, 188px) minmax(0, 1fr) auto; align-items: center; gap: 27px; padding: 27px 0; border-top: 1px solid var(--line); }
+.xcs-inc-n { font: 220 clamp(72px, 9vw, 112px)/.9 var(--sans); letter-spacing: -.03em; color: #d4d4d4; transition: color var(--d-slow) var(--e-out), transform var(--d-base) var(--e-io); }
+.xcs-inc-l li.lit .xcs-inc-n { color: var(--muted); transform: translateX(10px); }
 .xcs-inc-l li.on .xcs-inc-n { color: var(--ink); }
-.xcs-inc-t { font-size: clamp(22px, 1.95vw, 28px); font-weight: 600; line-height: 1.2; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
+.xcs-inc-t { font-size: clamp(21px, 2vw, 26px); font-weight: 497; line-height: 1.2; letter-spacing: -.02em; color: var(--ink); text-wrap: balance; }
 .xcs-inc-l .xcs-round[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
 .xcs-g { display: grid; place-items: center; }
 
 /* 3. the launches Hanzo built, a slow rail you can pause */
-.xcs-logos { padding: 0 0 clamp(120px, 14vw, 220px); }
+.xcs-logos { padding: 0 0 clamp(72px, 11vw, 188px); }
 .xcs-logos-h { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 40px; }
 .xcs-rail { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
 .xcs-track { display: flex; width: max-content; animation: xcs-rail 48s linear infinite; }
 .xcs-track.held, .xcs-rail:hover .xcs-track { animation-play-state: paused; }
 @keyframes xcs-rail { to { transform: translateX(-50%); } }
 .xcs-logo { flex: none; display: grid; place-items: center; width: 200px; height: 88px; color: var(--ink); text-decoration: none; }
-.xcs-logo img { max-height: 30px; max-width: 128px; width: auto; height: auto; object-fit: contain; filter: grayscale(1); opacity: .6; transition: opacity .3s, filter .3s, transform .4s var(--ease); }
-@media (hover: hover) { .xcs-logo:hover img { opacity: 1; transform: scale(1.06); } .xcs-logo:hover span { color: var(--ink); } }
+.xcs-logo img { max-height: 30px; max-width: 128px; width: auto; height: auto; object-fit: contain; filter: grayscale(1); opacity: .6; transition: opacity var(--d-base) var(--e-out); }
+@media (hover: hover) { .xcs-logo:hover img { opacity: 1; } .xcs-logo:hover span { color: var(--ink); } }
 .xcs-logo.bad img { display: none; }
-.xcs-logo span { font: 600 18px/1 var(--sans); letter-spacing: -.02em; color: #6e6e73; transition: color .3s; }
+.xcs-logo span { font: 497 21px/1 var(--sans); letter-spacing: -.02em; color: var(--muted); transition: color var(--d-base) var(--e-out); }
 
-@media (max-width: 900px) {
+@media (min-width: 900px) {
+  /* the hero card is the stage's height for every step, so its button never moves; chips share one line and shrink */
+  .xcs-card { min-height: 0; }
+  /* the chips keep their own reserved row above the buttons, so the card's height never changes as answers arrive */
+  .xcs-acts { flex-wrap: wrap; row-gap: 17px; }
+  .xcs-acts .xcs-chips { flex: 1 0 100%; min-height: 32px; flex-wrap: nowrap; overflow: hidden; }
+  .xcs-acts .xcs-chips li { flex: 0 1 auto; min-width: 0; }
+  .xcs-btns { margin-left: auto; }
+}
+@media (max-width: 899px) {
   .xcs-hero { padding: 88px 0 48px; min-height: 0; }
-  .xcs-hero-g { row-gap: 32px; }
+  .xcs-hero-g { row-gap: 28px; }
   .xcs-copy, .xcs-stagewrap, .xcs-more { grid-row: auto; }
-  .xcs-ai { display: inline-flex; align-items: center; min-height: 44px; }
   .xcs-copy { gap: 20px; }
-  .xcs-copy .vc-display { font-size: clamp(56px, 17vw, 72px); }
-  .xcs-stagewrap { margin-inline: -20px; padding: 16px; border-radius: 0; }
-  .xcs-card { min-height: 0; padding: 24px 20px; border-radius: 24px; }
-  .xcs-stage { margin-top: 24px; min-height: 128px; }
-  .xcs-q { font-size: 32px; }
-  .xcs-step input { font-size: 24px; margin-top: 22px; }
-  .xcs-size { min-height: 48px; padding: 0 16px; font-size: 16px; }
+  .xcs-ai { display: inline-flex; align-items: center; min-height: 44px; }
+  .xcs-stagewrap { margin-inline: -20px; padding: 40px 16px 16px; border-radius: 0; }
+  .xcs-card { padding: 24px 20px; border-radius: 24px; }
+  /* phones: the stage follows the step you are on (it only grows after your own tap) */
+  .xcs-stage { display: block; margin-top: 24px; }
+  .xcs-step { position: absolute; inset: 0 0 auto 0; }
+  .xcs-step.on { position: relative; }
+  .xcs-q { font-size: 26px; }
+  .xcs-picks { gap: 6px; }
+  /* the chips get their own wrapping row above the buttons */
+  .xcs-acts { flex-wrap: wrap; }
+  .xcs-chips { flex-basis: 100%; }
+  .xcs-chips:empty { display: none; }
+  .xcs-btns { margin-left: auto; }
   .xcs-inc-h { position: static; margin-bottom: 32px; }
   .xcs-inc-l li { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'n b' 't t'; gap: 12px 16px; padding: 24px 0; }
   .xcs-inc-n { grid-area: n; font-size: 72px; }
@@ -123,4 +143,5 @@
   .xcs-in, .xcs-up { animation: none; }
   .xcs-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
   .xcs-rail { -webkit-mask-image: none; mask-image: none; }
+  .xcs-ring { animation-duration: 2s; }
 }

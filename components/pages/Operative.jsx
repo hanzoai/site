@@ -32,9 +32,11 @@ function useLive(ref, amount = 0.2) {
 function useSteps(n, ms, live) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
+  const first = useRef(true);
   useEffect(() => {
     if (!live || mine) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
+    const t = setTimeout(() => setAt((v) => (v + 1) % n), first.current ? 700 : ms); // the first move comes within a second
+    first.current = false;
     return () => clearTimeout(t);
   }, [at, live, mine, n, ms]);
   return [at, (i) => { setAt(i); setMine(true); }];
@@ -45,19 +47,20 @@ function Desk({ at }) {
   const [x, y] = AIM[at];
   return (
     <div className={'xov-desk h' + at} aria-hidden="true">
-      <div className="xov-desk-bar"><i /><i /><i /><span className="x-mono">Xvfb :1</span><span className="x-mono xov-desk-r">localhost:6080</span></div>
+      <div className="xov-desk-bar"><i /><i /><i /><span className="x-mono">Xvfb :1</span><span className="x-mono xov-desk-r">localhost:8501</span></div>
       <div className="xov-desk-in">
         <img className="xov-wall" src="/models/iro.webp" alt="" />
         <div className="xov-win">
           <div className="xov-win-bar"><i /><i /><i /></div>
           <div className="xov-win-body">
-            <div className="xov-win-text"><i /><i /><i /><i /></div>
-            <div className="xov-field"><span className="xov-typed" /><b /></div>
+            <p className="xov-win-h">Say what you want</p>
+            <p className="xov-win-p">Type an objective and it plans, acts, looks at the result, and goes again.</p>
+            <div className="xov-field"><span className="xov-typed x-mono">objective</span><b /></div>
             <div className="xov-win-btn">OK</div>
           </div>
         </div>
         <div className="xov-scan" />
-        <div className="xov-read"><Mark size={14} /><i /><i /><i /></div>
+        <div className="xov-read"><Mark size={14} /><span>Multimodal Models</span></div>
         <div className="xov-keys">{['Esc', 'Tab', 'Ctrl', '⌘', 'Enter'].map((k, i) => <b key={k} style={{ '--k': i }}>{k}</b>)}</div>
         {/* the layer is the screen's size, so a % translate is a % of the screen: the cursor moves by transform only */}
         <motion.div className="xov-aim-w" animate={{ x: x * 100 + '%', y: y * 100 + '%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
@@ -282,8 +285,7 @@ function Ways() {
           {WAYS.map((v, i) => (
             <div key={v.k} className={'xov-card' + (at === i ? ' on' : '')}>
               <button type="button" className="xov-card-h" aria-pressed={at === i} onClick={() => choose(i)}>
-                {v.rec && <span className="xov-rec">Recommended</span>}
-                <b>{v.k}</b>
+                <b>{v.k}{v.rec && <span className="xov-rec">Recommended</span>}</b>
                 <span>by {v.by}</span>
               </button>
               <ul>{v.pts.map((p) => <li key={p}>{p}</li>)}</ul>

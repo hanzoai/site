@@ -1,20 +1,22 @@
 /* Identity v2. Accent: rose (the sign-in button). One dark room: Add sign-in. */
-.id { --acc: #404040; --glow: #737373; }
+.id { --acc: #0a0a0a; --glow: #525252; }
+.id .v2-dark, .id [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
 
 /* the pinned first screen */
 .id-pin { position: relative; height: 400svh; }
 .id-pin-stage { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; background: radial-gradient(40% 55% at 74% 55%, rgba(115, 115, 115, .10), transparent 70%); }
 .id-pin-grid { align-items: center; padding-top: 56px; }
-.id-layers { grid-column: 1 / span 6; display: grid; }
-.id-layer { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 36px, 0); pointer-events: none; transition: opacity .4s var(--e), transform .85s var(--e); }
-.id-layer[data-past] { transform: translate3d(0, -36px, 0); }
-.id-layer[data-on] { opacity: 1; transform: none; pointer-events: auto; transition-delay: .08s; }
-.id-hero .v2-kick { margin-bottom: 22px; }
+.id-layers { grid-column: 1 / span 6; }
+.js .id-layers { display: grid; }
+.js .id-layer { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 36px, 0); pointer-events: none; transition: opacity .4s var(--e), transform .85s var(--e); }
+.js .id-layer[data-past] { transform: translate3d(0, -36px, 0); }
+.js .id-layer[data-on] { opacity: 1; transform: none; pointer-events: auto; transition-delay: .08s; }
 .id-h1 { font-size: clamp(64px, 8.6vw, 128px); }
 .id-sub { margin: 28px 0 36px; color: var(--ink); font-size: clamp(22px, 2vw, 28px); }
 .id-stage .v2-headline { margin: 22px 0 24px; font-size: clamp(44px, 4.8vw, 72px); }
-.id-stage .v2-headline span { display: block; clip-path: inset(0 0 100% 0); padding-bottom: .08em; transition: clip-path .9s var(--e) .12s; }
-.id-stage[data-on] .v2-headline span { clip-path: inset(0 0 0 0); }
+.id-stage .v2-headline span { display: block; padding-bottom: .08em; }
+.js .id-stage .v2-headline span { clip-path: inset(0 0 100% 0); transition: clip-path .9s var(--e) .12s; }
+.js .id-stage[data-on] .v2-headline span { clip-path: inset(0 0 0 0); }
 .id-stage .v2-body { font-size: clamp(19px, 1.6vw, 23px); max-width: 30ch; }
 .id-card-wrap { grid-column: 8 / span 4; display: flex; justify-content: center; }
 
@@ -22,6 +24,7 @@
 .id-card { width: min(100%, 400px); aspect-ratio: 4 / 6; display: flex; flex-direction: column; border-radius: 36px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 60px 100px -40px rgba(64, 64, 64, .35), 0 30px 60px -30px rgba(0, 0, 0, .25); overflow: hidden; }
 .id-url { display: flex; align-items: center; gap: 8px; margin: 0; padding: 18px 24px; border-bottom: 1px solid var(--line); font: 500 14px/1 var(--mono); color: var(--soft); }
 .id-url i { width: 9px; height: 9px; border-radius: 99px; background: var(--glow); }
+.id-url span { margin-left: auto; color: var(--faint); }
 .id-screen { flex: 1; display: flex; align-items: center; padding: 28px; }
 .id-form { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 .id-t { margin: 0 0 10px; font: 600 28px/1.1 var(--sans); letter-spacing: -.03em; }
@@ -55,7 +58,7 @@
 .id-apps { width: 100%; text-align: center; }
 .id-apps div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .id-apps i { aspect-ratio: 1; border-radius: 22px; background: linear-gradient(135deg, #e9e9e9, #d4d4d4); box-shadow: inset 0 0 0 1px rgba(64, 64, 64, .12); }
-.id-apps i:nth-child(3n + 2) { background: linear-gradient(135deg, #f5f5f7, #e8e8ed); }
+.id-apps i:nth-child(3n + 2) { background: linear-gradient(135deg, #f5f5f7, #e9e9e9); }
 .id-apps p { margin: 22px 0 0; font: 500 14px/1 var(--mono); color: var(--acc); }
 
 /* what it does: a bento */
@@ -72,7 +75,7 @@
 .id-tile.t5 { grid-column: span 12; display: grid; grid-template-columns: 5fr 7fr; gap: 12px 48px; align-items: center; }
 .id-tile.t5 .id-tile-g { grid-row: span 2; order: 2; margin: 0; }
 .id-tile p { margin: 0; font-size: 17px; line-height: 1.5; color: var(--soft); max-width: 58ch; text-wrap: pretty; }
-.id-tile.t4 p { color: #a1a1a6; }
+.id-tile.t4 p { color: #a3a3a3; }
 .id-tile-g { min-height: 120px; display: flex; align-items: center; margin-bottom: 12px; color: var(--acc); }
 .id-tile.t4 .id-tile-g { color: var(--glow); }
 .id-g-code { display: grid; grid-template-columns: repeat(6, 44px); gap: 8px; }
@@ -81,7 +84,7 @@
 .id-g-code i:nth-child(n + 4)::after { background: transparent; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2); }
 .id-g-people { display: flex; align-items: center; }
 .id-g-people i { width: 56px; height: 56px; margin-right: -14px; border-radius: 99px; border: 3px solid #f5f5f7; background: linear-gradient(135deg, #d4d4d4, #a3a3a3); }
-.id-g-people i:nth-child(2n) { background: linear-gradient(135deg, #e8e8ed, #c7c7cc); }
+.id-g-people i:nth-child(2n) { background: linear-gradient(135deg, #e9e9e9, #d4d4d4); }
 .id-g-people span { margin-left: 34px; font: 600 14px/1 var(--mono); }
 .id-g-sso { display: grid; grid-template-columns: 1fr auto; grid-template-rows: repeat(3, auto); gap: 6px 16px; align-items: center; font: 500 13px/1 var(--mono); color: var(--soft); }
 .id-g-sso span { padding: 8px 10px; border-radius: 8px; background: #fff; }
@@ -101,7 +104,7 @@
 .id-large-h { align-items: end; margin-bottom: 56px; row-gap: 24px; }
 .id-large-h .v2-display { grid-column: 1 / span 7; max-width: 14ch; }
 .id-large-h .v2-lede { grid-column: 9 / -1; }
-.id-tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; background: #ececf0; width: max-content; max-width: 100%; box-sizing: border-box; }
+.id-tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; background: #ededed; width: max-content; max-width: 100%; box-sizing: border-box; }
 .id-tabs button { position: relative; min-height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: none; font: 500 16px/1 var(--sans); color: var(--soft); cursor: pointer; }
 .id-tabs button[aria-selected='true'] { color: var(--ink); }
 .id-tabs button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
@@ -119,7 +122,8 @@
 /* wear your name */
 .id-wear .v2-grid { align-items: center; }
 .id-wear-l { grid-column: 1 / span 6; }
-.id-wear-l .v2-display { margin: 20px 0 16px; }
+.id-wear-l .v2-display { margin: 0 0 14px; }
+.id-wear-cap { margin-bottom: 18px; }
 .id-wear-l .v2-lede { margin-bottom: 36px; }
 .id-wear-f { display: grid; gap: 8px; margin-bottom: 14px; max-width: 440px; }
 .id-wear-f span { font: 500 13px/1 var(--mono); color: var(--faint); }
@@ -147,21 +151,25 @@
 
 .id-end { padding: clamp(120px, 14vw, 200px) 0; text-align: center; background: radial-gradient(50% 60% at 50% 100%, rgba(115, 115, 115, .10), transparent 70%); }
 .id-end-in { display: flex; flex-direction: column; align-items: center; gap: 40px; }
+.id-end .v2-acts { justify-content: center; }
+.id-gh { display: inline-flex; align-items: center; min-height: 48px; padding: 0 8px; color: var(--ink); }
 .id-end .v2-display { max-width: 12ch; }
 
 @media (max-width: 900px) {
   .id-pin { height: auto; }
   .id-pin-stage { position: static; height: auto; display: block; padding-top: 96px; background: none; }
   .id-pin-grid { display: flex; flex-direction: column; padding-top: 0; }
-  .id-layers { display: contents; }
-  .id-layer { transform: none !important; pointer-events: auto; }
-  .id-hero { order: 0; opacity: 1; padding-bottom: 32px; }
+  .id-layers, .js .id-layers { display: contents; }
+  .js .id-layer { grid-area: auto; }
+  .js .id-layer { transform: none !important; pointer-events: auto; }
+  .js .id-hero, .id-hero { order: 0; opacity: 1; padding-bottom: 32px; }
   .id-h1 { font-size: 64px; }
   .id-card-wrap { order: 1; position: sticky; top: 60px; z-index: 2; padding: 8px 0 12px; background: #fff; }
-  .id-stage { order: 2; opacity: .3; padding: 12svh 0; transition: opacity .35s; }
-  .id-stage[data-on] { opacity: 1; }
+  .id-stage { order: 2; padding: 12svh 0; }
+  .js .id-stage { opacity: .3; transition: opacity .35s; }
+  .js .id-stage[data-on] { opacity: 1; }
   .id-stage .v2-headline { font-size: 34px; }
-  .id-stage .v2-headline span { clip-path: none; }
+  .js .id-stage .v2-headline span { clip-path: none; }
   .id-card { width: min(100%, 300px); aspect-ratio: 5 / 6; border-radius: 28px; }
   .id-url { padding: 12px 18px; }
   .id-screen { padding: 16px 18px; }

@@ -85,7 +85,7 @@ function Seg({ opts, val, set, id, by }) {
     <div className="x-seg" role="radiogroup" aria-labelledby={by}>
       {opts.map((o, i) => (
         <button key={o} ref={(el) => { refs.current[i] = el; }} type="button" role="radio" aria-checked={val === o} tabIndex={val === o ? 0 : -1} onClick={() => set(o)} onKeyDown={(e) => key(e, i)}>
-          {val === o && <motion.span layoutId={id} className="x-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+          {val === o && <motion.span layoutId={id} className="x-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
           <span>{o}</span>
         </button>
       ))}
@@ -102,7 +102,7 @@ export default function Pricing() {
     <section className="hv-pricing v2-sec" id="pricing" aria-labelledby="pricing-h">
       <div className="v2-wrap">
         <header className="hv-price-head">
-          <Lines as="h2" id="pricing-h" className="v2-display" lines={['Pricing']} />
+          <Lines as="h2" id="pricing-h" className="hv-h2" lines={['Pricing']} />
           <Tabs id="hv-price" tabs={['Personal', 'Team', 'API']} value={tab} onChange={setTab} label="Pricing" size="lg" />
         </header>
         <TabPanel id="hv-price" i={0} value={tab} className="x-plans hv-plans n3">

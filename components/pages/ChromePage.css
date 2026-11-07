@@ -83,9 +83,9 @@
 .xch-pane:not([hidden]) { animation: xch-pane .4s var(--av-ease) both; }
 @keyframes xch-pane { from { opacity: 0; transform: translate3d(0, 6px, 0); } }
 .xch-dom { margin: 0; padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); }
-.xch-dom.d0 { background: #e6f4ea; border-radius: 6px 6px 0 0; }
-.xch-dom.d1 { padding-left: 28px; background: #e6f4ea; }
-.xch-dom.d2 { background: #e6f4ea; border-radius: 0 0 6px 6px; }
+.xch-dom.d0 { background: #f2f2f2; border-radius: 6px 6px 0 0; }
+.xch-dom.d1 { padding-left: 28px; background: #f2f2f2; }
+.xch-dom.d2 { background: #f2f2f2; border-radius: 0 0 6px 6px; }
 .xch-dom .t { color: #404040; } .xch-dom .a { color: #525252; } .xch-dom .v { color: #262626; }
 .xch-warn, .xch-log, .xch-shot { display: flex; align-items: flex-start; gap: 10px; margin: 12px 0 0; padding: 6px 10px; border-radius: 6px; opacity: 0; transform: translate3d(0, 6px, 0); transition: opacity .4s, transform .5s var(--av-ease); }
 .xch-warn.on, .xch-log.on, .xch-shot.on { opacity: 1; transform: none; }

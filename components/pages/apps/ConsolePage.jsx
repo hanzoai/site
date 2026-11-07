@@ -22,7 +22,8 @@ import { useRouter } from 'next/navigation';
 import { EASE_OUT_EXPO as EASE, SPRING as SP } from '../../../lib/motion';
 import { A, Go, More } from '../../kit';
 import { href } from '../../../lib/route';
-import { Paste, Code, useLive } from '../cloud/Frame';
+import { Code, useLive } from '../cloud/Frame';
+import BizPaste from '../../v2/BizPaste';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
@@ -290,7 +291,7 @@ function Shell({ auto, view: want, size = 'lg' }) {
         {auto ? (
           <nav className="cs-rail" aria-label="Products">
             {SIDE.map(([t, to], i) => (
-              <A key={t} to={to} className={'cs-ico' + (t === 'Console' ? ' on' : '')} aria-label={t}><Ico d={PICON[i]} /><span className="cs-tip">{t}</span></A>
+              <A key={t} to={to} className={'cs-ico' + (t === 'Console' ? ' on' : '')} aria-label={t}><Ico d={PICON[i]} /><span className="cs-tip" aria-hidden="true">{t}</span></A>
             ))}
           </nav>
         ) : (
@@ -518,7 +519,7 @@ function GetConsole() {
         </div>
       </div>
       <div className="bz-wrap cs-get-paste">
-        <Paste name="Console" prompt="Read https://hanzo.ai/skill.md and use Hanzo Console in my project." className="cs-paste" />
+        <BizPaste name="Console" prompt="Read https://hanzo.ai/skill.md and use Hanzo Console in my project." className="cs-paste" />
       </div>
     </section>
   );
@@ -544,7 +545,8 @@ function End() {
 
 export default function ConsolePage() {
   return (
-    <main className="bz cs" data-ask-name="Hanzo Console">
+    <main className="bz cs">
+      <span data-ask-name="Hanzo Console" hidden />
       <Hero />
       <Chapters />
       <Find />

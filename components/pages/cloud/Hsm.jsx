@@ -9,7 +9,10 @@
    Supporting: kinetic title lines; the module settles from huge on scroll (Stage); pinned chapters (the one dark room).
    Beyond: "Pick your module" - choose the module you already have and read where its key lives, whether it can sign by
    threshold, and where ML-DSA-65 runs on it, in Hanzo's words, including what it cannot do.
-   Accent: copper, from the module. Every word and link is Hanzo's. */
+   Greys only (Hanzo's deck): the module is silver and ink. Every word and link is Hanzo's.
+   Persona: a security or platform engineer who already owns key hardware (a cloud KMS or a Zymbit module).
+   Goal: see that the key never leaves the hardware and that the module is a line of configuration.
+   CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -115,7 +118,6 @@ function Pick() {
       <div className="v2-wrap">
         <div className="hs-pick-head v2-grid">
           <div className="hs-pick-hl">
-            <p className="v2-kick acc">Bring the module you already have</p>
             <h2 className="v2-display s">Pick your module</h2>
           </div>
           <p className="v2-lede hs-pick-f">One Go interface behind all of them, so which module you use is a line of configuration rather than a rewrite.</p>
@@ -149,24 +151,23 @@ export default function Hsm() {
       <section className="hs-hero">
         <div className="v2-wrap v2-grid hs-hero-grid">
           <div className="hs-hero-copy">
-            <p className="v2-kick acc">Hardware security module</p>
             <Lines as="h1" className="v2-display hs-h1" lines={['Hanzo', 'HSM']} data-morph-target="" />
-            <motion.p className="v2-body hs-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>One interface to the key hardware you already trust — AWS KMS, Azure Key Vault, Google Cloud KMS, or a Zymbit module over PKCS#11. Generate keys, sign with them, and unwrap with them, without the private material ever reaching your process.</motion.p>
-            <div className="v2-acts"><A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A></div>
+            <p className="v2-body hs-lede v2-in" style={{ animationDelay: '.3s' }}>One interface to the key hardware you already trust — AWS KMS, Azure Key Vault, Google Cloud KMS, or a Zymbit module over PKCS#11. Generate keys, sign with them, and unwrap with them, without the private material ever reaching your process.</p>
+            <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}><A to="https://github.com/hanzoai" className="v2-btn solid" data-thumb="View on GitHub" data-cta="hsm-view-on-github">View on GitHub</A></div>
           </div>
-          <Lift className="hs-hero-obj" from={1.2} y={20} origin="50% 50%" offset={['start end', 'start 0.1']}>
+          <Lift className="hs-hero-obj" from={1.06} y={16} origin="50% 50%" offset={['start end', 'start 0.3']}>
             <Sign />
           </Lift>
         </div>
       </section>
 
-      <PinChapters className="hs-ch" dark label="What it is" items={FACTS} look="right" head={<p className="v2-kick hs-ch-k">What it is</p>} visual={(at) => <Exploded at={at} />} />
-
-      <Pick />
+      <PinChapters className="hs-ch" dark label="What it is" items={FACTS} look="right" foot={<p className="v2-kick hs-ch-k">What it is</p>} visual={(at) => <Exploded at={at} />} />
 
       <ShipPrompt name="HSM" prompt="Read https://hanzo.ai/skill.md and use Hanzo HSM in my project." />
 
-      <GetIt name="HSM" tag="Hardware security module" seed="hsm" data={[65, 11, 4]} lead="Get started with HSM" />
+      <Pick />
+
+      <GetIt name="HSM" tag="Hardware security module" seed="hsm" data={[65, 11, 4]} lead="Get started with HSM" ask={['View on GitHub', 'https://github.com/hanzoai', 'hsm-view-on-github']} />
     </main>
   );
 }

@@ -1,91 +1,82 @@
-/* /support, v3 (prefix xsp-). Ink, greys and white only (JAMES.md 7). */
-.xsp { overflow-x: clip; --ink: #1d1d1f; }
-.xsp ::selection { background: rgba(0, 0, 0, .12); }
+/* /support (prefix xsp-). Hanzo's deck only (MASTER.md 3.1): the neutral ramp, Book 497 headings, 48px buttons, a
+   56px field with 17px text, deck curves (no springs), flat surfaces (a hairline, never with a shadow).
+   Tokens come from components/pages/company/deck.css on .vc. */
+.xsp { overflow-x: clip; }
+.xsp ::selection { background: rgba(0, 0, 0, .1); }
 .xsp :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
-.xsp mark { background: #e8e8ed; color: var(--ink); border-radius: 4px; padding: 0 2px; box-shadow: inset 0 -2px 0 var(--ink); }
-.xsp-big { height: 52px; padding: 0 26px; font-size: 16px; }
-.xsp-big kbd { font: 500 13px/1 var(--mono); opacity: .55; margin-left: 4px; }
-.xsp .x-btn { transition: background .2s, border-color .2s, transform .12s var(--ease); }
-.xsp .x-btn:active, .xsp-pause:active, .xsp-door:active { transform: scale(.98); }
-@media (hover: hover) { .xsp .x-btn.solid:hover { background: #3a3a3c; } }
-/* arrivals in CSS, so JS off still shows every word */
-.xsp-in { animation: xsp-in .9s var(--ease) .55s both; }
-.xsp-up { animation: xsp-up 1.1s var(--ease) .25s both; }
+/* the match mark is drawn (a fill and an underline as shadows), so marking a word never moves a line */
+.xsp mark { padding: 0; background: #ededed; color: var(--ink); border-radius: 2px; box-shadow: 0 0 0 2px #ededed, inset 0 -2px 0 var(--ink); }
+.xsp-big { height: 48px; padding: 0 27px; font-size: 16px; }
+.xsp-go { display: inline-flex; }
+.xsp-pane .x-btn { transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out); }
+@media (hover: hover) { .xsp-pane .x-btn.solid:hover { background: #262626; border-color: #262626; } }
+/* Utility entries, 0.4s (MASTER 4.5), in CSS so JS off still shows every word; they wait for the page's go (after the
+   arrival curtain has cleared the top), then follow the h1 */
+.xsp-in { animation: xsp-in .4s var(--e-em) .3s both paused; }
+.xsp-up { animation: xsp-up .4s var(--e-em) .15s both paused; }
+.xsp[data-go] .xsp-in, .xsp[data-go] .xsp-up { animation-play-state: running; }
 @keyframes xsp-in { from { opacity: 0; } }
-@keyframes xsp-up { from { opacity: 0; transform: translateY(36px); } }
+@keyframes xsp-up { from { opacity: 0; transform: translateY(24px); } }
 
-/* 1. one line of huge type; the pill and its answer; the six ways, live */
-.xsp-hero { padding: 96px 0 64px; }
-.xsp-hero-g { row-gap: 40px; align-items: start; }
+/* 1. one line of display type; the pill and its answer; the six ways, live */
+.xsp-hero { padding: clamp(72px, 9vw, 116px) 0 clamp(72px, 11vw, 116px); }
+.xsp-hero-g { row-gap: 44px; align-items: start; }
 .xsp-head { grid-column: 1 / -1; }
-.xsp-h1 { font-size: clamp(56px, 9vw, 136px); white-space: nowrap; }
-.xsp-main { grid-column: 1 / 9; display: flex; flex-direction: column; gap: 20px; }
-.xsp-search { display: flex; align-items: center; gap: 16px; height: 88px; padding: 0 16px 0 30px; border-radius: 999px; background: #fff; border: 1px solid rgba(0, 0, 0, .1); box-shadow: 0 40px 80px -48px rgba(0, 0, 0, .3); color: #424245; transition: border-color .3s, box-shadow .4s var(--ease); }
-.xsp-search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(0, 0, 0, .08), 0 40px 80px -48px rgba(0, 0, 0, .3); }
+.xsp-main { grid-column: 1 / 8; display: flex; flex-direction: column; gap: 17px; }
+.xsp-search { display: flex; align-items: center; gap: 13px; height: 56px; padding: 0 6px 0 20px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink2); transition: border-color var(--d-fast) var(--e-out), box-shadow var(--d-fast) var(--e-out); }
+@media (hover: hover) { .xsp-search:hover { border-color: rgba(0, 0, 0, .3); } }
+/* the pill carries the one focus ring (ink, with a white halo), concentric with it; the field inside draws none */
+.xsp-search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 0 0 5px #fff; }
+.xsp .xsp-search input:focus-visible, .xsp .xsp-search input:focus { outline: none; box-shadow: none; }
 .xsp-search svg { flex: none; }
-.xsp-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; font: 500 clamp(22px, 2.2vw, 32px)/1 var(--sans); letter-spacing: -.025em; color: var(--ink); caret-color: var(--ink); }
-.xsp-search input::placeholder { color: #86868b; }
+.xsp-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; font: 400 17px/1 var(--sans); color: var(--ink); caret-color: var(--ink); }
 .xsp-search input::-webkit-search-cancel-button { display: none; }
-.xsp-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .12); background: #fff; color: var(--ink); cursor: pointer; transition: border-color .2s, transform .12s var(--ease); }
+.xsp-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xsp-pause:active { transform: scale(.97); }
 @media (hover: hover) { .xsp-pause:hover { border-color: rgba(0, 0, 0, .4); } }
-.xsp-enter { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); font: 500 18px/1 var(--mono); color: #86868b; transition: background .3s, color .3s, border-color .3s, transform .4s var(--ease); }
-.xsp-enter.on { border: 1.5px solid var(--ink); color: var(--ink); transform: scale(1.04); }
 
-.xsp-answer { position: relative; overflow: hidden; min-height: 330px; padding: clamp(28px, 3vw, 40px); background: #fff; }
-.xsp-fig { position: absolute; right: clamp(20px, 2.4vw, 36px); top: clamp(12px, 1.6vw, 24px); overflow: hidden; font: 600 clamp(96px, 11vw, 168px)/.86 var(--sans); letter-spacing: -.06em; color: #e8e8ed; pointer-events: none; }
-.xsp-fig span { display: block; }
-.xsp-panes { position: relative; display: grid; height: 100%; }
-.xsp-pane { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 14px; }
-.xsp-answer-t { position: relative; margin: 0; max-width: 12ch; font-size: clamp(40px, 4.2vw, 60px); font-weight: 600; line-height: 1; letter-spacing: -.045em; color: var(--ink); }
-.xsp-answer-d { position: relative; margin: 0; max-width: 44ch; font-size: clamp(19px, 1.5vw, 22px); line-height: 1.42; color: #424245; text-wrap: pretty; }
-.xsp-subj { display: flex; align-items: center; gap: 10px; margin: 0; font: 500 16px/1.3 var(--mono); color: var(--ink); min-width: 0; }
+.xsp-answer { position: relative; overflow: hidden; padding: clamp(27px, 3vw, 44px); background: #fff; border: 1px solid var(--line); border-radius: 28px; }
+.xsp-panes { position: relative; display: grid; }
+.xsp-pane { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 17px; pointer-events: none; visibility: hidden; transition: visibility 0s linear .15s; }
+/* only the shown answer takes a tap, from the first paint (before hydration too) */
+.xsp-pane.on { pointer-events: auto; visibility: visible; transition: none; }
+.xsp-answer-t { margin: 0; max-width: 14ch; font-size: clamp(32px, 3.6vw, 52px); font-weight: 497; line-height: 1.02; letter-spacing: -.035em; color: var(--ink); }
+.xsp-answer-d { margin: 0; max-width: 44ch; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.45; color: var(--ink2); text-wrap: pretty; }
+.xsp-subj { display: flex; align-items: center; gap: 10px; margin: 0; font: 400 16px/1.3 var(--mono); color: var(--ink); min-width: 0; }
 .xsp-subj span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xsp-answer-a { margin-top: auto; padding-top: 18px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; }
-.xsp-host { font: 500 14px/1 var(--mono); color: #6e6e73; }
+.xsp-answer-a { margin-top: 10.5px; display: flex; flex-wrap: wrap; align-items: center; gap: 13px 27px; }
 
-.xsp-side { grid-column: 9 / 13; display: flex; flex-direction: column; gap: 28px; padding-top: 18px; }
+.xsp-side { grid-column: 8 / 13; display: flex; flex-direction: column; gap: 27px; }
 .xsp-doors { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-.xsp-doors li { border-top: 1px solid var(--line); background: #fff; transition: opacity .4s var(--ease); }
-.xsp-doors li.dim { opacity: .38; }
-.xsp-door { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; grid-template-areas: 'n t a' 'n h a'; align-items: center; column-gap: 12px; row-gap: 2px; min-height: 60px; padding: 10px 4px; color: var(--ink); text-decoration: none; transition: transform .12s var(--ease); }
-.xsp-n { grid-area: n; font: 500 13px/1 var(--mono); color: #86868b; transition: color .3s; }
-.xsp-door-t { grid-area: t; font-size: 19px; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; transition: transform .45s var(--ease); }
-.xsp-door-h { grid-area: h; font: 500 13px/1.3 var(--mono); color: #6e6e73; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.xsp-door svg { grid-area: a; color: #86868b; transition: transform .4s var(--ease), color .3s; }
-.xsp-doors li.best .xsp-n, .xsp-doors li.best svg { color: var(--ink); }
+.xsp-doors li { border-top: 1px solid var(--line); background: #fff; transition: opacity var(--d-base) var(--e-out); }
+/* rows never fade below 4.5:1: the rest stay the deck's muted grey (#737373), a matching row reads #525252, the answer ink */
+.xsp-doors li.match .xsp-door { color: var(--ink2); }
+.xsp-door { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 13px; min-height: 64px; padding: 10px 4px; color: var(--muted); text-decoration: none; transition: color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xsp-door:active { transform: scale(.98); }
+.xsp-door-t { font-size: clamp(21px, 2vw, 26px); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; transition: transform var(--d-base) var(--e-io); }
+.xsp-door svg { color: var(--muted); transition: transform var(--d-base) var(--e-io), color var(--d-fast) var(--e-out); }
+.xsp-doors li.best .xsp-door { color: var(--ink); }
 .xsp-doors li.best .xsp-door-t { transform: translateX(6px); }
-@media (hover: hover) { .xsp-door:hover svg { transform: translateX(4px); color: var(--ink); } }
+.xsp-doors li.best svg { color: var(--ink); }
+@media (hover: hover) { .xsp-door:hover { color: var(--ink); } .xsp-door:hover svg { transform: translateX(4px); color: var(--ink); } }
 
-/* 2. the one dark room, over a slow contour field */
-.xsp-ent { position: relative; overflow: hidden; background: #000; color: #f5f5f7; padding: clamp(140px, 16vw, 240px) 0; }
-.xsp-ent-s { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .34); }
-.xsp-ent::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .78) 20%, rgba(0, 0, 0, .25)); pointer-events: none; }
-.xsp-ent .vc-grid { position: relative; z-index: 1; }
-.xsp-ent-t { grid-column: 1 / 11; margin: 0; font-size: clamp(34px, 4.4vw, 64px); font-weight: 600; line-height: 1.04; letter-spacing: -.04em; text-wrap: balance; color: #a1a1a6; }
-.xsp-ent-t a { color: #f5f5f7; text-decoration: none; }
-.xsp-ent-t a span { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 8px; text-decoration-color: rgba(255, 255, 255, .45); transition: text-decoration-color .3s; }
-@media (hover: hover) { .xsp-ent-t a:hover span { text-decoration-color: #f5f5f7; } }
-.xsp-ent-t a:focus-visible { outline-color: #f5f5f7; box-shadow: none; }
+/* 2. the closing Band (kit), set on the deck here: Book 497 closing line, the deck's text greys, a 48px ask */
+.xsp .x-band { padding: clamp(72px, 11vw, 188px) 0; }
+.xsp .x-band h2 { font-size: clamp(40px, 6.6vw, 84px); font-weight: 497; line-height: 1.02; letter-spacing: -.035em; color: #fafafa; max-width: 20ch; }
+.xsp .x-band .x-btn.solid { height: 48px; padding: 0 27px; background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+.xsp-note { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.45; color: #a3a3a3; }
 
-@media (max-width: 900px) {
-  .xsp-hero { padding: 88px 0 56px; min-height: 0; }
-  .xsp-hero-g { row-gap: 24px; }
-  .xsp-h1 { white-space: normal; font-size: clamp(52px, 15vw, 72px); }
+@media (max-width: 899px) {
+  .xsp-hero { padding: 88px 0 72px; }
+  .xsp-hero-g { row-gap: 27px; }
   .xsp-side { display: contents; }
   .xsp-side .vc-lede { order: 1; grid-column: 1 / -1; }
   .xsp-main { order: 2; }
-  .xsp-side .xsp-doors { order: 3; grid-column: 1 / -1; margin-top: 16px; }
-  .xsp-search { height: 64px; padding: 0 8px 0 20px; gap: 10px; }
-  .xsp-search svg { width: 22px; height: 22px; }
-  .xsp-search input { font-size: 20px; }
-  .xsp-enter { width: 48px; height: 48px; }
-  .xsp-answer { min-height: 0; padding: 24px; border-radius: 24px; }
-  .xsp-fig { font-size: 88px; right: 18px; top: 14px; }
-  .xsp-answer-t { font-size: 36px; }
+  .xsp-side .xsp-doors { order: 3; grid-column: 1 / -1; margin-top: 10px; }
+  .xsp-answer { padding: 24px 20px; border-radius: 24px; }
+  .xsp-answer-t { font-size: 32px; }
   .xsp-answer-d { font-size: 17px; }
-  .xsp-door { min-height: 64px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xsp-in, .xsp-up { animation: none; }
-  .xsp-enter.on { transform: none; }
 }

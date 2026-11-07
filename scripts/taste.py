@@ -17,6 +17,7 @@ def sat(r, g, b):
     h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
     return s * (1 - abs(2 * l - 1))  # chroma: 0 for any grey, black or white
 
+MAX_CHROMA = 0.03  # James 7 Nov: pale tints (lavender bubbles) are hues too; deck greys sit under 0.015
 DECK = ['#000000','#0a0a0a','#0f0f0f','#171717','#262626','#404040','#525252','#737373','#a3a3a3','#d4d4d4','#e4e4e4','#e4e4e7','#e5e5e5','#e9e9e9','#ededed','#f2f2f2','#f5f5f5','#f6f6f6','#f7f7f7','#fafafa','#fbfbfb','#fdfdfd','#ffffff']
 def lum(r, g, b): return 0.2126 * r + 0.7152 * g + 0.0722 * b
 def nearest(r, g, b):
@@ -26,13 +27,13 @@ def fix(text):
     def hx(m):
         h = m.group(1); h6 = "".join(c * 2 for c in h) if len(h) == 3 else h
         rgb = [int(h6[i:i + 2], 16) for i in (0, 2, 4)]
-        return m.group(0) if sat(*rgb) <= 0.08 else nearest(*rgb)
+        return m.group(0) if sat(*rgb) <= MAX_CHROMA else nearest(*rgb)
     def fn(m):
         if "$" in m.group(1) or "var(" in m.group(1) or m.group(0).startswith("hsl"): return m.group(0)
         n = re.findall(r"\d*\.?\d+%?", m.group(1))
         if len(n) < 3: return m.group(0)
         rgb = [float(x.rstrip("%")) for x in n[:3]]
-        if sat(*rgb) <= 0.08: return m.group(0)
+        if sat(*rgb) <= MAX_CHROMA: return m.group(0)
         d = nearest(*rgb); a = n[3] if len(n) > 3 else None
         return d if a is None else f"rgba({int(d[1:3],16)}, {int(d[3:5],16)}, {int(d[5:7],16)}, {a})"
     return FUNC.sub(fn, HEX.sub(hx, text))
@@ -41,13 +42,13 @@ def hues(text):
     bad = set()
     for m in HEX.finditer(text):
         h = m.group(1); h = "".join(c * 2 for c in h) if len(h) == 3 else h
-        if sat(int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)) > 0.08: bad.add("#" + m.group(1))
+        if sat(int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)) > MAX_CHROMA: bad.add("#" + m.group(1))
     for m in FUNC.finditer(text):
         nums = re.findall(r"\d*\.?\d+%?", m.group(1))
         if "$" in m.group(1) or "var(" in m.group(1): continue
         if m.group(0).startswith("hsl"):
             if len(nums) >= 3 and float(nums[1].rstrip("%")) > 8 and 8 < float(nums[2].rstrip("%")) < 92: bad.add(m.group(0)[:30])
-        elif len(nums) >= 3 and sat(*[float(n.rstrip("%")) for n in nums[:3]]) > 0.08: bad.add(m.group(0)[:30])
+        elif len(nums) >= 3 and sat(*[float(n.rstrip("%")) for n in nums[:3]]) > MAX_CHROMA: bad.add(m.group(0)[:30])
     return sorted(bad)
 
 def check(path):
@@ -72,5 +73,5 @@ def main(args):
 
 if __name__ == "__main__":
     assert nearest(255, 120, 0) in DECK and fix("a{color:#ff8800}") != "a{color:#ff8800}" and fix("#0a0a0a") == "#0a0a0a"
-    assert sat(128, 128, 128) == 0 and sat(255, 120, 0) > 0.5 and hues("#0a0a0a #fff rgba(0,0,0,.5)") == [] and hues("#ff8800") == ["#ff8800"]
+    assert sat(128, 128, 128) == 0 and sat(255, 120, 0) > 0.5 and hues("#0a0a0a #fff rgba(0,0,0,.5)") == [] and hues("#ff8800") == ["#ff8800"] and hues("#eef0fb") == ["#eef0fb"]
     sys.exit(main(sys.argv[1:]))
