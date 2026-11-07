@@ -28,3 +28,10 @@
   .gx .gx-say { font-size: 26px !important; }
   .gx .gx-mid { font-size: 22px !important; }
 }
+
+/* every control answers: the pause inverts on hover (not just a lighter fill) */
+@media (hover: hover) {
+  .gx .w2-pause:hover { background: #0a0a0a !important; color: #fff !important; }
+  .gx .w2-dark .w2-pause:hover, .gx [data-room='dark'] .w2-pause:hover { background: #fafafa !important; color: #0a0a0a !important; }
+  .gx .w2-pin-rail button:hover { color: var(--ink, #0a0a0a); }
+}
