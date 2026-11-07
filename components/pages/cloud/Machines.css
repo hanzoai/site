@@ -63,11 +63,6 @@
 .mc-hour { display: flex; align-items: baseline; gap: 10px; margin: 0; font-weight: 220; font-size: 84px; line-height: 1; letter-spacing: -.045em; font-variant-numeric: tabular-nums; color: var(--mc-w5); }
 .mc-hour > span:last-child { font-size: .26em; letter-spacing: 0; color: var(--mc-s1); font-weight: 500; }
 .mc-vram { display: flex; align-items: center; gap: 12px; margin: 10px 0 0; font: 500 16px/1 var(--mono); color: var(--glow); }
-/* the quote names its size: it is always Hanzo's 1x H100 quote */
-.mc-for { padding: 6px 10px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); color: var(--mc-w5); font-size: 13px; }
-/* 2x and 4x light their cards and rewrite the request; the 1x quote stays, a little quieter */
-.mc-quote { transition: opacity .4s var(--mc-io); }
-.mc-quote.dim { opacity: .6; }
 .mc-quote dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0 0; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .1); }
 .mc-quote dt { font: 500 12px/1 var(--mono); color: var(--mc-s1); }
 .mc-quote dd { margin: 8px 0 0; font: 497 clamp(21px, 1.8vw, 26px)/1 var(--sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--mc-w5); }
@@ -354,6 +349,7 @@ html:not(.js) .mc-zsheet { position: relative; opacity: 1 !important; }
 
 /* paste and ship: the prompt wraps; related links are rows that fill */
 .mc-ship.v2-sec { padding: 116px 0 72px; }
+.mc-ship .mc-api { margin: 18px 0 0; font: 500 13px/1.4 var(--mono); color: var(--mc-g6); overflow-wrap: anywhere; }
 .mc-ship .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .mc-ship .sp-rel ul { grid-template-columns: minmax(0, 1fr); }
 /* the fill reaches into the column gap on the left and stops at the gutter on the right */
