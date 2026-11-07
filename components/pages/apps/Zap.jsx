@@ -312,11 +312,9 @@ function Fleet() {
 
 /* the diagram's wires draw themselves in the first time they are seen, agents to gateway, then gateway to servers.
    A clip wipes them downwards as whole strokes, so every line meets its box (no dash pattern on a stretched path). */
-function Wires({ d, late }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.6 });
+function Wires({ d, late, seen }) {
   return (
-    <svg ref={ref} className={'zp-dia-l' + (seen ? ' on' : '') + (late ? ' late' : '')} viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+    <svg className={'zp-dia-l' + (seen ? ' on' : '') + (late ? ' late' : '')} viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
       {d.map((p) => <path key={p} d={p} />)}
     </svg>
   );
@@ -324,19 +322,21 @@ function Wires({ d, late }) {
 
 /* Hanzo's gateway diagram, drawn: the same words as the ASCII (kept in the HTML, hidden, for the record). */
 function Diagram() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <figure className="zp-dia">
+    <figure className="zp-dia" ref={ref}>
       <div className="zp-dia-swarm">
         <p className="x-mono">Agent Swarm</p>
         <div className="zp-dia-row">{['Agent 1', 'Agent 2', 'Agent 3', 'Agent N'].map((a) => <span key={a} className="x-mono">{a}</span>)}<em aria-hidden="true">...</em></div>
       </div>
-      <Wires d={['M12.5 0 V16 H50', 'M87.5 0 V16 H50', 'M37.5 0 V16', 'M62.5 0 V16', 'M50 16 V32']} />
+      <Wires d={['M12.5 0 V16 H50', 'M87.5 0 V16 H50', 'M37.5 0 V16', 'M62.5 0 V16', 'M50 16 V32']} seen={seen} />
       <div className="zp-dia-gw">
         <b>ZAP Gateway</b>
         <span className="x-mono">zap://localhost:9999</span>
         <ul>{['Schema Federation', 'Request Routing', 'Capability Control'].map((t) => <li key={t}>{t}</li>)}</ul>
       </div>
-      <Wires d={['M50 0 V16', 'M50 16 H16.7 V32', 'M50 16 H83.3 V32', 'M50 16 V32']} late />
+      <Wires d={['M50 0 V16', 'M50 16 H16.7 V32', 'M50 16 H83.3 V32', 'M50 16 V32']} late seen={seen} />
       <div className="zp-dia-row srv">{[['MCP Srv', 'GitHub'], ['ZAP Srv', 'Native'], ['MCP Srv', 'Slack']].map(([a, b]) => <span key={b}><b className="x-mono">{a}</b>{b}</span>)}<em aria-hidden="true">...</em></div>
       <pre className="x-mono" hidden>{ASCII}</pre>
     </figure>
