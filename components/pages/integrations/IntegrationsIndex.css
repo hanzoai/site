@@ -25,6 +25,40 @@
 @keyframes xii-h1 { from { transform: translate3d(0, 105%, 0); } }
 /* scale rhythm in the catalogue: the first guide of each family is a wide card, the rest pack around it */
 .xii-grid { grid-auto-flow: row; }
+/* the open card: the card's own box grows into the sheet (shared layout), 600 ms in-out */
+.xii-card { isolation: isolate; }
+.xii-card-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.xii-open { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 24px; }
+.xii-open-scrim { position: absolute; inset: 0; border: 0; background: rgba(0, 0, 0, .32); cursor: default; }
+.xii-open-card { position: relative; width: min(880px, 100%); max-height: calc(100dvh - 48px); overflow: auto; background: #ffffff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); overscroll-behavior: contain; }
+.xii-open-in { display: flex; flex-direction: column; gap: 24px; padding: clamp(24px, 3.4vw, 44px); }
+.xii-open-h { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 17px; }
+.xii-open-e { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: #f5f5f5; color: #0a0a0a; font: 497 21px/1 var(--sans); }
+.xii-open-e .xlg { width: 28px; height: 28px; }
+.xii-open-h h3 { margin: 0; font-size: 32px; font-weight: 497; letter-spacing: -.02em; line-height: 1.1; }
+.xii-open-k { margin: 6px 0 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #525252; }
+.xii-open-x { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #f5f5f5; color: #0a0a0a; cursor: pointer; transition: background-color 150ms var(--e-out), transform 90ms var(--e-out); }
+@media (hover: hover) { .xii-open-x:hover { background: #e4e4e7; } }
+.xii-open-x:active { transform: scale(.97); }
+.xii-open-x:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.xii-open-d { margin: 0; max-width: 62ch; font-size: 17px; line-height: 1.55; color: #525252; }
+.xii-open-code { border-radius: 16px; background: #171717; color: #fafafa; overflow: hidden; }
+.xii-open-cap { display: flex; justify-content: space-between; gap: 17px; margin: 0; padding: 12px 17px; border-bottom: 1px solid rgba(255, 255, 255, .1); font-size: 12px; color: #a3a3a3; }
+.xii-open-code .xii-code { padding: 17px 17px 17px 0; font-size: 14px; max-height: 340px; overflow: auto; }
+.xii-open-go { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; }
+@media (max-width: 899px) {
+  .xii-open { place-items: end center; padding: 0; }
+  .xii-open-card { width: 100%; max-height: 90dvh; border-radius: 24px 24px 0 0 !important; }
+  .xii-open-h h3 { font-size: 26px; }
+  .xii-open-go { align-self: stretch; justify-content: center; }
+  .xii-open-code .xii-code { font-size: 13px; }
+}
+/* the catalogue arrives as one list: each card rises 16px, 60 ms after the last (400 ms, ease-emphasis), once */
+@keyframes xii-card-in { from { opacity: 0; transform: translate3d(0, 16px, 0); } }
+@media (prefers-reduced-motion: no-preference) {
+  .xii-grid > li > .xii-card { animation: xii-card-in 400ms var(--e-emph) backwards; animation-delay: calc(var(--k, 0) * 60ms); }
+  html.js .xii-grid:not([data-in]) > li > .xii-card { animation-play-state: paused; }
+}
 .xii-grid > li.wide { grid-column: span 2; }
 .xii-grid > li.wide .xii-card-n { font-size: 26px; }
 .xii-grid > li.wide .xii-card-d { max-width: 44ch; }

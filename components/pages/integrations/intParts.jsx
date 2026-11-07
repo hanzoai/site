@@ -35,8 +35,9 @@ export function Lines({ code, only, typed, label }) {
       <code>
         {code.lines.map((l, j) => {
           const hz = HANZO.test(lineText(l));
+          const h = hz ? code.lines.slice(0, j).filter((x) => HANZO.test(lineText(x))).length : 0; // its turn among Hanzo's lines
           return (
-            <span key={j} className={'xig-ln' + (hz ? ' hz' : '')}>
+            <span key={j} className={'xig-ln' + (hz ? ' hz' : '')} style={hz ? { '--h': h } : undefined}>
               {l.length ? l.map(([k, x], n) => <span key={n} className={'c-' + k} data-t={typed && hz ? '' : undefined}>{x}</span>) : ' '}{'\n'}
             </span>
           );

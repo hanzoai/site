@@ -214,7 +214,8 @@ function Race() {
   const board = useRef(null);
   const calm = useCalm(); // read after mount, so the server HTML and the first render agree
   const t = useMotionValue(MAX); // the server shows the finished race (JS off); the browser sets it ready at once
-  useEffect(() => { if (!calm) t.set(0); }, [calm, t]);
+  // with motion the board starts ready (0.00 s) and races when reached; with reduced motion it shows the finished race
+  useEffect(() => { t.set(matchMedia('(prefers-reduced-motion: reduce)').matches ? MAX : 0); }, [calm, t]);
   // the room's edges open out as it arrives, and the figure grows from its resting 64px to the moment
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.1'] });
   const k = (v) => Math.min(1, Math.max(0, v));
