@@ -1,18 +1,22 @@
 'use client';
 /* Stream (v2, Cloud 4 chat). Archetype A, Launch: a full-bleed dark tape (Stage, frame) → the facts on a sideways tape you
-   scroll → the one line that changes → close. Accent: offset teal.
+   scroll → the one line that changes → Get Stream → closing band. Ink, greys and white only.
+   Persona: a team running Kafka clients who would rather not run a Kafka cluster. Goal: open the repo and point a client at it.
+   CTA: "GitHub" / "View on GitHub" (same href: hero, ask bar, close). Metric: cta_click:stream.primary.
    V2: 8/10 a full-bleed event tape clipped into a card as you scroll, then the six facts ride a sideways tape your scroll consumes, offset by offset
    Signature: your scroll is the consumer. The section pins and the page scrolls a tape of records sideways; each fact is a
    record stamped with its offset, and the committed-offset marker at the left edge reads the offset you have reached.
    Phones get the same tape as a swipe rail.
    Beyond: "Does my client's call work?" Type a Kafka API your client makes and it answers from the twelve Hanzo lists,
    at the versions modern clients negotiate, or says it is not among them.
-   Motion: horizontal scroll scrub (signature) + the hero's running partitions + the clip-to-card settle + magnetic primary.
+   Motion: horizontal scroll scrub (signature) + the hero's running partitions (idle, with Pause) + the clip-to-card
+   settle (scroll) + the API checker (state). Offset labels sit under their headlines.
    Every word, figure and link is Hanzo's; offsets and records are examples. */
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import useCalm from '../../v2/useCalm';
-import { Code, useLive, useEvery } from './Frame';
+import { Code, useEvery } from './Frame';
+import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import { useWide } from '../../v2/useWide';
@@ -24,18 +28,19 @@ const CLIENTS = ['kafka-python', 'sarama', 'confluent-kafka', 'franz-go'];
 /* Stage object: four partitions of records running under the clients. The consumer group's committed offset rides lane
    two; it goes down, keeps its offset, comes back where it left off; a batch whose chain does not line up bounces. */
 function Tape() {
-  const [ref, live] = useLive(0.2);
+  const [ref, live, , paused, toggle] = useDemo(0.1);
   const [tick, setTick] = useState(0);
   useEvery(900, live, () => setTick((t) => t + 1));
   const phase = Math.floor(tick / 5) % 3; // 0 consuming, 1 consumer down, 2 back where it left off
   const bad = tick % 7 === 3;
   return (
-    <div className="st2-tape" ref={ref} aria-hidden="true">
-      <div className="st2-clients">
+    <div className="st2-tape" ref={ref}>
+      <PauseBtn paused={paused} onClick={toggle} className="dk st2-pause" />
+      <div className="st2-clients" aria-hidden="true">
         {CLIENTS.map((c) => <span key={c} className="l2-mono">{c}</span>)}
         <b className="l2-mono">stream.hanzo.ai:9092</b>
       </div>
-      <div className="st2-lanes">
+      <div className="st2-lanes" aria-hidden="true">
         {[0, 1, 2, 3].map((l) => (
           <div key={l} className={'st2-lane ln' + l + (live ? '' : ' still')}>
             <span className="st2-p l2-mono">partition {l}</span>
@@ -91,9 +96,9 @@ function Ruler() {
           </div>
           {FACTS.map(([t, d], i) => (
             <article key={t} className={'st2-rec' + (pin && at > i ? ' read' : '')}>
-              <p className="st2-ofs l2-mono"><span>offset {String(i + 1).padStart(4, '0')}</span><span>{String(i + 1).padStart(2, '0')} / 06</span></p>
               <p className="st2-big l2-fig" aria-hidden="true">{String(i + 1).padStart(4, '0')}</p>
               <h3 className="l2-head">{t}</h3>
+              <p className="st2-ofs l2-mono"><span>offset {String(i + 1).padStart(4, '0')}</span><span>{String(i + 1).padStart(2, '0')} / 06</span></p>
               <p className="l2-body">{d}</p>
             </article>
           ))}
@@ -170,7 +175,7 @@ function OneLine() {
 
 export default function Stream() {
   return (
-    <main className="l2-page st2" style={{ '--ac': '#12b5a6' }}>
+    <main className="l2-page st2">
       <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
       </StageHero>

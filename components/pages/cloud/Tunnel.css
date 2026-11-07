@@ -25,7 +25,7 @@
 /* signature: the wipe (the one dark room) */
 .tn2-scene { position: relative; }
 .tn2-scene-pin { position: relative; padding-block: 120px; }
-.tn2-scene.pin .tn2-scene-pin { position: sticky; top: 0; height: 100svh; min-height: 640px; padding: 0; overflow: hidden; }
+.tn2-scene.pin .tn2-scene-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); min-height: 600px; padding: 0; overflow: hidden; }
 .tn2-scene-in { height: 100%; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
 .tn2-cap { grid-column: 1 / span 4; position: relative; min-height: 380px; }
 .tn2-cap-i { position: absolute; inset: 0 0 auto; opacity: 0; transform: translateY(40px); transition: opacity .35s var(--ease), transform .5s var(--ease); }
