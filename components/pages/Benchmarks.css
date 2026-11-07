@@ -842,3 +842,5 @@ html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(n+4) { 
   .xbm-trk .xbm-race-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding: 2px 16px; }
   .xbm-trk-a .xbm-lane-f { margin-left: 0; }
 }
+
+.xbm-figs-cta { margin-top: 24px; }

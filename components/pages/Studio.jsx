@@ -518,6 +518,7 @@ function Chair() {
           {/* one solid ask and one text link; "Open Studio" (back up into the monitor) waits under the related list */}
           <div className="a2-acts">
             <Cta to="https://studio.hanzo.ai" id="studio.close" thumb className="xst-ask">Launch studio.hanzo.ai</Cta>
+            <More to="/pricing">See plans, from $8/month</More>
             <More to="/design">Open Hanzo Design</More>
           </div>
           <div className="xst-rel">

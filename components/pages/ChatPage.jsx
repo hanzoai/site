@@ -31,6 +31,7 @@ import './ChatPage.css';
 
 const OPEN = '/login?next=%2Fchat';
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
+const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
 const RECENTS = ['Black holes and auroras', 'Email to the landlord', 'Investor update, shorter', 'Three days in Kyoto', 'Code that works, somehow', 'Support reply, API keys', 'Attention, simply', 'Sourdough starter', 'Three emails before lunch', 'Standup, for the absent', 'A fair refund', 'The fundraising deck', 'Interview notes', 'A toast for the team'];
 // Hanzo's own exchange (hanzo.ai home, content/live/index.json)
 const DEMO = [
@@ -63,6 +64,7 @@ const Open = ({ slot = 'hero' }) => (
   <Magnetic strength={0.18}><Cta to={OPEN} id={'chat.' + slot} thumb size="lg">Open Hanzo Chat</Cta></Magnetic>
 );
 const Docs = () => <Cta to={DOCS} kind="link" id="chat.docs">Read the docs</Cta>;
+const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'chat.go-' + slot}>Go is $8/month, every model</Cta>;
 
 /* Hand-off (MASTER 2: a cross-origin hand-off shows a pressed state, aria-busy, 200 to 400 ms). Any plain press on a
    link to Hanzo Chat inside the page is held, shown busy, then followed. New-tab presses go straight through. */
@@ -297,6 +299,7 @@ function Hero() {
           <p className="v2a-lede cht-lede cht-up" style={{ '--d': '.3s' }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</p>
           <div className="cht-acts cht-up" style={{ '--d': '.4s' }}>
             <Open slot="hero" />
+            <Plan slot="hero" />
             <Docs />
           </div>
         </div>
@@ -494,7 +497,7 @@ function Answers() {
 
 /* 4. The close: the kit's Band, in Hanzo's words, with the one ask. */
 function Close() {
-  return <Band title="Ask anything" action="Open Hanzo Chat" to={OPEN} note={<Docs />} />;
+  return <Band title="Ask anything" action="Open Hanzo Chat" to={OPEN} note={<><Plan slot="close" /><Docs /></>} />;
 }
 
 export default function ChatPage() {
