@@ -247,7 +247,9 @@
   .gd-modes { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 12px; }
   .gd-mode { grid-column: auto; padding: 14px; }
   .gd-wire { display: none; }
-  .gd-tokw { left: 84px; right: 72px; }
+  .gd-tokw { left: 104px; right: 84px; }
+  .gd-lane span { white-space: nowrap; }
+  .gd-lane .gd-arr { margin: 0 2px 0 0; }
   .gd-mode span { white-space: nowrap; }
   .gd-mode.lead { grid-column: 1 / -1; grid-row: auto; padding: 18px; }
   .gd-mode.lead b { font-size: 26px; }

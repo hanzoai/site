@@ -299,7 +299,7 @@ function Forge() {
     <section className="iv-forge v2-dark" data-room="dark" aria-labelledby="iv-f2" ref={room}>
       <div className="iv-forge-pin">
         <div className="v2-wrap">
-          <p className="iv-forge-q">…an HMAC under a key everybody knows is one anybody can compute.</p>
+          <p className="iv-forge-q"><span aria-hidden="true">…</span>an HMAC under a key everybody knows is one anybody can compute.</p>
           <div className="iv-forge-grid">
             <div className="iv-pane">
               <p className="v2-kick">the provider you chose</p>

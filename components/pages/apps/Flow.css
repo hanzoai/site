@@ -14,7 +14,14 @@
 .fl-intro { display: flex; flex-direction: column; gap: 24px; }
 .fl-intro .bz-acts { gap: 8px 28px; }
 .fl-intro .bz-lede { color: var(--ink); max-width: 30ch; }
-.fl-hero-insp { position: absolute; z-index: 2; left: 61%; top: 64%; }
+/* the run's own pause, on the canvas: an icon and the run's counter in their own slots, nothing crowding them */
+.fl-hold { position: absolute; z-index: 3; right: clamp(16px, 4vw, 32px); bottom: 40px; display: inline-flex; align-items: center; gap: 12px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #ffffff; color: var(--ink); font: inherit; cursor: pointer; transition: border-color .15s cubic-bezier(0, 0, .2, 1), transform .09s; }
+.fl-hold svg { flex: none; }
+.fl-hold-n { font-size: 13px; color: var(--soft); font-variant-numeric: tabular-nums; min-width: 6ch; text-align: right; }
+@media (hover: hover) { .fl-hold:hover { border-color: var(--ink); } }
+.fl-hold:active { transform: scale(.97); }
+.fl-hold:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.fl-hold[aria-pressed='true'] { border-color: var(--ink); }
 
 /* the graph */
 .fl-g { position: relative; --nw: 212px; }
@@ -37,15 +44,32 @@ button.fl-node:active { scale: .97; }
 .fl-node-n { flex: none; font-size: 12px; font-weight: 606; letter-spacing: .06em; color: var(--faint); transition: color .3s; }
 .fl-node.run .fl-node-n, .fl-node.done .fl-node-n, .fl-node.lit .fl-node-n { color: var(--ink); }
 .fl-node-h { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.fl-node-h b { font-size: 14px; font-weight: 606; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
-.fl-node-o { display: block; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.35; color: var(--faint); }
-.fl-node-o em { font-style: normal; margin-right: 8px; color: #d4d4d4; }
+.fl-node-h b { display: block; font-size: 14px; font-weight: 606; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
+/* Hanzo writes its component kinds in lower case inside a sentence; as a node's name it takes a first capital */
+.fl-node-h b::first-letter, .fl-pg-node b::first-letter, .fl-pg-steps b::first-letter, .fl-pg-io b::first-letter, .flp-lib li::first-letter { text-transform: uppercase; }
+.fl-node, .fl-node b, .fl-node-o { overflow-wrap: normal; word-break: normal; hyphens: none; }
+/* received and returned share one box, so swapping them never changes the card's size */
+.fl-node-o { display: grid; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.35; color: var(--faint); }
+.fl-node-o > span { grid-area: 1 / 1; transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(0, 0, .2, 1); }
+.fl-node-o .fl-io-o { opacity: 0; transform: translateY(4px); }
+.fl-node-o.is-out .fl-io-r { opacity: 0; transform: translateY(-4px); }
+.fl-node-o.is-out .fl-io-o { opacity: 1; transform: none; }
+.fl-node-o em { font-style: normal; margin-right: 8px; color: #737373; }
 .fl-node.done .fl-node-o { color: var(--ink); }
 .fl-node.done .fl-node-o em { color: var(--ink); font-weight: 606; }
 .fl-node.run { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(0, 0, 0, .08); }
 .fl-node.lit { border-color: var(--ink); border-width: 1.5px; box-shadow: 0 0 0 5px rgba(0, 0, 0, .08); }
 .fl-node-bar { position: absolute; left: 0; bottom: 0; width: 100%; height: 3px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
-@media (hover: hover) { .fl-hero button.fl-node:hover { border-color: rgba(0, 0, 0, .4); } }
+/* a hover tells you something: the card lifts, outlines in ink and shows the other side of what it does (what it
+   returned before it has run, what it received after) */
+@media (hover: hover) {
+  .fl-hero button.fl-node:hover { border-color: var(--ink); translate: -50% calc(-50% - 3px); box-shadow: 0 0 0 4px rgba(0, 0, 0, .06); }
+  .fl-hero button.fl-node:hover .fl-node-o { color: var(--ink); }
+  .fl-hero button.fl-node:hover .fl-node-o em { color: var(--ink); font-weight: 606; }
+  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-r, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-o { opacity: 0; transform: translateY(-4px); }
+  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-o, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-r { opacity: 1; transform: none; }
+}
+.fl-hero button.fl-node { transition: border-color .3s, box-shadow .3s, translate .3s cubic-bezier(.16, 1, .3, 1), opacity .4s, scale .4s cubic-bezier(.16, 1, .3, 1); }
 /* compact nodes: the pinned build-up and the phone's mini-graph draw only the index and the name, so they read as
    a diagram being built, not a second copy of the hero's running cards */
 .fl-compact .fl-node { gap: 0; padding: 10px 12px; border-radius: 12px; }
@@ -54,19 +78,6 @@ button.fl-node:active { scale: .97; }
 .fl-node.run .fl-node-bar { animation: fl-bar .9s linear forwards; }
 @keyframes fl-bar { to { transform: scaleX(1); } }
 
-/* the inspector: what one node received and returned */
-.fl-insp { width: 320px; padding: 18px 20px 14px; border-radius: 24px; background: #0a0a0a; color: #e9e9e9; box-shadow: none; }
-.fl-insp-k { display: flex; align-items: center; gap: 14px; margin: 0 0 10px; font-size: 13px; color: #737373; }
-.fl-insp-k span + span { margin-left: auto; }
-.fl-hold { flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: -8px -8px -8px 0; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .18); background: #171717; color: #f5f5f5; cursor: pointer; transition: border-color .15s, transform .09s; }
-@media (hover: hover) { .fl-hold:hover { border-color: rgba(255, 255, 255, .45); } }
-.fl-hold:active { transform: scale(.97); }
-.fl-hold:focus-visible { outline: 2px solid #f5f5f5; outline-offset: 2px; }
-.fl-insp h3 { margin: 0 0 8px; font-size: 17px; font-weight: 606; letter-spacing: -.01em; color: #ffffff; }
-.fl-insp p { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 16px; }
-.fl-insp p span { font-size: 13px; color: #737373; }
-.fl-insp p b { font-weight: 497; text-align: right; }
-.fl-insp p b.out { padding: 3px 9px; border-radius: 8px; background: #f5f5f5; color: #0a0a0a; }
 
 /* chapters: the graph pinned on its board and built one node per chapter; the inspector under it */
 .flc { position: relative; padding-top: clamp(56px, 6vw, 88px); }
