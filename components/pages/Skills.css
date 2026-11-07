@@ -17,6 +17,11 @@
 .xsk-hero-copy { grid-column: 1 / span 5; }
 .xsk-h1 { font-size: clamp(64px, 7.6vw, 112px); }
 .xsk-h1-set { transform-origin: 0 100%; } /* settles toward the lede as the page scrolls */
+/* the h1's cut-in runs on the server-rendered line from first paint (an animation outranks the inline start offset),
+   so the h1 never waits for hydration; with JS off Lines' rule shows it at rest */
+.xsk-h1 .a2-ln-in { animation: xsk-cut .7s var(--e-em) .15s both; }
+@keyframes xsk-cut { from { transform: translateY(105%); } to { transform: none; } }
+html:not(.js) .xsk-hero-obj { transform: none !important; }
 .xsk-hero-copy .a2-lede { margin: 28px 0 36px; color: var(--ink); }
 .xsk-hero-copy .a2-lede mark { background: linear-gradient(transparent 55%, var(--hl) 55%, var(--hl) 92%, transparent 92%); }
 .xsk .a2-acts .x-btn.solid { background: var(--ink); }
@@ -26,7 +31,7 @@
 @media (hover: hover) { .xsk-repo:hover { color: var(--ink); text-decoration-color: currentColor; } }
 .xsk-hero-obj { grid-column: 6 / span 7; }
 .xsk-wake { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; align-items: stretch; }
-.xsk-file { padding: 28px; border-radius: var(--r-hero); background: var(--paper); border: 1px solid var(--line); transform: rotate(-1.2deg); }
+.xsk-file { --tx: 0deg; --ty: 0deg; padding: 28px; border-radius: var(--r-hero); background: var(--paper); border: 1px solid var(--line); transform: perspective(1200px) rotate(-1.2deg) rotateX(var(--ty)) rotateY(var(--tx)); transition: transform .3s var(--e-out); }
 .xsk-file-top { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 13px; color: var(--faint); }
 .xsk-file-top span:first-child { color: var(--ink); font-weight: 500; }
 .xsk-fm { margin: 0 0 18px; font-size: 14.5px; line-height: 1.9; color: var(--ink); white-space: pre-wrap; }
@@ -93,9 +98,10 @@
 .xsk-stage-in { position: sticky; top: max(88px, calc(50svh - 270px)); height: 540px; display: grid; }
 /* the progress ticks live inside the panel's bottom edge, so they leave with it when the stage unpins */
 .xsk-scenes { position: relative; display: grid; border-radius: var(--r-hero); background: #f5f5f5; overflow: hidden; }
-.xsk-scene { grid-area: 1 / 1; display: grid; place-items: center; padding: 40px 40px 60px; opacity: 0; transform: translateY(24px); transition: opacity .3s var(--e-out), transform .5s var(--e-em); }
-.xsk-scene.past { transform: translateY(-24px); }
-.xsk-scene.on { opacity: 1; transform: none; transition-delay: .09s; }
+/* one scene at a time: the outgoing one leaves in 150 ms, the incoming one starts only after it is gone */
+.xsk-scene { grid-area: 1 / 1; display: grid; place-items: center; padding: 40px 40px 60px; opacity: 0; transform: translateY(24px); transition: opacity .15s var(--e-out), transform .15s var(--e-out); }
+.xsk-scene.past { transform: translateY(-16px); }
+.xsk-scene.on { opacity: 1; transform: none; transition: opacity .3s var(--e-out) .15s, transform .5s var(--e-em) .15s; }
 .xsk-ticks { position: absolute; left: 40px; right: 40px; bottom: 26px; display: flex; gap: 6px; }
 .xsk-ticks b { position: relative; flex: 1; height: 2px; border-radius: 2px; background: #d4d4d4; overflow: hidden; }
 .xsk-ticks b::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--e-em); }
@@ -118,7 +124,7 @@
 .xsk-zoom-ln .l { font-size: .72em; color: var(--soft); }
 /* 02: one gateway. The word arrives, the line runs down, discover-database fills ink, the rail runs out,
    and two of the five files rise and turn ink while the rest stay where they are. */
-.xsk-sc-gate { display: grid; justify-items: center; max-width: 420px; }
+.xsk-sc-gate { display: grid; justify-items: center; max-width: 520px; }
 .xsk-gw-word { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 12px; background: #fff; border: 1px solid var(--line); font-size: 16px; color: var(--ink); opacity: var(--on, 0); transform: translateY(calc((1 - var(--on, 0)) * -16px)); transition: opacity .3s var(--e-out) .15s, transform .5s var(--e-em) .15s; }
 .xsk-gw-word .xsk-caret-k { color: var(--faint); }
 .xsk-gw-v { display: block; width: 2px; height: 28px; background: var(--ink); transform-origin: 50% 0; transform: scaleY(var(--on, 0)); transition: transform .3s var(--e-io) .5s; }
@@ -127,10 +133,14 @@
 .xsk-gw::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: var(--ink); opacity: var(--on, 0); transition: opacity .3s var(--e-out) .75s; }
 :is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw { color: #fafafa; }
 .xsk-gw-rail { display: block; width: 82%; height: 2px; background: var(--ink); transform: scaleX(var(--on, 0)); transition: transform .4s var(--e-io) 1.35s; }
-.xsk-gw-files { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; width: 100%; margin-top: 22px; }
+/* the two pulled files are wider and carry their gateway's name in ink; the three left on the shelf stay drawn */
+.xsk-gw-files { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 1fr); gap: 10px; width: 100%; margin-top: 22px; }
+.xsk-gw-files em { display: block; margin-bottom: 2px; font: 500 13px/1.25 var(--mono); font-style: normal; color: var(--ink); overflow-wrap: anywhere; transition: color 0s calc(var(--k) * 60ms + 1.75s); }
+:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull em { color: #fafafa; }
+:is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull i { background: rgba(255, 255, 255, .3); }
 .xsk-gw-files span { position: relative; isolation: isolate; display: grid; gap: 6px; align-content: start; height: 84px; padding: 14px 10px; border-radius: 10px; background: #fff; border: 1px solid var(--line); opacity: .55; transition: transform .5s var(--e-em), opacity .3s var(--e-out); transition-delay: calc(var(--k) * 60ms + 1.6s); }
 .xsk-gw-files span::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: var(--ink); opacity: 0; transition: opacity .3s var(--e-out); transition-delay: inherit; }
-.xsk-gw-files i { display: block; height: 4px; border-radius: 2px; background: #e5e5e5; }
+.xsk-gw-files i { display: block; height: 4px; border-radius: 2px; background: #e5e5e5; transition: background-color 0s calc(var(--k) * 60ms + 1.75s); }
 .xsk-gw-files i:last-child { width: 60%; }
 :is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull { opacity: 1; transform: translateY(-14px); }
 :is(.xsk-scene.on, .xsk-pt-vis.on) .xsk-gw-files .pull::before { opacity: 1; }/* 03: the command wipes in, the output draws, the file lands */
@@ -150,20 +160,7 @@
 .xsk-sc-mono { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; height: 100%; padding: 10px 12px; border-radius: 10px; background: #d4d4d4; transform-origin: 0 50%; transform: scaleX(var(--on, 0)); transition: transform .9s var(--e-io) .15s; }
 .xsk-sc-five { display: flex; gap: 8px; height: 100%; }
 .xsk-sc-five b { width: 11%; display: grid; align-content: center; gap: 5px; padding: 0 8px; border-radius: 10px; background: var(--ink); transform-origin: 50% 100%; opacity: var(--on, 0); transform: scale(calc(.6 + var(--on, 0) * .4)); transition: opacity .3s var(--e-out), transform .4s var(--e-em); transition-delay: calc(var(--k) * 90ms + .9s); }
-/* 05: one file and its links. The link line is struck, a line runs down out of the file to the file it names,
-   then on to the next: two small stubs, linked rather than copied in. */
-.xsk-sc-link { display: grid; justify-items: start; max-width: 420px; }
-.xsk-lk-file { justify-self: stretch; display: grid; gap: 10px; padding: 20px 22px; border-radius: var(--r-card); background: #fff; border: 1px solid var(--line); }
-.xsk-lk-file .x-mono { margin-bottom: 4px; font-size: 13px; font-weight: 500; color: var(--ink); }
-.xsk-lk-file i { display: block; height: 7px; border-radius: 4px; background: #e5e5e5; }
-.xsk-lk-file em { position: relative; isolation: isolate; justify-self: start; margin: 4px 0 0 -8px; padding: 4px 8px; border-radius: 6px; font-style: normal; font-size: 13px; color: var(--ink); }
-.xsk-lk-file em::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--hl); transform-origin: 0 50%; transform: scaleX(var(--on, 0)); transition: transform .5s var(--e-em) .3s; }
-.xsk-lk-v { display: block; width: 2px; height: 40px; margin-left: 26px; background: var(--ink); transform-origin: 50% 0; transform: scaleY(var(--on, 0)); transition: transform .4s var(--e-io) .8s; }
-.xsk-lk-row { display: flex; align-items: center; }
-.xsk-lk-stub { display: inline-flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 12px; border: 1px dashed rgba(0, 0, 0, .3); background: #fff; font-size: 13px; color: var(--ink); opacity: var(--on, 0); transform: translateY(calc((1 - var(--on, 0)) * 10px)); transition: opacity .3s var(--e-out) 1.15s, transform .4s var(--e-em) 1.15s; }
-.xsk-lk-stub.b { transition-delay: 1.75s; }
-.xsk-lk-h { flex: 0 0 48px; height: 2px; background: var(--ink); transform-origin: 0 50%; transform: scaleX(var(--on, 0)); transition: transform .4s var(--e-io) 1.4s; }
-/* 06: a new file drops onto the shelf and joins it */
+/* 05: a new file drops onto the shelf and joins it */
 .xsk-sc-new { display: grid; justify-items: end; }
 .xsk-sc-new .xsk-agent { width: 100%; }
 .xsk-sc-drop { position: relative; z-index: 1; width: 132px; display: grid; gap: 7px; margin: 0 28px -22px 0; padding: 14px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); transform: translateY(calc((1 - var(--on, 0)) * -56px)) rotate(calc((1 - var(--on, 0)) * -6deg)); opacity: var(--on, 0); transition: transform .5s var(--e-em) .15s, opacity .3s var(--e-out) .15s; }
@@ -176,14 +173,19 @@
 
 /* the dark room: a thread. It enters as a rounded card inside the gutters and opens to full width as it arrives
    (--o scrubs 0 to 1); pills and files share one bottom-aligned block. */
-.xsk-thread { padding: clamp(72px, 7vw, 104px) 0; clip-path: inset(0 calc((1 - var(--o, 1)) * var(--gut)) round calc((1 - var(--o, 1)) * 24px)); }
+.xsk-thread { --hl: #404040; padding: clamp(64px, 6vw, 88px) 0; clip-path: inset(0 calc((1 - var(--o, 1)) * var(--gut)) round calc((1 - var(--o, 1)) * 24px)); }
 .xsk-thread .a2-grid { align-items: end; row-gap: 40px; }
-/* desktop: the three steps stand in a column, each level with its file, and a rail beside them fills as the thread is read */
-.xsk-thread-copy { grid-column: 1 / span 4; align-self: stretch; display: flex; gap: 24px; }
-.xsk-steps { order: 2; display: flex; flex-direction: column; justify-content: space-around; align-items: flex-start; gap: 8px; }
-.xsk-rail { position: relative; display: block; flex: none; width: 2px; margin: 40px 0; border-radius: 2px; background: rgba(255, 255, 255, .14); overflow: hidden; }
-.xsk-rail::after { content: ''; position: absolute; inset: 0; background: #fafafa; transform-origin: 50% 0; transform: scaleY(var(--r, 1)); transition: transform .4s var(--e-io); }
-.xsk-steps button { position: relative; isolation: isolate; height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: none; color: #a3a3a3; font: 500 16px/1 var(--sans); cursor: pointer; transition: transform .09s var(--e-out); }
+/* point 05's heading and words lead; the three steps sit in one row under them, a rail under the row fills as the
+   thread is read, and the row's foot shares the last file's baseline */
+.xsk-thread-copy { grid-column: 1 / span 5; display: grid; align-content: end; }
+.xsk-thread-h { max-width: none; }
+.xsk-thread .xsk-cap.a2-kick.show { margin: 12px 0 18px; color: #a3a3a3; }
+.xsk-thread-lede.a2-body { font-size: clamp(17px, 1.3vw, 19px); line-height: 1.55; color: #fafafa; }
+.xsk-thread-nav { display: grid; gap: 14px; margin-top: 32px; }
+.xsk-steps { display: flex; flex-wrap: nowrap; gap: 8px; }
+.xsk-rail { position: relative; display: block; width: 100%; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .14); overflow: hidden; }
+.xsk-rail::after { content: ''; position: absolute; inset: 0; background: #fafafa; transform-origin: 0 50%; transform: scaleX(var(--r, 1)); transition: transform .4s var(--e-io); }
+.xsk-steps button { flex: none; white-space: nowrap; position: relative; isolation: isolate; height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: none; color: #a3a3a3; font: 500 16px/1 var(--sans); cursor: pointer; transition: transform .09s var(--e-out); }
 .xsk-steps button::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: #fafafa; opacity: 0; transition: opacity .15s var(--e-out); }
 .xsk-steps button[aria-pressed='true'] { color: #000; border-color: #fafafa; }
 .xsk-steps button[aria-pressed='true']::before { opacity: 1; }
@@ -193,7 +195,7 @@
   .xsk-steps button:hover { border-color: rgba(255, 255, 255, .4); color: #fafafa; }
   .xsk-steps button[aria-pressed='true']:hover { color: #000; border-color: #fafafa; }
 }
-.xsk-files { grid-column: 5 / span 8; display: grid; gap: 16px; }
+.xsk-files { grid-column: 7 / span 6; display: grid; gap: 16px; }
 .xsk-f { position: relative; margin-left: calc(var(--i) * 16%); width: 62%; display: grid; gap: 10px; padding: 20px 22px; border-radius: 20px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); transform: translateY(8px); transition: transform .5s var(--e-em), opacity .3s var(--e-out); }
 .xsk-f::after { content: ''; position: absolute; inset: -1px; border-radius: inherit; border: 1px solid rgba(255, 255, 255, .4); opacity: 0; transition: opacity .3s var(--e-out); pointer-events: none; }
 .xsk-f > * { opacity: .25; transition: opacity .3s var(--e-out); }
@@ -204,8 +206,12 @@
 .xsk-f.peek { transform: translateY(-8px) scale(1.02); }
 .xsk-files.peeking .xsk-f:not(.peek) { opacity: .4; }
 .xsk-f .x-mono { font-size: 13px; color: #fafafa; }
+.xsk-f-ln { margin: 2px 0 4px; font-size: 16px; line-height: 1.4; color: #fafafa; }
 .xsk-f i { display: block; height: 8px; border-radius: 4px; background: #262626; }
-.xsk-f em { font-style: normal; font-size: 12.5px; color: #a3a3a3; }
+/* the link line is struck once its file is read (the grey highlighter, dark-room shade) */
+.xsk-f em { position: relative; isolation: isolate; justify-self: start; margin: 2px 0 0 -8px; padding: 3px 8px; border-radius: 6px; font-style: normal; font-size: 13px; color: #d4d4d4; }
+.xsk-f em::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--hl); transform-origin: 0 50%; transform: scaleX(0); transition: transform .5s var(--e-em) .15s; }
+.xsk-f.on em::before { transform: none; }
 
 /* get: the heading leads, the card is the object under it */
 .xsk-get-in { display: grid; justify-items: center; gap: 44px; }
@@ -220,15 +226,19 @@
 @media (hover: hover) { .xsk-get-meta a:hover { text-decoration-color: currentColor; } }
 .xsk-get-shelf { grid-area: shelf; align-self: center; }
 .xsk-deploy { grid-area: ask; justify-self: start; align-self: end; height: 48px; padding: 0 24px; font-size: 16px; background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .3); }
-/* the install's done line: the command bar runs out, three output lines draw, the tick lands */
+/* the install's done line: the real command types once, three output lines draw, the tick lands */
 .xsk-get-done { display: grid; gap: 14px; padding: 20px; border-radius: var(--r-card); background: #171717; }
-.xsk-gd-cmd { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #a3a3a3; }
-.xsk-gd-cmd i { flex: 1; height: 7px; border-radius: 4px; background: #404040; transform-origin: 0 50%; transform: scaleX(0); transition: transform .9s var(--e-io) .15s; }
+.xsk-gd-cmd { display: flex; align-items: flex-start; gap: 10px; min-height: 3.2em; margin: 0; font-size: 13px; line-height: 1.6; color: #fafafa; }
+.xsk-gd-cmd .d { flex: none; color: #a3a3a3; }
+.xsk-gd-type { min-width: 0; overflow-wrap: anywhere; }
+.xsk-gd-type .xsk-caret { display: inline-block; width: 2px; height: 14px; margin-left: 2px; vertical-align: -2px; opacity: 0; }
+.xsk-get-done.seen:not(.on) .xsk-gd-type .xsk-caret { opacity: 1; }
 .xsk-gd-out { display: grid; gap: 9px; }
-.xsk-gd-out i { display: block; height: 6px; border-radius: 3px; background: #262626; transform-origin: 0 50%; transform: scaleX(0); transition: transform .4s var(--e-em) calc(var(--k) * 90ms + 1.05s); }
-.xsk-gd-ok { margin: 0; font-size: 13.5px; opacity: 0; transform: translateY(8px); transition: opacity .3s var(--e-out) 1.4s, transform .4s var(--e-em) 1.4s; }
-.xsk-get-done.on :is(.xsk-gd-cmd i, .xsk-gd-out i, .xsk-gd-ok) { transform: none; }
+.xsk-gd-out i { display: block; height: 6px; border-radius: 3px; background: #262626; transform-origin: 0 50%; transform: scaleX(0); transition: transform .4s var(--e-em) calc(var(--k) * 90ms + .09s); }
+.xsk-gd-ok { margin: 0; font-size: 13.5px; opacity: 0; transform: translateY(8px); transition: opacity .3s var(--e-out) .4s, transform .4s var(--e-em) .4s; }
+.xsk-get-done.on :is(.xsk-gd-out i, .xsk-gd-ok) { transform: none; }
 .xsk-get-done.on .xsk-gd-ok { opacity: 1; }
+html:not(.js) .xsk-get-done :is(.xsk-gd-out i, .xsk-gd-ok) { transform: none; opacity: 1; }
 .xsk-gd-row { position: relative; isolation: isolate; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .08); color: #fafafa; transition: transform .4s var(--e-em); }
 .xsk-gd-row::before { content: ''; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: #fafafa; opacity: 0; transition: opacity .3s var(--e-out); }
 @media (hover: hover) {

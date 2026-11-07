@@ -393,6 +393,31 @@ function RoomArt({ k }) {
   );
 }
 
+/* The six features as checkpoints along one thread, from the mention to the merge: the line fills as you scroll
+   down it, each checkpoint it reaches turns to ink, and the one at the head of the fill is drawn in full. Under
+   reduced motion the whole thread is reached. The sheet still carries each one's sentence. */
+function Thread() {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const [at, setAt] = useState(0);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 72%', 'end 52%'] });
+  useMotionValueEvent(p, 'change', (v) => { if (!calm) setAt(Math.min(5, Math.max(0, Math.floor(v * 6)))); });
+  const k = calm ? 5 : at;
+  return (
+    <div className={`${P}-thr`} ref={ref}>
+      <p className={`${P}-thr-bar`} aria-hidden="true"><i /><i /><i /></p>
+      <div className={`${P}-thr-body`}>
+        <i className={`${P}-thr-line`} aria-hidden="true"><motion.b style={{ scaleY: calm ? 1 : p }} /></i>
+        <ol className={`${P}-thr-l`}>
+          {BUILT.items.map(([t], i) => (
+            <li key={t} className={i < k ? 'past' : i === k ? 'on' : ''} aria-current={i === k ? 'step' : undefined}><i aria-hidden="true" /><span>{t}</span></li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 /* What it is: the three rooms as one tile that swaps, and the six features one tap away. */
 function What() {
   const [i, setI] = useState(0);
@@ -426,7 +451,7 @@ function What() {
             <p className="a2-kick">{BUILT.kick}</p>
             <h2 className="a2-headline">{BUILT.title}</h2>
           </div>
-          <ul className={`${P}-built-l`}>{BUILT.items.map(([t]) => <li key={t}>{t}</li>)}</ul>
+          <Thread />
           <div className={`${P}-built-acts`}>
             <A2Sheet label="How each one works" title={BUILT.title} btnClass={`${P}-sheet-btn`}>
               <ul className={`${P}-runs`}>{BUILT.items.map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}</ul>
@@ -439,9 +464,21 @@ function What() {
   );
 }
 
-/* One runtime, four places: a line the signal runs along, a drop to each product, the one you point at in ink. */
+/* One runtime, four places: the rail is the object. A signal runs along the line; the product you point at (tap, or
+   reach with the arrow keys) drops from it and grows into an ink node carrying its name, and only its sentence shows
+   under the rail, swapping like the rooms tile. The other three stay names on the line. Every sentence stays in the HTML. */
 function Platform() {
   const [i, setI] = useState(0);
+  const tabs = useRef(null);
+  const key = (e) => {
+    const n = PLATFORM.items.length;
+    const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
+    if (k === undefined) return;
+    e.preventDefault();
+    const j = (k + n) % n;
+    setI(j);
+    tabs.current?.children[j]?.focus();
+  };
   return (
     <section className={`a2-sec ${P}-plat`} aria-labelledby="xsq-plat-h">
       <div className="a2-wrap">
@@ -449,18 +486,23 @@ function Platform() {
           <p className="a2-kick">{PLATFORM.kick}</p>
           <h2 id="xsq-plat-h" className="a2-headline">{PLATFORM.title}</h2>
         </div>
-        <div className={`${P}-plat-map`} aria-hidden="true">
-          <i className={`${P}-plat-rail`}><b /></i>
-          {PLATFORM.items.map(([t], k) => <i key={t} className={`${P}-plat-drop` + (i === k ? ' on' : '')} style={{ '--k': k }} />)}
+        <div className={`${P}-plat-map`}>
+          <i className={`${P}-plat-rail`} aria-hidden="true"><b /></i>
+          <div className={`${P}-plat-stops`} role="tablist" aria-label={PLATFORM.kick} onKeyDown={key} ref={tabs}>
+            {PLATFORM.items.map(([t], k) => (
+              <button key={t} type="button" role="tab" id={`${P}-pt-${k}`} aria-selected={i === k} aria-controls={`${P}-pp-${k}`} tabIndex={i === k ? 0 : -1}
+                className={`${P}-plat-stop` + (i === k ? ' on' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setI(k); }} onClick={() => setI(k)}>
+                <i className={`${P}-plat-drop`} aria-hidden="true" />
+                <span className={`${P}-plat-name`}>{t}</span>
+              </button>
+            ))}
+          </div>
+          <div className={`${P}-plat-stage`}>
+            {PLATFORM.items.map(([t, d], k) => (
+              <p key={t} id={`${P}-pp-${k}`} role="tabpanel" aria-labelledby={`${P}-pt-${k}`} aria-hidden={i !== k} className={i === k ? 'on' : ''} style={{ '--c': Math.min(k, 2) + 1 }}>{d}</p>
+            ))}
+          </div>
         </div>
-        <ol className={`${P}-plat-l`}>
-          {PLATFORM.items.map(([t, d], k) => (
-            <li key={t} className={i === k ? 'on' : ''} tabIndex={0} aria-current={i === k ? 'true' : undefined} onPointerEnter={() => setI(k)} onFocus={() => setI(k)} onClick={() => setI(k)}>
-              <span className={`${P}-mark m${k}`} aria-hidden="true"><i /><i /><i /><i /></span>
-              <h3>{t}</h3><p>{d}</p>
-            </li>
-          ))}
-        </ol>
         <div className={`${P}-runtime`}>
           <p>{PLATFORM.runtime}</p>
           <ul>{PLATFORM.links.map(([t, to]) => <li key={t}><A to={to} className={`${P}-rt`}>{t}</A></li>)}</ul>

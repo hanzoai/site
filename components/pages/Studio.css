@@ -37,7 +37,9 @@
 #xst-cinema { scroll-margin-top: 84px; }
 
 .xst-mon, .xst-insp { border-radius: var(--r-hero) !important; }
-.xst-desk { display: grid; grid-template-columns: minmax(0, 8.2fr) minmax(0, 3.8fr); gap: 14px; }
+.xst-desk { display: grid; grid-template-columns: minmax(0, 8.2fr) minmax(0, 3.8fr); grid-template-areas: 'mon insp' 'specs insp'; grid-template-rows: auto 1fr; column-gap: 14px; }
+.xst-mon { grid-area: mon; }
+.xst-insp { grid-area: insp; }
 .xst-mon { min-width: 0; border-radius: 20px; background: #0a0a0a; border: 1px solid var(--d-line); padding: 10px; }
 
 /* the viewer: anamorphic 2.39:1, the move runs on the still */

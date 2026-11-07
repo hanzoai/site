@@ -257,7 +257,7 @@
 .xtg-pin { position: relative; }
 /* the stage pins at the middle of the screen, so the strip and its sheet sit as one object while the six step past */
 .xtg-pin-stage { position: sticky; top: max(96px, calc(50vh - 190px)); z-index: 1; display: grid; gap: 12px; }
-.xtg-pin-run { height: 360px; }
+.xtg-pin-run { height: 480px; }
 .xtg-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
 .xtg-strip button { position: relative; display: grid; align-content: start; justify-items: start; gap: 14px; min-height: 124px; padding: 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: #fff; text-align: left; font: 500 15px/1.3 var(--sans); color: var(--faint); cursor: pointer; transition: color .15s var(--e-out), background-color .15s var(--e-out), border-color .15s var(--e-out), transform .09s var(--e-out); }
 @media (hover: hover) { .xtg-strip button:hover { color: var(--ink); border-color: rgba(0, 0, 0, .2); } }
@@ -471,7 +471,7 @@
 
   /* built: the strip becomes a pill rail pinned with its sheet, so the sheet changes where you are looking */
   .xtg-pin-stage { top: 72px; gap: 10px; }
-  .xtg-pin-run { height: 300px; }
+  .xtg-pin-run { height: 360px; }
   .xtg-strip { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 4px 16px; background: #fff; }
   .xtg-strip::-webkit-scrollbar { display: none; }
   .xtg-strip button { flex: none; display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px 0 6px; border-radius: 999px; white-space: nowrap; font-size: 14.5px; }

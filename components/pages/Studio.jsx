@@ -52,6 +52,12 @@ const SPECS = [
   'Multi-shot NLE timeline sequencer with frame-chained Koma 2.0 video, Oto foley, Uta score & Node Graph pipeline',
 ];
 const pad = (n) => String(n).padStart(2, '0');
+// bring one item of a horizontal rail to its centre by scrolling the rail itself (never the page)
+const follow = (rail, el, smooth) => {
+  if (!rail || !el || rail.scrollWidth <= rail.clientWidth + 1) return;
+  const r = rail.getBoundingClientRect(), b = el.getBoundingClientRect();
+  rail.scrollTo({ left: rail.scrollLeft + (b.left + b.width / 2) - (r.left + r.width / 2), behavior: smooth ? 'smooth' : 'auto' });
+};
 const wave = (k, n) => Array.from({ length: n }, (_, i) => 22 + ((i * 37 + k * 23) % 61)); // a fixed waveform per clip
 
 function Cinema() {
@@ -64,6 +70,11 @@ function Cinema() {
   const [model, setModel] = useState(1);
   const t = useRef(0), cur = useRef(0), sec = useRef(-1), drag = useRef(false);
   const imgs = useRef([]), lanes = useRef(null), ph = useRef(null), tc = useRef(null), bar = useRef(null), ret = useRef(null);
+  const lib = useRef(null), inLib = useRef(false);
+  useEffect(() => { // the library rail follows the shot on the monitor (left alone while the pointer is in it)
+    if (inLib.current) return;
+    follow(lib.current, lib.current?.querySelector('[aria-pressed="true"]')?.parentElement, !calm);
+  }, [shot, calm]);
 
   // one frame of the film, written straight to the elements (no React render per frame)
   const paint = () => {
@@ -171,7 +182,8 @@ function Cinema() {
           <i className="xst-caret" aria-hidden="true" />
         </A>
         <p className="xst-ik">Library</p>
-        <ul className="xst-lib">
+        {/* three tiles show, the rest wait in the rail with a peek; the rail follows the shot that is playing */}
+        <ul className="xst-lib" ref={lib} onPointerEnter={() => { inLib.current = true; }} onPointerLeave={() => { inLib.current = false; }}>
           {LIB.map(([m, t, k]) => (
             <li key={t}>
               <button type="button" aria-pressed={shot === k && SHOTS[k].title === t} className={MODELS[model] === NAME[m] ? 'mine' : ''} onClick={() => go(k)}>
@@ -181,7 +193,10 @@ function Cinema() {
             </li>
           ))}
         </ul>
+        <p className="xst-note">Hanzo Studio runs at studio.hanzo.ai on dedicated Hanzo Cloud GPUs.</p>
       </aside>
+      {/* Hanzo's three specs, one compact line each, straight under the timeline: no band of their own */}
+      <ul className="xst-specs">{SPECS.map((x, i) => <li key={x}><span className="x-mono">{pad(i + 1)}</span><span>{x}</span></li>)}</ul>
     </div>
   );
 }
@@ -216,10 +231,6 @@ function Hero() {
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}>
           <Cinema />
         </motion.div>
-        <div className="xst-foot">
-          <ul className="xst-specs">{SPECS.map((t, i) => <li key={t}><span className="x-mono">{pad(i + 1)}</span><span>{t}</span></li>)}</ul>
-          <p className="xst-note">Hanzo Studio runs at studio.hanzo.ai on dedicated Hanzo Cloud GPUs.</p>
-        </div>
       </div>
     </section>
   );
