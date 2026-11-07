@@ -36,10 +36,12 @@ const ARRIVE = { duration: 0.3, ease: EASE_OUT_EXPO };
 
 /* the tokens the shorthands accept */
 const SPACE = { $2: 8, $3: 12, $4: 16, $6: 24 };
-const BG = { $background: '#ffffff', $color2: '#e5e5e5', $accent: '#0a0a0a' };
+/* token names only from the scale the page's own code uses ($4, $8): no invented names */
+const BG = { $2: '#ffffff', $4: '#e5e5e5', $8: '#0a0a0a' };
+const INKY = '$8';
 const ROUND = { $2: 6, $4: 14, $8: 26 };
 const TOK = { p: SPACE, bg: BG, rounded: ROUND };
-const PRESETS = [{ p: '$4', bg: '$background', rounded: '$4' }, { p: '$6', bg: '$color2', rounded: '$8' }, { p: '$3', bg: '$accent', rounded: '$2' }];
+const PRESETS = [{ p: '$4', bg: '$2', rounded: '$4' }, { p: '$6', bg: '$4', rounded: '$8' }, { p: '$3', bg: '$8', rounded: '$2' }];
 const PLAT = [['iOS', 'Native', 'ios'], ['Android', 'Native', 'android'], ['Web', 'Atomic CSS', 'web'], ['Desktop', 'macOS · Win · Linux', 'desk']];
 const OK = (k, val) => TOK[k][val] !== undefined;
 
@@ -55,7 +57,7 @@ function Settle({ children, className = '' }) {
 /* Hanzo's Welcome component: a YStack with a Text and a Button. parts outlines the primitives it is made of;
    delay lets the four frames take a new state one after another (a wave across the platforms). */
 function Welcome({ v, parts, delay = 0 }) {
-  const dark = v.bg === '$accent';
+  const dark = v.bg === INKY;
   const r = ROUND[v.rounded];
   const tr = delay ? { ...SHAPE, delay, backgroundColor: { ...INK, delay }, color: { ...INK, delay } } : SHAPE;
   return (
