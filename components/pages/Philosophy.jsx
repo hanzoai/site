@@ -153,7 +153,7 @@ function LawStage({ at }) {
   const [main, sub] = split(LAST[1]);
   return (
     <div className="xph-law-stage" ref={ref}>
-      <div className="xph-law-hx" style={{ '--w': 'clamp(220px, 24vw, 340px)' }} aria-hidden="true">
+      <div className="xph-law-hx" style={{ '--w': 'clamp(240px, 27vw, 400px)' }} aria-hidden="true">
         {ls.map((y, i) => (
           <div key={i} className="xph-law-row" data-on={i < drawn} data-hot={i === (done ? 5 : at)}>
             <span className={'xph-hl ' + (y ? 'yang' : 'yin')}><i /><i /></span>

@@ -54,23 +54,24 @@ button.xph-hl:focus-visible { outline: 2px solid var(--acc); outline-offset: 6px
 .xph-laws-h { max-width: 12ch; }
 .xph-laws .pf-pin-t .pf-kick { color: var(--acc); }
 .xph-laws .pf-head { max-width: 14ch; }
-.xph-law-stage { display: grid; justify-items: center; gap: 48px; }
+.xph-law-stage { display: grid; justify-items: start; gap: 56px; padding-left: 6%; }
 .xph-law-hx { --w: 300px; display: flex; flex-direction: column-reverse; gap: calc(var(--w) * .07); }
 .xph-law-row { position: relative; width: var(--w); }
-.xph-law-row .xph-hl i { opacity: .08; transition: opacity .6s var(--ease), transform .7s cubic-bezier(.34, 1.4, .64, 1), background-color .5s; }
+.xph-law-row .xph-hl::before { content: ''; position: absolute; inset: 0; border-radius: calc(var(--w) * .018); background: rgba(0, 0, 0, .06); transition: opacity .5s var(--ease); }
+.xph-law-row[data-on='true'] .xph-hl::before { opacity: 0; }
+.xph-law-row .xph-hl i { opacity: 0; transition: opacity .6s var(--ease), transform .7s cubic-bezier(.34, 1.4, .64, 1), background-color .5s; }
 .xph-law-row[data-on='true'] .xph-hl i { opacity: 1; }
 .xph-law-row[data-hot='true'] .xph-hl { color: var(--acc); }
 .xph-law-row[data-hot='true'][data-on='true'] .xph-hl i { animation: xph-breathe 2.4s ease-in-out infinite; }
 @keyframes xph-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
-.xph-law-lab { position: absolute; left: calc(100% + 28px); top: 50%; width: 220px; display: flex; gap: 10px; align-items: baseline; font-size: 15px; line-height: 1.25; color: var(--soft); white-space: normal; opacity: 0; transform: translate3d(-10px, -50%, 0); transition: opacity .5s var(--ease), transform .6s var(--ease); }
+.xph-law-lab { position: absolute; left: calc(100% + 32px); top: 50%; width: 250px; display: flex; gap: 12px; align-items: baseline; font-size: 17px; line-height: 1.25; color: var(--soft); white-space: normal; opacity: 0; transform: translate3d(-10px, -50%, 0); transition: opacity .5s var(--ease), transform .6s var(--ease); }
 .xph-law-lab b { font-size: 13px; font-weight: 500; color: var(--faint); }
 .xph-law-row[data-on='true'] .xph-law-lab { opacity: 1; transform: translate3d(0, -50%, 0); }
 .xph-law-row[data-hot='true'] .xph-law-lab { color: var(--ink); }
 .xph-law-row[data-hot='true'] .xph-law-lab b { color: var(--acc); }
-.xph-law-cap { margin: 0; display: grid; justify-items: center; gap: 8px; text-align: center; font-size: clamp(22px, calc(1vw + 14px), 28px); font-weight: 560; letter-spacing: -.022em; color: var(--ink); opacity: 0; transform: translate3d(0, 12px, 0); transition: opacity .6s var(--ease), transform .7s var(--ease); }
+.xph-law-cap { margin: 0; display: grid; justify-items: start; gap: 8px; text-align: left; font-size: clamp(22px, calc(1vw + 14px), 28px); font-weight: 560; letter-spacing: -.022em; color: var(--ink); opacity: 0; transform: translate3d(0, 12px, 0); transition: opacity .6s var(--ease), transform .7s var(--ease); }
 .xph-law-cap span { font-size: 13px; font-weight: 500; letter-spacing: .08em; color: var(--acc); }
 .xph-law-cap[data-on='true'] { opacity: 1; transform: none; }
-.xph-law-stage { transform: translateX(-110px); }
 
 /* patterns */
 .xph-pat { padding-top: clamp(120px, 11vw, 160px); }
@@ -96,7 +97,8 @@ button.xph-hl:focus-visible { outline: 2px solid var(--acc); outline-offset: 6px
 .xph-tile { position: relative; display: grid; align-content: start; gap: 10px; min-height: 172px; padding: 16px 12px; border: 0; border-radius: 16px; background: none; text-align: left; color: var(--ink); cursor: pointer; transition: background-color .3s var(--ease); }
 .xph-tile:hover, .xph-tile:focus-visible { background: var(--card); }
 .xph-tile:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.xph-tile .xph-hx { margin-bottom: 8px; }
+.xph-tile .xph-hx { margin-bottom: 8px; transition: transform .45s var(--ease), color .3s; }
+.xph-tile:hover .xph-hx, .xph-tile:focus-visible .xph-hx { transform: translate3d(0, -4px, 0); }
 .xph-tile:hover .xph-hx { color: var(--acc); }
 .xph-tile-n { font-size: 13px; color: var(--faint); }
 .xph-tile-t { font-size: 16px; font-weight: 560; line-height: 1.2; letter-spacing: -.01em; }
@@ -225,7 +227,7 @@ button.xph-hl:focus-visible { outline: 2px solid var(--acc); outline-offset: 6px
 
 @media (max-width: 1200px) {
   .xph-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .xph-law-stage { transform: translateX(-80px); }
+  .xph-law-stage { padding-left: 0; }
   .xph-law-lab { width: 170px; }
 }
 
@@ -246,7 +248,7 @@ button.xph-hl:focus-visible { outline: 2px solid var(--acc); outline-offset: 6px
   .xph-laws .pf-pin-flat-c { border-top: 1px solid var(--line); padding-top: 40px; }
   .xph-laws .pf-pin-flat-c + .pf-pin-flat-c { margin-top: 64px; }
   .xph-laws .pf-pin-t-in .pf-kick { color: var(--acc); }
-  .xph-law-stage { transform: none; justify-items: start; gap: 28px; }
+  .xph-law-stage { padding-left: 0; gap: 28px; }
   .xph-law-hx { --w: 120px !important; }
   .xph-law-lab { left: calc(100% + 18px); width: calc(100vw - 120px - 18px - 40px); font-size: 14px; }
   .xph-law-row[data-on='true']:not([data-hot='true']) .xph-law-lab { opacity: 0; }
