@@ -248,6 +248,7 @@ function Race() {
   // with motion the board starts ready (0.00 s) and races when reached; with reduced motion it shows the finished race
   useEffect(() => { t.set(matchMedia('(prefers-reduced-motion: reduce)').matches ? MAX : 0); }, [calm, t]);
   const demo = useDemo(board, async (sleep) => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { t.set(MAX); return; } // calm: the finished race, never 0.00
     let v = 0;
     t.set(0);
     await sleep(500);
@@ -607,6 +608,7 @@ function Source() {
 }
 
 /* ---------- 7. paste and ship, then the closing Band ---------- */
+const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fdev'; // the Go plan, approved by James for the close
 const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Dev in my project. Start with: dev';
 function Paste() {
   return (
@@ -632,7 +634,7 @@ export default function DevPage() {
       <Setup />
       <Source />
       <Paste />
-      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<Lk to={DOCS} id="dev.close-docs">Read the docs</Lk>} />
+      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<><Cta kind="quiet" to={GO} id="dev.close-go" className="xdv-go">Get Hanzo Dev, $8/month</Cta><Lk to={DOCS} id="dev.close-docs">Read the docs</Lk></>} />
     </main>
   );
 }
