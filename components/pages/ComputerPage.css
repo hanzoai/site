@@ -14,6 +14,8 @@
 .cp-hero .x-arrow { color: #fafafa; }
 .cp-dom { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 .cp-stage { width: min(100% - 48px, 1152px); margin: 32px auto 0; }
+.js .cp-settle { animation: cp-arrive .9s cubic-bezier(.16, 1, .3, 1) .25s both; }
+@keyframes cp-arrive { from { opacity: 0; } to { opacity: 1; } }
 
 .cp-obj { padding: 8px; border-radius: 24px; background: #171717; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); }
 .cp-desk { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #000; isolation: isolate; }
@@ -270,6 +272,14 @@
 .cp-meta dd { display: flex; align-items: center; min-height: 44px; margin: 4px 0 0; color: #0a0a0a; }
 .cp-src { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-underline-offset: 3px; }
 .cp-meta dd .x-mono { margin-left: 6px; font-size: 13px; color: #525252; }
+.cp-term { align-self: stretch; margin: 10px 0 6px; border-radius: 16px; background: #171717; overflow: hidden; }
+.cp-term-bar { display: flex; gap: 6px; padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.cp-term-bar i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .2); }
+.cp-term code { display: flex; align-items: center; gap: 10px; padding: 20px 18px 24px; font-size: 15px; color: #fafafa; }
+.cp-term b { color: #a3a3a3; font-weight: 400; }
+.cp-term-c { width: 9px; height: 18px; margin-left: -4px; background: #fafafa; animation: cp-caret 1.1s steps(1) infinite; }
+/* the hero ask on black: hover darkens to silver so it reads, press scales */
+@media (hover: hover) { .cp-hero .x-btn[data-cta='computer-hero-try']:hover { background: #d4d4d4; } }
 .cp-band { padding: clamp(116px, 12vw, 188px) 0; }
 .cp-band .av-wrap { display: flex; flex-direction: column; align-items: center; }
 .x-band h2.cp-band-h { font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: 1.08; }
