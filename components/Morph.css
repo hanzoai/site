@@ -1,20 +1,24 @@
-/* Morph navigation (~600 ms). Hanzo's header never moves; the page turns; a clicked card opens into the hero. */
+/* Morph navigation (components/Morph.jsx). Hanzo's header never moves.
+   open: the card grows into a full-screen stage (600 ms). land: the stage settles into the new page's hero (600 ms).
+   leave / arrive: a small link dims the page at once and fades the next one in (opacity only, so pinned and fixed
+   parts of a page never jump). */
 header._z-z-header { view-transition-name: hz-header; }
 ::view-transition-group(hz-header) { animation: none; z-index: 3; }
-::view-transition-old(root) { animation: hz-turn-out .36s cubic-bezier(.7, 0, .84, 0) both; }
-::view-transition-new(root) { animation: hz-turn-in .6s cubic-bezier(.16, 1, .3, 1) both; }
-html[data-morph=open]::view-transition-old(root) { animation: hz-dim .45s ease both; }
+html[data-morph=open]::view-transition-old(root), html[data-morph=open]::view-transition-new(root),
+html[data-morph=land]::view-transition-old(root), html[data-morph=land]::view-transition-new(root) { animation: none; }
 ::view-transition-group(hz-morph) { animation-duration: .6s; animation-timing-function: cubic-bezier(.16, 1, .3, 1); z-index: 2; }
 ::view-transition-old(hz-morph), ::view-transition-new(hz-morph) { height: 100%; width: 100%; object-fit: cover; overflow: clip; }
-::view-transition-old(hz-morph) { animation: hz-fade-out .3s ease both; }
-::view-transition-new(hz-morph) { animation: hz-fade-in .44s .1s ease both; }
-@keyframes hz-turn-out { to { opacity: 0; transform: translateY(-3%) scale(.985); } }
-@keyframes hz-turn-in { from { opacity: 0; transform: translateY(5%); clip-path: inset(8% 0 0 0 round 24px); } to { opacity: 1; transform: none; clip-path: inset(0 0 0 0 round 0); } }
-@keyframes hz-dim { to { opacity: 0; transform: scale(.97); filter: brightness(.9); } }
+html[data-morph=open]::view-transition-old(hz-morph) { animation: hz-fade-out .45s cubic-bezier(.22, 1, .36, 1) both; }
+html[data-morph=open]::view-transition-new(hz-morph) { animation: hz-fade-in .3s .12s cubic-bezier(.22, 1, .36, 1) both; }
+html[data-morph=land]::view-transition-old(hz-morph) { animation: hz-fade-out .5s .1s cubic-bezier(.22, 1, .36, 1) both; }
+html[data-morph=land]::view-transition-new(hz-morph) { animation: hz-fade-in .35s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes hz-fade-out { to { opacity: 0; } }
 @keyframes hz-fade-in { from { opacity: 0; } }
-html[data-morph=back]::view-transition-old(root) { animation: hz-back-out .32s cubic-bezier(.7, 0, .84, 0) both; }
-html[data-morph=back]::view-transition-new(root) { animation: hz-back-in .5s cubic-bezier(.16, 1, .3, 1) both; }
-@keyframes hz-back-out { to { opacity: 0; transform: translateY(3%) scale(.985); } }
-@keyframes hz-back-in { from { opacity: 0; transform: translateY(-4%); } }
-@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
+.x-stage { position: fixed; inset: 0; z-index: 250; overflow: hidden; pointer-events: none; }
+.x-stage-m { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.x-stage-t { position: absolute; left: max(24px, calc((100vw - 1200px) / 2)); right: 24px; bottom: 14vh; margin: 0; max-width: 14ch; font: 560 clamp(48px, 7.2vw, 112px)/1.02 var(--sans); letter-spacing: -.045em; text-wrap: balance; animation: hz-stage-t .6s .18s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes hz-stage-t { from { opacity: 0; transform: translateY(24px); } }
+html[data-morph=leave] main { opacity: .35; transition: opacity .25s cubic-bezier(.7, 0, .84, 0); }
+html[data-morph=arrive] main { animation: hz-arrive .5s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes hz-arrive { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } html[data-morph] main { opacity: 1 !important; animation: none !important; } }
