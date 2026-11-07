@@ -412,3 +412,6 @@ a.cm-chip:active { transform: scale(.97); }
   .cm-order, .cm-dot, .cm-row-t, .cm-tile-art svg, .cm-run-art svg > *, .cm-spec dd, .cm-spec dd p, .cm-spec-pm::after, .cm-bd-row { transition: none; }
   .cm-fl-c.go, [data-enter], [data-enter] * { animation: none !important; }
 }
+
+/* 8 Nov: the close stands alone on its screen, a full section pad below the ways and Get Commerce */
+.cm-end { padding-top: clamp(116px, 12vw, 188px); }

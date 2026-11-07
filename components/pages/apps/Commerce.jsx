@@ -614,8 +614,26 @@ function End() {
 
 /* Order: the hero's rail, then the board (the signature) with the processor switch right under it, so switching
    re-flips the board a scroll above; then the black finder, the nouns, the spec sheet, the shapes, the ways, the close. */
+/* one solid fill at the close: while the close's solid "Read the docs" is on screen the header's ask goes quiet
+   (html[data-ask=quiet], the shell's own switch), said again after the shell's scroll pass */
+function useQuietAtClose() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const el = document.querySelector('[data-cta="commerce.close"]');
+    if (!el) return;
+    let on = false, mine = false, t = 0;
+    const apply = () => { if (on) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
+    const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; apply(); });
+    io.observe(el);
+    const onScroll = () => { clearTimeout(t); if (on) t = setTimeout(apply, 160); };
+    addEventListener('scroll', onScroll, { passive: true });
+    return () => { io.disconnect(); clearTimeout(t); removeEventListener('scroll', onScroll); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
 export default function Commerce() {
   const [pick, setPick] = useState(0);
+  useQuietAtClose();
   return (
     <main className="bz cm">
       <span data-ask-name="Hanzo Commerce" hidden />
