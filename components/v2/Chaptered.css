@@ -24,16 +24,22 @@
 .xpc-stage { position: relative; height: min(76svh, 720px); }
 .xpc-stage-in { position: absolute; inset: 0; }
 .xpc-story { display: none; }
+.xpc-t.st { max-width: 20ch; font-size: clamp(1.75rem, 2.8vw, 2.5rem); line-height: 1.12; letter-spacing: -.03em; font-weight: 560; }
 .xp-dark.xpc .xpc-rail button::before { background: #0a0a0a; border-color: rgba(255, 255, 255, .25); }
 .xp-dark.xpc .xpc-track { background: rgba(255, 255, 255, .12); }
 
 @media (max-width: 900px) {
-  .xpc { --pinned: 0; height: auto; padding: 112px 0; }
+  .xpc { --pinned: 0; height: auto; padding: 96px 0; }
   .xpc-pin { display: none; }
-  .xpc-story { display: grid; gap: 88px; }
-  .xpc-story .xpc-head { margin-bottom: -40px; }
-  .xpc-sch { display: grid; gap: 0; }
-  .xpc-sstage { position: relative; height: 380px; margin-bottom: 32px; }
-  .xpc-sch .xp-kick { margin-bottom: 14px; color: var(--xp-accent); }
-  .xpc-sch .xpc-b { margin-top: 14px; }
+  /* phones: the chapters become a rail you swipe, one card per chapter, the next one peeking */
+  .xpc-story { display: block; width: 100%; }
+  .xpc-story .xpc-head { width: calc(100% - 32px); margin: 0 auto 28px; }
+  .xpc-rail-p { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 16px 8px; scrollbar-width: none; }
+  .xpc-rail-p::-webkit-scrollbar { display: none; }
+  .xpc-sch { flex: 0 0 84%; scroll-snap-align: center; display: grid; align-content: start; gap: 0; }
+  .xpc-sstage { position: relative; height: 340px; margin-bottom: 24px; }
+  .xpc-sch .xpc-b { margin-top: 12px; }
+  .xpc-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+  .xpc-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--room-line-strong, rgba(0, 0, 0, .2)); transition: transform .3s var(--xp-ease), background .3s; }
+  .xpc-dots i.on { background: var(--room-ink); transform: scale(1.4); }
 }
