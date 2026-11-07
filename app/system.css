@@ -216,6 +216,24 @@ main:focus, .x-main-mark:focus { outline: none; }
 .x-state.error { border-style: solid; }
 .x-state .x-state-mark { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--room-fill-strong); color: var(--room-soft); }
 
+/* ---------- Cta sizes ---------- */
+.x-btn.lg { height: 52px; padding: 0 28px; font-size: 16px; }
+
+/* ---------- CodeBlock ---------- */
+.x-codeblock { margin: 0; border-radius: 16px; background: #0a0a0b; color: #e8e8ed; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
+.x-codeblock-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 6px 8px 6px 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); font: 500 12px/1 var(--mono); color: #a1a1a6; }
+.x-codeblock .x-copy { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .12); color: #d2d2d7; height: 32px; }
+.x-codeblock pre { margin: 0; padding: 16px; overflow: auto; overscroll-behavior: contain; font: 400 13.5px/1.65 var(--mono); tab-size: 2; white-space: pre; }
+.x-codeblock pre:focus-visible { outline-offset: -3px; }
+.x-codeblock-l.c { color: #86868b; }
+.x-codeblock-p { color: #6e6e73; user-select: none; -webkit-user-select: none; }
+
+/* ---------- Stat ---------- */
+.x-stat { display: flex; flex-direction: column; gap: 8px; }
+.x-stat-v { display: inline-block; font-size: var(--fs-figure); font-weight: 600; letter-spacing: -.03em; line-height: 1; font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; color: var(--room-ink); }
+.x-stat-l { font-size: 15px; color: var(--room-soft); }
+.x-stat-n { font-size: 12.5px; color: var(--room-faint); }
+
 /* ---------- forms (Hanzo's own fields, not browser defaults) ---------- */
 .x-field { display: flex; flex-direction: column; gap: 8px; }
 .x-field > label, .x-field-l { font-size: 13px; font-weight: 500; color: var(--room-soft); }
@@ -247,6 +265,33 @@ header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { transition: backg
 header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
 html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 @media (hover: hover) { html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--hover, rgba(0, 0, 0, .05)); } }
+
+/* ---------- header menus: the stage (a preview of the link under the pointer) and the phone sheet ---------- */
+.x-nav-panel { display: flex; align-items: stretch; background: #fff; } /* opaque: nothing of the page shows through */
+.x-nav-grid { flex: 1; min-width: 0; }
+.x-nav-stage { display: none; }
+@media (min-width: 1240px) {
+  .x-nav-stage { position: relative; display: flex; flex-direction: column; justify-content: flex-end; flex: none; width: 320px; margin: 20px 24px 28px 0; padding: 22px; border-radius: 20px; background: var(--hz-50); color: var(--hz-950); overflow: hidden; }
+  .x-nav-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(10, 10, 11, .22); }
+  .x-nav-stage-t { position: relative; display: flex; flex-direction: column; gap: 6px; }
+  .x-nav-stage-t b { font-size: 20px; font-weight: 560; letter-spacing: -.02em; line-height: 1.15; }
+  .x-nav-stage-t p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--hz-500); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .x-nav-stage-t span { font: 500 11.5px/1.2 var(--mono); color: var(--hz-400); overflow-wrap: anywhere; }
+}
+.x-sheet { display: flex; flex-direction: column; height: 100dvh; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); }
+.x-sheet-top { display: flex; align-items: center; gap: 4px; height: 68px; flex: none; }
+.x-sheet-home { font: 600 21px/1 var(--sans); letter-spacing: -.02em; color: var(--ink); text-decoration: none; margin-right: auto; }
+.x-sheet-s { width: 44px; height: 44px; margin-right: 52px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.x-sheet-x { top: 12px !important; width: 44px !important; height: 44px !important; }
+.x-sheet-list { flex: 1 0 auto; }
+.x-sheet-b { min-height: 56px; }
+.x-sheet-foot { flex: none; display: flex; flex-direction: column; gap: 12px; padding-top: 20px; }
+.x-sheet-lh { margin: 0 0 -4px; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.x-sheet-login { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.x-sheet-login a { display: flex; flex-direction: column; gap: 3px; min-height: 56px; justify-content: center; padding: 10px 14px; border-radius: 14px; background: var(--hz-50); color: var(--ink); text-decoration: none; }
+.x-sheet-login b { font-size: 15px; font-weight: 560; }
+.x-sheet-login span { font-size: 12.5px; color: var(--soft); }
+.x-sheet-ask { width: 100%; }
 
 /* ---------- the ask bar (components/Ask.jsx): one solid ask, after the hero, on every page and width ---------- */
 .x-ask { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .06); translate: -50% 0; max-width: calc(100vw - 32px); }

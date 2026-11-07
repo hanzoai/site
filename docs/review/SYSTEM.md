@@ -54,12 +54,18 @@ Nothing fades on hover. Press is a scale of .98 (or translateY of 1px for links)
 | Sheet | `<Sheet>` (kit) | Opens from the right on desktop and from the bottom on phones (drag down to close). Esc, the scrim and the close button shut it. Focus is trapped inside and returns to where it was. Scroll is held. |
 | Table | `.x-table-wrap > table.x-table` | Sticky header and first column, tabular figures, and a row hover fill. Mark the subject column's cells with `data-subject`; it gets a grey tint, never a hue. Use `.x-gap` on an honest "—". |
 | Field | `.x-field > label + .x-input2` | 48px tall with 16px text. `aria-invalid="true"` gives a dashed ink border. `.x-field-msg` holds the message. |
+| Button (preferred) | `<Cta to id kind size thumb busy disabled>` (kit) | The one button primitive from PLAN-COMPONENTS 2.4. `kind`: `solid` (one per screen), `quiet` (outlined) or `link` (text with a chevron). `size`: `sm`, `md` 44px or `lg` 52px. `id` is written as `data-cta` and sent as a `cta_click` event. `thumb` makes it the page's ask. Leaving for hanzo.ai or the console shows a short pressed state. |
+| Form field | `<Field label name type required autoComplete hint error as="textarea">` (kit) | A real `<label>` and 16px text, so phones never zoom. Hint and error are tied by `aria-describedby`. It checks itself on blur and sets `aria-invalid`. |
+| Data table | `<DataTable caption cols rows />` (kit) | `cols: [{ key, label, num, subject }]`. The first column is the row header. A missing value shows an honest "—". The wrapper scrolls by keyboard. |
+| Code | `<CodeBlock code label prompt />` (kit) | A 13.5/1.65 dark plate. Lines starting with `#` or `//` are dimmed. The `$ ` prompt cannot be selected or copied. Copy copies exactly what is shown. |
+| Figure | `<Stat value="1,600+" label note />` (kit) | Shows Hanzo's string byte for byte. It counts up once, only when it starts below the fold. |
+| FAQ | `<Faq items={[[q, a]]} multi first={0} />` (kit) | Closed answers are `hidden="until-found"`, so Find in page opens them and search engines read them. `#q-what-does-a-plan-cost` opens that answer on arrival. |
 | Loading | `<Skeleton lines={3} />` or `<Skeleton h={320} />` | Holds the exact box the content will take, so nothing moves when it arrives. |
 | Empty | `<Empty title detail action to />` | Pass Hanzo's own words. |
 | Error | `<Problem title detail onRetry action to />` | Has `role="alert"`. Pass Hanzo's own words. |
 
 ```jsx
-import { Tabs, TabPanel, Sheet, Skeleton, Empty, Problem, Img, Film } from '../kit';  // pages: '../../components/kit'
+import { Cta, Field, DataTable, CodeBlock, Stat, Faq, Tabs, TabPanel, Sheet, Skeleton, Empty, Problem, Img, Film } from '../kit';  // pages: '../../components/kit'
 const [i, setI] = useState(0);
 <Tabs id="plans" label="Plans" tabs={['Personal', 'Team', 'API']} value={i} onChange={setI} />
 <TabPanel id="plans" i={0} value={i}>…</TabPanel>
@@ -82,8 +88,8 @@ const [i, setI] = useState(0);
   - **Desktop:** a small bar at the bottom centre with the Hanzo mark, the page name (tap it to go back to the top), search and the ask.
   - **Phones (900px and under):** a full-width bar under the thumb.
   - It replaces the old phone thumb bar and reads the same attributes.
-- **While the bar shows,** the header's "Try Hanzo" turns from solid to outline, so only one solid button is on screen.
-- **`data-thumb` on your hero's main button.** The bar then carries your words and href, for example `<Go to="/contact-sales" solid data-thumb="Talk to sales">Talk to sales</Go>`. Without it, the bar carries the header's "Try Hanzo". The bar steps aside whenever any `[data-thumb]` button is on screen itself.
+- **One solid button on screen at any moment.** The header's "Try Hanzo" is an outline whenever any solid button of the page (`.x-btn.solid`, `[data-thumb]`, `.x-band`) is on screen, or the bar is showing; otherwise it is solid. The bar also steps aside while a page solid is in view.
+- **`data-thumb` on your hero's main button** (or `<Cta thumb>`). The bar then carries your words and href, for example `<Go to="/contact-sales" solid data-thumb="Talk to sales">Talk to sales</Go>`. Without it, the bar carries the header's "Try Hanzo". A `data-thumb` on a `display: contents` wrapper works too.
 - **Optional attributes:**
   - `data-ask-name="Hanzo Dev"`: the page name in the bar. The default is the first part of the `<title>`.
   - `data-ask-note="No card needed"`: a 12px risk line beside the button on desktop. Use Hanzo's words only.
@@ -102,7 +108,9 @@ const [i, setI] = useState(0);
   - Tab past the last link closes the menu and goes on to the next heading.
   - Shift+Tab from the first link returns to the heading.
   - Esc closes the menu and returns focus.
-- **Phones:** the Hanzo AI chevron opens a full-screen sheet of accordions.
+- **Stage (wide screens, 1240px and up):** the right of each menu previews the link under the pointer or focus. It shows the link's living Sigil and the page's own title and description from Hanzo's index.
+- **Phones:** the Hanzo AI chevron opens a full-screen sheet of accordions. The top has Hanzo AI, search and close. Rows are 56px. Hanzo's Log in choices and "Try Hanzo" are pinned at the bottom. Esc closes it, and Tab stays inside.
+- **The HTML is rendered on the server** (`components/Shell.jsx`), so the 375 KB `content.js` no longer ships in every page's JavaScript. Pages that still import `content.js` themselves (Home, Hero, Open, Agents, Platform, SetupMenu, ContactSales) carry it only on their own route; import just the field you need, or read it in a server component and pass it down.
 - **"Try Hanzo" no longer fades on hover.** Its fill shifts instead.
 - **No overlay blurs the page.** One backdrop blur per page, the header's. The menu scrim and the search backdrop are now a plain tint.
 - **The header does not hide on scroll.** Over 40 page stickies assume a 60px header at `top: 60px`, and hiding it would open gaps above all of them.
@@ -116,6 +124,9 @@ const [i, setI] = useState(0);
 - Small links turn the page while the header stays put.
 - Opt out with `data-no-morph`.
 - Pages are fetched on hover and on the first touch.
+- **Back and Forward** turn the page the other way and keep the scroll the browser restores.
+- **The screen is never held more than 700ms.** A slow page simply cuts over when it is ready.
+- **After every navigation, focus lands on the new page's `<main> h1`** (no ring, no scroll), so screen readers hear where they are. Keep one h1 per page inside `<main>`.
 - Reduced motion, new-tab clicks and browsers without View Transitions navigate instantly.
 
 ## 8. Fonts: no visible swap
@@ -193,9 +204,22 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 - **Focus.** One ring, 2px in the room's ink with a 3px offset. Never `outline: none` without a replacement.
 - **Reduced motion:** see section 2.
 - **Targets.** Hit targets are 44px or more on touch.
-- **Overlays.** Esc closes every overlay and returns focus.
+- **Overlays.** Esc closes every overlay and returns focus. Search, cookie preferences and `<Sheet>` trap Tab inside while open.
+- **Header behind sticky parts.** Use `top: var(--x-top)` (60px) for your own sticky parts. Anchors and focused elements stop 16px below the header (`scroll-padding-top`).
+- **Hover only on hover devices.** Wrap your own `:hover` rules in `@media (hover: hover)` so a tap on a phone does not leave things stuck in hover.
+- **Honest copy buttons.** `copyText(str)` from `components/ui.jsx` returns true only if the copy happened. Never show "Copied" otherwise.
+- **`useCalm()`** from `components/ui.jsx` is true under reduced motion and follows the setting live.
+- **Language menu.** Choosing a language no longer flips `<html lang>` or `dir`, because the content is English.
+
+## 11b. JS off: every word legible (PLAN 2.3, P1)
+
+- **Inline entrance states are cleared for you.** With JS off, a `<noscript>` rule clears every entrance state written inline into the server HTML: Motion's `initial={{ opacity: 0, y }}`, clip-paths and `visibility: hidden`.
+- **States your own CSS hides are yours to fix.** This covers chapter text shown one at a time, captions waiting for a scroll, and `opacity: 0` set in a class. Scope them to JS: `html.js` is set before first paint whenever JS runs. Write `.js .my-step:not(.on) { opacity: 0 }`, not `.my-step:not(.on) { opacity: 0 }`.
+- **Reviews count these.** On /api, /compare, /metrics and the home chapters, 8 to 16 text blocks are still invisible with JS off for this reason.
 
 ## 12. States: 404, error, loading
+
+- **404 hardening:** a malformed address cannot crash the 404, and "Go back" appears only when there is a page to go back to.
 
 - **Unknown address:** `app/not-found.jsx` renders `components/pages/Lost.jsx`, the 404 with its contour map and search.
 - **A page that throws while rendering:** `app/error.jsx` shows the same dark room with "Try again" and "Go home". The header and footer stay.
@@ -206,6 +230,7 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 
 - `lib/scroll.js`: `scrollToEl(el, { offset: -110 })` and `scrollToY(y)` work with or without Lenis and respect reduced motion. Use them instead of branching on `window.__lenis`.
 - `lib/route.js`: `href(p)` keeps links inside the site when the page exists here. Otherwise it sends them to hanzo.ai.
+- `lib/domwatch.js`: `onDomChange(fn)` is one shared, debounced DOM watcher. Use it instead of `setInterval` polling.
 
 ---
 
@@ -215,6 +240,9 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 - **Solid buttons inside `data-room="dark"`** are now #f5f5f7 with ink text. Before, they were black on black, for example the dark heroes on /guard, /hsm, /machines, /world, /gateway, /network, /pubsub, /telemetry and /visor.
 - **Green and blue accents** in shared CSS are now grey: code syntax colours, the Pareto chart, the cookie "Always Active" label, the savings chip and the race lane label.
 - **The old phone thumb bar** is replaced by the ask bar, with the same attributes.
+- **Arrival curtain** (`components/arrival.js`): home only, on the first visit in 7 days. It never runs on deep links, Save-Data, slow networks, reduced motion or bots. It holds 700ms at most, and the page behind is no longer dimmed or moved. A CSS failsafe lifts it at 3.5s. Do not wait for its `hz-arrived` event; it rarely fires now.
+- **Cookie notice:** "Reject all" sits beside "Accept all" at equal weight. Global Privacy Control is honoured. Any link to `#choices` reopens the preferences, or use `dispatchEvent(new Event('hz-consent-open'))`.
+- **The 1.5s DOM pollers** in the shell became one observer.
 
 ## Known breaks on main, owned by their page chats
 
