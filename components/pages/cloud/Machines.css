@@ -226,10 +226,11 @@ html:not(.js) .mc .v2-in, html:not(.js) .mc .v2-cut { animation: none; opacity: 
 .mc-map { grid-column: 9 / -1; display: grid; justify-items: center; gap: 0; padding: clamp(28px, 3vw, 44px); border-radius: 24px; background: var(--mc-w3); font: 500 13px/1 var(--mono); color: var(--mc-g5); }
 .mc-map > * { transition: opacity .4s var(--mc-io); }
 .mc-map[data-at='0'] > :not(.g0), .mc-map[data-at='1'] > :not(.g1):not(.mc-map-org), .mc-map[data-at='2'] > :not(.g2):not(.mc-map-org) { opacity: .4; }
-.mc-map-accts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.mc-map-accts span { padding: 10px 12px; border-radius: 999px; background: var(--mc-w); transition: background-color .4s var(--mc-io), color .4s var(--mc-io); }
+/* accounts, links and machines share three columns, so each account drops straight onto a machine */
+.mc-map-accts, .mc-map-links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; box-sizing: border-box; padding-inline: 16px; justify-items: center; }
+.mc-map-accts span { max-width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 999px; background: var(--mc-w); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: background-color .4s var(--mc-io), color .4s var(--mc-io); }
 .mc-map[data-at='1'] .mc-map-accts span { background: var(--mc-ink); color: var(--mc-w5); }
-.mc-map-links { display: flex; justify-content: center; gap: 72px; height: 36px; }
+.mc-map-links { height: 36px; }
 .mc-map-links i { width: 1px; height: 100%; background: var(--mc-g6); transform-origin: 50% 0; transform: scaleY(.25); transition: transform .8s var(--e); }
 .mc-map[data-at='1'] .mc-map-links i { transform: none; }
 .mc-map[data-at='1'] .mc-map-links i:nth-child(2) { transition-delay: 90ms; }
@@ -251,7 +252,7 @@ html:not(.js) .mc .v2-in, html:not(.js) .mc .v2-cut { animation: none; opacity: 
 .mc-ship .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 .mc-ship .sp-rel ul { grid-template-columns: minmax(0, 1fr); }
 /* the fill reaches into the column gap on the left and stops at the gutter on the right */
-.mc-ship .sp-rel-a { padding-inline: 12px; margin-inline: -12px 0; border-radius: 12px; transition: background-color .15s var(--mc-out); }
+.mc-ship .sp-rel-a { padding-left: 12px; padding-right: 12px; margin-left: -12px; margin-right: 0; border-radius: 12px; transition: background-color .15s var(--mc-out); }
 .mc-ship .sp-rel-a b { display: inline-block; transition: transform .3s var(--e); }
 /* the chapter dots answer too: a soft well under the dot */
 .mc-ch .pc-dots button { transition: background-color .15s var(--mc-out); }
@@ -283,11 +284,15 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
   .mc-hero { padding: 96px 0 72px; }
   .mc-lift { width: min(100% - 32px, 1280px); margin-top: 28px; }
   .mc-rent { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  /* a shorter rack, so the quote reaches the first phone screen */
+  /* the hero rack stands its four cards side by side, so the quote reaches the first phone screen */
+  .mc-rent > .mc-rack { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; perspective: none; }
+  .mc-rent > .mc-rack .mc-card { height: 56px; padding: 0 12px; gap: 8px; justify-content: space-between; border-radius: 12px; transform: none; }
+  .mc-rent > .mc-rack .mc-fins { display: none; }
   .mc-card { height: 34px; padding: 0 14px; gap: 14px; border-radius: 10px; }
   .mc-card-n { font-size: 14px; }
   .mc-led { width: 8px; height: 8px; }
   .mc-rack { gap: 6px; }
+  .mc-ch .pc-in { align-items: stretch; }
   .mc-req { padding: 18px; border-radius: 22px; }
   .mc-sizes { margin-top: 12px; }
   .mc-body { margin-top: 12px; }
@@ -328,8 +333,9 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
   .mc-own-in { display: flex; flex-direction: column-reverse; gap: 24px; }
   .mc-own-i { grid-template-columns: 40px minmax(0, 1fr); row-gap: 10px; padding: 20px 12px; }
   .mc-map { width: 100%; box-sizing: border-box; padding: 20px; }
-  .mc-map-links { gap: 56px; height: 24px; }
-  .mc-ship .sp-rel-a { margin-inline: 0; }
+  .mc-map-links { height: 24px; }
+  .mc-map-accts span { padding: 10px 8px; font-size: 12px; }
+  .mc-ship .sp-rel-a { margin-left: 0; }
   .mc-ship.v2-sec { padding: 72px 0; }
   .mc-close { padding: 72px 0; }
   .mc-close-art { margin-top: 40px; padding: 20px; }

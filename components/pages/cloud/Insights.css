@@ -185,7 +185,7 @@
 .in-wire { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; margin-bottom: 20px; }
 .in-wire code { font: 500 13px/1 var(--mono); padding: 8px 10px; border-radius: 8px; background: var(--w0); color: var(--ink); }
 .in-wire svg { width: 100%; height: 10px; overflow: visible; }
-.in-wire line { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; vector-effect: non-scaling-stroke; }
+.in-wire line { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; }
 .in-panel.on .in-wire line { animation: in-draw .9s var(--eio) both; }
 .in-v-ab.bars .in-wire { opacity: .45; }
 .in-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 200px; }
@@ -195,13 +195,13 @@
 .in-bars span { order: 2; font: 600 14px/1 var(--mono); color: var(--ink); padding-bottom: 10px; }
 .in-panel.on .in-bars b { animation: in-gy .8s var(--ez) both; animation-delay: .3s; }
 .in-panel.on .in-bars .b b { animation-delay: .42s; }
-.in-v-ab.wire .in-bars { opacity: .55; }
+.in-v-ab.wire .in-bars { opacity: .7; }
 .in-v-ab .in-wire, .in-v-ab .in-bars { transition: opacity .3s var(--eo); }
 
 /* funnels, retention, paths */
-.in-v-fn .in-row, .in-v-cost .in-row { grid-template-columns: minmax(0, 11ch) 1fr; }
+.in-v-fn .in-row, .in-v-cost .in-row { grid-template-columns: minmax(0, 23ch) 1fr; }
 .in-v-fn .in-row span, .in-v-cost .in-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.in-v-fn .in-row b, .in-v-cost .in-row b { position: relative; height: 14px; }
+.in-v-fn .in-row b, .in-v-cost .in-row b { position: relative; display: block; height: 14px; }
 .in-v-fn .in-row b i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--w) * 100%); border-radius: 4px; background: var(--ink); transform-origin: left; }
 .in-v-fn .in-row:nth-child(n+2) b i { background: var(--g1); }
 .in-panel.on .in-v-fn b i, .in-panel.on .in-v-cost b i { animation: in-gx .8s var(--ez) both; animation-delay: calc(var(--d) * 90ms + 120ms); }
@@ -222,7 +222,7 @@
 /* errors and LLM cost */
 .in-spike { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px; min-height: 56px; margin-bottom: 14px; padding: 0 14px; border-radius: 12px; background: var(--w0); font: 500 14px/1 var(--mono); color: var(--ink); }
 .in-spike svg { width: 100%; height: 36px; overflow: visible; }
-.in-spike polyline { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; vector-effect: non-scaling-stroke; }
+.in-spike polyline { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
 .in-panel.on .in-spike polyline { animation: in-draw 1s var(--eio) both; }
 .in-trace { list-style: none; margin: 0; padding: 0; }
 .in-trace li { min-height: 40px; display: flex; align-items: center; padding-left: calc(12px + var(--d) * 18px); border-left: 2px solid var(--s3); font: 500 14px/1.2 var(--mono); }
@@ -246,7 +246,7 @@
 .in-app.new { background: var(--b1); }
 .in-app-t { margin: 0; font: 600 18px/1 var(--mono); color: var(--w1); }
 .in-app-c { width: 100%; height: 90px; }
-.in-app-c polyline { fill: none; stroke: var(--w0); stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 0; animation: in-draw 1s var(--eio) both; animation-delay: .2s; }
+.in-app-c polyline { fill: none; stroke: var(--w0); stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; animation: in-draw 1s var(--eio) both; animation-delay: .2s; }
 .in-app-r { display: grid; gap: 0; }
 .in-app-r i { position: relative; height: 40px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
 .in-app-r i::after { content: ''; position: absolute; left: 0; top: 16px; height: 8px; width: calc(var(--w) * 100%); border-radius: 4px; background: rgba(255, 255, 255, .3); transform-origin: left; animation: in-gx .6s var(--ez) both; animation-delay: calc(var(--d) * 80ms + .3s); }
