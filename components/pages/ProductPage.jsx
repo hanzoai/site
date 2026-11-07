@@ -22,7 +22,9 @@
    operations it names in the table, so the words and the API read as one thing.
    Motion (not only scroll): time (the request types itself, rows land, the one-pass walk through the sentences),
    state (the steps morph the console; replay; pause), pointer (magnetic ask; a row fills under the pointer), arrival
-   (the name cut in, large, settling; the page's one reveal), scroll (the first measured figure grows at its moment).
+   (the name cut in, large, settling), scroll (the first measured figure grows at its moment; entrances: deal (measured
+   cards rise one by one out of a clip), rule (the OS layers and the links: each hairline draws left to right, then its row
+   arrives), iris (the closing band opens from a rounded inset to the full room)).
    Scale (MASTER 3.1, review 15:05): the product is the big thing of the first screen; h1 52 at rest (arrives up to
    84); section heads 44; sentences 26 in the console; table 14–16; figures 64, the first measured one growing at its moment.
    Ledger: deleted the pinned Stage (console pinned over a scroll-scrubbed sentence strip; the phone swipe rail), the
@@ -42,6 +44,7 @@ import FamLines from '../v2/FamLines';
 import FamGrow from '../v2/FamGrow';
 import NoJs from '../NoJs';
 import { ui } from '../v2/famUi';
+import { useEnter } from './api/enter';
 import { play } from '../../lib/sound';
 import '../v2/fam.css';
 import './ProductPage.css';
@@ -145,7 +148,8 @@ function Console({ p, sents }) {
       }
       if (now - t0 < (code.length / cps) * 1000 + 40) { raf = requestAnimationFrame(tick); return; }
       toks.forEach((t, i) => { t.textContent = full[i]; t.removeAttribute('data-cur'); });
-      if (pane) pane.scrollLeft = 0;
+      // the pane comes back to the top of the request once it has typed, so its first line is what rests on screen
+      if (pane) pane.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       rows.forEach((r) => r.setAttribute('data-in', ''));
       timers.push(setTimeout(() => { el.dataset.done = ''; setDone(true); }, 200));
     };
@@ -257,7 +261,7 @@ function Measured({ m }) {
     <section className="xpd-meas v2f-sec" aria-labelledby="xpd-meas-h">
       <div className="v2f-wrap">
         <h2 id="xpd-meas-h" className="xpd-sec-h">{m.title}</h2>
-        <ul className="xpd-meas-g">
+        <ul className="xpd-meas-g" data-enter="deal">
           {figs.map((l, k) => (
             <li key={l.href}>
               <A to={l.href} className="xpd-meas-c">
@@ -268,8 +272,8 @@ function Measured({ m }) {
           ))}
         </ul>
         {!!plain.length && (
-          <ul className="xpd-meas-rows">
-            {plain.map((l) => <li key={l.href}><A to={l.href} className="xpd-meas-r"><b>{l.name}</b>{l.rest ? ': ' + l.rest : ''}</A></li>)}
+          <ul className="xpd-meas-rows" data-enter="rule">
+            {plain.map((l) => <li key={l.href}><A to={l.href} className="xpd-meas-r"><span><b>{l.name}</b>{l.rest ? ': ' + l.rest : ''}</span></A></li>)}
           </ul>
         )}
       </div>
@@ -279,6 +283,7 @@ function Measured({ m }) {
 
 export default function ProductPage({ p, peek = {} }) {
   const router = useRouter();
+  useEnter('.xpd');
   const nums = [p.api.ops.length, p.os.length, ...(p.measured ? p.measured.links.flatMap((l) => (l.text.match(/\d[\d,]*(?:\.\d+)?/g) || []).map((x) => +x.replace(/,/g, ''))) : [])];
   const intro = (function flat(ns) { return ns.map((x) => (typeof x === 'string' ? x : flat(x.c || []))).join(''); })(p.intro).replace(/\s+/g, ' ').trim();
   const sents = split(intro);
@@ -319,7 +324,7 @@ export default function ProductPage({ p, peek = {} }) {
         <div className="v2f-wrap">
           <h2 id="xpd-os-h" className="xpd-sec-h">{p.osTitle}</h2>
           <nav aria-label={p.osTitle}>
-            <ol className="xpd-os-l">
+            <ol className="xpd-os-l" data-enter="rule">
               {p.os.map((o, i) => {
                 const k = slugOf(o.href), q = peek[k];
                 return (
@@ -339,7 +344,7 @@ export default function ProductPage({ p, peek = {} }) {
       </section>
 
       {(p.docs || p.site) && (
-        <section className="xpd-end v2f-sec tight">
+        <section className="xpd-end v2f-sec tight" data-enter="rule">
           <div className="v2f-wrap v2f-grid">
             {p.docs && (
               <div className="xpd-docs">
@@ -358,7 +363,7 @@ export default function ProductPage({ p, peek = {} }) {
       )}
 
       {/* the close: one dark room, Hanzo's own name and line, the one ask */}
-      <section className="x-band xpd-band" data-room="dark" aria-labelledby="xpd-band-h">
+      <section className="x-band xpd-band" data-room="dark" data-enter="iris" aria-labelledby="xpd-band-h">
         <div className="v2f-wrap xpd-band-g">
           <h2 id="xpd-band-h" className="xpd-band-h">{p.title}</h2>
           <p className="xpd-band-l">{p.lede}</p>
