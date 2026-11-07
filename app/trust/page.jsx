@@ -1,5 +1,5 @@
-// Signature: the evidence locker — a cabinet of the six things a review gets whose drawers pull themselves out one at a time, each with a live published or on-request chip and its contents in the tray
-// Beyond: find a control — type what your questionnaire asks (PKCE, SCIM, argon2id) and each group opens the drawer that answers it, the rest dim, and a count says how many of Hanzo's controls match
+// Signature: the evidence locker — a wide cabinet under the headline whose drawers pull themselves out one by one, each with its Published or On request mark and its contents in the tray beside it
+// Beyond: find a control — type what your questionnaire asks (PKCE, SCIM, argon2id) and the answers appear in place under each group, each opening the drawer that holds it, with a count of Hanzo's controls that match
 import Trust from '../../components/pages/Trust';
 import JsonLd from '../../components/JsonLd';
 
