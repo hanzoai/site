@@ -1,4 +1,5 @@
-/* The v2 scale (docs/VISION.md, docs/JAMES.md) for the Programs pages, owned by the Wave 2 Programs chat.
+/* The scale (docs/MASTER.md section 3: resting h1 52px, section headings 26px, figures 64px, 48px buttons, 1152px
+   container, golden spacing, flat objects) for the Programs pages, owned by the Wave 2 Programs chat.
    Usage: import '../v2/ProgramScale.css' in a page and put class "xp" on its <main>. Every class is prefixed xp- so it
    never collides with another chat's v2 styles. 0 UI hues (JAMES.md 7): --xp-accent is the room's ink, re-resolved in
    every [data-room]; colour arrives only through Hanzo's own media.
@@ -6,23 +7,23 @@
    (hover fill, press .98, focus, busy) and these classes only set the size. */
 .xp, .xp [data-room] { --xp-accent: var(--room-ink); }
 .xp { --xp-ease: cubic-bezier(.16, 1, .3, 1); overflow-x: clip; }
-.xp-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
-.xp-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
-.xp-sec { position: relative; padding: clamp(120px, 16vw, 240px) 0; }
-.xp-sec.tight { padding: clamp(96px, 11vw, 168px) 0; }
+.xp-wrap { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); margin-inline: auto; }
+.xp-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 12px; }
+.xp-sec { position: relative; padding: clamp(72px, 11vw, 188px) 0; }
+.xp-sec.tight { padding: clamp(72px, 8vw, 116px) 0; }
 
 /* type: display 128/96/80 → 56/48 on phones; headline 56 → 36; title 28; lede 24/21; body 19/17; kicker mono 13 */
-.xp-kick { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 28px; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
+.xp-kick { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 17px; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--room-soft, #525252); }
 .xp-kick::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--room-faint, #86868b); }
 .xp-kick.plain::before { display: none; }
-.xp-display { margin: 0; font-weight: 600; font-size: clamp(3.5rem, 8.9vw, 8rem); line-height: .92; letter-spacing: -.05em; color: var(--ink); text-wrap: balance; }
-.xp-display.md { font-size: clamp(3rem, 6.7vw, 6rem); }
-.xp-display.sm { font-size: clamp(3rem, 5.6vw, 5rem); }
-.xp-head { margin: 0; font-weight: 600; font-size: clamp(2.25rem, 3.9vw, 3.5rem); line-height: 1.02; letter-spacing: -.04em; color: var(--ink); max-width: 18ch; text-wrap: balance; }
-.xp-title { margin: 0; font-weight: 560; font-size: clamp(1.375rem, 1.95vw, 1.75rem); line-height: 1.18; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
-.xp-lede { margin: 0; font-size: clamp(1.3125rem, 1.67vw, 1.5rem); line-height: 1.42; letter-spacing: -.012em; color: var(--soft); max-width: 36ch; text-wrap: pretty; }
-.xp-body { margin: 0; font-size: clamp(1.0625rem, 1.32vw, 1.1875rem); line-height: 1.58; color: var(--soft); max-width: 64ch; text-wrap: pretty; }
-.xp-fig { font-weight: 600; font-feature-settings: 'tnum'; letter-spacing: -.05em; line-height: .9; }
+.xp-display { margin: 0; font-weight: 497; font-size: clamp(2.5rem, 3.6vw, 3.25rem); line-height: 1.04; letter-spacing: -.035em; color: var(--room-ink, #0a0a0a); text-wrap: balance; }
+.xp-display.md { font-size: clamp(2.5rem, 3.6vw, 3.25rem); }
+.xp-display.sm { font-size: clamp(2.25rem, 3vw, 2.75rem); }
+.xp-head { margin: 0; font-weight: 497; font-size: 26px; line-height: 1.15; letter-spacing: -.02em; color: var(--room-ink, #0a0a0a); max-width: 24ch; text-wrap: balance; }
+.xp-title { margin: 0; font-weight: 497; font-size: 21px; line-height: 1.25; letter-spacing: -.015em; color: var(--room-ink, #0a0a0a); text-wrap: balance; }
+.xp-lede { margin: 0; font-size: clamp(18px, 1.45vw, 21px); line-height: 1.45; letter-spacing: -.01em; color: var(--room-soft, #525252); max-width: 44ch; text-wrap: pretty; }
+.xp-body { margin: 0; font-size: 16px; line-height: 1.6; color: var(--room-soft, #525252); max-width: 64ch; text-wrap: pretty; }
+.xp-fig { font-weight: 220; font-feature-settings: 'tnum'; letter-spacing: -.04em; line-height: 1; }
 .xp-dark { background: #0a0a0a; color: #f5f5f7; }
 .xp-dark .xp-display, .xp-dark .xp-head, .xp-dark .xp-title { color: #f5f5f7; }
 .xp-dark .xp-lede, .xp-dark .xp-body, .xp-dark .xp-kick { color: #a1a1a6; }
@@ -30,25 +31,27 @@
 /* line-masked reveal (components/v2/LineReveal.jsx); .xp-cut is the CSS arrival that runs from the first paint */
 .xp-l { display: block; overflow: clip; padding: .02em 0 .08em; margin-bottom: -.08em; }
 .xp-l > span { display: block; }
-.xp-cut { animation: xp-cut 1.05s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--d, 0s) + var(--i, 0) * 90ms); }
-@keyframes xp-cut { from { transform: translateY(108%); } to { transform: none; } }
+.xp-cut { animation: xp-cut .7s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--d, 0s) + var(--i, 0) * 60ms); }
+@keyframes xp-cut { from { transform: translateY(105%); } to { transform: none; } }
 
 /* the primary action: one per screen (x-btn solid xp-cta), and the outline one (x-btn xp-ghost); sizes only */
-.xp-cta, .xp-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 12px; height: 56px; padding: 0 28px; border-radius: 999px; font: 560 17px/1 var(--sans); letter-spacing: -.01em; text-decoration: none; white-space: nowrap; cursor: pointer; }
+.xp-cta, .xp-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 48px; padding: 0 24px; border-radius: 999px; font: 500 16px/1 var(--sans); letter-spacing: -.01em; text-decoration: none; white-space: nowrap; cursor: pointer; }
 .xp-cta i, .xp-ghost i { font-style: normal; display: inline-block; transition: transform .3s var(--xp-ease); }
 @media (hover: hover) { .xp-cta:hover i, .xp-ghost:hover i { transform: translateX(4px); } }
 
 /* hero objects and cards: 28px and 16px radii, hairlines, a soft long shadow, no blur */
-.xp-obj { border-radius: 28px; background: #fff; border: 1px solid var(--line); box-shadow: 0 50px 100px -50px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .03); }
-.xp-card { border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+.xp-obj { border-radius: 24px; background: #fff; border: 1px solid rgba(0, 0, 0, .1); box-shadow: none; }
+.xp-card { border-radius: 24px; background: #f5f5f5; border: 0; }
 
 @media (max-width: 900px) {
-  .xp-wrap { width: min(100% - 32px, 1440px); }
+  .xp-wrap { width: calc(100% - 32px); }
   .xp-grid { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
   .xp-grid > * { grid-column: 1 / -1 !important; }
-  .xp-sec { padding: 120px 0; }
-  .xp-sec.tight { padding: 88px 0; }
-  .xp-display.md, .xp-display.sm { font-size: clamp(2.75rem, 12.8vw, 3.5rem); }
+  .xp-sec { padding: 72px 0; }
+  .xp-sec.tight { padding: 56px 0; }
+  .xp-display, .xp-display.md { font-size: 40px; }
+  .xp-display.sm { font-size: 34px; }
+  .xp-head { font-size: 24px; }
   .xp-kick { margin-bottom: 20px; }
   .xp-cta, .xp-ghost { width: 100%; }
 }

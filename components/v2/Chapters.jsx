@@ -69,7 +69,7 @@ export default function Chapters({ items, label, step = 0.8, className = '' }) {
           {items.map((it, i) => (
             <div className="v2-ch-item" key={it.key} data-on={!live || at === i} role="group" aria-label={`${i + 1} of ${n}: ${it.title}`}>
               <div className="v2-ch-text" inert={live && pinned && at !== i ? true : undefined}>
-                <A id={`v2-ch-${it.key}`} to={it.to} className="v2-ch-title v2-display-s" data-morph="">{it.title}</A>
+                <A id={`v2-ch-${it.key}`} to={it.to} className="v2-ch-title" data-morph="">{it.title}</A>
                 <p className="v2-kicker v2-ch-count"><span>{pad(i + 1)}</span> / {pad(n)}</p>
                 <div className="v2-ch-body">{it.text}</div>
               </div>

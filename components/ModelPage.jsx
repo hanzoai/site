@@ -71,7 +71,7 @@ export default function ModelPage({ slug, html, children }) {
         <motion.span className="x-scrollcue" {...rise(0.7)} aria-hidden="true">Scroll</motion.span>
       </section>
       <div className="x-model-body">{children || <Ported html={html} />}</div>
-      <a href={'/' + next.slug} className="x-next" data-card={next.slug} data-cursor="Open" onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
+      <a href={'/' + next.slug} className="x-next" data-card={next.slug} onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
         <Img src={media(next.slug, 'webp')} alt="" w={1200} h={1500} />
         <ModelFilm slug={next.slug} className="mb-next-film" />
         <span className="x-next-k">Next model</span>

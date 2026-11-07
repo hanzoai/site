@@ -72,7 +72,7 @@ export default function AppChapters({ items, head, label, dark = false, classNam
               <div className="v2a-ch-nav-row">
                 {items.map((it, i) => (
                   <button key={it.key} type="button" aria-current={i === at ? 'step' : undefined} aria-label={it.title} onClick={() => jump(i)}>
-                    {i === at && <motion.span layoutId={'v2a-ch-pill-' + (id || label)} className="v2a-ch-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                    {i === at && <motion.span layoutId={'v2a-ch-pill-' + (id || label)} className="v2a-ch-pill" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                     {it.icon}<span className="v2a-ch-nav-t" aria-hidden="true">{it.short || it.title}</span>
                   </button>
                 ))}

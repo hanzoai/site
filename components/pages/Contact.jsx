@@ -1,22 +1,23 @@
 'use client';
-/* /contact. V2: 8/10 Utility, calm and exact, in ink and greys only: a two-line kinetic question beside a patch panel
-   whose cable, once the curtain lifts, sweeps the four jacks and plugs back into Sales, the one ask never moving;
-   "Visit" as the one dark middle room, the address beside a big live San Francisco clock; the community as a big
-   index beside a contour plate that follows the row you reach or point at; a closing Band in Hanzo's words.
+/* /contact. V2: 8/10 Utility, calm and exact, on Hanzo's deck: a two-line question beside a patch panel whose cable,
+   once the headline has landed, sweeps the four sockets and plugs back into Sales (the one ask never moves), then
+   hangs and sways a little, leaning toward any jack you point at; "Visit" as the dark middle room beside a big live
+   San Francisco clock; the community as an index beside a contour plate that follows the row; a closing Band.
    Persona: anyone with a question for Hanzo: a buyer, a developer, a customer who needs help, the press.
    Goal: reach the right people in one choice.
    CTA: "Talk to sales" (/contact-sales), data-cta contact.hero; metric: the one contact click (contact_sales_submit downstream).
-   Signature: a patch panel. Four jacks sit across the top; a cable hangs from the jack you choose and swings on a
-   spring into the route below, its plug lifting out of one socket and seating in the next. On arrival the cable alone
-   sweeps the four sockets once and lands back on Sales; the Sales route and its button stay put until you choose.
-   Supporting (3): masked kinetic headline, once, after the curtain; the live clock; the community plate following
-   the row you reach.
+   Signature: a patch panel. Four jacks sit across the top; a cable hangs from the jack you choose into the route
+   below, its plug lifting out of one socket and seating in the next (500ms, ease-in-out, no spring). On arrival the
+   cable alone sweeps the four sockets once and lands back on Sales; the Sales route and its button stay put until
+   you choose. Phones keep the cable: a short wire from the chosen pill down into its route.
+   Supporting (3): masked kinetic headline, once, after the curtain has cleared the top; the live clock; the
+   community plate following the row you reach.
    Beyond: San Francisco's local time on a live dial beside Hanzo's Ferry Building address, and one tap to copy
    hello@hanzo.ai.
-   Deletes: the blue accent; the eyebrows over the h1 and the address; the route counters and the 01–04 jack numerals;
-   the mono URL lines under the networks; the invented clock captions; the auto-switching routes and the running wire
-   pulse; the contour map under the Visit room (the community plate is the page's one contour); raw .x-btn heroes (now
-   Go); the opacity-0 and inert states that hid three routes with JS off.
+   Deletes: the blue accent; the eyebrows over the h1 and the address; the route counters and 01–04 jack numerals;
+   the mono URL lines; the invented clock captions; the auto-switching routes and the running wire pulse; the Visit
+   room's contour map; raw .x-btn heroes (now Go); springs (deck ease curves only); the page CSS that broke the
+   Band's hover; the opacity-0 and inert server states that hid three routes with JS off.
    Every word and link is Hanzo's. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion } from 'motion/react';
@@ -25,18 +26,34 @@ import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
 import '../v2/vc-type.css';
+import './company/deck.css';
 import './Contact.css';
 
-const EASE = [0.16, 1, 0.3, 1];
-const SWING = { type: 'spring', stiffness: 140, damping: 16, mass: 0.9 };
+const EM = [0.16, 1, 0.3, 1]; // deck ease-emphasis (arrivals)
+const IO = [0.4, 0, 0.2, 1]; // deck ease-in-out (things that move and stay)
+const SWING = { duration: 0.5, ease: IO };
 const LINES = [
   { k: 'Sales', go: 'Talk to sales' },
   { k: 'Developer Dispatch', go: 'Subscribe to newsletter' },
   { k: 'Support', go: 'Get support' },
   { k: 'Press & General', go: 'hello@hanzo.ai' },
 ];
-// JS off: every route stacked and readable, no cable, no hands on the dial (PLAN 2.3 / 2.17)
-const NOJS = { __html: '<style>.xct-panel{display:flex!important;flex-direction:column;gap:40px;margin-top:24px!important}.xct-route{opacity:1!important;transform:none!important}.xct-cable,.xct-plug{display:none!important}.xct-in,.xct-in2{animation:none!important}.xct .x-band .x-word,.xct .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
+// JS off: every route stacked and readable; no cable, no hands on the dial, no plate, no dead copy button (PLAN 2.3)
+const NOJS = { __html: '<style>.xct-panel{display:flex!important;flex-direction:column;gap:40px;margin-top:24px!important}.xct-route{opacity:1!important;transform:none!important}.xct-cable,.xct-plug,.xct-plate,.xct-cp{display:none!important}.xct-in,.xct-in2{animation:none!important}.xct .x-band .x-word,.xct .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
+
+/* `go` turns true when the page may start its entrance: at once on a return visit; on a first visit, 550ms after
+   the arrival curtain starts lifting (it wipes up from the bottom, so the top of the screen is clear by then). */
+function useGo() {
+  const [curtain] = useState(() => typeof document !== 'undefined' && document.documentElement.classList.contains('x-arriving'));
+  const ok = useArrived();
+  const [go, setGo] = useState(false);
+  useEffect(() => {
+    if (!ok) return;
+    const t = setTimeout(() => setGo(true), curtain ? 550 : 0);
+    return () => clearTimeout(t);
+  }, [ok, curtain]);
+  return go;
+}
 
 /* Copy hello@hanzo.ai: an icon that turns into a drawn tick; its name is for screen readers only (no new visible words). */
 function CopyMail({ text }) {
@@ -51,12 +68,14 @@ function CopyMail({ text }) {
         setOk(true); clearTimeout(t.current); t.current = setTimeout(() => setOk(false), 1600);
       }}>
       {ok
-        ? <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.35, ease: EASE }} /></svg>
+        ? <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3, ease: EM }} /></svg>
         : <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>}
       <span className="x-sr" role="status">{ok ? 'Copied' : ''}</span>
     </button>
   );
 }
+
+const Arr = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Route({ i }) {
   if (i === 0) return (
@@ -97,43 +116,61 @@ function Route({ i }) {
     </>
   );
 }
-const Arr = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The patch panel. `at` is the route you chose (it starts, and stays, on Sales); `cab` is the socket the cable is in.
-   After the curtain, the cable alone sweeps the four sockets once and lands back on Sales. Pointer or focus on the
-   panel ends the sweep at once. The plug and the wire are one drawing, so the wire never hangs from empty air. */
-function Panel() {
+   Desktop: once the headline has landed, the cable alone sweeps the four sockets once and lands back on Sales. Then
+   it hangs and sways a little (the hero's one continuous mover), and leans toward a jack you point at. Pointer or
+   focus on the panel ends the sweep at once. The plug, the nub and the wire are one drawing. */
+function Panel({ go }) {
   const [at, setAt] = useState(0);
   const [cab, setCab] = useState(0);
   const [held, setHeld] = useState(false); // the visitor is here: no demo
   const [hyd, setHyd] = useState(false);
-  const ok = useArrived();
+  const [wide, setWide] = useState(true);
   const calm = useReducedMotion();
   const box = useRef(null);
+  const row = useRef(null);
   const plug = useRef(null);
   const jacks = useRef([]);
   const wire = useRef(null);
   const nub = useRef(null);
   const geo = useRef(null);
+  const cabRef = useRef(0);
+  const leanTo = useRef(-1);
   const [size, setSize] = useState(null);
   const seen = useInView(box, { amount: 0.35 });
   const sx = useMotionValue(0);
   const sy = useMotionValue(0);
+  const sway = useMotionValue(0); // -1..1, the wire's idle drift
+  const lean = useMotionValue(0); // 0..1 toward the jack under the pointer
   const placed = useRef(false);
 
-  useEffect(() => setHyd(true), []);
+  useEffect(() => {
+    setHyd(true);
+    const m = matchMedia('(min-width: 900px)');
+    const on = () => setWide(m.matches);
+    on(); m.addEventListener('change', on);
+    return () => m.removeEventListener('change', on);
+  }, []);
   const pick = (i) => { setHeld(true); setAt(i); setCab(i); };
   const hold = () => { if (!held) { setHeld(true); setCab(at); } };
 
-  // the arrival sweep: Sales → Dispatch → Support → Press → Sales, the cable only
+  // the arrival sweep (desktop): Sales → Dispatch → Support → Press → Sales, the cable only, after the h1 has landed
   useEffect(() => {
-    if (held || calm || !ok || !seen) return;
+    if (held || calm || !go || !seen || !wide) return;
     let k = 0, t = 0;
     const path = [1, 2, 3, 0];
-    const step = () => { setCab(path[k]); k += 1; if (k < path.length) t = setTimeout(step, 620); else setHeld(true); };
-    t = setTimeout(step, 700);
+    const step = () => { setCab(path[k]); k += 1; if (k < path.length) t = setTimeout(step, 600); else setHeld(true); };
+    t = setTimeout(step, 1000);
     return () => clearTimeout(t);
-  }, [held, calm, ok, seen]);
+  }, [held, calm, go, seen, wide]);
+
+  // idle: once at rest, the wire sways a few pixels, slowly, while the panel is on screen
+  useEffect(() => {
+    if (calm || !held || !seen) { sway.set(0); return; }
+    const a = animate(sway, [0, 1, 0, -1, 0], { duration: 7, ease: 'easeInOut', repeat: Infinity });
+    return () => a.stop();
+  }, [calm, held, seen, sway]);
 
   // draw the wire from the socket point (sx, sy) to the plug on the route; the nub rides the same point
   const draw = () => {
@@ -141,12 +178,15 @@ function Panel() {
     if (!g || !wire.current) return;
     const x0 = sx.get(), y0 = sy.get(), x1 = g.px, y1 = g.py;
     const sag = (y1 - y0) * 0.9;
-    wire.current.setAttribute('d', `M ${x0} ${y0} C ${x0} ${y0 + sag}, ${x1} ${y1 - sag * 0.7}, ${x1} ${y1}`);
+    const s = sway.get() * 10;
+    const l = leanTo.current >= 0 && g.js[leanTo.current] ? (g.js[leanTo.current][0] - x0) * 0.22 * lean.get() : 0;
+    wire.current.setAttribute('d', `M ${x0} ${y0} C ${x0 + s + l} ${y0 + sag}, ${x1 - s + l * 0.6} ${y1 - sag * 0.7}, ${x1} ${y1}`);
     nub.current.setAttribute('transform', `translate(${x0 - 9} ${y0 - 7})`);
+    if (!box.current.dataset.wired) box.current.dataset.wired = '1';
   };
   useEffect(() => {
-    const a = sx.on('change', draw), b = sy.on('change', draw);
-    return () => { a(); b(); };
+    const u = [sx, sy, sway, lean].map((m) => m.on('change', draw));
+    return () => u.forEach((f) => f());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useLayoutEffect(() => {
@@ -155,11 +195,12 @@ function Panel() {
       if (!b || !plug.current) return;
       const r = b.getBoundingClientRect();
       const p = plug.current.getBoundingClientRect();
+      const k = r.width / b.offsetWidth || 1; // the curtain scales the page while it lifts: measure in layout pixels
       geo.current = {
-        px: p.left - r.left + p.width / 2, py: p.top - r.top + 2,
-        js: jacks.current.map((j) => { const q = j.getBoundingClientRect(); return [q.left - r.left + q.width / 2, q.bottom - r.top + 2]; }),
+        px: (p.left - r.left + p.width / 2) / k, py: (p.top - r.top + 2) / k,
+        js: jacks.current.map((j) => { const q = j.getBoundingClientRect(); return [(q.left - r.left + q.width / 2) / k, (q.bottom - r.top + 2) / k]; }),
       };
-      setSize([r.width, r.height]);
+      setSize([b.offsetWidth, b.offsetHeight]);
       const [x, y] = geo.current.js[cabRef.current];
       sx.jump(x); sy.jump(y); placed.current = true;
       draw();
@@ -167,10 +208,13 @@ function Panel() {
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(box.current);
-    return () => ro.disconnect();
+    const r = row.current;
+    r.addEventListener('scroll', measure, { passive: true });
+    addEventListener('hz-arrived', measure);
+    document.fonts?.ready.then(measure);
+    return () => { ro.disconnect(); r.removeEventListener('scroll', measure); removeEventListener('hz-arrived', measure); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const cabRef = useRef(0);
   useEffect(() => {
     cabRef.current = cab;
     const g = geo.current;
@@ -181,12 +225,20 @@ function Panel() {
     return () => { a.stop(); b.stop(); };
   }, [cab, calm]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // pointer: the hanging wire leans toward the jack you point at (fine pointers only)
+  const point = (i) => {
+    if (calm || i === cabRef.current) { animate(lean, 0, { duration: 0.3, ease: IO }); return; }
+    leanTo.current = i;
+    animate(lean, 1, { duration: 0.3, ease: IO });
+  };
+  const unpoint = () => animate(lean, 0, { duration: 0.3, ease: IO });
+
   // phones: the jacks are a swipe row, so the chosen one slides into view (the row scrolls, never the page)
   useEffect(() => {
     const j = jacks.current[at];
-    const row = j?.parentElement;
-    if (!row || row.scrollWidth <= row.clientWidth) return;
-    row.scrollTo({ left: Math.max(0, j.offsetLeft - 14), behavior: calm ? 'auto' : 'smooth' });
+    const r = row.current;
+    if (!r || r.scrollWidth <= r.clientWidth) return;
+    r.scrollTo({ left: Math.max(0, j.offsetLeft - 20), behavior: calm ? 'auto' : 'smooth' });
   }, [at, calm]);
 
   const key = (e, i) => {
@@ -199,15 +251,18 @@ function Panel() {
   };
 
   return (
-    <div className="xct-obj vc-obj" ref={box} onPointerEnter={hold} onFocusCapture={hold}>
+    <div className="xct-obj" ref={box} onPointerEnter={hold} onFocusCapture={hold}>
       <noscript dangerouslySetInnerHTML={NOJS} />
-      <div className="xct-jacks" role="tablist" aria-label="Contact">
+      <div className="xct-jacks" role="tablist" aria-label="Contact" ref={row} onPointerLeave={unpoint}>
         {LINES.map((l, i) => (
           <button key={l.k} type="button" role="tab" id={'xct-t' + i} aria-controls={'xct-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1}
-            className={'xct-jack' + (at === i ? ' on' : '') + (cab === i ? ' lit' : '')} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)} ref={(el) => { jacks.current[i] = el; }}>
+            className={'xct-jack' + (at === i ? ' on' : '') + (cab === i ? ' lit' : '')} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}
+            onPointerEnter={(e) => { if (e.pointerType === 'mouse') point(i); }} ref={(el) => { jacks.current[i] = el; }}>
             <span className="xct-hole" aria-hidden="true"><i /></span>
-            <span className="xct-k">{l.k}</span>
-            <span className="xct-peek" aria-hidden="true">{l.go}</span>
+            <span className="xct-jt">
+              <span className="xct-k">{l.k}</span>
+              <span className="xct-peek" aria-hidden="true">{l.go}</span>
+            </span>
           </button>
         ))}
       </div>
@@ -220,8 +275,8 @@ function Panel() {
         {LINES.map((l, i) => (
           <motion.div key={l.k} id={'xct-p' + i} role="tabpanel" aria-labelledby={'xct-t' + i} className="xct-route"
             initial={false}
-            animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -22 : 22 }}
-            transition={{ duration: i === at ? 0.52 : 0.22, ease: EASE, delay: i === at ? 0.16 : 0 }}
+            animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -16 : 16 }}
+            transition={{ duration: i === at ? 0.3 : 0.15, ease: EM, delay: i === at ? 0.1 : 0 }}
             {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
             <Route i={i} />
           </motion.div>
@@ -294,7 +349,7 @@ const NETS = [
 
 /* The community: a big index of Hanzo's channels beside a contour plate. The plate follows the row you scroll to
    (on phones too, where it rides at the top while the rows pass) and the row you point at or focus; it redraws from
-   that channel's own address with a short cross-fade, its name springing up. */
+   that channel's own address with a short cross-fade, its name rising in. */
 function Community() {
   const [on, setOn] = useState(0);
   const [hyd, setHyd] = useState(false);
@@ -311,16 +366,16 @@ function Community() {
   }, []);
   const [n, u] = NETS[on];
   return (
-    <section className="vc-sec xct-com" aria-labelledby="xct-com-h">
+    <section className="xct-com" aria-labelledby="xct-com-h">
       <div className="vc-grid">
         <div className="xct-com-l">
           <MaskLines id="xct-com-h" lines={['Join the community']} className="vc-headline" />
-          <div className="xct-plate vc-obj" aria-hidden="true">
-            <motion.div key={u} className="xct-plate-s" initial={hyd ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: 0.32, ease: EASE }}>
+          <div className="xct-plate" aria-hidden="true">
+            <motion.div key={u} className="xct-plate-s" initial={hyd ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: EM }}>
               <Sigil seed={u} data={[n.length, u.length]} />
             </motion.div>
             <span className="xct-plate-w">
-              <motion.span key={n} className="xct-plate-n" initial={hyd ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{n}</motion.span>
+              <motion.span key={n} className="xct-plate-n" initial={hyd ? { y: '100%' } : false} animate={{ y: 0 }} transition={{ duration: 0.3, ease: EM }}>{n}</motion.span>
             </span>
           </div>
         </div>
@@ -340,16 +395,18 @@ function Community() {
 }
 
 export default function Contact() {
+  const go = useGo();
+  const [curtain] = useState(() => typeof document !== 'undefined' && document.documentElement.classList.contains('x-arriving'));
   return (
-    <main className="vc xct" style={{ '--acc': '#1d1d1f' }} data-ask-name="Contact">
-      <section className="xct-hero vc-scene" aria-labelledby="xct-h1">
+    <main className="vc xct" style={{ '--acc': '#0a0a0a' }} data-ask-name="Contact" data-go={go || undefined}>
+      <section className="xct-hero" aria-labelledby="xct-h1">
         <div className="vc-grid xct-hero-g">
           <div className="xct-hero-c">
-            <MaskLines as="h1" id="xct-h1" now delay={0.05} lines={['How can', 'we help?']} className="vc-display" />
+            <MaskLines as="h1" id="xct-h1" now delay={curtain ? 0.55 : 0.05} stagger={0.06} lines={['How can', 'we help?']} className="vc-display" />
             <p className="vc-lede xct-in">Sales, support, press or anything else: reach the right people here.</p>
           </div>
           <div className="xct-hero-o xct-in2">
-            <Panel />
+            <Panel go={go} />
           </div>
         </div>
       </section>
