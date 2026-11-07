@@ -2,7 +2,8 @@
 /* /contact. V2: 8/10 Utility, calm and exact, on Hanzo's deck: a two-line question beside a patch panel whose cable,
    once the headline has landed, sweeps the four sockets and plugs back into Sales (the one ask never moves), then
    hangs and sways a little, leaning toward any jack you point at; "Visit" as the dark middle room beside a big live
-   San Francisco clock; the community as an index beside a contour plate that follows the row; a closing Band.
+   San Francisco clock; the community as an index in three sizes (26px names, their mono addresses, the plate's big
+   name) where only the row you are on grows, then settles; a closing Band.
    Persona: anyone with a question for Hanzo: a buyer, a developer, a customer who needs help, the press.
    Goal: reach the right people in one choice.
    CTA: "Talk to sales" (/contact-sales), data-cta contact.hero; metric: the one contact click (contact_sales_submit downstream).
@@ -13,9 +14,9 @@
    Supporting (3): masked kinetic headline, once, after the curtain has cleared the top; the live clock; the
    community plate following the row you reach.
    Beyond: San Francisco's local time on a live dial beside Hanzo's Ferry Building address, and one tap to copy
-   hello@hanzo.ai.
+   hello@hanzo.ai, answered by a drawn tick and a visible "Copied" (role=status) only when the copy happened.
    Deletes: the blue accent; the eyebrows over the h1 and the address; the route counters and 01–04 jack numerals;
-   the mono URL lines; the invented clock captions; the auto-switching routes and the running wire pulse; the Visit
+   the phone plate's repeated name; the invented clock captions; the auto-switching routes and the running wire pulse; the Visit
    room's contour map; raw .x-btn heroes (now Go); springs (deck ease curves only); the page CSS that broke the
    Band's hover; the opacity-0 and inert server states that hid three routes with JS off.
    Every word and link is Hanzo's. */
