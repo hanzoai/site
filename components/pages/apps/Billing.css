@@ -279,3 +279,7 @@
   .bl2-mf-k, .bl2-is-k, .bl2-mf-f, .bl2-in label, .bl2-ci-k em, .bl2-seg button { font-size: 14px; }
   .bl2-zk, .bl2-ev li, .bl2-ev li em, .bl2-period, .bl2-inv-h em, .bl2-chip, .bl2-lv, .bl2-doc-h p, .bl2-pv-k, .bl2-pv-plan span, .bl2-log-k, .bl2-log li em { font-size: 14px; }
 }
+
+/* 8 Nov (Ready pass): desktop, the "Send your first meter event" ask rides beside the code and the agent prompt instead
+   of leaving the left half empty under it */
+@media (min-width: 901px) { .bl2-start-l { position: sticky; top: 96px; align-self: start; } }

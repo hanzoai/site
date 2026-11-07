@@ -3,6 +3,7 @@
 Reviewed 2026-11-07 ~17:00, walked moving at 1470x801 and 375x812 (Playwright, wheel steps of 400px every 700ms, rest pairs 1s apart, hover/press/click on every control in main, the console drawer opened at both sizes). Proof: `docs/review/billing/desktop-first.jpg`, `desktop-walk.jpg` (the dead white gap after the hero machine releases), `phone-first.jpg`, `phone-walk.jpg` (the hero machine running edge to edge with no gutter).
 
 Verdict: 7.5/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). The round-2 fixes are in (bfec0df8: tighter joins, one closing invoice, chapters driven by one value, phone gutters and scrolling code) and the calculator rebuild works: five inputs reprice every invoice on the page, history rows light their capability, CLS 0.000 at both sizes; this pass makes the Get started ask column sticky so the desktop section has no empty half. taste/unique/parity OK (text 94/94, links 14/14); 0 console errors, no overflow at 1470 and 375. Shared, not this page: motion.mjs's phone walk under-scrolls on every page (seen on /agents too), and the Finale/Drawer controls are components/v2.
 
 First complaint: "Better: it's alive and it makes sense now. But I scroll off the hero and get half a screen of nothing, then the same event, meter, invoice machine shows up a third time at the bottom as three dark boxes in a row. Don't repeat the trick, finish it."
 
