@@ -78,7 +78,7 @@ function Pipe() {
         <p className="tl2-k l2-mono">OTLP out</p>
         <ul className="tl2-out">
           <AnimatePresence initial={false}>
-            {s.out.map((b) => <motion.li key={b.id} layout initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}><b>batch</b><span className="l2-mono">{b.n} spans · 1 request</span></motion.li>)}
+            {s.out.slice(0, 3).map((b) => <motion.li key={b.id} initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}><b>batch</b><span className="l2-mono">{b.n} spans · 1 request</span></motion.li>)}
           </AnimatePresence>
         </ul>
       </div>
@@ -131,7 +131,7 @@ function Config({ at, compact }) {
   return (
     <motion.div ref={box} className={'tl2-ed' + (compact ? ' cp' : '')} key={at} initial={go ? 'a' : false} whileInView="b" viewport={{ once: !!compact, amount: 0.4 }}>
       <div className="tl2-strip" ref={strip}>
-        {STAGES.map(([t, f], i) => <span key={t} className={'l2-mono' + (f.includes(at) || at === 4 ? ' on' : '')}>{t}</span>)}
+        {STAGES.map(([t, f], i) => <span key={t} className={'l2-mono' + (f.includes(at) ? ' on' : at === 4 ? ' all' : '')}>{t}</span>)}
         <div className="tl2-track" aria-hidden="true"><motion.div className="tl2-run" variants={{ a: { x: '0%' }, b: { x: to } }} transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}><b /></motion.div>
           <motion.div className="tl2-run flow" initial={{ opacity: 0 }} animate={flow ? { x: ['0%', '0%', to, to], opacity: [0, 1, 1, 0] } : { opacity: 0 }} transition={flow ? { duration: 2.2, times: [0, 0.1, 0.8, 1], ease: [0.4, 0, 0.2, 1], repeat: Infinity, repeatDelay: 0.8, delay: 1.6 } : { duration: 0.3 }}><b /></motion.div></div>
       </div>
@@ -200,22 +200,32 @@ function FilmHead({ text, inn }) {
   );
 }
 
-function Facts() {
+function Facts({ at, onAt, wide }) {
   const [ref, inn] = useEnter(0.3);
+  const list = useRef(null);
+  useEffect(() => {
+    if (!wide || !list.current) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) onAt(+e.target.dataset.k); }), { rootMargin: '-46% 0px -46% 0px' });
+    list.current.querySelectorAll(':scope > li').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [wide, onAt]);
   return (
-    <section className="l2-sec tl2-facts" ref={ref}>
+    <section className={'l2-sec tl2-facts' + (wide ? ' side' : '')} ref={ref}>
       <div className="l2-wrap">
         <FilmHead text="One hop you control" inn={inn} />
-        <ol className="tl2-fl">
-          {FACTS.map(([t, d, k], i) => (
-            <li key={t}>
-              <p className="tl2-fl-n l2-mono">{String(i + 1).padStart(2, '0')}</p>
-              <h3>{t}</h3>
-              <p>{d}</p>
-              <p className="tl2-key l2-mono">{k}:</p>
-            </li>
-          ))}
-        </ol>
+        <div className="tl2-read">
+          <ol className="tl2-fl" ref={list}>
+            {FACTS.map(([t, d, k], i) => (
+              <li key={t} data-k={i} className={wide && i === at ? 'on' : ''} onClick={wide ? () => onAt(i) : undefined}>
+                <p className="tl2-fl-n l2-mono">{String(i + 1).padStart(2, '0')}</p>
+                <h3>{t}</h3>
+                <p>{d}</p>
+                <p className="tl2-key l2-mono">{k}:</p>
+              </li>
+            ))}
+          </ol>
+          {wide && <div className="tl2-read-file tl2-mg" data-in={inn}><p className="tl2-count l2-mono" aria-live="polite">{String(at + 1).padStart(2, '0')} / 06</p><Config at={at} /></div>}
+        </div>
       </div>
     </section>
   );
@@ -223,15 +233,13 @@ function Facts() {
 
 /* 4. The collector's config, read fact by fact: it steps through the six facts by itself (Pause), or tap a key.
    Entrance: magnet-gather (the file's lines are pulled together from scattered). */
-function ConfigRoom() {
+function ConfigRoom({ phone }) {
   const [ref, inn] = useEnter(0.25);
   const [held, toggle] = useContext(Hold);
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
-  const [phone, setPhone] = useState(false);
   const calm = useCalm();
   const seen = useInView(ref, { amount: 0.3 });
-  useEffect(() => { const m = matchMedia('(max-width: 900px)'); const s = () => setPhone(m.matches); s(); m.addEventListener('change', s); return () => m.removeEventListener('change', s); }, []);
   useTick(4800, seen && !held && !mine && !calm, () => setAt((a) => (a + 1) % FACTS.length));
   return (
     <section className="l2-sec tl2-cfg" ref={ref}>
@@ -240,7 +248,7 @@ function ConfigRoom() {
           {FACTS.map(([t, , k], i) => <button key={k} type="button" aria-pressed={i === at} aria-label={t} onClick={() => { setMine(true); setAt(i); }} className="l2-mono">{k}</button>)}
           <PauseBtn paused={held} onClick={toggle} className="tl2-cfg-pause" />
         </div>
-        <p className="tl2-cfg-t">{FACTS[at][0]}</p>
+        <p className="tl2-cfg-t">{FACTS[at][0]}<span className="tl2-count l2-mono">{String(at + 1).padStart(2, '0')} / 06</span></p>
         <Config at={at} compact={phone} />
       </div>
     </section>
@@ -306,6 +314,9 @@ function YourConfig() {
 
 export default function Telemetry() {
   const [held, setHeld] = useState(false);
+  const [phone, setPhone] = useState(false);
+  const [at, setAt] = useState(0);
+  useEffect(() => { const m = matchMedia('(max-width: 900px)'); const s = () => setPhone(m.matches); s(); m.addEventListener('change', s); return () => m.removeEventListener('change', s); }, []);
   const hold = useMemo(() => [held, () => setHeld((h) => !h)], [held]);
   return (
     <Hold.Provider value={hold}>
@@ -315,8 +326,8 @@ export default function Telemetry() {
         <Pipe />
       </StageHero>
       <GraphRoom />
-      <Facts />
-      <ConfigRoom />
+      <Facts at={at} onAt={setAt} wide={!phone} />
+      {phone && <ConfigRoom phone />}
       <Shutter>
         <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} object={<YourConfig />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest" />
       </Shutter>

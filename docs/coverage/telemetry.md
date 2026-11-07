@@ -66,7 +66,7 @@ Done here: Small text (every text node in main, measured after a full scroll): 0
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; only the deck neutrals and `#e4e4e7`. Captions sit under headings. Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only); objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set. /billing shares the split look with a different object (the meter).
+Done here: `taste.py` OK on the page JSX and CSS; only the deck neutrals and `#e4e4e7`, written as literals from the deck ramp (the shared Cloud kit's habit; no off-deck value). Captions sit under headings. Radii snapped to the deck set: 6, 8, 12, 16, 20, 24 and full (the 10, 14 and 18px radii are gone). The lit config lines no longer carry a left stripe; a lit line is a fill only. Icons are one inline 16px stroke set. /billing shares the split hero look with a different object (the meter); below the hero this page is its own: the living graph room, then the facts read beside their file.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border (
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: read the collector's config as you scroll (pinned scene). Supporting: batch filling (time), the chapter arrival (a span runs the pipeline strip to the lit stage in 1.2 s, the lit lines write in by clip-path 80 ms apart, a caret blinks 5 times and stops; then a second span keeps running the strip to the lit stage until Pause, in every chapter: on desktop it follows the chapter index of the pinned stage, on phones each stacked chapter runs it while it is in view; chapter 05 shows builder.yaml with the config.yaml it builds dimmed under it, so its window stays full), config pills (state; the collector at rest above them strikes through a signal or processor you switch off). `scripts/variety.py` OK. Kinds: idle (the hero collector), time (write-in, caret), state (pills, chapter swap), pointer (hover a signal in the hero and only that kind flows in), with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: the living graph (the pipeline settles like a physics graph; hover, focus or tap a node and its paths light). Then the facts read beside their file (desktop): config.yaml stands sticky beside the six facts, and the fact at the middle of the screen lights its block, writes its lines in by clip-path, runs a span along the strip to its stage and counts 01 / 06 to 06 / 06; click a fact to read it. Chapter 05 outlines the five stages instead of filling them. Phones keep the stepped config (time, with Pause; tap a key). Supporting: batch filling (time), config pills (state; the collector at rest strikes through what you switch off), hover a hero signal (pointer, with a pointer cursor) and only that kind flows in. `scripts/variety.py` OK. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -157,4 +157,4 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/telemetry.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Telemetry.jsx` (to carry the critic's score). Last critic verdict on file: 7/10 (walked before these round-2 fixes); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Telemetry.jsx` (to carry the critic's score). Ready (7 Nov, D2 run). Earlier critic verdict on file: 7/10 (walked before these round-2 fixes); this version waits for the next walk.

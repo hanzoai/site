@@ -18,18 +18,18 @@
 .tl2-sig li { padding: 7px 10px; border-radius: 8px; font-size: 13px; background: #f5f5f5; color: #404040; }
 .tl2-sig li.trace { background: var(--ink); color: #fff; }
 .tl2-batch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.tl2-batch i { aspect-ratio: 1.7; border-radius: 10px; background: #262626; transition: background .25s; }
+.tl2-batch i { aspect-ratio: 1.7; border-radius: 8px; background: #262626; transition: background .25s; }
 .tl2-batch i.on { background: #f5f5f5; }
 .tl2-sub { margin: 12px 0 0; font-size: 13px; color: #a3a3a3; }
 .tl2-mem { margin-top: auto; padding-top: 22px; height: 64px; box-sizing: content-box; }
 .tl2-mem p { display: flex; justify-content: space-between; margin: 0 0 10px; font-size: 13px; color: #a3a3a3; }
 .tl2-mem p .c { color: #f5f5f5; }
-.tl2-mem i { position: relative; display: block; height: 14px; border-radius: 14px; background: #262626; }
-.tl2-mem b { position: absolute; inset: 0; border-radius: 14px; background: #f5f5f5; transform-origin: 0 50%; transition: transform .4s var(--ease), background .3s; }
+.tl2-mem i { position: relative; display: block; height: 14px; border-radius: 12px; background: #262626; }
+.tl2-mem b { position: absolute; inset: 0; border-radius: 12px; background: #f5f5f5; transform-origin: 0 50%; transition: transform .4s var(--ease), background .3s; }
 .tl2-mem b.hot { background: repeating-linear-gradient(135deg, #f5f5f5 0 6px, #737373 6px 12px); }
 .tl2-mem em { position: absolute; left: 92%; top: -7px; bottom: -7px; width: 2px; background: #f5f5f5; }
 .tl2-out { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; height: 304px; overflow: hidden; }
-.tl2-out li { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 14px; background: #f5f5f5; }
+.tl2-out li { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 12px; background: #f5f5f5; }
 .tl2-out li:first-child { background: #e4e4e7; }
 .tl2-out b { font-size: 17px; font-weight: 606; }
 .tl2-out span { font-size: 13px; color: #404040; }
@@ -38,7 +38,7 @@
 .tl2-key { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
 .tl2-ed { display: flex; flex-direction: column; gap: 14px; }
 .tl2-strip { display: flex; flex-wrap: wrap; gap: 6px; }
-.tl2-strip span { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .16); font-size: 13px; color: #a3a3a3; transition: background .4s var(--ease), color .4s, border-color .4s; }
+.tl2-strip span { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .16); font-size: 13px; color: #a3a3a3; transition: background .4s var(--ease), color .4s, border-color .4s; }
 .tl2-strip span.on { background: #f5f5f5; border-color: #f5f5f5; color: #000; }
 .tl2-strip i { display: none; }
 .tl2-win { border-radius: 24px; background: #0f0f0f; border: 1px solid rgba(255, 255, 255, .12); overflow: hidden; }
@@ -49,7 +49,7 @@
 .tl2-ln { display: block; padding: 0 24px; white-space: pre; transition: color .35s, background .35s; }
 .tl2-ln em { display: inline-block; width: 34px; font-style: normal; color: #737373; }
 .tl2-ln b { font-weight: 400; color: #a3a3a3; }
-.tl2-ln.on { background: rgba(255, 255, 255, .08); color: #f5f5f5; box-shadow: inset 3px 0 0 #f5f5f5; }
+.tl2-ln.on { background: rgba(255, 255, 255, .08); color: #f5f5f5;  }
 .tl2-ln.on b { color: #fff; font-weight: 606; }
 
 /* Beyond: your config */
@@ -66,7 +66,7 @@
 .tl2-g button[aria-pressed='false'] { border-color: rgba(0, 0, 0, .18); }
 .tl2-g button[aria-pressed='true'] { border-color: var(--ink); color: var(--ink); }
 .tl2-g button[aria-pressed='true'] i { background: var(--ink); border-color: var(--ink); color: #fff; }
-.tl2-yc-out { margin-top: 22px; border-radius: 18px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; }
+.tl2-yc-out { margin-top: 22px; border-radius: 16px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; }
 .tl2-yc-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 18px; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 13px; color: #a3a3a3; }
 .tl2-yc-bar .x-copy { min-height: 44px; padding: 0 16px; background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); color: #f5f5f5; }
 .tl2-yc-out pre { margin: 0; padding: 16px 18px; max-height: 260px; overflow: auto; font: 400 14px/1.6 var(--mono); color: #d4d4d4; }
@@ -251,3 +251,26 @@
   .tl2 .l2-stage .l2-acts .x-btn.solid { background: transparent; color: var(--ink); border-color: rgba(10, 10, 10, .3); }
   .tl2 .l2-band .l2-band-acts .x-btn.solid { background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .4); }
 }
+
+/* ---- run 4 (D2): the facts read beside their file (desktop) ---- */
+.tl2-facts.side .tl2-read { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 56px; align-items: start; margin-top: 40px; }
+.tl2-facts.side .tl2-fl { grid-template-columns: minmax(0, 1fr); margin: 0; }
+.tl2-facts.side .tl2-fl li { min-height: 36svh; align-content: center; cursor: pointer; padding: 24px 0; }
+.tl2-facts.side .tl2-fl li h3, .tl2-facts.side .tl2-fl li p { transition: color .3s var(--ease); }
+.tl2-facts.side .tl2-fl li:not(.on) h3 { color: #737373; }
+.tl2-facts.side .tl2-fl li:not(.on) p { color: #737373; }
+.tl2-facts.side .tl2-fl li.on .tl2-fl-n { color: var(--ink); }
+.tl2-facts.side .tl2-fl li .tl2-fl-n { transition: color .3s var(--ease), transform .4s cubic-bezier(.16, 1, .3, 1); transform-origin: left top; }
+.tl2-facts.side .tl2-fl li.on .tl2-fl-n { transform: scale(1.6); }
+@media (hover: hover) { .tl2-facts.side .tl2-fl li:not(.on):hover h3 { color: var(--ink); } }
+.tl2-facts.side .tl2-fl li:active h3 { transform: translateY(1px); }
+.tl2-read-file { position: sticky; top: calc(var(--x-top, 60px) + 24px); }
+.tl2-read-file .tl2-code { font-size: 14px; }
+.tl2-read-file .tl2-ed:not(.cp) .tl2-code { min-height: calc(20 * 1.6em + 32px); }
+/* the hero's signals invite the hover */
+@media (hover: hover) and (pointer: fine) { .tl2-sig li { cursor: pointer; } }
+/* the close's config wraps instead of cutting words */
+.tl2-yc-out pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.tl2-strip span.all { border-color: var(--ink); color: var(--ink); }
+.tl2-count { margin: 0 0 12px; font-size: 13px; color: #525252; font-variant-numeric: tabular-nums; }
+.tl2-cfg-t .tl2-count { display: block; margin: 6px 0 0; font-size: 14px; font-weight: 400; letter-spacing: 0; }

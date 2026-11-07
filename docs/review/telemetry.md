@@ -1,5 +1,7 @@
 # /telemetry: James-eye review (round 3)
 
+Ready: 7 Nov 22:55, held up next to /api and /affiliate. The six facts now read beside a sticky config.yaml (the fact at mid-screen lights its block, writes its lines, runs the strip span, counts 01 / 06; click holds one) instead of a text grid and a second copy of the file; chapter 05 outlines the stages; the close's config wraps instead of cutting words; hero OTLP out drops `layout` (no shift) and shows 3 whole rows; signal pills carry a pointer cursor; lit lines lose the left stripe; radii snapped to the deck. taste/unique/parity OK (29/29, 2/2); 0 console errors, no overlap at 1470 and 375.
+
 Reviewed: main @ `9b547607` (last page commit `4df4f37b`).
 
 Walked 7 Nov, 17:00–17:14 UTC, on the dev server, moving, in Playwright Chromium:
