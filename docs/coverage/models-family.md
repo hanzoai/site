@@ -25,6 +25,12 @@ All three use metric `api_key_created`.
   - The auto-rotating snippet. The chosen language now persists across model pages through localStorage.
   - The "No published rate" string.
 
+## Round 2
+- **The breadcrumb and maker label moved into the Sigil object,** so nothing sits over the h1. On the maker shelf the breadcrumb sits beside the count.
+- **No split-flap and no count-up:** the three figures and the maker count rise into their line (MaskFig). The context figure is Hanzo's own short form, from the spec value or else the maker shelf card's (e.g. "33K"). It is never computed.
+- **Hanzo's model card everywhere:** the sibling rail and every card on the maker shelves use `components/v2/SpecCard.jsx` (SPEC.md values and tilt).
+- **Phone:** the moving Sigil object is on the first screen and the figures come after it. Nothing overlaps at 375×812.
+
 ## The 18 areas
 - **2.1 Strategy and conversion:**
   - One solid per viewport.
@@ -58,7 +64,7 @@ All three use metric `api_key_created`.
     - `.x-btn` (no `Cta`).
     - The close is Hanzo's band words in page markup, not kit `Band`.
 - **2.9 Motion and interaction:**
-  - **Arrival:** the name cuts in, and the context window spins in on split-flaps.
+  - **Arrival:** the name cuts in, and the three figures rise into their line (no flap, so no number Hanzo did not print is ever shown).
   - **Idle:** the Sigil drifts, and the field's light sweeps.
   - **Pointer:** the Sigil leans to the cursor, and dots answer with name, context and rates.
   - **State:** the bill's sliders and sibling picks (springs), code tabs with a layoutId pill, the spec fold.

@@ -1,0 +1,21 @@
+/* SpecCard (see SpecCard.jsx): Hanzo's model card, values measured on live hanzo.ai (docs/refs/hanzo-model-cards/SPEC.md) */
+.sc-card { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 220px; height: 100%; padding: 21px; overflow: hidden; border-radius: 20px; background: #000; color: #fff; text-decoration: none; cursor: pointer; isolation: isolate; transform-style: preserve-3d; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.sc-card:active { transform: scale(.98) !important; }
+.sc-card:focus-visible { outline: 2px solid #000; outline-offset: 3px; box-shadow: 0 0 0 6px #fff; }
+.sc-media { position: absolute; inset: 0; z-index: -1; }
+.sc-top { position: relative; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.sc-t { font-size: 22px; font-weight: 500; letter-spacing: -.44px; line-height: 28px; color: #fff; }
+.sc-arr { display: inline-block; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+@media (hover: hover) { .sc-card:hover .sc-arr { transform: translateX(4px); } }
+.sc-meta { margin-top: 6px; font: 400 13px/18px var(--mono); color: rgba(255, 255, 255, .6); overflow-wrap: anywhere; }
+.sc-meta b { font-weight: 400; color: #fff; }
+.sc-d { margin-top: 8px; max-width: 46ch; font-size: 13px; line-height: 18px; color: rgba(255, 255, 255, .8); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.sc-card.film .sc-d { max-width: 150px; }
+.sc-tags { position: relative; display: flex; flex-wrap: wrap; gap: 8px; }
+.sc-pill { display: inline-block; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; font: 400 10px/14px var(--mono); letter-spacing: .8px; text-transform: uppercase; color: rgba(255, 255, 255, .8); }
+.sc-flag { margin-bottom: 22px; }
+.sc-card.big { padding: 28px; }
+.sc-card.big .sc-t { font-size: 44px; letter-spacing: -.88px; line-height: 48px; }
+.sc-card.big .sc-d { margin-top: 18px; max-width: 160px; font-size: 15px; line-height: 21px; }
+@media (max-width: 640px) { .sc-card { padding: 16px; } .sc-d { font-size: 14px; line-height: 19px; } }
+@media (prefers-reduced-motion: reduce) { .sc-card { transition: none; } }
