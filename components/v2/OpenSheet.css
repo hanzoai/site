@@ -40,3 +40,4 @@
 .w2-detail.solo { padding: 0; width: 48px; justify-content: center; border: 0; background: none; }
 .w2-detail.solo i { width: 48px; height: 48px; font-size: 24px; }
 .w2-dark .w2-detail { background: #111113; color: #f5f5f7; border-color: rgba(255, 255, 255, .16); }
+.w2-sheet-k { margin: 10px 0 0; }
