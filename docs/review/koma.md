@@ -1,32 +1,33 @@
 # /koma — James-eye review
 
-Reviewed: main, page files at `dbe4459` (Koma is built on the shared creative-model template, `components/pages/model/Creative.jsx`, with its own anamorphic frames and a "Scrub the shot." signature). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `25b197c` (page files at `f68c8e5`), 7 Nov 15:01 UTC, under MASTER.md. Earlier: 7/10 at `1417fde`. Built on the shared creative-model template. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10
+Verdict: 6/10 (the pill floats over the film and the chapter list)
 
-First complaint: "The frames film is strong and it's black and white. But again no button on the first screen, the capability list is tiny mono text, and there's one red bar in the scrubber that isn't ours."
+First complaint: "The frames film is great, but that bar at the bottom covers the corner of the film and the last chapter name."
+
+**Card:** `docs/coverage/koma.md` is now in MASTER format, 18/18 `Done here:` lines. Measured claims hold: CLS 0.0002 at 1470 and 0 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion. The 10px model-card pills follow `SPEC.md`, which MASTER says wins; no longer raised.
+
+**Floats over content (MASTER 3.2 rule 6, fail, cap 6):** at 1470×801 the shared pill ("Koma · search · Request access") sits over the capability chapters from screen 4 to 11 of my walk, covering the foot of the film card and "04 Keyframe-guided scene trajectories" in the chapter list. Turn it off here (`data-ask="off"` on `<main>`) and let the header carry "Request access".
+
+**Scale (MASTER 3.1):** passes. "Koma" rests at 112px alone over the film, the headline settles at 44px, and each capability screen holds one title, a medium lede and a small mono list. (My counter sees four titles at once; they are stacked chapters, and only one shows.)
+
+## What changed since the last review
+Now on the MASTER card. The name rests at 112px (was 176px); the related-model labels follow SPEC.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes for motion: Hanzo's Koma film (receding film frames over peaks) plays full-bleed under "Koma" and "Video generation and world simulation." No ask on the first screen.
-2. **One in, one out?** Yes: the film settles beside "Every frame tells a story.", "What Koma does" pins the film while each capability (01 Temporal character continuity … 04 Keyframe-guided scene trajectories) takes its turn, then "Scrub the shot.", fields and the try-it close.
-3. **A real object in every section?** Yes: film, capability film card, scrubber, field cards.
-4. **One ask, sticky after the hero?** After the hero, yes: "Request access" solid, "Try it in Design" second, then the shared ask bar. Not on the first screen.
-5. **Every hover and press answers?** Not reliably measured: the walk's hover pass ran while the hero buttons were still hidden under the film.
-6. **Overlap, font swap, layout shift?** None visible; layout shift 0 and 0.04 on the phone.
-7. **Which reference, and is its motion there?** synchronized.studio (card opens into this page, with a close) and apple.com pinned capability chapters. Both there.
-8. **Different from its neighbours?** Yes: the frames film and the scrubber are Koma's own.
-9. **All 18 parts covered?** See below.
-10. **Banned tells?** One red UI fill on the scrubber's head (`kf-head`). Otherwise greys only, nothing above the h1.
-11. **Copy untouched?** Yes: parity 56/56 text, 4/4 links.
+1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: film frames recede over the peaks under "Koma", with "Request access" on the first screen.
+2. **One in, one out?** Yes: film settles, capabilities pin one at a time (01–04), signature, fields, related models, try-it close.
+3. **A real object in every section?** Yes.
+4. **One ask, sticky after the hero?** Through the floating pill on desktop (fail above).
+5. **Every hover and press answers?** The hero ask, close and model cards answer.
+6. **Overlap, font swap, layout shift?** The pill over the film and chapter list (above). Layout shift 0.0002 and 0.
+7. **Which reference, and is its motion there?** synchronized.studio and apple.com pinned chapters. Both there.
+8. **Different from its neighbours?** In film and signature, yes; layout is the shared creative template.
+9. **All 18 parts covered?** Card 18/18; Part 4 fails MASTER 3.2 rule 6 as written.
+10. **Banned tells?** A floating pill over content.
+11. **Copy untouched?** Card states parity clean; not contradicted.
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.1 / 2.4:** no ask on the first screen; 0 `data-cta`.
-- **2.6 Type floor:** 11 labels under 13px (11px "VIDEO" chip, 12px ids, the mono capability list).
-- **2.10 Media:** 13 images without width and height.
-- **2.11 Mobile:** after the hero most phone screens are still.
-
-## Fixes (shared ones belong in `Creative.jsx`)
-1. Put "Request access" (solid) and "Try it in Design" (link) on the first screen under the lede.
-2. Make the scrubber head ink or white, not red.
-3. Set the capability list at 13px or more in the body face, not tiny mono caps.
-4. Give images width and height.
+## Fixes
+1. `data-ask="off"` on this page's `<main>` (or the shared header-only mode once it lands); "Request access" solid in the sticky header after the hero.
+2. Films through the kit `Film` (7 raw `<video>` elements counted).

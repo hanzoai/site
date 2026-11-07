@@ -7,11 +7,12 @@
    - the hero cut-in is a CSS animation, so it starts at first paint, does not wait for hydration and ends visible
      even with JS off;
    - the inView variant is armed (hidden) only after mount and only while it is still below the fold.
+   Timing (MASTER part 3): translateY 105% → 0, 700 ms, ease-emphasis, 60 ms between lines.
    Reduced motion: set, no movement. Owned by Cloud 3. */
 import { useEffect, useRef, useState } from 'react';
 import './LaunchType.css';
 
-export default function LineMask({ lines, as = 'h2', className = '', delay = 0, inView = false, stagger = 0.09, ...rest }) {
+export default function LineMask({ lines, as = 'h2', className = '', delay = 0, inView = false, stagger = 0.06, ...rest }) {
   const ref = useRef(null);
   const [st, setSt] = useState(inView ? 'idle' : 'play'); // idle (visible, untouched) → armed (hidden) → play
   useEffect(() => {

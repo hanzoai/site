@@ -1,18 +1,19 @@
 'use client';
 /* Bounties & Rewards. Its idea is the ledger of what a contribution earns.
    Persona: a developer who wants to contribute to Hanzo's open repositories. Goal: take an open bounty.
-   CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: GitHub click (PLAN-COMPONENTS 1.1, the
-   researcher/contributor row).
+   CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: github_click.
    V2: 8/10 grey deck: display hero beside the live GitHub window of open bounties; the four ways to earn are huge-figure tiles you can count on (steppers on each tile total your points and credits by Hanzo's own rates and place you against the listed top three); the standings as big totals; the token race scrubbed by scroll as the dark room; a GitHub-style timeline for taking a bounty.
    Signature: the token race: in the dark room the ten organizations' bars race out on a log line as you scroll.
    Beyond: count on the tiles: steppers on each way to earn add up the points and AI credits Hanzo's rates give, with a
    marker placed against the standings Hanzo lists. No words but Hanzo's.
-   Motion: scrubbed race (scroll, the signature) + open bounties arriving live with a pulse (time, idle) + tiles lifting
-   and steppers springing the marker (pointer, state) + line-mask headline (arrival). 0 UI hues. */
+   Motion: scrubbed race with @hanzo's figure growing 52→84px while it is the moment (scroll, the signature) + open
+   bounties arriving live with a pulse (time, idle) + steppers gliding the marker (pointer, state) + line-mask headline
+   (arrival) + the take timeline filling as it is read. 0 UI hues. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { A } from '../kit';
-import LineReveal from '../v2/LineReveal';
+import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { A, Cta } from '../kit';
+import { Count } from '../ui';
+import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, REPOS, CONTRIBUTING, useBounties, SAY } from './Bounty.github';
 import '../v2/ProgramScale.css';
 import './Bounty.css';
@@ -33,12 +34,12 @@ function Open() {
         <i className="xbo-live" aria-hidden="true" />
         <span className="xbo-win-k">Bounties &amp; Rewards</span>
         <b>Open bounties</b>
-        {total > 0 && <span className="x-mono">{n(total)} open</span>}
+        {total > 0 && <span className="xbo-n x-mono" aria-hidden="true">{n(total)}</span>}
       </div>
       {items.length ? (
         <ul className="xbo-issues">
           {items.map((it, i) => (
-            <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: i * 0.06 }}>
+            <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>
               <a href={it.url} target="_blank" rel="noopener noreferrer">
                 <span className="xbo-dot" aria-hidden="true" />
                 <span className="xbo-iss-t">{it.title}</span>
@@ -50,11 +51,12 @@ function Open() {
       ) : (
         <div className="xbo-say" role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">
           <span className="xbo-ghosts" aria-hidden="true"><i /><i /><i /><i /></span>
-          <p className={st.kind === 'reading' ? 'xbo-shimmer' : ''}>{say}</p>
-          {st.kind === 'unreachable' && <a className="x-btn xp-ghost" href={SEARCH} target="_blank" rel="noopener noreferrer">Open bounties on GitHub ↗</a>}
+          {say && <p className="xbo-shimmer">{say}</p>}
+          {st.kind === 'unreachable' && <Cta to={SEARCH} kind="quiet" id="bounty.retry" className="xp-ghost">Every open bounty</Cta>}
+          {st.kind === 'ready' && !total && <Cta to="#propose" kind="quiet" id="bounty.propose" className="xp-ghost">Propose a bounty</Cta>}
         </div>
       )}
-      {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer">{n(more)} more on GitHub ↗</a>}
+      {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer"><span>Every open bounty</span><i aria-hidden="true">↗</i></a>}
     </div>
   );
 }
@@ -65,16 +67,16 @@ function Hero() {
       <div className="xp-wrap xp-grid">
         <div className="xbo-copy">
           <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Take an issue.', 'Ship the fix.']} />
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
             <p className="xp-lede xbo-lede">Open issues and bug reports across Hanzo’s repositories. Ship a fix or report a verified bug to earn AI credits and climb the global leaderboard.</p>
             <div className="xbo-acts">
-              <a href={SEARCH} target="_blank" rel="noopener noreferrer" className="x-btn solid xp-cta" data-thumb="Every open bounty" data-cta="bounty.hero">Every open bounty<i aria-hidden="true">↗</i></a>
+              <Cta to={SEARCH} id="bounty.hero" thumb className="xp-cta">Every open bounty</Cta>
               <A to="/leaderboard" className="xbo-link">Leaderboard</A>
               <A to={CONTRIBUTING} className="xbo-link">How to contribute</A>
             </div>
           </motion.div>
         </div>
-        <motion.div className="xbo-hero-win" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 }}>
+        <motion.div className="xbo-hero-win" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
           <Open />
         </motion.div>
       </div>
@@ -84,7 +86,7 @@ function Hero() {
 
 const WAYS = [
   ['Verified bug report', 50, '+$20 AI credits', 'Report a reproducible bug in Hanzo Dev, Cloud, Console, or SDKs. Earn +50 bounty points and up to $20 in AI credits.'],
-  ['Merged bounty pull request', 100, null, 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.'],
+  ['Merged bounty pull request', 100, '+$20 AI credits', 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.'],
   ['Qualified referral', 20, '+$5 AI credits', 'Invite a builder who activates a paid plan or trial. Earn +20 leaderboard points and $5 in AI credits.'],
   ['100K tokens processed', 1, null, 'Every 100,000 tokens processed across Hanzo Cloud models automatically adds +1 point to your global standing.'],
 ];
@@ -114,7 +116,7 @@ function Rewards() {
   const [bugs, prs, refs, blocks] = v;
   const lo = bugs * 50 + prs * 100 + refs * 20 + blocks;
   const hi = bugs * 50 + prs * 500 + refs * 20 + blocks;
-  const credits = bugs * 20 + refs * 5;
+  const credits = bugs * 20 + prs * 20 + refs * 5;
   const set = (i, x) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 1000 : 99, x)) : y))); };
   const MAX = 1700;
   const pos = (p) => Math.min(100, (p / MAX) * 100) + '%';
@@ -128,7 +130,7 @@ function Rewards() {
         <ul className="xbo-ways">
           {WAYS.map(([t, pts, cr, d2], i) => (
             <li key={t} className={'xbo-way w' + i}>
-              <span className="xbo-way-fig xp-fig"><span className="xbo-plus">+</span>{pts}<small> pts</small></span>
+              <span className="xbo-way-fig xp-fig"><span className="xbo-plus">+</span><Count to={pts} /><small> pts</small></span>
               <span className="x-sr">{`+${pts} pts`}</span>
               <div className="xbo-way-b">
                 <h3 className="xp-title">{t}</h3>
@@ -147,7 +149,7 @@ function Rewards() {
           <div className="xbo-total-n"><b className="xp-fig">{lo === hi ? n(lo) : `${n(lo)} – ${n(hi)}`}</b><span className="x-mono">pts</span></div>
           <div className="xbo-total-c"><b className="xp-fig">{`+$${n(credits)}`}</b><span className="x-mono">AI credits</span></div>
           <div className="xbo-track" aria-hidden="true">
-            <motion.i className="xbo-you" animate={{ left: pos(lo), width: `calc(${pos(hi)} - ${pos(lo)} + 8px)` }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
+            <motion.i className="xbo-you" animate={{ left: pos(lo), width: `calc(${pos(hi)} - ${pos(lo)} + 8px)` }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />
             {STAND.map((st, i) => <span key={st[0]} className="xbo-mk" style={{ left: pos(st[3]) }}><b className="x-mono">#{i + 1}</b></span>)}
           </div>
         </div>
@@ -157,9 +159,9 @@ function Rewards() {
 }
 
 const AWARDS = [
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#index-lock', 'Reported stale .git/index.lock failure during post-turn sandbox delivery on large C++ repositories (ClickHouse PR 115724).'],
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#repo-fallback', 'Reported Try Again / follow-up repository resolution failure when Forge workspace exists alongside a GitHub fork.'],
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#slack-thread-pr-review', 'Reported Slack @Hanzo thread parent context loss and multi-repo PR review handling in channel threads.'],
+  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#index-lock', '+50 pts · +$20 AI credits', 'Reported stale .git/index.lock failure during post-turn sandbox delivery on large C++ repositories (ClickHouse PR 115724).'],
+  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#repo-fallback', '+50 pts', 'Reported Try Again / follow-up repository resolution failure when Forge workspace exists alongside a GitHub fork.'],
+  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#slack-thread-pr-review', '+50 pts', 'Reported Slack @Hanzo thread parent context loss and multi-repo PR review handling in channel threads.'],
 ];
 
 function Standings() {
@@ -179,7 +181,7 @@ function Standings() {
                 <span className="xbo-role">{role}{up && <em className="xbo-up">{up}</em>}</span>
                 <span className="xbo-line x-mono">{line}</span>
               </span>
-              <span className="xbo-total xp-fig">{n(pts)}<small> pts</small></span>
+              <span className="xbo-pts xp-fig">{n(pts)}<small> pts</small></span>
             </li>
           ))}
         </ol>
@@ -188,12 +190,12 @@ function Standings() {
             <h3 className="xp-title">Recent verified bug reports &amp; awards</h3>
             <A to="/leaderboard" className="xbo-link">View global token &amp; bounty leaderboard</A>
           </div>
-          <ul>
-            {AWARDS.map(([h, d]) => (
+          <ul className="xp-obj xbo-aw">
+            {AWARDS.map(([h, prize, d]) => (
               <li key={h}>
                 <span className="xbo-wire-k x-mono">{h}</span>
                 <p>{d}</p>
-                <span className="xbo-wire-p x-mono">+50 pts · +$20 AI credits</span>
+                <span className="xbo-wire-p x-mono">{prize}</span>
               </li>
             ))}
           </ul>
@@ -221,15 +223,24 @@ const TOP = LOG(ORGS[0][3]);
 function Lane({ p, i, org }) {
   const [h, badge, req, t] = org;
   const to = LOG(t) / TOP;
-  const scaleX = useTransform(p, [0.05 + i * 0.035, 0.55 + i * 0.03], [0, to], { clamp: true });
+  const scaleX = useTransform(p, [0.05 + i * 0.035, 0.55 + i * 0.03], [0, 1], { clamp: true });
   return (
-    <li>
+    <li className="xbo-lane">
       <span className="xbo-org-n x-mono">{`#${i + 1}`}</span>
       <span className="xbo-org-w"><b>{h}</b><span className="xbo-badge">{badge}</span><span className="xbo-req x-mono">{req}</span></span>
-      <span className="xbo-org-bar" aria-hidden="true"><motion.i style={{ scaleX }} /></span>
+      <span className="xbo-org-bar" aria-hidden="true"><motion.i style={{ scaleX, width: (to * 100).toFixed(1) + '%' }} /></span>
       <span className="xbo-org-t x-mono">{n(t)} tokens</span>
     </li>
   );
+}
+
+/* @hanzo's figure counts with the race; the server and no-JS page carry the real figure. */
+function Tally({ p, to }) {
+  const ref = useRef(null);
+  const v = useTransform(p, [0.05, 0.55], [0, to], { clamp: true });
+  useMotionValueEvent(v, 'change', (x) => { if (ref.current) ref.current.textContent = n(Math.round(x)); });
+  useEffect(() => { if (ref.current) ref.current.textContent = n(Math.round(v.get())); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  return <span ref={ref}>{n(to)}</span>;
 }
 
 /* The token race, scrubbed by the scroll, on a log line. */
@@ -238,12 +249,13 @@ function Volume() {
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.85'] });
   const p = useTransform(scrollYProgress, (v) => (calm ? 1 : v));
+  const grow = useTransform(p, [0.05, 0.55], [0.62, 1], { clamp: true }); // 52px while the race waits, 84px once it has run
   return (
     <section className="xp-sec xp-dark xbo-vol" data-room="dark" aria-labelledby="xbo-vol-h">
       <div className="xp-wrap">
         <div className="xp-grid xbo-vol-head">
           <div className="xbo-vol-hl">
-            <p className="xbo-vol-fig xp-fig">106,039,884</p>
+            <motion.p className="xbo-vol-fig xp-fig" style={{ scale: grow }}><Tally p={p} to={ORGS[0][3]} /></motion.p>
             <p className="xbo-vol-u x-mono"><span>@hanzo</span><span>Core Fleet</span><span>tokens</span></p>
           </div>
           <div className="xbo-vol-hr">
@@ -263,7 +275,19 @@ function Volume() {
 const TAKE = ['Say on the issue that you are taking it.', 'Open a pull request that says Fixes and the issue’s number.', 'A maintainer reviews it, merges it, and credits your account with points and AI credits.'];
 const MARKS = [['Issue', 'open'], ['Pull request', 'pr'], ['Merged', 'merged']];
 
+function Mark({ p, i, children, cls }) {
+  const on = useTransform(p, (v) => (v >= i / TAKE.length + 0.08 ? 1 : 0));
+  const [lit, setLit] = useState(false);
+  useMotionValueEvent(on, 'change', (x) => setLit(!!x));
+  useEffect(() => setLit(!!on.get()), []); // eslint-disable-line react-hooks/exhaustive-deps
+  return <li className={cls + (lit ? ' on' : '')}>{children}</li>;
+}
+
 function Take() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.75', 'end 0.55'] });
+  const p = useTransform(scrollYProgress, (v) => (calm ? 1 : v));
   return (
     <section className="xp-sec xbo-take" aria-labelledby="xbo-take-h">
       <div className="xp-wrap xp-grid">
@@ -271,16 +295,15 @@ function Take() {
           <h2 id="xbo-take-h" className="xp-head">How a bounty is taken</h2>
           <p className="xp-body xbo-take-note">Verified bug reports and merged bounties earn Hanzo AI credits and leaderboard points, with email notifications sent as you climb ranks.</p>
         </div>
-        <ol className="xbo-tl">
+        <ol className="xbo-tl xp-obj" ref={ref}>
           {TAKE.map((t, i) => (
-            <li key={t} className={MARKS[i][1]}>
+            <Mark key={t} p={p} i={i} cls={MARKS[i][1]}>
               <span className="xbo-tl-m" aria-hidden="true" />
-              <span className="xbo-tl-k x-mono">{MARKS[i][0]}</span>
               <p className="xp-title">{t}</p>
-            </li>
+            </Mark>
           ))}
         </ol>
-        <div className="xbo-propose">
+        <div className="xbo-propose" id="propose">
           <h3 className="xp-title">Propose a bounty</h3>
           <p className="xp-body">Found something worth fixing? Open an issue in its repository saying what is wrong, where, and how a fix is checked, and ask for the bounty label. A maintainer decides.</p>
           <A to={REPOS} className="xbo-link">Hanzo’s repositories</A>
@@ -294,6 +317,7 @@ function Take() {
 export default function Bounty() {
   return (
     <main className="xp xbo">
+      <NoJs />
       <Hero />
       <Rewards />
       <Standings />

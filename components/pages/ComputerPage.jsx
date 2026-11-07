@@ -2,15 +2,18 @@
 // Signature: A black stage where a virtual desktop settles in under the headline and an agent cursor works software with no API, the desktop switching between reading pixels, OCR boxes, Set-of-Mark labels, voice and running as you
 // Beyond: A pre-flight checklist built only from Hanzo's own warnings: a fresh account or VM, the two macOS permissions, page-text redirects
 /* Hanzo Computer, v2 (Archetype A, launch: the desktop is the product).
-   V2: 8/10 the hero is the page's one dark room, a 7/5 headline over a full-bleed desktop that settles as you scroll and works by itself through six modes; three pinned lenses (pixels, OCR and marks, hands and voice); the pre-flight checklist as the Beyond; an editorial close
+   Persona: someone stuck with software that has no API (a vendor portal, an old desktop tool) who wants an agent to drive it.
+   Goal: see the agent read and work a real-looking desktop, check the three warnings, then try it.
+   CTA: "Try Hanzo Computer" (computer.hanzo.ai), the one solid button, in the hero and the closing Band.
+   Metric: signup_start
+   V2: 8/10 round 2: 52px headline over the moving desktop in the first screen; one ask with text links; no labels over headlines; nothing floats over the desktop but the agent's own marks; a pause control; the page ends on one Band; old V2 line follows. Round 1: the hero is the page's one dark room, a 7/5 headline over a full-bleed desktop that settles as you scroll and works by itself through six modes; three pinned lenses (pixels, OCR and marks, hands and voice); the pre-flight checklist as the Beyond; an editorial close
    Motion: signature = the agent desktop (cursor travels and clicks, the overlay for each mode comes on). Supporting: Stage
    settle, pinned chapters with clip wipes (components/v2/AppScenes), line-masked headline. Accent: violet, from the
    agent's marks. The desktop's windows are drawn as shapes, not invented software. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { Copy, Magnetic } from '../ui';
-import { A, Go } from '../kit';
-import Lines from '../v2/AppLines';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { Copy, Magnetic, Lines } from '../ui';
+import { A, Cta, Img } from '../kit';
 import Stage from '../v2/AppStage';
 import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
@@ -43,18 +46,18 @@ function Desktop({ at, live, small }) {
   const path = PATHS[at];
   return (
     <div className={'cp-desk m' + at + (live ? ' live' : '') + (small ? ' small' : '')} aria-hidden="true">
-      <img className="cp-wall" src="/models/mori.webp" alt="" />
-      <div className="cp-menu"><i /><span /><span /><span /><b className="cp-you">you</b></div>
+      <Img className="cp-wall" src="/models/mori.webp" alt="" w={1600} h={900} priority />
+      <div className="cp-menu"><i /><span /><span /><span /><span className="cp-menu-mic"><span className="cp-bars">{Array.from({ length: 7 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span></span><b className="cp-you">you</b></div>
       <div className="cp-win a">
         <div className="cp-wbar"><i /><i /><i /></div>
       </div>
-      <span className="cp-el cp-title" style={{ left: '9%', top: '20.5%', width: '22%' }} />
+      <span className="cp-el cp-title" style={{ left: '9%', top: '19.6%', width: '42%' }}>The vendor portal that exports one CSV at a time.</span>
       <span className="cp-el cp-field" style={{ left: '9%', top: '26%', width: '34%' }}><b /></span>
       {ROWS.map((r) => (
-        <span key={r} className="cp-el cp-row" style={{ top: 35 + r * 6.6 + '%' }}><i /><i /><i /></span>
+        <span key={r} className="cp-el cp-row" style={{ top: 35 + r * 6.6 + '%' }}><em>CSV</em><i /><i /></span>
       ))}
       <span className="cp-el cp-btn" style={{ left: '37%', top: '71%' }} />
-      <div className="cp-win b"><div className="cp-wbar"><i /><i /><i /></div></div>
+      <div className="cp-win b"><div className="cp-wbar"><i /><i /><i /><span>The desktop tool from 2009.</span></div></div>
       {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((c) => <span key={c} className="cp-el cp-cell" style={{ left: 55 + (c % 3) * 12 + '%', top: 38 + Math.floor(c / 3) * 12.5 + '%' }} />)}
       <div className="cp-dock">{[0, 1, 2, 3, 4, 5].map((d) => <i key={d} />)}</div>
 
@@ -62,14 +65,11 @@ function Desktop({ at, live, small }) {
       <span className="cp-pix" />
       <span className="cp-scan" />
       <div className="cp-ocr">
-        {[[8.5, 19.5, 23.5, 4.2], [8.5, 34.4, 15, 4.2], [8.5, 41, 15, 4.2], [8.5, 47.6, 15, 4.2], [36.3, 70.2, 12.4, 6.6]].map(([x, y, w, h], i) => <i key={i} style={{ left: x + '%', top: y + '%', width: w + '%', height: h + '%', '--i': i }} />)}
-        <em className="x-mono" style={{ left: '8.5%', top: '14.6%' }}>-with-ocr</em>
+        {[[8.4, 18.6, 43.4, 5.4], [8.5, 34.4, 6.4, 4.2], [8.5, 41, 6.4, 4.2], [8.5, 47.6, 6.4, 4.2], [36.3, 70.2, 12.4, 6.6]].map(([x, y, w, h], i) => <i key={i} style={{ left: x + '%', top: y + '%', width: w + '%', height: h + '%', '--i': i }} />)}
       </div>
       <div className="cp-som">
         {MARKS.map(([x, y], i) => <b key={i} className="x-mono" style={{ left: x + '%', top: y + '%', '--i': i }}>{i + 1}</b>)}
-        <em className="x-mono" style={{ left: '55%', top: '31.5%' }}>-with-som</em>
       </div>
-      <div className="cp-voice"><span className="cp-mic" /><span className="cp-bars">{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ '--i': i }} />)}</span><em className="x-mono">operate --voice</em></div>
 
       {/* the lane is the desktop's size, so moving it n% moves the cursor n% across the desktop (transform only) */}
       <motion.span className="cp-lane" initial={false}
@@ -87,10 +87,11 @@ function Desktop({ at, live, small }) {
 function Machine() {
   const [at, setAtS] = useState(0);
   const [mine, setMine] = useState(false);
+  const [paused, setPaused] = useState(false);
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
-  const live = seen && !calm;
+  const live = seen && !calm && !paused;
   const pick = (i) => { setAtS(i); setMine(true); };
   useEffect(() => {
     if (mine || !live) return;
@@ -107,6 +108,11 @@ function Machine() {
       <Desktop at={at} live={live} />
       <div className="cp-cap">
         <div className="cp-cap-top">
+          <button type="button" className="cp-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((p) => !p)}>
+            {paused
+              ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
+              : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
+          </button>
           <span className="cp-cap-k">If a person can click it, so can this</span>
           <span className="cp-count x-mono av-num">{String(at + 1).padStart(2, '0')} / 06</span>
         </div>
@@ -114,7 +120,7 @@ function Machine() {
           {SLIDES.map(([t], i) => (
             <li key={t}>
               <button type="button" role="tab" aria-selected={i === at} tabIndex={i === at ? 0 : -1} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}>
-                {i === at && <motion.span layoutId="cp-tab" className="cp-tab-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                {i === at && <motion.span layoutId="cp-tab" className="cp-tab-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                 <span>{t}</span>
                 {i === at && !mine && !calm && <i key={'t' + at} className={'cp-tab-t' + (live ? '' : ' paused')} aria-hidden="true" />}
               </button>
@@ -131,16 +137,15 @@ function Hero() {
     <section className="cp-hero av-dark" data-room="dark" aria-labelledby="cp-h1">
       <div className="av-wrap av-grid cp-top">
         <div className="cp-top-l">
-          <p className="av-kick"><b>computer.hanzo.ai</b></p>
-          <Lines as="h1" id="cp-h1" className="av-display cp-h1" lines={['Hanzo', 'Computer']} now delay={0.1} />
+          <Lines as="h1" id="cp-h1" className="cp-h1" play="load" lines={['Hanzo Computer']} />
+          <p className="cp-lede">An agent that uses the computer in front of it</p>
         </div>
         <div className="cp-top-r">
-          <p className="av-lede cp-lede">An agent that uses the computer in front of it</p>
-          <div className="av-acts">
-            <Magnetic strength={0.25}><Go to="https://computer.hanzo.ai" solid>Try Hanzo Computer</Go></Magnetic>
-            <i hidden data-thumb="Try Hanzo Computer" data-href="https://computer.hanzo.ai" />
-            <Go to="https://docs.hanzo.ai">Documentation</Go>
+          <div className="cp-acts">
+            <Magnetic strength={0.2}><Cta to="https://computer.hanzo.ai" id="computer-hero-try" thumb>Try Hanzo Computer</Cta></Magnetic>
+            <Cta to="https://docs.hanzo.ai" kind="link" id="computer-hero-docs">Documentation</Cta>
           </div>
+          <span className="cp-dom x-mono">computer.hanzo.ai</span>
         </div>
       </div>
       <Stage className="cp-stage" data-morph-target="">
@@ -235,12 +240,12 @@ function Preflight() {
     <section className="av-sec cp-pre" aria-labelledby="cp-pre-h">
       <div className="av-wrap av-grid">
         <div className="cp-pre-l">
-          <p className="av-kick"><b>Before you run it</b></p>
           <h2 id="cp-pre-h" className="av-head">{SLIDES[5][0]}</h2>
+          <span className="cp-note x-mono">Before you run it</span>
           <p className="av-body">{SLIDES[5][1]}</p>
           <div className="cp-meter">
             <span className="cp-meter-n av-num"><b>{done.length}</b> / {CHECKS.length}</span>
-            <span className="cp-meter-bar"><motion.i animate={{ scaleX: done.length / CHECKS.length }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} /></span>
+            <span className="cp-meter-bar"><motion.i animate={{ scaleX: done.length / CHECKS.length }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></span>
             <AnimatePresence mode="wait" initial={false}>
               <motion.span key={all ? 'y' : 'n'} className={'cp-meter-t x-mono' + (all ? ' ok' : '')} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3 }}>
                 {all ? 'Start with: hanzo desktop' : 'Tick each one'}
@@ -257,7 +262,7 @@ function Preflight() {
                   <span className="cp-check-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
                   <span className="cp-check-t"><b>{t}</b><span>{d}</span></span>
                   <span className="cp-box" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="24" height="24"><motion.path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" initial={false} animate={{ pathLength: on ? 1 : 0 }} transition={{ duration: 0.35, ease: EASE }} /></svg>
+                    <svg viewBox="0 0 24 24" width="24" height="24"><path className="cp-tick" d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </span>
                 </button>
               </li>
@@ -272,20 +277,23 @@ function Preflight() {
 /* ---------- for the software with no API: the editorial close ---------- */
 const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Computer in my project. Start with: hanzo desktop';
 
-function NoApi() {
+function Band() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  // the second black room arrives as a rounded card inside the gutters and opens to the full width as it is reached
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
+  const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
   return (
-    <section className="av-sec cp-noapi">
+    <motion.section ref={ref} className="x-band cp-band" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
       <div className="av-wrap">
-        <h2 className="av-display m cp-big">For the software <span className="cp-big-ac">with no API</span></h2>
-        <div className="av-grid cp-noapi-g">
-          <p className="av-lede cp-noapi-l">The vendor portal that exports one CSV at a time. The desktop tool from 2009. The internal app nobody will reopen. Those.</p>
-          <div className="av-acts cp-noapi-r">
-            <Go to="https://computer.hanzo.ai" solid>Try Hanzo Computer</Go>
-            <Go to="https://github.com/hanzoai/computer">View on GitHub</Go>
-          </div>
+        <Lines as="h2" className="cp-band-h" lines={['For the software', 'with no API']} />
+        <p>The vendor portal that exports one CSV at a time. The desktop tool from 2009. The internal app nobody will reopen. Those.</p>
+        <div className="x-band-act">
+          <Cta to="https://computer.hanzo.ai" id="computer-band-try" size="lg">Try Hanzo Computer</Cta>
+          <Cta to="https://github.com/hanzoai/computer" kind="link" id="computer-band-github">View on GitHub</Cta>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
@@ -297,7 +305,7 @@ function Ship() {
           <p className="av-title">Paste and ship</p>
           <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Computer from there.</p>
           <div className="cp-prompt">
-            <span className="av-kick">Agent prompt</span>
+            <span className="cp-note x-mono">Agent prompt</span>
             <code className="x-mono">{PASTE}</code>
             <Copy text={PASTE} label="Copy the agent prompt" />
           </div>
@@ -307,9 +315,9 @@ function Ship() {
           <p className="av-body">Computer-use for AI</p>
           <dl className="cp-meta">
             <div><dt>License:</dt><dd>Apache-2.0</dd></div>
-            <div><dt>Source</dt><dd><A to="https://github.com/hanzoai/computer">hanzoai/computer</A> <span className="x-mono">3 stars</span></dd></div>
+            <div><dt>Source</dt><dd><A to="https://github.com/hanzoai/computer" className="cp-src">hanzoai/computer</A> <span className="x-mono">3 stars</span></dd></div>
           </dl>
-          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+          <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="computer-deploy">Deploy to Cloud</Cta>
         </div>
       </div>
     </section>
@@ -318,12 +326,12 @@ function Ship() {
 
 export default function ComputerPage() {
   return (
-    <main className="av cp" style={{ '--ac': '#737373' }}>
+    <main className="av cp" data-ask="off" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
-      <Scenes label="How it sees and acts" items={LENSES} tone={['#fff', '#f5f5f7', '#fff']} className="cp-sc" />
+      <Scenes label="How it sees and acts" items={LENSES} tone={['#ffffff', '#f5f5f5', '#ffffff']} className="cp-sc" />
       <Preflight />
-      <NoApi />
       <Ship />
+      <Band />
     </main>
   );
 }

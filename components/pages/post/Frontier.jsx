@@ -30,8 +30,10 @@ export default function Frontier({ f }) {
 
   useEffect(() => {
     if (held || !live || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const id = setInterval(() => setAt((a) => order[(order.indexOf(a) + 1) % order.length]), 2400);
-    return () => clearInterval(id);
+    let raf = 0, last = performance.now();
+    const loop = (t) => { if (t - last >= 2400) { last = t; setAt((a) => order[(order.indexOf(a) + 1) % order.length]); } raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
   }, [held, live, order]);
 
   const d = f.dots[at];

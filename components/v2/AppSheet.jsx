@@ -30,11 +30,11 @@ export default function Sheet({ label, title, kick, children, trigger = '', icon
       </button>
       <div className={'av-sh' + (open ? ' open' : '')} data-dock={open ? '' : undefined}>
         <div className="av-sh-back" onClick={shut} aria-hidden="true" />
-        <div id={id} className="av-sh-panel" role="dialog" aria-modal="true" aria-label={title || label} data-lenis-prevent data-swipe-own>
+        <div id={id} className="av-sh-panel" role="dialog" aria-modal={open ? true : undefined} aria-label={title || label} data-lenis-prevent data-swipe-own>
           <div className="av-sh-top">
             <div>
-              {kick && <p className="av-kick">{kick}</p>}
               {title && <p className="av-sh-title">{title}</p>}
+              {kick && <p className="av-kick av-sh-sub">{kick}</p>}
             </div>
             <button ref={close} type="button" className="av-sh-x" onClick={shut} aria-label="Close">
               <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>

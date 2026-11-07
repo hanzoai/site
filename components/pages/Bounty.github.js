@@ -39,4 +39,6 @@ export function useBounties() {
   }, []);
   return st;
 }
-export const SAY = { reading: 'Asking GitHub for the open bounties.', unreachable: 'GitHub did not answer. Every open bounty is listed there.', none: 'No bounty is open right now. Propose one below.' };
+// Only Hanzo's own line is spoken; when GitHub does not answer, or nothing is open, the page shows Hanzo's own links
+// ("Every open bounty", "Propose a bounty") instead of a sentence of ours.
+export const SAY = { reading: 'Asking GitHub for the open bounties.', unreachable: '', none: '' };

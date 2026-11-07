@@ -69,7 +69,7 @@ function Run() {
         <span className="l2-mono">React Flow · SSE</span>
         <span className="au2-pub l2-mono"><i />published</span>
       </div>
-      <div className="au2-canvas" data-cursor="Watch">
+      <div className="au2-canvas">
         <Lane label="A run kept as a record" at={rec} crashed={crash} kind="rec" />
         <Lane label="A run held in a goroutine" at={go} crashed={crash} kind="go" />
         <AnimatePresence>
@@ -184,7 +184,7 @@ function Pieces() {
           <p className="au2-api l2-mono">GET /v1/pieces</p>
           <ol className="au2-path" aria-hidden="true">
             <AnimatePresence initial={false} mode="popLayout">
-              {path.map((k, j) => <motion.li key={k} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="l2-mono">{j + 1}</span>{PIECES[k]}</motion.li>)}
+              {path.map((k, j) => <motion.li key={k} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="l2-mono">{j + 1}</span>{PIECES[k]}</motion.li>)}
             </AnimatePresence>
           </ol>
         </div>
@@ -193,7 +193,7 @@ function Pieces() {
             const k = path.indexOf(i);
             return (
               <li key={t}>
-                <button type="button" className={k >= 0 ? 'on' : ''} aria-pressed={k >= 0} onClick={() => add(i)} data-cursor={k >= 0 ? undefined : 'Add'}>
+                <button type="button" className={k >= 0 ? 'on' : ''} aria-pressed={k >= 0} onClick={() => add(i)}>
                   <span className="au2-pi" aria-hidden="true">{t[0]}</span>{t}
                 </button>
               </li>

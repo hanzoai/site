@@ -3,29 +3,21 @@
    swells toward the pointer like a dock; the detail lives in one console you open by tab: start with the CLI, or let
    your agent sign itself up with no human in the loop. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
-import { Arrow, Copy, Mark, fine } from './ui';
+import { useInView, useReducedMotion } from 'motion/react';
+import { Arrow, Copy, Mark } from './ui';
 import { Tabs, TabPanel } from './kit';
 import C from '../content';
 import { SCRIPT } from '../lib/script';
 import SetupMenu from './SetupMenu';
 import Lines from './v2/Lines';
 
-/* Every agent Hanzo works with: the wall swells toward the pointer, like a dock. */
-function Ico({ a, mx, my }) {
-  const ref = useRef(null);
-  const d = useTransform(() => {
-    const x = mx.get(), y = my.get(), el = ref.current;
-    if (x === Infinity || !el) return 999;
-    const r = el.getBoundingClientRect();
-    return Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
-  });
-  const scale = useSpring(useTransform(d, [0, 80, 180], [1.5, 1.18, 1]), { stiffness: 300, damping: 30, mass: 0.4 });
+/* Every agent Hanzo works with, as a still wall of their own marks; pointing at (or focusing) one names it. */
+function Ico({ a }) {
   return (
     <li>
-      <motion.a ref={ref} href={a.href} className="hv-ico" style={{ scale }} data-name={a.name} aria-label={a.name + ' docs'}>
+      <a href={a.href} className="hv-ico" data-name={a.name} aria-label={a.name + ' docs'}>
         <span dangerouslySetInnerHTML={{ __html: a.icon }} />
-      </motion.a>
+      </a>
     </li>
   );
 }
@@ -72,8 +64,10 @@ function Steps({ open }) {
     if (calm || !open) { el.textContent = full; return; }
     let i = 0;
     el.textContent = '';
-    const t = setInterval(() => { i++; el.textContent = full.slice(0, i); if (i >= full.length) clearInterval(t); }, 24);
-    return () => clearInterval(t);
+    let t = 0;
+    const step = () => { i++; el.textContent = full.slice(0, i); if (i < full.length) t = setTimeout(step, 24); };
+    t = setTimeout(step, 24);
+    return () => clearTimeout(t);
   }, [on, calm, open]);
   useEffect(() => {
     if (mine || !seen || calm || !open) return;
@@ -124,24 +118,18 @@ function Steps({ open }) {
 }
 
 export default function Agents() {
-  const mx = useMotionValue(Infinity);
-  const my = useMotionValue(Infinity);
   const [tab, setTab] = useState(0);
   return (
     <section className="hv-agents v2-sec" id="compatible" aria-labelledby="compatible-h">
       <div className="v2-wrap">
         <header className="hv-head v2-grid">
-          <Lines as="h2" id="compatible-h" className="v2-display-s hv-head-t" lines={['Works with every agent,', 'bot and CLI tool.']} />
+          <Lines as="h2" id="compatible-h" className="hv-h2 hv-head-t" lines={['Works with every agent, bot and CLI tool.']} />
           <div className="hv-head-r">
-            <p className="v2-lede">Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up.</p>
+            <p className="hv-lead">Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up.</p>
           </div>
         </header>
-        <ul
-          className="hv-wall"
-          onPointerMove={(e) => { if (fine(e)) { mx.set(e.clientX); my.set(e.clientY); } }}
-          onPointerLeave={() => { mx.set(Infinity); my.set(Infinity); }}
-        >
-          {C.agents.map((a) => <Ico key={a.name} a={a} mx={mx} my={my} />)}
+        <ul className="hv-wall">
+          {C.agents.map((a) => <Ico key={a.name} a={a} />)}
         </ul>
         <div className="hv-ag-grid v2-grid">
           <div className="hv-ag-side">
