@@ -1,4 +1,5 @@
 'use client';
+// Persona: Developer comparing one lab's models. Goal: find the right model from this maker and open it. CTA: the hero's first action in Hanzo's words ("Get API Access"). Metric: api_key_created.
 /* A model maker's shelf in Hanzo's catalogue (73 makers, one template). The first screen leads with the maker's own
    count and a contour field seeded from its name and its models' numbers, beside the guest-key terminal.
    Signature: the sibling field at full size: every model the maker has on Hanzo, placed by context window and output
@@ -51,7 +52,7 @@ export default function ProviderShelf({ doc }) {
               </h1>
               {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
               <motion.div className="xmf-acts" {...up(0.42)}>
-                {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
+                {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '', 'data-cta': 'maker.hero' })}>{a.label}</A>)}
               </motion.div>
             </div>
             {/* the maker's count is the hero figure */}
@@ -81,8 +82,7 @@ export default function ProviderShelf({ doc }) {
         <section className="xmf-sec xmf-among" aria-labelledby="xmf-among-h">
           <div className="x-wrap">
             <header className="xmf-sh">
-              <p className="xmf-kick">{doc.name}</p>
-              <h2 id="xmf-among-h">Context window and output rate</h2>
+              <h2 id="xmf-among-h">{doc.name}</h2>
             </header>
             <Field points={cards} here={null} label={`${doc.name} models by context window and output rate`} />
           </div>
@@ -138,7 +138,7 @@ export default function ProviderShelf({ doc }) {
               <h2>{doc.band.title}</h2>
               {doc.band.lede && <p>{doc.band.lede}</p>}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')}>{a.label}</A>)}
+                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-cta': 'maker.band' })}>{a.label}</A>)}
               </div>
             </div>
           </div>
