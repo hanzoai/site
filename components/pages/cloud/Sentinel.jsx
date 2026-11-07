@@ -255,7 +255,7 @@ function Resolved() {
 
 export default function Sentinel() {
   return (
-    <main id="main" className="l2-page sn2">
+    <main id="main" className="l2-page sn2" data-ask="off">
       <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>

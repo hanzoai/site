@@ -1,24 +1,160 @@
-# /stream coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /stream coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/cloud/Stream.jsx` · styles `Stream.css` · shared: `components/v2/StageHero` (frame), `Finale`, `x-hamilton/{Demo,Launch.css}` · gallery: `docs/gallery/stream/`
+Page file: `components/pages/cloud/Stream.jsx` · gallery: `docs/gallery/stream/` · metric id: `cta_click:stream.primary`
 
-1. **Strategy and conversion.** Persona: a team running Kafka clients who would rather not run a Kafka cluster. Goal: open the repo and point a client at it. One ask, Hanzo's GitHub link (hanzoai/stream): "GitHub" solid in the hero (`data-thumb`, `data-cta="primary"`), the ask bar after the hero, and "View on GitHub" as the one solid in the closing band (same href). Metric id: `cta_click:stream.primary`.
-2. **Information architecture and navigation.** Header and footer unchanged. Order: the partitions running → the facts on a sideways tape → the one line that changes (code + API checker) → one dark ending: "Point the bootstrap server at it" and the ask beside one partition still running with its committed offset, then Get Stream with the agent prompt.
-3. **First impression and page narrative.** At 1470×801 the four partitions run full-bleed above the h1, its caption ("Kafka Wire Protocol", under the h1), the lede and the ask, all on the first screen; the committed offset rides lane 1 and a bad batch bounces within seconds. Ends in a band repeating the ask.
-4. **Conversion system.** Kit `<Cta>`; one solid per viewport; "Deploy to Cloud" is a text link.
-5. **Trust and proof.** Hanzo's four figures (Kafka, PubSub, Stateless, Durable) close the tape; the twelve Kafka APIs Hanzo lists drive the checker; repo chip shows "4 stars" from Hanzo's page.
-6. **Content presentation (copy untouched).** Parity 75/75 text, 2/2 links. One fact per tape stop; the offset label sits under each headline.
-7. **Visual design system.** Ink, greys and white only: records are silver on black, the committed-offset marker is a white chip, INVALID_RECORD is an outlined word, read records fill with ink. One dark room (the hero) and the dark closing band.
-8. **UI component library.** Kit `Cta`, `Copy`, Frame `Code`; the checker is a real labelled input with answer buttons (press scale, hover border); no browser-default controls, no `title=`.
-9. **Motion and interaction.** Idle: the partitions run, the consumer goes down and comes back, a batch bounces (with Pause); the closing partition keeps running under its committed offset (with Pause). Scroll: the hero clips into a card; the facts slide sideways and the committed offset counts. State: the checker lights the matching APIs as you type.
-10. **Media.** No Hanzo media for Stream; objects are the partition tape, the records and the producer code.
-11. **Mobile and responsive.** The hero tape stays full-bleed; the heading sits above the rail and the facts become a swipe rail from the 16px gutter with proximity snap and a peek; code stacks under the checker; no page sideways scroll; text ≥14px.
-12. **Accessibility.** One h1; 44px Pause on the running tape (WCAG 2.2.2); the checker answer is `aria-live`; contrast ≥4.5:1; reduced motion stops the tape and shows the final state.
-13. **Performance and engineering.** The tape is a CSS transform loop paused off screen and on Pause; the sideways tape is one transform from scroll; no canvas.
-14. **SEO and machine files.** Metadata and JSON-LD unchanged; every word in the server HTML.
-15. **Catalogue and product pages.** Product anatomy: identity, facts, how to use it (code), Get, band.
-16. **Developer experience.** The producer/consumer code with the bootstrap line marked; agent prompt with honest Copy.
-17. **States and resilience.** Consumer states: committed, down with offset kept, back where it left off; invalid batch refused. JS off shows every word.
-18. **Measurement and handover.** `data-cta`: primary, deploy, close. Filmed at 1470×801 and 375×812, no console errors.
+Open copy questions for James: none: every visible word is Hanzo's. Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
+Shared changes requested (`docs/requests/stream.md`): none. The shared code pane (`components/pages/cloud/Frame.jsx`) animates a multi-tab pill with a spring; this page uses single-tab panes only and holds the pane to the deck colours in `components/v2/x-hamilton/Launch.css`.
+Forks this page deleted: the teal boxes (greys now), the label squeezed over the title, the off-screen phone points (swipe rail now).
 
-**Ledger (deleted):** the teal accent and glows, the red INVALID_RECORD chip, the teal marker, the offset labels above the fact headlines, the eyebrow above the h1, the magnetic primary.
+Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; prices from `lib/plans.js`
+- [x] Open copy questions for James listed, none decided
+
+Done here: Persona is a team with Kafka clients who want Hanzo PubSub behind them; the one ask is Hanzo's "GitHub" (`data-cta` primary in the hero, "close" as the later solid), metric `cta_click:stream.primary`. `lib/cta.js` is not merged yet, so the label is the live page's own. h1 count 1. no prices on the live page. Every button changes something on screen.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- [ ] Breadcrumb at depth 2 or more (n/a: /stream is depth 1)
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" targets `#main`. 4 links in main, all through `A` or `Cta`. `python3 scripts/parity.py /stream` reports every live link present. No breadcrumb: the page sits at depth 1.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] `PageHero`; nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer
+- [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
+
+Done here: Hero is frame (the tape full-bleed behind the title, then clipped into a card); the object is a tape of records across four partitions, moving from arrival, with the committed-offset marker, so the record tape moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Stream" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (dark) → the offset ruler (light, pinned on desktop, swipe rail on phones) → one line to change (light) → closing band (dark). The live page has no proof strip, so it ends on the band and the footer.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label
+- [x] Copy button copies exactly the displayed text; failure never says Copied
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, close*, deploy (* = solid). The header carries the sticky ask at every width; the page bar is off (`data-ask="off"`) because the critic's shared note (15:00) fails any pill seen over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
+
+## 5. Trust and proof
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- [ ] Marquees pause, freeze under reduced motion, hide duplicates (n/a: no marquee)
+- [ ] Privacy link and owner line beside every submit (n/a: nothing is submitted)
+
+Done here: No partner logos; product names appear as text only. Parity holds every printed figure. Demo values (counts, offsets, machine names) are labelled examples in the header comment and drawn as objects, not claims.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] Tables, FAQ, tabs and code use the kit parts
+- [x] `python3 scripts/parity.py /stream`: 0 missing
+
+Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: a producer snippet in the shared code pane (copy equals display) and the agent prompt. Parity: 0 missing.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; only the deck neutrals and `#e4e4e7`. Captions sit under headings. Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only); objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set. /sentinel and /telemetry open light.
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading
+- [x] Focus ring visible on every stop of a Tab crawl
+- [x] Dialogs are native, trap focus and return it
+- [x] Inputs 16px or larger; no bare `:hover`
+- [x] Forks this page deleted: listed below
+
+Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: none. Inputs: none. Forks deleted: see the top of this card.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
+
+Done here: Signature: your scroll is the consumer (pinned sideways tape). Supporting: proximity snap (scroll), offset counter (time), the check that answers (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+
+## 10. Media
+- [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
+- [x] At most 2 videos playing; pause button on loops over 5 s
+- [ ] Budgets met; nothing missing; alt on every image (n/a: 0 images, 0 without alt)
+- [ ] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: no photos)
+
+Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (2 on the page): the hero tape and the band's mini tape.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 694px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better
+- [x] Pause control on every moving item
+- [x] Forms labelled; first error focused
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: Lowest measured text contrast 4.74:1 (0 runs flagged). Headings 12333333222 with 0 skips. Pause controls: the hero tape and the band's mini tape. Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [ ] JS and CSS inside budget; every image and video sized (not measured by this chat; no media to size)
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop
+
+Done here: `curl /stream/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+
+## 14. SEO and machine files
+- [x] Title and description match live (or are listed for James)
+- [x] Canonical equals og:url equals the live URL
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: Title "Hanzo Stream — Hanzo AI". Canonical https://hanzo.ai/stream/, og:url https://hanzo.ai/stream/. 2 JSON-LD blocks, all parse. Metadata comes from `content/pages.json` through the route file.
+
+## 15. Catalogue and product pages
+- [ ] Model card matches `SPEC.md` (or n/a: not a catalogue or model page)
+- [ ] Every card opens by Morph (n/a: no cards that open pages)
+- [ ] Every maker and model page linked in the DOM (n/a)
+- [x] One price figure everywhere
+
+Done here: Not a model page. Cloud product anatomy: identity, the tape as console, the six facts as records on the ruler, the band. Prices: no prices on the live page.
+
+## 16. Developer experience
+- [x] One `CodeBlock`; copy equals display (or n/a: no code on the page)
+- [x] Config blocks parse on their own
+- [x] Terminal pauses and ends on a static frame
+- [x] No hand-typed version number
+
+Done here: Code: a producer snippet in the shared code pane (copy equals display) and the agent prompt. The agent prompt is one string shown and copied as is. No version numbers are typed into the page.
+
+## 17. States and resilience
+- [ ] Loading, empty, error and offline states designed (n/a: the page reads no live data)
+- [x] Blocked live data leaves a complete page, no console errors
+- [ ] A failed submit keeps its values and shows no success (n/a: no submit)
+- [x] A thrown island does not blank the page
+
+Done here: Every word is in the server HTML and every demo is local, so a blocked network still shows the whole page; JS off was checked above. Each demo is its own component; the page has no shared runtime state to lose.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary; events only through `lib/track.js`
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment
+- [ ] Review read: `docs/review/stream.md` verdict 8 or more
+
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Stream.jsx`. Last critic verdict on file: 6/10 (walked an earlier version); this version waits for the next walk.

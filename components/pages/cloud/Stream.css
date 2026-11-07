@@ -61,7 +61,7 @@
 /* the one line that changes */
 .st2-code-l { grid-column: 1 / span 5; }
 .st2-code-r { grid-column: 7 / span 6; }
-.st2-code-r .cf-code { border-radius: 24px; box-shadow: 0 48px 120px -48px rgba(0, 0, 0, .3); }
+.st2-code-r .cf-code { border-radius: 24px; }
 .st2-code-r .cf-mark { background: #e4e4e7; color: var(--ink); border-radius: 4px; box-shadow: inset 0 -2px 0 var(--ink); }
 .st2-check { margin-top: 48px; padding: 26px; border-radius: 24px; background: #f5f5f5; }
 .st2-check label { display: flex; flex-direction: column; gap: 14px; }

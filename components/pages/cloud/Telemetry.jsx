@@ -154,11 +154,11 @@ function YourConfig() {
 
 export default function Telemetry() {
   return (
-    <main id="main" className="l2-page tl2">
+    <main id="main" className="l2-page tl2" data-ask="off">
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>
-      <PinScenes dark flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <p key="k" className="tl2-key l2-mono">{k}:</p>])} visual={(at, p) => <Config at={at} compact={!p} />} />
+      <PinScenes flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <p key="k" className="tl2-key l2-mono">{k}:</p>])} visual={(at, p) => <Config at={at} compact={!p} />} />
       <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} object={<YourConfig />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest" />
     </main>
   );

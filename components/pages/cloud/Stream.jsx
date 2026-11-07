@@ -194,7 +194,7 @@ function MiniTape() {
 
 export default function Stream() {
   return (
-    <main id="main" className="l2-page st2">
+    <main id="main" className="l2-page st2" data-ask="off">
       <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
       </StageHero>

@@ -215,7 +215,7 @@ function Figures() {
 
 export default function Auto() {
   return (
-    <main id="main" className="l2-page au2">
+    <main id="main" className="l2-page au2" data-ask="off">
       <Hero />
       <Index />
       <Figures />

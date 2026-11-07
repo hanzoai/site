@@ -112,7 +112,7 @@ function Scene() {
           <div className="tn2-cap">
             {[0, 4].map((i) => (
               <article key={i} className={'tn2-cap-i' + (cap === i ? ' on' : '')} aria-hidden={cap !== i && pin ? true : undefined}>
-                <h3 className="l2-head">{FACTS[i][0]}</h3>
+                <h2 className="l2-head">{FACTS[i][0]}</h2>
                 <p className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</p>
                 <p className="l2-body">{FACTS[i][1]}</p>
               </article>
@@ -226,7 +226,7 @@ function Shared() {
 
 export default function Tunnel() {
   return (
-    <main id="main" className="l2-page tn2">
+    <main id="main" className="l2-page tn2" data-ask="off">
       <Hero />
       <Scene />
       <Facts />

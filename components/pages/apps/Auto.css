@@ -22,15 +22,15 @@
 .au2-lane-k span { font-size: 13px; color: var(--faint); }
 .au2-nodes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(16px, 2.6vw, 40px); }
 .au2-node { position: relative; display: flex; align-items: center; gap: 10px; height: 60px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--hair); background: #fff; font-size: 16px; font-weight: 500; color: var(--soft); transition: border-color .3s, background .3s, color .3s, box-shadow .3s; }
-.au2-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: #f5f5f5; font: 600 13px/1 var(--mono); color: var(--soft); transition: background .3s, color .3s; }
+.au2-ic { flex: none; display: grid; place-items: center; width: 22px; height: 30px; font: 606 13px/1 var(--mono); color: var(--soft); transition: background .3s, color .3s; }
 .au2-nl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .au2-h { position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: #fff; border: 1.5px solid #d4d4d4; }
 .au2-h.l { left: -5.5px; }
 .au2-h.r { right: -5.5px; }
 .au2-node.done { color: var(--ink); border-color: #a3a3a3; }
-.au2-node.done .au2-ic { background: #ededed; color: var(--ink); }
+.au2-node.done .au2-ic { color: var(--ink); }
 .au2-node.now { color: #fff; background: var(--ink); border-color: var(--ink); }
-.au2-node.now .au2-ic { background: rgba(255, 255, 255, .2); color: #fff; }
+.au2-node.now .au2-ic { color: #fff; }
 .au2-lane.go .au2-node.now { background: #525252; border-color: #525252; }
 .au2-edge { position: absolute; left: 100%; top: 50%; width: clamp(16px, 2.6vw, 40px); height: 2px; margin-left: 2px; background: #e4e4e7; }
 .au2-edge b { display: block; height: 100%; background: var(--ac); transform-origin: 0 50%; transition: transform .45s var(--ease); }
@@ -100,8 +100,8 @@
 .au2-board button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .au2-board button:active { transform: scale(.97); }
 .au2-board button.on { border-color: var(--ac); }
-.au2-pi { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #f5f5f5; font: 600 15px/1 var(--mono); color: var(--soft); }
-.au2-board button.on .au2-pi { background: var(--ac); color: #fff; }
+.au2-pi { flex: none; display: grid; place-items: center; width: 22px; height: 36px; font: 606 14px/1 var(--mono); color: var(--soft); }
+.au2-board button.on .au2-pi { color: var(--ink); }
 
 /* four figures (the one dark room) */
 .au2-figs ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }

@@ -121,5 +121,5 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
   .vs2-sheet .vs2-cp { min-height: 180px; padding: 18px; }
   .vs2-name-l, .vs2-name-r { grid-column: auto; }
   .vs2-name-r { margin-top: 48px; }
-  .vs2-k, .vs2-prov em, .vs2-dry, .vs2-inv li span, .vs2-con p, .vs2-audit, .vs2-n, .vs2-p4 span, .vs2-p5 li, .vs2-p3 p { font-size: 14px; }
+  .vs2-k, .vs2-prov em, .vs2-dry, .vs2-inv li span, .vs2-inv2 li span, .vs2-con p, .vs2-audit, .vs2-n, .vs2-p4 span, .vs2-p5 li, .vs2-p3 p { font-size: 14px; }
 }
