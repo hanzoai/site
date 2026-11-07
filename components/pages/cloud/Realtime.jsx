@@ -29,7 +29,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react';
 import { A } from '../../kit';
 import { useCalm } from '../../ui';
-import { Code, useLive, useSteps } from './Frame';
+import { useLive, useSteps } from './Frame';
+import { LeafCode as Code } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from './close3/Close';
 import LineMask from '../../v2/LineMask';
@@ -98,7 +99,7 @@ function Screens() {
   return (
     <div className="rt-stage" ref={ref} data-paused={paused || undefined}>
       <div className="rt-conn">
-        <b>Live connection</b><span>One open stream</span><span>Records arrive as they change</span>
+        <span className="rt-conn-k">Live connection</span><span>One open stream</span><span>Records arrive as they change</span>
         <span className="rt-acts" aria-hidden="true">{['create', 'update', 'delete'].map((a) => <i key={a} className={a === action ? 'on' : ''}>{a}</i>)}</span>
         <LivePause inline paused={paused} onToggle={pause} className="rt-pause" />
       </div>
@@ -328,7 +329,7 @@ function Handshake() {
         <ol className="rt-calls" data-live={mounted || undefined}>
           {CALLS.map(([t, d], i) => (
             <li key={t} className={at === i ? 'on' : ''}>
-              <button type="button" onClick={() => choose(i)} aria-expanded={at === i} aria-controls={'rt-call-' + i}><span className="lx-num">{i + 1}</span><b>{t}</b></button>
+              <button type="button" onClick={() => choose(i)} aria-expanded={at === i} aria-controls={'rt-call-' + i}><span className="lx-num">{i + 1}</span><span className="rt-call-t">{t}</span></button>
               <p id={'rt-call-' + i}>{d}</p>
             </li>
           ))}
