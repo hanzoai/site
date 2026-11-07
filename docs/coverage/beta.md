@@ -22,7 +22,7 @@ Done here: Header comment in `app/beta/page.jsx` names Persona, Goal, CTA, Metri
 - ~~Breadcrumb at depth 2 or more~~ n/a: depth 1 page.
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One `<main>` from the layout; links via `A`/`Cta`; the product tiles link to /dev, /studio, /kai, /enso, /zen; parity links 4/4.
+Done here: One `<main>` from the layout; links via `A`/`Cta`; parity links 4/4 (Hanzo's own); the product tiles add links to Hanzo's own /dev, /studio, /kai, /enso and /zen pages; Feedback goes to /login?next=/beta (a button on live, listed for James).
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout; links via `A`/`Cta`; the product tiles 
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: the passes open into their sheet by shared-element morph (layoutId), not to a new page; the product tiles link to their own pages.
 
-Done here: No label above the h1. "Get there first." (52px) with Hanzo's line and Apply; the film strip below is the one big thing and plays within 1 s. `PageHero` is not in the kit yet, so the hero is page-local (left open). The page ends on its own dark close (Feedback 52px, Book a call 26px over Kai's film) then the footer; kit `Band` takes one action, this close has two (left open). JS off: films show posters, every line is in place.
+Done here: No label above the h1. "Get there first." (52px) with Hanzo's line and Apply; the film strip below is the one big thing and plays within 1 s. `PageHero` is not in the kit yet, so the hero is page-local (left open). The page ends on its own dark close (Feedback 52px, Book a call 26px over Kai's film; the room arrives as a rounded card that opens to full width, then the lines cut in) then the footer; kit `Band` takes one action, this close has two (left open). JS off: films show posters, every line is in place.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -40,7 +40,7 @@ Done here: No label above the h1. "Get there first." (52px) with Hanzo's line an
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `data-thumb` on the hero Apply; the shared ask bar repeats "Apply" after the hero and hides over the dark close.
+Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `data-thumb` on the hero Apply; after the hero the ask is the header's (the shared bar does not show on /beta, so nothing floats over the page).
 
 ## 5. Trust and proof
 - ~~No logo without documented permission; no seal; no invented number~~ n/a: no logos, seals or figures.

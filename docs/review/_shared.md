@@ -8,7 +8,7 @@ MASTER 3.2 rule 6 and the banned list (3.3: "Anything floating over content: a p
 
 - Owner: the shared-system chat (`components/Ask.jsx`). Page chats cannot fix it and are told not to touch it.
 - What James asked for instead: the one solid ask lives in the sticky header at every width; on phones a slim bottom bar only where it never covers content or the page's own ask.
-- How I score it, from 15:00: **counted per page.** A page can now turn the pill off itself (`data-ask="off"` on `<main>`; /api, /careers and the legal pages already do), and other critics fail it. So if my desktop walk sees the pill over a page's content, that page fails Part 4 (MASTER 3.2 rule 6) and is capped at 6. If the walk never sees it (a solid ask stays on screen, or the page turns it off), the page passes this rule.
+- How I score it, from 15:00: **counted per page.** A page can now turn the pill off itself (`data-ask="off"` on `<main>`; /api, /careers and the legal pages already do), and other critics fail it. So if my desktop walk sees the pill over a page's content, that page fails Part 4 (MASTER 3.2 rule 6) and is capped at 6. The same holds on the phone: MASTER allows a slim phone bar "only where it never covers content", so a phone bar seen over cards or text fails too. If the walk never sees it (a solid ask stays on screen, or the page turns it off), the page passes this rule.
 
 ## 2. 18-part cards (MASTER section 6)
 

@@ -156,7 +156,7 @@ function Passes({ paused }) {
       <div className="xp-wrap">
         <ul className="xbt-grid">
           {PASSES.map(([k, t, d, to, film], i) => (
-            <motion.li key={k} className={'xbt-cell c' + i} initial={{ clipPath: 'inset(18% 0 0 0 round 28px)', y: 40 }} whileInView={{ clipPath: 'inset(0% 0 0 0 round 28px)', y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}>
+            <motion.li key={k} className={'xbt-cell c' + i} initial={{ clipPath: 'inset(18% 0 0 0 round 24px)', y: 40 }} whileInView={{ clipPath: 'inset(0% 0 0 0 round 24px)', y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}>
               <motion.article layoutId={'xbt-pass-' + k} className={'xbt-pass' + (film ? ' dark' : '')} data-room={film ? 'dark' : undefined} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                 <motion.div layoutId={'xbt-m-' + k} className="xbt-pass-m" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><Media film={film} paused={paused} /></motion.div>
                 <button type="button" className="xbt-hit" onClick={(e) => show(i, e.currentTarget)} aria-haspopup="dialog" aria-label={t} />
@@ -176,23 +176,26 @@ function Passes({ paused }) {
   );
 }
 
-/* A line that cuts in from its mask once it is seen. */
+/* A line that cuts in from its mask once its mask is seen (the mask is watched, not the hidden line). */
 function Cut({ i, children }) {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.6 });
-  return <motion.span ref={ref} style={{ display: 'block' }} initial={{ y: '105%' }} animate={seen ? { y: '0%' } : { y: '105%' }} transition={{ duration: 0.7, ease: EASE, delay: i * 0.06 }}>{children}</motion.span>;
+  const seen = useInView(ref, { once: true, amount: 0.3 });
+  return <span className="xp-l" ref={ref}><motion.span style={{ display: 'block' }} initial={{ y: '105%' }} animate={seen ? { y: '0%' } : { y: '105%' }} transition={{ duration: 0.7, ease: EASE, delay: 0.2 + i * 0.06 }}>{children}</motion.span></span>;
 }
 
-/* The close: Feedback and Book a call, over Kai's own film, played once. */
+/* The close: Feedback and Book a call over Kai's own film. The room arrives as a rounded card inside the margins that
+   opens to full width; the film starts from its first frame once the room is on screen and plays once. */
 function Foot() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
-    <section className="xp-sec xp-dark xbt-foot" data-room="dark" data-ask-hide aria-label="Feedback, Book a call">
-      <div className="xbt-foot-film" aria-hidden="true"><Film src="/models/kai.webm" poster="/models/kai.webp" w={1200} h={1500} loop={false} /></div>
+    <motion.section ref={ref} className="xp-sec xp-dark xbt-foot" data-room="dark" data-ask-hide aria-label="Feedback, Book a call" initial={{ clipPath: 'inset(0% 2.5% round 24px)' }} whileInView={{ clipPath: 'inset(0% 0% round 0px)' }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.5, ease: EASE }}>
+      <div className="xbt-foot-film" aria-hidden="true"><Film key={seen ? 'on' : 'off'} src="/models/kai.webm" poster="/models/kai.webp" w={1200} h={1500} loop={false} /></div>
       <div className="xp-wrap xbt-foot-in">
-        <span className="xp-l"><Cut i={0}><A to="/login?next=%2Fbeta" className="xbt-big">Feedback<span aria-hidden="true">→</span></A></Cut></span>
-        <span className="xp-l"><Cut i={1}><a className="xbt-big sm" href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer">Book a call<span aria-hidden="true">↗</span></a></Cut></span>
+        <Cut i={0}><A to="/login?next=%2Fbeta" className="xbt-big">Feedback<span aria-hidden="true">→</span></A></Cut>
+        <Cut i={1}><a className="xbt-big sm" href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer">Book a call<span aria-hidden="true">↗</span></a></Cut>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

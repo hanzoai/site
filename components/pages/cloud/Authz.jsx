@@ -1,29 +1,36 @@
 'use client';
 /* Authz.
-   V2: 8/10 Apple-style launch: the permission check is the hero object, a graph that answers by itself; six pinned rules each with their own scene; a delegation you write yourself; a spec sheet; one dark close.
+   V2: 8/10 The check is the hero: a graph that asks itself who may touch what and answers true or false at figure size, then six pinned rules, a delegation you write yourself, the spec, one dark close. Deck greys, deck scale, no springs.
+   Persona: a developer adding authorization to a service (Hanzo's own words: "a library, not a service").
+   Goal: understand the one rule in one look, then read the docs or take the library.
+   CTA: "Read the docs" → https://docs.hanzo.ai/docs/projects/hanzoai/authz (solid, data-cta authz.hero, data-thumb);
+        "View on GitHub" → https://github.com/hanzoai/authz (quiet, authz.hero-2); "Deploy to Cloud" →
+        https://platform.hanzo.ai/deploy (solid in the close, authz.close); "Self-host" → the docs (quiet, authz.close-self).
+   Metric: api_key_created (developers).
    Signature: the check, answered live. A relationship graph of callers and locations (acme, acme/prod, acme/prod/web,
-   the app or site under that): a request arrives and the path from the caller through its grant down the tree lights
-   hop by hop, then the answer lands, true or false, with the step that decided it. It runs by itself; pick any caller
-   and any location and it asks again.
-   Supporting: the Stage hero (the graph starts huge and settles as you scroll), six pinned rules that fade one into the
-   next, and the closing dark room that opens out to full width.
-   Beyond: "Delegate it yourself" - choose where your grant sits and where you write the agent's, and see whether it can
+   the app or site under that): a request arrives and the path from the caller through its grant down the tree fills
+   in ink hop by hop, then the answer cuts in, true or false, with the step that decided it. It runs by itself (pause
+   beside the asks); pick any caller and any location and it asks again.
+   Supporting: the Stage hero (the graph settles as you scroll), six pinned rules that fade one into the next, and the
+   closing dark room that opens out to full width.
+   Beyond: "Delegate it yourself": choose where your grant sits and where you write the agent's, and see whether it can
    be delegated, with Hanzo's own sentence on why. Built only from the path rule on this page.
-   Accent: violet, the colour of a lit path. Every word and link is Hanzo's. */
+   Every word and link is Hanzo's; the demo's labels (caller, location, can, grant, target) are UI. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { EASE } from '../../ui';
-import { A } from '../../kit';
-import { Console, useLive, useSteps } from './Frame';
-import KeynoteStage from '../../v2/KeynoteStage';
+import { useLive, useSteps } from './Frame';
+import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteSpec, { Fig } from '../../v2/KeynoteSpec';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
+import { A } from '../../kit';
+import ExampleConsole from './ExampleConsole';
 import './Authz.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/authz';
 const GH = 'https://github.com/hanzoai/authz';
+const MOVE = [0.4, 0, 0.2, 1];
 
 /* Hanzo's example path, one level per row: each location prefixes the ones under it */
 const LOC = ['acme', 'acme/prod', 'acme/prod/web', 'the app or site under that'];
@@ -31,7 +38,8 @@ const LOC = ['acme', 'acme/prod', 'acme/prod/web', 'the app or site under that']
 const WHO = [['org-wide member', 0], ['workspace member', 1], ['agent, delegated', 2], ['invite-only project', 3]];
 /* the requests that arrive by themselves: [caller, target] */
 const SCRIPT = [[1, 2], [1, 0], [0, 3], [2, 1], [3, 3], [2, 2]];
-const HOP = 0.36;
+const EVERY = 4600; // ms per request; the CSS fill in the request bar runs the same time
+const HOP = 0.4;
 const covers = (g, t) => t >= g;
 
 /* where each node sits inside the graph, from layout (offsets ignore the Stage's scale) */
@@ -68,8 +76,9 @@ const STEPS = ['verifies the JWT that IAM signed', 'does a grant this caller hol
 /* The hero object and the signature: the check, asked of a graph. */
 function Check() {
   const [ref, live, calm] = useLive(0.3);
+  const paused = useStagePause();
   const [mine, setMine] = useState(null);
-  const [step] = useSteps(SCRIPT.length, 4600, live && !mine);
+  const [step] = useSteps(SCRIPT.length, EVERY, live && !mine && !paused);
   const [w, t] = mine || SCRIPT[step];
   const g = WHO[w][1];
   const ok = covers(g, t);
@@ -83,29 +92,29 @@ function Check() {
   const pick = (nw, nt) => setMine([nw, nt]);
   return (
     <div className="kn-obj az-obj" ref={ref}>
-      <div className="az-bar">
+      <div className={'az-bar' + (mine ? ' held' : '')}>
         <i /><i /><i />
         <span className="az-bar-t">hanzoai/authz</span>
-        <div className="az-reqs" role="tablist" aria-label="Requests">
+        <div className="az-reqs" role="group" aria-label="Requests">
           {SCRIPT.map(([a, b], i) => {
             const on = mine ? mine[0] === a && mine[1] === b : step === i;
-            return <button key={i} type="button" role="tab" aria-selected={on} aria-label={WHO[a][0] + ', ' + LOC[b]} onClick={() => pick(a, b)}><i /></button>;
+            return <button key={i} type="button" aria-pressed={on} aria-label={WHO[a][0] + ', ' + LOC[b]} onClick={() => pick(a, b)}><i /></button>;
           })}
           {mine && <button type="button" className="az-resume" onClick={() => setMine(null)}>Replay</button>}
         </div>
-        <code className="az-bar-c"><b>$</b> hanzo authz check</code>
+        <code className="az-bar-c"><b aria-hidden="true">$</b>hanzo authz check</code>
       </div>
       <div className="az-graph" ref={box}>
         {G && (
           <svg className="az-edges" width={G.W} height={G.H} aria-hidden="true">
             {WHO.map(([, gi], i) => <path key={'b' + i} className="az-e who" d={whoPath(G, i, gi)} />)}
             {LOC.slice(1).map((_, i) => <path key={'s' + i} className="az-e" d={treePath(G, i, i + 1)} />)}
-            <motion.path key={'w' + key} className="az-e lit who" d={whoPath(G, w, g)} initial={{ pathLength: calm ? 1 : 0 }} animate={{ pathLength: 1 }} transition={{ duration: HOP, ease: EASE, delay: d(1) }} />
+            <motion.path key={'w' + key} className="az-e lit who" d={whoPath(G, w, g)} initial={{ pathLength: calm ? 1 : 0 }} animate={{ pathLength: 1 }} transition={{ duration: HOP, ease: MOVE, delay: d(1) }} />
             {ok && Array.from({ length: walk }).map((_, j) => (
-              <motion.path key={key + '-' + j} className="az-e lit" d={treePath(G, g + j, g + j + 1)} initial={{ pathLength: calm ? 1 : 0 }} animate={{ pathLength: 1 }} transition={{ duration: HOP, ease: EASE, delay: d(2 + j) }} />
+              <motion.path key={key + '-' + j} className="az-e lit" d={treePath(G, g + j, g + j + 1)} initial={{ pathLength: calm ? 1 : 0 }} animate={{ pathLength: 1 }} transition={{ duration: HOP, ease: MOVE, delay: d(2 + j) }} />
             ))}
             {!ok && Array.from({ length: g - t }).map((_, j) => (
-              <motion.path key={key + '-m' + j} className="az-e miss" d={treePath(G, t + j, t + j + 1)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: d(2) }} />
+              <path key={key + '-m' + j} className="az-e miss" d={treePath(G, t + j, t + j + 1)} style={{ animationDelay: d(2) + 's' }} />
             ))}
           </svg>
         )}
@@ -124,14 +133,14 @@ function Check() {
           {LOC.map((l, i) => (
             <button
               key={l} type="button" role="radio" aria-checked={t === i} data-loc=""
-              className={'az-loc' + (lit(i) ? ' lit' : '') + (i === g ? ' grant' : '') + (i === t ? ' target' : '') + (i === t && !ok ? ' no' : '')}
+              className={'az-loc' + (lit(i) ? ' lit' : '') + (i === g ? ' grant' : '') + (i === t ? ' target' : '') + (i === t && !ok ? ' no' : '') + (i === LOC.length - 1 ? ' prose' : '')}
               style={{ '--lv': i, transitionDelay: lit(i) ? d(2 + (i - g)) + 's' : '0s' }}
               onClick={() => pick(w, i)}
             >
               <span className="az-loc-n">{l}</span>
               <span className="az-tags" aria-hidden="true">
-                {i === g && <em className="az-tag g">grant</em>}
-                {i === t && <em className="az-tag t">target</em>}
+                {i === g && <em key={'g' + key} className="az-tag g">grant</em>}
+                {i === t && <em key={'t' + key} className="az-tag t">target</em>}
               </span>
             </button>
           ))}
@@ -139,10 +148,10 @@ function Check() {
 
         <div className="az-col az-dec" aria-live="polite">
           <p className="az-k">can</p>
-          <p className="az-q" key={'q' + key}><b>{WHO[w][0]}</b><span>{LOC[t]}</span></p>
-          <motion.p key={'a' + key} className={'az-a kn-fig ' + (ok ? 'ok' : 'no')} initial={calm ? false : { opacity: 0, scale: 0.7, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: land }}>
-            {ok ? 'true' : 'false'}
-          </motion.p>
+          <p className="az-q"><b>{WHO[w][0]}</b><span>{LOC[t]}</span></p>
+          <p className={'az-a ' + (ok ? 'ok' : 'no')}>
+            <span key={'a' + key} className="az-a-t" style={{ animationDelay: land + 's' }}>{ok ? 'true' : 'false'}</span>
+          </p>
           <ol className="az-steps">
             {STEPS.map((s, i) => {
               const st = i === 0 ? 'ok' : i === 1 ? (ok ? 'ok' : 'no') : ok ? 'ok' : 'skip';
@@ -160,16 +169,24 @@ function Check() {
   );
 }
 
-/* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
+/* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps once through by
+   itself while seen (a step a second, so it ends at rest well inside 5 s) */
 function useStepOf(p, n, on) {
   const [k, setK] = useState(0);
   const calm = useReducedMotion();
   useEffect(() => {
-    if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
-    if (!on || calm) return;
-    const id = setInterval(() => setK((x) => (x + 1) % n), 1600);
-    return () => clearInterval(id);
-  }, [p, n, on, calm]);
+    if (!p) return;
+    const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
+    f(p.get());
+    return p.on('change', f);
+  }, [p, n]);
+  useEffect(() => {
+    if (p) return;
+    if (calm) { setK(n - 1); return; }
+    if (!on || k >= n - 1) return;
+    const t = setTimeout(() => setK((x) => Math.min(n - 1, x + 1)), Math.min(1000, 4500 / n));
+    return () => clearTimeout(t);
+  }, [p, n, on, calm, k]);
   return k;
 }
 
@@ -190,7 +207,7 @@ function WhereScene({ p, on }) {
       <div className="az-where-l">
         <p className="az-sc-k">location</p>
         <div className="az-where-list">
-          <ul>{LOC.map((l, i) => <li key={l} className={i >= k ? 'in' : ''} style={{ '--lv': i }}>{l}</li>)}</ul>
+          <ul>{LOC.map((l, i) => <li key={l} className={(i >= k ? 'in' : '') + (i === LOC.length - 1 ? ' prose' : '')} style={{ '--lv': i }}>{l}</li>)}</ul>
           <span className="az-bracket" aria-hidden="true" />
         </div>
       </div>
@@ -237,7 +254,7 @@ function RuleScene({ p, on }) {
   );
 }
 
-/* 04: a narrower grant inside your own, with an expiry running down */
+/* 04: a narrower grant inside your own, each with an expiry that runs down once */
 function DelegateScene() {
   return (
     <div className="kn-obj az-sc az-del">
@@ -302,13 +319,14 @@ const SCENES = [WhereScene, LeafScene, RuleScene, DelegateScene, TokenScene, Sig
 
 /* Beyond: write a delegation yourself. Allowed when the agent's grant sits at or under yours. */
 function Pick({ label, at, set, id }) {
+  const calm = useReducedMotion();
   return (
     <div className="az-pk" role="radiogroup" aria-label={label}>
       <p className="az-pk-k">{label}</p>
       <div className="az-pk-row">
         {LOC.map((l, i) => (
           <button key={l} type="button" role="radio" aria-checked={at === i} onClick={() => set(i)}>
-            {at === i && <motion.span layoutId={'az-pk-' + id} className="az-pk-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+            {at === i && <motion.span layoutId={'az-pk-' + id} className="az-pk-bg" transition={calm ? { duration: 0 } : { duration: 0.3, ease: MOVE }} />}
             <span>{l}</span>
           </button>
         ))}
@@ -326,11 +344,15 @@ function Delegate() {
     <section className="kn-sec az-dg">
       <div className="kn-wrap kn-grid az-dg-g">
         <div className="az-dg-l">
-          <p className="kn-kick ac">Delegation is a narrower grant</p>
-          <KeynoteLines className="kn-headline" lines={['Delegate it', 'yourself']} />
+          <div className="az-dg-h">
+            <KeynoteLines className="kn-headline" lines={['Delegate it', 'yourself']} />
+            <p className="kn-kick">Delegation is a narrower grant</p>
+          </div>
           <Pick label="your grant" at={mine} set={setMine} id="m" />
           <Pick label="the agent's grant" at={give} set={setGive} id="g" />
-          <label className="az-dg-x"><input type="checkbox" checked={exp} onChange={() => setExp(!exp)} /> with an expiry</label>
+          <button type="button" role="switch" aria-checked={exp} className="az-dg-x" onClick={() => setExp(!exp)}>
+            <span className="az-sw" aria-hidden="true"><i /></span>with an expiry
+          </button>
         </div>
         <div className={'az-dg-out ' + (ok ? 'ok' : 'no')} aria-live="polite">
           <div className="az-dg-path" aria-hidden="true">
@@ -343,7 +365,7 @@ function Delegate() {
             ))}
           </div>
           <div className="az-dg-legend" aria-hidden="true"><span className="m">your grant</span><span className="g">agent</span></div>
-          <p className="az-dg-a kn-fig">{ok ? 'true' : 'false'}</p>
+          <p className="az-dg-a"><span key={ok ? 'y' : 'n'} className="az-a-t">{ok ? 'true' : 'false'}</span></p>
           <p className="az-dg-w"><code>grant at {LOC[give]}</code>{ok && exp && <em>expiry</em>}</p>
           <p className="az-dg-say">{ok ? (exp ? 'Delegation is a narrower grant, with an expiry if you want one.' : 'Delegation is a narrower grant.') : 'Nothing can be delegated that the delegator does not already hold.'}</p>
         </div>
@@ -373,7 +395,7 @@ function Family() {
           </ul>
         </div>
         <div className="az-fam-r">
-          <Console name="Authz" api="/v1/authz" side={SIDE} />
+          <ExampleConsole name="Authz" api="/v1/authz" side={SIDE} />
           <p className="az-note">Example project. Every name in it is one you would give your own.</p>
         </div>
       </div>
@@ -383,14 +405,15 @@ function Family() {
 
 export default function Authz() {
   return (
-    <main className="kn az" style={{ '--ac': '#737373' }}>
+    <main className="kn az">
       <KeynoteStage
         kick="hanzoai/authz"
         title={['Hanzo Authz']}
         lede="Fine-grained authorization"
         acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}
         meta={<span>Apache-2.0 · a library, not a service</span>}
-        from={1.15}
+        cta="authz.hero"
+        from={1.08}
       >
         <Check />
       </KeynoteStage>
@@ -401,10 +424,10 @@ export default function Authz() {
         swap="fade"
         count
         head={
-          <p className="az-say">
-            <b>Hanzo Authz reads a token and answers whether the caller may do the thing.</b>{' '}
-            It verifies the JWT that IAM signed, then asks one question: does a grant this caller holds cover this path, and does its role admit this verb. It is a library, not a service — no store, no configuration, no network call on any path — so every Hanzo service asks that question the same way and gets the same answer.
-          </p>
+          <div className="kn-grid az-say">
+            <KeynoteLines className="kn-headline az-say-h" lines="Hanzo Authz reads a token and answers whether the caller may do the thing." />
+            <p className="kn-body az-say-p">It verifies the JWT that IAM signed, then asks one question: does a grant this caller holds cover this path, and does its role admit this verb. It is a library, not a service — no store, no configuration, no network call on any path — so every Hanzo service asks that question the same way and gets the same answer.</p>
+          </div>
         }
         items={RULES.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
         visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
@@ -435,6 +458,7 @@ export default function Authz() {
         stars="4 stars"
         self={DOCS}
         api="/v1/authz"
+        cta="authz.close"
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Authz in my project. Start with: hanzo authz check"
       />
     </main>
