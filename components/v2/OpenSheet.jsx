@@ -55,14 +55,16 @@ export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, 
 }
 
 /* A button that opens a sheet of detail; the detail is always in the page, collapsed. */
-export function Detail({ label = 'Read the detail', title, kicker, children, wide, className = '' }) {
+/* label: Hanzo's own words only (for example the items the sheet holds); with no label the button is the "+" alone and
+   its accessible name is the sheet's title. */
+export function Detail({ label, title, kicker, children, wide, className = '' }) {
   const [open, setOpen] = useState(false);
   const btn = useRef(null);
   const id = useId();
   return (
     <>
-      <motion.button ref={btn} type="button" className={'w2-detail ' + className} layoutId={'dt-' + id} transition={MORPH} aria-haspopup="dialog" onClick={() => setOpen(true)} data-cursor="Open">
-        <span>{label}</span><i aria-hidden="true">+</i>
+      <motion.button ref={btn} type="button" className={'w2-detail ' + (label ? '' : 'solo ') + className} layoutId={'dt-' + id} transition={MORPH} aria-haspopup="dialog" aria-label={label ? undefined : title} onClick={() => setOpen(true)} data-cursor="Open">
+        {label && <span>{label}</span>}<i aria-hidden="true">+</i>
       </motion.button>
       <div hidden>{children}</div>
       <Sheet open={open} onClose={() => { setOpen(false); setTimeout(() => btn.current?.focus({ preventScroll: true }), 50); }} layoutId={'dt-' + id} title={title} kicker={kicker} wide={wide}>{children}</Sheet>
