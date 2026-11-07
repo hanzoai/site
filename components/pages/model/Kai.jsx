@@ -1,16 +1,19 @@
 'use client';
-/* Kai: made for decisions.
+/* Kai: made for decisions. v2 launch page (Launch + Chapters, accent cobalt).
+   V2: 8/10 film settles into a diamond, a decision node; choice, score and noul pin as chapters, each answering a real guide question on the film; the decision tree is the one dark room; model cards, a spec sheet, one call to action
    Signature: the decision tree that resolves itself. A state types in, its typed questions branch out (choice,
    score, noul) and each settles on an answer: a choice's options weigh up, a score's marker finds its level, a
    yes/no tips. It runs Hanzo's own three requests from the Kai guide in turn; pick one by hand any time.
    Beyond: copy the exact request you just watched resolve (verbatim from the guide) and run it yourself; the three
-   question types sit below as live answer shapes that lead into the guide. */
+   question types pin as chapters, each one's answer shape playing on a real question from the guide. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A, More } from '../../kit';
 import Sigil from '../../Sigil';
 import { arrows } from './live';
+import Launch, { Lines, poly, dense, film } from '../../v2/Launch';
+import Chapters from '../../v2/x-cray/Chapters';
 import './Kai.css';
 
 const CURL = `curl -sS --fail-with-body https://api.hanzo.ai/v1/decisions \\
@@ -210,31 +213,91 @@ const TYPES = [
   ['score', 'Send criteria: the levels, lowest first.', 'Get score (the expected level index), legend, probabilities by level index.'],
   ['noul', 'Send instructions: a yes/no question.', 'Get noul: P(true).'],
 ];
+const TYPE_TITLE = ['Pick the right option.', 'Find the level.', 'Yes or no.'];
+
+const DIAMOND = poly((W, H, wide) => {
+  const c = wide ? [W * 0.72, H * 0.5] : [W / 2, H * 0.26];
+  const r = wide ? Math.min(H * 0.42, W * 0.25) : Math.min(W * 0.4, H * 0.2);
+  return dense([[c[0], c[1] - r], [c[0] + r, c[1]], [c[0], c[1] + r], [c[0] - r, c[1]]], 8);
+});
+
+// a chapter's picture: Kai's film in cobalt, with one question from the guide's support-ticket request answering on it
+function TypeArt({ i, on }) {
+  const q = CASES[0].qs[i];
+  return (
+    <div className="ka-art">
+      <img src={film('kai', 'webp')} alt="" loading="lazy" />
+      <div className="ka-qcard" aria-hidden="true">
+        <p className="ka-qcard-top"><code>POST /v1/decisions</code><em>{q.type}</em></p>
+        <p className="ka-qcard-n">{q.name}</p>
+        <p className="ka-qcard-i">{q.ins}</p>
+        <Answer q={q} on={on} />
+      </div>
+    </div>
+  );
+}
+
+const CHAPTERS = TYPES.map(([t, send, get], i) => ({
+  k: t,
+  title: TYPE_TITLE[i],
+  art: (on) => <TypeArt i={i} on={on} />,
+  body: (
+    <>
+      <p>{send}</p>
+      <p className="ka-get">{get}</p>
+      <p><More to="/kai/guide">Read the guide</More></p>
+    </>
+  ),
+}));
+
+const CARDS = [['Kai 1.8', 'Versioned model', 'kai-1.8', '/models/hanzo/kai-1.8', [1.8, 1024, 32768]], ['Kai', 'Default API alias', 'kai', '/models/hanzo/kai', [100, 0.021, 422]]];
 
 export default function Kai() {
   return (
-    <>
-      <section className="ka-intro mb-sec" aria-labelledby="ka-h">
-        <div className="x-wrap ka-split">
-          <div className="ka-copy">
-            <p className="mb-kick">Hanzo / Kai</p>
-            <h2 id="ka-h" className="mb-h">Kai.<span className="mb-l2">Made for decisions.</span></h2>
-            <p className="mb-lede">The decision model family from Hanzo. Explore each version, its capabilities and the evidence behind it.</p>
-            <div className="mb-acts">
-              <a href="#models" className="x-btn solid">Explore models</a>
-              <A to="https://platform.hanzo.ai/decisions" className="x-btn" data-thumb="Open Decisions">Open Decisions</A>
-              <More to="https://github.com/hanzoai/kai">Docs on GitHub</More>
+    <Launch
+      slug="kai"
+      accent="#2d5bff"
+      ink="#2448d8"
+      shape={DIAMOND}
+      aim={(W, H, wide) => (wide ? null : [-0.16 * W, -0.2 * H])}
+      headClass="ka-head"
+      head={
+        <>
+          <p className="lv-kick">Hanzo / Kai</p>
+          <Lines id="ka-h" lines={['Kai.', 'Made for decisions.']} />
+          <p className="lv-lede">The decision model family from Hanzo. Explore each version, its capabilities and the evidence behind it.</p>
+          <div className="lv-acts">
+            <a href="#models" className="x-btn solid">Explore models</a>
+            <A to="https://platform.hanzo.ai/decisions" className="x-btn" data-thumb="Open Decisions">Open Decisions</A>
+            <More to="https://github.com/hanzoai/kai">Docs on GitHub</More>
+          </div>
+        </>
+      }
+    >
+      <Chapters id="ka-types" label="Kai's three question types" items={CHAPTERS} flip />
+      <section className="lv-room lv-sec ka-live" aria-labelledby="ka-live-h">
+        <div className="x-wrap">
+          <div className="lv-sh">
+            <div>
+              <p className="lv-kick"><span className="mb-live">Live</span></p>
+              <h2 id="ka-live-h" className="lv-h">A state goes in. Answers come out.</h2>
             </div>
+            <p className="lv-p">Three requests from the Kai guide, resolving one question at a time. Pick one, copy it, and run it yourself.</p>
           </div>
           <Tree />
         </div>
       </section>
-      <section className="ka-models mb-sec" id="models" aria-labelledby="ka-m">
+      <section className="lv-sec ka-models" id="models" aria-labelledby="ka-m">
         <div className="x-wrap">
-          <h2 id="ka-m" className="mb-h2">Kai models</h2>
-          <p className="mb-lede">Explore the model cards</p>
+          <div className="lv-sh">
+            <div>
+              <p className="lv-kick">Model cards</p>
+              <h2 id="ka-m" className="lv-h">Kai models</h2>
+            </div>
+            <p className="lv-p">Explore the model cards</p>
+          </div>
           <ul className="ka-cards">
-            {[['Kai 1.8', 'Versioned model', 'kai-1.8', '/models/hanzo/kai-1.8', [1.8, 1024, 32768]], ['Kai', 'Default API alias', 'kai', '/models/hanzo/kai', [100, 0.021, 422]]].map(([n, l, code, to, data]) => (
+            {CARDS.map(([n, l, code, to, data]) => (
               <li key={code}>
                 <A to={to} className="ka-card" data-cursor="Open">
                   <Sigil seed={'kai/' + code} data={data} className="ka-sig" />
@@ -246,20 +309,36 @@ export default function Kai() {
               </li>
             ))}
           </ul>
-          <ol className="ka-types">
-            {TYPES.map(([t, send, get], i) => (
-              <li key={t}>
-                <A to="/kai/guide" className="ka-type">
-                  <span className={'ka-glyph ka-g' + i} aria-hidden="true"><i /><i /><i /></span>
-                  <b>{t}</b>
-                  <span>{send}</span>
-                  <span>{get}</span>
-                </A>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
-    </>
+      <section className="lv-sec ka-spec" aria-labelledby="ka-spec-h">
+        <div className="x-wrap ka-spec-in">
+          <div>
+            <p className="lv-kick">Spec sheet</p>
+            <h2 id="ka-spec-h" className="lv-h">One endpoint. Three kinds of question.</h2>
+          </div>
+          <table className="lv-spec">
+            <tbody>
+              <tr><th scope="row">Endpoint</th><td><code>POST /v1/decisions</code></td></tr>
+              <tr><th scope="row">Models</th><td><code>kai</code> Default API alias · <code>kai-1.8</code> Versioned model</td></tr>
+              {TYPES.map(([t, , get]) => <tr key={t}><th scope="row">{t}</th><td>{get}</td></tr>)}
+              <tr><th scope="row">SDKs</th><td>curl · Python <code>pip install hanzoai</code> · TypeScript <code>npm install hanzoai</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section className="lv-sec ka-end" aria-label="Start with Kai">
+        <div className="x-wrap lv-cta">
+          <Lines as="p" className="ka-end-l" lines={['Made for decisions.']} reveal />
+          <div className="lv-cta-r">
+            <p className="lv-p">Kai answers each question with a probability for every answer it allows, and writes no text.</p>
+            <div className="lv-acts">
+              <A to="https://platform.hanzo.ai/decisions" className="x-btn solid">Open Decisions</A>
+              <More to="/kai/guide">Read the guide</More>
+            </div>
+          </div>
+        </div>
+      </section>
+    </Launch>
   );
 }

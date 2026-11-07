@@ -1,6 +1,6 @@
-/* Uta (ut-): the studio on the left, the head on the right */
-.ut-split { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .6fr); gap: 48px; align-items: center; }
-.ut-head .cr-h { font-size: clamp(2.6rem, 4.4vw, 4.4rem); }
+/* Uta (ut-): four stems beside the headline, then the piano roll */
+.ut-v2 { width: min(42%, 540px); }
+.ut-v2 .lv-lines { font-size: clamp(3rem, 5.6vw, 5.5rem); }
 .ut-pre, .ut-status, .ut-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 12px 16px; }
 .ut-pre { border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .ut-pre .mb-mono { margin: 0; }
@@ -34,8 +34,7 @@
 .ut-q { font-size: 15px; line-height: 1.45; color: #f5f5f7; }
 .ut-eng { font-size: 14px; line-height: 1.5; color: #a1a1a6; }
 @media (max-width: 900px) {
-  .ut-split { grid-template-columns: 1fr; gap: 36px; }
-  .ut-head { order: -1; }
+  .ut-v2 { width: auto; }
   .ut-main { grid-template-columns: 1fr; }
   .ut-tracks { grid-template-columns: 1fr 1fr; border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .08); }
   .ut-tn { font-size: 14px; }
@@ -47,10 +46,10 @@
 }
 
 /* elite bar: type floor, balanced headings, thumb-sized taps */
-.ut-intro :is(h1, h2) { text-wrap: balance; }
+.ut-scene :is(h1, h2) { text-wrap: balance; }
 @media (max-width: 900px) {
   .ut-v,
   .ut-solo,
   .ut-mon figcaption span { font-size: 14px; }
-  .ut-intro button, .ut-intro [role=tab] { min-height: 44px; }
+  .ut-scene button, .ut-scene [role=tab] { min-height: 44px; }
 }
