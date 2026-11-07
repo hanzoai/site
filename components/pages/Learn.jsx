@@ -10,7 +10,7 @@
    0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A, Cta, More, Faq, Film } from '../kit';
+import { A, Cta, More, Faq, Film, Img } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
@@ -32,6 +32,10 @@ const TRY = [
   ['MCP', 'Thirteen tools — shell, files, code, git, HTTP — behind one server.', '/mcp'],
   ['Agents', 'A Python SDK where an agent is a model, instructions and tools, and several can sit behind one router.', '/agents/sdk'],
 ];
+/* Each card's still: Hanzo's own model art from public/models, matched to the product as the live pages do
+   (Chat answers with Enso; Playground's window shows Iro; Hanzo Dev with Mori; Zen is Zen; MCP with Oto; Agents with
+   Koma, as on /agents). Stills only: the page's two films (Zen, Kai) are the only things that play. */
+const TRY_ART = ['/models/enso.webp', '/models/iro.webp', '/models/mori.webp', '/models/zen.webp', '/models/oto.webp', '/models/koma.webp'];
 const FURTHER = [
   ['Starters', 'A starter for each Hanzo product. Browse, fork, deploy.', '/gallery'],
   ['UI', 'Open-source, accessible React components built on @hanzo/gui primitives.', '/ui'],
@@ -61,11 +65,15 @@ function Metro() {
   const calm = useReducedMotion();
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.4 });
+  const prev = useRef(0);
+  const dir = at >= prev.current ? 1 : -1;
+  useEffect(() => { prev.current = at; }, [at]);
   useEffect(() => {
     if (mine || calm || !seen || at >= START.length - 1) return; // one ride along the line, then it rests on MCP
-    const t = setTimeout(() => setAt((v) => v + 1), 2800);
+    const t = setTimeout(() => setAt((v) => v + 1), at === 0 ? 900 : 2800); // leaves the first station within a second
     return () => clearTimeout(t);
   }, [at, mine, calm, seen]);
+  const rest = !mine && !calm && at === START.length - 1; // the train breathes at MCP for under 5 s, then holds still
   const keys = (e) => {
     const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!d) return;
@@ -78,7 +86,7 @@ function Metro() {
       <div className="xlr-map-top"><span className="xlr-map-k">Learn</span><span className="xlr-line-tag">Start here</span><span className="xlr-map-n x-mono">{String(at + 1).padStart(2, '0')} / {String(START.length).padStart(2, '0')}</span></div>
       <div className="xlr-track">
         <i className="xlr-rail" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / (START.length - 1) }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} /></i>
-        <motion.span className="xlr-train" aria-hidden="true" initial={false} animate={{ x: (at / (START.length - 1)) * 100 + '%' }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}><i /></motion.span>
+        <motion.span className={'xlr-train' + (rest ? ' rest' : '')} aria-hidden="true" initial={false} animate={{ x: (at / (START.length - 1)) * 100 + '%' }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}><i /></motion.span>
         <div className="xlr-stops" role="tablist" aria-label="Start here" onKeyDown={keys}>
           {START.map(([t], i) => (
             <button key={t} type="button" role="tab" id={'xlr-t' + i} aria-controls={'xlr-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => { setAt(i); setMine(true); }}>
@@ -90,7 +98,7 @@ function Metro() {
       <div className="xlr-panels">
         {START.map(([t, d, h], i) => (
           <div key={t} id={'xlr-p' + i} role="tabpanel" aria-labelledby={'xlr-t' + i} hidden={at !== i} className="xlr-panel">
-            <motion.div key={at === i ? 'on' : 'off'} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+            <motion.div key={at === i ? 'on' : 'off'} initial={calm ? false : { clipPath: dir > 0 ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)' }} animate={{ clipPath: 'inset(0% 0% 0% 0%)', transitionEnd: { clipPath: 'none' } }} transition={{ duration: 0.3, ease: EASE }}>
               <h3 className="xp-head"><A to={h} className="xlr-guide">{t}<i aria-hidden="true">↗</i></A></h3>
               <p className="xp-lede">{d}</p>
             </motion.div>
@@ -109,7 +117,7 @@ function Hero() {
           <div className="xlr-hero-h">
             <LineReveal as="h1" id="xlr-h1" className="xp-display" lines={['Learn Hanzo']} />
           </div>
-          <motion.div className="xlr-hero-side" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
+          <motion.div className="xlr-hero-side" initial={{ clipPath: 'inset(0% 0% 100% 0%)' }} animate={{ clipPath: 'inset(0% 0% 0% 0%)', transitionEnd: { clipPath: 'none' } }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
             <p className="xp-lede">Start with a working request, then go as deep as you need.</p>
             <div className="xlr-acts">
               <Cta to={DOCS + 'quickstart'} id="learn.hero" thumb className="xp-cta">Get started</Cta>
@@ -197,7 +205,10 @@ function Rail() {
         {TRY.map(([t, d, h], i) => (
           <li key={t + h}>
             <A to={h} className={'xlr-card' + (lit === i ? ' lit' : '')} draggable={false}>
-              <span className="xlr-card-n xp-fig" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span className="xlr-card-m" aria-hidden="true">
+                <Img src={TRY_ART[i]} w={1200} h={1500} alt="" />
+                <span className="xlr-card-n xp-fig">{String(i + 1).padStart(2, '0')}</span>
+              </span>
               <b className="xlr-card-t" data-morph>{t}</b>
               <span className="xlr-card-d">{d}</span>
               <i aria-hidden="true">→</i>
