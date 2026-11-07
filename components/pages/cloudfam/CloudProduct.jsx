@@ -1,28 +1,28 @@
 'use client';
-/* Hanzo Cloud products (/cloud/<slug>, 42 pages, one template), v3. Archetype A, Launch: stage hero, chapters, a spec
-   sheet, a compare, one action. Pages in the family differ by their own console, their own Sigil (seeded by the slug
-   and the product's own figures) and their own words; never by a hue (JAMES 7: greys, silvers, ink and white only).
-   Persona: Developer, with the enterprise buyer (PLAN-COMPONENTS 1.1).
+/* Hanzo Cloud products (/cloud/<slug>, 42 pages, one template). Launch (MASTER 4.1, cloud products): the product as the
+   object, the product doing the thing, chapters, proof, one action. Pages in the family differ by their own console,
+   their own Sigil (seeded by the slug and the product's own figures), their own words, and by family group, one of four
+   first screens (MASTER 3.2 rule 7): stage (the console on a lid that settles flat: Compute, Infrastructure, Local),
+   wide (the console full width, growing as you arrive: AI, Apps, Observe, Dev), path (the product's own endpoint as
+   the giant object, the name resting at 52px: Science, Web3, Data), field (the product's own Sigil as a tall stage:
+   Security, Network). Never a hue: greys, silvers, ink and white only.
+   Persona: Developer, with the enterprise buyer.
    Goal: contact_sales_submit (the product's first action, "Talk to us"; /cloud/local: "Run it locally").
-   CTA: the product's own first action: hero (solid, data-thumb), the site's sticky ask bar after the hero, the closing Band.
-   One solid per screen.
-   Signature: the session runs in the console. The product's console is the hero object on a stage (it starts tipped
-   back like a lid and settles flat as you scroll) while the agent prompt from "Paste and ship" types itself into its
-   session bar and the example plays: the request walks the project's services, or the conversation with the agent
-   arrives turn by turn, or the CLI session prints line by line. Click a service and the walk holds on it; the pause
-   control in the window's bar stops the whole session (WCAG 2.2.2).
-   Scale rhythm (MASTER 3.1): the product's name is the hero's moment, 112px (84 for longer names) settling to 52px as
-   the stage settles; headings rest at 26px; figures 64px; Hanzo's genesis line starts small and light and grows to
-   44px Book once you reach it. The finder's black room rises as a rounded card and opens to full width.
-   Motion mix (scroll is 2 of 6 kinds): scroll (the stage settles and the name shrinks; the black room opens), time
-   (the session types and plays; the prompt's request travels from skill.md to the endpoint; the genesis line grows),
-   pointer (the Sigil fields lean to the pointer, related cards drift their field), state (the lit service glides, the
-   finder re-flows as you type), arrival (the stage).
-   Beyond: Google Cloud to Hanzo, in one lookup. A dark-room finder over every cloud page that names its Google Cloud
-   counterpart (18 of them): type the Google Cloud service you use now and its Hanzo product and endpoint come forward,
-   each a link. Built only from those pages' own "Google Cloud" and "API" lines.
-   Every section holds an object: the console; the prompt's route; the product's Sigil; Hanzo's mark; the spec card;
-   the finder; the related cards; the endpoint in the Band. Coverage: docs/coverage/cloud-family.md. */
+   CTA: the product's own first action: hero (solid, data-cta "cloud.<slug>.hero", data-thumb), the site's sticky ask
+   after the hero, the closing Band. One solid per screen; the console link and Copy are outlines.
+   Signature: the session runs in the console. The agent prompt from "Paste and ship" is in its session bar in full
+   (faint) from the first paint and types itself white over the same wrapping while the example plays: the request walks
+   the project's services, or the conversation with the agent arrives turn by turn, or the CLI session prints line by
+   line. Click a service and the walk holds on it; the pause control in the window's bar stops the session (WCAG 2.2.2).
+   Scale rhythm (MASTER 3.1): the name is the hero's moment, cut in by its line mask at 112px (84/64 for longer names)
+   and settling to 52px as the stage settles; headings rest at 26px; figures 64px; the genesis line is a quiet 21px
+   strip before the close, its weight moving once from Air to Book.
+   Motion mix: scroll (the stage settles and the name shrinks; the finder's room opens), time (the prompt types, the
+   session plays, the request travels from skill.md to the endpoint), pointer (Sigil fields lean, related cards drift),
+   state (the lit service glides, the finder re-flows as you type), arrival (the name's line mask).
+   Beyond: Google Cloud to Hanzo, in one lookup, on the 18 pages that name a Google Cloud counterpart: type the service
+   you use now and its Hanzo product and endpoint come forward. Built only from those pages' own "Google Cloud" and "API"
+   lines. Coverage: docs/coverage/cloud-family.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Mark } from '../../ui';
@@ -103,13 +103,13 @@ function Console({ doc }) {
   // the walk: rows light in turn; turns and lines arrive one by one, rest two beats, then the session replays
   useEffect(() => {
     if (!live || !seen || phase !== 'play') return;
-    const id = setInterval(() => {
-      if (Date.now() < hold.current) return;
+    const beat = kind === 'rows' ? 1900 : 1400;
+    const id = setTimeout(() => {
       if (kind === 'rows') setAt((a) => (a + 1) % count);
       else setAt((a) => (a >= count + 2 ? 0 : a + 1));
-    }, kind === 'rows' ? 1900 : 1400);
-    return () => clearInterval(id);
-  }, [seen, live, phase, kind, count]);
+    }, Math.max(beat, hold.current - Date.now())); // one step per beat; a pick holds the walk for 9 s
+    return () => clearTimeout(id);
+  }, [seen, live, phase, kind, count, at]);
 
   const alt = doc.liveLinks[0];
   const title = w.title.map((t, i) => <span key={i} className={i ? 'xcf-wt-b' : ''}>{t}</span>);
@@ -240,12 +240,12 @@ function Finder({ pairs, here }) {
     return k ? all.filter((p) => (p.google + ' ' + p.name + ' ' + p.api).toLowerCase().includes(k)) : all;
   }, [q, pairs, here]);
   const SHOWN = 6; // with no query: this page's pair and five more; every row stays in the HTML, the rest hidden
-  // idle scan: the rows are read one after another until you type or point at the list
+  // idle scan: the rows are read once, one after another (under 5 s), and it stops for good when you type or point
   useEffect(() => {
-    if (calm || !seen || q || held) return;
-    const id = setInterval(() => setLit((i) => (i + 1) % Math.max(1, Math.min(SHOWN, list.length))), 1700);
-    return () => clearInterval(id);
-  }, [calm, seen, q, held, list.length]);
+    if (calm || !seen || q || held || lit >= Math.min(SHOWN, list.length) - 1) return;
+    const id = setTimeout(() => setLit((i) => i + 1), 800);
+    return () => clearTimeout(id);
+  }, [calm, seen, q, held, list.length, lit]);
   // the black room (MASTER 3.1): a rounded card inside the gutters that opens past the edges as it is reached (transform only)
   const { scrollYProgress: rp } = useScroll({ target: box, offset: ['start end', 'start start'] });
   const roomS = useTransform(rp, (v) => 0.94 + 0.1 * Math.min(1, Math.max(0, (v - 0.35) / 0.55)));

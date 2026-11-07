@@ -1,27 +1,158 @@
-# /legal coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /legal coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/LegalIndex.jsx` (+ `LegalIndex.css`; the `/legal/*` template's `LegalDoc.*` is untouched) · gallery: `docs/gallery/legal/` · Persona: buyers, security and legal reviewers, users checking their terms · Goal: reach the right document in one step · CTA: none
+Page file: `components/pages/LegalIndex.jsx` (+ `LegalIndex.css`, data `legalData.js`) · gallery: `docs/gallery/legal/` · metric id: document open (`legal.doc.<slug>`)
 
-1. **Strategy and conversion.** Legal pages carry no ask (PLAN-COMPONENTS 2.4: "none on legal and careers"), so `<main data-ask="off">` keeps the shared ask bar away; the header's Try Hanzo stays as the only solid button. Every card is a real link into its document.
-2. **Information architecture and navigation.** Header and footer unchanged. Order: the stack (hero), the canonical-home statement and status, the twelve documents with filter chips (All, Agreements, Policies, Notices and registers), how these fit together, contact. Group anchors (#agreements, #policies, #notices-and-registers, #how-these-fit-together, #contact) are kept.
-3. **First impression and page narrative.** "Legal & Trust Center" cuts in; beside it a stack of paper deals itself, each sheet with its own hanzo.ai/legal address and Hanzo's "draft · pending counsel" stamp.
-4. **Conversion system.** No ask; cards open into their pages through the morph layer (`data-morph` on the title).
-5. **Trust and proof.** "Status: draft, pending counsel." and "not yet effective" stay in a calm status panel beside the statement.
-6. **Content presentation (copy untouched).** Parity 62/62, 16/16. "Legal" sits under the headline; the group titles are the filter chips; the filter only hides cards visually (hidden ones stay in the HTML).
-7. **Visual design system.** v2 scale; 0 UI hues (the old sepia is ink); the ladder's first state is the one inverted step. No dark room (utility page).
-8. **UI component library.** Kit `A`; `DocNodes` for Hanzo's text; v2 `Settle`, `x-gauss/LineMask`, `Pause`, `NoJs`. Chips use `aria-pressed`.
-9. **Motion and interaction.**
-   - Idle: the stack deals a sheet every 2.4s.
-   - Pointer: cards lift, their arrow turns ink and nudges; mail links draw their underline.
-   - State: chips re-flow the cards (layout animation); a card opens into its document (View Transition).
-   - Scroll: only the stack's settle.
-   - The stack has a pause button; the status dot pings twice and stops.
-10. **Media.** None belong to this page; the object is the paper stack.
-11. **Mobile and responsive.** At 375px the stack peeks under the lede on the first screen; chips wrap; cards stack; the ladder is two by two; mail rows stack; no sideways scroll.
-12. **Accessibility.** One h1. The decorative sheets are `aria-hidden`; the real documents are the card links. JS off: `NoJs`.
-13. **Performance and engineering.** One timer, off screen and when paused it stops.
-14. **SEO and machine files.** Metadata and JSON-LD unchanged.
-15. **Catalogue and product pages.** A small catalogue: twelve documents, three groups, counts on the chips.
-16. **Developer experience.** Does not apply.
-17. **States and resilience.** Filtering can't empty the grid (every chip has documents).
-18. **Measurement and handover.** No ask on legal; document opens are plain links. Filmed into `docs/gallery/legal/`.
+Open copy questions for James: the pile's stamp "draft · pending counsel" condenses Hanzo's status line ("Status: draft, pending counsel."); the ladder's step numbers 01–04 are ordinal, not claims.
+Shared changes requested: `docs/requests/templates.md` (covers every Business 2 page). Utility page: no ask (`data-ask="off"`), per MASTER part 4.
+Forks this page deleted: the sheet that popped in front in the same frame (now it leaves on top, then tucks under), stamps on every sheet (top sheet only, wrapping inside it), the floating pause on the fan, `AnimatePresence initial={false}` that cancelled the rows' arrival, the see-through chip bar, the invented "Show"/"Documents" labels, the phone's repeated group label on every row, the cursor label "Open", every spring, the stale colour comments.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] No page solid (legal carries no ask); the header's "Try Hanzo" is the one solid
+- [x] One h1; clear in 5 seconds
+- [x] No dead button
+- [x] Copy questions listed
+
+Done here: gate: 1 h1, 0 page solids.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; shared skip link
+- [x] Every row is a real `A` to its document
+- [x] n/a breadcrumb (depth 1)
+- [x] Link parity 0 removed
+
+Done here: parity links 16/16; `#agreements`, `#policies`, `#notices-and-registers` select their chip.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; the pile deals within 2.6 s
+- [x] h1 CSS cut-in painted by the server; "Legal" sits under the h1
+- [x] JS off legible (pause hidden with JS off)
+- [x] Hero pile → statement and status → index → how they fit (ladder) → contact
+- [x] Ends on the contact rows, then footer (Utility: no band)
+- [x] Rows open into their document page
+
+Done here: gate JS-off hidden 0.
+
+## 4. Conversion system
+- [x] n/a `<Cta>`: no ask on legal pages
+- [x] Ask bar off (`data-ask="off"`)
+- [x] n/a copy
+- [x] `data-cta="legal.doc.<slug>"` on every row
+
+Done here: e.g. `legal.doc.terms`, `legal.doc.privacy`.
+
+## 5. Trust and proof
+- [x] No seal, no certification mark, no invented number
+- [x] Status line is Hanzo's ("draft, pending counsel")
+- [x] n/a marquees
+- [x] n/a submit
+
+Done here: the page says plainly that the documents are not yet effective, in Hanzo's words.
+
+## 6. Content presentation (copy untouched)
+- [x] Phone text 14px+
+- [x] Statement at 32px (26px phone); prose 16–18px
+- [x] The index is one ruled list per group, each with a hidden h2 of Hanzo's group title
+- [x] `parity.py /legal`: 0 missing
+
+Done here: parity `text 62/62 links 16/16`.
+
+## 7. Visual design system
+- [x] `taste.py` passes (0 hues; #0a0a0b and #c7c7cc swapped for deck values)
+- [x] No label above a headline
+- [x] Rows divided by hairlines; only the pile floats
+- [x] One icon set
+- [x] Differs from neighbours: a pile of paper
+
+Done here: gate hues [].
+
+## 8. UI component library
+- [x] Hover in `@media (hover:hover)`; row press translateY(1px); chips .98
+- [x] Focus ring on every stop
+- [x] n/a dialogs
+- [x] No bare `:hover`
+- [x] Forks deleted: listed above
+
+Done here: the sticky chip bar is opaque white with a hairline.
+
+## 9. Motion and interaction
+- [x] Signature (the dealing pile), supporting: Settle, filter, document open; 0 fade-ups
+- [x] Idle (pile), state (chips), arrival (h1, rows rise 16px once, ladder grows at 25% in view), scroll (settle)
+- [x] Moves without input; every control answers
+- [x] Reduced motion: the pile cuts; no springs
+- [x] n/a sound
+
+Done here: the deal is two-phase: out on top (450ms ease-emphasis), then the next sheet comes forward after 200ms.
+
+## 10. Media
+- [x] n/a: no media on the live page
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Targets 44px+
+- [x] n/a primary (no ask)
+
+Done here: the stamp wraps inside the top sheet; the pause sits under the pile.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured
+- [x] Pause on the pile
+- [x] n/a forms
+- [x] One h1; hidden h2 per group, then h2 sections
+- [x] Keyboard reaches every row and chip
+
+Done here: the pile is `aria-hidden`; the index carries the same documents as links.
+
+## 13. Performance and engineering
+- [x] h1 and every row in server HTML
+- [x] No images
+- [x] No poller, no third party
+- [x] Nothing heavy on James's laptop
+
+Done here: one client island.
+
+## 14. SEO and machine files
+- [x] Title and description from `content/pages.json`
+- [x] Canonical from shared layout
+- [x] `<JsonLd route="/legal" />`
+- [x] Every row is a real link
+
+Done here: `app/legal/page.jsx`.
+
+## 15. Catalogue and product pages
+- [x] n/a
+- [x] Rows open their document
+- [x] All twelve documents linked
+- [x] n/a
+
+Done here: twelve of twelve in the index (filtered groups stay in the HTML, hidden).
+
+## 16. Developer experience
+- [x] n/a: no code
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a.
+
+## 17. States and resilience
+- [x] Filter states: All, or one group
+- [x] Blocked network: complete page, no console errors
+- [x] n/a submit
+- [x] Print: one column, no pile, no chips
+
+Done here: `@media print` in `LegalIndex.css`.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every row
+- [x] Nothing identifier-bearing
+- [x] `V2:` line in `app/legal/page.jsx`
+- [ ] Review 8 or more (re-review pending)
+
+Done here: previous review 7/10; its seven fixes addressed.

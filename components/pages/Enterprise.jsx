@@ -56,10 +56,8 @@ function shots(vw, vh, introBottom) {
   const fit = (i) => { const [w, h] = ring(i); return Math.min(stageW / w, stageH / h); };
   const x1 = 5 * (col + 24) + (8 * col + 7 * 24) / 2 - wrap / 2 + gut / 2;
   const y1 = 32;
-  const s0 = Math.min(1.25, (wrap - 120) / WIN[0]);
-  const top = introBottom + 40;
-  const y0 = top + (WIN[1] * s0) / 2 - vh / 2;
-  const ps = [0, P0], xs = [0, x1], ys = [y0, y1], ss = [s0, fit(0)];
+  // the first screen is the diagram itself: the four walls around the live workspace, words on the left
+  const ps = [0, P0], xs = [x1, x1], ys = [y1, y1], ss = [fit(0), fit(0)];
   for (let i = 0; i < 3; i++) { ps.push(startOf(i) + L * 0.5, startOf(i + 1)); xs.push(x1, x1); ys.push(y1, y1); ss.push(fit(i), fit(i + 1)); }
   ps.push(1); xs.push(x1); ys.push(y1); ss.push(fit(3));
   return { ps, xs, ys, ss };
@@ -146,13 +144,6 @@ function Step({ p, i, on, label, go }) {
 }
 
 // four nested walls, the chosen one drawn solid (phones and the tiles use this small one)
-const Glyph = ({ at, className = '' }) => (
-  <span className={'xe-glyph ' + className} aria-hidden="true">
-    {PLACES.map((_, k) => <i key={k} className={k === at ? 'on' : k < at ? 'out' : ''} style={{ inset: k * 12 + '%' }} />)}
-    <b />
-  </span>
-);
-
 function Boundary() {
   const ref = useRef(null);
   const intro = useRef(null);
@@ -160,6 +151,7 @@ function Boundary() {
   const [scrub, setScrub] = useState(false);
   const [ready, setReady] = useState(false);
   const [at, setAt] = useState(0);
+  const [lit, setLit] = useState(false); // on arrival the four walls stand equal; a wall lights once its words are in
   const [mine, setMine] = useState(false);
   const g = useMotionValue(0);
   const geo = useRef(null);
@@ -185,17 +177,18 @@ function Boundary() {
   const y = useTransform([p, g], cam('ys', 0));
   const scale = useTransform([p, g], cam('ss', 1));
   // function transforms on purpose: they run on the main thread in step with the camera (a range transform of opacity
-  // would be handed to the browser's scroll timeline, which measures this pinned section differently)
-  // the walls arrive only once the headline has fully left (no line drawn through words)
-  const walls = useTransform(p, (v) => ramp(v, 0.07, 0.14));
+  // would be handed to the browser's scroll timeline, which measures this pinned section differently).
+  // In the left column the hero words go out as the chapter words come in; the map stays where it is.
   const introO = useTransform(p, (v) => 1 - ramp(v, 0, 0.06));
-  const introY = useTransform(p, (v) => -90 * ramp(v, 0, 0.1));
-  const chO = useTransform(p, (v) => ramp(v, 0.1, 0.15));
-  const chY = useTransform(p, (v) => 36 * (1 - ramp(v, 0.1, 0.16)));
+  const introY = useTransform(p, (v) => -40 * ramp(v, 0, 0.08));
+  const chO = useTransform(p, (v) => ramp(v, 0.07, 0.13));
+  const chY = useTransform(p, (v) => 24 * (1 - ramp(v, 0.07, 0.14)));
 
   useMotionValueEvent(p, 'change', (v) => {
     if (!scrub) return;
-    setAt(Math.max(0, Math.min(3, Math.floor((v - P0) / L + 0.25))));
+    setLit(v > 0.07);
+    // the next place takes over as the camera starts toward it, so a wall it has passed fades before it grows past the words
+    setAt(Math.max(0, Math.min(3, Math.floor((v - P0) / L + 0.5))));
   });
 
   // phones and calm screens: the places turn by themselves until a hand takes over
@@ -245,13 +238,13 @@ function Boundary() {
 
         <motion.div className={'xe-cam' + (ready ? ' ready' : '')} style={{ x, y, scale }}>
           <div className="xe-map" data-at={at}>
-            <motion.div className="xe-rings" style={{ opacity: walls }}>
+            <div className="xe-rings">
               {PLACES.map((pl, i) => (
-                <div key={pl[0]} className={'xe-ring' + (i === at ? ' on' : i < at ? ' out' : '')} style={{ inset: i * STEP + 'px' }}>
+                <div key={pl[0]} className={'xe-ring' + (i === at && (lit || !scrub) ? ' on' : i < at ? ' out' : '')} style={{ inset: i * STEP + 'px', '--i': i }}>
                   <span className="xe-ring-l">{pl[0]}</span>
                 </div>
               ))}
-            </motion.div>
+            </div>
             <div className="xe-seat"><Workspace at={at} /></div>
           </div>
         </motion.div>
@@ -265,7 +258,6 @@ function Boundary() {
           </div>
           <div className="xe-scale" aria-hidden="true"><span>Fastest start</span><span>Most control</span></div>
           <div className="xe-caps" aria-live="polite">
-            <Glyph at={at} className="xe-caps-g" />
             {PLACES.map((pl, i) => (
               <div key={pl[0]} className={'xe-cap' + (i === at ? ' on' : i < at ? ' gone' : '')} aria-hidden={i !== at}>
                 <h3>{pl[0]}</h3>

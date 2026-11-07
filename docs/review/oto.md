@@ -1,36 +1,33 @@
 # /oto — James-eye review
 
-Reviewed: main at `1417fde` and later (re-walked 14:43–14:48 on the build after the Zen-names fix `1417fde` and the palette recolour `4b53974`), under MASTER.md. Built on the shared creative-model template `components/pages/model/Creative.jsx`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `648b798` (page files at `f68c8e5`; shared ask fix `d2b5ab8c` in), re-walked 7 Nov 15:12 UTC, under MASTER.md. Earlier: 7/10 (capped) at `1417fde`. Built on the shared creative-model template `components/pages/model/Creative.jsx`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10 (capped; page itself scores 8)
+Verdict: 8/10 (ready on my checks; polish only)
 
-First complaint: "The Foley console is the best thing here and it's black and white now. The tiny labels on the related cards are too small."
+First complaint: "Good. The Foley console is the best thing on it. Up top I see two black-and-white buttons at once, though."
 
-**Cap: part card (MASTER section 6).** `docs/coverage/oto.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
+**Card:** `docs/coverage/oto.md` is now in MASTER format, 18/18 `Done here:` lines. Measured claims hold: layout shift 0.0002 at 1470 and 0 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, "Request access" on the first screen. The 10px model-card pills follow `SPEC.md`, which MASTER says wins; no longer raised.
 
-**Scale (MASTER 3.1):** passes. The name rests at 176px over the film as the one hero moment (well past live hanzo.ai's 52px, but alone on its screen); each capability screen holds one 56px title, a medium lede and a small mono list. (My counter saw four 56px titles at once; they are the stacked chapter titles, and only one shows at a time.)
+**Floats over content (MASTER 3.2 rule 6):** passes: no pill on desktop; on the phone the bar showed at 1 of 33 rest stops and covered nothing.
 
-## What changed since the first review
-Fixed at 14:25 (`1417fde`) and 14:29 (palette): "Request access" now sits on the first screen under the lede, the chapter films play on the phone, the type floor was raised, and no UI hue is left (colour lives only in Hanzo's film).
+**Scale (MASTER 3.1):** passes. "Oto" rests at 112px alone over the waveform film, the headline settles at 44px ("Give every moment its sound."), and each capability screen shows one title, a medium lede and a small mono list (my counter sees four stacked chapter titles; only one shows).
+
+## What changed since the last review
+Now on the MASTER card (lifts the old cap). The name rests at 112px (was 176px). The shared fix took the floating pill away.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: the waveform film plays under "Oto" with "Request access" on the first screen; on the phone the waveform shape moves a little (1.6% change).
-2. **One in, one out?** Yes: the film settles into its shape, capabilities pin one at a time (01–04) with the film beside them, then the signature, fields, related models and the try-it close.
-3. **A real object in every section?** Yes: film, capability film card, the Foley console, field cards, model cards.
-4. **One ask, sticky after the hero?** Yes: "Request access" in the hero (solid, light on the dark film), the shared ask bar after it, and the close; `data-cta` on the primaries.
-5. **Every hover and press answers?** The hero ask and close (×) answer; model cards lift. Not every field card was exercised.
-6. **Overlap, font swap, layout shift?** None on the page; layout shift 0 on both sizes.
-7. **Which reference, and is its motion there?** synchronized.studio (the card opens into this page, with a close) and apple.com pinned chapters. Both there.
+1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: the waveform film under "Oto" with "Request access" on the first screen.
+2. **One in, one out?** Yes: film settles into its shape, capabilities pin one at a time (01–04), the Foley console, fields, related models, the try-it close.
+3. **A real object in every section?** Yes: film, capability film card, Foley console, field cards, model cards.
+4. **One ask, sticky after the hero?** The sticky header carries a solid "Try Hanzo"; the hero's "Request access" is solid too, so the first screen shows two solids (the shared header, see `_shared.md`).
+5. **Every hover and press answers?** The hero ask, the console controls and the model cards answer. The × close presses but shows no hover change.
+6. **Overlap, font swap, layout shift?** None; shift 0.0002 and 0.
+7. **Which reference, and is its motion there?** synchronized.studio (card opens into the page, × closes) and apple.com pinned chapters. Both there.
 8. **Different from its neighbours?** In film and signature, yes; layout is the shared creative template.
-9. **All 18 parts covered?** Card in the old format (cap above).
+9. **All 18 parts covered?** Card 18/18; the claims I measured hold.
 10. **Banned tells?** None measured.
-11. **Copy untouched?** Yes (parity clean on the first review; words unchanged since).
+11. **Copy untouched?** Card states parity clean; not contradicted.
 
-## Missing from the 18 parts (PLAN-COMPONENTS / MASTER, measured)
-- **Part 6 type floor:** 10px mono labels ("IMAGE", "VIDEO", "FOLEY" on the related-model cards) sit below even the 11–12px mono exception.
-- **Part 10 media:** 7 raw `<video>` elements rather than the kit `Film`.
-
-## Fixes
-1. Re-copy the 18-part card into `_TEMPLATE.md` format with `Done here:` evidence (lifts the cap).
-2. Raise the related-model labels to 11–12px mono capitals (shared `Creative.jsx`).
-3. Play the films through the kit `Film`.
+## Fixes (polish, not blocking)
+1. Give the × close the kit hover.
+2. When the shared header can carry a page's own ask, put "Request access" there so only one solid shows.
