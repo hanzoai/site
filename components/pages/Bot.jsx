@@ -18,6 +18,7 @@ import { A, More, Faq, Cta, Img } from '../kit';
 import Scenes from '../v2/AppScenes';
 import Sheet from '../v2/AppSheet';
 import { WORKFLOWS, TOOLS } from './Bot.data';
+import { play } from '../../lib/sound';
 import '../v2/AppType.css';
 import './Bot.css';
 
@@ -83,7 +84,7 @@ function Org() {
   useEffect(() => { if (!calm) setB(0); }, [calm]);
   useEffect(() => {
     if (!live) return;
-    if (b < 5) { const t = setTimeout(() => setB(b + 1), BEAT[b]); return () => clearTimeout(t); }
+    if (b < 5) { const t = setTimeout(() => { setB(b + 1); if (b === 4 && mine) play('done'); }, BEAT[b]); return () => clearTimeout(t); }
     if (mine) return;
     const t = setTimeout(() => { setAt((a) => (a + 1) % WORKFLOWS.length); setB(0); }, HOLD);
     return () => clearTimeout(t);
@@ -344,7 +345,7 @@ function Thread({ on }) {
   useEffect(() => { if (on && !calm) { setB(0); setPick(null); } }, [on, calm]);
   useEffect(() => {
     if (!on || calm || b >= 7) return;
-    const t = setTimeout(() => setB((v) => v + 1), [700, 1300, 1300, 1400, 1500, 1600, 1800][b]);
+    const t = setTimeout(() => { setB((v) => v + 1); if (b === 6) play('done'); }, [700, 1300, 1300, 1400, 1500, 1600, 1800][b]);
     return () => clearTimeout(t);
   }, [b, on, calm]);
   useEffect(() => { if (b === 7 && !pick) setPick('yes'); }, [b, pick]);
@@ -373,8 +374,8 @@ function Thread({ on }) {
             <span className="bt-answered x-mono" style={{ opacity: pick ? 1 : 0 }}>Answered</span>
             <p>Should /pricing include that sentence about crypto top-ups?</p>
             <div className="bt-yn">
-              <button type="button" className={pick === 'yes' ? 'on' : ''} onClick={() => { setPick('yes'); if (b < 7) setB(7); }} tabIndex={at(5) ? 0 : -1}>Yes, add it</button>
-              <button type="button" className={pick === 'no' ? 'on' : ''} onClick={() => setPick('no')} tabIndex={at(5) ? 0 : -1}>Not yet</button>
+              <button type="button" data-sound="tick" className={pick === 'yes' ? 'on' : ''} onClick={() => { setPick('yes'); if (b < 7) setB(7); }} tabIndex={at(5) ? 0 : -1}>Yes, add it</button>
+              <button type="button" data-sound="tick" className={pick === 'no' ? 'on' : ''} onClick={() => setPick('no')} tabIndex={at(5) ? 0 : -1}>Not yet</button>
             </div>
           </Msg>
           <Msg on={at(5) && pick !== 'no' && (b >= 7 || pick === 'yes')} face="mark"><p>Added. I will post a short update in #hanzo-marketing every weekday.</p></Msg>
@@ -565,7 +566,7 @@ function Pricing() {
               <span className="av-num">{n}</span>
               <span className="bt-need-faces">{CREW.slice(0, 10).map(([id], i) => <span key={id} className={'bt-nf' + (i < n ? ' on' : '')}><Face size={24} id={id} /></span>)}</span>
             </div>
-            <input id="bt-n" type="range" min="1" max="10" step="1" value={n} onChange={(e) => setN(+e.target.value)} style={{ '--f': (n - 1) / 9 }} aria-valuetext={`${n} ${n === 1 ? 'bot' : 'bots'}: ${PLANS[k][0]}`} />
+            <input id="bt-n" data-sound="tick" type="range" min="1" max="10" step="1" value={n} onChange={(e) => setN(+e.target.value)} style={{ '--f': (n - 1) / 9 }} aria-valuetext={`${n} ${n === 1 ? 'bot' : 'bots'}: ${PLANS[k][0]}`} />
             <output htmlFor="bt-n" className="x-mono"><b>{n}</b> {n === 1 ? 'bot' : 'bots'} → <b>{PLANS[k][0]}</b>, {PLANS[k][1]} / month</output>
           </div>
         </div>
@@ -692,7 +693,7 @@ function Close() {
 
 export default function Bot() {
   return (
-    <main className="av bt" data-ask="off" style={{ '--ac': '#0a0a0a' }}>
+    <main className="av bt" style={{ '--ac': '#0a0a0a' }}>
       <Hero />
       <Cases />
       <Scenes label="What a bot does" items={CHAPTERS} flip tone={['#ffffff', '#f7f7f7', '#ffffff', '#f7f7f7', '#ffffff']} className="bt-sc" />

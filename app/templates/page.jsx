@@ -1,4 +1,4 @@
-// V2: 8/10 Stage deck (the riffling deck of live windows arrives huge and settles), a shelf of all twelve whose tiles open into sheets, the setup room in the dark, deck greys only
+// V2: the riffling deck of live windows is the first screen's object (drag flips, never opens), a dense wall of twelve previews that open into sheets, the setup room in the dark, a closing band with the one ask; deck greys only
 // Signature: a deck of live browser windows that riffles itself; pull one forward and its address bar types its .hanzo.app name.
 // Beyond: the commands for the template in front, with its slug and its source repository filled in, ready to copy.
 import Templates from '../../components/pages/Templates';

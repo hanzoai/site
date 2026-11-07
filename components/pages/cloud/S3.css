@@ -1,132 +1,153 @@
-/* Object Storage v2, round 2 (JAMES 7): ink, greys and white only. A data shard is a filled ink tile, a parity shard an
-   ink outline, a lost one a dashed grey hole; what still reads is told by the tiles coming back, not by a colour. */
+/* Object Storage, round 3 (MASTER §3): the deck's neutral ramp only; flat fills or 1px hairlines, never both; no
+   shadows; radii 24 tiles, 16 volumes and roles (concentric inside the 24 stage), 6 chips and shards, full pills; press
+   .97 in 90ms; hover changes fill or ink. A data shard is a filled ink tile, a parity shard an ink outline, a lost one a
+   dashed grey hole; what still reads is told by the tiles coming back and an ink chip, not by a colour. */
 
-/* hero: the stage first, the type beneath it */
-.s3-hero { padding: clamp(20px, 2vw, 32px) 0 clamp(96px, 10vw, 160px); }
-.s3-kept { position: relative; height: clamp(300px, 23vw, 340px); border-radius: 28px; background: #f5f5f7; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
-.s3-name { position: absolute; left: 3%; top: 18px; z-index: 2; color: var(--ink); }
-.s3-fan { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.s3-fan path { fill: none; stroke: rgba(0, 0, 0, .08); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke .5s, stroke-width .3s; }
-.s3-fan path.on { stroke: rgba(29, 29, 31, .42); stroke-width: 1.3; }
-.s3-fan path.cut { stroke: rgba(0, 0, 0, .16); stroke-dasharray: 3 5; }
-.s3-fan path.hov { stroke: var(--ink); stroke-width: 2.2; }
-.s3-obj { position: absolute; left: 3%; top: 17%; width: 15%; min-width: 150px; height: 61%; display: flex; flex-direction: column; padding: 16px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 24px 50px -28px rgba(0, 0, 0, .3); transition: box-shadow .4s; }
-.s3-obj.reads { box-shadow: 0 0 0 2px var(--ink), 0 24px 50px -28px rgba(0, 0, 0, .4); }
-.s3-k { margin: 0; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #6e6e73; }
-.s3-file { flex: 1; display: grid; grid-template-columns: repeat(4, 22px); grid-auto-rows: 22px; gap: 6px; align-content: center; justify-content: center; }
-.s3-shard { display: block; width: 22px; height: 22px; border-radius: 7px; background: var(--ink); }
-.s3-shard.p { background: #fff; box-shadow: inset 0 0 0 2.5px var(--ink); }
-.s3-ghost { display: block; width: 22px; height: 22px; border-radius: 7px; border: 1.5px dashed #c7c7cc; transition: background-color .35s, border-color .35s, box-shadow .35s; transition-delay: calc(var(--i) * 30ms); }
-.s3-ghost.back { border: 0; background: var(--ink); animation: s3-pop .45s var(--lx-ease) both; animation-delay: calc(var(--i) * 30ms); }
-.s3-ghost.p.back { background: #fff; box-shadow: inset 0 0 0 2.5px var(--ink); }
-@keyframes s3-pop { from { transform: scale(.5); } }
-.s3-read { margin: 0; font: 500 13px/1.2 var(--mono); color: #6e6e73; min-height: 16px; }
-.s3-obj.reads .s3-read { color: var(--ink); font-weight: 600; }
-.s3-vols { position: absolute; left: 36%; right: 2%; top: 20%; height: 70%; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: 1fr 1fr; gap: 8px; }
-.s3-vol { position: relative; display: grid; place-items: center; border: 0; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--line); cursor: pointer; touch-action: manipulation; transition: background-color .35s, box-shadow .25s, transform .12s var(--lx-ease); }
-.s3-vol.hov:not(:disabled) { box-shadow: 0 0 0 1.5px var(--ink), 0 14px 30px -18px rgba(0, 0, 0, .35); }
-.s3-vol:active:not(:disabled) { transform: scale(.98); }
-.s3-vol:disabled { cursor: default; }
-.s3-vn { position: absolute; left: 10px; top: 9px; font: 500 13px/1 var(--mono); color: #6e6e73; }
-.s3-vol.hov .s3-vn { color: var(--ink); }
-.s3-slot { width: 22px; height: 22px; transition: transform .3s var(--lx-ease); }
-.s3-vol.hov .s3-slot { transform: translateY(-3px) scale(1.2); }
-.s3-vol.gone { background: #ececf0; box-shadow: none; outline: 1.5px dashed #aeaeb2; outline-offset: -1.5px; }
-.s3-vol.gone .s3-vn { text-decoration: line-through; }
-.s3-vol > b { position: absolute; inset: 0; display: grid; place-items: center; font: 400 22px/1 var(--sans); color: #6e6e73; }
-.s3-legend { position: absolute; left: calc(3% + 120px); right: 72px; top: 8px; min-height: 44px; justify-content: flex-start; display: flex; align-items: center; gap: 8px 20px; flex-wrap: wrap; font: 500 13px/1 var(--mono); color: #6e6e73; }
+/* hero: title left (8), lede and ask right (5), bottom-aligned; then the object on one flat quiet stage */
+.s3-hero { padding: clamp(32px, 4vw, 56px) 0 clamp(72px, 9vw, 120px); }
+.s3-hero-grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); column-gap: clamp(24px, 4vw, 56px); align-items: end; }
+.s3-hero-r { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.s3-sub { color: #0a0a0a; }
+.s3-acts { display: flex; gap: 8px 24px; align-items: center; flex-wrap: wrap; }
+
+.s3-kept { margin-top: clamp(24px, 3vw, 40px); border-radius: 24px; background: #f5f5f5; overflow: hidden; }
+/* the stage's own top row: pause first, what it is, the legend, what you are pointing at, Replay */
+.s3-bar { display: flex; align-items: center; gap: 8px 20px; flex-wrap: wrap; min-height: 64px; padding: 10px 20px 0 10px; }
+.s3-name { color: #0a0a0a; }
+.s3-legend { display: flex; align-items: center; gap: 8px 20px; flex-wrap: wrap; font: 500 13px/1 var(--mono); color: #525252; }
 .s3-legend span { display: inline-flex; align-items: center; gap: 8px; }
-.s3-legend i { width: 11px; height: 11px; border-radius: 3px; background: var(--ink); }
-.s3-legend i.p { background: #fff; box-shadow: inset 0 0 0 2px var(--ink); }
-.s3-legend i.x { background: none; outline: 1.5px dashed #8e8e93; outline-offset: -1.5px; }
-.s3-mine { margin-left: auto; color: var(--ink); }
-.s3-again { height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 500 14px/1 var(--sans); color: var(--ink); cursor: pointer; touch-action: manipulation; transition: border-color .22s, transform .12s var(--lx-ease); }
-.s3-again:active { transform: scale(.98); }
-.s3 .s3-pause { position: static; flex: none; }
-.s3-hero-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 24px; align-items: end; margin-top: clamp(28px, 3vw, 44px); }
-.s3-hero-r { display: flex; flex-direction: column; gap: 28px; padding-bottom: 10px; }
-.s3-sub { color: var(--ink); }
-.s3-acts { display: flex; gap: 10px 24px; align-items: center; flex-wrap: wrap; }
+.s3-legend i { width: 18px; height: 18px; border-radius: 6px; background: #0a0a0a; }
+.s3-legend i.p { background: none; box-shadow: inset 0 0 0 2px #0a0a0a; }
+.s3-legend i.x { background: none; box-shadow: none; outline: 1.5px dashed #737373; outline-offset: -1.5px; }
+.s3-mine { margin-left: auto; font: 500 13px/1 var(--mono); color: #0a0a0a; }
+.s3-again { height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: none; font: 500 14px/1 var(--sans); color: #0a0a0a; cursor: pointer; touch-action: manipulation; transition: border-color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
+.s3-again:active { transform: scale(.97); transition-duration: .09s; }
 
-/* the chapters' diagram */
-.s3-roles { border-radius: 28px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 40px 100px -40px rgba(0, 0, 0, .25); overflow: hidden; }
+.s3-field { position: relative; height: clamp(260px, 21vw, 300px); }
+.s3-fan { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.s3-fan path { fill: none; stroke: rgba(0, 0, 0, .1); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke .4s var(--e-out), stroke-width .3s var(--e-out); }
+.s3-fan path.on { stroke: rgba(0, 0, 0, .4); stroke-width: 1.3; }
+.s3-fan path.cut { stroke: rgba(0, 0, 0, .14); stroke-dasharray: 3 5; }
+.s3-fan path.hov { stroke: #0a0a0a; stroke-width: 2; }
+.s3-obj { position: absolute; left: 2%; top: 6%; width: 15%; min-width: 150px; height: 88%; display: flex; flex-direction: column; padding: 16px; border-radius: 16px; background: #fff; }
+.s3-k { margin: 0; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+.s3-file { flex: 1; display: grid; grid-template-columns: repeat(4, 22px); grid-auto-rows: 22px; gap: 6px; align-content: center; justify-content: center; }
+.s3-shard { display: block; width: 22px; height: 22px; border-radius: 6px; background: #0a0a0a; }
+.s3-shard.p { background: #fff; box-shadow: inset 0 0 0 2.5px #0a0a0a; }
+.s3-ghost { display: block; width: 22px; height: 22px; border-radius: 6px; border: 1.5px dashed #d4d4d4; transition: background-color .3s var(--e-out), border-color .3s var(--e-out), box-shadow .3s var(--e-out); transition-delay: calc(var(--i) * 30ms); }
+.s3-ghost.back { border: 0; background: #0a0a0a; animation: s3-fill .3s var(--lx-ease) both; animation-delay: calc(var(--i) * 30ms); }
+.s3-ghost.p.back { background: #fff; box-shadow: inset 0 0 0 2.5px #0a0a0a; }
+@keyframes s3-fill { from { transform: scale(.6); } }
+.s3-read { align-self: flex-start; margin: 0; padding: 7px 10px; border-radius: 999px; font: 500 13px/1 var(--mono); color: #737373; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
+.s3-obj.reads .s3-read { background: #0a0a0a; color: #fff; }
+.s3-vols { position: absolute; left: 36%; right: 2%; top: 6%; height: 88%; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: 1fr 1fr; gap: 8px; }
+.s3-vol { position: relative; display: grid; place-items: center; border: 0; border-radius: 16px; background: #fff; cursor: pointer; touch-action: manipulation; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
+.s3-vol:active:not(:disabled) { transform: scale(.97); transition-duration: .09s; }
+.s3-vol:disabled { cursor: default; }
+.s3-vn { position: absolute; left: 10px; top: 10px; font: 500 13px/1 var(--mono); color: #737373; transition: color .15s var(--e-out); }
+.s3-slot { width: 22px; height: 22px; }
+/* pointing at a volume: its tile fills grey, its name and its line turn ink (no lift, no scale) */
+.s3-vol.hov:not(:disabled) { background: #e4e4e7; }
+.s3-vol.hov .s3-vn { color: #0a0a0a; }
+.s3-vol.gone { background: #ededed; outline: 1.5px dashed #737373; outline-offset: -1.5px; }
+.s3-vol.gone .s3-vn { color: #525252; text-decoration: line-through; }
+.s3-vol > b { position: absolute; inset: 0; display: grid; place-items: center; font: 400 21px/1 var(--sans); color: #525252; }
+
+/* the chapter count is Hanzo's own caption: set under the chapter title, never above it (MASTER part 7) */
+.s3 .lx-pin-step { display: flex; flex-direction: column; }
+.s3 .lx-pin-t { order: 0; margin-top: 0; }
+.s3 .lx-pin-k { order: 1; margin-top: 12px; }
+.s3 .lx-pin-d { order: 2; }
+
+/* the chapters' diagram: a hairline on paper; a lit role is outlined in ink, a quiet one a flat grey tile */
+.s3-roles { border-radius: 24px; border: 1px solid var(--line); overflow: hidden; }
 .s3-dia { position: relative; height: min(380px, 44svh); margin: 0 4%; }
 .s3-dia > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .s3-dia line { stroke: rgba(0, 0, 0, .18); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
-.s3-dia line.proto { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 6 6; animation: s3-fade .6s var(--lx-ease) both; }
-@keyframes s3-fade { from { opacity: 0; } }
-.s3-role { position: absolute; width: 40%; height: 34%; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; padding: 18px 20px; border-radius: 18px; background: #f5f5f7; opacity: .45; transition: opacity .45s, box-shadow .45s, background-color .45s; transition-delay: calc(var(--i) * 60ms); }
+.s3-dia line.proto { stroke: #0a0a0a; stroke-width: 2; stroke-dasharray: 6 6; animation: s3-draw .4s var(--e-out) both; }
+@keyframes s3-draw { from { opacity: 0; } }
+.s3-role { position: absolute; width: 40%; height: 34%; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; padding: 18px 20px; border-radius: 16px; background: #f5f5f5; transition: background-color .3s var(--e-out), box-shadow .3s var(--e-out); transition-delay: calc(var(--i) * 60ms); }
 .s3-role:nth-of-type(1) { left: 0; top: 8%; }
 .s3-role:nth-of-type(2) { right: 0; top: 8%; }
 .s3-role:nth-of-type(3) { left: 0; bottom: 8%; }
 .s3-role:nth-of-type(4) { right: 0; bottom: 8%; }
-.s3-role.on { opacity: 1; background: #fff; box-shadow: 0 0 0 1.5px var(--ink), 0 18px 40px -24px rgba(0, 0, 0, .3); }
-.s3-role b { font-weight: 600; font-size: clamp(18px, 1.6vw, 22px); letter-spacing: -.02em; color: var(--ink); }
-.s3-role span { font-size: 15px; color: #6e6e73; }
-.s3-lock { position: absolute; right: 16px; top: 16px; color: var(--ink); opacity: 0; transform: scale(.6); transition: opacity .35s, transform .5s var(--lx-ease); }
+.s3-role.on { background: #fff; box-shadow: inset 0 0 0 1.5px #0a0a0a; }
+.s3-role b { font-weight: 497; font-size: 21px; letter-spacing: -.015em; color: #525252; transition: color .3s var(--e-out); }
+.s3-role.on b { color: #0a0a0a; }
+.s3-role span { font-size: 15px; color: #525252; }
+.s3-lock { position: absolute; right: 16px; top: 16px; color: #0a0a0a; opacity: 0; transform: scale(.6); transition: opacity .3s var(--e-out), transform .4s var(--lx-ease); }
 .s3-lock.on { opacity: 1; transform: none; }
-.s3-bin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 10px 16px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 14px/1 var(--mono); white-space: nowrap; transition: background-color .35s, color .35s, box-shadow .35s; }
-.s3-roles[data-step='3'] .s3-bin { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
-.s3-strip { display: grid; place-items: center; min-height: 104px; padding: 18px 24px; border-top: 1px solid var(--line); font: 500 15px/1.3 var(--mono); color: #6e6e73; animation: s3-up .55s var(--lx-ease) both; }
-@keyframes s3-up { from { opacity: 0; transform: translateY(10px); } }
+.s3-bin { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 10px 16px; border-radius: 999px; background: #0a0a0a; color: #fff; font: 500 14px/1 var(--mono); white-space: nowrap; transition: background-color .3s var(--e-out), color .3s var(--e-out), box-shadow .3s var(--e-out); }
+.s3-roles[data-step='3'] .s3-bin { background: #fff; color: #0a0a0a; box-shadow: inset 0 0 0 2px #0a0a0a; }
+.s3-strip { display: grid; place-items: center; min-height: 104px; padding: 18px 24px; border-top: 1px solid var(--line); font: 500 15px/1.3 var(--mono); color: #737373; }
+html.js .s3-strip { animation: s3-up .3s var(--lx-ease) both; }
+@keyframes s3-up { from { opacity: 0; transform: translateY(16px); } }
 .s3-strip p { margin: 0; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
-.s3-strip b { font-weight: 600; color: var(--ink); }
-.s3-strip s { color: #6e6e73; text-decoration-color: var(--ink); text-decoration-thickness: 2px; }
-.s3-kms { padding: 9px 13px; border-radius: 10px; background: var(--ink); color: #fff; }
-.s3-arrow { width: 40px; height: 2px; background: var(--ink); position: relative; }
-.s3-arrow::after { content: ''; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left: 7px solid var(--ink); border-right: 0; }
+.s3-strip b { font-weight: 600; color: #0a0a0a; }
+.s3-strip s { color: #737373; text-decoration-color: #0a0a0a; text-decoration-thickness: 2px; }
+.s3-kms { padding: 9px 13px; border-radius: 8px; background: #0a0a0a; color: #fff; }
+.s3-arrow { width: 40px; height: 2px; background: #0a0a0a; position: relative; }
+.s3-arrow::after { content: ''; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left: 7px solid #0a0a0a; border-right: 0; }
 .s3-cells { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
-.s3-cells i { width: 22px; height: 22px; border-radius: 6px; background: var(--ink); }
-.s3-cells i.p { background: #fff; box-shadow: inset 0 0 0 2.5px var(--ink); }
-.s3-cells i.x { background: none; box-shadow: none; outline: 1.5px dashed #8e8e93; outline-offset: -1.5px; }
-.s3-cells b { margin-left: 12px; color: var(--ink); }
+.s3-cells i { width: 22px; height: 22px; border-radius: 6px; background: #0a0a0a; }
+.s3-cells i.p { background: #fff; box-shadow: inset 0 0 0 2.5px #0a0a0a; }
+.s3-cells i.x { background: none; box-shadow: none; outline: 1.5px dashed #737373; outline-offset: -1.5px; }
+.s3-cells b { margin-left: 12px; color: #0a0a0a; }
 
-/* the dark room: the figures, then the prompt */
-.s3-room { padding: clamp(140px, 15vw, 220px) 0; }
-.s3-spec { margin-bottom: clamp(96px, 10vw, 150px); }
-.s3-spec .lx-spec-v { font-size: clamp(64px, 7.4vw, 112px); }
-.s3 .cf-paste { opacity: 1 !important; transform: none !important; } /* Frame's Paste fades up from opacity 0 in the server HTML: here it is simply there */
+/* the black room: the figures at their resting 64px (the room's one big thing), then the prompt */
+.s3-room { padding: clamp(72px, 11vw, 188px) 0; }
+.s3-spec { margin-bottom: clamp(72px, 8vw, 116px); }
+.s3 .cf-paste.dark { grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(24px, 4vw, 56px); }
+.s3 .cf-paste-t { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
+.s3 .cf-paste.dark .cf-paste-t { color: #fafafa; }
+.s3 .cf-paste.dark .cf-paste-d { color: rgba(255, 255, 255, .78); }
+.s3 .cf-paste.dark .cf-paste-box { border: 0; border-radius: 16px; background: #171717; color: #fafafa; }
+.s3 .cf-paste-bar { border-bottom-color: rgba(255, 255, 255, .1); }
+.s3 .cf-api { background: #262626; }
+.s3 .cf-paste-bar .x-copy { background: #262626; border-color: rgba(255, 255, 255, .1); color: #fafafa; }
+.s3 .cf-caret { background: #fafafa; }
 .s3 .x-copy-t { font-size: 13px; }
 
 @media (hover: hover) {
-  .s3-vol:not(:disabled):hover { box-shadow: 0 0 0 1.5px var(--ink); }
-  .s3-again:hover { border-color: var(--ink); }
+  .s3-vol:not(:disabled):hover { background: #e4e4e7; }
+  .s3-again:hover { border-color: #0a0a0a; background: #ededed; }
 }
 
-@media (max-width: 900px) {
-  .s3-hero { padding: 22px 0 80px; }
-  .s3-hero .lx-wrap { display: flex; flex-direction: column; }
-  .s3-hero-grid { order: -1; margin: 0 0 28px; grid-template-columns: 1fr; gap: 18px; }
-  .s3-hero-r { gap: 22px; padding: 0; }
-  .s3-sub { font-size: 17px; }
-  .s3-kept { height: 500px; border-radius: 22px; }
-  .s3-name { left: 16px; top: 16px; }
+@media (max-width: 899px) {
+  /* phone floor (14px) for the kit's lowercase mono captions on this page */
+  .s3 .cf-paste-k, .s3 .cf-api, .s3 .cf-api i, .s3 .lx-close-facts { font-size: 14px; }
+  .s3-hero { padding: 20px 0 64px; }
+  .s3-hero-grid { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
+  .s3-hero-r { gap: 20px; }
+  .s3-kept { margin-top: 28px; border-radius: 16px; }
+  .s3-bar { padding: 8px 12px 0 8px; gap: 6px 14px; }
+  .s3-legend { order: 3; width: 100%; padding: 0 0 4px 4px; gap: 6px 14px; }
+  .s3-mine { margin-left: 0; }
+  .s3-field { height: 330px; }
   .s3-fan { display: none; }
-  .s3-obj { left: 14px; right: 14px; top: 50px; width: auto; min-width: 0; height: 112px; padding: 12px 14px; flex-direction: row; align-items: center; gap: 12px; }
-  .s3-obj .s3-k { position: absolute; left: 14px; top: 12px; }
-  .s3-file { grid-template-columns: repeat(7, 18px); grid-auto-rows: 18px; gap: 5px; margin-top: 8px; }
-  .s3-shard, .s3-slot, .s3-ghost { width: 18px; height: 18px; border-radius: 5px; }
-  .s3-read { position: absolute; left: 14px; bottom: 12px; }
-  .s3-vols { left: 14px; right: 14px; top: 176px; height: 192px; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(3, 1fr); gap: 6px; }
+  .s3-obj { left: 12px; right: 12px; top: 12px; width: auto; min-width: 0; height: 104px; padding: 12px 14px; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; gap: 6px 12px; border-radius: 12px; }
+  .s3-obj .s3-k { grid-column: 1; }
+  .s3-file { grid-column: 2; grid-row: 1 / 3; grid-template-columns: repeat(7, 18px); grid-auto-rows: 18px; gap: 5px; justify-content: end; }
+  .s3-read { grid-column: 1; align-self: end; }
+  .s3-shard, .s3-slot, .s3-ghost { width: 18px; height: 18px; border-radius: 6px; }
+  .s3-vols { left: 12px; right: 12px; top: 128px; height: 190px; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(3, 1fr); gap: 6px; }
   .s3-vol { border-radius: 12px; }
-  .s3-vn { left: 7px; top: 6px; }
-  .s3-k, .s3-read, .s3-vn, .s3-legend { font-size: 14px; }
-  .s3-legend { left: 14px; right: 14px; top: auto; bottom: 12px; justify-content: flex-start; gap: 6px 14px; }
-  .s3-mine { margin-left: 0; flex: 1 1 auto; }
-  .s3 .lx-pin-obj { max-height: 36svh; }
-  .s3-roles { border-radius: 22px; }
-  .s3-dia { height: calc(36svh - 72px); min-height: 150px; margin: 0 12px; }
+  .s3-vn { left: 7px; top: 7px; }
+  .s3-k { font-size: 12px; }
+  .s3-read, .s3-vn, .s3-legend, .s3-mine { font-size: 14px; }
+  .s3-roles { border-radius: 16px; }
+  .s3-dia { height: calc(38svh - 72px); min-height: 150px; margin: 0 12px; }
   .s3-role { padding: 10px 12px; width: 44%; height: 38%; gap: 2px; border-radius: 12px; }
-  .s3-role b { font-size: 15px; }
+  .s3-role b { font-size: 16px; }
   .s3-role span { display: none; }
   .s3-bin { padding: 7px 10px; font-size: 14px; }
   .s3-lock { right: 8px; top: 8px; }
   .s3-strip { min-height: 72px; padding: 10px 12px; font-size: 14px; }
   .s3-cells { gap: 4px; }
-  .s3-cells i { width: 14px; height: 14px; border-radius: 4px; }
+  .s3-cells i { width: 14px; height: 14px; border-radius: 6px; }
   .s3-cells b { margin-left: 6px; }
-  .s3-spec .lx-spec-v { font-size: 56px; }
-  .s3-spec { margin-bottom: 80px; }
+  .s3-spec { margin-bottom: 64px; }
+  .s3 .cf-paste.dark { grid-template-columns: minmax(0, 1fr); }
   .s3 .x-copy-t { font-size: 14px; }
 }
-@media (prefers-reduced-motion: reduce) { .s3-strip, .s3-dia line.proto, .s3-ghost.back { animation: none; } }
+@media (prefers-reduced-motion: reduce) { html.js .s3-strip, .s3-dia line.proto, .s3-ghost.back { animation: none; } .s3-fan path, .s3-ghost, .s3-role { transition: none; } }

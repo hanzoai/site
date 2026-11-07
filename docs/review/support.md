@@ -17,7 +17,7 @@ Walked 7 Nov at about 15:05 UTC, page file at `24d2adc5` (`components/pages/Supp
 1. **Sells in 5 seconds, moves within 1 second?** Yes: "How can we help?", a search pill, the best answer and the six ways, all on the first screen. The h1 cuts in at once; the typing follows about a second later.
 2. **One in, one out, or a document?** Two screens: the search room and the Band. Not a document, but very short and quiet.
 3. **A real visual object in every section?** The working search UI and the Band. At rest the pill is an empty white box with only a magnifier (the repeated placeholder was rightly removed), so the hero's main object looks blank once the demo ends.
-4. **One ask, sticky after the hero?** No. The answer card's "Open Help Center" is the ask, but after the hero only the header's "Try Hanzo" stays; on desktop no ask follows you. Under the 14:45 rule the page's ask should live in the sticky header.
+4. **One ask, sticky after the hero?** Yes, shared: the header's "Try Hanzo" at every width (the 15:15 system), plus "Open Help Center" as the one page solid in the answer card.
 5. **Every hover and press answers, no jumps?** Yes. Pointing at a row previews its door; press on "Open Help Center" is .98; the pill border inks on hover.
 6. **Overlaps, font swap, layout shift?** None at either size.
 7. **Which reference, is its motion there?** apple.com support calm, plus "answer as you type". It works, but the demo never shows the answer changing (it keeps the Help Center), so a visitor does not see the magic unless they type.
@@ -28,11 +28,10 @@ Walked 7 Nov at about 15:05 UTC, page file at `24d2adc5` (`components/pages/Supp
 
 ## Card check (`docs/coverage/support.md`)
 - **Format.** Template format with `Done here:` lines on all 18 parts.
-- **Part 4 is false at 1470.** It ticks "Sticky ask in header and bar after the hero, same label". On desktop no bar appeared and the header ask stays "Try Hanzo".
-- **Verdict capped at 7.** It would sit at 7 anyway: correct, calm and short of a moment.
+- **Part 4 is out of date.** It says the shared ask bar carries "Open Help Center" after the hero at every width. Since the 15:15 system there is no desktop bar; the header's "Try Hanzo" is the sticky ask. Reword it.
+- **Verdict:** 7 on its own merits: correct and calm, but short of a moment.
 
 ## Fixes (in order)
-1. **Put "Open Help Center" in the sticky header** at every width (solid once the answer card leaves view). No floating bar.
-2. **Let the demo show the answer moving, once.** After "support ticket", type one more of Hanzo's own words that re-ranks the list (for example "status"): System Status rises into the answer card, then the demo clears and the card settles back on the Help Center. It runs once and pauses on pointer or focus, as now.
-3. **Do not leave the pill blank at rest.** Leave the last typed phrase dimmed in the field, or show the six ways' names as quiet chips under it, using words already on the page. No new copy.
-4. **Give the Band a small object.** For example, the six doors as a quiet row of Hanzo's own destinations, so the closing room is not text and a button only.
+1. **Let the demo show the answer moving, once.** After "support ticket", type one more of Hanzo's own words that re-ranks the list (for example "status"): System Status rises into the answer card, then the demo clears and the card settles back on the Help Center. It runs once and pauses on pointer or focus, as now.
+2. **Do not leave the pill blank at rest.** Leave the last typed phrase dimmed in the field, or show the six ways' names as quiet chips under it, using words already on the page. No new copy.
+3. **Give the Band a small object.** For example, the six doors as a quiet row of Hanzo's own destinations, so the closing room is not text and a button only.

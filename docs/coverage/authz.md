@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Authz.jsx` (+ `Authz.css`, page-local `ExampleConsole.jsx/.css`) · gallery: `docs/gallery/authz/` · metric id: `api_key_created` (developers; the click is `cta_click authz.hero`)
 
 Open copy questions for James: the demo's UI labels are ours, not Hanzo's ("caller", "location", "can", "grant", "target", "Replay", "Delegate it yourself", "your grant", "the agent's grant", "with an expiry", "edge", "token", "accepted", "rejected"); keep them or move them to `content/ui-strings.json`? The spec sheet's "1 rule" and "3" are counts of Hanzo's own "one question" and its three named algorithms (RSA, EC, ML-DSA-65), not new figures; keep? "4 stars" is the live page's static GitHub figure.
-Shared changes requested (`docs/requests/authz.md`): none. Kit notes for the Cloud 1 owner: KeynoteStage's `cta` default is the bare id `hero` (pages must pass `<page>.hero`); KeynoteClose's CodeBlock caption is 12px sentence case.
+Shared changes requested (`docs/requests/authz.md`): none. Kit notes for the Cloud 1 owner: KeynoteStage's `cta` default is the bare id `hero` (pages must pass `<page>.hero`); KeynoteClose's CodeBlock caption is 12px sentence case; its text-link "Self-host" reads `--ink` inside the dark room and the kit link asks are 21px tall (this page sets them white and 44px locally).
 Forks this page deleted: Frame's `Console` (6 `title=` tooltips, a spring row, a `setInterval`) replaced by page-local `ExampleConsole` (visible labels, no tooltip, built once); the spring on the answer (now a line-mask cut-in); the spring on the delegation picker (now a 300 ms tween glide); the native checkbox (now a switch button); the phones' `setInterval` scene loop (now one pass, a step a second); the violet/grey accent `--ac` and every off-deck grey (#fbfbfd, #f5f5f7, #e3e3e8, #0b0b0c, #8e8e93, #3a3a3e, #f0f0f3); 8 box-shadows; the 112px/128px answers and the 44px statement.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: "Read the docs" (docs.hanzo.ai/…/authz) is the hero's one solid (`data-cta="authz.hero"`, `data-thumb`), "View on GitHub" is quiet (`authz.hero-2`); the close's one solid is Hanzo's "Deploy to Cloud" (`authz.close`) with "Self-host" quiet. The first screen reads "Hanzo Authz / Fine-grained authorization" over a graph answering true or false.
+Done here: "Read the docs" (docs.hanzo.ai/…/authz) is the hero's one solid (`data-cta="authz.hero"`, `data-thumb`), "View on GitHub" is a kit text link (`authz.hero-2`); the close's one solid is Hanzo's "Deploy to Cloud" (`authz.close`) with the "Self-host" link. The header's "Try Hanzo" is always solid (SYSTEM §5), so the page keeps one own solid per view. The first screen reads "Hanzo Authz / Fine-grained authorization" over a graph answering true or false.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it

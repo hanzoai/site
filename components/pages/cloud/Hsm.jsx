@@ -1,6 +1,12 @@
 'use client';
+// Persona: a security or platform engineer who already owns key hardware.
+// Goal: see that the key never leaves the hardware and that the module is a line of configuration.
+// CTA: View on GitHub (hsm.hero, hsm.close).
+// Metric: cta_click hsm.hero
+// Signature: the module, exploded: a plate stack that signs in the hero and opens layer by layer as the facts are read.
+// Beyond: Pick your module: where its key lives, threshold signing and ML-DSA-65 per module, in Hanzo's words.
 /* HSM (v2, archetype A Launch).
-   V2: 8/10 The module as a product shot: it signs in the hero while its provider changes under the same call, then explodes layer by layer in a black room as the six facts are read; pick-your-module answers honestly per module.
+   V2: 8/10 The module signs in the hero while its provider changes under one interface, then explodes plate by plate in the dark room; pick-your-module answers per module; greys only, one ask.
    Signature: the module, exploded. One hardware module drawn as a stack of plates (the handle Hanzo holds, the
    boundary, the key, the firmware, the module itself). In the hero it is closed and signing: key id and bytes go in, a
    signature comes out, and the module under the interface changes (AWS KMS, Azure Key Vault, Google Cloud KMS, a Zymbit
@@ -15,12 +21,13 @@
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import { useLive, useSteps } from './Frame';
 import { Lines, Lift } from '../../v2/LiftStage';
 import PinChapters from '../../v2/x-hypatia/PinChapters';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Hsm.css';
 
@@ -56,9 +63,13 @@ function Module({ gap = 14, lit = [2], labels = {}, base, shares, small }) {
 
 /* Hero: the closed module signing, its provider changing under the same call. */
 function Sign() {
-  const [ref, live] = useLive(0.3);
+  const [ref, seen] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [m] = useSteps(MODULES.length, 3400, live);
   return (
+    <div className="lp-host">
+    <LivePause paused={paused} onToggle={togglePause} className="hs-pause" />
     <div className="hs-sign" ref={ref} aria-hidden="true">
       <Module gap={22} base={MODULES[m]} />
       <AnimatePresence mode="popLayout" initial={false}>
@@ -66,6 +77,7 @@ function Sign() {
         <motion.p key={'out' + m} className="hs-io out" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.8, ease: EASE, delay: 1.1 }}>signature ✓</motion.p>
       </AnimatePresence>
       <p className="hs-call">One interface <span>→</span> <AnimatePresence mode="wait" initial={false}><motion.b key={m} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>{MODULES[m]}</motion.b></AnimatePresence></p>
+    </div>
     </div>
   );
 }
@@ -125,7 +137,7 @@ function Pick() {
         <div className="hs-pick-tabs" role="tablist" aria-label="Module">
           {PICK.map(([m], i) => (
             <button key={m} type="button" role="tab" aria-selected={at === i} aria-controls="hs-pick-p" onClick={() => setAt(i)}>
-              {at === i && <motion.span layoutId="hs-tab" className="hs-tab-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              {at === i && <motion.span layoutId="hs-tab" className="hs-tab-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="hs-tab-t">{m}</span>
             </button>
           ))}
@@ -153,7 +165,7 @@ export default function Hsm() {
           <div className="hs-hero-copy">
             <Lines as="h1" className="v2-display hs-h1" lines={['Hanzo', 'HSM']} data-morph-target="" />
             <p className="v2-body hs-lede v2-in" style={{ animationDelay: '.3s' }}>One interface to the key hardware you already trust — AWS KMS, Azure Key Vault, Google Cloud KMS, or a Zymbit module over PKCS#11. Generate keys, sign with them, and unwrap with them, without the private material ever reaching your process.</p>
-            <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}><A to="https://github.com/hanzoai" className="v2-btn solid" data-thumb="View on GitHub" data-cta="hsm-view-on-github">View on GitHub</A></div>
+            <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}><Cta to="https://github.com/hanzoai" id="hsm.hero" thumb>View on GitHub</Cta></div>
           </div>
           <Lift className="hs-hero-obj" from={1.06} y={16} origin="50% 50%" offset={['start end', 'start 0.3']}>
             <Sign />
@@ -167,7 +179,7 @@ export default function Hsm() {
 
       <Pick />
 
-      <GetIt name="HSM" tag="Hardware security module" seed="hsm" data={[65, 11, 4]} lead="Get started with HSM" ask={['View on GitHub', 'https://github.com/hanzoai', 'hsm-view-on-github']} />
+      <GetIt name="HSM" tag="Hardware security module" seed="hsm" data={[65, 11, 4]} lead="Get started with HSM" ask={['View on GitHub', 'https://github.com/hanzoai', 'hsm.close']} />
     </main>
   );
 }

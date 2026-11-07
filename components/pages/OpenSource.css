@@ -50,6 +50,14 @@
 .xos-hstats dt { font-size: 13px; color: rgba(255, 255, 255, .55); }
 .xos-hint { margin: 0 60px 0 0; font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 
+/* the sticky local band (in-page, opaque, under Hanzo's header) */
+.xos-local { position: sticky; top: 60px; z-index: 10; background: #ffffff; border-bottom: 1px solid var(--hair); }
+.xos-local-in { display: flex; align-items: center; gap: 17px; min-height: 56px; }
+.xos-local-t { display: inline-flex; align-items: center; gap: 10px; }
+.xos-local-t .pf-mono { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #0a0a0a; }
+.xos-local-r { font-size: 12px; color: #737373; }
+.xos-local-a { margin-left: auto; min-height: 40px; padding: 0 17px; font-size: 14px; }
+
 /* what we publish: tabs, a panel of figures, the live dashboard */
 .xos-pub-top { align-items: end; }
 .xos-pub-h { grid-column: 1 / span 5; }
@@ -244,6 +252,7 @@
   .xos-hstats dt { font-size: 13px; }
   .xos-hint { margin-top: 27px; }
 
+  .xos-local-r { display: none; }
   .xos-pub-h, .xos-pub-l { grid-column: 1 / -1; }
   .xos-pub-l { margin-top: 17px; }
   .xos-eco { display: flex; margin: 27px 0; }
