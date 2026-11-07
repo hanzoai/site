@@ -19,7 +19,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useDemo, DemoCtl } from '../v2/AppDemo';
-import { Copy, Magnetic, EASE } from '../ui';
+import { EASE } from '../ui';
 import { A, Faq, Cta, Band, CodeBlock, Tabs, TabPanel } from '../kit';
 import AppLines from '../v2/AppLines';
 import './DevPage.css';
@@ -142,7 +142,7 @@ function Hero() {
         <motion.div className="xdv-hero-side" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
           <p className="xdv-lede">Hanzo Dev is a coding agent. It reads your repository, makes the change, runs the tests and shows you the diff — in your terminal, on the web, in the cloud and in Slack.</p>
           <div className="xdv-acts">
-            <Magnetic strength={0.18}><Cta to={OPEN} id="dev.hero" thumb size="lg">Open Dev</Cta></Magnetic>
+            <Cta to={OPEN} id="dev.hero" thumb size="lg">Open Dev</Cta>
             <Lk to={DOCS} id="dev.docs">Read the docs</Lk>
             <Lk to="https://github.com/hanzoai/dev" id="dev.github">Explore GitHub examples</Lk>
           </div>
