@@ -2,7 +2,8 @@
 /* Sentinel (v2, Cloud 4 chat). Archetype A, Launch: a side Stage hero with the issue view → one dark scene where the
    events collapse → five stacked sheets → Get Sentinel → closing band. Ink, greys and white only.
    Persona: an engineer whose frontend and services throw errors they can't reproduce. Goal: read the migration docs.
-   CTA: "Read the docs" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:sentinel.primary.
+   CTA: "Read the docs" (hero, header ask, close; data-cta primary / close).
+   Metric: cta_click:sentinel.primary
    V2: 8/10 the issue view as the hero, ten thousand events collapsing into one issue as you scroll, the facts as stacking sheets
    Signature: ten thousand events become one issue. In a pinned dark room, exceptions rain down a canvas; as you scroll
    they are pulled into a single issue card and its count climbs with them (scrubbed; on phones it plays when seen).
@@ -37,13 +38,13 @@ function Issue() {
   useTick(140, live, () => { setN((v) => v + 1 + Math.floor(rnd(v) * 9)); setT((x) => x + 1); if (rnd(t) > 0.82) setBars((b) => [...b.slice(1), 0.3 + rnd(t + 9) * 0.65]); });
   const resolved = calm || Math.floor(t / 22) % 2 === 1;
   return (
-    <div className="l2-obj sn2-issue" ref={ref} aria-hidden="true">
+    <div className="l2-obj sn2-issue" ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
-      <div className="sn2-top">
+      <div className="sn2-top" aria-hidden="true">
         <span className="sn2-dots"><i /><i /><i /></span>
         <span className="l2-mono sn2-host">sentry.hanzo.ai</span>
       </div>
-      <div className="sn2-body">
+      <div className="sn2-body" aria-hidden="true">
         <div className="sn2-head">
           <span className="sn2-tag l2-mono">TypeError</span>
           <span className="sn2-unres l2-mono">unresolved</span>
