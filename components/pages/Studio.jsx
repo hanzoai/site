@@ -1,6 +1,6 @@
 'use client';
 /* Studio.
-   V2: 8/10 hero recomposed (52px h1 at 38%, monitor and first timeline row on the first screen, ask row inline on phone), the six explainer boxes became one wired node graph with a single detail pane, specs a hairline list, REC moved under "Get Studio", "Open Studio" drops into the monitor instead of reloading the page, 26px section heads, deck greys and timings, hovers that say something (timecodes, arrow, chip fills), reduced-motion film hydration fixed.
+   V2: 8/10 white holes closed (47-131px between sections, the reel pulled up under the card), changeovers cut instead of blending (out in 150 ms, titles in by line mask), reel 240svh with bigger subject-framed moves and a frame that grows .92 to 1, phone reel a sticky 2.39:1 frame that swaps per pillar, phone h1 36px in 3 lines with the monitor at 413px, one solid plus one text link at the close.
    Persona: a director or a VFX team. Goal: launch Studio. CTA: Launch studio.hanzo.ai (studio.hero).
    Metric: cta_click on studio.hero and studio.close (data-cta; the event layer is the conductor's).
    Signature: the camera moves with your scroll. After the cutting room, a 2.39:1 frame pins on a white stage; each
