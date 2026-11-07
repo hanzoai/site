@@ -1,10 +1,12 @@
 # /customers/* coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/story/Story.jsx` (+ `Story.css`, `storyData.js`; route `app/customers/[slug]/page.jsx`) · gallery: `docs/gallery/customers/` · metric id: `contact_sales_submit` (journey level). Members checked: `/customers/damon-motorcycles`, `/customers/kanoa`.
+Page file: `components/pages/story/Story.jsx` (+ `Story.css`, `storyData.js`; route `app/customers/[slug]/page.jsx`) · gallery: `docs/gallery/customers-family/` (earlier stills in `docs/gallery/customers/`) · metric id: `contact_sales_submit` (journey level). Members checked: `/customers/damon-motorcycles`, `/customers/kanoa`.
 
 Open copy questions for James: (1) the primary ask on a case page is Hanzo's own "The original case study (PDF)", which sends a buyer to a PDF rather than to Hanzo; kept as the ask (Story type: the page's own closing link). (2) Years beside customer figures: Hanzo's header line gives one year per case ("2015", "2020"), shown under the name, not beside each figure.
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/requests/customers.md`): the media mirror into `public/` (the covers and frames are hanzo.ai-only).
 Forks this page deleted: raw `<img>` (now kit `Img` inside a local plate), raw `.x-btn` asks (now kit `Cta`), the kit `Flap` scramble on figures (it drew invented in-between numbers), the floating reel counter over the scenes, hover captions laid over the frames.
+
+Decision (count-ups): a count from 0 would show numbers that aren't Hanzo's (JAMES.md: every number traces to Hanzo's copy), so each figure arrives by its own characters rising into place (500ms ease-emphasis, 60ms apart, no overshoot). That arrival is kept, not removed. Sampled every 100ms during arrival on both members: only Hanzo's values were ever in the DOM.
 
 Rule clashes noted (higher rule taken): the hero is a black room that, per part 7, enters as a rounded card inside the gutters and opens to full width; it sits at the top, so it opens on arrival rather than on scroll.
 
@@ -33,7 +35,7 @@ Done here: one `<main class="xst">`; the shell's skip link targets it. Every lin
 - [x] Ends in proof strip, `Band`, footer (Story type: the page's own closing link)
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: the first screen is the black room opening (800ms) with the name cutting in by line mask (700ms, ease-emphasis, 200ms delay) and the Sigil drifting. h1 baseline at about 38% (desktop: h1 box 240–334px at 1470×801). Above the h1 there is only the breadcrumb; the year and kind sit under it. No kit `PageHero` exists yet, so the hero is page-local and follows its spec. With JS off, a `<noscript>` style plus `.js`-scoped CSS shows every word (checked with Playwright `javaScriptEnabled:false`). The sections run black room, paper, quiet room, 100svh scenes, paper wall, paper close. It ends on Hanzo's own closing links and the next case; per the Story type there is no Band. The next-launch picture carries `data-morph` into the sibling's `data-morph-target` stage.
+Done here: the first screen is the black room opening (800ms) with the name cutting in by line mask (700ms, ease-emphasis, 200ms delay) and the Sigil drifting. h1 baseline at about 38% (desktop: h1 box 240–334px at 1470×801). Above the h1 there is only the breadcrumb; the year and kind sit under it. No kit `PageHero` exists yet, so the hero is page-local and follows its spec. When the launch's picture cannot load (every run here; hanzo.ai is blocked), the room is not left as a bare contour. A graphite ledger plate (#262626, radius 20) holds the launch's own figures: the first at 64px Air with its label, the rest as hairline rows. It wipes open (500ms) and its characters rise. It sits at x 919–1311, y 379–701 at 1470×801, clear of the h1 (240–334) and the ask (405–457). At 375×812 it sits at y 132–387, above the h1 (496) and the ask (660–712). It is `aria-hidden`, because the figures section below is the readable copy. With JS off, a `<noscript>` style plus `.js`-scoped CSS shows every word (checked with Playwright `javaScriptEnabled:false`). The sections run black room, paper, quiet room, 100svh scenes, paper wall, paper close. It ends on Hanzo's own closing links and the next case; per the Story type there is no Band. The next-launch picture carries `data-morph` into the sibling's `data-morph-target` stage.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -84,7 +86,7 @@ Done here: figure buttons have a hover rule line and arrow nudge, press scale .9
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: no sound kit merged yet)
 
-Done here: the signature is the scenes wiping up (scroll-scrubbed clip-path). Supporting: the Sigil and the frame wipe on arrival; `variety.py` counts 3 techniques and 0 fade-ups. Kinds of motion: arrival (room opens, name cuts in), idle (Sigil drift), pointer (Sigil leans, hovers), state (figure press travels and marks; figures rise once), and scroll (name settles 84→52, scenes). Durations are deck tokens (90/150/300/400/500ms; scene moves 700–800ms), with ease-emphasis and no springs. Under reduced motion nothing is bound to scroll and `getAnimations()` is empty after 3s (checked).
+Done here: the signature is the scenes wiping up (scroll-scrubbed clip-path). Supporting: the Sigil and the frame wipe on arrival; `variety.py` counts 3 techniques and 0 fade-ups. Kinds of motion: arrival (room opens, name cuts in), idle (Sigil drift), pointer (Sigil leans, hovers), state (figure press travels and marks; figures rise once), and scroll (name settles 84→52, scenes). Durations are deck tokens (90/150/300/400/500ms; scene moves 700–800ms), with ease-emphasis and no springs. Under reduced motion nothing is bound to scroll. The hero contour gets `still={calm}` from `useCalm`, so its rAF loop stops (one frame), even when the setting is switched on later. The cover opens with no clip animation. `getAnimations()` shows 0 running after 3s on both members at 1470 and 375 (Playwright `reducedMotion: 'reduce'`).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -92,7 +94,7 @@ Done here: the signature is the scenes wiping up (scroll-scrubbed clip-path). Su
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them
 
-Done here: every picture is kit `Img` with width and height (hero 1920×1080 with `priority`, scenes and tiles 1200×1500, report 1600×1000, next 1600×900) inside a box reserved in CSS. Alt comes from Hanzo's own captions. The only dimming is a left gradient under the stage text. Damon's wall shows 6 frames. Gap: the pictures are not in the repository and hanzo.ai is blocked in this sandbox, so here every frame shows its silver caption plate. The dev server falls back to hanzo.ai for missing files, so they should load on an online localhost.
+Done here: measured in the DOM, 14/14 images on Damon and 7/7 on KANOA carry width and height attributes. Every picture is kit `Img` with width and height (hero 1920×1080 with `priority`, scenes and tiles 1200×1500, report 1600×1000, next 1600×900) inside a box reserved in CSS. Alt comes from Hanzo's own captions. The only dimming is a left gradient under the stage text. Damon's wall shows 6 frames. Gap: the pictures are not in the repository and hanzo.ai is blocked in this sandbox, so here every frame shows its silver caption plate. The dev server falls back to hanzo.ai for missing files, so they should load on an online localhost.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -157,4 +159,10 @@ Done here: a picture that fails (including one that failed before hydration) hid
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/<page>.md` verdict 8 or more (pending re-review)
 
-Done here: `data-cta="customers.hero"` and `"customers.close"`, sent as `cta_click` by the kit `Cta`; `lib/track.js` does not exist yet. There are no identifiers and no forms. The `V2:` line is in Story.jsx. `docs/review/customers-family.md` (6/10 at 6d77b65) was read, and its four fixes are done: only Hanzo's figures, sized images, reduced motion calm, and `data-cta`. A re-review is pending.
+Done here: `data-cta="customers.hero"` and `"customers.close"`, sent as `cta_click` by the kit `Cta`; `lib/track.js` does not exist yet. There are no identifiers and no forms. The `V2:` line is in Story.jsx. `docs/review/customers-family.md` (6/10 at 6d77b65) was read, and its four fixes are done:
+- only Hanzo's figures (no scramble, no overshoot);
+- sized images (14/14 and 7/7);
+- the contour stops under reduced motion (0 running animations);
+- `data-cta` is in the DOM (`customers.hero`, `customers.close`).
+
+The fallback hero now holds the figure ledger, so it is not left empty. A re-review is pending.

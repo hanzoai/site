@@ -1,7 +1,7 @@
 'use client';
 /* Enterprise, v2 (VISION archetype B, System: a map you travel; the calm trust of chatgpt.com/business/enterprise;
    PLAN-COMPONENTS 5.3).
-   V2: 8/10 where it runs as a scrolled zoom over Hanzo's live audit log; trust strip in the first screen; GPU detail in a drawer; one dark room, the Band; greys only
+   V2: 7.5/10 the review's six fixes: 240px+ of the live log in the first screen, hero in place in server HTML (cut-in on hydration), no hydration mismatch, results a quiet 28px ledger under one 64px figure, figures rest small and grow only as the moment, 44px phone links, no 404 logos
    Persona: an IT, security or platform lead choosing where Hanzo runs. Goal: see it runs where you need it, and that
    you can verify it. CTA: "Get Enterprise plan" (data-cta enterprise.hero, the page's ask) and one "Talk to sales" in
    the closing Band; metric: cta_click on enterprise.hero and the Band.
@@ -20,7 +20,7 @@
    figure is Hanzo's. */
 // Persona: an IT, security or platform lead choosing where Hanzo runs
 // Goal: see it runs where you need it, and that you can verify it
-// CTA: Get Enterprise plan (hero, ask bar and Band); metric: cta_click on enterprise.hero and enterprise.band
+// CTA: Get Enterprise plan (hero, then the header's solid ask on desktop / the phone ask bar, and the Band); metric: cta_click on enterprise.hero and enterprise.band
 // Signature: the boundary zoom: Hanzo's live audit log settles inside four walls and the camera travels in, one wall per scrolled chapter
 // Beyond: the prefill instrument: pick a prompt size and read Hanzo's measured prefill time and rate for Zen 6 on one DGX Spark
 import { useEffect, useRef, useState } from 'react';
@@ -42,7 +42,8 @@ const PLACES = [
 
 /* ---------- the boundary: geometry ---------- */
 // The map is built at its closest zoom and scaled down, so the workspace is crisp when the camera arrives.
-const WIN = [640, 430], STEP = 64;
+// walls 48px apart (were 64) and a taller window: the first screen at 1470×801 now holds 240px+ of the log writing
+const WIN = [640, 470], STEP = 48;
 const MAP = [WIN[0] + STEP * 8, WIN[1] + STEP * 8];
 const ring = (i) => [MAP[0] - STEP * 2 * i, MAP[1] - STEP * 2 * i];
 const P0 = 0.15, L = (1 - P0) / 4; // the arrival, then four chapters
@@ -96,10 +97,11 @@ function Workspace({ at }) {
   const [n, setN] = useState(7);
   useEffect(() => {
     if (!seen || calm) return;
-    const ts = [900, 2300, 3700].map((ms) => setTimeout(() => setN((v) => v + 1), ms));
-    return () => ts.forEach(clearTimeout);
+    // the first row lands at 0.9 s, then the log keeps writing at a calm pace while it is on screen
+    let t = setTimeout(function tick() { setN((v) => v + 1); t = setTimeout(tick, 2600); }, 900);
+    return () => clearTimeout(t);
   }, [seen, calm]);
-  const rows = Array.from({ length: 8 }, (_, k) => ({ id: n - k, r: LOG[mod(n - k, LOG.length)] }));
+  const rows = Array.from({ length: 9 }, (_, k) => ({ id: n - k, r: LOG[mod(n - k, LOG.length)] }));
   return (
     <div className="xe-win" ref={ref} aria-hidden="true">
       <div className="xe-win-bar">
@@ -118,7 +120,7 @@ function Workspace({ at }) {
           <div className="xe-cols"><span>Who</span><span>From where</span><span>What</span><span>Status</span></div>
           <div className="xe-rows">
             {rows.map(({ id, r }, k) => (
-              <div key={id} className={'xe-r' + (k === 0 && id > 7 ? ' new' : '') + (k > 6 ? ' gone' : '')} style={{ transform: `translateY(${k * ROW}px)` }}>
+              <div key={id} className={'xe-r' + (k === 0 && id > 7 ? ' new' : '') + (k > 7 ? ' gone' : '')} style={{ transform: `translateY(${k * ROW}px)` }}>
                 <span className="xe-actor"><i>{r[0][0]}</i><span>{r[0]}</span></span>
                 <span className="xe-from">{r[1]}</span>
                 <code>{r[2]}</code>
@@ -277,6 +279,8 @@ function PauseFilm() {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const [off, setOff] = useState(false);
+  const [up, setUp] = useState(false); // the server cannot know reduced motion: decide after hydration, so both renders match
+  useEffect(() => setUp(true), []);
   const first = useRef(true);
   useEffect(() => {
     const v = ref.current?.parentElement?.querySelector('video');
@@ -288,7 +292,7 @@ function PauseFilm() {
     v.addEventListener('play', hold);
     return () => v.removeEventListener('play', hold);
   }, [off]);
-  if (calm) return null; // under reduced motion the film never plays: its poster stands
+  if (calm && up) return null; // under reduced motion the film never plays: its poster stands
   return (
     <button ref={ref} type="button" className="xe-pause" aria-pressed={off} aria-label="Pause" onClick={() => setOff((o) => !o)}>
       {off ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
@@ -310,7 +314,7 @@ function Includes() {
         <div className="xe-tiles">
           <article className="xe-tile t-infra">
             <div className="xe-tile-walls" aria-hidden="true">
-              {PLACES.map((pl, i) => <span key={pl[0]} style={{ inset: `${i * 10}% ${i * 8}%` }}><em>{pl[0]}</em></span>)}
+              {PLACES.map((pl, i) => <span key={pl[0]} style={{ inset: `${i * 10}% ${i * 8}%`, '--i': i }}><em>{pl[0]}</em></span>)}
               <b />
             </div>
             <h3>Your infrastructure</h3>
@@ -373,9 +377,13 @@ function Roll({ k, children }) {
 
 function Prefill() {
   const [k, setK] = useState(1);
+  const [hot, setHot] = useState(false); // the figures rest small and grow while a size is being picked
+  const timer = useRef(0);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const pick = (i) => { setK(i); setHot(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHot(false), 1600); };
   const [, t, r] = PREFILL[k];
   return (
-    <div className="xe-pf">
+    <div className={'xe-pf' + (hot ? ' hot' : '')}>
       <div className="xe-pf-read">
         <p className="xe-k">Zen 6 on one DGX Spark, as Hanzo measured it</p>
         <div className="xe-pf-figs" aria-live="polite">
@@ -385,7 +393,7 @@ function Prefill() {
       </div>
       <div className="xe-pf-chart" role="radiogroup" aria-label="Prompt">
         {PREFILL.map(([s, , rate], i) => (
-          <button key={s} type="button" role="radio" aria-checked={k === i} onClick={() => setK(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setK(i)} data-cursor="">
+          <button key={s} type="button" role="radio" aria-checked={k === i} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} data-cursor="">
             <span className="xe-pf-s">{s}</span>
             <i className="xe-pf-bar"><b style={{ transform: `scaleX(${rate / TOP})` }} /></i>
             <span className="xe-pf-v x-mono">{rate.toLocaleString('en-US')}</span>
@@ -493,20 +501,14 @@ const PROOF = [
   ['250,000', 'email signups', 'Bellabeat', 'Preorders', '/customers#bellabeat', '/logos/customers/bellabeat.svg'],
 ];
 
-// a cloud's logo, or its name set in type if the logo cannot load
+// The logo files are not in public/ yet (requested in docs/requests/enterprise.md), so nothing hot-links or 404s:
+// a cloud is its name set in type, and a customer row carries its name. Once the files are vendored, set LOGOS true.
+const LOGOS = false;
 function CloudMark({ name, src }) {
-  const ref = useRef(null);
-  const [bad, setBad] = useState(false);
-  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
-  return bad ? <span className="xe-cloudname">{name}</span> : <Img ref={ref} src={src} alt={name} w={132} h={32} onError={() => setBad(true)} />;
+  return LOGOS ? <Img src={src} alt={name} w={132} h={32} /> : <span className="xe-cloudname">{name}</span>;
 }
-
-// a logo that hides itself if it cannot load (the name beside it carries on)
 function Mark({ src }) {
-  const ref = useRef(null);
-  const [bad, setBad] = useState(false);
-  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
-  return bad ? null : <Img ref={ref} src={src} alt="" w={96} h={20} onError={() => setBad(true)} />;
+  return LOGOS ? <Img src={src} alt="" w={96} h={20} /> : null;
 }
 
 function Proof() {
@@ -560,7 +562,19 @@ const PANEL = [
   ['Roles and second factors', ['organization', 'workspace', 'project', 'authenticator app', 'SMS', 'email']],
 ];
 
+// the row each item lights: single sign-on shows a sign-in arriving, the audit log writes a new row while you read it
+const SECROW = [LOG[0], null, null, LOG[7]];
 function SecPanel({ at }) {
+  const calm = useReducedMotion();
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (at !== 2 || calm) return;
+    let t = setTimeout(function tick() { setN((v) => v + 1); t = setTimeout(tick, 1800); }, 500);
+    return () => clearTimeout(t);
+  }, [at, calm]);
+  const row = (r, key) => (
+    <span className="xe-panel-r" key={key}><span>{r[0]}</span><span>{r[1]}</span><code>{r[2]}</code><b className={'xe-st s' + r[3][0]}>{r[3]}</b></span>
+  );
   return (
     <div className="xe-panel" aria-hidden="true">
       <div className="xe-panel-bar"><i /><i /><i /><span>Hanzo Enterprise · Your company</span></div>
@@ -569,6 +583,8 @@ function SecPanel({ at }) {
           <li key={t} className={i === at ? 'on' : undefined}>
             <span className="xe-panel-t"><b />{t}</span>
             <span className="xe-panel-c">{chips.map((c) => <em key={c}>{c}</em>)}</span>
+            {i === 2 ? <span className="xe-panel-log">{row(LOG[mod(n, LOG.length)], 'r' + n)}</span>
+              : SECROW[i] ? <span className="xe-panel-log">{row(SECROW[i], 'r')}</span> : null}
           </li>
         ))}
       </ul>
@@ -676,9 +692,13 @@ function Questions() {
   );
 }
 
+// The hero ships in place in the server HTML (h1 lines and lede visible, nothing translated out). Once React has
+// hydrated, a class plays the line-mask cut-in, so a slow load never shows a blank hero.
 export default function Enterprise() {
+  const [cut, setCut] = useState(false);
+  useEffect(() => setCut(true), []);
   return (
-    <main className="xe">
+    <main className={'xe' + (cut ? ' xe-cut' : '')}>
       <Boundary />
       <Security />
       <Includes />

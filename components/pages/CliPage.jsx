@@ -3,19 +3,19 @@
 // Beyond: Add to the script: the install script takes any of the binary's own commands (scan, share, status, link, auth show) as one press each, under Hanzo's own heading for it, and every block and the whole script copy as you built them
 // Persona: a developer deciding whether to put one more binary on their path.
 // Goal: install the CLI (the line is right there to copy) after seeing it work in a real session.
-// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid + ask bar (data-thumb) + the closing band; everything else is a text link.
+// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid (data-thumb) + the closing band; everything else is a text link. The header keeps the shared "Try Hanzo" (page ask requested in docs/requests/cli.md).
 // Metric: api_key_created (developer: copy the install line, then sign in with hanzo auth login)
 /* Hanzo CLI (Archetype: Developer, terminal-first, code as the hero).
-   V2: 8/10 round 2: no green (white on the black terminal, ink on white); one solid ask in the hero and again as the one closing band; kickers gone (their words title the windows they describe); rest sizes on the deck scale (h1 52); the session runs once and rests with Pause/Replay, the tree tour pauses; terminal, tree and print pane hold fixed heights so nothing moves under a thumb; 44 px targets; no springs
+   V2: 8/10 round 3: the hero ask is the one pure-white solid on the black room (was the room's #f5f5f7 grey); the h1 cuts in on first paint and the session waits for fonts plus that cut-in before typing; "Hanzo CLI · Developers" moved from the bar above the h1 to the status line below it; the three claims are small terminal windows that type their command in (stepped clip) with the missing verb struck after; h2s use page-local cli/Cut (no reduced-motion hydration error, legible with JS off); resting carets keep the hero, prompt and script alive; 44 px tabs; every hover answers
    Motion: signature = the typed session in the hero terminal (text nodes via refs, stops off screen, runs once then rests).
-   Supporting: the tree's selection that glides between leaves (layoutId, 300 ms ease), the added script block that wipes
-   in (clip), the line-masked headlines. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
+   Supporting: the tree's selection that glides between leaves (layoutId, 300 ms ease), the added script block and the claim
+   windows that wipe in (clip), the line-masked headlines. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Mark } from '../ui';
 import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
-import Lines from '../v2/x-edison/AppLines';
+import Lines from './cli/Cut';
 import '../v2/AppType.css';
 import './CliPage.css';
 
@@ -36,11 +36,13 @@ function Session({ onDone, paused, runKey }) {
   const hold = useRef(paused);
   hold.current = paused;
   const ran = useRef(-1);
-  const [n, setN] = useState(SESSION.length + 1); // the whole session is in the HTML (the final frame); the browser plays it once
+  const [n, setN] = useState(SESSION.length + 1); // the whole session is in the HTML (the final frame) for JS off and reduced motion
+  // with JS on, the rows are masked from first paint (`.js .cli-sess:not(.live)`), so the session only ever grows: never shown, wiped and retyped
+  const [live, setLive] = useState(false);
   useEffect(() => { onDone(n > SESSION.length); }, [n, onDone]);
   useEffect(() => {
     const fill = () => rows.current.forEach((el, i) => { if (el) el.textContent = SESSION[i][1]; });
-    if (calm) { fill(); setN(SESSION.length + 1); return; }
+    if (calm) { fill(); setN(SESSION.length + 1); setLive(true); return; }
     if (!seen || ran.current === runKey) return;
     ran.current = runKey;
     let alive = true, t = 0;
@@ -49,7 +51,10 @@ function Session({ onDone, paused, runKey }) {
     const run = async () => {
       rows.current.forEach((el, i) => { if (el && i < 2) el.textContent = ''; });
       setN(1);
-      await wait(350);
+      setLive(true);
+      // the h1 paints first: wait for the fonts and the h1's own cut-in (about 760 ms) before the first keystroke
+      if (runKey === 0) { try { await Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 1200))]); } catch {} await wait(Math.max(60, 900 - performance.now())); }
+      else await wait(350);
       for (let i = 0; i < SESSION.length && alive; i++) {
         setN(i + 1);
         const el = rows.current[i], txt = SESSION[i][1];
@@ -64,16 +69,16 @@ function Session({ onDone, paused, runKey }) {
       if (alive) { setN(SESSION.length + 1); play('done'); } // it ends at rest on the final frame, with the faint chime
     };
     run();
-    return () => { alive = false; clearTimeout(t); fill(); setN(SESSION.length + 1); };
+    return () => { alive = false; clearTimeout(t); fill(); setN(SESSION.length + 1); setLive(true); };
   }, [seen, calm, runKey]);
   return (
-    <ul className="cli-lines cli-sess" ref={box}>
+    <ul className={'cli-lines cli-sess' + (live ? ' live' : '')} ref={box}>
       {SESSION.map(([p, t], i) => (
         <li key={t} className={'cli-l k' + i + (i < n ? ' on' : '')}>
           <span className="cli-p" aria-hidden={i > 1 ? 'true' : undefined}>{p}</span>
           <span className="cli-tx">
             <span className="cli-ghost" aria-hidden="true">{t}</span>
-            <span className="cli-typed"><span ref={(el) => (rows.current[i] = el)}>{t}</span>{i === n - 1 && i < 2 && <span className="cli-caret" aria-hidden="true" />}</span>
+            <span className="cli-typed"><span ref={(el) => (rows.current[i] = el)}>{t}</span>{((i === n - 1 && i < 2) || (i === SESSION.length - 1 && n > SESSION.length)) && <span className="cli-caret" aria-hidden="true" />}</span>
           </span>
           {i === 2 && <span className={'cli-spin' + (n === 3 ? ' on' : '')} ref={spin} aria-hidden="true">{SPIN[0]}</span>}
         </li>
@@ -102,13 +107,12 @@ function Hero() {
             <A to="/desktop">Desktop</A>
             <A to="/cloud/api-keys">API Keys</A>
           </nav>
-          <span className="cli-who x-mono">Hanzo CLI · Developers</span>
           <button type="button" className="cli-ctl" onClick={ctl} aria-label={done ? 'Replay' : 'Pause'} aria-pressed={done ? undefined : paused}>
             {done ? <IconReplay /> : paused ? <IconPlay /> : <IconPause />}
           </button>
         </div>
         <div className="cli-body">
-          <h1 id="cli-h1" className="av-display cli-h1"><span>An AI engineer</span> <span>in your terminal</span></h1>
+          <h1 id="cli-h1" className="av-display cli-h1"><span className="cli-m"><span>An AI engineer</span></span> <span className="cli-m"><span>in your terminal</span></span></h1>
           <p className="av-lede cli-lede">Type <code>hanzo</code> in a repo and you get a coding session. Type <code>hanzo</code> and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
           <Session onDone={setDone} paused={paused} runKey={runKey} />
           <div className="cli-acts">
@@ -126,7 +130,10 @@ function Hero() {
             <p className="cli-note">Example project. Every name in it is one you would give your own.</p>
           </div>
         </div>
-        <p className="cli-status">Open source (MIT). One static Rust binary — macOS and Linux on amd64 and arm64, Windows on amd64. No runtime, no daemon.</p>
+        <div className="cli-status">
+          <p>Open source (MIT). One static Rust binary — macOS and Linux on amd64 and arm64, Windows on amd64. No runtime, no daemon.</p>
+          <span className="cli-who x-mono">Hanzo CLI · Developers</span>
+        </div>
       </div>
     </section>
   );
@@ -169,6 +176,7 @@ const TOUR = [[0, 0], [5, 0], [3, 0], [6, 0], [4, 0], [8, 1], [1, 0]];
 function Print({ cmd, desc }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
+  const first = useRef(cmd); // the first command is the server frame: its description is in the HTML at full opacity
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -188,7 +196,7 @@ function Print({ cmd, desc }) {
           <span className="cli-typed"><span ref={ref}>{cmd}</span><span className="cli-caret" aria-hidden="true" /></span>
         </span>
       </p>
-      <motion.p className="cli-what" key={desc + cmd} initial={calm ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: Math.min(0.9, cmd.length * 0.026 + 0.15) }}>
+      <motion.p className="cli-what" key={desc + cmd} initial={calm || cmd === first.current ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: Math.min(0.9, cmd.length * 0.026 + 0.15) }}>
         <span aria-hidden="true"># </span>{desc}
       </motion.p>
     </div>
@@ -196,20 +204,28 @@ function Print({ cmd, desc }) {
 }
 
 function Tree() {
-  const [open, setOpen] = useState(() => new Set([0]));
+  // fixed row slots: every folder starts open, so the self-running tour never opens or collapses a row (no reflow, no layout shift);
+  // it only moves the selection and scrolls the tree's own pane to it. A press still opens and closes folders by hand.
+  const [open, setOpen] = useState(() => new Set(TREE.map((_, r) => r)));
+  const pane = useRef(null);
   const [sel, setSel] = useState([0, 0]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
   const [paused, setPaused] = useState(false);
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.35 });
-  const calm = useReducedMotion();
+  const rm = useReducedMotion();
+  const [up, setUp] = useState(false);
+  useEffect(() => setUp(true), []);
+  const calm = up && rm; // the server and the first client render agree; reduced motion applies after mount
   const touring = !mine && !calm && k < TOUR.length - 1;
   useEffect(() => {
     if (!touring || !seen || paused) return; // it walks the tree once, then rests; a press anywhere hands it to you
     const t = setTimeout(() => {
       const nk = k + 1, [r, c] = TOUR[nk];
-      setK(nk); setOpen(new Set([r])); setSel([r, c]);
+      setK(nk); setSel([r, c]);
+      const ul = pane.current, li = ul?.querySelectorAll(':scope > li')[r];
+      if (ul && li) ul.scrollTo({ top: Math.max(0, li.offsetTop - 12), behavior: 'smooth' }); // the pane scrolls, never the page
     }, 3800);
     return () => clearTimeout(t);
   }, [k, touring, seen, paused]);
@@ -227,7 +243,7 @@ function Tree() {
         <button type="button" className="cli-ctl light" onClick={() => setPaused((p) => !p)} aria-label="Pause" aria-pressed={paused} hidden={!touring}>{paused ? <IconPlay /> : <IconPause />}</button>
       </div>
       <div className="cli-fs-main">
-        <ul className="cli-tree" role="tree" aria-label="hanzo">
+        <ul className="cli-tree" role="tree" aria-label="hanzo" ref={pane}>
           {TREE.map(([name, list], r) => {
             const isOpen = open.has(r);
             const last = r === TREE.length - 1;
@@ -276,6 +292,21 @@ const WHAT = [
   ['hanzo api', 'No raw-path escape hatch', 'There is no hanzo api verb and no URL to hand-write. Every cloud capability arrives as a typed subcommand, which is what keeps the CLI and the API from disagreeing.'],
 ];
 
+function Claim({ c, t, d, i }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  return (
+    <li ref={ref} className={(i === 2 ? 'no ' : '') + (seen ? 'in' : '')} style={{ '--n': c.length + 2 }}>
+      <span className="cli-win" aria-hidden="true">
+        <span className="cli-win-bar"><i /><i /><i /><b className="x-mono av-num">{String(i + 1).padStart(2, '0')}</b></span>
+        <span className="cli-three-c x-mono"><span className="cli-win-l"><span>$ </span>{i === 2 ? <s>{c}</s> : c}</span><span className="cli-caret" /></span>
+      </span>
+      <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
+      <p className="av-body">{d}</p>
+    </li>
+  );
+}
+
 function What() {
   return (
     <section className="av-sec cli-what-sec" aria-labelledby="cli-tree-h">
@@ -286,13 +317,7 @@ function What() {
         </div>
         <Tree />
         <ol className="cli-three">
-          {WHAT.map(([c, t, d], i) => (
-            <li key={t} className={i === 2 ? 'no' : ''}>
-              <span className="cli-three-c x-mono" aria-hidden="true"><span>$ </span>{i === 2 ? <s>{c}</s> : c}</span>
-              <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
-              <p className="av-body">{d}</p>
-            </li>
-          ))}
+          {WHAT.map(([c, t, d], i) => <Claim key={t} c={c} t={t} d={d} i={i} />)}
         </ol>
       </div>
     </section>
@@ -369,22 +394,46 @@ hanzo billing balance`;
 const BASE = SCRIPT.split('\n\n');
 const EXTRA = CAPS.filter(([c]) => c.startsWith('hanzo ')).map(([c, t]) => ['# ' + t + '\n' + c, t, c]);
 
-function Block({ b, i, added }) {
+function Block({ b, i, added, last }) {
   const [c, ...lines] = b.split('\n');
   const calm = useReducedMotion();
   const body = (
     <>
       <span className="cli-blk-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-      <pre><span className="cli-c">{c}</span>{'\n'}{lines.map((l) => <span key={l} className="cli-ln">{l}{'\n'}</span>)}</pre>
+      <pre><span className="cli-c">{c}</span>{'\n'}{lines.map((l, j) => <span key={l} className="cli-ln">{l}{last && j === lines.length - 1 && <span className="cli-caret" aria-hidden="true" />}{'\n'}</span>)}</pre>
       <Copy text={lines.join('\n')} label="Copy" className="cli-blk-cp" />
     </>
   );
-  if (!added) return <div className="cli-blk">{body}</div>;
+  if (!added) return <div className="cli-blk" style={{ '--i': i }}>{body}</div>;
   return (
-    <motion.div className="cli-blk add" initial={calm ? false : { clipPath: 'inset(0 100% 0 0)', opacity: 0.4 }} animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }} transition={{ duration: 0.6, ease: EASE }}>
+    <motion.div className="cli-blk add" initial={calm ? false : { clipPath: 'inset(0 100% 0 0)', opacity: 0.4 }} animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }} transition={{ duration: 0.5, ease: EASE }}>
       {body}
     </motion.div>
   );
+}
+
+/* the script's line count rolls to its value: from 0 as the window arrives (in step with the blocks wiping in), then from the old
+   count to the new one each time a block is added or removed. The true value is in the HTML; tabular numerals, fixed ch width. */
+function Roll({ value, go }) {
+  const ref = useRef(null);
+  const from = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (calm || !go) { el.textContent = value; if (go) from.current = value; return; }
+    const a = from.current ?? 0, b = value, t0 = performance.now(), dur = a === 0 ? 900 : 400;
+    from.current = b;
+    let raf = 0;
+    const tick = (t) => {
+      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(a + (b - a) * e);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); el.textContent = b; };
+  }, [value, go, calm]);
+  return <span ref={ref} className="cli-roll">{value}</span>;
 }
 
 function Start() {
@@ -392,6 +441,8 @@ function Start() {
   const blocks = [...BASE, ...add.map((i) => EXTRA[i][0])];
   const flip = (i) => setAdd((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i]));
   const lines = blocks.join('\n\n').split('\n').length;
+  const win = useRef(null);
+  const arrived = useInView(win, { once: true, amount: 0.3 });
   return (
     <section className="av-sec cli-start" aria-labelledby="cli-start-h">
       <div className="av-wrap av-grid">
@@ -415,15 +466,15 @@ function Start() {
             })}
           </div>
         </div>
-        <div className="cli-script av-obj">
+        <div className={'cli-script av-obj' + (arrived ? ' in' : '')} ref={win}>
           <div className="cli-script-bar">
             <span className="cli-script-t">Get started</span>
             <span className="x-mono">bash</span>
-            <span className="cli-script-n x-mono av-num" aria-live="polite">{lines} lines</span>
+            <span className="cli-script-n x-mono av-num"><span aria-hidden="true"><Roll value={lines} go={arrived} /> lines</span><span className="x-vh" aria-live="polite">{lines} lines</span></span>
             <Copy text={blocks.join('\n\n')} label="Copy script" />
           </div>
           <div className="cli-script-body">
-            {blocks.map((b, i) => <Block key={b} b={b} i={i} added={i >= BASE.length} />)}
+            {blocks.map((b, i) => <Block key={b} b={b} i={i} added={i >= BASE.length} last={i === blocks.length - 1} />)}
           </div>
         </div>
       </div>
@@ -465,6 +516,16 @@ function Get() {
 const PLACES = ['A local repo', 'a CI job', 'a machine you sshed into', 'a fix at 2am'];
 
 function Band() {
+  // one caret, stepping down the four places while the band is on screen: one mover in the viewport, not four
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [at, setAt] = useState(0);
+  useEffect(() => {
+    if (!seen || calm) return;
+    const t = setTimeout(() => setAt((a) => (a + 1) % PLACES.length), 2400);
+    return () => clearTimeout(t);
+  }, [seen, calm, at]);
   return (
     <section className="x-band cli-band" aria-labelledby="cli-band-h">
       <div className="av-wrap av-grid">
@@ -477,11 +538,11 @@ function Band() {
             <Cta to="https://platform.hanzo.ai" kind="link" id="cli.band-platform">Hanzo Platform</Cta>
           </div>
         </div>
-        <ul className="cli-places" aria-hidden="true">
-          {PLACES.map((p) => (
-            <li key={p}>
+        <ul className="cli-places" aria-hidden="true" ref={ref}>
+          {PLACES.map((p, i) => (
+            <li key={p} className={i === at ? 'on' : ''}>
               <span className="cli-place-k">{p}</span>
-              <span className="cli-place-t x-mono"><span>$</span> hanzo<i /></span>
+              <span className="cli-place-t x-mono"><span>$</span> hanzo<i className={i === at ? 'cli-caret' : ''} /></span>
             </li>
           ))}
         </ul>

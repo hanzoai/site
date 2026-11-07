@@ -16,20 +16,22 @@
    hiring card, the second solid button in Academic, solid "Apply" on every sheet.
    The role pages (/careers/<slug>) keep Careers.css; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
 import useArrived from './company/useArrived';
-import { openDoor, useArrival } from './doorway';
+import { openSheet, useSheetLanding } from './careers/door';
 import { href as hrefOf } from '../../lib/route';
+import { play } from '../../lib/sound';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './CareersBoard.css';
 
 const EASE = [0.16, 1, 0.3, 1];
-const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n{display:none!important}</style>' }; // JS off: the hero is legible
+// JS off: the hero is legible; the hiring steps read as a plain list (only one step per row, no counter, no bars)
+const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n,.xcb-hire-h .vc-num{display:none!important}</style>' };
 
 /* How we hire: the four steps slide through a mask by themselves (never two titles at once); tap a step to hold it. */
 function Hire({ how }) {
@@ -105,9 +107,10 @@ function Marked({ text, know }) {
 }
 
 /* One role, one sheet. It sticks a little lower than the one before, and settles back as later sheets cover it. */
-/* The sheet opens into its page: its rectangle grows to fill the screen in the sheet's own grey, the role page
-   arrives, and the cover wipes away (doorway.js). The site Morph is skipped here (data-no-morph): it times out today. */
-const open = (e, to, router, el) => openDoor(e, hrefOf(to), router, '#fff', el);
+/* The sheet opens into its page: the whole sheet grows to fill the screen in its own white, carrying its title and
+   numeral, which then land on the role page's h1 and numeral (careers/door.js). The site Morph is skipped here
+   (data-no-morph): it times out today (docs/requests/careers.md). */
+const open = (e, to, router, el) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
 
 function Sheet({ r, i, n, know, progress }) {
   const router = useRouter();
@@ -158,11 +161,18 @@ function Deck({ roles, know, dont, dontA }) {
 function Perks({ perks }) {
   const [at, setAt] = useState(0);
   const [t, p] = perks.items[at];
+  const calm = useReducedMotion();
+  const fade = { duration: calm ? 0 : 0.3, ease: EASE };
   return (
     <div className="vc-grid xcb-perk-g">
       <div className="xcb-perk-v" aria-hidden="true">
-        <Sigil seed={'careers/' + t} data={[t.length, p.length, at + 1]} className="xcb-perk-sig" />
-        <span className="xcb-perk-big vc-num">{String(at + 1).padStart(2, '0')}</span>
+        {/* the field and numeral crossfade (300ms, ease-emphasis) to the perk you point at, tap or focus */}
+        <AnimatePresence initial={false}>
+          <motion.div key={at} className="xcb-perk-f" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={fade}>
+            <Sigil seed={'careers/' + t} data={[t.length, p.length, at + 1]} className="xcb-perk-sig" />
+            <motion.span className="xcb-perk-big vc-num" initial={{ y: calm ? 0 : 12 }} animate={{ y: 0 }} exit={{ y: calm ? 0 : -12 }} transition={fade}>{String(at + 1).padStart(2, '0')}</motion.span>
+          </motion.div>
+        </AnimatePresence>
       </div>
       <ol className="xcb-perk-l">
         {perks.items.map(([pt, pp], i) => (
@@ -180,9 +190,10 @@ function Perks({ perks }) {
 const fig = (t) => /^([\d,]+\+)\s+(.*)$/.exec(t);
 
 export default function Careers({ d }) {
-  useArrival();
+  useSheetLanding();
   const roles = d.pos.leaves;
-  const [know, setKnow] = useState([]);
+  const [pick, setPick] = useState(null); // one skill at a time: the ink pill glides to it
+  const know = pick ? [pick] : [];
   const shown = roles;
   const skills = SKILLS.filter((k) => roles.some((r) => asks(r, k)));
   const hits = shown.filter((r) => know.some((k) => asks(r, k))).length;
@@ -198,7 +209,7 @@ export default function Careers({ d }) {
       <section className="xcb-hero vc-scene" aria-label={d.kicker} data-ask-name={d.kicker}>
         <div className="vc-grid xcb-hero-g">
           <div className="xcb-hero-c">
-            <MaskLines as="h1" id="xcb-h1" now delay={0.05} lines={lines} className="vc-display xcb-h1" />
+            <MaskLines as="h1" id="xcb-h1" now delay={-0.38} lines={lines} className="vc-display xcb-h1" />
             <motion.div className="xcb-hero-f" initial={{ opacity: 0, y: 12 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.4, ease: EASE, delay: 0.45 }}>
               <p className="vc-lede">{d.lede}</p>
               <div className="xcb-acts">
@@ -227,19 +238,25 @@ export default function Careers({ d }) {
             <h2 id="xcb-pos-h" className="vc-display s">{d.pos.title}</h2>
             <p className="vc-lede">{d.pos.lede}</p>
           </div>
+          {/* one quiet row: the skills, word for word from the roles; pick one and the ink pill glides to it */}
           <div className="xcb-tools">
+            <span className="xcb-know-i" aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r=".9" fill="currentColor" /></svg></span>
             <div className="xcb-know" role="group" aria-label="Match what you know">
-              <span className="xcb-know-i" aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r=".9" fill="currentColor" /></svg></span>
               {skills.map((k) => {
-                const on = know.includes(k);
-                return <button key={k} type="button" aria-pressed={on} onClick={() => setKnow((v) => (on ? v.filter((x) => x !== k) : [...v, k]))}>{k}</button>;
+                const on = pick === k;
+                return (
+                  <button key={k} type="button" aria-pressed={on} onClick={(e) => { play('tick'); setPick(on ? null : k); e.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); }}>
+                    {on && <motion.span layoutId="xcb-know-pill" className="xcb-pill" transition={{ duration: 0.3, ease: EASE }} />}
+                    <span>{k}</span>
+                  </button>
+                );
               })}
-              {know.length > 0 && (
-                <button type="button" className="xcb-know-x" aria-label="Clear" onClick={() => setKnow([])}>
-                  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
-                </button>
-              )}
             </div>
+            {pick && (
+              <button type="button" className="xcb-know-x" aria-label="Clear" onClick={() => setPick(null)}>
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+              </button>
+            )}
             <p className="xcb-count vc-num" role="status" aria-label={`${shown.length} of ${roles.length} roles${know.length ? `, ${hits} ask for what you know` : ''}`}>
               <b>{know.length ? hits : shown.length}</b> / {know.length ? shown.length : roles.length}
             </p>
