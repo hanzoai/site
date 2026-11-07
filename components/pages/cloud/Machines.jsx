@@ -126,11 +126,12 @@ function Specs() {
     // only count when the figure arrives from below; a deep link or reduced motion keeps the true value
     if (calm || !ref.current || ref.current.getBoundingClientRect().top < innerHeight) return;
     armed.current = true;
-    setN(0);
+    setN(10);
   }, [calm]);
   useEffect(() => {
+    // 10 to 80: always two tabular digits, so "GB HBM3" never moves while it counts
     if (!seen || !armed.current) return;
-    const c = animate(0, 80, { duration: 1.1, ease: EASE, delay: 0.25, onUpdate: (v) => setN(Math.round(v)) });
+    const c = animate(10, 80, { duration: 1.1, ease: EASE, delay: 0.25, onUpdate: (v) => setN(Math.round(v)) });
     return () => c.stop();
   }, [seen]);
   const lit = seen || calm;
@@ -193,11 +194,11 @@ function StepCon({ at }) {
       <div className="mc-con-bar"><span>/v1/compute/machines</span><b>{String(at + 1).padStart(2, '0')} / 06</b></div>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className="mc-con-body" initial="in" animate="on" exit={{ opacity: 0, transition: { duration: 0.15 } }}>
-          <motion.p className="mc-con-ask" variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE } } }}><span>{ask}</span></motion.p>
+          <p className="mc-con-ask"><span className="mc-mask"><motion.span variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE } } }}>{ask}</motion.span></span></p>
           <ul className="mc-con-back">
             {back.map((b, j) => (
               <li key={b} className={j === back.length - 1 ? 'last' : ''}>
-                <motion.span variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.3 + j * 0.12 } } }}>{b}</motion.span>
+                <span className="mc-mask"><motion.span variants={{ in: { y: '105%' }, on: { y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.3 + j * 0.12 } } }}>{b}</motion.span></span>
               </li>
             ))}
           </ul>

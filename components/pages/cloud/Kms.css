@@ -20,8 +20,13 @@
 .km-hero-row { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 18px; }
 .km-sub { color: var(--km-body); }
 html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
-@media (hover: hover) { .km-hero .x-btn:not(.solid):hover { border-color: var(--km-ink); } }
-.km-lift { margin-top: clamp(40px, 4vw, 56px); max-width: 1180px; position: relative; z-index: 2; }
+/* Documentation: a quiet fill and an ink edge on hover, and the same .98 press as the primary */
+.km-hero .x-btn:not(.solid) { transition: background-color .15s var(--km-move), border-color .15s var(--km-move), transform 90ms var(--km-move); }
+@media (hover: hover) { .km-hero .x-btn:not(.solid):hover { border-color: var(--km-ink); background: var(--km-quiet); box-shadow: none; } }
+.km-hero .x-btn:not(.solid):active { transform: scale(.98); }
+/* one edge system: every section, the hero stage included, sits in the same 1152px container */
+.km .v2-wrap { width: min(100% - 48px, 1152px); }
+.km-lift { margin-top: clamp(40px, 4vw, 56px); position: relative; z-index: 2; }
 
 /* the vault: one fixed height through the whole loop */
 .km-vault { display: grid; grid-template-columns: 7fr 5fr; gap: 16px; padding: 16px; border-radius: 28px; background: var(--km-paper); box-shadow: var(--km-float); }
@@ -84,7 +89,9 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 .km-holds .v2-grid { align-items: start; }
 .km-holds-l { grid-column: 1 / span 5; height: 100%; }
 .km-pin { position: sticky; top: 96px; }
-.km-holds-h { max-width: 16ch; }
+/* the chapter title outranks its six rules: h2 at the section size, the rule h3s a step below */
+.km-holds-h { max-width: 16ch; font-size: 26px; line-height: 1.15; letter-spacing: -.025em; }
+.km-rule h3.v2-headline { font-size: 21px; line-height: 1.2; letter-spacing: -.02em; }
 .km-holds-lede { max-width: 36ch; margin-top: 14px; }
 .km-panel { position: relative; margin-top: 28px; height: 324px; border-radius: 24px; background: var(--km-paper); box-shadow: var(--km-hair); overflow: hidden; }
 .km-panel-h { margin: 0; padding: 18px 24px; border-bottom: 1px solid var(--line); font: 600 14px/1 var(--mono); color: var(--km-ink); }
@@ -156,12 +163,49 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 .km-disk-l .v2-acts { margin-top: 32px; gap: 12px 28px; }
 .km-cli { border-radius: 24px; }
 
-/* example project */
-.km-proj .v2-grid { align-items: center; }
-.km-proj-c { grid-column: 1 / span 7; }
-.km-proj-t { grid-column: 9 / -1; }
-.km-proj-t .km-cap { margin-top: 14px; }
+/* the tail as one screen: the example project and its secret, the agent prompt, the related row under both */
+.km-ship { background: var(--km-quiet); --faint: var(--km-body); padding: clamp(72px, 8vw, 116px) 0; }
+.km-ship-g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 56px; align-items: center; }
+.km-ship-c { grid-column: 1 / span 7; }
+.km-ship-con .cf-con { box-shadow: var(--km-float); }
 @media (hover: hover) { .km .cf-con.light .cf-con-title:hover { color: var(--km-ink); text-decoration: underline; text-underline-offset: 3px; } }
+/* the vault's secret, docked under the console: which project read it, at which version */
+.km-key { position: relative; display: flex; align-items: center; gap: 16px; margin-top: 12px; padding: 10px 10px 10px 22px; border-radius: 16px; background: var(--km-ink); color: var(--km-black-ink); }
+.km-key-pause { order: 2; flex: none; }
+.km-key-in { position: relative; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; min-height: 44px; font: 500 14px/1.2 var(--mono); }
+.km-key-name em { margin-left: 10px; padding: 4px 8px; border-radius: 6px; background: var(--km-veil-dark-on); font-style: normal; font-size: 12px; color: var(--km-silver); }
+.km-key-v { display: inline-flex; align-items: baseline; gap: 10px; color: var(--km-on-black); }
+.km-key-v b { font: 600 17px/1 var(--sans); letter-spacing: -.02em; color: var(--km-black-ink); }
+.km-key-read { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; }
+.km-key-read > i { flex: none; width: 8px; height: 8px; border-radius: 99px; box-shadow: inset 0 0 0 1.5px var(--km-on-black); transition: background-color .3s var(--km-move); }
+.km-key-read > i.a { background: var(--km-black-ink); box-shadow: none; }
+.km-key-roll { color: var(--km-black-ink); }
+.km-key-roll > span { white-space: nowrap; }
+/* the one idle mover here: a hairline under the secret runs out the time until the next project reads it */
+.km-key-run { position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--km-line-dark); transform-origin: left; transform: scaleX(0); animation: km-run 2.6s linear both; }
+.km-key-run.held { animation: none; }
+.km-ship-cap { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-top: 28px; }
+.km-ship-cap .v2-title { max-width: 30ch; }
+.km-ship-p { grid-column: 9 / -1; }
+.km-ship-h { margin-bottom: 14px; }
+.km-api { display: inline-flex; align-items: center; gap: 8px; margin: 28px 0 12px; font: 500 13px/1 var(--mono); color: var(--km-ink); }
+.km-api i { font-style: normal; padding: 4px 7px; border-radius: 6px; background: var(--km-ink); color: var(--km-black-ink); letter-spacing: .04em; }
+/* the prompt wraps instead of running off the card (copy still equals the one displayed line) */
+.km .km-prompt pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.km-rel { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 0 32px; padding-top: 8px; border-top: 1px solid var(--line); }
+.km-rel > .v2-kick { padding: 18px 0; }
+.km-rel ul { flex: 1; display: flex; flex-wrap: wrap; justify-content: flex-end; list-style: none; margin: 0; padding: 0; }
+.km-rel li + li { border-left: 1px solid var(--line); }
+.km-rel-a { display: inline-flex; align-items: baseline; gap: 10px; min-height: 44px; padding: 16px 24px; border-radius: 12px; color: var(--km-ink); text-decoration: none; transition: background-color .15s var(--km-move), transform 90ms var(--km-move); }
+.km-rel-a b { font-weight: 600; font-size: 17px; letter-spacing: -.015em; }
+.km-rel-a span { color: var(--km-body); font-size: 14px; }
+.km-rel-a svg { align-self: center; color: var(--km-body); transition: transform .3s var(--km-ease), color .15s var(--km-move); }
+@media (hover: hover) {
+  .km-rel-a:hover { background: var(--km-paper); }
+  .km-rel-a:hover svg { transform: translateX(4px); color: var(--km-ink); }
+}
+.km-rel-a:active { transform: scale(.98); }
+.km-rel-a:focus-visible { outline: 2px solid var(--km-ink); outline-offset: 2px; box-shadow: 0 0 0 4px var(--km-paper); }
 
 @media (max-width: 900px) {
   .km { --km-gut: 16px; }
@@ -171,8 +215,12 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
   .km-secret { padding: 20px; gap: 16px; }
   .km-val { font-size: 18px; }
   .km-chain span { font-size: 12px; padding: 8px 10px; }
-  .km-stale { right: 8px; bottom: -14px; }
-  .km-pause { top: 24px; left: auto; right: 20px; }
+  .km .v2-wrap { width: min(100% - 32px, 1152px); }
+  /* the refused chip stays inside the version box */
+  .km-stale { right: 8px; bottom: 8px; }
+  /* the pause sits on the host row, clear of the name row and its production tag */
+  .km-pause { top: 16px; left: auto; right: 20px; }
+  .km-path { margin-top: 4px; }
   .km-host { display: flex; align-items: center; min-height: 44px; margin: -10px 0 -6px; padding-right: 52px; }
   .km-seal { padding-top: 56px; }
   .km-holds-l { height: auto; }
@@ -189,6 +237,28 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
   .km-figs li.big { order: -1; padding-bottom: 24px; }
   .km-figs li.big b { font-size: 44px; }
   .km-disk-g { grid-template-columns: minmax(0, 1fr); }
+  /* the terminal scrolls sideways on a phone: its right edge fades so clipped lines read as more */
+  .km-cli pre { -webkit-mask-image: linear-gradient(90deg, var(--km-black) calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, var(--km-black) calc(100% - 44px), transparent); }
+  /* the tail stacks: the prompt first, then the project and its secret, then the related row */
+  .km-ship { padding: 72px 0; }
+  .km-ship-g { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+  .km-ship-c, .km-ship-p, .km-rel { grid-column: 1; }
+  .km-ship-p { order: -1; }
+  .km-key { padding: 10px 10px 10px 16px; align-items: flex-start; }
+  .km-key-in { gap: 8px 16px; padding: 4px 0; }
+  .km-key-read { margin-left: 0; }
+  .km-rel { display: block; }
+  .km-rel ul { display: block; }
+  .km-rel li + li { border-left: 0; }
+  .km-rel li { border-top: 1px solid var(--line); }
+  .km-rel-a { display: flex; flex-wrap: wrap; padding: 14px 0; border-radius: 0; }
+  .km-rel-a svg { margin-left: auto; }
+  /* 44px targets on the shared console and close */
+  .km .cf-con-open { min-height: 44px; }
+  .km .cf-con-side { padding: 8px 4px; }
+  .km .cf-con-ico { min-width: 44px; }
+  .km .cf-con-body { grid-template-columns: 54px 1fr; }
+  .km-get .gi-more .x-arrow { min-height: 44px; display: inline-flex; align-items: center; }
   /* the closing contour art keeps to the right of the words */
   .km-get .gi-art { right: -62%; top: -14%; width: 88%; }
 }

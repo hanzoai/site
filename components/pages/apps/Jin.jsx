@@ -12,8 +12,9 @@
    Beyond: "Make the saccade yourself". Drag the image (spring physics; arrow keys too): the predicted embedding follows
    your shift live, the losses answer, and when you let go the image springs back and draws the round trip it closes.
    Motion: Figure 1 (idle, signature) + headlines cut into their line (arrival, scroll) + the drag with springs
-   (pointer) + Table 1 in a sheet (state). Every word and link is Hanzo's.
-V2: 8/10 deck scale (h1 52, headings 26, numerals 64), Figure 1 beside the title at both sizes, six numbered sections with drawn figures under a running head, the drag plate; deck greys, outlined frames, tweens not springs, kit Cta/Img/DataTable/BizPaste, nothing floating
+   (pointer) + Table 1 in a sheet (state) + each section figure drawing itself in once (arrival). Every word and link
+   is Hanzo's.
+V2: 8/10 round 2 (review 6/10): hero recomposed as a title page (title and ask over the Abstract side note, Figure 1 full width under them) with a fixed-height caption, CLS 0.207 -> 0.001; Figures 2-7 draw in once at 60% visible (strokes, fills, a point travelling the round trip, UMAP clusters separating; final state in HTML and under reduced motion); chapter 2 is the loud one (quiet room, numeral 112, heading 44, figure across 8 columns), 4-6 drop to a tighter medium scale, section bands cut; chapter 3 is one weighted axis, not three equal glyphs; Figure 8 gives the embedding space 3:2 and a fixed status chip; opaque rail; proof line before the close
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';

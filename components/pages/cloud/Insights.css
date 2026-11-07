@@ -50,8 +50,8 @@
 .in-mode-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
 .in-modes button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 /* the event line keeps one fixed height in both states, so the kill switch never changes the card */
-.in-events { position: relative; height: 21px; overflow: hidden; }
-.in-events p { margin: 0; font: 500 13px/1.6 var(--mono); color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.in-events { position: relative; height: 24px; overflow: hidden; }
+.in-events p { margin: 0; font: 500 13px/24px var(--mono); color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .in-events p.kill { color: var(--b1); }
 .in-field { --cols: 20; display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: clamp(6px, .7vw, 10px); padding: clamp(12px, 1.3vw, 20px); border-radius: 22px; background: var(--w0); }
 .in-field i { aspect-ratio: 1; border-radius: 999px; background: var(--s1); transition: background .5s var(--eio), transform .5s var(--ez); }
@@ -60,7 +60,7 @@
 .in-field i.pk { background: var(--s4); transform: scale(.86); transition-duration: .3s; }
 
 /* the tour: six tools in one window */
-.in-tour { padding-top: 72px; }
+.in-tour { padding: 72px 0 clamp(72px, 8vw, 116px); }
 .in-tour-h { align-items: end; margin-bottom: 40px; row-gap: 24px; }
 .in-tour-h .v2-display { grid-column: 1 / span 6; }
 .in-figs { grid-column: 8 / -1; list-style: none; margin: 0; padding: 0; display: flex; gap: 0; }
@@ -129,7 +129,7 @@
 .in-p-er .c { background: var(--acc); color: var(--w0); }
 
 /* the tool finder: Hanzo's tool names; the answer is the tool's drawing and Hanzo's whole sentence */
-.in-ask { background: var(--w1); }
+.in-ask { padding: clamp(72px, 8vw, 116px) 0; background: var(--w1); }
 .in-ask .v2-grid { align-items: center; }
 .in-ask-l { grid-column: 1 / span 4; }
 .in-ask-q { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -168,7 +168,8 @@
 .in .in-start-h { font-size: 32px; }
 .in-start-r { grid-column: 8 / -1; }
 .in-start-r .v2-lede { margin-bottom: 32px; max-width: 44ch; }
-.in .in-ship { padding-top: 44px; }
+.in .in-ship { padding: 44px 0 72px; }
+.in .in-get { padding-top: clamp(72px, 8vw, 116px); }
 
 /* the close: the field of people under the contour, and Hanzo's free-tier line beside the ask */
 .in-get .gi-art::before { content: ''; position: absolute; inset: 6%; background: radial-gradient(circle, var(--s1) 34%, transparent 36%) 0 0 / 8.33% 8.33%; -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent); mask-image: radial-gradient(closest-side, #000 60%, transparent); }
@@ -177,6 +178,13 @@
 
 /* greys only: the shared code pane's highlight */
 .in-code .cf-mark { background: var(--g3); color: var(--w1); }
+/* the shared code pane and dark room, brought onto the deck ramp here (request: docs/requests/insights.md) */
+.in .v2-dark { color: var(--w1); }
+.in .x-codeblock { background: var(--ink); color: var(--w1); }
+.in .x-codeblock pre, .in .x-codeblock code { color: var(--w1); }
+.in .x-codeblock-h, .in .x-codeblock-h span { color: var(--s4); }
+.in .x-codeblock .x-copy { color: rgba(255, 255, 255, .78); }
+.in .x-codeblock-l.c { color: var(--s4); }
 
 /* the live object's pause control */
 .in-flip-pause { top: 14px; right: 14px; }
@@ -198,11 +206,11 @@
   .in-modes { display: grid; grid-template-columns: 1fr; border-radius: 22px; }
   .in-modes button { text-align: left; border-radius: 18px; }
   .in-modes .in-mode-bg { border-radius: 18px; }
-  .in-events { height: 45px; }
-  .in-events p { white-space: normal; font-size: 14px; }
+  .in-events { height: 48px; }
+  .in-events p { white-space: normal; font-size: 14px; line-height: 24px; }
   .in-field { --cols: 12; gap: 6px; padding: 12px; }
-  .in-tour { padding-top: 72px; }
-  .in-figs li { padding: 0 12px; }
+  .in-figs li { flex: 1 1 auto; padding: 0 10px; }
+  .in-figs span { white-space: nowrap; }
   .in-figs b { font-size: 17px; }
   .in-win-body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
   .in-tabs { flex-direction: row; overflow-x: auto; scroll-snap-type: x proximity; border-right: 0; border-bottom: 1px solid var(--line); padding: 10px; scrollbar-width: none; }
