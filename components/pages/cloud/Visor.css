@@ -85,6 +85,7 @@ i.k { background: #d4d4d4; }
 .vs2-plus { position: absolute; right: 20px; bottom: 20px; width: 44px; height: 44px; padding: 14px; border-radius: 50%; background: rgba(255, 255, 255, .1); color: #fafafa; transition: background-color .3s var(--ease), color .3s var(--ease), transform .3s var(--ease); }
 @media (hover: hover) { .vs2-tile:hover { background: #262626; } .vs2-tile:hover .vs2-plus { background: #fafafa; color: #000; transform: rotate(90deg); } }
 .vs2-find { margin: 12px 4px 0; color: rgba(255, 255, 255, .78); }
+html:not(.js) .vs2-find[hidden] { display: block; } /* JS off: every paragraph reads in place */
 .vs2-stage { display: none; }
 
 @media (min-width: 901px) {

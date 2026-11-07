@@ -1,14 +1,17 @@
 'use client';
-/* Visor (v2, Cloud 4 chat). Archetype B, System: the fleet console arriving beside the title (Stage, side, flipped) →
-   six tiles in the one dark room that open into their cards → a batch you name → Get Visor → one closing band.
+/* Visor (v2, Cloud 4 chat). Archetype B, System: the fleet console running left to right under a left-set title
+   (Stage, rise, the only pipeline hero in Cloud 4) → one pinned dark room: the six things you get as a numbered list
+   with one picture large, each opening into its card → a batch you name → Get Visor, closing on the inventory itself.
    Persona: a platform engineer running machines on more than one cloud. Goal: open the repo and try the API.
    CTA: "View on GitHub" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:visor.primary.
    V2: 8/10 one request launches a fleet from three clouds as the hero; six tiles open into full cards in the kit Sheet; a batch you name; greys only, one ask, a closing band
-   Signature: every tile opens. The six things you get are tiles with their own small working picture; tap one and its
-   card rises with the picture large and Hanzo's paragraph beside it; Previous and Next walk the six; Escape or Back close.
+   Signature: the pinned room. Scroll walks 01 → 06 (or it steps by itself after 4 s at rest; a hover previews a row) and
+   the stage plays that item's picture large; open any row and its card rises with the picture and Hanzo's paragraph;
+   Previous and Next walk the six; Escape or Back close. Phones: the six stack as cards whose pictures play on arrival.
    Beyond: "Name a fleet". Choose a prefix and a count and see the machines a batch launch will name, in sequence under
    the prefix, beside the node pool and the cluster in the same inventory, and whether it is a dry run that spends nothing.
-   Motion: tile open (signature, state) + the hero's launch sequence (time, pausable) + inventory re-flow (state).
+   Motion: pinned room (signature: scroll + idle step + hover preview, state) + the hero's launch sequence (time,
+   pausable) + inventory re-flow (state) + the close's inventory landing once (time).
    Every word and link is Hanzo's; providers, regions and machine names are examples. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useScroll, useMotionValueEvent } from 'motion/react';
@@ -93,6 +96,9 @@ function Pic({ i }) {
    the card arrives (time, not scroll): the bars price, the machines name themselves, the pool fills, "quote" cuts in,
    the console is picked, the audit rows land. On desktop the row is a line in the pinned list; hovering or focusing it
    shows its picture on the stage (the hover tells you what it opens). Its paragraph stays in the HTML, findable. */
+// React renders `hidden` as a boolean, so the paragraph upgrades itself to hidden="until-found" (find in page opens it)
+const untilFound = (el) => { if (el) el.setAttribute('hidden', 'until-found'); };
+
 function Row({ t, d, i, at, onOpen, onPeek }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.45 });
@@ -104,7 +110,7 @@ function Row({ t, d, i, at, onOpen, onPeek }) {
         <span className="vs2-th">{t}</span>
         <svg className="vs2-plus" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
       </button>
-      <p className="vs2-find" hidden="until-found">{d}</p>
+      <p className="vs2-find" hidden ref={untilFound}>{d}</p>
     </li>
   );
 }
