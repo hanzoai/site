@@ -12,13 +12,14 @@
    every". Drag spins it (sideways on touch, vertical stays scroll; it lets go with inertia and turns back to the
    message); hovering a place lights its arcs and names it in the toolbar. Supporting: the ack pill that glides
    (layoutId), the replay preview over the stream's sequences (pointer), the h1 cut-in (the page's one reveal). The
-   pinned six chapters are gone: their words are one plain, quick list. Tweens only (ease-emphasis 300 ms, ease-in-out
+   pinned six chapters are gone: their words pass beside one held drawing that draws each fact once. Tweens only (ease-emphasis 300 ms, ease-in-out
    400 ms); no springs.
    States differ by fill, weight, dash and a shape, never by hue. Every word, figure and link is Hanzo's; places,
    sequence numbers and values are drawn.
-   V2: the black room is the hero: name, line and one ask left (5), the globe right (8) with the stream tray, the three
-   subscribers and the ack switch under it; then events.go beside "Put it between your services"; the six facts as a
-   numbered list; the prompt and the 4222 spec in the quiet room; the close. */
+   V2: 8/10 the black room is the hero: name, line and one ask left (5), the globe right (8) with the stream tray, the
+   three subscribers and the ack switch under it (phones: queue group a full-width row, no state cut); then events.go
+   walked once beside "Put it between your services"; the six facts passing beside one held drawing that draws the fact
+   at the middle (pubsub/PsFacts.jsx); the prompt and the 4222 spec in the quiet room; the close. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -30,6 +31,7 @@ import LineMask from '../../v2/LineMask';
 import NoJs from '../../NoJs';
 import LivePause, { usePause } from '../../v2/LivePause';
 import PsGlobe, { PLACES } from './pubsub/PsGlobe';
+import PsFacts from './pubsub/PsFacts';
 import './Pubsub.css';
 
 const GH = 'https://github.com/hanzoai/pubsub';
@@ -185,13 +187,35 @@ for _, msg := range msgs {
     msg.Ack()
 }`;
 
-const pad = (n) => String(n).padStart(2, '0');
+/* events.go, walked once as it arrives: connect, the stream, the publish, the consumer that fetches and acks, one
+   beat each (1.25 s, 5 s in all), then every line back in ink. A pointer on the code ends the walk at once. */
+const BEATS = ['conn', 'stream', 'pub', 'sub'];
+function Walked() {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const seen = useSeen(ref, 0.5);
+  const [beat, setBeat] = useState(-1);
+  const [held, setHeld] = useState(false);
+  useEffect(() => { if (!seen) { setBeat(-1); setHeld(false); } }, [seen]);
+  useEffect(() => {
+    if (calm || held || !seen) return;
+    if (beat >= BEATS.length) return;
+    const id = setTimeout(() => setBeat((b) => b + 1), beat < 0 ? 350 : 1250);
+    return () => clearTimeout(id);
+  }, [beat, seen, calm, held]);
+  const step = !held && beat >= 0 && beat < BEATS.length ? BEATS[beat] : undefined;
+  return (
+    <div className="ps-codew" ref={ref} data-step={step} onPointerEnter={() => setHeld(true)}>
+      <Code light title="PubSub" tabs={[{ k: 'events.go', code: CODE }]} className="ps-code" />
+    </div>
+  );
+}
 
 export default function Pubsub() {
   return (
     <main className="lx ps" data-cursor="">
       {/* without JavaScript the canvas stays empty: the stream tray and the subscribers carry the story instead */}
-      <NoJs css=".ps-globe{display:none}" />
+      <NoJs css=".ps-globe,.ps-figw,.ps-figm{display:none}" />
       <section className="ps-hero lx-dark" data-room="dark" data-morph-target data-ask-name="Hanzo PubSub">
         <div className="lx-wrap ps-hero-in">
           <div className="ps-hero-title">
@@ -210,22 +234,13 @@ export default function Pubsub() {
             <p className="lx-lede">Free tier includes 1M messages/month.</p>
             <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
           </div>
-          <Code light title="PubSub" tabs={[{ k: 'events.go', code: CODE }]} className="ps-code" />
+          <Walked />
         </div>
       </section>
 
       <section className="lx-sec ps-facts" aria-labelledby="ps-facts-h">
-        <div className="lx-wrap ps-facts-in">
-          <h2 id="ps-facts-h" className="lx-headline ps-facts-h">More than pub/sub</h2>
-          <ol className="ps-flist">
-            {FACTS.map(([h, d], i) => (
-              <li key={h}>
-                <p className="lx-kick ps-fk">{`${pad(i + 1)} / ${pad(FACTS.length)}`}</p>
-                <h3 className="ps-ft">{h}</h3>
-                <p className="ps-fd">{d}</p>
-              </li>
-            ))}
-          </ol>
+        <div className="lx-wrap">
+          <PsFacts facts={FACTS} />
         </div>
       </section>
 
