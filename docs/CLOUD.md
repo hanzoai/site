@@ -3,7 +3,16 @@
 James's 8 GB laptop could not run the chats, so the remaining work runs in the cloud. A local conductor chat merges each finished branch into James's copy, and he watches it on localhost:4180.
 
 ## Shared rules (every cloud chat)
-- **Read `docs/VISION.md` first.** It is James's expanded brief and outranks everything else: Apple-grade, chaptered, his references visible, v2 type, space and motion, scored 8/10 or better.
+- **The law, in order:**
+  1. `docs/JAMES.md`: his standards and the James-eye review.
+  2. `docs/BRIEF-v3.md`: goal, audiences, CTA logic, psychology, page types, UI system, motion library, references, budgets, done list.
+  3. `docs/PLAN-COMPONENTS.md`: all 18 parts of a website and every element in them, which every page must cover. It lands soon; pull main.
+  4. `docs/VISION.md` and `docs/DESIGN.md`.
+
+  Copy is frozen.
+- **Reviews decide "ready", not your own score.** Cloud James-eye critics walk every pushed page and write `docs/review/<page>.md`, with `Verdict: N/10` and the first complaint. After every `git pull`, read the reviews of your pages and fix anything under 8 **before** starting a new page.
+- **Coverage.** Each page you finish gets `docs/coverage/<page>.md`: the 18 parts, one line each, saying what you did for that part on this page (or why it does not apply).
+- **Read `docs/VISION.md` too.** It is James's expanded brief and outranks everything else: Apple-grade, chaptered, his references visible, v2 type, space and motion, scored 8/10 or better.
 - **Setup.** Run `npm ci`, then `npm run dev` (port 4180) in the background.
 - **The law.** Follow `docs/DESIGN.md`:
   - Nothing is lost: `python3 scripts/parity.py /<path>` shows 0 missing.
