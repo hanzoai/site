@@ -183,3 +183,13 @@
   .ze-specs .ze-row { font-size: 14px; }
   :is(.ze-live, .ze-family) button, .ze-live [role=tab] { min-height: 44px; }
 }
+/* the tab names cascade letter by letter, but read as words: the chip's own flex gap must not open between letters */
+.ze-tabs .mb-chip { gap: 0; }
+/* phone: once the film has closed into the arch, the pause rides inside the arch (bottom right), never alone on white */
+@media (max-width: 900px) {
+  .lv-stage[data-hero='zen'] .lv-pause { top: calc(49% - 58px); bottom: auto; right: calc(19% + 12px); }
+}
+@media (max-width: 900px) and (max-height: 739px) {
+  .lv-stage[data-hero='zen'] .lv-pause { top: calc(43% - 58px); }
+}
+.ze-tabs .mb-chip[aria-selected='true']:hover { background: #fff; border-color: #fff; }

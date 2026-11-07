@@ -31,7 +31,7 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Zen's own film plays full-bleed under the h1 cut-in within the first second. It then settles into an arch around Zen's sphere, and Hanzo's headline rises beside it. Then come Open weights, Zen 6 Flash and Zen 6 pin as chapters over Zen's film, then the reasoning trace (Zen reasons which Zen to run, lighting the row it reads on the two cards), Hanzo's model-card grid and a page-local closing band with the kit Band's words, cut in by line mask with no blur (the kit `Band`'s `Words` reveal blurs, so it is not used here; request in `docs/requests/zen-names.md`). Entrance states are scoped to `html.js`, so JS off shows the final state, band included.
+Done here: Zen's own film plays full-bleed under the h1 cut-in within the first second, then settles into an arch around Zen's sphere with Hanzo's headline beside it. Then the signature room: about 900 ink dots assemble into Zen's sphere over its rings (the pointer pushes them, a tap scatters them) beside the three figures. Then the reasoning trace (Zen reasons which Zen to run, lighting the rows it reads on the two cards), the three parts (Open weights on its own Sigil art with the two model ids, Zen 6 Flash and Zen 6 on Zen's film, each carrying its card), the family tiles (Every Zen model, Zen 7, Zen 6 Max), Hanzo's model cards coming into focus, and the closing band cut in by line mask. The sphere film is the object on the stage and two parts only; the swarm, trace and family each have their own.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapters that are not showing hide their links (`visibility: hidden`), so a Tab crawl never lands on an invisible stop (0 focusable links in hidden chapters, measured). The dark room's link hover is scoped to the dark room, so no link turns white on white. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. The trace tabs fill on hover (the chosen one brightens to white) and press to .96; Next/Replay press to .97; the parts tilt toward a fine pointer and settle flat; the family tiles and model cards answer hover and press; the film Pause lightens and presses to .94. The settled headline's links are in the tab order and focusing them settles the stage, so no Tab stop is invisible. Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +82,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Ch
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`): the kit ticks the trace tabs and taps the asks; the trace plays the faint `done` settle when it lands its answer on screen
 
-Done here: Signature: the reasoning trace (Zen reasons which Zen to run, lighting the row it reads on the two cards). Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
+Done here: Signature: the particle swarm (ink dots assemble Zen's sphere; pointer and tap move them). Supporting: the stage settle into the arch (scroll), the self-running reasoning trace (idle, with tabs and Next), the diagonal-wipe, letter-cascade, tilt-3d, glitch-in and focus-pull entrances, the parts' pointer tilt and the model-card tilt. Walked 7 Nov at 1470x801 and 375x812: no still screen above the footer.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, `Film`, shared `ModelFilm`)
@@ -98,7 +98,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: at 375 nothing pins. The stage settles by itself after arrival into the arch, and the film Pause rides inside the arch, never alone on white. The trace puts the two cards above the steps, so the lit row is on screen with the step reading it. Parts and family tiles stack; Hanzo's grid stacks to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -155,4 +155,4 @@ Done here: JS off shows every word, unblurred, including the closing band (check
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/zen.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `app/zen/page.jsx`. Proof is in `docs/gallery/zen/` (desktop film and 4 phone stills). This card is refreshed after each review.
+Done here: the `V2:` line is in the page file. Proof is in `docs/gallery/zen/` (desktop hero, settled headline, swarm, trace; phone stills), walked 7 Nov.
