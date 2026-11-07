@@ -330,6 +330,48 @@
 /* 13px floor in the product render */
 .ide-n, .ide-crumbs, .ide-status a, .ide-title, .ide-mem, .ide-mem-k, .ide-crumb, .ide-agent-h, .ide-plane-k, .ide-pic-chip span, .ide-pic-code li > span:first-child, .ide-box .x-mono, .ide-trail li.x-mono, .ide-ring span, .ide-node span, .ide-script-bar .x-mono { font-size: 13px; }
 
+/* critic round 4 (7 Nov): no equal boxes, JS off safe, every control answers, deck greys */
+.ide { --ep: #f5f5f5; --se: #d4d4d4; --pr: #737373; }
+.ide-title { color: #737373; } .ide-title b { color: #e5e5e5; }
+.ide-crumb, .ide-crumbs, .ide-agent-h, .ide-script-bar .x-mono, .ide-ring span { color: #a3a3a3; }
+.ide-lines li.hit .ide-n, .ide-agent li.k1 .ide-p, .ide-agent li.k3, .ide-agent li.k3 .ide-p, .ide-p { color: rgba(255, 255, 255, .78); }
+.ide-agent li.k2 { color: rgba(255, 255, 255, .55); }
+.ide-mem, .ide-pic-chip { background: #262626; color: #e5e5e5; }
+.ide-pic-chip { color: #fafafa; }
+.k-episodic .ide-mem-k, .ide-pic-chip.k-episodic span { background: #f5f5f5; color: #0a0a0a; }
+.k-semantic .ide-mem-k, .ide-pic-chip.k-semantic span { background: #d4d4d4; color: #0a0a0a; }
+.k-procedural .ide-mem-k, .ide-pic-chip.k-procedural span { background: #737373; color: #fafafa; }
+.ide-mem-k { font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+/* the gutter memory shows its kind; its words live in the caption beside it (no width animation) */
+.ide-mem-w, .ide-mem-w[class] { position: absolute; width: 1px; height: 1px; max-width: none !important; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; transition: none; }
+/* memory kinds: unequal widths, never three equal boxes */
+.ide-teach-g { grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr); }
+/* related apps as hairline rows, the arrow at the far edge */
+.ide-rel > div { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.ide-rel-a { flex-direction: row; align-items: center; justify-content: flex-start; gap: 20px; height: 72px; padding: 0 16px; border-radius: 0; background: transparent; border-top: 1px solid rgba(0, 0, 0, .1); transform: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
+.ide-rel-a b { flex: 1; font-size: 26px; font-weight: 497; letter-spacing: -.025em; }
+.ide-rel-g { width: 64px; }
+.ide-rel-i { position: static; margin-left: auto; font-size: 20px; }
+@media (hover: hover) { .ide-rel-a:hover { background: #f5f5f5; transform: none; } }
+.ide-rel-a:active { transform: scale(.99); }
+@media (max-width: 899px) { .ide-rel-a { height: 64px; } .ide-rel-a b { font-size: 21px; } .ide-rel-g { width: 48px; } }
+/* last controls that answer: the editor's Pause and the memory kinds */
+@media (hover: hover) {
+  .ide-pause:hover { color: #fafafa !important; background: rgba(255, 255, 255, .08) !important; }
+  .ide-teach-f [role='radiogroup'] button:not([aria-checked='true']):hover { border-color: rgba(0, 0, 0, .3); background: #f5f5f5; }
+}
+.ide-teach-f [role='radiogroup'] button { transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms; }
+.ide-teach-f [role='radiogroup'] button:active { transform: scale(.97); }
+/* less dead air between rooms; the start heading sits on the terminal's baseline */
+.ide-engine, .ide-teach { padding-top: clamp(72px, 8vw, 116px) !important; }
+.ide-start .a2-grid { align-items: end; }
+/* JS off: the stage lies flat, the editor under the ask, every picture and caption visible */
+html:not(.js) .ide-stage { height: auto; }
+html:not(.js) .ide-stick { position: static; height: auto; display: block; overflow: visible; padding: 112px 0 40px; }
+html:not(.js) .ide-copy { position: static; opacity: 1 !important; transform: none !important; }
+html:not(.js) .ide-obj { transform: none !important; margin: 48px auto 0; }
+html:not(.js) .ide-under, html:not(.js) .a2-ch-vis, html:not(.js) .ide-pic-chip, html:not(.js) .ide-mem { opacity: 1 !important; transform: none !important; animation: none !important; }
+
 /* critic round 3 (7 Nov): the app links live in the close, as 44px quiet rows that fill on hover */
 .ide-status-l { font-size: 11.5px; color: #737373; }
 .ide-apps { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 20px; }

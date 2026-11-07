@@ -33,11 +33,11 @@ Done here: One <main> (the layout's #main marker and skip link); links via kit A
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: h1 52px cut in by line mask (A2Lines, 700 ms, 60 ms apart); the editor starts under the buttons and settles as you scroll; it moves within 1 s (measured). JS off: 0 hidden text blocks (noscript rules). Ends: Get IDE and related cards, then kit Band, then footer. CLI, Playground and Desktop are Morph cards. PageHero is not in the kit yet.
+Done here: h1 52px cut in by line mask (A2Lines, 700 ms, 60 ms apart); the editor starts under the buttons and settles as you scroll; it moves within 1 s (measured). JS off (round 4, measured with JavaScript disabled at 1470 and 375): 0 hidden text blocks; the stage lies flat with the editor under the ask (`html:not(.js)` rules). Ends: Get IDE and related cards, then kit Band, then footer. CLI, Playground and Desktop are Morph cards. PageHero is not in the kit yet.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label
+- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Open the IDE" after the hero; phone: the shared Ask shows its bar only where it covers nothing, request in `docs/requests/founder.md`)
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -66,7 +66,7 @@ Done here: Deck sizes: h1 52, section 26, H3 17, lede 21, body 16; product rende
 - [ ] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16, no shadows on tiles; hand-drawn glyphs (pause, add, recall) until the Lucide set is in the kit; literal deck greys in IdePage.css still to move onto tokens.
+Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16, no shadows on tiles; hand-drawn glyphs (pause, add, recall) until the Lucide set is in the kit; off-deck greys (#26262c, #e9e9ec, #86868b, #c5c5c5, #bababa, #b6b6b6) overridden to deck values (#262626, #e5e5e5, #737373, #a3a3a3, white 78/55%) in round 4. No three equal boxes: memory kinds 5/4/3, related apps as 72px hairline rows.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +75,7 @@ Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16,
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the hand-written hero buttons (now kit Cta), the custom closing section (now kit Band), the tab row shared with /cli and /desktop, the grey code bars, every eyebrow, the indigo, orange, blue and green, springs. listed below
 
-Done here: Buttons press to .97/.98, focus ring from the system; the dark-room rows take a 6% white fill and the plus slides 4px on hover, Pause outlines on hover; hover rules only inside (hover: hover); the memory input is 17px.
+Done here: Buttons press to .97/.98, focus ring from the system; the dark-room rows take a 6% white fill and the plus slides 4px on hover, Pause outlines on hover; the editor's Pause fills white 8%, the memory kinds take a #f5f5f5 fill and darker border, related rows fill #f5f5f5; hover rules only inside (hover: hover); the memory input is 17px.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -100,7 +100,7 @@ Done here: No media on this page: the editor and the planes are drawn in the DOM
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask bottom at 520px on 375x667; a phone target crawl of <main> (7 Nov, round 3) finds 0 controls under 44px: View on GitHub, GitHub and Hanzo Cloud now have a 44px box, the app links in the close are 44px rows.
+Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask bottom at 520px on 375x667; a phone target crawl of <main> (7 Nov, round 3) finds 0 controls under 44px: View on GitHub, GitHub and Hanzo Cloud now have a 44px box, the app links in the close are 44px rows. The gutter memories are no longer focusable (their words are in the caption and the Teach room), so they are not targets.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

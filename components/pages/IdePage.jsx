@@ -97,7 +97,7 @@ function Editor() {
           </ol>
           <ul className="ide-mems">
             {MEMS.map(([line, kind, what]) => (
-              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={MOVE} tabIndex={0}>
+              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={MOVE}>
                 <span className="ide-mem-k x-mono">{kind}</span>
                 <span className="ide-mem-w">{what}</span>
               </motion.li>
@@ -382,7 +382,7 @@ function Start() {
           <div className="ide-script-bar"><span className="x-mono">bash</span><Copy text={SCRIPT} /></div>
           <pre className={seen && !calm ? 'type' : ''}>{SCRIPT.split('\n').map((l, i) => {
             const n = Math.max(1, l.length), at = d;
-            d += n * 0.022 + 0.18;
+            d += n * 0.01 + 0.07; // the whole script lands in about 3 s
             return <span key={i} className={l.startsWith('#') ? 'c' : ''} style={{ '--n': n, '--d': at + 's' }}>{l || ' '}</span>;
           })}</pre>
         </div>
