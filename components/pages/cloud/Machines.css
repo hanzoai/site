@@ -11,7 +11,7 @@
 .mc .v2-dark, .mc [data-room='dark'] { --acc: var(--mc-w5); --glow: var(--mc-s3); }
 
 /* hero: the black product shot */
-.mc-hero { padding: 92px 0 clamp(72px, 8vw, 116px); background: radial-gradient(60% 50% at 50% 78%, rgba(163, 163, 163, .16), transparent 70%), var(--mc-k); }
+.mc-hero { padding: 84px 0 clamp(72px, 8vw, 116px); background: radial-gradient(60% 50% at 50% 78%, rgba(163, 163, 163, .16), transparent 70%), var(--mc-k); }
 .mc-hero-t { text-align: center; display: flex; flex-direction: column; align-items: center; }
 .mc-h1 { margin: 0 auto; }
 .mc-cap { margin-top: 14px; color: var(--mc-s1); }
@@ -22,13 +22,14 @@
 .mc-acts .x-btn.solid:active { transform: scale(.98); transition-duration: 90ms; }
 .mc-acts .x-btn.solid:focus-visible { outline: 2px solid var(--mc-w); outline-offset: 3px; }
 /* the quiet ask: ink-on-black text with a 1px underline */
-.mc-acts .x-arrow { min-height: 44px; color: var(--mc-w5); }
-.mc-acts .x-arrow span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(255, 255, 255, .45); transition: text-decoration-color .15s var(--mc-out); }
+.mc-acts .x-arrow { min-height: 44px; color: var(--mc-w5); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(255, 255, 255, .45); transition: text-decoration-color .15s var(--mc-out); }
+.mc-acts .x-arrow span { text-decoration: none; }
 .mc-acts .x-arrow:active { transform: translateY(1px); }
 .mc-acts .x-arrow:focus-visible { outline: 2px solid var(--mc-w); outline-offset: 4px; border-radius: 6px; }
 @media (hover: hover) {
   .mc-acts .x-btn.solid:hover { background: var(--mc-w5); transform: translateY(-2px); outline-color: rgba(255, 255, 255, .55); }
-  .mc-acts .x-arrow:hover span { text-decoration-color: var(--mc-w); }
+  .mc-acts .x-arrow:hover { text-decoration-color: var(--mc-w); }
+  .mc-acts .x-arrow:hover span { text-decoration: none; }
 }
 /* the object sits inside the gutters even while it settles (scale 1.04 at most) */
 .mc-lift { width: min(100% - 120px, 1280px); margin: 36px auto 0; }
