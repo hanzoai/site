@@ -37,8 +37,15 @@
 /* ---------- the boundary (signature) ---------- */
 .xe-stage { position: relative; height: 360svh; }
 .xe-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-.xe-intro { position: absolute; left: 0; right: 0; top: calc(60px + clamp(24px, 5svh, 56px)); z-index: 3; }
+/* the first screen is the diagram: the words in the left 5 columns, the four walls around the live workspace in the right 8 */
+.xe-intro { position: absolute; z-index: 3; top: 50%; translate: 0 -50%; left: max(var(--gut), calc((100% - 1152px) / 2)); width: calc((min(100% - 2 * var(--gut), 1152px) - 288px) * 5 / 13 + 96px); margin: 0; padding-top: 40px; }
 .xe-intro .xe-d { max-width: 20ch; }
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .js .xe-intro-row { display: block; margin-top: 20px; }
+  .js .xe-intro .xe-acts { margin-top: 28px; }
+  .js .xe-intro .xe-trust { display: block; margin-top: 32px; }
+  .js .xe-intro .xe-trust-l { margin-top: 12px; }
+}
 .xe-intro-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px 48px; margin-top: 24px; }
 .xe-lede { margin: 0; max-width: 44ch; font-size: var(--s-lede); line-height: 1.45; letter-spacing: -.01em; color: var(--soft); text-wrap: pretty; }
 .xe-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; flex: none; }
@@ -52,11 +59,13 @@
 .xe-cam.ready { opacity: 1; }
 .xe-map { position: absolute; inset: 0; }
 .xe-rings { position: absolute; inset: 0; }
-.xe-ring { position: absolute; border-radius: 72px; border: 2px dashed rgba(0, 0, 0, .18); transition: border-color .4s var(--eio), opacity .4s var(--eio), background-color .4s var(--eio); }
+.xe-ring { position: absolute; border-radius: 72px; border: 2px dashed rgba(0, 0, 0, .2); transition: border-color .4s var(--eio), opacity .4s var(--eio), background-color .4s var(--eio); }
+/* on arrival the walls go up around the workspace, the innermost first (0.6 s, then every 120 ms outward) */
+.xe-cam.ready .xe-ring { animation: xe-wall .6s var(--ee) backwards; animation-delay: calc(.6s + (3 - var(--i)) * .12s); }
+@keyframes xe-wall { from { opacity: 0; transform: scale(.96); } }
 .xe-ring:nth-child(2) { border-radius: 64px; } .xe-ring:nth-child(3) { border-radius: 56px; } .xe-ring:nth-child(4) { border-radius: 48px; }
 .xe-ring.on { border: 2px solid var(--ink); background-color: rgba(255, 255, 255, .6); }
-.xe-ring.out { opacity: .3; }
-.xe-map[data-at='3'] .xe-ring.out { opacity: .1; }
+.xe-ring.out { opacity: 0; }
 /* the place in focus grows while it is the moment, then settles back */
 .xe-ring-l { position: absolute; top: 22px; left: 30px; font: 606 15px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); transform-origin: 0 0; transition: color .4s var(--eio), transform .5s var(--ee); }
 .xe-ring.on .xe-ring-l { color: var(--ink); transform: scale(1.4); }
@@ -315,22 +324,27 @@
   .xe-stage { height: auto; }
   .xe-pin { position: relative; height: auto; overflow: visible; padding-top: 84px; }
   .xe-intro, .xe-ch { position: relative; inset: auto; translate: none; transform: none !important; opacity: 1 !important; }
+  .xe-intro { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; padding-top: 0; }
   .xe-cam { position: relative; inset: auto; width: min(100% - 2 * var(--gut), 760px); height: auto; margin: 40px auto 0; transform: none !important; opacity: 1 !important; transition: none; pointer-events: auto; }
-  .xe-rings { display: none; }
   .xe-map, .xe-seat { position: relative; inset: auto; }
+  .xe-map { padding: 40px; }
+  .xe-ring { inset: calc(var(--i) * 10px) !important; border-radius: calc(20px + (4 - var(--i)) * 10px); }
+  .xe-ring:nth-child(n) { border-radius: calc(20px + (4 - var(--i)) * 10px); }
+  .xe-ring-l { display: none; }
+  .xe-ring.out { opacity: .35; }
+  .xe-ring.on { background-color: transparent; }
   .xe-win { position: relative; inset: auto; height: 400px; }
   .xe-ch { left: auto; width: min(100% - 2 * var(--gut), 760px); margin: 64px auto 0; padding: 0 0 calc(var(--pad) / 2); }
   .xe-step-bar b { transform: scaleX(0) !important; transition: none; }
   .xe-step.on .xe-step-bar b { transform: scaleX(1) !important; transition: transform 3.6s linear; }
-  .xe-caps { display: flex; gap: 20px; align-items: flex-start; min-height: 0; }
-  .xe-caps .xe-caps-g { display: block; width: 64px; height: 64px; margin-top: 4px; }
-  .xe-cap { position: absolute; left: 84px; }
-  .xe-cap.on { position: relative; left: 0; flex: 1; }
+  .xe-caps { display: grid; min-height: 0; }
+  .xe-cap { position: relative; inset: auto; grid-area: 1 / 1; }
 }
 /* JS off: no pin and no camera; the four places read as a list under the workspace, the log rows stack */
 html:not(.js) .xe-stage { height: auto; }
 html:not(.js) .xe-pin { position: relative; height: auto; overflow: visible; padding-top: 100px; }
 html:not(.js) .xe-intro, html:not(.js) .xe-ch { position: relative; inset: auto; translate: none; transform: none !important; opacity: 1 !important; }
+html:not(.js) .xe-intro { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; padding-top: 0; }
 html:not(.js) .xe-cam { position: relative; inset: auto; width: min(100% - 2 * var(--gut), 760px); height: auto; margin: 48px auto 0; transform: none !important; opacity: 1 !important; }
 html:not(.js) .xe-rings { display: none; }
 html:not(.js) .xe-map, html:not(.js) .xe-seat { position: relative; inset: auto; }
@@ -342,7 +356,7 @@ html:not(.js) .xe-ch { left: auto; width: min(100% - 2 * var(--gut), 760px); mar
 html:not(.js) .xe-caps { min-height: 0; }
 html:not(.js) .xe-cap { position: relative; margin-top: 28px; }
 @media (prefers-reduced-motion: reduce) {
-  .xe-line > span { animation: none; }
+  .xe-line > span, .xe-cam.ready .xe-ring { animation: none; }
   .xe-live i, .xe-r.new, .xe-r.new::before { animation: none; }
   .js .xe-cap, .js .xe-cap.on, .xe-r { transition: none; }
 }
@@ -371,8 +385,9 @@ html:not(.js) .xe-cap { position: relative; margin-top: 28px; }
   .xe-step { font-size: 13px; }
   .xe-scale { font-size: 11px; }
   .xe-caps { margin-top: 32px; }
-  .xe-caps .xe-caps-g { width: 52px; height: 52px; }
-  .xe-cap { left: 72px; }
+  .xe-map { padding: 32px; }
+  .xe-ring { inset: calc(var(--i) * 8px) !important; }
+  .xe-ring:nth-child(n) { border-radius: calc(20px + (4 - var(--i)) * 8px); }
   .xe-secu .xe-head, .xe-inc .xe-head, .xe-gpu .xe-head, .xe-part .xe-head { display: block; }
   .xe-head > .xe-l { margin-top: 12px; }
   .xe-tiles { grid-template-columns: minmax(0, 1fr); }
