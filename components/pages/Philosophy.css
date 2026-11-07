@@ -175,8 +175,8 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 .xph-mx { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 24px 48px; align-items: start; }
 .xph-mx-side { position: sticky; top: 100px; }
 .xph-mx-leg { display: flex; flex-wrap: wrap; gap: 12px 18px; margin: 32px 0 0; font-size: 14px; color: #525252; }
-.xph-mx-leg b { flex-basis: 100%; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #737373; }
-.xph-mx-leg span { display: inline-flex; align-items: center; gap: 8px; }
+.xph-mx-leg .xph-mx-leg-h { flex-basis: 100%; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #737373; }
+.xph-mx-leg span:not(.xph-mx-leg-h) { display: inline-flex; align-items: center; gap: 8px; }
 .xph-mx-scroll { overflow-x: auto; }
 .xph-mx-g { display: grid; grid-template-columns: repeat(9, minmax(56px, 1fr)); gap: 4px; min-width: 560px; }
 .xph-mx-row { display: contents; }
@@ -254,8 +254,8 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 .xph-stack-l { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
 .xph-stack-l a { position: relative; isolation: isolate; display: grid; grid-template-columns: 64px minmax(0, 4fr) minmax(0, 6fr) 48px; gap: 24px; align-items: center; padding: 32px 0; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .xph-stack-l a::before { content: ''; position: absolute; inset: 0 -16px; z-index: -1; border-radius: 16px; background: #f5f5f5; clip-path: inset(0 100% 0 0 round 16px); transition: clip-path .4s cubic-bezier(0, 0, .2, 1); }
-.xph-stack-l b { font-size: 21px; font-weight: 497; letter-spacing: -.012em; }
-.xph-stack-l a > span:not(.xph-hx) { font-size: 16px; line-height: 1.5; color: #525252; }
+.xph-stack-l .xph-stack-n { font-size: 21px; font-weight: 497; letter-spacing: -.012em; }
+.xph-stack-l a > span:not(.xph-hx):not(.xph-stack-n) { font-size: 16px; line-height: 1.5; color: #525252; }
 .xph-stack-l a > i { justify-self: end; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); transition: background-color 150ms cubic-bezier(0, 0, .2, 1), color 150ms cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) and (pointer: fine) {
   .xph-stack-l a:hover::before { clip-path: inset(0 0 0 0 round 16px); }
@@ -291,6 +291,11 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 .xph-whole { padding-top: clamp(96px, 10vw, 160px); }
 .xph-whole-t { max-width: 18ch; margin: 0; }
 .xph-whole-b { color: #737373; }
+/* the real line and its two-tone copy share one grid cell, so they wrap identically; the real one is see-through */
+.xph-whole-t { display: grid; }
+.xph-whole-t > span { grid-area: 1 / 1; }
+.xph-whole-r { color: transparent; }
+.xph-whole-v { pointer-events: none; }
 
 /* the close: the one dark room */
 .xph-close { color: #fafafa; }
@@ -387,7 +392,7 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
   .xph-steps p { font-size: 16px; }
   .xph-stack-l a { grid-template-columns: 40px minmax(0, 1fr) 44px; gap: 6px 16px; padding: 24px 0; }
   .xph-stack-l .xph-hx { --w: 28px !important; grid-row: span 2; align-self: start; margin-top: 6px; }
-  .xph-stack-l a > span:not(.xph-hx) { grid-column: 2; font-size: 16px; }
+  .xph-stack-l a > span:not(.xph-hx):not(.xph-stack-n) { grid-column: 2; font-size: 16px; }
   .xph-stack-l a > i { grid-column: 3; grid-row: 1 / span 2; }
   .xph-change-l, .xph-change-r { grid-column: 1 / -1; }
   .xph-change-r { padding-top: 40px; }

@@ -112,7 +112,7 @@ function Hero() {
             <p className="pf-mono xph-cap">Philosophy</p>
             <p className="xph-sub">64 patterns for intelligent systems</p>
           </div>
-          <p className="pf-body xph-lede">The <em>I Ching</em> is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal.</p>
+          <p className="pf-body xph-lede">The <em>I Ching</em><span> is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal.</span></p>
           <div className="xph-acts">
             <a href="#patterns" className="pf-btn solid" data-thumb="Explore the 64 patterns" data-cta="philosophy.hero">Explore the 64 patterns</a>
             <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
@@ -276,14 +276,12 @@ function Laws() {
 
 /* ---------- the 64 patterns: a quiet index, each pattern opening into a sheet ---------- */
 function Detail({ h }) {
-  const [main, sub] = split(h[1]);
   return (
     <article className="xph-det">
       <div className="xph-det-h">
         <Hexa ls={lines(h)} size={92} />
         <div>
-          <h3 className="xph-det-t">{main}</h3>
-          <p className="xph-det-s">{sub}</p>
+          <h3 className="xph-det-t">{h[1]}</h3>
           <p className="xph-det-tri"><span className="pf-mono">{h[0]}</span> · {h[2]} <i>over</i> {h[3]}</p>
         </div>
       </div>
@@ -396,7 +394,7 @@ function Matrix({ open }) {
     <div className="xph-mx">
       <div className="xph-mx-side">
         <p className="pf-body">Each hexagram stacks two trigrams — the lower force (bottom three lines) beneath the upper force (top three lines). Select a row or column to see how one force meets every other.</p>
-        <p className="xph-mx-leg"><b>The eight trigrams</b>{TRI_ORDER.map((t) => <span key={t}><Hexa ls={TRI[t]} size={16} />{t}</span>)}</p>
+        <p className="xph-mx-leg"><span className="xph-mx-leg-h">The eight trigrams</span>{TRI_ORDER.map((t) => <span key={t}><Hexa ls={TRI[t]} size={16} />{t}</span>)}</p>
       </div>
       <div className="xph-mx-scroll">
         <div className={'xph-mx-g' + (hi ? ' hi' : '')}>
@@ -558,7 +556,7 @@ function Stack() {
             <li key={t}>
               <A to={to}>
                 <Hexa ls={lines(HEX[[0, 1, 13, 62, 7, 12][i]])} size={34} />
-                <b data-morph>{t}</b>
+                <span className="xph-stack-n" data-morph>{t}</span>
                 <span>{d}</span>
                 <i aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i>
               </A>
@@ -604,12 +602,15 @@ function Change() {
   );
 }
 
+const WHOLE = ['The Zen of Hanzo is not a promise that systems will remain still.', 'It is a method for building systems that remain whole while everything changes.'];
 /* ---------- the belief statement: set still, in full ink (the timeline is this page's motion) ---------- */
 function Whole() {
   return (
     <section className="pf-sec xph-whole">
       <div className="pf-wrap">
-        <h2 className="pf-moment xph-whole-t">The Zen of Hanzo is not a promise that systems will remain still. <span className="xph-whole-b">It is a method for building systems that remain whole while everything changes.</span></h2>
+        {/* Hanzo's statement is one line of text (the real leaf, read and selected); the two tones are drawn by an
+            aria-hidden copy set exactly under it */}
+        <h2 className="pf-moment xph-whole-t"><span className="xph-whole-r">{WHOLE[0]} {WHOLE[1]}</span><span className="xph-whole-v" aria-hidden="true">{WHOLE[0]} <span className="xph-whole-b">{WHOLE[1]}</span></span></h2>
       </div>
     </section>
   );
