@@ -243,6 +243,7 @@ a.ld-chip:active { transform: scale(.98); }
   .ld-end-get, .ld-end-start { grid-column: 1 / -1; }
   .ld-end-start { margin-top: 64px; }
   .ld-row { min-height: 72px; font-size: 26px; }
+  .ld-caps-k, .ld-ns { font-size: 14px; }
   .ld-units, .ld-split-ok, .ld .cf-paste-k, .ld .x-copy-t, .ld .cf-code-k { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {

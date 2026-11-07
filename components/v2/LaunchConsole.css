@@ -10,3 +10,7 @@
 .lx-con-spin { display: inline-block; width: 10px; height: 10px; margin-right: 7px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; vertical-align: -1px; animation: lx-con-spin .9s linear infinite; }
 @keyframes lx-con-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .lx-con-spin { animation: none; } }
+@media (max-width: 900px) {
+  .lx-con .cf-con-ico { width: 44px; min-width: 44px; }
+  .lx-con .cf-con-title { display: inline-flex; align-items: center; min-height: 44px; }
+}

@@ -1,5 +1,5 @@
 /* PinScenes (see PinScenes.jsx). Owned by the Wave 2 Company chat. */
-.vc-pin { position: relative; height: calc(var(--n) * 100svh); }
+.vc-pin { position: relative; height: calc(var(--n) * 75svh + 25svh); }
 .vc-pin-sticky { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
 .vc-pin-stage { position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(32px, 5vw, 96px); align-items: center; }
 .vc-pin.flip .vc-pin-stage { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
@@ -11,8 +11,6 @@
 .vc-pin-rail { position: absolute; left: 0; top: 50%; translate: 0 -50%; height: min(52svh, 420px); width: 1px; background: var(--line); }
 .vc-pin.flip .vc-pin-rail { left: auto; right: 0; }
 .vc-pin-rail i { position: absolute; inset: 0; background: var(--acc, var(--ink)); transform-origin: 50% 0; }
-.vc-pin-rail span { position: absolute; top: -34px; left: 0; white-space: nowrap; }
-.vc-pin.flip .vc-pin-rail span { left: auto; right: 0; }
 
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
   .vc-pin { height: auto; }

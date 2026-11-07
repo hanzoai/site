@@ -220,3 +220,18 @@ a.xsd-tr:hover { background: rgba(255, 255, 255, .06); }
 .xsd-close { border-top: 1px solid var(--line); }
 .xsd-close-in { display: flex; flex-direction: column; align-items: flex-start; gap: 40px; }
 .xsd-close-h { margin: 0; max-width: 12ch; }
+
+/* code first (differs from its neighbours): the console on the left, the words on the right */
+.xsd-first { align-items: start; row-gap: 40px; }
+.xsd-code-first { grid-column: 1 / span 8; grid-row: 1; }
+.xsd-words { grid-column: 9 / span 4; grid-row: 1; padding-top: 8px; }
+.xsd-words .a2-kick { margin-bottom: 24px; }
+.xsd-words .xsd-h1 { max-width: none; font-size: clamp(44px, 4.6vw, 68px) !important; }
+.xsd-words .xsd-lede { margin: 24px 0 0; font-size: clamp(17px, 1.3vw, 19px); }
+.xsd-words .xsd-ex { margin: 40px 0 14px; }
+.xsd-pre { min-height: 470px; }
+@media (max-width: 900px) {
+  .xsd-code-first, .xsd-words { grid-row: auto; }
+  .xsd-words { order: -1; }
+  .xsd-pre { min-height: 0; }
+}

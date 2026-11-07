@@ -1,12 +1,15 @@
 'use client';
 /* Founder Program. Its idea is the merge that turns into Pro time.
-   V2: 8/10 rebuilt around one scrubbed scene: a display hero beside a pull request that merges itself; then the levels as a pinned scene where your scroll merges one, then three pull requests and the Pro time pours in; the repositories as the dark room; a calm claim form; questions.
+   Persona: a developer who contributes to Hanzo's public repositories. Goal: claim Pro time for a merged pull request.
+   CTA: "Claim a merged pull request" (the claim form on this page). Metric: no id in PLAN-COMPONENTS 1.1 yet (the claim
+   sends a marketing lead).
+   V2: 8/10 grey deck, no eyebrow; rebuilt around one scrubbed scene: a display hero beside a pull request that merges itself; then the levels as a pinned scene where your scroll merges one, then three pull requests and the Pro time pours in; the repositories as the dark room; a calm claim form; questions.
    Signature: the merge counter, scrubbed by your scroll: a giant count goes 0, 1, 2, 3 merged while Level 1 fills to a
    week of Pro and Level 2 to a month, the level cards lighting as each threshold is crossed.
    Beyond: your level, worked out. Count your merged pull requests and lines merged and see which level they reach,
    from Hanzo's own thresholds (your first merged pull request; three merged pull requests, or 1,000 lines merged).
    Motion: scrubbed merge scene (signature) + line-masked hero type + the hero pull request merging itself.
-   Accent: GitHub's merged purple. The claim form sends what hanzo.ai sends. Every word is Hanzo's; the open bounties
+   0 UI hues. The claim form sends what hanzo.ai sends. Every word is Hanzo's; the open bounties
    are GitHub's, read live. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
@@ -47,7 +50,7 @@ function PullRequest() {
   const merged = s === 2;
   return (
     <div className="xfo-pr xp-obj" ref={box} aria-hidden="true">
-      <div className="xfo-pr-top">{PR_ICON}<span className="x-mono">https://github.com/hanzoai/ui/pull/1</span></div>
+      <div className="xfo-pr-top">{PR_ICON}<span className="xfo-pr-k">Founder Program</span><span className="x-mono">https://github.com/hanzoai/ui/pull/1</span></div>
       <div className="xfo-diff">
         {[['', 72], ['del', 54], ['add', 80], ['add', 46], ['', 62], ['add', 70], ['', 38]].map(([k, w], i) => (
           <span key={i} className={k}><b>{k === 'add' ? '+' : k === 'del' ? '−' : ''}</b><i style={{ width: w + '%' }} /></span>
@@ -68,12 +71,11 @@ function Hero() {
     <section className="xfo-hero" aria-labelledby="xfo-h1">
       <div className="xp-wrap xp-grid">
         <div className="xfo-copy">
-          <p className="xp-kick">Founder Program</p>
           <LineReveal as="h1" id="xfo-h1" className="xp-display md" lines={['Merge a pull request.', 'Get Pro.']} />
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
             <p className="xp-lede xfo-lede">A merged pull request in a public Hanzo repository earns Pro time, granted by hand by a Hanzo admin.</p>
             <div className="xfo-acts">
-              <a href="#claim" className="xp-cta" data-thumb="Claim a merged pull request">Claim a merged pull request<i aria-hidden="true">↓</i></a>
+              <a href="#claim" className="x-btn solid xp-cta" data-thumb="Claim a merged pull request" data-cta="founder.hero">Claim a merged pull request<i aria-hidden="true">↓</i></a>
               <A to="/bounty" className="xfo-link">Find an issue</A>
             </div>
           </motion.div>
@@ -110,7 +112,7 @@ function Scene() {
       <div className="xfo-pin">
         <div className="xp-wrap xp-grid xfo-scene-g">
           <div className="xfo-count">
-            <h2 id="xfo-lv-h" className="xp-kick">Founder levels</h2>
+            <h2 id="xfo-lv-h" className="xp-head xfo-lv-h">Founder levels</h2>
             <p className="xfo-big xp-fig" aria-hidden="true">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span key={merged} initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{merged}</motion.span>
@@ -143,17 +145,17 @@ function Mine() {
   const l = prs >= 3 || (prs >= 1 && lines >= 1000) ? 1 : prs >= 1 ? 0 : -1;
   const step = (set, v, d, max) => set(Math.max(0, Math.min(max, v + d)));
   return (
-    <section className="xp-sec tight xfo-mine-s" aria-labelledby="xfo-mine-h">
+    <section className="xp-sec tight xfo-mine-s" aria-label="Founder levels">
       <div className="xp-wrap xp-grid">
-        <h2 id="xfo-mine-h" className="xp-head xfo-mine-h">Where do yours land?</h2>
+        <div className="xfo-mine-h" aria-hidden="true">{PR_ICON}</div>
         <div className="xfo-mine">
           <div className="xfo-mine-c">
-            <div><span>Merged pull requests</span><span className="xfo-st"><button type="button" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite">{prs}</output><button type="button" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
-            <div><span>Lines merged</span><span className="xfo-st"><button type="button" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite">{lines.toLocaleString('en-US')}</output><button type="button" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
+            <div><span>Merged pull request</span><span className="xfo-st"><button type="button" onClick={() => step(setPrs, prs, -1, 99)} disabled={!prs} aria-label="Fewer merged pull requests">−</button><output className="x-mono" aria-live="polite">{prs}</output><button type="button" onClick={() => step(setPrs, prs, 1, 99)} aria-label="More merged pull requests">+</button></span></div>
+            <div><span>lines merged</span><span className="xfo-st"><button type="button" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite">{lines.toLocaleString('en-US')}</output><button type="button" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
           </div>
           <AnimatePresence mode="wait" initial={false}>
             <motion.p key={l} className={'xfo-mine-r' + (l >= 0 ? ' on' : '')} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} aria-live="polite">
-              {l < 0 ? 'Level 1 starts at your first merged pull request.' : <><b>{LEVELS[l][0]} · {LEVELS[l][1]}</b><span>{LEVELS[l][3]}</span></>}
+              {l < 0 ? <><b>{LEVELS[0][0]}</b><span>{LEVELS[0][2]}</span></> : <><b>{LEVELS[l][0]} · {LEVELS[l][1]}</b><span>{LEVELS[l][3]}</span></>}
             </motion.p>
           </AnimatePresence>
         </div>
@@ -167,7 +169,7 @@ function Repos() {
   const items = st.kind === 'ready' ? st.open.items.slice(0, 5) : [];
   const say = st.kind === 'reading' ? SAY.reading : st.kind === 'unreachable' ? SAY.unreachable : SAY.none;
   return (
-    <section className="xp-sec xp-dark xfo-repos" data-room="dark" aria-labelledby="xfo-open-h">
+    <section className="xp-sec xp-dark xfo-repos" data-room="dark" data-ask-hide aria-labelledby="xfo-open-h">
       <div className="xp-wrap xp-grid">
         <div className="xfo-repos-l">
           <ul className="xfo-orgs" aria-hidden="true">{ORGS.map((o) => <li key={o}>{o}</li>)}</ul>
@@ -184,7 +186,7 @@ function Repos() {
               ))}
             </ul>
           ) : <p className={'xfo-say' + (st.kind === 'reading' ? ' reading' : '')} role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">{say}</p>}
-          <a className="xp-ghost xfo-every" href={SEARCH} target="_blank" rel="noopener noreferrer">Every open bounty ↗</a>
+          <a className="x-btn xp-ghost xfo-every" href={SEARCH} target="_blank" rel="noopener noreferrer">Every open bounty<i aria-hidden="true">↗</i></a>
         </div>
       </div>
     </section>
@@ -228,7 +230,7 @@ function Claim() {
                 <label><span>GitHub username</span><input id="founder-github" autoComplete="username" required placeholder="octocat" value={f.github} onChange={on('github')} /></label>
                 <label className="wide"><span>Merged pull request</span><input id="founder-pull" type="url" required placeholder="https://github.com/hanzoai/ui/pull/1" value={f.pull} onChange={on('pull')} /></label>
                 {st === 'refused' && <p className="xfo-refused" role="alert">It did not go through. Send the same to <a href={c.mail}>{SUPPORT}</a> instead.</p>}
-                <button type="submit" className="xp-cta xfo-send" disabled={!c.ok || st === 'sending'} aria-disabled={!c.ok}>{st === 'sending' ? 'Sending…' : 'Send the claim'}</button>
+                <button type="submit" className="x-btn solid xp-cta xfo-send" data-cta="founder.claim" disabled={!c.ok || st === 'sending'} aria-disabled={!c.ok}>{st === 'sending' ? 'Sending…' : 'Send the claim'}</button>
               </motion.form>
             )}
           </AnimatePresence>
