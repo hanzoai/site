@@ -13,6 +13,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
+import { Count } from '../ui';
 import { href } from '../../lib/route';
 import MaskLines from '../v2/MaskLines';
 import DetailSheet from '../v2/DetailSheet';
@@ -30,6 +31,13 @@ const lean = (e) => {
   el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
 };
 const rest = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
+
+/* a list arrives as one when it is reached: its items rise 16px in a 60 ms stagger (MASTER part 9, list-level entrance) */
+function useArrive() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.2 });
+  return { ref, 'data-arrive': seen ? 'in' : '' };
+}
 
 const num = (s) => parseInt(String(s).replace(/,/g, ''), 10) || 0;
 const NAMES = ['Hanzo', 'Lux', 'Zoo'];
@@ -335,6 +343,7 @@ function Publish() {
 
 /* ---------- the total, as figures ---------- */
 function Totals() {
+  const arrive = useArrive();
   return (
     <section className="pf-sec xos-total">
       <div className="pf-wrap pf-grid">
@@ -343,8 +352,8 @@ function Totals() {
           <p className="pf-body">Aggregate open-source activity counted from the forge and GitHub.</p>
           <p className="xos-grants"><A to="/grants">OSS &amp; research credit grants →</A></p>
         </header>
-        <ul className="xos-total-n">
-          {TOTAL.map(([v, k], i) => <li key={k}><b className={i ? 'pf-num xos-tot-s' : 'pf-moment'}>{v}</b><span>{k}</span></li>)}
+        <ul className="xos-total-n" {...arrive}>
+          {TOTAL.map(([v, k], i) => <li key={k} style={{ '--k': i }}><b className={i ? 'pf-num xos-tot-s' : 'pf-moment'}>{i ? v : <Count to={num(v)} duration={1.2} />}</b><span>{k}</span></li>)}
         </ul>
       </div>
     </section>
@@ -354,6 +363,7 @@ function Totals() {
 /* ---------- every organization: cards that open ---------- */
 function Orgs() {
   const [g, setG] = useState(0);
+  const arrive = useArrive();
   const keys = (e) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!k) return;
@@ -381,9 +391,9 @@ function Orgs() {
           return (
             <div key={x.name} id={'xos-op-' + i} role="tabpanel" aria-labelledby={'xos-og-' + i} hidden={g !== i} className="xos-opanel">
               <p className="xos-gal-sub pf-mono">{x.sub}</p>
-              <ul className="xos-ocards">
+              <ul className="xos-ocards" {...(i === g ? arrive : {})}>
                 {top.map((o, j) => (
-                  <li key={o.login} style={{ '--j': j }}>
+                  <li key={o.login} style={{ '--k': j }}>
                     <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>
                       <span className="xos-oc-i pf-mono" aria-hidden="true">{String(j + 1).padStart(2, '0')} / {x.orgs.length}</span>
                       <span className="xos-oc-top"><b data-morph>{o.name}</b><small className="pf-mono">{o.login}</small></span>
@@ -436,6 +446,7 @@ const BUILT = [
 ];
 
 function Built() {
+  const arrive = useArrive();
   return (
     <section className="pf-sec xos-built" aria-labelledby="xos-built-h">
       <div className="pf-wrap">
@@ -443,9 +454,9 @@ function Built() {
           <MaskLines as="h2" id="xos-built-h" className="pf-head" lines={['What Hanzo is built on']} />
           <p className="pf-body">The projects our platform actually runs on, each with its licence and the people who maintain it.</p>
         </div>
-        <ul className="xos-tiles">
-          {BUILT.map(([ic, name, repo, who, site, what, lic]) => (
-            <li key={name} className="xos-tile" onPointerMove={lean} onPointerLeave={rest}>
+        <ul className="xos-tiles" {...arrive}>
+          {BUILT.map(([ic, name, repo, who, site, what, lic], i) => (
+            <li key={name} className="xos-tile" style={{ '--k': i % 4 + Math.floor(i / 4) }} onPointerMove={lean} onPointerLeave={rest}>
               <span className="xos-tile-ic" aria-hidden="true">{ic}</span>
               <span className="xos-tile-lic pf-mono">{lic}</span>
               <A to={repo} className="xos-tile-n">{name}</A>
@@ -471,6 +482,7 @@ const CHARTER = [
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI'];
 
 function Charter() {
+  const arrive = useArrive();
   const end = useRef(null);
   const signed = useInView(end, { once: true, amount: 1 });
   return (
@@ -482,9 +494,9 @@ function Charter() {
           <p className="pf-lede">We hold ourselves to explicit, public commitments — not vague marketing language.</p>
         </header>
         <div className="xos-ch-body">
-          <ol className="xos-arts">
+          <ol className="xos-arts" {...arrive}>
             {CHARTER.map(([t, d], i) => (
-              <li key={t}>
+              <li key={t} style={{ '--k': i }}>
                 <span className="pf-mono xos-art-n">Article {ROMAN[i]}</span>
                 <h3 className="pf-title">{t}</h3>
                 <p className="pf-body">{d}</p>
@@ -512,6 +524,7 @@ const LANGS = Object.entries(ALL.reduce((m, r) => ((m[r.lang] = (m[r.lang] || 0)
 
 function Contribute() {
   const [lang, setLang] = useState(LANGS[0]);
+  const arrive = useArrive();
   const repos = ALL.filter((r) => r.lang === lang);
   const share = ECO.map((e, i) => { const hit = e.langs.find(([l]) => l === lang); return [NAMES[i], hit ? hit[1] : null, e.stats[3][1]]; });
   return (
@@ -539,9 +552,9 @@ function Contribute() {
                 : <span key={n} className="off"><b className="pf-mono">—</b> not among {n}’s five main languages</span>
             ))}
           </p>
-          <ul className="xos-lrepos" key={lang}>
+          <ul className="xos-lrepos" key={lang} {...arrive}>
             {repos.map((r, j) => (
-              <li key={r.name} style={{ '--j': j }}>
+              <li key={r.name} style={{ '--k': j }}>
                 <A to={r.to}><span className="pf-mono">{r.name}</span><small>{r.eco} · ★ {r.stars}</small></A>
               </li>
             ))}
@@ -556,7 +569,7 @@ export default function OpenSource() {
   return (
     <main className="xos pf-r">
       {/* JS off: the tabs cannot switch, so every ecosystem and galaxy panel shows, one after another */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!important;margin-top:64px}.xos-eco,.xos-chips{display:none!important}</style>' }} />
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!important;margin-top:64px}.xos-eco,.xos-chips{display:none!important}[data-arrive]>li{opacity:1!important;transform:none!important}</style>' }} />
       <Hero />
       <Publish />
       <Totals />
