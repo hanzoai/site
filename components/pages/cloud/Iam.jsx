@@ -279,8 +279,8 @@ function Family() {
           <Decode as="h2" className="v2-headline ia-fold" style={fold(0)} text="Refresh tokens" />
           <p className={'v2-body ia-fam-p ia-fold' + (dead ? ' dead' : '')} style={fold(120)}>
             <span>Refresh tokens are single-use and kept only as a hash. </span>
-            <span className="ia-fam-k">Presenting a spent one revokes the whole family</span>
-            <span>, so a stolen token cannot outlive its session.</span>
+            <span className="ia-fam-k">Presenting a spent one revokes the whole family,</span>
+            <span> so a stolen token cannot outlive its session.</span>
           </p>
         </div>
         <div ref={ref} className={'ia-fam-box ia-fold' + (dead ? ' dead' : '')} style={fold(240)}>

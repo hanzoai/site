@@ -62,7 +62,7 @@ function Board() {
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="ig-pause" />
     <div className="ig-board" ref={ref} aria-hidden="true">
-      <p className="ig-board-t"><i />hanzoai/ingress</p>
+      <p className="ig-board-t"><i /><span>hanzoai/ingress</span></p>
       <div className="ig-col">
         <p className="ig-k">hostname</p>
         {ROUTES.map(([p], i) => (
@@ -230,7 +230,7 @@ export default function Ingress() {
           <div className="ig-stage-l">
             <ul className="ig-legend">
               <li><i className="dot" aria-hidden="true" />hostname</li>
-              <li><i className="edge" aria-hidden="true" />hanzoai/ingress</li>
+              <li><i className="edge" aria-hidden="true" /><span>hanzoai/ingress</span></li>
               <li><i className="back" aria-hidden="true" />backend</li>
             </ul>
             <p className={'ig-stage-note' + (phase === 1 || phase === 2 ? ' down' : '')} aria-hidden="true">{NOTE[phase]}</p>
