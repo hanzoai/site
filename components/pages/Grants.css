@@ -207,3 +207,21 @@ html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
   .xgr-tracks { grid-template-columns: 1fr; }
   .xgr-send { width: 100%; }
 }
+
+/* the ledger's head stays beside the list and counts the rows as they light (no empty column beside the list) */
+.xgr-gets-l { position: sticky; top: 120px; align-self: start; }
+.xgr-gets-fig { display: flex; align-items: flex-end; gap: 12px; margin: 24px 0 0; color: #0a0a0a; }
+.xgr-gets-roll { display: inline-grid; overflow: hidden; height: 1.02em; font: 220 64px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.xgr-gets-roll > span { grid-area: 1 / 1; display: block; }
+.xgr-gets-fig small { padding-bottom: 8px; font-size: 13px; letter-spacing: .1em; color: #525252; }
+html:not(.js) .xgr-gets-fig { display: none; }
+@media (max-width: 900px) {
+  .xgr-gets-l { position: static; }
+  .xgr-gets-fig { display: none; }
+  /* phones: the filing card sits below the form, so the form never moves when typing starts */
+  .xgr-apply-in { display: flex; flex-direction: column; gap: 24px; }
+  .xgr-apply-l { display: contents; }
+  .xgr-apply-in > form, .xgr-apply-in > .xgr-ok { order: 1; }
+  .xgr-apply-l .xgr-file { order: 2; }
+  .xgr-apply-l .xgr-mail { margin-top: 0; }
+}

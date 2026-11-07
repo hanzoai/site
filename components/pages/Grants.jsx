@@ -106,9 +106,10 @@ const GETS = [
 ];
 
 /* one row of the ledger: it lights, and its tick draws, as it scrolls into view */
-function Get({ t, d, i }) {
+function Get({ t, d, i, lit }) {
   const ref = useRef(null);
   const on = useInView(ref, { once: true, amount: 0.6 });
+  useEffect(() => { if (on) lit(i + 1); }, [on]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <li ref={ref} className={on ? 'on' : ''}>
       <span className="xgr-gets-n x-mono">{pad(i + 1)}</span>
@@ -120,16 +121,27 @@ function Get({ t, d, i }) {
 }
 
 function Gets() {
+  // the head stays beside the ledger and counts the rows as they light: 01 / 04 up to 04 / 04
+  const [n, setN] = useState(0);
+  const lit = (k) => setN((v) => Math.max(v, k));
   return (
     <section className="xp-sec tight xgr-gets" data-enter="pixel-resolve" aria-labelledby="xgr-gets-h">
       <div className="xp-wrap xp-grid">
         <div className="xgr-gets-l">
           <h2 id="xgr-gets-h" className="xp-head">What Grant Recipients &amp; Interns Receive</h2>
           <p className="xp-lede">Compute, models, and workspaces to ship open research and open-source software.</p>
+          <p className="xgr-gets-fig" aria-hidden="true">
+            <span className="xgr-gets-roll">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span key={n} initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{pad(Math.max(1, n))}</motion.span>
+              </AnimatePresence>
+            </span>
+            <small className="x-mono">/ 04</small>
+          </p>
         </div>
         <div className="xgr-pix">
           <ul className="xgr-gets-g xgr-sheetlist">
-            {GETS.map(([t, d], i) => <Get key={t} t={t} d={d} i={i} />)}
+            {GETS.map(([t, d], i) => <Get key={t} t={t} d={d} i={i} lit={lit} />)}
           </ul>
           <div className="xgr-pix-b f" aria-hidden="true">{blocks(48, 300)}</div>
           <div className="xgr-pix-b c" aria-hidden="true">{blocks(12, 240)}</div>

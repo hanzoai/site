@@ -56,17 +56,13 @@ html.js .xgr-sheet-li[data-stamp]:not(.xgr-stamped) .xgr-sheet { opacity: 0; tra
 .xgr-sheet-li.xgr-stamped .xgr-sheet { animation: xgr-stamp .72s both; }
 .xgr-sheet-li.xgr-stamped .xgr-sheet-n { animation: xgr-stamp-n .6s .22s both; }
 .xgr-sheet-li.xgr-stamped .xgr-ink { animation: xgr-ink .8s cubic-bezier(.16, 1, .3, 1) .3s both; }
-@keyframes xgr-stamp {
-  0% { opacity: 0; transform: translateY(-36px) scale(1.04); animation-timing-function: cubic-bezier(.55, 0, .9, .4); }
-  42% { opacity: 1; transform: translateY(0) scale(1.012, .975); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
-  70% { transform: scale(.998, 1.004); }
-  100% { opacity: 1; transform: none; }
-}
-@keyframes xgr-stamp-n { 0% { opacity: 0; transform: scale(1.6); animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 55% { opacity: 1; transform: scale(.94); animation-timing-function: cubic-bezier(.16, 1, .3, 1); } 100% { opacity: 1; transform: none; } }
+/* no squash, no overshoot (MASTER: no springs): it accelerates down and stops dead; the ring carries the weight */
+@keyframes xgr-stamp { 0% { opacity: 0; transform: translateY(-36px) scale(1.04); animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 55% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
+@keyframes xgr-stamp-n { 0% { opacity: 0; transform: scale(1.6); animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 60% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
 @keyframes xgr-ink { from { opacity: .3; transform: scale(.4); } to { opacity: 0; transform: scale(9); } }
 /* the application being filed: each answer is pressed onto the card the moment it has one */
 .xgr-file dl > div.on dd { animation: xgr-file-stamp .42s both; transform-origin: 0 100%; }
-@keyframes xgr-file-stamp { 0% { transform: translateY(-6px) scale(1.04); opacity: .4; animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 50% { transform: scale(1.01, .96); opacity: 1; animation-timing-function: cubic-bezier(.16, 1, .3, 1); } 100% { transform: none; opacity: 1; } }
+@keyframes xgr-file-stamp { 0% { transform: translateY(-6px) scale(1.04); opacity: .4; animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 60% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
   .xgr-grid, .xgr-pix-b, .xgr-ink { display: none !important; }
