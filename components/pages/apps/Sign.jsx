@@ -9,11 +9,11 @@
    Motion budget: signature = the self-signing page (ink line draw); supporting = Stage (Settle), Chapters
    (PinChapters), Open (sheets). Colour: none (0 UI hues); ink and greys. Self-running demos carry a pause button.
    One dark room: "Send the first one". Every word and link is Hanzo's. */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A, Tick, Img } from '../../kit';
-import { useLive, useEvery, useSteps } from '../cloud/Frame';
+import { useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
 import PinChapters from '../../v2/x-gauss/PinChapters';
@@ -89,7 +89,22 @@ function Story() {
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const calm = useReducedMotion();
   const [ch, setCh] = useState(0);
-  const [auto] = useSteps(5, 1900, live && !paused && ch === 0);
+  // the desk plays the five steps by itself while you rest at the top; the moment you scroll it hands over to the
+  // chapters by going back to the blank page while the title is still on screen, so chapter 01 continues from what
+  // you see rather than jumping back to it. Back at the top, it plays again.
+  const [auto, setAuto] = useState(0);
+  const [top, setTop] = useState(true);
+  useEffect(() => {
+    const on = () => { const t = scrollY <= 24; setTop(t); if (!t) setAuto(0); };
+    on();
+    addEventListener('scroll', on, { passive: true });
+    return () => removeEventListener('scroll', on);
+  }, []);
+  useEffect(() => {
+    if (!(live && !paused && ch === 0 && top)) return;
+    const t = setTimeout(() => setAuto((v) => (v + 1) % 5), 1900);
+    return () => clearTimeout(t);
+  }, [auto, live, paused, ch, top]);
   const hero = (
     <div className="sg-lead">
       <LineMask as="h1" id="sg-h1" now className="w2-display sg-h1" lines={['Hanzo Sign']} />
@@ -325,33 +340,30 @@ function First() {
             <p className="w2-body">Open the hosted app and send a document</p>
             <A to="/login" className="w2-cta" data-cta="sign.close">Try Hanzo <i aria-hidden="true">→</i></A>
           </div>
+          {/* one ledger, quiet rows divided by hairlines: everything else Hanzo says here, never a second box or ask */}
           <ul className="sg-first-links">
             {[['Documentation', 'Setup, self-hosting, and the API reference', 'View Docs', DOCS], ['The source', 'Read it before you trust a contract to it', 'View on GitHub', REPO]].map(([t, d, a, to]) => (
               <li key={t}><h3>{t}</h3><p>{d}</p><A to={to} className="sg-tlink">{a} <i aria-hidden="true">→</i></A></li>
             ))}
+            <li>
+              <h3>Something more specific</h3>
+              <p>Signing inside your own product, a flow with approvals before the send, or running it on your infrastructure. Tell us the shape and we will tell you whether it fits.</p>
+              <A to="/contact-sales" className="sg-tlink">Contact Sales <i aria-hidden="true">→</i></A>
+            </li>
+            <li>
+              <h3>Get started with Sign</h3>
+              <p className="sg-row-links"><A to={DOCS} className="sg-tlink">Read the docs →</A><A to={REPO} className="sg-tlink">View on GitHub →</A></p>
+            </li>
+            <li className="sg-get">
+              <h3>Get Sign</h3>
+              <p>E-signature</p>
+              <span className="sg-get-meta">
+                <span className="sg-chip"><span>License:</span> AGPL-3.0</span>
+                <A to="https://github.com/hanzoai" className="sg-chip">hanzoai</A>
+                <A to="https://platform.hanzo.ai/deploy" className="sg-tlink">Deploy to Cloud <i aria-hidden="true">→</i></A>
+              </span>
+            </li>
           </ul>
-        </div>
-        <div className="sg-first-foot">
-          <div className="sg-spec">
-            <h3 className="w2-title">Something more specific</h3>
-            <p className="w2-body">Signing inside your own product, a flow with approvals before the send, or running it on your infrastructure. Tell us the shape and we will tell you whether it fits.</p>
-            <A to="/contact-sales" className="sg-tlink">Contact Sales <i aria-hidden="true">→</i></A>
-          </div>
-          <div className="sg-gs">
-            <h2 className="w2-title">Get started with Sign</h2>
-            <div className="sg-gs-links"><A to={DOCS}>Read the docs →</A><A to={REPO}>View on GitHub →</A></div>
-          </div>
-        </div>
-        <div className="sg-get">
-          <div>
-            <h2 className="w2-headline">Get Sign</h2>
-            <p className="sg-get-tag">E-signature</p>
-          </div>
-          <div className="sg-get-meta">
-            <span className="sg-chip"><span>License:</span> AGPL-3.0</span>
-            <A to="https://github.com/hanzoai" className="sg-chip">hanzoai</A>
-            <A to="https://platform.hanzo.ai/deploy" className="sg-tlink">Deploy to Cloud <i aria-hidden="true">→</i></A>
-          </div>
         </div>
       </div>
     </section>

@@ -238,3 +238,19 @@ html.js .sg-lines.up i:nth-child(8) { animation-delay: 420ms; } html.js .sg-line
 /* where two sections meet, one padding, not two (no 480px dead bands) */
 .sg.gx .w2-sec + .w2-sec { padding-top: clamp(40px, 5vw, 72px) !important; }
 .sg.gx .sg-parts { padding-top: clamp(40px, 5vw, 72px) !important; }
+
+/* the eight parts read as a compact index (number, name, +), not eight empty boxes; each opens its sheet */
+.sg-cards .w2-oc-card { min-height: 128px; justify-content: flex-end; padding: 22px 24px; }
+.sg-cards .w2-oc-t { font-size: 21px; padding-right: 44px; }
+.sg-cards .w2-oc-k { position: absolute; left: 24px; top: 22px; }
+@media (max-width: 899px) { .sg-cards .w2-oc-card { min-height: 104px; } .sg-cards .w2-oc-k { position: static; } }
+
+/* the close's ledger: one statement and one ask on the left, Hanzo's other lines as hairline rows on the right */
+.sg-first-links li.sg-get { display: grid; margin: 0; padding: 20px 0; border-top: 1px solid rgba(255, 255, 255, .12); }
+.sg-first-links .sg-get-meta { margin-top: 8px; }
+.sg-row-links { display: flex; flex-wrap: wrap; gap: 0 24px; color: #f5f5f7 !important; }
+.sg-first-links li { transition: background .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .sg-first-links li:hover h3 { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
+.sg-first-row { align-items: start; }
+.sg-first-main { position: sticky; top: 96px; }
+@media (max-width: 899px) { .sg-first-main { position: static; } }
