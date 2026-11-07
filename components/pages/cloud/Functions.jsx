@@ -28,7 +28,9 @@ import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteLines from '../../v2/KeynoteLines';
 import FnUses from './functions/FnUses';
 import FnClose from './functions/FnClose';
+import { useEntrances } from './functions/enter';
 import './Functions.css';
+import './functions/enter.css';
 
 const EMPH = [0.16, 1, 0.3, 1];
 const TRIGGERS = ['HTTP route', 'cron schedule', 'Kafka topic', 'RabbitMQ queue'];
@@ -72,7 +74,7 @@ function Life() {
   const calm = useReducedMotion() && mounted;
   const paused = useStagePause();
   const [ready, setReady] = useState(false);
-  const [t, setT] = useState(0);
+  const [t, setT] = useState(12); // a finished run at first paint (12 pods up), then it scales back to zero
   // the visitor can choose the trigger that fires (the composer's trigger choice, folded into the hero)
   const [pick, setPick] = useState(null);
   useEffect(() => { const id = setTimeout(() => setReady(true), WRITTEN); return () => clearTimeout(id); }, []);
@@ -85,7 +87,7 @@ function Life() {
   const going = ready || calm;
   const c = t % CYCLE;
   const burst = going && !calm && c < 13;
-  const pods = !going ? 0 : calm ? 12 : c < 13 ? Math.min(SLOTS - 6, c) : Math.max(0, 12 - (c - 13) * 2);
+  const pods = !going ? 12 : calm ? 12 : c < 13 ? Math.min(SLOTS - 6, c) : Math.max(0, 12 - (c - 13) * 2);
   const trig = pick != null ? pick : going ? Math.floor(t / CYCLE) % 4 : -1;
   return (
     <div className="kn-obj fn-life" ref={ref} data-burst={burst ? '' : undefined}>
@@ -93,7 +95,7 @@ function Life() {
         <p className="fn-col-k" aria-hidden="true">Triggers</p>
         <div className="fn-trig-b" role="group" aria-label="Triggers">
           {TRIGGERS.map((t2, i) => (
-            <button key={t2} type="button" data-sound="tick" aria-pressed={pick === i} className={trig === i ? 'on' : ''} onClick={() => setPick((v) => (v === i ? null : i))}><i aria-hidden="true" />{t2}</button>
+            <button key={t2} type="button" data-sound="tick" aria-pressed={pick === i} className={trig === i ? 'on' : ''} onClick={() => { setPick((v) => (v === i ? null : i)); setReady(true); setT((v) => v - (v % CYCLE) + CYCLE); }}><i aria-hidden="true" />{t2}</button>
           ))}
         </div>
         <span className="fn-calls" aria-hidden="true"><i /><i /><i /><i /><i /></span>
@@ -182,7 +184,7 @@ function WarmScene({ p, on }) {
       <p className="fn-sc-k">Pools are prewarmed</p>
       <div className="fn-pool">{Array.from({ length: 8 }).map((_, i) => <i key={i} className={i === 0 && k >= 2 ? 'hit' : ''} />)}</div>
       <div className="fn-req"><span className="fn-req-dot" /><span className="fn-req-l">request</span></div>
-      <p className="fn-zero"><span className="fn-zero-i" aria-hidden="true"><i /><i /><i /></span><span>Scale to zero is still the default when nothing is calling.</span></p>
+      <p className="fn-zero"><span className="fn-zero-i" aria-hidden="true"><i /><i /><i /></span><span>Scale to zero</span></p>
     </div>
   );
 }
@@ -218,8 +220,8 @@ function GpuScene({ p, on }) {
       <div className="fn-gnodes" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <div key={i} className={'fn-gnode' + (i === 2 ? ' gpu' : '')}>
-            {i === 2 ? <span>NVIDIA GPU</span> : <span className="fn-gnode-s"><i /><i /></span>}
-            <div>{i === 2 && <span className="fn-pod in" />}</div>
+            {i === 2 ? <span>NVIDIA GPU</span> : null}
+            <div className="fn-gslots">{Array.from({ length: 6 }).map((_, j) => <i key={j} className={i < 2 && (j + i) % 3 === 0 ? 'on' : ''} />)}{i === 2 && <span className="fn-pod in" />}</div>
           </div>
         ))}
       </div>
@@ -233,11 +235,9 @@ function TriggerScene({ on }) {
   return (
     <div className="kn-obj fn-sc fn-sc-tr">
       <ul className="fn-tr-l">{TRIGGERS.map((t) => <li key={t}>{t}</li>)}</ul>
-      <svg className="fn-tr-lines" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true">
-        {TRIGGERS.map((t, i) => (
-          <motion.path key={t} d={`M${50 + i * 100} 0 C ${50 + i * 100} 110, 200 90, 200 200`} initial={{ pathLength: 0 }} animate={{ pathLength: on || calm ? 1 : 0 }} transition={calm ? { duration: 0 } : { duration: 0.9, ease: EMPH, delay: i * 0.06 }} />
-        ))}
-      </svg>
+      <motion.svg className="fn-tr-lines" viewBox="0 0 400 200" preserveAspectRatio="none" aria-hidden="true" initial={{ clipPath: 'inset(0 0 100% 0)' }} animate={{ clipPath: on || calm ? 'inset(0 0 0% 0)' : 'inset(0 0 100% 0)' }} transition={calm ? { duration: 0 } : { duration: 0.9, ease: EMPH }}>
+        {TRIGGERS.map((t, i) => <path key={t} d={`M${50 + i * 100} 0 C ${50 + i * 100} 110, 200 90, 200 200`} />)}
+      </motion.svg>
       <div className="fn-tr-h"><b>handler.js</b><span>the same handler</span></div>
     </div>
   );
@@ -261,11 +261,9 @@ function VersionScene({ p, on }) {
         ))}
       </div>
       <div className="fn-vers" aria-hidden="true">
-        <div className="fn-ver a"><i /><i /><i /></div>
-        <div className="fn-ver b"><i /><i /><i /></div>
+        {['a', 'b'].map((v) => <div key={v} className={'fn-ver ' + v}>{Array.from({ length: 8 }).map((_, j) => <i key={j} style={{ '--j': j }} />)}</div>)}
       </div>
       <div className="fn-traffic" aria-hidden="true"><i className="a" /><i className="b" /></div>
-      <p className="fn-sc-k">a traffic decision rather than another build</p>
     </div>
   );
 }
@@ -340,7 +338,7 @@ function Joined() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.6, once: true });
   return (
-    <div className="fn-join" ref={ref} aria-hidden="true">
+    <div className="fn-join" ref={ref} aria-hidden="true" data-enter="split-merge">
       <span className="fn-join-n">handler.js</span>
       <svg viewBox="0 0 100 2" preserveAspectRatio="none"><motion.path d="M0 1H100" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH }} /></svg>
       <span className="fn-join-n">HTTP route</span>
@@ -351,12 +349,19 @@ function Joined() {
 }
 
 export default function Functions() {
+  const root = useRef(null);
+  // the chapters' stage and the close arm their entrances by attribute (their markup is the shared kit's); before useEntrances
+  useEffect(() => {
+    root.current?.querySelector('.fn-ch .knc-g')?.setAttribute('data-enter', 'spring-snap');
+    root.current?.querySelector('.knx-in')?.setAttribute('data-enter', 'grow-from-point');
+  }, []);
+  useEntrances(root);
   // the chapter rail's numbers preview their chapter: each gets its own title (Hanzo's words) as a tip, after mount
   useEffect(() => {
     document.querySelectorAll('.fn-ch .knc-rail button').forEach((b, i) => { if (GETS[i]) b.setAttribute('data-tip', GETS[i][0]); });
   }, []);
   return (
-    <main className="kn fn">
+    <main className="kn fn" ref={root}>
       <Hero />
 
       <KeynoteChapters

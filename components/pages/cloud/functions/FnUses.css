@@ -43,14 +43,11 @@
   .fn-uc-card:hover .fn-uo { transform: scale(1.03); }
 }
 
-/* JS on: the stage pins and holds one case at a time; the rest wait above or below, hidden */
-.js .fn-uc-run { height: calc(100svh + var(--n) * 50svh); }
-.js .fn-uc-pin { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-top: 60px; }
-.js .fn-uc-r { display: block; height: min(560px, calc(100svh - 160px)); }
-.js .fn-uc-card { position: absolute; inset: 0; min-height: 0; opacity: 0; visibility: hidden; transform: translate3d(0, 32px, 0); transition: opacity .32s var(--e-out), transform .6s var(--e-move), visibility 0s linear .6s; }
-.js .fn-uc-card[data-pos='past'] { transform: translate3d(0, -32px, 0); }
-.js .fn-uc-card[data-on] { opacity: 1; visibility: visible; transform: none; transition: opacity .5s var(--e-out) .08s, transform .8s var(--e-in), visibility 0s; }
-.js .fn-uc-card:not([data-on]) .fn-uc-n { transform: scale(.6); }
+/* four tiles, two by two under the heading; the points live in the sheet each tile grows into */
+.fn-uc { padding-top: clamp(44px, 6vw, 96px); }
+.fn-uc-l { grid-column: 1 / span 6; }
+.fn-uc-r { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 17px; }
+.fn-uc-card { min-height: 420px; }
 .js .fn-uc-pts { display: none; }
 
 /* ---------- the drawings ---------- */
@@ -146,6 +143,7 @@
 
 @media (max-width: 899px) {
   .fn-uc-l, .fn-uc-r { grid-column: 1 / -1; }
+  .fn-uc-r { grid-template-columns: minmax(0, 1fr); }
   .fn-uc-l { gap: 17px; }
   .fn-uc-h { gap: 10px; }
   .fn-uc-h .kn-lede { font-size: 16px; max-width: none; }
@@ -155,10 +153,6 @@
   .fn-uc-list button::before { display: none; }
   .fn-uc-list button[aria-current] { background: #0a0a0a; color: #fafafa; }
   .fn-uc-lt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .js .fn-uc-pin { padding-top: 64px; justify-content: flex-start; }
-  .js .fn-uc-pin .fn-uc-g { padding-top: 17px; }
-  .js .fn-uc-r { height: min(500px, calc(100svh - 300px)); }
-  .js .fn-uc-run { height: calc(100svh + var(--n) * 60svh); }
   .fn-uc-card { min-height: 380px; border-radius: 20px; }
   .fn-uc-obj { min-height: 0; padding: 17px; }
   .fn-uc-t { padding: 0 17px 17px; gap: 6px; }

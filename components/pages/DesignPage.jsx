@@ -253,7 +253,7 @@ function useEnter(onGo) {
       io.disconnect();
       el.dataset.enter = 'go';
       go.current?.(el);
-    }, { threshold: 0.3 });
+    }, { rootMargin: '0px 0px -25% 0px' }); // a tall section (the capabilities on a phone) never shows 30% of itself
     io.observe(el);
     return () => { io.disconnect(); delete el.dataset.enter; };
   }, [calm]);
@@ -498,12 +498,12 @@ const CAPS = [
 ];
 
 function CapArt({ k }) {
-  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Img src="/models/iro.webp" alt="" w={1200} h={1500} /><b>Neon<br />Horizon</b></span>;
+  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Film src="/models/iro.webm" poster="/models/iro.webp" w={1200} h={1500} /></span>;
   if (k === 'deck') return <span className="dz-ca dz-ca-deck">{[0, 1, 2].map((i) => <i key={i}><Img src={['/models/oto.webp', '/models/uta.webp', '/models/koe.webp'][i]} alt="" w={1200} h={1500} /></i>)}</span>;
   if (k === 'doc') return <span className="dz-ca dz-ca-doc">{[0, 1].map((p) => <i key={p}><b />{[90, 100, 84, 100, 62, 96, 74].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i>)}</span>;
   if (k === 'ads') return <span className="dz-ca dz-ca-ads">{['story', 'square', 'banner'].map((s) => <i key={s} className={s}><Img src="/models/mori.webp" alt="" w={1200} h={1500} /></i>)}</span>;
-  if (k === 'video') return <span className="dz-ca dz-ca-video"><Img src="/models/koma.webp" alt="" w={1200} h={1500} /><span className="dz-tl">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></span></span>;
-  return <span className="dz-ca dz-ca-music">{Array.from({ length: 28 }).map((_, i) => <i key={i} style={{ animationDelay: -i * 0.11 + 's', animationDuration: 0.7 + (i % 5) * 0.13 + 's' }} />)}</span>;
+  if (k === 'video') return <span className="dz-ca dz-ca-video"><Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} /><span className="dz-tl">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></span></span>;
+  return <span className="dz-ca dz-ca-music">{['uta', 'koe', 'oto'].map((m) => <i key={m}><Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} /></i>)}</span>;
 }
 
 function Caps() {
@@ -537,7 +537,7 @@ function Caps() {
 function Brief() {
   const [brief, setBrief] = useState('');
   const [on, setOn] = useState(() => CAPS.map(() => true));
-  const title = brief.trim() || 'Your brief';
+  const title = brief.trim();
   const picked = CAPS.filter((_, i) => on[i]);
   // opposite-drift: as the section crosses the screen its two halves drift apart and meet in the middle
   const ref = useRef(null);
@@ -574,8 +574,8 @@ function Brief() {
                 <li key={t} className={'k-' + k}>
                   <span className="dz-brief-art" aria-hidden="true"><CapArt k={k} /></span>
                   <span className="dz-brief-k x-mono">{tag}</span>
-                  <b>{title}</b>
-                  <span>{t}</span>
+                  <b>{title || t}</b>
+                  {title && <span>{t}</span>}
                 </li>
               ))}
             </ul>
@@ -677,10 +677,11 @@ function Band() {
   const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
+  const grow = useTransform(scrollYProgress, [0, 1], [0.72, 1]); // the heading grows to its 64px as the band opens
   return (
     <motion.section ref={ref} className="x-band dz-band" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
       <div className="av-wrap">
-        <h2 className="dz-band-h">Start creating in Hanzo Design</h2>
+        <motion.h2 className="dz-band-h" style={calm ? undefined : { scale: grow }}>Start creating in Hanzo Design</motion.h2>
         <p>Open the Design workspace in your browser and upload your first file.</p>
         <div className="x-band-act">
           <Cta to="/design" id="design-band-open" size="lg">Open Design</Cta>

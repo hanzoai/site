@@ -191,7 +191,7 @@
 .dz-sheet-a { grid-column: 6 / -1; position: relative; border-radius: 16px; overflow: hidden; background: #0a0a0a; min-height: 300px; }
 .dz-ca { position: absolute; inset: 0; display: block; }
 .dz-ca img { width: 100%; height: 100%; object-fit: cover; }
-.dz-ca-visual b { position: absolute; left: 7%; top: 9%; color: #fafafa; font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: .95; text-transform: uppercase; }
+.dz-ca video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .dz-ca-deck { display: flex; align-items: center; justify-content: center; background: #f2f2f2; }
 .dz-ca-deck i { position: absolute; width: 56%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; }
 .dz-ca-deck i:nth-child(1) { transform: translate(-22%, -22%) rotate(-5deg); }
@@ -207,9 +207,8 @@
 .dz-ca-ads .story { height: 90%; aspect-ratio: 9 / 16; } .dz-ca-ads .square { height: 50%; aspect-ratio: 1; } .dz-ca-ads .banner { height: 32%; aspect-ratio: 16 / 9; }
 .dz-ca-ads img { position: absolute; inset: 0; }
 .dz-ca-video .dz-tl { position: absolute; left: 14px; right: 14px; bottom: 14px; }
-.dz-ca-music { display: flex; align-items: center; justify-content: center; gap: 5px; background: #0a0a0a; }
-.dz-ca-music i { width: 8px; height: 46%; border-radius: 4px; background: linear-gradient(to top, #737373, #fafafa 50%, #737373); }
-.js .dz-ca-music i { animation: dz-bounce .8s ease-in-out infinite alternate; }
+.dz-ca-music { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 6px; background: #0a0a0a; }
+.dz-ca-music i { position: relative; border-radius: 10px; overflow: hidden; }
 
 /* ---------- Beyond: one brief ---------- */
 .dz-brief { border-top: 1px solid rgba(0, 0, 0, .1); }
@@ -273,7 +272,7 @@
 @media (hover: hover) { .dz-gh:hover { text-decoration: underline; text-underline-offset: 3px; } }
 .dz-band { padding: clamp(116px, 12vw, 188px) 0; }
 .dz-band .av-wrap { display: flex; flex-direction: column; align-items: center; }
-.x-band h2.dz-band-h { font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: 1.08; max-width: 16ch; }
+.x-band h2.dz-band-h { font-size: 64px; font-weight: 497; letter-spacing: -.035em; line-height: 1.02; max-width: 14ch; }
 .dz-band .x-arrow { color: #fafafa; }
 
 .dz-ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
@@ -342,10 +341,14 @@
 .dz-step-b { padding: 0 0 17px 34px; }
 .dz-step-b .av-body { margin: 0; font-size: 15px; }
 .js .dz-steps li:not(:has(button.on)) .dz-step-b { display: none; }
-/* the six capabilities: a plain grid, no sheets stacking on scroll */
+/* the six capabilities: one big, two small, one big, two small (scale has rhythm), no sheets stacking on scroll */
 .dz-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .dz-stack .dz-sheet { position: relative; top: auto; display: flex; flex-direction: column; gap: 20px; min-height: 0; margin: 0; }
 .dz-stack .dz-sheet-a { min-height: 220px; }
+.dz-stack .dz-sheet:nth-child(3n + 1) { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); }
+.dz-stack .dz-sheet:nth-child(3n + 1) .dz-sheet-a { min-height: 440px; }
+.dz-stack .dz-sheet:nth-child(3n + 1) .dz-sheet-t .av-head { font-size: 40px; line-height: 1.05; }
+@media (hover: hover) { .dz-sheet .dz-ca img, .dz-sheet .dz-ca video { transition: transform .6s cubic-bezier(.16, 1, .3, 1); } .dz-sheet:hover .dz-ca img, .dz-sheet:hover .dz-ca video { transform: scale(1.04); } }
 
 @media (prefers-reduced-motion: reduce) {
   .dz *, .dz *::before, .dz *::after { animation: none !important; }
@@ -379,6 +382,10 @@
   .dz-sheet-a { min-height: 240px; }
   .dz-caps-k { justify-self: start; }
   .dz-brief-l, .dz-dark-l { position: static; }
+  .dz-e-drift .dz-brief-l, .dz-e-drift .dz-brief-r { transform: none; } /* phone: nothing drifts past the 16px gutter */
+  .dz-stack .dz-sheet:nth-child(3n + 1) { display: flex; }
+  .dz-stack .dz-sheet:nth-child(3n + 1) .dz-sheet-a { min-height: 280px; }
+  .dz-stack .dz-sheet:nth-child(3n + 1) .dz-sheet-t .av-head { font-size: 30px; }
   .dz-brief-set { grid-template-columns: 1fr; }
   .dz-models { grid-template-columns: 1fr; }
   .dz-models li:nth-child(3n + 1) .dz-model-m { aspect-ratio: 16 / 10; }
