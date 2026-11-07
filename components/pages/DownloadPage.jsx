@@ -10,11 +10,10 @@
    Motion: the one delight = the fan-out from the button (CSS, plays once) and the ray. Supporting: segmented pickers
    that glide (layoutId), magnetic ask, line-masked headline (components/v2/x-edison/AppLines).
    Greys only. Every word, size and link is Hanzo's. */
-import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Magnetic, Mark } from '../ui';
 import { A, Cta, Img } from '../kit';
-import Lines from '../v2/x-edison/AppLines';
 import '../v2/AppType.css';
 import './DownloadPage.css';
 
@@ -99,10 +98,78 @@ const ARC = [[182, 249], [271, 358], [17, 74], [103, 163]];
 const RX = 44, RY = 41;
 const r2 = (n) => Math.round(n * 100) / 100; // rounded: server and browser print the same style
 
+/* Headline lines rise out of their own masks. The server and the first render show the lines in place (JS off and
+   reduced motion keep them there, and nothing differs at hydration); the hero plays from first paint in CSS (.js), the
+   rest when half in view. */
+function Lines({ lines, as: Tag = 'h2', className = '', now = false, delay = 0, id }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || calm || now) return;
+    if (el.getBoundingClientRect().top < innerHeight * 0.8) return;
+    el.dataset.rise = 'pre';
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); el.dataset.rise = 'go'; } }, { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [calm, now]);
+  return (
+    <Tag ref={ref} id={id} className={className} style={{ '--d': delay + 's' }} data-now={now ? '' : undefined}>
+      {lines.map((l, i) => <span key={i} className="dl-ln"><span style={{ '--i': i }}>{l}{i < lines.length - 1 ? ' ' : ''}</span></span>)}
+    </Tag>
+  );
+}
+
+/* At rest the centre reads through the builds by itself (the ray sweeping to each in turn, as pointing does), so the
+   first screen stays alive and shows what pointing does. It rests while the pointer is over the dial, and never runs
+   off screen, below 1200 px (no orbit there) or under reduced motion. */
+function useTour(box, out, list, setHot) {
+  const seen = useInView(box, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [over, setOver] = useState(false);
+  const live = out && seen && !calm && !over && list.length > 0;
+  useEffect(() => {
+    if (!live || !matchMedia('(min-width: 1200px)').matches) return;
+    let k = 0, t = 0;
+    const next = () => { setHot({ ...list[k % list.length], tour: true }); k += 3; t = setTimeout(rest, 1700); };
+    const rest = () => { setHot(null); t = setTimeout(next, 900); };
+    t = setTimeout(next, 1200);
+    return () => { clearTimeout(t); setHot((h) => (h && h.tour ? null : h)); };
+  }, [live, list, setHot]);
+  return setOver;
+}
+
+/* Below 1200 px each product's builds are a rail you swipe. When a rail first comes into view it slides a chip's width
+   and back, once, so it reads as a rail and not as chips falling off the edge. (Rendered as an empty marker before
+   the rail; it drives the rail that follows it.) */
+function Peek({ i }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const ul = ref.current?.parentElement?.querySelector('ul');
+    if (!ul || calm || matchMedia('(min-width: 1200px)').matches) return;
+    let t = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting || ul.scrollWidth <= ul.clientWidth + 4) return;
+      io.disconnect();
+      t = setTimeout(() => {
+        ul.scrollTo({ left: 72, behavior: 'smooth' });
+        t = setTimeout(() => ul.scrollTo({ left: 0, behavior: 'smooth' }), 650);
+      }, 900 + i * 260);
+    }, { threshold: 1 });
+    io.observe(ul);
+    const stop = () => { clearTimeout(t); io.disconnect(); };
+    ul.addEventListener('pointerdown', stop, { once: true });
+    return () => { stop(); ul.removeEventListener('pointerdown', stop); };
+  }, [calm, i]);
+  return <i ref={ref} hidden />;
+}
+
 function Dial({ os }) {
   const [label, mp, mb] = MAIN[os];
   const [out, setOut] = useState(false);
   const [hot, setHot] = useState(null);
+  const box = useRef(null);
   useEffect(() => { const t = setTimeout(() => setOut(true), 160); return () => clearTimeout(t); }, []);
   let n = 0;
   const groups = PRODUCTS.map((p, pi) => {
@@ -115,8 +182,11 @@ function Dial({ os }) {
   });
   const main = PRODUCTS[mp].builds[mb];
   const shown = hot || { p: PRODUCTS[mp], b: main };
+  const [flat, setFlat] = useState([]);
+  useEffect(() => { setFlat(groups.flatMap((g, pi) => g.map(({ b, x, y }) => ({ x, y, b, p: PRODUCTS[pi] })))); }, [os]); // eslint-disable-line react-hooks/exhaustive-deps
+  const rest = useTour(box, out, flat, setHot);
   return (
-    <div className={'dl-dial' + (out ? ' out' : '')}>
+    <div ref={box} className={'dl-dial' + (out ? ' out' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') rest(true); }} onPointerLeave={() => rest(false)}>
       <svg className="dl-orbit" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <ellipse cx="50" cy="50" rx={RX} ry={RY} />
         <path d="M50 4v92M3 50h94" className="dl-axis" />
@@ -137,10 +207,11 @@ function Dial({ os }) {
       </div>
       {PRODUCTS.map((p, pi) => (
         <div key={p.k} className={'dl-grp q' + pi + ' k-' + p.k}>
+          <Peek i={pi} />
           <p className="dl-grp-k"><span className="dl-grp-i"><Glyph k={p.k} /></span><b>{p.name}</b> <span className="x-mono">{p.v}</span></p>
           <ul>
             {groups[pi].map(({ b, i, x, y }) => (
-              <li key={b[0]} className="dl-chip" style={{ left: x + '%', top: y + '%', '--dx': r2(50 - x) + 'cqw', '--dy': r2(50 - y) + 'cqh', '--i': i }}>
+              <li key={b[0]} className={'dl-chip' + (hot && hot.tour && hot.b === b ? ' hot' : '')} style={{ left: x + '%', top: y + '%', '--dx': r2(50 - x) + 'cqw', '--dy': r2(50 - y) + 'cqh', '--i': i }}>
                 <a href={GH + b[2]} aria-label={p.name + ', ' + b[0] + ', ' + p.v + ', ' + b[1]} onPointerEnter={() => setHot({ x, y, p, b })} onPointerLeave={() => setHot(null)} onFocus={() => setHot({ x, y, p, b })} onBlur={() => setHot(null)}>
                   <span className="dl-chip-i"><Glyph k={p.k} /></span><span className="dl-chip-t">{b[0]}</span>
                 </a>
@@ -204,8 +275,26 @@ function Art({ k }) {
   );
 }
 
+/* The build list arrives as its card comes into view: your system's rows first, then the rest. The server and JS-off
+   show the finished list; the start state is set after mount, only for a card still below the fold. */
+function useArrive() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || calm || el.getBoundingClientRect().top < innerHeight * 0.9) return;
+    el.dataset.in = 'pre';
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); el.dataset.in = 'go'; } }, { rootMargin: '0px 0px -20% 0px' });
+    io.observe(el);
+    return () => { io.disconnect(); delete el.dataset.in; };
+  }, [calm]);
+  return ref;
+}
+
 function Card({ p, os, br }) {
   const mine = p.k === 'ext' ? [br] : (MINE[os] || {})[p.k] || [];
+  const arrive = useArrive();
+  const order = [...mine, ...p.builds.map((_, j) => j).filter((j) => !mine.includes(j))];
   const head = (
     <>
       <span className="dl-vis" data-morph=""><Art k={p.k} /></span>
@@ -217,7 +306,7 @@ function Card({ p, os, br }) {
     </>
   );
   return (
-    <article className={'dl-card k-' + p.k}>
+    <article ref={arrive} className={'dl-card k-' + p.k}>
       {p.to ? <A to={p.to} className="dl-card-a" data-cta={'download-open-' + p.k}>{head}</A> : <div className="dl-card-a">{head}</div>}
       <p className="dl-card-d">{p.d}</p>
       {p.k === 'cli' && (
@@ -230,7 +319,7 @@ function Card({ p, os, br }) {
       <ul className="dl-rows">
         {p.builds.map(([n, s, path], j) => (
           <li key={n}>
-            <a href={GH + path} className={'dl-row' + (mine.includes(j) ? ' mine' : '')}>
+            <a href={GH + path} className={'dl-row' + (mine.includes(j) ? ' mine' : '')} style={{ '--r': order.indexOf(j) }}>
               <span className="dl-row-n">{n}</span>
               <span className="dl-row-f x-mono">{FILE(path)}</span>
               <span className="dl-row-s x-mono av-num">{s}</span>
@@ -308,7 +397,7 @@ function Kit({ os, br }) {
                 <a href={GH + path} className="dl-kit-a">
                   <span className="dl-kit-i x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
                   <span className="dl-kit-n"><b>{p.name}</b><span>{o} · {p.v}</span></span>
-                  <span className="dl-kit-f x-mono">{FILE(path)}</span>
+                  <span className="dl-kit-f x-mono"><span>{FILE(path)}</span></span>
                   <span className="dl-kit-s x-mono av-num">{size}</span>
                   <span className="dl-kit-d"><Down s={16} /></span>
                 </a>

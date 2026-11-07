@@ -1,6 +1,13 @@
 /* ---------- /download: a precise dial, cards that open, your kit (deck scale, greys only, calm) ---------- */
 .dl { --dl-in: cubic-bezier(.16, 1, .3, 1); --dl-move: cubic-bezier(.4, 0, .2, 1); --dl-out: cubic-bezier(0, 0, .2, 1); }
 
+/* line-mask headlines (Lines in DownloadPage.jsx) */
+.dl-ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.dl-ln > span { display: block; }
+[data-rise='pre'] .dl-ln > span { transform: translateY(108%); }
+[data-rise='go'] .dl-ln > span, .js [data-now] .dl-ln > span { animation: dl-rise .7s var(--dl-in) calc(var(--d, 0s) + var(--i) * 60ms) backwards; }
+@keyframes dl-rise { from { transform: translateY(108%); } }
+
 /* hero: the name left, the lede right (aligned to the bottom), then the dial */
 .dl-hero { padding-top: 28px; }
 .dl-top { align-items: end; }
@@ -74,9 +81,19 @@ a.dl-card-a:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
 .dl-all { margin: 10px 16px 0; font-size: 15px; }
 .dl-all a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 @container (max-width: 480px) { .dl-row-f { display: none; } }
+/* the list arrives: your system's rows first (their dot pops), then the rest */
+.dl-card[data-in='pre'] .dl-row { opacity: 0; transform: translateY(12px); }
+.dl-card[data-in='go'] .dl-row { animation: dl-row .55s var(--dl-in) calc(.12s + var(--r) * 70ms) backwards; }
+.dl-card[data-in='go'] .dl-row.mine .dl-row-n::after { animation: dl-dot .5s var(--dl-in) .3s backwards; }
+@keyframes dl-row { from { opacity: 0; transform: translateY(12px); } }
+@keyframes dl-dot { from { transform: scale(0); } 60% { transform: scale(1.6); } }
 
 /* the four product pictures, each drawn from Hanzo's own lines */
 .dl-m { position: relative; height: min(76%, 300px); aspect-ratio: 16 / 10; max-width: 88%; border-radius: 12px; transition: transform .3s var(--dl-in); }
+/* the two wide cards: the picture grows with its card, so it is not a small window in a big empty tile */
+.dl-card.k-desk .dl-m, .dl-card.k-ed .dl-m { height: min(80%, 400px); max-width: 90%; }
+.dl-card.k-desk .dl-mw-chat, .dl-card.k-desk .dl-mw-side, .dl-card.k-ed .dl-me-list span { font-size: 14px; }
+.dl-card.k-desk .dl-mw-bar { height: 36px; }
 .dl-m-win, .dl-m-ed { display: flex; flex-direction: column; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); }
 .dl-mw-bar { flex: none; display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; background: #f5f5f5; border-bottom: 1px solid rgba(0, 0, 0, .08); }
 .dl-mw-bar i { width: 8px; height: 8px; border-radius: 50%; background: #d4d4d4; }
@@ -143,6 +160,7 @@ a.dl-card-a:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
 .dl-kit-n b { font-size: 21px; font-weight: 497; letter-spacing: -.015em; }
 .dl-kit-n span { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgba(255, 255, 255, .78); }
 .dl-kit-f { font-size: 13px; color: rgba(255, 255, 255, .55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dl-kit-f > span { display: block; overflow: hidden; text-overflow: ellipsis; }
 .dl-kit-s { font-size: 15px; text-align: right; }
 .dl-kit-d { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); color: #fafafa; transition: transform .3s var(--dl-in); }
 .dl-kit-a:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; border-radius: 8px; }
@@ -157,7 +175,8 @@ a.dl-card-a:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
 .dl .x-arrow { min-height: 44px; }
 
 @media (hover: hover) {
-  .dl-chip a:hover, .dl-chip a:focus-visible { transform: translateY(-2px); box-shadow: 0 0 0 1.5px #0a0a0a; }
+  .dl-chip a:hover, .dl-chip a:focus-visible, .dl-chip.hot a { transform: translateY(-2px); box-shadow: 0 0 0 1.5px #0a0a0a; }
+  .dl-chip.hot .dl-chip-i { color: #0a0a0a; }
   .dl-chip a:hover .dl-chip-i { color: #0a0a0a; }
   .dl-main-l a:hover, .dl-all a:hover { color: #0a0a0a; text-decoration-thickness: 2px; }
   a.dl-card-a:hover .dl-m { transform: translateY(-6px); }
@@ -201,6 +220,7 @@ a.dl-card-a:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
   .dl-grp-k .x-mono { font-size: 14px; }
   .dl-grp ul { flex-wrap: nowrap; margin: 0 -16px; padding: 2px 16px 10px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; }
   .dl-grp ul::-webkit-scrollbar { display: none; }
+  .dl-grp ul { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); }
   .dl-chip { scroll-snap-align: start; }
   .dl-bento { grid-template-columns: minmax(0, 1fr); }
   .dl-card.k-desk, .dl-card.k-ed, .dl-card.k-cli, .dl-card.k-ext { grid-column: 1 / -1; }
