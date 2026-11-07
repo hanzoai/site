@@ -330,6 +330,8 @@ function Close() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
   const calm = useReducedMotion();
+  const [up, setUp] = useState(false); // reduced motion is known only after mount: the server and first client frame match
+  useEffect(() => setUp(true), []);
   const [label, cards] = SIZES[useLastSize()];
   return (
     <section className="mc-close">
@@ -347,7 +349,7 @@ function Close() {
           </div>
         </div>
         <div className="mc-close-art" ref={ref}>
-          <Rack on={seen || calm ? cards : 0} className="rest" />
+          <Rack on={seen || (up && calm) ? cards : 0} className="rest" />
           <pre className="mc-body mc-close-body" aria-hidden="true"><code>{'{ "gpu": '}<b><Roll v={'"' + label + '"'} k="c" /></b>{', "dryRun": true }'}</code></pre>
         </div>
       </div>
