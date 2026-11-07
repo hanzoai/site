@@ -1,4 +1,4 @@
-// Signature: the cover story turns itself, six latest headlines wiping up in turn; the archive set as a book's contents
+// Signature: a magazine cover that turns itself: six latest headlines wipe through in turn while a red curtain crosses the art plate and its contour field redraws from the new title
 // Beyond: the publishing strip, a bar per month counted from Hanzo's own post dates, that narrows the contents to a month
 import BlogIndex from '../../components/pages/BlogIndex';
 import JsonLd from '../../components/JsonLd';
