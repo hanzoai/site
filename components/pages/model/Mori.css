@@ -34,3 +34,18 @@
   .mr-headwrap { position: static; padding-top: 36px; }
 }
 @media (prefers-reduced-motion: reduce) { .mr-cv { cursor: default; } }
+
+/* Mori's own ask is the one solid fill while it is on screen on desktop (the header steps back to an outline then,
+   Ask.jsx): white on the film, ink beside the settled cube; hover deepens the fill, press sinks 1px. Phones keep the
+   header's solid "Try Hanzo" (Ask.jsx never outlines it there), so the page's asks stay outlined below 701px. */
+@media (min-width: 701px) {
+  .lv-name-ask [data-cta='mori.first'].x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+  [data-cta='mori.hero'].x-btn { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+}
+@media (min-width: 701px) and (hover: hover) {
+  .lv-name-ask [data-cta='mori.first'].x-btn:hover { background: #e4e4e7; border-color: #e4e4e7; }
+  [data-cta='mori.hero'].x-btn:hover { background: #262626; border-color: #262626; }
+}
+[data-cta='mori.first'].x-btn:active, [data-cta='mori.hero'].x-btn:active { transform: translateY(1px) scale(.98); }
+/* type floor on this page: the mono labels rest at 13px, not 12 (the model-card pills keep SPEC.md's 11px) */
+main:has([data-hero='mori']) :is(.lv-crumb, .lv-side, .cr-fit-n, .cr-fit-k, .lv-ch-rail button) { font-size: 13px; }

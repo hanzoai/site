@@ -4,7 +4,8 @@
    Signature: a point cloud that turns. Points scattered through space settle onto a surface (SDF to mesh), then the
    shape keeps turning 360°; drag it to orbit (it carries your throw), and switch the view between wireframe, shaded
    and normals. (A drawn illustration of a mesh, not Mori's output.)
-   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
+   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour.
+   V2: 8/10 Request access is the one solid on the desktop first screen (white on the film, ink by the cube); 13px mono floor; film keeps playing in its cube on phones. */
 import { useMemo, useRef, useState } from 'react';
 import { Specs } from './Studio';
 import { usePaused } from '../../v2/ModelFilm';
