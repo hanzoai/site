@@ -19,6 +19,18 @@
 @keyframes xpr-cut { from { transform: translateY(105%); } }
 .xpr-h1 { margin: 0; font-size: var(--s-h1); font-weight: 497; line-height: 1.05; letter-spacing: -.035em; color: var(--ink); }
 .xpr-lede { margin: 0 0 .2em; max-width: 24ch; font-size: var(--s-lede); line-height: 1.35; letter-spacing: -.012em; color: var(--soft); text-wrap: balance; }
+.xpr-lede { margin-right: auto; }
+/* the models the bill covers: Hanzo's own art, dealt on arrival, lit once in turn, then resting on Enso */
+.xpr-art { display: flex; align-items: flex-end; gap: 12px; height: 132px; }
+.xpr-art-c { position: relative; width: 92px; height: 116px; border-radius: 20px; overflow: hidden; background: #000; animation: xpr-deal .5s var(--ee) both; animation-delay: calc(150ms + var(--i) * 60ms); transition: transform .4s var(--ee); }
+.xpr-art-c.big { width: 168px; }
+.xpr-art-c img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.xpr-art-c b { position: absolute; left: 12px; bottom: 10px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #fafafa; opacity: .55; transition: opacity .3s var(--eo); }
+.xpr-art-c[data-on='true'] { transform: translate3d(0, -16px, 0); }
+.xpr-art-c[data-on='true'] b { opacity: 1; }
+@media (hover: hover) and (pointer: fine) { .xpr-art-c:hover { transform: translate3d(0, -16px, 0) rotate(-2.5deg); } .xpr-art-c:hover b { opacity: 1; } }
+@keyframes xpr-deal { from { opacity: 0; translate: 0 24px; } }
+@media (prefers-reduced-motion: reduce) { .xpr-art-c { animation: none; transition: none; } }
 
 /* the room: tabs that stay with you while you read the plans */
 .xpr-tabs { position: sticky; top: var(--x-top, 60px); z-index: 20; padding: 12px 0; background: #fff; box-shadow: 0 1px 0 var(--line); }
@@ -155,9 +167,21 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
 .xpr-wins p { margin: 10px 0 0; padding: 0 16px 28px 0; font-size: 16px; line-height: 1.5; color: var(--soft); }
 
 /* the price tables (kit DataTable): one per group, each with its own header */
-.xpr-groups { display: grid; gap: clamp(56px, 6vw, 88px); }
+.xpr-groups { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.xpr-group { border-bottom: 1px solid var(--line); }
+.xpr-group[open] { padding-bottom: 44px; }
+.xpr-group-s { display: flex; align-items: center; gap: 12px; min-height: 64px; list-style: none; cursor: pointer; }
+.xpr-group-s::-webkit-details-marker { display: none; }
+.xpr-group-s h4 { margin: 0; font-size: var(--s-t); font-weight: 497; letter-spacing: -.02em; color: var(--ink); transition: transform .15s var(--eo); }
+.xpr-group-n { font: 500 13px/1 var(--mono); color: var(--soft); font-variant-numeric: tabular-nums; }
+.xpr-group-s i { position: relative; flex: none; width: 32px; height: 32px; margin-left: auto; border-radius: 50%; border: 1px solid var(--line); transition: transform .3s var(--ee), background-color .15s var(--eo); }
+.xpr-group-s i::before, .xpr-group-s i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 11px; height: 1.5px; margin: -.75px 0 0 -5.5px; background: var(--ink); }
+.xpr-group-s i::after { transform: rotate(90deg); }
+.xpr-group[open] > .xpr-group-s i { transform: rotate(45deg); background: var(--card); }
+.xpr-group-s:active h4 { transform: scale(.98); }
+.xpr-group-s:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 8px; }
+@media (hover: hover) { .xpr-group-s:hover i { background: var(--card); } .xpr-group-s:hover h4 { transform: translateX(4px); } }
 .xpr-group-h { margin-bottom: 18px; }
-.xpr-group-h h4 { margin: 0; font-size: var(--s-t); font-weight: 497; letter-spacing: -.02em; color: var(--ink); }
 .xpr-group-h p { margin: 8px 0 0; max-width: 70ch; font-size: 15.5px; line-height: 1.5; color: var(--soft); }
 .xpr-group-h small { display: block; margin: 10px 0; font: 500 13px/1.3 var(--mono); color: var(--soft); }
 .xpr-group-h .x-arrow { margin-top: 10px; }
@@ -195,7 +219,10 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
 .xpr-faq-more > summary { display: flex; align-items: center; min-height: 56px; border-bottom: 1px solid var(--line); list-style: none; cursor: pointer; font: 606 13px/1 var(--mono); letter-spacing: .08em; color: var(--ink); }
 .xpr-faq-more > summary::-webkit-details-marker { display: none; }
 .xpr-faq-more[open] > summary { display: none; }
-@media (hover: hover) { .xpr-faq-more > summary:hover { background: #fafafa; } }
+.xpr-faq-more > summary { gap: 12px; padding: 0 12px; margin: 0 -12px; border-radius: 8px; transition: background-color .15s var(--eo); }
+.xpr-faq-n { color: var(--soft); transition: transform .15s var(--eo); }
+.xpr-faq-more > summary:active { transform: scale(.98); }
+@media (hover: hover) { .xpr-faq-more > summary:hover { background: var(--card); } .xpr-faq-more > summary:hover .xpr-faq-n { transform: translateX(4px); } }
 .xpr-band-note { margin: 22px auto 0 !important; font-size: 16px !important; }
 .xpr-band-note a { color: #f5f5f7; text-underline-offset: 4px; }
 
@@ -209,6 +236,12 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
 @media (max-width: 899px) {
   .xpr { --s-h1: 40px; --s-h: 21px; --s-t: 17px; --s-fig: 44px; --s-lede: 17px; }
   .xpr-hero { padding: 40px 0 20px; }
+  .xpr-art { width: 100%; height: 76px; gap: 8px; }
+  .xpr-art-c { height: 60px; flex: 1 1 0; width: auto; border-radius: 16px; }
+  .xpr-art-c[data-on='true'] { transform: translate3d(0, -10px, 0); }
+  .xpr-art-c b { left: 10px; bottom: 8px; }
+  .xpr-art-c.big { flex: 1.8 1 0; width: auto; }
+  .xpr-trust .x-arrow, .xpr-band-note a { display: inline-flex; align-items: center; min-height: 44px; }
   .xpr-tabs { padding: 10px 0; }
   .xpr-tabs .x-tablist { display: flex; width: 100%; }
   .xpr-tabs .x-tab { flex: 1; }

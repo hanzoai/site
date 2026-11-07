@@ -22,7 +22,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
-import { A, More, Cta, Tabs, TabPanel, Faq, DataTable, Band } from '../kit';
+import { A, More, Cta, Tabs, TabPanel, Faq, DataTable, Band, Img } from '../kit';
 import Odometer from '../v2/Odometer';
 import Drawer from '../v2/x-cannon/Drawer';
 import './Pricing.css';
@@ -391,10 +391,11 @@ const cellOf = (r) => {
 function Models() {
   return (
     <div className="xpr-groups">
-      {GROUPS.map((g) => (
-        <div key={g.h} className="xpr-group">
+      {GROUPS.map((g, gi) => (
+        // one family open at a time on arrival; the rest fold under their name (every row stays in the HTML)
+        <details key={g.h} className="xpr-group" open={gi === 0}>
+          <summary className="xpr-group-s"><h4>{g.h}</h4><span className="xpr-group-n" aria-hidden="true">{g.rows.length}</span><i aria-hidden="true" /></summary>
           <div className="xpr-group-h">
-            <h4>{g.h}</h4>
             <p>{g.d}</p>
             {g.legend && <span className="xpr-chips">{g.legend.map((t) => <span key={t}>{t}</span>)}</span>}
             {g.extra && <small>{g.extra}</small>}
@@ -408,7 +409,7 @@ function Models() {
           />
           {g.after}
           {g.cta && <A to={g.cta[1]} className="xpr-use">{g.cta[0]}</A>}
-        </div>
+        </details>
       ))}
     </div>
   );
@@ -538,6 +539,30 @@ const QA = [
   ['Do you offer pricing for education or nonprofits?', 'Yes, for both. Contact sales with your institution or nonprofit credentials and we will sort out the right rate.'],
 ];
 
+/* ---------- the hero object: the models the bill covers, as Hanzo's own art ---------- */
+// "every model on one bill": Enso, Zen and Kai (the three families the plans name) deal onto the page, then each is lit
+// once in turn and the strip rests on Enso. Pointing lifts a card and names it. Hanzo's media is the only colour.
+const ART = [['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai']];
+function Art() {
+  const calm = useReducedMotion();
+  const [on, setOn] = useState(-1);
+  useEffect(() => {
+    if (calm) { setOn(0); return; }
+    const ts = [700, 1900, 3100, 4300].map((ms, k) => setTimeout(() => setOn(k % 3), ms));
+    return () => ts.forEach(clearTimeout);
+  }, [calm]);
+  return (
+    <div className="xpr-art" aria-hidden="true">
+      {ART.map(([s, n], i) => (
+        <span key={s} className={'xpr-art-c' + (i === 0 ? ' big' : '')} style={{ '--i': i }} data-on={on === i}>
+          <Img src={`/models/${s}.webp`} w={i ? 192 : 320} h={240} priority={i === 0} />
+          <b>{n}</b>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 /* ---------- the room ---------- */
 const TABS = ['Personal', 'Team', 'API'];
 
@@ -546,9 +571,14 @@ export default function Pricing() {
   const [src, setSrc] = useState(null);
   const [lit, setLit] = useState(-1);
   useEffect(() => {
-    const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
-    const t = TABS.findIndex((x) => x.toLowerCase() === h);
-    if (t >= 0) setTab(t);
+    const read = () => {
+      const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+      const t = TABS.findIndex((x) => x.toLowerCase() === h);
+      if (t >= 0) setTab(t);
+    };
+    read();
+    addEventListener('hashchange', read);
+    return () => removeEventListener('hashchange', read);
   }, []);
   const pick = (i) => { setTab(i); try { history.replaceState(null, '', '#' + TABS[i].toLowerCase()); } catch { /* the tab still changes */ } };
   const open = useCallback((e, col) => { setLit(col); setSrc(e.currentTarget.closest('article') || e.currentTarget); }, []);
@@ -559,6 +589,7 @@ export default function Pricing() {
         <div className="xpr-w xpr-hero-g">
           <h1 id="xpr-h1" className="xpr-h1"><span className="xpr-cut"><span>Pricing</span></span></h1>
           <p className="xpr-lede">Start free, every model on one bill.</p>
+          <Art />
         </div>
       </section>
       <div className="xpr-room">
@@ -578,7 +609,7 @@ export default function Pricing() {
           <div>
             <Faq items={QA.slice(0, 3)} first={0} multi />
             <details className="xpr-faq-more">
-              <summary><span aria-hidden="true">+ {QA.length - 3}</span><span className="x-sr">Read more</span></summary>
+              <summary><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {QA.length - 3}</span></summary>
               <Faq items={QA.slice(3)} first={-1} multi />
             </details>
           </div>
