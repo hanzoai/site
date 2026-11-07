@@ -74,7 +74,7 @@ Done here: `taste.py` passes (greys only; the red is gone); nothing above a head
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the hand-made submit button (now kit `Cta` busy), the label above the h1, the looping retyped paper, box-plus-shadow on the field, paper and envelope, 88px statements and 48px step titles, the invented step words. listed below
 
-Done here: Kit `Cta` states (hover fill, press .97, focus ring, busy); the field pill answers hover and focus; an invalid email marks the pill dashed; the Hanzo mark link has hover, press and focus.
+Done here: Kit `Cta` states (hover fill, press .97, focus ring, busy); the dark room's quiet Subscribe fills white 10% and lifts its arrow on hover; Privacy thickens its underline on hover; the four opt-in steps are buttons (hover underline, press .97, white focus ring, `aria-current="step"`); the field pill answers hover and focus; an invalid email marks the pill dashed; the Hanzo mark link has hover, press and focus.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states (hover fill, press .97, focus ring, busy); the field
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: the paper sets its lines once and folds into an envelope addressed to you on success. Scroll: the three statements grow and swell in weight only while each crosses the middle (the page's one size moment). Arrival: line-mask h1; the opt-in words arrive 60ms apart. Ease-emphasis, no springs or loops; reduced motion shows final states.
+Done here: Signature: the paper sets its lines once and folds into an envelope addressed to you on success. Scroll: the three statements grow and swell in weight only while each crosses the middle, and their words ink in 55ms apart once, then a caret rests blinking at the end (time, idle). State: the opt-in is one stage that walks its four steps once in view (1.4 s each, line-mask swap, a gliding marker on the rail), then rests on the last; pressing a step holds it. Arrival: line-mask h1. Ease-emphasis, no springs; reduced motion shows the last step and inked words with a still caret.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the paper and envelope are DOM with the page's own Sigil masthead.
@@ -99,7 +99,7 @@ Done here: No raster media; the paper's masthead is the page's own Sigil field.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375×812: the field stacks with a full-width Subscribe above the fold; the paper below; statements 32px without motion; steps two by two; no horizontal scroll at 320; targets 44px+.
+Done here: 375×812: the field stacks with a full-width Subscribe above the fold; the paper below; statements 32px without scale; the opt-in stage shows one step at 32px over a vertical rail of four 56px rows with the marker gliding down; no horizontal scroll at 320 (measured 0); targets 44px+.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -108,7 +108,7 @@ Done here: 375×812: the field stacks with a full-width Subscribe above the fold
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Greys at 4.5:1+; one h1, h2 in the dark room; the field labelled; the error is an alert tied to the field; the result takes focus.
+Done here: Greys at 4.5:1+ (step words white 55% on #0a0a0a is 7:1); one h1, h2 in the dark room; the field labelled; the error is an alert tied to the field; the result takes focus. The opt-in walk runs once and stops by itself (no pause needed); pressing any step holds it. The big stage word is `aria-hidden` (the rail buttons carry the words).
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -154,6 +154,6 @@ Done here: Success shows only when Hanzo answers pending (the confirm link is ou
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/newsletter.md` verdict 8 or more
+- [x] Review read: `docs/review/newsletter.md` and every complaint answered
 
-Done here: `data-cta` ids `newsletter.subscribe`, `newsletter.close` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/newsletter.md` (6/10 at `ca08189`): label above the h1, red, the looping paper, Subscribe hover, invented words and the phone's second solid all fixed.
+Done here: `data-cta` ids `newsletter.subscribe`, `newsletter.close` (kit Cta fires `cta_click`); V2 line in the page file and route header; review `docs/review/newsletter.md` (5/10 at `648b798`) read and answered: labels above headings gone, the three equal step boxes replaced by one stage with one step big at a time, Subscribe and Privacy hover, card present. A fresh critic re-scores it.

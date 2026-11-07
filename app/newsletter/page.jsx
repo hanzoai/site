@@ -4,7 +4,7 @@
 // Metric: lead_submit
 // Signature: the issue writes itself on paper, then folds into an envelope addressed to you.
 // Beyond: the double opt-in drawn before you commit: subscribe, confirm the link, then the first issue; nothing in between.
-// V2: 8/10 MASTER scale: 52px name, no label above it; the paper sets its lines once and rests; the three statements grow 48→64px only while each crosses the middle; the dark room's opt-in in Hanzo's own words with a quiet Subscribe; kit Cta with the busy ring
+// V2: 8/10 the opt-in is one stage walking its four steps once (one big at a time, gliding marker); statements ink in word by word with a resting caret; Subscribe and Privacy answer hover
 import Newsletter from '../../components/pages/Newsletter';
 import JsonLd from '../../components/JsonLd';
 
