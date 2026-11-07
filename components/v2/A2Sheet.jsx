@@ -3,7 +3,8 @@
    Usage: <A2Sheet label="See every capability" title="Capabilities">…anything…</A2Sheet>
    A button opens a panel from the right (a sheet rising from the bottom on phones) over a soft scrim. The contents are
    always in the HTML (closed = hidden and inert), so nothing is lost. Escape, the scrim and the close button shut it,
-   focus moves in on open and back to the button on close, and the smooth scroller pauses while it is open. */
+   focus moves in on open and back to the button on close, and the smooth scroller pauses while it is open. With
+   JavaScript off its contents sit in the page where the button was. */
 import { useEffect, useId, useRef, useState } from 'react';
 
 export default function A2Sheet({ label, title, children, className = '', btnClass = '' }) {
@@ -22,6 +23,7 @@ export default function A2Sheet({ label, title, children, className = '', btnCla
   }, [open]);
   return (
     <>
+      <noscript><style>{'.a2-sheet-btn,.a2-sheet-scrim,.a2-sheet-x{display:none!important}.a2-sheet{position:static!important;visibility:visible!important}.a2-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important}.a2-sheet-top{padding:24px 0 8px!important}.a2-sheet-body{padding:0!important;overflow:visible!important}'}</style></noscript>
       <button ref={btn} type="button" className={'a2-sheet-btn ' + btnClass} aria-haspopup="dialog" aria-expanded={open} aria-controls={id} onClick={() => setOpen(true)}>
         {label}<i aria-hidden="true">+</i>
       </button>

@@ -2,6 +2,7 @@
 /* Studio.
    V2: 8/10 the cutting room as the one dark room (a self-playing, scrubbable timeline), then a scrubbed camera move for the three pillars, the capabilities as a render graph, and the six creative models on a film strip whose frames open into their pages.
    Persona: a director or a VFX team. Goal: launch Studio. CTA: Launch studio.hanzo.ai (studio.hero).
+   Metric: cta_click on studio.hero and studio.close (data-cta; the event layer is the conductor's).
    Signature: the camera moves with your scroll. After the cutting room, a 2.39:1 frame pins on a white stage; each
    stretch of scroll performs one of Hanzo's camera moves on a still (Dolly In, Crane Rise, 360° Orbit) while the
    pillar it belongs to comes in as a subtitle. The hero is the product itself: a monitor and a multi-track timeline
@@ -285,6 +286,7 @@ function Reel() {
   });
   return (
     <section className="xst-reel" ref={ref} aria-label="Three pillars">
+      <noscript><style>{'.xst-reel{height:auto!important;padding:96px 0}.xst-reel-stick{position:static!important;height:auto!important;display:block!important}.xst-subs{gap:36px}.xst-subs li{grid-area:auto!important;opacity:1!important;transform:none!important}'}</style></noscript>
       <div className="xst-reel-stick">
         <div className="a2-wrap">
           <div className="xst-frame">

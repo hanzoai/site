@@ -1,32 +1,43 @@
 'use client';
 /* A role as a chapter book (/careers/<role>, eight of them, one template), in the editorial manner of osply.co and
-   grubogrubo.com: the role's name set at display size across eight columns, its one line answering it low on the right,
-   and under them a contents plate (the role's own contour, seeded from its slug and counts, in its own accent) that
-   starts close and settles as you scroll. Then the role reads one chapter a screen, Why Join Hanzo is set as an
-   editorial list, and the application closes the page in its one dark room. All wording is Hanzo's.
+   grubogrubo.com. The hero is the same white sheet you clicked on /careers (synchronized.studio): same title type,
+   same giant numeral from the deck, the same tags and line, so the click reads as one continuous open (the sheet is the
+   Morph target). Inside it the role's own contour (Sigil seeded with its slug) drifts behind the numeral, and its
+   contents open any chapter. Then the role reads one chapter a screen, Why Join Hanzo is set as an editorial list, and
+   the application closes the page in its one dark room. Ink, greys and white only. All wording is Hanzo's.
+   Persona: an engineer, designer or researcher deciding whether to apply
+   Goal: apply for this role
+   CTA: "Apply for this position" (Hanzo's words), riding the site ask bar after the hero
+   Metric: one contact click (the application email)
    Signature: the chapter book. About the role, what you will do, what we look for and what is nice to have turn like
    pages: the chapter's words pin on the left while its page wipes up into place on the right, a row of marks shows
-   where you are, and the contents plate opens any chapter. On a phone the chapters read straight down.
+   where you are, and the contents on the sheet open any chapter. On a phone the chapters read straight down.
    Beyond: the fit meter, then a three-step application. Mark the requirements you already meet (each tick draws
    itself); every chapter keeps its count, the total waits beside the form, and the form asks for a few fields at a
-   time, checking each step before the next. It still writes the email Hanzo's form writes; nothing is sent from here.
-   V2: 8/10 rebuilt as an editorial chapter book: display-size title, contents plate as the Stage object, sticky
-   chapters with page wipes, editorial Why Join list, dark apply room with a three-step form, sibling roles that open. */
-import { useRef, useState } from 'react';
+   time, checking each step before the next. It writes the email Hanzo's form writes; nothing is sent from here.
+   Motion (not only scroll): arrival (the title cut in), idle (the contour drifts in the sheet), state (ticks draw,
+   meters fill, the form slides step to step, share answers with a tick), pointer (magnetic ask, sibling rail drags
+   with inertia), scroll (the chapter wipes).
+   Ledger: deleted the orange accent, the kicker over the h1 and the counters over every headline, the separate
+   contents plate (folded into the hero sheet), and the invented "Back" / "Next" / "· Copied" / "Your email is ready"
+   strings (icons and register names now).
+   V2: 8/10 hero is the deck's own white sheet (numeral, tags, line, contents) landing where you clicked it; ink only;
+   no eyebrows; sticky apply; chapter book; three-step apply in the dark room; sibling roles drag and open. */
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { EASE } from '../ui';
+import { EASE, Magnetic } from '../ui';
 import { A } from '../kit';
 import Sigil from '../Sigil';
 import FamLines from '../v2/FamLines';
-import FamStage from '../v2/FamStage';
 import FamChapters from '../v2/FamChapters';
 import FamNext from '../v2/FamNext';
-import { accentAt } from '../v2/famAccent';
+import { ui } from '../v2/famUi';
 import { useArrival } from './doorway';
 import '../v2/fam.css';
 import './CareerRole.css';
 
 const nn = (i) => String(i).padStart(2, '0');
+const Arrow = ({ back }) => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={back ? { transform: 'scaleX(-1)' } : undefined}><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* a tick that draws itself when you mark a line */
 function Box({ on, soft }) {
@@ -45,6 +56,8 @@ function Steps({ f, role }) {
   const file = useRef(null);
   const [at, setAt] = useState(0);
   const [msg, setMsg] = useState('');
+  const [live, setLive] = useState(false);
+  useEffect(() => setLive(true), []);
   const n = f.fields.length;
   const cut = f.file ? f.file.at : Math.max(2, n - 2);
   const groups = [[0, Math.min(2, cut)], [Math.min(2, cut), cut], [cut, n]];
@@ -66,7 +79,7 @@ function Steps({ f, role }) {
     if (nm) lines.push(`${f.file.label}: ${nm}`);
     const subject = role.email.href.split('?')[1] || '';
     location.href = `mailto:${f.note.mail}?${subject}&body=${encodeURIComponent(lines.join('\n'))}`;
-    setMsg(nm ? 'Your email is ready. Attach ' + nm + ' to it.' : 'Your email is ready to send.');
+    setMsg(nm || ' ');
   };
   const field = ([x, i]) => (
     <label key={i} className={'xcj-fld' + (x.type === 'textarea' ? ' wide' : '')}>
@@ -77,14 +90,14 @@ function Steps({ f, role }) {
     </label>
   );
   return (
-    <form ref={form} className="xcj-form" onSubmit={submit} noValidate>
+    <form ref={form} className="xcj-form" onSubmit={submit} noValidate data-live={live ? '' : undefined}>
       <div className="xcj-prog" aria-hidden="true">
         <span className="x-mono">{nn(at + 1)} / {nn(steps.length)}</span>
         <span className="xcj-prog-b">{steps.map((_, k) => <i key={k} className={k <= at ? 'on' : ''} />)}</span>
       </div>
       <div className="xcj-steps">
         {steps.map((s, k) => (
-          <fieldset key={k} data-step={k} className="xcj-step" data-on={k === at ? '' : undefined} data-past={k < at ? '' : undefined} inert={k !== at} aria-hidden={k !== at}>
+          <fieldset key={k} data-step={k} className="xcj-step" data-on={k === at ? '' : undefined} data-past={k < at ? '' : undefined} inert={live && k !== at} aria-hidden={live && k !== at ? true : undefined}>
             <legend className="x-sr">{nn(k + 1)} / {nn(steps.length)}</legend>
             {s.map(field)}
             {k === 1 && f.file && (
@@ -99,18 +112,17 @@ function Steps({ f, role }) {
         ))}
       </div>
       <div className="xcj-acts">
-        {at > 0 && <button type="button" className="xcj-btn ghost" onClick={() => go(at - 1)}>Back</button>}
-        {at < last && <button type="button" className="xcj-btn acc" onClick={() => { if (check(at)) go(at + 1); }}>Next</button>}
-        <button type="submit" className="xcj-btn acc" hidden={at < last}>{f.submit}</button>
+        {at > 0 && <button type="button" className="xcj-btn ghost round" aria-label={ui('previous')} onClick={() => go(at - 1)}><Arrow back /></button>}
+        {at < last && <button type="button" className="xcj-btn solid round" aria-label={ui('next')} onClick={() => { if (check(at)) go(at + 1); }}><Arrow /></button>}
+        <button type="submit" className="xcj-btn solid" hidden={live && at < last}>{f.submit}</button>
       </div>
-      <p className="xcj-msg" role="status">{msg}</p>
+      <p className="xcj-msg" role="status">{msg && <><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg><span className="x-sr">{ui('email_ready')}</span><span aria-hidden="true">{f.note.mail}{msg.trim() ? ' · ' + msg : ''}</span></>}</p>
     </form>
   );
 }
 
-export default function CareerRole({ role, peers = [] }) {
+export default function CareerRole({ role, no, peers = [] }) {
   useArrival();
-  const acc = accentAt(Math.max(0, role.at || 0));
   const chapters = role.blocks.filter((b) => !b.cards.length);
   const why = role.blocks.find((b) => b.cards.length);
   const total = chapters.reduce((k, b) => k + b.items.length, 0);
@@ -144,7 +156,6 @@ export default function CareerRole({ role, peers = [] }) {
       name: b.title,
       text: (
         <div className="xcj-ch-t" id={'xcj-ch-' + ci}>
-          <p className="v2f-kick acc">{nn(ci + 1)} <span className="xcj-of">/ {nn(toc.length)}</span></p>
           <h2 className="v2f-head xcj-ch-h">{b.title}</h2>
           {b.paras[0] && <p className="v2f-lede xcj-ch-l">{b.paras[0]}</p>}
           {isList && (
@@ -182,45 +193,53 @@ export default function CareerRole({ role, peers = [] }) {
       ),
     };
   });
-  const sibs = peers.map((p) => ({ href: '/careers/' + p.slug, kicker: p.chips[0], title: p.title, meta: p.chips.slice(1).join(' · '), seed: '/careers/' + p.slug, acc: accentAt(p.at) }));
+  const sibs = peers.map((p) => ({ href: '/careers/' + p.slug, title: p.title, preview: p.lede, meta: p.chips.join(' · '), seed: '/careers/' + p.slug }));
   return (
-    <main className="v2f xcj" style={{ '--acc': acc }}>
-      <section className="xcj-hero" aria-labelledby="xcj-h1">
+    <main className="v2f xcj">
+      <section className="xcj-hero" aria-labelledby="xcj-h1" data-ask-name={role.title}>
         <div className="v2f-wrap">
           <div className="xcj-top">
             <A to="/careers" className="x-arrow xcj-back">
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
               <span>{role.back}</span>
             </A>
-            <button type="button" className="xcj-share" onClick={share}>{role.share}<em role="status">{copied ? ' · Copied' : ''}</em></button>
+            <button type="button" className="xcj-share" data-on={copied ? '' : undefined} onClick={share}>
+              <span className="xcj-share-i" aria-hidden="true">
+                {copied
+                  ? <svg viewBox="0 0 16 16" width="15" height="15"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  : <svg viewBox="0 0 16 16" width="15" height="15"><path d="M6.8 9.2a2.6 2.6 0 0 0 3.7 0l2-2a2.6 2.6 0 0 0-3.7-3.7l-.6.6M9.2 6.8a2.6 2.6 0 0 0-3.7 0l-2 2a2.6 2.6 0 0 0 3.7 3.7l.6-.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
+              </span>
+              {role.share}
+              <span className="x-sr" role="status">{copied ? ui('copied') : ''}</span>
+            </button>
           </div>
-          <ul className="xcj-chips v2f-kick">{role.chips.map((c) => <li key={c}>{c}</li>)}</ul>
-          <div className="v2f-grid xcj-hero-g">
-            <FamLines as="h1" id="xcj-h1" text={role.title} className="v2f-display xcj-h1" data-morph-target />
-            <div className="xcj-hero-r">
+          {/* the deck's own sheet, opened: the Morph target for the sheet you clicked on /careers */}
+          <article className="xcj-sheet" data-morph-target>
+            <Sigil seed={'/careers/' + role.slug} data={[total, role.blocks.length, role.form.fields.length]} className="xcj-sheet-s" />
+            <div className="xcj-sheet-l">
+              <FamLines as="h1" id="xcj-h1" text={role.title} className="xcj-h1" />
+              <ul className="xcj-tags">{role.chips.map((c) => <li key={c}>{c}</li>)}</ul>
               <p className="v2f-lede xcj-lede">{role.lede}</p>
               <div className="xcj-hero-a">
-                <a className="v2f-btn acc" href="#apply" data-thumb={role.apply}>{role.apply}</a>
+                <Magnetic strength={0.22}><a className="v2f-btn solid" href="#apply" data-thumb={role.apply} data-cta="careers.hero">{role.apply}</a></Magnetic>
                 <a className="v2f-btn" href={role.email.href}>{role.email.text}</a>
               </div>
             </div>
-          </div>
+            <div className="xcj-sheet-r">
+              {no && <span className="xcj-no v2f-num" aria-hidden="true">{no}</span>}
+              <ol className="xcj-toc">
+                {toc.map((t, i) => (
+                  <li key={t}>
+                    <a href={i < chapters.length ? '#xcj-ch-' + i : i === toc.length - 1 ? '#apply' : '#xcj-why'} onClick={tocAt(i)}>
+                      <span className="x-mono">{nn(i + 1)}</span><b>{t}</b>
+                      {i < chapters.length && chapters[i].items.length > 0 && <em className="x-mono" aria-hidden="true">{chapters[i].items.length}</em>}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </article>
         </div>
-        <FamStage className="v2f-wrap xcj-stage" from={1.08}>
-          <div className="xcj-plate">
-            <Sigil seed={'/careers/' + role.slug} data={[total, role.blocks.length, role.form.fields.length]} className="xcj-plate-s" />
-            <ol className="xcj-toc">
-              {toc.map((t, i) => (
-                <li key={t}>
-                  <a href={i < chapters.length ? '#xcj-ch-' + i : i === toc.length - 1 ? '#apply' : '#xcj-why'} onClick={tocAt(i)}>
-                    <span className="x-mono">{nn(i + 1)}</span><b>{t}</b>
-                    {i < chapters.length && chapters[i].items.length > 0 && <em className="x-mono" aria-hidden="true">{chapters[i].items.length}</em>}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </FamStage>
       </section>
 
       <FamChapters id="xcj-book" label={role.title} items={items} className="xcj-book" />
@@ -229,7 +248,6 @@ export default function CareerRole({ role, peers = [] }) {
         <section className="xcj-why v2f-sec" id="xcj-why" aria-labelledby="xcj-why-h">
           <div className="v2f-wrap v2f-grid">
             <div className="xcj-why-l">
-              <p className="v2f-kick acc">{nn(chapters.length + 1)} <span className="xcj-of">/ {nn(toc.length)}</span></p>
               <FamLines as="h2" play="view" id="xcj-why-h" text={why.title} className="v2f-display small" />
             </div>
             <ol className="xcj-why-r">
@@ -248,7 +266,6 @@ export default function CareerRole({ role, peers = [] }) {
       <section className="xcj-apply" id="apply" data-room="dark" aria-labelledby="xcj-apply-h">
         <div className="v2f-wrap v2f-grid">
           <div className="xcj-apply-l">
-            <p className="v2f-kick">{nn(toc.length)} <span className="xcj-of">/ {nn(toc.length)}</span></p>
             <FamLines as="h2" play="view" id="xcj-apply-h" text={role.form.title} className="v2f-display small" />
             <p className="xcj-apply-i">{role.form.intro}</p>
             {total > 0 && (

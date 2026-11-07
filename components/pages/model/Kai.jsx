@@ -13,6 +13,7 @@ import Sigil from '../../Sigil';
 import { arrows } from './live';
 import Launch, { Lines, poly, dense, film } from '../../v2/Launch';
 import ModelCards from './ModelCards';
+import ModelFilm from '../../v2/ModelFilm';
 import Chapters from '../../v2/x-cray/Chapters';
 import './Kai.css';
 
@@ -226,6 +227,7 @@ function TypeArt({ i, on }) {
   return (
     <div className="ka-art">
       <Img src={film('kai', 'webp')} w={1200} h={1500} />
+      <ModelFilm slug="kai" play={on} />
       <div className="ka-qcard" aria-hidden="true">
         <p className="ka-qcard-top"><code>POST /v1/decisions</code><em>{q.type}</em></p>
         <p className="ka-qcard-n">{q.name}</p>
@@ -255,6 +257,7 @@ export default function Kai() {
   return (
     <Launch
       slug="kai"
+      ask={{ label: 'Open Decisions', to: 'https://platform.hanzo.ai/decisions', id: 'kai-hero-decisions' }}
       shape={DIAMOND}
       aim={(W, H, wide) => (wide ? null : [-0.16 * W, -0.2 * H])}
       headClass="ka-head"

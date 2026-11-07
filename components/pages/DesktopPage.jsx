@@ -393,7 +393,7 @@ function End() {
 export default function DesktopPage() {
   const [os, setOs, mine] = useOs();
   return (
-    <main className="av dk" style={{ '--ac': '#0a9cff' }}>
+    <main className="av dk" style={{ '--ac': '#737373' }}>
       <Hero os={os} setOs={setOs} mine={mine} />
       <Build />
       <Offline />

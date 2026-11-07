@@ -20,7 +20,7 @@ const STEPS = [
   ['Read active tab DOM & accessibility tree', 'https://staging.acme.inc/checkout', 'Detected 1 uncaught TypeError in CheckoutForm.tsx:142 and contrast drop on .cta-button'],
   ['Verify organization site policy', '*.acme.inc · Allowed · Password manager blocked', 'Enterprise Chrome policy verified: DOM write allowed on staging.acme.inc'],
   ['Click element & capture network trace', 'button[data-testid="submit-order"]', 'POST /api/v1/orders → 200 OK (84ms) · Screenshot attached to #bug-button-darkmode'],
-  ['Post verified patch to Hanzo Team & Slack', 'PR #418 · styles/cta-button.css', 'Synced live preview artifact to #bug-button-darkmode'],
+  ['Post verified patch to Hanzo Team & Slack', 'PR #262626 · styles/cta-button.css', 'Synced live preview artifact to #bug-button-darkmode'],
 ];
 const PANES = ['Elements', 'Console', 'Network'];
 const FOLLOW = [0, 1, 2, 2, 2]; // which inspector pane follows each step
@@ -150,7 +150,7 @@ function Window() {
       <AnimatePresence>
         {flying && (
           <motion.span key="pr" className="xch-pr x-mono" aria-hidden="true" initial={{ opacity: 0, x: 0, y: 0, scale: 0.92 }} animate={{ opacity: [0, 1, 1, 1, 0], y: [0, -14, -14, -dy, -dy - 8], scale: [0.92, 1, 1, 0.86, 0.8] }} transition={{ duration: 2.8, times: [0, 0.14, 0.4, 0.86, 1], ease: EASE }}>
-            PR #418 · styles/cta-button.css → #bug-button-darkmode
+            PR #262626 · styles/cta-button.css → #bug-button-darkmode
           </motion.span>
         )}
       </AnimatePresence>
@@ -475,7 +475,7 @@ function Close() {
 
 export default function ChromePage() {
   return (
-    <main className="av xch" style={{ '--ac': '#0f9d58' }}>
+    <main className="av xch" style={{ '--ac': '#737373' }}>
       <Hero />
       <Paste />
       <What />

@@ -1,12 +1,14 @@
 'use client';
 /* Bounties & Rewards. Its idea is the ledger of what a contribution earns.
-   V2: 8/10 rebuilt as five screens: display hero beside the live GitHub window of open bounties; the four ways to earn as a tile grid of huge point figures, with the rank calculator opening beneath; the standings as an editorial table of big totals; the token race as the dark room; how a bounty is taken as a GitHub timeline.
-   Signature: the token race: in the dark room the ten organizations' bars race out on a log line as you scroll,
-   scrubbed by the scroll itself, @hanzo's hundred million and @Aeonaby's half million drawn honestly on one picture.
-   Beyond: where would you rank? Count what you would ship (bug reports, merged bounties, referrals, tokens) and see
-   the points and credits Hanzo's own rates give, placed against the standings Hanzo lists.
-   Motion: scrubbed race (signature) + line-masked hero type + open bounties arriving live + the rank drawer's spring.
-   Accent: GitHub's open green. Every word and figure is Hanzo's; the open bounties are GitHub's, read as the page opens. */
+   Persona: a developer who wants to contribute to Hanzo's open repositories. Goal: take an open bounty.
+   CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: GitHub click (PLAN-COMPONENTS 1.1, the
+   researcher/contributor row).
+   V2: 8/10 grey deck: display hero beside the live GitHub window of open bounties; the four ways to earn are huge-figure tiles you can count on (steppers on each tile total your points and credits by Hanzo's own rates and place you against the listed top three); the standings as big totals; the token race scrubbed by scroll as the dark room; a GitHub-style timeline for taking a bounty.
+   Signature: the token race: in the dark room the ten organizations' bars race out on a log line as you scroll.
+   Beyond: count on the tiles: steppers on each way to earn add up the points and AI credits Hanzo's rates give, with a
+   marker placed against the standings Hanzo lists. No words but Hanzo's.
+   Motion: scrubbed race (scroll, the signature) + open bounties arriving live with a pulse (time, idle) + tiles lifting
+   and steppers springing the marker (pointer, state) + line-mask headline (arrival). 0 UI hues. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A } from '../kit';
@@ -29,6 +31,7 @@ function Open() {
     <div className="xbo-win xp-obj" data-state={st.kind === 'ready' && !total ? 'none' : st.kind}>
       <div className="xbo-win-bar">
         <i className="xbo-live" aria-hidden="true" />
+        <span className="xbo-win-k">Bounties &amp; Rewards</span>
         <b>Open bounties</b>
         {total > 0 && <span className="x-mono">{n(total)} open</span>}
       </div>
@@ -48,7 +51,7 @@ function Open() {
         <div className="xbo-say" role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">
           <span className="xbo-ghosts" aria-hidden="true"><i /><i /><i /><i /></span>
           <p className={st.kind === 'reading' ? 'xbo-shimmer' : ''}>{say}</p>
-          {st.kind === 'unreachable' && <a className="xp-ghost" href={SEARCH} target="_blank" rel="noopener noreferrer">Open bounties on GitHub ↗</a>}
+          {st.kind === 'unreachable' && <a className="x-btn xp-ghost" href={SEARCH} target="_blank" rel="noopener noreferrer">Open bounties on GitHub ↗</a>}
         </div>
       )}
       {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer">{n(more)} more on GitHub ↗</a>}
@@ -61,12 +64,11 @@ function Hero() {
     <section className="xbo-hero" aria-labelledby="xbo-h1">
       <div className="xp-wrap xp-grid">
         <div className="xbo-copy">
-          <p className="xp-kick">Bounties &amp; Rewards</p>
           <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Take an issue.', 'Ship the fix.']} />
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>
             <p className="xp-lede xbo-lede">Open issues and bug reports across Hanzo’s repositories. Ship a fix or report a verified bug to earn AI credits and climb the global leaderboard.</p>
             <div className="xbo-acts">
-              <a href={SEARCH} target="_blank" rel="noopener noreferrer" className="xp-cta" data-thumb="Every open bounty">Every open bounty<i aria-hidden="true">↗</i></a>
+              <a href={SEARCH} target="_blank" rel="noopener noreferrer" className="x-btn solid xp-cta" data-thumb="Every open bounty" data-cta="bounty.hero">Every open bounty<i aria-hidden="true">↗</i></a>
               <A to="/leaderboard" className="xbo-link">Leaderboard</A>
               <A to={CONTRIBUTING} className="xbo-link">How to contribute</A>
             </div>
@@ -93,86 +95,61 @@ const STAND = [
   ['Antje Worring (@zooqueen)', 'Core Contributor', '0 bugs reported · +200 bounty pts · 5,212,081 tokens (Global #3)', 252, null],
 ];
 
-/* Count what you would ship; Hanzo's rates give the points and credits, placed against the listed standings. */
-function Rank() {
-  const [v, setV] = useState([1, 1, 0, 10]); // bugs, merged PRs, referrals, 100K-token blocks
+/* The four ways to earn, as tiles you can count on: a stepper on each adds to the total by Hanzo's own rates, and the
+   marker on the line sits against the standings Hanzo lists. */
+const STEP = [1, 1, 1, 1];
+function Rewards() {
+  const [v, setV] = useState([1, 1, 0, 10]); // bug reports, merged bounty pull requests, qualified referrals, 100K-token blocks
   const [mine, setMine] = useState(false);
   const box = useRef(null);
-  const seen = useInView(box, { amount: 0.4 });
+  const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const DEMO = [[1, 1, 0, 10], [2, 1, 1, 20], [3, 2, 1, 50], [0, 1, 2, 5]];
   const [d, setD] = useState(0);
   useEffect(() => {
     if (mine || calm || !seen) return;
-    const t = setTimeout(() => { const nx = (d + 1) % DEMO.length; setD(nx); setV(DEMO[nx]); }, 2600);
+    const t = setTimeout(() => { const nx = (d + 1) % DEMO.length; setD(nx); setV(DEMO[nx]); }, 2800);
     return () => clearTimeout(t);
   }, [d, mine, calm, seen]); // eslint-disable-line react-hooks/exhaustive-deps
   const [bugs, prs, refs, blocks] = v;
   const lo = bugs * 50 + prs * 100 + refs * 20 + blocks;
   const hi = bugs * 50 + prs * 500 + refs * 20 + blocks;
   const credits = bugs * 20 + refs * 5;
-  const set = (i, x) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 100000 : 999, x)) : y))); };
-  const F = [['Verified bug reports', 'up to $20 credits each'], ['Merged bounty pull requests', '+100 to +500 pts each'], ['Qualified referrals', '$5 credits each'], ['Tokens processed', '+1 pt per 100,000']];
+  const set = (i, x) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 1000 : 99, x)) : y))); };
   const MAX = 1700;
   const pos = (p) => Math.min(100, (p / MAX) * 100) + '%';
-  const passed = STAND.map((s, i) => [i + 1, s[3]]).filter(([, p]) => lo > p);
   return (
-    <div className="xbo-rank" ref={box}>
-      <div className="xbo-steppers">
-        {F.map(([t, rate], i) => (
-          <div key={t} className="xbo-step">
-            <span className="xbo-step-t"><b>{t}</b><small>{rate}</small></span>
-            <span className="xbo-step-c">
-              <button type="button" onClick={() => set(i, v[i] - 1)} aria-label={`Fewer ${t.toLowerCase()}`} disabled={!v[i]}>−</button>
-              <output className="x-mono" aria-live="polite">{i === 3 ? n(v[i] * 100000) : v[i]}</output>
-              <button type="button" onClick={() => set(i, v[i] + 1)} aria-label={`More ${t.toLowerCase()}`}>+</button>
-            </span>
-          </div>
-        ))}
-      </div>
-      <div className="xbo-out">
-        <div><span>Points</span><b className="x-mono">{lo === hi ? n(lo) : `${n(lo)} – ${n(hi)}`}</b></div>
-        <div><span>AI credits</span><b className="x-mono">{credits ? `up to $${n(credits)}` : '—'}</b>{prs > 0 && <small>+ AI credits for merged pull requests</small>}</div>
-        <div className="xbo-track" aria-hidden="true">
-          <motion.i className="xbo-you" animate={{ left: pos(lo), width: `calc(${pos(hi)} - ${pos(lo)} + 6px)` }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
-          {STAND.map((s, i) => <span key={s[0]} className="xbo-mk" style={{ left: pos(s[3]) }}><b className="x-mono">#{i + 1}</b></span>)}
-        </div>
-        <p className="xbo-rank-note" aria-live="polite">{passed.length ? `At the low end, past the points of ${new Intl.ListFormat('en', { type: 'conjunction' }).format(passed.map(([r]) => '#' + r))} as Hanzo lists them.` : 'Below the points of the top three as Hanzo lists them.'}</p>
-      </div>
-    </div>
-  );
-}
-
-function Rewards() {
-  const [open, setOpen] = useState(false);
-  return (
-    <section className="xp-sec xbo-rewards" aria-labelledby="xbo-rw">
+    <section className="xp-sec xbo-rewards" aria-labelledby="xbo-rw" ref={box}>
       <div className="xp-wrap">
         <div className="xp-grid xbo-rw-head">
           <h2 id="xbo-rw" className="xp-head xbo-rw-h">Rewards &amp; points</h2>
           <p className="xp-lede xbo-rw-l">Every verified bug report, merged pull request, and token processed on Hanzo Cloud builds your standing and awards AI credits.</p>
         </div>
         <ul className="xbo-ways">
-          {WAYS.map(([t, pts, cr, d], i) => (
+          {WAYS.map(([t, pts, cr, d2], i) => (
             <li key={t} className={'xbo-way w' + i}>
               <span className="xbo-way-fig xp-fig"><span className="xbo-plus">+</span>{pts}<small> pts</small></span>
               <span className="x-sr">{`+${pts} pts`}</span>
               <div className="xbo-way-b">
                 <h3 className="xp-title">{t}</h3>
                 {cr && <span className="xbo-cr x-mono">{cr}</span>}
-                <p className="xp-body">{d}</p>
+                <p className="xp-body">{d2}</p>
               </div>
+              <span className="xbo-step-c">
+                <button type="button" onClick={() => set(i, v[i] - STEP[i])} aria-label={'− ' + t} disabled={!v[i]}>−</button>
+                <output className="x-mono" aria-live="polite" aria-label={t}>{i === 3 ? n(v[i] * 100000) : v[i]}</output>
+                <button type="button" onClick={() => set(i, v[i] + STEP[i])} aria-label={'+ ' + t}>+</button>
+              </span>
             </li>
           ))}
         </ul>
-        <div className="xbo-drawer">
-          <button type="button" className="xbo-drawer-b" aria-expanded={open} aria-controls="xbo-rank" onClick={() => setOpen((o) => !o)}>
-            <span>Where would you rank?</span>
-            <motion.i aria-hidden="true" animate={{ rotate: open ? 45 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>+</motion.i>
-          </button>
-          <motion.div id="xbo-rank" className="xbo-drawer-in" initial={false} animate={open ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} inert={!open}>
-            <Rank />
-          </motion.div>
+        <div className="xbo-total" aria-live="polite">
+          <div className="xbo-total-n"><b className="xp-fig">{lo === hi ? n(lo) : `${n(lo)} – ${n(hi)}`}</b><span className="x-mono">pts</span></div>
+          <div className="xbo-total-c"><b className="xp-fig">{`+$${n(credits)}`}</b><span className="x-mono">AI credits</span></div>
+          <div className="xbo-track" aria-hidden="true">
+            <motion.i className="xbo-you" animate={{ left: pos(lo), width: `calc(${pos(hi)} - ${pos(lo)} + 8px)` }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />
+            {STAND.map((st, i) => <span key={st[0]} className="xbo-mk" style={{ left: pos(st[3]) }}><b className="x-mono">#{i + 1}</b></span>)}
+          </div>
         </div>
       </div>
     </section>
@@ -266,9 +243,8 @@ function Volume() {
       <div className="xp-wrap">
         <div className="xp-grid xbo-vol-head">
           <div className="xbo-vol-hl">
-            <p className="xp-kick">@hanzo · Core Fleet</p>
             <p className="xbo-vol-fig xp-fig">106,039,884</p>
-            <p className="xbo-vol-u x-mono">tokens</p>
+            <p className="xbo-vol-u x-mono"><span>@hanzo</span><span>Core Fleet</span><span>tokens</span></p>
           </div>
           <div className="xbo-vol-hr">
             <h2 id="xbo-vol-h" className="xp-head">Global token volume leaderboard</h2>
@@ -278,7 +254,7 @@ function Volume() {
         <ol className="xbo-orgs" ref={ref}>
           {ORGS.map((o, i) => <Lane key={o[0]} p={p} i={i} org={o} />)}
         </ol>
-        <div className="xbo-scale x-mono" aria-hidden="true"><span className="xbo-scale-in">{['100K', '1M', '10M', '100M'].map((t, i) => <span key={t} style={{ left: (i / TOP) * 100 + '%' }}>{t}</span>)}</span></div>
+        <div className="xbo-scale x-mono" aria-hidden="true"><span className="xbo-scale-in">{['100K', '1M'].map((t, i) => <span key={t} style={{ left: (i / TOP) * 100 + '%' }}>{t}</span>)}</span></div>
       </div>
     </section>
   );

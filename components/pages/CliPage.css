@@ -2,7 +2,7 @@
 .cli code { font: 500 .9em/1.4 var(--mono); }
 .cli-dots { display: flex; gap: 8px; flex: none; }
 .cli-dots i { width: 12px; height: 12px; border-radius: 50%; background: #2c2c30; }
-.cli-dots i:first-child { background: #ff5f57; } .cli-dots i:nth-child(2) { background: #febc2e; } .cli-dots i:last-child { background: #28c840; }
+.cli-dots i:first-child { background: #737373; } .cli-dots i:nth-child(2) { background: #d4d4d4; } .cli-dots i:last-child { background: #a3a3a3; }
 .cli-caret { display: inline-block; flex: none; width: .55em; height: 1.08em; margin-left: .08em; border-radius: 2px; background: var(--ac); vertical-align: -.16em; animation: cli-blink 1.05s steps(1) infinite; }
 @keyframes cli-blink { 50% { opacity: 0; } }
 [data-off] .cli-caret { animation-play-state: paused; }
@@ -33,7 +33,7 @@
 .cli-inst code span { color: var(--ac); }
 .cli .cli-inst .x-copy, .cli-hero .x-copy { flex: none; height: 44px; padding: 0 16px; font-size: 14px; background: #1c1c1f; border-color: rgba(255, 255, 255, .14); color: #d1d1d6; }
 .cli .cli-hero .x-btn.solid.cli-go { background: var(--ac); border-color: var(--ac); color: #000; font-weight: 600; }
-.cli .cli-hero .x-btn.solid.cli-go:hover { background: #8fe032; }
+.cli .cli-hero .x-btn.solid.cli-go:hover { background: #d4d4d4; }
 .cli .cli-hero .x-btn.cli-ghost { background: transparent; color: #f5f5f7; border-color: rgba(255, 255, 255, .22); }
 .cli .cli-hero .x-btn.cli-ghost:hover { border-color: rgba(255, 255, 255, .5); }
 
@@ -88,7 +88,7 @@
 .cli-dir { flex: none; color: var(--faint); }
 .cli-node.path { color: var(--ink); }
 .cli-node.path .cli-dir { color: var(--ink); }
-.cli-res.open .cli-dir path { fill: var(--ac); stroke: #4d8a12; }
+.cli-res.open .cli-dir path { fill: var(--ac); stroke: #737373; }
 .cli-node-t { font-weight: 500; }
 .cli-n { margin-left: auto; min-width: 26px; height: 22px; padding: 0 7px; border-radius: 999px; background: #ececef; font-size: 13px; line-height: 22px; text-align: center; color: var(--soft); }
 .cli-cmds { list-style: none; margin: 0; padding: 0; }

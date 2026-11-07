@@ -18,7 +18,7 @@
    Every word is Hanzo's.
    V2: 8/10 full-width Display headline over the table as a wide object that reads itself (gliding reading line, verdicts only, Enso raised by weight), sentences in a sheet, list rows on phones, giant Yes tally, card that opens, wiped dark room closing on the one ask; greys only, legible with JS off. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
+import { animate, motion, useInView, useReducedMotion } from 'motion/react';
 import { A } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import DetailSheet from '../v2/DetailSheet';
@@ -54,7 +54,7 @@ const YN = TABLE.map((r, i) => (r.c.some((c) => c.v === 'Yes' || c.v === 'No') ?
 const tone = (c) => (c.v === 'Yes' ? 'y' : c.v === 'No' ? 'n' : c.v ? 'v' : 't');
 const ASK = { label: 'Model routing APIs', to: '/compare/model-routing', cta: 'compare-routing' };
 // JS off: everything that starts hidden or offset stands in place
-const NOJS = '<style>.xcp-in{opacity:1!important;transform:none!important}.xcp-mark{display:none!important}</style>';
+const NOJS = '<style>.xcp-in{opacity:1!important;transform:none!important}.xcp-mark{display:none!important}.xcp-tally-r li>i b{transform:scaleX(var(--w))!important}</style>';
 
 const Tick = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Dash = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M4 8h8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
@@ -69,7 +69,7 @@ function useReader(ref) {
   const [held, setHeld] = useState(false);
   const [pinned, setPinned] = useState(false);
   const calm = useReducedMotion();
-  const live = useInView(ref, { amount: 0.3 });
+  const live = useInView(ref, { amount: 'some' });
   const run = !held && !pinned && !calm && live;
   const runRef = useRef(run);
   runRef.current = run;
@@ -198,13 +198,33 @@ function Hero() {
   );
 }
 
+/* a figure that counts up once when it is reached (1.2s), then follows the count; the HTML carries the real figure */
+function Fig({ v, go }) {
+  const ref = useRef(null);
+  const from = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !go) return;
+    const start = from.current ?? 0;
+    from.current = v;
+    if (start === v) { el.textContent = String(v); return; }
+    const c = animate(start, v, { duration: start === 0 ? 1.2 : 0.5, ease: [0.22, 1, 0.36, 1], onUpdate: (x) => { el.textContent = String(Math.round(x)); } });
+    return () => c.stop();
+  }, [v, go]);
+  return <span ref={ref}>{v}</span>;
+}
+
 /* ---------- Beyond: count the Yes ---------- */
 function Tally() {
   const [keep, setKeep] = useState(YN);
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const seen = useInView(ref, { once: true, amount: 0.35 });
+  const go = seen || calm;
   const flip = (i) => setKeep((k) => (k.includes(i) ? k.filter((x) => x !== i) : [...k, i].sort()));
   return (
     <section className="pf-sec xcp-tally" aria-labelledby="xcp-tally-h">
-      <div className="pf-wrap xcp-tally-g">
+      <div className="pf-wrap xcp-tally-g" ref={ref}>
         <div className="xcp-tally-l">
           <h2 id="xcp-tally-h" className="pf-head">Count the Yes</h2>
           <div className="xcp-chips" role="group" aria-label="Rows to count">
@@ -222,8 +242,8 @@ function Tally() {
             return (
               <li key={c} className={j === 0 ? 'me' : ''}>
                 <span className="xcp-tally-n">{c}{j === 0 && <small>Hanzo</small>}</span>
-                <span className="pf-num">{keep.length ? yes : '—'}<em>{keep.length ? ` / ${keep.length}` : ''}</em></span>
-                <i aria-hidden="true"><b style={{ transform: `scaleX(${keep.length ? yes / keep.length : 0})` }} /></i>
+                <span className="pf-num">{keep.length ? <Fig v={yes} go={go} /> : '—'}<em>{keep.length ? ` / ${keep.length}` : ''}</em></span>
+                <i aria-hidden="true"><b style={{ '--w': keep.length ? yes / keep.length : 0, transform: `scaleX(${go && keep.length ? yes / keep.length : 0})` }} /></i>
               </li>
             );
           })}
