@@ -15,7 +15,7 @@ Decisions noted (James never asked): the metric is `github_click`, not `api_key_
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices)
 - [x] Open copy questions for James listed, none decided
 
-Done here: `Pubsub.jsx` and `app/pubsub/page.jsx` open with Persona (Developer), Goal, CTA ("GitHub" → github.com/hanzoai/pubsub, `pubsub.hero` / `pubsub.close`), Metric (`github_click`), Signature, Beyond and `V2:`. In the black hero the ask is the one solid (white on #000); the header's "Try Hanzo" is outlined while it is on screen.
+Done here: `Pubsub.jsx` and `app/pubsub/page.jsx` open with Persona (Developer), Goal, CTA ("GitHub" → github.com/hanzoai/pubsub, `pubsub.hero` / `pubsub.close`), Metric (`github_click`), Signature, Beyond and `V2:`. In the black hero the ask is the one solid (white on #000); on desktop the header's "Try Hanzo" is outlined while it is on screen. On phones the shared header keeps a solid "Try Hanzo" (shared header, requested in `docs/requests/pricing.md` item 1), so the phone's first screen has two fills until that lands.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the layout's skip link targets `#main`)
@@ -66,7 +66,7 @@ Done here: `parity.py /pubsub`: 82/82 text, 2/2 links. `c3pal.cjs`: 0 runs under
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK; `c3pal.cjs` reads every computed colour in `<main>`: 0 off the deck ramp at both widths. The hero is #000; subscribers are outlined until a copy lands, then a flat #171717 fill; the inspector is outlined (1px, radius 24), the prompt a flat #171717 tile, events.go white with one hairline, nothing shadowed. "NATS JetStream" is in the bus's own toolbar. Hero medium: the only black-room hero with a top-down fan-out among the cloud pages.
+Done here: `taste.py` OK; `c3pal.cjs` reads every computed colour in `<main>`: 0 off the deck ramp at both widths. The hero is #000; subscribers are outlined until a copy lands, then a flat #171717 fill; the chapters' inspector is the hero's bus carried down (a flat #000 object, radius 20, its own toolbar line and pause), so the pinned chapters read as this page's object rather than the outlined white box /realtime and /datastore share; the prompt a flat #171717 tile, events.go white with one hairline, nothing shadowed. "NATS JetStream" is in the bus's own toolbar. Hero medium: the only black-room hero with a top-down fan-out among the cloud pages, and on phones the fan keeps all three wires over three subscribers side by side.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading (n/a for disabled/loading: nothing waits on a network)
