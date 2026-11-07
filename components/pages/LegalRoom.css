@@ -22,7 +22,7 @@
 .xlg2-sigil { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .16; }
 .xlg2-read { position: relative; display: flex; flex-direction: column; gap: 14px; animation: xlg2-in var(--reveal) var(--out) both; }
 @keyframes xlg2-in { from { opacity: 0; transform: translateY(14px); } }
-.xlg2-read-n { font-size: clamp(88px, 8vw, 128px); color: var(--ink); }
+.xlg2-read-n { font-size: clamp(56px, 5vw, 80px); color: var(--ink); }
 .xlg2-read-h { font-size: clamp(32px, 3vw, 44px); font-weight: 600; letter-spacing: -.035em; line-height: 1.04; max-width: 14ch; }
 .xlg2-read-t { margin: 0; max-width: 34ch; font-size: 17px; line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .xlg2-read-bar { display: block; height: 2px; width: 100%; border-radius: 2px; background: rgba(0, 0, 0, .1); overflow: hidden; position: relative; }
@@ -41,8 +41,11 @@
 
 /* the reading room */
 .xlg2-body { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); padding: clamp(40px, 5vw, 80px) 0 clamp(120px, 14vw, 220px); border-top: 1px solid var(--hair); }
-.xlg2-rail { grid-column: 1 / span 3; top: var(--xlg-top); }
-.xlg2-art { grid-column: 5 / span 8; max-width: 760px; }
+.xlg2-rail { grid-column: 1 / span 3; top: var(--xlg-top); -webkit-mask-image: linear-gradient(transparent, #000 40px, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(transparent, #000 40px, #000 calc(100% - 56px), transparent); padding: 24px 0 48px; }
+.xlg2 .xlg-track a:active { transform: translateY(1px); }
+.xlg2-find-f input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.xlg2-art { grid-column: 4 / span 9; min-width: 0; max-width: none; }
+.xlg2-art .xlg2-h2 { max-width: 760px; }
 .xlg2 .xlg-mark { background: var(--ink); box-shadow: 0 0 0 3px rgba(0, 0, 0, .08); }
 .xlg2 .xlg-line i { background: var(--ink); }
 .xlg2 .xlg-hit { background: var(--ink); }
@@ -54,15 +57,17 @@
 .xlg2-sec { padding: 0 0 clamp(64px, 7vw, 112px); }
 .xlg2-sec + .xlg2-sec { padding-top: clamp(64px, 7vw, 112px); border-top: 1px solid var(--hair); }
 .xlg2-h2 { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px 16px; margin: 0 0 32px; font-size: clamp(28px, 2.6vw, 40px); font-weight: 600; letter-spacing: -.035em; line-height: 1.08; text-wrap: balance; color: var(--ink); }
-.xlg2-n { grid-column: 1 / -1; display: block; font-size: clamp(64px, 6vw, 96px); color: color-mix(in srgb, var(--ink) 14%, #fff); transition: color .6s var(--ease); }
+.xlg2-n { grid-column: 1 / -1; display: block; font-size: clamp(40px, 3.6vw, 56px); color: #8e8e93; transition: color var(--scene) var(--out); }
 .xlg2-sec[data-on] .xlg2-n { color: var(--ink); }
 .xlg2-t { min-width: 0; }
 .xlg2-h2 .xlg-cl { align-self: center; }
-.xlg2-prose { font-size: clamp(17px, 1.32vw, 19px); line-height: 1.65; color: #1d1d1f; max-width: 64ch; }
+.xlg2-prose { font-size: clamp(17px, 1.32vw, 19px); line-height: 1.65; color: #1d1d1f; }
+.xlg2-prose > :not(.xlg-tw) { max-width: 66ch; }
 .xlg2-prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -.02em; margin-top: 2.2em; }
 .xlg2-prose li::marker { color: var(--muted); }
 .xlg2-prose blockquote { border-left: 0; border-radius: 16px; }
-.xlg2 .xlg-tw { border-radius: 16px; max-width: none; }
+.xlg2 .xlg-tw { border-radius: 16px; max-width: none; max-height: none; overflow-x: auto; overflow-y: visible; overscroll-behavior: auto; }
+.xlg2 .xlg-tw td { min-width: 104px; }
 /* type floor 13px (PLAN-COMPONENTS 2.6): code in prose and in tables, e.g. the cookie names */
 .xlg2-prose code, .xlg2 .xlg-tw code { font-size: max(13px, .86em); }
 .xlg2 .xlg-tw table, .xlg2 .xlg-tw td { font-size: 15px; }
@@ -92,9 +97,44 @@
   .xlg2-rail { position: static; width: auto; }
   .xlg2-art { max-width: none; min-width: 0; width: 100%; }
   .xlg2-h2 { font-size: 28px; }
-  .xlg2-n { font-size: 56px; }
   .xlg2-sec { padding-bottom: 64px; }
   .xlg2-sec + .xlg2-sec { padding-top: 64px; }
   .xlg2-prose { font-size: 17px; }
 }
 @media (prefers-reduced-motion: reduce) { .xlg2-n { transition: none; } .xlg2-read, .xlg2-read-bar::after { animation: none; } }
+
+/* copy link: a 44px target; its confirmation stays on screen */
+.xlg2 .xlg-cl { width: 44px; height: 44px; }
+.xlg2 .xlg2-prose h3 .xlg-cl { width: 44px; height: 44px; }
+.xlg2 .xlg-tip { font-size: 13px; }
+
+@media (max-width: 900px) {
+  /* the rail's Contents is the index on phones: the cover keeps its clause plate only */
+  .xlg2-ix { display: none; }
+  .xlg2-cover-l { border-bottom: 0; }
+  .xlg2-rail { -webkit-mask-image: none; mask-image: none; padding: 14px 16px; }
+  .xlg2 .xlg-track a, .xlg2 .xlg-det summary h2, .xlg2 .xlg-pct { font-size: 15px; }
+  .xlg2 .xlg-tip { left: auto; right: 0; top: -32px; translate: none; font-size: 14px; }
+  /* tables: each row a card, every cell under its column's name */
+  .xlg2 .xlg-tw { overflow: visible; border: 0; background: none; }
+  .xlg2 .xlg-tw table, .xlg2 .xlg-tw tbody, .xlg2 .xlg-tw tr, .xlg2 .xlg-tw td { display: block; width: 100%; }
+  .xlg2 .xlg-tw thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .xlg2 .xlg-tw tr { margin: 0 0 12px; padding: 14px 16px; border: 1px solid var(--hair); border-radius: 16px; background: #fff; }
+  .xlg2 .xlg-tw td { min-width: 0; padding: 6px 0; border: 0; }
+  .xlg2 .xlg-tw td[data-col]::before { content: attr(data-col); display: block; font: 500 13px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  .xlg2 .xlg-tw tbody tr:hover { background: #fff; }
+  .xlg2-n { font-size: 40px; }
+}
+
+/* print: the document, plain */
+@media print {
+  .xlg2-cover, .xlg2-rail, .xlg2-more, .xlg-cl, .v2f-sheet { display: none !important; }
+  .xlg2-stage { padding: 0 0 24px; }
+  .xlg2-body { display: block; padding: 0; border: 0; }
+  .xlg2-h1 { font-size: 36pt; max-width: none; }
+  .xlg2-prose { font-size: 11pt; max-width: none; }
+  .xlg2-sec, .xlg2-sec + .xlg2-sec { padding: 12pt 0; border: 0; break-inside: auto; }
+  .xlg2-h2 { break-after: avoid; font-size: 16pt; margin-bottom: 8pt; }
+  .xlg2-n { font-size: 16pt; color: #000; }
+  .xlg2 .xlg-tw { overflow: visible; box-shadow: none; }
+}

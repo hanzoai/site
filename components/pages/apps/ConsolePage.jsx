@@ -545,7 +545,8 @@ function End() {
 
 export default function ConsolePage() {
   return (
-    <main className="bz cs" data-ask-name="Hanzo Console">
+    <main className="bz cs">
+      <span data-ask-name="Hanzo Console" hidden />
       <Hero />
       <Chapters />
       <Find />

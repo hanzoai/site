@@ -247,3 +247,6 @@
   .xst-h1 { font-size: clamp(31px, 9vw, 36px) !important; line-height: 1.04; }
   .xst-h1 .a2-ln, .xst-h1 .a2-ln-in { display: inline; overflow: visible; } /* flows into four lines on a phone */
 }
+
+.xst-node-h { margin: 18px 0 0 !important; }
+.xst-node h3 { padding-right: 20px; }

@@ -2,16 +2,18 @@
 // Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
 // Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, which is the page's own claim (no second base URL) made visible, and it copies as curl
 /* Hanzo API, v2 (Archetype F, developer: the request is the hero).
-   V2: 8/10 Stage console types and streams all eight endpoints; How it fits together is four pinned chapters with live UI; one dark room for the base URL; endpoints are rows that open
-   Motion: signature = the live console (path types, answer streams). Supporting: Stage settle, pinned chapters with
-   clip wipes (components/v2/AppScenes, the dark room opens the same way), line-masked headline. Accent: cobalt, from the console's method pill.
-   Every word is Hanzo's. */
+   V2: 8/10 round 2: headline and live console side by side so the path types and the answer streams in the first screen at 1470×801; console height fixed (no phone jump); no labels over headlines; one ask, repeated at the close; real lines in the chapters; styled endpoint list instead of a native select
+   Persona: a developer who has used the OpenAI API and wants every Hanzo capability behind one key.
+   Goal: see that one base URL and one key reach every endpoint, then get a key.
+   CTA: "Get an API key, free" (hero, sticky ask bar, closing row); "OpenAPI Reference" as the quiet second.
+   Motion: signature = the live console (path types, answer streams, model film plays). Supporting: pinned chapters
+   with clip wipes (components/v2/AppScenes; the dark room opens the same way), line-masked headline, tab pill (layoutId).
+   Colour: greys only (Hanzo's deck); colour arrives only through the model films. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
-import { A, Go } from '../kit';
+import { A, Cta } from '../kit';
 import Lines from '../v2/x-edison/AppLines';
-import Stage from '../v2/AppStage';
 import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
 import './ApiPage.css';
@@ -38,6 +40,7 @@ const MORE = [
 ];
 const ALL = [...HERO.map(([m, p, d, doc]) => [m, p, d, doc]), ...MORE];
 const n8 = (i) => String(i + 1).padStart(2, '0') + ' / 08';
+const LONGEST = HERO.reduce((a, h) => (h[2].length > a.length ? h[2] : a), '');
 const KEY = 'Authorization: Bearer <your key>';
 
 /* ---------- the hero console: the path types, the answer streams, the model plays ---------- */
@@ -97,8 +100,11 @@ function Console() {
       <p className="api-con-key x-mono" aria-hidden="true">{KEY}</p>
       <div className="api-con-main">
         <div className="api-ret">
-          <span className="api-ret-k x-mono"><b aria-hidden="true" />{n8(at)}</span>
-          <p className="api-desc" aria-live="polite"><span ref={desc}>{d}</span></p>
+          <span className="api-ret-k x-mono">{n8(at)}</span>
+          <div className="api-desc-box">
+            <p className="api-desc api-desc-size" aria-hidden="true">{LONGEST}</p>
+            <p className="api-desc" aria-live="polite"><span ref={desc}>{d}</span></p>
+          </div>
           <A to={DOCS + doc} className="api-doc">Docs <span aria-hidden="true">↗</span></A>
         </div>
         <div className="api-model">
@@ -129,24 +135,18 @@ function Console() {
 function Hero() {
   return (
     <section className="api-hero" aria-labelledby="api-h1">
-      <div className="av-wrap">
-        <div className="api-top av-grid">
-          <div className="api-top-l">
-            <p className="av-kick"><b>API</b></p>
-            <Lines as="h1" id="api-h1" className="av-display api-h1" lines={['One API for', 'models, agents', 'and tools']} now delay={0.1} />
-          </div>
-          <div className="api-top-r">
-            <p className="av-lede">Every Hanzo capability answers under one base URL, behind one key.</p>
-            <div className="av-acts">
-              <Magnetic strength={0.25}><Go to="https://platform.hanzo.ai/api-keys" solid>Get an API key, free</Go></Magnetic>
-              <i hidden data-thumb="Get an API key, free" data-href="https://platform.hanzo.ai/api-keys" />
-              <Go to={DOCS}>OpenAPI Reference ↗</Go>
-            </div>
+      <div className="av-wrap av-grid api-top">
+        <div className="api-top-l">
+          <Lines as="h1" id="api-h1" className="av-display api-h1" lines={['One API for', 'models, agents', 'and tools']} now delay={0.05} />
+          <p className="av-lede">Every Hanzo capability answers under one base URL, behind one key.</p>
+          <div className="av-acts api-acts">
+            <Magnetic strength={0.25}><Cta to="https://platform.hanzo.ai/api-keys" kind="solid" size="lg" id="api-hero-key" thumb>Get an API key, free</Cta></Magnetic>
+            <A to={DOCS} className="x-arrow api-ref" data-cta="api-hero-ref">OpenAPI Reference ↗</A>
           </div>
         </div>
-        <Stage className="api-stage" data-morph-target="">
+        <div className="api-top-r" data-morph-target="">
           <Console />
-        </Stage>
+        </div>
       </div>
     </section>
   );
@@ -178,13 +178,15 @@ const PATHS = ALL.map(([, p]) => p.split(' · ')[0]);
 function KeyBill({ on }) {
   return (
     <div className={'api-vis api-bill' + (on ? ' on' : '')} aria-hidden="true">
-      <p className="api-vis-key x-mono">{KEY}</p>
       <ul>
-        {PATHS.slice(0, 8).map((p, i) => (
-          <li key={p} style={{ '--i': i }}><span className="x-mono">{p}</span><i><b /></i></li>
+        {PATHS.slice(0, 7).map((p, i) => (
+          <li key={p} style={{ '--i': i }}><span className="x-mono api-bill-p">{p}</span><span className="x-mono api-bill-k">Bearer &lt;your key&gt;</span></li>
         ))}
       </ul>
-      <div className="api-bill-sum"><span className="x-mono">/v1/billing/usage</span><i><b /></i></div>
+      <div className="api-bill-sum">
+        <span className="x-mono">/v1/billing/balance · /v1/billing/usage</span>
+        <p>What is left, and what was spent.</p>
+      </div>
     </div>
   );
 }
@@ -245,10 +247,10 @@ function Gateway({ on }) {
 }
 
 const FITS = [
-  { kick: 'Billing', title: 'One key, one bill', body: <p className="av-body">A single key authenticates every endpoint, and usage meters to the organization it belongs to. Spend is attributed in one place instead of once per service.</p>, visual: (on) => <KeyBill on={on} /> },
-  { kick: 'Gateway', title: 'Identity is the gateway’s to state', body: <p className="av-body">Every request passes a gateway that throws away the identity headers a client sent and writes them again from the verified token. Nothing downstream has to wonder whether an org id came from a token or from a curl flag.</p>, visual: (on) => <Identity on={on} /> },
-  { kick: 'Clients', title: 'Generated, not hand-written', body: <p className="av-body">The clients come from the OpenAPI document this API serves, and their method names are its operation ids. A client is checkable against a release rather than against somebody’s memory.</p>, visual: (on) => <Generated on={on} /> },
-  { kick: '/v1', title: 'Every route lives under /v1', body: <p className="av-body">Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.</p>, visual: (on) => <Gateway on={on} /> },
+  { title: 'One key, one bill', body: <p className="av-body">A single key authenticates every endpoint, and usage meters to the organization it belongs to. Spend is attributed in one place instead of once per service.</p>, visual: (on) => <KeyBill on={on} /> },
+  { title: 'Identity is the gateway’s to state', body: <p className="av-body">Every request passes a gateway that throws away the identity headers a client sent and writes them again from the verified token. Nothing downstream has to wonder whether an org id came from a token or from a curl flag.</p>, visual: (on) => <Identity on={on} /> },
+  { title: 'Generated, not hand-written', body: <p className="av-body">The clients come from the OpenAPI document this API serves, and their method names are its operation ids. A client is checkable against a release rather than against somebody’s memory.</p>, visual: (on) => <Generated on={on} /> },
+  { title: 'Every route lives under /v1', body: <p className="av-body">Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.</p>, visual: (on) => <Gateway on={on} /> },
 ];
 
 function Fits() {
@@ -256,7 +258,6 @@ function Fits() {
     <>
       <section className="api-fits-in">
         <div className="av-wrap">
-          <p className="av-kick">Under the hood</p>
           <Lines as="h2" className="av-display s api-fits-h" lines={['How it fits', 'together']} />
         </div>
       </section>
@@ -273,11 +274,13 @@ function Call() {
   const curl = `curl -X ${method} https://api.hanzo.ai${path} -H "Authorization: Bearer <your key>"`;
   return (
     <div className="api-call">
-      <div className="api-call-top">
-        <label className="av-kick" htmlFor="api-call-sel">Endpoint</label>
-        <select id="api-call-sel" value={k} onChange={(e) => setK(+e.target.value)}>
-          {ALL.map(([mm, pp], i) => <option key={pp} value={i}>{mm.split(' ')[0]} {pp.split(' · ')[0]}</option>)}
-        </select>
+      <p className="api-call-k" id="api-call-k">Endpoint</p>
+      <div className="api-call-list" role="listbox" aria-labelledby="api-call-k" data-lenis-prevent>
+        {ALL.map(([mm, pp], i) => (
+          <button key={pp} type="button" role="option" aria-selected={k === i} onClick={() => setK(i)}>
+            <span className="x-mono api-call-lm">{mm.split(' ')[0]}</span><span className="x-mono">{pp.split(' · ')[0]}</span>
+          </button>
+        ))}
       </div>
       <pre className="api-call-line"><code>
         <span className={'api-call-m m-' + method.toLowerCase()}>{method}</span> <span className="api-call-host">https://api.hanzo.ai</span><motion.span key={path} className="api-call-path" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 0.45, ease: EASE }}>{path}</motion.span>{'\n'}
@@ -297,7 +300,7 @@ function Base() {
   return (
     <motion.section ref={ref} className="av-sec api-dark av-dark" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
       <div className="av-wrap">
-        <h2 className="av-kick api-base-h">Base URL</h2>
+        <h2 className="av-head api-base-h">Base URL</h2>
         <div className="api-big">
           <span className="x-mono api-big-url">https://api.hanzo.ai<span className="av-ac">/v1</span></span>
           <Copy text="https://api.hanzo.ai/v1" />
@@ -327,7 +330,6 @@ function Table() {
     <section className="av-sec api-core">
       <div className="av-wrap av-grid">
         <div className="api-core-l">
-          <p className="av-kick">Reference</p>
           <h2 className="av-head">Core endpoints</h2>
           <p className="av-body">A few of the ones people reach for first. Every parameter and error shape is in the reference.</p>
           <div className="api-tools">
@@ -376,7 +378,7 @@ function Next() {
   return (
     <section className="av-sec tight api-next">
       <div className="av-wrap">
-        <h2 className="av-kick">Next</h2>
+        <h2 className="av-head api-next-h">Next</h2>
         <div className="api-next-row">
           {[['API reference', 'Every endpoint, parameter and response shape.', DOCS], ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart']].map(([t, d, to]) => (
             <A key={t} to={to} className="api-next-a">
@@ -385,6 +387,13 @@ function Next() {
               <span className="api-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="24" height="24"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
             </A>
           ))}
+        </div>
+        <div className="api-close">
+          <p className="av-display s api-close-t">Every Hanzo capability answers under one base URL, behind one key.</p>
+          <div className="av-acts">
+            <Magnetic strength={0.25}><Cta to="https://platform.hanzo.ai/api-keys" kind="solid" size="lg" id="api-close-key">Get an API key, free</Cta></Magnetic>
+            <A to={DOCS} className="x-arrow api-ref" data-cta="api-close-ref">OpenAPI Reference ↗</A>
+          </div>
         </div>
       </div>
     </section>

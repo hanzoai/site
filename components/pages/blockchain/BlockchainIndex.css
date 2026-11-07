@@ -26,7 +26,7 @@
 .bci-track i { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; transition: transform .7s var(--ease); }
 .bci-lit { font-size: 13px; color: var(--soft); white-space: nowrap; }
 .bci-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: transform .1s, box-shadow .2s, border-color .2s; }
-.bci-pause:hover { border-color: rgba(0, 0, 0, .3); box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .3); transform: translateY(-1px); }
+@media (hover: hover) { .bci-pause:hover { border-color: rgba(0, 0, 0, .3); box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .3); transform: translateY(-1px); } }
 .bci-pause:active { transform: scale(.98); }
 .bci-pause:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .bci-prods { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -52,7 +52,7 @@
 .bci-index > li { border-bottom: 1px solid var(--line); }
 .bci-index > li[hidden] { display: none; }
 .bci-all { grid-column: 6 / span 7; display: inline-flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; margin-top: 8px; padding: 0 10px; border: 0; border-bottom: 1px solid var(--line); background: none; font: 600 17px/1 var(--sans); color: var(--ink); cursor: pointer; transition: background-color .2s, transform .1s; }
-.bci-all:hover { background: var(--hz-50, #f5f5f7); }
+@media (hover: hover) { .bci-all:hover { background: var(--hz-50, #f5f5f7); } }
 .bci-all:active { transform: scale(.99); }
 .bci-all:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .bci-all i { position: relative; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); }
@@ -60,21 +60,21 @@
 .bci-all i::after { transform: rotate(90deg); }
 .bci-all[aria-expanded='true'] i::after { transform: rotate(0deg); }
 .bci-card { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: 'n t c' 'n d go'; align-items: baseline; column-gap: 18px; row-gap: 6px; padding: 22px 10px 20px; color: var(--ink); text-decoration: none; transition: background-color .2s, transform .1s; }
-.bci-card:hover { background: var(--hz-50, #f5f5f7); }
+@media (hover: hover) { .bci-card:hover { background: var(--hz-50, #f5f5f7); } }
 .bci-card:active { transform: scale(.995); }
 .bci-card:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .bci-card-n { grid-area: n; font-size: 13px; color: var(--soft); }
 .bci-card-t { grid-area: t; font-size: clamp(22px, 2vw, 30px); font-weight: 600; letter-spacing: -.025em; line-height: 1.1; transition: transform .35s var(--ease); }
-.bci-card:hover .bci-card-t { transform: translateX(8px); }
+@media (hover: hover) { .bci-card:hover .bci-card-t { transform: translateX(8px); } }
 .bci-card-d { grid-area: d; font-size: 16px; color: var(--soft); transition: transform .35s var(--ease); }
-.bci-card:hover .bci-card-d { transform: translateX(8px); }
+@media (hover: hover) { .bci-card:hover .bci-card-d { transform: translateX(8px); } }
 .bci-card-c { grid-area: c; justify-self: end; font-size: 13px; color: var(--soft); white-space: nowrap; }
 .bci-card-c b { color: var(--ink); font-weight: 600; }
 .bci-card-go { grid-area: go; justify-self: end; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; }
 .bci-card-go i { font-style: normal; opacity: .45; transition: opacity .2s; }
 .bci-card-go svg { transition: transform .2s var(--ease); }
-.bci-card:hover .bci-card-go i { opacity: 1; }
-.bci-card:hover .bci-card-go svg { transform: translateX(4px); }
+@media (hover: hover) { .bci-card:hover .bci-card-go i { opacity: 1; } }
+@media (hover: hover) { .bci-card:hover .bci-card-go svg { transform: translateX(4px); } }
 
 /* what sits behind the key: nine groups, one open */
 .bci-groups { background: var(--hz-50, #f5f5f7); }
@@ -86,7 +86,7 @@
 .bci-glist button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .bci-glist button .x-mono { font-size: 13px; color: var(--soft); }
 .bci-glist button b { font-size: clamp(19px, 1.6vw, 23px); font-weight: 600; letter-spacing: -.02em; transition: transform .3s var(--ease); }
-.bci-glist button:hover b { transform: translateX(6px); }
+@media (hover: hover) { .bci-glist button:hover b { transform: translateX(6px); } }
 .bci-glist button i { position: relative; width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .15); background: #fff; }
 .bci-glist button i::before, .bci-glist button i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 10px; height: 1.6px; margin: -.8px 0 0 -5px; background: var(--ink); border-radius: 1px; transition: transform .35s var(--ease); }
 .bci-glist button i::after { transform: rotate(90deg); }
@@ -138,7 +138,7 @@
 .bci-tot { width: 64px; }
 .bci-mx tbody th { position: sticky; left: 0; z-index: 1; width: 200px; background: #fff; text-align: left; font-weight: 500; }
 .bci-mx tbody th a { display: flex; align-items: center; min-height: 36px; padding-right: 10px; font-size: 15px; color: var(--ink); text-decoration: none; }
-.bci-mx tbody th a:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (hover: hover) { .bci-mx tbody th a:hover { text-decoration: underline; text-underline-offset: 3px; } }
 .bci-mx tbody tr.hot th { background: var(--hz-100, #e8e8ed); }
 .bci-mx td { position: relative; height: 36px; text-align: center; cursor: crosshair; transition: background-color .15s; }
 .bci-mx tr.hot td, .bci-mx td.col { background: var(--hz-50, #f5f5f7); }
@@ -158,12 +158,12 @@
 .bci-rows { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
 .bci-rows > li { border-bottom: 1px solid var(--line); }
 .bci-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 76px; padding: 0 8px; color: var(--ink); text-decoration: none; transition: background-color .2s, transform .1s; }
-.bci-row:hover { background: var(--hz-50, #f5f5f7); }
+@media (hover: hover) { .bci-row:hover { background: var(--hz-50, #f5f5f7); } }
 .bci-row:active { transform: scale(.995); }
 .bci-row:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .bci-row b { font-size: 21px; font-weight: 600; letter-spacing: -.015em; }
 .bci-row svg { transition: transform .2s var(--ease); }
-.bci-row:hover svg { transform: translateX(4px); }
+@media (hover: hover) { .bci-row:hover svg { transform: translateX(4px); } }
 .bci-points { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 32px; font-size: 16px; color: var(--soft); }
 .bci-points li { display: inline-flex; align-items: center; gap: 10px; }
 .bci-points li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); }

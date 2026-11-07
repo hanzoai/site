@@ -20,6 +20,7 @@ import Settle from '../v2/Settle';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
+import '../v2/x-gauss/Rhythm.css';
 import './Gallery.css';
 
 const FRAMES = [
@@ -210,7 +211,7 @@ function Moves() {
 
 export default function Gallery() {
   return (
-    <main className="xga w2">
+    <main id="main" className="xga w2 gx">
       <NoJs />
       <Wall />
       <Moves />

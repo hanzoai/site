@@ -10,9 +10,10 @@
    Motion: scrubbed race (scroll, the signature) + open bounties arriving live with a pulse (time, idle) + tiles lifting
    and steppers springing the marker (pointer, state) + line-mask headline (arrival). 0 UI hues. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A } from '../kit';
-import LineReveal from '../v2/LineReveal';
+import { Count } from '../ui';
+import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, REPOS, CONTRIBUTING, useBounties, SAY } from './Bounty.github';
 import '../v2/ProgramScale.css';
 import './Bounty.css';
@@ -33,7 +34,7 @@ function Open() {
         <i className="xbo-live" aria-hidden="true" />
         <span className="xbo-win-k">Bounties &amp; Rewards</span>
         <b>Open bounties</b>
-        {total > 0 && <span className="x-mono">{n(total)} open</span>}
+        {total > 0 && <span className="xbo-n x-mono" aria-hidden="true">{n(total)}</span>}
       </div>
       {items.length ? (
         <ul className="xbo-issues">
@@ -50,11 +51,12 @@ function Open() {
       ) : (
         <div className="xbo-say" role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">
           <span className="xbo-ghosts" aria-hidden="true"><i /><i /><i /><i /></span>
-          <p className={st.kind === 'reading' ? 'xbo-shimmer' : ''}>{say}</p>
-          {st.kind === 'unreachable' && <a className="x-btn xp-ghost" href={SEARCH} target="_blank" rel="noopener noreferrer">Open bounties on GitHub ↗</a>}
+          {say && <p className="xbo-shimmer">{say}</p>}
+          {st.kind === 'unreachable' && <a className="x-btn xp-ghost" href={SEARCH} target="_blank" rel="noopener noreferrer">Every open bounty<i aria-hidden="true">↗</i></a>}
+          {st.kind === 'ready' && !total && <a className="x-btn xp-ghost" href="#propose">Propose a bounty<i aria-hidden="true">↓</i></a>}
         </div>
       )}
-      {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer">{n(more)} more on GitHub ↗</a>}
+      {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer"><span>Every open bounty</span><i aria-hidden="true">↗</i></a>}
     </div>
   );
 }
@@ -84,7 +86,7 @@ function Hero() {
 
 const WAYS = [
   ['Verified bug report', 50, '+$20 AI credits', 'Report a reproducible bug in Hanzo Dev, Cloud, Console, or SDKs. Earn +50 bounty points and up to $20 in AI credits.'],
-  ['Merged bounty pull request', 100, null, 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.'],
+  ['Merged bounty pull request', 100, '+$20 AI credits', 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.'],
   ['Qualified referral', 20, '+$5 AI credits', 'Invite a builder who activates a paid plan or trial. Earn +20 leaderboard points and $5 in AI credits.'],
   ['100K tokens processed', 1, null, 'Every 100,000 tokens processed across Hanzo Cloud models automatically adds +1 point to your global standing.'],
 ];
@@ -114,7 +116,7 @@ function Rewards() {
   const [bugs, prs, refs, blocks] = v;
   const lo = bugs * 50 + prs * 100 + refs * 20 + blocks;
   const hi = bugs * 50 + prs * 500 + refs * 20 + blocks;
-  const credits = bugs * 20 + refs * 5;
+  const credits = bugs * 20 + prs * 20 + refs * 5;
   const set = (i, x) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 1000 : 99, x)) : y))); };
   const MAX = 1700;
   const pos = (p) => Math.min(100, (p / MAX) * 100) + '%';
@@ -128,7 +130,7 @@ function Rewards() {
         <ul className="xbo-ways">
           {WAYS.map(([t, pts, cr, d2], i) => (
             <li key={t} className={'xbo-way w' + i}>
-              <span className="xbo-way-fig xp-fig"><span className="xbo-plus">+</span>{pts}<small> pts</small></span>
+              <span className="xbo-way-fig xp-fig"><span className="xbo-plus">+</span><Count to={pts} /><small> pts</small></span>
               <span className="x-sr">{`+${pts} pts`}</span>
               <div className="xbo-way-b">
                 <h3 className="xp-title">{t}</h3>
@@ -157,9 +159,9 @@ function Rewards() {
 }
 
 const AWARDS = [
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#index-lock', 'Reported stale .git/index.lock failure during post-turn sandbox delivery on large C++ repositories (ClickHouse PR 115724).'],
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#repo-fallback', 'Reported Try Again / follow-up repository resolution failure when Forge workspace exists alongside a GitHub fork.'],
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#slack-thread-pr-review', 'Reported Slack @Hanzo thread parent context loss and multi-repo PR review handling in channel threads.'],
+  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#index-lock', '+50 pts · +$20 AI credits', 'Reported stale .git/index.lock failure during post-turn sandbox delivery on large C++ repositories (ClickHouse PR 115724).'],
+  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#repo-fallback', '+50 pts', 'Reported Try Again / follow-up repository resolution failure when Forge workspace exists alongside a GitHub fork.'],
+  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#slack-thread-pr-review', '+50 pts', 'Reported Slack @Hanzo thread parent context loss and multi-repo PR review handling in channel threads.'],
 ];
 
 function Standings() {
@@ -179,7 +181,7 @@ function Standings() {
                 <span className="xbo-role">{role}{up && <em className="xbo-up">{up}</em>}</span>
                 <span className="xbo-line x-mono">{line}</span>
               </span>
-              <span className="xbo-total xp-fig">{n(pts)}<small> pts</small></span>
+              <span className="xbo-pts xp-fig">{n(pts)}<small> pts</small></span>
             </li>
           ))}
         </ol>
@@ -189,11 +191,11 @@ function Standings() {
             <A to="/leaderboard" className="xbo-link">View global token &amp; bounty leaderboard</A>
           </div>
           <ul>
-            {AWARDS.map(([h, d]) => (
+            {AWARDS.map(([h, prize, d]) => (
               <li key={h}>
                 <span className="xbo-wire-k x-mono">{h}</span>
                 <p>{d}</p>
-                <span className="xbo-wire-p x-mono">+50 pts · +$20 AI credits</span>
+                <span className="xbo-wire-p x-mono">{prize}</span>
               </li>
             ))}
           </ul>
@@ -221,15 +223,24 @@ const TOP = LOG(ORGS[0][3]);
 function Lane({ p, i, org }) {
   const [h, badge, req, t] = org;
   const to = LOG(t) / TOP;
-  const scaleX = useTransform(p, [0.05 + i * 0.035, 0.55 + i * 0.03], [0, to], { clamp: true });
+  const scaleX = useTransform(p, [0.05 + i * 0.035, 0.55 + i * 0.03], [0, 1], { clamp: true });
   return (
-    <li>
+    <li className="xbo-lane">
       <span className="xbo-org-n x-mono">{`#${i + 1}`}</span>
       <span className="xbo-org-w"><b>{h}</b><span className="xbo-badge">{badge}</span><span className="xbo-req x-mono">{req}</span></span>
-      <span className="xbo-org-bar" aria-hidden="true"><motion.i style={{ scaleX }} /></span>
+      <span className="xbo-org-bar" aria-hidden="true"><motion.i style={{ scaleX, width: (to * 100).toFixed(1) + '%' }} /></span>
       <span className="xbo-org-t x-mono">{n(t)} tokens</span>
     </li>
   );
+}
+
+/* @hanzo's figure counts with the race; the server and no-JS page carry the real figure. */
+function Tally({ p, to }) {
+  const ref = useRef(null);
+  const v = useTransform(p, [0.05, 0.55], [0, to], { clamp: true });
+  useMotionValueEvent(v, 'change', (x) => { if (ref.current) ref.current.textContent = n(Math.round(x)); });
+  useEffect(() => { if (ref.current) ref.current.textContent = n(Math.round(v.get())); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  return <span ref={ref}>{n(to)}</span>;
 }
 
 /* The token race, scrubbed by the scroll, on a log line. */
@@ -243,7 +254,7 @@ function Volume() {
       <div className="xp-wrap">
         <div className="xp-grid xbo-vol-head">
           <div className="xbo-vol-hl">
-            <p className="xbo-vol-fig xp-fig">106,039,884</p>
+            <p className="xbo-vol-fig xp-fig"><Tally p={p} to={ORGS[0][3]} /></p>
             <p className="xbo-vol-u x-mono"><span>@hanzo</span><span>Core Fleet</span><span>tokens</span></p>
           </div>
           <div className="xbo-vol-hr">
@@ -275,12 +286,11 @@ function Take() {
           {TAKE.map((t, i) => (
             <li key={t} className={MARKS[i][1]}>
               <span className="xbo-tl-m" aria-hidden="true" />
-              <span className="xbo-tl-k x-mono">{MARKS[i][0]}</span>
               <p className="xp-title">{t}</p>
             </li>
           ))}
         </ol>
-        <div className="xbo-propose">
+        <div className="xbo-propose" id="propose">
           <h3 className="xp-title">Propose a bounty</h3>
           <p className="xp-body">Found something worth fixing? Open an issue in its repository saying what is wrong, where, and how a fix is checked, and ask for the bounty label. A maintainer decides.</p>
           <A to={REPOS} className="xbo-link">Hanzo’s repositories</A>
@@ -294,6 +304,7 @@ function Take() {
 export default function Bounty() {
   return (
     <main className="xp xbo">
+      <NoJs />
       <Hero />
       <Rewards />
       <Standings />

@@ -1,41 +1,42 @@
 'use client';
-/* /investors. V2: 8/10 Calm story in huge tabular figures, ink and greys only: a two-line display hero beside a figure
-   counter that rolls once through the seven measured results and rests (pause and replay control), the thesis as three
-   pinned chapters (Pareto, 200×, 400×), the stack as layered slabs, the results room as a wall of giant figures (the one
-   dark room), the public commit record, a still wall of what Hanzo built, the structure with 51% as its figure, every
-   figure listed to its source, and a Sigil close.
-   Persona: an investor (or press) doing diligence (PLAN 1.1 "Investor and press").
-   Goal: reach investor relations. CTA: "Contact investor relations" (mailto:ir@hanzo.ai), metric: the one contact
-   click (cta_click investors.*); one solid per screen, carried by the site's shared ask bar after the hero.
+/* /investors. Story page (MASTER 4.4), Hanzo's deck only.
+   V2: 8/10 After review: the hero arrives after the curtain and reads with JS off; the thesis and the results are
+   pinned scenes where one thing replaces the last (the outgoing title clears first) and each figure rolls in with a
+   true object beside it (16 of 16 tasks lit, 152 of 159 dots, LiveCodeBench and Kai bars on a zero baseline, Dev's
+   interval, 200x against 400x at twice the length); the stack's slabs layer as you scroll with Hanzo's 03 / 02 / 01 as
+   their numerals; the commit stats roll in one at a time; the close carries one solid, ir@hanzo.ai.
+   Persona: an investor (or press) doing diligence (MASTER 1, "investors and press").
+   Goal: reach investor relations. CTA: "Contact investor relations" (mailto:ir@hanzo.ai). Metric: one contact click
+   (cta_click investors.hero / investors.close).
    Signature: the figure counter. Every measured figure rolls in digit by digit, one at a time, each named in Hanzo's
-   own words and linked to the run it comes from; press any step to hold it.
-   Supporting (3): masked kinetic lines; the thesis as pinned chapters (PinScenes); the Sigil close drifting.
+   own words and linked to the run it comes from; press any step to hold it, Pause or Replay it.
+   Supporting (3): line-mask headlines; the pinned scenes (thesis and results) where figures roll in; the stack's
+   slabs layering as you scroll.
    Beyond: "Read the source": the seven figures as one list you tick off as you open each source, a giant tabular
-   counter that fills as you go, kept in this browser for next time.
-   Deletes: the indigo accent, the eyebrows ("Hanzo Investor Relations", "Hanzo.Thesis · one platform"), the endless
-   counter loop, the endlessly drifting logo marquee, the native checkboxes, the invented labels ("Open the source",
-   "Check our work", "Every figure, to its run", "checked", composed figure names) and the visible initials.
+   counter filling as you go, kept in this browser.
+   Deletes: the indigo accent, the eyebrows, the endless counter loop and marquee, native checkboxes, the drawn (not
+   measured) Pareto scatter, invented labels, visible initials, the forked UiBtn buttons (now the kit's Cta).
    Every word, figure and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { Btn as UiBtn } from '../ui';
-import { A, Img } from '../kit';
+import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react';
+import { A, Img, Cta } from '../kit';
 import Sigil from '../Sigil';
-import { href as hrefOf } from '../../lib/route';
 import MaskLines from './company/MaskLines';
-import PinScenes from './company/PinScenes';
+import useArrived from './company/useArrived';
 import { ECO } from './openSourceData';
 import '../v2/vc-type.css';
+import './company/deck.css';
 import './Investors.css';
 
 const EASE = [0.16, 1, 0.3, 1];
+// JS off: the hero's lede, asks and counter show, and every pinned scene stacks readable (PLAN 2.3, 2.17)
+const NOJS = { __html: '<style>.xin-roll-f[aria-hidden=true]{display:none!important}.xin-hero-l,.xin-hero-o,.xin-stats li{opacity:1!important;transform:none!important}.xin-pin{height:auto!important}.xin-pin-st{position:static!important;height:auto!important}.xin-pin-g{display:block!important}.xin-pin-s{display:grid!important;padding:48px 0}.xin-pin-s *{opacity:1!important;transform:none!important}</style>' };
 const H = ECO[0];
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 // the seven measured figures: Hanzo's own name for each, its subject, the figure and the page that carries its runs
 const [LEAD] = H.stats;
 const TICK = [['Research.DecisionSuite', 'Kai', '16 of 16', '/benchmarks#decision-suite'], ['Research.LiveCodeBench', 'Enso', '93.7%', '/enso'], ['GPQA Diamond', 'Enso Ultra', '95.6%', '/enso'], ['One decision, served', 'Kai', '0.8 ms', '/kai'], ['Faster on the same coding tasks', 'Hanzo Dev', '3.02×', '/dev'], ['Prompt tokens a second', 'Zen 6', '~3,665', '/zen#desks'], [LEAD[0], LEAD[2], LEAD[1], H.readTo]];
-const Btn = ({ to, children, ...r }) => <UiBtn href={hrefOf(to)} {...r}>{children}</UiBtn>;
 const Up = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 11l6-6M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const BACKERS = [['techstars', 'Techstars', 'https://www.techstars.com'], ['amazon', 'Amazon', 'https://aws.amazon.com'], ['digitalocean', 'DigitalOcean', 'https://www.digitalocean.com'], ['google', 'Google', 'https://cloud.google.com'], ['microsoft', 'Microsoft', 'https://azure.microsoft.com'], ['nvidia', 'NVIDIA', 'https://www.nvidia.com'], ['nebius', 'Nebius', 'https://nebius.com']];
 
@@ -51,7 +52,7 @@ function Logo({ src, name }) {
 
 /* ---------- the signature: the figure counter ----------
    It rolls once through the seven figures and rests on the first; Pause holds it, Replay runs it again (WCAG 2.2.2). */
-function Roll() {
+function Roll({ still = false }) {
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
@@ -59,14 +60,14 @@ function Roll() {
   const [run, setRun] = useState(true); // false once you hold it, pause it or it has gone round once
   const n = TICK.length;
   useEffect(() => {
-    if (!run || calm || !seen) return;
+    if (still || !run || calm || !seen) return;
     const t = setTimeout(() => { if (at === n - 1) { setAt(0); setRun(false); } else setAt(at + 1); }, 3400);
     return () => clearTimeout(t);
   }, [at, run, calm, seen, n]);
   const [label, who, , to] = TICK[at];
   const live = run && !calm;
   return (
-    <div className="xin-roll vc-obj" ref={box}>
+    <div className="xin-roll" ref={box}>
       <div className="xin-roll-h">
         <span className="vc-kick xin-roll-k" aria-live="polite"><span>{label}</span> <span className="xin-roll-w">{who}</span></span>
         <button type="button" className="xin-roll-p" aria-label={live ? 'Pause' : 'Replay'} onClick={() => { if (live) setRun(false); else { setAt(0); setRun(true); } }}>
@@ -107,68 +108,119 @@ function Roll() {
 }
 
 function Hero() {
+  const ok = useArrived();
   return (
     <section className="xin-hero" aria-label="Hanzo Investor Relations" data-ask-name="Hanzo Investor Relations">
+      <noscript dangerouslySetInnerHTML={NOJS} />
       <div className="vc-grid xin-hero-g">
         <div className="xin-hero-t">
           <MaskLines as="h1" id="xin-h1" now delay={0.05} lines={['The intelligence', 'layer for business.']} className="vc-display xin-h1" />
         </div>
-        <motion.div className="xin-hero-l" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, ease: EASE, delay: 0.6 }}>
+        <motion.div className="xin-hero-l" initial={{ opacity: 0, y: 12 }} animate={ok ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.52, ease: EASE, delay: 0.45 }}>
           <p className="vc-lede">Models, agents and the cloud beneath them — one account, one key, one bill.</p>
           <div className="xin-acts">
-            <UiBtn href="mailto:ir@hanzo.ai" solid className="xin-big" data-thumb="Contact investor relations" data-cta="investors.hero">Contact investor relations</UiBtn>
-            <UiBtn href="#research" className="xin-big" data-cta="investors.research">See the research</UiBtn>
+            <Cta to="mailto:ir@hanzo.ai" target="_self" className="xin-big" id="investors.hero" thumb>Contact investor relations</Cta>
+            <Cta to="/investors#research" kind="quiet" className="xin-big" id="investors.research">See the research</Cta>
           </div>
         </motion.div>
-        <motion.div className="xin-hero-o" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
-          <Roll />
+        <motion.div className="xin-hero-o" initial={{ opacity: 0, y: 40 }} animate={ok ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}>
+          <Roll still={!ok} />
         </motion.div>
       </div>
       <div className="vc-grid xin-backed">
         <p className="vc-kick">Backed by</p>
-        <ul>{BACKERS.map(([f, n, to]) => <li key={f}><A to={to}><Logo src={`/logos/partners/${f}.svg`} name={n} /></A></li>)}</ul>
+        <ul>{BACKERS.map(([f, n, to]) => <li key={f}><A to={to} aria-label={n}><Logo src={`/logos/partners/${f}.svg`} name={n} /></A></li>)}</ul>
       </div>
     </section>
   );
 }
 
-/* ---------- the thesis: three pinned chapters ---------- */
-const THESIS = [['Smarter', 'Frontier intelligence on a measured Pareto frontier.'], ['Faster', 'Up to 200× faster for direct decisions.'], ['Cheaper', 'Up to 400× cheaper on the work we measure.']];
-const Pareto = () => (
-  <svg className="xin-pareto" viewBox="0 0 600 500" aria-hidden="true">
-    <path d="M70 40V440H570" fill="none" stroke="rgba(0,0,0,.14)" strokeWidth="1.5" />
-    {[[150, 360], [210, 330], [260, 300], [330, 250], [400, 230], [460, 190], [300, 340], [380, 300], [470, 270], [520, 240], [240, 380]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="7" fill="#c7c7cc" />)}
-    <path d="M110 420C170 300 260 190 380 140S520 90 560 82" fill="none" stroke="#1d1d1f" strokeWidth="3" strokeLinecap="round" strokeDasharray="2 10" />
-    <circle cx="380" cy="140" r="16" fill="#1d1d1f" />
-    <circle cx="380" cy="140" r="30" fill="none" stroke="#1d1d1f" strokeOpacity=".25" strokeWidth="2" />
-  </svg>
-);
-const Big = ({ v }) => (
-  <div className="xin-big-f" aria-hidden="true">
-    <b className="vc-num">{v}</b>
-    <span className="xin-big-bar"><i style={{ '--w': v === '200×' ? '50%' : '100%' }} /><i className="one" /></span>
-  </div>
-);
-const THESIS_V = [<Pareto key="p" />, <Big key="2" v="200×" />, <Big key="4" v="400×" />];
-
-function Thesis() {
+/* A figure that rolls in digit by digit when its scene is on (the counter's own roll). */
+function RollFig({ v, on, className = '' }) {
   return (
-    <>
-      <PinScenes
-        label="Hanzo.Thesis · one platform"
-        className="xin-thesis"
-        scenes={THESIS.map(([t, d], i) => ({
-          key: t,
-          title: <h3 className="vc-display s">{t}</h3>,
-          body: <p className="vc-lede">{d}</p>,
-          visual: THESIS_V[i],
-        }))}
-      />
-    </>
+    <span className={'xin-rf vc-num ' + className}>
+      {[...v].map((c, j) => (
+        <span key={j} className="xin-roll-m">
+          <motion.span className="xin-roll-c" initial={false} animate={on ? { y: '0%' } : { y: '105%' }}
+            transition={{ duration: on ? 0.7 : 0.25, ease: EASE, delay: on ? 0.28 + j * 0.035 : 0 }}>{c === ' ' ? ' ' : c}</motion.span>
+        </span>
+      ))}
+    </span>
   );
 }
 
-/* ---------- the stack: three layered slabs ---------- */
+/* A pinned scene (page-local): the words pin on the left while the object on the right changes. The outgoing title
+   slides out of its mask before the next one rises, so two titles never share the frame. Phones, reduced motion and
+   JS off get every scene stacked. Keyboard focus inside a scene scrolls the page to it. */
+function Pinned({ id, label, dark, scenes, className = '', head }) {
+  const ref = useRef(null);
+  const n = scenes.length;
+  const [at, setAt] = useState(0);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.min(n - 1, Math.max(0, Math.floor(p * n * 0.999)))));
+  const go = (i) => {
+    const el = ref.current;
+    if (!el || innerWidth <= 900) return;
+    const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * ((i + 0.5) / n);
+    window.__lenis ? window.__lenis.scrollTo(y, { immediate: true, force: true }) : scrollTo(0, y);
+  };
+  return (
+    <section ref={ref} id={id} className={'xin-pin ' + className} style={{ '--n': n }} aria-label={label} data-room={dark ? 'dark' : undefined}>
+      {head}
+      <div className="xin-pin-st">
+        <div className="vc-grid xin-pin-g">
+          {scenes.map((s, i) => {
+            const st = i === at ? 'on' : i < at ? 'past' : 'next';
+            return (
+              <div className="xin-pin-s" key={s.key} data-st={st} onFocusCapture={() => i !== at && go(i)}>
+                <div className="xin-pin-t">
+                  {s.pre && <motion.div className="xin-pin-pre" initial={false} animate={{ opacity: st === 'on' ? 1 : 0 }} transition={{ duration: st === 'on' ? 0.3 : 0.15, delay: st === 'on' ? 0.25 : 0 }}>{s.pre}</motion.div>}
+                  <div className="xin-pin-h">
+                    <motion.div initial={false} animate={{ y: st === 'on' ? '0%' : st === 'past' ? '-105%' : '105%' }} transition={{ duration: st === 'on' ? 0.6 : 0.28, ease: EASE, delay: st === 'on' ? 0.3 : 0 }}>{s.title(st === 'on')}</motion.div>
+                  </div>
+                  <motion.div className="xin-pin-b" initial={false} animate={{ opacity: st === 'on' ? 1 : 0 }} transition={{ duration: st === 'on' ? 0.4 : 0.2, delay: st === 'on' ? 0.45 : 0 }}>{s.body}</motion.div>
+                </div>
+                <motion.div className="xin-pin-v" initial={false} animate={{ opacity: st === 'on' ? 1 : 0, scale: st === 'on' ? 1 : 0.97 }} transition={{ duration: st === 'on' ? 0.6 : 0.28, ease: EASE, delay: st === 'on' ? 0.2 : 0 }}>{s.visual(st === 'on')}</motion.div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- the thesis: three pinned chapters, each with a true object ---------- */
+const THESIS = [['Smarter', 'Frontier intelligence on a measured Pareto frontier.'], ['Faster', 'Up to 200× faster for direct decisions.'], ['Cheaper', 'Up to 400× cheaper on the work we measure.']];
+// 200× and 400× against the same 1× mark: the 400× bar is twice the 200× bar
+const Times = ({ v, w, on }) => (
+  <div className="xin-big-f" aria-hidden="true">
+    <b className="vc-num">{v}</b>
+    <span className="xin-big-bar"><i className="one" /><span><motion.i initial={false} animate={{ scaleX: on ? w : 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }} /></span></span>
+  </div>
+);
+const THESIS_V = [
+  () => <div className="xin-th-sig" aria-hidden="true"><Sigil seed="Hanzo.Thesis Smarter" data={[93.7, 95.6, 16]} /></div>,
+  (on) => <Times v="200×" w={0.5} on={on} />,
+  (on) => <Times v="400×" w={1} on={on} />,
+];
+
+function Thesis() {
+  return (
+    <Pinned
+      label="Hanzo.Thesis · one platform"
+      className="xin-thesis"
+      scenes={THESIS.map(([t, d], i) => ({
+        key: t,
+        title: () => <h3 className="vc-display s">{t}</h3>,
+        body: <p className="vc-lede">{d}</p>,
+        visual: THESIS_V[i],
+      }))}
+    />
+  );
+}
+
+/* ---------- the stack: three slabs that layer as you scroll ---------- */
 const LAYERS = [['Frontier models', 'One API for intelligence, with measured accuracy, speed and cost.', '/models'], ['Agents that do the work', 'Coding agents and autonomous runs on the same account and tools.', '/dev'], ['A cloud they can own', 'Managed on Hanzo, in a customer cloud, or on their own hardware.', '/platform']];
 function Stack() {
   return (
@@ -195,55 +247,68 @@ function Stack() {
   );
 }
 
-/* ---------- the results room: a wall of giant figures (the one dark room) ---------- */
+/* ---------- the results room: a pinned scene, one giant figure at a time (the one dark room) ---------- */
 const LCB = [['Enso', 93.7], ['gpt-5.6-sol', 93.1], ['gpt-5.5', 91.4], ['opus-5.5', 80.0], ['fable-5.1', 80.0], ['fable-5', 78.3]];
-const CELLS = [
-  ['/enso', 'Enso Ultra', '95.6%', 'GPQA Diamond', '152 of 159 new questions right, against 93.1% for the best single model on the same questions.'],
-  ['/kai', 'Kai', '0.8 ms', 'One decision, served', 'Kai on GPU, each a p50: 0.3 ms cached, 0.4 ms through the runtime, 0.8 ms served over HTTP.'],
-  ['/dev', 'Hanzo Dev', '3.02×', 'Faster on the same coding tasks', 'Over the 42 tasks both agents solved, 95% interval 2.06–4.36×.'],
-  ['/zen#desks', 'Zen 6', '~3,665', 'Prompt tokens a second', 'On NVIDIA Grace-Blackwell, NVFP4 + Latent Sparse Attention (D-LSA). Measured by Hanzo, Nov 4, 2026.'],
+const Dots = ({ n, lit, cols, on }) => (
+  <span className="xin-dots" style={{ '--cols': cols }} aria-hidden="true">
+    {Array.from({ length: n }, (_, i) => <motion.i key={i} className={i < lit ? 'on' : ''} initial={false} animate={{ opacity: on ? 1 : 0.2 }} transition={{ duration: 0.3, delay: on ? 0.3 + (i / n) * 0.8 : 0 }} />)}
+  </span>
+);
+const Bars = ({ rows, max, on, fmt }) => (
+  <ul className="xin-bars" aria-hidden="true">
+    {rows.map(([nm, v], i) => (
+      <li key={nm} className={i ? '' : 'me'}>
+        <span>{nm}</span>
+        <i><motion.b initial={false} animate={{ scaleX: on ? v / max : 0 }} transition={{ duration: 0.8, ease: EASE, delay: on ? 0.3 + i * 0.06 : 0 }} /></i>
+        <b>{fmt(v)}</b>
+      </li>
+    ))}
+  </ul>
+);
+const Interval = ({ on }) => ( // 3.02×, 95% interval 2.06–4.36×, on an axis from 0 with the 1× mark
+  <span className="xin-int" aria-hidden="true">
+    <i className="axis" /><i className="one" style={{ left: `${(1 / 5) * 100}%` }} />
+    <motion.i className="band" initial={false} style={{ left: `${(2.06 / 5) * 100}%`, width: `${((4.36 - 2.06) / 5) * 100}%` }} animate={{ opacity: on ? 1 : 0, scaleX: on ? 1 : 0.2 }} transition={{ duration: 0.7, ease: EASE, delay: 0.35 }} />
+    <motion.i className="pt" initial={false} style={{ left: `${(3.02 / 5) * 100}%` }} animate={{ scale: on ? 1 : 0 }} transition={{ duration: 0.3, ease: EASE, delay: 0.6 }} />
+  </span>
+);
+const RESULTS = [
+  { key: 'ds', k: 'Research.DecisionSuite', m: 'Kai', v: '16 of 16', t: 'Decision Suite tasks won by Kai', d: <>Each set on <span className="x-mono">Oct 15, 2026</span>, with its public data and the runs of both models.</>, to: '/benchmarks#decision-suite', go: 'Each task and its runs →', vis: (on) => <Dots n={16} lit={16} cols={4} on={on} /> },
+  { key: 'lcb', k: 'Research.LiveCodeBench', m: '175 questions', v: '93.7%', d: <><span className="xin-pin-p">Enso as enso-bench measured it on 2026-07-19, beside each single model on the same questions. Each bar is a run&apos;s accuracy.</span><span className="xin-pin-p">LiveCodeBench&apos;s recent problems: Enso <b className="x-mono">93.7%</b>, 164 of 175 right, against 93.1% for gpt-5.6-sol, the next model on the same questions.</span></>, to: '/enso', vis: (on) => <Bars rows={LCB} max={100} on={on} fmt={(v) => v.toFixed(1) + '%'} /> },
+  { key: 'gpqa', m: 'Enso Ultra', v: '95.6%', t: 'GPQA Diamond', d: '152 of 159 new questions right, against 93.1% for the best single model on the same questions.', to: '/enso', vis: (on) => <Dots n={159} lit={152} cols={20} on={on} /> },
+  { key: 'kai', m: 'Kai', v: '0.8 ms', t: 'One decision, served', d: 'Kai on GPU, each a p50: 0.3 ms cached, 0.4 ms through the runtime, 0.8 ms served over HTTP.', to: '/kai', vis: (on) => <Bars rows={[['cached', 0.3], ['runtime', 0.4], ['HTTP', 0.8]]} max={0.8} on={on} fmt={(v) => v + ' ms'} /> },
+  { key: 'dev', m: 'Hanzo Dev', v: '3.02×', t: 'Faster on the same coding tasks', d: 'Over the 42 tasks both agents solved, 95% interval 2.06–4.36×.', to: '/dev', vis: (on) => <Interval on={on} /> },
+  { key: 'zen', m: 'Zen 6', v: '~3,665', t: 'Prompt tokens a second', d: 'On NVIDIA Grace-Blackwell, NVFP4 + Latent Sparse Attention (D-LSA). Measured by Hanzo, Nov 4, 2026.', to: '/zen#desks', vis: () => <span className="xin-res-sig" aria-hidden="true"><Sigil seed="Zen 6 ~3,665" data={[3665, 4]} /></span> },
 ];
 function Research() {
   return (
-    <section className="vc-sec xin-res" id="research" data-room="dark" aria-labelledby="xin-res">
-      <div className="vc-grid">
-        <header className="xin-res-h">
+    <Pinned
+      id="research"
+      dark
+      label="The latest results, with every task."
+      className="xin-res"
+      head={(
+        <div className="vc-grid xin-res-h">
           <MaskLines id="xin-res" lines={['The latest results,', 'with every task.']} className="vc-display s" />
           <p className="vc-body">Each result is read from research runs on public questions, the same for every model.</p>
-        </header>
-        <A to="/benchmarks#decision-suite" className="xin-cell ds">
-          <span className="xin-cell-k x-mono">Research.DecisionSuite</span>
-          <span className="xin-cell-m">Kai</span>
-          <b className="xin-giant vc-num">16 of 16</b>
-          <b className="xin-cell-t">Decision Suite tasks won by Kai</b>
-          <span className="xin-cell-d">Each set on <span className="x-mono">Oct 15, 2026</span>, with its public data and the runs of both models.</span>
-          <span className="xin-go">Each task and its runs →</span>
-        </A>
-        <div className="xin-cell lcb">
-          <span className="xin-cell-k x-mono">Research.LiveCodeBench</span>
-          <span className="xin-cell-m">175 questions</span>
-          <ul className="xin-bars">
-            {LCB.map(([nm, v], i) => (
-              <li key={nm} className={i ? '' : 'me'} style={{ '--w': (v - 60) / 40 }}>
-                <span>{nm}</span>
-                <i><b /></i>
-                <b className="x-mono">{v.toFixed(1)}%</b>
-              </li>
-            ))}
-          </ul>
-          <p className="xin-cell-d">Enso as enso-bench measured it on 2026-07-19, beside each single model on the same questions. Each bar is a run&apos;s accuracy.</p>
-          <p className="xin-cell-d">LiveCodeBench&apos;s recent problems: Enso <b className="x-mono">93.7%</b>, 164 of 175 right, against 93.1% for gpt-5.6-sol, the next model on the same questions.</p>
         </div>
-        {CELLS.map(([to, m, v, t, d]) => (
-          <A key={t} to={to} className="xin-cell fig">
-            <span className="xin-cell-m">{m}</span>
-            <b className="xin-num vc-num">{v}</b>
-            <b className="xin-cell-t">{t}</b>
-            <span className="xin-cell-d">{d}</span>
-          </A>
-        ))}
-      </div>
-    </section>
+      )}
+      scenes={RESULTS.map((r) => ({
+        key: r.key,
+        pre: <p className="xin-cell-m">{r.k && <span className="x-mono">{r.k}</span>} {r.m}</p>,
+        title: (on) => <RollFig v={r.v} on={on} className="xin-giant" />,
+        body: (
+          <>
+            {r.t && <b className="xin-cell-t">{r.t}</b>}
+            <span className="xin-cell-d">{r.d}</span>
+            {r.go
+              ? <A to={r.to} className="xin-go">{r.go}</A>
+              : <A to={r.to} className="xin-go-i" aria-label={r.t || r.k}><Up /></A>}
+          </>
+        ),
+        visual: r.vis,
+      }))}
+    />
   );
 }
 
@@ -251,6 +316,8 @@ function Research() {
 function Public() {
   const cols = Math.ceil(H.heat.length / 7);
   const [lead, ...rest] = H.stats;
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
     <section className="vc-sec xin-pub" aria-labelledby="xin-pub">
       <div className="vc-grid">
@@ -259,20 +326,22 @@ function Public() {
           <p className="vc-body">The cloud, the gateway, the agents and the runtime are developed in the open. This is the public commit record, not a marketing projection.</p>
         </header>
         <A to={H.statTo[0]} className="xin-lead">
-          <span className="vc-kick acc">{lead[0]}</span>
-          <b className="vc-display vc-num">{lead[1]}</b>
+          <b className="vc-display vc-num">{lead[1]}<span className="xin-up"><Up /></span></b>
+          <span className="xin-lead-k">{lead[0]}</span>
           <small>{lead[2]}</small>
         </A>
-        <ul className="xin-stats">
+        <ul className="xin-stats" ref={ref}>
           {rest.map(([k, v, s], i) => (
-            <li key={i}><A to={H.statTo[i + 1]}><span>{k}</span><b className="vc-num">{v}</b><small>{s}</small></A></li>
+            <li key={i}><A to={H.statTo[i + 1]}><span>{k}</span><RollFig v={v} on={seen} className="xin-stat-v" /><small>{s}</small><span className="xin-up"><Up /></span></A></li>
           ))}
         </ul>
         <figure className="xin-heat">
-          <figcaption className="vc-kick">Commits a day</figcaption>
-          <div className="xin-heat-m" aria-hidden="true">{['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'].map((m, i) => <span key={i}>{m}</span>)}</div>
-          <div className="xin-heat-g" role="img" aria-label={H.heatLabel} style={{ '--cols': cols }}>
-            {[...H.heat].map((c, i) => <i key={i} className={c === '.' ? 'x' : 'l' + c} />)}
+          <figcaption className="vc-title">Commits a day</figcaption>
+          <div className="xin-heat-sc">
+            <div className="xin-heat-m" aria-hidden="true">{['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'].map((m, i) => <span key={i}>{m}</span>)}</div>
+            <div className="xin-heat-g" role="img" aria-label={H.heatLabel} style={{ '--cols': cols }}>
+              {[...H.heat].map((c, i) => <i key={i} className={c === '.' ? 'x' : 'l' + c} />)}
+            </div>
           </div>
           <div className="xin-heat-f"><span>Commits a day, from Nov 7, 2025 to Nov 6, 2026</span><span className="xin-leg">Less {[0, 1, 2, 3, 4].map((l) => <i key={l} className={'l' + l} />)} More</span></div>
         </figure>
@@ -288,12 +357,12 @@ function Public() {
   );
 }
 
-/* ---------- what Hanzo built: a wall that drifts ---------- */
+/* ---------- what Hanzo built: a still wall ---------- */
 const BUILT = [['damon-motorcycles.svg', 'Damon Motorcycles', '/customers/damon-motorcycles'], ['kanoa.png', 'KANOA', '/customers/kanoa'], ['skully.png', 'SKULLY', '/customers#skully'], ['bellabeat.svg', 'Bellabeat', '/customers#bellabeat'], ['stoned.svg', 'STONED Audio', '/customers#stoned'], ['unikoin-gold.svg', 'Unikrn', '/customers#unikoin-gold'], ['arca.png', 'Arca', '/customers#arca'], ['casper-blockchain.svg', 'Casper Labs', '/customers#casper-blockchain'], ['trillerfest.png', 'Triller', '/customers#trillerfest'], ['cover-build.svg', 'Cover Build', '/customers#cover-build'], ['myle-tap.png', 'Myle Tap', '/customers#myle-tap'], ['keek-social.svg', 'Personas Social', '/customers#keek-social']];
 function Built() {
   return (
     <section className="xin-built" aria-labelledby="xin-built-h">
-      <div className="vc-grid"><h2 id="xin-built-h" className="vc-kick xin-built-k">Products Hanzo built and launched</h2></div>
+      <div className="vc-grid"><h2 id="xin-built-h" className="vc-title xin-built-k">Products Hanzo built and launched</h2></div>
       <div className="vc-grid">
         <ul className="xin-wall">
           {BUILT.map(([f, nm, to]) => <li key={f}><A to={to} aria-label={nm}><Logo src={'/logos/customers/' + f} name={nm} /></A></li>)}
@@ -304,6 +373,17 @@ function Built() {
 }
 
 /* ---------- people and structure ---------- */
+/* A portrait (the kit's Img) whose fallback is the person's own Sigil, not a blank disc. */
+function Face({ slug, name }) {
+  const ref = useRef(null);
+  const [bad, setBad] = useState(false);
+  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
+  return (
+    <span className="xin-ini" aria-hidden="true">
+      {bad ? <Sigil seed={name} data={[name.length]} still /> : <Img ref={ref} src={`/authors/${slug}-portrait.jpg`} alt="" w={56} h={56} onError={() => setBad(true)} />}
+    </span>
+  );
+}
 function People() {
   return (
     <section className="vc-sec xin-people" aria-labelledby="xin-people">
@@ -319,14 +399,14 @@ function People() {
         </div>
         <div className="xin-people-r">
           <div className="xin-execs">
-            {[['Antje Worring', 'CEO, Hanzo AI, Inc.', 'https://www.linkedin.com/in/antje-worring/', 'antje-worring'], ['Zach Kelling', 'CTO, Hanzo AI, Inc.', 'https://www.linkedin.com/in/zeekay/', 'zach-kelling']].map(([nm, r, to, ini]) => (
-              <A key={nm} to={to} className="xin-exec"><span className="xin-ini" aria-hidden="true" style={{ '--img': `url(https://hanzo.ai/authors/${ini}-portrait.jpg)` }} /><b>{nm}</b><span>{r}</span><i aria-hidden="true">↗</i></A>
+            {[['Antje Worring', 'CEO, Hanzo AI, Inc.', 'https://www.linkedin.com/in/antje-worring/', 'antje-worring'], ['Zach Kelling', 'CTO, Hanzo AI, Inc.', 'https://www.linkedin.com/in/zeekay/', 'zach-kelling']].map(([nm, r, to, slug]) => (
+              <A key={nm} to={to} className="xin-exec"><Face slug={slug} name={nm} /><b>{nm}</b><span>{r}</span><i aria-hidden="true">↗</i></A>
             ))}
           </div>
           <div className="xin-gov">
-            <h3 className="vc-kick acc">Corporate structure</h3>
+            <h3 className="xin-gov-h">Corporate structure</h3>
             <p className="vc-body">Investors invest in Hanzo Industries Inc., the holding company. It owns 51% of Hanzo AI, Inc., which holds the AI IP and the app.</p>
-            <h3 className="vc-kick acc">Governance</h3>
+            <h3 className="xin-gov-h">Governance</h3>
             <p className="vc-body">Hanzo Industries Inc. is privately held and does not publish financial statements. Requests for information are answered case by case by investor relations.</p>
             <p className="xin-gov-l"><A to="/legal/terms">Legal</A><A to="/security">Security</A><A to="/press">Press</A></p>
           </div>
@@ -383,12 +463,12 @@ function Close() {
     <section className="xin-close" aria-labelledby="xin-close">
       <div className="vc-grid">
         <MaskLines id="xin-close" lines={['Build the future', 'with us.']} className="vc-display m" />
-        <div className="xin-close-art vc-obj" aria-hidden="true"><Sigil seed="/investors" data={[732288, 51, 16, 93.7]} /></div>
+        <div className="xin-close-art" aria-hidden="true"><Sigil seed="/investors" data={[732288, 51, 16, 93.7]} /></div>
         <div className="xin-close-r">
           <p className="vc-lede">For investment enquiries, company information and requests beyond this page, write directly to our team.</p>
           <div className="xin-acts">
-            <Btn to="https://cal.com/hanzo" className="xin-big" data-cta="investors.call">Book a call</Btn>
-            <a href="mailto:ir@hanzo.ai" className="xin-mail">ir@hanzo.ai</a>
+            <Cta to="mailto:ir@hanzo.ai" target="_self" className="xin-big" id="investors.close" data-thumb="Contact investor relations">ir@hanzo.ai</Cta>
+            <Cta to="https://cal.com/hanzo" kind="quiet" className="xin-big" id="investors.call">Book a call</Cta>
           </div>
         </div>
       </div>

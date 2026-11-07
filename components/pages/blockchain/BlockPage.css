@@ -298,3 +298,49 @@
   .xb2-marks li { width: 10px; height: 10px; }
   .xb2-kind { background: var(--card); }
 }
+
+/* round 4: the capabilities as one pinned deck, one card at a time (no grid of nine boxes) */
+.xb2-deckx { position: relative; height: calc(var(--n) * 42svh + 100svh); margin-top: clamp(40px, 5vw, 80px); }
+.xb2-deckx-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
+.xb2-deckx-g { align-items: center; width: 100%; }
+.xb2-deckx-h { grid-column: 1 / span 5; }
+.xb2-deckx-h .v2f-lede { margin-top: 20px; }
+.xb2-marks2 { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 40px; }
+.xb2-marks2 button { height: 44px; min-width: 32px; padding: 0 2px; border: 0; background: none; cursor: pointer; display: flex; align-items: center; }
+.xb2-marks2 i { display: block; width: 28px; height: 3px; border-radius: 3px; background: rgba(0, 0, 0, .12); overflow: hidden; }
+.xb2-marks2 b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); transition: transform var(--reveal) var(--out); }
+.xb2-marks2 button[aria-current='step'] b, .xb2-marks2 button.past b { transform: none; }
+.xb2-cards { grid-column: 7 / span 6; position: relative; height: min(56svh, 460px); margin: 0; padding: 0; list-style: none; }
+.xb2-card { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 18px; padding: clamp(28px, 3vw, 48px); border-radius: var(--r-hero); background: #fff; border: 1px solid var(--hair); box-shadow: var(--shadow); transform-origin: 50% 100%; transition: transform 640ms cubic-bezier(.16, 1, .3, 1), opacity 420ms cubic-bezier(.16, 1, .3, 1), visibility 0s; }
+.xb2-card h3 { margin: 0; font-size: clamp(36px, 3.6vw, 56px); font-weight: 600; letter-spacing: -.04em; line-height: 1.02; max-width: 14ch; text-wrap: balance; }
+.xb2-card p { margin: 0; font-size: clamp(19px, 1.5vw, 22px); line-height: 1.45; color: var(--soft); max-width: 36ch; text-wrap: pretty; }
+.xb2-card .x-arrow { min-height: 44px; display: inline-flex; align-items: center; }
+.xb2-card[data-s='on'] { z-index: 20; }
+.xb2-card[data-s='next'] { z-index: calc(20 - var(--d)); transform: translateY(calc(var(--d) * -16px)) scale(calc(1 - var(--d) * .04)); opacity: calc(1 - var(--d) * .22); pointer-events: none; }
+.xb2-card[data-s='next'] > * { opacity: 0; }
+.xb2-card[data-s='far'] { opacity: 0; visibility: hidden; transform: translateY(-48px) scale(.86); pointer-events: none; transition: transform 640ms cubic-bezier(.16, 1, .3, 1), opacity 420ms, visibility 0s 420ms; }
+.xb2-card[data-s='gone'] { z-index: 21; opacity: 0; visibility: hidden; transform: translateY(18%) rotate(-3deg) scale(.96); pointer-events: none; transition: transform 520ms cubic-bezier(.7, 0, .84, 0), opacity 320ms, visibility 0s 520ms; }
+.xb2-card > * { transition: opacity 320ms; }
+/* the member's own code, typed in */
+.xb2-type .xbc-ln { visibility: hidden; }
+.xb2-type .xbc-ln.on { visibility: visible; }
+.xb2-type:not(.done) .xbc-ln.on:not(:has(~ .xbc-ln.on))::after { content: ''; display: inline-block; width: .55em; height: 1.1em; margin-left: 2px; vertical-align: text-bottom; background: #f5f5f7; }
+/* the stream's blocks: a mark, not a number */
+.xb2 .xbc-stream .xb2-blk { display: block; width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid rgba(255, 255, 255, .4); }
+.xb2-key-link { color: #f5f5f7; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; padding: 0 8px; }
+@media (max-width: 900px) {
+  .xb2-deckx { height: auto; margin-top: 96px; }
+  .xb2-deckx-pin { position: static; height: auto; display: block; overflow: visible; }
+  .xb2-deckx-h { grid-column: 1 / -1; margin-bottom: 28px; }
+  .xb2-marks2 { order: 3; margin-top: 20px; }
+  .xb2-cards { grid-column: 1 / -1; height: auto; display: grid; grid-auto-flow: column; grid-auto-columns: 86%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 8px; }
+  .xb2-cards::-webkit-scrollbar { display: none; }
+  .xb2-card { position: relative; inset: auto; min-height: 300px; scroll-snap-align: start; opacity: 1 !important; visibility: visible !important; transform: none !important; padding: 24px; }
+  .xb2-card > * { opacity: 1 !important; }
+  .xb2-card h3 { font-size: 30px; }
+  .xb2-card p { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xb2-card, .xb2-card > *, .xb2-marks2 b { transition: none !important; }
+  .xb2-type .xbc-ln { visibility: visible; }
+}

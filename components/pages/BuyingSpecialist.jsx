@@ -14,8 +14,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useMotionValue, animate } from 'motion/react';
 import { EASE } from '../ui';
-import { A } from '../kit';
-import LineReveal from '../v2/LineReveal';
+import { A, Band } from '../kit';
+import LineReveal, { NoJs } from '../v2/LineReveal';
 import { P, r2, usd, BRIEF, written } from './BuyingSpecialist.data';
 import '../v2/ProgramScale.css';
 import './BuyingSpecialist.css';
@@ -44,13 +44,25 @@ function inline(t) {
   if (at < t.length) out.push(t.slice(at));
   return out;
 }
+/* Line by line: '#' lines become headings, runs of '-' or '1.' lines become lists, the rest paragraphs. */
 function Md({ text }) {
-  return text.split('\n\n').map((blk, i) => {
-    const ls = blk.split('\n').filter((l) => l.trim());
-    if (ls.length === 1 && /^#{1,3}\s+/.test(ls[0].trim())) return <h4 key={i}>{inline(ls[0].trim().replace(/^#{1,3}\s+/, ''))}</h4>;
-    if (ls.length && ls.every((l) => /^([-*]|\d+\.)\s+/.test(l.trim()))) return <ul key={i}>{ls.map((l, j) => <li key={j} className={/^\s{2,}/.test(l) ? 'sub' : ''}>{inline(l.trim().replace(/^([-*]|\d+\.)\s+/, ''))}</li>)}</ul>;
-    return <p key={i}>{inline(blk)}</p>;
-  });
+  const out = [];
+  let para = [], list = null;
+  const flush = () => {
+    if (para.length) { out.push(<p key={out.length}>{inline(para.join(' '))}</p>); para = []; }
+    if (list) { out.push(<ul key={out.length}>{list.map(([sub, t], j) => <li key={j} className={sub ? 'sub' : ''}>{inline(t)}</li>)}</ul>); list = null; }
+  };
+  for (const raw of text.split('\n')) {
+    const l = raw.trim();
+    if (!l) { flush(); continue; }
+    const h = /^#{1,4}\s+(.*)$/.exec(l);
+    const li = /^([-*]|\d+\.)\s+(.*)$/.exec(l);
+    if (h) { flush(); out.push(<h4 key={out.length}>{inline(h[1])}</h4>); }
+    else if (li) { if (para.length) { const p2 = para; para = []; out.push(<p key={out.length}>{inline(p2.join(' '))}</p>); } (list ||= []).push([/^\s{2,}/.test(raw), li[2]]); }
+    else { if (list) { const l2 = list; list = null; out.push(<ul key={out.length}>{l2.map(([sub, t], j) => <li key={j} className={sub ? 'sub' : ''}>{inline(t)}</li>)}</ul>); } para.push(l); }
+  }
+  flush();
+  return out;
 }
 
 function Quote({ q }) {
@@ -62,7 +74,7 @@ function Quote({ q }) {
         <div><span>Monthly Rate</span><b className="x-mono">{usd(q.monthlyTotal)}<small>/mo</small></b><span>Cancel anytime</span></div>
       </div>
       <div className="xbs-quote-a">
-        <A to={q.checkoutUrl} className="x-btn solid">Continue with {q.plan} →</A>
+        <A to={q.checkoutUrl} className="x-btn">Continue with {q.plan} →</A>
         <a href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer" className="x-btn">Book a Call (cal.com/hanzo)</a>
       </div>
     </div>
@@ -70,6 +82,17 @@ function Quote({ q }) {
 }
 
 /* The seat mixer: one square per member; Premium squares are filled. It re-prices itself until you take it. */
+/* A price that rolls: the new figure rises into place as the old one leaves. */
+function Roll({ v }) {
+  return (
+    <span className="xbs-roll">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.18 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{v}</motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
 /* The hero object: Hanzo's own quote card, the one the specialist writes into a reply, for a team of N members. It
    re-prices itself (4, 10, 25, 50) until you drag the seats or tell the chat your size. Every word on it is the
    card's own. */
@@ -77,7 +100,7 @@ function Sheet({ seats, setSeats, mine }) {
   const yr = seats * P.std;
   const mo = seats * P.stdMo;
   return (
-    <aside className="xbs-sheet" aria-label={`Hanzo Team Configuration, ${seats} members`}>
+    <aside className="xbs-sheet" data-room="dark" aria-label={`Hanzo Team Configuration, ${seats} members`}>
       <div className="xbs-sheet-h"><b>Hanzo Team Configuration</b><span className="x-mono">SAVE {P.save}% ANNUALLY</span></div>
       <p className="xbs-team x-mono" aria-hidden="true"><b>{seats}</b> members</p>
       <div className="xbs-seats" aria-hidden="true">
@@ -85,8 +108,8 @@ function Sheet({ seats, setSeats, mine }) {
       </div>
       <input className="xbs-range" type="range" min={2} max={100} value={seats} aria-label="members" onChange={(e) => { mine(); setSeats(+e.target.value); }} />
       <dl className="xbs-tot">
-        <div><dt>Annual Rate (Recommended)</dt><dd className="x-mono">{usd(r2(yr / 12))}<small>/mo</small></dd><dd className="xbs-sub">Billed {usd(yr)} annually upfront</dd></div>
-        <div><dt>Monthly Rate</dt><dd className="x-mono">{usd(mo)}<small>/mo</small></dd><dd className="xbs-sub">Cancel anytime</dd></div>
+        <div><dt>Annual Rate (Recommended)</dt><dd className="x-mono"><Roll v={usd(r2(yr / 12))} /><small>/mo</small></dd><dd className="xbs-sub">Billed {usd(yr)} annually upfront</dd></div>
+        <div><dt>Monthly Rate</dt><dd className="x-mono"><Roll v={usd(mo)} /><small>/mo</small></dd><dd className="xbs-sub">Cancel anytime</dd></div>
       </dl>
       <A to={`/pay/cart?plan=team&interval=year&quantity=${seats}`} className="x-btn solid xbs-start" data-thumb="Start Team Plan →" data-cta="buying-specialist.quote">Start Team Plan →</A>
       <A to="/enterprise/start" className="x-arrow xbs-more"><span>Start Enterprise Plan →</span></A>
@@ -109,9 +132,8 @@ function Promises() {
     animate(x, Math.max(min, Math.min(0, x.get() - d * w)), { type: 'spring', stiffness: 300, damping: 30 });
   };
   return (
-    <section className="xp-sec xbs-why" aria-labelledby="xbs-why-h">
+    <section className="xp-sec xbs-why" aria-label="The fastest path in.">
       <div className="xp-wrap xp-grid xbs-why-head">
-        <h2 id="xbs-why-h" className="xp-head">We can do all of it right here.</h2>
         <div className="xbs-why-nav">
           <button type="button" onClick={() => step(-1)} aria-label="Previous">←</button>
           <button type="button" onClick={() => step(1)} aria-label="Next">→</button>
@@ -138,6 +160,8 @@ export default function BuyingSpecialist() {
   const [busy, setBusy] = useState(false);
   const [val, setVal] = useState('');
   const [seats, setSeats] = useState(10);
+  const cycle = useRef(0);
+  const ask = useRef(null);
   const [own, setOwn] = useState(false);
   const end = useRef(null);
   const desk = useRef(null);
@@ -150,9 +174,10 @@ export default function BuyingSpecialist() {
   // the sheet re-prices itself (4, 10, 25, 50 members) until you or the chat set it
   useEffect(() => {
     if (own || calm || !seen) return;
-    const STEPS = [[4, 1], [10, 3], [25, 5], [50, 10]];
-    const i = STEPS.findIndex(([s]) => s === seats);
-    const t = setTimeout(() => { const [s] = STEPS[(i + 1) % STEPS.length]; setSeats(s); }, 2400);
+    const STEPS = [10, 25, 50, 4, 10]; // one cycle through, then it rests on 10
+    const i = STEPS.indexOf(seats, cycle.current);
+    if (i < 0 || i >= STEPS.length - 1) return;
+    const t = setTimeout(() => { cycle.current = i + 1; setSeats(STEPS[i + 1]); }, 2400);
     return () => clearTimeout(t);
   }, [seats, own, calm, seen]);
 
@@ -186,6 +211,7 @@ export default function BuyingSpecialist() {
 
   return (
     <main className="xp xbs">
+      <NoJs />
       <section className="xbs-desk" ref={desk} aria-labelledby="xbs-h1">
         <div className="xp-wrap xbs-grid">
           <div className="xbs-chat">
@@ -197,7 +223,7 @@ export default function BuyingSpecialist() {
                   <motion.p className="xp-lede xbs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>I&apos;m an AI buying specialist, here to help you figure out which plan fits, what it&apos;ll cost, and how to get your team set up. We can do all of it right here.</motion.p>
                   <div className="xbs-asks">
                     {ASK.map((t, i) => (
-                      <motion.button key={t} type="button" onClick={() => send(t)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.6 + i * 0.05 }} whileTap={{ scale: 0.97 }}>{`${t} →`}</motion.button>
+                      <motion.button key={t} type="button" onClick={() => { send(t); setTimeout(() => ask.current?.focus(), 60); }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE, delay: 0.6 + i * 0.05 } }} whileTap={{ scale: 0.97, transition: { duration: 0.12 } }}>{`${t} →`}</motion.button>
                     ))}
                   </div>
                 </motion.div>
@@ -229,8 +255,8 @@ export default function BuyingSpecialist() {
               </ol>
             )}
             <div ref={end} />
-            <form className="xbs-composer" data-dock onSubmit={(e) => { e.preventDefault(); if (!val.trim() && started) return; send(); }}>
-              <input type="text" value={val} onChange={(e) => setVal(e.target.value)} maxLength={2000} placeholder={started ? 'Ask the Buying Specialist a question...' : 'Press enter to get started'} aria-label={started ? 'Ask the Buying Specialist a question' : 'Press enter to get started'} disabled={busy} />
+            <form className={'xbs-composer' + (started ? ' live' : '')} onSubmit={(e) => { e.preventDefault(); if (!val.trim() && started) return; send(); }}>
+              <input ref={ask} type="text" value={val} onChange={(e) => setVal(e.target.value)} maxLength={2000} placeholder={started ? 'Ask the Buying Specialist a question...' : 'Press enter to get started'} aria-label={started ? 'Ask the Buying Specialist a question' : 'Press enter to get started'} disabled={busy} />
               <motion.button type="submit" aria-label="Send message" disabled={busy} whileTap={{ scale: 0.9 }}>
                 <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </motion.button>
@@ -243,6 +269,7 @@ export default function BuyingSpecialist() {
         </div>
       </section>
       <Promises />
+      <Band title="The fastest path in." lede="You'll have a quote and a plan by the end of this conversation." action="Start Team Plan →" to={`/pay/cart?plan=team&interval=year&quantity=${seats}`} />
     </main>
   );
 }

@@ -35,7 +35,7 @@ const hash = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - M
 const name = (i) => (i < 10 ? 'd' + (i + 1) : 'p' + (i - 9));
 // volume centres on the stage (percent), for the fan: two rows of seven to the right of the object
 const VX = (i) => 36 + ((i % 7) + 0.5) * (62 / 7);
-const VY = (i) => (i < 7 ? 25 : 60);
+const VY = (i) => (i < 7 ? 37.5 : 72.5); // row centres of .s3-vols (top 20%, height 70%)
 
 function Shard({ i }) {
   return <motion.i layoutId={'s3-' + i} className={'s3-shard' + (i >= 10 ? ' p' : '')} transition={{ type: 'spring', stiffness: 170, damping: 24, delay: (i % 7) * 0.035 }} />;
@@ -51,11 +51,12 @@ function Kept() {
   useEffect(() => {
     if (calm) { setPhase(3); return; }
     if (!live || pick || paused || hov !== null) return;
+    // the very first break-up starts within half a second, so the first screen is moving before you look for it
     const t = setTimeout(() => {
       if (phase === 3) { setPhase(0); setCycle((c) => c + 1); } else setPhase(phase + 1);
-    }, [1500, 1800, 1300, 2600][phase]);
+    }, phase === 0 && cycle === 0 ? 450 : [1500, 1800, 1300, 2600][phase]);
     return () => clearTimeout(t);
-  }, [phase, live, calm, pick, paused, hov]);
+  }, [phase, cycle, live, calm, pick, paused, hov]);
   const auto = useMemo(() => new Set(Array.from({ length: N }, (_, i) => i).sort((a, b) => hash(a + cycle * N) - hash(b + cycle * N)).slice(0, 4)), [cycle]);
   const lost = pick || auto;
   const toggle = (i) => {

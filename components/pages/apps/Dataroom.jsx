@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, More } from '../../kit';
 import { useLive } from '../cloud/Frame';
+import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
@@ -138,7 +139,7 @@ function Hero() {
           <p className="dr-tag x-mono">Secure Document Sharing</p>
           <p className="bz-lede">You send a link instead of an attachment, and the link keeps working for you after it leaves.</p>
           <div className="dr-acts">
-            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+            <BizAsk to="/login" thumb="Try Hanzo">Try Hanzo</BizAsk>
             <More to={DOCS}>Documentation</More>
           </div>
         </div>
@@ -411,7 +412,7 @@ function End() {
             <p className="bz-lede">You will know whether it was read before you have to ask.</p>
           </div>
           <div className="dr-end-go">
-            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+            <BizAsk to="/login" thumb="Try Hanzo">Try Hanzo</BizAsk>
             <p className="dr-end-note"><b>Start Sharing</b><span>Share documents with real-time analytics</span></p>
           </div>
         </div>
@@ -429,7 +430,8 @@ function End() {
 
 export default function Dataroom() {
   return (
-    <main className="bz dr" data-ask-name="Hanzo Dataroom">
+    <main className="bz dr">
+      <span data-ask-name="Hanzo Dataroom" hidden />
       <Hero />
       <BizChapters label="A link, shared" className="dr-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Room at={at} />}>
         <header className="bz-wrap dr-ch-head">

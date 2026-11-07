@@ -73,6 +73,14 @@ function find(art, q) {
 }
 
 function Rail({ toc, active, art }) {
+  const rail = useRef(null);
+  // the rail follows the reader: the active row is kept inside the rail's own view
+  useEffect(() => {
+    const box = rail.current, a = box && box.querySelector('a[aria-current]');
+    if (!a || box.scrollHeight <= box.clientHeight) return;
+    const r = a.getBoundingClientRect(), b = box.getBoundingClientRect();
+    if (r.top < b.top + 64 || r.bottom > b.bottom - 64) box.scrollTo({ top: box.scrollTop + (r.top - b.top) - b.height / 2 + r.height / 2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }, [active]);
   const { scrollYProgress } = useScroll({ target: art, offset: ['start 35%', 'end 65%'] });
   const pct = useRef(null);
   useMotionValueEvent(scrollYProgress, 'change', (v) => { if (pct.current) pct.current.textContent = Math.round(Math.min(1, Math.max(0, v)) * 100) + '%'; });
@@ -84,7 +92,7 @@ function Rail({ toc, active, art }) {
   const total = hits ? Object.values(hits).reduce((a, b) => a + b, 0) : 0;
   const where = hits ? toc.filter((t) => hits[t.id]).length : 0;
   return (
-    <aside className="xlg-rail xlg2-rail">
+    <aside ref={rail} className="xlg-rail xlg2-rail">
       <details open ref={det} className="xlg-det">
         <summary onClick={(e) => { if (matchMedia('(min-width: 901px)').matches) e.preventDefault(); }}>
           <h2>{ui('contents')}</h2>
@@ -126,7 +134,7 @@ function Section({ s, i, on }) {
     <section className="xlg-sec xlg2-sec" data-s={s.id || 'top'} data-on={on || undefined}>
       {s.id && (
         <h2 id={s.id} className="xlg-hd xlg2-h2">
-          <span className="xlg2-n v2f-num" aria-hidden={num ? undefined : 'true'}>{num || '§' + i}</span>
+          {num && <span className="xlg2-n v2f-num">{num}</span>}
           <span className="xlg2-t">{text}</span>
           <CopyLink id={s.id} />
         </h2>
@@ -138,7 +146,12 @@ function Section({ s, i, on }) {
 
 /* a clause's first sentence, Hanzo's own words, for the cover's preview */
 const plain = (nodes) => nodes.map((n) => (typeof n === 'string' ? n : n.t === 'h3' || n.t === 'table' ? ' ' : plain(n.c || []) + ' ')).join('');
-const firstSentence = (nodes) => { const t = plain(nodes).replace(/\s+/g, ' ').trim(); const m = /^(.{40,220}?[.;:])(\s|$)/.exec(t); return m ? m[1] : t.slice(0, 200) + (t.length > 200 ? '…' : ''); };
+const firstSentence = (nodes) => {
+  const t = plain(nodes).replace(/\s+/g, ' ').trim();
+  // a whole sentence, ending on its full stop (not after "Inc."), never cut mid-way; a list that opens on a colon reads to its first item's end
+  const m = /^(.{40,320}?[a-z0-9)"”’][.!?])(\s|$)/.exec(t);
+  return m ? m[1] : t.length <= 320 ? t : t.slice(0, t.lastIndexOf(' ', 320)) + ' …';
+};
 
 /* the cover: the document as an object. Its contour, and a plate that turns through its clauses by itself (number
    huge, first sentence); hover or focus on an index row shows that clause and holds it */
@@ -159,12 +172,20 @@ function Cover({ doc }) {
   }, [calm, held, secs.length]);
   const cur = secs[at] || secs[0];
   const pick = (k) => { setAt(k); setHeld(true); };
+  // the same element stays; the new clause rises into it (a remount would kill a swipe that started on the card)
+  const read = useRef(null);
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) { first.current = false; return; }
+    if (calm || !read.current || !read.current.animate) return;
+    read.current.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)' });
+  }, [at, calm]);
   return (
     <div ref={box} className="xlg2-cover v2f-obj" onPointerLeave={() => setHeld(false)}>
       <div className="xlg2-cover-l" aria-hidden="true">
         <Sigil seed={'/legal/' + doc.slug} data={[doc.toc.length, doc.sections.length, doc.others.length]} className="xlg2-sigil" />
         {cur && (
-          <div className="xlg2-read" key={cur.id}>
+          <div className="xlg2-read" ref={read}>
             {cur.num ? <span className="xlg2-read-n v2f-num">{cur.num}</span> : <span className="xlg2-read-h">{cur.text}</span>}
             <p className="xlg2-read-t">{cur.first}</p>
             {!calm && !held && secs.length > 1 && <i className="xlg2-read-bar" />}
@@ -200,6 +221,13 @@ export default function LegalDoc({ doc, peek = {} }) {
       es.forEach((e) => { if (e.isIntersecting) setActive(e.target.dataset.s); });
     }, { rootMargin: '-20% 0px -70% 0px' });
     secs.forEach((s) => io.observe(s));
+    // phones read each table row as a card: every cell carries its column's name
+    art.current.querySelectorAll('table').forEach((t) => {
+      const heads = [...t.querySelectorAll('thead th')].map((th) => th.textContent.trim());
+      t.querySelectorAll('tbody tr').forEach((tr) => [...tr.children].forEach((td, j) => { if (heads[j]) td.setAttribute('data-col', heads[j]); }));
+    });
+    // the page's metric: a click on one of the document's own contact addresses
+    art.current.querySelectorAll('a[href^="mailto:"]').forEach((a) => a.setAttribute('data-cta', 'legal.contact'));
     return () => io.disconnect();
   }, [doc.slug]);
   const size = doc.title.length <= 14 ? '' : doc.title.length <= 26 ? ' mid' : ' small';

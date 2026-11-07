@@ -355,3 +355,5 @@
   .xtg-hero2 .xtg-copy { position: static; }
   .xtg-hero2 .xtg-hero-grid { grid-template-areas: 'map' 'rail' 'moment'; }
 }
+
+.xtg-setup-t { margin: 18px 0 0 !important; }

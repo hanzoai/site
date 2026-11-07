@@ -9,7 +9,10 @@
    Beyond: "Sign one, forge one" - a real HMAC-SHA256 over the raw body, in your browser: change the body or the
    signature on the way in and it is turned away; empty the secret and it is refused (Idv.sign.mjs, self-check
    Idv.sign.test.mjs). Nothing leaves the page.
-   Accent: teal, from the verified tick. Every word and link is Hanzo's; the body and secret are examples. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; the body and secret are examples.
+   Persona: a team onboarding users that must verify identity with a vendor (Jumio, Onfido, Plaid).
+   Goal: see that the vendor is configuration, that only a proven verdict counts, and try a forged webhook.
+   CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import { A } from '../../kit';
@@ -74,10 +77,10 @@ function Statement() {
   return (
     <section className="v2-sec iv-say">
       <div className="v2-wrap">
-        <p className="v2-kick acc">What it is</p>
         <p className="iv-say-p" ref={ref} style={{ '--p': 0 }}>
           {words.map((w, i) => <span key={i} style={{ '--i': (i / words.length).toFixed(3) }}>{w} </span>)}
         </p>
+        <p className="v2-kick acc iv-say-cap">What it is</p>
       </div>
     </section>
   );
@@ -126,8 +129,8 @@ function Forge() {
       <div className="v2-wrap">
         <div className="v2-grid iv-forge-h">
           <div className="iv-forge-hl">
-            <p className="v2-kick acc">A webhook has to prove it is one</p>
             <h2 className="v2-display s">Sign one, forge one</h2>
+            <p className="v2-kick acc iv-forge-cap">A webhook has to prove it is one</p>
           </div>
           <div className={'iv-stamp ' + (ok ? 'ok' : 'no')} aria-live="polite">
             <AnimatePresence mode="wait" initial={false}>
@@ -171,11 +174,10 @@ export default function Idv() {
         <div className="v2-wrap v2-grid iv-hero-t">
           <Lines as="h1" className="v2-display iv-h1" lines={['Hanzo IDV']} data-morph-target="" />
           <div className="iv-hero-r">
-            <p className="v2-kick acc">Identity verification</p>
-            <A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A>
+            <A to="https://github.com/hanzoai" className="v2-btn solid v2-in" style={{ animationDelay: '.3s' }} data-thumb="View on GitHub" data-cta="idv-view-on-github">View on GitHub</A>
           </div>
         </div>
-        <Lift className="v2-wrap iv-lift" from={1.1} y={30} origin="50% 0%" offset={['start end', 'start 0.2']}>
+        <Lift className="v2-wrap iv-lift" from={1.05} y={20} origin="50% 0%" offset={['start end', 'start 0.4']}>
           <Board />
         </Lift>
       </section>
@@ -199,11 +201,11 @@ export default function Idv() {
         </div>
       </section>
 
-      <Forge />
-
       <ShipPrompt name="Identity verification" prompt="Read https://hanzo.ai/skill.md and use Hanzo Identity verification in my project." />
 
-      <GetIt name="IDV" tag="Identity verification" seed="idv" data={[256, 4, 6]} lead="Get started with IDV" />
+      <Forge />
+
+      <GetIt name="IDV" tag="Identity verification" seed="idv" data={[256, 4, 6]} lead="Get started with IDV" ask={['View on GitHub', 'https://github.com/hanzoai', 'idv-view-on-github']} />
     </main>
   );
 }

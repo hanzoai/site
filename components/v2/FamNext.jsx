@@ -4,7 +4,8 @@
    (data-morph-target there). Each card wears its sibling's own still contour (Sigil seeded with its slug), in ink.
    Motion that is not scroll: on a mouse the rail drags with inertia (it keeps gliding after you let go, then eases to
    rest) and a card you hover lifts and shows its own line (preview, Hanzo's words). Phones swipe it natively.
-   PLAN-COMPONENTS 2.15: at most 6 siblings, one tab stop per card.
+   PLAN-COMPONENTS 2.15: at most 6 siblings, one tab stop per card. Nothing floats over content (MASTER.md): the rail
+   opts out of the site's cursor label (data-cursor="").
    How to use it:
    - <FamNext items={[{ href, title, preview, meta, seed, data, dir }]} label="Benchmarks" />;
    - dir: 'prev' | 'next' draws an arrow (its name from the UI register) instead of a word; title and preview are
@@ -71,7 +72,7 @@ export default function FamNext({ items, label, className = '' }) {
   useDragRail(ref);
   if (!items || !items.length) return null;
   return (
-    <nav ref={ref} className={'v2f-next ' + className} aria-label={label} data-swipe-own data-drag="">
+    <nav ref={ref} className={'v2f-next ' + className} aria-label={label} data-swipe-own data-drag="" data-cursor="">
       {items.slice(0, 6).map((it) => (
         <A key={it.href} to={it.href} className="v2f-next-c" aria-label={it.dir ? ui(it.dir === 'prev' ? 'previous' : 'next') + ': ' + it.title : undefined} draggable={false}>
           {it.seed && <span className="v2f-next-s" aria-hidden="true"><Sigil seed={it.seed} data={it.data || []} still /></span>}

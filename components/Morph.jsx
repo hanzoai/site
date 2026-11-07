@@ -1,47 +1,155 @@
 'use client';
-/* Morph navigation (mounted once in app/layout.jsx): every in-site click is a ~600 ms View Transition. A big thing you
-   click (a card, a tile, a picture, 160×90 px or more) opens into the next page's hero; a small link turns the page like
-   a sheet while Hanzo's header stays put. Browsers without View Transitions, reduced motion, modified or new-tab clicks
-   and the WebGL opener's model cards ([data-card]) navigate instantly, as before.
-   How to use it on a page:
-   - nothing: links already morph. To choose what flies, put data-morph on the element inside the link (an image, a title);
-   - data-morph-target on the next page's hero (otherwise its first section receives the card);
-   - data-no-morph on a link or a region to opt out. Timing lives in components/Morph.css.
-   Back and Forward turn the page the other way. The screen is never held more than 700 ms: a slow page cuts over. */
+/* Morph navigation (mounted once in app/layout.jsx), the synchronized.studio move: a card opens into its page.
+   - A big thing you click (a card, a tile, a picture: 160×90 px or more, or anything marked data-morph inside a link)
+     grows at once into a full-screen stage that carries its picture (or its colour), with a soft whoosh. The next page
+     loads underneath while the stage holds; when it has painted, the stage settles into the page's hero
+     ([data-morph-target], else the first section) and dissolves. Nothing waits on the network before moving, so it is
+     the same at every connection speed, in dev and in production.
+   - A small link turns the page: the current page dims at once, the new one fades in when it arrives. Hanzo's header
+     never moves. Back and Forward turn the same way.
+   - Reduced motion, modified or new-tab clicks, downloads, other sites, [data-no-morph] regions and the WebGL opener's
+     cards ([data-card]) navigate as plain links.
+   How to use it on a page: nothing (links already morph). Optional: data-morph on the picture inside a link to choose
+   what flies; data-morph-target on the next page's hero; data-no-morph to opt out. Timing lives in Morph.css. */
 import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import './Morph.css';
+import { play } from '../lib/sound';
 
 const BIG = (r) => r.width >= 160 && r.height >= 90;
+const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const top = () => (window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0));
+const frames = (n, f) => (n ? requestAnimationFrame(() => frames(n - 1, f)) : f());
+
+// the card's own picture and colour, for the stage it grows into
+function stageFor(src) {
+  const stage = document.createElement('div');
+  stage.className = 'x-stage';
+  stage.setAttribute('aria-hidden', 'true');
+  // the card's colour is its largest painted surface (not a small pill inside it); failing that, the page behind it
+  const area = (r) => r.width * r.height;
+  const full = area(src.getBoundingClientRect());
+  let bg = '', best = 0;
+  for (const el of [src, ...src.querySelectorAll('*')].slice(0, 80)) {
+    const c = getComputedStyle(el).backgroundColor, a = area(el.getBoundingClientRect());
+    if (c && !/rgba\(0, 0, 0, 0\)|transparent/.test(c) && a > best && a >= full * 0.5) { bg = c; best = a; }
+  }
+  for (let el = src.parentElement; !bg && el; el = el.parentElement) {
+    const c = getComputedStyle(el).backgroundColor;
+    if (c && !/rgba\(0, 0, 0, 0\)|transparent/.test(c)) bg = c;
+  }
+  stage.style.background = bg || '#fff';
+  const lum = ((c) => { const m = (c || '').match(/[\d.]+/g); return m ? (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255 : 1; })(stage.style.background);
+  const media = [...src.querySelectorAll('img, video, canvas, svg')].find((el) => area(el.getBoundingClientRect()) >= full * 0.25);
+  if (media && media.tagName.toLowerCase() === 'svg') {
+    const m = media.cloneNode(true);
+    m.setAttribute('class', 'x-stage-m'); m.setAttribute('preserveAspectRatio', 'xMidYMid slice'); m.style.color = getComputedStyle(media).color;
+    stage.appendChild(m);
+  } else if (media) {
+    let m;
+    if (media.tagName === 'CANVAS') {
+      m = document.createElement('canvas'); m.width = media.width; m.height = media.height;
+      try { m.getContext('2d').drawImage(media, 0, 0); } catch { m = null; }
+    } else if (media.tagName === 'VIDEO') {
+      m = document.createElement('video');
+      Object.assign(m, { muted: true, playsInline: true, loop: true, autoplay: true, poster: media.poster, src: media.currentSrc || media.src });
+      if (media.currentTime) m.currentTime = media.currentTime;
+    } else {
+      m = document.createElement('img'); m.src = media.currentSrc || media.src; m.alt = '';
+    }
+    if (m) { m.className = 'x-stage-m'; stage.appendChild(m); }
+  }
+  // the card's own title (its largest words) takes the hero's place while the page loads
+  let title = null, size = 0;
+  for (const el of src.querySelectorAll('h1, h2, h3, h4, b, strong, span, p')) {
+    const t = el.textContent.trim(), fs = parseFloat(getComputedStyle(el).fontSize);
+    if (t.length >= 2 && t.length <= 80 && !el.querySelector('h1, h2, h3, h4, p, div') && fs > size) { title = t; size = fs; }
+  }
+  if (title && size >= 18) {
+    const h = document.createElement('p');
+    h.className = 'x-stage-t'; h.textContent = title; h.style.color = lum < 0.5 ? '#f5f5f7' : '#0a0a0b';
+    stage.appendChild(h);
+  }
+  return stage;
+}
 
 export default function Morph() {
   const router = useRouter();
   const path = usePathname();
-  const pending = useRef(null);
+  const pending = useRef(null); // { from, done } waiting for the next page to arrive
   const last = useRef(null);
 
-  useEffect(() => { last.current = location.pathname; const p = pending.current; if (p && location.pathname !== p.from) { pending.current = null; p.done(); } }, [path]);
-
-  // Back and Forward: the page turns the other way (no card flies; the URL already changed)
+  // the next page has arrived (its pathname is live): let it paint, then run what was waiting for it
   useEffect(() => {
+    last.current = location.pathname;
+    const p = pending.current;
+    if (p && location.pathname !== p.from) { pending.current = null; frames(2, p.done); }
+  }, [path]);
+
+  useEffect(() => {
+    const H = document.documentElement;
+    const clear = () => { delete H.dataset.morph; delete H.dataset.dir; };
+
+    // a small link, or Back/Forward: dim now, fade the new page in when it arrives
+    const turn = (from, go) => {
+      H.dataset.morph = 'leave';
+      const arrive = () => {
+        if (!window.__hzPop) top();
+        H.dataset.morph = 'arrive';
+        setTimeout(() => { if (H.dataset.morph === 'arrive') clear(); }, 700);
+      };
+      pending.current = { from, done: arrive };
+      go?.();
+      setTimeout(() => { if (pending.current?.done === arrive) { pending.current = null; clear(); } }, 8000); // never stuck dim
+    };
+
+    // a card: it grows into the stage now; the page comes in under it; the stage settles into the hero and dissolves
+    const open = (src, from, go) => {
+      play('whoosh'); // a card opening into its page (JAMES rule 10)
+      const stage = stageFor(src);
+      H.dataset.morph = 'open';
+      src.style.viewTransitionName = 'hz-morph';
+      const vt = document.startViewTransition(() => {
+        src.style.viewTransitionName = '';
+        document.body.appendChild(stage);
+        stage.style.viewTransitionName = 'hz-morph';
+        go(); // only after the card's picture has been captured
+      });
+      vt.ready.catch(() => {}); vt.updateCallbackDone.catch(() => {});
+      const grown = vt.finished.catch(() => {});
+      let gone = false;
+      const dissolve = () => {
+        if (gone) return; gone = true;
+        delete H.dataset.morph;
+        const hero = document.querySelector('[data-morph-target]') || document.querySelector('main > section, main > header, main > div');
+        // the stage settles into the hero's box, then dissolves into the page
+        if (hero && document.startViewTransition && hero.getBoundingClientRect().height > 40) {
+          H.dataset.morph = 'land';
+          const vt2 = document.startViewTransition(() => {
+            stage.style.viewTransitionName = '';
+            stage.remove();
+            hero.style.viewTransitionName = 'hz-morph';
+          });
+          vt2.ready.catch(() => {}); vt2.updateCallbackDone.catch(() => {});
+          vt2.finished.catch(() => {}).finally(() => { hero.style.viewTransitionName = ''; clear(); });
+        } else {
+          stage.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, easing: 'cubic-bezier(.22,1,.36,1)' }).finished.finally(() => stage.remove());
+          clear();
+        }
+      };
+      pending.current = { from, done: () => { top(); grown.then(() => setTimeout(dissolve, 60)); } };
+      setTimeout(() => { if (!gone) { pending.current = null; grown.then(dissolve); } }, 8000); // a page that never comes: let go
+    };
+
+    // Back and Forward (the URL has already changed)
     const pop = () => {
       window.__hzPop = true; // Chrome.jsx leaves the restored scroll alone
       const from = last.current;
-      if (!document.startViewTransition || !from || from === location.pathname || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      document.documentElement.dataset.morph = 'back';
-      let vt = null;
-      vt = document.startViewTransition(() => new Promise((ok) => {
-        pending.current = { from, done: () => requestAnimationFrame(() => ok()) };
-        setTimeout(() => { const p = pending.current; if (p) { pending.current = null; ok(); vt?.skipTransition?.(); } }, 700);
-      }));
-      vt.ready.catch(() => {}); vt.updateCallbackDone.catch(() => {});
-      vt.finished.catch(() => {}).finally(() => { delete document.documentElement.dataset.morph; });
+      if (!from || from === location.pathname || calm()) return;
+      H.dataset.dir = 'back';
+      turn(from, null);
     };
-    addEventListener('popstate', pop);
-    return () => removeEventListener('popstate', pop);
-  }, []);
 
-  useEffect(() => {
     const seen = new Set();
     const local = (a) => {
       if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download') || a.closest('[data-no-morph],[data-card]')) return null;
@@ -51,40 +159,26 @@ export default function Morph() {
     // fetch the next page while the pointer is on its way to the link
     const warm = (e) => { const u = local(e.target.closest?.('a[href]')); if (u && !seen.has(u.pathname)) { seen.add(u.pathname); router.prefetch(u.pathname); } };
     const click = (e) => {
-      if (!document.startViewTransition || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = e.target.closest?.('a[href]');
       const u = local(a);
-      if (!u || u.pathname === location.pathname || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (!u || u.pathname === location.pathname || calm()) return;
       e.preventDefault();
       e.stopPropagation();
+      const go = () => router.push(u.pathname + u.search + u.hash, { scroll: false });
       const own = a.matches('[data-morph]') ? a : a.querySelector('[data-morph]');
       const src = own || (BIG(a.getBoundingClientRect()) ? a : null);
-      if (src) src.style.viewTransitionName = 'hz-morph';
-      document.documentElement.dataset.morph = src ? 'open' : 'turn';
-      let vt = null;
-      vt = document.startViewTransition(() => new Promise((ok) => {
-        if (src) src.style.viewTransitionName = '';
-        const done = () => {
-          window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0);
-          const t = document.querySelector('[data-morph-target]') || document.querySelector('main > section, main > header, main > div');
-          if (src && t) t.style.viewTransitionName = 'hz-morph';
-          requestAnimationFrame(() => ok());
-        };
-        pending.current = { from: location.pathname, done };
-        router.push(u.pathname + u.search + u.hash, { scroll: false });
-        // never hold the screen: after 700 ms the page simply cuts over when it is ready (PLAN 2.9)
-        setTimeout(() => { const p = pending.current; if (p) { pending.current = null; p.done(); vt?.skipTransition?.(); } }, 700);
-      }));
-      vt.ready.catch(() => {}); vt.updateCallbackDone.catch(() => {}); // a skipped transition is not an error
-      vt.finished.catch(() => {}).finally(() => {
-        document.querySelectorAll('[style*="view-transition-name"]').forEach((el) => { el.style.viewTransitionName = ''; });
-        delete document.documentElement.dataset.morph;
-      });
+      if (src && document.startViewTransition) open(src, location.pathname, go);
+      else turn(location.pathname, go);
     };
+    addEventListener('popstate', pop);
     document.addEventListener('pointerover', warm, { passive: true });
     document.addEventListener('touchstart', warm, { passive: true }); // phones: fetch on the first touch, before the tap ends
     document.addEventListener('click', click, true);
-    return () => { document.removeEventListener('pointerover', warm); document.removeEventListener('touchstart', warm); document.removeEventListener('click', click, true); };
+    return () => {
+      removeEventListener('popstate', pop);
+      document.removeEventListener('pointerover', warm); document.removeEventListener('touchstart', warm); document.removeEventListener('click', click, true);
+    };
   }, [router]);
   return null;
 }

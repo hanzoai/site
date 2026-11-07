@@ -20,6 +20,7 @@ import { EASE_OUT_EXPO as EASE, SPRING } from '../../../lib/motion';
 import { A, More } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
 import BizStage from '../../v2/BizStage';
+import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizSheet from '../../v2/BizSheet';
@@ -165,7 +166,7 @@ function Hero() {
         <BizStage from={1.04} over={720} lift={0} className="pay-stage"><div className="pay-rise"><Phone at={at} live={live && !paused} big held={paused} onHold={calm ? null : () => setPaused(!paused)} /></div></BizStage>
         <div className="pay-side">
           <div className="pay-acts">
-            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+            <BizAsk to="/login" thumb="Try Hanzo">Try Hanzo</BizAsk>
             <More to={API}>Explore APIs</More>
           </div>
           <Tracker at={at} pick={(i) => { setAt(i); setHeld(true); }} run={live && !held && !paused} />
@@ -463,7 +464,7 @@ function End() {
         <BizLines id="pay-one" className="bz-display md" lines={['Put one payment', 'through it']} />
         <div className="bz-grid pay-end-row">
           <p className="bz-lede">Point it at the processor you already use, send a live payment, and add the second one when you want to see the difference. Nothing has to move on day one.</p>
-          <div className="pay-end-go"><A to="/login" className="x-btn solid" data-cta="primary">Try Hanzo</A></div>
+          <div className="pay-end-go"><BizAsk to="/login">Try Hanzo</BizAsk></div>
         </div>
         <A to="/contact-sales" className="pay-row"><span>Contact Sales</span><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
       </div>
@@ -473,7 +474,8 @@ function End() {
 
 export default function Payments() {
   return (
-    <main className="bz pay" data-ask-name="Payments">
+    <main className="bz pay">
+      <span data-ask-name="Hanzo Payments" hidden />
       <Hero />
       <BizChapters label="A payment, routed" className="pay-ch" items={STEPS.map(([t, d], i) => ({ t, d, x: CH[i] }))} stage={(at) => <ChStage at={at} />}>
         <header className="bz-wrap bz-grid pay-ch-head">

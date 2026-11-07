@@ -4,22 +4,23 @@
    Goal: understand what a rack for Zen 6 Max is made of, then reach sales
    CTA: Talk to sales -> /contact-sales (hero and close; data-thumb on the hero ask; data-cta not wired yet)
    Stage: the Zen film opens full width under the header and the name, then settles into its 28px card as you scroll.
-   Not only scroll: the film plays, the count runs, the asks lean to the pointer, the rack answers its switches.
+   Not only scroll: the title cuts in on load, the film plays (with a pause control), the count runs, the asks lean to
+   the pointer, the rack answers its switches.
    Signature: the rack builds itself, chapter by chapter. The black rack pins while four chapters pass beside it:
    four 8-GPU servers slide in and the GPU memory counts to Hanzo's own total (9,216 GB on B300, 5,760 GB on B200);
    qualification brackets the four; the GPUs split into one pool per specialist; a twin rack lands across a failure
    domain. Switch the server and the rack reloads.
    Beyond: B300 against B200 in one spec sheet, the rows Hanzo lists for each server side by side with the four-server
    total, so the server choice reads at a glance (and the rack above follows the column you pick).
-V2: 8/10 film Stage hero settles into a card; the rack as four pinned scroll chapters; B300 vs B200 spec sheet with a drawer; greys only, one solid ask per screen, no kicker above a headline
+V2: 8/10 film Stage hero with name, lede and ask on the first screen, settling into a card; the rack as four pinned scroll chapters; B300 vs B200 spec sheet with a drawer; greys only, shared Film/Cta/Lines
 */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { EASE, Count, Magnetic } from '../../ui';
-import { A, More } from '../../kit';
+import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { EASE, Count, Magnetic, Lines } from '../../ui';
+import { More, Cta, Film } from '../../kit';
 import Sigil from '../../Sigil';
 import { media } from '../../../lib/models';
-import { useFilms, arrows } from './live';
+import { arrows } from './live';
 import './ZenMax.css';
 
 const FEATS = [['One name', 'You call Zen 6 Max. One model, one API, one bill.'], ['Right-sized per request', 'Each request runs on the configuration built for that kind of work.'], ['Long context', 'Long context for large codebases and long documents.'], ['Tools and code', 'Tool calls and code generation, built in.']];
@@ -31,33 +32,57 @@ const PLAN = [['Qualification', 'Four 8-GPU servers is where a qualification sta
 const AROUND = ['NVLink and NVSwitch inside each server.', '400 or 800 Gb/s RDMA wherever a specialist spans servers.', 'About 31 TB of NVMe in each server (8 x 3.84 TB).', 'Separate sandbox workers for coding agents.', 'A high-availability control cluster.'];
 const REC = 'We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises. Routing cuts the average inference work a request needs. It does not cut the memory needed to keep every specialist ready.';
 
-/* Stage: the film covers the screen, then settles into its card (scale and position only; the card's settled box is
-   set in viewport units, so the cover scale is a constant and the server paints the first frame right) */
+/* Stage: the film opens full width under the header, then settles into its card (scale and position only; the card's
+   settled box is set in viewport units, so the cover scale is a constant and the server paints the first frame right).
+   The first screen already says what it is and carries the ask: name, Hanzo's lede and "Talk to sales" sit over the film
+   (white while the film is under them), then read ink on white once it has settled. */
 function Stage() {
   const box = useRef(null);
+  const film = useRef(null);
+  const held = useRef(false);
+  const [over, setOver] = useState(true); // the asks sit on the film (desktop, before it settles)
+  const [playing, setPlaying] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  const k = useTransform(p, [0, 0.62], [1, 0], { clamp: true }); // 1 = full screen, 0 = settled
-  const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenMax.css turns it into translate and scale 
-  const show = useTransform(k, [0.32, 0.06], [0, 1]); // only once the card has cleared the text (no overlap at 1470x801)
-  const lift = useTransform(k, [0.32, 0.06], [24, 0]);
+  const k = useTransform(p, [0, 0.62], [1, 0], { clamp: true }); // 1 = full width, 0 = settled
+  const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenMax.css turns it into translate and scale
+  useMotionValueEvent(ke, 'change', (v) => setOver(v > 0.68)); // the card clears the button at about two thirds
+  useEffect(() => {
+    setOver(ke.get() > 0.68);
+    const v = film.current?.querySelector('video');
+    if (!v) return;
+    const on = () => { if (held.current) v.pause(); else setPlaying(true); };
+    const off = () => setPlaying(false);
+    v.addEventListener('play', on);
+    v.addEventListener('pause', off);
+    return () => { v.removeEventListener('play', on); v.removeEventListener('pause', off); };
+  }, [ke]);
+  const toggle = () => {
+    const v = film.current?.querySelector('video');
+    if (!v) return;
+    held.current = playing;
+    if (playing) v.pause(); else v.play?.().catch(() => {});
+  };
   return (
     <section className="zx-stage" ref={box} aria-labelledby="zx-h">
       {/* JS off: what starts hidden for the scroll and arrival motion is simply shown, the stage settled (common gate item 5) */}
-      <noscript><style>{'.zx-card{--k:0!important}.zx-stage{height:auto!important}.zx-stage-more,.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}'}</style></noscript>
+      <noscript><style>{'.zx-card{--k:0!important}.zx-stage{height:auto!important}.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}.zx-pause{display:none}.zx-card .zx-film{display:none!important}.zx-card{background:#000 url(/models/zen.webp) center/cover}'}</style></noscript>
       <div className="zx-stage-pin">
-        <motion.div className="zx-card" style={{ '--k': ke }}>
-          <video className="zx-film" src={media('zen', 'webm')} poster={media('zen', 'webp')} autoPlay muted loop playsInline aria-hidden="true" />
+        <motion.div className="zx-card" style={{ '--k': ke }} ref={film}>
+          <Film src={media('zen', 'webm')} poster={media('zen', 'webp')} w={1200} h={1500} className="zx-film" />
         </motion.div>
+        <button type="button" className="zx-pause" aria-label={playing ? 'Pause' : 'Play'} aria-pressed={!playing} onClick={toggle}>
+          {playing
+            ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+            : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /></svg>}
+        </button>
         <div className="zx-w zx-stage-t">
           <div className="zx-stage-b">
-            <h1 id="zx-h" className="zx-name zx-blend" data-morph-target>Zen 6 Max</h1>
-            <motion.div className="zx-stage-more" style={{ opacity: show, y: lift }}>
-              <p className="zx-sub">Zen 6 Max. Built for the hardest work: deep reasoning, long context, and code.</p>
-              <div className="zx-acts">
-                <Magnetic><A to="/contact-sales" className="x-btn solid zx-btn" data-thumb="Talk to sales">Talk to sales</A></Magnetic>
-                <More to="/enterprise">Run it on your own GPUs</More>
-              </div>
-            </motion.div>
+            <Lines as="h1" play="load" lines={['Zen 6 Max']} id="zx-h" className="zx-name zx-blend" data-morph-target />
+            <p className="zx-sub zx-blend">Zen 6 Max. Built for the hardest work: deep reasoning, long context, and code.</p>
+            <div className="zx-acts" data-over={over || undefined}>
+              <Magnetic><Cta to="/contact-sales" id="zen6max.hero" size="lg" thumb>Talk to sales</Cta></Magnetic>
+              <Cta to="/enterprise" id="zen6max.hero.gpus" kind="link">Run it on your own GPUs</Cta>
+            </div>
           </div>
         </div>
       </div>
@@ -65,7 +90,7 @@ function Stage() {
   );
 }
 
-/* the four promises: an editorial index, one line each, sitting still */
+/* the four promises: an editorial index, each title cutting into its line as it arrives */
 function Promises() {
   return (
     <section className="zx-prom" aria-label="What Zen 6 Max is">
@@ -73,7 +98,7 @@ function Promises() {
         {FEATS.map(([t, x], i) => (
           <li key={t}>
             <span className="zx-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <h2>{t}</h2>
+            <Lines as="h2" lines={[t]} />
             <p>{x}</p>
           </li>
         ))}
@@ -228,7 +253,7 @@ function Close() {
         <div className="zx-close-art" aria-hidden="true"><Sigil seed="zen6-max" data={[9216, 5760, 2304, 1440, 31]} className="zx-sig" /></div>
         <div className="zx-close-t">
           <p className="zx-lede">Final capacity and performance commitments come from qualifying your workload: context length, concurrency, routing mix, latency, and failover.</p>
-          <div className="zx-acts"><Magnetic><A to="/contact-sales" className="x-btn solid zx-btn">Talk to sales</A></Magnetic></div>
+          <div className="zx-acts"><Magnetic><Cta to="/contact-sales" id="zen6max.close" size="lg">Talk to sales</Cta></Magnetic></div>
         </div>
       </div>
     </section>
@@ -236,11 +261,9 @@ function Close() {
 }
 
 export default function ZenMax() {
-  const root = useRef(null);
   const [k, setK] = useState(0);
-  useFilms(root);
   return (
-    <main className="zx" ref={root}>
+    <main className="zx">
       <Stage />
       <Promises />
       <Chapters k={k} setK={setK} />
