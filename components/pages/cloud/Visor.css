@@ -269,3 +269,14 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
   .vs2-k, .vs2-prov em, .vs2-dry, .vs2-inv li span, .vs2-inv2 li span, .vs2-con p, .vs2-audit, .vs2-n, .vs2-p4 span, .vs2-p5 li, .vs2-p3 p, .vs2-form label span, .vs2-count > span { font-size: 14px; }
 }
 @media (max-width: 900px) { .vs2-cmd { font-size: 21px; line-height: 1.3; } }
+
+/* ---- run 4 (D2) ---- */
+@media (min-width: 901px) {
+  /* the dry-run line runs under the request and the catalogue on one line: request → quote → providers → inventory */
+  .vs2-hero .vs2-fleet { grid-template-areas: 'copy req cat k con' 'copy req cat ul con' 'copy dry dry audit con'; }
+  .vs2-hero .vs2-dry { white-space: nowrap; padding-top: 6px; }
+  /* the dark room arrives sooner: no dead white band after the naming tool */
+  .vs2-name.l2-sec { padding-bottom: clamp(56px, 6vw, 96px); }
+  .vs2-tiles { padding-top: clamp(64px, 7vw, 112px); }
+}
+.vs2-range { margin: 14px 0 0; font-size: 13px; color: #a3a3a3; }
