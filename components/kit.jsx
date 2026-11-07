@@ -1,11 +1,22 @@
 'use client';
 /* The page kit: parts every rebuilt page draws on. Each page still composes its own layout and its own signature
-   moment; these are the shared grammar (section heads, questions, rolling numbers, ticks, the closing band). */
-import { useEffect, useRef, useState } from 'react';
+   moment; these are the shared grammar (section heads, questions, rolling numbers, ticks, the closing band).
+   HOW TO USE (states and styles live in app/system.css; full list in docs/review/SYSTEM.md):
+   - Links and asks: <A to>, <Go to solid>, <More to>, <Band title action to />.
+   - <Tabs id="plans" tabs={['Personal','Team','API']} value={i} onChange={setI} /> + <TabPanel id="plans" i={0} value={i}>:
+     a gliding pill, arrow keys / Home / End, every panel stays in the HTML.
+   - <Sheet open={o} onClose={() => setO(false)} title kicker wide>…</Sheet>: from the right on desktop, from the bottom
+     on phones; Esc, scrim and close shut it; focus goes in and comes back; scroll is held. (v2/DetailSheet is the
+     button-and-sheet pair; Sheet is the bare, controlled sheet for any trigger.)
+   - Loading, empty, error: <Skeleton lines={3} h={…} />, <Empty title action />, <Problem title detail onRetry />.
+   - Media: <Img src w h alt priority /> and <Film src poster w h /> (see their notes for the performance rules). */
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Words, Rise, Magnetic } from './ui';
 import { href } from '../lib/route';
+import { SPRING } from '../lib/motion';
 
 /* A link that stays inside the site when it can. */
 export function A({ to, children, className, ...rest }) {
@@ -125,5 +136,226 @@ export function Band({ title, lede, action, to, note }) {
         </Rise>
       </div>
     </section>
+  );
+}
+
+/* ---------- Tabs: a gliding pill over real tab buttons ----------
+   tabs: labels (strings) or { label, disabled }. value: the selected index. Arrow keys move and select, Home / End jump.
+   Pair with <TabPanel id i value> so every panel stays in the server HTML (hidden ones are hidden, not removed). */
+export function Tabs({ id, tabs, value, onChange, label, size, className = '' }) {
+  const refs = useRef([]);
+  const items = tabs.map((t) => (typeof t === 'string' ? { label: t } : t));
+  const move = (from, step) => {
+    for (let k = 1; k <= items.length; k++) {
+      const j = (from + step * k + items.length * k) % items.length;
+      if (!items[j].disabled) { onChange(j); refs.current[j]?.focus(); return; }
+    }
+  };
+  const key = (e, i) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); move(i, 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); move(i, -1); }
+    else if (e.key === 'Home') { e.preventDefault(); move(-1, 1); }
+    else if (e.key === 'End') { e.preventDefault(); move(items.length, -1); }
+  };
+  return (
+    <div className={'x-tablist' + (size === 'lg' ? ' lg' : '') + ' ' + className} role="tablist" aria-label={label}>
+      {items.map((t, i) => (
+        <button
+          key={t.label}
+          ref={(el) => { refs.current[i] = el; }}
+          type="button"
+          role="tab"
+          id={`${id}-tab-${i}`}
+          aria-controls={`${id}-panel-${i}`}
+          aria-selected={value === i}
+          tabIndex={value === i ? 0 : -1}
+          disabled={t.disabled}
+          className="x-tab"
+          onClick={() => onChange(i)}
+          onKeyDown={(e) => key(e, i)}
+        >
+          {value === i && <motion.span layoutId={`${id}-pill`} className="x-tab-pill" transition={SPRING.pill} aria-hidden="true" />}
+          <span className="x-tab-t">{t.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+export function TabPanel({ id, i, value, children, className = '' }) {
+  return (
+    <div role="tabpanel" id={`${id}-panel-${i}`} aria-labelledby={`${id}-tab-${i}`} hidden={value !== i} tabIndex={0} className={className}>
+      {children}
+    </div>
+  );
+}
+
+/* ---------- Sheet: the bare, controlled sheet ---------- */
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+export function Sheet({ open, onClose, title, kicker, wide = false, children, className = '' }) {
+  const [host, setHost] = useState(null);
+  const box = useRef(null);
+  const back = useRef(null);
+  const shut = useRef(onClose);
+  shut.current = onClose;
+  const tid = useId();
+  useEffect(() => setHost(document.body), []);
+  const phone = typeof window !== 'undefined' && matchMedia('(max-width: 700px)').matches;
+  useEffect(() => {
+    if (!open) return;
+    back.current = document.activeElement;
+    window.__lenis?.stop();
+    document.documentElement.classList.add('x-lock');
+    const t = setTimeout(() => box.current?.querySelector('.x-sheet2-x')?.focus(), 30);
+    const key = (e) => {
+      if (e.key === 'Escape') { e.stopPropagation(); shut.current(); return; }
+      if (e.key !== 'Tab' || !box.current) return; // keep focus inside the sheet
+      const f = [...box.current.querySelectorAll(FOCUSABLE)];
+      if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+    };
+    addEventListener('keydown', key, true);
+    return () => {
+      clearTimeout(t); removeEventListener('keydown', key, true);
+      window.__lenis?.start(); document.documentElement.classList.remove('x-lock');
+      back.current?.focus?.();
+    };
+  }, [open]);
+  if (!host) return null;
+  return createPortal(
+    <AnimatePresence>
+      {open && (
+        <div className="x-sheet2-wrap">
+          <motion.div className="x-sheet2-scrim" onClick={onClose} aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} />
+          <motion.div
+            ref={box}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={title ? tid : undefined}
+            className={'x-sheet2' + (wide ? ' wide' : '') + ' ' + className}
+            initial={phone ? { y: '100%' } : { x: '100%' }}
+            animate={phone ? { y: 0 } : { x: 0 }}
+            exit={phone ? { y: '100%' } : { x: '100%' }}
+            transition={SPRING.sheet}
+            {...(phone ? { drag: 'y', dragConstraints: { top: 0, bottom: 0 }, dragElastic: { top: 0, bottom: 0.6 }, onDragEnd: (_, i) => { if (i.offset.y > 90 || i.velocity.y > 600) onClose(); } } : {})}
+          >
+            {phone && <span className="x-grip" aria-hidden="true" />}
+            <div className="x-sheet2-head">
+              <div>
+                {kicker && <span className="x-sheet2-kick">{kicker}</span>}
+                {title && <h2 id={tid}>{title}</h2>}
+              </div>
+              <button type="button" className="x-sheet2-x" onClick={onClose} aria-label="Close">
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+              </button>
+            </div>
+            <div className="x-sheet2-body">{children}</div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>,
+    host,
+  );
+}
+
+/* ---------- loading, empty, error ----------
+   Skeleton holds the exact box the content will take, so nothing moves when it arrives. Give it the real height. */
+export function Skeleton({ lines = 0, h, w = '100%', radius, className = '', label = 'Loading' }) {
+  if (lines) {
+    return (
+      <span className={'x-skel-group ' + className} role="status" aria-label={label} style={{ display: 'block' }}>
+        {Array.from({ length: lines }, (_, i) => <span key={i} className="x-skel x-skel-line" style={{ width: i === lines - 1 && lines > 1 ? '62%' : w }} />)}
+      </span>
+    );
+  }
+  return <span className={'x-skel ' + className} role="status" aria-label={label} style={{ height: h, width: w, borderRadius: radius }} />;
+}
+/* Nothing to show yet: say so in the page's (Hanzo's) words and offer the one next step. */
+export function Empty({ title, detail, action, to, center = false, className = '' }) {
+  return (
+    <div className={'x-state' + (center ? ' center' : '') + ' ' + className}>
+      <span className="x-state-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeDasharray="2.5 2.5" /></svg></span>
+      {title && <p className="x-state-t">{title}</p>}
+      {detail && <p className="x-state-d">{detail}</p>}
+      {action && to && <More to={to}>{action}</More>}
+    </div>
+  );
+}
+/* Something failed: what happened, and a way on (retry, or the place it lives on hanzo.ai). role="alert" announces it. */
+export function Problem({ title, detail, onRetry, retry = 'Try again', action, to, center = false, className = '' }) {
+  return (
+    <div className={'x-state error' + (center ? ' center' : '') + ' ' + className} role="alert">
+      <span className="x-state-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M8 4.5v4.2M8 11.2v.3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></span>
+      {title && <p className="x-state-t">{title}</p>}
+      {detail && <p className="x-state-d">{detail}</p>}
+      <div className="x-row-links tight">
+        {onRetry && <button type="button" className="x-btn sm" onClick={onRetry}>{retry}</button>}
+        {action && to && <More to={to}>{action}</More>}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- media: the performance rules, built in ----------
+   Img: always give w and h (the box is reserved, CLS 0). `priority` only on the ONE image that is the page's LCP (it
+   loads eagerly with fetchpriority=high); everything else is lazy and decodes off the main thread. First-view images
+   ≤ 250 KB, AVIF or WebP where Hanzo has them. */
+export function Img({ src, alt, w, h, priority = false, sizes, className = '', style, ...rest }) {
+  return (
+    <img
+      src={src}
+      alt={alt ?? ''}
+      width={w}
+      height={h}
+      sizes={sizes}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding={priority ? 'sync' : 'async'}
+      fetchPriority={priority ? 'high' : 'auto'}
+      className={'x-media ' + className}
+      style={style}
+      {...rest}
+    />
+  );
+}
+/* Film: a muted, looping clip that plays only while it is on screen and the tab is visible, never under reduced motion
+   or Data Saver (the poster stays), and never downloads before it nears the screen. Give w and h (or a .x-ratio box).
+   No autoplay clip above 1.5 MB; nothing autoplays above the fold before first paint. */
+export function Film({ src, poster, w, h, label, className = '', loop = true, ...rest }) {
+  const ref = useRef(null);
+  const [near, setNear] = useState(false);
+  const calm = useReducedMotion();
+  const play = useCallback((v, on) => { if (!v) return; if (on) v.play?.().catch(() => {}); else v.pause?.(); }, []);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    const save = navigator.connection?.saveData;
+    let seen = false;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) setNear(true);
+      seen = e.intersectionRatio > 0.15;
+      play(v, seen && !calm && !save && !document.hidden);
+    }, { rootMargin: '300px 0px', threshold: [0, 0.15] });
+    io.observe(v);
+    const vis = () => play(v, seen && !calm && !save && !document.hidden);
+    document.addEventListener('visibilitychange', vis);
+    return () => { io.disconnect(); document.removeEventListener('visibilitychange', vis); v.pause?.(); };
+  }, [calm, play]);
+  return (
+    <video
+      ref={ref}
+      className={'x-media ' + className}
+      width={w}
+      height={h}
+      poster={poster}
+      muted
+      playsInline
+      loop={loop}
+      preload="none"
+      aria-label={label}
+      {...(label ? {} : { 'aria-hidden': true })}
+      {...rest}
+    >
+      {near && <source src={src} />}
+    </video>
   );
 }

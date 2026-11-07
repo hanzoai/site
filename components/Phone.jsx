@@ -1,23 +1,20 @@
 'use client';
 /* The phone layer (mounted once in app/layout.jsx; phones and tablets ≤ 900 px only).
-   (1) Thumb bar: once the hero has gone by, search and the page's main action sit under the thumb (52 px targets).
+   (1) The thumb bar now lives in components/Ask.jsx (one ask bar for every width); it still reads data-thumb and
+       data-dock exactly as before, so nothing on a page changes.
    (2) Sibling swipe: a sideways swipe on a family page (a model, a role, a legal document, a repo) turns to the next or
        previous one, with a hint that says where you are going; the page turns with a ~550 ms slide.
    (3) Sheets: search and the header menus rise from the bottom (components/HeaderTools.jsx).
    How to use it on a page:
-   - data-thumb on your main button or link (<Go to="/contact-sales" data-thumb="Talk to sales">…); its label and href
-     are read from it. Without one the bar offers Hanzo's own "Try Hanzo";
-   - data-dock on your own fixed bottom bar, and the thumb bar steps aside while it is there (it also yields to the
-     footer, the keyboard, the cookie note, search and menus);
+   - data-thumb on your main button or link (<Go to="/contact-sales" data-thumb="Talk to sales">…); see Ask.jsx;
+   - data-dock on your own fixed bottom bar, and the ask bar steps aside while it is there;
    - data-swipe-own on anything that handles its own sideways swipe (rails, tables and carousels that scroll natively
      are already left alone). */
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'motion/react';
 import { MODELS } from '../lib/models';
 import './Layer.css';
 
-const EASE = [0.16, 1, 0.3, 1];
 const FLAG = MODELS.map((m) => '/' + m.slug);
 const norm = (p) => '/' + p.split('/').filter(Boolean).join('/');
 const wants = (p) => { const s = norm(p).split('/').filter(Boolean); return s.length === 2 || (s.length === 1 && FLAG.includes(norm(p))); };
@@ -40,47 +37,6 @@ function go(href, dir) {
   a.href = href; a.style.position = 'fixed'; a.style.width = a.style.height = '0';
   document.body.appendChild(a); a.click(); a.remove(); // the morph layer turns the page
   setTimeout(() => { delete document.documentElement.dataset.dir; }, 1200);
-}
-
-function ThumbBar({ path }) {
-  const [on, setOn] = useState(false);
-  const [act, setAct] = useState({ label: 'Try Hanzo', href: 'https://hanzo.ai/signup' });
-  useEffect(() => {
-    const mq = matchMedia('(max-width: 900px)');
-    if (!mq.matches) { setOn(false); return; }
-    const main = document.querySelector('main');
-    const own = main?.querySelector('[data-thumb]');
-    setAct(own ? { label: own.getAttribute('data-thumb') || own.textContent.trim(), href: own.getAttribute('href') || own.dataset.href } : { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' });
-    const hero = main?.firstElementChild, foot = document.querySelector('footer');
-    let past = false, footIn = false, typing = false;
-    const update = () => setOn(past && !footIn && !typing && !document.querySelector('.x-cookie, .xcr-dock, [data-dock], .x-sheet, .x-pal, .x-pop'));
-    const io = new IntersectionObserver((es) => es.forEach((e) => {
-      if (e.target === hero) past = !e.isIntersecting && e.boundingClientRect.top < 0;
-      else footIn = e.isIntersecting;
-      update();
-    }));
-    hero && io.observe(hero); foot && io.observe(foot);
-    const fin = (e) => { typing = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName); update(); };
-    const fout = () => { typing = false; setTimeout(update, 50); };
-    addEventListener('focusin', fin); addEventListener('focusout', fout);
-    const t = setInterval(update, 1200); // docks and the cookie note come and go
-    return () => { io.disconnect(); removeEventListener('focusin', fin); removeEventListener('focusout', fout); clearInterval(t); };
-  }, [path]);
-  const ext = /^https?:/.test(act.href || '') && !(act.href || '').startsWith(typeof location !== 'undefined' ? location.origin : '~');
-  return (
-    <AnimatePresence>
-      {on && (
-        <motion.div className="x-thumb" initial={{ y: 90, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 90, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 34 }}>
-          <button type="button" className="x-thumb-s" aria-label="Search Hanzo" onClick={() => dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true }))}>
-            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="m13.2 13.2 3.6 3.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
-          </button>
-          <motion.a href={act.href} className="x-thumb-a" whileTap={{ scale: 0.97 }} {...(ext ? { rel: 'noopener' } : {})}>
-            <span>{act.label}</span><i aria-hidden="true">→</i>
-          </motion.a>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
 }
 
 function Swipe({ path }) {
@@ -127,5 +83,5 @@ function Swipe({ path }) {
 
 export default function Phone() {
   const path = usePathname();
-  return <><ThumbBar path={path} /><Swipe path={path} /></>;
+  return <Swipe path={path} />;
 }

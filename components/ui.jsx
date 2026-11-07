@@ -1,4 +1,10 @@
 'use client';
+/* The motion and control primitives every page uses. HOW TO USE (docs/review/SYSTEM.md has the full list):
+   - Headlines: <Lines as="h1" lines={['Smarter, Faster,', 'Pick all three.']} /> is the line-mask reveal (each line
+     rises out of its own mask, 1.1 s, once; the words are in the server HTML). <Words> is the older word-by-word blur.
+   - Arrival: <Rise> (max two fade-ups per page). Figures: <Count to={3.02} decimals={2} suffix="x" />.
+   - Pointer: useTilt(), <Magnetic>. Controls: <Btn href solid small busy disabled selected>, <Arrow>, <Copy text>.
+   - Tokens: EASE and SPRING here, or the full set in lib/motion.js. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   motion, AnimatePresence, animate, useInView, useMotionValue, useMotionTemplate,
@@ -54,6 +60,26 @@ export function Rise({ children, delay = 0, y = 28, className, as = 'div', amoun
       {...rest}
     >
       {children}
+    </Tag>
+  );
+}
+
+/* The line-mask headline reveal (BRIEF-v3 §8 pattern 2): one line per mask, rising 110% → 0 over 1.1 s, staggered
+   80 ms, once in view (or on load with play="load", for a hero). Screen readers and search engines get the whole
+   sentence; under reduced motion the lines are simply there. */
+export function Lines({ lines, as = 'h2', className, delay = 0, play = 'view', amount = 0.5, ...rest }) {
+  const Tag = motion[as];
+  const list = Array.isArray(lines) ? lines : [lines];
+  const show = { s: { transition: { staggerChildren: 0.08, delayChildren: delay } } };
+  const when = play === 'load' ? { animate: 's' } : { whileInView: 's', viewport: { once: true, amount } };
+  return (
+    <Tag className={className} initial="h" {...when} variants={{ h: {}, ...show }} {...rest}>
+      <span className="x-sr">{list.join(' ')}</span>
+      {list.map((l, i) => (
+        <span key={i} className="x-line" aria-hidden="true">
+          <motion.span className="x-line-in" variants={{ h: { y: '110%' }, s: { y: '0%', transition: { duration: 1.1, ease: EASE } } }}>{l}</motion.span>
+        </span>
+      ))}
     </Tag>
   );
 }
@@ -130,13 +156,18 @@ export function Magnetic({ children, strength = 0.3, className }) {
   );
 }
 
-export function Btn({ href, children, solid, small, className = '', ...rest }) {
+/* busy: a ring turns in place of the label (same width). disabled: quiet, not clickable. selected: inverted. */
+export function Btn({ href, children, solid, small, busy, disabled, selected, className = '', ...rest }) {
+  const off = busy || disabled;
   return (
     <motion.a
-      href={href}
+      href={off ? undefined : href}
       className={'x-btn' + (solid ? ' solid' : '') + (small ? ' sm' : '') + ' ' + className}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.97 }}
+      aria-busy={busy || undefined}
+      aria-disabled={disabled || undefined}
+      aria-pressed={selected === undefined ? undefined : !!selected}
+      whileHover={off ? undefined : { scale: 1.02 }}
+      whileTap={off ? undefined : { scale: 0.98 }}
       transition={{ duration: 0.2, ease: EASE }}
       {...rest}
     >
