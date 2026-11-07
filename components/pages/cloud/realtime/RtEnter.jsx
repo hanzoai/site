@@ -6,7 +6,8 @@
    only after mount and only for a section still below the fold; each observer watches an unclipped box, so every
    arrival fires. Only transform, clip-path and opacity move: no box changes size. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { useCalm } from '../../../ui'; // read after hydration, so the server frame and the first client frame match
 
 const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -28,7 +29,7 @@ function useArrive(margin = '0px 0px -18% 0px') {
 /* shrink-to-card: as you scroll off the hero it settles back into a grey rounded card, a little smaller */
 export function ShrinkToCard({ children, className = '', ...rest }) {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 0.8], [1, 0.92], { clamp: true });
   const fill = useTransform(scrollYProgress, [0, 0.3], [0, 1], { clamp: true });

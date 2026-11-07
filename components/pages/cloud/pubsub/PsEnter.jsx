@@ -6,7 +6,8 @@
    after mount and only for a section still below the fold; each observer watches the section itself, never a clipped
    child, so every arrival fires. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { useCalm } from '../../../ui'; // read after hydration, so the server frame and the first client frame match
 
 const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -112,7 +113,7 @@ export function useSnap(list) {
    the facts' empty bottom padding, and with reduced motion it simply sits there) */
 export function CoverSlide({ children, className = '', ...rest }) {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 45%'] });
   const y = useTransform(scrollYProgress, [0, 1], [112, 0], { clamp: true });
   return (
