@@ -81,7 +81,7 @@ function Body({ i, on }) {
 
 /* Stepping up to a frame: it opens large from the frame you clicked; arrows change what it shows (a crossfade), so
    closing flies back to the same frame. Escape closes, focus stays inside and comes back to the frame. */
-function Viewer({ at, from, setAt, close }) {
+function Viewer({ at, from, ver, setAt, close }) {
   const x = useRef(null);
   const box = useRef(null);
   useEffect(() => {
@@ -102,7 +102,7 @@ function Viewer({ at, from, setAt, close }) {
   return (
     <motion.div ref={box} className="xga-view" role="dialog" aria-modal="true" aria-label={t} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={(e) => e.target === e.currentTarget && close()} data-lenis-prevent>
       {/* it morphs only while it shows the frame it opened from; after stepping, closing is a clean fade (no double image) */}
-      <motion.div className="xga-view-in" layoutId={at === from ? 'xga-f' + from : undefined} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}>
+      <motion.div className="xga-view-in" layoutId={at === from ? 'xga-f' + from + '-' + ver : undefined} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={at} className="xga-view-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             <div className={'xga-view-art' + (at === 1 || at === 3 ? ' dk' : '')}><Render i={at} on /></div>
@@ -146,7 +146,13 @@ function Wall() {
     document.documentElement.style.overflow = 'hidden'; window.__lenis?.stop();
     return () => { document.documentElement.style.overflow = ''; window.__lenis?.start(); };
   }, [open >= 0]); // eslint-disable-line react-hooks/exhaustive-deps
-  const close = () => { const i = from; setLit(open); setOpen(-1); setTimeout(() => { setFrom(-1); document.getElementById('xga-f' + i)?.focus(); }, 650); };
+  const [ver, setVer] = useState(0); // a fresh shared-layout id after a stepped close, so no frame ever flies from a stale box
+  const close = () => {
+    const i = from;
+    if (open === from) { setOpen(-1); setTimeout(() => { setFrom(-1); document.getElementById('xga-f' + i)?.focus(); }, 650); return; }
+    setLit(i); setOpen(-1); setVer((v) => v + 1); setFrom(-1); // stepped away: a plain fade, the wall stays put
+    setTimeout(() => document.getElementById('xga-f' + i)?.focus(), 50);
+  };
   return (
     <section className="xga-wall-sec" ref={box} aria-labelledby="xga-h1" data-morph-target>
       <div className="w2-wrap">
@@ -182,7 +188,7 @@ function Wall() {
               key={t}
               id={'xga-f' + i}
               type="button"
-              layoutId={from === i ? undefined : 'xga-f' + i}
+              layoutId={from === i ? undefined : 'xga-f' + i + '-' + ver}
               className={'xga-frame f' + i + (lit === i ? ' lit' : '')}
               onClick={() => { setLit(i); setFrom(i); setOpen(i); }}
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setHold(true); setLit(i); } }}
@@ -210,7 +216,7 @@ function Wall() {
         </div>
         </Settle>
       </div>
-      <AnimatePresence>{open >= 0 && <Viewer at={open} from={from} setAt={setOpen} close={close} />}</AnimatePresence>
+      <AnimatePresence>{open >= 0 && <Viewer at={open} from={from} ver={ver} setAt={setOpen} close={close} />}</AnimatePresence>
     </section>
   );
 }
