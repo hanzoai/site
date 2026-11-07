@@ -101,28 +101,31 @@ function Hero() {
   const lit = wordAt(step);
   return (
     <section className="xkt-hero" ref={ref} aria-labelledby="xkt-h1">
-      <div className="a2-wrap a2-grid xkt-hero-grid">
-        <div className="xkt-hero-copy">
-          <p className="a2-kick"><b>Hanzo Kata</b> · Test repair</p>
-          <h1 id="xkt-h1" className="a2-display xkt-h1">
-            {WORDS.map((w, i) => (
-              <span className="a2-ln" key={w}>
-                <motion.span className={'a2-ln-in xkt-w' + (i === lit ? ' on' : '')} initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1], delay: 0.05 + i * 0.09 }}>{w}</motion.span>{' '}
-              </span>
-            ))}
-            <span className="xkt-auto">Autonomous loop.</span>
-          </h1>
-          <p className="a2-lede">Kata keeps your tests green. It triages a failing CI run, finds the regression, writes the fix and runs the suite again before anything lands.</p>
-          <div className="a2-acts">
-            <A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-thumb="Get API key" data-cta="kata.hero">Get API key</A>
-            <A to="https://github.com/hanzoai/kata" className="x-btn">Explore GitHub examples →</A>
-            <A to="https://docs.hanzo.ai/docs/coding" className="xkt-doc">Read the docs →</A>
+      <div className="a2-wrap">
+        <p className="a2-kick"><b>Hanzo Kata</b> · Test repair</p>
+        {/* the loop on one line across the page; the word the loop is on is the one in ink */}
+        <h1 id="xkt-h1" className="a2-display xkt-h1">
+          {WORDS.map((w, i) => (
+            <span className="a2-ln" key={w}>
+              <motion.span className={'a2-ln-in xkt-w' + (i === lit ? ' on' : '')} initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1], delay: 0.05 + i * 0.09 }}>{w}</motion.span>{' '}
+            </span>
+          ))}
+          <span className="xkt-auto">Autonomous loop.</span>
+        </h1>
+        <div className="a2-grid xkt-hero-grid">
+          <div className="xkt-hero-copy">
+            <p className="a2-lede">Kata keeps your tests green. It triages a failing CI run, finds the regression, writes the fix and runs the suite again before anything lands.</p>
+            <div className="a2-acts">
+              <A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-thumb="Get API key" data-cta="kata.hero">Get API key</A>
+              <A to="https://github.com/hanzoai/kata" className="x-btn">Explore GitHub examples →</A>
+            </div>
+            <p className="xkt-docs"><A to="https://docs.hanzo.ai/docs/coding" className="xkt-doc">Read the docs →</A></p>
           </div>
+          <motion.div className="xkt-hero-obj" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
+            <Board step={step} run={run} />
+            <Term step={step} run={run} replay={replay} />
+          </motion.div>
         </div>
-        <motion.div className="xkt-hero-obj" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
-          <Board step={step} run={run} />
-          <Term step={step} run={run} replay={replay} />
-        </motion.div>
       </div>
     </section>
   );
@@ -278,7 +281,7 @@ function Read() {
             <div key={h}>
               <h3 className="xkt-col-h x-mono">{h}</h3>
               <ul className="xkt-links">
-                {items.map(([to, t, d]) => <li key={t}><A to={to} className="xkt-link"><span><b>{t}</b>{d && <span>{d}</span>}</span><i aria-hidden="true">→</i></A></li>)}
+                {items.map(([to, t, d]) => <li key={t}><A to={to} className="xkt-link"><span><b>{t}</b>{d && <span>{d}</span>}</span><em className="x-mono" aria-hidden="true">{to.replace('https://', '')}</em><i aria-hidden="true">→</i></A></li>)}
               </ul>
             </div>
           ))}
@@ -302,11 +305,20 @@ function Questions() {
         <div className="xkt-qa-head">
           <p className="a2-kick">Questions</p>
           <h2 id="xkt-qa-h" className="a2-headline">Questions &amp; Answers</h2>
-          <div className="a2-acts xkt-qa-acts">
-            <A to="https://platform.hanzo.ai/keys" className="x-btn solid">Get API key</A>
-          </div>
         </div>
         <div className="xkt-qa-list"><A2Faq items={QA} /></div>
+      </div>
+    </section>
+  );
+}
+
+/* The close: one line, one ask (no second dark room: ink on paper). */
+function Close() {
+  return (
+    <section className="a2-sec xkt-close" aria-label="Get API key">
+      <div className="a2-wrap xkt-close-in">
+        <p className="xkt-close-h a2-display" aria-hidden="true">{WORDS.join(' ')}</p>
+        <div className="a2-acts"><A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-cta="kata.close">Get API key</A></div>
       </div>
     </section>
   );
@@ -322,6 +334,7 @@ export default function Kata() {
       <Capabilities />
       <Read />
       <Questions />
+      <Close />
     </main>
   );
 }
