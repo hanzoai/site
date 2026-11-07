@@ -82,7 +82,7 @@ Done here: System tabs, the pause control, model radios, the network switch, not
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit is not merged; the page plays none)
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`: `play('done')` once when the window's first build passes; `data-sound="tick"` on the model radios and the notes; tabs, the switch, the pause and the system rows tick through the kit's own wiring)
 
 Done here: Signature: the window assembles and builds (time: the ask is written into a text node, the run log ticks). Supporting: pinned chapters (scroll), line-mask headlines (arrival), magnetic ask (pointer), gliding pills and the agent token (state). The black room opens from a rounded card with a CSS view timeline. variety.py OK, 0 Rise. Reduced motion: the window shows its finished frame.
 

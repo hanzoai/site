@@ -82,7 +82,7 @@ Done here: Pause, browser tabs, the extension toggle, point steps and use tabs e
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: not merged; none played)
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`: `play('done')` once when the panel finishes its first walk of the five points; the browser tabs, steps, use tabs, the extension toggle and the pause tick through the kit's own wiring)
 
 Done here: Signature: the stack and its panel (idle: the panel walks the points, the windows shuffle on "one behaviour"; state: you deal a browser to the front). Supporting: pinned chapters (scroll), the request travelling the path (idle, in the black room), line-mask headlines (arrival). variety.py OK, 0 Rise. Points change without overlap: the old one leaves in 150 ms before the new one arrives.
 
