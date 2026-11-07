@@ -165,10 +165,10 @@ function Topology({ live }) {
   const lit = (a, b) => (hot === 4 ? [[0, 1], [1, 2], [2, 4], [4, 6]] : [[0, 1], [1, 3], [3, 5], [5, 6]]).some(([x, y]) => x === a && y === b);
   return (
     <div className="wd2-topo">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{PATH.map(([a, b]) => <line key={a + '-' + b} className={lit(a, b) ? 'on' : ''} x1={NODES[a][1]} y1={NODES[a][2]} x2={NODES[b][1]} y2={NODES[b][2]} />)}</svg>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g>{PATH.map(([a, b]) => <line key={a + '-' + b} className={lit(a, b) ? 'on' : ''} x1={NODES[a][1]} y1={NODES[a][2]} x2={NODES[b][1]} y2={NODES[b][2]} />)}</g></svg>
       {NODES.map(([t, x, y], i) => (i === 4 || i === 5
-        ? <button key={t} type="button" className={'wd2-node l2-mono m' + (i === hot ? ' on' : '')} style={{ left: x + '%', top: y + '%', '--d': i * 60 + 'ms' }} onClick={() => pick(i)} onMouseEnter={() => pick(i)} aria-pressed={i === hot}>{t}</button>
-        : <span key={t} className="wd2-node l2-mono" style={{ left: x + '%', top: y + '%', '--d': i * 60 + 'ms' }}>{t}</span>
+        ? <button key={t} type="button" className={'wd2-node l2-mono m' + (i === hot ? ' on' : '')} style={{ '--x': x + '%', '--y': y + '%', '--d': i * 60 + 'ms' }} onClick={() => pick(i)} onMouseEnter={() => pick(i)} aria-pressed={i === hot}>{t}</button>
+        : <span key={t} className="wd2-node l2-mono" style={{ '--x': x + '%', '--y': y + '%', '--d': i * 60 + 'ms' }}>{t}</span>
       ))}
     </div>
   );
