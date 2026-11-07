@@ -23,7 +23,7 @@ a.knx-chip:hover { border-color: var(--knx-soft); }
 .knx-bar { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .knx-bar > i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, .16); }
 .knx-k { margin-left: 8px; font: 500 13px/1 var(--mono); color: #a1a1a6; }
-.knx-api { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font: 500 12.5px/1 var(--mono); color: #d1d1d6; }
+.knx-api { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-width: 0; font: 500 12.5px/1.3 var(--mono); color: #d1d1d6; overflow-wrap: anywhere; }
 .knx-api i { font-style: normal; padding: 3px 6px; border-radius: 6px; background: var(--ac); color: #fff; }
 .knx-bar .x-copy { margin-left: auto; background: transparent; border-color: rgba(255, 255, 255, .18); color: #d1d1d6; min-height: 32px; }
 .knx-api + .x-copy { margin-left: 8px; }
@@ -33,6 +33,7 @@ a.knx-chip:hover { border-color: var(--knx-soft); }
 [data-off] .knx-caret { animation-play-state: paused; }
 
 @media (max-width: 900px) {
+  .knx-bar { flex-wrap: wrap; row-gap: 10px; }
   .knx-l, .knx-paste { grid-column: 1 / -1; }
   .knx-g { row-gap: 56px; }
   .knx-pd, .knx-k, .knx-api { font-size: 14px; }
