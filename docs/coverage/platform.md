@@ -84,7 +84,7 @@ Done here: Rows, pills, links, ring steps, capability rows and pause buttons cha
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the camera through the stack. Supporting: pinned chapters, typing (One API), Sigil preview; `variety.py` OK, no `Rise`. Kinds: scroll (camera, chapters), idle (arrival walk, capability walk, One API replay, ring), pointer (stack turns, previews), state (sheets, gliding pills), arrival (line masks). All auto-advancing parts are one-shot `setTimeout` steps that stop when off screen, with a pause control where they run past 5 s. Reduced motion: the stack rests open, no loops. No page-local sound; kit parts carry the shared ones.
+Done here: Signature: the camera through the stack. Supporting: pinned chapters, typing (One API), Sigil preview; `variety.py` OK, no `Rise`. Kinds: scroll (camera, chapters), idle (arrival walk, capability walk, One API replay, ring), pointer (stack turns, previews), state (sheets, gliding pills), arrival (line masks). All auto-advancing parts are one-shot `setTimeout` steps that stop when off screen, with a pause control where they run past 5 s. Reduced motion: the stack rests open, no loops. No page-local sound; kit parts carry the shared ones. Slice D (7 Nov): in the black map the camera holds on a group while its words are up and crosses to the next only within ±1.5% of track around the switch; the words crossfade (incoming 300 ms with no delay, outgoing 180 ms) and the intro hands to API by a scrubbed crossfade, so the left column is never empty for more than one transient frame (probe: 80 px wheel steps, 140 ms dwell: 1 sample under 0.6 combined opacity at the intro/API handoff, none at the group switches). The intro is at full opacity by the time the room covers the screen. Section entrances from MOTION-MAP, page-local in Platform.jsx/.css under html.js and no-preference: inertia-drag (directory thrown in, coasts and settles), count-roll (capability numbers roll up, the figure counts to its value), spiral-in (the improvement ring), underline-sweep (Open's heading lines and links), explode-gather (the figure strip). Probe: all five end with data-in and nothing under 0.5 opacity at 1470 and 375.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video on the page)
@@ -100,7 +100,7 @@ Done here: The objects are drawn, not filmed: the iso stack, the console window,
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `audit.cjs`: scrollWidth equals width at 375 and 1470, taps list empty (all ≥44px), CLS 0 desktop / 0.003 phone. Phone first screen: h1, lede, "Start building", then the stack itself (300px) naming its plates and opening. Chapters become a vertical story; capability rows tap to the stage.
+Done here: `audit.cjs`: scrollWidth equals width at 375 and 1470, taps list empty (all ≥44px), CLS 0 desktop / 0.003 phone. Phone first screen: h1, lede, "Start building", then the stack itself (300px) naming its plates and opening. Chapters become a vertical story; capability rows tap to the stage. Slice D (7 Nov): the directory reads 01-07 left to right, top to bottom (a 4-column grid, 2 on phones), second-row heads on one y, row fills inside their column; planes at 42svh a chapter and the journey at 420svh: 16.2 screens at 1470 (was 18.0). `check.mjs /platform`: 0 errors, no overlay, scrollWidth 1470/375; no in-page target under 44px at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -149,7 +149,7 @@ Done here: Commands are kit `CodeBlock` (docker run, curl install, hanzo serve),
 - [ ] A failed submit keeps its values and shows no success (n/a: no form)
 - [ ] A thrown island does not blank the page (no page-local error boundary; requested as a kit part)
 
-Done here: Nothing on the page calls a network API. Console errors: 0 on load and scroll at both sizes (`look.cjs`). JS off reads in full (NOJS rules lay every scene out in flow and open the sheets' text).
+Done here: Nothing on the page calls a network API. Console errors: 0 on load and scroll at both sizes (`look.cjs`). JS off reads in full (NOJS rules lay every scene out in flow and open the sheets' text). Slice D (7 Nov): JS off, the four Data tiles and every planes picture show (0 text elements under 0.3 opacity at 1470 and 375); the finder input carries suppressHydrationWarning (a pre-hydration screenshot writes an inline caret-color), so only the shared FooterHTML mismatch remains.
 
 ## 18. Measurement and handover
 - [ ] `data-cta` on every primary; events only through `lib/track.js` (hero and asks yes; Band primary blocked on kit; `lib/track.js` does not exist)

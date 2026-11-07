@@ -54,7 +54,7 @@
 @media (hover: hover) { .xpl-pill:hover { background: var(--k-ink); color: var(--k-white); border-color: var(--k-ink); } }
 
 /* ================= the journey: hero and map, one camera ================= */
-.xpl-jr { position: relative; height: 480svh; margin-top: calc(-1 * var(--hdr)); }
+.xpl-jr { position: relative; height: 420svh; margin-top: calc(-1 * var(--hdr)); }
 .xpl-jr-dark { position: absolute; left: 0; right: 0; top: calc((100% - 100svh) * .118); bottom: 0; pointer-events: none; }
 .xpl-jr-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 /* the black room: a rounded card inside the gutters that rises and opens past the screen's edges (transform only) */
@@ -138,9 +138,9 @@
 .xpl-groups { display: grid; align-content: center; justify-content: stretch; }
 .xpl-grp { grid-area: 1 / 1; opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity var(--k-base) var(--k-out), transform var(--k-slower) var(--k-em); }
 .xpl-grp[data-past='true'] { transform: translateY(-16px); }
-.xpl-grp[data-on='true'] { opacity: 1; transform: none; pointer-events: auto; transition: opacity 300ms 220ms var(--k-out), transform 400ms 220ms var(--k-em); }
+.xpl-grp[data-on='true'] { opacity: 1; transform: none; pointer-events: auto; transition: opacity 300ms var(--k-out), transform 400ms var(--k-em); }
 /* one group at a time: the leaving group is gone in 150 ms, before the arriving one starts (220 ms) */
-.xpl-grp:not([data-on='true']) { transition: opacity 150ms var(--k-out), transform 150ms var(--k-out); }
+.xpl-grp:not([data-on='true']) { transition: opacity 180ms var(--k-out), transform 180ms var(--k-out); }
 /* the planes' chapters hand over the same way */
 @media (min-width: 900px) {
   .xpl-pc .pc-copy:not([data-on='true']) { transition: opacity 150ms ease, transform 150ms ease; }
@@ -325,7 +325,7 @@
 .xpl-foot p { margin: 6px 0 0; }
 
 /* ================= planes: sticky chapters ================= */
-.xpl-pc { --pc-acc: var(--k-ink); --pc-per: 52svh; }
+.xpl-pc { --pc-acc: var(--k-ink); --pc-per: 42svh; }
 .xpl-pc .xpl-body { margin-top: 17px; max-width: 44ch; }
 .xpl-pc .xpl-links { margin-top: 17px; gap: 0 20px; }
 .xpl-pc .xpl-go { font-size: 14px; }
@@ -644,3 +644,69 @@
 .xpl .x-codeblock-h > span:empty { display: none; }
 .xpl .x-copy-t { font-size: 13px; }
 @media (max-width: 899px) { .xpl .x-copy-t, .xpl-win-f .xpl-go { font-size: 14px; } }
+
+/* slice D (7 Nov): the directory reads 01-07 left to right, top to bottom; each row's heads share one y; the hover
+   fill stays inside its column */
+.xpl-dir-cols { column-count: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 20px; row-gap: 44px; align-items: start; }
+.xpl-dir-g + .xpl-dir-g { margin-top: 0; }
+.xpl-dir-h, .xpl-dir-r { margin: 0; padding: 0 8px; }
+.xpl-dir-h { transition: background-color var(--k-fast) var(--k-out), transform var(--k-press); }
+@media (hover: hover) {
+  .xpl-dir-h:hover { background: var(--k-white); }
+  /* the chapter index previews its underline; the docker Copy and the endpoint rows answer the pointer */
+  .xpl-pc .pc-idx button { transition: color var(--k-fast) var(--k-out), background-color var(--k-fast) var(--k-out); border-radius: 8px; }
+  .xpl-pc .pc-idx button:not(.on):hover { background: rgba(0, 0, 0, .04); }
+  .xpl-run .x-copy { transition: color var(--k-fast) var(--k-out), background-color var(--k-fast) var(--k-out), border-color var(--k-fast) var(--k-out); }
+  .xpl-run .x-copy:hover { color: #fafafa; background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .32); }
+  .xpl-eps button:not(.on):hover { background: rgba(255, 255, 255, .06); }
+}
+.xpl-run .x-copy { color: #d4d4d4; }
+.xpl .x-band h2 { font-size: clamp(2.6rem, 6vw, 84px); }
+.xpl .x-band .x-btn.solid { background: #f5f5f5; border-color: #f5f5f5; }
+@media (max-width: 899px) {
+  .xpl-dir-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px; row-gap: 27px; }
+}
+@media (max-width: 899px) { .xpl-pc .pc-copy, .xpl-pc .pc-copy[data-past='true'] { padding-top: 64px; } .xpl-pc .pc-vis { margin-top: 27px; } }
+
+/* ---------- section entrances (MOTION-MAP /platform), played once by useEnter in Platform.jsx ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. inertia-drag: the directory is thrown in from the right, coasts and settles with a small give, column by column */
+  .js .xpl-dir[data-enter]:not([data-in]) .xpl-dir-g, .js .xpl-dir[data-enter]:not([data-in]) .xpl-dir-pv { opacity: 0; transform: translateX(220px); }
+  .js .xpl-dir[data-in]:not([data-done]) .xpl-dir-g, .js .xpl-dir[data-in]:not([data-done]) .xpl-dir-pv { animation: xpl-throw 1.15s cubic-bezier(.06, .8, .18, 1) both; }
+  .js .xpl-dir[data-in] .xpl-dir-g:nth-child(4n + 2) { animation-delay: 50ms; }
+  .js .xpl-dir[data-in] .xpl-dir-g:nth-child(4n + 3) { animation-delay: 100ms; }
+  .js .xpl-dir[data-in] .xpl-dir-g:nth-child(4n) { animation-delay: 150ms; }
+  .js .xpl-dir[data-in] .xpl-dir-pv { animation-delay: 200ms; }
+  @keyframes xpl-throw { 0% { opacity: 0; transform: translateX(220px); } 12% { opacity: 1; } 78% { transform: translateX(-6px); } 100% { opacity: 1; transform: none; } }
+
+  /* 2. count-roll: the capability numbers roll up into their slots while the figure counts to its value */
+  .js .xpl-reach[data-enter]:not([data-in]) .xpl-cap-n { opacity: 0; }
+  .js .xpl-reach[data-in]:not([data-done]) .xpl-cap-n { display: inline-block; animation: xpl-roll .6s cubic-bezier(.16, 1, .3, 1) both; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(2) .xpl-cap-n { animation-delay: 70ms; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(3) .xpl-cap-n { animation-delay: 140ms; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(4) .xpl-cap-n { animation-delay: 210ms; }
+  .js .xpl-reach[data-in] .xpl-cap-list li:nth-child(5) .xpl-cap-n { animation-delay: 280ms; }
+  @keyframes xpl-roll { 0% { opacity: 1; transform: translateY(.9em); clip-path: inset(0 0 100% 0); } 100% { opacity: 1; transform: none; clip-path: inset(0); } }
+
+  /* 3. spiral-in: the improvement ring turns in from the edge to its place */
+  .js .xpl-ring[data-enter]:not([data-in]) { opacity: 0; }
+  .js .xpl-ring[data-in]:not([data-done]) { animation: xpl-spiral 1.2s cubic-bezier(.2, .7, .2, 1) both; }
+  @keyframes xpl-spiral { 0% { opacity: 0; transform: rotate(-150deg) translateX(38%) scale(.45); } 25% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+  /* 4. underline-sweep: a rule sweeps under each line of the heading in turn, then under its three links */
+  .js .xpl-open[data-in]:not([data-done]) .xpl-op-h .xpl-l > span, .js .xpl-open[data-in]:not([data-done]) .xpl-links .xpl-go span { background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 2px; animation: xpl-sweep .9s cubic-bezier(.65, 0, .35, 1) both; }
+  .js .xpl-open[data-in] .xpl-op-h .xpl-l:nth-child(2) > span { animation-delay: .18s; }
+  .js .xpl-open[data-in] .xpl-links .xpl-go:nth-child(1) span { animation-delay: .4s; }
+  .js .xpl-open[data-in] .xpl-links .xpl-go:nth-child(2) span { animation-delay: .5s; }
+  .js .xpl-open[data-in] .xpl-links .xpl-go:nth-child(3) span { animation-delay: .6s; }
+  @keyframes xpl-sweep { 0% { background-size: 0 2px; background-position: 0 100%; } 55% { background-size: 100% 2px; background-position: 0 100%; } 56% { background-size: 100% 2px; background-position: 100% 100%; } 100% { background-size: 0 2px; background-position: 100% 100%; } }
+
+  /* 5. explode-gather: the figures start as scattered pieces and gather into the strip */
+  .js .xpl-facts[data-enter]:not([data-in]) > * { opacity: 0; }
+  .js .xpl-facts[data-in]:not([data-done]) > * { animation: xpl-gather .9s cubic-bezier(.16, 1, .3, 1) both; }
+  .js .xpl-facts > :nth-child(1) { --gx: -70px; --gy: -40px; --gr: -6deg; }
+  .js .xpl-facts > :nth-child(2) { --gx: 60px; --gy: -60px; --gr: 5deg; animation-delay: 60ms; }
+  .js .xpl-facts > :nth-child(3) { --gx: 90px; --gy: 30px; --gr: -4deg; animation-delay: 120ms; }
+  .js .xpl-facts > :nth-child(4) { --gx: -40px; --gy: 70px; --gr: 3deg; animation-delay: 180ms; }
+  @keyframes xpl-gather { 0% { opacity: 0; transform: translate(var(--gx), var(--gy)) rotate(var(--gr)) scale(.9); } 40% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+}

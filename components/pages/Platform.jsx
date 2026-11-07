@@ -16,6 +16,7 @@
    directory previews), state (sheets rise, tab and endpoint pills glide), arrival (headlines cut into their lines).
    Beyond: ask the map. Type a word (CUDA, keys, routing, memory) and the plates whose own Hanzo descriptions use it
    light up in the stack, each with the phrase that matched and a click into its sheet. Built only from Hanzo's words.
+   V2: 8/10 the camera through the stack with words and plates in step (the camera crosses groups only around the switch, the words crossfade), a directory that reads 01-07, shorter planes, and five section entrances (inertia-drag, count-roll, spiral-in, underline-sweep, explode-gather).
    Colour: none. Deck greys, ink and white only. One dark room (the map) and the closing Band.
    Every word and link is Hanzo's (parity 330/330, 129/129). Coverage: docs/coverage/platform.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -111,7 +112,7 @@ const Stat = ({ s }) => { const [f, ...r] = s.split(' '); return <><b>{f}</b> <s
 
 /* the journey's timeline, as fractions of its scroll */
 const REST = 0.34; // the stack rests slightly open on the first screen, so its plates read as layers, not one slab
-const T = { heroOut: [0.015, 0.085], wipe: [0.04, 0.15], explode: [0.07, 0.25], map: [0.14, 0.19], intro: [0.15, 0.2, 0.29, 0.33], g0: 0.34, close: [1.5, 1.6] }; // the room no longer closes: the map scrolls away whole and the directory follows (no blank screen)
+const T = { heroOut: [0.015, 0.085], wipe: [0.04, 0.15], explode: [0.07, 0.25], map: [0.075, 0.1], intro: [0.08, 0.115, 0.33, 0.355], g0: 0.34, close: [1.5, 1.6] }; // the room no longer closes: the map scrolls away whole and the directory follows (no blank screen)
 const GLEN = (1 - T.g0 - 0.02) / GROUPS.length;
 const groupAt = (p) => (p < T.g0 ? -1 : Math.min(GROUPS.length - 1, Math.floor((p - T.g0) / GLEN)));
 const zMid = (g, e) => { const b = IN_GROUP[g].map((i) => N - 1 - i); return (zOf(Math.min(...b), e) + zOf(Math.max(...b), e)) / 2; };
@@ -122,8 +123,12 @@ function camAt(p, k) {
   const sw = k * (1 - 0.36 * e); // the whole stack shrinks a little as it opens, so it always fits
   const whole = { y: LIFT * zMid(-1, e) * sw, s: sw, x: 0 };
   if (p < T.g0 - 0.06) return whole;
-  const stops = [whole, ...GROUPS.map((_, g) => ({ y: LIFT * zMid(g, 1) * k * 1.3, s: k * 1.3, x: -60 * k }))];
-  const at = [T.g0 - 0.06, ...GROUPS.map((_, g) => T.g0 + g * GLEN + GLEN * 0.35)];
+  // the camera holds on a group while its words are up and crosses to the next only around the boundary where the words
+  // change (within ±HOP of it), so the plates and the words on the left move in step
+  const grp = GROUPS.map((_, g) => ({ y: LIFT * zMid(g, 1) * k * 1.3, s: k * 1.3, x: -60 * k }));
+  const HOP = 0.015;
+  const stops = [whole], at = [T.g0 - 0.03];
+  GROUPS.forEach((_, g) => { stops.push(grp[g], grp[g]); at.push(T.g0 + g * GLEN + HOP, T.g0 + (g + 1) * GLEN - HOP); });
   let j = at.length - 1;
   while (j > 0 && p < at[j]) j--;
   if (j === at.length - 1) return stops[j];
@@ -172,7 +177,7 @@ function Journey({ openLayer }) {
     camX.set(c.x);
     const gi = groupAt(v);
     setG((o) => (o === gi ? o : gi));
-    const pi = v < 0.12 || v > T.close[1] ? 0 : 1;
+    const pi = v < 0.09 || v > T.close[1] ? 0 : 1;
     setPh((o) => (o === pi ? o : pi));
   };
   useMotionValueEvent(p, 'change', frame);
@@ -252,7 +257,7 @@ function Journey({ openLayer }) {
       <label className="xpl-ask-in">
         <span className="x-sr">Find in the stack</span>
         <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.4 10.4 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-        <input type="search" value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Find in the stack" autoComplete="off" spellCheck={false} aria-describedby="xpl-ask-n" />
+        <input type="search" suppressHydrationWarning value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Find in the stack" autoComplete="off" spellCheck={false} aria-describedby="xpl-ask-n" />
         {q && <button type="button" className="xpl-ask-x" onClick={() => setQ('')} aria-label="Clear"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>}
       </label>
       <p id="xpl-ask-n" className="xpl-ask-n" aria-live="polite">{hits ? `${hits.length} / ${N}` : ''}</p>
@@ -457,7 +462,7 @@ function Reach() {
   }, [seen, live, at]);
   const pick = (i) => { setAt(i); setRun(false); };
   return (
-    <section ref={ref} className="xpl-sec xpl-reach" aria-labelledby="xpl-rc-h">
+    <section ref={ref} className="xpl-sec xpl-reach" aria-labelledby="xpl-rc-h" data-enter="count-roll">
       <div className="xpl-wrap">
         <header className="xpl-head">
           <Lines id="xpl-rc-h" className="xpl-h2" lines={['Intelligence that connects', 'to every layer.']} />
@@ -529,7 +534,7 @@ function Loop() {
           <div className="xpl-links"><Go to="/research">Research</Go><Go to="/benchmarks">Benchmarks</Go><Go to="https://github.com/hanzoai/benchmarks">Harness</Go></div>
           <p className="xpl-body xpl-small">A modular feedback architecture, not a claim of unattended production self-modification. Only candidates that meet the relevant evaluation and release gates are promoted.</p>
         </div>
-        <div ref={ref} className="xpl-ring" style={{ '--at': at }} onPointerLeave={() => setHeld(false)}>
+        <div ref={ref} className="xpl-ring" data-enter="spiral-in" style={{ '--at': at }} onPointerLeave={() => setHeld(false)}>
           <span className="xpl-ring-c" aria-hidden="true" />
           <span className="xpl-ring-arc" aria-hidden="true" />
           <p className="xpl-ring-mid" aria-hidden="true"><b>{LOOP[at][1]}</b><span>{LOOP[at][2]}</span></p>
@@ -783,7 +788,7 @@ function OneApi() {
 /* ---------- open: the image we operate is the image you can pull; the object is the terminal you would paste into ---------- */
 function OpenSec() {
   return (
-    <section className="xpl-sec xpl-open" aria-labelledby="xpl-op-h">
+    <section className="xpl-sec xpl-open" aria-labelledby="xpl-op-h" data-enter="underline-sweep">
       <div className="xpl-wrap xpl-op-g">
         <div>
           <Lines id="xpl-op-h" className="xpl-h2 xpl-op-h" lines={['Your cloud should', 'not lock you in.']} />
@@ -813,7 +818,7 @@ function Catalog({ about = {} }) {
           <Lines id="xpl-cat-h" className="xpl-h2" lines={['Explore the platform.']} />
           <p className="xpl-body">Every plane, and what is in it.</p>
         </header>
-        <div className="xpl-dir">
+        <div className="xpl-dir" data-enter="inertia-drag">
           <div className="xpl-dir-cols">
             {CAT.map(([n, to, items], i) => (
               <div key={n} className="xpl-dir-g">
@@ -853,7 +858,7 @@ function Proof() {
   return (
     <section className="xpl-sec xpl-proofs" aria-label="View the measurements">
       <div className="xpl-wrap">
-        <div className="xpl-facts">
+        <div className="xpl-facts" data-enter="explode-gather">
           {FACTS.map(([f, h, d, l, to], i) => (
             <div key={h} className={'xpl-fact' + (i ? '' : ' big')}>
               <p className="xpl-fact-h">{f && <b>{f}</b>} <span>{h}</span></p>
@@ -876,16 +881,53 @@ function Proof() {
   );
 }
 
+/* ---------- section entrances (MOTION-MAP /platform: inertia-drag, count-roll, spiral-in, underline-sweep,
+   explode-gather), page-local. One observer marks each [data-enter] once with data-in when a quarter of it (or a
+   quarter of the screen) is in view; Platform.css plays the entrance it names. Start states live in the CSS under
+   html.js and prefers-reduced-motion: no-preference, so the server markup is final, JS off and reduced motion show
+   everything at rest. count-roll also counts its figures up to Hanzo's own value, ending on the exact string. ---------- */
+function countUp(el) {
+  const to = el.textContent;
+  const m = to.match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/);
+  if (!m || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const [, pre, num, post] = m, dec = (num.split('.')[1] || '').length, end = +num, t0 = performance.now();
+  const tick = (t) => {
+    const k = Math.min(1, (t - t0) / 1100), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = k < 1 ? pre + (end * e).toFixed(dec) + post : to;
+    if (k < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+function useEnter(root) {
+  useEffect(() => {
+    const els = [...(root.current?.querySelectorAll('[data-enter]') || [])];
+    if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
+    const timers = [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting || (e.intersectionRatio < 0.25 && e.intersectionRect.height < innerHeight * 0.25)) return;
+      const el = e.target;
+      el.dataset.in = '';
+      io.unobserve(el);
+      if (el.dataset.enter === 'count-roll') el.querySelectorAll('[data-on="true"] .xpl-tile-fig b').forEach(countUp);
+      timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800));
+    }), { threshold: [0, 0.1, 0.25, 0.5] });
+    els.forEach((el) => io.observe(el));
+    return () => { io.disconnect(); timers.forEach(clearTimeout); };
+  }, [root]);
+}
+
 /* JS off: every scene readable in flow (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.xpl-cap-p{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;margin-bottom:44px}.xpl-cap-stage{display:block!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}.xpl-ring{aspect-ratio:auto!important;width:100%!important;margin:44px 0 0!important}.xpl-ring-c,.xpl-ring-arc,.xpl-ring-mid,.xpl-ring-d,.xpl-ring-cap .xpl-play{display:none!important}.xpl-ring li{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;border-top:1px solid rgba(0,0,0,.1)}.xpl-ring li button{position:static!important;transform:none!important;width:auto!important;text-align:left!important;padding:12px 0!important}.xpl-ring small{display:block!important}.xpl-ring-cap{position:static!important;justify-content:flex-start!important;margin-top:17px!important}`;
+const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;opacity:1!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.xpl-cap-p{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;margin-bottom:44px}.xpl-cap-stage{display:block!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}.xpl-ring{aspect-ratio:auto!important;width:100%!important;margin:44px 0 0!important}.xpl-ring-c,.xpl-ring-arc,.xpl-ring-mid,.xpl-ring-d,.xpl-ring-cap .xpl-play{display:none!important}.xpl-ring li{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;border-top:1px solid rgba(0,0,0,.1)}.xpl-ring li button{position:static!important;transform:none!important;width:auto!important;text-align:left!important;padding:12px 0!important}.xpl-ring small{display:block!important}.xpl-ring-cap{position:static!important;justify-content:flex-start!important;margin-top:17px!important}`;
 
 export default function Platform({ about }) {
+  const root = useRef(null);
+  useEnter(root);
   const [sel, setSel] = useState(0);
   const [open, setOpen] = useState(false);
   const openLayer = (i) => { setSel(i); setOpen(true); };
   const step = (d) => setSel((s) => (s + d + N) % N);
   return (
-    <main className="xpl" data-ask-name="Hanzo Platform">
+    <main ref={root} className="xpl" data-ask-name="Hanzo Platform">
       <noscript><style>{NOJS}</style></noscript>
       <Journey openLayer={openLayer} />
       <Catalog about={about} />
