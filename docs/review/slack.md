@@ -1,71 +1,57 @@
 # /slack — James-eye review
 
 Verdict: 7/10
-First complaint: "I scroll the whole Slack window and the bar says 'Session complete', but I never see it finish. The last messages, the QA check and the merged PR, just run off the bottom of the window. The best bit is cut off."
+First complaint: "The Slack window is brilliant, then it goes flat. After the dark bit it's lists again: six feature names in two columns with nothing to look at, then four little icons in boxes with a sentence under each, with big white gaps in between. The back half is a document."
 
 I walked the page with Playwright (Chromium) on the dev server, moving, with video recorded.
-- **Desktop, 1470x801:** I wheel-scrolled top to bottom in 100px notches with a 160ms dwell (132 notches, a frame every 4th notch). I diffed frames at 150ms, 950ms, 3s and 4s with no input.
-- **Controls:** I hovered and pressed (mouse down, read styles, release off the target) the hero solid, the hero outline, the docs link, the "How each one works" trigger, a rooms tab, a platform item, the close solid, a close text link and a runtime pill. I clicked rail step 4 and the View tab. I opened the sheet and closed it with Esc, and opened an FAQ.
-- **Scene probe:** I scrolled to the middle of each of the six steps with the cookie bar rejected, then measured the message list against the window.
-- **Phone, 375x812 (isMobile, hasTouch, DPR 2):** I scrolled in 100px steps (144 steps, a frame every 5th). I scanned for overflow and for targets under 44px, and checked horizontal scroll at 320.
-- **Reduced motion:** I reloaded with reduced motion and checked `getAnimations()` after 3s, plus the settled scene and setup card.
-- **Console:** I checked it on 6 fresh loads (3 desktop, plus 3 mixed). The page's own console is clean, with 0 errors and 0 warnings and no issue badge. One load showed a compile error from `components/pages/Skills.jsx` (another page being edited) and a red badge in the long recording; I ignored both as instructed.
-- **Parity:** `parity.py /slack`: text 196/196, links 10/10.
+- **Desktop, 1470x801:** I wheel-scrolled top to bottom in 100px notches with a 170ms dwell (117 notches, a frame every 4th notch). I took frames at 150ms, 950ms, 3s and 4s with no input, and diffed two idle frames 600ms apart.
+- **Controls:** I hovered and pressed each of these (mouse down, read computed styles, release off the target): hero solid, hero outline, docs link, a rail step, the View artifact tab, an avatar (tooltip), the canvas card, a promise row, Paste's Copy, a rooms tab, "How each one works", a platform item, a runtime pill, an FAQ question, the close solid and Deploy to Cloud.
+- **Opened things:** I clicked rail step 4 (it jumps and selects), switched to View, opened the sheet and closed it with Esc, and opened an FAQ.
+- **Phone, 375x812 (isMobile, hasTouch, DPR 2):** I scrolled in 100px steps (151 steps, a frame every 6th). I scanned main for overflow and for targets under 44px, and checked 320 for horizontal scroll.
+- **Reduced motion:** I reloaded with reduced motion and read `getAnimations()` after 3.2s.
+- **Console:** 4 fresh loads (2 desktop, 2 phone) gave 0 errors and 0 warnings. The dev "1 Issue" badge came and went between runs while other pages were being edited, and was absent on a clean load, so I did not count it.
 
-Working files: /tmp/claude-0/-home-user-hanzo-site/715b2a45-dd44-5306-98d1-bc0b4d91bc34/scratchpad/critic2/slack/
+Working files: /tmp/claude-0/-home-user-hanzo-site/715b2a45-dd44-5306-98d1-bc0b4d91bc34/scratchpad/critic3/slack/
 
 ## What works
-- **The hero now sells.** The h1 is 52px and its baseline sits at about 43% of the screen. The lede, one solid ask and a quiet secondary are on the right. The black room and the step rail peek at y=458, so the product is on the first screen. The h1 cuts in by line mask (absent at 150ms, set by 950ms).
-- **Something moves untouched.** The "Working" dot and typing dots run; frames at 3s and 4s differ with no input.
-- **The signature is an apple.com-style pinned scene.** The window settles from 0.9 to full scale, each stretch of scroll plays the next message, the rail bars fill, and the Code / View / Canvas artifact follows the step. The tab pill glides (layoutId). Clicking rail step 4 jumps there and selects it.
-- **Phone scene is very good.** It is a compact pinned window under a snap rail that slides the current step into view. The thread scrolls to the newest message at every step, and the canvas shows under it. Nothing overflows at 375 or 320. In main, no target is under 44px.
-- **The fixes since the last review landed:**
-  - no hydration error;
-  - "Get Hanzo Tag" is one clean 26px line;
-  - the close has one solid ask with the two Explore links as text links;
-  - the three rooms are one tile with three states (hover or tap swaps the picture);
-  - the promises light parts of a window crop as you read;
-  - the platform is a runtime map where the product you point at is drawn in ink;
-  - the sheet trigger and outline button now fill on hover and press to .97.
-- **Every tested control answers** with more than opacity, with no layout jump. The solid fills #0a0a0a to #2c2c2e and presses to scale .97. The rooms tabs ink their label and rule. Text links nudge 1px on press. The runtime pills fill.
-- **The "Beyond" contrast slider** sweeps by itself until you drag it, and it is a real, honest object.
-- **No hue renders.** A computed-style scan of main found 0 chromatic colours.
-- **Reduced motion:** after 3s there are 0 running animations, and the setup card shows all three steps ticked with the full exchange.
+- **The first screen sells.** The h1 is 52px, three lines, with its baseline near 43% of the screen. The lede, one solid ask, a quiet outline and the docs link sit on the right. The dark room, the step rail and the window top peek in from y=459. The h1 cuts in by line mask: absent at 150ms, set by 950ms. The kicker is screen-reader only, so nothing sits above the h1.
+- **It moves with no input.** The "Working" dot and the typing dots run, and two idle frames 600ms apart differ.
+- **The signature is right now.** The window pins and settles from 0.9 to full scale. Each stretch of scroll plays the next step, and the Code / View / Canvas pane follows with a gliding pill. The thread now scrolls inside the window, so step 4's canvas card, step 5's QA message and step 6's "PR #418 merged · E2E green" and Archive Channel all land in view. The status flips to "Session ready" and the sidebar badge to "PR ready". The previous review's number 1 failure is fixed.
+- **The phone scene is excellent.** It is a compact pinned window under a snap rail that slides the current step in. Main has no overflow at 375 or 320 and no target under 44px.
+- **Hover and press answer, with no layout jump.**
+  - Solids go from #0a0a0a to #2c2c2e and press to .97.
+  - The outline and sheet buttons fill #f2f2f2 and press to .97.
+  - Rail steps and tabs brighten and press to .98.
+  - Avatars lift 3px and show a name and role tip.
+  - The canvas card lifts 2px and its border brightens.
+  - Text links nudge 1px on press.
+  - Rooms tabs ink their label and rule.
+  - Platform items press to .98.
+- **The copy fixes landed.** The setup card is labelled by its own name. Hanzo's sentence heads the close only. "Questions" is screen-reader only.
+- **The setup demo plays once** from a visible ask and ends at rest. It fits in a 604px section.
+- **Scale rhythm in Notes is fixed.** Unlit promises are 17px grey, and only the lit one steps up to 21px ink beside the crop, which lights the matching part.
+- **Reduced motion:** after 3.2s there are 0 running animations, and the setup card shows its finished state.
+- **The sheet** rises from the right, is opaque and closes with Esc.
 
 ## What fails (ranked, each with a concrete fix the owner can make in the page's own files)
-1. **On desktop the scene's last three steps play out of sight.** The probe measured this at each step's midpoint:
+1. **The platform row is four equal tiles, each a little icon in a rounded box with an explaining sentence under it.** MASTER part 7 says "never an icon in a rounded box", and JAMES bans "an explaining sentence under every tile". The rail and drops above the tiles are nice, but the eye lands on four identical icon boxes. Fix in `Slack.jsx` `Platform()` and `Slack.css`:
+   - Drop the `.xsq-mark` boxes. Make the rail the object: the drop for the pointed product grows into a small ink node carrying the product's name.
+   - Show only the active item's description (`d`) under the rail, swapping like the rooms tile. The other three become 17px titles on the line, with no sentence.
+   - That turns four equal boxes into one thing in focus.
+2. **"From @Hanzo mention to merged pull request" has no object.** It is six feature names in a two-column text list plus a sheet button, which fails "every section holds a real visual object". Fix in `Slack.jsx` `What()` (the `.xsq-built` block):
+   - Render the six names as a list of Slack-style rows with the timestamp and mono chip treatment already used in the window (`Msg`/chips).
+   - Or draw them as checkpoints along the same thread line, the lit one ink and the rest grey.
+   - Keep the sheet for the descriptions. Words unchanged.
+3. **Dead white bands still break the walk.** Each section ends with about 103px of padding plus the next one's 72px top, so about 175px of nothing sits between Built and Platform, Platform and Questions, and Questions and the close. At 375 there is about 150px of blank between the last FAQ and the close. Fix in `Slack.css`:
+   - Set `padding-bottom` on `.xsq-what, .xsq-plat, .xsq-faq` to 44px.
+   - Pull the next object up so neighbours overlap by about 40px, as part 3 asks (for example `.xsq-plat { margin-top: -40px }` with the rail as the bridge).
+4. **The scene drags per notch.** It is 5,126px tall for 6 steps, which is about 8 wheel notches per step at 1470x801 with nothing changing between them. James will feel he is scrolling through a still. Fix in `Slack.css`/`Slack.jsx` `Scene()`:
+   - Cut `.xsq-scene` height to about 360svh.
+   - Or, between steps, scrub something continuous: the current rail bar fill, already drawn, plus the new message's line-mask arrival tied to progress inside the step.
+5. **A few presses do not answer.** The runtime pills, the canvas card and the avatars have hover but no pressed transform. Fix in `Slack.css`: add `:active { transform: scale(.97) }` (90ms, `cubic-bezier(0,0,.2,1)`) to `.xsq-rt`, `.xsq-canvas-card` and `.xsq-who-i`. For the hover-lifted ones, use `translateY(-1px) scale(.98)`.
+6. **The Built section runs together on phone.** The six bold titles stack as 16px lines with nothing else, a plain list between two strong objects. Fix 2 covers it. Show phone-specific rows at 56px with the chip.
 
-   | Step | Message list bottom | Window bottom |
-   |---|---|---|
-   | 4. Canvas summary | 854 | 767 |
-   | 5. E2E verify | 937 | 767 |
-   | 6. Session complete | 965 | 767 |
-
-   The list's `scrollHeight` equals its `clientHeight`, so the scroll-to-bottom does nothing. The canvas card, the QA "Verified e2e" message, "PR #418 merged · E2E green" and the Archive Channel button are clipped below the window. The rail says "Session complete" while the thread still shows step 3's message. This is the page's signature, and its payoff is invisible at 1470x801. (Phone is correct.)
-
-   The cause: `.xsq-win-body` is a grid with a fixed height but an auto row, and `.xsq-thread` keeps `min-height: auto`, so the thread grows past the body and `.xsq-win { overflow: hidden }` clips it.
-
-   Fix in `Slack.css`:
-   - add `grid-template-rows: minmax(0, 1fr);` to `.xsq-win-body` (line 46);
-   - add `min-height: 0;` to `.xsq-thread` (line 61);
-   - add `.xsq-msgs > * { flex: none; }` so messages don't squash.
-
-   The existing `scrollTo` in `Window()` then brings each new step into view. Re-check at 1470x801 that "Session complete" and Archive Channel are visible at step 6.
-2. **Copy is not untouched: two headings are invented.**
-   - "Connect @Hanzo / in three steps" (setup h2) is a cut-down of Hanzo's sentence "Connect @Hanzo to your Slack workspace in three steps." That full sentence then appears twice, as the setup lede and again as the close h2.
-   - "Questions" (the FAQ h2) is in neither `content/live/slack.json` nor `content/ui-strings.json`.
-
-   Fix in `Slack.jsx`:
-   - In `Setup()`, use `CLOSE.lede` once as the h2 (drop the invented two-line title and the duplicate lede), or give the setup card no heading of its own and let the close carry the sentence.
-   - In `Questions()`, use the FAQ's own label from `slackData.js`/live if Hanzo has one. If it does not, use a visually hidden h2 and list the question on the card.
-3. **The setup demo loops forever and opens on an empty black box.** `Setup()` cycles `k` from 0 to 9 every 1.3s indefinitely. For about 4s of each 13s cycle the 286px dark mini-channel is blank (the frame at notch 76 shows a large empty black panel). MASTER says demos run once for 6 to 10s and then settle, and that a loop over 5s needs a pause control.
-
-   Fix in `Slack.jsx` `Setup()`: stop at `k === 9` instead of wrapping to 0 (`setK(v => Math.min(9, v + 1))` and clear the timer at 9). Start with the ASK message already in, so the box is never empty: begin at `k = 3`, or show the steps ticking over the visible ASK.
-4. **Dead white gaps between sections at 1470.** Each section is padded 161px top and bottom, so you scroll through about 320px of nothing between Notes and Setup, between Paste and the rooms, and before Questions and the close. It reads as a document between moments. Fix in `Slack.css`: collapse adjoining padding (for example `.xsq-notes + .xsq-setup, .xsq-what, .xsq-faq, .xsq-close { padding-top: 72px }`), so one section's object overlaps the next by about 40px, as part 3 asks.
-5. **Scale rhythm in Notes is flat.** The four promises are 19 to 23px, as big as the 26px section heading beside them, and they stack about 640px tall. Everything reads at one size. Fix in `Slack.css` line 223: drop `.xsq-points li p` to 16 to 17px with `--muted` for unlit rows, and let only the lit row step up to 21px. Then the crop and the lit promise are the one thing to look at.
-6. **The setup card at 1470x801 is taller than the screen** (top edge at y≈78, bottom at the fold), so you never see the steps and the exchange together. Fix in `Slack.css`: reduce `.xsq-mini` to about 220px and tighten `.xsq-card` padding, so the card fits in about 640px.
-7. **Platform items have no press state.** Hover inks the mark (good), but the `li` gets no pressed transform, and it is clickable with no button role or focus path. Fix in `Slack.jsx` `Platform()`: make each item a `<button type="button">` (or give the `li` `tabIndex={0}` and `onFocus={() => setI(k)}`). In `Slack.css`, add `:active { transform: scale(.98) }` with a 90ms ease.
-
-Shared (noted, not counted; request in `docs/requests/slack.md`):
-- On phone the header ask stays "Try Hanzo" and never takes "Set up Hanzo Tag", although desktop does swap.
-- At 375x812 the cookie card covers about 30% of the screen over the scene and setup.
+Shared (noted, not counted):
+- On phone the header ask stays "Try Hanzo" and never swaps to "Set up Hanzo Tag"; desktop does swap.
+- At 375x812 the cookie card covers the lower third over the scene until it is dismissed.
+- The dev "1 Issue" badge appeared intermittently while other pages compiled.
