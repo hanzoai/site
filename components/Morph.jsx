@@ -58,8 +58,9 @@ export default function Morph() {
       });
     };
     document.addEventListener('pointerover', warm, { passive: true });
+    document.addEventListener('touchstart', warm, { passive: true }); // phones: fetch on the first touch, before the tap ends
     document.addEventListener('click', click, true);
-    return () => { document.removeEventListener('pointerover', warm); document.removeEventListener('click', click, true); };
+    return () => { document.removeEventListener('pointerover', warm); document.removeEventListener('touchstart', warm); document.removeEventListener('click', click, true); };
   }, [router]);
   return null;
 }
