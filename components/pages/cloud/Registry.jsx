@@ -1,9 +1,10 @@
 'use client';
 /* Registry, v2 launch page (Cloud 3).
    V2: 8/10 one outlined window where a docker push asks IAM first, runs once (~9 s) and rests on the signed image with a
-   blinking prompt and Replay; the chapters' object is the image itself, a stack of layer plates that each fact acts on
-   (token lands, org claims it, signature docks, a tag slides off), not a second window; the dark room's heading is the
-   switch's name and strikes through when pressed; header ask left solid; every control answers.
+   blinking prompt and Replay; the dark room follows the hero straight off its last words (the secret); then a short
+   pin (about 3 screens) whose object is the image itself, a big inked stack of layers each fact visibly acts on and
+   labels (a password struck off as the token seats, the org inks the top, signature and attestation dock, a layer
+   slides out as storage shrinks, people fold into one directory), one caption under it, no lists; every control answers.
    Signature: a push that asks IAM first. docker push meets a 401 that names Hanzo IAM, a short-lived token travels from
    IAM to the client, the registry checks its signature, the layers go up, and the image lands in the org's repository
    with its cosign signature beside it as an ordinary artifact.
@@ -99,77 +100,45 @@ function Push() {
   );
 }
 
-/* ---------- the chapters' object: the repository, per fact; the intro's token runs out on its own ---------- */
+/* ---------- the chapters' object: the image itself, one big stack of layers that each fact acts on ---------- */
 const CLIENTS = ['docker', 'podman', 'buildkit', 'skopeo', 'crane'];
 const PEOPLE = [['ana', 'push'], ['kai', 'push'], ['lee', 'pull'], ['sam', 'revoked']];
 
-/* The image itself, not another window: its layers drawn as a stack of plates seen from above. Each chapter does one
-   thing to the same stack (the token lands on it, the org claims it, the signature and attestation dock beside it,
-   a tag slides off and its blobs are reclaimed), and the chapter's detail reads beneath it as a caption. */
-function Stack() {
-  return (
-    <div className="rg-iso" aria-hidden="true">
-      <div className="rg-iso-s">
-        {[0, 1, 2, 3].map((i) => <i key={i} className="rg-pl" style={{ '--z': i }} />)}
-        <i className="rg-pl rg-pl-top" style={{ '--z': 4 }} />
-        <i className="rg-pl rg-pl-sig" style={{ '--z': 4 }} />
-        <i className="rg-pl rg-pl-att" style={{ '--z': 3 }} />
-        <i className="rg-pl rg-pl-tok" style={{ '--z': 7 }} />
-      </div>
-      <p className="rg-iso-n">oci.hanzo.ai / <b>acme</b> / api</p>
-    </div>
-  );
-}
-
+/* The image drawn as its layers, a stack of inked plates seen from above, large enough to be each screen's one object.
+   Every chapter does one visible thing to it, labelled on the object itself:
+   intro: an IAM token hovers over it while its time runs out; 01: a password is struck off and falls away while the
+   token seats on the stack; 02: the org claims the top plate (it turns ink, "acme/* · push"); 03: the signature and the
+   attestation dock beside the image; 04: the stack squares up for /v2/; 05: a tag slides out and storage shrinks;
+   06: four people fold into one directory, one of them revoked. One short caption sits under it. */
 function Repo({ step, intro }) {
   const on = (i) => (!intro && step === i) || undefined;
   return (
     <div className="rg-rv" data-step={intro ? 'intro' : step}>
-      <Stack />
+      <div className="rg-iso" aria-hidden="true">
+        <div className="rg-iso-s">
+          {[0, 1, 2, 3].map((i) => <i key={i} className="rg-pl" style={{ '--z': i }} />)}
+          <i className="rg-pl rg-pl-top" style={{ '--z': 4 }} />
+          <i className="rg-pl rg-pl-sig" style={{ '--z': 4 }} />
+          <i className="rg-pl rg-pl-att" style={{ '--z': 3 }} />
+          <i className="rg-pl rg-pl-tok" style={{ '--z': 7 }} />
+        </div>
+        <span className="rg-t rg-t-tok" data-on={intro || undefined}><b>Hanzo IAM · token</b><span className="rg-ttl-bar"><i /></span></span>
+        <span className="rg-t rg-t-pw" data-on={on(0)}>password</span>
+        <span className="rg-t rg-t-seat" data-on={on(0)}>✓ token · signature checked</span>
+        <span className="rg-t rg-t-org" data-on={on(1)}><b>acme</b>/* · push</span>
+        <span className="rg-t rg-t-sig" data-on={on(2)}>cosign signature</span>
+        <span className="rg-t rg-t-att" data-on={on(2)}>in-toto attestation</span>
+        <span className="rg-t rg-t-del" data-on={on(4)}>v1.2.3-oops</span>
+        <span className="rg-ppl" data-on={on(5)}>{PEOPLE.map(([n, r], i) => <i key={n} className={r === 'revoked' ? 'off' : ''} style={{ '--i': i }}>{n[0]}</i>)}</span>
+        <p className="rg-iso-n">oci.hanzo.ai / <b>acme</b> / api</p>
+      </div>
       <div className="rg-rv-panes" aria-hidden="true">
-        <div className="rg-rv-pane rg-ttl" data-on={intro || undefined}>
-          <div className="rg-ttl-tok">
-            <span className="rg-k">Hanzo IAM</span>
-            <b>token</b>
-            <span className="rg-ttl-bar"><i /></span>
-          </div>
-          <ul className="rg-repos">{['api', 'web', 'worker'].map((r) => <li key={r}><b>acme</b>/{r}</li>)}</ul>
-        </div>
-        <div className="rg-rv-pane" data-on={on(0)}>
-          <ol className="rg-hs">
-            {[['client', 'docker push'], ['registry', '401 · Hanzo IAM'], ['Hanzo IAM', 'token minted'], ['registry', 'signature checked'], ['registry', 'push goes through']].map(([w, m], i) => (
-              <li key={i} style={{ '--i': i }} className={i === 1 ? 'warn' : i >= 3 ? 'ok' : ''}><span>{w}</span><b>{m}</b></li>
-            ))}
-          </ol>
-          <p className="rg-rv-foot">no password stored at either end</p>
-        </div>
-        <div className="rg-rv-pane" data-on={on(1)}>
-          <div className="rg-scope"><span className="rg-k">token · minted by IAM</span><code><b>acme</b>/* · push</code></div>
-          <ul className="rg-repos">{['api', 'web', 'worker'].map((r) => <li key={r}><b>acme</b>/{r}</li>)}</ul>
-          <p className="rg-rv-foot">one grant in one place</p>
-        </div>
-        <div className="rg-rv-pane" data-on={on(2)}>
-          <ul className="rg-arts">
-            {[['v1.2.3', 'image', ''], ['v1.2.3', 'cosign signature', 'sig'], ['v1.2.3', 'in-toto attestation', 'att']].map(([tag, k, c], i) => <li key={k} className={c} style={{ '--i': i }}><b>{tag}</b><span>{k}</span></li>)}
-          </ul>
-          <p className="rg-rv-foot">same repository as the image they describe</p>
-        </div>
-        <div className="rg-rv-pane" data-on={on(3)}>
-          <p className="rg-v2"><span className="lx-num">/v2/</span><em>registry HTTP API v2</em></p>
-          <ul className="rg-clients">{CLIENTS.map((c, i) => <li key={c} style={{ '--i': i }}>{c}</li>)}</ul>
-        </div>
-        <div className="rg-rv-pane" data-on={on(4)}>
-          <ul className="rg-tags">
-            <li><b>v1.2.3</b><span>image</span></li>
-            <li className="del"><b>v1.2.3-oops</b><span>deleted · blobs reclaimed</span></li>
-            <li><b>v1.2.2</b><span>image</span></li>
-          </ul>
-          <div className="rg-store"><i /><span>storage after the delete</span></div>
-        </div>
-        <div className="rg-rv-pane" data-on={on(5)}>
-          <p className="rg-k">one directory of people · Hanzo Cloud</p>
-          <ul className="rg-people">{PEOPLE.map(([n, r]) => <li key={n} className={r === 'revoked' ? 'off' : ''}><i>{n[0]}</i><b>{n}</b><span>{r}</span></li>)}</ul>
-        </div>
+        <p className="rg-rv-pane" data-on={on(0)}>no password stored at either end</p>
+        <p className="rg-rv-pane" data-on={on(1)}>one grant in one place</p>
+        <p className="rg-rv-pane" data-on={on(2)}>same repository as the image they describe</p>
+        <div className="rg-rv-pane rg-v2" data-on={on(3)}><span className="lx-num">/v2/</span><span className="rg-clients">{CLIENTS.join(' · ')}</span></div>
+        <div className="rg-rv-pane rg-store" data-on={on(4)}><i /><span>deleted · blobs reclaimed</span></div>
+        <p className="rg-rv-pane" data-on={on(5)}>one directory of people · Hanzo Cloud</p>
       </div>
     </div>
   );
@@ -246,17 +215,17 @@ export default function Registry() {
         </div>
       </section>
 
+      <ClipWipe dark className="rg-del">
+        <DelRoom />
+      </ClipWipe>
+
       <PinnedChapters
         label="Built on Hanzo IAM"
-        per={72}
+        per={46}
         intro={{ title: ['Built on', 'Hanzo IAM'], lede: 'The credential expires on its own, so there is nothing to rotate and nothing to leak' }}
         steps={FACTS.map(([t, d], i) => ({ t, d, k: String(i + 1).padStart(2, '0') }))}
         visual={(at, intro) => <Repo step={at} intro={intro} />}
       />
-
-      <ClipWipe dark className="rg-del">
-        <DelRoom />
-      </ClipWipe>
 
       <section className="lx-sec rg-con">
         <div className="lx-wrap rg-con-grid">

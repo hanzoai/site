@@ -4,7 +4,7 @@ Page file: `components/pages/cloud/Registry.jsx` (+ `Registry.css`) · route: `a
 
 Open copy questions for James: "View Source" and "View on GitHub" both point at the `github.com/hanzoai` org page, not a registry repo (Hanzo's links, kept as they are).
 Shared changes requested (`docs/requests/<page>.md`): none.
-Forks this page deleted: the page CSS that forced the header's "Try Hanzo" to an outline; the second white "repository window" in the chapters (now the layer stack); the switch label that repeated the dark room's h2; the swap row that repeated the hero lede; the forever-looping push; the spring knob; a drop shadow on a non-floating row; off-deck greys (#a1a1a6, #6e6e73, #0b0b0c and seven more).
+Forks this page deleted: the page CSS that forced the header's "Try Hanzo" to an outline; the second white "repository window" in the chapters (now the layer stack) and its six grey row lists (handshake, repos, artifacts, tags, people); the switch label that repeated the dark room's h2; the swap row that repeated the hero lede; the forever-looping push; the spring knob; a drop shadow on a non-floating row; off-deck greys (#a1a1a6, #6e6e73, #0b0b0c and seven more).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
@@ -23,7 +23,7 @@ Done here: "View Source" is the hero's one solid (`data-cta="registry.hero"`); t
 - [x] n/a breadcrumb: depth 1
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: `python3 scripts/parity.py /registry`: links 12/12. Order: push → "Built on Hanzo IAM" pinned stack → dark room → console + prompt → get started + related → close.
+Done here: `python3 scripts/parity.py /registry`: links 12/12. Order (breaks the shared cloud order on purpose): push → dark room "Delete the dockerconfigjson secret", straight off the lede's last words → "Built on Hanzo IAM" pinned stack (per 46svh, about 3.2 screens of scroll) → console + prompt → get started + related → close.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -66,7 +66,7 @@ Done here: Parity 69/69 text, 12/12 links. "Related capabilities" and the chapte
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours
 
-Done here: taste OK on both files. The chapters' object is a stack of layer plates seen from above on the page's white (no window chrome), so it no longer mirrors /o11y's or /metrics's white window; the hero is the only window.
+Done here: taste OK on both files. The chapters' object is one big inked stack of layer plates (about 330px plates, ink to #525252, a #f5f5f5 manifest plate) on the page's white with no window chrome, labelled on the object; the grey row lists are gone (one caption per chapter), so it no longer mirrors /o11y's or /metrics's white window; the hero is the only window. Section heads rest at 32px (26px phone); the dark room's ledger has one hairline.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible
@@ -84,7 +84,7 @@ Done here: Quickstart fills white on hover and presses .97; About IAM, the conso
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] n/a sound: shared kit
 
-Done here: The push runs once (~9 s) and rests; the caret blinks at rest; the layer stack floats ±5px over 6 s and each chapter acts on it (token lands, top turns ink for the org, signature and attestation dock, a layer slides out, the stack folds flat). `variety.py` OK.
+Done here: The push runs once (~9 s) and rests; the caret blinks at rest; the layer stack floats ±6px over 6 s and each chapter acts on it: intro, an IAM token hovers with its time bar draining and strikes itself; 01, a struck "password" falls away while the token seats (a new facet, not the push again); 02, the top plate inks for acme; 03, signature and attestation dock; 04, the stack squares for /v2/; 05, a layer slides out and the storage bar shrinks; 06, four people fold into one row, one revoked. `variety.py` OK.
 
 ## 10. Media
 - [x] n/a Film/Pic: Hanzo has no Registry images or film; every object is product UI or drawn
