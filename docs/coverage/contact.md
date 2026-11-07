@@ -25,7 +25,10 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button — n/a for prices: the page has none
 - [x] Open copy questions for James listed, none decided
 
-Done here: The one ask is Hanzo's "Talk to sales". It sits in the Sales route, which is chosen on arrival and never moves by itself: in a 12-sample trace from load, Sales stayed selected the whole time. `lib/cta.js` has not merged, so the label is Hanzo's verbatim.
+Done here:
+- **The one ask.** Hanzo's "Talk to sales", in the Sales route, which is chosen on arrival and never moves by itself.
+- **One solid fill through route changes.** After a route has faded in (450ms), the page sends a scroll event so the shared ask bar looks again. Checked at 1470 and 375 through Support, Press, Sales and Support: the header's ask stayed outline (`data-ask=on`) after every switch.
+- **Label.** `lib/cta.js` has not merged, so the label is Hanzo's verbatim.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -44,7 +47,9 @@ Done here: Every link is `A` or `Go`, plus the kit `Band`. Parity is 15/15 links
 - [ ] Card-to-page links use Morph — n/a: no cards lead to pages
 
 Done here:
-- **Entrance order.** It waits for the page's `go`: at once on a return visit, or 550ms after the curtain starts lifting, once the top is clear. Then the h1 cuts in (60ms between lines), the panel rises at +150ms and the lede at +300ms (0.4s entries). About 1s later the cable sweeps the four sockets and lands back on Sales; then it sways while idle.
+- **Entrance order** (/contact has no curtain; the curtain is home only). The h1 cuts in by CSS about 0.55s after first paint. The panel rises at 0.7s and the lede at 0.85s: 0.4s entries on CSS delays, so they never wait for the app bundle. Checked with the bundle blocked: the panel and the ask show, with the ask ending at y=603.
+- **Cable.** About 1s after hydration it sweeps the four sockets and lands back on Sales. Then its belly drifts slowly, about 12px on desktop and 17px on the phone's short wire.
+- **Height.** The h1 sits high, and the Visit room peeks below the hero as a rounded card.
 - **JS off.** All four routes are stacked with their links. The cable, plug, plate, copy button and clock hands are hidden.
 
 ## 4. Conversion system
@@ -77,7 +82,8 @@ Done here:
   - route headings 26–32px;
   - jacks 17px at weight 606;
   - body 17px.
-- **Jack hover.** It swaps the name for its action (Hanzo's button words) in the same slot. Checked at 1024, 1280 and 1470: the name is fully faded, the action sits inside the jack, and there is no visible overlap.
+- **Jack hover.** It swaps the name for its action (Hanzo's button words) only from 1400px, where the whole action fits. Checked at 900, 1024, 1280, 1399, 1400, 1440, 1470 and 1920: 1400 and up print the action whole, and below 1400 the name stays. There, hover answers with the outline, the socket and the wire leaning toward the jack; nothing is clipped.
+- **Type sizes.** "Visit" and the address are both section-heading size, so the room holds 3 sizes.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -88,8 +94,8 @@ Done here:
 
 Done here:
 - **Palette.** `taste.py` passes. Only deck neutrals (`#0a0a0a`, `#525252`, `#737373`, `#a3a3a3`, `#fafafa`, `#f5f5f5`, `#f2f2f2`, `#262626`) and white alpha steps are used.
-- **Surfaces.** The panel has a hairline and no shadow (radius 28); the inner route has a flat fill (radius 16); the plate has a flat fill (radius 24).
-- **Rooms.** Two black rooms, Visit and the Band, which are not back to back.
+- **Surfaces.** The panel has no outer box. The jacks are flat fills, and the chosen one is outlined as a state. The route has a flat fill (radius 24), and so does the plate (radius 24).
+- **Rooms.** Two black rooms, Visit and the Band, which are not back to back. Visit opens from a rounded card inside the gutters to full width as it is reached (CSS scroll timeline; a plain edge where it is unsupported or under reduced motion).
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -110,7 +116,7 @@ Done here: Buttons are 48px (route buttons and copy); jacks are 120px on desktop
 Done here:
 - **Kinds of motion:**
   - arrival: h1 cut-in, panel rise;
-  - idle: the cable's sweep, then its slow sway; the clock;
+  - idle: the cable's sweep, then its belly drifting about 12px (17px on phones); the clock;
   - pointer: the wire leans toward a hovered jack; the jack swaps name for action; the plate redraws;
   - state: the plug moves socket to socket in 500ms ease-in-out, with no spring.
 - **Scroll.** Only the two section cut-ins and the plate following the row.
@@ -130,7 +136,8 @@ Done here: The objects are drawn: the patch panel and cable (SVG), the live cloc
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- **Jacks.** At 375 they are one swipe row with faded edges, and a short wire drops from the chosen pill into its route (checked on tapping Support). The chosen pill scrolls into view.
+- **Jacks.** At 375 they are one swipe row with faded edges, and a short wire drops from the chosen pill into its route. The chosen pill scrolls into view.
+- **Fold.** At 375×667 "Talk to sales" ends at y=657, above the fold.
 - **Plate.** It rides at the top while the rows pass.
 - **Overflow.** No sideways scroll at 320 or 375.
 
@@ -181,19 +188,25 @@ Done here: n/a. The Developer Dispatch route links to /newsletter only.
 Done here:
 - **JS off.** Checked: 0 hidden texts and 0 inert.
 - **Plug and clock.** The plug shows only once its wire is drawn, and the clock hands only with the first tick.
+- **Bundle failure.** The entrances run on CSS delays, so with the app scripts blocked the lede, the panel and its ask are still shown.
+- **JS off.** The hero top-aligns and the dead jacks are hidden.
 - **Curtain.** The panel re-measures after the curtain's scale and after fonts load, so the plug sits centred.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` — not merged; nothing is sent
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/contact.md` (7/10). Applied:
-  - the jack-hover collision;
-  - the Band hover leak;
-  - the h1 after the curtain;
-  - idle and pointer life;
-  - the phone cable;
-  - the JS-off plate and copy button;
-  - the plug before its wire.
+- [x] Review read: `docs/review/contact.md` (re-review 2, 7/10). Applied:
+  - one solid fill after route switches;
+  - the jack action only where it fits;
+  - the phone fold at 375×667;
+  - the visible idle drift on desktop and phone;
+  - entrances that do not wait for the bundle;
+  - the Visit room opening from a rounded card;
+  - "Visit" at section-heading size;
+  - the JS-off hero;
+  - the flat jack tiles;
+  - a round focus ring for the kit `Go`'s extra Tab stop;
+  - a light ring on the Band.
 
 Done here: Gallery: `desktop.mp4`, `desktop-1.jpg`, `desktop-2.jpg`, `phone.jpg` and `before-desktop.jpg`. A pinned scroll scene was not added, because Utility pages have no scroll theatre (MASTER 4.5).

@@ -36,7 +36,7 @@ const Face = ({ n, size = 28 }) => (
   <span className="xtm-face" style={{ width: size, height: size, '--img': `url(https://hanzo.ai/memoji/${n}.svg)` }} data-i={INI[n] || n[0].toUpperCase()} aria-hidden="true" />
 );
 // JS off: the hero's words, asks and the canvas show in their final state (the stage keeps no transform)
-const NOJS = { __html: '<style>.xtm-cur{display:none!important}.xtm-hero-r,.xtm-stage-in{opacity:1!important;transform:none!important}.xtm-chap{height:auto!important}.xtm-chap-st{position:static!important;height:auto!important}.xtm-chap-g{display:block!important}.xtm-chap-s{display:grid!important;padding:48px 0}.xtm-chap-s *{opacity:1!important;transform:none!important}.xtm-panel[aria-hidden=true]{visibility:visible!important;position:static!important}</style>' };
+const NOJS = { __html: '<style>.xtm-cur{display:none!important}.xtm-hero-r,.xtm-stage-in{opacity:1!important;transform:none!important}.xtm-chap{height:auto!important}.xtm-chap-st{position:static!important;height:auto!important}.xtm-chap-g{display:block!important}.xtm-chap-s{display:grid!important;padding:48px 0}.xtm-chap-s *{opacity:1!important;transform:none!important}.xtm-panels{display:block!important}.xtm-panel{grid-area:auto!important;margin-bottom:12px}.xtm-panel[aria-hidden=true]{visibility:visible!important;display:block!important}</style>' };
 const arrowKeys = (n, set) => (e) => {
   const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
   if (!d) return;
@@ -79,9 +79,9 @@ function Canvas({ ok }) {
   const calm = useReducedMotion();
   const [phase, setPhase] = useState('rest'); // story → drift (the cursors breathe after Done) → rest; one control pauses or replays
   const liveRef = useRef(null);
-  const [stage, setStage] = useState(2); // the finished picture is what the page's HTML shows
-  const [said, setSaid] = useState(3);
-  const [steps, setSteps] = useState(3);
+  const [stage, setStage] = useState(0); // the story's first frame is what the page's HTML shows: it never plays its end first
+  const [said, setSaid] = useState(0);
+  const [steps, setSteps] = useState(0);
   const zoe = useCursor(40, 30), dev = useCursor(220, 250), qa = useCursor(300, 290);
   const [run, setRun] = useState(0); // the story plays once when first seen after the curtain, then rests on Done; Replay plays it again
   const played = useRef(false);
@@ -95,9 +95,10 @@ function Canvas({ ok }) {
     const near = (fx = 0.72, fy = 0.62) => {
       const el = taskEl.current;
       const [x, y] = offs(el, board.current);
-      return [x + el.offsetWidth * fx, y + el.offsetHeight * fy];
+      return [Math.min(x + el.offsetWidth * fx, board.current.offsetWidth - 76), y + el.offsetHeight * fy];
     };
-    const home = (c, fx, fy) => c.go(board.current.offsetWidth * fx, board.current.offsetHeight * fy, calm);
+    const cl = (x) => Math.min(x, board.current.offsetWidth - 76); // a cursor's label always stays inside the board
+    const home = (c, fx, fy) => c.go(cl(board.current.offsetWidth * fx), board.current.offsetHeight * fy, calm);
     (async () => {
       try {
         setPhase(calm ? 'rest' : 'story');
@@ -106,7 +107,7 @@ function Canvas({ ok }) {
           await sleep(500);
           zoe.go(...near(), calm); await sleep(1300);
           setSaid(1); await sleep(1500);
-          home(zoe, 0.5, 0.8);
+          home(zoe, 0.5, 0.45);
           dev.go(...near(), calm); await sleep(1400);
           setStage(1); await sleep(700);
           dev.go(...near(), calm); setSaid(2); await sleep(900);
@@ -114,8 +115,8 @@ function Canvas({ ok }) {
           qa.go(...near(0.4, 0.82), calm); await sleep(1300);
           setStage(2); await sleep(700);
           qa.go(...near(0.4, 0.82), calm); setSaid(3);
-          home(dev, 0.3, 0.86); await sleep(1200);
-          home(qa, 0.86, 0.9);
+          home(dev, 0.22, 0.42); await sleep(1200);
+          home(qa, 0.8, 0.6);
         }
         if (live.on) setPhase(calm ? 'rest' : 'drift');
       } catch (e) { if (e !== 'stop') throw e; }

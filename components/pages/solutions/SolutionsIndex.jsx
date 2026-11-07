@@ -79,12 +79,12 @@ function Tile({ it, d, w, k, n }) {
         <span className="xso-tile-go" aria-hidden="true">
           <svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
-        {d.steps && d.steps.length > 0 && (
-          <span className="xso-jobs">{d.steps.map((s) => <span key={s}>{s}</span>)}</span>
-        )}
         <span className="xso-tile-b">
           <span className="xso-tile-n">{it.name}</span>
-          <span className="xso-tile-t">{it.text}</span>
+          <span className="xso-tile-sw">
+            <span className="xso-tile-t">{it.text}</span>
+            {d.steps && d.steps.length > 0 && <span className="xso-jobs">{d.steps.map((s) => <span key={s}>{s}</span>)}</span>}
+          </span>
         </span>
       </A>
     </motion.li>

@@ -169,4 +169,4 @@ Done here: With hanzo.ai blocked (cloud), the memoji fall back to initial discs.
 - [x] `V2: 8/10 …` in the page file's top comment
 - [ ] Review read: `docs/review/team.md` was 6/10; every listed fix is done, awaiting re-review
 
-Done here: All six fixes from the review are done in its order (hero and JS off, the rooms, the workflow room, alive at rest and the chapter change, the phone pass, and this card). Gallery: `docs/gallery/team/`.
+Done here: The re-review (7/10) fixes are in. #bugfix stays the one open case and the other nine channels are sized to their content (on the phone a tap shows only that channel; with JS off all ten read as a list). The canvas starts on its first frame and rests its cursors above the fold. On the phone: 28px under the Code and Leaders headlines, cursor labels clamped inside the board, and board rows of fixed height (no column snapping). The gallery was not re-filmed after these fixes (stopped for usage).

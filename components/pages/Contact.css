@@ -9,45 +9,54 @@
 .xct-route .x-btn { transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out); }
 @media (hover: hover) { .xct-route .x-btn.solid:hover { background: #262626; border-color: #262626; } }
 .xct-go { display: inline-flex; }
-/* Utility entries, 0.4s (MASTER 4.5), in CSS so JS off still shows every word. They wait for the page's go (after
-   the arrival curtain has cleared the top, see useGo), then follow the h1: panel at +150ms, lede at +300ms. */
-.xct-in { animation: xct-in .4s var(--e-em) .3s both paused; }
-.xct-in2 { animation: xct-up .4s var(--e-em) .15s both paused; }
-.xct[data-go] .xct-in, .xct[data-go] .xct-in2 { animation-play-state: running; }
+/* the kit Go adds a focusable wrapper around its link: give that stop the pill's own round ring; on black, a light ring */
+.xct .x-go:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 999px; box-shadow: 0 0 0 5px #fff; }
+.xct .x-band :focus-visible { outline: 2px solid #fafafa; outline-offset: 3px; border-radius: 999px; box-shadow: 0 0 0 5px #000; }
+/* Utility entries, 0.4s (MASTER 4.5), on CSS delays only: they follow the h1's cut-in (about .55s after first paint)
+   and never wait for the app bundle, so a failed script still shows the panel and its ask. */
+.xct-in { animation: xct-in .4s var(--e-em) .85s both; }
+.xct-in2 { animation: xct-up .4s var(--e-em) .7s both; }
 @keyframes xct-in { from { opacity: 0; } }
 @keyframes xct-up { from { opacity: 0; transform: translateY(24px); } }
 
 /* 1. the question beside the patch panel */
-.xct-hero { padding: clamp(72px, 9vw, 116px) 0 72px; }
-.xct-hero-g { align-items: center; row-gap: 44px; }
+/* the h1 sits high (its baseline near 38% of the screen) and the next room peeks below the hero */
+.xct-hero { padding: clamp(44px, 6vw, 72px) 0 44px; }
+.xct-hero-g { align-items: start; row-gap: 44px; }
+.xct-hero-c { padding-top: 27px; }
 .xct-hero-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 27px; }
 .xct-hero-o { grid-column: 7 / 13; }
 
-.xct-obj { position: relative; padding: 24px; background: #fff; border: 1px solid var(--line); border-radius: 28px; display: flex; flex-direction: column; }
+.xct-obj { position: relative; display: flex; flex-direction: column; }
 .xct-jacks { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6.5px; }
-.xct-jack { position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 17px; min-height: 120px; padding: 17px 13px 13px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--ink2); text-align: left; cursor: pointer; transition: border-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xct-jack { position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 17px; min-height: 120px; padding: 17px 13px 13px; border: 1.5px solid transparent; border-radius: 16px; background: var(--quiet); color: var(--ink2); text-align: left; cursor: pointer; transition: border-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
 .xct-jack:active { transform: scale(.97); }
-.xct-jack.on { color: var(--ink); border-color: var(--ink); }
-.xct-hole { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(0, 0, 0, .18); background: var(--quiet); transition: border-color var(--d-fast) var(--e-out); }
+.xct-jack.on { color: var(--ink); border-color: var(--ink); background: #fff; }
+.xct-hole { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(0, 0, 0, .18); background: #fff; transition: border-color var(--d-fast) var(--e-out); }
 .xct-hole i { width: 8px; height: 8px; border-radius: 50%; background: rgba(0, 0, 0, .22); transition: background var(--d-fast) var(--e-out), transform var(--d-base) var(--e-io); }
 .xct-jack.on .xct-hole, .xct-jack.lit .xct-hole { border-color: var(--ink); }
 .xct-jack.lit .xct-hole i, .xct-jack.on .xct-hole i { background: var(--ink); transform: scale(1.35); }
 /* the jack's name and its action share one slot: pointing swaps the name for what the line does (Hanzo's own button
    words), so two-line names never collide with it */
-.xct-jt { display: grid; width: 100%; overflow: hidden; }
+.xct-jt { display: grid; width: 100%; overflow: hidden; padding-bottom: 2px; }
 .xct-k, .xct-peek { grid-area: 1 / 1; align-self: end; transition: transform var(--d-base) var(--e-io), opacity var(--d-fast) var(--e-out); }
 .xct-k { font: 606 17px/1.2 var(--sans); letter-spacing: -.01em; }
-.xct-peek { font: 400 16px/1.25 var(--sans); color: var(--ink); opacity: 0; transform: translateY(100%); }
+.xct-peek { font: 400 16px/1.25 var(--sans); color: var(--ink); opacity: 0; transform: translateY(100%); overflow-wrap: normal; word-break: normal; }
 @media (hover: hover) {
   .xct-jack:hover { color: var(--ink); border-color: rgba(0, 0, 0, .3); }
   .xct-jack:hover .xct-hole { border-color: var(--ink); }
+}
+/* the action prints only where it fits whole ("hello@hanzo.ai" needs 110px; the slot is 125px+ from 1400px). Below
+   that, hover answers with the outline, the socket and the wire leaning toward the jack. */
+@media (hover: hover) and (min-width: 1400px) {
   .xct-jack:hover .xct-k { opacity: 0; transform: translateY(-100%); }
   .xct-jack:hover .xct-peek { opacity: 1; transform: none; }
 }
+@media (max-width: 1399px) { .xct-peek { display: none; } }
 .xct-cable { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 2; overflow: visible; }
 .xct-wire { fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
 .xct-nub { fill: var(--ink); }
-.xct-panel { position: relative; margin-top: 104px; display: grid; padding: 44px 27px 27px; border-radius: 16px; background: var(--card); min-height: 320px; }
+.xct-panel { position: relative; margin-top: 88px; display: grid; padding: 44px 27px 27px; border-radius: 24px; background: var(--card); min-height: 320px; }
 .xct-plug { position: absolute; left: 50%; top: -8px; width: 18px; height: 24px; margin-left: -9px; border-radius: 6px; background: var(--ink); box-shadow: 0 0 0 4px var(--card); transition: opacity var(--d-fast) var(--e-out); }
 /* the plug shows only once its wire is drawn */
 .xct-obj:not([data-wired]) .xct-plug { opacity: 0; }
@@ -63,9 +72,15 @@
 
 /* 2. the dark middle room: the address beside a big live San Francisco clock */
 .xct-visit { position: relative; background: #000; color: #fafafa; padding: clamp(72px, 11vw, 188px) 0; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .xct-visit { animation: xct-open linear both; animation-timeline: view(); animation-range: entry 0% cover 35%; }
+    @keyframes xct-open { from { clip-path: inset(0 clamp(16px, 4vw, 32px) round 28px); } to { clip-path: inset(0 0 round 0); } }
+  }
+}
 .xct-visit-g { align-items: center; row-gap: 44px; }
 .xct-visit-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 27px; }
-.xct-visit-c .vc-display, .xct .xct-addr { color: #fafafa; }
+.xct-visit-c .vc-headline, .xct .xct-addr { color: #fafafa; }
 .xct-addr { max-width: 14ch; }
 .xct .xct-city { color: #a3a3a3; }
 .xct-clock { grid-column: 7 / 13; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 27px; }
@@ -100,20 +115,19 @@
 .xct-net:active .xct-net-n { transform: translate(10px, 1px); }
 
 @media (max-width: 899px) {
-  .xct-hero { padding: 88px 0 44px; }
-  .xct-hero-c { gap: 17px; }
-  .xct-obj { padding: 13px; border-radius: 24px; }
-  .xct-hero-g { row-gap: 27px; }
+  .xct-hero { padding: 64px 0 44px; }
+  .xct-hero-c { gap: 13px; padding-top: 10px; }
+  .xct-hero-g { row-gap: 20px; }
   /* phones: the jacks are one swipe row with soft edges; the wire drops from the chosen pill into its route */
-  .xct-jacks { display: flex; gap: 6.5px; overflow-x: auto; margin: -2px -13px 0; padding: 2px 13px; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 13px, #000 calc(100% - 27px), transparent); mask-image: linear-gradient(90deg, transparent, #000 13px, #000 calc(100% - 27px), transparent); }
+  .xct-jacks { display: flex; gap: 6.5px; overflow-x: auto; margin: -2px -20px 0; padding: 2px 20px; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 13px, #000 calc(100% - 27px), transparent); mask-image: linear-gradient(90deg, transparent, #000 13px, #000 calc(100% - 27px), transparent); }
   .xct-jacks::-webkit-scrollbar { display: none; }
   .xct-jack { flex: none; flex-direction: row; align-items: center; gap: 10px; min-height: 44px; padding: 0 17px 0 10px; border-radius: 999px; }
+  .xct-jt { padding-bottom: 0; }
   .xct-hole { width: 24px; height: 24px; }
   .xct-jt { width: auto; }
   .xct-k { font-size: 16px; white-space: nowrap; }
   .xct-peek { display: none; }
-  .xct-panel { margin-top: 40px; padding: 27px 20px 22px; min-height: 340px; }
-  .xct-visit-c .vc-display { font-size: clamp(40px, 11vw, 52px); }
+  .xct-panel { margin-top: 30px; padding: 20px 20px 20px; min-height: 0; }
   .xct-dial { width: min(100%, 300px); }
   .xct-clock { justify-items: start; }
   /* the plate rides at the top of the screen while the rows pass beneath it */
