@@ -10,7 +10,7 @@ import { useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import MaskFig from '../../v2/MaskFig';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
@@ -53,7 +53,7 @@ export default function ProviderShelf({ doc }) {
               </h1>
               {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
               <motion.div className="xmf-acts" {...up(0.42)}>
-                {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '', 'data-cta': 'maker.hero' })}>{a.label}</A>)}
+                {doc.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'maker.hero.2' : 'maker.hero'} thumb={!i}>{a.label}</Cta>)}
               </motion.div>
             </div>
             {/* the maker's count is the hero figure */}
@@ -138,7 +138,7 @@ export default function ProviderShelf({ doc }) {
               <h2>{doc.band.title}</h2>
               {doc.band.lede && <p>{doc.band.lede}</p>}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-cta': 'maker.band' })}>{a.label}</A>)}
+                {doc.band.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'maker.band.2' : 'maker.band'}>{a.label}</Cta>)}
               </div>
             </div>
           </div>
