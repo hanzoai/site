@@ -1,0 +1,4 @@
+.lx-wipe { position: relative; isolation: isolate; background: transparent !important; }
+.lx-wipe-bg { position: absolute; inset: 0; z-index: -1; background: var(--wipe, #0a0a0a); }
+.lx-wipe:not(.lx-dark) .lx-wipe-bg { background: var(--wipe, var(--card)); }
+.lx-wipe-in { position: relative; }
