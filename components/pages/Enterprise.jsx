@@ -93,7 +93,7 @@ function Workspace({ at }) {
     <div className="xe-win" ref={ref} aria-hidden="true">
       <div className="xe-win-bar">
         <i /><i /><i />
-        <span className="xe-win-t">Hanzo · Your company</span>
+        <span className="xe-win-t">Hanzo Enterprise · Your company</span>
         <span className={'xe-where' + (at === 3 ? ' sealed' : '')}><b />{PLACES[at][0]}<em>{PLACES[at][1]}</em></span>
       </div>
       <div className="xe-win-body">
@@ -210,7 +210,6 @@ function Boundary() {
     <section className="xe-stage" ref={ref} aria-labelledby="xe-h1">
       <div className="xe-pin">
         <motion.div className="xe-intro xe-w" ref={intro} style={{ opacity: introO, y: introY }}>
-          <p className="xe-k">Hanzo Enterprise</p>
           <h1 id="xe-h1" className="xe-d">{line('Give every team AI.', 0.05)}{line('Run it where you choose.', 0.16)}</h1>
           <div className="xe-intro-row">
             <motion.p className="xe-lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.45 }}>

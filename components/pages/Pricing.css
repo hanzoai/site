@@ -1,7 +1,7 @@
 /* ---------- Pricing v2 ---------- */
-/* one accent for this page (vermilion, the colour of a price tag); type on the v2 fluid scale */
+/* no UI hues (docs/JAMES.md 7): ink, greys, silvers and white; colour comes only from Hanzo's own media */
 .xpr {
-  --acc: #f0521c; --acc-s: rgba(240, 82, 28, .1);
+  --acc: #0a0a0a; --acc-s: rgba(0, 0, 0, .05);
   --d: clamp(56px, 8.9vw, 128px); --h: clamp(34px, 3.9vw, 56px); --t: clamp(22px, 1.95vw, 28px);
   --l: clamp(19px, 1.67vw, 24px); --b: clamp(17px, 1.32vw, 19px);
   overflow-x: clip;
@@ -67,7 +67,9 @@
 .xpr-head { margin: 14px 0 0; font-size: 14.5px; font-weight: 600; }
 .xpr-list { list-style: none; margin: 10px 0 0; padding: 0; }
 .xpr-list li { display: flex; gap: 10px; padding: 6px 0; font-size: 15px; line-height: 1.45; }
-.xpr-ck { flex: none; margin-top: 3px; color: var(--acc); }
+.xpr-ck { flex: none; margin-top: 3px; color: var(--ink); }
+.xpr-plan.dark .xpr-ck { color: #a1a1a6; }
+.xpr-plan.dark :focus-visible { outline-color: #f5f5f7; }
 .xpr-plan.dark .xpr-list li { color: #e8e8ed; }
 .xpr-more { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; margin-top: auto; padding: 18px 0 0; border: 0; border-top: 1px solid var(--line); background: none; color: var(--ink); font: 500 15px/1.3 var(--sans); text-align: left; cursor: pointer; }
 .xpr-inc + .xpr-more, .xpr-vars + .xpr-more { margin-top: 26px; }
@@ -92,7 +94,7 @@
 /* the line under the cards that opens the compare sheet */
 .xpr-cmp-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px; margin-top: 40px; padding: 26px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .xpr-cmp-open { display: inline-flex; align-items: center; gap: 12px; min-height: 48px; padding: 0; border: 0; background: none; color: var(--ink); font: 600 var(--t)/1.1 var(--sans); letter-spacing: -.03em; cursor: pointer; text-align: left; }
-.xpr-cmp-open span { color: var(--acc); transition: transform .35s var(--ease); }
+.xpr-cmp-open span { color: var(--ink); transition: transform .35s var(--ease); }
 .xpr-cmp-open:hover span { transform: translateX(8px); }
 .xpr-cmp-open:focus-visible { outline: 2px solid var(--acc); outline-offset: 4px; border-radius: 6px; }
 .xpr-cmp-row p { margin: 0; max-width: 52ch; font-size: 16px; color: var(--soft); }
@@ -114,14 +116,14 @@
 .xpr-cmp td .xpr-ck { margin-top: 0; }
 .xpr-cmp-t { color: var(--ink); }
 .xpr-cmp-no { color: #c7c7cc; }
-.xpr-cmp .lit { background: #fff6f2; }
-.xpr-cmp thead th.lit { background: #fff6f2; box-shadow: inset 0 3px 0 var(--acc); }
+.xpr-cmp .lit { background: #f5f5f7; }
+.xpr-cmp thead th.lit { background: #f5f5f7; }
 .xpr-cmp tbody tr:last-child th, .xpr-cmp tbody tr:last-child td { border-bottom: 0; }
 
 /* team */
 .xpr-team .xpr-d { margin-top: 18px; }
 .xpr-bill { display: flex; align-items: center; gap: 10px; }
-.xpr-save { padding: 6px 10px; border-radius: 999px; background: var(--acc); color: #fff; font: 600 13px/1 var(--mono); }
+.xpr-save { padding: 6px 10px; border-radius: 999px; background: #f5f5f7; color: #0a0a0a; font: 600 13px/1 var(--mono); }
 .xpr-seats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
 .xpr-seats > div { display: flex; flex-direction: column; align-items: flex-start; padding: 22px; border-radius: 20px; background: #161618; }
 .xpr-seats b { font-size: 17px; }
@@ -135,7 +137,7 @@
 .xpr-step button:focus-visible { outline: 2px solid #f5f5f7; outline-offset: 1px; }
 .xpr-step output { min-width: 3ch; text-align: center; font: 600 17px/1 var(--sans); font-feature-settings: 'tnum'; }
 .xpr-total { margin-top: 26px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .12); }
-.xpr-total > span { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--acc); }
+.xpr-total > span { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #a1a1a6; }
 .xpr-total .xpr-price { margin-top: 14px; }
 .xpr-ent .xpr-price.word { margin-top: 28px; }
 
@@ -151,7 +153,7 @@
 .xpr-bills { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .xpr-bills > li { display: grid; grid-template-columns: 56px minmax(0, 1fr); padding: 34px 0; border-bottom: 1px solid var(--line); }
 .xpr-bills > li > * { grid-column: 2; }
-.xpr-bills-n { grid-column: 1 !important; grid-row: 1 / span 4; padding-top: 7px; font: 500 13px/1 var(--mono); color: var(--acc); }
+.xpr-bills-n { grid-column: 1 !important; grid-row: 1 / span 4; padding-top: 7px; font: 500 13px/1 var(--mono); color: var(--faint); }
 .xpr-bills h3 { margin: 0; font-size: var(--t); font-weight: 600; letter-spacing: -.03em; }
 .xpr-unit { justify-self: start; margin-top: 10px; padding: 5px 10px; border-radius: 999px; background: var(--card); font: 500 13px/1.2 var(--mono); color: var(--ink); }
 .xpr-bills p { margin: 14px 0 0; max-width: 60ch; font-size: 17px; line-height: 1.55; color: var(--soft); }
@@ -173,7 +175,6 @@
 .xpr-stair i { width: 14px; border-radius: 4px; background: rgba(0, 0, 0, .1); }
 .xpr-stair i:nth-child(1) { height: 16px; } .xpr-stair i:nth-child(2) { height: 30px; } .xpr-stair i:nth-child(3) { height: 44px; }
 .xpr-stair i.on { background: var(--ink); }
-.xpr-wins li:first-child .xpr-stair i.on { background: var(--acc); }
 
 /* the price tables: a header that stays, the row you read lit */
 .xpr-tw { border-radius: 24px; border: 1px solid var(--line); background: #fff; }
@@ -182,8 +183,7 @@
 .xpr-tbl thead th:first-child { border-top-left-radius: 24px; }
 .xpr-tbl thead th:last-child { border-top-right-radius: 24px; }
 .xpr-tbl td { padding: 20px 18px; border-bottom: 1px solid var(--line); vertical-align: top; font: 500 14.5px/1.4 var(--mono); font-feature-settings: 'tnum'; transition: background .35s var(--ease); }
-.xpr-tbl tr[data-row].lit td { background: #fafafa; }
-.xpr-tbl tr[data-row].lit td:first-child { box-shadow: inset 3px 0 0 var(--acc); }
+.xpr-tbl tr[data-row].lit td { background: #f5f5f7; }
 .xpr-tbl td.none::before { content: '—'; color: #c7c7cc; }
 .xpr-tbl td.xpr-m { width: 40%; font-family: var(--sans); }
 .xpr-tbl td:not(.xpr-m) { white-space: nowrap; }
@@ -258,8 +258,7 @@
   .xpr-tbl td.none { display: none; }
   .xpr-tbl td:not(.xpr-m) { white-space: normal; }
   .xpr-tbl tr.grp th { padding: 36px 16px 14px; }
-  .xpr-tbl tr[data-row].lit td:first-child { box-shadow: none; }
-  .xpr-tbl tr[data-row].lit { box-shadow: inset 3px 0 0 var(--acc); background: #fafafa; }
+  .xpr-tbl tr[data-row].lit { background: #f5f5f7; }
   .xpr-tbl tr[data-row].lit td { background: none; }
   .xpr-ends .xpr-cta { width: 100%; }
   .xpr-faq { padding: 120px 0 80px; }
