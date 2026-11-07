@@ -55,7 +55,7 @@ Done here: No figure is worked out on the page. A rendered-text audit at 1470 an
 - [x] Disclosure through the kit sheet (recent rewards)
 - [x] `python3 scripts/parity.py /leaderboard`: 0 missing
 
-Done here: Text 94/94, links 2/2. Detail sits behind a click: the three recent rewards open in a sheet, and the four earning rules come one per pinned chapter.
+Done here: Text 94/94, links 2/2. Detail sits behind a click: the three recent rewards open in a sheet, the token board's rows 4 to 10 sit behind "Show all" on phones, and the four earning rules are one plain list beside a receipt that prints itself once.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py` passes; the deck ramp is named once as `--k-*` tokens at the top of `Leaderboard.css`, no literal hex below it
@@ -103,7 +103,7 @@ Done here: On phones the podium is cropped to its moment (tape first, blocks onl
 - [x] One h1; an h2 per section; the sheet title is an h2 in its dialog
 - [x] Keyboard reaches every control
 
-Done here: `aria-pressed` on podium steps and pause, `role=radio` with `aria-checked` on the per-PR chips, `aria-live` on totals, and `aria-valuetext` on the slider.
+Done here: `aria-pressed` on podium steps and pause, `role=tab` with `aria-selected` on the icon Linear/Log tabs, `aria-label`s on the icon stepper and Replay, `aria-live` on the tape, the rank and the receipt, and `aria-valuetext` on the slider.
 
 ## 13. Performance and engineering
 - [x] h1 in the server HTML (a line-mask reveal, legible with JS off)
@@ -111,7 +111,7 @@ Done here: `aria-pressed` on podium steps and pause, `role=radio` with `aria-che
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop (filmed in the cloud)
 
-Done here: The only idle work is the podium's timer, which stops off screen (`useInView`). There is no canvas, video or blur.
+Done here: The idle work is the podium's timer, the lists' readers, the race (written straight to the DOM per frame, no React render) and the scrubber's one climb; each stops off screen (`useInView`) or ends at rest. The only blurs are the one-shot entrances (rack-focus, focus-pull), and the focus-pull field fades to 0 and is hidden once the section has arrived. No canvas or video.
 
 ## 14. SEO and machine files
 - [x] Title and description from `content/pages.json`, unchanged (`app/leaderboard/page.jsx`)
@@ -145,4 +145,4 @@ Done here: With JS off every word reads in place (`<noscript>` overrides in the 
 - [x] `V2:` line in the page file's top comment
 - [x] Review read: `docs/review/leaderboard.md` (6/10), all ten fixes worked through in round 2
 
-Done here: The range input no longer raises a hydration mismatch (its fill rides `--f` on the label; `suppressHydrationWarning` on the input); the only console error left is the shared FooterHTML one. Round 2 proof: `docs/gallery/leaderboard/round2-*.jpg`.
+Done here: 0 console errors at 1470x801 and 375x812 on 8 Nov (check.cjs); the range input is hydration-safe (fill on `--f`, `suppressHydrationWarning`). The scrubber's org lines no longer sit on top of each other mid-climb (the old one leaves in 120 ms before the new one rises). Proof: `docs/gallery/leaderboard/desktop.jpg`, `phone-1.jpg`, `phone-2.jpg` (8 Nov).

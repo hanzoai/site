@@ -155,7 +155,7 @@
 .xlb-way .pf-body { margin: 0; }
 /* focus-pull-scroll's background: an unlabeled field of ghost bars behind the section, under the subject */
 .xlb-fp { position: relative; isolation: isolate; }
-.xlb-fp-field { position: absolute; inset: 0 0 auto; height: 100%; z-index: -1; display: grid; align-content: space-around; pointer-events: none; }
+.xlb-fp-field { position: absolute; inset: 0 0 auto; height: 100%; z-index: -1; display: grid; align-content: space-around; pointer-events: none; opacity: 0; }
 .xlb-fp-field i { display: block; height: 10px; border-radius: 10px; background: var(--k-muted); width: 44%; justify-self: end; }
 .xlb-fp-field i:nth-child(odd) { justify-self: start; }
 .xlb-fp-field i:nth-child(3n) { width: 62%; }
@@ -199,8 +199,9 @@
 .xlb-stepper output { min-width: 40px; text-align: center; font-size: 17px; }
 .xlb-stepper output { min-width: 52px; }
 .xlb-calc-orgs { display: grid; padding: 17px 0 4px; }
-.xlb-calc-org { grid-area: 1 / 1; display: grid; gap: 6px; align-content: start; font-size: 16px; line-height: 1.45; color: var(--k-body); visibility: hidden; opacity: 0; transform: translate3d(0, 8px, 0); transition: opacity var(--k-base) var(--k-out), transform var(--k-base) var(--k-emph), visibility 0s var(--k-base); }
-.xlb-calc-org[data-on='true'] { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+.xlb-calc-org { grid-area: 1 / 1; display: grid; gap: 6px; align-content: start; font-size: 16px; line-height: 1.45; color: var(--k-body); visibility: hidden; opacity: 0; transform: translate3d(0, -6px, 0); transition: opacity 120ms var(--k-out), transform 120ms var(--k-out), visibility 0s 120ms; }
+/* the old org leaves first (120ms), then the new one rises in: the two never sit on top of each other */
+.xlb-calc-org[data-on='true'] { visibility: visible; opacity: 1; transform: none; transition: opacity var(--k-base) var(--k-out) 120ms, transform var(--k-base) var(--k-emph) 120ms, visibility 0s 0s; }
 .xlb-calc-org p { margin: 0; }
 .xlb-calc-org b { font-weight: 606; color: var(--k-ink); overflow-wrap: anywhere; }
 .xlb-calc-org span { color: var(--k-body); }
@@ -330,7 +331,8 @@
   html.js [data-ent='rack'][data-in='false'] > .pf-wrap { filter: blur(16px); opacity: .25; transform: scale(1.03); }
   /* 3. focus-pull-scroll: with the scroll (--fp 0 to 1, set by FocusPull), the field blurs and the subject sharpens */
   html.js .xlb-fp:not([data-in='true']) > .xlb-fp-subj { filter: blur(calc((1 - var(--fp, 0)) * 12px)); opacity: calc(.3 + var(--fp, 0) * .7); }
-  html.js .xlb-fp > .xlb-fp-field { filter: blur(calc(var(--fp, 0) * 8px)); opacity: calc(1 - var(--fp, 0) * .55); }
+  html.js .xlb-fp > .xlb-fp-field { filter: blur(calc(var(--fp, 0) * 8px)); opacity: calc(1 - var(--fp, 0)); }
+  html.js .xlb-fp[data-in='true'] > .xlb-fp-field { opacity: 0; visibility: hidden; }
   /* 4. orbit-in: the Beyond's parts swing in on an arc about a pivot far to their left, one after another */
   html.js [data-ent='orbit'] .xlb-orb { transform-origin: -40vw 50%; transition: transform 900ms var(--k-emph), opacity var(--k-slow) var(--k-out); transition-delay: calc(var(--o) * 90ms); }
   html.js [data-ent='orbit'][data-in='false'] .xlb-orb { opacity: 0; transform: rotate(12deg); }
