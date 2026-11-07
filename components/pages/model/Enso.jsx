@@ -135,7 +135,7 @@ function Switchboard() {
         <strong>Enso</strong>
         {AXES.map((a, i) => <span key={a} className={'eo-ax eo-ax' + i} data-on={axis === i ? '' : undefined}>{a}</span>)}
       </div>
-      <ol className="eo-lanes">
+      <ol className="eo-lanes" aria-label="All Enso models">
         {TIERS.map((tr, i) => (
           <li key={tr.code} className="eo-lane" ref={(el) => (lanes.current[i] = el)} data-hit={hit === i ? '' : undefined}>
             <div className="eo-lane-top">
@@ -144,6 +144,7 @@ function Switchboard() {
             </div>
             <span className="eo-why">{AXES[tr.axis]} · {tr.why}</span>
             <p className="eo-last" aria-hidden="true"><i />{last[i]}</p>
+            <p className="eo-lane-p mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span>{tr.ctx && <> <b>1M</b> <span>context</span></>}</p>
           </li>
         ))}
       </ol>
@@ -200,6 +201,18 @@ function Gpqa() {
     return () => clearInterval(t);
   }, [seen, mine, calm, paused]);
   const pick = (i) => { setSel(i); setMine(true); };
+  // every result sits in a drawer under the chart: closed it is hidden="until-found" (find-in-page and #eo-results open it)
+  const drawer = useRef(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const el = drawer.current;
+    const show = () => setOpen(true);
+    const byHash = () => { if (location.hash === '#eo-results') show(); };
+    byHash();
+    el.addEventListener('beforematch', show);
+    addEventListener('hashchange', byHash);
+    return () => { el.removeEventListener('beforematch', show); removeEventListener('hashchange', byHash); };
+  }, []);
   const m = OTHERS[sel];
   const rows = [...GPQA].sort(sort === 'score' ? (a, b) => b[1] - a[1] : (a, b) => a[2] - b[2]);
   const frontier = ENSO.map((g) => `${px(g[2])},${py(g[1])}`).join(' ');
@@ -272,7 +285,12 @@ function Gpqa() {
             </ul>
           </aside>
         </div>
-        <div className="eo-table">
+        <div className="eo-table" data-open={open ? '' : undefined}>
+          <button type="button" className="eo-disc" aria-expanded={open} aria-controls="eo-results" onClick={() => setOpen((o) => !o)}>
+            <span className="eo-disc-t">GPQA Diamond</span>
+            <span className="eo-disc-a">{open ? 'Close' : 'Show all'}<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></span>
+          </button>
+          <div id="eo-results" className="eo-results" ref={drawer} hidden={open ? undefined : 'until-found'}>
           <div className="eo-sort" role="group" aria-label="Sort">
             <button type="button" className="eo-sortb" aria-pressed={sort === 'score'} onClick={() => setSort('score')}>By score</button>
             <button type="button" className="eo-sortb" aria-pressed={sort === 'cost'} onClick={() => setSort('cost')}>By cost</button>
