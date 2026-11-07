@@ -76,6 +76,7 @@
 .xcp-tally-cols li.me em { background: var(--ink); }
 .xcp-tally-cols span { text-align: right; font-size: 14px; font-feature-settings: 'tnum'; }
 
+@media (max-width: 900px) {
   .xcp-h1 { font-size: clamp(2.3rem, 10vw, 3.2rem); }
   .xcp-h1 .x-line { display: inline; }
   .xcp-feat { padding: 14px; margin-inline: -8px; border-radius: 24px; }
