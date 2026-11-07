@@ -287,3 +287,15 @@
   .ide-rel-a { height: 140px; }
 }
 @media (prefers-reduced-motion: reduce) { .ide-script pre span { animation: none !important; } }
+
+/* the status bar (differs from the /cli and /desktop windows' tab rows) */
+.ide-bar { justify-content: flex-start; padding-left: 92px; }
+.ide-status { display: flex; align-items: center; gap: 2px; height: 30px; padding: 0 12px; background: #0f0f0f; border-top: 1px solid rgba(255, 255, 255, .06); border-bottom: 0; }
+.ide-status a { height: 30px; padding: 0 10px; font: 500 12px/30px var(--mono); color: #737373; border-top: 0; }
+.ide-status a.on { background: transparent; color: #fafafa; border-top: 0; }
+.ide-status a:hover { color: #fafafa; }
+.ide-status-dot { width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: #fafafa; }
+.ide-status-r { margin-left: auto; font-size: 11.5px; color: #525252; }
+@media (max-width: 900px) { .ide-status { overflow-x: auto; scrollbar-width: none; } .ide-status a { flex: none; height: 44px; line-height: 44px; } .ide-status-r { display: none; } .ide-status { height: 44px; } }
+.ide-body { height: clamp(360px, 28vw, 410px); }
+@media (max-width: 900px) { .ide-body { height: auto; } .ide-code { height: 320px; } }

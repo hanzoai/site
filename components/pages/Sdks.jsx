@@ -141,12 +141,14 @@ function Console() {
   const [lang, setLang] = useState('python');
   const [mine, setMine] = useState(false);
   const prev = useRef({ dia: 'openai', lang: 'python' });
+  const first = useRef(true);
   const calm = useReducedMotion();
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.4 });
   useEffect(() => {
     if (mine || calm || !seen) return;
-    const t = setTimeout(() => setDia((d) => (d === 'openai' ? 'anthropic' : 'openai')), 4200);
+    const t = setTimeout(() => setDia((d) => (d === 'openai' ? 'anthropic' : 'openai')), first.current ? 900 : 4200); // moving within a second
+    first.current = false;
     return () => clearTimeout(t);
   }, [dia, mine, calm, seen]);
   const was = new Set(DIALECTS[prev.current.dia][prev.current.lang][1].split('\n')); // a line counts as changed only if the other dialect never says it

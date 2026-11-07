@@ -12,7 +12,7 @@
    install. Accent: orange, from the tool stream. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { Copy, Count } from '../ui';
+import { Copy } from '../ui';
 import { A, Go } from '../kit';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
@@ -100,17 +100,25 @@ function Hero() {
   );
 }
 
+/* A figure rises once out of its mask: only Hanzo's own number is ever shown (no count-up through other numbers). */
+function Fig({ v, d = 0 }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  const calm = useReducedMotion();
+  return <span className="a2-fig mcp-fig" ref={ref}><motion.span initial={calm ? false : { y: '105%' }} animate={seen ? { y: 0 } : undefined} transition={{ duration: 1, ease: EASE, delay: d }}>{v}</motion.span></span>;
+}
+
 /* The summary line, as three figures. */
 function Figures() {
   return (
     <section className="a2-sec mcp-figs" aria-label="38 unified action tools + 1,538 Cloud operations + 260+ specialized servers">
       <div className="a2-wrap">
         <p className="mcp-sum">
-          <span className="mcp-f"><Count to={38} className="a2-fig" /> <span>unified action tools</span></span>
+          <span className="mcp-f"><Fig v="38" /> <span>unified action tools</span></span>
           <span className="mcp-plus" aria-hidden="true">+</span>
-          <span className="mcp-f"><Count to={1538} className="a2-fig" delay={0.1} /> <span>Cloud operations</span></span>
+          <span className="mcp-f"><Fig v="1,538" d={0.1} /> <span>Cloud operations</span></span>
           <span className="mcp-plus" aria-hidden="true">+</span>
-          <span className="mcp-f"><Count to={260} suffix="+" className="a2-fig" delay={0.2} /> <span>specialized servers</span></span>
+          <span className="mcp-f"><Fig v="260+" d={0.2} /> <span>specialized servers</span></span>
         </p>
       </div>
     </section>
@@ -214,8 +222,8 @@ function Domains() {
           <li key={t}>
             <motion.button type="button" layoutId={'mcp-dom-' + i} className={'mcp-card d' + i} aria-haspopup="dialog" aria-expanded={open === i}
               onClick={(e) => { if (moved.current) { e.preventDefault(); return; } last.current = e.currentTarget; setOpen(i); }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} style={{ visibility: open === i ? 'hidden' : 'visible' }}>
-              <span className="mcp-card-n x-mono">{String(i + 1).padStart(2, '0')}</span>
               <h3 className="x-mono">{t}</h3>
+              <span className="mcp-card-n x-mono">{String(i + 1).padStart(2, '0')} / 06</span>
               <p>{desc}</p>
               <span className="mcp-card-tools" aria-hidden="true">{tools.slice(0, 4).map((x) => <i key={x} className="x-mono">{x}</i>)}{tools.length > 4 && <i className="x-mono more">+{tools.length - 4}</i>}</span>
               <span className="mcp-card-open" aria-hidden="true">+</span>
