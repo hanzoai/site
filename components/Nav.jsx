@@ -270,6 +270,7 @@ export default function Nav({ headerRef }) {
             </ul>
             {/* pinned under the thumb: Hanzo's own Log in choices and its ask, in the header's words */}
             <motion.div className="x-sheet-foot" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.4 }}>
+              <p className="x-sheet-lh">Log in</p>
               <div className="x-sheet-login">
                 {LOGIN.map((l) => <a key={l.label} href={l.href} onClick={close}><b>{l.label}</b><span>{l.sub}</span></a>)}
               </div>

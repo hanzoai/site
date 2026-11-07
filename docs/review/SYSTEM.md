@@ -108,7 +108,9 @@ const [i, setI] = useState(0);
   - Tab past the last link closes the menu and goes on to the next heading.
   - Shift+Tab from the first link returns to the heading.
   - Esc closes the menu and returns focus.
-- **Phones:** the Hanzo AI chevron opens a full-screen sheet of accordions.
+- **Stage (wide screens, 1240px and up):** the right of each menu previews the link under the pointer or focus. It shows the link's living Sigil and the page's own title and description from Hanzo's index.
+- **Phones:** the Hanzo AI chevron opens a full-screen sheet of accordions. The top has Hanzo AI, search and close. Rows are 56px. Hanzo's Log in choices and "Try Hanzo" are pinned at the bottom. Esc closes it, and Tab stays inside.
+- **The HTML is rendered on the server** (`components/Shell.jsx`), so the 375 KB `content.js` no longer ships in every page's JavaScript. Pages that still import `content.js` themselves (Home, Hero, Open, Agents, Platform, SetupMenu, ContactSales) carry it only on their own route; import just the field you need, or read it in a server component and pass it down.
 - **"Try Hanzo" no longer fades on hover.** Its fill shifts instead.
 - **No overlay blurs the page.** One backdrop blur per page, the header's. The menu scrim and the search backdrop are now a plain tint.
 - **The header does not hide on scroll.** Over 40 page stickies assume a 60px header at `top: 60px`, and hiding it would open gaps above all of them.

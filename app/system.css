@@ -286,6 +286,7 @@ html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .x-sheet-list { flex: 1 0 auto; }
 .x-sheet-b { min-height: 56px; }
 .x-sheet-foot { flex: none; display: flex; flex-direction: column; gap: 12px; padding-top: 20px; }
+.x-sheet-lh { margin: 0 0 -4px; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 .x-sheet-login { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .x-sheet-login a { display: flex; flex-direction: column; gap: 3px; min-height: 56px; justify-content: center; padding: 10px 14px; border-radius: 14px; background: var(--hz-50); color: var(--ink); text-decoration: none; }
 .x-sheet-login b { font-size: 15px; font-weight: 560; }
