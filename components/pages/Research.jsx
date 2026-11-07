@@ -19,8 +19,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, More } from '../kit';
-import MaskLines from '../v2/MaskLines';
-import SceneWipe from '../v2/SceneWipe';
+import MaskLines from './proof/MaskLines';
+import SceneWipe from './proof/SceneWipe';
 import LivePause, { usePause } from '../v2/LivePause';
 import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
@@ -330,17 +330,20 @@ function Reader({ it, lid, close }) {
 /* ---------- the close, in the one dark room: the statement revealed word by word (the signature) ---------- */
 const OPEN_A = 'The systems described in these papers are open source. The cloud, the gateway, the agent runtime and the infrastructure around them are developed in the open at';
 const OPEN_B = ', and the platform pays the open-source authors whose work runs on it.';
-function Word({ p, a, b, children }) {
+function Word({ p, a, b, calm, children }) {
   const o = useTransform(p, [a, b], [0.22, 1]);
-  return <motion.span className="xrs-w" style={{ opacity: o }}>{children}</motion.span>;
+  // the same span on server and client; reduced motion only sets it fully visible (no different markup, no mismatch)
+  return <motion.span className="xrs-w" style={{ opacity: calm ? 1 : o }}>{children}</motion.span>;
 }
 function Open() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // the server cannot know the setting: apply it after hydration, so markup matches
+  useEffect(() => setCalm(!!rm), [rm]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.55'] });
   const a = OPEN_A.split(' '), b = OPEN_B.slice(2).split(' ');
   const n = a.length + 1 + b.length;
-  const W = (i, child) => <Word key={i} p={scrollYProgress} a={i / n} b={(i + 1.6) / n}>{child}</Word>;
+  const W = (i, child) => <Word key={i} p={scrollYProgress} a={i / n} b={(i + 1.6) / n} calm={calm}>{child}</Word>;
   const link = <A to="https://github.com/hanzoai">github.com/hanzoai</A>;
   return (
     <SceneWipe className="xrs-open" label="Open source">
@@ -348,12 +351,10 @@ function Open() {
         <div className="pf-wrap pf-grid xrs-open-g">
           <MaskLines as="h2" className="pf-head xrs-open-h" lines={['Open source']} />
           <p className="xrs-open-t">
-            {calm ? <>{OPEN_A} {link}{OPEN_B}</> : <>
-              {a.map((w, i) => W(i, w + ' '))}
-              {W(a.length, link)}
-              {', '}
-              {b.map((w, i) => W(a.length + 1 + i, w + (i < b.length - 1 ? ' ' : '')))}
-            </>}
+            {a.map((w, i) => W(i, w + ' '))}
+            {W(a.length, link)}
+            {', '}
+            {b.map((w, i) => W(a.length + 1 + i, w + (i < b.length - 1 ? ' ' : '')))}
           </p>
           <div className="xrs-open-a"><A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="research.close">github.com/hanzoai</A></div>
         </div>

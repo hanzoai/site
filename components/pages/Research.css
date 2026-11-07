@@ -194,7 +194,13 @@
 
 @media (max-width: 900px) {
   .xrs-hero { height: auto; min-height: 0; flex-direction: column; align-items: stretch; }
-  .xrs-desk { position: relative; inset: auto; height: 300px; margin: 24px 16px 0; }
+  .xrs-desk { position: relative; inset: auto; height: 250px; margin: 16px 16px 0; }
+  /* the caption takes the full width; pause and the arrows sit on their own row under it */
+  .xrs-deal { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 24px !important; }
+  .xrs-deal-b { justify-content: flex-start; }
+  .xrs-cap { grid-template-columns: auto minmax(0, 1fr); }
+  /* filtering never collapses the page under you */
+  .xrs-list { min-height: 60svh; }
   .xrs-desk-s { --w: 46vw; }
   .xrs-desk-s:nth-child(n + 4) { display: none; }
   .xrs-desk-s:nth-child(1) { --x: 26% !important; --y: 8% !important; --r: -2deg !important; }

@@ -22,8 +22,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
 import { A, Cta, More } from '../kit';
-import MaskLines from '../v2/MaskLines';
-import SceneWipe from '../v2/SceneWipe';
+import MaskLines from './proof/MaskLines';
+import SceneWipe from './proof/SceneWipe';
 import Sheet from './security/Sheet';
 import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
@@ -218,7 +218,7 @@ function Infra() {
           <p className="pf-kick xsc-cap">Infrastructure</p>
           <p className="pf-body">Workloads sit in hardware-virtualised machines on managed Kubernetes, in data centres with physical access control and redundant power. Secrets never reach a manifest — they are fetched from Hanzo KMS at boot, and outside development a service refuses to start without a verified issuer, audience and key set rather than falling back to running open.</p>
         </div>
-        <ol className="xsc-rack" ref={ref}>
+        <ol className="xsc-rack" ref={ref} style={{ '--up': up }}>
           {RACK.map((t, i) => (
             <li key={t} style={{ '--on': i < up ? 1 : 0 }} data-up={i < up}>
               <span className="xsc-u pf-mono" aria-hidden="true">U{i + 1}</span>

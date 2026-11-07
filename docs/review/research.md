@@ -1,50 +1,93 @@
 # /research — James-eye review
 
-Verdict: 6/10
-First complaint: "The top is a pile of paper with the headline sitting on top of it. Things overlap, the little caption is reading a different paper from the one I'm pointing at, and once you scroll past it, it's just a long list."
+Verdict: 7/10
+First complaint: "On my phone the paper title under the buttons is one word per line, a skinny column running down the side. The big button sits just below the fold on a small phone. And the list still goes on and on."
 
-Walked 7 Nov 2026 on localhost:4180 with Playwright Chromium. At 1470×801 I recorded video, took frames at 0.3, 0.8, 1.3, 2.5, 4 and 6 s with no input, then wheel-scrolled half a screen at a time with a 0.9 s dwell (20 screens). At 375×812 (isMobile, hasTouch) I did the same with 27 screens. I hovered desk sheets, rows and ↗ links, opened a sheet into its title page, and used Esc. I tried the kinds rail, an empty search with Clear, and the month filter. I also loaded the page with reduced motion and with JS off at both sizes. Then I ran parity, taste and unique. Stills are in `docs/review/research/`.
+Walked 7 Nov 2026 on localhost:4180 with Playwright Chromium, fresh. This is not a re-read of the earlier review.
+- **1470×801:** I recorded video and took frames at 0.3, 0.8, 1.3, 2.5, 4 and 6 s with no input. I wheel-scrolled half a screen at a time with a 0.9 s dwell (16 steps).
+- **Desk sheets:** I held the pointer on one for 4.8 s and checked which sheet was lifted every 0.8 s. I opened a sheet into its title page, then pressed Esc and checked where focus went.
+- **Index:** I hovered a row and compared its box before and after. I used Show all, the kinds rail, an empty search with Clear, and the month filter. I traced layout-shift sources for each action.
+- **375×812:** isMobile and hasTouch, smooth touch-style scrolling over 22 steps.
+- **Other conditions:** reduced motion and JS off at both sizes, plus 320 px.
+- **Scripts:** parity, taste and unique.
+
+Stills are in `docs/review/research/`:
+- `desk-hero.jpg`: the desktop first screen at 1.3 s.
+- `desk-hover-mismatch.jpg`: the old name is kept, but it now shows the pointer holding Kai, which is fixed.
+- `phone-hero.jpg`: the phone desk.
+- `phone-caption.jpg`: the phone caption column.
 
 ## What works
-- **The idea is right for the page.** The hero is a desk of six real title pages, typeset in HTML from Hanzo's own titles, dates and subtitles. It is an object, not an icon. A sheet lifts within 0.9 s with no input, then another every 1.6 s, and the cycle has its own Pause.
-- **The card-to-page open is real.** A desk sheet or a row grows into its full title page (shared layoutId, 600 ms in-out). Focus moves to Close, Esc closes it and focus comes back. "Read on papers.hanzo.ai ↗" sits under the sheet. It is the best moment on the page.
-- **The Beyond aid works.** Press a month bar and the page scrolls to the index, which narrows to that month (Jun 2026 showed 7 rows). A removable month chip appears and the kind counts update. The empty state has a Clear button.
-- **The rows answer.** Hover fills the row from the left and tilts its mini sheet. The ↗ link turns ink with white glyph. Nothing jumps (the row box is identical before and after hover).
-- **The dark room enters as a rounded card and opens to full width.** The statement lifts out of grey word by word.
-- **Clean numbers.** Parity is 91/91 text and 34/34 links, taste OK, unique OK. CLS is 0.0005 at desktop and 0.0004 on phone. No horizontal scroll at 375. I saw no errors on single loads (3 clean loads). The "1 Issue" hydration badge showed only during the busy walk, as `_shared.md` §3 describes. JS off is fully legible, and reduced motion holds the desk still and shows the statement in full.
+- **The hero is fixed on desktop.** The desk of six typeset title pages now sits on the right half. "Work we publish" (52 px) sits on clean paper at the lower left, with the rule, the "Research" caption, the lede and one solid ask under it. Visually no glyph touches a sheet. (The h1 box touches the Cloud Economics sheet's box, but the empty part of the box, not the type.) The caption is one line ("01 / 06 Zen 6: Subquadra…") beside Pause, Previous and Next. It reads as one object on a quiet stage, editorial, osply-like.
+- **Something moves within 1 s, and the pointer now owns the desk.** The newest sheet is raised at 0.3 s, and the next lifts at about 2.5 s. With the pointer held on Kai for 4.8 s, Kai stayed lifted and the caption stayed on "02 / 06" the whole time. Only one sheet is lifted at a time.
+- **The card-to-page open is the best moment.** The sheet grows into its full title page (shared layoutId, 600 ms in-out) over a soft scrim. "Read on papers.hanzo.ai ↗" and Close sit under it. Focus goes to Close, Esc closes it, and focus returns to the same sheet's button.
+- **The index is shorter and alive.**
+  - Papers open on the newest six with "Show all 19" (31 rows when expanded).
+  - The rail sticks. Its month ("Sep 2026", "Jun 2026") rolls through a line mask as you read.
+  - Rows fill from the left on hover, and the mini sheet tilts. The row box is identical before and after hover (551, 322, 760×143).
+  - Kinds filter correctly (Specifications shows 7 rows).
+  - The month bars narrow the list ("Oct 2026" shows 1 row, with a removable chip).
+  - The empty search shows "Nothing in the library by that name." and Clear works.
+- **Counts agree now.** The tally reads 19 / 6 / 5, and the rail reads 30 / 19 / 6 / 5. The Oct 2024 bar sits behind a dashed break, so the time gap is honest. "When it was published" is now only an aria-label, not a visible h2.
+- **The dark room enters as a rounded card and opens to full width.** The statement lifts out of grey as you scroll, and "github.com/hanzoai" is a white solid ask.
+- **Clean numbers.**
+  - Parity: 91/91 text and 34/34 links.
+  - `taste.py` OK and `unique.py` OK.
+  - No horizontal scroll at 1470, 375 or 320.
+  - Untouched-scroll CLS is 0 at desktop and 0.010 on phone.
+  - JS off at both sizes leaves 0 hidden text blocks.
+  - Reduced motion holds the desk still, and `getAnimations()` is 0.
 
 ## The 11 answers
-1. **Does it sell in 5 s, and does something move in 1 s?** Movement, yes: a sheet lifts at 0.9 s. Selling, only partly. The h1 cuts in late (not visible at 300 ms) and lands on top of the "One Native Stack" sheet. "we" sits over that sheet's left edge (`desk-hero.jpg`). The right-hand caption block (01 / 06, a 4-line bold title, a 4-line subtitle, three round buttons) is crowded and right-aligned. It also sits over the AIVM sheet, so you read fragments ("Aug", "(M)", "ative") around it. The first screen reads busy rather than one big thing on a quiet stage.
-2. **One thing in, one out, or a document?** Desk, then tally and chart, then the dark room: that part works. But the index is 31 rows in one long column, about five full screens at 1470 and eleven on the phone. Nothing changes while you read it except a hover fill. It is a document in the middle of the page.
-3. **A real visual object in every section?** Hero: the desk, yes. Glance: the 19 and the bar chart, yes. Index: only 46px mini-sheet glyphs repeated 31 times. Dark room: type only.
-4. **One ask, nothing floating, scale rhythm?** The header ask becomes "Explore papers.hanzo.ai" once you scroll, which is good. No page-level float. The rhythm is fine: 52px h1, 19 as the moment, 6 and 5 medium, rows at 17px. But the glance section has huge dead air: about 250px of empty white above the chart and about 300px below it before the index starts (frames s01 and s02).
-5. **Does every hover and press answer?** The rows, ↗ links, kinds and bars do. **The desk does not.** Pointing at a sheet lifts it with CSS, but the timer keeps running. I held the pointer on "Cloud Economics" for 5 s and the caption moved from 02 to 03 to 04, lifting other sheets. At one point two sheets were raised at once while the caption named a third (`desk-hover-mismatch.jpg`). Only keyboard focus takes the desk over (`onFocus={pick}`). There is no `onMouseEnter`.
-6. **Overlaps, font swap or layout shift?** No shift and no font swap. **Overlap, yes, at both sizes.**
-   - Desktop: the h1 glyphs sit over a sheet's edge, and the caption sits over the AIVM sheet (198×3px measured; visually the AIVM sheet's text shows around the caption).
-   - Phone (`phone-hero.jpg`): six sheets are crammed into 340px, and the titles are clipped mid-word ("en 6: ubquadratic ltra-Long", "ai: Calibrated iscrete"). The top row starts at y=68, touching the 60px header. The bottom row runs to y=412, under the h1 that starts at y=339.
-   - JAMES.md: "Overlap: hero card, buttons and nav overlapping at 1470×801 or at 375×812" fails.
-7. **Which reference, and is its motion there?** It wants to be osply.co or hamol.studio editorial, with a playful desk and pointer-aware details. The card-to-page open is properly synchronized.studio. The pointer-awareness is missing: the desk ignores the pointer, as question 5 shows.
-8. **Different from its neighbours?** The hero medium (a paper desk) is its own. **The signature is not.** The scroll word reveal of a statement in the dark room is also the declared signature of /philosophy ("the belief statement reveals word by word as you scroll, ink rising out of grey") and of /press. MASTER §4 says never reuse a taken signature. The V2 header line is near word-for-word Philosophy's, and that reads as a template. `unique.py` passes, but James would see three Story pages ending the same way. PAGES.md lists /research as "hover previews of each abstract", and `app/research/page.jsx` claims "the title page of the row under your pointer follows it as a tilting live preview". Neither exists.
-9. **All 18 parts covered?** The card exists with 18 headings and filled `Done here:` lines, but several claims are false (see Card check).
-10. **Banned tells?** No hue, gradient text, Inter, emoji or stripe, and no browser-default controls. The eyebrow "Research" is under the h1, not above it, so that is fine. Two solid fills share the dark-room screen (the header ask and github.com/hanzoai, both white). That is the shared header issue and is not held against the page.
-11. **Copy untouched?** Hanzo's copy is all there (91/91). New strings were added that are neither Hanzo's nor in `content/ui-strings.json`: the h2 "When it was published", the placeholder "Find a paper or a HIP", "Nothing in the library by that name.", and "Previous paper" / "Next paper". The h2 is the visible one. MASTER gate 4 says new UI strings come only from `ui-strings.json`. There is also a count mismatch on screen: the tally says **6** Specifications and the rail says **7** two screens later (the "All HIPs" index row is counted in one and not the other).
+1. **Does it sell in 5 s, and does something move in 1 s?**
+   - Yes on desktop. A lifted sheet is there at 0.3 s.
+   - Under this machine's load, the h1's line-mask cut-in had not landed at 0.8 s. It was in by 1.3 s, so for most of the first second the screen shows a desk and a lede with no headline. On an idle machine it will be faster, but the headline should never be the last thing to arrive.
+   - Phone: the three-sheet fan sits above the 40 px headline, and the lede and ask follow. The ask spans y 643 to 691, inside 812 but 24 px below the fold at 375×667. MASTER part 11 asks for the primary above the fold at 375×667.
+2. **One thing in, one out, or a document?**
+   - Desktop is close: desk, then tally and bars, then the index with a sticky rail and a rolling month, then the dark room.
+   - Phone is still a document in the middle. Each row is about 240 px tall, so the index runs about 7 screens even folded (page height 8,904 px). The 2×2 kinds grid scrolls away, and the rolling month is hidden.
+3. **A real visual object in every section?** Hero: the desk, yes. Glance: the 19 and the bar chart, yes. Index: the mini sheets plus the rolling month and the rail, which is acceptable. Dark room: type only, but the word reveal is the object.
+4. **One ask, nothing floating, scale rhythm?**
+   - Desktop header: the ask becomes "Explore papers.hanzo.ai" after the hero, which is right. On phone the header keeps "Try Hanzo" (shared).
+   - Floating: nothing page-level floats. The cookie card is shared chrome.
+   - Rhythm is good: 52 px h1, the desk as the big thing, 19 as the moment, 6 and 5 medium, 17 px rows.
+   - Space is still heavy: about 150 px of white between the glance and the index on both sizes.
+   - Two white solids share the dark-room screen (the header ask and github.com/hanzoai). That is the shared header issue (`_shared.md` §1) and is not held against the page.
+5. **Does every hover and press answer?** Yes: sheets lift and hold, rows fill, ↗ links turn ink, kinds and bars fill, and the deal controls press. None of it jumps.
+6. **Overlaps, font swap or layout shift?**
+   - No font swap. Untouched CLS is 0 on desktop and 0.010 on phone.
+   - Desktop: no overlap of text or controls with the desk.
+   - Phone: the fanned sheets cover each other's titles ("Zen 6: Su… Ultra-Lor…"). That reads as a desk, not a bug.
+   - **Phone caption:** the caption below the hero is squeezed into a 150 px column beside three 44 px buttons. "Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops" runs one word per line, eight lines tall (`phone-caption.jpg`). It looks broken.
+   - **Filtering moves the page:** choosing a kind or typing a search with no results collapses the list. The footer jumps up into the viewport: one shift of 1.0 sourced to FOOTER, and 0.48 on "All". It is user-caused, but it feels like the page fell over.
+7. **Which reference, and is its motion there?** The desk is osply.co or hamol.studio editorial, and it is now pointer-aware. The open is synchronized.studio and lands well. The pinned index with a changing month is a light apple.com touch.
+8. **Different from its neighbours?** Yes. The hero medium (a paper desk) and the signature (the sheet that lifts and opens into its title page) are the page's own, and `unique.py` passes. The dark-room word reveal is still the same move /philosophy and /press use. It is now supporting rather than the signature, which is acceptable.
+9. **All 18 parts covered?** The card has 18 headings, each with `Done here:` filled, but parts of it are stale (see Card check).
+10. **Banned tells?** No hue, gradient text, Inter, emoji, stripe, browser-default control, or label above a headline. "Research" is a caption under the h1.
+11. **Copy untouched?** Parity is 91/91. One new visible UI string is not in `content/ui-strings.json`: the search placeholder "Find a paper or a HIP". The same applies to "Nothing in the library by that name." in the empty state. "Show all" is in `ui-strings.json`.
+
+**It works?** On clean default loads there are no errors. **Under reduced motion there is a deterministic hydration failure**, two loads out of two: "Hydration failed because the server rendered HTML didn't match the client", with the red "1 Issue" badge.
+- The diff points at `Open()` in `Research.jsx`. `calm ? <>{OPEN_A} …</> : <>…Word spans…</>` renders a plain string on the client but `xrs-w` spans on the server.
+- The shared `MaskLines` and `SceneWipe` also differ on that branch.
+- During the busy walk, the default load also showed one "attributes didn't match" error with the badge. That matches `_shared.md` §3 and is not held against the page.
 
 ## Card check
-`docs/coverage/research.md`: 18/18 headings, `Done here:` filled. These claims are false:
-- Part 12: "stops when a visitor points at a sheet". It does not; only focus stops it (verified, the caption kept cycling under a held pointer).
-- Parts 3 and 11: "375×812 and 1470×801 pass with no overlap" and "the 52px headline over its lower left". The headline sits over sheets at both sizes, and phone sheet titles are clipped mid-word.
-- Part 7: "Differs from neighbours". The hero does, but the signature is /philosophy's and /press's.
-- The header comment in `app/research/page.jsx` (Signature: pointer-following tilting preview) contradicts `Research.jsx` (Signature: scroll word reveal) and PAGES.md.
-- Per `_shared.md` §2, a false claim caps the page at 7. The overlap puts it below that.
+`docs/coverage/research.md` has 18/18 headings with `Done here:` filled. These claims no longer match the page:
+- **Part 9:** "Signature scroll word reveal". The page's header comment and `app/research/page.jsx` now say the signature is the desk and the open.
+- **Part 11, layout:** "Phone desk is two loose rows of three sheets". It is now one fan of three.
+- **Part 11, ask:** "Primary ask above the fold at 375". It is at 812 tall, not at the 375×667 MASTER asks for.
+- **Parts 9 and 17:** they claim reduced motion is clean. Under `reducedMotion: 'reduce'` the page throws a hydration error and shows the red badge.
+- **Part 18:** the "Review read" box is unticked.
+- Per `_shared.md` §2, a false claim caps the page at 7.
 
 ## To reach 8
-1. **Clear the hero.** Keep the desk off the headline. Either confine the six sheets to the top 55% with the h1, lede and ask on clean paper below, or shrink the desk so its lower-left quadrant really is empty, so no glyph of "Work we publish" touches a sheet edge. Take the right-hand caption out from over the AIVM sheet: one line (number and title), not a 4+4-line block, sitting below the sheets.
-2. **Fix the phone desk.** Six sheets at about 135px wide cannot hold a title, so they clip mid-word. Use three sheets in one fanned row, or one sheet large with the others peeking behind it. Keep a 24px gap below the header and keep it clear of the 40px h1.
-3. **Let the pointer own the desk.** `onMouseEnter` on a sheet should do what `onFocus` does: stop the timer, lift that sheet only, and switch the caption to it. When the pointer leaves, resume after a beat. Only one sheet should be lifted at a time.
-4. **Give the page its own signature.** The word reveal belongs to /philosophy. Make the desk the signature (a sheet lifts off and opens into its title page), as PAGES.md and `page.jsx` already promise. Then demote the dark-room reveal or change it, for example the statement typed in once, or the github link drawing an underline. Align the three header comments and the card.
-5. **Break up the index.** Thirty-one rows in one column is a document. Show Papers grouped by month as a short list with the rest collapsed behind "All 19", or pin the rail and let the month heading cross-fade as each month passes, so something changes while you read. On phone, the 2×2 kinds rail should stick under the header.
-6. **Small ones:**
-   - Make the 6 and 7 Specifications counts agree.
-   - Cut the empty space around the glance section by half.
-   - Space the Oct 2024 bar to show the time gap (or mark the break), since it currently sits a month's width from Jun 2026.
-   - Request "When it was published" and the search placeholder in `docs/requests/research.md` for `ui-strings.json`, or render that heading as an `aria-label` only.
+1. **Fix the reduced-motion hydration error.** In `Open()`, render the same word spans on server and client, and let reduced motion set their opacity to 1 (CSS under `prefers-reduced-motion`, or a style computed after mount). Do not swap the tree on `useReducedMotion()`. Check under `reducedMotion: 'reduce'` that the red badge is gone.
+2. **Fix the phone caption.** Under 900 px, put the deal controls on their own row (Pause, Previous and Next right-aligned). Under them, give the caption the full width as a single line, number plus title, clamped to 2 lines.
+3. **Lift the phone ask above 667.** Trim the gap between the fan and the h1 (about 88 px now) and shorten the fan by about 30 px, so "Explore papers.hanzo.ai" ends at or above y 640 at 375×667.
+4. **Make the phone index feel less like a document.** Tighten phone rows to about 140 to 160 px by putting the date inline with the title rather than on its own line. Make the 2×2 kinds rail and the rolling month a slim sticky strip under the header, so something changes as you read.
+5. **Stop filtering from collapsing the page.** Give `.xrs-list` a min-height equal to its pre-filter height while a filter is active (or at least 100svh), so the footer never jumps into view.
+6. **Correct the card** (parts 9, 11, 17 and 18) to match what the page does now. Request "Find a paper or a HIP" and the empty-state sentence in `docs/requests/research.md` for `ui-strings.json`.
+7. **Small ones:**
+   - Cut the white between the glance and the index by about half.
+   - When the reader is in Specifications or Standards, the rail month should drop to blank or "HIPs" instead of keeping the stale "Jun 2026".
+   - Number Standards from 01, not 00 (the 00 belongs to the "All HIPs" index row only).

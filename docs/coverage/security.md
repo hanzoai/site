@@ -158,4 +158,4 @@ Done here: Static Hanzo copy with no live fetch, so nothing loads or fails; the 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="security.hero"` and `"security.band"`; the page fires nothing itself. V2 line present. No critic review exists yet on origin/main.
+Done here: `data-cta="security.hero"` and `"security.band"`; the page fires nothing itself. V2 line present. `docs/review/security.md` read (7/10 on the walk before this build); its fixes are in: the chosen plate now rises above the stack on every tab (z-index), the rack grows to its moment as its units power on, the place stack moves at full size on desktop, the band ask presses to .98, the phone place labels stay on one line, and reduced motion no longer mismatches on hydration (page-local `proof/MaskLines` and `proof/SceneWipe`).

@@ -65,6 +65,7 @@
 .xsc-stk-s li { position: absolute; left: 0; top: calc(64px + var(--i) * 34px); width: 190px; height: 34px; z-index: calc(10 - var(--i)); cursor: pointer; }
 .xsc-stk-s .xsc-mp { left: 10px; top: -40px; width: 160px; height: 112px; transition: background-color var(--b) var(--pf-io), translate var(--sl) var(--pf-emph), outline-color var(--b) var(--pf-io); }
 .xsc-stk-s li.ok .xsc-mp { background: var(--brand); }
+.xsc-stk-s li[data-on='true'] { z-index: 20; }
 .xsc-stk-s li[data-on='true'] .xsc-mp { translate: -6px -44px; background: var(--ink); outline-color: var(--ink); }
 .xsc-stk-s li.core .xsc-mp { background: #000; outline-color: #000; }
 .xsc-stk-s li.core .xsc-mp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -104,7 +105,7 @@
 /* proof: what runs underneath */
 .xsc-infra-g { display: grid; grid-template-columns: minmax(0, 38.2fr) minmax(0, 61.8fr); column-gap: 44px; align-items: end; }
 .xsc-infra .pf-body { margin-top: 27px; }
-.xsc-rack { list-style: none; margin: 0; padding: 10.5px 27px; border-radius: 24px; background: var(--tile); }
+.xsc-rack { list-style: none; margin: 0; padding: 10.5px 27px; border-radius: 24px; background: var(--tile); transform: scale(calc(.92 + var(--up, 4) * .02)); transform-origin: 50% 100%; transition: transform var(--sl) var(--pf-emph); }
 .xsc-rack li { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) 40px; gap: 17px; align-items: center; min-height: 72px; border-bottom: 1px solid var(--line); }
 .xsc-rack li:last-child { border-bottom: 0; }
 .xsc-rack li::before { content: ''; position: absolute; inset: 6.5px -17px; border-radius: 12px; background: #fff; clip-path: inset(0 100% 0 0 round 12px); transition: clip-path var(--s) var(--pf-io); }
@@ -179,6 +180,14 @@
 .x-btn.xsc-light { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
 .x-btn.xsc-light { transition: background-color var(--f) var(--pf-out), transform var(--f) var(--pf-out); }
 @media (hover: hover) { .x-btn.xsc-light:hover { background: var(--brand); transform: translate3d(0, -2px, 0); } }
+.x-btn.xsc-light:active { transform: scale(.98); transition-duration: 90ms; }
+/* the place stack makes its move at full size on desktop */
+@media (min-width: 900px) {
+  .xsc-where { max-width: 640px; }
+  .xsc-where-s { height: 210px; }
+  .xsc-where-s i { width: 132px; height: 92px; margin-left: -66px; bottom: calc(18px + var(--i) * 24px); border-radius: 14px; }
+}
+.xsc-where-b .pf-mono { white-space: nowrap; }
 .xsc-note { margin: 17px 0 0; font-size: 14px; color: #a3a3a3; }
 .xsc-note a { color: #fafafa; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-underline-offset var(--f) var(--pf-out); }
 @media (hover: hover) { .xsc-note a:hover { text-underline-offset: 6px; } }
@@ -218,7 +227,7 @@
   .xsc-where { margin-top: 27px; }
   .xsc-where-s { height: 120px; }
   .xsc-where-s i { width: 72px; height: 50px; margin-left: -36px; bottom: calc(10px + var(--i) * 14px); }
-  .xsc-where-b .pf-mono { font-size: 14px; }
+  .xsc-where-b .pf-mono { font-size: 13px; letter-spacing: 0; }
   .xsc-ml-m { display: none; }
   /* phone first screen: h1, lede, ask, then the stack that checks itself; the audit line follows it */
   .xsc-hero-c { display: contents; }

@@ -1,73 +1,112 @@
 # /security — James-eye review
 
-Verdict: 5/10
-First complaint: "On the phone there's a whole Enterprise list sitting on top of the security layers, text over text. And when I press 'What comes with Enterprise' it throws me back to the top and the list is printed over the hero. That's broken, not premium."
+Verdict: 7/10
+First complaint: "I click 'Where It Sits' and the black Koma plate just disappears. The stack goes all white with two little black slivers poking out the sides. It's meant to lift out and it hides instead. That looks broken."
 
-Walked 7 Nov 2026 (main at `f244a55c`), Playwright Chromium, moving: 1470×801 and 375×812 (isMobile, hasTouch), 12 frames over the first ~5.5 s with no input, then half-screen wheel steps (desktop) or scroll steps (phone) with a 700 ms dwell each, plus video. Hovered and pressed the hero layer labels, tabs, worksheet ticks, rack rows, options, band ask; clicked a hero layer, arrowed the tablist, ticked 6/6, opened and Esc-closed the Enterprise sheet, copied the address. Also checked reduced motion, JS off, 375×667 and 320. Non-localhost POSTs were blocked.
+Walked 7 Nov 2026 (main at `dba2ca82`, after `c17b43ac` and `c79a1ad5`, the security fixes). I used Playwright Chromium and walked it moving, not from screenshots:
+- **Sizes:** 1470×801, and 375×812 with isMobile and hasTouch. Both recorded on video.
+- **Arrival:** 10 frames over the first 5 s with no input.
+- **Scroll:** desktop in 360px wheel steps, phone in 300px steps, with a 650 ms dwell on each screen.
+- **Hover and press:** the hero ask, the hero layer labels, the tabs, the worksheet tick, rack rows, the place buttons, option rows, the sheet button, the email and the band ask.
+- **Clicks:** a hero layer, then arrowed the tablist and ticked 6/6. Pressed "your cluster". Opened the Enterprise sheet and closed it with Esc.
+- **Other checks:** reduced motion, JS off, 375×667 and 320. Non-localhost POSTs were blocked.
+- **Neighbour:** /trust captured for comparison.
 
-Stills: `docs/review/security/hero-1470.jpg`, `phone-sheet-over-hero.jpg`, `sheet-open-1470.jpg`.
+Stills in `docs/review/security/`:
+- `hero-1470.jpg`
+- `controls-06-plate-hidden-1470.jpg`: the main bug.
+- `sheet-open-1470.jpg`
+- `phone-first-375.jpg`
+- `phone-sheet-over-hero.jpg`: the old name, which now shows the fixed bottom sheet working as a modal.
 
 ## What works
-- The hero idea is right for an "honest status" page. The six layers stack as isometric plates, from the edge down to Koma's black file. They check themselves once at 0.4 s and then 300 ms steps (`01 / 06` to `06 / 06`), and then rest. Something moves inside 1 s, it says "checked", and it stops. Reduced motion shows all six checked with 0 animations after 3 s.
-- One ask, Hanzo's words: "Talk to Security Team", solid in the hero. Once the hero leaves, the desktop header ask swaps to the same label. The closing band repeats it. The secondaries are text links.
-- Clicking a hero layer scrolls to the controls with that tab selected and focused. The tablist is a proper APG tablist (arrows wrap; inactive panels are `inert`). The layout-id pill glides at 300 ms ease-emphasis with no spring.
-- The reviewer's worksheet (Beyond) is a real idea. Ticking all six reveals "Schedule Security Review", and the count is `aria-live`.
-- The plate's mechanism glyphs are an honest small object made from the copy's own terms. Examples: struck-through `org / user / email → verified token`, and `organization → workspace → project`.
-- Clean numbers: CLS 0.0008 desktop and 0 on phone. No horizontal scroll at 375 or 320. Parity 60/60 text and 6/6 links. `taste.py` OK and `unique.py` OK. The ask bottom sits at y 454 at 375×667. JS off reads fully (h1 at opacity 1, every panel stacked).
-- No seals and no invented uptime. The status is Hanzo's own sentence.
+- **The hero is the right idea, well made.** Six isometric plates go from the edge down to Koma's black file. They check themselves from 0.4 s in 300 ms steps (`01 / 06` to `06 / 06`) and then stop. Something moves inside 1 s, it says "checked", and it rests.
+  - Hovering a layer label draws in its mechanism line, e.g. `HMAC signature · no algorithm · refresh token`. That is a hover that tells you something.
+  - Clicking a label scrolls to the controls with that tab selected and focused.
+- **The last review's blocker is fixed.** The sheet is now a native `<dialog>` with `showModal()`.
+  - Desktop: a right panel with a scrim.
+  - Phone: a proper bottom sheet with a grab bar.
+  - Opening it leaves the scroll position alone (3130 → 3130). Esc returns focus to "What comes with Enterprise".
+  - Nothing draws at rest. `scrollWidth` equals the viewport at 1470, 375 and 320.
+- **One ask.** "Talk to Security Team" is solid in the hero.
+  - Desktop: the header swaps from an outlined "Try Hanzo" to a solid "Talk to Security Team" once the hero leaves.
+  - Black room: the header outlines while the band's light ask is the solid one.
+  - All the secondaries are text links.
+- **The middle has some life now.**
+  - The rack powers on U1 to U4 as it enters (150 ms, then 400 ms steps).
+  - The "Our cloud / your cluster / your rack" switcher steps by itself once (900 ms) and then hands control to the visitor.
+  - The controls tablist is a correct APG tablist: arrows wrap, inactive panels are `inert`, and the pill glides at 300 ms ease-emphasis with no spring.
+  - The worksheet works: 6/6 reveals "Schedule Security Review", and the count is `aria-live`.
+- **The phone's first screen now carries the object.** The stack starts at y 538 inside 812 and checks itself in view. At 375×667 the ask's bottom sits at y 450.
+- **Clean numbers:**
+  - CLS 0.0023 on desktop (header-tools only) and 0 on the phone.
+  - Reduced motion: all six checked, 0 running animations after 3 s, h1 at opacity 1.
+  - JS off: 0 invisible text nodes.
+  - Parity 60/60 and 6/6. `taste.py` OK. `unique.py` OK.
+- **/trust has moved on.** It now has tilted document cards for the DPA and subprocessors, so the old "same numbered-list-plus-plate" overlap between neighbours is gone.
 
 ## The 11 answers
-1. **5 s / 1 s:** Yes on desktop. The h1, lede, ask, status line and the layer stack all fit, and the check pass starts at 0.4 s. On the phone the first screen is just text, ask and status. The layers start below the fold, so nothing moves on the phone's first screen.
-2. **One in, one out?** Only for the hero and the controls section. After that it is a document: "What runs underneath" (a paragraph beside 4 list rows), "Or none of our infrastructure at all" (a paragraph beside 3 rows), then the black room (paragraphs, a sheet button, an email, the band). The 3 white screens in a row read as the same type, so it is a text page with hairlines.
-3. **A real visual object in every section?** Hero: yes (the layer stack). Controls: a weak yes (a white plate holding a big "05" and some chips; only plate 06 has Koma). The infra "rack" is 4 rows with three dots each, which is decoration rather than an object. The "none" section has no object at all. In the black room the large statement and the address carry it, which is acceptable for a closing room.
+1. **5 s / 1 s:** Yes at both sizes. The h1, caption under it, lede, ask, status line and the moving six-layer stack all fit the desktop first screen. On the phone the stack starts inside the fold and moves.
+2. **One in, one out?** Partly. The hero, the controls (one plate swaps for the next) and the black room each feel like a scene. "What runs underneath" and "Or none of our infrastructure" are still a paragraph beside a list, two white screens in a row. The rack power-on and the place switcher stop them from being dead, but it still reads more like a document than a sequence there.
+3. **A real object in every section?**
+   - Hero: the stack.
+   - Controls: the carried-down stack and the mechanism glyphs.
+   - Infra: the rack. It is now a lit object, though still a list at heart.
+   - None: the small stack moving between three places. It is abstract and only just reads as "your cluster".
+   - Black room: the statement and the address.
+   - Yes overall, with the "none" visual the weakest.
 4. **One ask, nothing floating, scale rhythm:**
-   - Desktop: yes on the ask.
-   - Phone: the header still says "Try Hanzo", and no page ask bar appeared on the walk.
-   - Floating over content: on the phone, the Enterprise sheet panel sits over document y 812–1533. That covers the hero layers and the start of the controls (see the still). This fails rule 6.
-   - Scale: there is rhythm (52 h1, 26 heads, 64 plate figure, 84 closing line), but below the hero every section is the same mid scale. Nothing grows or shrinks.
+   - Desktop ask: yes. Nothing is fixed over content at either size (only the header and the shared cookie card).
+   - Phone: the shared header keeps a solid "Try Hanzo" next to the hero's solid "Talk to Security Team", so there are two solid fills with two different labels on the first screen. That comes from the shared header (`_shared.md` §1) and is not held against the page.
+   - Scale: the h1 is 52, heads 26, the band moment 84. But from the controls to the black room everything sits at the same middle scale. Nothing grows or shrinks as you go.
 5. **Hover and press:**
-   - Hero labels fill and their plate lifts 10px. Press is scale 0.974.
-   - Tabs nudge the title 4px. Rack and option rows nudge 4px, and the rack gets a clip-path fill.
-   - The tick button lifts 1px.
-   - The band ask's hover sets the background to the white it already has, so it does not visibly answer.
-   - No hover tells you anything new (a number or a preview). They are all nudges.
-6. **Overlap, font swap, shift:** No shift and no font swap. **Overlap: yes.**
-   - (a) On the phone, the closed `DetailSheet` panel renders in flow over the hero and controls.
-   - (b) On desktop, opening the sheet jumps the page to the top. The panel is not fixed and has no scrim, so the hero's layer labels print through it.
-   - (c) On desktop at rest, the parked panel's shadow shows as a grey fade down the right 50px of every screen. It is parked at x 1482–2122, which makes `scrollWidth` 2122 under `overflow-x: clip`.
-   - The cause is shared: `components/v2/DetailSheet.jsx` renders a `div.pf-sheet`, while `DetailSheet.css` only positions `dialog.pf-sheet` (the merge `d490cc53` kept mismatched halves). /trust shows the same right-edge fade. It still breaks this page.
-7. **Reference:** chatgpt.com/business/enterprise calm, as the brief asks. That calm is there, but its "big statements and proof listed quietly" turns into paragraphs here. No apple pinned scene and no osply-style editorial asymmetry.
-8. **Different from neighbours?**
-   - The hero differs: the isometric stack, versus /trust's centred h1 and /enterprise's nested-boxes diagram.
-   - But the controls section repeats /trust's own move: a numbered `01 / 06` list on the left and a detail plate with a big numeral on the right. Neighbours share a signature shape.
-9. **18 parts:** The card has 18 headings, each with a filled line. See the card check for claims that are now false.
+   - The hero ask darkens and presses to 0.98. Layer labels fill and show their mechanism, pressing to 0.971. Tabs ink their label and press to 0.98.
+   - The tick lifts 1px. Place buttons fill and press to 0.97. The email lifts 2px. Rack rows nudge their label 4px. The "+" turns 90°.
+   - The band ask lightens to `#e4e4e7` and lifts 2px. Its press keeps the same −2px lift, though: no 0.98 or 1px-down press, so the press does not answer.
+   - The selected plate "lift" is the visual failure (see 6).
+6. **Overlap, font swap, shift:**
+   - No layout shift and no font swap. No horizontal scroll at 1470, 375 or 320.
+   - **One visual overlap fault:** in the controls stack the chosen plate translates up (`translate: -6px -44px`, ink fill), but it keeps `z-index: 10 - i`, so it slides *behind* every plate above it.
+     - Choosing 04 shows two black slivers peeking out of a white stack.
+     - Choosing 06 hides the black Koma plate almost entirely, so the stack turns all white (`controls-06-plate-hidden-1470.jpg`).
+     - Only 01 lifts visibly. The page's through-line object reads as a glitch on 5 of 6 tabs.
+   - Phone detail: "your cluster" wraps to two lines while "Our cloud" and "your rack" stay on one, so the three labels don't sit on one baseline.
+7. **Reference:** It has the calm of chatgpt.com/business/enterprise, "proof listed quietly", which is what MASTER §4.2 asks for. The controls with one changing panel are a light nod to an Apple single-panel stage, but nothing is pinned or scrubbed. No osply/hamol editorial asymmetry.
+8. **Different from neighbours?** Yes:
+   - /trust: tilted document cards.
+   - /enterprise: a nested-box diagram.
+   - /security: an isometric layer stack that checks itself and is carried into the controls.
+9. **18 parts:** The card has 18/18 headings, each with a "Done here" line. See the card check.
 10. **Banned tells:**
-    - Nothing above the h1 ("Security Architecture" sits below it, which is correct).
-    - No hue, gradient text, Inter or seals.
-    - The "Or none of our infrastructure" plus "What runs underneath" pairing reads as walls of text.
-    - The sheet overlap is a hard fail.
+    - Nothing above the h1 ("Security Architecture" sits under it as a caption).
+    - No hue, gradient text, Inter, seals or invented uptime. No floating bar.
+    - The two paragraph-plus-list middle sections are close to "walls of text" but not over the line.
 11. **Copy untouched:** Parity 60/60 and 6/6. No changes seen.
 
-Console: one hydration-mismatch error and the red "1 Issue" badge on the first loaded walk, but a single quiet reload was clean. This matches `_shared.md` §3 (load-only), so it is not held against the page.
+Console: on the first, loaded walk, the desktop had one hydration-mismatch error and the red "1 Issue" badge. Quiet reloads of /security (and /trust) were clean, with no badge and 0 errors. This matches `_shared.md` §3 (load-only), so it is not held against the page.
 
 ## Card check
-`docs/coverage/security.md` is in MASTER format, with 18/18 headings and every "Done here" line filled. Three claims are false on this build:
-- **Part 11:** "375×812 and 1470×801 pass with no overlap" is false. The sheet panel sits over the hero and controls on the phone. The card cites `phone.mjs`, which did not catch it.
-- **Part 8:** "Dialogs are native, trap focus and return it" is false. The sheet is a `div`, not `<dialog>`. After Esc, focus goes to `body` and does not return to the "What comes with Enterprise" button. There is no scrim.
-- **Part 4:** "Sticky ask in header and bar after the hero, same label" holds on desktop only. On the phone the header stays "Try Hanzo", and no bar with "Talk to Security Team" appeared.
+`docs/coverage/security.md` is in MASTER format, 18/18, and every "Done here" line is filled. The three claims I failed last time are now true:
+- **Part 8:** the native dialog traps focus, Esc closes it, focus returns, and opening does not scroll.
+- **Part 11:** no overlap from the sheet, and no scroll at 320.
+- **Part 4:** the desktop header swap works, and the card honestly says the phone header is the shared "Try Hanzo".
 
-Per `_shared.md` §2, a false claim caps the page at 7, so the cap applies even after the overlap is fixed. Part 18 correctly leaves "Review read" unticked.
+Two small inaccuracies:
+- **Part 18** says "No critic review exists yet on origin/main". That is stale: a 5/10 review existed. Update it.
+- **Part 8** says "every control has hover, press…". The band ask's press is the same lift as its hover, not a press.
+
+Neither is a design claim the walk contradicts, so I don't apply the false-claim cap.
 
 ## To reach 8
-- **Fix the sheet (blocker).** Either render `DetailSheet` as the native `<dialog>` its CSS expects, or ship page-local CSS that makes `.pf-sheet` `position: fixed; inset: 0`, with the scrim and `visibility: hidden` while closed. Then:
-  - Confirm that nothing of the sheet is visible at rest on the phone and that the desktop right edge has no shadow.
-  - Confirm that opening it does not scroll the page and that Esc returns focus to the button.
-  - File `docs/requests/security.md` against the shared owner, because /trust and the other DetailSheet pages share the bug.
-- **Give the two white middle sections an object and make them one-in-one-out.**
-  - Turn the infra rack into a real thing: the four rows light one by one as they enter, or draw each as a server unit whose bay LEDs answer hover. Don't leave it as four list rows with dots.
-  - Give "Or none of our infrastructure at all" one visual: the same six-layer stack lifting off a "Hanzo cloud" base onto "your rack", built from the existing labels "Our cloud, your cluster, your rack".
-  - Or pin the two sections so that one replaces the other instead of three white screens of paragraphs stacking up.
-- **Move the controls section away from /trust's numbered-list-plus-plate layout.** One option: carry the hero stack down, sticky, so selecting a tab lifts that plate out of the stack and the words come up beside it. This also makes the hero object the page's through-line.
-- **Phone first screen:** pull at least the top of the layer stack (or a compact horizontal version) inside 812px so something moves without scrolling. Put "Talk to Security Team" in the phone header or the slim bar once the hero ask leaves.
-- **Make hovers tell something.** Hovering a hero layer could show its mechanism chips (for example `HKDF-SHA256 · TLS 1.3`). Give the band ask a visible hover change (not opacity).
-- **Correct the three card claims** once they are true.
+- **Fix the lifted plate (the blocker).** Give the chosen plate a z-index above the rest, e.g. `.xsc-stk-s li[data-on='true'] { z-index: 20 }`. It should then rise clear of the stack the way the copy promises ("the chosen one lifts out of the stack").
+  - Check every tab, especially 06: the Koma plate must stay visible and dark when it is chosen.
+  - The plates below it already drop 10px, so once the chosen plate sits on top the gap reads as a real lift.
+- **Give the middle a scale change and a scene, not two text screens.** For example:
+  - The rack grows from small to its moment as it powers on and settles back once U4 is lit.
+  - Or the "Our cloud / your cluster / your rack" stack makes a larger, clearer move: the stack lifts off a labelled base and lands on the next, using the same plate language as the hero, at a size that holds the screen.
+  - Right now both sections are a paragraph next to a list at the same mid scale.
+- **Press states:** give the band ask a real press (scale 0.98 or translateY 1px), not the hover's lift.
+- **Phone polish:**
+  - Keep the three place labels on one line (smaller tracking or a two-line layout for all three).
+  - The audit row at 375 reads as a hanging block (dot, then text, then the link indented under it). Align the link with the text or let it sit full width.
+- **Card:** refresh the part 18 line, and part 8 once the band press is fixed.
