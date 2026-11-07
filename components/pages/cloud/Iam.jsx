@@ -19,7 +19,7 @@
    Goal: trust how hanzo.id issues and protects tokens (PKCE, single-use refresh, one tenancy per organization).
    CTA: API reference (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { Cta } from '../../kit';
 import { useLive } from './Frame';
 import { Lines } from '../../v2/LiftStage';
@@ -110,14 +110,13 @@ function Family() {
 
 /* the stage settles back and lifts away as the rail comes in: scale 1 to .94, up 40px; the server paints it at rest */
 function Recede({ children }) {
-  const ref = useRef(null);
-  const calm = useReducedMotion();
+  const ref = useRef(null); // reduced motion: the CSS holds it at rest, so the server and client render the same
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.1', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -40]);
   return (
     <div ref={ref} className="ia-stage">
-      <motion.div style={calm ? undefined : { scale, y, transformOrigin: '50% 0%' }}>{children}</motion.div>
+      <motion.div className="ia-recede" style={{ scale, y, transformOrigin: '50% 0%' }}>{children}</motion.div>
     </div>
   );
 }

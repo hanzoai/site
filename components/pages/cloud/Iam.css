@@ -3,8 +3,8 @@
 .ia .v2-dark, .ia [data-room='dark'] { --acc: #fafafa; --glow: #e5e5e5; }
 
 /* hero: the name, lede and ask at the left (5 of 12), the live sign-in at the right; h1 near 38% of the screen */
-.ia-hero { padding: clamp(44px, 5vw, 72px) 0 clamp(72px, 8vw, 116px); }
-.ia-hero-g { align-items: center; min-height: calc(100svh - 60px - clamp(44px, 5vw, 72px) - 56px); row-gap: 44px; }
+.ia-hero { padding: clamp(44px, 5vw, 72px) 0 44px; }
+.ia-hero-g { align-items: center; min-height: calc(100svh - 280px); row-gap: 44px; }
 .ia-hero-t { grid-column: 1 / span 5; }
 .ia-sub { margin: 20px 0 32px; color: var(--ink); }
 .ia-stage { grid-column: 6 / -1; }
@@ -86,6 +86,13 @@
 .ia-steal-copy .v2-display { margin: 0 0 12px; }
 .ia-steal-cap { margin-bottom: 24px; }
 .ia-steal-acts { grid-column: 1 / span 5; grid-row: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.ia-steal-acts .x-btn { background: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .3); transition: background-color 150ms var(--ia-out), border-color 150ms var(--ia-out), color 150ms var(--ia-out), transform 150ms var(--ia-out); }
+.ia-steal-acts .x-btn.solid { background: #fafafa; color: #0a0a0a; border-color: #fafafa; }
+.ia-steal-acts .x-btn:active:not(:disabled) { transform: scale(.97); transition-duration: 90ms; }
+@media (hover: hover) {
+  .ia-steal-acts .x-btn:hover:not(:disabled) { border-color: #fafafa; background: rgba(255, 255, 255, .08); }
+  .ia-steal-acts .x-btn.solid:hover:not(:disabled) { background: #e5e5e5; border-color: #e5e5e5; }
+}
 .ia-steal-acts .x-btn:disabled { opacity: .35; cursor: not-allowed; }
 .ia-steal-x { min-height: 44px; padding: 0 8px; border: 0; background: none; color: #a3a3a3; font: 500 14px/1 var(--sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; transition: color 150ms var(--ia-out); }
 .ia-steal-x:active { transform: translateY(1px); }
@@ -104,7 +111,11 @@
 .ia-steal-say { margin: 0; font-size: 17px; line-height: 1.5; color: rgba(255, 255, 255, .78); }
 
 @media (max-width: 900px) {
-  .ia-hero { padding: 24px 0 72px; }
+  .ia-hero { padding: 24px 0 44px; }
+  .ia-rail.sr { padding-top: 72px; }
+  .ia-fam-top { padding-right: 52px; gap: 14px; }
+  .ia-flow { gap: 6px; }
+  .ia-flow .ia-arr { display: none; }
   .ia-hero-g { min-height: 0; row-gap: 32px; }
   .ia-sub { margin: 14px 0 24px; }
   .ia-fam { padding: 20px; gap: 20px; border-radius: 20px; }
