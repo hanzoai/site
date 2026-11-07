@@ -68,10 +68,7 @@ Done here: Parity shows 570/570 texts. The figures are Hanzo's: 3.02×, 9.6×, 1
 - [x] Tabs use the kit (`Tabs`/`TabPanel`); the pricing choices are radio groups with arrow keys
 - [x] `python3 scripts/parity.py /`: 0 missing
 
-Done here:
-- Section headings rest at 26px and sublines at 16px.
-- Figures rest at 64px in Zen Air; plan prices are 44px; captions are 12–13px Zen Mono capitals.
-- Each screen has one big thing.
+Done here: Section headings rest at 26px and sublines at 16px; figures rest at 64px in Zen Air, plan prices are 44px and captions are 12–13px Zen Mono capitals, so each screen has one big thing.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py` passes on every home file
