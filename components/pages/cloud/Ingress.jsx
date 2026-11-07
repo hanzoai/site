@@ -6,7 +6,12 @@
 // Signature: the routing board, live: requests by host and path, a backend leaving and rejoining rotation, a certificate arriving.
 // Beyond: Chain your own pipeline: pick and reorder Hanzo's middleware and watch a request walk it.
 /* Ingress (v2, archetype A Launch).
-   V2: 8/10 Ports 80 and 443 as figures over a live routing board; the six edge facts as scenes that wipe up; chain-your-own-pipeline in the dark room; greys only, one ask.
+   V2: 8/10 Round 2 (review 7/10): each of the six wipe scenes now plays its drawing once as it arrives (sources slide in and
+   the IngressClass ticks on, the lock shackle closes, a request passes the black chips, the hollow pod empties and refills,
+   the paths type in, 80 and 443 settle); the stage settles to the nearest whole scene when scrolling stops, so two
+   scenes never rest half-drawn; "What happens at the edge" rides in the first scene (no empty intro screen); the phone
+   board keeps its middleware row; the dark room opens from a rounded card, its chips and arrows hover and press, and the
+   request dot lights each step it passes; deck tokens only, tiles flat.
    Signature: the routing board, live. Requests arrive by hostname and path, pass the middleware named in annotations
    and land on backends; a backend that stops answering health checks drops out of rotation and comes back when it
    recovers; a new hostname fetches its own certificate; a docs path is served from disk with no pod at all.
@@ -129,7 +134,7 @@ function useWipe(n, off) {
       raf = 0;
       const { r, v } = geo();
       let j = r.top < innerHeight * 0.15 ? 0 : -1;
-      if (v > 0) j = Math.min(n - 1, Math.floor(v / span + (1 - REST) + 1e-3));
+      if (v > 0) j = Math.min(n - 1, Math.floor(v / span + (1 - REST) + 0.08)); // plays as its wipe is ~87% in
       if (j >= 0) setReach((x) => Math.max(x, j));
     };
     const settle = () => {

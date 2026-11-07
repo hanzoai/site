@@ -287,9 +287,10 @@ function useDraw() {
     el.querySelectorAll('svg .sk, svg .sa, svg .sg').forEach((n) => {
       if (n.closest('marker') || n.classList.contains('dash') || n.hasAttribute('stroke-dasharray')) return;
       n.setAttribute('pathLength', '1');
-      n.style.setProperty('--k', s++);
+      n.classList.add('jn-dw');
+      n.style.transitionDelay = Math.min(s++, 12) * 50 + 'ms';
     });
-    el.querySelectorAll('svg .fk, svg .fa, svg .fg, svg .fl, svg .fz, svg .fo').forEach((n) => n.style.setProperty('--f', f++));
+    el.querySelectorAll('svg .fk, svg .fa, svg .fg, svg .fl, svg .fz, svg .fo').forEach((n) => { n.style.transitionDelay = 320 + Math.min(f++, 40) * 20 + 'ms'; });
     setSt(' armed');
     let t = 0;
     const io = new IntersectionObserver(([e]) => {
