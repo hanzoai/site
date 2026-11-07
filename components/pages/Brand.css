@@ -5,7 +5,7 @@
   --b-ink: var(--ink); --b-ink2: var(--ink2); --b-muted: var(--muted); --b-faint: #a3a3a3; --b-raised: var(--quiet); --b-sunk: var(--tile);
   --b-black: #000000; --b-white: #ffffff; --b-dk-raised: #171717; --b-dk-seg: #262626; --b-dk-text: rgba(255, 255, 255, .78); --b-glow: rgba(255, 255, 255, .35); --b-dk-ink: #fafafa;
   --b-line: var(--line); --b-line2: #d4d4d4; --b-line3: #a3a3a3; --b-dk-line: rgba(255, 255, 255, .16);
-  --b-r-s: 12px; --b-r: 16px; --b-r-m: 16px; --b-r-l: 24px;
+  --b-r-s: 12px; --b-r: 16px; --b-r-m: 16px; --b-r-l: 24px; --b-r-xl: 28px;
   --b-out: var(--e-em); --b-tint: rgba(127, 127, 127, .18); --b-dk-hair: rgba(255, 255, 255, .1); --b-dk-hover: rgba(255, 255, 255, .08);
   overflow-x: clip;
 }
@@ -29,13 +29,19 @@
 .xbr-g { stroke: var(--b-line2); stroke-width: .2; fill: none; }
 .xbr-g.c { stroke: var(--b-line3); stroke-width: .22; }
 .xbr-tick { stroke: var(--b-line3); stroke-width: .25; }
-.xbr-ticks { opacity: 0; transition: opacity var(--d-slower) var(--b-out) .9s; }
-.xbr-dr.on .xbr-ticks { opacity: 1; } /* the compass ticks arrive after their circle has drawn */
+/* first frame: the h1 cuts in from 0.1 s even under the curtain, and the lede and asks are visible in the server HTML
+   with a transform-only rise (no opacity gate) */
+html.x-arriving .xbr-hero .vc-ml-css { animation-play-state: running; }
+.xbr-hero .vc-ml-css { animation-duration: .6s; animation-delay: 0s; } /* readable by 0.2 s (ease-emphasis) */
+.xbr-hero .vc-ml-l + .vc-ml-l .vc-ml-css { animation-delay: 60ms; }
+.xbr-hero-f { animation: xbr-rise .7s var(--b-out) .2s both; }
+@keyframes xbr-rise { from { transform: translateY(16px); } }
+@media (prefers-reduced-motion: reduce) { .xbr-hero-f { animation: none; } }
 .xbr-piece { fill: var(--b-ink); }
 .xbr-pause { position: absolute; right: 24px; bottom: 72px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 1px solid var(--b-line); background: var(--b-white); color: var(--b-ink); cursor: pointer; transition: background-color 150ms, transform .12s; -webkit-mask-image: none; }
 .xbr-pause:active { transform: scale(.94); }
 @media (hover: hover) { .xbr-pause:hover { background: var(--b-raised); } }
-@media (prefers-reduced-motion: reduce) { .xbr-pause { display: none; } .xbr-ticks { opacity: 1; } } /* nothing turns, so no Pause */
+@media (prefers-reduced-motion: reduce) { .xbr-pause { display: none; } } /* nothing turns, so no Pause */
 
 /* 2. principles: a pinned scene; each numeral stands in the principle's own material */
 .xbr-pr { padding-top: clamp(64px, 8vw, 120px); }
@@ -45,6 +51,9 @@
 .xbr-num-n { position: relative; z-index: 1; font: 600 clamp(28px, 3vw, 44px)/1 var(--sans); letter-spacing: -.04em; color: var(--b-muted); }
 .xbr-num-n b { display: block; font-size: clamp(160px, 22vw, 320px); line-height: .78; letter-spacing: -.07em; color: var(--b-ink); }
 .xbr-num.n0 { background: var(--b-white); box-shadow: inset 0 0 0 1px var(--b-line); }
+/* the panel's corners match PinScenes' 28px clip, so the 01 hairline runs edge to edge instead of being cut at the corners */
+.xbr-pin .vc-pin-v { border-radius: var(--b-r-xl); }
+.xbr-num { border-radius: inherit; }
 .xbr-num-mark { position: absolute; top: 18%; right: 16%; color: var(--b-ink); }
 /* 02 is a quiet room (MASTER: at most two dark rooms, the colour room and the assets card); the Brand Glow is its object */
 .xbr-num.n1 { background: var(--b-raised); }
@@ -106,6 +115,27 @@
 }
 .xbr-grad small { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--b-faint); }
 
+/* the colour room as one scene on desktop: swatches left (8 of 13), the board right (5 of 13) as one column of rows,
+   gradients below; the board's background is the scene's state and rings the brand swatch it stands on */
+.xbr .xbr-col { padding: clamp(96px, 10vw, 150px) 0; }
+.xbr-sw.big::after { content: ''; position: absolute; inset: -6px; border-radius: calc(var(--b-r-l) + 6px); border: 2px solid var(--b-dk-ink); opacity: 0; transition: opacity var(--d-base) var(--b-out); pointer-events: none; }
+.xbr-sw.big.sel::after { opacity: 1; }
+@media (min-width: 901px) {
+  .xbr-col-h { margin-bottom: 56px; }
+  .xbr-col-g > .xbr-col-l { grid-column: 1 / 9; }
+  .xbr .xbr-col .xbr-col-l .xbr-sub { margin-top: 44px; }
+  .xbr .xbr-col .xbr-col-l .xbr-sub:first-child { margin-top: 0; }
+  .xbr-sw.big { min-height: 300px; }
+  .xbr-grays .xbr-sw { min-height: 220px; }
+  .xbr-col-g > .xbr-reads { grid-column: 9 / 13; margin-top: 0; align-self: stretch; display: flex; flex-direction: column; }
+  .xbr-seg { align-self: flex-start; }
+  .xbr-reads ul { flex: 1; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 20px; }
+  .xbr-reads li { padding: 10px 16px; gap: 14px; }
+  .xbr-reads-s { font-size: 32px; }
+  .xbr .xbr-col .xbr-grads-h { margin-top: 56px; }
+  .xbr-grad span { height: 150px; }
+}
+
 /* 4. type: the signature, a specimen that fills the screen */
 .xbr-type-g { row-gap: 64px; align-items: start; }
 .xbr-type-h { grid-column: 1 / 5; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 120px; }
@@ -165,7 +195,7 @@
 .xbr-badge.ok svg { flex: none; }
 
 /* 6. assets: the marks the ZIP holds, and the one ask */
-.xbr-assets { padding: clamp(44px, 5vw, 72px) 0 clamp(120px, 14vw, 220px); }
+.xbr-assets { padding: clamp(44px, 5vw, 72px) 0 clamp(56px, 6vw, 88px); } /* the footer follows without a white gap */
 .xbr-dl { grid-column: 1 / 8; padding: clamp(32px, 4vw, 56px); border-radius: var(--b-r-l); background: var(--b-black); color: var(--b-dk-ink); display: flex; flex-direction: column; gap: 40px; }
 .xbr-dl .vc-headline { color: var(--b-dk-ink); max-width: 16ch; }
 .xbr-plates { display: flex; gap: 12px; }
