@@ -237,7 +237,9 @@ function CapObject({ i }) {
 }
 
 function Caps() {
-  const [i, setI] = useState(0);
+  const [i, setI0] = useState(0);
+  const [moved, setMoved] = useState(false);
+  const setI = (k) => { setMoved(true); setI0(k); };
   const key = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setI((i + 1) % 3); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setI((i + 2) % 3); } };
   return (
     <section className="bz-sec ld-caps" data-room="dark" aria-labelledby="ld-caps-h">
@@ -255,7 +257,7 @@ function Caps() {
           ))}
         </div>
         {CAPS.map(([g, t, d], k) => (
-          <div key={t} className="ld-cap" role="tabpanel" id={'ld-cap-p' + k} aria-labelledby={'ld-cap-t' + k} hidden={i !== k}>
+          <div key={t} className={'ld-cap' + (moved ? ' moved' : '')} role="tabpanel" id={'ld-cap-p' + k} aria-labelledby={'ld-cap-t' + k} hidden={i !== k}>
             <div className="ld-cap-copy">
               <span className="ld-glyph x-mono" aria-hidden="true">{g}</span>
               <h3 className="bz-title">{t}</h3>
@@ -333,8 +335,8 @@ function Numscript() {
     <section className="bz-sec ld-nsec" aria-labelledby="ld-ns-h">
       <div className="bz-wrap bz-grid">
         <div className="ld-nsec-copy">
-          <p className="bz-kick">Numscript</p>
           <BizLines id="ld-ns-h" className="bz-display sm" lines={['One transaction,', 'however many', 'parties']} />
+          <p className="bz-kick">Numscript</p>
           <BizSheet label="See the request" kick="bash" title="One transaction, however many parties">
             <Code tabs={[{ k: 'bash', code: CODE }]} light mark="Idempotency-Key: order_42_payout" />
           </BizSheet>
@@ -380,9 +382,9 @@ export default function Ledger() {
     <main className="bz ld">
       <span data-ask-name="Hanzo Ledger" hidden />
       <Hero />
-      <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Scenes at={at} />}>
+      <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <><h2 className="bz-headline ld-ch-h">Every cent lands somewhere</h2><Scenes at={at} /></>}>
         <header className="bz-wrap ld-ch-head">
-          <BizLines className="bz-display md" lines={['Every cent', 'lands somewhere']} />
+          <h2 className="bz-headline">Every cent lands somewhere</h2>
         </header>
       </BizChapters>
       <Caps />
