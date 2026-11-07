@@ -75,7 +75,7 @@ Done here: taste OK (2 files). Colour enters only through Hanzo's Zen film on th
 - [x] No bare `:hover` (all inside `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: the viewer traps Tab across its links and buttons, ←/→ step templates by crossfade, Esc and the × close return focus to the frame you opened.
+Done here: tiles are flat (a 1px inset line; the lit frame an ink line), only the viewer floats with a shadow; the viewer traps Tab across its links and buttons, ←/→ step templates by crossfade, Esc and the × close return focus to the frame you opened.
 
 ## 9. Motion and interaction
 - [x] One signature (the walking light read out by the plaque), 3 supporting (Settle, frame-to-viewer open, typing)
@@ -100,7 +100,7 @@ Done here: Hanzo's own `zen.webm` over `zen.webp` leads the wall; six product re
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: qc crawl 7 Nov: scrollWidth 320 at 320, 0 controls under 44px in `<main>` at 375; the Zen plaque is on the phone's first screen and the label strip moves below the frames.
+Done here: qc crawl 7 Nov: scrollWidth 320 at 320, 0 controls under 44px in `<main>` at 375; the phone viewer sits above the header (z 310) and a tap on its × closes it (hit-tested); the header keeps "Try Hanzo" on phones because "Browse the Gallery" does not fit it unclipped; the Zen plaque is on the phone's first screen and the label strip moves below the frames.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #525252 and #737373 on white, white 78% on black
@@ -133,7 +133,7 @@ Done here: `app/gallery/page.jsx` keeps "Gallery — Hanzo AI" and the live desc
 - n/a: maker and model pages
 - n/a: prices
 
-Done here: the viewer opens from the clicked frame's box (layoutId) and, while it still shows that frame, closes back into it. After stepping with ←/→ or the index it closes by a plain fade (the morph only joins the same picture), so nothing doubles or flies across the wall.
+Done here: the viewer opens from the clicked frame's box (layoutId) and, while it still shows that frame, closes back into it. After stepping with ←/→ or the index it closes by a plain fade and the wall's shared-layout ids are renewed, so no frame flies from a stale box (round 3, filmed at 80/250/450 ms after close at 1470: the wall is still).
 
 ## 16. Developer experience
 - [x] One prompt block; copy equals display (kit `Copy`)
@@ -149,7 +149,7 @@ Done here: the agent prompt copies exactly "Read https://hanzo.ai/skill.md and u
 - n/a: Failed submit (no form)
 - [x] A thrown island does not blank the page (film failure leaves the black plaque and its words)
 
-Done here: qc with api.hanzo.ai blocked: 0 page errors, 0 console errors at 1470, 375 and 320.
+Done here: qc with api.hanzo.ai blocked: 0 page errors, 0 console errors at 1470, 375 and 320 on warm loads. Critics saw an intermittent hydration warning on some cold dev loads, traced on other pages to the shared footer; not reproduced here.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (gallery.hero, gallery.viewer, gallery.close)
