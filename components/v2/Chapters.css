@@ -1,7 +1,8 @@
 /* Chapters (components/v2/Chapters.jsx). Pinned on desktop; one chapter after another on phones and for reduced motion. */
 .v2-ch { position: relative; }
 .v2-ch-title { display: inline-block; color: var(--ink); text-decoration: none; }
-.v2-ch-title:hover { text-decoration: underline; text-decoration-thickness: .04em; text-underline-offset: .1em; }
+@media (hover: hover) { .v2-ch-title:hover { text-decoration: underline; text-decoration-thickness: .04em; text-underline-offset: .1em; } }
+.v2-ch-title:active { transform: translateY(1px); }
 .v2-ch-count span { color: var(--ink); }
 .v2-ch-body { margin-top: 28px; }
 .v2-ch-vis { position: relative; border-radius: 28px; overflow: hidden; background: #fff; cursor: pointer; transform-origin: 50% 100%; }
@@ -23,8 +24,10 @@
   .v2-ch-track { position: relative; background: rgba(0, 0, 0, .08); border-radius: 2px; overflow: hidden; }
   .v2-ch-track b { position: absolute; inset: 0; background: var(--v2-accent); transform-origin: 50% 0; }
   .v2-ch-index ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 2px 20px; }
-  .v2-ch-index button { border: 0; background: none; padding: 6px 0; font: 500 15px/1.2 var(--sans); color: var(--faint); cursor: pointer; text-align: left; transition: color .25s; }
-  .v2-ch-index button:hover, .v2-ch-index button[aria-current] { color: var(--ink); }
+  .v2-ch-index button { border: 0; background: none; padding: 6px 0; font: 500 15px/1.2 var(--sans); color: #6e6e73; cursor: pointer; text-align: left; transition: color .22s, transform .12s; }
+  .v2-ch-index button:active { transform: translateY(1px); }
+  .v2-ch-index button[aria-current] { color: var(--ink); }
+  @media (hover: hover) { .v2-ch-index button:hover { color: var(--ink); } }
   .v2-ch-index button[aria-current]::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--v2-accent); vertical-align: 2px; }
 }
 

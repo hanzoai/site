@@ -84,7 +84,7 @@ export default function Pareto() {
             {[1, 3, 10, 30].map((v) => <text key={v} x={lx(v)} y={B + 26} textAnchor="middle" className="tick">${v}</text>)}
             <text x={L} y={T - 8} className="tick">GPQA Diamond %</text>
             <text x={R} y={B + 50} textAnchor="end" className="tick">cheaper ← $ per 1,000 questions → dearer</text>
-            <motion.rect x={L} y={T} height={B - T} className="x-plot-zone" animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
+            <motion.rect x={L} y={T} height={B - T} width={cap - L} className="x-plot-zone" initial={false} animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
             <motion.path d={path} className="front" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 1.6, ease: EASE, delay: 0.9 }} />
             {hot && (
               <g className="guide" aria-hidden="true">
