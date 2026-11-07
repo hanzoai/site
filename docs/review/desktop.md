@@ -1,5 +1,5 @@
 # /desktop — James-eye review
-Ready: 2026-11-08 the window is the real thing and leads the first screen (thread, limit.go, go test, Tests pass; no stripes, no blue or green; the empty file box now waits for its step, the first build runs faster and later loops keep the window built instead of blanking); missing hovers/press added (window tabs, terminal hold and command chips, note toggles). taste OK, parity 59/59 + 9/9, unique OK, check.mjs 0 errors / 0 overlaps / no h-scroll at 1470 and 375, phone CLS 0, reduced motion rests on the finished frame.
+Ready: 2026-11-07 the window is the real thing and leads the first screen (thread, limit.go, go test, Tests pass; no stripes, no blue or green; the empty file box now waits for its step, the first build runs faster and later loops keep the window built instead of blanking); missing hovers/press added (window tabs, terminal hold and command chips, note toggles). taste OK, parity 59/59 + 9/9, unique OK, check.mjs 0 errors / 0 overlaps / no h-scroll at 1470 and 375, phone CLS 0, reduced motion rests on the finished frame.
 
 Verdict: 6/10
 First complaint: "It's a box of grey stripes pretending to be an app. Show me the real thing, and drop the blue."
