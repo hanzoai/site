@@ -1,0 +1,32 @@
+/* PinScenes (components/v2, Wave 2 "Proof" chat): the sticky chapter scene. See PinScenes.jsx for usage. */
+.pf-pin { position: relative; height: calc(var(--n) * var(--per) + 100svh); }
+.pf-pin[data-room='dark'] { background: #000; color: #f5f5f7; }
+.pf-pin-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
+.pf-pin-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: center; padding-top: 60px; }
+.pf-pin.flip .pf-pin-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.pf-pin.flip .pf-pin-copy { order: 2; }
+.pf-pin-copy { position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 28px; align-items: center; }
+.pf-pin-meter { display: grid; justify-items: center; gap: 12px; font-size: 13px; color: var(--faint); }
+.pf-pin-meter i { display: block; width: 1px; height: 120px; background: var(--line); overflow: hidden; }
+.pf-pin-meter b { display: block; width: 100%; height: 100%; background: currentColor; transform-origin: 50% 0; color: var(--ink); }
+.pf-pin[data-room='dark'] .pf-pin-meter i { background: rgba(255, 255, 255, .16); }
+.pf-pin[data-room='dark'] .pf-pin-meter b { color: #f5f5f7; }
+.pf-pin-texts { display: grid; }
+.pf-pin-t { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 40px, 0); transition: opacity .45s var(--ease), transform .8s var(--ease); pointer-events: none; }
+.pf-pin-t[data-past='true'] { transform: translate3d(0, -40px, 0); transition-duration: .3s, .5s; }
+.pf-pin-t[data-on='true'] { opacity: 1; transform: none; pointer-events: auto; transition-delay: .08s; }
+.pf-pin-t-in > * + * { margin-top: 24px; }
+.pf-pin-t-in .pf-kick + .pf-head { margin-top: 0; }
+.pf-pin[data-room='dark'] .pf-head, .pf-pin-flat[data-room='dark'] .pf-head { color: #f5f5f7; }
+.pf-pin[data-room='dark'] .pf-body, .pf-pin[data-room='dark'] .pf-lede, .pf-pin-flat[data-room='dark'] .pf-body { color: #a1a1a6; }
+.pf-pin-vis { position: relative; min-height: min(72svh, 680px); display: grid; align-items: center; }
+
+/* phones: the same chapters, stacked, each with its own visual */
+.pf-pin-flat { padding: 120px 0 40px; }
+.pf-pin-flat[data-room='dark'] { background: #000; color: #f5f5f7; }
+.pf-pin-flat-c + .pf-pin-flat-c { margin-top: 96px; }
+.pf-pin-flat-v { margin-top: 32px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-pin-t, .pf-pin-t[data-past='true'] { transform: none; transition: opacity .01s; }
+}
