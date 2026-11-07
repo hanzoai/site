@@ -50,6 +50,15 @@ response = client.chat.completions.create(
 )
 print(response.choices[0].message.content)`;
 
+// each line of the snippet in its own span and each # comment in a grey span of its own, as Hanzo's highlighter splits them
+function Lines({ s }) {
+  return s.split('\n').map((l, i, a) => {
+    const c = l.indexOf('#'), nl = i < a.length - 1 ? '\n' : '';
+    if (c < 0) return <span key={i}>{l + nl}</span>;
+    return <span key={i}>{c > 0 && <span>{l.slice(0, c)}</span>}<span className="zc-cm">{l.slice(c)}</span>{nl}</span>;
+  });
+}
+
 const ROWS = [
   { n: 'Zen5 (Default)', slug: 'zen5', tier: 'pro', d: 'Canonical Zen5 default. a 35B frontier MoE (3B active) (35B total / 3B active per token, released Apr 2026, Apache-2.0). 256K context, agentic-trained, OpenAI + Anthropic API. The everyday Zen5 chat model.', big: '35B', small: '(3B active)', tot: 35, act: 3, ctx: '256K', ck: 256, arch: 'Zen frontier MoE' },
   { n: 'Zen5 Coder', slug: 'zen5-coder', tier: 'pro', d: 'Code-specialized Zen5 tier. 80B sparse MoE tuned for repo-scale code understanding, agentic refactoring, and tool-use coding loops.', big: '80B', small: '(MoE)', tot: 80, act: null, ctx: '256K', ck: 256, arch: 'Zen Coder MoE' },
@@ -105,8 +114,8 @@ function Stage() {
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.1 }}>Zen Models</motion.span></span>
               <span className="x-line zc-h1-2"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.16 }}>Complete API Catalog</motion.span></span>
             </h1>
-            <p className="zc-badge"><i aria-hidden="true" />Zen 6 and Zen 6 Flash available now · Zen 7 in research preview</p>
-            <p className="zc-lede">Built for agentic coding and multimodal work. <b>18</b> foundation models from <A to="https://zoo.industries">Zoo Labs Foundation</A> across language, code, vision, image, audio, and retrieval. Zen MoDE (Mixture of Diverse Experts) architecture. From $0.01/MTok.</p>
+            <p className="zc-badge"><i aria-hidden="true" /><span>Zen 6 and Zen 6 Flash available now · Zen 7 in research preview</span></p>
+            <p className="zc-lede"><span>Built for agentic coding and multimodal work.</span> <b>18</b> <span>foundation models from</span> <A to="https://zoo.industries">Zoo Labs Foundation</A> <span>across language, code, vision, image, audio, and retrieval.</span> <span>Zen MoDE (Mixture of Diverse Experts) architecture.</span> <span>From $0.01/MTok.</span></p>
             <div className="zc-acts">
               <Cta to="https://platform.hanzo.ai/api-keys" id="zen-models.hero" thumb>Get API key</Cta>
               <a href="#zen5" className="x-arrow" data-cta="zen-models.hero-explore"><span>Explore Models</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
@@ -164,7 +173,7 @@ function Quick() {
         </div>
         <figure className="zc-term">
           <div className="zc-term-bar"><b>python</b><span className="zc-term-copy"><Copy text={code(typed)} /></span></div>
-          <pre className="zc-code" tabIndex={0} data-lenis-prevent><code>{pre}<span className="zc-slot"><span>{typed}</span><i aria-hidden="true" /></span>{post}</code></pre>
+          <pre className="zc-code" tabIndex={0} data-lenis-prevent><code><Lines s={pre} /><span className="zc-slot"><span>{typed}</span><i aria-hidden="true" /></span><Lines s={post} /></code></pre>
         </figure>
       </div>
     </section>
@@ -312,7 +321,7 @@ function Row({ r, seen, i, open, onOpen }) {
   return (
     <motion.li layout className="zc-li" data-open={open || undefined} transition={{ layout: GLIDE }}>
       <div className="zc-row">
-        <b className="zc-row-n">{r.n}</b>
+        <b className="zc-row-n"><span>{r.n}</span></b>
         <span className="zc-row-p"><span className="zc-row-big">{r.big}</span>{r.small && <span className="zc-row-s"> {r.small}</span>}</span>
         <span className="zc-meter" aria-hidden="true">
           <span className="zc-bar"><i className="zc-tot" style={{ transform: `scaleX(${seen ? Math.max(0.015, r.tot / MAXP) : 0})`, transitionDelay: 0.1 + i * 0.06 + 's' }} />{r.act && <i className="zc-act" style={{ transform: `scaleX(${seen ? Math.max(0.012, r.act / MAXP) : 0})`, transitionDelay: 0.4 + i * 0.06 + 's' }} />}</span>

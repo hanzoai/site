@@ -69,6 +69,7 @@ html:not(.js) .zc-hold { display: none; }
 .zc-term-copy .x-copy { background: transparent; border-color: rgba(255, 255, 255, .14); color: var(--on-black); }
 .zc-term-copy .x-copy-t { font-size: 13px; }
 .zc-code { margin: 0; padding: 27px; overflow-x: auto; font: 400 14px/1.75 var(--mono); color: var(--on-black-2); }
+.zc-cm { color: var(--on-black-3); }
 .zc-slot { color: var(--on-black); background: rgba(255, 255, 255, .14); border-radius: 4px; padding: 1px 3px; }
 .zc-slot i { display: inline-block; width: 2px; height: 1.1em; margin-left: 1px; vertical-align: -3px; background: var(--on-black); animation: zc-blink 1s steps(2, jump-none) infinite; }
 @keyframes zc-blink { 50% { opacity: 0; } }
