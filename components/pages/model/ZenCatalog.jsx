@@ -9,6 +9,9 @@
    Beyond: the per-token meter. Each card draws its total parameters and the parameters that work per token on one
    shared scale (35B with 3B active, 230B with 10B active, 284B with 37B active, from Hanzo's rows), plus context on a log
    scale, so the mixture-of-experts trade is visible at a glance.
+   Persona: Developer choosing a Zen model to call (PLAN-COMPONENTS 1.1 Developer row).
+   Goal: pick a Zen5 model and make a first call; metric api_key_created.
+   CTA: Get API key (the one solid ask in the hero, data-thumb) to platform.hanzo.ai/api-keys; close: Get Started to /signup.
    V2: 8.5/10 Rebuilt as chapters (JAMES.md: no UI hues, nothing above the h1, one solid ask per screen): film stage hero, one-line Quick Start retype, pinned one-figure-per-screen scrub, a bento shelf that re-flows on sort and filter, cards that open into their model pages. */
 // Signature: the sort race: Zen5 cards re-flow into a new bento on sort or tier filter, each card opening into its model page
 // Beyond: the per-token meter: total vs active parameters and context on one shared scale for every Zen5 model

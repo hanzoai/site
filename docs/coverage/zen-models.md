@@ -1,0 +1,37 @@
+# Coverage: /zen/models — components/pages/model/ZenCatalog.jsx
+
+- **2.1 Strategy and conversion:** Persona (Developer), Goal and CTA are in the file header, with metric id `api_key_created`. There is one solid ask per screen in Hanzo's words: "Get API key" in the hero and "Get Started" at the close. The other actions are text links with an arrow. It does not read `lib/cta.js` (not on this branch yet).
+- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. "Explore Models" jumps to `#zen5`. Each Zen5 card now links to its existing model page (`/models/hanzo/zen5`, `-coder`, `-flash`, `-mini`, `-pro`), and all of Hanzo's links are kept. No sub-nav or sibling swipe.
+- **2.3 First impression and page narrative:** The first screen is the Zen film in a rounded stage, with the display h1 at the bottom of it and nothing above the h1. The status line, lede and asks sit under the h1. Then come the chapters, one idea each: Quick Start, the five figures one per screen, the Zen5 shelf, and the close.
+- **2.4 Conversion system:** One solid primary inside `main` per viewport, checked at 1470×801 and 375×812. `data-thumb` on "Get API key" feeds the phone bottom bar. Gaps: no `data-cta` attributes and no risk-reducer line (the page has no such Hanzo text). The header's own solid "Try Hanzo" is shared chrome, not this page.
+- **2.5 Trust and proof:** Only Hanzo's own figures are shown: 18 models, 2M context, $0.01/MTok, 7 modalities, and the Zen5 rows with their stated scores (80.2% SWE-Bench Verified, 76.3% BrowseComp). No logos or claims were added. The live page has no trust block, so none was added.
+- **2.6 Content presentation (copy untouched):** Parity is 0 missing: text 89/89, links 5/5. The copy is chaptered, not cut. The Zen5 table became cards with the same fields (Params, Context, Arch, Availability) and full descriptions.
+- **2.7 Visual design system:** Greys, black and white only, with no UI hues (JAMES.md); colour comes only from the Zen film. v2 type: display 128/80 (56/36 on phone) at line-height 1.0, headline 56, lede 24. Radii are 28px on the stage and terminal and 16px on cards; 12 columns at a max of 1440; one dark object (the film stage). Values sit in the page CSS because `tokens.css` does not exist yet.
+- **2.8 UI component library:** Uses the kit's `A`, `More` and `Copy`, plus `Sigil`. The segmented filter and sort, cards and figure scene are page parts. Gaps: raw `<video>`, `<pre>` and `.x-btn`, because `Film`, `CodeBlock`, `Cta`, `PageHero` and `Band` are not in the kit yet.
+- **2.9 Motion and interaction:**
+  - Signature (state): the sort and filter re-flow, with springs at 300/30 and a layoutId ink pill.
+  - Time: the model line retypes itself; tapping a name switches to it.
+  - Idle: the film plays.
+  - Arrival: the headline cuts into its line.
+  - Scroll: the pinned figures, and the card bars filling on view.
+  - Variety check passes (4 techniques, 0 fade-ups). Reduced motion shows final states with no pin and no autoplay.
+  - Gap: the status dot and the code caret are CSS loops.
+- **2.10 Media:** `/models/zen.webm` with the `zen.webp` poster. It plays only while on screen, is muted and `aria-hidden`, and does not autoplay under reduced motion. The 5 Zen5 cards have no images of their own, so a card morphs its whole box. Gap: no kit `Film` and no AVIF pipeline.
+- **2.11 Mobile and responsive:**
+  - On phones the stage stacks, the figures become a list (no pin), the shelf is one column, and the code and filter rows scroll inside themselves.
+  - Targets are 44px or more.
+  - No sideways scroll at 375×812 or at 320 (checked).
+- **2.12 Accessibility (WCAG 2.2 AA):**
+  - One h1. Real buttons with `aria-pressed`, a disabled state on empty tiers, `aria-live` on the shelf, the figures as a `dl`, and a visible focus outline on cards.
+  - Gap: the film and the retyping line have no pause control (WCAG 2.2.2).
+  - Gap: no axe run and no contrast audit.
+- **2.13 Performance and engineering:** Only transform and opacity animate. The film pauses off screen and the retype timer stops when out of view; the scroll scene sets state only five times per pass. Gap: LCP, CLS and INP not measured (no `budgets.json` yet).
+- **2.14 SEO and machine files (mirror live, add nothing new):** Title and description in `app/zen/models/page.jsx` and `JsonLd` route are unchanged. Nothing was added.
+- **2.15 Catalogue and product pages:**
+  - Tier filter chips show their true counts (0 for ultra max and pro max).
+  - Sort by Hanzo's order, size or context.
+  - Every card opens into its model page through the site morph layer (`data-morph`).
+  - Gap: no compare tray (deferred in the plan).
+- **2.16 Developer experience:** The Quick Start code is the second chapter. Copy gives exactly the code with the model name shown; switching models is one tap. "Get API key" is in the hero.
+- **2.17 States and resilience:** JS-off and reduced motion show every card, every figure and the full code in the server HTML. Tiers with no Zen5 model are disabled rather than leading to an empty shelf. If the film is blocked, its poster shows. No page-specific error boundary.
+- **2.18 Measurement and handover:** Gap: no analytics events wired (no `data-cta`, no `section_view`, no `api_key_created` hook on this page). Proof film and phone stills are in `docs/gallery/zen/models/`, and the `V2:` line is in the file header.

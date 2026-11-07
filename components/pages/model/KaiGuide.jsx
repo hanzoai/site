@@ -9,6 +9,9 @@
    Beyond: the request checker. Pick a limit and the checker loads that case (101 questions, a 3,982-token state, a
    state past 32,768, kai-1.4); drag the rulers to check your own request and see its input price at $0.021 per million
    tokens beside Jev's $0.042.
+   Persona: Developer wiring Kai decisions into a pipeline (PLAN-COMPONENTS 1.1 Developer row).
+   Goal: send a first POST /v1/decisions; metric api_key_created.
+   CTA: Get an API key (the one solid ask, in the hero with data-thumb and repeated at the close) to platform.hanzo.ai/api-keys.
    V2: 8.5/10 Rebuilt terminal-first in greys only (JAMES.md: no UI hues, nothing above the h1, one solid ask per screen): a self-running typed session as hero, a spec-sheet of question types, sticky copy-and-run code, limits that drive the checker, recipes room, Jev move as a landing diff with the benchmark as hero figures. */
 // Signature: the session runs itself: the guide's curl request typing into a terminal and its response shape streaming back
 // Beyond: the request checker, driven by the limit you pick or by your own rulers, priced against Jev
