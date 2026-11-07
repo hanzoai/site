@@ -23,7 +23,7 @@ Done here: `Pubsub.jsx` and `app/pubsub/page.jsx` open with Persona (Developer),
 - [x] Breadcrumb at depth 2 or more (n/a: depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: Every link is the kit `A`. `parity.py /pubsub`: 2/2 links. The inspector's six rows are buttons that scroll to their chapter.
+Done here: Every link is the kit `A`. `parity.py /pubsub`: 2/2 links. The chapters are reached by scroll (the pinned rail's own ticks); the earlier inspector rows that scrolled to a chapter are gone with the inspector.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -75,7 +75,7 @@ Done here: `taste.py` OK; `c3pal.cjs` reads every computed colour in `<main>`: 0
 - [x] Inputs 16px or larger; no bare `:hover` (n/a for inputs: none)
 - [x] Forks this page deleted: listed at the top
 
-Done here: The start and ack switches (`aria-pressed`, a pill that glides 300 ms), the inspector rows and the pauses are real buttons; hover changes fill or ink inside `@media (hover:hover)`; press is .97 for 90 ms. `c3ps-int.cjs`: replay hover lights 4 sequences and names "replay · from #40 → #43" in the toolbar; a row opens its chapter; the ack switch changes the line.
+Done here: The start and ack switches (`aria-pressed`, a pill that glides 300 ms), and the pauses are real buttons; hover changes fill or ink inside `@media (hover:hover)`; press is .97 for 90 ms. Replay hover lights the sequences from the one under the pointer and names "replay · from #40 → #43" in the toolbar; the ack switch changes the chapter bus's subscribers; the ack clause keeps a two-line height so choosing "no acks" moves nothing.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,15 +84,15 @@ Done here: The start and ack switches (`aria-pressed`, a pill that glides 300 ms
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
 
-Done here: Signature: one message fanning out (idle), the wires drawing as line art in 800 ms. Supporting: the gliding pill (`layoutId`), the line-mask cut-in; `variety.py` OK. Kinds: idle (bus, inspector), pointer (replay preview under the cursor, magnetic close ask), state (switches, rows), arrival (h1 cut-in, wires, the timed quiet-room wipe), scroll (pinned chapters, "Get PubSub" growing). Tweens only; 0 springs, 0 `setInterval`; reduced motion shows the settled fan-out.
+Done here: Signature: one message fanning out (idle), the wires drawing as line art in 800 ms. Supporting: the gliding pill (`layoutId`), the line-mask cut-in; `variety.py` OK. Kinds: idle (the hero bus and the chapter bus), pointer (replay preview under the cursor, magnetic close ask), state (switches, rows), arrival (h1 cut-in, wires, the timed quiet-room wipe), scroll (pinned chapters, "Get PubSub" growing). Tweens only; 0 springs, 0 `setInterval`; reduced motion shows the settled fan-out.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no Hanzo photo or film for PubSub)
-- [x] At most 2 videos playing; pause button on loops over 5 s (the bus and the inspector each have a 44px `LivePause`)
+- [x] At most 2 videos playing; pause button on loops over 5 s (the hero bus and the chapter bus each have a 44px `LivePause`)
 - [x] Budgets met; nothing missing; alt on every image (n/a: no images)
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: Hanzo has no PubSub media)
 
-Done here: Objects are product UI (bus, server inspector, prompt, events.go) and the page's Sigil from its own figures [4222, 3, 1000000].
+Done here: Objects are product UI (the bus, carried down as the chapters' object; the prompt; events.go) and the page's Sigil from its own figures [4222, 3, 1000000].
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: Objects are product UI (bus, server inspector, prompt, events.go) and
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `c3w320.cjs`: scrollWidth 320 at 320 wide, the ask's bottom at 234px at 375×667, 0 targets under 44px. On phones the title, line and ask come first and the bus stacks under them; the inspector sits in a fixed 35svh window so chapter words never move, `pinchk.cjs` 7/7 ok. The replay preview's tap path is the sequence row itself; the switches scroll sideways on their own row.
+Done here: `c3w320.cjs`: scrollWidth 320 at 320 wide, the ask's bottom at 234px at 375×667, 0 targets under 44px. On phones the title, line and ask come first and the bus stacks under them; the chapter bus keeps one height in every chapter (fixed wire, cell, card and footer rows; measured CLS 0.003 at 320, 0.002 at 375, 0.001 at 1470), and a subscriber's state wraps to two lines inside its card instead of being cut off. The replay preview's tap path is the sequence row itself; the switches scroll sideways on their own row.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -133,7 +133,7 @@ Done here: `app/pubsub/page.jsx` takes `metadata` from `content/pages.json` uned
 - [x] Every maker and model page linked in the DOM (n/a)
 - [x] One price figure everywhere (n/a: the free-tier line appears once)
 
-Done here: Cloud product anatomy: identity (h1, line), the product at work (bus), openable features (six chapters with an inspector and two switches), the 4222 spec, the close.
+Done here: Cloud product anatomy: identity (h1, line), the product at work (bus), openable features (six chapters on the pinned bus, two switches), the 4222 spec, the close.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (Frame's `Code` and `Paste` copy exactly what they show)
@@ -149,7 +149,7 @@ Done here: events.go is 13.5px/1.65 on white with one hairline; its copy writes 
 - [x] A failed submit keeps its values and shows no success (n/a: no form)
 - [x] A thrown island does not blank the page (Sigil, Cursor and Phone boundaries belong to the shared layer)
 
-Done here: The product's states are designed in the demo: published, stored, delivered, acked, redelivered, duplicate collapsed, chunked and put back together. `look2.cjs` logs 0 page errors at both widths.
+Done here: The product's states are designed in the chapter bus: published, stored, aged out, delivered, acked, redelivered, duplicate collapsed (chapter 02's footer line), last value, one answer, chunked and put back together, walled by account. `look2.cjs` logs 0 page errors at both widths.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: it does not exist yet; ids are in place)
