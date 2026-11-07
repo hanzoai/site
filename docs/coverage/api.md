@@ -3,7 +3,7 @@
 Page file: `components/pages/ApiPage.jsx` (+ `ApiPage.css`, shared `components/v2/AppType.css`, `AppScenes`, `x-edison/AppLines`) · gallery: `docs/gallery/api/` · metric id: `api_key_created`
 
 Open copy questions for James: none decided. The "cURL text" question in MASTER part 1 applies: the page shows no Hanzo cURL sample, so the request line is built from Hanzo's own base URL, paths and bearer header only.
-Shared changes requested (`docs/requests/apps1.md`): the header ask should carry the page's own label; a desktop-off mode for the ask bar (until then `data-ask="off"` on `<main>`, because a floating pill over content is banned); and `Band` with an `id` prop.
+Shared changes requested: `docs/requests/apps1.md` (a `Band` with an `id` prop). The ask is settled by the shared system: the header's solid "Try Hanzo" carries it at every width, with no desktop bar, and the page's own `data-thumb` ask rides the slim phone bar. The page closes on its own band with `<Cta id>`.
 Forks this page deleted: the native endpoint `<select>` (now a styled list), raw `<img>`/`<video>` (now kit `Img`/`Film`), the hidden `data-thumb` `<i>` (now `<Cta thumb>`), raw `.x-btn` `Go` asks (now `<Cta>`), the Stage hero wrapper, four kickers over headlines, spring transitions.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the h1, lede, ask and the live console share the first s
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the header's ask stays; the floating bar is off on this page because MASTER 3.3 bans a pill over content; the request for the header to carry "Get an API key, free" is in `docs/requests/apps1.md`)
+- [x] Sticky ask in header and bar after the hero (shared system: the header's solid "Try Hanzo" at every width, no desktop bar; on phones the slim quiet bar carries this page's `data-thumb` ask once the hero button leaves)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
