@@ -150,6 +150,7 @@ function Hero() {
             <div className="xft-acts">
               <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta" data-thumb="Open Chat" data-cta="features.hero">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
               <A to="/dev" className="xft-tlink">Launch Dev</A>
+              <A to="/signup" className="xft-tlink">Try Hanzo</A>
             </div>
           </div>
         </div>

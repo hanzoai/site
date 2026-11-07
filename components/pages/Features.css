@@ -11,6 +11,7 @@
 .xft-top-r .w2-lede { max-width: 52ch; }
 .xft-lede { font-size: clamp(17px, 1.4vw, 21px); }
 .xft-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+@media (max-width: 899px) { .xft-top-r .xft-acts > :first-child { flex-basis: 100%; } .xft-top-r .xft-acts .xft-tlink:nth-of-type(1) { margin-left: -6px; } }
 .xft-tlink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; color: inherit; font-size: 16px; font-weight: 500; text-decoration: underline; text-decoration-color: rgba(10, 10, 10, .3); text-underline-offset: 4px; transition: text-decoration-color .15s var(--eo); }
 @media (hover: hover) { .xft-tlink:hover { text-decoration-color: currentColor; } }
 .xft-tlink:active { transform: scale(.98); }
