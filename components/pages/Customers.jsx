@@ -122,7 +122,7 @@ function Plate() {
               <motion.span className="xcu-case-txt" initial={false} animate={{ opacity: i === at ? 1 : 0 }}
                 transition={i === at ? { duration: 0.4, delay: 0.25, ease: EASE } : { duration: 0.15 }}>
                 <span className="xcu-case-top">
-                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span className="xcu-alt">{c.name}</span>} />
+                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span aria-hidden="true" data-why="the h3 names the case; a missing logo leaves the corner to the year" />} />
                   <span className="vc-kick vc-num">{c.year}</span>
                 </span>
                 <span className="xcu-case-in">
@@ -148,19 +148,27 @@ function Plate() {
   );
 }
 
-/* The launch stage: the logo and figures of the launch being read, rising in as the last one leaves. */
-function Stage({ l, list }) {
+/* The launch stage: the logo and figures of the launch being read. The panel rolls like a slot: the outgoing launch
+   rises out of the stage's mask while the incoming one rises in right behind it (same 400ms ease-in-out, edge to edge),
+   so the stage is never blank during a continuous scroll and the two never share a pixel. The lead figure arrives as
+   the moment (84px) and settles to its 64px rest while you read. */
+const ROLL = { duration: 0.4, ease: [0.4, 0, 0.2, 1] };
+function Stage({ l, list, calm }) {
   return (
     <div className="xcu-st" aria-hidden="true">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={l.id} className="xcu-st-in" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } }}
-          exit={{ opacity: 0, y: -16, transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] } }}>
+      <AnimatePresence initial={false}>
+        <motion.div key={l.id} className="xcu-st-in" initial={calm ? false : { y: '100%' }} animate={{ y: '0%', transition: calm ? { duration: 0 } : ROLL }}
+          exit={calm ? { opacity: 0, transition: { duration: 0 } } : { y: '-100%', transition: ROLL }}>
           <span className="xcu-st-top">
             <span className="xcu-st-logo">{l.logo ? <Pic src={'/logos/customers/' + l.logo} alt="" w={200} h={40} fallback={<b>{l.name}</b>} /> : <b>{l.name}</b>}</span>
             <span className="vc-kick vc-num">{l.year || ''}</span>
           </span>
           {l.f.length > 0
-            ? <span className="xcu-st-f">{l.f.map(([n, w], k) => <span key={w} className={(k ? 'b' : 'a') + (n.length > 8 ? ' long' : '')}><b className="vc-num">{n}</b><span>{w}</span></span>)}</span>
+            ? <span className="xcu-st-f">{l.f.map(([n, w], k) => (
+              <span key={w} className={(k ? 'b' : 'a') + (n.length > 8 ? ' long' : '')}>
+                {k ? <b className="vc-num">{n}</b> : <motion.b className="vc-num" initial={calm ? false : { scale: n.length > 8 ? 1.15 : 84 / 64 }} animate={{ scale: 1, transition: { duration: 0.5, delay: 1.1, ease: [0.4, 0, 0.2, 1] } }}>{n}</motion.b>}
+                <span>{w}</span>
+              </span>))}</span>
             : <span className="xcu-st-f"><span className="a nm"><b>{l.name}</b><span>{l.kind}</span></span></span>}
         </motion.div>
       </AnimatePresence>
@@ -243,7 +251,7 @@ function Every() {
             </motion.li>
           ))}
         </ol>
-        <div className="xcu-aside"><Stage l={cur} list={shown} /></div>
+        <div className="xcu-aside"><Stage l={cur} list={shown} calm={calm} /></div>
       </div>
     </section>
   );
