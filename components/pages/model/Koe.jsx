@@ -81,7 +81,7 @@ function Booth() {
       g.fillStyle = s.t - t < 0.25 ? '#ffffff' : 'rgba(245,245,247,.78)';
       g.fillRect(x, mid - a, bwid, Math.max(2 * d, a * 2));
     }
-    g.fillStyle = '#ff453a';
+    g.fillStyle = '#f5f5f5';
     g.fillRect(Math.min(w - 2 * d, (s.t / LEN) * w), 0, 2 * d, h);
     const sec = Math.floor(s.t), cs = Math.floor((s.t % 1) * 100);
     if (sEl.current) sEl.current.textContent = String(Math.min(5, sec));
