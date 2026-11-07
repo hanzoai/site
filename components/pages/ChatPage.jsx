@@ -1,4 +1,9 @@
 'use client';
+// Persona: a consumer choosing a chat app (MASTER 1: consumers).
+// Goal: open Hanzo Chat. Metric: first_chat.
+// CTA: "Open Hanzo Chat" -> /login?next=%2Fchat (hero, header ask bar, closing Band).
+// Signature: the live chat runs itself once; each question visibly routes through Enso to the model that answers.
+// Beyond: who answers what, Enso and its eight models as a sheet you point at, each opening into its page.
 /* Hanzo Chat, v3 (JAMES.md, PLAN-COMPONENTS 5.7). Persona: consumer choosing a chat app. Goal: open Hanzo Chat.
    CTA: "Open Hanzo Chat" (/login?next=%2Fchat), one solid ask in hero, sticky bar and close. Metric: first_chat.
    One idea per screen:
@@ -16,9 +21,9 @@
    the picture lifts into that model's page (the synchronized.studio opener).
    Greys only: colour arrives through Hanzo's own model artwork. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
-import { EASE, Copy, Magnetic, Btn } from '../ui';
-import { A, Img } from '../kit';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { EASE, Copy, Magnetic } from '../ui';
+import { A, Img, Cta, Band } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import AppLines from '../v2/AppLines';
@@ -39,32 +44,11 @@ const ROUTED = MODELS.filter((m) => m.slug !== 'enso');
 const ENSO = MODELS[0];
 const pic = (slug) => `/models/${slug}.webp`;
 
-/* The one ask, with its handoff state: the press answers at once (the kit's ring turns in place of the label), then
-   it leaves for Hanzo Chat. */
-function Open({ className = '', slot = 'hero' }) {
-  const [busy, setBusy] = useState(false);
-  const go = (e) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-    e.preventDefault();
-    setBusy(true);
-    setTimeout(() => { window.location.href = href(OPEN); }, 280);
-  };
-  return (
-    <Magnetic strength={0.18}>
-      <Btn href={href(OPEN)} solid busy={busy} className={'cht-open ' + className} onClick={go} data-thumb="Open Hanzo Chat" data-cta={'chat.' + slot}>
-        <span>Open Hanzo Chat</span>
-        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-      </Btn>
-    </Magnetic>
-  );
-}
-
-const Docs = ({ dark }) => (
-  <A to={DOCS} className={'cht-link' + (dark ? ' dark' : '')}>
-    <span>Read the docs</span>
-    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-  </A>
+/* The one ask: the kit's Cta, which shows its hand-off state (aria-busy, a ring) as it leaves for Hanzo Chat. */
+const Open = ({ slot = 'hero' }) => (
+  <Magnetic strength={0.18}><Cta to={OPEN} id={'chat.' + slot} thumb size="lg">Open Hanzo Chat</Cta></Magnetic>
 );
+const Docs = () => <Cta to={DOCS} kind="link" id="chat.docs">Read the docs</Cta>;
 
 /* Speak an answer aloud with the browser's own voice. */
 function Listen({ text }) {
@@ -117,7 +101,7 @@ function Rail({ route, at }) {
           const scan = route.phase === 'scan' && at === i;
           return (
             <li key={m.slug} className={(lit ? 'lit' : '') + (scan ? ' scan' : '') + (peek === m.slug ? ' peek' : '')}>
-              {(scan || lit) && <motion.span layoutId="cht-lane" className="cht-lane-bg" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+              {(scan || lit) && <motion.span layoutId="cht-lane" className="cht-lane-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <button type="button" className="cht-lane-b" aria-pressed={peek === m.slug} aria-controls="cht-peek" onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(m.slug); }} onFocus={() => setPeek(m.slug)} onClick={() => setPeek(m.slug)}>
                 <Img src={pic(m.slug)} alt="" w={26} h={26} />
                 <b>{m.name}</b>
@@ -160,7 +144,7 @@ function Window() {
       if (el) el.value = '';
       setMsgs((m) => [...m, { role: 'user', text: q }, { role: 'ai', state: 'wait', model: 'enso' }]);
       setRoute({ phase: 'scan', pick: null });
-      await sleep(1200);
+      for (let s = 0; s < 9; s++) { setAt(s % ROUTED.length); await sleep(135); } // the scan, on the demo's own clock
       setRoute({ phase: 'pick', pick: 'zen' });
       setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'stream', model: 'zen', text: a }]);
       await sleep(40);
@@ -170,12 +154,6 @@ function Window() {
     }
   }, { amount: 0.3 });
 
-  // the scan: a light moving down the models while Enso decides (only while the conversation runs)
-  useEffect(() => {
-    if (route.phase !== 'scan') return;
-    const t = setInterval(() => setAt((v) => (v + 1) % ROUTED.length), 140);
-    return () => clearInterval(t);
-  }, [route.phase]);
   useEffect(() => { const l = log.current; if (l) l.scrollTo({ top: l.scrollHeight, behavior: demo.calm ? 'auto' : 'smooth' }); }, [msgs, demo.calm]);
 
   const takeOver = () => {
@@ -229,7 +207,7 @@ function Window() {
             {sel > 0 ? (
               <div className="cht-empty">
                 <p className="cht-empty-t">{RECENTS[sel]}</p>
-                <A to={OPEN} className="x-btn cht-empty-b">Open Hanzo Chat</A>
+                <Cta to={OPEN} kind="quiet" id="chat.recent">Open Hanzo Chat</Cta>
               </div>
             ) : msgs.length === 0 && mine ? (
               <div className="cht-empty"><p className="cht-empty-t">Ask anything</p></div>
@@ -239,7 +217,7 @@ function Window() {
           </div>
           <form className="cht-composer" onSubmit={send}>
             <input ref={input} type="text" placeholder="Ask anything" aria-label="Ask anything" maxLength={2000} onFocus={takeOver} onPointerDown={takeOver} enterKeyHint="send" />
-            <motion.button type="submit" className={'cht-send' + (busy ? ' busy' : '')} aria-label="Open Hanzo Chat" aria-busy={busy || undefined} whileTap={{ scale: 0.92 }}>
+            <motion.button type="submit" className={'cht-send' + (busy ? ' busy' : '')} aria-label="Open Hanzo Chat" aria-busy={busy || undefined} whileTap={{ scale: 0.97 }}>
               <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </motion.button>
           </form>
@@ -256,7 +234,7 @@ function Hero() {
     <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
       <div className="v2a-wrap cht-hero-in">
         <div className="cht-copy">
-          <AppLines as="h1" id="cht-h1" className="v2a-display cht-h1" lines={['Ask anything.', 'Enso picks', 'the model.']} />
+          <AppLines as="h1" id="cht-h1" className="v2a-display cht-h1" lines={['Ask anything.', 'Enso picks the model.']} />
           <motion.p className="v2a-lede cht-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</motion.p>
           <motion.div className="cht-acts" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}>
             <Open slot="hero" />
@@ -383,6 +361,21 @@ function Art({ k }) {
   );
 }
 
+/* The dark room's heading starts big, as the moment, and shrinks back to a section heading as the pinned scene
+   takes over (MASTER 3.1: some things start big and shrink as things happen). */
+function ToolsHead() {
+  const ref = useRef(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.7', 'start 0.05'] });
+  const scale = useTransform(p, (v) => 1 - 0.62 * Math.min(1, Math.max(0, v)));
+  return (
+    <div className="v2a-wrap cht-ch-head" ref={ref}>
+      <motion.div className="cht-ch-hw" style={{ scale }}>
+        <AppLines as="h2" view className="cht-ch-h" lines={['A chat that does the work,', 'not just the talking']} soft={[1]} />
+      </motion.div>
+    </div>
+  );
+}
+
 function Tools() {
   return (
     <AppChapters
@@ -390,11 +383,7 @@ function Tools() {
       dark
       id="cht-tools"
       label="A chat that does the work, not just the talking"
-      head={(
-        <div className="v2a-wrap cht-ch-head">
-          <AppLines as="h2" view className="v2a-display md cht-ch-h" lines={['A chat that does the work,', 'not just the talking']} soft={[1]} />
-        </div>
-      )}
+      head={<ToolsHead />}
       items={TOOLS.map(([title, body, k]) => ({ key: k, title, body, icon: <Ico k={k} />, art: <Art k={k} /> }))}
     />
   );
@@ -438,29 +427,9 @@ function Who() {
   );
 }
 
-/* 4. The close: the page ends where it starts, in a field to ask in, which takes you back up to the live chat. */
+/* 4. The close: the kit's Band, in Hanzo's words, with the one ask. */
 function Close() {
-  const go = () => {
-    const w = document.getElementById('cht-try');
-    if (!w) return;
-    const y = w.getBoundingClientRect().top + scrollY - Math.max(80, (innerHeight - w.offsetHeight) / 2);
-    if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.2 }); else scrollTo({ top: y, behavior: 'smooth' });
-    setTimeout(() => w.querySelector('input[aria-label="Ask anything"]')?.focus({ preventScroll: true }), 1200);
-  };
-  return (
-    <section className="cht-close" data-room="dark" aria-label="Ask anything">
-      <div className="v2a-wrap">
-        <motion.button type="button" className="cht-field" onClick={go} whileTap={{ scale: 0.99 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-          <span className="cht-field-ph">Ask anything</span>
-          <span className="cht-field-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="22" height="22"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-        </motion.button>
-        <div className="cht-close-acts">
-          <Open className="on-dark" slot="close" />
-          <Docs dark />
-        </div>
-      </div>
-    </section>
-  );
+  return <Band title="Ask anything" action="Open Hanzo Chat" to={OPEN} note={<Docs />} />;
 }
 
 export default function ChatPage() {
