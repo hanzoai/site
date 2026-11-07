@@ -1,45 +1,52 @@
 # /bot — James-eye review
 
 Verdict: 6/10
-First complaint: "The first screen is centred text and three buttons. Where's the product? And it's orange again."
+First complaint: "The first screen is centred text and three buttons. Where's the product? And there's a pill bar floating over the text."
 
-Walked 7 Nov, page file at `a1dcdca` (`components/pages/Bot.jsx`, `Bot.css`, shared `v2/AppStage`, `AppScenes`), on the preview of main plus the Apps 1 branch. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus a plain scroll pass to the footer at both widths, reduced motion and JS off. Stills: `review/bot/desktop-walk.jpg`, `review/bot/desktop-walk-2.jpg`, `review/bot/phone-walk.jpg`.
+Walked 7 Nov, page file at `4b53974` (`components/pages/Bot.jsx`, `Bot.css`, shared `v2/AppStage`, `AppScenes`), on the 14:43 preview of main plus the Apps branches, judged against `docs/MASTER.md` and `docs/JAMES.md`.
+- **This build:** a 9-second first-screen film at 1470×801 and 375×812 with no input, hover and press on the primary, a full scroll pass at both widths, reduced motion, JS off and phone tap targets.
+- **The earlier `a1dcdca` walk:** the full moving walk with hovers and taps; the layout is the same.
+
+Stills: `review/bot/desktop-walk.jpg`, `review/bot/desktop-walk-2.jpg`, `review/bot/phone-walk.jpg`, `review/bot/desktop-first-9s.jpg`.
 
 ## What works
 - The org chart under the hero is a real idea. A person @mentions a bot in a thread, a packet runs down the crew to that bot, and the reply fills in. It runs by itself through ten channels.
-- Five pinned chapters hold the text while a live product pane changes (sandbox, bot roster, thread with "Yes, add it", routine toggles, memory file). That is the Apple pattern.
-- "Message your bots where you already are" is a lovely type moment: one huge sentence of channel names, lit and dimmed.
-- The plan slider ("How many resident bots do you need?") is a good Beyond. The close "Meet your first bot" is a proper Band: one solid "Try Hanzo" and a text link.
-- Press scales .98, hovers answer, CLS 0 at both widths, no font swap. Parity: text 306/306, links 21/21. Reduced motion leaves 0 running animations.
+- Five pinned chapters hold the text while a live pane changes (sandbox, bot roster, thread with "Yes, add it", routine toggles, memory file).
+- "Message your bots where you already are" is one huge sentence of channel names, lit and dimmed: a lovely type moment. The plan slider is a good Beyond.
+- "Meet your first bot" is a proper close: one solid "Try Hanzo" and a text link. The header's ask is the same "Try Hanzo".
+- Monochrome now (taste.py passes). Press scales .98, hovers answer, CLS 0. Reduced motion leaves 0 running. Parity: text 306/306, links 21/21.
+
+## Card check
+- `docs/coverage/bot.md` does not exist, so the verdict is capped at 7. All 18 parts are missing a `Done here:` line.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** No at 1470×801. The first screen is a centred kicker, a centred headline, a paragraph and three asks. After the cut-in, nothing on it moves. The org chart that is the hero object starts below the fold, with only its caption strip peeking.
-2. **One in, one out, or a document?** Mixed. The chapters and the channel sentence are scenes. But the page is 16,300px tall, about 20 screens: workflows list, chapters, 200 tools, channels, steps, install, paste, pricing, extras, FAQ, close, then a "Get Bot" related list and "Deploy to Cloud" after the close. That is the overload he complained about.
-3. **A real visual object in every section?** Mostly. But several panes are grey placeholder bars where real content should be: the second thread card in the hero stage, the memory file, the sandbox panel. They read as loading skeletons, not product.
-4. **One ask, sticky after the hero?** "Try Hanzo" is the page's ask and the header carries it at every scroll, so it is always on screen. But the hero offers three asks of near-equal weight ("Try Hanzo", "Install on your Mac", "Contact sales"), and a solid "Deploy to Cloud" appears after the closing Band.
-5. **Every hover and press answers, no jumps?** Yes on desktop. On phone, tapping a workflow opens its drawer and the page behind is locked until Close, which is correct. Text links are 19–21px tall, under the 44px target.
-6. **Overlaps, font swap, layout shift?** None seen, CLS 0. JS off: 158 of 219 text blocks stay invisible, so most of the page is blank without scripts.
-7. **Which reference, is its motion there?** Apple product page: yes in the chapters. chatgpt.com/business calm trust: no, it is too long and too busy for that.
-8. **Different from neighbours?** Partly. It shares the kicker-over-Display opening, the Stage, the pinned-chapter kit and the one dark room with /api, /cli, /desktop and /gen. The tangerine is close to /careers' and /affiliate's orange.
-9. **18 areas (PLAN-COMPONENTS)?** See below. No `docs/coverage/bot.md`.
+1. **Sells in 5 seconds, moves within 1 second?** No at 1470×801. The first screen is a centred label, a 126px centred headline, a paragraph and three asks. After the headline's cut-in, nothing on it moves. The org chart, the real object, starts below the fold.
+2. **One in, one out, or a document?** Mixed. The chapters and the channel sentence are scenes. But the page is about 20 screens: workflows, chapters, 200 tools, channels, steps, install, paste, pricing, extras, FAQ, close, then "Get Bot" and "Deploy to Cloud" after the close.
+3. **A real visual object in every section?** Mostly, but the hero thread's second card, the sandbox and the memory file are grey placeholder bars, not product.
+4. **One ask, in the sticky header?** The header carries "Try Hanzo", the page's ask. But the hero gives three asks of near-equal weight, a solid "Deploy to Cloud" sits after the closing Band, and a floating pill ("Hanzo Bot · search · Try Hanzo") rides over the workflow rows and the FAQ on desktop.
+5. **Every hover and press answers, no jumps?** Yes on desktop. Phone text links are 19–21px tall.
+6. **Overlaps, font swap, layout shift?** The floating pill overlaps content at 1470×801. No shift. JS off: 146 of 219 text blocks stay invisible.
+7. **Which reference, is its motion there?** Apple product page: yes in the chapters. chatgpt.com/business calm: no, too long and busy.
+8. **Different from neighbours?** Partly. The centred label, Display headline and stage opening repeats /desktop. Chapters, black room and "Paste and ship" repeat /api and /cli.
+9. **18 parts (MASTER §2)?** No card. See below.
 10. **Banned tells?** Yes:
-    - eyebrows over the h1 ("HANZO BOT · AI TEAMMATES") and over most headlines ("10 KILLER WORKFLOWS", "01 · WHAT A BOT IS", "PRICING", "FAQ"…);
-    - a tangerine UI accent on kickers, @mentions, bot faces, checks, toggles and `$` prompts;
-    - a green "1 working" status;
+    - labels directly above the h1 ("HANZO BOT · AI TEAMMATES") and above h2s ("10 KILLER WORKFLOWS", "PRICING", "FAQ"…);
+    - a floating pill bar over content;
     - a centred headline over three buttons, the stock SaaS opening.
 11. **Copy untouched?** Yes (parity clean).
 
-## Missing from the 18 areas
-- **2.3 First impression:** the hero object is not in the first screen at 1470×801. The page ends after its Band with more content ("Get Bot", "Deploy to Cloud").
-- **2.4 Conversion:** three hero asks. The extra solid after the close.
-- **2.6 Content presentation:** too long for one scroll. The 10 workflows and the FAQ could be one drawer each, as they already open.
-- **2.7 Visual system:** tangerine and green UI hues. Placeholder bars inside product panes.
-- **2.11 / 2.12:** 19–21px text-link targets; 158 text blocks hidden with JS off.
-- **2.18:** no `Persona:` / `Goal:` / `CTA:` lines, no `data-cta`.
+## Missing from the 18 parts
+- **Card:** no coverage card, and no `Persona:` / `Goal:` / `CTA:` / metric lines.
+- **Part 3 First impression:** the hero object is not in the first screen. Content continues after the Band.
+- **Part 4 Conversion:** three hero asks; an extra solid after the close; the floating pill.
+- **Part 6 Content:** too long for one scroll.
+- **Part 7 Visual system:** labels over headings; placeholder bars in product panes.
+- **Parts 11 / 12:** 19–21px phone targets; 146 text blocks hidden with JS off.
 
 ## Fixes (in order)
-1. **Put the org chart in the first screen.** Headline left at about 96px, the live crew and thread right (or under a shorter headline), so the packet runs above the fold at 1470×801 within the first second.
-2. **One ask in the hero.** Keep "Try Hanzo" solid. Make "Install on your Mac" and "Contact sales" text links. Move "Deploy to Cloud" and the "Get Bot" list above the closing Band, or into a drawer, so the page ends on "Meet your first bot".
-3. **Take the orange out.** @mentions, faces, checks, toggles and prompts go ink or white alpha steps; "1 working" gets a shape, not green. Delete every kicker over a headline.
-4. **Fill the panes with real content.** Replace the grey bars in the hero's second card, the sandbox and MEMORY.md with Hanzo's own example lines (the page already has them in the thread and skill text).
-5. **Shorten the walk.** Fold "Three steps" into the install room, and put "Need more than one resident bot?" under the plan slider. Let the FAQ open in one sheet. Aim for about 12 screens, not 20.
+1. **Put the org chart in the first screen.** Headline at rest size (about 52–64px, MASTER §3.1) on the left of an 8/5 split, the live crew and thread on the right, so the packet runs above the fold within the first second.
+2. **One ask.** Keep "Try Hanzo" solid. Make "Install on your Mac" and "Contact sales" text links. Turn off the floating desktop pill (the header already carries the ask). Move "Get Bot" and "Deploy to Cloud" above the FAQ so the page ends on "Meet your first bot".
+3. **Delete every label sitting directly above a heading.**
+4. **Fill the panes with real content.** Replace the grey bars with Hanzo's own example lines from the thread and skill text.
+5. **Shorten.** Fold "Three steps" into the install room, and put "Need more than one resident bot?" under the slider. Aim for about 12 screens.
+6. **Write `docs/coverage/bot.md`**: 18 parts, each with real evidence.
