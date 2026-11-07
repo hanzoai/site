@@ -1,21 +1,28 @@
 'use client';
-/* One Web3 product (/blockchain/<product>, 16 pages, one template). The first screen is this product's own: its name
-   and claim beside a black key card where its supported chains stream past as linked blocks, over a contour field
-   seeded from its name and its counts.
-   Signature: the block stream. The chains this product names run as a chain of blocks across the key card, by
-   themselves; hover to stop the stream and read it.
+/* One Web3 product (/blockchain/<product>, 16 pages, one template), read as a launch. The first screen is the
+   product's name at display size and its claim; under it the hero object, the black key card, starts close and settles
+   as you scroll, its supported chains streaming across its top as linked blocks, its figures huge.
+   Signature: the exploded deck. The product's capabilities arrive as one stacked deck of sheets in the middle of a
+   pinned scene; as you scroll, the sheets are dealt off the top one by one and separate into their places, until the
+   deck has become the full grid. A counter keeps how many are out. Phones read the grid as it is.
    Beyond: "Your chain". Pick any chain Hanzo lists across its Web3 products and see at once whether this product
-   names it, and which of the other products do (each one a link), from every product page's own Supported Chains. */
-import { useMemo, useState } from 'react';
-import { motion } from 'motion/react';
-import { EASE, Copy } from '../../ui';
+   names it, and which of the other products do (each one a link), from every product page's own Supported Chains.
+   V2: 8/10 Stage key card settling under a display headline, capabilities as a scroll-dealt exploded deck, code as the developer hero, editorial Built For rows, sibling products as cards that open, one accent per member. */
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { Copy } from '../../ui';
 import { A } from '../../kit';
-import Sigil from '../../Sigil';
+import FamLines from '../../v2/FamLines';
+import FamStage from '../../v2/FamStage';
+import FamNext from '../../v2/FamNext';
+import { accentAt } from '../../v2/famAccent';
+import '../../v2/fam.css';
 import './blockchain.css';
+import './BlockPage.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const pad = (n) => String(n).padStart(2, '0');
 const GO = { 'Try Hanzo': '/signup', 'View Documentation': 'https://docs.hanzo.ai', 'View Pricing': '/pricing?tab=blockchain' };
+const out3 = (v) => 1 - Math.pow(1 - v, 3);
 
 export function Stream({ chains, label }) {
   if (!chains.length) return null;
@@ -40,20 +47,111 @@ export function Code({ file, code, langs }) {
   );
 }
 
-function Items({ b }) {
+/* ---------- the signature: a deck of sheets, dealt into the grid by scroll ---------- */
+function Sheet({ it, i, n, off, p }) {
+  const a = 0.04 + (i / n) * 0.5;
+  const e = useTransform(p, [a, a + 0.36], [0, 1], { clamp: true });
+  const k = (v) => 1 - out3(v);
+  const x = useTransform(e, (v) => (off ? k(v) * off.dx : 0));
+  const y = useTransform(e, (v) => (off ? k(v) * (off.dy + i * 9) : 0));
+  const rotate = useTransform(e, (v) => (off ? k(v) * ((i % 2 ? 1 : -1) * (1.5 + (i % 3) * 1.2)) : 0));
+  const scale = useTransform(e, (v) => (off ? 1 - k(v) * Math.min(0.12, i * 0.014) : 1));
   return (
-    <section className={'x-sec xbc-items' + (b.cols ? ' wide' : '') + (b.items.length <= 4 && !b.cols ? ' few' : '')}>
-      <div className="x-wrap">
-        <header className="xbc-sh">{b.title && <h2>{b.title}</h2>}{b.lede && <p>{b.lede}</p>}</header>
-        <ul className="xbc-grid">
+    <motion.li className="xb2-sheet" style={off ? { x, y, rotate, scale, zIndex: n - i } : undefined}>
+      <span className="xb2-sheet-n x-mono">{pad(i + 1)}</span>
+      <h3>{it.title}</h3>
+      {it.text && <p>{it.text}</p>}
+      {it.link && <A to={it.link.href} className="x-arrow">{it.link.label}</A>}
+    </motion.li>
+  );
+}
+
+function Explode({ b }) {
+  const sec = useRef(null);
+  const grid = useRef(null);
+  const calm = useReducedMotion();
+  const [off, setOff] = useState(null);
+  const [dealt, setDealt] = useState(0);
+  const n = b.items.length;
+  const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    let k = 0;
+    for (let i = 0; i < n; i++) if (p >= 0.04 + (i / n) * 0.5 + 0.2) k = i + 1;
+    if (k !== dealt) setDealt(k);
+  });
+  useEffect(() => {
+    const measure = () => {
+      const g = grid.current;
+      if (!g || calm || !matchMedia('(min-width: 901px)').matches) { setOff(null); return; }
+      const cx = g.clientWidth / 2, cy = g.clientHeight / 2;
+      setOff([...g.children].map((li) => ({ dx: cx - (li.offsetLeft + li.offsetWidth / 2), dy: cy - (li.offsetTop + li.offsetHeight / 2) })));
+    };
+    measure();
+    addEventListener('resize', measure);
+    return () => removeEventListener('resize', measure);
+  }, [calm, n]);
+  return (
+    <section ref={sec} className={'xb2-ex' + (off ? ' pin' : '')} aria-labelledby={'xb2-ex-' + b.title.length}>
+      <div className="xb2-ex-pin">
+        <div className="v2f-wrap v2f-grid xb2-ex-g">
+          <header className="xb2-ex-h">
+            <FamLines as="h2" id={'xb2-ex-' + b.title.length} play="view" className="v2f-head" text={b.title} />
+            {b.lede && <p className="v2f-lede">{b.lede}</p>}
+            <p className="xb2-ex-c" aria-hidden="true"><b className="v2f-num">{pad(off ? dealt : n)}</b><span className="x-mono">/ {pad(n)}</span></p>
+          </header>
+          <ul ref={grid} className="xb2-deck">
+            {b.items.map((it, i) => <Sheet key={it.title} it={it} i={i} n={n} off={off && off[i]} p={scrollYProgress} />)}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* a short list (Built For): editorial rows */
+function Rows({ b }) {
+  return (
+    <section className="v2f-sec xb2-rows">
+      <div className="v2f-wrap">
+        <header className="xb2-sh">
+          {b.title && <FamLines as="h2" play="view" className="v2f-head" text={b.title} />}
+          {b.lede && <p className="v2f-lede">{b.lede}</p>}
+        </header>
+        <ol className="xb2-rl">
           {b.items.map((it, i) => (
-            <motion.li key={it.title} initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.65, ease: EASE, delay: (i % 3) * 0.06 }}>
-              <span className="xbc-n x-mono">{pad(i + 1)}</span>
+            <li key={it.title} className="v2f-grid">
+              <span className="xb2-rl-n x-mono">{pad(i + 1)}</span>
               <h3>{it.title}</h3>
+              <div className="xb2-rl-t">
+                {it.text && <p>{it.text}</p>}
+                {it.link && <A to={it.link.href} className="x-arrow">{it.link.label}</A>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* products with their bullets (the exchange): big tiles */
+function Tiles({ b }) {
+  return (
+    <section className="v2f-sec xb2-tiles">
+      <div className="v2f-wrap">
+        <header className="xb2-sh">
+          {b.title && <FamLines as="h2" play="view" className="v2f-head" text={b.title} />}
+          {b.lede && <p className="v2f-lede">{b.lede}</p>}
+        </header>
+        <ul className="xb2-tl">
+          {b.items.map((it, i) => (
+            <li key={it.title} className="v2f-card">
+              <span className="xb2-sheet-n x-mono">{pad(i + 1)}</span>
+              <h3 className="v2f-title">{it.title}</h3>
               {it.text && <p>{it.text}</p>}
               {it.bullets.length > 0 && <ul className="xbc-bul">{it.bullets.map((x) => <li key={x}>{x}</li>)}</ul>}
               {it.link && <A to={it.link.href} className="x-arrow">{it.link.label}</A>}
-            </motion.li>
+            </li>
           ))}
         </ul>
       </div>
@@ -67,12 +165,11 @@ function YourChain({ here, all, self }) {
   const yes = here.includes(pick);
   const others = all.filter((p) => p.slug !== self && p.chains.includes(pick));
   return (
-    <div className="xbc-your">
+    <div className="xbc-your xb2-your">
       <p className="xbc-your-k x-mono">Your chain</p>
-      <div className="xbc-your-pick" role="group" aria-label="Your chain" data-swipe-own>
+      <div className="xbc-your-pick" role="group" aria-label="Your chain" data-swipe-own data-lenis-prevent>
         {chains.map((c) => (
           <button key={c} type="button" aria-pressed={c === pick} onClick={() => setPick(c)} className={here.includes(c) ? 'in' : ''}>
-            {c === pick && <motion.span layoutId="xbc-your" className="xbc-your-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
             <span>{c}</span>
           </button>
         ))}
@@ -90,89 +187,122 @@ export default function BlockPage({ doc, all }) {
   const h = doc.hero;
   const key = doc.key;
   const chains = doc.chains;
-  const nums = [chains.length, h.features.length, ...doc.blocks.filter((b) => b.items).map((b) => b.items.length)];
+  // the hero's four features repeat the first capabilities word for word on most pages: show them once
+  const capText = new Set(doc.blocks.filter((b) => b.items).flatMap((b) => b.items.map((it) => it.title + '|' + it.text)));
+  const feats = h.features.filter((f) => !capText.has(f.title + '|' + f.text));
+  const deckAt = doc.blocks.findIndex((b) => b.kind === 'items' && b.items.length >= 6 && !b.items.some((it) => it.bullets.length));
+  // the products after this one, in the family's order, as cards that open into their page
+  const at = all.findIndex((p) => p.slug === doc.slug);
+  const next = (at < 0 ? all : [...all.slice(at + 1), ...all.slice(0, at)]).slice(0, 6).map((p) => ({ href: p.href, title: p.name, meta: p.chains.slice(0, 3).join(' · '), seed: p.href, data: [p.chains.length], acc: accentAt(p.i) }));
   return (
-    <main className="xbc">
-      <section className="xbc-hero" aria-labelledby="xbc-h1">
-        <Sigil seed={doc.route} data={nums} className="xbc-sigil" />
-        <div className={'x-wrap xbc-hero-g' + (key ? '' : ' solo')}>
-          <div>
-            {h.chip && <motion.p className="xbc-chip" {...up(0)}><i aria-hidden="true" />{h.chip}</motion.p>}
-            <h1 id="xbc-h1" className="xbc-h1" data-morph-target>
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.06 }}>{h.title}</motion.span></span>
-            </h1>
-            {h.claim && <motion.p className="xbc-claim" {...up(0.22)}>{h.claim}</motion.p>}
-            {h.lede && <motion.p className="xbc-lede" {...up(0.3)}>{h.lede}</motion.p>}
-            {h.actions.length > 0 && (
-              <motion.div className="xbc-acts" {...up(0.38)}>{h.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}</motion.div>
-            )}
-            {h.features.length > 0 && (
-              <motion.ul className="xbc-feat" {...up(0.45)}>
-                {h.features.map((f) => <li key={f.title}><b>{f.title}</b><span>{f.text}</span></li>)}
-              </motion.ul>
-            )}
-            {h.back && <motion.p {...up(0.55)}><A to={h.back.href} className="x-arrow xbc-back">{h.back.text}</A></motion.p>}
+    <main className="xbc xb2 v2f" style={{ '--acc': accentAt(doc.i) }}>
+      <section className="xb2-hero" aria-labelledby="xbc-h1">
+        <div className="v2f-wrap v2f-grid xb2-hero-g">
+          <div className="xb2-hero-t">
+            {h.back && <A to={h.back.href} className="x-arrow xb2-back"><span>{h.back.text}</span></A>}
+            {h.chip && <p className="v2f-kick acc xb2-chip"><i aria-hidden="true" />{h.chip}</p>}
+            <FamLines as="h1" id="xbc-h1" text={h.title} className="v2f-display xb2-h1" data-morph-target />
           </div>
-          {key && (
-            <motion.aside className="xbc-key" initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
-              <Stream chains={chains} label={`Supported chains: ${chains.join(', ')}`} />
-              <div className="xbc-key-in">
-                <h2>{key.title}</h2>
-                {key.sub && <p className="xbc-key-sub">{key.sub}</p>}
-                {key.stats.length > 0 && <dl className="xbc-stats">{key.stats.map(([v, l]) => <div key={l}><dd className="x-mono">{v}</dd><dt>{l}</dt></div>)}</dl>}
-                <div className="xbc-acts">{key.actions.map((t, i) => <A key={t} to={GO[t] || '/signup'} className={'x-btn' + (i ? '' : ' solid')} {...(i || h.actions.length ? {} : { 'data-thumb': '' })}>{t}</A>)}</div>
-                {key.note && <p className="xbc-note">{key.note}</p>}
-                {key.trusted && <div className="xbc-trust"><p>{key.trusted.label}</p><ul>{key.trusted.tags.map((t) => <li key={t}>{t}</li>)}</ul></div>}
-              </div>
-            </motion.aside>
-          )}
+          <div className="xb2-hero-r">
+            {h.claim && <p className="xb2-claim">{h.claim}</p>}
+            {h.lede && <p className="v2f-lede xb2-lede">{h.lede}</p>}
+            {h.actions.length > 0 && (
+              <div className="xb2-acts">{h.actions.map((a, i) => <A key={a.label} to={a.href} className={'v2f-btn' + (i ? '' : ' acc')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}</div>
+            )}
+          </div>
         </div>
+        {key && (
+          <div className="v2f-wrap">
+            <FamStage className="xb2-stage" from={1.08}>
+              <aside className="xb2-key">
+                <Stream chains={chains} label={`Supported chains: ${chains.join(', ')}`} />
+                <div className="xb2-key-g">
+                  <div className="xb2-key-l">
+                    <h2>{key.title}</h2>
+                    {key.sub && <p className="xb2-key-sub">{key.sub}</p>}
+                    <div className="xb2-acts">{key.actions.map((t, i) => <A key={t} to={GO[t] || '/signup'} className={'v2f-btn' + (i ? ' ghost' : ' light')} {...(i || h.actions.length ? {} : { 'data-thumb': '' })}>{t}</A>)}</div>
+                    {key.note && <p className="xb2-note">{key.note}</p>}
+                  </div>
+                  {key.stats.length > 0 && <dl className="xb2-stats">{key.stats.map(([v, l]) => <div key={l}><dd className="v2f-num">{v}</dd><dt>{l}</dt></div>)}</dl>}
+                </div>
+                {key.trusted && <div className="xb2-trust"><p>{key.trusted.label}</p><ul>{key.trusted.tags.map((t) => <li key={t}>{t}</li>)}</ul></div>}
+              </aside>
+            </FamStage>
+          </div>
+        )}
+        {feats.length > 0 && (
+          <div className="v2f-wrap">
+            <ul className="xb2-feat">{feats.map((f) => <li key={f.title}><b>{f.title}</b><span>{f.text}</span></li>)}</ul>
+          </div>
+        )}
       </section>
 
       {doc.blocks.map((b, i) => {
-        if (b.kind === 'items') return <Items key={i} b={b} />;
+        if (b.kind === 'items') {
+          if (i === deckAt) return <Explode key={i} b={b} />;
+          if (b.items.some((it) => it.bullets.length)) return <Tiles key={i} b={b} />;
+          return <Rows key={i} b={b} />;
+        }
         if (b.kind === 'code') return (
-          <section key={i} className="x-sec xbc-int">
-            <div className="x-wrap xbc-int-g">
-              <header className="xbc-sh">{b.title && <h2>{b.title}</h2>}{b.lede && <p>{b.lede}</p>}</header>
-              <Code file={b.file} code={b.code} langs={b.langs} />
+          <section key={i} className="v2f-sec xb2-int">
+            <div className="v2f-wrap v2f-grid">
+              <header className="xb2-int-h">
+                {b.title && <FamLines as="h2" play="view" className="v2f-head" text={b.title} />}
+                {b.lede && <p className="v2f-lede">{b.lede}</p>}
+                {b.items.length > 0 && <ul className="xb2-int-i">{b.items.map((it) => <li key={it.title}><b>{it.title}</b>{it.text && <span>{it.text}</span>}</li>)}</ul>}
+              </header>
+              <div className="xb2-code"><Code file={b.file} code={b.code} langs={b.langs} /></div>
             </div>
           </section>
         );
         if (b.kind === 'chains') return (
-          <section key={i} className="x-sec xbc-chains">
-            <div className="x-wrap xbc-chains-g">
-              <div>
-                <header className="xbc-sh"><h2>{b.title}</h2></header>
-                <ul className="xbc-chiplist">{b.chains.map((c) => <li key={c}>{c}</li>)}</ul>
+          <section key={i} className="v2f-sec xb2-chains">
+            <div className="v2f-wrap v2f-grid">
+              <div className="xb2-chains-l">
+                <FamLines as="h2" play="view" className="v2f-head" text={b.title} />
+                <ul className="xb2-chiplist">{b.chains.map((c) => <li key={c}>{c}</li>)}</ul>
               </div>
-              {all.length > 1 && <YourChain here={b.chains} all={all} self={doc.slug} />}
+              {all.length > 1 && <div className="xb2-chains-r"><YourChain here={b.chains} all={all} self={doc.slug} /></div>}
             </div>
           </section>
         );
         if (b.kind === 'band') return (
-          <section key={i} className="xbc-band" data-room="dark">
-            <div className="x-wrap">
-              <h2>{b.title}</h2>
-              {b.lede && <p>{b.lede}</p>}
-              <div className="xbc-acts">{b.links.map((l, k) => <A key={l.href + k} to={l.href} className={'x-btn' + (k ? '' : ' solid')}>{l.label}</A>)}{b.buttons.map((t) => <A key={t} to={GO[t] || '/signup'} className="x-btn">{t}</A>)}</div>
-            </div>
-          </section>
+          <div key={i}>
+            {next.length > 0 && (
+              <section className="v2f-sec tight xb2-next" aria-label={h.back ? h.back.text : 'Web3'}>
+                <div className="v2f-wrap"><FamNext items={next} label={h.back ? h.back.text : 'Web3'} /></div>
+              </section>
+            )}
+            <section className="xb2-band" data-room="dark">
+              <div className="v2f-wrap v2f-grid xb2-band-g">
+                {b.title ? <h2 className="v2f-display small xb2-band-h">{b.title}</h2> : <span className="xb2-band-h" />}
+                <div className="xb2-band-r">
+                  {b.lede && <p className="v2f-lede">{b.lede}</p>}
+                  <div className="xb2-acts">{b.links.map((l, k) => <A key={l.href + k} to={l.href} className={'v2f-btn' + (k ? ' ghost' : ' light')}>{l.label}</A>)}{b.buttons.map((t) => <A key={t} to={GO[t] || '/signup'} className="v2f-btn ghost">{t}</A>)}</div>
+                </div>
+              </div>
+            </section>
+          </div>
         );
         if (b.kind === 'get') return (
-          <section key={i} className="xbc-get">
-            <div className="x-wrap xbc-get-g">
-              <div><h2>{b.title}</h2>{b.text && <p>{b.text}</p>}</div>
-              <div className="xbc-get-r">
+          <section key={i} className="xb2-get">
+            <div className="v2f-wrap xb2-get-g">
+              <div><h2 className="v2f-title">{b.title}</h2>{b.text && <p>{b.text}</p>}</div>
+              <div className="xb2-get-r">
                 {b.chips.map((c) => <span key={c} className="xbc-tag x-mono">{c}</span>)}
                 {b.github && <A to={b.github.href} className="xbc-tag x-mono">{b.github.text}</A>}
-                {b.deploy && <A to={b.deploy.href} className="x-btn solid">{b.deploy.text}</A>}
+                {b.deploy && <A to={b.deploy.href} className="v2f-btn acc">{b.deploy.text}</A>}
               </div>
             </div>
           </section>
         );
         return null;
       })}
+      {!doc.blocks.some((b) => b.kind === 'band') && next.length > 0 && (
+        <section className="v2f-sec tight xb2-next" aria-label={h.back ? h.back.text : 'Web3'}>
+          <div className="v2f-wrap"><FamNext items={next} label={h.back ? h.back.text : 'Web3'} /></div>
+        </section>
+      )}
     </main>
   );
 }
