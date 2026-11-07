@@ -68,7 +68,7 @@
    comes in as the last goes out; on phones the same chapters simply stack */
 .v2f-ch { position: relative; height: calc(var(--n) * 100svh); }
 .v2f-ch-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
-.v2f-ch-g { width: 100%; align-items: center; }
+.v2f-ch-g { align-items: center; }
 .v2f-ch-i { display: contents; }
 .v2f-ch-t { grid-column: 1 / span 5; grid-row: 1; align-self: center; transition: opacity .55s var(--ease), transform .7s var(--ease); }
 .v2f-ch-t:not([data-on]) { opacity: 0; transform: translateY(var(--dy, 48px)); pointer-events: none; }
@@ -113,8 +113,9 @@
   /* chapters become a plain vertical read on phones: every chapter, then its picture */
   .v2f-ch { height: auto; }
   .v2f-ch-pin { position: static; height: auto; display: block; overflow: visible; }
-  .v2f-ch-g { display: flex; flex-direction: column; gap: 96px; }
-  .v2f-ch-i { display: flex; flex-direction: column; gap: 32px; }
+  .v2f-ch-g { display: flex; flex-direction: column; align-items: stretch; gap: 96px; }
+  .v2f-ch-i { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
+  .v2f-ch-t, .v2f-ch-v { min-width: 0; max-width: 100%; }
   .v2f-ch-t, .v2f-ch-v { opacity: 1 !important; transform: none !important; clip-path: none !important; pointer-events: auto !important; }
   .v2f-ch-v { height: auto; }
   .v2f-ch-nav { display: none; }

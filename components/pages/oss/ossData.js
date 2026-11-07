@@ -43,7 +43,7 @@ function sections(root) {
 const figures = (sec) => findAll(sec, (n) => n.t === 'div' && n.c.filter(isN).length === 2 && n.c[0].t === 'span' && isN(n.c[1]) && n.c[1].t === 'p')
   .map((d) => ({ value: clean(textOf(d.c[0])), n: num(textOf(d.c[0])), label: clean(textOf(d.c[1])) }));
 
-export function orgDoc(org) {
+export function orgDoc(org, withNear = true) {
   const rel = 'oss/' + org;
   const html = fs.readFileSync(path.join(ROOT, 'content', 'pages', rel + '.html'), 'utf8');
   const root = load(rel);
@@ -99,5 +99,12 @@ export function orgDoc(org) {
   const fig = (k) => doc.counts.flatMap((c) => c.figures).find((f) => f.label.startsWith(k));
   doc.key = ['public repositories', 'stars', 'forks', 'commits in the past year'].map(fig).filter(Boolean);
   doc.spark = (doc.counts.find((c) => c.spark) || {}).spark || null;
+  // its place in the family (one accent per page, neighbours never share one) and the next organizations, as cards
+  const all = ORGS();
+  doc.i = all.indexOf(org);
+  doc.near = withNear ? [1, 2, 3, 4].map((k) => all[(doc.i + k) % all.length]).map((o) => {
+    const d = orgDoc(o, false);
+    return { org: o, i: d.i, name: d.name, repos: d.key[0] || null, commits: d.key.find((f) => /^commits/.test(f.label)) || null, data: d.key.map((f) => f.n) };
+  }) : [];
   return doc;
 }

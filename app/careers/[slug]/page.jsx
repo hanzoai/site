@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import CareerRole from '../../../components/pages/CareerRole';
 import JsonLd from '../../../components/JsonLd';
-import { SLUGS, role } from '../../../components/pages/careersData';
+import { SLUGS, role, peers } from '../../../components/pages/careersData';
 import { metaOf } from '../../../components/pages/htmltree';
 
 export const dynamicParams = false;
@@ -16,5 +16,5 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { slug } = await params;
   if (!SLUGS.includes(slug)) notFound();
-  return <><JsonLd route={'/careers/' + slug} /><CareerRole role={role(slug)} /></>;
+  return <><JsonLd route={'/careers/' + slug} /><CareerRole role={role(slug)} peers={peers().filter((r) => r.slug !== slug)} /></>;
 }

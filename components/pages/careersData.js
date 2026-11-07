@@ -50,13 +50,16 @@ export function role(slug) {
   }
   const apply = find(root, (n) => n.a && n.a.id === 'apply');
   return {
-    slug,
+    slug, at: SLUGS.indexOf(slug),
     back: T(back), share: T(share), chips,
     title: T(find(root, tag('h1'))), lede: T(find(root, slot('lede'))),
     apply: T(acts[0]), email: { text: T(acts[1]), href: acts[1].a.href },
     blocks, form: { title: T(find(apply, tag('h2'))), intro: T(find(apply, (n) => n.t === 'span' && slot('text')(n))), fields, file, check, submit, note },
   };
 }
+
+/* every role in brief (title, chips), for the siblings at the foot of a role */
+export const peers = () => SLUGS.map((s) => { const r = role(s); return { slug: s, at: r.at, title: r.title, chips: r.chips }; });
 
 export function board() {
   const root = load('careers');

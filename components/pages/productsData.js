@@ -16,7 +16,13 @@ export function product(slug) {
   const links = (s) => findAll(s, tag('a')).map((a) => ({ href: a.a.href, text: T(a) }));
   for (const s of secs.slice(2)) {
     const h = T(find(s, tag('h2')));
-    if (h === 'API') { out.api = { title: h, lede: T(find(s, (n) => n.t === 'p' && slot('text')(n))), table: find(s, tag('table')) }; }
+    if (h === 'API') {
+      const table = find(s, tag('table'));
+      // the operations as plain rows (method, path, what it does), read from Hanzo's own table
+      const heads = findAll(table, tag('th')).map(T);
+      const ops = findAll(table, tag('tr')).filter((r) => find(r, tag('td'))).map((r) => findAll(r, tag('td')).map(T));
+      out.api = { title: h, lede: T(find(s, (n) => n.t === 'p' && slot('text')(n))), table, heads, ops };
+    }
     else if (h === 'Try it') {
       const toks = [];
       const w = (n, kind) => { if (typeof n === 'string') { toks.push([kind || 'ink', n]); return; } w2(n); };
