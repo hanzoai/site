@@ -108,7 +108,7 @@ function Collapse() {
       const p = calm ? 1 : pin ? Math.min(1, scrollYProgress.get() * 1.25) : Math.min(1, ((t % 8) / 4.5));
       const cr = card.current.getBoundingClientRect(), r = c.getBoundingClientRect();
       const cx = cr.left - r.left, cy = cr.top - r.top;
-      g.fillStyle = '#d1d1d6';
+      g.fillStyle = '#d4d4d4';
       for (let n = 0; n < P.length; n++) {
         const q = P[n];
         // once everything has landed, one in twenty keeps falling into the issue: the room stays alive
@@ -195,7 +195,7 @@ function Pic({ i }) {
     </div>
   );
   if (i === 3) return (
-    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a} style={{ '--k': k }}><i style={{ background: ['#0a0a0a', '#3a3a3c', '#6e6e73', '#a1a1a6'][k] }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
+    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a} style={{ '--k': k }}><i style={{ background: ['#0a0a0a', '#404040', '#737373', '#a3a3a3'][k] }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
   );
   if (i === 4) return <Route />;
   return (

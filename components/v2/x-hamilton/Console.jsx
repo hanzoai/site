@@ -33,7 +33,7 @@ export default function Console({ name, side, api }) {
           <ul role="listbox" aria-label="Projects">
             {ROWS.map(([n, st], i) => (
               <li key={n} role="option" aria-selected={at === i} tabIndex={0} onClick={() => setAt(i)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setAt(i))}>
-                {at === i && <motion.span layoutId="l2-con-row" className="l2-con-row" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                {at === i && <motion.span layoutId="l2-con-row" className="l2-con-row" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                 <i className={'l2-con-dot ' + (st === 'Building' ? 'b' : 'r')} aria-hidden="true" />
                 <span className="l2-con-name">{n}</span>
                 <span className="l2-con-st">{st}</span>
