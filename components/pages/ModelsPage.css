@@ -442,3 +442,23 @@
 
 /* the page's pause stops its CSS loops too */
 [data-mpaused] .xmo-live i, [data-mpaused] .xmo-caret { animation-play-state: paused; }
+
+/* GA item 15: a price on each model that has one, and "Use it now" on each catalogue model. The button is the card's
+   sibling (never inside its link), pinned to the card's foot; the pills leave it room. */
+.xmo-pill.price { color: #fff; border-color: rgba(255, 255, 255, .45); }
+.xmo-cards > li { position: relative; }
+.xmo-use { position: absolute; right: 21px; bottom: 21px; z-index: 2; background: #fff; border-color: #fff; transition: background .2s, transform .2s cubic-bezier(.2, .8, .2, 1); }
+.xmo-use::after { content: ''; position: absolute; inset: -5px -4px; }
+.xmo-use:active { transform: scale(.97); }
+@media (hover: hover) { .xmo-use:hover { background: #e8e8e8; border-color: #e8e8e8; } }
+.xmo-cards > li:has(.xmo-use) .sc-tags { padding-right: 116px; }
+@media (max-width: 899px) {
+  /* rows: the button sits at the row's right, centred; the row's text stops short of it */
+  .xmo-cards:not(.tiles) .xmo-use { right: 0; bottom: auto; top: 50%; margin-top: -17px; border-color: var(--line); }
+  .xmo-cards:not(.tiles) > li:has(.xmo-use) .sc-card { padding-right: 112px; }
+  /* creative tiles: a full-width button under the pills */
+  .xmo-cards.tiles .xmo-use { left: 16px; right: 16px; bottom: 16px; }
+  .xmo-cards.tiles > li:has(.xmo-use) .sc-card { padding-bottom: 62px; }
+  .xmo-cards.tiles > li:has(.xmo-use) .sc-tags { padding-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .xmo-use { transition: none; } }
