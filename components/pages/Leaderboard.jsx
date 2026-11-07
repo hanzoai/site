@@ -324,8 +324,8 @@ function Calc() {
     <section className="pf-sec xlb-calc-s" aria-labelledby="xlb-calc-h">
       <div className="pf-wrap">
         <div className="xlb-calc-head">
-          <p className="pf-kick">Your points, worked out</p>
-          <h2 id="xlb-calc-h" className="pf-head">Add up your own.</h2>
+          <p className="pf-kick">Beyond the board</p>
+          <h2 id="xlb-calc-h" className="pf-head">Your points, worked out</h2>
         </div>
         <div className="xlb-calc pf-obj">
           <div className="xlb-calc-in">
