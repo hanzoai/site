@@ -122,7 +122,8 @@ function Plate() {
               <motion.span className="xcu-case-txt" initial={false} animate={{ opacity: i === at ? 1 : 0 }}
                 transition={i === at ? { duration: 0.4, delay: 0.25, ease: EASE } : { duration: 0.15 }}>
                 <span className="xcu-case-top">
-                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span aria-hidden="true" data-why="the h3 names the case; a missing logo leaves the corner to the year" />} />
+                  {/* a missing logo leaves the corner to the year: the h3 below already names the case, never twice */}
+                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span />} />
                   <span className="vc-kick vc-num">{c.year}</span>
                 </span>
                 <span className="xcu-case-in">
