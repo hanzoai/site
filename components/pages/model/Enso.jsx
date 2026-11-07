@@ -1,17 +1,17 @@
 'use client';
-/* Enso: one endpoint that routes every request. v2 launch page (Launch + Chapters, accent vermilion).
-   V2: 8/10 film settles into an ensō ring beside the headline; the three tiers are pinned chapters over Enso's own film; the live router is the one dark room; GPQA as hero figures, a Pareto chart and a spec sheet
+/* Enso: one endpoint that routes every request. v2 launch page (Launch + Chapters, ink on white, Enso's own film).
    Signature: the switchboard. Requests stream in by themselves, pass through Enso, which weighs quality, speed and
    cost, and land in the tier made for them (Flash at volume, Pro while someone waits, Ultra where a wrong answer is
    expensive). Send any of Hanzo's own task words by hand.
    Beyond: the GPQA Diamond explorer. Pick any model (or let it tour) and see it beside Enso's three tiers in
-   Hanzo's own figures and words, with every result in a drawer you can re-sort by score or by cost. */
+   Hanzo's own figures and words, with every result in a table you can re-sort by score or by cost. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
-import { A, More } from '../../kit';
+import { A, More, Cta, Img, Stat, DataTable, Band } from '../../kit';
 import { useLoop, fit } from './live';
 import Launch, { Lines, ring, film } from '../../v2/Launch';
+import ModelCards from './ModelCards';
 import Chapters from '../../v2/x-cray/Chapters';
 import './Enso.css';
 
@@ -204,19 +204,11 @@ function Gpqa() {
     <section className="eo-gpqa lv-sec" ref={box} aria-labelledby="eo-gpqa-h">
       <div className="x-wrap">
         <div className="lv-sh">
-          <div>
-            <p className="lv-kick">GPQA Diamond</p>
-            <h2 id="eo-gpqa-h" className="lv-h">A New Pareto Frontier of Intelligence</h2>
-          </div>
+          <h2 id="eo-gpqa-h" className="lv-h">A New Pareto Frontier of Intelligence</h2>
           <p className="lv-p">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
         </div>
-        <div className="lv-figs eo-figs">
-          {[...ENSO].reverse().map((g, i) => (
-            <div key={g[0]} className={'lv-fig' + (i === 0 ? ' ac' : '')}>
-              <b>{g[1].toFixed(1)}<small>%</small></b>
-              <span>{g[0]}, {money(g[2])} per 1,000 questions</span>
-            </div>
-          ))}
+        <div className="lv-stats eo-figs">
+          {[...ENSO].reverse().map((g) => <Stat key={g[0]} value={`${g[1].toFixed(1)}%`} label={g[0]} note={`${money(g[2])} per 1,000 questions`} />)}
         </div>
         <div className="eo-plotwrap">
           <svg className="eo-plot" viewBox="0 0 1000 600" role="group" aria-label="GPQA Diamond % against $ per 1,000 questions">
@@ -277,35 +269,30 @@ function Gpqa() {
             </ul>
           </aside>
         </div>
-        <details className="lv-drawer eo-table">
-          <summary>Every result, sortable</summary>
+        <div className="eo-table">
           <div className="eo-sort" role="group" aria-label="Sort">
             <button type="button" className="eo-sortb" aria-pressed={sort === 'score'} onClick={() => setSort('score')}>By score</button>
             <button type="button" className="eo-sortb" aria-pressed={sort === 'cost'} onClick={() => setSort('cost')}>By cost</button>
           </div>
-          <table>
-            <thead><tr><th scope="col">Model</th><th scope="col">GPQA Diamond %</th><th scope="col">$ per 1,000 questions</th></tr></thead>
-            <tbody>
-              {rows.map((g) => {
-                const k = OTHERS.indexOf(g);
-                return (
-                  <motion.tr key={g[0]} layout transition={{ duration: 0.5, ease: EASE }} className={(g[0].startsWith('Enso') ? 'enso' : '') + (k === sel ? ' on' : '')} onClick={k >= 0 ? () => pick(k) : undefined}>
-                    <th scope="row">{g[0]} {g[4] && <A to={g[4]} className="eo-src" aria-label={g[0] + ' source'}>↗</A>}</th>
-                    <td className="mb-tnum">{`${g[1].toFixed(1)}%`}</td>
-                    <td className="mb-tnum">{money(g[2])}</td>
-                  </motion.tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </details>
+          <DataTable
+            caption="GPQA Diamond"
+            cols={[{ key: 'm', label: 'Model' }, { key: 's', label: 'GPQA Diamond %', num: true }, { key: 'c', label: '$ per 1,000 questions', num: true }]}
+            rows={rows.map((g) => {
+              const enso = g[0].startsWith('Enso');
+              return {
+                m: <>{enso ? <b>{g[0]}</b> : g[0]} {g[4] && <A to={g[4]} className="eo-src" aria-label={g[0] + ' source'}>↗</A>}</>,
+                s: enso ? <b>{`${g[1].toFixed(1)}%`}</b> : `${g[1].toFixed(1)}%`,
+                c: enso ? <b>{money(g[2])}</b> : money(g[2]),
+              };
+            })}
+          />
+        </div>
       </div>
     </section>
   );
 }
 
 const RING = ring((W, H, wide) => (wide ? { x: W * 0.71, y: H * 0.5, r: Math.min(H * 0.39, W * 0.24) } : { x: W / 2, y: H * 0.25, r: Math.min(W * 0.34, H * 0.17) }));
-const TIER_TITLE = ['At volume.', 'While someone waits.', 'Where a wrong answer is expensive.'];
 const TIER_TASKS = TIERS.map((_, i) => TASKS.filter(([, k]) => k === i).map(([w]) => w));
 
 // a chapter's picture: Enso's own film, framed a little closer each tier, with that tier's card laid on it
@@ -313,7 +300,7 @@ function TierArt({ i }) {
   const tr = TIERS[i];
   return (
     <div className="eo-art" style={{ '--z': 1.12 + i * 0.22, '--x': ['-4%', '6%', '-2%'][i], '--y': ['3%', '-5%', '2%'][i], ...[{}, { '--cl': 'auto', '--cr': '32px', '--ct': '32px', '--cb': 'auto' }, { '--cl': 'auto', '--cr': '32px' }][i] }}>
-      <img src={film('enso', 'webp')} alt="" loading="lazy" />
+      <Img src={film('enso', 'webp')} w={1200} h={1500} />
       <div className="eo-tcard" aria-hidden="true">
         <p className="eo-tcard-top"><b>{tr.name}</b><code>{tr.code}</code></p>
         <p className="eo-tcard-ax">{AXES[tr.axis]}</p>
@@ -326,7 +313,7 @@ function TierArt({ i }) {
 
 const CHAPTERS = TIERS.map((tr, i) => ({
   k: tr.name,
-  title: TIER_TITLE[i],
+  title: tr.name,
   art: <TierArt i={i} />,
   body: (
     <>
@@ -342,34 +329,25 @@ const CHAPTERS = TIERS.map((tr, i) => ({
   ),
 }));
 
+// the three tiers side by side, every cell in Hanzo's own words and figures
 function Spec() {
-  const rows = [
-    ['Model', (tr) => <code>{tr.code}</code>],
-    ['Input', (tr) => <><b>{tr.inp}</b> per 1M tokens</>],
-    ['Output', (tr) => <><b>{tr.out}</b> per 1M tokens</>],
-    ['Context', (tr) => (tr.ctx ? '1M' : '—')],
-    ['API', () => 'OpenAI-compatible · Anthropic-compatible'],
-    ['Workbench', (tr) => <A to={tr.wb}>Open in Workbench</A>],
-  ];
+  const head = (tr) => <>{tr.name} <code>{tr.code}</code></>;
   return (
     <section className="lv-sec eo-spec" aria-labelledby="eo-spec-h">
       <div className="x-wrap">
         <div className="lv-sh">
-          <div>
-            <p className="lv-kick">Spec sheet</p>
-            <h2 id="eo-spec-h" className="lv-h">Three tiers, one endpoint.</h2>
-          </div>
+          <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
+          <p className="lv-p">Enso routes each request for quality, speed and cost.</p>
         </div>
-        <div className="eo-spec-scroll">
-          <table className="lv-spec">
-            <thead><tr><th scope="col"><span className="x-sr">Fact</span></th>{TIERS.map((tr) => <th key={tr.code} scope="col">{tr.name}</th>)}</tr></thead>
-            <tbody>
-              {rows.map(([label, cell]) => (
-                <tr key={label}><th scope="row">{label}</th>{TIERS.map((tr) => <td key={tr.code}>{cell(tr)}</td>)}</tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption="All Enso models"
+          cols={[{ key: 'k', label: 'Enso' }, ...TIERS.map((tr) => ({ key: tr.code, label: head(tr), num: true }))]}
+          rows={[
+            { k: 'in · per 1M tokens', ...Object.fromEntries(TIERS.map((tr) => [tr.code, tr.inp])) },
+            { k: 'out', ...Object.fromEntries(TIERS.map((tr) => [tr.code, tr.out])) },
+            { k: 'context', ...Object.fromEntries(TIERS.map((tr) => [tr.code, tr.ctx ? '1M' : ''])) },
+          ]}
+        />
       </div>
     </section>
   );
@@ -379,39 +357,32 @@ export default function Enso() {
   return (
     <Launch
       slug="enso"
-      accent="#e5412d"
-      ink="#c0331d"
       shape={RING}
       headClass="eo-head"
       head={
         <>
-          <p className="lv-kick">Hanzo / Enso</p>
           <Lines id="eo-h" lines={['The right intelligence.', 'Every time.']} />
           <p className="lv-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
           <div className="lv-acts">
-            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo">Try Hanzo</A>
-            <A to="https://platform.hanzo.ai" className="x-btn">API Platform</A>
+            <Cta to="/login" id="enso-hero-try" thumb>Try Hanzo</Cta>
+            <Cta to="https://platform.hanzo.ai" kind="quiet" id="enso-hero-platform">API Platform</Cta>
             <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
           </div>
+          <p className="lv-crumb">Hanzo / Enso</p>
         </>
       }
     >
-      <Chapters id="eo-tiers" label="Enso's three tiers" items={CHAPTERS} />
-      <section className="lv-room lv-sec eo-live" aria-labelledby="eo-live-h">
+      <Chapters id="eo-tiers" label="Enso" items={CHAPTERS} />
+      <section className="lv-room lv-sec eo-live" data-room="dark" aria-label="Enso">
         <div className="x-wrap">
-          <div className="lv-sh">
-            <div>
-              <p className="lv-kick eo-live-k"><span className="mb-live">Live</span></p>
-              <h2 id="eo-live-h" className="lv-h">Every request finds its tier.</h2>
-            </div>
-            <p className="lv-p">Enso weighs quality, speed and cost, then sends each request where it belongs: Flash at volume, Pro while someone waits, Ultra where a wrong answer is expensive.</p>
-          </div>
           <Switchboard />
           <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
         </div>
       </section>
       <Gpqa />
       <Spec />
+      <ModelCards slug="enso" />
+      <Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" />
     </Launch>
   );
 }
