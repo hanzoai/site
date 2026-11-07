@@ -325,6 +325,7 @@ function Places() {
   const track = useRef(null);
   const x = useMotionValue(0);
   const [lim, setLim] = useState(0);
+  const [pitch, setPitch] = useState(452); // one card and its gap
   const [drag, setDrag] = useState(false);
   useIso(() => {
     const fit = () => {
@@ -332,16 +333,21 @@ function Places() {
       if (!v || !tr) return;
       const wide = matchMedia('(min-width: 900px)').matches;
       setDrag(wide);
-      setLim(wide ? Math.max(0, tr.scrollWidth - v.clientWidth) : 0);
+      const first = tr.firstElementChild;
+      const pt = first ? first.offsetWidth + (parseFloat(getComputedStyle(tr).columnGap) || 12) : 452;
+      setPitch(pt);
+      // the end rounds up to a whole card, so the last stop also lands a card's edge on the gutter
+      setLim(wide ? Math.ceil(Math.max(0, tr.scrollWidth - v.clientWidth) / pt - 0.02) * pt : 0);
       if (!wide) x.set(0);
     };
     fit();
     addEventListener('resize', fit);
     return () => removeEventListener('resize', fit);
   }, [x]);
+  // each step lands a card's left edge on the gutter (gap included), so no card stops cut through its words
   const step = (d) => {
-    const card = track.current?.firstElementChild?.offsetWidth || 400;
-    animate(x, Math.max(-lim, Math.min(0, x.get() - d * (card + 24))), EZ);
+    const at = Math.round(-x.get() / pitch);
+    animate(x, -Math.min(lim, Math.max(0, (at + d) * pitch)), EZ);
   };
   return (
     <section className="v2a-sec xdv-places" aria-labelledby="xdv-pl-h">
@@ -361,7 +367,7 @@ function Places() {
       </div>
       {/* entrance 1 (stack-drop): the four places drop from above and stack onto their places, one after another */}
       <In kind="stack-drop" className="xdv-pl-view" boxRef={view} data-drag={drag ? '' : undefined}>
-        <motion.ul className="xdv-pl" ref={track} style={{ x }} drag={drag ? 'x' : false} dragConstraints={{ left: -lim, right: 0 }} dragElastic={0.08} dragTransition={{ power: 0.35, timeConstant: 320 }}>
+        <motion.ul className="xdv-pl" ref={track} style={{ x }} drag={drag ? 'x' : false} dragConstraints={{ left: -lim, right: 0 }} dragElastic={0.08} dragTransition={{ power: 0.35, timeConstant: 320, modifyTarget: (v) => Math.round(v / pitch) * pitch }}>
           {PLACES.map(([name, tag, d, g], i) => (
             <Play as="li" key={name} className="xdv-pl-card" style={{ '--d': i }}>
               <div className={'xdv-pl-art ' + g} aria-hidden="true"><Scene g={g} /></div>
@@ -460,6 +466,17 @@ function How() {
           </div>
         </Sheet>
         <Sheet n={2} kick="Proof" title="Built to be checked." lede="Nothing counts as done because a model said so.">
+          {/* the object: the verifier's ledger for the hero's change, one line per thing it records, each settling in turn
+              (words already on this page: the file, its +1 −1, the exit status, the tests, the diff) */}
+          <Play className="xdv-ledger x-mono" aria-hidden="true">
+            <p className="xdv-led-h"><i /><span>{PROOF[2][0]}</span><em>@acme/api (main)</em></p>
+            <ol>
+              {[['src/retry.ts', '+1 −1'], ['the exit status', '✓'], ['the tests', '✓'], ['the diff', '+1 −1']].map(([k, v], i) => (
+                <li key={k} style={{ '--i': i }}><span className="n">{String(i + 1).padStart(2, '0')}</span><span className="k">{k}</span><span className="v">{v}</span><i className="ok" /></li>
+              ))}
+            </ol>
+            <p className="xdv-led-f">✓ {HIGHLIGHTS[1]}</p>
+          </Play>
           <ul className="xdv-pr">
             {PROOF.map(([name, d]) => (
               <li key={name}>
@@ -579,7 +596,7 @@ function Source() {
           <h2 className="v2a-head">Questions &amp; Answers</h2>
           <p className="v2a-folio">Questions</p>
         </div>
-        <div className="xdv-qa-r">
+        <Play className="xdv-qa-r">
           <Faq items={QA} multi />
           <details className="xdv-read">
             <summary>
@@ -601,7 +618,7 @@ function Source() {
               ))}
             </div>
           </details>
-        </div>
+        </Play>
       </div>
     </section>
   );
@@ -618,7 +635,7 @@ function Paste() {
           <h2 className="v2a-head" id="xdv-paste-h">Paste this into any agent. It reads the skill manifest and calls Dev from there.</h2>
           <p className="v2a-folio">Paste and ship</p>
         </div>
-        <div className="xdv-paste-r"><CodeBlock code={PASTE} label="Agent prompt" /></div>
+        <Play className="xdv-paste-r"><CodeBlock code={PASTE} label="Agent prompt" /></Play>
       </div>
     </section>
   );
