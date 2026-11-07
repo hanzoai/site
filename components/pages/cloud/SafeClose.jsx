@@ -3,7 +3,8 @@
    reduced motion (docs/requests/reduced-motion-hydration.md). KeynoteRoom reads motion's useReducedMotion() while
    rendering (null on the server, true on the first client render), so the room's clip-path differs and React logs a
    hydration error. This copy reads the kit's useCalm() instead. Same props, same markup, same CSS as KeynoteClose,
-   plus enter: a data-enter name for arrive.js on the block.
+   plus enter: a data-enter name for arrive.js on the block. Copy rule (8 Nov): "api /v1/…" and the repo name are each
+   one plain text element, as on hanzo.ai.
    Used by /crawl /dashboards /datastore /dns. Delete it and import v2/KeynoteClose again once the shared file is fixed. */
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useMotionTemplate } from 'motion/react';
@@ -44,7 +45,7 @@ function Body({ name, tag, lead, prompt, api, cta = 'close', license = 'Apache-2
           {tag && <p className="kn-lede knx-tag">{tag}</p>}
           <div className="knx-meta">
             {license && <span className="knx-chip"><span>License:</span> {license}</span>}
-            {repo && <A to={repo[1]} className="knx-chip"><Gh />{repo[0]}{stars && <em>{stars}</em>}</A>}
+            {repo && <A to={repo[1]} className="knx-chip"><Gh /><span style={{ color: 'inherit' }}>{repo[0]}</span>{stars && <em>{stars}</em>}</A>}
           </div>
           <div className="kn-acts knx-acts">
             {deploy && <Magnetic strength={0.2}><Cta to={deploy} id={cta} className="knx-go">Deploy to Cloud</Cta></Magnetic>}
@@ -56,7 +57,7 @@ function Body({ name, tag, lead, prompt, api, cta = 'close', license = 'Apache-2
           <div className="knx-paste">
             <p className="kn-title knx-pt">Paste and ship</p>
             <p className="knx-pd">Paste this into any agent. It reads the skill manifest and calls {name} from there.</p>
-            {api && <p className="knx-api"><i>api</i>{api}</p>}
+            {api && <p className="knx-api"><span>api {api}</span></p>}
             <CodeBlock code={prompt} label="Agent prompt" className="knx-code" />
           </div>
         )}
