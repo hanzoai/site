@@ -634,10 +634,11 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
 .xe .x-arrow:focus-visible span { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
 /* the closing band carries "Get started" as one quiet caption row under its ask */
 .xe-band-meta { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 27px; padding-top: 17px; border-top: 1px solid rgba(0, 0, 0, .1); width: min(100%, 860px); font-size: 12px; color: #525252; }
-.xe-bm { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 10px; margin: 0; }
-.xe-bm > * + *::before { content: '·'; margin-right: 10px; color: #a3a3a3; }
+.xe-bm { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 20px; margin: 0; }
+.xe .xe-band .xe-bm, .xe .xe-band .xe-bm * { font-size: 12px; line-height: 1.4; color: #525252; }
+.xe .xe-band .xe-bm .xe-bm-h, .xe .xe-band .xe-bm a, .xe .xe-band .xe-bm a * { color: #0a0a0a; }
 .xe-bm-h { color: #0a0a0a; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
-.xe-bm .x-arrow { min-height: 44px; font: inherit; font-size: 12px; }
+.xe-bm .x-arrow { min-height: 44px; font-family: inherit; font-weight: 500; }
 .xe-bm-a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: text-decoration-thickness .15s var(--xe-out); }
 @media (hover: hover) { .xe-bm-a:hover { text-decoration-thickness: 2px; } }
 /* the file names wrap whole on a phone: the name breaks at its hyphens and dots, the size gets its own line */
@@ -646,7 +647,6 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-zips li > span.xe-zip-n { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.4; }
   .xe-zips em { flex-basis: 100%; padding-left: 30px; }
   .xe-bm { flex-direction: column; gap: 0; }
-  .xe-bm > * + *::before { display: none; }
 }
 /* the phone hero: one flat window right under its browser switch. The windows behind fade out instead of fanning past the
    screen's edges, and picking a browser swaps the front window flat in 300 ms (CSS outranks the fan's inline transforms) */
