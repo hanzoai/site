@@ -72,63 +72,108 @@
 /* the render tag hangs under its frame (where the hidden caption was), so it never sits on the card inside the window */
 .gu-tag { position: absolute; z-index: 3; left: 50%; top: calc(100% + 10px); translate: -50% 0; padding: 6px 10px; border-radius: 8px; background: #0a0a0a; color: #ffffff; font-size: 13px; white-space: nowrap; animation: gu-in .4s var(--ease) both; }
 
-/* the run: the hero's four frames are the pinned stage; the chapters swap underneath them, one at a time.
-   html.js only, so with JS off nothing pins and every chapter reads in order. */
-.gu-run { position: relative; }
-/* each of the five steps gets more than one screen of scroll (5 × 115svh × .94 ≈ 108svh), so a one-screen wheel
-   always lands on every step from 01 to 05 */
-html.js .gu-run { height: calc(100svh + 5 * 115svh); }
-html.js .gu-run-pin { position: sticky; top: var(--gu-top, 60px); height: calc(100svh - var(--gu-top, 60px)); display: flex; flex-direction: column; overflow: clip; }
-.gu-run .gu-stage { position: relative; margin-top: 10px; }
 .gu-four { position: relative; }
 .gu-fig { position: relative; }
-.gu-fig figcaption { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
-.gu-four:not([data-step='-1']) figcaption { opacity: 0; }
-html:not(.js) .gu-four figcaption { opacity: 1; }
+.gu-hero .gu-stage { position: relative; margin-top: 28px; }
 
-/* the words: the run's heading left, the lit chapter right (8/5), every chapter in one cell so nothing moves */
-.gu-run-copy { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; margin-top: 18px; }
-html.js .gu-run-copy { margin-block: auto; } /* pinned: the words sit in the middle of the space under the four */
-.gu-run-h { grid-column: 1 / span 4; margin: 0; }
-.gu-run-list { grid-column: 6 / span 8; display: grid; list-style: none; margin: 0; padding: 0; }
-.gu-run-i { grid-area: 1 / 1; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 5fr); gap: 6px 24px; align-items: start; }
-.gu-run-t { grid-row: 1 / span 2; margin: 0; font-size: 21px; font-weight: 606; letter-spacing: -.02em; line-height: 1.2; text-wrap: balance; }
-.gu-run-i .bz-body { margin: 0; }
-.gu-run-n { grid-column: 2; margin: 0; font-size: 13px; color: var(--soft); }
-html.js .gu-run-i { opacity: 0; transform: translateY(12px); transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1); pointer-events: none; }
-html.js .gu-run[data-step='-1'] .gu-run-i { transform: translateY(24px); }
-html.js .gu-run:not([data-step='-1']) .gu-run-i.on { opacity: 1; transform: none; transition-delay: .12s; pointer-events: auto; }
-/* the step's one moment: as it arrives, its title grows past its size and settles back (transform only) */
-@keyframes gu-grow { 0% { transform: scale(.94); } 40% { transform: scale(1.16); } 100% { transform: none; } }
-.gu-run-t { transform-origin: 0 50%; }
-html.js .gu-run:not([data-step='-1']) .gu-run-i.on .gu-run-t { animation: gu-grow .9s cubic-bezier(.16, 1, .3, 1) .12s both; }
-html:not(.js) .gu-run-i { grid-area: auto; margin-bottom: 32px; }
+/* build it once: the heading, the compare signature, then the five chapters as plain rows */
+.gu-build { padding-top: clamp(72px, 8vw, 116px); }
+.gu-build-top { margin-bottom: clamp(28px, 3vw, 44px); }
+.gu-build-top h2 { margin: 0; max-width: 18ch; }
 
-/* 01 one codebase: one source above, a hairline down to each platform, each tagged with what it renders to */
-.gu-four::before { content: ''; position: absolute; left: 10%; right: 10%; top: -10px; height: 1px; background: #0a0a0a; transform: scaleX(0); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
-/* each wire runs from the frame's top edge up to the hairline (the four's top clips it, whatever the frame's height) */
-.gu-run .gu-four { clip-path: inset(-10px -40px -60px -40px); }
-.gu-run .gu-dev { position: relative; }
-.gu-run .gu-dev::before { content: ''; position: absolute; left: 50%; bottom: 100%; width: 1px; height: 600px; background: #0a0a0a; transform: scaleY(0); transform-origin: 50% 100%; transition: transform .4s cubic-bezier(.16, 1, .3, 1) .2s; pointer-events: none; }
-.gu-four[data-step='0']::before { transform: scaleX(1); }
-.gu-four[data-step='0'] .gu-dev::before { transform: scaleY(1); }
-/* 03 compile-time CSS: the screen collapses to the flat rule */
+/* the signature: one window, a divider dragged across it; Hanzo's source on the left, the platform it renders on the right */
+.gu-cmp { position: relative; height: clamp(360px, 46svh, 480px); border-radius: 24px; overflow: hidden; background: #f5f5f5; cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.gu-cmp-a, .gu-cmp-b { position: absolute; inset: 0; }
+.gu-cmp-a { background: #171717; clip-path: inset(0 calc(100% - var(--x)) 0 0); transition: clip-path .5s cubic-bezier(.4, 0, .2, 1); }
+.gu-cmp[data-dragging] .gu-cmp-a, .gu-cmp[data-dragging] .gu-cmp-h { transition: none; }
+.gu-cmp-a pre { margin: 0; padding: clamp(28px, 4vw, 56px); font-size: clamp(14px, 1.4vw, 17px); line-height: 1.7; color: #a3a3a3; white-space: pre; }
+.gu-src-k { color: #737373; }
+.gu-src-t { color: #fafafa; }
+.gu-cmp-b { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+.gu-cmp-dev { grid-column: 2; justify-self: center; display: grid; place-items: center; height: 100%; padding: 28px 0 64px; }
+.gu-cmp-dev[data-k='ios'] .gu-dev, .gu-cmp-dev[data-k='android'] .gu-dev { width: clamp(120px, 11vw, 168px); }
+.gu-cmp-dev[data-k='web'] .gu-dev, .gu-cmp-dev[data-k='desk'] .gu-dev { width: clamp(260px, 30vw, 440px); }
+.gu-cmp-dev .gu-dev { animation: gu-in .4s cubic-bezier(0, 0, .2, 1) both; }
+.gu-cmp-plat { position: absolute; right: 24px; bottom: 18px; display: flex; gap: 6px; margin: 0; font-size: 13px; }
+.gu-cmp-plat span { padding: 6px 10px; border-radius: 8px; color: #737373; transition: background-color .15s, color .15s; }
+.gu-cmp-plat span.on { background: #0a0a0a; color: #ffffff; }
+.gu-cmp-h { position: absolute; top: 0; bottom: 0; left: var(--x); width: 44px; margin-left: -22px; display: grid; place-items: center; outline: none; transition: left .5s cubic-bezier(.4, 0, .2, 1); }
+.gu-cmp-h::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background: #ffffff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); }
+.gu-cmp-h i { position: relative; width: 44px; height: 44px; border-radius: 50%; background: #ffffff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12), 0 24px 60px -16px rgba(0, 0, 0, .18); transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.gu-cmp-h i::before, .gu-cmp-h i::after { content: ''; position: absolute; top: 50%; width: 7px; height: 7px; margin-top: -4px; border-top: 1.5px solid #0a0a0a; border-left: 1.5px solid #0a0a0a; }
+.gu-cmp-h i::before { left: 11px; rotate: -45deg; }
+.gu-cmp-h i::after { right: 11px; rotate: 135deg; }
+@media (hover: hover) { .gu-cmp:hover .gu-cmp-h i { transform: scale(1.08); } }
+.gu-cmp[data-dragging] .gu-cmp-h i { transform: scale(.97); }
+.gu-cmp-h:focus-visible i { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+
+/* the five chapters: words left, each chapter's own object right; the list leans with the scroll speed (--sk) */
+.gu-chs { list-style: none; margin-top: clamp(56px, 6vw, 88px); padding-bottom: 0; transform: skewY(var(--sk, 0deg)); transform-origin: 50% 0; }
+.gu-ch { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; padding: 32px 0; border-top: 1px solid var(--line); }
+.gu-ch-copy { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 10px; }
+.gu-ch-t { margin: 0; font-size: 21px; font-weight: 606; letter-spacing: -.02em; line-height: 1.2; }
+.gu-ch-copy .bz-body { margin: 0; }
+.gu-ch-n { margin: 0; font-size: 13px; color: var(--soft); }
+.gu-ch-obj { grid-column: 7 / span 6; display: grid; place-items: center; min-height: 200px; padding: 28px; border-radius: 24px; background: #f5f5f5; }
+.gu-ch-targets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; margin: 0; padding: 0; list-style: none; }
+.gu-ch-targets li { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 16px; background: #ffffff; }
+.gu-ch-targets b { font-size: 17px; font-weight: 606; }
+.gu-ch-targets span { font-size: 13px; color: var(--soft); }
+.gu-ch-pair { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.gu-ch-flat { width: 100%; padding: 24px; border-radius: 16px; background: #171717; container-type: inline-size; }
+.gu-ch-flat .gu-flat { padding: 0; font-size: 15px; }
+.gu-ch-parts { display: flex; flex-direction: column; align-items: center; gap: 28px; padding-top: 30px; }
+.gu-ch-parts .gu-w { gap: 18px; }
+.gu-ch-prims { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.gu-ch-prims li { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; color: var(--soft); background: #ffffff; }
+.gu-ch-prims li.on { background: #0a0a0a; border-color: #0a0a0a; color: #ffffff; }
+@keyframes gu-press { 0%, 72%, 100% { scale: 1; } 82% { scale: .93; } }
+.gu-ch-wave .gu-b { animation: gu-press 1.5s cubic-bezier(.4, 0, .2, 1) infinite; }
+
+/* the compiler's flat rule (chapter 03) */
 .gu-scr.flat { background: #171717; place-items: center start; }
 .gu-flat { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 0 6cqw; color: #a3a3a3; font-size: clamp(11px, 5.4cqw, 15px); line-height: 1.5; animation: gu-in .3s cubic-bezier(0, 0, .2, 1) both; }
 .gu-flat span:not(.gu-flat-t) { color: #fafafa; }
-.gu-ios .gu-flat, .gu-android .gu-flat { flex-direction: column; font-size: 8.4cqw; }
-/* 04 primitives: the card comes apart, and the kit's primitives line up under the four (its three lit) */
-.gu-four[data-step='3'] .gu-w { gap: 18px; }
-.gu-prims { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; opacity: 0; transform: translateY(8px); transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .4s cubic-bezier(.16, 1, .3, 1); pointer-events: none; }
-.gu-prims li { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); font-size: 13px; color: var(--soft); }
-.gu-prims li.on { background: #0a0a0a; border-color: #0a0a0a; color: #ffffff; }
-.gu-run[data-step='3'] .gu-prims { opacity: 1; transform: none; }
-/* 05 animated by default: each new state rolls across the four, and every button presses itself */
-@keyframes gu-press { 0%, 72%, 100% { scale: 1; } 82% { scale: .93; } }
-.gu-four[data-step='4'] .gu-b { animation: gu-press 1.5s cubic-bezier(.4, 0, .2, 1) infinite; }
-.gu-four[data-step='4'] .gu-fig:nth-child(2) .gu-b { animation-delay: .09s; }
-.gu-four[data-step='4'] .gu-fig:nth-child(3) .gu-b { animation-delay: .18s; }
-.gu-four[data-step='4'] .gu-fig:nth-child(4) .gu-b { animation-delay: .27s; }
+
+/* ---------- the five entrances (docs/MOTION-MAP.md), in page order. A section is armed by JS only (below the fold,
+   motion allowed), so the server HTML, JS off and reduced motion are the finished page. ---------- */
+/* 1 split-merge: the compare's two halves slide in from left and right and meet at the divider */
+.gu-cmp-wrap[data-arm] .gu-cmp-a { transform: translateX(-24%); opacity: 0; }
+.gu-cmp-wrap[data-arm] .gu-cmp-b { transform: translateX(24%); opacity: 0; }
+.gu-cmp-wrap[data-arm][data-in] .gu-cmp-a, .gu-cmp-wrap[data-arm][data-in] .gu-cmp-b { transform: none; opacity: 1; transition: transform .8s cubic-bezier(.16, 1, .3, 1), opacity .5s cubic-bezier(0, 0, .2, 1), clip-path .5s cubic-bezier(.4, 0, .2, 1); }
+/* 2 velocity-skew: the rows arrive leaning and straighten (and the list keeps leaning with scroll speed, --sk) */
+.gu-chs[data-arm] .gu-ch { transform: translateY(48px) skewY(6deg); opacity: 0; transform-origin: 0 0; }
+.gu-chs[data-arm][data-in] .gu-ch { transform: none; opacity: 1; transition: transform .7s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 80ms), opacity .4s cubic-bezier(0, 0, .2, 1) calc(var(--i) * 80ms); }
+/* 3 domino: the editor's rows tip into place one after another */
+.gu-api[data-arm] .gu-api-top > *, .gu-api[data-arm] .gu-ed > *, .gu-api[data-arm] .gu-api-one { transform: rotate(-9deg) translateY(-12px); transform-origin: 0 100%; opacity: 0; }
+.gu-api[data-arm][data-in] .gu-api-top > *, .gu-api[data-arm][data-in] .gu-ed > *, .gu-api[data-arm][data-in] .gu-api-one { transform: none; opacity: 1; transition: transform .5s cubic-bezier(.16, 1, .3, 1), opacity .3s cubic-bezier(0, 0, .2, 1); }
+.gu-api[data-in] .gu-api-top > :nth-child(2) { transition-delay: .09s; }
+.gu-api[data-in] .gu-ed > :nth-child(1) { transition-delay: .18s; }
+.gu-api[data-in] .gu-ed > :nth-child(2) { transition-delay: .27s; }
+.gu-api[data-in] .gu-ed > :nth-child(3) { transition-delay: .36s; }
+.gu-api[data-in] .gu-ed > :nth-child(4) { transition-delay: .45s; }
+.gu-api[data-in] .gu-ed > :nth-child(5) { transition-delay: .54s; }
+.gu-api[data-in] .gu-api-one { transition-delay: .63s; }
+/* 4 cursor-lens: a lens sweeps the row once and each card resolves as it passes; then the lens follows a fine pointer
+   and the card under it magnifies */
+.gu-lens-wrap { position: relative; }
+.gu-lens { position: absolute; z-index: 4; left: 0; top: 0; width: 132px; height: 132px; margin: -66px 0 0 -66px; border-radius: 50%; border: 1.5px solid #0a0a0a; pointer-events: none; opacity: 0; transform: translate(var(--lx, 0px), var(--ly, 0px)); transition: opacity .2s cubic-bezier(0, 0, .2, 1); }
+.gu-lens-wrap[data-lens] .gu-lens { opacity: 1; }
+.gu-plats > li { transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+.gu-plats > li.gu-lensed { transform: scale(1.04); z-index: 2; }
+@keyframes gu-sweep { from { transform: translate(-80px, 160px); opacity: 1; } 92% { opacity: 1; } to { transform: translate(calc(100cqw + 80px), 160px); opacity: 0; } }
+.gu-lens-wrap { container-type: inline-size; }
+.gu-lens-wrap[data-arm] .gu-plats > li { opacity: 0; transform: scale(.9); filter: blur(4px); }
+.gu-lens-wrap[data-arm][data-in] .gu-lens { animation: gu-sweep 1.3s cubic-bezier(.4, 0, .2, 1) both; }
+.gu-lens-wrap[data-arm][data-in] .gu-plats > li { opacity: 1; transform: none; filter: none; transition: transform .5s cubic-bezier(.16, 1, .3, 1), opacity .3s cubic-bezier(0, 0, .2, 1), filter .4s cubic-bezier(0, 0, .2, 1); }
+.gu-lens-wrap[data-in] .gu-plats > li:nth-child(1) { transition-delay: .15s; }
+.gu-lens-wrap[data-in] .gu-plats > li:nth-child(2) { transition-delay: .45s; }
+.gu-lens-wrap[data-in] .gu-plats > li:nth-child(3) { transition-delay: .75s; }
+.gu-lens-wrap[data-in] .gu-plats > li:nth-child(4) { transition-delay: 1.05s; }
+.gu-lens-wrap[data-in][data-lens] .gu-plats > li { transition-delay: 0s; }
+/* 5 grow-from-point: the close grows out of the last point the visitor clicked (or its centre) */
+.gu-end[data-arm] { clip-path: circle(0 at var(--gx, 50%) var(--gy, 50%)); }
+.gu-end[data-arm][data-in] { clip-path: circle(150% at var(--gx, 50%) var(--gy, 50%)); transition: clip-path .9s cubic-bezier(.16, 1, .3, 1); }
 /* the one ask leans toward the pointer */
 .gu-pull { display: inline-flex; transition: translate .3s cubic-bezier(.16, 1, .3, 1); }
 

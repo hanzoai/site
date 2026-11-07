@@ -6,29 +6,34 @@
 .id .v2-display.s { font-size: 26px; line-height: 1.15; letter-spacing: -.025em; }
 .id .v2-display.m { font-size: 44px; }
 
-/* the pinned first screen: the hosted card leads on the left, the title and the stages on the right */
-.id-pin { position: relative; height: 400svh; }
-.id-pin-stage { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; }
-.id-pin-grid { align-items: center; padding-top: 56px; }
-.id-layers { grid-column: 8 / -1; grid-row: 1; }
-.js .id-layers { display: grid; }
-.js .id-layer { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 36px, 0); pointer-events: none; transition: opacity .4s var(--e), transform .85s var(--e); }
-.js .id-layer[data-past] { transform: translate3d(0, -36px, 0); }
-.js .id-layer[data-on] { opacity: 1; transform: none; pointer-events: auto; transition-delay: .08s; }
+/* the first screen: the hosted card leads on the left, the title on the right; the next room peeks below */
+.id-hero-s { padding: calc(var(--x-top, 60px) + 44px) 0 56px; }
+.id-hero-grid { align-items: center; min-height: calc(100svh - var(--x-top, 60px) - 160px); }
+.id-hero { grid-column: 8 / -1; grid-row: 1; }
 .id-sub { margin: 27px 0 36px; color: var(--ink); font-size: 21px; }
-.id-stage .v2-headline { margin: 0 0 17px; font-size: 32px; }
-.id-stage .v2-headline span { display: block; padding-bottom: .08em; }
-.js .id-stage .v2-headline span { clip-path: inset(0 0 100% 0); transition: clip-path .9s var(--e) .12s; }
-.js .id-stage[data-on] .v2-headline span { clip-path: inset(0 0 0 0); }
-.id-stage .v2-body { font-size: 21px; max-width: 30ch; }
 .id-card-wrap { grid-column: 1 / span 6; grid-row: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 17px; }
 .id .v2-sec { padding: clamp(72px, 8vw, 116px) 0; }
 
-/* the progress mark: under the card, never above a heading */
-.id-prog { display: flex; align-items: center; gap: 6px; }
-.id-prog i { width: 24px; height: 2px; border-radius: 2px; background: #d4d4d4; transition: background-color .3s var(--e-out); }
-.id-prog i[data-on] { background: #0a0a0a; }
-.id-prog span { margin-left: 10px; font-size: 12px; letter-spacing: .14em; color: #525252; font-variant-numeric: tabular-nums; }
+/* the three stages: rows on an 8/5 split, the card on alternating sides; the 0N / 03 caption under the heading */
+.id-stages .v2-wrap { display: grid; gap: clamp(44px, 6vw, 88px); }
+.id-stage-row { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
+.id-stage-txt { grid-column: 1 / span 5; }
+.id-stage-card { grid-column: 7 / -1; display: flex; justify-content: center; }
+.id-stage-row.r1 .id-stage-txt { grid-column: 9 / -1; grid-row: 1; }
+.id-stage-row.r1 .id-stage-card { grid-column: 1 / span 7; grid-row: 1; }
+.id-stage-txt .v2-headline { margin: 0; font-size: 26px; }
+.id-stage-txt .v2-body { margin: 0; font-size: 17px; line-height: 1.55; max-width: 34ch; color: #404040; }
+.id-stage-n { display: flex; align-items: center; gap: 6px; margin: 12px 0 17px; font-size: 12px; letter-spacing: .14em; color: #525252; }
+.id-stage-n span { margin-right: 10px; font-variant-numeric: tabular-nums; }
+.id-stage-n i { width: 20px; height: 2px; border-radius: 2px; background: #d4d4d4; }
+.id-stage-n i[data-on] { background: #0a0a0a; }
+.id-st-host { width: min(100%, 380px); }
+.id-card.st { width: 100%; height: 400px; }
+/* the token rows and the app marks arrive with the stages (after the ink has spread) */
+.js .id-stages:not([data-in]) .id-token p:not(.id-t) { opacity: 0; transform: translateX(-12px); }
+.id-token p:not(.id-t) { transition: opacity .4s var(--e-out), transform .5s var(--e-em); transition-delay: calc(.9s + var(--k) * 180ms); }
+.id-apps i { background: #0a0a0a; color: #fafafa; transition: background-color .4s var(--e-out), color .4s var(--e-out), transform .4s var(--e-em); transition-delay: calc(1s + var(--k) * 110ms); }
+.js .id-stages:not([data-in]) .id-apps i { background: #f2f2f2; color: #a3a3a3; transform: scale(.86); }
 
 /* the hosted card; it leans toward a fine pointer (2.5° at most) */
 .id-card { position: relative; width: min(100%, 420px); display: flex; flex-direction: column; border-radius: 36px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 24px 60px -16px rgba(0, 0, 0, .18); overflow: hidden; }
@@ -373,7 +378,9 @@
   .id-panel-art { min-height: 268px; margin-bottom: 20px; }
   .id-art { padding: 20px; }
   .id-art-pin { top: 14px; right: 14px; }
-  .id-art-region { padding-top: 56px; }
+  .id-art-region { padding-top: 56px; grid-template-columns: minmax(0, 1fr) 56px; }
+  .id-art-org.ghost { min-width: 0; padding: 12px; }
+  .id-art-org.ghost .id-art-k { display: none; }
   .id-art-node { min-width: 0; flex: 1 1 100%; }
   .id-art-wire { flex-basis: 100%; min-height: 44px; }
   .id-art-wire i { width: 2px; height: 28px; transform-origin: 50% 0; animation-name: id-wire-y; }

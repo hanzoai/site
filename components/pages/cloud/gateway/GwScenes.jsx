@@ -4,8 +4,6 @@
    is its final state and the keyframes only say where it starts, so reduced motion (animation: none) shows the end. */
 import './GwScenes.css';
 
-const pad = (n) => String(n).padStart(2, '0');
-
 /* 01: a JWT walks to the gate and is checked against JWKS; an API key walks on to the service that issued it */
 function Jwks() {
   return (
@@ -101,8 +99,8 @@ function Hop() {
         <span className="gws-pill">client</span>
         <span className="gws-track s" />
         <div className="gws-bin">
-          <span className="gws-gw">Gateway</span>
           <b>Hanzo Cloud</b>
+          <span className="gws-slot"><span className="gws-gw">Gateway</span></span>
         </div>
       </div>
       <p className="gws-hop-k"><span className="a">its own service</span><span className="b">inside the cloud binary</span></p>
@@ -112,11 +110,11 @@ function Hop() {
 
 const SCENES = [Jwks, Headers, Routes, Bucket, Health, Hop];
 
-export default function GwScene({ at, total }) {
+/* no window chrome: the scene is the object (its chapter's "0N / 06" sits once, under the chapter's heading) */
+export default function GwScene({ at }) {
   const S = SCENES[at];
   return (
     <div className="gws v2-obj" aria-hidden="true">
-      <div className="gws-bar"><span className="gws-dots"><i /><i /><i /></span><span>api.hanzo.ai</span><b>{pad(at + 1)} / {pad(total)}</b></div>
       <div className="gws-body" key={at}><S /></div>
     </div>
   );

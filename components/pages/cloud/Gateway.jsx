@@ -6,7 +6,7 @@
 // Signature: the gate, running: one request at a time checked, stripped, stamped or turned away (429) across a full-width lane.
 // Beyond: chapter 02, opened: pick a credential and fake headers, see what every service behind the gate receives.
 /* Gateway (v2, archetype A Launch).
-   V2: 8/10 round 4: phone chapters carry their own scene above their words (nothing pinned over text); landed requests get their own lane so the card never crosses them; the lane leans 2.5° to a fine pointer; the statement cuts in by its line; the dark room is chapter 02 opened (no repeated heading or sentence, real switches); Paste and ship sits beside the console, Related capabilities closes the page; larger scenes, one section-padding step, hovers on console rows, icons and the close's links; Hanzo's case on every label.
+   V2: 8/10 round 5: the request is checked on the line and crosses into a Hanzo Cloud ledger on the far side (the right half is the payoff); the token bucket has its own lane at the top of the gate; the first frame (server, client, reduced motion) is the finished check at rest, so nothing jumps; no fake browser chrome, the chapter counter shows once; one pinned stage at every width (phone: a 40svh scene with the words swapping below it); dots preview their scene; bucket rims, Gateway mounted inside Hanzo Cloud; the dark room's switches answer beside them on phones and its stray counter is gone; the close leads with Deploy to Cloud; Hanzo's "→" in the related arrow slot; the console spans the container.
    Signature: the gate, running across the whole screen. One request at a time arrives from the left carrying a token and
    a forged X-Org-Id; at the gate the token is checked against JWKS, the forged header is torn off, the real identity is
    stamped on from the claims and the request walks through to Hanzo Cloud. A token bucket on the gate drains with each
@@ -90,8 +90,9 @@ function Lane() {
   // where the card goes: onto the line (centred on the gate) to be checked; then, on a wide lane, across into the ledger
   // on the Hanzo Cloud side (it shrinks into the ledger's top row); on a phone, on past the gate; a 429 goes back
   const cw = 420;
-  const toLedger = `${Math.round(((wd / 2 - 32 - 130 - cw / 2) / cw) * 100)}%`;
-  const x = limited ? (phase >= 2 ? '-190%' : '-50%') : phase >= 4 ? (wide ? toLedger : '120%') : '-50%';
+  // the card's resting place (x 0) is centred on the gate by CSS, so the server HTML and the first client frame agree
+  const toLedger = `${Math.round(((wd / 2 - 32 - 130) / cw) * 100)}%`;
+  const x = limited ? (phase >= 2 ? '-140%' : '0%') : phase >= 4 ? (wide ? toLedger : '170%') : '0%';
   const gone = limited ? phase >= 2 : phase >= 4;
   const enter = (v) => (boot.current ? false : v);
   return (
@@ -115,13 +116,13 @@ function Lane() {
       </div>
       <div className="gw-bucket">
         <span>Token-bucket</span>
-        <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} initial={false} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ duration: 0.3, ease: EASE }} />)}</div>
+        <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} initial={false} style={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ duration: 0.3, ease: EASE }} />)}</div>
       </div>
       <AnimatePresence initial={false}>
         <motion.div
           key={n}
           className="gw-req"
-          initial={{ x: '-260%', opacity: 0 }}
+          initial={{ x: '-210%', opacity: 0 }}
           animate={{ x, opacity: gone ? 0 : 1, scale: !limited && phase >= 4 && wide ? 0.56 : 1 }}
           exit={{ opacity: 0, transition: { duration: 0.15 } }}
           transition={{ x: { duration: phase === 0 ? 1.0 : 1.0, ease: [0.4, 0, 0.2, 1] }, scale: { duration: 1.0, ease: [0.4, 0, 0.2, 1] }, opacity: { duration: gone ? 0.35 : 0.4, delay: gone ? 0.7 : 0 } }}
@@ -305,7 +306,7 @@ export default function Gateway() {
 
       <Say />
 
-      <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} total={RULES.length} />} />
+      <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} />} />
 
       <Forge />
 

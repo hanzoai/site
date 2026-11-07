@@ -299,3 +299,69 @@
   .gw-lane { transition: none; }
   .gw-say-h.cut .gw-say-in { clip-path: none; transform: none; transition: none; }
 }
+
+/* round 4 ------------------------------------------------------------------------------------------------------- */
+/* hero: the request is checked on the line (centred on the gate) and crosses into the Hanzo Cloud ledger on the far
+   side; the token bucket has its own lane at the top of the gate, "Gateway" names the line at its foot */
+.gw-lane { height: clamp(460px, 34vw, 520px); }
+.gw-req { margin-top: -132px; margin-left: calc(var(--cw) * -0.5); z-index: 2; will-change: transform; }
+.gw-bucket { top: 20px; bottom: auto; z-index: 3; }
+.gw-gate-k { top: auto; bottom: 22px; left: 0; transform: translateX(-50%); padding: 7px 10px; border-radius: 999px; background: #f5f5f5; }
+.gw-cloud { position: absolute; top: 50%; right: 32px; width: 260px; transform: translateY(-50%); display: grid; gap: 14px; }
+.gw-cloud .gw-side.r { position: static; margin: 0; color: var(--ink); }
+.gw-cloud .gw-log { position: static; transform: none; display: grid; gap: 8px; }
+.gw-cloud .gw-log li { min-width: 0; }
+.gw-queue { z-index: 1; }
+
+/* the dark room (chapter 02, opened): no stray counter, just the pick */
+.gw-forge-head { display: flex; justify-content: flex-start; margin-bottom: 32px; }
+.gw-forge-pick { justify-self: auto; }
+
+/* chapter scenes: flat quiet tiles (no outline, no shadow), the scene is the object */
+.gw .gws.v2-obj { background: #f5f5f5; box-shadow: none; border: 0; }
+
+/* example project: the window spans the container, its caption above it */
+.gw-proj-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.gw-proj-in .gw-proj-t, .gw-proj-in .gw-proj-c { grid-column: 1 / -1; }
+.gw-proj-in .gw-proj-t { padding: 20px 0 0; border-top: 1px solid var(--line); }
+.gw-proj-in .gw-proj-l { max-width: none; }
+/* the console's window bar keeps its title, not three grey dots */
+.gw .cf-con-bar > i { display: none; }
+
+/* related: Hanzo's own "→" sits in the right-hand arrow slot, where the other rows draw theirs */
+.gw .sp-rel-a b { position: static; }
+.gw-rel-arw { position: absolute; right: 2px; top: 21px; line-height: 1; font-size: 15px; font-weight: 600; transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.gw .sp-rel-a svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .gw .sp-rel-a:hover svg, .gw .sp-rel-a:hover .gw-rel-arw { transform: translateX(4px); }
+}
+
+@media (max-width: 1100px) and (min-width: 901px) {
+  .gw-queue { display: none; }
+  .gw-cloud { width: 220px; right: 24px; }
+}
+
+@media (max-width: 900px) {
+  .gw-lane { height: 420px; }
+  /* phone: the card is checked just left of the gate (shifted by 58% of its own width) and walks on past it */
+  .gw-req { margin-top: -118px; margin-left: calc(var(--cw) * -1.08); }
+  .gw-bucket { top: auto; bottom: 18px; left: 20px; transform: none; }
+  .gw-gate-k { top: 76px; bottom: auto; left: auto; right: 12px; transform: none; padding: 0; background: none; }
+  .gw-cloud { top: 38px; right: auto; left: 84px; width: auto; transform: none; }
+  .gw-cloud .gw-log { display: none; }
+  /* the switches and what every service behind it receives sit side by side, so a tap answers on the same screen */
+  .gw-forge-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; }
+  .gw-arrow { display: none; }
+  .gw-pane { padding: 16px 10px; border-radius: 18px; }
+  .gw-pane .v2-kick { margin-bottom: 14px; font-size: 12px !important; }
+  .gw-forge-hs { font-size: 12px; gap: 6px; }
+  .gw-forge-hs li { min-height: 40px; }
+  .gw-forge-hs li.gone, .gw-forge-hs li.set, .gw-forge-auth { padding: 6px 8px; flex-wrap: wrap; gap: 2px 6px; }
+  .gw-forge-hs li.gone span { font-size: 11px; }
+  .gw-tog { padding: 0 8px; gap: 8px; min-height: 44px; }
+  .gw-tog-ui { width: 30px; height: 18px; }
+  .gw-tog-ui::after { width: 12px; height: 12px; }
+  .gw-tog[aria-checked='true'] .gw-tog-ui::after { transform: translateX(12px); }
+  .gw-forge-hs li.set em { margin-left: 0; }
+  .gw-rel-arw { top: 50%; transform: translateY(-50%); }
+}

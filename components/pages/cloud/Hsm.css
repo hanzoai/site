@@ -70,35 +70,48 @@
   100% { opacity: 0; transform: translate(78cqw, 60cqh) scale(.6); }
 }
 
-/* chapters: the black room. It enters as a rounded card inside the gutters and opens to full width (clip-path set by
-   scroll in Hsm.jsx). The chapters are in normal flow, so no two ever share a place, with or without motion. Desktop:
-   the words on the left, one chapter per stretch of scroll, and the drawing sticky on the right following the chapter
-   crossing the middle of the screen. The "0N / 06" counter is a caption under each h2. */
-.hc { position: relative; background: #000; color: #fafafa; }
-.hc-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 24px; }
-.hc-copy { padding: 18svh 0 22svh; }
-.hc-art { min-height: 70svh; display: flex; flex-direction: column; justify-content: center; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
-.js .hc-art:not([data-on]) { opacity: .32; }
-.hc-t { margin: 0; font-size: 32px; font-weight: 497; line-height: 1.12; letter-spacing: -.02em; color: #fafafa; text-wrap: balance; max-width: 18ch; }
-.hc-n { margin: 17px 0 0; color: rgba(255, 255, 255, .55); }
+/* the signature: the spotlight room. A black room that enters as a rounded card inside the gutters and opens to full
+   width (clip-path set by scroll in Hsm.jsx). The module on the left, the first five facts in normal flow on the right
+   (nothing pins). A soft light follows the cursor; the fact under it comes to full ink and lights its plate. */
+.hc { position: relative; overflow: hidden; background: #000; color: #fafafa; }
+.hc-light { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.hc-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: 24px; align-items: center; padding-block: clamp(72px, 9vw, 116px); }
+.hc-vis { position: relative; height: clamp(440px, 44vw, 620px); }
+.hc-copy { display: flex; flex-direction: column; }
+.hc-art { padding: 24px 20px 26px; margin: 0 -20px; border-top: 1px solid rgba(255, 255, 255, .1); border-radius: 16px; outline: none; cursor: default; transition: background-color .3s cubic-bezier(0, 0, .2, 1); }
+.hc-art:first-child { border-top-color: transparent; }
+.hc-art[data-on] { background: rgba(255, 255, 255, .05); border-top-color: transparent; }
+.hc-art[data-on] + .hc-art { border-top-color: transparent; }
+.hc-art:focus-visible { box-shadow: 0 0 0 2px #fafafa; }
+.hc-t { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; color: rgba(255, 255, 255, .78); text-wrap: balance; max-width: 22ch; transition: color .3s cubic-bezier(0, 0, .2, 1); }
+.hc-art[data-on] .hc-t { color: #fff; }
+.hc-n { margin: 10.5px 0 0; color: rgba(255, 255, 255, .55); }
 /* the room's name, a caption beside the first counter */
 .hc-what { margin-left: 12px; padding-left: 12px; border-left: 1px solid rgba(255, 255, 255, .22); }
-/* scale rhythm: the chapter that has just become the one being read grows a little, then settles */
+/* scale rhythm: the fact that has just come under the light grows a little, then settles */
 .hc-t { transform-origin: 0 100%; }
 .js .hc-art[data-on] .hc-t { animation: hc-grow 1.1s cubic-bezier(.16, 1, .3, 1) both; }
-@keyframes hc-grow { 0% { transform: scale(1); } 35% { transform: scale(1.1); } 100% { transform: scale(1); } }
-.hc-d { margin: 17px 0 0; max-width: 46ch; font-size: 17px; line-height: 1.6; color: rgba(255, 255, 255, .78); text-wrap: pretty; }
-.hc-frame { display: contents; }
-.hc-vis { position: relative; }
-.hc-vis-in { position: sticky; top: var(--x-top, 64px); height: calc(100svh - var(--x-top, 64px)); }
-/* chapter 06: the modules Hanzo lists, as one segmented control; picking one changes the drawing only */
+@keyframes hc-grow { 0% { transform: scale(1); } 35% { transform: scale(1.08); } 100% { transform: scale(1); } }
+.hc-d { margin: 10.5px 0 0; max-width: 52ch; font-size: 15px; line-height: 1.6; color: rgba(255, 255, 255, .55); text-wrap: pretty; transition: color .3s cubic-bezier(0, 0, .2, 1); }
+.hc-art[data-on] .hc-d { color: rgba(255, 255, 255, .92); }
+
+/* chapter 06: its own light section, the module picker beside the module. The modules Hanzo lists, as one segmented
+   control; picking one changes the drawing only. */
+.hs .hs-pick.v2-sec { padding: clamp(72px, 9vw, 116px) 0; }
+.hs-pick-grid { align-items: center; }
+.hs-pick-copy { grid-column: 1 / span 5; }
+.hs-pick-t { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
+.hs-pick-n { margin: 10.5px 0 0; color: var(--soft); }
+.hs-pick-d { margin: 17px 0 0; max-width: 46ch; font-size: 16px; line-height: 1.6; color: #525252; text-wrap: pretty; }
+.hs-pick-vis { grid-column: 6 / -1; position: relative; height: clamp(380px, 36vw, 520px); }
+.hs-pick-vis .hm { transform: translateX(-12%); }
 .hs-vendors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 27px; max-width: 100%; }
-.hs-vendors button { position: relative; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16); font: 500 14px/1 var(--sans); color: rgba(255, 255, 255, .55); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
-.hs-vendors button:active { transform: scale(.97); }
-.hs-vendors button[aria-selected='true'] { color: #0a0a0a; }
-.hs-vendors button:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
-@media (hover: hover) { .hs-vendors button:not([aria-selected='true']):hover { color: #fafafa; background: rgba(255, 255, 255, .08); } }
-.hs-vendor-bg { position: absolute; inset: 0; border-radius: 999px; background: #fafafa; }
+.hs-vendors button { position: relative; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); font: 500 14px/1 var(--sans); color: #525252; cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
+.hs-vendors button:active { transform: scale(.98); }
+.hs-vendors button[aria-selected='true'] { color: #fafafa; }
+.hs-vendors button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+@media (hover: hover) { .hs-vendors button:not([aria-selected='true']):hover { color: #0a0a0a; background: #f5f5f5; } }
+.hs-vendor-bg { position: absolute; inset: 0; border-radius: 999px; background: #0a0a0a; }
 .hs-vendor-t { position: relative; }
 .hs-ch .hm { --plate: #171717; --edge: rgba(255, 255, 255, .16); --ink2: #f5f5f5; }
 .hs-ch .hm-handle { background: rgba(255, 255, 255, .05); }
@@ -112,7 +125,19 @@
 /* paste and ship: its own stage. The prompt keys in once in a graphite card; Copy answers when the line is whole. */
 .hs .sp.v2-sec { padding: clamp(72px, 8vw, 116px) 0 0; }
 .hs .sp-h { margin: 0 0 17px; font-size: 26px; line-height: 1.15; }
-.hs-ship-card { grid-column: 6 / -1; margin: 0; border-radius: 20px; background: #171717; color: #fafafa; overflow: hidden; }
+/* sticky-stack: two cards in one column. As the section is scrolled past, the words card sticks near the top and the
+   prompt card rides up and sticks just below it, stacking onto it. */
+.hs-stack { display: flex; flex-direction: column; gap: 27px; max-width: 880px; }
+.hs-card { margin: 0; border-radius: 20px; }
+.hs-card-1 { padding: 28px 28px 30px; background: #f5f5f5; }
+.hs-card-1 .sp-d { margin: 0; }
+.hs-ship-card { margin: 0; border-radius: 20px; background: #171717; color: #fafafa; overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  .js .hs-stack { padding-bottom: 32svh; }
+  .js .hs-card { position: sticky; }
+  .js .hs-card-1 { top: calc(var(--x-top, 64px) + 24px); z-index: 1; }
+  .js .hs-card-2 { top: calc(var(--x-top, 64px) + 24px + 84px); z-index: 2; box-shadow: 0 -18px 40px -24px rgba(0, 0, 0, .35); }
+}
 .hs-ship-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 20px; border-bottom: 1px solid rgba(255, 255, 255, .1); font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 .hs-ship-card .x-copy { min-width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; border: 0; border-radius: 999px; font: 500 13px/1 var(--sans); letter-spacing: 0; text-transform: none; background: rgba(255, 255, 255, .08); color: #fafafa; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .hs-ship-card .x-copy:hover { background: rgba(255, 255, 255, .16); } }
@@ -168,20 +193,22 @@
   .hs-io.in { left: 2%; top: calc(50% - 150px); transform: none; }
   .hs-io.out { right: 2%; top: calc(50% + 98px); bottom: auto; transform: none; }
   .hs-call { left: 56px; font-size: 13px; gap: 8px; }
-  /* phone chapters. Plain list (reduced motion, scripts off): one drawing, then the six chapters in flow. */
-  .hc-in { display: block; }
-  .hc-frame { display: flex; flex-direction: column; }
-  .hc-vis { order: -1; height: clamp(220px, 36svh, 300px); }
-  .hc-vis-in { position: relative; top: auto; height: 100%; }
-  .hc-copy { padding: 24px 0 72px; }
-  .hc-art { min-height: 0; padding: 0 0 44px; justify-content: flex-start; }
-  .js .hc-art:not([data-on]) { opacity: 1; }
-  .hc-t { font-size: 26px; }
-  .hc-d { font-size: 15px; line-height: 1.55; }
+  /* phone room: the module on top, the five facts under it; tap a fact to place the light */
+  .hc-in { display: block; padding-block: 56px 64px; }
+  .hc-vis { height: clamp(220px, 36svh, 300px); }
+  .hc-copy { padding-top: 16px; }
+  .hc-art { padding: 20px 16px 22px; margin: 0 -16px; }
+  .hc-t { font-size: 21px; }
+  .hc-d { font-size: 15px; line-height: 1.55; color: rgba(255, 255, 255, .62); }
   .hs-exp .hm { transform: translateX(-18%); }
   .hs-ch .hm { --s: 120px; --gk: .5; }
   .hs-ch .hm-labels li { width: 96px; max-width: 96px; left: calc(50% + var(--s) * .55); font-size: 12px; line-height: 1.25; }
   .hs-ch .hm-labels li i { width: 12px; }
+  /* phone picker: the words, then the module */
+  .hs-pick-copy, .hs-pick-vis { grid-column: 1 / -1; }
+  .hs-pick-vis { height: 300px; margin-top: 16px; }
+  .hs-pick-vis .hm { --s: 130px; transform: translateX(-16%); }
+  .hs-pick-vis .hm-labels li { width: 110px; max-width: 110px; }
   /* the module pills: one row that scrolls sideways, the next one peeking */
   .hs-vendors { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; margin-right: calc(-1 * var(--gutter, 16px)); padding-right: 16%; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 78%, transparent); mask-image: linear-gradient(90deg, #000 78%, transparent); }
   .hs-vendors::-webkit-scrollbar { display: none; }
@@ -190,24 +217,46 @@
   .hs-names { margin-top: 44px; }
   .hs-names li { font-size: clamp(30px, 9.5vw, 44px); }
 }
-/* phone with motion and scripts: one pinned frame for the room. The drawing sits on top, one chapter's words under
-   it; the room scrolls past behind the frame and the chapter swaps per stretch (Hsm.jsx reads the progress). Words
-   never move under the drawing: only one chapter is shown at a time, in the same place. */
-@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .js .hc-in { min-height: calc(100svh - var(--x-top, 64px) + 5 * 80svh); }
-  .js .hc-frame { position: sticky; top: var(--x-top, 64px); height: calc(100svh - var(--x-top, 64px)); }
-  .js .hc-vis { flex: none; }
-  .js .hc-copy { position: relative; flex: 1; min-height: 0; padding: 0; }
-  .js .hc-art { position: absolute; inset: 0; padding: 12px 0 0; opacity: 0; visibility: hidden; transition: opacity .3s cubic-bezier(0, 0, .2, 1), visibility 0s linear .3s; }
-  .js .hc-art[data-on] { opacity: 1; visibility: visible; transition-delay: 0s; }
+/* the five entrances, in the map's order. Each section gets data-in once a quarter of it is in view (Hsm.jsx). The
+   hidden start states apply only with scripts on and motion allowed, so scripts-off and reduced motion show every
+   section at rest. Transform, opacity and clip only; deck easings; no springs. */
+@media (prefers-reduced-motion: no-preference) {
+  /* 1 swing-door: the hero module swings in on a vertical hinge at its left edge */
+  .hs-door { height: 100%; transform-origin: 0 50%; transition: transform .9s cubic-bezier(.16, 1, .3, 1), opacity .5s cubic-bezier(0, 0, .2, 1); }
+  .js .hs-door:not([data-in]) { transform: perspective(1200px) rotateY(-72deg); opacity: 0; }
+  /* 2 pull-back: the room's contents start close up and pull back to show the whole */
+  .hc-in[data-entrance] { transform-origin: 50% 40%; transition: transform 1.1s cubic-bezier(.16, 1, .3, 1), opacity .6s cubic-bezier(0, 0, .2, 1); }
+  .js .hc-in[data-entrance]:not([data-in]) { transform: scale(1.45); opacity: 0; }
+  /* 3 venetian-type: each line slides in from alternating sides, 60ms apart */
+  .vt-l { transition: transform .7s cubic-bezier(.16, 1, .3, 1), opacity .5s cubic-bezier(0, 0, .2, 1); }
+  .js [data-entrance='venetian-type']:not([data-in]) .vt-l { opacity: 0; }
+  .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-t, .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-d, .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-vis { transform: translateX(-64px); }
+  .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-n, .js [data-entrance='venetian-type']:not([data-in]) .hs-vendors { transform: translateX(64px); }
+  .hs-pick-n.vt-l { transition-delay: .06s; } .hs-pick-d.vt-l { transition-delay: .12s; } .hs-vendors.vt-l { transition-delay: .18s; } .hs-pick-vis.vt-l { transition-delay: .24s; }
+  /* 4 sticky-stack: the cards stick and stack as you scroll (the sticky offsets above); on arrival each card rises a little */
+  .hs-card { transition: transform .6s cubic-bezier(.16, 1, .3, 1), opacity .5s cubic-bezier(0, 0, .2, 1); }
+  .js [data-entrance='sticky-stack']:not([data-in]) .hs-card { transform: translateY(40px); opacity: 0; }
+  .hs-card-2 { transition-delay: .12s; }
+  /* 5 domino: the close's lines tip into place one after another from a top hinge */
+  .dm { transform-origin: 50% 0; transition: transform .6s cubic-bezier(.16, 1, .3, 1), opacity .4s cubic-bezier(0, 0, .2, 1); }
+  .js [data-entrance='domino']:not([data-in]) .dm { transform: perspective(900px) rotateX(-88deg); opacity: 0; }
+  .hs-names li.dm { transition: transform .6s cubic-bezier(.16, 1, .3, 1), opacity .4s cubic-bezier(0, 0, .2, 1), color .4s cubic-bezier(0, 0, .2, 1); }
+  .gi-copy .dm:nth-child(2) { transition-delay: .08s; } .gi-copy .dm:nth-child(3) { transition-delay: .16s; } .gi-copy .dm:nth-child(4) { transition-delay: .24s; } .gi-copy .dm:nth-child(5) { transition-delay: .32s; }
+  .hs-names .dm:nth-child(1) { transition-delay: .4s; } .hs-names .dm:nth-child(2) { transition-delay: .48s; } .hs-names .dm:nth-child(3) { transition-delay: .56s; } .hs-names .dm:nth-child(4) { transition-delay: .64s; }
 }
+.hs-door { height: 100%; }
 @media (prefers-reduced-motion: reduce) {
   .hs-settle { transform: none !important; }
   .hs-sign .hm { transform: none; transition: none; }
   .hs-pulse { display: none; }
   .hc { clip-path: none !important; }
   .hc-art { transition: none; }
-  .js .hc-art:not([data-on]) { opacity: 1; }
+  /* the spotlight at rest: no light, every fact at full ink, every plate lit */
+  .hc-light { display: none; }
+  .hc-art .hc-t { color: #fff; }
+  .hc-art .hc-d { color: rgba(255, 255, 255, .92); }
+  .hc-art[data-on] { background: none; }
+  .hs-ch .hm-plate { border-color: var(--glow); box-shadow: 0 0 0 1px var(--glow); }
   .hm-plate, .hm-labels li, .hm-core i { transition: none; animation: none; }
   .hs-pause { display: none; }
   .hs-call { left: 0; }
