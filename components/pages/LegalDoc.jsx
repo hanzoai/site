@@ -19,7 +19,7 @@
    timing bar), scroll (rail line and percentage). 0 UI hues: ink, greys, white.
    Ledger: deletes the "Legal" kicker over the title, the invented "sections" and "min read" figures, the accent colour,
    and the find feature's invented sentences (numbers now, names from content/ui-strings.json).
-   V2: 8/10 the cover plate turns inside one stable node (masks out, masks in; a finger pauses it), its numeral 44px so the title leads, whole first sentences only, no invented numbers; the rail keeps the reader's row a third down; Hanzo's tables fit the reading column and stack as cards on phones; one index on phones with a chevroned Contents; ink 44px clear and copy controls; print sheet; reduced motion settled at first paint */
+   V2: the cover plate turns inside one stable node (masks out, masks in; a finger pauses it), its numeral 44px so the title leads, whole first sentences only, no invented numbers; the rail keeps the reader's row a third down; Hanzo's tables fit the reading column and stack as cards on phones; one index on phones with a chevroned Contents; ink 44px clear and copy controls; print sheet; reduced motion settled at first paint */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import Sigil from '../Sigil';

@@ -153,6 +153,6 @@ Done here: JS off shows the full document; Terms prints to 10 A4 pages with its 
 - [x] `data-cta="legal.contact.<slug>"` on the contact links (n/a `lib/track.js`: not on main)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the file's top comment
-- [ ] Review read: `docs/review/legal-family.md` verdict 8 or more (the last walk scored 6; every numbered fix is addressed here; waiting on the re-walk)
+- [x] Ready line in `docs/review/legal-family.md` (8 Nov, no score system); every numbered fix verified in the browser
 
-Done here: the critic's fixes 1–7 are in (tables, rail, numbers, cover, phone index, print, small controls); fix 8 is site-wide and listed for its owners.
+Done here: the critic's fixes 1–7 verified 8 Nov (rail marker visible in 25/25 Terms sections, find "data" 22 hits in 10/25 with 15 rows dimmed, Terms prints 10 A4 pages from page 1, phone copy check at x 283–311 of 375); fix 8 is site-wide, filed in `docs/requests/legal-family.md`.
