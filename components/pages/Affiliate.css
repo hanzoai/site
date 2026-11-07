@@ -1,27 +1,27 @@
 /* ---------- affiliates (v2, grey deck) ---------- */
 
 /* hero: display type left, the action right, then the browser window as the hero object */
-.xaf-hero { padding: clamp(56px, 8vw, 128px) 0 clamp(120px, 14vw, 220px); }
+.xaf-hero { padding: clamp(56px, 8vw, 128px) 0 clamp(24px, 3vw, 48px); }
 .xaf-top { align-items: end; row-gap: 40px; }
 .xaf-copy { grid-column: 1 / span 8; }
 .xaf-side { grid-column: 9 / span 4; display: grid; gap: 32px; justify-items: start; padding-bottom: 10px; }
-.xaf-win { margin-top: clamp(56px, 7vw, 104px); perspective: 1400px; }
-.xaf-win-in { overflow: hidden; background: #fff; }
-.xaf-tabs { display: flex; align-items: flex-end; gap: 18px; height: 52px; padding: 0 clamp(16px, 2vw, 28px); background: var(--hz-50); border-bottom: 1px solid var(--line); }
-.xaf-dots { display: flex; gap: 8px; align-self: center; }
-.xaf-dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--hz-150); }
-.xaf-tab { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 18px; border-radius: 12px 12px 0 0; background: #fff; font: 500 14px/1 var(--sans); color: var(--hz-950); border: 1px solid var(--line); border-bottom: 0; margin-bottom: -1px; }
-.xaf-bar { display: flex; align-items: center; padding: clamp(14px, 1.6vw, 22px) clamp(16px, 2vw, 28px); }
-.xaf-url { flex: 1; min-width: 0; display: flex; align-items: center; height: clamp(64px, 7vw, 96px); padding: 0 clamp(16px, 2vw, 32px); border-radius: 20px; background: var(--hz-50); font: 500 clamp(1.05rem, 2.9vw, 2.75rem)/1 var(--mono); letter-spacing: -.03em; color: var(--hz-950); white-space: nowrap; overflow: hidden; }
+.xaf-apply { position: relative; display: inline-grid; justify-items: start; gap: 10px; }
+.xaf-to { font-size: 14px; color: var(--hz-500); opacity: 0; transform: translateY(-6px); clip-path: inset(0 100% 0 0); transition: opacity .25s var(--xp-ease), transform .35s var(--xp-ease), clip-path .45s var(--xp-ease); }
+@media (hover: hover) { .xaf-apply:hover .xaf-to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); } }
+.xaf-apply:focus-within .xaf-to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
 .xaf-lock { flex: none; display: inline-block; width: .5em; height: .62em; margin-right: .5em; border: 2px solid var(--hz-500); border-radius: 3px 3px 4px 4px; position: relative; top: .1em; }
 .xaf-lock::before { content: ''; position: absolute; left: 50%; bottom: 100%; width: .32em; height: .3em; margin-left: -.16em; border: 2px solid var(--hz-500); border-bottom: 0; border-radius: .2em .2em 0 0; }
-.xaf-typed { overflow: hidden; }
-.xaf-caret { flex: none; width: 3px; height: 1.05em; margin-left: 3px; background: var(--hz-950); animation: xaf-blink 1s steps(1) infinite; }
-.xaf-caret.rest { animation: none; opacity: 0; }
+.xaf-caret { flex: none; display: inline-block; width: .06em; height: .9em; margin-left: .04em; background: var(--hz-950); vertical-align: -.08em; animation: xaf-blink 1s steps(1) infinite; }
+.xaf-caret.rest { animation: none; opacity: 0; width: 0; margin: 0; }
 @keyframes xaf-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
-.xaf-page { display: grid; gap: 12px; padding: 8px clamp(16px, 2vw, 28px) clamp(20px, 2.4vw, 32px); }
-.xaf-page i { display: block; height: 12px; border-radius: 6px; background: var(--hz-50); }
-.xaf-page i:nth-child(2) { width: 72%; } .xaf-page i.s { width: 44%; }
+
+/* the link itself, the hero object, in its own screen */
+.xaf-link { padding: clamp(40px, 5vw, 80px) 0 clamp(120px, 14vw, 220px); }
+.xaf-link-in { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .2em; font: 500 clamp(2rem, 5.1vw, 5rem)/1.02 var(--mono); letter-spacing: -.06em; color: var(--hz-950); padding: clamp(28px, 4vw, 64px) 0; border-block: 1px solid var(--line); transform-origin: 50% 50%; }
+.xaf-lnk { white-space: nowrap; }
+.xaf-link-k { display: flex; justify-content: space-between; margin: 16px 0 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--hz-500); }
+.xaf-link-k .x-mono { text-transform: none; letter-spacing: 0; }
+.xaf-lnk-code { display: inline-block; padding: 0 .18em; border-radius: .14em; background: var(--hz-950); color: #fff; }
 
 /* how it works: the chapters' object */
 .xaf-how-h { margin: 0; }
@@ -31,14 +31,15 @@
 .xaf-s { width: min(86%, 560px); }
 .xaf-req { display: grid; gap: 18px; justify-items: center; }
 .xaf-req-top { width: 100%; display: flex; align-items: center; gap: 16px; height: 88px; padding: 0 28px; border-radius: 20px; background: var(--hz-950); color: var(--hz-50); font: 500 clamp(1.1rem, 1.9vw, 1.6rem)/1 var(--mono); letter-spacing: -.02em; box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .5); }
-.xaf-verb { padding: 8px 12px; border-radius: 10px; background: var(--hz-800); color: #fff; font-size: .7em; letter-spacing: .04em; }
+.xaf-verb { padding: 8px 12px; border-radius: 10px; background: var(--hz-800); color: #fff; font-size: 14px; letter-spacing: .04em; }
 .xaf-req-or { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--hz-500); }
 .xaf-mail, .xaf-row { width: 100%; display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 16px; background: #fff; border: 1px solid var(--line); box-shadow: 0 20px 40px -30px rgba(0, 0, 0, .3); }
 .xaf-mail b { font: 560 19px/1.2 var(--sans); letter-spacing: -.015em; color: var(--hz-950); }
 .xaf-mail-i, .xaf-av { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--hz-50); font: 600 16px/1 var(--mono); color: var(--hz-950); }
-.xaf-lines { flex: 1; display: grid; gap: 9px; }
-.xaf-lines i { display: block; height: 10px; border-radius: 5px; background: var(--hz-100); }
-.xaf-lines i:nth-child(2) { width: 70%; } .xaf-lines i:nth-child(3) { width: 48%; }
+.xaf-mt { flex: 1; display: grid; gap: 4px; min-width: 0; }
+.xaf-mt b { font: 560 18px/1.2 var(--sans); letter-spacing: -.015em; color: var(--hz-950); }
+.xaf-mt small { font: 500 14px/1.2 var(--mono); color: var(--hz-500); }
+.xaf-out { flex: none; font: 400 20px/1 var(--sans); color: var(--hz-500); }
 .xaf-reply { display: grid; gap: 14px; }
 .xaf-row.in { margin-left: 40px; width: calc(100% - 40px); border-color: var(--hz-300); }
 .xaf-av.h { background: var(--hz-950); color: #fff; }
@@ -50,15 +51,14 @@
 .xaf-org { display: inline-flex; align-items: center; gap: 14px; height: 68px; padding: 0 26px 0 10px; border-radius: 999px; background: var(--hz-950); color: #fff; font: 500 17px/1 var(--sans); box-shadow: 0 30px 60px -28px rgba(0, 0, 0, .6); }
 .xaf-org-i { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #fff; color: var(--hz-950); font: 600 13px/1 var(--mono); }
 .xaf-you { font: 600 clamp(2rem, 3.6vw, 3.25rem)/1 var(--sans); letter-spacing: -.045em; color: var(--hz-950); }
-.xaf-land ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
-.xaf-land li { height: 36px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid var(--hz-200); background: #fff; font: 500 14px/1 var(--mono); color: var(--hz-950); }
 .xaf .xpc-t a, .xaf .xpc-sch a { color: inherit; text-decoration: underline; text-underline-offset: .12em; text-decoration-thickness: 1px; }
 .xaf .xpc-t .x-copy, .xaf .xpc-sch .x-copy { margin: 0 6px; vertical-align: .2em; }
 .xaf-code-in { font: 500 .78em/1.4 var(--mono); letter-spacing: -.02em; padding: 2px 10px; border-radius: 10px; background: var(--hz-50); border: 1px solid var(--line); color: var(--hz-950); overflow-wrap: anywhere; }
 
 /* the rule, drawn (the dark room) */
-.xaf-rule-h { max-width: 16ch; }
-.xaf-rule-tabs { margin-top: clamp(48px, 5vw, 80px); }
+.xaf-rule-tabs .x-tablist { gap: 6px; padding: 6px; flex-wrap: wrap; width: auto; max-width: 100%; border-radius: 28px; }
+.xaf-rule-tabs .x-tab { height: auto; min-height: 44px; padding: .3em .6em; font: 600 clamp(1.5rem, 3.2vw, 3rem)/1.05 var(--sans); letter-spacing: -.045em; }
+.xaf-rule-p:focus-visible .xaf-dia-wrap { outline: 2px solid var(--focus); outline-offset: 4px; }
 .xaf-rule-p { margin-top: 24px; outline: none; }
 .xaf-dia-wrap { height: clamp(300px, 34vw, 460px); border-radius: 28px; background: var(--hz-900); border: 1px solid var(--room-line); display: grid; place-items: center; overflow: hidden; }
 .xaf-dia { width: min(92%, 760px); height: auto; }
@@ -75,21 +75,19 @@
 
 /* close */
 .xaf-close .xp-grid { align-items: end; row-gap: 40px; }
-.xaf-close-l { grid-column: 1 / span 7; display: grid; gap: 40px; }
+.xaf-close-l { grid-column: 1 / span 7; }
 .xaf-close-h { max-width: 14ch; font-size: clamp(2.75rem, 5.6vw, 5rem); }
-.xaf-close-bar { display: flex; align-items: center; height: 72px; padding: 0 24px; font: 500 clamp(.95rem, 1.6vw, 1.375rem)/1 var(--mono); color: var(--hz-600); background: var(--hz-50); box-shadow: none; overflow: hidden; white-space: nowrap; }
 .xaf-close-act { grid-column: 9 / span 4; display: grid; gap: 24px; justify-items: start; }
 
 @media (prefers-reduced-motion: reduce) { .xaf-caret { animation: none; } }
 @media (max-width: 900px) {
-  .xaf-hero { padding: 32px 0 88px; }
+  .xaf-hero { padding: 32px 0 24px; }
   .xaf-side { gap: 24px; padding: 0; }
-  .xaf-win { margin-top: 40px; }
-  .xaf-tabs { height: 44px; }
-  .xaf-tab { height: 32px; font-size: 14px; }
-  .xaf-bar { padding: 12px; }
-  .xaf-url { height: 52px; padding: 0 12px; border-radius: 12px; font-size: 14px; letter-spacing: -.02em; }
-  .xaf-page { display: none; }
+  .xaf-link { padding: 8px 0 88px; }
+  .xaf-link-in { font-size: clamp(1.75rem, 9vw, 2.5rem); }
+  .xaf-lnk { white-space: normal; overflow-wrap: anywhere; }
+  .xaf-to { opacity: 1; transform: none; clip-path: none; }
+  .xaf-rule-tabs .x-tab { font-size: 1.375rem; }
   .xaf-stage { border-radius: 22px; }
   .xaf-s { width: 88%; }
   .xaf-req-top { height: 64px; padding: 0 16px; font-size: 15px; gap: 10px; }
@@ -101,7 +99,6 @@
   .xaf-you { font-size: 1.75rem; }
   .xaf-dia-wrap { height: 260px; border-radius: 22px; }
   .xaf-close-act { justify-items: stretch; }
-  .xaf-close-bar { height: 56px; font-size: 14px; }
 }
 /* the copy control is icon-only (its name stays in aria-label) until James approves the word */
 .xaf .x-copy { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; }

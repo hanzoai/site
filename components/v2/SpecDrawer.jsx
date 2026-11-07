@@ -6,7 +6,9 @@
    Usage:
      <SpecDrawer rows={[{ v: '4222', l: 'Client port' }, { v: 'Replay', l: 'From any point' }]}
                  open="See the code" sheetTitle="events.go">{<Code … />}</SpecDrawer>
-   rows: Hanzo's own figures and words only. Without children there is no button. Owned by Cloud 3. */
+   rows: Hanzo's own figures and words only. Without children there is no button. The closed sheet is not a dialog
+   (no role, no aria-modal), so the site's sticky ask (components/Ask.jsx) does not mistake it for an open overlay.
+   Owned by Cloud 3. */
 import { useEffect, useId, useRef, useState } from 'react';
 import './LaunchType.css';
 import './SpecDrawer.css';
@@ -27,7 +29,7 @@ export function Sheet({ open, onClose, title, children, id }) {
   return (
     <div className="lx-sheet" data-open={open ? '' : undefined} id={id}>
       <button type="button" className="lx-sheet-scrim" tabIndex={-1} aria-hidden="true" onClick={onClose} />
-      <div className="lx-sheet-panel" role="dialog" aria-modal="true" aria-label={title} inert={!open} data-lenis-prevent>
+      <div className="lx-sheet-panel" role={open ? 'dialog' : undefined} aria-modal={open || undefined} aria-label={title} inert={!open} data-lenis-prevent>
         <div className="lx-sheet-bar">
           <p className="lx-kick">{title}</p>
           <button ref={close} type="button" className="lx-sheet-x" onClick={onClose} aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></button>

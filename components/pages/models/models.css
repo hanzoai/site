@@ -249,8 +249,10 @@
 .xmf-fig.id code { min-width: 0; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.35; color: var(--ink); overflow-wrap: anywhere; }
 
 /* the model page's first screen (PLAN-COMPONENTS 5.5): words and the three numbers on the left, the 4:5 Sigil object right */
-.xmf-launch-g { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; min-height: calc(100svh - 60px); padding: clamp(32px, 5vh, 64px) 0; }
-.xmf-launch-g .xmf-launch-t { grid-column: 1 / 10; }
+.xmf-launch-g { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: auto auto; column-gap: 24px; align-content: center; min-height: calc(100svh - 60px); padding: clamp(32px, 5vh, 64px) 0; }
+.xmf-launch-g .xmf-launch-t { grid-column: 1 / 10; grid-row: 1; }
+.xmf-launch-g .xmf-figs { grid-column: 1 / 10; grid-row: 2; }
+.xmf-launch-g .xmf-obj { grid-row: 1 / 3; align-self: center; }
 .xmf-model .xmf-name.s { font-size: clamp(48px, 5.2vw, 76px); }
 .xmf-model .xmf-name.m { font-size: clamp(42px, 4.4vw, 64px); }
 .xmf-model .xmf-name.l { font-size: clamp(34px, 3.4vw, 50px); }
@@ -262,11 +264,13 @@
 .xmf-model .xmf-fig dd b { font-family: var(--sans); font-weight: 560; font-size: clamp(52px, 6vw, 96px); font-variant-numeric: tabular-nums; letter-spacing: -.045em; }
 .xmf-obj { grid-column: 10 / 13; position: relative; margin: 0; aspect-ratio: 4 / 5; max-height: calc(100svh - 140px); justify-self: end; width: 100%; border-radius: 28px; overflow: hidden; background: #f5f5f7; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06), 0 50px 100px -70px rgba(0, 0, 0, .45); }
 .xmf-obj-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: #1d1d1f; opacity: .7; }
-.xmf-obj-l { position: absolute; left: 22px; top: 20px; margin: 0; font-size: 13px; letter-spacing: .06em; color: var(--muted); }
-.xmf-obj-id { position: absolute; left: 14px; right: 14px; bottom: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; gap: 2px 12px; padding: 14px 14px 14px 18px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 20px 40px -24px rgba(0, 0, 0, .3); }
+.xmf-obj-top { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 14px 0 20px; }
+.xmf-obj-top .xmf-crumbs { margin: 10px 0 0; font-size: 13px; }
+.xmf-obj-l { position: absolute; left: 20px; top: 84px; margin: 0; font-size: 13px; letter-spacing: .04em; color: var(--muted); }
+.xmf-obj-id { position: absolute; left: 14px; right: 14px; bottom: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 12px; padding: 14px 14px 14px 18px; border-radius: 18px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 20px 40px -24px rgba(0, 0, 0, .3); }
 .xmf-obj-id > span { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .xmf-obj-id code { grid-column: 1; font-size: 15px; color: var(--ink); overflow-wrap: anywhere; }
-.xmf-obj-id .x-copy { grid-column: 2; grid-row: 1 / 3; }
+.xmf-obj-id .x-copy { grid-column: 2; grid-row: span 2; align-self: end; }
 
 /* the maker's own family, as a switcher */
 .xmf-fam { border-top: 0; }
@@ -408,6 +412,7 @@
   .xmf-maker-n { margin-top: 40px; align-items: flex-start; text-align: left; }
   .xmf-maker-n b { font-size: 120px; }
   .xmf-maker-n > span { font-size: 14px; }
+  .xmf-maker-top { position: relative; justify-content: space-between; margin-top: 32px; }
   .xmf-term { margin-top: 24px; border-radius: 22px; }
   .xmf-term pre { padding: 18px; font-size: 13px; }
   .xmf-prov .xmf-among .xmf-plot { aspect-ratio: 4 / 5; }
@@ -428,22 +433,35 @@
 .xmf-quick :focus-visible { outline-color: #f5f5f7; }
 
 @media (max-width: 900px) {
-  .xmf-launch-g { display: block; min-height: 0; padding: 28px 0 56px; }
+  .xmf-launch-g { display: flex; flex-direction: column; min-height: 0; padding: 28px 0 56px; }
+  .xmf-launch-g .xmf-launch-t { order: 1; }
+  .xmf-launch-g .xmf-obj { order: 2; aspect-ratio: auto; height: auto; display: flex; flex-direction: column; justify-content: space-between; gap: 72px; padding: 0 0 12px; }
+  .xmf-launch-g .xmf-obj-top, .xmf-launch-g .xmf-obj-id { position: relative; left: auto; right: auto; top: auto; bottom: auto; }
+  .xmf-launch-g .xmf-obj-id { margin: 0 12px; }
+  .xmf-launch-g .xmf-obj-l { display: none; }
+  .xmf-launch-g .xmf-figs { order: 3; }
+  .xmf-obj-top { padding: 10px 10px 0 16px; }
+  .xmf-obj-top .xmf-crumbs { font-size: 14px; }
   .xmf-model .xmf-name.s { font-size: clamp(44px, 12vw, 56px); }
   .xmf-model .xmf-name.m { font-size: clamp(38px, 10vw, 48px); }
   .xmf-model .xmf-name.l { font-size: clamp(32px, 8.4vw, 40px); }
   .xmf-model .xmf-figs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .xmf-model .xmf-fig { padding: 16px 8px 0 0; }
   .xmf-model .xmf-fig + .xmf-fig { padding-left: 10px; border-left: 1px solid var(--line); border-top: 0; }
-  .xmf-model .xmf-fig dd b { font-size: clamp(30px, 9vw, 40px); letter-spacing: -.04em; }
+  .xmf-model .xmf-fig dd b { font-size: clamp(24px, 7.4vw, 36px); letter-spacing: -.04em; }
   .xmf-model .xmf-fig dd > span { display: none; }
-  .xmf-obj { margin-top: 40px; max-height: none; border-radius: 22px; }
+  .xmf-obj { margin-top: 32px; max-height: none; border-radius: 22px; }
   .xmf-rel .xmf-plot { aspect-ratio: 4 / 5; border-radius: 22px; }
   .xmf-rel .xmf-more-h h2 { font-size: 36px; }
 }
 
 /* one pause (ModelFilm's FilmPause) stops every loop on the page: the Sigils, the field's light, the rings */
-.xmf-obj-pause { position: absolute; right: 14px; top: 14px; }
-.xmf-maker-pause { position: absolute; right: 0; top: 0; }
+.xmf-maker-top { position: absolute; right: 0; top: 0; display: flex; align-items: center; gap: 16px; }
+.xmf-maker-top .xmf-crumbs { margin: 0; }
 .xmf-maker-g { position: relative; }
 [data-mpaused] .xmf-sweep, [data-mpaused] .xmf-dot.me::after, [data-mpaused] .xmf-field.on .xmf-dot b { animation-play-state: paused; }
+
+/* Hanzo's model cards (SpecCard) in the rail and on the shelf */
+.xmf-rail > li, .xmf-grid > li { min-width: 0; }
+.xmf-rail .sc-card { min-height: 240px; }
+@media (max-width: 900px) { .xmf-maker-top { position: relative; justify-content: space-between; margin-top: 36px; } }

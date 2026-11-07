@@ -14,6 +14,13 @@ Header: `Persona:` Developer choosing a model (and the buyer comparing labs) · 
   - The second solid in the Try panel.
   - The vermilion accent.
 
+## Round 2 (after the palette pass and docs/refs/hanzo-model-cards/SPEC.md)
+- **Every model card is now Hanzo's card exactly:** the wall tiles, the catalogue cards and the creative tiles. The values are #000, a 20px radius, a 22/500 title with "→" top left, a 13/18px description at 80% white, 10px Zen Mono pills, Enso's "Flagship model" pill, the measured ±2.7° pointer tilt (.3s cubic-bezier(.2,.8,.2,1)) and a .98 press.
+- They come from one shared piece, `components/v2/SpecCard.jsx`. The wall draws the same card at its own scale.
+- **No count-up and no flap:** 11, 84.4% and 100.0% rise once into their line (`components/v2/MaskFig.jsx`), so no number Hanzo did not print ever shows.
+- **First screen:** the h1 with nothing over it, the ask, and nine cards with a playing film within 1s.
+- **Phone:** nothing overlaps at 375×812.
+
 ## The 18 areas
 - **2.1 Strategy and conversion:**
   - One solid ask per viewport, in Hanzo's words: "Get API key" in the hero (`data-thumb`, `data-cta="models.hero"`). "Every model" is a text link.
@@ -57,7 +64,7 @@ Header: `Persona:` Developer choosing a model (and the buyer comparing labs) · 
   - **Idle:** the lit film plays and the light moves on every 2.6s; the request card switches models by itself; the Sigil drifts behind Related.
   - **Pointer:** hovering a film tile or an Enso/Zen column plays that film; the Sigil leans to the cursor.
   - **State:** chips re-flow with a layoutId pill (spring 300/30), tabs, the fold, the disclosure.
-  - **Arrival:** the h1 cuts in, and the figures count up once.
+  - **Arrival:** the h1 cuts in, and the figures rise once into their line (MaskFig). No count-up, so only Hanzo's own numbers are ever shown.
   - **Scroll:** the fly-in and the pinned families. That is 2 of the 6 kinds.
   - `variety.py`: 4 techniques, 0 fade-ups.
   - Press is scale .98 or 1px down on every control. Hover is in `@media (hover:hover)`.
@@ -112,6 +119,8 @@ Header: `Persona:` Developer choosing a model (and the buyer comparing labs) · 
 ## Ledger (what this page deleted)
 - The compare tray (Tray, its buttons and CSS).
 - The page's own img+video `Film` (now ModelFilm).
+- The white catalogue card (now Hanzo's black card, SpecCard).
+- Count-ups (now MaskFig).
 - The rounded-panel entry clip on the dark room.
 - The vermilion accent and every hue.
 - The "Show all N / Show fewer" visible strings.

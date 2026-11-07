@@ -1,33 +1,31 @@
 # /oss/* (template) — James-eye review
 
-Reviewed: main, page files at `483255a`. Members walked: `/oss/hanzo-app` and `/oss/crowdstart`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main, page files at `4fa3ca0` (second review; the first, at `483255a`, scored 5/10). Members walked: `/oss/hanzo-app` and `/oss/crowdstart`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 5/10
+Verdict: 7/10
 
-First complaint: "The first screen is just words and buttons and nothing moves. Then the first number I see is a giant '0' next to 'stars'. That's the opposite of selling."
+First complaint: "Now the numbers are up front and it looks like us. But the screen barely moves; I have to look hard to see the contour drifting. And on my phone it's completely still."
+
+## What changed since the first review
+Fixed: no eyebrow above the h1 (the "Open source · Hanzo" line sits under the lede), the dark ledger card is in the first screen beside the title, its lead figure is now the true "11 public repositories" (zeros are in the small row), the sibling orgs are cards that open, and text reads with JavaScript off.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** No. The first screen is the org name at display size, Hanzo's one-line description ("[Legacy] Hanzo app templates…"), and three actions. **Nothing moves** after the headline lands (0% change on both sizes, both members). The dark ledger card starts at the fold, and its first visible figure is "0 stars" set huge.
-2. **One in, one out?** Partly: "Counted from GitHub" and "Counted on Hanzo Forge" pin as two chapters (01 / 02) with their figures, then the repositories list. It is short and orderly but static.
-3. **A real object in every section?** The ledger card and the figure plates; the repositories are a list.
-4. **One ask, sticky after the hero?** Yes: "hanzo-app on GitHub" / "crowdstart on GitHub" solid in the hero and carried by the shared ask bar; the header's "Try Hanzo" turns outlined on desktop.
-5. **Every hover and press answers?** Not measured beyond the hero buttons (which answer).
+1. **Sells in 5 seconds, moves within 1 second?** Yes: the org name, Hanzo's description, "hanzo-app on GitHub", and the ledger card with its figures. After arrival the movement is a faint contour drift (0.1–1.2% change); on the phone the first screen is still.
+2. **One in, one out?** Yes: "Counted from GitHub" and "Counted on Hanzo Forge" pin as chapters, then repositories as cards, then sibling orgs, then a dark close repeating the ask.
+3. **A real object in every section?** Yes: ledger, figure plates, repository cards, org cards.
+4. **One ask, sticky after the hero?** Yes: "… on GitHub" in the hero, the shared ask bar and the dark close. `data-cta` present.
+5. **Every hover and press answers?** The ask answers both. "On Hanzo Forge" and "Every organization" press but do not change on hover.
 6. **Overlap, font swap, layout shift?** None; layout shift 0.
-7. **Which reference, and is its motion there?** hamol.studio numbered catalogue (01 / 02, figures). The numbering is there; the motion is not.
-8. **Different from its neighbours?** Members differ only by their figures and name (each has its own contour seed in the ledger).
+7. **Which reference, and is its motion there?** hamol.studio numbered catalogue and synchronized.studio (org cards that open). Both there.
+8. **Different from its neighbours?** Members differ by figures and contour seed; layout shared, which is fine for a 56-member family.
 9. **All 18 parts covered?** See below.
-10. **Banned tells?** Yes:
-    - An eyebrow above the h1 on desktop ("OPEN SOURCE · HANZO", mono caps).
-    - A dead first screen.
-11. **Copy untouched?** Yes: parity 37/37 and 28/28 text, 25/25 and 9/9 links. Figures come from GitHub on the walk date.
+10. **Banned tells?** None found.
+11. **Copy untouched?** Yes: parity 37/37 and 28/28 text, 25/25 and 9/9 links.
 
 ## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.3 First impression:** no moving object; the hero object (ledger) is below the fold.
-- **2.5 Proof order:** a zero is the lead figure; plan says lead with current verifiable proof.
-- **2.3 / 2.17 No-JS (hanzo-app):** 3 of 22 blocks hidden with JavaScript off ("02 / 02", "Counted on Hanzo Forge"), hidden by the page's own CSS (scope to `html.js`, SYSTEM.md §11b).
+- **2.9 Motion:** first-screen motion is too faint to read as alive; none on the phone.
+- **2.8 Link states:** two text links without hover.
 
 ## Fixes
-1. Remove "OPEN SOURCE · HANZO" from above the h1.
-2. Bring the ledger card into the first screen beside or under the title, with its contour drifting, so something is alive on arrival.
-3. Lead the ledger with the member's strongest true figure (public repositories, commits in the past year, or Forge mirrors) and keep zeros in the small rows, not as the giant number.
-4. Scope the chapter text's hidden state to `html.js`.
+1. Give the ledger one clear arrival move (figures counting up once to Hanzo's values, from zero) and let the contour drift visibly; do the same on the phone.
+2. Add the kit's arrow-link hover to "On Hanzo Forge" and "Every organization".

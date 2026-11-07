@@ -180,9 +180,6 @@
 .jn-table td { color: var(--soft); }
 .jn-paste { grid-template-columns: 1fr !important; gap: 18px !important; margin-top: 40px; }
 .jn-paste .cf-paste-t { font-size: 21px; }
-.jn[data-end] .pf-ask { opacity: 0 !important; transform: translate3d(-50%, 16px, 0) scale(.96) !important; pointer-events: none !important; }
-/* the v2 AskBar is this page's sticky ask on desktops; the site bar (.x-ask) would stack a second one under it */
-@media (min-width: 901px) { body:has(main.jn) .x-ask { display: none !important; } }
 
 @media (max-width: 900px) {
   .jn-hero { padding: 88px 0 96px; }

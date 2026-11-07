@@ -240,6 +240,18 @@
       "where": "/careers/* application, after the form writes the email (a tick and the address show; this is the status)",
       "reason": "status message",
       "needs_james": true
+    },
+    "pause": {
+      "string": "Pause",
+      "where": "self-running demos (/benchmarks/* playhead): stops the motion",
+      "reason": "control label (WCAG 2.2.2)",
+      "needs_james": true
+    },
+    "stop": {
+      "string": "Stop",
+      "where": "/integrations/* editor: finish the typing at once (icon)",
+      "reason": "control label (WCAG 2.2.2)",
+      "needs_james": true
     }
   }
 }

@@ -4,7 +4,6 @@
 .v2-odo-r { display: inline-flex; }
 .v2-odo-c { display: inline-block; }
 .v2-odo-d { display: inline-block; height: 1em; overflow: hidden; }
-.v2-odo-s { display: block; transform: translateY(calc(var(--d) * -1em)); transition: transform .3s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 20ms); animation: v2-odo-in .3s cubic-bezier(.16, 1, .3, 1) calc(80ms + var(--i) * 20ms) backwards; }
+.v2-odo-s { display: block; transform: translateY(calc(var(--d) * -1em)); transition: transform .3s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 20ms); }
 .v2-odo-s::before { content: '0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9'; display: block; white-space: pre; line-height: 1em; }
-@keyframes v2-odo-in { from { transform: translateY(0); } }
-@media (prefers-reduced-motion: reduce) { .v2-odo-s { transition: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) { .v2-odo-s { transition: none; } }

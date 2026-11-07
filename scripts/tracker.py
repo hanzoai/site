@@ -48,8 +48,8 @@ W = {
      'computer': 'A virtual desktop with an agent cursor working software that has no API',
      'operative': 'A container opening to show what is inside, then one docker run starting it',
      'operator': 'Kubernetes-style control loop: desired versus actual state converging'},
- 4: {k: 'Its own live diagram of what it does (see docs/DESIGN.md)' for k in ['playground', 'gateway', 'base', 'machines', 'engine', 'edge', 'functions', 'dns', 's3', 'kms', 'hsm', 'iam', 'identity', 'idv', 'authz', 'guard', 'sentinel', 'registry', 'tunnel', 'ingress', 'network', 'node', 'mq', 'pubsub', 'stream', 'realtime', 'datastore', 'search', 'crawl', 'o11y', 'metrics', 'telemetry', 'insights', 'analytics', 'dashboards', 'visor', 'world']},
- 5: {k: 'Its own live diagram of what it does (see docs/DESIGN.md)' for k in ['billing', 'payments', 'commerce', 'ledger', 'treasury', 'risk', 'sign', 'dataroom', 'captable', 'console', 'auto', 'automations', 'flow', 'ui', 'gui', 'jin', 'zap', 'tabs', 'blockchain']},
+ 4: {k: 'Its own live diagram of what it does (see docs/MASTER.md)' for k in ['playground', 'gateway', 'base', 'machines', 'engine', 'edge', 'functions', 'dns', 's3', 'kms', 'hsm', 'iam', 'identity', 'idv', 'authz', 'guard', 'sentinel', 'registry', 'tunnel', 'ingress', 'network', 'node', 'mq', 'pubsub', 'stream', 'realtime', 'datastore', 'search', 'crawl', 'o11y', 'metrics', 'telemetry', 'insights', 'analytics', 'dashboards', 'visor', 'world']},
+ 5: {k: 'Its own live diagram of what it does (see docs/MASTER.md)' for k in ['billing', 'payments', 'commerce', 'ledger', 'treasury', 'risk', 'sign', 'dataroom', 'captable', 'console', 'auto', 'automations', 'flow', 'ui', 'gui', 'jin', 'zap', 'tabs', 'blockchain']},
  6: {k: 'Own layout, chosen when built' for k in ['startups', 'grants', 'affiliate', 'referral', 'bounty', 'leaderboard', 'founder', 'beta', 'newsletter', 'features', 'templates', 'gallery', 'integrations', 'sdks', 'learn', 'legal', 'sms-opt-in', 'buying-specialist', 'blog']},
  7: {k: 'Model page: hero opens from its card; body rebuilt' for k in ['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori']},
 }

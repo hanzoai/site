@@ -36,7 +36,7 @@
 .sn2-issue .l2-pause { top: 54px; right: 14px; }
 .sn2-col-pause { top: 84px !important; right: 24px !important; }
 .sn2-col { position: relative; }
-.sn2-col-pin { position: sticky; top: 0; height: 100svh; min-height: 640px; overflow: hidden; }
+.sn2-col-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); min-height: 600px; overflow: hidden; }
 .sn2-cv { position: absolute; inset: 0; width: 100%; height: 100%; }
 .sn2-col-in { position: relative; height: 100%; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
 .sn2-col-copy { grid-column: 1 / span 5; position: relative; z-index: 2; padding: 32px 0; }
