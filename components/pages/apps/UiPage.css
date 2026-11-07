@@ -199,10 +199,10 @@ a.ui-chip:active { transform: scale(.98); }
 .ui-hero { padding-bottom: clamp(72px, 7vw, 116px); }
 
 /* v2.4: each chapter recomposes the board's body (fixed height, so nothing below moves) */
-.uc-body { height: 372px; align-content: start; overflow: hidden; }
+.uc-body { height: 404px; align-content: start; overflow: hidden; }
 .uc-board.bare .uc-body { height: 336px; }
 .uc-v { display: grid; gap: 14px; align-content: start; }
-.uc-tab { position: absolute; right: 24px; bottom: 22px; z-index: 2; padding: 10px 18px; border-radius: 10px; background: #fff; box-shadow: 0 2px 0 rgba(0, 0, 0, .16), 0 0 0 1px rgba(0, 0, 0, .1); font-size: 21px; color: #0a0a0a; animation: uc-press .7s cubic-bezier(.16, 1, .3, 1); }
+.uc-tab { position: absolute; right: 28px; top: 28px; z-index: 2; padding: 10px 18px; border-radius: 10px; background: #fff; box-shadow: 0 2px 0 rgba(0, 0, 0, .16), 0 0 0 1px rgba(0, 0, 0, .1); font-size: 21px; color: #0a0a0a; animation: uc-press .7s cubic-bezier(.16, 1, .3, 1); }
 @keyframes uc-press { 0% { transform: translateY(3px); box-shadow: 0 0 0 rgba(0, 0, 0, .16), 0 0 0 1px rgba(0, 0, 0, .2); } 100% { transform: none; } }
 .uc-big { display: flex; align-items: baseline; gap: 16px; margin: 6px 0 0; }
 .uc-big span { font-size: 17px; color: #737373; }
@@ -256,7 +256,7 @@ a.ui-chip:active { transform: scale(.98); }
 /* the close: one band, the line and its ask beside the board it sells; the proof sits under it */
 .ui-stop-in { grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); align-items: center; }
 .ui-stop-l { display: flex; flex-direction: column; gap: 28px; }
-.ui-stop-l h2 { max-width: 12ch; font-size: clamp(40px, 4.4vw, 64px) !important; line-height: 1.02 !important; letter-spacing: -.035em !important; }
+.ui-stop-l h2 { max-width: 12ch; font-size: clamp(40px, 4.4vw, 64px) !important; line-height: 1.02 !important; letter-spacing: -.035em !important; font-weight: 497 !important; }
 .ui-stop { padding-bottom: clamp(44px, 5vw, 72px); }
 .uc-board.bare .uc-prod li { padding-top: 14px; padding-bottom: 14px; }
 .uc-board.c4 .uc-sheet b { display: none; }
@@ -268,7 +268,7 @@ a.ui-chip:active { transform: scale(.98); }
 @media (max-width: 899px) {
   .uc-body { height: 268px; }
   .uc-board.bare .uc-body { height: 268px; }
-  .uc-tab { right: 14px; bottom: 14px; font-size: 17px; padding: 8px 14px; }
+  .uc-tab { right: 18px; top: 18px; font-size: 17px; padding: 8px 14px; }
   .uc-big b { font-size: 64px; }
   .uc-chat { min-height: 220px; }
   .uc-msg { font-size: 14px; padding: 10px 12px; }
