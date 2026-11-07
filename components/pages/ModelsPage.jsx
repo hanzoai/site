@@ -20,7 +20,6 @@ import { EASE, Count, Copy } from '../ui';
 import { A } from '../kit';
 import { useOpener } from '../Opener';
 import Sigil from '../Sigil';
-import AskBar from '../v2/AskBar';
 import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
 import { media, bySlug } from '../../lib/models';
 import './ModelsPage.css';
@@ -147,7 +146,7 @@ function Stage() {
                 );
               })}
             </motion.ul>
-            <FilmPause className="xmo-pause" />
+            <div className="xmo-wall-cap"><span className="x-mono">Models</span><FilmPause /></div>
           </div>
         </div>
       </div>
@@ -800,7 +799,6 @@ export default function ModelsPage({ makers }) {
       <Try />
       <First />
       <Related />
-      <AskBar title="Models" label="Get API key" to="https://platform.hanzo.ai/api-keys" />
     </main>
   );
 }

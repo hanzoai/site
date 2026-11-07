@@ -56,7 +56,8 @@
 /* while the camera flies in, the eight leaving tiles cannot be hovered or clicked */
 @media (min-width: 901px) and (prefers-reduced-motion: no-preference) { .xmo-wall.zoom .xmo-tile:not(.c) { pointer-events: none; } }
 .xmo-wall { transform: scale(.3333); }
-.xmo-pause { position: absolute; right: 0; bottom: 24px; }
+.xmo-wall-cap { position: absolute; right: 0; bottom: 20px; z-index: 3; display: flex; align-items: center; gap: 14px; }
+.xmo-wall-cap > span { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .xmo-tile:not(.lit) .xmo-tile-shade { opacity: 1; }
 .xmo-tile:not(.lit) .xmo-tile-t span { opacity: .7; }
 
@@ -336,7 +337,7 @@
   .xmo-tile-t em { font-size: 12px; }
   .xmo-tile::after { box-shadow: inset 0 0 0 2px #f5f5f7; }
   .xmo-area { display: flex; flex-direction: column; }
-  .xmo-pause { position: relative; right: auto; bottom: auto; align-self: flex-end; margin-top: 12px; }
+  .xmo-wall-cap { position: relative; right: auto; bottom: auto; justify-content: space-between; margin-top: 12px; }
 
   .xmo-fam { height: auto; }
   .xmo-fam-pin { position: static; height: auto; overflow: visible; }

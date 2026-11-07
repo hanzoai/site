@@ -1,14 +1,15 @@
 'use client';
-/* One model in Hanzo's catalogue (470 pages, one template), v2: it reads like a model launch (the anthropic.com
-   reference). The first screen is the name, huge, over the model's own contour field, with its figures as heroes along
-   the bottom: context window on split-flaps, the rates per million tokens, the model ID to copy. Then one idea per
-   screen: where it sits among its maker's models, what it costs at your volume, the spec sheet (the long one opens on
-   request), the quick start in the page's one dark room, its siblings on a rail, and one closing call.
-   Signature: the sibling field. Every model from the same maker placed by context window and output rate; a light
-   sweeps across and each model answers as it passes; this one rings; every dot opens its page.
-   Beyond: the bill comparer. Set a monthly volume, pick any sibling, see both bills, the ratio and the context each
-   gives, from Hanzo's own rates (rate × volume, nothing estimated).
-   Motion: kinetic name (once), the field drifting behind the first screen and easing away on scroll, split-flap figures. */
+// Persona: Developer picking a model. Goal: pick it and try it. CTA: the page's first action in Hanzo's words (usually "Get API key"). Metric: api_key_created.
+// Signature: the open. The card you pressed on /models (or a sibling) lands as this page's name (morph), and the page answers with the model's own living contour field.
+// Beyond: the bill comparer. Set a monthly volume, pick any sibling, see both bills and the context each gives, from Hanzo's own rates (rate × volume, nothing estimated).
+/* One model in Hanzo's catalogue (470 pages, one template), read like a model launch (anthropic.com) and laid out as
+   PLAN-COMPONENTS 5.5 asks: name and three numbers (context, in, out: the largest type on the screen), the CTA pair, the
+   model's Sigil at 4:5 on the right with its ID; then the spec sheet, the quick start (the one dark room), Hanzo's
+   "More from <maker>" as the related chapter (the sibling field, the bill comparer, the rail of siblings), and the close.
+   No eyebrow over any headline, no UI hue, no headline that is not Hanzo's.
+   Motion mix: arrival (the name cuts in, split-flap context), idle (the Sigil drifts; the field's light sweeps),
+   pointer (the Sigil leans to the cursor; dots answer with their rates), state (bill sliders, sibling picks, code
+   tabs), scroll (the Sigil eases up as you leave the first screen). Readable with animations and JavaScript off. */
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
@@ -20,7 +21,9 @@ import './models.css';
 const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const short = (t) => (t >= 1e6 ? +(t / 1e6).toFixed(1) + 'M' : Math.round(t / 1000) + 'K');
 const size = (name) => (name.length <= 14 ? 's' : name.length <= 24 ? 'm' : 'l');
-const FOLD = 2; // spec groups shown before "See the full spec"
+const FOLD = 2; // spec groups shown before the rest opens
+const DASH = '—'; // a value Hanzo has not printed yet (PLAN-COMPONENTS 0.6: never "…")
+const idParts = (id) => id.split('/').map((p, i) => <span key={i}>{i ? <>/<wbr /></> : null}{p}</span>);
 
 function Spec({ g, price }) {
   return (
@@ -32,7 +35,7 @@ function Spec({ g, price }) {
           {g.facts.map((f) => (
             <div key={f.label} className={f.label === 'Model ID' ? 'id' : undefined}>
               <dt>{f.label}</dt>
-              <dd>{f.label === 'Price' ? price : f.value}{f.label === 'Model ID' && f.value && <Copy text={f.value} label="Copy model ID" />}</dd>
+              <dd>{f.label === 'Price' ? price : f.value || DASH}{f.label === 'Model ID' && f.value && <Copy text={f.value} label="Copy model ID" />}</dd>
             </div>
           ))}
         </dl>
@@ -45,7 +48,7 @@ export default function ModelSheet({ doc }) {
   const need = !doc.rate || doc.siblings.some((s) => !s.rate);
   const cat = useCatalog(need);
   const rate = rateFrom(cat, doc.id, doc.rate);
-  const price = doc.price || (cat ? rateText(rate) : '…');
+  const price = doc.price || (cat && rate ? rateText(rate) : DASH);
   const sibs = doc.siblings.map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
   const self = { name: doc.name, href: doc.route, rate, tokens: doc.tokens, ctx: doc.ctx };
   const field = [self, ...sibs];
@@ -58,28 +61,24 @@ export default function ModelSheet({ doc }) {
   const ctxLabel = doc.ctx ? (doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx) || {}).label : null;
   const hero = useRef(null);
   const { scrollYProgress: hp } = useScroll({ target: hero, offset: ['start start', 'end start'] });
-  const artY = useTransform(hp, [0, 1], ['0%', '24%']);
-  const artO = useTransform(hp, [0, 0.85], [1, 0]);
+  const artY = useTransform(hp, [0, 1], ['0%', '18%']);
+  const moreTitle = (doc.more && doc.more.title) || doc.provider.name;
   return (
     <main className="xmf xmf-model">
       <section className="xmf-launch" ref={hero} aria-labelledby="xmf-h1">
-        <motion.div className="xmf-art" style={{ y: artY, opacity: artO }} aria-hidden="true">
-          <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-sigil" />
-        </motion.div>
-        <div className="x-wrap xmf-launch-in">
+        <div className="x-wrap xmf-launch-g">
           <div className="xmf-launch-t">
             <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
               {doc.crumbs.map((c, i) => (
                 <span key={i}>{c.href ? <A to={c.href}>{c.label}</A> : <span className="x-mono" aria-current="page">{c.label}</span>}</span>
               ))}
             </motion.nav>
-            {doc.label && <motion.p className="xmf-pill x-mono" {...up(0.05)}>{doc.label}</motion.p>}
             <h1 id="xmf-h1" className={'xmf-name ' + size(doc.name)} data-morph-target>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.name}</motion.span></span>
             </h1>
             {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
             <motion.div className="xmf-acts" {...up(0.42)}>
-              {first && <A to={first.href} className="x-btn solid xmf-btn" data-thumb="">{first.label}</A>}
+              {first && <A to={first.href} className="x-btn solid xmf-btn" data-thumb="" data-cta="model.hero">{first.label}</A>}
               {doc.actions.slice(1).map((a) => <A key={a.label} to={a.href} className="x-btn xmf-btn">{a.label}</A>)}
             </motion.div>
             {doc.links.length > 0 && (
@@ -87,28 +86,32 @@ export default function ModelSheet({ doc }) {
                 {doc.links.map((l) => <li key={l.href}><A to={l.href} className="x-arrow">{l.label}</A></li>)}
               </motion.ul>
             )}
-          </div>
-          {/* the figures, as heroes: what a launch page leads with */}
-          <motion.dl className="xmf-figs" {...up(0.55)} aria-label={price}>
-            {ctxFig && (
+            {/* the three numbers, largest on the screen: what a launch page leads with */}
+            <motion.dl className="xmf-figs" {...up(0.55)} aria-label={price}>
               <div className="xmf-fig ctx">
                 <dt>{ctxLabel || 'Context Window'}</dt>
-                <dd><b><Flap value={ctxFig} /></b></dd>
+                <dd><b>{ctxFig ? <Flap value={ctxFig} /> : DASH}</b></dd>
               </div>
-            )}
-            <div className="xmf-fig">
-              <dt>In</dt>
-              <dd><b className="x-mono">{rate ? money(rate.in) : '…'}</b><span>per million tokens</span></dd>
-            </div>
-            <div className="xmf-fig">
-              <dt>Out</dt>
-              <dd><b className="x-mono">{rate ? money(rate.out) : '…'}</b><span>per million tokens</span></dd>
-            </div>
-            <div className="xmf-fig id">
-              <dt>Model ID</dt>
-              <dd><code className="x-mono">{doc.id.split('/').map((p, i) => <span key={i}>{i ? <>/<wbr /></> : null}{p}</span>)}</code><Copy text={doc.id} label="Copy model ID" /></dd>
-            </div>
-          </motion.dl>
+              <div className="xmf-fig">
+                <dt>In</dt>
+                <dd><b className="x-mono">{rate ? money(rate.in) : DASH}</b><span>per million tokens</span></dd>
+              </div>
+              <div className="xmf-fig">
+                <dt>Out</dt>
+                <dd><b className="x-mono">{rate ? money(rate.out) : DASH}</b><span>per million tokens</span></dd>
+              </div>
+            </motion.dl>
+          </div>
+          {/* the hero object: the model's own contour field at 4:5, its maker label and its ID to copy */}
+          <motion.figure className="xmf-obj" style={{ y: artY }} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
+            <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" />
+            {doc.label && <p className="xmf-obj-l x-mono">{doc.label}</p>}
+            <figcaption className="xmf-obj-id">
+              <span className="x-mono">Model ID</span>
+              <code className="x-mono">{idParts(doc.id)}</code>
+              <Copy text={doc.id} label="Copy model ID" />
+            </figcaption>
+          </motion.figure>
         </div>
       </section>
 
@@ -124,37 +127,13 @@ export default function ModelSheet({ doc }) {
         </nav>
       )}
 
-      {rate && plotted > 1 && (
-        <section className="xmf-sec xmf-among" id="among" aria-labelledby="xmf-among-h">
-          <div className="x-wrap">
-            <header className="xmf-sh">
-              <p className="xmf-kick">{doc.provider.name}</p>
-              <h2 id="xmf-among-h">{`${doc.name} among ${plotted - 1} sibling${plotted > 2 ? 's' : ''}`}</h2>
-            </header>
-            <Field points={field} here={doc.route} label={`${doc.provider.name} models by context window and output rate`} />
-          </div>
-        </section>
-      )}
-
-      {rate && (
-        <section className={'xmf-sec xmf-cost' + (plotted > 1 ? ' after' : '')} id="cost" aria-labelledby="xmf-cost-h">
-          <div className="x-wrap">
-            <header className="xmf-sh">
-              <p className="xmf-kick">{plotted > 1 ? 'Bill a month' : doc.provider.name}</p>
-              <h2 id="xmf-cost-h">{`What ${doc.name} costs at your volume`}</h2>
-            </header>
-            <Bill self={self} others={sibs} />
-          </div>
-        </section>
-      )}
-
       {groups.length > 0 && (
         <section className="xmf-sec xmf-specs" id="specs" aria-label="Specifications">
           <div className="x-wrap">
             {groups.map((g, k) => (k < FOLD || all ? <Spec key={k} g={g} price={price} /> : <div key={k} hidden><Spec g={g} price={price} /></div>))}
             {groups.length > FOLD && (
-              <button type="button" className="xmf-more-spec" aria-expanded={all} onClick={() => setAll((v) => !v)}>
-                <span>{all ? 'Show less' : 'See the full spec'}</span><i aria-hidden="true">{all ? '−' : '+'}</i>
+              <button type="button" className="xmf-more-spec" aria-expanded={all} aria-label={all ? `Show ${FOLD}` : `Show all (${groups.length})`} onClick={() => setAll((v) => !v)}>
+                <i aria-hidden="true" className={all ? 'on' : ''} />
               </button>
             )}
           </div>
@@ -179,43 +158,52 @@ export default function ModelSheet({ doc }) {
         </section>
       ))}
 
-      <section className="xmf-end">
-        <Sigil seed={doc.route + '#end'} data={[doc.siblings.length + 1, doc.tokens].filter(Boolean)} className="xmf-end-sigil" />
-        <div className="x-wrap">
-          {doc.more && (
-            <div className="xmf-more">
-              <div className="xmf-more-h">
-                <h2>{doc.more.title}</h2>
-                {doc.more.all && <A to={doc.more.all.href} className="x-arrow">{doc.more.all.label}</A>}
-              </div>
+      {/* related: Hanzo's "More from <maker>" heads the whole chapter: where this model sits, what it costs beside a
+          sibling, and the siblings themselves, each opening into its page */}
+      {(doc.more || (rate && plotted > 1)) && (
+        <section className="xmf-sec xmf-rel" id="more" aria-labelledby="xmf-more-h">
+          <div className="x-wrap">
+            <div className="xmf-more-h">
+              <h2 id="xmf-more-h">{moreTitle}</h2>
+              {doc.more && doc.more.all && <A to={doc.more.all.href} className="x-arrow">{doc.more.all.label}</A>}
+            </div>
+            {rate && plotted > 1 && <Field points={field} here={doc.route} label={`${doc.provider.name} models by context window and output rate`} />}
+            {rate && <div className="xmf-cost"><Bill self={self} others={sibs} /></div>}
+            {doc.more && (
               <ul className="xmf-rail" data-swipe-own>
                 {doc.more.cards.map((c) => {
-                  const s = sibs.find((x) => x.href === c.href);
+                  const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
                       <A to={c.href} className="xmf-card" data-cursor="Open">
                         <span className="xmf-card-t"><b data-morph>{c.name}</b>{c.ctx && <i className="x-mono">{c.ctx}</i>}</span>
                         <span className="xmf-card-d">{c.desc}</span>
-                        <span className="xmf-card-f x-mono">{s && s.rate ? `${money(s.rate.in)} → ${money(s.rate.out)}` : ' '}</span>
+                        <span className="xmf-card-f x-mono">{sib && sib.rate ? `${money(sib.rate.in)} → ${money(sib.rate.out)}` : ' '}</span>
                       </A>
                     </li>
                   );
                 })}
               </ul>
-            </div>
-          )}
-          {doc.band && (
+            )}
+          </div>
+        </section>
+      )}
+
+      {doc.band && (
+        <section className="xmf-end">
+          <Sigil seed={doc.route + '#end'} data={[doc.siblings.length + 1, doc.tokens].filter(Boolean)} className="xmf-end-sigil" />
+          <div className="x-wrap">
             <div className="xmf-band">
               <h2>{doc.band.title}</h2>
               {doc.band.lede && <p>{doc.band.lede}</p>}
               {doc.band.nodes && <Loose nodes={doc.band.nodes.filter((n) => !(n && n.t === 'h2'))} />}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')}>{a.label}</A>)}
+                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-cta': 'model.band' })}>{a.label}</A>)}
               </div>
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
     </main>
   );
 }
