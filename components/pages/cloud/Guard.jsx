@@ -9,7 +9,10 @@
    Beyond: "Paste your own" with real dials - type or paste anything, switch each detector on or off and choose the
    marker text; the same kinds of detector run in your own page and nothing is sent (Guard.redact.mjs, self-check in
    Guard.redact.test.mjs).
-   Accent: green, from the pass light. Every word and link is Hanzo's; the request and reply are made-up examples. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; the request and reply are made-up examples.
+   Persona: a team shipping an LLM feature that worries about pasted secrets and prompt injection.
+   Goal: watch both directions get read, then try it on their own text.
+   CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -74,7 +77,7 @@ function Composer() {
   const read2 = st >= 3;
   return (
     <div className="gd-comp" ref={ref} aria-hidden="true">
-      <div className="gd-comp-bar"><span className="gd-dot" /><span>Guard</span><em>{read1 ? (read2 ? 'reply read' : 'request read') : 'reading'}</em></div>
+      <div className="gd-comp-bar"><span className="gd-dot" /><span>hanzoai/guard</span><em>{read1 ? (read2 ? 'reply read' : 'request read') : 'reading'}</em></div>
       <div className="gd-msg me">
         <p className="gd-who">request <span>→ model</span></p>
         <p className="gd-body" key={'q' + loop}>{read1 ? <Marked text={REQ} /> : <span ref={reqRef} />}{!read1 && <i className="gd-caret" />}</p>
@@ -156,8 +159,8 @@ function Yours() {
     <section className="v2-sec gd-yours">
       <div className="v2-wrap v2-grid">
         <div className="gd-yours-h">
-          <p className="v2-kick acc">Paste your own</p>
           <h2 className="v2-headline">Each becomes a typed marker</h2>
+          <p className="v2-kick acc gd-yours-cap">Paste your own</p>
           <p className="v2-body">This runs in your page and nothing you type is sent. The marker text is this page's; with Guard you choose your own.</p>
         </div>
         <div className="gd-ed v2-obj">
@@ -197,23 +200,22 @@ export default function Guard() {
     <main className="v2 gd">
       <section className="gd-hero v2-dark" data-room="dark">
         <div className="v2-wrap gd-hero-t">
-          <p className="v2-kick acc">hanzoai/guard</p>
           <Lines as="h1" className="v2-display gd-h1" lines={['Guard']} data-morph-target="" />
-          <motion.p className="v2-lede gd-sub" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}>It reads what goes into a model, and what comes back</motion.p>
-          <div className="v2-acts gd-acts"><A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A></div>
+          <p className="v2-lede gd-sub v2-in" style={{ animationDelay: '.25s' }}>It reads what goes into a model, and what comes back</p>
+          <div className="v2-acts gd-acts v2-in" style={{ animationDelay: '.38s' }}><A to="https://github.com/hanzoai" className="v2-btn solid" data-thumb="View on GitHub" data-cta="guard-view-on-github">View on GitHub</A></div>
         </div>
         <Lift className="v2-wrap gd-lift" from={1.16} y={30} origin="50% 0%" offset={['start end', 'start 0.2']}>
           <Composer />
         </Lift>
       </section>
 
-      <PinChapters className="gd-ch" label="What it looks for" items={FACTS} head={<p className="v2-kick gd-ch-k">What it looks for</p>} visual={(at) => <Board at={at} />} />
-
-      <Yours />
+      <PinChapters className="gd-ch" label="What it looks for" items={FACTS} foot={<p className="v2-kick gd-ch-k">What it looks for</p>} visual={(at) => <Board at={at} />} />
 
       <ShipPrompt name="Guard" prompt="Read https://hanzo.ai/skill.md and use Hanzo Guard in my project." flip />
 
-      <GetIt name="Guard" tag="AI guardrails" seed="guard" data={[6, 6]} lead="Get started with Guard" />
+      <Yours />
+
+      <GetIt name="Guard" tag="AI guardrails" seed="guard" data={[6, 6]} lead="Get started with Guard" ask={['View on GitHub', 'https://github.com/hanzoai', 'guard-view-on-github']} />
     </main>
   );
 }
