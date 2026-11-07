@@ -203,7 +203,7 @@
   .xhp-flows { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 899px) {
-  .xhp { padding: 27px 0 var(--pad); }
+  .xhp { padding: 27px 0 0; } /* the closing band runs straight into the footer */
   .xhp-g { grid-template-columns: minmax(0, 1fr); column-gap: 0; }
   /* the question, then the live panel, then the index and the document */
   .xhp-hero { display: contents; }
