@@ -156,7 +156,8 @@ function Catalogue({ groups, label }) {
           <h2 className="pf-head" id="xii-cat-h">{fam === 'All' ? label : fam}</h2>
           <label className="xii-find">
             <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.5 10.5 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-            <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find your tool" aria-label="Find your tool" />
+            {/* a search looks across every family, so typing returns the chips to All */}
+            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); if (e.target.value && fam !== 'All') setFam('All'); }} placeholder="Find your tool" aria-label="Find your tool" />
           </label>
         </div>
         <div className="xii-chips" role="tablist" aria-label="Family" onKeyDown={keys}>
@@ -167,14 +168,20 @@ function Catalogue({ groups, label }) {
             </button>
           ))}
         </div>
-        {!shown.length && <p className="xii-none" role="status">Nothing matches “{q}”.</p>}
+        {!shown.length && (
+          <div className="xii-none" role="status">
+            <p>Nothing matches “{q}”.</p>
+            <button type="button" className="xii-none-a" onClick={() => { setQ(''); setFam('All'); }}><span>All</span><span className="pf-mono">{cards.length}</span></button>
+          </div>
+        )}
         <ul className="xii-grid" aria-live="polite">
           <AnimatePresence initial={false} mode="popLayout">
             {cards.map((c, i) => {
               const on = shown.includes(c);
               if (!on && !calm) return null;
+              const wide = fam === 'All' && !t && (i === 0 || cards[i - 1].fam !== c.fam); // each family's first guide
               return (
-                <motion.li key={c.href} layout={!calm} hidden={!on} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={PILL}>
+                <motion.li key={c.href} layout={!calm} hidden={!on} className={wide ? 'wide' : undefined} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={PILL}>
                   <A to={c.href} className="xii-card" onPointerMove={lean} onPointerLeave={rest}>
                     <span className="xii-card-e" aria-hidden="true">{monoOf(c.name)}</span>
                     <span className="xii-card-fam pf-mono" aria-hidden="true">{String(cards.indexOf(c) + 1).padStart(2, '0')} / {cards.length}</span>
@@ -203,7 +210,12 @@ export default function IntegrationsIndex({ doc }) {
       <section className="xii-hero" aria-labelledby="xin-h1">
         <div className="pf-wrap pf-grid xii-hero-g">
           <div className="xii-hero-a">
-            <div data-morph-target><MaskLines as="h1" id="xin-h1" className="pf-display xii-h1" lines={doc.title.split(/ (?=everything)/)} delay={0.05} amount={0.1} /></div>
+            {/* the h1 cuts in by line mask in plain CSS, so it plays from the first paint with no wait for scripts */}
+            <div data-morph-target>
+              <h1 id="xin-h1" className="pf-display xii-h1">
+                {doc.title.split(/ (?=everything)/).map((l, i, a) => <span key={i} className="xii-h1-l"><span style={{ '--i': i }}>{l}</span>{i < a.length - 1 ? ' ' : null}</span>)}
+              </h1>
+            </div>
             <p className="pf-lede xii-lede xii-in" style={{ '--i': 2 }}><Loose nodes={doc.lede} /></p>
             <div className="xii-acts xii-in" style={{ '--i': 3 }}>
               {doc.actions.map((a, i) => (i
