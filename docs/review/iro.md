@@ -1,35 +1,36 @@
 # /iro — James-eye review
 
-Reviewed: main, page files at `d3752c2` (Iro rides the shared creative-model template `components/pages/model/Creative.jsx`, also used by Koe, Koma, Mori, Oto and Uta, so most of this applies to them too). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `1417fde` and later (re-walked 14:43–14:48 on the build after the Zen-names fix `1417fde` and the palette recolour `4b53974`), under MASTER.md. Built on the shared creative-model template `components/pages/model/Creative.jsx`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10
+Verdict: 7/10 (capped; page itself scores 8)
 
-First complaint: "The pink film is gorgeous, but the pink has leaked into the labels and chips everywhere. There's no button on the first screen. And on my phone, once the film is gone, nothing moves."
+First complaint: "The pink is only in the film now and the button is on the first screen. Good. The little labels on the related cards are too small to read."
+
+**Cap: part card (MASTER section 6).** `docs/coverage/iro.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1):** passes. The name rests at 176px over the film as the one hero moment (well past live hanzo.ai's 52px, but alone on its screen); each capability screen holds one 56px title, a medium lede and a small mono list. (My counter saw four 56px titles at once; they are the stacked chapter titles, and only one shows at a time.)
+
+## What changed since the first review
+Fixed at 14:25 (`1417fde`) and 14:29 (palette): "Request access" now sits on the first screen under the lede, the chapter films play on the phone, the type floor was raised, and no UI hue is left (colour lives only in Hanzo's film).
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Moves, yes: Hanzo's own Iro film (pink clouds through a lit frame) plays full-bleed under "Iro" and "Image generation and visual understanding." It sells the mood more than the product, and there is **no ask on the first screen** ("Request access" arrives after the film settles).
-2. **One in, one out?** Yes on desktop: the film settles into a card beside "Imagine without limits.", then "Watch an image resolve." runs a live resolve, then "What Iro does" pins the film while capabilities change (01 Image…). **Phone:** after the hero the screens barely move (0.1% or less on most).
-3. **A real object in every section?** Yes: film, resolve demo, capability cards, field picker.
-4. **One ask, sticky after the hero?** Yes after the hero: "Request access" solid with "Try it in Design" as a link, then the shared ask bar; the header's "Try Hanzo" turns outlined. "Request access" is Hanzo's honest label for a research-preview model.
-5. **Every hover and press answers?** The close (×) and hero links answer; a pause control exists for the film.
-6. **Overlap, font swap, layout shift?** None; layout shift 0.0001 and 0.013.
-7. **Which reference, and is its motion there?** synchronized.studio (card opens into this page, with a close) and apple.com (pinned capability chapters). Both there.
-8. **Different from its neighbours?** Yes in film and colour; in layout it is the same template as Koe, Koma, Mori, Oto and Uta.
-9. **All 18 parts covered?** See below.
-10. **Banned tells?** Yes:
-    - UI hue: magenta on the mono labels ("IMAGE · IRO 1", "CAPABILITIES", "01 IMAGE"), the use-case icons and the background washes (`cr-g-iro`). The film may be pink; the interface should not be.
-    - Pink mono labels above the section headlines (eyebrows over every h2).
-11. **Copy untouched?** Yes: parity 51/51 text, 4/4 links.
+1. **Sells in 5 seconds, moves within 1 second?** Yes: Hanzo's Iro film plays under "Iro" and its line, with "Request access" now on the first screen. The pink is the film itself, which MASTER allows.
+2. **One in, one out?** Yes: the film settles into its shape, capabilities pin one at a time (01–04) with the film beside them, then the signature, fields, related models and the try-it close.
+3. **A real object in every section?** Yes: film, capability film card, the live resolve, field cards, model cards.
+4. **One ask, sticky after the hero?** Yes: "Request access" in the hero (solid, light on the dark film), the shared ask bar after it, and the close; `data-cta` on the primaries.
+5. **Every hover and press answers?** The hero ask and close (×) answer; model cards lift. Not every field card was exercised.
+6. **Overlap, font swap, layout shift?** None on the page; layout shift 0.0001 desktop, 0.03 phone.
+7. **Which reference, and is its motion there?** synchronized.studio (the card opens into this page, with a close) and apple.com pinned chapters. Both there.
+8. **Different from its neighbours?** In film and signature, yes; layout is the shared creative template.
+9. **All 18 parts covered?** Card in the old format (cap above).
+10. **Banned tells?** None measured.
+11. **Copy untouched?** Yes (parity clean on the first review; words unchanged since).
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.1 / 2.4:** no ask in the first screen; 0 `data-cta`.
-- **2.6 Type floor:** 12 labels under 13px (the 11px "IMAGES" chip, 12px model ids).
-- **2.10 Media:** 16 images without width and height.
-- **2.11 Mobile:** most screens after the hero are still on the phone.
+## Missing from the 18 parts (PLAN-COMPONENTS / MASTER, measured)
+- **Part 6 type floor:** 10px mono labels ("IMAGE", "VIDEO", "FOLEY" on the related-model cards) sit below even the 11–12px mono exception.
+- **Part 10 media:** 6 raw `<video>` elements rather than the kit `Film`.
 
-## Fixes (in `Creative.jsx`, so they reach all six creative models)
-1. Keep colour inside the film: labels, chips, icons and washes in ink, white and greys.
-2. Put "Request access" (solid) and "Try it in Design" (link) on the first screen under the lede.
-3. Drop the mono label above each section headline, or move it under the headline.
-4. Give every image its width and height; raise chips and ids to 13px or more.
-5. Phone: let the capability film or the resolve demo play as each section reaches mid-screen.
+## Fixes
+1. Re-copy the 18-part card into `_TEMPLATE.md` format with `Done here:` evidence (lifts the cap).
+2. Raise the related-model labels to 11–12px mono capitals (shared `Creative.jsx`).
+3. Play the films through the kit `Film`.

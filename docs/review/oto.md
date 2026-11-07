@@ -1,30 +1,36 @@
 # /oto — James-eye review
 
-Reviewed: main, page files at `dbe4459` (Oto is built on the shared creative-model template, `components/pages/model/Creative.jsx`, with its own Foley console; see also /iro, /koe, /koma, /mori). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `1417fde` and later (re-walked 14:43–14:48 on the build after the Zen-names fix `1417fde` and the palette recolour `4b53974`), under MASTER.md. Built on the shared creative-model template `components/pages/model/Creative.jsx`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10
+Verdict: 7/10 (capped; page itself scores 8)
 
-First complaint: "The waveform film is great. But the Foley console has little coloured emoji icons and a blue-purple spectrum, and there's still no button on the first screen."
+First complaint: "The Foley console is the best thing here and it's black and white now. The tiny labels on the related cards are too small."
+
+**Cap: part card (MASTER section 6).** `docs/coverage/oto.md` is in the old format: 0 of 18 `Done here:` lines under `## N.` headings. Capped at 7 until it is re-copied from `docs/coverage/_TEMPLATE.md` with every claim true on the page. The shared desktop ask bar floats over content (site-wide, see `_shared.md`); not counted against this page.
+
+**Scale (MASTER 3.1):** passes. The name rests at 176px over the film as the one hero moment (well past live hanzo.ai's 52px, but alone on its screen); each capability screen holds one 56px title, a medium lede and a small mono list. (My counter saw four 56px titles at once; they are the stacked chapter titles, and only one shows at a time.)
+
+## What changed since the first review
+Fixed at 14:25 (`1417fde`) and 14:29 (palette): "Request access" now sits on the first screen under the lede, the chapter films play on the phone, the type floor was raised, and no UI hue is left (colour lives only in Hanzo's film).
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Desktop: Hanzo's Oto film (a white waveform) plays full-bleed under "Oto" and "Sound generation and audio understanding."; no ask on the first screen. Phone: the film settles into a waveform shape above "Give every moment its sound." with the ask, then is nearly still.
-2. **One in, one out?** Yes on desktop: film settles, capabilities pin, then the signature Foley console (props fire, the spectrum paints, the bus meters answer), fields, try-it close.
-3. **A real object in every section?** Yes; the Foley console is the richest live object of the creative models.
-4. **One ask, sticky after the hero?** After the hero, yes ("Request access", then the ask bar). Not on the first screen.
-5. **Every hover and press answers?** Not reliably measured (hero buttons hidden under the film during the hover pass); console props highlight when they fire.
-6. **Overlap, font swap, layout shift?** None; layout shift 0 on both sizes.
-7. **Which reference, and is its motion there?** synchronized.studio card-to-page; apple.com chapters; a self-running product console. All there.
-8. **Different from its neighbours?** Yes: the Foley console is Oto's own.
-9. **All 18 parts covered?** See below.
-10. **Banned tells?** Yes, inside the console: coloured emoji icons on each prop (drum, footsteps, lock, rain), an orange fill, and a navy-to-violet spectrum. JAMES.md allows 0 UI hues; the console is UI, not Hanzo's film.
-11. **Copy untouched?** Yes: parity 74/74 text, 4/4 links.
+1. **Sells in 5 seconds, moves within 1 second?** Yes: the waveform film plays under "Oto" with "Request access" on the first screen; on the phone the waveform shape moves a little (1.6% change).
+2. **One in, one out?** Yes: the film settles into its shape, capabilities pin one at a time (01–04) with the film beside them, then the signature, fields, related models and the try-it close.
+3. **A real object in every section?** Yes: film, capability film card, the Foley console, field cards, model cards.
+4. **One ask, sticky after the hero?** Yes: "Request access" in the hero (solid, light on the dark film), the shared ask bar after it, and the close; `data-cta` on the primaries.
+5. **Every hover and press answers?** The hero ask and close (×) answer; model cards lift. Not every field card was exercised.
+6. **Overlap, font swap, layout shift?** None on the page; layout shift 0 on both sizes.
+7. **Which reference, and is its motion there?** synchronized.studio (the card opens into this page, with a close) and apple.com pinned chapters. Both there.
+8. **Different from its neighbours?** In film and signature, yes; layout is the shared creative template.
+9. **All 18 parts covered?** Card in the old format (cap above).
+10. **Banned tells?** None measured.
+11. **Copy untouched?** Yes (parity clean on the first review; words unchanged since).
 
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.1 / 2.4:** no ask on the first screen; 0 `data-cta`.
-- **2.6 Type floor:** 18 labels under 13px (the console's mono meta, the 11px "AUDIO" chip).
-- **2.11 Mobile:** most phone screens after the hero are still.
+## Missing from the 18 parts (PLAN-COMPONENTS / MASTER, measured)
+- **Part 6 type floor:** 10px mono labels ("IMAGE", "VIDEO", "FOLEY" on the related-model cards) sit below even the 11–12px mono exception.
+- **Part 10 media:** 7 raw `<video>` elements rather than the kit `Film`.
 
 ## Fixes
-1. Console in ink and greys: monochrome glyphs instead of emoji, a white-on-black spectrum, no orange.
-2. "Request access" (solid) and "Try it in Design" (link) on the first screen (shared template fix).
-3. Raise console meta to 13px where it is read, or drop the decorative readouts.
+1. Re-copy the 18-part card into `_TEMPLATE.md` format with `Done here:` evidence (lifts the cap).
+2. Raise the related-model labels to 11–12px mono capitals (shared `Creative.jsx`).
+3. Play the films through the kit `Film`.
