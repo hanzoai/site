@@ -36,7 +36,7 @@ export default function Finale({ name, prompt, api, head, lede, small, acts = []
   return (
     <section className={`l2-fin ${dark ? 'l2-dark' : ''} ${className}`} data-room={dark ? 'dark' : undefined}>
       <div className="l2-wrap">
-        <div className="l2-fin-top">
+        {(head || prompt || children) && <div className="l2-fin-top">
           <div className="l2-fin-copy">
             {head && <h2 className="l2-head">{head}</h2>}
             {lede && <p className="l2-lede">{lede}</p>}
@@ -45,7 +45,7 @@ export default function Finale({ name, prompt, api, head, lede, small, acts = []
             {children}
           </div>
           {prompt && <div className="l2-fin-prompt"><Prompt name={name} prompt={prompt} api={api} /></div>}
-        </div>
+        </div>}
         {related && (
           <div className="l2-rel">
             <p className="l2-kick">{relTitle}</p>
