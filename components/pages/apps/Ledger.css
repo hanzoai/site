@@ -287,13 +287,13 @@ html:has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://ha
   .ld-journal { padding: 16px 14px; min-height: 646px; }
   .ld-journal li { grid-template-columns: 1fr auto; gap: 8px 10px; padding: 12px; }
   .ld-tx { grid-column: 1 / -1; }
-  /* each posting on two lines, so no account name ends in "…": source →, then destination and amount */
-  .ld-posts p, .ld-posting p:not(.sum) { grid-template-columns: auto minmax(0, 1fr); gap: 0 8px; padding: 4px 0; }
+  /* each posting on two lines, so no account name ends in "…": the source, then → destination and the amount */
+  .ld-posts p, .ld-posting p:not(.sum) { grid-template-columns: 16px minmax(0, 1fr) auto; gap: 2px 6px; padding: 4px 0; }
   .ld-posts p span, .ld-posting p:not(.sum) span { overflow: visible; white-space: nowrap; text-overflow: clip; }
-  .ld-posts p > span:first-child, .ld-posting p:not(.sum) > span:first-child { grid-column: 1; grid-row: 1; }
-  .ld-posts p > i, .ld-posting p:not(.sum) > i { grid-column: 2; grid-row: 1; justify-self: start; text-align: left; }
-  .ld-posts p > span:nth-of-type(2), .ld-posting p:not(.sum) > span:nth-of-type(2) { grid-column: 1; grid-row: 2; color: var(--bz-ink); }
-  .ld-posts p > b, .ld-posting p:not(.sum) > b { grid-column: 2; grid-row: 2; justify-self: end; }
+  .ld-posts p > span:first-child, .ld-posting p:not(.sum) > span:first-child { grid-column: 1 / -1; grid-row: 1; }
+  .ld-posts p > i, .ld-posting p:not(.sum) > i { grid-column: 1; grid-row: 2; text-align: left; }
+  .ld-posts p > span:nth-of-type(2), .ld-posting p:not(.sum) > span:nth-of-type(2) { grid-column: 2; grid-row: 2; color: var(--bz-ink); }
+  .ld-posts p > b, .ld-posting p:not(.sum) > b { grid-column: 3; grid-row: 2; justify-self: end; }
   .ld-tx, .ld-even, .ld-jk, .ld-hash { font-size: 14px; }
   .ld-link { left: 22px; }
   .ld-note { padding: 12px 14px; }
