@@ -8,7 +8,7 @@
    Metric: signup_start
    V2: 8/10 motion map: compare — the pinned three-chapter scene is gone; "What is Hanzo Design" is a before/after divider over the raw upload and what it became, driven by the three steps; the capability sheets no longer stack on scroll. Earlier: round 2: the workspace window left and a 52px headline right, both in the first screen; one ask with text links; no labels over headlines; kit media; a pause control; the models' black room opens from a card; ends on one Band. Round 1: editorial 5/7 hero, oversized type running into a workspace window whose artifact morphs by itself; three pinned chapters; the six capabilities as sticky stacked sheets; One brief kept as the Beyond; the models in the one dark room open into their pages
    Motion: signature = the workspace window (the frame morphs to each artifact's shape, the headline's word follows). Supporting:
-   pinned chapters (components/v2/AppScenes), line-masked headline, sheets that stack as you scroll. Accent: magenta.
+   the before/after divider, line-masked headline, one entrance per section. Greys only; colour comes from Hanzo's model media.
    The music app is live: its spectrum dances to 124 BPM and the four synth pads play. Every word is Hanzo's; the brief is yours. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
@@ -189,7 +189,34 @@ function Clip({ live }) {
 }
 
 /* ---------- the signature: one conversation, the artifact morphing in its window ---------- */
+/* Each artifact's shape inside the stage: [width share, height share, aspect]; the missing side follows the aspect. */
+const SHAPE = { app: [1, 1, 0], deck: [0.84, 0, 16 / 9], ad: [1, 0.92, 0], visual: [0, 1, 0.8], doc: [0, 1, 0.74], video: [0.88, 0, 1.6] };
+function shapeOf(k, W, H) {
+  const [fw, fh, ar] = SHAPE[k];
+  let w = fw ? W * fw : 0, h = fh ? H * fh : 0;
+  if (!w) w = h * ar;
+  if (!h) h = w / ar;
+  if (w > W) { w = W; if (ar) h = w / ar; }
+  if (h > H) { h = H; if (ar) w = h * ar; }
+  const left = Math.round((W - w) / 2), top = Math.round((H - h) / 2);
+  return { left, top, width: Math.round(w), height: Math.round(h), right: Math.round(W - left - w), bottom: Math.round(H - top - h) };
+}
+function useSize(ref) {
+  const [s, setS] = useState(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setS([e.contentRect.width, e.contentRect.height]));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ref]);
+  return s;
+}
+
 function Workspace({ at, pick, live, mine, calm, paused, onPause }) {
+  const frame = useRef(null);
+  const size = useSize(frame);
+  const r = size && shapeOf(KIND[at], size[0], size[1]);
   const art = [<MusicApp key="a" live={live && at === 0} />, <Deck key="d" live={live && at === 1} />, <Ads key="ad" />, <Poster key="p" />, <Doc key="doc" />, <Clip key="f" live={live && at === 5} />][at];
   const key = (e, i) => {
     const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
@@ -218,13 +245,16 @@ function Workspace({ at, pick, live, mine, calm, paused, onPause }) {
         </AnimatePresence>
       </div>
       <div className="dz-stage" id="dz-art" role="tabpanel" aria-label={TABS[at]}>
-        <motion.div layout className={'dz-frame k-' + KIND[at]} style={{ borderRadius: 16 }} transition={{ layout: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }}>
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div key={at} className="dz-art" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.45, ease: EASE, delay: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
+        {/* The frame's box never moves (no layout shift): its shape is a clip-path that morphs, and each new artifact
+            mounts straight into the new shape's rectangle. */}
+        <div ref={frame} className={'dz-frame k-' + KIND[at]} style={r ? { clipPath: `inset(${r.top}px ${r.right}px ${r.bottom}px ${r.left}px round 16px)` } : undefined}>
+          <AnimatePresence initial={false}>
+            <motion.div key={at} className="dz-art" style={r ? { left: r.left, top: r.top, width: r.width, height: r.height } : undefined}
+              initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.45, ease: EASE, delay: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
               {art}
             </motion.div>
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
       <div className="dz-chat">
         <div className="dz-file"><span className="dz-file-i" aria-hidden="true">♪</span><span className="x-mono">neon-horizon-master.mp3 (4.8 MB)</span></div>
@@ -497,13 +527,17 @@ const CAPS = [
   ['Music, voice & interactive apps', 'Original music (Uta), narration (Koe), sound effects (Oto), and self-contained interactive HTML5/Canvas/WebAudio apps.', 'music', 'Uta · Koe · Oto'],
 ];
 
-function CapArt({ k }) {
-  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Film src="/models/iro.webm" poster="/models/iro.webp" w={1200} h={1500} /></span>;
+/* Each capability's own media. In the Brief's cards (still) the clips show their posters, so at most two films play on a screen. */
+function Clip2({ m, still }) {
+  return still ? <Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} /> : <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} />;
+}
+function CapArt({ k, still }) {
+  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Clip2 m="iro" still={still} /></span>;
   if (k === 'deck') return <span className="dz-ca dz-ca-deck">{[0, 1, 2].map((i) => <i key={i}><Img src={['/models/oto.webp', '/models/uta.webp', '/models/koe.webp'][i]} alt="" w={1200} h={1500} /></i>)}</span>;
   if (k === 'doc') return <span className="dz-ca dz-ca-doc">{[0, 1].map((p) => <i key={p}><b />{[90, 100, 84, 100, 62, 96, 74].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i>)}</span>;
   if (k === 'ads') return <span className="dz-ca dz-ca-ads">{['story', 'square', 'banner'].map((s) => <i key={s} className={s}><Img src="/models/mori.webp" alt="" w={1200} h={1500} /></i>)}</span>;
-  if (k === 'video') return <span className="dz-ca dz-ca-video"><Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} /><span className="dz-tl">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></span></span>;
-  return <span className="dz-ca dz-ca-music">{['uta', 'koe', 'oto'].map((m) => <i key={m}><Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} /></i>)}</span>;
+  if (k === 'video') return <span className="dz-ca dz-ca-video"><Clip2 m="koma" still={still} /><span className="dz-tl">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></span></span>;
+  return <span className="dz-ca dz-ca-music">{['uta', 'koe', 'oto'].map((m, i) => <i key={m}><Clip2 m={m} still={still || i > 0} /></i>)}</span>;
 }
 
 function Caps() {
@@ -572,7 +606,7 @@ function Brief() {
             <ul className="dz-brief-set" aria-live="polite">
               {picked.map(([t, , k, tag]) => (
                 <li key={t} className={'k-' + k}>
-                  <span className="dz-brief-art" aria-hidden="true"><CapArt k={k} /></span>
+                  <span className="dz-brief-art" aria-hidden="true"><CapArt k={k} still /></span>
                   <span className="dz-brief-k x-mono">{tag}</span>
                   <b>{title || t}</b>
                   {title && <span>{t}</span>}

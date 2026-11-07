@@ -44,15 +44,13 @@
 .dz-tab-t.paused { animation-play-state: paused; }
 @keyframes dz-time { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .dz-badge { flex: none; font-size: 12px; letter-spacing: .06em; color: #525252; padding: 5px 9px; border-radius: 8px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); background: #fff; white-space: nowrap; }
-.dz-stage { position: relative; height: clamp(320px, 27vw, 380px); display: grid; place-items: center; padding: 18px; background: #f5f5f5; overflow: hidden; }
-.dz-frame { position: relative; overflow: hidden; background: #0a0a0a; }
-.dz-frame.k-app { width: 100%; height: 100%; }
-.dz-frame.k-deck { width: 84%; aspect-ratio: 16 / 9; }
-.dz-frame.k-ad { width: 100%; height: 92%; background: transparent; overflow: visible; }
-.dz-frame.k-visual { height: 100%; aspect-ratio: 4 / 5; }
-.dz-frame.k-doc { height: 100%; aspect-ratio: .74; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
-.dz-frame.k-video { width: 88%; aspect-ratio: 16 / 10; }
+.dz-stage { position: relative; height: clamp(320px, 27vw, 380px); background: #f5f5f5; overflow: hidden; }
+.dz-frame { position: absolute; inset: 18px; background: #0a0a0a; clip-path: inset(0 round 16px); transition: clip-path .6s cubic-bezier(.76, 0, .24, 1), background-color .4s cubic-bezier(0, 0, .2, 1); }
+.dz-frame.k-ad { background: transparent; }
+.dz-frame.k-doc { background: #fff; }
+.dz-doc { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); border-radius: 16px; }
 .dz-art { position: absolute; inset: 0; }
+@media (prefers-reduced-motion: reduce) { .dz-frame { transition: none; } }
 .dz-chat { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 12px; align-items: center; padding: 12px 14px 14px; border-top: 1px solid rgba(0, 0, 0, .1); background: #fafafa; }
 .dz-file { display: flex; align-items: center; gap: 10px; padding: 6px 12px 6px 6px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); font-size: 13px; color: #0a0a0a; }
 .dz-file-i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: #0a0a0a; color: #fafafa; font-size: 15px; flex: none; }
@@ -368,7 +366,8 @@
   .dz-bar { padding: 0 8px 0 4px; }
   .dz-badge { display: none; }
   .dz-tabs button { height: 36px; flex: none; }
-  .dz-stage { height: 380px; padding: 10px; }
+  .dz-stage { height: 380px; }
+  .dz-frame { inset: 10px; }
   .dz-app { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto auto; padding: 12px; gap: 8px; }
   .dz-app-top p { display: none; }
   .dz-track, .dz-viz, .dz-pads, .dz-eq { grid-column: 1; }
@@ -400,3 +399,7 @@
   .dz-step-b .av-body { font-size: 14px; }
   .dz-stack { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* close the white gap between "Paste and ship / Get Design" and the capabilities */
+.dz-start { padding-bottom: clamp(32px, 3vw, 44px); }
+.dz-caps { padding-top: clamp(56px, 5vw, 72px); }

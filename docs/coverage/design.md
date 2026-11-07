@@ -87,8 +87,8 @@ Done here: The brief input is 56px with 21px text and a 2px ink focus ring; the 
 Done here: Motion map signature `compare`: a divider dragged (pointer, touch, arrow keys; `role="slider"`) across the raw neon-horizon-master.mp3 upload and what it became, chosen by the three steps; it sweeps once from the raw side on arrival. Section entrances, in order: drop-in (What), explode-gather (models), opposite-drift (One brief, scroll), word-shuffle (paste and repo), count-roll (capability numbers); h1 keeps a CSS line cut-in; no reveal repeats. Earlier: Idle (the workspace cycles six artifacts, the spectrum runs at 124 BPM), state (the frame morphs to each artifact's shape; the headline's highlight and tab pill glide at 300ms ease-emphasis), pointer (pads and modes), arrival (h1 line cut-in, window clip-in), scroll (pinned chapters, stacking sheets, black rooms opening from cards). No springs. Sound: the six artifact tabs, the visualizer modes and the brief chips tick through the shared kit; the four synth pads are `data-sound=""` because they play their own note.
 
 ## 10. Media
-- [x] `Film` and `Pic` only; sizes and posters set (kit `Img` 1200×1500 everywhere; kit `Film` with a poster for the one clip)
-- [x] At most 2 videos playing; pause button on loops over 5 s (one clip, only while its tab shows; the window's pause stops it)
+- [x] `Film` and `Pic` only; sizes and posters set (kit `Img` 1200×1500 everywhere; kit `Film` with a poster for every clip: the hero's Koma tab and the capability art's Iro, Koma and Uta films)
+- [x] At most 2 videos playing; pause button on loops over 5 s (kit `Film` plays only in view; the Brief's cards show posters, so no screen runs more than two; the window's pause stops the hero clip)
 - [x] Budgets met; nothing missing; alt on every image (artwork is decorative, `alt=""`; the tiles are named by their text)
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (six model pictures in the black room; three on the deck sheet)
 
@@ -100,7 +100,7 @@ Done here: Every picture is Hanzo's own model art from `/models/`, shown without
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: check.mjs at 375×812: h1, one solid and the moving window in the first screen, CLS 0.000, 0 small targets. On phones the text comes first and the window follows; sheets stop stacking and chapters stack.
+Done here (re-measured 8 Nov): check.mjs at 1470×801 and 375×812: 0 errors, no horizontal scroll, 0 overlaps. Hero frame morph is now a clip-path on a fixed box, so six auto-cycles on phone measure CLS 0.0000 (desktop 0.0024, the shared header). On phones the text comes first and the window follows; the brief no longer drifts (no element past the 16px gutter) and the capability sheets reach full opacity.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better (#0a0a0a / #525252 on white; #fafafa and white 78% on black)
