@@ -1,13 +1,13 @@
 /* Iro (ir-): the headline left of the square, then the resolving canvas */
 .ir-head { width: min(44%, 560px); }
 .ir-stage { padding: 0; }
-.ir-frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #18181b, #0a0a0a 70%); }
+.ir-frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #171717, #0a0a0a 70%); }
 .ir-frame::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px); background-size: 32px 32px; }
 .ir-pic { position: absolute; left: 50%; top: 50%; translate: -50% -50%; border-radius: 6px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 30px 60px -20px rgba(0, 0, 0, .8); background: #000; }
 .ir-pic canvas, .ir-pic img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; display: block; }
 .ir-pic img { object-fit: cover; opacity: 0; transition: opacity 1.1s var(--ease); }
 .ir-pic img[data-on] { opacity: 1; }
-.ir-tag { position: absolute; margin: 0; z-index: 2; padding: 6px 9px; border-radius: 7px; background: rgba(10, 10, 10, .72); color: #c7c7cc; }
+.ir-tag { position: absolute; margin: 0; z-index: 2; padding: 6px 9px; border-radius: 6px; background: rgba(10, 10, 10, .72); color: #d4d4d4; }
 .ir-tl { top: 14px; left: 14px; }
 .ir-bl { bottom: 14px; left: 14px; }
 .ir-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 14px 16px; border-top: 1px solid rgba(255, 255, 255, .08); }

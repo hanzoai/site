@@ -124,7 +124,7 @@ function Answer({ q, on }) {
       <div className="ka-score">
         <div className="ka-track">
           {q.levels.map((l, i) => <span key={l} className="ka-tick" style={{ left: (i / n) * 100 + '%' }} />)}
-          <motion.span className="ka-run" initial={false} animate={{ x: on ? (q.at / n) * 100 + '%' : '0%', opacity: on ? 1 : 0.3 }} transition={{ type: 'spring', stiffness: 120, damping: 16 }}><i className="ka-mark" /></motion.span>
+          <motion.span className="ka-run" initial={false} animate={{ x: on ? (q.at / n) * 100 + '%' : '0%', opacity: on ? 1 : 0.3 }} transition={{ duration: 0.3, ease: EASE }}><i className="ka-mark" /></motion.span>
         </div>
         <ol className="ka-levels">{q.levels.map((l, i) => <li key={l} data-win={on && Math.round(q.at) === i ? '' : undefined}>{l}</li>)}</ol>
       </div>
@@ -133,7 +133,7 @@ function Answer({ q, on }) {
   return (
     <div className="ka-noul">
       <span>no</span>
-      <div className="ka-track"><motion.span className="ka-run" initial={false} animate={{ x: on ? q.p * 100 + '%' : '50%' }} transition={{ type: 'spring', stiffness: 110, damping: 14 }}><i className="ka-mark" /></motion.span></div>
+      <div className="ka-track"><motion.span className="ka-run" initial={false} animate={{ x: on ? q.p * 100 + '%' : '50%' }} transition={{ duration: 0.3, ease: EASE }}><i className="ka-mark" /></motion.span></div>
       <span>yes</span>
       <em>P(true)</em>
     </div>
@@ -289,7 +289,7 @@ export default function Kai() {
           <ul className="ka-cards">
             {CARDS.map(([n, l, code, to, data]) => (
               <li key={code}>
-                <A to={to} className="ka-card" data-cursor="Open">
+                <A to={to} className="ka-card">
                   <Sigil seed={'kai/' + code} data={data} className="ka-sig" />
                   <span className="ka-card-l">{l}</span>
                   <span className="ka-card-n" data-morph>{n}</span>
