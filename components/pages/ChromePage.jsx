@@ -120,7 +120,7 @@ function Window() {
               <p className="xch-sub">15 seats · Annual billing · Zero data retention enabled</p>
               <div className="xch-page-top">
                 <p className="xch-tag x-mono">ACTIVE TAB · STAGING.ACME.INC</p>
-                <p className="xch-overlay"><i />Agent overlay active</p>
+                <p className="xch-overlay"><i /><span>Agent overlay active</span></p>
               </div>
               <div className="xch-row">
                 <div className={'xch-target' + (n >= 1 ? ' on' : '') + (n === 0 ? ' scan' : '')}>
@@ -130,7 +130,7 @@ function Window() {
                   <span className="xch-wcag x-mono">WCAG AAA 8.9:1</span>
                 </div>
                 <div className={'xch-policy' + (n === 1 ? ' check' : '') + (n >= 2 ? ' ok' : '')}>
-                  <b>Organization Site Policy</b>
+                  <b><span>Organization Site Policy</span></b>
                   <span className="xch-seg x-mono" role="radiogroup" aria-label="Organization Site Policy">
                     {[['list', 'Allowlist'], ['all', 'Allow all sites']].map(([k, l]) => (
                       <button key={k} type="button" role="radio" aria-checked={pol === k} className={pol === k ? 'on' : ''} onClick={() => setPol(k)} data-sound="tick">{l}</button>
@@ -156,7 +156,7 @@ function Window() {
                   <li key={t} className={state}>
                     <span className="xch-dot" aria-hidden="true" />
                     <span>
-                      <b>{t}</b>
+                      <b><span>{t}</span></b>
                       <span className="x-mono xch-arg">{a}</span>
                       <span className="xch-res">{r}</span>
                     </span>
