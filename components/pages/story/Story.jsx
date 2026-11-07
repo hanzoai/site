@@ -12,7 +12,7 @@
    pointer, each figure's own characters rise into place (only Hanzo's figure is ever drawn, never an in-between
    number), a pressed figure travels to its sentence and marks it, the wall's frames wipe open on arrival. Deck motion
    tokens only (90/150/300/400/500 ms, ease-emphasis), no springs.
-   V2: 8/10 on the deck: black room opening from a card, 84→52 name, 21px lede and 64px Air figures (never an in-between number), chapters as wiping 100svh scenes, frames wall, next-launch card; kit Img and Cta; nothing floating */
+   V2: 8/10 on the deck: black room opening from a card (a graphite ledger of the launch's own figures holds the room when its picture cannot load; the contour stops under reduced motion), 84→52 name, 21px lede and 64px Air figures (never an in-between number), chapters as wiping 100svh scenes, frames wall, next-launch card; kit Img and Cta; nothing floating */
 // Signature: the campaign as scene changes: each chapter a 100svh scene that wipes up over the last (scrubbed clip-path), its picture pushing in
 // Beyond: where each figure comes from: press a headline figure, the page travels to the sentence that states it and marks it, else the case study PDF
 // Persona: enterprise buyer or founder checking that Hanzo has delivered results for others (Buy journey)
@@ -46,11 +46,23 @@ const marked = (text, m) => {
 /* a picture (kit Img, its box reserved) over its own caption plate: if the file cannot load, the plate is what shows
    (quiet: the caption already sits under the frame, so the plate stays plain) */
 const BOX = { hero: [1920, 1080], scene: [1200, 1500], tile: [1200, 1500], shot: [1600, 1000], next: [1600, 900] };
-function Pic({ img, className = '', priority, style, n, box = 'tile', quiet }) {
+function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art, live = true }) {
   const [w, h] = BOX[box];
+  const ref = useRef(null);
+  const [bad, setBad] = useState(false);
+  const calm = useCalm();
+  // `art`: when the picture cannot load, the plate carries a slow contour seeded by the picture's own path (MASTER part
+  // 10, media failure falls back to an aspect-ratio box with Sigil); it pauses off screen and stands still for reduced motion
+  useEffect(() => {
+    const i = art && ref.current && ref.current.querySelector('img');
+    if (!i) return;
+    const fail = () => setBad(true);
+    if (i.complete && !i.naturalWidth) fail(); else i.addEventListener('error', fail, { once: true });
+    return () => i.removeEventListener('error', fail);
+  }, [art]);
   return (
-    <span className={'xst-pic ' + className} data-plate>
-      <span className="xst-plate" aria-hidden="true">{n && <b className="x-mono">{n}</b>}{!quiet && <span>{img.alt}</span>}</span>
+    <span className={'xst-pic ' + className} data-plate ref={ref}>
+      <span className="xst-plate" aria-hidden="true">{bad && <Sigil seed={img.src} className="xst-pic-sigil" still={calm || !live} />}{n && <b className="x-mono">{n}</b>}{!quiet && <span>{img.alt}</span>}</span>
       <motion.span className="xst-pic-in" style={style}><Img src={img.src} alt={img.alt} w={w} h={h} priority={priority} /></motion.span>
     </span>
   );
@@ -93,10 +105,11 @@ function Hero({ doc, ask }) {
   return (
     <section ref={box} className="xst-hero" data-room="dark" data-hero={doc.slug} data-ready={ready ? '' : undefined} data-bare={bare || undefined} aria-labelledby="xst-h1">
       {/* the black room enters as a rounded card inside the gutters and opens to full width */}
-      <motion.div className="xst-cover" data-morph-target initial={{ clipPath: 'inset(0px 32px 0px 32px round 24px)' }} animate={{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }} transition={{ duration: 0.8, ease: EASE_IO, delay: 0.1 }}>
+      <motion.div className="xst-cover" data-morph-target initial={calm ? false : { clipPath: 'inset(0px 32px 0px 32px round 24px)' }} animate={{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }} transition={{ duration: 0.8, ease: EASE_IO, delay: 0.1 }}>
         {doc.cover && <span className="xst-cover-in"><Pic img={doc.cover} priority box="hero" /></span>}
         <span className="xst-scrim" aria-hidden="true" />
-        <Sigil seed={doc.route} data={nums} className="xst-sigil" />
+        {/* still={calm}: the contour stops (one frame) the moment reduced motion is on, also when it is switched on later */}
+        <Sigil seed={doc.route} data={nums} className="xst-sigil" still={calm} />
       </motion.div>
       <div className="xst-hero-in">
         <nav className="xst-crumb" aria-label="Breadcrumb">
@@ -112,8 +125,24 @@ function Hero({ doc, ask }) {
           <p className="xst-meta x-mono"><span>{doc.year}</span><i aria-hidden="true" /><span>{doc.kind}</span></p>
           {ask && <Cta to={ask.href} id="customers.hero" size="lg" thumb className="xst-ask">{ask.label}</Cta>}
         </div>
+        {bare && doc.figures.length > 0 && <Ledger figures={doc.figures} calm={calm} />}
       </div>
     </section>
+  );
+}
+
+/* when the launch's picture cannot load, the room still holds a real object: the launch's own figures on a graphite
+   plate (Hanzo's values and labels, exactly as the header prints them; aria-hidden, the figures section below is the
+   readable copy). It wipes open once, then each figure's characters rise into place, never an in-between number. */
+function Ledger({ figures, calm }) {
+  const [first, ...rest] = figures;
+  return (
+    <motion.div className="xst-ledger" aria-hidden="true" data-in=""
+      initial={calm ? false : { clipPath: 'inset(0% 0% 100% 0% round 20px)' }} animate={{ clipPath: 'inset(0% 0% 0% 0% round 20px)' }}
+      transition={{ duration: 0.5, ease: EM, delay: 0.3 }}>
+      <span className="xst-ledger-a"><Figure value={first.value} /><span>{first.label}</span></span>
+      {rest.length > 0 && <span className="xst-ledger-r">{rest.map((f) => <span key={f.value}><b>{f.value}</b><span>{f.label}</span></span>)}</span>}
+    </motion.div>
   );
 }
 
@@ -144,7 +173,7 @@ function Figures({ doc, mark, onPress }) {
 }
 
 /* one chapter: a full scene that wipes up over the one before it, then lifts its words away as the next arrives */
-function Scene({ s, i, n, p, mark, calm, last }) {
+function Scene({ s, i, n, p, mark, calm, last, live }) {
   const t = (v) => v * (n - 1);
   const enter = (v) => (i ? c01((t(v) - (i - 0.8)) / 0.55) : 1);
   const leave = (v) => c01((t(v) - (i + 0.2)) / 0.55);
@@ -160,7 +189,7 @@ function Scene({ s, i, n, p, mark, calm, last }) {
           <p className="xst-t">{marked(s.text, mark)}</p>
           <p className="xst-n x-mono" aria-hidden="true">{s.n} / {last}</p>
         </motion.div>
-        {s.img && <Pic img={s.img} className="xst-scene-pic" n={s.n} style={calm ? undefined : { scale: push }} box="scene" />}
+        {s.img && <Pic img={s.img} className="xst-scene-pic" n={s.n} style={calm ? undefined : { scale: push }} box="scene" art live={live} />}
       </div>
     </motion.article>
   );
@@ -170,13 +199,13 @@ function Chapters({ how, mark, box }) {
   const n = how.steps.length;
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
   const calm = useCalm();
-  const [, setAt] = useState(0);
+  const [at, setAt] = useState(0); // the chapter on stage: only its contour drifts (one mover in view)
   useMotionValueEvent(p, 'change', (v) => setAt(Math.max(0, Math.min(n - 1, Math.floor(v * (n - 1) + 0.45)))));
   const last = how.steps[n - 1].n;
   return (
     <div className="xst-scenes" ref={box} style={{ '--n': n }}>
       <div className="xst-stage">
-        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} calm={calm} last={last} />)}
+        {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} calm={calm} last={last} live={i === at} />)}
       </div>
     </div>
   );
@@ -188,7 +217,7 @@ function Wall({ g }) {
       {g.imgs.map((p, i) => (
         <li key={p.src} className="xst-tile" style={{ '--i': i }}>
           <figure>
-            <Pic img={p} quiet />
+            <Pic img={p} quiet art={i < 3} />
             <figcaption>{p.alt}</figcaption>
           </figure>
         </li>
@@ -244,7 +273,7 @@ export default function Story({ doc, next }) {
               <h2 id="xst-rep-h" className="xst-h2">{doc.report.h2}</h2>
               <p className="xst-t">{marked(doc.report.text, mark)}</p>
             </div>
-            <figure className="xst-shot"><Pic img={doc.report.img} box="shot" /></figure>
+            <figure className="xst-shot"><Pic img={doc.report.img} box="shot" art /></figure>
           </div>
         </section>
       )}

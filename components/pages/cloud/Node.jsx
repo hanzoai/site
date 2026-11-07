@@ -1,6 +1,6 @@
 'use client';
 /* Node, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief).
-   V2: 8/10 One machine's life: the node settles from big to its place on the 8/5 split beside the 52px title and runs itself (up, joined, hardware reported, jobs lighting the five levels of work, roots settling on Lux), tilts a degree or two toward your pointer and takes a job of whatever level you point at; the figures are the one big thing of the next screen; six reasons play in one pinned graphite terminal; a quiet room to put a machine on the fabric; deck greys, flat surfaces, no springs.
+   V2: 8/10 Round 4 (review 7/10): the h1 now cuts in after the page is painted (it used to finish before first paint); the machine shows its own process (pid, network, the level it is serving) instead of /network's peer lines; the hero-to-Why band is ~120px, not ~300; the figures roll and settle once on entry; the pinned stage is 48svh a chapter (was 76), sits higher, and each chapter plays a 2.8s scripted beat when it arrives (command keyed in, chips one by one, bars filling, models/route/placement lit in turn, declared struck then attested ringed, the node driving itself up/join/stop once, roots appended to Lux) and rests on a blinking prompt; under 900px the scene stacks, one terminal per chapter at true height; Copy swaps to the tick and "Copied" together; text links part their stroke, Node docs' arrow nudges.
    Persona: Developer with a machine to lend (a compute provider).
    Goal: run a node.
    CTA: "Run a Node" → https://docs.hanzo.ai/docs/proof-of-ai/node-operator (data-cta node.hero, node.close; the site's
@@ -15,14 +15,15 @@
    or stops by its recorded pid while the other process that happens to share the name keeps running.
    Motion (1 signature + 3): idle = the machine's own loop (the one continuous mover, pausable); pointer = the machine
    tilting toward a fine pointer (2.5° at most, eased 300ms), a level you point at taking a job, the magnetic close;
-   time = the terminal's lines staged in per chapter; state = the drive control, the levels sheet rising; arrival = the
-   cut-in title, the timed wipe into the quiet room; scroll (under half) = the stage settling from big to its place and
-   the pinned terminal.
+   time = each chapter's scripted beat on the terminal (one frame scheduler, plays once, rests on a blinking prompt);
+   state = the drive control, the levels sheet rising, the Copy confirm; arrival = the cut-in title, the figures
+   settling, the timed wipe into the quiet room; scroll (under half) = the stage settling from big to its place and
+   the pinned terminal (stacked under 900px).
    Every word and link is Hanzo's; hashes and bars are drawn, not measured. */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { A } from '../../kit';
-import { Paste, useLive } from './Frame';
+import { Paste, useLive, useFrame } from './Frame';
 import SettleStage from '../../v2/SettleStage';
 import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
@@ -32,6 +33,8 @@ import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
 import './Node.css';
 
+const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
 const DOCS = 'https://docs.hanzo.ai/docs/proof-of-ai/node-operator';
 const LEVELS = ['embeddings and small models', 'chat-sized models', 'large and multimodal', 'training', 'specialized compute like proofs'];
 const HW = ['Consumer cards', 'datacenter accelerators', 'Apple Silicon'];
@@ -40,6 +43,7 @@ const root = (n) => { let x = (n * 2654435761) >>> 0; return '0x' + Array.from({
 const JOBS = [1, 0, 2, 4];
 const END = 3 + JOBS.length * 2 - 1; // up, starting, joined, then four jobs lit and settled: about nine seconds, once
 const pad = (n) => String(n).padStart(2, '0');
+const PID = '48213'; // drawn, like the roots: the pid this CLI records when it starts the node
 
 /* ---------- the hero object: one machine ---------- */
 function Machine() {
@@ -79,9 +83,12 @@ function Machine() {
         </div>
         <div className="nd-cell nd-net">
           <p className="nd-k">joins the fabric</p>
-          {/* the machine's own view of the fabric: one transport to each peer it can see, drawn in as it joins (no map: that is /network's) */}
-          <ul className={'nd-peers' + (t >= 2 ? ' on' : '')} aria-hidden="true">
-            {['peer 03', 'peer 05', 'peer 06'].map((p, i) => <li key={p} style={{ '--i': i }}><span>hanzod</span><i><b /></i><span>{p}</span></li>)}
+          {/* this one machine's own process, not a peer diagram (that is /network's): its recorded pid as it starts, the
+              network it joined, the level of the job it is serving now; each rule draws in as its row comes up */}
+          <ul className="nd-peers nd-proc" aria-hidden="true">
+            {[['pid', PID, t >= 1], ['network', 'hanzo.network', t >= 2], ['level', job >= 0 ? pad(job + 1) + ' / 05' : '·', t >= 3]].map(([k, v, on], i) => (
+              <li key={k} className={(on ? 'on' : '') + (i === 2 && job >= 0 ? ' lit' : '')} style={{ '--i': i }}><span>{k}</span><i><b /></i><span>{on ? v : '·'}</span></li>
+            ))}
           </ul>
           <p className="nd-k2">peer-to-peer</p>
         </div>
@@ -162,35 +169,79 @@ const WHY = [
 ];
 const DRIVE = { up: 'running · active network', join: 'running · switched network', stop: 'stopped · recorded pid' };
 
-function Screen({ step, drive }) {
+/* each chapter's beat: when a chapter becomes the one on the terminal (and the terminal is seen), its lines play out
+   once over BEAT seconds on the page's one frame scheduler (Frame's useFrame), then rest. b is seconds into the beat.
+   Server HTML, JS off and reduced motion all hold the final frame (b = BEAT); after mount it is armed at 0 until seen. */
+const BEAT = 2.8;
+const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+function useBeat(key, run, calm) {
+  const [b, setB] = useState(BEAT);
+  const t0 = useRef(0);
+  useIso(() => {
+    if (calm) { setB(BEAT); return; }
+    if (!run) { setB(0); return; } // armed: the terminal waits, empty of this chapter's lines, until it is seen
+    t0.current = performance.now();
+    setB(0);
+  }, [key, run, calm]);
+  useFrame(run && !calm && b < BEAT, () => {
+    const v = Math.min(BEAT, (performance.now() - t0.current) / 1000);
+    const q = v >= BEAT ? BEAT : Math.floor(v * 30) / 30;
+    setB((o) => (o === q ? o : q));
+  });
+  return b;
+}
+
+/* a string keyed in a character at a time from at, at 50ms a character; the rest of it holds its room unseen */
+function Keyed({ text, b, at }) {
+  const n = b >= BEAT ? text.length : Math.max(0, Math.min(text.length, Math.floor((b - at) / 0.05)));
+  return <>{text.slice(0, n)}<span className="nd-ghost">{text.slice(n)}</span></>;
+}
+
+function Screen({ step, drive, b }) {
+  const R = (at, c = '') => (c ? c + ' ' : '') + 'nd-b' + (b >= at ? ' in' : '');
+  const rest = <p className={R(BEAT - 0.3, 'c nd-rest')}><span>$</span><i className={'nd-caret' + (b >= BEAT ? ' on' : '')} aria-hidden="true" /></p>;
   if (step === 0) return (
     <>
-      <p className="c"><span>$</span> hanzo fabric up</p>
-      <p className="o">reports what it can serve</p>
-      <div className="nd-t-hw">{HW.map((h) => <b key={h}>{h}</b>)}</div>
-      <p className="o">the cluster routes to it <em>on that basis</em></p>
+      <p className="c"><span>$</span> <Keyed text="hanzo fabric up" b={b} at={0.1} /></p>
+      <p className={R(1, 'o')}>reports what it can serve</p>
+      <div className="nd-t-hw">{HW.map((h, i) => <b key={h} className={R(1.25 + i * 0.3)}>{h}</b>)}</div>
+      <p className={R(1.95, 'o')}>the cluster routes to it <em><Keyed text="on that basis" b={b} at={2.05} /></em></p>
+      {rest}
     </>
   );
   if (step === 1) return (
     <>
-      <p className="o">block reward <em>→ a tenth</em> · AI compute</p>
-      <ol className="nd-t-lv">{LEVELS.map((l, i) => <li key={l} style={{ '--i': i }}><span>{l}</span><i><b style={{ transform: `scaleX(${0.2 + i * 0.2})` }} /></i></li>)}</ol>
-      <p className="o">share scaled by <em>the level of the work</em></p>
+      <p className="o">block reward <em className={R(0.3)}>→ a tenth</em> · AI compute</p>
+      <ol className="nd-t-lv">{LEVELS.map((l, i) => {
+        const f = ease((b - 0.5 - i * 0.28) / 0.7);
+        return <li key={l} className={f > 0 ? 'on' : ''} style={{ '--i': i }}><span>{l}</span><i><b style={{ transform: `scaleX(${((0.2 + i * 0.2) * f).toFixed(3)})` }} /></i></li>;
+      })}</ol>
+      <p className={R(2.2, 'o')}>share scaled by <em>the level of the work</em></p>
+      {rest}
     </>
   );
-  if (step === 2) return (
-    <ul className="nd-t-ask">
-      <li><code>models</code><span>everything served across the peers</span></li>
-      <li><code>route</code><span>names who would answer</span></li>
-      <li><code>placement</code><span>where a model nobody serves loads</span></li>
-    </ul>
-  );
+  if (step === 2) {
+    const lit = b >= 0.4 && b < 2.5 ? Math.min(2, Math.floor((b - 0.4) / 0.7)) : -1;
+    return (
+      <>
+        <ul className="nd-t-ask">
+          {[['models', 'everything served across the peers'], ['route', 'names who would answer'], ['placement', 'where a model nobody serves loads']].map(([c, s], i) => (
+            <li key={c} className={R(0.4 + i * 0.7) + (lit === i ? ' lit' : '')}><code>{c}</code><span>{s}</span></li>
+          ))}
+        </ul>
+        {rest}
+      </>
+    );
+  }
   if (step === 3) return (
-    <ul className="nd-t-tier">
-      <li className="no"><span>declared</span><b>not proof</b></li>
-      <li className="yes"><span>attested</span><b>✓ tier</b></li>
-      <li className="tr"><span>trust score</span><i><b /></i></li>
-    </ul>
+    <>
+      <ul className="nd-t-tier">
+        <li className={R(0.2, 'no') + (b >= 0.8 ? ' struck' : '')}><span>declared</span><b>not proof</b></li>
+        <li className={R(1.3, 'yes') + (b >= 1.4 ? ' ring' : '')}><span>attested</span><b className={R(1.9)}>✓ tier</b></li>
+        <li className={R(2.1, 'tr')}><span>trust score</span><i><b style={{ transform: `scaleX(${(0.8 * ease((b - 2.2) / 0.6)).toFixed(3)})` }} /></i></li>
+      </ul>
+      {rest}
+    </>
   );
   if (step === 4) return (
     <>
@@ -199,22 +250,32 @@ function Screen({ step, drive }) {
         <li className={drive === 'stop' ? 'off' : 'run'}><code>hanzod</code><span>this CLI</span><em>{DRIVE[drive]}</em></li>
         <li className="run other"><code>hanzod</code><span>shares the name</span><em>running · untouched</em></li>
       </ul>
+      {rest}
     </>
   );
+  const newest = b >= BEAT ? -1 : Math.floor((b - 0.4) / 0.45);
   return (
     <>
       <p className="o">ordered on <em>the Hanzo L2</em></p>
-      <ul className="nd-t-roots">{[1, 2, 3, 4].map((n) => <li key={n} style={{ '--i': n }}><b>Merkle root</b><code>{root(n + 3)}</code><span>Lux</span></li>)}</ul>
-      <p className="o">anchored · <em>cannot quietly be rewritten</em></p>
+      <ul className="nd-t-roots">{[1, 2, 3, 4].map((n, i) => <li key={n} className={R(0.4 + i * 0.45) + (newest === i ? ' lit' : '')}><b>Merkle root</b><code>{root(n + 3)}</code><span>Lux</span></li>)}</ul>
+      <p className={R(2.4, 'o')}>anchored · <em>cannot quietly be rewritten</em></p>
+      {rest}
     </>
   );
 }
 
-function Term({ step, drive }) {
+/* chapter five's beat drives the node itself once (up, then join, then stop) before handing it to the visitor */
+const autoVerb = (b) => (b < 0.3 || b >= BEAT ? null : b < 1.1 ? 'up' : b < 2 ? 'join' : 'stop');
+
+function Term({ step, drive, onAuto }) {
+  const [ref, live, calm] = useLive(0.3);
+  const b = useBeat(step, live, calm);
+  const auto = step === 4 ? autoVerb(b) : null;
+  useEffect(() => { if (auto && onAuto) onAuto(auto); }, [auto, onAuto]);
   return (
-    <div className="nd-term" data-step={step}>
+    <div className="nd-term" data-step={step} ref={ref}>
       <div className="nd-term-bar"><i /><i /><i /><span>hanzod — node</span></div>
-      <div className="nd-term-body" key={step + (step === 4 ? drive : '')}><Screen step={step} drive={drive} /></div>
+      <div className="nd-term-body" key={step + (step === 4 ? drive : '')}><Screen step={step} drive={drive} b={b} /></div>
     </div>
   );
 }
@@ -229,16 +290,84 @@ function Drive({ drive, setDrive }) {
   );
 }
 
+/* phones (under 900px, MASTER part 11): the pinned scene stacks, each chapter with its own terminal at true height,
+   each playing its beat once as it comes into view. Desktop keeps the pinned stage; CSS shows one or the other. */
+function Stack({ drive, setDrive, onAuto }) {
+  return (
+    <section className="nd-stack" aria-label="Why Run a Hanzo Node">
+      <ol className="lx-wrap nd-stack-l">
+        {WHY.map(([t, d], i) => (
+          <li key={t}>
+            <h3 className="lx-pin-t">{t}</h3>
+            <p className="lx-kick nd-stack-k">{pad(i + 1)} / {pad(WHY.length)}</p>
+            <p className="lx-pin-d">{d}</p>
+            {i === 4 && <Drive drive={drive} setDrive={setDrive} />}
+            <Term step={i} drive={drive} onAuto={onAuto} />
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/* a figure settles once as it is reached: each digit rolls a full turn and lands on its true value (MASTER part 9).
+   The true value is the server HTML; the rolling columns exist only after mount, below the fold, out of the a11y tree. */
+function Roll({ v, i }) {
+  const ref = useRef(null);
+  const [st, setSt] = useState('set');
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (el.getBoundingClientRect().top < innerHeight * 0.92) return; // already in view: leave it set
+    setSt('armed');
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSt('go'); io.disconnect(); } }, { threshold: 0.6 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  if (st === 'set') return <span ref={ref} className="nd-roll">{v}</span>;
+  return (
+    <span ref={ref} className="nd-roll" data-st={st}>
+      <span className="x-sr">{v}</span>
+      <span className="nd-roll-v" aria-hidden="true">
+        {[...v].map((c, j) => (/\d/.test(c)
+          ? <span key={j} className="nd-col" style={{ '--d': i * 2 + j, '--to': 10 + +c }}><span>{Array.from({ length: 11 + +c }, (_, k) => <span key={k}>{k % 10}</span>)}</span></span>
+          : <span key={j}>{c}</span>))}
+      </span>
+    </span>
+  );
+}
+
+/* the h1 cut in by line mask (MASTER part 3: 105% to 0, 700ms, ease-emphasis, 60ms apart). The kit's LineMask starts at
+   style time, which on a cold load is before the first paint, so it was over before anyone saw it; here the cut starts
+   once the page is up (after mount), with a CSS-only failsafe at 1.6s, and the words are the server HTML. */
+function Title() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (performance.now() > 1800) return; // the failsafe already has it
+    const id = requestAnimationFrame(() => ref.current?.setAttribute('data-in', ''));
+    return () => cancelAnimationFrame(id);
+  }, []);
+  return (
+    <h1 ref={ref} className="lx-display lx-lm nd-h1">
+      <span className="lx-line"><span>Hanzo</span></span>
+      <span className="lx-line"><span>Node</span></span>
+    </h1>
+  );
+}
+
 export default function Node() {
   const [drive, setDrive] = useState('up');
-  const steps = WHY.map(([t, d], i) => ({ t, d, extra: i === 4 ? <Drive drive={drive} setDrive={setDrive} /> : null }));
+  const mine = useRef(false); // once the visitor drives it, the beat never takes the wheel again
+  const byHand = useCallback((c) => { mine.current = true; setDrive(c); }, []);
+  const onAuto = useCallback((c) => { if (!mine.current) setDrive(c); }, []);
+  const steps = WHY.map(([t, d], i) => ({ t, d, extra: i === 4 ? <Drive drive={drive} setDrive={byHand} /> : null }));
   return (
     <main className="lx nd">
       <section className="nd-hero" data-morph-target data-ask-name="Hanzo Node">
         <div className="lx-wrap nd-hero-grid">
           <Lean><SettleStage from={1.06} lift={24} className="nd-stage"><Machine /></SettleStage></Lean>
           <div className="nd-hero-copy">
-            <LineMask as="h1" className="lx-display nd-h1" lines={['Hanzo', 'Node']} />
+            <Title />
             <p className="lx-title nd-sub">Decentralized AI Compute</p>
             <p className="lx-lede nd-lede">hanzod is the node that runs hanzo.network. It joins the fabric over a peer-to-peer transport, serves models to whatever the cluster routes to it, and settles the work on Lux. One Rust binary, started with hanzo fabric up.</p>
             <div className="nd-acts">
@@ -253,13 +382,14 @@ export default function Node() {
         <div className="lx-wrap">
           <LineMask as="h2" className="lx-headline nd-why-h" lines={['Why Run a Hanzo Node']} inView />
           <div className="nd-spec">
-            <SpecDrawer rows={[{ v: '1', l: 'Rust binary' }, { v: '3', l: 'commands, no orchestration' }, { v: '5', l: 'levels of the work' }, { v: '1/10', l: 'of the block reward, for AI compute' }]} />
+            <SpecDrawer rows={[['1', 'Rust binary'], ['3', 'commands, no orchestration'], ['5', 'levels of the work'], ['1/10', 'of the block reward, for AI compute']].map(([v, l], i) => ({ v: <Roll v={v} i={i} />, l }))} />
             <LevelsSheet />
           </div>
         </div>
       </section>
 
-      <PinnedChapters label="Why Run a Hanzo Node" steps={steps} per={76} objH={36} visual={(at) => <Term step={at} drive={drive} />} />
+      <PinnedChapters className="nd-pin" label="Why Run a Hanzo Node" steps={steps} per={48} objH={36} visual={(at) => <Term step={at} drive={drive} onAuto={onAuto} />} />
+      <Stack drive={drive} setDrive={byHand} onAuto={onAuto} />
 
       <ClipWipe className="nd-put">
         <div className="lx-wrap nd-put-grid">
@@ -274,7 +404,7 @@ export default function Node() {
           </div>
           <div className="nd-put-r">
             <Paste name="Node" prompt="Read https://hanzo.ai/skill.md and use Hanzo Node in my project. Start with: hanzo node list" className="lx-paste" />
-            <div className="nd-docs"><span className="lx-kick">Node</span><A to={DOCS} className="nd-docs-a">Node docs →</A></div>
+            <div className="nd-docs"><span className="lx-kick">Node</span><A to={DOCS} className="nd-docs-a">Node docs <span className="nd-docs-arr">→</span></A></div>
           </div>
         </div>
       </ClipWipe>

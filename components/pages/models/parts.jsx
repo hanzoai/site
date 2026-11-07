@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A, Tabs, TabPanel, CodeBlock } from '../../kit';
+import { href } from '../../../lib/route';
 import { SNAP } from './rates';
 
 export const money = (v) => (v == null ? '—' : v === 0 ? 'Free' : '$' + (v < 1 ? v.toFixed(3) : v.toFixed(2)));
@@ -30,6 +31,33 @@ export function useCatalog(need) {
   return map;
 }
 export const rateFrom = (cat, id, own) => own || (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;
+/* a rate the page cannot print without asking api.hanzo.ai (printed rates and the snapshot need no request) */
+export const missing = (id, own) => !rateFrom(null, id, own);
+
+/* a link to a page this rebuild has (it opens by Morph); anything else opens Hanzo's live page in a new tab */
+export const isLocal = (h) => !!h && !/^https?:/.test(href(h) || '');
+
+/* One polite live region for the page: whenever a Copy button really copied (its own label turns to "Copied"),
+   it is said once here, so a screen reader hears it wherever focus is (role="status"). */
+export function CopyStatus() {
+  const [msg, setMsg] = useState('');
+  useEffect(() => {
+    let t1 = 0, t2 = 0;
+    const on = (e) => {
+      const b = e.target && e.target.closest && e.target.closest('.x-copy');
+      if (!b) return;
+      clearTimeout(t1); clearTimeout(t2);
+      t1 = setTimeout(() => {
+        if (b.getAttribute('aria-label') !== 'Copied') return;
+        setMsg('');
+        t2 = setTimeout(() => { setMsg('Copied'); t2 = setTimeout(() => setMsg(''), 1800); }, 40);
+      }, 260);
+    };
+    document.addEventListener('click', on);
+    return () => { document.removeEventListener('click', on); clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+  return <span role="status" className="x-sr">{msg}</span>;
+}
 
 /* ---------- signature: the sibling field ----------
    Every model from the same maker, placed by context window (across) and output rate (up). A light sweeps across it
@@ -45,49 +73,60 @@ export function Field({ points, here, label = 'Models by context window and outp
     const paid = ok.filter((p) => p.rate.out > 0).map((p) => Math.log10(p.rate.out));
     let [x0, x1] = [Math.min(...lx), Math.max(...lx)];
     let [y0, y1] = paid.length ? [Math.min(...paid), Math.max(...paid)] : [0, 1];
-    if (x1 - x0 < 0.4) { x0 -= 0.3; x1 += 0.3; }
+    // log context across, padded on both sides so no model sits on an edge (most makers' models share one or two sizes)
+    const px = Math.max(0.25, (x1 - x0) * 0.18);
+    x0 -= px; x1 += px;
     if (y1 - y0 < 0.4) { y0 -= 0.3; y1 += 0.3; }
     const free = ok.some((p) => p.rate.out === 0);
-    const X = (v) => 6 + ((v - x0) / (x1 - x0)) * 88;
-    const Y = (v) => (free ? 82 : 92) - ((v - y0) / (y1 - y0)) * (free ? 74 : 84);
+    const X = (v) => 10 + ((v - x0) / (x1 - x0)) * 80;
+    const Y = (v) => (free ? 80 : 88) - ((v - y0) / (y1 - y0)) * (free ? 66 : 74);
     const seenAt = {};
     const dots = ok.map((p, i) => {
-      let x = X(Math.log10(p.tokens)), y = p.rate.out > 0 ? Y(Math.log10(p.rate.out)) : 94;
-      const k = Math.round(x) + ':' + Math.round(y); const n = (seenAt[k] = (seenAt[k] || 0) + 1) - 1; // same spot (a batch twin): fan out
-      if (n) { x += ((n % 2) * 2 - 1) * Math.ceil(n / 2) * 1.6; y -= Math.ceil(n / 2) * 1.2; }
-      return { ...p, x, y, i };
+      let x = X(Math.log10(p.tokens)), y = p.rate.out > 0 ? Y(Math.log10(p.rate.out)) : 92;
+      // models on the same spot (batch twins, one size and rate) open out on a small spiral around it, never off the plot
+      const k = Math.round(x / 2) + ':' + Math.round(y / 3); const n = (seenAt[k] = (seenAt[k] || 0) + 1) - 1;
+      if (n) { const a = n * 2.4, r = 1.7 * Math.sqrt(n); x += Math.cos(a) * r; y += Math.sin(a) * r * 2.2; }
+      // rounded, so the server's maths and the browser's print the same style (no hydration mismatch)
+      return { ...p, x: +Math.min(95, Math.max(5, x)).toFixed(2), y: +Math.min(95, Math.max(5, y)).toFixed(2), i, local: isLocal(p.href) };
     });
+    // a tick at every context size the maker offers (Hanzo's own short form), else at each power of ten
+    const sizes = [...new Map(ok.map((p) => [p.ctx || ctxText(p.tokens), p.tokens])).entries()].sort((a, b) => a[1] - b[1]);
     const xt = [];
-    for (let d = Math.ceil(x0); d <= Math.floor(x1); d++) xt.push({ at: X(d), t: ctxText(10 ** d) });
+    if (sizes.length <= 6) sizes.forEach(([s, t]) => xt.push({ at: +X(Math.log10(t)).toFixed(2), t: s }));
+    else for (let d = Math.ceil(x0); d <= Math.floor(x1); d++) xt.push({ at: +X(d).toFixed(2), t: ctxText(10 ** d) });
+    // two sizes close together ("900K", "1M") keep only the first label, so no two labels print on each other
+    for (let i = xt.length - 1; i > 0; i--) if (xt[i].at - xt[i - 1].at < 7) xt[i].t = '';
     const yt = [];
-    for (let d = Math.ceil(y0); d <= Math.floor(y1); d++) yt.push({ at: Y(d), t: money(10 ** d) });
-    if (free) yt.push({ at: 94, t: 'Free' });
+    for (let d = Math.ceil(y0); d <= Math.floor(y1); d++) yt.push({ at: +Y(d).toFixed(2), t: money(10 ** d) });
+    if (free) yt.push({ at: 92, t: 'Free' });
     return { dots, xt, yt };
   }, [points]);
   const H = placed.dots.find((d) => d.href === hot);
+  const me = placed.dots.find((d) => d.href === here);
   return (
     <div className={'xmf-field' + (seen ? ' on' : '')} ref={ref} role="group" aria-label={label}>
       <div className="xmf-plot">
-        {placed.xt.map((t) => <span key={'x' + t.t} className="xmf-gx" style={{ left: t.at + '%' }}><i>{t.t}</i></span>)}
+        {placed.xt.map((t, i) => <span key={'x' + i} className="xmf-gx" style={{ left: t.at + '%' }}><i>{t.t}</i></span>)}
         {placed.yt.map((t) => <span key={'y' + t.t} className="xmf-gy" style={{ top: t.at + '%' }}><i>{t.t}</i></span>)}
         <span className="xmf-sweep" aria-hidden="true"><i /></span>
         {placed.dots.map((d) => {
-          const me = d.href === here;
-          return (
-            <A
-              key={d.href}
-              to={d.href}
-              className={'xmf-dot' + (me ? ' me' : '')}
-              style={{ left: d.x + '%', top: d.y + '%', '--x': (d.x / 100).toFixed(3), '--i': d.i }}
-              aria-label={`${d.name}: ${d.ctx || ctxText(d.tokens)} context, ${rateText(d.rate)}`}
-              aria-current={me ? 'page' : undefined}
-              onPointerEnter={() => setHot(d.href)} onPointerLeave={() => setHot(null)}
-              onFocus={() => setHot(d.href)} onBlur={() => setHot(null)}
-            >
-              <b aria-hidden="true" />
-            </A>
-          );
+          const mine = d.href === here;
+          const p = {
+            className: 'xmf-dot' + (mine ? ' me' : '') + (d.local ? '' : ' far'),
+            style: { left: d.x + '%', top: d.y + '%', '--x': (d.x / 100).toFixed(3), '--i': String(d.i) },
+            'aria-label': `${d.name}: ${d.ctx || ctxText(d.tokens)} context, ${rateText(d.rate)}`,
+            onPointerEnter: () => setHot(d.href), onPointerLeave: () => setHot(null),
+            onFocus: () => setHot(d.href), onBlur: () => setHot(null),
+          };
+          // a model with a page here is a link; one without stays a readable point (it never sends you off the site)
+          return d.local || mine
+            ? <A key={d.href} to={d.href} {...p} aria-current={mine ? 'page' : undefined}><b aria-hidden="true" /></A>
+            : <span key={d.href} {...p} role="img" tabIndex={0}><b aria-hidden="true" /></span>;
         })}
+        {/* this page's own model is named at rest */}
+        {me && H !== me && (
+          <span className={'xmf-me-l' + (me.x > 60 ? ' l' : '')} style={{ left: me.x + '%', top: me.y + '%' }} aria-hidden="true">{me.name}</span>
+        )}
         <AnimatePresence>
           {H && (
             <motion.span
@@ -106,6 +145,75 @@ export function Field({ points, here, label = 'Models by context window and outp
       </div>
       <div className="xmf-axes" aria-hidden="true"><span>Context window →</span><span>↑ Output $ / M tokens</span></div>
     </div>
+  );
+}
+
+/* ---------- the spec sheet's object: the two rates drawn to one scale ----------
+   In and out per million tokens as two bars (Hanzo's own rates, nothing else); they draw in once when the sheet arrives. */
+export function RateBars({ rate }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
+  if (!rate) return null;
+  const top = Math.max(rate.in, rate.out) || 1;
+  const bar = (k, v) => (
+    <div className="xmf-rb-r">
+      <span className="x-mono">{k}</span>
+      <i aria-hidden="true"><b style={{ transform: `scaleX(${seen ? Math.max(v ? 0.02 : 0, v / top) : 0})` }} /></i>
+      <em className="x-mono">{money(v)}</em>
+    </div>
+  );
+  return (
+    <div className="xmf-rb" ref={ref} aria-label={rateText(rate)} role="img">
+      {bar('In', rate.in)}
+      {bar('Out', rate.out)}
+    </div>
+  );
+}
+
+/* ---------- a limit drawn: the context a model reaches, against what it was trained on ----------
+   Both numbers come from Hanzo's own spec line ("32,768 tokens (YaRN; trained: 1,024)"); the bar is to scale. */
+export function Reach({ value, tokens }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const m = /trained:\s*([\d,]+)/.exec(value || '');
+  const trained = m ? parseInt(m[1].replace(/,/g, ''), 10) : null;
+  if (!tokens) return null;
+  const reach = (value || '').split(' (')[0];
+  // the reach in steps of the trained length (32,768 / 1,024 = 32 cells): the first cell is what it was trained on
+  const n = trained && tokens % trained === 0 && tokens / trained <= 64 ? tokens / trained : 0;
+  return (
+    <figure className={'xmf-reach' + (seen ? ' on' : '')} ref={ref}>
+      <div className={'xmf-reach-bar' + (n ? ' cells' : '')} aria-hidden="true">
+        {n ? Array.from({ length: n }, (_, i) => <i key={i} className={i ? '' : 'tr'} style={{ '--i': String(i) }} />) : <i className="all" />}
+      </div>
+      <figcaption>
+        {trained && <span className="x-mono tr">{m[1]}</span>}
+        <span className="x-mono all">{reach}</span>
+      </figcaption>
+    </figure>
+  );
+}
+
+/* ---------- Hanzo's other "More from" cards that are not in the rail ----------
+   One line each: the name and its context; the description arrives on hover or focus (it is in the HTML throughout).
+   A model this rebuild has a page for opens it; one it has not opens Hanzo's live page in a new tab and says so. */
+export function Also({ cards }) {
+  if (!cards.length) return null;
+  return (
+    <ul className="xmf-also">
+      {cards.map((c) => {
+        const far = !isLocal(c.href);
+        return (
+          <li key={c.href}>
+            <A to={c.href} className={'xmf-also-a' + (far ? ' far' : '')} {...(far ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+              <b>{c.name}<i aria-hidden="true">{far ? '↗' : '→'}</i>{far && <span className="x-sr"> (opens in a new tab)</span>}</b>
+              {c.ctx && <span className="x-mono xmf-also-c">{c.ctx}</span>}
+              {c.desc && <span className="xmf-also-d">{c.desc}</span>}
+            </A>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 

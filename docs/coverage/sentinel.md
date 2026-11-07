@@ -2,7 +2,7 @@
 
 Page file: `components/pages/cloud/Sentinel.jsx` · gallery: `docs/gallery/sentinel/` · metric id: `cta_click:sentinel.primary`
 
-Open copy questions for James: "Mode" (`c4_mode`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
+Open copy questions for James: Hanzo's 06/06 says "Functional Source License" but the shared "Get Sentinel" chip says "License: BSL-1.1" (left as is). "Mode" (`c4_mode`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
 Shared changes requested (`docs/requests/sentinel.md`): none.
 Forks this page deleted: the purple rain and pink dots (greys now), the eyebrow over the h1.
 

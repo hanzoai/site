@@ -1,0 +1,1059 @@
+[
+{
+"key": "/",
+"route": "/",
+"title": "/",
+"members": 0,
+"slug": "home"
+},
+{
+"key": "/about",
+"route": "/about",
+"title": "Chasing the Pareto Frontier of AI",
+"members": 0,
+"slug": "about"
+},
+{
+"key": "/affiliate",
+"route": "/affiliate",
+"title": "Affiliates",
+"members": 0,
+"slug": "affiliate"
+},
+{
+"key": "/agents",
+"route": "/agents",
+"title": "Hanzo for agents: free to start, pay as you go",
+"members": 0,
+"slug": "agents"
+},
+{
+"key": "/agents/*",
+"route": "/agents/crew",
+"title": "The agents in every workspace",
+"members": 2,
+"slug": "agents-family"
+},
+{
+"key": "/analytics",
+"route": "/analytics",
+"title": "Hanzo Analytics",
+"members": 0,
+"slug": "analytics"
+},
+{
+"key": "/api",
+"route": "/api",
+"title": "One API for models, agents and tools",
+"members": 0,
+"slug": "api"
+},
+{
+"key": "/authz",
+"route": "/authz",
+"title": "Hanzo Authz",
+"members": 0,
+"slug": "authz"
+},
+{
+"key": "/auto",
+"route": "/auto",
+"title": "Workflow automation in one binary",
+"members": 0,
+"slug": "auto"
+},
+{
+"key": "/automations",
+"route": "/automations",
+"title": "The apps a workflow can reach",
+"members": 0,
+"slug": "automations"
+},
+{
+"key": "/base",
+"route": "/base",
+"title": "The backend in one file",
+"members": 0,
+"slug": "base"
+},
+{
+"key": "/benchmarks",
+"route": "/benchmarks",
+"title": "Hanzo",
+"members": 0,
+"slug": "benchmarks"
+},
+{
+"key": "/benchmarks/*",
+"route": "/benchmarks/cronquestions",
+"title": "CronQuestions benchmark",
+"members": 27,
+"slug": "benchmarks-family"
+},
+{
+"key": "/beta",
+"route": "/beta",
+"title": "Get there first",
+"members": 0,
+"slug": "beta"
+},
+{
+"key": "/billing",
+"route": "/billing",
+"title": "Hanzo Billing",
+"members": 0,
+"slug": "billing"
+},
+{
+"key": "/blockchain",
+"route": "/blockchain",
+"title": "One API key, every chain. And an agent that can use it.",
+"members": 0,
+"slug": "blockchain"
+},
+{
+"key": "/blockchain/*",
+"route": "/blockchain/bundler",
+"title": "Bundler API",
+"members": 17,
+"slug": "blockchain-family"
+},
+{
+"key": "/blog",
+"route": "/blog",
+"title": "Blog",
+"members": 0,
+"slug": "blog"
+},
+{
+"key": "/blog/*",
+"route": "/blog/kai-decision-models",
+"title": "Kai 1: Decisions, Not Completions",
+"members": 3,
+"slug": "blog-family"
+},
+{
+"key": "/bot",
+"route": "/bot",
+"title": "Hanzo Bot",
+"members": 0,
+"slug": "bot"
+},
+{
+"key": "/bounty",
+"route": "/bounty",
+"title": "Bounties",
+"members": 0,
+"slug": "bounty"
+},
+{
+"key": "/brand",
+"route": "/brand",
+"title": "Hanzo Brand Guidelines.",
+"members": 0,
+"slug": "brand"
+},
+{
+"key": "/buying-specialist",
+"route": "/buying-specialist",
+"title": "AI Buying Specialist",
+"members": 0,
+"slug": "buying-specialist"
+},
+{
+"key": "/captable",
+"route": "/captable",
+"title": "Hanzo Cap Table - Equity Management Platform",
+"members": 0,
+"slug": "captable"
+},
+{
+"key": "/careers",
+"route": "/careers",
+"title": "Compilers, cryptography, and the cloud they run on",
+"members": 0,
+"slug": "careers"
+},
+{
+"key": "/careers/*",
+"route": "/careers/academic-research-intern",
+"title": "Academic & PhD Research Intern (AI Research & Systems)",
+"members": 8,
+"slug": "careers-family"
+},
+{
+"key": "/chat",
+"route": "/chat",
+"title": "Hanzo Chat",
+"members": 0,
+"slug": "chat"
+},
+{
+"key": "/chrome",
+"route": "/chrome",
+"title": "Hanzo in Chrome",
+"members": 0,
+"slug": "chrome"
+},
+{
+"key": "/cli",
+"route": "/cli",
+"title": "A senior engineer in your shell",
+"members": 0,
+"slug": "cli"
+},
+{
+"key": "/cloud/*",
+"route": "/cloud/ai-metrics",
+"title": "AI Metrics",
+"members": 42,
+"slug": "cloud-family"
+},
+{
+"key": "/commerce",
+"route": "/commerce",
+"title": "Hanzo Commerce - Headless Commerce API",
+"members": 0,
+"slug": "commerce"
+},
+{
+"key": "/compare",
+"route": "/compare",
+"title": "How we compare, row by row, with the source on every row",
+"members": 0,
+"slug": "compare"
+},
+{
+"key": "/compare/*",
+"route": "/compare/model-routing",
+"title": "Enso vs OpenRouter, Portkey, LiteLLM",
+"members": 1,
+"slug": "compare-family"
+},
+{
+"key": "/comparison",
+"route": "/comparison",
+"title": "What it costs to run it yourself",
+"members": 0,
+"slug": "comparison"
+},
+{
+"key": "/computer",
+"route": "/computer",
+"title": "Hanzo Computer",
+"members": 0,
+"slug": "computer"
+},
+{
+"key": "/console",
+"route": "/console",
+"title": "Hanzo Console",
+"members": 0,
+"slug": "console"
+},
+{
+"key": "/contact",
+"route": "/contact",
+"title": "Contact",
+"members": 0,
+"slug": "contact"
+},
+{
+"key": "/contact-sales",
+"route": "/contact-sales",
+"title": "Talk to sales",
+"members": 0,
+"slug": "contact-sales"
+},
+{
+"key": "/crawl",
+"route": "/crawl",
+"title": "Hanzo Crawl - AI-Ready Web Crawler",
+"members": 0,
+"slug": "crawl"
+},
+{
+"key": "/customers",
+"route": "/customers",
+"title": "Products Hanzo built and launched",
+"members": 0,
+"slug": "customers"
+},
+{
+"key": "/customers/*",
+"route": "/customers/damon-motorcycles",
+"title": "Damon Motorcycles \u00b7 $8.4M in bikes sold in 30 days",
+"members": 2,
+"slug": "customers-family"
+},
+{
+"key": "/dashboards",
+"route": "/dashboards",
+"title": "Hanzo Dashboards",
+"members": 0,
+"slug": "dashboards"
+},
+{
+"key": "/dataroom",
+"route": "/dataroom",
+"title": "Hanzo Dataroom - Secure Document Sharing & Analytics",
+"members": 0,
+"slug": "dataroom"
+},
+{
+"key": "/datastore",
+"route": "/datastore",
+"title": "Hanzo Datastore",
+"members": 0,
+"slug": "datastore"
+},
+{
+"key": "/design",
+"route": "/design",
+"title": "Hanzo Design",
+"members": 0,
+"slug": "design"
+},
+{
+"key": "/desktop",
+"route": "/desktop",
+"title": "Hanzo Desktop",
+"members": 0,
+"slug": "desktop"
+},
+{
+"key": "/dev",
+"route": "/dev",
+"title": "Hanzo Dev",
+"members": 0,
+"slug": "dev"
+},
+{
+"key": "/dns",
+"route": "/dns",
+"title": "Hanzo DNS",
+"members": 0,
+"slug": "dns"
+},
+{
+"key": "/download",
+"route": "/download",
+"title": "Download Hanzo",
+"members": 0,
+"slug": "download"
+},
+{
+"key": "/edge",
+"route": "/edge",
+"title": "Hanzo Edge",
+"members": 0,
+"slug": "edge"
+},
+{
+"key": "/engine",
+"route": "/engine",
+"title": "Hanzo Engine",
+"members": 0,
+"slug": "engine"
+},
+{
+"key": "/enso",
+"route": "/enso",
+"title": "Hanzo Enso",
+"members": 0,
+"slug": "enso"
+},
+{
+"key": "/enterprise",
+"route": "/enterprise",
+"title": "Enterprise AI",
+"members": 0,
+"slug": "enterprise"
+},
+{
+"key": "/extension",
+"route": "/extension",
+"title": "Hanzo Extension",
+"members": 0,
+"slug": "extension"
+},
+{
+"key": "/features",
+"route": "/features",
+"title": "Features",
+"members": 0,
+"slug": "features"
+},
+{
+"key": "/flow",
+"route": "/flow",
+"title": "Hanzo Flow",
+"members": 0,
+"slug": "flow"
+},
+{
+"key": "/founder",
+"route": "/founder",
+"title": "Founder Program",
+"members": 0,
+"slug": "founder"
+},
+{
+"key": "/functions",
+"route": "/functions",
+"title": "Hanzo Functions",
+"members": 0,
+"slug": "functions"
+},
+{
+"key": "/gallery",
+"route": "/gallery",
+"title": "Gallery",
+"members": 0,
+"slug": "gallery"
+},
+{
+"key": "/gateway",
+"route": "/gateway",
+"title": "Hanzo Gateway",
+"members": 0,
+"slug": "gateway"
+},
+{
+"key": "/gen",
+"route": "/gen",
+"title": "Hanzo Gen",
+"members": 0,
+"slug": "gen"
+},
+{
+"key": "/grants",
+"route": "/grants",
+"title": "Open Source & Research Credit Grants",
+"members": 0,
+"slug": "grants"
+},
+{
+"key": "/guard",
+"route": "/guard",
+"title": "Guard",
+"members": 0,
+"slug": "guard"
+},
+{
+"key": "/gui",
+"route": "/gui",
+"title": "Hanzo GUI",
+"members": 0,
+"slug": "gui"
+},
+{
+"key": "/help/privacy/model-training",
+"route": "/help/privacy/model-training",
+"title": "How do I change my model improvement setting?",
+"members": 0,
+"slug": "help_privacy_model-training"
+},
+{
+"key": "/history",
+"route": "/history",
+"title": "History & Track Record",
+"members": 0,
+"slug": "history"
+},
+{
+"key": "/hsm",
+"route": "/hsm",
+"title": "Hanzo HSM",
+"members": 0,
+"slug": "hsm"
+},
+{
+"key": "/iam",
+"route": "/iam",
+"title": "Hanzo IAM",
+"members": 0,
+"slug": "iam"
+},
+{
+"key": "/ide",
+"route": "/ide",
+"title": "An IDE that remembers your codebase",
+"members": 0,
+"slug": "ide"
+},
+{
+"key": "/identity",
+"route": "/identity",
+"title": "Hanzo Identity",
+"members": 0,
+"slug": "identity"
+},
+{
+"key": "/idv",
+"route": "/idv",
+"title": "Hanzo IDV",
+"members": 0,
+"slug": "idv"
+},
+{
+"key": "/ingress",
+"route": "/ingress",
+"title": "Hanzo Ingress",
+"members": 0,
+"slug": "ingress"
+},
+{
+"key": "/insights",
+"route": "/insights",
+"title": "Hanzo Insights",
+"members": 0,
+"slug": "insights"
+},
+{
+"key": "/integrations",
+"route": "/integrations",
+"title": "Integrations",
+"members": 0,
+"slug": "integrations"
+},
+{
+"key": "/integrations/*",
+"route": "/integrations/anthropic-sdk",
+"title": "Use Hanzo AI with Anthropic SDK",
+"members": 19,
+"slug": "integrations-family"
+},
+{
+"key": "/investors",
+"route": "/investors",
+"title": "Hanzo Investor Relations",
+"members": 0,
+"slug": "investors"
+},
+{
+"key": "/iro",
+"route": "/iro",
+"title": "Iro",
+"members": 0,
+"slug": "iro"
+},
+{
+"key": "/jin",
+"route": "/jin",
+"title": "Jin",
+"members": 0,
+"slug": "jin"
+},
+{
+"key": "/kai",
+"route": "/kai",
+"title": "Hanzo Kai",
+"members": 0,
+"slug": "kai"
+},
+{
+"key": "/kai/guide",
+"route": "/kai/guide",
+"title": "How to use Kai, Hanzo\u2019s decision model",
+"members": 0,
+"slug": "kai_guide"
+},
+{
+"key": "/kata",
+"route": "/kata",
+"title": "Hanzo Kata",
+"members": 0,
+"slug": "kata"
+},
+{
+"key": "/kms",
+"route": "/kms",
+"title": "Hanzo KMS",
+"members": 0,
+"slug": "kms"
+},
+{
+"key": "/koe",
+"route": "/koe",
+"title": "Koe",
+"members": 0,
+"slug": "koe"
+},
+{
+"key": "/koma",
+"route": "/koma",
+"title": "Koma",
+"members": 0,
+"slug": "koma"
+},
+{
+"key": "/leaderboard",
+"route": "/leaderboard",
+"title": "Leaderboard",
+"members": 0,
+"slug": "leaderboard"
+},
+{
+"key": "/learn",
+"route": "/learn",
+"title": "Learn Hanzo",
+"members": 0,
+"slug": "learn"
+},
+{
+"key": "/ledger",
+"route": "/ledger",
+"title": "Hanzo Ledger",
+"members": 0,
+"slug": "ledger"
+},
+{
+"key": "/legal",
+"route": "/legal",
+"title": "Legal & Trust Center",
+"members": 0,
+"slug": "legal"
+},
+{
+"key": "/legal/*",
+"route": "/legal/acceptable-use",
+"title": "Acceptable Use Policy",
+"members": 11,
+"slug": "legal-family"
+},
+{
+"key": "/machines",
+"route": "/machines",
+"title": "Hanzo Machines",
+"members": 0,
+"slug": "machines"
+},
+{
+"key": "/mcp",
+"route": "/mcp",
+"title": "Hanzo MCP",
+"members": 0,
+"slug": "mcp"
+},
+{
+"key": "/metrics",
+"route": "/metrics",
+"title": "Hanzo Metrics",
+"members": 0,
+"slug": "metrics"
+},
+{
+"key": "/models",
+"route": "/models",
+"title": "Models",
+"members": 0,
+"slug": "models"
+},
+{
+"key": "/models/*",
+"route": "/models/aion-labs",
+"title": "Aion Labs Models via Hanzo AI",
+"members": 544,
+"slug": "models-family"
+},
+{
+"key": "/models/*",
+"route": "/models/aion-labs",
+"title": "Aion Labs Models via Hanzo AI",
+"members": 544,
+"slug": "models-family"
+},
+{
+"key": "/mori",
+"route": "/mori",
+"title": "Mori",
+"members": 0,
+"slug": "mori"
+},
+{
+"key": "/mq",
+"route": "/mq",
+"title": "Hanzo MQ",
+"members": 0,
+"slug": "mq"
+},
+{
+"key": "/network",
+"route": "/network",
+"title": "Hanzo Network",
+"members": 0,
+"slug": "network"
+},
+{
+"key": "/newsletter",
+"route": "/newsletter",
+"title": "Subscribe to Hanzo AI Newsletter & Developer Updates",
+"members": 0,
+"slug": "newsletter"
+},
+{
+"key": "/node",
+"route": "/node",
+"title": "Hanzo Node",
+"members": 0,
+"slug": "node"
+},
+{
+"key": "/o11y",
+"route": "/o11y",
+"title": "Hanzo O11y",
+"members": 0,
+"slug": "o11y"
+},
+{
+"key": "/open-source",
+"route": "/open-source",
+"title": "Open Source",
+"members": 0,
+"slug": "open-source"
+},
+{
+"key": "/operative",
+"route": "/operative",
+"title": "Hanzo Operative",
+"members": 0,
+"slug": "operative"
+},
+{
+"key": "/operator",
+"route": "/operator",
+"title": "Hanzo Operator",
+"members": 0,
+"slug": "operator"
+},
+{
+"key": "/oss/*",
+"route": "/oss/crowdstart",
+"title": "Crowdstart",
+"members": 56,
+"slug": "oss-family"
+},
+{
+"key": "/oto",
+"route": "/oto",
+"title": "Oto",
+"members": 0,
+"slug": "oto"
+},
+{
+"key": "/payments",
+"route": "/payments",
+"title": "Hanzo Payments",
+"members": 0,
+"slug": "payments"
+},
+{
+"key": "/philosophy",
+"route": "/philosophy",
+"title": "The Zen of Hanzo",
+"members": 0,
+"slug": "philosophy"
+},
+{
+"key": "/platform",
+"route": "/platform",
+"title": "Hanzo Platform",
+"members": 0,
+"slug": "platform"
+},
+{
+"key": "/playground",
+"route": "/playground",
+"title": "Playground",
+"members": 0,
+"slug": "playground"
+},
+{
+"key": "/press",
+"route": "/press",
+"title": "Press Resources.",
+"members": 0,
+"slug": "press"
+},
+{
+"key": "/pricing",
+"route": "/pricing",
+"title": "Pricing",
+"members": 0,
+"slug": "pricing"
+},
+{
+"key": "/products/*",
+"route": "/products/agents",
+"title": "Agents: Workers the company keeps: a model, instructions, tools and a budget",
+"members": 7,
+"slug": "products-family"
+},
+{
+"key": "/pubsub",
+"route": "/pubsub",
+"title": "Hanzo PubSub",
+"members": 0,
+"slug": "pubsub"
+},
+{
+"key": "/realtime",
+"route": "/realtime",
+"title": "Instant data sync across all clients",
+"members": 0,
+"slug": "realtime"
+},
+{
+"key": "/referral",
+"route": "/referral",
+"title": "Bring a builder to Hanzo",
+"members": 0,
+"slug": "referral"
+},
+{
+"key": "/registry",
+"route": "/registry",
+"title": "Hanzo Registry",
+"members": 0,
+"slug": "registry"
+},
+{
+"key": "/research",
+"route": "/research",
+"title": "Work we publish",
+"members": 0,
+"slug": "research"
+},
+{
+"key": "/risk",
+"route": "/risk",
+"title": "Hanzo Risk",
+"members": 0,
+"slug": "risk"
+},
+{
+"key": "/s3",
+"route": "/s3",
+"title": "Hanzo S3",
+"members": 0,
+"slug": "s3"
+},
+{
+"key": "/sdks",
+"route": "/sdks",
+"title": "SDKs for every language",
+"members": 0,
+"slug": "sdks"
+},
+{
+"key": "/search",
+"route": "/search",
+"title": "Hanzo Search",
+"members": 0,
+"slug": "search"
+},
+{
+"key": "/security",
+"route": "/security",
+"title": "What protects your data, and how.",
+"members": 0,
+"slug": "security"
+},
+{
+"key": "/sentinel",
+"route": "/sentinel",
+"title": "Hanzo Sentinel",
+"members": 0,
+"slug": "sentinel"
+},
+{
+"key": "/sign",
+"route": "/sign",
+"title": "Hanzo Sign",
+"members": 0,
+"slug": "sign"
+},
+{
+"key": "/skills",
+"route": "/skills",
+"title": "Skills",
+"members": 0,
+"slug": "skills"
+},
+{
+"key": "/slack",
+"route": "/slack",
+"title": "Hanzo Tag for Slack",
+"members": 0,
+"slug": "slack"
+},
+{
+"key": "/sms-opt-in",
+"route": "/sms-opt-in",
+"title": "Get Hanzo text messages",
+"members": 0,
+"slug": "sms-opt-in"
+},
+{
+"key": "/solutions",
+"route": "/solutions",
+"title": "Solutions for every team and industry",
+"members": 0,
+"slug": "solutions"
+},
+{
+"key": "/solutions/*",
+"route": "/solutions/agents",
+"title": "Hanzo for AI agents",
+"members": 18,
+"slug": "solutions-family"
+},
+{
+"key": "/startups",
+"route": "/startups",
+"title": "The Hanzo Startup Program",
+"members": 0,
+"slug": "startups"
+},
+{
+"key": "/stream",
+"route": "/stream",
+"title": "Hanzo Stream",
+"members": 0,
+"slug": "stream"
+},
+{
+"key": "/studio",
+"route": "/studio",
+"title": "Hanzo Studio",
+"members": 0,
+"slug": "studio"
+},
+{
+"key": "/support",
+"route": "/support",
+"title": "Support",
+"members": 0,
+"slug": "support"
+},
+{
+"key": "/tabs",
+"route": "/tabs",
+"title": "Keep tabs on your agents",
+"members": 0,
+"slug": "tabs"
+},
+{
+"key": "/tag",
+"route": "/tag",
+"title": "Hanzo Tag",
+"members": 0,
+"slug": "tag"
+},
+{
+"key": "/team",
+"route": "/team",
+"title": "Hanzo Team",
+"members": 0,
+"slug": "team"
+},
+{
+"key": "/telemetry",
+"route": "/telemetry",
+"title": "Hanzo Telemetry",
+"members": 0,
+"slug": "telemetry"
+},
+{
+"key": "/templates",
+"route": "/templates",
+"title": "Start from a product",
+"members": 0,
+"slug": "templates"
+},
+{
+"key": "/treasury",
+"route": "/treasury",
+"title": "Hanzo Treasury",
+"members": 0,
+"slug": "treasury"
+},
+{
+"key": "/trust",
+"route": "/trust",
+"title": "Security you can read",
+"members": 0,
+"slug": "trust"
+},
+{
+"key": "/tunnel",
+"route": "/tunnel",
+"title": "Hanzo Tunnel",
+"members": 0,
+"slug": "tunnel"
+},
+{
+"key": "/ui",
+"route": "/ui",
+"title": "Hanzo UI",
+"members": 0,
+"slug": "ui"
+},
+{
+"key": "/uta",
+"route": "/uta",
+"title": "Uta",
+"members": 0,
+"slug": "uta"
+},
+{
+"key": "/visor",
+"route": "/visor",
+"title": "Hanzo Visor",
+"members": 0,
+"slug": "visor"
+},
+{
+"key": "/world",
+"route": "/world",
+"title": "Hanzo World",
+"members": 0,
+"slug": "world"
+},
+{
+"key": "/zap",
+"route": "/zap",
+"title": "Hanzo ZAP",
+"members": 0,
+"slug": "zap"
+},
+{
+"key": "/zen",
+"route": "/zen",
+"title": "The Zen family",
+"members": 0,
+"slug": "zen"
+},
+{
+"key": "/zen/7",
+"route": "/zen/7",
+"title": "Zen 7 Frontier Foundation",
+"members": 0,
+"slug": "zen_7"
+},
+{
+"key": "/zen/models",
+"route": "/zen/models",
+"title": "The complete Zen API catalog",
+"members": 0,
+"slug": "zen_models"
+},
+{
+"key": "/zen/zen6-max",
+"route": "/zen/zen6-max",
+"title": "Zen 6 Max",
+"members": 0,
+"slug": "zen_zen6-max"
+}
+]

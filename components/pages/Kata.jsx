@@ -28,6 +28,7 @@ import A2Room from '../v2/A2Room';
 import useNarrow from '../v2/A2Narrow';
 import { T, EMPH, MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Kata.css';
 
 const KEYS = 'https://platform.hanzo.ai/keys';
@@ -344,6 +345,7 @@ function Questions() {
 }
 
 export default function Kata() {
+  usePhoneAsk();
   return (
     <main className="a2 xkt">
       <Hero />

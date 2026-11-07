@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import JsonLd from '../../../components/JsonLd';
 import OrgPage from '../../../components/pages/oss/OrgPage';
+import JsonLd from '../../../components/JsonLd';
 import { ORGS, orgDoc, metaOf } from '../../../components/pages/oss/ossData';
 
 export const dynamicParams = false;

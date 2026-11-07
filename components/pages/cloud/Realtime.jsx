@@ -267,7 +267,7 @@ function StreamMap({ step, intro }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.code key={cur} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: QUICK }} transition={ARRIVE}>{cur < 0 ? MAP[0] : MAP[cur]}</motion.code>
         </AnimatePresence>
-        <LivePause inline paused={paused} onToggle={pause} className="rt-mpause" />
+        <LivePause inline dark paused={paused} onToggle={pause} className="rt-mpause" />
       </div>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={cur} className="rt-map-b" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: QUICK }} transition={{ duration: 0.4, ease: EASE }}>

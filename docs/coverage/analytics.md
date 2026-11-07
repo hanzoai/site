@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices on this page
 - [x] Open copy questions for James listed, none decided
 
-Done here: "Try Hanzo" → /login is the page's ask (`analytics.hero`, `data-thumb`), again after the script (`analytics.script`, quiet: the header already carries the solid "Try Hanzo", so two identical solids never share a view; the hero's follows the kit Stage, which draws a "Try Hanzo" ask quiet for the same reason); "Deploy to Cloud" is the close's one solid (`analytics.close`). Request Demo (in the hero, by the kit Stage, and after the script), Read the docs and View on GitHub are text-link `Cta`s. Decision: since the shared change of 7 Nov 15:01 (SYSTEM.md §5) the header's "Try Hanzo" is always solid, so the page keeps one solid of its own per view and every secondary ask is a link.
+Done here: "Try Hanzo" → /login is the page's ask (`analytics.hero`, `data-thumb`). Above 700px it is now the first screen's one solid fill (48px, page-scoped CSS on `[data-cta="analytics.hero"]` with `--btn-solid-bg/-ink/-hover`; measured rgb(10,10,10), hover rgb(44,44,46)); while it shows, the header's "Try Hanzo" is an outline, and the header goes solid once it scrolls away. On phones the header's "Try Hanzo" is always solid, so the hero's stays a 48px outline there (one solid per view at both sizes). Again after the script (`analytics.script`, quiet); "Deploy to Cloud" is the close's one solid (`analytics.close`). Request Demo, Read the docs and View on GitHub are text-link `Cta`s.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; the layout's skip link reaches its `#main` mark
@@ -33,7 +33,7 @@ Done here: Parity links 13/13, including the re-homed `/cdn-cgi/l/email-protecti
 - [x] Ends in proof strip (security spec), closing block, footer
 - [x] ~~Card-to-page links use Morph~~ n/a: the report cards open in place (`KeynoteOpen`), no card leaves the page
 
-Done here: At first paint, by CSS with no script: the title cuts in, the activity line draws (1.4 s from 0.35 s), the three KPIs settle by line mask at 0.5 s and the realtime dot rings. With JS off the audit finds no hidden copy (only the kit's JS-only chapter rail numbers). Order: hero, reports, three pinned chapters, commerce, graphite AI room, script, security spec, community, close.
+Done here: At first paint, by CSS with no script: the title cuts in, the activity line draws (1.4 s from 0.35 s), the three KPIs settle by line mask at 0.5 s and the realtime dot rings. With JS off the audit finds no hidden copy (only the kit's JS-only chapter rail numbers). Order: hero, reports, three pinned chapters, commerce, graphite AI room, script, security spec, community, close. The hero dashboard now sits inside the grid (x 629–1327 at 1470 with its 1.06 settle, right edge on the gutter, no bleed off-screen). Section padding is page-scoped to 48–88px (hero bottom 56–88, reports top 32–56, chapter head top 0), so the 250–350px white gaps are gone and the page is ~850px shorter at 1470 (12,274 → ~11,400).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` or hand-made `kn-btn` ask
@@ -75,7 +75,7 @@ Done here: taste OK (2 checked). Replaced every off-deck grey (#fbfbfd #dcdce1 #
 - [x] ~~Inputs 16px or larger~~ n/a: no input; no bare `:hover` (all inside `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: Question chips, resource rows, Apply and the chart answer hover with border/ink/arrow (never opacity), press at .97 in 90 ms, focus `2px solid var(--focus)`. Apply keeps its width and gains a tick (status by shape). No `title=` on the page (audit: none).
+Done here: Question chips fill #f5f5f5 with an ink border and the arrow steps 4px; report cards lift 4px, turn their hairline ink, spin the plus and start their own picture (Realtime rows wipe in, the Journeys path draws, funnel bars fill, events wipe, attribution blocks grow); every link ask ("Request Demo", "Read how reports work", "Read the docs"…) draws an underline from the left and moves its arrow 5px (measured background-size 0 → 100%); security spec rows take a #fafafa fill, feature rows #f5f5f5, the audit card lifts and its page tilts; the repo card lifts with an ink border and its arrow turns. Resource rows, Apply and the chart also answer; press at .97–.98, focus `2px solid var(--focus)`. Apply keeps its width and gains a tick. No `title=` on the page.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -92,7 +92,7 @@ Done here: `variety.py` OK (pathLength only in the page file; 0 Rise). Kinds: id
 - [x] ~~Budgets, alt~~ n/a: no image
 - [x] ~~No dimmed photo~~ n/a: no photo
 
-Done here: Every section's object is drawn UI (dashboard, report pictures, funnel/cohort/revenue scenes, commerce board, AI panel, code), all SVG or CSS.
+Done here: Every section's object is drawn UI, all SVG or CSS: dashboard, report pictures, funnel/cohort/revenue scenes, commerce board, AI panel, code, and now the security features as a settings panel (seven switches that turn on in sequence when seen), "Continual internal audits / Report on request." as a document card, and "Powered by Community" led by a repository card (a 26-week contribution grid that fills in week by week, linking to github.com/hanzoai/insights). The Attribution card's "referrer" block has a 92px floor, so the word is no longer clipped.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -155,6 +155,6 @@ Done here: No fetch on the page; film and sweep show 0 console errors at desk an
 - [x] `data-cta` on every primary; events only through the kit `Cta` (`hz-event`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: no `docs/review/analytics.md` yet
+- [x] Review read: `docs/review/analytics.md` (7/10, 7 Nov 16:37); its fixes are done in round 2
 
-Done here: Primary `analytics.hero` with `data-thumb`; gallery `docs/gallery/analytics/` (desktop.mp4, desktop.jpg, phone-1..3.jpg). Own score 8/10; the critic's verdict decides.
+Done here: Primary `analytics.hero` with `data-thumb`; gallery `docs/gallery/analytics/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, plus round 2 `desktop-r2.jpg`, `phone-r2.jpg`). Own score 8/10; the critic's verdict decides.

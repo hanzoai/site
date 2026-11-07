@@ -1,22 +1,25 @@
 'use client';
 /* Auto (v2, Cloud 4 chat). Archetype A, Launch: the page opens on the editor itself → six properties as an index that
-   opens one at a time → four figures in the one dark room → the connectors → Get Auto → one closing band.
+   opens one at a time, each with its own small live object → four figures in the one dark room, pinned while they cut in →
+   the connectors as a workflow you re-route → Get Auto → one closing band.
    Persona: a developer who wants workflows that survive a restart. Goal: open Auto.
    CTA: "Open Auto" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:auto.primary.
-   V2: 8/10 the hero is the flow editor, two runs racing a pod restart you can trigger; six properties as an index whose open line grows and shows its picture; greys only, one ask, a closing band
+   V2: 8/10 the hero race splits within 2 s (pod rescheduled on the first run: record holds step 3, goroutine drops to step 1, a hairline marker instead of a scrim); each property opens on its own live object (record ticks, /v1/pieces streaming, one run with two triggers, the SSE event log, draft vs published, IAM then KMS); the figures room pins and cuts each word in on scroll while the container draws; connectors are quiet rows feeding a drawn chain; the editor tilts under a fine pointer
    Signature: a run that survives the restart. The first screen is a React-Flow-style canvas; the same flow runs twice, once
-   kept as a record and once held in a goroutine. Every other run the pod is rescheduled: the record resumes at the step it
-   wrote down, the goroutine starts over from the trigger.
+   kept as a record and once held in a goroutine. On the first run (and every other run after) the pod is rescheduled: the
+   record resumes at the step it wrote down, the goroutine starts over from the trigger and finishes last.
    Beyond: restart the pod yourself, at any moment, and watch which run keeps its place (Hanzo's own claim: a run is a
    record, not a goroutine).
-   Motion: the running canvas (signature, time, pausable) + the index line growing as it opens (state) + the connector
-   path re-flowing (state). Every word and link is Hanzo's. */
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { EASE } from '../../ui';
+   Motion: the running canvas (signature, time, pausable) + pointer tilt on the editor (useSpring) + the pinned figures
+   scrubbed by scroll (useScroll) + drawn wires in the connector chain and the container (pathLength). The index line grows
+   as it opens (state). Every word and link is Hanzo's. */
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
+import { EASE, useCalm } from '../../ui';
 import { Cta } from '../../kit';
 import Finale from '../../v2/Finale';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
+import Mini from './auto/Minis';
 import './Auto.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/auto';
@@ -25,46 +28,86 @@ const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0
 const NODES = ['trigger', 'GitHub', 'Postgres', 'Slack', 'done'];
 const N = NODES.length;
 
-/* One lane of the flow on the canvas. */
-function Lane({ label, at, crashed, kind }) {
+/* status glyph on a node: pending ring, running arc, done tick */
+function Glyph({ s }) {
   return (
-    <div className={'au2-lane ' + kind + (crashed ? ' crashed' : '')}>
-      <p className="au2-lane-k"><b>{label}</b><span className="l2-mono">step {Math.min(at + 1, N)} / {N}</span></p>
+    <svg className={'au2-g ' + s} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      {s === 'done' && <path d="M5 8.2 7.1 10.3 11 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />}
+    </svg>
+  );
+}
+
+/* One lane of the flow on the canvas. */
+function Lane({ label, at, kind, lost }) {
+  const cur = Math.min(at, N - 1);
+  return (
+    <div className={'au2-lane ' + kind + (lost ? ' lost' : '')}>
+      <p className="au2-lane-k"><b>{label}</b><span className="l2-mono">step {Math.min(at + 1, N)} / {N}<em> · {at >= N ? 'done' : NODES[cur]}</em></span></p>
       <div className="au2-nodes">
-        {NODES.map((n, i) => (
-          <div key={n} className={'au2-node' + (i < at ? ' done' : i === at ? ' now' : '')}>
-            <span className="au2-h l" /><span className="au2-ic" aria-hidden="true">{n[0].toUpperCase()}</span><span className="au2-nl">{n}</span><span className="au2-h r" />
-            {i < N - 1 && <i className="au2-edge"><b style={{ transform: `scaleX(${i < at ? 1 : 0})` }} /></i>}
-          </div>
-        ))}
+        <i className="au2-track" aria-hidden="true"><b style={{ transform: `scaleX(${cur / (N - 1)})` }} /></i>
+        {NODES.map((n, i) => {
+          const s = i < at ? 'done' : i === at ? 'now' : 'wait';
+          return (
+            <div key={n} className={'au2-node ' + s}>
+              <span className="au2-h l" /><Glyph s={s} /><span className="au2-nl">{n}</span><span className="au2-h r" />
+              {i < N - 1 && <i className="au2-edge"><b style={{ transform: `scaleX(${i < at ? 1 : 0})` }} /></i>}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-/* The canvas: both runs step together; every other run the pod is rescheduled at step 3. */
+/* Pointer tilt for the editor, fine pointers only (up to 2.5°). */
+function useLean() {
+  const rx = useSpring(0, { stiffness: 140, damping: 22 });
+  const ry = useSpring(0, { stiffness: 140, damping: 22 });
+  const fine = useRef(false);
+  useEffect(() => { fine.current = matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches; }, []);
+  const onPointerMove = (e) => {
+    if (!fine.current) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    ry.set(((e.clientX - r.left) / r.width - 0.5) * 5);
+    rx.set((0.5 - (e.clientY - r.top) / r.height) * 3);
+  };
+  const onPointerLeave = () => { rx.set(0); ry.set(0); };
+  return { style: { rotateX: rx, rotateY: ry, transformPerspective: 1600 }, onPointerMove, onPointerLeave };
+}
+
+/* The canvas: both runs step together; on the first run (then every other run) the pod is rescheduled at step 3. */
 function Run() {
-  const [ref, live, , paused, toggle] = useDemo(0.25);
-  const [rec, setRec] = useState(2);
-  const [go, setGo] = useState(2);
+  const [ref, live, calm, paused, toggle] = useDemo(0.25);
+  const tilt = useLean();
+  const [rec, setRec] = useState(1);
+  const [go, setGo] = useState(1);
   const [crash, setCrash] = useState(false);
-  const [saved, setSaved] = useState(null);
-  const [mine, setMine] = useState(false);
+  const [saved, setSaved] = useState(2);
   const [loops, setLoops] = useState(0);
-  useTick(950, live && !crash, () => {
-    if (rec >= N) { setRec(0); setGo(0); setLoops((l) => l + 1); return; }
-    setRec(rec + 1);
-    setGo((v) => Math.min(N, v + 1));
-  });
-  useEffect(() => { if (!mine && live && !crash && rec === 2 && go === 2 && loops % 2 === 1) restart(); }, [rec, go, loops, live]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (crash) { const t = setTimeout(() => { setGo(0); setCrash(false); }, 1500); return () => clearTimeout(t); } }, [crash]);
+  const [mine, setMine] = useState(-1);
+  const [hold, setHold] = useState(0);
   const restart = () => {
     if (crash) return;
     setSaved(rec);
+    setGo(0);
     setCrash(true);
   };
+  useTick(700, live && !crash, () => {
+    if (rec === 2 && go === 2 && loops % 2 === 0 && mine !== loops) { restart(); return; }
+    if (rec >= N && go >= N) {
+      if (hold < 2) { setHold(hold + 1); return; }
+      setHold(0); setRec(0); setGo(0); setLoops(loops + 1); return;
+    }
+    setRec(Math.min(N, rec + 1));
+    setGo(Math.min(N, go + 1));
+  });
+  useEffect(() => { if (crash) { const t = setTimeout(() => setCrash(false), 1600); return () => clearTimeout(t); } }, [crash]);
+  const R = calm ? 3 : rec;
+  const G = calm ? 0 : go;
+  const cut = calm || crash;
   return (
-    <div className="au2-ed" ref={ref}>
+    <motion.div className="au2-ed" ref={ref} {...tilt}>
       <div className="au2-bar">
         <span className="au2-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="l2-mono">React Flow · SSE</span>
@@ -72,24 +115,21 @@ function Run() {
         <PauseBtn paused={paused} onClick={toggle} />
       </div>
       <div className="au2-canvas">
-        <Lane label="A run kept as a record" at={rec} crashed={crash} kind="rec" />
-        <Lane label="A run held in a goroutine" at={go} crashed={crash} kind="go" />
-        <AnimatePresence>
-          {crash && (
-            <motion.div className="au2-crash" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}>
-              <b className="l2-mono">pod rescheduled</b>
-              <span>record: resumes at step {saved + 1} · goroutine: starts over</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <Lane label="A run kept as a record" at={R} kind="rec" />
+        <div className={'au2-mark' + (cut ? ' on' : '')}>
+          <i className="au2-mark-l" aria-hidden="true" />
+          <b className="l2-mono">pod rescheduled</b>
+          <span className="l2-mono">record: resumes at step {(calm ? 2 : saved) + 1} · goroutine: starts over</span>
+        </div>
+        <Lane label="A run held in a goroutine" at={G} kind="go" lost={crash} />
       </div>
       <div className="au2-foot">
-        <button type="button" className="au2-restart" onClick={() => { setMine(true); restart(); }} disabled={crash} aria-label="Restart the pod">
+        <button type="button" className={'au2-restart' + (crash ? ' busy' : '')} onClick={() => { setMine(loops); restart(); }} aria-disabled={crash || undefined} aria-label="Restart the pod">
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.55M13 2.5v2.5h-2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
         <span className="l2-mono">Step state is written down as it goes.</span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -100,15 +140,15 @@ function Hero() {
         <div className="au2-top">
           <div className="au2-name">
             <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><motion.span initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.06 }}>Hanzo Auto</motion.span></span></h1>
-            <motion.p className="l2-stage-kick l2-mono" {...up(0.2)}>auto.hanzo.ai</motion.p>
+            <motion.p className="l2-stage-kick l2-mono" {...up(0.16)}>auto.hanzo.ai</motion.p>
+            <motion.p className="l2-lede" {...up(0.22)}>Workflow automation in one binary</motion.p>
           </div>
-          <motion.p className="l2-lede" {...up(0.28)}>Workflow automation in one binary</motion.p>
-          <motion.div className="l2-acts" {...up(0.36)}>
+          <motion.div className="l2-acts" {...up(0.3)}>
             <Cta to={OPEN} id="primary" size="lg" thumb data-thumb="Open Auto">Open Auto</Cta>
             <Cta to={DOCS} kind="link" id="docs">Documentation</Cta>
           </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}>
+        <motion.div className="au2-stage" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }}>
           <Run />
         </motion.div>
       </div>
@@ -125,33 +165,30 @@ const PROPS = [
   ['Connections, not pasted keys', "A connection is a named credential the flow refers to. It is encrypted at rest through Hanzo KMS, and who may touch it is Hanzo IAM's answer, not a second login here."],
 ];
 
-/* A small picture per property, shown in the cursor preview (and inline on phones). */
-function Mini({ i }) {
-  if (i === 0) return <ol className="au2-m0 l2-mono">{['trigger', 'GitHub', 'Postgres'].map((s, k) => <li key={s} className={k < 2 ? 'ok' : 'now'}><i />{s}</li>)}<li className="rec">record</li></ol>;
-  if (i === 1) return <div className="au2-m1"><p className="l2-mono">GET /v1/pieces</p><span>Slack</span><span>GitHub</span><span>Postgres</span><span>Stripe</span></div>;
-  if (i === 2) return <div className="au2-m2 l2-mono"><span>POST trigger</span><span>/v1/runs</span><b>run</b></div>;
-  if (i === 3) return <div className="au2-m3"><p className="l2-mono">server-sent events</p>{[0, 1, 2, 3].map((k) => <i key={k} />)}</div>;
-  if (i === 4) return <div className="au2-m4 l2-mono"><span className="d">draft</span><span className="p">published</span></div>;
-  return <div className="au2-m5 l2-mono"><span>connection</span><span className="k">Hanzo KMS</span><span className="k">Hanzo IAM</span></div>;
-}
-
-/* The six properties as an index: each line rests small; the open one grows and shows its words and its picture. */
+/* The six properties as an index: each line rests small; the open one grows and runs its own small live object. */
 function Index() {
   const [open, setOpen] = useState(0);
+  const [ref, live, calm, paused, toggle] = useDemo(0.2);
   return (
     <section className="l2-sec au2-idx">
       <div className="l2-wrap">
         <h2 className="l2-head">A run that survives the restart</h2>
-        <ol className="au2-list">
+        <ol className="au2-list" ref={ref}>
           {PROPS.map(([t, d], i) => (
             <li key={t} className={open === i ? 'open' : ''}>
-              <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
+              <button type="button" className="au2-row" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
                 <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
                 <span className="au2-t">{t}</span>
                 <svg className="au2-x" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
               </button>
               <div className="au2-d" inert={open !== i}>
-                <div className="au2-d-in"><p className="l2-body">{d}</p><div className="au2-mini" aria-hidden="true"><Mini i={i} /></div></div>
+                <div className="au2-d-in">
+                  <p className="l2-body">{d}</p>
+                  <div className="au2-mini">
+                    {open === i && <PauseBtn paused={paused} onClick={toggle} />}
+                    <div aria-hidden="true"><Mini i={i} run={live && open === i} calm={calm} /></div>
+                  </div>
+                </div>
               </div>
             </li>
           ))}
@@ -163,7 +200,7 @@ function Index() {
 
 const PIECES = ['Slack', 'GitHub', 'Notion', 'Gmail', 'Stripe', 'HubSpot', 'Jira', 'Linear', 'Discord', 'Airtable', 'Google Sheets', 'Postgres'];
 
-/* Press a connector and it becomes the flow's next step. */
+/* Press a connector and it becomes the flow's next step; the wires between steps draw again as the chain re-flows. */
 function Pieces() {
   const [path, setPath] = useState([0, 4, 9]);
   const add = (i) => setPath((p) => (p.includes(i) ? p : [...p.slice(1), i]));
@@ -175,7 +212,16 @@ function Pieces() {
           <p className="au2-api l2-mono">GET /v1/pieces</p>
           <ol className="au2-path" aria-hidden="true">
             <AnimatePresence initial={false} mode="popLayout">
-              {path.map((k, j) => <motion.li key={k} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="l2-mono">{j + 1}</span>{PIECES[k]}</motion.li>)}
+              {path.map((k, j) => (
+                <motion.li key={k} layout initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 12 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+                  {j > 0 && (
+                    <svg className="au2-wire" viewBox="0 0 12 28" width="12" height="28">
+                      <motion.path key={k + '-' + j} d="M6 0V22M2.5 18.5 6 22l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3, ease: EASE, delay: 0.08 * j }} />
+                    </svg>
+                  )}
+                  <span className="au2-step"><span className="l2-mono">{j + 1}</span>{PIECES[k]}</span>
+                </motion.li>
+              ))}
             </AnimatePresence>
           </ol>
         </div>
@@ -185,7 +231,10 @@ function Pieces() {
             return (
               <li key={t}>
                 <button type="button" className={k >= 0 ? 'on' : ''} aria-pressed={k >= 0} onClick={() => add(i)}>
-                  <span className="au2-pi" aria-hidden="true">{t[0]}</span>{t}
+                  <span className="au2-pn">{t}</span>
+                  <span className="au2-ps l2-mono" aria-hidden="true">
+                    {k >= 0 ? k + 1 : <svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
+                  </span>
                 </button>
               </li>
             );
@@ -196,17 +245,46 @@ function Pieces() {
   );
 }
 
-function Figures() {
+const FIGS = [['Go', 'One process'], ['SQLite', 'Per replica'], ['/v1', 'Flows and runs'], ['Apache', 'Self-hosted']];
+
+/* one figure: its word cuts up into its line as the pinned room scrolls past its stretch */
+function Fig({ p, i, on, k, d }) {
+  const y = useTransform(p, [0.08 + i * 0.11, 0.24 + i * 0.11], ['105%', '0%']);
+  const o = useTransform(p, [0.08 + i * 0.11, 0.24 + i * 0.11], [0.3, 1]);
   return (
-    <section className="l2-sec l2-dark au2-figs" data-room="dark">
-      <div className="l2-wrap">
-        <ul>
-          {[['Go', 'One process'], ['SQLite', 'Per replica'], ['/v1', 'Flows and runs'], ['Apache', 'Self-hosted']].map(([k, d]) => (
-            <li key={k}><b>{k}</b><span className="l2-mono">{d}</span></li>
-          ))}
-        </ul>
-        <div className="au2-box" aria-hidden="true">
-          <div className="au2-ctr"><span className="l2-mono">container</span><b>auto</b><i className="au2-port l2-mono">:port</i><em className="l2-mono">state.sqlite</em></div>
+    <li>
+      <b className="l2-ln"><motion.span style={on ? { y } : undefined}>{k}</motion.span></b>
+      <motion.span className="l2-mono" style={on ? { opacity: o } : undefined}>{d}</motion.span>
+    </li>
+  );
+}
+
+/* The one dark room: pinned while the four words cut in, then the container that holds them draws its outline. */
+function Figures() {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const [on, setOn] = useState(false);
+  useEffect(() => setOn(!calm), [calm]);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.7', 'end end'] });
+  const draw = useTransform(p, [0.58, 0.82], [0, 1]);
+  const chips = useTransform(p, [0.74, 0.88], [0, 1]);
+  return (
+    <section ref={ref} className={'l2-dark au2-figs' + (on ? ' pin' : '')} data-room="dark">
+      <div className="au2-figs-pin">
+        <div className="l2-wrap">
+          <ul>
+            {FIGS.map(([k, d], i) => <Fig key={k} p={p} i={i} on={on} k={k} d={d} />)}
+          </ul>
+          <div className="au2-box" aria-hidden="true">
+            <div className="au2-ctr">
+              <svg className="au2-ctr-line" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <motion.rect x="0.5" y="0.5" width="99" height="99" rx="12" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" style={on ? { pathLength: draw } : undefined} />
+              </svg>
+              <span className="l2-mono">container</span><b>auto</b>
+              <motion.i className="au2-port l2-mono" style={on ? { opacity: chips } : undefined}>:port</motion.i>
+              <motion.em className="l2-mono" style={on ? { opacity: chips } : undefined}>state.sqlite</motion.em>
+            </div>
+          </div>
         </div>
       </div>
     </section>

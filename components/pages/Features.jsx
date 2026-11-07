@@ -1,10 +1,9 @@
 'use client';
 /* Persona: anyone weighing Hanzo's products (developers, teams, people who chat). Goal: start a first chat. CTA: "Open Chat" → /chat?skip=login. Metric: first_chat.
-   Platform features. V2: 7/10 the self-playing keyboard is the hero object (display above, ten keys in three clusters), three pinned product chapters that light one feature at a time with the visual answering it, a closing band with the one ask; greys only
-   Motion budget: signature = the self-playing keyboard; supporting = Settle, Chapters (PinChapters), magnetic primary.
-   No springs, no live AI call (MASTER 3.3): the page's chat room is gone; the footer keeps Hanzo's own chat box.
-   Colour: none (0 UI hues); the pressed key is ink. Pause buttons sit in the display bar and under the chapter visual.
-   Platform features. Its idea is the instrument you play to chat, build and ship.
+   Platform features. V2: 8/10 the self-playing keyboard is the hero object (display above, ten keys in three clusters); then three product rooms, each with Hanzo's own film (Enso for Chat, Zen for Dev, Iro for Design) beside its features as rows that open one at a time and step by themselves; each room opens its product; the close holds the three film cards and the one ask; greys only, colour from Hanzo's media.
+   Motion budget: signature = the self-playing keyboard; supporting = Settle (stage), rows that step and open (state), films (idle), magnetic primary.
+   No springs, no live AI call (MASTER 3.3): the footer keeps Hanzo's own chat box.
+   Colour: none in the UI (0 hues); colour arrives only through Hanzo's model films. One page pause stops the films and the rows; the display has its own.
    Signature: Hanzo's ten features are keycaps on one keyboard, set in three clusters (Hanzo Chat, Hanzo Dev, Hanzo
    Design & Cloud). It plays itself, a key pressing every couple of seconds and its feature lighting on the display
    above; press a key, tap it, or type 1 to 0 to play it yourself.
@@ -14,15 +13,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Magnetic } from '../ui';
-import { A, Img } from '../kit';
-import { useLive, useEvery } from './cloud/Frame';
+import { A } from '../kit';
+import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
 import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
-import PinChapters from '../v2/x-gauss/PinChapters';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Features.css';
 
 const GROUPS = [
@@ -46,6 +45,10 @@ const GROUPS = [
 const KEYS = GROUPS.flatMap(([g, tag, fs], gi) => fs.map(([t, d]) => ({ g, tag, gi, t, d })));
 const CAP = (i) => String((i + 1) % 10);
 const words = (s) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
+const pad = (n) => String(n).padStart(2, '0');
+/* Hanzo's own model films: Enso routes Hanzo Chat, Zen codes in Hanzo Dev, Iro draws on the Design canvas. */
+const FILMS = ['enso', 'zen', 'iro'];
+const TO = ['/chat', '/dev', '/design'];
 
 function Instrument() {
   const [at, setAt] = useState(0);
@@ -82,7 +85,7 @@ function Instrument() {
       <div className="xft-screen" aria-live={mine ? 'polite' : 'off'}>
         <div className="xft-screen-top">
           <span className="x-mono">{k.g}{k.tag ? ` · ${k.tag}` : ''}</span>
-          <span className="x-mono xft-count">{String(at + 1).padStart(2, '0')} / 10</span>
+          <span className="x-mono xft-count">{pad(at + 1)} / 10</span>
           <span className="xft-pause">{pauseBtn}</span>
         </div>
         <div className="xft-screen-body">
@@ -96,7 +99,7 @@ function Instrument() {
       </div>
       <form className="xft-find" role="search" onSubmit={(e) => { e.preventDefault(); if (hits?.length) press(hits[0], true); }}>
         <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="m13.2 13.2 3.6 3.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
-        <input value={q} onChange={(e) => { setMine(true); setQ(e.target.value); }} aria-label="Find a feature" maxLength={80} />
+        <input value={q} onChange={(e) => { setMine(true); setQ(e.target.value); }} aria-label="Find a feature" placeholder="Find a feature" maxLength={80} />
         <span className="xft-find-n x-mono" aria-live="polite">{hits ? `${hits.length} of 10` : ''}</span>
       </form>
       <div className="xft-board">
@@ -145,78 +148,58 @@ function Hero() {
   );
 }
 
-/* Chapter visuals: each product as its own piece of UI, running by itself while it is the chapter on screen. */
-function ChatUI({ k }) {
-  const fs = GROUPS[0][2];
+/* A product room: the features as rows (one open at a time, stepping by itself while the room is in view; hover, tap
+   and focus take over) beside the product's Hanzo film, which opens the product. */
+function Product({ gi }) {
+  const [g, tag, fs] = GROUPS[gi];
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.45 });
+  const calm = useReducedMotion();
+  const paused = usePaused();
+  const [row, setRow] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || calm || mine || paused) return;
+    const t = setTimeout(() => setRow((v) => (v + 1) % fs.length), 2600);
+    return () => clearTimeout(t);
+  }, [row, seen, calm, mine, paused, fs.length]);
+  const pick = (i) => { setMine(true); setRow(i); };
   return (
-    <div className="xft-ui chat" aria-hidden="true">
-      <div className="xft-ui-bar"><i /><i /><i /><span className="x-mono">Hanzo Chat</span></div>
-      <div className="xft-ui-in">
-        <p className="xft-ui-q">Ask Hanzo anything</p>
-        <div className="xft-ui-enso"><Img src="/models/enso.webp" alt="" w={36} h={36} /><b>Enso</b></div>
-        <ul className="xft-ui-chips">{fs.map(([t], i) => <li key={t} className={i === k ? 'on' : i < k ? 'done' : ''}>{t}</li>)}</ul>
+    <section ref={ref} className={'xft-prod p' + gi} aria-labelledby={'xft-p' + gi} style={{ '--r': row }} {...(gi === 1 ? { 'data-room': 'dark' } : {})}>
+      <div className="w2-wrap xft-prod-in">
+        <div className="xft-prod-w">
+          <h2 id={'xft-p' + gi} className="w2-headline xft-prod-h"><A to={TO[gi]}>{g}</A></h2>
+          {tag && <p className="xft-prod-tag x-mono">{tag}</p>}
+          <ol className="xft-rows">
+            {fs.map(([t, d], i) => (
+              <li key={t} className={row === i ? 'on' : ''}>
+                <button type="button" aria-expanded={row === i} onClick={() => pick(i)} onFocus={() => pick(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') pick(i); }}>
+                  <span className="x-mono">{pad(i + 1)}</span><b>{t}</b>
+                </button>
+                <div className="xft-row-d"><p>{d}</p></div>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="xft-film-w">
+          <A to={TO[gi]} className="xft-film" tabIndex={-1} aria-hidden="true">
+            <ModelFilm slug={FILMS[gi]} play={seen && !paused} />
+            <span className="xft-film-cap"><span className="x-mono">{pad(row + 1)} / {pad(fs.length)}</span><b className="xft-film-t">{fs[row][0]}</b><i>→</i></span>
+            <span className="xft-film-bar">{fs.map((f, i) => <i key={i} className={row === i ? 'on' : i < row ? 'done' : ''} />)}</span>
+          </A>
+          {gi === 0 && <span className="xft-film-p"><FilmPause className="dark" /></span>}
+        </div>
       </div>
-    </div>
-  );
-}
-function DevUI({ k }) {
-  const fs = GROUPS[1][2];
-  return (
-    <div className="xft-ui dev" aria-hidden="true">
-      <div className="xft-ui-bar"><i /><i /><i /><span className="x-mono">Hanzo Dev · CLI + Web</span></div>
-      <pre className="xft-ui-term x-mono">{fs.map(([t], i) => <span key={t} className={'l' + (i <= k ? ' on' : '')}><b>{i <= k ? '✓' : '·'}</b> {t}{'\n'}</span>)}<span className="xft-ui-caret" /></pre>
-    </div>
-  );
-}
-function CanvasUI({ k: row }) {
-  const k = row === 0 ? 1 : 3; // canvas lights the graph; memory lights the store
-  return (
-    <div className="xft-ui canvas" aria-hidden="true">
-      <div className="xft-ui-bar"><i /><i /><i /><span className="x-mono">Hanzo Design & Cloud</span></div>
-      <div className="xft-ui-graph">
-        <svg viewBox="0 0 400 220" preserveAspectRatio="none"><path d="M70 60 C 150 60, 150 110, 200 110 M70 160 C 150 160, 150 110, 200 110 M200 110 C 260 110, 270 60, 330 60 M200 110 C 260 110, 270 160, 330 160" /></svg>
-        {['a', 'b', 'c', 'd', 'e'].map((c, i) => <span key={c} className={'xft-ui-node ' + c + (i <= k + 1 ? ' on' : '')} />)}
-      </div>
-      <div className="xft-ui-mem"><i className={k > 1 ? 'on' : ''} /><i className={k > 2 ? 'on' : ''} /><i /></div>
-    </div>
+    </section>
   );
 }
 
-function Products() {
-  const [ref, live] = useLive(0.05);
-  const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
-  const [ch, setCh] = useState(0);
-  const [row, setRow] = useState(0); // one feature at a time: the list lights a row and the visual answers it
-  useEvery(1800, live && !paused, () => setRow((v) => (v + 1) % GROUPS[ch][2].length));
-  return (
-    <div ref={ref}>
-      <PinChapters id="xft-products" label="Hanzo Chat, Hanzo Dev, Hanzo Design & Cloud" className="xft-pin"
-        chapters={GROUPS.map(([g, tag, fs], gi) => ({ k: tag || undefined, t: g, b: (
-          <ul className="xft-ch-list">{fs.map(([t, d], i) => <li key={t} className={gi === ch && i === row ? 'on' : ''}><b>{t}</b><span>{d}</span></li>)}</ul>
-        ) }))}
-        visual={(at) => {
-          if (at !== ch) setTimeout(() => { setCh(at); setRow(0); }, 0);
-          return (
-            <div className={'xft-vis' + (paused ? ' paused' : '')}>
-              {pauseBtn}
-              {[ChatUI, DevUI, CanvasUI].map((V, i) => (
-                <motion.div key={i} className="xft-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.96 }} transition={{ duration: 0.5, ease: EASE }} aria-hidden={at !== i} inert={at !== i}>
-                  <V k={at === i ? row : 0} />
-                </motion.div>
-              ))}
-            </div>
-          );
-        }} />
-    </div>
-  );
-}
-
-/* The close: one band, the one ask again. */
+/* The close: the three products as film cards, and the one ask again. */
 function Band() {
   return (
     <section className="w2-sec tight xft-band" aria-label="Open Chat">
       <div className="w2-wrap xft-band-in">
-        <p className="xft-band-g" aria-hidden="true">{GROUPS.map(([g]) => <span key={g}>{g}</span>)}</p>
+        <div className="xft-band-cards">{GROUPS.map(([g], gi) => <A key={g} to={TO[gi]} className={'xft-bc b' + gi}><ModelFilm slug={FILMS[gi]} play={false} /><b>{g}</b></A>)}</div>
         <div className="xft-acts">
           <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta" data-thumb="Open Chat" data-cta="features.close">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
           <A to="/dev" className="xft-tlink">Launch Dev</A>
@@ -227,12 +210,13 @@ function Band() {
 }
 
 export default function Features() {
+  usePhoneAsk();
   return (
     <main id="main" className="xft w2 gx">
       <NoJs />
       <noscript><style>{'.xft-feat:not(:first-child){display:none!important}'}</style></noscript>
       <Hero />
-      <Products />
+      {GROUPS.map((x, gi) => <Product key={gi} gi={gi} />)}
       <Band />
     </main>
   );

@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Mori.jsx` on `components/pages/model/Creative.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/mori/` · metric id: `contact_sales_submit`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/requests/mori.md`: the header ask fades on hover; Ask.jsx never steps back on phones; Ask.jsx misses CSS fade-ins; `docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our scene headings, raw `.x-btn` asks (now `Cta`), raw `<img>`/`<video>` (now `Img`, `Film`, `ModelFilm`), the studio-map tile, springs on the tab pill, cursor labels.
 
 ## 1. Strategy and conversion
@@ -31,7 +31,7 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Mori's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a cube seen from above whose near edges draw in, and Hanzo's headline rises beside it. Then come four capability chapters first, then the demo; each chapter frames Mori's own film and plays it while its chapter is read, then the viewport: a point cloud settles into a mesh and turns; drag to orbit; wireframe, shaded, normals, Hanzo's model-card grid and the `Band`. Entrance states are scoped to `html.js`.
+Done here: Mori's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a cube seen from above whose near edges draw in, and Hanzo's headline rises beside it. The film is the hero's and the cube's alone. Then four capability chapters, each with its own drawn object (`MoriArt.jsx`: a quad sphere closed by triangle fans; the six material maps dealt in; rooms rising on a metric grid; the export formats landing beside a turning solid), the fits beside a camera scanning a cube, the studio map, the dark viewport (a point cloud settles into a mesh and turns; drag to orbit; wireframe, shaded, normals), then Hanzo's model-card grid and the `Band`, so the two card grids never sit back to back and the tail alternates white, black, white, black. The fits-to-map gap is closed to 44-72px. Entrance states are scoped to `html.js`.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: Mori's own film plays full-bleed under the h1 cut-in within the first
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Request access" after the hero. `data-cta` ids: `mori.first` (first screen), `mori.hero` (headline), `mori.preview` (preview).
+Done here: one solid at a time. While Mori's own "Request access" is on screen it is the solid fill (white on the film, ink beside the settled cube, `Mori.css` scoped by `data-cta`) and the header's "Try Hanzo" steps back to an outline (Ask.jsx); once it has gone by, the header is solid again and on phones, where the header always keeps its solid "Try Hanzo", `usePhoneAsk` (Mori.jsx) sets `html[data-ask=quiet]` while Mori's ask is on screen, so there too Mori's own ask is the one solid; the header is solid again once it has gone by. `data-cta` ids: `mori.first` (first screen), `mori.hero` (headline), `mori.preview` (preview).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -55,7 +55,7 @@ Done here: Hanzo's own research-preview note (samples publish only after blind r
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /mori`: 0 missing
 
-Done here: parity text 52/52, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
+Done here: parity text 52/52, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions rest at 13px on this page (crumb, side labels, chapter rail, fit rows: `Mori.css`, scoped to `[data-hero=mori]`); Hanzo's model-card pills are 11px mono capitals (SPEC 10px, raised one step at the critics' ask). Tables: n/a: no table on this page. Headings use `text-wrap: balance`.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)
@@ -64,7 +64,7 @@ Done here: parity text 52/52, links 4/4. Section headings rest at 26px, the sett
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a0a, #525252, #737373, #a3a3a3 on black), Book 497 headings, radii 24 on tiles and 20 on Hanzo's art cards. Black rooms: the viewport room and the closing Band. /mori has its own settle shape (a cube seen from above whose near edges draw in), its own demo and its own scene order among the six creative pages.
+Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a0a, #525252, #737373, #a3a3a3 on black), Book 497 headings, radii 24 on tiles and 20 on Hanzo's art cards. Black rooms: the viewport room and the closing Band. /mori has its own settle shape (a cube seen from above whose near edges draw in), its own demo, five drawn chapter and fits objects no other creative page has, and its own scene order (demo between the map and the cards) among the six creative pages. No icon in a rounded box: the chapter glyph chip is gone from Mori's chapters.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. "Try it in Design" moves its arrow 4px on hover; both asks deepen their fill on hover and press to translateY(1px) scale .98. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +82,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Ch
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
 - [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
 
-Done here: Signature: the viewport: a point cloud settles into a mesh and turns; drag to orbit; wireframe, shaded, normals. Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
+Done here: Signature: the viewport: a point cloud settles into a mesh and turns; drag to orbit; wireframe, shaded, normals. Each chapter object builds when its chapter arrives, then idles (the sphere turns, the light walks round the maps, a scan line crosses the plan, the formats light in turn, the camera circles). The viewport's shaded mode is lit by a key and rim light, and its twist is a whole turn, so the seam closes. Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, `Film`, shared `ModelFilm`)
@@ -90,7 +90,7 @@ Done here: Signature: the viewport: a point cloud settles into a mesh and turns;
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them
 
-Done here: Hanzo's own films are unfiltered; the only dimming is a gradient under the name. `ModelFilm` holds at most two films playing at once. The stage's `FilmPause` stops every film and the page's self-running demos. The model-card grid puts nine real model films and posters on screen together.
+Done here: Hanzo's own films are unfiltered; the only dimming is a gradient under the name. `ModelFilm` holds at most two films playing at once. The stage's `FilmPause` stops every film and the page's self-running demos. Mori's own film plays only in the hero and the cube; the chapters and fits are drawn objects. The model-card grid puts nine real model films and posters on screen together.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -155,4 +155,4 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/mori.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `app/mori/page.jsx`. Proof is in `docs/gallery/mori/` (desktop film and 4 phone stills). This card is refreshed after each review.
+Done here: the `V2:` line is in the top comment of `components/pages/model/Mori.jsx`. Proof is in `docs/gallery/mori/`: the desktop film, the first screens, the four chapter objects (`chapters.jpg`), the shaded viewport without its seam (`shaded.jpg`) and 4 phone stills. This card is refreshed after each review.

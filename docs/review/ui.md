@@ -1,179 +1,189 @@
-# /ui: James-eye review (re-review)
+# /ui: James-eye review (third walk)
 
-Verdict: 6/10
-First complaint: "The top's good now. It's alive and it's all greys. Then it turns into the same page as Sign and Treasury: a sideways label, numbers down the side, and a big grey box with a little drawing of the buttons you've just shown me for real. Those sliders are just the browser's sliders. And on my phone there's a pause button sitting on top of a heading."
+Reviewed: `main` @ `2586ae4b` (the page's own last change is `6967dabb`, "one real board drives the six chapters…"). Files: `components/pages/apps/UiPage.jsx`, `UiPage.css`, shared `components/v2/x-gauss/*`.
+Walked 7 Nov, about 15:45 to 16:30 UTC, on the running dev server, at 1470×801 and at 375×812 (touch, 2× DPR), plus 320 wide. The walk: slow wheel and touch scrolls of half a screen, with a 1.5 s dwell on each stop to see what moves untouched; a 150 ms state log for the first 5.5 s; hover and press probes on 12 controls; a 45-stop Tab crawl; keyboard runs on the Dialog, the menu and the sliders; a layout-shift PerformanceObserver; an h1 box log; console capture over 6 loads; reduced motion; JS off at both widths. `taste.py` OK, `parity.py /ui` text 59/59 and links 2/2, `variety.py` OK. I did not run `motion.mjs`; the frame logs above stand in for it.
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `c647368`. Files hash (UiPage.jsx, UiPage.css, app/ui/page.jsx, Scale.css, Settle.jsx, x-gauss/*, Frame.jsx): `4c87a2d0ce71`. The page's own files last changed in `86b4125` (the "JAMES.md pass"). Shared pieces changed while I walked: x-gauss PinChapters (`00b5029`, `ffe7921`, `c647368`), Frame.css greys (`4b53974`) and Ask.jsx (`c647368`). Every finding below was re-checked on `c647368`.
-Walked 7 Nov 14:13–14:45 UTC on the dev server at 1470×801 and at 375×812 (touch, 2× DPR). I recorded screencasts, frame bursts 150 ms and 400 ms apart, per-screen stills, a frame-difference log and a layout-shift observer. The cookie note was skipped.
-Since the 6/10 at `86852aa`, these are fixed:
-- the violet, and the blue, green and yellow code colours;
-- the label above the h1 (it now sits below);
-- JS-off legibility;
-- `data-cta` and the `Persona:`/`Goal:`/`CTA:` header;
-- the pause controls;
-- the raw `<table>` and `<img>`;
-- hover on the chapter rail;
-- the coverage file.
+Verdict: 7/10
+First complaint: "Better. It moves, it's all greys, and nothing sits on top of anything now. But I scroll past the box of buttons and get the same box of buttons again, and all that changes is a little grey line at the bottom. After that it's a black room with a small headline in it, and the end is three grey strips. Nothing on the page is big. And on my phone there are still two black buttons on the first screen saying different things."
 
-Proof: `img/ui.jpg` (desktop first screen with the board's Dialog open | phone first screen with the board's menu open).
+The cap applies: `docs/coverage/ui.md` makes claims that are false on the page (see answer 9), so this verdict cannot go above 7 until the card is true.
+
+Fixed since the 6/10 at `c647368`, all re-checked:
+- The sliders are drawn (`role="slider"`; arrows, Page keys and drag move them; a hover ring on the thumb). The page has 0 `input[type=range]`.
+- The board's Dialog moves focus to Close, keeps Tab inside, closes on Esc and returns focus to "Ship it" (`aria-modal="true"`).
+- The menu takes Enter (focus goes to "button"), ArrowDown (to "dialog") and Esc (closes, focus goes back to "Options ▾").
+- The swatches are one tab stop with arrow keys.
+- The hero pause sits inside the token card (x 1368–1413, y 412–457, inside 973–1432).
+- On phone, the chapter pause sits beside the h2 with no overlap (h2 x 16–299, pause x 315–359).
+- The board's buttons hover (Ship it #525252 → #262626; Options border → ink). The stars chip is 44px and inverts on hover.
+- The dark room types once, then renders "Ship it" into the Hello() card. Copy copies only the two `npx` lines.
+- The chapters now act on one real board, not drawings.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes.
-   - **Desktop.** "Hanzo UI" is 161.7px with a 0.92 line height. Beside it are "The React components powering Hanzo apps" and an ink "GitHub ↗". All three paint at first paint (about 0.9 s). The title cuts in by line mask and is set by about 2.0 s.
-   - **The board.** It uses itself every 1.5 s: the menu opens, then the Dialog over a scrim, the focus ring walks and the tokens retune (radius 14 → 4 → 22, ink → graphite → steel). In the idle log, 7 of 11 intervals of 0.4 s change.
-   - **Desktop fit.** At 1470×801 the board is 325 of its 436px on screen (y 476–801), and the Dialog fits (y ≈ 595–791).
-   - **Phone.** The board starts at y 513 and the menu and Dialog open on the first screen.
-   - **The catch.** The h1 is server-rendered out of its mask. On a 4× throttled phone (dev build) "Hanzo UI" lands 3.3 s after first paint, after the board and the pill.
-2. **One in, one out, or a document?** One in, one out through the six pinned chapters: the words cross-fade and the specimen swaps. On desktop, between the board and chapter 1 sits about one still screen: the board's tail, about 300px of white, a floating pause and the start of the vertical label. After the chapters it becomes a document again:
-   - a still dark room;
-   - "Paste and ship";
-   - "Stop reinventing buttons.";
-   - the "Get UI" bar.
-3. **A real object in every section?** The hero has the best one in this group: real working Button, Field, Panel, list, DropdownMenu, Dialog and a token panel.
-   - **Chapters.** Wireframes in a 787×540 grey box: a Dialog drawn as two grey bars and a black block, three app cards of grey bars, a "Tab" key under four pills. About 85% of the box is empty. Only "Accessible by Default" (focus walks every 0.7 s) and "One package" (cards hop every 1.4 s) move.
-   - **Dark room.** A code pane and one "Ship it" in a light card; nothing runs.
-   - **Close.** "Stop reinventing buttons." and "Get UI" have no object.
-4. **One ask, sticky after the hero?** Mid-page yes: the "Hanzo UI · search · GitHub →" pill on desktop, the thumb bar on phone, with the header outlined. The ends break it:
-   - **First screen.** Next to the ink "GitHub ↗" sits the board's ink "Ship it" (97×50 at y 509 desktop, y 546 phone). At a squint these are two black pills 200px apart.
-   - **Second screen (y 681).** No page ask is on screen. Only the header's solid "Try Hanzo" shows, because the bar has not arrived yet.
-   - **The close.** On desktop the solid "View on GitHub" (y 536) and the bar's solid "GitHub →" show together. On phone the bar steps aside, but the header's "Try Hanzo" turns solid, so the screen holds two solid buttons with two verbs.
-5. **Every hover and press answers?** Mostly. These answer:
-   - hero "GitHub" (ink → #2c2c2e, arrow nudge 3px, press 0.98);
-   - the ask bar;
-   - "View on GitHub";
-   - "Deploy to Cloud" (outline → ink border and veil);
-   - the rail numbers (ink, line grows, press 1px);
-   - "Copy";
-   - the dark room's "Ship it" (1.04 hover, 0.95 press).
 
-   These do not:
-   - **No hover:** the board's "Ship it" and "Options ▾" (press 0.98 only).
-   - **No press:** the accent swatches (hover scale 1.08).
-   - **Neither:** the "hanzoai/ui 8 stars" chip.
-   - **Native browser sliders:** the radius and density sliders, on the first screen.
+1. **Does it sell in 5 seconds, and does something move within 1 second?**
+   - **Sells: yes.** "Hanzo UI" (52px), "React Component Library" as a mono caption under it, the lede, an ink "GitHub ↗", and a real board of Button, Field, Panel and table beside a token panel.
+   - **Within 1 s: only just.** The h1 cut-in plays at first paint, and the right column drifts up 14px. The board, which is the page's idle object, does nothing for its first 1.5 s tick after hydration. In the state log the focus ring first moves at 3.66 s from navigation (FCP 0.87 s), so about 2.8 s after paint at 1470 and 2.1 s after paint at 375. The Dialog opens at about 4.2 s after paint. The menu waits a full cycle (about 9 s), because the script starts on `menu` at k=0 and its first tick lands on `idle`.
+   - **The first screen itself.** The h1 sits at y 234 under about 170px of empty white. The grey tray is scaled by Settle to x 10–1460, so its corners nearly touch the screen edges. It reads as a tray of boxes, not a hero.
 
-   Keyboard (desktop):
-   - **Dialog.** Enter on "Ship it" opens it, but focus stays on "Ship it" behind the scrim. Tab goes to "Options ▾" behind the scrim, Esc does nothing, and there is no `aria-modal`.
-   - **Menu.** "Options ▾" opens it, but ArrowDown doesn't enter it, Esc doesn't close it, and the items aren't focusable.
-   - **Accent swatches.** The `radiogroup` takes 3 tab stops and the arrow keys do nothing.
+2. **One thing in, one thing out, or a document?**
+   - **Hero to chapters.** The thing that comes in is the thing that just went out. The chapter board (`ShowBoard`) is the hero board again: the same Ship it, Options, Field, Panel and three "in production" rows.
+   - **Chapter by chapter.**
+     - 01 adds tags and the menu or Dialog. It is good.
+     - 02 walks the ring. It is fine.
+     - 03 retunes radius and grey. It is visible.
+     - 04 changes only a 13px word in the title bar ("chat → console → cloud"). The board does not change.
+     - 05 fills 18 tiny cells in the footer strip.
+     - 06 outlines one row.
 
-   On the page that says "focus management, keyboard behaviour … that CSS cannot", the demo's own Dialog and menu have neither. Touch taps on the board work.
-6. **Overlap, font swap, layout shift?**
-   - **Clean.** CLS is 0.0000 over full walks at both widths. The h1 box is steady, there is no font swap, and there is no horizontal scroll at 320 or 375.
-   - **Phone overlap.** The chapter pause (44px, x 315–359) sits on top of the section title "Components your design team will sign off on" (top 1416). The title is `nowrap`, so it clips at the screen edge: "…will s[II] of" at 375 and "…team [II] s" at 320.
-   - **Desktop overlap.** The hero pause (x 1412–1457, y 460–505) covers the token card's top-right corner, which runs to x 1441 from y 476. About 28px still overlaps at rest.
-   - **Desktop orphan.** The chapter pause floats 11px under the header and 60px above its box (pause y 71, box y 131).
-   - **Phone cuts.** Chapter headings slide under the sticky specimen and are cut through the letters: "Overlays are compone…" at y 1442 and "One package, everywh…" at y 2442.
+     From 03 to 06 the big object barely changes, and the chapter's change lives in a 56px footer line.
+   - **After the chapters.** The page turns back into a document: a dark room (it types once, then holds still), "Paste and ship", "Stop reinventing buttons.", then the "Get UI" strip. That makes 4 quiet blocks in a row.
+
+3. **Does every section hold a real visual object?**
+   - **Hero:** yes, a working board and token panel.
+   - **Chapters:** yes, but it is the same object as the hero.
+   - **Dark room:** yes, a terminal and a rendered button.
+   - **Paste:** a shared prompt card.
+   - **"Stop reinventing buttons." and "Get UI":** no object. A 26px line sits alone at the left of an empty 1470px band (screenshot at y 5415).
+
+4. **One ask in the sticky header, nothing floating over content? Does scale have rhythm?**
+   - **Desktop.**
+     - The header ask becomes an ink "GitHub" once the hero ask leaves, and it yields at the close: at y 5200 and 5600 only "View on GitHub" is solid. Good.
+     - For the first 1 to 2 s the header shows a solid "Try Hanzo" beside the hero's solid "GitHub" (frames at 0.3 s and 1 s), until it turns outlined.
+   - **Phone: fails.**
+     - The header ask stays a solid "Try Hanzo" for the whole page. It never becomes "GitHub".
+     - First screen: "Try Hanzo" (y 8) and "GitHub ↗" (y 345) are both solid.
+     - Close: "Try Hanzo" and "View on GitHub ↗" (y 275) are both solid. That is two verbs, which is the same complaint as last time.
+     - The "GitHub →" thumb bar shows at y 758 only around scroll 700 to 800, then leaves the DOM for the rest of the page. So for most of the phone walk the page's own ask is not in the bar.
+   - **Scale.**
+     - Measured sizes: h1 52px; every h2 and h3 26px (24 and 21px on phone); body 16px; mono 12 to 13px.
+     - Nothing on the page is big, and nothing grows or shrinks as you scroll. The "60" in "From init to UI in 60 seconds" is set inline at 26px, so the one figure Hanzo gives is not a figure.
+     - The dark room puts a 26px line in about 300px of black.
+     - The rhythm is all medium.
+
+5. **Does every hover and press answer, with no jump?** Mostly. With no layout jump (Δy 0 or ±1):
+   - hero "GitHub" (ink → #2c2c2e, 0.98);
+   - "View on GitHub" (same);
+   - board "Ship it" (→ #262626, 0.98);
+   - "Options ▾" (border → ink, 0.98);
+   - the chapter numbers (#f2f2f2 fill, 0.97);
+   - terminal Copy (veil and ring, 0.986);
+   - pnpm Copy;
+   - stars chip (inverts, 0.98);
+   - slider thumb (ring, 0.98);
+   - pause (inverts).
+
+   These miss:
+   - **Accent swatches:** hover scale 1.08, and press does nothing (it stays 1.08).
+   - **"Deploy to Cloud":** the underline darkens on hover, and press does nothing.
+   - **Hover tells you nothing.** No hover shows a number or a preview: the swatches don't name their token, and the chapter numbers don't preview.
+
+6. **Overlap, font swap, layout shift?** Clean.
+   - **CLS:** 0.0010 over the full desktop walk and 0.0004 over the phone walk. The h1 box held at top 234 and height 60 from first sample to 4 s.
+   - **Fonts:** Zen and Zen Mono load, with no visible swap.
+   - **Width:** no horizontal scroll at 320, 375 or 1470.
+   - **Overlap:** no control overlaps a heading at either width.
+   - **Small overlaps inside the demo:**
+     - In chapter 01, the open menu covers the `.panel` tag (desktop).
+     - On phone, the scrim and Dialog cut through the `.field` tag ("f̶i̶e̶l̶d").
+   - **Phone wrap:** "every Hanzo dashboard" wraps to 2 lines in the hero board's table at 375 (row height 44 against 22).
+
 7. **Which reference, and is its motion there?**
-   - **apple.com product page:** yes. The pinned chapters and the bottom pill (sub-nav with a persistent ask) are there.
-   - **motion.dev:** yes. The Dialog and menu open on a 300/30 spring, the hero ask is magnetic and the board's radius morphs over 0.5 s.
+   - **apple.com product page:** partly. A sticky board drives the chapters on desktop. But "one panel changes" is mostly a footer line changing.
+   - **motion.dev:** yes. The menu and Dialog open on ease-emphasis, the tokens morph radius over 0.5 s, and the asks are magnetic.
    - **synchronized.studio:** absent. Nothing opens into its page.
-   - **anthropic launch:** no hero figure. The "60" in "in 60 seconds" could be one.
-8. **Different from its neighbours?** The hero is now the only light hero in the group with a working component board, and that is its own idea. The arrangement is not:
-   - **The hero.** Giant name left, lede and ask right, object tray on the fold line: the same as /treasury and /zap, in light.
-   - **The middle.** The same PinChapters as /risk, /sign, /tabs and /treasury: a vertical 13px mono label up the rail, 01–06, words left, a 28px-radius grey box on the right with a small drawing in it.
-   - **The close.** The same "Get X" bar (License chip, stars chip, Deploy to Cloud) as /treasury and /zap.
-9. **All 18 parts covered?** No; see below. `docs/coverage/ui.md` exists but overclaims:
-   - "One solid per viewport" is false at the close.
-   - "The dialog is role=dialog" is a role without the behaviour.
-   - The Enso picture is not "Hanzo's Enso mark".
-10. **Banned tells?** Two items from the reject list:
-    - **Browser-default controls:** the two `<input type="range">` (appearance auto, `accent-color` ink) on the first screen.
-    - **Overlap at 375×812:** the pause on the chapter title (answer 6).
+   - **anthropic launch:** absent. There is no hero figure, and the "60" is not used.
+   - **The real feel:** a tidy docs page.
 
-    Also:
-    - **Dead controls:** the stars chip, and no hover on the board's buttons.
-    - **The pill under the h1.** "React Component Library" is still a pill (13px mono, on the card colour, 12px under the h1). It is not an eyebrow now, but it is a badge. Its icon is now the Enso model's art (`/models/enso.webp`), not live's "blocks" icon.
+8. **Different from its neighbours?**
+   - **The hero idea is its own:** a board that uses itself, with tokens you can drag.
+   - **/gui is too close.** Its own top comment describes "five sticky chapters" and "the graphite room is the token editor". /ui has six sticky chapters and a token editor too, so the two library pages (both in PAGES.md group 5) share the same two ideas.
+   - **The close is shared.** The "Get UI" strip (License chip, stars chip, Deploy to Cloud) has the same shape as /zap, /treasury, /gui and about 25 other pages that render `License:` through the shared Frame.
 
-    Clean:
-    - **No UI hue:** 0 saturated colours in `main`, and the code pane is greys only.
-    - **No eyebrow above any headline.**
-11. **Copy untouched?** Yes. Parity is 59/59 for text and 2/2 for links on `c647368`. The added strings are demo labels and data ("Options ▾", "@hanzo/design tokens", "--radius", "--density", "<Dialog />", ".button/.panel/.field/.table", "aria-* · role · focus", "Hello()", "in production" ×3). "in production" restates Hanzo's "Powers chat.hanzo.ai, platform.hanzo.ai, and every Hanzo dashboard". There is no new claim or number.
+9. **Is every one of the 18 parts covered?** The card has 18 headings, but these claims are false on the page:
+   - **Part 1, "One solid fill per viewport":** false on phone. The first screen and the close both show "Try Hanzo" and a GitHub ask, both solid.
+   - **Part 3, "the board opens its menu and dialog by itself within 1.5 s":** false. The first change is about 2.8 s after paint, the Dialog about 4.2 s and the menu about 9 s.
+   - **Part 4, "Sticky ask 'GitHub'":** true on desktop only. On phone the header holds "Try Hanzo" and the bar is gone after about 800px.
+   - **Part 8, "press .98 … on every control":** false for the swatches and "Deploy to Cloud".
+   - **Part 17, "Blocked network: complete page, no console errors":** 1 of 6 cold loads logged a hydration mismatch ("A tree hydrated but some attributes of the server rendered HTML didn't match"), and the red "1 Issue" badge stayed on screen. The other 5 loads were clean, so the error is intermittent, but it is there.
 
-## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 / 4 Common gate.** The `Persona:`, `Goal:`, `CTA:` and metric header is present, but two solid buttons show on the close at both widths (answer 4). The header comments are stale:
-  - UiPage.jsx line 3 still says "violet accent".
-  - UiPage.css line 1 still says "violet".
-  - There is no PageHero or Band.
-- **2.3 First impression.**
-  - The h1 is painted out of its mask until hydration, so on a slow phone it arrives last.
-  - The page ends in three stacked blocks (Paste, Stop, Get), not one Band repeating the ask.
-- **2.4 Conversion.** The close shows two solid buttons (answer 4). `data-thumb` is only on the hero, so the bar does not yield to "View on GitHub".
-- **2.6 Content.**
-  - "in production" wraps to two lines at 375, in the hero board ("● in / production") and in chapter 6.
-  - The desktop section title is 13px mono set vertically (`writing-mode: vertical-rl`, 366px tall), and it is clipped under the header as the pin releases.
-  - On desktop, "terminal", "Copy" and "Agent prompt" are 12.5px, under the 13px floor (shared Frame.css). The phone floor passes, except code at 13.5px, which CANON allows.
-- **2.7 Visual system.** Three nested boxes in the hero: a grey 28px tray, a white board and a grey panel. At load the tray is scaled edge to edge (x 0–1470), with its corners at the screen edges.
-- **2.8 Components.**
-  - Native range sliders.
-  - The Dialog has no focus move, trap, Esc or return.
-  - `role="menu"` has no arrow keys or Esc, and its `li` items are not focusable.
-  - The `radiogroup` has no arrow keys.
-  - 2 bare `:hover` rules (UiPage.css lines 19 and 34).
-  - The stars chip has no states.
-- **2.9 Motion.**
-  - The mix is good. Idle: the board, the focus walk, the package hop and the caret. Pointer: magnetic, swatches. State: the Dialog, the menu and the token retune. Scroll: Settle and the pinned chapters. Arrival: the cut-in. Scroll is well under half.
-  - The dark room is still.
-  - 3 `setInterval` loops (1.5 s, 0.7 s, 1.4 s), gated by view and pause.
-  - The "Paste and ship" caret blinks forever, with no pause.
-  - Reduced motion is good: the board stays still, the h1 is in place, and 0 animations run after 3 s.
-- **2.11 Mobile.**
-  - The pause overlaps the title (answer 6).
-  - The "hanzoai/ui 8 stars" chip is 40px tall, under 44.
-  - Headings are cut by the sticky specimen.
-- **2.12 Accessibility.**
-  - "Hello()" is 3.33:1 (#86868b on #f5f5f7).
-  - The board's Dialog and menu keyboard paths (answer 5).
-- **2.16 Developer experience.** The init pane's one Copy copies the shell lines and the JSX together, so a paste into a terminal fails.
-- **2.10 Media.** No Hanzo media beyond the swapped 24px Enso picture. That is fine for a UI page, but the picture ties the library to a model it isn't.
-- **Shared, not the page's fault:**
-  - No sound kit exists yet.
-  - The footer's "Privacy choices" toggle is blue.
-  - One hydration error appeared once, during a mid-merge reload, and did not reproduce in 3 clean loads.
+10. **Banned tells?** None from the hard list:
+    - 0 hues (`taste.py` OK);
+    - no eyebrow above a headline (the mono caption is below the h1);
+    - no springs;
+    - no Inter;
+    - no gradient text;
+    - no browser-default control;
+    - nothing floating over content on desktop.
+
+    Near misses:
+    - **"In your face" is not the problem; flatness is.** Every heading is 26px.
+    - **Literal colours.** The page CSS uses hex values that are not in the deck: `#f5f5f7` (the render card), `#0a0a0b`, `#1d1d20`, `#2c2c2e` and `#86868b` (MASTER part 7: tokens only, no literal hex). They pass the chroma check but are Apple's greys, not Hanzo's.
+
+11. **Is the copy untouched?** Yes. Parity is text 59/59 and links 2/2. The added strings are demo labels ("Field", "Panel", "Options ▾", the `.button`/`.panel` tags, "chat/console/cloud") and they are listed as copy questions on the card.
+
+## Missing from the 18 parts
+- **1 Strategy.** There are two solid fills on the phone's first screen and at its close.
+- **3 Narrative.**
+  - The hero is a hand-built `LineMask` block, not `PageHero`.
+  - The next idea repeats the hero object.
+  - The page ends on three blocks (Paste, Stop, Get UI), not one proof strip and one `Band`.
+  - The board's first idle act lands after 2 s.
+- **4 Conversion.**
+  - The phone header never carries the page's ask.
+  - The phone thumb bar appears for about 100px of scroll, then leaves the DOM.
+- **6 Content.** "every Hanzo dashboard" wraps in the hero table at 375.
+- **7 Visual.**
+  - Non-deck literal greys (#f5f5f7, #86868b, #1d1d20, #2c2c2e, #0a0a0b) and literal shadows in page CSS.
+  - The hero is still three nested boxes (grey tray, white board, white token card), with the tray scaled to within 10px of the screen edges at load.
+  - The page differs too little from /gui.
+- **8 Components.**
+  - The swatches and "Deploy to Cloud" have no press state.
+  - Hover never carries information.
+- **9 Motion.**
+  - The board's script starts on a wasted `idle` tick, so the menu waits about 9 s.
+  - In chapters 03 to 06 the change sits in the footer, not on the board.
+  - The dark room holds still after its one typing run.
+- **11 Mobile.**
+  - The swipe rail is `scroll-snap-type: x mandatory`, where MASTER part 8 says proximity.
+  - The board (y 209–730) and the chapter card (from y 754) do not fit on one 812px screen, so you swipe text you can't read while watching a board whose change you can't see. One of the two is always off screen.
+- **17 States.** There is an intermittent hydration mismatch with the red dev badge.
+- **18 Handover.** The card overclaims (answer 9), and the `V2: 7/10` line is self-scored.
 - **Passing:**
-  - one h1 and one main;
-  - 0 hues;
-  - no eyebrow above a headline;
-  - CLS 0;
-  - no horizontal scroll at 320 or 375;
-  - JS off legible at both widths (0 hidden runs);
-  - reduced motion settles;
-  - `data-thumb` and `data-cta` on the hero, and `data-cta` on the close;
-  - a sticky ask after the hero;
-  - touch works on the board;
-  - parity clean.
+  - one h1 and one `main#main`;
+  - JS off at both widths (45 text nodes, 0 hidden, terminal at full opacity);
+  - under reduced motion, 0 animations after 3.5 s, the board still and the terminal's 12 of 12 lines with "Ship it" rendered;
+  - Tab crawl: 45 of 45 stops visible with a ring;
+  - CLS of 0.001 or less;
+  - no scroll at 320;
+  - 44px targets;
+  - `data-cta` and `data-thumb` on both asks;
+  - parity, taste and variety pass.
 
 ## Fixes (in order)
-1. **Clear the two items from the reject list.**
-   - Draw the radius and density sliders yourself: a hairline track, an ink fill, a 20px thumb with a hover ring and a 0.98 press, keeping the labels and the value readouts.
-   - On phone, take the chapter pause off "Components your design team will sign off on". Put it inside the specimen box's corner, and let the title wrap instead of `nowrap`, so nothing overlaps or clips at 375 or 320.
-   - On desktop, put the chapter pause inside its grey box, not under the header.
-   - Move the hero pause into the board's own corner (or the tray gutter) so it stops covering the token card.
-2. **Make the demo do what the copy says.**
-   - Dialog: on open, move focus to it, trap Tab, close on Esc and on Close, and return focus to "Ship it". Add `aria-modal="true"`.
-   - Menu: arrow keys, roving `tabindex` on the items, Esc closes it and focus returns to the trigger.
-   - Accent swatches: one tab stop with arrows.
-
-   A developer will press Tab on a page titled "Accessible by Default".
-3. **One solid at the close.** Put `data-thumb` on "View on GitHub" (or make the bar treat it as its twin), so on desktop the bar steps aside and on phone the header stays outlined. On the first screen, start the board on the graphite or steel token, so the only ink pill is "GitHub".
-4. **Let the chapters use the real board, not drawings.** Pin the hero's board, or a copy at full size, and let each chapter act on it:
-   - 01 opens the real Dialog and menu, with the .button/.panel/.field/.table tags on the parts that are CSS;
-   - 02 walks focus through the real controls;
-   - 03 retunes the real tokens, so the Beyond lands where its words are;
-   - 04 shows the same board as chat, console and cloud;
-   - 05 shows its one stylesheet;
-   - 06 shows its three live rows.
-
-   This also breaks the shared PinChapters look (vertical label, grey box, small drawing) that /risk, /sign, /tabs and /treasury all have.
-5. **Wake the dark room.** Once, in view and pausable:
-   - type `npx @hanzo/ui init` and `add …`;
-   - render "Ship it" into the Hello() card when `return <Button>` lands.
-
-   Split Copy into the shell block and the JSX block. Lift "Hello()" to 4.5:1 or better.
+1. **Make the card true, then make the phone carry one ask.**
+   - On phone, the header ask must be the page's ask ("GitHub"), or outlined while a page solid is on screen. That way the first screen and the close each show one solid.
+   - Keep the thumb bar present after the hero ask leaves, not just for 100px.
+   - Correct the card's "1.5 s", "every control", "one solid" and "no console errors" lines to what the page does.
+2. **Stop showing the same box twice.** The chapter board must be a different view of the library, not the hero board again.
+   - One option: on desktop, pin the hero board itself and let the chapters act on it.
+   - Another: change the chapter board's composition so each chapter changes the board's body, not its footer.
+   - In 04, the board itself must become chat, console and cloud (three different real layouts made of the same parts), not a 13px word swap.
+   - In 05, let the stylesheet fill across the board.
+   - In 06, show the three products.
+3. **Give the page one big thing per screen.**
+   - Make "60" in "From init to UI in 60 seconds" a 64px figure that counts or settles once (the true value stays in the HTML, tabular numerals).
+   - Give the close an object, for example the hero board, settled small beside "Stop reinventing buttons.", so the page ends on the thing it sells.
+   - Merge Paste, Stop and Get UI into one closing `Band`, with the strip under it as quiet proof.
+4. **Wake the hero inside 1 s.**
+   - Start the script on its first real act (the menu) on the first tick, about 600 ms after hydration, then keep the 1.5 s rhythm.
+   - Let the tray settle inside the gutters at load (no edge-to-edge scale), so the first screen is not a tray of boxes.
+5. **Every tap answers, and says something.**
+   - Give the swatches a 0.97 press and a tooltip-free label on hover (the token name and value, e.g. "graphite #404040").
+   - Give "Deploy to Cloud" a translateY(1px) press.
+   - Let a chapter number's hover preview its chapter on the board.
 6. **Finish the edges.**
-   - Keep "in production" on one line at 375.
-   - Make the stars chip 44px, with a hover (ink border) and a 0.98 press.
-   - Give the board's buttons a hover.
-   - Restore live's icon on "React Component Library" or drop the picture.
-   - Fix the stale "violet" comments.
-   - Server-render the h1 in place, so a slow phone shows the name first.
+   - Keep "every Hanzo dashboard" on one line at 375 (shorter row padding, or let the status drop under it by design).
+   - Make the rail `proximity`, and on phone show the board's changing part (the footer line or the tagged part) inside the chapter card, so both are on one screen.
+   - Swap the non-deck greys for deck tokens: #f5f5f7 → #f5f5f5, #86868b → #737373, #1d1d20 or #2c2c2e → #171717 or #262626, #0a0a0b → #0a0a0a.
+   - Find the intermittent hydration mismatch (attributes that differ server versus client on first load) so no load shows the red badge.
