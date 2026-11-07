@@ -1,65 +1,160 @@
-# /philosophy coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /philosophy coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Philosophy.jsx` · gallery: `docs/gallery/philosophy/`
+Page file: `components/pages/Philosophy.jsx` (+ `Philosophy.css`, data `philosophyData.js`) · gallery: `docs/gallery/philosophy/` · metric id: `philosophy.close` (cta_click), lead `philosophy.hero`
+
+Open copy questions for James: none (no copy changed; "Philosophy", "The premise", "The synthesis", "The 64 patterns", "The method", "Across the stack" are Hanzo's labels, set as captions under their headings).
+Shared changes requested (`docs/requests/philosophy.md`): none.
+Forks this page deleted: the floating AskBar pill (MASTER: nothing floats over content), the 236px headline (now 52px at rest), the v1 "seal" kickers above headings, the spring and overshoot easings, every hover lift and scale.
+
+Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
 ## 1. Strategy and conversion
-Done here: One ask, Hanzo's "Explore the 64 patterns" (to #patterns): solid in the hero, then the sticky ask after the hero. "Build with Hanzo" is a text link with an arrow. The close repeats one solid ask in Hanzo's words ("Explore Hanzo"), with "Read the research" and "View the source" as text links.
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from Hanzo's page ("Explore the 64 patterns" → #patterns; close "Explore Hanzo" → /)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; n/a: no prices on the page
+- [x] Open copy questions for James listed, none decided
+
+Done here: Story page, one audience (builders and researchers judging how Hanzo thinks), metric `philosophy.close`. One solid ask per screen; "Build with Hanzo", "Read the research" and "View the source" are text links.
 
 ## 2. Information architecture and navigation
-Done here: Hanzo's header and footer are unchanged. Order, one idea per screen: the hexagram (what this is), the premise, the five laws, the 64 patterns, how we build, the stack, the questions, the belief statement, the close.
+- [x] One `<main id="main">`; skip link reaches it
+- [x] Every link through `A`, `More` or a plain hash link; every stack row a real link
+- [x] n/a: depth 1, no breadcrumb
+- [x] Link parity: 10/10, 0 removed
+
+Done here: `<main id="main">` takes the layout's "Skip to content"; links use the kit `A` and `More`; parity shows 10/10 links.
 
 ## 3. First impression and page narrative
-Done here: The first screen is a stage: one huge hexagram, centred, that changes within 1s with no input and keeps walking the sixty-four in King Wen order, its name and trigrams either side; "The Zen of Hanzo" runs across the foot of the screen (line-mask cut-in), unlike the headline-left/object-right heroes of its neighbours. The whole hero fits 1470×801. No label sits above the headline; "Philosophy" is a caption under it.
+- [x] Sells in 5 s; something moves within 1 s without input (the hexagram's first change at 900 ms)
+- [x] Hero: the hexagram is the one big thing; h1 52px by line mask; nothing above the h1 ("Philosophy" is a caption under it)
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per screen; sizes alternate (one moment per screen: hexagram, premise sentence, law hexagram, belief statement)
+- [x] Ends in the dark room's closing link ("Explore Hanzo"), then the footer
+- [x] n/a: no cards to other pages beyond the stack rows (they morph through the site layer)
+
+Done here: First screen at 1470×801: centred hexagram (≈420px) walking the sixty-four, 52px headline, caption, lede and ask at its foot; JS off measured 0 of 910 text blocks hidden.
 
 ## 4. Conversion system
-Done here: `data-thumb="Explore the 64 patterns"` drives the phone thumb bar. `AskBar` carries the same label on desktop once the hero has gone. One solid button per screen.
+- [x] Kit ask (`.pf-btn.solid`) only; no raw `.x-btn`
+- [x] Sticky ask: the header's ask and the site's own bar read `data-thumb`; no page-level floating bar
+- [x] n/a: no copy button
+- [x] `data-cta="philosophy.hero"` and `data-thumb` on the primary; `data-cta="philosophy.close"` on the closing ask
+
+Done here: The page's floating AskBar was removed (MASTER §3.2 rule 6); the site ask bar carries "Explore the 64 patterns" from `data-thumb`.
 
 ## 5. Trust and proof
-Done here: Does not apply as numbers: the page makes no figures or claims. Its proof is its completeness: all 64 patterns, each with its principle, practice and question, in Hanzo's words.
+- [x] No logo, no seal, no invented number
+- [x] Every figure traces to Hanzo's copy (64, 8, the King Wen numbers)
+- [x] n/a: no marquee
+- [x] n/a: no form
+
+Done here: The only figures are Hanzo's own (64 patterns, 8 trigrams, 5 laws, 8 steps); nothing is claimed beyond the copy.
 
 ## 6. Content presentation (copy untouched)
-Done here: Parity is 437/437 text and 10/10 links. Detail sits behind clicks: every pattern opens in one sheet that steps to its neighbours; the matrix and lenses are tabs; all 64 details stay in the server HTML. Captions sit under headlines, never above.
+- [x] No text under 13px except 12px mono capitals
+- [x] Headings 12–18ch, lede ≤ 44ch, body ≤ 66ch; `text-wrap: balance` on headings
+- [x] Views are APG tabs with arrow keys; all 64 details in the HTML
+- [x] `python3 scripts/parity.py /philosophy`: 437/437 text, 10/10 links
+
+Done here: Sizes from ProofRhythm (h1 52, headings 26, titles 21, lede 20, body 16); detail lives in the pattern sheet (one per page, steps ← →), all 64 entries server-rendered.
 
 ## 7. Visual design system
-Done here: v2 scale from `components/v2/ProofScale.css` (display 148/80, headline 56, lede 24, body 19, Zen Mono captions). Ink, greys and whites only, with no hues; changing lines are marked with a dot, not a colour. One dark room: the close.
+- [x] `taste.py` passes; only deck greys (#0a0a0a, #525252, #737373, #f5f5f5, #e4e4e7, #e5e5e5)
+- [x] No label, tag, badge or pill above a headline
+- [x] Tiles are flat fills; rows divided by hairlines; only the sheet floats
+- [x] n/a: no icons beyond arrows and the hexagram glyphs
+- [x] Differs from neighbours: a centred line-art stage with the headline under it
+
+Done here: Ink only; changing lines are marked by a dot, not a colour; the dark close enters as a rounded card and opens to full width (SceneWipe).
 
 ## 8. UI component library
-Done here: Uses the kit (`A`, `More`) and the v2 pieces `MaskLines`, `PinScenes`, `AskBar` and the `DetailSheet` look (one page-local sheet for all 64). The view switch and the lens chips are styled pills (layoutId); no browser-default controls, no native tooltips.
+- [x] Every control has hover (inside `@media (hover: hover)`), press (scale .97, 90 ms), focus-visible
+- [x] Focus ring on every stop (hexagram lines, tiles, cells, steps, rows)
+- [x] The pattern sheet traps focus, Esc closes, focus returns to the tile
+- [x] n/a: no inputs
+- [x] Forks deleted: listed above
+
+Done here: Hovers fill or part the hexagram's strokes (James's "strokes parting", 2–6px); no lift or scale on hover; presses scale .97.
 
 ## 9. Motion and interaction
-Done here: as listed.
-   - Idle: the hero hexagram walks the sixty-four; the premise's one line opens and closes; the laws' last line never settles; the method ring steps round until you point at a step.
-   - Pointer: press any hero line and it flips (Beyond: "Change a line"); tiles lift and swap their subtitle for the principle; matrix cells scale; the method hand follows the step you point at; stack rows fill with a clip-path wipe. Press is scale .98 or 1px.
-   - State: the view pill and lens pill glide (layoutId), the pattern sheet rises and steps with ← →.
-   - Scroll: the pinned five laws (≤ 250svh) and the word-by-word reveal of the belief statement.
+- [x] Signature scroll word reveal; supporting: line-mask headings, pinned laws, gliding view pill (300 ms ease-emphasis); 0 fade-ups
+- [x] Kinds: idle (hero walk, premise line, laws' last line, one lap of the method ring), pointer (strokes part, fills), state (sheet, pill), scroll (word reveal, pinned laws) under half
+- [x] The hero moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [x] n/a: sound is a shared kit, not wired on this page
+
+Done here: Deck timings only (150 ms hover, 300 ms state, 400 ms fills, 800 ms line art), no springs or overshoot; `variety.py` OK.
 
 ## 10. Media
-Done here: The page has no Hanzo images or film. Its objects are the hexagrams themselves: the hero oracle, the building law hexagram, 64 tiles, the 8 × 8 matrix, the method ring and the 1 → 2 → 8 → 64 close.
+- [x] n/a: the page has no Hanzo photo or film; its objects are drawn (hexagrams, ring)
+- [x] n/a: no video
+- [x] n/a: no image
+- [x] n/a: no photo
+
+Done here: Every object is drawn in HTML and CSS (the hexagram is 6 rows of two halves), so nothing loads and nothing shifts.
 
 ## 11. Mobile and responsive
-Done here: At 375px: the hero stacks with the oracle under the ask; the pinned laws become stacked chapters each with its hexagram (only the newest line labelled); tiles are 3 per row; the matrix scrolls inside its own frame; the sheet rises from the bottom. Targets are 44px or more, no sideways scroll, no text under 14px.
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll (phone.mjs 375/375); the matrix scrolls inside its own frame
+- [x] Every target 44px or more; tiles and rows answer taps
+- [x] Primary ask above the fold at 375 (moved above the lede)
 
-## 12. Accessibility
-Done here: as listed.
-   - Real buttons; the views are `role=tab` with arrow keys; matrix and chips use `aria-pressed`.
-   - The sheet traps focus, Esc closes it, ← → step, focus returns to the tile.
-   - Hero lines are buttons with labels ("Line 3, open: change it"); `aria-live` only after the visitor changes one.
-   - Reduced motion: the walk and every loop stop, the word reveal shows the full sentence.
+Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; pinned laws stack as chapters.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Text #0a0a0a / #525252 / #737373 on white, #525252 on #f5f5f5
+- [x] Pause control (LivePause, 44px, `aria-pressed`) first in the hero stage; every other loop ends at rest
+- [x] n/a: no forms
+- [x] One h1; h2 per section, h3 in groups and the sheet
+- [x] Keyboard reaches every line, tile, tab, cell and step
+
+Done here: The hero walk has a pause button; the premise line, the laws' last line and the method ring stop after a few cycles; `aria-live` speaks only after a visitor changes a line.
 
 ## 13. Performance and engineering
-Done here: Motion is transform, opacity and clip-path only. Idle loops stop off screen (`useInView`, `[data-off]`). No canvas, no video, no blur.
+- [x] h1 and the hexagram in server HTML
+- [x] No images or video; CSS-only line art
+- [x] No poller; timers stop off screen (`useInView`)
+- [x] Filming and checks run in the cloud
+
+Done here: All motion is transform, opacity and clip-path; timers are `setTimeout` chains that stop when unseen or paused.
 
 ## 14. SEO and machine files
-Done here: Metadata and JSON-LD are unchanged (`app/philosophy/page.jsx`). All text is in the server HTML, including all 64 sheet entries and every chapter.
+- [x] Title and description unchanged (`app/philosophy/page.jsx`)
+- [x] Canonical untouched (shared)
+- [x] `<JsonLd route="/philosophy" />` renders
+- [x] Stack rows are real links
+
+Done here: Metadata and JSON-LD come from the route file, unchanged; every word is in the server HTML.
 
 ## 15. Catalogue and product pages
-Done here: The 64 patterns act as a catalogue: sequence, matrix and lens views, each item opening its detail in a sheet.
+- [x] n/a: not a catalogue or model page (the 64 patterns open in a sheet, not pages)
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a: a Story page; its index of 64 opens each pattern in the one sheet.
 
 ## 16. Developer experience
-Done here: Does not apply.
+- [x] n/a: no code on the page
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a: no code, terminal or config on /philosophy.
 
 ## 17. States and resilience
-Done here: All content is static, so there is no loading or error state. The lens view has an empty-state line in Hanzo's words; the sheet wraps from 64 to 01. JavaScript off: a `<noscript>` rule lays out every view and all 64 patterns in the page and the belief statement in full ink; measured 0 of 910 text blocks hidden at 1470 (on phone only the matrix's own sideways scroller holds cells off screen).
+- [x] Static content: no loading or error state; the lens view has Hanzo's empty-state line
+- [x] No live data
+- [x] n/a: no form
+- [x] JS off: a `<noscript>` rule lays out all views and all 64 patterns; reduced motion shows final states
+
+Done here: JS off measured 0 hidden blocks at 1470; the sheet wraps 64 → 01; nothing on the page fetches.
 
 ## 18. Measurement and handover
-Done here: `// Persona:`, `// Goal:` and `// CTA:` lines head the page file; every solid ask carries `data-cta` (explore-patterns, explore-hanzo) and AskBar takes the same id. No analytics are wired yet (BRIEF-v3 §1, pending Hanzo's event log). Filmed with `scripts/motion.mjs` (desktop). Gallery: `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`.
+- [x] `data-cta` on both primaries (`philosophy.hero`, `philosophy.close`); n/a: `lib/track.js` wiring is shared
+- [x] Nothing identifier-bearing
+- [x] `V2:` line in the page file's top comment
+- [ ] Review read: `docs/review/philosophy.md` (not written yet)
+
+Done here: Filmed with `scripts/motion.mjs` (desktop) and `scripts/shot.mjs` (phone); gallery `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`.
