@@ -1,4 +1,5 @@
 # /datastore — James-eye review
+Ready: 2026-11-08 middle shortened: "What it does" is now a sideways snap rail (drag, arrows, counter; each picture plays while seen), so only the exploded table pins; the twelve industries are a wall the scan passes over row by row (pointer picks a row); hero console files inside 1470x801 and Try Hanzo solid; Documentation/Self-host hovers; phone console 3-up so duration_ms reads whole, phone CLS 0; entrances spiral-in, rack-focus, squash-land; reduced motion 0 animations, 0 hydration errors; taste OK, parity 78/78 + 5/5, unique OK, check 0 errors/0 overlaps/no h-scroll at 1470 and 375.
 7 Nov. Walked moving at 1470x801 and 375x812 (phone: isMobile, hasTouch) with Playwright on this worktree's dev server (:4182). At each size: frames at 0, 1 and 3 s with no input, then wheel scrolls of 0.85 of a screen with a 1.5 s dwell to the footer, hover and press on every control in `main` on desktop, taps on phone (a column in the hero console). Measured CLS, horizontal overflow and console output. Component: `components/pages/cloud/Datastore.jsx`.
 
 Verdict: 7/10
