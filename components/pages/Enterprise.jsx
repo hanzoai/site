@@ -1,7 +1,7 @@
 'use client';
 /* Enterprise, v2 (VISION archetype B, System: a map you travel; the calm trust of chatgpt.com/business/enterprise;
    PLAN-COMPONENTS 5.3).
-   V2: 8/10 where it runs as a scrolled zoom over Hanzo's live audit log; trust strip in the first screen; GPU detail in a drawer; one dark room, the Band; greys only
+   V2: 7.5/10 the review's six fixes: 240px+ of the live log in the first screen, hero in place in server HTML (cut-in on hydration), no hydration mismatch, results a quiet 28px ledger under one 64px figure, figures rest small and grow only as the moment, 44px phone links, no 404 logos
    Persona: an IT, security or platform lead choosing where Hanzo runs. Goal: see it runs where you need it, and that
    you can verify it. CTA: "Get Enterprise plan" (data-cta enterprise.hero, the page's ask) and one "Talk to sales" in
    the closing Band; metric: cta_click on enterprise.hero and the Band.
@@ -20,7 +20,7 @@
    figure is Hanzo's. */
 // Persona: an IT, security or platform lead choosing where Hanzo runs
 // Goal: see it runs where you need it, and that you can verify it
-// CTA: Get Enterprise plan (hero, ask bar and Band); metric: cta_click on enterprise.hero and enterprise.band
+// CTA: Get Enterprise plan (hero, then the header's solid ask on desktop / the phone ask bar, and the Band); metric: cta_click on enterprise.hero and enterprise.band
 // Signature: the boundary zoom: Hanzo's live audit log settles inside four walls and the camera travels in, one wall per scrolled chapter
 // Beyond: the prefill instrument: pick a prompt size and read Hanzo's measured prefill time and rate for Zen 6 on one DGX Spark
 import { useEffect, useRef, useState } from 'react';
