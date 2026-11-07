@@ -185,7 +185,7 @@ export default function World() {
         <Hero />
       </StageHero>
       <Room />
-      <Finale name="World" head="Run AI With Confidence" lede="Free for the first million events / month." prompt="Read https://hanzo.ai/skill.md and use Hanzo World in my project. Start with: hanzo world news" tag="3D world building" />
+      <Finale name="World" head="Run AI With Confidence" lede="Free for the first million events / month." ask={['Open World Monitor', 'https://world.hanzo.ai']} links={[['Documentation', 'https://docs.hanzo.ai/docs/cli/world']]} prompt="Read https://hanzo.ai/skill.md and use Hanzo World in my project. Start with: hanzo world news" tag="3D world building" />
     </main>
   );
 }

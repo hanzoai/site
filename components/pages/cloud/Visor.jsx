@@ -197,7 +197,7 @@ export default function Visor() {
       </StageHero>
       <Tiles />
       <Name />
-      <Finale name="Visor" head="Get started with Hanzo Visor" prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
+      <Finale name="Visor" head="Get started with Hanzo Visor" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
     </main>
   );
 }

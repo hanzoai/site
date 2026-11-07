@@ -24,7 +24,7 @@ export default function Drawer({ label, title, children, className = '' }) {
   const panel = (
     <>
       <div className={'l2-scrim' + (open ? ' on' : '')} onClick={() => setOpen(false)} aria-hidden="true" />
-      <div ref={sheet} className={'l2-sheet' + (open ? ' on' : '')} role="dialog" aria-modal="true" aria-label={title || label} aria-hidden={!open} inert={!open} data-lenis-prevent>
+      <div ref={sheet} className={'l2-sheet' + (open ? ' on' : '')} role="dialog" aria-modal={open ? 'true' : undefined} aria-label={title || label} aria-hidden={!open} inert={!open} data-lenis-prevent>
         <div className="l2-sheet-bar"><p>{title || label}</p><button type="button" className="l2-sheet-x" onClick={() => setOpen(false)} aria-label="Close">×</button></div>
         <div className="l2-sheet-body">{children}</div>
       </div>

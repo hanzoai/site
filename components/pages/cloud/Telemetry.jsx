@@ -153,7 +153,7 @@ export default function Telemetry() {
         <Pipe />
       </StageHero>
       <PinScenes dark flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <p key="k" className="tl2-key l2-mono">{k}:</p>])} visual={(at) => <Config at={at} />} />
-      <Finale name="Telemetry" head="Put it in front of your backend" prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest">
+      <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest">
         <YourConfig />
       </Finale>
     </main>
