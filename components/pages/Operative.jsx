@@ -166,7 +166,7 @@ function Hero() {
     <section className="xov-hero" ref={ref} aria-labelledby="xov-h1">
       <div className="a2-wrap a2-grid xov-top">
         <A2Lines as="h1" id="xov-h1" className="a2-display xov-h1" lines={['Hanzo', 'Operative']} now />
-        <p className="a2-kick"><b>Computer use, in a container</b></p>
+        <p className="a2-kick">Computer use, in a container</p>
         <p className="a2-lede xov-lede">A container with a Linux desktop inside it, and a model driving that desktop by screenshot, mouse and keyboard.</p>
         <div className="a2-acts xov-acts">
           <Cta to="#get-started" id="operative.hero" thumb>Get Started</Cta>
@@ -178,7 +178,7 @@ function Hero() {
           <span className="xov-crate-tag x-mono">ghcr.io/hanzoai/operative:latest</span>
           <Desk at={at} peek={peek} rest={!ready || !!calm} live={live && !paused && going} goal={ASK[ask].q} btnLabel={ASK[ask].btn} keys={ASK[ask].keys} run={run} />
           <div className={'xov-chat' + (going ? ' going' : '')} role="group" aria-labelledby="xov-chat-h">
-            <p className="xov-chat-h" id="xov-chat-h"><Mark size={14} /><b>Say what you want</b></p>
+            <p className="xov-chat-h" id="xov-chat-h"><Mark size={14} /><span className="xov-b">Say what you want</span></p>
             <div className="xov-asks">
               {ASK.map((a, i) => (
                 <button key={a.q} type="button" aria-pressed={ask === i && !auto} className={ask === i ? 'on' : ''} onClick={() => pick(i)}>{a.q}</button>
@@ -192,7 +192,7 @@ function Hero() {
                   <ol className="xov-says">
                     {a.steps.map(([verb, h, d], i) => (
                       <li key={i} className={(k === ask && i < shown ? 'on' : '') + (k === ask && going && i === shown ? ' next' : '')}>
-                        <span className="xov-say"><span className="x-mono xov-verb">{verb}</span><b>{HANDS[h]}</b>{d && <code className="x-mono">{d}</code>}</span>
+                        <span className="xov-say"><span className="x-mono xov-verb">{verb}</span><span className="xov-b">{HANDS[h]}</span>{d && <span className="x-mono xov-code">{d}</span>}</span>
                       </li>
                     ))}
                   </ol>
@@ -211,7 +211,7 @@ function Hero() {
               <li key={h}>
                 <button type="button" aria-pressed={at === i} className={at === i ? 'on' : ''} onClick={() => choose(i)}
                   onPointerEnter={(ev) => ev.pointerType === 'mouse' && setPeek(i)} onPointerLeave={() => setPeek(null)} onFocus={() => setPeek(i)} onBlur={() => setPeek(null)}>
-                  <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{h}</b>{going && at === i && <i key={run + '-' + shown} />}
+                  <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><span className="xov-b">{h}</span>{going && at === i && <i key={run + '-' + shown} />}
                 </button>
               </li>
             ))}
@@ -282,7 +282,7 @@ function Inside() {
                 <li key={t} className={'xov-fold' + (i === on ? ' on' : '')} style={{ '--n': i + 2 }}>
                   <button type="button" aria-current={i === on ? 'step' : undefined} aria-describedby={'xov-d' + i} onClick={() => go(i)}
                     onPointerEnter={(ev) => ev.pointerType === 'mouse' && setHov(i)} onPointerLeave={() => setHov(-1)}>
-                    <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{t}</b>
+                    <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><span className="xov-b">{t}</span>
                   </button>
                 </li>
               ))}
@@ -348,7 +348,7 @@ function Run() {
         </div>
         <div className="a2-grid xov-run-grid">
           <div className="xov-term">
-            <div className="xov-term-bar"><i /><i /><i /><b>Installation</b><button type="button" className="xov-replay" onClick={() => setGo((g) => g + 1)}>Replay</button></div>
+            <div className="xov-term-bar"><i /><i /><i /><span className="xov-b">Installation</span><button type="button" className="xov-replay" onClick={() => setGo((g) => g + 1)}>Replay</button></div>
             <ol className="xov-steps">
               <li><span className="xov-n x-mono">1</span><p id="xov-s1">Pull the image</p><div className="xov-scroll" tabIndex={0} role="region" aria-labelledby="xov-s1"><code className="x-mono xov-type"><span className="xov-ghost" aria-hidden="true">$ {PULL}</span><span><span className="xov-p">$</span> <span ref={pull}>{PULL}</span></span></code></div></li>
               <li><span className="xov-n x-mono">2</span><p id="xov-s2">Run it with your key and the four ports</p><div className="xov-scroll" tabIndex={0} role="region" aria-labelledby="xov-s2"><code className="x-mono xov-type"><span className="xov-ghost" aria-hidden="true">$ {RUN}_</span><span><span className="xov-p">$</span> <span ref={run}>{RUN}</span><i className="xov-caret" /></span></code></div></li>
@@ -360,8 +360,8 @@ function Run() {
             <span className="x-mono xov-ports-k">operative</span>
             {PORTS.map(([p, what], i) => (
               <div key={p} className={'xov-port' + (i < lit ? ' on' : '')}>
-                <b className="a2-fig">{p}</b>
-                <span className="xov-port-w">{what && <span>{what}</span>}<code className="x-mono" aria-hidden="true">-p {p}:{p}</code></span>
+                <span className="a2-fig">{p}</span>
+                <span className="xov-port-w">{what && <span>{what}</span>}<span className="x-mono xov-code" aria-hidden="true">-p {p}:{p}</span></span>
                 <i aria-hidden="true" />
               </div>
             ))}
@@ -369,11 +369,11 @@ function Run() {
           <div className="xov-more-w">
             <details className="xov-dis">
               <summary><h3 className="a2-title">System Requirements</h3><i aria-hidden="true" /></summary>
-              <ul className="xov-req">{REQ.map((r) => <li key={r}><span className="xov-chk" aria-hidden="true" /><span>{r}</span></li>)}</ul>
+              <ul className="xov-req">{REQ.map((r) => <li key={r}>{'• ' + r}</li>)}</ul>
             </details>
             <details className="xov-dis">
               <summary><h3 className="a2-title">Basic Usage</h3><i aria-hidden="true" /></summary>
-              <ul className="xov-usage">{USAGE.map(([t, c], i) => <li key={t}><p id={'xov-u' + i}>{t}</p><div className="xov-scroll" tabIndex={0} role="region" aria-labelledby={'xov-u' + i}><code className="x-mono">{c}</code></div></li>)}</ul>
+              <ul className="xov-usage">{USAGE.map(([t, c], i) => <li key={t}><p id={'xov-u' + i}>{t}</p><div className="xov-scroll" tabIndex={0} role="region" aria-labelledby={'xov-u' + i}><span className="x-mono xov-code">{c}</span></div></li>)}</ul>
             </details>
           </div>
         </div>
@@ -437,10 +437,10 @@ function Ways() {
                 <p className="xov-way-k">{v.k}{v.rec && <span className="xov-rec">Recommended</span>}</p>
                 <p className="xov-way-by">by {v.by}</p>
               </div>
-              <ol className="xov-way-pts">{v.pts.map((p, j) => <li key={p} style={{ '--j': j }}><span className="x-mono" aria-hidden="true">{String(j + 1).padStart(2, '0')}</span>{p}</li>)}</ol>
+              <ol className="xov-way-pts">{v.pts.map((p, j) => <li key={p} style={{ '--j': j }}><span className="x-mono" aria-hidden="true">{String(j + 1).padStart(2, '0')}</span><span>{p}</span></li>)}</ol>
               <div className="xov-way-set">
                 <p>{v.set}</p>
-                <code className="x-mono">docker run {v.env}</code>
+                <span className="x-mono xov-code">{'docker run ' + v.env}</span>
               </div>
             </div>
           ))}
@@ -478,7 +478,7 @@ function Action() {
           <p className="a2-body">Watch as Hanzo Operative uses multimodal AI to router interfaces, complete tasks, and solve problems autonomously.</p>
           <div className="xov-act-links">
             <A2Pause paused={held} onChange={setHeld} label="Pause" />
-            <A to="https://docs.hanzo.ai" className="xov-more">View more examples <i aria-hidden="true">→</i></A>
+            <A to="https://docs.hanzo.ai" className="xov-more"><span>View more examples →</span></A>
           </div>
         </div>
         <div className="xov-loop-w">
