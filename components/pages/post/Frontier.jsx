@@ -19,8 +19,9 @@ export default function Frontier({ f }) {
   const [at, setAt] = useState(order[order.length - 1]);
   const [held, setHeld] = useState(false);
   const y0 = Math.min(...f.y) - 1, y1 = Math.max(...f.y);
-  const px = (c) => L + ((Math.log10(c) - X0) / (X1 - X0)) * (VW - L - R);
-  const py = (a) => T + (1 - (a - y0) / (y1 - y0)) * (VH - T - B);
+  // rounded, so the server's and the browser's floating point agree (no hydration mismatch)
+  const px = (c) => Math.round((L + ((Math.log10(c) - X0) / (X1 - X0)) * (VW - L - R)) * 100) / 100;
+  const py = (a) => Math.round((T + (1 - (a - y0) / (y1 - y0)) * (VH - T - B)) * 100) / 100;
   // single models nobody beats on both price and score, cheapest first
   const edge = useMemo(() => {
     let best = -1;

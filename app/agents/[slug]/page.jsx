@@ -1,7 +1,7 @@
-import { notFound } from 'next/navigation';
-import JsonLd from '../../../components/JsonLd';
 import AgentRoom from '../../../components/pages/crew/AgentRoom';
 import { SLUGS, agentsDoc, meta } from '../../../components/pages/crew/agentsData';
+import { notFound } from 'next/navigation';
+import JsonLd from '../../../components/JsonLd';
 
 export const dynamicParams = false;
 export const generateStaticParams = () => SLUGS().map((slug) => ({ slug }));

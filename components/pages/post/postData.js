@@ -73,23 +73,43 @@ function frontier(slug) {
   };
 }
 
+const sections = (root) => root.c.flatMap((k) => (isN(k) && k.t === 'section' ? [k] : findAll(k, tag('section')).filter((s) => !findAll(s, tag('section')).some((x) => x !== s))));
+const whenOf = (hero, back) => findAll(hero, (n) => n.t === 'span' && isText(n)).map((s) => clean(textOf(s))).filter((t) => t && t !== clean(textOf(back)));
+
+// the post's film: Hanzo's own media for the first model the post is about (its chip, then its figures), if it has one
+const FILMS = ['enso', 'kai', 'zen', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta'];
+const filmOf = (chip, names) => [chip, ...names].map((s) => (s || '').toLowerCase()).flatMap((s) => FILMS.filter((f) => new RegExp('\\b' + f + '\\b').test(s)))[0] || null;
+
+/* the other posts, for "keep reading": each one's own title, chip, date and read time from its captured hero */
+function siblings(slug) {
+  return SLUGS().filter((s) => s !== slug).map((s) => {
+    const [hero, ...rest] = sections(load('blog/' + s));
+    const back = find(hero, (n) => n.t === 'a' && n.a && n.a.href);
+    const when = whenOf(hero, back);
+    const facts = rest.filter((x) => !find(x, tag('h2')) && find(x, slot('grid'))).flatMap((x) => cards(find(x, slot('grid'))));
+    const chip = clean(textOf(find(hero, slot('chip'))));
+    return { href: '/blog/' + s, film: filmOf(chip, facts.map((c) => c[1])), title: clean(textOf(find(hero, tag('h1')))), chip,
+      date: when.find((t) => /\d{4}$/.test(t)) || '', read: when.find((t) => /min read$/.test(t)) || '' };
+  });
+}
+
 export function post(slug) {
   const root = load('blog/' + slug);
-  const secs = root.c.flatMap((k) => (isN(k) && k.t === 'section' ? [k] : findAll(k, tag('section')).filter((s) => !findAll(s, tag('section')).some((x) => x !== s))));
-  const [hero, ...rest] = secs;
+  const [hero, ...rest] = sections(root);
   const back = find(hero, (n) => n.t === 'a' && n.a && n.a.href);
-  const when = findAll(hero, (n) => n.t === 'span' && isText(n)).map((s) => clean(textOf(s))).filter((t) => t && t !== clean(textOf(back)));
+  const when = whenOf(hero, back);
   const facts = rest.filter((s) => !find(s, tag('h2')) && find(s, slot('grid'))).flatMap((s) => cards(find(s, slot('grid'))));
   // the post's one live figure: hanzo.ai marks its chart with data-chart; the other draws a Game of Life board
   const kind = /data-chart="([\w-]+)"/.exec(fs.readFileSync(path.join(ROOT, 'content', 'pages', 'blog', slug + '.html'), 'utf8'))?.[1] || 'life';
   const body = rest.filter((s) => find(s, tag('h2'))).flatMap((s) => blocks(s, kind));
   const read = when.find((t) => /min read$/.test(t)) || '';
   return {
-    slug, route: '/blog/' + slug,
+    slug, route: '/blog/' + slug, film: filmOf(clean(textOf(find(hero, slot('chip')))), facts.map((c) => c[1])),
     back: { label: clean(textOf(back)), href: back.a.href },
     chip: clean(textOf(find(hero, slot('chip')))),
     date: when.find((t) => /\d{4}$/.test(t)) || '', read, minutes: parseInt(read, 10) || 0,
     title: clean(textOf(find(hero, tag('h1')))), lede: clean(textOf(find(hero, slot('lede')))),
     facts, body, frontier: body.some((b) => b.k === 'figure' && b.kind === 'gpqa') ? frontier(slug) : null,
+    next: siblings(slug),
   };
 }

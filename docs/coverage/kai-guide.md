@@ -1,0 +1,38 @@
+# Coverage: /kai/guide — components/pages/model/KaiGuide.jsx
+
+- **2.1 Strategy and conversion:** Persona (Developer), Goal and CTA are in the file header, with metric id `api_key_created`. There is one solid ask, "Get an API key", in the hero, repeated at the close in Hanzo's words. "Read the reference" and the cookbook links are text links with an arrow. The recipes room keeps Hanzo's solid "Read the Recipes Guide" as that screen's one solid button. It does not read `lib/cta.js` (not on this branch yet).
+- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. The "Models / Kai Guide" breadcrumb moved below the hero asks. Links to /models, /kai#benchmarks, the docs, the cookbook and GitHub are kept. No sub-nav.
+- **2.3 First impression and page narrative:** The first screen is the display h1 with nothing above it. The "Hanzo decision model · 0 output tokens" line, lede and ask sit below it, beside a terminal that starts typing within a second. Then come the chapters: the question types as a spec sheet, the code, the limits with the checker, the recipes room, the Jev diff, and the close.
+- **2.4 Conversion system:** One solid primary inside `main` per viewport, checked at 1470×801 and 375×812. `data-thumb` on the hero "Get an API key" feeds the phone bottom bar. Gaps: no `data-cta` attributes and no risk-reducer line (no such Hanzo text). The header's own solid "Try Hanzo" is shared chrome.
+- **2.5 Trust and proof:** The benchmark sentence (kai-1.4 84.4% against Jev 76.6% across 11 suites) is shown as two hero figures with bars, plus "The runs →" to /kai#benchmarks. The limits and prices are Hanzo's own. The streamed response shows field names only, with values left as "…", so no numbers are invented.
+- **2.6 Content presentation (copy untouched):** Parity is 0 missing: text 184/184, links 7/7. The Jev comparison became one unified diff that keeps both comments and all three changed values. The limits are a definition list, all visible.
+- **2.7 Visual design system:** Greys, black and white only, with no UI hues (JAMES.md). The checker's 200 and 422 are told apart by a solid panel against a struck-through grey figure on a hatched panel, and the diff by −/+ signs and brightness, not red and green. v2 type: display 128 (56 on phone) at line-height 1.0, headline 56, lede 24, body 19. Radii are 28px on terminals and 16px on the verdict. One dark room (recipes). Values sit in the page CSS because `tokens.css` does not exist yet.
+- **2.8 UI component library:** Uses the kit's `A`, `More` and `Copy`, and the shared `arrows` key handler and `kaiLimits` checker. The session, spec rows, checker, diff and bench are page parts. Gaps: raw `<pre>` and `.x-btn`, because `CodeBlock`, `Cta`, `PageHero` and `Band` are not in the kit yet.
+- **2.9 Motion and interaction:**
+  - Signature (time): the curl request types into the terminal and the response shape streams back, with Replay.
+  - Idle: the checker cycles through Hanzo's limit cases until you take over.
+  - State: a layoutId pill on the code tabs; picking a limit loads that case; the ruler knobs move on springs.
+  - Arrival: the headline cuts into its line.
+  - Scroll: the diff lines landing, and the benchmark bars filling on view.
+  - Variety check passes (2 techniques, 0 fade-ups). Reduced motion shows the full text and final states.
+  - Gap: the question-type glyphs and the caret are CSS loops.
+- **2.10 Media:** Not applicable: the page has no images or film on hanzo.ai. The hero object is the live terminal.
+- **2.11 Mobile and responsive:**
+  - On phones everything stacks and the sticky columns unstick.
+  - The terminals wrap or scroll inside themselves; the code bar wraps at 320.
+  - Targets are 44px or more, and the range inputs have a 44px hit area over the custom track.
+  - No sideways scroll at 375×812 or at 320 (checked).
+- **2.12 Accessibility (WCAG 2.2 AA):**
+  - One h1. Tabs with `role=tab` and arrow keys, a model radiogroup, labelled range inputs (`State tokens`, `Questions`), a focus ring on the knob, limit buttons with `aria-pressed`, and a polite live verdict once you take over.
+  - Gap: the looping session has Replay but no pause control (WCAG 2.2.2).
+  - Gap: no axe run and no contrast audit.
+- **2.13 Performance and engineering:** Typing writes into text nodes through refs, not per-letter React state. The session and checker run only while on screen. Only transform and opacity animate. Gap: LCP, CLS and INP not measured (no `budgets.json` yet).
+- **2.14 SEO and machine files (mirror live, add nothing new):** Title and description in `app/kai/guide/page.jsx` and `JsonLd` route are unchanged. Nothing was added.
+- **2.15 Catalogue and product pages:** Not applicable: a single guide page, not a catalogue.
+- **2.16 Developer experience:**
+  - The curl request is the hero object, with Copy.
+  - curl, Python and TypeScript tabs, each with Copy equal to the displayed code.
+  - The limits checker shows the 200 or 422 a request would get, and its input price.
+  - The Jev migration is a single diff.
+- **2.17 States and resilience:** JS-off shows the complete request and response shape, all tab code (hidden panels in HTML), all limits and the diff in its final state. The checker has its 200, extrapolated and 422 states. No page-specific error boundary.
+- **2.18 Measurement and handover:** Gap: no analytics events wired (no `data-cta`, no `install_copy` or `api_key_created` hook on the Copy buttons or the ask). Proof film and phone stills are in `docs/gallery/kai/guide/`, and the `V2:` line is in the file header.

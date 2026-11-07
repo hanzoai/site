@@ -1,98 +1,177 @@
-/* Customer story: a campaign that plays back (prefix xst-) */
-.xst-hero { position: relative; min-height: min(92vh, 980px); display: flex; align-items: flex-end; color: #f5f5f7; background: #0a0a0a; overflow: hidden; }
-.xst-cover { position: absolute; inset: 0; }
-.xst-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.xst-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 10, 10, .35) 0%, rgba(10, 10, 10, 0) 30%, rgba(10, 10, 10, .2) 55%, rgba(10, 10, 10, .82) 100%); }
-.xst-sigil { position: absolute; right: 0; top: 0; width: min(62vw, 900px); height: 100%; color: rgba(255, 255, 255, .42); mix-blend-mode: screen; pointer-events: auto; }
-.xst-hero-t { position: relative; z-index: 1; padding: 0 0 clamp(48px, 7vw, 96px); }
-.xst-back { display: inline-flex; align-items: center; min-height: 44px; color: rgba(245, 245, 247, .78); text-decoration: none; font: 500 15px/1 var(--sans); transition: color .2s, transform .35s var(--ease); }
-.xst-back:hover { color: #fff; transform: translateX(-3px); }
-.xst-meta { display: flex; gap: 10px; margin: 10px 0 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: rgba(245, 245, 247, .75); }
-.xst-h1 { margin: 14px 0 0; font-size: clamp(3.4rem, 9.5vw, 9.5rem); font-weight: 560; letter-spacing: -.055em; line-height: .92; text-wrap: balance; }
-
-.xst-intro { padding: clamp(64px, 8vw, 120px) 0 clamp(48px, 6vw, 96px); }
-.xst-intro-g { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(36px, 6vw, 96px); align-items: start; }
-.xst-lede { margin: 0; max-width: 34ch; font-size: clamp(1.4rem, 2.3vw, 2rem); font-weight: 460; letter-spacing: -.022em; line-height: 1.3; text-wrap: pretty; scroll-margin-top: 140px; }
-.xst-figs { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.xst-fig dd { margin: 0; height: 100%; }
-.xst-fig-b { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; height: 100%; min-height: 168px; padding: 22px 22px 20px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; transition: border-color .25s, background .25s, transform .35s var(--ease); }
-.xst-fig-b:hover { border-color: rgba(0, 0, 0, .22); transform: translateY(-3px); }
-.xst-fig-b[aria-pressed='true'] { background: #fff; border-color: var(--ink); }
-.xst-fig-b:disabled { cursor: default; }
-.xst-fig-v { font-size: clamp(2.3rem, 4vw, 3.4rem); font-weight: 560; letter-spacing: -.045em; line-height: 1; font-feature-settings: 'tnum'; }
-.xst-fig-l { font-size: 15px; line-height: 1.4; color: var(--soft); text-wrap: pretty; }
-.xst-fig-w { margin-top: auto; padding-top: 10px; font-size: 13px; color: var(--faint); transition: color .25s, transform .35s var(--ease); }
-.xst-fig-b:hover .xst-fig-w { color: var(--ink); transform: translateX(3px); }
-.xst-mark { background: linear-gradient(transparent 58%, rgba(255, 214, 10, .55) 58%); color: inherit; padding: 0 .05em; animation: xst-mark .9s var(--ease) both; }
+/* Customer story: a feature told in scenes (prefix xst-). No UI hue: ink, greys and silver; colour comes only from the
+   launch's own pictures. One dark room (the stage). */
+.xst { --tint: #f5f5f7; --plate: #e9e9ec; --silver: #b8b8be; --edge: max(24px, calc((100vw - 1440px) / 2)); }
+.xst-g { width: min(100% - 48px, 1440px); margin-inline: auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+.xst-kicker, .xst-kick, .xst-n { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+.xst-h2 { margin: 0; font-size: clamp(36px, 4.2vw, 56px); font-weight: 600; letter-spacing: -.045em; line-height: 1; text-wrap: balance; }
+.xst-t { margin: 0; max-width: 62ch; font-size: 19px; line-height: 1.6; color: #1d1d1f; text-wrap: pretty; }
+.xst-mark { background: linear-gradient(transparent 58%, rgba(10, 10, 10, .12) 58%); color: inherit; padding: 0 .05em; animation: xst-mark .9s var(--ease) both; }
 @keyframes xst-mark { from { opacity: .2; } }
 
-.xst-report { padding: clamp(48px, 6vw, 96px) 0; scroll-margin-top: 80px; }
-.xst-report-g { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 5vw, 80px); align-items: center; perspective: 1400px; }
-.xst-h2 { margin: 0 0 18px; font-size: clamp(2rem, 3.6vw, 3.2rem); font-weight: 560; letter-spacing: -.04em; line-height: 1.04; text-wrap: balance; }
-.xst-t { margin: 0; max-width: 66ch; font-size: 1.1875rem; line-height: 1.66; color: #1d1d1f; text-wrap: pretty; }
-.xst-shot { margin: 0; border-radius: 18px; overflow: hidden; background: var(--card); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .35), 0 0 0 1px var(--line); transform-origin: 50% 100%; }
-.xst-shot img { display: block; width: 100%; height: auto; }
+/* a picture over its caption plate (the plate shows when the file cannot load) */
+.xst-pic { position: relative; display: block; overflow: hidden; background: var(--plate); }
+.xst-pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.xst-pic img[data-missing] { visibility: hidden; }
+.xst-plate { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; padding: clamp(20px, 2.4vw, 36px); color: #3a3a3c; font-size: clamp(20px, 1.9vw, 28px); font-weight: 560; letter-spacing: -.025em; line-height: 1.15; text-wrap: balance; }
+.xst-plate > span { margin-top: auto; max-width: 22ch; }
+.xst-plate b { font-size: 13px; font-weight: 500; letter-spacing: .12em; }
 
-/* chapters | stage */
-.xst-how { padding: clamp(72px, 9vw, 140px) 0; }
-.xst-play { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); margin-top: clamp(28px, 4vw, 56px); }
-.xst-steps { position: relative; list-style: none; margin: 0; padding: 0 0 0 36px; }
-.xst-rail { position: absolute; left: 5px; top: 10px; bottom: 10px; width: 2px; background: var(--line); border-radius: 2px; }
-.xst-rail i { position: absolute; inset: 0; background: var(--ink); transform-origin: top; }
-.xst-steps li { position: relative; padding: 0 0 clamp(56px, 12vh, 140px); scroll-margin-top: 140px; }
-.xst-steps li::before { content: ''; position: absolute; left: -36px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, .22); transition: background .3s, box-shadow .3s; }
-.xst-steps li[data-on]::before { background: var(--ink); box-shadow: 0 0 0 5px rgba(10, 10, 10, .08); }
-.xst-n { margin: 0; font-size: 13px; color: var(--faint); letter-spacing: .06em; }
-.xst-h3 { margin: 6px 0 12px; font-size: clamp(1.4rem, 2vw, 1.75rem); font-weight: 560; letter-spacing: -.03em; line-height: 1.15; color: var(--faint); transition: color .4s var(--ease); }
-.xst-steps .xst-t { color: var(--soft); transition: color .4s var(--ease); }
-.xst-steps li[data-on] .xst-h3 { color: var(--ink); }
-.xst-steps li[data-on] .xst-t { color: #1d1d1f; }
-.xst-inline { display: none; }
-.xst-stage { position: relative; }
-.xst-frame { position: sticky; top: 112px; aspect-ratio: 4 / 5; max-height: calc(100vh - 150px); border-radius: 24px; overflow: hidden; background: var(--card); }
-.xst-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s var(--ease); }
-.xst-frame img[data-on] { opacity: 1; animation: xst-push 9s ease-in-out infinite alternate; }
-@keyframes xst-push { from { transform: scale(1); } to { transform: scale(1.07); } }
-.xst-reel { position: absolute; top: 16px; left: 16px; padding: 8px 12px; border-radius: 999px; background: rgba(10, 10, 10, .78); color: #f5f5f7; font-size: 13px; }
-.xst-reel b { display: inline-block; font-weight: 500; animation: xst-roll .5s var(--ease); }
+/* 1. the stage: the launch's picture full-bleed, settling into a framed plate as you leave */
+.xst-hero { position: relative; height: 100svh; min-height: 640px; color: #f5f5f7; background: #0a0a0a; overflow: hidden; }
+.xst-cover { position: absolute; inset: 0; transform-origin: 50% 40%; }
+.xst-cover-in, .xst-cover-in .xst-pic { position: absolute; inset: 0; display: block; }
+.xst-hero .xst-pic { background: #161618; }
+.xst-hero .xst-plate { color: rgba(245, 245, 247, .55); align-items: flex-end; justify-content: flex-start; font: 500 13px/1.3 var(--mono); letter-spacing: .06em; padding: 96px var(--edge) 0; }
+.xst-hero .xst-plate > span { max-width: 28ch; text-align: right; }
+.xst-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 10, 10, 0) 45%, rgba(10, 10, 10, .74) 100%); pointer-events: none; }
+.xst-sigil { position: absolute; right: 0; top: 0; width: min(64vw, 980px); height: 100%; color: #d8d8de; opacity: .5; mix-blend-mode: screen; }
+.xst-back { position: absolute; z-index: 2; top: 88px; left: var(--edge); display: inline-flex; align-items: center; min-height: 44px; color: rgba(245, 245, 247, .8); text-decoration: none; font: 500 15px/1 var(--sans); transition: color .2s, transform .35s var(--ease); }
+.xst-back:hover { color: #fff; transform: translateX(-4px); }
+.xst-hero-t { position: absolute; z-index: 1; left: var(--edge); right: var(--edge); bottom: clamp(48px, 9svh, 112px); }
+.xst-kick { display: flex; align-items: center; gap: 14px; color: rgba(245, 245, 247, .78); }
+.xst-kick i { width: 40px; height: 1px; background: var(--silver); }
+.xst-hero-b { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 32px; margin-top: 28px; }
+.xst-hero .xst-ask { height: 52px; padding: 0 26px; font-size: 16px; background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; transition: transform .2s var(--ease), background .2s; }
+.xst-hero .xst-ask:hover { background: #fff; }
+.xst-ask:active, .xst-pdf:active { transform: scale(.98); }
+.xst-h1 { color: #f5f5f7; margin: 0; max-width: 12ch; font-size: clamp(56px, 9.4vw, 128px); font-weight: 600; letter-spacing: -.05em; line-height: .92; text-wrap: balance; }
+
+/* 2. the statement and the figures on a rule */
+.xst-intro { padding: clamp(120px, 16vw, 240px) 0 clamp(120px, 14vw, 220px); }
+.xst-lede { grid-column: 1 / span 9; margin: 0; font-size: clamp(30px, 3.6vw, 52px); font-weight: 500; letter-spacing: -.035em; line-height: 1.1; text-wrap: balance; scroll-margin-top: 140px; }
+.xst-figs { grid-column: 1 / -1; margin: clamp(80px, 10vw, 160px) 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; }
+.xst-fig dd { margin: 0; height: 100%; }
+.xst-fig-b { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; height: 100%; padding: 28px 0 8px; border: 0; border-top: 1px solid rgba(0, 0, 0, .14); background: none; color: var(--ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; }
+.xst-fig-b::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+.xst-fig-b:hover::before, .xst-fig-b:focus-visible::before, .xst-fig-b[aria-pressed='true']::before { transform: scaleX(1); }
+.xst-fig-b:disabled { cursor: default; }
+.xst-fig-v { font-size: clamp(44px, 5.2vw, 84px); font-weight: 600; letter-spacing: -.05em; line-height: .9; font-feature-settings: 'tnum'; white-space: nowrap; }
+.xst-fig-v.x-flap { gap: 0; }
+.xst-fig-v span { min-width: 0; padding: 0; border-radius: 0; background: none; box-shadow: none; }
+.xst-fig-l { font-size: 17px; line-height: 1.4; color: var(--soft); text-wrap: pretty; max-width: 24ch; }
+.xst-fig-w { display: inline-flex; gap: 8px; margin-top: auto; padding-top: 14px; font-size: 13px; line-height: 1.35; color: var(--faint); transition: color .25s; }
+.xst-fig-w i { font-style: normal; color: var(--ink); display: inline-block; transition: transform .35s var(--ease); }
+.xst-fig-b:hover .xst-fig-w { color: var(--ink); }
+.xst-fig-b:hover .xst-fig-w i { transform: translateY(3px); }
+a.xst-fig-b:hover .xst-fig-w i { transform: translate(2px, -2px); }
+
+/* 3. the platform's own report: real product UI as the object */
+.xst-report { padding: 0 0 clamp(120px, 16vw, 240px); scroll-margin-top: 80px; }
+.xst-report .xst-g { align-items: center; }
+.xst-report-t { grid-column: 1 / span 4; }
+.xst-report-t .xst-h2 { margin-bottom: 24px; }
+.xst-shot { grid-column: 6 / span 7; margin: 0; border-radius: 28px; overflow: hidden; box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .45), 0 0 0 1px var(--line); transform: perspective(1600px) rotateX(9deg) translateY(56px) scale(.96); transform-origin: 50% 100%; transition: transform 1.3s var(--ease); }
+.xst-shot[data-in] { transform: none; }
+.xst-shot .xst-pic { aspect-ratio: 16 / 10; }
+
+/* 4. the chapters: 100svh scenes on a sticky stage, each wiping up over the last */
+.xst-how { padding: 0; }
+.xst-how-head { align-items: end; padding-bottom: clamp(48px, 6vw, 96px); }
+.xst-how-head .xst-h2 { grid-column: 1 / span 8; }
+.xst-how-head .xst-kicker { grid-column: 10 / span 3; justify-self: end; color: var(--faint); }
+.xst-scenes { --pinned: 1; position: relative; height: calc(var(--n) * 100svh); }
+.xst-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.xst-scene { position: absolute; inset: 0; display: flex; align-items: center; padding-top: 56px; background: #fff; scroll-margin-top: 0; }
+.xst-scene[data-tone='b'] { background: var(--tint); }
+.xst-scene + .xst-scene { box-shadow: 0 -1px 0 var(--line); }
+.xst-scene-g { width: min(100% - 48px, 1440px); align-items: center; }
+.xst-scene-t { grid-column: 1 / span 5; }
+.xst-h3 { margin: 0 0 24px; font-size: clamp(34px, 3.8vw, 56px); font-weight: 600; letter-spacing: -.045em; line-height: 1.02; text-wrap: balance; }
+.xst-scene-pic { grid-column: 6 / span 7; height: min(72svh, 760px); border-radius: 28px; box-shadow: 0 50px 100px -60px rgba(0, 0, 0, .35); }
+.xst-scene-pic img { transform-origin: 50% 60%; }
+.xst-scene.bare .xst-scene-t { grid-column: 1 / span 10; }
+.xst-scene.bare .xst-h3 { font-size: clamp(56px, 7.4vw, 112px); line-height: .94; letter-spacing: -.05em; }
+.xst-scene.bare .xst-t { font-size: clamp(21px, 1.7vw, 24px); line-height: 1.5; max-width: 52ch; }
+.xst-reel { position: absolute; z-index: 3; left: var(--edge); bottom: 28px; display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--soft); pointer-events: none; }
+.xst-reel-n b { display: inline-block; font-weight: 500; color: var(--ink); animation: xst-roll .5s var(--ease); }
 @keyframes xst-roll { from { transform: translateY(70%); opacity: 0; } }
-.xst-cap { position: absolute; left: 16px; right: 16px; bottom: 16px; padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, .92); color: var(--ink); font-size: 14px; line-height: 1.4; }
-.xst-cap:empty { display: none; }
+.xst-reel-bar { display: flex; gap: 4px; }
+.xst-reel-bar i { width: 22px; height: 2px; border-radius: 2px; background: rgba(0, 0, 0, .12); transition: background .4s var(--ease); }
+.xst-reel-bar i[data-on] { background: var(--ink); }
 
-/* gallery: a filmstrip that spotlights one frame at a time */
-.xst-more { padding: clamp(48px, 6vw, 96px) 0 clamp(64px, 8vw, 120px); }
-.xst-gal { list-style: none; display: flex; gap: 14px; margin: 0; padding: 4px max(24px, calc((100vw - var(--wrap)) / 2)) 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: max(24px, calc((100vw - var(--wrap)) / 2)); scrollbar-width: none; }
-.xst-gal::-webkit-scrollbar { display: none; }
-.xst-gal li { flex: 0 0 auto; scroll-snap-align: start; }
-.xst-gal button { position: relative; display: block; width: clamp(240px, 26vw, 360px); padding: 0; border: 0; border-radius: 20px; overflow: hidden; background: var(--card); cursor: pointer; opacity: .55; transform: scale(.97); transition: opacity .6s var(--ease), transform .6s var(--ease); }
-.xst-gal li[data-on] button, .xst-gal button:hover { opacity: 1; transform: scale(1); }
-.xst-gal img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
-.xst-gal-c { position: absolute; left: 12px; right: 12px; bottom: 12px; padding: 8px 12px; border-radius: 10px; background: rgba(255, 255, 255, .92); color: var(--ink); font-size: 14px; line-height: 1.35; text-align: left; opacity: 0; transform: translateY(8px); transition: opacity .4s var(--ease), transform .4s var(--ease); }
-.xst-gal li[data-on] .xst-gal-c, .xst-gal button:hover .xst-gal-c { opacity: 1; transform: none; }
+/* 5. from the campaign: an asymmetric wall; tiles wipe open on arrival, a hover reads Hanzo's caption */
+.xst-more { padding: clamp(120px, 16vw, 240px) 0 0; }
+.xst-more .xst-h2 { grid-column: 1 / span 8; margin-bottom: clamp(40px, 5vw, 72px); }
+.xst-wall { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+.xst-tile { grid-column: span 6; }
+.xst-tile:nth-child(6n + 1), .xst-tile:nth-child(6n + 4) { grid-column: span 7; }
+.xst-tile:nth-child(6n + 2), .xst-tile:nth-child(6n + 3) { grid-column: span 5; }
+.xst-tile figure { position: relative; margin: 0; }
+.xst-tile .xst-pic { height: clamp(300px, 34vw, 540px); border-radius: 16px; clip-path: inset(100% 0% 0% 0% round 16px); transition: clip-path 1.1s var(--ease); transition-delay: calc(var(--i) * 70ms); }
+.xst-tile[data-in] .xst-pic { clip-path: inset(0% 0% 0% 0% round 16px); }
+.xst-tile .xst-pic img { transition: transform .9s var(--ease); }
+.xst-tile:hover .xst-pic img { transform: scale(1.035); }
+.xst-tile figcaption { position: absolute; left: 14px; right: 14px; bottom: 14px; width: fit-content; max-width: calc(100% - 28px); padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, .94); color: var(--ink); font-size: 15px; line-height: 1.35; opacity: 0; transform: translateY(8px); transition: opacity .35s var(--ease), transform .35s var(--ease); }
+.xst-tile:hover figcaption, .xst-tile:focus-within figcaption { opacity: 1; transform: none; }
+.xst-tile:has(img[data-missing]) figcaption { display: none; }
 
-.xst-end { padding: 0 0 clamp(96px, 10vw, 152px); }
-.xst-end-g { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; padding-top: 36px; border-top: 1px solid var(--line); }
+/* 6. the way out: the case study, every launch, and the next launch as a card that opens into its page */
+.xst-end { padding: clamp(120px, 16vw, 240px) 0 clamp(120px, 14vw, 200px); }
+.xst-end-g { align-items: end; row-gap: 48px; }
+.xst-end-a { grid-column: 1 / span 4; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding-bottom: 8px; }
+.xst-pdf { height: 52px; padding: 0 26px; font-size: 16px; }
 .xst-all { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); text-decoration: none; font: 500 16px/1 var(--sans); transition: transform .35s var(--ease); }
-.xst-all:hover { transform: translateX(4px); text-decoration: underline; text-underline-offset: 4px; }
+.xst-all:hover { transform: translateX(4px); }
+.xst-next { grid-column: 6 / span 7; position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; color: var(--ink); text-decoration: none; }
+.xst-next-pic { display: block; border-radius: 28px; overflow: hidden; }
+.xst-next-pic .xst-pic { aspect-ratio: 16 / 9; }
+.xst-next-pic img { transition: transform 1s var(--ease); }
+.xst-next:hover .xst-next-pic img { transform: scale(1.04); }
+.xst-next-t { display: flex; flex-direction: column; gap: 12px; padding-right: 72px; }
+.xst-next-t .xst-kicker { color: var(--faint); }
+.xst-next-n { font-size: clamp(40px, 5.4vw, 80px); font-weight: 600; letter-spacing: -.05em; line-height: .94; }
+.xst-next-f { font-size: 17px; color: var(--soft); }
+.xst-next-f b { color: var(--ink); font-weight: 600; font-feature-settings: 'tnum'; }
+.xst-next-go { position: absolute; right: 0; bottom: 6px; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .16); color: var(--ink); transition: transform .45s var(--ease), border-color .3s; }
+.xst-next:hover .xst-next-go { transform: translateX(6px); border-color: var(--ink); }
+.xst-next:active .xst-next-pic { transform: scale(.99); }
+.xst-next-pic { transition: transform .2s var(--ease); }
+.xst-next:focus-visible { outline: 2px solid var(--ink); outline-offset: 8px; border-radius: 28px; }
 
-@media (max-width: 900px) {
-  .xst-hero { min-height: 82vh; }
-  .xst-sigil { width: 100%; height: 70%; }
-  .xst-intro-g, .xst-report-g, .xst-play { grid-template-columns: minmax(0, 1fr); }
-  .xst-lede { max-width: none; }
-  .xst-figs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .xst-fig-b { min-height: 150px; padding: 18px 16px; }
-  .xst-stage { display: none; }
-  .xst-inline { display: block; width: 100%; margin-top: 18px; border-radius: 18px; aspect-ratio: 4 / 3; object-fit: cover; background: var(--card); }
-  .xst-steps { padding-left: 28px; }
-  .xst-steps li::before { left: -28px; }
-  .xst-steps li { padding-bottom: 56px; }
-  .xst-t { font-size: 1.0625rem; }
-  .xst-gal button { width: 74vw; }
+/* phones and reduced motion: scenes stand in a column, each with its own tint; on phones each picture wipes open on arrival */
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .xst-scenes { --pinned: 0; height: auto; }
+  .xst-stage { position: relative; height: auto; overflow: visible; }
+  .xst-scene { position: relative; inset: auto; display: block; padding: clamp(96px, 12vw, 160px) 0; clip-path: none !important; }
+  .xst-scene-t { transform: none !important; opacity: 1 !important; }
+  .xst-scene-pic img { transform: none !important; }
+  .xst-reel { display: none; }
 }
-@media (max-width: 420px) {
-  .xst-figs { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 900px) {
+  .xst-g, .xst-scene-g { width: min(100% - 32px, 1440px); grid-template-columns: minmax(0, 1fr); column-gap: 0; }
+  .xst { --edge: 16px; }
+  .xst-hero { min-height: 560px; }
+  .xst-back { top: 72px; }
+  .xst-hero .xst-plate > span { display: none; }
+  .xst-sigil { width: 100%; height: 72%; }
+  .xst-h1 { font-size: clamp(48px, 13vw, 56px); max-width: none; }
+  .xst-t { font-size: 17px; }
+  .xst-intro { padding: 120px 0; }
+  .xst-lede, .xst-figs, .xst-report-t, .xst-shot, .xst-how-head .xst-h2, .xst-how-head .xst-kicker, .xst-scene-t, .xst-scene.bare .xst-scene-t, .xst-scene-pic, .xst-more .xst-h2, .xst-wall, .xst-tile, .xst-end-a, .xst-next { grid-column: 1 / -1 !important; }
+  .xst-lede { font-size: clamp(26px, 7.4vw, 32px); }
+  .xst-figs { grid-template-columns: minmax(0, 1fr); margin-top: 72px; }
+  .xst-fig-b { padding: 22px 0 20px; }
+  .xst-fig-v { font-size: clamp(48px, 14vw, 56px); }
+  .xst-report { padding-bottom: 120px; }
+  .xst-shot { margin-top: 40px; }
+  .xst-how-head .xst-kicker { justify-self: start; margin-top: 16px; }
+  .xst-scene { padding: 96px 0; }
+  .xst-h3 { font-size: clamp(32px, 9vw, 36px); }
+  .xst-scene.bare .xst-h3 { font-size: clamp(44px, 13vw, 56px); }
+  .xst-scene.bare .xst-t { font-size: 19px; }
+  .xst-scene-pic { height: auto; aspect-ratio: 4 / 5; margin-top: 36px; border-radius: 20px; clip-path: inset(24% 0% 0% 0% round 20px); transition: clip-path 1s var(--ease); }
+  .xst-scene[data-in] .xst-scene-pic { clip-path: inset(0% 0% 0% 0% round 20px); }
+  .xst-more { padding-top: 120px; }
+  .xst-wall { gap: 16px; }
+  .xst-tile .xst-pic { height: auto; aspect-ratio: 4 / 5; }
+  .xst-tile figcaption { opacity: 1; transform: none; position: static; margin-top: 10px; padding: 0; background: none; color: var(--soft); max-width: none; }
+  .xst-end { padding: 120px 0; }
+  .xst-next-t { padding-right: 64px; }
+  .xst-next-pic { border-radius: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xst-frame img[data-on], .xst-reel b, .xst-mark { animation: none !important; }
+  .xst-cover, .xst-hero-t { clip-path: none !important; transform: none !important; }
+  .xst-tile .xst-pic, .xst-scene-pic { clip-path: none !important; transition: none !important; }
+  .xst-shot { transform: none; transition: none; }
+  .xst-reel-n b, .xst-mark { animation: none !important; }
 }
