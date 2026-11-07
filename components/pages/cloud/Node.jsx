@@ -289,8 +289,9 @@ function Lean({ children }) {
 function Grow({ target, children }) {
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target, offset: ['start start', 'end end'] });
-  const scale = useTransform(scrollYProgress, [0, 0.16, 0.9, 1], [1, 1.04, 1.04, 1]);
-  return <motion.div className="nd-grow" style={calm ? undefined : { scale }}>{children}</motion.div>;
+  // the style is always the same motion value (so the server and the first client frame match); reduced motion holds it at 1
+  const scale = useTransform(scrollYProgress, [0, 0.16, 0.9, 1], calm ? [1, 1, 1, 1] : [1, 1.04, 1.04, 1]);
+  return <motion.div className="nd-grow" style={{ scale }}>{children}</motion.div>;
 }
 
 /* "A tenth of the block reward": the one big statement; it opens the kit's sheet with the five levels it is shared by.

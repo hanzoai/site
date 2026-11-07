@@ -33,7 +33,7 @@ Done here: Every link is kit `A`. `parity.py /node`: 4/4 links; "About the Netwo
 - [x] Ends in proof strip, `Band`, footer (`LaunchClose`: Sigil, "Get Node", the one ask, licence and repo)
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: The first screen is the machine on the left eight columns (it settles from 1.06 to its place) and the 52px title, "Decentralized AI Compute" as its caption, the lede and the ask on the right five. It starts within 0.7 s ("hanzo fabric up" → starting → joined → serving); `fs-audit.cjs` measures motion on both sizes and nothing above the h1. Round 4: the h1 cuts in (105% → 0, 700 ms, ease-emphasis, 60 ms apart) once the page is mounted, with a CSS failsafe at 1.6 s; measured on a cold dev load it now plays from ~1.2 s to ~1.9 s, after first paint at ~0.7 s (it used to finish before first paint). The hero-to-"Why" band is ~120px (was ~300). Rooms: hero, figures, pinned terminal (48svh a chapter, about 3 screens, was 5.6), quiet room, close.
+Done here: The first screen is one machine on the left seven columns (flat #f5f5f5 surface, the command bar, one white readout: the level being served at 40px, the five-bar ladder, hardware and Lux as one quiet line each) and the 52px title, "Decentralized AI Compute" as its caption, the lede and the ask on the right. No settle pop: scale 1 in server HTML, JS off and reduced motion. The h1 starts 44% into its mask, so it reads from the first frame.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (the kit's 48px `lx-cta`; swapped when the deck `Cta` lands)
@@ -49,7 +49,7 @@ Done here: The hero ask has `data-cta="node.hero" data-thumb="Run a Node"`, the 
 - [x] Marquees pause, freeze under reduced motion, hide duplicates (n/a: no marquee)
 - [x] Privacy link and owner line beside every submit (n/a: no form)
 
-Done here: The four figures count Hanzo's own words (one Rust binary, three commands, the five listed levels, a tenth of the block reward), each with its label beside it. Merkle roots and bars are drawn, as the header comment says.
+Done here: Only Hanzo's words and figures: "A tenth" of the block reward is the one big statement (64px) and opens the levels sheet; no derived figures, no drawn hashes (Lux roots are unlabeled squares).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -57,7 +57,7 @@ Done here: The four figures count Hanzo's own words (one Rust binary, three comm
 - [x] Tables, FAQ, tabs and code use the kit parts (n/a for tables, FAQ and tabs: none; code is Frame's Paste and the drawn terminal)
 - [x] `python3 scripts/parity.py /node`: 0 missing
 
-Done here: Parity 37/37 text, 4/4 links. Sizes: h1 52, caption 21, the figures 64 (the next screen's one big thing), section headings 26, chapter titles 32, lede 20, body 16, terminal 16 mono, captions 13; the cells' 12px labels are Zen Mono capitals. The "01 / 06" counts sit under each chapter title.
+Done here: Parity 37/37 text, 4/4 links. Sizes: h1 52, caption 21, "A tenth" 64 (the next screen's one big thing), section heading 26, chapter titles 32, the machine's readout 40 (declared/attested 64 as their chapter's moment), lede 20, body 17, mono 13-17.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py` passes; no literal hex outside tokens (deck values only)
@@ -66,7 +66,7 @@ Done here: Parity 37/37 text, 4/4 links. Sizes: h1 52, caption 21, the figures 6
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #ededed, #f2f2f2, #f5f5f5, #171717, #262626, #404040. The machine is a hairline stage with flat #f5f5f5 cells (16px inside the 24px stage); the terminal is flat graphite with no shadow. Neighbour /network is the map page (a peer graph in its hero and as its chapters' object) with a black room; /node opens on a product card left of the copy and shows one machine's own process (pid ── 48213, network ── hanzo.network, level ── 02 / 05, each rule drawn in as the row comes up; no peers, no map), and keeps the graphite terminal and a quiet room, with no black room.
+Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7/#e5e5e5, #ededed, #f2f2f2, #f5f5f5, #171717. The machine is one flat #f5f5f5 surface (radius 24) holding the #171717 command bar and a white readout (radius 16); the lit level is its one ink block.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading (n/a for disabled and loading: nothing is ever unavailable or fetched)
@@ -75,7 +75,7 @@ Done here: `taste.py` OK; values #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #e
 - [x] Inputs 16px or larger; no bare `:hover` (n/a for inputs: none; every hover is in `@media (hover:hover)`)
 - [x] Forks this page deleted: listed at the top
 
-Done here: The five level buttons (44px rows on desktop, 64px bars on phone), the drive bar (up / join / stop, `aria-pressed`), the pause and "See the levels" all fill or ink on hover and press at .97 for 90 ms; text links press 1px and on hover their stroke parts 3px and goes to ink; "Node docs →" nudges its arrow 6px. Copy swaps to the tick and "Copied" together (no ghost icon). The levels sheet mounts only while open, so the sticky ask never mistakes it for an overlay.
+Done here: The five ladder bars (96px desktop, 72px phone; hover fills #ededed and greys the bar, press .97), the drive bar (up / join / stop, `aria-pressed`), the six rail dashes (44px, hover well), the pause, and "A tenth" (its plus turns 90° and fills ink) all answer on hover and press; the hero ask's arrow nudges 4px beside its fill change.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: The five level buttons (44px rows on desktop, 64px bars on phone), th
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
 
-Done here: Signature: the machine's own run (idle, the one mover on its screen): up, starting, joined, then four jobs lit and settled in about nine seconds (MASTER §4.1); it rests serving with three roots settled, and the toolbar's play replays it. Supporting: the tilt toward a fine pointer (2.5° at most, 300 ms ease-in-out), each chapter's scripted 2.8 s beat on the terminal (time: the command keyed in, chips one by one, the five bars filling in turn, models / route / placement lit in sequence, declared struck then attested ringed and the trust bar filling, the node driving itself up → join → stop once before the visitor takes it, four roots appended to Lux), then a blinking prompt at rest, the stage settling from 1.06 (scroll). Also pointer (a level you point at takes a job), state (drive bar, levels sheet), arrival (title cut-in, the four figures rolling once and settling, the quiet room's wipe). The beats run on Frame's one `useFrame` scheduler only while the terminal is seen. `variety.py` OK; no `setInterval`. Walk: 0 still screens of 6 inside the stage on desktop. Scale rhythm: the stage starts big and settles, the figures are the next screen's one big thing, "Get Node" grows to 64.
+Done here: Signature: one machine from hero to chapter six. Idle: it keeps serving from the frame you see (jobs light levels, roots settle), rests, play replays from hanzo fabric up. Pointer: tilt (2.5°), a level you point at takes a job. Scroll (under half): the machine pins on the left and becomes the chapter stage, growing 4% while it is the stage; the chapter not on stage is at 32% so one thing reads at a time. Time: each chapter's 2.8 s beat inside the machine (hardware at 44px, bars fill, the asked question lit, declared struck then attested ringed, the verb's effect, the root committed). State: drive control, levels sheet, odometer count.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: Hanzo has no Node photo or film)
@@ -100,7 +100,7 @@ Done here: Objects are drawn product UI (the machine, the figures, the terminal,
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Phone order: title, caption, lede, ask (y≈325), then the machine with the five levels as five 64px bars and the lit level named under them. Under 900px the pinned scene stacks (MASTER part 11): each chapter's title, count and words, then its own terminal at true height playing its beat as it comes into view (chapter five's drive bar sits above its terminal); no half-empty window. Tilt is fine-pointer only; levels take a tap.
+Done here: Phone order: title, caption, lede, ask, then the hero machine (five 72px bars), "A tenth", then each chapter with its own small machine playing its beat as it arrives (no pin, MASTER part 11). 375 and 320: scrollWidth equals the viewport, no text cut by its box.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -157,4 +157,4 @@ Done here: The machine's own states are designed: stopped (hollow LED, blinking 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/node.md` verdict 8 or more (pending: no verdict had landed at push time)
 
-Done here: `node.hero` and `node.close` are set. Gallery: `docs/gallery/node/d.mp4`, `d.jpg`, `p.jpg` (`film.cjs`, no errors), round 4 `round2-desktop.jpg`, `round2-stage.jpg`, `round2-phone.jpg`. Review 7/10 read; all six page fixes done, the phone header ask filed in `docs/requests/node.md`. The critic's verdict decides.
+Done here: `node.hero` and `node.close` are set. Gallery: `docs/gallery/node/desktop.jpg`, `phone-1.jpg`, `phone-2.jpg` (8 Nov, round 5 CSS); earlier stills kept.

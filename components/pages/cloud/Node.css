@@ -1,192 +1,183 @@
-/* Node, round 3 (MASTER §3): the deck's neutral ramp only; flat fills or 1px hairlines, never both; no shadows; radii
-   24 tiles, 16 cells (concentric inside the 24 stage), 12 rows, 8 chips, full pills; press .97 in 90ms; hover changes
-   fill or ink. The machine's states differ by fill and shape: a hollow LED when stopped, grey while joining, solid ink
-   when serving; a lit level is an ink bar; the newest root is an ink row. Type rests at the kit's sizes. */
+/* Node, round 5 (Node.jsx): one machine from the hero to chapter six. The deck's neutral ramp only; flat fills or 1px
+   hairlines, never both; no shadows; radii 24 the machine, 16 inside it, 12 rows, full pills; press .97 in 90ms; hover
+   changes fill or ink. The machine's states differ by fill and shape: a hollow LED when off, grey while it joins, solid
+   ink when it serves; the lit level is the one ink block in the hero. Type rests at the kit's sizes. */
 
-/* hero: the machine on the left eight columns, the title, caption, lede and ask on the right five */
-.nd-hero { padding: clamp(32px, 4vw, 56px) 0 clamp(17px, 2vw, 27px); }
-/* the h1 cuts in once the page is up (Title in Node.jsx): failsafe at 1.6s with no hydration, else on mount */
-html.js .nd-h1 .lx-line > span { animation: nd-cut .7s var(--lx-ease) 1.6s both; }
-html.js .nd-h1[data-in] .lx-line > span { animation-name: nd-cut-in; animation-delay: 0s; }
-html.js .nd-h1[data-in] .lx-line + .lx-line > span { animation-delay: .06s; }
-@keyframes nd-cut { from { transform: translateY(105%); } }
-@keyframes nd-cut-in { from { transform: translateY(105%); } }
-.nd-hero-grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); column-gap: clamp(32px, 5vw, 72px); align-items: center; }
+/* ---------- the run: the machine pins on the left, the words scroll on the right ---------- */
+.nd-run { padding: clamp(24px, 3vw, 40px) 0 clamp(72px, 8vw, 116px); }
+.nd-run-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(40px, 5vw, 80px); align-items: start; }
+.nd-run-obj { position: relative; align-self: stretch; }
+.nd-run-stick { position: sticky; top: max(84px, calc(50svh - 290px)); }
+.nd-lean { transition: transform .3s var(--e-io); }
+.nd-grow { transform-origin: 50% 40%; }
+.nd-run-copy { min-width: 0; }
+/* the hero words hold the first screen beside the machine */
+.nd-hero-copy { min-height: calc(100svh - 120px); display: flex; flex-direction: column; justify-content: center; padding-bottom: 40px; }
+/* the h1 cuts in by line mask from the server HTML (no hydration wait); it starts 44% into its mask, so the words read
+   on the very first frame */
+html.js .nd-h1 .lx-line > span { animation: nd-cut .7s var(--lx-ease) both; }
+html.js .nd-h1 .lx-line + .lx-line > span { animation-delay: .06s; }
+@keyframes nd-cut { from { transform: translateY(44%); } }
 .nd-sub { margin: 16px 0 0; color: #0a0a0a; }
 .nd-lede { margin: 20px 0 32px; }
 .nd-acts { display: flex; gap: 8px 24px; align-items: center; flex-wrap: wrap; }
-.nd-lean { transition: transform .3s var(--e-io); }
+/* the hero ask answers with more than a fill: its arrow nudges */
+.nd .lx-cta svg, .nd .lx-ghost svg { transition: transform .3s var(--e-io); }
 
-/* the machine */
-.nd-mac { background: #fff; padding: 8px; }
-.nd-mac-top { display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 12px 0 8px; }
+/* why: the heading, then "A tenth" as the one big statement (it opens the levels sheet) */
+.nd-why { padding: clamp(40px, 6vw, 96px) 0 clamp(40px, 5vw, 72px); }
+.nd-why-h { margin-bottom: 28px; }
+.nd-tenth { display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-areas: 'v p' 'l l'; align-items: center; column-gap: 16px; width: 100%; margin: 0; padding: 20px 0; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: none; color: #0a0a0a; text-align: left; font: inherit; cursor: pointer; touch-action: manipulation; transition: transform .15s var(--e-out); }
+.nd-tenth-v { grid-area: v; font-weight: 220; font-size: 64px; line-height: 1; letter-spacing: -.045em; }
+.nd-tenth-l { grid-area: l; margin-top: 12px; font-size: 20px; line-height: 1.4; letter-spacing: -.01em; color: #525252; }
+.nd-tenth-p { grid-area: p; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); transition: transform .3s var(--e-io), background-color .15s var(--e-out), color .15s var(--e-out); }
+.nd-tenth:active { transform: scale(.98); transition-duration: .09s; }
+.nd-tenth:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; border-radius: 12px; }
+.nd-why-m { margin: 20px 0 0; font-size: 16px; line-height: 1.5; color: #525252; }
+
+/* the six chapters: each holds the screen while the machine stages it; the one on the stage is in ink */
+.nd-ch { list-style: none; margin: 0; padding: 0; }
+.nd-ch > li { min-height: 64svh; display: flex; flex-direction: column; justify-content: center; padding: 40px 0; }
+.nd-ch-t { margin: 0; font-weight: 497; font-size: 32px; line-height: 1.12; letter-spacing: -.025em; color: #0a0a0a; text-wrap: balance; }
+.nd-ch-k { margin-top: 12px; }
+.nd-ch-d { margin: 16px 0 0; font-size: 17px; line-height: 1.55; color: #525252; max-width: 44ch; }
+.nd-ch-mac { display: none; }
+@media (min-width: 900px) {
+  .nd-ch > li > :not(.nd-ch-mac) { transition: opacity .4s var(--e-io); }
+  html.js .nd-ch > li:not([data-on]) > :not(.nd-ch-mac) { opacity: .32; }
+}
+
+/* the rail under the machine: six dashes, one per chapter, the current one in ink (44px hit areas) */
+.nd-rail { display: flex; gap: 0; margin-top: 12px; padding-left: 4px; }
+.nd-rail button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: none; cursor: pointer; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
+.nd-rail i { display: block; width: 24px; height: 3px; border-radius: 2px; background: #d4d4d4; transition: background-color .3s var(--e-out), width .3s var(--lx-ease); }
+.nd-rail button[aria-current] i { background: #0a0a0a; }
+.nd-rail button:active { transform: scale(.97); transition-duration: .09s; }
+.nd-rail button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 0; }
+
+/* ---------- the machine ---------- */
+.nd-mac { border-radius: 24px; background: #f5f5f5; padding: 8px; }
+.nd-mac-top { display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 16px 0 8px; }
 .nd .nd-pause { flex: none; }
-.nd-led { width: 12px; height: 12px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 2px #d4d4d4; transition: background-color .3s var(--e-out), box-shadow .3s var(--e-out); }
-.nd-mac[data-status='starting'] .nd-led, .nd-mac[data-status='joined'] .nd-led { background: #a3a3a3; box-shadow: none; }
-.nd-mac[data-status='serving'] .nd-led { background: #0a0a0a; box-shadow: none; }
+.nd-led { flex: none; width: 12px; height: 12px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 2px #a3a3a3; transition: background-color .3s var(--e-out), box-shadow .3s var(--e-out); }
+.nd-mac[data-status='join'] .nd-led { background: #a3a3a3; box-shadow: none; }
+.nd-mac[data-status='on'] .nd-led { background: #0a0a0a; box-shadow: none; }
 .nd-mac-n { font: 500 15px/1 var(--mono); color: #0a0a0a; }
-.nd-status { margin-left: auto; padding: 8px 12px; border-radius: 999px; background: #f2f2f2; font: 500 13px/1 var(--mono); color: #525252; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
-.nd-mac[data-status='serving'] .nd-status { background: #0a0a0a; color: #fff; }
-.nd-cmd { margin: 0 10px; padding: 18px 20px; border-radius: 12px; background: #171717; color: #fafafa; font: 500 17px/1 var(--mono); display: flex; align-items: center; gap: 8px; }
-.nd-cmd > span { color: #a3a3a3; }
-.nd-caret { width: 9px; height: 1.1em; background: #fafafa; opacity: 0; }
+.nd-mac-r { margin-left: auto; min-width: 0; font: 500 13px/1.2 var(--mono); color: #525252; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nd-cmd { margin: 0; padding: 18px 20px; border-radius: 16px; background: #171717; color: #fafafa; font: 500 17px/1 var(--mono); display: flex; align-items: center; gap: 8px; }
+.nd-cmd > span:first-child { color: #a3a3a3; }
+.nd-caret { display: inline-block; width: 9px; height: 1.1em; background: #fafafa; opacity: 0; }
 .nd-caret.on { animation: nd-blink 1s steps(2) infinite; }
 @keyframes nd-blink { 50% { opacity: 1; } }
-.nd-mac-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
-.nd-cell { padding: 18px; border-radius: 16px; background: #f5f5f5; min-width: 0; }
-.nd-k { margin: 0 0 14px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
-.nd-k2 { margin: 6px 0 0; font: 500 13px/1 var(--mono); color: #525252; }
-.nd-hw ul, .nd-lux ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; }
-/* three roots' worth of room from the start, so a new root never moves anything */
-.nd-lux ul { min-height: 174px; }
-.nd-hw li { height: 38px; display: flex; align-items: center; padding: 0 12px; border-radius: 8px; font: 500 14px/1 var(--sans); color: #525252; background: #fff; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
-.nd-hw li.on { background: #0a0a0a; color: #fff; }
-.nd-net { display: flex; flex-direction: column; }
-.nd-peers { list-style: none; margin: 4px 0 16px; padding: 0; display: grid; gap: 18px; }
-.nd-net .nd-k2 { margin-top: auto; }
-.nd-peers li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font: 500 13px/1 var(--mono); color: #525252; }
-.nd-peers li span:first-child { color: #0a0a0a; }
-.nd-peers i { position: relative; height: 2px; background: #d4d4d4; }
-.nd-peers b { position: absolute; inset: 0; background: #0a0a0a; transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--e-io); transition-delay: calc(var(--i) * 120ms); }
-.nd-peers li.on b { transform: scaleX(1); }
-.nd-peers li.on span:last-child { color: #0a0a0a; }
-/* the process rows: pid, network, level; the level row fills with ink while a job is lit */
-.nd-proc { gap: 6px; margin-bottom: 12px; }
-.nd-proc li { height: 38px; padding: 0 12px; border-radius: 8px; background: #fff; color: #737373; transition: background-color .3s var(--e-out), color .3s var(--e-out); }
-.nd-proc li span:first-child { color: #525252; }
-.nd-proc li.lit { background: #0a0a0a; }
-.nd-proc li.lit span, .nd-proc li.lit span:first-child, .nd-proc li.lit span:last-child { color: #fff; }
-.nd-proc li.lit i { background: #404040; }
-.nd-proc li.lit b { background: #fff; }
-/* the five levels: each takes a job when you point at it */
-.nd-lv ol { list-style: none; margin: -6px -8px 0; padding: 0; display: grid; gap: 0; }
-.nd-lv button { width: 100%; display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 10px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 8px; background: none; text-align: left; font: 500 14px/1.15 var(--sans); color: #525252; cursor: pointer; touch-action: manipulation; transition: color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
-.nd-lv button i { height: 8px; border-radius: 999px; background: #e4e4e7; overflow: hidden; }
-.nd-lv button b { display: block; height: 100%; background: #a3a3a3; transform: scaleX(var(--s)); transform-origin: 0 50%; transition: background-color .3s var(--e-out); }
-.nd-lv button.on { color: #0a0a0a; }
-.nd-lv button.on b { background: #0a0a0a; }
-.nd-lv button:active { transform: scale(.97); transition-duration: .09s; }
-.nd-lv-now { display: none; }
-.nd-lux li { display: flex; flex-direction: column; justify-content: center; gap: 4px; height: 54px; padding: 0 12px; border-radius: 8px; background: #fff; font: 500 13px/1.1 var(--mono); color: #525252; transition: background-color .4s var(--e-out), color .4s var(--e-out); }
-.nd-lux li b { font: 500 13px/1 var(--mono); color: inherit; }
-.nd-lux li.new { background: #0a0a0a; color: #fff; animation: nd-in .3s var(--lx-ease) both; }
-@keyframes nd-in { from { opacity: 0; transform: translateY(16px); } }
-.nd-lux li.slot { background: none; outline: 1.5px dashed #d4d4d4; outline-offset: -1.5px; }
 
-/* why: the section heading at its resting 26px; the figures are this screen's one big thing */
-.nd-why { padding-top: clamp(44px, 5vw, 72px); padding-bottom: clamp(48px, 6vw, 96px); }
-.nd-why-h { margin-bottom: clamp(32px, 4vw, 56px); }
-/* the figures settle once: each digit rolls a full turn and lands (Roll in Node.jsx); tabular, 1ch columns */
-.nd-roll { display: inline-flex; }
-.nd-roll-v { display: inline-flex; }
-.nd-col { display: inline-block; width: 1ch; height: 1em; overflow: hidden; }
-.nd-col > span { display: block; transform: translateY(calc(var(--to) * -1em)); }
-.nd-col > span > span { display: block; height: 1em; }
-.nd-roll[data-st='armed'] .nd-col > span { transform: none; }
-.nd-roll[data-st='go'] .nd-col > span { transition: transform .8s var(--lx-ease); transition-delay: calc(var(--d) * 60ms); }
+/* the readout: one key thing at size, the rest quiet; the same height for the hero and every chapter, so nothing jumps */
+.nd-read { display: flex; flex-direction: column; min-height: 380px; margin-top: 8px; padding: 28px 24px 24px; border-radius: 16px; background: #fff; }
+.nd-cap { margin: 0; font: 500 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+.nd-quiet { margin: 0; font-size: 14px; line-height: 1.4; color: #737373; }
+.nd-quiet em { font-style: normal; color: #0a0a0a; }
+.nd-b { opacity: 0; transform: translateY(8px); transition: opacity .3s var(--e-out), transform .4s var(--lx-ease), background-color .3s var(--e-out), color .3s var(--e-out); }
+.nd-b.in { opacity: 1; transform: none; }
+.nd-ghost { visibility: hidden; }
+
+/* hero: the level being served, big; the ladder you can point at; hardware and Lux as one quiet line each */
+.nd-big { margin: 14px 0 0; font-weight: 497; font-size: clamp(30px, 2.6vw, 40px); line-height: 1.1; letter-spacing: -.03em; color: #0a0a0a; min-height: 2.2em; }
+.nd-big-m { display: block; overflow: hidden; padding-bottom: .08em; }
+.nd-big-in { display: block; }
+.nd-big-in.cut { animation: nd-big .55s var(--lx-ease) both; }
+@keyframes nd-big { from { transform: translateY(105%); } }
+.nd-ladder { list-style: none; margin: auto 0 0; padding: 20px 0 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; align-items: end; }
+.nd-ladder button { display: flex; align-items: flex-end; width: 100%; height: 96px; padding: 6px; border: 0; border-radius: 12px; background: #f5f5f5; cursor: pointer; touch-action: manipulation; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
+.nd-ladder i { display: flex; align-items: flex-end; width: 100%; height: 100%; }
+.nd-ladder b { display: block; width: 100%; height: 100%; border-radius: 8px; background: #d4d4d4; transform: scaleY(var(--s)); transform-origin: 50% 100%; transition: background-color .3s var(--e-out); }
+.nd-ladder button.on b { background: #0a0a0a; }
+.nd-ladder button:active { transform: scale(.97); transition-duration: .09s; }
+.nd-ladder button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.nd-foot { display: grid; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.nd-hw { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.nd-hw span { transition: color .3s var(--e-out); }
+.nd-hw span.on { color: #0a0a0a; }
+.nd-lux { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nd-chain { list-style: none; margin: 0; padding: 0; display: flex; gap: 5px; }
+.nd-chain li { width: 14px; height: 14px; border-radius: 4px; box-shadow: inset 0 0 0 1px #d4d4d4; }
+.nd-chain li.set { background: #a3a3a3; box-shadow: none; }
+.nd-chain li.new { background: #0a0a0a; box-shadow: none; animation: nd-in .35s var(--lx-ease) both; }
+@keyframes nd-in { from { opacity: 0; transform: translateY(-8px) scale(.6); } }
+
+/* chapter 1: the hardware, at size */
+.nd-r0 { list-style: none; margin: 18px 0 auto; padding: 0; display: grid; gap: 4px; }
+.nd-r0 li { font-weight: 497; font-size: clamp(30px, 2.8vw, 44px); line-height: 1.12; letter-spacing: -.03em; color: #0a0a0a; }
+/* chapter 2: the five levels, each bar filling to its share */
+.nd-r1 { list-style: none; margin: 22px 0 auto; padding: 0; display: grid; gap: 14px; }
+.nd-r1 li { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 18px; font-size: 16px; line-height: 1.25; color: #a3a3a3; transition: color .3s var(--e-out); }
+.nd-r1 li.on { color: #0a0a0a; }
+.nd-r1 i { height: 12px; border-radius: 999px; background: #f2f2f2; overflow: hidden; }
+.nd-r1 b { display: block; height: 100%; background: #0a0a0a; transform-origin: 0 50%; }
+/* chapter 3: three questions, the one being answered lit */
+.nd-r2 { list-style: none; margin: auto 0; padding: 0; display: grid; gap: 8px; }
+.nd-r2 li { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; gap: 16px; min-height: 64px; padding: 10px 18px; border-radius: 12px; background: #f5f5f5; }
+.nd-r2 code { font: 600 15px/1 var(--mono); color: #0a0a0a; transition: color .3s var(--e-out); }
+.nd-r2 span { font-size: 16px; line-height: 1.35; color: #525252; transition: color .3s var(--e-out); }
+.nd-r2 li.lit { background: #0a0a0a; }
+.nd-r2 li.lit code, .nd-r2 li.lit span { color: #fafafa; }
+/* chapter 4: declared struck, attested ringed, at 64px */
+.nd-r3 { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 6px; justify-items: start; }
+.nd-r3 li { position: relative; font-weight: 220; font-size: 64px; line-height: 1.05; letter-spacing: -.045em; }
+.nd-r3 .no { color: #a3a3a3; }
+.nd-r3 .no::after { content: ''; position: absolute; left: -4px; right: -4px; top: 54%; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--e-io); }
+.nd-r3 .no.struck::after { transform: scaleX(1); }
+.nd-r3 .yes { padding: 2px 18px 8px; margin-left: -18px; color: #0a0a0a; }
+.nd-r3 .yes::before { content: ''; position: absolute; inset: 0; border-radius: 999px; box-shadow: inset 0 0 0 2px #0a0a0a; clip-path: inset(0 100% 0 0); transition: clip-path .6s var(--e-io); }
+.nd-r3 .yes.ring::before { clip-path: inset(0); }
+.nd-r3 + .nd-quiet { margin: 20px 0 auto; }
+/* chapter 5: what the verb does, and the two processes that share the name */
+.nd-r4 { margin: 18px 0 auto; font-weight: 497; font-size: clamp(26px, 2.2vw, 32px); line-height: 1.15; letter-spacing: -.025em; color: #0a0a0a; animation: nd-r4 .45s var(--lx-ease) both; text-wrap: balance; }
+@keyframes nd-r4 { from { opacity: 0; transform: translateY(12px); } }
+.nd-r4-ps { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 8px; }
+.nd-r4-ps li { display: grid; grid-template-columns: 12px auto minmax(0, 1fr); align-items: center; gap: 12px; min-height: 52px; padding: 8px 16px; border-radius: 12px; background: #f5f5f5; transition: background-color .3s var(--e-out); }
+.nd-r4-ps i { width: 10px; height: 10px; border-radius: 50%; background: #0a0a0a; transition: background-color .3s var(--e-out), box-shadow .3s var(--e-out); }
+.nd-r4-ps code { font: 500 15px/1 var(--mono); color: #0a0a0a; transition: color .3s var(--e-out); }
+.nd-r4-ps span { font-size: 14px; line-height: 1.35; color: #737373; }
+.nd-r4-ps li.off { background: none; box-shadow: inset 0 0 0 1px #d4d4d4; }
+.nd-r4-ps li.off i { background: transparent; box-shadow: inset 0 0 0 2px #a3a3a3; }
+.nd-r4-ps li.off code { color: #a3a3a3; text-decoration: line-through; }
+/* chapter 6: the work ordered, then committed as one root */
+.nd-r5 { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.nd-r5 li { height: 72px; border-radius: 12px; background: #e5e5e5; }
+.nd-r5 li:last-child.in { background: #0a0a0a; }
+.nd-r5-t { margin: auto 0 0; padding-top: 20px; font-weight: 497; font-size: clamp(24px, 2vw, 30px); line-height: 1.15; letter-spacing: -.025em; color: #0a0a0a; }
+
+/* the chapter count rolls like an odometer (Odo) */
+.nd-odo-v { display: inline-flex; font-variant-numeric: tabular-nums; }
+.nd-col { display: inline-block; width: 1ch; height: 1.2em; line-height: 1.2em; overflow: hidden; vertical-align: top; }
+.nd-col > span { display: block; transition: transform .6s var(--lx-ease); }
+.nd-col > span > span { display: block; height: 1.2em; }
+
+/* the levels sheet */
 .nd-sheet { list-style: none; margin: 0; padding: 0; display: grid; }
-.nd-sheet li { display: grid; grid-template-columns: 56px 1fr 1fr; align-items: center; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--line); }
-.nd-sheet span { font-size: 15px; color: #737373; }
+.nd-sheet li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--line); }
 .nd-sheet b { font-weight: 497; font-size: 21px; letter-spacing: -.015em; }
 .nd-sheet i { height: 10px; border-radius: 999px; background: #ededed; overflow: hidden; }
 .nd-sheet em { display: block; height: 100%; background: #0a0a0a; transform-origin: 0 50%; }
 
-/* the chapter count is Hanzo's own caption: set under the chapter title, never above it (MASTER part 7) */
-.nd .lx-pin-step { display: flex; flex-direction: column; align-items: flex-start; }
-.nd .lx-pin-t { order: 0; margin-top: 0; }
-.nd .lx-pin-k { order: 1; margin-top: 12px; }
-.nd .lx-pin-d { order: 2; }
-.nd .lx-pin-step > :not(.lx-pin-t):not(.lx-pin-k):not(.lx-pin-d) { order: 3; }
-
-/* the chapters' terminal: one graphite object on the paper, flat (no shadow) */
-.nd-term { border-radius: 24px; background: #171717; color: #fafafa; overflow: hidden; min-height: min(580px, 70svh); display: flex; flex-direction: column; }
-.nd-stack { display: none; }
-/* the stage sits higher in its pinned screen, so it never waits under a band of white */
-.nd .nd-pin[data-live] .lx-pin-grid { padding-top: 40px; }
-.nd-term-bar { display: flex; align-items: center; gap: 7px; height: 52px; padding: 0 20px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
-.nd-term-bar i { width: 11px; height: 11px; border-radius: 50%; background: #404040; }
-.nd-term-bar span { margin-left: 12px; font: 500 13px/1 var(--mono); color: #a3a3a3; }
-.nd-term-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: 32px clamp(24px, 3vw, 44px); font: 500 16px/1.5 var(--mono); }
-/* time: each chapter's lines are staged in, 60ms apart */
-.nd-term-body > * { margin: 0; }
-html.js .nd-term-body > * { animation: nd-line .4s var(--lx-ease) both; }
-.nd-term-body > :nth-child(2) { animation-delay: .06s; }
-.nd-term-body > :nth-child(3) { animation-delay: .12s; }
-.nd-term-body > :nth-child(4) { animation-delay: .18s; }
-.nd-term-body > :nth-child(5) { animation-delay: .24s; }
-@keyframes nd-line { from { opacity: 0; transform: translateY(16px); } }
-/* the chapter's beat (useBeat): a part arrives when its moment comes, then holds; .in is also the server/JS-off state */
-.nd-b { opacity: 0; transform: translateY(8px); transition: opacity .3s var(--e-out), transform .4s var(--lx-ease), background-color .3s var(--e-out), color .3s var(--e-out); }
-.nd-b.in { opacity: 1; transform: none; }
-.nd-ghost { visibility: hidden; }
-.nd-term .nd-caret { display: inline-block; vertical-align: -.2em; margin-left: 2px; }
-.nd-rest { color: #a3a3a3; }
-.nd-t-lv li > span { transition: color .3s var(--e-out); color: #737373; }
-.nd-t-lv li.on > span { color: #d4d4d4; }
-.nd-t-ask li.lit, .nd-t-roots li.lit { background: #fafafa; }
-.nd-t-ask li.lit code, .nd-t-ask li.lit span, .nd-t-roots li.lit b, .nd-t-roots li.lit code, .nd-t-roots li.lit span { color: #0a0a0a; }
-.nd-t-ask code, .nd-t-ask span, .nd-t-roots b, .nd-t-roots code, .nd-t-roots span { transition: color .3s var(--e-out); }
-.nd-term .c span { color: #a3a3a3; margin-right: 8px; }
-.nd-term .o { color: #a3a3a3; }
-.nd-term em { font-style: normal; color: #fafafa; font-weight: 600; }
-.nd-t-hw { display: flex; flex-wrap: wrap; gap: 8px; }
-.nd-t-hw b { font-weight: 500; padding: 10px 14px; border-radius: 8px; background: #262626; color: #fafafa; }
-.nd-t-lv { list-style: none; padding: 0; display: grid; gap: 10px; }
-.nd-t-lv li { display: grid; grid-template-columns: minmax(0, 1.2fr) 1fr; gap: 16px; align-items: center; color: #d4d4d4; }
-.nd-t-lv i { height: 10px; border-radius: 999px; background: #262626; overflow: hidden; }
-/* the bars fill to their share on the chapter's beat (inline scaleX each frame), one after another */
-.nd-t-lv b { display: block; height: 100%; background: #fafafa; transform-origin: 0 50%; }
-.nd-t-ask, .nd-t-tier, .nd-t-ps, .nd-t-roots { list-style: none; padding: 0; display: grid; gap: 10px; }
-.nd-t-ask li, .nd-t-tier li, .nd-t-ps li, .nd-t-roots li { display: flex; align-items: center; gap: 16px; min-height: 56px; padding: 0 18px; border-radius: 12px; background: #262626; }
-.nd-t-ask code { color: #fafafa; font-weight: 600; min-width: 96px; }
-.nd-t-ask span { color: #d4d4d4; }
-.nd-t-tier li { justify-content: space-between; }
-.nd-t-tier .no { color: #a3a3a3; }
-/* declared is struck through on the beat: a drawn line, then attested rings */
-.nd-t-tier .no span, .nd-t-tier .no b { position: relative; }
-.nd-t-tier .no span::after, .nd-t-tier .no b::after { content: ''; position: absolute; left: -2px; right: -2px; top: 52%; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--e-io); }
-.nd-t-tier .no b::after { transition-delay: .2s; }
-.nd-t-tier .no.struck span::after, .nd-t-tier .no.struck b::after { transform: scaleX(1); }
-.nd-t-tier .yes { position: relative; background: none; color: #fafafa; }
-.nd-t-tier .yes::before { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1.5px #fafafa; clip-path: inset(0 100% 0 0); transition: clip-path .6s var(--e-io); }
-.nd-t-tier .yes.ring::before { clip-path: inset(0); }
-.nd-t-tier .yes b { color: #fafafa; font-weight: 600; }
-.nd-t-tier .no b { font-weight: 500; }
-.nd-t-tier .tr i { flex: 0 0 52%; height: 10px; border-radius: 999px; background: #404040; overflow: hidden; }
-.nd-t-tier .tr i b { display: block; height: 100%; width: 100%; background: #fafafa; transform-origin: 0 50%; }
-.nd-t-ps li { display: grid; grid-template-columns: 80px 1fr auto; }
-.nd-t-ps code { color: #fafafa; }
-.nd-t-ps span { color: #a3a3a3; }
-.nd-t-ps em { padding: 7px 10px; border-radius: 999px; font-size: 13px; font-style: normal; }
-.nd-t-ps .run em { background: #fafafa; color: #0a0a0a; }
-.nd-t-ps .off { background: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
-.nd-t-ps .off em { color: #a3a3a3; text-decoration: line-through; }
-.nd-t-ps .other em { background: #404040; color: #fafafa; }
-.nd-t-roots li { justify-content: space-between; }
-.nd-t-roots b { font-weight: 500; color: #a3a3a3; }
-.nd-t-roots code { color: #fafafa; }
-.nd-t-roots span { color: #fafafa; font-weight: 600; }
-
 /* drive it (chapter five): one command bar; the chosen verb fills with ink */
-.nd-drive { margin-top: 24px; display: inline-flex; align-items: center; gap: 2px; padding: 3px 3px 3px 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); font: 500 15px/1 var(--mono); }
+.nd-drive { align-self: flex-start; margin-top: 24px; display: inline-flex; align-items: center; gap: 2px; padding: 3px 3px 3px 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); font: 500 15px/1 var(--mono); }
 .nd-drive-p { margin-right: 10px; color: #737373; }
 .nd-drive button { min-width: 64px; height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font: inherit; color: #0a0a0a; cursor: pointer; touch-action: manipulation; transition: background-color .15s var(--e-out), color .15s var(--e-out), transform .15s var(--e-out); }
 .nd-drive button[aria-pressed='true'] { background: #0a0a0a; color: #fff; }
 .nd-drive button:active { transform: scale(.97); transition-duration: .09s; }
 
-/* every text link presses (the kit's lx-text has no :active) */
+/* every text link presses; the page's own text links part their drawn underline (3px) and go to ink on hover */
 .nd .lx-text { transition: text-decoration-color .15s var(--e-out), transform .15s var(--e-out); }
 .nd .lx-text:active { transform: translateY(1px); transition-duration: .09s; }
-/* the page's own text links answer like the rest of it: the underline is a drawn stroke that parts from the words
-   (3px) and goes to ink on hover; Node docs' arrow nudges on */
-.nd-hero .lx-text, .nd-put .lx-text { position: relative; text-decoration: none; }
-.nd-hero .lx-text::after, .nd-put .lx-text::after { content: ''; position: absolute; left: 0; right: 0; bottom: 11px; height: 1px; background: currentColor; opacity: .3; transition: transform .3s var(--e-io), opacity .15s var(--e-out); }
+.nd-hero-copy .lx-text, .nd-put .lx-text { position: relative; text-decoration: none; }
+.nd-hero-copy .lx-text::after, .nd-put .lx-text::after { content: ''; position: absolute; left: 0; right: 0; bottom: 11px; height: 1px; background: currentColor; opacity: .3; transition: transform .3s var(--e-io), opacity .15s var(--e-out); }
 .nd-docs-arr { display: inline-block; transition: transform .3s var(--e-io); }
 
 /* the quiet room: put a machine on the fabric (5 words | 8 prompt) */
 .nd-put { padding: clamp(72px, 11vw, 188px) 0; }
 .nd-put-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: clamp(32px, 5vw, 72px); align-items: end; }
 .nd-put-l .lx-lede { margin: 20px 0 32px; }
+.nd-put-r { min-width: 0; }
 .nd .cf-paste-t { color: #0a0a0a; }
 .nd .cf-paste-d { color: #525252; }
 .nd .cf-paste-box { border-radius: 16px; background: #171717; color: #fafafa; }
@@ -198,88 +189,86 @@ html.js .nd-term-body > * { animation: nd-line .4s var(--lx-ease) both; }
 .nd-docs .lx-kick { color: #525252; }
 .nd-docs-a { font: 500 17px/1.3 var(--sans); color: #0a0a0a; min-height: 44px; display: inline-flex; align-items: center; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(0, 0, 0, .3); transition: text-decoration-color .15s var(--e-out), transform .15s var(--e-out); }
 .nd-docs-a:active { transform: scale(.97); transition-duration: .09s; }
+/* the Copy confirm swaps together: on Copied only the tick shows, and back */
+.nd .x-copy[aria-label='Copied'] svg:has(rect), .nd .x-copy:not([aria-label='Copied']) svg:not(:has(rect)) { display: none; }
 
 @media (hover: hover) {
-  .nd-lv button:hover { color: #0a0a0a; background: #ededed; }
-  .nd-lv button:hover b { background: #525252; }
-  .nd-lv button.on:hover b { background: #0a0a0a; }
+  .nd .lx-cta:hover svg, .nd .lx-ghost:hover svg { transform: translateX(4px); }
+  .nd-tenth:hover .nd-tenth-p { transform: rotate(90deg); background: #0a0a0a; color: #fff; }
+  .nd-rail button:hover { background: #ededed; }
+  .nd-rail button:hover i { background: #737373; }
+  .nd-rail button[aria-current]:hover i { background: #0a0a0a; }
+  .nd-ladder button:hover { background: #ededed; }
+  .nd-ladder button:hover b { background: #737373; }
+  .nd-ladder button.on:hover b { background: #0a0a0a; }
   .nd-drive button:not([aria-pressed='true']):hover { background: #ededed; }
   .nd-docs-a:hover { text-decoration-color: currentColor; }
-  .nd-hero .lx-text:hover::after, .nd-put .lx-text:hover::after { transform: translateY(3px); opacity: 1; }
+  .nd-hero-copy .lx-text:hover::after, .nd-put .lx-text:hover::after { transform: translateY(3px); opacity: 1; }
   .nd-docs-a:hover .nd-docs-arr { transform: translateX(6px); }
 }
-/* the Copy confirm swaps together: on Copied only the tick shows, with no copy icon fading behind it, and back */
-.nd .x-copy[aria-label='Copied'] svg:has(rect), .nd .x-copy:not([aria-label='Copied']) svg:not(:has(rect)) { display: none; }
 @media (hover: hover) and (pointer: fine) { .nd-lean { will-change: transform; } }
 
+/* ---------- phones: no pin; the hero words, then the machine, then each chapter with its own small machine ---------- */
 @media (max-width: 899px) {
-  /* phone floor (14px) for the kit's lowercase mono captions on this page */
   .nd .cf-paste-k, .nd .cf-api, .nd .cf-api i, .nd .lx-close-facts { font-size: 14px; }
-  .nd-hero { padding: 20px 0 64px; }
-  .nd-hero-grid { grid-template-columns: minmax(0, 1fr); row-gap: 32px; }
-  .nd-hero-copy { order: -1; }
+  .nd-run { padding: 20px 0 72px; }
+  .nd-run-grid { display: flex; flex-direction: column; }
+  .nd-run-copy { display: contents; }
+  .nd-hero-copy { order: 0; min-height: 0; padding: 0; }
+  .nd-run-obj { order: 1; height: auto; margin-top: 28px; }
+  .nd-run-stick { position: static; }
+  .nd-rail { display: none; }
+  .nd-why { order: 2; padding: 64px 0 24px; }
+  .nd-ch { order: 3; display: grid; gap: 56px; }
+  .nd-ch > li { min-height: 0; padding: 0; }
+  .nd-ch-t { font-size: 26px; }
+  .nd-ch-d { font-size: 16px; }
+  .nd-ch-mac { display: block; margin-top: 20px; }
   .nd-sub { margin-top: 12px; }
   .nd-lede { margin: 12px 0 20px; }
-  .nd-mac-top { height: 56px; padding: 0 4px; }
-  .nd-status { font-size: 14px; }
-  .nd-cmd { margin: 0 6px; padding: 14px 16px; font-size: 15px; }
-  .nd-mac-grid { grid-template-columns: minmax(0, 1fr); padding: 6px; gap: 6px; }
-  .nd-net { display: none; }
-  .nd-cell { padding: 14px; border-radius: 12px; }
-  .nd-k { font-size: 12px; }
-  .nd-k2 { font-size: 14px; }
-  .nd-hw li { height: 40px; }
-  /* phone: the five levels become five 44px columns whose height is the share; the lit one is named below */
-  .nd-lv ol { margin: 0; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; align-items: end; }
-  .nd-lv button { display: flex; align-items: flex-end; justify-content: center; height: 64px; padding: 6px; border-radius: 8px; background: #fff; }
-  .nd-lv button i { width: 100%; height: 100%; display: flex; align-items: flex-end; background: none; border-radius: 6px; }
-  .nd-lv button b { width: 100%; height: 100%; border-radius: 6px; transform: scaleY(var(--s)); transform-origin: 50% 100%; }
-  .nd-lv button span { display: none; }
-  .nd-lv-now { display: block; margin: 10px 0 0; font: 500 14px/1.3 var(--mono); color: #0a0a0a; }
-  .nd-lux li, .nd-lux li b { font-size: 14px; }
-  .nd-lux ul li:not(.new):not(.wait) { display: none; }
-  .nd-lux ul { min-height: 0; }
-  .nd-sheet li { grid-template-columns: 36px 1fr; gap: 6px 12px; padding: 14px 0; }
+  .nd-mac { padding: 6px; border-radius: 20px; }
+  .nd-mac-top { height: 56px; gap: 10px; padding: 0 8px 0 4px; }
+  .nd-mac-r { font-size: 14px; }
+  .nd-cmd { padding: 14px 16px; font-size: 15px; border-radius: 14px; }
+  .nd-read { min-height: 0; margin-top: 6px; padding: 20px 16px 18px; border-radius: 14px; }
+  .nd-big { font-size: 28px; min-height: 2.2em; }
+  .nd-ladder { padding-top: 16px; gap: 6px; }
+  .nd-ladder button { height: 72px; }
+  .nd-quiet { font-size: 14px; }
+  .nd-lux { flex-wrap: wrap; gap: 8px; }
+  .nd-chain li { width: 12px; height: 12px; }
+  .nd-tenth-v { font-size: 52px; }
+  .nd-tenth-l { font-size: 17px; }
+  .nd-r0 li { font-size: 28px; }
+  .nd-r1 { margin-top: 16px; gap: 10px; }
+  .nd-r1 li { grid-template-columns: minmax(0, 1fr) 72px; gap: 12px; font-size: 14px; }
+  .nd-r2 li { grid-template-columns: minmax(0, 1fr); gap: 6px; min-height: 0; padding: 12px 14px; }
+  .nd-r2 span { font-size: 14px; }
+  .nd-r3 li { font-size: 44px; }
+  .nd-r4 { font-size: 21px; margin-bottom: 0; }
+  .nd-r4-ps li { grid-template-columns: 12px auto; padding: 10px 14px; }
+  .nd-r4-ps span { grid-column: 2; font-size: 14px; }
+  .nd-r5 { gap: 6px; }
+  .nd-r5 li { height: 44px; border-radius: 8px; }
+  .nd-r5-t { font-size: 21px; }
+  .nd-sheet li { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 14px 0; }
   .nd-sheet b { font-size: 17px; }
-  .nd-sheet i { grid-column: 2; }
-  /* the pinned scene stacks: each chapter, then its own terminal at its true height */
-  .nd-pin { display: none; }
-  .nd-stack { display: block; padding: 8px 0 clamp(72px, 11vw, 116px); }
-  .nd-stack-l { list-style: none; margin-block: 0; padding: 0; display: grid; gap: 72px; }
-  .nd-stack-l > li { min-width: 0; }
-  .nd-stack-k { margin-top: 10px; }
-  .nd-stack .nd-term { margin-top: 20px; }
-  .nd-term { min-height: 0; border-radius: 16px; }
-  .nd-term-bar { height: 36px; }
-  .nd-term-bar span { font-size: 14px; }
-  .nd-term-body { padding: 16px 14px 18px; gap: 10px; font-size: 14px; line-height: 1.3; justify-content: flex-start; }
-  .nd-t-hw { gap: 5px; }
-  .nd-t-hw b { padding: 6px 8px; }
-  .nd-t-lv { gap: 3px; }
-  .nd-t-lv li { grid-template-columns: 1fr 64px; gap: 10px; }
-  .nd-t-ask, .nd-t-tier, .nd-t-ps, .nd-t-roots { gap: 6px; }
-  .nd-t-ask li, .nd-t-tier li, .nd-t-ps li, .nd-t-roots li { min-height: 38px; padding: 0 12px; gap: 10px; border-radius: 8px; }
-  .nd-t-ask code { min-width: 76px; }
-  .nd-t-ask span { font-size: 14px; }
-  .nd-t-ps li { grid-template-columns: 60px 1fr; padding: 4px 12px; }
-  .nd-t-ps span { display: none; }
-  .nd-t-ps em { font-size: 14px; }
-  .nd-drive { margin-top: 12px; font-size: 14px; padding-left: 12px; }
+  .nd-drive { margin-top: 16px; font-size: 14px; padding-left: 12px; }
   .nd-drive-p { margin-right: 4px; }
   .nd-drive button { min-width: 52px; padding: 0 10px; }
   .nd-put-grid { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
   .nd .x-copy-t { font-size: 14px; }
   .nd-docs { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  html.js .nd-term-body > *, .nd-lux li.new { animation: none; }
-  .nd-b, .nd-t-tier .yes::before, .nd-t-tier .no span::after, .nd-t-tier .no b::after, .nd-roll .nd-col > span, .nd-docs-arr { transition: none !important; }
-  .nd-caret.on { animation: none; opacity: 1; }
-  .nd-lean, .nd-peers b { transition: none; }
-}
 @media (max-width: 360px) {
-  .nd-mac, .nd-mac-grid { padding: 4px; }
-  .nd-lv { padding: 12px 8px; }
-  .nd-lv ol { gap: 3px; }
+  .nd-mac { padding: 4px; }
+  .nd-read { padding: 16px 12px; }
   .nd-drive-p { display: none; }
+  .nd-r3 li { font-size: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .nd-h1 .lx-line > span, .nd-big-in.cut, .nd-chain li.new, .nd-r4 { animation: none; }
+  .nd-b, .nd-r3 .yes::before, .nd-r3 .no::after, .nd-col > span, .nd-docs-arr, .nd-ch > li > * { transition: none !important; }
+  .nd-caret.on { animation: none; opacity: 1; }
+  .nd-lean { transition: none; }
 }
