@@ -1,14 +1,14 @@
 'use client';
 /* Persona: developers who run coding agents in shells on their own machines. Goal: open Tabs. CTA: "Open Tabs" → tabs.hanzo.ai. Metric: signup_start (app handoff).
-   Tabs, v2. V2: 8/10 Stage window (shell panes and their tree arrive huge and settle), three pinned chapters on why it is shaped this way, a linked-machines map, a dark tile room, greys only
+   Tabs. V2: 7/10 the window is the hero (name and address in its own bar, the tree in its sidebar), pinned chapters, a linked-machines map, a dark room of four running objects closing on one ask, greys only
    Keep tabs on your agents.
    Signature: the layout is a tree, drawn live. Shell panes split themselves inside a browser window while the tree
    beside them grows a branch for every split; close a pane and its sibling takes the space, and nothing else moves.
    Split and close them yourself.
    Beyond: the phone flip. The same tree, turned into what Tabs does on a phone: swipeable pages instead of slivers,
    with the key row a soft keyboard lacks (Esc, Ctrl, Tab and the arrows).
-   Motion budget: signature = the live tree (layout re-flow); supporting = Stage (Settle), Chapters (PinChapters),
-   magnetic primary. Colour: none (0 UI hues; no terminal green). Pause buttons on the self-running tree and chapter
+   Motion budget: signature = the live tree (layout re-flow); supporting = Settle, Chapters (PinChapters),
+   magnetic primary. No springs (ease-emphasis 300ms). Scale rhythm via Rhythm.css (h1 52, h2 26). Colour: none (0 UI hues; no terminal green). Pause buttons on the self-running tree and chapter
    visuals. One dark room: "What you get". Every word is Hanzo's. */
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
@@ -22,6 +22,7 @@ import PinChapters from '../v2/x-gauss/PinChapters';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
+import '../v2/x-gauss/Rhythm.css';
 import './Tabs.css';
 
 const START = { id: 's0', dir: 'row', a: leaf('p1', 'build'), b: leaf('p2', 'work') };
@@ -36,7 +37,7 @@ const DOOMED = [null, null, 'p3', 'p4']; // the pane about to close glows first
 
 function Pane({ p, act, doomed, hand }) {
   return (
-    <motion.div layout layoutId={'xtb-' + p.id} className={'xtb-pane' + (doomed ? ' doomed' : '')} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+    <motion.div layout layoutId={'xtb-' + p.id} className={'xtb-pane' + (doomed ? ' doomed' : '')} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
       <div className="xtb-pane-bar">
         <span className="x-mono">{p.name}</span>
         <span className="xtb-pane-acts">
@@ -89,7 +90,7 @@ function Phone({ list }) {
       onPointerUp={(e) => { const d = x0.current == null ? 0 : e.clientX - x0.current; x0.current = null; if (Math.abs(d) > 36) setAt(Math.max(0, Math.min(list.length - 1, i + (d < 0 ? 1 : -1)))); }}>
       <div className="xtb-phone-top x-mono"><span>{list[i].name}</span><span>{i + 1} / {list.length}</span></div>
       <div className="xtb-phone-pages">
-        <motion.div className="xtb-phone-track" animate={{ x: -i * 100 + '%' }} transition={{ type: 'spring', stiffness: 300, damping: 32 }}>
+        <motion.div className="xtb-phone-track" animate={{ x: -i * 100 + '%' }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
           {list.map((p) => (
             <div key={p.id} className={'xtb-pane-body' + (p.name === 'build' ? ' run' : '')} aria-hidden="true"><i /><i /><i /><i /><span className="x-mono"><b>$</b>{key && p.id === list[i].id ? <kbd>{key}</kbd> : null}<em /></span></div>
           ))}
@@ -215,10 +216,10 @@ function SpaceTree({ on }) {
   return (
     <div className="xtb-v tree" aria-hidden="true">
       <div className="xtb-v-grid">
-        <motion.div layout className="xtb-v-p a" transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">build</span></motion.div>
-        <motion.div layout className="xtb-v-col" transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
-          <motion.div layout className="xtb-v-p b" transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">work</span></motion.div>
-          {!shut && <motion.div layout className="xtb-v-p c" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">shell 3</span></motion.div>}
+        <motion.div layout className="xtb-v-p a" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="x-mono">build</span></motion.div>
+        <motion.div layout className="xtb-v-col" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+          <motion.div layout className="xtb-v-p b" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="x-mono">work</span></motion.div>
+          {!shut && <motion.div layout className="xtb-v-p c" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="x-mono">shell 3</span></motion.div>}
         </motion.div>
       </div>
       <p className="xtb-v-note x-mono">{shut ? 'closed · the sibling takes the space' : 'split ⇅ · two siblings'}</p>
@@ -315,7 +316,7 @@ function What() {
 
 export default function Tabs() {
   return (
-    <main className="xtb w2">
+    <main id="main" className="xtb w2 gx">
       <NoJs />
       <Hero />
       <Why />
