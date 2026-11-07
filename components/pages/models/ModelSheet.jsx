@@ -221,7 +221,7 @@ export default function ModelSheet({ doc }) {
           <div className="x-wrap xmf-quick-g">
             <header className="xmf-sh dark">
               <h2>{doc.quick.title}</h2>
-              <p className="x-mono xmf-quick-id">{doc.id}</p>
+              <p className="x-mono xmf-quick-id"><i className="xmf-live" aria-hidden="true" />{doc.id}</p>
             </header>
             <Codes samples={doc.quick.samples} keyLink={doc.quick.key} title={doc.quick.title} />
           </div>

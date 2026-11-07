@@ -593,6 +593,11 @@
 .xmf-also::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, .045) 50%, rgba(0, 0, 0, 0)) 0 -240px / 100% 240px no-repeat; animation: xmf-shelf-light 7s linear infinite; }
 .xmf-code .x-codeblock-l:last-child::after { content: ''; display: inline-block; width: 8px; height: 1.1em; margin-left: 3px; vertical-align: -2px; background: #a3a3a3; animation: xmf-caret 1.1s steps(2, jump-none) infinite; }
 @keyframes xmf-caret { 50% { opacity: 0; } }
+.xmf-live { display: inline-block; width: 7px; height: 7px; margin-right: 10px; border-radius: 50%; background: #fafafa; vertical-align: 1px; animation: xmf-live 2s cubic-bezier(0, 0, .2, 1) infinite; }
+@keyframes xmf-live { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .5); } 70%, 100% { box-shadow: 0 0 0 7px rgba(255, 255, 255, 0); } }
+[data-mpaused] .xmf-live { animation-play-state: paused; }
+@media (min-width: 900px) { .xmf-quick .xmf-sh { position: sticky; top: 148px; } }
+@media (prefers-reduced-motion: reduce) { .xmf-live { animation: none; } }
 [data-mpaused] .xmf-rb-r i::after, [data-mpaused] .xmf-also::before, [data-mpaused] .xmf-code .x-codeblock-l:last-child::after { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .xmf-rb-r i::after, .xmf-also::before, .xmf-code .x-codeblock-l:last-child::after { animation: none; background: none; } }
 
@@ -610,8 +615,10 @@
 .xmf-also-a b i { display: inline-block; margin-left: 8px; font-style: normal; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
 .xmf-also-c { grid-column: 3; grid-row: 1; font-size: 13px; color: var(--soft); }
 .xmf-also-d { grid-column: 2; grid-row: 1; font-size: 13px; line-height: 18px; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; opacity: 0; transform: translateY(4px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xmf-also-a:hover { background: #f5f5f5; }
+.xmf-pick button:not([aria-pressed='true']):hover { background: #f5f5f5; }
+.xmf-pick button { transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) {
-  .xmf-also-a:hover { background: #f5f5f5; }
   .xmf-also-a:hover b i { transform: translateX(4px); }
   .xmf-also-a.far:hover b i { transform: translate(3px, -3px); }
   .xmf-also-a:hover .xmf-also-d { opacity: 1; transform: none; }
