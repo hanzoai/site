@@ -2,18 +2,20 @@
 // Persona: a developer choosing a coding agent (MASTER 1: developers).
 // Goal: open Dev, or install it. Metric: signup_start (install_copy on the install commands).
 // CTA: "Open Dev" -> /login?next=%2Fdev (hero, header ask bar, closing Band).
-// Signature: a live terminal session where the diff lands in the file beside it, then a staged race whose 3.02x grows as the moment.
+// Signature: compare (MOTION-MAP): the file beside the self-running session is a before / after slider; when Dev's change lands the divider sweeps in by itself, then the visitor drags it (or uses the arrow keys) across src/retry.ts before and after.
 // Beyond: the race, each side's median task replayed at the speed it ran.
-/* Hanzo Dev (MASTER 4.1, Launch: "Dev is a terminal with a diff landing"). One idea per screen:
-     1. "Describe the change. Dev ships it." Dev at work: the session writes, the diff lands in src/retry.ts beside it.
-     2. The race, in the black room: the room opens out, the 3.02x figure grows from 64px to the moment as you reach it,
-        then each side replays its median task at the speed it ran, once (pause and replay).
-     3. Wherever the work is: terminal, web, cloud and Slack, each as its own small UI, on a rail you throw.
-     4. How it works, as sheets that stack: models, the Kai controller, proof, the sandbox fence, Gen.
-     5. Install: three ways as tabs, one command at a time, then sign in. 6. Source, then questions and reading folded.
+/* Hanzo Dev (MASTER 4.1, Launch: "Dev is a terminal with a diff landing"). Order (no shared sequence, MOTION-MAP):
+     1. "Describe the change. Dev ships it." Dev at work, the file beside it as a before / after slider (the signature).
+     2. Wherever the work is: terminal, web, cloud and Slack, each its own small UI, on a rail you throw.   [stack-drop]
+     3. How it works, sheet after sheet: models, the Kai controller, proof, the sandbox fence, Gen.        [letter-cascade]
+     4. The race, in the black room: each side replays its median task at the speed it ran (pause, replay).  [pendulum]
+     5. Install: three ways as tabs, then sign in.                                                           [slot-roll]
+     6. Source (the repository card), then questions and reading folded.                                     [zoom-through]
      7. Paste and ship, then the closing Band.
-   Motion mix (JAMES.md 9): time (the session, the race), arrival (h1 line mask, terminal entry), pointer (the thrown rail,
-   ladder and row previews), state (tab and row pills at 300 ms ease-emphasis, the fence), scroll (the race room only).
+   No pinned scene and no scroll-scrubbed reveal (MOTION-MAP rule 3); each section enters its own way (components/pages/dev/enter.jsx).
+   V2: 7/10 motion map: compare signature in the hero file pane (before / after slider, swept in when the change lands, draggable and keyed), five page-local entrances (stack-drop, letter-cascade, pendulum, slot-roll, zoom-through), race unpinned, sheets in plain flow, section order changed.
+   Motion mix (JAMES.md 9): time (the session, the race), arrival (h1 line mask, the five entrances), pointer (the
+   divider, the thrown rail, ladder and row previews), state (tab and row pills at 300 ms ease-emphasis, the fence).
    Deck greys only; a status reads by its shape (+ and -, ticks), never a hue. Every word, figure and link is Hanzo's;
    only the code in the sample session is an illustration. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -22,6 +24,7 @@ import { useDemo, DemoCtl } from '../v2/AppDemo';
 import { EASE } from '../ui';
 import { A, Faq, Cta, Band, CodeBlock, Tabs, TabPanel } from '../kit';
 import AppLines from '../v2/AppLines';
+import { In, Cascade, Roll } from './dev/enter';
 import useCalm from '../v2/useCalm';
 import './DevPage.css';
 
@@ -56,22 +59,50 @@ const HOT = 2; // the line the change lands on
 const HIGHLIGHTS = ['Reads the repository, makes the change and runs the tests', 'Shows you the diff and waits for your review', 'In your terminal, on the web, in the cloud and in Slack', 'Enso by default, every Hanzo model by name'];
 const ASK = 'Describe the change.'; // what you give Dev, in Hanzo's own words
 
-/* the file beside the session: Dev reads it, and the edit lands on line 2 */
-function File({ stage, pre }) {
+/* the signature (MOTION-MAP: compare): the file beside the session is a before / after slider. Before Dev's change the
+   whole pane is the file as it was; when the change lands the divider sweeps to the middle by itself, and from then on
+   the visitor drags it (or uses the arrow keys) to compare the file before and after the edit. */
+function Src({ after }) {
   return (
-    <div className={'xdv-file s' + stage + (pre ? ' pre' : '')} aria-hidden="true">
+    <ol className="xdv-src x-mono">
+      {FILE.map((l, i) => (
+        <li key={i} className={i === HOT ? (after ? 'hot add' : 'hot del') : ''}>
+          <span className="n">{i + 1}</span>
+          <span><b className="sg">{i === HOT ? (after ? '+' : '−') : ' '}</b>{i === HOT && after ? FIXED : l}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+function File({ stage, pre }) {
+  const [pos, setPos] = useState(50); // the divider, in % of the pane's width; the server shows it at rest, mid-way
+  const [held, setHeld] = useState(false); // the visitor has taken the divider: the demo no longer moves it
+  const box = useRef(null);
+  useEffect(() => {
+    if (held) return;
+    if (pre || stage < 2) { setPos(100); return; } // before the change: the whole pane is the file as it was
+    let raf = 0; const t0 = performance.now();
+    const step = (t) => { const k = Math.min(1, (t - t0) / 900); setPos(100 - 50 * (1 - Math.pow(1 - k, 3))); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [stage, pre, held]);
+  const at = (x) => { const r = box.current.getBoundingClientRect(); setHeld(true); setPos(Math.max(0, Math.min(100, ((x - r.left) / r.width) * 100))); };
+  const down = (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    at(e.clientX);
+  };
+  return (
+    <div className={'xdv-file s' + stage + (pre ? ' pre' : '')}>
       <div className="xdv-file-tab x-mono"><i />src/retry.ts<em className="xdv-file-ct"><b>+1</b> <s>−1</s> <u>M</u></em></div>
-      {/* the change lands as a hunk: the old line is struck through as it leaves, the new one wipes in under it */}
-      <ol className="xdv-src x-mono">
-        {FILE.map((l, i) => (
-          i === HOT ? [
-            <li key="del" className="del" style={{ '--i': i }}><span className="n">{i + 1}</span><span><b className="sg">−</b>{l}</span></li>,
-            <li key="add" className="add" style={{ '--i': i }}><span className="n">{i + 1}</span><span><b className="sg">+</b>{FIXED}</span></li>,
-          ] : (
-            <li key={i} style={{ '--i': i }}><span className="n">{i + 1}</span><span><b className="sg"> </b>{l}</span></li>
-          )
-        ))}
-      </ol>
+      <div className="xdv-cmp" ref={box} style={{ '--p': pos + '%' }}
+        onPointerDown={down} onPointerMove={(e) => { if (e.currentTarget.hasPointerCapture(e.pointerId)) at(e.clientX); }}>
+        <div className="xdv-cmp-a" aria-hidden="true"><Src /></div>
+        <div className="xdv-cmp-b" aria-hidden="true"><Src after /></div>
+        <span className="xdv-cmp-bar" aria-hidden="true"><i /></span>
+        <input className="xdv-cmp-r" type="range" min="0" max="100" step="1" value={Math.round(pos)} aria-label="src/retry.ts −1 +1"
+          onChange={(e) => { setHeld(true); setPos(+e.target.value); }} />
+      </div>
     </div>
   );
 }
@@ -216,11 +247,6 @@ function Race() {
   const t = useMotionValue(MAX); // the server shows the finished race (JS off); the browser sets it ready at once
   // with motion the board starts ready (0.00 s) and races when reached; with reduced motion it shows the finished race
   useEffect(() => { t.set(matchMedia('(prefers-reduced-motion: reduce)').matches ? MAX : 0); }, [calm, t]);
-  // the room's edges open out as it arrives, and the figure grows from its resting 64px to the moment
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.1'] });
-  const k = (v) => Math.min(1, Math.max(0, v));
-  const clip = useTransform(p, (v) => { const r = 1 - k(v); return `inset(0 ${(r * 4.5).toFixed(2)}vw round ${(r * 24).toFixed(1)}px)`; });
-  const grow = useTransform(p, (v) => 0.4 + 0.6 * k((v - 0.35) / 0.65));
   const demo = useDemo(board, async (sleep) => {
     let v = 0;
     t.set(0);
@@ -228,23 +254,23 @@ function Race() {
     while (v < MAX) { await sleep(32); v = Math.min(MAX, v + 0.032); t.set(v); }
   }, { amount: 0.3 }); // a third of the board on screen (on a phone the two clocks stack, so the whole board never fits)
   return (
-    <motion.section className="xdv-race" data-room="dark" ref={ref} aria-labelledby="xdv-race" style={calm ? undefined : { clipPath: clip }}>
+    <section className="xdv-race" data-room="dark" ref={ref} aria-labelledby="xdv-race">
       <div className="xdv-race-pin">
         <div className="v2a-wrap">
           <div className="v2a-grid xdv-race-top">
-            <h2 className="xdv-race-h" id="xdv-race"><motion.span className="xdv-big v2a-fig" style={calm ? undefined : { scale: grow }}>3.02×</motion.span> <span className="xdv-race-t">faster on the same coding tasks.</span></h2>
+            <h2 className="xdv-race-h" id="xdv-race"><span className="xdv-big v2a-fig">3.02×</span> <span className="xdv-race-t">faster on the same coding tasks.</span></h2>
             <p className="xdv-race-l">Hanzo Dev and Claude Code were handed the same 44 coding tasks (single-fault repairs), one try each. Each clock replays that side's median time a task, at the speed it ran.</p>
           </div>
-          <div className="xdv-split" ref={board}>
+          {/* entrance 3 (pendulum): the two sides swing in from their top edge and settle */}
+          <In kind="pendulum" className="xdv-split" boxRef={board}>
             {SIDES.map((s) => <Side key={s.who} t={t} side={s} />)}
-          </div>
+          </In>
           <div className="xdv-race-act">
             <Ctl demo={demo} className="dark" />
             <Cta kind="quiet" onClick={demo.replay} id="dev.race" className="xdv-replay-btn">Replay race</Cta>
           </div>
         </div>
       </div>
-      <div className="xdv-race-hold" aria-hidden="true" />
       <div className="xdv-race-after"><div className="v2a-wrap">
         <ul className="x-sr">{SIDES.map((s) => <li key={s.who}>{s.who}: {s.s.toFixed(2)} s median time a task, {s.calls} model calls a task</li>)}</ul>
         <div className="v2a-grid xdv-verdict-row">
@@ -267,7 +293,7 @@ function Race() {
           </div>
         </div>
       </div></div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -320,7 +346,7 @@ function Places() {
     <section className="v2a-sec xdv-places" aria-labelledby="xdv-pl-h">
       <div className="v2a-wrap v2a-grid xdv-pl-head">
         <div className="xdv-pl-hl">
-          <AppLines as="h2" view id="xdv-pl-h" className="v2a-head" lines={['Wherever the work is.']} />
+          <h2 id="xdv-pl-h" className="v2a-head">Wherever the work is.</h2>
           <p className="v2a-folio">One agent</p>
         </div>
         <div className="xdv-pl-hr">
@@ -332,10 +358,11 @@ function Places() {
           </div>
         </div>
       </div>
-      <div className="xdv-pl-view" ref={view} data-drag={drag ? '' : undefined}>
+      {/* entrance 1 (stack-drop): the four places drop from above and stack onto their places, one after another */}
+      <In kind="stack-drop" className="xdv-pl-view" boxRef={view} data-drag={drag ? '' : undefined}>
         <motion.ul className="xdv-pl" ref={track} style={{ x }} drag={drag ? 'x' : false} dragConstraints={{ left: -lim, right: 0 }} dragElastic={0.08} dragTransition={{ power: 0.35, timeConstant: 320 }}>
-          {PLACES.map(([name, tag, d, g]) => (
-            <Play as="li" key={name} className="xdv-pl-card">
+          {PLACES.map(([name, tag, d, g], i) => (
+            <Play as="li" key={name} className="xdv-pl-card" style={{ '--d': i }}>
               <div className={'xdv-pl-art ' + g} aria-hidden="true"><Scene g={g} /></div>
               <div className="xdv-pl-txt">
                 <h3>{name}</h3>
@@ -345,7 +372,7 @@ function Places() {
             </Play>
           ))}
         </motion.ul>
-      </div>
+      </In>
       <div className="v2a-wrap xdv-pl-more"><Lk to={OPEN} id="dev.web">Open Dev on the web</Lk></div>
     </section>
   );
@@ -384,17 +411,18 @@ function Rows({ list, at, set, label }) {
 
 function Sheet({ n, kick, title, lede, links, children }) {
   return (
-    <Play as="article" className={'xdv-sheet' + (n % 2 ? ' flip' : '')} style={{ '--k': n }}>
+    // entrance 2 (letter-cascade): as each sheet arrives its title's letters fall into place one by one
+    <In as="article" kind="letter-cascade" amount={0.3} className={'xdv-sheet' + (n % 2 ? ' flip' : '')} style={{ '--k': n }}>
       <div className="xdv-sheet-in v2a-grid">
         <div className="xdv-sheet-l">
-          <h3 className="v2a-head">{title}</h3>
+          <h3 className="v2a-head"><Cascade text={title} /></h3>
           {lede && <p className="v2a-body xdv-sheet-lede">{lede}</p>}
           {links && <div className="xdv-sheet-links">{links}</div>}
           <p className="v2a-folio xdv-sheet-f"><span className="x-mono">{String(n + 1).padStart(2, '0')}</span>{kick}</p>
         </div>
         <div className="xdv-sheet-r">{children}</div>
       </div>
-    </Play>
+    </In>
   );
 }
 
@@ -475,11 +503,12 @@ const SIGNIN = 'dev login                 # pick an account: Hanzo is the defaul
 function Setup() {
   const [way, setWay] = useState(0);
   return (
-    <section className="v2a-sec xdv-setup" id="install" aria-labelledby="xdv-in-h">
+    // entrance 4 (slot-roll): the heading's letters roll up into place like a slot machine
+    <In as="section" kind="slot-roll" amount={0.25} className="v2a-sec xdv-setup" id="install" aria-labelledby="xdv-in-h">
       <div className="v2a-wrap">
         <div className="v2a-grid xdv-in-head">
           <div className="xdv-in-hl">
-            <AppLines as="h2" view id="xdv-in-h" className="v2a-head" lines={['One line, three ways.']} />
+            <h2 id="xdv-in-h" className="v2a-head"><Roll text="One line, three ways." /></h2>
             <p className="v2a-folio">Install</p>
           </div>
           <p className="v2a-body xdv-in-hr">Linux, macOS and Windows. Dev updates itself the way it was installed.</p>
@@ -504,7 +533,7 @@ function Setup() {
           </div>
         </div>
       </div>
-    </section>
+    </In>
   );
 }
 
@@ -526,7 +555,7 @@ function Source() {
     <section className="v2a-sec xdv-oss" aria-labelledby="xdv-oss-h">
       <div className="v2a-wrap v2a-grid xdv-oss-top">
         <div className="xdv-oss-l">
-          <AppLines as="h2" view id="xdv-oss-h" className="v2a-head" lines={['Read every line.']} />
+          <h2 id="xdv-oss-h" className="v2a-head">Read every line.</h2>
           <p className="v2a-folio">Open source</p>
         </div>
         <div className="xdv-oss-r">
@@ -536,12 +565,13 @@ function Source() {
       </div>
       {/* the repository as an object: its name, licence and latest release, all words already on this page */}
       <div className="v2a-wrap">
-        <Play className="xdv-repo x-mono" aria-hidden="true">
+        {/* entrance 5 (zoom-through): the repository flies in from far behind the screen */}
+        <In kind="zoom-through" amount={0.3} className="xdv-repo x-mono" aria-hidden="true">
           <span className="xdv-repo-n"><i />hanzoai/dev</span>
           <span className="xdv-repo-t">Apache-2.0</span>
           <span className="xdv-repo-t">v0.7.7</span>
           <span className="xdv-repo-tree">{FILE.map((l, i) => <b key={i} style={{ '--i': i }}>{l || ' '}</b>)}</span>
-        </Play>
+        </In>
       </div>
       <div className="v2a-wrap v2a-grid xdv-qa">
         <div className="xdv-qa-l">
@@ -596,9 +626,9 @@ export default function DevPage() {
   return (
     <main className="xdv">
       <Hero />
-      <Race />
       <Places />
       <How />
+      <Race />
       <Setup />
       <Source />
       <Paste />
