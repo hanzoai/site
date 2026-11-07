@@ -7,12 +7,12 @@
    Usage (last child of the page's <main>):
      <AskBar title="Leaderboard" label="Open bounties" to="/bounty" />
    Props: title (the page's own name), label + to (the hero's ask, verbatim), hero (CSS selector of the hero; default
-   the first section in <main>). Press is scale .98; the arrow nudges on hover. Reduced motion: it simply appears. */
+   the first section in <main>), cta (the data-cta id, same as the hero's). Press is scale .98; the arrow nudges on hover. Reduced motion: it simply appears. */
 import { useEffect, useRef, useState } from 'react';
 import { A } from '../kit';
 import './AskBar.css';
 
-export default function AskBar({ title, label, to, hero }) {
+export default function AskBar({ title, label, to, hero, cta }) {
   const ref = useRef(null);
   const [on, setOn] = useState(false);
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function AskBar({ title, label, to, hero }) {
   return (
     <div ref={ref} className="pf-ask" data-on={on} aria-hidden={!on} inert={!on}>
       <span className="pf-ask-t">{title}</span>
-      <A to={to} className="pf-ask-b">
+      <A to={to} className="pf-ask-b" data-cta={cta}>
         <span>{label}</span>
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </A>
