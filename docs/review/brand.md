@@ -1,91 +1,38 @@
 # /brand — James-eye review
 
-Verdict: 6/10
-First complaint: "The logo moves for a second, then the whole page just sits there. I scroll and it's a document: nothing comes in, nothing goes out. And the top looks like the press page."
+Verdict: 7/10
+First complaint: "There's a red error badge in the corner every time it loads, and the principles screen is in your face: a huge heading and a giant number at the same time."
 
-Walked 7 Nov, page file at `215d6ed` (`components/pages/Brand.jsx`, `Brand.css`), HEAD `94acb12`. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus a return visit without the curtain, reduced motion, JS off, and 320 wide. Stills: `review/brand/desktop-walk.jpg`, `review/brand/phone-walk.jpg`.
+Walked 2026-11-07 16:33 UTC, HEAD e584018d, at 1470x801 and 375x812 (isMobile, touch). First screen sampled at 0.2/1/3/6 s on a fresh visit and on a reload. Scrolled the whole page in 200px (desktop wheel) and 160px (phone) steps with about 0.7 s dwell. Hovered, clicked and tapped every control in main, with clipboard permission for the copy checks. Also checked reduced motion and JS off, collected console errors over 6 extra loads, and ran taste.py (OK) and parity.py (76/76 text, 4/4 links).
 
 ## What works
-- The colour is right: only ink, white and Hanzo's greys. Color Palette is the one dark room, and the swatches, gradients and samples are the content. The proof-red is gone.
-- The headline is a real Display moment: 128px (56px on phone) with line height 0.92, and it cuts in by line. Fonts load under the curtain, so there is no swap. CLS is 0 on desktop and 0.0005 on phone (from the flap board).
-- One ask in Hanzo's words. "Download Assets" is the hero's only solid button. The shared bar carries it after the hero at both widths and steps aside when the ZIP link is on screen. While the bar is up, the header's "Try Hanzo" turns to an outline.
-- The objects are things you use:
-  - Copy a swatch and its icon draws a tick.
-  - Switch between Hanzo White and Hanzo Black and the six ratios flip again, each with a shape verdict.
-  - Drag the slider and the "Aa" and every Heading take the weight.
-  - The bench buttons press (scale .95–.97), the card lifts, and the download disc drops 4px.
-- The hero fits both frames: the ask's bottom edge is at 689 of 801, and at 465 of 812 on phone. Every phone target is 44px or more. There is no sideways scroll at 320 or 375. Under reduced motion, 0 animations run, the mark is shown in its final state and the weight sits at 560. Parity is 76/76 for text and 4/4 for links.
+- The hero object is the Hanzo mark drawn on its own construction grid (circle, ticks, guide lines). The pieces drift apart and reassemble on an idle loop, so the screen is alive without input. It has a pause control. Reduced motion shows the assembled mark.
+- "Download Assets" is the one solid ask. The header swaps "Try Hanzo" for "Download Assets" once the hero ask leaves view. Press Kit is outlined. Nothing floats over content except the shared cookie card.
+- Principles is a real pinned stage: 01, 02 and 03 swap one panel at a time, with "/ 03" and a left progress line. On phone it stacks one panel per screen.
+- The colour room is good. In the grey strip, hovering widens a swatch (an accordion, not opacity), and a click copies the hex: the clipboard read back `#404040` and the icon turned into a tick. The White/Black readability toggle slides a pill and re-grades all six "Aa" rows with pass, partial and fail marks. The hover and the toggle both tell you something.
+- In Typography, the "Aa" weight sweeps once when it is on screen (560→200→900→560, under 5 s) and then rests. The slider takes over and the scale rows follow it. This is real time-based plus pointer motion.
+- The email copy button really copies `brand@hanzo.ai` and confirms with a tick.
+- The motion mix covers idle (mark), scroll (pin), time (weight sweep), state (toggle, copy confirmation) and pointer (swatch accordion, slider), so scroll is under half.
+- No hue anywhere. Monochrome only, and taste.py passes. Copy matches live. No horizontal scroll at either size. JS off is fully legible and reduced motion shows final states.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** It sells: the title says what it is, and the mark is the brand. It barely moves.
-   - On a first visit, the line cut-in, the grid draw and the pieces landing all play under the 2.4s curtain. All that is left after the lift is about 1.5s of the mark closing. From about 3s after the lift, the hero does not change by a single pixel (checked to 7s).
-   - On a return visit, with no curtain, the arrival is lovely: the lines cut in at 0.4–0.8s, the guides draw, the pieces fly in, and the mark opens and closes by 4.6s. Then it rests.
-2. **One in, one out, or a document?** A document. There is no pinned scene and no scroll choreography; only "Color Palette" masks in. The principles are three still rows, Typography is a list, and Components is a bench. The signature sweep is the only move below the hero that runs by itself. It fires when 25% of a section about 2,000px tall is in view, so its dip to weight 200 plays while the "Aa" is still under the fold and the ask bar. By the time the "Aa" is in view it is already at 896 (still 7).
-3. **A real visual object in every section?** Mostly. The mark, the swatches, the contrast board, the gradients, the giant "Aa" and the bench all qualify. The principles' objects are 96–108px tiles, and the first is a mark icon in a grey box: an icon alone. The assets close is a black text card with a download disc.
-4. **One ask, sticky after the hero?** Yes, at both widths. But its one destination, `/press/hanzo-press-kit.zip`, is not in `public/`. The dev server fetches it from hanzo.ai (blocked here, so it returned 404). A static export would return 404 unless the file is mirrored (2.10).
-5. **Every hover and press answers, no jumps?** Mostly. The faults:
-   - A gray swatch lifts 10px inside its `overflow:hidden` strip. That clips its top and opens a black notch below it (still 5).
-   - There is no hover on the big swatches, the inactive "Hanzo Black" segment, the "Link Button" sample or brand@hanzo.ai. That link also has no underline, against the ink-plus-underline rule.
-   - On desktop, pressing a gray swatch shows no scale, because the CSS hover lift wins.
+1. **Sell in 5 s / move in 1 s:** Yes on a warm load. h1, lede, both asks and the mark are on screen by about 0.8 s, and the mark starts moving at once. One cold first load in my run was blank at 1 s, but the warm reloads were not, so I put that down to dev compile.
+2. **One in, one out:** Mostly yes. The pinned principles and the colour room each carry one idea. It drifts back toward a document in Typography → Components → Assets, which are tall static blocks separated by about 250px of empty white (between the end of the colour room and Typography, and above Components). The right column of the assets screen is also empty for its top 350px.
+3. **A real object per section:** Yes. The mark, the 01/02/03 panels (Hanzo marks, the glow, the 4×4 mark grid), live swatches, the "Aa" specimen, real button/card/badge specimens, and the asset tiles.
+4. **One ask, nothing floating; scale rhythm:** The ask passes. Scale fails in places. The h1 is 84px, and the principles h2s and "Color Palette" are also 84px. The principles screen pairs an 84px heading with a ~300px numeral, so two big things fight on one screen. Typography, Components and the Assets heading all sit at 64px. Very little settles back to the 26px resting size.
+5. **Every hover and press answers:** Mostly. Primary, Press Kit, swatches, the toggle, the ZIP link and the copy buttons all answer. The demo "Card Title" card says "with hover states" but nothing visibly changes on hover. The Secondary and Link specimen buttons show no computed change on hover either.
+6. **Overlaps, font swap, layout shift:** No visible overlaps at either size. The stacked principle headings only overlap inside the pinned stage, where one shows at a time. On phone, a mid-glide frame of the White/Black toggle briefly shows the pill over the "Hanzo Black" label, and it settles cleanly. **Console:** a hydration mismatch fires on every early-screenshot load (6/6) and raises the red "1 Issue" badge. Its diff points into this page: the Typography range input `style={{'--p': ...}}` in `components/pages/Brand.jsx:318-319`, in the `Type()` component.
+7. **Reference:** apple.com product page for the pinned principles and the one-idea colour room, and osply/hamol for the editorial type specimen. The pinned-stage motion is really there.
+8. **Different from neighbours:** Yes. The hero medium is a drawn logo-construction diagram, and the signature is the weight sweep plus slider. Neither is a stock hero.
+9. **18 parts:** What I could see covers one h1, one solid ask with the header swap, a pause control on idle motion, copy confirmations, a closing assets card with the page's own link and contact, legible JS off, reduced motion, sound toggle in the header and the footer. I did not read the coverage card, as instructed.
+10. **Banned tells:** No hue, no eyebrow above any h1 or h2 (taste.py OK), no gradient text and no fading buttons. Risks: "everything big at once" on the principles and colour screens, three black or graphite rooms (black 02 panel, the colour room and the assets card; the brief allows 2), and the three equal logo tiles in the assets card. The tiles read as a logo specimen, not icon boxes, so I am not counting them.
+11. **Copy untouched:** Yes. parity.py gives 76/76 text and 4/4 links.
 
-   On the phone, every tap answered.
-6. **Overlaps, font swap or layout shift?** None at 1470×801 or 375×812, no swap, and CLS of about 0. Two failures elsewhere:
-   - **At 320:** the contrast board squeezes the gray names to one letter a line ("Gra / y / 90 / 0"), "presentations." breaks into "presentation / s.", and the segment labels wrap.
-   - **With JS off:** the lede, "Download Assets", "Press Kit" and the whole mark are invisible, because the server HTML sets them to `opacity:0`. The hero becomes a headline beside an empty white card.
-7. **Which reference, is its motion there?** Apple shows in the specimen and the dark colour room: huge type, with the product as the object. Its motion does not: there is no pinned, scrubbed scene. The bench and the spring lifts follow motion.dev correctly, but they are small. It reads as a well-set, static brand book.
-8. **Different from neighbours?** Not from /press, which links here. Both heroes have:
-   - a Display headline ending in a full stop;
-   - the same lede and solid/outline button pair;
-   - a white rounded card holding the Hanzo mark on the right.
-
-   Going from press to brand looks like one template twice. The type specimen is this page's own, but it is four screens down.
-9. **18 areas (PLAN-COMPONENTS)?** `docs/coverage/brand.md` exists and is mostly true. Four claims do not hold: "JS off shows them", "lands its five pieces within a second" (true only without the curtain), "no labels over any headline", and the tick on a blocked clipboard. See below.
-10. **Banned tells?** One. "01 / 03", "02 / 03" and "03 / 03" are 13px mono kickers over each principle headline: directly above it on phone, above and to the left on desktop. The six mono group labels (BRAND COLORS, GRAY SCALE, GRADIENTS, BUTTONS, CARDS, BADGES) have the same kicker look, and "CARDS" sits over "Card Title". The green "Success Badge" is a component sample, so it counts as content, not accent.
-11. **Copy untouched?** All of Hanzo's words are there, and none is reworded ("Design System" and "Design Principles" became aria-labels, per the eyebrow rule). But the page adds visible figures that Hanzo does not publish:
-    - six contrast ratios per background (17.93:1 to 2.52:1);
-    - the weight readout "560", with "100" and "900";
-    - a "→ PRIMARY BUTTON" echo under the bench.
-
-    They are computed, not made up, but they are new copy, and there is no `content/ui-strings.json` to hold them. They need James's yes, or they go.
-
-## Missing from the 18 areas
-- **2.3 First impression:** the arrival plays under the curtain. It is not gated on `useArrived()` (Careers already is). Nothing lives in the hero after the first 3s.
-- **2.3 / 2.9 Scroll story and motion:** there is no scene where one thing comes in as another goes out, and the one signature move fires off screen.
-- **2.3 / 2.17 Server-rendered text:** the hero lede, the ask and the mark are hidden with JS off (a P1).
-- **2.7 Visual system:**
-  - The hero object is the same card as /press.
-  - `Brand.css` uses literal hex values throughout.
-  - The 28px radius, the {120,18} spring and the .95 tap scale are not CANON values.
-- **2.8 Components:**
-  - Bare `:hover` rules (not inside `@media (hover:hover)`) on the swatches, bench buttons, card and download link.
-  - The tear in the gray strip on hover.
-  - The missing hover states listed in answer 5.
-- **2.8 / 2.17 Copy:** the swatch tick, and the kit Copy's tick with its "Copied" aria-label, appear even when the clipboard write fails. The plan requires that a blocked clipboard never reads as "Copied".
-- **2.10 Media:** the assets ZIP is not mirrored into `public/`.
-- **2.11 Mobile:** at 320, the contrast board, the assets headline and the segment control break.
-- **2.12 Accessibility:**
-  - The heading outline jumps from h1 to h3 at the principles.
-  - "Need brand assistance?" is an h3 with no h2 above it in its section, because the assets headline is a `<p>`.
-  - The verdict icons sit centred under left-aligned gray names.
-- **0.6 UI strings:** new visible figures and new aria strings ("WCAG AA 4.5:1", "below WCAG AA", "Font weight", "Background"), with no register.
+Shared (not counted): the FooterHTML hydration diff appears in the same error, and the shared cookie card covers the lower part of the screen on both sizes.
 
 ## Fixes (in order)
-1. **Play the arrival where it can be seen, then keep the hero alive.**
-   - Gate the h1's `now`, the guide draw, the landing and the open-once on `useArrived()`.
-   - Then give the hero one ambient life within the 2.9 budget: the mark's pieces lean toward the pointer anywhere in the hero (on a spring, not only when the pointer is over the card).
-   - Add one slow idle mover with a pause control, frozen under reduced motion.
-2. **Make the scroll a set of scenes, not a list.**
-   - Pin the three principles so each line replaces the last.
-   - Turn "01 / 03" into a giant ink numeral as the row's object. That also removes the kicker over each headline and the icon-in-a-box tiles.
-   - Let the colour room arrive: the gray strip opens from a single bar into six as it enters.
-3. **Fix JS off.** Render `.xbr-hero-f` and the mark's pieces visible in the server HTML, using the same kind of noscript rule MaskLines uses, so the lede, the ask and the mark show with scripts off.
-4. **Fire the signature in view.** Watch `.xbr-spec` at amount 0.6, not the whole section at 0.25. Then the full 200 → 900 → 560 sweep plays on screen, above the ask bar.
-5. **Split the hero from /press.** Take the mark out of the white card and let the construction grid run full-bleed on the stage at hero scale. Then /press is a card stack and /brand is a drawing.
-6. **Tidy:**
-   - On gray hover, widen the hovered swatch (flex-grow) instead of moving it inside a clipped strip, and put the rule inside `@media (hover:hover)`.
-   - At 360px and narrower, stack each contrast row (name over figure), size the assets headline so "presentations." fits, and stop the segment labels from wrapping.
-   - Underline brand@hanzo.ai and give it a hover. Give the inactive segment, the Link Button sample and the big swatches a hover too.
-   - Show no tick when the clipboard write fails.
-   - Fix the heading outline.
-   - Ask James about the ratios, "560 / 100 / 900" and the bench echo.
-   - Mirror the ZIP into `public/press/`.
+1. Kill the page's hydration mismatch. In `Brand.jsx` `Type()`, stop rendering the range input's `style={{'--p': ...}}` from state on the server. One option is to set `--p` in an effect or ref after mount, or to render a static server value and update it on the client. Re-test with screenshots taken in the first 600 ms until the red badge is gone.
+2. Bring scale back to rhythm. Rest the principle h2s and "Color Palette" at section size (26–44px) so the 01/02/03 numeral is the one big thing on the principles screen and the swatches are the big thing in the colour room. Consider settling the h1 nearer 52–64px so the mark leads.
+3. Close the dead white gaps. Trim the ~250px empty bands before Typography and Components, and fill or collapse the empty top of the assets right column, for example by bottom-aligning less or lifting "Need brand assistance?" to the card's top, so each screen still brings one thing in.
+4. Give the demo "Card Title" card a visible hover (the 2.5° tilt or a hairline/fill change), plus visible hovers on the Secondary and Link specimens, since the copy promises hover states.
+5. Drop to 2 dark rooms. For example, make the assets card graphite inside a light section, or make the 02 panel quiet `#f5f5f5` with the glow as its object.

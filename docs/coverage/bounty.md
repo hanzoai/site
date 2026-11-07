@@ -14,7 +14,7 @@ Forks this page deleted: forked `x-btn solid` / `x-btn xp-ghost` buttons (now ki
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header comment in `app/bounty/page.jsx` names Persona, Goal, CTA, Metric `github_click`, Signature, Beyond. One solid per screen: kit `Cta` "Every open bounty" (`bounty.hero`), repeated by the shared ask bar after the hero; the header's Try Hanzo turns outline. No copy questions.
+Done here: Header comment in `app/bounty/page.jsx` names Persona, Goal, CTA, Metric `github_click`, Signature, Beyond. One solid per screen: kit `Cta` "Every open bounty" (`bounty.hero`). Desktop: the header's button is an outline while it shows, then carries "Every open bounty". Phone: the page sets the shell's `html[data-ask=quiet]` while the hero ask is on screen, so the header's Try Hanzo is an outline there and solid after; the phone bar is the shell's quiet one. No copy questions.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout; links via `A`/`Cta`; GitHub issues open
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages; issue rows link out to GitHub.
 
-Done here: No label above the h1. "Take an issue. / Ship the fix." (52px) cuts in by CSS line mask; the live GitHub window arrives row by row within 1 s and its dot pulses. `PageHero` is not in the kit yet (hero page-local). The page ends on the take timeline and propose card, then the footer; no kit `Band` yet because the dark room (the race) sits just before it (left open). JS off: `NoJs` shows every final state.
+Done here: No label above the h1 (Hanzo's "Bounties & Rewards" sits inside the window's bar, beside "Open bounties"). "Take an issue. / Ship the fix." (52px) cuts in by line mask; the GitHub window's rows deal in within 1 s (server HTML holds the build snapshot, `Bounty.snapshot.js`, so it is never empty); at 2.4 s the newest bounty arrives at the top as the count ticks 9→10; then a quiet reader walks the rows every 3.2 s (paused under the pointer, off screen, reduced motion). `PageHero` is not in the kit yet (hero page-local). The page ends on the take timeline and propose card, then the footer; no kit `Band` yet because the dark room (the race) sits just before it (left open). JS off: `NoJs` shows every final state.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -40,7 +40,7 @@ Done here: No label above the h1. "Take an issue. / Ship the fix." (52px) cuts i
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `data-thumb` on the hero ask; empty and unreachable states hand off with quiet kit `Cta`s.
+Done here: Kit `Cta` only (no raw `.x-btn` in the page file); `data-cta` and `data-thumb` on the hero ask; `data-cta` also on Leaderboard, How to contribute and the window's Every open bounty. GitHub unreachable shows the build snapshot; nothing open hands off with a quiet kit `Cta` "Propose a bounty".
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -74,7 +74,7 @@ Done here: `taste.py` passes (greys only); nothing above a headline; objects out
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: forked `x-btn solid` / `x-btn xp-ghost` buttons (now kit `Cta`), tile hover lifts with shadows, the stepper's box-plus-shadow, oversized 10rem/8rem/6rem figures. listed below
 
-Done here: Kit `Cta` states; steppers have hover, press .97 in 90ms, focus ring and disabled at zero; issue rows, race lanes and tiles answer hover (fill, dim-the-rest, hairline darkens and the figure drifts 12px).
+Done here: Kit `Cta` states; steppers have hover, press .97 in 90ms, focus ring and disabled at zero; issue rows, race lanes and tiles answer hover (fill, dim-the-rest, hairline darkens and the figure drifts 12px). Press: hero Cta scale .98, text links .97, issue rows .99, deck bars and PR title 1px down.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states; steppers have hover, press .97 in 90ms, focus ring 
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: the race scrubbed by scroll, @hanzo's figure counting with it and growing 52→84px only while it runs. Time: the live window's pulse; the tiles count through Hanzo's examples until you touch a stepper. State: the marker glides to your total; the take timeline inks in step by step. Arrival: line-mask headline. Ease-emphasis, no springs; reduced motion shows final states.
+Done here: Signature: the race scrubbed by scroll, @hanzo's figure counting with it and growing 52→84px only while it runs. Time: the newest bounty arrives once with the count ticking up, a reader walks the rows, the window's pulse; the tiles count through Hanzo's examples until you touch a stepper; the awards deck deals the next report every 5 s with its bar running. State: the marker glides to your total; the PR window (pinned on desktop) changes state open issue → pull request → merged as the three steps are read, its head inking in at merged. Arrival: line-mask headline. Ease-emphasis, no springs; reduced motion shows final states.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the objects are the live window, tiles, race and timeline.
@@ -91,7 +91,7 @@ Done here: Signature: the race scrubbed by scroll, @hanzo's figure counting with
 - ~~Budgets met; nothing missing; alt on every image~~ n/a: no images.
 - ~~No dimmed or filtered photo; 4+ real visuals together where the page has them~~ n/a: no photos.
 
-Done here: No raster media; the objects are DOM (live GitHub window, tiles, race, timeline).
+Done here: No raster media; the objects are DOM (live GitHub window, tiles, race, awards deck, the PR window).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -108,7 +108,7 @@ Done here: 375×812: hero ask full width above the fold, window below; tiles sta
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Greys at 4.5:1+ on white and on the dark room; one h1, h2s in order, h3 per tile; steppers labelled with live output; the window's reading state is a status region.
+Done here: Greys at 4.5:1+ on white and on the dark room; one h1, h2s in order, h3 per tile; steppers labelled with live output; Hanzo's "Asking GitHub for the open bounties." is a status line while GitHub is asked. Moving items pause: the deck and the row reader stop under pointer or focus and the deck's bars pick any report; reduced motion stops both.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -148,7 +148,7 @@ Done here: n/a: no code on the page.
 - ~~A failed submit keeps its values and shows no success~~ n/a: no form.
 - [x] A thrown island does not blank the page
 
-Done here: The live window has reading (ghost rows), empty ("Propose a bounty"), and unreachable (hand-off to GitHub) states in Hanzo's words; a blocked request leaves the full page with no console errors.
+Done here: The live window shows the build snapshot (`Bounty.snapshot.js`, refreshed by `node components/pages/Bounty.github.test.mjs --snap`) until GitHub answers and keeps it if GitHub is blocked; empty hands off to "Propose a bounty". A blocked request leaves the full page with no console errors.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
@@ -156,4 +156,4 @@ Done here: The live window has reading (ghost rows), empty ("Propose a bounty"),
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/bounty.md` verdict 8 or more
 
-Done here: `data-cta` ids `bounty.hero`, `bounty.retry`, `bounty.propose` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/bounty.md` (6/10 at `c2fa6e5`): eyebrow, greens and purple, press state, idle move and the two text sections all fixed.
+Done here: `data-cta` ids `bounty.hero`, `bounty.leaderboard`, `bounty.contributing`, `bounty.window`, `bounty.propose` (kit Cta fires `cta_click`); V2 line in the page file and route header; review `docs/review/bounty.md` (6/10 at `c2fa6e5`): no eyebrow, 0 hues (checked computed), idle move added, awards as one deck, take as the PR itself, press states, phone one solid.

@@ -18,10 +18,11 @@
 // Metric: post opens (data-cta="blog.*")
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
-// V2: 6/10 critic round 2 (pause covered by the index, phone plate and strip, quiet below the fold, headings); all fixed, re-review pending
+// V2: 8/10 round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { A, Cta, Img } from '../kit';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
+import { A, Cta, Film, Img } from '../kit';
+import NoJs from '../NoJs';
 import Sigil from '../Sigil';
 import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
@@ -62,10 +63,30 @@ const POSTS = [
   ['pricing', 'February 27, 2026', 'Hanzo Pricing Deep Dive: Every Model, Every Plan, Every Comparison', 'The comprehensive breakdown of Hanzo pricing across AI models, cloud compute, GPU access, and tools — with head-to-head comparisons against every major competitor.', '2026-02-27-pricing-deep-dive/'],
 ].map(([tag, date, title, desc, path]) => ({ tag, date, title, desc, to: B + path, month: date.split(' ')[0] }));
 const COVER = POSTS.slice(0, 6);
-const HERE = [['The Next Frontier Will Be Synthesis', '/blog/synthesis'], ['A New Pareto Frontier', '/blog/pareto-frontier'], ['Kai 1: Decisions, Not Completions', '/blog/kai-decision-models']];
+/* each on-site post shows Hanzo's own film for the first model it is about (as its /blog/<slug> plate and keep-reading cards do) */
+const HERE = [['The Next Frontier Will Be Synthesis', '/blog/synthesis', 'zen'], ['A New Pareto Frontier', '/blog/pareto-frontier', 'enso'], ['Kai 1: Decisions, Not Completions', '/blog/kai-decision-models', 'kai']];
 const MONTHS = ['February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October'];
 const pad = (n) => String(n).padStart(2, '0');
 const HOLD = 6.5;
+const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* the number of posts counts up once when the contents are reached, large, then settles to its 64px rest */
+function Count({ n, label, go, from }) {
+  const [v, setV] = useState(n);
+  useEffect(() => {
+    if (!go || from == null || calmNow()) { setV(n); return; }
+    let raf = 0; const t0 = performance.now();
+    const step = (t) => { const k = Math.min(1, (t - t0) / 1100); setV(Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [go, n, from]);
+  return (
+    <p className={'xbl-count v2s-num' + (go ? ' go' : '')}>
+      <span aria-hidden="true">{v}</span><span className="xbl-sr" aria-live="polite">{n}{label ? ' ' + label : ''}</span>
+      <span className="v2s-cap" aria-hidden="true">{label}</span>
+    </p>
+  );
+}
 
 /* ---------- 1. the masthead and the cover (Signature) ---------- */
 function Cover() {
@@ -153,18 +174,29 @@ function Hero() {
 }
 
 /* ---------- 2. the posts that live on this site: each opens into its page ---------- */
+/* fine pointers only: the art plate tilts up to 2.5 degrees toward the hand, and settles when it leaves */
+const tilt = (e) => {
+  if (e.pointerType !== 'mouse') return;
+  const el = e.currentTarget.querySelector('.xbl-here-art'); if (!el) return;
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
+  el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
+};
+const untilt = (e) => { const el = e.currentTarget.querySelector('.xbl-here-art'); if (el) { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); } };
+
 function Here() {
   return (
-    <section className="v2s-sec tight xbl-here" aria-label="Posts on hanzo.ai">
+    <section className="v2s-sec tight xbl-here" aria-labelledby="xbl-here-h">
       <div className="v2s-wrap">
+        <h2 id="xbl-here-h" className="xbl-sr">Posts on hanzo.ai</h2>
         <ul className="xbl-here-g">
-          {HERE.map(([t, to], i) => (
-            <li key={to} className={i ? 'small' : 'big'}>
-              <A to={to} className="xbl-here-a">
-                <span className="xbl-here-art">{to.includes('kai') ? <Img src="/models/kai.webp" w={1200} h={1500} className="xbl-here-img" /> : <Sigil seed={to} />}</span>
+          {HERE.map(([t, to, film], i) => (
+            <motion.li key={to} className={i ? 'small' : 'big'} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.9, ease: EASE, delay: i * 0.12 }}>
+              <A to={to} className="xbl-here-a" onPointerMove={tilt} onPointerLeave={untilt}>
+                <span className="xbl-here-art"><Film src={`/models/${film}.webm`} poster={`/models/${film}.webp`} w={1200} h={1500} className="xbl-here-img" aria-hidden="true" /></span>
                 <span className={'xbl-here-t ' + (i ? 'v2s-title' : 'v2s-headline')}><span data-morph>{t}</span> <Arr /></span>
               </A>
-            </li>
+            </motion.li>
           ))}
         </ul>
       </div>
@@ -178,13 +210,13 @@ function Strip({ m, setM, months, top, all }) {
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
     <div className="xbl-strip-w">
-    <div className="xbl-strip" ref={ref} role="group" aria-label="Posts by month, 2026">
+    <div className={'xbl-strip' + (seen ? ' seen' : '')} ref={ref} role="group" aria-label="Posts by month, 2026">
       {months.map(([k, n], i) => {
         const Tag = n ? 'button' : 'span'; // a month with no posts is a gap in the strip, not a control
         return (
           <Tag key={k} {...(n ? { type: 'button', 'aria-pressed': m === k, onClick: () => setM(m === k ? null : k) } : { role: 'img' })} className={'xbl-bar' + (m === k ? ' on' : '') + (n ? '' : ' none')} aria-label={`${k} 2026: ${n} ${n === 1 ? 'post' : 'posts'}`}>
             <span className="xbl-bar-n v2s-num" aria-hidden="true">{n || ''}</span>
-            <span className="xbl-bar-c" aria-hidden="true"><i style={{ transform: `scaleY(${seen ? n / top : 0})`, transitionDelay: `${i * 60}ms` }} /></span>
+            <span className="xbl-bar-c" aria-hidden="true" style={{ '--i': i }}><i style={{ transform: `scaleY(${seen ? n / top : 0})`, transitionDelay: `${i * 60}ms` }} /></span>
             <span className="xbl-bar-k" aria-hidden="true">{k.slice(0, 3)}</span>
           </Tag>
         );
@@ -210,6 +242,8 @@ function Contents() {
   }, []);
   const [all, setAll] = useState(false);
   const top0 = useRef(null);
+  const head = useRef(null);
+  const headSeen = useInView(head, { once: true, amount: 0.5 });
   const shown = m ? groups.filter(([k]) => k === m) : groups;
   // a month from the strip: the contents close up to it and come into view
   const choose = (k) => {
@@ -221,36 +255,39 @@ function Contents() {
   return (
     <section className="v2s-sec xbl-contents" aria-labelledby="xbl-c-h">
       <div className="v2s-wrap">
-        <div className="v2s-head xbl-c-head">
+        <div className="v2s-head xbl-c-head" ref={head}>
           <h2 id="xbl-c-h" className="v2s-display xbl-c-h">Contents</h2>
           <p className="v2s-cap">Every post</p>
+          <Count key={m || 'all'} n={m ? (months.find(([k]) => k === m) || [0, 0])[1] : POSTS.length} label={m ? m + ' 2026' : ''} go={headSeen} from={m ? null : 0} />
           <div className="v2s-side xbl-c-strip">
-            <p className="xbl-count v2s-num" key={m || 'all'} aria-live="polite">{m ? (months.find(([k]) => k === m) || [0, 0])[1] : POSTS.length}<span className="v2s-cap">{m ? m + ' 2026' : ''}</span></p>
             <Strip m={m} setM={choose} months={months} top={top} all={all} />
           </div>
         </div>
         <div className="xbl-toc" ref={top0}>
+          {/* one month at a time: the newest first; a bar brings its month in as the last one leaves; All 24 opens every month */}
+          <AnimatePresence mode="wait" initial={false}>
           {shown.map(([k, list], gi) => (
-            <motion.section key={k} hidden={!m && !all && gi > 1 ? true : undefined} className="xbl-month" initial={m ? { opacity: 0, y: 12 } : false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} aria-label={`${k} 2026`}>
+            <motion.section key={(m || 'all') + k} hidden={!m && !all && gi > 0 ? true : undefined} className="xbl-month" initial={m ? { opacity: 0, x: 40 } : false} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40, transition: { duration: 0.22, ease: [0.7, 0, 0.84, 0] } }} transition={{ duration: 0.55, ease: EASE }} aria-label={`${k} 2026`}>
               <div className="xbl-month-h" aria-hidden="true">
                 <b>{k}</b>
                 <span className="v2s-num">2026 · {pad(list.length)}</span>
               </div>
               <ol>
                 {list.map((p) => (
-                  <li key={p.to}>
+                  <motion.li key={p.to} initial="off" whileInView="on" viewport={{ once: true, amount: 0.4 }} variants={{ off: { opacity: 0, x: 24 }, on: { opacity: 1, x: 0 } }} transition={{ duration: 0.7, ease: EASE }} className="xbl-li">
                     <a href={p.to} target="_blank" rel="noopener noreferrer" className="xbl-row">
                       <span className="xbl-row-k">{p.tag}</span>
                       <span className="xbl-row-main">
-                        <span className="xbl-row-line"><b>{p.title}</b><i aria-hidden="true" /><span className="xbl-row-d v2s-num">{p.date}</span></span>
+                        <span className="xbl-row-line"><b>{p.title}</b><motion.i aria-hidden="true" variants={{ off: { scaleX: 0 }, on: { scaleX: 1 } }} transition={{ duration: 0.9, ease: EASE, delay: 0.25 }} /><span className="xbl-row-d v2s-num">{p.date}</span></span>
                         <span className="xbl-row-p">{p.desc}</span>
                       </span>
                     </a>
-                  </li>
+                  </motion.li>
                 ))}
               </ol>
             </motion.section>
           ))}
+          </AnimatePresence>
           {!m && !all && <button type="button" className="xbl-more" onClick={() => setAll(true)} aria-expanded="false">All {POSTS.length} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
         </div>
       </div>
@@ -262,7 +299,7 @@ export default function BlogIndex() {
   return (
     <main id="main" className="xbl v2s">
       {/* JavaScript off: the masthead and the first cover story show at rest */}
-      <noscript><style>{'.xbl .v2-line>span,.xbl-mast-r,.xbl-story.on *{transform:none!important;opacity:1!important;clip-path:none!important}'}</style></noscript>
+      <NoJs css={'.xbl .v2-line>span,.xbl-mast-r,.xbl-story.on *,.xbl-here li,.xbl-li{transform:none!important;opacity:1!important;clip-path:none!important} .xbl-story:not(.on){visibility:hidden!important} .xbl-curtain{display:none} .xbl-month[hidden]{display:grid!important} .xbl-more,.xbl-allbtn,.xst-pause{display:none!important}'} />
       <Hero />
       <Here />
       <Contents />

@@ -2,7 +2,7 @@
 /* Affiliates. Its idea is the link that remembers who sent it.
    Persona: a partner who refers organizations to Hanzo. Goal: apply. CTA: "Apply" (mailto hello@hanzo.ai, Hanzo's own
    subject line). Metric: contact_click (no dedicated id in MASTER section 1 for affiliate applications).
-   V2: 8/10 grey deck: the affiliate link itself, at display size in its own screen, writes itself once and rests with its code marked (it leans to the pointer); the four steps are sticky chapters told in Hanzo's own sentences with one object changing beside them (a swipe rail on phones); the dark room is Hanzo's three rules as the headline, each drawn as a diagram that runs itself; one Apply, sticky from the end of the hero.
+   V2: 8/10 grey deck: h1 rests at 52px and the affiliate link (64px mono, the hero object) sits whole in the first screen and is written by 1 s; no gap before the steps, a shorter pin, one solid on phones; writes itself once and rests with its code marked (it leans to the pointer); the four steps are sticky chapters told in Hanzo's own sentences with one object changing beside them (a swipe rail on phones); the dark room is Hanzo's three rules as the headline, each drawn as a diagram that runs itself; one Apply, sticky from the end of the hero.
    Signature: sticky chapters: Hanzo's four step sentences pin on the left while one object on the right turns from the
    apply request into the reply, the code and link, and an org landing on the link.
    Beyond: the rule, drawn: first touch, one affiliate per org, never your own, each as a small diagram that plays
@@ -28,13 +28,14 @@ const RULES = ['first touch', 'one affiliate per org', 'never your own'];
 function Link() {
   const box = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.4 });
+  const live = useInView(box, { amount: 0.2 }); // the idle beat runs only while the link is on screen
   const tilt = useTilt(2.5, 'rgba(255,255,255,0)');
-  // the link writes itself once (CSS, from an empty first frame, so nothing is wiped and retyped); it waits until it is seen
+  // the link writes itself once (CSS from the first paint, so nothing is wiped and retyped and it is whole by about 1 s)
   return (
     <section className="xaf-link" aria-label={LINK}>
-      <noscript><style>{'.xaf-lnk-t,.xaf-lnk-code{animation:none!important}.xaf-caret{display:none}'}</style></noscript>
+      <noscript><style>{'.xaf-lnk-t,.xaf-lnk-code{animation:none!important}.xaf-caret{display:none}.xaf .xpc-story{width:min(100% - 2 * clamp(16px, 4vw, 32px),1152px)!important}@media (min-width:901px){.xaf .xpc-rail-p{grid-template-columns:repeat(2,minmax(0,1fr))!important}}'}</style></noscript>
       <div className="xp-wrap" ref={box}>
-        <motion.div className={'xaf-link-in' + (seen ? ' on' : '')} style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
+        <motion.div className={'xaf-link-in' + (seen ? ' on' : '') + (live ? ' live' : '')} style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
           <span className="xaf-lnk"><span className="xaf-lnk-t">{LINK.slice(0, 22)}</span><b className="xaf-caret" /></span>
           <span className="xaf-lnk-code">&lt;code&gt;</span>
         </motion.div>
@@ -44,7 +45,28 @@ function Link() {
   );
 }
 
+/* Phones: the shared header keeps a solid "Try Hanzo" (it only quiets itself above 700px). While this page's own
+   solid Apply is on screen, quiet the header with the shared `html[data-ask=quiet]` hook so one solid shows at a time. */
+function usePhoneQuietHeader() {
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 700px)');
+    const H = document.documentElement;
+    const asks = [...document.querySelectorAll('.xaf [data-cta^="affiliate."]')];
+    if (!asks.length || typeof IntersectionObserver === 'undefined') return;
+    const vis = new Set();
+    const sync = () => { if (!mq.matches) return; if (vis.size) H.dataset.ask = 'quiet'; else delete H.dataset.ask; };
+    const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? vis.add(e.target) : vis.delete(e.target))); sync(); });
+    asks.forEach((a) => io.observe(a));
+    // the shared header code clears the flag when it (re)starts: put it back if our ask is still on screen
+    const mo = new MutationObserver(() => { if (mq.matches && vis.size && H.dataset.ask !== 'quiet') sync(); });
+    mo.observe(H, { attributes: true, attributeFilter: ['data-ask'] });
+    mq.addEventListener('change', sync);
+    return () => { io.disconnect(); mo.disconnect(); mq.removeEventListener('change', sync); if (mq.matches) delete H.dataset.ask; };
+  }, []);
+}
+
 function Hero() {
+  usePhoneQuietHeader();
   return (
     <section className="xaf-hero" aria-labelledby="xaf-h1">
       <div className="xp-wrap">
@@ -110,7 +132,7 @@ function How() {
     { title: <>Once approved you have a code and a link, <code className="xaf-code-in">{LINK}</code>.</> },
     { title: 'An org that signs up through the link is attributed to you: first touch, one affiliate per org, never your own.' },
   ];
-  return <Chaptered label="How it works" statement head={<h2 className="xp-head xaf-how-h">How it works</h2>} chapters={chapters} stage={(i, still) => <Stage at={i} still={still} />} />;
+  return <Chaptered label="How it works" statement head={<h2 className="xp-head xaf-how-h">How it works</h2>} chapters={chapters} per={0.55} stage={(i, still) => <Stage at={i} still={still} />} />;
 }
 
 /* The rule, drawn: each of Hanzo's three rules as a diagram with no words but the link. They play themselves. */
