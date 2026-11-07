@@ -55,7 +55,37 @@
 .ps-one i { width: 20px; height: 20px; border-radius: 6px; background: #262626; transition: background-color .3s cubic-bezier(.4, 0, .2, 1); }
 .ps-one i.on { background: #fafafa; }
 
-/* the inspector (the chapters' object): outlined, never raised */
+/* the chapters' object is the hero's bus itself, pinned on a black card; each chapter changes what it does */
+.ps-cbus { padding: 8px 24px 24px; border-radius: 20px; background: #000; color: #fafafa; }
+.ps-cbus .ps-bar { margin-bottom: 16px; }
+.ps-cbus-k { margin-left: auto; font: 500 13px/1 var(--mono); color: #a3a3a3; white-space: nowrap; }
+.ps-cbus .ps-wire { height: 40px; }
+.ps-cbus .ps-wire.fan { height: 56px; }
+.ps-cbus .ps-msg b, .ps-cbus .ps-sub b { transition: opacity .3s cubic-bezier(.4, 0, .2, 1); }
+/* streams: aged-out sequences are dashed and empty; the consumer reads from its start (ringed) onward */
+.ps-seqs span.old { background: transparent; color: #525252; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+.ps-seqs span.rd { background: #404040; color: #fafafa; }
+.ps-seqs span.rd.from { box-shadow: inset 0 0 0 2px #fafafa; }
+/* accounts: the wall drops between account a and account b */
+.ps-subs.walled { position: relative; }
+.ps-subs.walled .ps-sub.wall { border: 1px dashed rgba(255, 255, 255, .3); background: transparent; }
+.ps-subs.walled .ps-sub.wall span { text-decoration: line-through; }
+.ps-subs.walled::after { content: ''; position: absolute; top: -10px; bottom: -10px; left: calc(66.6% - 5px); width: 2px; background: #fafafa; }
+@media (max-width: 899px) {
+  .ps-cbus { padding: 4px 12px 12px; border-radius: 16px; }
+  .ps-cbus-k { display: none; }
+  .ps-cbus .ps-bar { height: 40px; margin-bottom: 8px; }
+  .ps-cbus .ps-pub, .ps-cbus .ps-pub + .ps-wire { display: none; }
+  .ps-cbus .ps-k { margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ps-cbus .ps-seqs span { height: 36px; }
+  .ps-cbus .ps-wire.fan { height: 32px; }
+  .ps-cbus .ps-subs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ps-cbus .ps-sub { height: 60px; gap: 6px; min-width: 0; padding: 0 8px; }
+  .ps-cbus .ps-sub b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ps-cbus .ps-sub span { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+}
+
+/* the inspector (the chapters' earlier object, kept for reference): outlined, never raised */
 .ps-ins { position: relative; background: #fff; border-radius: 24px; border: 1px solid var(--line); overflow: hidden; }
 .ps-ipause { top: 10px; right: 12px; }
 .ps-ins-h { display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 72px 0 24px; border-bottom: 1px solid var(--line); }
