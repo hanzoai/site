@@ -4,7 +4,7 @@
 // Metric: lead_submit
 // Signature: the issue writes itself on paper, then folds into an envelope addressed to you.
 // Beyond: the double opt-in drawn before you commit: subscribe, confirm the link, then the first issue; nothing in between.
-// V2: 8/10 the opt-in is one stage walking its four steps once (one big at a time, gliding marker); statements ink in word by word with a resting caret; Subscribe and Privacy answer hover
+// V2: 8/10 two pinned scenes: a second issue composed line by line (one statement at 44px) and the opt-in walked by scroll; the paper tilts and writes your address; no phone shift; one solid per screen
 import Newsletter from '../../components/pages/Newsletter';
 import JsonLd from '../../components/JsonLd';
 

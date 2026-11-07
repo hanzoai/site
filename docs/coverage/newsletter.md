@@ -2,8 +2,8 @@
 
 Page file: `components/pages/Newsletter.jsx` · gallery: `docs/gallery/newsletter/` · metric id: `lead_submit`
 
-Open copy questions for James: the form's state lines ("Check your inbox: we sent … a link to confirm.", "Enter an email address like you@example.com.", "Too many tries from here. Try again in an hour.", "We could not reach our mail service. Try again in a minute.") come from the page as it arrived in the 7 Nov snapshot (`4203095f`) and are not in `content/live/newsletter.json`; listed for James. "Read", "Nothing is sent to you until you do.", "The newsletter", "Newsletter", "Three steps" and "Subscribing…" are removed.
-Shared changes requested (`docs/requests/<page>.md`): `docs/requests/affiliate.md` (the header's ask outlines while a page's own ask is on screen, and carries it after the hero; on /newsletter it carries "Subscribe").
+Open copy questions for James: the form's state lines ("Check your inbox: we sent … a link to confirm.", "Enter an email address like you@example.com.", "Too many tries from here. Try again in an hour.", "We could not reach our mail service. Try again in a minute.") come from the page as it arrived in the 7 Nov snapshot (`4203095f`) and are not in `content/live/newsletter.json`; listed for James. "Read", "Nothing is sent to you until you do.", "The newsletter", "Newsletter", "Three steps" and "Subscribing…" are removed. Also for James: Hanzo's one sentence "We email a link to confirm first, and every issue has a one-click unsubscribe" is shown whole under the field, and re-set (words unchanged) as the dark room's h2 and the step labels "a link to confirm", "once or twice a month", "one-click unsubscribe". Keep or drop the re-cut?
+Shared changes requested (`docs/requests/<page>.md`): `docs/requests/affiliate.md` (the header's ask outlines while a page's own ask is on screen, and carries it after the hero; on /newsletter it carries "Subscribe"); `docs/requests/newsletter.md` (the phone header keeps a solid "Try Hanzo"; the kit solid hover `#2c2c2e` is off the ramp).
 Forks this page deleted: the hand-made submit button (now kit `Cta` busy), the label above the h1, the looping retyped paper, box-plus-shadow on the field, paper and envelope, 88px statements and 48px step titles, the invented step words.
 
 
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout; links via `A`/`Cta`; parity links 3/3.
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages.
 
-Done here: Nothing above the h1. "The Hanzo newsletter" (52px) cuts in by line mask; the paper lands and sets its three lines once within 2 s, then rests. `PageHero` is not in the kit (left open). The page ends on the dark room (the opt-in and a quiet Subscribe) then the footer (left open: no `Band`). JS off: `NoJs` shows final states; the paper's lines are set.
+Done here: Nothing above the h1. "The Hanzo newsletter" (52px) cuts in by line mask; the paper lands and sets its three lines once within 2 s, then rests; it tilts toward a fine pointer (2.5° max) and writes the typed address on itself. Then one pinned scene per idea: the issue being composed (one statement at 44px, a small index, the paper setting each line), then the pinned opt-in (one step at 64px). `PageHero` is not in the kit (left open). The page ends on the dark room (the opt-in and a quiet Subscribe) then the footer (left open: no `Band`). JS off: `NoJs` shows final states; the paper's lines are set.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -56,7 +56,7 @@ Done here: No figures, logos or seals; the privacy link and the confirm-first, o
 - ~~Tables, FAQ, tabs and code use the kit parts~~ n/a: no table, FAQ, tabs or code.
 - [x] `python3 scripts/parity.py /newsletter`: 0 missing
 
-Done here: Parity 7/7 text. Type from MASTER: h1 52px, lede 21px, field 17px, statements 48→64px only while each is the moment (32px phone), dark-room head 26px, step words 21px, mono 13px.
+Done here: Parity 7/7 text. Type from MASTER: h1 52px, lede 21px, field 17px, one statement at 44px at a time with the index rows at 16px beside the paper's 18px lines (phone rows 21px), dark-room head 26px, the one opt-in step at 64px over 17px rail words, mono 13px.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states (hover fill, press .97, focus ring, busy); the dark 
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: the paper sets its lines once and folds into an envelope addressed to you on success. Scroll: the three statements grow and swell in weight only while each crosses the middle, and their words ink in 55ms apart once, then a caret rests blinking at the end (time, idle). State: the opt-in is one stage that walks its four steps once in view (1.4 s each, line-mask swap, a gliding marker on the rail), then rests on the last; pressing a step holds it. Arrival: line-mask h1. Ease-emphasis, no springs; reduced motion shows the last step and inked words with a still caret.
+Done here: Signature: the paper sets its lines once and folds into an envelope addressed to you on success. Scroll (pinned, desktop): the issue is composed while the section holds still: each statement takes the stage at 44px by line mask, its weight swelling 280→497 as it lands (inside a fixed box, so no reflow), its words ink in 55ms apart and a caret rests blinking at the end (time, idle); the paper sets that line (a grey placeholder slides off) and an ink bar marks it; the paper straightens -3°→0. Phone: no pin; each index row sets its paper line as it reaches the middle. State: the opt-in is pinned while scroll walks its four steps (line-mask swap, a gliding marker); left alone in view it also walks itself once (1.4 s a step) and rests on the last; pressing a step holds it. Pointer: the hero paper tilts toward a fine pointer (2.5° max) and writes the typed address on itself. Arrival: line-mask h1. Ease-emphasis, no springs; reduced motion shows the last step and inked words with a still caret.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the paper and envelope are DOM with the page's own Sigil masthead.
@@ -99,7 +99,7 @@ Done here: No raster media; the paper's masthead is the page's own Sigil field.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375×812: the field stacks with a full-width Subscribe above the fold; the paper below; statements 32px without scale; the opt-in stage shows one step at 32px over a vertical rail of four 56px rows with the marker gliding down; no horizontal scroll at 320 (measured 0); targets 44px+.
+Done here: 375×812: the field stacks with a full-width Subscribe above the fold; the paper below, inside the gutters; no pinned scene under 900px (the composed issue sits above three 21px index rows that set its lines as they reach the middle); measured CLS 0.0000 over a full 375×812 wheel scroll (was 0.296), desktop 0.0016; the opt-in stage shows one step at 32px over a vertical rail of four 56px rows with the marker gliding down; no horizontal scroll at 320 (measured 0); targets 44px+.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -156,4 +156,4 @@ Done here: Success shows only when Hanzo answers pending (the confirm link is ou
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/newsletter.md` and every complaint answered
 
-Done here: `data-cta` ids `newsletter.subscribe`, `newsletter.close` (kit Cta fires `cta_click`); V2 line in the page file and route header; review `docs/review/newsletter.md` (5/10 at `648b798`) read and answered: labels above headings gone, the three equal step boxes replaced by one stage with one step big at a time, Subscribe and Privacy hover, card present. A fresh critic re-scores it.
+Done here: `data-cta` ids `newsletter.subscribe`, `newsletter.close` (kit Cta fires `cta_click`); V2 line in the page file and route header; review `docs/review/newsletter.md` (5/10 at `648b798`) read and answered: labels above headings gone, the three equal step boxes replaced by one stage with one step big at a time, Subscribe and Privacy hover, card present. Second review (6/10): phone shift removed, the statements told by the composed issue (one big at a time), the close Subscribe outlined in the dark room, the paper tilts and previews the address, the h1 holds still on success (measured 0px), both scenes pinned, the paper inside the phone gutters, copy questions listed. A fresh critic re-scores it.
