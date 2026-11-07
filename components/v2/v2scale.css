@@ -26,7 +26,7 @@
 
 /* buttons: one solid primary, one quiet secondary, 44px tall or more */
 .v2-acts { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.v2-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; font: 500 17px/1 var(--sans); letter-spacing: -.01em; text-decoration: none; color: var(--ink); background: transparent; border: 1px solid rgba(0, 0, 0, .14); cursor: pointer; transition: background .25s var(--e), color .25s var(--e), border-color .25s var(--e); }
+.v2-btn { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; min-height: 48px; padding: 0 24px; border-radius: 999px; font: 500 17px/1 var(--sans); letter-spacing: -.01em; text-decoration: none; color: var(--ink); background: transparent; border: 1px solid rgba(0, 0, 0, .14); cursor: pointer; transition: background .25s var(--e), color .25s var(--e), border-color .25s var(--e); }
 .v2-btn:hover { border-color: var(--ink); }
 .v2-btn.solid { background: var(--ink); color: #fff; border-color: var(--ink); }
 .v2-btn.solid:hover { background: var(--acc); border-color: var(--acc); }
