@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: one query, four answers (pinned scene). Supporting: typewriter and streamed answer (time), gliding mode pill (state), the stage settle (scroll). `scripts/variety.py` OK. Kinds: idle (the hero object; the dark room stepping through its three steps every 4.2 s while in view; the closing bar retyping the query once at 60% in view), time, state, pointer, with scroll only in the pinned scene. On phone each chapter picture starts at 60% in view (`useInView`), so the lists fuse and the answer streams while you look. Selected mode and framework rows now answer hover too. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: one query, four answers (pinned scene). Supporting: typewriter and streamed answer (time), gliding mode pill (state), the stage settle (scroll). `scripts/variety.py` OK. Kinds: idle (the hero object; the dark room stepping through its three steps every 4.2 s while in view; the closing bar retyping the query once at 60% in view), time, state, pointer, with scroll only in the pinned scene. On phone each chapter picture starts at 60% in view (`useInView`), so the lists fuse and the answer streams while you look. Selected mode and framework rows now answer hover too (selected framework slides 10→16px). Also idle on arrival: chapter 01's missing "e" drops in and underlines; the vector map's lines draw when seen; the frameworks take turns every 2.6 s while on screen until you pick one; the plan finder's sliders roll up to their defaults once. Own Playwright walk (5 frames 1 s apart per screen, no input): desktop 11/13 screens move (STILL: pricing after its roll, footer), phone 10/18. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 6.67:1 (0 runs flagged). Headings 12333
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /search/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /search/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone). CLS over a full walk: 0.0045 desktop, 0.0040 phone (the streamed answer reserves its full height with a hidden copy; the close's list keeps a 234px floor on phone).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)

@@ -4,7 +4,9 @@
    blinking prompt and Replay; the dark room follows the hero straight off its last words (the secret); then a short
    pin (about 3 screens) whose object is the image itself, a big inked stack of layers each fact visibly acts on and
    labels (a password struck off as the token seats, the org inks the top, signature and attestation dock, a layer
-   slides out as storage shrinks, people fold into one directory), one caption under it, no lists; every control answers.
+   slides out as storage shrinks, people fold into one directory), one caption under it, no lists; then the page's own
+   tail: a registry console listing acme's repositories, each opening into its layers and tags (one still pushing);
+   related capabilities drawn as what each does to an image; one close that carries "Get started" and the agent prompt.
    Signature: a push that asks IAM first. docker push meets a 401 that names Hanzo IAM, a short-lived token travels from
    IAM to the client, the registry checks its signature, the layers go up, and the image lands in the org's repository
    with its cosign signature beside it as an ordinary artifact.
@@ -25,9 +27,7 @@ import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
-import LaunchConsole from '../../v2/LaunchConsole';
 import LivePause, { usePause } from '../../v2/LivePause';
-import RelatedCards from '../../v2/RelatedCards';
 import { A } from '../../kit';
 import './Registry.css';
 
@@ -93,6 +93,10 @@ function Push() {
             <li className={'sig' + st(6)} {...peek(6)}><b>v1.2.3</b><span>cosign signature</span></li>
             <li className="in"><b>v1.2.2</b><span>image</span></li>
           </ul>
+          <div className={'rg-mini' + (s >= 4 ? ' up' : '') + (s >= 5 ? ' done' : '')}>
+            {[0, 1, 2, 3].map((i) => <i key={i} style={{ '--z': i }} />)}
+            <i className="top" style={{ '--z': 4 }} />
+          </div>
           <p className="rg-org">a repository name begins with your org</p>
         </div>
       </div>
@@ -201,6 +205,108 @@ function DelRoom() {
 const SIDE = [['Registry', '/registry'], ['Projects', '/cloud/projects'], ['Environments', '/cloud/environments'], ['Builds', '/cloud/builds'], ['Releases', '/cloud/releases'], ['Pipelines', '/cloud/pipelines']];
 const REL = [['Projects', '/cloud/projects', 'The deploy unit'], ['Environments', '/cloud/environments', 'Dev, staging, prod — isolated'], ['Builds', '/cloud/builds', 'Source to signed image']];
 
+/* ---------- the tail is Registry's own: its console lists the org's repositories, each an image you can open into
+   its tags; related capabilities are drawn as what they do to an image; the close carries "Get started" and the
+   agent prompt, so the page ends once ---------- */
+const CON_ICONS = ['M3 5.5 8 3l5 2.5L8 8zM3 8.5 8 11l5-2.5M3 11.5 8 14l5-2.5', 'M2.5 3.5h11v9h-11zM2.5 6.5h11', 'M3 4h4v4H3zM9 8h4v4H9zM5 8v4h4', 'M4 3v10M4 8h5l3-3M9 8l3 3', 'M8 2v12M3 7l5-5 5 5', 'M2.5 4.5h4v7h-4zM9.5 4.5h4v7h-4zM6.5 8h3'];
+const REPOS = [['gateway', 'Ready'], ['payments-api', 'Ready'], ['checkout-web', 'Building'], ['docs-site', 'Ready']];
+
+function RegConsole() {
+  const [ref, live, calm] = useLive(0.4);
+  const [at, setAt] = useState(2);
+  const [built, setBuilt] = useState(false);
+  // the building image finishes its push while you watch, then the next one starts (only on screen)
+  useEffect(() => {
+    if (calm) { setBuilt(true); return; }
+    if (!live) return;
+    const id = setTimeout(() => setBuilt((b) => !b), 4200);
+    return () => clearTimeout(id);
+  }, [live, built, calm]);
+  const st = (n, s) => (n === 'checkout-web' && built ? 'Ready' : s);
+  const cur = REPOS[at][0];
+  const busy = st(cur, REPOS[at][1]) === 'Building';
+  return (
+    <div className="rg-rc" ref={ref}>
+      <div className="rg-rc-bar"><i /><i /><i /><A to="/home" className="cf-con-title rg-rc-title">Registry — Hanzo</A></div>
+      <div className="rg-rc-body">
+        <nav className="rg-rc-side" aria-label="Products">
+          {SIDE.map(([t, to], i) => (
+            <A key={t} to={to} className={'rg-rc-ico' + (i === 0 ? ' on' : '')} aria-label={t}>
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d={CON_ICONS[i % CON_ICONS.length]} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /></svg>
+              <span className="rg-rc-tip">{t}</span>
+            </A>
+          ))}
+        </nav>
+        <ul className="rg-rc-list" role="listbox" aria-label="Projects">
+          {REPOS.map(([n, s], i) => {
+            const now = st(n, s);
+            return (
+              <li key={n} role="option" aria-selected={at === i} tabIndex={0} onClick={() => setAt(i)} onMouseEnter={() => setAt(i)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setAt(i))}>
+                <span className="rg-rc-n"><em>acme/</em>{n}</span>
+                <span className={'rg-rc-st' + (now === 'Building' ? ' b' : '')}>{now === 'Building' && <b className="rg-rc-spin" aria-hidden="true" />}{now}</span>
+              </li>
+            );
+          })}
+        </ul>
+        <div className={'rg-rc-img' + (busy ? ' busy' : '')} aria-hidden="true">
+          <div className="rg-rc-stack" key={cur}>
+            {[0, 1, 2, 3].map((i) => <i key={i} style={{ '--z': i }} />)}
+            <i className="top" style={{ '--z': 4 }} />
+          </div>
+          <p className="rg-rc-path">oci.hanzo.ai / <b>acme</b> / {cur}</p>
+          <ul className="rg-rc-tags">
+            <li><b>v1.2.3</b><span>image</span></li>
+            <li className="sig"><b>v1.2.3</b><span>cosign signature</span></li>
+          </ul>
+        </div>
+      </div>
+      <p className="rg-rc-cap">The service the session above is changing.</p>
+      <div className="rg-rc-foot">
+        <span>api.hanzo.ai<b>/v1/registry</b></span>
+        <A to="https://hanzo.team/" className="rg-rc-open">Open in the console ↗</A>
+      </div>
+    </div>
+  );
+}
+
+/* related capabilities, each drawn as what it does to an image: Projects holds the image (a stack in its frame),
+   Environments runs it three times (dev, staging, prod: three stacks), Builds makes it (source lines turning into
+   layers). Hover plays the drawing; the title is the morph source like every card that opens into its page. */
+function RelArt({ to }) {
+  const k = to.split('/').pop();
+  const n = k === 'environments' ? 3 : 1;
+  return (
+    <span className={'rg-ra rg-ra-' + k} aria-hidden="true">
+      {k === 'builds' && <span className="rg-ra-src"><i /><i /><i /></span>}
+      {Array.from({ length: n }, (_, j) => (
+        <span key={j} className="rg-ra-s" style={{ '--j': j }}>{[0, 1, 2, 3].map((i) => <i key={i} style={{ '--z': i }} />)}</span>
+      ))}
+    </span>
+  );
+}
+
+function Related() {
+  return (
+    <section className="rg-rel">
+      <div className="lx-wrap">
+        <h2 className="rg-rel-h">Related capabilities</h2>
+        <ul className="rg-rel-grid">
+          {REL.map(([t, to, d]) => (
+            <li key={t}>
+              <A to={to} className="rg-rel-card" data-cursor="">
+                <RelArt to={to} />
+                <span className="rg-rel-t" data-morph>{t}</span>
+                <span className="rg-rel-d">{d}</span>
+                <Arr />
+              </A>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 export default function Registry() {
   return (
     <main className="lx rg">
@@ -228,23 +334,23 @@ export default function Registry() {
       />
 
       <section className="lx-sec rg-con">
-        <div className="lx-wrap rg-con-grid">
-          <div>
-            <LaunchConsole light name="Registry" api="/v1/registry" cap="The service the session above is changing." side={SIDE} />
-            <p className="rg-note">Example project. Every name in it is one you would give your own.</p>
-          </div>
-          <Paste name="Registry" prompt="Read https://hanzo.ai/skill.md and use Hanzo Registry in my project. Start with: hanzo registry images" className="lx-paste" />
+        <div className="lx-wrap rg-con-in">
+          <RegConsole />
+          <p className="rg-note">Example project. Every name in it is one you would give your own.</p>
         </div>
       </section>
 
-      <RelatedCards className="rg-rel" items={REL}>
-        <div className="rg-start">
-          <h2 className="lx-title">Get started with Registry</h2>
-          <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
-        </div>
-      </RelatedCards>
+      <Related />
 
-      <LaunchClose name="Registry" tag="OCI image registry" seed="registry" data={[401, 2, 6]} ask={['View Source', GH]} cta="registry.close" />
+      <LaunchClose name="Registry" tag="OCI image registry" seed="registry" data={[401, 2, 6]} ask={['View Source', GH]} cta="registry.close" className="rg-close">
+        <div className="rg-start">
+          <div className="rg-start-row">
+            <h3 className="rg-start-h">Get started with Registry</h3>
+            <A to={GH} className="lx-text">View on GitHub</A>
+          </div>
+          <Paste name="Registry" prompt="Read https://hanzo.ai/skill.md and use Hanzo Registry in my project. Start with: hanzo registry images" className="lx-paste rg-paste" />
+        </div>
+      </LaunchClose>
     </main>
   );
 }

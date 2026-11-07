@@ -340,10 +340,10 @@
 .rk-flow-w { position: relative; height: 1px; background: #d4d4d4; overflow: visible; }
 .rk-flow-w i { position: absolute; left: 0; top: -4px; width: 100%; height: 9px; opacity: 0; transform: translateX(-100%); }
 .rk-flow-w i::after { content: ''; position: absolute; right: -4px; top: 0; width: 9px; height: 9px; border-radius: 50%; background: #0a0a0a; }
-.rk-flow.on .rk-flow-w i { animation: rk-flow 2.6s var(--ease) infinite; }
+.rk-flow.on .rk-flow-w i { animation: rk-flow 3.4s var(--ease) infinite; }
 @keyframes rk-flow { 0% { transform: translateX(-100%); opacity: 0; } 15% { opacity: 1; } 45% { transform: none; opacity: 1; } 55%, 100% { transform: none; opacity: 0; } }
 .rk-flow-back { grid-column: 1 / -1; justify-self: end; margin-top: 14px; font-size: 13px; color: #525252; }
-.rk-flow.on .rk-flow-back { animation: rk-back 2.6s var(--ease) infinite; }
+.rk-flow.on .rk-flow-back { animation: rk-back 3.4s var(--ease) infinite; }
 @keyframes rk-back { 0%, 50% { color: #737373; transform: none; } 65%, 90% { color: #0a0a0a; transform: translateX(-6px); } 100% { color: #737373; transform: none; } }
 .rk-flow-p { grid-column: 1 / -1; margin-top: 16px; padding: 10px 14px; border-radius: 12px; border: 1px dashed rgba(0, 0, 0, .18); font-size: 13px; color: #525252; justify-self: start; }
 @media (prefers-reduced-motion: reduce) { .rk-flow.on .rk-flow-w i, .rk-flow.on .rk-flow-back { animation: none; } .rk-flow-w i { opacity: 1; transform: none; } }
@@ -353,4 +353,31 @@
    button there: one solid per viewport. Desktop keeps the hero ask solid and the header steps down. */
 @media (max-width: 700px) {
   .rk .rk-hero-act .w2-cta, .rk .rk-band .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 2px #0a0a0a; }
+}
+
+/* Idle, in view only: the decision-card drawings, the tier ladder, the named gaps, the live face's ping */
+.rk-say.on .rk-face.live .rk-face-k i { animation: rk-ping 2.2s ease-out infinite; }
+.rk-on.on .rk-art.acc i:nth-child(4) { animation: rk-acc 3.2s var(--ease) infinite; }
+@keyframes rk-acc { 0%, 100% { transform: none; } 40%, 60% { transform: translateX(-52px); } }
+.rk-on.on .rk-art.acc i:nth-child(3) { animation: rk-acc3 3.2s var(--ease) infinite; }
+@keyframes rk-acc3 { 0%, 100% { background: #fff; } 40%, 60% { background: #0a0a0a; } }
+.rk-on.on .rk-art.tx b { animation: rk-tx 2.8s var(--ease) infinite; }
+@keyframes rk-tx { 0%, 20% { transform: translateX(-12px); opacity: 0; } 40%, 85% { transform: none; opacity: 1; } 100% { transform: none; opacity: 0; } }
+.rk-on.on .rk-art.ab i { animation: rk-ab 2.4s var(--ease) infinite; }
+.rk-on.on .rk-art.ab i:nth-child(2) { animation-delay: .15s; } .rk-on.on .rk-art.ab i:nth-child(3) { animation-delay: .3s; } .rk-on.on .rk-art.ab i:nth-child(4) { animation-delay: .45s; } .rk-on.on .rk-art.ab i:nth-child(5) { animation-delay: .6s; } .rk-on.on .rk-art.ab i:nth-child(6) { animation-delay: .75s; }
+@keyframes rk-ab { 0%, 100% { transform: scaleY(.6); } 50% { transform: none; } }
+.rk-on.on .rk-art.dp b { animation: rk-dp 3s var(--ease) infinite; }
+@keyframes rk-dp { 0%, 30% { transform: rotate(-6deg) scale(1.25); opacity: 0; } 45%, 90% { transform: rotate(-6deg); opacity: 1; } 100% { transform: rotate(-6deg); opacity: 0; } }
+.rk-ladder li { transition: transform .4s var(--ease), box-shadow .4s var(--ease); }
+.rk-ladder li.on { transform: translateY(-8px); box-shadow: inset 0 0 0 2px #0a0a0a; }
+.rk-ladder li:last-child.on { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .55); }
+.rk-gaps li { position: relative; transition: transform .3s var(--ease), color .3s var(--ease); }
+.rk-gaps li::before { content: ''; position: absolute; left: -16px; top: 50%; width: 8px; height: 1px; background: #0a0a0a; transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s var(--ease); }
+.rk-gaps li.on { transform: translateX(16px); }
+.rk-gaps li.on::before { transform: none; }
+@media (max-width: 599px) { .rk-gaps li.on { transform: translateX(12px); } .rk-gaps li::before { left: -12px; } }
+@media (prefers-reduced-motion: reduce) { .rk-on.on .rk-art i, .rk-on.on .rk-art b, .rk-say.on .rk-face-k i { animation: none !important; } }
+/* Desktop: the shorter column of a two-column section stays with the reader, so its stepping object stays in view */
+@media (min-width: 900px) {
+  .rk-rules-grid > .rk-plat, .rk-not-grid > div:first-child { position: sticky; top: 96px; align-self: start; }
 }

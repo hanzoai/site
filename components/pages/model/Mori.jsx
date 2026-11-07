@@ -5,9 +5,14 @@
    shape keeps turning 360°; drag it to orbit (it carries your throw), and switch the view between wireframe, shaded
    and normals. (A drawn illustration of a mesh, not Mori's output.)
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour.
-   V2: 8/10 Request access is the one solid on the desktop first screen (white on the film, ink by the cube); 13px mono floor; film keeps playing in its cube on phones. */
-import { useMemo, useRef, useState } from 'react';
+   The film is the hero's and the cube's alone: each chapter and the fits picture draw their own object (MoriArt.jsx:
+   a quad sphere closed by triangle fans, the six material maps, rooms rising on a metric grid, the export formats
+   landing beside a turning solid, a camera scanning a cube). Order: chapters, fits, studio map, the dark viewport,
+   then the model cards, so the two card grids never sit back to back.
+   V2: 8/10 Request access is the one solid at both widths; every chapter its own drawn object; shaded mesh without its seam. */
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Specs } from './Studio';
+import { MoriCap, MoriFits } from './MoriArt';
 import { usePaused } from '../../v2/ModelFilm';
 import Creative from './Creative';
 import { poly, dense, focus } from '../../v2/Launch';
@@ -20,7 +25,7 @@ const MODES = ['wireframe', 'shaded', 'normals'];
 function mesh() {
   const P = new Float32Array(U * V * 3), N = new Float32Array(U * V * 3), S = new Float32Array(U * V * 3), r0 = rng(42);
   const at = (u, v) => {
-    const a = (u / U) * Math.PI * 2, b = (v / V) * Math.PI * 2 + a * 0.5;
+    const a = (u / U) * Math.PI * 2, b = (v / V) * Math.PI * 2 + a; // a whole turn of twist, so the seam at u = U meets u = 0
     const r = 0.42 * (1 + 0.2 * Math.sin(3 * a + 2 * b));
     return [(1 + r * Math.cos(b)) * Math.cos(a), r * Math.sin(b) * 1.1, (1 + r * Math.cos(b)) * Math.sin(a)];
   };
@@ -103,9 +108,13 @@ function Viewport() {
       }
       quads.sort((x, y) => y[0] - x[0]);
       for (const [, a, b, c2, e] of quads) {
-        if (m === 1) { const lit = Math.max(0, -nz[a] * 0.35 - nz[a + 1] * 0.6 - nz[a + 2] * 0.72); const v = Math.round(64 + Math.pow(lit, 0.8) * 186); g.fillStyle = `rgb(${v},${v},${v})`; }
+        if (m === 1) { // a key light from the top left and a rim from behind, two-sided, so it reads as a sculpted solid
+          const dl = -nz[a] * 0.45 - nz[a + 1] * 0.6 - nz[a + 2] * 0.66, key = Math.abs(dl), rim = Math.pow(1 - Math.abs(nz[a + 2]), 3);
+          const spec = Math.pow(key, 24);
+          const v = Math.round(Math.min(245, 28 + Math.pow(key, 1.2) * 170 + rim * 40 + spec * 60)); g.fillStyle = `rgb(${v},${v},${v})`;
+        }
         else { const v = Math.round(40 + (nz[a] * 0.3 + nz[a + 1] * 0.25 - nz[a + 2] * 0.45 + 0.5) * 200); const c = Math.max(24, Math.min(240, v)); g.fillStyle = `rgb(${c},${c},${c})`; } // normals as a grey relief, no hue
-        g.beginPath(); g.moveTo(proj[a], proj[a + 1]); g.lineTo(proj[b], proj[b + 1]); g.lineTo(proj[c2], proj[c2 + 1]); g.lineTo(proj[e], proj[e + 1]); g.closePath(); g.fill();
+        g.beginPath(); g.moveTo(proj[a], proj[a + 1]); g.lineTo(proj[b], proj[b + 1]); g.lineTo(proj[c2], proj[c2 + 1]); g.lineTo(proj[e], proj[e + 1]); g.closePath(); g.fill(); g.strokeStyle = g.fillStyle; g.lineWidth = d * 0.75; g.stroke(); // the stroke closes the hairline gaps between quads
       }
     }
     if (deg.current) deg.current.style.transform = `rotate(${(s.yaw * 180) / Math.PI}deg)`;
@@ -156,7 +165,32 @@ const EDGES = (W, H, wide) => {
   );
 };
 
+/* phones: Mori's own "Request access" is the one solid while it is on screen; the header's "Try Hanzo" steps back to an
+   outline then (the same html[data-ask=quiet] Ask.jsx sets on desktop) and is solid again once it has gone by */
+function usePhoneAsk() {
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 700px)'), H = document.documentElement;
+    const els = [...document.querySelectorAll("[data-cta='mori.first'], [data-cta='mori.hero']")];
+    if (!els.length) return;
+    const on = new Set();
+    const set = () => { if (mq.matches && on.size) H.dataset.ask = 'quiet'; else if (mq.matches) delete H.dataset.ask; };
+    const io = new IntersectionObserver((es) => { es.forEach((e) => { const r = e.boundingClientRect; if (e.isIntersecting && r.bottom > 60 && getComputedStyle(e.target.closest('.lv-name, .lv-head') || e.target).visibility !== 'hidden') on.add(e.target); else on.delete(e.target); }); set(); }, { threshold: [0, 0.5, 1] });
+    els.forEach((el) => io.observe(el));
+    mq.addEventListener('change', set);
+    // Ask.jsx restores the header a moment after each route starts (and clears data-ask): keep ours while it holds
+    const mo = new MutationObserver(() => { if (mq.matches && on.size && H.dataset.ask !== 'quiet') set(); });
+    mo.observe(H, { attributes: true, attributeFilter: ['data-ask'] });
+    // the headline's actions fade in as the film settles; when that ends, let Ask.jsx look again (it re-checks on
+    // scroll), so the header never holds a second solid "Request access" beside the page's own
+    const head = document.querySelector('[data-hero=mori]');
+    const again = () => dispatchEvent(new Event('scroll'));
+    head?.addEventListener('transitionend', again);
+    return () => { io.disconnect(); mo.disconnect(); head?.removeEventListener('transitionend', again); mq.removeEventListener('change', set); if (mq.matches) delete H.dataset.ask; };
+  }, []);
+}
+
 export default function Mori() {
+  usePhoneAsk();
   return (
     <Creative
       slug="mori"
@@ -166,8 +200,10 @@ export default function Mori() {
       aim={(W, H, wide) => (wide ? null : focus(0.6, 0.62, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46], [0.5, 0.75])(W, H))}
       over={EDGES}
       headClass="mr-v2"
-      first="chapters"
+      first="tail"
       flip
+      capArt={(i, on) => <MoriCap i={i} on={on} />}
+      fitsArt={(seen) => <MoriFits seen={seen} />}
       demo={
         <section className="lv-room mr-room" data-room="dark" aria-label="Mori">
           <div className="mr-stage">
