@@ -72,64 +72,66 @@
 .jn-cap p { margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 16px; line-height: 1.5; color: var(--bz-muted); }
 .jn-cap b { color: var(--ink); font-weight: 606; }
 .jn-phase { display: block; padding: 3px 8px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 13px; line-height: 1.5; white-space: nowrap; }
-.jn-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--bz-line); background: #fff; color: var(--ink); cursor: pointer; transition: transform var(--dur-press, .09s), box-shadow .15s, border-color .15s; }
+.jn-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--bz-line); background: #fff; color: var(--ink); cursor: pointer; transition: transform var(--dur-press, .09s), background-color .15s, border-color .15s; }
 @media (hover: hover) { .jn-pause:hover { background: #f5f5f5; border-color: rgba(0, 0, 0, .3); } }
 .jn-pause:active { transform: scale(.98); }
 .jn-pause:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* rested: the replay button is the figure's one ink mark, so the way back in is obvious */
+.jn-pause.done { background: var(--ink); border-color: var(--ink); color: #fff; }
+@media (hover: hover) { .jn-pause.done:hover { background: #262626; border-color: #262626; } }
+.jn-pause svg { transition: transform .3s var(--bz-emph); }
+@media (hover: hover) { .jn-pause.done:hover svg { transform: rotate(-60deg); } }
 
-/* the paper: a running head over six numbered sections */
-.jn-paper { position: relative; border-top: 1px solid var(--bz-line); }
+/* ---------- the paper: a running head over the six chapters ---------- */
+.jn-paper { position: relative; border-top: 1px solid var(--bz-line); overflow-x: clip; }
 .jn-run { position: sticky; top: 60px; z-index: 5; background: #fff; border-bottom: 1px solid var(--bz-line); }
 .jn-run-in { display: flex; align-items: center; gap: 28px; height: 48px; }
 .jn-run-in .x-mono { font-size: 13px; color: var(--bz-muted); }
 .jn-run-t { font-size: 16px; font-weight: 497; }
 .jn-run-in .jn-run-n { margin-left: auto; color: var(--ink); }
 .jn-run-bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink); transform-origin: 0 50%; transition: transform .5s var(--bz-emph); }
-/* rhythm: 1 and 3 at the resting scale, 2 ("Ours") is the loud one in its own quiet room, 4 to 6 drop to a tighter
-   medium scale; padding is cut so the next idea peeks inside the screen */
-.jn-sec { padding: clamp(72px, 7vw, 104px) 0; }
-.jn-sec + .jn-sec { border-top: 1px solid var(--bz-line); }
-.jn-sec-in { align-items: start; row-gap: 40px; }
+
+/* the chapters, stacked (phones, and every width with JS off): numeral, heading, text, then the figure; the order
+   alternates so the figure sits above the text in chapters 2, 4 and 6 */
+.jn-stage { display: flex; flex-direction: column; }
+.jn-stage > * { order: var(--o, 0); }
+.jn-plate { display: none; }
+.jn-ch { position: relative; z-index: 0; display: flex; flex-direction: column; gap: 24px; padding: clamp(64px, 7vw, 104px) 0; }
 .jn-num { margin: 0; font-size: 64px; font-weight: 220; line-height: .78; letter-spacing: -.06em; font-variant-numeric: tabular-nums; color: var(--ink); }
-.jn-txt { display: flex; flex-direction: column; gap: 24px; }
+.jn-txt { display: flex; flex-direction: column; gap: 24px; max-width: 34em; }
 .jn-h { max-width: 12ch; }
-.jn-txt .bz-body { color: var(--ink); }
-.jn-mfig { margin: 0; min-width: 0; }
+.jn-txt .bz-body { margin: 0; color: var(--ink); }
+/* scale rhythm: 1, 4 and 6 rest at 64 / 26; 2 ("Ours") is loud in its own quiet room; 3 breaks out wide at 112; 5 is
+   the medium step at 84 / 32. Nothing shrinks as the paper goes on. */
+.c1 .jn-num, .c2 .jn-num { font-size: 112px; }
+.c1 .jn-h { font-size: 44px; line-height: 1.06; letter-spacing: -.03em; }
+.c2 .jn-h, .c4 .jn-h { font-size: 32px; line-height: 1.1; letter-spacing: -.025em; }
+.c4 .jn-num { font-size: 84px; }
+.c1::before { content: ''; position: absolute; z-index: -1; inset: 0 -100vmax; background: #f5f5f5; }
+
+/* the figures */
+.jn-mfig { margin: 0; min-width: 0; position: relative; }
 .jn-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.jn-fsvg { min-height: 0; }
 .jn-mfig figcaption { margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--ink); display: flex; gap: 20px; align-items: baseline; }
 .jn-mfig figcaption > .x-mono { flex: none; font-size: 13px; font-weight: 497; color: var(--ink); }
 .jn-mfig ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; line-height: 1.4; color: var(--bz-muted); }
-.jn-mfig li { display: inline-flex; align-items: center; }
-.jn-mfig li b { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 6px; background: var(--ink); color: #fff; font-weight: 497; font-size: 13px; }
-/* 1: numeral | text | figure, at rest */
-.v0 .jn-num { grid-column: 1 / span 2; grid-row: 1; }
-.v0 .jn-txt { grid-column: 3 / span 4; grid-row: 1; }
-.v0 .jn-mfig { grid-column: 8 / span 5; grid-row: 1; }
-/* 2, the moment: a quiet room, the numeral at 112, the heading at 44, the figure across eight columns */
-.jn-sec.v1 { background: #f5f5f5; padding: clamp(88px, 9vw, 132px) 0; border-top: 0; }
-.jn-sec.v1 + .jn-sec { border-top: 0; }
-.v1 .jn-sec-in { row-gap: 32px; grid-template-rows: auto 1fr; }
-.v1 .jn-num { grid-column: 1 / span 4; grid-row: 1; font-size: 112px; }
-.v1 .jn-txt { grid-column: 1 / span 4; grid-row: 2; }
-.v1 .jn-h.big { font-size: 44px; line-height: 1.06; letter-spacing: -.03em; }
-.v1 .jn-mfig { grid-column: 5 / span 8; grid-row: 1 / span 2; }
-.v1 .jn-mfig figcaption { border-top-color: var(--ink); }
-/* 4 to 6: medium and tighter, the figure smaller, alternating sides */
-.jn-sec.v3, .jn-sec.v4, .jn-sec.v5 { padding: clamp(56px, 5vw, 72px) 0; }
-.v3 .jn-num, .v4 .jn-num, .v5 .jn-num { font-size: 44px; }
-.v3 .jn-h, .v4 .jn-h, .v5 .jn-h { font-size: 21px; }
-.v3 .jn-num, .v5 .jn-num { grid-column: 1 / span 1; grid-row: 1; }
-.v3 .jn-txt, .v5 .jn-txt { grid-column: 2 / span 5; grid-row: 1; gap: 16px; }
-.v3 .jn-mfig, .v5 .jn-mfig { grid-column: 8 / span 4; grid-row: 1; }
-.v4 .jn-mfig { grid-column: 2 / span 4; grid-row: 1; }
-.v4 .jn-txt { grid-column: 7 / span 5; grid-row: 1; gap: 16px; }
-.v4 .jn-num { grid-column: 12 / span 1; grid-row: 1; text-align: right; }
-/* layout C: numeral, headline and body across, the wide figure under them */
-.v2 .jn-num { grid-column: 1 / span 2; grid-row: 1; }
-.v2 .jn-txt { grid-column: 3 / span 10; grid-row: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--g); align-items: end; }
-.v2 .jn-txt .jn-h { grid-column: 1; }
-.v2 .jn-txt .bz-body { grid-column: 2; grid-row: 1; align-self: end; }
-.v2 .jn-mfig { grid-column: 3 / span 10; grid-row: 2; }
+.jn-mfig li { display: inline-flex; align-items: center; cursor: default; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.jn-mfig li b { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 6px; background: var(--ink); color: #fff; font-weight: 497; font-size: 13px; box-shadow: inset 0 0 0 1.5px var(--ink); transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--bz-emph); }
+.jn-mfig li.on { color: var(--ink); }
+.jn-mfig li.on b { background: #fff; color: var(--ink); transform: translateY(-2px); }
+.jn-scrub-bar { display: none; }
+.jn-pfig[data-fig="1"]::before { content: ''; position: absolute; z-index: -1; inset: -24px -100vmax 0; background: #f5f5f5; }
+.jn-stage > .jn-pfig { position: relative; z-index: 0; padding-bottom: 8px; }
+.c2 > .jn-mfig { margin-top: 16px; }
+
+/* a legend letter and its part of the drawing light each other: the rest of the drawing steps back */
+.jn-svg g[data-k] { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.jn-mfig[data-hot] .jn-svg g[data-k] { opacity: .16; }
+.jn-mfig[data-hot="a"] .jn-svg g[data-k="a"], .jn-mfig[data-hot="b"] .jn-svg g[data-k="b"],
+.jn-mfig[data-hot="c"] .jn-svg g[data-k="c"], .jn-mfig[data-hot="d"] .jn-svg g[data-k="d"] { opacity: 1; }
+.jn-svg g[data-k]:not([data-k=""]) { cursor: default; }
+
 /* figure ink: greys and black, told apart by weight, dash and fill */
 .jn-svg .sk, .jn-svg .sa, .jn-svg .sg, .jn-svg .sd { fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .jn-svg .sk { stroke: var(--ink); }
@@ -148,30 +150,72 @@
 .jn-svg .mk { fill: var(--ink); }
 .jn-svg .lt { font: 497 21px/1 var(--mono); fill: var(--ink); text-anchor: middle; dominant-baseline: middle; }
 .jn-svg .lt.a { font-weight: 606; }
-/* the one-shot draw (Jin.jsx useDraw): armed = blank, drawn = the finished figure the server HTML already shows */
+/* the scrubbed point: rides the round trip with the scroll (Jin.jsx Paper) */
+.jn-svg .jn-scrub { fill: #fff; stroke: var(--ink); stroke-width: 2.5; }
+/* the draw (Jin.jsx useDraw): armed = blank, drawn = the finished figure the server HTML already shows */
 .jn-trip { fill: var(--ink); opacity: 0; pointer-events: none; }
 .jn-mfig.armed .jn-svg .jn-dw { stroke-dasharray: 1 1.02; stroke-dashoffset: 1; stroke-opacity: 0; }
 .jn-mfig.armed .jn-svg :is(.fk, .fa, .fg, .fl, .fz, .fo) { fill-opacity: 0; transform: scale(.4); transform-box: fill-box; transform-origin: center; }
-.jn-mfig.armed .jn-svg :is(.dash, [stroke-dasharray], .sd, .lt) { opacity: 0; }
+.jn-mfig.armed .jn-svg :is(.dash, [stroke-dasharray], .sd, .lt, .jn-scrub) { opacity: 0; }
 .jn-mfig.armed .jn-svg .jn-clu { transform: translate(var(--x), var(--y)); }
 .jn-mfig.armed .jn-svg .mk { fill-opacity: 0; }
 /* each mark's stagger delay (50 ms apart for strokes, 20 ms for marks) is set inline by useDraw */
 .jn-mfig.drawn .jn-svg .jn-dw { stroke-dashoffset: 0; stroke-opacity: 1; transition-property: stroke-dashoffset, stroke-opacity; transition-duration: 1.1s, .15s; transition-timing-function: cubic-bezier(.4, 0, .2, 1), linear; }
 .jn-mfig.drawn .jn-svg :is(.fk, .fa, .fg, .fl, .fz, .fo) { fill-opacity: 1; transform: none; transition-property: fill-opacity, transform; transition-duration: .4s, .5s; transition-timing-function: cubic-bezier(0, 0, .2, 1), var(--bz-emph); }
-.jn-mfig.drawn .jn-svg :is(.dash, [stroke-dasharray], .sd, .lt) { opacity: 1; transition: opacity .4s cubic-bezier(0, 0, .2, 1) 1.1s; }
+.jn-mfig.drawn .jn-svg :is(.dash, [stroke-dasharray], .sd, .lt, .jn-scrub) { opacity: 1; transition: opacity .4s cubic-bezier(0, 0, .2, 1) 1.1s; }
 .jn-mfig.drawn .jn-svg .jn-clu { transform: none; transition: transform 1.2s cubic-bezier(.4, 0, .2, 1) .5s; }
 .jn-mfig.drawn .jn-svg .mk { fill-opacity: 1; transition: fill-opacity .3s cubic-bezier(0, 0, .2, 1) 1s; }
 .jn-mfig.drawn .jn-svg .jn-trip { animation: jn-trip 2.6s linear both; }
 @keyframes jn-trip { 0%, 34% { opacity: 0; } 36%, 90% { opacity: 1; } 100% { opacity: 0; } }
 
-/* Beyond: the one dark plate */
+/* ---------- the pinned stage (desktop, JS on): the texts scroll on the left, the plate stays on the right ---------- */
+@media (min-width: 901px) {
+  .js .jn-stage { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: clamp(40px, 5vw, 72px); }
+  .js .jn-stage > * { order: 0; }
+  .js .jn-ch { grid-column: 1; justify-content: flex-start; padding: 17svh 0 10svh; }
+  .js .jn-ch.c0 { grid-row: 1; min-height: 92svh; }
+  .js .jn-ch.c1 { grid-row: 2; min-height: 124svh; padding-top: 22svh; }
+  .js .jn-ch.c2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: clamp(40px, 5vw, 72px); row-gap: 40px; align-items: end; padding: clamp(104px, 11vw, 160px) 0; border-top: 1px solid var(--bz-line); border-bottom: 1px solid var(--bz-line); }
+  .js .jn-ch.c2 .jn-num { grid-column: 1; grid-row: 1; }
+  .js .jn-ch.c2 .jn-txt { grid-column: 2; grid-row: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 40px; align-items: end; max-width: none; }
+  .js .jn-ch.c2 .jn-h { max-width: 9ch; }
+  .js .jn-ch.c2 > .jn-mfig { grid-column: 1 / -1; grid-row: 2; margin-top: 24px; }
+  .js .jn-ch.c3 { grid-row: 1; min-height: 84svh; }
+  .js .jn-ch.c4 { grid-row: 2; min-height: 108svh; padding-top: 20svh; }
+  .js .jn-ch.c5 { grid-row: 3; min-height: calc(100svh - 108px); }
+  /* the text a chapter is on reads in ink; the one leaving steps back to grey */
+  .js .jn-ch:not(.c2) .jn-txt .bz-body { transition: color .4s cubic-bezier(0, 0, .2, 1); }
+  .js .jn-ch:not(.on):not(.c2) .jn-txt .bz-body { color: var(--bz-muted); }
+
+  /* the plate: one frame per run, pinned under the running head; the run's figures stack inside it */
+  .js .jn-plate, .js .jn-pfig { grid-column: 2; position: sticky; top: 132px; align-self: start; height: calc(100svh - 164px); max-height: 720px; margin-top: 32px; }
+  .js .jn-stage.ra > .jn-plate, .js .jn-pfig.ra { grid-row: 1 / span 2; }
+  .js .jn-stage.rb > .jn-plate, .js .jn-pfig.rb { grid-row: 1 / span 3; }
+  .js .jn-plate { display: block; z-index: 1; border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px var(--bz-line); }
+  .js .jn-pfig { z-index: 2; display: flex; flex-direction: column; padding: 40px 40px 28px; opacity: 0; pointer-events: none; transition: opacity .3s cubic-bezier(0, 0, .2, 1) .32s; }
+  .js .jn-pfig.on { opacity: 1; pointer-events: auto; transition-delay: 0s; }
+  .js .jn-pfig[data-fig="1"]::before { content: none; }
+  .js .jn-pfig .jn-fsvg { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .js .jn-pfig .jn-svg { width: 100%; height: 100%; max-height: 100%; }
+  .js .jn-pfig figcaption { margin-top: 16px; }
+  /* scrubbed: a hairline across the plate's top edge follows the reading of the chapter */
+  .js .jn-pfig .jn-scrub-bar { display: block; position: absolute; left: 24px; right: 24px; top: 0; height: 2px; background: var(--ink); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
+  /* draw out: what leaves undraws quickly, all at once, then the next figure draws in over it */
+  .js .jn-pfig.armed:not(.drawn) .jn-svg * { transition-delay: 0s !important; }
+  .js .jn-pfig.armed:not(.drawn) .jn-svg .jn-dw { transition: stroke-dashoffset .4s cubic-bezier(.4, 0, .2, 1), stroke-opacity .1s linear .35s; }
+  .js .jn-pfig.armed:not(.drawn) .jn-svg :is(.fk, .fa, .fg, .fl, .fz, .fo) { transition: fill-opacity .25s cubic-bezier(.4, 0, .2, 1), transform .3s cubic-bezier(.4, 0, .2, 1); }
+  .js .jn-pfig.armed:not(.drawn) .jn-svg :is(.dash, [stroke-dasharray], .sd, .lt, .jn-scrub, .mk) { transition: opacity .15s linear, fill-opacity .15s linear; }
+}
+
+/* ---------- Beyond: the one dark plate ---------- */
 .jn-try { background: #0a0a0a; color: #f5f5f5; }
 .jn-try h2 { color: #f5f5f5; }
 .jn-try-head { grid-column: 1 / span 4; align-self: start; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
-.jn-try-k { margin: 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #737373; }
+.jn-try-k { margin: 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #a3a3a3; }
 .jn-try-head .bz-body { color: #a3a3a3; }
-/* the status chip reserves two lines, so it never moves the heading above it */
-.jn-state { box-sizing: border-box; align-self: stretch; display: flex; align-items: center; min-height: calc(2.8em + 24px); margin: 6px 0 0; padding: 12px 16px; border-radius: 12px; background: #f5f5f5; color: #0a0a0a; font-size: 14px; line-height: 1.4; }
+/* the status is a mono caption on the black under a hairline; it reserves two lines, so the heading never moves */
+.jn-state { box-sizing: border-box; align-self: stretch; display: flex; align-items: flex-start; gap: 10px; min-height: calc(2.8em + 14px); margin: 6px 0 0; padding: 14px 0 0; border-top: 1px solid rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .78); font-size: 14px; line-height: 1.4; }
+.jn-state::before { content: ''; flex: none; width: 6px; height: 6px; margin-top: .45em; border-radius: 50%; background: rgba(255, 255, 255, .78); }
 .jn-try-obj { grid-column: 6 / span 7; display: flex; flex-direction: column; gap: 28px; }
 /* not Figure 1 again: the image is the small handle, the embedding space is the object, at 3:2 */
 .jn-try-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: end; gap: 20px; }
@@ -192,27 +236,37 @@
 .jn-try .jn-lbl.go { background: #f5f5f5; color: #0a0a0a; }
 .jn-try .jn-trace polyline { stroke: #737373; }
 .jn-try .jn-trace .ret { stroke: #f5f5f5; }
-.jn-loss.dark .x-mono { color: #a3a3a3; }
-.jn-loss.dark .jn-track { background: #171717; box-shadow: none; }
-.jn-loss.dark i { background: #737373; }
-.jn-loss.dark .on .x-mono { color: #f5f5f5; }
-.jn-loss.dark .on i { background: #f5f5f5; }
+/* Figure 8's read-out: the three losses as a trace over your drags */
+.jn-trc svg { display: block; width: 100%; height: 120px; overflow: visible; }
+.jn-trc .g { fill: none; stroke: rgba(255, 255, 255, .08); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.jn-trc polyline { fill: none; stroke-width: 1.5; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: stroke-width .3s cubic-bezier(0, 0, .2, 1); }
+.jn-trc polyline.on { stroke-width: 2.5; }
+.jn-trc .l0 { stroke: #f5f5f5; }
+.jn-trc .l1 { stroke: rgba(255, 255, 255, .55); stroke-dasharray: 5 4; }
+.jn-trc .l2 { stroke: #737373; stroke-dasharray: 1.5 3.5; }
+.jn-trc-k { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(255, 255, 255, .1); display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; color: #a3a3a3; }
+.jn-trc-k li { display: inline-flex; align-items: center; gap: 10px; transition: color .3s; }
+.jn-trc-k li.on { color: #fafafa; }
+.jn-trc-k i { width: 22px; height: 0; border-top: 2px solid #f5f5f5; }
+.jn-trc-k .l1 i { border-top: 2px dashed rgba(255, 255, 255, .55); }
+.jn-trc-k .l2 i { border-top: 2px dotted #737373; }
 
-/* the close: one proof line, one sentence, the same ask, full-width rows */
+/* ---------- the close: one proof line, one sentence, the same ask, full-width rows ---------- */
 .jn-proof { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 0 0 clamp(40px, 5vw, 64px); padding: 14px 0; border-top: 1px solid var(--bz-line); border-bottom: 1px solid var(--bz-line); font-size: 13px; color: var(--bz-muted); }
 .jn-proof span:first-child { color: var(--ink); }
 .jn-end-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px 48px; padding-bottom: clamp(48px, 6vw, 88px); }
 .jn-rows { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
 .jn-rows > li { border-bottom: 1px solid var(--bz-line); }
 .jn-row { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) auto 24px; align-items: center; gap: 24px; min-height: 80px; padding: 0 8px; color: var(--ink); text-decoration: none; transition: background-color .15s, transform var(--dur-press, .09s); }
-@media (hover: hover) { .jn-row:hover { background: #f5f5f5; } }
+@media (hover: hover) { .jn-row:hover { background: #f5f5f5; } .jn-row:hover svg:last-child { transform: translateX(4px); } }
 .jn-row:active { transform: scale(.995); }
 .jn-row:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+.jn-row:focus-visible svg:last-child { transform: translateX(4px); }
 .jn-row b { font-size: 21px; font-weight: 606; letter-spacing: -.015em; }
 .jn-row > span { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; font-size: 16px; color: var(--bz-muted); }
 .jn-row > span i { font-style: normal; font-size: 14px; color: var(--ink); }
 .jn-row em { font-style: normal; font-size: 16px; font-weight: 497; }
-.jn-row svg:last-child { transition: transform .15s var(--bz-emph); }
+.jn-row svg:last-child { transition: transform .3s var(--bz-emph); }
 .jn-row-sheet { padding: 18px 0; }
 .jn-table { width: 100%; border-collapse: collapse; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
 .jn-table thead { display: none; }
@@ -222,6 +276,19 @@
 .jn-table td { color: var(--bz-muted); }
 .jn-paste { grid-template-columns: 1fr !important; gap: 18px !important; margin-top: 40px; }
 .jn-paste .cf-paste-t { font-size: 21px; }
+.jn-sheet-btn svg { transition: transform .3s var(--bz-emph); }
+@media (hover: hover) { .jn-sheet-btn:hover svg { transform: rotate(90deg); } }
+
+/* Table 1's sheet, a native dialog: from the right on desktop, from the bottom on phones */
+.jn-dlg { position: fixed; inset: 12px 12px 12px auto; margin: 0; padding: 0; border: 0; width: min(620px, calc(100vw - 24px)); max-width: none; height: auto; max-height: none; border-radius: 24px; background: #fff; color: var(--bz-ink); box-shadow: var(--bz-float); text-align: left; outline: none; overflow: hidden; }
+.jn-dlg[open] { display: flex; flex-direction: column; animation: jn-dlg-in .5s var(--bz-emph); }
+.jn-dlg.out { animation: jn-dlg-out .28s cubic-bezier(.4, 0, .2, 1) forwards; }
+.jn-dlg::backdrop { background: rgba(0, 0, 0, .3); animation: jn-fade .3s cubic-bezier(0, 0, .2, 1); }
+.jn-dlg.out::backdrop { animation: jn-fade .28s cubic-bezier(.4, 0, .2, 1) reverse forwards; }
+@keyframes jn-dlg-in { from { transform: translateX(calc(100% + 24px)); } }
+@keyframes jn-dlg-out { to { transform: translateX(calc(100% + 24px)); } }
+@keyframes jn-fade { from { opacity: 0; } }
+.jn-dlg .bz-sheet-body { flex: 1; }
 
 @media (max-width: 900px) {
   .jn-hero { padding: 88px 0 96px; }
@@ -239,7 +306,7 @@
   .jn-f1 .jn-pane-c { padding-left: 0; }
   .jn-f1 figcaption { margin-left: 0; }
   .jn-pk b, .jn-mfig li b { font-size: 14px; }
-  .jn-pk, .jn-loss .x-mono, .jn-lbl, .jn-phase, .jn-abs-k, .jn-run-in .x-mono, .jn-mfig figcaption > .x-mono, .jn-try-k, .jn-table caption { font-size: 14px; }
+  .jn-pk, .jn-loss .x-mono, .jn-lbl, .jn-phase, .jn-abs-k, .jn-run-in .x-mono, .jn-mfig figcaption > .x-mono, .jn-try-k, .jn-table caption, .jn-trc-k { font-size: 14px; }
   .jn-loss > div { grid-template-columns: 152px minmax(0, 1fr); gap: 10px; }
   .jn-guess > i { width: 24px; height: 24px; margin: -12px; }
   .jn-home { width: 30px; height: 30px; margin: -15px; }
@@ -250,25 +317,31 @@
   .jn-run { top: 56px; }
   .jn-run-in { gap: 14px; height: 44px; }
   .jn-run-in > .x-mono:first-child { display: none; }
-  .jn-sec { padding: 64px 0; }
-  .jn-sec.v1 { padding: 80px 0; }
-  .jn-sec.v3, .jn-sec.v4, .jn-sec.v5 { padding: 48px 0; }
-  .jn-sec-in { row-gap: 28px; }
-  .jn-sec .jn-num, .jn-sec .jn-txt, .jn-sec .jn-mfig { grid-column: 1 / -1 !important; grid-row: auto !important; text-align: left !important; }
+  /* stacked: each chapter is numeral, heading and text, with its figure above or below it in turn */
+  .jn-ch { padding: 56px 0 40px; gap: 20px; }
+  .jn-ch.c1 { padding-bottom: 64px; }
+  .jn-ch.c2 { padding: 72px 0 64px; }
   .jn-num { font-size: 44px; }
-  .v1 .jn-num { font-size: 84px; }
-  .v1 .jn-h.big { font-size: 36px; }
-  .v3 .jn-num, .v4 .jn-num, .v5 .jn-num { font-size: 32px; }
-  .v3 .jn-mfig, .v4 .jn-mfig, .v5 .jn-mfig { max-width: 320px; }
-  .jn-try-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
-  .v2 .jn-txt { display: flex; align-items: stretch; }
+  .c1 .jn-num, .c2 .jn-num { font-size: 84px; }
+  .c4 .jn-num { font-size: 64px; }
+  .c1 .jn-h { font-size: 36px; }
+  .c2 .jn-h, .c4 .jn-h { font-size: 26px; }
+  .jn-stage > .jn-pfig { padding: 8px 0 0; }
+  .jn-pfig[data-fig="1"]::before { inset: -8px -100vmax 0; }
+  .c1::before { inset: 0 -100vmax; }
+  .jn-pfig:not([data-fig="1"]) + .jn-ch, .jn-ch + .jn-pfig { border-top: 0; }
   .jn-svg.wide .lt { font-size: 32px; }
-  .jn-mfig figcaption { flex-direction: column; gap: 10px; }
-  .jn-mfig ul { flex-direction: column; gap: 8px; }
+  /* the legend is one line: "Figure N", then the lettered keys in a strip that slides sideways */
+  .jn-mfig figcaption { gap: 14px; align-items: center; }
+  .jn-mfig ul { flex-wrap: nowrap; gap: 18px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; padding: 4px 18% 4px 0; margin: -4px 0; -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
+  .jn-mfig ul::-webkit-scrollbar { display: none; }
+  .jn-mfig li { flex: none; white-space: nowrap; scroll-snap-align: start; min-height: 32px; }
 
+  .jn-try-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
   .jn-try-head, .jn-try-obj { grid-column: 1 / -1; }
   .jn-try-obj { margin-top: 48px; gap: 22px; }
   .jn-try-row { gap: 10px; }
+  .jn-trc svg { height: 96px; }
 
   .jn-end-top { gap: 28px; }
   .jn-row { grid-template-columns: minmax(0, 1fr) 24px; gap: 6px 12px; padding: 16px 4px; min-height: 64px; }
@@ -276,8 +349,12 @@
   .jn-row svg:last-child { grid-column: 2; grid-row: 1; }
   .jn .x-arrow { min-height: 44px; }
   .jn-paste .cf-paste-k, .jn-paste .x-copy-t { font-size: 14px; }
+  .jn-dlg { inset: auto 8px 8px 8px; width: auto; max-height: 88svh; }
+  @keyframes jn-dlg-in { from { transform: translateY(calc(100% + 16px)); } }
+  @keyframes jn-dlg-out { to { transform: translateY(calc(100% + 16px)); } }
 }
 @media (prefers-reduced-motion: reduce) {
   .jn-hero-fig { animation: none; }
-  .jn-guess, .jn-home, .jn-trace *, .jn-run-bar, .jn-ticks li { transition: none !important; }
+  .jn-guess, .jn-home, .jn-trace *, .jn-run-bar, .jn-ticks li, .jn-pfig, .jn-svg g[data-k] { transition: none !important; }
+  .jn-dlg[open], .jn-dlg.out, .jn-dlg::backdrop { animation: none !important; }
 }

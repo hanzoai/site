@@ -450,20 +450,25 @@ function Paper() {
         <i className="jn-run-bar" style={{ transform: `scaleX(${(at + 1) / 6})` }} />
       </div>
       <p className="x-sr">What is in the repository</p>
-      <div className="bz-wrap jn-stage">
-        <i className="jn-plate ra" aria-hidden="true" />
-        <i className="jn-plate rb" aria-hidden="true" />
-        {SECS.map(([t, lines, d, key], i) => [
-          <section key={t} className={'jn-ch c' + i + (at === i ? ' on' : '')} data-sec={i} aria-labelledby={'jn-s' + i} style={{ '--o': 2 * i + (i % 2 ? 1 : 0) }}>
-            <p className="jn-num" aria-hidden="true">{i + 1}</p>
-            <div className="jn-txt">
-              <BizLines id={'jn-s' + i} className={'bz-headline jn-h'} lines={lines} />
-              <p className="bz-body">{d}</p>
-            </div>
-            {i === BREAK && <Fig i={i} keys={key} />}
-          </section>,
-          i !== BREAK && <Fig key={t + '-f'} i={i} keys={key} plate staged={staged} on={at === i} />,
-        ])}
+      <div className="bz-wrap">
+        {[[0, BREAK], [BREAK, BREAK + 1], [BREAK + 1, SECS.length]].map(([a, b]) => {
+          const ch = SECS.slice(a, b).map(([t, lines, d, key], j) => {
+            const i = a + j;
+            return [
+              <section key={t} className={'jn-ch c' + i + (at === i ? ' on' : '')} data-sec={i} aria-labelledby={'jn-s' + i} style={{ '--o': 2 * i + (i % 2 ? 1 : 0) }}>
+                <p className="jn-num" aria-hidden="true">{i + 1}</p>
+                <div className="jn-txt">
+                  <BizLines id={'jn-s' + i} className="bz-headline jn-h" lines={lines} />
+                  <p className="bz-body">{d}</p>
+                </div>
+                {i === BREAK && <Fig i={i} keys={key} />}
+              </section>,
+              i !== BREAK && <Fig key={t + '-f'} i={i} keys={key} plate staged={staged} on={at === i} />,
+            ];
+          });
+          // a run of the pinned stage is its own box, so its plate unpins where the run ends
+          return a === BREAK ? ch : <div key={a} className={'jn-stage' + run(a)}><i className="jn-plate" aria-hidden="true" />{ch}</div>;
+        })}
       </div>
     </div>
   );

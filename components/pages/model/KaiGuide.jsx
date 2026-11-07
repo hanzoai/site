@@ -19,6 +19,7 @@
 // Signature: the session runs itself once: the guide's curl request typing into a terminal and its response shape streaming back
 // Beyond: the request checker, driven by the limit you pick or by your own rulers, priced against Jev
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
 import { A, Cta, Tabs, TabPanel, CodeBlock } from '../../kit';
@@ -105,7 +106,8 @@ const CODES = [['curl', CURL], ['pip install hanzoai', PY], ['npm install hanzoa
 const RESP = `{
   "id": —,
   "model": "kai",
-  "routing": —, // the checkpoint that answered: kai-1.3 for the model id kai
+  // the checkpoint that answered: kai-1.3 for the model id kai
+  "routing": —,
   "usage": { "output_tokens": 0 },
   "answers": {
     "department": { "choice": —, "probabilities": —, "confidence": — },
@@ -120,7 +122,7 @@ const RLINES = RESP.split('\n');
 // the lines the session rests on: usage (output_tokens 0) and the answers block, lit in this order once it settles
 // the status line in the guide's own words: an em dash while it runs, "0 output tokens" once it rests
 const DONE = '0 output tokens';
-const KEY = RLINES.map((l, i) => (i >= 4 && i <= 9 ? i - 4 : undefined));
+const KEY = RLINES.map((l, i) => (i >= 5 && i <= 10 ? i - 5 : undefined));
 
 /* the first screen: the request types and the response streams, once (typing into text nodes via refs), then rests on
    the answer: the request dims, the response scrolls so its usage and answers lines sit mid-window, and those lines
@@ -399,11 +401,16 @@ function Limits() {
   // the open limit follows the checker's walk; the sentence slot keeps one height, so nothing moves when it changes
   useEffect(() => { if (lit !== null) setOpen(lit); }, [lit]);
   const pick = (i) => { setOpen(i); setRow(i); setMine([...SCENES[ROW_SCENE[i]]]); };
+  // React writes `hidden` as a plain boolean, so the until-found value is set here, before paint; until then a .js rule
+  // folds the same four sentences, and with JS off all five stay open
+  useLayoutEffect(() => {
+    list.current.querySelectorAll('dd').forEach((d, i) => (i === open ? d.removeAttribute('hidden') : d.setAttribute('hidden', 'until-found')));
+  }, [open]);
   useEffect(() => {
     const dl = list.current;
     const dds = [...dl.querySelectorAll('dd')];
     // find-in-page or a #limit-<name> link reveals a folded sentence: open that row with it
-    const found = dds.map((d, i) => { const f = () => pick(i); d.addEventListener('beforematch', f); return f; });
+    const found = dds.map((d, i) => { const f = () => flushSync(() => pick(i)); d.addEventListener('beforematch', f); return f; });
     const hash = () => { const i = LIMITS.findIndex(([k]) => '#' + slug(k) === location.hash); if (i >= 0) pick(i); };
     hash(); addEventListener('hashchange', hash);
     // reserve the tallest open state, so a sentence opening or folding never moves the page
@@ -428,7 +435,7 @@ function Limits() {
             {LIMITS.map(([k, v], i) => (
               <div key={k} id={slug(k)} data-on={open === i || undefined}>
                 <dt><button type="button" aria-expanded={open === i} aria-controls={slug(k) + '-d'} onClick={() => pick(i)}><span>{k}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button></dt>
-                <dd id={slug(k) + '-d'} hidden={open === i ? undefined : 'until-found'}>{v}</dd>
+                <dd id={slug(k) + '-d'}>{v}</dd>
               </div>
             ))}
           </dl>
