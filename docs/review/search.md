@@ -1,4 +1,5 @@
 # /search: James-eye review
+Ready: 2026-11-07, slice D — verified on the stacked-cards build: no phone overlap at 04 (stack contains its pictures at 375/320), hover holds a step only while on it (resumes after leave), phone hero ask quiet under the solid header, GitHub arrow nudges on hover, all five entrances end visible at both sizes
 
 Verdict: 7/10
 First complaint: "On the phone the last chapter gets swallowed by the black section. The answer card has no bottom and the second source has gone under it. And on the desktop, if my mouse brushes over one of the steps in the dark section, it stops moving and never starts again. It's nearly there, but those two things make it look broken."

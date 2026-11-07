@@ -7,7 +7,7 @@
    Phone (≤700px): the header keeps a solid "Try Hanzo", so the hero's "Read the docs" sits quiet (outlined) and the
    shared slim bar carries it after the hero; one solid per viewport at both widths.
    Metric: api_key_created (developers, MASTER §1).
-   V2: 8/10 a Spotlight-size search types on arrival and settles; one query answered four ways in pinned chapters (phone pictures run when seen); the dark room runs its three steps by itself (pausable, hover holds); the close replays the hero query centred under one merged rank; page-scoped deck tokens, 44px phone targets
+   V2: 8/10 a Spotlight-size search types on arrival and settles; one query answered four ways on cards that stack as you pass (phone pictures run when seen; each section enters its own way: blinds, sticky-stack, zoom-through, pull-back, grow-from-point); the dark room runs its three steps by itself (pausable, hover holds); the close replays the hero query centred under one merged rank; page-scoped deck tokens, 44px phone targets
    Signature: one query, four answers. "Kubernets" types itself into a search bar the size of the screen, and as you scroll
    the same index answers it four ways: the typo fixed, the neighbours by meaning, the two lists fused by rank (the rows
    re-flow into one), then a streamed answer with its sources.
