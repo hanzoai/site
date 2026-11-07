@@ -1,6 +1,6 @@
-// Signature: a sales desk where the greeting sits at display size over the live conversation, and a dark seat-by-seat quote sheet beside it re-prices itself and takes the size you tell it
-// Beyond: the seat mixer: members and Premium seats priced from Hanzo’s own seat prices, yearly against monthly, with what yearly billing saves
-// V2: 8/10 display greeting with the chat under it, the dark quote sheet as the hero object, the six promises as a rail you throw with inertia
+// Signature: a sales desk where the greeting sits at display size over the live conversation, and Hanzo’s own dark quote card beside it re-prices seat by seat and takes the size you tell it
+// Beyond: the quote card you can drag: its seats follow the slider and the annual and monthly rates re-price from Hanzo’s own seat prices, before you type a word
+// V2: 8/10 grey deck; Hanzo’s own quote card (its exact words) as the dark hero object, re-pricing by itself; the chat sends the same requests; the six promises as a rail you throw; one solid ask, sticky after the hero
 import BuyingSpecialist from '../../components/pages/BuyingSpecialist';
 import JsonLd from '../../components/JsonLd';
 

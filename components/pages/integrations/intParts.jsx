@@ -1,10 +1,12 @@
 'use client';
-/* Parts of the /integrations/<tool> guide (v2): the editor that types its first sample by itself, the still code card
-   each chapter shows, and the "Only the Hanzo lines" switch they all share. Code is always in the HTML in full; the
-   typing only blanks and refills the text nodes in the browser (no React state per character). */
+/* Parts of the /integrations/<tool> guide: the editor that types its first sample by itself, the still code card each
+   chapter shows, and the "Only the Hanzo lines" switch they all share. Code is always in the HTML in full; the typing
+   only blanks and refills the text nodes in the browser (no React state per character). Ink and greys only: tokens
+   differ by weight and grey step, never by hue (JAMES.md 7); Hanzo's own lines are marked in the gutter, not striped. */
 import { useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
+import { ui } from '../../v2/famUi';
 
 export const HANZO = /hanzo/i;
 const lineText = (l) => l.map((t) => t[1]).join('');
@@ -13,7 +15,7 @@ export const hitsOf = (code) => {
   return { hits: lines.filter((l) => HANZO.test(lineText(l))).length, of: lines.filter((l) => l.length).length };
 };
 
-/* the code itself: numbered lines, tokens coloured by kind, Hanzo's lines marked in the page's accent */
+/* the code itself: numbered lines, tokens set apart by weight and grey, Hanzo's lines marked in the gutter */
 export function Lines({ code, only, typed, label }) {
   return (
     <pre className={'xig-pre' + (only ? ' only' : '')} tabIndex={0} aria-label={label} data-lenis-prevent data-swipe-own>
@@ -28,13 +30,16 @@ export function Lines({ code, only, typed, label }) {
   );
 }
 
-/* the switch: dims every line that is not about Hanzo, in every window on the page */
+/* the switch: dims every line that is not about Hanzo, in every window on the page (an icon; its name is registered) */
 export function Only({ only, setOnly, code, dark }) {
   const { hits, of } = hitsOf(code);
   return (
     <div className={'xig-only' + (dark ? ' dark' : '')}>
-      <button type="button" aria-pressed={only} onClick={() => setOnly(!only)} className="xig-switch"><i aria-hidden="true" /><span>Only the Hanzo lines</span></button>
-      <span className="x-mono xig-hits" aria-live="polite">{hits} of {of} lines point at Hanzo</span>
+      <button type="button" aria-pressed={only} aria-label={ui('int_only')} onClick={() => setOnly(!only)} className="xig-switch">
+        <i aria-hidden="true" />
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 4h12M2 8h7M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="12.5" cy="8" r="1.6" fill="currentColor" /></svg>
+      </button>
+      <span className="x-mono xig-hits" aria-live="polite"><b>{hits}</b><span aria-hidden="true"> / </span><span className="x-sr"> {ui('of')} </span>{of}<span className="x-sr"> {ui('int_hits')}</span></span>
     </div>
   );
 }
@@ -59,7 +64,7 @@ export function Editor({ sample, only, setOnly, aside, name }) {
     setState('typing');
     const per = Math.max(1, Math.ceil(total / (4.2 * 60))); // the whole sample in about four seconds
     let i = 0, j = 0, raf = 0, wait = 0;
-    const start = performance.now() + 650;
+    const start = performance.now() + 450;
     const step = (t) => {
       if (t < start) { raf = requestAnimationFrame(step); return; }
       if (wait > 0) { wait--; raf = requestAnimationFrame(step); return; }
@@ -86,9 +91,9 @@ export function Editor({ sample, only, setOnly, aside, name }) {
     <div className="xig-ed" ref={box} data-state={state}>
       <div className="xig-ed-bar">
         <span className="xig-dots" aria-hidden="true"><i /><i /><i /></span>
-        <span className="xig-tab"><span className="x-mono xig-tab-n">01</span>{sample.title}</span>
+        <span className="xig-tab">{sample.title}</span>
         {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
-        {sample.code && <Copy text={sample.code.text} className="xig-copy" />}
+        {sample.code && <Copy text={sample.code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
       <div className="xig-ed-g">
         <div className="xig-ed-code">
@@ -108,6 +113,7 @@ export function CodeCard({ sample, only, Loose, name }) {
       <div className="xig-card-bar">
         <span className="xig-tab">{sample.title}</span>
         {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
+        {sample.code && <Copy text={sample.code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
       {sample.code ? <Lines code={sample.code} only={only} label={name + ': ' + sample.title} /> : <div className="xig-prose"><Loose nodes={sample.nodes} /></div>}
     </div>

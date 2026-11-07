@@ -1,12 +1,14 @@
 'use client';
 /* AI Buying Specialist. Its idea is the sales desk where the quote writes itself while you talk.
-   V2: 8/10 rebuilt as a desk and a rail: the greeting at display size with the conversation under it, the quote sheet as the dark hero object re-pricing seat by seat; the six promises as a rail you throw with inertia.
+   Persona: a team lead choosing a Hanzo plan (PLAN-COMPONENTS 1.1 buyer). Goal: a quote and a plan. CTA: "Start Team
+   Plan →" (Hanzo's own plan button), with the conversation itself as the first action. Metric: signup_start.
+   V2: 8/10 grey deck: the greeting at display size with the conversation under it; Hanzo's own quote card as the dark hero object, re-pricing seat by seat by itself; the six promises as a rail you throw with inertia; one solid ask, sticky after the hero.
    Signature: the conversation on the left; beside it a quote sheet of seats, one square per member, fills and
    re-prices by itself, and when you tell the specialist your team size the sheet takes that size and the price rolls.
-   Beyond: the seat mixer. Set members and how many take Premium; yearly and monthly totals come from Hanzo's own seat
-   prices ($20 / $25 Standard, $100 / $125 Premium), with what yearly billing saves.
+   Beyond: the quote card you can drag: its seats follow the slider and the annual and monthly rates re-price from
+   Hanzo's own seat prices, before you type a word.
    Motion: live quote sheet (signature) + line-masked greeting + a drag rail with inertia for the promises.
-   Accent: blue. The chat is real: POST https://api.hanzo.ai/v1/chat/public (model enso-free) with Hanzo's own
+   0 UI hues. The chat is real: POST https://api.hanzo.ai/v1/chat/public (model enso-free) with Hanzo's own
    specialist brief, the transcript filed as Hanzo files it, and Hanzo's own written answers when the endpoint cannot
    be reached. */
 import { useEffect, useRef, useState } from 'react';
@@ -68,28 +70,26 @@ function Quote({ q }) {
 }
 
 /* The seat mixer: one square per member; Premium squares are filled. It re-prices itself until you take it. */
-function Sheet({ seats, prem, setSeats, setPrem, mine }) {
-  const yr = (seats - prem) * P.std + prem * P.prem;
-  const mo = (seats - prem) * P.stdMo + prem * P.premMo;
+/* The hero object: Hanzo's own quote card, the one the specialist writes into a reply, for a team of N members. It
+   re-prices itself (4, 10, 25, 50) until you drag the seats or tell the chat your size. Every word on it is the
+   card's own. */
+function Sheet({ seats, setSeats, mine }) {
+  const yr = seats * P.std;
+  const mo = seats * P.stdMo;
   return (
-    <aside className="xbs-sheet" aria-label="Team quote">
-      <div className="xbs-sheet-h"><b>Hanzo Team</b><span className="x-mono">{seats} members</span></div>
+    <aside className="xbs-sheet" aria-label={`Hanzo Team Configuration, ${seats} members`}>
+      <div className="xbs-sheet-h"><b>Hanzo Team Configuration</b><span className="x-mono">SAVE {P.save}% ANNUALLY</span></div>
+      <p className="xbs-team x-mono" aria-hidden="true"><b>{seats}</b> members</p>
       <div className="xbs-seats" aria-hidden="true">
-        {Array.from({ length: 100 }, (_, i) => <i key={i} className={i < seats ? (i >= seats - prem ? 'p' : 's') : ''} />)}
+        {Array.from({ length: 100 }, (_, i) => <i key={i} className={i < seats ? 's' : ''} style={{ transitionDelay: (i % 20) * 8 + 'ms' }} />)}
       </div>
-      <label className="xbs-range"><span>Members <output className="x-mono">{seats}</output></span>
-        <input type="range" min={2} max={100} value={seats} onChange={(e) => { mine(); const v = +e.target.value; setSeats(v); setPrem((p) => Math.min(p, v)); }} />
-      </label>
-      <label className="xbs-range"><span>Premium seats <output className="x-mono">{prem}</output></span>
-        <input type="range" min={0} max={seats} value={prem} onChange={(e) => { mine(); setPrem(+e.target.value); }} />
-      </label>
+      <input className="xbs-range" type="range" min={2} max={100} value={seats} aria-label="members" onChange={(e) => { mine(); setSeats(+e.target.value); }} />
       <dl className="xbs-tot">
-        <div><dt>Billed yearly</dt><dd className="x-mono">{usd(r2(yr / 12))}<small>/mo</small></dd><dd className="xbs-sub">{usd(yr)} a year</dd></div>
-        <div><dt>Billed monthly</dt><dd className="x-mono">{usd(mo)}<small>/mo</small></dd><dd className="xbs-sub">Yearly saves {usd(mo * 12 - yr)}</dd></div>
+        <div><dt>Annual Rate (Recommended)</dt><dd className="x-mono">{usd(r2(yr / 12))}<small>/mo</small></dd><dd className="xbs-sub">Billed {usd(yr)} annually upfront</dd></div>
+        <div><dt>Monthly Rate</dt><dd className="x-mono">{usd(mo)}<small>/mo</small></dd><dd className="xbs-sub">Cancel anytime</dd></div>
       </dl>
-      <p className="xbs-legend"><i className="s" />Standard seat · $20/mo yearly, $25 monthly <i className="p" />Premium seat · $100/mo yearly, $125 monthly</p>
-      <A to={`/pay/cart?plan=team&interval=year&quantity=${seats}`} className="x-btn solid xbs-start">Start Team Plan →</A>
-      <p className="xbs-more">More than 100 people? <A to="/enterprise/start">Start Enterprise Plan →</A></p>
+      <A to={`/pay/cart?plan=team&interval=year&quantity=${seats}`} className="x-btn solid xbs-start" data-thumb="Start Team Plan →" data-cta="buying-specialist.quote">Start Team Plan →</A>
+      <A to="/enterprise/start" className="x-arrow xbs-more"><span>Start Enterprise Plan →</span></A>
     </aside>
   );
 }
@@ -138,7 +138,6 @@ export default function BuyingSpecialist() {
   const [busy, setBusy] = useState(false);
   const [val, setVal] = useState('');
   const [seats, setSeats] = useState(10);
-  const [prem, setPrem] = useState(3);
   const [own, setOwn] = useState(false);
   const end = useRef(null);
   const desk = useRef(null);
@@ -153,7 +152,7 @@ export default function BuyingSpecialist() {
     if (own || calm || !seen) return;
     const STEPS = [[4, 1], [10, 3], [25, 5], [50, 10]];
     const i = STEPS.findIndex(([s]) => s === seats);
-    const t = setTimeout(() => { const [s, p] = STEPS[(i + 1) % STEPS.length]; setSeats(s); setPrem(p); }, 2400);
+    const t = setTimeout(() => { const [s] = STEPS[(i + 1) % STEPS.length]; setSeats(s); }, 2400);
     return () => clearTimeout(t);
   }, [seats, own, calm, seen]);
 
@@ -180,7 +179,7 @@ export default function BuyingSpecialist() {
       a = d?.choices?.[0]?.message?.content?.trim() || w.content;
     } catch { /* the written answer stands in */ }
     setMsgs((m) => [...m, { role: 'assistant', content: a, quote: w.quote }]);
-    if (w.quote?.plan === 'Hanzo Team') { setOwn(true); setSeats(Math.min(100, w.quote.seats)); setPrem(0); }
+    if (w.quote?.plan === 'Hanzo Team') { setOwn(true); setSeats(Math.min(100, w.quote.seats)); }
     file(q, a, w.quote, list);
     setBusy(false);
   };
@@ -239,7 +238,7 @@ export default function BuyingSpecialist() {
             <p className="xbs-legal">By continuing, you agree to our <A to="/privacy">Privacy Policy</A>.</p>
           </div>
           <motion.div className="xbs-side" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}>
-            <Sheet seats={seats} prem={prem} setSeats={setSeats} setPrem={setPrem} mine={() => setOwn(true)} />
+            <Sheet seats={seats} setSeats={setSeats} mine={() => setOwn(true)} />
           </motion.div>
         </div>
       </section>

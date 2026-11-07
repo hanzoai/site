@@ -1,5 +1,6 @@
 'use client';
-/* Risk, v2. V2: 8/10 Stage hero (the dial arrives huge and settles), three pinned chapters (compliance, lifecycle, agents), cards that open into sheets, one dark room, red accent
+/* Persona: enterprise buyer (fraud, AML and trust-and-safety leads). Goal: start a sales conversation. CTA: "Talk to us" → /contact-sales. Metric: contact_sales_submit.
+   Risk, v2. V2: 8/10 Stage hero (the dial arrives huge and settles), three pinned chapters (compliance, lifecycle, agents), cards that open into sheets, one dark room, red accent
    Signature: the dial that decides, and shows its work. Pick a stage (signup, payment, post-purchase; the stage is a
    field) and signals light; the needle swings to a score and the plane returns an action and its reasons. It never
    declines on its own: past the line it summons a person, the ceiling Hanzo's engine refuses to start above.
@@ -7,7 +8,8 @@
    contribution, exactly how Hanzo says its scores explain themselves. The dial is labelled an illustration, because no
    figure on this page is a customer result.
    Motion budget: signature = the live dial; supporting = Stage (Settle), Chapters (PinChapters), Open (sheets).
-   Accent: signal red, one per page. One dark room: "Your data, your model". Every word and link is Hanzo's. */
+   Colour: none (JAMES.md, 0 UI hues); the hot side of the dial is ink, status reads by shape and word. Every self-running
+   demo has a pause control. One dark room: "Your data, your model". Every word and link is Hanzo's. */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
@@ -17,6 +19,9 @@ import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
 import PinChapters from '../../v2/x-gauss/PinChapters';
 import { OpenCards, Detail } from '../../v2/OpenSheet';
+import NoJs from '../../v2/x-gauss/NoJs';
+import { usePause } from '../../v2/x-gauss/Pause';
+import Sigil from '../../Sigil';
 import '../../v2/Scale.css';
 import './Risk.css';
 
@@ -31,12 +36,13 @@ const LINE = 50;
 /* The hero object: a gauge on the left, the decision and its reasons on the right. */
 function Dial() {
   const [ref, live] = useLive(0.3);
+  const [paused, pauseBtn] = usePause();
   const [st, setSt] = useState(1);
   const [off, setOff] = useState([false, false, false]); // a signal set back to neutral
   const [mine, setMine] = useState(false);
   const [beat, setBeat] = useState(0);
   // idle: walk the stages and set one signal to neutral, then back, so the dial is always deciding something
-  useEvery(2200, live && !mine, () => {
+  useEvery(2200, live && !mine && !paused, () => {
     const b = beat + 1;
     setBeat(b);
     if (b % 3 === 0) { setSt((s) => (s + 1) % 3); setOff([false, false, false]); }
@@ -52,7 +58,9 @@ function Dial() {
   const roll = { initial: { y: '60%', opacity: 0 }, animate: { y: 0, opacity: 1 }, exit: { y: '-60%', opacity: 0 }, transition: { type: 'spring', stiffness: 300, damping: 30 } };
   return (
     <div className="rk-dial w2-object" ref={ref}>
+      {pauseBtn}
       <div className="rk-dial-l">
+        <p className="rk-name x-mono">Risk</p>
         <div className="rk-gauge" aria-hidden="true">
           <svg viewBox="0 0 220 124">
             <path d="M14 112 A 96 96 0 0 1 206 112" className="rk-arc" />
@@ -101,14 +109,13 @@ function Hero() {
       <div className="w2-wrap">
         <div className="rk-hero-top">
           <div>
-            <motion.p className="rk-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Risk</motion.p>
             <LineMask as="h1" id="rk-h1" now className="w2-display s rk-h1" lines={['One risk plane for accounts,', 'payments and agents']} />
           </div>
           <motion.div className="rk-hero-act" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.45 }}>
-            <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
+            <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us" data-cta="risk.hero">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
           </motion.div>
         </div>
-        <Settle from={1.1} lift={60} bleed={56}><Dial /></Settle>
+        <Settle from={1.08} lift={40}><Dial /></Settle>
       </div>
     </section>
   );
@@ -133,7 +140,6 @@ function Today() {
   return (
     <section className="w2-sec tight rk-today">
       <div className="w2-wrap">
-        <p className="w2-kicker">Status</p>
         <h2 className="w2-headline rk-today-h">Where this is today</h2>
         <div className="rk-faces">
           <div className="rk-face live">
@@ -241,6 +247,7 @@ function Lanes({ on }) {
 
 function Chapters() {
   const [ref, live] = useLive(0.05);
+  const [paused, pauseBtn] = usePause();
   const chapters = [
     {
       k: '/v1/aml · live', t: 'Available now: the compliance face',
@@ -277,9 +284,10 @@ function Chapters() {
       <PinChapters id="rk-how" label="Where the plane stands" className="rk-pin" chapters={chapters}
         visual={(at) => (
           <div className="rk-vis">
+            {pauseBtn}
             {[CaseFile, Track, Lanes].map((V, i) => (
               <motion.div key={i} className="rk-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.96 }} transition={{ duration: 0.6, ease: EASE }} style={{ pointerEvents: at === i ? 'auto' : 'none' }} aria-hidden={at !== i}>
-                <V on={live && at === i} />
+                <V on={live && !paused && at === i} />
               </motion.div>
             ))}
           </div>
@@ -414,9 +422,10 @@ function Not() {
           <p className="w2-body">Anti-money-laundering compliance and fraud prevention are related jobs, not one job. <strong>/v1/aml</strong> is the compliance face, <strong>/v1/risk</strong> is the decide plane, and one engine serves both. Nearby: <A to="/idv">identity verification</A> for proving who somebody is, <A to="/guard">Guard</A> for what a model is allowed to say, and <A to="/analytics">Analytics</A> for the event plane the model reads.</p>
         </div>
         <div className="rk-next">
+          <div className="rk-next-art" aria-hidden="true"><Sigil seed="hanzo-risk" data={[5, 20, 4, 3]} /></div>
           <h2 className="w2-kicker">Next</h2>
           {[['Talk to us', 'Tell us which stage is costing you, and help shape what the tiers include.', '/contact-sales'], ['The API', 'One base URL and one key for every Hanzo capability, including this one.', '/api'], ['The engine, source available', 'The monitoring engine underneath the compliance face, under the Lux Ecosystem License. Read it and check the citations; commercial use outside a Lux network is licensed separately.', 'https://github.com/luxfi/aml']].map(([t, d, to], i) => (
-            <A key={t} to={to} className={'rk-next-a' + (i === 0 ? ' first' : '')}><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A>
+            <A key={t} to={to} className={'rk-next-a' + (i === 0 ? ' first' : '')} {...(i === 0 ? { 'data-cta': 'risk.close' } : {})}><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A>
           ))}
         </div>
       </div>
@@ -427,6 +436,7 @@ function Not() {
 export default function Risk() {
   return (
     <main className="rk w2">
+      <NoJs />
       <Hero />
       <Statement />
       <Today />

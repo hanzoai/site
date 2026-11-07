@@ -12,7 +12,8 @@
    Motion: clip-path wipe scrub (signature) + typing + magnetic primary. Every word and link is Hanzo's; the URL is the
    example Hanzo prints. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
+import useCalm from '../../v2/useCalm';
 import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { Code, useLive } from './Frame';
@@ -27,9 +28,10 @@ const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0
 
 /* Hero: the command types into a text node; the URL lands as the headline's second act. */
 function Hero() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live] = useLive(0.3);
+  const calm = useCalm();
   const cmd = useRef(null);
-  const [done, setDone] = useState(!!calm);
+  const [done, setDone] = useState(false);
   useEffect(() => {
     if (calm) { if (cmd.current) cmd.current.textContent = CMD; setDone(true); return; }
     if (!live || done) return;
@@ -41,15 +43,15 @@ function Hero() {
     <section className="tn2-hero" ref={ref}>
       <div className="l2-wrap">
         <motion.p className="l2-kick tn2-kick" {...up(0)}><i aria-hidden="true" />hanzo share</motion.p>
-        <h1 className="l2-display"><span className="l2-ln"><motion.span initial={calm ? false : { y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 }}>Hanzo Tunnel</motion.span></span></h1>
+        <h1 className="l2-display"><span className="l2-ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 }}>Hanzo Tunnel</motion.span></span></h1>
         <div className="tn2-hero-row">
           <motion.p className="l2-lede" {...up(0.32)}>A public HTTPS URL for something running on your laptop. The port stays bound to localhost and the Hanzo fabric carries the traffic to it, so nothing is listening on whatever network the machine is sitting on.</motion.p>
           <motion.div className="l2-acts" {...up(0.44)}><Magnetic strength={0.25}><A to={GH} className="x-btn solid" data-thumb="View Source">View Source</A></Magnetic></motion.div>
         </div>
       </div>
-      <motion.div className="tn2-term" initial={calm ? false : { opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }} aria-hidden="true">
+      <motion.div className="tn2-term" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }} aria-hidden="true">
         <div className="l2-wrap">
-          <p className="tn2-cmd l2-mono"><span className="tn2-ps">$</span> <span ref={cmd}>{calm ? CMD : ''}</span><i className={'tn2-caret' + (done ? ' off' : '')} /></p>
+          <p className="tn2-cmd l2-mono"><span className="tn2-ps">$</span> <span ref={cmd} /><i className={'tn2-caret' + (done ? ' off' : '')} /></p>
           <p className={'tn2-share l2-mono' + (done ? ' on' : '')}>→ sharing 3000</p>
           <p className={'tn2-url' + (done ? ' on' : '')}><span className="tn2-lock" />wispyfox7421<b>.share.hanzo.ai</b><em className="l2-mono">→ localhost:3000</em></p>
         </div>
@@ -70,12 +72,13 @@ const FACTS = [
 /* Signature: the URL opens (a wipe grows from it) and closes (the wipe shrinks back) as the scene is scrolled. */
 function Scene() {
   const sec = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const wide = useWide();
   const pin = wide && !calm;
   const [ref, live] = useLive(0.3);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
-  const clock = useMotionValue(calm ? 0.6 : 0);
+  const clock = useMotionValue(0);
+  useEffect(() => { if (calm) clock.set(0.6); }, [calm, clock]);
   // phones: the scene plays by itself when seen, 9 s a loop
   useEffect(() => {
     if (pin || calm || !live) return;
@@ -83,7 +86,8 @@ function Scene() {
     return () => c.stop();
   }, [pin, calm, live, clock]);
   const p = pin ? scrollYProgress : clock;
-  const [q, setQ] = useState(calm ? 60 : 0);
+  const [q, setQ] = useState(0);
+  useEffect(() => { if (calm) setQ(60); }, [calm]);
   useMotionValueEvent(p, 'change', (v) => { const n = Math.round(v * 100); if (n !== q) setQ(n); });
   const open = (v) => (v < 0.3 ? 0 : v < 0.42 ? (v - 0.3) / 0.12 : v < 0.78 ? 1 : v < 0.9 ? 1 - (v - 0.78) / 0.12 : 0);
   const clip = useTransform(p, (v) => `circle(${(calm ? 1 : open(v)) * 150}% at 22% 62%)`);
@@ -202,12 +206,12 @@ function One() {
 
 export default function Tunnel() {
   return (
-    <main className="l2-page tn2" style={{ '--ac': '#ff6a13' }}>
+    <main className="l2-page tn2" style={{ '--ac': '#737373' }}>
       <Hero />
       <Scene />
       <Facts />
       <One />
-      <Finale name="Tunnel" head="Get started with Tunnel" acts={[['View on GitHub', GH]]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
+      <Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
     </main>
   );
 }

@@ -5,7 +5,8 @@ import JsonLd from '../../../components/JsonLd';
 import Ported from '../../../components/Ported';
 import ModelsPage from '../../../components/pages/ModelsPage';
 import ProviderShelf from '../../../components/pages/models/ProviderShelf';
-import { PROVIDERS, providerDoc, metaOf } from '../../../components/pages/models/modelsData';
+import { PROVIDERS, providerDoc, metaOf, makerIndex } from '../../../components/pages/models/modelsData';
+import NoScript from '../../../components/pages/models/NoScript';
 
 export const dynamicParams = false;
 export const generateStaticParams = () => PROVIDERS().map((slug) => ({ slug }));
@@ -22,8 +23,8 @@ export default async function Page({ params }) {
   const route = '/models/' + slug;
   const ld = <JsonLd route={route} />;
   // hanzo.ai serves the catalogue itself at /models/stealth
-  if (slug === 'stealth') return <>{ld}<ModelsPage /></>;
+  if (slug === 'stealth') return <>{ld}<NoScript /><ModelsPage makers={makerIndex()} /></>;
   // shortcut: /models/enso is Enso's research report, not a maker's shelf; drawn as captured until it gets its own room
   if (slug === 'enso') return <>{ld}<main className="x-ported"><Ported html={fs.readFileSync(path.join(process.cwd(), 'content', 'pages', 'models', 'enso.html'), 'utf8')} /></main></>;
-  return <>{ld}<ProviderShelf doc={providerDoc(slug)} /></>;
+  return <>{ld}<NoScript /><ProviderShelf doc={providerDoc(slug)} /></>;
 }

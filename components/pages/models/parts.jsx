@@ -6,9 +6,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A } from '../../kit';
+import { SNAP } from './rates';
 
 export const money = (v) => (v == null ? '—' : v === 0 ? 'Free' : '$' + (v < 1 ? v.toFixed(3) : v.toFixed(2)));
-export const rateText = (r) => (r ? `${money(r.in)} in · ${money(r.out)} out, per million tokens` : 'No published rate');
+export const rateText = (r) => (r ? `${money(r.in)} in · ${money(r.out)} out, per million tokens` : '—');
 const ctxText = (t) => (t == null ? '—' : t >= 1e6 ? +(t / 1e6).toFixed(1) + 'M' : Math.round(t / 1000) + 'K');
 const bill = (r, i, o) => (r ? r.in * i + r.out * o : null);
 const dollars = (v) => (v == null ? '—' : v === 0 ? '$0' : '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2)));
@@ -28,7 +29,7 @@ export function useCatalog(need) {
   }, [need]);
   return map;
 }
-export const rateFrom = (cat, id, own) => own || (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || null;
+export const rateFrom = (cat, id, own) => own || (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;
 
 /* ---------- signature: the sibling field ----------
    Every model from the same maker, placed by context window (across) and output rate (up). A light sweeps across it
@@ -117,7 +118,7 @@ function Volume({ id, label, i, set }) {
   return (
     <label className="xmf-vol" htmlFor={id}>
       <span>{label}</span>
-      <input id={id} type="range" min={0} max={STEPS.length - 1} step={1} value={i} onChange={(e) => set(+e.target.value)} aria-valuetext={STEPS[i] + ' million tokens a month'} />
+      <input id={id} type="range" min={0} max={STEPS.length - 1} step={1} value={i} onChange={(e) => set(+e.target.value)} aria-valuetext={STEPS[i] + ' million tokens a month'} style={{ '--f': (i / (STEPS.length - 1)) * 100 + '%' }} />
       <b className="x-mono">{STEPS[i].toLocaleString('en-US')}M</b>
     </label>
   );
@@ -149,7 +150,7 @@ export function Bill({ self, others }) {
     <div className="xmf-bill">
       {/* the month's bill is the hero figure; the sliders set it, a sibling sits beside it */}
       <div className="xmf-bill-l">
-        <p className="xmf-bill-big"><b className="x-mono">{dollars(a)}</b><span>{`${self.name}, a month`}</span></p>
+        <p className="xmf-bill-big"><b className="x-mono">{dollars(a)}</b><span>Bill a month</span></p>
         <p className="xmf-say">{say || `${dollars(a)} a month at ${i.toLocaleString('en-US')}M in and ${o.toLocaleString('en-US')}M out.`}</p>
         <div className="xmf-vols">
           <Volume id="xmf-vi" label="Input a month" i={vi} set={setVi} />
@@ -177,19 +178,17 @@ export function Bill({ self, others }) {
   );
 }
 
-/* ---------- the quick-start room: tabs that turn by themselves until you choose ---------- */
+/* ---------- the quick-start room: the language you pick is kept for the next model page (PLAN-COMPONENTS 2.15:
+   no auto-rotating snippet; the language persists) ---------- */
+const LANG = 'hz-lang';
 export function Codes({ samples, keyLink, title }) {
   const [on, setOn] = useState(0);
-  const touched = useRef(false);
   const box = useRef(null);
-  const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   useEffect(() => {
-    if (!seen || calm || touched.current || samples.length < 2) return;
-    const t = setInterval(() => { if (!touched.current) setOn((v) => (v + 1) % samples.length); }, 5200);
-    return () => clearInterval(t);
-  }, [seen, calm, samples.length]);
-  const choose = (i) => { touched.current = true; setOn(i); };
+    try { const k = localStorage.getItem(LANG); const j = samples.findIndex((s) => s.lang === k); if (j > 0) setOn(j); } catch { /* storage off: first tab */ }
+  }, [samples]);
+  const choose = (i) => { setOn(i); try { localStorage.setItem(LANG, samples[i].lang); } catch { /* storage off */ } };
   const keys = (e) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;

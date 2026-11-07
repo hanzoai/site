@@ -10,7 +10,8 @@
    Motion: horizontal scroll scrub (signature) + the hero's running partitions + the clip-to-card settle + magnetic primary.
    Every word, figure and link is Hanzo's; offsets and records are examples. */
 import { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import useCalm from '../../v2/useCalm';
 import { Code, useLive, useEvery } from './Frame';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
@@ -68,7 +69,7 @@ const FIGS = [['Kafka', 'Wire protocol'], ['PubSub', 'Holds the log'], ['Statele
 function Ruler() {
   const sec = useRef(null);
   const track = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const wide = useWide();
   const pin = wide && !calm;
   const [span, setSpan] = useState(3000);
@@ -169,7 +170,7 @@ function OneLine() {
 
 export default function Stream() {
   return (
-    <main className="l2-page st2" style={{ '--ac': '#12b5a6' }}>
+    <main className="l2-page st2" style={{ '--ac': '#a3a3a3' }}>
       <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
       </StageHero>
@@ -179,7 +180,7 @@ export default function Stream() {
         name="Stream"
         head="Point the bootstrap server at it"
         lede="The clients stay as they are. The cluster underneath them goes away."
-        acts={[['View on GitHub', GHS]]}
+        ask={['View on GitHub', GHS]}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
         tag="Event stream"
         repo={['hanzoai/stream', GHS]}

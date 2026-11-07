@@ -1,22 +1,52 @@
 'use client';
 /* Hanzo Tag (governance view of the same product as /slack).
+   V2: 8/10 the mention as a map that spreads from one @Hanzo across the channels into canvases, diffs and the merged PR, set big beside the moment it opened; governance as the one dark room; the rest chaptered in the v2 grammar with a pink accent from the fixed button.
+   Persona: a workspace owner weighing what Hanzo can see. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (tag.hero).
+   Metric: cta_click on tag.hero and tag.close (data-cta; the event layer is the conductor's).
    Signature: Mention map: one @Hanzo at the centre, rings spreading out across a field of channels, then branching into
    Canvas, Diff, Preview and the merged PR #418; click any node to read that moment of the thread.
    Beyond: "Will Hanzo see this?": pick where a message lives (a channel with @Hanzo added or not, tagged or not,
    scheduled work, a direct message) and get the answer from Hanzo's own FAQ sentences.
    The field holds 42 points because Hanzo's setup card says 42 channels enabled; only the tagged one lights.
    Every word, figure and link is Hanzo's (components/pages/slackData.js). */
-import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
-import { EASE, Rise } from '../ui';
-import { A, More, SecHead, Faq } from '../kit';
-import { Get, Paste, useLive, useEvery } from './cloud/Frame';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { A, Go, More } from '../kit';
 import Sigil from '../Sigil';
+import A2Lines from '../v2/A2Lines';
+import A2Paste from '../v2/A2Paste';
+import A2Faq from '../v2/A2Faq';
+import '../v2/A2.css';
 import { HERO, SETUP, ASK, ANSWER, STEPS, SESSION, CANVAS, WINDOW, TABS, DIFF, VIEW, WHAT, BUILT, PLATFORM, CODE, FAQ, CLOSE, Parts, Msg } from './slackData';
 import './Tag.css';
 
 const P = 'xtg';
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const EASE = [0.16, 1, 0.3, 1];
+function useLive(amount = 0.2) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount });
+  const calm = useReducedMotion();
+  return [ref, seen && !calm, calm];
+}
+function useEvery(ms, run, fn) {
+  const f = useRef(fn);
+  f.current = fn;
+  useEffect(() => {
+    if (!run) return;
+    const t = setInterval(() => f.current(), ms);
+    return () => clearInterval(t);
+  }, [ms, run]);
+}
+/* A section head in the v2 grammar: kicker, a line-masked headline, one sentence. */
+function Head({ kick, title, lede, id, dark, size = 'a2-headline' }) {
+  return (
+    <header className={`${P}-head` + (dark ? ' dark' : '')}>
+      {kick && <p className="a2-kick">{kick}</p>}
+      <A2Lines id={id} className={size} lines={[title]} />
+      {lede && <p className="a2-lede">{lede}</p>}
+    </header>
+  );
+}
 // rounded: server and browser trig can differ in the last digit, which breaks hydration
 const at = (deg, r) => [+(50 + Math.cos((deg * Math.PI) / 180) * r).toFixed(2), +(50 + Math.sin((deg * Math.PI) / 180) * r).toFixed(2)];
 
@@ -149,23 +179,22 @@ function MentionMap() {
 }
 
 function Hero() {
-  const line = (t, d) => (
-    <span className="x-line" key={t}><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>
-  );
   return (
     <section className={`${P}-hero`} aria-labelledby="xtg-h1">
-      <div className={`x-wrap ${P}-hero-grid`}>
+      <div className={`a2-wrap ${P}-hero2`}>
         <div className={`${P}-copy`}>
-          <motion.p className="x-kick" {...up(0)}>{HERO.kick}</motion.p>
-          <h1 id="xtg-h1" className={`${P}-h1`}>{HERO.title.map((t, i) => line(t, 0.05 + i * 0.1))}</h1>
-          <motion.p className={`${P}-lede`} {...up(0.35)}>{HERO.lede}</motion.p>
-          <motion.div className={`${P}-acts`} {...up(0.48)}>
-            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb>{HERO.acts[0][0]}</A>
+          <p className="a2-kick"><b>@</b> {HERO.kick}</p>
+          <A2Lines as="h1" id="xtg-h1" className={`a2-headline ${P}-h1`} lines={HERO.title} now />
+          <p className="a2-body">{HERO.lede}</p>
+          <div className="a2-acts">
+            <A to={HERO.acts[0][1]} className="x-btn solid" data-thumb={HERO.acts[0][0]} data-cta="tag.hero">{HERO.acts[0][0]}</A>
             <A to={HERO.acts[1][1]} className="x-btn">{HERO.acts[1][0]}</A>
-          </motion.div>
-          <motion.div {...up(0.58)}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></motion.div>
+          </div>
+          <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
         </div>
-        <MentionMap />
+        <div className={`${P}-hero-grid`}>
+          <MentionMap />
+        </div>
       </div>
     </section>
   );
@@ -177,9 +206,9 @@ function Channels() {
   const [i, setI] = useState(0);
   useEvery(2800, live, () => setI((v) => (v + 1) % 4));
   return (
-    <section className={`x-sec ${P}-chans`} ref={ref}>
-      <div className="x-wrap">
-        <SecHead kicker={CODE.kick} title={CODE.title} lede={CODE.lede} />
+    <section className={`a2-sec ${P}-chans`} ref={ref}>
+      <div className="a2-wrap">
+        <Head kick={CODE.kick} title={CODE.title} lede={CODE.lede} size="a2-display s" />
         <ul className={`${P}-quad`}>
           {HERO.points.map((t, k) => <li key={t} className={i === k ? 'on' : ''}><i aria-hidden="true">@</i><p>{t}</p><b className={`${P}-timer`} aria-hidden="true" /></li>)}
         </ul>
@@ -196,14 +225,12 @@ function Setup() {
   useEvery(1500, live, () => setS((v) => (v >= 5 ? 0 : v + 1)));
   const n = calm ? 4 : s;
   return (
-    <section className={`x-sec ${P}-setup`} ref={ref}>
-      <div className="x-wrap">
+    <section className={`a2-sec ${P}-setup`} ref={ref}>
+      <div className="a2-wrap">
         <div className={`${P}-setup-h`}>
-          <Rise>
-            <p className={`${P}-setup-t`}>{SETUP.title}</p>
-            <h2>{SETUP.name}</h2>
-            <p className={`${P}-setup-s`}>{SETUP.sub}</p>
-          </Rise>
+          <p className={`${P}-setup-t`}>{SETUP.title}</p>
+          <h2 className="a2-display s">{SETUP.name}</h2>
+          <p className={`${P}-setup-s`}>{SETUP.sub}</p>
         </div>
         <div className={`${P}-wire`} style={{ '--n': Math.min(n, 3) }}>
           <i className={`${P}-wire-l`} aria-hidden="true"><b /></i>
@@ -233,9 +260,9 @@ function What() {
   const [i, setI] = useState(0);
   useEvery(3200, live, () => setI((v) => (v + 1) % 3));
   return (
-    <section className={`x-sec ${P}-what`} ref={ref}>
-      <div className="x-wrap">
-        <SecHead kicker={WHAT.kick} title={WHAT.title} lede={WHAT.lede} />
+    <section className={`a2-sec ${P}-what`} ref={ref}>
+      <div className="a2-wrap">
+        <Head kick={WHAT.kick} title={WHAT.title} lede={WHAT.lede} />
         <ol className={`${P}-rows`}>
           {WHAT.items.map(([n, t, d], k) => (
             <li key={n} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}>
@@ -255,9 +282,9 @@ function Built() {
   const [mine, setMine] = useState(false);
   useEvery(3000, live && !mine, () => setI((v) => (v + 1) % BUILT.items.length));
   return (
-    <section className={`x-sec ${P}-built`} ref={ref}>
-      <div className="x-wrap">
-        <SecHead kicker={BUILT.kick} title={BUILT.title} />
+    <section className={`a2-sec ${P}-built`} ref={ref}>
+      <div className="a2-wrap">
+        <Head kick={BUILT.kick} title={BUILT.title} />
         <div className={`${P}-idx`}>
           <div role="tablist" aria-label={BUILT.kick} aria-orientation="vertical" className={`${P}-idx-l`}>
             {BUILT.items.map(([t], k) => (
@@ -301,9 +328,9 @@ function See() {
   const [mine, setMine] = useState(false);
   useEvery(3400, live && !mine, () => setI((v) => (v + 1) % SEE.length));
   return (
-    <section className={`x-sec ${P}-see`} data-room="dark" ref={ref}>
-      <div className="x-wrap">
-        <SecHead dark kicker="Will Hanzo see this?" title={FAQ[0][0]} />
+    <section className={`a2-sec a2-dark ${P}-see`} data-room="dark" ref={ref}>
+      <div className="a2-wrap">
+        <Head dark kick="Will Hanzo see this?" title={FAQ[0][0]} size="a2-display s" />
         <div className={`${P}-see-g`}>
           <div role="radiogroup" aria-label="Where the message lives" className={`${P}-see-l`}>
             {SEE.map(([q], k) => (
@@ -329,7 +356,7 @@ function See() {
         </div>
         <div className={`${P}-see-faq`}>
           <h3 className={`${P}-see-qh`}>Questions</h3>
-          <Faq items={FAQ} dark />
+          <A2Faq items={FAQ} dark />
         </div>
       </div>
     </section>
@@ -339,9 +366,9 @@ function See() {
 /* Four products around one runtime; a signal crosses between them. */
 function Platform() {
   return (
-    <section className={`x-sec ${P}-plat`}>
-      <div className="x-wrap">
-        <SecHead kicker={PLATFORM.kick} title={PLATFORM.title} />
+    <section className={`a2-sec ${P}-plat`}>
+      <div className="a2-wrap">
+        <Head kick={PLATFORM.kick} title={PLATFORM.title} />
         <div className={`${P}-cross`}>
           <i className={`${P}-cross-h`} aria-hidden="true"><b /></i>
           <i className={`${P}-cross-v`} aria-hidden="true"><b /></i>
@@ -360,19 +387,21 @@ function Platform() {
 
 function Close() {
   return (
-    <section className={`x-sec ${P}-close`}>
+    <section className={`a2-sec ${P}-close`}>
       <Sigil seed="hanzo-tag" data={[42, 418, 8.9, 28, 3, 32, 9]} className={`${P}-sigil`} />
-      <div className="x-wrap">
-        <Paste name="Tag" prompt="Read https://hanzo.ai/skill.md and use Hanzo Tag in my project." />
-        <div className={`${P}-close-in`}>
-          <Rise>
-            <p className="x-kick">{CLOSE.title}</p>
-            <h2>{CLOSE.lede}</h2>
-            <p className={`${P}-close-n`}>{CLOSE.note}</p>
-          </Rise>
-          <div className={`${P}-acts`}>
-            {CLOSE.acts.map(([t, to], k) => <A key={t} to={to} className={'x-btn' + (k ? '' : ' solid')}>{t}</A>)}
+      <div className={`a2-wrap a2-grid ${P}-close-in`}>
+        <div className={`${P}-close-copy`}>
+          <p className="a2-kick">{CLOSE.title}</p>
+          <h2 className="a2-display s">{CLOSE.lede}</h2>
+          <p className="a2-lede">{CLOSE.note}</p>
+          <div className="a2-acts">
+            {CLOSE.acts.map(([t, to], k) => <A key={t} to={to} className={'x-btn' + (k ? '' : ' solid')} {...(k ? {} : { 'data-cta': 'tag.close' })}>{t}</A>)}
           </div>
+        </div>
+        <div className={`${P}-get`}>
+          <span className={`${P}-get-at`} aria-hidden="true">@</span>
+          <h2>Get Hanzo Tag</h2>
+          <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -381,16 +410,16 @@ function Close() {
 
 export default function Tag() {
   return (
-    <main className={P}>
+    <main className={`a2 ${P}`}>
       <Hero />
       <Channels />
       <Setup />
+      <A2Paste name="Tag" text="Read https://hanzo.ai/skill.md and use Hanzo Tag in my project." />
       <What />
       <Built />
       <See />
       <Platform />
       <Close />
-      <Get name="Hanzo Tag" license={null} repo={null} />
     </main>
   );
 }

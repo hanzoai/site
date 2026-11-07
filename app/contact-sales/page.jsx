@@ -1,6 +1,8 @@
-// V2: 8/10 Utility: huge kinetic "Talk to sales" beside one big question at a time on a card over a living violet field, your brief building itself as you answer, Enterprise's inclusions as a numbered list you add to that brief, launches on a slow logo rail
+// V2: 8/10 v3 to JAMES.md: ink and greys only, no label over the h1, the hero and its one ask (the card's arrow) fit 1470×801 and 375×812, invented labels replaced by icons and Hanzo's own sentences, Enterprise's inclusions as five giant numerals you light and add, a logo rail with a pause
+// Persona: an enterprise buyer weighing data residency and vendor consolidation · Goal: send a qualified enquiry · CTA: Talk to sales (contact-sales.submit) · Metric: contact_sales_submit
 // Signature: the enquiry is a conversation: one question per screen of the card, set large; Enter moves on, the answer slides up and away and the next question rises while a progress line springs along
-// Beyond: Your brief: your answers gather under the questions, and any of the five things Enterprise includes can be added from the last question or straight from the list, written into your note in Hanzo's words
+// Beyond: any of the five things Enterprise includes can be added to your note, from the last question or straight from the giant numerals, written in Hanzo's words, with its numeral joining the chips under the card
+// Deletes: the violet accent and field, the Enterprise eyebrow, the invented labels (Your brief, Next, Back, Sending…, the error and thank-you sentences), the blinking fake caret, native logo tooltips, raw img
 import ContactSales from '../../components/pages/ContactSales';
 import JsonLd from '../../components/JsonLd';
 

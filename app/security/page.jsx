@@ -1,4 +1,4 @@
-// Signature: zoom into the layer — the six-layer stack stays on screen as the map while each layer in turn lifts out, turns face-on and shows its mechanism, the control's words pinned beside it
+// Signature: zoom into the layer — the six-layer stack stays on screen as the map while each layer in turn lifts out, turns face-on and shows its mechanism, advancing by itself or at your hand
 // Beyond: reviewer's worksheet — tick each control as you check it, the count stays in this browser, and at six of six the page hands over Hanzo's security review
 import Security from '../../components/pages/Security';
 import JsonLd from '../../components/JsonLd';

@@ -1,27 +1,36 @@
 'use client';
-/* About, v2 (Story archetype, editorial). Accent: ultramarine, the head of the frontier.
-   First screen: "Chasing the Pareto Frontier of AI" set at display size, the lede tucked beside its short last line, and
-   the frontier itself, full-bleed underneath, drawing itself with its head running ahead.
+/* About, v3 (Story archetype, editorial). Ink, greys and silvers only (JAMES.md 7): colour comes from Hanzo's own model art.
+   First screen: "Chasing the Pareto Frontier of AI" at display size, the lede tucked beside its short last line, and the
+   frontier itself full-bleed underneath: it draws itself (time), Techstars '17 sits on it as a milestone, and a pointer
+   over it reads the year under the hand (pointer).
    Signature: the six reasons Hanzo builds are tiles that open. Click one and the tile itself grows into a full sheet
    (shared-element morph, synchronized.studio); previous / next turn through the six inside it; it folds back on close.
-   Supporting (three): the frontier draws itself; the startups figure counts up on a rising staircase of figures; the core
-   team's commits land in the one dark room, the newest pulsing.
+   Supporting (three): the frontier draws itself and answers the pointer; the startups figure counts up on a rising
+   staircase of figures; the core team's commits land in the one dark middle room, the newest pulsing.
    Beyond: "Pick two? Keep all four." The lede's four trade-offs as switches; nothing switches anything else off, and
    each shows the line on this page that holds it.
    Every word, figure and link is Hanzo's (content/live/about.json). */
+// Persona: a buyer, founder or engineer checking who is behind Hanzo (arrives from the footer, /history or search)
+// Goal: believe the team and its record, then start building
+// CTA: Get Started (/pricing) in the hero, after the track record and in the sticky ask; the close repeats the careers ask
+// Metric: signup_start (data-cta="about.*")
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
-import { A } from '../kit';
+import { A, Band, Img } from '../kit';
+import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
-import Lines from '../v2/x-feynman/Lines';
+import Lines from '../v2/Lines';
 import Unfold from '../v2/Unfold';
-import '../v2/Story.css';
+import '../v2/system.css';
+import './story.css';
 import './About.css';
 
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Link2 = ({ to, children }) => <A to={to} className="v2s-link"><span>{children}</span><Arr /></A>;
+const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const TL = ({ to, children }) => <A to={to} className="v2s-tlink">{children}<Chev /></A>;
 const pad = (n) => String(n).padStart(2, '0');
 
 /* ---------- the frontier: one curve, four ghost axes under it ---------- */
@@ -48,6 +57,20 @@ function Frontier() {
   const hx = useTransform(p, (v) => X(v));
   const hy = useTransform(p, (v) => Y(f(v)));
   const ax = useTransform(p, [0.25, 0.6], [0, 1]);
+  const ts = useTransform(p, [0.24, 0.3], [0, 1]); // Techstars '17 lands as the head passes 2017
+  // pointer: the hand reads the year under it, on the curve
+  const hand = useMotionValue(-1);
+  const cx = useTransform(hand, (t) => X(Math.max(0, t)));
+  const cy = useTransform(hand, (t) => Y(f(Math.max(0, t))));
+  const [yr, setYr] = useState(null);
+  const move = (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const t = Math.max(0, Math.min(1, ((e.clientX - r.left) / r.width * W - PL) / (W - PL - PR)));
+    hand.set(t);
+    const y = Math.round(2014 + t * 12);
+    setYr((v) => (v === y ? v : y));
+  };
   // idle: the curve draws itself, holds at the frontier, and draws again; only while it is on screen
   useEffect(() => {
     if (calm) { p.set(1); return; }
@@ -56,7 +79,7 @@ function Frontier() {
     return () => c.stop();
   }, [seen, calm, p]);
   return (
-    <div className="xab-front-w" ref={ref}>
+    <div className={'xab-front-w' + (yr ? ' read' : '')} ref={ref} onPointerMove={move} onPointerLeave={() => setYr(null)} data-cursor="">
       <svg className="xab-front-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
         {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
         <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
@@ -68,6 +91,16 @@ function Frontier() {
           </g>
         ))}
         <motion.path d={FRONT} className="xab-line" style={{ pathLength: p }} />
+        <motion.g className="xab-ts" style={{ opacity: ts }}>
+          <circle cx={X(0.25)} cy={Y(f(0.25))} r="7" />
+          <line x1={X(0.25)} x2={X(0.25)} y1={Y(f(0.25)) - 14} y2={Y(f(0.25)) - 46} />
+          <text x={X(0.25)} y={Y(f(0.25)) - 58} textAnchor="middle">Techstars ’17</text>
+        </motion.g>
+        <motion.g className="xab-hand" style={{ x: cx }} aria-hidden="true">
+          <line x1="0" x2="0" y1={PT - 10} y2={Y(0)} />
+          <text x="10" y={PT + 8}>{yr}</text>
+        </motion.g>
+        <motion.circle className="xab-hand-dot" r="8" cx={cx} cy={cy} />
         <motion.g style={{ x: hx, y: hy }}>
           <circle r="26" className="xab-halo" />
           <circle r="10" className="xab-head" />
@@ -81,16 +114,15 @@ function Frontier() {
 /* ---------- 1. the first screen ---------- */
 function Hero() {
   return (
-    <section className="xab-hero" aria-labelledby="xab-h1">
+    <section className="xab-hero" aria-labelledby="xab-h1" data-ask-name="About">
       <div className="v2s-wrap xab-hero-top">
-        <motion.p className="xab-badge" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>Techstars ’17</motion.p>
-        <Lines as="h1" id="xab-h1" className="v2s-display xab-h1" delay={0.05} lines={['Chasing the', <>Pareto <span className="v2s-it v2s-acc">Frontier</span></>, 'of AI']} />
+        <Lines as="h1" id="xab-h1" className="v2s-display xab-h1" now delay={0.05} lines={['Chasing the', 'Pareto Frontier', 'of AI']} />
         <motion.div className="xab-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.55 }}>
           <p className="v2s-lede">From SKULLY and open-source commerce, through Techstars ’17, to 1700+ open repositories and the sovereign AI cloud today — advancing intelligence, speed, deterministic safety, and equitable cost together.</p>
           <div className="v2s-acts">
-            <A to="/pricing" className="v2s-btn solid" data-thumb="Get Started">Get Started</A>
-            <A to="/history" className="v2s-btn">Our History</A>
-            <A to="/open-source" className="v2s-btn">Open Source</A>
+            <A to="/pricing" className="v2s-btn solid" data-thumb="Get Started" data-cta="about.hero">Get Started</A>
+            <TL to="/history">Our History</TL>
+            <TL to="/open-source">Open Source</TL>
           </div>
         </motion.div>
       </div>
@@ -208,12 +240,10 @@ function Why() {
   return (
     <section className="v2s-sec xab-why" id="why" aria-labelledby="xab-why-h">
       <div className="v2s-wrap">
-        <div className="v2s-grid xab-why-head">
-          <div className="v2s-c-1-8">
-            <p className="v2s-kick">Why We Build</p>
-            <h2 id="xab-why-h" className="v2s-headline xab-why-h">Moving the frontier without trading away safety, privacy, or ownership.</h2>
-          </div>
-          <p className="v2s-lede v2s-c-9-12 xab-why-l">Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research.</p>
+        <div className="v2s-head side xab-why-head">
+          <p className="v2s-label">Why We Build</p>
+          <h2 id="xab-why-h" className="v2s-headline xab-why-h">Moving the frontier without trading away safety, privacy, or ownership.</h2>
+          <p className="v2s-lede xab-why-l">Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research.</p>
         </div>
         <Picks />
         <ul className="xab-tiles" ref={grid}>
@@ -223,11 +253,10 @@ function Why() {
       <Unfold layoutId={open == null ? null : 'xab-p' + open} onClose={() => setOpen(null)} label={t} className="xab-sheet" onKey={(e) => { if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); }}>
         <div className="xab-sheet-g">
           <div className="xab-sheet-a">
-            <p className="xab-sheet-n v2s-num v2s-acc" aria-hidden="true">{pad(at + 1)}</p>
+            <p className="xab-sheet-n v2s-num" aria-hidden="true">{pad(at + 1)}</p>
             <Radar at={at} />
           </div>
           <motion.div className="xab-sheet-t" key={at} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}>
-            <p className="v2s-kick">Why We Build · {pad(at + 1)} / {pad(PILLARS.length)}</p>
             <h3 className="v2s-headline">{t}</h3>
             <p className="v2s-lede xab-sheet-k">{k}</p>
             <p className="v2s-body">{d}</p>
@@ -236,6 +265,7 @@ function Why() {
         </div>
         <div className="xab-sheet-f">
           <button type="button" className="xab-step" onClick={() => step(-1)}><span aria-hidden="true">←</span> {PILLARS[(at + 5) % 6][0]}</button>
+          <span className="xab-step-n v2s-num" aria-hidden="true">{pad(at + 1)} / {pad(PILLARS.length)}</span>
           <button type="button" className="xab-step" onClick={() => step(1)}>{PILLARS[(at + 1) % 6][0]} <span aria-hidden="true">→</span></button>
         </div>
       </Unfold>
@@ -255,16 +285,14 @@ function Record() {
   return (
     <section className="v2s-sec xab-rec" aria-labelledby="xab-rec-h">
       <div className="v2s-wrap">
-        <div className="v2s-grid">
-          <div className="v2s-c-1-7">
-            <p className="v2s-kick">Proven Track Record</p>
-            <h2 id="xab-rec-h" className="v2s-headline">Built with founders, scaled to public markets.</h2>
-          </div>
+        <div className="v2s-head">
+          <p className="v2s-label">Proven Track Record</p>
+          <h2 id="xab-rec-h" className="v2s-headline">Built with founders, scaled to public markets.</h2>
         </div>
         <dl className="xab-figs">
           <div><dt className="v2s-num"><Count to={100} suffix="+" duration={1.8} /></dt><dd>Startups built &amp; funded</dd></div>
           <div><dt className="v2s-num">$1B+</dt><dd>Client revenue generated</dd></div>
-          <div><dt className="v2s-num v2s-acc">2024</dt><dd>Went public on Nasdaq (2024)</dd></div>
+          <div><dt className="v2s-num">2024</dt><dd>Went public on Nasdaq (2024)</dd></div>
         </dl>
         <ol className="xab-miles">
           {MILES.map(([y, t]) => <li key={y}><b className="v2s-num">{y}</b><span>{t}</span></li>)}
@@ -272,9 +300,9 @@ function Record() {
         <div className="v2s-grid xab-rec-foot">
           <p className="v2s-body v2s-c-1-7">From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
           <div className="v2s-acts v2s-c-8-12 xab-rec-acts">
-            <A to="/pricing" className="v2s-btn solid">Start Building</A>
-            <A to="/history" className="v2s-btn">Read Our Full History</A>
-            <A to="/customers" className="v2s-btn">Customer Stories</A>
+            <A to="/pricing" className="v2s-btn solid" data-cta="about.record">Start Building</A>
+            <TL to="/history">Read Our Full History</TL>
+            <TL to="/customers">Customer Stories</TL>
           </div>
         </div>
       </div>
@@ -295,7 +323,7 @@ function Portrait({ p }) {
   return (
     <figure className={'xab-pic ' + state}>
       <span className="xab-mono" aria-hidden="true">{p.mono}</span>
-      <img ref={img} src={p.img} alt={p.name} width="640" height="800" loading="lazy" onLoad={() => setState('ok')} onError={() => setState('none')} />
+      <Img ref={img} src={p.img} alt={p.name} w={640} h={800} onLoad={() => setState('ok')} onError={() => setState('none')} />
     </figure>
   );
 }
@@ -307,8 +335,8 @@ function Founders() {
         {FOUNDERS.map((p, i) => (
           <article key={p.name} className={'xab-person' + (i ? ' two' : '')}>
             <Portrait p={p} />
-            <p className="v2s-kick">{p.role}</p>
             <h3 className="v2s-headline">{p.name}</h3>
+            <p className="xab-role">{p.role}</p>
             <p className="v2s-body">{p.bio}</p>
             <ul className="xab-socials">{p.links.map(([l, to]) => <li key={l}><A to={to}>{l} <span aria-hidden="true">↗</span></A></li>)}</ul>
           </article>
@@ -343,12 +371,10 @@ function Zen() {
   return (
     <section className="v2s-sec xab-zen" id="zen" aria-labelledby="xab-zen-h">
       <div className="v2s-wrap">
-        <div className="v2s-grid xab-zen-head">
-          <div className="v2s-c-1-8">
-            <p className="v2s-kick">Operating Principles</p>
-            <h2 id="xab-zen-h" className="v2s-display xab-zen-h">The Zen of <span className="v2s-it">Hanzo</span></h2>
-          </div>
-          <div className="v2s-c-9-12 xab-zen-l">
+        <div className="v2s-head side xab-zen-head">
+          <p className="v2s-label">Operating Principles</p>
+          <h2 id="xab-zen-h" className="v2s-display xab-zen-h">The Zen of Hanzo</h2>
+          <div className="xab-zen-l">
             <p className="v2s-lede">The principles the company argues from when a decision is close.</p>
             <Link2 to="/philosophy">Explore the full Zen manifesto</Link2>
           </div>
@@ -368,7 +394,7 @@ function Zen() {
           <div className="v2s-c-7-12 xab-zen-plate" aria-hidden="true">
             {ZEN.map(([t, d], i) => (
               <div key={t} className={'xab-zen-card' + (i === at ? ' on' : '')}>
-                <span className="xab-zen-n v2s-num v2s-acc">{pad(i + 1)}</span>
+                <span className="xab-zen-n v2s-num">{pad(i + 1)}</span>
                 <b className="v2s-title">{t}</b>
                 <p className="v2s-lede">{d}</p>
               </div>
@@ -382,7 +408,7 @@ function Zen() {
 
 /* ---------- 6. the dark room: open source, deterministic safety, and the commits as they land ---------- */
 const COMMITS = [
-  ['hanzoai/ui', 'Merge pull request #299 from hanzoai/fix/footer-signature-no-crop', 'b44e122', 'Nov 6, 06:04 UTC', 'https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a'],
+  ['hanzoai/ui', 'Merge pull request #737373 from hanzoai/fix/footer-signature-no-crop', 'b44e122', 'Nov 6, 06:04 UTC', 'https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a'],
   ['hanzoai/desktop', 'chore(desktop): finalize 1.1.53 skin, guest/LSA integration, and UI primitive repairs', 'ddfcd04', 'Nov 6, 05:53 UTC', 'https://github.com/hanzoai/desktop/commit/ddfcd04565afa1b27a6480fd7fc2a9de0ec84e94'],
   ['hanzoai/desktop', 'Update css', 'e749213', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/e7492134d79dc3c7c1def579a2305cba7c8092f5'],
   ['hanzoai/desktop', "feat(desktop): hanzo.ai's app stack, macOS window controls, and the window's own skin", '421d4f2', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/421d4f233bd6516367293b496c6000c3a2219cde'],
@@ -428,12 +454,10 @@ function Open() {
   return (
     <section className="v2s-sec xab-open" data-room="dark" aria-labelledby="xab-open-h">
       <div className="v2s-wrap">
-        <div className="v2s-grid">
-          <div className="v2s-c-1-10">
-            <p className="v2s-kick">Open Source &amp; Deterministic Safety</p>
-            <h2 id="xab-open-h" className="v2s-display xab-open-h">Verifiable code. <span className="xab-dim">Calibrated decisions.</span></h2>
-          </div>
-          <p className="v2s-lede v2s-c-1-7 xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
+        <div className="v2s-head">
+          <p className="v2s-label">Open Source &amp; Deterministic Safety</p>
+          <h2 id="xab-open-h" className="v2s-display xab-open-h">Verifiable code. <span className="xab-dim">Calibrated decisions.</span></h2>
+          <p className="v2s-lede xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
         </div>
         <div className="xab-panes">
           {PANES.map(([t, k, d, items, l, to]) => (
@@ -462,16 +486,14 @@ const RUNTIMES = [
 
 function Runtime({ m }) {
   const box = useRef(null);
-  const vid = useRef(null);
   const opener = useOpener();
+  // the card's own picture lifts into the model page (WebGL opener); Hanzo Engine has no film, so its plate is its contour field
   const open = m.slug ? (e) => opener?.open(e, { el: box.current, src: `/models/${m.slug}.webp`, href: m.to, key: m.slug }) : undefined;
-  // the film plays only while a hand is on the card: real detail on hover, nothing looping by itself
-  const play = (on) => { const v = vid.current; if (!v || matchMedia('(prefers-reduced-motion: reduce)').matches) return; on ? v.play().catch(() => {}) : v.pause(); };
   return (
     <li>
-      <a href={href(m.to)} ref={box} data-card={m.slug} className={'xab-rt' + (m.slug ? '' : ' plain')} onClick={open} onPointerEnter={() => play(true)} onPointerLeave={() => play(false)} onFocus={() => play(true)} onBlur={() => play(false)}>
+      <a href={href(m.to)} ref={box} data-card={m.slug} className={'xab-rt' + (m.slug ? '' : ' plain')} onClick={open}>
         <span className="xab-rt-media" aria-hidden="true">
-          {m.slug ? (<><img src={`/models/${m.slug}.webp`} alt="" loading="lazy" /><video ref={vid} src={`/models/${m.slug}.webm`} muted loop playsInline preload="none" onPlaying={(e) => e.currentTarget.classList.add('on')} /></>) : <span className="xab-rt-type">C · CUDA · Metal</span>}
+          {m.slug ? <Img src={`/models/${m.slug}.webp`} w={1200} h={1500} /> : <Sigil seed={m.name} className="xab-rt-sigil" />}
         </span>
         <span className="xab-rt-t">
           <span className="xab-rt-k">{m.kind}</span>
@@ -496,12 +518,10 @@ function Research() {
   return (
     <section className="v2s-sec xab-research" aria-labelledby="xab-res-h">
       <div className="v2s-wrap">
-        <div className="v2s-grid">
-          <div className="v2s-c-1-8">
-            <p className="v2s-kick">Frontier Models &amp; Research</p>
-            <h2 id="xab-res-h" className="v2s-headline">Original architectures, engines, and published research.</h2>
-          </div>
-          <p className="v2s-lede v2s-c-9-12 xab-res-l">Rather than wrapping third-party endpoints, Hanzo designs decision models, semantic routers, bare-metal inference engines, and open research on verifiable agent safety.</p>
+        <div className="v2s-head side">
+          <p className="v2s-label">Frontier Models &amp; Research</p>
+          <h2 id="xab-res-h" className="v2s-headline">Original architectures, engines, and published research.</h2>
+          <p className="v2s-lede xab-res-l">Rather than wrapping third-party endpoints, Hanzo designs decision models, semantic routers, bare-metal inference engines, and open research on verifiable agent safety.</p>
         </div>
         <div className="xab-row-h">
           <h3 className="v2s-kick">Models &amp; Runtimes</h3>
@@ -536,36 +556,50 @@ const ROLES = [
   ['Open Agent Compilers & Tools', 'Building MCP infrastructure, linkage memory, and local-first developer tools used across the ecosystem.'],
 ];
 
+/* three tracks, one frontier: each role is a line that ends at the same head; a hand on a role lights its line */
+const TRACKS = [[0.5, 1.5], [0.62, 1.1], [0.74, 2]].map(([a, q]) => trace((t) => f(t) * (a + (1 - a) * Math.pow(t, q))));
+
 function Careers() {
+  const [on, setOn] = useState(-1);
   return (
-    <section className="v2s-sec xab-careers" aria-labelledby="xab-car-h">
-      <div className="v2s-wrap">
-        <p className="v2s-kick">Careers at Hanzo</p>
-        <h2 id="xab-car-h" className="v2s-display xab-car-h">Push the Pareto frontier <span className="v2s-it v2s-acc">with us.</span></h2>
-        <div className="v2s-grid xab-car-g">
-          <p className="v2s-lede v2s-c-1-6">We hire systems programmers, AI safety researchers, and product engineers who care about open source, equitable access, privacy, and sovereign ownership. High autonomy, zero bureaucracy, and code that ships in public.</p>
-          <ol className="v2s-c-7-12 xab-roles">
+    <>
+      <section className="v2s-sec tight xab-careers" aria-label="Careers at Hanzo">
+        <div className="v2s-wrap xab-car-g">
+          <p className="v2s-label">Careers at Hanzo</p>
+          <ol className="xab-roles" onPointerLeave={() => setOn(-1)}>
             {ROLES.map(([t, d], i) => (
-              <li key={t}>
+              <li key={t} className={on === i ? 'on' : ''} onPointerEnter={() => setOn(i)} onFocus={() => setOn(i)} onBlur={() => setOn(-1)} tabIndex={0}>
                 <span className="v2s-num" aria-hidden="true">{pad(i + 1)}</span>
                 <div><h3 className="v2s-title">{t}</h3><p>{d}</p></div>
               </li>
             ))}
           </ol>
+          <div className={'xab-tracks' + (on >= 0 ? ' lit' : '')} aria-hidden="true">
+            <svg viewBox={`${PL} ${PT} ${W - PL - PR} ${H - PT - PB}`} preserveAspectRatio="none">
+              <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
+              {TRACKS.map((d, i) => <path key={i} d={d} className={'xab-track' + (on === i ? ' on' : '')} />)}
+              <path d={FRONT} className="xab-line" />
+            </svg>
+            <i className="xab-tracks-head" />
+          </div>
         </div>
-        <div className="v2s-acts xab-car-acts">
-          <A to="/careers" className="v2s-btn solid">Explore Open Roles <Arr /></A>
-          <A to="/team" className="v2s-btn">Meet the Team</A>
-          <A to="/open-source" className="v2s-btn">Browse Code on GitHub</A>
-        </div>
-      </div>
-    </section>
+      </section>
+      <Band
+        title="Push the Pareto frontier with us."
+        lede="We hire systems programmers, AI safety researchers, and product engineers who care about open source, equitable access, privacy, and sovereign ownership. High autonomy, zero bureaucracy, and code that ships in public."
+        action="Explore Open Roles"
+        to="/careers"
+        note={<p className="x-band-note xab-band-note"><A to="/team">Meet the Team</A><A to="/open-source">Browse Code on GitHub</A></p>}
+      />
+    </>
   );
 }
 
 export default function About() {
   return (
     <main className="xab v2s">
+      {/* JavaScript off: every line and the curve show at rest */}
+      <noscript><style>{'.xab .v2-line>span,.xab-hero-side{transform:none!important;opacity:1!important}.xab-line{stroke-dasharray:none!important}.xab-ghost{display:none}'}</style></noscript>
       <Hero />
       <Why />
       <Record />

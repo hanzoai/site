@@ -1,5 +1,5 @@
 'use client';
-/* Koma: every frame tells a story. v2 launch page (Creative on Launch + Chapters, accent amber).
+/* Koma: every frame tells a story. v2 launch page (Creative on Launch + Chapters, Hanzo's black and white).
    Signature: a four-shot timeline you scrub. The playhead runs Hanzo's Koma film through Shot 01 to 04, each with its
    own camera move (slow push, lateral arc, parallax pan, crane up) and a cut between them; grab the timeline (or use
    the arrow keys) and the film, the timecode and the shot follow your hand. The film settles into an anamorphic frame.
@@ -137,15 +137,13 @@ export default function Koma() {
   return (
     <Creative
       slug="koma"
-      accent="#f29a1f"
-      ink="#a85f00"
       shape={SCOPE}
-      aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.64, H * 0.31)(W, H) : focus(0.72, 0.5, W / 2, H * 0.25, 1.25)(W, H))}
+      aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.64, H * 0.31, 1.14, [W * 0.06, H * 0.06, W * 0.94, H * 0.56])(W, H) : focus(0.72, 0.5, W / 2, H * 0.25, 1.3, [16, H * 0.08, W - 16, H * 0.42])(W, H))}
       headClass="kf-v2"
       first="chapters"
       flip
       demo={
-        <Scene slug="koma" dark className="kf-scene" k="Live monitor" title="Scrub the shot." lede="Four shots, four camera moves: slow push, lateral arc, parallax pan, crane up, with a cut between them. Grab the timeline, or use the arrow keys, and the film follows your hand.">
+        <Scene slug="koma" dark className="kf-scene">
           <Studio slug="koma" engine="Hanzo Koma-1 · Spatio-temporal DiT">
             <Monitor />
           </Studio>

@@ -393,7 +393,7 @@ function Next() {
 
 export default function ApiPage() {
   return (
-    <main className="av api" style={{ '--ac': '#3355ff' }}>
+    <main className="av api" style={{ '--ac': '#525252' }}>
       <Hero />
       <Paste />
       <Fits />

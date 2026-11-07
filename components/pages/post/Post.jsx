@@ -250,8 +250,8 @@ function End({ doc, cta, sources }) {
               <li key={n.href} className={i === 0 ? 'big' : ''}>
                 <A to={n.href} className="xbg-card" data-cursor="Open">
                   <span className="xbg-card-art">{n.film ? <img src={film(n.film, 'webp')} alt="" width="1200" height="1500" loading="lazy" decoding="async" /> : <Sigil seed={n.href} data={[parseInt(n.read, 10) || 0, n.title.length]} className="xbg-sigil" />}</span>
-                  <span className="xbg-card-k x-mono"><span>{n.chip}</span><span>{n.date}</span><span className="xbg-card-r">{n.read}</span></span>
                   <span className="xbg-card-t" data-morph>{n.title}</span>
+                  <span className="xbg-card-k x-mono"><span>{n.chip}</span><span>{n.date}</span><span className="xbg-card-r">{n.read}</span></span>
                 </A>
               </li>
             ))}

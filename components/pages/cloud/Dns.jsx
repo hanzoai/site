@@ -1,51 +1,136 @@
 'use client';
-/* DNS. Signature: a record propagating. One record is created through the one API, fans out to the five providers on
-   the ring, and a check wave sweeps the global resolvers, each flipping to answered as it is reached. The CLI types
-   itself line by line; the architecture runs as a live diagram with packets moving from your applications through the
-   control plane to the providers; the plans sit on one row. Beyond: "What do you need?" - press the needs you have (more
-   than 5 zones, DNSSEC, role-based access, Edge DNS...) and the lightest plan whose own list covers them lights up while
-   the plans that fall short step back. Every word and link is Hanzo's. */
-import { useState } from 'react';
-import { motion } from 'motion/react';
-import { EASE, Rise } from '../../ui';
+/* DNS.
+   V2: 8/10 Apple-style launch: DNS as code is the hero (a record lands in the zone as a diff, then a query resolves along its path), six pinned chapters each draw one capability, the architecture is the dark room, and the plans answer "What do you need?".
+   Signature: DNS as code. The hero is the zone itself: the CLI writes a record, the new line lands in the zone file as
+   a pink diff, and a query for that name then travels its path live (resolver, Hanzo DNS, the provider that holds the
+   zone) and comes back with the answer; the next record follows, through each of the five providers in turn.
+   Supporting: six pinned chapters whose pictures rise in from below (providers round one API, a query fanned out in
+   parallel, the CLI lit line by line, the API in a pipeline, the DNSSEC key turning, CoreDNS with Hanzo plugins), the
+   architecture in the dark room with packets crossing the control plane, and the closing agent prompt.
+   Beyond: "What do you need?" - press the needs you have (more than 5 zones, DNSSEC, role-based access, Edge DNS...)
+   and the lightest plan whose own list covers them lights up while the plans that fall short step back.
+   Accent: DNS pink, from the diff's own added line. Every word and link is Hanzo's; names and addresses in the zone are
+   documentation examples (example.com, 192.0.2.0/24). */
+import { useEffect, useState } from 'react';
+import { motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { EASE, Copy } from '../../ui';
 import { A } from '../../kit';
-import { Hero, Paste, Get, Head, useLive, useSteps } from './Frame';
+import { useLive, useEvery } from './Frame';
+import KeynoteStage from '../../v2/KeynoteStage';
+import KeynoteChapters from '../../v2/KeynoteChapters';
+import KeynoteRoom from '../../v2/KeynoteRoom';
+import KeynoteClose from '../../v2/KeynoteClose';
+import KeynoteLines from '../../v2/KeynoteLines';
 import './Dns.css';
 
 const PROVIDERS = ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean'];
-const rnd = (i) => { const x = Math.sin(i * 77.3) * 9137.1; return x - Math.floor(x); };
-const RESOLVERS = Array.from({ length: 28 }, (_, i) => {
-  const a = rnd(i) * Math.PI * 2, r = 0.42 + rnd(i + 40) * 0.5;
-  return [50 + Math.cos(a) * r * 46, 50 + Math.sin(a) * r * 46, r];
-});
 
-function Propagate() {
-  const [ref, live] = useLive(0.3);
-  const [k] = useSteps(2, 3600, live);
+/* ---------- the hero: a record lands as a diff, then a query resolves along its path ---------- */
+const ZONE = [['@', 'A', '192.0.2.10'], ['www', 'CNAME', 'example.com.']];
+const RECS = [['api', 'A', '192.0.2.24'], ['docs', 'CNAME', 'example.com.'], ['mail', 'A', '192.0.2.31'], ['edge', 'A', '192.0.2.47'], ['status', 'CNAME', 'example.com.']];
+const PH = 10; // beats per record: 0 command, 1 the diff lands, 2-5 the query walks its path, 6 the answer, 7-9 hold
+
+function Zone() {
+  const [ref, live, calm] = useLive(0.25);
+  const [k, setK] = useState(0);
+  useEvery(520, live, () => setK((v) => v + 1));
+  const r = calm ? 0 : Math.floor(k / PH) % RECS.length;
+  const s = calm ? PH - 1 : k % PH;
+  const [name, type, val] = RECS[r];
+  const prov = PROVIDERS[r % PROVIDERS.length];
+  const PATH = [['query', name + '.example.com'], ['resolver', ''], ['Hanzo DNS', 'Record Manager'], [prov, 'zone example.com']];
+  const reach = s - 2; // the last node reached
   return (
-    <div className="dn-radar" ref={ref} aria-hidden="true">
-      <div className="dn-rings"><i /><i /><i /></div>
-      {live && <span key={'w' + k} className="dn-wave" />}
-      {RESOLVERS.map(([x, y, r], i) => (
-        <span key={k + '-' + i} className={'dn-res' + (live ? ' go' : ' done')} style={{ left: x + '%', top: y + '%', animationDelay: (r * 1.6 + 0.5).toFixed(2) + 's' }} />
-      ))}
-      {PROVIDERS.map((p, i) => {
-        const a = -Math.PI / 2 + (i / PROVIDERS.length) * Math.PI * 2;
-        return (
-          <span key={p} className="dn-prov" style={{ left: 50 + Math.cos(a) * 30 + '%', top: 50 + Math.sin(a) * 30 + '%' }}>
-            <motion.i key={k} initial={{ scale: 0.6, opacity: 0.4 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.15 + i * 0.07, type: 'spring', stiffness: 300, damping: 18 }} />{p}
-          </span>
-        );
-      })}
-      <div className="dn-rec">
-        <p className="dn-rec-k">hanzo dns zones records create</p>
-        <p className="dn-rec-n">example.com</p>
-        <p className="dn-rec-s"><b />propagation check</p>
+    <div className="kn-obj ink dn-zone" ref={ref}>
+      <div className="dn-bar"><i /><i /><i /><span>example.com</span><em>DNS as code</em></div>
+      <p className="dn-cmd"><b>$</b> hanzo dns zones records create example.com</p>
+      <div className="dn-zone-b">
+        <div className="dn-file" aria-hidden="true">
+          <p className="dn-file-h">$ORIGIN example.com.</p>
+          {ZONE.map(([n, t, v]) => <p key={n} className="dn-rr"><span className="g"> </span><b>{n}</b><em>{t}</em><span>{v}</span></p>)}
+          {RECS.slice(0, r).map(([n, t, v]) => <p key={n} className="dn-rr"><span className="g"> </span><b>{n}</b><em>{t}</em><span>{v}</span></p>)}
+          <p key={'add' + r} className={'dn-rr add' + (s >= 1 ? ' in' : '')}><span className="g">+</span><b>{name}</b><em>{type}</em><span>{val}</span></p>
+        </div>
+        <div className="dn-path" aria-hidden="true">
+          <div className="dn-nodes">
+            <span className="dn-rail"><i style={{ transform: `scaleY(${Math.max(0, Math.min(1, reach / 3))})` }} /></span>
+            {PATH.map(([t, d], i) => (
+              <div key={i} className={'dn-node' + (reach >= i ? ' on' : '') + (reach === i ? ' now' : '')}>
+                <i />
+                <p><b>{t}</b>{d && <span>{d}</span>}</p>
+              </div>
+            ))}
+          </div>
+          <div className={'dn-ans' + (s >= 6 ? ' in' : '')}>
+            <span>answer</span><b>{name}.example.com.</b><em>{type}</em><b>{val}</b>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
+/* ---------- chapters: one capability per screen ---------- */
+/* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
+function useStepOf(p, n, on) {
+  const [k, setK] = useState(0);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
+    if (calm) { setK(n - 1); return; }
+    if (!on) return;
+    const t = setInterval(() => setK((x) => (x + 1) % n), 1400);
+    return () => clearInterval(t);
+  }, [p, n, on, calm]);
+  return k;
+}
+
+/* 01: five providers round one API, lit one by one */
+function ProvidersScene({ p, on }) {
+  const k = useStepOf(p, PROVIDERS.length, on);
+  const calm = useReducedMotion();
+  return (
+    <div className="kn-obj dn-sc dn-sc-prov">
+      <div className="dn-ring">
+        <svg className="dn-spokes" viewBox="0 0 400 400" aria-hidden="true">
+          <circle cx="200" cy="200" r="150" className="orbit" />
+          {PROVIDERS.map((pv, i) => {
+            const a = -Math.PI / 2 + (i / PROVIDERS.length) * Math.PI * 2;
+            return <motion.line key={pv} x1="200" y1="200" x2={200 + Math.cos(a) * 150} y2={200 + Math.sin(a) * 150} className={k === i ? 'on' : ''} initial={calm ? false : { pathLength: 0 }} animate={on ? { pathLength: 1 } : undefined} transition={{ duration: 0.9, ease: EASE, delay: i * 0.08 }} />;
+          })}
+        </svg>
+        <div className="dn-hub"><b>One API</b><span>/v1/dns</span></div>
+        {PROVIDERS.map((pv, i) => {
+          const a = -Math.PI / 2 + (i / PROVIDERS.length) * Math.PI * 2;
+          return <span key={pv} className={'dn-pv' + (k === i ? ' on' : '')} style={{ left: 50 + Math.cos(a) * 37.5 + '%', top: 50 + Math.sin(a) * 37.5 + '%' }}>{pv}</span>;
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* 02: one query to every provider at once, merged into one view */
+const LAT = [0.42, 0.7, 0.3, 0.86, 0.56];
+function ParallelScene({ p, on }) {
+  const k = useStepOf(p, 3, on);
+  return (
+    <div className="kn-obj dn-sc dn-sc-par" data-k={k}>
+      <p className="dn-sc-k">Parallel Queries</p>
+      <div className="dn-par">
+        <div className="dn-par-q"><b>example.com</b></div>
+        <ul className="dn-par-l">
+          {PROVIDERS.map((pv, i) => <li key={pv}><span>{pv}</span><i><b style={{ '--dn-w': LAT[i] }} /></i></li>)}
+        </ul>
+      </div>
+      <div className="dn-merge">
+        <p className="dn-merge-h"><b>one view</b><span>all providers</span></p>
+        {[...ZONE, RECS[0]].map(([n, t, v], i) => <p key={n} className="dn-rr" style={{ '--dn-i': i }}><b>{n}</b><em>{t}</em><span>{v}</span></p>)}
+      </div>
+    </div>
+  );
+}
+
+/* 03: the CLI, lit a line at a time */
 const CLI = [
   ['# Install the Hanzo CLI', 'curl -fsSL https://hanzo.sh | sh'],
   ['# Every zone your org owns, whichever provider holds it', 'hanzo dns zones list'],
@@ -54,103 +139,131 @@ const CLI = [
   ['# Push a set of zones and records in one call', 'hanzo dns sync'],
   ['# Ask the control plane whether it is answering', 'hanzo dns health'],
 ];
-
-function Cli() {
-  const [ref, live] = useLive(0.3);
+function CliScene({ p, on }) {
+  const k = useStepOf(p, CLI.length, on);
   return (
-    <section className="x-sec dn-cli" ref={ref}>
-      <div className="x-wrap dn-cli-grid">
-        <div className="dn-term">
-          <div className="dn-term-bar"><i /><i /><i /><span>terminal</span></div>
-          <pre><code>
-            {CLI.map(([c, cmd], i) => (
-              <span key={cmd} className={'dn-step' + (live ? ' on' : '')} style={{ '--d': i * 0.55 + 's' }}>
-                <span className="dn-c">{c}</span>{'\n'}<span className="dn-cmd"><b>$</b> {cmd}</span>{'\n\n'}
-              </span>
-            ))}
-          </code></pre>
-        </div>
-        <Paste name="DNS" api="/v1/dns" prompt="Read https://hanzo.ai/skill.md and use Hanzo DNS in my project. Start with: hanzo dns zones list" className="dn-paste" />
-      </div>
-    </section>
+    <div className="kn-obj ink dn-sc dn-sc-cli">
+      <div className="dn-bar"><i /><i /><i /><span>terminal</span><Copy text={CLI.map(([c, x]) => c + '\n' + x).join('\n')} /></div>
+      <pre className="dn-cli"><code>
+        {CLI.map(([c, cmd], i) => (
+          <span key={cmd} className={'dn-step' + (i === k ? ' now' : i < k ? ' done' : '')}>
+            <span className="c">{c}</span>{'\n'}<span className="x"><b>$</b> {cmd}</span>{'\n'}
+          </span>
+        ))}
+      </code></pre>
+    </div>
   );
 }
 
+/* 04: the REST API inside a pipeline */
+function ApiScene({ p, on }) {
+  const k = useStepOf(p, 4, on);
+  const S = [['CI/CD', 'pipelines'], ['REST API', '/v1/dns'], ['Record Manager', 'Hanzo DNS Control Plane'], ['example.com', 'infrastructure code']];
+  return (
+    <div className="kn-obj dn-sc dn-sc-api">
+      <p className="dn-sc-k">API First</p>
+      <ol className="dn-pipe">
+        {S.map(([t, d], i) => <li key={t} className={i <= k ? 'on' : ''}><i>{String(i + 1).padStart(2, '0')}</i><b>{t}</b><span>{d}</span></li>)}
+      </ol>
+    </div>
+  );
+}
+
+/* 05: DNSSEC, the signing key turning on its rotation schedule */
+function DnssecScene({ p, on }) {
+  const calm = useReducedMotion();
+  const zero = useMotionValue(0);
+  const turn = useTransform(p || zero, [0, 1], [0, 300]);
+  return (
+    <div className="kn-obj dn-sc dn-sc-sec">
+      <p className="dn-sc-k">DNSSEC</p>
+      <div className={'dn-dial' + (!p && on && !calm ? ' spin' : '')}>
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle cx="100" cy="100" r="86" className="t" />
+          {Array.from({ length: 12 }, (_, i) => <line key={i} x1="100" y1="10" x2="100" y2={i % 3 ? 18 : 24} transform={`rotate(${i * 30} 100 100)`} />)}
+        </svg>
+        <motion.span className="dn-key" style={p && !calm ? { rotate: turn } : undefined} aria-hidden="true">
+          <i><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="8" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M12 12h9M18 12v3M21 12v2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg></i>
+        </motion.span>
+        <div className="dn-dial-c"><b>example.com</b><span>signing · key rotation</span></div>
+      </div>
+      <div className="dn-threats"><span>spoofing</span><span>cache poisoning</span></div>
+    </div>
+  );
+}
+
+/* 06: CoreDNS at the edge, Hanzo plugins stacked on it */
+function EdgeScene({ p, on }) {
+  const k = useStepOf(p, 4, on);
+  return (
+    <div className="kn-obj dn-sc dn-sc-edge">
+      <p className="dn-sc-k">Edge DNS</p>
+      <div className="dn-stack">
+        {['custom middleware', 'advanced routing logic', 'Hanzo plugins'].map((t, i) => <span key={t} className={'dn-layer' + (k > 2 - i ? ' on' : '')} style={{ '--dn-i': i }}>{t}</span>)}
+        <span className="dn-layer base on">CoreDNS</span>
+      </div>
+      <p className="dn-edge-f"><i />Low-latency resolution</p>
+    </div>
+  );
+}
+
+const SCENES = [ProvidersScene, ParallelScene, CliScene, ApiScene, DnssecScene, EdgeScene];
 const FEATS = [
-  ['Multi-Provider', 'Unified API across Cloudflare, CoreDNS, Route53, GoDaddy, and DigitalOcean. Manage all your DNS from one interface.', 'Cloudflare · CoreDNS · Route53 · GoDaddy · DigitalOcean'],
-  ['Parallel Queries', 'Query all providers simultaneously and merge results. Get a unified view of your DNS records across every provider.', 'all providers → one view'],
-  ['CLI Native', 'Full CLI control with hanzo dns zones list, hanzo dns zones records create, and more. Script and automate your DNS workflows natively.', '$ hanzo dns zones list'],
-  ['API First', 'REST API for programmatic DNS management. Integrate DNS operations into your CI/CD pipelines and infrastructure code.', '/v1/dns'],
-  ['DNSSEC', 'Built-in DNSSEC signing and automatic key rotation. Protect your domains from spoofing and cache poisoning attacks.', 'signing · key rotation'],
-  ['Edge DNS', 'CoreDNS at the edge with Hanzo plugins. Low-latency resolution with custom middleware for advanced routing logic.', 'CoreDNS + Hanzo plugins'],
+  ['Multi-Provider', 'Unified API across Cloudflare, CoreDNS, Route53, GoDaddy, and DigitalOcean. Manage all your DNS from one interface.'],
+  ['Parallel Queries', 'Query all providers simultaneously and merge results. Get a unified view of your DNS records across every provider.'],
+  ['CLI Native', 'Full CLI control with hanzo dns zones list, hanzo dns zones records create, and more. Script and automate your DNS workflows natively.'],
+  ['API First', 'REST API for programmatic DNS management. Integrate DNS operations into your CI/CD pipelines and infrastructure code.'],
+  ['DNSSEC', 'Built-in DNSSEC signing and automatic key rotation. Protect your domains from spoofing and cache poisoning attacks.'],
+  ['Edge DNS', 'CoreDNS at the edge with Hanzo plugins. Low-latency resolution with custom middleware for advanced routing logic.'],
 ];
 
-function Feats() {
-  const [at, setAt] = useState(-1);
-  return (
-    <section className="x-sec dn-feats">
-      <div className="x-wrap">
-        <Head title="One API. Every Provider." lede="Stop juggling provider consoles. Every zone you own, in one place." />
-        <ul className="dn-rows" onMouseLeave={() => setAt(-1)}>
-          {FEATS.map(([t, d, tag], i) => (
-            <li key={t} className={at === i ? 'on' : ''} onMouseEnter={() => setAt(i)}>
-              <h3>{t}</h3>
-              <p>{d}</p>
-              <span className="dn-tag" aria-hidden="true">{tag}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
+/* ---------- the dark room: where Hanzo DNS sits ---------- */
 const COLS = [
   ['Your Applications', ['CI/CD', 'CLI', 'REST API']],
   ['Hanzo DNS Control Plane', ['Record Manager', 'DNSSEC Engine', 'Parallel Query', 'Audit Log']],
   ['DNS Providers', ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean', '+ More']],
 ];
-
 function Arch() {
   return (
-    <section className="x-sec dn-arch" data-room="dark">
-      <div className="x-wrap">
-        <div className="dn-arch-top">
-          <Head dark title="Built for Infrastructure Teams" lede="Hanzo DNS sits between your applications and DNS providers, giving you a single control plane for all DNS operations." />
-          <ul className="dn-checks">
-            {['Provider-agnostic record management with automatic conflict resolution', 'Audit logging for every DNS change with rollback support', 'Sub-second propagation checks across global resolvers', 'DNSSEC key management with automated rotation schedules'].map((t, i) => (
-              <li key={t}>{t}</li>
-            ))}
-          </ul>
+    <KeynoteRoom className="kn-sec dn-arch">
+      <div className="kn-wrap">
+        <div className="kn-grid dn-arch-h">
+          <KeynoteLines className="kn-display sm dn-arch-t" lines={['Built for', 'Infrastructure Teams']} />
+          <p className="kn-lede dn-arch-l">Hanzo DNS sits between your applications and DNS providers, giving you a single control plane for all DNS operations.</p>
         </div>
         <div className="dn-flow">
           {COLS.map(([h, items], c) => (
-            <Rise key={h} className={'dn-col c' + c} delay={c * 0.1}>
+            <div key={h} className={'dn-col c' + c}>
               <p className="dn-col-h">{h}</p>
               <ul>{items.map((t) => <li key={t}>{t}</li>)}</ul>
-            </Rise>
+            </div>
           ))}
-          <div className="dn-wire w0" aria-hidden="true">{[0, 1, 2].map((i) => <b key={i} style={{ animationDelay: i * 0.6 + 's' }} />)}</div>
-          <div className="dn-wire w1" aria-hidden="true">{[0, 1, 2].map((i) => <b key={i} style={{ animationDelay: 0.3 + i * 0.6 + 's' }} />)}</div>
+          {[0, 1].map((w) => <div key={w} className={'dn-wire w' + w} aria-hidden="true">{[0, 1, 2].map((i) => <b key={i} style={{ animationDelay: w * 0.35 + i * 0.7 + 's' }} />)}</div>)}
         </div>
+        <ul className="dn-checks">
+          {['Provider-agnostic record management with automatic conflict resolution', 'Audit logging for every DNS change with rollback support', 'Sub-second propagation checks across global resolvers', 'DNSSEC key management with automated rotation schedules'].map((t) => (
+            <li key={t}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>{t}</li>
+          ))}
+        </ul>
       </div>
-    </section>
+    </KeynoteRoom>
   );
 }
 
+/* ---------- use cases ---------- */
 const USES = [
   ['DevOps Automation', 'Automate DNS record management as part of your deployment pipeline. Create, update, and clean up records programmatically.'],
   ['Multi-Cloud DNS', 'Manage DNS across AWS, Cloudflare, and DigitalOcean from a single API. No more switching consoles.'],
   ['Domain Portfolio Management', 'Manage hundreds of domains across multiple registrars and DNS providers from one unified interface.'],
 ];
 
+/* ---------- pricing, with Beyond: what do you need? ---------- */
 const PLANS = [
   ['Starter', 'Usage-based pricing for getting started', ['Up to 5 zones', '2 DNS providers', 'CLI and API access', 'Volume-based query pricing'], 'Talk to us', false, false],
   ['Pro', 'For teams managing production DNS', ['Unlimited zones', 'All DNS providers', 'DNSSEC management', 'Audit logging', 'Priority support'], 'Talk to us', true, true],
   ['Team', 'For teams with shared DNS management', ['Everything in Pro', 'Team collaboration', 'Role-based access', 'Shared audit log', 'Priority support'], 'Talk to us', false, true],
   ['Enterprise', 'For organizations with advanced needs', ['Everything in Team', 'Edge DNS (CoreDNS)', 'Custom plugins', 'SLA guarantee', 'Dedicated support'], 'Contact Sales', false, true],
 ];
-
 // each need is a line from a plan's own list; the number is the first plan (index into PLANS) that carries it
 const NEEDS = [['More than 5 zones', 1], ['More than 2 DNS providers', 1], ['DNSSEC management', 1], ['Audit logging', 1], ['Team collaboration', 2], ['Role-based access', 2], ['Edge DNS (CoreDNS)', 3], ['Custom plugins', 3], ['SLA guarantee', 3]];
 
@@ -159,30 +272,35 @@ function Pricing() {
   const fit = Math.max(0, ...need.map((i) => NEEDS[i][1]));
   const pick = (i) => setNeed((n) => (n.includes(i) ? n.filter((x) => x !== i) : [...n, i]));
   return (
-    <section className="x-sec dn-price">
-      <div className="x-wrap">
-        <div className="dn-uses">
-          <Head kick="Use Cases" title="From startups to enterprise, Hanzo DNS scales with your infrastructure" />
-          <ol>{USES.map(([t, d], i) => <li key={t}><span>{String(i + 1).padStart(2, '0')}</span><h3>{t}</h3><p>{d}</p></li>)}</ol>
-        </div>
-        <Head kick="Pricing" title="Start free. Scale as you grow." center />
-        <div className="dn-fit">
-          <p className="dn-fit-h">What do you need? <span aria-live="polite">{need.length ? <>Fits: <b>{PLANS[fit][0]}</b></> : 'Starter covers up to 5 zones and 2 DNS providers.'}</span></p>
-          <div className="dn-fit-chips" role="group" aria-label="What you need">
-            {NEEDS.map(([t], i) => <button key={t} type="button" aria-pressed={need.includes(i)} onClick={() => pick(i)}>{t}</button>)}
+    <section className="kn-sec dn-price">
+      <div className="kn-wrap">
+        <div className="kn-grid dn-price-h">
+          <div className="dn-price-t">
+            <p className="kn-kick ac">Pricing</p>
+            <KeynoteLines className="kn-display sm" lines={['Start free.', 'Scale as you grow.']} />
           </div>
-          {need.length > 0 && <button type="button" className="dn-fit-x" onClick={() => setNeed([])}>Clear</button>}
+          <div className="dn-fit">
+            <p className="dn-fit-h">What do you need?</p>
+            <div className="dn-fit-chips" role="group" aria-label="What do you need?">
+              {NEEDS.map(([t], i) => <button key={t} type="button" aria-pressed={need.includes(i)} onClick={() => pick(i)}>{t}</button>)}
+            </div>
+            <p className="dn-fit-a" aria-live="polite">
+              {need.length ? <>Fits: <b>{PLANS[fit][0]}</b> <button type="button" className="dn-fit-x" onClick={() => setNeed([])}>Clear</button></> : 'Starter covers up to 5 zones and 2 DNS providers.'}
+            </p>
+          </div>
         </div>
         <div className={'dn-plans' + (need.length ? ' picking' : '')}>
           {PLANS.map(([n, d, pts, cta, pop, month], i) => (
-            <Rise key={n} className={'dn-plan' + (pop ? ' pop' : '') + (need.length && i === fit ? ' fit' : '') + (need.length && i < fit ? ' short' : '')} delay={i * 0.06}>
-              {pop && <span className="dn-pop">Popular</span>}
-              <h3>{n}</h3>
-              <p className="dn-plan-p">Custom{month && <span>/month</span>}</p>
+            <div key={n} className={'dn-plan' + (pop ? ' pop' : '') + (need.length && i === fit ? ' fit' : '') + (need.length && i < fit ? ' short' : '')}>
+              <div className="dn-plan-top">
+                <h3 className="kn-title">{n}</h3>
+                {pop && <span className="dn-pop">Popular</span>}
+              </div>
+              <p className="dn-plan-p kn-fig">Custom{month && <span>/month</span>}</p>
               <p className="dn-plan-d">{d}</p>
-              <ul>{pts.map((p) => <li key={p}>{p}</li>)}</ul>
-              <A to="/contact-sales" className={'x-btn' + (pop ? ' solid' : '')}>{cta}</A>
-            </Rise>
+              <ul>{pts.map((pt) => <li key={pt}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>{pt}</li>)}</ul>
+              <A to="/contact-sales" className={'kn-btn' + (pop || (need.length && i === fit) ? ' solid' : '')}>{cta}</A>
+            </div>
           ))}
         </div>
       </div>
@@ -192,20 +310,57 @@ function Pricing() {
 
 export default function Dns() {
   return (
-    <main className="dn">
-      <Hero
+    <main className="kn dn" style={{ '--ac': '#525252' }}>
+      <KeynoteStage
+        look="side"
         kick="Programmable DNS Infrastructure"
-        title="Hanzo DNS"
-        sub="One API for Cloudflare, CoreDNS, Route53, and more."
+        title={['Hanzo', 'DNS']}
+        lede="One API for Cloudflare, CoreDNS, Route53, and more."
         acts={[['Try Hanzo', '/login'], ['GitHub', 'https://github.com/hanzoai']]}
+        from={1.06}
       >
-        <Propagate />
-      </Hero>
-      <Cli />
-      <Feats />
+        <Zone />
+      </KeynoteStage>
+
+      <KeynoteChapters
+        className="dn-ch"
+        head={(
+          <div className="kn-grid dn-ch-head">
+            <KeynoteLines className="kn-display sm dn-ch-t" lines={['One API.', 'Every Provider.']} />
+            <p className="kn-lede dn-ch-l">Stop juggling provider consoles. Every zone you own, in one place.</p>
+          </div>
+        )}
+        items={FEATS.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
+        visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
+        swap="rise"
+        side="right"
+        count
+      />
+
       <Arch />
+
+      <section className="kn-sec dn-uses">
+        <div className="kn-wrap kn-grid dn-uses-g">
+          <div className="dn-uses-t">
+            <p className="kn-kick ac">Use Cases</p>
+            <KeynoteLines className="kn-headline" lines="From startups to enterprise, Hanzo DNS scales with your infrastructure" />
+          </div>
+          <ol className="dn-uses-l">
+            {USES.map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><h3 className="kn-title">{t}</h3><p>{d}</p></li>)}
+          </ol>
+        </div>
+      </section>
+
       <Pricing />
-      <Get name="DNS" tag="DNS as code" />
+
+      <KeynoteClose
+        light
+        className="dn-close"
+        name="DNS"
+        tag="DNS as code"
+        api="/v1/dns"
+        prompt="Read https://hanzo.ai/skill.md and use Hanzo DNS in my project. Start with: hanzo dns zones list"
+      />
     </main>
   );
 }

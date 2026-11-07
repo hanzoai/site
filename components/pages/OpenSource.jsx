@@ -1,4 +1,7 @@
 'use client';
+// Persona: a developer, contributor or evaluator checking how much of Hanzo is open and where to contribute (arrives from the header, GitHub or /oss)
+// Goal: see the scale of what Hanzo publishes, open an organization, and go to Hanzo's GitHub
+// CTA: View on GitHub -> https://github.com/hanzoai (hero, sticky AskBar and thumb bar; the close keeps Hanzo's "Start Contributing") · metric cta_click (data-cta="view-on-github")
 /* Open source. Its idea is the scale of it, made literal: a catalogue of 2,247 repositories you can open.
    V2: 8/10 Catalogue rebuilt: a living sky of every repository as the hero (the camera pulls back on arrival, clusters open their org), the three ecosystems as a tabbed live dashboard, totals as hero figures, numbered org cards that open, a signed charter; greys only, one ask.
    Signature: cards that open. Every organization is a numbered card (01 / 37) that opens into its own page, and in the
@@ -178,7 +181,7 @@ function Hero() {
           <p className="xos-cap xos-in" style={{ '--i': 1 }}>Open Source First</p>
           <p className="pf-lede xos-lede xos-in" style={{ '--i': 2 }}>We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to.</p>
           <div className="xos-acts xos-in" style={{ '--i': 3 }}>
-            <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l" data-thumb="View on GitHub">View on GitHub</A>
+            <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l" data-thumb="View on GitHub" data-cta="view-on-github">View on GitHub</A>
             <More to="https://github.com/hanzoai">Star Our Repos</More>
           </div>
         </div>
@@ -504,7 +507,7 @@ function Contribute() {
           <p className="xos-cap">Join the Community</p>
           <p className="pf-lede">We welcome contributions of all kinds: code, documentation, bug reports and feature requests.</p>
           <div className="xos-con-acts">
-            <A to="https://github.com/hanzoai" className="pf-btn solid">Start Contributing</A>
+            <A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="start-contributing">Start Contributing</A>
           </div>
           <p className="xos-con-note"><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
         </div>
@@ -537,6 +540,8 @@ function Contribute() {
 export default function OpenSource() {
   return (
     <main className="xos">
+      {/* JS off: the tabs cannot switch, so every ecosystem and galaxy panel shows, one after another */}
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!important;margin-top:64px}.xos-eco,.xos-chips{display:none!important}</style>' }} />
       <Hero />
       <Publish />
       <Totals />
@@ -544,7 +549,7 @@ export default function OpenSource() {
       <Built />
       <Charter />
       <Contribute />
-      <AskBar title="Open source" label="View on GitHub" to="https://github.com/hanzoai" />
+      <AskBar title="Open source" label="View on GitHub" to="https://github.com/hanzoai" cta="view-on-github" />
     </main>
   );
 }

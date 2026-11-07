@@ -16,5 +16,5 @@
 - **2.14 SEO and machine files:** title and description come from `content/pages.json`, plus `<JsonLd route="/help/privacy/model-training">`. Nothing new was added.
 - **2.15 Catalogue and product pages:** does not apply.
 - **2.16 Developer experience:** does not apply (no code on the page).
-- **2.17 States and resilience:** the email keeps Hanzo's own protected link (`/cdn-cgi/l/email-protection`) in the HTML and becomes `mailto:privacy@hanzo.ai` once scripts run. The whole document is readable regardless of the panel. Gap: with JS off, the h1 and lede are server-rendered at their pre-arrival offset and opacity, so they are hidden without JS.
+- **2.17 States and resilience:** the email keeps Hanzo's own protected link (`/cdn-cgi/l/email-protection`) in the HTML and becomes `mailto:privacy@hanzo.ai` once scripts run. The whole document is readable regardless of the panel. With JS off, a `<noscript>` style shows the h1 and lede at once and hides the cursor, which needs scripts to walk. Verified with a Playwright context with `javaScriptEnabled: false` at 1470×801, and with JS on there are no console errors.
 - **2.18 Measurement and handover:** the `V2:` line is in the header. Proof is in `docs/gallery/help/privacy/model-training/` (desktop mp4, phone jpgs). Gap: no analytics events wired (no events are defined for help pages).

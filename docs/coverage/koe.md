@@ -1,0 +1,28 @@
+# Coverage: /koe — components/pages/model/Koe.jsx on components/pages/model/Creative.jsx and components/v2/Launch.jsx
+
+- **2.1 Strategy and conversion:** Persona (creative studio, researcher audience), Goal, CTA and metric `contact_sales_submit` are in the `app/koe/page.jsx` header. One solid ask, "Request access", is in the hero (`<Cta thumb>`, carried by the ask bar) and repeated in the closing Band. "Try it in Design" is outlined. The preview block repeats the ask outlined, so each screen keeps a single solid button.
+- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. "Research preview" leads to `/beta/research`, "Every model" to `/models`, and every studio-map card opens its creative model. The model-card grid reaches every named model.
+- **2.3 First impression and page narrative:** Koe's film at full bleed with the h1 "Koe" cut in, and nothing above it. The film settles into a tall voice capsule left of the headline (a pill on phones), and Hanzo's headline rises beside it, with the model's kind and version under the actions. Then come the four capability chapters, then the booth, where Koe fits, the studio map, the preview, the model-card grid and the Band.
+- **2.4 Conversion system:** One filled primary per viewport, with `data-cta` ids `koe-hero-access`, `koe-hero-design` and `koe-preview-access`. The research-preview note sits next to the preview ask, in Hanzo's words.
+- **2.5 Trust and proof:** No figures are claimed. Hanzo's own note says the pictures are illustrations until samples pass blind review, and it sits in the preview block.
+- **2.6 Content presentation (copy untouched):** Parity is 0 missing (text 58/58, links 4/4). Every heading is Hanzo's ("What Koe does", "Where Koe fits", "Find your field", "Try Koe on your own work"). Our own scene headings were removed, and labels that sat above headlines now sit beside or under them.
+- **2.7 Visual design system:** Ink, greys and white only. Colour comes only from Koe's film, which is never filtered. There is no dark middle room (the studio window is the black object), and a dark closing Band. The studio map uses Hanzo's black model cards.
+- **2.8 UI component library:** Kit `Cta`, `More`, `A`, `Img`, `Film` and `Band`, shared `v2/Launch` and `v2/x-cray/Chapters`, and Hanzo's exact model cards (`ModelCards.jsx`, SPEC). Presets are radios with arrow keys. Tap the waveform to seek.
+- **2.9 Motion and interaction:**
+  - Signature (time): the waveform streams and the phonemes light in step, and each preset re-performs the word.
+  - Arrival: the h1 cut-in.
+  - Scroll (desktop): the stage settles, and the capability chapters wipe in.
+  - Phones: the stage settles by itself.
+  - State: the studio map tours the fields with a gliding tab pill.
+  - Pointer: the model-card tilt, and a hovered map card plays its film.
+  - Ambient: each model's glyph loop, paused off screen.
+  - Reduced motion shows final states.
+- **2.10 Media:** Koe's film (kit `Img` and `Film`). At most two films play in the card grid, and one map card plays only while hovered or focused.
+- **2.11 Mobile and responsive:** No pin at 900px and under. The phone camera pans the subject into the shape. Chapters become picture-then-words, and the fits, map and card grids stack to 1 or 2 columns. No sideways scroll at 375. Targets are 44px or more.
+- **2.12 Accessibility (WCAG 2.2 AA):** One h1. The map tabs are real tabs with arrow keys. The chapter rail is made of buttons. Cards are single links with `aria-current` on this page. Gap: no axe run.
+- **2.13 Performance and engineering:** Only transform, opacity and clip-path animate. Demo loops run only on screen (`useLoop`). Gap: no Lighthouse run.
+- **2.14 SEO and machine files (mirror live, add nothing new):** Title, description and `JsonLd` are unchanged.
+- **2.15 Catalogue and product pages:** The studio map shows all six creative models on Hanzo's black cards, with the field's use in each model's words. The model-card grid sits under it, with this page marked.
+- **2.16 Developer experience:** Not a developer page. The studio window shows the model id (`koe-1`) on studio.hanzo.ai.
+- **2.17 States and resilience:** JS off: every word shows. If the films are blocked, their posters show. Reduced motion shows the final frame of the booth: a voice waveform streams out of the playhead while the phonemes of "Hanzo" light in step, with four acting presets.
+- **2.18 Measurement and handover:** `data-cta` ids are on the asks. Proof is in `docs/gallery/koe/`. The `V2:` line is in the route header.
