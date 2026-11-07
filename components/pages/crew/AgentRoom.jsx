@@ -7,9 +7,10 @@
    the way a router hands a network its turns. Hover, focus or press anything to take the baton.
    Supporting: the stage (the live object starts big and low, then settles beside the next chapter as the first
    chapter's words leave), an ink that slides between choices, a magnetic main action. Sigil sits under the object.
+   The demos play through once each time they come into view, then rest; no colour but Hanzo's own pictures (v3 rules).
    Beyond: start in one step. On Crew, type what you need and the agent whose own role matches takes the baton; Enter
    opens the chat with them. On the SDK, its own install line for pip or cargo, ready to copy.
-   V2: 8.5/10 Rebuilt as an Apple-style launch: pinned stage where the live ring or console settles as chapter one hands over to chapter two, v2 display type, stacked sheets, spec sheet, one dark room per member. */
+   V2: 8.5/10 Apple-style launch: pinned stage where the live ring or console settles as chapter one hands over to chapter two; greyscale, no kicker over the h1, one solid ask repeated hero to close, demos that settle. */
 // Signature: who has the turn: a baton passes by itself around the agents' ring and through the console turns, the hero object settling on a pinned stage
 // Beyond: start in one step: type a need and the agent whose own role matches takes the baton (Enter opens the chat); the SDK's own pip or cargo line, ready to copy
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -43,9 +44,10 @@ function useBaton(n, ms, box, calm) {
   const live = useInView(box, { amount: 0.3 });
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
-  useEffect(() => {
+  useEffect(() => { // one full round each time it comes into view, then it rests where it started
     if (!live || held || n < 2 || calm) return;
-    const id = setInterval(() => setAt((a) => (a + 1) % n), ms);
+    let k = 0;
+    const id = setInterval(() => { setAt((a) => (a + 1) % n); k += 1; if (k >= n) clearInterval(id); }, ms);
     return () => clearInterval(id);
   }, [live, held, n, ms, calm]);
   return { at, take: (i) => { setAt(i); setHeld(true); }, free: () => setHeld(false) };
@@ -86,21 +88,23 @@ function Stage({ first, second, object, art }) {
 function Title({ f }) {
   return (
     <>
-      <Kick>{f.label}</Kick>
       <h1 id="xag-h1" className={'xag-h1' + (f.h1.length > 34 ? ' long' : '')} data-morph-target>
         <span className="x-line"><motion.span className="x-line-in" initial={{ y: '106%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{f.h1}</motion.span></span>
       </h1>
+      {f.label && <p className="xag-meta">{f.label}</p>}
     </>
   );
 }
 
-function Acts({ list, big, first = 'solid' }) {
+const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+/* one solid ask (the first, in Hanzo's words); every other action is a text link with an arrow */
+function Acts({ list, big, solid = true }) {
   if (!list || !list.length) return null;
   return (
     <div className="xag-acts">
-      {list.map((a, i) => (i === 0 && first === 'solid'
+      {list.map((a, i) => (i === 0 && solid
         ? <Magnetic key={a.href + i} strength={0.25}><A to={a.href} className={'x-btn solid' + (big ? ' xag-big' : '')} data-thumb="">{a.label}</A></Magnetic>
-        : <A key={a.href + i} to={a.href} className={'x-btn' + (big ? ' xag-big' : '')}>{a.label}</A>))}
+        : <A key={a.href + i} to={a.href} className="xag-tl"><span>{a.label}</span><Chev /></A>))}
     </div>
   );
 }
@@ -168,11 +172,12 @@ function Crew({ doc, roster, room, build }) {
   useEffect(() => { if (hit && hit.length) base.take(hit[0]); else if (!q) base.free(); }, [hit]); // eslint-disable-line react-hooks/exhaustive-deps
   const b = { ...base, hit };
   const nums = [roster.agents.length, ...roster.agents.map((a) => a.name.length), doc.sections.length];
+  const ask = room && room.actions.length ? room.actions.slice(0, 1) : null; // the crew's one ask, in Hanzo's words
   return (
     <>
       <Stage
         art={<Sigil seed={doc.route} data={nums} className="xag-sigil" />}
-        first={<><Title f={f} />{f.lede.map((p, i) => <motion.p key={i} className="xag-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.35 + i * 0.08 }}>{p}</motion.p>)}</>}
+        first={<><Title f={f} />{f.lede.map((p, i) => <motion.p key={i} className="xag-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.35 + i * 0.08 }}>{p}</motion.p>)}<Acts list={ask} big /></>}
         second={<><Kick>{roster.eyebrow}</Kick><h2 className="xag-h2">{roster.h2}</h2>{roster.lede && <p className="xag-lede">{roster.lede}</p>}<Find r={roster} b={b} q={q} setQ={setQ} /></>}
         object={<div ref={box}><Ring r={roster} b={b} /></div>}
       />
@@ -184,6 +189,7 @@ function Crew({ doc, roster, room, build }) {
               <span className="xag-build-t">{build.label}</span>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </A>
+            {ask && <Acts list={ask} big />}
           </div>
         </section>
       )}
@@ -247,7 +253,7 @@ function Console({ c }) {
     if (!live || calm) { setShown(c.turns.length); setThink(false); return; }
     let i = 0, t = 0;
     const next = () => {
-      if (i >= c.turns.length) { t = setTimeout(() => { i = 0; setShown(0); t = setTimeout(next, 700); }, 4800); return; }
+      if (i >= c.turns.length) return; // the conversation settles; it plays again only when it comes back into view
       const agent = c.turns[i].who !== 'you';
       setThink(agent);
       t = setTimeout(() => { setThink(false); i += 1; setShown(i); t = setTimeout(next, agent ? 1700 : 900); }, agent ? 1300 : 500);
@@ -377,14 +383,14 @@ function Code({ s }) {
   );
 }
 
-function Close({ s, get }) {
+function Close({ s, get, ask }) {
   return (
     <section className="xag-sec xag-close">
       <div className="xag-wrap">
         <h2 className="xag-close-t">{s.h2}</h2>
         <div className="xag-close-g">
           {s.lede && <p className="xag-lede">{s.lede}</p>}
-          <Acts list={s.actions} big />
+          <Acts list={[...(ask || []), ...s.actions]} big solid={!!(ask && ask.length)} />
         </div>
         {get && (
           <div className="xag-get">
@@ -392,7 +398,7 @@ function Close({ s, get }) {
             <div className="xag-get-c">
               {get.license && <span className="xag-chip x-mono"><span>{get.license[0]}</span> {get.license[1]}</span>}
               {get.github && <A to={get.github.href} className="xag-chip x-mono">{get.github.label} ↗</A>}
-              {get.actions.map((a) => <A key={a.href} to={a.href} className="x-btn solid">{a.label}</A>)}
+              {get.actions.map((a) => <A key={a.href} to={a.href} className="xag-tl"><span>{a.label}</span><Chev /></A>)}
             </div>
           </div>
         )}
@@ -422,7 +428,7 @@ function Sdk({ doc }) {
       {by('pillars').map((s, i) => <Sheets key={'p' + i} s={s} />)}
       {by('parts').map((s, i) => <Spec key={'s' + i} s={s} />)}
       {by('code').map((s, i) => <Code key={'c' + i} s={s} />)}
-      {by('close').map((s, i) => <Close key={'x' + i} s={s} get={i === 0 ? by('get')[0] : null} />)}
+      {by('close').map((s, i) => <Close key={'x' + i} s={s} get={i === 0 ? by('get')[0] : null} ask={f.actions.slice(0, 1)} />)}
       {!by('close').length && by('get').map((g, i) => <Close key={'g' + i} s={{ h2: '', actions: [] }} get={g} />)}
     </>
   );
