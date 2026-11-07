@@ -362,7 +362,7 @@ function Close() {
   return (
     <section className="xp-sec xlr-close" aria-labelledby="xlr-close-h">
       <div className="xp-wrap xp-grid">
-        <LineReveal as="h2" id="xlr-close-h" className="xp-display sm xlr-close-h" lines={['Start with a working request,', 'then go as deep as you need.']} onView />
+        <LineReveal as="h2" id="xlr-close-h" className="xp-display sm xlr-close-h" lines={['Start with a working request, ', 'then go as deep as you need.']} onView />
         <div className="xlr-close-act">
           <Cta to={DOCS + 'quickstart'} id="learn.close" className="xp-cta">Get started</Cta>
           <Cta to="https://hanzo.university" kind="link" id="learn.close-university" className="xlr-link">Hanzo University</Cta>
