@@ -37,7 +37,7 @@ Done here: h1 52px cut in by line mask (A2Lines, 700 ms, 60 ms apart); the edito
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Open the IDE" after the hero; phone: the shared Ask shows its bar only where it covers nothing, request in `docs/requests/founder.md`)
+- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Open the IDE" after the hero; phone: `usePhoneAsk` keeps one solid at a time, but "Open the IDE" does not fit the phone header without clipping, so it stays "Try Hanzo"; request in `docs/requests/founder.md`)
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -157,4 +157,4 @@ Done here: The memory demo has an empty state (an em dash named Nothing yet.); n
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/ide.md` verdict 8 or more
 
-Done here: data-cta on ide.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; last review 5/10 was on an older build (every complaint fixed).
+Done here: data-cta on ide.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; reviews read: 6/10, 6/10, then 7/10 (7 Nov); round 6 answers the last (whole code lines, reduced motion lays the stage flat, less air, hovers, Teach placeholder).

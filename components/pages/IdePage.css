@@ -84,7 +84,9 @@
 .ide-pic-mem { background: #171717; box-shadow: var(--a2-shadow); }
 .ide-pic-code { list-style: none; margin: 0; padding: 28px 0; }
 .ide-pic-code li { display: flex; align-items: center; gap: 8px; height: 30px; padding-left: 20px; }
-.ide-pic-code li span { width: 26px; font-size: 12px; color: #737373; text-align: right; margin-right: 10px; }
+.ide-pic-code li > span:first-child { flex: none; width: 26px; font-size: 12px; color: #737373; text-align: right; margin-right: 10px; }
+.ide-pic-code li > .ide-pic-src { flex: 1; width: auto; min-width: 0; font-size: 15px; }
+@media (max-width: 899px) { .ide-pic-code li > .ide-pic-src { font-size: 13px; } }
 .ide-pic-chip { position: absolute; right: 24px; display: flex; align-items: center; gap: 10px; margin: 0; height: 32px; padding: 0 12px 0 6px; border-radius: 10px; background: #262626; border: 1px solid rgba(255, 255, 255, .12); color: #fafafa; font-size: 14px; white-space: nowrap; animation: ide-chip .7s var(--a2-ease) both; }
 .ide-pic-chip span { padding: 4px 8px; border-radius: 6px; color: #000; font-size: 12px; }
 @keyframes ide-chip { from { opacity: 0; transform: translateX(24px) scale(.94); } }
@@ -371,6 +373,23 @@
 .ide-engine { padding-bottom: clamp(32px, 4vw, 56px) !important; }
 @media (hover: hover) { .ide-script-bar button:hover { background: #262626; color: #fafafa; border-color: rgba(255, 255, 255, .3); } }
 @media (max-width: 899px) { .ide-key { position: static; margin: 52px 16px 0; align-self: start; } .ide-pic-safe .ide-box { padding-top: 8px; } }
+/* round 6: no dead air before the chapters or Teach, the last hovers, the kit accent on the deck's ink */
+.ide { --acc: #0a0a0a; }
+.ide-engine { padding-bottom: 0 !important; }
+.ide-teach { padding-top: 44px !important; }
+@media (min-width: 900px) { .ide .a2-ch-stick { align-items: flex-start; padding-top: clamp(96px, 12vh, 140px); } }
+@media (hover: hover) {
+  .ide .a2-ch-stick button:not([aria-current]):hover { color: #0a0a0a; }
+  .ide-get .x-btn:hover { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .6); }
+}
+/* reduced motion on desktop: the stage lies flat, as with JS off, so the editor never sits over the words */
+@media (prefers-reduced-motion: reduce) {
+  .ide-stage { height: auto; }
+  .ide-stick { position: static; height: auto; display: block; overflow: visible; padding: 112px 0 40px; }
+  .ide-copy { position: static; opacity: 1 !important; transform: none !important; }
+  .ide-obj { transform: none !important; margin: 48px auto 0; }
+  .ide-under { opacity: 1 !important; }
+}
 /* JS off: the stage lies flat, the editor under the ask, every picture and caption visible */
 html:not(.js) .ide-stage { height: auto; }
 html:not(.js) .ide-stick { position: static; height: auto; display: block; overflow: visible; padding: 112px 0 40px; }
