@@ -45,6 +45,17 @@ html.js .xcs-e-grow:not(.in) { opacity: 0; }
 .xcs-word { white-space: nowrap; }
 .xcs-ch { display: inline-block; }
 @keyframes xcs-fall { from { opacity: 0; transform: translateY(-.9em) rotate(-12deg); } to { opacity: 1; transform: none; } }
+/* the h2 holds its words as one line (.xcs-cas-real); the letters fall in a copy laid exactly over it (.xcs-cas-fx,
+   aria-hidden), and once the last one has landed (~1.2s) the copy steps away and the real line is what shows */
+.xcs-e-cascade { display: grid; }
+.xcs-cas-real, .xcs-cas-fx { grid-area: 1 / 1; }
+.xcs-cas-fx { pointer-events: none; }
+html:not(.js) .xcs-cas-fx { display: none; }
+@keyframes xcs-cas-on { from { opacity: 0; } to { opacity: 1; } }
+@keyframes xcs-cas-off { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+html.js .xcs-e-cascade .xcs-cas-real { opacity: 0; }
+html.js .xcs-e-cascade.in .xcs-cas-real { animation: xcs-cas-on 1ms linear 1.25s both; }
+.xcs-e-cascade.in .xcs-cas-fx { animation: xcs-cas-off 1ms linear 1.25s both; }
 html.js .xcs-e-cascade:not(.in) .xcs-ch { opacity: 0; }
 .xcs-e-cascade.in .xcs-ch { animation: xcs-fall .5s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i) * 22ms); }
 
@@ -68,4 +79,6 @@ html.x-arriving .xcs-e-pendulum.in, html.x-arriving .xcs-e-accordion.in .xcs-rou
   .xcs-stamp, .xcs-e-pendulum.in, .xcs-e-accordion.in .xcs-route, .xcs-e-accordion.in .xcs-alt, .xcs-e-grow.in, .xcs-e-cascade.in .xcs-ch, .xcs .x-band h2.xcs-film .x-word { animation: none; }
   html.js .xcs-e-pendulum:not(.in), html.js .xcs-e-accordion:not(.in) .xcs-route, html.js .xcs-e-accordion:not(.in) .xcs-alt, html.js .xcs-e-grow:not(.in), html.js .xcs-e-cascade:not(.in) .xcs-ch { opacity: 1; }
   .xcs .x-band h2.xcs-film .x-word { -webkit-mask-image: none; mask-image: none; }
+  html.js .xcs-e-cascade .xcs-cas-real { opacity: 1; animation: none; }
+  .xcs-cas-fx { display: none; }
 }

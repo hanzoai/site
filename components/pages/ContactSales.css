@@ -19,10 +19,9 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-more { grid-column: 1 / 7; grid-row: 2; display: flex; flex-direction: column; gap: 24px; }
 .xcs-routes { display: flex; flex-direction: column; border-top: 1px solid var(--line); max-width: 520px; }
 .xcs-route { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 48px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 17px; }
-.xcs-route span { color: var(--ink2); transition: color var(--d-fast) var(--e-out); }
-.xcs-route b { display: inline-flex; font-weight: 606; transition: transform var(--d-base) var(--e-io); }
-.xcs-route span { display: inline-block; transition: color var(--d-fast) var(--e-out), transform var(--d-base) var(--e-em); }
-@media (hover: hover) { .xcs-route:hover b { transform: translateX(-6px); } .xcs-route:hover span { color: var(--ink); transform: translateX(6px); } }
+.xcs-route .xcs-rv { display: inline-flex; font-weight: 606; transition: transform var(--d-base) var(--e-io); }
+.xcs-route .xcs-rl { display: inline-block; color: var(--ink2); transition: color var(--d-fast) var(--e-out), transform var(--d-base) var(--e-em); }
+@media (hover: hover) { .xcs-route:hover .xcs-rv { transform: translateX(-6px); } .xcs-route:hover .xcs-rl { color: var(--ink); transform: translateX(6px); } }
 .xcs-alt { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink2); max-width: 520px; }
 .xcs-ai { font-weight: 606; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; transition: text-underline-offset var(--d-base) var(--e-out); }
 @media (hover: hover) { .xcs-ai:hover { text-decoration-thickness: 2px; text-underline-offset: 6px; } }
@@ -116,6 +115,10 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-logo { flex: none; position: relative; display: flex; align-items: center; height: clamp(96px, 9vw, 128px); padding: 0 clamp(28px, 3vw, 44px); color: var(--ink); text-decoration: none; }
 /* a small grey dot between names (drawn, not typed) */
 .xcs-logo::after { content: ''; position: absolute; right: -3px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #d4d4d4; }
+.xcs-logo img { display: block; height: clamp(28px, 2.6vw, 40px); width: auto; max-width: 180px; object-fit: contain; filter: grayscale(1) brightness(.2); opacity: .55; transition: transform var(--d-base) var(--e-em), opacity var(--d-base) var(--e-out); }
+@media (hover: hover) { .xcs-logo:hover img { opacity: 1; transform: translateY(-4px); } }
+.xcs-logo:focus-visible img { opacity: 1; }
+.xcs-logo:active img { transform: translateY(1px); }
 .xcs-logo span { display: inline-block; font: 497 clamp(28px, 2.8vw, 40px)/1 var(--sans); letter-spacing: -.03em; color: var(--muted); white-space: nowrap; transition: transform var(--d-base) var(--e-em), color var(--d-base) var(--e-out); }
 @media (hover: hover) { .xcs-logo:hover span { color: var(--ink); transform: translateY(-4px); } }
 .xcs-logo:focus-visible span { color: var(--ink); }
