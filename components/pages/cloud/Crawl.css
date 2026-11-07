@@ -510,3 +510,45 @@ html:not(.js) .cr-now { display: none !important; }
   .cr-now-t .kn-fig { font-size: 14px; color: #737373; }
   .cr .cr-figs .kn-fig { font-size: 26px; }
 }
+
+/* round 4 (8 Nov) */
+/* the reader: the last page's Markdown holds until the new lines start, then steps aside */
+.cr-rd-mdb { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.cr-rd-mdb > pre:last-child { flex: 1; }
+.cr-rd-prev { position: absolute; inset: 0; margin: 0; font: 400 16px/1.75 var(--mono); white-space: pre-wrap; word-break: break-word; pointer-events: none; }
+.cr-rd .cr-rd-prev .cr-ml { animation: none; }
+.cr-rd-prev { animation: cr-prev 1.15s steps(1, end) both; }
+@keyframes cr-prev { to { visibility: hidden; } }
+/* the first screen: the reader's bar and its first lines sit inside 1470x801 */
+@media (min-width: 900px) {
+  .cr > .kns { padding-top: clamp(32px, calc(26svh - 128px), 120px); }
+  .cr > .kns .kns-g { row-gap: 36px; }
+  /* How it works: each step's object at a size you can read (its parts scale with it) */
+  .cr-step { grid-template-columns: minmax(0, 1fr) 302px; gap: 44px; }
+  .cr-sa { zoom: 1.4; }
+}
+@media (max-width: 899px) { .cr-rd-prev { font-size: 14px; } }
+@media (prefers-reduced-motion: reduce) {
+  .cr .kns-in, .cr .kns-obj-in, .cr .knl-t, .cr-rd-prev, .cr-sa *, .cr-sa-md span { animation: none !important; }
+  .cr-rd-prev { display: none; }
+}
+/* entrances (arrive.js sets data-arm below the fold, then data-in on arrival; JS off and reduced motion: final state) */
+/* slot-roll: each Reads word rolls up into its slot */
+.cr-kinds[data-arm]:not([data-in]) li { clip-path: inset(0 0 100% 0); transform: translateY(70%); }
+.cr-kinds[data-in] li { animation: cr-slot .6s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--n, 0) * 70ms); }
+.cr-kinds li:nth-child(2) { --n: 1; } .cr-kinds li:nth-child(3) { --n: 2; } .cr-kinds li:nth-child(4) { --n: 3; } .cr-kinds li:nth-child(5) { --n: 4; } .cr-kinds li:nth-child(6) { --n: 5; }
+@keyframes cr-slot { from { clip-path: inset(0 0 100% 0); transform: translateY(70%); } to { clip-path: inset(0); transform: none; } }
+/* tile-flip: the four Returns flip in on their top edge, one after another */
+.cr-figs[data-enter] { perspective: 900px; }
+.cr-figs[data-arm]:not([data-in]) > * { transform: rotateX(-90deg); opacity: 0; }
+.cr-figs[data-in] > * { transform-origin: 50% 0; animation: cr-flip .7s cubic-bezier(.16, 1, .3, 1) both; }
+.cr-figs[data-in] > :nth-child(2) { animation-delay: .09s; } .cr-figs[data-in] > :nth-child(3) { animation-delay: .18s; } .cr-figs[data-in] > :nth-child(4) { animation-delay: .27s; }
+@keyframes cr-flip { from { transform: rotateX(-90deg); opacity: 0; } 40% { opacity: 1; } to { transform: none; opacity: 1; } }
+/* pendulum: the plan picker swings in from its top edge and settles */
+.cr-fit[data-arm]:not([data-in]) { transform: rotate(9deg); opacity: 0; }
+.cr-fit[data-in] { transform-origin: 50% -40%; animation: cr-swing 1.2s both; }
+@keyframes cr-swing { 0% { transform: rotate(9deg); opacity: 0; animation-timing-function: cubic-bezier(.3, 0, .5, 1); } 20% { opacity: 1; } 40% { transform: rotate(-4deg); animation-timing-function: cubic-bezier(.4, 0, .5, 1); } 66% { transform: rotate(1.6deg); } 86% { transform: rotate(-.5deg); } 100% { transform: none; opacity: 1; } }
+/* grow-from-point: the plan sheet grows out of where you last pressed (or its centre) */
+.cr-sheet[data-arm]:not([data-in]) { transform: scale(.6); opacity: 0; }
+.cr-sheet[data-in] { transform-origin: var(--hz-ox, 50%) 0; animation: cr-grow .8s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes cr-grow { from { transform: scale(.6); opacity: 0; } 30% { opacity: 1; } to { transform: none; opacity: 1; } }

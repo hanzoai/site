@@ -1,4 +1,5 @@
 # /crawl — James-eye review
+Ready: 2026-11-08 the reader keeps the last Markdown until the next page writes (no blank slab), hero reader inside the first screen at 1470x801, How it works step objects at readable size (~300px) and looping while seen, four page-local entrances (slot-roll Reads, tile-flip Returns, pendulum plan picker, grow-from-point plan sheet), reduced motion: final states, 0 animations, 0 hydration errors (SafeClose); earlier round already fixed the phone duplicate, gaps, ask count, inert pills, GitHub hover, phone paths; taste OK, parity 108/108 + 14/14, unique OK, check 0 errors/0 overlaps/no h-scroll at 1470 and 375.
 
 Verdict: 7.5/10
 First complaint: "The stepping scene is great, then it turns into a document again. 'How it works' is fetch, extract, render all over again as rows of text with little grey stamps, nothing moves, and there's a big empty white gap before and after it. And on my phone the same paragraph shows up twice."
