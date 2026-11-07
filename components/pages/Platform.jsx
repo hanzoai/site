@@ -450,9 +450,9 @@ function Reach() {
   const live = run && !calm;
   useEffect(() => {
     if (!seen || !live) return;
-    const t = setInterval(() => setAt((v) => (v + 1) % CAPS.length), 3600);
-    return () => clearInterval(t);
-  }, [seen, live]);
+    const t = setTimeout(() => setAt((v) => (v + 1) % CAPS.length), 3600);
+    return () => clearTimeout(t);
+  }, [seen, live, at]);
   const pick = (i) => { setAt(i); setRun(false); };
   return (
     <section ref={ref} className="xpl-sec xpl-reach" aria-labelledby="xpl-rc-h">
@@ -516,9 +516,9 @@ function Loop() {
   const [run, setRun] = useState(true);
   useEffect(() => {
     if (!seen || calm || held || !run) return;
-    const t = setInterval(() => setAt((v) => (v + 1) % LOOP.length), 1900);
-    return () => clearInterval(t);
-  }, [seen, calm, held, run]);
+    const t = setTimeout(() => setAt((v) => (v + 1) % LOOP.length), 1900);
+    return () => clearTimeout(t);
+  }, [seen, calm, held, run, at]);
   return (
     <section className="xpl-sec xpl-loop" aria-labelledby="xpl-lp-h">
       <div className="xpl-wrap xpl-lp-g">
