@@ -18,9 +18,9 @@
    States differ by fill, weight, dash and a shape, never by hue. Every word, figure and link is Hanzo's; sequence
    numbers and values are drawn.
    V2: 8/10 The page's one black room is the hero: name, line and one ask left (5), the bus right (8), where one
-   message drops into the stream and fans out down drawn wires; six pinned chapters over one outlined server
-   inspector; the prompt and the 4222 spec in the quiet room; events.go beside "Put it between your services"; deck
-   greys, tweens only. */
+   message drops into the stream and fans out down drawn wires; six pinned chapters over the same bus (ChapterBus),
+   each changing what it does; the prompt and the 4222 spec in the quiet room; events.go beside "Put it between your
+   services"; deck greys, tweens only. (Inspector/Overview/Panel below are the earlier chapter object, unused.) */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -341,12 +341,18 @@ function ChapterBus({ step, intro, ack, from }) {
     if (s === 0) return (i < 1 + k % 2 ? 'old' : '') + (i >= START_AT[from] ? ' rd' : '') + (i === START_AT[from] ? ' from' : '');
     if (s === 1) return i === 5 && t >= 1 ? 'new' : '';
     if (s === 2) return i === 5 ? 'new' : 'old';
+    if (s === 3) return i === 5 ? 'new' : 'old';
     if (s === 4) return i < chunks ? 'rd' : '';
+    if (s === 5) return i < 3 ? 'rd' : 'old';
     return '';
   };
+  // what each chapter's stream cells carry: sequences, a key's history down to its last value, the request waiting,
+  // chunks, or the subjects each account owns
+  const label = (x, i) => (s === 2 ? (i === 5 ? String(1040 + n) : '') : s === 3 ? (i === 5 ? 'req' : '') : s === 4 ? (i < chunks ? '▪' : '') : s === 5 ? (i < 3 ? 'a' : 'b') : x);
+  const foot = s === 1 ? 'msg id usr_123 · duplicate collapsed · two minutes' : s === 5 ? 'nkey · signed JWT · per-subject · TLS' : s === 0 ? (n % 2 ? 'original pace' : 'as fast as it can') : '';
   const subs = s === 1
     ? ['analytics', 'audit', 'my-service'].map((x, i) => { const [c, l] = subState(t, ack, i, top); return [x, l, c]; })
-    : s === 0 ? [['my-service', 'from ' + STARTS[from][0], 'got'], ['analytics', n % 2 ? 'original pace' : 'as fast as it can', 'got'], ['audit', '—', '']]
+    : s === 0 ? [['my-service', 'from ' + STARTS[from][0], 'got'], ['analytics', 'reading', 'got'], ['audit', '—', '']]
       : s === 2 ? ['orders', 'payments', 'signups'].map((x, i) => [x, i === k ? 'watch · ' + (1040 + n) : 'last value', i === k ? 'got ack' : ''])
         : s === 3 ? [0, 1, 2].map((i) => ['instance ' + (i + 1), i === k ? 'one answer' : '—', i === k ? 'got ack' : ''])
           : s === 4 ? [['assets', chunks >= 6 ? 'put back together' : 'chunk ' + chunks + ' / 6', chunks >= 6 ? 'got ack' : ''], ['watch', chunks >= 6 ? 'changed' : '—', chunks >= 6 ? 'got' : ''], ['my-service', '—', '']]
@@ -370,12 +376,14 @@ function ChapterBus({ step, intro, ack, from }) {
         <Wire on={s !== 1 || t >= 1} />
         <div className="ps-node ps-str">
           <p className="ps-k">{mid}</p>
-          <div className="ps-seqs">{nums.map((x, i) => <span key={i} className={cell(i)}>{s === 4 ? (i < chunks ? '▪' : '') : s === 2 && i < 5 ? '' : x}</span>)}</div>
+          <div className="ps-seqs">{nums.map((x, i) => <span key={i} className={cell(i)}>{label(x, i)}</span>)}</div>
         </div>
-        <Wire on={flow} xs={s === 5 ? [15, 46] : s === 3 ? [[15, 46, 81][k]] : [15, 46, 81]} />
+        {/* the one-instance chapter still draws a fan (two coinciding paths), so the wire keeps its height */}
+        <Wire on={flow} xs={s === 5 ? [15, 46] : s === 3 ? [[15, 46, 81][k], [15, 46, 81][k] + 0.01] : [15, 46, 81]} />
         <div className={'ps-node ps-subs' + (s === 5 ? ' walled' : '')}>
           {subs.map(([b, l, c], i) => <div key={i} className={'ps-sub ' + (c || '')}><b>{b}</b><span>{l}</span></div>)}
         </div>
+        <p className="ps-cfoot">{foot || ' '}</p>
       </div>
     </div>
   );

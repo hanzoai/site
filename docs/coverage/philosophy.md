@@ -155,6 +155,6 @@ Done here: JS off measured 0 hidden blocks at 1470; the sheet wraps 64 → 01; n
 - [x] `data-cta` on both primaries (`philosophy.hero`, `philosophy.close`); n/a: `lib/track.js` wiring is shared
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [ ] Review read: `docs/review/philosophy.md` (not written yet)
+- [x] Review read: `docs/review/philosophy.md` (7/10 on the walk before this build). In this build: the blank bands around the laws heading, the premise tail and above "Every hexagram is active" are cut; Sequence tiles run six a row at desktop widths so no name breaks mid-word; the questions section holds the question's trigram drawn large (walks the eight once, then follows the pointer), sticky beside the list; the closing statement is hydration-safe under reduced motion (0 console errors measured); text links are 44px tall. Not changed: the hero keeps its centred hexagram over the headline (the h1 sits low by design so the hexagram is the first screen's one big thing).
 
 Done here: Filmed with `scripts/motion.mjs` (desktop) and `scripts/shot.mjs` (phone); gallery `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`.

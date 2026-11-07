@@ -83,9 +83,13 @@ function Console({ p, lit }) {
     toks.forEach((n) => { n.textContent = ''; });
     const timers = [];
     let raf = 0;
-    const t0 = performance.now() + 250;
+    const t0 = performance.now() + 150;
+    // the request types in 1.8 s at most (a long one types faster), and the answer lands while it types, so the API
+    // table is never empty after the first second and a half
+    const cps = Math.max(CPS, code.length / 1.8);
+    rows.forEach((r, i) => timers.push(setTimeout(() => r.setAttribute('data-in', ''), 500 + i * 140)));
     const tick = (now) => {
-      let n = Math.max(0, Math.floor(((now - t0) / 1000) * CPS));
+      let n = Math.max(0, Math.floor(((now - t0) / 1000) * cps));
       let cur = -1;
       for (let i = 0; i < toks.length; i++) {
         const take = Math.max(0, Math.min(full[i].length, n));
@@ -100,11 +104,11 @@ function Console({ p, lit }) {
         const y = c.offsetTop + c.offsetHeight - pane.clientHeight + 24; if (y > pane.scrollTop) pane.scrollTop = y;
         const x = c.offsetLeft + c.offsetWidth - pane.clientWidth + 40; pane.scrollLeft = Math.max(0, x);
       }
-      if (now - t0 < (code.length / CPS) * 1000 + 40) { raf = requestAnimationFrame(tick); return; }
+      if (now - t0 < (code.length / cps) * 1000 + 40) { raf = requestAnimationFrame(tick); return; }
       toks.forEach((t, i) => { t.textContent = full[i]; t.removeAttribute('data-cur'); });
       if (pane) pane.scrollLeft = 0;
-      rows.forEach((r, i) => timers.push(setTimeout(() => r.setAttribute('data-in', ''), 300 + i * 150)));
-      const landed = 300 + rows.length * 150;
+      rows.forEach((r) => r.setAttribute('data-in', ''));
+      const landed = 200;
       timers.push(setTimeout(() => { el.dataset.done = ''; }, landed));
       // one pass: each operation lights in turn, then the console rests
       rows.forEach((_, i) => timers.push(setTimeout(() => setWalk(i), landed + 400 + i * 700)));

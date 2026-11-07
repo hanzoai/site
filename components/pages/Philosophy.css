@@ -65,6 +65,9 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 
 /* laws: the intro, then the pinned chapters */
 .xph-laws-in { padding-bottom: 0; }
+/* no blank screens: the laws heading sits close above its pinned scene, the premise ends where its words end */
+.xph-laws-in.pf-sec { padding-top: clamp(56px, 6vw, 96px); }
+.xph-premise.pf-sec { padding-bottom: clamp(48px, 5vw, 80px); }
 .xph-laws-h { max-width: 12ch; }
 .xph-laws .pf-head { max-width: 14ch; }
 .xph-law-stage { display: grid; justify-items: start; gap: 56px; padding-left: 6%; }
@@ -86,7 +89,7 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 .xph-law-cap[data-on='true'] { opacity: 1; transform: none; }
 
 /* patterns */
-.xph-pat { padding-top: clamp(120px, 11vw, 160px); }
+.xph-pat { padding-top: clamp(64px, 6vw, 96px); }
 .xph-pat-h { align-items: end; row-gap: 32px; }
 .xph-pat-t { grid-column: 1 / 7; }
 .xph-pat-l { grid-column: 8 / 13; }
@@ -115,7 +118,9 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 .xph-tile:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .xph-tile .xph-hx { margin-bottom: 8px; }
 .xph-tile-n { font-size: 13px; color: #737373; }
-.xph-tile-t { min-width: 0; font-size: 16px; font-weight: 560; line-height: 1.2; letter-spacing: -.01em; overflow-wrap: break-word; hyphens: auto; }
+.xph-tile-t { min-width: 0; font-size: 15px; font-weight: 560; line-height: 1.2; letter-spacing: -.01em; overflow-wrap: normal; hyphens: manual; text-wrap: balance; }
+/* six tiles a row on wide screens, so every pattern's name has the room to stay whole */
+@media (min-width: 900px) { .xph-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 .xph-tile-s { display: grid; font-size: 14px; line-height: 1.3; color: #525252; }
 .xph-tile-s > span { grid-area: 1 / 1; transition: opacity .3s cubic-bezier(.4, 0, .2, 1), transform .3s cubic-bezier(.4, 0, .2, 1); }
 .xph-tile-p { opacity: 0; color: var(--ink); }
@@ -228,6 +233,15 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 .xph-qs li .pf-mono { font-size: 13px; font-weight: 500; letter-spacing: 0; color: #737373; }
 .xph-qs li .xph-hx { color: rgba(0, 0, 0, .55); }
 .xph-qs li:last-child { border-bottom: 1px solid var(--line); }
+.xph .x-arrow { display: inline-flex; align-items: center; min-height: 44px; }
+.xph-qs li { cursor: default; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.xph-qs li:not([data-on]) { color: #525252; }
+.xph-qs li[data-on] .xph-hx { color: var(--ink); }
+/* the question's trigram, large: the screen's one big thing; it sticks while the eight questions pass */
+.xph-change-l { position: sticky; top: 96px; }
+.xph-change-big { display: flex; align-items: flex-end; gap: 20px; margin-top: 56px; color: var(--ink); }
+.xph-change-big .pf-mono { font-size: 13px; color: #525252; font-variant-numeric: tabular-nums; }
+@media (max-width: 899px) { .xph-change-l { position: static; } .xph-change-big { margin-top: 32px; } .xph-change-big .xph-hx { transform: scale(.7); transform-origin: 0 100%; } }
 
 /* the belief statement, filling in word by word */
 .xph-whole { padding-top: clamp(96px, 10vw, 160px); }
@@ -289,7 +303,7 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
   .xph-one { grid-column: 1 / -1; justify-items: start; margin-top: 48px; --w: min(240px, 64vw); }
   .xph-premise-h, .xph-premise-t { grid-column: 1 / -1; }
   .xph-premise-t { margin-top: 24px; }
-  .xph-laws-in { padding-top: 120px; }
+  .xph-laws-in, .xph-laws-in.pf-sec { padding-top: 64px; }
   .xph-laws .pf-pin-flat-c { border-top: 1px solid var(--line); padding-top: 40px; }
   .xph-laws .pf-pin-flat-c + .pf-pin-flat-c { margin-top: 64px; }
   .xph-law-stage { padding-left: 0; gap: 28px; }

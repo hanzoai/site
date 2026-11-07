@@ -30,7 +30,7 @@ Done here: One `<main>`; links through `A`, `More`, `Cta`; parity links 69/69.
 - ~~`PageHero`; nothing above the h1~~ n/a: page-owned hero on the kit grammar (A2Lines h1 cut-in); nothing visible above the h1
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
-- [x] Ends in proof strip, `Band`, footer
+- [x] Ends in the close ask and footer (n/a for a proof strip and `Band`: the page has no figures beyond install lines)
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open a page
 
 Done here: The console flips OpenAI ⇄ Anthropic by itself within ~1 s and re-sets only the changed lines; on phones the console now follows the h1, lede and ask directly, so it moves inside the first 812px (the two dialect notes follow it). No proof strip: the page has no figures to show beyond install lines; it ends with the close ask and footer.
@@ -100,7 +100,7 @@ Done here: No images or films on the page.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Probe: hscroll 0 at 1470, 375, 320; CLS 0; the hero ask sits at y≈400 at 375×812.
+Done here: Probe: hscroll 0 at 1470, 375, 320; CLS 0; the hero ask sits at y≈400 at 375×812. The hero console fills its column on phones (it no longer sizes to its longest code line and gets clipped): measured inside the viewport at 375 (console 16–359, cURL 266–343, Copy 271–345) and at 320 (the language row wraps; cURL 32–109, Copy 216–290); the code scrolls inside its own pane. Module links are 44px tall on phones. The official-SDK picker walks the six languages once by itself on arrival and stops at the first touch.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
