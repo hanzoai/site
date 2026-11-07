@@ -74,7 +74,7 @@ function clone(g, w, h, d, t) {
 // viseme dubbing: five mouths over five timed slots; the playhead walks the word and each mouth opens on its slot
 function viseme(g, w, h, d, t) {
   const T = 4.2, s = (t % T) + 0.3, x0 = w * 0.08, tw = w * 0.84, span = 3.6 - 0.55;
-  const cw = tw / 5, my = h * 0.38, R = Math.min(cw * 0.36, h * 0.16);
+  const cw = tw / 5, my = h * 0.36, R = Math.min(cw * 0.42, h * 0.16);
   PH.forEach(([p, a, b, open, wide], i) => {
     const on = s >= a && s < b, done = s >= b, u = on ? Math.sin(Math.PI * (s - a) / (b - a)) : 0;
     const cx = x0 + cw * (i + 0.5), rx = R * (0.55 + 0.45 * wide), ry = Math.max(1.5 * d, R * open * (on ? 0.25 + 0.75 * u : 0.12));
@@ -86,15 +86,15 @@ function viseme(g, w, h, d, t) {
     // its slot on the timeline, as long as the phoneme lasts
     const sx = x0 + ((a - 0.55) / span) * tw, sw = ((b - a) / span) * tw;
     g.fillStyle = on ? W : done ? INK + '.45)' : INK + '.14)';
-    g.fillRect(sx + d, h * 0.78, sw - 2 * d, 8 * d);
+    g.fillRect(sx + d, h * 0.7, sw - 2 * d, 8 * d);
   });
   const px = x0 + (Math.min(Math.max(s - 0.55, 0), span) / span) * tw;
-  g.fillStyle = W; g.fillRect(px, h * 0.74, 2 * d, 16 * d);
+  g.fillStyle = W; g.fillRect(px, h * 0.66, 2 * d, 16 * d);
 }
 
 // likeness rights: the voice carries a watermark under it, and every second is logged as one block in a chain
 function mark(g, w, h, d, t) {
-  const bars = 80, bw = (w * 0.84) / bars, x0 = w * 0.08, mid = h * 0.4;
+  const bars = 80, bw = (w * 0.84) / bars, x0 = w * 0.08, mid = h * 0.36;
   for (let i = 0; i < bars; i++) {
     const x = i / bars, a = Math.max(d, Math.pow(Math.sin(Math.PI * x), 0.7) * (0.35 + 0.65 * Math.abs(Math.sin(i * 0.61 + t * 1.4))) * h * 0.17);
     g.fillStyle = INK + '.55)'; g.fillRect(x0 + i * bw + bw * 0.2, mid - a, Math.max(d, bw * 0.6), a * 2);
@@ -102,11 +102,11 @@ function mark(g, w, h, d, t) {
   // the watermark: a fine dotted carrier riding through the voice, drifting
   for (let i = 0; i < 140; i++) {
     const x = i / 140, y = mid + Math.sin(x * 24 + t * 2.2) * h * 0.035;
-    g.fillStyle = (i + Math.floor(t * 10)) % 7 === 0 ? W : INK + '.35)';
-    g.fillRect(x0 + x * w * 0.84, y, 1.5 * d, 1.5 * d);
+    g.fillStyle = (i + Math.floor(t * 10)) % 7 === 0 ? W : INK + '.7)';
+    g.fillRect(x0 + x * w * 0.84 - d, y - d, 2.5 * d, 2.5 * d);
   }
   // the provenance log: blocks fill one per 0.45s, linked, then the chain starts a new page
-  const n = 12, gap = 8 * d, bs = Math.min((w * 0.84 - gap * (n - 1)) / n, 26 * d), cy = h * 0.8, done = Math.floor((t / 0.45) % (n + 3));
+  const n = 12, gap = 8 * d, bs = Math.min((w * 0.84 - gap * (n - 1)) / n, 26 * d), cy = h * 0.68, done = Math.floor((t / 0.45) % (n + 3));
   const sx = x0 + (w * 0.84 - (bs * n + gap * (n - 1))) / 2;
   for (let i = 0; i < n; i++) {
     const x = sx + i * (bs + gap);
@@ -142,7 +142,7 @@ export default function KoePanel({ k, on = true }) {
     const c = cv.current;
     if (!c) return;
     if (still) T.current = 2.2 + k * 0.5;
-    else if (on && !paused) T.current += dt;
+    else if (on && !paused) T.current += Math.max(0, dt); // the first rAF stamp can sit before the loop's start time
     const { w, h, d } = fit(c);
     const g = c.getContext('2d');
     g.clearRect(0, 0, w, h);

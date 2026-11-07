@@ -54,7 +54,11 @@ html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup
 .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] .lv-name-h { color: #0a0a0a; font-size: 52px; letter-spacing: -.035em; line-height: 1; animation: ko-name .7s cubic-bezier(.16, 1, .3, 1) both; }
 .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] :is(.lv-name-d, .lv-name-t, .lv-name-ask) { display: none; }
 @keyframes ko-name { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-@media (min-width: 901px) { .lv:not([data-calm]) .ko-v2 { top: calc(50% - 80px); transform: none; } }
+@media (min-width: 901px) {
+  .lv:not([data-calm]) .ko-v2 { top: calc(50% - 80px); transform: none; }
+  /* the pause disc docks at the foot of the settled capsule, on its own film */
+  .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-pause { left: calc(26% - 22px); right: auto; top: calc(92% - 76px); bottom: auto; animation: ko-dock .5s cubic-bezier(.16, 1, .3, 1) both; }
+}
 
 /* the booth window is a static tile: a flat fill, no shadow */
 .ko-scene .mb-panel { box-shadow: none; }
@@ -62,7 +66,7 @@ html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup
 .ko-panel { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .ko-fits-art { background: #0a0a0a; }
 /* captions sit under their headings; the rooms after the booth close up */
-.ko-sh { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.ko-sh { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 40px; }
 .ko-fits { padding-top: 0; }
 .ko-map { padding-top: 0; }
 @media (min-width: 901px) { .ko-scene { padding-bottom: 116px; } .ko-fits { padding-bottom: 116px; } }
