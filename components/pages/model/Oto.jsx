@@ -1,5 +1,5 @@
 'use client';
-/* Oto: give every moment its sound. v2 launch page (Creative on Launch + Chapters, accent sky). The film settles
+/* Oto: give every moment its sound. v2 launch page (Creative on Launch + Chapters, Hanzo's black and white). The film settles
    into a waveform; the soundstage is the page's one dark room.
    Signature: a live spectrogram. Each Foley prop fires on its own cue (00:01.12, 00:02.40, 00:03.85, 00:05.10) and
    paints its sound into the scrolling spectrum (a drum's broadband hit, gravel steps at 120 BPM, a vault latch's
@@ -7,6 +7,7 @@
    it, synthesised in the browser. (An illustration of Foley, not Oto's output.)
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useEffect, useRef, useState } from 'react';
+import { Film } from '../../kit';
 import { Studio } from './Studio';
 import Creative, { Scene } from './Creative';
 import { lerp, film, focus } from '../../v2/Launch';
@@ -181,18 +182,15 @@ export default function Oto() {
   return (
     <Creative
       slug="oto"
-      accent="#0ba5d9"
-      ink="#06789f"
       shape={WAVE}
       aim={(W, H, wide) => (wide ? null : focus(0.5, 0.55, W / 2, H * 0.25, 1.2, [W * 0.05, H * 0.07, W * 0.95, H * 0.43])(W, H))}
       headClass="ot-v2"
       first="demo"
       demo={
-        <Scene slug="oto" dark className="ot-scene" k="Live soundstage" title="Every prop on its cue.">
+        <Scene slug="oto" dark className="ot-scene">
           <div className="ot-top">
-            <p className="lv-p">Each Foley prop fires on its own cue and paints its sound into the scrolling spectrum while the bus meters answer. Tap a prop to fire it; turn on Sound to hear it.</p>
             <figure className="ot-cam">
-              <video src={film('oto', 'webm')} poster={film('oto', 'webp')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+              <Film src={film('oto', 'webm')} poster={film('oto', 'webp')} w={1200} h={1500} />
               <figcaption className="mb-mono mb-live">LIVE SOUNDSTAGE PIT · CAM 01</figcaption>
             </figure>
           </div>
