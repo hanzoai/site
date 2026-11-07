@@ -81,10 +81,11 @@
 .api-bill-sum p { margin: 6px 0 0; font-size: 16px; color: var(--soft); }
 
 /* 2: identity is rewritten at the gate */
-.api-id { flex-direction: row; align-items: center; gap: 0; }
+.api-id { flex-direction: column; align-items: stretch; gap: 14px; }
+.api-id .api-id-col { flex: none; }
 .api-id-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-.api-id-card { display: flex; flex-direction: column; gap: 14px; padding: 24px 22px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 20px 40px -24px rgba(0, 0, 0, .25); }
-.api-id-card span { font-size: 15px; color: var(--soft); overflow-wrap: anywhere; }
+.api-id-card { display: flex; flex-direction: column; gap: 12px; padding: 18px 16px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); }
+.api-id-card span { font-size: 14px; color: var(--soft); overflow-wrap: anywhere; }
 .api-id-drop { position: relative; color: #262626 !important; }
 .api-id-drop::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; }
 .api-id.on .api-id-drop::after { animation: api-strike 4.8s var(--av-ease) 1 both; }
@@ -92,11 +93,11 @@
 .api-id-new { color: var(--ac) !important; font-weight: 600; opacity: .15; }
 .api-id.on .api-id-new { animation: api-new 4.8s var(--av-ease) 1 both; }
 @keyframes api-new { 0%, 52% { opacity: .15; } 62%, 100% { opacity: 1; } }
-.api-id-gate { position: relative; flex: none; width: clamp(120px, 12vw, 180px); margin: 0 clamp(10px, 1.4vw, 20px); padding: 64px 14px; border-radius: 16px; background: var(--ink); color: #fff; text-align: center; }
-.api-id-gate span { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
-.api-id-pk { position: absolute; left: -24px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--ac); opacity: 0; }
+.api-id-gate { position: relative; flex: none; width: auto; margin: 0; padding: 18px 16px; border-radius: 16px; background: var(--ink); color: #fff; text-align: center; }
+.api-id-gate span { font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.api-id-pk { display: none; position: absolute; left: -24px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--ac); opacity: 0; }
 .api-id.on .api-id-pk { animation: api-pk 4.8s linear 1; }
-@keyframes api-pk { 0% { transform: translateX(0); opacity: 0; } 8% { opacity: 1; } 45% { transform: translateX(calc(clamp(120px, 12vw, 180px) / 2 + 24px)); opacity: 1; } 55% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes api-pk { 0% { transform: translateX(0); opacity: 0; } 8% { opacity: 1; } 45% { transform: translateX(calc(clamp(96px, 8.5vw, 124px) / 2 + 24px)); opacity: 1; } 55% { opacity: 0; } 100% { opacity: 0; } }
 
 /* 3: the client lines up with the document, row for row */
 .api-gen-h { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); gap: 16px; }
