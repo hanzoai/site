@@ -194,3 +194,6 @@
   .mcp-sheet { position: relative; top: auto; } /* on a phone a sheet can be taller than the screen, so the sheets read as a list */
   .mcp-stack { gap: 16px; }
 }
+@media (max-width: 420px) {
+  .mcp-h1 { font-size: 26.5px !important; letter-spacing: -.045em; line-height: 1.1; text-wrap: wrap; } /* three lines at 375 (review, 7 Nov) */
+}
