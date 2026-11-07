@@ -143,6 +143,7 @@
 .cli-add button:hover { color: #f5f5f7; border-color: rgba(255, 255, 255, .45); }
 .cli-add button[aria-pressed='true'] { border-style: solid; border-color: #64d2ff; color: #64d2ff; background: rgba(100, 210, 255, .08); }
 
+@media (prefers-reduced-motion: reduce) {
   .cli *, .cli *::before, .cli *::after { animation: none !important; }
   .cli-l { opacity: 1; transform: none; }
 }
