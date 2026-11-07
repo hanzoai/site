@@ -42,8 +42,8 @@ export const ANSWER = { who: 'hanzo', time: '9:31 AM', body: ['Traced to ', ['co
 
 export const PEOPLE = {
   hanzo: { name: 'Hanzo', role: 'APP', init: 'H' },
-  dev: { name: 'Dev', role: 'Software', face: 'dev' },
-  qa: { name: 'Qa', role: 'Quality', face: 'sci' },
+  dev: { name: 'Dev', role: 'Software', face: 'dev', init: 'D' },
+  qa: { name: 'Qa', role: 'Quality', face: 'sci', init: 'Q' },
   zoe: { name: 'Zoe Maxwell', role: 'Design', init: 'ZM' },
   harry: { name: 'Harry Boone', role: 'Eng', init: 'HB' },
 };
@@ -158,11 +158,14 @@ export const CLOSE = {
 /* The thread's grammar, drawn by both pages under their own class prefix (p). */
 export const Parts = ({ body, p }) => body.map((x, i) => (typeof x === 'string' ? x : <span key={i} className={`${p}-${x[0]}`}>{x[1]}</span>));
 
+/* A face: the person's initial on a drawn disc. Hanzo's memoji (dev.svg, sci.svg) belong in public/memoji/; hanzo.ai was
+   unreachable from the build machine, so nothing is hotlinked and no broken picture or failed request reaches the page.
+   Once the files are mirrored, MEMOJI turns them on (drawn over the disc, which stays as the fallback). */
+const MEMOJI = false;
 export function Face({ who, p, size = 32 }) {
   const m = PEOPLE[who];
-  return m.face
-    ? <img className={`${p}-face`} src={`https://hanzo.ai/memoji/${m.face}.svg`} alt="" width={size} height={size} loading="lazy" decoding="async" />
-    : <span className={`${p}-face ${who}`} aria-hidden="true">{m.init}</span>;
+  const pic = MEMOJI && m.face ? { backgroundImage: `url(/memoji/${m.face}.svg)`, backgroundSize: 'cover' } : null;
+  return <span className={`${p}-face ${who}`} style={pic || undefined} aria-hidden="true">{m.init}</span>;
 }
 
 /* One message: a person, a system line, or the merged-PR banner. */

@@ -13,7 +13,8 @@
    to camera moves is a demo, not a claim. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
-import { A, Go, More } from '../kit';
+import { A, Cta, Go, More } from '../kit';
+import { scrollToEl } from '../../lib/scroll';
 import { useOpener } from '../Opener';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
@@ -99,7 +100,7 @@ function Cinema() {
   const s = SHOTS[shot];
 
   return (
-    <div className="xst-desk" ref={box}>
+    <div className="xst-desk" id="xst-cinema" ref={box}>
       <div className="xst-mon">
         <div className="xst-view">
           {SHOTS.map((x, i) => (
@@ -135,7 +136,7 @@ function Cinema() {
           >
             <div className="xst-ruler" aria-hidden="true">{Array.from({ length: SHOTS.length }, (_, i) => <span key={i}>00:{pad(i * SHOT)}</span>)}</div>
             <div className={'xst-track v' + (MODELS[model] === 'Koma' ? ' on' : '')}>
-              {SHOTS.map((x, i) => <span key={x.title} className={'xst-clip' + (i === shot ? ' now' : '')} style={{ backgroundImage: `url(/models/${x.img}.webp)` }}><em>{x.rig}</em></span>)}
+              {SHOTS.map((x, i) => <span key={x.title} className={'xst-clip' + (i === shot ? ' now' : '')} style={{ backgroundImage: `url(/models/${x.img}.webp)` }}><em>{x.rig}</em><b className="xst-tc x-mono" aria-hidden="true">00:{pad(i * SHOT)}–00:{pad((i + 1) * SHOT)}</b></span>)}
             </div>
             <div className={'xst-track a' + (MODELS[model] === 'Oto' ? ' on' : '')}>
               {SHOTS.map((x, i) => <span key={x.title} className={'xst-clip w' + (i === shot ? ' now' : '')}>{wave(i, 16).map((h, j) => <i key={j} style={{ transform: `scaleY(${h / 100})` }} />)}</span>)}
@@ -185,6 +186,16 @@ function Cinema() {
   );
 }
 
+// "Open Studio" is Hanzo's own label for the page you are on, so it never reloads it: it takes you into the cutting
+// room (the monitor) instead. The href stays /studio so the link survives with JavaScript off.
+function jump(e) {
+  const el = document.getElementById('xst-cinema');
+  if (!el) return;
+  e.preventDefault();
+  scrollToEl(el, { offset: -84, duration: 0.9 }); // reduced motion jumps (lib/scroll)
+  el.querySelector('.xst-lanes')?.focus({ preventScroll: true });
+}
+
 function Hero() {
   return (
     <section className="a2-dark xst-hero" data-room="dark" aria-labelledby="xst-h1">
@@ -192,21 +203,23 @@ function Hero() {
         <div className="a2-grid xst-top">
           <div className="xst-top-l">
             <p className="a2-kick xst-kick"><i aria-hidden="true" />Hanzo Studio · AI Cinema & Production Engine</p>
-            <A2Lines as="h1" id="xst-h1" className="a2-display s xst-h1" lines={['Direct AI cinema', 'with precision camera rigs', '& multi-shot timelines']} now />
+            <A2Lines as="h1" id="xst-h1" className="a2-display xst-h1" lines={['Direct AI cinema', 'with precision camera rigs', '& multi-shot timelines']} now />
           </div>
           <div className="xst-top-r">
             <p className="a2-lede">Full production-quality AI film direction, camera motion control, character consistency lock, multi-shot storyboard sequencing, and node-graph VFX pipelines on cloud GPUs.</p>
             <div className="a2-acts">
-              <A to="https://studio.hanzo.ai" className="x-btn solid" data-thumb="Launch studio.hanzo.ai" data-cta="studio.hero">Launch studio.hanzo.ai</A>
-              <Go to="/studio">Open Studio</Go>
+              <Cta to="https://studio.hanzo.ai" id="studio.hero" thumb className="xst-ask">Launch studio.hanzo.ai</Cta>
+              <Cta to="/studio" kind="link" className="xst-jump" onClick={jump}>Open Studio</Cta>
             </div>
           </div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
+        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}>
           <Cinema />
         </motion.div>
-        <ul className="xst-specs">{SPECS.map((t, i) => <li key={t}><span className="x-mono">{pad(i + 1)}</span>{t}</li>)}</ul>
-        <p className="xst-note">Hanzo Studio runs at studio.hanzo.ai on dedicated Hanzo Cloud GPUs.</p>
+        <div className="xst-foot">
+          <ul className="xst-specs">{SPECS.map((t, i) => <li key={t}><span className="x-mono">{pad(i + 1)}</span><span>{t}</span></li>)}</ul>
+          <p className="xst-note">Hanzo Studio runs at studio.hanzo.ai on dedicated Hanzo Cloud GPUs.</p>
+        </div>
       </div>
     </section>
   );
@@ -317,19 +330,37 @@ const CAPS = [
   ['Dedicated Cloud GPU Render Farm', 'Queue 4K anamorphic multi-shot renders across distributed Hanzo Cloud GPUs with organization-wide asset libraries and IAM access control.', '4K'],
 ];
 
-/* The capabilities as a graph a render pass walks through, node to node. */
+/* The capabilities as one node graph a render pass walks through: six small nodes wired on one canvas, and the node
+   the pass is on opens its sentence in the one pane beside it (one in, one out). Positions are % of the canvas. */
+const NODE = [[0, 22], [0, 72], [26, 47], [52, 20], [52, 74], [78, 47]];
+const WIRE = [[0, 2], [1, 2], [2, 3], [2, 4], [3, 5], [4, 5]];
+const NW = 22; // node width, % of the canvas
+const wire = ([a, b]) => {
+  const [x1, y1] = [NODE[a][0] + NW, NODE[a][1]], [x2, y2] = NODE[b];
+  return `M${x1} ${y1} C${x1 + 2.6} ${y1} ${x2 - 2.6} ${y2} ${x2} ${y2}`;
+};
+
 function Graph() {
   const ref = useRef(null);
+  const tabs = useRef([]);
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
   const [hov, setHov] = useState(-1);
+  const [mine, setMine] = useState(false);
   useEffect(() => {
-    if (!live || calm || hov >= 0) return;
-    const t = setInterval(() => setAt((v) => (v + 1) % CAPS.length), 1400);
+    if (!live || calm || hov >= 0 || mine) return;
+    const t = setInterval(() => setAt((v) => (v + 1) % CAPS.length), 3200); // the pass moves on while you read
     return () => clearInterval(t);
-  }, [live, calm, hov]);
+  }, [live, calm, hov, mine]);
   const lit = hov >= 0 ? hov : at;
+  const pick = (i) => { setAt(i); setHov(-1); setMine(true); };
+  const key = (e, i) => {
+    const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    const n = e.key === 'Home' ? 0 : e.key === 'End' ? CAPS.length - 1 : d === undefined ? -1 : (i + d + CAPS.length) % CAPS.length;
+    if (n < 0) return;
+    e.preventDefault(); pick(n); tabs.current[n]?.focus();
+  };
   return (
     <section className="a2-sec xst-graph" ref={ref} aria-labelledby="xst-graph-h">
       <div className="a2-wrap">
@@ -337,15 +368,43 @@ function Graph() {
           <p className="a2-kick">Capabilities</p>
           <A2Lines id="xst-graph-h" className="a2-display s" lines={['Built for cinema, VFX,', 'and multi-shot storytelling']} />
         </div>
-        <ol className="xst-net">
-          {CAPS.map(([h, d, tag], i) => (
-            <li key={h} className={'xst-node' + (i === lit ? ' on' : '') + (i < lit ? ' done' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)} onPointerLeave={() => setHov(-1)}>
-              <h3>{h}</h3>
-              <p>{d}</p>
-              <span className="xst-node-h"><span className="x-mono">{pad(i + 1)}</span><em className="x-mono">{tag}</em><i aria-hidden="true" /></span>
-            </li>
-          ))}
-        </ol>
+        <div className="xst-gw">
+          <div className="xst-canvas" role="tablist" aria-label="Capabilities" onPointerLeave={() => setHov(-1)}>
+            <svg className="xst-wires" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {WIRE.map((w) => <path key={w.join()} d={wire(w)} vectorEffect="non-scaling-stroke" />)}
+              {WIRE.map((w) => <path key={'l' + w.join()} d={wire(w)} vectorEffect="non-scaling-stroke" className={'lit' + (w[1] <= lit ? ' on' : '')} />)}
+            </svg>
+            {CAPS.map(([h, , tag], i) => (
+              <button
+                key={h} type="button" role="tab" id={'xst-cap-' + i} aria-selected={i === lit} aria-controls="xst-cap-pane" tabIndex={i === lit ? 0 : -1}
+                ref={(el) => { tabs.current[i] = el; }}
+                className={'xst-node' + (i === lit ? ' on' : '') + (i < lit ? ' done' : '')}
+                style={{ '--x': NODE[i][0] / 100, '--y': NODE[i][1] / 100 }}
+                onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}
+              >
+                {i === lit && <motion.span layoutId="xst-node-ring" className="xst-node-ring" aria-hidden="true" transition={{ duration: calm ? 0 : 0.4, ease: [0.4, 0, 0.2, 1] }} />}
+                <span className="xst-node-k x-mono"><span>{pad(i + 1)}</span><i aria-hidden="true" /></span>
+                <b>{h}</b>
+                <em className="x-mono">{tag}</em>
+              </button>
+            ))}
+          </div>
+          <div className="xst-pane" id="xst-cap-pane" role="tabpanel" aria-labelledby={'xst-cap-' + lit} onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(lit)} onPointerLeave={() => setHov(-1)}>
+            <div className="xst-pane-k x-mono" aria-hidden="true">
+              <span>{pad(lit + 1)} / {pad(CAPS.length)}</span>
+              <i><b style={{ transform: `scaleX(${(lit + 1) / CAPS.length})` }} /></i>
+            </div>
+            <div className="xst-pane-st">
+              {CAPS.map(([h, d, tag], i) => (
+                <div key={h} className={'xst-pane-c' + (i === lit ? ' on' : '')} aria-hidden={i !== lit}>
+                  <em className="x-mono">{tag}</em>
+                  <h3 className="a2-title">{h}</h3>
+                  <p>{d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -369,6 +428,8 @@ function Strip() {
   const boxes = useRef([]);
   const [on, setOn] = useState(0);
   const [held, setHeld] = useState(false);
+  const [ready, setReady] = useState(false); // the server cannot know reduced motion: films join after hydration
+  useEffect(() => setReady(true), []);
   useEffect(() => {
     if (!live || held || calm) return;
     const t = setInterval(() => setOn((v) => (v + 1) % BIN.length), 3200);
@@ -387,7 +448,7 @@ function Strip() {
               onClick={(e) => opener?.open(e, { el: boxes.current[i], src: `/models/${slug}.webp`, href: '/' + slug, key: slug })}>
               <span className="xst-fr-m" ref={(el) => { boxes.current[i] = el; }}>
                 <img src={`/models/${slug}.webp`} alt="" loading="lazy" />
-                {on === i && !calm && <video src={`/models/${slug}.webm`} autoPlay muted loop playsInline aria-hidden="true" />}
+                {ready && on === i && !calm && <video src={`/models/${slug}.webm`} autoPlay muted loop playsInline aria-hidden="true" />}
               </span>
               <span className="xst-fr-t"><em className="x-mono">{kind}</em><b>{NAME[slug]}</b><span>{d}</span></span>
             </a>
@@ -406,16 +467,20 @@ function Chair() {
         <div className="xst-chair-copy">
           <A2Lines id="xst-chair-h" className="a2-display m" lines={['Step into', 'the director’s chair']} />
           <p className="a2-lede">Launch Hanzo Studio at studio.hanzo.ai or open Hanzo Design at hanzo.ai/design.</p>
-          <div className="a2-acts"><A to="/studio" className="x-btn solid" data-cta="studio.close">Open Studio</A><Go to="/design">Open Hanzo Design</Go></div>
+          <div className="a2-acts">
+            <Cta to="https://studio.hanzo.ai" id="studio.close" thumb className="xst-ask">Launch studio.hanzo.ai</Cta>
+            <Go to="/design">Open Hanzo Design</Go>
+            <Cta to="/studio" kind="link" className="xst-jump" onClick={jump}>Open Studio</Cta>
+          </div>
           <div className="xst-rel">
             <p className="a2-kick">Related capabilities</p>
             <ul>{[['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers']].map(([t, to, d]) => <li key={t}><A to={to} className="xst-rel-a"><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A></li>)}</ul>
           </div>
         </div>
         <div className="xst-get">
-          <span className="xst-mark" aria-hidden="true"><i />REC</span>
           <h2>Get Studio</h2>
           <p>Visual builder studio</p>
+          <span className="xst-mark" aria-hidden="true"><i />REC</span>
           <p className="xst-get-meta x-mono"><span><span>License:</span> GPL-3.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
           <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
         </div>
