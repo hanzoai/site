@@ -1,0 +1,56 @@
+/* /cli entrances (docs/MOTION-MAP.md), one per main section, in page order:
+   1 noise-dissolve (the compare statement)  2 shutter (paste and ship)  3 side-carousel (capabilities rail)
+   4 curtain-rise (get started)  5 cursor-trail (the closing band).
+   Initial states only under `.js` and only before `.in`, so the server HTML and JS off show the final state.
+   Reduced motion: final state at once. Transform / opacity / clip-path / filter only. */
+
+/* 1. noise-dissolve: the block dissolves in out of grain; the grain itself flickers and thins away */
+.cli-e[data-e='noise'] { position: relative; }
+.cli-noise { position: absolute; inset: -24px -12px; pointer-events: none; opacity: 0; z-index: 2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.35'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px; }
+.js .cli-e[data-e='noise']:not(.in) > :not(.cli-noise) { opacity: 0; filter: blur(4px); }
+.js .cli-e[data-e='noise']:not(.in) > .cli-noise { opacity: 1; }
+.js .cli-e[data-e='noise'].in > :not(.cli-noise) { transition: opacity .9s cubic-bezier(0, 0, .2, 1), filter .9s cubic-bezier(0, 0, .2, 1); }
+.js .cli-e[data-e='noise'].in > .cli-noise { animation: cli-grain 1.1s steps(9) both; }
+@keyframes cli-grain {
+  0% { opacity: 1; transform: translate3d(0, 0, 0); }
+  30% { opacity: .85; transform: translate3d(-18px, 9px, 0); }
+  60% { opacity: .45; transform: translate3d(12px, -14px, 0); }
+  100% { opacity: 0; transform: translate3d(-6px, 6px, 0); }
+}
+
+/* 2. shutter: two bars close from top and bottom, then open on the section */
+.cli-e[data-e='shutter'] { position: relative; overflow: hidden; }
+.cli-shut { position: absolute; left: 0; right: 0; height: 50.5%; z-index: 2; pointer-events: none; background: #0a0a0a; transform: scaleY(0); }
+.cli-shut.t { top: 0; transform-origin: top; }
+.cli-shut.b { bottom: 0; transform-origin: bottom; }
+.js .cli-e[data-e='shutter']:not(.in) > .av-wrap { opacity: 0; }
+.js .cli-e[data-e='shutter'].in > .av-wrap { animation: cli-shut-show 1s steps(1) both; }
+.js .cli-e[data-e='shutter'].in > .cli-shut.t { animation: cli-shut-t 1s cubic-bezier(.4, 0, .2, 1) both; }
+.js .cli-e[data-e='shutter'].in > .cli-shut.b { animation: cli-shut-b 1s cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes cli-shut-t { 0% { transform: scaleY(0); } 40%, 52% { transform: scaleY(1); } 100% { transform: translate3d(0, -101%, 0) scaleY(1); } }
+@keyframes cli-shut-b { 0% { transform: scaleY(0); } 40%, 52% { transform: scaleY(1); } 100% { transform: translate3d(0, 101%, 0) scaleY(1); } }
+@keyframes cli-shut-show { 0% { opacity: 0; } 46% { opacity: 1; } }
+
+/* 3. side-carousel: the capability cards ride in from the right one after another and snap into the rail */
+.js .cli-e[data-e='carousel']:not(.in) .cli-cap { opacity: 0; transform: translate3d(64vw, 0, 0); }
+.js .cli-e[data-e='carousel'].in .cli-cap { transition: transform .7s cubic-bezier(.16, 1, .3, 1) calc(var(--c, 0) * 80ms), opacity .3s cubic-bezier(0, 0, .2, 1) calc(var(--c, 0) * 80ms); }
+
+/* 4. curtain-rise: the section rises from below behind a clip */
+.js .cli-e[data-e='curtain']:not(.in) > .av-wrap { clip-path: inset(100% 0 0 0); transform: translate3d(0, 96px, 0); }
+.js .cli-e[data-e='curtain'].in > .av-wrap { transition: clip-path .9s cubic-bezier(.16, 1, .3, 1), transform .9s cubic-bezier(.16, 1, .3, 1); }
+.cli-e[data-e='curtain'].in > .av-wrap { clip-path: inset(-40px -40px -40px -40px); } /* keeps focus rings and shadows unclipped at rest */
+
+/* 5. cursor-trail: a trail of terminal carets sweeps across once, uncovering the band, then follows a fine pointer */
+.cli-e[data-e='trail'] { position: relative; overflow: hidden; }
+.js .cli-e[data-e='trail']:not(.in) > .av-wrap { clip-path: inset(0 100% 0 0); }
+.js .cli-e[data-e='trail'].in > .av-wrap { transition: clip-path 1.1s cubic-bezier(0, 0, .2, 1); }
+.cli-e[data-e='trail'].in > .av-wrap { clip-path: inset(-40px -40px -40px -40px); }
+.cli-trail { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .4s cubic-bezier(0, 0, .2, 1); }
+.cli-trail i { position: absolute; left: -5px; top: -10px; width: 10px; height: 20px; border-radius: 2px; background: var(--ink); opacity: calc(1 - var(--k) * .1); scale: calc(1 - var(--k) * .07); will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cli-e > *, .cli-e .cli-cap { opacity: 1 !important; filter: none !important; transform: none !important; clip-path: none !important; animation: none !important; transition: none !important; }
+  .cli-noise, .cli-shut, .cli-trail { display: none !important; }
+}

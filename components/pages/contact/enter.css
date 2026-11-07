@@ -1,0 +1,64 @@
+/* /contact entrances (prefix xcte-). Start states only under html.js and no-preference, so JS off and reduced motion
+   show every section in its final state. Transform, opacity, clip-path and filter only. MOTION-MAP's own words win
+   over the older no-overshoot rule here: spring-snap overshoots on purpose. */
+
+/* 1. tile-flip: the patch panel forms out of a grid of flipping tiles (CSS only, on load) */
+.xcte-tiles { position: absolute; inset: -4px; z-index: 6; display: grid; grid-auto-rows: 1fr; pointer-events: none; }
+.xcte-tiles i { display: block; background: #fff; backface-visibility: hidden; transform-origin: 0 50%; animation: xcte-flip .5s cubic-bezier(.16, 1, .3, 1) calc(.7s + var(--d)) both; }
+@keyframes xcte-flip {
+  from { transform: perspective(700px) rotateY(0deg); opacity: 1; }
+  to { transform: perspective(700px) rotateY(92deg); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .xcte-tiles { display: none; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 2. focus-pull-scroll: the dial comes sharp out of a blur first; the address, the background of the shot, stays
+     soft a moment longer, then settles into focus */
+  html.js [data-enter=focus]:not([data-in]) .xct-clock { opacity: 0; }
+  html.js [data-enter=focus]:not([data-in]) .xct-visit-c { opacity: 0; }
+  html.js [data-enter=focus][data-in] .xct-clock { animation: xcte-sharpen .9s cubic-bezier(.16, 1, .3, 1) both; }
+  html.js [data-enter=focus][data-in] .xct-visit-c { animation: xcte-soft 1.2s cubic-bezier(.4, 0, .2, 1) both; }
+
+  /* 3. tilt-3d-hover: the community's heading and plate tilt in from a 3D lean and level out */
+  html.js [data-enter=tilt]:not([data-in]) { opacity: 0; }
+  html.js [data-enter=tilt][data-in] { animation: xcte-tilt .8s cubic-bezier(.16, 1, .3, 1) both; }
+
+  /* 4. spring-snap: the rows snap in from the side one after another and overshoot before they settle */
+  html.js [data-enter=spring]:not([data-in]) > li { opacity: 0; }
+  html.js [data-enter=spring][data-in] > li { animation: xcte-snap .62s linear both; animation-delay: calc(var(--i, 0) * 55ms); }
+
+  /* 5. vertical-ticker: the closing band's words tick up into place in three clicks behind the band's edge */
+  html.js [data-enter=ticker] .x-band { clip-path: inset(0); }
+  html.js [data-enter=ticker]:not([data-in]) .x-band .x-wrap { opacity: 0; }
+  html.js [data-enter=ticker][data-in] .x-band .x-wrap { animation: xcte-ticker .9s both; }
+}
+
+@keyframes xcte-sharpen {
+  from { opacity: .25; filter: blur(18px); transform: scale(1.07); }
+  to { opacity: 1; filter: blur(0); transform: none; }
+}
+@keyframes xcte-soft {
+  0% { opacity: 0; filter: blur(12px); }
+  45% { opacity: .55; filter: blur(4px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+@keyframes xcte-tilt {
+  from { opacity: 0; transform: perspective(1100px) rotateX(26deg) rotateY(-20deg) translateY(48px); }
+  to { opacity: 1; transform: none; }
+}
+/* a spring drawn as keyframes: in from 96px, past its place by 14px, back 5px, then still */
+@keyframes xcte-snap {
+  0% { opacity: 0; transform: translateX(96px); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
+  45% { opacity: 1; transform: translateX(-14px); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  72% { transform: translateX(5px); animation-timing-function: cubic-bezier(.4, 0, .4, 1); }
+  100% { opacity: 1; transform: none; }
+}
+/* three ticks: each click moves up one notch on ease-emphasis, then holds a beat */
+@keyframes xcte-ticker {
+  0% { opacity: 0; transform: translateY(120px); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+  26% { opacity: 1; transform: translateY(80px); }
+  36% { transform: translateY(80px); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+  60% { transform: translateY(40px); }
+  70% { transform: translateY(40px); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+  100% { opacity: 1; transform: none; }
+}

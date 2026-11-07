@@ -26,8 +26,8 @@ import { useRouter } from 'next/navigation';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
-import useArrived from './company/useArrived';
 import { openSheet, useSheetLanding } from './careers/door';
+import { Roll, useEnter } from './careers/enter';
 import { href as hrefOf } from '../../lib/route';
 import { play } from '../../lib/sound';
 import '../v2/vc-type.css';
@@ -168,15 +168,31 @@ function Deck({ roles, know, dont, dontA }) {
   );
 }
 
-/* How the team works: a still list (Utility pages keep scroll quiet, MASTER 4.5). Its object is one Sigil field drawn
-   from the perk you point at or focus; the field redraws as you move down the list. */
+/* The signature, word-light (MOTION-MAP.md): how the team works, read as one long statement. Every word of the four
+   perks lights in turn as you read down the list (scroll-linked, ink from a pale grey); the tile beside it crossfades its
+   Sigil field and numeral to the perk being lit, or to the one you point at, tap or focus. Server HTML, JS off and
+   reduced motion show every word lit. */
+const split = (t) => t.split(/(\s+)/);
 function Perks({ perks }) {
-  const [at, setAt] = useState(0);
-  const [t, p] = perks.items[at];
+  const list = useRef(null);
   const calm = useReducedMotion();
+  const counts = perks.items.map(([pt, pp]) => split(pt + ' ' + pp).filter((w) => w.trim()).length);
+  const total = counts.reduce((a, b) => a + b, 0);
+  const [lit, setLit] = useState(total);
+  const [hover, setHover] = useState(null);
+  const { scrollYProgress } = useScroll({ target: list, offset: ['start 78%', 'end 55%'] });
+  const read = (v) => setLit(calm ? total : Math.round(Math.min(1, Math.max(0, v)) * total));
+  useMotionValueEvent(scrollYProgress, 'change', read);
+  useEffect(() => { read(scrollYProgress.get()); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  let reading = 0;
+  for (let s = 0, i = 0; i < counts.length; s += counts[i], i++) if (lit > s) reading = i;
+  const at = hover ?? reading;
+  const [t, p] = perks.items[at];
   const fade = { duration: calm ? 0 : 0.3, ease: EASE };
+  let w = 0;
+  const words = (text) => split(text).map((x, k) => (x.trim() ? <span key={k} className={'xcb-w' + (w++ < lit ? '' : ' off')}>{x}</span> : x));
   return (
-    <div className="vc-grid xcb-perk-g">
+    <div className="vc-grid xcb-perk-g xce-swing" ref={useEnter()}>
       <div className="xcb-perk-v" aria-hidden="true">
         {/* the field and numeral crossfade (300ms, ease-emphasis) to the perk you point at, tap or focus */}
         <AnimatePresence initial={false}>
@@ -186,12 +202,12 @@ function Perks({ perks }) {
           </motion.div>
         </AnimatePresence>
       </div>
-      <ol className="xcb-perk-l">
+      <ol className="xcb-perk-l" ref={list} onPointerLeave={() => setHover(null)}>
         {perks.items.map(([pt, pp], i) => (
-          <li key={pt} className={i === at ? 'on' : ''} tabIndex={0} onPointerEnter={() => setAt(i)} onFocus={() => setAt(i)} onClick={() => setAt(i)}>
+          <li key={pt} className={i === at ? 'on' : ''} tabIndex={0} onPointerEnter={(e) => e.pointerType === 'mouse' && setHover(i)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} onClick={() => setHover(i)}>
             <span className="xcb-perk-n vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <h3 className="vc-title">{pt}</h3>
-            <p className="vc-body">{pp}</p>
+            <h3 className="vc-title">{words(pt)}</h3>
+            <p className="vc-body">{words(pp)}</p>
           </li>
         ))}
       </ol>
@@ -214,7 +230,23 @@ export default function Careers({ d }) {
   const lines = [words[0], words[1], words.slice(2, 5).join(' '), words.slice(5).join(' ')];
   const [intA, intB] = d.intern.leaves;
   const ask = d.hacts[0];
-  const arrived = useArrived();
+  const draw = useEnter('0px');
+  const iris = useEnter();
+  const count = useEnter();
+  const under = useRef(null);
+  const stack = useEnter('0px 0px -30% 0px');
+  // sticky-stack: Academic holds with its bottom on the screen's bottom while the dark close slides over it
+  useEffect(() => {
+    const el = under.current, top = stack.current;
+    if (!el || !top) return;
+    const fit = () => { el.style.top = Math.min(0, innerHeight - el.offsetHeight) + 'px'; };
+    fit();
+    const ro = new ResizeObserver(fit); ro.observe(el);
+    addEventListener('resize', fit);
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) el.dataset.under = ''; else if (e.boundingClientRect.top > 0) delete el.dataset.under; }, { rootMargin: '0px 0px -40% 0px' });
+    io.observe(top);
+    return () => { ro.disconnect(); io.disconnect(); removeEventListener('resize', fit); };
+  }, [stack]);
   return (
     <main className="vc xcb" style={{ '--acc': '#0a0a0a' }} data-ask="off">
       <noscript dangerouslySetInnerHTML={NOJS} />
@@ -222,30 +254,33 @@ export default function Careers({ d }) {
         <div className="vc-grid xcb-hero-g">
           <div className="xcb-hero-c">
             <MaskLines as="h1" id="xcb-h1" now delay={-0.38} lines={lines} className="vc-display xcb-h1" />
-            <motion.div className="xcb-hero-f" initial={{ opacity: 0, y: 12 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.4, ease: EASE, delay: 0.45 }}>
+            <div className="xcb-hero-f">
               <p className="vc-lede">{d.lede}</p>
               <div className="xcb-acts">
                 <Cta to={'/careers' + ask.href} className="xcb-big" id="careers.hero" thumb>{ask.text}</Cta>
                 <Cta to={d.hacts[1].href} kind="link" className="xcb-tap" id="careers.history">{d.hacts[1].text}</Cta>
               </div>
-            </motion.div>
+            </div>
           </div>
-          <motion.div className="xcb-hero-o" initial={{ opacity: 0, y: 48 }} animate={arrived ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+          {/* entrance 1, line-draw: the card's outline draws itself, then the card fills */}
+          <div className="xcb-hero-o xce-draw" ref={draw}>
+            <svg className="xce-draw-svg" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="28" pathLength="1" /></svg>
             <Hire how={d.how} />
-          </motion.div>
+          </div>
         </div>
       </section>
 
       <section className="xcb-perks" aria-labelledby="xcb-perks-h">
         <div className="vc-grid xcb-perks-hd">
-          <MaskLines id="xcb-perks-h" lines={[d.perks.lede]} className="vc-headline" />
+          <h2 id="xcb-perks-h" className="vc-headline">{d.perks.lede}</h2>
           <p className="xcb-meta">{d.perks.title}</p>
         </div>
         <Perks perks={d.perks} />
       </section>
 
       <section className="xcb-pos" id="open-positions" aria-labelledby="xcb-pos-h">
-        <div className="vc-grid xcb-pos-g">
+        {/* entrance 3, iris: the title, lede and skill row open from a circle at the centre */}
+        <div className="vc-grid xcb-pos-g xce-iris" ref={iris}>
           <div className="xcb-pos-h">
             <h2 id="xcb-pos-h" className="vc-display s">{d.pos.title}</h2>
             <p className="vc-lede">{d.pos.lede}</p>
@@ -279,16 +314,17 @@ export default function Careers({ d }) {
         </div>
       </section>
 
-      <section className="vc-sec xcb-int" id="internships" aria-labelledby="xcb-int-h">
-        <div className="vc-grid">
+      <section className="vc-sec xcb-int xce-under" id="internships" aria-labelledby="xcb-int-h" ref={under}>
+        {/* entrance 4, count-roll: the 2,137+ figure's digits roll into their values */}
+        <div className="vc-grid xce-count" ref={count}>
           <header className="xcb-int-h">
-            <MaskLines id="xcb-int-h" lines={[d.intern.title]} className="vc-headline" />
+            <h2 id="xcb-int-h" className="vc-headline">{d.intern.title}</h2>
             <p className="vc-body">{d.intern.lede}</p>
           </header>
           {[intA, intB].map((l, k) => (
             <article key={l.title} className={'xcb-panel ' + (k ? 'b' : 'a')}>
               {k === 0 && <span className="xcb-panel-sig" aria-hidden="true"><Sigil seed={'careers/' + l.title} data={[l.desc.length]} /></span>}
-              {l.perks.filter(fig).map((p) => { const m = fig(p); return <p key={p} className="xcb-fig"><b className="vc-num">{m[1]}</b><span>{m[2]}</span></p>; })}
+              {l.perks.filter(fig).map((p) => { const m = fig(p); return <p key={p} className="xcb-fig"><Roll text={m[1]} className="vc-num" /><span>{m[2]}</span></p>; })}
               <h3 className="vc-title">{l.title}</h3>
               <ul className="xcb-panel-p">{l.perks.filter((p) => !fig(p)).map((p) => <li key={p}>{p}</li>)}</ul>
               <p className="vc-body">{l.desc}</p>
@@ -301,10 +337,11 @@ export default function Careers({ d }) {
         </div>
       </section>
 
-      <section className="xcb-close" data-room="dark" aria-labelledby="xcb-close-h">
+      {/* entrance 5, sticky-stack: the dark close slides up over Academic and lands on it as a card that opens to full width */}
+      <section className="xcb-close xce-stack" data-room="dark" aria-labelledby="xcb-close-h" ref={stack}>
         <div className="vc-grid">
           <div className="xcb-close-l">
-            <MaskLines id="xcb-close-h" lines={[d.close.title]} className="vc-display m" />
+            <h2 id="xcb-close-h" className="vc-display m">{d.close.title}</h2>
             <p className="vc-lede">{d.close.lede}</p>
             <div className="xcb-acts">
               <Cta to={'/careers' + d.close.acts[0].href} className="xcb-big" id="careers.close" thumb>{d.close.acts[0].text}</Cta>

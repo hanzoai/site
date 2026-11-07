@@ -1,4 +1,4 @@
-// Signature: The terminal is the first screen: a full-bleed black room that is one giant terminal window, where hanzo is typed, the request streams and the gateway lands on staging, all in Hanzo's own example session
+// Signature: compare (Before / after slider, docs/MOTION-MAP.md): in the second screen, under "A resource tree, not a pile of flags", the visitor drags a divider across the CLI's own commands: left of it they lie as a pile of flags, right of it the same commands stand as the resource tree (pointer, finger on the handle, or arrow keys); on arrival it sweeps once, then rests
 // Beyond: Add to the script: the install script takes any of the binary's own commands (scan, share, status, link, auth show) as one press each, under Hanzo's own heading for it, and every block and the whole script copy as you built them
 import CliPage from '../../components/pages/CliPage';
 import JsonLd from '../../components/JsonLd';

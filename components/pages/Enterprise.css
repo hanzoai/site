@@ -36,19 +36,15 @@
 .xe-ck { flex: none; stroke: currentColor; }
 .xe-ck circle { stroke-opacity: .35; }
 
-/* ---------- the boundary (signature) ---------- */
-.xe-stage { position: relative; height: 360svh; }
-.xe-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-/* the first screen is the diagram: the words in the left 5 columns, the four walls around the live workspace in the right 8 */
-.xe-intro { position: absolute; z-index: 3; top: 50%; translate: 0 -50%; left: max(var(--gut), calc((100% - 1152px) / 2)); width: calc((min(100% - 2 * var(--gut), 1152px) - 288px) * 5 / 13 + 96px); margin: 0; padding-top: 40px; }
+/* ---------- the hero (unpinned): words in 5 of 13 columns, the walls around the live workspace in the other 8 ---------- */
+.xe-hero { padding: clamp(88px, 11vh, 120px) 0 clamp(48px, 6vw, 88px); }
+.xe-hero-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 24px; align-items: center; }
+.xe-intro { margin: 0; }
 .xe-intro .xe-d { max-width: 20ch; }
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  .js .xe-intro-row { display: block; margin-top: 20px; }
-  .js .xe-intro .xe-acts { margin-top: 28px; }
-  .js .xe-intro .xe-trust { display: block; margin-top: 32px; }
-  .js .xe-intro .xe-trust-l { margin-top: 12px; }
-}
-.xe-intro-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px 48px; margin-top: 24px; }
+.xe-intro .xe-acts { margin-top: 28px; }
+.xe-intro .xe-trust { display: block; margin-top: 32px; }
+.xe-intro .xe-trust-l { margin-top: 12px; }
+.xe-intro-row { margin-top: 20px; }
 .xe-lede { margin: 0; max-width: 44ch; font-size: var(--s-lede); line-height: 1.45; letter-spacing: -.01em; color: var(--soft); text-wrap: pretty; }
 .xe-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; flex: none; }
 .xe-trust { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 32px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
@@ -57,22 +53,17 @@
 .xe-pills { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--soft); }
 .xe-pills li { display: inline-flex; align-items: center; gap: 8px; }
 
-/* the map: the window (640×470) inside four walls 48px apart (JS: WIN, STEP) */
-.xe-cam { position: absolute; left: 50%; top: 50%; width: 1024px; height: 854px; margin: -427px 0 0 -512px; transform-origin: 50% 50%; opacity: 0; transition: opacity .5s var(--ee) .1s; z-index: 2; pointer-events: none; }
-.xe-cam.ready { opacity: 1; }
-.xe-map { position: absolute; inset: 0; }
+/* the map: the workspace inside four walls 26px apart; the place in focus is drawn solid and its name grows */
+.xe-map { position: relative; padding: 96px 84px 84px; }
 .xe-rings { position: absolute; inset: 0; }
-.xe-ring { position: absolute; border-radius: 72px; border: 2px dashed rgba(0, 0, 0, .2); transition: border-color .4s var(--eio), opacity .4s var(--eio), background-color .4s var(--eio); }
+.xe-ring { position: absolute; inset: calc(var(--i) * 22px); border-radius: calc(48px - var(--i) * 8px); border: 1.5px dashed rgba(0, 0, 0, .2); transition: border-color .4s var(--eio), background-color .4s var(--eio); }
 /* on arrival the walls go up around the workspace, the innermost first (0.6 s, then every 120 ms outward) */
-.xe-cam.ready .xe-ring { animation: xe-wall .6s var(--ee) backwards; animation-delay: calc(.6s + (3 - var(--i)) * .12s); }
+.xe-cut .xe-ring { animation: xe-wall .6s var(--ee) backwards; animation-delay: calc(.6s + (3 - var(--i)) * .12s); }
 @keyframes xe-wall { from { opacity: 0; transform: scale(.96); } }
-.xe-ring:nth-child(2) { border-radius: 60px; } .xe-ring:nth-child(3) { border-radius: 48px; } .xe-ring:nth-child(4) { border-radius: 38px; }
 .xe-ring.on { border: 2px solid var(--ink); background-color: rgba(255, 255, 255, .6); }
-.xe-ring.out { opacity: 0; }
-/* the place in focus grows while it is the moment, then settles back */
-.xe-ring-l { position: absolute; top: 15px; left: 30px; font: 606 15px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); transform-origin: 0 0; transition: color .4s var(--eio), transform .5s var(--ee); }
-.xe-ring.on .xe-ring-l { color: var(--ink); transform: scale(1.4); }
-.xe-seat { position: absolute; inset: 192px; }
+.xe-ring-l { position: absolute; top: 7px; left: 24px; font: 606 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); transform-origin: 0 0; transition: color .4s var(--eio), transform .5s var(--ee); }
+.xe-ring.on .xe-ring-l { color: var(--ink); transform: scale(1.18); }
+.xe-seat { position: relative; height: 420px; }
 
 /* the workspace: real Hanzo UI, built at its closest zoom; outlined, not raised */
 .xe-win { position: absolute; inset: 0; display: flex; flex-direction: column; border-radius: 28px; background: #fff; border: 1px solid rgba(0, 0, 0, .14); overflow: hidden; font-size: 13px; color: var(--ink); text-align: left; }
@@ -119,39 +110,47 @@
 .xe-st { justify-self: end; padding: 0 7px; border-radius: 6px; background: #ededed; font: 606 11.5px/22px var(--mono); }
 .xe-st.s4 { background: var(--ink); color: #fff; }
 
-/* the chapter column: 5 of 13 columns, the map takes the other 8 */
-.xe-ch { position: absolute; z-index: 3; top: 50%; translate: 0 -50%; left: max(var(--gut), calc((100% - 1152px) / 2)); width: calc((min(100% - 2 * var(--gut), 1152px) - 288px) * 5 / 13 + 96px); padding-top: 40px; }
-.xe-ch .xe-h { font-size: var(--s-t); line-height: 1.25; letter-spacing: -.015em; max-width: 24ch; }
-.xe-ch .xe-b { margin-top: 10px; font-size: 15px; max-width: 44ch; }
-.xe-ch .xe-tag { margin-top: 14px !important; }
-.xe-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 32px; }
-.xe-step { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 0 0 6px; min-height: 44px; border: 0; background: none; color: var(--faint); font: 500 14px/1.2 var(--sans); text-align: left; cursor: pointer; transition: color .15s var(--eo); }
-.xe-step .x-mono { font-size: 12px; }
-@media (hover: hover) { .xe-step:hover { color: var(--ink); } .xe-step:hover .xe-step-bar { background: rgba(0, 0, 0, .2); } }
-.xe-step-bar { transition: background-color .15s var(--eo); }
-.xe-step.on { color: var(--ink); }
-.xe-step:active { transform: scale(.97); transition: transform 90ms var(--eo); }
-.xe-step-bar { display: block; width: 100%; height: 2px; margin-bottom: 8px; border-radius: 2px; background: var(--line); overflow: hidden; }
-.xe-step-bar b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
-.xe-scale { display: flex; justify-content: space-between; margin-top: 12px; font: 606 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
-.xe-caps { position: relative; margin-top: 40px; min-height: 210px; }
-.xe-caps .xe-caps-g { display: none; }
-.xe-cap { position: absolute; inset: 0 0 auto 0; }
-.js .xe-cap { opacity: 0; translate: 0 24px; transition: opacity .3s var(--eio), translate .3s var(--eio); pointer-events: none; }
-.js .xe-cap.gone { translate: 0 -24px; }
-.js .xe-cap.on { opacity: 1; translate: 0 0; transition: opacity .5s var(--ee) .1s, translate .5s var(--ee) .1s; pointer-events: auto; }
-.xe-cap h3 { margin: 0; font-size: var(--s-moment); font-weight: 497; line-height: 1.05; letter-spacing: -.03em; }
-.xe-cap h3 + p { margin: 14px 0 0; max-width: 40ch; font-size: var(--s-body); line-height: 1.55; color: var(--soft); }
+/* ---------- the signature: rows that open (the four places) ---------- */
+.xe-places .xe-head { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: end; }
+.xe-scale { display: flex; justify-content: space-between; margin-top: clamp(40px, 4.4vw, 64px); padding-bottom: 12px; font: 606 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.xe-rows-l { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.xe-rows-l > li { position: relative; border-bottom: 1px solid var(--line); }
+.xe-row-h { margin: 0; font: inherit; }
+.xe-row-h button { position: relative; display: grid; grid-template-columns: 56px minmax(0, 5fr) minmax(0, 7fr) 44px; align-items: center; gap: 0 24px; width: 100%; min-height: 76px; padding: 0; border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer; transition: transform .15s var(--eo); }
+.xe-row-h .x-mono { font-size: 12px; color: var(--faint); transition: color .15s var(--eo); }
+.xe-row-n { font-size: var(--s-t); font-weight: 497; letter-spacing: -.015em; transform-origin: 0 50%; transition: transform .3s var(--ee); }
+.xe-row-s { font-size: 15px; color: var(--soft); }
+/* the plus turns into a minus as the row opens */
+.xe-row-x { position: relative; justify-self: end; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); transition: background-color .15s var(--eo), border-color .15s var(--eo); }
+.xe-row-x::before, .xe-row-x::after { content: ''; position: absolute; left: 50%; top: 50%; width: 14px; height: 1.5px; margin: -.75px 0 0 -7px; background: var(--ink); transition: transform .3s var(--ee), background-color .15s var(--eo); }
+.xe-row-x::after { transform: rotate(90deg); }
+.xe-rows-l > li.on .xe-row-x { background: var(--ink); border-color: var(--ink); }
+.xe-rows-l > li.on .xe-row-x::before, .xe-rows-l > li.on .xe-row-x::after { background: #fff; }
+.xe-rows-l > li.on .xe-row-x::after { transform: rotate(0deg); }
+.xe-rows-l > li.on .x-mono { color: var(--ink); }
+/* the place you are on grows a step while it is the moment */
+.xe-rows-l > li.on .xe-row-n { transform: scale(1.24); }
+@media (hover: hover) { .xe-row-h button:hover .xe-row-x { border-color: rgba(0, 0, 0, .3); } .xe-rows-l > li:not(.on) .xe-row-h button:hover .xe-row-n { transform: translateX(6px); } }
+.xe-row-h button:active { transform: scale(.98); transition: transform 90ms var(--eo); }
+/* the full detail, opened in place: the walls with this place drawn solid, then what it means */
+.xe-row-d { display: grid; grid-template-columns: 56px minmax(0, 5fr) minmax(0, 7fr) 44px; gap: 0 24px; padding: 4px 0 32px; }
+.xe-row-d[hidden] { display: none; }
+.xe-row-d .xe-glyph { grid-column: 2; }
+.xe-row-d .xe-cap { grid-column: 3; align-self: center; }
+.js .xe-rows-l > li.on .xe-row-d { animation: xe-open .5s var(--ee) both; }
+@keyframes xe-open { from { opacity: 0; clip-path: inset(0 0 100% 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+.xe-cap p:first-child { margin: 0; max-width: 46ch; font-size: var(--s-lede); line-height: 1.45; color: var(--soft); text-wrap: pretty; }
 .xe-cap b { color: var(--ink); font-weight: 606; }
-.xe-cap-n { display: flex; gap: 16px; margin: 16px 0 0; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--soft); }
+.xe-cap-n { display: flex; gap: 16px; margin: 20px 0 0; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--soft); }
 .xe-cap-n .x-mono { color: var(--faint); letter-spacing: .04em; }
 
-/* the small four-wall glyph */
-.xe-glyph { position: relative; display: block; width: 72px; height: 72px; flex: none; }
-.xe-glyph i { position: absolute; border: 1.5px dashed rgba(0, 0, 0, .25); border-radius: 22%; transition: border-color .3s var(--eio), opacity .3s var(--eio); }
+/* the four-wall glyph: the hero's walls in small, this place solid, the workspace at the centre */
+.xe-glyph { position: relative; display: block; width: 100%; max-width: 280px; aspect-ratio: 4 / 3; flex: none; }
+.xe-glyph i { position: absolute; border: 1.5px dashed rgba(0, 0, 0, .25); border-radius: 18px; transition: border-color .3s var(--eio), opacity .3s var(--eio); }
 .xe-glyph i.on { border: 2px solid var(--ink); }
-.xe-glyph i.out { opacity: .3; }
-.xe-glyph b { position: absolute; inset: 41%; border-radius: 3px; background: var(--ink); }
+.xe-glyph i.out { opacity: .35; }
+.xe-glyph b { position: absolute; inset: 41% 40%; border-radius: 4px; background: var(--ink); }
+.js .xe-rows-l > li.on .xe-glyph i.on { animation: xe-wall .5s var(--ee) .1s backwards; }
 
 /* ---------- includes: tiles (flat fills, no outline, no shadow) ---------- */
 .xe-tiles { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; margin-top: clamp(40px, 4.4vw, 72px); }
@@ -300,7 +299,8 @@
 .xe-dot { color: var(--faint); }
 
 /* ---------- security ---------- */
-.xe-stick { grid-column: 1 / span 5; position: sticky; top: 112px; align-self: start; }
+/* no sticky chapters on this page: the security panel and the questions heading sit beside their lists */
+.xe-stick, .xe-sec-obj { grid-column: 1 / span 5; align-self: start; }
 .xe-sec-g { margin-top: clamp(40px, 4.4vw, 72px); }
 .xe-panel { border-radius: 24px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; overflow: hidden; }
 .xe-panel-bar { display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-bottom: 1px solid var(--line); background: #fafafa; font-size: 12.5px; color: var(--soft); }
@@ -372,63 +372,44 @@
   .xe-qa-list a::after { inset: -12px -6px; }
 }
 
-/* ---------- phones and calm screens: the same story, told by tap ---------- */
-@media (max-width: 899px), (prefers-reduced-motion: reduce) {
-  .xe-stage { height: auto; }
-  .xe-pin { position: relative; height: auto; overflow: visible; padding-top: 84px; }
-  .xe-intro, .xe-ch { position: relative; inset: auto; translate: none; transform: none !important; opacity: 1 !important; pointer-events: auto !important; }
-  .xe-intro { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; padding-top: 0; }
-  .xe-cam { position: relative; inset: auto; width: min(100% - 2 * var(--gut), 760px); height: auto; margin: 40px auto 0; transform: none !important; opacity: 1 !important; transition: none; pointer-events: auto; }
-  .xe-map, .xe-seat { position: relative; inset: auto; }
-  .xe-map { padding: 40px; }
-  .xe-ring { inset: calc(var(--i) * 10px) !important; border-radius: calc(20px + (4 - var(--i)) * 10px); }
-  .xe-ring:nth-child(n) { border-radius: calc(20px + (4 - var(--i)) * 10px); }
-  .xe-ring-l { display: none; }
-  .xe-ring.out { opacity: .35; }
-  .xe-ring.on { background-color: transparent; }
-  .xe-win { position: relative; inset: auto; height: 400px; }
-  .xe-ch { left: auto; width: min(100% - 2 * var(--gut), 760px); margin: 64px auto 0; padding: 0 0 calc(var(--pad) / 2); }
-  .xe-step-bar b { transform: scaleX(0) !important; transition: none; }
-  .xe-step.on .xe-step-bar b { transform: scaleX(1) !important; transition: transform 3.6s linear; }
-  .xe-caps { display: grid; min-height: 0; }
-  .xe-cap { position: relative; inset: auto; grid-area: 1 / 1; }
-}
-/* JS off: no pin and no camera; the four places read as a list under the workspace, the log rows stack */
-html:not(.js) .xe-stage { height: auto; }
-html:not(.js) .xe-pin { position: relative; height: auto; overflow: visible; padding-top: 100px; }
-html:not(.js) .xe-intro, html:not(.js) .xe-ch { position: relative; inset: auto; translate: none; transform: none !important; opacity: 1 !important; }
-html:not(.js) .xe-intro { width: min(100% - 2 * var(--gut), 1152px); margin-inline: auto; padding-top: 0; }
-html:not(.js) .xe-cam { position: relative; inset: auto; width: min(100% - 2 * var(--gut), 760px); height: auto; margin: 48px auto 0; transform: none !important; opacity: 1 !important; }
-html:not(.js) .xe-rings { display: none; }
-html:not(.js) .xe-map, html:not(.js) .xe-seat { position: relative; inset: auto; }
-html:not(.js) .xe-win { position: relative; inset: auto; height: auto; }
+/* JS off: the log rows stack in the window; every place's detail reads (the closed ones open) */
+html:not(.js) .xe-win { height: auto; }
+html:not(.js) .xe-seat { height: auto; }
 html:not(.js) .xe-rows { height: auto; }
 html:not(.js) .xe-r { position: relative; transform: none !important; }
 html:not(.js) .xe-r.gone { display: none; }
-html:not(.js) .xe-ch { left: auto; width: min(100% - 2 * var(--gut), 760px); margin: 64px auto 0; padding: 0 0 96px; }
-html:not(.js) .xe-caps { min-height: 0; }
-html:not(.js) .xe-fig > span { transform: none !important; }
+html:not(.js) .xe-row-d[hidden] { display: grid; }
 html:not(.js) .xe-tally i, html:not(.js) .xe-rackglyph i { background: var(--ink); }
-html:not(.js) .xe-cap { position: relative; margin-top: 28px; }
 @media (prefers-reduced-motion: reduce) {
-  .xe-cut .xe-line > span, .xe-cam.ready .xe-ring { animation: none; }
+  .xe-cut .xe-line > span, .xe-cut .xe-ring, .js .xe-rows-l > li.on .xe-row-d, .js .xe-rows-l > li.on .xe-glyph i.on { animation: none; }
   .xe-live i, .xe-r.new, .xe-r.new::before, .xe-panel-r { animation: none; }
-  .xe-tally i, .xe-rackglyph i, .xe-led > *, .xe-roll, .xe-pf-u, .xe-tile-fig, .xe-rackcard-figs b, .xe-offer p.xe-offer-fig { transition: none; }
-  .js .xe-cap, .js .xe-cap.on, .xe-r { transition: none; }
+  .xe-tally i, .xe-rackglyph i, .xe-led > *, .xe-roll, .xe-pf-u, .xe-tile-fig, .xe-rackcard-figs b, .xe-offer p.xe-offer-fig, .xe-row-n { transition: none; }
+  .xe-r { transition: none; }
 }
 @media (max-width: 899px) {
   .xe { --s-h1: 40px; --s-h: 21px; --s-moment: 32px; --s-t: 17px; --s-fig: 44px; --s-big: 52px; --s-lede: 17px; }
   .xe-g { display: block; }
   /* the phone tells it in this order: headline, asks, the live workspace, then the trust strip */
-  .xe-pin { display: flex; flex-direction: column; }
+  .xe-hero { padding-top: 84px; }
+  .xe-hero-g { display: flex; flex-direction: column; align-items: stretch; }
   .xe-intro { display: contents; }
-  .xe-intro > * { width: calc(100% - 2 * var(--gut)); margin-inline: auto; }
   .xe-intro > .xe-d { order: 1; }
-  .xe-intro-row { order: 2; flex-direction: column; align-items: flex-start; margin-top: 16px; }
-  .xe-cam { order: 3; width: calc(100% - 2 * var(--gut)); margin-top: 28px; }
-  .xe-trust { order: 4; margin-top: 24px; }
-  /* extra room under the place tabs and captions, so the phone ask bar never rests over them */
-  .xe-ch { order: 5; width: calc(100% - 2 * var(--gut)); padding-bottom: calc(var(--pad) / 2 + 72px); }
+  .xe-intro-row { order: 2; margin-top: 16px; }
+  .xe-map { order: 3; margin-top: 28px; padding: 32px; }
+  .xe-intro .xe-trust { order: 4; margin-top: 24px; }
+  .xe-ring { inset: calc(var(--i) * 8px); border-radius: calc(20px + (4 - var(--i)) * 8px); }
+  .xe-ring-l { display: none; }
+  .xe-ring.on { background-color: transparent; }
+  .xe-seat { height: 320px; }
+  /* the rows that open: number, name and the plus; the detail stacks under */
+  .xe-places .xe-head { display: block; }
+  .xe-row-h button { grid-template-columns: 32px minmax(0, 1fr) 44px; gap: 0 12px; min-height: 64px; }
+  .xe-row-s { display: none; }
+  .xe-row-d { display: block; padding: 0 0 24px 44px; }
+  .xe-row-d .xe-glyph { max-width: 180px; margin-bottom: 20px; }
+  /* extra room under the places, so the phone ask bar never rests over an open row */
+  .xe-places { padding-bottom: calc(var(--pad) / 2 + 72px); }
+  .xe-tiles-v { margin-inline: calc(-1 * var(--gut)); padding-inline: var(--gut); overflow: hidden; }
   .xe-panel-r { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto; }
   .xe-panel-r > span:nth-child(2) { display: none; }
   .xe-acts { width: 100%; flex-direction: column; align-items: flex-start; }
@@ -440,18 +421,13 @@ html:not(.js) .xe-cap { position: relative; margin-top: 28px; }
   .xe-main { padding: 14px 14px 0; }
   .xe-cols, .xe-r { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 44px; gap: 10px; }
   .xe-cols span:nth-child(2), .xe-from { display: none; }
-  .xe-steps { gap: 6px; }
-  .xe-step { font-size: 13px; }
   .xe-scale { font-size: 11px; }
-  .xe-caps { margin-top: 32px; }
-  .xe-map { padding: 32px; }
-  .xe-ring { inset: calc(var(--i) * 8px) !important; }
-  .xe-ring:nth-child(n) { border-radius: calc(20px + (4 - var(--i)) * 8px); }
   .xe-secu .xe-head, .xe-inc .xe-head, .xe-gpu .xe-head, .xe-part .xe-head { display: block; }
   .xe-head > .xe-l { margin-top: 12px; }
-  .xe-tiles { grid-template-columns: minmax(0, 1fr); }
-  .xe-tile, .t-company { grid-column: auto; min-height: 380px; border-radius: 20px; }
-  .t-company { display: flex; align-items: flex-start; min-height: 0; padding-top: 24px; }
+  /* phones: the tiles are a rail you drag and throw (inertia), each 84% wide so the next one peeks */
+  .xe-tiles { display: flex; width: max-content; gap: 12px; touch-action: pan-y; cursor: grab; }
+  .xe-tile, .t-company { grid-column: auto; flex: none; width: calc(84vw - 2 * var(--gut) * .84); min-height: 380px; border-radius: 20px; }
+  .t-company { display: flex; align-items: flex-start; padding-top: 24px; }
   .xe-tile-ui { order: -1; justify-content: flex-start; margin-bottom: 32px; }
   .xe-tile-v { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .xe-tile-v .xe-glyph { width: 64px; }

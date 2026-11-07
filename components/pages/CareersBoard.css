@@ -49,7 +49,10 @@
 .xcb-perks-hd .vc-headline { grid-column: 1 / 9; }
 .xcb-perks-hd .xcb-meta { grid-column: 1 / 9; }
 .xcb-perk-g { align-items: start; }
-.xcb-perk-v { grid-column: 1 / 6; position: sticky; top: 96px; aspect-ratio: 1; border-radius: 24px; background: #f5f5f5; overflow: hidden; display: grid; place-items: center; color: rgba(0, 0, 0, .4); }
+/* word-light: each word of the perks lights from pale grey as you read down (Careers.jsx Perks) */
+.xcb-w { transition: color var(--d-base) var(--e-out); }
+.xcb-w.off { color: #d4d4d4; }
+.xcb-perk-v { grid-column: 1 / 6; position: relative; aspect-ratio: 1; border-radius: 24px; background: #f5f5f5; overflow: hidden; display: grid; place-items: center; color: rgba(0, 0, 0, .4); }
 .xcb-perk-f { position: absolute; inset: 0; display: grid; place-items: center; }
 .xcb-perk-sig { position: absolute; inset: 0; width: 100%; height: 100%; }
 .xcb-perk-big { position: relative; font: 220 clamp(120px, 16vw, 240px)/.9 var(--sans); letter-spacing: -.03em; color: var(--ink); }

@@ -89,10 +89,10 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-sent-i { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--ink); color: #fff; }
 .xcs .xcs-sent-t { max-width: 20ch; font-size: clamp(26px, 2.6vw, 32px); line-height: 1.15; letter-spacing: -.025em; }
 
-/* 2. what Enterprise includes. Base (JS off, reduced motion): a plain list, numerals at a 64px rest.
-   .pin (desktop with motion): one pinned scene, one idea in as the last goes out. Phones: panels that stack. */
+/* 2. what Enterprise includes: a plain list (no pinned scene), numerals at a 64px rest; it grows in from your last
+   pointer point (contact-sales/enter.css) and an added numeral stamps into ink */
 .xcs .xcs-inc-h .vc-headline { font-size: clamp(26px, 2.4vw, 36px); line-height: 1.08; letter-spacing: -.025em; }
-.xcs-inc-h { grid-column: 1 / 5; align-self: start; position: sticky; top: 120px; display: flex; flex-direction: column; gap: 20px; }
+.xcs-inc-h { grid-column: 1 / 5; align-self: start; display: flex; flex-direction: column; gap: 20px; }
 .xcs-inc-l { grid-column: 5 / 13; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
 /* every row presses (.98, 90ms) and a click or tap on it adds it; on a press the numeral inks at once */
 .xcs-inc-l li { cursor: pointer; -webkit-tap-highlight-color: transparent; transform-origin: 50% 50%; transition: transform var(--d-press) var(--e-out); }
@@ -101,29 +101,12 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-inc-l li { display: grid; grid-template-columns: clamp(96px, 9vw, 132px) minmax(0, 1fr); align-items: center; gap: 27px; padding: 24px 0; border-top: 1px solid var(--line); }
 .xcs-inc-x { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 27px; }
 .xcs-inc-n { display: inline-block; font: 220 64px/.9 var(--sans); letter-spacing: -.03em; color: #d4d4d4; transform-origin: 0 100%; transition: color var(--d-slow) var(--e-out), transform var(--d-slower) var(--e-em); }
-.xcs-inc-l li.lit .xcs-inc-n { color: var(--muted); }
+.xcs-inc-l li.lit .xcs-inc-n { color: var(--muted); transform: translateX(10px); }
 .xcs-inc-l li.on .xcs-inc-n { color: var(--ink); }
 .xcs-inc-t { font-size: clamp(21px, 1.8vw, 26px); font-weight: 497; line-height: 1.2; letter-spacing: -.02em; color: var(--ink); text-wrap: balance; }
 .xcs-inc-l .xcs-round[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
 .xcs-g { display: grid; place-items: center; }
-
-/* the pinned scene: about 0.6 of a screen of scroll per idea; the column of numerals rests at 64px and the active one
-   grows to 112px (scale 1.75, a transform, so nothing reflows); its sentence rises in beside it as the last one lifts out */
-.xcs-inc.pin { height: calc(100svh + 4 * 60svh); padding: 0; }
-.xcs-inc.pin .xcs-inc-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; }
-.xcs-inc.pin .xcs-inc-stick > .vc-grid { width: 100%; align-items: center; }
-.xcs-inc.pin .xcs-inc-h { position: static; align-self: center; }
-.xcs-inc.pin .xcs-inc-l { position: relative; height: 400px; border: 0; }
-.xcs-inc.pin .xcs-inc-l li { position: absolute; inset: 0; display: block; padding: 0; border: 0; pointer-events: none; transform: none; }
-.xcs-inc.pin .xcs-inc-n { position: absolute; left: 0; top: 0; pointer-events: auto; transform-origin: 0 0; transform: translateY(var(--y)); }
-.xcs-inc.pin li.past .xcs-inc-n { color: #a3a3a3; }
-.xcs-inc.pin li.act .xcs-inc-n { color: var(--ink2); transform: translateY(var(--y)) scale(1.75); }
-.xcs-inc.pin li.on .xcs-inc-n { color: var(--ink); }
-.xcs-inc.pin .xcs-inc-x { position: absolute; left: clamp(190px, 16vw, 250px); right: 0; top: 0; min-height: 101px; opacity: 0; pointer-events: none; transform: translateY(calc(var(--ty) + 28px)); transition: opacity var(--d-base) var(--e-out), transform var(--d-slower) var(--e-em); }
-.xcs-inc.pin li.past .xcs-inc-x { transform: translateY(calc(var(--ty) - 28px)); }
-.xcs-inc.pin li.act .xcs-inc-x { opacity: 1; pointer-events: auto; transform: translateY(var(--ty)); transition-delay: 90ms; }
-.xcs-inc.pin li.act .xcs-inc-x:active { transform: translateY(var(--ty)) scale(.98); transition-duration: var(--d-press); transition-delay: 0ms; }
-.xcs-inc.pin .xcs-inc-t { font-size: clamp(24px, 2vw, 30px); }
+.xcs-chips .xcs-stamp { max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: top; }
 
 /* 3. the launches Hanzo built: their names as a type rail whose speed answers the scroll; pause, hover or focus holds it */
 .xcs-logos { padding: clamp(48px, 6vw, 88px) 0 clamp(56px, 7vw, 104px); }
@@ -163,18 +146,8 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
   .xcs-chips { flex-basis: 100%; min-height: 32px; }
   .xcs-btns { margin-left: auto; }
   .xcs-inc-h { position: static; margin-bottom: 24px; }
-  /* phones: five panels that stack as you scroll (each sticks under the header and the next slides over it);
-     the numeral rests at 64px and the panel you are on grows it to 112px */
-  .xcs-inc-l { border-bottom: 0; }
-  .xcs-inc-l li { position: sticky; top: 60px; min-height: 50svh; align-content: start; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 20px 0 32px; background: #fff; }
-  .xcs-inc-n { height: 101px; display: flex; align-items: flex-end; }
-  .xcs-inc-l li.act .xcs-inc-n { transform: scale(1.75); color: var(--ink2); }
-  .xcs-inc-l li.act.on .xcs-inc-n { color: var(--ink); }
+  .xcs-inc-l li { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 24px 0; }
   .xcs-inc-t { font-size: 21px; }
-}
-@media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
-  /* the numeral grows from its baseline: draw the glyph itself at the foot of its 101px slot */
-  .xcs-inc-n { line-height: 101px; height: auto; display: block; transform-origin: 0 85%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xcs-in, .xcs-up { animation: none; }
@@ -182,5 +155,4 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
   .xcs-logo::after { display: none; }
   .xcs-rail { -webkit-mask-image: none; mask-image: none; }
   .xcs-ring { animation-duration: 2s; }
-  .xcs-inc-l li.act .xcs-inc-n { transform: none; }
 }
