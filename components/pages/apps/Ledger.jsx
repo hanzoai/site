@@ -27,8 +27,8 @@
    Kept: the book's film and its pointer read-back, the split sliding to 95 / 5 once when seen, the capability pill glide,
    every idle hairline, the hero's line-masked title and the Band opening to full width (now once when it is reached).
    Replaced: the pinned BizChapters scene (now three plain steps, each scene beside its words) and the BizStage scroll
-   settle (now the stack-drop). The Numscript copy no longer sticks, which also frees "See the request" from the sticky
-   column's stacking context, so the sheet opens over the header and the splitter.
+   settle (now the stack-drop). The Numscript copy rides beside the splitter (sticky on desktop); while its sheet is open
+   the column rises to z 1000 (Ledger.css), so the sheet and its scrim cover the header and the splitter.
 V2: 9/10 motion-map pass: one calculator reprices the book, steps, dark room and request; five distinct entrances in map order; no pinned scenes; the request sheet opens above everything
 */
 import { createContext, memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, Fragment } from 'react';
@@ -285,8 +285,7 @@ function Splitter() {
   );
 }
 
-/* Entrance 2, velocity-skew. The words no longer stick beside the splitter (no pinned scene, and no sticky stacking
-   context trapping the sheet under the header). */
+/* Entrance 2, velocity-skew. The words ride beside the splitter; the open sheet lifts their column above the header. */
 function Numscript() {
   const ref = useRef(null);
   useSkew(ref);
@@ -339,7 +338,7 @@ function Scene({ i }) {
           <span className="ld-chain-h x-mono">{k ? 'sha256 of tx ' + k : 'sha256'}</span>
         </div>
       ))}
-      <svg className="ld-back" viewBox="0 0 40 160" aria-hidden="true"><path d="M6 150 C 38 150, 38 84, 6 84" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M12 78 L5 84 L12 90" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
+      <svg className="ld-back" viewBox="0 0 40 160" preserveAspectRatio="none" aria-hidden="true"><path d="M6 150 C 38 150, 38 84, 6 84" fill="none" stroke="currentColor" strokeWidth="1.6" vectorEffect="non-scaling-stroke" /><path d="M12 78 L5 84 L12 90" fill="none" stroke="currentColor" strokeWidth="1.6" vectorEffect="non-scaling-stroke" /></svg>
       <p className="ld-chain-n">a reversing transaction points back at the original</p>
     </>
   );
