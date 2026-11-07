@@ -44,3 +44,6 @@
 .gx-slide:active .gx-slide-k { transform: scale(.98); }
 .gx-slide:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; border-radius: 8px; }
 @media (hover: hover) { .gx-slide:hover .gx-slide-k { box-shadow: 0 0 0 3px #fff, 0 0 0 7px rgba(0, 0, 0, .12); } }
+
+/* a sheet's headline is never smaller than the tile that opened it */
+.gx .w2-sheet-t { font-size: 26px !important; line-height: 1.15 !important; letter-spacing: -.02em !important; }
