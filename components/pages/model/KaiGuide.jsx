@@ -177,8 +177,35 @@ const TYPES = [
   ['noul', <><b>Send</b> <code>instructions</code>: a yes/no question.</>, <><b>Get</b> <code>noul</code>: P(true). kai-1.3, the default, does not read a noul’s <code>criteria</code>.</>],
 ];
 
+/* the three types as a spec sheet; each glyph draws its type, then the three take turns showing it again (one mover at a
+   time, a 9 s round) while the sheet is on screen, paused off screen and under reduced motion */
+function Types() {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.2 });
+  return (
+    <section className="kg-types kg-sec" ref={box} data-off={!seen || undefined} aria-labelledby="kg-q">
+      <div className="kg-wrap">
+        <div className="kg-head">
+          <div><h2 id="kg-q" className="kg-h2">Three question types</h2></div>
+          <div className="kg-side"><p className="kg-kick">Questions</p><p className="kg-lede-s">Name each question; its answer comes back under the same name.</p></div>
+        </div>
+        <ol className="kg-rows">
+          {TYPES.map(([n, send, get], i) => (
+            <li key={n}>
+              <div className="kg-row-n"><span className={'kg-glyph g' + i} aria-hidden="true"><i /><i /><i /><i /></span><h3>{n}</h3></div>
+              <p>{send}</p>
+              <p>{get}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* the hero already typed the curl request, so the code opens on Python (curl stays one tab away) */
 function CallIt() {
-  const [k, setK] = useState(0);
+  const [k, setK] = useState(1);
   return (
     <div className="kg-code">
       <Tabs id="kg-lang" label="Language" tabs={CODES.map(([l]) => l)} value={k} onChange={setK} />
@@ -202,11 +229,13 @@ const tokPos = (t) => (Math.log2(Math.max(256, t)) - LO) / (HI - LO);
 const posTok = (p) => Math.round(Math.pow(2, LO + p * (HI - LO)));
 const usd = (x) => '$' + (x < 0.01 ? x.toFixed(5) : x.toFixed(3));
 
-function Checker({ s, mine, setMine }) {
+// a ruler's thumb position as one fixed string, the same on the server and in the browser (no hydration drift)
+const run = (p) => ({ transform: `translateX(${(Math.round(p * 10000) / 100).toFixed(2)}%)` });
+
+function Checker({ s, mine, setMine, price }) {
   const [m, tok, q] = mine || SCENES[s];
   const r = check(m, tok, q);
   const set = (i, v) => { const n = [...(mine || SCENES[s])]; n[i] = v; setMine(n); };
-  const glide = { duration: T.base, ease: EMPH };
   return (
     <div className="kg-check">
       <div className="kg-check-bar"><b>POST /v1/decisions</b><em>request check</em></div>
@@ -221,7 +250,7 @@ function Checker({ s, mine, setMine }) {
             <i className="kg-zone z3" style={{ left: tokPos(MAXSTATE) * 100 + '%' }} />
             <span className="kg-mk" style={{ left: tokPos(TRAINED) * 100 + '%' }}>1,024</span>
             <span className="kg-mk" style={{ left: tokPos(MAXSTATE) * 100 + '%' }}>32,768</span>
-            <motion.span className="kg-run" initial={false} animate={{ x: tokPos(tok) * 100 + '%' }} transition={glide}><i /></motion.span>
+            <span className="kg-run" style={run(tokPos(tok))}><i /></span>
             <input type="range" min="0" max="1000" value={Math.round(tokPos(tok) * 1000)} onChange={(e) => set(1, posTok(+e.target.value / 1000))} aria-label="State tokens" />
           </span>
         </label>
@@ -230,7 +259,7 @@ function Checker({ s, mine, setMine }) {
           <span className="kg-track">
             <i className="kg-zone z3" style={{ left: (MAXQ / 101) * 100 + '%' }} />
             <span className="kg-mk" style={{ left: (MAXQ / 101) * 100 + '%' }}>100</span>
-            <motion.span className="kg-run" initial={false} animate={{ x: (q / 101) * 100 + '%' }} transition={glide}><i /></motion.span>
+            <span className="kg-run" style={run(q / 101)}><i /></span>
             <input type="range" min="1" max="101" value={q} onChange={(e) => set(2, +e.target.value)} aria-label="Questions" />
           </span>
         </label>
@@ -245,7 +274,7 @@ function Checker({ s, mine, setMine }) {
             ))}
           </div>
         </div>
-        <p className="kg-cost">
+        <p className="kg-cost" data-on={price || undefined}>
           <span>Input, per 1,000 requests this size</span>
           <b>{r.code === 200 ? usd((tok * 0.021 * 1000) / 1e6) : '—'}</b>
           <span>Jev {r.code === 200 ? usd((tok * 0.042 * 1000) / 1e6) : '—'} · output is free</span>
@@ -294,7 +323,7 @@ function Limits() {
           </dl>
         </div>
         <div className="kg-limits-c">
-          <Checker s={s} mine={mine} setMine={(n) => { setRow(null); setMine(n); }} />
+          <Checker s={s} mine={mine} price={lit === 4} setMine={(n) => { setRow(null); setMine(n); }} />
         </div>
       </div>
     </section>
@@ -309,6 +338,48 @@ const RECIPES = [
   ['recipes::kata', 'Autonomous test-and-repair agent state machine gating code patch generation vs human review.'],
   ['recipes::gen', 'Conversational assistant harness managing multi-turn history and Model Context Protocol (MCP) dispatch.'],
 ];
+
+/* the black room's object: one recipe on the stage, its name large and its line beneath, the other five small and grey
+   beside it. A hairline fills under the stage and hands on to the next recipe when it is full (6 s); pointing at or
+   focusing a name brings it on stage, the pointer on the room holds the fill, and the bar's own control pauses it.
+   Off screen and under reduced motion the fill does not run, so nothing changes by itself. */
+function Recipes() {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.35 });
+  const [k, setK] = useState(0);
+  const [hold, setHold] = useState(false);
+  const next = () => setK((x) => (x + 1) % RECIPES.length);
+  return (
+    <div className="kg-rx" ref={box} data-off={!seen || undefined} data-hold={hold || undefined}>
+      <div className="kg-rx-stage">
+        <div className="kg-rx-top">
+          <span className="kg-rx-ix" aria-hidden="true">{String(k + 1).padStart(2, '0')} / {String(RECIPES.length).padStart(2, '0')}</span>
+          <span className="kg-rx-bar" aria-hidden="true"><i key={k} onAnimationEnd={next} /></span>
+          <button type="button" className="kg-rx-btn" aria-label={hold ? 'Play' : 'Pause'} aria-pressed={hold} onClick={() => setHold((h) => !h)}>
+            {hold
+              ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
+              : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5.5 3.5v9M10.5 3.5v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
+          </button>
+        </div>
+        <div className="kg-rx-stack">
+          {RECIPES.map(([n, d], i) => (
+            <div key={n} className="kg-rx-it" data-on={i === k || undefined} data-pos={i < k ? 'up' : i > k ? 'down' : undefined} aria-hidden={i !== k || undefined}>
+              <span className="kg-rx-m"><code>{n}</code></span>
+              <p>{d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <ul className="kg-rec">
+        {RECIPES.map(([n], i) => (
+          <li key={n} data-on={i === k || undefined}>
+            <button type="button" aria-pressed={i === k} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setK(i); }} onFocus={() => setK(i)} onClick={() => setK(i)}><code>{n}</code></button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 /* the move from Jev as one diff: the three changed lines land in turn when the diff reaches the screen */
 function Jev() {
@@ -352,14 +423,36 @@ function Bench() {
   );
 }
 
+/* the closing band (page-local: the kit Band is a black room and would make a third dark surface): the guide's own
+   sentence cuts in by line mask when it arrives, then the key ask and the reference, centred, on the Quiet room */
+function End() {
+  const box = useRef(null);
+  const seen = useInView(box, { once: true, amount: 0.5 });
+  const [armed, setArmed] = useState(false);
+  useEffect(() => { if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setArmed(true); }, []);
+  return (
+    <section className="kg-end" ref={box} data-arm={armed || undefined} data-on={seen || undefined} aria-labelledby="kg-e">
+      <div className="kg-wrap">
+        <h2 id="kg-e" className="kg-end-h">
+          <span className="x-line"><span className="x-line-in">Kai answers each question with a probability for every answer it allows, and writes no text.</span></span>
+        </h2>
+        <div className="kg-acts kg-close">
+          <Cta to="https://platform.hanzo.ai/api-keys" id="kai-guide.close">Get an API key</Cta>
+          <Cta to="https://docs.hanzo.ai/docs/decisions" kind="link" id="kai-guide.close-reference">Read the reference</Cta>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function KaiGuide() {
   return (
     <main className="kg">
       <section className="kg-hero" aria-labelledby="kg-h">
+        <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-sess-btn,.kg-rx-btn{display:none!important}.kg-code [role=tabpanel]{display:block!important}.kg-code [role=tablist]{display:none!important}'}</style></noscript>
         <div className="kg-wrap kg-hero-g">
           <div className="kg-hero-t">
             <h1 id="kg-h" className="kg-h1">
-              <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-sess-btn{display:none!important}.kg-code [role=tabpanel]{display:block!important}.kg-code [role=tablist]{display:none!important}'}</style></noscript>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.1 }}>How to</motion.span></span>
               <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.16 }}>Use Kai</motion.span></span>
             </h1>
@@ -375,23 +468,7 @@ export default function KaiGuide() {
         </div>
       </section>
 
-      <section className="kg-types kg-sec" aria-labelledby="kg-q">
-        <div className="kg-wrap">
-          <div className="kg-head">
-            <div><h2 id="kg-q" className="kg-h2">Three question types</h2></div>
-            <div className="kg-side"><p className="kg-kick">Questions</p><p className="kg-lede-s">Name each question; its answer comes back under the same name.</p></div>
-          </div>
-          <ol className="kg-rows">
-            {TYPES.map(([n, send, get], i) => (
-              <li key={n}>
-                <div className="kg-row-n"><span className={'kg-glyph g' + i} aria-hidden="true"><i /><i /><i /><i /></span><h3>{n}</h3></div>
-                <p>{send}</p>
-                <p>{get}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <Types />
 
       <section className="kg-call kg-sec" aria-labelledby="kg-c">
         <div className="kg-wrap kg-call-g">
@@ -412,11 +489,9 @@ export default function KaiGuide() {
             <div><h2 id="kg-r" className="kg-h2">Composable Decision Recipes</h2></div>
             <div className="kg-side"><p className="kg-kick">Recipes &amp; Blueprints</p><p className="kg-lede-s">Modular Rust structs and TypeScript workflows that sit inside your pipelines: retail triage, industrial diagnostics, confidence routing, and agent loops.</p></div>
           </div>
-          <ul className="kg-rec">
-            {RECIPES.map(([n, d]) => <li key={n}><code>{n}</code><p>{d}</p></li>)}
-          </ul>
+          <Recipes />
           <div className="kg-acts">
-            <Cta to="https://docs.hanzo.ai/docs/guides/cookbook/recipes" id="kai-guide.recipes">Read the Recipes Guide</Cta>
+            <Cta to="https://docs.hanzo.ai/docs/guides/cookbook/recipes" kind="quiet" id="kai-guide.recipes">Read the Recipes Guide</Cta>
             <Cta to="https://docs.hanzo.ai/docs/guides/cookbook" kind="link" id="kai-guide.recipes-cookbook">View All Cookbook Pipelines</Cta>
             <A to="https://github.com/hanzoai/kai/tree/main/recipes" className="kg-gh" data-cta="kai-guide.recipes-github">Kai recipes on GitHub ↗</A>
           </div>
@@ -430,19 +505,18 @@ export default function KaiGuide() {
             <div className="kg-side"><p className="kg-kick">Coming from Jev</p><p className="kg-lede-s">Kai takes the request body Jev takes. The same endpoint also serves typesafe/jev-1.13 with a Hanzo key, at Jev’s price.</p></div>
           </div>
           <Jev />
-          <div className="kg-jev-g">
-            <p className="kg-differs">What differs: Kai answers at most <b>100</b> questions a request, refuses a state past <b>32,768</b> tokens with <b>422</b>, and kai-1.3, the default, ignores a noul’s criteria. OpenAI’s Decisions body (<code>input</code> and a list of questions) is refused.</p>
-            <div className="kg-bench">
-              <Bench />
-              <p>On the frozen harness, kai-1.4 averaged 84.4% accuracy against Jev’s 76.6% across the 11 suites it leads, both models on the same questions. <A to="/kai#benchmarks" className="kg-runs">The runs →</A></p>
-            </div>
-          </div>
-          <div className="kg-acts kg-close">
-            <Cta to="https://platform.hanzo.ai/api-keys" id="kai-guide.close">Get an API key</Cta>
-            <Cta to="https://docs.hanzo.ai/docs/decisions" kind="link" id="kai-guide.close-reference">Read the reference</Cta>
-          </div>
+          <p className="kg-differs">What differs: Kai answers at most <b>100</b> questions a request, refuses a state past <b>32,768</b> tokens with <b>422</b>, and kai-1.3, the default, ignores a noul’s criteria. OpenAI’s Decisions body (<code>input</code> and a list of questions) is refused.</p>
         </div>
       </section>
+
+      {/* the proof strip, then the closing band: the page's own sentence, the key ask, the reference */}
+      <section className="kg-proof">
+        <div className="kg-wrap kg-proof-g">
+          <Bench />
+          <p>On the frozen harness, kai-1.4 averaged 84.4% accuracy against Jev’s 76.6% across the 11 suites it leads, both models on the same questions. <A to="/kai#benchmarks" className="kg-runs">The runs →</A></p>
+        </div>
+      </section>
+      <End />
     </main>
   );
 }
