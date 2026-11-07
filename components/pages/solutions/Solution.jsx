@@ -17,7 +17,7 @@
    Motion: idle (the film and its stories) · pointer (magnetic ask, hover holds the stories, drag rail of siblings) ·
    state (overlap pills glide, products re-flow, sheets rise) · scroll (stage settle, the chapters). Each member's own
    contour (Sigil seeded with its slug) sits behind its overlap finder; siblings carry theirs.
-   V2: 8/10 film beside the headline playing its jobs as stories, each job's film playing in view (phones too), the tail folded into two sheets from the last job, ink only, no eyebrows, magnetic ask, member contour behind the overlap finder, siblings that drag and open. */
+   V2: 8/10 film beside the headline playing its jobs as stories, resting sizes (h1 52, heads 26, figures 64 at weight 220), each job's film playing in view (phones too), the tail folded into two sheets from the last job, ink and tokens only, no springs, no eyebrows, member contour behind the overlap finder, siblings that drag and open. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Img, Film as Clip } from '../../kit';
@@ -108,7 +108,7 @@ function Overlap({ here, me, sibs, data, seed, sig }) {
       <div className="xsl-ovl-pick" role="group" aria-label={me} data-swipe-own>
         {sibs.map((s) => (
           <button key={s.href} type="button" aria-pressed={s.href === pick} onClick={() => setPick(s.href)}>
-            {s.href === pick && <motion.span layoutId="xsl-ovl" className="xsl-ovl-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            {s.href === pick && <motion.span layoutId="xsl-ovl" className="xsl-ovl-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
             <span>{s.label}</span>
           </button>
         ))}
@@ -180,11 +180,11 @@ function Stories({ reel, n }) {
       {step && (
         <div className="xs2-film-job" aria-hidden="true">
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.b key={step.title} className="xs2-film-n x-mono" initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.22 } }} transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}>{pad(r.at + 1)}</motion.b>
+            <motion.b key={step.title} className="xs2-film-n x-mono" initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.22 } }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>{pad(r.at + 1)}</motion.b>
           </AnimatePresence>
           <span className="xs2-film-tw">
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.span key={step.title} className="xs2-film-t" initial={{ y: '105%' }} animate={{ y: 0 }} exit={{ y: '-105%', transition: { duration: 0.22 } }} transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}>{step.title}</motion.span>
+              <motion.span key={step.title} className="xs2-film-t" initial={{ y: '105%' }} animate={{ y: 0 }} exit={{ y: '-105%', transition: { duration: 0.22 } }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>{step.title}</motion.span>
             </AnimatePresence>
           </span>
         </div>

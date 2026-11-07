@@ -1,88 +1,152 @@
 # /sentinel: James-eye review
 
 Verdict: 6/10
-First complaint: "It's still purple. I said greys, silvers, blacks and whites, and the rain, the bars, the buttons and the customer dots are still purple and pink, with red on top. The little label is still stuck over the headline. And after the rain it's five still pictures in a stack."
+First complaint: "It's black and white now, good. But everything is shouting: a giant title, a giant number and a giant heading on every card. That little bar at the bottom sits right on top of the words and the buttons. And once the rain is done, nothing moves."
 
-Reviewed: main @ `dfe5ff5` (last page commit `486d6d0`). Files hash: `670aa11a3d68`
-Walked 7 Nov 14:19–14:21 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
+Reviewed: main @ `cb11693` (last page commit `4b53974`). Files hash: `be9701ade340`
+Walked 7 Nov 14:40–14:48 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
 Proof: `img/sentinel.jpg` (desktop first screen | phone first screen).
 
 ## Since the last review
-- **Done: one ask per screen.** The shared ask bar now carries "Read the docs →". On desktop it is fixed at y=734 on screens s3 to s11, and on phone it is the bottom bar on s2 to s8. While it shows, the header's "Try Hanzo" turns to an outline, so each of those screens has exactly one solid button. Last time phone had two solid buttons on every screen and desktop had no page ask at all. Still open: the close's solid button is "Deploy to Cloud", a different verb from the bar's.
-- **Done: presses and JS-off.** The hero's "Read the docs" and "View on GitHub" and the close's "Deploy to Cloud" now press to 0.98. "Copy" now answers the hover and presses to 0.92. With JS off, 0 text runs are hidden (it was 8). The "hanzoai" chip still has no press.
-- **Open: colour and the label.** The hue counts are exactly the same as last time: violet 65 on desktop (24 fills, 28 text, 13 borders), red 8, and violet-to-pink account dots 9. `--ac: #7a5af8` and the rain's `#9d86ff` are still in the code, and "● SENTRY.HANZO.AI" still sits 24px above the h1 at both widths.
-- **Open: the ghosted hero and the late product.** The shared hero still fades the words and buttons to 16% and turns off their clicks below 20%. At s1 (y=650) both buttons sit at y=563 at 16% and ignore clicks. Because they count as "on screen", the ask bar also stays away, so that screen has no working solid button. The issue view still arrives 22% off the right edge at 1.16× size.
-- **Open: everything else from last time.** The sheet pictures 02–06 still have no motion of their own (`Pic` has none). The rain still runs through the 01/06 paragraph. "03 / 06" and "05 / 06" are still 4.2:1, "Copy" and "Agent prompt" are still 13px, and the chip is still 36px tall. There are still 10 bare `:hover` rules and 2 `setInterval` timers, and there is no coverage file. The page's own files changed by 7 lines, a reduced-motion hydration fix; everything that got better came from the shared kit.
+- **Done: the colour.** There are 0 hues at either width. Last time desktop had violet 65 times, red 8 and pink 9. Now the rain is light grey, the selected router chips are ink, the bad release is an ink bar, the missed cron is a dashed ink ring, and the account dots are a grey ramp.
+- **Done: nothing above a headline, plus the small stuff.**
+  - "SENTRY.HANZO.AI" is now a 13px mono caption under the h1 at both widths, and every "0N / 06" sits under its heading.
+  - 0 text runs are under the size floor and 0 are under 4.5:1. Before, "Copy" was 13px and "03 / 06" measured 4.2:1.
+  - The "hanzoai" chip now presses (0.98) and is 44px tall.
+  - The close's one solid button is now "Read the docs" (it was "Deploy to Cloud"), with Deploy as a text link.
+  - `docs/coverage/sentinel.md` exists, and the header has Persona, Goal and CTA.
+- **Still open: the hero.** At 1470×801 the issue view still arrives 12% off the right edge at 1.08× size. Its right side, its Pause and the fourth breadcrumb are off the screen. At s1 (y=650) the words and both buttons still hang at about 20%: the darkest pixel of the h1 is 206 of 255. They also ignore clicks.
+- **Still open: the back half is still.** The rain still falls through the 01/06 paragraph at both widths. The five sheet pictures have no motion of their own: phone s3–s7 have a shotdiff of 0. The dark room stops once the count lands: desktop s5 has a shotdiff of 0.
+- **New since then:**
+  - The shared ask pill now covers words and controls on desktop. On phone the pill is gone, and the header's "Try Hanzo" carries the ask.
+  - The new scale rule fails the desktop sizes.
+  - **Not in this walk:** page commit `aa30dc4` (14:40:03) reached main after the walk started. It adds sheet pictures that play once, a trickle after the count, a mask behind the 01/06 text and a resolved issue in the close. The walked `Sentinel.jsx` is the earlier file (blob `413d760`). `aa30dc4` does not change the sizes, the pill or the hero, so this verdict stands either way.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Mostly. The words are clear ("Hanzo Sentinel / Error tracking and performance monitoring"), and the live issue view sits beside the title at 1470×801. On phone its top ("4,350 events · 1 issue") shows at the fold. The page appears at about 2.0 s (the usual dev-server blank), and then the view runs itself. The count ticks up from 4,221 (4,328 by 5.5 s), the histogram shifts, and the top frame resolves from `main.3f9a.js:1:88213 · t.a()` to `checkout/cart.ts:42 · applyDiscount()`. Desktop has 10 of 51 frames moving in the rest of the 3 s idle, and phone has 14 of 25 in its first second. But on desktop the card still lands 22% off the right edge and 16% too big. At first sight its right side runs off the screen and its breadcrumbs sit under the fold, and it only settles as you scroll. The movement is small: digits and thin lavender bars.
-2. **One in, one out, or a document?** Half, and the same as last time. The hero pins for 601px while the words fade and the card settles. The dark room is the real one in, one out: violet rain falls past a faint card and is pulled into it as you scroll, the count climbs to 10,000 and the "1 issue" chip lands. On phone it plays by itself every 8 s (7,315 → 8,485 → 9,031 → 10,000 in the film). Then on desktop five sheets (02–06) slide up over each other, 18px apart. Each one is a still drawing beside a paragraph, and nothing in them moves unless you tap the router in 05/06. On phone the sheets lie flat, so 02–06 read as five cards in a column. Once the count lands, the particles freeze inside the card and the dark room is still. The desktop film fell behind the walk again (about two screens by the end) and never reached the "Get Sentinel" block, so stillness is read from the phone film and the code.
-3. **A real object in every section?** Hero: yes, the live issue view. Dark room: yes, the rain and the card. 05/06: yes, the alert router, still the best Beyond in this group. Every pick reads back as a sentence ("A regression goes to PagerDuty and opens the ticket in Jira"). 02/06 (trace bars) and 03/06 (release bars and the cron row) are fine drawings, but they are static. 04/06 is four rows from "account 1" to "account 4" with coloured dots: a list, not a thing. 06/06 is a grey curve with two dots, close to an icon. The close has an agent prompt with a blinking violet caret and the "Get Sentinel" type, and no object.
-4. **One ask, sticky after the hero?** Nearly. The hero has "Read the docs" (solid) and "View on GitHub" (outlined). From s3 to s11 on desktop and s2 to s8 on phone, the bottom bar's "Read the docs →" is the only solid button. Three things still break it:
-   - At s1 on desktop the only solid-looking buttons are the hero's two ghosts at 16%, and they ignore clicks.
-   - For one screen after the hero (desktop s2, phone s1), the solid ask is the header's "Try Hanzo" before it hands over to "Read the docs".
-   - The close's one solid button is a third verb, "Deploy to Cloud".
-5. **Every hover and press answers?** Mostly, now. These hover and press to 0.98: "Read the docs", "View on GitHub" and "Deploy to Cloud". "Copy" hovers and presses (0.92). The router pills show a border on hover, press to 0.96 and update the sentence. Phone taps on "New issues", "regressions", "GitHub" and "GitLab" all answer. The "hanzoai" chip hovers but has no press. "email" and "GitHub" read DEAD at s10 only because the 06/06 sheet had slid over the router and the pointer landed on it. The magnetic pull on "Read the docs" and "Deploy to Cloud" is the only thing that follows the pointer: no tilt, no preview, no cursor-aware light.
-6. **Overlap, font swap, layout shift?** None measured. CLS is 0 at both widths. The h1 box changes once (439 ms on desktop, 542 ms on phone, its cut-in) and then holds. There is no horizontal scroll at 375 or 320. Two visual clashes the walker does not measure:
-   - The rain falls straight through the 01/06 paragraph, so the body text is read through a curtain of violet dashes.
-   - On desktop the new ask bar's "Read the docs →" sits on the bottom-left corner of the "Paste and ship" card at the close.
-7. **Which reference, and is its motion there?** apple.com product page: the pinned, scrubbed dark room is there, and it is the page's moment. anthropic.com launch: the 120px "10,000 events / 1 issue" is a real hero figure. synchronized.studio (a card opens into its page) is absent; the close has no related card at all. The stacked sheets are a scroll trick from the kit, not from a reference.
-8. **Different from its neighbours?** Less than last time.
-   - /visor now uses the same side stage mirrored: a product panel arriving from the edge on one side and a two-line 128px "Hanzo X" on the other.
-   - /search centres its title over a blue search box, /telemetry puts the lede beside the title with an amber collector under it, and /tunnel puts an orange terminal on the fold.
-   - After the hero it is the kit: the "● X" eyebrow with a coloured dot (all five pages), one dark room with "01 / 06", numbered chapters to 06, and the "Get started with Hanzo X / Paste and ship / Get X / Deploy to Cloud" close.
-   - What tells the pages apart is one colour each: violet here, blue /search, amber /telemetry, orange /tunnel, pink /visor. That is the one-accent-per-page rule James replaced. James: "It's not just a template."
-9. **All 18 parts covered?** No; see below. `docs/coverage/sentinel.md` is missing.
+1. **Sells in 5 seconds, moves within 1 second?** Yes on phone, half on desktop.
+   - **Desktop:** the page paints at 0.68 s. The h1 cuts in (4 of 25 frames move in the first second), then the issue runs itself: 12 of 42 frames move in the rest of the 3 s. The count ticks from 4,211 to 4,507 over the first 13 s, the histogram shifts, and the top frame flips between `main.3f9a.js:1:88213` and `checkout/cart.ts:42`.
+   - **But the desktop object is cut off.** The issue view starts at x≈726 and runs past 1470. The "source map" chip shows only its "s", and "exception" is cut by the fold.
+   - **Phone:** the page paints at 0.16 s, and 15 of 25 frames move in the first second. The h1 (52px, one line), the caption, the lede, "Read the docs" and the issue's count and histogram all fit inside 812.
+2. **One in, one out, or a document?** One in, one out down to the count, then a stack of still cards.
+   - **Desktop dark room:** it pins for 260svh. Rain is pulled into one card as you scroll, and the count climbs: 390 at s2, 6,312 and then 7,061 at s3, 10,000 with "1 issue" at s4. That part is the page's moment.
+   - **After the count lands, nothing moves.** s5 has a shotdiff of 0. Then five sheets stack 18px apart. Each holds a drawing that does not move: in s6–s9 the only change is the next sheet creeping 1–2px as the scroll settles.
+   - **Phone:** the room plays by itself every 8 s (p-sheet-02/03). The sheets lie flat, and 10 of the page's 14 phone screens read STILL.
+   - The phone s2 reading is the walker's fault: it tapped the rain's Pause at s1, and the room froze at "4 events".
+3. **A real object in every section?** Yes, apart from the close.
+   - Hero: the issue view.
+   - Dark room: the rain and the card.
+   - Sheets: the trace waterfall (02), the release bars with the cron row (03), four account rows (04, a list rather than a thing), the alert router (05, still the best Beyond in the group) and the fork line (06).
+   - Close: Hanzo's "Paste and ship" prompt beside "Get started with Hanzo Sentinel", then "Get Sentinel" and its chips. It has no product object.
+4. **One ask in the sticky header, nothing floating, scale with rhythm?** No on all three.
+   - **Desktop, s2 to s10, the floating pill:** the site's pill ("Hanzo Sentinel | search | Read the docs →", x 553–916, y 727–781) floats bottom centre over the page.
+     - At s6 it covers the 03/06 paragraph ("…a regression shows [up in] / …a support queue [on]…").
+     - At s8 it covers the router's "New issues" chip and half of "regressions". The walker's hover on "New issues" landed on the pill.
+     - At s13 it sits on the footer wordmark.
+   - **Desktop s1:** the header's "Try Hanzo" is solid next to the ghost "Read the docs".
+   - **Phone:** there is no bar at all. From s1 to s7 and from s10 to s13, the only solid button is the header's "Try Hanzo", a different verb from the page's "Read the docs".
+   - **Scale on desktop is everything big** (this pack has no `scale` field; sizes are from the CSS at 1470 and the shots). Live hanzo.ai rests at h1 52px, section heads 26px and figures 64px.
+     - h1: 116px.
+     - Dark room: a 56px h2 beside a 118px "10,000".
+     - Every sheet heading: 48px.
+     - Close: the band head at 74px, then "Get Sentinel" at 56px.
+     - Nothing settles back. The h1 only fades, the card scales just 0.94 → 1, and the 118px number stays at 118px.
+   - **Phone is closer:** the h1 is 52px, headings are 32–36px, and the figure is 64px.
+5. **Does every hover and press answer?** Mostly.
+   - **Answer on hover and press:**
+     - "Read the docs": hover, and a press to 0.98.
+     - "View on GitHub": hover, and a 1px press.
+     - Router "spikes", "email" and "GitHub": hover, and a press to 0.98.
+     - "Copy": hover, and a press to 0.94.
+     - The "hanzoai" chip: hover, and a press to 0.98.
+   - **Pause:** it grows to 1.06 on hover (the walker logs JUMP; this is a scale, not a layout move), but it has no press. `.l2-pause:hover` comes after `:active` and wins.
+   - **Read DEAD:** "New issues" (under the pill) and "Slack" and "Opsgenie" (under the 06/06 sheet, which had slid over the router).
+   - **Phone taps:** "New issues", "regressions" and "Copy" answer. The rain's Pause stopped the rain, though the walker saw no change on the button.
+   - Nothing follows the pointer.
+6. **Overlap, font swap, layout shift?** None measured: CLS is 0.015 on desktop (the dark-room card) and 0 on phone. The h1 box changes once (529 ms and 441 ms, its cut-in), and there is no horizontal scroll at 375 or 320. Clashes the walker does not count:
+   - the pill over text and over the router (desktop);
+   - the rain through the 01/06 paragraph (both widths);
+   - on phone, rain dashes spilling onto the white page under the dark room (p-shot-02, y≈670–730).
+7. **Which reference, and is its motion there?**
+   - apple.com product page: yes, in the pinned, scrubbed dark room.
+   - anthropic.com launch: the "10,000 events / 1 issue" is a real hero figure.
+   - synchronized.studio card-open: absent. No card opens into a page.
+   - The stacked sheets are a scroll trick from the kit, not from a reference.
+8. **Different from its neighbours?** No, and less so now that the colours are gone.
+   - /visor is this page mirrored: a product panel cut off by the left edge, with a two-line 116px "Hanzo Visor", a mono caption and one black button on the right.
+   - /search, /telemetry, /tunnel and /stream have the same 116px "Hanzo X", the same mono caption under it ("HYBRID SEARCH + RAG", "KAFKA WIRE PROTOCOL", "HANZO SHARE") and the same black pill button.
+   - They all end on the same "Get started with Hanzo X / Paste and ship / Get X / Deploy to Cloud" band.
+   - Last time one colour per page told them apart. Now that all are grey, the template shows. James: "It's not just a template."
+9. **All 18 parts covered?** No; see below. The card exists, but two of its claims fail the walk.
 10. **Banned tells?** Yes:
-    - Violet UI hue throughout, declared in the file as "Accent: issue violet" (`--ac: #7a5af8`, rain `#9d86ff`). It colours:
-      - the TypeError tag, histogram and "exception" dot;
-      - the rain, the card's glow and the "1 issue" chip;
-      - the chapter numbers, and the trace, profile and release bars;
-      - the cron dots, the selected router pills and the prompt caret.
-      Counted 65 times on desktop and 24 on phone (h255). JAMES.md rule 7: the UI has 0 brand hues.
-    - Red (#e5484d) on the bad release bar and the missed cron dot (h360, 8 counts).
-    - Violet-to-magenta-to-pink account dots (`hsl(255…321)`; h270/h300/h315, 9 counts).
-    - The "● SENTRY.HANZO.AI" eyebrow 24px above the h1, at both widths.
-    - Dead buttons: the hero's two buttons stay on screen at 16% while ignoring clicks.
-11. **Copy untouched?** Yes. Parity is 29/29 text and 3/3 links. The 27 added strings are demo data and UI labels, the same set as last time:
-    - the error, frames and breadcrumbs, and counts from 4,211;
-    - "service a" to "service d", "account 1" to "account 4", production/staging;
-    - "when", "goes to", "opens a ticket in", "1 issue".
-    "10,000" is Hanzo's own "ten thousand events" in figures, and the fork label lifts Hanzo's 06/06 sentence. None is a new claim. For James, not the builder: Hanzo's 06/06 says "Functional Source License", while the "Get Sentinel" chip says "License: BSL-1.1". Both are on the page and they disagree.
+    - **Floating over content:** the ask pill covers the 03/06 text and the router's chips on desktop. The fix is shared, but the page fails.
+    - **Everything big at once on desktop:** a 116px h1, 48–56px section heads, a 118px figure, and a 74px and a 56px heading back to back at the close.
+    - **Dead buttons:** at s1 the hero's "Read the docs" and "View on GitHub" stay on screen at about 20% while ignoring clicks.
+    - **A dead back half on phone:** the five sheets and the close never move without input.
 
-## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy / 4 Common gate:** no `Persona:`, `Goal:`, `CTA:` or metric id in the page header. The solid ask changes verb three times down the page: "Try Hanzo" for one screen, then "Read the docs", then "Deploy to Cloud".
-- **2.3 First impression:** at 1470×801 the hero object starts cut off by the right edge and the fold. For one screen after the pin, the hero's words and buttons hang at 16%. No card opens into its page (Morph).
-- **2.4 Conversion:** 0 `data-cta`. The close's solid button ("Deploy to Cloud") differs from the bar's verb ("Read the docs"). On desktop the bar covers the corner of the "Paste and ship" card.
-- **2.6 Content:** "Copy" is 13px at both widths and "Agent prompt" is 13px on phone (floor 14). In `Sentinel.css` the "release 1" to "release 6" labels and the "source map" chip are 12px on desktop. The rain crosses the 01/06 paragraph.
-- **2.7 Visual system:** violet, red, magenta and pink break the 0-hue override. A violet glow sits under the dark-room card.
-- **2.8 Components:** 10 bare `:hover` rules and 4 raw `.x-btn` uses in the page's files. The "hanzoai" chip has no press.
-- **2.9 Motion:** 2 `setInterval` timers (`Frame.jsx`). The sheet pictures 02–06 have no motion of their own, and the desktop dark room is still once the count lands. Reduced motion is good: everything comes to rest.
-- **2.11 Mobile:** the "hanzoai" chip is 36px tall (111×36), under 44px.
-- **2.12 Accessibility:** "03 / 06" and "05 / 06" in violet measure 4.2:1, under 4.5:1. The ticking issue and the rain have no pause control (WCAG 2.2.2).
-- **2.13 Performance:** the step into the dark room took 5.7 s to paint, against 1.0–2.1 s for the others (it was 8.4 s). The desktop film fell about two screens behind the walk. The canvas still redraws 900 particles every frame at up to 2× density while the room is on screen.
-- **Coverage:** `docs/coverage/sentinel.md` is missing.
-- Passing: one h1, one main, no horizontal scroll at 320, no `title=` tooltips, no native selects, no raw img/video/table. JS-off is legible (0 hidden runs), reduced motion settles, CLS 0 and the h1 box is steady. There is one solid ask per screen through the body at both widths.
+    Clean: no hue, nothing above any headline, no opacity-only hover, no title tooltips, no sound, no model cards.
+11. **Copy untouched?** Yes. Parity is 29/29 text and 3/3 links. The 27 added strings are the same demo data and labels as last time: the error and its frames, counts from 4,211, "service a" to "d", "account 1" to "4", and "when", "goes to", "opens a ticket in". "10,000" is Hanzo's "ten thousand events" in figures. For James: Hanzo's 06/06 says "Functional Source License", but the "Get Sentinel" chip says "License: BSL-1.1".
+
+## Missing from the 18 parts (MASTER §2, measured; coverage card checked)
+- **1. Strategy:**
+  - The metric id sits inside the CTA line ("Metric: cta_click:sentinel.primary"), not on its own line, so the check finds none.
+  - On phone, the solid ask after the hero is "Try Hanzo", not "Read the docs".
+  - The licence question is not listed for James.
+- **3. First impression:**
+  - At 1470×801 the hero object starts cut by the right edge and the fold.
+  - At s1 the hero's words and buttons hang at about 20%.
+  - No card opens into a page (Morph).
+- **4. Conversion:**
+  - The shared pill floats over the sheets on desktop (s6, s8).
+  - There is no sticky ask for the page on phone.
+  - Desktop s1 shows two solid buttons: the header and the ghost.
+- **6. Content:** the desktop sizes are off the deck scale (44, 52, 64, 84, 112): 116, 118, 74, 56 and 48px.
+- **7. Visual system:**
+  - Everything is big at once on desktop.
+  - Each sheet has both a 1px outline and a shadow (`.sn2-sheet`), and the rule is raise or outline, never both.
+  - It does not differ from /visor (mirror) or the rest of Cloud 4.
+- **8. Components:**
+  - Pause has no press.
+  - The family's `Frame.css` (in this page's file list) holds 9 bare `:hover` rules and 4 raw `.x-btn` uses. `Sentinel.css` itself is clean.
+- **9. Motion:**
+  - The sheet pictures 02–06 do not move.
+  - The dark room is still once the count lands.
+  - The hero's tick runs on `useEvery`, a 140 ms `setInterval` (2 in `Frame.jsx`), not the one rAF scheduler.
+- **11. Mobile:**
+  - Three phone targets are 21px tall: "View on GitHub" 127×21 (twice) and "Deploy to Cloud" 132×21.
+  - The router chips are 40px tall (`min-height: 40px`).
+  - Rain spills onto the white under the dark room.
+- **12. Accessibility:**
+  - The hero's Pause sits inside the issue view's `aria-hidden="true"` wrapper, so a focusable control is hidden from screen readers.
+  - The rain runs through the 01/06 body text.
+- **13. Performance:** the desktop walker crawled through the dark room: 22–51 s per 2.2 s dwell on s1–s5, against 4–8 s on s6–s13. Other pages walked at the same time were slow too, so some of this is machine load. Still, 900 particles redraw every frame at up to 2× density while the room is on screen.
+- **Coverage:** `docs/coverage/sentinel.md` exists in the older format: 18 numbered paragraphs, all present. Two claims are false:
+  - Part 1 says "carried by the ask bar after the hero", but at 375 there is no bar, and "Try Hanzo" is the solid from s1 to s7.
+  - Part 11 says "targets ≥44px", but three phone links are 21px and the router chips are 40px.
+
+  The card also lacks the three lines above part 1 (copy questions, requested shared changes, forks deleted). Part 9's sheet motion and trickle describe `aa30dc4`, which this walk did not include. They are unverified, not counted false.
+- Passing:
+  - 0 hues; nothing above any headline; one h1; one main.
+  - JS off has 0 hidden runs, and reduced motion settles.
+  - CLS is 0.015 and 0, and the h1 box is steady. No horizontal scroll at 320.
+  - 0 runs under the size floor, 0 low contrast, 0 title tooltips.
+  - 5 `data-cta` and 1 `data-thumb`; no raw img, video or table.
+  - No console errors. The rain's Pause works.
+  - The close's one solid button is "Read the docs".
+  - Parity is 29/29 and 3/3.
 
 ## Fixes (in order)
-1. **Take the violet, red and pink out.**
-   - Set `--ac` to ink.
-   - Draw the histogram, the trace, profile and release bars and the cron dots in greys. Mark the slow span, the bad release and the missed cron with ink weight or a hatched fill.
-   - Make the rain white at low alpha and the "1 issue" chip an inverted ink chip.
-   - Fill the selected router pills with ink and make the account dots grey.
-   - Drop the violet glow under the card and the violet caret.
-2. **Delete the "● SENTRY.HANZO.AI" eyebrow above the h1** (drop the `kick` prop on `StageHero`). The address already sits in the issue view's toolbar.
-3. **Never leave a ghost button, and start the product whole.** Either keep the hero buttons at full strength until they scroll away, or fade them fully out at the end of the pin so the "Read the docs" bar takes over on the next screen. Never leave a 16% button that ignores clicks. Pass `travel` to `StageHero` so the issue view starts at its settled size and fully on screen at 1470×801.
-4. **One verb to the end.** Give the "Get Sentinel" block "Read the docs" as its one solid button, with "Deploy to Cloud" and "View on GitHub" as the outlined row. Put `data-ask-hide` on the "Paste and ship" block so the bar stops covering its corner. Give the "hanzoai" chip a press of 0.98 and a 44px hit area.
-5. **Make each sheet's picture play once when it lands, then hold.**
-   - The slow span grows across the trace.
-   - Release 5 drops while the others stand.
-   - The cron row ticks and misses one.
-   - The four accounts arrive one by one.
-   - The fork line draws itself.
-   After the count lands, keep a slow trickle of new events falling into the card so the dark room stays alive.
-6. **Keep the rain off the words, fix the small stuff, write the coverage.**
-   - Mask the canvas behind the 01/06 copy so the paragraph sits on clean black.
-   - Make the "0N / 06" numbers ink (this also fixes the 4.2:1).
-   - Set "Copy" and "Agent prompt" to 14px.
-   - Add `docs/coverage/sentinel.md`.
+1. **Bring desktop back to Hanzo's rhythm.** Add page-local overrides under `.sn2`:
+   - Set the h1 to 52px, the dark-room h2 and the sheet headings to 26px, the band head to 52px and "Get Sentinel" to 26px.
+   - Let "10,000" be the one big thing. It climbs at 112px while the events fall, then settles to 64px when "1 issue" lands.
+2. **Nothing over the words.** Put `data-ask-hide` on the sheets section and the dark room so the shared pill steps aside there. The request to retire the desktop pill is already in `docs/review/SYSTEM.md`. On phone, make "Read the docs" the sticky ask after the hero, not the header's "Try Hanzo". If the shared bar won't carry it, add that to `SYSTEM.md`.
+3. **Start the product whole, and never ghost the hero.** Pass `travel={{ x: ['0%', '0%'], s: [1, 1] }}` to `StageHero`. Then the issue view, its Pause and all four breadcrumbs sit inside 1470×801 from the first frame. Main's `StageHero` now keeps side copy at full strength (`d5d6f10`). Confirm it at s1: a 20% button that ignores clicks must never show.
+4. **Make the back half move, and keep the rain in its room.** `aa30dc4` adds the sheet pictures playing once, the trickle after the count and the black mask behind the 01/06 text. Check them on the next walk: phone s3–s7 and desktop s5 must stop reading STILL. On phone, clip the canvas to the dark room so no dashes land on the white below.
+5. **Small fixes:**
+   - Give the "View on GitHub" and "Deploy to Cloud" text links and the router chips 44px hit areas.
+   - Give Pause a press: declare `.sn2 .l2-pause:active` after the hover rule.
+   - Move the hero's Pause out of the `aria-hidden` wrapper.
+   - Drop the 1px border on `.sn2-sheet` and keep its shadow.
+6. **Make the card true.**
+   - Rewrite parts 1 and 11 to match the walk.
+   - Add the three lines above part 1, with the licence question for James: "Functional Source License" in 06/06 against the "BSL-1.1" chip.
+   - Put the metric id on its own line in the header.

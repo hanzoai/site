@@ -139,9 +139,9 @@ export function Bill({ self, others }) {
   const row = (m, v, me) => (
     <div className={'xmf-brow' + (me ? ' me' : '')} key={m.name + (me ? '*' : '')}>
       <span className="xmf-bname">{m.name}</span>
-      <span className="xmf-bar" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: v == null ? 0 : Math.max(0.012, v / top) }} transition={{ type: 'spring', stiffness: 170, damping: 26 }} /></span>
+      <span className="xmf-bar" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: v == null ? 0 : Math.max(0.012, v / top) }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></span>
       <b className="x-mono">{dollars(v)}</b>
-      <span className="xmf-bctx" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: m.tokens ? m.tokens / ctxTop : 0 }} transition={{ type: 'spring', stiffness: 170, damping: 26 }} /></span>
+      <span className="xmf-bctx" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: m.tokens ? m.tokens / ctxTop : 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></span>
       <span className="x-mono xmf-bctx-t">{m.ctx || ctxText(m.tokens)}</span>
     </div>
   );
@@ -163,10 +163,10 @@ export function Bill({ self, others }) {
         {other && row(other, b, false)}
       </div>
       {priced.length > 0 && (
-        <div className="xmf-pick" role="group" aria-label="Compare with" data-swipe-own>
+        <div className="xmf-pick" role="group" aria-label="Compare with" data-swipe-own data-cursor="">
           {priced.map((p) => (
             <button key={p.href} type="button" aria-pressed={p.href === pick} onClick={() => setPick(p.href)}>
-              {p.href === pick && <motion.span layoutId="xmf-pick" className="xmf-pick-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+              {p.href === pick && <motion.span layoutId="xmf-pick" className="xmf-pick-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
               <span>{p.name}</span><i className="x-mono">{money(p.rate.out)}</i>
             </button>
           ))}
@@ -202,7 +202,7 @@ export function Codes({ samples, keyLink, title }) {
         <div className="xmf-tabs" role="tablist" aria-label={title} onKeyDown={keys}>
           {samples.map((s, i) => (
             <button key={s.lang} type="button" role="tab" id={'xmf-tab-' + i} aria-selected={on === i} aria-controls={'xmf-pane-' + i} tabIndex={on === i ? 0 : -1} onClick={() => choose(i)}>
-              {on === i && <motion.span layoutId="xmf-tab" className="xmf-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+              {on === i && <motion.span layoutId="xmf-tab" className="xmf-tab-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
               <span>{s.lang}</span>
             </button>
           ))}

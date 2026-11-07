@@ -5,7 +5,7 @@ import JsonLd from '../../components/JsonLd';
 
 export const metadata = {
   title: 'Enterprise AI — Hanzo AI',
-  description: 'Models, agents and one shared workspace for everyone in your company, in your cloud, on your servers or fully offline.',
+  description: 'Enterprise AI platform deployed in your cloud, on-premise, or air-gapped. Dedicated GPU clusters, custom models, and 24/7 engineering support.',
 };
 
 export default function Page() {

@@ -11,8 +11,8 @@
    CTA: the hero's ask, Hanzo's words ("Try Hanzo"), riding the site ask bar after the hero
    Metric: signup_start (then api_key_created)
    Signature: the console runs itself. The request types out of Hanzo's own "Try it", then the API answers: each of
-   the product's operations lands in turn and the count settles. It replays on its own while it is on screen; a
-   press on any operation in the spec sheet sends the console to that operation.
+   the product's operations lands in turn and the count settles, once, then rests (Replay runs it again). Point at
+   an operation and Hanzo's line for it slides in under the answer.
    Beyond: peek the seven. The Hanzo OS stack shows every layer's operation count from its own API table and its line
    on hover or focus, so you can choose the next product without opening six pages; each opens into its page.
    Motion (not only scroll): time (the console types and answers on arrival), state (point at an operation and its line
@@ -20,6 +20,8 @@
    Ledger: deleted the per-product accent colours, the green live dot, syntax hues, the kicker over the h1, the
    coloured hover stripe, the invented "operations" / "Replay" labels, the word-lit paragraph (a wall of text) and the
    Stage zoom that pushed the console under the fold.
+   Scale (MASTER 3.1): h1 52, section heads 26, sentences 32, figures 64; the spec count and the first measured
+   figure grow past 64 only while they cross the middle of the screen (FamGrow), then settle back.
    V2: 8/10 launch page in ink: name, line and ask beside the live console, whole on the first screen at 1470×801;
    Hanzo's paragraph as one sentence per screen beside its own operations; API spec sheet; measured figures; Hanzo OS
    layers that open. */
@@ -30,6 +32,7 @@ import { A, More } from '../kit';
 import Sigil from '../Sigil';
 import FamLines from '../v2/FamLines';
 import FamChapters from '../v2/FamChapters';
+import FamGrow from '../v2/FamGrow';
 import { ui } from '../v2/famUi';
 import '../v2/fam.css';
 import './ProductPage.css';
@@ -54,8 +57,6 @@ function Console({ p }) {
   // from here the browser takes over: the request is cleared and the answer held back until it is typed
   useLayoutEffect(() => {
     if (calm || !root.current) return;
-    const pre = root.current.querySelector('pre');
-    pre.style.minHeight = pre.offsetHeight + 'px';
     root.current.dataset.armed = '';
     root.current.querySelectorAll('[data-t]').forEach((n) => { n.textContent = ''; });
   }, [calm]);
@@ -65,6 +66,8 @@ function Console({ p }) {
     const el = root.current;
     const toks = [...el.querySelectorAll('[data-t]')];
     const rows = [...el.querySelectorAll('[data-row]')];
+    const pane = el.querySelector('.xpd-req');
+    if (pane) pane.scrollTop = 0;
     delete el.dataset.done;
     rows.forEach((r) => r.removeAttribute('data-in'));
     toks.forEach((n) => { n.textContent = ''; });
@@ -81,12 +84,14 @@ function Console({ p }) {
         n -= take;
       }
       toks.forEach((t, i) => (i === cur ? t.setAttribute('data-cur', '') : t.removeAttribute('data-cur')));
+      // the pane follows the cursor, only once it would leave the view
+      const c = cur >= 0 && toks[cur];
+      if (pane && c) { const y = c.offsetTop + c.offsetHeight - pane.clientHeight + 32; if (y > pane.scrollTop) pane.scrollTop = y; }
       if (now - t0 < (code.length / CPS) * 1000 + 40) { raf = requestAnimationFrame(tick); return; }
       toks.forEach((t, i) => { t.textContent = full[i]; t.removeAttribute('data-cur'); });
       rows.forEach((r, i) => timers.push(setTimeout(() => r.setAttribute('data-in', ''), 320 + i * 170)));
       timers.push(setTimeout(() => { el.dataset.done = ''; }, 320 + rows.length * 170));
-      // it runs again by itself while it stays on screen
-      timers.push(setTimeout(() => setRun((k) => k + 1), 320 + rows.length * 170 + 6500));
+      // it runs once and settles (MASTER part 9: a demo ends at rest); the replay button runs it again
     };
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); timers.forEach(clearTimeout); };
@@ -104,7 +109,7 @@ function Console({ p }) {
         </button>
       </div>
       <div className="xpd-con-g">
-        <div className="xpd-req">
+        <div className="xpd-req" data-lenis-prevent>
           <h2 className="xpd-pane-h x-mono">{p.tryIt.title}</h2>
           <pre tabIndex={0}><code>{p.tryIt.toks.map(([k, t], i) => <span key={i} data-t data-k={k}>{t}</span>)}</code></pre>
         </div>
@@ -118,7 +123,7 @@ function Console({ p }) {
             ))}
           </ol>
           <div className="xpd-ans-n">
-            <b className="v2f-num" data-off={sel >= 0 ? '' : undefined}>{ops.length}</b>
+            <b className="v2f-num v2f-fig" data-off={sel >= 0 ? '' : undefined}>{ops.length}</b>
             {ops.map((r, i) => <span key={i} className="xpd-ans-d" data-on={sel === i ? '' : undefined}>{r[2]}</span>)}
           </div>
         </div>
@@ -176,9 +181,9 @@ function Spec({ api }) {
     <section className="xpd-spec v2f-sec" aria-labelledby="xpd-api">
       <div className="v2f-wrap v2f-grid">
         <div className="xpd-spec-l">
-          <FamLines as="h2" play="view" id="xpd-api" text={api.title} className="v2f-display mid xpd-spec-t" />
+          <FamLines as="h2" play="view" id="xpd-api" text={api.title} className="v2f-head xpd-spec-t" />
           <p className="v2f-lede xpd-spec-h">{api.lede}</p>
-          <p className="xpd-spec-n" aria-hidden="true"><b className="v2f-num">{api.ops.length}</b></p>
+          <p className="xpd-spec-n" aria-hidden="true"><FamGrow to={1.75}><b className="v2f-num v2f-fig">{api.ops.length}</b></FamGrow></p>
         </div>
         <div className="xpd-spec-r" ref={list}>
           <table className="xpd-tab">
@@ -210,15 +215,15 @@ function Measured({ m }) {
   return (
     <section className="xpd-meas v2f-sec" aria-labelledby="xpd-meas-h">
       <div className="v2f-wrap">
-        <FamLines as="h2" play="view" id="xpd-meas-h" text={m.title} className="v2f-display small xpd-meas-h" />
+        <FamLines as="h2" play="view" id="xpd-meas-h" text={m.title} className="v2f-head xpd-meas-h" />
         <ul className="xpd-meas-g">
-          {m.links.map((l) => {
+          {m.links.map((l, k) => {
             const [name, ...rest] = l.text.split(': ');
             const fig = hero(rest.join(': '));
             return (
               <li key={l.href}>
                 <A to={l.href} className="xpd-meas-c">
-                  {fig ? <b className="v2f-num xpd-meas-f" aria-hidden="true">{fig}</b> : <i className="xpd-meas-f none" aria-hidden="true" />}
+                  {fig ? (k === 0 ? <FamGrow to={1.75}><b className="v2f-num v2f-fig xpd-meas-f" aria-hidden="true">{fig}</b></FamGrow> : <b className="v2f-num v2f-fig xpd-meas-f" aria-hidden="true">{fig}</b>) : <i className="xpd-meas-f none" aria-hidden="true" />}
                   <span className="xpd-meas-t"><b>{name}</b>{rest.length ? ': ' + rest.join(': ') : ''}</span>
                 </A>
               </li>
@@ -236,7 +241,7 @@ export default function ProductPage({ p, peek = {} }) {
   return (
     <main className="v2f xpd">
       <section className="xpd-hero" aria-labelledby="xpd-h1" data-ask-name={p.title}>
-        <Sigil seed={'/products/' + p.slug} data={nums} className="xpd-sigil" />
+        <Sigil seed={'/products/' + p.slug} data={nums} className="xpd-sigil" still />
         <div className="v2f-wrap v2f-grid xpd-hero-g">
           <div className="xpd-hero-l">
             <FamLines as="h1" id="xpd-h1" text={p.title} className="v2f-display xpd-h1" data-morph-target />
@@ -259,7 +264,7 @@ export default function ProductPage({ p, peek = {} }) {
       <section className="xpd-os v2f-sec" aria-labelledby="xpd-os-h">
         <div className="v2f-wrap">
           <div className="xpd-os-top">
-            <FamLines as="h2" play="view" id="xpd-os-h" text={p.osTitle} className="v2f-display small" />
+            <FamLines as="h2" play="view" id="xpd-os-h" text={p.osTitle} className="v2f-head" />
           </div>
           <nav aria-label={p.osTitle}>
             <ol className="xpd-os-l">

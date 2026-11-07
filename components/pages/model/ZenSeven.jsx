@@ -1,20 +1,22 @@
 'use client';
-/* Zen 7 (/zen/7): the next generation, not yet published. A teaser in three calm screens.
-   Persona: researcher who wants early Zen 7 access (no metric id for /beta applications in PLAN-COMPONENTS 1.1 yet)
-   Goal: know Zen 7 is coming open-weight under Apache 2.0, and apply for research access
-   CTA: Apply for research access -> /beta (hero and close; data-thumb on the hero ask; data-cta not wired yet)
-   Signature: the 7 rises. A giant 7, Zen 7's own living field showing only through the numeral (the weights are there,
-   not yet out), sweeps in from the bottom right of the first screen and settles beside the title as you scroll
-   (scale and position only). Not only scroll: the title cuts in on arrival, the field drifts and bends to the pointer,
-   the lineage draws itself and its stations spring in, and the asks lean to the pointer.
-   Beyond: the lineage line. Zen 6's own facts on one end, Zen 7 on the other, and the three things Hanzo says Zen 7
-   expands landing on the line as it draws, so the step from one to the other reads at a glance.
-V2: 8/10 Stage numeral that rises and settles on scroll, line-masked title, drawn lineage line, one dark room for access; no kicker over the title (its words are the title)
+/* Zen 7 (/zen/7): the next generation, not yet published. A teaser in three calm screens (docs/MASTER.md).
+   The giant 7 is this page's one big thing, as the moment: Zen 7's own living field shows only through the numeral (the
+   weights are there, not yet out). It sweeps in from the bottom right of the first screen and settles beside the title
+   as you scroll (scale and position only). The title rests at 52px.
+   Not only scroll: the title cuts in on load, the field drifts and bends to the pointer, the lineage line draws itself and
+   its stations land on it, and the research room opens from a card to full width as it is reached.
+V2: 8/10 the 7 rises and settles beside a 52px title; drawn lineage line; research room opens to full width; deck sizes, 1152/13-col grid, no springs
 */
+// Persona: researcher who wants early Zen 7 access
+// Goal: know Zen 7 is coming open-weight under Apache 2.0, and apply for research access
+// CTA: Apply for research access -> /beta (data-cta zen7.hero with data-thumb; again in the research room as zen7.access)
+// Metric: GitHub or weights click (researcher row, MASTER section 1); the /beta application itself has no metric id yet
+// Signature: the 7 rises: a giant numeral with Zen 7's field showing through it settles beside the title as you scroll
+// Beyond: the lineage line: Zen 6's own facts on one end, Zen 7 on the other, and the three things Hanzo says Zen 7 expands landing on the line as it draws
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { EASE, Magnetic } from '../../ui';
-import { A, More } from '../../kit';
+import { EASE } from '../../ui';
+import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import './ZenSeven.css';
 
@@ -29,7 +31,7 @@ function Stage() {
   return (
     <section className="z7-stage" ref={box} aria-labelledby="z7-h">
       {/* JS off: the title, the settled 7 and the lineage stations are simply shown (common gate item 5) */}
-      <noscript><style>{'.z7-art{--k:0!important}.z7-stage{height:auto!important}.z7-h .x-line-in{transform:none!important}.z7-rail li{opacity:1!important;transform:none!important}.z7-path path{stroke-dasharray:none!important;stroke-dashoffset:0!important}'}</style></noscript>
+      <noscript><style>{'.z7-art{--k:0!important}.z7-stage{height:auto!important}.z7-h .x-line-in{transform:none!important}.z7-rail li{opacity:1!important;transform:none!important}.z7-path path{stroke-dasharray:none!important;stroke-dashoffset:0!important}.z7-access{--open:1!important}'}</style></noscript>
       <div className="z7-pin">
         <motion.div className="z7-art" aria-hidden="true" style={{ '--k': ke }}>
           {/* three layers on white: the black 7, the field over it, white with a 7-shaped hole on top (so no box edge shows) */}
@@ -46,15 +48,16 @@ function Stage() {
           <h1 id="z7-h" className="z7-h" data-morph-target>
             {LINES.map((l, i) => (
               <span key={l} className="x-line">
-                <motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.12 + i * 0.09 }}>{l}</motion.span>{i < LINES.length - 1 ? ' ' : ''}
+                <motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.1 + i * 0.06 }}>{l}</motion.span>{i < LINES.length - 1 ? ' ' : ''}
               </span>
             ))}
           </h1>
           <p className="z7-lede">The next open-weight generation. Weights and reproducible checkpoints publish under Apache 2.0 upon final alignment. Apply for research access below.</p>
           <div className="z7-acts">
-            <Magnetic><A to="/beta" className="x-btn solid z7-btn" data-thumb="Apply for research access">Apply for research access</A></Magnetic>
-            <More to="/zen">Back to Zen</More>
+            <Cta to="/beta" id="zen7.hero" thumb>Apply for research access</Cta>
+            <Cta to="/zen" id="zen7.hero.back" kind="link">Back to Zen</Cta>
           </div>
+          <nav className="z7-crumb"><ol><li><A to="/zen">Zen</A></li><li aria-current="page">Zen 7</li></ol></nav>
         </div>
       </div>
     </section>
@@ -65,7 +68,7 @@ function Stage() {
 function Lineage() {
   const seen = { once: true, amount: 0.5 };
   const calm = useReducedMotion(); // reduced motion: the line and its stations are simply there
-  const draw = calm ? { duration: 0 } : { duration: 1.6, ease: EASE };
+  const draw = calm ? { duration: 0 } : { duration: 0.9, ease: EASE }; // a hairline draws in 900 ms
   return (
     <section className="z7-brings" aria-labelledby="z7-b">
       <div className="z7-w z7-brings-g">
@@ -73,7 +76,7 @@ function Lineage() {
         <p className="z7-para">Zen 7 is the next open-weight generation from Zoo Labs Foundation, built on the same lineage as Zen 6 but with expanded multimodal reasoning, longer context, and improved agentic coding performance. Trained with identity and agentic coding data from Hanzo&apos;s own platform.</p>
       </div>
       <div className="z7-w z7-line">
-        <A to="/zen" className="z7-node" data-cursor="Zen 6">
+        <A to="/zen" className="z7-node">
           <span className="z7-node-k">Zen 6</span>
           <span>27.3B dense</span>
           <span>Text, images and video</span>
@@ -88,7 +91,7 @@ function Lineage() {
           </svg>
           <ol>
             {GROWS.map((g, i) => (
-              <motion.li key={g} initial={{ opacity: 0, scale: 0.86 }} whileInView={{ opacity: 1, scale: 1 }} viewport={seen} transition={calm ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 30, delay: 0.35 + i * 0.4 }}>{g}</motion.li>
+              <motion.li key={g} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={seen} transition={calm ? { duration: 0 } : { duration: 0.3, ease: EASE, delay: 0.2 + i * 0.3 }}>{g}</motion.li>
             ))}
           </ol>
         </div>
@@ -102,21 +105,29 @@ function Lineage() {
   );
 }
 
+/* the research room: the page's one black room; it enters as a rounded card inside the gutters and opens to full
+   width as it is reached (ZenSeven.css turns --open into the clip) */
+function Access() {
+  const room = useRef(null);
+  const { scrollYProgress: rp } = useScroll({ target: room, offset: ['start end', 'start 0.3'] });
+  return (
+    <motion.section className="z7-access" data-room="dark" data-ask-hide aria-labelledby="z7-r" ref={room} style={{ '--open': rp }}>
+      <Sigil seed="zen-7/access" data={[2, 0, 7]} className="z7-sig2" />
+      <div className="z7-w z7-access-g">
+        <h2 id="z7-r" className="z7-big">Research access</h2>
+        <p className="z7-lede">Weights and reproducible checkpoints publish under Apache 2.0 upon final alignment. Apply for research access to get early evaluation endpoints and participate in alignment feedback.</p>
+        <div className="z7-acts"><Cta to="/beta" id="zen7.access">Apply for research access</Cta></div>
+      </div>
+    </motion.section>
+  );
+}
+
 export default function ZenSeven() {
   return (
     <main className="z7">
       <Stage />
       <Lineage />
-      <section className="z7-access" data-room="dark" aria-labelledby="z7-r">
-        <Sigil seed="zen-7/access" data={[2, 0, 7]} className="z7-sig2" />
-        <div className="z7-w z7-access-g">
-          <h2 id="z7-r" className="z7-big">Research access</h2>
-          <div className="z7-access-t">
-            <p className="z7-lede">Weights and reproducible checkpoints publish under Apache 2.0 upon final alignment. Apply for research access to get early evaluation endpoints and participate in alignment feedback.</p>
-            <div className="z7-acts"><Magnetic><A to="/beta" className="x-btn solid z7-btn">Apply for research access</A></Magnetic></div>
-          </div>
-        </div>
-      </section>
+      <Access />
     </main>
   );
 }

@@ -1,23 +1,23 @@
 'use client';
-/* Zen 6 Max (/zen/zen6-max): a model launch read like a product film, one idea per screen.
-   Persona: enterprise buyer running Zen 6 Max on its own GPUs (metric contact_sales_submit)
-   Goal: understand what a rack for Zen 6 Max is made of, then reach sales
-   CTA: Talk to sales -> /contact-sales (hero and close; data-thumb on the hero ask; data-cta not wired yet)
-   Stage: the Zen film opens full width under the header and the name, then settles into its 28px card as you scroll.
-   Not only scroll: the title cuts in on load, the film plays (with a pause control), the count runs, the asks lean to
-   the pointer, the rack answers its switches.
-   Signature: the rack builds itself, chapter by chapter. The black rack pins while four chapters pass beside it:
-   four 8-GPU servers slide in and the GPU memory counts to Hanzo's own total (9,216 GB on B300, 5,760 GB on B200);
-   qualification brackets the four; the GPUs split into one pool per specialist; a twin rack lands across a failure
-   domain. Switch the server and the rack reloads.
-   Beyond: B300 against B200 in one spec sheet, the rows Hanzo lists for each server side by side with the four-server
-   total, so the server choice reads at a glance (and the rack above follows the column you pick).
-V2: 8/10 film Stage hero with name, lede and ask on the first screen, settling into a card; the rack as four pinned scroll chapters; B300 vs B200 spec sheet with a drawer; greys only, shared Film/Cta/Lines
+/* Zen 6 Max (/zen/zen6-max): a model launch read like a product film, one idea per screen (docs/MASTER.md).
+   The first screen sells on its own: the name, Hanzo's lede and "Talk to sales" over the playing Zen film. The film
+   then settles from full width into its card (8 of 13 columns) and the name settles from 112px to its resting 52px:
+   the name is the moment only while the film is.
+   Then the promises, the rack chapters (pinned on a desktop, stacked on a phone), the B300/B200 sheet, the close.
+   Not only scroll: the name cuts in on load, the film plays (with a pause control), the count runs, the rack answers its
+   switches, the drawer opens, the field in the close bends to the pointer.
+V2: 8/10 name, lede and ask on a full-width film that settles into its card; rack chapters; B300/B200 DataTable; deck sizes, 1152 container, no springs
 */
+// Persona: enterprise buyer running Zen 6 Max on its own GPUs
+// Goal: understand what a rack for Zen 6 Max is made of, then reach sales
+// CTA: Talk to sales -> /contact-sales (data-cta zen6max.hero with data-thumb; again at the close as zen6max.close)
+// Metric: contact_sales_submit
+// Signature: the rack builds itself, chapter by chapter: four servers slide in and the GPU memory counts to Hanzo's total, the GPUs split into one pool per specialist, a twin rack lands across a failure domain
+// Beyond: B300 against B200 in one sheet, the rows Hanzo lists for each server side by side under their four-server totals; picking a column switches the rack
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { EASE, Count, Magnetic, Lines } from '../../ui';
-import { More, Cta, Film } from '../../kit';
+import { EASE, Count } from '../../ui';
+import { A, More, Cta, Film, DataTable } from '../../kit';
 import Sigil from '../../Sigil';
 import { media } from '../../../lib/models';
 import { arrows } from './live';
@@ -25,80 +25,98 @@ import './ZenMax.css';
 
 const FEATS = [['One name', 'You call Zen 6 Max. One model, one API, one bill.'], ['Right-sized per request', 'Each request runs on the configuration built for that kind of work.'], ['Long context', 'Long context for large codebases and long documents.'], ['Tools and code', 'Tool calls and code generation, built in.']];
 const DGX = [
-  { name: 'DGX B300', chip: 'B300', total: 9216, rows: [['GPUs', '8 x B300'], ['GPU memory', '8 x 288 GB, 2,304 GB'], ['Cluster network', '8 x 800 Gb/s InfiniBand or Ethernet'], ['Data cache', '8 x 3.84 TB']], doc: ['NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory', 'https://docs.nvidia.com/dgx/dgxb300-user-guide/introduction-to-dgxb300.html'] },
-  { name: 'DGX B200', chip: 'B200', total: 5760, rows: [['GPUs', '8 x B200'], ['GPU memory', '1,440 GB'], ['Cluster network', '8 x ConnectX-7, up to 400 Gb/s'], ['Data cache', '8 x 3.84 TB']], doc: ['NVIDIA DGX B200 user guide: 1,440 GB total GPU memory', 'https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html'] },
+  { name: 'DGX B300', total: 9216, rows: [['GPUs', '8 x B300'], ['GPU memory', '8 x 288 GB, 2,304 GB'], ['Cluster network', '8 x 800 Gb/s InfiniBand or Ethernet'], ['Data cache', '8 x 3.84 TB']], doc: ['NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory', 'https://docs.nvidia.com/dgx/dgxb300-user-guide/introduction-to-dgxb300.html'] },
+  { name: 'DGX B200', total: 5760, rows: [['GPUs', '8 x B200'], ['GPU memory', '1,440 GB'], ['Cluster network', '8 x ConnectX-7, up to 400 Gb/s'], ['Data cache', '8 x 3.84 TB']], doc: ['NVIDIA DGX B200 user guide: 1,440 GB total GPU memory', 'https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html'] },
 ];
 const PLAN = [['Qualification', 'Four 8-GPU servers is where a qualification starts.'], ['Isolated production pools', 'One pool for each specialist, so a busy class of work never takes memory from another.'], ['Redundant pools', 'Two independent replicas of those pools across failure domains.']];
 const AROUND = ['NVLink and NVSwitch inside each server.', '400 or 800 Gb/s RDMA wherever a specialist spans servers.', 'About 31 TB of NVMe in each server (8 x 3.84 TB).', 'Separate sandbox workers for coding agents.', 'A high-availability control cluster.'];
 const REC = 'We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises. Routing cuts the average inference work a request needs. It does not cut the memory needed to keep every specialist ready.';
+const FOUR = 'Four B300 servers hold 9,216 GB of GPU memory; four B200 servers hold 5,760 GB.';
 
-/* Stage: the film opens full width under the header, then settles into its card (scale and position only; the card's
-   settled box is set in viewport units, so the cover scale is a constant and the server paints the first frame right).
-   The first screen already says what it is and carries the ask: name, Hanzo's lede and "Talk to sales" sit over the film
-   (white while the film is under them), then read ink on white once it has settled. */
+/* a line that cuts into its mask once (700 ms, ease-emphasis); the mask is watched, not the hidden line inside it */
+function Cut({ children, load, delay = 0 }) {
+  const when = load ? { animate: 's' } : { whileInView: 's', viewport: { once: true, amount: 0.6 } };
+  return (
+    <motion.span className="x-line" initial="h" {...when}>
+      <motion.span className="x-line-in" variants={{ h: { y: '105%' }, s: { y: 0 } }} transition={{ duration: 0.7, ease: EASE, delay }}>{children}</motion.span>
+    </motion.span>
+  );
+}
+
+/* Stage: the film opens full width under the header (--k 1), then settles into its card (--k 0). Scale and position
+   only; ZenMax.css turns --k into the transforms, and --s0 (the cover scale) is measured here and guessed in CSS for the
+   first paint. The asks read light while the film is under them. */
 function Stage() {
   const box = useRef(null);
-  const film = useRef(null);
+  const pin = useRef(null);
+  const card = useRef(null);
   const held = useRef(false);
-  const [over, setOver] = useState(true); // the asks sit on the film (desktop, before it settles)
+  const [over, setOver] = useState(true);
   const [playing, setPlaying] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  const k = useTransform(p, [0, 0.62], [1, 0], { clamp: true }); // 1 = full width, 0 = settled
-  const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenMax.css turns it into translate and scale
+  const k = useTransform(p, [0, 0.62], [1, 0], { clamp: true });
+  const ke = useTransform(k, (v) => v * (2 - v)); // eased out
   useMotionValueEvent(ke, 'change', (v) => setOver(v > 0.68)); // the card clears the button at about two thirds
   useEffect(() => {
     setOver(ke.get() > 0.68);
-    const v = film.current?.querySelector('video');
-    if (!v) return;
+    const fit = () => {
+      const c = card.current;
+      if (!c || !c.offsetWidth) return;
+      const s = Math.max((innerWidth * 1.08) / c.offsetWidth, (innerHeight - 40) / c.offsetHeight);
+      pin.current?.style.setProperty('--s0', s.toFixed(3));
+    };
+    fit();
+    addEventListener('resize', fit);
+    const v = card.current?.querySelector('video');
     const on = () => { if (held.current) v.pause(); else setPlaying(true); };
     const off = () => setPlaying(false);
-    v.addEventListener('play', on);
-    v.addEventListener('pause', off);
-    return () => { v.removeEventListener('play', on); v.removeEventListener('pause', off); };
+    v?.addEventListener('play', on);
+    v?.addEventListener('pause', off);
+    return () => { removeEventListener('resize', fit); v?.removeEventListener('play', on); v?.removeEventListener('pause', off); };
   }, [ke]);
   const toggle = () => {
-    const v = film.current?.querySelector('video');
+    const v = card.current?.querySelector('video');
     if (!v) return;
     held.current = playing;
     if (playing) v.pause(); else v.play?.().catch(() => {});
   };
   return (
     <section className="zx-stage" ref={box} aria-labelledby="zx-h">
-      {/* JS off: what starts hidden for the scroll and arrival motion is simply shown, the stage settled (common gate item 5) */}
-      <noscript><style>{'.zx-card{--k:0!important}.zx-stage{height:auto!important}.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}.zx-pause{display:none}.zx-card .zx-film{display:none!important}.zx-card{background:#000 url(/models/zen.webp) center/cover}'}</style></noscript>
-      <div className="zx-stage-pin">
-        <motion.div className="zx-card" style={{ '--k': ke }} ref={film}>
+      {/* JS off: the stage settled, the poster for the film, every step and the drawer shown (gate item 5) */}
+      <noscript><style>{'.zx-stage-pin{--k:0!important}.zx-stage{height:auto!important}.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}.zx-pause{display:none}.zx-card .zx-film{display:none!important}.zx-card{background:#000 url(/models/zen.webp) center/cover}'}</style></noscript>
+      <motion.div className="zx-stage-pin" ref={pin} style={{ '--k': ke }}>
+        <div className="zx-card" ref={card}>
           <Film src={media('zen', 'webm')} poster={media('zen', 'webp')} w={1200} h={1500} className="zx-film" />
-        </motion.div>
-        <button type="button" className="zx-pause" aria-label={playing ? 'Pause' : 'Play'} aria-pressed={!playing} onClick={toggle}>
+        </div>
+        <button type="button" className="zx-pause" aria-label="Pause" aria-pressed={!playing} onClick={toggle}>
           {playing
-            ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
-            : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /></svg>}
+            ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+            : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5.5 3.5v9l7-4.5z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>}
         </button>
         <div className="zx-w zx-stage-t">
           <div className="zx-stage-b">
-            <Lines as="h1" play="load" lines={['Zen 6 Max']} id="zx-h" className="zx-name zx-blend" data-morph-target />
+            <h1 id="zx-h" className="zx-name zx-blend" data-morph-target><Cut load delay={0.1}>Zen 6 Max</Cut></h1>
             <p className="zx-sub zx-blend">Zen 6 Max. Built for the hardest work: deep reasoning, long context, and code.</p>
             <div className="zx-acts" data-over={over || undefined}>
-              <Magnetic><Cta to="/contact-sales" id="zen6max.hero" size="lg" thumb>Talk to sales</Cta></Magnetic>
+              <Cta to="/contact-sales" id="zen6max.hero" thumb>Talk to sales</Cta>
               <Cta to="/enterprise" id="zen6max.hero.gpus" kind="link">Run it on your own GPUs</Cta>
             </div>
+            <nav className="zx-crumb zx-blend"><ol><li><A to="/zen">Zen</A></li><li aria-current="page">Zen 6 Max</li></ol></nav>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
 
-/* the four promises: an editorial index, each title cutting into its line as it arrives */
+/* the four promises: heading left, line right (5 and 8 of 13 columns); each heading cuts into its line on arrival */
 function Promises() {
   return (
-    <section className="zx-prom" aria-label="What Zen 6 Max is">
+    <section className="zx-prom">
       <ol className="zx-w zx-prom-l">
         {FEATS.map(([t, x], i) => (
           <li key={t}>
-            <span className="zx-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <Lines as="h2" lines={[t]} />
+            <h2><span className="zx-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><Cut>{t}</Cut></h2>
             <p>{x}</p>
           </li>
         ))}
@@ -116,10 +134,10 @@ function Rack({ k, plan, q, on, calm }) {
       <div className={'zx-rack' + (twin ? ' twin' : '')} data-go={go || undefined}>
         {[0, 1, 2, 3].map((s) => (
           <div key={s} className="zx-slot">
-            <motion.div key={k} className="zx-srv" initial={{ x: 40, opacity: 0 }} animate={go ? { x: 0, opacity: 1 } : { x: 40, opacity: 0 }} transition={calm ? { duration: 0 } : { duration: 0.6, ease: EASE, delay: s * 0.1 }}>
+            <motion.div key={k} className="zx-srv" initial={{ x: 40, opacity: 0 }} animate={go ? { x: 0, opacity: 1 } : { x: 40, opacity: 0 }} transition={calm ? { duration: 0 } : { duration: 0.5, ease: EASE, delay: s * 0.06 }}>
               <span className="zx-srv-n">{DGX[k].name}</span>
               <span className="zx-gpus">
-                {Array.from({ length: 8 }, (_, g) => <i key={g} data-p={plan >= 1 ? Math.min(2, Math.floor((s * 8 + g) / 11)) : undefined} style={{ transitionDelay: (go && !calm ? 0.3 + s * 0.1 + g * 0.025 : 0) + 's' }} />)}
+                {Array.from({ length: 8 }, (_, g) => <i key={g} data-p={plan >= 1 ? Math.min(2, Math.floor((s * 8 + g) / 11)) : undefined} style={{ transitionDelay: (go && !calm ? 0.3 + s * 0.06 + g * 0.02 : 0) + 's' }} />)}
               </span>
             </motion.div>
           </div>
@@ -136,28 +154,31 @@ function Rack({ k, plan, q, on, calm }) {
   );
 }
 
-/* the chapters: text steps past a pinned rack; the step in the middle of the screen sets the rack's state */
+/* the chapters. Desktop: text steps past the pinned rack and the step at mid-screen sets its state. Phone: no pin
+   (MASTER part 11): the rack sits above its steps and the planning buttons set it. */
 function Chapters({ k, setK }) {
   const [at, setAt] = useState(0);
+  const [wide, setWide] = useState(true);
   const steps = useRef([]);
   const panel = useRef(null);
   const on = useInView(panel, { once: true, amount: 0.35 });
   const calm = useReducedMotion();
   useEffect(() => {
-    // the step in the band where the eye reads: mid-screen on a desktop, under the pinned rack on a phone
-    const phone = matchMedia('(max-width: 900px)').matches;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.step); }), { rootMargin: phone ? '-62% 0px -22% 0px' : '-45% 0px -45% 0px' });
+    const mq = matchMedia('(min-width: 900px)');
+    setWide(mq.matches);
+    if (!mq.matches) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.step); }), { rootMargin: '-45% 0px -45% 0px' });
     steps.current.forEach((s) => s && io.observe(s));
     return () => io.disconnect();
   }, []);
   const plan = Math.max(0, at - 1);
   const go = (i) => {
-    const el = steps.current[i + 1];
-    if (!el) return;
-    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const y = el.getBoundingClientRect().top + scrollY - innerHeight / 2 + el.offsetHeight / 2;
-    if (window.__lenis && !calm) window.__lenis.scrollTo(y, { duration: 1.1 }); else scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
     setAt(i + 1);
+    const el = steps.current[i + 1];
+    if (!wide || !el) return;
+    const quiet = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const y = el.getBoundingClientRect().top + scrollY - innerHeight / 2 + el.offsetHeight / 2;
+    if (window.__lenis && !quiet) window.__lenis.scrollTo(y, { duration: 0.5 }); else scrollTo({ top: y, behavior: quiet ? 'auto' : 'smooth' });
   };
   return (
     <section className="zx-dep" aria-labelledby="zx-dep-h">
@@ -170,11 +191,11 @@ function Chapters({ k, setK }) {
           <div className="zx-step" data-step="0" ref={(el) => { steps.current[0] = el; }} data-on={at === 0 || undefined}>
             <p className="zx-lede">What a rack for Zen 6 Max is made of.</p>
             <p className="zx-body">{REC}</p>
-            <p className="zx-body zx-four">Four B300 servers hold 9,216 GB of GPU memory; four B200 servers hold 5,760 GB.</p>
+            <p className="zx-body zx-four">{FOUR}</p>
           </div>
           {PLAN.map(([t, x], i) => (
             <div key={t} className="zx-step" data-step={i + 1} ref={(el) => { steps.current[i + 1] = el; }} data-on={at === i + 1 || undefined}>
-              <h4 className="zx-step-t">{t}</h4>
+              <h3 className="zx-step-t">{t}</h3>
               <p className="zx-body">{x}</p>
             </div>
           ))}
@@ -182,16 +203,16 @@ function Chapters({ k, setK }) {
         <div className="zx-pin">
           <div className="zx-panel" ref={panel}>
             <div className="zx-bar">
-              <div className="zx-seg" role="radiogroup" aria-label="Server" onKeyDown={arrows}>
+              <div className="zx-seg" role="radiogroup" onKeyDown={arrows}>
                 {DGX.map((d, i) => <button key={d.name} type="button" role="radio" aria-checked={k === i} tabIndex={k === i ? 0 : -1} className="zx-chip" onClick={() => setK(i)}>{d.name}</button>)}
               </div>
               <span className="zx-bar-n" aria-hidden="true">{String(at + 1).padStart(2, '0')} / 04</span>
             </div>
             <Rack k={k} plan={plan} q={at === 1} on={on} calm={calm} />
             <div className="zx-foot">
-              <p className="zx-total"><Count key={k} to={DGX[k].total} suffix=" GB" className="zx-num" /><span>GPU memory in four {DGX[k].chip} servers</span></p>
+              <p className="zx-total"><Count key={k} to={DGX[k].total} suffix=" GB" duration={1.2} className="zx-num" /><span>{DGX[k].name}</span></p>
               <div className="zx-plan" role="group" aria-labelledby="zx-plan-l">
-                <h3 id="zx-plan-l" className="zx-plan-l">Planning range</h3>
+                <p id="zx-plan-l" className="zx-plan-l">Planning range</p>
                 {PLAN.map(([t], i) => <button key={t} type="button" aria-pressed={plan === i && at > 0} className="zx-chip sm" onClick={() => go(i)}>{t}</button>)}
               </div>
             </div>
@@ -202,35 +223,26 @@ function Chapters({ k, setK }) {
   );
 }
 
-/* Beyond: the spec sheet, B300 and B200 side by side; picking a column switches the rack above */
+/* Beyond: the sheet. The two four-server totals sit over their columns (the one big thing on this screen); picking a
+   column switches the rack above and tints that column. */
 function Spec({ k, setK }) {
   const [open, setOpen] = useState(false);
+  const cols = [
+    { key: 'row', label: '' },
+    ...DGX.map((d, i) => ({ key: 'd' + i, subject: k === i, label: <button type="button" className="zx-col" aria-pressed={k === i} onClick={() => setK(i)}>{d.name}</button> })),
+  ];
+  const rows = DGX[0].rows.map(([label], r) => ({ row: label, d0: DGX[0].rows[r][1], d1: DGX[1].rows[r][1] }));
   return (
-    <section className="zx-spec" aria-label="DGX B300 and DGX B200">
+    <section className="zx-spec">
       <div className="zx-w">
-        <div className="zx-sheet" role="table" aria-label="DGX B300 and DGX B200">
-          <div className="zx-sheet-r zx-sheet-hd" role="row">
-            <span role="columnheader" className="zx-sheet-k"><span className="x-sr">Row</span></span>
-            {DGX.map((d, i) => (
-              <span key={d.name} role="columnheader">
-                <button type="button" className="zx-col" aria-pressed={k === i} onClick={() => setK(i)}><span className="zx-col-n">{d.name}</span></button>
-              </span>
-            ))}
-          </div>
-          {DGX[0].rows.map(([label], r) => (
-            <div key={label} className="zx-sheet-r" role="row">
-              <span role="rowheader" className="zx-sheet-k">{label}</span>
-              {DGX.map((d, i) => <span key={d.name} role="cell" data-on={k === i || undefined}>{d.rows[r][1]}</span>)}
-            </div>
-          ))}
-          <div className="zx-sheet-r" role="row">
-            <span role="rowheader" className="zx-sheet-k">Four servers</span>
-            {DGX.map((d, i) => <span key={d.name} role="cell" className="zx-sheet-big" data-on={k === i || undefined}>{d.total.toLocaleString('en-US')} GB</span>)}
-          </div>
-          <div className="zx-sheet-r zx-sheet-src" role="row">
-            <span role="rowheader" className="zx-sheet-k"><span className="x-sr">Source</span></span>
-            {DGX.map((d) => <span key={d.name} role="cell"><More to={d.doc[1]}>{d.doc[0]}</More></span>)}
-          </div>
+        <div className="zx-figs" aria-hidden="true">
+          <span />
+          {DGX.map((d, i) => <span key={d.name} className="zx-fig" data-on={k === i || undefined}>{d.total.toLocaleString('en-US')} GB</span>)}
+        </div>
+        <DataTable caption={FOUR} cols={cols} rows={rows} className="zx-sheet" />
+        <div className="zx-srcs">
+          <span />
+          {DGX.map((d) => <More key={d.name} to={d.doc[1]}>{d.doc[0]}</More>)}
         </div>
         <div className="zx-drawer">
           <button type="button" className="zx-drawer-b" aria-expanded={open} aria-controls="zx-around" onClick={() => setOpen((o) => !o)}>
@@ -248,12 +260,12 @@ function Spec({ k, setK }) {
 
 function Close() {
   return (
-    <section className="zx-close" aria-label="Talk to sales">
+    <section className="zx-close" data-ask-hide>
       <div className="zx-w zx-close-g">
         <div className="zx-close-art" aria-hidden="true"><Sigil seed="zen6-max" data={[9216, 5760, 2304, 1440, 31]} className="zx-sig" /></div>
         <div className="zx-close-t">
-          <p className="zx-lede">Final capacity and performance commitments come from qualifying your workload: context length, concurrency, routing mix, latency, and failover.</p>
-          <div className="zx-acts"><Magnetic><Cta to="/contact-sales" id="zen6max.close" size="lg">Talk to sales</Cta></Magnetic></div>
+          <p className="zx-state">Final capacity and performance commitments come from qualifying your workload: context length, concurrency, routing mix, latency, and failover.</p>
+          <div className="zx-acts"><Cta to="/contact-sales" id="zen6max.close">Talk to sales</Cta></div>
         </div>
       </div>
     </section>

@@ -1,4 +1,5 @@
 'use client';
+// V2: 8/10 (own estimate; critic pending) Hanzo's exact model grid as the hero, the black room of three families, Kai's figures, a catalogue of Hanzo's cards that open into their pages, every model linked
 // Persona: Developer choosing a model (and the buyer comparing labs). Goal: find the model, open its page. CTA: "Get API key" (platform.hanzo.ai/api-keys). Metric: api_key_created.
 // Signature: a card opens into its page. The first screen is Hanzo's model grid exactly as live hanzo.ai draws it (SPEC.md); every card lifts into its model's page (the WebGL opener), every catalogue card's name flies into its sheet (morph).
 // Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from here, findable with Ctrl-F, so no page of the 544 is an orphan.
@@ -92,6 +93,7 @@ function GridCard({ m, i, play, open, setLit, setHeld }) {
         href={'/' + m.slug}
         className={'xmo-card' + (big ? ' big' : '')}
         data-card={m.slug}
+        data-cursor=""
         aria-label={`${m.name}: ${m.desc}`}
         onClick={(e) => open(e, e.currentTarget, m.slug)}
         onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !big) { setLit(i); setHeld(true); } }}
@@ -120,9 +122,9 @@ function Stage() {
   const [held, setHeld] = useState(false);
   useEffect(() => {
     if (calm || stop || held) return;
-    const t = setInterval(() => setLit((i) => (i % 8) + 1), 2600);
-    return () => clearInterval(t);
-  }, [calm, stop, held]);
+    const t = setTimeout(() => setLit((i) => (i % 8) + 1), 2600); // one step, then this effect schedules the next
+    return () => clearTimeout(t);
+  }, [calm, stop, held, lit]);
   const go = 'https://platform.hanzo.ai/api-keys';
   return (
     <section className="xmo-stage" aria-labelledby="xmo-h1">
@@ -139,7 +141,7 @@ function Stage() {
             </motion.div>
           </div>
         </div>
-        <ul className="xmo-grid" data-swipe-own>
+        <ul className="xmo-grid" data-swipe-own data-cursor="">
           {GRID.map((slug, i) => (
             <GridCard key={slug} m={bySlug[slug]} i={i} play={i === 0 || lit === i} open={open} setLit={setLit} setHeld={setHeld} />
           ))}
@@ -180,7 +182,7 @@ function Families() {
           </header>
           <ol className="xmo-fam-list">
             {FAM.map((f, i) => (
-              <li key={f.slug} className={'xmo-fam-c' + (on === i ? ' on' : '') + (on > i ? ' past' : '')} data-card={f.slug + '-family'} aria-current={on === i ? 'step' : undefined}>
+              <li key={f.slug} className={'xmo-fam-c' + (on === i ? ' on' : '') + (on > i ? ' past' : '')} data-card={f.slug + '-family'} data-cursor="" aria-current={on === i ? 'step' : undefined}>
                 <div className="xmo-fam-film">
                   <Film slug={f.slug} play={!wide || on === i} />
                   <span className="xmo-fam-n x-mono" aria-hidden="true">{`0${i + 1} / 03`}</span>
@@ -221,7 +223,7 @@ function Versus() {
             {VS.map((c) => (
               <div key={c.k} role="columnheader" className={'xmo-vs-c ' + c.k} onPointerEnter={() => setHot(c.k)} onPointerLeave={() => setHot(null)}>
                 {/* each family's own film: still until the pointer (or a tap) asks it to play */}
-                <A to={c.to} className="xmo-vs-film" tabIndex={-1} aria-hidden="true" onFocus={() => setHot(c.k)}><Film slug={c.k} play={hot === c.k} /></A>
+                <A to={c.to} className="xmo-vs-film" data-cursor="" tabIndex={-1} aria-hidden="true" onFocus={() => setHot(c.k)}><Film slug={c.k} play={hot === c.k} /></A>
                 <h3>{c.name}</h3>
                 <p>{c.tag}</p>
               </div>
@@ -370,7 +372,7 @@ function Tile({ m }) {
 function Head({ slug, title, children, link }) {
   return (
     <header className={'xmo-gh' + (slug ? ' film' : '')}>
-      {slug && <span className="xmo-gh-film" data-card={slug + '-head'}><Film slug={slug} /></span>}
+      {slug && <span className="xmo-gh-film" data-card={slug + '-head'} data-cursor=""><Film slug={slug} /></span>}
       <h2>{title}</h2>
       {children}
       {link}
@@ -384,7 +386,7 @@ function Every({ makers }) {
   if (!makers || !makers.length) return null;
   return (
     <details className="xmo-every" id="every">
-      <summary>
+      <summary data-sound="tick">
         <span className="xmo-every-t">Every model</span>
         <i aria-hidden="true" />
       </summary>
@@ -732,7 +734,7 @@ function Related() {
         <ul>
           {RELATED.map(([t, d, to], i) => (
             <li key={t}>
-              <A to={to}><span className="x-mono xmo-rel-n">{`0${i + 1}`}</span><b>{t}</b><span className="xmo-rel-d">{d}</span><i aria-hidden="true">→</i></A>
+              <A to={to} data-cursor=""><span className="x-mono xmo-rel-n">{`0${i + 1}`}</span><b>{t}</b><span className="xmo-rel-d">{d}</span><i aria-hidden="true">→</i></A>
             </li>
           ))}
         </ul>
