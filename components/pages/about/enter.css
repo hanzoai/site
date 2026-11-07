@@ -1,0 +1,69 @@
+/* /about's five entrances (enter.js). Start states only under main.xab-enter (added on the client after mount), so the
+   server HTML, JS off and reduced motion all show every section at rest. Each plays once, when [data-enter] gets .is-in.
+   Transform, opacity, clip-path and mask only. */
+
+/* 1. Why We Build → ink-spread: an organic ink blot (three soft round blots growing from different points, merged)
+   spreads across the figure, the switches and the principles to reveal them */
+.xab-enter [data-enter='ink-spread'] {
+  -webkit-mask-image: radial-gradient(circle, #000 58%, transparent 72%), radial-gradient(circle, #000 58%, transparent 72%), radial-gradient(circle, #000 58%, transparent 72%);
+  mask-image: radial-gradient(circle, #000 58%, transparent 72%), radial-gradient(circle, #000 58%, transparent 72%), radial-gradient(circle, #000 58%, transparent 72%);
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: 18% 30%, 62% 70%, 88% 22%; mask-position: 18% 30%, 62% 70%, 88% 22%;
+  -webkit-mask-size: 0% 0%, 0% 0%, 0% 0%; mask-size: 0% 0%, 0% 0%, 0% 0%;
+}
+.xab-enter [data-enter='ink-spread'].is-in { animation: xab-ink 1.15s cubic-bezier(.33, 0, .2, 1) both; }
+@keyframes xab-ink {
+  0% { -webkit-mask-size: 0% 0%, 0% 0%, 0% 0%; mask-size: 0% 0%, 0% 0%, 0% 0%; }
+  40% { -webkit-mask-size: 90% 120%, 40% 60%, 20% 30%; mask-size: 90% 120%, 40% 60%, 20% 30%; }
+  100% { -webkit-mask-size: 420% 420%, 420% 420%, 420% 420%; mask-size: 420% 420%, 420% 420%, 420% 420%; }
+}
+
+/* 2. Track record → magnet-gather: the three figures and four milestones start scattered and tilted, and are pulled
+   together into their places, the nearest first */
+.xab-enter [data-enter='magnet-gather'] :is(.xab-figs > div, .xab-miles li) { opacity: 0; transform: translate(var(--gx, 0), var(--gy, 0)) rotate(var(--gr, 0deg)); }
+.xab-enter [data-enter='magnet-gather'] .xab-figs > div:nth-child(1) { --gx: -140px; --gy: 70px; --gr: -8deg; }
+.xab-enter [data-enter='magnet-gather'] .xab-figs > div:nth-child(2) { --gx: 30px; --gy: 120px; --gr: 6deg; }
+.xab-enter [data-enter='magnet-gather'] .xab-figs > div:nth-child(3) { --gx: 160px; --gy: -60px; --gr: 9deg; }
+.xab-enter [data-enter='magnet-gather'] .xab-miles li:nth-child(1) { --gx: -90px; --gy: 90px; --gr: 12deg; }
+.xab-enter [data-enter='magnet-gather'] .xab-miles li:nth-child(2) { --gx: 60px; --gy: 140px; --gr: -10deg; }
+.xab-enter [data-enter='magnet-gather'] .xab-miles li:nth-child(3) { --gx: -50px; --gy: 160px; --gr: 7deg; }
+.xab-enter [data-enter='magnet-gather'] .xab-miles li:nth-child(4) { --gx: 120px; --gy: 100px; --gr: -12deg; }
+.xab-enter [data-enter='magnet-gather'].is-in :is(.xab-figs > div, .xab-miles li) { animation: xab-gather .7s cubic-bezier(.5, 0, .1, 1) both; }
+.xab-enter [data-enter='magnet-gather'].is-in .xab-figs > div:nth-child(2) { animation-delay: 60ms; }
+.xab-enter [data-enter='magnet-gather'].is-in .xab-figs > div:nth-child(3) { animation-delay: 120ms; }
+.xab-enter [data-enter='magnet-gather'].is-in .xab-miles li:nth-child(1) { animation-delay: 160ms; }
+.xab-enter [data-enter='magnet-gather'].is-in .xab-miles li:nth-child(2) { animation-delay: 200ms; }
+.xab-enter [data-enter='magnet-gather'].is-in .xab-miles li:nth-child(3) { animation-delay: 240ms; }
+.xab-enter [data-enter='magnet-gather'].is-in .xab-miles li:nth-child(4) { animation-delay: 280ms; }
+@keyframes xab-gather { 0% { opacity: 0; transform: translate(var(--gx), var(--gy)) rotate(var(--gr)); } 35% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+/* 3. Founders → squash-land: each card drops in, lands with a squash and a stretch, and settles (≤ 650 ms) */
+.xab-enter [data-enter='squash-land'] .xab-person { opacity: 0; transform: translateY(-90px); transform-origin: 50% 100%; }
+.xab-enter [data-enter='squash-land'].is-in .xab-person { animation: xab-squash .65s cubic-bezier(.3, 0, .3, 1) both; }
+.xab-enter [data-enter='squash-land'].is-in .xab-person.two { animation-delay: .14s; }
+@keyframes xab-squash {
+  0% { opacity: 0; transform: translateY(-90px) scale(.96, 1.06); }
+  45% { opacity: 1; transform: translateY(0) scale(1.06, .9); }
+  68% { transform: translateY(-8px) scale(.98, 1.03); }
+  86% { transform: translateY(0) scale(1.01, .99); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* 4. Zen of Hanzo → letter-cascade: the heading's letters, then each principle's, fall into place one by one */
+.xab-enter [data-enter='letter-cascade'] .xab-lc > span { opacity: 0; transform: translateY(-0.9em) rotate(-8deg); }
+.xab-enter [data-enter='letter-cascade'].is-in .xab-lc > span { animation: xab-letter .5s cubic-bezier(.2, .9, .3, 1.25) both; animation-delay: calc(var(--k, 0) * 22ms); }
+.xab-enter [data-enter='letter-cascade'] .xab-zen-d { opacity: 0; }
+.xab-enter [data-enter='letter-cascade'].is-in .xab-zen-d { animation: xab-zen-d .5s ease both; animation-delay: calc(500ms + var(--z, 0) * 90ms); }
+.xab-zen-list li { --z: 0; }
+@keyframes xab-letter { 0% { opacity: 0; transform: translateY(-0.9em) rotate(-8deg); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+@keyframes xab-zen-d { from { opacity: 0; } to { opacity: 1; } }
+
+/* 5. The dark room → accordion: the panes and then the commit log unfold one fold after another from a top hinge */
+.xab-enter [data-enter='accordion'] { perspective: 1400px; }
+.xab-enter [data-enter='accordion'] :is(.xab-panes, .xab-log-h, .xab-log li, .xab-log-f) { opacity: 0; transform: rotateX(-82deg); transform-origin: 50% 0; }
+.xab-enter [data-enter='accordion'].is-in :is(.xab-panes, .xab-log-h, .xab-log li, .xab-log-f) { animation: xab-fold .55s cubic-bezier(.2, .8, .2, 1) both; }
+.xab-enter [data-enter='accordion'].is-in .xab-log-h { animation-delay: 120ms; }
+.xab-enter [data-enter='accordion'].is-in .xab-log li { animation-delay: calc(200ms + var(--n, 0) * 80ms); }
+.xab-enter [data-enter='accordion'].is-in .xab-log-f { animation-delay: 720ms; }
+@keyframes xab-fold { 0% { opacity: 0; transform: rotateX(-82deg); } 40% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+/* reduced motion: enter.js never adds .xab-enter, so none of the start states above apply */

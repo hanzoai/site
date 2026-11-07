@@ -1,0 +1,69 @@
+/* /api entrances, page-local (see enter.jsx). Start states only with JS and only when motion is welcome. */
+
+/* 1. line-draw: the agent prompt card's outline draws itself, then the card fills and its words arrive */
+.api-draw { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.api-draw rect { width: calc(100% - 2px); height: calc(100% - 2px); fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; opacity: 0; }
+.api-prompt[data-enter] { position: relative; }
+
+/* 2. underline-sweep: underlines sweep under the heading's words in sequence, then under each row's title as it arrives */
+.api-sweep { background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 2px; padding-bottom: 2px; }
+
+/* 3. invert-flash: the black room arrives inverted for a beat, flickers once, then holds black */
+/* 4. shutter: two bars close from top and bottom over the block, then open on it */
+.api-core-l[data-enter], .api-rows[data-enter] { position: relative; }
+.api-core-l[data-enter]::before, .api-core-l[data-enter]::after,
+.api-rows[data-enter]::before, .api-rows[data-enter]::after { content: ''; position: absolute; left: -8px; right: -8px; height: 50.5%; background: var(--ink); z-index: 3; pointer-events: none; transform: translateY(-101%); visibility: hidden; }
+.api-core-l[data-enter]::before, .api-rows[data-enter]::before { top: 0; }
+.api-core-l[data-enter]::after, .api-rows[data-enter]::after { bottom: 0; transform: translateY(101%); }
+
+/* 5. swing-door: the closing band swings in on a hinge at its left edge */
+.api-next[data-enter] { perspective: 1600px; overflow-x: clip; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 1 */
+  .js .api-prompt[data-enter] { transition: background-color .4s ease .55s; }
+  .js .api-prompt[data-enter]:not([data-in]) { background-color: transparent; }
+  .js .api-prompt[data-enter] > :not(.api-draw) { transition: opacity .4s ease .6s, transform .5s cubic-bezier(.16, 1, .3, 1) .6s; }
+  .js .api-prompt[data-enter]:not([data-in]) > :not(.api-draw) { opacity: 0; transform: translateY(6px); }
+  .js .api-prompt[data-enter]:not([data-in]) .api-draw rect { opacity: 1; stroke-dashoffset: 1; }
+  .js .api-prompt[data-in] .api-draw rect { animation: api-draw 1.3s cubic-bezier(.65, 0, .35, 1) both; }
+  @keyframes api-draw { 0% { opacity: 1; stroke-dashoffset: 1; } 55% { opacity: 1; stroke-dashoffset: 0; } 75% { opacity: 1; stroke-dashoffset: 0; } 100% { opacity: 0; stroke-dashoffset: 0; } }
+
+  /* 2 */
+  .js .api-fits[data-enter]:not([data-in]) .api-fits-h .api-sweep { opacity: .18; }
+  .js .api-fits-h .api-sweep { transition: opacity .35s ease calc(var(--i, 0) * 150ms + .1s); }
+  .js .api-fits[data-in] .api-fits-h .api-sweep { animation: api-sweep .9s cubic-bezier(.65, 0, .35, 1) calc(var(--i, 0) * 150ms) both; }
+  .js .api-fit .api-fit-t > * { transition: opacity .45s ease, transform .55s cubic-bezier(.16, 1, .3, 1); }
+  .js .api-fit:not(.on) .api-fit-t > * { opacity: 0; transform: translateY(10px); }
+  .js .api-fit.on .api-sweep { animation: api-sweep 1s cubic-bezier(.65, 0, .35, 1) .15s both; }
+  @keyframes api-sweep {
+    0% { background-size: 0 2px; background-position: 0 100%; }
+    55% { background-size: 100% 2px; background-position: 0 100%; }
+    56% { background-size: 100% 2px; background-position: 100% 100%; }
+    100% { background-size: 0 2px; background-position: 100% 100%; }
+  }
+
+  /* 3 */
+  .js .api-dark[data-enter]:not([data-in]) > .av-wrap { opacity: 0; }
+  .js .api-dark[data-in]:not([data-done]) { animation: api-invert .7s linear both; }
+  .js .api-dark[data-in]:not([data-done]) > .av-wrap { animation: api-invert-in .7s ease both; }
+  @keyframes api-invert { 0%, 22% { filter: invert(1); } 34% { filter: invert(0); } 46% { filter: invert(.9); } 58%, 100% { filter: invert(0); } }
+  @keyframes api-invert-in { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 1; } }
+
+  /* 4 */
+  .js .api-core-l[data-enter], .js .api-rows[data-enter] { overflow: clip; overflow-clip-margin: 8px; }
+  .js .api-core-l[data-enter]:not([data-in]) > *, .js .api-rows[data-enter]:not([data-in]) > * { opacity: 0; }
+  .js .api-core-l[data-in]:not([data-done]) > *, .js .api-rows[data-in]:not([data-done]) > * { animation: api-shutter-c .9s linear both; }
+  .js .api-core-l[data-in]::before, .js .api-rows[data-in]::before { visibility: visible; animation: api-shutter-t .9s cubic-bezier(.65, 0, .35, 1) both; }
+  .js .api-core-l[data-in]::after, .js .api-rows[data-in]::after { visibility: visible; animation: api-shutter-b .9s cubic-bezier(.65, 0, .35, 1) both; }
+  .js .api-rows[data-in]::before, .js .api-rows[data-in]::after, .js .api-rows[data-in]:not([data-done]) > * { animation-delay: .12s; }
+  @keyframes api-shutter-t { 0% { transform: translateY(-101%); } 42%, 56% { transform: none; } 100% { transform: translateY(-101%); visibility: hidden; } }
+  @keyframes api-shutter-b { 0% { transform: translateY(101%); } 42%, 56% { transform: none; } 100% { transform: translateY(101%); visibility: hidden; } }
+  @keyframes api-shutter-c { 0%, 49% { opacity: 0; } 50%, 100% { opacity: 1; } }
+
+  /* 5 */
+  .js .api-next[data-enter] > .av-wrap { transform-origin: 0 50%; }
+  .js .api-next[data-enter]:not([data-in]) > .av-wrap { opacity: 0; transform: rotateY(-62deg); }
+  .js .api-next[data-in] > .av-wrap { animation: api-swing .7s cubic-bezier(.3, .7, .4, 1) both; }
+  @keyframes api-swing { 0% { opacity: 0; transform: rotateY(-62deg); } 60% { opacity: 1; transform: rotateY(5deg); } 82% { transform: rotateY(-1.5deg); } 100% { opacity: 1; transform: none; } }
+}

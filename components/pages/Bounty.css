@@ -274,14 +274,75 @@ html:not(.js) .xbo-roll i:first-child { visibility: hidden; }
 .xbo-pr[data-step='2'] .xbo-pr-t span { color: var(--hz-400); }
 .xbo-pr[data-step='2'] .xbo-pr-bar i { background: #f5f5f7; }
 .xbo-tl li .xp-title { transition: color .3s var(--xp-ease); }
-.xbo-take-foot { row-gap: 24px; align-items: start; }
-@media (min-width: 901px) {
-  .xbo-pin { height: 210vh; }
-  .xbo-stage { position: sticky; top: calc(var(--x-top, 60px) + clamp(40px, 8vh, 96px)); align-items: start; }
-  .xbo-take-foot { margin-top: clamp(24px, 4vw, 64px); }
+/* the signature: one question at a time. Left, one step per screen on a sliding track; right, the PR that summarises
+   the answers as they build. */
+.xbo-take-head { align-items: end; row-gap: 20px; }
+.xbo-take-head h2 { grid-column: 1 / span 6; }
+.xbo-take-note { grid-column: 8 / span 5; margin: 0; }
+.xbo-flow { margin-top: clamp(40px, 5vw, 72px); align-items: start; row-gap: 20px; }
+.xbo-q { grid-column: 1 / span 7; display: grid; overflow: clip; touch-action: pan-y; }
+.xbo-q-track { min-width: 0; }
+.xbo-q-track { display: flex; transform: translateX(calc(var(--q, 0) * -100%)); transition: transform .6s cubic-bezier(.22, .8, .2, 1); }
+.xbo-q-step { flex: 0 0 100%; min-width: 0; display: grid; align-content: start; gap: 20px; padding: clamp(24px, 3vw, 40px); transition: opacity .4s var(--xp-ease); }
+.js .xbo-q-step[aria-hidden='true'] { opacity: 0; }
+.xbo-q-prompt { margin: 0; font: 500 22px/1.3 var(--sans); letter-spacing: -.015em; color: var(--ink); max-width: 30ch; }
+.xbo-q-pick { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.xbo-q-pick button { width: 100%; display: grid; grid-template-columns: 18px 1fr; gap: 6px 12px; min-height: 44px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--ink); text-align: left; font: inherit; cursor: pointer; transition: border-color .2s, background .2s, transform .1s; }
+@media (hover: hover) { .xbo-q-pick button:hover { border-color: var(--hz-400); background: var(--hz-50); } }
+.xbo-q-pick button:active { transform: scale(.98); }
+.xbo-q-pick button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.xbo-q-pick button[aria-pressed='true'] { border-color: var(--hz-950); background: var(--hz-950); color: #f5f5f7; }
+.xbo-q-pick button[aria-pressed='true'] .xbo-dot { border-color: #f5f5f7; }
+.xbo-q-pick button[aria-pressed='true'] .xbo-dot::after { background: #f5f5f7; }
+.xbo-q-pick button[aria-pressed='true'] .xbo-q-r { color: var(--hz-400); }
+.xbo-q-t { font: 500 16px/1.35 var(--sans); }
+.xbo-q-r { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--soft); }
+.xbo-q-r em { font-style: normal; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--hz-300); }
+.xbo-q-code { margin: 0; display: inline-flex; align-items: center; gap: 2px; padding: 18px 20px; border-radius: 14px; background: var(--hz-950); color: #f5f5f7; font-size: 17px; justify-self: start; }
+.xbo-q-code b { font-weight: 500; }
+.xbo-caret { display: inline-block; width: 2px; height: 1.15em; margin-left: 4px; background: #f5f5f7; animation: xbo-blink 1s steps(1) infinite; }
+@keyframes xbo-blink { 50% { opacity: 0; } }
+.xbo-q-earn { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.xbo-q-earn .xp-fig { font-size: 64px; color: var(--ink); }
+.xbo-q-earn small { font-size: 16px; color: var(--soft); }
+.xbo-q-step.xbo-propose { grid-template-columns: minmax(0, 1fr); align-items: start; background: none; border-radius: 0; gap: 16px; justify-items: start; padding: clamp(24px, 3vw, 40px); }
+.xbo-q-step.xbo-propose .xp-body { max-width: 52ch; margin: 0; }
+.xbo-q-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px clamp(16px, 2vw, 24px); border-top: 1px solid var(--line); }
+.xbo-q-arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 400 18px/1 var(--sans); cursor: pointer; transition: background .2s, transform .1s; }
+@media (hover: hover) { .xbo-q-arrow:hover:not(:disabled) { background: var(--hz-100); } }
+.xbo-q-arrow:active:not(:disabled) { transform: scale(.96); }
+.xbo-q-arrow:disabled { opacity: .35; cursor: default; }
+.xbo-q-arrow:focus-visible, .xbo-q-dots button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.xbo-q-dots { display: flex; gap: 6px; }
+.xbo-q-dots button { width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.xbo-q-dots button:disabled { cursor: default; }
+.xbo-q-dots i { display: block; width: 28px; height: 3px; border-radius: 3px; background: var(--hz-200); transition: background .3s, transform .3s var(--xp-ease); transform-origin: 50% 50%; }
+.xbo-q-dots button[aria-current='step'] i { background: var(--hz-950); transform: scaleX(1.3); }
+.xbo-q-dots button:disabled i { opacity: .5; }
+html:not(.js) .xbo-q-track { display: grid; transform: none; }
+html:not(.js) .xbo-q-nav { display: none; }
+
+.xbo-flow .xbo-pr { grid-column: 9 / span 4; }
+.xbo-pr[data-has='n'] .xbo-pr-wait { display: grid; gap: 10px; }
+.xbo-pr-wait b, .xbo-pr-wait span { display: block; height: 12px; border-radius: 6px; background: var(--hz-100); }
+.xbo-pr-wait span { width: 50%; }
+.xbo-sum { list-style: none; margin: 0; padding: 20px clamp(20px, 2.4vw, 28px); display: grid; gap: 14px; }
+.xbo-sum li { display: grid; grid-template-columns: 20px 1fr; gap: 12px; align-items: center; color: var(--hz-400); font-size: 13px; transition: color .3s var(--xp-ease); }
+.xbo-sum li.on { color: var(--ink); }
+.xbo-sum li .x-mono { overflow-wrap: anywhere; }
+.xbo-sum li.on .x-mono { animation: xbo-sum-in .45s var(--xp-ease); }
+@keyframes xbo-sum-in { from { opacity: 0; transform: translateX(-10px); } }
+.xbo-sum .xbo-tl-m { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--hz-300); background: #fff; transition: background .3s, border-color .3s; }
+.xbo-sum li.on .xbo-tl-m { border-color: var(--hz-950); background: var(--hz-950); }
+@media (max-width: 900px) {
+  .xbo-take-head h2, .xbo-take-note, .xbo-q, .xbo-flow .xbo-pr { grid-column: 1 / -1; }
+  .xbo-q-prompt { font-size: 19px; }
+  .xbo-q-earn .xp-fig { font-size: 44px; }
+  .xbo-q-dots { gap: 0; }
+  .xbo-q-dots i { width: 20px; }
+  .xbo-q-nav { padding: 10px 12px; }
 }
 @media (max-width: 900px) {
-  .xbo-pr { grid-column: 1 / -1; }
   .xbo-pr-head { padding: 20px; gap: 14px; }
   .xbo-pr-t b { font-size: 17px; }
   .xbo-deck { grid-column: 1 / -1; }
@@ -304,11 +365,8 @@ html:not(.js) .xbo-asking { display: none; }
 /* the list's last row fades under the window's foot instead of being cut */
 .xbo-issues { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); }
 
-/* the token race as one pinned scene on desktop: the dark room holds while the ten bars race and @hanzo's figure counts */
-@media (min-width: 901px) and (min-height: 700px) {
-  .xbo-vol { padding: 0 !important; }
-  .xbo-vpin { height: 240vh; }
-  .xbo-vstage { position: sticky; top: var(--x-top, 60px); height: calc(100vh - var(--x-top, 60px)); display: flex; flex-direction: column; justify-content: center; }
+/* the token race, compact on desktop: one line per lane, so the ten bars read as one race, not a table */
+@media (min-width: 901px) {
   .xbo-vol .xbo-vol-head { row-gap: 16px; }
   .xbo-vol .xbo-vol-fig { font-size: 72px; }
   .xbo-vol .xbo-vol-u { margin-top: 8px; }

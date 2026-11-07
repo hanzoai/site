@@ -1,0 +1,43 @@
+/* The post's five entrances (see enter.js). Start states only under main.xbg-enter (added on mount); reduced motion
+   shows everything at rest. Transform, opacity and clip-path only. */
+
+/* 1. pendulum: the hero card hangs from its top edge, swings in and settles (first paint, no JS) */
+.xbg-art[data-enter='pendulum'] { transform-origin: 50% -40%; animation: xbg-pendulum 700ms cubic-bezier(.33, 0, .2, 1) 120ms both; }
+@keyframes xbg-pendulum {
+  0% { transform: rotate(-14deg) translateY(-24px); opacity: 0; }
+  35% { transform: rotate(7deg); opacity: 1; }
+  60% { transform: rotate(-3.5deg); }
+  80% { transform: rotate(1.5deg); }
+  100% { transform: none; opacity: 1; }
+}
+
+/* 2. typewriter: the heading's own text waits (its box held), a typed copy and a caret write it out */
+.xbg-enter [data-enter='typewriter']:not([data-in]) { color: transparent; }
+[data-enter='typewriter'] { position: relative; }
+[data-enter='typewriter'][data-typing] { color: transparent; }
+.xbg-tw { position: absolute; inset: 0; color: var(--room-ink); pointer-events: none; }
+.xbg-tw::after { content: ''; display: inline-block; width: 2px; height: .95em; margin-left: 2px; vertical-align: -.1em; background: currentColor; animation: xbg-caret 420ms steps(1) infinite; }
+@keyframes xbg-caret { 50% { opacity: 0; } }
+
+/* 3. grid-wave: each cell rises from small, delayed by its distance from the pointer */
+.xbg-enter [data-enter='grid-wave']:not([data-in]) > * { opacity: 0; transform: scale(.5); }
+[data-enter='grid-wave'][data-in='1'] > * { animation: xbg-wave 520ms cubic-bezier(.16, 1, .3, 1) var(--d, 0ms) both; }
+@keyframes xbg-wave { from { opacity: 0; transform: scale(.5); } }
+
+/* 4. page-curl: a cover over each card's picture peels away from its bottom-right corner, its fold catching light */
+.xbg-next .xbg-card-art::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(135deg, var(--room-bg) 0 58%, #e4e4e7 72%, #a1a1aa 100%); clip-path: polygon(0 0, 0 0, 0 0); }
+.xbg-enter .xbg-next:not([data-in]) .xbg-card-art::after { clip-path: polygon(0 0, 220% 0, 0 220%); }
+.xbg-next[data-in='1'] .xbg-card-art::after { animation: xbg-curl 700ms cubic-bezier(.65, 0, .35, 1) both; }
+.xbg-next[data-in='1'] li + li .xbg-card-art::after { animation-delay: 160ms; }
+@keyframes xbg-curl { from { clip-path: polygon(0 0, 220% 0, 0 220%); } to { clip-path: polygon(0 0, 0 0, 0 0); } }
+
+/* 5. underline-sweep: a line sweeps under each word of the closing line in turn, then leaves */
+.xbg-uw { position: relative; display: inline-block; }
+.xbg-uw::after { content: ''; position: absolute; left: 0; right: 0; bottom: .02em; height: 3px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; }
+.xbg-band[data-in='1'] .xbg-uw::after { animation: xbg-sweep 640ms cubic-bezier(.65, 0, .35, 1) calc(var(--i, 0) * 130ms) both; }
+@keyframes xbg-sweep { 0% { transform: scaleX(0); transform-origin: 0 50%; } 50% { transform: scaleX(1); transform-origin: 0 50%; } 51% { transform-origin: 100% 50%; } 100% { transform: scaleX(0); transform-origin: 100% 50%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .xbg-art[data-enter], [data-enter] > *, .xbg-card-art::after, .xbg-uw::after, .xbg-tw::after { animation: none !important; }
+  .xbg-next .xbg-card-art::after { clip-path: polygon(0 0, 0 0, 0 0) !important; }
+}

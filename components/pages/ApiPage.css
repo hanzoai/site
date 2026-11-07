@@ -21,28 +21,49 @@ html:not([data-api-ask]):has(main.api) header[data-slot=masthead] a[data-x-ask] 
 .api-ref:active { transform: translateY(1px); }
 .api-top-r { grid-column: 5 / -1; }
 
-.api-con { padding: 12px; background: #fff; }
-.api-con-bar { display: flex; align-items: center; gap: 14px; min-height: 76px; padding: 0 10px 0 16px; border-radius: 18px; background: var(--card); }
-.api-meth { flex: none; padding: 8px 12px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; letter-spacing: .04em; }
-.api-url { flex: 1; min-width: 0; display: flex; align-items: baseline; overflow: hidden; white-space: nowrap; font-size: clamp(15px, 1.25vw, 18px); letter-spacing: -.03em; }
-.api-host { color: var(--faint); flex: none; }
-.api-path { color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
-.api-caret { flex: none; align-self: center; width: 3px; height: 1.05em; margin-left: 3px; border-radius: 2px; background: var(--ink); }
+/* the signature: a terminal. The curl types itself, its output streams back, and the row below picks the next command */
+.api-con.api-term { padding: 10px; background: #0a0a0a; border-color: #0a0a0a; color: #f5f5f7; box-shadow: 0 0 0 1px rgba(0, 0, 0, .9); }
+.api-term-bar { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 4px 0 14px; }
+.api-term-bar .api-ret-k { flex: 1; color: #86868b; }
+.api-term .api-pause { background: #1c1c1f; border-color: rgba(255, 255, 255, .14); color: #f5f5f7; }
+@media (hover: hover) { .api-term .api-pause:hover { border-color: rgba(255, 255, 255, .4); } }
+.api-term .api-pause:focus-visible { outline-color: #f5f5f7; }
+.api-term-cmd { margin: 0; font-size: clamp(13.5px, 1.05vw, 15.5px); line-height: 1.75; letter-spacing: -.01em; color: #d1d1d6; min-height: 7em; } /* four lines held, so a path that wraps after the host never moves the page */
+.api-ln { display: block; }
+.api-ln.ind { padding-left: 2ch; }
+.api-url, .api-host { white-space: nowrap; }
+.api-term-ps { color: #86868b; user-select: none; }
+.api-meth { color: #0a0a0a; background: #f5f5f7; padding: 1px 7px; border-radius: 6px; font-weight: 600; }
+.api-host { color: #86868b; }
+.api-path { color: #fff; font-weight: 500; }
+.api-term-key { color: #a1a1a6; }
+.api-caret { display: inline-block; vertical-align: -.15em; width: .55em; height: 1.1em; margin-left: 2px; background: #f5f5f7; }
 .api-caret.idle { animation: api-blink 1s steps(1) 4; }
 .api-con.held .api-caret { animation: none; }
 @keyframes api-blink { 50% { opacity: 0; } }
-.api-send { display: grid; place-items: center; flex: none; width: 56px; height: 56px; border-radius: 16px; background: var(--ink); color: #fff; transition: transform .3s var(--av-ease); }
+.api-send { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: #f5f5f7; color: #0a0a0a; transition: transform .3s var(--av-ease); }
 @media (hover: hover) { .api-send:hover { transform: translateX(3px); } }
 .api-send:active { transform: scale(.98); }
 .api-pause { order: 2; flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); background: #fff; color: #0a0a0a; display: grid; place-items: center; cursor: pointer; transition: border-color .15s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .api-pause:hover { border-color: rgba(0, 0, 0, .3); } }
 .api-pause:active { transform: scale(.97); }
 .api-pause:focus-visible { outline: 2px solid var(--focus, #0a0a0a); outline-offset: 2px; }
-.api-meth { order: 0; } .api-url { order: 1; } .api-send { order: 3; }
-.api-con-key { margin: 12px 0 0; padding: 0 16px; font-size: 13px; color: var(--faint); }
-.api-con-main { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 12px; margin-top: 12px; }
-.api-ret { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px 26px; border-radius: 18px; border: 1px solid var(--line); }
+.api-con-main { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 10px; }
+.api-ret { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 22px 22px 20px; border-radius: 16px; background: #000; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
 .api-ret-k { font-size: 13px; color: var(--faint); }
+.api-term .api-desc { color: #f5f5f7; font-size: clamp(17px, 1.3vw, 20px); }
+.api-term .api-desc-box { border-left: 2px solid rgba(255, 255, 255, .16); padding-left: 14px; }
+.api-term .api-doc { background: #1c1c1f; border-color: rgba(255, 255, 255, .16); color: #f5f5f7; }
+@media (hover: hover) { .api-term .api-doc:hover { border-color: rgba(255, 255, 255, .4); } }
+.api-term .api-chips { background: #000; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); margin-top: 10px; }
+.api-term .api-chips button { color: #a1a1a6; }
+.api-term .api-chips button span.x-mono::before { content: '$ '; color: #636366; }
+.api-term .api-chips button[aria-selected='true'] { color: #0a0a0a; }
+.api-term .api-chips button[aria-selected='true'] span.x-mono::before { color: #636366; }
+@media (hover: hover) { .api-term .api-chips button:hover:not([aria-selected='true']) { color: #f5f5f7; background: #1c1c1f; } }
+.api-term .api-chip-bg { background: #f5f5f7; box-shadow: none; }
+.api-term .api-chip-t { background: #0a0a0a; }
+.api-term .api-chips button:focus-visible { outline-color: #f5f5f7; }
 /* the box is sized by the longest answer, so streaming never moves anything */
 .api-desc-box { display: grid; width: 100%; flex: 1; }
 .api-desc-box > .api-desc { grid-area: 1 / 1; }
@@ -77,17 +98,23 @@ html:not([data-api-ask]):has(main.api) header[data-slot=masthead] a[data-x-ask] 
 .api-prompt code { grid-column: 1; padding: 0; background: none; font: 500 clamp(16px, 1.3vw, 19px)/1.5 var(--mono); white-space: normal; overflow-wrap: anywhere; }
 .api-prompt .x-copy { grid-column: 2; grid-row: 1 / 3; height: 44px; padding: 0 18px; font-size: 14px; }
 
-/* how it fits together: an intro screen, then the pinned chapters */
-.api-fits-in { padding: 0 0 clamp(40px, 5vw, 80px); }
-/* the stage arrives with its heading: on wide screens the pinned chapters sit just under the header, not centred
-   in 100svh, so there is no blank band between "How it fits together" and the first chapter */
-@media (min-width: 901px) {
-  .api-fits-in { padding-bottom: 0; }
-  .js .api .av-sc-pin { align-items: flex-start; padding-top: 24px; } /* + the grid's own 40px = clear of the 60px header when pinned */
+/* how it fits together: four plain rows, text 5 / visual 7, alternating sides; no pinned stage */
+.av-sec.api-fits { padding-top: clamp(24px, 3vw, 48px); }
+.api-fits-h { margin: 0 0 clamp(40px, 5vw, 72px); }
+.api-fit-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(56px, 7vw, 112px); }
+.api-fit { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
+.api-fit-t { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 16px; }
+.api-fit-t h3 { margin: 0; max-width: 18ch; }
+.api-fit-n { font-size: 13px; color: var(--faint); }
+.api-fit-v { grid-column: 7 / -1; min-height: clamp(380px, 34vw, 480px); display: flex; }
+.api-fit:nth-child(even) .api-fit-t { grid-column: 8 / -1; grid-row: 1; }
+.api-fit:nth-child(even) .api-fit-v { grid-column: 1 / span 6; grid-row: 1; }
+.api-fit-v > .api-vis { flex: 1; height: auto; }
+@media (max-width: 900px) {
+  .api-fit { grid-template-columns: minmax(0, 1fr); row-gap: 24px; }
+  .api-fit .api-fit-t, .api-fit .api-fit-v, .api-fit:nth-child(even) .api-fit-t, .api-fit:nth-child(even) .api-fit-v { grid-column: 1; grid-row: auto; }
+  .api-fit-v { min-height: 0; }
 }
-/* the h2 line mask (page-local; same markup on server and client) */
-.js .api-mask .api-h1-ln > span { animation: none; transform: translateY(108%); transition: transform .7s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i, 0) * 60ms); }
-.js .api-mask.on .api-h1-ln > span { transform: none; }
 .api-vis { position: relative; width: 100%; height: 100%; border-radius: 28px; background: var(--card); padding: clamp(28px, 3vw, 48px); display: flex; flex-direction: column; justify-content: center; gap: 18px; overflow: hidden; }
 .api-vis-key { margin: 0; align-self: flex-start; padding: 12px 18px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px var(--line); font-size: 15px; color: var(--ink); }
 
@@ -272,8 +299,6 @@ html:not([data-api-ask]):has(main.api) header[data-slot=masthead] a[data-x-ask] 
 
 @media (prefers-reduced-motion: reduce) {
   .api *, .api *::before, .api *::after { animation: none !important; }
-  .api .api-dark { clip-path: none !important; }
-  .js .api-mask .api-h1-ln > span { transform: none; transition: none; }
   .api-bill b { transform: scaleX(var(--w, .5)); }
   .api-gen li span:last-child, .api-gen li svg, .api-id-new { opacity: 1; transform: none; }
 }
@@ -284,15 +309,10 @@ html:not([data-api-ask]):has(main.api) header[data-slot=masthead] a[data-x-ask] 
   .api-top { row-gap: 28px; }
   .api-top-l { gap: 20px; }
   .api-acts .x-arrow { min-height: 44px; }
-  .api-con { padding: 8px; border-radius: 22px; }
-  .api-con-bar { min-height: 60px; gap: 10px; padding: 0 8px 0 12px; border-radius: 14px; }
-  .api-meth { padding: 7px 10px; font-size: 13px; border-radius: 9px; }
-  .api-url { font-size: 15px; }
-  .api-host { display: none; }
-  .api-send { width: 44px; height: 44px; border-radius: 12px; }
-  .api-con-key { padding: 0 12px; }
-  .api-con-main { grid-template-columns: 1fr; gap: 8px; margin-top: 8px; }
-  .api-ret { padding: 20px; }
+  .api-con.api-term { padding: 8px; border-radius: 22px; }
+  .api-term-cmd { font-size: 13.5px; }
+  .api-con-main { grid-template-columns: 1fr; gap: 8px; }
+  .api-ret { padding: 18px 16px; }
   .api-desc { font-size: 18px; }
   .api-model { min-height: 180px; }
   .api-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-top: 8px; }

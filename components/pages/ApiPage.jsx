@@ -1,24 +1,28 @@
 'use client';
-// Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
+// Signature: Live terminal: the hero terminal types the page's own curl to https://api.hanzo.ai (only the path changes), streams back what that endpoint returns with the model that serves it playing beside, and the visitor picks the next command
 // Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, which is the page's own claim (no second base URL) made visible, and it copies as curl
 /* Hanzo API, v2 (Archetype F, developer: the request is the hero).
-   V2: 8/10 round 5: GET/POST/search no longer empty the list; the route list lives only in the hero, the dark picker and the table (scenes show key→bill, one operation ticking to its client id, the gateway fanning to models); header quiet from first paint while our ask shows; answer never blanks; curl wraps; ref links draw an underline
+   V2: 8/10 motion map: signature `terminal` (the hero types the curl, streams its output, you pick the next command); entrances line-draw (Paste), underline-sweep (How it fits), invert-flash (Base URL), shutter (Core endpoints), swing-door (Band); pinned chapters replaced by four plain rows
    Persona: a developer who has used the OpenAI API and wants every Hanzo capability behind one key.
    Metric: api_key_created (data-cta api-hero-key, api-close-key).
    Goal: see that one base URL and one key reach every endpoint, then get a key.
    CTA: "Get an API key, free" (hero, desktop header via thumb, phone slim bar, the Band); "OpenAPI Reference" as the quiet second.
-   Motion: signature = the live console (path types, answer streams, model film plays). Supporting: pinned chapters
-   with clip wipes (components/v2/AppScenes; the dark room opens the same way), line-masked headline (CSS, first paint), tab pill (layoutId).
+   Motion (MOTION-MAP): signature `terminal` = the hero terminal types the page's own curl (only the path changes),
+   streams the endpoint's output back with the model film beside, and the row under it picks the next command (click, tap,
+   arrow keys); pause holds it. Entrances, page-local in components/pages/api/: line-draw (Paste and ship card),
+   underline-sweep (How it fits together), invert-flash (the black room), shutter (Core endpoints), swing-door (the Band).
+   No pinned chapters. One other reveal: the h1's line rise at first paint. Tab pills glide (layoutId).
    Colour: greys only (Hanzo's deck); colour arrives only through the model films. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Cta, Img, Film } from '../kit';
 import { play } from '../../lib/sound';
 import NoJs from '../NoJs';
-import Scenes from '../v2/AppScenes';
+import { useEnter, Draw } from './api/enter';
 import '../v2/AppType.css';
 import './ApiPage.css';
+import './api/enter.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/openapi/';
 const HERO = [
@@ -59,7 +63,8 @@ function Console() {
   const first = useRef(true); // the first walk waits for the h1 to land (the words lead)
   const live = seen && !calm && !held;
   useEffect(() => {
-    const [, p, d] = HERO[at];
+    const [, full, d] = HERO[at];
+    const p = full.split(' · ')[0]; // a curl calls one path
     if (!live) { if (path.current) path.current.textContent = p; if (desc.current) desc.current.textContent = d; setDone(true); return; }
     let alive = true, t = 0, i = 0, w = 0;
     const words = d.split(' ');
@@ -96,27 +101,27 @@ function Console() {
   const [peek, setPeek] = useState(-1);
   const model = HERO[peek >= 0 ? peek : at][4];
   return (
-    <div className={'api-con av-obj' + (held ? ' held' : '')} ref={box}>
-      <div className="api-con-bar">
+    <div className={'api-con api-term av-obj' + (held ? ' held' : '')} ref={box}>
+      <div className="api-term-bar">
+        <span className="api-ret-k x-mono">{n8(at)}</span>
         <button type="button" className="api-pause" data-sound="tick" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((h) => !h)}>
           {held
             ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg>
             : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
         </button>
-        <span className="api-meth x-mono">{m}</span>
-        <span className="api-url x-mono">
-          <span className="api-host">https://api.hanzo.ai</span>
-          <span className="api-path" ref={path}>{p}</span>
-          <span className={'api-caret' + (done ? ' idle' : '')} aria-hidden="true" />
-        </span>
         <A to={DOCS + doc} className="api-send" aria-label={'Docs: ' + p}>
-          <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </A>
       </div>
-      <p className="api-con-key x-mono" aria-hidden="true">{KEY}</p>
       <div className="api-con-main">
         <div className="api-ret">
-          <span className="api-ret-k x-mono">{n8(at)}</span>
+          {/* the command types itself: the same curl the black room copies, with only the path changing */}
+          <p className="api-term-cmd x-mono">
+            <span className="api-ln"><span className="api-term-ps" aria-hidden="true">$ </span>curl -X <span className="api-meth">{m}</span>{' \\'}</span>
+            <span className="api-ln ind"><span className="api-host">https://api.hanzo.ai</span><wbr /><span className="api-url"><span className="api-path" ref={path}>{p.split(' · ')[0]}</span><span className={'api-caret' + (done ? ' idle' : '')} aria-hidden="true" />{' \\'}</span></span>
+            <span className="api-ln ind">-H &quot;<span className="api-term-key">{KEY}</span>&quot;</span>
+          </p>
+          {/* and its output streams back */}
           <div className="api-desc-box">
             <p className="api-desc api-desc-size" aria-hidden="true">{LONGEST}</p>
             <p className="api-desc" aria-live="polite"><span ref={desc}>{d}</span></p>
@@ -134,10 +139,19 @@ function Console() {
           <NoJs css=".api-model video{display:none!important}" />
         </div>
       </div>
-      <ol className="api-chips" role="tablist" aria-label="Endpoints" onPointerLeave={() => setPeek(-1)}>
+      {/* pick the next command: click, tap, or arrow keys along the row */}
+      <ol className="api-chips" role="tablist" aria-label="Endpoints" onPointerLeave={() => setPeek(-1)}
+        onKeyDown={(e) => {
+          const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+          if (!k) return;
+          e.preventDefault();
+          const n = (at + k + HERO.length) % HERO.length;
+          pick(n);
+          e.currentTarget.querySelectorAll('button')[n]?.focus();
+        }}>
         {HERO.map(([mm, pp], i) => (
           <li key={pp}>
-            <button type="button" role="tab" aria-selected={at === i} data-sound="tick" onClick={() => { setPeek(-1); pick(i); }}
+            <button type="button" role="tab" aria-selected={at === i} tabIndex={at === i ? 0 : -1} data-sound="tick" onClick={() => { setPeek(-1); pick(i); }}
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(i); }}>
               {at === i && <motion.span layoutId="api-chip" className="api-chip-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="x-mono">{mm + ' ' + pp}</span>
@@ -184,7 +198,8 @@ function Paste() {
           <p className="av-title">Paste and ship</p>
           <p className="av-body">Paste this into any agent. It reads the skill manifest and calls API from there.</p>
         </div>
-        <div className="api-prompt">
+        <div className="api-prompt" data-enter="line-draw">
+          <Draw />
           <span className="av-kick">Agent prompt</span>
           <code>{text}</code>
           <Copy text={text} />
@@ -277,30 +292,34 @@ const FITS = [
   { title: 'Every route lives under /v1', body: <p className="av-body">Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.</p>, visual: (on) => <Gateway on={on} /> },
 ];
 
-/* a page-local line mask: the same markup on server and client (no reduced-motion branch at render); the rise is CSS,
-   held under html.js until the heading is half in view, and @media (prefers-reduced-motion) shows it in place */
-function Mask({ lines, className }) {
+/* How it fits together: four plain rows (no pinned stage). Each visual plays once as its row arrives. */
+function FitRow({ item, i }) {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const on = useInView(ref, { once: true, amount: 0.35 });
   return (
-    <h2 ref={ref} className={className + ' api-mask' + (seen ? ' on' : '')}>
-      {lines.map((l, i, a) => (
-        <span key={l} className="api-h1-ln"><span style={{ '--i': i }}>{l}{i < a.length - 1 ? ' ' : ''}</span></span>
-      ))}
-    </h2>
+    <li ref={ref} className={'api-fit' + (on ? ' on' : '')}>
+      <div className="api-fit-t">
+        <span className="api-fit-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <h3 className="av-head"><span className="api-sweep">{item.title}</span></h3>
+        {item.body}
+      </div>
+      <div className="api-fit-v">{item.visual(on)}</div>
+    </li>
   );
 }
 
 function Fits() {
   return (
-    <>
-      <section className="api-fits-in">
-        <div className="av-wrap">
-          <Mask className="av-display s api-fits-h" lines={['How it fits', 'together']} />
-        </div>
-      </section>
-      <Scenes label="How it fits together" items={FITS} />
-    </>
+    <section className="av-sec api-fits" data-enter="underline-sweep">
+      <div className="av-wrap">
+        <h2 className="av-display s api-fits-h">
+          {['How', 'it', 'fits', 'together'].map((w, i, a) => <span key={w}><span className="api-sweep" style={{ '--i': i }}>{w}</span>{i < a.length - 1 ? ' ' : ''}</span>)}
+        </h2>
+        <ol className="api-fit-list">
+          {FITS.map((it, i) => <FitRow key={it.title} item={it} i={i} />)}
+        </ol>
+      </div>
+    </section>
   );
 }
 
@@ -327,13 +346,9 @@ function Call() {
 }
 
 function Base() {
-  // the scene change: the dark room opens out of a rounded card to the full width as it arrives (no hard edge)
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.15'] });
-  const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 48px)', 'inset(0% 0% 0% 0% round 0px)']);
-  // the same style on server and client; reduced motion drops the clip in CSS (ApiPage.css), never by a render branch
+  // the dark room arrives with an invert flash (components/pages/api/enter.css), not a scroll scrub
   return (
-    <motion.section ref={ref} className="av-sec api-dark av-dark" data-room="dark" style={{ clipPath: clip }}>
+    <section className="av-sec api-dark av-dark" data-room="dark" data-enter="invert-flash">
       <div className="av-wrap">
         <h2 className="av-head api-base-h">Base URL</h2>
         <div className="api-big">
@@ -349,7 +364,7 @@ function Base() {
           <div className="api-base-r"><Call /></div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -379,7 +394,7 @@ function Table() {
   return (
     <section className="av-sec api-core">
       <div className="av-wrap av-grid">
-        <div className="api-core-l">
+        <div className="api-core-l" data-enter="shutter">
           <h2 className="av-head">Core endpoints</h2>
           <p className="av-body">A few of the ones people reach for first. Every parameter and error shape is in the reference.</p>
           <div className="api-tools">
@@ -398,7 +413,7 @@ function Table() {
             <span className="api-count x-mono av-num">{rows.length} / {ALL.length}</span>
           </div>
         </div>
-        <ul className="api-rows" ref={list}>
+        <ul className="api-rows" ref={list} data-enter="shutter">
           {rows.map(([m, p, d, doc], n) => {
             const k = ALL.findIndex((r) => r[1] === p);
             const isOpen = open === k;
@@ -434,7 +449,7 @@ function Table() {
 const NEXT = [['API reference', 'Every endpoint, parameter and response shape.', DOCS], ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart']];
 function Next() {
   return (
-    <section className="av-sec tight api-next">
+    <section className="av-sec tight api-next" data-enter="swing-door">
       <div className="av-wrap">
         <div className="api-close">
           <p className="av-display s api-close-t">Every Hanzo capability answers under one base URL, behind one key.</p>
@@ -494,6 +509,7 @@ function useOneSolidOnPhone() {
 
 export default function ApiPage() {
   useOneSolidOnPhone();
+  useEnter('main.api');
   return (
     <main className="av api">
       <Hero />

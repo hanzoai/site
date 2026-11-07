@@ -84,15 +84,23 @@
 .xbs-roll { position: relative; display: inline-grid; overflow: clip; vertical-align: bottom; } /* relative: the leaving figure is clipped by its own box */
 .xbs-roll > span { grid-area: 1 / 1; }
 
-/* the promises: one dark sheet that changes with the promise, beside the ledger; each scene is the page's own UI */
+/* the signature: the plan stamped onto the quote (Stamp in the page file) */
+.xbs-sheet { position: relative; transform-origin: 50% 100%; }
+.xbs-stamp { position: absolute; z-index: 2; right: clamp(22px, 2.2vw, 30px); top: clamp(78px, 7vw, 92px); display: grid; justify-items: center; gap: 2px; padding: 8px 14px; border: 2px solid #f5f5f7; outline: 1px solid rgba(245, 245, 247, .5); outline-offset: 3px; border-radius: 8px; color: #f5f5f7; text-transform: uppercase; letter-spacing: .1em; pointer-events: none; mix-blend-mode: normal; }
+.xbs-stamp b { font: 600 14px/1.1 var(--mono); }
+.xbs-stamp span { font: 500 11px/1.1 var(--mono); color: #a1a1a6; }
+
+/* the promises: three plain sections of two, each promise with its own small card of the page's interface */
 .xbs-why { padding-top: clamp(56px, 6vw, 96px); }
-.xbs-why-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 112px); align-items: start; }
-.xbs-stage-w { position: sticky; top: calc(var(--x-top, 60px) + 48px); }
-.xbs-stage { position: relative; border-radius: 24px; background: #0a0a0a; color: #fafafa; padding: clamp(24px, 2.8vw, 36px); aspect-ratio: 5 / 4; display: grid; grid-template-rows: 1fr auto; overflow: hidden; }
+.xbs-why.next { padding-top: 0; }
+.xbs-pair { list-style: none; margin-top: 0; margin-bottom: 0; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 4vw, 64px); }
+.xbs-item { display: grid; align-content: start; gap: 10px; min-width: 0; }
+.xbs-item .xp-title { font-size: 21px; color: var(--ink); }
+.xbs-item .xp-body { color: var(--soft); }
+.xbs-pcard { position: relative; margin-top: 14px; padding: clamp(20px, 2.4vw, 32px); border-radius: 22px; background: #0a0a0a; color: #fafafa; overflow: hidden; min-height: 240px; display: grid; transition: translate .3s var(--xp-ease); }
+@media (hover: hover) { .xbs-item:hover .xbs-pcard { translate: 0 -4px; } }
+.xbs-pcard > .xbs-scene { position: relative; z-index: 1; }
 .xbs-scene { display: grid; align-content: center; gap: 18px; min-height: 0; }
-.xbs-pips { display: flex; gap: 6px; }
-.xbs-pips i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .16); transition: background .3s var(--xp-ease), transform .3s var(--xp-ease); }
-.xbs-pips i.on { background: #f5f5f7; transform: scale(1.2); }
 .xbs-sx { margin: 0; font-size: 13px; color: #a1a1a6; }
 .xbs-sx b { font: 220 40px/1 var(--sans); letter-spacing: -.03em; color: #fafafa; margin-right: 6px; }
 .xbs-sg { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; }
@@ -133,21 +141,7 @@
 @keyframes xbs-type { 0% { width: 0; } 60%, 100% { width: 100%; } }
 .xbs-msend { position: absolute; right: 5px; top: 5px; width: 42px; height: 42px; border-radius: 50%; background: #0a0a0b; color: #f5f5f7; display: grid; place-items: center; font-style: normal; font-size: 16px; }
 .xbs-mlegal { margin: 0; text-align: center; font-size: 13px; color: #a1a1a6; }
-[data-off] .xbs-stage *, [data-off] .xbs-stage *::after { animation-play-state: paused; }
-
-.xbs-ledger { list-style: none; margin: 0; padding: 0; }
-.xbs-ledger li { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 8px 20px; align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--line); cursor: default; outline: none; }
-.xbs-ledger li:first-child { padding-top: 0; }
-.xbs-ledger li:last-child { border-bottom: 0; }
-.xbs-ledger .xp-title { font-size: 21px; color: var(--soft); transition: color .3s var(--xp-ease); }
-.xbs-ledger .xp-body { grid-column: 2; color: var(--soft); }
-.xbs-ledger li.on .xp-title { color: var(--ink); }
-/* the marker: a small grey dot that grows into an ink dot on the promise the sheet is showing */
-.xbs-mark { justify-self: center; align-self: center; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); transform: scale(.5); opacity: .3; transition: transform .3s var(--xp-ease), opacity .3s var(--xp-ease); }
-.xbs-ledger li.on .xbs-mark { transform: scale(1); opacity: 1; }
-@media (hover: hover) { .xbs-ledger li:hover .xp-title { color: var(--ink); } .xbs-ledger li:hover .xbs-mark { opacity: .7; } }
-
-.xbs-pcard { display: none; }
+[data-off] .xbs-pcard *, [data-off] .xbs-pcard *::after { animation-play-state: paused; }
 
 /* The dark objects (quote sheet, phone quote, promise cards) take the dark room's tokens page-locally, without
    data-room="dark": that attribute would also turn the shared header dark over this white page. */
@@ -190,13 +184,11 @@ html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[data-x-ask
   .xbs-seats { grid-template-columns: repeat(10, 1fr); }
   .xbs-team b { font-size: 52px; }
   .xbs-tot dd { font-size: 26px; }
-  /* pinned scenes stack under 900px: the sticky stage goes, each promise carries its own card */
-  .xbs-why-g { grid-template-columns: 1fr; gap: 0; }
-  .xbs-stage-w { display: none; }
-  .xbs-pcard { display: block; grid-column: 1 / -1; margin-top: 18px; padding: 20px; border-radius: 20px; background: #0a0a0a; color: #fafafa; overflow: hidden; }
-  .xbs-ledger li .xp-title { color: var(--ink); }
-  .xbs-ledger li .xbs-mark { transform: scale(1); opacity: 1; }
+  .xbs-pair { grid-template-columns: 1fr; gap: 48px; }
+  .xbs-why.next { padding-top: 48px; }
+  .xbs-pcard { padding: 20px; border-radius: 20px; min-height: 0; }
   .xbs-scene { gap: 12px; }
+  .xbs-stamp { top: 64px; right: 20px; }
   .xbs-sp { font-size: 40px; }
   .xbs-sx b { font-size: 32px; }
   .xbs-sg { gap: 4px; grid-template-columns: repeat(20, 1fr); }

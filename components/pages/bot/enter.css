@@ -1,0 +1,40 @@
+/* /bot's five entrances. Start states live only under .bt-en (added after mount, never under reduced motion);
+   .is-in plays the entrance once; .was-in (already on screen at mount) shows at rest with no animation. */
+
+/* 1. tile-flip: the ten workflow tiles flip in on their vertical axis, diagonal by diagonal, to form the wall */
+.bt-en [data-enter='tile-flip'] [data-tiles] { perspective: 900px; }
+.bt-en [data-enter='tile-flip']:not(.is-in) [data-tile] { opacity: 0; transform: rotateY(-92deg); }
+.bt-en [data-enter='tile-flip'].is-in:not(.was-in) [data-tile] { animation: bte-flip .62s cubic-bezier(.2, .8, .2, 1.08) backwards; animation-delay: calc(var(--k, 0) * 70ms); transform-origin: 0 50%; backface-visibility: hidden; }
+@keyframes bte-flip { from { opacity: 0; transform: rotateY(-92deg); } 40% { opacity: 1; } }
+
+/* 2. ripple: each "what a bot does" section's picture opens as a circle from its centre, while a ring runs on past it */
+.bt-en [data-enter='ripple'] .bt-chv { position: relative; overflow: hidden; border-radius: 24px; }
+.bt-en [data-enter='ripple']:not(.is-in) .bt-chv > * { clip-path: circle(0% at 50% 50%); }
+.bt-en [data-enter='ripple']:not(.is-in) .bt-cht { opacity: 0; }
+.bt-en [data-enter='ripple'].is-in:not(.was-in) .bt-chv > * { animation: bte-open .7s cubic-bezier(.16, 1, .3, 1) backwards; }
+.bt-en [data-enter='ripple'].is-in:not(.was-in) .bt-cht { animation: bte-fade .5s ease .25s backwards; }
+.bt-en [data-enter='ripple'].is-in:not(.was-in) .bt-chv::after { content: ''; position: absolute; left: 50%; top: 50%; z-index: 2; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; box-shadow: 0 0 0 2px #0a0a0a; pointer-events: none; animation: bte-ring .9s cubic-bezier(.16, 1, .3, 1) forwards; }
+@keyframes bte-open { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(75% at 50% 50%); } }
+@keyframes bte-ring { from { transform: scale(.4); opacity: .9; } to { transform: scale(16); opacity: 0; } }
+@keyframes bte-fade { from { opacity: 0; } }
+
+/* 3. grid-wave: the tool rows ripple in by their distance from the pointer */
+.bt-en [data-enter='grid-wave']:not(.is-in) [data-cell] { opacity: 0; transform: translateY(14px) scale(.9); }
+.bt-en [data-enter='grid-wave'].is-in:not(.was-in) [data-cell] { animation: bte-wave .5s cubic-bezier(.2, .9, .3, 1.15) backwards; animation-delay: var(--d, 0ms); }
+@keyframes bte-wave { from { opacity: 0; transform: translateY(14px) scale(.9); } }
+
+/* 4. fold-out: the terminal and the agent prompt unfold like paper from a hinge along their top edge */
+.bt-en [data-enter='fold-out'] [data-fold] { transform-origin: 50% 0; }
+.bt-en [data-enter='fold-out']:not(.is-in) [data-fold] { opacity: 0; transform: perspective(1100px) rotateX(-88deg); }
+.bt-en [data-enter='fold-out'].is-in:not(.was-in) [data-fold] { animation: bte-fold .7s cubic-bezier(.2, .85, .25, 1.06) backwards; }
+.bt-en [data-enter='fold-out'].is-in:not(.was-in) [data-fold='2'] { animation-delay: .14s; }
+@keyframes bte-fold { from { opacity: 0; transform: perspective(1100px) rotateX(-88deg); } 35% { opacity: 1; } to { transform: perspective(1100px) rotateX(0deg); } }
+
+/* 5. grow-from-point: the pricing screen grows out of the point the visitor last pointed at or tapped */
+.bt-en [data-enter='grow-from-point']:not(.is-in) { opacity: 0; clip-path: circle(0 at var(--gx, 50%) var(--gy, 50%)); }
+.bt-en [data-enter='grow-from-point'].is-in:not(.was-in) { animation: bte-grow .7s cubic-bezier(.16, 1, .3, 1) backwards; transform-origin: var(--gx, 50%) var(--gy, 50%); }
+@keyframes bte-grow { from { opacity: .3; clip-path: circle(0 at var(--gx, 50%) var(--gy, 50%)); transform: scale(.94); } to { clip-path: circle(150% at var(--gx, 50%) var(--gy, 50%)); transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-en [data-enter] *, .bt-en [data-enter] { animation: none !important; }
+}
