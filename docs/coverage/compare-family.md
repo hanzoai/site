@@ -31,7 +31,7 @@ Done here: the page moved from the catch-all port to its own family route `app/c
 - [x] Ends on the doors out, then the footer (no `Band`: the live page has none)
 - [x] n/a Morph cards
 
-Done here: phone first screen at 375×812: h1 (40px), label, lede, the race, then "Hanzo Enso" at y≈728.
+Done here: phone first screen: h1 (40px), label, lede, the compact race, then "Hanzo Enso" ending at y=640 (inside 667).
 
 ## 4. Conversion system
 - [x] `<Cta>` only
@@ -93,9 +93,9 @@ Done here: n/a: no media on the live page.
 - [x] 375×812 and 1470×801: no overlap (walked)
 - [x] No horizontal page scroll at 375; the table pin-scrolls inside its region (keyboard reachable)
 - [x] Targets 44px (tabs on coarse pointers, switch, vendor rows 72px)
-- [ ] Primary above the fold at 375×667: no (y≈728): the race is placed above it, as the review asked; the bar carries the ask once scrolled
+- [x] Primary above the fold at 375×667: "Hanzo Enso" spans y 596–640, with the race still above it
 
-Done here: under 900px the race goes compact (32px figures, names inline) and sits between the lede and the ask.
+Done here: under 900px the race is a 2 × 2 grid of 32px figures over 2px bars with 13px names, between the lede and the ask; measured at 375×667, 375×812 and 1470×801 with no overlap and no sideways scroll.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a / #525252 / #737373 on white and #f5f5f5 (muted text on #f5f5f5 uses #525252)
