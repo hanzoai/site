@@ -1,4 +1,5 @@
 # /integrations/* (template) — James-eye review
+Ready: 2026-11-07 the chapter window now fills its stage (66svh, was ~46%: a percentage height resolved to auto), phone CLS while typing 0.0006 (caret no longer adds a break point), one-row phone window bar and one label where language = name, wrapped lines hang under their indent, long lines fade at the edge, infrastructure route keeps a request moving after typing, visible band hovers, links land at the top on phones; checked on anthropic-sdk, docker, cursor (+ parity on all 19); header, cookie card and FamNext timing filed in docs/requests/integrations.md
 Verdict: 6/10
 First complaint: "There's a red '1 Issue' error sitting on the hero and the cookie box is covering the code. Then I scroll into the 'scene' and it's one small code box in a big empty white room. That's not premium, it's a dead page with a tab in it."
 

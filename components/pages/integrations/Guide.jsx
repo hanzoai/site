@@ -30,7 +30,7 @@ import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
 import { ui } from '../../v2/famUi';
-import { Editor, CodeCard, Only } from './intParts';
+import { Editor, CodeCard, Only, landAtTop } from './intParts';
 import Logo from './logos';
 import './guide.css';
 
@@ -98,7 +98,7 @@ export default function Guide({ doc, emojis }) {
   );
   const editor = first && <Editor sample={first} only={only} setOnly={setOnly} aside={face === 'term' ? null : side} name={name} face={face} />;
   return (
-    <main className={'v2f xig face-' + face}>
+    <main className={'v2f xig face-' + face} onClickCapture={landAtTop}>
       {face === 'term' ? (
         <section className="xig-hero xig-hero-t" aria-labelledby="xig-h1">
           <div className="v2f-wrap v2f-grid xig-hero-tg">
