@@ -228,6 +228,10 @@ textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize:
 .x-input2:disabled { background: var(--room-fill); color: var(--room-faint); cursor: not-allowed; }
 .x-field-msg { font-size: 13px; color: var(--room-soft); min-height: 1.3em; }
 
+/* ---------- cookie notice: Reject all and Accept all at equal weight ---------- */
+.x-cookie .x-cookie-more { border-color: transparent; background: none; color: var(--soft); }
+@media (max-width: 640px) { .x-cookie div { flex-wrap: wrap; } .x-cookie .x-btn { flex: 1; } .x-cookie .x-cookie-more { flex-basis: 100%; } }
+
 /* ---------- utilities ---------- */
 .x-tnum { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 .x-vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

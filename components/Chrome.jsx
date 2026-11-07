@@ -40,6 +40,7 @@ export function Smooth({ children }) {
   useEffect(() => {
     if (first.current) { first.current = false; return; }
     if (window.__hzHold) return; // a close transition is restoring the previous scroll
+    if (window.__hzPop) { window.__hzPop = false; return; } // Back/Forward: the browser restores where you were
     window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0);
     // focus moves to the new page's h1 (screen readers hear where they are; the next Tab starts in the page), unless
     // something on the page already took focus
