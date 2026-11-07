@@ -2,7 +2,7 @@
 // Signature: peel the layers: the OpenAPI document, the generated Cloud SDK, the hand-written AI + Agents library and your application lift apart in 3D on the second screen and close again; drag across to peel it by hand, pick a layer and it rises out and explains itself.
 // Beyond: the hero console flips one request OpenAI ⇄ Anthropic, re-typing only the lines that differ; pick your language and its install line, registry, docs and org line up in one place; and a Go import path you can type to find.
 /* SDKs.
-   V2: 8/10 code as the hero: one big console where only the lines that differ between the OpenAI and Anthropic dialects re-set, Hanzo's six languages as a picker, the per-language orgs as the one dark room, and the Go modules as a type wall you filter by typing.
+   V2: 8/10 code as the hero: the console flips OpenAI ⇄ Anthropic re-setting only the lines that differ and fits the phone column; the peel stack; the org rows draw in as the dark room opens; the flagship Python card leads with Node and Rust stacked beside it; the Go finder's idle typing lights its modules in the wall.
    Persona: a developer choosing a client library. Goal: call the API from their language. CTA: API reference (sdks.hero).
    Metric: cta_click on sdks.hero and sdks.close (data-cta; the event layer is the conductor's).
    SDKs. The first screen is the gateway's own request, written three ways and spoken two ways: the console flips
@@ -406,11 +406,15 @@ function Official() {
 }
 
 function Orgs() {
+  // the rows draw in one by one, top to bottom, as the dark room opens
+  const tab = useRef(null);
+  const seen = useInView(tab, { amount: 0.25, once: true });
   return (
     <section className="a2-sec a2-dark xsd-orgs" data-room="dark" aria-labelledby="xsd-orgs-h">
+      <NoJs css=".xsd-table .xsd-tr{opacity:1!important;transform:none!important}" />
       <div className="a2-wrap">
         <Head dark kicker="Per-language orgs" title="A home for every ecosystem" lede="Each language has its own org holding the generated cloud SDK, an AI + agents library and the split-out packages. Every one of them ships the same six runnable examples — prove the key works, one completion, balance and usage, a store round-trip, create and run an agent, list the tools — so knowing one language's set is enough to navigate another's." id="xsd-orgs-h" />
-        <div className="xsd-table" role="table" aria-label="Per-language orgs">
+        <div className={'xsd-table' + (seen ? ' in' : '')} ref={tab} role="table" aria-label="Per-language orgs">
           <div className="xsd-tr xsd-th" role="row">{['Language', 'Org', 'Install', 'sdk', 'docs', 'ai'].map((h) => <span key={h} role="columnheader">{h}</span>)}</div>
           {ORGS.map(([l, flag, org, cmd, sdk, docs, ai], i) => (
             <div key={l} className="xsd-row" style={{ '--i': i }}>
@@ -453,6 +457,7 @@ function Flagship() {
 /* Go modules served at hanzo.ai: type an import path; idle, the field types module names by itself. */
 function Mods() {
   const [q, setQ] = useState('');
+  const [ghost, setGhost] = useState(''); // the word the field has just typed by itself: its modules light in the wall
   const ph = useRef(null);
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
@@ -464,12 +469,12 @@ function Mods() {
       const w = MODS[i];
       c += dir;
       if (ph.current) ph.current.textContent = w.slice(0, c);
-      if (c >= w.length) { dir = -1; t = setTimeout(tick, 1100); return; }
-      if (c <= 0) { dir = 1; i = (i + 7) % MODS.length; }
+      if (c >= w.length) { dir = -1; setGhost(w); t = setTimeout(tick, 1100); return; }
+      if (c <= 0) { dir = 1; i = (i + 7) % MODS.length; setGhost(''); }
       t = setTimeout(tick, dir > 0 ? 80 : 35);
     };
     t = setTimeout(tick, 400);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); setGhost(''); };
   }, [seen, calm, q]);
   const shown = MODS.filter((m) => m.includes(q.trim().toLowerCase()));
   return (
@@ -484,9 +489,9 @@ function Mods() {
           </span>
           <span className="xsd-find-n x-mono" aria-live="polite">{shown.length} / {MODS.length}</span>
         </label>
-        <ul className="xsd-modlist">
+        <ul className={'xsd-modlist' + (ghost && !q ? ' ghost' : '')}>
           {MODS.map((m) => (
-            <li key={m} hidden={!shown.includes(m)}><A to={'/' + m} className="xsd-mod"><span>hanzo.ai/</span>{m}</A></li>
+            <li key={m} hidden={!shown.includes(m)}><A to={'/' + m} className={'xsd-mod' + (ghost && !q && m.includes(ghost) ? ' lit' : '')}><span>hanzo.ai/</span>{m}</A></li>
           ))}
         </ul>
         {!shown.length && <p className="xsd-none">No module at that path.</p>}

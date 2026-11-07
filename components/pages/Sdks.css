@@ -320,3 +320,20 @@
 
 /* h3s rest below the 32px section h2s they sit under */
 .xsd-pick-p h3, .xsd-lib h3 { font-size: clamp(21px, 1.8vw, 26px); font-weight: 497; letter-spacing: -.02em; }
+
+/* the orgs draw in row by row as the dark room opens */
+.xsd-table .xsd-tr:not(.xsd-th) { opacity: 0; transform: translateY(12px); transition: opacity .5s cubic-bezier(0, 0, .2, 1) calc(var(--i, 0) * 90ms + 120ms), transform .7s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 90ms + 120ms), background-color .25s; }
+.xsd-table.in .xsd-tr { opacity: 1; transform: none; }
+/* idle, the finder types a path and the wall answers: the modules it names stay ink, the rest step back */
+.xsd-modlist .xsd-mod { transition: color .35s cubic-bezier(0, 0, .2, 1), background .2s; }
+.xsd-modlist.ghost .xsd-mod:not(.lit) { color: #a3a3a3; }
+/* the flagship card: the name on top, the line and its install at the foot, so the tall card is composed, not empty */
+.xsd-lib.lead { grid-template-rows: auto auto 1fr auto; }
+.xsd-lib.lead .xsd-cmd { order: 1; background: rgba(255, 255, 255, .08); }
+.xsd-lib.lead p:last-child { align-self: end; max-width: 24ch; font-size: clamp(20px, 1.7vw, 26px); line-height: 1.3; letter-spacing: -.01em; color: #fafafa; }
+@media (prefers-reduced-motion: reduce) { .xsd-table .xsd-tr:not(.xsd-th) { opacity: 1; transform: none; transition: none; } }
+@media (max-width: 900px) {
+  .xsd-lib.lead { grid-template-rows: none; }
+  .xsd-lib.lead p:last-child { font-size: 18px; }
+}
+@media (hover: hover) { .xsd-modlist.ghost .xsd-mod:hover { color: var(--ink); } }

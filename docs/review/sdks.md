@@ -1,4 +1,5 @@
 # /sdks — James-eye review
+Ready: 2026-11-07, slice D — phone console fits 375/320 (cURL and Copy reachable), flagship lead spans two rows with Node/Rust stacked (no three-in-a-row), org rows draw in, the finder's idle typing lights its modules in the wall, 44px phone targets
 
 Verdict: 6/10
 First complaint: "On my phone the code box runs off the side of the screen. I can't see cURL and I can't even press Copy, which is the whole point of the page. And past that code window it goes back to being a document: two grey cards, a table, three boxes."
