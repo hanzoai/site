@@ -3,10 +3,10 @@
 Page file: `components/pages/cloud/Visor.jsx` · gallery: `docs/gallery/visor/` · metric id: `cta_click:visor.primary`
 
 Open copy questions for James: "Fewer" (`c4_fewer`); "More" (`c4_more_machines`); "Machines" (`c4_machines`); "Launch" (`c4_launch`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/visor.md`): none.
-Forks this page deleted: the shared-element dialog that froze half open (kit Sheet now), the blinking "ready" lights, the "Name a fleet" label over the heading, the row of three equal tiles (now 01 wide, 02|03, 04|05, 06 wide).
+Shared changes requested: none filed. Noted for the shared owner: `Finale` renders two h2s ("Get started with Hanzo Visor" and "Get Visor"); not changed here.
+Forks this page deleted: the shared-element dialog that froze half open (kit Sheet now), the blinking "ready" lights, the "Name a fleet" label over the heading, the row of three equal tiles, then the 2-column grid of dark boxes (now one pinned room: a numbered list and one picture large), the `noscript` copy of the six paragraphs (they now sit in each row as `hidden="until-found"`).
 
-Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
+Measured on the dev server at 1470×801, 375×812 and 320×640 with Playwright (`audit.js`, `shot.js`) and `scripts/motion.mjs`, JS on and off, 7 Nov round 2.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -33,15 +33,15 @@ Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" tar
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: Hero is side, flipped (the fleet on 7 columns at left, copy at right); the object is one request launching three GPU machines: providers price, a dry run quotes, machines land in one inventory, so the launch sequence (first step at 0.5 s) moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Visor" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → six tiles (dark) → name a fleet (light) → closing band (dark). The live page has no proof strip, so it ends on the band and the footer.
+Done here: Hero is `StageHero look="rise"` with page-local CSS: a left-set title and, under it, the fleet console running left to right as a pipeline (request → three providers → one inventory → console), which rises 10svh as you scroll. The object is one request launching three GPU machines: providers answer, a dry run quotes, machines land in reserved slots of one inventory, so the launch sequence (first step at 0.5 s) moves within the first second. On the phone the providers sit side by side and the machines land first in the inventory, so train-01 and train-02 land inside the first 812px screen (y 717 and 756). `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Visor" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → the pinned room of six (dark) → name a fleet (light) → closing band (dark), which carries Visor's own object: the inventory landing row by row with the SSH console open. The live page has no proof strip, so it ends on the band and the footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label
+- [ ] Sticky ask in header and bar after the hero, same label (partly: the header carries Hanzo's "Try Hanzo" at every width; the page's own ask is "View on GitHub" in the hero and the close; the bar is off)
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, close*, deploy (* = solid). The header carries the sticky ask at every width; the page bar is off (`data-ask="off"`) because the critic's shared note (15:00) fails any pill seen over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
+Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, close*, deploy (* = solid). The sticky header carries the shared "Try Hanzo" at every width, not the page's "View on GitHub"; the page bar is off (`data-ask="off"`) because the critic's shared note (15:00) fails any pill seen over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -57,7 +57,7 @@ Done here: No partner logos; product names appear as text only. Parity holds eve
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /visor`: 0 missing
 
-Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the agent prompt in the band. Parity: 0 missing.
+Done here: Small text: 0 visible text runs under 13px at 1470, 375 and 320 (11-12px mono capitals excepted; none on the page), measured by walking every text node in `main`. The hero's lowercase mono runs ("cached and priced", the "train-01" tab, the audit line) are 13px. Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the agent prompt in the band. Parity: 0 missing.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; every literal value is a deck value
@@ -66,16 +66,16 @@ Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK on the page JSX and CSS; only the deck neutrals (the CSS writes them as literal deck hex values, not `var()` tokens). The tile pictures draw ink on `#fafafa` chips, so no word is white on white. Captions sit under headings. Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only); objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set. /sentinel uses the same side look the other way round.
+Done here: `taste.py` OK on the page JSX and CSS; only the deck neutrals (the CSS writes them as literal deck hex values, not `var()` tokens). The tile pictures draw ink on `#fafafa` chips, so no word is white on white. Captions sit under headings. Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only); objects are outlined with a hairline and carry no shadow. Icons are one inline 16px stroke set. Neighbours: /sentinel and /world sit beside their object (side), /search centres (rise), /telemetry and /billing split, /stream frames; /visor is the only left-set title over a full-width pipeline console, and the only pinned numbered room.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
 - [x] Focus ring visible on every stop of a Tab crawl
-- [x] Dialogs are native, trap focus and return it
+- [x] Dialogs trap focus and return it (the kit `Sheet`, a `role="dialog"` element, not a native `<dialog>`)
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: the tiles open in the kit Sheet (focus held, Escape closes, focus returns). Inputs: prefix input (20px), machine count (48px icon buttons), dry run or launch toggle. Forks deleted: see the top of this card.
+Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: the six rows open in the kit Sheet, a `div role="dialog"` (focus held, Escape closes, focus returns). Inputs: prefix input (20px text; focus draws the one 2px ink ring with a white halo, caret in ink), machine count (48px icon buttons), dry run or launch toggle. Row hover on desktop previews that item's picture on the stage, brightens the title and turns the plus. Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: every tile opens into its card (kit Sheet). Supporting: launch sequence (time, pausable), each tile's picture playing once as it arrives and again on hover (bars price, machines name themselves, the pool fills, "quote" cuts in by line mask, SSH is picked, audit rows land), the naming tool's batch naming itself 01, 02, 03 on arrival (time), a blinking console caret (the one idle mover in the tile room), inventory re-flow (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: controls answer in 90 to 300 ms; the tile pictures' one-time arrivals (bars, the "quote" line mask) run 500 to 700 ms with ease-emphasis.
+Done here: Signature: the pinned room (desktop): scroll walks 01 → 06, a hairline under the current row fills over 4 s and the room then steps on by itself, hovering a row previews it, and the stage replays that item's picture large (bars price, machines name themselves, the pool fills, "quote" cuts in by line mask, SSH is picked, audit rows land); any row opens into its card (kit Sheet). On phones the rows stack as cards whose pictures play once on arrival. Supporting: launch sequence (time, pausable; the pause also stops the console caret), the naming tool's batch naming itself 01, 02, 03 on arrival (time), inventory re-flow (state), the close's inventory landing once (time). `scripts/variety.py` OK. Kinds: idle (hero, the room's resting step), time, state, pointer (row preview), with scroll only driving the pinned room. Timers are `setTimeout` chains, no `setInterval`. `motion.mjs` desktop: 2 still screens of 9 (the hero caught mid-hold, and the room's entry frame). Reduced motion (`useCalm`) renders the settled frame. No springs: controls answer in 90 to 300 ms; the tile pictures' one-time arrivals (bars, the "quote" line mask) run 500 to 700 ms with ease-emphasis.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -100,7 +100,7 @@ Done here: 0 videos. The moving objects are drawn in HTML and SVG; the one loop 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Overflow 0px at 375 and 0px at 320. Under 900px all three providers show as compact rows, so the AWS pick still happens on the phone. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 388px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+Done here: Overflow 0px at 375 and 0px at 320. Under 900px the three providers sit side by side (48px chips), so the AWS pick still happens on the phone and the first machines land inside the first screen. 0 controls in `main` under 44px at 1470, 375 and 320 after scrolling the whole page (the shared footer and header were not counted). The primary ask's bottom edge sits at 388px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: Overflow 0px at 375 and 0px at 320. Under 900px all three providers s
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Lowest measured text contrast 6.67:1 (0 runs flagged). Headings 12222 with 0 skips. Pause controls: the hero fleet. Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
+Done here: Resting states are legible: the dry-run line and the unanswered providers' "…" are #525252 on #f5f5f5 / #fff (7.0:1 / 7.8:1) at every step of the loop, no faded opacity; an unanswered provider is drawn with a dashed border instead of 45% opacity. Inactive rows in the dark room are white at 55% on black (about 6.6:1). Contrast is computed from the CSS values, not run through an automated checker this round. Headings 12222 with 0 skips. Pause controls: the hero fleet. Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 6.67:1 (0 runs flagged). Headings 12222
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /visor/` returns the h1 in the HTML. Layout shift 0.008 desktop, 0.000 phone (Playwright walk, whole page, 16:40): the hero inventory reserves five rows and new machines land below the pool and cluster, so nothing moves. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /visor/` returns the h1 in the HTML. Layout shift 0.0024 desktop, 0.0005 phone (Playwright walk, whole page, round 2); `motion.mjs` 0.014 desktop, 0.000 phone: the hero inventory reserves three dashed machine slots that fill in place, so nothing moves. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -149,7 +149,7 @@ Done here: Code: the agent prompt in the band. The agent prompt is one string sh
 - [ ] A failed submit keeps its values and shows no success (n/a: no submit)
 - [x] A thrown island does not blank the page
 
-Done here: Every word is in the server HTML and every demo is local, so a blocked network still shows the whole page; JS off was checked above. Each demo is its own component; the page has no shared runtime state to lose.
+Done here: Every word is in the server HTML (the six paragraphs too, in their rows, shown in place with JS off and `hidden="until-found"` with JS on) and every demo is local, so a blocked network still shows the whole page. Each demo is its own component; the page has no shared runtime state to lose.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
@@ -157,4 +157,4 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/visor.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Visor.jsx`. Last critic verdict on file: 6/10 (walked an earlier version); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Visor.jsx`. Last critic verdict on file: 7/10 (walked round 1); this version (round 2) waits for the next walk.

@@ -5,7 +5,7 @@
 .zp-fleet-k { padding-right: 56px; }
 .zp-hero { padding: clamp(104px, 8.4vw, 128px) 0 clamp(96px, 10vw, 160px); overflow: hidden; }
 .zp-top { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; margin-bottom: clamp(36px, 3.6vw, 56px); }
-.zp-kick { display: inline-flex; align-items: center; gap: 10px; margin: 18px 0 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #a1a1a6; }
+.zp-kick { display: inline-flex; align-items: center; gap: 10px; margin: 18px 0 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #a3a3a3; }
 .zp-kick img { width: 26px; height: 26px; border-radius: 7px; object-fit: cover; }
 .zp-h1 { font-size: clamp(120px, 15vw, 224px); line-height: .8; letter-spacing: -.07em; }
 .zp-top-r { display: flex; flex-direction: column; gap: 28px; padding-bottom: 10px; }
@@ -14,28 +14,28 @@
 .zp-hero .w2-ghost { height: 56px; }
 
 /* the two lanes: the buffer and the text */
-.zp-wire { display: grid; gap: 14px; padding: clamp(18px, 2.4vw, 28px); border: 1px solid rgba(255, 255, 255, .1); border-radius: 22px; background: #0c0c0e; }
-.zp-lane-k { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 12px; font-size: 12.5px; color: #86868b; }
-.zp-lane-k span:last-child { color: #f5f5f7; }
+.zp-wire { display: grid; gap: 14px; padding: clamp(18px, 2.4vw, 28px); border: 1px solid rgba(255, 255, 255, .1); border-radius: 22px; background: #0a0a0a; }
+.zp-lane-k { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 12px; font-size: 12.5px; color: #a3a3a3; }
+.zp-lane-k span:last-child { color: #fafafa; }
 .zp-buf { position: relative; display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); gap: 0; padding: 6px 0 26px; }
 .zp-word { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; padding: 0 3px; }
 .zp-word + .zp-word { border-left: 1px solid rgba(255, 255, 255, .08); }
-.zp-word i { height: 22px; border-radius: 3px; background: #1c1c20; transition: background .45s var(--ease), transform .45s var(--ease); }
-.zp-word.hdr i { background: #2c2c32; }
-.zp-word.on i { background: #f5f5f7; transform: translateY(-3px); }
-.zp-word span { position: absolute; left: 4px; bottom: -22px; font-size: 12px; color: #a1a1a6; white-space: nowrap; }
-.zp-word.on span { color: #f5f5f7; }
+.zp-word i { height: 22px; border-radius: 3px; background: #171717; transition: background .45s var(--ease), transform .45s var(--ease); }
+.zp-word.hdr i { background: #262626; }
+.zp-word.on i { background: #fafafa; transform: translateY(-3px); }
+.zp-word span { position: absolute; left: 4px; bottom: -22px; font-size: 12px; color: #a3a3a3; white-space: nowrap; }
+.zp-word.on span { color: #fafafa; }
 .zp-ptr { position: absolute; left: 0; top: 0; width: calc(100% / 11); height: 2px; background: var(--acc); border-radius: 2px; }
 .zp-ptr::after { content: ''; position: absolute; left: 0; top: -5px; width: 2px; height: 12px; background: var(--acc); }
 .zp-lane.json { padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .08); }
-.zp-json { margin: 0; font-size: 14.5px; line-height: 1.7; word-break: break-all; color: #48484f; }
+.zp-json { margin: 0; font-size: 14.5px; line-height: 1.7; word-break: break-all; color: #737373; }
 .zp-json .seen { color: var(--acc); }
 .zp-json .cur { color: #0a0a0a; background: var(--acc); border-radius: 3px; }
 .zp-pick { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .08); }
-.zp-pick > span { margin-right: 6px; font-size: 12.5px; color: #86868b; }
-.zp-pick button { min-height: 40px; padding: 0 16px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; background: transparent; color: #d1d1d6; font-size: 14px; cursor: pointer; transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease); }
+.zp-pick > span { margin-right: 6px; font-size: 12.5px; color: #a3a3a3; }
+.zp-pick button { min-height: 40px; padding: 0 16px; border: 1px solid rgba(255, 255, 255, .16); border-radius: 999px; background: transparent; color: #d4d4d4; font-size: 14px; cursor: pointer; transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease); }
 @media (hover: hover) { .zp-pick button:hover { border-color: rgba(255, 255, 255, .45); color: #fff; } }
-.zp-pick button[aria-checked='true'] { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
+.zp-pick button[aria-checked='true'] { background: #fafafa; color: #0a0a0a; border-color: #fafafa; }
 
 .zp-wire { border-radius: 28px; padding: clamp(22px, 2.8vw, 40px); gap: 20px; }
 .zp-word i { height: 30px; }
@@ -49,10 +49,10 @@
 .zp-points li::before { content: ''; position: absolute; left: 0; right: 24px; top: -1px; height: 2px; background: var(--acc); transform: scaleX(0); transform-origin: 0 50%; transition: transform .6s var(--ease); }
 .zp-points li.on::before { transform: scaleX(1); }
 .zp-points button { display: grid; gap: 10px; width: 100%; height: 100%; padding: 24px 24px 8px 0; border: 0; background: none; color: inherit; text-align: left; font: inherit; cursor: pointer; }
-.zp-points span { font-size: 13px; color: #86868b; }
+.zp-points span { font-size: 13px; color: #a3a3a3; }
 .zp-points b { font-size: clamp(24px, 2.4vw, 36px); font-weight: 600; letter-spacing: -.04em; line-height: 1.05; transition: color .3s; }
-.zp-points em { font-style: normal; font-size: 16px; color: #86868b; }
-.zp-points li:not(.on) b { color: #6e6e73; }
+.zp-points em { font-style: normal; font-size: 16px; color: #a3a3a3; }
+.zp-points li:not(.on) b { color: #737373; }
 @media (hover: hover) { .zp-points button:hover b { color: #fff; } }
 
 /* why: packets that open */
@@ -60,7 +60,7 @@
 .zp-packets .w2-oc-card { min-height: 280px; }
 .zp-packets .w2-oc-t { font-size: clamp(20px, 1.7vw, 25px); }
 .zp-hdr { display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px; width: calc(100% - 44px); }
-.zp-hdr i { height: 10px; border-radius: 2px; background: #e3e3e8; }
+.zp-hdr i { height: 10px; border-radius: 2px; background: #e4e4e4; }
 .zp-hdr i.f { background: var(--ink); }
 
 .w2-sheet .zp-hdr { width: 100%; }
@@ -70,15 +70,15 @@
 .zp-run-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(32px, 5vw, 96px); align-items: center; }
 .zp-run-copy { display: flex; flex-direction: column; gap: 20px; }
 .zp-zapd code { padding: 2px 8px; border-radius: 6px; background: #fff; font: 500 .92em var(--mono); color: var(--ink); }
-.zp-term { border-radius: 28px; background: #0b0b0c; color: #e9e9ec; box-shadow: 0 30px 60px -36px rgba(0, 0, 0, .5); overflow: hidden; }
+.zp-term { border-radius: 28px; background: #0a0a0a; color: #e5e5e5; box-shadow: 0 30px 60px -36px rgba(0, 0, 0, .5); overflow: hidden; }
 .zp-term-bar { display: flex; align-items: center; gap: 7px; padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
-.zp-term-bar > i { width: 11px; height: 11px; border-radius: 50%; background: #2c2c30; }
-.zp-term-bar > span { margin-left: 8px; font-size: 12.5px; color: #86868b; }
-.zp-term-bar .x-copy { margin-left: auto; background: #1d1d20; border-color: rgba(255, 255, 255, .1); color: #d1d1d6; }
+.zp-term-bar > i { width: 11px; height: 11px; border-radius: 50%; background: #262626; }
+.zp-term-bar > span { margin-left: 8px; font-size: 12.5px; color: #a3a3a3; }
+.zp-term-bar .x-copy { margin-left: auto; background: #171717; border-color: rgba(255, 255, 255, .1); color: #d4d4d4; }
 .zp-term pre { margin: 0; padding: 28px; font-size: clamp(14px, 1.15vw, 17px); line-height: 1.75; white-space: pre-wrap; word-break: break-all; }
 .zp-term pre span { opacity: .18; transition: opacity .35s var(--ease); }
 .zp-term pre span.in { opacity: 1; }
-.zp-term pre span.c { color: #86868b; }
+.zp-term pre span.c { color: #a3a3a3; }
 
 
 /* built: figures, the diagram, the fleet */
@@ -88,8 +88,8 @@
 .zp-stats li:first-child b { color: var(--ink); }
 .zp-stats span { font-size: clamp(17px, 1.4vw, 21px); color: var(--soft); }
 .zp-built-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 16px; align-items: stretch; }
-.zp-ascii { min-width: 0; border-radius: 28px; background: #0b0b0c; overflow: auto; display: flex; align-items: center; }
-.zp-ascii pre { margin: 0; padding: 28px; font-size: clamp(11px, .95vw, 14px); line-height: 1.35; color: #d1d1d6; }
+.zp-ascii { min-width: 0; border-radius: 28px; background: #0a0a0a; overflow: auto; display: flex; align-items: center; }
+.zp-ascii pre { margin: 0; padding: 28px; font-size: clamp(11px, .95vw, 14px); line-height: 1.35; color: #d4d4d4; }
 .zp-fleet { display: grid; gap: 20px; padding: clamp(24px, 3vw, 36px); }
 .zp-fleet-k { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 10px 12px; font-size: 16px; color: var(--soft); }
 .zp-fleet-k b { font-size: clamp(56px, 5vw, 80px); line-height: .9; color: var(--ink); }
@@ -99,10 +99,10 @@
 .zp-topo-k { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
 .zp-procs { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 3px; min-height: 12px; }
 .zp-topo:not(.one) .zp-procs { height: 108px; overflow: hidden; }
-.zp-procs i { width: 10px; height: 10px; border-radius: 2px; background: #c7c7cc; animation: zp-in .45s var(--ease) both; }
+.zp-procs i { width: 10px; height: 10px; border-radius: 2px; background: #d4d4d4; animation: zp-in .45s var(--ease) both; }
 .zp-procs i[style*='--s: 0'] { background: var(--ink); }
-.zp-procs i[style*='--s: 1'] { background: #6e6e73; }
-.zp-topo.one .zp-procs i.d { width: 26px; background: #0a0a0b; box-shadow: 0 0 0 2px #fff, 0 0 0 3px #0a0a0b; }
+.zp-procs i[style*='--s: 1'] { background: #737373; }
+.zp-topo.one .zp-procs i.d { width: 26px; background: #0a0a0a; box-shadow: 0 0 0 2px #fff, 0 0 0 3px #0a0a0a; }
 @keyframes zp-in { from { opacity: 0; transform: scale(.3); } }
 .zp-topo-n { margin: 0; font-size: 14px; color: var(--soft); }
 .zp-topo-n b { font-size: 16px; color: var(--ink); }
@@ -129,7 +129,7 @@
 .zp-chip2 { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 999px; background: #fff; color: var(--ink); font: 500 14px/1 var(--mono); text-decoration: none; }
 .zp-chip2 span { color: var(--faint); }
 .zp-addr { display: inline-flex; align-items: center; gap: 4px; margin: 18px 0 0; font-size: 15px; color: var(--soft); }
-.zp-addr i { width: 8px; height: 1.1em; background: #0a0a0b; animation: zp-blink 1.1s steps(1) 4; }
+.zp-addr i { width: 8px; height: 1.1em; background: #0a0a0a; animation: zp-blink 1.1s steps(1) 4; }
 @keyframes zp-blink { 50% { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) { .zp-chip span, .zp-addr i, .zp-procs i { animation: none; } }
@@ -303,3 +303,58 @@ html:not(.js) .zp-dia-l { clip-path: none; }
   .zp-row { padding: 0 4px; font-size: 16px; min-height: 56px; }
   .zp-row em { display: none; }
 }
+
+/* v2.6 (round-2 review) */
+/* the terminal: lines never wrap (they scroll sideways inside a labelled region, so no token is split), and the box keeps
+   one height through the whole loop: six lines at 1.75, plus padding */
+.zp-term pre { white-space: pre; word-break: normal; overflow-x: auto; height: calc(6 * 1.75em + 56px); scrollbar-width: thin; }
+.zp-term pre:focus-visible { outline: 2px solid #fafafa; outline-offset: -4px; border-radius: 0 0 24px 24px; }
+.zp-term-bar .x-copy { font-size: 13px; }
+/* reduced motion: the page-local Stage sits in its final place from the first paint */
+@media (prefers-reduced-motion: reduce) { .zp-settle { transform: none !important; } }
+/* the pinned stage never scrolls sideways under focus */
+.zp-why.pinned .zp-why-stick { overflow: clip; }
+/* type floor: labels at 13px (desktop), 14px (phone) */
+.zp-lane-k, .zp-pick > span, .zp-term-bar > span, .zp-word span, .zp-dia-row.srv b { font-size: 13px; }
+/* field chips are 44px everywhere */
+.zp-pick button { min-height: 44px; }
+/* the hero ask's hover can be seen: the white fill steps down to the brand silver */
+@media (hover: hover) { .zp-hero .w2-cta:hover { background: #e4e4e4; } }
+/* the slider's press wins over its hover */
+.zp-slide[data-press] .zp-slide-k, .zp-slide[data-press]:hover .zp-slide-k { transform: scale(.92); transition-duration: 90ms; }
+.zp-hero .w2-cta { background: #fafafa; }
+/* the zero is a fact, not a hero figure (MASTER part 5): it sits at medium beside the two figures */
+.zp-stats li.zero .zp-fig { font-size: 32px; line-height: 2; font-weight: 400; }
+/* the one scale moment: N:1 and 1:M arrive at hero size, hold a beat, then settle to figure size */
+.zp-stats li { padding-top: 64px; } /* room above the figures for the moment they are big, so nothing overlaps */
+.zp-stats li:not(.zero) .zp-fig { transform-origin: 0 100%; }
+.js .zp-stats:not(.seen) li:not(.zero) .zp-fig { transform: scale(1.75); }
+.zp-stats.seen li:not(.zero) .zp-fig { animation: zp-grow 1.6s cubic-bezier(.4, 0, .2, 1) both; }
+.zp-stats.seen li:nth-child(2) .zp-fig { animation-delay: .12s; }
+@keyframes zp-grow { 0%, 40% { transform: scale(1.75); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .zp-stats.seen .zp-fig { animation: none; } .js .zp-stats .zp-fig { transform: none !important; } }
+/* the sidecar box: squares sized to the count, so a small fleet fills its box instead of leaving it empty */
+.zp-topo:not(.one) .zp-procs { gap: 4px; }
+.zp-topo:not(.one) .zp-procs i { width: var(--sz, 10px); height: var(--sz, 10px); border-radius: 3px; }
+/* the diagram's "..." sit inside their rows */
+.zp-dia-row { grid-template-columns: repeat(4, minmax(0, 1fr)) auto; }
+.zp-dia-row.srv { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
+.zp-dia-row em, .zp-dia-row.srv em { position: static; align-self: center; padding: 0 2px; font-size: 14px; }
+/* the band meets the footer: no white strip under it */
+.gx .zp-point.w2-sec { padding-bottom: clamp(16px, 2vw, 24px) !important; }
+/* the copy button is a full 44px target */
+.zp-term-bar .x-copy { height: 44px; padding: 0 14px; }
+/* one solid per screen: on phones the shared header keeps its solid "Try Hanzo", so the page's own asks are outlined
+   there (and on desktop with JS off, where the header cannot step aside) */
+@media (max-width: 899px) {
+  .zp .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .9); }
+  .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgba(250, 250, 250, .8); }
+  .zp-word span { font-size: 14px; }
+  .zp-lane-k, .zp-pick > span, .zp-term-bar > span, .zp-dia-row.srv b, .zp-term-bar .x-copy { font-size: 14px; }
+  .zp-hero .zp-acts { gap: 8px 16px; }
+  .zp-hero .zp-acts > :first-child { flex-basis: 100%; } /* the ask on its own row; the two text links share the next */
+  .zp-why-at { font-size: 14px; }
+  .zp-dia-row em { font-size: 14px; }
+}
+html:not(.js) .zp .w2-cta { background: transparent; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .9); }
+html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgba(250, 250, 250, .8); }

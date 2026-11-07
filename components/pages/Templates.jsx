@@ -219,9 +219,9 @@ function Commands({ t }) {
             <Copy text={lines.map((l) => l[0]).join('\n')} />
           </div>
           <pre className="xtp-pre">
-            {lines.map(([c]) => {
+            {lines.map(([c], li) => {
               const k = Math.max(0, Math.min(c.length, left));
-              const typing = left >= 0 && k < c.length; // the line the caret is on
+              const typing = left >= 0 && (k < c.length || li === lines.length - 1); // the line the caret is on (the last, once done)
               const wait = left < 0; // a line not reached yet: its prompt waits too
               left -= c.length;
               return (
@@ -230,7 +230,6 @@ function Commands({ t }) {
                 </span>
               );
             })}
-            {n >= total && <span className="xtp-caret" aria-hidden="true" />}
           </pre>
         </div>
       </div>

@@ -147,7 +147,7 @@ function Config({ at, compact }) {
           {/* builder.yaml is 9 lines: under it, the config.yaml the built binary runs, dimmed, so the window stays full */}
           {at === 4 && !compact && <>
             <span className="tl2-ln tl2-ghost-h" aria-hidden="true"><em>{'  '}</em>config.yaml{'\n'}</span>
-            {CFG.slice(0, 10).map(([l], i) => <span key={'g' + i} className="tl2-ln tl2-ghost" aria-hidden="true"><em>{String(i + 1).padStart(2, ' ')}</em>{l}{'\n'}</span>)}
+            {CFG.slice(0, 9).map(([l], i) => <span key={'g' + i} className="tl2-ln tl2-ghost" aria-hidden="true"><em>{String(i + 1).padStart(2, ' ')}</em>{l}{'\n'}</span>)}
           </>}
         </code></pre>
       </div>
@@ -201,7 +201,7 @@ function YourConfig() {
       {group('processors', ['batching', 'memory ceiling'], prc, setPrc)}
       <div className="tl2-yc-out">
         <div className="tl2-yc-bar l2-mono"><span>config.yaml</span><Copy text={text} /></div>
-        <pre><code>{text}</code></pre>
+        <pre tabIndex={0} aria-label="config.yaml"><code>{text}</code></pre>
       </div>
     </div>
   );

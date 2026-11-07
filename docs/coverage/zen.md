@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Zen.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/zen/` · metric id: `signup_start`
 
 Open copy questions for James: (1) the h1 is "Zen" with the home model card's line ("Deep reasoning for complex problems."), and live /zen's h1 "Open models. Yours to run." sits beside the settled film as an h2 with the same words: keep, or make the live line the h1 again? (2) The trace's tab names reuse Hanzo's card rows ("Open weights", "Text, images and video", "Packed ternary, 5.95 GB"), its button uses the register's "Next" and "Replay", and its tablist is named "Zen": no new words, but the tabs are a new use of them. Labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the kit Band's blur reveal; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our spec table and headings, raw `.x-btn` asks (now `Cta`), raw `<img>` (now `Img`, `ModelFilm`), cursor labels.
 
 ## 1. Strategy and conversion
@@ -13,7 +13,7 @@ Forks this page deleted: our spec table and headings, raw `.x-btn` asks (now `Ct
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: model page, prices are the model's own)
 - [x] Open copy questions for James listed, none decided
 
-Done here: `app/zen/page.jsx` carries Persona, Goal, CTA, Metric `signup_start`, Signature and Beyond. The one solid ask "Try Hanzo" (/login) is solid (white on the film) on the first screen while the header ask stays quiet, solid beside the settled headline, then solid in the closing band (`zen.band`); the header turns solid only once the page's ask leaves view. One h1 ("Zen") is in the server HTML.
+Done here: `app/zen/page.jsx` carries Persona, Goal, CTA, Metric `signup_start`, Signature and Beyond. The one solid ask "Try Hanzo" (/login): on desktop the page's own ask fills (white on the film, then ink beside the settled headline) while the shared header goes quiet, and the header is solid when no page ask is on screen; on phones the header carries the solid and the page's asks are outlined; the closing band's ask (`zen.band`) is solid. One h1 ("Zen") is in the server HTML.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -39,7 +39,7 @@ Done here: Zen's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: "Try Hanzo" appears 4 times: the header, the first-screen ask (white fill on the film), the settled headline and the closing band; the chapters and the trace cards no longer repeat it. On desktop the first-screen and headline asks are solid while the header is quiet; on phones the header stays solid, so the settled headline's ask is outlined (one solid per screen at 375×812 and 375×667). `data-cta` ids: `zen.first` (first screen; its `data-thumb` is set by the shared Launch, which has none: requested), `zen.hero` and `zen.band` (both with `data-thumb`). The settled headline's links stay out of the tab order (`visibility: hidden`) until the headline shows.
+Done here: "Try Hanzo" appears 4 times: the header, the first-screen ask (white fill on the film), the settled headline and the closing band; the chapters and the trace cards no longer repeat it. One solid "Try Hanzo" per screen, in step with the shared header: on desktop the shared `Ask.jsx` quiets the header (`html[data-ask=quiet]`) while a page "Try Hanzo" is on screen, and the page's own ask then fills (white on the film, ink beside the settled headline); when no page ask is on screen the header is the solid one. On phones (≤700px) the header stays solid and the page's first-screen and headline asks stay outlined. Measured by sampling every 300px of scroll at 1470 and 375: exactly one solid "Try Hanzo" at each stop after arrival (the first ~0.5 s, while the first-screen ask fades in, can show none). The closing band's ask (`zen.band`, `data-thumb`) is solid while the header is quiet. `data-cta` ids: `zen.first`, `zen.hero`, `zen.band`. The settled headline's links stay in the tab order; focusing one scrolls the stage to its settled point so it shows.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -80,7 +80,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Ch
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
-- [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`): the kit ticks the trace tabs and taps the asks; the trace plays the faint `done` settle when it lands its answer on screen
 
 Done here: Signature: the reasoning trace (Zen reasons which Zen to run, lighting the row it reads on the two cards). Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
 
@@ -105,7 +105,7 @@ Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, 
 - [x] Pause control on every moving item
 - [ ] n/a: forms labelled; first error focused (no form)
 - [x] One h1; no heading skips; names start with visible text
-- [x] Keyboard reaches every control
+- [x] Keyboard reaches every control (desktop: focusing the settled headline's "Try Hanzo", "API Platform" or "Docs on GitHub" scrolls the stage to its settled point, so they show; measured Tab order Try Hanzo → Try Hanzo → API Platform → Docs on GitHub → Close → Pause → chapters → trace)
 
 Done here: body text is #525252 on white and #a3a3a3 or better on black. The `FilmPause` (44px, `aria-pressed`) sits at the stage foot. h1 is the name, h2 the headline and section heads, h3 the chapters. Tabs and radios take arrow keys.
 

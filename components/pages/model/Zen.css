@@ -1,10 +1,18 @@
 /* Zen (ze-): figures, the Zen 6 chapters, the reasoning console beside its two cards, the spec, the family */
 .ze-head { width: min(48%, 600px); }
-/* one solid ask per screen: the header goes quiet while a page ask is in view, so the first-screen ask is the solid one */
-.lv-stage[data-hero='zen'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
-@media (hover: hover) { .lv-stage[data-hero='zen'] .lv-name-ask .x-btn:hover { background: #e5e5e5; border-color: #e5e5e5; } }
-/* the settled headline's links leave the tab order until the headline is shown */
-.js .ze-head:not([data-on]) .lv-acts { visibility: hidden; }
+/* one solid ask per screen, in step with the shared header: Ask.jsx sets html[data-ask=quiet] (desktop only) while a
+   page "Try Hanzo" is on screen. Then the page's own ask fills; otherwise it stays outlined and the header is the solid. */
+.lv-stage[data-hero='zen'] :is(.lv-name-ask, .lv-acts) .x-btn { transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1), border-color .3s cubic-bezier(0, 0, .2, 1); }
+:root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+:root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow) { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+@media (hover: hover) {
+  :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-name-ask .x-btn:hover { background: #e4e4e7; border-color: #e4e4e7; }
+  :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { background: #262626; border-color: #262626; }
+  .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { border-color: #0a0a0a; }
+}
+.ze-art-sig { background: #000; color: rgba(255, 255, 255, .5); }
+.ze-sigart { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* keyboard: the settled headline's links stay in the tab order; focusing one scrolls the stage to its settled point */
 /* the film pause rides inside the settled arch, never alone on white */
 @media (min-width: 901px) { .lv-head.ze-head[data-on] ~ .lv-pause { right: calc(40% - min(32%, 64svh) + 16px); bottom: calc(9svh + 16px); } }
 .ze-figs-sec { padding-bottom: 0; }
@@ -24,6 +32,7 @@
 .ze-open p { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px; font-size: 15px; }
 .ze-ch-specs { display: flex; flex-wrap: wrap; gap: 6px; }
 .ze-ch-specs span { padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--soft); }
+@media (min-width: 901px) { .lv-room.ze-live { padding-block: 72px; } } /* the room fits one 801px screen */
 .ze-console { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; }
 .ze-trace { position: relative; padding: 26px 28px 24px; border-right: 1px solid rgba(255, 255, 255, .08); display: flex; flex-direction: column; }
 .ze-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -73,8 +82,6 @@
 @media (hover: hover) { .ze-live .ze-l:hover { text-decoration: underline; color: #fff; } }
 /* a chapter that is not showing keeps its links out of the tab order */
 #ze-ch[data-live] .lv-ch-t[aria-hidden='true'] :is(a, button) { visibility: hidden; }
-/* phones: the header carries the solid ask, so the settled headline's ask is outlined */
-@media (max-width: 900px) { .ze-head .x-btn.solid { background: transparent; color: #0a0a0a; border-color: rgba(10, 10, 10, .3); } }
 /* trace slots waiting to be filled read as empty slots, not a black void */
 .js .ze-steps li:not([data-in]) { opacity: 1; transform: none; background: transparent; border-style: dashed; border-color: rgba(255, 255, 255, .1); color: transparent; }
 .js .ze-steps li:not([data-in]) .ze-n { color: #404040; }
@@ -86,7 +93,8 @@
 .ze-fam li.big .ze-fam-a { min-height: 560px; background: #000; color: #fff; }
 .ze-fam li.big .ze-fam-d { color: rgba(255, 255, 255, .82); }
 .ze-fam li.big .ze-sig { color: rgba(255, 255, 255, .4); }
-@media (hover: hover) { .ze-fam-a:hover { background: #ededed; } .ze-fam li.big .ze-fam-a:hover { background: #0a0a0a; } }
+@media (hover: hover) { .ze-fam-a:hover { background: #ededed; } .ze-fam li.big .ze-fam-a:hover { background: #171717; } .ze-fam li.big .ze-fam-a:hover .ze-sig { color: rgba(255, 255, 255, .6); } }
+.ze-sig { transition: color .4s var(--ease); }
 .ze-fam-a:active { transform: scale(.98); }
 .ze-sig { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(0, 0, 0, .28); }
 .ze-fam-n { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
@@ -103,10 +111,16 @@
   .ze-open p { grid-template-columns: auto 1fr; font-size: 14px; }
   .ze-open em { display: none; }
   .ze-console { grid-template-columns: 1fr; }
-  .ze-trace { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .08); padding: 20px 16px; min-height: 620px; } /* the trace's tallest state, reserved so the cards never move */
-  .ze-steps { min-height: 300px; }
-  .ze-steps li { font-size: 14px; padding: 11px 12px; grid-template-columns: 28px 1fr; }
-  .ze-cards { padding: 14px; }
+  .ze-trace { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .08); padding: 20px 16px; }
+  /* every slot holds the longest step (3 lines at 375), so switching needs never moves the cards */
+  .ze-steps li { font-size: 14px; padding: 11px 12px; grid-template-columns: 28px 1fr; min-height: 85px; align-items: start; }
+  /* phones: the two cards sit above the trace, compact, so the row a step reads is on screen with the step */
+  .ze-cards { order: -1; padding: 14px; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ze-card { padding: 14px; border-radius: 16px; }
+  .ze-card h3 { font-size: 17px; }
+  .ze-card code, .ze-card .ze-price, .ze-card .ze-acts { display: none; }
+  .ze-card .ze-row { font-size: 14px; }
+  .ze-card .ze-specs { flex-direction: column; align-items: flex-start; }
   .ze-fam { grid-template-columns: 1fr; gap: 16px; }
   .ze-fam-a, .ze-fam li.big .ze-fam-a { min-height: 240px; padding: 24px; }
 }

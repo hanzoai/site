@@ -1,87 +1,111 @@
-# /uta: James-eye review
+# /uta: James-eye review (third walk)
 
-Walked on main at `32406a2c` against the dev server, 7 Nov 16:05 to 16:36 UTC, under MASTER.md and JAMES.md. I walked it moving at 1470×801 and 375×812 in Playwright Chromium:
-- a slow wheel scroll of half a screen per step, dwelling 2.2 s on each screen and comparing two frames to catch anything that moves without input;
-- a header-ask timeline every 100 ms from navigation;
-- hover and press on the asks, presets, solo, roll tap, Download MIDI, Pause, the map tabs and cards;
-- a card opened into its page and Back;
-- a PerformanceObserver for layout shift and `document.fonts` for the swap;
-- reduced motion, JS off, 375×667 and 320.
+Walked on main at `54289c8b` (page last changed in `5f423b08`) against the running dev server, 7 Nov about 16:45 to 17:10 UTC, under MASTER.md and JAMES.md. Playwright Chromium, moving, at 1470×801 and 375×812:
+- a slow wheel scroll (an eighth of a screen per tick), dwelling on every screen and comparing two frames 1.5 s apart to catch what moves without input;
+- the header ask and every solid fill sampled every 40px of scroll from the top, with and without the cookie card;
+- hover and press read from computed styles on every control (asks, film Pause, presets, solo, Pause/Play, Download MIDI, Sound, chapter rail, Band links); the piano roll tapped at both sizes; a model card opened into its page and Back;
+- a Tab crawl with an opacity/visibility check up the ancestor chain;
+- a PerformanceObserver for layout shift, a 100 ms timeline of the h1 box and `document.fonts`;
+- reduced motion, JS off at both sizes, 320×640 and 375×667;
+- `node scripts/motion.mjs /uta` (films in `shots/uta/`), `parity.py`, `taste.py`.
 
-I also ran `node scripts/motion.mjs /uta` (films in `shots/uta/`), `parity.py`, `taste.py` and `variety.py`.
+Verdict: 7/10
 
-Verdict: 6/10
+First complaint: "It's much better, and the piano roll is lovely. But as I scroll past the name, the button top right goes 'Try Hanzo', then 'Request access', then 'Try Hanzo' again, and the icons next to it jump each time. For a second there are two black buttons on screen. Pick one and keep it still."
 
-First complaint: "On my phone the name's gone before I've read it, and the top bar keeps flicking between 'Try Hanzo' and 'Request access' and shoving the icons about. And why am I looking at the same six black cards twice?"
+**Cap: false claims on the card (MASTER section 6).** The page alone scores 7, and two lines on `docs/coverage/uta.md` are untrue, so 7 is also the ceiling:
+1. Part 8 says "Focus ring visible on every stop of a Tab crawl". At 1470, from the top of the page, the 2nd and 3rd Tab stops in `main` are the settled headline's "Request access" and "Try it in Design". They sit at y=504 inside `.lv-acts` at `opacity: 0`, under the hero film. The ring is drawn but nobody can see it: two invisible stops on the first screen (screenshot `tab-1`).
+2. The line above part 1 says "The page shows Hanzo's words only". The studio's "Download MIDI", "Sound off" / "Sound on" and "Play" are in neither `content/live/uta.json`, `content/pages/uta.html` nor `content/ui-strings.json`. Of these labels only "Pause" is in the register. MASTER gate 4 says new UI strings come only from `ui-strings.json`.
 
-**Cap: false claims on the card (MASTER section 6).** `docs/coverage/uta.md` claims four things the page does not do, so the verdict is capped at 7 whatever the page scores. The page scores 6 on its own (see fixes).
-1. Part 4 says "on phones the shared bar carries 'Request access' after the hero". At 375×812, with cookies rejected, no fixed bar shows at y=1500, 3000, 6000 or 8000. The phone header carries "Try Hanzo", so "Request access" never appears again on the phone until the closing Band.
-2. Parts 1 and 4 say there is "one solid fill per viewport" and that "the header carries the one solid 'Try Hanzo'". At 1470 the header ask turns outlined (`rgba(10,10,10,0)`) whenever the page's outlined ask is on screen. The first screen and the headline screen therefore have **no** solid fill: the hero ask is a white outline on the film, and `uta.hero` is a white button on white paper.
-3. Part 11 says "every target 44px or more". On the phone the Band's "Every model" and "Research preview" are 106×25 and 136×25. The desktop chapter rail buttons are 30px tall.
-4. Part 9 says "no `setInterval`" and "0 fade-ups". `Creative.jsx:127` tours the studio map with `setInterval(…, 3200)`. The map card captions swap by opacity plus y. The Band headline reveals by `opacity:0; filter:blur(12px); translateY` (the kit `ui.jsx:52`), and MASTER part 9 says "No opacity-and-blur reveal". `variety.py` passes only because it does not see these.
+Part 1's "one solid fill per screen, measured" is also only nearly true. From y≈560 to y≈740 the header's solid black ask and the headline's solid "Request access" (`uta.hero`) are on screen together. On load, at about 1.0 s, the header shows a solid "Request access" beside the white hero ask.
 
 ## Measured
-- **Console:** 0 errors and 0 warnings on every load. Once, at 375×667, the Next dev badge showed "1 Issue". I could not reproduce it in 6 more loads, so I am not counting it.
-- **Layout shift:** CLS 0.0015 at 1470 and 0.000 at 375. Every desktop shift comes from the header's right cluster at 1434, 1536, 1650, 2864, 6369, 10029 and 15832 ms, because the ask label changes width. The sound, EN and Log in controls move about 37px sideways each time. That is a jump you can see.
-- **Header ask timeline at 1470:** "Try Hanzo" (solid) for 0–500 ms, then "Request access" (solid) for 600–1700 ms, then "Try Hanzo" fading to outline at 1800–1900 ms. It changes twice in the first 2 seconds with no input, then again every time the page's ask enters or leaves view.
-- **Fonts:** Zen and Zen Mono finished loading at 857 ms. The h1 box held at 135,459, 1200×122 through the swap, so I saw no visible swap.
-- **Phone hero:** "Uta" cuts in at about 1.2 s. At **2.36 s** the stage collapses into the four stems by itself. The h1 slides under `lv-pin` and stays covered, and the first ask turns `visibility:hidden`. The name gets about 1 s on screen and never comes back on the phone.
-- **No horizontal scroll:** scrollWidth equals innerWidth at 1470, 375 and 320.
-- **Reduced motion:** no running animations after 3.5 s and 0 films playing. The roll freezes on a full frame, but its button still reads "Pause" and the status still reads "STREAMING ACTIVE".
-- **JS off:** every heading and paragraph is visible, and the header ask is solid "Try Hanzo".
-- **motion.mjs at 1470:** 12 dead hovers (the film Pause, both "Request access" asks on screen 1, and the chapter rail 01–04) and 1 still screen (y=7200). At 375: 5 dead taps, all solo or preset taps landing mid-scroll.
+- **Console:** 0 errors on 4 clean loads at each size. A red "1 Issue" badge appeared only on runs that took a screenshot right after `load`. That error was a hydration mismatch on the footer's `__html`, and it does not occur without the early screenshot, so it is the known Playwright artifact and not counted. The Treasury parse error in the log names another page's file.
+- **Layout shift:** CLS 0.0012 at 1470 and 0.0000 at 375. Every desktop shift is the shared header's right cluster: at 1.3, 1.4, 1.5, 2.8, 7.6 and 12.5 s it widens or narrows by 37.6px as the ask label changes, and the Sound, EN and Log in controls slide sideways each time.
+- **Header ask while scrolling the first 1450px at 1470:**
+  1. y 0–100: "Try Hanzo", outlined, beside the solid white `uta.first`.
+  2. y 140: "Request access", solid.
+  3. y 560–740: still solid, and `uta.hero` is solid too. **Two solid fills.**
+  4. y 710–920: "Try Hanzo", solid, then outlined.
+  5. y 1350: "Request access", outlined.
+  6. y 1430: "Request access", solid.
+
+  That is four changes of label or weight in about one and a half screens (shared header, requested in `docs/requests/`).
+- **Fonts:** fonts finished loading by 0.6 s. The h1 box held at 135,459, 1200×122 through the swap. No visible swap.
+- **Phone hero:** the hold is real. "Uta", the lede and an outlined "Request access" stay over the full-bleed film until the first scroll. With no input, at 6 s the film eases into the four stems, the name slides under the stage and the hero ask goes `visibility:hidden`. The headline's asks are on the next screen.
+- **No horizontal scroll** at 1470, 375 and 320. At 375×667 the first ask sits at y 575–619. At 320×640 it sits at y 568–612.
+- **Targets:** none under 44px in `main` at 1470, 375, 320 or 375×667.
+- **Reduced motion:** 0 running animations and 0 playing films after 3.5 s, and none after scrolling to the Band. The roll's button reads "Play" and "STREAMING ACTIVE" is hidden.
+- **JS off:** 0 hidden text elements at 1470 and 375. Name, lede and ask are on the film, and the Band is legible.
+- **Dwell:** every desktop screen changes without input down to the footer. On the phone two screens are still: the studio's spec tail at y≈2030, and the "Where Uta fits" list at y≈4870 (text only, its film is below the fold).
+- **motion.mjs:** at 1470, 0 still screens, CLS 0.001, and 137 of 392 scroll frames over 50 ms (headless, relative). Phone: 4 of 338. It flags 14 "dead" hovers (film Pause, the hero asks, rail 01/04). My computed-style probe contradicts most of these:
+  - The film Pause scales to 1.08 and lightens.
+  - The hero ask goes `#e5e5e5`.
+  - Rail 02 inks and slides 4px.
+
+  Its dead "Request access" at y=0 is the invisible headline ask above.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Desktop: yes. Uta's own film plays from frame 0, "Music generation and composition." arrives, and "Uta" cuts in at about 1.3 s at 112px. Phone: the film moves at once, but at 2.36 s the name and ask are taken away with no input. That breaks "sell in 5 seconds" on the phone.
-2. **One in, one out?** Mostly. On desktop the stage settles into four rising stems beside "Compose beyond imagination.", then the piano roll, then four pinned chapters that change one at a time. After that it turns into a document: Fits (a list), "Find your field" (six black creative cards) and then Hanzo's model grid with the same six creative models again. That is two grids of the same black cards back to back, about 4 screens of them on the phone.
-3. **A real object in every section?** Yes: the film, the stems, the live piano roll (the best thing on the page), the chapter films, the Fits film, the cards and the Band. But the four chapter pictures are one film at four zooms, so the "one panel changes" moment reads as the same picture four times.
+1. **Sells in 5 seconds, moves within 1 second?** Yes at both sizes. Uta's film plays from frame 0, "Music generation and composition." is there, and "Uta" (112px, 52px on phone) cuts in by about 1.2 s. The phone now holds the name until you scroll, which fixes the last walk's complaint. The cookie card (shared) covers the phone's lede and ask on a first visit, and it covers "Uta" itself from y=593.
+2. **One in, one out?** Yes on desktop: the film settles into four rising stems beside "Compose beyond imagination.", then the studio, then four pinned chapters that change one at a time, then Fits, then Hanzo's model grid once (the duplicate map is gone), then the Band. On the phone it reads more like a stack: chapters are picture then words, and Fits is a text list.
+3. **A real object in every section?** Yes. The film, the stems, the live piano roll, four different chapter pictures (the whole fan, a playhead crossing three cuts, the film cut into four stems, a lit D-minor keyboard), the Fits film, the nine model cards and the Band. On the phone the Fits screen is text until its film arrives below.
 4. **One ask in the sticky header, nothing floating; scale rhythm?**
-   - **Ask:** fails. The header label flips between two words and two weights, and on desktop no solid fill shows while the page's own ask is visible. Hero and header use different words on the phone. The cookie card covers the 4th chapter rail item at 1470 and the headline at 375 until it is dismissed (shared chrome).
-   - **Scale:** passes. 112px name alone on its screen, then a 44px headline beside medium stems, then 44px chapter titles one at a time with 16px body and 12px mono, and an 88px Band close.
-5. **Every hover and press answers, no jumps?**
-   - **Answers:** the hero ask fills on hover and presses to 0.98; presets press to 0.966 and solo goes light; a tap on the roll adds a melody note (verified); Download MIDI saves `uta-sketch.mid`; the map cards tilt and play their film; and a card opened into /koe with Back returning to the same scroll.
-   - **Dead:** the chapter rail and the film Pause have no hover. The header ask's hover is opacity 0.88 only, which is the banned "button that fades on hover" (shared header).
-   - **Jumps:** the header cluster jumps on every label swap.
-6. **Overlap, font swap, layout shift?** No font swap. Layout shift is small, but it is the visible header jump above. The × close overlaps the 4th stem during the desktop settle (s00). The cookie card covers content on both sizes (shared).
+   - **Ask:** not yet. The desktop header changes its label and weight four times in the first 1.5 screens, and shows two solid fills for about 180px of scroll. On the phone the solid ask is "Try Hanzo" while the page's own ask is an outlined "Request access", so the hero ask's label is not the header's (MASTER part 4). On the phone the film Pause (a 44px grey disc) sits in the white page beside "MUSIC · UTA 1" after the settle, where it reads as a floating control.
+   - **Scale:** passes. 112px name alone, a 44px headline with medium stems, 26px section heads with 44px chapter titles one at a time, 16px body and 12px mono, then a 64px Band head.
+5. **Every hover and press answers, no jumps?** Nearly.
+   - **Answers:**
+     - The asks fill on hover and press to 0.98.
+     - Presets brighten and press to 0.96. Solo inks and presses.
+     - A roll tap adds a melody note at both sizes, and a second tap removes it.
+     - A preset re-voices the roll, and solo dims the other stems (pixel-verified).
+     - Download MIDI saves `uta-sketch.mid` (289 bytes, `MThd`).
+     - The rail slides 4px. The Band links underline and press.
+     - The Koe card tilts and opens through the WebGL opener with Koe's picture full-bleed, and Back returns within about 270px of where I was.
+   - **Dead:** "Try it in Design" has no hover change. The header ask's hover is `opacity .88` only, a fade-on-hover (shared header).
+   - **Jumps:** the header cluster jumps 37.6px on every label swap.
+6. **Overlap, font swap, layout shift?**
+   - No font swap.
+   - Small CLS, but it is the visible header jump.
+   - The cookie card (shared) covers the 4th chapter rail item at 1470, and the phone hero name until dismissed.
+   - During the desktop settle the × close sits over the 4th stem for a moment.
 7. **Which reference, and is its motion there?**
-   - **synchronized.studio:** present. The card opens into its page with Koe's picture going full-bleed, and the × on the hero.
-   - **apple.com pinned chapters:** present on desktop.
-   - **motion.dev:** the gliding tab pill is there.
-   - **Missing:** the anthropic.com launch story has no benchmark-as-hero figure (the page has none in Hanzo's copy, which is fair).
-8. **Different from its neighbours?** Partly. Its own film, stem shape and piano roll are distinct. But the room order is the same creative template as Iro, Koma, Oto, Koe and Mori: stage, demo, four chapters, fits, map, model cards, Band. So is the same 40px glyph tile on every chapter.
-9. **All 18 parts covered?** The card has 18 `Done here:` lines, but four of its claims are false (cap above), and parts 1, 4, 6, 7, 9 and 11 have real gaps (below).
+   - synchronized.studio: yes, the card opens into its page.
+   - apple.com: yes, a pinned stage that settles and pinned chapters where one panel changes.
+   - motion.dev: the line-mask cut-ins.
+   - anthropic.com launch: no benchmark hero, fairly, because Hanzo's copy has none.
+8. **Different from its neighbours?** Partly. Its own stem shape, its own studio (the piano roll), and its own chapter pictures. But the room order is still the creative template shared with Iro, Koma, Oto, Koe and Mori: stage, demo, four chapters, Fits, model cards, Band.
+9. **All 18 parts covered?** The card fills all 18, but two claims are false (cap above), and parts 1, 4, 8, 9 and 11 have real gaps (below).
 10. **Banned tells?**
-    - The chapter "glyph" (`Creative.css:58`, `.cr-g`) is a 40px tile, radius 12, white at 14%, with an animated mark. It is an icon in a rounded box, on every chapter picture, and it is a second continuous mover beside the playing film.
-    - The Band headline uses an opacity-and-blur reveal.
-    - The header ask fades on hover.
-    - No hue, gradient text, Inter, purple-blue or eyebrow above a headline. `taste.py` passes.
-11. **Copy untouched?** `parity.py` gives text 74/74 and links 4/4. But the map adds words Hanzo never wrote:
-    - The heading "Find your field" appears nowhere in `content/` or `content/ui-strings.json`.
-    - The tab labels "Film", "Games" and "Design and space" are shortened from or invented beside Hanzo's own field names ("Film and trailer scoring", "Game music"). "Advertising" and "Publishing" are Hanzo's own.
+    - The header ask fades on hover (shared).
+    - The chapter-04 keys animate `background` (`Uta.css:92-93`), and MASTER part 8 says animate only transform, opacity and clip-path.
+    - Each chapter viewport runs two continuous movers (the film plus the playhead or the keys), and the studio runs the roll, the timecode and the monitor film together. MASTER part 9 says at most one per viewport.
+    - No hue, gradient text, Inter, purple-blue, icon box or label above a headline. "MUSIC" and "CAPABILITIES" sit below their headings. `taste.py` passes.
+11. **Copy untouched?** Hanzo's copy is untouched: `parity.py` gives text 74/74 and links 4/4, and the studio's labels ("STREAMING ACTIVE", "Abbey Road Master", "TIMELINE FLOW") trace to `content/live/uta.json`. But "Download MIDI", "Sound off/on" and "Play" are our words and are not in the register.
 
 ## Missing from the 18 parts
-- **Part 1:** no solid fill on the desktop first screen or the headline screen.
-- **Part 3:** the phone hero holds the h1 for about 1 s, then removes it with no input. Rooms 5 and 6 are not "one idea per 100svh": two grids of the same six models sit back to back.
-- **Part 4:** there is no phone ask bar after the hero, the header label changes twice during load, and the hero ask and the header ask differ in label on the phone.
-- **Part 6:** an invented heading and tab labels. The Band links are mismatched: "Research preview" is 20.6px/400 beside "Every model" at 15px/500.
-- **Part 7:** an icon in a rounded box on every chapter picture.
-- **Part 8 and Part 11:** the chapter rail has no hover state and is 30px tall. The phone Band links are 25px tall.
+- **Part 1:** two solid fills on screen for about 180px of scroll past the headline, and for about 1 s on load.
+- **Part 4:**
+  - The header label swaps four times while the first screens pass, and moves its neighbours.
+  - On the phone the header's solid ask is "Try Hanzo", not the hero ask's label.
+- **Part 6 / gate 4:** three control labels are not in `content/ui-strings.json`.
+- **Part 8 / Part 12:** two invisible Tab stops (the settled headline's asks, while `.lv-acts` is at opacity 0 under the film). "Try it in Design" has no hover.
 - **Part 9:**
-  - `setInterval` drives the map tour.
-  - The map captions fade up.
-  - The Band uses an opacity-and-blur reveal.
-  - Two continuous movers share each chapter viewport (the film and the glyph).
-  - Under reduced motion the roll still reads "Pause" and "STREAMING ACTIVE".
+  - Two continuous movers per chapter viewport, and three in the studio.
+  - The keys animate `background`.
+- **Part 11:** the phone film Pause sits loose in the white page after the settle. Two still screens on the phone (the studio spec tail, and the Fits list).
+- **Shared chrome, judged on the page:**
+  - The cookie card covers the phone hero name and ask, and the 4th rail item at 1470.
+  - The header ask fades on hover.
 
 ## Fixes (to reach 8)
-1. **Phone hero:** do not collapse the stage on a timer. Hold the name, lede and "Request access" until the visitor scrolls (or for at least 5 s), and let the settle follow the scroll, as on desktop.
-2. **Header ask:** keep one label and one width in the header, and stop the swap from moving the sound, EN and Log in controls (fixed-width slot, or a crossfade inside a reserved box). Request it in `docs/requests/` if it lives in the shared header. Make sure one solid fill shows on every viewport: either the page's first and headline asks go solid while the header goes quiet, or the header stays solid.
-3. **Phone ask bar:** either make the shared bar carry "Request access" after the hero at 375, or delete the claim from the card.
-4. **Repeated cards:** drop one of the two back-to-back grids of the same six creative models, or make the map a different object (for example a list with one film) so the page does not show the same cards twice.
-5. **Glyph tile:** remove the 40px rounded glyph from the chapter pictures (`Creative.css:13,58`). The film is the object, and the tile is an icon in a box and a second mover.
-6. **Chapter pictures:** make each one show something different (a different moment or crop of the film tied to the chapter, or the roll's stem for "Multitrack stem separation"), not one picture at four zooms.
-7. **Map copy:** replace "Find your field" and the invented tab labels with Hanzo's own words (the fits' own kinds), or list them as copy questions for James and use the live labels.
-8. **Map tour:** replace the `setInterval` with the page's `useLoop` or a `Demo` timer, and swap the captions without a fade-up. Request a reveal for the Band headline that is not blur (shared `ui.jsx`).
-9. **Targets and hovers:** give the chapter rail a hover that changes more than opacity, and raise it to 44px. Make the Band's "Every model" and "Research preview" 44px tall and the same size and weight.
-10. **Reduced motion:** the roll's button should read "Play" and the status should not claim "STREAMING ACTIVE" when frozen.
-11. **Card:** rewrite `docs/coverage/uta.md` so every line is true after the fixes (parts 1, 4, 9 and 11 especially).
+1. **Header ask (shared, chase the request):** one label and one width per page, with no swap that moves Sound, EN and Log in (a fixed slot or an in-place crossfade). Make the quiet/solid hand-off happen when the page ask actually enters view, not about 180px late, so only one solid fill is ever on screen. Give it a hover that is not an opacity fade.
+2. **Invisible Tab stops:** while `.lv-acts` is hidden under the film, take its two links out of the tab order (`inert` on the hidden headline block until it settles). Alternatively, make focus on them settle the stage. Then re-crawl and correct part 8 of the card.
+3. **Control labels:** use register strings for "Download MIDI", "Sound off/on" and "Play", or request them in `content/ui-strings.json` and list them as copy questions for James. Fix the card's "Hanzo's words only" line.
+4. **One mover per viewport:** in the chapters, stop the film while the playhead or keys run (or drop the overlay motion and let the film be the mover). In the studio, let the monitor film rest as a poster while the roll plays.
+5. **Keys:** animate the chapter-04 keys with opacity on a white layer, not `background`.
+6. **"Try it in Design":** give it a hover that tells you something (the arrow moving 4px, or an underline), as the Band links have.
+7. **Phone details:**
+   - Move the film Pause inside the stems' box (or the stage foot) after the settle, so it does not float on white paper.
+   - Bring the Fits film above or beside the list at 375, so that screen has an object.
+8. **Neighbours:** give /uta one room-order difference from the other creative pages. For example, put Fits before the chapters, or end the chapters on the roll itself.
+9. **Card:** rewrite `docs/coverage/uta.md` so every line is true after these fixes (the line above part 1, and parts 1, 4, 8 and 9).

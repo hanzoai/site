@@ -141,7 +141,7 @@
 .tl2-code, .tl2-ln em { color: #a3a3a3; }
 .tl2-ln b { color: #d4d4d4; }
 /* chapter 05: config.yaml dimmed under builder.yaml, so the window stays full */
-.tl2-ln.tl2-ghost { color: #737373; }
+.tl2-ln.tl2-ghost, .tl2-ln.tl2-ghost em { color: #a3a3a3; }
 .tl2-ln.tl2-ghost-h { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .08); color: #a3a3a3; }
 /* the collector at rest: 13px desktop, 14px phone */
 .tl2-rest { font-size: 13px; }
@@ -151,7 +151,7 @@
   .tl2 .l2-stage { height: 125svh; }
   .tl2 .l2-pin-head { padding-top: 27px; }
   /* the rail sits under the chapter copy (right), clear of the config window */
-  .tl2 .l2-pin.flip .l2-rail { left: auto; right: 0; }
+  .tl2 .l2-pin.flip .l2-rail { grid-column: 9 / span 4; }
   /* the close: the config spans the band beside a narrower copy column, in two columns of its own */
   .tl2 .l2-band-copy { grid-column: 1 / span 4; }
   .tl2 .l2-band-obj { grid-column: 5 / span 8; }
