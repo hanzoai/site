@@ -437,3 +437,20 @@ html:not(.js) .ide-under, html:not(.js) .a2-ch-vis, html:not(.js) .ide-pic-chip,
 .ide-acc button:active { transform: scale(.99); }
 @media (hover: hover) { .ide-dark .a2-pause:hover { background: #262626; border-color: rgba(255, 255, 255, .3); } .a2-pause:hover { border-color: rgba(0, 0, 0, .3); } }
 @media (max-width: 899px) { .ide-acc button::before { inset: 0 -8px; } }
+
+/* round 8: a memory chip never covers code. Lines that carry a chip keep their text clear of the chip and its lead line
+   (ellipsis if needed); the stage's shadow is the deck's floating shadow and is never cut by the sticky stage */
+.ide-lines li > .ide-src { flex: 0 1 auto; min-width: 0; }
+.ide-lines li.m { padding-right: var(--mw, 120px); }
+.ide-win { box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18), 0 0 0 1px rgba(0, 0, 0, .3); }
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) { html.js .ide-stick { overflow: clip; overflow-clip-margin: 64px; } }
+/* Teach: one sheet in three columns, divided by hairlines, not three filled boxes */
+.ide-teach-g { gap: 0; }
+.ide-teach-c { background: none; border-radius: 0; padding: 8px 28px; }
+.ide-teach-c:first-child { padding-left: 0; }
+.ide-teach-c + .ide-teach-c { border-left: 1px solid rgba(0, 0, 0, .1); }
+.ide-teach-c li { background: #f5f5f5; }
+@media (max-width: 899px) {
+  .ide-teach-c, .ide-teach-c:first-child { padding: 20px 0; }
+  .ide-teach-c + .ide-teach-c { border-left: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+}

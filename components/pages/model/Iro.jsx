@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { Img } from '../../kit';
-import { Studio } from './Studio';
+import { Studio, Glyph } from './Studio';
 import Creative, { Scene } from './Creative';
 import { box as frame, film } from '../../v2/Launch';
 import { useLoop, rng } from './live';
@@ -16,8 +16,8 @@ import usePhoneAsk from '../usePhoneAsk';
 import './Iro.css';
 
 const ASPECTS = [['16:9', 16 / 9], ['1:1', 1], ['21:9', 21 / 9]];
-// fit each aspect inside the 4:3 frame (88% wide, 80% tall at most), as percentages of the frame
-const box = (r) => { const w = Math.min(0.88, 0.6 * r); return { width: w * 100 + '%', height: (w / r / 0.75) * 100 + '%' }; };
+// each aspect fits inside the frame (88% wide, the frame's height less room for the tags), sized in CSS from --r
+const box = (r) => ({ '--r': r });
 const W = 240; // working width in pixels: the noise is computed here and the canvas scales it up
 const STEPS = 50;
 
@@ -107,7 +107,7 @@ function Canvas() {
           </motion.div>
         </AnimatePresence>
         <p className="ir-tag ir-tl mb-mono">CANVAS: 2048 × 2048 · 16-BIT FLOAT</p>
-        <p className="ir-tag ir-bl mb-mono">FLOW-MATCHING CONVERGENCE: STEP <span ref={stepEl}>3</span>/50 · CFG: 7.0</p>
+        <p className="ir-tag ir-bl mb-mono">FLOW-MATCHING CONVERGENCE: STEP <span ref={stepEl}>3</span>/50 <span className="ir-cfg">· CFG: 7.0</span></p>
       </div>
       <div className="ir-ctl">
         <button type="button" className="mb-chip ir-play" aria-pressed={play} onClick={() => { const s = S.current; if (s.step >= STEPS) { reseed(); s.step = 1; } setPlay(!play); }}>{play ? 'Pause' : 'Play'}</button>
@@ -123,6 +123,43 @@ function Canvas() {
     </div>
   );
 }
+
+
+/* a still of the same flow at one step: each chapter (and the fits tile) shows the picture part-made, so the page shows
+   the image being made instead of one finished picture over and over; it runs up to its step while read */
+const GW = 360, GH = 450;
+function Grain({ step, on, seed }) {
+  const cv = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const img = new Image();
+    img.src = film('iro', 'webp');
+    let raf = 0, dead = false;
+    img.decode().then(() => {
+      const c = cv.current;
+      if (dead || !c) return;
+      c.width = GW; c.height = GH;
+      const g = c.getContext('2d', { willReadFrequently: true }), tmp = document.createElement('canvas'), r = rng(seed);
+      const N = new Float32Array(GW * GH).map(() => (r() + r() + r() - 1.5) * 1.15);
+      const paint = (k) => {
+        const t = k / STEPS, div = Math.max(1, Math.round(1 + 23 * (1 - t) ** 2)); // coarse shapes first, detail last
+        tmp.width = Math.ceil(GW / div); tmp.height = Math.ceil(GH / div);
+        tmp.getContext('2d').drawImage(img, 0, 0, tmp.width, tmp.height);
+        g.imageSmoothingEnabled = true; g.drawImage(tmp, 0, 0, GW, GH);
+        const d = g.getImageData(0, 0, GW, GH), o = d.data;
+        for (let i = 0; i < o.length; i += 4) { const n = (1 - t) * (128 + N[i >> 2] * 80); o[i] = t * o[i] + n; o[i + 1] = t * o[i + 1] + n; o[i + 2] = t * o[i + 2] + n; }
+        g.putImageData(d, 0, 0);
+      };
+      if (calm || !on) { paint(step); return; }
+      const t0 = performance.now();
+      const run = (now) => { const p = Math.min(1, (now - t0) / 1600); paint(Math.max(1, Math.round(step * (1 - (1 - p) ** 3)))); if (p < 1 && !dead) raf = requestAnimationFrame(run); };
+      raf = requestAnimationFrame(run);
+    }).catch(() => {});
+    return () => { dead = true; cancelAnimationFrame(raf); };
+  }, [on, step, seed, calm]);
+  return <canvas ref={cv} role="img" aria-label={`Step ${step} of ${STEPS}`} />;
+}
+const CAP_STEPS = [26, 34, 42, 50];
 
 // the film settles into a square canvas beside the headline
 const SQUARE = frame((W, H, wide) => {
@@ -140,6 +177,8 @@ export default function Iro() {
       headClass="ir-head"
       aim={(W, H, wide) => (wide ? null : [-0.12 * W, -0.25 * H])}
       first="demo"
+      capArt={(i, on, base) => <div className="cr-art ir-grain" style={base}><Grain step={CAP_STEPS[i]} on={on} seed={11 + i} /><Glyph k="iro" i={i} /></div>}
+      fitsArt={(seen) => <figure className="cr-fits-art ir-grain"><Grain step={STEPS} on={seen} seed={5} /></figure>}
       demo={
         <Scene slug="iro" className="ir-scene">
           <Studio slug="iro" engine="Hanzo Iro-1 · Flow-matching DiT" specs={[['Typography Exactness', 'Font Locking', 'Locked'], ['Color Space', 'Wide Gamut', 'Display P3'], ['Prompt Adherence', 'Semantic Flow', 'High Precision']]}>

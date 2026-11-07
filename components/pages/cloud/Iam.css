@@ -118,9 +118,9 @@ html:not(.js) .ia .ia-pause { display: none; }
 .ia-card[data-on] .ia-obj { color: #0a0a0a; }
 .ia-card[data-on] .ia-obj path { stroke-dashoffset: 0; }
 .ia-card-big { margin: 0; font-weight: 497; font-size: 44px; line-height: 1; letter-spacing: -.05em; color: #a3a3a3; text-wrap: balance; transition: color 400ms var(--ia-out); }
-.ia-card-big span { display: inline-block; transform-origin: 0 100%; transition: transform 500ms var(--ia-em); }
+.ia-card-big > span { display: inline-block; transform-origin: 0 100%; transition: transform 500ms var(--ia-em); }
 .ia-card[data-on] .ia-card-big { color: #0a0a0a; }
-.ia-card[data-on] .ia-card-big span { transform: scale(1.4545); }
+.ia-card[data-on] .ia-card-big > span { transform: scale(1.4545); }
 .ia-card .v2-title { margin-bottom: 10px; }
 .ia-card-d { margin: 0; font-size: 15px; line-height: 1.5; color: #525252; text-wrap: pretty; opacity: 0; transform: translateY(8px); transition: opacity 400ms var(--ia-em), transform 400ms var(--ia-em); }
 .ia-card[data-on] .ia-card-d { opacity: 1; transform: none; }
@@ -163,7 +163,7 @@ html:not(.js) .ia .ia-pause { display: none; }
 /* the dark room: enters as a rounded card inside the gutters and opens to full width (clip-path, from the scroll) */
 .ia-room { position: relative; z-index: 1; padding: clamp(72px, 8vw, 116px) 0; scroll-margin-top: 64px; }
 .ia-fam-grid { align-items: center; row-gap: 32px; }
-.ia-fam-copy { grid-column: 1 / span 5; }
+.ia-fam-copy { grid-column: 1 / span 5; align-self: start; padding-top: 8px; }
 .ia-fam-copy .v2-headline { margin: 0 0 16px; color: #fafafa; }
 .ia-fam-p { color: rgba(255, 255, 255, .55); }
 .ia-fam-k { color: #fafafa; background: linear-gradient(#fafafa, #fafafa) 0 100% / 0 1px no-repeat; transition: background-size 500ms var(--ia-io); }
@@ -240,14 +240,14 @@ button.ia-tok:disabled { cursor: default; }
   .ia-fr-rail { --cw: calc(100vw - 68px); column-gap: 12px; }
   .ia-card { height: auto; min-height: 380px; transform: none; }
   .ia-card-big { font-size: 32px; overflow-wrap: anywhere; }
-  .ia-card[data-on] .ia-card-big span { transform: none; }
+  .ia-card[data-on] .ia-card-big > span { transform: none; }
   .ia-card-d { opacity: 1; transform: none; }
   .ia .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   .ia .sp-rel-a { flex-wrap: wrap; gap: 4px 12px; }
   .ia .sp-rel-a span { flex-basis: 100%; order: 3; }
   .ia-rel-to { display: none; }
   .ia .sp-rel-a svg { margin-left: auto; }
-  .ia-room { padding: 96px 0; }
+  .ia-room { padding: 72px 0; }
   .ia-fam-box { padding: 68px 16px 24px; }
   .ia-fam-track { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .ia-fam-track li:nth-child(5) .ia-fam-seg { display: none; }
@@ -261,7 +261,7 @@ button.ia-tok:disabled { cursor: default; }
   .ia-card, .ia-card[data-on] { transform: none; }
   .ia-card-d { opacity: 1; transform: none; }
   /* only the current card's word and object in ink; the rest rest grey */
-  .ia-card[data-on] .ia-card-big span { transform: none; }
+  .ia-card[data-on] .ia-card-big > span { transform: none; }
   .ia-obj path { stroke-dashoffset: 0; transition: none; }
   li.live .ia-tok i { animation: none; }
 }

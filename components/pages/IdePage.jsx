@@ -88,9 +88,26 @@ function Editor() {
     let alive = true, h = 0;
     const end = LAST + 6;
     const tick = (v) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= end ? 0 : v + 1), v >= end ? 4200 : 520); };
-    tick(0);
+    // the finished picture holds for 1.5 s, then its memories leave in order before the replay (no hard reset)
+    h = setTimeout(() => tick(0), 1500);
     return () => { alive = false; clearTimeout(h); };
   }, [seen, calm, paused]);
+  // each line that carries a memory keeps its text clear of that chip and its dashed lead (the chip can grow on hover)
+  useEffect(() => {
+    const w = ref.current;
+    if (!w) return;
+    const lis = w.querySelectorAll('.ide-lines li'), chips = w.querySelectorAll('.ide-mem');
+    const set = () => MEMS.forEach(([line], i) => {
+      const c = chips[i];
+      if (!c || !lis[line]) return;
+      const lead = parseFloat(getComputedStyle(c, '::before').width) || 0;
+      lis[line].style.setProperty('--mw', Math.ceil(c.offsetWidth + lead + 24) + 'px');
+    });
+    set();
+    const ro = new ResizeObserver(set);
+    chips.forEach((c) => ro.observe(c));
+    return () => ro.disconnect();
+  }, []);
   const cursor = Math.min(t, LAST);
   const hit = t >= LAST + 1 && t < 99 ? true : t === 99;
   return (
@@ -110,15 +127,15 @@ function Editor() {
           <div className="ide-crumbs x-mono"><span>api.hanzo.ai</span><span>/v1/code</span></div>
           <ol className="ide-lines x-mono" aria-hidden="true">
             {SCRIPT_LINES.map((l, i) => (
-              <li key={i} className={(i === cursor && t < 99 ? 'cur' : '') + (hit && IMPACT.includes(i) ? ' hit' : '')}>
+              <li key={i} className={(i === cursor && t < 99 ? 'cur' : '') + (hit && IMPACT.includes(i) ? ' hit' : '') + (MEMS.some((m) => m[0] === i) ? ' m' : '')}>
                 <span className="ide-n">{i + 1}</span>
                 <span className="ide-src"><Shell l={l} /></span>
               </li>
             ))}
           </ol>
           <ul className="ide-mems">
-            {MEMS.map(([line, kind, what]) => (
-              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={MOVE}>
+            {MEMS.map(([line, kind, what], i) => (
+              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={t >= line + 1 ? MOVE : { ...MOVE, delay: i * 0.06 }}>
                 <span className="ide-mem-k x-mono">{kind}</span>
                 <span className="ide-mem-w">{what}</span>
               </motion.li>
@@ -149,7 +166,7 @@ function Stage() {
   const copy = useRef(null);
   const obj = useRef(null);
   const sy = useMotionValue(0); // how far the editor rises as you scroll: it rests under the buttons in normal flow (no jump on hydration)
-  const ss = useMotionValue(1); // how much larger it starts (never wider than the screen)
+  const ss = useMotionValue(1); // it starts at its own size: no pop after hydration
   const narrow = useNarrow();
   const calm = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -161,7 +178,6 @@ function Stage() {
       const c = copy.current, o = obj.current;
       if (!c || !o) return;
       sy.set(Math.max(0, o.offsetTop - 96)); // it rises from under the buttons to just below the header
-      ss.set(Math.min(1.04, (innerWidth - 48) / o.offsetWidth));
     };
     m();
     addEventListener('resize', m);

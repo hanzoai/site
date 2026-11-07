@@ -126,7 +126,7 @@ export function Editor({ sample, only, setOnly, aside, name, face }) {
       <div className="xig-ed-bar">
         <span className="xig-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="xig-tab">{sample.title}</span>
-        {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
+        {sample.lang && sample.lang.toLowerCase() !== sample.title.toLowerCase() && <span className="x-mono xig-lang">{sample.lang}</span>}
         <span className="xig-ctl-slot">{ctl}</span>
         {code && <Copy text={code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
@@ -157,7 +157,7 @@ export function CodeCard({ sample, only, Loose, name, tabs, at }) {
           ))}
         </span>
         <span className="xig-card-t">{sample.title}</span>
-        {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
+        {sample.lang && sample.lang.toLowerCase() !== sample.title.toLowerCase() && <span className="x-mono xig-lang">{sample.lang}</span>}
         {code && <Copy text={code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
       {caption.map((c) => <p key={c} className="xig-cap x-mono">{c}</p>)}

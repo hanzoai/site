@@ -298,4 +298,4 @@
 .xin-roll-n { gap: 0; }
 .xin-roll-n li { min-width: 44px; }
 .xin-slab:active, .xin-stats a:active, .xin-lead:active, .xin-commits a:active, .xin-wall a:active, .xin-dd-go:active, .xin-exec:active { transform: translateY(1px); transition-duration: 90ms; }
-@media (hover: hover) { .xin-gov-l a:hover { text-decoration: underline; text-underline-offset: 3px; } .xin-backed a:hover .xin-logo-n { color: #0a0a0a !important; } }
+@media (hover: hover) { .xin-gov-l a:hover { text-decoration-thickness: 2px; text-underline-offset: 4px; } .xin-backed a:hover .xin-logo-n { color: #0a0a0a !important; } }

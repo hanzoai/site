@@ -303,21 +303,20 @@ function Read() {
           <h2 id="xkt-read-h" className="a2-headline">The agent, the loop, the documentation.</h2>
           <p className="a2-body">Explore the source code, recipes, and documentation.</p>
         </div>
-        <div className="xkt-cols">
-          {READ.map(([h, items]) => (
-            <div key={h} className="xkt-col">
-              <h3 className="xkt-col-h">{h}</h3>
-              <ul className="xkt-links">
-                {items.map(([to, t, d]) => (
-                  <li key={t}>
-                    {/* site pages open by Morph: the title you click becomes the next page's hero */}
-                    <A to={to} className="xkt-link"><span><b {...(to.startsWith('/') ? { 'data-morph': '' } : {})}>{t}</b>{d && <span>{d}</span>}</span><i aria-hidden="true">→</i></A>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+        {/* one ruled list: the group is a caption on its first row; hover shows where the link goes */}
+        <ul className="xkt-rows">
+          {READ.flatMap(([h, items]) => items.map(([to, t, d], k) => (
+            <li key={t}>
+              <A to={to} className="xkt-row">
+                <span className="xkt-row-g x-mono">{k === 0 ? h : null}</span>
+                {/* site pages open by Morph: the title you click becomes the next page's hero */}
+                <span className="xkt-row-t"><b {...(to.startsWith('/') ? { 'data-morph': '' } : {})}>{t}</b>{d && <span>{d}</span>}</span>
+                <span className="xkt-row-to x-mono" aria-hidden="true">{to.startsWith('/') ? 'hanzo.ai' + to : to.replace('https://', '')}</span>
+                <i aria-hidden="true">→</i>
+              </A>
+            </li>
+          )))}
+        </ul>
       </div>
     </section>
   );
@@ -337,6 +336,8 @@ function Questions() {
         <div className="xkt-qa-head">
           <p className="a2-kick">Questions</p>
           <h2 id="xkt-qa-h" className="a2-headline">Questions &amp; Answers</h2>
+          {/* the one line the last answer gives you, as you would type it */}
+          <pre className="xkt-qa-term x-mono" aria-hidden="true"><span className="xkt-ps">$ </span>hanzo auth login{'\n'}<span className="xkt-ps">$ </span>export HANZO_API_KEY<span className="xkt-cur" /></pre>
         </div>
         <div className="xkt-qa-list"><A2Faq items={QA} /></div>
       </div>

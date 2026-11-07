@@ -39,7 +39,7 @@ Done here: Iro's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Request access" after the hero. `data-cta` ids: `iro.first` (first screen), `iro.hero` (headline), `iro.preview` (preview).
+Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), on phones the header keeps "Try Hanzo" (usePhoneAsk swaps in the page's ask only where the words fit; at 375 they do not), and the hero's "Request access" sits inside the first screen at 375×667. `data-cta` ids: `iro.first` (first screen), `iro.hero` (headline), `iro.preview` (preview).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -95,7 +95,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
 - [x] No horizontal scroll at 320
-- [ ] Every target 44px or more (all but two: "Every model" and "Research preview" in the shared Creative close are 25px tall on phones; reported to its owner); every hover has a tap path
+- [ ] Every target 44px or more ("Every model" and "Research preview" in the Creative close are now 44px tall, the same 15px with an arrow); every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
 Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
@@ -115,7 +115,7 @@ Done here: body text is #525252 on white and #a3a3a3 or better on black. The `Fi
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured on a full scroll walk (7 Nov, round 4): 0.0015 at 1470 and 0.000 at 375 (an earlier critic walk measured 0.029 on the phone before the shared ask fix). "Every model" and "Research preview" in the close are 25px-tall text links from the shared Creative template (`Creative.jsx`, not this page's file); reported to its owner.
+Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the demo loop runs only on screen (`useLoop`) and stops with its own Pause or the page pause. CLS measured on a full scroll walk (7 Nov, round 4): 0.0015 at 1470 and 0.000 at 375 (an earlier critic walk measured 0.029 on the phone before the shared ask fix). "Every model" and "Research preview" in the close are one 15px pair with arrows and 44px targets.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)

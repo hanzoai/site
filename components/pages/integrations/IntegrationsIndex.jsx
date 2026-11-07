@@ -211,6 +211,13 @@ function Catalogue({ groups, label, previews = {} }) {
   const shown = cards.filter((c) => (fam === 'All' || c.fam === fam) && hit(c));
   const fams = [['All', cards.filter(hit).length], ...groups.map((g) => [g.title, g.cards.filter((c) => hit({ ...c, fam: g.title })).length])];
   const calm = useReducedMotion();
+  // the family lives in the URL (#frameworks), so a filtered view can be shared and opens as it was left
+  const tag = (f) => f.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  useEffect(() => {
+    const h = location.hash.slice(1), g = h && groups.find((x) => tag(x.title) === h);
+    if (g) setFam(g.title);
+  }, [groups]);
+  const pickFam = (f) => { setFam(f); history.replaceState(history.state, '', f === 'All' ? location.pathname + location.search : '#' + tag(f)); };
   const gridRef = useRef(null);
   const gridIn = useInView(gridRef, { once: true, amount: 0.05 });
   /* the signature (MOTION-MAP: h-gallery): on a desktop the catalogue pins under the header and the vertical scroll
@@ -242,7 +249,7 @@ function Catalogue({ groups, label, previews = {} }) {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;
     const i = (fams.findIndex(([f]) => f === fam) + d + fams.length) % fams.length;
-    setFam(fams[i][0]);
+    pickFam(fams[i][0]);
     document.getElementById('xii-f-' + i)?.focus();
   };
   return (
@@ -255,12 +262,12 @@ function Catalogue({ groups, label, previews = {} }) {
           <label className="xii-find">
             <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.5 10.5 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
             {/* a search looks across every family, so typing returns the chips to All */}
-            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); if (e.target.value && fam !== 'All') setFam('All'); }} placeholder="Find your tool" aria-label="Find your tool" />
+            <input type="search" value={q} onChange={(e) => { setQ(e.target.value); if (e.target.value && fam !== 'All') pickFam('All'); }} placeholder="Find your tool" aria-label="Find your tool" />
           </label>
         </div>
         <div className="xii-chips" role="tablist" aria-label="Family" onKeyDown={keys}>
           {fams.map(([f, k], i) => (
-            <button key={f} id={'xii-f-' + i} type="button" role="tab" aria-selected={fam === f} tabIndex={fam === f ? 0 : -1} onClick={() => setFam(f)} disabled={!k && fam !== f}>
+            <button key={f} id={'xii-f-' + i} type="button" role="tab" aria-selected={fam === f} tabIndex={fam === f ? 0 : -1} onClick={() => pickFam(f)} disabled={!k && fam !== f}>
               {fam === f && <motion.span layoutId="xii-chip" className="xii-chip-bg" transition={PILL} />}
               <span>{f}</span><span className="pf-mono">{k}</span>
             </button>
@@ -269,7 +276,7 @@ function Catalogue({ groups, label, previews = {} }) {
         {!shown.length && (
           <div className="xii-none" role="status">
             <p>Nothing matches “{q}”.</p>
-            <button type="button" className="xii-none-a" onClick={() => { setQ(''); setFam('All'); }}><span>All</span><span className="pf-mono">{cards.length}</span></button>
+            <button type="button" className="xii-none-a" onClick={() => { setQ(''); pickFam('All'); }}><span>All</span><span className="pf-mono">{cards.length}</span></button>
           </div>
         )}
       </div>

@@ -53,7 +53,7 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 .km-ver b { font: 600 20px/1 var(--sans); letter-spacing: -.03em; color: var(--km-ink); }
 .km-ver em { margin-left: auto; font-style: normal; color: var(--km-ink); }
 .km-ver.cur { box-shadow: inset 0 0 0 2px var(--km-ink); }
-.km-stale { position: absolute; right: 12px; bottom: -18px; z-index: 1; padding: 10px 14px; border-radius: 12px; background: var(--km-card); color: var(--km-graphite); font: 500 13px/1 var(--mono); box-shadow: var(--km-float); }
+.km-stale { position: absolute; left: 0; right: 0; top: 0; height: 52px; display: flex; align-items: center; padding: 0 14px; border-radius: 12px; background: var(--km-card); color: var(--km-graphite); font: 500 13px/1 var(--mono); box-shadow: var(--km-float); }
 .km-stale b { font-weight: 700; }
 .km-log { list-style: none; margin: 0; padding: 16px; height: 104px; box-sizing: border-box; overflow: hidden; border-radius: 16px; background: var(--km-fill); display: grid; gap: 8px; flex: 1 0 auto; align-content: start; }
 .km-log li { display: flex; align-items: center; gap: 10px; font: 500 13px/1.3 var(--mono); color: var(--km-body); }
@@ -71,7 +71,7 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 .km-seal .v2-grid { align-items: center; }
 .km-seal-l { grid-column: 1 / span 5; }
 .km-seal-d { margin-top: 14px; }
-.km-seal-box { grid-column: 7 / -1; padding: clamp(24px, 3vw, 44px); }
+.km-seal-box { position: relative; grid-column: 7 / -1; padding: clamp(24px, 3vw, 44px); }
 .km-seal-k { display: block; margin: 0 0 10px; font: 500 13px/1 var(--mono); color: var(--km-body); }
 .km-seal-box input { width: 100%; box-sizing: border-box; min-height: 56px; padding: 0 18px; border-radius: 16px; border: 1px solid rgba(0, 0, 0, .14); background: var(--km-paper); font: 500 clamp(18px, 1.6vw, 22px)/1 var(--sans); color: var(--km-ink); caret-color: var(--km-ink); transition: border-color .15s var(--km-move); }
 @media (hover: hover) { .km-seal-box input:hover { border-color: rgba(0, 0, 0, .3); } }
@@ -185,8 +185,8 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 /* the one idle mover here: a hairline under the secret runs out the time until the next project reads it */
 .km-key-run { position: absolute; left: 22px; right: 70px; bottom: 7px; height: 1px; background: var(--km-line-dark); transform-origin: left; transform: scaleX(0); animation: km-run 2.6s linear both; }
 .km-key-run.held { animation: none; }
-.km-ship-cap { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-top: 28px; }
-.km-ship-cap .v2-title { max-width: 30ch; }
+.km-ship-cap { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+.km-ship-cap .km-cap-s { margin: 0; max-width: 52ch; font-size: 16px; color: var(--km-body); }
 .km-ship-p { grid-column: 9 / -1; }
 .km-ship-h { margin-bottom: 14px; }
 .km-api { display: inline-flex; align-items: center; gap: 8px; margin: 28px 0 12px; font: 500 13px/1 var(--mono); color: var(--km-ink); }
@@ -218,7 +218,6 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
   .km-chain span { font-size: 12px; padding: 8px 10px; }
   .km .v2-wrap { width: min(100% - 32px, 1152px); }
   /* the refused chip stays inside the version box */
-  .km-stale { right: 8px; bottom: 8px; }
   /* the pause sits on the host row, clear of the name row and its production tag */
   .km-pause { top: 16px; left: auto; right: 20px; }
   .km-path { margin-top: 4px; }
@@ -269,3 +268,27 @@ html:not(.js) .km .v2-in { animation: none; opacity: 1; transform: none; }
 @media (max-width: 359px) { .km .cf-cap { min-height: 106px; } }
 /* phones: no text under 14px except 11-12px mono capitals */
 @media (max-width: 900px) { .km-seal-k, .km-rule-n { font-size: 14px; } }
+
+/* the seal box's in-view anchor (the idle sealing runs only while it is on screen) */
+.km-seal-anchor { position: absolute; inset: 0; pointer-events: none; }
+/* the dark room's terminal types once, line by line, when it is 40% in view; the text is in the page from the start */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .km-cli-w .x-codeblock-l { clip-path: inset(0 100% 0 0); }
+  html.js .km-cli-w.on .x-codeblock-l { animation: km-type .34s steps(22, end) both; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(1) { animation-delay: 0.00s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(2) { animation-delay: 0.36s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(3) { animation-delay: 0.72s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(4) { animation-delay: 1.08s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(5) { animation-delay: 1.44s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(6) { animation-delay: 1.80s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(7) { animation-delay: 2.16s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(8) { animation-delay: 2.52s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(9) { animation-delay: 2.88s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(10) { animation-delay: 3.24s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(11) { animation-delay: 3.60s; }
+  html.js .km-cli-w.on .x-codeblock-l:nth-child(12) { animation-delay: 3.96s; }
+}
+@keyframes km-type { to { clip-path: inset(0 0 0 0); } }
+/* the hero ask's hover says where it goes: an arrow slides in beside the label */
+.km-hero .x-btn.solid::after { content: ''; width: 14px; height: 14px; margin-left: 0; max-width: 0; opacity: 0; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; transition: max-width .3s var(--km-ease), margin .3s var(--km-ease), opacity .2s var(--km-move), transform .3s var(--km-ease); }
+@media (hover: hover) { .km-hero .x-btn.solid:hover::after { max-width: 14px; margin-left: 8px; opacity: 1; transform: translateX(2px); } }

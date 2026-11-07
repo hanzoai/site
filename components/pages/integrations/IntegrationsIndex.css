@@ -276,3 +276,6 @@
   .xii-ring, .xii-sat, .xii-in, .xii-ln, .xii-tab-t, .xii-mini, .xii-h1-l > span { animation: none; }
   .xii-card { transition: none; }
 }
+
+/* pressed: the arrow chip goes solid ink as the card presses (never a flat grey) */
+.xii-card:active .xii-card-go { background: #0a0a0a; color: #ffffff; transform: scale(.97); transition-duration: 90ms; }

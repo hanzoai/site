@@ -20,7 +20,6 @@ import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
-import RelatedCards from '../../v2/RelatedCards';
 import { Copy } from '../../ui';
 import { A } from '../../kit';
 import { play } from '../../../lib/sound';
@@ -149,7 +148,7 @@ function Field({ lead }) {
           <LivePause paused={paused} onToggle={pause} inline className="mt-pause" />
           <span className="mt-host">metrics.hanzo.ai</span>
           <code className="mt-q">rate(http_requests_total[5m])</code>
-          <div className="mt-split" role="group" aria-label="Split by label">
+          <div className="mt-split" role="group" aria-label="Split by label" style={{ '--i': Object.keys(SPLIT).indexOf(split) }}>
             {Object.keys(SPLIT).map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
           </div>
           <ul className="mt-legend" aria-label="Series">{series.map((s, k) => <li key={s} className={'s' + k + (hk === k ? ' hl' : '')}><i />{s}</li>)}</ul>
@@ -297,6 +296,7 @@ function Chapters({ intro, steps, table }) {
   useEffect(() => { setMounted(true); const m = matchMedia('(min-width: 900px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    if (!wide) return;
     const i = Math.min(total - 1, Math.max(0, Math.floor(p * total * 0.999))) - 1;
     setAt((v) => (v === i ? v : i));
   });
@@ -308,10 +308,17 @@ function Chapters({ intro, steps, table }) {
     window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) }) : window.scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
   };
   const pin = mounted && wide;
+  // under 900px nothing pins: one table sticks above the words, and the chapter crossing the middle of the screen drives it
+  useEffect(() => {
+    if (!mounted || wide || !ref.current) return;
+    const arts = [...ref.current.querySelectorAll('.mt-ch-step')];
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(arts.indexOf(e.target) - 1)), { rootMargin: '-55% 0px -40% 0px' });
+    arts.forEach((a) => io.observe(a));
+    return () => io.disconnect();
+  }, [mounted, wide]);
   const where = (i) => (i < at ? 'past' : i === at ? 'on' : 'next');
   const step = (i, body) => (
     <article key={i} className={'mt-ch-step' + (i < 0 ? ' mt-ch-intro' : '')} data-at={where(i)} inert={pin && i !== at ? true : undefined}>
-      {mounted && !wide && <div className="mt-ch-own">{table(i)}</div>}
       {body}
     </article>
   );
@@ -337,7 +344,7 @@ function Chapters({ intro, steps, table }) {
               ))}
             </nav>
           </div>
-          {(!mounted || wide) && <div className="mt-ch-obj">{table(at)}</div>}
+          <div className="mt-ch-obj">{table(at)}</div>
         </div>
       </div>
     </section>
@@ -406,6 +413,10 @@ function Room() {
               <pre className="mt-paste-code"><code>{PROMPT}</code><span className="mt-caret" aria-hidden="true" /></pre>
             </div>
           </div>
+          <nav className="mt-rel" aria-label="Related capabilities">
+            <p className="mt-rel-k">Related capabilities</p>
+            <A to="/cloud/logs" className="mt-logs"><b>Logs</b><span>Search every line</span><Arr /></A>
+          </nav>
         </div>
         <i className="mt-wire" aria-hidden="true"><b key={sent} className={sent && !calm ? 'go' : ''} /></i>
         <div className="mt-send-r">
@@ -494,8 +505,6 @@ export default function Metrics() {
         table={(at) => <Table step={at} on={on} auto={auto} />} />
 
       <Room />
-
-      <RelatedCards className="mt-rel" items={[['Logs', '/cloud/logs', 'Search every line']]} />
 
       <LaunchClose className="mt-close" name="Metrics" tag="Time-series metrics" seed="metrics" data={[4, 6]} ask={['View on GitHub', GH]} cta="metrics.close" repo={['hanzoai/metrics', GH]} stars="4 stars" />
     </main>

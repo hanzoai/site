@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - ~~No dead or self-looping button; prices from `lib/plans.js`~~ n/a: no prices on this page
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in Kata.jsx; one solid: kit Cta "Get API key" (kata.hero, thumb) in the hero, repeated in the kit Band. `lib/cta.js` does not exist yet; the label and href are Hanzo's own from the page.
+Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in Kata.jsx; one solid at a time: kit Cta "Get API key" (kata.hero, thumb) in the hero, repeated in the kit Band; usePhoneAsk outlines the header ask while either is on screen (shared hook; the first ~400 ms before it runs can still show two fills). `lib/cta.js` does not exist yet; the label and href are Hanzo's own from the page.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -41,7 +41,7 @@ Done here: h1 "Test. Repair. Verify." at 52px cuts in by line mask (700 ms, 60 m
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit Cta only (solid hero, quiet GitHub, plain docs link); the ask bar carries "Get API key" via data-thumb; the A2Paste strip copies exactly the prompt it shows.
+Done here: Kit Cta only (solid hero, quiet GitHub, plain docs link); the header carries "Get API key" after the hero on desktop; on phone the header label swap is the shared usePhoneAsk's (it keeps "Try Hanzo" when the words would not fit); the A2Paste strip copies exactly the prompt it shows.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -100,7 +100,7 @@ Done here: No media on this page; every visual is drawn in the DOM with Hanzo's 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375x812 and 1470x801: 0 text overlaps; 320 scrollWidth 320; ask bottom at 524px on 375x667; chips, Replay and links 44px or more on phones.
+Done here: 375x812 and 1470x801: 0 text overlaps (the dial's dots sit on the ring with their labels inside it, 18px clear); phone first screen shows the board (hero padding 88, docs link hidden on phone); 320 scrollWidth 320; ask bottom at 524px on 375x667; chips, Replay and links 44px or more on phones.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: 375x812 and 1470x801: 0 text overlaps; 320 scrollWidth 320; ask botto
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Text #0a0a0a/#525252 on white and #a3a3a3 or lighter on black; pause control first in the hero box (stops the loop and the cursor); radio groups named; one h1, h2 sections, h3 items; keyboard reaches every control.
+Done here: Text #0a0a0a/#525252/#737373 (unlit h1 words and the idle file name, 4.74:1) on white and #a3a3a3 or lighter on black; pause control first in the hero box (stops the loop and the cursor); radio groups named; one h1, h2 sections, h3 items; keyboard reaches every control.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
