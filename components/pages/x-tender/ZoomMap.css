@@ -1,0 +1,35 @@
+/* ZoomMap (see ZoomMap.jsx): layout only; each page brings its own look (colours, type, the part's art).
+   Wide screens with JS: a sticky stage over a runway (scroll) or one still screen (reduced motion), the words in a band
+   at the top and the part's explanation laid over the map. Phones and JS off: words, map, explanation, stacked. */
+.zm { position: relative; --zl: 0; --zd: 0; --zt: 0; }
+.zm-run { position: relative; }
+.zm-stage { position: relative; display: flex; flex-direction: column; }
+.zm-head { position: relative; z-index: 2; }
+.zm-path { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; margin-top: 17px; font: 400 13px/1 var(--mono); }
+.zm-step { display: inline-flex; align-items: center; gap: 2px; }
+.zm-sep { color: var(--quiet, #737373); padding: 0 2px; }
+.zm-path button { min-height: 44px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; font: inherit; color: var(--quiet, #737373); cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+.zm-path button[aria-current] { color: var(--ink, #0a0a0a); }
+.zm-path button:active { transform: scale(.97); transition-duration: 90ms; }
+.zm-path button:focus-visible { outline: 2px solid var(--focus, var(--ink, #0a0a0a)); outline-offset: 2px; }
+.zm-view { position: relative; overflow: hidden; height: var(--zm-h, 420px); touch-action: pan-y; }
+.zm-view[data-next] { cursor: zoom-in; }
+.zm-svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.zm-aim { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-dasharray: 5 5; opacity: .6; pointer-events: none; }
+.zm-art { position: absolute; inset: 0; pointer-events: none; opacity: var(--zd); }
+.js .zm:not([data-shown]) .zm-art { visibility: hidden; }
+.zm-say { position: relative; }
+
+/* JS off: the part's art stands under the map, nothing hidden */
+html:not(.js) .zm-art { position: relative; inset: auto; opacity: 1; visibility: visible; }
+
+/* wide screens with JS: one screen, the band on top, the map behind */
+.js .zm[data-wide] .zm-stage { height: 100svh; overflow: hidden; }
+.js .zm[data-wide] .zm-head { position: absolute; left: 0; right: 0; top: 0; padding-top: 92px; pointer-events: none; }
+.js .zm[data-wide] .zm-head .zm-path, .js .zm[data-wide] .zm-head a, .js .zm[data-wide] .zm-head button { pointer-events: auto; }
+.js .zm[data-wide] .zm-view { position: absolute; inset: 0; height: auto; }
+.js .zm[data-wide] .zm-say { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none; opacity: var(--zd); }
+.js .zm[data-wide]:not([data-shown]) .zm-say { visibility: hidden; }
+.js .zm[data-wide][data-shown] .zm-say * { pointer-events: auto; }
+.js .zm[data-mode='scroll'] .zm-run { height: var(--zm-tall); }
+.js .zm[data-mode='scroll'] .zm-stage { position: sticky; top: 0; }

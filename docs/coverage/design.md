@@ -33,7 +33,7 @@ Done here: parity reports links 13/13, including /iro, /koma, /oto, /koe, /uta, 
 - [x] Ends in proof strip, `Band`, footer (the repo line "Get Design · Apache-2.0" sits before the Band)
 - [x] Card-to-page links use Morph (the model tiles hand their picture to the model page through `useOpener`)
 
-Done here: At 1470×801 the window (left) and the 52px headline, lede and "Open Design" (right) share the first screen; the spectrum dances and the tab timer runs within 1 s (check.mjs: 4 animations, 1,628 changes). Order: hero → 3 pinned chapters → stacked capability sheets → black room (models) → One brief → paste and repo → black Band.
+Done here: At 1470×801 the window (left) and the 52px headline, lede and "Open Design" (right) share the first screen; the spectrum dances and the tab timer runs within 1 s (check.mjs: 4 animations, 1,628 changes). Motion map (7 Nov): order is hero → the compare signature with the three steps → black room (models) → One brief → paste and repo → capabilities grid → black Band; the pinned three-chapter scene and the stacking sheets are gone.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -84,7 +84,7 @@ Done here: The brief input is 56px with 21px text and a 2px ink focus ring; the 
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`; tabs, switches and pressed buttons tick through `components/Sound.jsx`)
 
-Done here: Idle (the workspace cycles six artifacts, the spectrum runs at 124 BPM), state (the frame morphs to each artifact's shape; the headline's highlight and tab pill glide at 300ms ease-emphasis), pointer (pads and modes), arrival (h1 line cut-in, window clip-in), scroll (pinned chapters, stacking sheets, black rooms opening from cards). No springs. Sound: the six artifact tabs, the visualizer modes and the brief chips tick through the shared kit; the four synth pads are `data-sound=""` because they play their own note.
+Done here: Motion map signature `compare`: a divider dragged (pointer, touch, arrow keys; `role="slider"`) across the raw neon-horizon-master.mp3 upload and what it became, chosen by the three steps; it sweeps once from the raw side on arrival. Section entrances, in order: drop-in (What), explode-gather (models), opposite-drift (One brief, scroll), word-shuffle (paste and repo), count-roll (capability numbers); h1 keeps a CSS line cut-in; no reveal repeats. Earlier: Idle (the workspace cycles six artifacts, the spectrum runs at 124 BPM), state (the frame morphs to each artifact's shape; the headline's highlight and tab pill glide at 300ms ease-emphasis), pointer (pads and modes), arrival (h1 line cut-in, window clip-in), scroll (pinned chapters, stacking sheets, black rooms opening from cards). No springs. Sound: the six artifact tabs, the visualizer modes and the brief chips tick through the shared kit; the four synth pads are `data-sound=""` because they play their own note.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img` 1200×1500 everywhere; kit `Film` with a poster for the one clip)
