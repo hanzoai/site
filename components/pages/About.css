@@ -43,6 +43,9 @@
 .xab-picks li.hint .xab-sw::before { animation: xab-ask 2.6s cubic-bezier(.16, 1, .3, 1) 1.2s infinite; }
 @keyframes xab-ask { 0% { opacity: 0; transform: scale(.9); } 25% { opacity: .55; } 70%, 100% { opacity: 0; transform: scale(1.18); } }
 .xab-picks li.on .xab-sw::after { transform: translateX(24px); }
+/* a hand on a switch leans its knob toward the other side, so it says what a click will do */
+.xab-picks button:hover .xab-sw::after { transform: translateX(5px); }
+.xab-picks li.on button:hover .xab-sw::after { transform: translateX(19px); }
 .xab-picks li p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--faint); transition: color .4s var(--ease); }
 .xab-picks li.on p { color: var(--ink); }
 .xab-picks .v2s-link { font-size: 15px; color: var(--soft); }
