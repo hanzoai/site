@@ -94,7 +94,7 @@ function Metro() {
         <motion.span className={'xlr-train' + (rest ? ' rest' : '')} aria-hidden="true" initial={false} animate={{ x: (at / (START.length - 1)) * 100 + '%' }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}><i /></motion.span>
         <div className="xlr-stops" role="tablist" aria-label="Start here" onKeyDown={keys}>
           {START.map(([t], i) => (
-            <button key={t} type="button" role="tab" id={'xlr-t' + i} aria-controls={'xlr-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => { setAt(i); setMine(true); }}>
+            <button key={t} type="button" role="tab" id={'xlr-t' + i} aria-label={t} aria-controls={'xlr-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => { setAt(i); setMine(true); }}>
               <i aria-hidden="true" /><span>{t}</span>
             </button>
           ))}
@@ -193,10 +193,6 @@ function Say() {
   return (
     <section className="xp-sec xlr-say" aria-labelledby="xlr-say-k">
       <div className="xp-wrap xp-grid">
-        <div className="xlr-say-top">
-          <span id="xlr-say-k" className="xlr-say-k">{QA[0][0]}</span>
-          <span className="xlr-say-n x-mono" aria-hidden="true">{String(n).padStart(2, '0')} / {N}</span>
-        </div>
         <p className="xlr-say-t" ref={ref} tabIndex={0} onKeyDown={keys} onPointerLeave={() => setHover(null)}>
           {WORDS.map((w, i) => (
             <span key={i}>
@@ -204,6 +200,11 @@ function Say() {
             </span>
           ))}
         </p>
+        {/* the question it answers sits under the statement as its caption, never as a label above it */}
+        <div className="xlr-say-top">
+          <span id="xlr-say-k" className="xlr-say-k">{QA[0][0]}</span>
+          <span className="xlr-say-n x-mono" aria-hidden="true">{String(n).padStart(2, '0')} / {N}</span>
+        </div>
         <div className="xlr-say-more"><More to="/platform">How the platform fits together</More></div>
       </div>
     </section>

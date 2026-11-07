@@ -64,7 +64,7 @@ Done here: parity 69/69 text, 26/26 links. Scale: h1 52px (40 phone), section he
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK on the 3 files. Nothing above a headline (the map's "Learn / Start here" labels sit inside the map). The map is no longer outlined; only its guide panel is a flat fill. Radii 24 cards, 16 media and panel, full buttons; no shadows. "Read the thinking" is a 5/7 split with a hairline list, not three equal boxes. Hero object is the transit map, unlike /affiliate and /beta. One dark room.
+Done here: `taste.py` OK on the 3 files. Nothing above a headline (the map's "Learn / Start here" labels sit inside the map; the statement's question caption now sits under the statement, 8 Nov). The map is no longer outlined; only its guide panel is a flat fill, and on desktop it reads as one row (guide name left, its line right, 120px tall), so map, train and open guide all sit in the first screen at 1470x801. Radii 24 cards, 16 media and panel, full buttons; no shadows. "Read the thinking" is a 5/7 split with a hairline list, not three equal boxes. Hero object is the transit map, unlike /affiliate and /beta. One dark room.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -98,7 +98,7 @@ Done here: kit `Img` and `Film` only. Six Hanzo model stills on the rail (Enso o
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: scrollWidth equals the viewport at 1470, 375 and 320. 375×812: "Get started" full width at y 247–295; under the map the current station's name sits beneath its dot in 12px mono (first left-aligned, last right-aligned) and clip-reveals as the train moves; the rail shows one card and a 16% peek; the heading sits above the counter and steppers; the University, posts, thinking and close stack to one column.
+Done here: scrollWidth equals the viewport at 1470, 375 and 320. 375×812: "Get started" full width at y 247–295; under the map the current station's name sits beneath its dot in 12px mono (first left-aligned, last right-aligned) and clip-reveals as the train moves (the other names are `display:none` on phones; every station keeps its name in `aria-label`); the rail shows one card and a 16% peek; the heading sits above the counter and steppers; the University, posts, thinking and close stack to one column.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

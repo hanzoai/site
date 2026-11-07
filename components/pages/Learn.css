@@ -52,6 +52,14 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .xlr-panels { margin-top: 40px; min-height: 220px; padding: clamp(24px, 2.8vw, 36px); border-radius: 16px; background: var(--card); }
 .xlr-panel > div { display: grid; gap: 16px; justify-items: start; }
 .xlr-panel .xp-lede { max-width: 48ch; }
+/* desktop: the guide reads as one line under the map (its name left, its line right), so the panel holds no empty half
+   and the whole map, train and open guide sit in the first screen at 1470x801 */
+@media (min-width: 901px) {
+  .xlr-panels { margin-top: 32px; min-height: 0; padding: 28px clamp(24px, 2.8vw, 36px); }
+  .xlr-panel > div { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; column-gap: 24px; align-content: center; min-height: 64px; }
+  .xlr-panel .xp-lede { margin: 0; }
+  .xlr-panel h3 { margin: 0; }
+}
 /* the index, scene 1: the rail of six (proximity snap, 16% peek, drag with inertia) */
 .xlr-rail-top { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
 .xlr-rail-ctl { display: flex; align-items: center; gap: 8px; }
@@ -92,8 +100,8 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 .xlr-uni-l { color: inherit; text-decoration: none; }
 .xlr-uni-l::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: 24px; }
 .xlr-uni-m { position: relative; display: block; aspect-ratio: 4 / 5; max-height: 560px; border-radius: 24px; overflow: hidden; background: var(--hz-100); outline: 1px solid rgba(0, 0, 0, .08); outline-offset: -1px; }
-.xlr-pause { position: absolute; left: 16px; top: 16px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); color: var(--ink); cursor: pointer; transition: background-color .15s, transform .15s var(--xp-ease); }
-@media (hover: hover) { .xlr-pause:hover { background: #fff; transform: scale(1.06); } }
+.xlr-pause { position: absolute; left: 16px; top: 16px; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); color: var(--ink); cursor: pointer; transition: background-color .15s, color .15s, transform .15s var(--xp-ease); }
+@media (hover: hover) { .xlr-pause:hover { background: var(--ink); color: #fff; } }
 .xlr-pause:active { transform: scale(.97); transition-duration: 90ms; }
 .xlr-pause:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .xlr-uni-m video { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--xp-ease); }
@@ -194,7 +202,9 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
   /* phone: the current station's name sits under its dot (first aligned left, last right), the rest stay named for
      screen readers only */
   .xlr-stops button { position: relative; }
-  .xlr-stops button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* phones: only the lit station shows its name (each button keeps its name in aria-label) */
+  .xlr-stops button span { position: absolute; display: none; }
+  .xlr-stops button[aria-selected='true'] span { display: block; }
   .xlr-stops button[aria-selected='true'] span { top: 46px; left: 50%; width: auto; height: auto; overflow: visible; clip: auto; white-space: nowrap; font: 606 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); transform: translateX(-50%); animation: xlr-label .3s cubic-bezier(.16, 1, .3, 1); }
   .xlr-stops button:first-child[aria-selected='true'] span { left: 8px; transform: none; }
   .xlr-stops button:last-child[aria-selected='true'] span { left: auto; right: 8px; transform: none; }
@@ -224,15 +234,15 @@ html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { backg
 /* ---------- motion map (7 Nov): word-light signature + five entrances ---------- */
 
 /* signature, word-light: Hanzo's first answer at display size, lit word by word as it is read */
-.xlr-say.xp-sec { padding: clamp(40px, 5vw, 88px) 0 clamp(96px, 10vw, 168px); }
-.xlr-say-top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: clamp(24px, 3vw, 40px); }
+.xlr-say.xp-sec { padding: clamp(40px, 5vw, 88px) 0 clamp(64px, 6vw, 104px); }
+.xlr-say-top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: clamp(24px, 3vw, 40px); }
 .xlr-say-k { font: 606 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--hz-500); }
 .xlr-say-n { font-size: 14px; color: var(--soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .xlr-say-t { grid-column: 1 / span 11; margin: 0; font: 497 clamp(30px, 4.3vw, 64px)/1.1 var(--sans); letter-spacing: -.03em; text-wrap: pretty; color: var(--ink); }
 .xlr-say-t > span > span { color: var(--hz-200); cursor: pointer; transition: color .3s var(--xp-ease); }
 .xlr-say-t > span > span.on { color: var(--ink); }
 .xlr-say-t:focus-visible { outline: 2px solid var(--focus); outline-offset: 10px; border-radius: 8px; }
-.xlr-say-more { grid-column: 1 / -1; margin-top: clamp(28px, 3vw, 44px); }
+.xlr-say-more { grid-column: 1 / -1; margin-top: clamp(16px, 2vw, 24px); }
 
 /* entrance 1, tile-flip (hero): paper tiles flip away corner to corner; at rest they are edge-on (invisible) */
 .xlr-hero-wrap { position: relative; }
