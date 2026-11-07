@@ -1,0 +1,28 @@
+# Coverage: /zen — components/pages/model/Zen.jsx on components/v2/Launch.jsx
+
+- **2.1 Strategy and conversion:** Persona (Developer), Goal, CTA and metric `signup_start` are in the `app/zen/page.jsx` header. One solid ask, "Try Hanzo", is in the hero (`<Cta thumb>`, carried by the ask bar) and repeated in the closing Band. "API Platform" is outlined, and "Docs on GitHub" is a text link.
+- **2.2 Information architecture and navigation:** Hanzo's links are kept: `/zen/models`, `/zen/7`, `/zen/zen6-max`, the Workbench and GitHub links. The model-card grid reaches every named model.
+- **2.3 First impression and page narrative:** Zen's film at full bleed with the h1 "Zen" cut in, and nothing above it. The film settles into an arch around the sphere, and "Open models. / Yours to run." rises beside it. Then come Zen's figures, open weights, Zen 6 Flash and Zen 6 as chapters, the live reasoning trace, the family tiles, the model-card grid and the Band.
+- **2.4 Conversion system:** One filled primary per viewport, with `data-cta` ids `zen-hero-try` and `zen-hero-platform`. Every model card in the trace carries "Try Hanzo" and "Open in Workbench" as text links.
+- **2.5 Trust and proof:** The only figures are Hanzo's: Packed ternary, 5.95 GB; 27.3B dense; $2.28 in and $7.26 out per 1M tokens. They are shown with kit `Stat`, byte for byte.
+- **2.6 Content presentation (copy untouched):** Parity is 0 missing (text 23/23, links 6/6). The chapter titles are Hanzo's names (Open weights, Zen 6 Flash, Zen 6). Our headings and spec labels were removed.
+- **2.7 Visual design system:** Ink, greys and white only. Colour comes only from Zen's film, which is never filtered. One dark middle room (the trace) and a dark closing Band. The big family tile is the inverted (black) tile.
+- **2.8 UI component library:** Kit `Cta`, `More`, `A`, `Img`, `Film`, `Stat` and `Band`, plus `Sigil`, shared `v2/Launch` and `v2/x-cray/Chapters`, and Hanzo's exact model cards. Gap: the trace's tabs are page tabs with arrow keys.
+- **2.9 Motion and interaction:**
+  - Signature (time and idle): the trace reasons step by step, and each step lights the row it reads off the card beside it.
+  - Arrival: the h1 cut-in.
+  - Scroll (desktop): the arch settle, and the chapter wipes.
+  - Ambient: the Sigils drift.
+  - Pointer: the card tilt, and the Sigils lean toward the mouse.
+  - State: "Next step" and the tabs.
+  - Phones: the stage settles by itself.
+  - Reduced motion shows final states.
+- **2.10 Media:** Zen's film comes from the kit `Img` and `Film`, playing only on screen, with a 0.6s crossfade. At most two films run in the card grid.
+- **2.11 Mobile and responsive:** No pin at 900px and under. The phone camera pans the sphere into the arch. The figures, chapters and console stack. No sideways scroll at 375. Targets are 44px or more.
+- **2.12 Accessibility (WCAG 2.2 AA):** One h1. Tabs with arrow keys. `aria-live` on the trace once you have used it. The family tiles and model cards are single links. Gap: no axe run.
+- **2.13 Performance and engineering:** Only transform, opacity and clip-path animate. The trace timers stop off screen. Gap: no Lighthouse run.
+- **2.14 SEO and machine files (mirror live, add nothing new):** Title, description and `JsonLd` are unchanged.
+- **2.15 Catalogue and product pages:** The family tiles (Every Zen model, Zen 7, Zen 6 Max) with living Sigils, plus Hanzo's model-card grid with this page marked.
+- **2.16 Developer experience:** Model ids `zen6-flash` and `zen6`, Workbench links and "Docs on GitHub" sit on every card.
+- **2.17 States and resilience:** JS off: every word shows, and the server renders the finished trace. If the film is blocked, its poster shows. Reduced motion shows the finished trace and the settled stage.
+- **2.18 Measurement and handover:** `data-cta` ids are on the asks. Proof is in `docs/gallery/zen/`. The `V2:` line is in the route header.
