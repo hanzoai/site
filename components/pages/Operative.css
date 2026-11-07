@@ -185,7 +185,7 @@
 .xov-social li { border-bottom: 1px solid var(--line); }
 .xov-soc { display: flex; align-items: center; justify-content: space-between; min-height: 60px; font-size: 19px; font-weight: 560; letter-spacing: -.015em; color: var(--ink); text-decoration: none; }
 .xov-soc i { font-style: normal; color: var(--faint); transition: transform .35s var(--a2-ease), color .3s; }
-.xov-soc:hover i { transform: translate(3px, -3px); color: var(--acc); }
+@media (hover: hover) { .xov-soc:hover i { transform: translate(3px, -3px); color: var(--acc); } }
 .xov-end { margin-top: 120px; align-items: stretch; row-gap: 24px; }
 .xov-read-b { grid-column: 1 / span 6; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 40px; border-radius: var(--r-hero); background: var(--card); }
 .xov-get { grid-column: 7 / span 6; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 40px; border-radius: var(--r-hero); background: var(--acc); color: #fff; }

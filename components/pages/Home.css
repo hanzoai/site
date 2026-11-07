@@ -588,3 +588,5 @@
   .hv .x-band h2 { font-size: 32px; }
   .hv .hv-plan .x-price b { font-size: 40px; }
 }
+/* the count runs from 0 to 805,254 without moving the sparkline beside it (CLS 0) */
+@media (min-width: 900px) { .hv .hv-stat.hero { grid-template-columns: 22rem minmax(0, 1fr); } }

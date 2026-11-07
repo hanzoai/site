@@ -1,20 +1,23 @@
 'use client';
 // Persona: a security reviewer or the buyer who has to sign off (arrives from /trust, /enterprise, the footer or a questionnaire link)
-// Goal: see which mechanism protects what, check each control, and reach Hanzo's security team
-// CTA: Talk to Security Team -> /contact (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="talk-to-security-team")
-/* Security. Its idea: a map you travel. The whole of it first — six layers, from the edge down to the organization's
-   own file, stacked as one exploded object while a request passes through them and each layer checks itself. Then the
-   camera goes into one layer at a time: it lifts out of the stack, turns to face you and shows its mechanism, while
-   its control's words sit beside it — by itself every few seconds, or at your hand. Then what runs underneath, the
-   option of none of it, and in the one dark room the sign-off, the address for what you find, and the hard question.
-   Every word is Hanzo's. Structure follows BRIEF-v3 §5.2 (System): hero with the ask > the layers > the checklist
-   with its detail > proof > closing ask. No accent hue: hierarchy from ink alone; colour only from Hanzo's own media.
-   Signature: zoom into the layer — the six-layer stack stays on screen as the map while each layer in turn lifts out, turns face-on and shows its mechanism, advancing by itself or at your hand.
-   Beyond: "Reviewer's worksheet". Tick each control as you check it; the count stays in this browser, and when all
-   six are ticked the page hands you the next step, Hanzo's own security review.
-   Motion: signature (layer zoom: idle auto-advance, springs, a gliding tab pill) + MaskLines headline cut-in (arrival)
-   + the hero request pulse (idle) + the SceneWipe dark room (the one scroll-linked effect).
-   V2: 8/10 System rebuild in ink only: unboxed hero layer map with a live request pulse, a self-advancing layer zoom with the worksheet beside it, calm proof, one wiped-in dark room with the sign-off sheet, one ask (Talk to Security Team) in the hero, sticky after it and at the close; JS off shows every control. */
+// Goal: see an honest status, which mechanism protects what, check each control, and reach Hanzo's security team
+// CTA: Talk to Security Team -> /contact (hero; the shared ask bar after it; the closing band) · data-cta="security.hero" / "security.band"
+// Metric: contact_sales_submit (enterprise buyers, MASTER §1) via cta_click on security.hero and security.band
+// Signature: none by design (MASTER §4.2, an honest status) — the six layers check themselves once as the page arrives, then the controls read as a calm document you select from
+// Beyond: "Reviewer's worksheet" — tick each control as you check it; the count stays in this browser, and at six of six the page hands over Hanzo's own next step, Schedule Security Review
+/* Security, brought to MASTER §4.2: an honest status, easy to verify. The first screen is the headline, the ask, the
+   status in Hanzo's words ("Continual internal audits, with the report on request") and the six layers from the edge to
+   the organization's own file, which check themselves once in a 0.4 s-step pass and then rest. Below it the controls
+   read as a calm document: pick a layer and its mechanism and words come up beside it, with the reviewer's worksheet.
+   Then what runs underneath, the option of none of it, and one black room with the sign-off, the address for what you
+   find, and the closing band with the same ask. Hanzo's deck only: ink and greys, colour only from Hanzo's koma image.
+   Scale has rhythm (ProofRhythm): h1 52, headings 26, figures 64; one big thing per screen (the map, the plate's figure,
+   the rack, the statement, the closing line at 84).
+   Motion (no springs): the line-mask cut-in (arrival), the one-time status pass (time), the gliding layer pill and the
+   plate crossfade (state), pointer answers on every control, and the black room's entry (the one scroll-linked move).
+   Conflict noted on the card: MASTER §4.2 also lists DPA, subprocessors and security.txt for /security; on hanzo.ai those
+   live on /trust, and the split is not ours to merge, so /security links /trust for them and adds no copy.
+   V2: 8/10 calm honest-status rebuild in ink: status pass in the hero, the controls as a selectable document with the worksheet, quiet proof, one black room ending on the same ask. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
@@ -22,10 +25,11 @@ import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import SceneWipe from '../v2/SceneWipe';
 import DetailSheet from '../v2/DetailSheet';
-import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
+import '../v2/ProofRhythm.css';
 import './Security.css';
 
+const EMPH = [0.16, 1, 0.3, 1]; // deck ease-emphasis
 const CONTROLS = [
   ['Encryption at Rest and in Transit', 'At rest, each organization is its own file on Hanzo Base, and where a master key is configured each file opens under its own key, derived through HKDF-SHA256. In transit the edge speaks TLS 1.3 and offers hybrid ML-KEM-768 key exchange to clients that support it, so their traffic captured today cannot be read by a quantum computer later.'],
   ['Second Factors', 'An authenticator app, or a code by SMS or email, with recovery codes. Enrolment hands out the material and demands it back before it writes anything, and adding or dropping a factor signs the account out of every other browser — a stolen session that outlives the change is the same as not having the factor.'],
@@ -34,7 +38,7 @@ const CONTROLS = [
   ['The Edge Throws Identity Away', 'Anything that arrives claiming to be an org, a user or an email is deleted at the gateway before a single handler reads it. Identity is written back only from a verified token. Inside the cluster, services reach each other over a binary protocol rather than the public internet.'],
   ['Where It Sits', 'An organization is a tenancy boundary, and on Hanzo Base it is a physical one — a different organization is a different database file, so no query can reach across two. Dedicated and self-hosted deployments pin that file to a region you choose.'],
 ];
-/* the mechanism each layer shows when it faces you: Hanzo's own terms, lifted from the control's words */
+/* the mechanism each layer shows: Hanzo's own terms, lifted from the control's words */
 const MECH = [
   { kind: 'chips', items: ['HKDF-SHA256', 'TLS 1.3', 'ML-KEM-768', 'Hanzo Base'] },
   { kind: 'chips', items: ['Authenticator app', 'SMS', 'Email', 'Recovery codes'] },
@@ -45,31 +49,29 @@ const MECH = [
 ];
 const pad = (i) => String(i + 1).padStart(2, '0');
 const KEY = 'hz-security-checked';
-const DWELL = 5000; // ms each layer faces you when nobody is choosing
-const Check = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Check = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* ---------- hero: the whole map, a request passing through every layer ---------- */
+/* ---------- hero: the status, checked once as the page arrives ---------- */
 function Map({ pick }) {
   const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.3 });
+  const live = useInView(ref, { amount: 0.3, once: true });
   const calm = useReducedMotion();
-  const [n, setN] = useState(0); // 0 = waiting at the edge, 1..6 = layers passed, 7 = hold
+  const [n, setN] = useState(0); // 0 = waiting at the edge, 1..6 = layers checked; it stops at 6
   useEffect(() => {
-    if (calm || !live) return;
-    const t = setTimeout(() => setN((v) => (v + 1) % 8), n === 7 ? 2600 : n === 0 ? 500 : 820);
+    if (calm) { setN(6); return; }
+    if (!live || n >= 6) return;
+    const t = setTimeout(() => setN((v) => v + 1), n === 0 ? 400 : 300);
     return () => clearTimeout(t);
   }, [n, calm, live]);
-  useEffect(() => { if (calm) setN(6); }, [calm]); // final state after hydration, never a different first render
-  const done = Math.min(n, 6);
   return (
     <div className="xsc-map" ref={ref}>
       <p className="xsc-map-h">
         <span>The controls, named</span>
-        <span className="pf-mono" aria-hidden="true">{pad(Math.max(0, done - 1))} / 06</span>
+        <span className="pf-mono" aria-hidden="true">{pad(Math.max(0, n - 1))} / 06</span>
       </p>
       <ol className="xsc-map-st">
         {CONTROLS.map(([t], i) => (
-          <li key={t} style={{ '--i': i }} className={(i < done ? 'ok' : '') + (i === done - 1 ? ' now' : '') + (i === 5 ? ' core' : '')}>
+          <li key={t} style={{ '--i': i }} className={(i < n ? 'ok' : '') + (i === n - 1 && n < 6 ? ' now' : '') + (i === 5 ? ' core' : '')}>
             <span className="xsc-mp" aria-hidden="true">{i === 5 && <img src="/models/koma.webp" alt="" width="172" height="120" />}</span>
             <button type="button" className="xsc-ml" onClick={() => pick(i)}>
               <span className="pf-mono">{pad(i)}</span>
@@ -88,11 +90,11 @@ function Hero({ pick }) {
     <section className="xsc-hero" aria-labelledby="xsc-h1">
       <div className="pf-wrap xsc-hero-g">
         <div className="xsc-hero-c">
-          <MaskLines as="h1" id="xsc-h1" className="pf-display m" lines={['What protects', 'your data,', 'and how.']} />
+          <MaskLines as="h1" id="xsc-h1" className="pf-display" lines={['What protects', 'your data,', 'and how.']} />
           <p className="pf-kick xsc-cap">Security Architecture</p>
           <p className="pf-lede">Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</p>
           <div className="xsc-acts">
-            <A to="/contact" className="pf-btn solid" data-thumb="Talk to Security Team" data-cta="talk-to-security-team">Talk to Security Team</A>
+            <A to="/contact" className="pf-btn solid" data-thumb="Talk to Security Team" data-cta="security.hero">Talk to Security Team</A>
             <More to="https://docs.hanzo.ai/docs/cli/security">Security Documentation</More>
           </div>
           <p className="xsc-audit">
@@ -109,7 +111,7 @@ function Hero({ pick }) {
   );
 }
 
-/* ---------- signature: the camera goes into one layer at a time ---------- */
+/* ---------- the controls, a calm document you select from ---------- */
 function Mech({ m }) {
   if (m.kind === 'chips') return <ul className="xsc-chips">{m.items.map((c) => <li key={c}>{c}</li>)}</ul>;
   if (m.kind === 'rules') return <ul className="xsc-rules">{m.items.map(([a, b]) => <li key={a}><span>{a}</span><b>{b}</b></li>)}</ul>;
@@ -117,40 +119,7 @@ function Mech({ m }) {
   return <div className="xsc-strike"><ul>{m.items.map((c) => <li key={c}><s>{c}</s></li>)}</ul><p><span aria-hidden="true">→</span> {m.foot}</p></div>;
 }
 
-function Zoom({ at }) {
-  return (
-    <div className="xsc-zoom" aria-hidden="true">
-      {CONTROLS.map(([t], i) => {
-        const on = i === at;
-        return (
-          <motion.div
-            key={t}
-            className={'xsc-zp' + (on ? ' on' : '') + (i < at ? ' past' : '') + (i === 5 ? ' core' : '')}
-            initial={false}
-            animate={on
-              ? { x: 80, y: 0, scale: 1, rotateX: 0, rotateZ: 0 }
-              : { x: -280, y: -150 + i * 60, scale: 0.4, rotateX: 58, rotateZ: -42 }}
-            transition={{ type: 'spring', stiffness: 120, damping: 20, mass: 0.9 }}
-            style={{ zIndex: on ? 20 : 10 - i, transformPerspective: 1600 }}
-          >
-            {i === 5 && <img src="/models/koma.webp" alt="" width="480" height="330" />}
-            <div className="xsc-zp-in">
-              <span className="xsc-zp-n">{pad(i)}</span>
-              <b className="xsc-zp-t">{t}</b>
-              <Mech m={MECH[i]} />
-            </div>
-          </motion.div>
-        );
-      })}
-    </div>
-  );
-}
-
-function Layers({ at, setAt, held, hold }) {
-  const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.45 });
-  const calm = useReducedMotion();
-  const [under, setUnder] = useState(false); // the pointer is on the stage: it waits under the hand
+function Layers({ at, setAt }) {
   const [ok, setOk] = useState([]); // the reviewer's ticks, kept in this browser only
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); if (Array.isArray(v)) setOk(v.filter((i) => i >= 0 && i < 6)); } catch {} }, []);
   const tick = (i) => setOk((o) => {
@@ -158,38 +127,30 @@ function Layers({ at, setAt, held, hold }) {
     try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {}
     return v;
   });
-  // by itself: the next layer every DWELL ms while the stage is on screen and nobody is choosing
-  const auto = live && !held && !calm && !under;
-  useEffect(() => {
-    if (!auto) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 6), DWELL);
-    return () => clearTimeout(t);
-  }, [auto, at, setAt]);
   const keys = (e) => {
     const k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
     if (!k) return;
     e.preventDefault();
     const n = (at + k + 6) % 6;
-    hold(); setAt(n);
+    setAt(n);
     document.getElementById('xsc-tab-' + n)?.focus();
   };
   return (
-    <section className="pf-sec tight xsc-layers" id="controls" ref={ref} aria-labelledby="xsc-layers-h">
-      <div className="pf-wrap xsc-layers-g" onPointerEnter={(e) => e.pointerType === 'mouse' && setUnder(true)} onPointerLeave={() => setUnder(false)}>
+    <section className="pf-sec xsc-layers" id="controls" aria-labelledby="xsc-layers-h">
+      <div className="pf-wrap xsc-layers-g">
         <div className="xsc-layers-l">
-          <MaskLines id="xsc-layers-h" className="pf-head" lines={['The controls,', 'named']} />
+          <h2 id="xsc-layers-h" className="pf-head">The controls, named</h2>
           <div className="xsc-tabs" role="tablist" aria-label="The controls" aria-orientation="vertical" onKeyDown={keys}>
             {CONTROLS.map(([t], i) => (
               <button
                 key={t} id={'xsc-tab-' + i} type="button" role="tab" aria-selected={at === i} aria-controls={'xsc-p-' + i} tabIndex={at === i ? 0 : -1}
                 className={ok.includes(i) ? 'ok' : ''}
-                onClick={() => { hold(); setAt(i); }}
+                onClick={() => setAt(i)}
               >
-                {at === i && <motion.span layoutId="xsc-pill" className="xsc-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                {at === i && <motion.span layoutId="xsc-pill" className="xsc-pill" transition={{ duration: 0.3, ease: EMPH }} />}
                 <span className="pf-mono">{pad(i)}</span>
                 <span className="xsc-tab-t">{t}</span>
                 <span className="xsc-tab-ok"><Check s={14} /></span>
-                {at === i && auto && <i className="xsc-dwell" key={'d' + at} style={{ animationDuration: DWELL + 'ms' }} aria-hidden="true" />}
               </button>
             ))}
           </div>
@@ -197,7 +158,18 @@ function Layers({ at, setAt, held, hold }) {
           {ok.length === 6 && <More to="/contact-sales">Schedule Security Review</More>}
         </div>
         <div className="xsc-layers-r">
-          <Zoom at={at} />
+          <div className="xsc-plates" aria-hidden="true">
+            {CONTROLS.map(([t], i) => (
+              <div key={t} className={'xsc-plate' + (i === 5 ? ' core' : '')} data-on={at === i}>
+                {i === 5 && <img src="/models/koma.webp" alt="" width="640" height="440" />}
+                <div className="xsc-plate-in">
+                  <span className="pf-figure">{pad(i)}</span>
+                  <b className="pf-title">{t}</b>
+                  <Mech m={MECH[i]} />
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="xsc-panels">
             {CONTROLS.map(([t, d], i) => (
               <div key={t} id={'xsc-p-' + i} role="tabpanel" aria-labelledby={'xsc-tab-' + i} className="xsc-panel" data-on={at === i} inert={at !== i}>
@@ -225,7 +197,7 @@ function Infra() {
     <section className="pf-sec xsc-infra" aria-labelledby="xsc-infra-h">
       <div className="pf-wrap xsc-infra-g">
         <div>
-          <MaskLines id="xsc-infra-h" className="pf-head" lines={['What runs', 'underneath']} />
+          <MaskLines id="xsc-infra-h" className="pf-head" lines={['What runs underneath']} />
           <p className="pf-kick xsc-cap">Infrastructure</p>
           <p className="pf-body">Workloads sit in hardware-virtualised machines on managed Kubernetes, in data centres with physical access control and redundant power. Secrets never reach a manifest — they are fetched from Hanzo KMS at boot, and outside development a service refuses to start without a verified issuer, audience and key set rather than falling back to running open.</p>
         </div>
@@ -247,11 +219,13 @@ function None() {
   return (
     <section className="pf-sec xsc-none" aria-labelledby="xsc-none-h">
       <div className="pf-wrap xsc-none-g">
-        <h2 id="xsc-none-h" className="pf-display s">Or none of our infrastructure at all</h2>
-        <p className="pf-lede">Every piece named on this page is a binary you can run yourself. The strongest answer to a question about our infrastructure is that you do not have to use it.</p>
+        <div>
+          <h2 id="xsc-none-h" className="xsc-none-h">Or none of our infrastructure at all</h2>
+          <p className="pf-lede">Every piece named on this page is a binary you can run yourself. The strongest answer to a question about our infrastructure is that you do not have to use it.</p>
+        </div>
         <ol className="xsc-opts">
           {OPTIONS.map(([t, d], i) => (
-            <li key={t}><span className="xsc-opt-n" aria-hidden="true">{pad(i)}</span><b className="pf-title">{t}</b><span>{d}</span></li>
+            <li key={t}><span className="xsc-opt-n pf-mono" aria-hidden="true">{pad(i)}</span><b className="pf-title">{t}</b><span>{d}</span></li>
           ))}
         </ol>
       </div>
@@ -259,7 +233,7 @@ function None() {
   );
 }
 
-/* ---------- the one dark room: the sign-off, the address, the hard question ---------- */
+/* ---------- the one black room: the sign-off, the address, the closing band ---------- */
 const COMES = ['Single sign-on through Hanzo IAM', 'Federation to your own OpenID Connect issuer', 'SCIM 2.0 provisioning from your directory', 'A named engineer who knows your deployment', 'Priority incident response', 'Retention set by you, not by us', 'Audit records exported where you want them', 'Security questionnaire support'];
 
 function Dark() {
@@ -268,7 +242,7 @@ function Dark() {
       <div className="pf-sec">
         <div className="pf-wrap xsc-ent-g">
           <div>
-            <MaskLines className="pf-display s" lines={['If you are the one', 'who has to sign off']} />
+            <MaskLines className="pf-head" lines={['If you are the one', 'who has to sign off']} />
             <p className="pf-kick xsc-cap">Enterprise</p>
           </div>
           <div>
@@ -298,11 +272,11 @@ function Dark() {
         </div>
 
         <div className="pf-wrap xsc-ask">
-          <MaskLines className="pf-display m" lines={['Ask us the', 'hard question']} />
+          <MaskLines className="pf-moment" lines={['Ask us the', 'hard question']} />
           <div className="xsc-ask-r">
             <p className="pf-lede">Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure.</p>
             <div className="xsc-ask-acts">
-              <A to="/contact" className="pf-btn solid xsc-light" data-cta="talk-to-security-team">Talk to Security Team</A>
+              <A to="/contact" className="pf-btn solid xsc-light" data-cta="security.band">Talk to Security Team</A>
               <More to="/contact-sales">Schedule Security Review</More>
             </div>
             <p className="xsc-note"><A to="/login">Try Hanzo</A> · <A to="https://docs.hanzo.ai/docs/cli/security">Read the security documentation</A></p>
@@ -315,26 +289,24 @@ function Dark() {
 
 export default function Security() {
   const [at, setAt] = useState(0);
-  const [held, setHeld] = useState(false);
-  const hold = () => setHeld(true);
-  // a layer named in the hero map: bring its stage up with that layer facing you
+  // a layer named in the hero: bring the controls up with that layer chosen
   const pick = (i) => {
-    hold(); setAt(i);
+    setAt(i);
     const el = document.getElementById('controls');
     if (!el) return;
     const y = el.getBoundingClientRect().top + scrollY - 40;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: 'smooth' });
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: 0.5 }) : scrollTo({ top: y, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    setTimeout(() => document.getElementById('xsc-tab-' + i)?.focus({ preventScroll: true }), 520);
   };
   return (
-    <main className="xsc">
-      {/* JS off: every control's words stand stacked, and the dark room is simply there */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xsc-panel{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:24px}.pf-wipe>div[aria-hidden]{clip-path:none!important}</style>' }} />
+    <main className="xsc pf-r">
+      {/* JS off: every control's words and plate stand stacked, and the black room is simply there */}
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xsc-panel,.xsc-plate{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:24px}.pf-wipe>div[aria-hidden]{clip-path:none!important}</style>' }} />
       <Hero pick={pick} />
-      <Layers at={at} setAt={setAt} held={held} hold={hold} />
+      <Layers at={at} setAt={setAt} />
       <Infra />
       <None />
       <Dark />
-      <AskBar title="Security" label="Talk to Security Team" to="/contact" cta="talk-to-security-team" />
     </main>
   );
 }

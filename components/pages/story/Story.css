@@ -1,183 +1,175 @@
-/* Customer story: a feature told in scenes (prefix xst-). No UI hue: ink, greys and silver; colour comes only from the
-   launch's own pictures. One dark room (the stage). */
-.xst { --tint: #f5f5f7; --plate: #e9e9ec; --silver: #b8b8be; --edge: max(24px, calc((100vw - 1440px) / 2)); }
-.xst-g { width: min(100% - 48px, 1440px); margin-inline: auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
-.xst-kicker, .xst-kick, .xst-n { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
-.xst-h2 { margin: 0; font-size: clamp(36px, 4.2vw, 56px); font-weight: 600; letter-spacing: -.045em; line-height: 1; text-wrap: balance; }
-.xst-t { margin: 0; max-width: 62ch; font-size: 19px; line-height: 1.6; color: #1d1d1f; text-wrap: pretty; }
-.xst-mark { background: linear-gradient(transparent 58%, rgba(10, 10, 10, .12) 58%); color: inherit; padding: 0 .05em; animation: xst-mark .9s var(--ease) both; }
+/* Customer story (prefix xst-), on Hanzo's deck: neutrals only (colour comes from the launch's pictures), one black room
+   (the stage), the deck's sizes, radii and motion tokens. Nothing floats over the content. */
+.xst {
+  --ink: #0a0a0a; --body: #262626; --muted: #525252; --quiet: #737373; --hair: rgba(0, 0, 0, .1);
+  --quiet-room: #f5f5f5; --plate: #ededed; --plate-ink: #404040;
+  --d-press: 90ms; --d-fast: 150ms; --d-base: 300ms; --d-slow: 400ms; --d-slower: 500ms;
+  --e-out: cubic-bezier(0, 0, .2, 1); --e-io: cubic-bezier(.4, 0, .2, 1); --e-em: cubic-bezier(.16, 1, .3, 1);
+  --gutter: clamp(16px, 4vw, 32px); --pad: clamp(72px, 11vw, 188px);
+}
+.xst-g { width: min(100% - 2 * var(--gutter), 1152px); margin-inline: auto; display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 17px; }
+.xst-h2 { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+.xst-t { margin: 0; max-width: 62ch; font-size: 16px; line-height: 1.6; color: var(--body); text-wrap: pretty; }
+.xst-cap, .xst-n, .xst-meta { margin: 0; font: 500 12px/1.35 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+.xst-cap, .xst-n { color: var(--quiet); }
+.xst-mark { background: linear-gradient(transparent 60%, #e4e4e7 60%); color: inherit; padding: 0 .05em; animation: xst-mark var(--d-slower) var(--e-em) both; }
 @keyframes xst-mark { from { opacity: .2; } }
 
 /* a picture over its caption plate (the plate shows when the file cannot load) */
 .xst-pic { position: relative; display: block; overflow: hidden; background: var(--plate); }
-.xst-pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.xst-pic-in { position: absolute; inset: 0; display: block; transform-origin: 50% 60%; }
+.xst-pic img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; background: none; }
 .xst-pic img[data-missing] { visibility: hidden; }
-.xst-plate { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; padding: clamp(20px, 2.4vw, 36px); color: #3a3a3c; font-size: clamp(20px, 1.9vw, 28px); font-weight: 560; letter-spacing: -.025em; line-height: 1.15; text-wrap: balance; }
+.xst-plate { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 17px; padding: clamp(17px, 2.4vw, 27px); color: var(--plate-ink); font-size: 21px; font-weight: 497; letter-spacing: -.015em; line-height: 1.25; text-wrap: balance; }
 .xst-plate > span { margin-top: auto; max-width: 22ch; }
-.xst-plate b { font-size: 13px; font-weight: 500; letter-spacing: .12em; }
+.xst-plate b { font-size: 12px; font-weight: 500; letter-spacing: .14em; }
 
-/* 1. the stage: the launch's picture full-bleed, settling into a framed plate as you leave */
-.xst-hero { position: relative; height: calc(100svh - var(--x-top, 60px)); min-height: 600px; color: #f5f5f7; background: #0a0a0a; overflow: hidden; }
-.xst-cover { position: absolute; inset: 0; transform-origin: 50% 40%; }
+/* 1. the stage: a black room that enters as a rounded card inside the gutters and opens to full width */
+.xst-hero { position: relative; height: calc(100svh - var(--x-top, 60px) - 56px); min-height: 560px; color: #fafafa; background: #fff; overflow: hidden; }
+.xst-cover { position: absolute; inset: 0; background: #000; }
 .xst-cover-in, .xst-cover-in .xst-pic { position: absolute; inset: 0; display: block; }
-.xst-hero .xst-pic { background: #161618; }
-.xst-hero .xst-plate { color: rgba(245, 245, 247, .55); align-items: flex-end; justify-content: flex-start; font: 500 13px/1.3 var(--mono); letter-spacing: .06em; padding: 96px var(--edge) 0; }
-.xst-hero .xst-plate > span { max-width: 28ch; margin-top: 0; text-align: right; }
-.xst-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 10, 10, 0) 45%, rgba(10, 10, 10, .74) 100%); pointer-events: none; }
-.xst-sigil { position: absolute; right: 0; top: 0; width: min(64vw, 980px); height: 100%; color: #d8d8de; opacity: .5; mix-blend-mode: screen; }
-/* no picture: the contour takes the whole stage and Hanzo's caption reads in it */
-.xst-hero[data-bare] .xst-sigil { width: 100%; opacity: .9; }
-.xst-hero[data-bare] .xst-plate { color: rgba(245, 245, 247, .72); font-size: 15px; }
-.xst-back { position: absolute; z-index: 2; top: 88px; left: var(--edge); display: inline-flex; align-items: center; min-height: 44px; color: rgba(245, 245, 247, .8); text-decoration: none; font: 500 15px/1 var(--sans); transition: color .2s, transform .35s var(--ease); }
-@media (hover: hover) { .xst-back:hover { color: #fff; transform: translateX(-4px); } }
-.xst-hero-t { position: absolute; z-index: 1; left: var(--edge); right: var(--edge); bottom: clamp(48px, 9svh, 112px); }
-.xst-kick { display: flex; align-items: center; gap: 14px; color: rgba(245, 245, 247, .78); }
-.xst-kick i { width: 40px; height: 1px; background: var(--silver); }
-.xst-hero-b { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 32px; margin-top: 28px; }
-.xst-h1 { color: #f5f5f7; margin: 0; max-width: 12ch; font-size: clamp(56px, 9.4vw, 128px); font-weight: 600; letter-spacing: -.05em; line-height: .92; text-wrap: balance; }
+.xst-hero .xst-pic { background: #171717; }
+.xst-hero .xst-plate { color: rgba(255, 255, 255, .55); align-items: flex-end; justify-content: flex-start; font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; padding: 27px max(var(--gutter), calc((100vw - 1152px) / 2)) 0; }
+.xst-hero .xst-plate > span { margin-top: 0; max-width: 28ch; text-align: right; }
+.xst-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .55) 0%, rgba(0, 0, 0, 0) 62%); pointer-events: none; }
+.xst-sigil { position: absolute; right: 0; top: 0; width: min(64vw, 980px); height: 100%; color: rgba(255, 255, 255, .45); }
+.xst-hero[data-bare] .xst-sigil { width: 100%; color: rgba(255, 255, 255, .55); }
+.xst-hero-in { position: relative; z-index: 1; height: 100%; width: min(100% - 2 * var(--gutter), 1152px); margin-inline: auto; }
+.xst-crumb { position: absolute; top: 17px; left: 0; }
+.xst-crumb ol { list-style: none; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; font-size: 14px; color: rgba(255, 255, 255, .55); }
+.xst-crumb li + li::before { content: '/'; margin-right: 10px; color: rgba(255, 255, 255, .3); }
+.xst-crumb a { display: inline-flex; align-items: center; min-height: 44px; color: #fafafa; text-decoration: none; transition: transform var(--d-base) var(--e-out); }
+.xst-crumb a:active { transform: translateY(1px); }
+.xst-hero-t { position: absolute; left: 0; right: 0; top: calc(38% - 80px); }
+.xst-h1 { margin: 0; font-size: 84px; font-weight: 497; letter-spacing: -.035em; line-height: .98; text-wrap: balance; color: #fafafa; transform-origin: 0 100%; }
+.xst-meta { display: flex; align-items: center; gap: 14px; margin-top: 27px; color: rgba(255, 255, 255, .78); }
+.xst-meta i { width: 32px; height: 1px; background: rgba(255, 255, 255, .3); }
+.xst-ask { margin-top: 27px; }
 
-/* 2. the statement and the figures on a rule */
-.xst-intro { padding: clamp(120px, 16vw, 240px) 0 clamp(120px, 14vw, 220px); }
-.xst-lede { grid-column: 1 / span 9; margin: 0; font-size: clamp(30px, 3.6vw, 52px); font-weight: 500; letter-spacing: -.035em; line-height: 1.1; text-wrap: balance; scroll-margin-top: 140px; }
-.xst-figs { grid-column: 1 / -1; margin: clamp(80px, 10vw, 160px) 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; }
+/* 2. the lede and the figures on a rule: each figure's own characters rise into place on arrival */
+.xst-intro { padding: var(--pad) 0; }
+.xst-lede { grid-column: 1 / span 8; margin: 0; max-width: 44ch; font-size: 21px; line-height: 1.45; color: var(--ink); text-wrap: pretty; scroll-margin-top: 140px; }
+.xst-figs { grid-column: 1 / -1; margin: 72px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 17px; }
 .xst-fig dd { margin: 0; height: 100%; }
-.xst-fig-b { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; height: 100%; padding: 28px 0 8px; border: 0; border-top: 1px solid rgba(0, 0, 0, .14); background: none; color: var(--ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; }
-.xst-fig-b::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform .5s var(--ease); }
+.xst-fig-b { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; height: 100%; padding: 27px 0 6px; border: 0; border-top: 1px solid var(--hair); background: none; color: var(--ink); text-align: left; text-decoration: none; font: inherit; cursor: pointer; transition: transform var(--d-fast) var(--e-out); }
+.xst-fig-b::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform var(--d-base) var(--e-out); }
 .xst-fig-b:focus-visible::before, .xst-fig-b[aria-pressed='true']::before { transform: scaleX(1); }
-@media (hover: hover) { .xst-fig-b:hover::before { transform: scaleX(1); } }
 .xst-fig-b:disabled { cursor: default; }
-.xst-fig-b:not(:disabled):active { transform: translateY(1px); }
-.xst-all:active, .xst-back:active { transform: translateY(1px); }
-.xst-fig-v { font-size: clamp(44px, 5.2vw, 84px); font-weight: 600; letter-spacing: -.05em; line-height: .9; font-feature-settings: 'tnum'; white-space: nowrap; }
-/* each figure's own characters rise out of a mask on arrival; only Hanzo's figure is ever shown (scripts off: shown as is) */
-.xst-fig-v { display: inline-flex; overflow: hidden; padding-bottom: .04em; }
-.xst-ch { display: inline-block; white-space: pre; transition: transform .9s var(--ease) calc(var(--k) * 45ms); }
-.js .xst-fig:not([data-in]) .xst-ch { transform: translateY(108%); }
-.xst-fig-l { font-size: 17px; line-height: 1.4; color: var(--soft); text-wrap: pretty; max-width: 24ch; }
-.xst-fig-w { display: inline-flex; gap: 8px; margin-top: auto; padding-top: 14px; font-size: 13px; line-height: 1.35; color: var(--faint); transition: color .25s; }
-.xst-fig-w i { font-style: normal; color: var(--ink); display: inline-block; transition: transform .35s var(--ease); }
-@media (hover: hover) { .xst-fig-b:hover .xst-fig-w { color: var(--ink); } }
-@media (hover: hover) { .xst-fig-b:hover .xst-fig-w i { transform: translateY(3px); } }
-@media (hover: hover) { a.xst-fig-b:hover .xst-fig-w i { transform: translate(2px, -2px); } }
+.xst-fig-b:not(:disabled):active { transform: scale(.97); transition-duration: var(--d-press); }
+.xst-fig-v { display: inline-flex; overflow: hidden; padding-bottom: .06em; font-size: 64px; font-weight: 220; letter-spacing: -.03em; line-height: 1; font-feature-settings: 'tnum'; white-space: nowrap; }
+.xst-ch { display: inline-block; white-space: pre; transition: transform var(--d-slower) var(--e-em) calc(var(--k) * 60ms); }
+.js .xst-fig:not([data-in]) .xst-ch { transform: translateY(105%); }
+.xst-fig-l { font-size: 14px; line-height: 1.45; color: var(--muted); text-wrap: pretty; max-width: 24ch; }
+.xst-fig-w { display: inline-flex; gap: 8px; margin-top: auto; padding-top: 10px; font-size: 12px; letter-spacing: .06em; line-height: 1.4; color: var(--quiet); transition: color var(--d-fast) var(--e-out); }
+.xst-fig-w i { font-style: normal; color: var(--ink); display: inline-block; transition: transform var(--d-base) var(--e-out); }
+@media (hover: hover) {
+  .xst-fig-b:hover::before { transform: scaleX(1); }
+  .xst-fig-b:hover .xst-fig-w { color: var(--ink); }
+  .xst-fig-b:hover .xst-fig-w i { transform: translateY(3px); }
+  a.xst-fig-b:hover .xst-fig-w i { transform: translate(2px, -2px); }
+  .xst-crumb a:hover { text-decoration: underline; text-underline-offset: 3px; }
+}
 
-/* 3. the platform's own report: real product UI as the object */
-.xst-report { padding: 0 0 clamp(120px, 16vw, 240px); scroll-margin-top: 80px; }
-.xst-report .xst-g { align-items: center; }
-.xst-report-t { grid-column: 1 / span 4; }
-.xst-report-t .xst-h2 { margin-bottom: 24px; }
-.xst-shot { grid-column: 6 / span 7; margin: 0; border-radius: 28px; overflow: hidden; box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .45), 0 0 0 1px var(--line); transform: perspective(1600px) rotateX(9deg) translateY(56px) scale(.96); transform-origin: 50% 100%; transition: transform 1.3s var(--ease); }
-.xst-shot[data-in] { transform: none; }
+/* 3. the platform's own report: Hanzo's product UI, in the quiet room */
+.xst-report { padding: var(--pad) 0; background: var(--quiet-room); scroll-margin-top: 80px; }
+.xst-report .xst-g { align-items: end; }
+.xst-report-t { grid-column: 1 / span 5; }
+.xst-report-t .xst-h2 { margin-bottom: 17px; }
+.xst-shot { grid-column: 6 / span 8; margin: 0; border-radius: 20px; overflow: hidden; transition: transform var(--d-slower) var(--e-em); }
+.js .xst-shot:not([data-in]) { transform: translateY(24px); }
 .xst-shot .xst-pic { aspect-ratio: 16 / 10; }
 
 /* 4. the chapters: 100svh scenes on a sticky stage, each wiping up over the last */
-.xst-how { padding: 0; }
-.xst-how-head { align-items: end; padding-bottom: clamp(48px, 6vw, 96px); }
+.xst-how { padding-top: var(--pad); }
+.xst-how-head { align-items: end; padding-bottom: 44px; }
 .xst-how-head .xst-h2 { grid-column: 1 / span 8; }
-.xst-how-head .xst-kicker { grid-column: 10 / span 3; justify-self: end; color: var(--faint); }
+.xst-how-head .xst-cap { grid-column: 9 / span 5; justify-self: end; }
 .xst-scenes { --pinned: 1; position: relative; height: calc(var(--n) * 100svh); }
 .xst-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-.xst-scene { position: absolute; inset: 0; display: flex; align-items: center; padding-top: 56px; background: #fff; scroll-margin-top: 0; }
-.xst-scene[data-tone='b'] { background: var(--tint); }
-.xst-scene + .xst-scene { box-shadow: 0 -1px 0 var(--line); }
-.xst-scene-g { width: min(100% - 48px, 1440px); align-items: center; }
+.xst-scene { position: absolute; inset: 0; display: flex; align-items: center; padding-top: var(--x-top, 60px); background: #fff; }
+.xst-scene[data-tone='b'] { background: var(--quiet-room); }
+.xst-scene[data-tone='b'] .xst-n { color: var(--muted); } /* #737373 fails 4.5:1 on the quiet room */
+.xst-scene + .xst-scene { box-shadow: 0 -1px 0 var(--hair); }
+.xst-scene-g { align-items: center; }
 .xst-scene-t { grid-column: 1 / span 5; }
-.xst-h3 { margin: 0 0 24px; font-size: clamp(34px, 3.8vw, 56px); font-weight: 600; letter-spacing: -.045em; line-height: 1.02; text-wrap: balance; }
-.xst-scene-pic { grid-column: 6 / span 7; height: min(68svh, 740px); border-radius: 28px; box-shadow: 0 50px 100px -60px rgba(0, 0, 0, .35); }
-.xst-scene-pic img { transform-origin: 50% 60%; }
-.xst-scene.bare .xst-scene-t { grid-column: 1 / span 10; }
-.xst-scene.bare .xst-h3 { font-size: clamp(56px, 7.4vw, 112px); line-height: .94; letter-spacing: -.05em; }
-.xst-scene.bare .xst-t { font-size: clamp(21px, 1.7vw, 24px); line-height: 1.5; max-width: 52ch; }
-.xst-reel { position: absolute; z-index: 3; left: var(--edge); bottom: 28px; display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--soft); pointer-events: none; }
-.xst-reel-n b { display: inline-block; font-weight: 500; color: var(--ink); animation: xst-roll .5s var(--ease); }
-@keyframes xst-roll { from { transform: translateY(70%); opacity: 0; } }
-.xst-reel-bar { display: flex; gap: 4px; }
-.xst-reel-bar i { width: 22px; height: 2px; border-radius: 2px; background: rgba(0, 0, 0, .12); transition: background .4s var(--ease); }
-.xst-reel-bar i[data-on] { background: var(--ink); }
+.xst-h3 { margin: 0 0 17px; font-size: 32px; font-weight: 497; letter-spacing: -.025em; line-height: 1.1; text-wrap: balance; }
+.xst-n { margin-top: 27px; }
+.xst-scene-pic { grid-column: 6 / span 8; height: min(66svh, 640px); border-radius: 20px; }
+.xst-scene.bare .xst-scene-t { grid-column: 1 / span 9; }
+.xst-scene.bare .xst-h3 { font-size: 52px; line-height: 1; letter-spacing: -.03em; }
+.xst-scene.bare .xst-t { font-size: 21px; line-height: 1.45; max-width: 52ch; }
 
-/* 5. from the campaign: an asymmetric wall; tiles wipe open on arrival, a hover reads Hanzo's caption */
-.xst-more { padding: clamp(120px, 16vw, 240px) 0 0; }
-.xst-more .xst-h2 { grid-column: 1 / span 8; margin-bottom: clamp(40px, 5vw, 72px); }
-.xst-wall { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+/* 5. from the campaign: an asymmetric wall of Hanzo's frames, each wiping open on arrival */
+.xst-more { padding: var(--pad) 0 0; }
+.xst-more .xst-h2 { grid-column: 1 / span 8; margin-bottom: 44px; }
+.xst-wall { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 27px 12px; }
 .xst-tile { grid-column: span 6; }
 .xst-tile:nth-child(6n + 1), .xst-tile:nth-child(6n + 4) { grid-column: span 7; }
 .xst-tile:nth-child(6n + 2), .xst-tile:nth-child(6n + 3) { grid-column: span 5; }
-.xst-tile figure { position: relative; margin: 0; }
-.xst-tile .xst-pic { height: clamp(300px, 34vw, 540px); border-radius: 16px; clip-path: inset(100% 0% 0% 0% round 16px); transition: clip-path 1.1s var(--ease); transition-delay: calc(var(--i) * 70ms); }
-.xst-tile[data-in] .xst-pic { clip-path: inset(0% 0% 0% 0% round 16px); }
-.xst-tile .xst-pic img { transition: transform .9s var(--ease); }
-@media (hover: hover) { .xst-tile:hover .xst-pic img { transform: scale(1.035); } }
-.xst-tile figcaption { position: absolute; left: 14px; right: 14px; bottom: 14px; width: fit-content; max-width: calc(100% - 28px); padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, .94); color: var(--ink); font-size: 15px; line-height: 1.35; opacity: 0; transform: translateY(8px); transition: opacity .35s var(--ease), transform .35s var(--ease); }
-.xst-tile:focus-within figcaption { opacity: 1; transform: none; }
-@media (hover: hover) { .xst-tile:hover figcaption { opacity: 1; transform: none; } }
-.xst-tile:has(img[data-missing]) figcaption { display: none; }
+.xst-tile figure { margin: 0; }
+.xst-tile .xst-pic { height: clamp(280px, 32vw, 460px); border-radius: 20px; clip-path: inset(0% 0% 0% 0% round 20px); transition: clip-path var(--d-slower) var(--e-em) calc(var(--i) * 60ms); }
+.js .xst-tile:not([data-in]) .xst-pic { clip-path: inset(100% 0% 0% 0% round 20px); }
+.xst-tile figcaption { margin-top: 10px; font-size: 13px; line-height: 1.4; color: var(--muted); }
 
 /* 6. the way out: the case study, every launch, and the next launch as a card that opens into its page */
-.xst-end { padding: clamp(120px, 16vw, 240px) 0 clamp(120px, 14vw, 200px); }
-.xst-end-g { align-items: end; row-gap: 48px; }
-.xst-end-a { grid-column: 1 / span 4; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding-bottom: 8px; }
-.xst-pdf { height: 52px; padding: 0 26px; font-size: 16px; }
-.xst-all { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); text-decoration: none; font: 500 16px/1 var(--sans); transition: transform .35s var(--ease); }
-@media (hover: hover) { .xst-all:hover { transform: translateX(4px); } }
-.xst-next { grid-column: 6 / span 7; position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; color: var(--ink); text-decoration: none; }
-.xst-next-pic { display: block; border-radius: 28px; overflow: hidden; }
+.xst-end { padding: var(--pad) 0; }
+.xst-end-g { align-items: end; row-gap: 44px; }
+.xst-end-a { grid-column: 1 / span 5; display: flex; flex-direction: column; align-items: flex-start; gap: 17px; padding-bottom: 6px; }
+.xst-all { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); font-size: 16px; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-underline-offset var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xst-all:active { transform: translateY(1px); }
+.xst-next { grid-column: 6 / span 8; position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 17px; color: var(--ink); text-decoration: none; }
+.xst-next-pic { display: block; border-radius: 20px; overflow: hidden; transition: transform var(--d-press) var(--e-out); }
 .xst-next-pic .xst-pic { aspect-ratio: 16 / 9; }
-.xst-next-pic img { transition: transform 1s var(--ease); }
-@media (hover: hover) { .xst-next:hover .xst-next-pic img { transform: scale(1.04); } }
-.xst-next-t { display: flex; flex-direction: column; gap: 12px; padding-right: 72px; }
-.xst-next-t .xst-kicker { color: var(--faint); }
-.xst-next-n { font-size: clamp(40px, 5.4vw, 80px); font-weight: 600; letter-spacing: -.05em; line-height: .94; }
-.xst-next-f { font-size: 17px; color: var(--soft); }
-.xst-next-f b { color: var(--ink); font-weight: 600; font-feature-settings: 'tnum'; }
-.xst-next-go { position: absolute; right: 0; bottom: 6px; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .16); color: var(--ink); transition: transform .45s var(--ease), border-color .3s; }
-@media (hover: hover) { .xst-next:hover .xst-next-go { transform: translateX(6px); border-color: var(--ink); } }
-.xst-next:active .xst-next-pic { transform: scale(.99); }
-.xst-next-pic { transition: transform .2s var(--ease); }
-.xst-next:focus-visible { outline: 2px solid var(--ink); outline-offset: 8px; border-radius: 28px; }
+.xst-next-pic .xst-pic-in { inset: 0 -24px; transition: transform var(--d-slow) var(--e-io); }
+.xst-next:active .xst-next-pic { transform: scale(.97); }
+.xst-next-t { display: flex; flex-direction: column; gap: 10px; padding-right: 64px; }
+.xst-next-n { font-size: 32px; font-weight: 497; letter-spacing: -.025em; line-height: 1.1; }
+.xst-next-f { font-size: 14px; color: var(--muted); }
+.xst-next-f b { color: var(--ink); font-weight: 606; font-feature-settings: 'tnum'; }
+.xst-next-go { position: absolute; right: 0; bottom: 4px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--hair); color: var(--ink); transition: transform var(--d-base) var(--e-out), border-color var(--d-fast) var(--e-out); }
+.xst-next:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; border-radius: 20px; }
+@media (hover: hover) {
+  .xst-all:hover { text-underline-offset: 6px; }
+  .xst-next:hover .xst-next-pic .xst-pic-in { transform: translateX(-24px); }
+  .xst-next:hover .xst-next-go { transform: translateX(6px); border-color: var(--ink); }
+}
 
-/* phones and reduced motion: scenes stand in a column, each with its own tint; on phones each picture wipes open on arrival */
-@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+/* phones and reduced motion: scenes stand in a column, each in its own room; on phones each picture wipes open on arrival */
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
   .xst-scenes { --pinned: 0; height: auto; }
   .xst-stage { position: relative; height: auto; overflow: visible; }
-  .xst-scene { position: relative; inset: auto; display: block; padding: clamp(96px, 12vw, 160px) 0; clip-path: none !important; }
+  .xst-scene { position: relative; inset: auto; display: block; padding: var(--pad) 0; clip-path: none !important; }
   .xst-scene-t { transform: none !important; opacity: 1 !important; }
-  .xst-scene-pic img { transform: none !important; }
-  .xst-reel { display: none; }
+  .xst-scene-pic .xst-pic-in { transform: none !important; }
 }
-@media (max-width: 900px) {
-  .xst-g, .xst-scene-g { width: min(100% - 32px, 1440px); grid-template-columns: minmax(0, 1fr); column-gap: 0; }
-  .xst { --edge: 16px; }
+@media (max-width: 899px) {
+  .xst-g, .xst-scene-g { grid-template-columns: minmax(0, 1fr); column-gap: 0; }
+  .xst-lede, .xst-figs, .xst-report-t, .xst-shot, .xst-how-head .xst-h2, .xst-how-head .xst-cap, .xst-scene-t, .xst-scene.bare .xst-scene-t, .xst-scene-pic, .xst-more .xst-h2, .xst-wall, .xst-tile, .xst-end-a, .xst-next { grid-column: 1 / -1 !important; }
   .xst-hero { min-height: 560px; }
-  .xst-back { top: 72px; }
-  .xst-hero .xst-plate > span { display: none; }
   .xst-sigil { width: 100%; height: 72%; }
-  .xst-h1 { font-size: clamp(48px, 13vw, 56px); max-width: none; }
-  .xst-t { font-size: 17px; }
-  .xst-intro { padding: 120px 0; }
-  .xst-lede, .xst-figs, .xst-report-t, .xst-shot, .xst-how-head .xst-h2, .xst-how-head .xst-kicker, .xst-scene-t, .xst-scene.bare .xst-scene-t, .xst-scene-pic, .xst-more .xst-h2, .xst-wall, .xst-tile, .xst-end-a, .xst-next { grid-column: 1 / -1 !important; }
-  .xst-lede { font-size: clamp(26px, 7.4vw, 32px); }
-  .xst-figs { grid-template-columns: minmax(0, 1fr); margin-top: 72px; }
-  .xst-fig-b { padding: 22px 0 20px; }
-  .xst-fig-v { font-size: clamp(48px, 14vw, 56px); }
-  .xst-report { padding-bottom: 120px; }
-  .xst-shot { margin-top: 40px; }
-  .xst-how-head .xst-kicker { justify-self: start; margin-top: 16px; }
-  .xst-scene { padding: 96px 0; }
-  .xst-h3 { font-size: clamp(32px, 9vw, 36px); }
-  .xst-scene.bare .xst-h3 { font-size: clamp(44px, 13vw, 56px); }
-  .xst-scene.bare .xst-t { font-size: 19px; }
-  .xst-scene-pic { height: auto; aspect-ratio: 4 / 5; margin-top: 36px; border-radius: 20px; clip-path: inset(24% 0% 0% 0% round 20px); transition: clip-path 1s var(--ease); }
+  .xst-hero .xst-plate > span { display: none; }
+  .xst-hero-t { top: auto; bottom: 44px; }
+  .xst-h1 { font-size: 44px; line-height: 1; }
+  .xst-meta { flex-wrap: wrap; }
+  .xst-lede { font-size: 17px; }
+  .xst-figs { grid-template-columns: minmax(0, 1fr); margin-top: 44px; }
+  .xst-fig-b { padding: 17px 0; }
+  .xst-fig-v { font-size: 52px; }
+  .xst-shot { margin-top: 27px; }
+  .xst-how-head .xst-cap { justify-self: start; margin-top: 10px; }
+  .xst-h3 { font-size: 26px; }
+  .xst-scene.bare .xst-h3 { font-size: 44px; }
+  .xst-scene.bare .xst-t { font-size: 17px; }
+  .xst-scene-pic { height: auto; aspect-ratio: 4 / 5; margin-top: 27px; clip-path: inset(24% 0% 0% 0% round 20px); transition: clip-path var(--d-slower) var(--e-em); }
   .xst-scene[data-in] .xst-scene-pic { clip-path: inset(0% 0% 0% 0% round 20px); }
-  .xst-more { padding-top: 120px; }
-  .xst-wall { gap: 16px; }
+  .xst-wall { grid-template-columns: minmax(0, 1fr); }
   .xst-tile .xst-pic { height: auto; aspect-ratio: 4 / 5; }
-  .xst-tile figcaption { opacity: 1; transform: none; position: static; margin-top: 10px; padding: 0; background: none; color: var(--soft); max-width: none; }
-  .xst-end { padding: 120px 0; }
-  .xst-next-t { padding-right: 64px; }
-  .xst-next-pic { border-radius: 20px; }
+  .xst-next-n { font-size: 26px; }
+  .xst-next-t { padding-right: 60px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xst-cover, .xst-hero-t { clip-path: none !important; transform: none !important; }
+  .xst-cover, .xst-h1 { clip-path: none !important; transform: none !important; }
   .xst-tile .xst-pic, .xst-scene-pic { clip-path: none !important; transition: none !important; }
-  .xst-shot { transform: none; transition: none; }
-  .xst-reel-n b, .xst-mark { animation: none !important; }
+  .xst-shot, .xst-ch { transform: none !important; transition: none !important; }
+  .xst-mark { animation: none !important; }
 }

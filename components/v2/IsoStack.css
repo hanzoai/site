@@ -1,25 +1,35 @@
 /* IsoStack (v2): plates in isometric view. Orthographic: no perspective, one rotated layer, plates move on Z. */
-.iso { --iso-acc: #0a0a0b; --iso-w: 400px; --iso-h: 270px; position: relative; display: grid; place-items: center; pointer-events: none; }
+.iso {
+  /* Hanzo's deck (MASTER 3.1): the only colour, radius and timing values this file uses */
+  --k-white: #ffffff; --k-quiet: #f5f5f5; --k-card: #f2f2f2; --k-muted: #ededed; --k-silver: #e4e4e7; --k-track: #d4d4d4;
+  --k-ink: #0a0a0a; --k-body: #525252; --k-dim: #737373; --k-mid: #404040; --k-dark: #262626; --k-graphite: #171717; --k-black: #000000;
+  --k-on: #fafafa; --k-on-2: rgba(255, 255, 255, .78); --k-on-3: rgba(255, 255, 255, .55); --k-on-4: #a3a3a3;
+  --k-line: rgba(0, 0, 0, .1); --k-line-d: rgba(255, 255, 255, .1);
+  --k-sheen: linear-gradient(135deg, #f6f6f6 0%, #e9e9e9 45%, #f6f6f6 70%, #e9e9e9 100%);
+  --k-float: 0 24px 60px -16px rgba(0, 0, 0, .18);
+  --k-press: 90ms; --k-fast: 150ms; --k-base: 300ms; --k-slow: 400ms; --k-slower: 500ms;
+  --k-out: cubic-bezier(0, 0, .2, 1); --k-io: cubic-bezier(.4, 0, .2, 1); --k-em: cubic-bezier(.16, 1, .3, 1);
+ --iso-acc: var(--k-ink); --iso-w: 400px; --iso-h: 270px; position: relative; display: grid; place-items: center; pointer-events: none; }
 .iso-cam { position: relative; width: 0; height: 0; transform-style: preserve-3d; }
 .iso-rot {
   position: absolute; left: 0; top: 0; transform-style: preserve-3d;
   /* --iso-tx / --iso-tz turn the whole stack (a page sets them from the pointer); the transition is the follow */
   transform: rotateX(calc(56deg + var(--iso-tx, 0deg))) rotateZ(calc(-38deg + var(--iso-tz, 0deg)));
-  transition: transform .9s cubic-bezier(.16, 1, .3, 1);
+  transition: transform 500ms cubic-bezier(.4, 0, .2, 1);
 }
 .iso-plate {
   position: absolute; left: calc(var(--iso-w) / -2); top: calc(var(--iso-h) / -2); width: var(--iso-w); height: var(--iso-h);
-  border-radius: 22px; pointer-events: auto; cursor: pointer;
+  border-radius: 20px; pointer-events: auto; cursor: pointer;
   background:
-    linear-gradient(rgba(0, 0, 0, .045) 1px, transparent 1px) 0 0 / 30px 30px,
-    linear-gradient(90deg, rgba(0, 0, 0, .045) 1px, transparent 1px) 0 0 / 30px 30px,
-    linear-gradient(135deg, #fff, #f4f4f6);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, .1) inset, 0 1px 0 rgba(255, 255, 255, .9) inset;
-  transition: opacity .5s ease, box-shadow .5s ease, background-color .5s ease;
+    linear-gradient(rgba(0, 0, 0, .05) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(90deg, rgba(0, 0, 0, .05) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(135deg, var(--k-white), #f6f6f6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .1) inset, 0 1px 0 rgba(255, 255, 255, .92) inset;
+  transition: opacity 400ms cubic-bezier(0, 0, .2, 1), box-shadow 400ms cubic-bezier(0, 0, .2, 1);
 }
 .iso-n, .iso-name { position: absolute; font-style: normal; pointer-events: none; }
 .iso-n { left: 22px; top: 18px; font: 500 15px/1 var(--mono); letter-spacing: .06em; color: rgba(0, 0, 0, .4); }
-.iso-name { left: 22px; bottom: 18px; font: 600 26px/1 var(--sans); letter-spacing: -.03em; color: var(--ink); opacity: 0; transform: translateY(6px); transition: opacity .4s ease, transform .5s var(--ease); }
+.iso-name { left: 22px; bottom: 18px; font: 497 26px/1 var(--sans); letter-spacing: -.02em; color: var(--k-ink); opacity: 0; transform: translateY(6px); transition: opacity 300ms cubic-bezier(0, 0, .2, 1), transform 400ms cubic-bezier(.16, 1, .3, 1); }
 .iso-shadow {
   position: absolute; left: -330px; top: 40px; width: 660px; height: 240px; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(0, 0, 0, .16), rgba(0, 0, 0, .05) 60%, transparent); transform: rotate(-8deg);
@@ -29,11 +39,11 @@
   background:
     linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 30px 30px,
     linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 30px 30px,
-    linear-gradient(135deg, #1d1d20, #121214);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, .12) inset;
+    linear-gradient(135deg, var(--k-dark), var(--k-graphite));
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .1) inset;
 }
 .iso.dark .iso-n { color: rgba(255, 255, 255, .45); }
-.iso.dark .iso-name { color: #fff; }
+.iso.dark .iso-name { color: var(--k-white); }
 .iso.dark .iso-shadow { background: radial-gradient(closest-side, color-mix(in srgb, var(--iso-acc) 26%, transparent), transparent); }
 .iso-plate.dim { opacity: .2; }
 .iso-plate.lit, .iso-plate.match {
@@ -43,10 +53,10 @@
   background:
     linear-gradient(color-mix(in srgb, var(--iso-acc) 22%, transparent) 1px, transparent 1px) 0 0 / 30px 30px,
     linear-gradient(90deg, color-mix(in srgb, var(--iso-acc) 22%, transparent) 1px, transparent 1px) 0 0 / 30px 30px,
-    linear-gradient(135deg, color-mix(in srgb, var(--iso-acc) 34%, #1d1d20), #141416);
+    linear-gradient(135deg, color-mix(in srgb, var(--iso-acc) 34%, var(--k-dark)), var(--k-graphite));
 }
 .iso-plate.lit .iso-name, .iso-plate.match .iso-name, .iso-plate.hot .iso-name { opacity: 1; transform: none; }
 .iso-plate.lit .iso-n, .iso-plate.match .iso-n { color: var(--iso-acc); }
-.iso.dark .iso-plate.lit .iso-n, .iso.dark .iso-plate.match .iso-n { color: color-mix(in srgb, var(--iso-acc) 50%, #fff); }
+.iso.dark .iso-plate.lit .iso-n, .iso.dark .iso-plate.match .iso-n { color: color-mix(in srgb, var(--iso-acc) 50%, var(--k-white)); }
 .iso-plate.hot { opacity: 1; box-shadow: 0 0 0 1.5px currentColor inset; }
 @media (prefers-reduced-motion: reduce) { .iso-plate, .iso-name, .iso-rot { transition: none; } .iso-rot { transform: rotateX(56deg) rotateZ(-38deg); } }

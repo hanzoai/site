@@ -1,67 +1,158 @@
-# /comparison coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /comparison coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Comparison.jsx` · gallery: `docs/gallery/comparison/`
+Page file: `components/pages/Comparison.jsx` · gallery: `docs/gallery/comparison/` · metric id: `signup_start`, read as `cta_click` on `comparison.hero`
+
+Open copy questions for James: none.
+Shared changes requested (`docs/requests/<page>.md`): none filed. For the kit owner: `DetailSheet` is a `role=dialog` div, not a native `<dialog>` (part 8); `MaskLines` runs 1s where MASTER asks 700 ms.
+Forks this page deleted: the floating phone total pill (`.xcm-mini`), the digit-rolling odometer, the 112–128px centred headline, the 140 ms `setInterval` printer (now CSS transition delays), the spring on the stack bar, every hover transform that was not James's (row nudges, box swell, arrow turn), the side-by-side stack table (now in a sheet, so every price shows once).
 
 ## 1. Strategy and conversion
-Done here: One ask, Hanzo's "Try Hanzo" (hanzo.ai/signup, `data-cta="try-hanzo"`): solid in the hero, in the sticky AskBar after the hero, and again closing the dark room. "Images it runs" is a quiet (+) that opens a sheet; "Put them all back" is a text control.
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; Hanzo's own label "Try Hanzo" → hanzo.ai/signup
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; n/a `lib/plans.js` (no plan prices here)
+- [x] Open copy questions for James listed, none decided
+
+Done here: One solid ask in the hero (`comparison.hero`) and again at the close of the dark room (`comparison.close`); "Images it runs" is a quiet (+) and "Put them all back" a text control.
 
 ## 2. Information architecture and navigation
-Done here: Hanzo's header and footer are unchanged. Order: the question, the bill that answers it, then the part no bill prices, and Hanzo's closing line with the ask. Each screen answers the question the one before raised.
+- [x] One `<main>`; the shared layout's `#main` mark takes the skip link (no second id)
+- [x] Every link through `A`
+- n/a Breadcrumb: /comparison is depth 1
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: `parity.py /comparison` reports 63/63 text and no links to lose; header and footer untouched.
 
 ## 3. First impression and page narrative
-Done here: The headline is centred at Display size (about 111px), and beneath it a slot the receipt feeds out of: a tall centred slip that prints the eleven stacks line by line once the page has arrived (within 1s of it), its total rolling to $225.57/mo. At 1470×801 the slot and the head of the slip are on the first screen.
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] Nothing above the h1 ("Comparison" is a caption in the right column of the split); `PageHero` n/a until the shared part merges
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in the dark room's closing line and the one ask, then the footer
+- [x] Card-to-page: the receipt is the `data-morph-target` for /compare's "Buy it, or run it" card
+
+Done here: The 52px h1 sits left of the 8/5 split with its lede and ask; beneath, the slip feeds out of its slot within 1 s of arrival and its lines print in a 60 ms stagger. JS off: 0 blocks hidden (checked with JS disabled).
 
 ## 4. Conversion system
-Done here: `data-thumb="Try Hanzo"` (with `data-href`) drives the phone thumb bar. `AskBar` (watching the hero text) carries the same label and `cta` id on desktop. On phones a dark total pill follows the thumb through the slip once the hero has gone. One solid button per screen.
+- [x] Kit `pf-btn solid` (no raw `.x-btn`); `<Cta>` n/a until it merges
+- [x] Sticky ask: the shared bar reads the hero's `data-thumb`; the page's own floating total is gone
+- n/a Copy button: none on this page
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: Hero ask `data-cta="comparison.hero"` inside `data-thumb="Try Hanzo"`; close ask `data-cta="comparison.close"`. AskBar renders only hidden data for the shared bar.
 
 ## 5. Trust and proof
-Done here: Every line is a compose footprint and compute cost as Hanzo's SBOM serves them; each stack's images, vCPU and GB open in the sheet. The note under the slip says what the figure leaves out. The duties are printed as "$ ?", as Hanzo declines to cost them.
+- [x] No logo, no seal, no invented number
+- [x] Every figure traces to Hanzo's copy (each stack's compose footprint and $/mo, the $225.57/mo total)
+- n/a Marquees: none
+- n/a Privacy by a submit: no form
+
+Done here: The total only ever shows whole real figures (the sum of the lines switched on); the note under the slip says what the figure leaves out.
 
 ## 6. Content presentation (copy untouched)
-Done here: Parity is 63/63 text. "Comparison" sits under the h1 as a caption; "Run it yourself, and here is the bill" is the slip's real h2; "And the part that is not a line item" is the dark room's h2. Nothing sits above a headline.
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan in the headings
+- [x] The stack table lives in a sheet with `scope` on every header; `DataTable` n/a until it merges
+- [x] `python3 scripts/parity.py /comparison`: 0 missing
+
+Done here: Parity 63/63. The critic's "the same eleven prices listed twice" is answered: the main scroll shows each price once, on the slip; images, vCPU and GB open in the sheet.
 
 ## 7. Visual design system
-Done here: v2 scale from `components/v2/ProofScale.css`. Paper white, ink and its alpha steps only: the stack bar is four ink alphas, the line boxes and the slot are ink. One dark room, wiped in.
+- [x] `python3 scripts/taste.py` passes; deck greys only
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii 6, 8, 12, 16 from the deck; the slip is flat paper with one floating shadow
+- [x] One icon set (hand-drawn tick, arrow, reset at 1.6–2.2px); no icon in a rounded box
+- [x] Differs from neighbours: a receipt slip feeding from a slot (/compare is a wide table)
+
+Done here: `taste.py` OK on Comparison.jsx and Comparison.css. Rhythm from `ProofRhythm.css` (`pf-r` on `<main>`): h1 52, headings 26, the total the one 84px moment (52px phone), the dark-room "$ ?" a 64px figure.
 
 ## 8. UI component library
-Done here: Uses the kit (`A`) and the v2 pieces `MaskLines`, `PinScenes`, `DetailSheet`, `SceneWipe` and `AskBar`. Every slip line is a styled `role=switch` button; no browser-default controls, no tooltips.
+- [x] Every control has hover (inside `@media (hover:hover)`), press (scale .97, 90 ms), focus-visible
+- [x] Focus ring visible on every stop of a Tab crawl
+- [ ] Dialogs are native: the kit's `DetailSheet` is a `role=dialog` div that traps and returns focus (kit owner's change)
+- n/a Inputs: none
+- [x] Forks this page deleted: listed above
+
+Done here: Slip lines are `role=switch` buttons; hover fills the row, darkens the box and underlines the name; no nudges.
 
 ## 9. Motion and interaction
-Done here: see below.
-- Time: the slip feeds out of the slot and prints line by line; the total is an odometer whose digits roll, right-hand digits first.
-- Pointer: a line's box swells and its name slides 3px, the sheet's plus turns, the reset arrow turns, the ask lifts 1px; presses step 1px or scale .98.
-- State: lines strike through and return, the stack bar regrows on a spring, "same image, more than once" comes and goes, the sheet rises.
-- Scroll: the dark room's wipe and five duty chapters (PinScenes, ≤ 250svh), each printing one more "$ ?" line.
+- [x] One signature (the slip feeding and printing), 3 supporting (line-mask h1, total swap, dark-room wipe with duty chapters), 0 fade-ups
+- [x] Kinds: time (feed and print), state (switches, stack bar reflow, total swap, sheet), arrival (h1), scroll (wipe, chapters ≤ 250svh)
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- n/a Sound: no shared sound kit exists yet
+
+Done here: Deck timings: 300 ms ease-emphasis prints, 60 ms stagger, 300 ms ease-in-out reflow, 150 ms hovers, 90 ms presses; the paper feed is the one scene move at 1.4 s. `variety.py` OK.
 
 ## 10. Media
-Done here: The page has no Hanzo images or film. Its hero object is product-style paper: the slip, and the unpriced slip in the dark room.
+- n/a Images and films: the page has none; its objects are the slip and the duty receipt
+- n/a Videos: none
+- n/a Alt: no images
+- n/a Dimmed photos: none
+
+Done here: n/a: no media on this page; the hero object is product-style paper drawn in HTML.
 
 ## 11. Mobile and responsive
-Done here: At 375px the headline stays centred at about 68px, the slip runs full width with 44px lines, the total pill follows the thumb, and the duty chapters stack, each with its single printed line. No sideways page scroll (the sheet's table scrolls inside the sheet), no text under 14px.
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320 (the sheet's table scrolls inside the sheet)
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
 
-## 12. Accessibility
-Done here: see below.
-- Each line is a button with `role=switch`, `aria-checked` and a spoken "Take out / Add" label with its price.
-- The total is real text for screen readers (the rolling strips are `aria-hidden`), and the full figure stays in the page whatever is selected.
-- Reduced motion: the slip is fed and printed at once and nothing rolls. JS off: a noscript rule shows the slip and every line (checked, 0 hidden).
+Done here: `phone.mjs /comparison` OK (375/375). Nothing floats over content: the old total pill is removed; the shared bar is the only bottom layer.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast: ink and #525252 on white; #a3a3a3 only on black
+- n/a Pause control: nothing loops (the slip prints once)
+- n/a Forms: none
+- [x] One h1; h2 for the bill and the dark room; names start with visible text
+- [x] Keyboard reaches every switch, the sheet and the reset
+
+Done here: Each line's switch says "Take out / Add" with its price; the total is real text for screen readers and the full figure stays in the page whatever is selected.
 
 ## 13. Performance and engineering
-Done here: see below.
-- Motion is transform, opacity and clip-path only; the slip's shadow is a static pseudo-element.
-- Unprinted lines wait invisible in place and the slip feeds by transform, so printing causes no layout shift.
-- No blur, no video, no canvas, no images.
+- [x] h1 and LCP element in server HTML
+- [x] No images; transform, opacity and clip-path only
+- [x] No poller (printing is CSS transition delays); no third party
+- [x] Nothing heavy run on James's laptop (filmed in the cloud)
+
+Done here: Unprinted lines wait invisible in place and the slip feeds by transform, so printing causes no layout shift.
 
 ## 14. SEO and machine files
-Done here: Metadata and JSON-LD are unchanged (`app/comparison/page.jsx`). All text is in the server HTML, including every stack's images and figures, every duty and the full total.
+- [x] Title and description unchanged (`app/comparison/page.jsx`)
+- [x] Canonical from the shared layout
+- [x] `<JsonLd route="/comparison" />` renders
+- n/a Cards: none
+
+Done here: Every stack's images and figures, every duty and the full total are in the server HTML.
 
 ## 15. Catalogue and product pages
-Done here: Does not apply: a utility page. It is the target of /compare's "Buy it, or run it" card (`data-morph-target` on the slip).
+- n/a Model card: not a catalogue or model page
+- [x] It receives /compare's card by Morph (`data-morph-target` on the slip)
+- n/a Maker and model links: not a catalogue
+- [x] One price figure everywhere (each stack's $/mo appears once in the scroll)
+
+Done here: n/a for catalogue parts; the slip is the landing target of the card that opens from /compare.
 
 ## 16. Developer experience
-Done here: Image names are shown in mono as their compose files write them; otherwise does not apply.
+- n/a CodeBlock: no code on the page
+- n/a Config blocks: none
+- n/a Terminal: none
+- n/a Versions: image tags are Hanzo's compose text, not typed versions
+
+Done here: n/a: no code; image names are shown in mono as their compose files write them.
 
 ## 17. States and resilience
-Done here: The figures are static. Edge states: strike every stack and the slip reads "Nothing running, nothing to pay. Add a stack back."; when the selection repeats an image, "same image, more than once" appears with what the copies reserve.
+- [x] Static figures, so no loading or error state; the empty state reads "Nothing running, nothing to pay. Add a stack back."
+- [x] No live data; complete with the network blocked
+- n/a Submit: no form
+- [x] No island can blank the page
+
+Done here: Strike every stack and the empty line shows with a $0.00/mo total; the "same image, more than once" block comes and goes with the selection.
 
 ## 18. Measurement and handover
-Done here: Persona, Goal and CTA lines head the page file; every ask carries `data-cta="try-hanzo"` for `cta_click`. No analytics are wired yet (BRIEF-v3 §1). Filmed with `scripts/motion.mjs` at desktop; gallery: `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`.
+- [x] `data-cta` on every primary; n/a `lib/track.js` (not in `lib/` yet)
+- [x] Nothing identifier-bearing; no form
+- [x] `V2:` line in the top comment
+- [x] Review read: `docs/review/comparison.md` 8/10 (walked before this rework; its complaint, prices shown twice, is fixed)
+
+Done here: `comparison.hero` and `comparison.close`; V2 line updated.
