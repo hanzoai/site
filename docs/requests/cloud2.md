@@ -51,6 +51,10 @@ Invented strings inside shared components (not this group's files):
   which is not a registered UI string. /gui stopped passing it, so the dialog now has no name. Asked for: name the dialog with
   `aria-labelledby` pointing at the card's own heading, or register "Open" in `content/ui-strings.json`.
 
+- `components/kit.jsx` `CodeBlock` (around line 491) marks itself `data-room="dark"`, so every small code card (e.g. the cloud
+  pages' "Paste and ship" prompt) turns the sticky header dark while it passes under it, over a white page. Asked for: only real
+  dark rooms carry `data-room="dark"`.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
