@@ -11,7 +11,7 @@
    3 the opt-in envelope noise-dissolve; 4 the four steps card-deal; 5 the close pixel-resolve.
    No pinned scenes. 0 UI hues. The form sends exactly what hanzo.ai sends: POST
    https://api.hanzo.ai/v1/marketing/subscribe {email, source, locale}. */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Mark } from '../ui';
 import { A, Cta, Tick } from '../kit';
@@ -156,24 +156,41 @@ function Words({ text, on }) {
   );
 }
 
-function Row({ text, i }) {
+function Row({ text, i, cur, onOn, onHot }) {
   const ref = useRef(null);
   const on = useInView(ref, { once: true, amount: 0.8 });
+  useEffect(() => { if (on) onOn(i); }, [on, i, onOn]);
   return (
-    <li ref={ref} className={'xnl-st' + (on ? ' on' : '')}>
+    <li ref={ref} className={'xnl-st' + (on ? ' on' : '') + (cur ? ' cur' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') onHot(i); }} onPointerLeave={() => onHot(-1)}>
       <span className="xnl-st-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
       <p className="xnl-st-t"><Words text={text} on={on} /></p>
     </li>
   );
 }
 
-/* What each issue carries: the three statements, said once on the page, beside a drifting contour field (the page's
-   Sigil). The section shrinks into a card as you leave it. */
+/* What each issue carries: the three statements, said once on the page, beside the issue they make up (the hero's paper
+   again, small): each statement, as its words ink in, draws its own line on the paper, and the pointer on a statement
+   lights its line. Only the newest statement keeps a blinking caret. The section shrinks into a card as you leave it. */
+const BARS = [[92, 54], [78, 40], [86, 22]];
 function Inside() {
+  const [lit, setLit] = useState(0);
+  const [hot, setHot] = useState(-1);
+  const onOn = useCallback((i) => setLit((v) => Math.max(v, i + 1)), []);
   return (
     <ShrinkToCard className="xnl-inside" aria-label="Releases, benchmarks and engineering notes">
       <div className="xp-wrap xnl-inside-in">
-        <ol className="xnl-sts">{LINES.map((l, i) => <Row key={l} text={l} i={i} />)}</ol>
+        <ol className="xnl-sts">{LINES.map((l, i) => <Row key={l} text={l} i={i} cur={i === lit - 1} onOn={onOn} onHot={setHot} />)}</ol>
+        <div className="xnl-idx" aria-hidden="true">
+          <div className="xnl-idx-mast"><Sigil seed="newsletter-inside" data={[1, 2]} className="xnl-sigil" /><span className="xnl-idx-mark"><Mark size={14} /></span></div>
+          <ol className="xnl-idx-ls">
+            {BARS.map((w, i) => (
+              <li key={i} className={(i < lit ? 'on' : '') + (i === hot ? ' hot' : '')}>
+                <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
+                <span><i style={{ width: w[0] + '%' }} /><i style={{ width: w[1] + '%' }} /></span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </ShrinkToCard>
   );
