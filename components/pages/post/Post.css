@@ -15,7 +15,12 @@
 .xbg-back:active { transform: translateY(1px); transition-duration: 0s; }
 .xbg-h1 { margin: 0; max-width: 16ch; font-size: 52px; font-weight: 497; line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
 .xbg-wm { display: inline-block; overflow: hidden; padding: .04em 0 .12em; margin: -.04em 0 -.12em; vertical-align: top; }
-.xbg-wi { display: inline-block; }
+.xbg-wi { display: inline-block; animation: xbg-rise 700ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(50ms + var(--i, 0) * 55ms); }
+@keyframes xbg-rise { from { transform: translateY(105%); } }
+/* the film (or its poster, before it plays) drifts from first paint, so the first second is never still */
+.xbg-plate-film { animation: xbg-drift 9s ease-in-out infinite alternate; }
+@keyframes xbg-drift { from { transform: scale(1.06) translate3d(1.5%, 1%, 0); } to { transform: scale(1) translate3d(0, 0, 0); } }
+@media (prefers-reduced-motion: reduce) { .xbg-wi, .xbg-plate-film, .xbg-gist * { animation: none !important; } }
 .xbg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6.5px 17px; margin: 17px 0 0; color: var(--mute); }
 .xbg-chip { display: inline-flex; align-items: center; gap: 10.5px; color: var(--ink2); }
 .xbg-chip::before { content: ''; width: 17px; height: 1px; background: currentColor; }
@@ -107,6 +112,30 @@
 .xbg-role { color: var(--mute); }
 .xbg-note { font-size: 14px; line-height: 1.5; color: var(--mute); text-wrap: pretty; }
 
+/* the gist: a text-only chapter's own figures or steps, drawn (Gist.jsx) */
+.xbg-gist { margin: 44px 0; }
+.xbg-gist .xbg-gist-s .x-stat-v { font-size: 64px; font-weight: 220; letter-spacing: -.03em; }
+.xbg-gist .x-stat-l { font: 606 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
+.xbg-gist.figs { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 27px; }
+.xbg-gist.figs .x-stat { padding-top: 17px; border-top: 1px solid var(--ink2); gap: 10.5px; }
+.xbg-gist.bars { display: flex; flex-direction: column; gap: 27px; }
+.xbg-gist-bar { display: grid; grid-template-columns: 188px minmax(0, 1fr); align-items: center; column-gap: 27px; }
+.xbg-gist-bar .x-stat-v { font-size: 44px; }
+.xbg-gist-track { position: relative; height: 10.5px; border-radius: 6px; background: var(--room-fill-strong); overflow: hidden; }
+.xbg-gist-track i { position: absolute; left: 0; top: 0; bottom: 0; min-width: 6px; border-radius: 6px; background: var(--ink2); transform: scaleX(0); transform-origin: left; transition: transform 1200ms cubic-bezier(.16, 1, .3, 1); }
+.xbg-gist[data-on='true'] .xbg-gist-track i { transform: scaleX(1); }
+html:not(.js) .xbg-gist-track i { transform: none; }
+.xbg-gist.steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); column-gap: 17px; position: relative; }
+.xbg-gist.steps::before { content: ''; position: absolute; left: 6px; right: 6px; top: 6px; height: 1px; background: var(--hair); }
+.xbg-gist.steps li { position: relative; display: flex; flex-direction: column; gap: 10.5px; color: var(--mute); animation: xbg-step calc(var(--n) * 1.6s) linear infinite; animation-delay: calc(var(--i) * 1.6s); animation-play-state: paused; }
+.xbg-gist.steps[data-on='true'] li { animation-play-state: running; }
+.xbg-gist-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--room-bg); box-shadow: inset 0 0 0 1.5px currentColor; transition: background-color 300ms; }
+.xbg-gist.steps li .x-mono { font-size: 12px; letter-spacing: .14em; }
+.xbg-gist-t { font-size: 17px; line-height: 1.35; max-width: 18ch; }
+@keyframes xbg-step { 0%, 30% { color: var(--ink2); } 36%, 100% { color: var(--mute); } }
+.xbg-gist.steps li .xbg-gist-dot { animation: xbg-dot calc(var(--n) * 1.6s) linear infinite; animation-delay: inherit; animation-play-state: inherit; }
+@keyframes xbg-dot { 0%, 30% { background: var(--ink2); transform: scale(1.15); } 36%, 100% { background: var(--room-bg); transform: scale(1); } }
+
 /* code: kit CodeBlock (and kit Tabs above it) */
 .xbg-code { margin: 44px 0; display: flex; flex-direction: column; gap: 10.5px; align-items: flex-start; }
 .xbg-code > *, .xbg-code [role='tabpanel'] { width: 100%; }
@@ -174,6 +203,7 @@
 .xbg-card-t { font-size: 21px; font-weight: 497; line-height: 1.25; letter-spacing: -.01em; max-width: 26ch; text-wrap: balance; }
 .xbg-card-k { display: flex; flex-wrap: wrap; gap: 6.5px 17px; color: var(--mute); }
 .xbg-card-r { color: var(--ink2); }
+.xbg .x-band h2 { text-wrap: balance; }
 .xbg-band-more { display: flex; flex-wrap: wrap; justify-content: center; gap: 10.5px 27px; }
 .xbg-band-more .x-arrow { color: #fafafa; }
 
@@ -194,7 +224,7 @@
   .xbg-sheet { padding: 4px var(--gut) 17px; }
 }
 @media (max-width: 899px) {
-  .xbg-cover { padding: 96px 0 27px; }
+  .xbg-cover { padding: 68px 0 27px; }
   .xbg-back { margin-bottom: 10.5px; }
   .xbg-h1 { font-size: 40px; line-height: 1.06; }
   .xbg-lede { margin-top: 17px; font-size: 17px; }
@@ -209,6 +239,10 @@
   .xbg-fig { font-size: 44px; }
   .xbg-stage.film .xbg-facts:not(.figs) li { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'f' 'r' 'n'; }
   .xbg-parts { grid-template-columns: minmax(0, 1fr); }
+  .xbg-gist .xbg-gist-s .x-stat-v { font-size: 44px; }
+  .xbg-gist-bar { grid-template-columns: 128px minmax(0, 1fr); column-gap: 17px; }
+  .xbg-gist-bar .x-stat-v { font-size: 32px; }
+  .xbg-gist-t { font-size: 14px; }
   .xbg-part-film { aspect-ratio: 16 / 10; }
   .xbg-life { grid-template-columns: minmax(0, 1fr); }
   .xbg-life figcaption { grid-column: 1; grid-row: 3; }
@@ -220,11 +254,6 @@
   .xbg-tk.y { width: auto; left: -4px; }
   .xbg-src, .xbg-next { grid-template-columns: minmax(0, 1fr); }
   .xbg-src ol { margin-top: 17px; }
-}
-/* phones: the header keeps its solid "Try Hanzo", so the post's own ask reads as the outline beside it (one solid on screen) */
-@media (max-width: 700px) {
-  .xbg-ask .x-btn.solid { background-color: transparent; border-color: var(--room-ink); color: var(--room-ink); }
-  .xbg-ask .x-btn.solid:active { background-color: var(--room-fill); }
 }
 @media (max-width: 599px) {
   .xbg-facts.figs, .xbg-stage.film .xbg-facts.figs { grid-template-columns: minmax(0, 1fr); }

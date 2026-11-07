@@ -9,7 +9,7 @@
    Signature: the reading thread. A margin rail holds the chapter you are in as a numeral that hands over to the next,
    and a spine that fills as you read, each chapter a knot (on a phone, a reading bar that opens the contents).
    Beyond: minutes left. The post's own stated read time counts down as you read, and any chapter is one press away.
-   V2: 8.5/10 film card plays beside the title inside the first 801px (kit Film + pause), the header carries the post's ask on desktop (no floating pill), on phones the post's ask is the outline beside the header's one solid, code in greys, press on back link and next-post cards, NoJs instead of <noscript> */
+   V2: 8/10 round 2: title cut-in is CSS from first paint and the film's poster drifts at once (no dead first second); every text-only chapter draws its own figures, bars or steps (Gist.jsx, no new copy); on phones the post's ask is the one solid (header quiet while it shows); chapter counter read on every scroll; Band headline balanced */
 // Persona: a developer or founder reading Hanzo's thinking (arrives from /blog, search or a shared link)
 // Goal: finish the post, understand its one idea, take the post's own next step
 // CTA: the post's first closing link as the one solid ask (hero, data-thumb, data-cta "blog-post.hero"), repeated in the closing Band
@@ -21,7 +21,7 @@ import { motion, AnimatePresence, useMotionValueEvent, useScroll, useTransform }
 import { EASE } from '../../ui';
 import { A, Band, Cta, CodeBlock, Film as KitFilm, Img, Tabs, TabPanel } from '../../kit';
 import Sigil from '../../Sigil';
-import NoJs from '../../NoJs';
+import Gist, { gist } from './Gist';
 import Life from './Life';
 import Frontier from './Frontier';
 import './Post.css';
@@ -86,17 +86,17 @@ function Block({ b, i, doc, next }) {
   return null;
 }
 
-/* the title, word by word out of a mask, once (700 ms, 55 ms apart) */
+/* the title, word by word out of a mask, once (700 ms, 55 ms apart). A CSS animation, so it runs from first paint
+   instead of waiting for hydration; reduced motion shows it at rest. */
 function Title({ text }) {
   const words = text.split(' ');
   return (
     <h1 id="xbg-h1" className="xbg-h1" data-morph-target>
-      <NoJs css=".xbg-wi{transform:none!important}" />
       <span className="x-sr">{text}</span>
       {words.map((w, i) => (
         <Fragment key={i}>
           <span className="xbg-wm" aria-hidden="true">
-            <motion.span className="xbg-wi" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.05 + i * 0.055 }}>{w}</motion.span>
+            <span className="xbg-wi" style={{ '--i': i }}>{w}</span>
           </span>
           {i < words.length - 1 ? ' ' : ''}
         </Fragment>
@@ -110,6 +110,27 @@ function Title({ text }) {
    the measured slot), the title steps back and the post's figures settle onto the film. Phones (under 900px), reduced
    motion and no-JS get the same parts stacked. The header turns dark only once the plate fills the screen. */
 const PIN = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
+
+/* Phones keep Hanzo's "Try Hanzo" solid in the header; while the post's own solid ask is on screen the header's button
+   reads as an outline (the same html[data-ask=quiet] the shell sets on desktop), so the post's ask is the one solid. */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const mq = matchMedia('(max-width: 700px)');
+    const el = document.querySelector('main.xbg [data-cta="blog-post.hero"]');
+    if (!el) return;
+    let mine = false, vis = false;
+    const apply = () => {
+      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine) { delete H.dataset.ask; mine = false; }
+    };
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
+    io.observe(el);
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
 function Stage({ doc, nums, ask }) {
   const ref = useRef(null), plate = useRef(null), slot = useRef(null);
   const box = useRef({ t: 120, r: 32, b: 72, l: 520 });
@@ -198,15 +219,26 @@ function Thread({ doc, chapters, body }) {
   const left = useRef(null), leftP = useRef(null);
   const { scrollYProgress: fill } = useScroll({ target: body, offset: ['start 40%', 'end 85%'] });
   const say = (v) => { const m = Math.ceil(doc.minutes * (1 - v) - 0.05); return v > 0.985 ? 'Finished' : (m < 1 ? 'Under a minute' : m + ' min') + ' left'; };
-  // the chapter you are in: the last heading above 40% of the screen (read on scroll, so fast jumps never skip one)
-  const hs = useRef([]);
-  useEffect(() => { hs.current = [...document.querySelectorAll('.xbg [data-knot]')]; }, []);
+  // the chapter you are in: the last heading above 60% of the screen, read on every scroll (not only while the body's
+  // progress moves, which stops near the end and left the counter one chapter behind); finished means the last chapter
+  const done = useRef(false);
+  useEffect(() => {
+    const hs = [...document.querySelectorAll('.xbg [data-knot]')];
+    const read = () => {
+      const line = innerHeight * 0.6;
+      let n = hs.reduce((k, h, i) => (h.getBoundingClientRect().top < line ? i : k), 0);
+      if (done.current) n = hs.length - 1;
+      setAt((a) => (a === n ? a : n));
+    };
+    read();
+    addEventListener('scroll', read, { passive: true });
+    addEventListener('resize', read);
+    return () => { removeEventListener('scroll', read); removeEventListener('resize', read); };
+  }, []);
   useMotionValueEvent(fill, 'change', (v) => {
     const s = say(v);
+    done.current = v > 0.985;
     [left.current, leftP.current].forEach((el) => { if (el && el.textContent !== s) el.textContent = s; });
-    const line = innerHeight * 0.4;
-    const n = hs.current.reduce((k, h, i) => (h.getBoundingClientRect().top < line ? i : k), 0);
-    setAt((a) => (a === n ? a : n));
   });
   const list = (tap) => (
     <ol className="xbg-knots">
@@ -300,7 +332,9 @@ export default function Post({ doc }) {
     else if (b.k === 'sources') sources = b;
     else if (chapters.length) chapters[chapters.length - 1].blocks.push({ b, i });
   });
+  chapters.forEach((c) => { c.gist = gist(c.blocks); });
   const nums = [doc.minutes, doc.title.length];
+  useOneSolidOnPhone();
   return (
     <main className="xbg">
       <Stage doc={doc} nums={nums} ask={cta && cta.links[0]} />
@@ -315,7 +349,12 @@ export default function Post({ doc }) {
                   <span className="xbg-num x-mono" aria-hidden="true">{pad(n + 1)}</span>
                   <h2 id={c.h.id} tabIndex={-1} className="xbg-h2" data-knot>{c.h.text}</h2>
                 </header>
-                {c.blocks.map(({ b, i }) => (doc.body[i - 1] && doc.body[i - 1].k === 'figure' && doc.body[i - 1].kind === 'life' && b.k === 'p' ? null : <Block key={i} b={b} i={i} doc={doc} next={doc.body[i + 1]} />))}
+                {c.blocks.map(({ b, i }, k) => (doc.body[i - 1] && doc.body[i - 1].k === 'figure' && doc.body[i - 1].kind === 'life' && b.k === 'p' ? null : (
+                  <Fragment key={i}>
+                    <Block b={b} i={i} doc={doc} next={doc.body[i + 1]} />
+                    {c.gist && c.gist.after === k && <Gist g={c.gist} />}
+                  </Fragment>
+                )))}
               </section>
             ))}
           </article>

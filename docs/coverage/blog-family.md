@@ -13,7 +13,7 @@ Forks this page deleted: its own code tabs and copy button (now kit `Tabs` + `Co
 - [x] No dead or self-looping button; n/a prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: one solid `Cta` (`blog-post.hero`, the post's first closing link, e.g. "How to use Kai") on screen one, repeated once in the closing `Band`; the header's "Try Hanzo" turns outline while it shows, then carries the post's ask once the hero has gone (desktop, shared system; no floating pill). On phones (700px and under) the header keeps a solid "Try Hanzo", so the post's hero ask is drawn as the outline beside it: one solid on screen (measured at 375x812, 7 Nov). Persona/Goal/CTA/Metric/Signature/Beyond are in `Post.jsx`'s top comment.
+Done here: one solid `Cta` (`blog-post.hero`, the post's first closing link, e.g. "How to use Kai") on screen one, repeated once in the closing `Band`; the header's "Try Hanzo" turns outline while it shows, then carries the post's ask once the hero has gone (desktop, shared system; no floating pill). On phones (700px and under) the post's hero ask is the one solid: while it is on screen the page sets `html[data-ask=quiet]` so the header's "Try Hanzo" reads as an outline (the /bounty pattern; measured at 375x812: one solid, "How to use Kai" / "Hanzo Gen"). Persona/Goal/CTA/Metric/Signature/Beyond are in `Post.jsx`'s top comment.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; skip link reaches `#main` (layout)
@@ -31,7 +31,7 @@ Done here: parity links 4/4, 8/8, 9/9; next-post cards are `<A>` links that open
 - [x] Ends in proof (sources, other posts), `Band`, footer
 - [x] Card-to-page links use Morph; the card title carries `data-morph`, the h1 is `data-morph-target`
 
-Done here: screen one is the 52px title cut in by word mask (700 ms, 55 ms apart), the post's ask, and its film (Kai, Enso) or Sigil playing in a card from the first second (critic 6/10 fix: "the picture only starts when I scroll"). The scene pins and the card opens to full bleed, then chapters, sources, next posts, `Band`. At 1470x801 the film card's top sits at 176px, playing (currentTime 2.1s to 4.2s over 2s, measured on both members); the Sigil post moves too. JS off: a `NoJs` rule (no `<noscript>` in the client component) shows the title.
+Done here: screen one is the 52px title cut in by word mask (700 ms, 55 ms apart, a CSS animation from first paint, so it does not wait for hydration; the film's poster drifts from first paint too), the post's ask, and its film (Kai, Enso) or Sigil playing in a card from the first second (critic 6/10 fix: "the picture only starts when I scroll"). The scene pins and the card opens to full bleed, then chapters, sources, next posts, `Band`. At 1470x801 the film card's top sits at 176px, playing (currentTime 2.1s to 4.2s over 2s, measured on both members); the Sigil post moves too. On phones the back link sits 68px under the header and about 280px of film is in the first screen. Mid-page stays one-in-one-out: every chapter that is only paragraphs gets one object drawn from its own words (`Gist.jsx`): Pareto 01 and Kai 01 a step track whose light walks through the chapter's own three steps, Pareto 03 count-up tiles "0.27 / ms p50" and "$0.021 / per million tokens", Kai 03 "Limits" 1,024 against 32,768 as bars at their true ratio. JS off: the cut-in plays as plain CSS, so the title always lands.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -82,7 +82,7 @@ Done here: the back link drops 1px on press, next-post cards press to .98 and un
 - [x] Reduced motion shows the final state (stacked layout, no pin); no `setInterval` (Life and the GPQA walk run on rAF clocks)
 - [x] n/a: sound belongs to the shared kit
 
-Done here: `variety.py` OK (sigil, scroll scrub, clip reveal); no springs (the spine follows scroll directly; tab pill is the kit's); figures arrive at 84px and settle to 64px as the plate opens.
+Done here: `variety.py` OK (sigil, scroll scrub, clip reveal); the chapter numeral is read on every scroll (heading above 60% of the screen; the last chapter once finished), so it never lags at "02 / 03 · Finished"; the closing Band headline is balanced (no one-word last line at 1470); no springs (the spine follows scroll directly; tab pill is the kit's); figures arrive at 84px and settle to 64px as the plate opens.
 
 ## 10. Media
 - [x] `Film` and `Img` from the kit only; sizes and posters set (1200×1500)
@@ -154,4 +154,4 @@ Done here: reduced motion, JS off and phones get the stacked layout with every w
 - [x] Nothing before consent (no tracker of our own)
 - [x] `V2:` line and this card
 
-Done here: `V2: 8.5/10` line in `Post.jsx`; proof in `docs/gallery/blog/v3-post-*` (desktop first screen, phone first screen, phone code, desktop walk webm); events: `cta_click` with `blog-post.hero`, `blog-post.next-n`, `blog-post.close-n`.
+Done here: `V2: 8/10` line in `Post.jsx`; proof in `docs/gallery/blog/v3-post-*` (desktop at 250 ms and settled, desktop gist, phone first screen, phone Limits bars, phone code, desktop walk webm); the intermittent footer hydration warning is shared (`docs/requests/blog-family.md`); events: `cta_click` with `blog-post.hero`, `blog-post.next-n`, `blog-post.close-n`.
