@@ -1,6 +1,7 @@
 'use client';
 /* Kata.
    V2: 8/10 the headline is the loop (Test. Repair. Verify. light in turn with a live session), a scrubbed dial through the four stations, and one dark room that a green wipe turns into a passing suite.
+   Persona: an engineer whose CI keeps going red. Goal: get an API key. CTA: Get API key (kata.hero, sticky in the ask bar).
    Signature: the page turns green. The hero headline is the loop itself: "Test." lights while the suite runs and one
    test goes red, "Repair." while Kai triages and Enso writes the edit, "Verify." when 13 passed · 0 failed lands; the
    terminal and the test board beside it run Hanzo's session on their own. The loop is a dial pinned on screen while
