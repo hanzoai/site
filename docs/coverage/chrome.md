@@ -3,7 +3,7 @@
 Page file: `components/pages/ChromePage.jsx` · gallery: `docs/gallery/chrome/` · metric id: `signup_start` (install hand-off to the Chrome Web Store)
 
 Open copy questions for James: none new. "Add to Chrome" points at `https://chromewebstore.google.com` (the live href, no listing path), kept as live.
-Shared changes requested (`docs/requests/apps1.md`): 1 header ask label per page; 2 a desktop-off mode for the ask bar (this page sets `data-ask="off"`); 3 `Band` with an `id` prop (this page closes on its own ask row with `<Cta id>`).
+Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
 Forks this page deleted: the PR pill that flew over the window and the channel chip above it (the patch now lands in the window's own `#bug-button-darkmode` tab); the grey skeleton stripes in the ghost tabs (now Hanzo's own tab names); the progress bars in chapter one (now a tick per action); the raw `.x-btn` hero and close buttons (now `<Cta>`); every label above a heading; the second ending ("Get Hanzo in Chrome" with a solid "Deploy to Cloud", now a text-link row above the close); the endless loops (the run, the scan and the MCP pulses now play a set number of times and rest).
 
 ## 1. Strategy and conversion
@@ -39,7 +39,7 @@ Done here: the h1 is plain server HTML; the window run starts as soon as 15% of 
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="chrome.hero" thumb>` and `<Cta id="chrome.band">`; every other link carries `chrome.*`. The floating ask bar is off (`data-ask="off"`, MASTER 3.3: nothing floats over content); the header's solid carries the ask until apps1.md item 1 lands. The agent prompt copies exactly what is shown.
+Done here: `<Cta id="chrome.hero" thumb>` and `<Cta id="chrome.band">`; every other link carries `chrome.*`. The header carries the solid "Try Hanzo"; there is no floating bar on desktop, and on phones the slim shared bar carries this page's own `data-thumb` ask.md item 1 lands. The agent prompt copies exactly what is shown.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -80,9 +80,9 @@ Done here: pause/replay, inspector tabs, policy radios, try chips and pills pres
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: the shared kit has not landed)
+- [x] Sound only on the listed moments, through the one kit
 
-Done here: signature agent run (time and state: steps, panes, the channel tab filling), Stage settle and the black room opening (scroll), pinned chapters (scroll), the policy pill at 300 ms ease (no spring). variety.py: 3 counted techniques, 0 Rise. The run plays once and rests; reduced motion shows the finished run.
+Done here: signature agent run (time and state: steps, panes, the channel tab filling), Stage settle and the black room opening (scroll), pinned chapters (scroll), the policy pill at 300 ms ease (no spring). variety.py: 3 counted techniques, 0 Rise. The run plays once and rests; reduced motion shows the finished run. The run's end plays the kit's faint 'done' chime (`play('done')`); policy radios and try chips carry `data-sound="tick"`; inspector tabs tick through the kit's `[role=tab]` rule.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no media)
