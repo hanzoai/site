@@ -1,6 +1,6 @@
 'use client';
 /* Skills.
-   V2: 8/10 a paper page where a word wakes a gateway: the skill file is the hero, then one pinned stage whose panel changes with each of the six points (file, shelf, terminal, bars, thread, new file), a grey highlighter striking each key line.
+   V2: 8/10 a paper page where a word wakes a gateway: the skill file is the hero, then one pinned stage that shows something new at each point (the frontmatter close up, one gateway pulling two files, the install, the trade, one file's links drawn out, a new file), a grey highlighter, and a dark thread room that opens from a card.
    Persona: a developer tuning a coding agent's context. Goal: add the skills. CTA: View on GitHub (skills.hero).
    Metric: cta_click on skills.hero and skills.close (data-cta; the event layer is the conductor's).
    Signature: say a word, a gateway wakes. The hero is a markdown skill file beside an agent's context tray. A prompt
@@ -8,10 +8,11 @@
    lights, and its specific files fly into the tray while everything else stays on the shelf.
    Then the trade, scrubbed by scroll: one monolithic guide against five focused reads, each drawn as a small file
    against one long one (relative lengths, never a token count). The six points scroll past on the left while one
-   pinned panel on the right rebuilds the hero's pieces for each (under 900px each point carries its own small
-   object); a grey highlighter strikes each key line once as it reaches the screen. The one dark room is the thread.
-   Beyond: follow a thread, API design → rate limiting → Redis: three files read, one after another, linked rather
-   than repeated; hovering a step previews its file. Every word and link is Hanzo's; file contents are drawn as blank lines. */
+   pinned panel on the right shows each point's own object, none a copy of the hero (under 900px each point carries
+   it, capped small); a grey highlighter strikes each key line once as it reaches the screen. The one dark room is
+   the thread, labelled by point 05's heading (Hanzo prints it once): API design → rate limiting → Redis, three files
+   read one after another; hovering a step lifts its file and dims the rest. The close shows the install's done line.
+   Every word and link is Hanzo's; file contents are drawn as blank lines. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy } from '../ui';
@@ -58,14 +59,13 @@ function useWake(ref) {
   return [typed, w, phase];
 }
 
-/* the hero's pieces, shared by the hero and the essay's stage */
-function FileCard({ prose = true }) {
+/* the hero's pieces (the shelf is also scene 06's) */
+function FileCard() {
   return (
     <div className="xsk-file">
       <div className="xsk-file-top x-mono"><span>hanzo.md</span><span>markdown</span></div>
       <pre className="xsk-fm x-mono"><span className="d">---</span>{'\n'}<span className="k">name:</span> hanzo{'\n'}<span className="k">description:</span> Development knowledge your coding agent loads only when it needs it{'\n'}<span className="d">---</span></pre>
-      {prose ? <div className="xsk-prose"><b># A skill is a markdown file</b><span>Frontmatter carries a name and a description. Below it is prose, code, and links to related skills.</span></div>
-        : <div className="xsk-blank">{[92, 78, 86, 64, 40].map((v, k) => <i key={k} style={{ width: v + '%', '--k': k }} />)}</div>}
+      <div className="xsk-prose"><b># A skill is a markdown file</b><span>Frontmatter carries a name and a description. Below it is prose, code, and links to related skills.</span></div>
       <div className="xsk-links x-mono">{['discover-database', 'discover-zig'].map((l) => <span key={l}>→ {l}</span>)}</div>
     </div>
   );
@@ -109,11 +109,14 @@ function Wake() {
 }
 
 function Hero() {
+  // the h1 is the moment at rest, then settles from 112px toward 84px over the first 200px of scroll (scale only)
+  const { scrollY } = useScroll();
+  const settle = useTransform(scrollY, [0, 200], [1, 0.75], { clamp: true });
   return (
     <section className="xsk-hero" aria-labelledby="xsk-h1">
       <div className="a2-wrap a2-grid xsk-hero-grid">
         <div className="xsk-hero-copy">
-          <Lines as="h1" id="xsk-h1" className="a2-display xsk-h1" lines={['Skills']} now />
+          <motion.div className="xsk-h1-set" style={{ scale: settle }}><Lines as="h1" id="xsk-h1" className="a2-display xsk-h1" lines={['Skills']} now /></motion.div>
           <p className="a2-lede">Development knowledge your coding agent loads <mark>only when it needs it</mark></p>
           <div className="a2-acts"><A to={GH} className="x-btn solid xsk-ask" data-thumb="View on GitHub" data-cta="skills.hero">View on GitHub<Arw /></A></div>
           <p className="xsk-repo-cap x-mono"><A to={GH} className="xsk-repo">hanzoai/skills</A></p>
@@ -163,15 +166,34 @@ function Hl({ children }) {
   return <mark ref={ref} className={cx('xsk-hl', seen && 'on')}>{children}</mark>;
 }
 
-/* 01 the file, 02 the shelf waking, 03 the install, 04 the trade, 05 the thread, 06 a new file joining the shelf */
+/* 01 the frontmatter close up, 02 one gateway pulling two files, 03 the install, 04 the trade,
+   05 one file's links drawn out to the files it points at, 06 a new file joining the shelf. None repeats the hero. */
+const ZOOM = [
+  ['d', '---'], ['k', 'name:', ' hanzo'], ['k', 'description:', ' Development knowledge your coding agent loads only when it needs it'], ['d', '---'],
+  ['b', 88], ['b', 64], ['l', '→ discover-database'],
+];
 function Scene({ k }) {
-  if (k === 0) return <div className="xsk-sc xsk-sc-file"><FileCard prose={false} /></div>;
-  if (k === 1) return (
-    <div className="xsk-sc xsk-sc-shelf"><div className="xsk-agent">
-      <div className="xsk-say x-mono"><span className="xsk-caret-k">›</span><span>Postgres</span><b className="xsk-caret" /></div>
-      <Shelf lit="discover-database" />
-      <Tray pulled k="s" />
+  if (k === 0) return (
+    <div className="xsk-sc xsk-sc-zoom"><div className="xsk-zoom">
+      <p className="xsk-zoom-top x-mono">hanzo.md</p>
+      <ol className="xsk-zoom-ln x-mono">
+        {ZOOM.map(([c, a, b], j) => (
+          <li key={j} className={c} style={{ '--k': j }}>
+            {c === 'd' || c === 'l' ? a : c === 'b' ? <i style={{ width: a + '%' }} /> : <><span>{a}</span>{b}</>}
+          </li>
+        ))}
+      </ol>
     </div></div>
+  );
+  if (k === 1) return (
+    <div className="xsk-sc xsk-sc-gate">
+      <span className="xsk-gw-word x-mono"><span className="xsk-caret-k">›</span> Postgres</span>
+      <b className="xsk-gw-v" />
+      <span className="xsk-gw x-mono">discover-database</span>
+      <b className="xsk-gw-v two" />
+      <b className="xsk-gw-rail" />
+      <div className="xsk-gw-files">{[0, 1, 2, 3, 4].map((j) => <span key={j} className={cx(j % 2 === 1 && 'pull')} style={{ '--k': j }}><i /><i /><i /></span>)}</div>
+    </div>
   );
   if (k === 2) return (
     <div className="xsk-sc xsk-sc-term"><div className="xsk-term">
@@ -190,14 +212,18 @@ function Scene({ k }) {
     </div>
   );
   if (k === 4) return (
-    <div className="xsk-sc xsk-sc-thread">
-      {THREAD.map((t, i) => (
-        <div key={t} className="xsk-sc-f" style={{ '--k': i }}>
-          <span className="x-mono">{t}</span>
-          {[86, 64, 92].map((v, j) => <i key={j} style={{ width: v + '%' }} />)}
-          {i < 2 && <em className="x-mono">→ {THREAD[i + 1]}</em>}
-        </div>
-      ))}
+    <div className="xsk-sc xsk-sc-link">
+      <div className="xsk-lk-file">
+        <span className="x-mono">{THREAD[0]}</span>
+        {[92, 70, 84].map((v, j) => <i key={j} style={{ width: v + '%', '--k': j }} />)}
+        <em className="x-mono">→ {THREAD[1]}</em>
+      </div>
+      <b className="xsk-lk-v" />
+      <div className="xsk-lk-row">
+        <span className="xsk-lk-stub a x-mono">{THREAD[1]}</span>
+        <b className="xsk-lk-h" />
+        <span className="xsk-lk-stub b x-mono">{THREAD[2]}</span>
+      </div>
     </div>
   );
   return (
@@ -216,7 +242,7 @@ function Point({ i, t, d, on, onSeen }) {
   return (
     <li ref={ref} className={cx('xsk-pt', 'p' + i, on && 'on')}>
       <div className="xsk-pt-copy">
-        <h2 className="a2-headline">{t}</h2>
+        <h2 className="a2-headline" id={'xsk-pt-h' + i}>{t}</h2>
         <p className="a2-kick show xsk-cap">{pad(i + 1)} / 06</p>
         <p className="a2-body">{d}</p>
         {i === 2 && <div className="xsk-cmd"><code className="x-mono">{CMD}</code><Copy text={CMD} /></div>}
@@ -238,8 +264,8 @@ function Essay() {
           <div className="xsk-stage-in">
             <div className="xsk-scenes">
               {POINTS.map((_, i) => <div key={i} className={cx('xsk-scene', at === i && 'on', at > i && 'past')}><Scene k={i} /></div>)}
+              <div className="xsk-ticks">{POINTS.map((_, i) => <b key={i} className={cx(at >= i && 'on')} />)}</div>
             </div>
-            <div className="xsk-ticks">{POINTS.map((_, i) => <b key={i} className={cx(at >= i && 'on')} />)}</div>
           </div>
         </div>
       </div>
@@ -247,12 +273,15 @@ function Essay() {
   );
 }
 
-/* The one dark room: follow a thread, file to file. Hovering a step previews its file. */
+/* The one dark room: the thread, file to file. It is labelled by point 05's heading (Hanzo prints that heading once),
+   enters as a rounded card inside the gutters and opens to full width as it arrives. Hovering a step lifts its file. */
 const THREAD = ['API design', 'rate limiting', 'Redis'];
 
 function Thread() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.4 });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
+  const open = useTransform(scrollYProgress, [0, 1], [0, 1], { clamp: true });
   const calm = useReducedMotion();
   const [at, setAt] = useState(2);
   const [mine, setMine] = useState(false);
@@ -266,12 +295,10 @@ function Thread() {
     return () => clearTimeout(t);
   }, [seen, calm, mine]);
   return (
-    <section className="a2-sec a2-dark xsk-thread" data-room="dark" ref={ref} aria-labelledby="xsk-thread-h">
-      <div className="a2-wrap a2-grid">
+    <motion.section className="a2-sec a2-dark xsk-thread" data-room="dark" ref={ref} aria-labelledby="xsk-pt-h4" style={{ '--o': open }}>
+      <div className="a2-wrap a2-grid xsk-thread-grid">
         <div className="xsk-thread-copy">
-          <h2 id="xsk-thread-h" className="a2-headline">Cross-referenced, not duplicated</h2>
-          <p className="a2-kick">Follow a thread</p>
-          <div className="xsk-steps" role="group" aria-label="The thread" onPointerLeave={() => setPeek(-1)}>
+          <div className="xsk-steps" role="group" aria-labelledby="xsk-pt-h4" onPointerLeave={() => setPeek(-1)}>
             {THREAD.map((t, i) => (
               <button key={t} type="button" aria-pressed={at >= i} onClick={() => { setMine(true); setAt(i); }}
                 onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(i); }} onFocus={() => setPeek(i)} onBlur={() => setPeek(-1)}>
@@ -279,8 +306,9 @@ function Thread() {
               </button>
             ))}
           </div>
+          <b className="xsk-rail" aria-hidden="true" style={{ '--r': Math.min(at + 1, 3) / 3 }} />
         </div>
-        <div className="xsk-files" aria-hidden="true">
+        <div className={cx('xsk-files', peek >= 0 && 'peeking')} aria-hidden="true">
           {THREAD.map((t, i) => (
             <div key={t} className={cx('xsk-f', at >= i && 'on', peek === i && 'peek')} style={{ '--i': i }}>
               <span className="x-mono">{t}</span>
@@ -290,7 +318,20 @@ function Thread() {
           ))}
         </div>
       </div>
-    </section>
+    </motion.section>
+  );
+}
+
+/* the close: the install's done line, drawn when the card arrives; hovering the card lifts the tick row */
+function Done() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  return (
+    <div ref={ref} className={cx('xsk-get-done', seen && 'on')} aria-hidden="true">
+      <div className="xsk-gd-cmd"><span className="x-mono">$</span><i /></div>
+      <div className="xsk-gd-out">{[64, 46, 56].map((v, j) => <i key={j} style={{ width: v + '%', '--k': j }} />)}</div>
+      <p className="xsk-gd-ok x-mono"><span className="xsk-gd-row"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg><span>hanzo.md</span></span></p>
+    </div>
   );
 }
 
@@ -305,7 +346,7 @@ function Get() {
             <p>Reusable agent skills</p>
             <p className="xsk-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
           </div>
-          <div className="xsk-get-shelf" aria-hidden="true"><Shelf /></div>
+          <div className="xsk-get-shelf"><Done /></div>
           <A to="https://platform.hanzo.ai/deploy" className="x-btn xsk-ask xsk-deploy" data-cta="skills.close">Deploy to Cloud<Arw /></A>
         </div>
       </div>

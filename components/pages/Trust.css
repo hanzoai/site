@@ -14,14 +14,14 @@
 }
 
 /* hero: a centred statement over the cabinet */
-.xtr-hero { padding: clamp(72px, 7vw, 116px) 0 clamp(44px, 4vw, 72px); }
+.xtr-hero { padding: clamp(72px, 7vw, 116px) 0 clamp(17px, 2vw, 27px); }
 .xtr-hero-top { display: flex; flex-direction: column; align-items: center; text-align: center; margin: 0 auto 44px; }
 .xtr-hero-top .xtr-cap.pf-kick { margin: 17px 0 0; }
 .xtr-hero-top .pf-lede { max-width: 52ch; margin-top: 17px; }
 .xtr-hero-top .pf-btn { margin-top: 27px; }
 @media (hover: hover) { .xtr-hero .pf-btn.solid:hover { background: #262626; border-color: #262626; } }
 
-.xtr-locker { max-width: 1152px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 61.8fr) minmax(0, 38.2fr); border-radius: 24px; background: var(--tile); overflow: hidden; }
+.xtr-locker { position: relative; max-width: 1152px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 61.8fr) minmax(0, 38.2fr); border-radius: 24px; background: var(--tile); overflow: hidden; }
 .xtr-cab-w { padding: 17px 44px 17px 17px; }
 .xtr-locker-h { display: flex; justify-content: space-between; margin: 0; padding: 6.5px 6.5px 17px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
 .xtr-locker-h .pf-mono { color: var(--ink); letter-spacing: .04em; font-size: 13px; }
@@ -52,17 +52,19 @@
 .xtr-tray-p .x-arrow { margin-top: auto; padding-top: 10.5px; }
 
 /* papers you can read now: close under the cabinet, so the papers peek in as the cabinet leaves */
-.pf-r .pf-sec.xtr-docs { padding-top: clamp(44px, 5vw, 72px); padding-bottom: clamp(72px, 8vw, 116px); }
+.pf-r .pf-sec.xtr-docs { padding-top: clamp(27px, 3vw, 44px); padding-bottom: clamp(72px, 8vw, 116px); }
 .xtr-docs-g { display: grid; grid-template-columns: minmax(0, 38.2fr) minmax(0, 61.8fr); column-gap: 44px; align-items: center; }
 .xtr-docs-c .pf-body { margin-top: 17px; }
 .xtr-papers { display: grid; grid-template-columns: 1fr 1fr; gap: 27px; padding: 17px 0; }
-.xtr-paper { position: relative; display: flex; flex-direction: column; gap: 17px; min-height: 400px; padding: 27px; border-radius: 16px; background: #fff; box-shadow: var(--float); color: var(--ink); text-decoration: none; transition: transform var(--b) var(--pf-io); }
+.xtr-paper { position: relative; display: flex; flex-direction: column; gap: 17px; min-height: 360px; padding: 27px; border-radius: 16px; background: #fff; box-shadow: var(--float); color: var(--ink); text-decoration: none; transition: transform var(--b) var(--pf-io); }
 .xtr-paper.p0 { transform: rotate(-1.5deg) translate3d(0, 17px, 0); }
 .xtr-paper.p1 { transform: rotate(1.5deg); }
 .xtr-paper:active { transform: rotate(0) translate3d(0, -6px, 0) scale(.97); transition-duration: 90ms; }
 .xtr-paper-k { font-size: 13px; color: var(--quiet); }
 .xtr-paper b { font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.018em; text-wrap: balance; }
-.xtr-paper-d { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; line-height: 1.6; color: var(--mute); }
+/* the page's ruled lines: an object to look at, not words to read twice */
+.xtr-paper-r { display: grid; gap: 13px; margin-top: 10.5px; }
+.xtr-paper-r i { display: block; height: 2px; border-radius: 2px; background: var(--tile2); }
 .xtr-paper-go { display: grid; place-items: center; width: 44px; height: 44px; margin-top: auto; border-radius: 50%; background: var(--tile); color: var(--ink); transition: transform var(--f) var(--pf-out), background-color var(--f) var(--pf-out), color var(--f) var(--pf-out); }
 @media (hover: hover) {
   .xtr-paper:hover { transform: rotate(0) translate3d(0, -6px, 0); }
@@ -162,8 +164,10 @@
   .xtr-fact-b:hover .pf-title { transform: translate3d(4px, 0, 0); }
 }
 @media (min-width: 900px) {
-  /* the section is three and a half screens tall; its stage holds still for the length of it, one stance per step */
-  .xtr-facts { height: 265svh; }
+  /* the section is about two screens tall; its stage holds still for the length of it, one stance per step. It starts
+     under the list above, so the pinned stage arrives without a white screen first (its empty top is click-through) */
+  .xtr-facts { height: 205svh; margin-top: -88px; pointer-events: none; }
+  .xtr-facts-g { pointer-events: auto; }
   .xtr-pin { position: sticky; top: 0; display: flex; align-items: center; height: 100svh; padding-top: 60px; box-sizing: border-box; }
   .xtr-facts-g { display: grid; grid-template-columns: minmax(0, 38.2fr) minmax(0, 61.8fr); grid-template-rows: auto repeat(4, auto) minmax(0, 1fr); column-gap: 44px; align-items: start; }
   .xtr-facts-h { grid-column: 1; grid-row: 1; padding-bottom: 44px; }
@@ -173,10 +177,12 @@
   .xtr-fact:nth-child(2) dt { grid-row: 3; }
   .xtr-fact:nth-child(3) dt { grid-row: 4; }
   .xtr-fact:nth-child(4) dt { grid-row: 5; }
-  .xtr-stage { grid-column: 2; grid-row: 1 / -1; align-self: stretch; align-items: flex-start; min-height: min(520px, calc(100svh - 150px)); padding: 27px 44px; box-sizing: border-box; }
-  .xtr-fact dd { grid-column: 2; grid-row: 1 / -1; align-self: end; z-index: 1; display: flex; flex-direction: column; gap: 10.5px; padding: 44px; opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--b) var(--pf-emph), transform var(--b) var(--pf-emph); pointer-events: none; }
+  .xtr-stage { grid-column: 2; grid-row: 1 / -1; align-self: stretch; align-items: flex-start; padding: 27px 44px; box-sizing: border-box; }
+  .xtr-fact dd { grid-column: 2; grid-row: 1 / -1; align-self: start; z-index: 1; display: flex; flex-direction: column; gap: 10.5px; padding: 64px 44px 44px; opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--b) var(--pf-emph), transform var(--b) var(--pf-emph); pointer-events: none; }
   .xtr-fact[data-on='true'] dd { opacity: 1; transform: none; pointer-events: auto; }
-  .xtr-fact-big { margin-bottom: 6.5px; }
+  /* the index starts small and grows as its stance takes the stage (64 → 84px, a transform), then rests */
+  .xtr .xtr-fact-big { margin-bottom: 6.5px; font-size: 84px; line-height: .9; transform: scale(.762); transform-origin: 0 100%; transition: transform var(--5, 500ms) var(--pf-emph) 90ms; }
+  .xtr-fact[data-on='true'] .xtr-fact-big { transform: none; }
   .xtr-fact-in { max-width: 56ch; }
 }
 
