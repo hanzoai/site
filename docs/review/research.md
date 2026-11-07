@@ -1,4 +1,5 @@
 # /research — James-eye review
+Ready: 2026-11-07, slice D — h1 arrives on CSS from first paint, filtering keeps the list's height (footer never jumps), Standards from 01, rail reads HIPs in the specs; phone caption, ask above 667, reduced-motion hydration and signature move were fixed in bb7920b4/f687922c and hold
 
 Verdict: 7/10
 First complaint: "On my phone the paper title under the buttons is one word per line, a skinny column running down the side. The big button sits just below the fold on a small phone. And the list still goes on and on."

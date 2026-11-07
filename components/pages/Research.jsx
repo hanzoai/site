@@ -14,8 +14,9 @@
    row → its title page, 600 ms in-out), a line-mask cut-in on the h1 and the figures only, the month that follows your reading in the index rail. Idle: the desk lifting one sheet at a time (pausable). Pointer: rows fill from
    the left (400 ms), their sheet tilts 2°, bars and kinds fill. State: the list re-flows, the title page opens. Deck
    timings only (150 ms hover, 300 ms state, 400 ms moves, 600 ms open), no springs or overshoot. Ink only.
-   Every word, date and link is Hanzo's. */
-import { useEffect, useMemo, useRef, useState } from 'react';
+   Every word, date and link is Hanzo's.
+   V2: 8/10 slice D: h1 cuts in on CSS from first paint, filtering keeps the list's height (no footer jump), Standards numbered from 01, the rail reads HIPs over the specifications. */
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, More } from '../kit';
@@ -154,7 +155,8 @@ function Hero({ open, openLid }) {
       </div>
       <div className="pf-wrap pf-grid xrs-hero-g">
         <div className="xrs-hero-c">
-          <MaskLines as="h1" id="xrs-h1" className="pf-display xrs-h1" lines={['Work we', 'publish']} amount={0.1} />
+          {/* the h1 cuts in on CSS from first paint, so the headline never waits for hydration (same mask and easing as MaskLines) */}
+          <h1 id="xrs-h1" className="pf-display xrs-h1"><span className="pf-mask-l"><span className="pf-mask-in xrs-cut">Work we</span> </span><span className="pf-mask-l"><span className="pf-mask-in xrs-cut" style={{ '--d': '60ms' }}>publish</span></span></h1>
           <div className="xrs-hero-row">
             <p className="pf-mono xrs-cap-h">Research</p>
             <p className="pf-lede xrs-lede">Hanzo builds infrastructure that has to hold up under audit, regulation and adversaries.</p>
@@ -234,6 +236,16 @@ function Library({ mon, setMon, open, openKey }) {
     return () => io.disconnect();
   }, [all, kind, t, mon]);
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  // filtering never collapses the page: while a kind, a search or a month narrows the list, the list keeps the height
+  // it had unfiltered, so the footer never jumps up into view under the reader
+  const filtered = kind !== 'All' || !!t || !!mon;
+  const tall = useRef(0);
+  useLayoutEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    if (!filtered) { el.style.minHeight = ''; tall.current = el.offsetHeight; }
+    else if (!el.style.minHeight) el.style.minHeight = Math.max(tall.current, innerHeight * 0.8) + 'px';
+  });
   return (
     <section className="pf-sec xrs-lib" id="papers">
       <div className="pf-wrap pf-grid xrs-lib-g">
@@ -268,10 +280,10 @@ function Library({ mon, setMon, open, openKey }) {
                     const head = it.date && (!prev || prev.date !== it.date);
                     const id = key(it);
                     return (
-                      <motion.li key={it.t} layout="position" hidden={!match(it) || (folded && k === 'Papers' && i >= 6)} data-d={it.date || undefined} className={head ? 'xrs-new' : ''} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
+                      <motion.li key={it.t} layout="position" hidden={!match(it) || (folded && k === 'Papers' && i >= 6)} data-d={it.date || 'HIPs'} className={head ? 'xrs-new' : ''} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
                         <div className="xrs-row">
                           <button type="button" className="xrs-row-open" onClick={(e) => open(it, e.currentTarget)} aria-haspopup="dialog" aria-label={`Open the title page: ${it.t}`}>
-                            <span className="xrs-row-d pf-mono">{it.date ? (head ? it.date : '') : pad(i)}</span>
+                            <span className="xrs-row-d pf-mono">{it.date ? (head ? it.date : '') : pad(list[0].t === 'All HIPs' ? i : i + 1)}</span>
                             <span className="xrs-thumb">
                               {openKey !== id && <motion.span layoutId={id} className="xrs-thumb-s" style={{ borderRadius: 4 }} transition={OPEN}><Mini x={it} /></motion.span>}
                             </span>
