@@ -1,0 +1,60 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Perceptron Models via Hanzo AI"
+},
+{
+"p": "2 models available"
+},
+{
+"p": "Access all 2 Perceptron models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Perceptron Mk1 33K Perceptron Mk1 (Mark One) is Perceptron's highest-quality vision-language model for video and embodied reasoning.** It accepts image and video inputs paired with natural language queries, and produces detailed visual understanding... text",
+"href": "/models/perceptron/perceptron-mk1"
+},
+{
+"a": "Perceptron Mk1.5 37K Perceptron Mk1.5 is Perceptron's embodied reasoning model for physical agents. It accepts text, image, video, and audio input, and answers with text plus optional structured annotations: points, boxes, polygons, tracks,... text",
+"href": "/models/perceptron/perceptron-mk1.5"
+}
+],
+[
+{
+"h2": "Use Perceptron models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

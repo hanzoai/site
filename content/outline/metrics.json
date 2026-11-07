@@ -1,0 +1,168 @@
+[
+[
+{
+"h1": "Hanzo Metrics"
+},
+{
+"p": "The metrics half of Hanzo O11y"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/metrics"
+},
+{
+"a": "Logs",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "AI Metrics",
+"href": "/cloud/ai-metrics"
+},
+{
+"a": "Billing",
+"href": "/billing"
+},
+{
+"a": "Plans & Pricing",
+"href": "/cloud/plans"
+},
+{
+"a": "Sessions",
+"href": "/cloud/sessions"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/event/insights"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Metrics from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Metrics in my project. Start with: hanzo metrics query"
+}
+],
+[
+{
+"h2": "What a metric is here"
+},
+{
+"p": "A row in a column store rather than a series in a store of its own."
+},
+{
+"h3": "One store, not four"
+},
+{
+"p": "Metrics go where the logs and traces already are — Hanzo Datastore, a column store. Nothing to run beside it and nothing to keep in sync with it."
+},
+{
+"h3": "PromQL, or the builder"
+},
+{
+"p": "Bring the PromQL you already wrote, or assemble the query in the UI without learning it. Both compile to the same thing."
+},
+{
+"h3": "Labels you would not dare add"
+},
+{
+"p": "Per-model, per-route, per-tenant. A column store counts distinct values for a living, so a label that would multiply series in a time-series database is just another column here."
+},
+{
+"h3": "The number leads somewhere"
+},
+{
+"p": "A spike on a chart is the start of a question, not the end. Click it and you are in the traces for that window, because they were never in a different system."
+},
+{
+"h3": "Alerts are saved queries"
+},
+{
+"p": "You write the query, look at it, then keep it as a rule. What pages you is something you have already seen return the answer you expected."
+},
+{
+"h3": "Scoped to your org"
+},
+{
+"p": "Every query carries the org from your token, so one deployment serves many tenants and no panel can read across them."
+}
+],
+[
+{
+"h2": "Send a metric, then follow it"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/metrics"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Logs Search every line",
+"href": "/cloud/logs"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+}
+],
+[
+{
+"h2": "Get Metrics"
+},
+{
+"p": "Time-series metrics"
+},
+{
+"a": "hanzoai/metrics",
+"href": "https://github.com/hanzoai/metrics"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

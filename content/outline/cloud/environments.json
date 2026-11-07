@@ -1,0 +1,107 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Environments"
+},
+{
+"p": "Dev, staging, prod — isolated."
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/operator"
+},
+{
+"a": "Projects",
+"href": "/cloud/projects"
+},
+{
+"a": "Environments",
+"href": "/cloud/environments"
+},
+{
+"a": "Builds",
+"href": "/cloud/builds"
+},
+{
+"a": "Registry",
+"href": "/registry"
+},
+{
+"a": "Releases",
+"href": "/cloud/releases"
+},
+{
+"a": "Pipelines",
+"href": "/cloud/pipelines"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/platform/environments"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Environments from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Environments in my project. Start with: hanzo platform environments"
+}
+],
+[
+{
+"p": "Every project gets isolated environments with their own secrets, data, and domains. Promote a build between them rather than rebuilding it."
+},
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Projects The deploy unit",
+"href": "/cloud/projects"
+},
+{
+"a": "Builds Source to signed image",
+"href": "/cloud/builds"
+},
+{
+"a": "Registry Your container registry",
+"href": "/registry"
+}
+]
+]

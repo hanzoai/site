@@ -1,0 +1,141 @@
+[
+[
+{
+"h1": "Hanzo for marketing teams"
+},
+{
+"p": "Go from a brief to a published campaign — copy, images, video and the landing page — and measure it with the same platform that shipped it."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"p": "Write the positioning, the long post and the short variants in one conversation. Enso picks a fast model for the variants and a strong one for the essay, or you name the one you want."
+},
+{
+"p": "Studio wires image, video and audio models into a node graph. Save the graph, and the next campaign starts from the look you settled on."
+},
+{
+"p": "Describe the page and Hanzo App builds it on a live URL, with the form, the database and sign-in already there."
+},
+{
+"p": "A workflow posts to LinkedIn, X, Instagram, TikTok and YouTube, and sends through Mailchimp, Customer.io or Brevo, on the dates you set."
+},
+{
+"p": "An experiment is a flag with a metric attached. Pick the goal before launch and read the result when it means something."
+},
+{
+"li": "Brief to draft in one thread"
+},
+{
+"li": "Make the images and the video"
+},
+{
+"li": "Ship the landing page"
+},
+{
+"li": "Publish on schedule"
+},
+{
+"li": "Know what worked"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Design A node graph for generating images, video, audio and 3D.",
+"href": "/design"
+},
+{
+"a": "Hanzo App Describe an app and it ships to a live URL with data, sign-in and storage wired in.",
+"href": "/dev"
+},
+{
+"a": "Hanzo Auto Workflows fired by a webhook or a schedule, with runs that survive a restart.",
+"href": "/auto"
+},
+{
+"a": "Connectors The apps a workflow can read from, write to, or be started by.",
+"href": "/automations"
+},
+{
+"a": "Hanzo Insights Events, funnels, session replay, feature flags and experiments.",
+"href": "/insights"
+},
+{
+"a": "Enso Routes each call to the model that should take it.",
+"href": "/enso"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "More teams"
+},
+{
+"a": "Finance",
+"href": "/solutions/finance"
+},
+{
+"a": "Data",
+"href": "/solutions/data"
+},
+{
+"a": "Sales",
+"href": "/solutions/sales"
+},
+{
+"a": "Operations",
+"href": "/solutions/operations"
+},
+{
+"a": "Engineering",
+"href": "/solutions/engineering"
+},
+{
+"a": "Design",
+"href": "/solutions/design"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

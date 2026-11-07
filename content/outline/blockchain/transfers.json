@@ -1,0 +1,215 @@
+[
+[
+{
+"h1": "Transfers API"
+},
+{
+"p": "Track token & NFT transfers in real-time"
+},
+{
+"p": "Monitor and query all token transfers across chains. Get transfer history, pending transactions, and real-time notifications for any address or contract."
+},
+{
+"h3": "All Transfer Types"
+},
+{
+"p": "Native tokens, ERC-20, ERC-721, and ERC-1155 transfers."
+},
+{
+"h3": "Historical Data"
+},
+{
+"p": "Query transfer history from genesis to present."
+},
+{
+"h3": "Real-time Alerts"
+},
+{
+"p": "Webhooks for instant transfer notifications."
+},
+{
+"h3": "Advanced Filtering"
+},
+{
+"p": "Filter by token, address, amount, or time range."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "All Transfer Types"
+},
+{
+"p": "Native tokens, ERC-20, ERC-721, and ERC-1155 transfers."
+},
+{
+"h3": "Historical Data"
+},
+{
+"p": "Query transfer history from genesis to present."
+},
+{
+"h3": "Real-time Alerts"
+},
+{
+"p": "Webhooks for instant transfer notifications."
+},
+{
+"h3": "Advanced Filtering"
+},
+{
+"p": "Filter by token, address, amount, or time range."
+},
+{
+"h3": "Decoded Data"
+},
+{
+"p": "Human-readable transfer details with token metadata."
+},
+{
+"h3": "Multi-chain"
+},
+{
+"p": "Unified API for transfers across 100+ chains."
+},
+{
+"h3": "Low Latency"
+},
+{
+"p": "Sub-second transfer detection and notification."
+},
+{
+"h3": "Internal Transfers"
+},
+{
+"p": "Track internal transactions and contract interactions."
+},
+{
+"h3": "Analytics"
+},
+{
+"p": "Aggregate transfer volume and flow analytics."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@openzeppelin/contracts/token/ERC20/IERC20.sol\" ; import \"@openzeppelin/contracts/token/ERC721/IERC721.sol\" ; /// @title TransferMonitor - Track and log transfers for indexing contract TransferMonitor { // Indexed transfer events for efficient querying event TokenTransfer ( address indexed token, address indexed from, address indexed to, uint256 amount, uint256 timestamp ); event NFTTransfer ( address indexed collection, uint256 indexed tokenId, address indexed from, address to, uint256 timestamp ); event NativeTransfer ( addres"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Transaction Monitoring"
+},
+{
+"p": "Track deposits, withdrawals, and suspicious activity."
+},
+{
+"h3": "Portfolio Updates"
+},
+{
+"p": "Real-time balance updates as transfers happen."
+},
+{
+"h3": "Compliance Tools"
+},
+{
+"p": "AML monitoring and transaction screening."
+},
+{
+"h3": "Notification Services"
+},
+{
+"p": "Alert users on incoming transfers and NFT activity."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Transfers API"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Transfers API"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

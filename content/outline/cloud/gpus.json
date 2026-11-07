@@ -1,0 +1,115 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "GPUs"
+},
+{
+"p": "On-demand accelerators, by the second."
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/operator"
+},
+{
+"a": "GPUs",
+"href": "/cloud/gpus"
+},
+{
+"a": "Machines",
+"href": "/machines"
+},
+{
+"a": "Containers",
+"href": "/cloud/containers"
+},
+{
+"a": "Functions",
+"href": "/functions"
+},
+{
+"a": "Edge",
+"href": "/edge"
+},
+{
+"a": "Applications",
+"href": "/cloud/applications"
+},
+{
+"a": "Clusters",
+"href": "/cloud/clusters"
+},
+{
+"a": "Kubernetes",
+"href": "/cloud/kubernetes"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/compute/gpus"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls GPUs from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo GPUs in my project. Start with: hanzo visor gpus get"
+}
+],
+[
+{
+"p": "H100, A100, and consumer-class GPUs on demand — attach to a machine, a container, or a training job. Per-second billing, no reservations, no idle spend."
+},
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Machines VMs by the second",
+"href": "/machines"
+},
+{
+"a": "Containers",
+"href": "/cloud/containers"
+},
+{
+"a": "Functions Serverless handlers",
+"href": "/functions"
+}
+]
+]

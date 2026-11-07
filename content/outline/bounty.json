@@ -1,0 +1,86 @@
+[
+[
+{
+"h1": "Take an issue. Ship the fix."
+},
+{
+"p": "Open issues and bug reports across Hanzo’s repositories. Ship a fix or report a verified bug to earn AI credits and climb the global leaderboard."
+},
+{
+"a": "Every open bounty",
+"href": "https://github.com/search?type=issues&s=created&o=desc&q=is%3Aissue%20is%3Aopen%20label%3Abounty%20archived%3Afalse%20org%3Ahanzoai%20org%3Ahanzo-apps%20org%3Ahanzo-go%20org%3Ahanzo-js"
+},
+{
+"a": "Leaderboard",
+"href": "/leaderboard"
+},
+{
+"a": "How to contribute",
+"href": "https://github.com/hanzoai/.github/blob/main/CONTRIBUTING.md"
+}
+],
+[
+{
+"h2": "Rewards & points"
+},
+{
+"p": "Every verified bug report, merged pull request, and token processed on Hanzo Cloud builds your standing and awards AI credits."
+}
+],
+[
+{
+"h2": "Top bug hunters & contributors"
+},
+{
+"p": "Builders climbing the ranks through verified bug reports, merged bounties, and global token volume."
+},
+{
+"a": "View global token & bounty leaderboard",
+"href": "/leaderboard"
+}
+],
+[
+{
+"h2": "Global token volume leaderboard"
+},
+{
+"p": "Top 10 active organizations across 217 organizations on Hanzo Cloud by total tokens processed."
+}
+],
+[
+{
+"h2": "How a bounty is taken"
+},
+{
+"li": "Say on the issue that you are taking it."
+},
+{
+"li": "Open a pull request that says Fixes and the issue’s number."
+},
+{
+"li": "A maintainer reviews it, merges it, and credits your account with points and AI credits."
+},
+{
+"p": "Verified bug reports and merged bounties earn Hanzo AI credits and leaderboard points, with email notifications sent as you climb ranks."
+}
+],
+[
+{
+"h2": "Propose a bounty"
+},
+{
+"p": "Found something worth fixing? Open an issue in its repository saying what is wrong, where, and how a fix is checked, and ask for the bounty label. A maintainer decides."
+},
+{
+"a": "Hanzo’s repositories",
+"href": "https://github.com/orgs/hanzoai/repositories?type=public"
+},
+{
+"p": "A security issue goes to [email protected] , never to a public issue."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#d4a7b1b7a1a6bda0ad94bcb5baaebbfab5bd"
+}
+]
+]

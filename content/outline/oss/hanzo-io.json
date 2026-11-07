@@ -1,0 +1,100 @@
+[
+[
+{
+"h1": "Hanzo"
+},
+{
+"p": "Hanzo business apps"
+},
+{
+"a": "hanzo-io on GitHub",
+"href": "https://github.com/hanzo-io"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-io"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 15 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-io, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-io/webshop 0 0 Open Source eCommerce Platform Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/webshop"
+},
+{
+"li": "hanzo-io/team 0 0 Simple, open source team messaging platform Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/team"
+},
+{
+"li": "hanzo-io/press Python 0 0 💲 SaaS platform and cloud hosting for the Hanzo Stack - powers SaaS payments and billing for Hanzo products. Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/press"
+},
+{
+"li": "hanzo-io/nonprofit 0 0 Non Profit module for Frappe/ERPNext Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/nonprofit"
+},
+{
+"li": "hanzo-io/cloud Python 0 0 💲 Manages infrastructure, marketplace, SaaS and more for Hanzo App Cloud. Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/cloud"
+},
+{
+"li": "hanzo-io/chat TypeScript 0 0 Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-io/chat"
+},
+{
+"li": "hanzo-io/beneficiary 0 0 Beneficiary Management Platform, built on Hanzo Framework. Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/beneficiary"
+},
+{
+"li": "hanzo-io/bench 0 0 CLI to manage Multi-tenant deployments for Hanzo apps Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/bench"
+},
+{
+"li": "hanzo-io/agriculture 0 0 Agriculture Domain for ERPNext Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/hanzo-io/agriculture"
+}
+]
+]

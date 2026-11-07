@@ -1,0 +1,168 @@
+[
+[
+{
+"h1": "Agents"
+},
+{
+"p": "Workers the company keeps: a model, instructions, tools and a budget."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Agents API",
+"href": "https://docs.hanzo.ai/docs/openapi/agents"
+},
+{
+"li": "Company The legal body: formation, cap table, documents and filings, as operations.",
+"href": "/products/company"
+},
+{
+"li": "Agents Workers the company keeps: a model, instructions, tools and a budget.",
+"href": "/products/agents"
+},
+{
+"li": "Models Every model behind one endpoint and one key.",
+"href": "/products/models"
+},
+{
+"li": "Memory What the company knows, and when it knew it.",
+"href": "/products/memory"
+},
+{
+"li": "Identity Who is acting — a person, a program or an agent — and what it may reach.",
+"href": "/products/identity"
+},
+{
+"li": "Machines Real computers, leased by the org, for agents and for the software they ship.",
+"href": "/products/machines"
+},
+{
+"a": "Record Every act on every layer, by a person or an agent, in one trail.",
+"href": "/products/record"
+}
+],
+[
+{
+"p": "An agent is defined once in the org and run by name. Every run is recorded with its input, output, model and duration, and a session carries a cap it cannot exceed. Each subsystem’s operations are MCP tools, so an agent reaches the same surface a founder does."
+}
+],
+[
+{
+"h2": "API"
+},
+{
+"p": "Operations on api.hanzo.ai. One key reaches every layer."
+},
+{
+"table": [
+[
+"Method",
+"Path",
+"What it does"
+],
+[
+"POST",
+"/v1/agent",
+"Defines an agent in the org: a model, instructions and a set of tools."
+],
+[
+"POST",
+"/v1/agent/{ref}/run",
+"Runs one of the org’s agents and returns the recorded run."
+],
+[
+"GET",
+"/v1/agent/{ref}/spend",
+"Answers what one agent has spent, in micro-USD."
+],
+[
+"POST",
+"/v1/agent/sessions",
+"Opens a live agent session in the org."
+],
+[
+"POST",
+"/v1/agent/sessions/{id}/budget",
+"Sets, raises, or removes a session’s cap."
+],
+[
+"POST",
+"/v1/mcp",
+"Every subsystem’s operations as MCP tools."
+]
+]
+}
+],
+[
+{
+"h2": "Try it"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/agent \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"name\": \"helper\", \"model\": \"enso-flash\", \"instructions\": \"be terse\", \"cap_micro_usd\": 5000000, \"period\": \"month\"} ' curl https://api.hanzo.ai/v1/agent/helper/run \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"input\": \"Summarise yesterday’s signups\"} '"
+}
+],
+[
+{
+"h2": "Docs"
+},
+{
+"a": "Agents API",
+"href": "https://docs.hanzo.ai/docs/openapi/agents"
+},
+{
+"a": "Agents, the concept",
+"href": "https://docs.hanzo.ai/docs/concepts/agents"
+}
+],
+[
+{
+"h2": "On this site"
+},
+{
+"a": "Agents SDK",
+"href": "/agents/sdk"
+},
+{
+"a": "Bot",
+"href": "/bot"
+},
+{
+"a": "MCP",
+"href": "/mcp"
+},
+{
+"a": "Skills",
+"href": "/skills"
+},
+{
+"a": "Computer",
+"href": "/computer"
+},
+{
+"a": "Operative",
+"href": "/operative"
+},
+{
+"a": "Auto",
+"href": "/auto"
+},
+{
+"a": "Automations",
+"href": "/automations"
+},
+{
+"a": "Flow",
+"href": "/flow"
+},
+{
+"a": "Extension",
+"href": "/extension"
+},
+{
+"a": "CLI",
+"href": "/cli"
+}
+]
+]

@@ -1,0 +1,109 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Marketplace"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Chat",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot",
+"href": "/bot"
+},
+{
+"a": "Search",
+"href": "/search"
+},
+{
+"a": "Crawl",
+"href": "/crawl"
+},
+{
+"a": "Studio",
+"href": "/studio"
+},
+{
+"a": "Console",
+"href": "/console"
+},
+{
+"a": "Referrals",
+"href": "/cloud/referrals"
+},
+{
+"a": "Marketplace",
+"href": "/cloud/marketplace"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/pricing/models"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Marketplace from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Marketplace in my project. Start with: hanzo marketplace listings list"
+}
+],
+[
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Chat Conversational AI",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot Multi-agent platform",
+"href": "/bot"
+},
+{
+"a": "Search Retrieval & answers",
+"href": "/search"
+}
+]
+]

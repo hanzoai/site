@@ -1,0 +1,147 @@
+[
+[
+{
+"h1": "Identity"
+},
+{
+"p": "Who is acting — a person, a program or an agent — and what it may reach."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "IAM API",
+"href": "https://docs.hanzo.ai/docs/openapi/iam"
+},
+{
+"li": "Company The legal body: formation, cap table, documents and filings, as operations.",
+"href": "/products/company"
+},
+{
+"li": "Agents Workers the company keeps: a model, instructions, tools and a budget.",
+"href": "/products/agents"
+},
+{
+"li": "Models Every model behind one endpoint and one key.",
+"href": "/products/models"
+},
+{
+"li": "Memory What the company knows, and when it knew it.",
+"href": "/products/memory"
+},
+{
+"li": "Identity Who is acting — a person, a program or an agent — and what it may reach.",
+"href": "/products/identity"
+},
+{
+"li": "Machines Real computers, leased by the org, for agents and for the software they ship.",
+"href": "/products/machines"
+},
+{
+"a": "Record Every act on every layer, by a person or an agent, in one trail.",
+"href": "/products/record"
+}
+],
+[
+{
+"p": "One issuer for every principal. A person signs in, a program trades its client credentials for a token, and every request carries the org it acts for. Keys are scoped to what they may reach, and secrets are held per org, never in the code that uses them."
+}
+],
+[
+{
+"h2": "API"
+},
+{
+"p": "Operations on api.hanzo.ai. One key reaches every layer."
+},
+{
+"table": [
+[
+"Method",
+"Path",
+"What it does"
+],
+[
+"POST",
+"/v1/iam/oauth/token",
+"Exchanges a sign-in code, a refresh token or client credentials for tokens."
+],
+[
+"GET",
+"/v1/iam/oauth/userinfo",
+"Returns the profile claims for whoever the access token belongs to."
+],
+[
+"POST",
+"/v1/iam/keys",
+"Issues an API key."
+],
+[
+"GET",
+"/v1/kms/secrets",
+"Lists the secrets the org holds, without their values."
+],
+[
+"POST",
+"/v1/kms/secrets",
+"Stores or replaces one secret in the org."
+]
+]
+}
+],
+[
+{
+"h2": "Try it"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/iam/oauth/token \\ -d grant_type=client_credentials \\ -d client_id= $ CLIENT_ID \\ -d client_secret= $ CLIENT_SECRET curl https://api.hanzo.ai/v1/iam/oauth/userinfo \\ -H \" Authorization: Bearer $ ACCESS_TOKEN \""
+}
+],
+[
+{
+"h2": "Docs"
+},
+{
+"a": "IAM API",
+"href": "https://docs.hanzo.ai/docs/openapi/iam"
+},
+{
+"a": "KMS API",
+"href": "https://docs.hanzo.ai/docs/openapi/kms"
+},
+{
+"a": "IAM SDK",
+"href": "https://docs.hanzo.ai/docs/sdks/iam"
+}
+],
+[
+{
+"h2": "On this site"
+},
+{
+"a": "IAM",
+"href": "/iam"
+},
+{
+"a": "Identity",
+"href": "/identity"
+},
+{
+"a": "Authz",
+"href": "/authz"
+},
+{
+"a": "KMS",
+"href": "/kms"
+},
+{
+"a": "HSM",
+"href": "/hsm"
+},
+{
+"a": "IDV",
+"href": "/idv"
+}
+]
+]

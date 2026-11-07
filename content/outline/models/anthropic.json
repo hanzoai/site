@@ -1,0 +1,148 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Anthropic Models via Hanzo AI"
+},
+{
+"p": "24 models available"
+},
+{
+"p": "Access all 24 Anthropic models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Claude Fable 5 1M Claude Fable 5 is a Mythos-class model from Anthropic, built for autonomous knowledge work and coding. It supports text, image, and file inputs with text output, with reasoning support and... text",
+"href": "/models/anthropic/claude-fable-5"
+},
+{
+"a": "Claude Fable 5.1 1M Claude Fable 5.1 improves on Claude Fable 5 across the board, with the biggest gains in agentic coding, long-running agentic workflows, and knowledge work: long code refactors, front-end and visual... text",
+"href": "/models/anthropic/claude-fable-5.1"
+},
+{
+"a": "Claude Fable 5.1 (batch) 1M Claude Fable 5.1 improves on Claude Fable 5 across the board, with the biggest gains in agentic coding, long-running agentic workflows, and knowledge work: long code refactors, front-end and visual... text",
+"href": "/models/anthropic/claude-fable-5.1:batch"
+},
+{
+"a": "Claude Haiku 4.5 200K Claude Haiku 4.5 is Anthropic’s fastest and most efficient model, delivering near-frontier intelligence at a fraction of the cost and latency of larger Claude models. Matching Claude Sonnet 4’s performance... text",
+"href": "/models/anthropic/claude-haiku-4.5"
+},
+{
+"a": "Claude Haiku 5.5 1M Claude Haiku 5.5 is Anthropic's small, fast model for high-volume, cost-sensitive work such as summarization, subagents, and browser use. It succeeds Claude Haiku 4.5 with stronger coding, computer use, and... text",
+"href": "/models/anthropic/claude-haiku-5.5"
+},
+{
+"a": "Claude Haiku 5.5 (batch) 1M Claude Haiku 5.5 is Anthropic's small, fast model for high-volume, cost-sensitive work such as summarization, subagents, and browser use. It succeeds Claude Haiku 4.5 with stronger coding, computer use, and... text",
+"href": "/models/anthropic/claude-haiku-5.5:batch"
+},
+{
+"a": "Claude Opus 4.1 200K Claude Opus 4.1 is an updated version of Anthropic’s flagship model, offering improved performance in coding, reasoning, and agentic tasks. It achieves 74.5% on SWE-bench Verified and shows notable gains... text",
+"href": "/models/anthropic/claude-opus-4.1"
+},
+{
+"a": "Claude Opus 4.5 200K Claude Opus 4.5 is Anthropic’s frontier reasoning model optimized for complex software engineering, agentic workflows, and long-horizon computer use. It offers strong multimodal capabilities, competitive performance across real-world coding and... text",
+"href": "/models/anthropic/claude-opus-4.5"
+},
+{
+"a": "Claude Opus 4.6 1M Opus 4.6 is Anthropic’s strongest model for coding and long-running professional tasks. It is built for agents that operate across entire workflows rather than single prompts, making it especially effective... text",
+"href": "/models/anthropic/claude-opus-4.6"
+},
+{
+"a": "Claude Opus 4.7 1M Opus 4.7 is the next generation of Anthropic's Opus family, built for long-running, asynchronous agents. Building on the coding and agentic strengths of Opus 4.6, it delivers stronger performance on... text",
+"href": "/models/anthropic/claude-opus-4.7"
+},
+{
+"a": "Claude Opus 4.8 1M Claude Opus 4.8 is Anthropic's most capable generally available model in the Opus family. It supports text, image, and file inputs with text output, with reasoning support and a 1M-token... text",
+"href": "/models/anthropic/claude-opus-4.8"
+},
+{
+"a": "Claude Opus 5 1M Claude Opus 5 is Anthropic’s flagship model for demanding reasoning, coding, and long-horizon agentic work. It is particularly strong at end-to-end software tasks, code review and bug finding, visual analysis... text",
+"href": "/models/anthropic/claude-opus-5"
+},
+{
+"a": "Claude Opus 5.5 1M Claude Opus 5.5 is Anthropic's flagship model for demanding reasoning, coding, and long-horizon agentic work, succeeding Claude Opus 5. It is particularly strong at multi-step changes in large codebases, code... text",
+"href": "/models/anthropic/claude-opus-5.5"
+},
+{
+"a": "Claude Opus 5.5 (batch) 1M Claude Opus 5.5 is Anthropic's flagship model for demanding reasoning, coding, and long-horizon agentic work, succeeding Claude Opus 5. It is particularly strong at multi-step changes in large codebases, code... text",
+"href": "/models/anthropic/claude-opus-5.5:batch"
+},
+{
+"a": "Claude Opus 5 (batch) 1M Claude Opus 5 is Anthropic’s flagship model for demanding reasoning, coding, and long-horizon agentic work. It is particularly strong at end-to-end software tasks, code review and bug finding, visual analysis... text",
+"href": "/models/anthropic/claude-opus-5:batch"
+},
+{
+"a": "Claude Sonnet 4.5 1M Claude Sonnet 4.5 is Anthropic’s most advanced Sonnet model to date, optimized for real-world agents and coding workflows. It delivers state-of-the-art performance on coding benchmarks such as SWE-bench Verified, with... text",
+"href": "/models/anthropic/claude-sonnet-4.5"
+},
+{
+"a": "Claude Sonnet 4.6 1M Sonnet 4.6 is Anthropic's most capable Sonnet-class model yet, with frontier performance across coding, agents, and professional work. It excels at iterative development, complex codebase navigation, end-to-end project management with... text",
+"href": "/models/anthropic/claude-sonnet-4.6"
+},
+{
+"a": "Claude Sonnet 5 1M Sonnet 5 is Anthropic's most capable Sonnet-class model, with frontier performance across coding, agents, and professional work. It supports adaptive thinking with selectable reasoning effort levels (low, medium, high, max,... text",
+"href": "/models/anthropic/claude-sonnet-5"
+},
+{
+"a": "Claude Sonnet 5.5 1M Claude Sonnet 5.5 is Anthropic's Sonnet-class model for well-scoped everyday work, succeeding Claude Sonnet 5 as a direct upgrade. It is especially strong at building features, fixing bugs, and producing... text",
+"href": "/models/anthropic/claude-sonnet-5.5"
+},
+{
+"a": "Claude Sonnet 5.5 (batch) 1M Claude Sonnet 5.5 is Anthropic's Sonnet-class model for well-scoped everyday work, succeeding Claude Sonnet 5 as a direct upgrade. It is especially strong at building features, fixing bugs, and producing... text",
+"href": "/models/anthropic/claude-sonnet-5.5:batch"
+},
+{
+"a": "Claude Fable Latest 1M This model always redirects to the latest model in the Claude Fable family. text",
+"href": "/models/anthropic/claude-fable-latest"
+},
+{
+"a": "Claude Haiku Latest 1M This model always redirects to the latest model in the Claude Haiku family. text",
+"href": "/models/anthropic/claude-haiku-latest"
+},
+{
+"a": "Claude Opus Latest 1M This model always redirects to the latest model in the Claude Opus family. text",
+"href": "/models/anthropic/claude-opus-latest"
+},
+{
+"a": "Claude Sonnet Latest 1M This model always redirects to the latest model in the Claude Sonnet family. text",
+"href": "/models/anthropic/claude-sonnet-latest"
+}
+],
+[
+{
+"h2": "Use Anthropic models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

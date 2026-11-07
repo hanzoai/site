@@ -1,0 +1,107 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Embeddings"
+},
+{
+"p": "Turn anything into vectors."
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/ai"
+},
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "Agents",
+"href": "/agents"
+},
+{
+"a": "Inference",
+"href": "/engine"
+},
+{
+"a": "Embeddings",
+"href": "/cloud/embeddings"
+},
+{
+"a": "Providers",
+"href": "/cloud/providers"
+},
+{
+"a": "Prompts",
+"href": "/cloud/prompts"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/embeddings"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Embeddings from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Embeddings in my project. Start with: hanzo embeddings create"
+}
+],
+[
+{
+"p": "Open embedding models for text, code, and images behind one API, wired straight into Vector for retrieval. Batch or realtime, metered per token."
+},
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Models Open-weight model garden",
+"href": "/models"
+},
+{
+"a": "Agents Build & run agents",
+"href": "/agents"
+},
+{
+"a": "Inference",
+"href": "/engine"
+}
+]
+]

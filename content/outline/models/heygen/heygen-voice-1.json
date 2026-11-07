@@ -1,0 +1,101 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "heygen",
+"href": "/models/heygen"
+},
+{
+"h1": "HeyGen Voice"
+},
+{
+"p": "HeyGen Voice is a text-to-speech model from HeyGen."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Try in Chat",
+"href": "/chat"
+}
+],
+[
+{
+"h2": "Specifications"
+}
+],
+[
+{
+"h2": "Quick start"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "cURL"
+},
+{
+"button": "Go"
+},
+{
+"code": "import OpenAI from ' openai ' const client = new OpenAI ({ apiKey : process.env.HANZO_API_KEY , baseURL : ' https://api.hanzo.ai/v1 ' }) const response = await client.chat.completions. create ({ model : ' heygen/heygen-voice-1 ' , messages : [{ role : ' user ' , content : ' Hello! ' }] }) console. log ( response.choices [ 0 ] .message.content )"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( api_key=os . environ [ \" HANZO_API_KEY \" ], base_url= \" https://api.hanzo.ai/v1 \" ) response = client . chat . completions . create ( model= \" heygen/heygen-voice-1 \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }] ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' { \"model\": \"heygen/heygen-voice-1\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+},
+{
+"code": "package main import ( \" context \" \" fmt \" \" os \" \" github.com/sashabaranov/go-openai \" ) func main () { cfg := openai . DefaultConfig ( os . Getenv ( \" HANZO_API_KEY \" )) cfg . BaseURL = \" https://api.hanzo.ai/v1 \" client := openai . NewClientWithConfig ( cfg ) resp , _ := client . CreateChatCompletion ( context . Background (), openai . ChatCompletionRequest { Model : \" heygen/heygen-voice-1 \" , Messages : [] openai . ChatCompletionMessage { { Role : openai . ChatMessageRoleUser , Content : \" Hello! \" }, }, }, ) fmt . Println ( resp . Choices [ 0 ]. Message . Content ) }"
+}
+],
+[
+{
+"h2": "More from heygen"
+},
+{
+"a": "HeyGen Video HeyGen Video is a general-purpose video generation model from HeyGen. It renders short clips with synthesized audio (dialogue, ambience, and sound effects) in a single call, working from a text...",
+"href": "/models/heygen/heygen-video-1"
+},
+{
+"a": "HeyGen Voice Turbo HeyGen Voice Turbo is a lower-latency version of HeyGen Voice, HeyGen's text-to-speech model. It has the same 10 default voices, or bring your own HeyGen key to use voice clones...",
+"href": "/models/heygen/heygen-voice-1-turbo"
+},
+{
+"a": "HeyGen Voice Turbo (free) HeyGen Voice Turbo is a lower-latency version of HeyGen Voice, HeyGen's text-to-speech model. It has the same 10 default voices, or bring your own HeyGen key to use voice clones...",
+"href": "/models/heygen/heygen-voice-1-turbo:free"
+},
+{
+"a": "View all heygen models →",
+"href": "/models/heygen"
+}
+],
+[
+{
+"h2": "Use HeyGen Voice via Hanzo AI"
+},
+{
+"p": "One API key. Every major model. OpenAI-compatible. Start free."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

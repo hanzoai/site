@@ -1,0 +1,111 @@
+[
+[
+{
+"h1": "Koe 1"
+},
+{
+"p": "Performance in every word."
+},
+{
+"p": "Directable speech synthesis, character performances, dubbing and multilingual dialogue."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Try it in Design",
+"href": "/design"
+},
+{
+"img": "/models/koe.webp",
+"alt": ""
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What Koe does"
+},
+{
+"h3": "Director-grade emotional modulation"
+},
+{
+"p": "Direct nuances in tone: breath control, hesitation, whispers, intense delivery, irony, and pitch contour through natural language instructions."
+},
+{
+"h3": "Cross-lingual voice cloning"
+},
+{
+"p": "Preserves vocal identity, formant fingerprint and emotional timbre across languages and regional dialects."
+},
+{
+"h3": "Viseme-synchronized dubbing"
+},
+{
+"p": "Phoneme timing alignment matched to video mouth shapes and facial cadence for localization."
+},
+{
+"h3": "Actor likeness rights"
+},
+{
+"p": "Every synthesized voice carries an imperceptible cryptographic watermark, and its provenance is logged."
+}
+],
+[
+{
+"p": "In production"
+},
+{
+"h2": "Where Koe fits"
+},
+{
+"p": "Localization"
+},
+{
+"h3": "Actor-preserving film dubbing"
+},
+{
+"p": "Dub episodic television and movies into international languages while retaining the original actor’s voice characteristics."
+},
+{
+"p": "Game dialogue"
+},
+{
+"h3": "Real-time branching character speech"
+},
+{
+"p": "Deliver thousands of hours of high-performance character dialogue in video games without recording bottlenecks."
+},
+{
+"p": "Audiobooks and podcasts"
+},
+{
+"h3": "Multi-voice dramatic performances"
+},
+{
+"p": "Cast an entire ensemble of distinct characters from a single manuscript with consistent chapter-to-chapter character voices."
+}
+],
+[
+{
+"p": "Research preview"
+},
+{
+"h2": "Try Koe on your own work"
+},
+{
+"p": "Samples of Koe's own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Every model",
+"href": "/models"
+}
+]
+]

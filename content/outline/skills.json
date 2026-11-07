@@ -1,0 +1,93 @@
+[
+[
+{
+"h1": "Skills"
+},
+{
+"p": "Development knowledge your coding agent loads only when it needs it"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "Frontmatter carries a name and a description. Below it is prose, code, and links to related skills. Nothing to compile, nothing to run — you can read one before you trust it."
+},
+{
+"p": "A gateway is a small skill whose whole job is to notice. Say Postgres and discover-database wakes up; say comptime and discover-zig does. It pulls the specific files and gets out of the way."
+},
+{
+"p": "npx skills add https://hanzoskills.com/hanzo.md adds the Hanzo skill to your agent, and hanzoskills.com/llms.txt lists every other one as plain markdown."
+},
+{
+"p": "One topic per file, a few hundred lines each. Five focused reads cost less than one monolithic guide, and you get the five that matter instead of the one that covers everything badly."
+},
+{
+"p": "Skills link to the skills next to them, so an agent following a thread from API design into rate limiting into Redis reads three files and never the same paragraph twice."
+},
+{
+"p": "Drop a markdown file in a category, give it a name and a description, and it joins discovery. Your house conventions load the same way the public ones do."
+},
+{
+"li": "A skill is a markdown file"
+},
+{
+"li": "Gateway skills do the finding"
+},
+{
+"li": "Install it in one line"
+},
+{
+"li": "Written small on purpose"
+},
+{
+"li": "Cross-referenced, not duplicated"
+},
+{
+"li": "Add your own"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Skills from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Skills in my project. Start with: hanzo tools skills list"
+}
+],
+[
+{
+"h2": "Get started with Skills"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Skills"
+},
+{
+"p": "Reusable agent skills"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

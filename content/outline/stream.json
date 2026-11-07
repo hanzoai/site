@@ -1,0 +1,104 @@
+[
+[
+{
+"h1": "Hanzo Stream"
+},
+{
+"p": "A Kafka port in front of Hanzo PubSub"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/stream"
+},
+{
+"img": "/models/mori.webp",
+"alt": ""
+},
+{
+"p": "Produce, Fetch, ListOffsets, Metadata, OffsetCommit, OffsetFetch, FindCoordinator, JoinGroup, SyncGroup, Heartbeat, CreateTopics and ApiVersions, at the versions modern clients negotiate. kafka-python, sarama, confluent-kafka and franz-go all connect."
+},
+{
+"p": "One topic partition is one durable PubSub stream. Retention, replicas and disk are that stream's settings, so the thing actually holding your events is a system you already run and already back up."
+},
+{
+"p": "One Go binary that keeps no state of its own. Restart it, run several, roll it mid-deploy — the log is somewhere else, so the gateway is never the piece you are afraid to touch."
+},
+{
+"p": "A group's committed offsets live in a PubSub key-value bucket, so a consumer that dies comes back where it left off instead of at the top. Ask for an offset that has aged out and you get OFFSET_OUT_OF_RANGE, so the client resets rather than hangs."
+},
+{
+"p": "Every Kafka offset is written into the record batch header when the batch is produced, and read straight back from there. Deriving them from the store's own sequence numbers works right up until the sequence has gaps in it — and then one record can make every fetch after it unreadable."
+},
+{
+"p": "A produce whose batch chain does not line up is refused with INVALID_RECORD instead of being written and discovered later by a consumer that cannot get past it. The scan that recovers a partition's bounds is capped, so a damaged topic degrades rather than stalls."
+},
+{
+"li": "It speaks Kafka"
+},
+{
+"li": "The log lives in PubSub"
+},
+{
+"li": "Nothing to operate"
+},
+{
+"li": "Offsets survive a restart"
+},
+{
+"li": "Offsets are stamped, not inferred"
+},
+{
+"li": "Bad batches are refused on arrival"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Stream from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
+}
+],
+[
+{
+"h2": "One line changes: the bootstrap server"
+},
+{
+"code": "import json from kafka import KafkaProducer , KafkaConsumer # The only line that changes producer = KafkaProducer ( bootstrap_servers= [ \" stream.hanzo.ai:9092 \" ], value_serializer= lambda v : json . dumps ( v ). encode (), ) producer . send ( \" events \" , { \" type \" : \" user.signup \" , \" user_id \" : \" usr_123 \" }) # Consumer groups work identically consumer = KafkaConsumer ( \" events \" , bootstrap_servers= [ \" stream.hanzo.ai:9092 \" ], group_id= \" my-service \" , auto_offset_reset= \" earliest \" , ) for message in consumer : process ( message . value )"
+}
+],
+[
+{
+"h2": "Point the bootstrap server at it"
+},
+{
+"p": "The clients stay as they are. The cluster underneath them goes away."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/stream"
+}
+],
+[
+{
+"h2": "Get Stream"
+},
+{
+"p": "Event stream"
+},
+{
+"a": "hanzoai/stream",
+"href": "https://github.com/hanzoai/stream"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

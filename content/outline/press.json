@@ -1,0 +1,222 @@
+[
+[
+{
+"h1": "Press Resources."
+},
+{
+"p": "Press kit, brand assets, and who to email — for anyone writing about Hanzo AI, Inc."
+},
+{
+"a": "Download Press Kit",
+"href": "/press/hanzo-press-kit.zip"
+},
+{
+"a": "Contact Press Team",
+"href": "/cdn-cgi/l/email-protection#433331263030032b222d392c6d222a"
+},
+{
+"h3": "Logo - Dark Background"
+},
+{
+"p": "White logo for use on dark backgrounds"
+},
+{
+"p": "SVG, PNG"
+},
+{
+"h3": "Logo - Light Background"
+},
+{
+"p": "Black logo for use on light backgrounds"
+},
+{
+"p": "SVG, PNG"
+},
+{
+"h3": "Icon Only"
+},
+{
+"p": "Standalone icon without wordmark"
+},
+{
+"p": "SVG, PNG, ICO"
+}
+],
+[
+{
+"h2": "About Hanzo AI, Inc."
+},
+{
+"p": "Hanzo AI, Inc. is an AI technology company building the infrastructure for the next generation of intelligent applications. Founded in 2016 and headquartered in San Francisco, Hanzo is led by CEO Antje Worring and CTO Zach Kelling, providing AI platforms, developer tools, and cloud services to companies worldwide. Our mission is to make AI accessible, safe, and beneficial for everyone."
+}
+],
+[
+{
+"h2": "Press Contact"
+},
+{
+"p": "Get in touch with our media relations team."
+},
+{
+"h3": "Media Inquiries"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#cabab8afb9b98aa2aba4b0a5e4aba3"
+},
+{
+"h3": "Headquarters"
+},
+{
+"p": "Hanzo AI, Inc."
+},
+{
+"p": "1 Ferry Building"
+},
+{
+"p": "San Francisco, CA 94105"
+},
+{
+"p": "United States"
+}
+],
+[
+{
+"h2": "Brand Assets"
+},
+{
+"p": "Download logos and visual assets."
+},
+{
+"a": "Brand Guidelines",
+"href": "/brand"
+},
+{
+"a": "Download Press Kit (ZIP)",
+"href": "/press/hanzo-press-kit.zip"
+},
+{
+"a": "View Brand Guidelines",
+"href": "/brand"
+},
+{
+"h3": "Partner Assets"
+},
+{
+"a": "Logo (PNG)",
+"href": "/press/partners/techstars/techstars.png"
+},
+{
+"a": "Logo (SVG)",
+"href": "/press/partners/nvidia/nvidia.svg"
+},
+{
+"a": "Logo (SVG)",
+"href": "/press/partners/googlecloud/googlecloud.svg"
+},
+{
+"a": "Logo (SVG)",
+"href": "/press/partners/aws/aws.svg"
+},
+{
+"a": "Logo (SVG)",
+"href": "/press/partners/digitalocean/digitalocean.svg"
+},
+{
+"a": "Logo (SVG)",
+"href": "/press/partners/nebius/nebius.svg"
+}
+],
+[
+{
+"h2": "Recent News"
+},
+{
+"p": "Latest press releases and company announcements."
+},
+{
+"a": "February 27, 2026 Hanzo Launches One API for Every Model — 500+ Models, Zero Markup The Hanzo AI API provides access to over 500 models from every major provider through a single API key with zero markup on third-party pricing.",
+"href": "/blog"
+},
+{
+"a": "February 27, 2026 Hanzo Cloud Launches with 10-54% Lower Pricing Than Competitors Hanzo Cloud offers developer VMs starting at $5/mo with 2x the RAM of DigitalOcean at the same price, zero egress fees, and global multi-cloud routing.",
+"href": "/blog"
+},
+{
+"a": "February 27, 2026 Hanzo Bot: Full-Stack AI Agent Hosting from $5/mo Deploy AI agents with built-in access to 500+ models, 260+ MCP tools, GPU compute, and multimodal capabilities — audio transcription 85% cheaper than OpenAI.",
+"href": "/blog"
+},
+{
+"a": "February 27, 2026 Zen4 Coder 480B: The Largest Open-Source Code Model Zen4 Coder 480B MoE delivers frontier-class code generation with only 22B active parameters, available through the Hanzo AI API.",
+"href": "/blog"
+},
+{
+"a": "February 9, 2026 Zen4 Model Family Launch — 14 Models from 600M to 480B Parameters Zoo Labs Foundation releases the Zen4 model family built on Mixture of Diverse Experts architecture, spanning chat, code, vision, and audio — served on the Hanzo AI API.",
+"href": "/blog"
+},
+{
+"a": "February 27, 2026 Complete AI Pricing Breakdown: Models, Cloud, GPU, and Audio Every Hanzo rate in one place — gateway, cloud, GPU, and audio.",
+"href": "/blog"
+}
+],
+[
+{
+"h2": "Connect With Us"
+},
+{
+"p": "Follow us on social media for the latest updates."
+},
+{
+"a": "Discord discord.gg/XthHQQj",
+"href": "https://discord.gg/XthHQQj"
+},
+{
+"a": "X (Twitter) @hanzoai",
+"href": "https://x.com/hanzoai"
+},
+{
+"a": "GitHub @hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "LinkedIn hanzo-ai",
+"href": "https://linkedin.com/company/hanzo-ai"
+},
+{
+"a": "Facebook @hanzoinc",
+"href": "https://facebook.com/hanzoinc"
+},
+{
+"a": "Bluesky @hanzoai.bsky.social",
+"href": "https://bsky.app/profile/hanzoai.bsky.social"
+},
+{
+"a": "Reddit r/HanzoAI",
+"href": "https://www.reddit.com/r/HanzoAI/"
+},
+{
+"a": "TikTok @hanzoinc",
+"href": "https://www.tiktok.com/@hanzoinc"
+},
+{
+"a": "Instagram @hanzoinc",
+"href": "https://www.instagram.com/hanzoinc"
+}
+],
+[
+{
+"h2": "Meet our team"
+},
+{
+"p": "For executive bios and headshots, visit our team page or contact our press team."
+},
+{
+"a": "View Team",
+"href": "https://hanzo.team"
+},
+{
+"a": "Request Executive Bios",
+"href": "/cdn-cgi/l/email-protection#99e9ebfceaead9f1f8f7e3f6b7f8f0"
+}
+]
+]

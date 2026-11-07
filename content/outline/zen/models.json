@@ -1,0 +1,57 @@
+[
+[
+{
+"h1": "Zen Models Complete API Catalog"
+},
+{
+"p": "Built for agentic coding and multimodal work. 45 foundation models from Zoo Labs Foundation across language, code, vision, image, audio, and retrieval. Zen MoDE (Mixture of Diverse Experts) architecture. From $0.15/MTok."
+},
+{
+"a": "Zoo Labs Foundation",
+"href": "https://zoo.industries"
+},
+{
+"a": "Explore Models",
+"href": "#zen5"
+},
+{
+"a": "Full Pricing",
+"href": "/pricing"
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+}
+],
+[
+{
+"h2": "Quick Start"
+},
+{
+"p": "Drop-in OpenAI-compatible API. Switch models with one line."
+},
+{
+"code": "from hanzoai import Hanzo client = Hanzo () # Use any Zen model response = client . chat . completions . create ( model= \" zen6 \" , # or zen6-flash, zen5-coder, etc. messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], ) print ( response . choices [ 0 ]. message . content )"
+}
+],
+[
+{
+"h2": "Ready to build with Zen?"
+},
+{
+"p": "All 45 Zen models available via OpenAI-compatible API. Start building today."
+},
+{
+"a": "Get Started",
+"href": "/signup"
+},
+{
+"a": "Try Hanzo Dev",
+"href": "/dev"
+},
+{
+"a": "View Pricing",
+"href": "/pricing"
+}
+]
+]

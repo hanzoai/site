@@ -1,0 +1,171 @@
+[
+[
+{
+"h1": "Hanzo Dashboards"
+},
+{
+"p": "A dashboard is a saved query"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/dashboards"
+},
+{
+"a": "Logs",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "AI Metrics",
+"href": "/cloud/ai-metrics"
+},
+{
+"a": "Billing",
+"href": "/billing"
+},
+{
+"a": "Plans & Pricing",
+"href": "/cloud/plans"
+},
+{
+"a": "Sessions",
+"href": "/cloud/sessions"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/o11y/dashboards"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Dashboards from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Dashboards in my project. Start with: hanzo o11y dashboards list"
+}
+],
+[
+{
+"h2": "What a dashboard is made of"
+},
+{
+"p": "Widgets, monitors, saved views and score configs — all of them queries over one store."
+},
+{
+"h3": "Widgets over your own data"
+},
+{
+"p": "A widget names what to select and how to group it. Because it queries the store that already holds your traces, a chart cannot drift from what happened."
+},
+{
+"h3": "Monitors"
+},
+{
+"p": "A saved query you want watched rather than looked at. Same definition as the widget beside it, kept in one place so the alert and the chart cannot disagree."
+},
+{
+"h3": "One store, not two"
+},
+{
+"p": "Traces, observations and scores live in the service that serves the dashboards. There is no export step, no second database to keep in sync, and nothing to reconcile after an outage."
+},
+{
+"h3": "Saved table views"
+},
+{
+"p": "The columns, filters and sort you arrived at are a preset you can name and return to. Presets belong to the project, so a colleague opens the view you meant."
+},
+{
+"h3": "Scores are yours to define"
+},
+{
+"p": "Score configs say what good means for your application — a rating, a label, a number from an evaluator. Dashboards then aggregate the thing you actually care about."
+},
+{
+"h3": "Permission per category"
+},
+{
+"p": "Access is granted by category rather than per object, and the boundary is the organization on your token. Reading somebody else's project is not a URL away."
+}
+],
+[
+{
+"h2": "Start from a trace"
+},
+{
+"p": "Send traces from your application, then build the view that answers the question you keep asking about them."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/dashboards"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Logs Search every line",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics Time series & SLOs",
+"href": "/metrics"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+}
+],
+[
+{
+"h2": "Get Dashboards"
+},
+{
+"p": "Composable dashboards"
+},
+{
+"a": "hanzoai/dashboards",
+"href": "https://github.com/hanzoai/dashboards"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

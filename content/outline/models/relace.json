@@ -1,0 +1,60 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Relace Models via Hanzo AI"
+},
+{
+"p": "2 models available"
+},
+{
+"p": "Access all 2 Relace models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Relace Apply 3 256K Relace Apply 3 is a specialized code-patching LLM that merges AI-suggested edits straight into your source files. It can apply updates from GPT-4o, Claude, and others into your files at... text",
+"href": "/models/relace/relace-apply-3"
+},
+{
+"a": "Relace Search 256K The relace-search model uses 4-12 `view_file` and `grep` tools in parallel to explore a codebase and return relevant files to the user request. In contrast to RAG, relace-search performs agentic... text",
+"href": "/models/relace/relace-search"
+}
+],
+[
+{
+"h2": "Use Relace models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

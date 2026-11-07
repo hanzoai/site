@@ -1,0 +1,110 @@
+[
+[
+{
+"h1": "Hanzo UI"
+},
+{
+"p": "The React components powering Hanzo apps"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/ui"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "Dialog and DropdownMenu are real components, because they carry focus management, keyboard behaviour and placement that CSS cannot. Buttons, panels, fields and tables are classes over tokens — which is why reading the markup is still possible."
+},
+{
+"p": "WAI-ARIA compliant, keyboard navigable, screen reader tested. Accessibility isn't an afterthought — it's the foundation."
+},
+{
+"p": "Every value comes from a @hanzo/design token — a plain CSS variable, alongside self-hosted faces. Nothing hard-codes a colour, a size or a radius, so retuning the tokens retunes everything at once and a brand fork costs nothing."
+},
+{
+"p": "pnpm add @hanzo/ui. The same components run chat, console, and cloud — upgrade once and all three move together."
+},
+{
+"p": "Built on @hanzo/gui primitives. No styled-components, no emotion, no CSS-in-JS at render — one atomic stylesheet, generated at build."
+},
+{
+"p": "Powers chat.hanzo.ai, platform.hanzo.ai, and every Hanzo dashboard. If it ships in our products, it ships in your code."
+},
+{
+"li": "Overlays are components. The rest is CSS."
+},
+{
+"li": "Accessible by Default"
+},
+{
+"li": "Nothing invents a colour"
+},
+{
+"li": "One package, everywhere"
+},
+{
+"li": "Zero Runtime CSS"
+},
+{
+"li": "Production Tested"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls UI from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo UI in my project."
+}
+],
+[
+{
+"h2": "From init to UI in 60 seconds"
+},
+{
+"code": "init"
+},
+{
+"p": "Add the components you need. Skip the ones you don't."
+},
+{
+"code": "# Initialize in any React project npx @hanzo/ui init # Add the components you need npx @hanzo/ui add button dialog dropdown-menu # Use them import { Button } from \" @hanzo/ui \" export function Hello () { return < Butto n> Ship it < /Butto n> }"
+}
+],
+[
+{
+"h2": "Stop reinventing buttons."
+},
+{
+"p": "Hanzo UI gives you the components — you focus on what makes your product different."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/ui"
+}
+],
+[
+{
+"h2": "Get UI"
+},
+{
+"p": "Headless UI primitives"
+},
+{
+"a": "hanzoai/ui",
+"href": "https://github.com/hanzoai/ui"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,272 @@
+[
+[
+{
+"h1": "Direct AI cinema with precision camera rigs & multi-shot timelines"
+},
+{
+"p": "Full production-quality AI film direction, camera motion control, character consistency lock, multi-shot storyboard sequencing, and node-graph VFX pipelines on cloud GPUs."
+},
+{
+"li": "12 cinema camera trajectories: Dolly, Crane, Vertigo Zolly, Crash Zoom, FPV Drone, 360° Orbit & SnorriCam"
+},
+{
+"li": "Character & world continuity lock across every shot — face seed, wardrobe, lighting & Koe voice print"
+},
+{
+"li": "Multi-shot NLE timeline sequencer with frame-chained Koma 2.0 video, Oto foley, Uta score & Node Graph pipeline"
+},
+{
+"a": "Open Studio",
+"href": "/studio"
+},
+{
+"a": "Launch studio.hanzo.ai",
+"href": "https://studio.hanzo.ai"
+},
+{
+"p": "Hanzo Studio runs at studio.hanzo.ai on dedicated Hanzo Cloud GPUs."
+},
+{
+"button": "Iro"
+},
+{
+"button": "Koma"
+},
+{
+"button": "Mori"
+},
+{
+"button": "Oto"
+},
+{
+"button": "Koe"
+},
+{
+"button": "Uta"
+},
+{
+"img": "/images/models/koe.webp",
+"alt": "Slower sign, made with Koe"
+},
+{
+"img": "/images/models/koe.webp",
+"alt": "The shop sign, made with Koe"
+},
+{
+"img": "/images/models/oto.webp",
+"alt": "Tin roof, made with Oto"
+},
+{
+"img": "/images/models/mori.webp",
+"alt": "Paper lantern, made with Mori"
+},
+{
+"img": "/images/models/koma.webp",
+"alt": "The drift, made with Koma"
+},
+{
+"img": "/images/models/iro.webp",
+"alt": "Friday street, made with Iro"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Studio from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Studio in my project."
+}
+],
+[
+{
+"p": "What is Hanzo Studio"
+},
+{
+"h2": "Production-grade AI film direction and node-graph VFX"
+},
+{
+"p": "Where Hanzo Design (/design) builds everyday visuals, decks, docs, and interactive apps inside your workspace, Hanzo Studio (studio.hanzo.ai) is a full cinema production suite built for directors, filmmakers, and VFX teams."
+},
+{
+"h3": "Cinema Camera & Lens Rig"
+},
+{
+"p": "Control physical 6-DoF camera trajectories (Dolly In/Out, Crane Rise, Vertigo Zolly, Crash Zoom, Whip Pan, 360° Orbit, Bullet-Time), 14mm–135mm prime & anamorphic 2.39:1 lenses, T-Stop aperture bokeh, and volumetric lighting."
+},
+{
+"h3": "Character & World Consistency Lock"
+},
+{
+"p": "Lock Actor ID identity embeddings, wardrobe, reference stills, and Koe voice profiles so your cast and environment stay frame-accurate across every angle and cut."
+},
+{
+"h3": "Multi-Shot Timeline & Node Graph"
+},
+{
+"p": "Chain shots directly with last-frame conditioning (ConcatVideo), layer Oto foley and Uta musical scores on a multi-track timeline, or drop into the full Comfy-compatible Node Graph pipeline."
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "Built for cinema, VFX, and multi-shot storytelling"
+},
+{
+"h3": "Koma 2.0 Camera Motion Control"
+},
+{
+"p": "Direct exact camera paths, focal lengths (14mm to 135mm Anamorphic), shutter angles, and depth-of-field rack focus before rendering."
+},
+{
+"h3": "Persistent Actor & Set Vault"
+},
+{
+"p": "Upload character sheets or lock generated seeds once; reference @KAI-01 or @SORA-02 in any shot to preserve face, costume, and voice."
+},
+{
+"h3": "Frame-Chained Storyboard Sequencer"
+},
+{
+"p": "Cut multi-shot scenes on a real timeline with automatic boundary frame matching, lip-sync dialogue, and OpenTimelineIO / MP4 master export."
+},
+{
+"h3": "Visual Node-Graph Pipeline"
+},
+{
+"p": "Switch to the node-graph canvas at any time to wire custom checkpoints, ControlNets, relighting passes, and Python nodes."
+},
+{
+"h3": "Synchronized Foley, Voice & Score"
+},
+{
+"p": "Every shot automatically pairs Koma video with Oto spatial foley, Koe multi-speaker lip-sync dialogue, and Uta stems."
+},
+{
+"h3": "Dedicated Cloud GPU Render Farm"
+},
+{
+"p": "Queue 4K anamorphic multi-shot renders across distributed Hanzo Cloud GPUs with organization-wide asset libraries and IAM access control."
+}
+],
+[
+{
+"h2": "Every creative model, in one studio."
+},
+{
+"p": "Video, image, 3D, sound, voice and music, each a node on the canvas. Open one to see what it makes."
+},
+{
+"a": "Iro Image generation and visual understanding. Images",
+"href": "/iro"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"a": "Koma Video generation and world simulation. Video",
+"href": "/koma"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"a": "Oto Sound generation and audio understanding. Audio",
+"href": "/oto"
+},
+{
+"img": "/models/oto.webp",
+"alt": ""
+},
+{
+"a": "Koe Voice synthesis and speech understanding. Voice",
+"href": "/koe"
+},
+{
+"img": "/models/koe.webp",
+"alt": ""
+},
+{
+"a": "Uta Music generation and composition. Music",
+"href": "/uta"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+},
+{
+"a": "Mori 3D generation and spatial understanding. 3D",
+"href": "/mori"
+},
+{
+"img": "/models/mori.webp",
+"alt": ""
+},
+{
+"a": "Explore model pricing →",
+"href": "/pricing"
+},
+{
+"a": "View full model catalog →",
+"href": "/models"
+}
+],
+[
+{
+"h2": "Step into the director’s chair"
+},
+{
+"p": "Launch Hanzo Studio at studio.hanzo.ai or open Hanzo Design at hanzo.ai/design."
+},
+{
+"a": "Open Studio",
+"href": "/studio"
+},
+{
+"a": "Open Hanzo Design",
+"href": "/design"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Chat Conversational AI",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot Multi-agent platform",
+"href": "/bot"
+},
+{
+"a": "Search Retrieval & answers",
+"href": "/search"
+}
+],
+[
+{
+"h2": "Get Studio"
+},
+{
+"p": "Visual builder studio"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

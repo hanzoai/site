@@ -1,0 +1,93 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "API Keys"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/iam"
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/iam"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls API Keys from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo API Keys in my project. Start with: hanzo iam keys list"
+}
+],
+[
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+}
+]
+]

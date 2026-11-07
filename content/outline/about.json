@@ -1,0 +1,438 @@
+[
+[
+{
+"h1": "Chasing the Pareto Frontier of AI"
+},
+{
+"p": "From SKULLY and open-source commerce, through Techstars ’17, to 1700+ open repositories and the sovereign AI cloud today — advancing intelligence, speed, deterministic safety, and equitable cost together."
+},
+{
+"a": "Get Started",
+"href": "/pricing"
+},
+{
+"a": "Our History",
+"href": "/history"
+},
+{
+"a": "Open Source",
+"href": "/open-source"
+},
+{
+"img": "/authors/antje-worring-portrait.jpg",
+"alt": "Antje Worring"
+},
+{
+"h3": "Antje Worring"
+},
+{
+"p": "Chief Executive Officer and co-founder"
+},
+{
+"p": "Leads Hanzo’s strategy, enterprise partnerships and sovereign AI deployments."
+},
+{
+"a": "Website ↗",
+"href": "https://antjeworr.ing"
+},
+{
+"a": "X ↗",
+"href": "https://x.com/antjeworring"
+},
+{
+"a": "GitHub ↗",
+"href": "https://github.com/zooqueen"
+},
+{
+"a": "LinkedIn ↗",
+"href": "https://www.linkedin.com/in/antje-worring/"
+},
+{
+"img": "/authors/zach-kelling-portrait.jpg",
+"alt": "Zach Kelling"
+},
+{
+"h3": "Zach Kelling"
+},
+{
+"p": "Chief Technology Officer and founder"
+},
+{
+"p": "Builds Hanzo’s AI cloud, its engine runtimes and its agent frameworks. A long-time open-source author."
+},
+{
+"a": "Website ↗",
+"href": "https://zeekay.io"
+},
+{
+"a": "X ↗",
+"href": "https://x.com/zeekay"
+},
+{
+"a": "GitHub ↗",
+"href": "https://github.com/zeekay"
+},
+{
+"a": "LinkedIn ↗",
+"href": "https://www.linkedin.com/in/zeekay/"
+}
+],
+[
+{
+"h2": "Moving the frontier without trading away safety, privacy, or ownership."
+},
+{
+"p": "Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research."
+},
+{
+"h3": "Safety in AI"
+},
+{
+"p": "Deterministic verification over guesswork"
+},
+{
+"p": "Generative models drift and hallucinate when left unchecked. We pair frontier reasoning with Kai calibrated discrete decision models, formal policy gates, and sandboxed execution so autonomous agents stay bounded in production."
+},
+{
+"a": "Safety research",
+"href": "/research"
+},
+{
+"h3": "Frontier Performance"
+},
+{
+"p": "Bare-metal C, CUDA, and Metal runtimes"
+},
+{
+"p": "Speed is an architectural choice. From Hanzo Engine’s zero-Python inference kernels and Kai’s decisions, which write no text, to Enso’s learned multi-model routing, every layer is engineered to maximize intelligence per millisecond."
+},
+{
+"a": "Live benchmarks",
+"href": "/benchmarks"
+},
+{
+"h3": "Equitable Access"
+},
+{
+"p": "Frontier capability without hyperscaler tax"
+},
+{
+"p": "Breakthrough AI cannot belong only to trillion-dollar incumbents. By routing each task to the most efficient model, publishing open weights, and pricing compute fairly, we put startups, researchers, and builders on equal footing."
+},
+{
+"a": "Transparent pricing",
+"href": "/pricing"
+},
+{
+"h3": "Open Source"
+},
+{
+"p": "1700+ public repositories since 2014"
+},
+{
+"p": "Our engines, agent SDKs, MCP servers, UI kits, and Hanzo Improvement Proposals (HIPs) are developed in the open. Anyone can inspect the code, verify how decisions are made, fork the stack, and contribute."
+},
+{
+"a": "Browse repositories",
+"href": "/open-source"
+},
+{
+"h3": "Privacy by Architecture"
+},
+{
+"p": "No training without your say"
+},
+{
+"p": "Business and API accounts are never used to train shared models unless an administrator or a written agreement says so, and a personal account only if you turn it on. Organizations sit in isolated tenant databases with scoped HKDF-SHA256 keys, local-first CLI workflows, and strict gateway identity stripping."
+},
+{
+"a": "Security & trust",
+"href": "/trust"
+},
+{
+"h3": "Ownership & Sovereignty"
+},
+{
+"p": "Cloud, private VPC, on-prem, or air-gapped"
+},
+{
+"p": "If you cannot move your weights, memory, and runtime onto your own hardware, you are renting your intelligence. Hanzo runs identically on our global cloud, inside your VPC, or completely air-gapped on your own GPUs."
+},
+{
+"a": "Explore platform",
+"href": "/platform"
+}
+],
+[
+{
+"h2": "Built with founders, scaled to public markets."
+},
+{
+"p": "From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today."
+},
+{
+"a": "Start Building",
+"href": "/pricing"
+},
+{
+"a": "Read Our Full History",
+"href": "/history"
+},
+{
+"a": "Customer Stories",
+"href": "/customers"
+}
+],
+[
+{
+"h2": "The Zen of Hanzo"
+},
+{
+"p": "The principles the company argues from when a decision is close."
+},
+{
+"h3": "Enable the Underdog"
+},
+{
+"p": "Enable others to win. Democratize technology so small businesses and startups can compete with industry giants."
+},
+{
+"h3": "Data-Driven Everything"
+},
+{
+"p": "Let data be your guide. Embrace analytics and AI as the foundation of decision-making."
+},
+{
+"h3": "Open Innovation"
+},
+{
+"p": "Be open, share often. Openness accelerates growth—both for the company and its community."
+},
+{
+"h3": "Adaptability"
+},
+{
+"p": "Pivot with purpose. There is no failure, only feedback. Move quickly and strike in new directions when opportunity calls."
+},
+{
+"h3": "Customer-Centric Growth"
+},
+{
+"p": "Treat each client as a long-term partner and guide them to success."
+},
+{
+"h3": "First Principles Thinking"
+},
+{
+"p": "See the invisible, do the impossible. Boil problems down to their essence and solve them in fundamentally better ways."
+},
+{
+"a": "Explore the full Zen manifesto",
+"href": "/philosophy"
+}
+],
+[
+{
+"h2": "Verifiable code. Calibrated decisions."
+},
+{
+"p": "Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty."
+},
+{
+"h3": "1700+ Open Repositories"
+},
+{
+"p": "Auditable infrastructure from kernel to interface"
+},
+{
+"p": "Since open-sourcing our commerce architecture in 2014, we have published over 1700 public repositories. From C/CUDA/Metal inference engines to agent compilers, MCP tools, and cross-platform UI kits, our stack is built to be read, audited, and extended."
+},
+{
+"p": "Zero Proprietary Lock-In: Export and run models, agents, and state on your own hardware without rewriting application code."
+},
+{
+"p": "HIP Standards: Core protocols and architectures published openly through Hanzo Improvement Proposals."
+},
+{
+"p": "Shared Ecosystem: MCP servers, skills, UI primitives, and inference runtimes built in public with contributors worldwide."
+},
+{
+"a": "Explore Open Source Ecosystem",
+"href": "/open-source"
+},
+{
+"h3": "Deterministic Safety Bounds"
+},
+{
+"p": "Calibrated decisions, not guesswork"
+},
+{
+"p": "Unconstrained token generators drift in high-stakes workflows. Hanzo puts calibrated decisions (Kai), policy checks and isolated sandboxes in front of any autonomous agent that touches production data or billing."
+},
+{
+"p": "Policy Governance: Policy checks stop a tool call or a change your policy refuses before it is sent."
+},
+{
+"p": "Sovereign & Air-Gapped: Run inside your own VPC or offline cluster with zero external telemetry or third-party relays."
+},
+{
+"p": "Calibrated Confidence: Kai returns calibrated probability distributions and defers cleanly when evidence is insufficient."
+},
+{
+"a": "Read Our Safety Research",
+"href": "/research"
+},
+{
+"a": "github.com/hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Merge pull request #299 from hanzoai/fix/footer-signature-no-crop",
+"href": "https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a"
+},
+{
+"a": "chore(desktop): finalize 1.1.53 skin, guest/LSA integration, and UI primitive repairs",
+"href": "https://github.com/hanzoai/desktop/commit/ddfcd04565afa1b27a6480fd7fc2a9de0ec84e94"
+},
+{
+"a": "Update css",
+"href": "https://github.com/hanzoai/desktop/commit/e7492134d79dc3c7c1def579a2305cba7c8092f5"
+},
+{
+"a": "feat(desktop): hanzo.ai's app stack, macOS window controls, and the window's own skin",
+"href": "https://github.com/hanzoai/desktop/commit/421d4f233bd6516367293b496c6000c3a2219cde"
+},
+{
+"a": "fix(footer): keep full Hanzo wordmark and punctuation visible at responsive widths",
+"href": "https://github.com/hanzoai/ui/commit/72c079f77bf1683373a719f575f3541006c72457"
+},
+{
+"a": "hanzo 8.5.910",
+"href": "https://github.com/hanzoai/homebrew-tap/commit/098a650e94d36cbf48af446d647845ff90686929"
+},
+{
+"a": "View Open Source Dashboard",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Original architectures, engines, and published research."
+},
+{
+"p": "Rather than wrapping third-party endpoints, Hanzo designs decision models, semantic routers, bare-metal inference engines, and open research on verifiable agent safety."
+},
+{
+"h3": "Models & Runtimes"
+},
+{
+"a": "View Model Catalog",
+"href": "/models"
+},
+{
+"h4": "Kai"
+},
+{
+"p": "Calibrated discrete decision model for autonomous agent loops. Factorized discrete choice, calibrated probability distributions, and deterministic policy governance."
+},
+{
+"a": "Details →",
+"href": "/kai"
+},
+{
+"h4": "Zen Multimodal"
+},
+{
+"p": "Multimodal reasoning models across text, code, vision, speech, and structured output, built for both low-power edge devices and sovereign GPU clusters."
+},
+{
+"a": "Details →",
+"href": "/zen"
+},
+{
+"h4": "Hanzo Engine"
+},
+{
+"p": "Bare-metal C, CUDA, and Metal inference engine with speculative decoding and NVFP4/FP8 kernels, removing Python runtime overhead on production hardware."
+},
+{
+"a": "Details →",
+"href": "/engine"
+},
+{
+"h4": "Enso Router"
+},
+{
+"p": "Learned semantic router and multi-model coordinator (HIP-0510) that sends each prompt to a model by accuracy and cost."
+},
+{
+"a": "Details →",
+"href": "/enso"
+},
+{
+"h3": "Selected Papers & Technical Writing"
+},
+{
+"a": "Papers",
+"href": "/research"
+},
+{
+"a": "Blog",
+"href": "/blog"
+},
+{
+"a": "Research Paper Oct 2026 Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops Factorized discrete choice, calibrated distributions, and deterministic policy governance for mission-critical autonomy. Read publication",
+"href": "https://papers.hanzo.ai/kai-decision-model/"
+},
+{
+"a": "Research Paper Sep 2026 Linkage, Not Similarity: What Long-Term Agent Memory Has to Retrieve Why cosine vector similarity falls short on multi-session recall and how linkage graphs preserve causal context over time. Read publication",
+"href": "https://papers.hanzo.ai/hanzo-context-memory/"
+},
+{
+"a": "Technical Blog Oct 2026 Your AI is Planning To Kill You: Deterministic Safety Bounds Why unconstrained generative loops fail under adversarial pressure, and how Kai enforces mathematical safety bounds. Read publication",
+"href": "https://hanzo.blog/2026-10-16-your-ai-is-planning-to-kill-you/"
+},
+{
+"a": "Technical Blog Oct 2026 Optimizing for Headless Commerce in the Era of Agentic LLMs What it takes for infrastructure to be readable, verifiable, and payable by autonomous agents with clear human authorization. Read publication",
+"href": "https://hanzo.blog/headless-commerce-agentic-llms/"
+}
+],
+[
+{
+"h2": "Push the Pareto frontier with us."
+},
+{
+"p": "We hire systems programmers, AI safety researchers, and product engineers who care about open source, equitable access, privacy, and sovereign ownership. High autonomy, zero bureaucracy, and code that ships in public."
+},
+{
+"h3": "Distributed Systems & Inference"
+},
+{
+"p": "Scaling bare-metal C/CUDA/Metal kernels, multi-node GPU clusters, and sovereign inference clouds."
+},
+{
+"h3": "AI Safety & Formal Verification"
+},
+{
+"p": "Advancing calibrated discrete decision models (Kai), verification graphs, and deterministic policy bounds."
+},
+{
+"h3": "Open Agent Compilers & Tools"
+},
+{
+"p": "Building MCP infrastructure, linkage memory, and local-first developer tools used across the ecosystem."
+},
+{
+"a": "Explore Open Roles",
+"href": "/careers"
+},
+{
+"a": "Meet the Team",
+"href": "/team"
+},
+{
+"a": "Browse Code on GitHub",
+"href": "/open-source"
+}
+]
+]

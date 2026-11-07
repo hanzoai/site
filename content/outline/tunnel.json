@@ -1,0 +1,112 @@
+[
+[
+{
+"h1": "Hanzo Tunnel"
+},
+{
+"p": "A public HTTPS URL for something running on your laptop. The port stays bound to localhost and the Hanzo fabric carries the traffic to it, so nothing is listening on whatever network the machine is sitting on."
+},
+{
+"a": "View Source",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"p": "Your service keeps listening on 127.0.0.1. The fabric reaches in and carries the traffic, so a café, a client's office, or a conference floor sees nothing."
+},
+{
+"p": "You get a random token by default. Pass --name and the subdomain is yours to reuse, so the callback URL you registered last week still works today."
+},
+{
+"p": "No second signup, no config file to fill in. The first share provisions the account from the identity you already signed in with, then prints the URL."
+},
+{
+"p": "hanzo link publishes the terminal you are in so the console can watch it, or drive it. That one is gated behind your org's identity provider — knowing the URL is not enough, and if the gate cannot be applied the command refuses to publish."
+},
+{
+"p": "The tunnel belongs to the command that started it. Close the terminal and the URL stops answering — a share cannot outlive the session that meant to make it."
+},
+{
+"p": "proxy passes traffic through to a local port. web and static serve a directory as a site. drive hands over files. One flag picks which, and a port, a host:port, or a full URL all work as the target."
+},
+{
+"li": "The port stays on localhost"
+},
+{
+"li": "A name you can keep"
+},
+{
+"li": "Your login is the account"
+},
+{
+"li": "A shell is never open by hostname"
+},
+{
+"li": "It ends when you do"
+},
+{
+"li": "Four things to put behind it"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Tunnel from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share"
+}
+],
+[
+{
+"h2": "One command, one URL"
+},
+{
+"p": "Install the CLI, sign in once, and name a port. It is the same sign-in that runs your agents and bills your usage, so there is nothing else to set up."
+},
+{
+"code": "$ hanzo share 3000 → sharing 3000 https://wispyfox7421.share.hanzo.ai → localhost:3000"
+},
+{
+"a": "Install the CLI",
+"href": "https://docs.hanzo.ai/docs/cli"
+},
+{
+"a": "See Pricing",
+"href": "/pricing"
+}
+],
+[
+{
+"h2": "Get started with Tunnel"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Tunnel"
+},
+{
+"p": "Secure tunnels"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

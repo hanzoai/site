@@ -1,0 +1,112 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Logs"
+},
+{
+"p": "Search every line."
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/o11y"
+},
+{
+"a": "Logs",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "AI Metrics",
+"href": "/cloud/ai-metrics"
+},
+{
+"a": "Billing",
+"href": "/billing"
+},
+{
+"a": "Plans & Pricing",
+"href": "/cloud/plans"
+},
+{
+"a": "Sessions",
+"href": "/cloud/sessions"
+},
+{
+"li": "$ hanzo"
+},
+{
+"li": "> deploy the gateway to staging"
+},
+{
+"li": "· reading the project"
+},
+{
+"li": "✓ gateway is on staging"
+},
+{
+"code": "api.hanzo.ai /v1/o11y/logs"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Logs from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Logs in my project. Start with: hanzo o11y logs get"
+}
+],
+[
+{
+"p": "Structured logs from every service in one searchable store, retained per plan and scoped per organization. No agent to install and no second log vendor."
+},
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Metrics Time series & SLOs",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+}
+]
+]

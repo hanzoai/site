@@ -1,0 +1,180 @@
+[
+[
+{
+"h1": "ZAP"
+},
+{
+"p": "The wire format is the data structure"
+},
+{
+"a": "Read the docs",
+"href": "https://zap-proto.dev/docs/quick-start"
+},
+{
+"a": "Read the Papers",
+"href": "https://github.com/zap-proto/papers"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/zap-proto/spec"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "Read it where it landed."
+},
+{
+"p": "The whole header is sixteen bytes."
+},
+{
+"p": "One wire, three readers."
+},
+{
+"p": "All run on ZAP."
+},
+{
+"li": "No parse"
+},
+{
+"li": "A 16-byte header"
+},
+{
+"li": "Go · Rust · TS"
+},
+{
+"li": "MCP · A2A · ACP"
+}
+],
+[
+{
+"h2": "Why bother"
+},
+{
+"p": "JSON over HTTP is fine until a hundred agents are calling the same tools. Then the cost is the copies, and the fix is to stop making them."
+},
+{
+"h3": "One tool server, not one per agent"
+},
+{
+"p": "Running an MCP server beside every agent duplicates the process, the schema and the idle memory as many times as you have agents. Put the servers behind one endpoint and the agents share them."
+},
+{
+"h3": "The work you removed cannot be slow"
+},
+{
+"p": "Fewer processes to schedule and no text to turn into objects on either side of a call. That is where the time goes at scale, and the way to get it back is not to do it."
+},
+{
+"h3": "It carries the protocol you already use"
+},
+{
+"p": "MCP, A2A and ACP layer on ZAP without changing what your code says. ZAP is underneath them, not instead of them."
+},
+{
+"h3": "The message is already the object"
+},
+{
+"p": "Structs, lists, text and bytes are laid out on the wire in the shape a reader wants them, eight-byte aligned. Reading a field is a pointer and an offset into the buffer that arrived."
+},
+{
+"h3": "Nothing to collect afterwards"
+},
+{
+"p": "A reader that walks the buffer in place allocates nothing per message, so there is no garbage to collect and no pause to tune away later."
+},
+{
+"h3": "Existing MCP servers, wrapped"
+},
+{
+"p": "Point the daemon at the MCP servers you already run — over stdio, over HTTP, over a Unix socket — and it presents their tools as one federated schema. Agents connect once and see everything."
+},
+{
+"h3": "Keys arrive instead of being fetched"
+},
+{
+"p": "ZAP carries its own key distribution: a service subscribes once and receives the snapshot, then rotations and revocations as they happen. Nothing polls a JWKS endpoint, and a revoked key stops working when it is revoked rather than when a cache expires."
+},
+{
+"h3": "Three implementations, one wire"
+},
+{
+"p": "Go, Rust and TypeScript, held wire-compatible against a single schema file. The schema is the contract, and an incompatible change bumps its identifier rather than hoping nobody notices."
+}
+],
+[
+{
+"h2": "Four lines and it is running"
+},
+{
+"p": "One daemon in front of the servers you already have. Agents hold a single connection to it."
+},
+{
+"p": "zapd presents the tools and resources of every backend as one schema, whether the backend speaks MCP or ZAP."
+}
+],
+[
+{
+"h2": "How it is put together"
+},
+{
+"p": "Many agents on one side, many tool servers on the other, one address in the middle."
+},
+{
+"code": "┌─────────────────────────────────────────────────────────────────┐\n│                        Agent Swarm                               │\n│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐             │\n│  │ Agent 1 │  │ Agent 2 │  │ Agent 3 │  │ Agent N │    ...      │\n│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘             │\n│       │            │            │            │                   │\n│       └────────────┴─────┬──────┴────────────┘                   │\n│                          │                                       │\n│                          ▼                        "
+}
+],
+[
+{
+"h2": "Point one agent at it"
+},
+{
+"p": "Start the daemon, add the MCP servers you already run, change one address in your agent. Nothing else about your setup has to move."
+},
+{
+"a": "Read the docs",
+"href": "https://zap-proto.dev/docs"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/zap-proto/spec"
+},
+{
+"p": "What ZAP saves depends on your workload, your payload size and your topology. The claim here is about mechanism, not about a number: a reader that walks the buffer in place does no parsing and no allocation, and shared backends run one process where per-agent sidecars run many. Measure it on your own traffic — we have not published a benchmark and will not quote one we cannot show you."
+}
+],
+[
+{
+"h2": "Read the protocol"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/zap"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get ZAP"
+},
+{
+"p": "Zero-copy application protocol"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/zap"
+}
+]
+]

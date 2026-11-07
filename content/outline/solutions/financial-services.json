@@ -1,0 +1,154 @@
+[
+[
+{
+"h1": "Hanzo for financial services"
+},
+{
+"p": "Automate onboarding, reconciliation and reporting on a platform that records who did what — person or agent — and keeps each organization’s data in its own store."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "IDV puts one interface in front of the verification vendors, so switching vendor is configuration. A webhook must prove it came from the vendor before its verdict counts."
+},
+{
+"p": "Model accounts, holds and transfers on a double-entry ledger, and let agents move money only through it."
+},
+{
+"p": "One integration in front of the payment processors, so which one moves the money is a choice you can change without touching checkout."
+},
+{
+"p": "Every request is a row in the audit trail, and the platform’s own entries — consent answers, credentials issued and revoked — cannot be written or edited through the API."
+},
+{
+"p": "Agents read filings and disclosures as text, keep each extracted fact with its source and date, and answer as of any date you name."
+},
+{
+"li": "Onboarding without a rewrite"
+},
+{
+"li": "Money on a ledger that balances"
+},
+{
+"li": "Processors as a routing decision"
+},
+{
+"li": "Reports an examiner can trace"
+},
+{
+"li": "Filings, read and remembered"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo IDV One interface to the identity-verification vendors for KYC, KYB and AML.",
+"href": "/idv"
+},
+{
+"a": "Hanzo Ledger A programmable double-entry ledger.",
+"href": "/ledger"
+},
+{
+"a": "Hanzo Payments One integration in front of the processors that move the money.",
+"href": "/payments"
+},
+{
+"a": "Record Every act by a person or an agent, in one audit trail.",
+"href": "/products/record"
+},
+{
+"a": "Memory A graph of what was true and when it was known, answered with citations.",
+"href": "/products/memory"
+},
+{
+"a": "Hanzo Datastore A column store for analytical SQL.",
+"href": "/datastore"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "Security and compliance"
+},
+{
+"a": "How the controls work",
+"href": "/trust"
+},
+{
+"a": "Terms and data processing",
+"href": "/legal"
+}
+],
+[
+{
+"h2": "More industries"
+},
+{
+"a": "Cybersecurity",
+"href": "/solutions/cybersecurity"
+},
+{
+"a": "Healthcare",
+"href": "/solutions/healthcare"
+},
+{
+"a": "Law",
+"href": "/solutions/law"
+},
+{
+"a": "Retail",
+"href": "/solutions/retail"
+},
+{
+"a": "Government",
+"href": "/solutions/government"
+},
+{
+"a": "Education",
+"href": "/solutions/education"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

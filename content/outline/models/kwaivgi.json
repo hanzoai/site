@@ -1,0 +1,64 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "kwaivgi Models via Hanzo AI"
+},
+{
+"p": "3 models available"
+},
+{
+"p": "Access all 3 kwaivgi models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Video v3.0 Pro Kling v3.0 Pro is Kuaishou's premium video generation model, offering higher visual quality than the Standard tier. It supports text-to-video and image-to-video workflows, with first-frame and last-frame control for precise... video",
+"href": "/models/kwaivgi/kling-v3.0-pro"
+},
+{
+"a": "Video v3.0 Standard Kling v3.0 Standard is a video generation model from Kuaishou. It supports text-to-video and image-to-video workflows, with first-frame and last-frame control for guided scene composition. Clips range from 3 to... video",
+"href": "/models/kwaivgi/kling-v3.0-std"
+},
+{
+"a": "Video O1 Kling Video O1 is a video generation model from Kuaishou. It supports text and image inputs with video output, enabling text-to-video and image-to-video workflows. It is suited for cinematic content... video",
+"href": "/models/kwaivgi/kling-video-o1"
+}
+],
+[
+{
+"h2": "Use kwaivgi models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

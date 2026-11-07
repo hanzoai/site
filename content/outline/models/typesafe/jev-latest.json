@@ -1,0 +1,97 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "typesafe",
+"href": "/models/typesafe"
+},
+{
+"h1": "Jev"
+},
+{
+"p": "Typed decisions at POST /v1/decisions."
+},
+{
+"a": "Get decisions",
+"href": "#quickstart"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/decisions"
+}
+],
+[
+{
+"h2": "Specifications"
+}
+],
+[
+{
+"h2": "Quick start"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "cURL"
+},
+{
+"button": "Go"
+},
+{
+"code": "// npm install hanzoai import { AiApi , Configuration } from ' hanzoai ' const ai = new AiApi ( new Configuration ({ accessToken : process.env.HANZO_API_KEY })) const { data : decision } = await ai. postDecisions ({ aiDecisionsRequest : { model : ' ~typesafe/jev-latest ' , state : { incident : ' checkout 5xx at 14% ' }, questions : { severity : { type : ' choice ' , instructions : ' How severe is this incident? ' , criteria : { low : ' cosmetic or internal; no customer is affected ' , high : ' some customers are blocked from finishing a task ' , critical : ' every customer is blocked and no re"
+},
+{
+"code": "# pip install hanzoai import os from hanzoai . cloud import ApiClient , Configuration from hanzoai . cloud . api import AiApi from hanzoai . cloud . models . ai_decisions_request import AiDecisionsRequest ai = AiApi ( ApiClient ( Configuration ( access_token=os . environ [ \" HANZO_API_KEY \" ]))) decision = ai . post_decisions ( AiDecisionsRequest . from_dict ({ \" model \" : \" ~typesafe/jev-latest \" , \" state \" : { \" incident \" : \" checkout 5xx at 14% \" }, \" questions \" : { \" severity \" : { \" type \" : \" choice \" , \" instructions \" : \" How severe is this incident? \" , \" criteria \" : { \" low \" : \""
+},
+{
+"code": "curl -sS --fail-with-body https://api.hanzo.ai/v1/decisions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' { \"model\": \"~typesafe/jev-latest\", \"state\": { \"incident\": \"checkout 5xx at 14%\" }, \"questions\": { \"severity\": { \"type\": \"choice\", \"instructions\": \"How severe is this incident?\", \"criteria\": { \"low\": \"cosmetic or internal; no customer is affected\", \"high\": \"some customers are blocked from finishing a task\", \"critical\": \"every customer is blocked and no revenue comes in\" } } } } '"
+},
+{
+"code": "// net/http: the Go SDK refuses a choice question with named criteria. package main import ( \" bytes \" \" encoding/json \" \" fmt \" \" io \" \" net/http \" \" os \" ) func main () { if err := run (); err != nil { fmt . Fprintln ( os . Stderr , err ) os . Exit ( 1 ) } } func run () error { body , err := json . Marshal ( map [ string ] any { \" model \" : \" ~typesafe/jev-latest \" , \" state \" : map [ string ] string { \" incident \" : \" checkout 5xx at 14% \" }, \" questions \" : map [ string ] any { \" severity \" : map [ string ] any { \" type \" : \" choice \" , \" instructions \" : \" How severe is this incident? \" ,"
+}
+],
+[
+{
+"h2": "More from typesafe"
+},
+{
+"a": "Jev 1.13 TypeSafe's decision model, reached through OpenRouter, at its list price: $0.042 per million input tokens. Output is free.",
+"href": "/models/typesafe/jev-1.13"
+},
+{
+"a": "Jev Router 1M Jev Router picks the best model and reasoning effort for each request, balancing quality, speed, and cost. It runs on [Jev](https://openrouter.ai/~typesafe/jev-latest), TypeSafe's first System One model, and adapts as your...",
+"href": "/models/typesafe/jev-router"
+},
+{
+"a": "View all typesafe models →",
+"href": "/models/typesafe"
+}
+],
+[
+{
+"h2": "Use Jev via Hanzo AI"
+},
+{
+"p": "One API key. One call to POST /v1/decisions."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

@@ -1,0 +1,240 @@
+[
+[
+{
+"h1": "Create visuals, decks, docs, ads, videos & interactive apps"
+},
+{
+"p": "Your AI design studio inside Hanzo. Upload any file — a music track, product photo, PDF, or dataset — and turn it into visuals, presentations, documents, ads, videos, or a full-blown interactive music & visualizer app."
+},
+{
+"li": "Visuals, images, posters, presentations, documents, ads, video & music in tabs"
+},
+{
+"li": "Upload any file — even an MP3/WAV track to build a full interactive music player & visualizer app"
+},
+{
+"li": "Export vector PDFs, 16:9 slide decks, multi-aspect ads, MP4 clips, and standalone HTML5 apps"
+},
+{
+"a": "Open Design",
+"href": "/design"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/apps/design"
+},
+{
+"p": "Need full multi-shot AI cinema & camera rigs? Open studio.hanzo.ai."
+},
+{
+"button": "Music App"
+},
+{
+"button": "Presentation"
+},
+{
+"button": "Ad Suite"
+},
+{
+"button": "Visual"
+},
+{
+"button": "Document"
+},
+{
+"button": "Video"
+},
+{
+"button": "BARS"
+},
+{
+"button": "WAVE"
+},
+{
+"button": "RADIAL"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Design from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Design in my project."
+}
+],
+[
+{
+"p": "What is Hanzo Design"
+},
+{
+"h2": "One conversation, every creative artifact in a tab"
+},
+{
+"p": "Describe what you need or drop in your raw files. Hanzo Design creates and iterates on each artifact side-by-side in live tabs you can inspect, play, and export."
+},
+{
+"h3": "Upload any content"
+},
+{
+"p": "Drop in audio (.mp3, .wav, .flac), images, video clips, PDFs, Office docs, or CSV/JSON data. Every uploaded file is wired directly into the visuals, decks, and apps you create."
+},
+{
+"h3": "Presentations, documents & ads"
+},
+{
+"p": "Generate 16:9 keynote slide decks, typeset brand & technical documents with vector PDF export, and multi-format social and display ad campaigns."
+},
+{
+"h3": "Interactive music & visual apps"
+},
+{
+"p": "Upload a song or audio stem and build a full-blown interactive WebAudio music app with a 60fps FFT spectrum visualizer, waveform scrubber, 3-band EQ, and playable synth pads."
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "Everything a creative team ships"
+},
+{
+"h3": "Visuals, images & posters"
+},
+{
+"p": "High-resolution imagery, product photography, posters, and vector brand assets powered by Iro."
+},
+{
+"h3": "Slide decks & presentations"
+},
+{
+"p": "Structured 16:9 slide decks with keyboard navigation, speaker flow, and vector PDF download."
+},
+{
+"h3": "Documents & print-ready PDFs"
+},
+{
+"p": "Editorial reports, brand guidelines, and one-pagers with live preview and native PDF typesetting."
+},
+{
+"h3": "Ads & campaign kits"
+},
+{
+"p": "Social, story, and banner ads with matched art direction, headline lockups, and conversion CTAs."
+},
+{
+"h3": "Video & motion loops"
+},
+{
+"p": "Short product loops, animated promos, and motion graphics rendered with Koma and browser-native MP4 export."
+},
+{
+"h3": "Music, voice & interactive apps"
+},
+{
+"p": "Original music (Uta), narration (Koe), sound effects (Oto), and self-contained interactive HTML5/Canvas/WebAudio apps."
+}
+],
+[
+{
+"h2": "Every creative model, in one studio."
+},
+{
+"p": "Video, image, 3D, sound, voice and music, each a node on the canvas. Open one to see what it makes."
+},
+{
+"a": "Iro Image generation and visual understanding. Images",
+"href": "/iro"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"a": "Koma Video generation and world simulation. Video",
+"href": "/koma"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"a": "Oto Sound generation and audio understanding. Audio",
+"href": "/oto"
+},
+{
+"img": "/models/oto.webp",
+"alt": ""
+},
+{
+"a": "Koe Voice synthesis and speech understanding. Voice",
+"href": "/koe"
+},
+{
+"img": "/models/koe.webp",
+"alt": ""
+},
+{
+"a": "Uta Music generation and composition. Music",
+"href": "/uta"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+},
+{
+"a": "Mori 3D generation and spatial understanding. 3D",
+"href": "/mori"
+},
+{
+"img": "/models/mori.webp",
+"alt": ""
+},
+{
+"a": "Explore model pricing →",
+"href": "/pricing"
+},
+{
+"a": "View full model catalog →",
+"href": "/models"
+}
+],
+[
+{
+"h2": "Start creating in Hanzo Design"
+},
+{
+"p": "Open the Design workspace in your browser and upload your first file."
+},
+{
+"a": "Open Design",
+"href": "/design"
+},
+{
+"a": "Open Hanzo Studio (Cinema)",
+"href": "https://studio.hanzo.ai"
+}
+],
+[
+{
+"h2": "Get Design"
+},
+{
+"p": "Creative AI workspace for visuals, decks, documents, ads & interactive apps"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

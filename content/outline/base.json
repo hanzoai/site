@@ -1,0 +1,207 @@
+[
+[
+{
+"h1": "An app backend in one file"
+},
+{
+"p": "Base is a single Go binary that serves your data, your users, your files, live updates and scheduled work over one HTTP API. The store is a SQLite file on disk, so deploying is copying a binary and backing up is copying a file."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/base"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/base"
+},
+{
+"p": "Open source (MIT). Runs as one binary — self-host or deploy managed on Hanzo Cloud."
+},
+{
+"a": "Datastore",
+"href": "/datastore"
+},
+{
+"a": "Object Storage",
+"href": "/s3"
+},
+{
+"a": "Base",
+"href": "/base"
+},
+{
+"a": "Memory",
+"href": "/cloud/memory"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/base"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Base from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Base in my project. Start with: hanzo base bases list"
+}
+],
+[
+{
+"p": "What is Hanzo Base"
+},
+{
+"h2": "Declare a collection, get an API"
+},
+{
+"p": "A collection is a real table with a schema you write down. The moment it exists it answers over HTTP, carries an access rule, streams its changes, and shows up in the admin. There is no code generation step and nothing to wire together."
+},
+{
+"h3": "Data"
+},
+{
+"p": "Records answer at /v1/collections/{name}/records — list, read, create, update, delete, with paging, sorting and a filter language over every field you declared. Schema changes are migrations. SQLite is the default store; hand Base a Postgres DSN and the same API runs on that instead."
+},
+{
+"h3": "Auth is Hanzo IAM"
+},
+{
+"p": "Base keeps no password and has no login form. It verifies the token IAM signed and reads the identity out of it — that is the whole of authentication. One account everywhere Hanzo runs, and no reset flow of your own to get wrong."
+},
+{
+"h3": "Files and live updates"
+},
+{
+"p": "Uploads go to object storage and are served through the same rule that guards the record pointing at them. Clients open one stream and receive records as they change, so a page stays current without asking again every few seconds."
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What you get"
+},
+{
+"h3": "The schema is the API"
+},
+{
+"p": "Define a collection and its records are addressable the same second, with an admin UI to browse and edit them. Nothing is scaffolded into your repo, so there is nothing to regenerate when the schema moves."
+},
+{
+"h3": "One stream, no polling"
+},
+{
+"p": "Subscribe over server-sent events and records arrive as they change. A browser cannot put a header on that request, so the stream is opened with a short-lived grant minted on an ordinary authenticated call — your access token never travels in a URL."
+},
+{
+"h3": "Rules run before the count"
+},
+{
+"p": "An access rule is a predicate on the collection, folded into the query ahead of paging and ahead of the count — so a row you may not read is not counted either. With nobody signed in, a rule naming the caller matches nothing."
+},
+{
+"h3": "Files behind the same rule"
+},
+{
+"p": "An upload is guarded by the rule on the record that references it, and reading one takes a token minted per request rather than a URL that works forever."
+},
+{
+"h3": "A file per tenant"
+},
+{
+"p": "Each org gets its own SQLite file, opened under a key derived for that org — a different tenant is a different file, so no query can reach across two. Point Base at object storage and the write-ahead log streams there continuously, encrypted before it leaves the process, and you can restore to a moment."
+},
+{
+"h3": "Server-side logic, fenced in"
+},
+{
+"p": "A function is a record in a collection, so the collection’s rules decide who may run it. It runs in-process with two calls bound — read a record, read a list — and no network, no filesystem, no shell. Whatever the first version binds is supported forever, which is why that list is short."
+}
+],
+[
+{
+"h2": "Run the binary"
+},
+{
+"p": "Deploy Base managed on Hanzo Cloud, or run it yourself on a laptop, a box, or a cluster. Same API in all four places."
+},
+{
+"a": "Deploy on Hanzo Cloud",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/base"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Base docs →",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/base"
+},
+{
+"a": "Datastore Analytical columnar store",
+"href": "/datastore"
+},
+{
+"a": "Object Storage Object storage",
+"href": "/s3"
+},
+{
+"a": "Memory",
+"href": "/cloud/memory"
+}
+],
+[
+{
+"h2": "Get Base"
+},
+{
+"p": "Embedded data backend with IAM-native auth"
+},
+{
+"a": "hanzoai/base",
+"href": "https://github.com/hanzoai/base"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/base"
+}
+]
+]

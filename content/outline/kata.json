@@ -1,0 +1,146 @@
+[
+[
+{
+"h1": "Test. Repair. Verify. Autonomous loop."
+},
+{
+"p": "Kata keeps your tests green. It triages a failing CI run, finds the regression, writes the fix and runs the suite again before anything lands."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/keys"
+},
+{
+"a": "Explore GitHub examples →",
+"href": "https://github.com/hanzoai/kata"
+},
+{
+"a": "Read the docs →",
+"href": "https://docs.hanzo.ai/docs/coding"
+}
+],
+[
+{
+"p": "The loop"
+},
+{
+"h2": "From a failing test to a verified fix."
+},
+{
+"p": "Kata never submits speculative code: Kai triages every failure, Enso writes the fix, and your own test suite decides whether it lands."
+},
+{
+"h3": "Catch the failure"
+},
+{
+"h3": "Choose what to do"
+},
+{
+"h3": "Write the fix"
+},
+{
+"h3": "Prove it"
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "Built for the pipeline."
+},
+{
+"p": "Test repair, triage and the choice of model, in the CI you already run."
+},
+{
+"h3": "Test repair, end to end"
+},
+{
+"h3": "Triage by Kai"
+},
+{
+"h3": "Models picked by Enso"
+},
+{
+"h3": "Runs in your pipeline"
+}
+],
+[
+{
+"p": "Questions"
+},
+{
+"h2": "Questions & Answers"
+}
+],
+[
+{
+"p": "Read"
+},
+{
+"h2": "The agent, the loop, the documentation."
+},
+{
+"p": "Explore the source code, recipes, and documentation."
+},
+{
+"h3": "Kata"
+},
+{
+"a": "hanzoai/kata GitHub Repository.",
+"href": "https://github.com/hanzoai/kata"
+},
+{
+"a": "Multi-Language SDKs",
+"href": "https://github.com/hanzoai/kata/tree/main/examples"
+},
+{
+"a": "Rust Recipes Crate",
+"href": "https://github.com/hanzoai/kata/tree/main/recipes"
+},
+{
+"h3": "Agent Systems"
+},
+{
+"a": "Hanzo Dev Our coding agent.",
+"href": "/dev"
+},
+{
+"a": "Hanzo Gen Universal harness.",
+"href": "/gen"
+},
+{
+"a": "Kai Decision engine.",
+"href": "/kai"
+},
+{
+"h3": "Models"
+},
+{
+"a": "Enso Model router.",
+"href": "/enso"
+},
+{
+"a": "Zen Open weights.",
+"href": "/zen"
+},
+{
+"a": "Every model",
+"href": "/models"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Kata from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Kata in my project. Start with: hanzo kata run"
+}
+]
+]

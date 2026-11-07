@@ -1,0 +1,152 @@
+[
+[
+{
+"h1": "hanzo-templates"
+},
+{
+"p": "The public repositories of hanzo-templates on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "hanzo-templates on GitHub",
+"href": "https://github.com/hanzo-templates"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-templates"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 80 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-templates, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-templates/gallery HTML 0 0 Hanzo template: gallery Pushed Sep 15, 2026 9 commits this year Forge",
+"href": "https://github.com/hanzo-templates/gallery"
+},
+{
+"li": "hanzo-templates/desktop-tauri TypeScript 0 0 Tauri v2 + React 19 desktop starter — Rust commands, Hanzo Base backend, one web preview build. Pushed Sep 11, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-tauri"
+},
+{
+"li": "hanzo-templates/desktop-monitor TypeScript 0 0 Native system monitor — per-core CPU, memory, processes, disks and interfaces via sysinfo, sampled at 1 Hz. Pushed Sep 11, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-monitor"
+},
+{
+"li": "hanzo-templates/desktop-recorder TypeScript 0 0 Screen recorder — desktopCapturer picks any screen or window with no OS prompt, MediaRecorder writes webm to disk. Pushed Sep 11, 2026 7 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-recorder"
+},
+{
+"li": "hanzo-templates/desktop-electron TypeScript 0 0 Electron 43 + Forge + Vite + React baseline — contextIsolated IPC, native dialogs, app metrics, frameless chrome. Pushed Sep 11, 2026 6 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-electron"
+},
+{
+"li": "hanzo-templates/desktop-notes TypeScript 0 0 Local-first markdown notes — one .md file per note in the OS app-data dir, live preview, optional Base sync. Pushed Sep 11, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-notes"
+},
+{
+"li": "hanzo-templates/desktop-tray TypeScript 0 0 Menubar/tray utility — resident clipboard history, global shortcut, close-hides-not-quits. Pushed Sep 11, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-tray"
+},
+{
+"li": "hanzo-templates/desktop-chat TypeScript 0 0 Desktop AI client — streaming SSE to any OpenAI-compatible gateway, threads and API key kept out of web storage. Pushed Sep 11, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-chat"
+},
+{
+"li": "hanzo-templates/desktop-editor TypeScript 0 0 CodeMirror 6 code editor in a Tauri window — real filesystem tree, syntax highlighting, ⌘S writes through. Pushed Sep 11, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/desktop-editor"
+},
+{
+"li": "hanzo-templates/flutter Dart 0 0 Material 3 starter — NavigationBar, search, detail route, widget tests. Pushed Sep 11, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/flutter"
+},
+{
+"li": "hanzo-templates/voxel-craft JavaScript 0 0 Chunk — a voxel sandbox Pushed Sep 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-templates/voxel-craft"
+},
+{
+"li": "hanzo-templates/unity-webgl JavaScript 0 0 Unity WebGL on hanzo.app Pushed Sep 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzo-templates/unity-webgl"
+},
+{
+"li": "hanzo-templates/three-webgpu JavaScript 0 0 Neon Reef — Three.js WebGPU Pushed Sep 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-templates/three-webgpu"
+},
+{
+"li": "hanzo-templates/godot-arcade GDScript 0 0 Orb Runner — Godot 4 web export Pushed Sep 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-templates/godot-arcade"
+},
+{
+"li": "hanzo-templates/flutter-chat Dart 0 0 Streaming AI chat in Flutter, wired to the Hanzo /v1 API. Pushed Sep 11, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/flutter-chat"
+},
+{
+"li": "hanzo-templates/expo-shop TypeScript 0 0 Storefront: product grid, detail route, cart with a live tab badge. Pushed Sep 11, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/expo-shop"
+},
+{
+"li": "hanzo-templates/expo-chat TypeScript 0 0 Streaming AI chat client on Expo Router, wired to the Hanzo /v1 API. Pushed Sep 10, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/expo-chat"
+},
+{
+"li": "hanzo-templates/rapier-physics JavaScript 0 0 Fracture Yard — Rapier3D physics sandbox Pushed Sep 10, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-templates/rapier-physics"
+},
+{
+"li": "hanzo-templates/swiftui-chat Swift 0 0 Native streaming AI chat — @Observable, AsyncThrowingStream, Hanzo /v1. Pushed Sep 9, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/swiftui-chat"
+},
+{
+"li": "hanzo-templates/swiftui Swift 0 0 Native iOS 17 starter — TabView, NavigationStack, swift-testing. Pushed Sep 9, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/swiftui"
+},
+{
+"li": "hanzo-templates/expo-auth TypeScript 0 0 OAuth 2.0 + PKCE sign-in against Hanzo IAM, with a route guard. Pushed Sep 9, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-templates/expo-auth"
+},
+{
+"li": "hanzo-templates/kart-racer JavaScript 0 0 Circuit — a drivable arcade racer in three.js Pushed Sep 9, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-templates/kart-racer"
+}
+]
+]

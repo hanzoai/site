@@ -1,0 +1,178 @@
+[
+[
+{
+"h1": "Cybersecurity Policy"
+},
+{
+"p": "How we protect your data — who can reach it, how it is encrypted, and what happens if something goes wrong."
+}
+],
+[
+{
+"p": "Draft. This document is not yet in force."
+},
+{
+"p": "Effective 2026-09-06 · Version 2026-09-06 · Previous version: none, this is the first."
+},
+{
+"h2": "Contents"
+},
+{
+"li": "What we protect",
+"href": "#what-we-protect"
+},
+{
+"li": "Who can reach it",
+"href": "#who-can-reach-it"
+},
+{
+"li": "How organizations stay separate",
+"href": "#how-organizations-stay-separate"
+},
+{
+"li": "Encryption",
+"href": "#encryption"
+},
+{
+"li": "Keeping it current",
+"href": "#keeping-it-current"
+},
+{
+"li": "If something goes wrong",
+"href": "#if-something-goes-wrong"
+},
+{
+"li": "Certifications",
+"href": "#certifications"
+},
+{
+"li": "Where it runs",
+"href": "#where-it-runs"
+},
+{
+"li": "Who we share it with",
+"href": "#who-we-share-it-with"
+},
+{
+"li": "Found a weakness?",
+"href": "#found-a-weakness"
+}
+],
+[
+{
+"p": "How we protect your data. /security describes the same controls in\nthe source code; this is the short version."
+},
+{
+"a": "/security",
+"href": "/security"
+},
+{
+"h2": "What we protect"
+},
+{
+"p": "Your content, your agents' memory, your passwords, and the keys and tokens that\nconnect Hanzo to your other services. All of it is encrypted, reachable only by\npeople who need it, and kept separate from every other organization's."
+},
+{
+"p": "Operational data — usage, logs, billing — is handled with the same care and a\nlighter hand."
+},
+{
+"p": "We do not train models on your content. Not your prompts, not your agent\nmemory, not your files. The Privacy Policy says what happens to your\ndata in every case."
+},
+{
+"a": "Privacy Policy",
+"href": "/privacy"
+},
+{
+"h2": "Who can reach it"
+},
+{
+"p": "People here get the least access their job needs, and lose it the day they\nchange roles or leave. Anyone with production access signs in as themselves,\nwith a second factor. There are no shared admin accounts."
+},
+{
+"p": "Inside the product, you set the rules: who can see what, and which actions an\nagent must ask you about first — spending money, publishing, or writing to a\nsystem you have connected."
+},
+{
+"p": "Keys and tokens for your other services are encrypted, scoped to the one\nworkflow that uses them, and revocable by you at any moment. They never appear\nin a log or on a screen."
+},
+{
+"h2": "How organizations stay separate"
+},
+{
+"p": "Each organization's data is its own file. A query in one cannot reach the other,\nbecause the other file is not open. Where a master key is set, each file is\nopened under its own derived key, so one leaked key exposes one file."
+},
+{
+"p": "To be precise, since reviewers ask: this is per-file isolation. Two key\nderivations exist and one of them is tied to the organization."
+},
+{
+"h2": "Encryption"
+},
+{
+"p": "Moving — TLS 1.3, plus hybrid ML-KEM-768 key exchange at the edge. Traffic\ncaptured today stays unreadable when quantum computers arrive."
+},
+{
+"p": "Stored — AES-256-GCM, under a key derived for your tenant alone. Backups use age , which also has a post-quantum option."
+},
+{
+"code": "age"
+},
+{
+"p": "Keys live apart from the data they open."
+},
+{
+"h2": "Keeping it current"
+},
+{
+"p": "We watch our dependencies and infrastructure for known vulnerabilities and fix\nby severity. Every change gets code review and automated checks before it ships.\nOur infrastructure providers patch the systems underneath."
+},
+{
+"h2": "If something goes wrong"
+},
+{
+"p": "We have a process to spot, contain, investigate, and fix a security incident,\nwith named people and a clear escalation path."
+},
+{
+"p": "If a confirmed incident affects your data, we tell you within 72 hours of\nconfirming it. If a credential looks compromised, revoking it cuts off access\nimmediately."
+},
+{
+"p": "Your data is backed up through our managed database providers."
+},
+{
+"h2": "Certifications"
+},
+{
+"p": "Our controls are built to be compatible with SOC 2, and we audit them\ncontinually. Ask for the report and it comes back — no questionnaire first."
+},
+{
+"p": "If your review runs on a named framework, tell us which one and what your\nreviewer needs to see. We scope it with you as part of the engagement."
+},
+{
+"h2": "Where it runs"
+},
+{
+"p": "Our cloud runs on established providers, in facilities with their own physical\nsecurity under recognized attestations. We secure the devices and accounts our\npeople use to connect."
+},
+{
+"p": "You can also run Hanzo on your own Kubernetes or your own machine. Then the\ninfrastructure is yours and the software is ours."
+},
+{
+"h2": "Who we share it with"
+},
+{
+"p": "Any provider that will touch your data is reviewed before we onboard them, and\ngets only what its job requires. The current list is published as our Subprocessors register."
+},
+{
+"a": "Subprocessors",
+"href": "/legal/subprocessors"
+},
+{
+"h2": "Found a weakness?"
+},
+{
+"p": "Write to [email protected] . We would rather hear it from you than read it\nlater, and we do not go after researchers who report in good faith."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#d7a4b2b4a2a5bea3ae97bfb6b9adb8f9b6be"
+}
+]
+]

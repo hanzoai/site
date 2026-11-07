@@ -1,0 +1,22 @@
+[
+[
+{
+"h1": "Everything you need to chat, build and ship."
+},
+{
+"p": "Explore Hanzo Chat, Dev, and Studio — intelligent model routing, repo-scale coding agents, and unified cloud APIs."
+},
+{
+"a": "Open Chat",
+"href": "/chat?skip=login"
+},
+{
+"a": "Launch Dev",
+"href": "/dev"
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+}
+]
+]

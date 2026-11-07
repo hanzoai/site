@@ -1,0 +1,357 @@
+[
+[
+{
+"h1": "The apps a workflow can reach"
+},
+{
+"p": "Every one of these is a step you can drop onto a Hanzo Auto canvas: read from it, write to it, or let a change in it start a run."
+},
+{
+"h2": "Most reached for"
+},
+{
+"a": "🤖 OpenAI",
+"href": "#openai"
+},
+{
+"a": "🧠 Anthropic Claude",
+"href": "#anthropic-claude"
+},
+{
+"a": "✨ Google Gemini",
+"href": "#google-gemini"
+},
+{
+"a": "💬 Slack",
+"href": "#slack"
+},
+{
+"a": "🎮 Discord",
+"href": "#discord"
+},
+{
+"a": "📱 WhatsApp",
+"href": "#whatsapp"
+},
+{
+"a": "📝 Notion",
+"href": "#notion"
+},
+{
+"a": "📊 Airtable",
+"href": "#airtable"
+},
+{
+"a": "📗 Google Sheets",
+"href": "#google-sheets"
+},
+{
+"a": "📁 Google Drive",
+"href": "#google-drive"
+},
+{
+"a": "📐 Linear",
+"href": "#linear"
+},
+{
+"a": "☁️ Salesforce",
+"href": "#salesforce"
+}
+],
+[
+{
+"button": "All"
+},
+{
+"button": "AI & LLMs"
+},
+{
+"button": "Communication"
+},
+{
+"button": "Productivity"
+},
+{
+"button": "Data & Storage"
+},
+{
+"button": "CRM & Sales"
+},
+{
+"button": "Commerce"
+},
+{
+"button": "Marketing"
+},
+{
+"button": "Developer Tools"
+},
+{
+"button": "Social Media"
+}
+],
+[
+{
+"h2": "All Integrations"
+},
+{
+"h3": "OpenAI"
+},
+{
+"h3": "Anthropic Claude"
+},
+{
+"h3": "Google Gemini"
+},
+{
+"h3": "Azure OpenAI"
+},
+{
+"h3": "Hugging Face"
+},
+{
+"h3": "Replicate"
+},
+{
+"h3": "Stability AI"
+},
+{
+"h3": "ElevenLabs"
+},
+{
+"h3": "Deepgram"
+},
+{
+"h3": "Slack"
+},
+{
+"h3": "Discord"
+},
+{
+"h3": "Telegram"
+},
+{
+"h3": "WhatsApp"
+},
+{
+"h3": "Microsoft Teams"
+},
+{
+"h3": "Twilio"
+},
+{
+"h3": "Zoom"
+},
+{
+"h3": "Google Chat"
+},
+{
+"h3": "Notion"
+},
+{
+"h3": "Airtable"
+},
+{
+"h3": "Google Sheets"
+},
+{
+"h3": "Google Docs"
+},
+{
+"h3": "Google Drive"
+},
+{
+"h3": "Dropbox"
+},
+{
+"h3": "Calendly"
+},
+{
+"h3": "Google Calendar"
+},
+{
+"h3": "Trello"
+},
+{
+"h3": "Asana"
+},
+{
+"h3": "ClickUp"
+},
+{
+"h3": "Linear"
+},
+{
+"h3": "Jira"
+},
+{
+"h3": "PostgreSQL"
+},
+{
+"h3": "MySQL"
+},
+{
+"h3": "MongoDB"
+},
+{
+"h3": "Redis"
+},
+{
+"h3": "Supabase"
+},
+{
+"h3": "Firebase"
+},
+{
+"h3": "AWS S3"
+},
+{
+"h3": "Google Cloud Storage"
+},
+{
+"h3": "Snowflake"
+},
+{
+"h3": "BigQuery"
+},
+{
+"h3": "Salesforce"
+},
+{
+"h3": "HubSpot"
+},
+{
+"h3": "Pipedrive"
+},
+{
+"h3": "Close"
+},
+{
+"h3": "Intercom"
+},
+{
+"h3": "Zendesk"
+},
+{
+"h3": "Freshdesk"
+},
+{
+"h3": "Apollo"
+},
+{
+"h3": "Stripe"
+},
+{
+"h3": "Shopify"
+},
+{
+"h3": "WooCommerce"
+},
+{
+"h3": "Square"
+},
+{
+"h3": "PayPal"
+},
+{
+"h3": "Chargebee"
+},
+{
+"h3": "Paddle"
+},
+{
+"h3": "LemonSqueezy"
+},
+{
+"h3": "Mailchimp"
+},
+{
+"h3": "SendGrid"
+},
+{
+"h3": "Resend"
+},
+{
+"h3": "ConvertKit"
+},
+{
+"h3": "ActiveCampaign"
+},
+{
+"h3": "Brevo"
+},
+{
+"h3": "Customer.io"
+},
+{
+"h3": "Postmark"
+},
+{
+"h3": "GitHub"
+},
+{
+"h3": "GitLab"
+},
+{
+"h3": "Vercel"
+},
+{
+"h3": "Netlify"
+},
+{
+"h3": "Railway"
+},
+{
+"h3": "Render"
+},
+{
+"h3": "Sentry"
+},
+{
+"h3": "PagerDuty"
+},
+{
+"h3": "Datadog"
+},
+{
+"h3": "Twitter / X"
+},
+{
+"h3": "LinkedIn"
+},
+{
+"h3": "Instagram"
+},
+{
+"h3": "Facebook"
+},
+{
+"h3": "TikTok"
+},
+{
+"h3": "YouTube"
+},
+{
+"h3": "Pinterest"
+},
+{
+"h3": "Bluesky"
+}
+],
+[
+{
+"h2": "Not here?"
+},
+{
+"p": "Anything with an HTTP API can be a step today — a request node and a connection holding the credential. If it deserves a proper connector, tell us and we will add one."
+},
+{
+"a": "Request Integration",
+"href": "/contact"
+},
+{
+"a": "Build Custom Integration",
+"href": "https://docs.hanzo.ai/docs/cli/auto"
+}
+]
+]

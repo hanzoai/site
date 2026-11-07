@@ -1,0 +1,144 @@
+[
+[
+{
+"h1": "Hanzo KMS"
+},
+{
+"p": "Hanzo KMS — Enterprise Secret Management & Key Infrastructure"
+},
+{
+"a": "hanzokms on GitHub",
+"href": "https://github.com/hanzokms"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzokms"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 4 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzokms, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzokms/go-sdk Go 0 0 Hanzo KMS Go SDK Pushed Sep 17, 2026 36 commits this year Forge",
+"href": "https://github.com/hanzokms/go-sdk"
+},
+{
+"li": "hanzokms/terraform-provider Go 0 0 Hanzo KMS Terraform Provider Pushed Sep 15, 2026 99 commits this year Forge",
+"href": "https://github.com/hanzokms/terraform-provider"
+},
+{
+"li": "hanzokms/cli Go 0 0 Hanzo KMS CLI — Secret injection and infrastructure management Pushed Sep 15, 2026 377 commits this year Forge",
+"href": "https://github.com/hanzokms/cli"
+},
+{
+"li": "hanzokms/python-sdk Python 0 0 Hanzo KMS Python SDK Pushed Sep 15, 2026 30 commits this year Forge",
+"href": "https://github.com/hanzokms/python-sdk"
+},
+{
+"li": "hanzokms/node-sdk TypeScript 0 0 Hanzo KMS Node.js SDK Pushed Sep 15, 2026 16 commits this year Forge",
+"href": "https://github.com/hanzokms/node-sdk"
+},
+{
+"li": "hanzokms/kubernetes-operator Go 0 0 Hanzo KMS Kubernetes Operator Pushed Sep 15, 2026 69 commits this year Forge",
+"href": "https://github.com/hanzokms/kubernetes-operator"
+},
+{
+"li": "hanzokms/kmip Go 0 0 Hanzo KMS KMIP implementation Pushed Sep 15, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzokms/kmip"
+},
+{
+"li": "hanzokms/secrets-action TypeScript 0 0 Hanzo KMS GitHub Action for secret injection Pushed Sep 15, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzokms/secrets-action"
+},
+{
+"li": "hanzokms/java-sdk Java 0 0 Hanzo KMS Java SDK Pushed Sep 15, 2026 14 commits this year Forge",
+"href": "https://github.com/hanzokms/java-sdk"
+},
+{
+"li": "hanzokms/dotnet-sdk C# 0 0 Hanzo KMS .NET SDK Pushed Sep 15, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzokms/dotnet-sdk"
+},
+{
+"li": "hanzokms/rust-sdk Rust 0 0 Hanzo KMS Rust SDK Pushed Sep 15, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzokms/rust-sdk"
+},
+{
+"li": "hanzokms/cpp-sdk C++ 0 0 Hanzo KMS C++ SDK Pushed Sep 15, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzokms/cpp-sdk"
+},
+{
+"li": "hanzokms/packer-plugin Go 0 0 Hanzo KMS Packer Plugin Pushed Sep 15, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzokms/packer-plugin"
+},
+{
+"li": "hanzokms/php-sdk PHP 0 0 Hanzo KMS PHP SDK Pushed Sep 15, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzokms/php-sdk"
+},
+{
+"li": "hanzokms/mcp-server 0 0 Hanzo KMS MCP Server for AI agents Pushed Sep 15, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzokms/mcp-server"
+},
+{
+"li": "hanzokms/turn Go 0 0 Pushed Sep 11, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzokms/turn"
+},
+{
+"li": "hanzokms/csi-provider Go 0 0 Hanzo KMS CSI Provider for Kubernetes Pushed Sep 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzokms/csi-provider"
+},
+{
+"li": "hanzokms/go-keyring Go 0 0 Pushed Sep 10, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzokms/go-keyring"
+},
+{
+"li": "hanzokms/homebrew-kms Ruby 0 0 Homebrew tap for Hanzo KMS CLI Pushed Sep 9, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzokms/homebrew-kms"
+},
+{
+"li": "hanzokms/k8s-kms-plugin 0 0 Hanzo KMS Plugin for Kubernetes KMS encryption Pushed Oct 31, 2024 Forge",
+"href": "https://github.com/hanzokms/k8s-kms-plugin"
+}
+]
+]

@@ -1,0 +1,215 @@
+[
+[
+{
+"h1": "Gas Manager"
+},
+{
+"p": "Sponsor gas for your users"
+},
+{
+"p": "Paymaster-as-a-Service for account abstraction. Sponsor gas fees, set limits per user and per operation, and let users transact without a native token."
+},
+{
+"h3": "Gas Sponsorship"
+},
+{
+"p": "Pay gas fees on behalf of your users for frictionless UX."
+},
+{
+"h3": "Spending Policies"
+},
+{
+"p": "Set limits per user, per operation, or per time period."
+},
+{
+"h3": "User Whitelisting"
+},
+{
+"p": "Control which users can access sponsored transactions."
+},
+{
+"h3": "Multi-chain"
+},
+{
+"p": "Sponsor gas across Ethereum, Polygon, Arbitrum, and more."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Gas Sponsorship"
+},
+{
+"p": "Pay gas fees on behalf of your users for frictionless UX."
+},
+{
+"h3": "Spending Policies"
+},
+{
+"p": "Set limits per user, per operation, or per time period."
+},
+{
+"h3": "User Whitelisting"
+},
+{
+"p": "Control which users can access sponsored transactions."
+},
+{
+"h3": "Multi-chain"
+},
+{
+"p": "Sponsor gas across Ethereum, Polygon, Arbitrum, and more."
+},
+{
+"h3": "Custom Paymasters"
+},
+{
+"p": "Deploy custom paymaster logic for advanced use cases."
+},
+{
+"h3": "ERC-20 Gas Payment"
+},
+{
+"p": "Let users pay gas in stablecoins or your app token."
+},
+{
+"h3": "Real-time Balance"
+},
+{
+"p": "Monitor sponsor balance and usage in real-time."
+},
+{
+"h3": "Auto-refill"
+},
+{
+"p": "Automatic balance top-up when running low."
+},
+{
+"h3": "Usage Analytics"
+},
+{
+"p": "Track sponsored gas by user, operation, and chain."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/gas/IHanzoPaymaster.sol\" ; import \"@account-abstraction/contracts/core/BasePaymaster.sol\" ; contract HanzoPaymaster is BasePaymaster { mapping (address => bool) public whitelistedContracts ; mapping (address => uint256) public userGasUsed ; uint256 public maxGasPerUser = 0.01 ether ; constructor ( IEntryPoint _entryPoint) BasePaymaster ( _entryPoint) {} // Validate paymaster will sponsor this UserOp function _validatePaymasterUserOp ( UserOperation calldata userOp , bytes32 userOpHash , uint256 maxCost ) internal override"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Onboarding"
+},
+{
+"p": "Remove gas friction for new users entering Web3."
+},
+{
+"h3": "Gaming"
+},
+{
+"p": "Sponsor in-game transactions so players never stop to buy gas."
+},
+{
+"h3": "NFT Minting"
+},
+{
+"p": "Cover gas for NFT drops and collection mints."
+},
+{
+"h3": "Enterprise Apps"
+},
+{
+"p": "Abstract blockchain complexity for business users."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Gas Manager"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Gas Manager"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

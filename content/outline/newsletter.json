@@ -1,0 +1,26 @@
+[
+[
+{
+"h1": "The Hanzo newsletter"
+},
+{
+"p": "Releases, benchmarks and engineering notes, once or twice a month."
+},
+{
+"li": "New models and what they measured, the day they ship"
+},
+{
+"li": "What changed in the API, the CLI and Hanzo Dev"
+},
+{
+"li": "Engineering notes from the people who built it"
+},
+{
+"button": "Subscribe"
+},
+{
+"a": "Privacy",
+"href": "/legal/privacy"
+}
+]
+]

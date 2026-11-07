@@ -1,0 +1,307 @@
+[
+[
+{
+"h1": "zos-apps"
+},
+{
+"p": "The public repositories of zos-apps on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "zos-apps on GitHub",
+"href": "https://github.com/zos-apps"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/zos-apps"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 0 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of zos-apps, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "zos-apps/zsettings TypeScript 0 0 Customize your zOS experience Pushed Nov 1, 2026 4 commits this year Forge",
+"href": "https://github.com/zos-apps/zsettings"
+},
+{
+"li": "zos-apps/zgitstats TypeScript 0 0 View GitHub contribution statistics Pushed Nov 1, 2026 4 commits this year Forge",
+"href": "https://github.com/zos-apps/zgitstats"
+},
+{
+"li": "zos-apps/zide TypeScript 0 0 Xcode - Code editor and IDE for zOS development Pushed Nov 1, 2026 1 commit this year Forge",
+"href": "https://github.com/zos-apps/zide"
+},
+{
+"li": "zos-apps/zworkspace TypeScript 0 0 All-in-one workspace Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zworkspace"
+},
+{
+"li": "zos-apps/zblocks TypeScript 0 0 Classic block-stacking puzzle game Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zblocks"
+},
+{
+"li": "zos-apps/zretro TypeScript 0 0 Super Nintendo emulator - relive the classics Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zretro"
+},
+{
+"li": "zos-apps/zisland TypeScript 0 0 A mysterious island appears in the fog... Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zisland"
+},
+{
+"li": "zos-apps/zdoom TypeScript 0 0 Rip and tear, until it is done. Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zdoom"
+},
+{
+"li": "zos-apps/zsearch TypeScript 0 0 Universal search and command launcher (⌘K) Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zsearch"
+},
+{
+"li": "zos-apps/zsticky TypeScript 0 0 Desktop sticky notes Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zsticky"
+},
+{
+"li": "zos-apps/zflow TypeScript 0 0 Workflow automation tool Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zflow"
+},
+{
+"li": "zos-apps/zvault TypeScript 0 0 Manage passwords and secure notes Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zvault"
+},
+{
+"li": "zos-apps/ztext TypeScript 0 0 zOS textedit application Pushed Nov 1, 2026 4 commits this year Forge",
+"href": "https://github.com/zos-apps/ztext"
+},
+{
+"li": "zos-apps/zfonts TypeScript 0 0 Font management and preview Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zfonts"
+},
+{
+"li": "zos-apps/zdisk TypeScript 0 0 Manage disks, partitions, and volumes Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zdisk"
+},
+{
+"li": "zos-apps/zmonitor TypeScript 0 0 Activity Monitor - System performance monitoring for zOS Pushed Nov 1, 2026 4 commits this year Forge",
+"href": "https://github.com/zos-apps/zmonitor"
+},
+{
+"li": "zos-apps/zaudiomidi TypeScript 0 0 Configure audio devices and MIDI settings Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zaudiomidi"
+},
+{
+"li": "zos-apps/zcolor TypeScript 0 0 Pick and analyze colors from anywhere on screen Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zcolor"
+},
+{
+"li": "zos-apps/zusage TypeScript 0 0 Monitor and manage screen usage Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zusage"
+},
+{
+"li": "zos-apps/zsheets TypeScript 0 0 Spreadsheet application Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zsheets"
+},
+{
+"li": "zos-apps/zdocs TypeScript 0 0 Word processor Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zdocs"
+},
+{
+"li": "zos-apps/zslides TypeScript 0 0 Presentation software Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zslides"
+},
+{
+"li": "zos-apps/zbackup TypeScript 0 0 Backup and restore utility Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zbackup"
+},
+{
+"li": "zos-apps/zdrop TypeScript 0 0 Wireless file sharing Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zdrop"
+},
+{
+"li": "zos-apps/zstore TypeScript 0 0 Discover and install apps Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zstore"
+},
+{
+"li": "zos-apps/zbrowser TypeScript 0 0 Web browser with search and navigation Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zbrowser"
+},
+{
+"li": "zos-apps/zfiles TypeScript 0 0 File manager with sidebar navigation and quick look Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zfiles"
+},
+{
+"li": "zos-apps/zgit TypeScript 0 0 Git GUI client Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zgit"
+},
+{
+"li": "zos-apps/zapi TypeScript 0 0 API development platform Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zapi"
+},
+{
+"li": "zos-apps/zbox TypeScript 0 0 Container management Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zbox"
+},
+{
+"li": "zos-apps/znotebook TypeScript 0 0 Interactive data notebooks Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/znotebook"
+},
+{
+"li": "zos-apps/zpen TypeScript 0 0 Social development environment for front-end designers and developers Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zpen"
+},
+{
+"li": "zos-apps/zcode TypeScript 0 0 Code editor Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zcode"
+},
+{
+"li": "zos-apps/zboard TypeScript 0 0 Virtual whiteboard for sketching hand-drawn diagrams Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zboard"
+},
+{
+"li": "zos-apps/zsketch TypeScript 0 0 A tiny little drawing app Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zsketch"
+},
+{
+"li": "zos-apps/z3d TypeScript 0 0 3D modeling, animation, and rendering Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/z3d"
+},
+{
+"li": "zos-apps/zphotoedit TypeScript 0 0 Image editing Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zphotoedit"
+},
+{
+"li": "zos-apps/zvector TypeScript 0 0 UI/UX design tool Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zvector"
+},
+{
+"li": "zos-apps/zdesign TypeScript 0 0 Collaborative design and prototyping Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zdesign"
+},
+{
+"li": "zos-apps/znetwork TypeScript 0 0 Professional networking and career development Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/znetwork"
+},
+{
+"li": "zos-apps/zsocial TypeScript 0 0 Real-time social media and news Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zsocial"
+},
+{
+"li": "zos-apps/zmail TypeScript 0 0 Email by Google Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zmail"
+},
+{
+"li": "zos-apps/zcall TypeScript 0 0 FaceTime video calling app for zOS Pushed Nov 1, 2026 4 commits this year Forge",
+"href": "https://github.com/zos-apps/zcall"
+},
+{
+"li": "zos-apps/zmeet TypeScript 0 0 Video conferencing Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zmeet"
+},
+{
+"li": "zos-apps/zsecure TypeScript 0 0 Private messaging Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zsecure"
+},
+{
+"li": "zos-apps/ztalk TypeScript 0 0 Secure messaging and calls Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/ztalk"
+},
+{
+"li": "zos-apps/zmessenger TypeScript 0 0 Secure messaging Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zmessenger"
+},
+{
+"li": "zos-apps/zteams TypeScript 0 0 Team collaboration Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zteams"
+},
+{
+"li": "zos-apps/zhangout TypeScript 0 0 Voice, video, and text chat for communities Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zhangout"
+},
+{
+"li": "zos-apps/zcollab TypeScript 0 0 Business communication and collaboration Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zcollab"
+},
+{
+"li": "zos-apps/zcut TypeScript 0 0 Professional video editing Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zcut"
+},
+{
+"li": "zos-apps/zconvert TypeScript 0 0 Video transcoder Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zconvert"
+},
+{
+"li": "zos-apps/zaudio TypeScript 0 0 Audio editor Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zaudio"
+},
+{
+"li": "zos-apps/zdj TypeScript 0 0 DJ performance and music management Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zdj"
+},
+{
+"li": "zos-apps/zband TypeScript 0 0 Music creation studio Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zband"
+},
+{
+"li": "zos-apps/zstudio TypeScript 0 0 Professional music production Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zstudio"
+},
+{
+"li": "zos-apps/zsession TypeScript 0 0 Music production and performance Pushed Nov 1, 2026 7 commits this year Forge",
+"href": "https://github.com/zos-apps/zsession"
+},
+{
+"li": "zos-apps/ztv TypeScript 0 0 Apple streaming service Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/ztv"
+},
+{
+"li": "zos-apps/zlive TypeScript 0 0 Live streaming platform Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zlive"
+},
+{
+"li": "zos-apps/zfilms TypeScript 0 0 Amazon streaming service Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/zos-apps/zfilms"
+},
+{
+"button": "Show all 111"
+}
+]
+]

@@ -1,0 +1,222 @@
+[
+[
+{
+"h1": "NFT API"
+},
+{
+"p": "NFT metadata, ownership & marketplace data"
+},
+{
+"p": "Complete NFT data API for ERC-721 and ERC-1155 tokens. Get metadata, ownership history, floor prices, rarity scores, and collection stats across all major chains."
+},
+{
+"h3": "Rich Metadata"
+},
+{
+"p": "Normalized metadata with images, traits, and attributes."
+},
+{
+"h3": "Collection Discovery"
+},
+{
+"p": "Search and explore NFT collections by name or address."
+},
+{
+"h3": "Ownership History"
+},
+{
+"p": "Track ownership changes, sales, and provenance."
+},
+{
+"h3": "Floor & Sales Data"
+},
+{
+"p": "Real-time floor prices and recent sales from marketplaces."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Rich Metadata"
+},
+{
+"p": "Normalized metadata with images, traits, and attributes."
+},
+{
+"h3": "Collection Discovery"
+},
+{
+"p": "Search and explore NFT collections by name or address."
+},
+{
+"h3": "Ownership History"
+},
+{
+"p": "Track ownership changes, sales, and provenance."
+},
+{
+"h3": "Floor & Sales Data"
+},
+{
+"p": "Real-time floor prices and recent sales from marketplaces."
+},
+{
+"h3": "Rarity Scoring"
+},
+{
+"p": "Automatic trait rarity calculation for collections."
+},
+{
+"h3": "Multi-chain Support"
+},
+{
+"p": "ERC-721 and ERC-1155 across Ethereum, Polygon, and more."
+},
+{
+"h3": "Spam Filtering"
+},
+{
+"p": "Automatic detection and filtering of spam NFTs."
+},
+{
+"h3": "Fast Rendering"
+},
+{
+"p": "Optimized image proxying and thumbnail generation."
+},
+{
+"h3": "Metadata Refresh"
+},
+{
+"p": "On-demand metadata refresh for dynamic NFTs."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/nft/IHanzoNFT.sol\" ; import \"@openzeppelin/contracts/token/ERC721/IERC721.sol\" ; import \"@openzeppelin/contracts/token/ERC1155/IERC1155.sol\" ; import \"@openzeppelin/contracts/security/ReentrancyGuard.sol\" ; contract NFTMarketplace is ReentrancyGuard { IHanzoNFT public hanzoNFT ; struct Listing { address seller ; address nftContract ; uint256 tokenId ; uint256 price ; bool is1155 ; uint256 amount ; } mapping (bytes32 => Listing) public listings ; event Listed ( bytes32 indexed listingId, address seller, uint256 price ); ev"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "NFT Marketplaces"
+},
+{
+"p": "Build trading platforms with rich collection and item data."
+},
+{
+"h3": "Wallet Integration"
+},
+{
+"p": "Display NFT collections with images and metadata."
+},
+{
+"h3": "Gaming Platforms"
+},
+{
+"p": "Track in-game assets and player inventories."
+},
+{
+"h3": "Analytics Tools"
+},
+{
+"p": "Collection analytics, whale tracking, and market trends."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with NFT API"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get NFT API"
+},
+{
+"p": "NFT marketplace"
+},
+{
+"a": "luxfi",
+"href": "https://github.com/luxfi"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

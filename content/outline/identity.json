@@ -1,0 +1,181 @@
+[
+[
+{
+"h1": "Hanzo Identity"
+},
+{
+"p": "The sign-in your users actually see."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "View Documentation",
+"href": "https://docs.hanzo.ai/docs/openapi/iam"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"p": "A password, a passkey, or a Google or GitHub account. A second factor when the organization asks for one."
+},
+{
+"p": "Who signed in, which organizations they belong to, and the role they hold where they asked to act."
+},
+{
+"p": "Sign in once and the session is good across every app in the organization, including ours."
+},
+{
+"li": "Signing in"
+},
+{
+"li": "What the token carries"
+},
+{
+"li": "One sign-in, every app"
+}
+],
+[
+{
+"h2": "What it does"
+},
+{
+"p": "Standards, not a proprietary protocol. If your framework can read an OpenID Connect discovery document, it can already talk to this."
+},
+{
+"h3": "A second factor"
+},
+{
+"p": "An authenticator app, a code by SMS or email, or a passkey. Enrolment sends the material and then demands it back before it writes anything, and the destination is never taken from the request — an enrolment that let the caller name the phone would enrol the attacker's."
+},
+{
+"h3": "Accounts and membership"
+},
+{
+"p": "Create people, put them in an organization, give them a role there. SCIM 2.0 does the same thing from a directory you already run, so joiners and leavers arrive without a script of your own."
+},
+{
+"h3": "Single sign-on"
+},
+{
+"p": "Every application registers under its own client id and redirects to the same authorize endpoint, so a person who is already signed in comes straight back with a code and never sees a form twice."
+},
+{
+"h3": "Roles that travel"
+},
+{
+"p": "A role is granted at a place — an organization, a workspace under it, a single project. The token carries the one that applies to the request, so your service decides without asking us anything."
+},
+{
+"h3": "Passkeys"
+},
+{
+"p": "A WebAuthn credential registered to the account, unlocked by whatever the device already uses — a fingerprint, a face, a PIN. Nothing that can be phished, because there is nothing to type."
+},
+{
+"h3": "A record of what happened"
+},
+{
+"p": "Actions are written once to an append-only log scoped to the organization they happened in. The write path exists; there is no edit path for normal operation, which is the point of keeping one."
+}
+],
+[
+{
+"h2": "Running it for a large organization"
+},
+{
+"p": "The same service, wearing your name, on hardware you choose."
+},
+{
+"h3": "Where the data sits"
+},
+{
+"p": "An organization is a tenancy boundary, and the boundary is enforced by the code that reads the token rather than by a column somebody has to remember to filter on."
+},
+{
+"li": "• Enterprise security with GDPR and privacy controls"
+},
+{
+"li": "• Self-host it, in your own region, on your own cluster"
+},
+{
+"li": "• One Go binary, embedded SQLite by default — nothing to run beside it"
+},
+{
+"h3": "Bring the identity you already have"
+},
+{
+"p": "Point Identity at your own issuer and it becomes the entry point without becoming the record."
+},
+{
+"li": "• Federate to any OpenID Connect issuer by naming its discovery URL"
+},
+{
+"li": "• SCIM 2.0 provisioning, so joiners and leavers arrive from your directory"
+},
+{
+"li": "• White-labelled by hostname — your mark on your domain, never ours"
+},
+{
+"h3": "Signing up your customers"
+},
+{
+"p": "An organization can hold its own customers as sub-organizations, so a business you serve manages its people without any of it reaching yours."
+},
+{
+"li": "• Sign in with Google or GitHub, or with any issuer you add"
+},
+{
+"li": "• A consent screen the person has to pass before an app gets a token"
+},
+{
+"li": "• Org admins manage their own members without platform access"
+},
+{
+"h3": "What you write"
+},
+{
+"p": "Almost nothing. Nobody should be hand-rolling OAuth in 2026, and with this you do not."
+},
+{
+"li": "• One SDK with an entry point per runtime — server, React, browser, Next.js, Passport"
+},
+{
+"li": "• An OpenAPI 3.1 description generated from the handlers themselves"
+},
+{
+"li": "• The sign-in page is hosted and already built — you send people to it"
+}
+],
+[
+{
+"h2": "Add sign-in"
+},
+{
+"p": "Register the app, set the callback your framework already uses, install the SDK. That is the whole integration."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Read Documentation",
+"href": "https://docs.hanzo.ai/docs/openapi/iam"
+}
+],
+[
+{
+"h2": "Get started with Identity"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/iam"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+]
+]

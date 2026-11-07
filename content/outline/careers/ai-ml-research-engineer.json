@@ -1,0 +1,91 @@
+[
+[
+{
+"a": "Back to all careers",
+"href": "/careers"
+},
+{
+"button": "Share position"
+},
+{
+"h1": "AI/ML Research Engineer"
+},
+{
+"p": "Work on foundational models, fine-tuning, and novel architectures. Experience with transformers, RLHF, and distributed training required."
+},
+{
+"a": "Apply for this position",
+"href": "#apply"
+},
+{
+"a": "Email resume directly",
+"href": "/cdn-cgi/l/email-protection#294a485b4c4c5b5a694148475346074840165a5c4b434c4a5d1468595945404a485d4046470c1a680c1b1968600c1b6f64650c1b197b4c5a4c485b4a410c1b196c474e40474c4c5b"
+}
+],
+[
+{
+"h2": "About the Role"
+},
+{
+"p": "As an AI/ML Research Engineer at Hanzo, you will work on the core intelligence layer powering the Hanzo open cloud. You will train, fine-tune, and optimize frontier models, explore reinforcement learning with human & AI feedback (RLHF/RLAIF), and develop next-generation reasoning architectures."
+},
+{
+"p": "Hanzo builds an open AI cloud — compilers, models, distributed infrastructure, and agent tooling. Our codebases are predominantly open source, and team members operate with high autonomy and end-to-end ownership."
+},
+{
+"h2": "Key Responsibilities"
+},
+{
+"p": "Train and fine-tune foundation models across text, code, multimodal, and agentic workflows."
+},
+{
+"p": "Design and execute large-scale distributed training runs across GPU clusters using PyTorch, DeepSpeed, and Megatron."
+},
+{
+"p": "Develop novel evaluation harnesses and benchmarks to assess model reasoning, tool use, and safety."
+},
+{
+"p": "Collaborate with the inference and compiler teams to quantize, optimize, and deploy models to production."
+},
+{
+"p": "Publish open source weights, research papers, and reproducible training recipes."
+},
+{
+"h2": "What We're Looking For"
+},
+{
+"p": "Deep understanding of transformer architectures, attention mechanisms, and modern LLM pre-training / post-training techniques."
+},
+{
+"p": "Hands-on experience with PyTorch, distributed training frameworks (FSDP, DeepSpeed, Ray), and GPU performance profiling."
+},
+{
+"p": "Demonstrated track record of shipping ML models to production or high-quality open-source / published research contributions."
+},
+{
+"p": "Strong systems fundamentals: concurrency, networking, and memory efficiency."
+},
+{
+"h2": "Nice to Have"
+},
+{
+"p": "Experience with synthetic data generation, agentic reasoning loops (MCTS, ReAct), or tool-calling tuning."
+},
+{
+"p": "Familiarity with Triton, CUDA kernel development, or custom model quantization formats."
+},
+{
+"h2": "Why Join Hanzo"
+},
+{
+"h2": "Apply for this Role"
+},
+{
+"button": "Submit Application"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#40232132252532330028212e3a2f6e21297f3335222a2523347d0130302c29232134292f2e65730165727001096572060d0c6572701225332521322328657270052e27292e252532"
+}
+]
+]

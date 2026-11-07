@@ -1,0 +1,223 @@
+[
+[
+{
+"h1": "Hanzo Machines"
+},
+{
+"p": "Rent a machine by the hour, metered to your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "View Documentation",
+"href": "https://docs.hanzo.ai"
+}
+],
+[
+{
+"h3": "NVIDIA H100"
+},
+{
+"p": "Dedicated GPU instances for AI/ML training"
+},
+{
+"h3": "AMD EPYC 7763"
+},
+{
+"p": "High-core count CPU instances"
+},
+{
+"h3": "Storage Options"
+},
+{
+"p": "Ultra-fast NVMe and persistent storage"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Machines from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Machines in my project. Start with: hanzo visor machines list"
+}
+],
+[
+{
+"h2": "How renting one works"
+},
+{
+"p": "Every step is an API call, so anything you do once by hand you can put in a script afterwards"
+},
+{
+"h3": "Ask what exists"
+},
+{
+"p": "The sizes and regions you can launch into are an endpoint, not a page in the docs. Read them, then pick one — nothing to keep in sync by hand."
+},
+{
+"h3": "Price it before you buy it"
+},
+{
+"p": "A launch with dryRun returns the price and creates nothing. The same call without it creates the machine, so what you were quoted is what you asked for."
+},
+{
+"h3": "Metered to the organization"
+},
+{
+"p": "Time is debited from your org's prepaid balance while a machine is up. Before it launches, the cloud says whether you may — and what is missing if you may not."
+},
+{
+"h3": "One list, whoever owns them"
+},
+{
+"p": "Rented machines, the droplets and cluster workers behind them, and your own hardware that dialed in with hanzo link all appear as one fleet, deduplicated."
+},
+{
+"h3": "A row per accelerator"
+},
+{
+"p": "The GPU view counts real cards: from the size of the nodes you rented, and from what your own workers report through nvidia-smi. Where there is no inventory, it returns nothing rather than inventing something."
+},
+{
+"h3": "A machine can carry an agent"
+},
+{
+"p": "Bind a cloud agent to a machine and the pair is one thing to launch, message, stop and tear down. Unbinding is separate, so the agent can move without the machine going with it."
+}
+],
+[
+{
+"h2": "When you want a whole machine"
+},
+{
+"p": "Reach for one when the work outlasts a request, or needs a card of its own"
+},
+{
+"h3": "Training runs"
+},
+{
+"p": "A job that needs cards for hours and nothing for the rest of the week."
+},
+{
+"li": "• GPU sizes named from the list the API returns"
+},
+{
+"li": "• GPU-hours metered while the job runs"
+},
+{
+"li": "• Cancel and the hours used so far are billed, then the job stops"
+},
+{
+"h3": "Serving a model"
+},
+{
+"p": "A machine that stays up because something is calling it."
+},
+{
+"li": "• Run Hanzo Engine on a card you rented"
+},
+{
+"li": "• Terminate it when the traffic goes away"
+},
+{
+"li": "• The bill follows the machine, not a reservation"
+},
+{
+"h3": "Work that will not fit in a request"
+},
+{
+"p": "Renders, batches and simulations that take longer than an HTTP call."
+},
+{
+"li": "• A queue per GPU, plus a shared any-GPU lane"
+},
+{
+"li": "• Each item says which node claimed it"
+},
+{
+"li": "• Read the queue instead of guessing where a job went"
+},
+{
+"h3": "Agents that need a computer"
+},
+{
+"p": "An agent with a machine under it, launched and torn down as one thing."
+},
+{
+"li": "• Bind a cloud agent to a machine"
+},
+{
+"li": "• Message it, or stop it, by name"
+},
+{
+"li": "• Tearing down the pair unbinds the agent first"
+}
+],
+[
+{
+"h2": "Whose machine it is"
+},
+{
+"p": "Ownership, region and account are decisions the API makes you state"
+},
+{
+"h3": "Scoped to your organization"
+},
+{
+"p": "A machine belongs to one org and is named within it. Every read and every terminate is checked against the org on your token, not against the id in the URL."
+},
+{
+"h3": "Bring your own account"
+},
+{
+"p": "Link a DigitalOcean, AWS or GCP account and the clusters it holds fold into the same fleet. Your capacity, your contract, one place to see it."
+},
+{
+"h3": "Pick the region deliberately"
+},
+{
+"p": "Launches name a region from the list the API returns, so where a workload runs is a decision you made rather than one that was made for you."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "GPUs On-demand accelerators",
+"href": "/cloud/gpus"
+},
+{
+"a": "Containers",
+"href": "/cloud/containers"
+},
+{
+"a": "Functions Serverless handlers",
+"href": "/functions"
+}
+],
+[
+{
+"h2": "Get Machines"
+},
+{
+"p": "Long-running compute machines"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

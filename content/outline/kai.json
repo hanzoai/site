@@ -1,0 +1,39 @@
+[
+[
+{
+"h1": "Kai. Made for decisions."
+},
+{
+"p": "The decision model family from Hanzo. Explore each version, its capabilities and the evidence behind it."
+},
+{
+"a": "Explore models",
+"href": "#models"
+},
+{
+"a": "Open Decisions",
+"href": "https://platform.hanzo.ai/decisions"
+},
+{
+"a": "Docs on GitHub",
+"href": "https://github.com/hanzoai/kai"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+}
+],
+[
+{
+"h2": "Kai models"
+},
+{
+"li": "Kai 1.8 Versioned model kai-1.8 View model card",
+"href": "/models/hanzo/kai-1.8"
+},
+{
+"li": "Kai Default API alias kai View model card",
+"href": "/models/hanzo/kai"
+}
+]
+]

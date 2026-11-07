@@ -1,0 +1,46 @@
+[
+[
+{
+"h1": "Climb the ranks. Earn AI credits."
+},
+{
+"p": "The live Hanzo leaderboard across bug bounties, open-source pull requests, and global token volume. Verified contributions earn AI credits and automatic rank updates."
+},
+{
+"a": "Open bounties",
+"href": "/bounty"
+},
+{
+"a": "GitHub issues",
+"href": "https://github.com/search?type=issues&s=created&o=desc&q=is%3Aissue%20is%3Aopen%20label%3Abounty%20archived%3Afalse%20org%3Ahanzoai%20org%3Ahanzo-apps%20org%3Ahanzo-go%20org%3Ahanzo-js"
+}
+],
+[
+{
+"h2": "Bug bounty & contributor leaderboard"
+},
+{
+"p": "Ranked by verified bug reports (+50 pts), merged bounty pull requests (+100 to +500 pts), and token volume (+1 pt per 100K tokens)."
+}
+],
+[
+{
+"h2": "Global token volume leaderboard"
+},
+{
+"p": "Top 10 active organizations across 217 organizations on Hanzo Cloud by total tokens processed."
+}
+],
+[
+{
+"h2": "How to earn points & AI credits"
+},
+{
+"p": "Every verified bug report and merged pull request triggers an automatic email notification with your updated points, AI credits, and leaderboard rank."
+},
+{
+"a": "Browse open bounties",
+"href": "/bounty"
+}
+]
+]

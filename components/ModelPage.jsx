@@ -1,0 +1,67 @@
+'use client';
+/* A model's page. Its hero is the card's film at full bleed, exactly where the open transition lands, so the card
+   and the page are one continuous object. Close runs the transition back into the card. Hanzo's own page follows. */
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { EASE } from './ui';
+import { useOpener } from './Opener';
+import Ported from './Ported';
+import { bySlug, media, MODELS } from '../lib/models';
+
+export default function ModelPage({ slug, html }) {
+  const m = bySlug[slug];
+  const opener = useOpener();
+  const hero = useRef(null);
+  const [ready, setReady] = useState(false);
+  const { scrollYProgress: p } = useScroll({ target: hero, offset: ['start start', 'end start'] });
+  const y = useTransform(p, [0, 1], ['0%', '18%']);
+  const textY = useTransform(p, [0, 1], [0, -80]);
+  const fade = useTransform(p, [0, 0.7], [1, 0]);
+  const i = MODELS.findIndex((x) => x.slug === slug);
+  const next = MODELS[(i + 1) % MODELS.length];
+
+  useEffect(() => {
+    const img = hero.current.querySelector('img');
+    const done = () => setReady(true);
+    if (img.complete) img.decode().then(done, done); else img.addEventListener('load', done, { once: true });
+  }, []);
+
+  const rise = (d) => ({ initial: { opacity: 0, y: 30 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1, ease: EASE, delay: d } });
+
+  return (
+    <main className="x-model">
+      <section className="x-mhero" ref={hero} data-hero={slug} data-ready={ready ? '' : undefined} aria-labelledby="mh">
+        <motion.div className="x-mhero-media" style={{ y }}>
+          <img src={media(slug, 'webp')} alt="" />
+          <video src={media(slug, 'webm')} autoPlay muted loop playsInline aria-hidden="true" />
+        </motion.div>
+        <motion.div className="x-mhero-copy x-wrap" style={{ y: textY, opacity: fade }}>
+          {m.kicker && <motion.p className="x-mkick" {...rise(0.15)}>{m.kicker}</motion.p>}
+          <h1 id="mh" className="x-mhero-name">
+            <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{m.name}</motion.span></span>
+          </h1>
+          <motion.p className="x-mhero-desc" {...rise(0.3)}>{m.desc}</motion.p>
+          <motion.p className="x-mtags static" {...rise(0.4)}>{m.tags.map((t) => <span key={t}>{t}</span>)}</motion.p>
+        </motion.div>
+        <motion.a
+          href="/"
+          className="x-mclose"
+          aria-label="Close and return to all models"
+          onClick={(e) => opener.close(e, { key: slug, src: media(slug, 'webp') })}
+          initial={{ opacity: 0, scale: 0.6 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.6, ease: EASE, delay: 0.5 }}
+          whileHover={{ rotate: 90 }} whileTap={{ scale: 0.9 }}
+        >
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+        </motion.a>
+        <motion.span className="x-scrollcue" {...rise(0.7)} aria-hidden="true">Scroll</motion.span>
+      </section>
+      <div className="x-model-body"><Ported html={html} /></div>
+      <a href={'/' + next.slug} className="x-next" data-card={next.slug} onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
+        <img src={media(next.slug, 'webp')} alt="" />
+        <span className="x-next-k">Next model</span>
+        <span className="x-next-n">{next.name}</span>
+        <span className="x-next-d">{next.desc}</span>
+      </a>
+    </main>
+  );
+}

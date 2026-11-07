@@ -1,0 +1,66 @@
+[
+[
+{
+"h1": "Open models. Yours to run."
+},
+{
+"p": "The open-weight family behind Hanzo. Download the weights, or call them on Hanzo Cloud."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "API Platform",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "Docs on GitHub",
+"href": "https://github.com/zenlm"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+}
+],
+[
+{
+"h3": "Zen 6 Flash"
+},
+{
+"code": "zen6-flash"
+},
+{
+"p": "The compact build of Zen 6, for local and low-cost use."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Open in Workbench",
+"href": "https://platform.hanzo.ai/workbench?model=zen6-flash"
+},
+{
+"h3": "Zen 6"
+},
+{
+"code": "zen6"
+},
+{
+"p": "The open-weight flagship for agentic coding and multimodal work."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Open in Workbench",
+"href": "https://platform.hanzo.ai/workbench?model=zen6"
+},
+{
+"a": "Every Zen model",
+"href": "/zen/models"
+}
+]
+]

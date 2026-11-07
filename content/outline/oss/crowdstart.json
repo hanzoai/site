@@ -1,0 +1,76 @@
+[
+[
+{
+"h1": "Crowdstart"
+},
+{
+"p": "Crowdstart is now Hanzo, a cutting-edge software stack for modern companies."
+},
+{
+"a": "crowdstart on GitHub",
+"href": "https://github.com/crowdstart"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/crowdstart"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 0 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of crowdstart, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "crowdstart/crowdstart.com CSS 0 0 Crowdstart is now part of Hanzo. Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/crowdstart/crowdstart.com"
+},
+{
+"li": "crowdstart/hustle CoffeeScript 2 0 Animation library. Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/crowdstart/hustle"
+},
+{
+"li": "crowdstart/quill Stylus 2 0 Functional CSS library. Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/crowdstart/quill"
+}
+]
+]

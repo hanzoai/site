@@ -1,0 +1,111 @@
+[
+[
+{
+"h1": "Mori 1"
+},
+{
+"p": "Build worlds, not just images."
+},
+{
+"p": "3D assets, geometry, materials, environments and spatially consistent scenes."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Try it in Design",
+"href": "/design"
+},
+{
+"img": "/models/mori.webp",
+"alt": ""
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What Mori does"
+},
+{
+"h3": "Production quad and tri topologies"
+},
+{
+"p": "Generates clean, water-tight, manifold meshes with optimized edge flow ready for rigging, animation, and real-time engine shaders."
+},
+{
+"h3": "Complete PBR material synthesis"
+},
+{
+"p": "Delivers full Physically Based Rendering material stacks: albedo, normal, roughness, metallic, ambient occlusion, and emissive maps."
+},
+{
+"h3": "Spatially coherent environments"
+},
+{
+"p": "Construct full 3D interior and exterior scene geometry aligned to absolute real-world metric scale and coordinate grids."
+},
+{
+"h3": "Universal engine export"
+},
+{
+"p": "Exports USDZ, glTF and GLB, FBX and OBJ, and 3D Gaussian splats."
+}
+],
+[
+{
+"p": "In production"
+},
+{
+"h2": "Where Mori fits"
+},
+{
+"p": "Spatial computing"
+},
+{
+"h3": "AR asset pipeline"
+},
+{
+"p": "Generate photorealistic interactive 3D models for AR commerce and spatial apps."
+},
+{
+"p": "Game development"
+},
+{
+"h3": "Real-time environment and prop kitbashing"
+},
+{
+"p": "Populate vast open worlds with hundreds of unique, textured 3D props matching target polycount budgets."
+},
+{
+"p": "Architecture and industrial design"
+},
+{
+"h3": "Rapid spatial prototyping"
+},
+{
+"p": "Translate conceptual sketches and CAD schematics into fully realized 3D spatial volumes."
+}
+],
+[
+{
+"p": "Research preview"
+},
+{
+"h2": "Try Mori on your own work"
+},
+{
+"p": "Samples of Mori's own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Every model",
+"href": "/models"
+}
+]
+]

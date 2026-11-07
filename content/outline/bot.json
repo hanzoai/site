@@ -1,0 +1,1552 @@
+[
+[
+{
+"h1": "Teammates you can hand real work to."
+},
+{
+"p": "Give a bot a job. It has its own computer, signs in to your tools the way you do, and comes back when the work is done. On your machine, in our cloud, or both."
+},
+{
+"li": "Each bot has its own computer: a browser, a terminal and your apps"
+},
+{
+"li": "It signs in to your tools once and works the way you do"
+},
+{
+"li": "Bots hand work to each other and ask you only when it matters"
+},
+{
+"li": "Routines run on a schedule and stop for your yes"
+},
+{
+"a": "Try Hanzo",
+"href": "https://hanzo.bot"
+},
+{
+"a": "Install on your Mac",
+"href": "#install"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"p": "Open source. Run it on your own machine if you want to — your keys and your data stay with you."
+},
+{
+"button": "Des Working"
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"button": "Mark Working"
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"button": "Mark Working"
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"button": "Yes, add it"
+},
+{
+"button": "Not yet"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Bot from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Bot in my project. Start with: hanzo bot runs list"
+}
+],
+[
+{
+"p": "What a bot is"
+},
+{
+"h2": "A teammate with its own computer"
+},
+{
+"p": "Not a chat window. A bot has a computer of its own and works while you do something else."
+},
+{
+"h3": "Its own computer"
+},
+{
+"p": "Each bot runs in its own sandbox with a browser, a terminal and your apps. Nothing it does touches your machine unless you let it."
+},
+{
+"h3": "Works where you work"
+},
+{
+"p": "Sign it in once. It uses the same tools and websites you do, including the ones that are hard to automate."
+},
+{
+"h3": "Comes back when it is done"
+},
+{
+"p": "Give it a task and go do something else. It returns with finished work and asks only when it needs your say."
+}
+],
+[
+{
+"p": "Give each bot a job"
+},
+{
+"h2": "One bot per job"
+},
+{
+"h3": "Inbox"
+},
+{
+"p": "Sorts what came in, answers what it can, and parks drafts for your ok."
+},
+{
+"h3": "Sales outreach"
+},
+{
+"p": "Researches accounts, drafts messages in your voice, and leaves a review list."
+},
+{
+"h3": "Research"
+},
+{
+"p": "Reads, compares, and writes up what it found."
+},
+{
+"h3": "Bug reproduction"
+},
+{
+"p": "Reproduces the report, finds the failing step, and files it."
+},
+{
+"h3": "Expenses"
+},
+{
+"p": "Collects the receipts and files the report."
+},
+{
+"h3": "Chief of staff"
+},
+{
+"p": "Keeps the other bots on task and tells you what changed."
+}
+],
+[
+{
+"p": "Work with many at once"
+},
+{
+"h2": "Bots that hand work to each other"
+},
+{
+"h3": "One gateway, many bots"
+},
+{
+"p": "Each bot has its own workspace, sign-ins and history, and each message goes to the bot it is meant for."
+},
+{
+"h3": "Sub-agents"
+},
+{
+"p": "A bot can start background runs that work in parallel and post what they found back in the chat that asked."
+},
+{
+"h3": "Bots message bots"
+},
+{
+"p": "One bot can read another’s session and send it a message, so a handoff needs no copy and paste."
+},
+{
+"a": "How multi-agent works",
+"href": "https://docs.hanzo.bot/docs/concepts/multi-agent"
+}
+],
+[
+{
+"p": "Show it how it is done"
+},
+{
+"h2": "Teach it a routine once"
+},
+{
+"h3": "Skills"
+},
+{
+"p": "Write the steps in a plain Markdown skill, and the bot uses it whenever the job comes up."
+},
+{
+"h3": "On a schedule"
+},
+{
+"p": "Every morning, or in twenty minutes. Scheduled jobs survive a restart and can post the result to a chat."
+},
+{
+"h3": "Your say at each step"
+},
+{
+"p": "A multi-step routine can stop at the steps you mark and wait for your yes before it goes on."
+},
+{
+"a": "Skills in the docs",
+"href": "https://docs.hanzo.bot/docs/tools/skills"
+}
+],
+[
+{
+"p": "Gets better as it goes"
+},
+{
+"h2": "It remembers what it learns"
+},
+{
+"h3": "Memory is files"
+},
+{
+"p": "Decisions, preferences and running notes go into Markdown files in its workspace, not into the model."
+},
+{
+"h3": "It looks things up"
+},
+{
+"p": "It searches those notes when it needs them, so what you told it last week still counts."
+},
+{
+"h3": "Yours to read and fix"
+},
+{
+"p": "Open the files, correct them or delete them. The next session starts from what you left."
+},
+{
+"a": "How memory works",
+"href": "https://docs.hanzo.bot/docs/concepts/memory"
+}
+],
+[
+{
+"p": "How it starts"
+},
+{
+"h2": "Three steps"
+},
+{
+"h3": "Name it and give it a job"
+},
+{
+"p": "Say what you want done, in plain words."
+},
+{
+"h3": "Sign it in to your tools"
+},
+{
+"p": "Once. It keeps the access it needs and nothing more."
+},
+{
+"h3": "Let it work"
+},
+{
+"p": "It comes back when it is done, or when it needs you."
+}
+],
+[
+{
+"p": "Talk to it anywhere"
+},
+{
+"h2": "Message your bots where you already are"
+},
+{
+"a": "Coming from OpenClaw? One command moves your install",
+"href": "https://github.com/hanzoai/bot/blob/main/docs/install/migrate-from-openclaw.md"
+}
+],
+[
+{
+"p": "Pricing"
+},
+{
+"h2": "Included in plans from $15"
+},
+{
+"p": "Each plan below includes resident cloud bots. Or run Hanzo Bot free on your own machine."
+},
+{
+"h3": "Pro"
+},
+{
+"li": "3x more usage than Go"
+},
+{
+"li": "3x higher limits than Go"
+},
+{
+"li": "Hanzo Bot: 1 bot of your own"
+},
+{
+"li": "Early access to new models and features"
+},
+{
+"li": "Train custom models on your data"
+},
+{
+"li": "Hanzo Engine to run models on your own hardware"
+},
+{
+"li": "Dedicated support"
+},
+{
+"a": "Get Pro",
+"href": "/pay/confirm/card?plan=pro-2x&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat"
+},
+{
+"h3": "Dev"
+},
+{
+"li": "5x more usage than Go"
+},
+{
+"li": "5x higher limits than Go"
+},
+{
+"li": "Hanzo Bot: 2 bots of your own"
+},
+{
+"li": "Early access to new models and features"
+},
+{
+"li": "Train custom models on your data"
+},
+{
+"li": "Hanzo Engine to run models on your own hardware"
+},
+{
+"li": "Dedicated support"
+},
+{
+"a": "Get Dev",
+"href": "/pay/confirm/card?plan=dev-5x&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat"
+},
+{
+"h3": "Max"
+},
+{
+"li": "15x more usage than Go"
+},
+{
+"li": "15x higher limits than Go"
+},
+{
+"li": "Hanzo Bot: 5 bots of your own"
+},
+{
+"li": "Early access to new models and features"
+},
+{
+"li": "Train custom models on your data"
+},
+{
+"li": "Hanzo Engine to run models on your own hardware"
+},
+{
+"li": "Dedicated support"
+},
+{
+"a": "Get Max",
+"href": "/pay/confirm/card?plan=max-10x&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat"
+},
+{
+"h3": "Ultra"
+},
+{
+"li": "Highest included usage across every model"
+},
+{
+"li": "Continuous usage with no window resets"
+},
+{
+"li": "Usage beyond what is included is paid from your prepaid balance at list price"
+},
+{
+"li": "Hanzo Bot: 10 bots of your own"
+},
+{
+"li": "Early access to new models and features"
+},
+{
+"li": "Train custom models on your data"
+},
+{
+"li": "Hanzo Engine to run models on your own hardware"
+},
+{
+"li": "Dedicated support"
+},
+{
+"a": "Get Ultra",
+"href": "/pay/confirm/card?plan=ultra&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat"
+},
+{
+"p": "Every plan can run Hanzo Bot on your own Mac or Linux machine, 100% free and open source."
+}
+],
+[
+{
+"p": "Install"
+},
+{
+"h2": "On your Mac in two commands"
+},
+{
+"p": "Node 22 or newer, on macOS or Linux. The second command walks you through your model, channels and skills, and keeps the gateway running in the background."
+},
+{
+"code": "npm install -g @hanzo/bot hanzo-bot onboard --install-daemon"
+},
+{
+"a": "Install guide",
+"href": "https://docs.hanzo.bot/docs/install"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/bot"
+}
+],
+[
+{
+"h2": "Ten everyday workflows your team hands off in a single mention."
+},
+{
+"p": "A human opens a channel or posts a quick explanation, mentions the right teammate, and gets finished work back — verified end-to-end by a second specialist before you merge or send."
+},
+{
+"img": "/images/models/enso.webp",
+"alt": ""
+},
+{
+"img": "/images/models/kai.webp",
+"alt": ""
+},
+{
+"img": "/images/models/zen.webp",
+"alt": ""
+},
+{
+"img": "/images/models/iro.webp",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/su.svg",
+"alt": ""
+},
+{
+"img": "/memoji/doc.svg",
+"alt": ""
+},
+{
+"img": "/memoji/opera.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/data.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sal.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/fin.svg",
+"alt": ""
+},
+{
+"img": "/memoji/data.svg",
+"alt": ""
+},
+{
+"img": "/memoji/law.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/su.svg",
+"alt": ""
+},
+{
+"img": "/memoji/opera.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sal.svg",
+"alt": ""
+},
+{
+"img": "/memoji/fin.svg",
+"alt": ""
+},
+{
+"img": "/memoji/law.svg",
+"alt": ""
+},
+{
+"img": "/memoji/data.svg",
+"alt": ""
+},
+{
+"img": "/memoji/doc.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"a": "Learn more about Team",
+"href": "/team"
+},
+{
+"a": "Learn more about Bot",
+"href": "/bot"
+},
+{
+"a": "Open Hanzo Bot",
+"href": "https://hanzo.bot"
+},
+{
+"a": "Open Hanzo Team",
+"href": "https://hanzo.team"
+}
+],
+[
+{
+"p": "Works where you work"
+},
+{
+"h2": "Sign it in to the tools you use"
+},
+{
+"p": "You log in once in the bot's own browser. It keeps the session and works in the same tools and sites you do."
+},
+{
+"img": "/connectors/001-chatgpt.png",
+"alt": "ChatGPT"
+},
+{
+"img": "/connectors/002-claude.png",
+"alt": "Claude"
+},
+{
+"img": "/connectors/003-google-gemini.png",
+"alt": "Google Gemini"
+},
+{
+"img": "/connectors/004-microsoft-copilot.png",
+"alt": "Microsoft Copilot"
+},
+{
+"img": "/connectors/005-github-copilot.png",
+"alt": "GitHub Copilot"
+},
+{
+"img": "/connectors/006-codex.png",
+"alt": "Codex"
+},
+{
+"img": "/connectors/007-perplexity.png",
+"alt": "Perplexity"
+},
+{
+"img": "/connectors/008-notebooklm.png",
+"alt": "NotebookLM"
+},
+{
+"img": "/connectors/009-gamma.png",
+"alt": "Gamma"
+},
+{
+"img": "/connectors/010-granola.png",
+"alt": "Granola"
+},
+{
+"img": "/connectors/011-google-workspace.png",
+"alt": "Google Workspace"
+},
+{
+"img": "/connectors/012-microsoft-365.png",
+"alt": "Microsoft 365"
+},
+{
+"img": "/connectors/013-slack.png",
+"alt": "Slack"
+},
+{
+"img": "/connectors/014-microsoft-teams.png",
+"alt": "Microsoft Teams"
+},
+{
+"img": "/connectors/015-zoom.png",
+"alt": "Zoom"
+},
+{
+"img": "/connectors/016-notion.png",
+"alt": "Notion"
+},
+{
+"img": "/connectors/017-coda.png",
+"alt": "Coda"
+},
+{
+"img": "/connectors/018-dropbox.png",
+"alt": "Dropbox"
+},
+{
+"img": "/connectors/019-box.png",
+"alt": "Box"
+},
+{
+"img": "/connectors/020-loom.png",
+"alt": "Loom"
+},
+{
+"img": "/connectors/021-asana.png",
+"alt": "Asana"
+},
+{
+"img": "/connectors/022-clickup.png",
+"alt": "ClickUp"
+},
+{
+"img": "/connectors/023-monday-com.png",
+"alt": "monday.com"
+},
+{
+"img": "/connectors/024-linear.png",
+"alt": "Linear"
+},
+{
+"img": "/connectors/025-jira.png",
+"alt": "Jira"
+},
+{
+"img": "/connectors/026-airtable.png",
+"alt": "Airtable"
+},
+{
+"img": "/connectors/027-smartsheet.png",
+"alt": "Smartsheet"
+},
+{
+"img": "/connectors/028-todoist.png",
+"alt": "Todoist"
+},
+{
+"img": "/connectors/029-calendly.png",
+"alt": "Calendly"
+},
+{
+"img": "/connectors/030-miro.png",
+"alt": "Miro"
+},
+{
+"img": "/connectors/031-hubspot.png",
+"alt": "HubSpot"
+},
+{
+"img": "/connectors/032-salesforce.png",
+"alt": "Salesforce"
+},
+{
+"img": "/connectors/033-pipedrive.png",
+"alt": "Pipedrive"
+},
+{
+"img": "/connectors/034-zoho-crm.png",
+"alt": "Zoho CRM"
+},
+{
+"img": "/connectors/035-freshsales.png",
+"alt": "Freshsales"
+},
+{
+"img": "/connectors/036-close.png",
+"alt": "Close"
+},
+{
+"img": "/connectors/037-attio.png",
+"alt": "Attio"
+},
+{
+"img": "/connectors/038-apollo-io.png",
+"alt": "Apollo.io"
+},
+{
+"img": "/connectors/039-clay.png",
+"alt": "Clay"
+},
+{
+"img": "/connectors/040-gong.png",
+"alt": "Gong"
+},
+{
+"img": "/connectors/041-mailchimp.png",
+"alt": "Mailchimp"
+},
+{
+"img": "/connectors/042-klaviyo.png",
+"alt": "Klaviyo"
+},
+{
+"img": "/connectors/043-brevo.png",
+"alt": "Brevo"
+},
+{
+"img": "/connectors/044-kit.png",
+"alt": "Kit"
+},
+{
+"img": "/connectors/045-activecampaign.png",
+"alt": "ActiveCampaign"
+},
+{
+"img": "/connectors/046-customer-io.png",
+"alt": "Customer.io"
+},
+{
+"img": "/connectors/047-semrush.png",
+"alt": "Semrush"
+},
+{
+"img": "/connectors/048-ahrefs.png",
+"alt": "Ahrefs"
+},
+{
+"img": "/connectors/049-buffer.png",
+"alt": "Buffer"
+},
+{
+"img": "/connectors/050-sprout-social.png",
+"alt": "Sprout Social"
+},
+{
+"img": "/connectors/051-canva.png",
+"alt": "Canva"
+},
+{
+"img": "/connectors/052-figma.png",
+"alt": "Figma"
+},
+{
+"img": "/connectors/053-adobe-creative-cloud.png",
+"alt": "Adobe Creative Cloud"
+},
+{
+"img": "/connectors/054-framer.png",
+"alt": "Framer"
+},
+{
+"img": "/connectors/055-webflow.png",
+"alt": "Webflow"
+},
+{
+"img": "/connectors/056-midjourney.png",
+"alt": "Midjourney"
+},
+{
+"img": "/connectors/057-runway.png",
+"alt": "Runway"
+},
+{
+"img": "/connectors/058-descript.png",
+"alt": "Descript"
+},
+{
+"img": "/connectors/059-elevenlabs.png",
+"alt": "ElevenLabs"
+},
+{
+"img": "/connectors/060-heygen.png",
+"alt": "HeyGen"
+},
+{
+"img": "/connectors/061-wordpress.png",
+"alt": "WordPress"
+},
+{
+"img": "/connectors/062-ghost.png",
+"alt": "Ghost"
+},
+{
+"img": "/connectors/063-shopify.png",
+"alt": "Shopify"
+},
+{
+"img": "/connectors/064-woocommerce.png",
+"alt": "WooCommerce"
+},
+{
+"img": "/connectors/065-squarespace.png",
+"alt": "Squarespace"
+},
+{
+"img": "/connectors/066-wix.png",
+"alt": "Wix"
+},
+{
+"img": "/connectors/067-stripe.png",
+"alt": "Stripe"
+},
+{
+"img": "/connectors/068-square.png",
+"alt": "Square"
+},
+{
+"img": "/connectors/069-paypal.png",
+"alt": "PayPal"
+},
+{
+"img": "/connectors/070-paddle.png",
+"alt": "Paddle"
+},
+{
+"img": "/connectors/071-quickbooks-online.png",
+"alt": "QuickBooks Online"
+},
+{
+"img": "/connectors/072-xero.png",
+"alt": "Xero"
+},
+{
+"img": "/connectors/073-gusto.png",
+"alt": "Gusto"
+},
+{
+"img": "/connectors/074-rippling.png",
+"alt": "Rippling"
+},
+{
+"img": "/connectors/075-deel.png",
+"alt": "Deel"
+},
+{
+"img": "/connectors/076-ramp.png",
+"alt": "Ramp"
+},
+{
+"img": "/connectors/077-brex.png",
+"alt": "Brex"
+},
+{
+"img": "/connectors/078-expensify.png",
+"alt": "Expensify"
+},
+{
+"img": "/connectors/079-docusign.png",
+"alt": "DocuSign"
+},
+{
+"img": "/connectors/080-ironclad.png",
+"alt": "Ironclad"
+},
+{
+"img": "/connectors/081-intercom.png",
+"alt": "Intercom"
+},
+{
+"img": "/connectors/082-zendesk.png",
+"alt": "Zendesk"
+},
+{
+"img": "/connectors/083-help-scout.png",
+"alt": "Help Scout"
+},
+{
+"img": "/connectors/084-freshdesk.png",
+"alt": "Freshdesk"
+},
+{
+"img": "/connectors/085-front.png",
+"alt": "Front"
+},
+{
+"img": "/connectors/086-crisp.png",
+"alt": "Crisp"
+},
+{
+"img": "/connectors/087-gorgias.png",
+"alt": "Gorgias"
+},
+{
+"img": "/connectors/088-typeform.png",
+"alt": "Typeform"
+},
+{
+"img": "/connectors/089-surveymonkey.png",
+"alt": "SurveyMonkey"
+},
+{
+"img": "/connectors/090-dovetail.png",
+"alt": "Dovetail"
+},
+{
+"img": "/connectors/091-google-analytics.png",
+"alt": "Google Analytics"
+},
+{
+"img": "/connectors/092-posthog.png",
+"alt": "PostHog"
+},
+{
+"img": "/connectors/093-mixpanel.png",
+"alt": "Mixpanel"
+},
+{
+"img": "/connectors/094-amplitude.png",
+"alt": "Amplitude"
+},
+{
+"img": "/connectors/095-hotjar.png",
+"alt": "Hotjar"
+},
+{
+"img": "/connectors/096-fullstory.png",
+"alt": "FullStory"
+},
+{
+"img": "/connectors/097-looker-studio.png",
+"alt": "Looker Studio"
+},
+{
+"img": "/connectors/098-power-bi.png",
+"alt": "Power BI"
+},
+{
+"img": "/connectors/099-tableau.png",
+"alt": "Tableau"
+},
+{
+"img": "/connectors/100-metabase.png",
+"alt": "Metabase"
+},
+{
+"img": "/connectors/101-vs-code.png",
+"alt": "VS Code"
+},
+{
+"img": "/connectors/102-jetbrains-ides.png",
+"alt": "JetBrains IDEs"
+},
+{
+"img": "/connectors/103-cursor.png",
+"alt": "Cursor"
+},
+{
+"img": "/connectors/104-windsurf.png",
+"alt": "Windsurf"
+},
+{
+"img": "/connectors/105-zed.png",
+"alt": "Zed"
+},
+{
+"img": "/connectors/106-neovim.png",
+"alt": "Neovim"
+},
+{
+"img": "/connectors/107-github.png",
+"alt": "GitHub"
+},
+{
+"img": "/connectors/108-gitlab.png",
+"alt": "GitLab"
+},
+{
+"img": "/connectors/109-bitbucket.png",
+"alt": "Bitbucket"
+},
+{
+"img": "/connectors/110-sourcegraph.png",
+"alt": "Sourcegraph"
+},
+{
+"img": "/connectors/111-postman.png",
+"alt": "Postman"
+},
+{
+"img": "/connectors/112-bruno.png",
+"alt": "Bruno"
+},
+{
+"img": "/connectors/113-swagger.png",
+"alt": "Swagger"
+},
+{
+"img": "/connectors/114-zapier.png",
+"alt": "Zapier"
+},
+{
+"img": "/connectors/115-make.png",
+"alt": "Make"
+},
+{
+"img": "/connectors/116-n8n.png",
+"alt": "n8n"
+},
+{
+"img": "/connectors/117-kong.png",
+"alt": "Kong"
+},
+{
+"img": "/connectors/118-ngrok.png",
+"alt": "ngrok"
+},
+{
+"img": "/connectors/119-twilio.png",
+"alt": "Twilio"
+},
+{
+"img": "/connectors/120-resend.png",
+"alt": "Resend"
+},
+{
+"img": "/connectors/121-next-js.png",
+"alt": "Next.js"
+},
+{
+"img": "/connectors/122-react.png",
+"alt": "React"
+},
+{
+"img": "/connectors/123-vue.png",
+"alt": "Vue"
+},
+{
+"img": "/connectors/124-svelte.png",
+"alt": "Svelte"
+},
+{
+"img": "/connectors/125-astro.png",
+"alt": "Astro"
+},
+{
+"img": "/connectors/126-vite.png",
+"alt": "Vite"
+},
+{
+"img": "/connectors/127-tailwind-css.png",
+"alt": "Tailwind CSS"
+},
+{
+"img": "/connectors/128-flutter.png",
+"alt": "Flutter"
+},
+{
+"img": "/connectors/129-fastapi.png",
+"alt": "FastAPI"
+},
+{
+"img": "/connectors/130-django.png",
+"alt": "Django"
+},
+{
+"img": "/connectors/131-postgresql.png",
+"alt": "PostgreSQL"
+},
+{
+"img": "/connectors/132-mysql.png",
+"alt": "MySQL"
+},
+{
+"img": "/connectors/133-sqlite.png",
+"alt": "SQLite"
+},
+{
+"img": "/connectors/134-mongodb-atlas.png",
+"alt": "MongoDB Atlas"
+},
+{
+"img": "/connectors/135-redis.png",
+"alt": "Redis"
+},
+{
+"img": "/connectors/136-supabase.png",
+"alt": "Supabase"
+},
+{
+"img": "/connectors/137-firebase.png",
+"alt": "Firebase"
+},
+{
+"img": "/connectors/138-neon.png",
+"alt": "Neon"
+},
+{
+"img": "/connectors/139-planetscale.png",
+"alt": "PlanetScale"
+},
+{
+"img": "/connectors/140-clickhouse-cloud.png",
+"alt": "ClickHouse Cloud"
+},
+{
+"img": "/connectors/141-aws.png",
+"alt": "AWS"
+},
+{
+"img": "/connectors/142-microsoft-azure.png",
+"alt": "Microsoft Azure"
+},
+{
+"img": "/connectors/143-google-cloud.png",
+"alt": "Google Cloud"
+},
+{
+"img": "/connectors/144-cloudflare.png",
+"alt": "Cloudflare"
+},
+{
+"img": "/connectors/145-vercel.png",
+"alt": "Vercel"
+},
+{
+"img": "/connectors/146-netlify.png",
+"alt": "Netlify"
+},
+{
+"img": "/connectors/147-render.png",
+"alt": "Render"
+},
+{
+"img": "/connectors/148-railway.png",
+"alt": "Railway"
+},
+{
+"img": "/connectors/149-fly-io.png",
+"alt": "Fly.io"
+},
+{
+"img": "/connectors/150-digitalocean.png",
+"alt": "DigitalOcean"
+},
+{
+"img": "/connectors/151-docker.png",
+"alt": "Docker"
+},
+{
+"img": "/connectors/152-kubernetes.png",
+"alt": "Kubernetes"
+},
+{
+"img": "/connectors/153-github-actions.png",
+"alt": "GitHub Actions"
+},
+{
+"img": "/connectors/154-gitlab-ci-cd.png",
+"alt": "GitLab CI/CD"
+},
+{
+"img": "/connectors/155-circleci.png",
+"alt": "CircleCI"
+},
+{
+"img": "/connectors/156-buildkite.png",
+"alt": "Buildkite"
+},
+{
+"img": "/connectors/157-terraform.png",
+"alt": "Terraform"
+},
+{
+"img": "/connectors/158-pulumi.png",
+"alt": "Pulumi"
+},
+{
+"img": "/connectors/159-ansible.png",
+"alt": "Ansible"
+},
+{
+"img": "/connectors/160-argo-cd.png",
+"alt": "Argo CD"
+},
+{
+"img": "/connectors/161-playwright.png",
+"alt": "Playwright"
+},
+{
+"img": "/connectors/162-cypress.png",
+"alt": "Cypress"
+},
+{
+"img": "/connectors/163-vitest.png",
+"alt": "Vitest"
+},
+{
+"img": "/connectors/164-jest.png",
+"alt": "Jest"
+},
+{
+"img": "/connectors/165-pytest.png",
+"alt": "pytest"
+},
+{
+"img": "/connectors/166-selenium.png",
+"alt": "Selenium"
+},
+{
+"img": "/connectors/167-browserstack.png",
+"alt": "BrowserStack"
+},
+{
+"img": "/connectors/168-storybook.png",
+"alt": "Storybook"
+},
+{
+"img": "/connectors/169-sonarqube.png",
+"alt": "SonarQube"
+},
+{
+"img": "/connectors/170-semgrep.png",
+"alt": "Semgrep"
+},
+{
+"img": "/connectors/171-auth0.png",
+"alt": "Auth0"
+},
+{
+"img": "/connectors/172-clerk.png",
+"alt": "Clerk"
+},
+{
+"img": "/connectors/173-workos.png",
+"alt": "WorkOS"
+},
+{
+"img": "/connectors/174-okta.png",
+"alt": "Okta"
+},
+{
+"img": "/connectors/175-snyk.png",
+"alt": "Snyk"
+},
+{
+"img": "/connectors/176-trivy.png",
+"alt": "Trivy"
+},
+{
+"img": "/connectors/177-dependabot.png",
+"alt": "Dependabot"
+},
+{
+"img": "/connectors/178-renovate.png",
+"alt": "Renovate"
+},
+{
+"img": "/connectors/179-hashicorp-vault.png",
+"alt": "HashiCorp Vault"
+},
+{
+"img": "/connectors/180-1password.png",
+"alt": "1Password"
+},
+{
+"img": "/connectors/181-sentry.png",
+"alt": "Sentry"
+},
+{
+"img": "/connectors/182-datadog.png",
+"alt": "Datadog"
+},
+{
+"img": "/connectors/183-grafana.png",
+"alt": "Grafana"
+},
+{
+"img": "/connectors/184-new-relic.png",
+"alt": "New Relic"
+},
+{
+"img": "/connectors/185-honeycomb.png",
+"alt": "Honeycomb"
+},
+{
+"img": "/connectors/186-better-stack.png",
+"alt": "Better Stack"
+},
+{
+"img": "/connectors/187-elastic-observability.png",
+"alt": "Elastic Observability"
+},
+{
+"img": "/connectors/188-opentelemetry.png",
+"alt": "OpenTelemetry"
+},
+{
+"img": "/connectors/189-pagerduty.png",
+"alt": "PagerDuty"
+},
+{
+"img": "/connectors/190-incident-io.png",
+"alt": "incident.io"
+},
+{
+"img": "/connectors/191-openai-api.png",
+"alt": "OpenAI API"
+},
+{
+"img": "/connectors/192-anthropic-api.png",
+"alt": "Anthropic API"
+},
+{
+"img": "/connectors/193-gemini-api.png",
+"alt": "Gemini API"
+},
+{
+"img": "/connectors/194-hugging-face.png",
+"alt": "Hugging Face"
+},
+{
+"img": "/connectors/195-ollama.png",
+"alt": "Ollama"
+},
+{
+"img": "/connectors/196-langchain.png",
+"alt": "LangChain"
+},
+{
+"img": "/connectors/197-llamaindex.png",
+"alt": "LlamaIndex"
+},
+{
+"img": "/connectors/198-vercel-ai-sdk.png",
+"alt": "Vercel AI SDK"
+},
+{
+"img": "/connectors/199-pinecone.png",
+"alt": "Pinecone"
+},
+{
+"img": "/connectors/200-weights-and-biases.png",
+"alt": "Weights & Biases"
+},
+{
+"p": "200 tools. Each mark belongs to its owner and is shown to say what Hanzo connects to — not to imply any partnership or endorsement."
+}
+],
+[
+{
+"h2": "Need more than one resident bot?"
+},
+{
+"p": "Each plan includes the resident cloud bots it lists. For more bots, choose a plan that includes more."
+},
+{
+"a": "See the plans",
+"href": "/pricing"
+}
+],
+[
+{
+"p": "Agent Architecture & Pricing Model"
+},
+{
+"h2": "Why Hanzo Bot is built and priced this way"
+},
+{
+"p": "Designed around the real economics of autonomous resident agents: dedicated sandboxes, cost-efficient model tiering, and transparent, auditable memory."
+},
+{
+"h3": "Why a $100/mo entry floor?"
+},
+{
+"h3": "Routine work at 1/5th the token cost"
+},
+{
+"h3": "Zen Ultra for complex reasoning ($800/mo)"
+},
+{
+"h3": "Plain Markdown files you can inspect & edit"
+}
+],
+[
+{
+"p": "FAQ"
+},
+{
+"h2": "Questions"
+}
+],
+[
+{
+"h2": "Meet your first bot"
+},
+{
+"p": "A teammate you can trust with real work."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Chat Conversational AI",
+"href": "/cloud/chat"
+},
+{
+"a": "Search Retrieval & answers",
+"href": "/search"
+},
+{
+"a": "Crawl Web crawler",
+"href": "/crawl"
+}
+],
+[
+{
+"h2": "Get Bot"
+},
+{
+"p": "Connect your AI agents to every messaging channel"
+},
+{
+"a": "hanzoai/bot",
+"href": "https://github.com/hanzoai/bot"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

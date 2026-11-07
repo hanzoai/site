@@ -1,0 +1,521 @@
+[
+[
+{
+"h1": "The playground for humans + AI"
+},
+{
+"p": "Your people and your AI agents plan, build, and ship together — in one connected workspace."
+},
+{
+"li": "A channel for each team and project, direct messages, and threads that keep a decision next to the question that started it."
+},
+{
+"li": "Mention an agent and hand it the work. It answers in the channel with the work done: a pull request, a drafted reply, an updated deck."
+},
+{
+"li": "Switch between your company, a side project and your friends from one rail, each with its own channels, people and agents."
+},
+{
+"li": "Dedicated AI teammates configured with your repos, docs, and permissions."
+},
+{
+"a": "Open Hanzo Team",
+"href": "https://hanzo.team"
+},
+{
+"a": "Create your team",
+"href": "https://hanzo.team/start"
+},
+{
+"a": "Teams in the docs",
+"href": "https://docs.hanzo.ai/docs/usage/teams"
+},
+{
+"img": "/memoji/vi.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/su.svg",
+"alt": ""
+},
+{
+"img": "/memoji/opera.svg",
+"alt": ""
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Team from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Team in my project."
+}
+],
+[
+{
+"p": "What it is"
+},
+{
+"h2": "One workspace. Everything connected."
+},
+{
+"p": "Stop jumping between tools just to get work done."
+},
+{
+"h3": "Channels for every part of the work"
+},
+{
+"p": "A channel for each team and project, direct messages, and threads that keep a decision next to the question that started it."
+},
+{
+"h3": "Agents are teammates"
+},
+{
+"p": "Mention an agent and hand it the work. It answers in the channel with the work done: a pull request, a drafted reply, an updated deck."
+},
+{
+"h3": "Every organization you belong to"
+},
+{
+"p": "Switch between your company, a side project and your friends from one rail, each with its own channels, people and agents."
+}
+],
+[
+{
+"p": "Together"
+},
+{
+"h2": "Humans and agents, on the same work"
+},
+{
+"h3": "Coding"
+},
+{
+"p": "A bug report becomes a pull request; a person reviews it, the checks pass, and it ships, all in the channel."
+},
+{
+"h3": "Support"
+},
+{
+"p": "An agent drafts the reply, a person makes it warmer, and it goes out."
+},
+{
+"h3": "Email"
+},
+{
+"p": "The inbox is sorted and the replies are drafted in your voice. You approve them as a batch."
+},
+{
+"h3": "Fundraising"
+},
+{
+"p": "The deck and the model are built, the intros are drafted, and the meeting lands on the calendar."
+},
+{
+"h3": "Docs & Specs"
+},
+{
+"p": "Shared specifications stay linked to issues, pull requests, and channel decisions without drifting out of date."
+},
+{
+"h3": "Release Ops"
+},
+{
+"p": "Changelogs, CI status, and rollout checks post straight to the room where your engineers coordinate deploys."
+},
+{
+"a": "Meet the AI teammates",
+"href": "https://hanzo.team/agents"
+}
+],
+[
+{
+"p": "The rooms"
+},
+{
+"h2": "Everything the team works in"
+},
+{
+"h3": "Board"
+},
+{
+"p": "Cards in Backlog, Doing and Done, each with its owner, person or agent."
+},
+{
+"h3": "Drive"
+},
+{
+"p": "The team's documents and files, in folders."
+},
+{
+"h3": "Calendar"
+},
+{
+"p": "The week's meetings and agent routines on one schedule."
+},
+{
+"h3": "Meet"
+},
+{
+"p": "Calls with notes taken for you, in the same workspace as the work they are about."
+},
+{
+"h3": "Inbox"
+},
+{
+"p": "Every mention, thread reply, and review request collected in one triage queue."
+},
+{
+"h3": "Agents"
+},
+{
+"p": "Dedicated AI teammates configured with your repos, docs, and permissions."
+},
+{
+"a": "Open Hanzo Team",
+"href": "https://hanzo.team"
+}
+],
+[
+{
+"h2": "Ten everyday workflows your team hands off in a single mention."
+},
+{
+"p": "A human opens a channel or posts a quick explanation, mentions the right teammate, and gets finished work back — verified end-to-end by a second specialist before you merge or send."
+},
+{
+"img": "/images/models/enso.webp",
+"alt": ""
+},
+{
+"img": "/images/models/kai.webp",
+"alt": ""
+},
+{
+"img": "/images/models/zen.webp",
+"alt": ""
+},
+{
+"img": "/images/models/iro.webp",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/su.svg",
+"alt": ""
+},
+{
+"img": "/memoji/doc.svg",
+"alt": ""
+},
+{
+"img": "/memoji/opera.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/data.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sal.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/fin.svg",
+"alt": ""
+},
+{
+"img": "/memoji/data.svg",
+"alt": ""
+},
+{
+"img": "/memoji/law.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/cyber.svg",
+"alt": ""
+},
+{
+"img": "/memoji/des.svg",
+"alt": ""
+},
+{
+"img": "/memoji/mark.svg",
+"alt": ""
+},
+{
+"img": "/memoji/su.svg",
+"alt": ""
+},
+{
+"img": "/memoji/opera.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sal.svg",
+"alt": ""
+},
+{
+"img": "/memoji/fin.svg",
+"alt": ""
+},
+{
+"img": "/memoji/law.svg",
+"alt": ""
+},
+{
+"img": "/memoji/data.svg",
+"alt": ""
+},
+{
+"img": "/memoji/doc.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"a": "Learn more about Team",
+"href": "/team"
+},
+{
+"a": "Learn more about Bot",
+"href": "/bot"
+},
+{
+"a": "Open Hanzo Bot",
+"href": "https://hanzo.bot"
+},
+{
+"a": "Open Hanzo Team",
+"href": "https://hanzo.team"
+}
+],
+[
+{
+"h2": "Code channels where engineers, designers, and agents ship together."
+},
+{
+"p": "Every code channel pairs the conversation with a live Artifacts pane — Canvas root-cause writeups, unified branch diffs, and interactive previews that update as your agents and teammates iterate."
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"a": "Hanzo Team",
+"href": "/team"
+},
+{
+"a": "Hanzo Tag for Slack",
+"href": "/slack"
+},
+{
+"a": "Hanzo Tag Governance",
+"href": "/tag"
+},
+{
+"a": "Hanzo in Chrome",
+"href": "/chrome"
+},
+{
+"a": "Hanzo Bot",
+"href": "/bot"
+}
+],
+[
+{
+"p": "Leadership"
+},
+{
+"h2": "Led by builders. Driven by research."
+},
+{
+"p": "Hanzo is operated by a high-density team of systems architects, AI researchers, and compiler engineers. Instead of layers of bureaucracy, we stay close to the code — shipping open-source software and frontier models."
+},
+{
+"img": "/authors/antje-worring-portrait.jpg",
+"alt": "Antje Worring"
+},
+{
+"h3": "Antje Worring"
+},
+{
+"a": "antjeworr.ing",
+"href": "https://antjeworr.ing"
+},
+{
+"img": "/authors/zach-kelling-portrait.jpg",
+"alt": "Zach Kelling"
+},
+{
+"h3": "Zach Kelling"
+},
+{
+"a": "zeekay.io",
+"href": "https://zeekay.io"
+}
+],
+[
+{
+"p": "Hanzo Team"
+},
+{
+"h2": "One workspace for how your team actually works."
+},
+{
+"p": "Bring your projects, tasks, conversations, docs, meetings, and knowledge together."
+},
+{
+"a": "Create your team",
+"href": "https://hanzo.team/start"
+},
+{
+"a": "Open Hanzo Team",
+"href": "https://hanzo.team"
+}
+],
+[
+{
+"h2": "Get Team"
+},
+{
+"p": "Team workspace — channels, direct messages, agents as teammates"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,208 @@
+[
+[
+{
+"h1": "Research API and R&D Ops Board Supplemental Terms"
+},
+{
+"p": "Terms for the /v1/research registry, run ingestion, evidence integrity, durability states, and research-record rights."
+}
+],
+[
+{
+"p": "Draft. This document is not yet in force."
+},
+{
+"p": "Effective 2026-07-22 · Version 2026-07-22 · Previous version: none, this is the first."
+},
+{
+"h2": "Contents"
+},
+{
+"li": "1. Covered records",
+"href": "#1-covered-records"
+},
+{
+"li": "2. Permission to ingest and preserve",
+"href": "#2-permission-to-ingest-and-preserve"
+},
+{
+"li": "3. Submission authority",
+"href": "#3-submission-authority"
+},
+{
+"li": "4. Private by default",
+"href": "#4-private-by-default"
+},
+{
+"li": "5. Evidence integrity and corrections",
+"href": "#5-evidence-integrity-and-corrections"
+},
+{
+"li": "6. Local and cloud durability",
+"href": "#6-local-and-cloud-durability"
+},
+{
+"li": "7. Research integrity",
+"href": "#7-research-integrity"
+},
+{
+"li": "8. Rights in records and artifacts",
+"href": "#8-rights-in-records-and-artifacts"
+},
+{
+"li": "9. No guarantee of scientific validity",
+"href": "#9-no-guarantee-of-scientific-validity"
+},
+{
+"li": "10. Retention, deletion, and export",
+"href": "#10-retention-deletion-and-export"
+},
+{
+"li": "11. Contact",
+"href": "#11-contact"
+}
+],
+[
+{
+"p": "These Supplemental Terms apply to /v1/research , the Hanzo Research registry, research uploaders, project dashboards, R&D Ops Board, run artifacts, and related APIs and interfaces."
+},
+{
+"code": "/v1/research"
+},
+{
+"h2": "1. Covered records"
+},
+{
+"p": "A “Research Run Record” may include:"
+},
+{
+"li": "project, experiment, run, task, attempt, and artifact identifiers;"
+},
+{
+"li": "project owner, organization, repository, revision, branch, and build information;"
+},
+{
+"li": "run status, research hypothesis, acceptance gate, and planned follow-up;"
+},
+{
+"li": "model, provider, dataset, benchmark, prompt, policy, and workflow versions;"
+},
+{
+"li": "configurations, seeds, environment, hardware, software, and dependency information;"
+},
+{
+"li": "results, metrics, errors, logs, traces, profiles, checkpoints, and artifacts;"
+},
+{
+"li": "attempts, tokens, costs, latency, throughput, energy, memory, and reliability;"
+},
+{
+"li": "consent, license, access, visibility, and provenance information; and"
+},
+{
+"li": "integrity hashes, timestamps, signatures, supersession links, and canonical/latest status."
+},
+{
+"h2": "2. Permission to ingest and preserve"
+},
+{
+"p": "The submitting user or organization authorizes Hanzo to receive, validate, transform into a standard schema, deduplicate, store, index, compare, reproduce, and preserve submitted Research Run Records for the selected private or public purpose. Stable IDs may make repeated uploads idempotent."
+},
+{
+"p": "Hanzo may preserve nonpersonal run metadata, measurements, failure records, provenance, and integrity information for the life of the research registry. Content containing personal data, Customer Content, confidential information, licensed datasets, model Outputs, or secrets remains governed by the applicable agreement and retention policy."
+},
+{
+"h2": "3. Submission authority"
+},
+{
+"p": "The submitter represents that it has authority to upload the record and grant the selected processing and visibility rights. The submitter must not upload credentials, private keys, unsupported regulated data, third-party confidential material, hidden benchmark items, model weights, datasets, or Outputs contrary to license or contract."
+},
+{
+"h2": "4. Private by default"
+},
+{
+"p": "Research Run Records and artifacts are private to the submitting user or organization by default. Upload does not authorize public display, model training, or Verified Commons publication."
+},
+{
+"p": "A separate visibility action is required to make a project, run, metric, artifact, or result public. The interface must identify what will be displayed and must check benchmark, model-provider, dataset, privacy, and confidentiality rights before publication."
+},
+{
+"h2": "5. Evidence integrity and corrections"
+},
+{
+"p": "Hanzo may use append-only event history, content hashes, signatures, restricted mutation controls, and replicated storage to protect evidentiary integrity. The term “immutable” describes version-preserved evidence; it does not prevent:"
+},
+{
+"li": "correction through a linked superseding record;"
+},
+{
+"li": "marking a record invalid, withdrawn, retracted, or disputed;"
+},
+{
+"li": "restricting access to protect rights or security;"
+},
+{
+"li": "deleting personal data or content when legally or contractually required; or"
+},
+{
+"li": "changing which valid run is designated canonical or latest."
+},
+{
+"p": "Hanzo will not silently rewrite a material historical result. A dashboard may present the latest canonical measurement while retaining the audit history."
+},
+{
+"h2": "6. Local and cloud durability"
+},
+{
+"p": "An uploader acknowledgement means only the durability state identified in that acknowledgement. Hanzo should distinguish local-recorded, upload-pending, cloud-confirmed, replicated, backup-confirmed, and recovery-tested states. Hanzo does not guarantee that a run is “never lost” unless the applicable plan expressly includes that guarantee and the run reached the stated durable state."
+},
+{
+"h2": "7. Research integrity"
+},
+{
+"p": "Submitters must record negative, failed, interrupted, and superseded runs honestly. They may not fabricate evidence, omit known material protocol deviations, relabel provider-reported results as Hanzo-executed, or manipulate endpoints because an evaluation is occurring."
+},
+{
+"p": "Hanzo may annotate provenance gaps, conflicts, faults, contamination, incomplete samples, and protocol limitations. Good-faith corrections do not erase the original evidence trail."
+},
+{
+"h2": "8. Rights in records and artifacts"
+},
+{
+"p": "Each party retains rights in its preexisting code, datasets, models, content, and confidential information. To the extent permitted by law, Hanzo owns its registry schema, evaluation software, normalized compilations, integrity system, dashboards, and aggregate analyses. Facts and third-party materials remain subject to their underlying rights."
+},
+{
+"p": "The submitter grants Hanzo the limited license necessary to operate the selected private or public registry mode. Generalized model training requires the separate Research and Data Contribution Terms."
+},
+{
+"h2": "9. No guarantee of scientific validity"
+},
+{
+"p": "Registry status means that evidence was recorded under the shown provenance; it is not certification that a hypothesis, benchmark, model, provider claim, or causal conclusion is correct. Results remain limited by protocol, sampling, nondeterminism, rights, data quality, provider drift, and execution environment."
+},
+{
+"h2": "10. Retention, deletion, and export"
+},
+{
+"p": "Authorized users may export organization records in a supported format. Deletion requests are subject to applicable law, contractual commitments, research integrity, and legal holds. Where raw content must be deleted but a nonpersonal measurement may lawfully remain, Hanzo may preserve the measurement and deletion/provenance record."
+},
+{
+"h2": "11. Contact"
+},
+{
+"p": "Research: [email protected] Privacy: [email protected] Security: [email protected]"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#a6d4c3d5c3c7d4c5cee6cec7c8dcc988c7cf"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#ea9a98839c8b8993aa828b849085c48b83"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#5b283e382e29322f221b333a352134753a32"
+}
+]
+]

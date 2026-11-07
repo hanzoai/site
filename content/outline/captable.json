@@ -1,0 +1,357 @@
+[
+[
+{
+"h1": "Hanzo Cap Table"
+},
+{
+"p": "Who owns what, and what happens to that when you raise again."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/cli/captable"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "Common, preferred, and custom share classes, with authorized shares, par value and voting rights."
+},
+{
+"p": "ISO and NSO, with the cliff and the schedule attached to the grant."
+},
+{
+"p": "Caps, discounts and interest held as terms, not as a note in a folder."
+},
+{
+"p": "What they convert into at a given price is a calculation you can run before you agree to it."
+},
+{
+"p": "What everyone owns once the options and the notes convert."
+},
+{
+"p": "At an exit price, who gets paid and in what order."
+},
+{
+"li": "Share classes"
+},
+{
+"li": "Option grants"
+},
+{
+"li": "SAFEs and notes"
+},
+{
+"li": "Run the round"
+},
+{
+"li": "Fully diluted"
+},
+{
+"li": "Waterfall"
+}
+],
+[
+{
+"h2": "The instruments, modelled"
+},
+{
+"p": "A spreadsheet can hold these numbers. It cannot tell you what they become at the next price."
+},
+{
+"h3": "Ownership, fully diluted"
+},
+{
+"p": "The number that matters is not how many shares exist, it is what everyone owns once the options and the notes convert. That is the default view here."
+},
+{
+"h3": "Share Classes"
+},
+{
+"p": "Common, preferred, and custom share classes. Track authorized shares, par value, and voting rights."
+},
+{
+"h3": "Option grants"
+},
+{
+"p": "ISO and NSO, with the cliff and the schedule attached to the grant. Vested-to-date is computed from the dates rather than typed in and left to rot."
+},
+{
+"h3": "SAFEs and notes"
+},
+{
+"p": "Caps, discounts and interest held as terms, not as a note in a folder. What they convert into at a given price is a calculation you can run before you agree to it."
+},
+{
+"h3": "Equity Plans"
+},
+{
+"p": "Option pools and equity incentive plans. Manage board-approved pools with real-time utilization tracking."
+},
+{
+"h3": "Built-in E-Signing"
+},
+{
+"p": "Integrated document signing for equity grants, board consents, and stock purchase agreements."
+},
+{
+"h3": "Stakeholders"
+},
+{
+"p": "Founders, employees, investors and advisors, each seeing their own holding and nobody else's. The exercise window after someone leaves is a date the system knows, not one they have to remember."
+},
+{
+"h3": "Waterfall"
+},
+{
+"p": "At an exit price, who gets paid and in what order. Preferences mean the founders' share is not their percentage, and this is where that becomes visible."
+},
+{
+"h3": "Audit Trail"
+},
+{
+"p": "Complete audit history for every transaction. SOC 2 compatible controls and data integrity."
+},
+{
+"h3": "SSO Authentication"
+},
+{
+"p": "Passkeys, Google SSO, and Hanzo IAM single sign-on for secure access."
+}
+],
+[
+{
+"h2": "Simple, Transparent Pricing"
+},
+{
+"p": "Free and open source forever. Self-host or use our managed cloud."
+},
+{
+"h3": "Community"
+},
+{
+"p": "Self-host and own your data. Full source code on GitHub."
+},
+{
+"a": "Get on GitHub",
+"href": "https://github.com/hanzoai/"
+},
+{
+"li": "Unlimited stakeholders"
+},
+{
+"li": "Share classes & options"
+},
+{
+"li": "SAFEs & convertible notes"
+},
+{
+"li": "Vesting schedules"
+},
+{
+"li": "Basic reporting"
+},
+{
+"li": "Community support"
+},
+{
+"h3": "Startup"
+},
+{
+"p": "For early-stage startups managing their first cap table."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Community"
+},
+{
+"li": "Managed cloud hosting"
+},
+{
+"li": "E-signing for grants"
+},
+{
+"li": "Waterfall analysis"
+},
+{
+"li": "409A valuation tracking"
+},
+{
+"li": "Email support"
+},
+{
+"li": "Up to 25 stakeholders"
+},
+{
+"h3": "Growth"
+},
+{
+"p": "For growing companies with complex equity structures."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Startup"
+},
+{
+"li": "Unlimited stakeholders"
+},
+{
+"li": "Advanced equity plans"
+},
+{
+"li": "Board consent workflows"
+},
+{
+"li": "Data room integration"
+},
+{
+"li": "Custom branding"
+},
+{
+"li": "SSO / SAML"
+},
+{
+"li": "Priority support"
+},
+{
+"h3": "Enterprise"
+},
+{
+"p": "For companies with advanced compliance and security needs."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Growth"
+},
+{
+"li": "Dedicated infrastructure"
+},
+{
+"li": "Custom SLA"
+},
+{
+"li": "On-premise deployment"
+},
+{
+"li": "Compliance certifications"
+},
+{
+"li": "Dedicated account manager"
+},
+{
+"li": "24/7 phone support"
+}
+],
+[
+{
+"h3": "Built on Open Source"
+},
+{
+"p": "Hanzo Cap Table is built on Captable, Inc. (OpenCap), the open-source alternative to Carta, Pulley, and AngelList. We contribute back to the community and extend it with Hanzo IAM integration, e-signing, and enterprise features."
+},
+{
+"a": "Captable, Inc.",
+"href": "https://github.com/captableinc/captable"
+},
+{
+"a": "hanzoai/captable",
+"href": "https://github.com/hanzoai/captable"
+},
+{
+"a": "Upstream: captableinc/captable",
+"href": "https://github.com/captableinc/captable"
+}
+],
+[
+{
+"h2": "Put the current table in, then model the round"
+},
+{
+"p": "Import what you have today. The useful part starts when you ask what the next price does to it."
+},
+{
+"h3": "Get Started"
+},
+{
+"p": "Set up your cap table in minutes"
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"h3": "Documentation"
+},
+{
+"p": "Explore our guides and API references"
+},
+{
+"a": "View Docs",
+"href": "https://docs.hanzo.ai/docs/cli/captable"
+},
+{
+"h3": "For Developers"
+},
+{
+"p": "Self-host or integrate via API"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/captable"
+}
+],
+[
+{
+"h3": "Need a Custom Solution?"
+},
+{
+"p": "Our team can help you set up and migrate your cap table with advanced compliance and security features."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "Get started with Cap Table"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/captable"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/captable"
+}
+],
+[
+{
+"h2": "Get Captable"
+},
+{
+"p": "Cap table + equity management"
+},
+{
+"a": "hanzoai/captable",
+"href": "https://github.com/hanzoai/captable"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

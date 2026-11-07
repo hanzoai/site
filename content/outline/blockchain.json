@@ -1,0 +1,183 @@
+[
+[
+{
+"h1": "One API key, every chain. And an agent that can use it."
+},
+{
+"p": "RPC endpoints, token and NFT data, smart wallets, and webhooks — reached the same way whichever chain you are on. Reading a balance on Ethereum and reading one on Solana are the same call with a different argument, so the chain becomes a parameter instead of a rewrite. The same calls are exposed as tools, so an agent can make them too."
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Pricing"
+},
+{
+"p": "Start on the free tier. No credit card required."
+}
+],
+[
+{
+"h2": "The pieces"
+},
+{
+"p": "Each one answers a question you would otherwise run a node to answer. They share a key, an address scheme, and a chain argument, so reaching for a second one costs you a line."
+},
+{
+"a": "Hanzo Chains Multi-chain RPC endpoints & infrastructure Get started",
+"href": "/blockchain/chains"
+},
+{
+"a": "Chain Directory RPC endpoints, chain IDs and explorers for every network Get started",
+"href": "/blockchain/directory"
+},
+{
+"a": "Indexer Query blockchain data with GraphQL Get started",
+"href": "/blockchain/indexer"
+},
+{
+"a": "Smart Wallets ERC-4337 account abstraction wallets Get started",
+"href": "/blockchain/wallets"
+},
+{
+"a": "Rollups L2 scaling & rollup infrastructure Get started",
+"href": "/blockchain/rollups"
+},
+{
+"a": "Token API ERC-20 balances, prices & metadata Get started",
+"href": "/blockchain/tokens"
+},
+{
+"a": "NFT API NFT metadata, ownership & transfers Get started",
+"href": "/blockchain/nft"
+},
+{
+"a": "Transfers API Track token & NFT transfers Get started",
+"href": "/blockchain/transfers"
+},
+{
+"a": "Prices API Real-time & historical price feeds Get started",
+"href": "/blockchain/tokens"
+},
+{
+"a": "DEX API Swap routing & liquidity aggregation Get started",
+"href": "/blockchain/exchange"
+},
+{
+"a": "Oracle API On-chain price oracles & data feeds Get started",
+"href": "/blockchain/oracle"
+},
+{
+"a": "Webhooks Real-time blockchain event notifications Get started",
+"href": "/blockchain/webhooks"
+},
+{
+"a": "Websockets Live blockchain data streaming Get started",
+"href": "/blockchain/websockets"
+},
+{
+"a": "Bundler API ERC-4337 UserOp bundling service Get started",
+"href": "/blockchain/bundler"
+},
+{
+"a": "Gas Manager Sponsor gas for your users Get started",
+"href": "/blockchain/gas"
+},
+{
+"a": "Simulation API UserOp & transaction simulation Get started",
+"href": "/blockchain/bundler"
+},
+{
+"a": "Debug API Transaction tracing & debugging Get started",
+"href": "/blockchain/explorer"
+},
+{
+"a": "Trace API Internal transaction traces Get started",
+"href": "/blockchain/explorer"
+},
+{
+"a": "Payments Crypto payments gateway Get started",
+"href": "/blockchain/pay"
+}
+],
+[
+{
+"h2": "What sits behind the key"
+},
+{
+"p": "An app that touches a chain ends up needing most of this — a node to read from, somewhere to keep keys, a way to hear about a transaction that already happened. Open a group to see what it covers."
+},
+{
+"button": "Blockchain Nodes & Data Read a chain without running a node for it"
+},
+{
+"button": "Wallet & Key Management Where the keys live, and what has to happen before one signs"
+},
+{
+"button": "On-Chain Payments Take a stablecoin the way you would take a card"
+},
+{
+"button": "Smart Contract Management Ship a contract to several chains and keep track of what you shipped"
+},
+{
+"button": "Decentralized Storage Persistent, censorship-resistant data storage"
+},
+{
+"button": "Oracle Services Bring off-chain data on-chain"
+},
+{
+"button": "Blockchain Indexing Ask a question a chain cannot answer in one call"
+},
+{
+"button": "Cross-Chain Infrastructure Bridge assets and data between chains"
+},
+{
+"button": "Compliance & Fiat Enterprise compliance and fiat rails"
+}
+],
+[
+{
+"h2": "An agent with an address."
+},
+{
+"p": "These calls are exposed as tools, so an agent can make them the way you would. It reads a balance, builds a transaction, and signs under whatever policy you put on the key — the same policy that governs a person. What an agent may spend is a rule on the wallet, not a promise in a prompt."
+},
+{
+"li": "AI agents that can send on-chain transactions"
+},
+{
+"li": "Natural language smart contract interaction"
+},
+{
+"li": "Automated DeFi strategies with AI optimization"
+},
+{
+"li": "Cross-chain portfolio management"
+},
+{
+"code": "import { Hanzo } from \" @hanzo/ai \" ; import { Wallet } from \" @hanzo/blockchain \" ; const agent = new Hanzo. Agent ({ model : \" claude-sonnet-4-6 \" , tools : [ Wallet.tools ], }); // Agent can now execute on-chain await agent. run ( ` Check my ETH balance on Ethereum mainnet, then swap 0.1 ETH for USDC on Uniswap if the price is favorable. ` );"
+}
+],
+[
+{
+"h2": "The chains"
+},
+{
+"p": "Adding one is our work, not yours — the call you already wrote takes a different argument."
+}
+],
+[
+{
+"h2": "Make the first call"
+},
+{
+"p": "A key from the console reaches the RPC endpoints, the token and NFT data, the wallets and the webhooks. Pick a chain and read something. No credit card required."
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Pricing"
+}
+]
+]

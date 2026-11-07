@@ -1,0 +1,151 @@
+[
+[
+{
+"h1": "Models"
+},
+{
+"p": "Every model behind one endpoint and one key."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Models",
+"href": "https://docs.hanzo.ai/docs/models"
+},
+{
+"li": "Company The legal body: formation, cap table, documents and filings, as operations.",
+"href": "/products/company"
+},
+{
+"li": "Agents Workers the company keeps: a model, instructions, tools and a budget.",
+"href": "/products/agents"
+},
+{
+"li": "Models Every model behind one endpoint and one key.",
+"href": "/products/models"
+},
+{
+"li": "Memory What the company knows, and when it knew it.",
+"href": "/products/memory"
+},
+{
+"li": "Identity Who is acting — a person, a program or an agent — and what it may reach.",
+"href": "/products/identity"
+},
+{
+"li": "Machines Real computers, leased by the org, for agents and for the software they ship.",
+"href": "/products/machines"
+},
+{
+"a": "Record Every act on every layer, by a person or an agent, in one trail.",
+"href": "/products/record"
+}
+],
+[
+{
+"p": "Send a request to api.hanzo.ai and name a model. The same request reaches Enso, Zen or a model another lab serves, in the wire format your client already speaks — OpenAI chat completions and responses, or Anthropic messages."
+}
+],
+[
+{
+"h2": "API"
+},
+{
+"p": "Operations on api.hanzo.ai. One key reaches every layer."
+},
+{
+"table": [
+[
+"Method",
+"Path",
+"What it does"
+],
+[
+"GET",
+"/v1/models",
+"Returns the models the routing table serves."
+],
+[
+"POST",
+"/v1/chat/completions",
+"The OpenAI-compatible chat completions API."
+],
+[
+"POST",
+"/v1/responses",
+"The OpenAI-compatible responses API."
+],
+[
+"POST",
+"/v1/messages",
+"The Anthropic Messages API."
+],
+[
+"POST",
+"/v1/embeddings",
+"OpenAI-compatible embeddings."
+]
+]
+}
+],
+[
+{
+"h2": "Try it"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"model\": \"zen5\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello\"}]} '"
+}
+],
+[
+{
+"h2": "Docs"
+},
+{
+"a": "Models",
+"href": "https://docs.hanzo.ai/docs/models"
+},
+{
+"a": "Chat completions",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-chat-completions"
+}
+],
+[
+{
+"h2": "On this site"
+},
+{
+"a": "Model catalog",
+"href": "/models"
+},
+{
+"a": "Enso",
+"href": "/enso"
+},
+{
+"a": "Zen",
+"href": "/zen"
+},
+{
+"a": "One API",
+"href": "/api"
+},
+{
+"a": "Engine",
+"href": "/engine"
+},
+{
+"a": "Gateway",
+"href": "/gateway"
+},
+{
+"a": "Guard",
+"href": "/guard"
+},
+{
+"a": "Jin",
+"href": "/jin"
+}
+]
+]

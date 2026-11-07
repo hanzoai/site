@@ -1,0 +1,81 @@
+[
+[
+{
+"h1": "How we compare, row by row, with the source on every row"
+},
+{
+"p": "Each page sets a Hanzo product beside a named alternative."
+},
+{
+"a": "Which API should you route your model calls through?",
+"href": "/compare/model-routing"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "Enso: 600+. OpenRouter: 500+ (80+ providers). Portkey: 1,600+. LiteLLM: 1,800+ (140+ providers)."
+},
+{
+"p": "Enso: Yes — /v1/chat/completions. OpenRouter: Yes. Portkey: Yes. LiteLLM: Yes."
+},
+{
+"p": "Enso: Yes — same key. OpenRouter: Yes — Anthropic Messages format, tools and extended thinking. Portkey: Yes — /v1/messages routes to any of their models. LiteLLM: Yes — serves the format at /v1/messages."
+},
+{
+"p": "Enso: Yes — model calls are quoted from above before they happen, and an agent that would breach its cap is refused rather than discovered on an invoice. OpenRouter: No — blocks once a limit is reached (403), Enterprise plan only. No pre-flight quote published.. Portkey: No — budget limit expires the key once reached, Enterprise plan. No pre-flight quote published.. LiteLLM: No — caps budgets and stops at the cap. No pre-flight quote published.."
+},
+{
+"p": "Enso: The router beside single models from other labs on the same 198 questions, every row a research run with its accuracy and what its tokens cost at list prices. OpenRouter: not measured by us. Portkey: not measured by us. LiteLLM: not measured by us."
+},
+{
+"p": "Enso: Yes — GPQA-Diamond, 198 graduate-level questions, every row a research run. OpenRouter: No — their Benchmarks API scores the models, not the router. Portkey: Not published. LiteLLM: Yes — Auto Routing Cost Ladders: 58.2% savings, 46.8% win rate vs flagship."
+},
+{
+"p": "Enso: Yes — the whole cloud is one binary and one API, on your own Kubernetes or your laptop. OpenRouter: No — a hosted service. Portkey: Self-hosting offered at enterprise tier. LiteLLM: Yes — open source, self-hosted free forever."
+},
+{
+"li": "Models reachable"
+},
+{
+"li": "OpenAI-compatible endpoint"
+},
+{
+"li": "Native Anthropic /v1/messages"
+},
+{
+"li": "Cost known before the call runs"
+},
+{
+"li": "GPQA-Diamond, run by us"
+},
+{
+"li": "Routing quality published by the vendor"
+},
+{
+"li": "Runs on your own infrastructure"
+}
+],
+[
+{
+"h2": "Comparisons"
+},
+{
+"li": "Which API should you route your model calls through? — Hanzo Enso against OpenRouter, Portkey, LiteLLM .",
+"href": "/compare/model-routing"
+}
+],
+[
+{
+"h2": "A different question"
+},
+{
+"p": "If what you are weighing is whether to run it yourself rather than buy it, that page is separate."
+},
+{
+"a": "Buy it, or run it",
+"href": "/comparison"
+}
+]
+]

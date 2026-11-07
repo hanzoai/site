@@ -1,0 +1,113 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "Z.ai",
+"href": "/models/z-ai"
+},
+{
+"h1": "GLM 5V Turbo"
+},
+{
+"p": "GLM-5V-Turbo is Z.ai’s first native multimodal agent foundation model, built for vision-based coding and agent-driven tasks."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Try in Chat",
+"href": "/chat"
+}
+],
+[
+{
+"h2": "Specifications"
+}
+],
+[
+{
+"h2": "Quick start"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "cURL"
+},
+{
+"button": "Go"
+},
+{
+"code": "import OpenAI from ' openai ' const client = new OpenAI ({ apiKey : process.env.HANZO_API_KEY , baseURL : ' https://api.hanzo.ai/v1 ' }) const response = await client.chat.completions. create ({ model : ' z-ai/glm-5v-turbo ' , messages : [{ role : ' user ' , content : ' Hello! ' }] }) console. log ( response.choices [ 0 ] .message.content )"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( api_key=os . environ [ \" HANZO_API_KEY \" ], base_url= \" https://api.hanzo.ai/v1 \" ) response = client . chat . completions . create ( model= \" z-ai/glm-5v-turbo \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }] ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' { \"model\": \"z-ai/glm-5v-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+},
+{
+"code": "package main import ( \" context \" \" fmt \" \" os \" \" github.com/sashabaranov/go-openai \" ) func main () { cfg := openai . DefaultConfig ( os . Getenv ( \" HANZO_API_KEY \" )) cfg . BaseURL = \" https://api.hanzo.ai/v1 \" client := openai . NewClientWithConfig ( cfg ) resp , _ := client . CreateChatCompletion ( context . Background (), openai . ChatCompletionRequest { Model : \" z-ai/glm-5v-turbo \" , Messages : [] openai . ChatCompletionMessage { { Role : openai . ChatMessageRoleUser , Content : \" Hello! \" }, }, }, ) fmt . Println ( resp . Choices [ 0 ]. Message . Content ) }"
+}
+],
+[
+{
+"h2": "More from Z.ai"
+},
+{
+"a": "GLM 4.5 131K GLM-4.5 is our latest flagship foundation model, purpose-built for agent-based applications. It leverages a Mixture-of-Experts (MoE) architecture and supports a context length of up to 128k tokens. GLM-4.5 delivers significantly...",
+"href": "/models/z-ai/glm-4.5"
+},
+{
+"a": "GLM 4.5 Air 131K GLM-4.5-Air is the lightweight variant of our latest flagship model family, also purpose-built for agent-centric applications. Like GLM-4.5, it adopts the Mixture-of-Experts (MoE) architecture but with a more compact parameter...",
+"href": "/models/z-ai/glm-4.5-air"
+},
+{
+"a": "GLM 4.5V 66K GLM-4.5V is a vision-language foundation model for multimodal agent applications. Built on a Mixture-of-Experts (MoE) architecture with 106B parameters and 12B activated parameters, it achieves state-of-the-art results in video understanding,...",
+"href": "/models/z-ai/glm-4.5v"
+},
+{
+"a": "GLM 4.6 205K Compared with GLM-4.5, this generation brings several key improvements: Longer context window: The context window has been expanded from 128K to 200K tokens, enabling the model to handle more complex...",
+"href": "/models/z-ai/glm-4.6"
+},
+{
+"a": "GLM 4.6V 131K GLM-4.6V is a large multimodal model designed for high-fidelity visual understanding and long-context reasoning across images, documents, and mixed media. It supports up to 128K tokens, processes complex page layouts...",
+"href": "/models/z-ai/glm-4.6v"
+},
+{
+"a": "GLM 4.7 205K GLM-4.7 is Z.ai’s latest flagship model, featuring upgrades in two key areas: enhanced programming capabilities and more stable multi-step reasoning/execution. It demonstrates significant improvements in executing complex agent tasks while...",
+"href": "/models/z-ai/glm-4.7"
+},
+{
+"a": "View all Z.ai models →",
+"href": "/models/z-ai"
+}
+],
+[
+{
+"h2": "Use GLM 5V Turbo via Hanzo AI"
+},
+{
+"p": "One API key. Every major model. OpenAI-compatible. Start free."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

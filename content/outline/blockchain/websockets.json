@@ -1,0 +1,215 @@
+[
+[
+{
+"h1": "Websockets"
+},
+{
+"p": "Live blockchain data streaming"
+},
+{
+"p": "Real-time bidirectional communication with blockchain networks. Subscribe to blocks, transactions, logs, and pending transactions with persistent WebSocket connections."
+},
+{
+"h3": "Persistent Connections"
+},
+{
+"p": "Long-lived WebSocket connections with automatic reconnection."
+},
+{
+"h3": "Real-time Streaming"
+},
+{
+"p": "Instant delivery of blocks, transactions, and events."
+},
+{
+"h3": "Pending Transactions"
+},
+{
+"p": "Subscribe to mempool for pending transaction visibility."
+},
+{
+"h3": "Low Latency"
+},
+{
+"p": "Sub-100ms latency for time-sensitive applications."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Persistent Connections"
+},
+{
+"p": "Long-lived WebSocket connections with automatic reconnection."
+},
+{
+"h3": "Real-time Streaming"
+},
+{
+"p": "Instant delivery of blocks, transactions, and events."
+},
+{
+"h3": "Pending Transactions"
+},
+{
+"p": "Subscribe to mempool for pending transaction visibility."
+},
+{
+"h3": "Low Latency"
+},
+{
+"p": "Sub-100ms latency for time-sensitive applications."
+},
+{
+"h3": "Multi-chain Streams"
+},
+{
+"p": "Stream from multiple chains on a single connection."
+},
+{
+"h3": "Authenticated Sessions"
+},
+{
+"p": "Secure connections with API key authentication."
+},
+{
+"h3": "Auto-reconnect"
+},
+{
+"p": "Automatic reconnection with message replay on disconnect."
+},
+{
+"h3": "Filtered Subscriptions"
+},
+{
+"p": "Subscribe to specific addresses, topics, or event types."
+},
+{
+"h3": "Connection Metrics"
+},
+{
+"p": "Monitor connection health and message throughput."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; /// @title EventEmitter - Structured events for WebSocket streaming /// @notice Emit indexed events for efficient WebSocket subscriptions contract EventEmitter { // Indexed events for real-time streaming via WebSockets event BlockProcessed ( uint256 indexed blockNumber, bytes32 indexed blockHash, uint256 timestamp, uint256 gasUsed ); event TransactionDetected ( bytes32 indexed txHash, address indexed from, address indexed to, uint256 value, uint256 gasPrice ); event ContractEvent ( address indexed contractAddress, bytes32 indexed eventS"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Trading Applications"
+},
+{
+"p": "Real-time price feeds and order book updates for DEXs."
+},
+{
+"h3": "Mempool Monitoring"
+},
+{
+"p": "Track pending transactions for MEV and arbitrage."
+},
+{
+"h3": "Live Dashboards"
+},
+{
+"p": "Real-time blockchain activity and network stats."
+},
+{
+"h3": "Bot Infrastructure"
+},
+{
+"p": "High-frequency trading and automated strategies."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Websockets"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Websockets"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

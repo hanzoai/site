@@ -1,0 +1,76 @@
+[
+[
+{
+"h1": "hanzo-dart"
+},
+{
+"p": "The public repositories of hanzo-dart on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "hanzo-dart on GitHub",
+"href": "https://github.com/hanzo-dart"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-dart"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 0 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-dart, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-dart/sdk Dart 0 0 hanzoai — the generated Dart client for the Hanzo Cloud API Pushed Sep 24, 2026 25 commits this year Forge",
+"href": "https://github.com/hanzo-dart/sdk"
+},
+{
+"li": "hanzo-dart/base Dart 0 0 hanzo — Dart client for Hanzo Base (reactive backend, Hanzo IAM-native auth) Pushed Sep 11, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzo-dart/base"
+},
+{
+"li": "hanzo-dart/hanzoai Dart 0 0 hanzoai — Dart client for the Hanzo Cloud /v1/ platform API (agents, sessions, machines), Hanzo IAM-native auth Pushed Sep 9, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzo-dart/hanzoai"
+}
+]
+]

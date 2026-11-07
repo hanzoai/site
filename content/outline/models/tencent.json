@@ -1,0 +1,84 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Tencent Models via Hanzo AI"
+},
+{
+"p": "8 models available"
+},
+{
+"p": "Access all 8 Tencent models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Hunyuan A13B Instruct 131K Hunyuan-A13B is a 13B active parameter Mixture-of-Experts (MoE) language model developed by Tencent, with a total parameter count of 80B and support for reasoning via Chain-of-Thought. It offers competitive benchmark... text",
+"href": "/models/tencent/hunyuan-a13b-instruct"
+},
+{
+"a": "Hy-MT2-1.8B 8K Hy-MT2-1.8B is a compact 1.8B-parameter translation model from Tencent. It supports 33 language pairs and five Chinese dialect and minority-language pairs, with workflows for structured, delimiter-based, contextual, glossary-based, and style-guided... text",
+"href": "/models/tencent/hy-mt2-1.8b"
+},
+{
+"a": "Hy-MT2-30B-A3B 8K Hy-MT2-30B-A3B is Tencent's flagship translation model in the Hy-MT2 family. It supports 33 language pairs and five Chinese dialect and minority-language pairs, with workflows for structured, delimiter-based, contextual, glossary-based, and... text",
+"href": "/models/tencent/hy-mt2-30b-a3b"
+},
+{
+"a": "Hy-MT2-7B 8K Hy-MT2-7B is a 7B-parameter translation model from Tencent. It supports 33 language pairs and five Chinese dialect and minority-language pairs, with workflows for structured, delimiter-based, contextual, glossary-based, and style-guided translation. text",
+"href": "/models/tencent/hy-mt2-7b"
+},
+{
+"a": "Hy3 262K Hy3 is a 295B-parameter Mixture-of-Experts model from Tencent (21B active, 192 experts with top-8 routing) built for reasoning, agentic workflows, and real-world production use. It supports a configurable reasoning effort:... text",
+"href": "/models/tencent/hy3"
+},
+{
+"a": "Hy3 preview 262K Hy3 preview is a high-efficiency Mixture-of-Experts model from Tencent designed for agentic workflows and production use. It supports configurable reasoning levels across disabled, low, and high modes, allowing it to... text",
+"href": "/models/tencent/hy3-preview"
+},
+{
+"a": "Hy4 1M The official release of Hy4 delivers comprehensive and substantial improvements over Hy4 Preview, with particularly strong gains in agentic capabilities and performance across a wide range of long-horizon, real-world productivity... text",
+"href": "/models/tencent/hy4"
+},
+{
+"a": "Hy4 preview 1M Tencent: Hy4 preview is a mixture-of-experts model from Tencent, with 49B active parameters out of 770B total. It is designed for coding agents, complex tool-use workflows, and productivity tasks that... text",
+"href": "/models/tencent/hy4-preview"
+}
+],
+[
+{
+"h2": "Use Tencent models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

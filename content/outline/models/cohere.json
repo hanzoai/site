@@ -1,0 +1,76 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Cohere Models via Hanzo AI"
+},
+{
+"p": "6 models available"
+},
+{
+"p": "Access all 6 Cohere models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Command A 256K Command A is an open-weights 111B parameter model with a 256k context window focused on delivering great performance across agentic, multilingual, and coding use cases. Compared to other leading proprietary... text",
+"href": "/models/cohere/command-a"
+},
+{
+"a": "Command A+ 192K Command A+ is Cohere's flagship model for enterprise agentic workflows. It accepts text and image inputs with a 192K context window, supports native tool calling with strict tool schemas, structured... text",
+"href": "/models/cohere/command-a-plus"
+},
+{
+"a": "Command R (08-2024) 128K command-r-08-2024 is an update of the [Command R](/models/cohere/command-r) with improved performance for multilingual retrieval-augmented generation (RAG) and tool use. More broadly, it is better at math, code and reasoning and... text",
+"href": "/models/cohere/command-r-08-2024"
+},
+{
+"a": "Command R+ (08-2024) 128K command-r-plus-08-2024 is an update of the [Command R+](/models/cohere/command-r-plus) with roughly 50% higher throughput and 25% lower latencies as compared to the previous Command R+ version, while keeping the hardware footprint... text",
+"href": "/models/cohere/command-r-plus-08-2024"
+},
+{
+"a": "Command R7B (12-2024) 128K Command R7B (12-2024) is a small, fast update of the Command R+ model, delivered in December 2024. It excels at RAG, tool use, agents, and similar tasks requiring complex reasoning... text",
+"href": "/models/cohere/command-r7b-12-2024"
+},
+{
+"a": "North Mini Code (free) 256K North Mini Code is Cohere's first agentic coding model and the debut of its North family. A sparse mixture-of-experts model with 30B total parameters and 3B active, it is optimized... text",
+"href": "/models/cohere/north-mini-code:free"
+}
+],
+[
+{
+"h2": "Use Cohere models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

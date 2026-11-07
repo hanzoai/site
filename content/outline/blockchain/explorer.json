@@ -1,0 +1,209 @@
+[
+[
+{
+"h1": "Hanzo Explorer"
+},
+{
+"p": "One explorer for every chain"
+},
+{
+"p": "An explorer for Lux and every chain connected to it. Search transactions, decode contract calls, and query on-chain data."
+},
+{
+"h3": "Multi-Chain Support"
+},
+{
+"p": "Explore Lux, Ethereum, Polygon, and all integrated chains from one interface."
+},
+{
+"h3": "Block & Transaction Search"
+},
+{
+"p": "Search by address, transaction hash, block number, or ENS name."
+},
+{
+"h3": "Contract Verification"
+},
+{
+"p": "Verify and publish contract source code. Read and write to contracts."
+},
+{
+"h3": "Transaction Decoding"
+},
+{
+"p": "Automatic ABI decoding shows human-readable transaction details."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Multi-Chain Support"
+},
+{
+"p": "Explore Lux, Ethereum, Polygon, and all integrated chains from one interface."
+},
+{
+"h3": "Block & Transaction Search"
+},
+{
+"p": "Search by address, transaction hash, block number, or ENS name."
+},
+{
+"h3": "Contract Verification"
+},
+{
+"p": "Verify and publish contract source code. Read and write to contracts."
+},
+{
+"h3": "Transaction Decoding"
+},
+{
+"p": "Automatic ABI decoding shows human-readable transaction details."
+},
+{
+"h3": "Analytics Dashboard"
+},
+{
+"p": "Network stats, gas trends, token metrics, and protocol analytics."
+},
+{
+"h3": "Alerts & Notifications"
+},
+{
+"p": "Set up alerts for address activity, large transfers, and contract events."
+},
+{
+"h3": "Data Export"
+},
+{
+"p": "Export transaction history, token transfers, and analytics to CSV."
+},
+{
+"h3": "API Access"
+},
+{
+"p": "Full API access to all explorer data for integration."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/explorer/IHanzoExplorer.sol\" ; /// @title VerifiedContract - Contract verification and analytics integration /// @notice Events and functions designed for explorer indexing and verification contract VerifiedContract { // Events optimized for explorer indexing event ContractVerified ( address indexed contractAddress, bytes32 indexed codeHash, string sourceUrl, uint256 timestamp ); event TransactionDecoded ( bytes32 indexed txHash, address indexed target, bytes4 selector, bytes decodedParams ); event AddressLabeled ( addres"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Developer Debugging"
+},
+{
+"p": "Debug failed transactions, trace contract calls, and verify deployments."
+},
+{
+"h3": "User Transparency"
+},
+{
+"p": "Let users verify their transactions and understand contract interactions."
+},
+{
+"h3": "Compliance Reporting"
+},
+{
+"p": "Export transaction history for tax reporting and audit requirements."
+},
+{
+"h3": "Protocol Monitoring"
+},
+{
+"p": "Track protocol metrics, TVL, and user activity across chains."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Hanzo Explorer"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Hanzo Explorer"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

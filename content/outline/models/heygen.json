@@ -1,0 +1,68 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "heygen Models via Hanzo AI"
+},
+{
+"p": "4 models available"
+},
+{
+"p": "Access all 4 heygen models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "HeyGen Video HeyGen Video is a general-purpose video generation model from HeyGen. It renders short clips with synthesized audio (dialogue, ambience, and sound effects) in a single call, working from a text... video",
+"href": "/models/heygen/heygen-video-1"
+},
+{
+"a": "HeyGen Voice HeyGen Voice is a text-to-speech model from HeyGen. It comes with 10 default voices, or bring your own HeyGen key to use voice clones from your own account. It streams... speech",
+"href": "/models/heygen/heygen-voice-1"
+},
+{
+"a": "HeyGen Voice Turbo HeyGen Voice Turbo is a lower-latency version of HeyGen Voice, HeyGen's text-to-speech model. It has the same 10 default voices, or bring your own HeyGen key to use voice clones... speech",
+"href": "/models/heygen/heygen-voice-1-turbo"
+},
+{
+"a": "HeyGen Voice Turbo (free) HeyGen Voice Turbo is a lower-latency version of HeyGen Voice, HeyGen's text-to-speech model. It has the same 10 default voices, or bring your own HeyGen key to use voice clones... speech",
+"href": "/models/heygen/heygen-voice-1-turbo:free"
+}
+],
+[
+{
+"h2": "Use heygen models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

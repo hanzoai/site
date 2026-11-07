@@ -1,0 +1,155 @@
+[
+[
+{
+"h1": "Hanzo Gateway"
+},
+{
+"p": "The trust boundary in front of the API"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/gateway"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Gateway",
+"href": "/gateway"
+},
+{
+"a": "DNS",
+"href": "/dns"
+},
+{
+"a": "Service Mesh",
+"href": "/cloud/service-mesh"
+},
+{
+"a": "Nodes",
+"href": "/cloud/nodes"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/gateway"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Gateway from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Gateway in my project. Start with: hanzo gateway config get"
+}
+],
+[
+{
+"h2": "Nothing downstream has to ask who is calling"
+},
+{
+"p": "Gateway answers that once, at the edge, so every service behind it can read an org id and believe it."
+},
+{
+"h3": "The token is checked here"
+},
+{
+"p": "A JWT is validated against Hanzo IAM's JWKS before anything else reads the request. Opaque API keys aren't JWTs, so they go on to the service that issued them and it decides."
+},
+{
+"h3": "Identity headers are written, not trusted"
+},
+{
+"p": "X-User-Id, X-Org-Id, X-Roles and every X-IAM-* variant are stripped from every inbound request, then written back from the verified claims — sub, owner, roles. A curl flag can't set them."
+},
+{
+"h3": "No route map, deliberately"
+},
+{
+"p": "For api.hanzo.ai it forwards /* straight to Hanzo Cloud, which owns the /v1 mount table. A second table here would be a second thing to keep in sync, and the first one to go stale."
+},
+{
+"h3": "Rate limits per caller and overall"
+},
+{
+"p": "Token-bucket limits by client IP and across the edge as a whole, with per-endpoint overrides in config. A rejected request gets a 429 and a Retry-After, not a dropped connection."
+},
+{
+"h3": "Liveness that consults nothing"
+},
+{
+"p": "The health check answers whether the process is up and asks no backend. A probe that fails when a dependency blinks restarts a healthy process and turns one outage into two — so backends are dialed lazily and degrade per request instead."
+},
+{
+"h3": "A hop, or no hop at all"
+},
+{
+"p": "Run it as its own service in front of the API, or mount it inside the cloud binary with one call. Same checks either way — one less network hop when you don't want one."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Gateway docs →",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/gateway"
+},
+{
+"a": "DNS Authoritative DNS + DNSSEC",
+"href": "/dns"
+},
+{
+"a": "Service Mesh",
+"href": "/cloud/service-mesh"
+},
+{
+"a": "Nodes",
+"href": "/cloud/nodes"
+}
+],
+[
+{
+"h2": "Get Gateway"
+},
+{
+"p": "API gateway"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/gateway"
+}
+]
+]

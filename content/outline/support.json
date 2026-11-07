@@ -1,0 +1,41 @@
+[
+[
+{
+"h1": "How can we help?"
+},
+{
+"p": "Answers, docs, live status, and a direct line to the team."
+},
+{
+"a": "Help Center Search answers, browse guides, and open a support ticket. The fastest path to a resolution. Open Help Center",
+"href": "https://hanzo.help"
+},
+{
+"a": "Documentation Guides, API references, and quickstarts for every product across the Hanzo Cloud. Read the docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"a": "System Status Live uptime and incident history for every Hanzo service. Check here first if something feels off. View status",
+"href": "https://status.hanzo.ai"
+},
+{
+"a": "Community Ask questions and share what you build with other developers on the Hanzo Discord and Community. Join the community",
+"href": "https://discord.gg/XthHQQj"
+},
+{
+"a": "GitHub Report a bug, request a feature, or contribute — our SDKs and tooling are open source. Open an issue",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Email us Prefer email? Reach the team directly and we’ll get back to you. [email protected]",
+"href": "/cdn-cgi/l/email-protection#98ebede8e8f7eaecd8f0f9f6e2f7b6f9f1"
+},
+{
+"p": "On an enterprise plan or need a dedicated channel? Email [email protected] and we’ll route you to your team."
+},
+{
+"a": "Email [email protected]",
+"href": "/cdn-cgi/l/email-protection#d3a0a6a3a3bca1a793bbb2bda9bcfdb2ba"
+}
+]
+]

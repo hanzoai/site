@@ -1,0 +1,36 @@
+[
+[
+{
+"h1": "Keep tabs on your agents."
+},
+{
+"p": "Your coding agents work in shells on real machines. Tabs puts every one of those shells in front of you — split, tiled, and reachable from anywhere you can open a browser."
+},
+{
+"a": "Open Tabs",
+"href": "https://tabs.hanzo.ai"
+}
+],
+[
+{
+"h2": "Link a machine, and it appears here"
+},
+{
+"p": "Run hanzo link on a laptop, a workstation, a GPU box — anything with a shell. The machine keeps the connection, and nothing is exposed to the network it sits on. Open Tabs and the shells are there."
+}
+],
+[
+{
+"h2": "Why it is shaped this way"
+}
+],
+[
+{
+"h2": "What you get"
+},
+{
+"a": "Read the source",
+"href": "https://github.com/hanzo-apps/tabs"
+}
+]
+]

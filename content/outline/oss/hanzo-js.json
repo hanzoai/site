@@ -1,0 +1,96 @@
+[
+[
+{
+"h1": "Hanzo JS"
+},
+{
+"p": "JavaScript SDK + libraries for Hanzo Ecosystem"
+},
+{
+"a": "hanzo-js on GitHub",
+"href": "https://github.com/hanzo-js"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-js"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 24 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-js, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-js/sdk-fetch TypeScript 0 0 The Hanzo API client for fetch runtimes — Workers, Deno, Bun, browsers. No axios, no dependencies. Generated from hanzoai/cloud's openapi.yaml. Pushed Nov 5, 2026 23 commits this year Forge",
+"href": "https://github.com/hanzo-js/sdk-fetch"
+},
+{
+"li": "hanzo-js/sdk-angular TypeScript 0 0 The Hanzo API client for Angular — injectable services, HttpClient, RxJS Observables. Generated from hanzoai/cloud's openapi.yaml. Pushed Nov 5, 2026 23 commits this year Forge",
+"href": "https://github.com/hanzo-js/sdk-angular"
+},
+{
+"li": "hanzo-js/sdk TypeScript 0 10 Unified Hanzo TypeScript SDK — IAM, KMS, Commerce, Billing, MPC, PaaS, Team, Auth, API. One install, every service. Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzo-js/sdk"
+},
+{
+"li": "hanzo-js/kai TypeScript 0 0 @hanzo/kai — TypeScript client for Kai decisions on api.hanzo.ai Pushed Nov 5, 2026 10 commits this year Forge",
+"href": "https://github.com/hanzo-js/kai"
+},
+{
+"li": "hanzo-js/hanzo JavaScript 0 0 Unified npm package for the Hanzo CLI and Open AI Cloud client libraries. Pushed Nov 5, 2026 11 commits this year Forge",
+"href": "https://github.com/hanzo-js/hanzo"
+},
+{
+"li": "hanzo-js/cloud TypeScript 0 0 @hanzo/cloud — typed TypeScript client for the Hanzo Cloud /v1/ platform API (agents, sessions, machines), Hanzo IAM-native auth Pushed Nov 5, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-js/cloud"
+},
+{
+"li": "hanzo-js/base TypeScript 0 0 @hanzo/base — JavaScript/TypeScript client for Hanzo Base (reactive backend, Hanzo IAM-native auth) Pushed Nov 5, 2026 17 commits this year Forge",
+"href": "https://github.com/hanzo-js/base"
+},
+{
+"li": "hanzo-js/.github 0 0 Org profile Pushed Nov 5, 2026 10 commits this year Forge",
+"href": "https://github.com/hanzo-js/.github"
+}
+]
+]

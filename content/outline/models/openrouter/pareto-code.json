@@ -1,0 +1,113 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "OpenRouter",
+"href": "/models/openrouter"
+},
+{
+"h1": "Pareto Code Router"
+},
+{
+"p": "The Pareto Router maintains a tiered shortlist of strong coding models, ranked by [Artificial Analysis](https://artificialanalysis.ai/) coding percentiles."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Try in Chat",
+"href": "/chat"
+}
+],
+[
+{
+"h2": "Specifications"
+}
+],
+[
+{
+"h2": "Quick start"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "cURL"
+},
+{
+"button": "Go"
+},
+{
+"code": "import OpenAI from ' openai ' const client = new OpenAI ({ apiKey : process.env.HANZO_API_KEY , baseURL : ' https://api.hanzo.ai/v1 ' }) const response = await client.chat.completions. create ({ model : ' openrouter/pareto-code ' , messages : [{ role : ' user ' , content : ' Hello! ' }] }) console. log ( response.choices [ 0 ] .message.content )"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( api_key=os . environ [ \" HANZO_API_KEY \" ], base_url= \" https://api.hanzo.ai/v1 \" ) response = client . chat . completions . create ( model= \" openrouter/pareto-code \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }] ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' { \"model\": \"openrouter/pareto-code\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+},
+{
+"code": "package main import ( \" context \" \" fmt \" \" os \" \" github.com/sashabaranov/go-openai \" ) func main () { cfg := openai . DefaultConfig ( os . Getenv ( \" HANZO_API_KEY \" )) cfg . BaseURL = \" https://api.hanzo.ai/v1 \" client := openai . NewClientWithConfig ( cfg ) resp , _ := client . CreateChatCompletion ( context . Background (), openai . ChatCompletionRequest { Model : \" openrouter/pareto-code \" , Messages : [] openai . ChatCompletionMessage { { Role : openai . ChatMessageRoleUser , Content : \" Hello! \" }, }, }, ) fmt . Println ( resp . Choices [ 0 ]. Message . Content ) }"
+}
+],
+[
+{
+"h2": "More from OpenRouter"
+},
+{
+"a": "Auto Router 2M Auto is OpenRouter’s flagship model router, built for general-purpose usage. It adapts to each request, choosing cost-optimal models and adjusting reasoning effort. It balances task difficulty, benchmark results, live prices,...",
+"href": "/models/openrouter/auto"
+},
+{
+"a": "Auto Router (Beta) 2M The experimental version of our Auto Router where we test new improvements. Use it to get the latest and greatest version of our general purpose auto router, but expect beta...",
+"href": "/models/openrouter/auto-beta"
+},
+{
+"a": "Auto Code 2M Auto Code is OpenRouter’s router built specifically for coding agents and harnesses. It uses the same routing engine as the [Auto Router](https://openrouter.ai/openrouter/auto), with every request treated as part of an...",
+"href": "/models/openrouter/auto-code"
+},
+{
+"a": "Body Builder (beta) 128K Transform your natural language requests into structured OpenRouter API request objects. Describe what you want to accomplish with AI models, and Body Builder will construct the appropriate API calls. Example:...",
+"href": "/models/openrouter/bodybuilder"
+},
+{
+"a": "Free Models Router 200K The simplest way to get free inference. openrouter/free is a router that selects free models at random from the models available on OpenRouter. The router smartly filters for models that...",
+"href": "/models/openrouter/free"
+},
+{
+"a": "Fusion 1M Fusion turns your prompt into a small multi-model deliberation. A panel of expert models (see below) analyzes your prompt in parallel with web search and web fetch enabled, then a...",
+"href": "/models/openrouter/fusion"
+},
+{
+"a": "View all OpenRouter models →",
+"href": "/models/openrouter"
+}
+],
+[
+{
+"h2": "Use Pareto Code Router via Hanzo AI"
+},
+{
+"p": "One API key. Every major model. OpenAI-compatible. Start free."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

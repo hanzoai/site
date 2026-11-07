@@ -1,0 +1,1201 @@
+[
+[
+{
+"p": "Hanzo Platform"
+},
+{
+"h1": "The AI‑native cloud."
+},
+{
+"p": "Run models, agents, applications, data and infrastructure through one operating plane."
+},
+{
+"p": "Kubernetes-native. Fully observable. Open source. Run it on Hanzo infrastructure or infrastructure you control."
+},
+{
+"a": "Start building",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Inspect the stack",
+"href": "#stack"
+},
+{
+"p": "GPUs · Functions · Containers · Databases · Observability · One API"
+},
+{
+"a": "Chat",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot",
+"href": "/bot"
+},
+{
+"a": "Search",
+"href": "/search"
+},
+{
+"a": "Crawl",
+"href": "/crawl"
+},
+{
+"a": "Studio",
+"href": "/studio"
+},
+{
+"a": "Console",
+"href": "/console"
+},
+{
+"a": "Referrals",
+"href": "/cloud/referrals"
+},
+{
+"a": "Marketplace",
+"href": "/cloud/marketplace"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"h2": "One stack. Down to the kernel."
+},
+{
+"p": "Build with agents. Route with Enso. Reason with Zen. Decide with Kai. Run on infrastructure you control."
+},
+{
+"h3": "Gateway"
+},
+{
+"p": "One entry for the AI stack: keys, orgs, admission, usage limits and routing to the right model or service."
+},
+{
+"a": "Product",
+"href": "/gateway"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/gateway"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/gateway"
+},
+{
+"p": "A stable API boundary, independent of which backend runs the request."
+},
+{
+"h3": "AI Gateway"
+},
+{
+"p": "A compatible inference interface for chat, completions, embeddings, multimodal models and agent workloads."
+},
+{
+"a": "Product",
+"href": "/api"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/ai"
+},
+{
+"p": "The same client and key can move between models without rebuilding the application."
+},
+{
+"h3": "Enso"
+},
+{
+"p": "Choose models and execution paths by capability, quality, latency and cost. Invoke a specific model when the application needs exact control."
+},
+{
+"a": "Product",
+"href": "/enso"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/models/enso"
+},
+{
+"a": "Examples",
+"href": "https://github.com/hanzoai/enso"
+},
+{
+"p": "Enso routes. Zen reasons. Kai decides."
+},
+{
+"p": "Enso Ultra answered 152 of 159 new questions right, against 93.1% for the best single model on the same questions."
+},
+{
+"a": "How Enso routes →",
+"href": "/enso"
+},
+{
+"a": "View the measurements →",
+"href": "/benchmarks/gpqa"
+},
+{
+"h3": "Zen"
+},
+{
+"p": "Hanzo’s open-weight generative model family for reasoning, coding, language and multimodal generation."
+},
+{
+"a": "Product",
+"href": "/zen"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/models/zen"
+},
+{
+"a": "Recipes",
+"href": "https://github.com/hanzoai/zen"
+},
+{
+"p": "The reasoning layer: language, synthesis, plans and generation."
+},
+{
+"a": "View the measurements →",
+"href": "/benchmarks/zen-6"
+},
+{
+"h3": "Kai"
+},
+{
+"p": "Typed decisions and policy-aware evaluations for choosing actions, scoring evidence and guarding what an agent may execute."
+},
+{
+"a": "Product",
+"href": "/kai"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/models/kai"
+},
+{
+"a": "Examples",
+"href": "https://github.com/hanzoai/kai"
+},
+{
+"p": "Reasoning can generate proposals; Kai helps turn evidence into accountable decisions."
+},
+{
+"a": "View the measurements →",
+"href": "/benchmarks#kai"
+},
+{
+"h3": "Agents"
+},
+{
+"p": "Composable agents coordinate tasks, use tools, schedule work and continue from intention to verified results."
+},
+{
+"a": "Product",
+"href": "/agents"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/agent"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/agents"
+},
+{
+"p": "Agents act across software and services instead of stopping at a response."
+},
+{
+"p": "Hanzo Dev beside Claude Code on the same coding repairs, paired over 42 tasks both solved; 95% interval 2.06–4.36×."
+},
+{
+"a": "Hanzo Dev →",
+"href": "/dev"
+},
+{
+"a": "View the measurements →",
+"href": "/benchmarks#coding-agent"
+},
+{
+"h3": "Sandboxes"
+},
+{
+"p": "Isolated execution for code, browser work and agent tools, with controlled permissions and lifecycle."
+},
+{
+"a": "Product",
+"href": "/platform"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/sandbox"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/vm"
+},
+{
+"p": "Keep tool execution separated from model inference and production resources."
+},
+{
+"h3": "Hanzo Cloud"
+},
+{
+"p": "Deploy and coordinate inference and agent systems across Hanzo infrastructure, your clusters or a hybrid environment."
+},
+{
+"a": "Product",
+"href": "/platform"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/network"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/cloud"
+},
+{
+"p": "One operating plane connects identity, usage, execution and infrastructure."
+},
+{
+"h3": "Inference Engine"
+},
+{
+"p": "The native serving engine with continuous batching, paged attention, quantization and persistent KV caching at the node level."
+},
+{
+"a": "Product",
+"href": "/engine"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/engine"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/engine"
+},
+{
+"p": "The inference work runs in one serving binary, from local hardware to GPU-backed systems."
+},
+{
+"a": "View the measurements →",
+"href": "/benchmarks/inference"
+},
+{
+"h3": "Hanzo ML"
+},
+{
+"p": "Rust tensor, neural-network and model-execution primitives with accelerated device backends."
+},
+{
+"a": "Product",
+"href": "/open-source"
+},
+{
+"a": "Docs",
+"href": "https://github.com/hanzoai/ml/blob/main/README.md"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/ml"
+},
+{
+"p": "Hanzo owns framework code close to the math, not just the API wrapper."
+},
+{
+"h3": "Kernel DSL"
+},
+{
+"p": "A first-party Rust kernel DSL targeting CUDA, ROCm, Vulkan and Metal alongside backend-specific implementations."
+},
+{
+"a": "Product",
+"href": "/open-source"
+},
+{
+"a": "Docs",
+"href": "https://github.com/hanzoai/ml/blob/main/hanzo-kernel/README.md"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/ml/tree/main/hanzo-kernel"
+},
+{
+"p": "One portable kernel expression, optimized and validated for each device. Backend performance is workload-specific."
+},
+{
+"a": "Protocol",
+"href": "https://docs.hanzo.ai/docs/zap"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/zap"
+},
+{
+"h3": "One kernel DSL. Four targets."
+},
+{
+"p": "Four parallel acceleration backends, not four extra hops. First-party kernels and performance tuning for supported workloads."
+},
+{
+"p": "CUDA kernels, attention and accelerated GPU operations."
+},
+{
+"a": "Explore CUDA",
+"href": "https://github.com/hanzoai/ml/tree/main/hanzo-kernels"
+},
+{
+"p": "HIP/ROCm execution, attention and quantized operations."
+},
+{
+"a": "Explore ROCm",
+"href": "https://github.com/hanzoai/ml/tree/main/hanzo-rocm-kernels"
+},
+{
+"p": "SPIR-V shader paths and portable GPU execution."
+},
+{
+"a": "Explore Vulkan",
+"href": "https://github.com/hanzoai/ml/tree/main/hanzo-ml/src/vulkan"
+},
+{
+"p": "Apple Silicon kernels and GPU-validated execution paths."
+},
+{
+"a": "Explore Metal",
+"href": "https://github.com/hanzoai/ml/tree/main/hanzo-metal-kernels"
+},
+{
+"h3": "Intelligence that connects to every layer."
+},
+{
+"p": "Agent capabilities sit alongside the inference path; not every request crosses every subsystem."
+},
+{
+"h4": "Semantic + Graph"
+},
+{
+"p": "Semantic retrieval, durable memory, provenance and connected knowledge for agent work."
+},
+{
+"p": "LoCoMo, held-out test split: every evidence turn of a multi-hop question in the top 20 for 37.5% of questions, against 18.8% for cosine search."
+},
+{
+"a": "Product",
+"href": "/products/memory"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/graph"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/semantic"
+},
+{
+"a": "The LoCoMo run",
+"href": "/benchmarks/locomo"
+},
+{
+"h4": "Code Intelligence"
+},
+{
+"p": "Symbols, ASTs, references and repository-aware code navigation for coding agents."
+},
+{
+"a": "Product",
+"href": "/dev"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/code"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/lsp"
+},
+{
+"h4": "Hanzo Forge"
+},
+{
+"p": "Source hosting, builds, CI/CD and deployments connecting agents to shipped software."
+},
+{
+"a": "Product",
+"href": "https://forge.hanzo.ai"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/cli/platform"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/forge"
+},
+{
+"h4": "In. Out. Under control."
+},
+{
+"p": "Admission, auth, routing, streaming and responses are boundary functions around the stack rather than another inference step. Outbound calls carry delegated credentials that stay in KMS."
+},
+{
+"a": "Product",
+"href": "/ingress"
+},
+{
+"a": "Ingress",
+"href": "https://github.com/hanzoai/ingress"
+},
+{
+"a": "Egress",
+"href": "https://github.com/hanzoai/egress"
+},
+{
+"h4": "Everything leaves a trace."
+},
+{
+"p": "Follow a request across models, decisions, tools and infrastructure to cost, quality, latency, usage and evaluation."
+},
+{
+"a": "Product",
+"href": "/o11y"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/o11y"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/o11y"
+},
+{
+"h3": "Not just running. Learning."
+},
+{
+"a": "Research",
+"href": "/research"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"a": "Harness",
+"href": "https://github.com/hanzoai/benchmarks"
+},
+{
+"li": "01 / Observe Measure Traces · regressions"
+},
+{
+"li": "02 / Propose Hypothesize Candidate upgrades"
+},
+{
+"li": "03 / Isolate Experiment Sandboxed variants"
+},
+{
+"li": "04 / Prove Benchmark Quality · latency · cost"
+},
+{
+"li": "05 / Control Gate + promote Review · rollback"
+},
+{
+"p": "A modular feedback architecture, not a claim of unattended production self-modification. Only candidates that meet the relevant evaluation and release gates are promoted."
+},
+{
+"p": "Inspectable product, docs and source links for each architectural surface."
+},
+{
+"a": "Open source",
+"href": "/open-source"
+},
+{
+"p": "CUDA, ROCm, Vulkan and Metal; backend-specific validation, never blanket speed claims."
+},
+{
+"a": "Kernel DSL",
+"href": "https://github.com/hanzoai/ml/tree/main/hanzo-kernel"
+},
+{
+"p": "Published measurements are scoped to a named model, workload, hardware and baseline."
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"p": "GPU targets are parallel hardware backends, not sequential stages. Zen is generative reasoning; Kai provides decision intelligence. ZAP is a native RPC protocol for supported interconnect paths. Research and evaluation form a gated improvement loop. “Native” describes Hanzo’s architecture surfaces; not every implementation, weight, driver or operating system is owned or open sourced by Hanzo."
+}
+],
+[
+{
+"h2": "One runtime for every kind of work."
+},
+{
+"p": "The same plane, held for a millisecond or for a month. What changes is how much of a machine the work needs, not what you have to learn."
+},
+{
+"li": "Functions Scale to zero between calls."
+},
+{
+"li": "Containers Your image, deployed and addressable."
+},
+{
+"li": "Sandboxes Isolated shells for agents and untrusted code."
+},
+{
+"li": "Machines A whole machine, by the second."
+},
+{
+"li": "GPUs Accelerators attached to any of them."
+},
+{
+"li": "Kubernetes The substrate all of it runs on."
+},
+{
+"button": "Containers Deploy an image and invoke it. Deployments, triggers, secrets, metrics and logs are all part of the same surface, so a function you ship is a function you can watch. api.hanzo.ai /v1/functions"
+},
+{
+"button": "Machines"
+},
+{
+"button": "Sandboxes"
+},
+{
+"a": "GPUs",
+"href": "/cloud/gpus"
+},
+{
+"a": "Machines",
+"href": "/machines"
+},
+{
+"a": "Containers",
+"href": "/cloud/containers"
+},
+{
+"a": "Functions",
+"href": "/functions"
+},
+{
+"a": "Edge",
+"href": "/edge"
+},
+{
+"a": "Applications",
+"href": "/cloud/applications"
+},
+{
+"a": "Clusters",
+"href": "/cloud/clusters"
+},
+{
+"a": "Kubernetes",
+"href": "/cloud/kubernetes"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/functions"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+},
+{
+"a": "Compute API",
+"href": "https://docs.hanzo.ai/docs/openapi/compute"
+},
+{
+"a": "Function API",
+"href": "https://docs.hanzo.ai/docs/openapi/function"
+},
+{
+"a": "Sandbox API",
+"href": "https://docs.hanzo.ai/docs/openapi/sandbox"
+},
+{
+"a": "Machines",
+"href": "/machines"
+}
+],
+[
+{
+"h2": "The data primitives AI applications use."
+},
+{
+"p": "Each primitive is the right shape for its job, and they share one project, one key and one bill."
+},
+{
+"h3": "Datastore"
+},
+{
+"a": "Datastore",
+"href": "/datastore"
+},
+{
+"p": "Columnar analytics over everything you collected."
+},
+{
+"h3": "Object Storage"
+},
+{
+"a": "Object Storage",
+"href": "/s3"
+},
+{
+"p": "Objects, signed URLs, lifecycle rules."
+},
+{
+"h3": "Base"
+},
+{
+"a": "Base",
+"href": "/base"
+},
+{
+"p": "An application backend: records, rules, realtime."
+},
+{
+"h3": "Memory"
+},
+{
+"a": "Memory",
+"href": "/cloud/memory"
+},
+{
+"p": "What an agent is allowed to remember between runs."
+},
+{
+"a": "Base API",
+"href": "https://docs.hanzo.ai/docs/openapi/base"
+},
+{
+"a": "Object storage API",
+"href": "https://docs.hanzo.ai/docs/openapi/s3"
+},
+{
+"a": "KV API",
+"href": "https://docs.hanzo.ai/docs/openapi/kv"
+},
+{
+"a": "Hanzo Base",
+"href": "/base"
+}
+],
+[
+{
+"h2": "One control plane. Any infrastructure."
+},
+{
+"p": "The API, the console, the identities and the bill stay the same when the machines underneath change."
+},
+{
+"h3": "Hanzo Cloud"
+},
+{
+"p": "Capacity we operate and meter, provisioned by the call."
+},
+{
+"h3": "Your cloud account"
+},
+{
+"p": "Your credentials and your machines, under the same control plane."
+},
+{
+"h3": "Your cluster"
+},
+{
+"p": "Attach Kubernetes you already run and address it like any other."
+},
+{
+"a": "Compute API",
+"href": "https://docs.hanzo.ai/docs/openapi/compute"
+},
+{
+"a": "Node API",
+"href": "https://docs.hanzo.ai/docs/openapi/node"
+},
+{
+"a": "Visor",
+"href": "/visor"
+}
+],
+[
+{
+"h2": "Security is part of the cloud, not a product on top of it."
+},
+{
+"p": "An agent gets an identity because it runs here, and the trail is written because every call goes through the same door."
+},
+{
+"h3": "Identity"
+},
+{
+"p": "One issuer for people, programs and agents, each request scoped to the org it acts for."
+},
+{
+"h3": "Permissions"
+},
+{
+"p": "Access follows the resource, not the caller."
+},
+{
+"h3": "Secrets"
+},
+{
+"p": "Held in KMS and handed only to the environment that needs them."
+},
+{
+"h3": "Audit"
+},
+{
+"p": "Actions written to a trail you can query, attributable to whoever took them."
+},
+{
+"a": "IAM API",
+"href": "https://docs.hanzo.ai/docs/openapi/iam"
+},
+{
+"a": "KMS API",
+"href": "https://docs.hanzo.ai/docs/openapi/kms"
+},
+{
+"a": "Audit API",
+"href": "https://docs.hanzo.ai/docs/openapi/audit"
+},
+{
+"a": "Security",
+"href": "/security"
+}
+],
+[
+{
+"h2": "One API. Every capability."
+},
+{
+"p": "The same key, organization, project, policy and usage ledger behind every path. The interface changes; the system does not."
+},
+{
+"li": "api.hanzo.ai /v1/models"
+},
+{
+"li": "api.hanzo.ai /v1/agent"
+},
+{
+"li": "api.hanzo.ai /v1/function"
+},
+{
+"li": "api.hanzo.ai /v1/provisioning/sql"
+},
+{
+"li": "api.hanzo.ai /v1/provisioning/vector"
+},
+{
+"li": "api.hanzo.ai /v1/s3/buckets"
+},
+{
+"li": "api.hanzo.ai/v1/…"
+},
+{
+"p": "Five operations, one key, no glue. Each is checked against the published OpenAPI document on every build."
+},
+{
+"p": "One org, one afternoon: a spaceship shop that did not exist this morning."
+},
+{
+"p": "Start with the models."
+},
+{
+"code": "GET /v1/models"
+},
+{
+"p": "Returns the list of available models from the routing table."
+},
+{
+"button": "Play"
+},
+{
+"a": "Every capability",
+"href": "https://docs.hanzo.ai/docs/openapi"
+},
+{
+"a": "The API",
+"href": "/api"
+}
+],
+[
+{
+"h2": "Push code. Get a production system."
+},
+{
+"p": "An address, a certificate, secrets, metrics, logs and its share of the bill come back with it, because none of them is a separate purchase."
+},
+{
+"h3": "Push"
+},
+{
+"p": "A commit to the forge starts the build."
+},
+{
+"h3": "Build"
+},
+{
+"p": "The image is built in the cluster, never on a laptop."
+},
+{
+"h3": "Release"
+},
+{
+"p": "It rolls out with its secrets and its address, ready to roll back."
+},
+{
+"h3": "Observe"
+},
+{
+"p": "Logs, metrics and traces from its first request."
+},
+{
+"a": "Deploy API",
+"href": "https://docs.hanzo.ai/docs/openapi/deploy"
+},
+{
+"a": "Registry API",
+"href": "https://docs.hanzo.ai/docs/openapi/registry"
+},
+{
+"a": "CLI docs",
+"href": "https://docs.hanzo.ai/docs/cli"
+},
+{
+"a": "Registry",
+"href": "/registry"
+}
+],
+[
+{
+"h2": "Your cloud should not lock you in."
+},
+{
+"p": "The platform is open source, and the image we operate is the image you can pull: the same API and console on your cluster, in your network or on a laptop."
+},
+{
+"a": "Quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+},
+{
+"a": "Open source",
+"href": "/open-source"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/cloud"
+}
+],
+[
+{
+"h2": "Pay for what runs."
+},
+{
+"p": "Nothing is billed for existing. One organization balance and one usage ledger, and every line traces back to a request."
+},
+{
+"h3": "Models"
+},
+{
+"p": "By usage"
+},
+{
+"h3": "Compute"
+},
+{
+"p": "By execution"
+},
+{
+"h3": "Storage"
+},
+{
+"p": "By consumption"
+},
+{
+"h3": "Managed services"
+},
+{
+"p": "By usage"
+},
+{
+"a": "Pricing docs",
+"href": "https://docs.hanzo.ai/docs/pricing"
+},
+{
+"a": "Billing API",
+"href": "https://docs.hanzo.ai/docs/openapi/billing"
+},
+{
+"a": "Plans and rates",
+"href": "/pricing"
+}
+],
+[
+{
+"h2": "Explore the platform."
+},
+{
+"p": "Every plane, and what is in it."
+},
+{
+"h3": "AI"
+},
+{
+"a": "AI",
+"href": "/products/models"
+},
+{
+"p": "Models · Agents · Inference · Embeddings · Providers"
+},
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "Agents",
+"href": "/agents"
+},
+{
+"a": "Inference",
+"href": "/engine"
+},
+{
+"a": "Embeddings",
+"href": "/cloud/embeddings"
+},
+{
+"a": "Providers",
+"href": "/cloud/providers"
+},
+{
+"h3": "Compute"
+},
+{
+"a": "Compute",
+"href": "/products/machines"
+},
+{
+"p": "GPUs · Machines · Containers · Functions · Edge"
+},
+{
+"a": "GPUs",
+"href": "/cloud/gpus"
+},
+{
+"a": "Machines",
+"href": "/machines"
+},
+{
+"a": "Containers",
+"href": "/cloud/containers"
+},
+{
+"a": "Functions",
+"href": "/functions"
+},
+{
+"a": "Edge",
+"href": "/edge"
+},
+{
+"h3": "Data"
+},
+{
+"a": "Data",
+"href": "/products/memory"
+},
+{
+"p": "Datastore · Object Storage · Base · Memory"
+},
+{
+"a": "Datastore",
+"href": "/datastore"
+},
+{
+"a": "Object Storage",
+"href": "/s3"
+},
+{
+"a": "Base",
+"href": "/base"
+},
+{
+"a": "Memory",
+"href": "/cloud/memory"
+},
+{
+"h3": "Dev"
+},
+{
+"a": "Dev",
+"href": "/products/agents"
+},
+{
+"p": "CLI · Playground · Desktop · API Keys"
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+},
+{
+"h3": "Observe"
+},
+{
+"a": "Observe",
+"href": "/products/record"
+},
+{
+"p": "Logs · Metrics · Dashboards · O11y · AI Metrics"
+},
+{
+"a": "Logs",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "AI Metrics",
+"href": "/cloud/ai-metrics"
+},
+{
+"h3": "Security"
+},
+{
+"a": "Security",
+"href": "/products/identity"
+},
+{
+"p": "IAM · Authz · KMS · Secrets · Audit"
+},
+{
+"a": "IAM",
+"href": "/iam"
+},
+{
+"a": "Authz",
+"href": "/authz"
+},
+{
+"a": "KMS",
+"href": "/kms"
+},
+{
+"a": "Secrets",
+"href": "/cloud/secrets"
+},
+{
+"a": "Audit",
+"href": "/cloud/audit"
+},
+{
+"h3": "Network"
+},
+{
+"a": "Network",
+"href": "/products/machines"
+},
+{
+"p": "Gateway · DNS · Service Mesh · Nodes"
+},
+{
+"a": "Gateway",
+"href": "/gateway"
+},
+{
+"a": "DNS",
+"href": "/dns"
+},
+{
+"a": "Service Mesh",
+"href": "/cloud/service-mesh"
+},
+{
+"a": "Nodes",
+"href": "/cloud/nodes"
+},
+{
+"a": "The complete catalog",
+"href": "/products"
+}
+],
+[
+{
+"h2": "Build on the stack. Or run it yourself."
+},
+{
+"p": "Models, agents, compute, data, security and observability behind one API, from prototype to production."
+},
+{
+"a": "Start building",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+]
+]

@@ -1,0 +1,288 @@
+[
+[
+{
+"h1": "Lux FHE"
+},
+{
+"p": "Lux FHE research, examples, and SDK and tooling."
+},
+{
+"a": "luxfhe on GitHub",
+"href": "https://github.com/luxfhe"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/luxfhe"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 8 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of luxfhe, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "luxfhe/workshop Jupyter Notebook 0 0 Lux FHE Workshop - Interactive tutorials and exercises Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/workshop"
+},
+{
+"li": "luxfhe/wasm-sdk Rust 0 0 WASM SDK for LuxFHE - builds from github.com/luxfi/tfhe Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxfhe/wasm-sdk"
+},
+{
+"li": "luxfhe/wasm JavaScript 0 0 Pushed Nov 5, 2026 12 commits this year Forge",
+"href": "https://github.com/luxfhe/wasm"
+},
+{
+"li": "luxfhe/v1-sdk TypeScript 0 0 LuxFHE v1 SDK - Standard FHE for JavaScript/TypeScript Pushed Nov 5, 2026 7 commits this year Forge",
+"href": "https://github.com/luxfhe/v1-sdk"
+},
+{
+"li": "luxfhe/torus C++ 0 0 Torus — the Lux Industries FHE compiler for CPU/GPU/FPGA targets Pushed Nov 5, 2026 21 commits this year Forge",
+"href": "https://github.com/luxfhe/torus"
+},
+{
+"li": "luxfhe/threshold 0 0 LuxFHE Threshold - Distributed FHE decryption Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/luxfhe/threshold"
+},
+{
+"li": "luxfhe/template-vue Vue 0 0 FHE Vue.js template Pushed Nov 5, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfhe/template-vue"
+},
+{
+"li": "luxfhe/template-ui TypeScript 0 0 FHE UI components Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/template-ui"
+},
+{
+"li": "luxfhe/template-nuxt TypeScript 0 0 FHE Nuxt.js template Pushed Nov 5, 2026 Forge",
+"href": "https://github.com/luxfhe/template-nuxt"
+},
+{
+"li": "luxfhe/template-next TypeScript 0 0 FHE Next.js template Pushed Nov 5, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfhe/template-next"
+},
+{
+"li": "luxfhe/template-miniapp TypeScript 0 0 FHE miniapp template Pushed Nov 5, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfhe/template-miniapp"
+},
+{
+"li": "luxfhe/template-hardhat-starter TypeScript 0 0 FHE Hardhat starter Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/template-hardhat-starter"
+},
+{
+"li": "luxfhe/template-hardhat TypeScript 0 0 FHE Hardhat template Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/template-hardhat"
+},
+{
+"li": "luxfhe/template-foundry Solidity 0 0 FHE Foundry template Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/template-foundry"
+},
+{
+"li": "luxfhe/template-fhevm-hardhat TypeScript 0 0 FHEVM Hardhat template Pushed Nov 5, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfhe/template-fhevm-hardhat"
+},
+{
+"li": "luxfhe/solidity 0 0 LuxFHE Solidity library Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/luxfhe/solidity"
+},
+{
+"li": "luxfhe/sdk 0 0 LuxFHE SDK - JavaScript/TypeScript FHE SDK Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/luxfhe/sdk"
+},
+{
+"li": "luxfhe/research-verifiable-fhe Rust 0 0 Verifiable FHE proofs Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/research-verifiable-fhe"
+},
+{
+"li": "luxfhe/research-threshold-paper Rust 0 0 Threshold FHE paper Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/luxfhe/research-threshold-paper"
+},
+{
+"li": "luxfhe/research-ocp-fhe TypeScript 0 0 Open Compute Protocol FHE Pushed Nov 5, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfhe/research-ocp-fhe"
+},
+{
+"li": "luxfhe/remix-plugin TypeScript 0 0 FHE Remix IDE plugin Pushed Nov 5, 2026 7 commits this year Forge",
+"href": "https://github.com/luxfhe/remix-plugin"
+},
+{
+"li": "luxfhe/python-sdk 0 0 LuxFHE Python SDK - FHE for Python and ML Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/luxfhe/python-sdk"
+},
+{
+"li": "luxfhe/permit TypeScript 0 0 FHE permit utilities Pushed Nov 5, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfhe/permit"
+},
+{
+"li": "luxfhe/mocks-cofhe Solidity 0 0 CoFHE mock contracts Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/mocks-cofhe"
+},
+{
+"li": "luxfhe/ml-sdk Python 0 0 Lux FHE ML SDK - Machine Learning with FHE Pushed Nov 5, 2026 7 commits this year Forge",
+"href": "https://github.com/luxfhe/ml-sdk"
+},
+{
+"li": "luxfhe/luxfhe.github.io HTML 0 0 luxfhe Landing Page Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/luxfhe/luxfhe.github.io"
+},
+{
+"li": "luxfhe/kms TypeScript 0 0 Lux FHE KMS - Threshold Key Management System Pushed Nov 5, 2026 8 commits this year Forge",
+"href": "https://github.com/luxfhe/kms"
+},
+{
+"li": "luxfhe/hardhat-plugin TypeScript 0 0 FHE Hardhat plugin Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/hardhat-plugin"
+},
+{
+"li": "luxfhe/handbook 0 0 Lux FHE Handbook - Comprehensive guide to FHE development Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/handbook"
+},
+{
+"li": "luxfhe/fhevm 0 0 Lux FHEVM - Full-stack FHE blockchain framework Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/luxfhe/fhevm"
+},
+{
+"li": "luxfhe/examples Jupyter Notebook 0 0 FHE examples in C, C++, Python, Go, Rust, Ruby, Elixir, Haskell, Node Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/examples"
+},
+{
+"li": "luxfhe/example-voting TypeScript 0 0 FHE voting demo Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/example-voting"
+},
+{
+"li": "luxfhe/example-tickets Vue 0 0 FHE tickets UI Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/example-tickets"
+},
+{
+"li": "luxfhe/example-ticketing TypeScript 0 0 FHE ticketing contracts Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/example-ticketing"
+},
+{
+"li": "luxfhe/example-ticket-manager Vue 0 0 FHE ticket manager Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/example-ticket-manager"
+},
+{
+"li": "luxfhe/example-smart-wallet TypeScript 0 0 FHE smart wallet Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-smart-wallet"
+},
+{
+"li": "luxfhe/example-secret-santa TypeScript 0 0 FHE secret santa Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-secret-santa"
+},
+{
+"li": "luxfhe/example-rps-game TypeScript 0 0 FHE rock-paper-scissors Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-rps-game"
+},
+{
+"li": "luxfhe/example-rng-game TypeScript 0 0 FHE random number game Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-rng-game"
+},
+{
+"li": "luxfhe/example-redact TypeScript 0 0 FHE data redaction Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-redact"
+},
+{
+"li": "luxfhe/example-poker TypeScript 0 0 FHE poker game Pushed Nov 5, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfhe/example-poker"
+},
+{
+"li": "luxfhe/example-playground Solidity 0 0 FHE interactive playground Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-playground"
+},
+{
+"li": "luxfhe/example-ios-demo Swift 0 0 FHE iOS demo app Pushed Nov 5, 2026 11 commits this year Forge",
+"href": "https://github.com/luxfhe/example-ios-demo"
+},
+{
+"li": "luxfhe/example-fhe-voting TypeScript 0 0 FHE voting implementation Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/example-fhe-voting"
+},
+{
+"li": "luxfhe/example-erc20-tutorial JavaScript 0 0 FHE ERC20 tutorial Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/example-erc20-tutorial"
+},
+{
+"li": "luxfhe/example-encrypto Solidity 0 0 FHE Foundry examples Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-encrypto"
+},
+{
+"li": "luxfhe/example-demo-v2 Vue 0 0 FHE v2 SDK demo Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-demo-v2"
+},
+{
+"li": "luxfhe/example-dapps TypeScript 0 0 FHE dapps monorepo Pushed Nov 5, 2026 11 commits this year Forge",
+"href": "https://github.com/luxfhe/example-dapps"
+},
+{
+"li": "luxfhe/example-confidential-voting TypeScript 0 0 FHE confidential voting Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/example-confidential-voting"
+},
+{
+"li": "luxfhe/example-confidential-contracts TypeScript 0 0 FHE confidential contract patterns Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-confidential-contracts"
+},
+{
+"li": "luxfhe/example-blind-auction-v2 Solidity 0 0 FHE blind auction v2 (threshold) Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-blind-auction-v2"
+},
+{
+"li": "luxfhe/example-blind-auction JavaScript 0 0 FHE blind auction Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-blind-auction"
+},
+{
+"li": "luxfhe/example-binary-guessing TypeScript 0 0 FHE binary guessing game Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/example-binary-guessing"
+},
+{
+"li": "luxfhe/docs Jupyter Notebook 0 0 LuxFHE documentation Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfhe/docs"
+},
+{
+"li": "luxfhe/.github 0 0 LuxFHE organization profile and configuration Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfhe/.github"
+},
+{
+"li": "luxfhe/papers 0 0 FHE research papers and specifications Pushed Jun 25, 2026 2 commits this year Forge",
+"href": "https://github.com/luxfhe/papers"
+}
+]
+]

@@ -1,0 +1,111 @@
+[
+[
+{
+"h1": "Iro 1"
+},
+{
+"p": "Imagine without limits."
+},
+{
+"p": "High-fidelity image generation, creative direction, editing, character design and consistent visual assets."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Try it in Design",
+"href": "/design"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What Iro does"
+},
+{
+"h3": "Photorealistic and stylized direction"
+},
+{
+"p": "Micro-surface textures, ray-traced global illumination and lettering in any period’s style."
+},
+{
+"h3": "Iterative semantic inpainting"
+},
+{
+"p": "Perform granular region-based edits and relighting without altering unmasked background or introducing stylistic seam lines."
+},
+{
+"h3": "Multi-perspective character sheets"
+},
+{
+"p": "Create multi-angle turnarounds, expression sheets, and costume variations for fictional or branded characters."
+},
+{
+"h3": "16-bit wide-gamut output"
+},
+{
+"p": "Native wide-gamut RGB pipeline supporting Rec. 2020, Adobe RGB, and CMYK proofing workflows."
+}
+],
+[
+{
+"p": "In production"
+},
+{
+"h2": "Where Iro fits"
+},
+{
+"p": "Brand and marketing"
+},
+{
+"h3": "Omnichannel campaign assets"
+},
+{
+"p": "Produce high-resolution campaign assets adapted for billboard, mobile, social, and print mediums simultaneously."
+},
+{
+"p": "Concept art and design"
+},
+{
+"h3": "Rapid worldbuilding and props"
+},
+{
+"p": "Accelerate visual development phases for entertainment franchises and industrial product packaging."
+},
+{
+"p": "Publishing"
+},
+{
+"h3": "Custom hero cover artwork"
+},
+{
+"p": "Synthesize stylistically coherent editorial illustrations with complex conceptual metaphors."
+}
+],
+[
+{
+"p": "Research preview"
+},
+{
+"h2": "Try Iro on your own work"
+},
+{
+"p": "Samples of Iro's own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Every model",
+"href": "/models"
+}
+]
+]

@@ -1,0 +1,307 @@
+[
+[
+{
+"h1": "hanzoskill"
+},
+{
+"p": "Hanzo Skills — AI skill modules"
+},
+{
+"a": "hanzoskill on GitHub",
+"href": "https://github.com/hanzoskill"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzoskill"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 0 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzoskill, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzoskill/hanzo-web3 0 0 Hanzo Web3 blockchain API — RPC, data, token, NFT, webhook, and wallet APIs for 100+ chains Pushed Sep 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/hanzo-web3"
+},
+{
+"li": "hanzoskill/bootnode-api 0 0 Bootnode blockchain API skill — RPC, data, token, NFT, webhook, and wallet APIs for 100+ chains Pushed Sep 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/bootnode-api"
+},
+{
+"li": "hanzoskill/pars-api 0 0 Pars Cloud blockchain API — RPC, data, token, NFT, webhook, and wallet APIs for 100+ chains Pushed Sep 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/pars-api"
+},
+{
+"li": "hanzoskill/lux-api 0 0 Lux Cloud blockchain API — RPC, data, token, NFT, webhook, and wallet APIs for 100+ chains Pushed Sep 10, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/lux-api"
+},
+{
+"li": "hanzoskill/bootnode-gateway 0 0 Bootnode agentic gateway — keyless blockchain access via x402 USDC micropayments Pushed Sep 10, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/bootnode-gateway"
+},
+{
+"li": "hanzoskill/lux-gateway 0 0 Lux Cloud agentic gateway — keyless blockchain access via x402 USDC micropayments Pushed Sep 10, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/lux-gateway"
+},
+{
+"li": "hanzoskill/hanzo-web3-gateway 0 0 Hanzo Web3 agentic gateway — keyless blockchain access via x402 USDC micropayments Pushed Sep 10, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/hanzo-web3-gateway"
+},
+{
+"li": "hanzoskill/zoo-api 1 0 Zoo Labs blockchain API — RPC, data, token, NFT, webhook, and wallet APIs for 100+ chains Pushed Sep 9, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/zoo-api"
+},
+{
+"li": "hanzoskill/zoo-gateway 0 0 Zoo Labs agentic gateway — keyless blockchain access via x402 USDC micropayments Pushed Sep 9, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/zoo-gateway"
+},
+{
+"li": "hanzoskill/pars-gateway 0 0 Pars Cloud agentic gateway — keyless blockchain access via x402 USDC micropayments Pushed Sep 9, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/pars-gateway"
+},
+{
+"li": "hanzoskill/last30days Python 0 0 Hanzo Bot skill: last30days (by zats) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/last30days"
+},
+{
+"li": "hanzoskill/stock-analysis Python 0 0 Hanzo Bot skill: stock-analysis (by udiedrichsen) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/stock-analysis"
+},
+{
+"li": "hanzoskill/reddit-read-only JavaScript 0 0 Hanzo Bot skill: reddit-read-only (by tristanmanchester) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/reddit-read-only"
+},
+{
+"li": "hanzoskill/beanstalk-gateway JavaScript 0 0 Hanzo Bot skill: beanstalk-gateway (by tommygeoco) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/beanstalk-gateway"
+},
+{
+"li": "hanzoskill/reddit JavaScript 0 0 Hanzo Bot skill: reddit (by theglove44) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/reddit"
+},
+{
+"li": "hanzoskill/sports-ticker Python 0 0 Hanzo Bot skill: sports-ticker (by robbyczgw-cla) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/sports-ticker"
+},
+{
+"li": "hanzoskill/samsung-smartthings Python 0 0 Hanzo Bot skill: samsung-smartthings (by regenrek) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/samsung-smartthings"
+},
+{
+"li": "hanzoskill/lancedb-memory Python 0 0 Hanzo Bot skill: lancedb-memory (by pntrivedy) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/lancedb-memory"
+},
+{
+"li": "hanzoskill/withings-family Python 0 0 Hanzo Bot skill: withings-family (by odrobnik) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/withings-family"
+},
+{
+"li": "hanzoskill/george Python 0 0 Hanzo Bot skill: george (by odrobnik) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/george"
+},
+{
+"li": "hanzoskill/grok-search JavaScript 0 0 Hanzo Bot skill: grok-search (by notabhay) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/grok-search"
+},
+{
+"li": "hanzoskill/venice-ai-media Python 0 0 Hanzo Bot skill: venice-ai-media (by nhannah) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/venice-ai-media"
+},
+{
+"li": "hanzoskill/xai JavaScript 0 0 Hanzo Bot skill: xai (by mvanhorn) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/xai"
+},
+{
+"li": "hanzoskill/search-x JavaScript 0 0 Hanzo Bot skill: search-x (by mvanhorn) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/search-x"
+},
+{
+"li": "hanzoskill/antigravity-quota JavaScript 0 0 Hanzo Bot skill: antigravity-quota (by mukhtharcm) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/antigravity-quota"
+},
+{
+"li": "hanzoskill/surfline Python 0 0 Hanzo Bot skill: surfline (by miguelcarranza) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/surfline"
+},
+{
+"li": "hanzoskill/notnative JavaScript 0 0 Hanzo Bot skill: notnative (by k4ditano) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/notnative"
+},
+{
+"li": "hanzoskill/hyperliquid JavaScript 0 0 Hanzo Bot skill: hyperliquid (by k0nkupa) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/hyperliquid"
+},
+{
+"li": "hanzoskill/asana JavaScript 0 0 Hanzo Bot skill: asana (by k0nkupa) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/asana"
+},
+{
+"li": "hanzoskill/smalltalk Python 0 0 Hanzo Bot skill: smalltalk (by johnmci) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/smalltalk"
+},
+{
+"li": "hanzoskill/bot-homebridge Python 0 0 Hanzo Bot skill: bot-homebridge (by jiasenl) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/bot-homebridge"
+},
+{
+"li": "hanzoskill/miniflux-news Python 0 0 Hanzo Bot skill: miniflux-news (by hartlco) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/miniflux-news"
+},
+{
+"li": "hanzoskill/krea-api Python 0 0 Hanzo Bot skill: krea-api (by fossilizedcarlos) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/krea-api"
+},
+{
+"li": "hanzoskill/crypto-price Python 0 0 Hanzo Bot skill: crypto-price (by evgyur) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/crypto-price"
+},
+{
+"li": "hanzoskill/garmin-health-analysis Python 1 0 Hanzo Bot skill: garmin-health-analysis (by eversonl) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/garmin-health-analysis"
+},
+{
+"li": "hanzoskill/strava-cycling-coach Python 0 0 Hanzo Bot skill: strava-cycling-coach (by ericrosenberg) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/strava-cycling-coach"
+},
+{
+"li": "hanzoskill/screen-monitor HTML 0 0 Hanzo Bot skill: screen-monitor (by emasoudy) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/screen-monitor"
+},
+{
+"li": "hanzoskill/agent-zero-bridge JavaScript 0 0 Hanzo Bot skill: agent-zero-bridge (by dowingard) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/agent-zero-bridge"
+},
+{
+"li": "hanzoskill/media-backup Python 0 0 Hanzo Bot skill: media-backup (by dbhurley) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/media-backup"
+},
+{
+"li": "hanzoskill/grocery-list Python 0 0 Hanzo Bot skill: grocery-list (by dbhurley) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/grocery-list"
+},
+{
+"li": "hanzoskill/content-advisory Python 0 0 Hanzo Bot skill: content-advisory (by dbhurley) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/content-advisory"
+},
+{
+"li": "hanzoskill/blockchain-attestation JavaScript 0 0 Hanzo Bot skill: blockchain-attestation (by dbhurley) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/blockchain-attestation"
+},
+{
+"li": "hanzoskill/botlink JavaScript 0 0 Hanzo Bot skill: botlink (by davemorin) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/botlink"
+},
+{
+"li": "hanzoskill/orf JavaScript 0 0 Hanzo Bot skill: orf (by cpojer) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/orf"
+},
+{
+"li": "hanzoskill/hn-digest JavaScript 0 0 Hanzo Bot skill: hn-digest (by cpojer) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/hn-digest"
+},
+{
+"li": "hanzoskill/telegram-usage JavaScript 0 0 Hanzo Bot skill: telegram-usage (by c-drew) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/telegram-usage"
+},
+{
+"li": "hanzoskill/nest-devices Python 0 0 Hanzo Bot skill: nest-devices (by amogower) Pushed Feb 11, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoskill/nest-devices"
+},
+{
+"li": "hanzoskill/ynab 0 0 Hanzo Bot skill: ynab (by obviyus) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/ynab"
+},
+{
+"li": "hanzoskill/oracle 0 0 Hanzo Bot skill: oracle (by steipete) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/oracle"
+},
+{
+"li": "hanzoskill/openrouter-transcribe Shell 0 0 Hanzo Bot skill: openrouter-transcribe (by obviyus) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/openrouter-transcribe"
+},
+{
+"li": "hanzoskill/openhue 0 0 Hanzo Bot skill: openhue (by steipete) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/openhue"
+},
+{
+"li": "hanzoskill/openai-whisper-api Shell 0 0 Hanzo Bot skill: openai-whisper-api (by steipete) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/openai-whisper-api"
+},
+{
+"li": "hanzoskill/openai-whisper 0 0 Hanzo Bot skill: openai-whisper (by steipete) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/openai-whisper"
+},
+{
+"li": "hanzoskill/openai-image-gen Python 0 0 Hanzo Bot skill: openai-image-gen (by steipete) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/openai-image-gen"
+},
+{
+"li": "hanzoskill/obsidian 0 0 Hanzo Bot skill: obsidian (by steipete) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/obsidian"
+},
+{
+"li": "hanzoskill/codex-account-switcher Python 0 0 Hanzo Bot skill: codex-account-switcher (by odrobnik) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/codex-account-switcher"
+},
+{
+"li": "hanzoskill/agentic-spicy-food Python 0 0 Hanzo Bot skill: agentic-spicy-food (by nowloady) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/agentic-spicy-food"
+},
+{
+"li": "hanzoskill/agent-commerce-engine Python 0 0 Hanzo Bot skill: agent-commerce-engine (by nowloady) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/agent-commerce-engine"
+},
+{
+"li": "hanzoskill/perplexity JavaScript 0 0 Hanzo Bot skill: perplexity (by zats) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/perplexity"
+},
+{
+"li": "hanzoskill/brave-images 0 0 Hanzo Bot skill: brave-images (by zats) Pushed Feb 11, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoskill/brave-images"
+},
+{
+"button": "Show all 749"
+}
+]
+]

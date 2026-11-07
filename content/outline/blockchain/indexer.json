@@ -1,0 +1,216 @@
+[
+[
+{
+"h1": "Hanzo Indexer"
+},
+{
+"p": "Query blockchain data with GraphQL"
+},
+{
+"p": "Index and query on-chain data at scale. Deploy your own subgraphs and read the result through one GraphQL API."
+},
+{
+"h3": "GraphQL API"
+},
+{
+"p": "Query indexed chain data through GraphQL."
+},
+{
+"h3": "Custom Subgraphs"
+},
+{
+"p": "Deploy your own indexing logic with custom subgraph definitions."
+},
+{
+"h3": "Real-Time Indexing"
+},
+{
+"p": "Data indexed within seconds of on-chain confirmation."
+},
+{
+"h3": "Historical Aggregation"
+},
+{
+"p": "Pre-computed aggregations and time-series data for analytics."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "GraphQL API"
+},
+{
+"p": "Query indexed chain data through GraphQL."
+},
+{
+"h3": "Custom Subgraphs"
+},
+{
+"p": "Deploy your own indexing logic with custom subgraph definitions."
+},
+{
+"h3": "Real-Time Indexing"
+},
+{
+"p": "Data indexed within seconds of on-chain confirmation."
+},
+{
+"h3": "Historical Aggregation"
+},
+{
+"p": "Pre-computed aggregations and time-series data for analytics."
+},
+{
+"h3": "Cross-Chain Unification"
+},
+{
+"p": "Unified data model across multiple chains for easy cross-chain queries."
+},
+{
+"h3": "Webhooks"
+},
+{
+"p": "Push notifications for indexed events to your backend."
+},
+{
+"h3": "Token & Portfolio APIs"
+},
+{
+"p": "Pre-built APIs for token balances, transfers, and portfolio tracking."
+},
+{
+"h3": "Analytics Dashboard"
+},
+{
+"p": "Monitor indexing status, query performance, and data freshness."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/indexer/IHanzoIndexer.sol\" ; /// @title IndexedContract - Emit events optimized for Hanzo Indexer /// @notice Structured events for efficient GraphQL querying contract IndexedContract { // Indexed events for efficient GraphQL queries event Transfer ( address indexed from, address indexed to, uint256 indexed tokenId, uint256 amount, uint256 timestamp ); event Swap ( address indexed pair, address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, uint256 indexed blockNumber ); even"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "DeFi Dashboards"
+},
+{
+"p": "Build trading dashboards with real-time price, volume, and liquidity data from DEXs."
+},
+{
+"h3": "NFT Analytics"
+},
+{
+"p": "Track NFT sales, floor prices, holder distributions, and collection statistics."
+},
+{
+"h3": "Token Explorers"
+},
+{
+"p": "Create token explorers with transfer history, holder analytics, and supply metrics."
+},
+{
+"h3": "Protocol Monitoring"
+},
+{
+"p": "Monitor protocol health, TVL, user activity, and governance participation."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Hanzo Indexer"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Hanzo Indexer"
+},
+{
+"p": "Blockchain indexer"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

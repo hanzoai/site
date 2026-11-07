@@ -1,0 +1,179 @@
+[
+[
+{
+"h1": "The complete MCP runtime for coding, decisions, browser, and cloud"
+},
+{
+"p": "Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright & Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP."
+},
+{
+"a": "Browse 260+ tools",
+"href": "https://docs.hanzo.ai/docs/mcp-tools/all-tools"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/mcp"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/mcp"
+},
+{
+"p": "Open source, MIT. Identical tool names and schemas in TypeScript, Python, and Rust — plus remote streamable HTTP at api.hanzo.ai/v1/mcp."
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "Core runtime (fs, exec, code, git, fetch, workspace, ui), semantic code intelligence (code_search, code_context, code_ask, code_index), Kai decision & safety guardrails (kai_decide, kai_command_guard, kai_injection_screen), browser CDP, issue tracker, and persistent memory."
+},
+{
+"p": "Through the unified hanzo router and /docs/mcp-tools catalog, agents provision sandboxes, deploy containers across 34 regions, query vector indexes, rotate KMS secrets, verify IAM policies, and inspect billing usage under one bearer key."
+},
+{
+"p": "Every shell command and external input can pass through kai_command_guard and kai_injection_screen in single-digit milliseconds. Enable or drop tool groups per environment with --enable-tools and --disable-tools."
+},
+{
+"li": "Full-stack agent capabilities, ready out of the box"
+},
+{
+"li": "117 Hanzo Cloud services, 1,538 typed operations"
+},
+{
+"li": "Scoped permissions & Kai safety screening"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls MCP from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo MCP in my project. Start with: hanzo mcp create"
+}
+],
+[
+{
+"p": "Tool domains"
+},
+{
+"h2": "Every surface an autonomous team needs"
+},
+{
+"p": "From local AST refactoring and headless browser verification to multi-region cloud deployments."
+},
+{
+"h3": "fs & exec"
+},
+{
+"p": "read, write, stat, list, mkdir, rm, mv, apply_patch, search_text — plus exec with run, background, ps, kill, and logs so long-running dev servers and test suites stream cleanly."
+},
+{
+"h3": "code_search, code_context, code_ask, code_index"
+},
+{
+"p": "AST-aware symbol resolution, call graphs, cross-repository indexing, and structural transforms. Find every caller of a symbol in 2ms without grep noise."
+},
+{
+"h3": "kai_decide, kai_command_guard, kai_injection_screen"
+},
+{
+"p": "13 purpose-built Kai decision, scoring, routing, log triage, recovery, and context compaction tools running in 6.4ms at a fraction of LLM token cost."
+},
+{
+"h3": "browser, cdp, git & fetch"
+},
+{
+"p": "Full Playwright and Chrome DevTools Protocol automation (navigate, click, screenshot, console, network), complete git workflows, and streaming HTTP fetch."
+},
+{
+"h3": "tracker, memory, think, plan & tasks"
+},
+{
+"p": "tracker_boards, tracker_issues, tracker_create, and tracker_update sync directly with engineering boards, while memory, think, and plan persist architecture context across sessions."
+},
+{
+"h3": "hanzo (117 Cloud services · 1,538 ops)"
+},
+{
+"p": "Direct typed access to Deploy, Sandbox, IAM, KMS, KV, S3, Vector, Search, Crawl, Workflow, Commerce, and Billing — inspectable at docs.hanzo.ai/docs/mcp-tools."
+}
+],
+[
+{
+"p": "Get started"
+},
+{
+"h2": "One config block"
+},
+{
+"p": "Use the --package= form for local stdio, or point any MCP client directly at https://api.hanzo.ai/v1/mcp over streamable HTTP."
+},
+{
+"code": "// .mcp.json — add Hanzo MCP to any MCP client { \" mcpServers \" : { \" hanzo \" : { \" command \" : \" npx \" , \" args \" : [ \" -y \" , \" hanzo \" , \" mcp \" ] } } } // Or install the whole native stack once and run it yourself: //   npm i -g hanzo //   hanzo mcp              # stdio; the binary downloads on first run //   hanzo mcp -t sse       # or over HTTP"
+},
+{
+"a": "All MCP Tools Reference",
+"href": "https://docs.hanzo.ai/docs/mcp-tools/all-tools"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/mcp"
+}
+],
+[
+{
+"h2": "Add Hanzo MCP to your client"
+},
+{
+"p": "One block in .mcp.json, or connect over streamable HTTP at api.hanzo.ai/v1/mcp."
+},
+{
+"a": "Browse All Tools",
+"href": "https://docs.hanzo.ai/docs/mcp-tools/all-tools"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/mcp"
+},
+{
+"a": "Hanzo Platform",
+"href": "https://platform.hanzo.ai"
+}
+],
+[
+{
+"p": "MCP"
+},
+{
+"a": "MCP docs →",
+"href": "https://docs.hanzo.ai/docs/mcp"
+}
+],
+[
+{
+"h2": "Get MCP"
+},
+{
+"p": "Model Context Protocol — 260+ tools"
+},
+{
+"a": "hanzoai/mcp",
+"href": "https://github.com/hanzoai/mcp"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/mcp"
+}
+]
+]

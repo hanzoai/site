@@ -1,0 +1,111 @@
+[
+[
+{
+"h1": "Hanzo for agents: free to start, pay as you go"
+},
+{
+"p": "Sign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required."
+},
+{
+"a": "Sign up headless",
+"href": "#headless"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/agents"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"p": "Sign a one-time challenge from hanzo.id. A first-seen wallet gets its own account and organization."
+},
+{
+"p": "POST /v1/account/keys with that token. It is shown once."
+},
+{
+"p": "POST /v1/chat/completions. GET /v1/billing/tier says what the free allowance has left."
+},
+{
+"p": "POST /v1/billing/crypto/deposit returns the address to send to; the balance is credited when the chain confirms."
+},
+{
+"p": "Each call is billed from your balance at its model’s rate in GET /v1/pricing."
+},
+{
+"li": "Sign up with a wallet"
+},
+{
+"li": "Get a key"
+},
+{
+"li": "Make a first call"
+},
+{
+"li": "Top up in USDC or USDT"
+},
+{
+"li": "Pay as you go"
+}
+],
+[
+{
+"h2": "One command installs the whole stack"
+},
+{
+"p": "The CLI, the coding agent, the MCP server and the inference engine are native Rust binaries. npm installs a small launcher; each binary downloads, checksum-verified, the first time it runs. Any OS, Windows included."
+},
+{
+"button": "Copy"
+},
+{
+"code": "npm i -g hanzo              # any OS; or: curl -fsSL https://hanzo.sh | sh\nhanzo auth login            # a person approves once; headless agents use a key\nhanzo                       # a coding session in this repo (fetches the agent)\nhanzo mcp                   # the MCP server over stdio (fetched on first run)\nhanzo engine serve <model>  # local inference (fetched on first run)\n\n# Register the MCP server with nothing installed first:\nclaude mcp add --scope user hanzo -- npx -y hanzo mcp"
+}
+],
+[
+{
+"h2": "The five steps, as one script"
+},
+{
+"p": "Every step is one request. This file makes them all, as it was run against production."
+},
+{
+"code": "// No human required: sign up with a wallet, get a key, call the API, top up in USDC or USDT. // A first-seen wallet gets its own Hanzo account and organization, with a small free allowance to try it. // npm i @hanzo/ai viem   ·   node agent.ts   (Node 22.18+; set HANZO_WALLET_KEY to use your own wallet) import { Hanzo } from ' @hanzo/ai ' import { generatePrivateKey , privateKeyToAccount } from ' viem/accounts ' import { createHash , randomBytes } from ' node:crypto ' const ID = ' https://hanzo.id ' const API = ' https://api.hanzo.ai ' const CLIENT = ' hanzo-ai ' // Your agent's own wallet, o"
+},
+{
+"p": "Keep the wallet key and the API key in your secret store: the wallet is the account, and the API key is shown once. A deposit address lasts 24 hours and is credited when the chain confirms; send only the token and chain it names."
+}
+],
+[
+{
+"h2": "Paste this into your agent"
+},
+{
+"p": "What Hanzo is, the base URL, how to discover the API and the headless path, in one block an agent keeps in its context."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Hanzo (https://hanzo.ai) is the AI operating system for business: one API for every model, Kai decisions and agents, with one key. Building business software since 2014. Techstars '17.\n\nSign up free with a wallet. Get an API key free. A small free allowance to try it. Top up in USDC or USDT over the API to raise your limits and pay as you go. No human required.\n\nBase URL: https://api.hanzo.ai/v1 (chat completions in the OpenAI shape). Discover: GET https://api.hanzo.ai/v1 lists every capability, GET https://api.hanzo.ai/v1/<capability> its operations, and https://api.hanzo.ai/v1/openapi.json i"
+},
+{
+"a": "Agents SDK",
+"href": "/agents/sdk"
+},
+{
+"a": "llms.txt",
+"href": "/llms.txt"
+},
+{
+"a": "Book a call",
+"href": "https://cal.com/hanzo"
+}
+],
+[
+{
+"h2": "Questions"
+}
+]
+]

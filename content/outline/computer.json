@@ -1,0 +1,104 @@
+[
+[
+{
+"h1": "Hanzo Computer"
+},
+{
+"p": "An agent that uses the computer in front of it"
+},
+{
+"a": "Try Hanzo Computer",
+"href": "https://computer.hanzo.ai"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"p": "No DOM, no accessibility tree, no selectors to maintain. A native app, a canvas, a remote desktop and a web page all look the same to it — like a screenshot."
+},
+{
+"p": "Mac, Windows, and Linux with an X server. On macOS the terminal asks for Screen Recording and Accessibility the first time, because those are exactly the permissions this needs."
+},
+{
+"p": "Add -with-ocr to the model and it reads text off the screen to build a map of clickable elements — the fix for a button a model can see but keeps missing by twenty pixels."
+},
+{
+"p": "Add -with-som and the screenshot arrives pre-labelled, so the model names a marked element instead of guessing a coordinate."
+},
+{
+"p": "operate --voice takes the objective by microphone. Needs the audio extras and portaudio installed; it is not in the base install."
+},
+{
+"p": "This runs as you, on your machine, with your logged-in sessions. Give it a fresh user account or a VM before you give it anything that matters — and remember that text on a web page can try to redirect it."
+},
+{
+"li": "It reads pixels"
+},
+{
+"li": "Mouse and keyboard"
+},
+{
+"li": "OCR when clicking is hard"
+},
+{
+"li": "Set-of-Mark prompting"
+},
+{
+"li": "Say it out loud"
+},
+{
+"li": "It has whatever you have"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Computer from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Computer in my project. Start with: hanzo desktop"
+}
+],
+[
+{
+"h2": "For the software with no API"
+},
+{
+"p": "The vendor portal that exports one CSV at a time. The desktop tool from 2009. The internal app nobody will reopen. Those."
+},
+{
+"a": "Try Hanzo Computer",
+"href": "https://computer.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/computer"
+}
+],
+[
+{
+"h2": "Get Computer"
+},
+{
+"p": "Computer-use for AI"
+},
+{
+"a": "hanzoai/computer",
+"href": "https://github.com/hanzoai/computer"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

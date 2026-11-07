@@ -1,0 +1,191 @@
+[
+[
+{
+"h1": "Learn Hanzo"
+},
+{
+"p": "Start with a working request, then go as deep as you need."
+},
+{
+"a": "Get started",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+},
+{
+"a": "Hanzo University",
+"href": "https://hanzo.university"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "Install, authenticate, and make your first call. The shortest path from nothing to a working request."
+},
+{
+"p": "Drive the platform from your terminal — projects, deploys, keys and logs."
+},
+{
+"p": "Every endpoint, parameter and response shape."
+},
+{
+"p": "Define an agent once and run it from chat, the API, or your own application."
+},
+{
+"p": "Connect tools and data to models over the Model Context Protocol."
+},
+{
+"li": "Getting started"
+},
+{
+"li": "CLI"
+},
+{
+"li": "API reference"
+},
+{
+"li": "Agents"
+},
+{
+"li": "MCP"
+}
+],
+[
+{
+"h2": "Hanzo University"
+},
+{
+"a": "Hanzo University Courses and certifications live on Hanzo University.",
+"href": "https://hanzo.university"
+}
+],
+[
+{
+"h2": "Start here"
+},
+{
+"a": "Getting started Install, authenticate, and make your first call. The shortest path from nothing to a working request.",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+},
+{
+"a": "CLI Drive the platform from your terminal — projects, deploys, keys and logs.",
+"href": "https://docs.hanzo.ai/docs/cli"
+},
+{
+"a": "API reference Every endpoint, parameter and response shape.",
+"href": "https://docs.hanzo.ai/docs/openapi"
+}
+],
+[
+{
+"h2": "Pick what to try"
+},
+{
+"a": "Chat One thread with every model, your MCP tools, your files and a code sandbox.",
+"href": "/chat"
+},
+{
+"a": "Playground Every model in every mode, with each run’s tokens and cost beside the answer.",
+"href": "/playground"
+},
+{
+"a": "Hanzo Dev A coding agent that opens the files, makes the change, runs the tests and shows you the diff.",
+"href": "/dev"
+},
+{
+"a": "Zen models Open-weight frontier models you can self-host anywhere, served on the Hanzo API.",
+"href": "/zen"
+},
+{
+"a": "MCP Thirteen tools — shell, files, code, git, HTTP — behind one server.",
+"href": "/mcp"
+},
+{
+"a": "Agents A Python SDK where an agent is a model, instructions and tools, and several can sit behind one router.",
+"href": "/agents/sdk"
+}
+],
+[
+{
+"h2": "Go further"
+},
+{
+"a": "Agents Define an agent once and run it from chat, the API, or your own application.",
+"href": "https://docs.hanzo.ai/docs/openapi/agents/"
+},
+{
+"a": "MCP Connect tools and data to models over the Model Context Protocol.",
+"href": "https://docs.hanzo.ai/docs/mcp"
+},
+{
+"a": "Starters A starter for each Hanzo product. Browse, fork, deploy.",
+"href": "/gallery"
+},
+{
+"a": "UI Open-source, accessible React components built on @hanzo/gui primitives.",
+"href": "/ui"
+},
+{
+"a": "GUI The cross-platform UI kit and design system behind every Hanzo app.",
+"href": "/gui"
+}
+],
+[
+{
+"h2": "From the blog"
+},
+{
+"a": "Optimizing for Headless Commerce in the Era of Agentic LLMs 2026-10-26 Buyers are becoming agents. What it takes to be readable, signable and payable by an LLM with no human in the loop, and what Hanzo ships for it today.",
+"href": "https://hanzo.blog/headless-commerce-agentic-llms/"
+},
+{
+"a": "Your AI is Planning To Kill You 2026-10-25 Why frontier models fail when real lives are on the line, and how Hanzo Kai 1.9 enforces deterministic safety.",
+"href": "https://hanzo.blog/2026-10-16-your-ai-is-planning-to-kill-you/"
+},
+{
+"a": "Kai 1: Decisions, Not Completions 2026-10-07 Kai is Hanzo's decision model, served by the Hanzo API. Give it explicit state and a listed question, and it returns a typed, calibrated answer — a choice, a score, a yes/no, or a reasoned deferral.",
+"href": "https://hanzo.blog/2026-10-07-introducing-kai/"
+}
+],
+[
+{
+"h2": "Read the thinking"
+},
+{
+"a": "Technical Blog Product launches, architecture deep dives, and research essays.",
+"href": "/blog"
+},
+{
+"a": "Research papers The reasoning behind the architecture, published in full.",
+"href": "/research"
+},
+{
+"a": "Source The platform is open source — read it, run it, change it.",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Questions"
+},
+{
+"a": "How the platform fits together",
+"href": "/platform"
+},
+{
+"a": "The commands, ready to copy",
+"href": "https://docs.hanzo.ai/docs/guides/coding/claude-code"
+},
+{
+"a": "Every board and its runs",
+"href": "/benchmarks"
+},
+{
+"a": "See every plan and model rate",
+"href": "/pricing"
+},
+{
+"a": "Hanzo Enterprise",
+"href": "/enterprise"
+}
+]
+]

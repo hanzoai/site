@@ -1,0 +1,395 @@
+[
+[
+{
+"h1": "Hanzo Analytics"
+},
+{
+"p": "Traffic, sessions and revenue for the sites you run, in a dashboard you can read without training."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Request Demo",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "The reports"
+},
+{
+"p": "Each one answers a question you would otherwise export a CSV to answer."
+},
+{
+"h3": "Realtime"
+},
+{
+"p": "Who is on the site right now, which page they are on and how they got there. Useful the hour you ship something and the hour something breaks."
+},
+{
+"h3": "Journeys"
+},
+{
+"p": "The route people actually took through the site, laid out as a tree. It rarely matches the one in the navigation, and that gap is the finding."
+},
+{
+"h3": "Funnels, goals and retention"
+},
+{
+"p": "Define the steps and see where the drop is. Goals count the thing you care about, and retention answers the harder question of whether anyone came back."
+},
+{
+"h3": "Events"
+},
+{
+"p": "Track a click or a signup with a name and a few properties. No schema to declare up front and nothing to migrate when you add one."
+},
+{
+"h3": "Attribution and UTM"
+},
+{
+"p": "Which channel, campaign and referrer brought the session that converted — including the touch that started it, not only the one that closed it."
+},
+{
+"h3": "Live User Activity"
+}
+],
+[
+{
+"h2": "From a visit to a number"
+},
+{
+"p": "A pageview is not worth much on its own. It gets interesting once it is joined to the step someone stopped at, the campaign that sent them and the money that followed."
+},
+{
+"h3": "Where they stop"
+},
+{
+"p": "Build the funnel from steps you already track and read the drop between them. The step with the cliff is the one worth a week of work."
+},
+{
+"h3": "Whether they return"
+},
+{
+"p": "Retention by the week someone arrived. Growth that comes only from new visitors looks identical to growth that lasts, until you look at this."
+},
+{
+"h3": "What it was worth"
+},
+{
+"p": "Send the order value with the event and revenue shows up beside the traffic that produced it, split by channel and campaign."
+},
+{
+"a": "Read how reports work",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/insights"
+}
+],
+[
+{
+"h2": "If you sell something"
+},
+{
+"p": "Revenue is a report here, not an integration you buy on top."
+},
+{
+"h3": "Revenue beside the traffic"
+},
+{
+"p": "Send an amount and a currency with the event and it lands in the same reports as everything else. Totals, order values and the sessions behind them."
+},
+{
+"h3": "Which campaign paid for itself"
+},
+{
+"p": "Attribution splits revenue across the channels and campaigns that touched the session, so spend can be argued with numbers rather than instinct."
+},
+{
+"h3": "The checkout, step by step"
+},
+{
+"p": "Cart to payment as a funnel, with the abandonment rate per step. Add a goal for the one step you would defend in a meeting."
+},
+{
+"h4": "Sales Performance"
+},
+{
+"h4": "Product Recommendations"
+}
+],
+[
+{
+"h2": "Open Source at Our Core"
+},
+{
+"p": "Hanzo Analytics is fully open-source, fostering innovation and collaboration among thousands of global developers."
+},
+{
+"a": "View Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"a": "View Repository",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "A script, then an API"
+},
+{
+"p": "The tag collects pageviews on its own. Everything past that is a function call."
+},
+{
+"h3": "What you are signing up for"
+},
+{
+"li": "• Your database, your rows It runs against Postgres, MySQL or MariaDB — one you already operate. The raw events stay somewhere you can query directly."
+},
+{
+"li": "• Many sites, one install Add a site, get a tracking id. Group people into teams, and share a board with someone who should not have an account."
+},
+{
+"li": "• Open source, MIT Read it, fork it, run it on a small server for as long as you like. The hosted version exists so you do not have to."
+},
+{
+"a": "View Documentation",
+"href": "https://docs.hanzo.ai/docs/analytics"
+},
+{
+"a": "API Reference",
+"href": "https://docs.hanzo.ai/docs/openapi"
+},
+{
+"a": "Example Projects",
+"href": "https://github.com/hanzoai/insights"
+},
+{
+"button": "JavaScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "API"
+},
+{
+"code": "// Initialize Hanzo Analytics in your app import { HanzoAnalytics } from ' hanzo-analytics ' ; // Configure your instance const analytics = new HanzoAnalytics ({ projectId : ' YOUR_PROJECT_ID ' , options : { autoPageviews : true , trackClicks : true , debugMode : false } }); // Track custom events analytics. track ( ' purchase_completed ' , { productId : ' prod_123 ' , price : 89.99 , currency : ' USD ' }); // Identify users analytics. identify ( ' user_123 ' , { name : ' Jane Smith ' , email : ' [email protected] ' , plan : ' premium ' });"
+}
+],
+[
+{
+"h2": "AI-Powered Observability & Monitoring"
+},
+{
+"p": "Proactively identify issues and opportunities with AI-powered insights and monitoring."
+},
+{
+"h3": "Real-time anomaly detection"
+},
+{
+"p": "Automatically identify unusual patterns and potential issues before they impact your business."
+},
+{
+"h3": "Predictive alerts and proactive monitoring"
+},
+{
+"p": "Get alerted about potential problems before they occur with AI-powered predictive monitoring."
+},
+{
+"h3": "Deep integration with Hanzo Cloud and Base"
+},
+{
+"p": "Connect your analytics with your entire infrastructure for comprehensive visibility."
+},
+{
+"h3": "AI Analysis in Action"
+},
+{
+"h4": "Traffic Anomaly Detection"
+},
+{
+"h4": "AI Insights"
+},
+{
+"h4": "AI Recommendation"
+},
+{
+"p": "Based on the traffic pattern analysis, we recommend scaling your infrastructure in the US-West region for the next 3 hours."
+},
+{
+"button": "Apply Recommendation"
+}
+],
+[
+{
+"h2": "Enterprise-Grade Security & Compliance"
+},
+{
+"p": "Secure by design, ensuring your data meets stringent compliance standards."
+},
+{
+"h3": "Security Features"
+},
+{
+"li": "End-to-end encryption"
+},
+{
+"li": "Data residency controls"
+},
+{
+"li": "Custom data retention policies"
+},
+{
+"li": "Role-based access control"
+},
+{
+"li": "Regular security audits"
+},
+{
+"li": "Privacy-focused data collection"
+},
+{
+"li": "Automated compliance monitoring"
+},
+{
+"h3": "Security and assurance"
+},
+{
+"h4": "Continual internal audits"
+},
+{
+"p": "Report on request."
+},
+{
+"h4": "Data protection"
+},
+{
+"p": "EU data handling, deletion, and export on request."
+},
+{
+"h4": "Privacy by design"
+},
+{
+"p": "Collected because it is used, not because it can be."
+},
+{
+"h4": "Data Privacy Commitment"
+},
+{
+"p": "Hanzo Analytics collects what a report uses and nothing else. You choose where the data lives, how long it is kept, and who on your team can read it, and you can export or delete it on request."
+},
+{
+"a": "Read our privacy policy →",
+"href": "/legal/privacy"
+}
+],
+[
+{
+"h2": "Powered by Community, Improved by Collaboration"
+},
+{
+"p": "Join thousands of developers building the future of analytics together."
+},
+{
+"h3": "Open Source"
+},
+{
+"p": "Hanzo Analytics is fully open source, with a vibrant community of developers contributing from around the world. Join us on GitHub to collaborate on the future of analytics."
+},
+{
+"a": "GitHub Repo",
+"href": "https://github.com/hanzoai/insights"
+},
+{
+"h3": "Resources"
+},
+{
+"p": "Access comprehensive documentation, tutorials, and examples to help you make the most of Hanzo Analytics."
+},
+{
+"a": "Documentation Comprehensive guides and API references",
+"href": "https://docs.hanzo.ai/docs/analytics"
+},
+{
+"a": "Community Forum Join discussions with developers and AI experts",
+"href": "https://discord.gg/XthHQQj"
+},
+{
+"a": "Examples Sample projects showcasing Hanzo Analytics",
+"href": "https://github.com/hanzoai/insights"
+},
+{
+"a": "Support Get help from our team and community",
+"href": "/support"
+},
+{
+"a": "Browse All Resources",
+"href": "https://docs.hanzo.ai/docs/analytics"
+}
+],
+[
+{
+"h2": "Add the script"
+},
+{
+"p": "One tag on the page and the dashboard fills in on its own. Host it yourself or let us run it — the software is the same either way."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Request Demo",
+"href": "/contact-sales"
+},
+{
+"h3": "One tag"
+},
+{
+"p": "Paste it into the head of your site. Pageviews start arriving before you have decided what to name anything."
+},
+{
+"h3": "Your data stays yours"
+},
+{
+"p": "The events live in your own Postgres, MySQL or MariaDB. Nothing is sampled, and nothing is held back from an export."
+},
+{
+"h3": "Open source, MIT"
+},
+{
+"p": "Run it on a small server for as long as you like. The hosted version is the same code with the operations taken care of."
+}
+],
+[
+{
+"h2": "Get started with Analytics"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/insights"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Analytics"
+},
+{
+"p": "Product analytics on your data"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

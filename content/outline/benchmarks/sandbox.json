@@ -1,0 +1,165 @@
+[
+[
+{
+"p": "Benchmarks / Sandbox cold start"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"h1": "Cold start, by primitive"
+},
+{
+"p": "A V8 context ready to execute JavaScript in 0.13 ms, the median of one pass, reproducible by one command."
+},
+{
+"a": "hanzoai/benchmarks · sandbox",
+"href": "https://github.com/hanzoai/benchmarks/tree/main/sandbox"
+},
+{
+"code": "node sandbox/sandbox.mjs"
+},
+{
+"p": "prints the table on this page — transcribed from bench/README.md, the pass of 2026-09-07"
+},
+{
+"h2": "What is measured"
+},
+{
+"p": "The time from asking for a sandbox to having one that will execute code. A V8 context is a fresh global inside a V8 isolate that is already running: it is cheap because it shares that isolate’s heap. Timings are the median of the pass."
+},
+{
+"h2": "Results"
+},
+{
+"p": "an M-series laptop · the pass of 2026-09-07 · median of the pass"
+},
+{
+"table": [
+[
+"primitive",
+"measured here",
+"what it can run"
+],
+[
+"V8 context",
+"0.13 ms",
+"JavaScript, sharing the heap"
+]
+]
+},
+{
+"p": "A context runs JavaScript, which makes it the right primitive for a JavaScript transform. An agent that installs a package or runs a shell gets a microVM instead, which is a separate measurement."
+},
+{
+"h2": "What this measures, and what it does not"
+},
+{
+"p": "Cold start is not throughput. This is the time to the first instruction, on an idle machine. It says nothing about what happens when a thousand sandboxes are asked for at once."
+},
+{
+"p": "One machine, one day. A single pass on one laptop, reproducible by one command. Read it as a floor that has been established rather than as a service level."
+},
+{
+"p": "It is one of three costs, not the cost. A sandbox is what an agent needs to run a command. What it costs to keep an agent that is doing nothing is 477 bytes and a 0.034 ms resume , and what a running agent holds is 601 bytes of heap and 125 ns to spawn . The three are separate measurements with separate commands and they do not add up into a single number."
+},
+{
+"a": "477 bytes and a 0.034 ms resume",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "601 bytes of heap and 125 ns to spawn",
+"href": "/benchmarks/goroutine"
+},
+{
+"p": "Hanzo AI Cloud"
+},
+{
+"h3": "Build on Hanzo Cloud"
+},
+{
+"a": "Start on Hanzo Cloud",
+"href": "https://cloud.hanzo.ai"
+},
+{
+"a": "View Models & Pricing",
+"href": "/pricing"
+},
+{
+"a": "Previous Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "All Benchmarks Board",
+"href": "/benchmarks"
+},
+{
+"a": "Next Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"h3": "Related in runtime"
+},
+{
+"a": "Fleet residency",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"p": "LoCoMo · MemoryAgentBench · LongMemEval · CronQuestions · RepoBench-R · LoCoMo · subject scope · LoCoMo-Conv · Engine prefill on CUDA vs llama.cpp · GPQA-Diamond"
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "CronQuestions",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "LoCoMo · subject scope",
+"href": "/benchmarks/locomo-subject-scope"
+},
+{
+"a": "LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"a": "Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"a": "GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"p": "harness and the committed table: hanzoai/benchmarks · sandbox · sandbox.mjs needs a container runtime; colima start is enough on macOS"
+},
+{
+"a": "hanzoai/benchmarks · sandbox",
+"href": "https://github.com/hanzoai/benchmarks/tree/main/sandbox"
+},
+{
+"code": "sandbox.mjs"
+},
+{
+"code": "colima start"
+}
+]
+]

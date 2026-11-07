@@ -1,0 +1,158 @@
+[
+[
+{
+"h1": "Cookie Notice"
+},
+{
+"p": "The cookies and similar technologies Hanzo uses, the consent posture by category, and how to control them."
+}
+],
+[
+{
+"p": "Effective 2026-09-30 · Version 2026-09-30 · Previous version: none, this is the first."
+},
+{
+"h2": "Contents"
+},
+{
+"li": "1. Categories",
+"href": "#1-categories"
+},
+{
+"li": "2. Consent and control",
+"href": "#2-consent-and-control"
+},
+{
+"li": "3. Retention",
+"href": "#3-retention"
+},
+{
+"li": "4. Cookie inventory",
+"href": "#4-cookie-inventory"
+}
+],
+[
+{
+"p": "This Cookie Notice explains how Hanzo AI, Inc. uses cookies and similar technologies (local storage, SDKs, pixels) on hanzo.ai and the Hanzo Console. It supplements the Privacy Policy ."
+},
+{
+"a": "Privacy Policy",
+"href": "/legal/privacy"
+},
+{
+"h2": "1. Categories"
+},
+{
+"li": "Strictly necessary. Authentication, session integrity, security, load balancing, and core functionality. These are always active; the Services cannot operate without them, so they do not require consent."
+},
+{
+"li": "Analytics. Measurement of how hanzo.ai is used: our own first-party analytics and Google Analytics."
+},
+{
+"li": "Marketing performance. Measuring the advertising campaigns that bring visitors to Hanzo: the Meta Pixel, Google's ad measurement, the ad click a visit arrived from, and the matching conversion events Hanzo sends to Google and Meta from its servers, with email addresses hashed."
+},
+{
+"li": "Personalised third-party marketing. Letting Google and Meta use that data to personalise ads, such as audiences and retargeting. When it is off, Meta receives the data under Limited Data Use and Google under ad personalisation denied."
+},
+{
+"h2": "2. Consent and control"
+},
+{
+"p": "What applies to you depends on where you are. In the EU and EEA, the United Kingdom, Switzerland, Quebec, Brazil and mainland China, and wherever we cannot tell, analytics, marketing and personalization are off until you accept: Google Analytics and the Meta Pixel are not loaded before then, and the banner offers Accept, Reject and Customize with equal ease. Everywhere else they are on by default, with a notice, a “Manage” control and a “Do not sell or share my personal information” link. The full policy is in Section 8 of the Privacy Policy ."
+},
+{
+"a": "Privacy Policy",
+"href": "/legal/privacy"
+},
+{
+"p": "You can change any category at any time through Privacy choices in the footer of every Hanzo page; your choice is kept in the hz_consent cookie and applies to the events Hanzo sends from its servers as well as to the tags in your browser. You can also control cookies through your browser. We honor Global Privacy Control in every region as an opt-out of sale and sharing: marketing performance and personalized third-party marketing stay off, and Meta and other cross-context advertising tags are not loaded."
+},
+{
+"a": "Privacy choices",
+"href": "#choices"
+},
+{
+"code": "hz_consent"
+},
+{
+"p": "A browser privacy signal governs cookies and comparable tracking. It does not change your model-training setting (Settings → Privacy) or withdraw a separate research contribution ; those are managed on their own."
+},
+{
+"a": "research contribution",
+"href": "/legal/research-contribution"
+},
+{
+"h2": "3. Retention"
+},
+{
+"p": "Nonessential analytics identifiers are retained no longer than the period listed in the Privacy Policy retention schedule — generally no more than 13 months — after which they expire or are renewed only with continued consent. Strictly necessary cookies persist only as long as the session or security function requires."
+},
+{
+"a": "Privacy Policy",
+"href": "/legal/privacy"
+},
+{
+"h2": "4. Cookie inventory"
+},
+{
+"table": [
+[
+"Name / pattern",
+"Category",
+"Purpose",
+"Duration",
+"Provider"
+],
+[
+"hz_consent",
+"Strictly necessary",
+"Your Cookie Preferences",
+"13 months",
+"Hanzo"
+],
+[
+"hz_consent_v",
+"Strictly necessary",
+"The version of this policy your choice was made under, so you are asked again when it changes",
+"13 months",
+"Hanzo"
+],
+[
+"hanzo_iam_* (local storage)",
+"Strictly necessary",
+"Your sign-in session",
+"Until sign-out",
+"Hanzo"
+],
+[
+"hz_cid",
+"Analytics",
+"A first-party Google Analytics client id, set when _ga is absent",
+"2 years",
+"Hanzo"
+],
+[
+"_ga , _ga_*",
+"Analytics",
+"Google Analytics visitor and session",
+"2 years",
+"Google"
+],
+[
+"hz_touch",
+"Marketing performance",
+"The ad click (gclid, gbraid, wbraid, fbclid) a visit arrived from",
+"90 days",
+"Hanzo"
+],
+[
+"_fbp , _fbc",
+"Marketing performance",
+"Meta browser and click identifiers",
+"90 days",
+"Meta, set by Hanzo or the Pixel"
+]
+]
+}
+]
+]

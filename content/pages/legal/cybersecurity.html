@@ -1,0 +1,63 @@
+<div class="is_View _fd-column _minH-100vh"><main class="is_View _fd-column _pb-c-space-10"><section aria-labelledby="_R_1dlfiv5t75tf6bdb_" class="is_View _ox-_platformweb_clip _pos-relative _width-10037 _ox-hidden _oy-hidden _dsp-flex _fd-column _justify-center _mt-calc-1calc62003180138 _pt-calc0pxcalc447866377" data-slot="fold"><div aria-hidden="true" class="is_View _pos-absolute _t-0px _l-0px _r-0px _height-640px _pe-none _backgroundImage-radial-grad1214971095"></div><div class="is_View _fd-column _pos-relative _width-10037 _maxW-1320px _mr-auto _ml-auto _pr-page-gutter _pl-page-gutter _pt-max40pxmin8857263194 _pb-max48pxmin8857263194"><div class="is_View _dsp-grid _gridTemplateColumns-minmax01fr1234957 _items-center _gap-max36pxmin5518920252 _width-10037"><div class="is_View _text-_platformweb_center _fd-column _minW-0px _gap-c-space-4 _items-center"><div class="is_View _self-center"><div class="is_View _btlr-_platformweb_9999px _btrr-_platformweb_9999px _bbrr-_platformweb_9999px _bblr-_platformweb_9999px _dsp-_platformweb_inline-flex _width-_platformweb_fit-content _textDecoration-_platformweb_none _self-flex-start _dsp-inline-flex _fd-row _items-center _justify-center _gap-6px _pr-12px _pl-12px _pt-4px _pb-4px _btlr-9999px _btrr-9999px _bbrr-9999px _bblr-9999px _bg-transparent _btw-1px _brw-1px _borderBottomWidth-1px _borderLeftWidth-1px _btc-border-stro3513 _brc-border-stro3513 _borderBottomColor-border-stro3513 _borderLeftColor-border-stro3513 _pos-relative _ox-hidden _oy-hidden _bbs-solid _bts-solid _bls-solid _brs-solid" data-label=""><span class="is_Text font_mono _col-muted-foreg108704142 _ff-f-family _fs-f-size-1 _lh-f-lineHeigh112920 _fw-600" data-slot="text">Legal</span></div></div><h1 class="is_Text font_heading _fs-_sm_f-size-11 _fs-_lg_text-6xl _col-foreground _dsp-revert-laye114 _ws-inherit _ff-f-family _fs-f-size-10 _fw-497 _lh-1--19 _ls--0--012em _textWrap-balance _width-10037 _maxW-900px" data-slot="display" id="_R_1dlfiv5t75tf6bdb_">Cybersecurity Policy</h1><p class="is_Text _textWrap-_platformweb_balance _col-muted-foreg108704142 _dsp-revert-laye114 _ws-inherit _fs-f-size-4 _lh-1--65 _ls-0px _textWrap-pretty _maxW-600px" data-slot="lede">How we protect your data — who can reach it, how it is encrypted, and what happens if something goes wrong.</p></div></div></div></section><section class="is_View _fd-column _pt-c-space-7 _pb-c-space-7 _pr-maxvar--pag1616741076 _pl-maxvar--pag1616741076"><div class="is_View _fd-column _width-10037"><div data-slot="document"><p><strong>Draft.</strong> <!-- -->This document is not yet in force.</p><p>Effective 2026-09-06 · Version 2026-09-06 ·<!-- --> <!-- -->Previous version: none, this is the first.</p><nav aria-labelledby="legal-contents"><h2 id="legal-contents">Contents</h2><ul><li><a href="#what-we-protect">What we protect</a></li><li><a href="#who-can-reach-it">Who can reach it</a></li><li><a href="#how-organizations-stay-separate">How organizations stay separate</a></li><li><a href="#encryption">Encryption</a></li><li><a href="#keeping-it-current">Keeping it current</a></li><li><a href="#if-something-goes-wrong">If something goes wrong</a></li><li><a href="#certifications">Certifications</a></li><li><a href="#where-it-runs">Where it runs</a></li><li><a href="#who-we-share-it-with">Who we share it with</a></li><li><a href="#found-a-weakness">Found a weakness?</a></li></ul></nav></div></div></section><section class="is_View _fd-column _pt-c-space-7 _pb-c-space-7 _pr-maxvar--pag1616741076 _pl-maxvar--pag1616741076"><div class="is_View _fd-column _width-10037"><div data-slot="document"><p>How we protect your data. <a href="/security">/security</a> describes the same controls in
+the source code; this is the short version.</p>
+<h2 id="what-we-protect">What we protect</h2>
+<p>Your content, your agents' memory, your passwords, and the keys and tokens that
+connect Hanzo to your other services. All of it is encrypted, reachable only by
+people who need it, and kept separate from every other organization's.</p>
+<p>Operational data — usage, logs, billing — is handled with the same care and a
+lighter hand.</p>
+<p><strong>We do not train models on your content.</strong> Not your prompts, not your agent
+memory, not your files. The <a href="/privacy">Privacy Policy</a> says what happens to your
+data in every case.</p>
+<h2 id="who-can-reach-it">Who can reach it</h2>
+<p>People here get the least access their job needs, and lose it the day they
+change roles or leave. Anyone with production access signs in as themselves,
+with a second factor. There are no shared admin accounts.</p>
+<p>Inside the product, you set the rules: who can see what, and which actions an
+agent must ask you about first — spending money, publishing, or writing to a
+system you have connected.</p>
+<p>Keys and tokens for your other services are encrypted, scoped to the one
+workflow that uses them, and revocable by you at any moment. They never appear
+in a log or on a screen.</p>
+<h2 id="how-organizations-stay-separate">How organizations stay separate</h2>
+<p>Each organization's data is its own file. A query in one cannot reach the other,
+because the other file is not open. Where a master key is set, each file is
+opened under its own derived key, so one leaked key exposes one file.</p>
+<p>To be precise, since reviewers ask: this is per-file isolation. Two key
+derivations exist and one of them is tied to the organization.</p>
+<h2 id="encryption">Encryption</h2>
+<p><strong>Moving</strong> — TLS 1.3, plus hybrid ML-KEM-768 key exchange at the edge. Traffic
+captured today stays unreadable when quantum computers arrive.</p>
+<p><strong>Stored</strong> — AES-256-GCM, under a key derived for your tenant alone. Backups use
+<code>age</code>, which also has a post-quantum option.</p>
+<p>Keys live apart from the data they open.</p>
+<h2 id="keeping-it-current">Keeping it current</h2>
+<p>We watch our dependencies and infrastructure for known vulnerabilities and fix
+by severity. Every change gets code review and automated checks before it ships.
+Our infrastructure providers patch the systems underneath.</p>
+<h2 id="if-something-goes-wrong">If something goes wrong</h2>
+<p>We have a process to spot, contain, investigate, and fix a security incident,
+with named people and a clear escalation path.</p>
+<p>If a confirmed incident affects your data, we tell you <strong>within 72 hours</strong> of
+confirming it. If a credential looks compromised, revoking it cuts off access
+immediately.</p>
+<p>Your data is backed up through our managed database providers.</p>
+<h2 id="certifications">Certifications</h2>
+<p>Our controls are built to be compatible with SOC 2, and we audit them
+continually. <strong>Ask for the report and it comes back — no questionnaire first.</strong></p>
+<p>If your review runs on a named framework, tell us which one and what your
+reviewer needs to see. We scope it with you as part of the engagement.</p>
+<h2 id="where-it-runs">Where it runs</h2>
+<p>Our cloud runs on established providers, in facilities with their own physical
+security under recognized attestations. We secure the devices and accounts our
+people use to connect.</p>
+<p>You can also run Hanzo on your own Kubernetes or your own machine. Then the
+infrastructure is yours and the software is ours.</p>
+<h2 id="who-we-share-it-with">Who we share it with</h2>
+<p>Any provider that will touch your data is reviewed before we onboard them, and
+gets only what its job requires. The current list is published as our
+<a href="/legal/subprocessors">Subprocessors</a> register.</p>
+<h2 id="found-a-weakness">Found a weakness?</h2>
+<p>Write to <strong><a href="/cdn-cgi/l/email-protection#d7a4b2b4a2a5bea3ae97bfb6b9adb8f9b6be"><span class="__cf_email__" data-cfemail="582b3d3b2d2a312c21183039362237763931">[email protected]</span></a></strong>. We would rather hear it from you than read it
+later, and we do not go after researchers who report in good faith.</p>
+</div></div></section></main></div>$/$

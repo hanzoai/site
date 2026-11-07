@@ -1,0 +1,76 @@
+[
+[
+{
+"h1": "Hanzo AI"
+},
+{
+"p": "The public repositories of hanzo-inc on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "hanzo-inc on GitHub",
+"href": "https://github.com/hanzo-inc"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-inc"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 386 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-inc, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-inc/koma 1 0 Koma: Hanzo's image model — one call, any aspect ratio, $0.16 an image Pushed Nov 2, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-inc/koma"
+},
+{
+"li": "hanzo-inc/tabs TypeScript 0 0 Keep tabs on your agents — browser terminal workspace Pushed Nov 2, 2026 62 commits this year Forge",
+"href": "https://github.com/hanzo-inc/tabs"
+},
+{
+"li": "hanzo-inc/.github 0 0 Pushed Nov 1, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzo-inc/.github"
+}
+]
+]

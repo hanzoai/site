@@ -1,0 +1,101 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "inclusionAI",
+"href": "/models/inclusionai"
+},
+{
+"h1": "Ling 3.1 Flash"
+},
+{
+"p": "Ling 3.1 Flash is a hybrid reasoning mixture-of-experts model from inclusionAI, with 25B active parameters out of 560B total."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Try in Chat",
+"href": "/chat"
+}
+],
+[
+{
+"h2": "Specifications"
+}
+],
+[
+{
+"h2": "Quick start"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "cURL"
+},
+{
+"button": "Go"
+},
+{
+"code": "import OpenAI from ' openai ' const client = new OpenAI ({ apiKey : process.env.HANZO_API_KEY , baseURL : ' https://api.hanzo.ai/v1 ' }) const response = await client.chat.completions. create ({ model : ' inclusionai/ling-3.1-flash ' , messages : [{ role : ' user ' , content : ' Hello! ' }] }) console. log ( response.choices [ 0 ] .message.content )"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( api_key=os . environ [ \" HANZO_API_KEY \" ], base_url= \" https://api.hanzo.ai/v1 \" ) response = client . chat . completions . create ( model= \" inclusionai/ling-3.1-flash \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }] ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' { \"model\": \"inclusionai/ling-3.1-flash\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+},
+{
+"code": "package main import ( \" context \" \" fmt \" \" os \" \" github.com/sashabaranov/go-openai \" ) func main () { cfg := openai . DefaultConfig ( os . Getenv ( \" HANZO_API_KEY \" )) cfg . BaseURL = \" https://api.hanzo.ai/v1 \" client := openai . NewClientWithConfig ( cfg ) resp , _ := client . CreateChatCompletion ( context . Background (), openai . ChatCompletionRequest { Model : \" inclusionai/ling-3.1-flash \" , Messages : [] openai . ChatCompletionMessage { { Role : openai . ChatMessageRoleUser , Content : \" Hello! \" }, }, }, ) fmt . Println ( resp . Choices [ 0 ]. Message . Content ) }"
+}
+],
+[
+{
+"h2": "More from inclusionAI"
+},
+{
+"a": "Ling 3.0 Flash 262K *Ling-3.0-flash* is a *124B-parameter Mixture-of-Experts (MoE) model*, with approximately *5.1B parameters activated per token*. The model is designed with *token efficiency and production-scale agentic inference* as key priorities, enabling developers...",
+"href": "/models/inclusionai/ling-3.0-flash"
+},
+{
+"a": "Ling 3.0 Flash VL 131K Ling 3.0 Flash VL builds on Ling 3.0 Flash (124B total / 5.5B active MoE from InclusionAI), further strengthening its language capabilities while adding native visual perception and advanced visual...",
+"href": "/models/inclusionai/ling-3.0-flash-vl"
+},
+{
+"a": "Ling 3.0 Tiny 262K Ling 3.0 Tiny is a mixture-of-experts model from InclusionAI, with 1.3B active parameters out of 7.9B total. It is designed for responsive agents, instruction following, and multi-turn conversations, with switchable...",
+"href": "/models/inclusionai/ling-3.0-tiny"
+},
+{
+"a": "View all inclusionAI models →",
+"href": "/models/inclusionai"
+}
+],
+[
+{
+"h2": "Use Ling 3.1 Flash via Hanzo AI"
+},
+{
+"p": "One API key. Every major model. OpenAI-compatible. Start free."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

@@ -1,0 +1,93 @@
+[
+[
+{
+"h1": "Hanzo IDV"
+},
+{
+"p": "Hanzo IDV is one interface in front of the identity-verification vendors, so which vendor you use is a line of configuration rather than a rewrite of your onboarding. It does not verify anybody itself. It starts a check with the provider you chose, reads the verdict back, and proves that a callback came from them and not from someone who guessed the URL. Jumio and Onfido work end to end today; Plaid works by polling; the rest refuse until their response parsing is written, which is stated here because a verification service that guesses is worse than one that says it cannot tell."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+},
+{
+"p": "Start a verification, check its status, parse a webhook, name yourself. Every provider implements the same four, so swapping one for another is configuration and not a rewrite of your onboarding."
+},
+{
+"p": "A provider whose response we do not parse refuses rather than answering. Two of them used to return approved without reading the reply — one for any response that was not an error, the other including a rejected document. Anything gating on that would have admitted an unverified person, so both now refuse until the parsing is written."
+},
+{
+"p": "Signatures are HMAC-SHA256 over the raw body, compared in constant time, with the header matched case-insensitively because the wire spelling and the canonical spelling differ. An empty signing secret is a refusal, never a skip — an HMAC under a key everybody knows is one anybody can compute."
+},
+{
+"p": "Every result is verified before it counts. A webhook whose signature we can check is accepted; anything else is polled from the provider directly, so the verdict always comes from the source."
+},
+{
+"p": "The API token bills per check and the webhook token is what separates a provider's verdict from a forgery, so neither is a literal in the code and neither falls back to an environment variable. A missing secret fails at construction rather than producing a provider that quietly runs without one."
+},
+{
+"p": "Proving somebody is who they say is a different job from watching what they do afterwards. Sanctions lists, transaction monitoring, cases and the five-year record clock live in Hanzo Risk, and this does not duplicate them."
+},
+{
+"li": "Four calls, whichever vendor"
+},
+{
+"li": "A verdict, or nothing"
+},
+{
+"li": "A webhook has to prove it is one"
+},
+{
+"li": "Polling where a callback cannot be trusted"
+},
+{
+"li": "Credentials come from KMS"
+},
+{
+"li": "Verification is not screening"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Identity verification from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Identity verification in my project."
+}
+],
+[
+{
+"h2": "Get started with IDV"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get IDV"
+},
+{
+"p": "Identity verification"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

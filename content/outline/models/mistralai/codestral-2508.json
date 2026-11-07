@@ -1,0 +1,113 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "Mistral",
+"href": "/models/mistralai"
+},
+{
+"h1": "Codestral 2508"
+},
+{
+"p": "Mistral's cutting-edge language model for coding released end of July 2025."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Try in Chat",
+"href": "/chat"
+}
+],
+[
+{
+"h2": "Specifications"
+}
+],
+[
+{
+"h2": "Quick start"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "cURL"
+},
+{
+"button": "Go"
+},
+{
+"code": "import OpenAI from ' openai ' const client = new OpenAI ({ apiKey : process.env.HANZO_API_KEY , baseURL : ' https://api.hanzo.ai/v1 ' }) const response = await client.chat.completions. create ({ model : ' mistralai/codestral-2508 ' , messages : [{ role : ' user ' , content : ' Hello! ' }] }) console. log ( response.choices [ 0 ] .message.content )"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( api_key=os . environ [ \" HANZO_API_KEY \" ], base_url= \" https://api.hanzo.ai/v1 \" ) response = client . chat . completions . create ( model= \" mistralai/codestral-2508 \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }] ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' { \"model\": \"mistralai/codestral-2508\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+},
+{
+"code": "package main import ( \" context \" \" fmt \" \" os \" \" github.com/sashabaranov/go-openai \" ) func main () { cfg := openai . DefaultConfig ( os . Getenv ( \" HANZO_API_KEY \" )) cfg . BaseURL = \" https://api.hanzo.ai/v1 \" client := openai . NewClientWithConfig ( cfg ) resp , _ := client . CreateChatCompletion ( context . Background (), openai . ChatCompletionRequest { Model : \" mistralai/codestral-2508 \" , Messages : [] openai . ChatCompletionMessage { { Role : openai . ChatMessageRoleUser , Content : \" Hello! \" }, }, }, ) fmt . Println ( resp . Choices [ 0 ]. Message . Content ) }"
+}
+],
+[
+{
+"h2": "More from Mistral"
+},
+{
+"a": "Devstral 2 2512 262K Devstral 2 is a state-of-the-art open-source model by Mistral AI specializing in agentic coding. It is a 123B-parameter dense transformer model supporting a 256K context window. Devstral 2 supports exploring...",
+"href": "/models/mistralai/devstral-2512"
+},
+{
+"a": "Ministral 3 14B 2512 262K The largest model in the Ministral 3 family, Ministral 3 14B offers frontier capabilities and performance comparable to its larger Mistral Small 3.2 24B counterpart. A powerful and efficient language...",
+"href": "/models/mistralai/ministral-14b-2512"
+},
+{
+"a": "Ministral 3 3B 2512 131K The smallest model in the Ministral 3 family, Ministral 3 3B is a powerful, efficient tiny language model with vision capabilities.",
+"href": "/models/mistralai/ministral-3b-2512"
+},
+{
+"a": "Ministral 3 8B 2512 262K A balanced model in the Ministral 3 family, Ministral 3 8B is a powerful, efficient tiny language model with vision capabilities.",
+"href": "/models/mistralai/ministral-8b-2512"
+},
+{
+"a": "Mistral Large 128K This is Mistral AI's flagship model, Mistral Large 2 (version `mistral-large-2407`). It's a proprietary weights-available model and excels at reasoning, code, JSON, chat, and more. Read the launch announcement [here](https://mistral.ai/news/mistral-large-2407/)....",
+"href": "/models/mistralai/mistral-large"
+},
+{
+"a": "Mistral Large 2407 131K This is Mistral AI's flagship model, Mistral Large 2 (version mistral-large-2407). It's a proprietary weights-available model and excels at reasoning, code, JSON, chat, and more. Read the launch announcement [here](https://mistral.ai/news/mistral-large-2407/)....",
+"href": "/models/mistralai/mistral-large-2407"
+},
+{
+"a": "View all Mistral models →",
+"href": "/models/mistralai"
+}
+],
+[
+{
+"h2": "Use Codestral 2508 via Hanzo AI"
+},
+{
+"p": "One API key. Every major model. OpenAI-compatible. Start free."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

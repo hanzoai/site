@@ -1,0 +1,215 @@
+[
+[
+{
+"h1": "Webhooks"
+},
+{
+"p": "Real-time blockchain event notifications"
+},
+{
+"p": "Get instant notifications for on-chain events. Subscribe to transfers, contract events, address activity, and more with reliable webhook delivery."
+},
+{
+"h3": "Event Subscriptions"
+},
+{
+"p": "Subscribe to transfers, logs, contract events, and more."
+},
+{
+"h3": "Instant Delivery"
+},
+{
+"p": "Sub-second event detection and webhook dispatch."
+},
+{
+"h3": "Signed Payloads"
+},
+{
+"p": "HMAC signatures for webhook authenticity verification."
+},
+{
+"h3": "Automatic Retries"
+},
+{
+"p": "Failed deliveries retry with exponential backoff."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Event Subscriptions"
+},
+{
+"p": "Subscribe to transfers, logs, contract events, and more."
+},
+{
+"h3": "Instant Delivery"
+},
+{
+"p": "Sub-second event detection and webhook dispatch."
+},
+{
+"h3": "Signed Payloads"
+},
+{
+"p": "HMAC signatures for webhook authenticity verification."
+},
+{
+"h3": "Automatic Retries"
+},
+{
+"p": "Failed deliveries retry with exponential backoff."
+},
+{
+"h3": "Multi-chain"
+},
+{
+"p": "Monitor events across all supported networks."
+},
+{
+"h3": "Filters & Conditions"
+},
+{
+"p": "Fine-grained filtering by address, topic, or value."
+},
+{
+"h3": "Event History"
+},
+{
+"p": "Query and replay past webhook deliveries."
+},
+{
+"h3": "Block Confirmations"
+},
+{
+"p": "Configure confirmation count for finality."
+},
+{
+"h3": "Delivery Analytics"
+},
+{
+"p": "Monitor success rates and latency metrics."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/webhooks/IHanzoWebhooks.sol\" ; /// @title WebhookTrigger - Emit events for webhook notifications /// @notice Structured events for reliable webhook delivery contract WebhookTrigger { // Events optimized for webhook subscriptions event PaymentReceived ( address indexed from, address indexed token, uint256 amount, bytes32 indexed orderId, uint256 timestamp ); event LiquidationAlert ( address indexed user, address indexed market, uint256 collateralValue, uint256 debtValue, uint256 indexed blockNumber ); event NFTActivity ( a"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Payment Processing"
+},
+{
+"p": "Instant confirmation of crypto deposits and payments."
+},
+{
+"h3": "DeFi Monitoring"
+},
+{
+"p": "Track liquidations, swaps, and position changes."
+},
+{
+"h3": "NFT Notifications"
+},
+{
+"p": "Alert users on sales, bids, and transfers."
+},
+{
+"h3": "Security Alerts"
+},
+{
+"p": "Monitor for suspicious contract interactions."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Webhooks"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Webhooks"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

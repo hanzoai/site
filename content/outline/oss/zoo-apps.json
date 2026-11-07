@@ -1,0 +1,116 @@
+[
+[
+{
+"h1": "Zoo Apps"
+},
+{
+"p": "The public repositories of zoo-apps on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "zoo-apps on GitHub",
+"href": "https://github.com/zoo-apps"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/zoo-apps"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 1 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of zoo-apps, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "zoo-apps/zoolabs.io TypeScript 0 0 Zoo Labs - Exotic Animals x AI Agents | zoolabs.io Pushed Nov 6, 2026 42 commits this year Forge",
+"href": "https://github.com/zoo-apps/zoolabs.io"
+},
+{
+"li": "zoo-apps/vote TypeScript 0 0 Zoo Vote - DAO governance and voting Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/zoo-apps/vote"
+},
+{
+"li": "zoo-apps/papers TeX 0 0 Zoo Labs Foundation research papers Pushed Nov 6, 2026 209 commits this year Forge",
+"href": "https://github.com/zoo-apps/papers"
+},
+{
+"li": "zoo-apps/network TypeScript 0 0 Zoo Network - Network information and node management Pushed Nov 6, 2026 8 commits this year Forge",
+"href": "https://github.com/zoo-apps/network"
+},
+{
+"li": "zoo-apps/lab JavaScript 0 0 Zoo Lab - Experimental AI research interface Pushed Nov 6, 2026 18 commits this year Forge",
+"href": "https://github.com/zoo-apps/lab"
+},
+{
+"li": "zoo-apps/industries TypeScript 0 0 zoo.industries marketing site (static, served on hanzoai/spa) Pushed Nov 6, 2026 399 commits this year Forge",
+"href": "https://github.com/zoo-apps/industries"
+},
+{
+"li": "zoo-apps/gym Python 0 0 Gym Pushed Nov 6, 2026 10 commits this year Forge",
+"href": "https://github.com/zoo-apps/gym"
+},
+{
+"li": "zoo-apps/fund Solidity 0 1 Zoo Fund - Grants and funding platform Pushed Nov 6, 2026 22 commits this year Forge",
+"href": "https://github.com/zoo-apps/fund"
+},
+{
+"li": "zoo-apps/foundation TypeScript 0 0 Zoo Foundation - Foundation website Pushed Nov 6, 2026 23 commits this year Forge",
+"href": "https://github.com/zoo-apps/foundation"
+},
+{
+"li": "zoo-apps/exchange TypeScript 0 0 Zoo Exchange - Token trading platform Pushed Nov 6, 2026 19 commits this year Forge",
+"href": "https://github.com/zoo-apps/exchange"
+},
+{
+"li": "zoo-apps/computer TypeScript 0 0 Zoo Computer - E-commerce platform for AI hardware Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zoo-apps/computer"
+},
+{
+"li": "zoo-apps/chat HTML 0 0 Zoo Chat - AI Chat Interface Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zoo-apps/chat"
+},
+{
+"li": "zoo-apps/ZIPs HTML 0 0 Zoo Improvement Proposals - Governance framework for Zoo ecosystem Pushed Nov 6, 2026 58 commits this year Forge",
+"href": "https://github.com/zoo-apps/ZIPs"
+}
+]
+]

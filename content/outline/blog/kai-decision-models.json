@@ -1,0 +1,43 @@
+[
+[
+{
+"a": "Back to Blog",
+"href": "/blog"
+},
+{
+"h1": "Kai 1: Decisions, Not Completions"
+},
+{
+"p": "Kai is Hanzo's decision model. Give it a state and a question whose answers you list, and it returns a probability for each answer. It writes no text."
+}
+],
+[
+{
+"h2": "Why not generate the decision"
+},
+{
+"h2": "One call"
+},
+{
+"code": "import { AiApi , Configuration } from ' hanzoai ' const ai = new AiApi ( new Configuration ({ accessToken : process.env.HANZO_API_KEY })) const { data : decision } = await ai. postDecisions ({ aiDecisionsRequest : { model : ' kai ' , state : { tool_call : ' bash.exec ' , command : ' pytest -v tests/test_agent.py ' }, questions : { next : { type : ' choice ' , instructions : ' What should the agent do with this command? ' , criteria : { approve : ' safe to run ' , reject : ' unsafe ' , clarify : ' needs the user first ' }, }, }, }, }) console. log ( decision.answers.next.choice , decision.answe"
+},
+{
+"code": "import os from hanzoai . cloud import ApiClient , Configuration from hanzoai . cloud . api import AiApi from hanzoai . cloud . models . ai_decisions_request import AiDecisionsRequest ai = AiApi ( ApiClient ( Configuration ( access_token=os . environ [ \" HANZO_API_KEY \" ]))) decision = ai . post_decisions ( AiDecisionsRequest . from_dict ({ \" model \" : \" kai \" , \" state \" : { \" tool_call \" : \" bash.exec \" , \" command \" : \" pytest -v tests/test_agent.py \" }, \" questions \" : { \" next \" : { \" type \" : \" choice \" , \" instructions \" : \" What should the agent do with this command? \" , \" criteria \" : "
+},
+{
+"h2": "Limits"
+},
+{
+"a": "How to use Kai",
+"href": "/kai/guide"
+},
+{
+"a": "Kai against Jev",
+"href": "/kai#benchmarks"
+},
+{
+"a": "API reference",
+"href": "https://docs.hanzo.ai/docs/decisions"
+}
+]
+]

@@ -1,0 +1,72 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Microsoft Models via Hanzo AI"
+},
+{
+"p": "5 models available"
+},
+{
+"p": "Access all 5 Microsoft models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "MAI-Voice-2 MAI-Voice-2 is an expressive text-to-speech model from Microsoft AI. It is suited for conversational assistants, media narration, accessibility, education, and other long-form voice applications. It supports 15 languages across 18... speech",
+"href": "/models/microsoft/mai-voice-2"
+},
+{
+"a": "MAI-Voice-2-Flash MAI-Voice-2-Flash is a low-latency text-to-speech model from Microsoft AI for voice agents, assistants, call centers, accessibility, narration, and other interactive applications. It generates expressive 24 kHz mono speech across 15... speech",
+"href": "/models/microsoft/mai-voice-2-flash"
+},
+{
+"a": "MAI-Voice-2.1 MAI-Voice-2.1 is Microsoft AI's highest-fidelity, most expressive text-to-speech model. It produces natural, studio-grade speech across 23 languages, with detailed prosody, nuanced expressiveness, and speaker consistency over long-form content. It is... speech",
+"href": "/models/microsoft/mai-voice-2.1"
+},
+{
+"a": "MAI-Voice-2.1-Flash MAI-Voice-2.1-Flash is a low-latency text-to-speech model from Microsoft AI, optimized for real-time responsiveness. It produces natural, expressive speech across 23 languages, with human-like intonation, rhythm, and emotional nuance. It is... speech",
+"href": "/models/microsoft/mai-voice-2.1-flash"
+},
+{
+"a": "Phi 4 16K [Microsoft Research](/microsoft) Phi-4 is designed to perform well in complex reasoning tasks and can operate efficiently in situations with limited memory or where quick responses are needed. At 14 billion... text",
+"href": "/models/microsoft/phi-4"
+}
+],
+[
+{
+"h2": "Use Microsoft models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

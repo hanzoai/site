@@ -1,0 +1,111 @@
+[
+[
+{
+"h1": "Uta 1"
+},
+{
+"p": "Compose beyond imagination."
+},
+{
+"p": "Soundtracks, original songs, musical ideas, cue-driven scoring and creative music production."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Try it in Design",
+"href": "/design"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What Uta does"
+},
+{
+"h3": "Multi-movement song and score generation"
+},
+{
+"p": "Composes full multi-movement compositions with cohesive motifs, verse-chorus-bridge progressions, and orchestral codas."
+},
+{
+"h3": "Dynamic video cue scoring"
+},
+{
+"p": "Automated tempo ramps, harmonic tension builds, and dynamic hits synchronized to scene cuts and dramatic beats."
+},
+{
+"h3": "Multitrack stem separation"
+},
+{
+"p": "Generates separate mixable stems: lead vocal, backing vocal, drums, bass, rhythm guitars, synthesizers, and orchestral strings."
+},
+{
+"h3": "Precise music theory controls"
+},
+{
+"p": "Explicit direction over key signatures, modes (Dorian, Mixolydian, etc.), time signatures, BPM tempos, and arrangement density."
+}
+],
+[
+{
+"p": "In production"
+},
+{
+"h2": "Where Uta fits"
+},
+{
+"p": "Film and trailer scoring"
+},
+{
+"h3": "Adaptive cinematic soundtracks"
+},
+{
+"p": "Draft, test, and orchestrate hybrid orchestral and electronic scores tailored directly to picture edits."
+},
+{
+"p": "Game music"
+},
+{
+"h3": "Dynamic non-linear music systems"
+},
+{
+"p": "Compose layered stems that dynamically fade in, intensify, or resolve based on in-game combat states."
+},
+{
+"p": "Advertising"
+},
+{
+"h3": "Bespoke commercial brand anthems"
+},
+{
+"p": "Produce original, broadcast-cleared signature themes and underscores without production music library compromises."
+}
+],
+[
+{
+"p": "Research preview"
+},
+{
+"h2": "Try Uta on your own work"
+},
+{
+"p": "Samples of Uta's own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Every model",
+"href": "/models"
+}
+]
+]

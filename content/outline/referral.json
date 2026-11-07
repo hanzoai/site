@@ -1,0 +1,45 @@
+[
+[
+{
+"h1": "Bring a builder to Hanzo."
+},
+{
+"p": "One link counts everyone who signs up through it, and who goes on to use Hanzo."
+},
+{
+"a": "Get your link",
+"href": "/signup?next=%2Freferral"
+},
+{
+"a": "Sign in",
+"href": "/login?next=%2Freferral"
+},
+{
+"button": "Copy"
+}
+],
+[
+{
+"h2": "How it works"
+},
+{
+"li": "Share it anywhere: every way out carries your link."
+},
+{
+"li": "An account that signs up through it is yours, once and for good."
+},
+{
+"li": "It qualifies with its first metered spend."
+},
+{
+"li": "Each one moves you up the beta waitlist."
+},
+{
+"p": "A referral pays nothing. Affiliates are paid on what their referrals spend."
+},
+{
+"a": "Affiliates",
+"href": "/affiliate"
+}
+]
+]

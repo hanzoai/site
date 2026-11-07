@@ -1,0 +1,125 @@
+[
+[
+{
+"h1": "Hanzo Reserved tier"
+},
+{
+"p": "Capacity set aside for your organization — dedicated compute and inference for production traffic, or the whole stack on hardware you own — on an agreement sized to your load."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "GPU and CPU capacity held for your organization rather than drawn from the shared pool, so your traffic does not queue behind anyone else’s."
+},
+{
+"p": "Train and serve your own models on that capacity, beside the catalog, through the same API and the same key."
+},
+{
+"p": "A request can say how soon it needs its answer, and one that can wait is billed at a lower tariff. Reserved capacity carries the traffic that cannot."
+},
+{
+"p": "Run the same open-source stack on-premises or air-gapped, with Zen weights served by Hanzo Engine. Moving between our cloud and yours is a deployment decision, not a migration."
+},
+{
+"p": "The agreement carries a custom SLA, white-glove onboarding and 24/7 access to the engineers who run the platform."
+},
+{
+"li": "A dedicated compute cluster"
+},
+{
+"li": "Your models, hosted"
+},
+{
+"li": "Pay less for what can wait"
+},
+{
+"li": "On your own hardware"
+},
+{
+"li": "A custom SLA and people to call"
+}
+],
+[
+{
+"h2": "Capacity"
+},
+{
+"p": "On-demand GPUs today, per hour. Reserved capacity is priced in the agreement."
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "GPUs Accelerators on demand, metered by the second.",
+"href": "/cloud/gpus"
+},
+{
+"a": "Machines Sandboxes, metered machines and functions, each the organization’s own.",
+"href": "/products/machines"
+},
+{
+"a": "Hanzo Engine The inference engine, for serving models on machines you control.",
+"href": "/engine"
+},
+{
+"a": "Enso Routes each call to the model that should take it.",
+"href": "/enso"
+},
+{
+"a": "Zen Open-weight models you can download and run on your own hardware.",
+"href": "/zen"
+},
+{
+"a": "Enterprise Our cloud or yours: air-gapped deployment, SSO, audit logs and a person to call.",
+"href": "/enterprise"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "More solutions"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

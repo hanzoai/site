@@ -1,0 +1,228 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Qwen Models via Hanzo AI"
+},
+{
+"p": "44 models available"
+},
+{
+"p": "Access all 44 Qwen models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Qwen2.5 72B Instruct 33K Qwen2.5 72B is the latest series of Qwen large language models. Qwen2.5 brings the following improvements upon Qwen2: - Significantly more knowledge and has greatly improved capabilities in coding and... text",
+"href": "/models/qwen/qwen-2.5-72b-instruct"
+},
+{
+"a": "Qwen2.5 7B Instruct 33K Qwen2.5 7B is the latest series of Qwen large language models. Qwen2.5 brings the following improvements upon Qwen2: - Significantly more knowledge and has greatly improved capabilities in coding and... text",
+"href": "/models/qwen/qwen-2.5-7b-instruct"
+},
+{
+"a": "Qwen2.5 Coder 32B Instruct 33K Qwen2.5-Coder is the latest series of Code-Specific Qwen large language models (formerly known as CodeQwen). Qwen2.5-Coder brings the following improvements upon CodeQwen1.5: - Significantly improvements in **code generation**, **code reasoning**... text",
+"href": "/models/qwen/qwen-2.5-coder-32b-instruct"
+},
+{
+"a": "Qwen-Audio-3.0-TTS Flash Qwen-Audio-3.0-TTS Flash is Alibaba's fast, cost-efficient text-to-speech model, generating spoken audio from text via the DashScope Speech Synthesizer API. speech",
+"href": "/models/qwen/qwen-audio-3.0-tts-flash"
+},
+{
+"a": "Qwen-Audio-3.0-TTS Plus Qwen-Audio-3.0-TTS Plus is Alibaba's higher-quality text-to-speech model, generating spoken audio from text via the DashScope Speech Synthesizer API. speech",
+"href": "/models/qwen/qwen-audio-3.0-tts-plus"
+},
+{
+"a": "Qwen-Plus 1M Qwen-Plus, based on the Qwen2.5 foundation model, is a 131K context model with a balanced performance, speed, and cost combination. text",
+"href": "/models/qwen/qwen-plus"
+},
+{
+"a": "Qwen2.5 VL 72B Instruct 128K Qwen2.5-VL is proficient in recognizing common objects such as flowers, birds, fish, and insects. It is also highly capable of analyzing texts, charts, icons, graphics, and layouts within images. text",
+"href": "/models/qwen/qwen2.5-vl-72b-instruct"
+},
+{
+"a": "Qwen3 14B 41K Qwen3-14B is a dense 14.8B parameter causal language model from the Qwen3 series, designed for both complex reasoning and efficient dialogue. It supports seamless switching between a \"thinking\" mode for... text",
+"href": "/models/qwen/qwen3-14b"
+},
+{
+"a": "Qwen3 235B A22B Instruct 2507 262K Qwen3-235B-A22B-Instruct-2507 is a multilingual, instruction-tuned mixture-of-experts language model based on the Qwen3-235B architecture, with 22B active parameters per forward pass. It is optimized for general-purpose text generation, including instruction following,... text",
+"href": "/models/qwen/qwen3-235b-a22b-2507"
+},
+{
+"a": "Qwen3 235B A22B Thinking 2507 128K Qwen3-235B-A22B-Thinking-2507 is a high-performance, open-weight Mixture-of-Experts (MoE) language model optimized for complex reasoning tasks. It activates 22B of its 235B parameters per forward pass and natively supports up to 262,144... text",
+"href": "/models/qwen/qwen3-235b-a22b-thinking-2507"
+},
+{
+"a": "Qwen3 30B A3B 41K Qwen3, the latest generation in the Qwen large language model series, features both dense and mixture-of-experts (MoE) architectures to excel in reasoning, multilingual support, and advanced agent tasks. Its unique... text",
+"href": "/models/qwen/qwen3-30b-a3b"
+},
+{
+"a": "Qwen3 30B A3B Instruct 2507 262K Qwen3-30B-A3B-Instruct-2507 is a 30.5B-parameter mixture-of-experts language model from Qwen, with 3.3B active parameters per inference. It operates in non-thinking mode and is designed for high-quality instruction following, multilingual understanding, and... text",
+"href": "/models/qwen/qwen3-30b-a3b-instruct-2507"
+},
+{
+"a": "Qwen3 32B 131K Qwen3-32B is a dense 32.8B parameter causal language model from the Qwen3 series, optimized for both complex reasoning and efficient dialogue. It supports seamless switching between a \"thinking\" mode for... text",
+"href": "/models/qwen/qwen3-32b"
+},
+{
+"a": "Qwen3 Coder 480B A35B 262K Qwen3-Coder-480B-A35B-Instruct is a Mixture-of-Experts (MoE) code generation model developed by the Qwen team. It is optimized for agentic coding tasks such as function calling, tool use, and long-context reasoning over... text",
+"href": "/models/qwen/qwen3-coder"
+},
+{
+"a": "Qwen3 Coder 30B A3B Instruct 262K Qwen3-Coder-30B-A3B-Instruct is a 30.5B parameter Mixture-of-Experts (MoE) model with 128 experts (8 active per forward pass), designed for advanced code generation, repository-scale understanding, and agentic tool use. Built on the... text",
+"href": "/models/qwen/qwen3-coder-30b-a3b-instruct"
+},
+{
+"a": "Qwen3 Coder Flash 1M Qwen3 Coder Flash is Alibaba's fast and cost efficient version of their proprietary Qwen3 Coder Plus. It is a powerful coding agent model specializing in autonomous programming via tool calling... text",
+"href": "/models/qwen/qwen3-coder-flash"
+},
+{
+"a": "Qwen3 Coder Next 262K Qwen3-Coder-Next is an open-weight causal language model optimized for coding agents and local development workflows. It uses a sparse MoE design with 80B total parameters and only 3B activated per... text",
+"href": "/models/qwen/qwen3-coder-next"
+},
+{
+"a": "Qwen3 Next 80B A3B Instruct 262K Qwen3-Next-80B-A3B-Instruct is an instruction-tuned chat model in the Qwen3-Next series optimized for fast, stable responses without “thinking” traces. It targets complex tasks across reasoning, code generation, knowledge QA, and multilingual... text",
+"href": "/models/qwen/qwen3-next-80b-a3b-instruct"
+},
+{
+"a": "Qwen3 VL 235B A22B Instruct 262K Qwen3-VL-235B-A22B Instruct is an open-weight multimodal model that unifies strong text generation with visual understanding across images and video. The Instruct model targets general vision-language use (VQA, document parsing, chart/table... text",
+"href": "/models/qwen/qwen3-vl-235b-a22b-instruct"
+},
+{
+"a": "Qwen3 VL 30B A3B Instruct 262K Qwen3-VL-30B-A3B-Instruct is a multimodal model that unifies strong text generation with visual understanding for images and videos. Its Instruct variant optimizes instruction-following for general multimodal tasks. It excels in perception... text",
+"href": "/models/qwen/qwen3-vl-30b-a3b-instruct"
+},
+{
+"a": "Qwen3 VL 30B A3B Thinking 262K Qwen3-VL-30B-A3B-Thinking is a multimodal model that unifies strong text generation with visual understanding for images and videos. Its Thinking variant enhances reasoning in STEM, math, and complex tasks. It excels... text",
+"href": "/models/qwen/qwen3-vl-30b-a3b-thinking"
+},
+{
+"a": "Qwen3 VL 8B Instruct 262K Qwen3-VL-8B-Instruct is a multimodal vision-language model from the Qwen3-VL series, built for high-fidelity understanding and reasoning across text, images, and video. It features improved multimodal fusion with Interleaved-MRoPE for long-horizon... text",
+"href": "/models/qwen/qwen3-vl-8b-instruct"
+},
+{
+"a": "Qwen3.5-122B-A10B 262K The Qwen3.5 122B-A10B native vision-language model is built on a hybrid architecture that integrates a linear attention mechanism with a sparse mixture-of-experts model, achieving higher inference efficiency. In terms of... text",
+"href": "/models/qwen/qwen3.5-122b-a10b"
+},
+{
+"a": "Qwen3.5-27B 262K The Qwen3.5 27B native vision-language Dense model incorporates a linear attention mechanism, delivering fast response times while balancing inference speed and performance. Its overall capabilities are comparable to those of... text",
+"href": "/models/qwen/qwen3.5-27b"
+},
+{
+"a": "Qwen3.5-35B-A3B 262K The Qwen3.5 Series 35B-A3B is a native vision-language model designed with a hybrid architecture that integrates linear attention mechanisms and a sparse mixture-of-experts model, achieving higher inference efficiency. Its overall... text",
+"href": "/models/qwen/qwen3.5-35b-a3b"
+},
+{
+"a": "Qwen3.5 397B A17B 262K The Qwen3.5 series 397B-A17B native vision-language model is built on a hybrid architecture that integrates a linear attention mechanism with a sparse mixture-of-experts model, achieving higher inference efficiency. It delivers... text",
+"href": "/models/qwen/qwen3.5-397b-a17b"
+},
+{
+"a": "Qwen3.5-9B 262K Qwen3.5-9B is a multimodal foundation model from the Qwen3.5 family, designed to deliver strong reasoning, coding, and visual understanding in an efficient 9B-parameter architecture. It uses a unified vision-language design... text",
+"href": "/models/qwen/qwen3.5-9b"
+},
+{
+"a": "Qwen3.5-Flash 1M The Qwen3.5 native vision-language Flash models are built on a hybrid architecture that integrates a linear attention mechanism with a sparse mixture-of-experts model, achieving higher inference efficiency. Compared to the... text",
+"href": "/models/qwen/qwen3.5-flash-02-23"
+},
+{
+"a": "Qwen3.5 Plus 2026-02-15 1M The Qwen3.5 native vision-language series Plus models are built on a hybrid architecture that integrates linear attention mechanisms with sparse mixture-of-experts models, achieving higher inference efficiency. In a variety of... text",
+"href": "/models/qwen/qwen3.5-plus-02-15"
+},
+{
+"a": "Qwen3.5 Plus 2026-04-20 1M Qwen3.5 Plus (April 2026) is a large-scale multimodal language model from Alibaba. It accepts text, image, and video input and produces text output, with a 1M token context window. This... text",
+"href": "/models/qwen/qwen3.5-plus-20260420"
+},
+{
+"a": "Qwen3.6 27B 262K Qwen3.6 27B is a dense 27-billion-parameter language model from the Qwen Team at Alibaba, released in April 2026. It features hybrid multimodal capabilities — accepting text, image, and video inputs... text",
+"href": "/models/qwen/qwen3.6-27b"
+},
+{
+"a": "Qwen3.6 35B A3B 262K Qwen3.6-35B-A3B is an open-weight multimodal model from Alibaba Cloud with 35 billion total parameters and 3 billion active parameters per token. It uses a hybrid sparse mixture-of-experts architecture combining Gated... text",
+"href": "/models/qwen/qwen3.6-35b-a3b"
+},
+{
+"a": "Qwen3.6 Flash 1M Qwen3.6 Flash is a fast, efficient language model from Alibaba's Qwen 3.6 series. It supports text, image, and video input with a 1M token context window. Tiered pricing kicks in... text",
+"href": "/models/qwen/qwen3.6-flash"
+},
+{
+"a": "Qwen3.6 Plus 1M Qwen 3.6 Plus builds on a hybrid architecture that combines efficient linear attention with sparse mixture-of-experts routing, enabling strong scalability and high-performance inference. Compared to the 3.5 series, it delivers... text",
+"href": "/models/qwen/qwen3.6-plus"
+},
+{
+"a": "Qwen3.7 Flash 1M Qwen3.7 Flash is a vision-language reasoning model from Alibaba. It is suited for multimodal agents, visual coding, search, and computer interaction, with strengths in object recognition, spatial understanding, and real-world... text",
+"href": "/models/qwen/qwen3.7-flash"
+},
+{
+"a": "Qwen3.7 Max 1M Qwen3.7-Max is the flagship model in Alibaba's Qwen3.7 series. It supports text input and output and is designed for agent-centric workloads, with particular strengths in coding, office and productivity tasks,... text",
+"href": "/models/qwen/qwen3.7-max"
+},
+{
+"a": "Qwen3.7 Plus 1M Qwen3.7-Plus is a cost-effective model in Alibaba's Qwen3.7 series. It supports text and image input with text output, building on the series' text capabilities with a comprehensive upgrade to its... text",
+"href": "/models/qwen/qwen3.7-plus"
+},
+{
+"a": "Qwen3.7 Plus (batch) 262K Qwen3.7-Plus is a cost-effective model in Alibaba's Qwen3.7 series. It supports text and image input with text output, building on the series' text capabilities with a comprehensive upgrade to its... text",
+"href": "/models/qwen/qwen3.7-plus:batch"
+},
+{
+"a": "Qwen3.8 2.4T A95B 1M Qwen3.8 2.4T A95B is an open-weight sparse mixture-of-experts model from Qwen and the open-weight variant of [Qwen3.8 Max](/qwen/qwen3.8-max), with 95 billion active parameters out of 2.4 trillion total. It is... text",
+"href": "/models/qwen/qwen3.8-2.4t-a95b"
+},
+{
+"a": "Qwen3.8 27B 1M Qwen3.8 27B is an open-weight dense vision-language model from Qwen. It is suited for coding, professional workflows, research, multimodal interaction, and long-running agent tasks, with flexible thinking that can be... text",
+"href": "/models/qwen/qwen3.8-27b"
+},
+{
+"a": "Qwen3.8 Flash 1M Qwen3.8 Flash is a multimodal reasoning model from Alibaba. It is suited for coding assistance, agentic workflows, visual understanding, document and codebase analysis, desktop interaction, chart analysis, and long-video analysis. text",
+"href": "/models/qwen/qwen3.8-flash"
+},
+{
+"a": "Qwen3.8 Max (0902) 1M Qwen3.8 Max 0902 is an updated snapshot of Qwen3.8 Max from Alibaba's Qwen team. It is a 2.4-trillion-parameter mixture-of-experts model that accepts text, image, and video input and returns text,... text",
+"href": "/models/qwen/qwen3.8-max-0902"
+},
+{
+"a": "Qwen3.8 Max Prime 1M Qwen3.8 Max Prime is a higher-throughput variant of Qwen3.8 Max from Alibaba's Qwen team, served as a separate SKU at a higher price point. It accepts text, image, and video... text",
+"href": "/models/qwen/qwen3.8-max-prime"
+},
+{
+"a": "Qwen3.8 Omni Flash 1M Qwen3.8 Omni Flash is an omni-modal reasoning model from Alibaba, the first Qwen model built around agentic capabilities with native audio-video understanding. It is suited for audio-video analysis and summarization,... text",
+"href": "/models/qwen/qwen3.8-omni-flash"
+}
+],
+[
+{
+"h2": "Use Qwen models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

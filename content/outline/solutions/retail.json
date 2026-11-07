@@ -1,0 +1,141 @@
+[
+[
+{
+"h1": "Hanzo for retail"
+},
+{
+"p": "Write the catalog, run the storefront, answer customers and measure every change — with agents doing the repetitive part and one platform under all of it."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"p": "Generate product copy and imagery from the specs and a few photos, in your voice and your look, and review it before it goes live."
+},
+{
+"p": "Shoppers type what they mean. Keyword and vector search run in one request, so the exact item and the near misses come back together."
+},
+{
+"p": "A headless API for the catalog, cart, checkout and orders, with payments routed across processors. Already on Shopify, WooCommerce or Square? Workflows connect to them."
+},
+{
+"p": "A support agent answers order questions from your order data and hands off to a person with the history attached. Zendesk, Intercom and Freshdesk connect through workflows."
+},
+{
+"p": "Roll a change out to a share of shoppers behind a flag, attach a metric, and keep it or kill it on the result."
+},
+{
+"li": "A catalog that writes itself"
+},
+{
+"li": "Search that understands shoppers"
+},
+{
+"li": "Commerce behind any front end"
+},
+{
+"li": "Support that knows the order"
+},
+{
+"li": "Test every change"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Commerce A headless API for the catalog, the cart, checkout and orders.",
+"href": "/commerce"
+},
+{
+"a": "Hanzo Payments One integration in front of the processors that move the money.",
+"href": "/payments"
+},
+{
+"a": "Hanzo Search Keyword and meaning in one query over the documents you push.",
+"href": "/search"
+},
+{
+"a": "Hanzo Design A node graph for generating images, video, audio and 3D.",
+"href": "/design"
+},
+{
+"a": "Hanzo Insights Events, funnels, session replay, feature flags and experiments.",
+"href": "/insights"
+},
+{
+"a": "Hanzo Auto Workflows fired by a webhook or a schedule, with runs that survive a restart.",
+"href": "/auto"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "More industries"
+},
+{
+"a": "Cybersecurity",
+"href": "/solutions/cybersecurity"
+},
+{
+"a": "Financial services",
+"href": "/solutions/financial-services"
+},
+{
+"a": "Healthcare",
+"href": "/solutions/healthcare"
+},
+{
+"a": "Law",
+"href": "/solutions/law"
+},
+{
+"a": "Government",
+"href": "/solutions/government"
+},
+{
+"a": "Education",
+"href": "/solutions/education"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

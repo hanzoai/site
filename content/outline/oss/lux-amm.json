@@ -1,0 +1,104 @@
+[
+[
+{
+"h1": "lux-amm"
+},
+{
+"p": "The public repositories of lux-amm on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "lux-amm on GitHub",
+"href": "https://github.com/lux-amm"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/lux-amm"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 0 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of lux-amm, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "lux-amm/v4-sdk TypeScript 1 0 Lux AMM V4 SDK. Fork of upstream Uniswap v4-sdk. Pushed Sep 11, 2026 4 commits this year Forge",
+"href": "https://github.com/lux-amm/v4-sdk"
+},
+{
+"li": "lux-amm/v2-sdk TypeScript 0 0 Lux AMM V2 SDK. Fork of upstream Uniswap v2-sdk. Pushed Sep 11, 2026 3 commits this year Forge",
+"href": "https://github.com/lux-amm/v2-sdk"
+},
+{
+"li": "lux-amm/sdk-core TypeScript 0 0 Lux AMM core SDK primitives (currency, fractions, math). Fork of upstream Uniswap sdk-core. Pushed Sep 11, 2026 2 commits this year Forge",
+"href": "https://github.com/lux-amm/sdk-core"
+},
+{
+"li": "lux-amm/v3-sdk TypeScript 0 0 Lux AMM V3 SDK. Fork of upstream Uniswap v3-sdk. Pushed Sep 11, 2026 4 commits this year Forge",
+"href": "https://github.com/lux-amm/v3-sdk"
+},
+{
+"li": "lux-amm/v2-core TypeScript 0 0 Lux AMM V2 core contracts. Fork of upstream Uniswap v2-core. Pushed Sep 11, 2026 2 commits this year Forge",
+"href": "https://github.com/lux-amm/v2-core"
+},
+{
+"li": "lux-amm/v4-periphery Solidity 1 0 Lux AMM V4 periphery contracts. Fork of upstream Uniswap v4-periphery. Pushed Sep 10, 2026 2 commits this year Forge",
+"href": "https://github.com/lux-amm/v4-periphery"
+},
+{
+"li": "lux-amm/v4-core Solidity 0 0 Lux AMM V4 core contracts. Fork of upstream Uniswap v4-core. Pushed Sep 10, 2026 2 commits this year Forge",
+"href": "https://github.com/lux-amm/v4-core"
+},
+{
+"li": "lux-amm/v3-core TypeScript 0 0 Lux AMM V3 core contracts. Fork of upstream Uniswap v3-core. Pushed Sep 10, 2026 2 commits this year Forge",
+"href": "https://github.com/lux-amm/v3-core"
+},
+{
+"li": "lux-amm/v3-periphery TypeScript 0 0 Lux AMM V3 periphery contracts. Fork of upstream Uniswap v3-periphery. Pushed Sep 9, 2026 4 commits this year Forge",
+"href": "https://github.com/lux-amm/v3-periphery"
+},
+{
+"li": "lux-amm/_test_repo 0 0 test Pushed Apr 26, 2026 Forge",
+"href": "https://github.com/lux-amm/_test_repo"
+}
+]
+]

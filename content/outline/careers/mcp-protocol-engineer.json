@@ -1,0 +1,88 @@
+[
+[
+{
+"a": "Back to all careers",
+"href": "/careers"
+},
+{
+"button": "Share position"
+},
+{
+"h1": "MCP Protocol Engineer"
+},
+{
+"p": "Design and implement Model Context Protocol servers and tooling. Shape the future of AI agent infrastructure."
+},
+{
+"a": "Apply for this position",
+"href": "#apply"
+},
+{
+"a": "Email resume directly",
+"href": "/cdn-cgi/l/email-protection#8be8eaf9eeeef9f8cbe3eae5f1e4a5eae2b4f8fee9e1eee8ffb6cafbfbe7e2e8eaffe2e4e5aeb8caaeb9bbc6c8dbaeb9bbdbf9e4ffe4e8e4e7aeb9bbcee5ece2e5eeeef9"
+}
+],
+[
+{
+"h2": "About the Role"
+},
+{
+"p": "The Model Context Protocol (MCP) is the universal bridge between foundation models and external tools, databases, and environments. You will architect Hanzo's MCP ecosystem: high-throughput transport protocols, sandboxed runtime servers, schema validation, and multi-agent coordination layers."
+},
+{
+"p": "Hanzo builds an open AI cloud — compilers, models, distributed infrastructure, and agent tooling. Our codebases are predominantly open source, and team members operate with high autonomy and end-to-end ownership."
+},
+{
+"h2": "Key Responsibilities"
+},
+{
+"p": "Architect and maintain high-performance MCP servers connecting models to codebases, cloud infra, and enterprise data."
+},
+{
+"p": "Implement secure Hanzo Visor, WebAssembly, and container sandboxes for untrusted agent tool execution."
+},
+{
+"p": "Design protocol extensions for streaming responses, binary payloads, and distributed MCP federations."
+},
+{
+"p": "Build developer SDKs in TypeScript, Python, and Go for authoring and hosting MCP servers."
+},
+{
+"h2": "What We're Looking For"
+},
+{
+"p": "Experience with protocol design, RPCs (gRPC, JSON-RPC, SSE, WebSockets), and type-safe schema validation (JSON Schema, Protobuf)."
+},
+{
+"p": "Proficiency in TypeScript, Go, or Rust."
+},
+{
+"p": "Experience with secure sandbox execution environments (Docker, Firecracker, Hanzo Visor, Wasm)."
+},
+{
+"p": "Passion for developer experience, clean documentation, and robust error handling."
+},
+{
+"h2": "Nice to Have"
+},
+{
+"p": "Active involvement in the MCP open source ecosystem or agent frameworks."
+},
+{
+"p": "Background in identity, authentication, and capability-based authorization."
+},
+{
+"h2": "Why Join Hanzo"
+},
+{
+"h2": "Apply for this Role"
+},
+{
+"button": "Submit Application"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#fe9d9f8c9b9b8c8dbe969f908491d09f97c18d8b9c949b9d8ac3bf8e8e92979d9f8a979190dbcdbfdbccceb3bdaedbccceae8c918a919d9192dbcccebb909997909b9b8c"
+}
+]
+]

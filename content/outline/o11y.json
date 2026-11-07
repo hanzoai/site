@@ -1,0 +1,168 @@
+[
+[
+{
+"h1": "Hanzo O11y"
+},
+{
+"p": "Traces, metrics and logs, in one place"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/o11y"
+},
+{
+"a": "Logs",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "AI Metrics",
+"href": "/cloud/ai-metrics"
+},
+{
+"a": "Billing",
+"href": "/billing"
+},
+{
+"a": "Plans & Pricing",
+"href": "/cloud/plans"
+},
+{
+"a": "Sessions",
+"href": "/cloud/sessions"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/o11y"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls O11y from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo O11y in my project. Start with: hanzo o11y logs get"
+}
+],
+[
+{
+"h2": "One store, one query language"
+},
+{
+"p": "Every panel scopes to your org from the token, so a shared deployment still answers one tenant at a time."
+},
+{
+"h3": "Traces and APM"
+},
+{
+"p": "Follow one request across services, queues and databases. Sort by the slow tail rather than the average, and open the span that spent the time."
+},
+{
+"h3": "Metrics"
+},
+{
+"p": "Write PromQL if you already have it, or build the query in the UI if you do not. Both run against the same store the traces are in."
+},
+{
+"h3": "Logs"
+},
+{
+"p": "Search structured logs by field, not by regex over a blob. A span carries the id its log lines were written with, so the pivot is a click."
+},
+{
+"h3": "Exceptions"
+},
+{
+"p": "Errors are grouped and counted rather than listed, so a thousand of the same stack trace is one row with a number on it — and it links to the trace that raised it."
+},
+{
+"h3": "Dashboards and alerts"
+},
+{
+"p": "An alert rule is a saved query, so what fires at three in the morning is something you already looked at. It reaches PagerDuty, Opsgenie, Slack, Teams, email or a webhook."
+},
+{
+"h3": "OpenTelemetry on the wire"
+},
+{
+"p": "OTLP over gRPC on 4317 and HTTP on 4318. Any OTel SDK or collector points at it by setting one endpoint variable — there is no agent of ours to install."
+}
+],
+[
+{
+"h2": "Point an OTLP endpoint at it"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/o11y"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Logs Search every line",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics Time series & SLOs",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+}
+],
+[
+{
+"h2": "Get O11y"
+},
+{
+"p": "Observability suite"
+},
+{
+"a": "hanzoai/o11y",
+"href": "https://github.com/hanzoai/o11y"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

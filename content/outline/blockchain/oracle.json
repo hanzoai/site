@@ -1,0 +1,209 @@
+[
+[
+{
+"h1": "Hanzo Oracle"
+},
+{
+"p": "Bring real-world data on-chain"
+},
+{
+"p": "Price feeds, randomness, weather, and custom attestations, delivered to your contracts. Built on Lux's OracleVM with Chainlink integration."
+},
+{
+"h3": "Price Feeds"
+},
+{
+"p": "Real-time and historical price data for crypto, forex, commodities, and stocks."
+},
+{
+"h3": "VRF (Randomness)"
+},
+{
+"p": "Verifiable random numbers for gaming, NFT mints, and fair selection."
+},
+{
+"h3": "Weather Data"
+},
+{
+"p": "On-chain weather data for parametric insurance and prediction markets."
+},
+{
+"h3": "Custom Data Feeds"
+},
+{
+"p": "Bring any API data on-chain with custom oracle configurations."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Price Feeds"
+},
+{
+"p": "Real-time and historical price data for crypto, forex, commodities, and stocks."
+},
+{
+"h3": "VRF (Randomness)"
+},
+{
+"p": "Verifiable random numbers for gaming, NFT mints, and fair selection."
+},
+{
+"h3": "Weather Data"
+},
+{
+"p": "On-chain weather data for parametric insurance and prediction markets."
+},
+{
+"h3": "Custom Data Feeds"
+},
+{
+"p": "Bring any API data on-chain with custom oracle configurations."
+},
+{
+"h3": "Cryptographic Proofs"
+},
+{
+"p": "Every data point includes cryptographic proof of authenticity."
+},
+{
+"h3": "Scheduled Updates"
+},
+{
+"p": "Configure update frequency from seconds to daily, based on your needs."
+},
+{
+"h3": "Historical Data"
+},
+{
+"p": "Access historical oracle data for backtesting and analysis."
+},
+{
+"h3": "Low Latency"
+},
+{
+"p": "Sub-second updates for time-sensitive applications."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/oracle/IHanzoOracle.sol\" ; import \"@hanzo/oracle/IHanzoVRF.sol\" ; contract MyDeFiProtocol { IHanzoOracle public oracle ; IHanzoVRF public vrf ; constructor ( address _oracle , address _vrf) { oracle = IHanzoOracle ( _oracle ); vrf = IHanzoVRF ( _vrf ); } // Get latest ETH/USD price function getEthPrice () external view returns ( uint256 price , uint256 timestamp ) { ( price , timestamp ) = oracle. getLatestPrice ( \"ETH/USD\" ); require ( timestamp > block.timestamp - 1 hours , \"Stale price\" ); } // Get TWAP price over peri"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "DeFi Protocols"
+},
+{
+"p": "Power lending, derivatives, and synthetic assets with reliable price feeds."
+},
+{
+"h3": "Gaming & NFTs"
+},
+{
+"p": "Generate provably fair random numbers for loot boxes, mints, and gameplay."
+},
+{
+"h3": "Insurance"
+},
+{
+"p": "Trigger parametric insurance payouts based on weather, flight, or event data."
+},
+{
+"h3": "Prediction Markets"
+},
+{
+"p": "Settle markets with verified outcomes from trusted data sources."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Hanzo Oracle"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Hanzo Oracle"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

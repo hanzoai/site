@@ -1,0 +1,104 @@
+[
+[
+{
+"h1": "Gallery"
+},
+{
+"p": "Curated template showcase for Hanzo products"
+},
+{
+"a": "Browse the Gallery",
+"href": "https://gallery.hanzo.ai"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/studio"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "Vector + Chat + Zen, prewired. Plug your docs in, ship a branded assistant in an afternoon."
+},
+{
+"p": "Multi-step agents using the Hanzo Agent SDK. Email triage, research bots, research-to-PR pipelines."
+},
+{
+"p": "Every template ships with a Hanzo Cloud deploy button. CI, secrets, and scaling preconfigured."
+},
+{
+"p": "All templates Apache-2.0 in the hanzo-apps/gallery monorepo. Read the code, fork the project."
+},
+{
+"p": "Filter by stack, product, or use case. Live previews. Embedded code playgrounds."
+},
+{
+"p": "Build a template the community will love? Open a PR — we showcase the best with a paid bounty."
+},
+{
+"li": "RAG Chatbots"
+},
+{
+"li": "Agent Workflows"
+},
+{
+"li": "Deploy in One Click"
+},
+{
+"li": "Open Source"
+},
+{
+"li": "Searchable"
+},
+{
+"li": "Submit Yours"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Gallery from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Gallery in my project."
+}
+],
+[
+{
+"h2": "Skip the Boilerplate"
+},
+{
+"p": "Ship your idea, not your scaffolding."
+},
+{
+"a": "Browse the Gallery",
+"href": "https://gallery.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzo-apps/gallery"
+}
+],
+[
+{
+"h2": "Get Gallery"
+},
+{
+"p": "Image + video gallery"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

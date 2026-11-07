@@ -1,0 +1,245 @@
+[
+[
+{
+"h1": "Your screen updates when the data does"
+},
+{
+"p": "Open one stream and records reach the browser as they change — created, updated, deleted — with no polling loop and no timer deciding how stale a page is allowed to get. A subscription is a collection, or a single record inside it, and the access rule already guarding that collection decides what any given subscriber is allowed to receive."
+},
+{
+"a": "Start Building",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "View Documentation",
+"href": "https://docs.hanzo.ai"
+},
+{
+"code": "// Watch a collection const stop = await base . collection ( ' messages ' ) . subscribe ( ' * ' , ( e ) => { console. log ( e.action , e.record.id ); render ( e.record ); }); // create | update | delete"
+}
+],
+[
+{
+"h2": "What the stream gives you"
+},
+{
+"p": "One connection, and the rules you already wrote deciding what goes down it"
+},
+{
+"h3": "One stream, server-sent"
+},
+{
+"p": "A single long-lived HTTP response carries every update, so nothing special has to sit in front of it. The browser notices a dropped network and reconnects on its own."
+},
+{
+"h3": "A collection, or one record"
+},
+{
+"p": "Watch a whole collection and hear about everything that lands in it, or watch one record and hear only about that one. Change what you are watching without dropping the stream."
+},
+{
+"h3": "One broker per tenant"
+},
+{
+"p": "An org's subscribers attach to that org's own broker, reading that org's own data. Two tenants using the same collection name are not sharing a topic, so there is no cross-tenant fan-out to get wrong."
+},
+{
+"h3": "Deletes are checked too"
+},
+{
+"p": "A delete is announced only to the subscribers whose rule would have let them read the record. Something you were never allowed to see does not reveal itself on the way out."
+},
+{
+"h3": "The same data, not a copy of it"
+},
+{
+"p": "The stream reads from the store the API reads. There is no separate event bus to keep in step, and nothing that can be current in one place and stale in the other."
+},
+{
+"h3": "The rule is the filter"
+},
+{
+"p": "What reaches a subscriber is decided by the collection's access rule, evaluated against the identity that opened the stream. It is the same predicate that guards the API, not a second one written for the stream."
+},
+{
+"h3": "A grant, not your token"
+},
+{
+"p": "A browser cannot put a header on the request that opens a stream. So you mint a short-lived grant on an ordinary authenticated call and spend it once, within thirty seconds — rather than putting a token that opens every service into a URL that every proxy and access log will keep."
+},
+{
+"h3": "Limits belong to the deployment"
+},
+{
+"p": "How many streams and how many requests are settings on the deployment and counted once for the process, not copied onto each tenant — so a limit of two means two."
+}
+],
+[
+{
+"h2": "Build Interactive Experiences"
+},
+{
+"p": "Hanzo Realtime powers a wide range of applications that demand immediate data updates"
+},
+{
+"h3": "Chat Applications"
+},
+{
+"p": "Build messaging apps with real-time delivery, typing indicators, and read receipts."
+},
+{
+"h3": "Collaborative Workspaces"
+},
+{
+"p": "Create shared workspaces where multiple users can collaborate simultaneously."
+},
+{
+"h3": "Collaborative Editing"
+},
+{
+"p": "Several people editing one document, each of them seeing the others' changes land as they happen."
+},
+{
+"h3": "Multiplayer Games"
+},
+{
+"p": "Develop low-latency multiplayer games with synchronized game state across players."
+},
+{
+"h3": "Live Dashboards"
+},
+{
+"p": "Build dashboards that update in real-time as new data becomes available."
+},
+{
+"h3": "Dev Tooling"
+},
+{
+"p": "Create collaborative coding environments with real-time changes and execution."
+}
+],
+[
+{
+"h2": "Three calls, then it is live"
+},
+{
+"p": "Mint a grant, spend it to open the stream, say what you want to hear about"
+},
+{
+"h3": "The handshake, in full"
+},
+{
+"p": "There is no hidden protocol here. A grant is minted on a normal authenticated request, the stream spends it once, and the client id that comes back is how you tell the server which collections and records you want. The SDK does all three for you; the raw calls are there if you would rather do it yourself."
+},
+{
+"h4": "Mint a grant"
+},
+{
+"p": "One authenticated request returns a string good for thirty seconds and exactly one stream"
+},
+{
+"h4": "Open the stream, name your topics"
+},
+{
+"p": "Spend the grant, take the client id it hands back, then post the collections and records you care about"
+},
+{
+"h4": "Write a record"
+},
+{
+"p": "Any create, update or delete reaches everyone watching whose rule lets them see it"
+},
+{
+"a": "View Documentation",
+"href": "https://docs.hanzo.ai"
+},
+{
+"code": "// 1. mint a grant on an ordinary authenticated request const { token } = await post ( ' /v1/realtime/token ' ); // 2. spend it — once, and within thirty seconds const es = new EventSource ( ' /v1/realtime?token= ' + token ); es. addEventListener ( ' CONNECT ' , ( ev ) => { const { clientId } = JSON. parse ( ev.data ); // 3. name the collections and records you want post ( ' /v1/realtime ' , { clientId , subscriptions : [ ' messages ' , // the whole collection ' orders/ord_42 ' , // one record ], }); }); // records arrive as events named for the topic es. addEventListener ( ' messages ' , ( ev"
+}
+],
+[
+{
+"h2": "What happens as it grows"
+},
+{
+"p": "The parts that scale, and the parts that are simply not in the way"
+},
+{
+"h3": "A change costs its audience"
+},
+{
+"p": "A record is written once and handed to the subscribers already attached to it. The work is the number of people watching, not the size of the collection they are watching."
+},
+{
+"h3": "A stream is a response"
+},
+{
+"p": "Not a process, not a socket server beside the API — an HTTP response left open. They are cheap to hold, and one that goes away releases what it held without anything needing to be told."
+},
+{
+"h3": "Isolated by tenant"
+},
+{
+"p": "Every org's subscribers sit on that org's own broker, over that org's own data. Adding a tenant adds a broker rather than widening a shared one, so nobody's growth is anybody else's problem."
+},
+{
+"h4": "No polling"
+},
+{
+"p": "The client asks once, not every second"
+},
+{
+"h4": "Reconnects itself"
+},
+{
+"p": "A dropped stream reopens with a fresh grant"
+},
+{
+"h4": "Nothing extra to run"
+},
+{
+"p": "The same binary that serves the API serves the stream"
+}
+],
+[
+{
+"h2": "Two calls and the page keeps itself current"
+},
+{
+"p": "Mint a grant, open the stream, name a collection. No credit card to start."
+},
+{
+"a": "Start Building",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai"
+}
+],
+[
+{
+"h2": "Subscribe to your first collection"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Realtime"
+},
+{
+"p": "Realtime channels + presence"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

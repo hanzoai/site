@@ -1,0 +1,157 @@
+[
+[
+{
+"a": "Integrations",
+"href": "/integrations"
+},
+{
+"h1": "Use Hanzo AI with Docker"
+},
+{
+"p": "Deploy Hanzo AI-powered services in Docker containers. Use the Hanzo API from any containerized application with proper environment configuration."
+},
+{
+"p": "Base URL: https://api.hanzo.ai/v1"
+},
+{
+"code": "https://api.hanzo.ai/v1"
+},
+{
+"p": "API Key: Get yours at platform.hanzo.ai/api-keys · Fully OpenAI-compatible · every model on the gateway available"
+},
+{
+"a": "platform.hanzo.ai/api-keys",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"p": "Created by Docker / Moby Project"
+},
+{
+"a": "Docker / Moby Project",
+"href": "https://docker.com"
+},
+{
+"p": "License: Apache-2.0 · View source on GitHub →"
+},
+{
+"a": "View source on GitHub →",
+"href": "https://github.com/moby/moby"
+},
+{
+"p": "Hanzo AI is OpenAI-compatible, so existing Docker code works with zero refactoring. We deeply appreciate the Docker / Moby Project team for building and maintaining this open-source project."
+},
+{
+"h2": "Dockerfile"
+},
+{
+"code": "FROM python:3.12-slim WORKDIR /app COPY requirements.txt . RUN pip install -r requirements.txt COPY . . ENV HANZO_API_KEY= \"\" ENV OPENAI_API_BASE= \"https://api.hanzo.ai/v1\" CMD [ \"python\" , \"main.py\" ]"
+},
+{
+"h2": "compose.yml"
+},
+{
+"code": "services : app : build : . environment : - HANZO_API_KEY=${HANZO_API_KEY} - OPENAI_API_BASE=https://api.hanzo.ai/v1 ports : - \" 8000:8000 \" restart : unless-stopped"
+},
+{
+"h2": "Run with env"
+},
+{
+"code": "# .env file HANZO_API_KEY= your-hanzo-api-key # Start docker compose up -d # Or direct run docker run -e HANZO_API_KEY=your-key -p 8000:8000 my-ai-app"
+},
+{
+"h2": "App code"
+},
+{
+"code": "import os from openai import OpenAI client = OpenAI ( base_url=os . environ . get ( \" OPENAI_API_BASE \" , \" https://api.hanzo.ai/v1 \" ), api_key=os . environ [ \" HANZO_API_KEY \" ], )"
+},
+{
+"h2": "Ready to get started?"
+},
+{
+"p": "Create a free account and get your API key. The Free plan includes free model requests and Kai decisions, no card."
+},
+{
+"a": "Get API key — Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse Models",
+"href": "/models"
+},
+{
+"h2": "More integrations"
+},
+{
+"a": "OpenAI Python SDK",
+"href": "/integrations/openai-sdk"
+},
+{
+"a": "Anthropic SDK",
+"href": "/integrations/anthropic-sdk"
+},
+{
+"a": "LangChain",
+"href": "/integrations/langchain"
+},
+{
+"a": "LlamaIndex",
+"href": "/integrations/llamaindex"
+},
+{
+"a": "Vercel AI SDK",
+"href": "/integrations/vercel-ai-sdk"
+},
+{
+"a": "Hugging Face",
+"href": "/integrations/huggingface"
+},
+{
+"a": "AutoGen",
+"href": "/integrations/autogen"
+},
+{
+"a": "CrewAI",
+"href": "/integrations/crewai"
+},
+{
+"a": "DSPy",
+"href": "/integrations/dspy"
+},
+{
+"a": "Haystack",
+"href": "/integrations/haystack"
+},
+{
+"a": "Cursor",
+"href": "/integrations/cursor"
+},
+{
+"a": "Continue.dev",
+"href": "/integrations/continue-dev"
+},
+{
+"a": "GitHub Copilot",
+"href": "/integrations/github-copilot"
+},
+{
+"a": "Kubernetes",
+"href": "/integrations/kubernetes"
+},
+{
+"a": "Python",
+"href": "/integrations/python"
+},
+{
+"a": "TypeScript",
+"href": "/integrations/typescript"
+},
+{
+"a": "Go",
+"href": "/integrations/go"
+},
+{
+"a": "Rust",
+"href": "/integrations/rust"
+}
+]
+]

@@ -1,0 +1,154 @@
+[
+[
+{
+"h1": "Pricing"
+},
+{
+"button": "Personal"
+},
+{
+"button": "Team"
+},
+{
+"button": "API"
+},
+{
+"h2": "Free"
+},
+{
+"p": "Chat and build with Hanzo, free."
+},
+{
+"p": "No card needed"
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"p": "Instant access · Free forever"
+},
+{
+"button": "What’s included"
+},
+{
+"li": "Chat on the web with Enso Free and Zen Free"
+},
+{
+"li": "Free model requests and Kai decisions included"
+},
+{
+"li": "Search the web from chat"
+},
+{
+"li": "Write, edit and create content"
+},
+{
+"li": "Make code, pages and charts beside the chat"
+},
+{
+"li": "Choose how hard it thinks"
+},
+{
+"h2": "Go"
+},
+{
+"p": "Your everyday AI development toolkit, with access to every model and more included usage."
+},
+{
+"p": "Billed monthly"
+},
+{
+"a": "Try Hanzo",
+"href": "/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat"
+},
+{
+"p": "No commitment · Cancel anytime"
+},
+{
+"button": "What’s included"
+},
+{
+"li": "Everything in Free, plus:"
+},
+{
+"li": "Build apps with Hanzo Dev"
+},
+{
+"li": "Connect any MCP server in Hanzo Dev"
+},
+{
+"li": "The Hanzo CLI for macOS, Windows and Linux"
+},
+{
+"li": "Every model, including Enso Ultra and Kai"
+},
+{
+"li": "Usage included on every model"
+},
+{
+"li": "Priority inference and priority support"
+},
+{
+"li": "Your own agents, working in the background"
+},
+{
+"li": "Automations, with daily runs included"
+},
+{
+"h2": "Pro"
+},
+{
+"button": "3x"
+},
+{
+"button": "5x"
+},
+{
+"button": "15x"
+},
+{
+"button": "∞"
+},
+{
+"p": "For serious builders running agents, shipping code, and needing substantially higher limits."
+},
+{
+"p": "Billed monthly"
+},
+{
+"a": "Try Hanzo",
+"href": "/pay/confirm/card?plan=pro-2x&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat"
+},
+{
+"p": "No commitment · Cancel anytime"
+},
+{
+"button": "What’s included"
+},
+{
+"li": "Everything in Go, plus:"
+},
+{
+"li": "3x more usage than Go"
+},
+{
+"li": "3x higher limits than Go"
+},
+{
+"li": "Hanzo Bot: 1 bot of your own"
+},
+{
+"li": "Early access to new models and features"
+},
+{
+"li": "Train custom models on your data"
+},
+{
+"li": "Hanzo Engine to run models on your own hardware"
+},
+{
+"li": "Dedicated support"
+}
+]
+]

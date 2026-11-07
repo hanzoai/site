@@ -1,0 +1,56 @@
+[
+[
+{
+"h1": "Merge a pull request. Get Pro."
+},
+{
+"p": "A merged pull request in a public Hanzo repository earns Pro time, granted by hand by a Hanzo admin."
+},
+{
+"a": "Claim a merged pull request",
+"href": "#claim"
+},
+{
+"a": "Find an issue",
+"href": "/bounty"
+},
+{
+"li": "Level 1 Founding Contributor Your first merged pull request A week of Pro"
+},
+{
+"li": "Level 2 Founding Builder Three merged pull requests, or 1,000 lines merged A month of Pro, and Hanzo swag"
+}
+],
+[
+{
+"h2": "Find an issue"
+},
+{
+"p": "Any public repository of hanzoai, hanzo-apps, hanzo-go, hanzo-js counts. The open bounties are scoped to start with."
+},
+{
+"a": "Every open bounty",
+"href": "/bounty"
+}
+],
+[
+{
+"h2": "Claim it"
+},
+{
+"p": "Send the merged pull request. A Hanzo admin checks the merge and grants the Pro time by hand to the Hanzo account at your email."
+},
+{
+"button": "Send the claim"
+}
+],
+[
+{
+"h2": "Questions"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection"
+}
+]
+]

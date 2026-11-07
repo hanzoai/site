@@ -1,0 +1,154 @@
+[
+[
+{
+"h1": "Hanzo for cybersecurity"
+},
+{
+"p": "Put agents on the queue — the triage, the investigation, the fix — on a platform whose own controls are written down mechanism by mechanism, with every agent action in the audit trail."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "An agent reads the alert, pulls the related traces and logs, and writes up what happened with a link to every line it relied on. The analyst decides; the agent gathers."
+},
+{
+"p": "Hand a bot the CVE and the repository. It finds the affected code, makes the change, runs the tests and opens a pull request for review."
+},
+{
+"p": "Run a proof of concept or open a suspicious file in a leased sandbox, a separate computer for the organization, and read the exit code, stdout and stderr back."
+},
+{
+"p": "Guard reads prompts on the way in for injection and pasted secrets, and replies on the way out for leaks — as a proxy, a CLI wrapper or a filter in front of an MCP server."
+},
+{
+"p": "PKCE with S256 only, argon2id password hashes, single-use refresh tokens that revoke their whole family on replay, and SCIM from your directory."
+},
+{
+"li": "Triage with the evidence attached"
+},
+{
+"li": "From advisory to pull request"
+},
+{
+"li": "Reproduce it somewhere else"
+},
+{
+"li": "Guard the model boundary"
+},
+{
+"li": "Identity your review can press on"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Guard Catches prompt injection and pasted secrets going in, and leaks coming out.",
+"href": "/guard"
+},
+{
+"a": "Hanzo O11y Traces, metrics, logs and profiles in one place.",
+"href": "/o11y"
+},
+{
+"a": "Hanzo Bot A teammate with its own computer that signs in to your tools and reports back.",
+"href": "/bot"
+},
+{
+"a": "Machines Sandboxes, metered machines and functions, each the organization’s own.",
+"href": "/products/machines"
+},
+{
+"a": "Hanzo IAM Sign-in through your identity provider, SCIM provisioning and org-scoped roles.",
+"href": "/iam"
+},
+{
+"a": "Hanzo KMS Secrets held per organization, never in the code that uses them.",
+"href": "/kms"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "Security and compliance"
+},
+{
+"a": "How the controls work",
+"href": "/trust"
+},
+{
+"a": "Terms and data processing",
+"href": "/legal"
+}
+],
+[
+{
+"h2": "More industries"
+},
+{
+"a": "Financial services",
+"href": "/solutions/financial-services"
+},
+{
+"a": "Healthcare",
+"href": "/solutions/healthcare"
+},
+{
+"a": "Law",
+"href": "/solutions/law"
+},
+{
+"a": "Retail",
+"href": "/solutions/retail"
+},
+{
+"a": "Government",
+"href": "/solutions/government"
+},
+{
+"a": "Education",
+"href": "/solutions/education"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

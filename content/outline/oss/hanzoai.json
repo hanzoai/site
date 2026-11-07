@@ -1,0 +1,307 @@
+[
+[
+{
+"h1": "Hanzo AI"
+},
+{
+"p": "AI infrastructure for the agentic era — LLM gateway, MCP tools, multi-agent SDKs, and dev tools. Techstars '17."
+},
+{
+"a": "hanzoai on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzoai"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 2,178 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzoai, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzoai/ui TypeScript 8 12 React component library for AI applications Pushed Nov 6, 2026 2,107 commits this year Forge",
+"href": "https://github.com/hanzoai/ui"
+},
+{
+"li": "hanzoai/desktop TypeScript 3 0 Hanzo Desktop — the client, local and cloud Pushed Nov 6, 2026 454 commits this year Forge",
+"href": "https://github.com/hanzoai/desktop"
+},
+{
+"li": "hanzoai/homebrew-tap Ruby 4 0 Homebrew formulae for Hanzo AI tools Pushed Nov 6, 2026 88 commits this year Forge",
+"href": "https://github.com/hanzoai/homebrew-tap"
+},
+{
+"li": "hanzoai/app TypeScript 3 3 The Hanzo workspace app standard — @hanzo/app Pushed Nov 6, 2026 417 commits this year Forge",
+"href": "https://github.com/hanzoai/app"
+},
+{
+"li": "hanzoai/build TypeScript 3 2 Hanzo Build — describe an app and watch it built, deployed and running Pushed Nov 6, 2026 262 commits this year Forge",
+"href": "https://github.com/hanzoai/build"
+},
+{
+"li": "hanzoai/mcp Rust 8 12 Model Context Protocol server with 260+ tools for AI agents Pushed Nov 6, 2026 219 commits this year Forge",
+"href": "https://github.com/hanzoai/mcp"
+},
+{
+"li": "hanzoai/cli Rust 11 14 The Hanzo CLI — an AI coding agent and every product of the Hanzo cloud, in one Rust binary. curl -fsSL https://hanzo.sh | sh Pushed Nov 6, 2026 498 commits this year Forge",
+"href": "https://github.com/hanzoai/cli"
+},
+{
+"li": "hanzoai/kai TypeScript 4 0 Getting-started examples and recipes for Kai on api.hanzo.ai. Model implementation is proprietary. Pushed Nov 6, 2026 24 commits this year Forge",
+"href": "https://github.com/hanzoai/kai"
+},
+{
+"li": "hanzoai/commerce Go 3 2 Multi-tenant commerce and billing — orders, subscriptions, invoices, plans, usage metering and a credit ledger. One Go binary. MIT OR Apache-2.0. Pushed Nov 6, 2026 160 commits this year Forge",
+"href": "https://github.com/hanzoai/commerce"
+},
+{
+"li": "hanzoai/egress Go 3 0 The outbound trust boundary: callers ask for a metered upstream call, the provider credential stays in KMS and is never handed back. Pushed Nov 6, 2026 68 commits this year Forge",
+"href": "https://github.com/hanzoai/egress"
+},
+{
+"li": "hanzoai/dev Python 14 5 Hanzo Dev — fast, local AI coding agent for your terminal (Rust CLI, powered by Hanzo AI; Apache-2.0). Pushed Nov 6, 2026 14,776 commits this year Forge",
+"href": "https://github.com/hanzoai/dev"
+},
+{
+"li": "hanzoai/hips TeX 4 0 Design proposals and specifications for the Hanzo AI platform (HIPs). Pushed Nov 6, 2026 481 commits this year Forge",
+"href": "https://github.com/hanzoai/hips"
+},
+{
+"li": "hanzoai/.github Shell 3 0 Hanzo organization profile Pushed Nov 6, 2026 197 commits this year Forge",
+"href": "https://github.com/hanzoai/.github"
+},
+{
+"li": "hanzoai/engine Rust 8 5 Hanzo AI native inference engine - Rust-based LLM & embedding engine for foundational models Pushed Nov 5, 2026 3,231 commits this year Forge",
+"href": "https://github.com/hanzoai/engine"
+},
+{
+"li": "hanzoai/design JavaScript 3 1 Hanzo Design System — monochrome, dark-default tokens + components + brand assets Pushed Nov 5, 2026 109 commits this year Forge",
+"href": "https://github.com/hanzoai/design"
+},
+{
+"li": "hanzoai/iam Go 3 3 Hanzo IAM v2 — proprietary identity service on zap-proto/zip + hanzoai/orm + hanzoai/base. Clean-room, original work. Pushed Nov 5, 2026 5,381 commits this year Forge",
+"href": "https://github.com/hanzoai/iam"
+},
+{
+"li": "hanzoai/bot TypeScript 5 1 Hanzo Bot — personal AI assistant across your messaging channels (WhatsApp, Telegram, Slack, Discord, Signal, iMessage, and more) Pushed Nov 5, 2026 113,784 commits this year Forge",
+"href": "https://github.com/hanzoai/bot"
+},
+{
+"li": "hanzoai/o11y TypeScript 4 0 Hanzo o11y — OpenTelemetry-native observability (metrics, traces, logs) for the Hanzo platform, backed by Hanzo Datastore. Pushed Nov 5, 2026 2,021 commits this year Forge",
+"href": "https://github.com/hanzoai/o11y"
+},
+{
+"li": "hanzoai/social TypeScript 3 0 Hanzo Social — publish to every account an org owns Pushed Nov 3, 2026 44 commits this year Forge",
+"href": "https://github.com/hanzoai/social"
+},
+{
+"li": "hanzoai/zip-rs Rust 5 0 Rust crate for writing zip-mounted wasm handlers (HIP-0105) Pushed Nov 3, 2026 12 commits this year Forge",
+"href": "https://github.com/hanzoai/zip-rs"
+},
+{
+"li": "hanzoai/zip-js TypeScript 4 0 TypeScript SDK for hanzoai/zip-mounted handlers — goja (native) + Javy (wasm) backends. #[handler]-equivalent for TS. Pushed Nov 3, 2026 19 commits this year Forge",
+"href": "https://github.com/hanzoai/zip-js"
+},
+{
+"li": "hanzoai/zen Rust 3 0 Zen LM, the open model family from Zoo Labs Foundation (501(c)(3)). Use it on api.hanzo.ai. Pushed Nov 3, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzoai/zen"
+},
+{
+"li": "hanzoai/zap-es TypeScript 3 0 Archived TypeScript ZAP wire encoder; superseded by @zap-proto/zap. Pushed Nov 3, 2026 34 commits this year Forge",
+"href": "https://github.com/hanzoai/zap-es"
+},
+{
+"li": "hanzoai/zap Rust 3 0 Rust runtime for ZAP, the binary RPC protocol used for service-to-service communication. Pushed Nov 3, 2026 41 commits this year Forge",
+"href": "https://github.com/hanzoai/zap"
+},
+{
+"li": "hanzoai/yaegi Go 4 0 Yaegi is Another Elegant Go Interpreter Pushed Nov 3, 2026 16 commits this year Forge",
+"href": "https://github.com/hanzoai/yaegi"
+},
+{
+"li": "hanzoai/xorm-adapter Go 4 0 Casbin xorm adapter — fork of hanzoid/xorm-adapter Pushed Nov 3, 2026 25 commits this year Forge",
+"href": "https://github.com/hanzoai/xorm-adapter"
+},
+{
+"li": "hanzoai/xorm Go 4 0 Hanzo xorm — a simple and powerful ORM for Go (fork of xorm, BSD-3-Clause) Pushed Nov 3, 2026 59 commits this year Forge",
+"href": "https://github.com/hanzoai/xorm"
+},
+{
+"li": "hanzoai/world-zap Go 3 0 Gateway serving Hanzo World real-time feeds over MCP and ZAP protocols. Pushed Nov 3, 2026 24 commits this year Forge",
+"href": "https://github.com/hanzoai/world-zap"
+},
+{
+"li": "hanzoai/works TypeScript 3 0 hanzo.works — the apps a company runs on, served as capabilities on one API Pushed Nov 3, 2026 13 commits this year Forge",
+"href": "https://github.com/hanzoai/works"
+},
+{
+"li": "hanzoai/wasm2go Go 3 0 High-performance ahead-of-time WebAssembly to Go compiler with SSA optimization and native assembly emission Pushed Nov 3, 2026 82 commits this year Forge",
+"href": "https://github.com/hanzoai/wasm2go"
+},
+{
+"li": "hanzoai/wasm Go 3 0 WebAssembly in the calling process — a thin wrapper over wazero Pushed Nov 3, 2026 17 commits this year Forge",
+"href": "https://github.com/hanzoai/wasm"
+},
+{
+"li": "hanzoai/wan2.2 Python 3 0 Open video generation models supporting text-to-video and image-to-video synthesis. Pushed Nov 3, 2026 27 commits this year Forge",
+"href": "https://github.com/hanzoai/wan2.2"
+},
+{
+"li": "hanzoai/waitlist TypeScript 3 0 Brand-neutral waitlist widget with referral sharing, backed by Hanzo Base. Pushed Nov 3, 2026 27 commits this year Forge",
+"href": "https://github.com/hanzoai/waitlist"
+},
+{
+"li": "hanzoai/volume Go 3 0 Node-local persistent volumes for a Hanzo cluster. Pushed Nov 3, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoai/volume"
+},
+{
+"li": "hanzoai/voice Go 3 0 Mirror of git.hanzo.ai/hanzoai/voice — canonical source is the forge Pushed Nov 3, 2026 6 commits this year Forge",
+"href": "https://github.com/hanzoai/voice"
+},
+{
+"li": "hanzoai/vm Rust 3 0 Hanzo VM — native microVMs for agents: Virtualization.framework on macOS, KVM on Linux. Mounts, checkpoints, port forwards, egress policy, secret injection. Pushed Nov 3, 2026 277 commits this year Forge",
+"href": "https://github.com/hanzoai/vm"
+},
+{
+"li": "hanzoai/video Python 3 0 Agent-driven tool that scripts, sources footage, edits, and renders a finished video from a text prompt. Pushed Nov 3, 2026 112 commits this year Forge",
+"href": "https://github.com/hanzoai/video"
+},
+{
+"li": "hanzoai/vfs Go 4 0 S3-backed virtual block filesystem with PQ encryption — unlimited write storage for stateful services Pushed Nov 3, 2026 85 commits this year Forge",
+"href": "https://github.com/hanzoai/vfs"
+},
+{
+"li": "hanzoai/ventures TypeScript 3 0 hanzo.ventures — Hanzo Ventures Pushed Nov 3, 2026 10 commits this year Forge",
+"href": "https://github.com/hanzoai/ventures"
+},
+{
+"li": "hanzoai/vector-go Go 4 0 Hanzo Vector Go SDK - Go client for Hanzo Vector (Qdrant) Pushed Nov 3, 2026 56 commits this year Forge",
+"href": "https://github.com/hanzoai/vector-go"
+},
+{
+"li": "hanzoai/vector 4 0 High-performance vector database for AI embeddings Pushed Nov 3, 2026 616 commits this year Forge",
+"href": "https://github.com/hanzoai/vector"
+},
+{
+"li": "hanzoai/vault Go 4 0 PCI-compliant card tokenization vault (CDE) Pushed Nov 3, 2026 22 commits this year Forge",
+"href": "https://github.com/hanzoai/vault"
+},
+{
+"li": "hanzoai/ui-customization Go 3 0 Go service serving Hanzo console UI branding and customization config over ZAP RPC. Pushed Nov 3, 2026 8 commits this year Forge",
+"href": "https://github.com/hanzoai/ui-customization"
+},
+{
+"li": "hanzoai/ubuntu Dockerfile 3 0 Base Ubuntu container image used as the foundation for Hanzo's Docker images. Pushed Nov 3, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzoai/ubuntu"
+},
+{
+"li": "hanzoai/types Go 3 0 Values the Hanzo fleet shares. Standard library only. Pushed Nov 3, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzoai/types"
+},
+{
+"li": "hanzoai/tts Jupyter Notebook 3 0 LLM-based text-to-speech training and inference framework using audio codec tokens. Pushed Nov 3, 2026 15 commits this year Forge",
+"href": "https://github.com/hanzoai/tts"
+},
+{
+"li": "hanzoai/trust JavaScript 3 0 Control inventory and coverage fold served at /v1/trust/* from the cloud binary. Pushed Nov 3, 2026 23 commits this year Forge",
+"href": "https://github.com/hanzoai/trust"
+},
+{
+"li": "hanzoai/trpc-openapi TypeScript 3 0 Pushed Nov 3, 2026 25 commits this year Forge",
+"href": "https://github.com/hanzoai/trpc-openapi"
+},
+{
+"li": "hanzoai/tractor-beam-xhr 3 0 Pushed Nov 3, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzoai/tractor-beam-xhr"
+},
+{
+"li": "hanzoai/tractor-beam-gcs 3 0 Google Cloud Storage plugin for Tractor Beam. Pushed Nov 3, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzoai/tractor-beam-gcs"
+},
+{
+"li": "hanzoai/tractor-beam JavaScript 3 0 JavaScript library for drag-and-drop folder uploads using the Directory Upload API proposal. Pushed Nov 3, 2026 6 commits this year Forge",
+"href": "https://github.com/hanzoai/tractor-beam"
+},
+{
+"li": "hanzoai/traces Go 3 0 Distributed tracing backend using object storage, integrated with Grafana and Prometheus. Pushed Nov 3, 2026 465 commits this year Forge",
+"href": "https://github.com/hanzoai/traces"
+},
+{
+"li": "hanzoai/trace-js TypeScript 4 0 🪢 trace JS/TS SDKs - Instrument your LLM app and get detailed tracing/observability. Works with any LLM or framework Pushed Nov 3, 2026 16 commits this year Forge",
+"href": "https://github.com/hanzoai/trace-js"
+},
+{
+"li": "hanzoai/thinking Go 3 0 Maps one reasoning-depth setting to each AI provider's native thinking-effort format. Pushed Nov 3, 2026 6 commits this year Forge",
+"href": "https://github.com/hanzoai/thinking"
+},
+{
+"li": "hanzoai/theming TypeScript 3 0 Theming toolkit for white-label apps: seed colors become full palettes and CSS variables. Pushed Nov 3, 2026 141 commits this year Forge",
+"href": "https://github.com/hanzoai/theming"
+},
+{
+"li": "hanzoai/themes 3 0 Hanzo theme presets for coding harnesses — Claude Code, Codex, hanzo dev (native theme formats) Pushed Nov 3, 2026 7 commits this year Forge",
+"href": "https://github.com/hanzoai/themes"
+},
+{
+"li": "hanzoai/templates-blueprints JavaScript 3 0 Catalog of one-click deploy templates for the Hanzo PaaS at platform.hanzo.ai. Pushed Nov 3, 2026 19 commits this year Forge",
+"href": "https://github.com/hanzoai/templates-blueprints"
+},
+{
+"li": "hanzoai/templates Shell 3 0 Collection of prebuilt UI templates for dashboards, landing pages, portfolios, and ecommerce sites. Pushed Nov 3, 2026 16 commits this year Forge",
+"href": "https://github.com/hanzoai/templates"
+},
+{
+"li": "hanzoai/team TypeScript 3 0 Hanzo Team UI — the new frontend on @hanzo/gui over the team backend Pushed Nov 3, 2026 18 commits this year Forge",
+"href": "https://github.com/hanzoai/team"
+},
+{
+"li": "hanzoai/tasks Go 4 0 Hanzo Tasks — durable workflow execution engine for AI agent orchestration (ZAP-native, Hanzo IAM) Pushed Nov 3, 2026 4,439 commits this year Forge",
+"href": "https://github.com/hanzoai/tasks"
+},
+{
+"button": "Show all 461"
+}
+]
+]

@@ -1,0 +1,826 @@
+[
+[
+{
+"h1": "Privacy Policy"
+},
+{
+"p": "What personal data Hanzo collects, why, who sees it, how long we keep it, how analytics and advertising consent works by region, and how to change your model-training setting."
+}
+],
+[
+{
+"p": "Effective 2026-10-25 · Version 2026-10-25 · Previous version: none, this is the first."
+},
+{
+"h2": "Contents"
+},
+{
+"li": "1. Scope and our roles",
+"href": "#1-scope-and-our-roles"
+},
+{
+"li": "2. The four Hanzo data-use states",
+"href": "#2-the-four-hanzo-data-use-states"
+},
+{
+"li": "3. Personal data we collect",
+"href": "#3-personal-data-we-collect"
+},
+{
+"li": "4. How Enso and third-party models process requests",
+"href": "#4-how-enso-and-third-party-models-process-requests"
+},
+{
+"li": "5. Why we process personal data and our legal bases",
+"href": "#5-why-we-process-personal-data-and-our-legal-bases"
+},
+{
+"li": "6. AI research and training",
+"href": "#6-ai-research-and-training"
+},
+{
+"li": "7. How we disclose personal data",
+"href": "#7-how-we-disclose-personal-data"
+},
+{
+"li": "8. Analytics, advertising and your privacy choices",
+"href": "#8-analytics-advertising-and-your-privacy-choices"
+},
+{
+"li": "9. Retention",
+"href": "#9-retention"
+},
+{
+"li": "10. Security",
+"href": "#10-security"
+},
+{
+"li": "11. Your rights and choices",
+"href": "#11-your-rights-and-choices"
+},
+{
+"li": "12. Automated processing and profiling",
+"href": "#12-automated-processing-and-profiling"
+},
+{
+"li": "13. International transfers",
+"href": "#13-international-transfers"
+},
+{
+"li": "14. Children",
+"href": "#14-children"
+},
+{
+"li": "15. U.S. state disclosures",
+"href": "#15-u-s-state-disclosures"
+},
+{
+"li": "16. European disclosures",
+"href": "#16-european-disclosures"
+},
+{
+"li": "17. AI-specific transparency",
+"href": "#17-ai-specific-transparency"
+},
+{
+"li": "18. Changes to this Policy",
+"href": "#18-changes-to-this-policy"
+},
+{
+"li": "19. SMS and text messaging",
+"href": "#19-sms-and-text-messaging"
+},
+{
+"li": "20. Contact",
+"href": "#20-contact"
+}
+],
+[
+{
+"p": "This Privacy Policy explains how Hanzo AI, Inc. (“Hanzo,” “we,” “us,” or “our”) collects, uses, discloses, and retains personal data in connection with hanzo.ai, the Hanzo Console, consumer applications, account administration, Enso, our APIs and SDKs, model hosting, agents, tools, benchmarks, research programs, websites, and related services (the “Services”)."
+},
+{
+"p": "It also explains the separate choices that govern ordinary service processing, private AI research and training, and public data contribution."
+},
+{
+"h2": "1. Scope and our roles"
+},
+{
+"p": "For individual accounts, website visitors, account administration, billing, security, and Hanzo’s own research programs, Hanzo generally acts as a controller or business that determines why and how personal data is processed."
+},
+{
+"p": "When a business customer uses the Services to process personal data in Customer Content, Hanzo generally acts as that customer’s processor or service provider. That processing is governed by the customer agreement and Data Processing Addendum , not by Hanzo’s independent decisions. The customer remains responsible for its notices, permissions, lawful bases, and instructions."
+},
+{
+"a": "Data Processing Addendum",
+"href": "/legal/dpa"
+},
+{
+"p": "If a business customer separately elects to contribute Customer Content to Hanzo research, Hanzo may act as an independent controller for the specifically contributed copy and purpose, as disclosed at the time of contribution. Research use is not necessary to receive the core API or enterprise Services."
+},
+{
+"p": "This Policy does not replace a specialized biometric, consumer-health, student-data, or other notice where one is required."
+},
+{
+"h2": "2. The four Hanzo data-use states"
+},
+{
+"p": "Hanzo’s systems must treat the following as separate states:"
+},
+{
+"li": "Service Only. Data is used to provide the requested service, route the request, secure and support the platform, comply with law, and generate customer-visible usage and billing records. It is not used to train generalized Hanzo models or routers."
+},
+{
+"li": "Private Improvement. The user or customer permits specified data to be used internally for evaluation, debugging, and product improvement, but not to train generalized models unless the consent expressly includes training."
+},
+{
+"li": "Research and Training. The user or authorized organization affirmatively permits specified data to be used to train, fine-tune, evaluate, or optimize reusable Hanzo models and systems."
+},
+{
+"li": "Public Commons. The contributor separately chooses identified materials for public release under a stated dataset license. Private research permission alone never authorizes public release."
+},
+{
+"p": "Business and API accounts are Service Only unless an authorized administrator chooses otherwise or a written agreement says so. For individual accounts, your chats and coding sessions move to Research and Training only through the “Help improve Hanzo’s models” setting, which we show you before your first chat and which you can change at any time in Settings → Privacy. Accepting the Terms does not change it. Each choice is recorded, granular, and can be withdrawn going forward."
+},
+{
+"h2": "3. Personal data we collect"
+},
+{
+"h3": "3.1 Data you provide"
+},
+{
+"li": "Account and identity data: name, email address, organization, role, username, authentication information, account identifiers, and optional profile details."
+},
+{
+"li": "Phone and messaging data: mobile or telephone number, where you provide one, for two-factor authentication, account security alerts, and service notifications you opt into, together with the opt-in and consent record for those messages."
+},
+{
+"li": "Billing and transaction data: billing address, tax information, subscription, credit balance, usage, invoice, and payment status. Payment-card details are collected directly by our payment processor, Square; Hanzo does not store full card numbers."
+},
+{
+"li": "Inputs and Customer Content: prompts, instructions, files, text, code, images, audio, video, documents, datasets, retrieved content, and information accessed through connectors at your direction."
+},
+{
+"li": "Outputs and Actions: generated responses and media, tool calls, agent actions, code execution results, files created or modified, and communications sent at your direction."
+},
+{
+"li": "Feedback and support data: ratings, annotations, corrections, bug reports, survey responses, support conversations, and related content you deliberately submit."
+},
+{
+"li": "Research contribution data: materials you affirmatively contribute, the consent record, selected license, study responses, and any compensation or research-program administration data."
+},
+{
+"li": "Verification data: information used to verify age, identity, organization, eligibility, fraud risk, or account ownership. Hanzo avoids collecting government IDs or facial templates unless necessary and covered by an appropriate notice and consent."
+},
+{
+"li": "Communications and marketing data: messages, event registrations, newsletter choices, and communication preferences."
+},
+{
+"h3": "3.2 Data generated by the Services"
+},
+{
+"li": "Routing and inference telemetry: requested model or preset, candidate and selected model/provider, Enso policy version, routing scores, confidence or uncertainty estimates, samples, retries, verifier results, tool decisions, safety classifications, and stop/challenge/reroute decisions."
+},
+{
+"li": "Benchmark and evaluation data: benchmark or task identifiers, model and provider versions, prompts where licensed, outputs, correctness labels, judge or verifier results, seeds, decoding settings, cost, latency, token counts, failures, and provenance."
+},
+{
+"li": "Research Run Records: project and run identifiers, repository and revision, status, gates, configurations, environment and hardware, model and dataset versions, attempts, metrics, logs, artifacts, costs, timings, failures, uploader identity, integrity hashes, supersession history, and provenance submitted to /v1/research or generated by Hanzo research systems."
+},
+{
+"li": "Research features: embeddings, activation-derived features, capability estimates, model profiles, disagreement patterns, recovery/damage labels, workflow representations, and other features derived from contributed or lawfully obtained data."
+},
+{
+"li": "Usage and device data: IP address, approximate location derived from IP, browser, operating system, device type, identifiers, timestamps, pages and features used, referral information, and interaction events."
+},
+{
+"li": "Logs and security data: authentication events, API calls, error reports, crash information, abuse indicators, network and system logs, and investigation records."
+},
+{
+"li": "Event, cookie and advertising data: the events our sites and apps send to the Hanzo event endpoint (Section 8), cookie identifiers, advertising click identifiers (such as gclid or fbclid), and your consent choices. Where the law requires consent first, we set no nonessential cookie and load no analytics or advertising tag until you agree."
+},
+{
+"h3": "3.3 Data from other sources"
+},
+{
+"p": "We may receive data from organization administrators, identity and payment providers, integrations you enable, model and infrastructure providers, security and fraud services, public sources, licensed datasets, research partners, and contributors."
+},
+{
+"p": "If Hanzo trains or fine-tunes its own generative models using public, licensed, synthetic, or contributed datasets, Hanzo will maintain source and rights documentation and publish legally required training-data summaries. Public availability does not by itself eliminate privacy, copyright, or other legal obligations."
+},
+{
+"h3": "3.4 Sensitive and regulated data"
+},
+{
+"p": "Inputs can reveal health, race or ethnicity, religion, sexual orientation, citizenship or immigration status, political beliefs, precise location, financial information, biometric information, or other sensitive data. Do not submit regulated or sensitive data unless the feature and your agreement expressly support it and you have all required permissions."
+},
+{
+"p": "Hanzo does not use sensitive personal data to infer characteristics, train generalized systems, or publish datasets without the applicable explicit permission and safeguards. Voice, face, and likeness features are addressed in the Biometric, Voice, and Likeness Notice . Consumer health data is addressed in the Consumer Health Data Privacy Policy ."
+},
+{
+"a": "Biometric, Voice, and Likeness Notice",
+"href": "/legal/biometric-voice"
+},
+{
+"a": "Consumer Health Data Privacy Policy",
+"href": "/legal/consumer-health"
+},
+{
+"h3": "3.5 Google account data"
+},
+{
+"p": "You can connect a Google account to Hanzo. What each connection can reach, and nothing more:"
+},
+{
+"table": [
+[
+"Connection",
+"Google permission",
+"What Hanzo does with it",
+"Where it is kept"
+],
+[
+"Sign in with Google",
+"openid , email , profile",
+"Identify you and keep your account",
+"Your Hanzo account"
+],
+[
+"Google Workspace, from Setup",
+"drive , documents , spreadsheets , gmail.modify , calendar",
+"Do the work you ask the assistant for in your own Workspace: read, search and summarize your files, mail and calendar; create and edit documents and sheets; draft, send and organize email; and create or change events",
+"The access token stays in your browser and expires within an hour; what the assistant reads for a task is processed by Hanzo's models for that task (Section 4)"
+],
+[
+"Gmail, kept connected",
+"gmail.send",
+"Send the mail you write or approve from your own address, including sends you schedule",
+"A refresh token, encrypted in Hanzo's key management service under your account"
+],
+[
+"Google Drive and Sheets, for an organization",
+"drive.readonly , spreadsheets",
+"Import the files and sheets an administrator selects, and run the automations they set up",
+"An access token, encrypted in Hanzo's key management service under the organization"
+]
+]
+},
+{
+"p": "The assistant acts in your Workspace only on tasks you give it or set it up to run, and only through the connection you granted. Google user data is not sold, not used for advertising, not used to train or improve generalized AI or machine-learning models, and not read by people at Hanzo except with your permission, for security, or where the law requires it. It is shared only with the service providers that run the feature for you, under the same limits."
+},
+{
+"p": "Disconnect at any time in Settings, which deletes what Hanzo kept for that connection, or revoke Hanzo at myaccount.google.com/permissions , which ends the grant everywhere."
+},
+{
+"a": "myaccount.google.com/permissions",
+"href": "https://myaccount.google.com/permissions"
+},
+{
+"p": "Hanzo's use and transfer of information received from Google APIs will adhere to the Google API Services User Data Policy , including the Limited Use requirements."
+},
+{
+"a": "Google API Services User Data Policy",
+"href": "https://developers.google.com/terms/api-services-user-data-policy"
+},
+{
+"h2": "4. How Enso and third-party models process requests"
+},
+{
+"p": "Enso may use an Input and request metadata to select among models, providers, prompts, reasoning methods, tools, samples, and verification workflows. A quality or research mode may send the same or transformed request to multiple approved providers, compare candidate responses, and run additional evaluators."
+},
+{
+"p": "Accordingly, Customer Content may be disclosed to the model and infrastructure providers necessary to fulfill the request. Hanzo identifies providers and processing locations in its Subprocessor Register and offers provider or region restrictions where stated in the applicable plan or order form."
+},
+{
+"a": "Subprocessor Register",
+"href": "/legal/subprocessors"
+},
+{
+"p": "Hanzo requires processors and subprocessors to process personal data under contract and appropriate instructions. If you independently connect or direct Hanzo to an external service not managed as a Hanzo subprocessor, that service may process data under its own terms and privacy policy."
+},
+{
+"h2": "5. Why we process personal data and our legal bases"
+},
+{
+"p": "Where the GDPR or similar law applies, Hanzo relies on the legal bases below. The exact basis depends on the context and jurisdiction."
+},
+{
+"table": [
+[
+"Purpose",
+"Typical data",
+"Typical legal basis"
+],
+[
+"Create and administer accounts; authenticate users",
+"account, identity, organization, logs",
+"contract; legitimate interests; legal obligation"
+],
+[
+"Provide inference, routing, hosting, tools, agents, storage, support, and requested Actions",
+"Customer Content, routing telemetry, integration data",
+"contract; steps requested before contract; customer instructions"
+],
+[
+"Meter usage, invoice, process payment, and administer credits",
+"account, billing, usage",
+"contract; legal obligation; legitimate interests"
+],
+[
+"Secure the Services; prevent fraud, abuse, and unauthorized access; investigate incidents",
+"account, content reasonably necessary for investigation, device and log data",
+"legitimate interests; legal obligation; vital interests where applicable"
+],
+[
+"Debug and maintain the Services",
+"errors, limited content context, telemetry",
+"contract; legitimate interests"
+],
+[
+"Measure how the Services are used (analytics purpose) and personalize them",
+"events, usage and device data, cookie identifiers",
+"consent where the law requires it; otherwise legitimate interests with an opt-out"
+],
+[
+"Measure and attribute advertising, build audiences, and run ads with Google and Meta (advertising purpose)",
+"events, click identifiers, cookie identifiers, hashed email where you allow it",
+"consent where the law requires it; otherwise legitimate interests with an opt-out"
+],
+[
+"Send essential service notices",
+"contact and account data",
+"contract; legal obligation"
+],
+[
+"Send marketing",
+"contact, preferences, website activity",
+"consent where required; otherwise legitimate interests with opt-out"
+],
+[
+"Conduct optional private studies or use identified Customer Content for generalized model/router training",
+"contributed content, feedback, research features, consent record",
+"consent; a separate written research agreement; legitimate interests only where documented, expected, necessary, and lawful"
+],
+[
+"Publish a selected contribution to Verified Commons",
+"selected materials, attribution if chosen, provenance, license",
+"separate contribution agreement; consent for applicable personal data"
+],
+[
+"Comply with law, enforce agreements, and establish or defend claims",
+"relevant account, transaction, content, and log data",
+"legal obligation; legitimate interests"
+]
+]
+},
+{
+"p": "Hanzo will not rely on “performance of a contract” to justify generalized model training when training is not necessary to provide the service requested. If Hanzo relies on legitimate interests for an AI-research activity, it will document necessity, reasonable expectations, balancing, safeguards, and the right to object. Special-category personal data requires an additional lawful condition."
+},
+{
+"h2": "6. AI research and training"
+},
+{
+"h3": "6.1 What optional research can include"
+},
+{
+"p": "If you turn on “Help improve Hanzo’s models,” or otherwise opt in, your chats and coding sessions, and any other data you choose to contribute, may be used to train Zen models and to develop and evaluate Enso Scout, Critic, Controller, Conductor, Genome, capability models, verifiers, safety systems, model hosting, datasets, and other Hanzo research. Depending on your selection, this may include Inputs, Outputs from one or more candidate models, reasoning or tool traces, feedback, correctness labels, benchmark provenance, routing features, embeddings, activation-derived features, cost, token use, and latency."
+},
+{
+"h3": "6.2 What opting out means"
+},
+{
+"p": "If you turn the setting off, we do not use your new chats and coding sessions to train models. Training that had already begun before you turned it off is not undone, as the help page explains. If research is disabled, Hanzo may still process data to provide the service, route the request, meter usage, prevent abuse, comply with law, and investigate errors or incidents. It may use aggregate statistics or information rendered non-personal under applicable law, but it will not use Customer Content to train generalized models or routers."
+},
+{
+"a": "help page",
+"href": "/help/privacy/model-training"
+},
+{
+"p": "Safety review is not a hidden training override. Material reviewed for safety or security may be retained and analyzed for that specific purpose, but generalized training requires the separately stated permission."
+},
+{
+"h3": "6.3 Withdrawal and deletion"
+},
+{
+"p": "You may withdraw research permission for future use in Settings → Privacy or by contacting [email protected] . Withdrawal does not invalidate processing lawfully completed before withdrawal. Hanzo will stop placing the affected data into new training runs and will delete or quarantine eligible source records according to its provenance and deletion procedures."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#5424263d2235372d143c353a2e3b7a353d"
+},
+{
+"p": "Because trained models contain distributed learned parameters rather than a simple database of source records, removal from a completed model may require model retirement, retraining, machine unlearning, output filtering, or another technically and legally appropriate remedy. Hanzo will evaluate valid legal requests rather than treating completed training as automatically anonymous or categorically exempt."
+},
+{
+"h3": "6.4 Public research and Verified Commons"
+},
+{
+"p": "Hanzo may publish aggregate or properly de-identified research findings. Publishing identifiable, pseudonymous, or user-contributed content requires the applicable authority, privacy basis, and contribution terms. Hashing or removing an account ID alone does not make data anonymous."
+},
+{
+"p": "Private research permission does not permit public release. A public contribution flow will identify the selected material, intended repository, attribution choice, dataset license, revocation limitations, and whether third parties may copy and redistribute the data."
+},
+{
+"h2": "7. How we disclose personal data"
+},
+{
+"p": "We may disclose data to:"
+},
+{
+"li": "Model and inference providers selected or permitted for the request;"
+},
+{
+"li": "Cloud, storage, database, network, observability, security, and support providers that operate the Services;"
+},
+{
+"li": "Payment, tax, identity, fraud, and billing providers ;"
+},
+{
+"li": "Integration providers you enable or direct us to use;"
+},
+{
+"li": "Professional advisers, auditors, insurers, and research service providers bound by appropriate obligations;"
+},
+{
+"li": "Your organization and administrators , including workspace content and usage under organizational control;"
+},
+{
+"li": "Authorities or other parties when reasonably necessary to comply with law, protect rights and safety, investigate fraud or abuse, or establish or defend legal claims;"
+},
+{
+"li": "Transaction participants in a merger, financing, acquisition, reorganization, bankruptcy, or asset transfer, subject to applicable law and appropriate confidentiality; and"
+},
+{
+"li": "The public or research repositories , only for information authorized for publication or aggregate/de-identified findings."
+},
+{
+"p": "We do not sell personal data for money. Where the advertising purpose is on (Section 8), the events we send to Google and Meta may count as “sharing” for cross-context behavioral advertising or “targeted advertising” under some U.S. state laws. You can turn that off at any time through Privacy choices, and we honor Global Privacy Control everywhere."
+},
+{
+"p": "We do not share your mobile phone number or SMS/text-messaging opt-in or consent data with third parties or affiliates for their own marketing or promotional purposes. Phone numbers and consent collected for messaging are used solely to deliver the messages you requested, such as one-time passcodes, two-factor authentication, and account or transactional notifications."
+},
+{
+"h2": "8. Analytics, advertising and your privacy choices"
+},
+{
+"h3": "8.1 One event stream"
+},
+{
+"p": "Hanzo’s websites, apps and SDKs report what happens in them (page views, sign-in steps, feature use, errors) to one place: the Hanzo event endpoint, api.hanzo.ai/v1/event . Nothing else receives events from your browser. When an event arrives we add your IP address, your approximate country from that address, your user agent, and the browser, operating system and device type taken from it. Browser tags identify the Hanzo project with a public publishable key and, when you are signed in, send your Hanzo account token as well, so the event ties to your account. Servers that send events use secret keys that never ship to a browser. Our analytics and error tools read from this stream."
+},
+{
+"code": "api.hanzo.ai/v1/event"
+},
+{
+"h3": "8.2 Purposes"
+},
+{
+"p": "Every event carries your current choices, and the endpoint enforces them: it drops or withholds whatever a purpose does not allow. The purposes are:"
+},
+{
+"li": "Essential: sign-in, security, fraud and abuse prevention, rate limits, reliability and the state of a transaction. Always on; needed for the Services to work."
+},
+{
+"li": "Analytics: product usage, page and session measurement, and funnels."
+},
+{
+"li": "Personalization: tailoring what you see from your activity."
+},
+{
+"li": "Advertising: measuring and attributing ad campaigns, building audiences, Google Analytics 4 and Meta advertising, and ads across contexts. A separate setting records whether your data may be sold or shared for that purpose."
+},
+{
+"h3": "8.3 Vendors"
+},
+{
+"p": "Google (Google Analytics 4) and Meta (the Meta Pixel and Conversions API) are our analytics and advertising vendors. They receive data only for a purpose you have allowed or that applies by default where you are (Section 8.4), and only what Section 8.5 lets through. Where you have allowed advertising, we may send Meta a hashed email address for conversion measurement. The technologies involved are listed in the Cookie Notice ."
+},
+{
+"a": "Cookie Notice",
+"href": "/legal/cookies"
+},
+{
+"h3": "8.4 What applies where you are"
+},
+{
+"p": "We decide from your location, taken from your connection at the edge of our network, which of two modes applies. The policy is one table, applied the same way everywhere."
+},
+{
+"table": [
+[
+"Where",
+"Mode",
+"What it means"
+],
+[
+"EU and EEA, United Kingdom, Switzerland, Quebec, Brazil, mainland China",
+"Opt-in",
+"Analytics, personalization and advertising are off until you accept. The banner offers Accept, Reject and Customize with equal ease. Google Analytics and Meta are not loaded before you accept."
+],
+[
+"United States, Canada outside Quebec, Australia, Japan, and every other country",
+"Default on, with notice and opt-out",
+"All purposes are on. A notice tells you so, with “Manage” and a “Do not sell or share my personal information” link, and you can turn any of them off."
+]
+]
+},
+{
+"p": "If we cannot tell where you are, we treat you as being in an opt-in region. Essential processing is not optional anywhere."
+},
+{
+"h3": "8.5 Global Privacy Control and what vendors never receive"
+},
+{
+"p": "We honor the Global Privacy Control signal ( Sec-GPC: 1 , or navigator.globalPrivacyControl ) in every region: advertising and sale or sharing are turned off, and Meta and other cross-context advertising tags are not loaded. Analytics then follows your region’s default."
+},
+{
+"code": "Sec-GPC: 1"
+},
+{
+"code": "navigator.globalPrivacyControl"
+},
+{
+"p": "A firewall in the service that forwards data to vendors enforces this rule, and it is covered by automated tests: raw prompts, chat text, form input, API payloads, file names, email addresses (other than the hashed email described in Section 8.3), user-generated content, and URL query parameters never reach Google, Meta or any other advertising platform. The only query parameters that pass are utm_* , gclid , gbraid , wbraid and fbclid . The event stream we keep ourselves is richer than what any vendor sees."
+},
+{
+"code": "utm_*"
+},
+{
+"code": "gclid"
+},
+{
+"code": "gbraid"
+},
+{
+"code": "wbraid"
+},
+{
+"code": "fbclid"
+},
+{
+"h3": "8.6 Changing your choice"
+},
+{
+"p": "Use Privacy choices in the footer of any Hanzo page, at any time. Your choice is stored in a first-party cookie, and we ask again if this policy changes in a way that affects it. Withdrawing consent applies going forward; it does not undo what was lawfully collected before. Your choices here govern analytics, personalization and advertising only. Model training is a separate setting (Section 6), and a browser privacy signal does not change it."
+},
+{
+"h2": "9. Retention"
+},
+{
+"p": "Hanzo retains personal data only as long as necessary for the stated purpose, contractual commitments, security, disputes, and legal obligations. We keep data on the following schedule:"
+},
+{
+"table": [
+[
+"Data",
+"Standard retention"
+],
+[
+"Account and workspace profile",
+"account life; deletion within 30 days after closure, subject to legal holds and backup cycle"
+],
+[
+"Consumer conversation content",
+"until the user deletes it or closes the account; backend deletion within 30 days, unless a shorter product setting applies"
+],
+[
+"API/enterprise request and response content",
+"up to 30 days for support and abuse monitoring by default; zero-retention or customer-configured period where contracted"
+],
+[
+"Routing and usage telemetry, and analytics events, without raw Customer Content",
+"up to 24 months for operations, billing analysis, and reliability research"
+],
+[
+"Nonpersonal standardized Benchmark Records and provenance",
+"for the life of the registry or research program, including longitudinal comparison, replication, cache-before-spend, and model-drift analysis"
+],
+[
+"Nonpersonal Research Run Records, integrity hashes, and supersession history",
+"for the life of the research registry; public visibility is controlled separately from retention"
+],
+[
+"Research artifacts containing Customer Content, personal data, secrets, or licensed material",
+"the applicable service, customer, consent, study, or license period; never made public merely because run metadata is retained"
+],
+[
+"Security and abuse logs",
+"normally 90 days; up to 12 months or longer when connected to an active incident, legal obligation, or dispute"
+],
+[
+"Billing, tax, and transaction records",
+"seven years or the period required by applicable law"
+],
+[
+"Support records",
+"three years after resolution, unless needed for an active dispute"
+],
+[
+"Opted-in private research source data",
+"up to two years unless a shorter consent or study term applies; then delete or lawfully de-identify"
+],
+[
+"Research provenance, consent, and withdrawal records",
+"life of the relevant dataset/model plus six years, as necessary to prove rights and honor withdrawal"
+],
+[
+"Public Commons contributions",
+"according to the selected public license; Hanzo can remove future distributions but cannot guarantee deletion of third-party copies"
+],
+[
+"Biometric identifiers or templates",
+"no longer than necessary for the stated feature, and in all events as required by applicable biometric law; see separate notice"
+],
+[
+"Cookie identifiers",
+"as listed in the Cookie Notice , generally no longer than 13 months for nonessential analytics"
+],
+[
+"Backups",
+"overwritten on a rolling basis, targeted within 90 days after primary deletion"
+]
+]
+},
+{
+"p": "Legal holds, fraud prevention, chargebacks, security incidents, and mandatory records may justify longer retention. Data rendered anonymous under applicable law may be retained without the same limits."
+},
+{
+"h2": "10. Security"
+},
+{
+"p": "Hanzo uses administrative, technical, and organizational measures designed to protect personal data, including access controls, encryption in transit and at rest where appropriate, secrets management, tenant separation, audit logging, vulnerability management, backups, incident response, and subprocessor diligence."
+},
+{
+"p": "No system is perfectly secure. Users must protect credentials, configure integrations and agents carefully, and avoid submitting unsupported regulated data. Business security measures and incident-notification obligations are described in the DPA and applicable order form."
+},
+{
+"h2": "11. Your rights and choices"
+},
+{
+"p": "Depending on your location, you may have rights to:"
+},
+{
+"li": "know whether and how we process personal data;"
+},
+{
+"li": "access and receive a portable copy;"
+},
+{
+"li": "correct inaccurate data;"
+},
+{
+"li": "delete personal data;"
+},
+{
+"li": "restrict processing;"
+},
+{
+"li": "object to processing based on legitimate interests;"
+},
+{
+"li": "withdraw consent;"
+},
+{
+"li": "opt out of sale, sharing, targeted advertising, or qualifying profiling;"
+},
+{
+"li": "limit certain uses of sensitive personal information;"
+},
+{
+"li": "obtain information about or opt out of qualifying automated decision-making;"
+},
+{
+"li": "appeal a denied request; and"
+},
+{
+"li": "complain to a regulator or supervisory authority."
+},
+{
+"p": "Submit requests to [email protected] . You can change analytics and advertising choices yourself through Privacy choices, and your model-training setting in Settings → Privacy. Authorized agents may submit requests where permitted. We may verify identity using information proportionate to the request; we will not require account creation or unnecessary sensitive information merely to exercise an opt-out right."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#e292908b9483819ba28a838c988dcc838b"
+},
+{
+"p": "We will respond within the legally required period, generally one month under the GDPR and 45 days under many U.S. state laws, subject to permitted extensions. We do not discriminate against users for exercising privacy rights."
+},
+{
+"p": "Marketing emails include an unsubscribe mechanism. Research and public-contribution choices are managed separately from marketing and cookies."
+},
+{
+"h2": "12. Automated processing and profiling"
+},
+{
+"p": "Enso automatically selects computational resources and workflows. This affects which model processes a request, response quality, cost, latency, and the generated Output; it is not designed by Hanzo to make legal or similarly significant decisions about the user."
+},
+{
+"p": "Hanzo may use automated systems for fraud prevention, safety enforcement, and account protection, with human review and appeal where required. Customers that use Hanzo in employment, credit, insurance, healthcare, education, housing, or another significant-decision context are responsible for separate compliance and may do so only under an appropriate written agreement."
+},
+{
+"h2": "13. International transfers"
+},
+{
+"p": "Hanzo is based in the United States and may process data in the United States and other countries listed in the Subprocessor Register . Where required, Hanzo uses the European Commission’s Standard Contractual Clauses, the UK International Data Transfer Addendum or other approved mechanism, transfer-impact assessments, and supplementary safeguards."
+},
+{
+"a": "Subprocessor Register",
+"href": "/legal/subprocessors"
+},
+{
+"h2": "14. Children"
+},
+{
+"p": "The Services are intended for people at least 18 years old. Hanzo does not knowingly collect personal data from children through the general Services. If you believe a child has provided data, contact [email protected] . We will investigate and delete it where appropriate."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#cdbdbfa4bbacaeb48da5aca3b7a2e3aca4"
+},
+{
+"p": "Any future K–12 or under-18 offering requires separate terms, age assurance, parental or school authorization, data minimization, and compliance with COPPA, FERPA, state student-privacy laws, and applicable European child-consent rules before launch."
+},
+{
+"h2": "15. U.S. state disclosures"
+},
+{
+"p": "During the preceding 12 months, Hanzo may have collected the categories described in Section 3, used them for the purposes in Section 5, and disclosed them to the recipient categories in Section 7. These may map to statutory categories such as identifiers, customer records, commercial information, internet activity, geolocation approximated from IP, audio/visual information, professional information, inferences, sensitive personal information, and Customer Content."
+},
+{
+"p": "Hanzo does not sell personal data for money. Where the advertising purpose is on (Section 8), sending events to Google and Meta may be “sharing” or “targeted advertising” under these laws. You can opt out with the “Do not sell or share my personal information” link, through Privacy choices in the footer, or with Global Privacy Control, which we honor as an opt-out of sale and sharing. Hanzo does not use or disclose sensitive personal information for purposes outside those permitted by California law without providing the required right to limit."
+},
+{
+"p": "California residents may request the categories and specific pieces of personal information collected, sources, purposes, recipient categories, correction, deletion, and portability, and may use an authorized agent. Colorado, Connecticut, Delaware, Indiana, Iowa, Kentucky, Maryland, Minnesota, Montana, Nebraska, New Hampshire, New Jersey, Oregon, Rhode Island, Tennessee, Texas, Utah, Virginia, and other covered-state residents may have similar rights, including appeal rights and opt-outs for targeted advertising, sale, or qualifying profiling. Rights vary by law and exemptions."
+},
+{
+"p": "Research consent and public-dataset contribution remain separate opt-in choices rather than “sale” opt-outs."
+},
+{
+"h2": "16. European disclosures"
+},
+{
+"p": "EEA users may contact [email protected] to exercise GDPR rights and may lodge a complaint with their local supervisory authority. Send data-protection questions and requests to [email protected] ."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#3b4b49524d5a58427b535a554154155a52"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#e393918a9582809aa38b828d998ccd828a"
+},
+{
+"p": "Hanzo will conduct a data-protection impact assessment where processing—such as large-scale monitoring, sensitive-data processing, biometric processing, or significant automated decision-making—is likely to create high risk. Hanzo will maintain records of processing, legitimate-interest assessments where used, and transfer-impact assessments."
+},
+{
+"h2": "17. AI-specific transparency"
+},
+{
+"p": "Hanzo identifies when users are interacting directly with AI. Where required, Hanzo will provide or preserve machine-readable marking of AI-generated or manipulated content and support disclosure for synthetic media and deepfakes."
+},
+{
+"p": "If Hanzo places its own general-purpose AI model on the EU market, Hanzo will maintain required technical documentation, copyright compliance policies, and public training-content summaries. If Hanzo publicly releases or substantially modifies a generative AI system in California, it will publish the training-data documentation required by California Civil Code section 3111. This Privacy Policy is not a substitute for those model-specific disclosures."
+},
+{
+"h2": "18. Changes to this Policy"
+},
+{
+"p": "We may update this Policy to reflect product, legal, or operational changes. We will post the effective date and provide additional notice for material changes. We will not retroactively convert previously collected service-only data into training data through a quiet policy change. A materially expanded research or public-release purpose requires a new lawful basis and, where applicable, a new affirmative choice."
+},
+{
+"h2": "19. SMS and text messaging"
+},
+{
+"p": "If you provide your mobile number and opt in, we send SMS for two-factor authentication (one-time passcodes), account security, and transactional notifications, and — only with your separate consent — occasional product updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out at any time and HELP for help. Opting out of SMS does not affect your ability to sign in via other methods. Mobile information is never shared with third parties or affiliates for marketing. SMS is delivered via our messaging provider (Twilio) acting as our processor."
+},
+{
+"p": "The corresponding consent terms are in the Terms of Service ."
+},
+{
+"a": "Terms of Service",
+"href": "/legal/terms"
+},
+{
+"h2": "20. Contact"
+},
+{
+"p": "Hanzo AI, Inc. 1 Ferry Building San Francisco, CA 94105, USA"
+},
+{
+"li": "Privacy requests and questions: [email protected]",
+"href": "/cdn-cgi/l/email-protection#8dfdffe4fbeceef4cde5ece3f7e2a3ece4"
+},
+{
+"li": "Security reports: [email protected]",
+"href": "/cdn-cgi/l/email-protection#deadbbbdabacb7aaa79eb6bfb0a4b1f0bfb7"
+},
+{
+"li": "General support: [email protected]",
+"href": "/cdn-cgi/l/email-protection#94e7e1e4e4fbe6e0d4fcf5faeefbbaf5fd"
+},
+{
+"li": "Legal notices: [email protected]",
+"href": "/cdn-cgi/l/email-protection#c8a4adafa9a488a0a9a6b2a7e6a9a1"
+}
+]
+]

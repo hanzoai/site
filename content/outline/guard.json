@@ -1,0 +1,93 @@
+[
+[
+{
+"h1": "Guard"
+},
+{
+"p": "It reads what goes into a model, and what comes back"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/mori.webp",
+"alt": ""
+},
+{
+"p": "Overriding the instructions, role-play, asking for the system prompt, bypassing a rule, hiding the ask in an encoding, and reframing the context. A match returns a confidence rather than a verdict, and you decide what confidence is worth blocking."
+},
+{
+"p": "Social security numbers, card numbers checked against the Luhn digit so a phone number is not mistaken for one, emails, phone numbers, IP addresses, and provider API keys. Each becomes a typed marker, so the model still knows a card number was there and does not lose the sentence."
+},
+{
+"p": "The reply is read with the same detectors as the request, because the leak that matters is usually the one coming back. A machine-learning classifier for categories like violence and self-harm is available and off unless you turn it on — pattern matching is the default because it is the part that behaves the same every time."
+},
+{
+"p": "Turn each detector on or off, set the injection threshold, add your own patterns for whatever is sensitive in your domain, and choose the marker text. Requests are rate limited per user with a token bucket, so a single caller cannot burn the budget."
+},
+{
+"p": "Decisions are written as JSON lines with a hash of the content, not the content. Logging what you just redacted would put it in a file with weaker access control than the one you took it out of. Turn content logging on deliberately, or leave it off."
+},
+{
+"p": "Start the proxy with your provider as the upstream and point the base URL at it. Or wrap a CLI tool over a pseudo-terminal and everything you type is filtered on its way in. Or put it in front of an MCP server and filter the tool calls."
+},
+{
+"li": "Six shapes an injection takes"
+},
+{
+"li": "The things people paste by accident"
+},
+{
+"li": "Both directions, on purpose"
+},
+{
+"li": "You set the dials"
+},
+{
+"li": "A log that is not a second copy of the leak"
+},
+{
+"li": "Nothing to rewrite"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Guard from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Guard in my project."
+}
+],
+[
+{
+"h2": "Get started with Guard"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Guard"
+},
+{
+"p": "AI guardrails"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

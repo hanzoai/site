@@ -1,0 +1,154 @@
+[
+[
+{
+"h1": "Works with everything"
+},
+{
+"p": "Drop in https://api.hanzo.ai/v1 as the base URL and your Hanzo API key."
+},
+{
+"code": "https://api.hanzo.ai/v1"
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "SDK docs",
+"href": "https://docs.hanzo.ai/docs/sdks"
+},
+{
+"button": "Python"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Go"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key= HANZO_API_KEY , )"
+},
+{
+"code": "import OpenAI from \" openai \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : HANZO_API_KEY , });"
+},
+{
+"code": "client := openai . NewClient ( option . WithBaseURL ( \" https://api.hanzo.ai/v1 \" ), option . WithAPIKey ( HANZO_API_KEY ), )"
+}
+],
+[
+{
+"h2": "AI SDKs"
+},
+{
+"a": "🐍 OpenAI Python SDK Use the official OpenAI Python SDK with Hanzo AI by pointing it to our OpenAI-compatible API endpoint. Access every model on Hanzo's gateway with your existing OpenAI code — no refactor needed. AI SDKs",
+"href": "/integrations/openai-sdk"
+},
+{
+"a": "🤖 Anthropic SDK Use the Anthropic Python or TypeScript SDK with Hanzo AI to access Claude models alongside 50+ other models through a single API key and billing account. AI SDKs",
+"href": "/integrations/anthropic-sdk"
+},
+{
+"a": "🤗 Hugging Face Access Hugging Face models and use the HF Inference API through the Hanzo AI API. Also use Hanzo AI models with HuggingFace Hub tooling. AI SDKs",
+"href": "/integrations/huggingface"
+}
+],
+[
+{
+"h2": "Frameworks"
+},
+{
+"a": "⛓️ LangChain Integrate LangChain with Hanzo AI to build chains, agents, and RAG pipelines using any model on Hanzo's gateway. Hanzo is OpenAI-compatible so ChatOpenAI just works. Frameworks",
+"href": "/integrations/langchain"
+},
+{
+"a": "🦙 LlamaIndex Use LlamaIndex with Hanzo AI to build powerful RAG applications, data agents, and query pipelines. Drop in Hanzo as your LLM provider with zero friction. Frameworks",
+"href": "/integrations/llamaindex"
+},
+{
+"a": "▲ Vercel AI SDK Use the Vercel AI SDK with Hanzo AI to build streaming AI UIs, chatbots, and generative interfaces in Next.js, React, and other frameworks. Frameworks",
+"href": "/integrations/vercel-ai-sdk"
+},
+{
+"a": "🤝 AutoGen Build multi-agent systems with Microsoft AutoGen. Set base_url to api.hanzo.ai/v1 in the AutoGen config, name a Hanzo model, and the agents run on it. Frameworks",
+"href": "/integrations/autogen"
+},
+{
+"a": "🚢 CrewAI Use CrewAI to build collaborative AI agent teams powered by Hanzo AI models. CrewAI's role-based agents work with any OpenAI-compatible provider. Frameworks",
+"href": "/integrations/crewai"
+},
+{
+"a": "🔬 DSPy Use DSPy to program (not prompt) Hanzo AI models. DSPy's systematic approach to LM prompting works with any OpenAI-compatible provider. Frameworks",
+"href": "/integrations/dspy"
+},
+{
+"a": "🌾 Haystack Build NLP pipelines and RAG systems with Haystack. Point OpenAIChatGenerator at api.hanzo.ai/v1, name a Hanzo model, and the pipeline runs unchanged. Frameworks",
+"href": "/integrations/haystack"
+}
+],
+[
+{
+"h2": "Platforms & Editors"
+},
+{
+"a": "🖱️ Cursor Use Hanzo AI models inside Cursor IDE by adding a custom API provider. Access Zen, GPT-4.1, Claude Sonnet, and 50+ other models directly in your editor. Platforms & Editors",
+"href": "/integrations/cursor"
+},
+{
+"a": "🔄 Continue.dev Configure Continue.dev VS Code / JetBrains extension to use Hanzo AI as your coding assistant. Add Hanzo as a custom OpenAI-compatible provider in your config. Platforms & Editors",
+"href": "/integrations/continue-dev"
+},
+{
+"a": "🐙 GitHub Copilot Extend your GitHub Copilot workflow with Hanzo AI for access to additional models and capabilities via the API. Use Hanzo for tasks Copilot can't handle. Platforms & Editors",
+"href": "/integrations/github-copilot"
+}
+],
+[
+{
+"h2": "Infrastructure"
+},
+{
+"a": "🐳 Docker Deploy Hanzo AI-powered services in Docker containers. Use the Hanzo API from any containerized application with proper environment configuration. Infrastructure",
+"href": "/integrations/docker"
+},
+{
+"a": "⚓ Kubernetes Deploy Hanzo AI-powered workloads on Kubernetes. Securely manage your Hanzo API key as a K8s secret and inject it into pods. Infrastructure",
+"href": "/integrations/kubernetes"
+}
+],
+[
+{
+"h2": "Languages"
+},
+{
+"a": "🐍 Python Use Hanzo AI in Python with the official OpenAI SDK (fully compatible), the Anthropic SDK, or via HTTP with httpx/requests. Zero lock-in, standard interfaces. Languages",
+"href": "/integrations/python"
+},
+{
+"a": "🟦 TypeScript Use Hanzo AI in TypeScript and Node.js with the OpenAI SDK, Vercel AI SDK, or raw fetch. Full type safety and async/streaming support. Languages",
+"href": "/integrations/typescript"
+},
+{
+"a": "🐹 Go Use Hanzo AI in Go using the official OpenAI Go client or any OpenAI-compatible Go library. Hanzo's standard REST API works with all HTTP clients. Languages",
+"href": "/integrations/go"
+},
+{
+"a": "🦀 Rust Use Hanzo AI in Rust via the async-openai crate or raw reqwest HTTP calls. Full async support with Tokio, streaming, and type-safe API access. Languages",
+"href": "/integrations/rust"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Integrations from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Integrations in my project. Start with: hanzo integrations list"
+}
+]
+]

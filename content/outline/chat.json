@@ -1,0 +1,101 @@
+[
+[
+{
+"h1": "Ask anything. Enso picks the model."
+},
+{
+"p": "Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation."
+},
+{
+"a": "Open Hanzo Chat",
+"href": "/login?next=%2Fchat"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/chat"
+},
+{
+"button": "Black holes and auroras"
+},
+{
+"button": "Email to the landlord"
+},
+{
+"button": "Investor update, shorter"
+},
+{
+"button": "Three days in Kyoto"
+},
+{
+"button": "Code that works, somehow"
+},
+{
+"button": "Support reply, API keys"
+},
+{
+"button": "Attention, simply"
+},
+{
+"button": "Sourdough starter"
+},
+{
+"button": "Three emails before lunch"
+},
+{
+"button": "Standup, for the absent"
+},
+{
+"button": "A fair refund"
+},
+{
+"button": "The fundraising deck"
+},
+{
+"button": "Interview notes"
+},
+{
+"button": "A toast for the team"
+}
+],
+[
+{
+"h2": "A chat that does the work, not just the talking"
+},
+{
+"h3": "The right model, every time"
+},
+{
+"p": "Enso sends each question to the model that answers it best. Pick one by name whenever you want to."
+},
+{
+"h3": "Search and code"
+},
+{
+"p": "It searches the web for what is current and runs code when an answer needs working out."
+},
+{
+"h3": "Your files"
+},
+{
+"p": "Add a document, a sheet or a picture and ask about it in the same conversation."
+},
+{
+"h3": "Voice"
+},
+{
+"p": "Dictate a question or talk it through, and listen to the answer."
+},
+{
+"h3": "Memory"
+},
+{
+"p": "Tell it what to remember, and it carries that into the next conversation."
+},
+{
+"h3": "Chat, then Dev"
+},
+{
+"p": "When a conversation turns into building, Dev is one press away in the same app."
+}
+]
+]

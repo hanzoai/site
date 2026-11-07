@@ -1,0 +1,136 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Z.ai Models via Hanzo AI"
+},
+{
+"p": "21 models available"
+},
+{
+"p": "Access all 21 Z.ai models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "GLM 4.5 131K GLM-4.5 is our latest flagship foundation model, purpose-built for agent-based applications. It leverages a Mixture-of-Experts (MoE) architecture and supports a context length of up to 128k tokens. GLM-4.5 delivers significantly... text",
+"href": "/models/z-ai/glm-4.5"
+},
+{
+"a": "GLM 4.5 Air 131K GLM-4.5-Air is the lightweight variant of our latest flagship model family, also purpose-built for agent-centric applications. Like GLM-4.5, it adopts the Mixture-of-Experts (MoE) architecture but with a more compact parameter... text",
+"href": "/models/z-ai/glm-4.5-air"
+},
+{
+"a": "GLM 4.5V 66K GLM-4.5V is a vision-language foundation model for multimodal agent applications. Built on a Mixture-of-Experts (MoE) architecture with 106B parameters and 12B activated parameters, it achieves state-of-the-art results in video understanding,... text",
+"href": "/models/z-ai/glm-4.5v"
+},
+{
+"a": "GLM 4.6 205K Compared with GLM-4.5, this generation brings several key improvements: Longer context window: The context window has been expanded from 128K to 200K tokens, enabling the model to handle more complex... text",
+"href": "/models/z-ai/glm-4.6"
+},
+{
+"a": "GLM 4.6V 131K GLM-4.6V is a large multimodal model designed for high-fidelity visual understanding and long-context reasoning across images, documents, and mixed media. It supports up to 128K tokens, processes complex page layouts... text",
+"href": "/models/z-ai/glm-4.6v"
+},
+{
+"a": "GLM 4.7 205K GLM-4.7 is Z.ai’s latest flagship model, featuring upgrades in two key areas: enhanced programming capabilities and more stable multi-step reasoning/execution. It demonstrates significant improvements in executing complex agent tasks while... text",
+"href": "/models/z-ai/glm-4.7"
+},
+{
+"a": "GLM 4.7 Flash 200K As a 30B-class SOTA model, GLM-4.7-Flash offers a new option that balances performance and efficiency. It is further optimized for agentic coding use cases, strengthening coding capabilities, long-horizon task planning,... text",
+"href": "/models/z-ai/glm-4.7-flash"
+},
+{
+"a": "GLM 5 205K GLM-5 is Z.ai’s flagship open-source foundation model engineered for complex systems design and long-horizon agent workflows. Built for expert developers, it delivers production-grade performance on large-scale programming tasks, rivaling leading... text",
+"href": "/models/z-ai/glm-5"
+},
+{
+"a": "GLM 5 Turbo 203K GLM-5 Turbo is a new model from Z.ai designed for fast inference and strong performance in agent-driven environments such as OpenClaw scenarios. It is deeply optimized for real-world agent workflows... text",
+"href": "/models/z-ai/glm-5-turbo"
+},
+{
+"a": "GLM 5.1 205K GLM-5.1 delivers a major leap in coding capability, with particularly significant gains in handling long-horizon tasks. Unlike previous models built around minute-level interactions, GLM-5.1 can work independently and continuously on... text",
+"href": "/models/z-ai/glm-5.1"
+},
+{
+"a": "GLM 5.2 1M GLM 5.2 is a large-scale reasoning model from Z.ai. It supports text input and output with a 1M-token context window, and is suited for long-horizon agent workflows, project-level software engineering,... text",
+"href": "/models/z-ai/glm-5.2"
+},
+{
+"a": "GLM 5.3 1M GLM-5.3 is a large-scale reasoning model from Z.ai, built for complex software engineering and long-horizon agent tasks. It supports text input and output with a 1M-token context window, and improves... text",
+"href": "/models/z-ai/glm-5.3"
+},
+{
+"a": "GLM 5.3 Flash 1M GLM-5.3-Flash is a native multimodal model from Z.ai. It is suited for efficient coding and long-horizon agent tasks. Its hybrid sparse and linear attention architecture maintains accurate long-context behavior while... text",
+"href": "/models/z-ai/glm-5.3-flash"
+},
+{
+"a": "GLM 5.3 Flash (batch) 1M GLM-5.3-Flash is a native multimodal model from Z.ai. It is suited for efficient coding and long-horizon agent tasks. Its hybrid sparse and linear attention architecture maintains accurate long-context behavior while... text",
+"href": "/models/z-ai/glm-5.3-flash:batch"
+},
+{
+"a": "GLM 5.3 FlashX 1M GLM-5.3-FlashX is the high-speed variant of Z.ai's GLM-5.3-Flash, a native multimodal model delivering inference speeds of up to 200 tokens/s. Built on the same hybrid sparse and linear attention architecture... text",
+"href": "/models/z-ai/glm-5.3-flashx"
+},
+{
+"a": "GLM 5.3 FlashX Legal 1M GLM-5.3-FlashX-Legal (GLM-Legal) is Z.ai's legal-domain variant of GLM-5.3-FlashX, a native multimodal model that accepts text, image, and video input and produces text. It adds legal-domain mid-training and post-training with reinforcement... text",
+"href": "/models/z-ai/glm-5.3-flashx-legal"
+},
+{
+"a": "GLM 5.3 Prime 1M GLM-5.3-Prime is the high-speed variant of Z.ai's GLM-5.3, inheriting its full capabilities while delivering 1.5–2× the output throughput through inference acceleration. It supports text input and output with a 1M-token... text",
+"href": "/models/z-ai/glm-5.3-prime"
+},
+{
+"a": "GLM 5.3 (batch) 1M GLM-5.3 is a large-scale reasoning model from Z.ai, built for complex software engineering and long-horizon agent tasks. It supports text input and output with a 1M-token context window, and improves... text",
+"href": "/models/z-ai/glm-5.3:batch"
+},
+{
+"a": "GLM 5V Turbo 203K GLM-5V-Turbo is Z.ai’s first native multimodal agent foundation model, built for vision-based coding and agent-driven tasks. It natively handles image, video, and text inputs, excels at long-horizon planning, complex coding,... text",
+"href": "/models/z-ai/glm-5v-turbo"
+},
+{
+"a": "GLM Flash Latest 1M This model always redirects to the latest model in the GLM Flash family. text",
+"href": "/models/z-ai/glm-flash-latest"
+},
+{
+"a": "GLM Latest 1M This model always redirects to the latest GLM model from Z.ai. text",
+"href": "/models/z-ai/glm-latest"
+}
+],
+[
+{
+"h2": "Use Z.ai models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

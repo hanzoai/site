@@ -1,0 +1,72 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Amazon Models via Hanzo AI"
+},
+{
+"p": "5 models available"
+},
+{
+"p": "Access all 5 Amazon models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Nova 2 Lite 1M Nova 2 Lite is a fast, cost-effective reasoning model for everyday workloads that can process text, images, and videos to generate text. Nova 2 Lite demonstrates standout capabilities in processing... text",
+"href": "/models/amazon/nova-2-lite-v1"
+},
+{
+"a": "Nova Lite 1.0 300K Amazon Nova Lite 1.0 is a very low-cost multimodal model from Amazon that focused on fast processing of image, video, and text inputs to generate text output. Amazon Nova Lite... text",
+"href": "/models/amazon/nova-lite-v1"
+},
+{
+"a": "Nova Micro 1.0 128K Amazon Nova Micro 1.0 is a text-only model that delivers the lowest latency responses in the Amazon Nova family of models at a very low cost. With a context length... text",
+"href": "/models/amazon/nova-micro-v1"
+},
+{
+"a": "Nova Premier 1.0 1M Amazon Nova Premier is the most capable of Amazon’s multimodal models for complex reasoning tasks and for use as the best teacher for distilling custom models. text",
+"href": "/models/amazon/nova-premier-v1"
+},
+{
+"a": "Nova Pro 1.0 300K Amazon Nova Pro 1.0 is a capable multimodal model from Amazon focused on providing a combination of accuracy, speed, and cost for a wide range of tasks. As of December... text",
+"href": "/models/amazon/nova-pro-v1"
+}
+],
+[
+{
+"h2": "Use Amazon models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

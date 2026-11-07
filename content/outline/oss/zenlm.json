@@ -1,0 +1,307 @@
+[
+[
+{
+"h1": "Zen LM"
+},
+{
+"p": "Frontier language models from 600M to 480B parameters — edge to cloud. Open weights, Zen architecture."
+},
+{
+"a": "zenlm on GitHub",
+"href": "https://github.com/zenlm"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/zenlm"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 17 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of zenlm, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "zenlm/zen6-flash 0 0 Zen6 Flash — 27B Ultra-Compact Ternary Vision-Language Model (PQ2_0, DFlash2, Metal & Unified Memory Native) Pushed Nov 6, 2026 2 commits this year Forge",
+"href": "https://github.com/zenlm/zen6-flash"
+},
+{
+"li": "zenlm/zen6-coder Python 0 0 Zen6 Coder — 38B-Class Frontier Agentic MoE (Halogen W4B, GGUF UD-IQ4_XS, AMD Strix Halo Native) Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zenlm/zen6-coder"
+},
+{
+"li": "zenlm/zen6 Python 0 0 Zen6 — Flagship 27B Frontier Dense Model (NVFP4, DFlash2 1M, Blackwell & SGLang Native) Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zenlm/zen6"
+},
+{
+"li": "zenlm/zen5-engine C 2 0 Zen5 inference engine. Pushed Nov 6, 2026 110 commits this year Forge",
+"href": "https://github.com/zenlm/zen5-engine"
+},
+{
+"li": "zenlm/zen5 Python 0 0 zen5 MoDE — Mixture of Diverse Experts. 3.1T params, 0.8-100B+ active, complexity-aware routing across 6 model families. Pushed Nov 6, 2026 110 commits this year Forge",
+"href": "https://github.com/zenlm/zen5"
+},
+{
+"li": "zenlm/zen-world 0 0 Zen World — 3D world & scene generation Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zenlm/zen-world"
+},
+{
+"li": "zenlm/zen-voyager 0 0 Zen Voyager — explorable, navigable world generation Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zenlm/zen-voyager"
+},
+{
+"li": "zenlm/zen-vl Python 0 0 Zen VL - Vision-language models with function calling (4B/8B/30B) Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/zenlm/zen-vl"
+},
+{
+"li": "zenlm/zen-video-i2v 0 0 Zen Video I2V — image-to-video generation Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zenlm/zen-video-i2v"
+},
+{
+"li": "zenlm/zen-video 0 0 Zen Video — text-to-video generation Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zenlm/zen-video"
+},
+{
+"li": "zenlm/zen-translator Python 1 0 Real-time multimodal translation with voice cloning and lip synchronization Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zenlm/zen-translator"
+},
+{
+"li": "zenlm/zen-training Python 0 0 Zen zen-training model Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zenlm/zen-training"
+},
+{
+"li": "zenlm/zen-trainer Python 0 0 Training framework for Zen Coder models - fine-tune 4B to 1T parameter models on agentic coding data Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/zenlm/zen-trainer"
+},
+{
+"li": "zenlm/zen-scribe Python 0 0 Zen Scribe 4B - Professional content writing Pushed Nov 6, 2026 8 commits this year Forge",
+"href": "https://github.com/zenlm/zen-scribe"
+},
+{
+"li": "zenlm/zen-router Python 0 0 Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-router"
+},
+{
+"li": "zenlm/zen-reranker 1 0 Cross-encoder reranker for search relevance Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/zenlm/zen-reranker"
+},
+{
+"li": "zenlm/zen-pro Shell 0 0 Zen Pro 8B - Professional-grade language model Pushed Nov 6, 2026 10 commits this year Forge",
+"href": "https://github.com/zenlm/zen-pro"
+},
+{
+"li": "zenlm/zen-omni Jupyter Notebook 1 0 Zen-Omni 30B — hypermodal AI with MLX/GGUF Pushed Nov 6, 2026 27 commits this year Forge",
+"href": "https://github.com/zenlm/zen-omni"
+},
+{
+"li": "zenlm/zen-nano Python 1 0 Zen Nano v1.0 - Ultra-lightweight edge AI model Pushed Nov 6, 2026 10 commits this year Forge",
+"href": "https://github.com/zenlm/zen-nano"
+},
+{
+"li": "zenlm/zen-musician Python 0 0 Zen Musician 7B - Music generation from lyrics Pushed Nov 6, 2026 11 commits this year Forge",
+"href": "https://github.com/zenlm/zen-musician"
+},
+{
+"li": "zenlm/zen-logo TypeScript 0 0 Official Zen AI logo package with React components and utilities Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zenlm/zen-logo"
+},
+{
+"li": "zenlm/zen-live Python 0 0 Real-time speech translation for broadcast news monitoring. Powered by Hanzo AI. Pushed Nov 6, 2026 56 commits this year Forge",
+"href": "https://github.com/zenlm/zen-live"
+},
+{
+"li": "zenlm/zen-identity Python 0 0 Zen SOUL - core identity and values for Zen AI models Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/zenlm/zen-identity"
+},
+{
+"li": "zenlm/zen-guard-stream 0 0 Zen Guard Stream - Real-time safety monitoring Pushed Nov 6, 2026 10 commits this year Forge",
+"href": "https://github.com/zenlm/zen-guard-stream"
+},
+{
+"li": "zenlm/zen-guard-gen 0 0 Zen Guard Gen 4B - Safe content generation Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zenlm/zen-guard-gen"
+},
+{
+"li": "zenlm/zen-guard Python 0 0 Zen Guard - Content safety detection and moderation Pushed Nov 6, 2026 23 commits this year Forge",
+"href": "https://github.com/zenlm/zen-guard"
+},
+{
+"li": "zenlm/zen-foley 0 0 Zen Foley - Video-to-audio Foley sound effects Pushed Nov 6, 2026 9 commits this year Forge",
+"href": "https://github.com/zenlm/zen-foley"
+},
+{
+"li": "zenlm/zen-family Python 0 0 Zen Family - Complete model family documentation Pushed Nov 6, 2026 18 commits this year Forge",
+"href": "https://github.com/zenlm/zen-family"
+},
+{
+"li": "zenlm/zen-embedding-2 0 0 Zen Embedding 2: one embedding space for text, code, images, video and audio Pushed Nov 6, 2026 1 commit this year Forge",
+"href": "https://github.com/zenlm/zen-embedding-2"
+},
+{
+"li": "zenlm/zen-embedding Python 0 0 Zen Embedding - High-quality text embeddings Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-embedding"
+},
+{
+"li": "zenlm/zen-eco-thinking 0 0 Zen Eco 4B Thinking - Chain-of-thought reasoning model Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-eco-thinking"
+},
+{
+"li": "zenlm/zen-eco-instruct 0 0 Zen Eco 4B Instruct - Efficient instruction-following model Pushed Nov 6, 2026 8 commits this year Forge",
+"href": "https://github.com/zenlm/zen-eco-instruct"
+},
+{
+"li": "zenlm/zen-eco-coder 0 0 Zen Eco 4B Coder - Code generation and analysis Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zenlm/zen-eco-coder"
+},
+{
+"li": "zenlm/zen-eco-agent 0 0 Zen Eco 4B Agent - Tool-calling and function execution Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-eco-agent"
+},
+{
+"li": "zenlm/zen-eco Python 0 0 4B efficient models - instruct, thinking, and agent variants Pushed Nov 6, 2026 8 commits this year Forge",
+"href": "https://github.com/zenlm/zen-eco"
+},
+{
+"li": "zenlm/zen-dub-live Python 1 0 Real-Time Speech-to-Speech Translation and Lip-Synchronized Video Dubbing Pushed Nov 6, 2026 15 commits this year Forge",
+"href": "https://github.com/zenlm/zen-dub-live"
+},
+{
+"li": "zenlm/zen-dub Python 3 1 Zen Dub - Real-time high-quality lip-sync model Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-dub"
+},
+{
+"li": "zenlm/zen-docs MDX 0 0 Comprehensive documentation for all Zen LM models Pushed Nov 6, 2026 11 commits this year Forge",
+"href": "https://github.com/zenlm/zen-docs"
+},
+{
+"li": "zenlm/zen-director Python 0 0 Zen Director 5B - Text/image-to-video generation Pushed Nov 6, 2026 9 commits this year Forge",
+"href": "https://github.com/zenlm/zen-director"
+},
+{
+"li": "zenlm/zen-designer-thinking 0 0 Zen Designer Thinking - Design reasoning model Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-designer-thinking"
+},
+{
+"li": "zenlm/zen-designer-instruct 0 0 Zen Designer Instruct - Design instruction following Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-designer-instruct"
+},
+{
+"li": "zenlm/zen-designer Python 0 0 Design multimodal models for UI/UX generation Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zenlm/zen-designer"
+},
+{
+"li": "zenlm/zen-coder Python 0 0 Zen Coder 4B - Advanced coding assistant Pushed Nov 6, 2026 9 commits this year Forge",
+"href": "https://github.com/zenlm/zen-coder"
+},
+{
+"li": "zenlm/zen-code-docs TypeScript 0 0 Zen Code Docs 4B - Documentation generation Pushed Nov 6, 2026 21 commits this year Forge",
+"href": "https://github.com/zenlm/zen-code-docs"
+},
+{
+"li": "zenlm/zen-code-action 0 0 Zen Code Action 4B - Code action suggestions Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zenlm/zen-code-action"
+},
+{
+"li": "zenlm/zen-code 0 0 Zen Code 4B - General code generation Pushed Nov 6, 2026 3,880 commits this year Forge",
+"href": "https://github.com/zenlm/zen-code"
+},
+{
+"li": "zenlm/zen-blog MDX 0 0 Zen Blog 4B - Blog and article writing Pushed Nov 6, 2026 72 commits this year Forge",
+"href": "https://github.com/zenlm/zen-blog"
+},
+{
+"li": "zenlm/zen-artist-edit 0 0 Instruction-guided image editing Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zenlm/zen-artist-edit"
+},
+{
+"li": "zenlm/zen-artist Python 0 0 Zen Artist - Creative visual generation Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/zenlm/zen-artist"
+},
+{
+"li": "zenlm/zen-agent Python 0 0 Zen Agent 4B - Agentic workflows with MCP support Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zenlm/zen-agent"
+},
+{
+"li": "zenlm/zen-3d 0 0 Zen 3D — controllable image-to-3D asset generation Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zenlm/zen-3d"
+},
+{
+"li": "zenlm/zen MDX 2 0 Zen AI model family — efficient models for edge and cloud Pushed Nov 6, 2026 35 commits this year Forge",
+"href": "https://github.com/zenlm/zen"
+},
+{
+"li": "zenlm/ui TypeScript 0 0 React components for the Zen LM model library — model cards, tables, and browsable catalog Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zenlm/ui"
+},
+{
+"li": "zenlm/satori 0 0 🎥 Satori: Efficient video generation in latent space using diffusion models with explicit temporal dynamics, enabling high-quality frame coherence and reduced computational overhead. Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zenlm/satori"
+},
+{
+"li": "zenlm/press HTML 0 0 Zen LM press kit and media resources Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/zenlm/press"
+},
+{
+"li": "zenlm/papers TeX 0 0 Zen papers. Pushed Nov 6, 2026 30 commits this year Forge",
+"href": "https://github.com/zenlm/papers"
+},
+{
+"li": "zenlm/mu Python 0 0 🎹 Mu: Blazingly Fast and Embarrassingly Simple End-to-End Full-Length Song Generation with Latent Diffusion. Pushed Nov 6, 2026 14 commits this year Forge",
+"href": "https://github.com/zenlm/mu"
+},
+{
+"li": "zenlm/models TypeScript 0 0 Canonical Zen model definitions — the single source of truth Pushed Nov 6, 2026 9 commits this year Forge",
+"href": "https://github.com/zenlm/models"
+},
+{
+"li": "zenlm/logo TypeScript 0 0 Zen LM logos and marks Pushed Nov 6, 2026 36 commits this year Forge",
+"href": "https://github.com/zenlm/logo"
+},
+{
+"li": "zenlm/llama.cpp 0 0 Fork of llama.cpp Pushed Nov 6, 2026 1,097 commits this year Forge",
+"href": "https://github.com/zenlm/llama.cpp"
+},
+{
+"button": "Show all 88"
+}
+]
+]

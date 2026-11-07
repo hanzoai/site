@@ -1,0 +1,367 @@
+[
+[
+{
+"h1": "Hanzo Dataroom"
+},
+{
+"p": "You send a link instead of an attachment, and the link keeps working for you after it leaves."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/cli/dataroom"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "A folder tree rather than a single file, shared as one link."
+},
+{
+"p": "A password, a verified email, an NDA to accept, an expiry date, downloads off. Set them per link."
+},
+{
+"p": "You send a link instead of an attachment, and the link keeps working for you after it leaves."
+},
+{
+"p": "Time spent on each page, how far they got, and whether they came back."
+},
+{
+"p": "Access can change after the link has gone, which an emailed PDF never allowed."
+},
+{
+"li": "Add the documents"
+},
+{
+"li": "Set who may open it"
+},
+{
+"li": "Send the link"
+},
+{
+"li": "See what they read"
+},
+{
+"li": "Change your mind"
+}
+],
+[
+{
+"h2": "A link you still control"
+},
+{
+"p": "Every setting here is per link, so one document can be shared ten different ways."
+},
+{
+"h3": "Page-by-page analytics"
+},
+{
+"p": "Time spent on each page, how far they got, and whether they came back. Which page an investor re-read twice tells you what the next call is about."
+},
+{
+"h3": "Data rooms"
+},
+{
+"p": "A folder tree rather than a single file, shared as one link. Diligence is forty documents and a hundred questions, and both sides need to know what is in scope."
+},
+{
+"h3": "Access controls"
+},
+{
+"p": "A password, a verified email, an NDA to accept, an expiry date, downloads off. Set them per link, so the same document can be open to one person and shut to another."
+},
+{
+"h3": "Custom Branding"
+},
+{
+"p": "White-label with your logo, colors, and custom domain. Present a professional experience to investors."
+},
+{
+"h3": "Watermarking"
+},
+{
+"p": "The viewer's own email printed across every page. It does not make a screenshot impossible; it makes an anonymous one impossible, which is the part that changes behaviour."
+},
+{
+"h3": "Email verification"
+},
+{
+"p": "A code to the address before the document opens. Otherwise a forwarded link is a stranger, and your analytics are counting the wrong person."
+},
+{
+"h3": "Custom Domains"
+},
+{
+"p": "Use your own domain for sharing links. Build trust with a branded URL."
+},
+{
+"h3": "Webhooks"
+},
+{
+"p": "A view fires an event. Knowing someone opened the deck while you are still in the thread is worth more than knowing it on Monday."
+},
+{
+"h3": "Team Management"
+},
+{
+"p": "Multi-tenant workspaces with role-based access. Manage sharing across your organization."
+},
+{
+"h3": "SSO Authentication"
+},
+{
+"p": "Passkeys, Google, LinkedIn, SAML SSO, and Hanzo IAM single sign-on."
+}
+],
+[
+{
+"h2": "Simple, Transparent Pricing"
+},
+{
+"p": "Start free and scale as you grow. Self-host for free forever or let us handle the infrastructure."
+},
+{
+"h3": "Free"
+},
+{
+"p": "Get started with document sharing and analytics."
+},
+{
+"a": "Get on GitHub",
+"href": "https://github.com/hanzoai/"
+},
+{
+"li": "1 team member"
+},
+{
+"li": "50 links"
+},
+{
+"li": "50 documents"
+},
+{
+"li": "Unlimited visitors"
+},
+{
+"li": "Page-by-page analytics"
+},
+{
+"li": "Community support"
+},
+{
+"h3": "Pro"
+},
+{
+"p": "For professionals who need branding and more capacity."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Unlimited links"
+},
+{
+"li": "100 documents"
+},
+{
+"li": "Large file uploads"
+},
+{
+"li": "Custom branding"
+},
+{
+"li": "Video support"
+},
+{
+"li": "Folder organization"
+},
+{
+"h3": "Business"
+},
+{
+"p": "For teams that need custom domains and advanced access controls."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Pro"
+},
+{
+"li": "3 team members"
+},
+{
+"li": "1,000 documents"
+},
+{
+"li": "Custom domain"
+},
+{
+"li": "Email verification"
+},
+{
+"li": "Allow/block lists"
+},
+{
+"li": "Screenshot protection"
+},
+{
+"li": "Webhooks"
+},
+{
+"h3": "Data Rooms"
+},
+{
+"p": "Full data room capabilities for fundraising and due diligence."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Business"
+},
+{
+"li": "Unlimited data rooms"
+},
+{
+"li": "Data room analytics"
+},
+{
+"li": "NDA agreements"
+},
+{
+"li": "Dynamic watermark"
+},
+{
+"li": "Granular permissions"
+},
+{
+"li": "Custom data room domain"
+},
+{
+"li": "24/7 email support"
+}
+],
+[
+{
+"h3": "Built on Open Source"
+},
+{
+"p": "Hanzo Dataroom is built on Papermark , the open-source DocSend alternative. We contribute back to the community and extend it with Hanzo IAM integration, multi-tenant workspaces, and enterprise features."
+},
+{
+"a": "Papermark",
+"href": "https://www.papermark.io"
+},
+{
+"a": "hanzoai/dataroom",
+"href": "https://github.com/hanzoai/dataroom"
+},
+{
+"a": "Upstream: mfts/papermark",
+"href": "https://github.com/mfts/papermark"
+}
+],
+[
+{
+"h2": "Upload one document and send the link"
+},
+{
+"p": "You will know whether it was read before you have to ask."
+},
+{
+"h3": "Start Sharing"
+},
+{
+"p": "Share documents with real-time analytics"
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"h3": "Documentation"
+},
+{
+"p": "Explore our guides and API references"
+},
+{
+"a": "View Docs",
+"href": "https://docs.hanzo.ai/docs/cli/dataroom"
+},
+{
+"h3": "For Developers"
+},
+{
+"p": "Integrate document sharing into your apps"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/dataroom"
+}
+],
+[
+{
+"h3": "Need a Custom Solution?"
+},
+{
+"p": "Our team can help you design a tailored data room setup for your fundraising or due diligence needs."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "Get started with Dataroom"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/dataroom"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/dataroom"
+}
+],
+[
+{
+"h2": "Get Dataroom"
+},
+{
+"p": "Secure data room"
+},
+{
+"a": "hanzoai/dataroom",
+"href": "https://github.com/hanzoai/dataroom"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+],
+[
+{
+"h2": "Get Dataroom"
+},
+{
+"p": "Secure data room"
+},
+{
+"a": "hanzoai/dataroom",
+"href": "https://github.com/hanzoai/dataroom"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

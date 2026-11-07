@@ -1,0 +1,180 @@
+[
+[
+{
+"h1": "Machines"
+},
+{
+"p": "Real computers, leased by the org, for agents and for the software they ship."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Sandbox API",
+"href": "https://docs.hanzo.ai/docs/openapi/sandbox"
+},
+{
+"li": "Company The legal body: formation, cap table, documents and filings, as operations.",
+"href": "/products/company"
+},
+{
+"li": "Agents Workers the company keeps: a model, instructions, tools and a budget.",
+"href": "/products/agents"
+},
+{
+"li": "Models Every model behind one endpoint and one key.",
+"href": "/products/models"
+},
+{
+"li": "Memory What the company knows, and when it knew it.",
+"href": "/products/memory"
+},
+{
+"li": "Identity Who is acting — a person, a program or an agent — and what it may reach.",
+"href": "/products/identity"
+},
+{
+"li": "Machines Real computers, leased by the org, for agents and for the software they ship.",
+"href": "/products/machines"
+},
+{
+"a": "Record Every act on every layer, by a person or an agent, in one trail.",
+"href": "/products/record"
+}
+],
+[
+{
+"p": "Lease a sandbox and run commands in it, launch a metered machine, or publish a function. Each is the org’s own and each is billed to it, so an agent that needs a computer asks for one the same way a person would."
+}
+],
+[
+{
+"h2": "API"
+},
+{
+"p": "Operations on api.hanzo.ai. One key reaches every layer."
+},
+{
+"table": [
+[
+"Method",
+"Path",
+"What it does"
+],
+[
+"POST",
+"/v1/sandbox",
+"Leases a sandbox — a real computer — for the org."
+],
+[
+"POST",
+"/v1/sandbox/{id}/exec",
+"Runs one command in a sandbox and answers with its exit code, stdout and stderr."
+],
+[
+"GET",
+"/v1/compute/sizes",
+"Lists the machine sizes available to launch."
+],
+[
+"POST",
+"/v1/compute/machines",
+"Launches a metered machine, or prices one first with dryRun."
+],
+[
+"POST",
+"/v1/function",
+"Publishes a serverless function under the org."
+],
+[
+"POST",
+"/v1/function/{name}/invoke",
+"Runs a function and records the invocation."
+]
+]
+}
+],
+[
+{
+"h2": "Try it"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/sandbox \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"class\": \"exec\"} ' curl https://api.hanzo.ai/v1/sandbox/ $ SANDBOX /exec \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"argv\": [\"uname\", \"-a\"]} '"
+}
+],
+[
+{
+"h2": "Docs"
+},
+{
+"a": "Sandbox API",
+"href": "https://docs.hanzo.ai/docs/openapi/sandbox"
+},
+{
+"a": "Visor API",
+"href": "https://docs.hanzo.ai/docs/openapi/visor"
+},
+{
+"a": "Functions API",
+"href": "https://docs.hanzo.ai/docs/openapi/functions"
+}
+],
+[
+{
+"h2": "On this site"
+},
+{
+"a": "Machines",
+"href": "/machines"
+},
+{
+"a": "Visor",
+"href": "/visor"
+},
+{
+"a": "Functions",
+"href": "/functions"
+},
+{
+"a": "Edge",
+"href": "/edge"
+},
+{
+"a": "Registry",
+"href": "/registry"
+},
+{
+"a": "Operator",
+"href": "/operator"
+},
+{
+"a": "Ingress",
+"href": "/ingress"
+},
+{
+"a": "DNS",
+"href": "/dns"
+},
+{
+"a": "Tunnel",
+"href": "/tunnel"
+},
+{
+"a": "ZAP",
+"href": "/zap"
+},
+{
+"a": "PubSub",
+"href": "/pubsub"
+},
+{
+"a": "Stream",
+"href": "/stream"
+},
+{
+"a": "MQ",
+"href": "/mq"
+}
+]
+]

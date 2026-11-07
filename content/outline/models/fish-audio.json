@@ -1,0 +1,72 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "fish-audio Models via Hanzo AI"
+},
+{
+"p": "5 models available"
+},
+{
+"p": "Access all 5 fish-audio models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Drama 3 Drama 3 is a text-to-speech model from Fish Audio built for directed voice performances. You write the direction in plain language in square brackets before a line, such as `[nervous,... speech",
+"href": "/models/fish-audio/drama-3"
+},
+{
+"a": "S1 S1 is a multilingual text-to-speech model from Fish Audio. It is suited for voice applications that need broad emotional expression, using parenthetical controls to guide speaking style across its supported... speech",
+"href": "/models/fish-audio/s1"
+},
+{
+"a": "S2 Pro S2 Pro is a multilingual text-to-speech model from Fish Audio. It is suited for expressive narration and multi-speaker dialogue, with natural-language controls for speaking style and emotion. speech",
+"href": "/models/fish-audio/s2-pro"
+},
+{
+"a": "S2.1 Pro S2.1 Pro is a production-oriented text-to-speech model from Fish Audio. It is suited for multilingual voice applications, expressive narration, and dialogue synthesis, with open-ended natural-language controls for speaking style and... speech",
+"href": "/models/fish-audio/s2.1-pro"
+},
+{
+"a": "S2.1 Pro Free (free) S2.1 Pro Free is the no-cost variant of Fish Audio S2.1 Pro, intended for testing, prototyping, and low-volume applications. It provides the same synthesis capabilities without production latency or availability... speech",
+"href": "/models/fish-audio/s2.1-pro-free:free"
+}
+],
+[
+{
+"h2": "Use fish-audio models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

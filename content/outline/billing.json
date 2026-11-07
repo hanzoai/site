@@ -1,0 +1,209 @@
+[
+[
+{
+"h1": "Hanzo Billing"
+},
+{
+"p": "Subscriptions, usage, invoices. Charge a fixed price, charge for what someone used, or charge for both on the same invoice. Plans, prices, meters, coupons and credits are separate objects, so a pricing change is a new price rather than a migration — and your servers never hold a card number to do any of it."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/billing"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "AI Metrics",
+"href": "/cloud/ai-metrics"
+},
+{
+"a": "Billing",
+"href": "/billing"
+},
+{
+"a": "Plans & Pricing",
+"href": "/cloud/plans"
+},
+{
+"a": "Sessions",
+"href": "/cloud/sessions"
+},
+{
+"a": "Annotation Queues",
+"href": "/cloud/annotation-queues"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/billing"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Billing from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Billing in my project. Start with: hanzo billing balance"
+}
+],
+[
+{
+"p": "What is Hanzo Billing"
+},
+{
+"h2": "The objects you bill with"
+},
+{
+"p": "Small pieces that compose, rather than one plan type that has to cover every case."
+},
+{
+"h3": "Plans and prices"
+},
+{
+"p": "A plan says what someone gets. A price says what it costs. Keeping them apart is what lets you change a price without touching anyone already on the old one."
+},
+{
+"h3": "Meters"
+},
+{
+"p": "Post an event when something is used and the meter aggregates it. The invoice reads the meter at the end of the period, so nobody has to add up rows by hand."
+},
+{
+"h3": "Invoices"
+},
+{
+"p": "Line items assembled from the subscription and the meters, with tax calculated on the invoice itself. Preview one before it is issued, which is when a pricing mistake is still cheap."
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What the endpoint gives you"
+},
+{
+"h3": "Credits and refunds"
+},
+{
+"p": "Issue credit against a balance, or refund a payment that already settled. Both leave a record, because a customer arguing about a bill is really arguing about a history."
+},
+{
+"h3": "Coupons and discounts"
+},
+{
+"p": "Apply one to a subscription or to a single invoice. A discount is an object on the invoice rather than an adjusted number, so the reason the total changed is still legible."
+},
+{
+"h3": "Webhooks"
+},
+{
+"p": "The provider tells us a payment settled and we tell you. One endpoint per provider, so adding a second processor does not mean a second integration on your side."
+}
+],
+[
+{
+"p": "Get started"
+},
+{
+"h2": "Report the use, then charge for it"
+},
+{
+"code": "import { Hanzo } from ' @hanzo/billing ' ; const billing = new Hanzo ({ apiKey : process.env.HANZO_API_KEY }); // Report usage in real time await billing.usage. record ({ customer : ' cus_abc123 ' , meter : ' api_requests ' , value : 1 , timestamp : new Date (), }); // Subscribe with metered pricing await billing.subscriptions. create ({ customer : ' cus_abc123 ' , items : [{ price : ' price_api_metered ' }], payment_behavior : ' default_incomplete ' , });"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/billing"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Send your first meter event"
+},
+{
+"p": "Report what someone used, and let the invoice read the meter at the end of the period."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/billing"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Logs Search every line",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics Time series & SLOs",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+}
+],
+[
+{
+"h2": "Get Billing"
+},
+{
+"p": "Metered billing engine"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

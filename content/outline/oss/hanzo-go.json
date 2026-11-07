@@ -1,0 +1,92 @@
+[
+[
+{
+"h1": "hanzo-go"
+},
+{
+"p": "The public repositories of hanzo-go on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "hanzo-go on GitHub",
+"href": "https://github.com/hanzo-go"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-go"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 1 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-go, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-go/.github 0 0 Org profile Pushed Oct 26, 2026 10 commits this year Forge",
+"href": "https://github.com/hanzo-go/.github"
+},
+{
+"li": "hanzo-go/sendgrid Go 0 0 The Official SendGrid Led, Community Driven Golang API Library Pushed Oct 17, 2026 11 commits this year Forge",
+"href": "https://github.com/hanzo-go/sendgrid"
+},
+{
+"li": "hanzo-go/sdk Go 0 0 Hanzo AI SDK for Go — agents, cloud, inference. Pushed Oct 4, 2026 217 commits this year Forge",
+"href": "https://github.com/hanzo-go/sdk"
+},
+{
+"li": "hanzo-go/openai Go 0 0 OpenAI ChatGPT, GPT-3, GPT-4, DALL·E, Whisper API wrapper for Go Pushed Sep 17, 2026 14 commits this year Forge",
+"href": "https://github.com/hanzo-go/openai"
+},
+{
+"li": "hanzo-go/tygoja HTML 0 0 Experimental helper library for generating TypeScript declarations from Go code Pushed Sep 17, 2026 14 commits this year Forge",
+"href": "https://github.com/hanzo-go/tygoja"
+},
+{
+"li": "hanzo-go/openrouter Go 0 0 OpenRouter Go SDK Pushed Sep 15, 2026 9 commits this year Forge",
+"href": "https://github.com/hanzo-go/openrouter"
+},
+{
+"li": "hanzo-go/lz4 Go 0 7 Hanzo fork of pierrec/lz4 — pinned to v4.1.22 (v4.1.23+ broke superfly/ltx end-of-frame detection) Pushed Sep 15, 2026 12 commits this year Forge",
+"href": "https://github.com/hanzo-go/lz4"
+}
+]
+]

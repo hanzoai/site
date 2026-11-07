@@ -1,0 +1,101 @@
+[
+[
+{
+"h1": "Jin"
+},
+{
+"p": "Research on learning without labels"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "A clean implementation of the image variant: a context encoder, a target encoder that is its moving average, and a predictor that has to guess the target embeddings. Both a ViT and an energy-transformer backbone."
+},
+{
+"p": "Ours. Eyes jitter constantly and the brain predicts what the jitter will do to the scene, so the model shifts an image, predicts how its embedding moves, and shifts back to check it lands where it started."
+},
+{
+"p": "Huber loss on the prediction, a cycle-consistency term that punishes drift on the round trip, and the invariance and covariance parts of VICReg to stop the representation collapsing."
+},
+{
+"p": "An MAE with self-distillation sits alongside, for the comparison that matters: is a decoder worth its parameters when the goal is a good representation rather than a good reconstruction?"
+},
+{
+"p": "Self-supervised training has no validation loss to watch, so there are linear probes, KNN, attention-map visualisation in a Dash dashboard, correlation dimension, and UMAP coloured by true class."
+},
+{
+"p": "Grant proposals on hierarchical JEPA for edge AI, where the interesting constraint is learning useful representations on hardware that cannot phone home."
+},
+{
+"li": "I-JEPA"
+},
+{
+"li": "Saccade JEPA"
+},
+{
+"li": "Three losses at once"
+},
+{
+"li": "Masked autoencoding"
+},
+{
+"li": "Ways to see what it learned"
+},
+{
+"li": "The papers"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Jin from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Jin in my project."
+}
+],
+[
+{
+"h2": "Read the code"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Jin"
+},
+{
+"p": "Multimodal foundation model"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

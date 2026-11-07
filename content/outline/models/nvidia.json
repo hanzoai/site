@@ -1,0 +1,100 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "NVIDIA Models via Hanzo AI"
+},
+{
+"p": "12 models available"
+},
+{
+"p": "Access all 12 NVIDIA models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Nemotron 3 Nano 30B A3B 262K NVIDIA Nemotron 3 Nano 30B A3B is a small language MoE model with highest compute efficiency and accuracy for developers to build specialized agentic AI systems. The model is fully... text",
+"href": "/models/nvidia/nemotron-3-nano-30b-a3b"
+},
+{
+"a": "Nemotron 3 Nano Omni (free) 256K NVIDIA Nemotron™ 3 Nano Omni is a 30B-A3B open multimodal model designed to function as a perception and context sub-agent in enterprise agent systems. It accepts text, image, video, and... text",
+"href": "/models/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
+},
+{
+"a": "Nemotron 3 Super 1M NVIDIA Nemotron 3 Super is a 120B-parameter open hybrid MoE model, activating just 12B parameters for maximum compute efficiency and accuracy in complex multi-agent applications. Built on a hybrid Mamba-Transformer... text",
+"href": "/models/nvidia/nemotron-3-super-120b-a12b"
+},
+{
+"a": "Nemotron 3 Ultra 262K NVIDIA Nemotron 3 Ultra is an open frontier-reasoning and orchestration model from NVIDIA, with 55B active parameters out of 550B total (MoE). Built on a hybrid Transformer-Mamba mixture-of-experts architecture, it... text",
+"href": "/models/nvidia/nemotron-3-ultra-550b-a55b"
+},
+{
+"a": "Nemotron 3 Ultra (free) 1M NVIDIA Nemotron 3 Ultra is an open frontier-reasoning and orchestration model from NVIDIA, with 55B active parameters out of 550B total (MoE). Built on a hybrid Transformer-Mamba mixture-of-experts architecture, it... text",
+"href": "/models/nvidia/nemotron-3-ultra-550b-a55b:free"
+},
+{
+"a": "Nemotron 3.5 Content Safety 131K NVIDIA Nemotron 3.5 Content Safety is a compact 4B-parameter multimodal guardrail model from NVIDIA, fine-tuned from Google Gemma-3-4B. It moderates both inputs to and responses from LLMs and VLMs, accepting... text",
+"href": "/models/nvidia/nemotron-3.5-content-safety"
+},
+{
+"a": "Nemotron 3.5 Content Safety (free) 128K NVIDIA Nemotron 3.5 Content Safety is a compact 4B-parameter multimodal guardrail model from NVIDIA, fine-tuned from Google Gemma-3-4B. It moderates both inputs to and responses from LLMs and VLMs, accepting... text",
+"href": "/models/nvidia/nemotron-3.5-content-safety:free"
+},
+{
+"a": "Nemotron 3.5 Lightning 262K NVIDIA Nemotron 3.5 Lightning is an open mixture-of-experts model from NVIDIA, with 3B active parameters out of 30B total. It is suited for high-throughput agentic workloads and specialized tasks that... text",
+"href": "/models/nvidia/nemotron-3.5-lightning"
+},
+{
+"a": "Nemotron 3.5 Lightning (free) 1M NVIDIA Nemotron 3.5 Lightning is an open mixture-of-experts model from NVIDIA, with 3B active parameters out of 30B total. It is suited for high-throughput agentic workloads and specialized tasks that... text",
+"href": "/models/nvidia/nemotron-3.5-lightning:free"
+},
+{
+"a": "Nemotron 3.5 Super VL 1M NVIDIA Nemotron 3.5 Super VL is an open multimodal mixture-of-experts model from NVIDIA, with 12B active parameters out of 120B total. It takes text, images, documents, GUI screenshots, and video... text",
+"href": "/models/nvidia/nemotron-3.5-super-vl"
+},
+{
+"a": "Nemotron 3.5 Super VL (free) 1M NVIDIA Nemotron 3.5 Super VL is an open multimodal mixture-of-experts model from NVIDIA, with 12B active parameters out of 120B total. It takes text, images, documents, GUI screenshots, and video... text",
+"href": "/models/nvidia/nemotron-3.5-super-vl:free"
+},
+{
+"a": "Switchyard 1M Switchyard is an open-source model routing system that switches between multiple models to optimize the cost of requests. By default it will use OpenRouter market data to select the most... text",
+"href": "/models/nvidia/switchyard"
+}
+],
+[
+{
+"h2": "Use NVIDIA models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

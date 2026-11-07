@@ -1,0 +1,285 @@
+[
+[
+{
+"h1": "Recursive agent harness. Mod anything."
+},
+{
+"p": "Gen is a recursively self-upgrading agentic harness that runs the coding agent you use — Hanzo Dev, Claude Code, Codex, and custom loops — with full hackability, MCP tools attached, and every session linked to your Hanzo account."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/keys"
+},
+{
+"a": "Explore GitHub examples →",
+"href": "https://github.com/hanzoai/gen"
+},
+{
+"a": "Read the docs →",
+"href": "https://docs.hanzo.ai/docs/coding"
+}
+],
+[
+{
+"p": "Install"
+},
+{
+"h2": "One line, then any agent."
+},
+{
+"p": "Linux and macOS. hanzo.sh downloads gen’s native build and checks it: its checksum always, its provenance with a signed-in gh. Run it again to upgrade."
+},
+{
+"code": "curl -fsSL https://hanzo.sh | sh -s gen # gen alone curl -fsSL https://hanzo.sh | sh # or every Hanzo tool, gen included"
+},
+{
+"code": "gen # Hanzo Dev, the default gen --claude # Claude Code; any agent is a flag gen --codex \" add a test \" # a task, run headless"
+},
+{
+"p": "Sign in once with the Hanzo CLI, hanzo auth login, and every session is linked to your account."
+},
+{
+"a": "Every build →",
+"href": "https://github.com/hanzoai/gen/releases"
+}
+],
+[
+{
+"p": "Gen and Dev"
+},
+{
+"h2": "One runs agents. One is an agent."
+},
+{
+"h3": "The recursive harness. Mod anything."
+},
+{
+"a": "hanzoai/gen →",
+"href": "https://github.com/hanzoai/gen"
+},
+{
+"h3": "Our agent."
+},
+{
+"a": "Hanzo Dev →",
+"href": "/dev"
+}
+],
+[
+{
+"p": "Agents"
+},
+{
+"h2": "The agent you use is a flag."
+},
+{
+"p": "Each launches as itself, with its own interface and its own habits, and Gen around it. gen --help lists every one."
+},
+{
+"li": "Hanzo Dev --dev"
+},
+{
+"li": "Claude Code --claude"
+},
+{
+"li": "Codex --codex"
+},
+{
+"li": "Cursor --cursor"
+},
+{
+"li": "Antigravity --agy"
+},
+{
+"li": "Gemini CLI --gemini"
+},
+{
+"li": "o OpenCode --opencode"
+},
+{
+"li": "k Kilo Code --kilo"
+},
+{
+"li": "c Crush --crush"
+},
+{
+"li": "p Pi --pi"
+},
+{
+"li": "GitHub Copilot CLI --copilot"
+},
+{
+"li": "a Amp --amp"
+},
+{
+"li": "Grok Build --grok"
+},
+{
+"li": "g Goose --goose"
+},
+{
+"li": "a Aider --aider"
+},
+{
+"li": "Hermes Agent --hermes"
+},
+{
+"li": "c Cline --cline"
+},
+{
+"li": "c Continue CLI --continue"
+},
+{
+"li": "o Oh My Pi --omp"
+},
+{
+"li": "l Letta Code --letta"
+},
+{
+"li": "k Kode --kode"
+},
+{
+"li": "o OpenHands --openhands"
+},
+{
+"li": "i Open Interpreter --interpreter"
+}
+],
+[
+{
+"p": "Our rails"
+},
+{
+"h2": "What Gen puts around it."
+},
+{
+"p": "Tools, models, sessions and fences, each set by a flag."
+},
+{
+"h3": "Tools"
+},
+{
+"h3": "Models"
+},
+{
+"h3": "Sessions"
+},
+{
+"h3": "Fences"
+},
+{
+"code": "gen --claude --cloud # its model calls through api.hanzo.ai gen --claude --cloud --model enso-ultra gen --codex --no-link # keep the session on this machine gen --resume < session-i d> # pick a linked session back up gen --claude -- -c # after --, the agent's own arguments"
+}
+],
+[
+{
+"p": "In the Hanzo CLI"
+},
+{
+"h2": "The same harness, as hanzo dev."
+},
+{
+"p": "The Hanzo CLI links Gen, so hanzo dev takes the same flags and runs the same session. Use whichever is on your path."
+},
+{
+"code": "hanzo dev # gen hanzo dev --claude # gen --claude hanzo dev --codex --cloud # gen --codex --cloud"
+},
+{
+"a": "The Hanzo CLI →",
+"href": "/cli"
+}
+],
+[
+{
+"p": "Open source"
+},
+{
+"h2": "MIT, in the open."
+},
+{
+"p": "The harness, every agent's launcher and how its output is read are on GitHub, one file an agent."
+},
+{
+"a": "The source →",
+"href": "https://github.com/hanzoai/gen"
+}
+],
+[
+{
+"p": "Questions"
+},
+{
+"h2": "Questions & Answers"
+}
+],
+[
+{
+"p": "Read"
+},
+{
+"h2": "The harness, the agent, the CLI."
+},
+{
+"p": "Where to get Gen, what it runs, and the same harness in the CLI."
+},
+{
+"h3": "Gen"
+},
+{
+"a": "hanzoai/gen MIT.",
+"href": "https://github.com/hanzoai/gen"
+},
+{
+"a": "The agents",
+"href": "#agents"
+},
+{
+"a": "Install curl -fsSL https://hanzo.sh | sh -s gen",
+"href": "#install"
+},
+{
+"a": "Releases",
+"href": "https://github.com/hanzoai/gen/releases"
+},
+{
+"h3": "Dev"
+},
+{
+"a": "Hanzo Dev Our agent, Gen’s default.",
+"href": "/dev"
+},
+{
+"a": "Kai Dev’s controller.",
+"href": "/kai"
+},
+{
+"h3": "Models"
+},
+{
+"a": "Enso",
+"href": "/enso"
+},
+{
+"a": "Every model",
+"href": "/models"
+},
+{
+"a": "Hanzo CLI",
+"href": "/cli"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Gen from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Gen in my project. Start with: gen"
+}
+]
+]

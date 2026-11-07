@@ -1,0 +1,64 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "unbiased Models via Hanzo AI"
+},
+{
+"p": "3 models available"
+},
+{
+"p": "Access all 3 unbiased models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Pareto 26.10 1M Pareto is a multimodal composite model built for research, coding, and agentic workflows, while delivering frontier-level performance across a broad range of general-purpose tasks. text",
+"href": "/models/unbiased/pareto-26.10"
+},
+{
+"a": "Pareto 26.9 262K Pareto is a multimodal composite model built for research, coding, and agentic workflows, while delivering frontier-level performance across a broad range of general-purpose tasks. text",
+"href": "/models/unbiased/pareto-26.9"
+},
+{
+"a": "Pareto Latest 1M This model always redirects to the latest model in the Pareto family. text",
+"href": "/models/unbiased/pareto-latest"
+}
+],
+[
+{
+"h2": "Use unbiased models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

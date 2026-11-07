@@ -1,0 +1,93 @@
+[
+[
+{
+"h1": "Hanzo Operator"
+},
+{
+"p": "One binary that runs the stack on Kubernetes"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+},
+{
+"p": "Service covers most workloads. Datastore covers the stateful ones and dispatches on its type, with SQL, KV, DocDB and S3 as thin facades over it. Gateway, Ingress, DNS, Base, IAM, KMS and MPC are their own Kinds, because each one wires up differently."
+},
+{
+"p": "A KMSSecret is materialized beside the workload and synced from kms.hanzo.ai. What lives in git is the path to a secret, never the secret."
+},
+{
+"p": "Every sweep reads each object before it applies, then logs what it did to it: created, reverted, or already in sync. The resync interval is per-resource and clamped into a safe band, so a bad number can't turn the loop into a hot loop."
+},
+{
+"p": "Point it at a repo and it applies what's there, on a tight poll a push webhook can interrupt for an instant sweep. A file removed from git is left alone — the plan type has no delete case, so pruning isn't something a bug can cause."
+},
+{
+"p": "Server-side apply under its own field manager, so a git-driven apply never fights a per-Kind reconcile. Turn on autoscaling and the Deployment ships with no replica count at all — the autoscaler owns that field, alone."
+},
+{
+"p": "operator install lays down the CRDs, namespace, RBAC and Deployment. operator up does that and applies your resources behind it. Both are server-side apply, so running either again changes nothing."
+},
+{
+"li": "Kinds that know the stack"
+},
+{
+"li": "Secrets come from KMS"
+},
+{
+"li": "Drift is reverted, and said out loud"
+},
+{
+"li": "Git is a source, and it never deletes"
+},
+{
+"li": "Every write is attributable"
+},
+{
+"li": "Install is one command"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Operator from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Operator in my project."
+}
+],
+[
+{
+"h2": "Get started with Hanzo Operator"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Operator"
+},
+{
+"p": "K8s operator"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

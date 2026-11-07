@@ -1,0 +1,208 @@
+[
+[
+{
+"h1": "An IDE that remembers your codebase"
+},
+{
+"p": "The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox."
+},
+{
+"a": "Open the IDE",
+"href": "https://ide.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/ide"
+},
+{
+"p": "Open source (Apache 2.0). The VS Code workbench on a Rust engine. Open VSX extensions run as they are."
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+},
+{
+"li": "$ hanzo"
+},
+{
+"li": "> deploy the gateway to staging"
+},
+{
+"li": "· reading the project"
+},
+{
+"li": "✓ gateway is on staging"
+},
+{
+"code": "api.hanzo.ai /v1/code"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls IDE from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo IDE in my project. Start with: hanzo code"
+}
+],
+[
+{
+"p": "What is Hanzo IDE"
+},
+{
+"h2": "The workbench you know, on an engine that is ours"
+},
+{
+"p": "The editor surface, the extension model and the keybindings are the ones you use today. Everything under them is Rust: the agent loop, the memory, the indexing, the sandbox."
+},
+{
+"h3": "It remembers"
+},
+{
+"p": "Engram gives the agent a memory that lasts past the conversation: what happened, what is true about the project, and how things are done here. Memories are consolidated, decay when unused, and come back when they matter."
+},
+{
+"h3": "It understands structure"
+},
+{
+"p": "Tree-sitter indexing gives the agent the call graph, the type hierarchy and the impact radius of a change, so it reads the code that matters instead of every file."
+},
+{
+"h3": "It is safe by default"
+},
+{
+"p": "Tool calls run in a sandbox. Secrets live in the keychain, sensitive fields are encrypted at rest, and every action lands in an audit trail. All of it is in the core, none of it is a plugin."
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What the window carries"
+},
+{
+"h3": "Three tiers of memory"
+},
+{
+"p": "A sensory buffer for the turn, working memory for the session, and a long-term graph of episodic, semantic and procedural memory that survives a restart."
+},
+{
+"h3": "Recall that ranks"
+},
+{
+"p": "Full-text and vector search run together across every store, fused and reranked, and every answer arrives with a quality score."
+},
+{
+"h3": "Agent profiles"
+},
+{
+"p": "Name what an agent may touch, which model it runs on, and how far it may go on its own. Switch profiles per task."
+},
+{
+"h3": "An activity feed"
+},
+{
+"p": "Every tool call, every decision and every approval the agent made, in real time, in one column."
+},
+{
+"h3": "Open VSX extensions"
+},
+{
+"p": "The extensions you rely on install from Open VSX and run natively. Language servers, themes, keymaps."
+},
+{
+"h3": "Ten layers of security"
+},
+{
+"p": "PII detection, field-level encryption, sandbox enforcement, keychain integration and audit trails, built into the engine."
+}
+],
+[
+{
+"p": "Get started"
+},
+{
+"h2": "Open it in the browser, or build it on your machine"
+},
+{
+"code": "# Open it in the browser open https://ide.hanzo.ai # Or build the desktop app from source git clone https://github.com/hanzoai/ide.git cd ide npm install npm run tauri:dev # First launch: pick a provider, paste a key, choose a model."
+},
+{
+"a": "Open the IDE",
+"href": "https://ide.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/ide"
+}
+],
+[
+{
+"h2": "Open the IDE. It already knows the way around."
+},
+{
+"p": "Your project, its call graph, and what the agent learned last week, in one window."
+},
+{
+"a": "Open the IDE",
+"href": "https://ide.hanzo.ai"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/ide"
+},
+{
+"a": "Hanzo Cloud",
+"href": "https://platform.hanzo.ai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+}
+],
+[
+{
+"h2": "Get IDE"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,64 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "TheDrummer Models via Hanzo AI"
+},
+{
+"p": "3 models available"
+},
+{
+"p": "Access all 3 TheDrummer models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Cydonia 24B V4.1 131K Uncensored and creative writing model based on Mistral Small 3.2 24B with good recall, prompt adherence, and intelligence. text",
+"href": "/models/thedrummer/cydonia-24b-v4.1"
+},
+{
+"a": "Skyfall 36B V2 33K Skyfall 36B v2 is an enhanced iteration of Mistral Small 2501, specifically fine-tuned for improved creativity, nuanced writing, role-playing, and coherent storytelling. text",
+"href": "/models/thedrummer/skyfall-36b-v2"
+},
+{
+"a": "UnslopNemo 12B 1M UnslopNemo v4.1 is the latest addition from the creator of Rocinante, designed for adventure writing and role-play scenarios. text",
+"href": "/models/thedrummer/unslopnemo-12b"
+}
+],
+[
+{
+"h2": "Use TheDrummer models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

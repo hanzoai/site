@@ -1,0 +1,138 @@
+[
+[
+{
+"h1": "Hanzo for AI agents"
+},
+{
+"p": "Define an agent once — model, instructions, tools and a budget — run it by name from anywhere, and read back every step it took."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "An agent lives in the organization, not in a script. Call it from the API, the CLI, a workflow or chat; each run is recorded with its input, output, model and duration."
+},
+{
+"p": "Every session carries a cap in micro-dollars. Raise it, lower it or remove it, and read what each agent has spent."
+},
+{
+"p": "Each subsystem’s operations are exposed over MCP, so an agent reaches the same surface a person does — under the grants its credential carries, and no more."
+},
+{
+"p": "The agent leases a sandbox, runs commands, drives a desktop or your signed-in browser, and gives the machine back."
+},
+{
+"p": "Fire a run from a webhook, a schedule or a message, and let a durable workflow carry it through restarts."
+},
+{
+"li": "Define once, run by name"
+},
+{
+"li": "A budget it cannot pass"
+},
+{
+"li": "Every operation is a tool"
+},
+{
+"li": "A computer when it needs one"
+},
+{
+"li": "Started by events"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Agents Define an agent once — model, instructions, tools and a budget — and run it by name.",
+"href": "/products/agents"
+},
+{
+"a": "Hanzo Bot A teammate with its own computer that signs in to your tools and reports back.",
+"href": "/bot"
+},
+{
+"a": "MCP A shell, a filesystem, a code index, git and HTTP for any MCP client.",
+"href": "/mcp"
+},
+{
+"a": "Agents SDK A Python SDK for agents that hand work to each other behind a router.",
+"href": "/agents/sdk"
+},
+{
+"a": "Hanzo Auto Workflows fired by a webhook or a schedule, with runs that survive a restart.",
+"href": "/auto"
+},
+{
+"a": "Hanzo Computer An agent that drives any app by screenshot, mouse and keyboard.",
+"href": "/computer"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "Security and compliance"
+},
+{
+"a": "How the controls work",
+"href": "/trust"
+},
+{
+"a": "Terms and data processing",
+"href": "/legal"
+}
+],
+[
+{
+"h2": "More use cases"
+},
+{
+"a": "Content creation",
+"href": "/solutions/content-creation"
+},
+{
+"a": "Research",
+"href": "/solutions/research"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

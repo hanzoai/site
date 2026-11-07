@@ -1,0 +1,175 @@
+[
+[
+{
+"p": "Benchmarks / Fleet residency"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"h1": "What a dormant agent costs"
+},
+{
+"p": "A million dormant agents written to disk and read back: 477 bytes of state each, 455 MB for the million, and a resume in 0.034 ms. Measured on a laptop, against a competitor figure that was modelled and never billed."
+},
+{
+"a": "hanzoai/benchmarks · fleet",
+"href": "https://github.com/hanzoai/benchmarks/tree/main/fleet"
+},
+{
+"a": "What a Dormant Agent Costs",
+"href": "https://github.com/hanzoai/papers/blob/main/site/public/pdfs/hanzo-dormant-agents.pdf"
+},
+{
+"code": "node fleet/fleet.mjs /tmp/fleet"
+},
+{
+"p": "prints the table on this page — transcribed from bench/README.md, the pass of 2026-09-07"
+},
+{
+"h2": "What is measured"
+},
+{
+"p": "A million agents are created, written to disk, and read back. What is counted is the state a dormant agent occupies — the row that has to exist for an agent to be resumable at all — the rate at which those rows can be written, and the time to bring one back. Nothing is running while the measurement is taken, which is the point: an agent platform’s floor is what it costs to keep an agent that is doing nothing."
+},
+{
+"h2": "Results"
+},
+{
+"p": "one million agents · an M-series laptop · the pass of 2026-09-07"
+},
+{
+"table": [
+[
+"measurement",
+"Hanzo, measured",
+"the published figure"
+],
+[
+"state per dormant agent",
+"477 bytes",
+"~1 MB, a competitor’s own modelled assumption"
+],
+[
+"one million dormant agents on disk",
+"455 MB",
+"~977 GB at that assumption"
+],
+[
+"dormant agents written per second",
+"309,789",
+"—"
+],
+[
+"resume one, in process",
+"0.034 ms",
+"—"
+]
+]
+},
+{
+"p": "The right-hand column is not a competitor’s measurement. It is the per-agent figure a competing platform assumes in its own published arithmetic, marked there as modelled and never billed. Ours is a directory you can list. The distance between the two is about 2,200× and most of it is the difference between an assumption and a file."
+},
+{
+"h2": "What this does not measure"
+},
+{
+"p": "A dormant agent is not a running one. This number is the floor, and the floor is the easy part. What a live agent costs is a different measurement with a different command — 601 bytes of heap and 125 ns to spawn ."
+},
+{
+"a": "601 bytes of heap and 125 ns to spawn",
+"href": "/benchmarks/goroutine"
+},
+{
+"p": "One machine, one day. This is a single pass on one laptop. It is reproducible by one command and it is not a fleet of machines under load, so read it as a floor that has been established rather than as a service level."
+},
+{
+"p": "Hanzo AI Cloud"
+},
+{
+"h3": "Build on Hanzo Cloud"
+},
+{
+"a": "Start on Hanzo Cloud",
+"href": "https://cloud.hanzo.ai"
+},
+{
+"a": "View Models & Pricing",
+"href": "/pricing"
+},
+{
+"a": "Previous LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"a": "All Benchmarks Board",
+"href": "/benchmarks"
+},
+{
+"a": "Next Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"h3": "Related in runtime"
+},
+{
+"a": "Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "Sandbox cold start",
+"href": "/benchmarks/sandbox"
+},
+{
+"p": "LoCoMo · MemoryAgentBench · LongMemEval · CronQuestions · RepoBench-R · LoCoMo · subject scope · LoCoMo-Conv · Engine prefill on CUDA vs llama.cpp · GPQA-Diamond"
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "CronQuestions",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "LoCoMo · subject scope",
+"href": "/benchmarks/locomo-subject-scope"
+},
+{
+"a": "LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"a": "Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"a": "GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"p": "harness and the committed table: hanzoai/benchmarks · fleet · the paper: What a Dormant Agent Costs"
+},
+{
+"a": "hanzoai/benchmarks · fleet",
+"href": "https://github.com/hanzoai/benchmarks/tree/main/fleet"
+},
+{
+"a": "What a Dormant Agent Costs",
+"href": "https://github.com/hanzoai/papers/blob/main/site/public/pdfs/hanzo-dormant-agents.pdf"
+}
+]
+]

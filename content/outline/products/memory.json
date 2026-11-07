@@ -1,0 +1,165 @@
+[
+[
+{
+"h1": "Memory"
+},
+{
+"p": "What the company knows, and when it knew it."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Graph API",
+"href": "https://docs.hanzo.ai/docs/openapi/graph"
+},
+{
+"li": "Company The legal body: formation, cap table, documents and filings, as operations.",
+"href": "/products/company"
+},
+{
+"li": "Agents Workers the company keeps: a model, instructions, tools and a budget.",
+"href": "/products/agents"
+},
+{
+"li": "Models Every model behind one endpoint and one key.",
+"href": "/products/models"
+},
+{
+"li": "Memory What the company knows, and when it knew it.",
+"href": "/products/memory"
+},
+{
+"li": "Identity Who is acting — a person, a program or an agent — and what it may reach.",
+"href": "/products/identity"
+},
+{
+"li": "Machines Real computers, leased by the org, for agents and for the software they ship.",
+"href": "/products/machines"
+},
+{
+"a": "Record Every act on every layer, by a person or an agent, in one trail.",
+"href": "/products/record"
+}
+],
+[
+{
+"p": "The graph records assertions — an entity, a relation, a value, who said it and when it was so — and never overwrites one. A read takes two instants: as_of for when the world was so, as_known for how much had been heard. So a past answer can be reproduced exactly, and a correction does not erase what was believed before it. Each org’s own data lives in its Base, a SQLite store of its own."
+}
+],
+[
+{
+"h2": "API"
+},
+{
+"p": "Operations on api.hanzo.ai. One key reaches every layer."
+},
+{
+"table": [
+[
+"Method",
+"Path",
+"What it does"
+],
+[
+"POST",
+"/v1/graph",
+"Asserts what is true of an entity."
+],
+[
+"GET",
+"/v1/graph",
+"Reads the assertions the org has recorded, bounded by as_of and as_known."
+],
+[
+"POST",
+"/v1/graph/resolve",
+"What is in force about an entity as of an instant, and what disagreed."
+],
+[
+"POST",
+"/v1/graph/diff",
+"What came into force, was superseded and was retracted between two instants."
+],
+[
+"POST",
+"/v1/graph/answer",
+"Answers a question from the whole graph, citing the assertions it rests on."
+],
+[
+"GET",
+"/v1/base/bases",
+"Lists every Base the caller can reach, one per org."
+]
+]
+}
+],
+[
+{
+"h2": "Try it"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/graph \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"assertions\": [{\"entity\": \"acme/svc/api\", \"relation\": \"owner\", \"value\": \"acme/team/core\", \"names\": true, \"at\": \"2026-01-05T00:00:00Z\", \"source\": \"wiki/api\"}]} ' curl https://api.hanzo.ai/v1/graph/resolve \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"entity\": \"acme/svc/api\", \"relation\": \"owner\", \"as_of\": \"2026-03-01T00:00:00Z\", \"as_known\": \"2026-02-01T00:00:00Z\"} '"
+}
+],
+[
+{
+"h2": "Measured"
+},
+{
+"a": "CronQuestions: point-in-time questions answered through /v1/graph",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "LoCoMo: multi-hop ALL@20 from 18.8 to 37.5 on the held-out split",
+"href": "/benchmarks/locomo"
+},
+{
+"a": "LongMemEval-S: 500 questions over 4,846 sessions, top-five evidence 90.6% against 85.8% for cosine",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "MemoryAgentBench: FactConsolidation substring EM from 33 to 67 on a 262k haystack",
+"href": "/benchmarks/memoryagentbench"
+}
+],
+[
+{
+"h2": "Docs"
+},
+{
+"a": "Graph API",
+"href": "https://docs.hanzo.ai/docs/openapi/graph"
+},
+{
+"a": "Memory, the concept",
+"href": "https://docs.hanzo.ai/docs/concepts/memory"
+},
+{
+"a": "hanzo graph",
+"href": "https://docs.hanzo.ai/docs/cli/graph"
+}
+],
+[
+{
+"h2": "On this site"
+},
+{
+"a": "Base",
+"href": "/base"
+},
+{
+"a": "Search",
+"href": "/search"
+},
+{
+"a": "Datastore",
+"href": "/datastore"
+},
+{
+"a": "Object storage",
+"href": "/s3"
+}
+]
+]

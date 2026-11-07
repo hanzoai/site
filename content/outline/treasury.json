@@ -1,0 +1,86 @@
+[
+[
+{
+"h1": "Hanzo Treasury"
+},
+{
+"p": "A double-entry ledger for money moving inside your product"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/treasury"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"code": "// A $ 100 order, split three ways, written once. // Numscript refuses to run this if the amounts do not add up. send [USD/2 10000] ( source = @users:001 destination = { 90% to @merchants:042 5% to @fees:processing remaining to @platform:revenue } )"
+}
+],
+[
+{
+"h2": "What it is made of"
+},
+{
+"p": "A ledger, a language for writing transactions, and the machinery around them."
+},
+{
+"h3": "Double-entry ledger"
+},
+{
+"p": "A transaction is a set of postings with a source and a destination, and it is rejected unless it balances. Entries are immutable — a correction is another transaction, so history stays true."
+},
+{
+"h3": "Reconciliation"
+},
+{
+"p": "Match what the ledger believes against what a payment provider reports, and show the rows that disagree. The breaks are the output; agreeing totals need no attention."
+},
+{
+"h3": "Accounts and balances"
+},
+{
+"p": "Hold balances per account and per currency, and move between them as ledger transactions. What an account settles against is configured per deployment."
+},
+{
+"h3": "Wallets with holds"
+},
+{
+"p": "Multi-currency virtual wallets that can hold an amount and release it later. That is how you take money at checkout and pay a seller on delivery without the balance lying in between."
+},
+{
+"h3": "Flows and webhooks"
+},
+{
+"p": "Longer sequences — capture, split, pay out, retry — run as orchestrated flows, and every change of financial state is delivered as an event you can subscribe to."
+}
+],
+[
+{
+"h2": "Post your first transaction"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/treasury"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"h2": "Get Treasury"
+},
+{
+"p": "Treasury management"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

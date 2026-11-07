@@ -1,0 +1,267 @@
+[
+[
+{
+"h1": "Hanzo DNS"
+},
+{
+"p": "One API for Cloudflare, CoreDNS, Route53, and more."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"code": "# Install the Hanzo CLI curl -fsSL https://hanzo.sh | sh # Every zone your org owns, whichever provider holds it hanzo dns zones list # One zone's records hanzo dns zones records list example.com # Add a record to that zone hanzo dns zones records create example.com # Push a set of zones and records in one call hanzo dns sync # Ask the control plane whether it is answering hanzo dns health"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls DNS from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo DNS in my project. Start with: hanzo dns zones list"
+}
+],
+[
+{
+"h2": "One API. Every Provider."
+},
+{
+"p": "Stop juggling provider consoles. Every zone you own, in one place."
+},
+{
+"h3": "Multi-Provider"
+},
+{
+"p": "Unified API across Cloudflare, CoreDNS, Route53, GoDaddy, and DigitalOcean. Manage all your DNS from one interface."
+},
+{
+"h3": "Parallel Queries"
+},
+{
+"p": "Query all providers simultaneously and merge results. Get a unified view of your DNS records across every provider."
+},
+{
+"h3": "CLI Native"
+},
+{
+"p": "Full CLI control with hanzo dns zones list, hanzo dns zones records create, and more. Script and automate your DNS workflows natively."
+},
+{
+"h3": "API First"
+},
+{
+"p": "REST API for programmatic DNS management. Integrate DNS operations into your CI/CD pipelines and infrastructure code."
+},
+{
+"h3": "DNSSEC"
+},
+{
+"p": "Built-in DNSSEC signing and automatic key rotation. Protect your domains from spoofing and cache poisoning attacks."
+},
+{
+"h3": "Edge DNS"
+},
+{
+"p": "CoreDNS at the edge with Hanzo plugins. Low-latency resolution with custom middleware for advanced routing logic."
+}
+],
+[
+{
+"h2": "Built for Infrastructure Teams"
+},
+{
+"p": "Hanzo DNS sits between your applications and DNS providers, giving you a single control plane for all DNS operations."
+},
+{
+"li": "Provider-agnostic record management with automatic conflict resolution"
+},
+{
+"li": "Audit logging for every DNS change with rollback support"
+},
+{
+"li": "Sub-second propagation checks across global resolvers"
+},
+{
+"li": "DNSSEC key management with automated rotation schedules"
+},
+{
+"h4": "Your Applications"
+},
+{
+"h4": "Hanzo DNS Control Plane"
+},
+{
+"h4": "DNS Providers"
+}
+],
+[
+{
+"h2": "Use Cases"
+},
+{
+"p": "From startups to enterprise, Hanzo DNS scales with your infrastructure"
+},
+{
+"h3": "DevOps Automation"
+},
+{
+"p": "Automate DNS record management as part of your deployment pipeline. Create, update, and clean up records programmatically."
+},
+{
+"h3": "Multi-Cloud DNS"
+},
+{
+"p": "Manage DNS across AWS, Cloudflare, and DigitalOcean from a single API. No more switching consoles."
+},
+{
+"h3": "Domain Portfolio Management"
+},
+{
+"p": "Manage hundreds of domains across multiple registrars and DNS providers from one unified interface."
+}
+],
+[
+{
+"h2": "Pricing"
+},
+{
+"p": "Start free. Scale as you grow."
+},
+{
+"h3": "Starter"
+},
+{
+"p": "Custom"
+},
+{
+"p": "Usage-based pricing for getting started"
+},
+{
+"li": "Up to 5 zones"
+},
+{
+"li": "2 DNS providers"
+},
+{
+"li": "CLI and API access"
+},
+{
+"li": "Volume-based query pricing"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"h3": "Pro"
+},
+{
+"p": "Custom /month"
+},
+{
+"p": "For teams managing production DNS"
+},
+{
+"li": "Unlimited zones"
+},
+{
+"li": "All DNS providers"
+},
+{
+"li": "DNSSEC management"
+},
+{
+"li": "Audit logging"
+},
+{
+"li": "Priority support"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"h3": "Team"
+},
+{
+"p": "Custom /month"
+},
+{
+"p": "For teams with shared DNS management"
+},
+{
+"li": "Everything in Pro"
+},
+{
+"li": "Team collaboration"
+},
+{
+"li": "Role-based access"
+},
+{
+"li": "Shared audit log"
+},
+{
+"li": "Priority support"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"h3": "Enterprise"
+},
+{
+"p": "Custom /month"
+},
+{
+"p": "For organizations with advanced needs"
+},
+{
+"li": "Everything in Team"
+},
+{
+"li": "Edge DNS (CoreDNS)"
+},
+{
+"li": "Custom plugins"
+},
+{
+"li": "SLA guarantee"
+},
+{
+"li": "Dedicated support"
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "Get DNS"
+},
+{
+"p": "DNS as code"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,64 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "typesafe Models via Hanzo AI"
+},
+{
+"p": "3 models available"
+},
+{
+"p": "Access all 3 typesafe models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Jev 1.13 TypeSafe's decision model, reached through OpenRouter, at its list price: $0.042 per million input tokens. Output is free. decision",
+"href": "/models/typesafe/jev-1.13"
+},
+{
+"a": "Jev Router 1M Jev Router picks the best model and reasoning effort for each request, balancing quality, speed, and cost. It runs on [Jev](https://openrouter.ai/~typesafe/jev-latest), TypeSafe's first System One model, and adapts as your... text",
+"href": "/models/typesafe/jev-router"
+},
+{
+"a": "Jev TypeSafe's decision model, reached through OpenRouter, at its list price: $0.042 per million input tokens. Output is free. decision",
+"href": "/models/typesafe/jev-latest"
+}
+],
+[
+{
+"h2": "Use typesafe models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

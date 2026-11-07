@@ -1,0 +1,111 @@
+[
+[
+{
+"h1": "Oto 1"
+},
+{
+"p": "Give every moment its sound."
+},
+{
+"p": "Film Foley, immersive sound effects, environmental audio and synchronized scene sound."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Try it in Design",
+"href": "/design"
+},
+{
+"img": "/models/oto.webp",
+"alt": ""
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What Oto does"
+},
+{
+"h3": "Timeline-synchronized Foley"
+},
+{
+"p": "Aligns transient sound impacts, footsteps, collisions, and cloth rustle to video frames down to millisecond precision."
+},
+{
+"h3": "Acoustic room impulse modeling"
+},
+{
+"p": "Automatically matches early reflections, reverberation decay, and high-frequency absorption to physical scene geometry."
+},
+{
+"h3": "Layered multi-stem ambience"
+},
+{
+"p": "Generates isolated multichannel bed tracks: wind, urban traffic, foliage movement, room tone, and distant atmospheric cues."
+},
+{
+"h3": "Dynamic mechanical and impact sound"
+},
+{
+"p": "Produces complex physical audio: vehicle engine load, firearm transients, glass stress fractures, and metallic resonance."
+}
+],
+[
+{
+"p": "In production"
+},
+{
+"h2": "Where Oto fits"
+},
+{
+"p": "Post-production"
+},
+{
+"h3": "Automated Foley track generation"
+},
+{
+"p": "Eliminate tedious manual spot-effects editing by synthesizing frame-aligned footsteps, props, and cloth movements."
+},
+{
+"p": "Game audio"
+},
+{
+"h3": "Procedural audio asset banks"
+},
+{
+"p": "Generate endless non-repeating variations of impact sounds, footsteps on varying surfaces, and weapon transients."
+},
+{
+"p": "Virtual worlds"
+},
+{
+"h3": "Spatial 3D audio environments"
+},
+{
+"p": "Bake realistic acoustic audio stems into virtual venues, architectural walkthroughs, and simulations."
+}
+],
+[
+{
+"p": "Research preview"
+},
+{
+"h2": "Try Oto on your own work"
+},
+{
+"p": "Samples of Oto's own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Every model",
+"href": "/models"
+}
+]
+]

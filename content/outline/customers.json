@@ -1,0 +1,103 @@
+[
+[
+{
+"h1": "Products Hanzo built and launched"
+},
+{
+"p": "Hanzo built the store, ran the ads and found the audience for each of these launches. Here is what we did and what each one sold."
+}
+],
+[
+{
+"h2": "Case studies"
+},
+{
+"a": "Damon Motorcycles 2020 Ran the CES reveal and the preorder campaign: AI-written ad sets, show-floor targeting, video and email.",
+"href": "/customers/damon-motorcycles"
+},
+{
+"a": "KANOA 2015 Built the site and store, then ran paid acquisition, email and the preorder campaign.",
+"href": "/customers/kanoa"
+}
+],
+[
+{
+"h2": "Every launch"
+},
+{
+"h3": "SKULLY"
+},
+{
+"h3": "Bellabeat"
+},
+{
+"h3": "STONED Audio"
+},
+{
+"h3": "Unikrn"
+},
+{
+"h3": "Arca"
+},
+{
+"h3": "Casper Labs"
+},
+{
+"h3": "Palladium"
+},
+{
+"h3": "Triller"
+},
+{
+"h3": "Cover Build"
+},
+{
+"h3": "Myle Tap"
+},
+{
+"h3": "Personas Social"
+}
+],
+[
+{
+"h2": "Backed by builders."
+},
+{
+"img": "/logos/partners/techstars.svg",
+"alt": "Techstars logo"
+},
+{
+"img": "/logos/partners/amazon.svg",
+"alt": "Amazon logo"
+},
+{
+"img": "/logos/partners/digitalocean.svg",
+"alt": "DigitalOcean logo"
+},
+{
+"img": "/logos/partners/google.svg",
+"alt": "Google logo"
+},
+{
+"img": "/logos/partners/microsoft.svg",
+"alt": "Microsoft logo"
+},
+{
+"img": "/logos/partners/nvidia.svg",
+"alt": "NVIDIA logo"
+},
+{
+"img": "/logos/partners/nebius.svg",
+"alt": "Nebius logo"
+}
+],
+[
+{
+"h2": "Launch with us"
+},
+{
+"a": "Talk to us",
+"href": "/contact"
+}
+]
+]

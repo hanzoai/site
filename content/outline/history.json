@@ -1,0 +1,240 @@
+[
+[
+{
+"h1": "Sovereign intelligence since 2014."
+},
+{
+"p": "From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today."
+},
+{
+"a": "Explore Our History",
+"href": "#timeline"
+},
+{
+"a": "About Hanzo",
+"href": "/about"
+},
+{
+"a": "Open Source",
+"href": "/open-source"
+},
+{
+"h2": "Hardware AI & Open Commerce"
+},
+{
+"h2": "Techstars ’17 & Applied AI"
+},
+{
+"h2": "Public Markets & Cloud Scale"
+},
+{
+"h2": "Sovereign AI Cloud & Research"
+}
+],
+[
+{
+"p": "Track record"
+},
+{
+"h2": "Shipping for venture-funded companies since 2014"
+},
+{
+"p": "Building business software since 2014, with AI and machine learning in commercial use from the start and GPT models in production by 2019. Founded as Crowdstart and renamed Hanzo in 2016. The first customer, SKULLY, raised $1M in about 45 hours, the fastest fully funded campaign on Indiegogo."
+},
+{
+"a": "TechCrunch, 2014 ↗",
+"href": "https://techcrunch.com/2014/08/14/the-skully-smart-helmet-is-the-fastest-funded-indiegogo-campaign-to-hit-1m/"
+},
+{
+"a": "SKULLY ↗",
+"href": "/customers#skully"
+},
+{
+"p": "The first blockchain-native commerce platform, 2017: the Unikrn ICO raised over 120,000 ETH across regulated jurisdictions."
+},
+{
+"a": "Crunchbase News, 2017 ↗",
+"href": "https://news.crunchbase.com/startups/found-ico-makes-sense/"
+},
+{
+"a": "Unikrn on Hanzo ↗",
+"href": "/customers#unikrn"
+},
+{
+"p": "Damon Motorcycles and Triller, two of the companies Hanzo built with, listed on Nasdaq in 2024."
+},
+{
+"a": "Damon (DMN) ↗",
+"href": "https://www.nortonrosefulbright.com/en/news/95a8e26f/norton-rose-fulbright-advises-grafiti-holding-inc-in-its-business-combination-with-damon-motors-inc"
+},
+{
+"a": "Triller (ILLR) ↗",
+"href": "https://www.nasdaq.com/press-release/agba-completes-merger-triller-2024-10-15"
+},
+{
+"a": "Case studies ↗",
+"href": "/customers#damon-motorcycles"
+},
+{
+"p": "Hundreds of venture-funded startups, backed by Y Combinator, 500 Startups, Techstars and other tier-1 firms: billions in client revenue, and two companies taken past 100 million users."
+},
+{
+"a": "Customers ↗",
+"href": "/customers"
+},
+{
+"p": "Selected for Techstars in 2017 to build intelligent commerce: analytics, marketing and commerce on one learning engine."
+},
+{
+"a": "hanzo.blog, 2017 ↗",
+"href": "https://hanzo.blog/2017-06-08-techstars-17/"
+},
+{
+"a": "Startland News, 2017 ↗",
+"href": "https://startlandnews.com/2017/10/techstars-spotlight-hanzos-e-commerce-tools-designed-to-make-you-money/"
+},
+{
+"p": "Open-source from the start: hanzoai/commerce in 2014, followed by 1700+ public repositories across C/CUDA/Metal runtimes, MCP servers, agent SDKs, and HIP standards."
+},
+{
+"a": "github.com/hanzoai ↗",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Open Source ↗",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Year by year: 2014 to today"
+},
+{
+"p": "Built with hundreds of venture-funded startups: billions in client revenue and two that went public on Nasdaq in 2024, from our first customer SKULLY to the sovereign AI cloud today."
+},
+{
+"li": "2014 $5.8M Raised · Indiegogo #1 SKULLY & Open-Source Commerce First customer: SKULLY, pioneering the world’s first AI and augmented reality heads-up display motorcycle helmet. Raised $2.5M on Indiegogo and $3.3M directly on Hanzo, reaching tens of millions of people worldwide with embedded spatial computer vision and real-time telematics. Open-sourced hanzoai/commerce as one of our earliest public repositories, establishing our long-term commitment to open infrastructure. Launch · 2014 $5.8M Raised · #1 Campaign SKULLY AR Helmet Spatial computing, heads-up display telemetry, and computer vision interface reaching tens of millions. SKULLY Case Study hanzoai/commerce (GitHub)",
+"href": "/customers#skully"
+},
+{
+"li": "2015 250k Signups · Health Wearables Bellabeat AI Wearables for Women Partnered with Bellabeat to architect their women’s health AI wearable platform and data infrastructure. Collected 250,000 email signups and tens of thousands of pre-orders at launch, establishing their wearable platform and analytics stack. Launch · 2015 250k Signups · Health Platform Bellabeat Health Platform AI-driven biometric tracking and personalized wellness wearables scaled to millions of connected devices. Bellabeat Case Study Agency Story",
+"href": "/customers#bellabeat"
+},
+{
+"li": "2016 Zero Press · $1.5M/Mo KANOA Smart Audio & Earbuds Launched KANOA, pioneering early true wireless smart earbuds. Launched without press coverage, relying exclusively on Hanzo’s data + AI engine to collect 50,000 pre-orders and scale smoothly from zero to $1.5M/month ($10M+ total). Launch · 2016 $1.5M/Mo · $10M+ Sales KANOA Wireless Audio Early true wireless earbuds powered entirely by Hanzo data & autonomous audience segmentation. KANOA Case Study Customer Portfolio",
+"href": "/customers#kanoa"
+},
+{
+"li": "2017 120k ETH · Techstars ’17 Unikrn 120,000 ETH ICO & Techstars ’17 Engineered the token launch for Unikrn (Unikoin Gold), the first regulated esports bookmaker, raising over 120,000 ETH from the public across 15+ jurisdictions before its acquisition by Entain. Selected for Techstars ’17 (Boulder/NYC), architecting distributed infrastructure for smart contract auditing and cryptographic settlement. Consensus · 2017 120k ETH Raised · Acquired Unikrn (Unikoin Gold) Regulated Ethereum token economy with multi-jurisdiction compliance and automated verification. Unikrn Case Study Agency Story Techstars '17 Announcement",
+"href": "/customers#unikrn"
+},
+{
+"li": "2018 SEC Approved · $650M ATH Arca SEC Stablecoin & Casper Network Arca: Launched the first SEC-approved interest-bearing stablecoin, scaling institutional assets under management to $500M+ by 2021. Casper Labs: Co-designed architecture, led the Rust pivot, and launched the network as founding members of DEVxDAO (early Swiss DAO). CSPR reached an all-time-high market cap of $650M. Institutional Web3 · 2018 $500M+ AUM · $650M ATH Arca Stablecoin & Casper Blockchain First SEC-regulated interest-bearing digital asset ($500M+ AUM) and enterprise proof-of-stake blockchain. Arca Case Study Casper Case Study Casper Agency Story",
+"href": "/customers#arca"
+},
+{
+"li": "2019 CES 2020 launch · Nasdaq 2024 Damon Electric Hypersport & CoPilot Radar Engineered the digital platform and edge telematics for Damon Motorcycles, whose CES 2020 launch sold $8.4M in 30 days; Damon went public on Nasdaq in 2024. Powered the CoPilot 360° radar collision warning system, a CES Innovation Awards Honoree in 2022. EV & Edge AI · 2019 $8.4M in 30 days · Nasdaq Damon Motorcycles Radar edge telematics, and a launch campaign at a 541:1 return on ad spend, for electric superbikes. Damon Case Study Agency Story",
+"href": "/customers#damon-motorcycles"
+},
+{
+"li": "2020 169M+ Viewers · 82M MAU TrillerFest & Planetary Scale Streaming Architected low-latency global ingress for Triller, delivering TrillerFest to over 169M live viewers worldwide. Scaled platform infrastructure as monthly active users grew past 82M, powering creator distribution toward its 2024 Nasdaq listing. Global Media · 2020 169M+ Viewers · 82M MAU Triller & TrillerFest Largest virtual streaming event in history with high-concurrency real-time audience distribution. Triller Case Study Trillerfest Agency Story",
+"href": "/customers#triller"
+},
+{
+"li": "2021 $2.7B+ ATH Market Cap Zoo Labs Foundation & Decentralized AI Founded Zoo Labs Foundation as a 501(c)(3) nonprofit research institution dedicated to decentralized AI research and open foundation models. Completed a $5M+ token sale for early AI blockchain compute, with ZOO market cap reaching an all-time high of $2.7B+. Built the Gym distributed training platform and DSO protocol ($18 per model adaptation). Decentralized AI · 2021 $2.7B+ ATH Market Cap Zoo Labs Foundation 501(c)(3) non-profit AI research network, Gym training cluster, and community ZIPs governance. Zoo Labs Case Study Agency Story Zoo Labs NGO Research Papers",
+"href": "/customers#zoo-labs-foundation"
+},
+{
+"li": "2022 $2.4B+ ATH Market Cap LUX Post-Quantum Consensus Network Engineered LUX Network, a high-speed post-quantum blockchain architecture with sub-second finality. Raised $10M+ in token sale, reaching an all-time-high market cap of $2.4B+, establishing foundational cryptographic primitives used across Hanzo KMS. Post-Quantum · 2022 $2.4B+ ATH Market Cap LUX Network Quantum-resistant consensus and high-throughput transaction pipelines. LUX Case Study LUX Network",
+"href": "/customers#lux-network"
+},
+{
+"li": "2023 3.4× Lift · AI Personalization Predictive Commerce & Autonomous Merchandising Scaled predictive AI commerce with Karma Fashion, generating a 3.4× campaign growth lift and automated neural personalization for direct-to-consumer retail. Integrated real-time semantic discovery and autonomous merchandising workflows across next-generation commerce brands. Commerce AI · 2023 3.4× Growth Lift Karma Fashion AI-driven crowdfunding and dynamic neural personalization that catalyzed retail growth. Karma Case Study Customer Portfolio",
+"href": "/customers#karma"
+},
+{
+"li": "2024 12M Items / Day · 400% Engagement Multimodal Social Discovery & Real-Time AI Moderation Deployed Zen multimodal vision and text models to process 12M daily content items for Keek with sub-second latency. Adapted the EARLE recommendation architecture for large-scale social discovery, driving a 400% increase in content engagement and 85% reduction in harmful content reach. Multimodal AI · 2024 12M Items / Day Keek Social Platform Multimodal content understanding and real-time safety pipeline processing 12M items daily. Keek Case Study Customer Portfolio",
+"href": "/customers#keek"
+},
+{
+"li": "2025 13 HIP-0300 Tools · 260+ Tools The Agent Protocol (MCP) & Computer Control Pioneered the Model Context Protocol (MCP) ecosystem, standardizing 260+ tools across 13 HIP-0300 unified primitives with automatic ZAP service bridging. Released Operative for multimodal computer use, Hanzo Dev for autonomous terminal coding, and the cross-platform Hanzo Desktop app. Protocol Milestone · 2025 260+ Tools Hanzo MCP & Operative Native agent protocol exposing every cloud subsystem as an executable tool with browser and OS control. Operative Launch MCP Tools Ecosystem Hanzo Dev",
+"href": "https://hanzo.blog/blog/2025-04-20-hanzo-operative-launch/"
+},
+{
+"li": "2026 Zen 4 – Zen 7 · Enso & Kai The Sovereign AI Cloud & Frontier Zen Family Released the frontier Zen model family: Zen 4 in February, Zen 5 in May, Zen 6 and Zen 6 Flash in September, with Zen 7 research preview underway. Introduced original reasoning architectures Enso and Kai calibrated discrete decision intelligence, powered by the C/CUDA/Metal Hanzo Engine, distributed Hanzo Base, and sovereign Hanzo KMS key custody on api.hanzo.ai. Sovereign Cloud · 2026 Zen · Enso · Kai Zen, Enso, Kai & Sovereign Stack Full sovereign AI cloud: bare-metal C/CUDA/Metal engine, private KMS custody, and frontier foundation & decision models. Zen 4 Launch Introducing Enso Explore Models Sovereign Cloud",
+"href": "https://hanzo.blog/blog/2026-02-09-zen4-launch/"
+}
+],
+[
+{
+"h2": "The Zen of Hanzo"
+},
+{
+"p": "The principles the company argues from when a decision is close."
+},
+{
+"h3": "Enable the Underdog"
+},
+{
+"p": "Enable others to win. Democratize technology so small businesses and startups can compete with industry giants."
+},
+{
+"h3": "Data-Driven Everything"
+},
+{
+"p": "Let data be your guide. Embrace analytics and AI as the foundation of decision-making."
+},
+{
+"h3": "Open Innovation"
+},
+{
+"p": "Be open, share often. Openness accelerates growth—both for the company and its community."
+},
+{
+"h3": "Adaptability"
+},
+{
+"p": "Pivot with purpose. There is no failure, only feedback. Move quickly and strike in new directions when opportunity calls."
+},
+{
+"h3": "Customer-Centric Growth"
+},
+{
+"p": "Treat each client as a long-term partner and guide them to success."
+},
+{
+"h3": "First Principles Thinking"
+},
+{
+"p": "See the invisible, do the impossible. Boil problems down to their essence and solve them in fundamentally better ways."
+},
+{
+"a": "Explore the full Zen manifesto",
+"href": "/philosophy"
+}
+],
+[
+{
+"h2": "Hanzo FDE"
+},
+{
+"p": "Forward deployed engineers who work from inside your team: your people, your systems, your data, on Hanzo’s platform."
+},
+{
+"h3": "Embedded"
+},
+{
+"h3": "On your data"
+},
+{
+"h3": "Shipped"
+},
+{
+"h3": "Handed over"
+},
+{
+"a": "Talk to Hanzo FDE",
+"href": "/contact-sales"
+}
+]
+]

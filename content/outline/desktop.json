@@ -1,0 +1,166 @@
+[
+[
+{
+"h1": "Hanzo Desktop"
+},
+{
+"p": "Build agents on your own machine"
+},
+{
+"a": "Download",
+"href": "https://docs.hanzo.ai/docs/apps/desktop"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+},
+{
+"li": "Add rate limiting to the payments API."
+},
+{
+"li": "Read 14 files. The limiter belongs in the gateway, not the handler — one place, every route."
+},
+{
+"li": "Wrote gateway/limit.go and a test at 100 req/min per key. Tests pass."
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Desktop from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Desktop in my project."
+}
+],
+[
+{
+"h2": "What you can build in it"
+},
+{
+"p": "Free and open source. Download it, and the first agent is a few minutes of clicking."
+},
+{
+"h3": "Nothing to scaffold"
+},
+{
+"p": "An agent is made in the window: give it a job, some tools, and a model. There is no project to create first and no file to check in before it exists."
+},
+{
+"h3": "Local model or cloud model, per agent"
+},
+{
+"p": "Point one agent at a model running on your machine and another at one on Hanzo Cloud. It is a setting on the agent, not a decision about the whole install."
+},
+{
+"h3": "They work together"
+},
+{
+"p": "Agents share context and hand steps to each other, so a job that needs several of them is one workflow instead of you copying between three chat windows."
+},
+{
+"h3": "It works with the network off"
+},
+{
+"p": "With a local model pinned, an agent keeps running when the connection goes. Nothing has to be uploaded for it to do its job."
+},
+{
+"h3": "Your keys stay on your machine"
+},
+{
+"p": "Keys and the data an agent touches stay local. An agent that has to pay for something spends from a key you hold, on hardware you own."
+},
+{
+"h3": "MCP is how it reaches your tools"
+},
+{
+"p": "Agents speak the Model Context Protocol, so a tool you have already connected elsewhere works here without a second integration written for this app."
+}
+],
+[
+{
+"h2": "Available everywhere you work"
+},
+{
+"p": "Native installers for macOS (Apple Silicon + Intel), Windows, and Linux."
+}
+],
+[
+{
+"h2": "Download it and build one"
+},
+{
+"p": "Pick a model, describe the job, hand it the tools. If the model is a local one, the whole thing runs without an account."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Desktop docs →",
+"href": "https://docs.hanzo.ai/docs/apps/desktop"
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+}
+],
+[
+{
+"h2": "Get Desktop"
+},
+{
+"p": "Desktop client"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/apps/desktop"
+}
+]
+]

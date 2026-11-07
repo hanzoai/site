@@ -1,0 +1,44 @@
+[
+[
+{
+"h1": "Hi there, let's find the right plan for your team."
+},
+{
+"p": "I'm an AI buying specialist, here to help you figure out which plan fits, what it'll cost, and how to get your team set up. We can do all of it right here."
+},
+{
+"li": "The fastest path in. You'll have a quote and a plan by the end of this conversation."
+},
+{
+"li": "The best price you'll get. I'll check for our latest pricing."
+},
+{
+"li": "I already know your account. If you're using Hanzo, I can see your current plan, seats, and usage."
+},
+{
+"li": "Free to talk. This conversation doesn't count toward your usage."
+},
+{
+"li": "A sales rep if you want one. For complex or large deals, I'll hand you to a teammate with everything you've shared already in context."
+},
+{
+"li": "Nothing sensitive needed. I can find the right plan with some basic information. Please keep confidential details out of chat."
+},
+{
+"a": "Privacy Policy",
+"href": "/privacy"
+},
+{
+"button": "We have a team of 10 developers →"
+},
+{
+"button": "Explain Standard vs Premium seats →"
+},
+{
+"button": "Looking for dedicated VPC & HIPAA →"
+},
+{
+"button": "Compare Team vs Enterprise →"
+}
+]
+]

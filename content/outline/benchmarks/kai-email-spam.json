@@ -1,0 +1,252 @@
+[
+[
+{
+"p": "Benchmarks / Kai / Email spam"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"a": "Kai",
+"href": "/benchmarks?product=Kai#all"
+},
+{
+"h1": "Email spam"
+},
+{
+"p": "Kai and Jev on the same 400 questions of Email spam, one run per Kai revision."
+},
+{
+"h2": "Latest"
+},
+{
+"a": "98.5% Accuracy · kai-1.4 · c1856a77 Jev 97.8% · Win · Oct 16, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "0.016 Calibration error (ECE) · kai-1.4 · c1856a77 Jev 0.060 · Win · Oct 16, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"h2": "History"
+},
+{
+"p": "12 results across 2 metrics, newest first. Superseded runs stay, so a revision's progress can be read."
+},
+{
+"table": [
+[
+"Measured",
+"Subject",
+"Metric",
+"Value",
+"Baseline",
+"Result",
+"Status"
+],
+[
+"Oct 16, 2026",
+"kai-1.4 · c1856a77",
+"Accuracy",
+"98.5%",
+"Jev 97.8%",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Oct 16, 2026",
+"kai-1.4 · c1856a77",
+"Calibration error (ECE)",
+"0.016",
+"Jev 0.060",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Oct 3, 2026",
+"kai-1 · 0834a74f",
+"Accuracy",
+"99.8%",
+"Jev 97.8%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Oct 3, 2026",
+"kai-1 · 0834a74f",
+"Calibration error (ECE)",
+"0.003",
+"Jev 0.060",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a8 · 0cfeef05",
+"Accuracy",
+"99.5%",
+"Jev 97.8%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a7 · 0834a74f",
+"Accuracy",
+"99.8%",
+"Jev 97.8%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a6 · a211cc70",
+"Accuracy",
+"99.8%",
+"Jev 97.8%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a8 · 0cfeef05",
+"Calibration error (ECE)",
+"0.004",
+"Jev 0.060",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a7 · 0834a74f",
+"Calibration error (ECE)",
+"0.003",
+"Jev 0.060",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a6 · a211cc70",
+"Calibration error (ECE)",
+"0.003",
+"Jev 0.060",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 27, 2026",
+"Kai a5 · df1c16a2",
+"Accuracy",
+"99.5%",
+"Jev 97.8%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 27, 2026",
+"Kai a5 · df1c16a2",
+"Calibration error (ECE)",
+"0.004",
+"Jev 0.060",
+"Win",
+"Superseded · Hanzo-measured"
+]
+]
+},
+{
+"h2": "Conditions"
+},
+{
+"h2": "Hardware"
+},
+{
+"p": "CPU AS SERVED"
+},
+{
+"h2": "Source"
+},
+{
+"p": "research run app.email_spam-harness-kai-1.4.c1856a77-kai"
+},
+{
+"a": "research run app.email_spam-harness-kai-1.4.c1856a77-kai",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&id=app.email_spam-harness-kai-1.4.c1856a77-kai"
+},
+{
+"h2": "Reproduce"
+},
+{
+"p": "bench score --harness . --kai results/kai/preds.json.gz --out results/scores.json   # in hanzoai/benchmarks/decision @ 5f616dd"
+},
+{
+"code": "bench score --harness . --kai results/kai/preds.json.gz --out results/scores.json   # in hanzoai/benchmarks/decision @ 5f616dd"
+},
+{
+"h2": "More Kai benchmarks"
+},
+{
+"p": "AG News · DAIR Emotion · Banking77 · Support triage · Phishing · Toxicity · RAG relevance · Model routing · Typed decisions · MASSIVE · Choosing among many options · Latency of one decision"
+},
+{
+"a": "AG News",
+"href": "/benchmarks/kai-ag-news"
+},
+{
+"a": "DAIR Emotion",
+"href": "/benchmarks/kai-dair-emotion"
+},
+{
+"a": "Banking77",
+"href": "/benchmarks/kai-banking77"
+},
+{
+"a": "Support triage",
+"href": "/benchmarks/kai-support-triage"
+},
+{
+"a": "Phishing",
+"href": "/benchmarks/kai-phishing"
+},
+{
+"a": "Toxicity",
+"href": "/benchmarks/kai-toxicity"
+},
+{
+"a": "RAG relevance",
+"href": "/benchmarks/kai-rag-relevance"
+},
+{
+"a": "Model routing",
+"href": "/benchmarks/kai-model-routing"
+},
+{
+"a": "Typed decisions",
+"href": "/benchmarks/kai-typed-decisions"
+},
+{
+"a": "MASSIVE",
+"href": "/benchmarks/kai-massive"
+},
+{
+"a": "Choosing among many options",
+"href": "/benchmarks/kai-choice-size"
+},
+{
+"a": "Latency of one decision",
+"href": "/benchmarks/kai-latency"
+},
+{
+"p": "Every result for Email spam on the shelf · How these are measured"
+},
+{
+"a": "Every result for Email spam on the shelf",
+"href": "/benchmarks?q=Email%20spam#all"
+},
+{
+"a": "How these are measured",
+"href": "/benchmarks#methods"
+}
+]
+]

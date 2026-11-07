@@ -1,0 +1,93 @@
+[
+[
+{
+"h1": "Hanzo Telemetry"
+},
+{
+"p": "The collector that sits between your app and wherever the data goes"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"p": "Receives over gRPC and HTTP, exports the same way. OTLP is the format the OpenTelemetry SDKs already speak, so nothing in your code changes to point at it."
+},
+{
+"p": "All three move through the same process, so there is one thing to run, one config to read and one place to look when telemetry stops arriving."
+},
+{
+"p": "Spans arrive one at a time and leave in batches. That is the difference between a request per span and a request per few thousand, and your backend feels it."
+},
+{
+"p": "Tell it how much memory it may use and it refuses work rather than exceeding it. Telemetry is the thing that should degrade during an incident, not the thing that causes one."
+},
+{
+"p": "This is the collector itself. Build a distribution with the receivers, processors and exporters you actually want, and ship one binary containing those and nothing else."
+},
+{
+"p": "A binary in your own network. Whatever you decide not to forward, you decide before the data has left — which is the only point where that is still your call."
+},
+{
+"li": "OTLP in, OTLP out"
+},
+{
+"li": "Traces, metrics and logs"
+},
+{
+"li": "Batching"
+},
+{
+"li": "A memory ceiling"
+},
+{
+"li": "Assembled, not installed"
+},
+{
+"li": "It runs where you run"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Telemetry from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project."
+}
+],
+[
+{
+"h2": "Put it in front of your backend"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Telemetry"
+},
+{
+"p": "OpenTelemetry ingest"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

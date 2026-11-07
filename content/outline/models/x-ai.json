@@ -1,0 +1,112 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "xAI Models via Hanzo AI"
+},
+{
+"p": "15 models available"
+},
+{
+"p": "Access all 15 xAI models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Grok 4.20 2M Grok 4.20 is a reasoning model from SpaceXAI with industry-leading speed and agentic tool calling capabilities. It combines the lowest hallucination rate on the market with strict prompt adherance, delivering... text",
+"href": "/models/x-ai/grok-4.20"
+},
+{
+"a": "Grok 4.20 Multi-Agent 2M Grok 4.20 Multi-Agent is a variant of SpaceXAI’s Grok 4.20 designed for collaborative, agent-based workflows. Multiple agents operate in parallel to conduct deep research, coordinate tool use, and synthesize information... text",
+"href": "/models/x-ai/grok-4.20-multi-agent"
+},
+{
+"a": "Grok 4.3 1M Grok 4.3 is a reasoning model from SpaceXAI. It accepts text and image inputs with text output, and is suited for agentic workflows, instruction-following tasks, and applications requiring high factual... text",
+"href": "/models/x-ai/grok-4.3"
+},
+{
+"a": "Grok 4.3 (batch) 1M Grok 4.3 is a reasoning model from SpaceXAI. It accepts text and image inputs with text output, and is suited for agentic workflows, instruction-following tasks, and applications requiring high factual... text",
+"href": "/models/x-ai/grok-4.3:batch"
+},
+{
+"a": "Grok 4.5 500K Grok 4.5 is a model from SpaceXAI with frontier performance on coding, knowledge work, and STEM. text",
+"href": "/models/x-ai/grok-4.5"
+},
+{
+"a": "Grok 4.6 500K Grok 4.6 is a model from SpaceXAI with frontier performance on coding, knowledge work, and STEM. It is succeeded by [Grok 4.7](/x-ai/grok-4.7). text",
+"href": "/models/x-ai/grok-4.6"
+},
+{
+"a": "Grok 4.6 (batch) 500K Grok 4.6 is a model from SpaceXAI with frontier performance on coding, knowledge work, and STEM. It is succeeded by [Grok 4.7](/x-ai/grok-4.7). text",
+"href": "/models/x-ai/grok-4.6:batch"
+},
+{
+"a": "Grok 4.7 500K Grok 4.7 is SpaceXAI's flagship model for coding, agentic tasks, and knowledge work, succeeding Grok 4.6. It is particularly strong at long-running software engineering tasks, verifying its own work, and... text",
+"href": "/models/x-ai/grok-4.7"
+},
+{
+"a": "Grok 4.7 (batch) 500K Grok 4.7 is SpaceXAI's flagship model for coding, agentic tasks, and knowledge work, succeeding Grok 4.6. It is particularly strong at long-running software engineering tasks, verifying its own work, and... text",
+"href": "/models/x-ai/grok-4.7:batch"
+},
+{
+"a": "Grok Build 0.1 256K Grok Build 0.1 is SpaceXAI’s fast coding model trained specifically for agentic software engineering workflows. It supports text and image inputs with text output, and is optimized for interactive coding... text",
+"href": "/models/x-ai/grok-build-0.1"
+},
+{
+"a": "Grok Imagine Video Grok Imagine Video is SpaceXAI's fast, text-, image-, and reference-conditioned video generation model. It produces short videos (1–15 seconds, 24 fps) at 480p or 720p across seven aspect ratios -... video",
+"href": "/models/x-ai/grok-imagine-video"
+},
+{
+"a": "Grok Imagine Video 1.5 Grok Imagine Video 1.5 is a video generation model from SpaceXAI. It creates videos from text prompts, with an optional starting image to guide the scene. It can direct subject... video",
+"href": "/models/x-ai/grok-imagine-video-1.5"
+},
+{
+"a": "Grok Imagine Video 1.5 Lite Grok Imagine Video 1.5 Lite is a faster, lower-cost video generation model from SpaceXAI, distilled from [Grok Imagine Video 1.5](/x-ai/grok-imagine-video-1.5). It supports text-to-video and image-to-video, trading some quality for speed... video",
+"href": "/models/x-ai/grok-imagine-video-1.5-lite"
+},
+{
+"a": "Grok Voice TTS 1.0 Grok Voice TTS 1.0 is a text-to-speech model from SpaceXAI. It converts text into spoken audio across 20+ languages with automatic language detection, and offers five built-in voices (Eve, Ara,... speech",
+"href": "/models/x-ai/grok-voice-tts-1.0"
+},
+{
+"a": "Grok Latest 500K This model always redirects to the latest Grok model from xAI. text",
+"href": "/models/x-ai/grok-latest"
+}
+],
+[
+{
+"h2": "Use xAI models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

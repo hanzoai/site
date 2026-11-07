@@ -1,0 +1,290 @@
+[
+[
+{
+"h1": "Hanzo Crawl"
+},
+{
+"p": "Give it a URL, get back Markdown"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/openapi/crawl/"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Chat",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot",
+"href": "/bot"
+},
+{
+"a": "Search",
+"href": "/search"
+},
+{
+"a": "Crawl",
+"href": "/crawl"
+},
+{
+"a": "Studio",
+"href": "/studio"
+},
+{
+"a": "Console",
+"href": "/console"
+},
+{
+"a": "Referrals",
+"href": "/cloud/referrals"
+},
+{
+"a": "Marketplace",
+"href": "/cloud/marketplace"
+},
+{
+"li": "$ hanzo"
+},
+{
+"li": "> deploy the gateway to staging"
+},
+{
+"li": "· reading the project"
+},
+{
+"li": "✓ gateway is on staging"
+},
+{
+"code": "api.hanzo.ai /v1/crawl"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Crawl from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Crawl in my project. Start with: hanzo crawl create"
+}
+],
+[
+{
+"h2": "Three steps, and a boundary"
+},
+{
+"p": "Fetch, extract, render. Then the part that matters when the URL comes from a stranger."
+},
+{
+"h3": "The readable part, not the page"
+},
+{
+"p": "Deciding which subtree is the article is the hard problem, and it is the one this solves. You get the content and what the page says about itself, without the chrome around it."
+},
+{
+"h3": "A browser only when needed"
+},
+{
+"p": "Most pages are a fetch and a parse. Headless Chromium is a separate service it escalates to for the ones that genuinely need rendering, so you do not pay browser cost for a documentation page."
+},
+{
+"h3": "Markdown, and the metadata"
+},
+{
+"p": "Headings stay headings and links keep their targets, resolved against the page they came from. Title, description and canonical URL come back alongside — including the URL after redirects, which is the one worth citing."
+},
+{
+"h3": "It cannot be pointed at your cluster"
+},
+{
+"p": "The caller supplies the URL, which makes any crawler a request-forgery primitive. Loopback, link-local and multicast are refused — including the cloud metadata endpoint on 169.254.169.254 that hands out credentials."
+},
+{
+"h3": "Every redirect is checked too"
+},
+{
+"p": "Blocking the first address is not enough, because a public URL can redirect to a private one. The guard sits on the dialer, so a 302 toward metadata is refused at the hop that matters."
+},
+{
+"h3": "A tool an agent can call"
+},
+{
+"p": "It answers on MCP as well as over HTTP, so a model can read a page mid-conversation without you building the plumbing for it."
+}
+],
+[
+{
+"h2": "How it works"
+},
+{
+"p": "Each step is its own file and can be tested without the other two."
+},
+{
+"h3": "Fetch"
+},
+{
+"p": "One guarded HTTP request. The dialer refuses private and link-local addresses on every hop, so a URL that redirects somewhere it should not reach is stopped there rather than after the fact."
+},
+{
+"h3": "Extract"
+},
+{
+"p": "The document is reduced to the subtree a reader would call the content, plus the title, description and canonical URL the page claims for itself. If the HTML alone is not enough, this is where a headless browser gets involved."
+},
+{
+"h3": "Render"
+},
+{
+"p": "That subtree becomes Markdown with its structure intact — headings, lists, code and links, with relative URLs resolved against the page. It is the format a model reads best and a person can still diff."
+}
+],
+[
+{
+"h2": "Two ways to call it"
+},
+{
+"p": "Over HTTP at /v1/crawl when your code is doing the asking, or over MCP when a model is."
+}
+],
+[
+{
+"h2": "Pricing"
+},
+{
+"p": "You are paying for the hosted API and the browsers behind it, not for the code."
+},
+{
+"h3": "Build"
+},
+{
+"li": "50,000 pages/month"
+},
+{
+"li": "5 concurrent crawlers"
+},
+{
+"li": "JavaScript rendering"
+},
+{
+"li": "Markdown + structured output"
+},
+{
+"li": "REST API access"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/openapi/crawl/"
+},
+{
+"h3": "Scale"
+},
+{
+"li": "500,000 pages/month"
+},
+{
+"li": "25 concurrent crawlers"
+},
+{
+"li": "Priority JS rendering"
+},
+{
+"li": "LLM-based extraction"
+},
+{
+"li": "Direct Search + Vector integration"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/openapi/crawl/"
+},
+{
+"h3": "Enterprise"
+},
+{
+"li": "Unlimited pages"
+},
+{
+"li": "Unlimited concurrent crawlers"
+},
+{
+"li": "Dedicated rendering pool"
+},
+{
+"li": "Custom extraction schemas"
+},
+{
+"li": "Dedicated support + SLA"
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"p": "The crawler is open source, and so is the headless-browser image it escalates to. Run both yourself for nothing. The plans buy you somebody else operating them."
+}
+],
+[
+{
+"p": "Hanzo Crawl"
+},
+{
+"h2": "Send it a URL"
+},
+{
+"p": "One call, and the page comes back as Markdown. From your code over HTTP, or from a model over MCP."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/openapi/crawl/"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Chat Conversational AI",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot Multi-agent platform",
+"href": "/bot"
+},
+{
+"a": "Search Retrieval & answers",
+"href": "/search"
+}
+],
+[
+{
+"h2": "Get Crawl"
+},
+{
+"p": "Crawl, scrape, and embed"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

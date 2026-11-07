@@ -1,0 +1,222 @@
+[
+[
+{
+"h1": "Smart Wallets"
+},
+{
+"p": "ERC-4337 account abstraction wallets"
+},
+{
+"p": "Smart contract wallets with account abstraction. Social recovery, session keys, batch transactions, and gasless transactions included."
+},
+{
+"h3": "Smart Contract Wallets"
+},
+{
+"p": "Upgradeable wallets with programmable logic and security."
+},
+{
+"h3": "Social Recovery"
+},
+{
+"p": "Recover accounts using trusted guardians, not seed phrases."
+},
+{
+"h3": "Session Keys"
+},
+{
+"p": "Temporary permissions for apps without repeated signing."
+},
+{
+"h3": "Multi-sig Support"
+},
+{
+"p": "Require multiple approvals for high-value transactions."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Smart Contract Wallets"
+},
+{
+"p": "Upgradeable wallets with programmable logic and security."
+},
+{
+"h3": "Social Recovery"
+},
+{
+"p": "Recover accounts using trusted guardians, not seed phrases."
+},
+{
+"h3": "Session Keys"
+},
+{
+"p": "Temporary permissions for apps without repeated signing."
+},
+{
+"h3": "Multi-sig Support"
+},
+{
+"p": "Require multiple approvals for high-value transactions."
+},
+{
+"h3": "Batch Transactions"
+},
+{
+"p": "Execute multiple operations in a single transaction."
+},
+{
+"h3": "Multi-chain"
+},
+{
+"p": "Same wallet address across all EVM chains."
+},
+{
+"h3": "Custom Modules"
+},
+{
+"p": "Extend functionality with modular security plugins."
+},
+{
+"h3": "Time-locked Actions"
+},
+{
+"p": "Schedule transactions and set spending limits."
+},
+{
+"h3": "Transaction History"
+},
+{
+"p": "Complete audit trail of all wallet activity."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@account-abstraction/contracts/core/BaseAccount.sol\" ; import \"@hanzo/wallet/ISessionKeyManager.sol\" ; import \"@hanzo/wallet/ISocialRecovery.sol\" ; contract HanzoSmartAccount is BaseAccount, ISocialRecovery { address public owner ; ISessionKeyManager public sessionManager ; mapping (address => bool) public guardians ; uint256 public guardianCount ; uint256 public recoveryThreshold ; constructor ( IEntryPoint _entryPoint , address _owner , address [] memory _guardians , uint256 _threshold ) BaseAccount ( _entryPoint) { owner = _o"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Consumer Wallets"
+},
+{
+"p": "User-friendly wallets without seed phrase management."
+},
+{
+"h3": "Gaming"
+},
+{
+"p": "Session keys sign in-game actions without prompting on every move."
+},
+{
+"h3": "Enterprise Treasury"
+},
+{
+"p": "Multi-sig controls for corporate crypto management."
+},
+{
+"h3": "DeFi Power Users"
+},
+{
+"p": "Batch operations and automated strategies."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Smart Wallets"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Smart Wallets"
+},
+{
+"p": "Multi-chain wallets"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

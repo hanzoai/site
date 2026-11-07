@@ -1,0 +1,68 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Sakana AI Models via Hanzo AI"
+},
+{
+"p": "4 models available"
+},
+{
+"p": "Access all 4 Sakana AI models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Fugu Max 1M Fugu Max is the cost-performance model in Sakana AI's Fugu family. Rather than a single monolithic model, Fugu is a learned multi-agent orchestration system: a language model trained to route... text",
+"href": "/models/sakana/fugu-max"
+},
+{
+"a": "Fugu Ultra 1M Fugu Ultra is the higher-performance model in Sakana AI's Fugu family. Rather than a single monolithic model, Fugu is a learned multi-agent orchestration system: a language model trained to route... text",
+"href": "/models/sakana/fugu-ultra"
+},
+{
+"a": "Fugu Ultra v2 1M Fugu Ultra v2 is the higher-performance model in Sakana AI's Fugu family. Rather than a single monolithic model, Fugu is a learned multi-agent orchestration system: a language model trained to... text",
+"href": "/models/sakana/fugu-ultra-v2"
+},
+{
+"a": "Sakana Namazu 262K Sakana Namazu is a Japanese-specialized reasoning model from Sakana AI, based on Kimi K2.6 with additional training for Japanese language and business contexts. It is suited for Japanese instruction following,... text",
+"href": "/models/sakana/sakana-namazu"
+}
+],
+[
+{
+"h2": "Use Sakana AI models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

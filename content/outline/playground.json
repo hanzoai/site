@@ -1,0 +1,79 @@
+[
+[
+{
+"h1": "Try a model, then ship it"
+},
+{
+"p": "Chat, completions, decisions, embeddings, image, video, audio and vision, against every model in the catalog, with each run's tokens and cost beside the answer."
+},
+{
+"a": "Open the Playground",
+"href": "https://platform.hanzo.ai/playground"
+},
+{
+"a": "Read the API",
+"href": "/api"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Playground from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Playground in my project."
+}
+],
+[
+{
+"h2": "Then the same request from code"
+},
+{
+"p": "A key, a model name, and a message is the whole first request."
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' {\"model\":\"zen\",\"messages\":[{\"role\":\"user\",\"content\":\"Hello\"}]} '"
+},
+{
+"code": "pip install hanzoai import os from hanzoai . cloud import ApiClient , Configuration , KeysApi api = ApiClient ( Configuration ( host= \" https://api.hanzo.ai \" , access_token=os . environ [ \" HANZO_API_KEY \" ], )) print ( KeysApi ( api ). get_keys (). keys )"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+}
+],
+[
+{
+"h2": "Get Playground"
+},
+{
+"p": "Hands-on sandbox for every product"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

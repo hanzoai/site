@@ -1,0 +1,212 @@
+[
+[
+{
+"h1": "An AI engineer in your terminal"
+},
+{
+"p": "Type hanzo in a repo and you get a coding session. Type hanzo and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API's own document."
+},
+{
+"a": "Install from hanzo.sh",
+"href": "https://docs.hanzo.ai/docs/cli"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/cli"
+},
+{
+"p": "Open source (MIT). One static Rust binary — macOS and Linux on amd64 and arm64, Windows on amd64. No runtime, no daemon."
+},
+{
+"a": "CLI",
+"href": "/cli"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+},
+{
+"li": "$ hanzo"
+},
+{
+"li": "> deploy the gateway to staging"
+},
+{
+"li": "· reading the project"
+},
+{
+"li": "✓ gateway is on staging"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls CLI from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo CLI in my project. Start with: hanzo auth login"
+}
+],
+[
+{
+"p": "What is Hanzo CLI"
+},
+{
+"h2": "A resource tree, not a pile of flags"
+},
+{
+"p": "hanzo <resource> <command>. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has."
+},
+{
+"h3": "A coding session, metered"
+},
+{
+"p": "Bare hanzo runs our dev agent with the Hanzo toolset attached and the model calls billed to your organization. Point it at claude or codex instead and it drives an agent you already have."
+},
+{
+"h3": "Run the cloud on your machine"
+},
+{
+"p": "hanzo serve cloud starts the whole API locally, or name one service — iam, kms, gateway, storage, pubsub. hanzo engine serve puts a model on a local endpoint."
+},
+{
+"h3": "No raw-path escape hatch"
+},
+{
+"p": "There is no hanzo api verb and no URL to hand-write. Every cloud capability arrives as a typed subcommand, which is what keeps the CLI and the API from disagreeing."
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What the binary carries"
+},
+{
+"h3": "Several identities at once"
+},
+{
+"p": "Hold as many principals as you need and switch between them. A second login never clobbers the first, and hanzo auth show says which one is answering right now."
+},
+{
+"h3": "Secrets arrive on stdin"
+},
+{
+"p": "Pass --token - and the credential is read from the pipe, never from argv — so nothing lands in shell history, ps, or a CI log. It is stored in the OS keychain, or an owner-only file where there is none."
+},
+{
+"h3": "A public URL for a local port"
+},
+{
+"p": "hanzo share 3000 publishes a service over the zero-trust fabric while the port stays bound to localhost. Pass --name to keep the same subdomain next time."
+},
+{
+"h3": "Find the secret before the commit"
+},
+{
+"p": "hanzo scan walks a path for exposed credentials and exits non-zero when it finds one, which is what makes it usable as a hook rather than a habit."
+},
+{
+"h3": "The whole cloud, unhealthy first"
+},
+{
+"p": "hanzo status leads with what is broken, then clusters, applications and the machines on your fleet. The thing you needed to know is the first line, not the last."
+},
+{
+"h3": "Put this shell on the fabric"
+},
+{
+"p": "hanzo link publishes the terminal you are in so the console can watch it — or drive it. --read-only when you would rather be watched than typed at."
+}
+],
+[
+{
+"p": "Get started"
+},
+{
+"h2": "Install, sign in, start working"
+},
+{
+"code": "# Install the CLI — the same line Hanzo prints everywhere curl -fsSL https://hanzo.sh | sh npm i -g hanzo # Sign in. Interactive picker, or name a provider. hanzo auth login # Bare hanzo IS a coding session in this repo hanzo # ...or hand it the task and let it run headless hanzo \" add rate limiting to the /v1/chat endpoint \" # What did that cost, and what is left hanzo usage summary hanzo billing balance"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/cli"
+}
+],
+[
+{
+"h2": "Install once. It comes with you."
+},
+{
+"p": "A local repo, a CI job, a machine you sshed into, a fix at 2am. Same binary, same identity, same commands."
+},
+{
+"a": "Install the CLI",
+"href": "https://docs.hanzo.ai/docs/cli"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/cli"
+},
+{
+"a": "Hanzo Platform",
+"href": "https://platform.hanzo.ai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Playground",
+"href": "/playground"
+},
+{
+"a": "Desktop",
+"href": "/desktop"
+},
+{
+"a": "API Keys",
+"href": "/cloud/api-keys"
+}
+],
+[
+{
+"h2": "Get CLI"
+},
+{
+"p": "One CLI for the whole stack"
+},
+{
+"a": "hanzoai/cli",
+"href": "https://github.com/hanzoai/cli"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

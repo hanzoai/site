@@ -1,0 +1,121 @@
+[
+[
+{
+"h1": "Hanzo Node"
+},
+{
+"p": "hanzod is the node that runs hanzo.network. It joins the fabric over a peer-to-peer transport, serves models to whatever the cluster routes to it, and settles the work on Lux. One Rust binary, started with hanzo fabric up."
+},
+{
+"a": "Run a Node",
+"href": "https://docs.hanzo.ai/docs/proof-of-ai/node-operator"
+},
+{
+"a": "View Source",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"p": "Consumer cards, datacenter accelerators, or Apple Silicon. The node reports what it can serve and the cluster routes to it on that basis."
+},
+{
+"p": "A tenth of the block reward is set aside for AI compute. A provider's share is scaled by the level of the work — embeddings and small models, chat-sized models, large and multimodal, training, or specialized compute like proofs."
+},
+{
+"p": "Ask it for models and it lists everything served across the peers your node can see. Ask it to route and it names who would answer; ask for placement and it says where a model nobody serves should be loaded."
+},
+{
+"p": "A node's confidential-compute tier is attested rather than declared, and its share is scaled by that tier and by a trust score. Claiming a capability is not the same as proving one."
+},
+{
+"p": "up starts it on the active network, join switches network and starts it, stop signals the process this CLI started by its recorded pid — and never anything else that happens to share the name."
+},
+{
+"p": "Work is ordered on the Hanzo L2 and committed to Lux as a Merkle root, so what a node did is anchored where it cannot quietly be rewritten later."
+},
+{
+"li": "The hardware you already have"
+},
+{
+"li": "Paid out of the block reward"
+},
+{
+"li": "The cluster knows who has what"
+},
+{
+"li": "Attested, then trusted"
+},
+{
+"li": "Three commands, no orchestration"
+},
+{
+"li": "Settled on Lux"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Node from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Node in my project. Start with: hanzo node list"
+}
+],
+[
+{
+"h2": "Put a machine on the fabric"
+},
+{
+"p": "Install the CLI, pick a network, run hanzo fabric up. The node binary is resolved from your PATH or an env var — the CLI runs it and never builds it for you."
+},
+{
+"a": "Quickstart",
+"href": "https://docs.hanzo.ai/docs/proof-of-ai/node-operator"
+},
+{
+"a": "About the Network",
+"href": "/network"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Node"
+},
+{
+"a": "Node docs →",
+"href": "https://docs.hanzo.ai/docs/proof-of-ai/node-operator"
+}
+],
+[
+{
+"h2": "Get Node"
+},
+{
+"p": "Standalone Hanzo node"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/proof-of-ai/node-operator"
+}
+]
+]

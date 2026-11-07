@@ -1,0 +1,284 @@
+[
+[
+{
+"h1": "zap-proto"
+},
+{
+"p": "The public repositories of zap-proto on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "zap-proto on GitHub",
+"href": "https://github.com/zap-proto"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/zap-proto"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 1 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of zap-proto, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "zap-proto/zip Go 0 1 ZAP-native web framework (gofiber v3) — one framework for every Go binary; ZAP primary, HTTP extra, MCP for free Pushed Nov 6, 2026 342 commits this year Forge",
+"href": "https://github.com/zap-proto/zip"
+},
+{
+"li": "zap-proto/zerocopy TypeScript 0 0 Why build zero-copy applications — landing page for zerocopy.app Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zap-proto/zerocopy"
+},
+{
+"li": "zap-proto/zapd Rust 0 0 ZAP universal router — the one shared local broker every ZAP service connects to Pushed Nov 6, 2026 40 commits this year Forge",
+"href": "https://github.com/zap-proto/zapd"
+},
+{
+"li": "zap-proto/zap2pb Go 0 0 zap2pb — sanctioned ZAP->protobuf-wire boundary; the one place allowed to import google.golang.org/protobuf Pushed Nov 6, 2026 2 commits this year Forge",
+"href": "https://github.com/zap-proto/zap2pb"
+},
+{
+"li": "zap-proto/zap-spec TypeScript 0 0 Canonical, language-agnostic schemas for the ZAP wire format (capability auth + future families) Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/zap-proto/zap-spec"
+},
+{
+"li": "zap-proto/zap-proto.github.io MDX 0 0 ZAP Protocol marketing site — zap-proto.io Pushed Nov 6, 2026 27 commits this year Forge",
+"href": "https://github.com/zap-proto/zap-proto.github.io"
+},
+{
+"li": "zap-proto/zap-es TypeScript 0 0 Cap'n-Proto-style binary wire encoder for TS — fork of unjs/capnp-es Pushed Nov 6, 2026 33 commits this year Forge",
+"href": "https://github.com/zap-proto/zap-es"
+},
+{
+"li": "zap-proto/ws ZAP 0 0 Multi-stream pubsub over ZAP — per-stream FEC, no head-of-line blocking Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zap-proto/ws"
+},
+{
+"li": "zap-proto/wireshark Lua 0 0 Wireshark dissector for ZAP frames Pushed Nov 6, 2026 2 commits this year Forge",
+"href": "https://github.com/zap-proto/wireshark"
+},
+{
+"li": "zap-proto/web TypeScript 0 0 Browser frontend RPC over ZAP — drop-in tRPC replacement for Next.js / Remix / SvelteKit Pushed Nov 6, 2026 10 commits this year Forge",
+"href": "https://github.com/zap-proto/web"
+},
+{
+"li": "zap-proto/wasm Rust 0 0 ZAP compiled to WebAssembly — browser + Node.js Pushed Nov 6, 2026 12 commits this year Forge",
+"href": "https://github.com/zap-proto/wasm"
+},
+{
+"li": "zap-proto/vscode TypeScript 0 0 ZAP schema support for VS Code — syntax + LSP integration Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zap-proto/vscode"
+},
+{
+"li": "zap-proto/vim Vim Script 0 0 ZAP schema syntax for Vim / Neovim Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zap-proto/vim"
+},
+{
+"li": "zap-proto/test ZAP 0 0 Test framework for ZAP compiler plugins Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zap-proto/test"
+},
+{
+"li": "zap-proto/telemetry Go 0 0 One call starts a Go service's traces, metrics and logs on the ZAP wire. No OTLP, no gRPC. Pushed Nov 6, 2026 2 commits this year Forge",
+"href": "https://github.com/zap-proto/telemetry"
+},
+{
+"li": "zap-proto/syntax TypeScript 0 0 ZAP schema syntax highlighting — Shiki, TextMate, VS Code grammars Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zap-proto/syntax"
+},
+{
+"li": "zap-proto/sublime 0 0 ZAP schema support for Sublime Text Pushed Nov 6, 2026 1 commit this year Forge",
+"href": "https://github.com/zap-proto/sublime"
+},
+{
+"li": "zap-proto/spec Rust 1 0 ZAP wire-format specification — canonical, byte-for-byte Pushed Nov 6, 2026 30 commits this year Forge",
+"href": "https://github.com/zap-proto/spec"
+},
+{
+"li": "zap-proto/scala Scala 0 0 ZAP for Scala Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zap-proto/scala"
+},
+{
+"li": "zap-proto/rust Rust 0 0 ZAP for Rust — zap-proto on crates.io Pushed Nov 6, 2026 154 commits this year Forge",
+"href": "https://github.com/zap-proto/rust"
+},
+{
+"li": "zap-proto/ruby C++ 0 0 ZAP for Ruby Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zap-proto/ruby"
+},
+{
+"li": "zap-proto/rns Go 0 0 PQ-RNS — Resource Name Service binding names to post-quantum identities. Schema + canonical DID + cross-language KAT. Pushed Nov 6, 2026 9 commits this year Forge",
+"href": "https://github.com/zap-proto/rns"
+},
+{
+"li": "zap-proto/py Python 0 0 ZAP for Python — zap-proto on PyPI Pushed Nov 6, 2026 34 commits this year Forge",
+"href": "https://github.com/zap-proto/py"
+},
+{
+"li": "zap-proto/proofs TeX 0 0 Formal proofs for the ZAP protocol family Pushed Nov 6, 2026 2 commits this year Forge",
+"href": "https://github.com/zap-proto/proofs"
+},
+{
+"li": "zap-proto/pb2zap Go 0 0 Reusable protobuf->zap-proto wire codemod Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zap-proto/pb2zap"
+},
+{
+"li": "zap-proto/papers TeX 0 0 ZAP design papers and research Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zap-proto/papers"
+},
+{
+"li": "zap-proto/ocaml-rpc OCaml 0 0 ZAP RPC layer for OCaml Pushed Nov 6, 2026 17 commits this year Forge",
+"href": "https://github.com/zap-proto/ocaml-rpc"
+},
+{
+"li": "zap-proto/ocaml OCaml 0 0 ZAP for OCaml — code generator + runtime Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zap-proto/ocaml"
+},
+{
+"li": "zap-proto/node-capnp C++ 0 0 Vendored mirror of kentonv/node-capnp — read-only reference Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zap-proto/node-capnp"
+},
+{
+"li": "zap-proto/nim Nim 0 0 ZAP for Nim Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/zap-proto/nim"
+},
+{
+"li": "zap-proto/md Go 0 0 zap-md — markdown response adapter for the ZAP ecosystem (token-efficient, agent-ready serialization) Pushed Nov 6, 2026 1 commit this year Forge",
+"href": "https://github.com/zap-proto/md"
+},
+{
+"li": "zap-proto/mcp TypeScript 1 0 Model Context Protocol over ZAP — mutually authenticated, non-repudiable Pushed Nov 6, 2026 16 commits this year Forge",
+"href": "https://github.com/zap-proto/mcp"
+},
+{
+"li": "zap-proto/lua Lua 0 0 ZAP for Lua Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zap-proto/lua"
+},
+{
+"li": "zap-proto/lsp C++ 0 0 ZAP Language Server Pushed Nov 6, 2026 24 commits this year Forge",
+"href": "https://github.com/zap-proto/lsp"
+},
+{
+"li": "zap-proto/js TypeScript 0 0 ZAP for TypeScript & JavaScript — @zap-proto/zap Pushed Nov 6, 2026 76 commits this year Forge",
+"href": "https://github.com/zap-proto/js"
+},
+{
+"li": "zap-proto/java Java 0 0 ZAP for Java Pushed Nov 6, 2026 15 commits this year Forge",
+"href": "https://github.com/zap-proto/java"
+},
+{
+"li": "zap-proto/intellij Java 0 0 ZAP schema support for IntelliJ / JetBrains Pushed Nov 6, 2026 2 commits this year Forge",
+"href": "https://github.com/zap-proto/intellij"
+},
+{
+"li": "zap-proto/http Go 0 0 HTTP request/response over ZAP — drop-in net/http API Pushed Nov 6, 2026 31 commits this year Forge",
+"href": "https://github.com/zap-proto/http"
+},
+{
+"li": "zap-proto/haskell Haskell 0 0 ZAP for Haskell Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zap-proto/haskell"
+},
+{
+"li": "zap-proto/go Go 1 0 ZAP for Go — github.com/zap-proto/go Pushed Nov 6, 2026 63 commits this year Forge",
+"href": "https://github.com/zap-proto/go"
+},
+{
+"li": "zap-proto/gen TypeScript 0 0 zapgen — canonical .zap schema → multi-language Hanzo SDK generator (ZAP-native primary, HTTP/WS/SSE fallback) Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zap-proto/gen"
+},
+{
+"li": "zap-proto/fix ZAP 0 0 FIX 4.4 / 5.0 trading channel over ZAP — sub-microsecond p99 Pushed Nov 6, 2026 Forge",
+"href": "https://github.com/zap-proto/fix"
+},
+{
+"li": "zap-proto/fiber Go 0 0 Fork of gofiber/fiber v3 — adds specificity-based route precedence (ServeMux-1.22 semantics) natively in the router Pushed Nov 6, 2026 Forge",
+"href": "https://github.com/zap-proto/fiber"
+},
+{
+"li": "zap-proto/erlang Erlang 0 0 ZAP for Erlang / Elixir Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zap-proto/erlang"
+},
+{
+"li": "zap-proto/dev MDX 0 0 ZAP developer portal — quickstart, SDK docs, protocol reference Pushed Nov 6, 2026 Forge",
+"href": "https://github.com/zap-proto/dev"
+},
+{
+"li": "zap-proto/d C++ 0 0 ZAP for D Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zap-proto/d"
+},
+{
+"li": "zap-proto/cs C# 0 0 ZAP for .NET / C# Pushed Nov 6, 2026 18 commits this year Forge",
+"href": "https://github.com/zap-proto/cs"
+},
+{
+"li": "zap-proto/cpp-core C++ 0 0 ZAP for C++ — pure codec, no RPC layer Pushed Nov 6, 2026 145 commits this year Forge",
+"href": "https://github.com/zap-proto/cpp-core"
+},
+{
+"li": "zap-proto/cpp C++ 0 0 ZAP for C++ — full SDK (codec + RPC + transports) Pushed Nov 6, 2026 15 commits this year Forge",
+"href": "https://github.com/zap-proto/cpp"
+},
+{
+"li": "zap-proto/c C 0 0 ZAP for C — C ABI for FFI and embedding Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/zap-proto/c"
+},
+{
+"li": "zap-proto/benchmarks Python 0 0 ZAP benchmark suite — apples-to-apples perf vs. Protobuf, JSON, FlatBuffers Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/zap-proto/benchmarks"
+},
+{
+"li": "zap-proto/bench Go 0 0 ZAP-HTTP vs net/http memory + latency benchmark Pushed Nov 6, 2026 10 commits this year Forge",
+"href": "https://github.com/zap-proto/bench"
+},
+{
+"li": "zap-proto/acp ZAP 0 0 Agent Communication Protocol over ZAP — FIPA-style speech acts, signed Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zap-proto/acp"
+},
+{
+"li": "zap-proto/a2a ZAP 0 0 Google Agent-to-Agent (A2A) over ZAP — agent cards, tasks, artifacts Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/zap-proto/a2a"
+},
+{
+"li": "zap-proto/docs 0 0 ZAP documentation site — redirects to zap-proto.dev Pushed Jun 25, 2026 2 commits this year Forge",
+"href": "https://github.com/zap-proto/docs"
+}
+]
+]

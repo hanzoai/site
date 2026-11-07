@@ -1,0 +1,256 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Google Models via Hanzo AI"
+},
+{
+"p": "51 models available"
+},
+{
+"p": "Access all 51 Google models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Gemini 2.5 Flash 1M Gemini 2.5 Flash is Google's state-of-the-art workhorse model, specifically designed for advanced reasoning, coding, mathematics, and scientific tasks. It includes built-in \"thinking\" capabilities, enabling it to provide responses with greater... text",
+"href": "/models/google/gemini-2.5-flash"
+},
+{
+"a": "Nano Banana (Gemini 2.5 Flash Image) 33K Gemini 2.5 Flash Image, a.k.a. \"Nano Banana,\" is now generally available. It is a state of the art image generation model with contextual understanding. It is capable of image generation,... image text",
+"href": "/models/google/gemini-2.5-flash-image"
+},
+{
+"a": "Gemini 2.5 Flash Lite 1M Gemini 2.5 Flash-Lite is a lightweight reasoning model in the Gemini 2.5 family, optimized for ultra-low latency and cost efficiency. It offers improved throughput, faster token generation, and better performance... text",
+"href": "/models/google/gemini-2.5-flash-lite"
+},
+{
+"a": "Gemini 2.5 Pro 1M Gemini 2.5 Pro is Google’s state-of-the-art AI model designed for advanced reasoning, coding, mathematics, and scientific tasks. It employs “thinking” capabilities, enabling it to reason through responses with enhanced accuracy... text",
+"href": "/models/google/gemini-2.5-pro"
+},
+{
+"a": "Gemini 2.5 Pro Preview 06-05 1M Gemini 2.5 Pro is Google’s state-of-the-art AI model designed for advanced reasoning, coding, mathematics, and scientific tasks. It employs “thinking” capabilities, enabling it to reason through responses with enhanced accuracy... text",
+"href": "/models/google/gemini-2.5-pro-preview"
+},
+{
+"a": "Gemini 3 Flash Preview 1M Gemini 3 Flash Preview is a high speed, high value thinking model designed for agentic workflows, multi turn chat, and coding assistance. It delivers near Pro level reasoning and tool... text",
+"href": "/models/google/gemini-3-flash-preview"
+},
+{
+"a": "Gemini 3 Flash Preview (batch) 1M Gemini 3 Flash Preview is a high speed, high value thinking model designed for agentic workflows, multi turn chat, and coding assistance. It delivers near Pro level reasoning and tool... text",
+"href": "/models/google/gemini-3-flash-preview:batch"
+},
+{
+"a": "Nano Banana Pro (Gemini 3 Pro Image) 131K Nano Banana Pro is Google’s most advanced image-generation and editing model, built on Gemini 3 Pro. It extends the original Nano Banana with significantly improved multimodal reasoning, real-world grounding, and... image text",
+"href": "/models/google/gemini-3-pro-image"
+},
+{
+"a": "Nano Banana Pro (Gemini 3 Pro Image Preview) 66K Nano Banana Pro is Google’s most advanced image-generation and editing model, built on Gemini 3 Pro. It extends the original Nano Banana with significantly improved multimodal reasoning, real-world grounding, and... image text",
+"href": "/models/google/gemini-3-pro-image-preview"
+},
+{
+"a": "Nano Banana 2 (Gemini 3.1 Flash Image) 131K Gemini 3.1 Flash Image, a.k.a. \"Nano Banana 2,\" is Google’s latest state of the art image generation and editing model, delivering Pro-level visual quality at Flash speed. It combines advanced... image text",
+"href": "/models/google/gemini-3.1-flash-image"
+},
+{
+"a": "Nano Banana 2 (Gemini 3.1 Flash Image Preview) 66K Gemini 3.1 Flash Image Preview, a.k.a. \"Nano Banana 2,\" is Google’s latest state of the art image generation and editing model, delivering Pro-level visual quality at Flash speed. It combines... image text",
+"href": "/models/google/gemini-3.1-flash-image-preview"
+},
+{
+"a": "Gemini 3.1 Flash Lite 1M Gemini 3.1 Flash Lite is Google’s GA high-efficiency multimodal model optimized for low-latency, high-volume workloads. It supports text, image, video, audio, and PDF inputs, and is designed for lightweight agentic... text",
+"href": "/models/google/gemini-3.1-flash-lite"
+},
+{
+"a": "Nano Banana 2 Lite (Gemini 3.1 Flash Lite Image) 66K Nano Banana 2 Lite (Gemini 3.1 Flash Lite Image) is Google's fastest, most cost-efficient Gemini image model, built for high-velocity developer pipelines and rapid-fire visual exploration. It delivers text-to-image generation... image text",
+"href": "/models/google/gemini-3.1-flash-lite-image"
+},
+{
+"a": "Gemini 3.1 Flash Lite Preview 1M Gemini 3.1 Flash Lite Preview is Google's high-efficiency model optimized for high-volume use cases. It outperforms Gemini 2.5 Flash Lite on overall quality and approaches Gemini 2.5 Flash performance across... text",
+"href": "/models/google/gemini-3.1-flash-lite-preview"
+},
+{
+"a": "Gemini 3.1 Flash Lite (batch) 1M Gemini 3.1 Flash Lite is Google’s GA high-efficiency multimodal model optimized for low-latency, high-volume workloads. It supports text, image, video, audio, and PDF inputs, and is designed for lightweight agentic... text",
+"href": "/models/google/gemini-3.1-flash-lite:batch"
+},
+{
+"a": "Gemini 3.1 Flash TTS Preview Gemini 3.1 Flash TTS Preview is a text-to-speech model from Google, and a substantial generational step up from Gemini 2.5 Flash TTS. It takes text input and produces audio output... speech",
+"href": "/models/google/gemini-3.1-flash-tts-preview"
+},
+{
+"a": "Gemini 3.1 Pro Preview 1M Gemini 3.1 Pro Preview is Google’s frontier reasoning model, delivering enhanced software engineering performance, improved agentic reliability, and more efficient token usage across complex workflows. Building on the multimodal foundation... text",
+"href": "/models/google/gemini-3.1-pro-preview"
+},
+{
+"a": "Gemini 3.1 Pro Preview Custom Tools 1M Gemini 3.1 Pro Preview Custom Tools is a variant of Gemini 3.1 Pro that improves tool selection behavior by preventing overuse of a general bash tool when more efficient third-party... text",
+"href": "/models/google/gemini-3.1-pro-preview-customtools"
+},
+{
+"a": "Gemini 3.1 Pro Preview (batch) 1M Gemini 3.1 Pro Preview is Google’s frontier reasoning model, delivering enhanced software engineering performance, improved agentic reliability, and more efficient token usage across complex workflows. Building on the multimodal foundation... text",
+"href": "/models/google/gemini-3.1-pro-preview:batch"
+},
+{
+"a": "Gemini 3.5 Flash 1M Gemini 3.5 Flash is Google's high-efficiency multimodal model, bringing near-Pro level coding and reasoning at Flash-tier cost and speed. It is highly optimized for coding proficiency and parallel agentic execution... text",
+"href": "/models/google/gemini-3.5-flash"
+},
+{
+"a": "Gemini 3.5 Flash Lite 1M Gemini 3.5 Flash Lite is a high-efficiency model from Google with upgraded agentic capabilities. It is suited for subagents that execute focused tasks within complex, multi-agent workflows. text",
+"href": "/models/google/gemini-3.5-flash-lite"
+},
+{
+"a": "Gemini 3.5 Flash Lite (batch) 1M Gemini 3.5 Flash Lite is a high-efficiency model from Google with upgraded agentic capabilities. It is suited for subagents that execute focused tasks within complex, multi-agent workflows. text",
+"href": "/models/google/gemini-3.5-flash-lite:batch"
+},
+{
+"a": "Gemini 3.5 Flash (batch) 1M Gemini 3.5 Flash is Google's high-efficiency multimodal model, bringing near-Pro level coding and reasoning at Flash-tier cost and speed. It is highly optimized for coding proficiency and parallel agentic execution... text",
+"href": "/models/google/gemini-3.5-flash:batch"
+},
+{
+"a": "Gemini 3.6 Flash 1M Gemini 3.6 Flash is a high-efficiency model from Google for coding, agentic workflows, and web and app development. It is designed to produce polished outputs with fewer unnecessary edits and... text",
+"href": "/models/google/gemini-3.6-flash"
+},
+{
+"a": "Gemini 3.6 Flash (batch) 1M Gemini 3.6 Flash is a high-efficiency model from Google for coding, agentic workflows, and web and app development. It is designed to produce polished outputs with fewer unnecessary edits and... text",
+"href": "/models/google/gemini-3.6-flash:batch"
+},
+{
+"a": "Gemini 3.7 Flash 1M Gemini 3.7 Flash is a multimodal model from Google for fast agentic workflows, coding, and complex multi-step reasoning. It is designed for tasks that require responsive performance and reliable multi-step... text",
+"href": "/models/google/gemini-3.7-flash"
+},
+{
+"a": "Gemini 3.7 Flash (batch) 1M Gemini 3.7 Flash is a multimodal model from Google for fast agentic workflows, coding, and complex multi-step reasoning. It is designed for tasks that require responsive performance and reliable multi-step... text",
+"href": "/models/google/gemini-3.7-flash:batch"
+},
+{
+"a": "Gemini 3.8 Flash 1M Gemini 3.8 Flash is Google's most intelligent Flash model with significant gains from 3.7 Flash across software engineering, agentic tasks, and multi-step reasoning. text",
+"href": "/models/google/gemini-3.8-flash"
+},
+{
+"a": "Gemini 3.8 Flash Lite TTS Gemini 3.8 Flash Lite TTS is a text-to-speech model from Google and the fast, high-throughput member of the 3.8 TTS family alongside [Gemini 3.8 Flash TTS](https://openrouter.ai/google/gemini-3.8-flash-tts). It is suited for... speech",
+"href": "/models/google/gemini-3.8-flash-lite-tts"
+},
+{
+"a": "Gemini 3.8 Flash TTS Gemini 3.8 Flash TTS is a text-to-speech model from Google and the successor to [Gemini 3.1 Flash TTS Preview](https://openrouter.ai/google/gemini-3.1-flash-tts-preview). It is the creative tier of the 3.8 TTS family, suited... speech",
+"href": "/models/google/gemini-3.8-flash-tts"
+},
+{
+"a": "Gemini 3.8 Flash (batch) 1M Gemini 3.8 Flash is Google's most intelligent Flash model with significant gains from 3.7 Flash across software engineering, agentic tasks, and multi-step reasoning. text",
+"href": "/models/google/gemini-3.8-flash:batch"
+},
+{
+"a": "Gemini 4 Argon 1M Gemini 4 Argon is Google's flagship reasoning model, built for complex software engineering, deep mathematical and scientific problem solving, and autonomous multi-step agents. Google trained it to keep context across... text",
+"href": "/models/google/gemini-4-argon"
+},
+{
+"a": "Gemini 4 Argon (batch) 1M Gemini 4 Argon is Google's flagship reasoning model, built for complex software engineering, deep mathematical and scientific problem solving, and autonomous multi-step agents. Google trained it to keep context across... text",
+"href": "/models/google/gemini-4-argon:batch"
+},
+{
+"a": "Nano Banana 2.1 66K Nano Banana 2.1 (Gemini Nano Banana 2.1) is Google's image generation and editing model on the Flash tier, succeeding Nano Banana 2 and Nano Banana Pro. It improves product recontextualization,... image text",
+"href": "/models/google/gemini-nano-banana-2.1"
+},
+{
+"a": "Gemini Omni 1.1 Flash 131K Gemini Omni 1.1 Flash is Google's native multimodal video generation and editing model, the generally available successor to Gemini Omni Flash Preview. It is suited for text-to-video, image-to-video, first and... text video",
+"href": "/models/google/gemini-omni-1.1-flash"
+},
+{
+"a": "Gemini Omni 1.2 Flash 131K Gemini Omni 1.2 Flash is Google's native multimodal video generation and editing model, the successor to Gemini Omni 1.1 Flash. It generates clips up to 15 seconds long with native... text video",
+"href": "/models/google/gemini-omni-1.2-flash"
+},
+{
+"a": "Gemma 2 27B 8K Gemma 2 27B by Google is an open model built from the same research and technology used to create the [Gemini models](/models?q=gemini). Gemma models are well-suited for a variety of... text",
+"href": "/models/google/gemma-2-27b-it"
+},
+{
+"a": "Gemma 3 12B 131K Gemma 3 introduces multimodality, supporting vision-language input and text outputs. It handles context windows up to 128k tokens, understands over 140 languages, and offers improved math, reasoning, and chat capabilities,... text",
+"href": "/models/google/gemma-3-12b-it"
+},
+{
+"a": "Gemma 3 27B 131K Gemma 3 introduces multimodality, supporting vision-language input and text outputs. It handles context windows up to 128k tokens, understands over 140 languages, and offers improved math, reasoning, and chat capabilities,... text",
+"href": "/models/google/gemma-3-27b-it"
+},
+{
+"a": "Gemma 3 4B 131K Gemma 3 introduces multimodality, supporting vision-language input and text outputs. It handles context windows up to 128k tokens, understands over 140 languages, and offers improved math, reasoning, and chat capabilities,... text",
+"href": "/models/google/gemma-3-4b-it"
+},
+{
+"a": "Gemma 4 26B A4B 262K Gemma 4 26B A4B IT is an instruction-tuned Mixture-of-Experts (MoE) model from Google DeepMind. Despite 25.2B total parameters, only 3.8B activate per token during inference — delivering near-31B quality at... text",
+"href": "/models/google/gemma-4-26b-a4b-it"
+},
+{
+"a": "Gemma 4 26B A4B  (free) 262K Gemma 4 26B A4B IT is an instruction-tuned Mixture-of-Experts (MoE) model from Google DeepMind. Despite 25.2B total parameters, only 3.8B activate per token during inference — delivering near-31B quality at... text",
+"href": "/models/google/gemma-4-26b-a4b-it:free"
+},
+{
+"a": "Gemma 4 31B 262K Gemma 4 31B Instruct is Google DeepMind's 30.7B dense multimodal model supporting text and image input with text output. Features a 256K token context window, configurable thinking/reasoning mode, native function... text",
+"href": "/models/google/gemma-4-31b-it"
+},
+{
+"a": "Gemma 4 31B (free) 262K Gemma 4 31B Instruct is Google DeepMind's 30.7B dense multimodal model supporting text and image input with text output. Features a 256K token context window, configurable thinking/reasoning mode, native function... text",
+"href": "/models/google/gemma-4-31b-it:free"
+},
+{
+"a": "Lyria 3 Clip Preview 1M 30 second duration clips are priced at $0.04 per clip. Lyria 3 is Google's family of music generation models, available through the Gemini API. With Lyria 3, you can generate... text audio",
+"href": "/models/google/lyria-3-clip-preview"
+},
+{
+"a": "Lyria 3 Pro Preview 1M Full-length songs are priced at $0.08 per song. Lyria 3 is Google's family of music generation models, available through the Gemini API. With Lyria 3, you can generate high-quality, 48kHz... text audio",
+"href": "/models/google/lyria-3-pro-preview"
+},
+{
+"a": "Veo 3.1 Google's state-of-the-art video generation model, built for maximum visual fidelity in final production cuts. Veo 3.1 generates high-quality 1080p video from text or image prompts with native synchronized audio —... video",
+"href": "/models/google/veo-3.1"
+},
+{
+"a": "Veo 3.1 Fast Google's mid-tier video generation model balancing speed and quality. Veo 3.1 Fast generates high-quality video from text or image prompts with native synchronized audio, offering faster turnaround than Veo 3.1... video",
+"href": "/models/google/veo-3.1-fast"
+},
+{
+"a": "Veo 3.1 Lite Google's most cost-effective video generation model, designed for high-volume applications and rapid iteration. Veo 3.1 Lite generates 720p and 1080p video from text or image prompts with native synchronized audio... video",
+"href": "/models/google/veo-3.1-lite"
+},
+{
+"a": "Gemini Flash Latest 1M This model always redirects to the latest model in the Gemini Flash family. text",
+"href": "/models/google/gemini-flash-latest"
+},
+{
+"a": "Gemini Pro Latest 1M This model always redirects to the latest model in the Gemini Pro family. text",
+"href": "/models/google/gemini-pro-latest"
+}
+],
+[
+{
+"h2": "Use Google models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

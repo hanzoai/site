@@ -1,0 +1,236 @@
+[
+[
+{
+"h1": "Tag @Hanzo in Slack. Ship code, canvases, and pull requests in the thread."
+},
+{
+"p": "Hanzo Tag brings autonomous Code Channels, live Canvas summaries, branch diffs, and WIMSE-federated cloud agents straight into your existing Slack workspace."
+},
+{
+"li": "Mention @Hanzo in any channel or thread to investigate bugs, query repositories, draft canvases, and open pull requests."
+},
+{
+"li": "Dedicated Code Channels pair your Slack thread with live Code, View, and Canvas artifacts so engineering and design iterate together."
+},
+{
+"li": "Enterprise WIMSE federated workload identity binds AWS IAM roles, GCP Workload Identity, verified gateways, and RFC 7523 auth servers."
+},
+{
+"li": "Full auditability with Scheduled Work, Memory, and Network event logs plus organization spend caps in Hanzo Admin Settings."
+},
+{
+"a": "Set up Hanzo Tag",
+"href": "/settings/organization/products?tab=tag"
+},
+{
+"a": "Configure Federated Access (WIMSE)",
+"href": "/settings/organization/products?tab=tag&sub=federated"
+},
+{
+"a": "Slack integration docs",
+"href": "https://docs.hanzo.ai/docs/openapi/channel"
+},
+{
+"p": "Organization-scoped security: Hanzo Tag only reads channels where @Hanzo is added, uses federated workload identities instead of personal accounts, and never trains on your Slack data."
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Tag from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Tag in my project."
+}
+],
+[
+{
+"p": "What it is"
+},
+{
+"h2": "Your Slack channels become live engineering & operations rooms"
+},
+{
+"p": "Keep context where your team already talks — without switching between chat, tickets, and diff viewers."
+},
+{
+"h3": "Code Channels in Slack"
+},
+{
+"p": "Spin up a session channel for a bug or feature. @Hanzo searches your codebase, proposes the fix, loops in reviewers, and opens the PR."
+},
+{
+"h3": "Live Canvas & Diff Artifacts"
+},
+{
+"p": "Every session produces structured root-cause Canvases, unified git diffs, and interactive visual previews alongside the conversation."
+},
+{
+"h3": "Federated Agent Access (WIMSE)"
+},
+{
+"p": "Authenticate agents to AWS, GCP, and internal gateways using short-lived cryptographic workload tokens instead of static secrets."
+}
+],
+[
+{
+"p": "Built for Slack teams"
+},
+{
+"h2": "From @Hanzo mention to merged pull request"
+},
+{
+"h3": "Explicit @Hanzo invocation"
+},
+{
+"p": "Hanzo stays quiet until tagged or scheduled. It reads only the channels it belongs to and responds right inside the thread."
+},
+{
+"h3": "GitHub & GitLab branch workflows"
+},
+{
+"p": "Reads files, compares branches, runs test suites in isolated cloud sandboxes, and pushes verified commits to your repository."
+},
+{
+"h3": "Shared organization MCP connectors"
+},
+{
+"p": "Grant Hanzo Tag access to the MCP connectors your organization has already configured — Linear, Sentry, Datadog, Notion, and more."
+},
+{
+"h3": "Scheduled channel routines"
+},
+{
+"p": "Run recurring morning triage, release readiness checks, and incident summaries that post directly to designated Slack channels."
+},
+{
+"h3": "WIMSE Cloud Roles & RFC 7523 Auth"
+},
+{
+"p": "Configure AWS/GCP IAM role ARNs, active-probed gateways, and OAuth JWT bearer authorization servers in Organization Settings."
+},
+{
+"h3": "Activity & network audit logs"
+},
+{
+"p": "Inspect every scheduled run, workspace memory entry, and outbound network event from the Hanzo Tag Activity console."
+},
+{
+"a": "Open Hanzo Tag Activity Console",
+"href": "/settings/organization/products?tab=tag&sub=activity"
+}
+],
+[
+{
+"p": "Unified agent platform"
+},
+{
+"h2": "Works alongside Hanzo Team, Hanzo Bot, and Hanzo in Chrome"
+},
+{
+"h3": "Hanzo Tag (/slack)"
+},
+{
+"p": "Native Slack integration with Code Channels, Canvas summaries, and WIMSE workload federation."
+},
+{
+"h3": "Hanzo Team (hanzo.team)"
+},
+{
+"p": "First-party AI-native workspace with built-in Code Channels, Board, Drive, Calendar, Meet, and Inbox."
+},
+{
+"h3": "Hanzo Bot (hanzo.bot)"
+},
+{
+"p": "Always-on resident bots with dedicated sandbox computers that connect to Slack, Discord, Telegram, WhatsApp, and iMessage."
+},
+{
+"h3": "Hanzo in Chrome (/chrome)"
+},
+{
+"p": "Side-panel browser agent that captures live DOM/network repros and sends them straight to your Slack code channel."
+},
+{
+"a": "Explore Hanzo Team",
+"href": "/team"
+}
+],
+[
+{
+"h2": "Turn any Slack channel into a live coding session with @Hanzo."
+},
+{
+"p": "Mention @Hanzo in a channel or spin up a dedicated code channel. Inspect every file read, review live Canvas summaries and unified git diffs side-by-side, and merge the pull request without leaving the thread."
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/dev.svg",
+"alt": ""
+},
+{
+"img": "/memoji/sci.svg",
+"alt": ""
+},
+{
+"a": "Hanzo Team",
+"href": "/team"
+},
+{
+"a": "Hanzo Tag for Slack",
+"href": "/slack"
+},
+{
+"a": "Hanzo Tag Governance",
+"href": "/tag"
+},
+{
+"a": "Hanzo in Chrome",
+"href": "/chrome"
+},
+{
+"a": "Hanzo Bot",
+"href": "/bot"
+}
+],
+[
+{
+"p": "Hanzo Tag"
+},
+{
+"h2": "Connect @Hanzo to your Slack workspace in three steps."
+},
+{
+"p": "Available on Team and Enterprise plans with usage-based channel billing, spend caps, and zero training on your workspace conversations."
+},
+{
+"a": "Connect Slack Workspace",
+"href": "/settings/organization/products?tab=tag"
+},
+{
+"a": "Explore Hanzo Team",
+"href": "/team"
+},
+{
+"a": "Explore Hanzo in Chrome",
+"href": "/chrome"
+}
+],
+[
+{
+"h2": "Get Hanzo Tag"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

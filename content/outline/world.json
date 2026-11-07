@@ -1,0 +1,100 @@
+[
+[
+{
+"h1": "Hanzo World"
+},
+{
+"p": "World Monitor — global AI-system observability"
+},
+{
+"a": "Open World Monitor",
+"href": "https://world.hanzo.ai"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/cli/world"
+},
+{
+"img": "/models/koe.webp",
+"alt": ""
+},
+{
+"p": "A real-time map of every model, agent, and tool call. Trace any request from edge to GPU."
+},
+{
+"p": "P50/P95/P99 by model and route. Per-org and per-user spend. Auto-anomaly on cost spikes."
+},
+{
+"p": "Embedding drift, output drift, prompt drift. Alert when production diverges from baseline."
+},
+{
+"p": "Continuous evals on live traffic. Pin scores. Compare model versions in production."
+},
+{
+"p": "Pulls signals from Hanzo Cloud, AWS, GCP, Azure, and self-hosted clusters. One unified view."
+},
+{
+"p": "Reconstruct any agent session step by step. Inspect tool calls, prompts, model outputs, and IO."
+},
+{
+"li": "Live Topology"
+},
+{
+"li": "Latency + Cost"
+},
+{
+"li": "Drift Detection"
+},
+{
+"li": "Eval Dashboards"
+},
+{
+"li": "Multi-Cloud"
+},
+{
+"li": "Forensic Replay"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls World from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo World in my project. Start with: hanzo world news"
+}
+],
+[
+{
+"h2": "Run AI With Confidence"
+},
+{
+"p": "Free for the first million events / month."
+},
+{
+"a": "Open World Monitor",
+"href": "https://world.hanzo.ai"
+}
+],
+[
+{
+"h2": "Get World"
+},
+{
+"p": "3D world building"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

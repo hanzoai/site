@@ -1,0 +1,167 @@
+[
+[
+{
+"h1": "One risk plane for accounts, payments and agents"
+},
+{
+"p": "Two faces over one engine, at two different stages. Available now — the compliance face, at api.hanzo.ai/v1/aml: monitoring, alerts, cases, rules, sanctions screening, relationship lookback and a retained-record clock. In development — the decide plane, which will score an account, a transaction, a session or an agent and return a decision you can explain, from a model trained on your organization's own data rather than a pooled model of somebody else's traffic."
+}
+],
+[
+{
+"h2": "Where this is today"
+},
+{
+"p": "Hanzo Risk is two faces over one engine, and they are not at the same stage. The compliance face is live at api.hanzo.ai/v1/aml , behind your Hanzo identity: monitoring, alerts, cases, rules, sanctions screening, relationship lookback, and a retained-record plane that keeps a five-year clock."
+},
+{
+"p": "Its source is public and every rule cites the instrument it implements, so what this page claims can be read back out of the code. It is not open source : the engine is licensed under the Lux Ecosystem License — free for research and on Lux networks, and licensed separately for commercial use anywhere else."
+},
+{
+"p": "The decide plane — /v1/risk , everything else on this page — and the shared model plane behind both are being built. Every capability below says which of the two it is."
+}
+],
+[
+{
+"h2": "Available now: the compliance face"
+},
+{
+"p": "Anti-money-laundering monitoring is a different job from stopping fraud, and it is the half that is live. It is one face of the same engine, not a separate product."
+}
+],
+[
+{
+"h2": "The customer lifecycle"
+},
+{
+"p": "In development. Loss does not arrive at one moment, so the plane will not watch one moment. Same call, same record, same model at each stage — the stage is a field."
+}
+],
+[
+{
+"h2": "What it decides on"
+},
+{
+"p": "In development. Fraud is a use of a scoring plane, not a product that sits beside one. One call will judge an account, a transaction, a session or an agent."
+}
+],
+[
+{
+"h2": "Your data, your model"
+},
+{
+"p": "In development. The endpoint your events already arrive through is live; reading those events as features, and training on them, is what is being built."
+},
+{
+"p": "Most fraud products score you against a pooled model built from other people’s traffic. Hanzo already holds yours. Analytics, product events and errors arrive through one endpoint — POST /v1/event — and are stored as rows scoped to your organization, beside your model usage, in a warehouse Hanzo runs and every tenant shares. That endpoint is live today. Reading those events as features and training on them is what is coming: your users, your products, your normal."
+},
+{
+"p": "The boundary is the hard part, and the commitment is that it will be enforced in the code rather than asserted in a policy. A feature read will not be expressible without a tenant. The organization will come from your verified identity, never from a field a caller can set. Anything shared across organizations will be an aggregate — published quantiles, with no organization, no subject and no identifier in the row — and a bucket too few organizations contributed to will not be published at all. The model is meant to be per organization down to its geometry, so that two organizations do not merely keep separate counters; they have separate models."
+},
+{
+"p": "Two of the properties that plane needs are already in the engine’s behavioural model, and it is those that will be carried forward. A score there is attributable by construction: move one input back to its neutral value, score again, and the drop is that input’s contribution — no second model is asked to explain the first. And a statistical judgement may summon a person; it may not decline anything on its own, a ceiling the engine refuses to start above. On the live deployment that model runs in shadow : it scores, and it contributes nothing to any transaction’s outcome."
+}
+],
+[
+{
+"h2": "Agents are not bots"
+},
+{
+"p": "In development. This is the argument for building the decide plane here rather than buying one, not a description of something running today."
+},
+{
+"p": "A user-agent string cannot tell you whether traffic is a scraper or a customer’s agent doing work it was asked to do. The plane will not read one."
+},
+{
+"p": "Hanzo runs agents. An agent transacting here has a registration in your organization, a credential of a known class, a live session and metered usage — four facts about our own platform rather than four guesses about a client. Traffic carrying them will be treated as an agent and get the agent policy. Traffic that declares nothing and authenticates as nobody will be in the anonymous lane and bounded like one."
+},
+{
+"p": "Treating a customer’s agent as a bad bot is a lost sale. Treating a bad bot as an agent is a loss. The difference has to be computed, and computing it needs facts only the platform the agent runs on has."
+}
+],
+[
+{
+"h2": "Rules, lists and suppression"
+},
+{
+"p": "In development."
+}
+],
+[
+{
+"h2": "Platforms and marketplaces"
+},
+{
+"p": "In development."
+},
+{
+"p": "If you run a platform, your risk is your sellers as much as your buyers. Risk will declare a control against a subject — hold a payout, set a reserve, restrict a merchant, block a suspect transaction — and the money plane will read it. Risk will never move money itself."
+},
+{
+"p": "That separation is deliberate. The thing that decides and the thing that pays should not be the same thing, and a control that is a written record rather than a side effect is one you can still account for a year later."
+}
+],
+[
+{
+"h2": "How it connects"
+},
+{
+"p": "In development. Risk will ingest signals and return a decision. Everything about how you take money stays where it is."
+}
+],
+[
+{
+"h2": "Plans"
+},
+{
+"p": "In development. Four tiers, each a subscription with screens included and metered beyond that on the Hanzo bill you already have. A screen is one decision about one transaction, account or customer. Nothing here is priced yet."
+}
+],
+[
+{
+"h2": "What this is not"
+},
+{
+"p": "Hanzo does not process payments — your processor does, and Hanzo Commerce owns the money plane. There is no dispute-network integration today: Risk assembles the evidence, you submit it. No figure on this page is a customer result, because the decide plane has not carried customer traffic yet. When it has, the numbers here will be ours and measured."
+},
+{
+"a": "Hanzo Commerce",
+"href": "/commerce"
+},
+{
+"p": "Three unmet requirements decide whether this is enough on its own, and they are named here rather than left to be found. There is no report workflow — no drafting, no approval step, no filing. There is no filing clock, so no deadline is measured anywhere. And there is no confidentiality marking on a case, so nothing in the engine keeps a case note away from the customer. What is here is the detection and the record; the filing is not."
+},
+{
+"p": "Anti-money-laundering compliance and fraud prevention are related jobs, not one job. /v1/aml is the compliance face, /v1/risk is the decide plane, and one engine serves both. Nearby: identity verification for proving who somebody is, Guard for what a model is allowed to say, and Analytics for the event plane the model reads."
+},
+{
+"a": "identity verification",
+"href": "/idv"
+},
+{
+"a": "Guard",
+"href": "/guard"
+},
+{
+"a": "Analytics",
+"href": "/analytics"
+}
+],
+[
+{
+"h2": "Next"
+},
+{
+"a": "Talk to us Tell us which stage is costing you, and help shape what the tiers include.",
+"href": "/contact-sales"
+},
+{
+"a": "The API One base URL and one key for every Hanzo capability, including this one.",
+"href": "/api"
+},
+{
+"a": "The engine, source available The monitoring engine underneath the compliance face, under the Lux Ecosystem License. Read it and check the citations; commercial use outside a Lux network is licensed separately.",
+"href": "https://github.com/luxfi/aml"
+}
+]
+]

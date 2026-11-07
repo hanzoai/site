@@ -1,0 +1,495 @@
+[
+[
+{
+"h1": "Hanzo Commerce"
+},
+{
+"p": "Products, carts, checkout, orders and returns behind an API, with no storefront attached."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/commerce"
+},
+{
+"a": "API Platform",
+"href": "https://platform.hanzo.ai"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "A product holds the description; a variant holds the size, the colour and the price."
+},
+{
+"p": "A cart is a real object with its own id, so someone can leave and come back."
+},
+{
+"p": "Hold the money when the order is placed."
+},
+{
+"p": "Take it when the box ships."
+},
+{
+"p": "A return is a first-class object rather than a note in a support ticket."
+},
+{
+"li": "Product and variant"
+},
+{
+"li": "Cart"
+},
+{
+"li": "Authorize"
+},
+{
+"li": "Capture"
+},
+{
+"li": "Refund or return"
+}
+],
+[
+{
+"h2": "What it keeps track of"
+},
+{
+"p": "The nouns a shop is made of, each one addressable and none of them assuming what your site looks like."
+},
+{
+"h3": "Carts"
+},
+{
+"p": "A cart is a real object with its own id, so someone can leave and come back, and you can look at what they left in it."
+},
+{
+"h3": "Products and variants"
+},
+{
+"p": "A product holds the description; a variant holds the size, the colour and the price. Stock is tracked on the variant, which is the thing people actually buy."
+},
+{
+"h3": "Authorize and capture"
+},
+{
+"p": "Two steps, not one. Hold the money when the order is placed and take it when the box ships, which is what your accountant and your customer both expect."
+},
+{
+"h3": "Coupons and discounts"
+},
+{
+"p": "Applied to a cart or to an invoice, and recorded as their own line. The reason a total came out lower survives the transaction."
+},
+{
+"h3": "Prices per store"
+},
+{
+"p": "One catalogue can answer differently for different stores. The product does not have to be duplicated to be priced twice."
+},
+{
+"h3": "Subscriptions"
+},
+{
+"p": "Plans, prices and renewals sit in the same service as the orders, so a customer who buys once and subscribes once is one customer with one history."
+},
+{
+"h3": "Orders, refunds and returns"
+},
+{
+"p": "The whole life of an order, including the parts nobody demos. A return is a first-class object rather than a note in a support ticket."
+},
+{
+"h3": "Many stores, one install"
+},
+{
+"p": "Stores are scoped by organisation, so an agency or a marketplace runs several without running several copies of this."
+},
+{
+"h3": "It never sees a card"
+},
+{
+"p": "Card numbers are tokenized in a separate service and this one only ever holds the token. That is a smaller thing to secure, and a much smaller thing to be audited on."
+},
+{
+"h3": "Your data, per tenant"
+},
+{
+"p": "Each organisation's records live in its own store. Isolation is a file boundary rather than a WHERE clause somebody has to remember to write."
+}
+],
+[
+{
+"h2": "The endpoints"
+},
+{
+"p": "Grouped by what they are about. Every one of them is scoped to your organisation by the token you call with, so multi-tenancy is not something you implement on top."
+},
+{
+"h3": "Hanzo Commerce API Endpoints"
+},
+{
+"p": "List all carts for the current session/user"
+},
+{
+"p": "Get details for a specific cart"
+},
+{
+"p": "Update cart items and quantities"
+},
+{
+"p": "Remove a cart"
+},
+{
+"p": "Capture payment for a previously authorized checkout"
+},
+{
+"p": "Process a direct checkout charge"
+},
+{
+"p": "Authorize payment for later capture"
+},
+{
+"p": "Get a specific product collection"
+},
+{
+"p": "List all product collections"
+},
+{
+"p": "List all available coupons"
+},
+{
+"p": "Get details for a specific coupon"
+},
+{
+"p": "List all available discounts"
+},
+{
+"p": "Get details for a specific discount"
+},
+{
+"p": "Get a specific order"
+},
+{
+"p": "List all orders"
+},
+{
+"p": "Process a refund for an order"
+},
+{
+"p": "View payment details for an order"
+},
+{
+"p": "Capture payment for a previously authorized order"
+},
+{
+"p": "List all products"
+},
+{
+"p": "Get a specific product"
+},
+{
+"p": "Get details for a specific return"
+},
+{
+"p": "List all returns"
+},
+{
+"p": "List all product reviews"
+},
+{
+"p": "Get a specific product review"
+},
+{
+"p": "Get a specific store"
+},
+{
+"p": "List all stores"
+},
+{
+"p": "Deploy a site/storefront"
+},
+{
+"p": "Get a specific product in a store"
+},
+{
+"p": "Get a specific variant in a store"
+},
+{
+"p": "Get a specific product variant"
+},
+{
+"p": "List all product variants"
+}
+],
+[
+{
+"h2": "When to reach for it"
+},
+{
+"p": "Four shapes that fit. If none of them is yours, a hosted shop is probably the easier answer."
+},
+{
+"h3": "A storefront you designed"
+},
+{
+"p": "You have a front end you like and do not want a theme system telling you how it works. This gives you the catalogue, the cart and the checkout as calls, and stays out of the rendering."
+},
+{
+"h3": "One catalogue, several stores"
+},
+{
+"p": "A brand with regional shops, or an agency running stores for clients. Stores are scoped by organisation and can price the same product differently."
+},
+{
+"h3": "Selling a subscription and a thing"
+},
+{
+"p": "Hardware with a plan, or a course with a membership. Orders and subscriptions are in one service, so the customer has one history rather than two accounts."
+},
+{
+"h3": "Taking payment inside your own product"
+},
+{
+"p": "You are not building a shop, you are charging for what you already made. Use the checkout, the invoices and the meters, and ignore the rest."
+}
+],
+[
+{
+"h2": "Who takes the money"
+},
+{
+"p": "The processor is a setting, not an architecture. Each one gets its own webhook endpoint, so adding a second — or leaving the first — is a change here rather than a change in your checkout."
+},
+{
+"h3": "Payment Gateways"
+},
+{
+"li": "Stripe"
+},
+{
+"li": "PayPal"
+},
+{
+"li": "Adyen"
+},
+{
+"li": "Square"
+},
+{
+"li": "Braintree"
+},
+{
+"li": "Klarna"
+},
+{
+"li": "Affirm"
+},
+{
+"li": "Apple Pay"
+},
+{
+"h3": "Marketing & CRM"
+},
+{
+"li": "Mailchimp"
+},
+{
+"li": "Klaviyo"
+},
+{
+"li": "HubSpot"
+},
+{
+"li": "Salesforce"
+},
+{
+"li": "Segment"
+},
+{
+"li": "Meta Pixel"
+},
+{
+"li": "Google Analytics"
+},
+{
+"li": "Customer.io"
+},
+{
+"h3": "Shipping & Fulfillment"
+},
+{
+"li": "ShipStation"
+},
+{
+"li": "ShipBob"
+},
+{
+"li": "EasyPost"
+},
+{
+"li": "FedEx"
+},
+{
+"li": "UPS"
+},
+{
+"li": "USPS"
+},
+{
+"li": "DHL"
+},
+{
+"li": "AfterShip"
+},
+{
+"h3": "Accounting & ERP"
+},
+{
+"li": "QuickBooks"
+},
+{
+"li": "Xero"
+},
+{
+"li": "NetSuite"
+},
+{
+"li": "SAP"
+},
+{
+"li": "Avalara"
+},
+{
+"li": "TaxJar"
+},
+{
+"li": "Sage"
+},
+{
+"li": "Microsoft Dynamics"
+}
+],
+[
+{
+"h2": "What you are running"
+},
+{
+"p": "Worth knowing before you put your revenue behind it."
+},
+{
+"h3": "One Go binary"
+},
+{
+"p": "A single container with no queue, no cache tier and no companion services to stand up beside it. Run it locally the same way it runs in production."
+},
+{
+"h3": "A store per organisation"
+},
+{
+"p": "Tenants are separated by where their data lives rather than by a column, so one tenant's query cannot reach another's rows."
+},
+{
+"h3": "Outside the card boundary"
+},
+{
+"p": "Card numbers are tokenized by a separate service. This one is connected to that boundary without being inside it, which is the whole point of drawing one."
+},
+{
+"h3": "Identity from Hanzo IAM"
+},
+{
+"p": "Sign-in, organisations and tokens come from IAM. There is no second user table here to fall out of step with the first."
+},
+{
+"h3": "Mounts into the cloud binary"
+},
+{
+"p": "It runs on its own or as a subsystem inside the unified Hanzo Cloud binary. Same code, same routes, one fewer process to operate."
+},
+{
+"h3": "Open source"
+},
+{
+"p": "MIT or Apache-2.0, your choice. Read how your money is handled instead of taking our word for it."
+}
+],
+[
+{
+"h2": "Create a product, then sell it"
+},
+{
+"p": "The whole thing runs from one container. Point your front end at it and take an order."
+},
+{
+"h3": "Start Selling"
+},
+{
+"p": "Launch your store with our easy-to-use platform"
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"h3": "Documentation"
+},
+{
+"p": "Explore our guides and API references"
+},
+{
+"a": "View Docs",
+"href": "https://docs.hanzo.ai/docs/cli/commerce"
+},
+{
+"h3": "For Developers"
+},
+{
+"p": "Integrate our APIs into your applications"
+},
+{
+"a": "API Reference",
+"href": "https://docs.hanzo.ai/docs"
+}
+],
+[
+{
+"h3": "Need a Custom Solution?"
+},
+{
+"p": "Our team of experts can help you design and implement a tailored e-commerce solution for your unique business needs."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "Get started with Commerce"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/commerce"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Commerce"
+},
+{
+"p": "Headless commerce + AI recommendations"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

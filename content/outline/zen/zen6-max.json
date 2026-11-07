@@ -1,0 +1,118 @@
+[
+[
+{
+"h1": "Zen 6 Max"
+},
+{
+"p": "Zen 6 Max. Built for the hardest work: deep reasoning, long context, and code."
+},
+{
+"a": "Talk to sales",
+"href": "/contact-sales"
+},
+{
+"a": "Run it on your own GPUs",
+"href": "/enterprise"
+}
+],
+[
+{
+"h3": "One name"
+},
+{
+"p": "You call Zen 6 Max. One model, one API, one bill."
+},
+{
+"h3": "Right-sized per request"
+},
+{
+"p": "Each request runs on the configuration built for that kind of work."
+},
+{
+"h3": "Long context"
+},
+{
+"p": "Long context for large codebases and long documents."
+},
+{
+"h3": "Tools and code"
+},
+{
+"p": "Tool calls and code generation, built in."
+}
+],
+[
+{
+"p": "Enterprise deployment"
+},
+{
+"h2": "On your own premises"
+},
+{
+"p": "What a rack for Zen 6 Max is made of."
+},
+{
+"p": "We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises. Routing cuts the average inference work a request needs. It does not cut the memory needed to keep every specialist ready."
+},
+{
+"h2": "DGX B300"
+},
+{
+"p": "NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory"
+},
+{
+"a": "NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory",
+"href": "https://docs.nvidia.com/dgx/dgxb300-user-guide/introduction-to-dgxb300.html"
+},
+{
+"h2": "DGX B200"
+},
+{
+"p": "NVIDIA DGX B200 user guide: 1,440 GB total GPU memory"
+},
+{
+"a": "NVIDIA DGX B200 user guide: 1,440 GB total GPU memory",
+"href": "https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html"
+},
+{
+"p": "Four B300 servers hold 9,216 GB of GPU memory; four B200 servers hold 5,760 GB."
+},
+{
+"h3": "Planning range"
+},
+{
+"p": "Qualification . Four 8-GPU servers is where a qualification starts."
+},
+{
+"p": "Isolated production pools . One pool for each specialist, so a busy class of work never takes memory from another."
+},
+{
+"p": "Redundant pools . Two independent replicas of those pools across failure domains."
+},
+{
+"h3": "Around the servers"
+},
+{
+"p": "NVLink and NVSwitch inside each server."
+},
+{
+"p": "400 or 800 Gb/s RDMA wherever a specialist spans servers."
+},
+{
+"p": "About 31 TB of NVMe in each server (8 x 3.84 TB)."
+},
+{
+"p": "Separate sandbox workers for coding agents."
+},
+{
+"p": "A high-availability control cluster."
+},
+{
+"p": "Final capacity and performance commitments come from qualifying your workload: context length, concurrency, routing mix, latency, and failover."
+},
+{
+"a": "Talk to sales",
+"href": "/contact-sales"
+}
+]
+]

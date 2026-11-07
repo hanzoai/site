@@ -1,0 +1,129 @@
+[
+[
+{
+"h1": "What protects your data, and how."
+},
+{
+"p": "Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified."
+},
+{
+"a": "Talk to Security Team",
+"href": "/contact"
+},
+{
+"a": "Security Documentation",
+"href": "https://docs.hanzo.ai/docs/cli/security"
+},
+{
+"a": "The controls, and how to check them",
+"href": "/trust"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"p": "At rest, each organization is its own file on Hanzo Base, and where a master key is configured each file opens under its own key, derived through HKDF-SHA256. In transit the edge speaks TLS 1.3 and offers hybrid ML-KEM-768 key exchange to clients that support it, so their traffic captured today cannot be read by a quantum computer later."
+},
+{
+"p": "An authenticator app, or a code by SMS or email, with recovery codes. Enrolment hands out the material and demands it back before it writes anything, and adding or dropping a factor signs the account out of every other browser — a stolen session that outlives the change is the same as not having the factor."
+},
+{
+"p": "A key is told apart from a token by its prefix, so nothing has to guess what it was handed. Tokens are refused outright if they carry an HMAC signature or no algorithm at all, and a refresh token is single-use — presenting a spent one revokes its whole family rather than the one token."
+},
+{
+"p": "Access is a grant at a place: an organization, a workspace under it, a project under that. A check asks whether some grant the caller holds covers the path and admits the verb. One rule, no special cases, and the decision is a function call rather than a service that can be down."
+},
+{
+"p": "Anything that arrives claiming to be an org, a user or an email is deleted at the gateway before a single handler reads it. Identity is written back only from a verified token. Inside the cluster, services reach each other over a binary protocol rather than the public internet."
+},
+{
+"p": "An organization is a tenancy boundary, and on Hanzo Base it is a physical one — a different organization is a different database file, so no query can reach across two. Dedicated and self-hosted deployments pin that file to a region you choose."
+},
+{
+"li": "Encryption at Rest and in Transit"
+},
+{
+"li": "Second Factors"
+},
+{
+"li": "Keys and Tokens"
+},
+{
+"li": "Who May Reach What"
+},
+{
+"li": "The Edge Throws Identity Away"
+},
+{
+"li": "Where It Sits"
+}
+],
+[
+{
+"h2": "What runs underneath"
+},
+{
+"p": "Workloads sit in hardware-virtualised machines on managed Kubernetes, in data centres with physical access control and redundant power. Secrets never reach a manifest — they are fetched from Hanzo KMS at boot, and outside development a service refuses to start without a verified issuer, audience and key set rather than falling back to running open."
+},
+{
+"h3": "Or none of our infrastructure at all"
+},
+{
+"p": "Every piece named on this page is a binary you can run yourself. The strongest answer to a question about our infrastructure is that you do not have to use it."
+}
+],
+[
+{
+"h2": "If you are the one who has to sign off"
+},
+{
+"p": "Bring the control you are required to demonstrate and we will show you the code that implements it, or tell you plainly that it does not exist yet. A control we cannot point at is one you should not put your name to."
+},
+{
+"p": "Where a requirement is not met, the honest options are usually self-hosting, a dedicated deployment, or waiting. Our engineers will say which one applies rather than selling you the gap."
+},
+{
+"h3": "What comes with Enterprise"
+},
+{
+"p": "An engineer who has read your deployment, retention you set rather than inherit, and somebody to answer the questionnaire your procurement team is about to send."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h3": "Found something"
+},
+{
+"p": "Email us rather than opening a public issue, and include a reproduction if you have one. A real report from a stranger is worth more than an internal review, and we answer quickly."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#0576606670776c717c456d646b7f6a2b646c"
+}
+],
+[
+{
+"h2": "Ask us the hard question"
+},
+{
+"p": "Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Schedule Security Review",
+"href": "/contact-sales"
+},
+{
+"a": "Read the security documentation",
+"href": "https://docs.hanzo.ai/docs/cli/security"
+}
+]
+]

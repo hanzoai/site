@@ -1,0 +1,76 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Aion Labs Models via Hanzo AI"
+},
+{
+"p": "6 models available"
+},
+{
+"p": "Access all 6 Aion Labs models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Aion-2.0 131K Aion-2.0 is a variant of DeepSeek V3.2 optimized for immersive roleplaying and storytelling. It is particularly strong at introducing tension, crises, and conflict into stories, making narratives feel more engaging.... text",
+"href": "/models/aion-labs/aion-2.0"
+},
+{
+"a": "Aion-3.0 131K Aion-3.0 is a multi-model roleplaying and storytelling system from AionLabs, built on the GLM family of models. It uses a collaborative generation process in which multiple specialized models each contribute... text",
+"href": "/models/aion-labs/aion-3.0"
+},
+{
+"a": "Aion-3.0-Mini 131K Aion-3.0 Mini is a multi-model roleplaying and storytelling system from AionLabs, built on the DeepSeek family of models. It uses a collaborative generation process in which multiple specialized models each... text",
+"href": "/models/aion-labs/aion-3.0-mini"
+},
+{
+"a": "Aion 3.5 262K Aion 3.5 is a multi-model roleplaying and storytelling system from AionLabs, built on the GLM family of models. It uses a collaborative generation process in which multiple specialized models each... text",
+"href": "/models/aion-labs/aion-3.5"
+},
+{
+"a": "Aion 3.5 Mini 262K Aion 3.5 Mini is a multi-model roleplaying and storytelling system from AionLabs, built on the GLM family of models. It is the smaller, lower-cost sibling of Aion 3.5 and uses... text",
+"href": "/models/aion-labs/aion-3.5-mini"
+},
+{
+"a": "Aion-RP 1.0 (8B) 33K Aion-RP-Llama-3.1-8B ranks the highest in the character evaluation portion of the RPBench-Auto benchmark, a roleplaying-specific variant of Arena-Hard-Auto, where LLMs evaluate each other’s responses. It is a fine-tuned base model... text",
+"href": "/models/aion-labs/aion-rp-llama-3.1-8b"
+}
+],
+[
+{
+"h2": "Use Aion Labs models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

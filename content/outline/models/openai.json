@@ -1,0 +1,376 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "OpenAI Models via Hanzo AI"
+},
+{
+"p": "81 models available"
+},
+{
+"p": "Access all 81 OpenAI models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "GPT-3.5 Turbo (older v0613) 4K GPT-3.5 Turbo is OpenAI's fastest model. It can understand and generate natural language or code, and is optimized for chat and traditional completion tasks.\n\nTraining data up to Sep 2021. text",
+"href": "/models/openai/gpt-3.5-turbo-0613"
+},
+{
+"a": "GPT-3.5 Turbo 16k 16K This model offers four times the context length of gpt-3.5-turbo, allowing it to support approximately 20 pages of text in a single request at a higher cost. Training data: up... text",
+"href": "/models/openai/gpt-3.5-turbo-16k"
+},
+{
+"a": "GPT-4 8K OpenAI's flagship model, GPT-4 is a large-scale multimodal language model capable of solving difficult problems with greater accuracy than previous models due to its broader general knowledge and advanced reasoning... text",
+"href": "/models/openai/gpt-4"
+},
+{
+"a": "GPT-4.1 1M GPT-4.1 is a flagship large language model optimized for advanced instruction following, real-world software engineering, and long-context reasoning. It supports a 1 million token context window and outperforms GPT-4o and... text",
+"href": "/models/openai/gpt-4.1"
+},
+{
+"a": "GPT-4.1 Mini 1M GPT-4.1 Mini is a mid-sized model delivering performance competitive with GPT-4o at substantially lower latency and cost. It retains a 1 million token context window and scores 45.1% on hard... text",
+"href": "/models/openai/gpt-4.1-mini"
+},
+{
+"a": "GPT-4.1 Nano 1M For tasks that demand low latency, GPT‑4.1 nano is the fastest and cheapest model in the GPT-4.1 series. It delivers exceptional performance at a small size with its 1 million... text",
+"href": "/models/openai/gpt-4.1-nano"
+},
+{
+"a": "GPT-4o 128K GPT-4o (\"o\" for \"omni\") is OpenAI's latest AI model, supporting both text and image inputs with text outputs. It maintains the intelligence level of [GPT-4 Turbo](/models/openai/gpt-4-turbo) while being twice as... text",
+"href": "/models/openai/gpt-4o"
+},
+{
+"a": "GPT-4o (2024-05-13) 128K GPT-4o (\"o\" for \"omni\") is OpenAI's latest AI model, supporting both text and image inputs with text outputs. It maintains the intelligence level of [GPT-4 Turbo](/models/openai/gpt-4-turbo) while being twice as... text",
+"href": "/models/openai/gpt-4o-2024-05-13"
+},
+{
+"a": "GPT-4o (2024-08-06) 128K The 2024-08-06 version of GPT-4o offers improved performance in structured outputs, with the ability to supply a JSON schema in the respone_format. Read more [here](https://openai.com/index/introducing-structured-outputs-in-the-api/). GPT-4o (\"o\" for \"omni\") is... text",
+"href": "/models/openai/gpt-4o-2024-08-06"
+},
+{
+"a": "GPT-4o (2024-11-20) 128K The 2024-11-20 version of GPT-4o offers a leveled-up creative writing ability with more natural, engaging, and tailored writing to improve relevance & readability. It’s also better at working with uploaded... text",
+"href": "/models/openai/gpt-4o-2024-11-20"
+},
+{
+"a": "GPT-4o-mini 128K GPT-4o mini is OpenAI's newest model after [GPT-4 Omni](/models/openai/gpt-4o), supporting both text and image inputs with text outputs. As their most advanced small model, it is many multiples more affordable... text",
+"href": "/models/openai/gpt-4o-mini"
+},
+{
+"a": "GPT-4o-mini (2024-07-18) 128K GPT-4o mini is OpenAI's newest model after [GPT-4 Omni](/models/openai/gpt-4o), supporting both text and image inputs with text outputs. As their most advanced small model, it is many multiples more affordable... text",
+"href": "/models/openai/gpt-4o-mini-2024-07-18"
+},
+{
+"a": "GPT-5 400K GPT-5 is OpenAI’s most advanced model, offering major improvements in reasoning, code quality, and user experience. It is optimized for complex tasks that require step-by-step reasoning, instruction following, and accuracy... text",
+"href": "/models/openai/gpt-5"
+},
+{
+"a": "GPT-5 Image 400K [GPT-5](https://openrouter.ai/openai/gpt-5) Image combines OpenAI's GPT-5 model with state-of-the-art image generation capabilities. It offers major improvements in reasoning, code quality, and user experience while incorporating GPT Image 1's superior instruction following,... image text",
+"href": "/models/openai/gpt-5-image"
+},
+{
+"a": "GPT-5 Image Mini 400K GPT-5 Image Mini combines OpenAI's advanced language capabilities, powered by [GPT-5 Mini](https://openrouter.ai/openai/gpt-5-mini), with GPT Image 1 Mini for efficient image generation. This natively multimodal model features superior instruction following, text... image text",
+"href": "/models/openai/gpt-5-image-mini"
+},
+{
+"a": "GPT-5 Mini 400K GPT-5 Mini is a compact version of GPT-5, designed to handle lighter-weight reasoning tasks. It provides the same instruction-following and safety-tuning benefits as GPT-5, but with reduced latency and cost.... text",
+"href": "/models/openai/gpt-5-mini"
+},
+{
+"a": "GPT-5 Nano 400K GPT-5-Nano is the smallest and fastest variant in the GPT-5 system, optimized for developer tools, rapid interactions, and ultra-low latency environments. While limited in reasoning depth compared to its larger... text",
+"href": "/models/openai/gpt-5-nano"
+},
+{
+"a": "GPT-5 Nano (batch) 400K GPT-5-Nano is the smallest and fastest variant in the GPT-5 system, optimized for developer tools, rapid interactions, and ultra-low latency environments. While limited in reasoning depth compared to its larger... text",
+"href": "/models/openai/gpt-5-nano:batch"
+},
+{
+"a": "GPT-5 Pro 400K GPT-5 Pro is OpenAI’s most advanced model, offering major improvements in reasoning, code quality, and user experience. It is optimized for complex tasks that require step-by-step reasoning, instruction following, and... text",
+"href": "/models/openai/gpt-5-pro"
+},
+{
+"a": "GPT-5.1 400K GPT-5.1 is the latest frontier-grade model in the GPT-5 series, offering stronger general-purpose reasoning, improved instruction adherence, and a more natural conversational style compared to GPT-5. It uses adaptive reasoning... text",
+"href": "/models/openai/gpt-5.1"
+},
+{
+"a": "GPT-5.1-Codex 400K GPT-5.1-Codex is a specialized version of GPT-5.1 optimized for software engineering and coding workflows. It is designed for both interactive development sessions and long, independent execution of complex engineering tasks.... text",
+"href": "/models/openai/gpt-5.1-codex"
+},
+{
+"a": "GPT-5.1-Codex-Max 400K GPT-5.1-Codex-Max is OpenAI’s latest agentic coding model, designed for long-running, high-context software development tasks. It is based on an updated version of the 5.1 reasoning stack and trained on agentic... text",
+"href": "/models/openai/gpt-5.1-codex-max"
+},
+{
+"a": "GPT-5.1-Codex-Mini 400K GPT-5.1-Codex-Mini is a smaller and faster version of GPT-5.1-Codex text",
+"href": "/models/openai/gpt-5.1-codex-mini"
+},
+{
+"a": "GPT-5.2 400K GPT-5.2 is the latest frontier-grade model in the GPT-5 series, offering stronger agentic and long context perfomance compared to GPT-5.1. It uses adaptive reasoning to allocate computation dynamically, responding quickly... text",
+"href": "/models/openai/gpt-5.2"
+},
+{
+"a": "GPT-5.2-Codex 400K GPT-5.2-Codex is an upgraded version of GPT-5.1-Codex optimized for software engineering and coding workflows. It is designed for both interactive development sessions and long, independent execution of complex engineering tasks.... text",
+"href": "/models/openai/gpt-5.2-codex"
+},
+{
+"a": "GPT-5.2 Pro 400K GPT-5.2 Pro is OpenAI’s most advanced model, offering major improvements in agentic coding and long context performance over GPT-5 Pro. It is optimized for complex tasks that require step-by-step reasoning,... text",
+"href": "/models/openai/gpt-5.2-pro"
+},
+{
+"a": "GPT-5.3-Codex 400K GPT-5.3-Codex is OpenAI’s most advanced agentic coding model, combining the frontier software engineering performance of GPT-5.2-Codex with the broader reasoning and professional knowledge capabilities of GPT-5.2. It achieves state-of-the-art results... text",
+"href": "/models/openai/gpt-5.3-codex"
+},
+{
+"a": "GPT-5.4 1M GPT-5.4 is OpenAI’s latest frontier model, unifying the Codex and GPT lines into a single system. It features a 1M+ token context window (922K input, 128K output) with support for... text",
+"href": "/models/openai/gpt-5.4"
+},
+{
+"a": "GPT-5.4 Image 2 272K [GPT-5.4](https://openrouter.ai/openai/gpt-5.4) Image 2 combines OpenAI's GPT-5.4 model with state-of-the-art image generation capabilities from GPT Image 2. It enables rich multimodal workflows, allowing users to seamlessly move between reasoning, coding, and... image text",
+"href": "/models/openai/gpt-5.4-image-2"
+},
+{
+"a": "GPT-5.4 Mini 400K GPT-5.4 mini brings the core capabilities of GPT-5.4 to a faster, more efficient model optimized for high-throughput workloads. It supports text and image inputs with strong performance across reasoning, coding,... text",
+"href": "/models/openai/gpt-5.4-mini"
+},
+{
+"a": "GPT-5.4 Nano 400K GPT-5.4 nano is the most lightweight and cost-efficient variant of the GPT-5.4 family, optimized for speed-critical and high-volume tasks. It supports text and image inputs and is designed for low-latency... text",
+"href": "/models/openai/gpt-5.4-nano"
+},
+{
+"a": "GPT-5.4 Pro 1M GPT-5.4 Pro is OpenAI's most advanced model, building on GPT-5.4's unified architecture with enhanced reasoning capabilities for complex, high-stakes tasks. It features a 1M+ token context window (922K input, 128K... text",
+"href": "/models/openai/gpt-5.4-pro"
+},
+{
+"a": "GPT-5.5 1M GPT-5.5 is OpenAI’s frontier model designed for complex professional workloads, building on GPT-5.4 with stronger reasoning, higher reliability, and improved token efficiency on hard tasks. It features a 1M+ token... text",
+"href": "/models/openai/gpt-5.5"
+},
+{
+"a": "GPT-5.5 Pro 1M GPT-5.5 Pro is OpenAI’s high-capability model optimized for deep reasoning and accuracy on complex, high-stakes workloads. It features a 1M+ token context window (922K input, 128K output) with support for... text",
+"href": "/models/openai/gpt-5.5-pro"
+},
+{
+"a": "GPT-5.6 Luna 1M GPT-5.6 Luna is a fast, cost-efficient model in OpenAI's GPT-5.6 series. It is suited for high-volume, latency-sensitive tasks such as chat, classification, and lightweight agentic workflows, providing capable reasoning for... text",
+"href": "/models/openai/gpt-5.6-luna"
+},
+{
+"a": "GPT-5.6 Luna Pro 1M GPT-5.6 Luna Pro is the same underlying model as [GPT-5.6 Luna](https://openrouter.ai/openai/gpt-5.6-luna), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-5.6-luna-pro"
+},
+{
+"a": "GPT-5.6 Luna Pro (batch) 1M GPT-5.6 Luna Pro is the same underlying model as [GPT-5.6 Luna](https://openrouter.ai/openai/gpt-5.6-luna), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-5.6-luna-pro:batch"
+},
+{
+"a": "GPT-5.6 Luna (batch) 1M GPT-5.6 Luna is a fast, cost-efficient model in OpenAI's GPT-5.6 series. It is suited for high-volume, latency-sensitive tasks such as chat, classification, and lightweight agentic workflows, providing capable reasoning for... text",
+"href": "/models/openai/gpt-5.6-luna:batch"
+},
+{
+"a": "GPT-5.6 Sol 1M GPT-5.6 Sol is the flagship model in OpenAI's GPT-5.6 series. It is suited for complex reasoning, coding, and agentic workflows, and is particularly strong at command-line and multi-step coding tasks... text",
+"href": "/models/openai/gpt-5.6-sol"
+},
+{
+"a": "GPT-5.6 Sol Pro 1M GPT-5.6 Sol Pro is the same underlying model as [GPT-5.6 Sol](https://openrouter.ai/openai/gpt-5.6-sol), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-5.6-sol-pro"
+},
+{
+"a": "GPT-5.6 Sol Pro (batch) 1M GPT-5.6 Sol Pro is the same underlying model as [GPT-5.6 Sol](https://openrouter.ai/openai/gpt-5.6-sol), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-5.6-sol-pro:batch"
+},
+{
+"a": "GPT-5.6 Sol (batch) 1M GPT-5.6 Sol is the flagship model in OpenAI's GPT-5.6 series. It is suited for complex reasoning, coding, and agentic workflows, and is particularly strong at command-line and multi-step coding tasks... text",
+"href": "/models/openai/gpt-5.6-sol:batch"
+},
+{
+"a": "GPT-5.6 Terra 1M GPT-5.6 Terra is a balanced model in OpenAI's GPT-5.6 series, positioned between the flagship Sol tier and the cost-efficient Luna tier. It is suited for everyday coding, reasoning, and agentic... text",
+"href": "/models/openai/gpt-5.6-terra"
+},
+{
+"a": "GPT-5.6 Terra Pro 1M GPT-5.6 Terra Pro is the same underlying model as [GPT-5.6 Terra](https://openrouter.ai/openai/gpt-5.6-terra), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-5.6-terra-pro"
+},
+{
+"a": "GPT-5.6 Terra Pro (batch) 1M GPT-5.6 Terra Pro is the same underlying model as [GPT-5.6 Terra](https://openrouter.ai/openai/gpt-5.6-terra), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-5.6-terra-pro:batch"
+},
+{
+"a": "GPT-5.6 Terra (batch) 1M GPT-5.6 Terra is a balanced model in OpenAI's GPT-5.6 series, positioned between the flagship Sol tier and the cost-efficient Luna tier. It is suited for everyday coding, reasoning, and agentic... text",
+"href": "/models/openai/gpt-5.6-terra:batch"
+},
+{
+"a": "GPT-6 Astra 1M GPT-6 Astra is OpenAI's flagship model for demanding end-to-end work. It is suited for advanced analysis, software engineering, deep research, scientific work, and document creation, with particular strengths in long-horizon... text",
+"href": "/models/openai/gpt-6-astra"
+},
+{
+"a": "GPT-6 Astra Pro 1M GPT-6 Astra Pro is the same underlying model as [GPT-6 Astra](https://openrouter.ai/openai/gpt-6-astra), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6-astra-pro"
+},
+{
+"a": "GPT-6 Astra Pro (batch) 1M GPT-6 Astra Pro is the same underlying model as [GPT-6 Astra](https://openrouter.ai/openai/gpt-6-astra), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6-astra-pro:batch"
+},
+{
+"a": "GPT-6 Astra (batch) 1M GPT-6 Astra is OpenAI's flagship model for demanding end-to-end work. It is suited for advanced analysis, software engineering, deep research, scientific work, and document creation, with particular strengths in long-horizon... text",
+"href": "/models/openai/gpt-6-astra:batch"
+},
+{
+"a": "GPT-6 Luna 1M GPT-6 Luna is the fast, cost-efficient model in OpenAI's GPT-6 series, positioned below GPT-6 Sol. It is suited for high-volume and latency-sensitive workloads such as chat, classification, and lightweight agentic... text",
+"href": "/models/openai/gpt-6-luna"
+},
+{
+"a": "GPT-6 Luna Pro 1M GPT-6 Luna Pro is the same underlying model as [GPT-6 Luna](https://openrouter.ai/openai/gpt-6-luna), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6-luna-pro"
+},
+{
+"a": "GPT-6 Luna Pro (batch) 1M GPT-6 Luna Pro is the same underlying model as [GPT-6 Luna](https://openrouter.ai/openai/gpt-6-luna), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6-luna-pro:batch"
+},
+{
+"a": "GPT-6 Luna (batch) 1M GPT-6 Luna is the fast, cost-efficient model in OpenAI's GPT-6 series, positioned below GPT-6 Sol. It is suited for high-volume and latency-sensitive workloads such as chat, classification, and lightweight agentic... text",
+"href": "/models/openai/gpt-6-luna:batch"
+},
+{
+"a": "GPT-6 Sol 1M GPT-6 Sol is the cost-efficient high-end model in OpenAI's GPT-6 series, positioned below the flagship GPT-6 Astra and above the fast GPT-6 Luna tier. It is suited for demanding professional... text",
+"href": "/models/openai/gpt-6-sol"
+},
+{
+"a": "GPT-6 Sol Pro 1M GPT-6 Sol Pro is the same underlying model as [GPT-6 Sol](https://openrouter.ai/openai/gpt-6-sol), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6-sol-pro"
+},
+{
+"a": "GPT-6 Sol Pro (batch) 1M GPT-6 Sol Pro is the same underlying model as [GPT-6 Sol](https://openrouter.ai/openai/gpt-6-sol), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6-sol-pro:batch"
+},
+{
+"a": "GPT-6 Sol (batch) 1M GPT-6 Sol is the cost-efficient high-end model in OpenAI's GPT-6 series, positioned below the flagship GPT-6 Astra and above the fast GPT-6 Luna tier. It is suited for demanding professional... text",
+"href": "/models/openai/gpt-6-sol:batch"
+},
+{
+"a": "GPT-6.1 Sol 1M GPT-6.1 Sol is an upgrade to GPT-6 Sol from OpenAI, positioned below the flagship GPT-6 Astra in the GPT-6 series. It is suited for agentic coding, computer use, document-heavy professional... text",
+"href": "/models/openai/gpt-6.1-sol"
+},
+{
+"a": "GPT-6.1 Sol Pro 1M GPT-6.1 Sol Pro is the same underlying model as [GPT-6.1 Sol](https://openrouter.ai/openai/gpt-6.1-sol), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6.1-sol-pro"
+},
+{
+"a": "GPT-6.1 Sol Pro (batch) 1M GPT-6.1 Sol Pro is the same underlying model as [GPT-6.1 Sol](https://openrouter.ai/openai/gpt-6.1-sol), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6.1-sol-pro:batch"
+},
+{
+"a": "GPT-6.1 Sol (batch) 1M GPT-6.1 Sol is an upgrade to GPT-6 Sol from OpenAI, positioned below the flagship GPT-6 Astra in the GPT-6 series. It is suited for agentic coding, computer use, document-heavy professional... text",
+"href": "/models/openai/gpt-6.1-sol:batch"
+},
+{
+"a": "GPT-6.1 Terra 1M GPT-6.1 Terra is the mid-tier model in OpenAI's GPT-6.1 series, priced below GPT-6.1 Sol. It is suited for everyday agentic, coding, and writing work, is particularly strong at understanding screenshots... text",
+"href": "/models/openai/gpt-6.1-terra"
+},
+{
+"a": "GPT-6.1 Terra Pro 1M GPT-6.1 Terra Pro is the same underlying model as [GPT-6.1 Terra](https://openrouter.ai/openai/gpt-6.1-terra), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6.1-terra-pro"
+},
+{
+"a": "GPT-6.1 Terra Pro (batch) 1M GPT-6.1 Terra Pro is the same underlying model as [GPT-6.1 Terra](https://openrouter.ai/openai/gpt-6.1-terra), served with `reasoning.mode` set to `pro` for higher-quality responses on complex tasks. **Cost note:** pro mode spends far more... text",
+"href": "/models/openai/gpt-6.1-terra-pro:batch"
+},
+{
+"a": "GPT-6.1 Terra (batch) 1M GPT-6.1 Terra is the mid-tier model in OpenAI's GPT-6.1 series, priced below GPT-6.1 Sol. It is suited for everyday agentic, coding, and writing work, is particularly strong at understanding screenshots... text",
+"href": "/models/openai/gpt-6.1-terra:batch"
+},
+{
+"a": "GPT Audio 128K The gpt-audio model is OpenAI's first generally available audio model. The new snapshot features an upgraded decoder for more natural sounding voices and maintains better voice consistency. Audio is priced... text audio",
+"href": "/models/openai/gpt-audio"
+},
+{
+"a": "GPT Audio Mini 128K A cost-efficient version of GPT Audio. The new snapshot features an upgraded decoder for more natural sounding voices and maintains better voice consistency. Input is priced at $0.60 per million... text audio",
+"href": "/models/openai/gpt-audio-mini"
+},
+{
+"a": "GPT Chat Latest 400K GPT Chat Latest points to OpenAI's stable API alias `chat-latest` that always resolves to the latest Instant chat model used in ChatGPT. As OpenAI rolls out new Instant model updates... text",
+"href": "/models/openai/gpt-chat-latest"
+},
+{
+"a": "gpt-oss-120b 131K gpt-oss-120b is an open-weight, 117B-parameter Mixture-of-Experts (MoE) language model from OpenAI designed for high-reasoning, agentic, and general-purpose production use cases. It activates 5.1B parameters per forward pass and is optimized... text",
+"href": "/models/openai/gpt-oss-120b"
+},
+{
+"a": "gpt-oss-120b (batch) 131K gpt-oss-120b is an open-weight, 117B-parameter Mixture-of-Experts (MoE) language model from OpenAI designed for high-reasoning, agentic, and general-purpose production use cases. It activates 5.1B parameters per forward pass and is optimized... text",
+"href": "/models/openai/gpt-oss-120b:batch"
+},
+{
+"a": "gpt-oss-20b 131K gpt-oss-20b is an open-weight 21B parameter model released by OpenAI under the Apache 2.0 license. It uses a Mixture-of-Experts (MoE) architecture with 3.6B active parameters per forward pass, optimized for... text",
+"href": "/models/openai/gpt-oss-20b"
+},
+{
+"a": "gpt-oss-20b (batch) 131K gpt-oss-20b is an open-weight 21B parameter model released by OpenAI under the Apache 2.0 license. It uses a Mixture-of-Experts (MoE) architecture with 3.6B active parameters per forward pass, optimized for... text",
+"href": "/models/openai/gpt-oss-20b:batch"
+},
+{
+"a": "gpt-oss-safeguard-20b 131K gpt-oss-safeguard-20b is a safety reasoning model from OpenAI built upon gpt-oss-20b. This open-weight, 21B-parameter Mixture-of-Experts (MoE) model offers lower latency for safety tasks like content classification, LLM filtering, and trust... text",
+"href": "/models/openai/gpt-oss-safeguard-20b"
+},
+{
+"a": "o3 200K o3 is a well-rounded and powerful model across domains. It sets a new standard for math, science, coding, and visual reasoning tasks. It also excels at technical writing and instruction-following.... text",
+"href": "/models/openai/o3"
+},
+{
+"a": "o3 Pro 200K The o-series of models are trained with reinforcement learning to think before they answer and perform complex reasoning. The o3-pro model uses more compute to think harder and provide consistently... text",
+"href": "/models/openai/o3-pro"
+},
+{
+"a": "GPT Astra Latest 1M This model always redirects to the latest model in the GPT Astra family. text",
+"href": "/models/openai/gpt-astra-latest"
+},
+{
+"a": "GPT Luna Latest 1M This model always redirects to the latest model in the GPT Luna family. text",
+"href": "/models/openai/gpt-luna-latest"
+},
+{
+"a": "GPT Mini Latest 400K This model always redirects to the latest model in the GPT Mini family. text",
+"href": "/models/openai/gpt-mini-latest"
+},
+{
+"a": "GPT Sol Latest 1M This model always redirects to the latest model in the GPT Sol family. text",
+"href": "/models/openai/gpt-sol-latest"
+},
+{
+"a": "GPT Terra Latest 1M This model always redirects to the latest model in the GPT Terra family. text",
+"href": "/models/openai/gpt-terra-latest"
+}
+],
+[
+{
+"h2": "Use OpenAI models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

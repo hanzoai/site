@@ -1,0 +1,187 @@
+[
+[
+{
+"p": "Benchmarks / Engine prefill on CUDA vs llama.cpp"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"h1": "Engine prefill on CUDA vs llama.cpp"
+},
+{
+"p": "hanzo-engine against llama.cpp on CUDA, built against the same weights and run on the same box: prefill throughput at the prompt lengths where the whole 95% interval of the ratio lies above parity."
+},
+{
+"a": "hanzoai/engine · bench/dossier",
+"href": "https://github.com/hanzoai/engine/tree/bench/dossier/bench-runs"
+},
+{
+"a": "Refutation-Driven Performance Engineering",
+"href": "https://papers.hanzo.ai/refutation-driven-perf"
+},
+{
+"code": "scripts/dossier.sh --backend cuda --model <same.gguf> -p 512,500,2048,4096 -n 128 -r 7"
+},
+{
+"p": "prints the table on this page — transcribed from the committed run files on branch bench/dossier, the pass of 2026-07-21"
+},
+{
+"h2": "What is measured"
+},
+{
+"p": "hanzo-engine and llama.cpp, built against the same weights, run on the same box, alternating. Prefill is tokens per second at a given prompt length, and the ratio is ours over theirs, so above 1.000 is a win. The models are Zen-1.7B at Q4_K_M and Zen-4B at Q4_K_M; 7 repetitions per cell, as its run records, with the first discarded as warmup, a Student-t 95% interval on each engine, and the ratio's interval formed by adding the two relative intervals in quadrature."
+},
+{
+"p": "The verdict is the harness's, not a reading of ours: WIN where the whole interval lies above 1.000 and neither engine's coefficient of variation exceeded 5%, which is how the harness says the box was quiet. Every cell below is one."
+},
+{
+"h2": "Prefill on CUDA, cell by cell"
+},
+{
+"p": "3 cells from 2 runs on branch bench/dossier · engine 1.7.87 · each run pins its engine release, its llama.cpp build and its model digest, and is linked below"
+},
+{
+"code": "bench/dossier"
+},
+{
+"table": [
+[
+"backend",
+"model",
+"quant",
+"prompt tokens",
+"llama.cpp t/s",
+"hanzo t/s",
+"ratio",
+"95% interval",
+"verdict"
+],
+[
+"CUDA",
+"Zen-1.7B",
+"Q4_K_M",
+"500",
+"7250.2",
+"7961.3",
+"1.098",
+"1.053 – 1.143",
+"WIN"
+],
+[
+"CUDA",
+"Zen-1.7B",
+"Q4_K_M",
+"4096",
+"6871.3",
+"7474.8",
+"1.088",
+"1.051 – 1.125",
+"WIN"
+],
+[
+"CUDA",
+"Zen-4B",
+"Q4_K_M",
+"2048",
+"3592.5",
+"3774.4",
+"1.051",
+"1.017 – 1.085",
+"WIN"
+]
+]
+},
+{
+"h2": "The work that produced it"
+},
+{
+"p": "Refutation-Driven Performance Engineering is the campaign that produced these kernels, written as a log of numbered hypotheses, each settled by a cheap decisive experiment. A long prefill is compute-bound, which is where that work landed."
+},
+{
+"a": "Refutation-Driven Performance Engineering",
+"href": "https://papers.hanzo.ai/refutation-driven-perf"
+},
+{
+"p": "Hanzo AI Cloud"
+},
+{
+"h3": "Build on Hanzo Cloud"
+},
+{
+"a": "Start on Hanzo Cloud",
+"href": "https://cloud.hanzo.ai"
+},
+{
+"a": "View Models & Pricing",
+"href": "/pricing"
+},
+{
+"a": "Previous Sandbox cold start",
+"href": "/benchmarks/sandbox"
+},
+{
+"a": "All Benchmarks Board",
+"href": "/benchmarks"
+},
+{
+"a": "Next GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"p": "LoCoMo · MemoryAgentBench · LongMemEval · CronQuestions · RepoBench-R · LoCoMo · subject scope · LoCoMo-Conv · Fleet residency · Live agent footprint · Sandbox cold start · GPQA-Diamond"
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "CronQuestions",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "LoCoMo · subject scope",
+"href": "/benchmarks/locomo-subject-scope"
+},
+{
+"a": "LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"a": "Fleet residency",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "Sandbox cold start",
+"href": "/benchmarks/sandbox"
+},
+{
+"a": "GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"p": "the committed runs, in bench-runs : CUDA Zen-1.7B Q4_K_M · CUDA Zen-4B Q4_K_M"
+},
+{
+"a": "bench-runs",
+"href": "https://github.com/hanzoai/engine/tree/bench/dossier/bench-runs"
+}
+]
+]

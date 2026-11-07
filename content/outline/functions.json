@@ -1,0 +1,180 @@
+[
+[
+{
+"h1": "Hanzo Functions"
+},
+{
+"p": "Functions that run on Kubernetes."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "View Documentation",
+"href": "https://docs.hanzo.ai/docs/cli/function"
+},
+{
+"code": "export async function handler ( req , res ) { // Process incoming data const { data } = await req. json (); const result = await processData ( data ); // Return JSON response return Response. json ({ success : true , data : result }) }"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Functions from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Functions in my project. Start with: hanzo functions list"
+}
+],
+[
+{
+"h2": "What you get"
+},
+{
+"p": "A handler file, a trigger, and the cluster you already run"
+},
+{
+"h3": "Python, Go, Node.js, Rust"
+},
+{
+"p": "Name a runtime and point at a handler file. When the language you want is not one of them, bring a container you built yourself and deploy that instead."
+},
+{
+"h3": "Warm before the request"
+},
+{
+"p": "Pools are prewarmed, so a function is not booting on the request that needed it. Scale to zero is still the default when nothing is calling."
+},
+{
+"h3": "On your own cluster"
+},
+{
+"p": "Install it with Helm into Kubernetes you already run. Functions are ordinary workloads there, so quotas, node pools and network policy keep meaning what they meant."
+},
+{
+"h3": "A GPU is a normal ask"
+},
+{
+"p": "A function can request an NVIDIA GPU and be scheduled onto a node that has one. That is what lets model work be a function instead of a service somebody has to keep alive."
+},
+{
+"h3": "Triggers, not just HTTP"
+},
+{
+"p": "An HTTP route, a cron schedule, a Kafka topic, a RabbitMQ queue. The trigger is its own object, so the same handler can answer to several without knowing about any of them."
+},
+{
+"h3": "Versions you can move between"
+},
+{
+"p": "Blue/green and canary between versions of a function, so backing out a bad deploy is a traffic decision rather than another build."
+}
+],
+[
+{
+"h2": "Common Use Cases"
+},
+{
+"p": "Hanzo Functions powers a wide range of serverless applications"
+},
+{
+"h3": "API Backends"
+},
+{
+"p": "Build complete REST or GraphQL APIs with automatic scaling and no server management."
+},
+{
+"li": "• Custom middleware for authentication and validation"
+},
+{
+"li": "• API versioning and documentation generation"
+},
+{
+"li": "• Automatic OpenAPI schema generation"
+},
+{
+"h3": "Real-time Processing"
+},
+{
+"p": "Process events in real-time with automatic scaling for traffic spikes."
+},
+{
+"li": "• Webhook handlers for third-party services"
+},
+{
+"li": "• Event-driven data transformation and enrichment"
+},
+{
+"li": "• Real-time analytics processing"
+},
+{
+"h3": "AI/ML Inference"
+},
+{
+"p": "Deploy machine learning models for inference with built-in GPU acceleration."
+},
+{
+"li": "• Image and text classification"
+},
+{
+"li": "• AI chatbots and virtual assistants"
+},
+{
+"li": "• Real-time recommendations"
+},
+{
+"h3": "Scheduled Tasks"
+},
+{
+"p": "Run tasks on a schedule without maintaining a dedicated server."
+},
+{
+"li": "• Periodic data cleanup and maintenance"
+},
+{
+"li": "• Scheduled reports and notifications"
+},
+{
+"li": "• Recurring data integration and ETL processes"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "GPUs On-demand accelerators",
+"href": "/cloud/gpus"
+},
+{
+"a": "Machines VMs by the second",
+"href": "/machines"
+},
+{
+"a": "Containers",
+"href": "/cloud/containers"
+}
+],
+[
+{
+"h2": "Get Functions"
+},
+{
+"p": "Serverless functions"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,103 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Sessions"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/o11y"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "AI Metrics",
+"href": "/cloud/ai-metrics"
+},
+{
+"a": "Billing",
+"href": "/billing"
+},
+{
+"a": "Plans & Pricing",
+"href": "/cloud/plans"
+},
+{
+"a": "Sessions",
+"href": "/cloud/sessions"
+},
+{
+"a": "Annotation Queues",
+"href": "/cloud/annotation-queues"
+},
+{
+"li": "Add rate limiting to the payments API."
+},
+{
+"li": "Read 14 files. The limiter belongs in the gateway, not the handler — one place, every route."
+},
+{
+"li": "Wrote gateway/limit.go and a test at 100 req/min per key. Tests pass."
+},
+{
+"code": "api.hanzo.ai /v1/o11y/sessions"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Sessions from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Sessions in my project. Start with: hanzo o11y sessions get"
+}
+],
+[
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Logs Search every line",
+"href": "/cloud/logs"
+},
+{
+"a": "Metrics Time series & SLOs",
+"href": "/metrics"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+}
+]
+]

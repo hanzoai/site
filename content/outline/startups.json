@@ -1,0 +1,130 @@
+[
+[
+{
+"h1": "The Hanzo Startup Program"
+},
+{
+"p": "Everyone starts free. Venture-backed teams get up to $150,000 in credits."
+},
+{
+"a": "Apply for credits",
+"href": "#apply"
+},
+{
+"a": "Start building free",
+"href": "https://platform.hanzo.ai"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "Creating an account is free. Add funds when you are ready and pay only for what you use — no subscription, no minimums."
+},
+{
+"p": "Connect your own GPUs and machines. Run cheap on hardware you already have — we meter the platform, not your iron."
+},
+{
+"p": "For venture-backed startups. Application required, and tier-1 VC backing is required for the credits program."
+},
+{
+"li": "Start in minutes"
+},
+{
+"li": "Bring your own compute"
+},
+{
+"li": "Up to $150,000 in credits"
+}
+],
+[
+{
+"p": "Techstars founders: Hanzo is a Techstars company. We offer perks tailored to each portfolio brand — mention your batch when you apply and we will match it."
+}
+],
+[
+{
+"h2": "Apply to the program"
+},
+{
+"p": "We review applications weekly. The more you share, the faster we can match you to the right tier."
+},
+{
+"button": "Andreessen Horowitz (a16z)"
+},
+{
+"button": "Sequoia"
+},
+{
+"button": "Benchmark"
+},
+{
+"button": "Greylock"
+},
+{
+"button": "Accel"
+},
+{
+"button": "Founders Fund"
+},
+{
+"button": "Lightspeed"
+},
+{
+"button": "Index Ventures"
+},
+{
+"button": "Bessemer"
+},
+{
+"button": "Khosla Ventures"
+},
+{
+"button": "GV (Google Ventures)"
+},
+{
+"button": "Techstars"
+},
+{
+"button": "AI & inference Models, agents, RAG, one API for every model"
+},
+{
+"button": "Deploy Apps, functions, edge, machines"
+},
+{
+"button": "Data Vector, SQL, KV, object storage"
+},
+{
+"button": "Compute GPUs, training, batch jobs"
+},
+{
+"button": "I want to bring my own compute Connect your own GPUs or machines and run on hardware you already own."
+},
+{
+"button": "Submit application"
+},
+{
+"p": "By submitting, you agree to Hanzo’s Privacy Policy . We use your information only to review this application."
+},
+{
+"a": "Privacy Policy",
+"href": "/legal/privacy"
+}
+],
+[
+{
+"h2": "Not venture-backed?"
+},
+{
+"p": "You do not need to qualify to build. Start free and pay only for what you use, or create an Enterprise plan for your team."
+},
+{
+"a": "Start free",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "Create Enterprise plan",
+"href": "/enterprise/start"
+}
+]
+]

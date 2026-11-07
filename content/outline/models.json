@@ -1,0 +1,352 @@
+[
+[
+{
+"h1": "Frontier AI families"
+},
+{
+"p": "Proprietary and open weight models for text, decisions, video, image, and more — one account, one API key."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Every model",
+"href": "#catalog"
+},
+{
+"button": "Enso"
+},
+{
+"button": "Zen 6"
+},
+{
+"button": "Claude Fable 5"
+},
+{
+"p": "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow."
+}
+],
+[
+{
+"p": "Three families"
+},
+{
+"h2": "Enso routes. Kai decides. Zen reasons."
+},
+{
+"li": "routes Enso Picks the model for every call, in every modality. Explore Enso →",
+"href": "/enso"
+},
+{
+"li": "decides Kai Answers a choice, a score or a yes/no, with the probability of each. 11 · Suites won · Kai vs Jev Explore Kai →",
+"href": "/kai"
+},
+{
+"li": "reasons Zen Open weights for the code, the copy, the images and the voice. Zen 6 and Zen 6 Flash now · Zen 7 in research preview Explore Zen →",
+"href": "/zen"
+}
+],
+[
+{
+"p": "Enso vs Zen"
+},
+{
+"h2": "Proprietary orchestration, on open foundations"
+},
+{
+"h3": "Enso"
+},
+{
+"li": "Flash, Pro and Ultra presets"
+},
+{
+"li": "OpenAI- and Anthropic-compatible"
+},
+{
+"li": "Metered and audited per organization"
+},
+{
+"a": "Explore Enso →",
+"href": "/enso"
+},
+{
+"h3": "Zen"
+},
+{
+"li": "Free to download and self-host"
+},
+{
+"li": "Or call it on Hanzo Cloud"
+},
+{
+"li": "From a 501(c)(3) non-profit"
+},
+{
+"a": "Explore Zen →",
+"href": "/zen"
+}
+],
+[
+{
+"h2": "Enso models"
+},
+{
+"a": "Enso enso 900K Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow. text",
+"href": "/models/hanzo/enso"
+},
+{
+"a": "Enso Flash enso-flash 900K Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow. text",
+"href": "/models/hanzo/enso-flash"
+},
+{
+"a": "Enso Ultra enso-ultra 1M Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer. text",
+"href": "/models/hanzo/enso-ultra"
+},
+{
+"a": "Enso: the router, its presets and its runs →",
+"href": "/enso"
+}
+],
+[
+{
+"h2": "Zen models"
+},
+{
+"p": "Open weights, made with Zoo Labs Foundation . Download every Zen model at huggingface.co/zenlm , or call it here."
+},
+{
+"a": "Zoo Labs Foundation",
+"href": "https://zoo.ngo"
+},
+{
+"a": "huggingface.co/zenlm",
+"href": "https://huggingface.co/zenlm"
+},
+{
+"a": "Zen6 zen6 1M text",
+"href": "/models/hanzo/zen6"
+},
+{
+"a": "Zen6 Flash zen6-flash 1M text",
+"href": "/models/hanzo/zen6-flash"
+},
+{
+"a": "Zen5 (Default) zen5 1M Canonical Zen5 default. a 35B frontier MoE (3B active) (35B total / 3B active per token, released Apr 2026, Apache-2.0). 256K context, agentic-trained, OpenAI + Anthropic API. The everyday Zen5 chat model. text",
+"href": "/models/hanzo/zen5"
+},
+{
+"a": "Zen5 Pro zen5-pro 1M Zen Flash IQ2_XXS-imatrix weights (81 GB GGUF on zenlm/zen-5-pro-gguf). 284B total / 37B active per token, 1M context, asymmetric routed-MoE quant. Fits a single 128 GB Apple Silicon / DGX Spark / H100 80 GB. text",
+"href": "/models/hanzo/zen5-pro"
+},
+{
+"a": "Zen5 Coder zen5-coder 1M Code-specialized Zen5 tier. 80B sparse MoE tuned for repo-scale code understanding, agentic refactoring, and tool-use coding loops. text",
+"href": "/models/hanzo/zen5-coder"
+},
+{
+"a": "Zen5 Flash zen5-flash 1M Smallest and cheapest text-only Zen5 chat tier. 4B-class dense, sub-100ms TTFT, 32K context. For high-volume routing and simple agent loops. text",
+"href": "/models/hanzo/zen5-flash"
+},
+{
+"a": "Zen VL — Vision-Language zen-vl 1M Reads images and reasons over them — visual Q&A, document and chart understanding, grounded captioning. text",
+"href": "/models/hanzo/zen-vl"
+},
+{
+"a": "Zen Embedding zen-embedding 33K Dense text embeddings for semantic search, retrieval, and clustering. embeddings",
+"href": "/models/hanzo/zen-embedding"
+},
+{
+"p": "The next open-weight generation after Zen 6, in research preview."
+},
+{
+"a": "Request access",
+"href": "/zen/7"
+},
+{
+"a": "Run Zen: the docs →",
+"href": "https://docs.hanzo.ai/docs/models/zen"
+}
+],
+[
+{
+"h2": "Kai decision models"
+},
+{
+"a": "Kai kai 33K Hanzo Kai is a structured decision model answering typed questions at /v1/decisions with calibrated probabilities and zero output tokens. Full multimodal decision architecture (~850M parameters, 32K reach); native vision and audio towers: Kai-2 target. Text State Vision (Kai-2 target)",
+"href": "/models/hanzo/kai"
+},
+{
+"a": "Decision Benchmarks 11 suites won vs jev Ahead of Jev on 11 suites: AG News, DAIR Emotion, Banking77, Support triage, Email spam, Phishing, Toxicity, RAG relevance, Model routing, Typed decisions, MASSIVE, 51 languages. 84.4% mean accuracy across these 11 suites, against Jev's 76.6%. 100.0% of repeated requests answer identically, against Jev's 44.2%. benchmarks",
+"href": "/kai#benchmarks"
+},
+{
+"a": "Autonomous Agent Steering decision-ready A choice, a score or a yes/no, each with its probabilities, for agent loops such as Hanzo Dev's. choice score noul",
+"href": "/kai#types"
+},
+{
+"a": "Kai: decisions and their benchmarks →",
+"href": "/kai"
+}
+],
+[
+{
+"h2": "Creative models"
+},
+{
+"p": "Video, images, 3D, sound effects, voice and music, each its own model, in research preview."
+},
+{
+"a": "Koma koma-1 Research preview Cinematic video generation, character continuity, motion, animation, and shot-level creative control. Video api.hanzo.ai/v1/video",
+"href": "/koma"
+},
+{
+"a": "Iro iro-1 Research preview High-fidelity image generation, creative direction, editing, character design and consistent visual assets. Image api.hanzo.ai/v1/images",
+"href": "/iro"
+},
+{
+"a": "Mori mori-1 Research preview 3D assets, geometry, materials, environments and spatially consistent scenes. 3D api.hanzo.ai/v1/3d",
+"href": "/mori"
+},
+{
+"a": "Oto oto-1 Research preview Film Foley, immersive sound effects, environmental audio and synchronized scene sound. Foley api.hanzo.ai/v1/foley",
+"href": "/oto"
+},
+{
+"a": "Koe koe-1 Research preview Directable speech synthesis, character performances, dubbing and multilingual dialogue. Voice api.hanzo.ai/v1/audio/speech",
+"href": "/koe"
+},
+{
+"a": "Uta uta-1 Research preview Soundtracks, original songs, musical ideas, cue-driven scoring and creative music production. Music api.hanzo.ai/v1/music",
+"href": "/uta"
+},
+{
+"a": "Make something in Design →",
+"href": "/design"
+}
+],
+[
+{
+"h2": "Flagships from other labs"
+},
+{
+"a": "Claude Fable 5 anthropic/claude-fable-5 1M Claude Fable 5 is a Mythos-class model from Anthropic, built for autonomous knowledge work and coding. It supports text, image, and file inputs with text output, with reasoning support and... text",
+"href": "/models/anthropic/claude-fable-5"
+},
+{
+"a": "GPT-3.5 Turbo (older v0613) openai/gpt-3.5-turbo-0613 4K GPT-3.5 Turbo is OpenAI's fastest model. It can understand and generate natural language or code, and is optimized for chat and traditional completion tasks.\n\nTraining data up to Sep 2021. text",
+"href": "/models/openai/gpt-3.5-turbo-0613"
+},
+{
+"a": "Gemini 2.5 Pro google/gemini-2.5-pro 1M Gemini 2.5 Pro is Google’s state-of-the-art AI model designed for advanced reasoning, coding, mathematics, and scientific tasks. It employs “thinking” capabilities, enabling it to reason through responses with enhanced accuracy... text",
+"href": "/models/google/gemini-2.5-pro"
+},
+{
+"a": "DeepSeek V3 deepseek/deepseek-chat 164K DeepSeek-V3 is the latest model from the DeepSeek team, building upon the instruction following and coding abilities of the previous versions. Pre-trained on nearly 15 trillion tokens, the reported evaluations... text",
+"href": "/models/deepseek/deepseek-chat"
+},
+{
+"a": "Grok 4.20 x-ai/grok-4.20 2M Grok 4.20 is a reasoning model from SpaceXAI with industry-leading speed and agentic tool calling capabilities. It combines the lowest hallucination rate on the market with strict prompt adherance, delivering... text",
+"href": "/models/x-ai/grok-4.20"
+},
+{
+"a": "Muse Glimmer 30B meta/muse-glimmer-30b 131K Muse Glimmer 30B is a dense, open-weight multimodal model from Meta Superintelligence Labs, distilled from Muse Spark and optimized for autonomous agents on consumer hardware. It is suited for long-horizon... text",
+"href": "/models/meta/muse-glimmer-30b"
+},
+{
+"a": "Command A cohere/command-a 256K Command A is an open-weights 111B parameter model with a 256k context window focused on delivering great performance across agentic, multilingual, and coding use cases. Compared to other leading proprietary... text",
+"href": "/models/cohere/command-a"
+},
+{
+"a": "Every model, priced →",
+"href": "#catalog"
+}
+],
+[
+{
+"h2": "Every model, and what it costs"
+},
+{
+"p": "Dollars per million tokens, in and out, from the live catalog."
+},
+{
+"a": "How models are called and billed →",
+"href": "https://docs.hanzo.ai/docs/models"
+}
+],
+[
+{
+"h2": "Try any model"
+},
+{
+"p": "Test any model directly on the gateway. Switch models by changing one string."
+},
+{
+"p": "Sign in to chat with Enso, Zen, or any model on the endpoint. Pick a model, start a thread, billed to your account and kept private."
+},
+{
+"a": "Get free API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Open Hanzo Chat",
+"href": "/chat"
+}
+],
+[
+{
+"h2": "Your first request"
+},
+{
+"p": "The chat-completions shape you already send, at api.hanzo.ai/v1, in the language you write."
+},
+{
+"button": "cURL"
+},
+{
+"button": "Python"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Go"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' { \"model\": \"enso\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( api_key=os . environ [ \" HANZO_API_KEY \" ], base_url= \" https://api.hanzo.ai/v1 \" ) response = client . chat . completions . create ( model= \" enso \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }] ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"code": "import OpenAI from ' openai ' const client = new OpenAI ({ apiKey : process.env.HANZO_API_KEY , baseURL : ' https://api.hanzo.ai/v1 ' }) const response = await client.chat.completions. create ({ model : ' enso ' , messages : [{ role : ' user ' , content : ' Hello! ' }] }) console. log ( response.choices [ 0 ] .message.content )"
+},
+{
+"code": "package main import ( \" context \" \" fmt \" \" os \" \" github.com/sashabaranov/go-openai \" ) func main () { cfg := openai . DefaultConfig ( os . Getenv ( \" HANZO_API_KEY \" )) cfg . BaseURL = \" https://api.hanzo.ai/v1 \" client := openai . NewClientWithConfig ( cfg ) resp , _ := client . CreateChatCompletion ( context . Background (), openai . ChatCompletionRequest { Model : \" enso \" , Messages : [] openai . ChatCompletionMessage { { Role : openai . ChatMessageRoleUser , Content : \" Hello! \" }, }, }, ) fmt . Println ( resp . Choices [ 0 ]. Message . Content ) }"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "The quickstart →",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Agents Build & run agents",
+"href": "/agents"
+},
+{
+"a": "Inference",
+"href": "/engine"
+},
+{
+"a": "Embeddings Turn anything into vectors",
+"href": "/cloud/embeddings"
+}
+]
+]

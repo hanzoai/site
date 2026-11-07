@@ -1,0 +1,80 @@
+[
+[
+{
+"h1": "hanzo-fi"
+},
+{
+"p": "The public repositories of hanzo-fi on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "hanzo-fi on GitHub",
+"href": "https://github.com/hanzo-fi"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-fi"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 0 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-fi, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-fi/auth Go 0 0 Auth repository Pushed Sep 15, 2026 24 commits this year Forge",
+"href": "https://github.com/hanzo-fi/auth"
+},
+{
+"li": "hanzo-fi/gateway Go 0 1 gateway repository Pushed Sep 15, 2026 39 commits this year Forge",
+"href": "https://github.com/hanzo-fi/gateway"
+},
+{
+"li": "hanzo-fi/go-libs Go 0 0 Hanzo Finance — go-libs Pushed Sep 11, 2026 102 commits this year Forge",
+"href": "https://github.com/hanzo-fi/go-libs"
+},
+{
+"li": "hanzo-fi/numscript Go 0 0 Hanzo Finance — numscript DSL Pushed Sep 10, 2026 47 commits this year Forge",
+"href": "https://github.com/hanzo-fi/numscript"
+}
+]
+]

@@ -1,0 +1,130 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "Hanzo",
+"href": "/models/hanzo"
+},
+{
+"h1": "zen-embedding-3"
+},
+{
+"p": "zen-embedding-3, through one API key."
+},
+{
+"a": "Get API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Try in Chat",
+"href": "/chat"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks#zen"
+}
+],
+[
+{
+"h2": "More from Hanzo"
+},
+{
+"a": "Zen: 1T+ Parameter MoE Architecture",
+"href": "https://hanzo.blog/2026-04-06-zen-model-architecture/"
+},
+{
+"a": "Zen benchmarks",
+"href": "/benchmarks#zen"
+}
+],
+[
+{
+"h2": "Specifications"
+}
+],
+[
+{
+"h2": "Quick start"
+},
+{
+"a": "Get an API key →",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "Python"
+},
+{
+"button": "cURL"
+},
+{
+"button": "Go"
+},
+{
+"code": "import OpenAI from ' openai ' const client = new OpenAI ({ apiKey : process.env.HANZO_API_KEY , baseURL : ' https://api.hanzo.ai/v1 ' }) const response = await client.chat.completions. create ({ model : ' zen-embedding-3 ' , messages : [{ role : ' user ' , content : ' Hello! ' }] }) console. log ( response.choices [ 0 ] .message.content )"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( api_key=os . environ [ \" HANZO_API_KEY \" ], base_url= \" https://api.hanzo.ai/v1 \" ) response = client . chat . completions . create ( model= \" zen-embedding-3 \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }] ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Content-Type: application/json \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' { \"model\": \"zen-embedding-3\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+},
+{
+"code": "package main import ( \" context \" \" fmt \" \" os \" \" github.com/sashabaranov/go-openai \" ) func main () { cfg := openai . DefaultConfig ( os . Getenv ( \" HANZO_API_KEY \" )) cfg . BaseURL = \" https://api.hanzo.ai/v1 \" client := openai . NewClientWithConfig ( cfg ) resp , _ := client . CreateChatCompletion ( context . Background (), openai . ChatCompletionRequest { Model : \" zen-embedding-3 \" , Messages : [] openai . ChatCompletionMessage { { Role : openai . ChatMessageRoleUser , Content : \" Hello! \" }, }, }, ) fmt . Println ( resp . Choices [ 0 ]. Message . Content ) }"
+}
+],
+[
+{
+"h2": "More from Hanzo"
+},
+{
+"a": "Zen Embedding 33K Dense text embeddings for semantic search, retrieval, and clustering.",
+"href": "/models/hanzo/zen-embedding"
+},
+{
+"a": "zen-free 1M",
+"href": "/models/hanzo/zen-free"
+},
+{
+"a": "Zen Guard — Content Safety 128K Safety classifier for moderation and guardrails across a broad category and language set.",
+"href": "/models/hanzo/zen-guard"
+},
+{
+"a": "zen-scribe Hanzo's speech-to-text model, which writes down what is said in any language, served at /v1/audio/transcriptions.",
+"href": "/models/hanzo/zen-scribe"
+},
+{
+"a": "Zen VL — Vision-Language 1M Reads images and reasons over them — visual Q&A, document and chart understanding, grounded captioning.",
+"href": "/models/hanzo/zen-vl"
+},
+{
+"a": "zen-voice-mini Hanzo's text-to-speech voice, served at /v1/audio/speech. It speaks Arabic as well as English.",
+"href": "/models/hanzo/zen-voice-mini"
+},
+{
+"a": "View all Hanzo models →",
+"href": "/models/hanzo"
+}
+],
+[
+{
+"h2": "Use zen-embedding-3 via Hanzo AI"
+},
+{
+"p": "One API key. Every major model. OpenAI-compatible. Start free."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

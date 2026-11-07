@@ -1,0 +1,104 @@
+[
+[
+{
+"h1": "Hanzo Flow"
+},
+{
+"p": "Build an AI workflow on a canvas, ship it as an API"
+},
+{
+"a": "Open Flow",
+"href": "https://flow.hanzo.ai"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/cli/flow"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"p": "Models, vector stores, document loaders, text splitters, output parsers, memory, retrievers and toolkits — plus anything you write yourself, which is a component like the rest."
+},
+{
+"p": "A component is a Python class. Edit it in the browser and the change is live on the next run — no rebuild, no plugin format, no waiting for someone to add the parameter you need."
+},
+{
+"p": "The playground runs a flow one node at a time and shows what each one received and returned. When a chain gives a strange answer, this is where you find the node that caused it."
+},
+{
+"p": "Several agents on the same canvas, with conversation state between them and retrieval underneath — visible as a graph rather than buried in a prompt."
+},
+{
+"p": "As a REST endpoint, as JSON your Python app loads directly, or as an MCP server — after which the flow is a tool your coding agent can call."
+},
+{
+"p": "Credentials live as variables the graph references by name, so a flow you export or share carries the wiring and not the secrets."
+},
+{
+"li": "The library"
+},
+{
+"li": "Open any node"
+},
+{
+"li": "Step through it"
+},
+{
+"li": "Multi-agent"
+},
+{
+"li": "Publish it three ways"
+},
+{
+"li": "Keys stay out of the flow"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Flow from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Flow in my project. Start with: hanzo flow workflows list"
+}
+],
+[
+{
+"h2": "Run it locally first"
+},
+{
+"p": "uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too."
+},
+{
+"a": "Open Flow",
+"href": "https://flow.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Flow"
+},
+{
+"p": "Visual workflow builder"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

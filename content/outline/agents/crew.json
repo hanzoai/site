@@ -1,0 +1,131 @@
+[
+[
+{
+"h1": "The agents in every workspace"
+},
+{
+"p": "The team of agents every Hanzo workspace comes with, and Bots at work in their own room."
+}
+],
+[
+{
+"p": "Agents"
+},
+{
+"h2": "People and agents. One workspace."
+},
+{
+"p": "The team is already there. Open one and talk."
+},
+{
+"a": "Antje",
+"href": "/chat?agent=Antje"
+},
+{
+"img": "/agents/antje.jpg",
+"alt": ""
+},
+{
+"a": "Des Designer",
+"href": "/chat?agent=Des"
+},
+{
+"img": "/agents/des.png",
+"alt": ""
+},
+{
+"a": "Dev Engineer",
+"href": "/chat?agent=Dev"
+},
+{
+"img": "/agents/dev.png",
+"alt": ""
+},
+{
+"a": "Einstein Legal & IP Counsel",
+"href": "/chat?agent=Einstein"
+},
+{
+"img": "/agents/einstein.png",
+"alt": ""
+},
+{
+"a": "Feynman Researcher",
+"href": "/chat?agent=Feynman"
+},
+{
+"img": "/agents/feynman.png",
+"alt": ""
+},
+{
+"a": "Leo Quality & Accessibility Engineer",
+"href": "/chat?agent=Leo"
+},
+{
+"img": "/agents/leo.png",
+"alt": ""
+},
+{
+"a": "Maya Chief of Staff",
+"href": "/chat?agent=Maya"
+},
+{
+"img": "/agents/maya.png",
+"alt": ""
+},
+{
+"a": "Nora Support Lead",
+"href": "/chat?agent=Nora"
+},
+{
+"img": "/agents/nora.png",
+"alt": ""
+},
+{
+"a": "Vi Strategist",
+"href": "/chat?agent=Vi"
+},
+{
+"img": "/agents/vi.png",
+"alt": ""
+},
+{
+"a": "Zach Quantitative Finance & Market Analyst",
+"href": "/chat?agent=Zach"
+},
+{
+"img": "/agents/zach.jpg",
+"alt": ""
+},
+{
+"a": "Or build your own.",
+"href": "/agents"
+}
+],
+[
+{
+"p": "Bots"
+},
+{
+"h2": "They keep working."
+},
+{
+"p": "A bot has its own computer: browser, files, terminal, apps."
+},
+{
+"a": "Launch a bot",
+"href": "https://hanzo.team/bots"
+},
+{
+"img": "/shots/bots-1440-dark.webp",
+"alt": "The Bots room: the org's agents in the sidebar, Dev's page with its runs — Weekly outreach, Expense report, Support digest, each done — and a message box to Dev"
+},
+{
+"img": "/shots/bots-1440-light.webp",
+"alt": "The Bots room: the org's agents in the sidebar, Dev's page with its runs — Weekly outreach, Expense report, Support digest, each done — and a message box to Dev"
+},
+{
+"p": "the Bots room · sample names"
+}
+]
+]

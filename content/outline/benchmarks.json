@@ -1,0 +1,1601 @@
+[
+[
+{
+"h1": "Intelligence, cost and speed, each measured."
+},
+{
+"p": "Zen 6 prefills ~3,665 tokens a second and decodes ~70 on NVIDIA Grace-Blackwell, measured Nov 4, 2026."
+},
+{
+"a": "The results",
+"href": "#enso"
+},
+{
+"a": "Every benchmark",
+"href": "#all"
+}
+],
+[
+{
+"p": "Enso · intelligence per dollar"
+},
+{
+"h2": "Enso on the boards it was run on."
+},
+{
+"h3": "A New Pareto Frontier of Intelligence"
+},
+{
+"p": "GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers."
+},
+{
+"h2": "The frontier, one benchmark at a time"
+},
+{
+"p": "Accuracy against what the run cost at list prices, on a log axis, for each board where Enso’s router is on the frontier. Every point is a research run, read when the page opens, and its cost is the tokens it records on the whole question set at the price list’s rate for its own model id. The dashed line joins the runs no other run beats on both."
+},
+{
+"button": "CSV"
+},
+{
+"button": "JSON"
+},
+{
+"button": "Copy link"
+},
+{
+"p": "One benchmark at a time: the frontier is drawn only among runs of the same benchmark, never across two. Filled points are Pareto-efficient — no other run scores higher for less. Hanzo's router is the large point in the brightest ink, labelled in bold; the single models are grey. A run's cost is the input and output tokens it records on the whole question set at the price list's rate for its own model id, the router's included, at list prices, Nov 6, 2026. Hover or tab to a point for its record."
+},
+{
+"table": [
+[
+"System",
+"Accuracy",
+"Run cost",
+"Tag, date",
+"Pareto"
+],
+[
+"enso",
+"92.9%",
+"$5.58",
+"frontier · 2026-07-19",
+"yes"
+],
+[
+"gpt-5.6-sol",
+"91.9%",
+"$4.08",
+"frontier · 2026-07-19",
+"yes"
+],
+[
+"opus-5.5",
+"90.9%",
+"$3.78",
+"fill · 2026-10-16",
+"yes"
+],
+[
+"sonnet-5.5",
+"90.4%",
+"$1.85",
+"fill · 2026-10-16",
+"yes"
+],
+[
+"gpt-5.5",
+"89.9%",
+"$11.95",
+"frontier · 2026-07-19",
+""
+],
+[
+"fable-5.1",
+"87.9%",
+"$8.23",
+"fill · 2026-10-16",
+""
+],
+[
+"opus-4.8",
+"86.4%",
+"$3.66",
+"frontier · 2026-07-19",
+""
+],
+[
+"haiku-5.5",
+"83.3%",
+"$0.19",
+"fill · 2026-10-16",
+"yes"
+],
+[
+"fable-5",
+"82.8%",
+"$9.87",
+"frontier · 2026-07-19",
+""
+],
+[
+"claude-5-sonnet",
+"77.8%",
+"$5.66",
+"frontier · 2026-07-19",
+""
+],
+[
+"deepseek-v4-pro",
+"74.2%",
+"$0.259",
+"frontier · 2026-07-19",
+""
+],
+[
+"gpt-4o",
+"54.5%",
+"$1.58",
+"frontier · 2026-07-19",
+""
+]
+]
+},
+{
+"h2": "Every system on GPQA Diamond"
+},
+{
+"p": "GPQA Diamond · enso.gpqa_diamond, split test · every row a research run, read from api.hanzo.ai when the page opens · sorted by accuracy"
+},
+{
+"table": [
+[
+"System",
+"Accuracy",
+"Correct",
+"Run cost",
+"Tag, date"
+],
+[
+"enso run",
+"92.9%",
+"184 of 198",
+"$5.58",
+"frontier · 2026-07-19"
+],
+[
+"enso-ultra run",
+"92.9%",
+"184 of 198",
+"$20.20",
+"frontier · 2026-07-19"
+],
+[
+"gpt-5.6-sol run",
+"91.9%",
+"182 of 198",
+"$4.08",
+"frontier · 2026-07-19"
+],
+[
+"opus-5.5 run",
+"90.9%",
+"180 of 198",
+"$3.78",
+"fill · 2026-10-16"
+],
+[
+"sonnet-5.5 run",
+"90.4%",
+"179 of 198",
+"$1.85",
+"fill · 2026-10-16"
+],
+[
+"gpt-5.5 run",
+"89.9%",
+"178 of 198",
+"$11.95",
+"frontier · 2026-07-19"
+],
+[
+"fable-5.1 run",
+"87.9%",
+"174 of 198",
+"$8.23",
+"fill · 2026-10-16"
+],
+[
+"opus-4.8 run",
+"86.4%",
+"171 of 198",
+"$3.66",
+"frontier · 2026-07-19"
+],
+[
+"haiku-5.5 run",
+"83.3%",
+"165 of 198",
+"$0.190",
+"fill · 2026-10-16"
+],
+[
+"fable-5 run",
+"82.8%",
+"164 of 198",
+"$9.87",
+"frontier · 2026-07-19"
+],
+[
+"claude-5-sonnet run",
+"77.8%",
+"154 of 198",
+"$5.66",
+"frontier · 2026-07-19"
+],
+[
+"deepseek-v4-pro run",
+"74.2%",
+"147 of 198",
+"$0.259",
+"frontier · 2026-07-19"
+],
+[
+"gpt-4o run",
+"54.5%",
+"108 of 198",
+"$1.58",
+"frontier · 2026-07-19"
+]
+]
+},
+{
+"p": "Each system's frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list's rate for its own model id, the router's included, at list prices, Nov 6, 2026; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read."
+}
+],
+[
+{
+"p": "Kai · decisions"
+},
+{
+"h2": "Kai beside Jev, on the same questions."
+},
+{
+"h3": "Decision Suite"
+},
+{
+"h2": "Kai against Jev, suite by suite"
+},
+{
+"p": "The suites Kai leads, both models on the same questions, each row dated by its runs. Sort by the lead, switch to calibration error, draw it as a chart or a table; the view is kept in the address, and the rows are read from the research API when the page opens."
+},
+{
+"h2": "Yes or no, read from the state"
+},
+{
+"p": "Production Kai answers a yes/no question with a reader trained for it. The tests below are the ones it leads Jev on, both models given the same questions and the same rows."
+},
+{
+"table": [
+[
+"Test",
+"Kai",
+"Jev"
+],
+[
+"A question and its paraphrase, mean |Δp| over 20 pairs",
+"0.124",
+"0.151"
+],
+[
+"A state silent on the question, answered between 0.35 and 0.65: share of 60",
+"81.7%",
+"38.3%"
+],
+[
+"Accuracy over 951 validation rows of 9 yes/no suites, pooled",
+"88.3%",
+"87.5%"
+]
+]
+},
+{
+"p": "Kai is kai-1.2, read 2026-10-08; Jev is typesafe/jev-1.13 through the API, read 2026-10-06. Hanzo-measured; harness private."
+},
+{
+"h2": "The trolley problem, decided on the counts"
+},
+{
+"p": "Kai does not weigh lives by preference. Its policy acts on the counts it grounds from the scene, and escalates to a person where it cannot ground them. On trolley-bench's 5,240 setups, scored by the article's own rules, the checks below are the ones Kai leads Jev on; every check is lower is better, and GPT-6 Luna's recorded answers stand beside both."
+},
+{
+"table": [
+[
+"Check",
+"Kai",
+"Jev",
+"GPT-6 Luna"
+],
+[
+"Acted where acting kills more than it saves",
+"17 of 672 (2.5%)",
+"69 of 672 (10.3%)",
+"143 of 672 (21.3%)"
+],
+[
+"Killed a stranger to save the people, but would not destroy its own server",
+"48 of 480 (10.0%)",
+"180 of 480 (37.5%)",
+"0 of 480 (0.0%)"
+],
+[
+"Pulled the switch onto one person with nobody on the main track, of the wordings",
+"0 of 24 (0.0%)",
+"1 of 24 (4.2%)",
+"24 of 24 (100.0%)"
+]
+]
+},
+{
+"p": "Kai is kai-1.8 through its nio/harm@1 policy, read 2026-10-20; Jev is typesafe/jev-1.13 and GPT-6 Luna is gpt-6-luna, each the benchmark's recorded answers. zachlandes/trolley-bench at cde97d7. Hanzo-scored by the article's rules; the scorer reproduces the article's numbers from the recorded answers."
+},
+{
+"p": "Before any of it, Kai was qualified on 14,832 sealed trolley-structured scenes in two registers it had never read (quarry and piste), hashed before the model was frozen and read once. Every scene of the switch, server, robot, developer, and empty families, 8,300 in all, was decided right, with no wrong course; the crowd, hedged, infra, and vague families, where the harm cannot be counted, were escalated to a person every time."
+},
+{
+"table": [
+[
+"Family",
+"Scenes",
+"Coverage",
+"Accuracy",
+"Wrong"
+],
+[
+"switch",
+"1,734",
+"99.9%",
+"100.0%",
+"0"
+],
+[
+"server",
+"2,400",
+"99.8%",
+"100.0%",
+"0"
+],
+[
+"robot",
+"1,366",
+"99.9%",
+"100.0%",
+"0"
+],
+[
+"developer",
+"1,600",
+"100.0%",
+"100.0%",
+"0"
+],
+[
+"empty",
+"1,200",
+"100.0%",
+"100.0%",
+"0"
+],
+[
+"spelled",
+"552",
+"98.6%",
+"99.8%",
+"1"
+],
+[
+"bridge",
+"300",
+"58.0%",
+"98.9%",
+"2"
+]
+]
+},
+{
+"p": "ground-8, read 2026-10-20 at the qualified floor. Coverage is the share of scenes grounded; accuracy is of those; wrong counts the courses a grounded scene got wrong. Hanzo-measured; the sealed set is private."
+},
+{
+"h2": "Finding the right tool in a large catalog"
+},
+{
+"p": "Kai’s tool-relevance head, in development, ranks a shortlist of 32 tools drawn from the whole catalog. The shortlist is an open embedding model, zen-embedding-0.6B, with a small BM25 term; nothing is trained for it. Here it is scored against BM25 alone on a dev catalog Hanzo assembled from public tool-calling sets and its own API: 2,928 tools, 6,608 requests."
+},
+{
+"p": "Every request"
+},
+{
+"a": "Every request",
+"href": "#shortlist"
+},
+{
+"p": "6,608 requests · 2,928 tools · Recall@32: a right tool among the first 32"
+},
+{
+"p": "Requests for a Hanzo service"
+},
+{
+"a": "Requests for a Hanzo service",
+"href": "#shortlist"
+},
+{
+"p": "670 requests · a service scored as the best of its operations"
+},
+{
+"p": "An internal dev set, not a public benchmark: one run, 2026-10-11. Retrieval only, not an agent result."
+},
+{
+"h2": "Verified coding-agent performance"
+},
+{
+"p": "Hanzo Dev, with Kai and Enso Flash on api.hanzo.ai, against native Claude Code on held-out repository repairs. Each task is one fault its visible test fails on, and counts as solved only when a hidden verifier passes. Speed is the paired wall time over the tasks both solved."
+},
+{
+"a": "3.02× faster on the 42 tasks both solved 95% interval 2.06–4.36×.",
+"href": "#coding-agent"
+},
+{
+"table": [
+[
+"Tasks both solved, by how Hanzo Dev settled them",
+"Tasks",
+"Speed",
+"95% interval"
+],
+[
+"Every task both solved",
+"42",
+"3.02×",
+"2.06–4.36×"
+],
+[
+"Settled by search, no model call",
+"24",
+"8.22×",
+"6.86–9.82×"
+],
+[
+"The model’s first edit",
+"4",
+"1.31×",
+"1.14–1.48×"
+]
+]
+},
+{
+"table": [
+[
+"Agent",
+"Median seconds",
+"Model calls a task"
+],
+[
+"Claude Code, sonnet-5.5 default effort",
+"9.5",
+"3.8"
+],
+[
+"Hanzo Dev, dev flow fix, Kai + enso-flash",
+"2.3",
+"1.0"
+]
+]
+},
+{
+"p": "The fastest tasks are settled by a search with no model call: it tries single-token edits of the kinds these faults are drawn from against the visible test alone, and never reads a hidden test or the fault. These results are specific to this benchmark, one attempt a task; they are not a claim about general-purpose coding."
+},
+{
+"p": "Research runs of coding.repair on split held, ended 2026-10-15, harness commit 8e966be: GET /v1/research/runs?benchmark=coding.repair."
+},
+{
+"h2": "Agent tools"
+},
+{
+"p": "Tool handlers in Hanzo MCP, each run on the same cases as the handler it replaced. Each row says what decides it, rules, BM25 or Kai, as its run records. A rate is shown with its count."
+},
+{
+"h3": "Shell commands an agent should not run unasked"
+},
+{
+"p": "Split hermes: hermes-jev-skills evals/gate/fixtures.jsonl (MIT), 118 made-up commands. The rules were frozen and read once (1 of 65 allowed: a metadata-endpoint fetch); that class and a bare `rm -rf /` were fixed after, so this run is not held out"
+},
+{
+"table": [
+[
+"Handler",
+"What decides",
+"Allowed, should deny or ask",
+"Ordinary, stopped",
+"Must deny, denied",
+"Median time"
+],
+[
+"Current",
+"Rules",
+"0.0% (0 / 65)",
+"34.0% (18 / 53)",
+"54.3% (19 / 35)",
+"0.060 ms"
+],
+[
+"Replaced, ae4d07b",
+"Rules, then Kai",
+"18.5% (12 / 65)",
+"62.3% (33 / 53)",
+"14.3% (5 / 35)",
+"–"
+]
+]
+},
+{
+"p": "Research runs of mcp.command on split hermes , ended 2026-10-15 ; the current handler at commit 863cb8a : GET /v1/research/runs?org=hanzo&benchmark=mcp.command"
+},
+{
+"a": "GET /v1/research/runs?org=hanzo&benchmark=mcp.command",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.command"
+},
+{
+"h3": "Which registered tool a task needs"
+},
+{
+"p": "Split t1dev: supplied tool lists from Kai's T1 tools6 dev split (manifest 48be841f)"
+},
+{
+"table": [
+[
+"Handler",
+"What decides",
+"Right tool first",
+"MRR",
+"Abstained",
+"Median time"
+],
+[
+"Current",
+"Rules, then BM25",
+"73.3% (220 / 300)",
+"0.841",
+"1",
+"0.160 ms"
+],
+[
+"Replaced, ae4d07b",
+"Kai",
+"65.7% (197 / 300)",
+"0.805",
+"43",
+"–"
+]
+]
+},
+{
+"p": "Research runs of mcp.select on split t1dev , ended 2026-10-15 ; the current handler at commit 863cb8a : GET /v1/research/runs?org=hanzo&benchmark=mcp.select"
+},
+{
+"a": "GET /v1/research/runs?org=hanzo&benchmark=mcp.select",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.select"
+},
+{
+"p": "Split hand: eight hand-labelled tasks over eight tools"
+},
+{
+"table": [
+[
+"Handler",
+"What decides",
+"Right tool first",
+"MRR",
+"Abstained",
+"Median time"
+],
+[
+"Current",
+"Rules, then BM25",
+"50.0% (4 / 8)",
+"0.590",
+"2",
+"0.100 ms"
+],
+[
+"Replaced, ae4d07b",
+"Kai",
+"25.0% (2 / 8)",
+"0.491",
+"2",
+"–"
+]
+]
+},
+{
+"p": "Research runs of mcp.select on split hand , ended 2026-10-15 ; the current handler at commit 863cb8a : GET /v1/research/runs?org=hanzo&benchmark=mcp.select"
+},
+{
+"a": "GET /v1/research/runs?org=hanzo&benchmark=mcp.select",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.select"
+},
+{
+"h3": "What kind of failure a CI log shows"
+},
+{
+"p": "Split ci60: 60 real CI logs from 48 public repositories, labelled from the excerpt alone without the rules in view; nameable = the 40 whose class the old six categories can name"
+},
+{
+"table": [
+[
+"Handler",
+"What decides",
+"Right class",
+"Right class, nameable",
+"Unknown",
+"Median time"
+],
+[
+"Current",
+"Rules",
+"70.0% (42 / 60)",
+"70.0% (28 / 40)",
+"9",
+"0.370 ms"
+],
+[
+"Replaced, ae4d07b",
+"Kai",
+"–",
+"50.0% (20 / 40)",
+"–",
+"–"
+]
+]
+},
+{
+"p": "Research runs of mcp.triage on split ci60 , ended 2026-10-15 ; the current handler at commit 863cb8a : GET /v1/research/runs?org=hanzo&benchmark=mcp.triage"
+},
+{
+"a": "GET /v1/research/runs?org=hanzo&benchmark=mcp.triage",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=mcp.triage"
+},
+{
+"h2": "Price"
+}
+],
+[
+{
+"p": "Zen 6 · speed on our own hardware & Latent Sparse Attention"
+},
+{
+"h2": "Zen 6 prefills ~3,665 tokens a second on NVIDIA Grace-Blackwell and scales 72.40× faster at 10M tokens with Latent Sparse Attention."
+},
+{
+"a": "~3,665 tok/s Prefill · Zen 6 on NVIDIA Grace-Blackwell Decode ~70 tok/s · 141.2 tok/s with DFlash2 · 46.29× prefill & 78.57× decode at 1M context (99.8% KV pruned) · measured by Hanzo on Nov 4, 2026.",
+"href": "/benchmarks/zen-6"
+},
+{
+"p": "Prefill, tokens a second"
+},
+{
+"a": "Prefill, tokens a second",
+"href": "/benchmarks/zen-6"
+},
+{
+"p": "the low end of a range is the bar"
+},
+{
+"p": "Decode, tokens a second"
+},
+{
+"a": "Decode, tokens a second",
+"href": "/benchmarks/zen-6"
+},
+{
+"p": "one request"
+},
+{
+"a": "72.40× Latent Sparse Attention (D-LSA) prefill speedup · 10M tokens on NVIDIA H200 42.50× decode speedup at 10M tokens · 46.29× (26.40 ms) prefill and 78.57× (0.167 ms) decode at 1M tokens on NVIDIA Grace-Blackwell GB10 (99.8% KV pruned) · RULER 95.2% vs 95.4% full attention · N-LSA 1.6× faster training at 128K.",
+"href": "/benchmarks/zen-6"
+},
+{
+"p": "Latent Sparse Attention (D-LSA) prefill speedup"
+},
+{
+"a": "Latent Sparse Attention (D-LSA) prefill speedup",
+"href": "/benchmarks/zen-6"
+},
+{
+"p": "against full attention"
+},
+{
+"p": "Latent Sparse Attention (D-LSA) decode speedup"
+},
+{
+"a": "Latent Sparse Attention (D-LSA) decode speedup",
+"href": "/benchmarks/zen-6"
+},
+{
+"p": "against full attention"
+},
+{
+"p": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention →"
+},
+{
+"a": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention →",
+"href": "https://papers.hanzo.ai/zen6-latent-sparse-attention/"
+}
+],
+[
+{
+"p": "Agent harness · what the agent remembers and finds"
+},
+{
+"h2": "On LoCoMo, Hanzo's context engine finds 2.0× the multi-hop evidence cosine does."
+},
+{
+"a": "2.0× Multi-hop ALL@20 · LoCoMo 37.5% against cosine's 18.8% on the test split: every annotated evidence turn in the top 20.",
+"href": "/benchmarks/locomo"
+},
+{
+"h2": "Memory and retrieval"
+},
+{
+"p": "What a memory finds in a long conversation, and what a reader does with it. Each panel is one metric, the baseline and Hanzo on the same data, the same embedder and the same cut-off, drawn on one scale."
+},
+{
+"p": "MemoryAgentBench"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"p": "substring EM · pooled over the dev haystack and the three test haystacks, and the largest alone · reader: none, embedder zenlm/zen-embedding-0.6b"
+},
+{
+"p": "LoCoMo"
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"p": "test split · zen-embedding-0.6b · k=20 · ALL = every annotated evidence turn in the top 20"
+},
+{
+"p": "LongMemEval"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"p": "500 questions · all-minilm vectors for both · ALL@5 = every evidence session in the top 5"
+},
+{
+"h2": "Knowledge graph"
+},
+{
+"p": "Point-in-time questions over facts that begin and end, against another temporal store on the same data. On the CronQuestions types the harness covers, the Hanzo graph answers 99.88% and Semantica 99.88%; what differs is the price of a question."
+},
+{
+"a": "0.063 ms Hanzo graph, through the API median question · Hits@1 99.88%",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "5,357 ms Semantica temporal query median question · Hits@1 99.88%",
+"href": "/benchmarks/cronquestions"
+},
+{
+"h2": "Code"
+},
+{
+"p": "Cross-file retrieval in a repository, scored apart from generation. Typed links are regular expressions over imports, definitions and identifiers; no model reads anything in that row."
+},
+{
+"p": "RepoBench-R"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"p": "cross-file-first · test split · R@1"
+},
+{
+"h2": "Agent Code Intelligence: The Race"
+},
+{
+"p": "How Hanzo Dev and Hanzo MCP accelerate agentic code comprehension compared to traditional raw-file reading and containerized local RAG stacks (Qdrant + Ollama). Benchmarked across production multi-language repositories."
+},
+{
+"button": "Subsystem Logic (State Tracking & Auth)"
+},
+{
+"button": "Function Signature & Implementation"
+},
+{
+"button": "API Surface & Route Discovery"
+},
+{
+"button": "Claude Code Acceleration: Zero-Model Fault Repair (Kai)"
+},
+{
+"button": "Claude Code Acceleration: Atomic AST Refactoring"
+},
+{
+"p": "TARGET QUERY"
+},
+{
+"button": "Run Race Simulation"
+},
+{
+"table": [
+[
+"Architecture",
+"Latency",
+"Tool Turns",
+"Tokens Injected",
+"Token Savings",
+"Speedup"
+],
+[
+"Traditional Agent (Grep + Whole File Reads)",
+"36.4 s",
+"8",
+"25,078",
+"Baseline",
+"1.0×"
+],
+[
+"Containerized Local RAG (Qdrant + Ollama)",
+"202 ms",
+"1",
+"382",
+"98.5%",
+"180.0×"
+],
+[
+"Hanzo Native (`hanzo dev` / `hanzo code claude`)",
+"0.7 ms",
+"1",
+"398",
+"98.4%",
+"100×+"
+]
+]
+},
+{
+"p": "In a real agentic workflow (e.g. Claude Code, Cursor, Windsurf), each tool roundtrip incurs an additional 3–5 seconds of LLM inference latency. By replacing 6–13 iterative file exploration roundtrips with Hanzo’s in-process AST indexing (`code_context`, `code_tool`, `hanzo_refactor`) and Kai deterministic test-driven search, Hanzo Dev accelerates Claude Code by 20× to 50× (and up to 137× on zero-model search-settled faults) , while slashing token consumption by 90% to 100% ."
+},
+{
+"p": "Research runs on benchmarks claude-acceleration and code-rag-navigation, harness commit hanzoai/benchmarks: GET /v1/research/runs?org=hanzo&benchmark=claude-acceleration · GET /v1/research/runs?org=hanzo&benchmark=code-rag-navigation · GET /v1/benchmark/leaderboard?benchmark=code-rag-navigation"
+},
+{
+"a": "GET /v1/research/runs?org=hanzo&benchmark=claude-acceleration",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=claude-acceleration"
+},
+{
+"a": "GET /v1/research/runs?org=hanzo&benchmark=code-rag-navigation",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=code-rag-navigation"
+},
+{
+"a": "GET /v1/benchmark/leaderboard?benchmark=code-rag-navigation",
+"href": "https://api.hanzo.ai/v1/benchmark/leaderboard?benchmark=code-rag-navigation"
+}
+],
+[
+{
+"p": "Agent platform · what an agent costs"
+},
+{
+"h2": "A dormant agent costs 477 bytes."
+},
+{
+"a": "477 bytes State per dormant agent Against a published ~1 MB (2,198×). 1M agents: 455 MB on disk vs ~977 GB.",
+"href": "/benchmarks/platform-bench"
+},
+{
+"h2": "Platform, agents, and sandboxes"
+},
+{
+"p": "What an agent costs at rest, what a live one costs to wake, and what a sandbox costs to start."
+},
+{
+"a": "477 bytes State per dormant agent",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "601 bytes Heap per live agent, a goroutine",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "125 ns Spawn one goroutine",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "107 ms — 107 ns each Wake one million goroutines",
+"href": "/benchmarks/goroutine"
+},
+{
+"p": "A live agent here is a goroutine: it shares one address space with every other, and nothing about it is an isolation boundary. Code that has to be isolated gets a microVM. The goroutine timings are the median of one pass on an Apple M4 Max, 16 cores. Every figure here is transcribed from the harness's README rather than read from a run file, and each page names the command that prints it."
+},
+{
+"h2": "Start-up and cost"
+},
+{
+"a": "0.034 ms Resume one dormant agent In process, from its stored state.",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "149.6 ms A sandbox that runs a shell, cold pooled 35.8 ms; published <200 ms · ~1 s · 1–3 s.",
+"href": "/benchmarks/platform-bench"
+},
+{
+"a": "$0.00000063 One call, marginal cost Against a published $0.05 credit (79,614×).",
+"href": "/benchmarks/platform-bench"
+}
+],
+[
+{
+"p": "Methods"
+},
+{
+"h2": "How every number was taken"
+},
+{
+"h2": "Methodology"
+},
+{
+"p": "Every result is current. Each build pulls the latest validated runs from the research API: canonical, public, and not flagged inconsistent. When the API cannot be read, or answers with fewer runs than the committed snapshot already holds, the build keeps the snapshot, and the page swaps in what the API holds once it answers in the browser."
+},
+{
+"p": "Every row is dated. A run is dated by when it ended; the platform bench records its month."
+},
+{
+"p": "Live, frozen, superseded. Live is the newest run the API serves for a benchmark. Frozen is a committed run file, a snapshot, or a figure transcribed from a harness’s README. Superseded is an earlier run of the same benchmark that a later one replaced; it stays in the library, so a revision’s history can be read."
+},
+{
+"p": "Where a number comes from. Kai’s and Enso’s rows are research runs, served at the research API and read when this page opens. The memory, graph and code panels read the committed run files of the benchmarks repository. Kai’s yes/no table and the tool shortlist are Hanzo-measured reads the research API does not file: each is its run’s report, copied unchanged, and names its model, date and count."
+},
+{
+"a": "the research API",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo"
+},
+{
+"p": "Measured, not reported. Every frontier point is a run Hanzo filed: the router and each single model on the same questions, at the same tag. No vendor-reported figure is on a board here."
+},
+{
+"p": "Prices are prices. Kai beside Jev is the input-token rate each is billed, from the price list, not a cost per task. The frontier’s axis is what each run spent on the whole question set. No speed is claimed here without a measured comparison; latency, where this Kai version was timed, is in its tables."
+},
+{
+"p": "Comparing rows. A frontier is drawn among the rows of one benchmark, never across two, and a leaderboard row compares two models on one suite. Suites measure different tasks, so the mean is a summary, not a score on any of them."
+},
+{
+"p": "The memory and code panels regenerate from the committed runs on a fresh clone: git clone https://github.com/hanzoai/benchmarks && cd benchmarks/brain && node results.mjs"
+},
+{
+"code": "git clone https://github.com/hanzoai/benchmarks && cd benchmarks/brain && node results.mjs"
+},
+{
+"h2": "The research"
+},
+{
+"p": "Every paper the library publishes. A benchmark’s own page names the paper that reports it, where one does. Specifications are the HIPs ."
+},
+{
+"a": "HIPs",
+"href": "https://hips.hanzo.ai"
+},
+{
+"p": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention"
+},
+{
+"a": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention",
+"href": "https://papers.hanzo.ai/zen6-latent-sparse-attention/"
+},
+{
+"p": "Distilled & Native Latent Sparse Attention (D-LSA / N-LSA) on 27B Dense Transformers"
+},
+{
+"p": "Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops"
+},
+{
+"a": "Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops",
+"href": "https://papers.hanzo.ai/kai-decision-model/"
+},
+{
+"p": "Factorized Discrete Choice, Calibrated Distributions, and Deterministic Policy Governance"
+},
+{
+"p": "Linkage, Not Similarity"
+},
+{
+"a": "Linkage, Not Similarity",
+"href": "https://papers.hanzo.ai/hanzo-context-memory/"
+},
+{
+"p": "What long-term agent memory has to retrieve, and how it is measured"
+},
+{
+"p": "Hanzo AI Chain (AIVM)"
+},
+{
+"a": "Hanzo AI Chain (AIVM)",
+"href": "https://papers.hanzo.ai/hanzo-ai-chain/"
+},
+{
+"p": "Useful-Work Mining, the Native AI Coin, and Post-Quantum Omnichain Settlement"
+},
+{
+"p": "Cloud Economics of a Sovereign OSS Stack"
+},
+{
+"a": "Cloud Economics of a Sovereign OSS Stack",
+"href": "https://papers.hanzo.ai/hanzo-cloud-economics/"
+},
+{
+"p": "A Regulated Capital-Markets Migration Case Study"
+},
+{
+"p": "One Native Stack for Private, Continuously-Learning AI"
+},
+{
+"a": "One Native Stack for Private, Continuously-Learning AI",
+"href": "https://papers.hanzo.ai/hanzo-native-stack-thesis/"
+},
+{
+"p": "Inference at the Bandwidth Wall, On-Device QLoRA, One Engine"
+},
+{
+"p": "Native ROCm Inference on a Consumer RDNA3.5 APU"
+},
+{
+"a": "Native ROCm Inference on a Consumer RDNA3.5 APU",
+"href": "https://papers.hanzo.ai/hanzo-rocm-inference/"
+},
+{
+"p": "Reaching llama.cpp Decode Parity via a Unified 1-bit-to-Full Quant Core"
+},
+{
+"p": "Edge LLM Inference Across Commodity Accelerators"
+},
+{
+"a": "Edge LLM Inference Across Commodity Accelerators",
+"href": "https://papers.hanzo.ai/hanzo-cross-backend-inference/"
+},
+{
+"p": "Measured AMD, NVIDIA, and Apple Performance"
+},
+{
+"p": "Native Training in the Hanzo Engine"
+},
+{
+"a": "Native Training in the Hanzo Engine",
+"href": "https://papers.hanzo.ai/hanzo-native-training/"
+},
+{
+"p": "One Engine, One Quant Format, One Backend"
+},
+{
+"p": "Continuously-Learning Private AI"
+},
+{
+"a": "Continuously-Learning Private AI",
+"href": "https://papers.hanzo.ai/hanzo-continuous-learning-privacy/"
+},
+{
+"p": "Self-Improvement and Privacy in the Hanzo Native Stack"
+},
+{
+"p": "Economical Serving and the hanzo.ai Platform"
+},
+{
+"a": "Economical Serving and the hanzo.ai Platform",
+"href": "https://papers.hanzo.ai/hanzo-platform-infra-desktop/"
+},
+{
+"p": "A Bandwidth-Optimal Unified Train-and-Serve Runtime"
+},
+{
+"p": "The Unified Sovereign-Tenant Cloud"
+},
+{
+"a": "The Unified Sovereign-Tenant Cloud",
+"href": "https://papers.hanzo.ai/hanzo-unified-tenant-cloud/"
+},
+{
+"p": "Linear Shared-Nothing Scaling via Per-Tenant SQLite and In-Process Composition"
+},
+{
+"p": "Refutation-Driven Performance Engineering"
+},
+{
+"a": "Refutation-Driven Performance Engineering",
+"href": "https://papers.hanzo.ai/refutation-driven-perf/"
+},
+{
+"p": "An Empirical Study of a Multi-Week GPU Kernel Campaign"
+},
+{
+"p": "Evolutionary Schedule Search in a One-Source Kernel DSL"
+},
+{
+"a": "Evolutionary Schedule Search in a One-Source Kernel DSL",
+"href": "https://papers.hanzo.ai/evolutionary-schedule-search/"
+},
+{
+"p": "And the Continual-Improvement Loop It Anchors"
+},
+{
+"p": "Hanzo Router"
+},
+{
+"a": "Hanzo Router",
+"href": "https://papers.hanzo.ai/hanzo-router/"
+},
+{
+"p": "Memory-Aware, Local-First LLM Routing with a Learned SLO-Constrained Policy"
+},
+{
+"p": "What a Dormant Agent Costs"
+},
+{
+"a": "What a Dormant Agent Costs",
+"href": "https://papers.hanzo.ai/hanzo-dormant-agents/"
+},
+{
+"p": "State, Execution and Isolation Measured Separately at a Fleet of One Million"
+},
+{
+"p": "Hops Do Not Fix Multi-Hop Retrieval"
+},
+{
+"a": "Hops Do Not Fix Multi-Hop Retrieval",
+"href": "https://papers.hanzo.ai/hanzo-multi-hop-retrieval/"
+},
+{
+"p": "A Negative Result on Long-Horizon Conversational Memory, and What the Failure Actually Is"
+},
+{
+"p": "Retrieval Scoped by Subject"
+},
+{
+"a": "Retrieval Scoped by Subject",
+"href": "https://papers.hanzo.ai/locomo-subject-scope/"
+},
+{
+"p": "A factorial measurement of conversational memory on LoCoMo, and the negative controls that locate the effect"
+},
+{
+"p": "Hanzo Network Whitepaper"
+},
+{
+"a": "Hanzo Network Whitepaper",
+"href": "https://papers.hanzo.ai/network-whitepaper/"
+},
+{
+"p": "L1 Blockchain for Decentralized AI Compute"
+}
+],
+[
+{
+"p": "Every benchmark"
+},
+{
+"h2": "Every benchmark, every run"
+},
+{
+"p": "One shelf for everything above, by the same five products: each Kai revision on each suite it leads, each Enso tier on the frontiers it holds, each Zen 6 reading, each memory and platform pass. Search it, filter it, pick rows of one benchmark to compare, and open any of them for its history, conditions, hardware, source and the command that reproduces it."
+},
+{
+"button": "Newest"
+},
+{
+"button": "Largest lead"
+},
+{
+"button": "Benchmark"
+},
+{
+"button": "Value"
+},
+{
+"button": "CSV"
+},
+{
+"button": "JSON"
+},
+{
+"button": "Copy link"
+},
+{
+"a": "Live results",
+"href": "?state=live#all"
+},
+{
+"a": "Kai, every revision",
+"href": "?product=Kai&category=Decision%20harness&measure=Accuracy&order=name#all"
+},
+{
+"a": "Superseded runs",
+"href": "?state=superseded#all"
+},
+{
+"a": "Zen 6 and the engine",
+"href": "?product=Zen%206#all"
+},
+{
+"a": "Not measured by Hanzo",
+"href": "?by=Vendor&by=Board#all"
+},
+{
+"button": "Filters"
+},
+{
+"button": "Kai 120"
+},
+{
+"button": "Zen 6 26"
+},
+{
+"button": "Agent harness 8"
+},
+{
+"button": "Agent platform 12"
+},
+{
+"button": "Decision harness 115"
+},
+{
+"button": "Throughput & subquadratic long-context attention 23"
+},
+{
+"button": "Platform, agents, and sandboxes 9"
+},
+{
+"button": "Memory and retrieval 6"
+},
+{
+"button": "Capability 3"
+},
+{
+"button": "Cost and start-up 3"
+},
+{
+"button": "Engine prefill vs llama.cpp 3"
+},
+{
+"button": "Latency 2"
+},
+{
+"button": "2 more"
+},
+{
+"button": "Accuracy 67"
+},
+{
+"button": "Calibration error (ECE) 51"
+},
+{
+"button": "D-LSA Decode speedup 8"
+},
+{
+"button": "D-LSA Prefill speedup 8"
+},
+{
+"button": "Decode throughput 3"
+},
+{
+"button": "Prefill throughput 3"
+},
+{
+"button": "Prefill throughput vs llama.cpp 3"
+},
+{
+"button": "substring EM 3"
+},
+{
+"button": "20 more"
+},
+{
+"button": "Hanzo 166"
+},
+{
+"button": "Nov 2026 23"
+},
+{
+"button": "Oct 2026 42"
+},
+{
+"button": "Sep 2026 98"
+},
+{
+"button": "Jul 2026 3"
+},
+{
+"button": "Live 48"
+},
+{
+"button": "Frozen 23"
+},
+{
+"button": "Superseded 95"
+},
+{
+"button": "Win 146"
+},
+{
+"button": "Unscored 20"
+},
+{
+"p": "166 of 166 results, 24 benchmarks"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "AG News",
+"href": "/benchmarks/kai-ag-news"
+},
+{
+"button": "Show all 166"
+},
+{
+"h2": "Every benchmark page"
+},
+{
+"p": "Enso"
+},
+{
+"a": "Enso",
+"href": "?product=Enso#all"
+},
+{
+"a": "GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"p": "filter the shelf to it"
+},
+{
+"p": "Kai"
+},
+{
+"a": "Kai",
+"href": "?product=Kai#all"
+},
+{
+"a": "AG News",
+"href": "/benchmarks/kai-ag-news"
+},
+{
+"a": "DAIR Emotion",
+"href": "/benchmarks/kai-dair-emotion"
+},
+{
+"a": "Banking77",
+"href": "/benchmarks/kai-banking77"
+},
+{
+"a": "Support triage",
+"href": "/benchmarks/kai-support-triage"
+},
+{
+"a": "Email spam",
+"href": "/benchmarks/kai-email-spam"
+},
+{
+"a": "Phishing",
+"href": "/benchmarks/kai-phishing"
+},
+{
+"a": "Toxicity",
+"href": "/benchmarks/kai-toxicity"
+},
+{
+"a": "RAG relevance",
+"href": "/benchmarks/kai-rag-relevance"
+},
+{
+"a": "Model routing",
+"href": "/benchmarks/kai-model-routing"
+},
+{
+"a": "Typed decisions",
+"href": "/benchmarks/kai-typed-decisions"
+},
+{
+"a": "MASSIVE",
+"href": "/benchmarks/kai-massive"
+},
+{
+"a": "Choosing among many options",
+"href": "/benchmarks/kai-choice-size"
+},
+{
+"a": "Latency of one decision",
+"href": "/benchmarks/kai-latency"
+},
+{
+"p": "filter the shelf to it"
+},
+{
+"p": "Zen 6"
+},
+{
+"a": "Zen 6",
+"href": "?product=Zen%206#all"
+},
+{
+"a": "Zen 6 throughput & Latent Sparse Attention",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"p": "filter the shelf to it"
+},
+{
+"p": "Agent harness"
+},
+{
+"a": "Agent harness",
+"href": "?product=Agent%20harness#all"
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "CronQuestions",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "LoCoMo · subject scope",
+"href": "/benchmarks/locomo-subject-scope"
+},
+{
+"a": "LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"p": "filter the shelf to it"
+},
+{
+"p": "Agent platform"
+},
+{
+"a": "Agent platform",
+"href": "?product=Agent%20platform#all"
+},
+{
+"a": "Platform bench",
+"href": "/benchmarks/platform-bench"
+},
+{
+"a": "Fleet residency",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "Sandbox cold start",
+"href": "/benchmarks/sandbox"
+},
+{
+"p": "filter the shelf to it"
+}
+]
+]

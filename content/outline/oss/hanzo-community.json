@@ -1,0 +1,212 @@
+[
+[
+{
+"h1": "hanzo-community"
+},
+{
+"p": "The public repositories of hanzo-community on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "hanzo-community on GitHub",
+"href": "https://github.com/hanzo-community"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-community"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 5 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-community, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-community/mmdamd140_thiqa-1 0 0 Pushed Aug 25, 2026 Forge",
+"href": "https://github.com/hanzo-community/mmdamd140_thiqa-1"
+},
+{
+"li": "hanzo-community/hanzo_cursor-probe 0 0 Pushed Aug 25, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_cursor-probe"
+},
+{
+"li": "hanzo-community/hanzo_font-lux-network 0 0 Pushed Aug 23, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_font-lux-network"
+},
+{
+"li": "hanzo-community/hanzo_font-zoo-ngo 0 0 Pushed Aug 23, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_font-zoo-ngo"
+},
+{
+"li": "hanzo-community/hanzo_font-hanzo-ai 0 0 Pushed Aug 23, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_font-hanzo-ai"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-one 0 0 Pushed Aug 22, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-one"
+},
+{
+"li": "hanzo-community/hanzo_trust 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_trust"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-ventures 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-ventures"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-codes 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-codes"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-works 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-works"
+},
+{
+"li": "hanzo-community/hanzo_hanzoskills 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzoskills"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-cloud 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-cloud"
+},
+{
+"li": "hanzo-community/hanzo_zerotrust 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_zerotrust"
+},
+{
+"li": "hanzo-community/hanzo_bot 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_bot"
+},
+{
+"li": "hanzo-community/hanzo_base 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_base"
+},
+{
+"li": "hanzo-community/hanzo_dev 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_dev"
+},
+{
+"li": "hanzo-community/hanzo_bootnode 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_bootnode"
+},
+{
+"li": "hanzo-community/hanzo_zen 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_zen"
+},
+{
+"li": "hanzo-community/hanzo_gui 0 0 Pushed Aug 21, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_gui"
+},
+{
+"li": "hanzo-community/hanzo_faucet 0 0 Pushed Aug 20, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_faucet"
+},
+{
+"li": "hanzo-community/hanzo_edge-site 0 0 Pushed Aug 20, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_edge-site"
+},
+{
+"li": "hanzo-community/hanzo_engine 0 0 Pushed Aug 20, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_engine"
+},
+{
+"li": "hanzo-community/hanzo_hips 0 0 Hanzo Improvement Proposals (hips.hanzo.ai) Pushed Aug 18, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hips"
+},
+{
+"li": "hanzo-community/hanzo_speak2hear 0 0 Agent-assisted mediation for hard conversations. Built in hanzo.app with Enso. Pushed Aug 17, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_speak2hear"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-store 0 0 Pushed Aug 17, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-store"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-app 0 0 hanzo.app landing and product catalog (Vite SPA) Pushed Aug 16, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-app"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-industries 0 0 Pushed Aug 16, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-industries"
+},
+{
+"li": "hanzo-community/hanzo_logo 0 0 Pushed Aug 16, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_logo"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-console 0 0 Pushed Aug 15, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-console"
+},
+{
+"li": "hanzo-community/hanzo_hanzo-ai 0 0 hanzo.ai apex marketing site (Next.js static export) Pushed Aug 15, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-community/hanzo_hanzo-ai"
+},
+{
+"li": "hanzo-community/hanzo_lux-partners 0 0 Pushed Aug 15, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_lux-partners"
+},
+{
+"li": "hanzo-community/lux_zoo-exchange 0 0 Pushed Aug 14, 2026 Forge",
+"href": "https://github.com/hanzo-community/lux_zoo-exchange"
+},
+{
+"li": "hanzo-community/lux_lux-exchange 0 0 Pushed Aug 14, 2026 Forge",
+"href": "https://github.com/hanzo-community/lux_lux-exchange"
+},
+{
+"li": "hanzo-community/hanzo_megashop 0 0 Pushed Aug 14, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_megashop"
+},
+{
+"li": "hanzo-community/hanzo_dev-docs 0 0 Pushed Aug 14, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_dev-docs"
+},
+{
+"li": "hanzo-community/hanzo_gallery 0 0 Pushed Aug 14, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_gallery"
+},
+{
+"li": "hanzo-community/hanzo_openrouter 0 0 Pushed Aug 14, 2026 Forge",
+"href": "https://github.com/hanzo-community/hanzo_openrouter"
+}
+]
+]

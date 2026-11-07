@@ -1,0 +1,157 @@
+[
+[
+{
+"a": "Integrations",
+"href": "/integrations"
+},
+{
+"h1": "Use Hanzo AI with Python"
+},
+{
+"p": "Use Hanzo AI in Python with the official OpenAI SDK (fully compatible), the Anthropic SDK, or via HTTP with httpx/requests. Zero lock-in, standard interfaces."
+},
+{
+"p": "Base URL: https://api.hanzo.ai/v1"
+},
+{
+"code": "https://api.hanzo.ai/v1"
+},
+{
+"p": "API Key: Get yours at platform.hanzo.ai/api-keys · Fully OpenAI-compatible · every model on the gateway available"
+},
+{
+"a": "platform.hanzo.ai/api-keys",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"p": "Created by Python Software Foundation"
+},
+{
+"a": "Python Software Foundation",
+"href": "https://python.org"
+},
+{
+"p": "License: PSF License · View source on GitHub →"
+},
+{
+"a": "View source on GitHub →",
+"href": "https://github.com/python/cpython"
+},
+{
+"p": "Hanzo AI is OpenAI-compatible, so existing Python code works with zero refactoring. We deeply appreciate the Python Software Foundation team for building and maintaining this open-source project."
+},
+{
+"h2": "OpenAI SDK (recommended)"
+},
+{
+"code": "pip install openai from openai import OpenAI client = OpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key= \" your-hanzo-api-key \" , ) response = client . chat . completions . create ( model= \" zen4-pro \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], ) print ( response . choices [ 0 ]. message . content )"
+},
+{
+"h2": "httpx (raw HTTP)"
+},
+{
+"code": "import httpx , json response = httpx . post ( \" https://api.hanzo.ai/v1/chat/completions \" , headers= { \" Authorization \" : \" Bearer your-hanzo-api-key \" }, json= { \" model \" : \" zen4-pro \" , \" messages \" : [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], }, ) print ( response . json ()[ \" choices \" ][ 0 ][ \" message \" ][ \" content \" ])"
+},
+{
+"h2": "Async with asyncio"
+},
+{
+"code": "import asyncio from openai import AsyncOpenAI client = AsyncOpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key= \" your-hanzo-api-key \" , ) async def main (): response = await client . chat . completions . create ( model= \" zen4-pro \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello async! \" }], ) print ( response . choices [ 0 ]. message . content ) asyncio . run ( main ())"
+},
+{
+"h2": "Environment setup"
+},
+{
+"code": "# .env HANZO_API_KEY =your-hanzo-api-key # Load in code from dotenv import load_dotenv import os load_dotenv () from openai import OpenAI client = OpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key=os . environ [ \" HANZO_API_KEY \" ], )"
+},
+{
+"h2": "Ready to get started?"
+},
+{
+"p": "Create a free account and get your API key. The Free plan includes free model requests and Kai decisions, no card."
+},
+{
+"a": "Get API key — Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse Models",
+"href": "/models"
+},
+{
+"h2": "More integrations"
+},
+{
+"a": "OpenAI Python SDK",
+"href": "/integrations/openai-sdk"
+},
+{
+"a": "Anthropic SDK",
+"href": "/integrations/anthropic-sdk"
+},
+{
+"a": "LangChain",
+"href": "/integrations/langchain"
+},
+{
+"a": "LlamaIndex",
+"href": "/integrations/llamaindex"
+},
+{
+"a": "Vercel AI SDK",
+"href": "/integrations/vercel-ai-sdk"
+},
+{
+"a": "Hugging Face",
+"href": "/integrations/huggingface"
+},
+{
+"a": "AutoGen",
+"href": "/integrations/autogen"
+},
+{
+"a": "CrewAI",
+"href": "/integrations/crewai"
+},
+{
+"a": "DSPy",
+"href": "/integrations/dspy"
+},
+{
+"a": "Haystack",
+"href": "/integrations/haystack"
+},
+{
+"a": "Cursor",
+"href": "/integrations/cursor"
+},
+{
+"a": "Continue.dev",
+"href": "/integrations/continue-dev"
+},
+{
+"a": "GitHub Copilot",
+"href": "/integrations/github-copilot"
+},
+{
+"a": "Docker",
+"href": "/integrations/docker"
+},
+{
+"a": "Kubernetes",
+"href": "/integrations/kubernetes"
+},
+{
+"a": "TypeScript",
+"href": "/integrations/typescript"
+},
+{
+"a": "Go",
+"href": "/integrations/go"
+},
+{
+"a": "Rust",
+"href": "/integrations/rust"
+}
+]
+]

@@ -1,0 +1,164 @@
+[
+[
+{
+"h1": "Company"
+},
+{
+"p": "The legal body: formation, cap table, documents and filings, as operations."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Company API",
+"href": "https://docs.hanzo.ai/docs/openapi/company"
+},
+{
+"li": "Company The legal body: formation, cap table, documents and filings, as operations.",
+"href": "/products/company"
+},
+{
+"li": "Agents Workers the company keeps: a model, instructions, tools and a budget.",
+"href": "/products/agents"
+},
+{
+"li": "Models Every model behind one endpoint and one key.",
+"href": "/products/models"
+},
+{
+"li": "Memory What the company knows, and when it knew it.",
+"href": "/products/memory"
+},
+{
+"li": "Identity Who is acting — a person, a program or an agent — and what it may reach.",
+"href": "/products/identity"
+},
+{
+"li": "Machines Real computers, leased by the org, for agents and for the software they ship.",
+"href": "/products/machines"
+},
+{
+"a": "Record Every act on every layer, by a person or an agent, in one trail.",
+"href": "/products/record"
+}
+],
+[
+{
+"p": "Choose a structure, add founders, clear KYC, pay the fee, sign, and record the founding allocation. Each step is one guarded transition of the formation machine, so an agent can drive it and cannot skip a step. The law needs a person three times — identity, signature and the fee — and after genesis the shares, rounds and documents are operations like any other."
+}
+],
+[
+{
+"h2": "API"
+},
+{
+"p": "Operations on api.hanzo.ai. One key reaches every layer."
+},
+{
+"table": [
+[
+"Method",
+"Path",
+"What it does"
+],
+[
+"POST",
+"/v1/company/tariff",
+"Itemises what a formation costs before anyone commits to it."
+],
+[
+"POST",
+"/v1/company",
+"Begins the org’s one formation and returns the stages reachable from it."
+],
+[
+"POST",
+"/v1/company/advance",
+"Runs the one guarded transition of the formation machine."
+],
+[
+"POST",
+"/v1/company/genesis",
+"Seeds the cap table with the founding allocation and anchors its root on-chain."
+],
+[
+"GET",
+"/v1/captable/summary",
+"Computes the org’s cap table."
+],
+[
+"POST",
+"/v1/legal/documents",
+"Renders a document from a template and seals it in the org’s store."
+]
+]
+}
+],
+[
+{
+"h2": "Try it"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/company/tariff \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"structure\": \"c-corp\", \"jurisdiction\": \"DE\"} '"
+}
+],
+[
+{
+"h2": "Docs"
+},
+{
+"a": "Company API",
+"href": "https://docs.hanzo.ai/docs/openapi/company"
+},
+{
+"a": "Cap table API",
+"href": "https://docs.hanzo.ai/docs/openapi/captable"
+},
+{
+"a": "hanzo company",
+"href": "https://docs.hanzo.ai/docs/cli/company"
+}
+],
+[
+{
+"h2": "On this site"
+},
+{
+"a": "Cap table",
+"href": "/captable"
+},
+{
+"a": "Data room",
+"href": "/dataroom"
+},
+{
+"a": "Sign",
+"href": "/sign"
+},
+{
+"a": "Commerce",
+"href": "/commerce"
+},
+{
+"a": "Billing",
+"href": "/billing"
+},
+{
+"a": "Payments",
+"href": "/payments"
+},
+{
+"a": "Treasury",
+"href": "/treasury"
+},
+{
+"a": "Ledger",
+"href": "/ledger"
+},
+{
+"a": "Risk",
+"href": "/risk"
+}
+]
+]

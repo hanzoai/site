@@ -1,0 +1,307 @@
+[
+[
+{
+"h1": "luxfi"
+},
+{
+"p": "Post-quantum blockchain with multi-consensus, FHE, and cross-chain interoperability."
+},
+{
+"a": "luxfi on GitHub",
+"href": "https://github.com/luxfi"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/luxfi"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 106 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of luxfi, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "luxfi/zwing Go 0 0 Z-Wing: canonical Lux post-quantum secure channel (X-Wing KEM + Ed25519/ML-DSA-65 hybrid identity + ChaCha20-Poly1305) Pushed Nov 6, 2026 23 commits this year Forge",
+"href": "https://github.com/luxfi/zwing"
+},
+{
+"li": "luxfi/zpay Solidity 2 0 ▼ ZPay is an anonymous and private payment system secured by zero knowledge proofs. Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/luxfi/zpay"
+},
+{
+"li": "luxfi/zmq Go 0 0 Pure-Go implementation of ZeroMQ-4 Pushed Nov 6, 2026 24 commits this year Forge",
+"href": "https://github.com/luxfi/zmq"
+},
+{
+"li": "luxfi/zkvm-benchmarks Rust 0 0 Benchmarks of popular zkVMs including Jolt Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfi/zkvm-benchmarks"
+},
+{
+"li": "luxfi/zk Go 0 0 Lux Z-Chain proof envelope, verifier dispatch, and account-ID registry. Strict-PQ STARK/FRI verification under ChainSecurityProfile. Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/luxfi/zk"
+},
+{
+"li": "luxfi/zapdb Go 0 0 Fast key-value DB in Go. Pushed Nov 6, 2026 140 commits this year Forge",
+"href": "https://github.com/luxfi/zapdb"
+},
+{
+"li": "luxfi/zapcodec Go 0 0 ZAP-native little-endian reflection codec — extracted from luxfi/codec as part of Wave 2G-Archive Pushed Nov 6, 2026 13 commits this year Forge",
+"href": "https://github.com/luxfi/zapcodec"
+},
+{
+"li": "luxfi/zap Go 1 0 Zero-Allocation Protocol for high-performance AI agent communication Pushed Nov 6, 2026 141 commits this year Forge",
+"href": "https://github.com/luxfi/zap"
+},
+{
+"li": "luxfi/xvm C++ 0 0 Lux XVM — GPU-native UTXO transitions Pushed Nov 6, 2026 14 commits this year Forge",
+"href": "https://github.com/luxfi/xvm"
+},
+{
+"li": "luxfi/work-board TypeScript 0 0 Zoo DAO on-chain bounty board — live BountyV1/EscrowV1/ReputationV1 work-market over JSON-RPC Pushed Nov 6, 2026 38 commits this year Forge",
+"href": "https://github.com/luxfi/work-board"
+},
+{
+"li": "luxfi/widgets TypeScript 0 0 lux custom node module Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/widgets"
+},
+{
+"li": "luxfi/wc-utils 0 0 lux custom node module Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/wc-utils"
+},
+{
+"li": "luxfi/wc-types 0 0 lux custom node module Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfi/wc-types"
+},
+{
+"li": "luxfi/wc-socket-transport 0 0 lux custom node module Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/wc-socket-transport"
+},
+{
+"li": "luxfi/wc-iso-crypto 0 0 lux custom node module Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/wc-iso-crypto"
+},
+{
+"li": "luxfi/wc-core 0 0 lux custom node module Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/wc-core"
+},
+{
+"li": "luxfi/wc-client 0 0 lux custom node module Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/wc-client"
+},
+{
+"li": "luxfi/wc-browser-utils 0 0 lux custom node module Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/wc-browser-utils"
+},
+{
+"li": "luxfi/warp-relayer Go 0 0 Lux-native off-chain courier for cross-chain warp messages between Lux-derived L1s (asset-bridge teleport). NOT for validator-set management. Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/luxfi/warp-relayer"
+},
+{
+"li": "luxfi/warp Go 0 0 Warp Protocol v2.0 Pushed Nov 6, 2026 230 commits this year Forge",
+"href": "https://github.com/luxfi/warp"
+},
+{
+"li": "luxfi/wallet TypeScript 0 0 Open Source Lux DeFi Wallet. Pushed Nov 6, 2026 217 commits this year Forge",
+"href": "https://github.com/luxfi/wallet"
+},
+{
+"li": "luxfi/vote-zoo HTML 0 0 Zoo Labs Governance - Vote on proposals Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfi/vote-zoo"
+},
+{
+"li": "luxfi/vms Go 0 0 VM interfaces and components for Lux blockchain Pushed Nov 6, 2026 12 commits this year Forge",
+"href": "https://github.com/luxfi/vms"
+},
+{
+"li": "luxfi/vm Go 0 0 Virtual machine types and interfaces for Lux blockchain Pushed Nov 6, 2026 261 commits this year Forge",
+"href": "https://github.com/luxfi/vm"
+},
+{
+"li": "luxfi/version Go 0 0 Pushed Nov 6, 2026 20 commits this year Forge",
+"href": "https://github.com/luxfi/version"
+},
+{
+"li": "luxfi/verkle Go 0 0 luxfi-maintained fork of ethereum/go-verkle. See LUXFI-FORK.md. Pushed Nov 6, 2026 26 commits this year Forge",
+"href": "https://github.com/luxfi/verkle"
+},
+{
+"li": "luxfi/vault Solidity 1 0 ▼ LUX Quantum Vault Project Pushed Nov 6, 2026 7 commits this year Forge",
+"href": "https://github.com/luxfi/vault"
+},
+{
+"li": "luxfi/validators Go 0 0 Validator management for Lux blockchain Pushed Nov 6, 2026 41 commits this year Forge",
+"href": "https://github.com/luxfi/validators"
+},
+{
+"li": "luxfi/utxo Go 0 0 Pushed Nov 6, 2026 132 commits this year Forge",
+"href": "https://github.com/luxfi/utxo"
+},
+{
+"li": "luxfi/utils Go 0 0 Lux utils package Pushed Nov 6, 2026 49 commits this year Forge",
+"href": "https://github.com/luxfi/utils"
+},
+{
+"li": "luxfi/util Go 0 0 Shared Go utilities for Lux. Pushed Nov 6, 2026 40 commits this year Forge",
+"href": "https://github.com/luxfi/util"
+},
+{
+"li": "luxfi/upgrade Go 0 0 Lux network upgrade configuration and scheduling Pushed Nov 6, 2026 24 commits this year Forge",
+"href": "https://github.com/luxfi/upgrade"
+},
+{
+"li": "luxfi/units Go 0 0 Lux denomination and size unit constants Pushed Nov 6, 2026 12 commits this year Forge",
+"href": "https://github.com/luxfi/units"
+},
+{
+"li": "luxfi/uni-v4-subgraph TypeScript 0 0 Subgraph for Uniswap V4 Pushed Nov 6, 2026 20 commits this year Forge",
+"href": "https://github.com/luxfi/uni-v4-subgraph"
+},
+{
+"li": "luxfi/uni-v3-subgraph TypeScript 0 0 Subgraph for Uniswap V3 Pushed Nov 6, 2026 21 commits this year Forge",
+"href": "https://github.com/luxfi/uni-v3-subgraph"
+},
+{
+"li": "luxfi/uni-v2-subgraph TypeScript 0 0 Uniswap V2 subgraph 📊 Pushed Nov 6, 2026 11 commits this year Forge",
+"href": "https://github.com/luxfi/uni-v2-subgraph"
+},
+{
+"li": "luxfi/uma JavaScript 0 0 UMA optimistic oracle (Solidity) Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfi/uma"
+},
+{
+"li": "luxfi/tw-typography JavaScript 0 0 Pushed Nov 6, 2026 8 commits this year Forge",
+"href": "https://github.com/luxfi/tw-typography"
+},
+{
+"li": "luxfi/tui Go 0 0 Pushed Nov 6, 2026 24 commits this year Forge",
+"href": "https://github.com/luxfi/tui"
+},
+{
+"li": "luxfi/tss Go 0 0 Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/tss"
+},
+{
+"li": "luxfi/treasury Go 0 0 Treasury platform: 13 providers, banking, payments, FX, cards, compliance Pushed Nov 6, 2026 161 commits this year Forge",
+"href": "https://github.com/luxfi/treasury"
+},
+{
+"li": "luxfi/trace Go 0 0 High-performance distributed tracing library for Lux services; OpenTelemetry-compatible, with context propagation and customizable exporters. Pushed Nov 6, 2026 Forge",
+"href": "https://github.com/luxfi/trace"
+},
+{
+"li": "luxfi/torus-ntt Shell 0 0 Torus NTT: Number Theoretic Transform acceleration Pushed Nov 6, 2026 14 commits this year Forge",
+"href": "https://github.com/luxfi/torus-ntt"
+},
+{
+"li": "luxfi/torus-ml Python 0 0 Torus ML: Machine Learning on encrypted data Pushed Nov 6, 2026 Forge",
+"href": "https://github.com/luxfi/torus-ml"
+},
+{
+"li": "luxfi/torus-fft Shell 0 0 Torus FFT: Fast Fourier Transform acceleration Pushed Nov 6, 2026 Forge",
+"href": "https://github.com/luxfi/torus-fft"
+},
+{
+"li": "luxfi/tokenomics JavaScript 0 0 Genesis NFT registry and token supply analysis Pushed Nov 6, 2026 4 commits this year Forge",
+"href": "https://github.com/luxfi/tokenomics"
+},
+{
+"li": "luxfi/tls Go 0 0 Pushed Nov 6, 2026 27 commits this year Forge",
+"href": "https://github.com/luxfi/tls"
+},
+{
+"li": "luxfi/timer Go 0 0 Mockable time utilities for Lux blockchain Pushed Nov 6, 2026 24 commits this year Forge",
+"href": "https://github.com/luxfi/timer"
+},
+{
+"li": "luxfi/threshold Go 3 0 ▼ LUX multiparty CGGMP21, FROST, LSS protocol and other threshold signature schemes. Pushed Nov 6, 2026 467 commits this year Forge",
+"href": "https://github.com/luxfi/threshold"
+},
+{
+"li": "luxfi/test Go 0 0 Pushed Nov 6, 2026 24 commits this year Forge",
+"href": "https://github.com/luxfi/test"
+},
+{
+"li": "luxfi/teleporter Rust 0 0 ▼ Teleport protocol Docker and Kubernetes orchestration. Pushed Nov 6, 2026 5 commits this year Forge",
+"href": "https://github.com/luxfi/teleporter"
+},
+{
+"li": "luxfi/teleport TypeScript 3 0 Zero-knowledge MPC cross-chain bridge Pushed Nov 6, 2026 62 commits this year Forge",
+"href": "https://github.com/luxfi/teleport"
+},
+{
+"li": "luxfi/tel TypeScript 0 0 Lux Tel - telecommunications and satellite connectivity Pushed Nov 6, 2026 135 commits this year Forge",
+"href": "https://github.com/luxfi/tel"
+},
+{
+"li": "luxfi/tee Go 0 0 Pushed Nov 6, 2026 10 commits this year Forge",
+"href": "https://github.com/luxfi/tee"
+},
+{
+"li": "luxfi/sys Go 0 0 Pushed Nov 6, 2026 20 commits this year Forge",
+"href": "https://github.com/luxfi/sys"
+},
+{
+"li": "luxfi/styleguide 0 0 Lux's delta on the shared estate style guide. Original, CC0. Pushed Nov 6, 2026 3 commits this year Forge",
+"href": "https://github.com/luxfi/styleguide"
+},
+{
+"li": "luxfi/store HTML 0 0 Lux Store - Coming Soon Pushed Nov 6, 2026 6 commits this year Forge",
+"href": "https://github.com/luxfi/store"
+},
+{
+"li": "luxfi/status TypeScript 0 0 Lux Network Status Dashboard Pushed Nov 6, 2026 30 commits this year Forge",
+"href": "https://github.com/luxfi/status"
+},
+{
+"li": "luxfi/staking Go 0 0 TLS certificate loading for Lux staking Pushed Nov 6, 2026 32 commits this year Forge",
+"href": "https://github.com/luxfi/staking"
+},
+{
+"li": "luxfi/snapshots 0 0 Daily snapshots for Lux blockchain networks Pushed Nov 6, 2026 18 commits this year Forge",
+"href": "https://github.com/luxfi/snapshots"
+},
+{
+"button": "Show all 344"
+}
+]
+]

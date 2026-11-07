@@ -1,0 +1,437 @@
+[
+[
+{
+"h1": "SDKs for every language"
+},
+{
+"p": "A full Cloud SDK generated from the OpenAPI document the API itself serves, and a hand-written AI + Agents library."
+},
+{
+"a": "hanzoai/sdk",
+"href": "https://github.com/hanzoai/sdk"
+},
+{
+"a": "API reference",
+"href": "https://docs.hanzo.ai/docs/openapi/"
+},
+{
+"button": "Python"
+},
+{
+"button": "TypeScript"
+},
+{
+"button": "cURL"
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key= \" hk-... \" , # your Hanzo API key ) resp = client . chat . completions . create ( model= \" zen5 \" , # any model on the gateway messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], ) print ( resp . choices [ 0 ]. message . content )"
+},
+{
+"code": "import OpenAI from \" openai \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : \" hk-... \" , }); const resp = await client.chat.completions. create ({ model : \" zen5 \" , messages : [{ role : \" user \" , content : \" Hello! \" }], }); console. log ( resp.choices [ 0 ] .message.content );"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' { \"model\": \"zen5\", \"messages\": [{\"role\": \"user\", \"content\": \"Hello!\"}] } '"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls SDKs from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo SDKs in my project."
+}
+],
+[
+{
+"h2": "Full Cloud SDK"
+},
+{
+"p": "Generated from one document and never edited by hand, so every route is reachable the day it ships — models, agents, data, compute, network, security, platform and chain. Method and class names are the document's operation ids, which is what makes a client checkable against a release instead of against somebody's memory. Real code lives in hanzo-<lang>/sdk ."
+},
+{
+"h2": "AI + Agents"
+},
+{
+"p": "The hand-crafted flagship: models, agents, tools, memory, and MCP. Python hanzo is the most complete; Node ships @hanzo/ai . Distinct from the generated cloud SDK — this is the \"we love this language\" library."
+}
+],
+[
+{
+"h2": "Use the OpenAI SDK"
+},
+{
+"p": "POST /v1/chat/completions — identical request/response to OpenAI Chat Completions."
+},
+{
+"p": "Point the official OpenAI SDK at the Hanzo gateway."
+},
+{
+"code": "from openai import OpenAI client = OpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key= \" hk-... \" , # your Hanzo API key ) resp = client . chat . completions . create ( model= \" zen5 \" , # any model on the gateway messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], ) print ( resp . choices [ 0 ]. message . content )"
+}
+],
+[
+{
+"h2": "Use the Anthropic SDK"
+},
+{
+"p": "POST /v1/messages — the native Anthropic Messages API, x-api-key auth and content-block responses."
+},
+{
+"p": "Point the official Anthropic SDK at the Hanzo gateway."
+},
+{
+"code": "from anthropic import Anthropic client = Anthropic ( base_url= \" https://api.hanzo.ai \" , api_key= \" hk-... \" , # sent as the x-api-key header ) msg = client . messages . create ( model= \" zen5 \" , max_tokens= 1024 , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], ) print ( msg . content [ 0 ]. text )"
+}
+],
+[
+{
+"h2": "Official Cloud SDKs"
+},
+{
+"p": "Use our official SDKs to integrate Cloud into your application"
+},
+{
+"h3": "Hanzo Python SDK"
+},
+{
+"a": "hanzoai",
+"href": "https://pypi.org/project/hanzoai/"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/sdks/python"
+},
+{
+"h3": "Hanzo Go SDK"
+},
+{
+"a": "github.com/hanzoai/go-sdk",
+"href": "https://pkg.go.dev/github.com/hanzoai/go-sdk"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/sdks/go"
+},
+{
+"h3": "Hanzo TypeScript SDK"
+},
+{
+"a": "@hanzo/sdk",
+"href": "https://www.npmjs.com/package/@hanzo/sdk"
+},
+{
+"h3": "Hanzo Rust SDK"
+},
+{
+"a": "hanzo",
+"href": "https://crates.io/crates/hanzo"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/sdks/rust"
+},
+{
+"h3": "Hanzo Swift SDK"
+},
+{
+"a": "hanzo-swift/sdk",
+"href": "https://github.com/hanzo-swift"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/sdks/swift"
+},
+{
+"h3": "Hanzo Kotlin SDK"
+},
+{
+"a": "hanzo-kt/sdk",
+"href": "https://github.com/hanzo-kt/sdk"
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/sdks/kotlin"
+}
+],
+[
+{
+"h2": "A home for every ecosystem"
+},
+{
+"p": "Each language has its own org holding the generated cloud SDK, an AI + agents library and the split-out packages. Every one of them ships the same six runnable examples — prove the key works, one completion, balance and usage, a store round-trip, create and run an agent, list the tools — so knowing one language's set is enough to navigate another's."
+},
+{
+"a": "Python Flagship GA hanzo-py pip install hanzoai sdk hanzo-py/sdk docs hanzoai/python-sdk ai hanzo",
+"href": "https://github.com/hanzo-py"
+},
+{
+"a": "Go GA hanzo-go go get github.com/hanzoai/go-sdk sdk hanzo-go/sdk docs hanzoai/go-sdk",
+"href": "https://github.com/hanzo-go"
+},
+{
+"a": "TypeScript GA hanzo-js npm install @hanzo/sdk sdk hanzo-js/sdk docs hanzoai/js-sdk ai @hanzo/ai",
+"href": "https://github.com/hanzo-js"
+},
+{
+"a": "Rust GA hanzo-rs cargo add hanzo sdk hanzo-rs/sdk docs hanzoai/rust-sdk ai hanzo",
+"href": "https://github.com/hanzo-rs"
+},
+{
+"a": "Swift GA hanzo-swift .package(url: \"https://github.com/hanzo-swift/sdk\") sdk hanzo-swift/sdk docs hanzoai/swift-sdk",
+"href": "https://github.com/hanzo-swift"
+},
+{
+"a": "Kotlin GA hanzo-kt implementation(\"com.github.hanzo-kt:sdk:v8.0.0\") sdk hanzo-kt/sdk docs hanzoai/kotlin-sdk",
+"href": "https://github.com/hanzo-kt"
+}
+],
+[
+{
+"h2": "The flagship AI library"
+},
+{
+"p": "Models, agents, tools, memory, and MCP — hand-crafted, not generated. Python leads; Rust and Node follow."
+},
+{
+"h3": "Python"
+},
+{
+"p": "Flagship — the most complete AI + agents library."
+},
+{
+"h3": "Node"
+},
+{
+"p": "Models, agents, tools, memory, and MCP for TypeScript."
+},
+{
+"h3": "Rust"
+},
+{
+"p": "The AI + agents crate for Rust — crypto, DID, MCP, agents, embeddings, feature-gated."
+}
+],
+[
+{
+"h2": "Served at hanzo.ai"
+},
+{
+"p": "Each module has a page at its import path, with its source and its reference."
+},
+{
+"a": "hanzo.ai/ lz4/v4",
+"href": "/lz4/v4"
+},
+{
+"a": "hanzo.ai/ openai",
+"href": "/openai"
+},
+{
+"a": "hanzo.ai/ openrouter",
+"href": "/openrouter"
+},
+{
+"a": "hanzo.ai/ sdk",
+"href": "/sdk"
+},
+{
+"a": "hanzo.ai/ sendgrid",
+"href": "/sendgrid"
+},
+{
+"a": "hanzo.ai/ age",
+"href": "/age"
+},
+{
+"a": "hanzo.ai/ agent",
+"href": "/agent"
+},
+{
+"a": "hanzo.ai/ base-ha",
+"href": "/base-ha"
+},
+{
+"a": "hanzo.ai/ builder",
+"href": "/builder"
+},
+{
+"a": "hanzo.ai/ cd",
+"href": "/cd"
+},
+{
+"a": "hanzo.ai/ cek",
+"href": "/cek"
+},
+{
+"a": "hanzo.ai/ ci",
+"href": "/ci"
+},
+{
+"a": "hanzo.ai/ cpy3",
+"href": "/cpy3"
+},
+{
+"a": "hanzo.ai/ csqlite",
+"href": "/csqlite"
+},
+{
+"a": "hanzo.ai/ dashscope-go-sdk",
+"href": "/dashscope-go-sdk"
+},
+{
+"a": "hanzo.ai/ dashscopego",
+"href": "/dashscopego"
+},
+{
+"a": "hanzo.ai/ dbx",
+"href": "/dbx"
+},
+{
+"a": "hanzo.ai/ egress",
+"href": "/egress"
+},
+{
+"a": "hanzo.ai/ finance",
+"href": "/finance"
+},
+{
+"a": "hanzo.ai/ flags",
+"href": "/flags"
+},
+{
+"a": "hanzo.ai/ framework",
+"href": "/framework"
+},
+{
+"a": "hanzo.ai/ gochimp3",
+"href": "/gochimp3"
+},
+{
+"a": "hanzo.ai/ graph",
+"href": "/graph"
+},
+{
+"a": "hanzo.ai/ grpc-web",
+"href": "/grpc-web"
+},
+{
+"a": "hanzo.ai/ ingress-parser",
+"href": "/ingress-parser"
+},
+{
+"a": "hanzo.ai/ insights-go",
+"href": "/insights-go"
+},
+{
+"a": "hanzo.ai/ kafka",
+"href": "/kafka"
+},
+{
+"a": "hanzo.ai/ kms-operator",
+"href": "/kms-operator"
+},
+{
+"a": "hanzo.ai/ livekit",
+"href": "/livekit"
+},
+{
+"a": "hanzo.ai/ log",
+"href": "/log"
+},
+{
+"a": "hanzo.ai/ ltx",
+"href": "/ltx"
+},
+{
+"a": "hanzo.ai/ namespace",
+"href": "/namespace"
+},
+{
+"a": "hanzo.ai/ notify",
+"href": "/notify"
+},
+{
+"a": "hanzo.ai/ o11y-foundry",
+"href": "/o11y-foundry"
+},
+{
+"a": "hanzo.ai/ onnxgo",
+"href": "/onnxgo"
+},
+{
+"a": "hanzo.ai/ orm",
+"href": "/orm"
+},
+{
+"a": "hanzo.ai/ otel-collector",
+"href": "/otel-collector"
+},
+{
+"a": "hanzo.ai/ pdf",
+"href": "/pdf"
+},
+{
+"a": "hanzo.ai/ proto",
+"href": "/proto"
+},
+{
+"a": "hanzo.ai/ pubsub-go",
+"href": "/pubsub-go"
+},
+{
+"a": "hanzo.ai/ replicate",
+"href": "/replicate"
+},
+{
+"a": "hanzo.ai/ search-go",
+"href": "/search-go"
+},
+{
+"a": "hanzo.ai/ sqlcipher",
+"href": "/sqlcipher"
+},
+{
+"a": "hanzo.ai/ sqlite",
+"href": "/sqlite"
+},
+{
+"a": "hanzo.ai/ sqlite-vec",
+"href": "/sqlite-vec"
+},
+{
+"a": "hanzo.ai/ tygoja",
+"href": "/tygoja"
+},
+{
+"a": "hanzo.ai/ vfs",
+"href": "/vfs"
+},
+{
+"a": "hanzo.ai/ xorm",
+"href": "/xorm"
+},
+{
+"a": "hanzo.ai/ yaegi",
+"href": "/yaegi"
+},
+{
+"a": "hanzo.ai/ zip",
+"href": "/zip"
+}
+],
+[
+{
+"p": "SDKs"
+},
+{
+"a": "SDKs docs →",
+"href": "https://docs.hanzo.ai/docs/sdks"
+}
+]
+]

@@ -1,0 +1,111 @@
+[
+[
+{
+"h1": "Koma 1"
+},
+{
+"p": "Every frame tells a story."
+},
+{
+"p": "Cinematic video generation, character continuity, motion, animation, and shot-level creative control."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Try it in Design",
+"href": "/design"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "What Koma does"
+},
+{
+"h3": "Temporal character continuity"
+},
+{
+"p": "Maintains identity, costume attributes, facial geometry, and lighting coherence across multi-cut cinematic sequences."
+},
+{
+"h3": "Shot-level director control"
+},
+{
+"p": "Parametric camera choreography: focal length, pan/tilt rate, crane elevation, and dynamic optical depth-of-field."
+},
+{
+"h3": "High-fidelity motion synthesis"
+},
+{
+"p": "Continuous flow-matching spatial-temporal diffusion eliminating morphing, temporal flicker, and anatomy degeneration."
+},
+{
+"h3": "Keyframe-guided scene trajectories"
+},
+{
+"p": "Interpolates smoothly between user-defined storyboard keyframes with physics-aware object kinematics."
+}
+],
+[
+{
+"p": "In production"
+},
+{
+"h2": "Where Koma fits"
+},
+{
+"p": "Film and episodic VFX"
+},
+{
+"h3": "Previsualization and virtual production"
+},
+{
+"p": "Turn treatment scripts and concept art into dynamic camera animatics before principal photography begins."
+},
+{
+"p": "Advertising"
+},
+{
+"h3": "High-velocity spot iteration"
+},
+{
+"p": "Generate product-centric commercial variants with exact brand asset placement and lighting continuity."
+},
+{
+"p": "Game development"
+},
+{
+"h3": "In-game cinematics and storyboards"
+},
+{
+"p": "Rapidly construct dynamic narrative cutscenes matching game engine art direction."
+}
+],
+[
+{
+"p": "Research preview"
+},
+{
+"h2": "Try Koma on your own work"
+},
+{
+"p": "Samples of Koma's own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline."
+},
+{
+"a": "Request access",
+"href": "/beta/research"
+},
+{
+"a": "Every model",
+"href": "/models"
+}
+]
+]

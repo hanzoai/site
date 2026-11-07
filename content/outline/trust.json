@@ -1,0 +1,175 @@
+[
+[
+{
+"h1": "Security you can read"
+},
+{
+"p": "How you get in, what a credential reaches, what gets written down, and where the keys live — each one a mechanism you can point at in the source."
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "The processor terms in full — roles and instructions, subprocessor governance, security measures, the Standard Contractual Clause modules for EEA and UK transfers, and the U.S. state service-provider terms. Still a draft pending counsel, which the page says at the top, so read it as terms proposed rather than terms signed."
+},
+{
+"p": "Which providers can process your data, what each one does, where it runs, and whether it may train on your content — including the model providers a routed request reaches through a gateway. Rows still being confirmed against a provider’s signed terms are marked as such rather than left to look settled."
+},
+{
+"p": "Send the one your process uses — SIG, CAIQ, VSA, or your own spreadsheet. We answer it against the code, and where an answer is a mechanism rather than a yes, we point at the mechanism."
+},
+{
+"p": "A working session with the engineers who wrote it. Identity, tenancy, the audit trail, key custody — whichever part your reviewer wants to press on, in as much depth as they want to go."
+},
+{
+"p": "Everything summarised below, at the level a reviewer needs: the algorithms, the parameters, the failure behaviour, and what happens at each boundary. Under NDA where your process requires one."
+},
+{
+"p": "Tell us what your process runs on and what your reviewer needs to see. We scope the work with you as part of the enterprise agreement rather than pointing at a checkmark."
+},
+{
+"li": "The Data Processing Addendum"
+},
+{
+"li": "The subprocessor register"
+},
+{
+"li": "A security questionnaire, answered"
+},
+{
+"li": "An architecture review"
+},
+{
+"li": "The control detail behind this page"
+},
+{
+"li": "A framework scoped to your engagement"
+}
+],
+[
+{
+"h2": "What you can read, and what you can ask for"
+},
+{
+"p": "The two documents a review opens first are published — read them now, no email. The other four we send on request: the questionnaire, the review session and the control detail come back the same week."
+},
+{
+"a": "The Data Processing Addendum The processor terms in full — roles and instructions, subprocessor governance, security measures, the Standard Contractual Clause modules for EEA and UK transfers, and the U.S. state service-provider terms. Still a draft pending counsel, which the page says at the top, so read it as terms proposed rather than terms signed.",
+"href": "/legal/dpa"
+},
+{
+"a": "The subprocessor register Which providers can process your data, what each one does, where it runs, and whether it may train on your content — including the model providers a routed request reaches through a gateway. Rows still being confirmed against a provider’s signed terms are marked as such rather than left to look settled.",
+"href": "/legal/subprocessors"
+}
+],
+[
+{
+"h2": "Where we stand today"
+},
+{
+"p": "We run the controls those audits examine, and this page is the evidence — every mechanism below was read in the source before it was written here. Bring your questionnaire and we will answer it against the code rather than against a summary of it."
+},
+{
+"p": "On frameworks: we audit ourselves continually and send the report on request — ask and it comes back, no questionnaire first. If your review runs on a named framework, tell us which one and what your reviewer needs to see. We scope it with you as part of the engagement, at the speed of the engagement rather than a calendar."
+},
+{
+"p": "If a control you need is not on this page, ask. Where we have it we will show you the code, and where we do not you will get a straight answer the same day."
+}
+],
+[
+{
+"h2": "Getting in"
+},
+{
+"p": "One service issues every credential. Hanzo IAM is the only thing that holds a password or runs a login, and nothing else in the stack has its own."
+}
+],
+[
+{
+"h2": "What a credential reaches"
+},
+{
+"p": "Naming a resource and authorizing it are separate questions. Containment names; grants authorize."
+}
+],
+[
+{
+"h2": "Keeping organizations apart"
+},
+{
+"p": "A tenancy boundary that only exists in a WHERE clause is one bug from being nothing."
+}
+],
+[
+{
+"h2": "What gets written down"
+},
+{
+"p": "An audit trail is the one control a reviewer can test rather than take on faith, so it is worth saying exactly what is in it."
+}
+],
+[
+{
+"h2": "Keys"
+},
+{
+"p": "Where a key comes from, and who is able to hold one."
+}
+],
+[
+{
+"h2": "Where we stand"
+},
+{
+"p": "Everything a reviewer establishes in the first email, answered here instead."
+},
+{
+"p": "Frameworks. Our controls are built to be compatible with SOC 2, and we audit them continually. The audit report is available upon request — ask and it comes back, no questionnaire first. If your review runs on a named framework, the fourth card above is how that conversation starts."
+},
+{
+"p": "FIPS: our code implements published standards, ML-KEM and ML-DSA among them, but implementing a standard is not the same as holding a validation, and a 140-3 validation belongs to the vendor of a module rather than to us. Nor do we run one today: signing happens in our own process, not inside an external module. If your deployment requires validated hardware custody, tell us and we will scope it with you rather than imply you already have it."
+},
+{
+"p": "Passkeys. Passkey credentials can be stored and managed, but a passkey cannot complete a sign-in — the assertion ceremony is not in the build running today, so the login screen does not offer it, which is the only honest thing a login screen can do about a method the server cannot yet perform. Second factors that do work: an authenticator app, SMS, and email, with recovery codes."
+},
+{
+"p": "Availability. An uptime number is a contractual commitment, so ours lives in the agreement where it has consequences rather than on a marketing page where it does not. Ask for the number your agreement would carry and we will put it in writing."
+}
+],
+[
+{
+"h2": "Found something"
+},
+{
+"p": "Send it to [email protected] . The same address is published at /.well-known/security.txt under RFC 9116, so a scanner finds it without reading this page. Tell us what you did and what came back; we do not need a proof-of-concept exploit to take a report seriously, and we will not threaten anyone who sends one in good faith."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#cebdabadbbbca7bab78ea6afa0b4a1e0afa7"
+},
+{
+"a": "/.well-known/security.txt",
+"href": "/.well-known/security.txt"
+},
+{
+"p": "For the mechanisms in more detail — encryption, infrastructure, what an enterprise agreement adds — see the security page ."
+},
+{
+"a": "the security page",
+"href": "/security"
+}
+],
+[
+{
+"h2": "Bring us the hard questions"
+},
+{
+"p": "Your questionnaire, your architecture review, your framework. We answer against the code, we move at the speed of your review, and you will always know which of those two you are getting."
+},
+{
+"a": "Request a review or an enterprise deployment",
+"href": "/contact-sales"
+}
+]
+]

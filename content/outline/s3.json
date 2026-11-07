@@ -1,0 +1,76 @@
+[
+[
+{
+"h1": "Hanzo Object Storage"
+},
+{
+"p": "Buckets and objects, presigned links, multipart uploads, versioning and object lock."
+},
+{
+"a": "API reference",
+"href": "https://docs.hanzo.ai/docs/openapi/s3"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/s3"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "One binary in four roles: a master that tracks where everything is, volume servers that hold the bytes, a filer for the namespace and the HTTP gateway your code talks to."
+},
+{
+"p": "Server-side encryption whose keys are minted by Hanzo KMS rather than read out of a config file."
+},
+{
+"p": "Objects are erasure-coded across ten data shards and four parity shards, so four can be lost and the object still reads."
+},
+{
+"p": "Every call between the pieces speaks one binary protocol, with no gRPC anywhere: one transport to secure and one to debug."
+},
+{
+"li": "One binary, four roles"
+},
+{
+"li": "Keys from KMS"
+},
+{
+"li": "Ten data shards, four parity"
+},
+{
+"li": "One protocol"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Object Storage from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list"
+}
+],
+[
+{
+"h2": "Get Object Storage"
+},
+{
+"p": "Distributed object storage"
+},
+{
+"a": "hanzoai/s3",
+"href": "https://github.com/hanzoai/s3"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

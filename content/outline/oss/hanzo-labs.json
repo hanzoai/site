@@ -1,0 +1,96 @@
+[
+[
+{
+"h1": "Hanzo Labs"
+},
+{
+"p": "Accelerate growth  🚀"
+},
+{
+"a": "hanzo-labs on GitHub",
+"href": "https://github.com/hanzo-labs"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-labs"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 7 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-labs, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-labs/wallet-2 JavaScript 0 1 2.0 Wallet Demo Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/hanzo-labs/wallet-2"
+},
+{
+"li": "hanzo-labs/nodes Dockerfile 0 1 Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/hanzo-labs/nodes"
+},
+{
+"li": "hanzo-labs/network TypeScript 0 0 Hanzo Network - AI Infrastructure for the Decentralized Economy Pushed Nov 2, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzo-labs/network"
+},
+{
+"li": "hanzo-labs/miners Shell 0 1 Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/hanzo-labs/miners"
+},
+{
+"li": "hanzo-labs/exchange-sdk HTML 0 1 Hanzo Exchange SDK Pushed Nov 2, 2026 7 commits this year Forge",
+"href": "https://github.com/hanzo-labs/exchange-sdk"
+},
+{
+"li": "hanzo-labs/ethereum-reader TypeScript 0 1 Ethereum reader for Hanzo Platform Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/hanzo-labs/ethereum-reader"
+},
+{
+"li": "hanzo-labs/ethereum-cluster Python 0 1 Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/hanzo-labs/ethereum-cluster"
+},
+{
+"li": "hanzo-labs/arcadia JavaScript 1 1 Desktop app for local wallet management Pushed Nov 2, 2026 Forge",
+"href": "https://github.com/hanzo-labs/arcadia"
+}
+]
+]

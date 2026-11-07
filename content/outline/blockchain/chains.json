@@ -1,0 +1,222 @@
+[
+[
+{
+"h1": "Hanzo Chains"
+},
+{
+"p": "RPC for every chain"
+},
+{
+"p": "Access 100+ blockchain networks through a unified API. High-availability managed nodes with archive data access, WebSocket subscriptions, and enterprise-grade reliability. From Ethereum and Solana to Lux ecosystem chains (Hanzo Network, Zoo Network, Pars Network), EVM L2s, and Cosmos chains."
+},
+{
+"h3": "100+ Chains Supported"
+},
+{
+"p": "Full Lux ecosystem (P/C/A/B/Z/T/K/Q/D chains), EVM L2s, Solana, Cosmos, and more."
+},
+{
+"h3": "Archive Node Access"
+},
+{
+"p": "Query historical blockchain state from genesis. Full archive data included."
+},
+{
+"h3": "WebSocket Streams"
+},
+{
+"p": "Real-time subscriptions for blocks, transactions, and contract events."
+},
+{
+"h3": "Ultra-Low Latency"
+},
+{
+"p": "Global edge distribution with sub-50ms response times worldwide."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "100+ Chains Supported"
+},
+{
+"p": "Full Lux ecosystem (P/C/A/B/Z/T/K/Q/D chains), EVM L2s, Solana, Cosmos, and more."
+},
+{
+"h3": "Archive Node Access"
+},
+{
+"p": "Query historical blockchain state from genesis. Full archive data included."
+},
+{
+"h3": "WebSocket Streams"
+},
+{
+"p": "Real-time subscriptions for blocks, transactions, and contract events."
+},
+{
+"h3": "Ultra-Low Latency"
+},
+{
+"p": "Global edge distribution with sub-50ms response times worldwide."
+},
+{
+"h3": "High Availability"
+},
+{
+"p": "Enterprise reliability with automatic failover across regions."
+},
+{
+"h3": "Rate Limiting Built-in"
+},
+{
+"p": "Intelligent rate limiting, request queuing, and load balancing."
+},
+{
+"h3": "Auto-Scaling"
+},
+{
+"p": "Handles traffic spikes automatically without configuration."
+},
+{
+"h3": "Analytics Dashboard"
+},
+{
+"p": "Monitor usage, latency metrics, and error rates in real-time."
+},
+{
+"h3": "L2 & Rollup Support"
+},
+{
+"p": "Native support for Arbitrum, Optimism, Base, zkSync, and more."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/chains/IChainReader.sol\" ; import \"@hanzo/chains/ICrossChainMessenger.sol\" ; contract MultiChainReader { IChainReader public chainReader ; ICrossChainMessenger public messenger ; mapping (uint256 => uint256) public chainBalances ; event CrossChainBalanceUpdated ( uint256 chainId, uint256 balance ); constructor ( address _chainReader , address _messenger) { chainReader = IChainReader ( _chainReader ); messenger = ICrossChainMessenger ( _messenger ); } // Request balance from another chain via cross-chain message function r"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "DeFi Applications"
+},
+{
+"p": "Build DEXs, lending protocols, and yield aggregators with reliable chain data."
+},
+{
+"h3": "NFT Marketplaces"
+},
+{
+"p": "Power NFT minting, trading, and metadata with fast node infrastructure."
+},
+{
+"h3": "Multi-chain Wallets"
+},
+{
+"p": "Fetch balances and broadcast transactions across 100+ chains."
+},
+{
+"h3": "Analytics Platforms"
+},
+{
+"p": "Query historical data for portfolio tracking and market intelligence."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Hanzo Chains"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Hanzo Chains"
+},
+{
+"p": "Multi-chain platform"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

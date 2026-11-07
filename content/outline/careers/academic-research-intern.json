@@ -1,0 +1,85 @@
+[
+[
+{
+"a": "Back to all careers",
+"href": "/careers"
+},
+{
+"button": "Share position"
+},
+{
+"h1": "Academic & PhD Research Intern"
+},
+{
+"p": "For PhD candidates, graduate researchers, and student builders working on foundation models, compilers, cryptography, or autonomous agents. Includes free compute & API credits and full access to Hanzo Team for your research."
+},
+{
+"a": "Apply for this position",
+"href": "#apply"
+},
+{
+"a": "Email resume directly",
+"href": "/cdn-cgi/l/email-protection#d6b5b7a4b3b3a4a596beb7b8acb9f8b7bfe9a5a3b4bcb3b5a2eb97a6a6babfb5b7a2bfb9b8f3e597f3e4e697b5b7b2b3bbbfb5f3e4e6f3e4e0f3e4e686be92f3e4e684b3a5b3b7a4b5bef3e4e69fb8a2b3a4b8"
+}
+],
+[
+{
+"h2": "About the Role"
+},
+{
+"p": "Hanzo hosts PhD candidates, graduate students, and academic researchers for research internships and fellowships year-round. You will work directly with our research and systems teams on frontier foundation models (Zen, Kai, Enso), high-throughput inference compilers, zero-knowledge ML, and agent infrastructure — with free API & GPU compute credits, full access to Hanzo Team for your lab or research group, and open-access publication under your own name."
+},
+{
+"p": "Hanzo builds an open AI cloud — compilers, models, distributed infrastructure, and agent tooling. Our codebases are predominantly open source, and team members operate with high autonomy and end-to-end ownership."
+},
+{
+"h2": "Key Responsibilities"
+},
+{
+"p": "Conduct original research on foundation model architectures, RLHF/RLAIF post-training, agentic reasoning, or inference compilers."
+},
+{
+"p": "Run large-scale experiments using complimentary Hanzo Cloud GPU clusters, API credits, and Hanzo Team workspaces."
+},
+{
+"p": "Publish open-source weights, reproducible benchmarks, and peer-reviewed papers at top venues (NeurIPS, ICML, ICLR, OSDI, SOSP)."
+},
+{
+"p": "Collaborate directly with Hanzo researchers and engineers to ship research into production open-source repositories."
+},
+{
+"h2": "What We're Looking For"
+},
+{
+"p": "Currently pursuing a PhD, Master's, or exceptional undergraduate degree in Computer Science, Machine Learning, Physics, Mathematics, or a related field."
+},
+{
+"p": "Strong implementation skills in Python, PyTorch, Rust, C++, or Go."
+},
+{
+"p": "Track record of open-source contributions, preprints, or systems projects."
+},
+{
+"h2": "Nice to Have"
+},
+{
+"p": "First-author publications or preprints in machine learning, compilers, cryptography, or distributed systems."
+},
+{
+"p": "Active contributions to Hanzo open-source repositories or the broader open AI ecosystem."
+},
+{
+"h2": "Why Join Hanzo"
+},
+{
+"h2": "Apply for this Role"
+},
+{
+"button": "Submit Application"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#3556544750504746755d545b4f5a1b545c0a4640575f50564108744545595c5654415c5a5b1006741007057456545150585c56100705100703100705655d71100705675046505447565d1007057c5b4150475b"
+}
+]
+]

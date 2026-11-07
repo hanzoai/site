@@ -1,0 +1,216 @@
+[
+[
+{
+"h1": "Hanzo Exchange"
+},
+{
+"p": "AMM. DEX. Order Books. All-in-One."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/network"
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "Exchange Products"
+},
+{
+"p": "Choose your trading model or combine them for hybrid exchanges"
+},
+{
+"h3": "AMM Infrastructure"
+},
+{
+"p": "Deploy and manage automated market makers across chains"
+},
+{
+"li": "Constant product (x*y=k) pools"
+},
+{
+"li": "Concentrated liquidity positions"
+},
+{
+"li": "Multi-token weighted pools"
+},
+{
+"li": "Custom bonding curves"
+},
+{
+"li": "Flash loan support"
+},
+{
+"li": "MEV-resistant design"
+},
+{
+"a": "Learn more",
+"href": "/blockchain/defi"
+},
+{
+"h3": "DEX Aggregator"
+},
+{
+"p": "Route swaps across 100+ DEXs for best execution"
+},
+{
+"li": "Multi-DEX price comparison"
+},
+{
+"li": "Split route optimization"
+},
+{
+"li": "Cross-chain swaps"
+},
+{
+"li": "Limit order support"
+},
+{
+"li": "Gas optimization"
+},
+{
+"li": "MEV protection"
+},
+{
+"a": "Learn more",
+"href": "/blockchain/defi"
+},
+{
+"h3": "Order Book Engine"
+},
+{
+"p": "High-performance matching engine for CEX-grade trading"
+},
+{
+"li": "Sub-millisecond matching"
+},
+{
+"li": "Millions of orders/second"
+},
+{
+"li": "Market & limit orders"
+},
+{
+"li": "Stop-loss & take-profit"
+},
+{
+"li": "Margin trading support"
+},
+{
+"li": "Real-time feeds"
+},
+{
+"a": "Learn more",
+"href": "/blockchain/defi"
+},
+{
+"h3": "Liquidity Network"
+},
+{
+"p": "Access deep liquidity pools and market makers"
+},
+{
+"li": "Institutional liquidity"
+},
+{
+"li": "RFQ (Request for Quote)"
+},
+{
+"li": "OTC desk integration"
+},
+{
+"li": "Market maker APIs"
+},
+{
+"li": "Liquidity mining"
+},
+{
+"li": "LP analytics"
+},
+{
+"a": "Learn more",
+"href": "/blockchain/defi"
+}
+],
+[
+{
+"h2": "Institutional-Grade Infrastructure"
+},
+{
+"h3": "Sub-ms Latency"
+},
+{
+"p": "Colocated infrastructure for fastest execution"
+},
+{
+"h3": "Multi-Chain"
+},
+{
+"p": "Trade across 100+ networks from one interface"
+},
+{
+"h3": "MEV Protected"
+},
+{
+"p": "Private transactions and fair ordering"
+},
+{
+"h3": "Real-time Data"
+},
+{
+"p": "WebSocket feeds with tick-level precision"
+},
+{
+"h3": "Self-Custody"
+},
+{
+"p": "Non-custodial trading with your own keys"
+},
+{
+"h3": "Historical Data"
+},
+{
+"p": "Full trade history and OHLCV archives"
+}
+],
+[
+{
+"code": "import { HanzoExchange } from \" @hanzo/blockchain \" ; const exchange = new HanzoExchange ({ apiKey : process.env.HANZO_API_KEY , }); // DEX Aggregator - Find best swap route const quote = await exchange.dex. getQuote ({ fromToken : \" ETH \" , toToken : \" USDC \" , amount : \" 1.0 \" , slippage : 0.5 , // 0.5% }); console. log ( \" Best route: \" , quote.route ); console. log ( \" Expected output: \" , quote.outputAmount ); console. log ( \" Price impact: \" , quote.priceImpact ); // Execute swap with MEV protection const tx = await exchange.dex. swap ( quote , { mevProtection : true , privateTransaction"
+}
+],
+[
+{
+"h2": "Build Your Exchange"
+},
+{
+"p": "From DeFi protocols to institutional trading platforms—we have the infrastructure."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/network"
+},
+{
+"a": "View Pricing",
+"href": "/pricing?tab=blockchain"
+}
+],
+[
+{
+"h2": "Get Exchange"
+},
+{
+"p": "DEX exchange surface"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

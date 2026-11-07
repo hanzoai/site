@@ -1,0 +1,385 @@
+[
+[
+{
+"p": "Benchmarks / LoCoMo"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"h1": "LoCoMo"
+},
+{
+"p": "Ten long conversations, 1,540 questions with annotated evidence turns. Hanzo Context measured against cosine over turns and against the annotated gold turns, on the same split, embedder, reader and k."
+},
+{
+"a": "LoCoMo",
+"href": "https://github.com/snap-research/locomo"
+},
+{
+"a": "Evaluating Very Long-Term Conversational Memory of LLM Agents",
+"href": "https://arxiv.org/abs/2402.17753"
+},
+{
+"a": "Hops Do Not Fix Multi-Hop Retrieval",
+"href": "https://github.com/hanzoai/papers/blob/main/site/public/pdfs/hanzo-multi-hop-retrieval.pdf"
+},
+{
+"a": "Linkage, Not Similarity",
+"href": "https://github.com/hanzoai/papers/blob/main/site/public/pdfs/hanzo-context-memory.pdf"
+},
+{
+"code": "node results.mjs"
+},
+{
+"p": "regenerates every table on this page from the raw runs"
+},
+{
+"h2": "What is measured"
+},
+{
+"p": "Ten conversations, 5,882 turns, 1,540 questions, each annotated with the turns that answer it. Retrieval is scored against those turns. Configurations are chosen on conversations 0–2 and frozen at a commit before conversations 3–9 run once. Adversarial questions are excluded, as Mem0 and Zep exclude them."
+},
+{
+"h2": "Retrieval"
+},
+{
+"p": "The engine adds candidate generators to cosine — BM25, the atomic fact index, canonical entities, the timeline, adjacency, one hop of typed expansion, then a second retrieval hop asked with what the first resolved. On the held-out split multi-hop ALL@20 goes from 18.8 to 37.5 and R@20 from 70.9 to 80.7, on the same embedder and the same k."
+},
+{
+"h3": "all ten conversations · zen-embedding-0.6b · k= 20"
+},
+{
+"p": "facts LoCoMo’s own observation annotations · weights frozen on dev at 33d0f8749bd1 · rows are cumulative: each carries every generator before it, from BM25 on · ALL = every annotated turn inside the top 20; ANY = at least one; R@20 = |retrieved ∩ gold| / |gold|"
+},
+{
+"table": [
+[
+"configuration",
+"multi-hop ALL",
+"multi-hop ANY",
+"single-hop ALL",
+"temporal ALL",
+"open-domain ALL",
+"R@k",
+"nDCG@k",
+"supported"
+],
+[
+"semantic only",
+"22.7",
+"79.8",
+"78.2",
+"77.3",
+"33.7",
+"71.9",
+"49.6",
+"81.0"
+],
+[
+"+facts",
+"36.9",
+"88.3",
+"82.3",
+"82.6",
+"42.4",
+"78.2",
+"59.6",
+"86.4"
+],
+[
+"+adjacency",
+"39.0",
+"88.7",
+"84.2",
+"83.5",
+"44.6",
+"79.7",
+"61.4",
+"87.8"
+],
+[
+"+iterative hops",
+"39.0",
+"87.9",
+"86.8",
+"84.4",
+"45.7",
+"80.9",
+"62.6",
+"88.0"
+]
+]
+},
+{
+"h3": "all ten conversations · all-MiniLM-L6-v2 · k= 10"
+},
+{
+"p": "facts LoCoMo’s own observation annotations · weights frozen on dev at 33d0f8749bd1 · rows are cumulative: each carries every generator before it, from BM25 on · ALL = every annotated turn inside the top 10; ANY = at least one; R@10 = |retrieved ∩ gold| / |gold|"
+},
+{
+"table": [
+[
+"configuration",
+"multi-hop ALL",
+"multi-hop ANY",
+"single-hop ALL",
+"temporal ALL",
+"open-domain ALL",
+"R@k",
+"nDCG@k",
+"supported"
+],
+[
+"semantic only",
+"9.6",
+"49.6",
+"51.4",
+"46.1",
+"16.3",
+"45.3",
+"31.1",
+"53.1"
+],
+[
+"+lexical",
+"13.8",
+"58.9",
+"67.2",
+"62.0",
+"23.9",
+"59.2",
+"43.7",
+"67.6"
+],
+[
+"+facts",
+"20.9",
+"73.4",
+"73.1",
+"72.0",
+"25.0",
+"66.7",
+"52.0",
+"75.6"
+],
+[
+"+adjacency",
+"21.6",
+"74.5",
+"74.6",
+"72.6",
+"27.2",
+"67.7",
+"53.3",
+"76.3"
+],
+[
+"+iterative hops",
+"24.1",
+"78.0",
+"77.5",
+"73.5",
+"27.2",
+"70.1",
+"55.8",
+"78.5"
+]
+]
+},
+{
+"h3": "test split, conversations 3–9 · zen-embedding-0.6b · k= 20"
+},
+{
+"p": "facts LoCoMo’s own observation annotations · weights frozen on dev at 33d0f8749bd1 · rows are cumulative: each carries every generator before it, from BM25 on · ALL = every annotated turn inside the top 20; ANY = at least one; R@20 = |retrieved ∩ gold| / |gold|"
+},
+{
+"table": [
+[
+"configuration",
+"multi-hop ALL",
+"multi-hop ANY",
+"single-hop ALL",
+"temporal ALL",
+"open-domain ALL",
+"R@k",
+"nDCG@k",
+"supported"
+],
+[
+"semantic only",
+"18.8",
+"80.3",
+"78.3",
+"72.3",
+"35.6",
+"70.9",
+"48.8",
+"80.5"
+],
+[
+"+facts",
+"35.1",
+"88.5",
+"83.0",
+"78.8",
+"43.8",
+"77.9",
+"58.7",
+"86.4"
+],
+[
+"+entities",
+"35.1",
+"88.5",
+"83.0",
+"78.8",
+"43.8",
+"77.9",
+"58.7",
+"86.4"
+],
+[
+"+timeline",
+"34.6",
+"88.5",
+"83.3",
+"79.7",
+"45.2",
+"78.2",
+"59.9",
+"86.8"
+],
+[
+"+adjacency",
+"37.5",
+"88.5",
+"84.6",
+"80.1",
+"45.2",
+"79.1",
+"60.5",
+"87.5"
+],
+[
+"+typed graph",
+"37.5",
+"88.5",
+"84.6",
+"80.1",
+"45.2",
+"79.1",
+"60.5",
+"87.5"
+],
+[
+"+iterative hops",
+"37.5",
+"88.0",
+"87.7",
+"81.4",
+"45.2",
+"80.7",
+"61.6",
+"87.8"
+]
+]
+},
+{
+"h2": "The other LoCoMo harness"
+},
+{
+"p": "hanzoai/semantic · bench/locomo measures the same dataset under a different protocol: lexical retrieval with no embedding model, a fixed extractive reader with no language model anywhere, and all 1,986 questions including the adversarial quarter, reported apart. Its numbers measure a different reader and are not on the scale of these, so it has its own page and its own paper."
+},
+{
+"a": "hanzoai/semantic · bench/locomo",
+"href": "/benchmarks/locomo-subject-scope"
+},
+{
+"p": "Hanzo AI Cloud"
+},
+{
+"h3": "Build on Hanzo Cloud"
+},
+{
+"a": "Start on Hanzo Cloud",
+"href": "https://cloud.hanzo.ai"
+},
+{
+"a": "View Models & Pricing",
+"href": "/pricing"
+},
+{
+"a": "Previous GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"a": "All Benchmarks Board",
+"href": "/benchmarks"
+},
+{
+"a": "Next MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"h3": "Related in memory"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "LoCoMo · subject scope",
+"href": "/benchmarks/locomo-subject-scope"
+},
+{
+"a": "LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"p": "CronQuestions · RepoBench-R · Fleet residency · Live agent footprint · Sandbox cold start · Engine prefill on CUDA vs llama.cpp · GPQA-Diamond"
+},
+{
+"a": "CronQuestions",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "Fleet residency",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "Sandbox cold start",
+"href": "/benchmarks/sandbox"
+},
+{
+"a": "Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"a": "GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"p": "raw runs, traces, prompts and scoring: hanzoai/benchmarks · brain · protocol in METHOD.md · every table above regenerated by node results.mjs"
+},
+{
+"code": "METHOD.md"
+},
+{
+"code": "node results.mjs"
+}
+]
+]

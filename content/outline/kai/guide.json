@@ -1,0 +1,105 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "How to Use Kai"
+},
+{
+"p": "Send a state and typed questions to POST /v1/decisions with model: \"kai\" . Kai answers each question with a probability for every answer it allows, and writes no text."
+},
+{
+"a": "Get an API key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Read the reference",
+"href": "https://docs.hanzo.ai/docs/decisions"
+}
+],
+[
+{
+"p": "Questions"
+},
+{
+"h2": "Three question types"
+},
+{
+"p": "Name each question; its answer comes back under the same name."
+}
+],
+[
+{
+"p": "Call it"
+},
+{
+"h2": "One request, three questions"
+},
+{
+"p": "Every response also carries id, model, usage (output_tokens is 0), routing (the checkpoint that answered: kai-1.3 for the model id kai), state_hash and latency_ms."
+},
+{
+"code": "curl -sS --fail-with-body https://api.hanzo.ai/v1/decisions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' { \"model\": \"kai\", \"state\": \"Customer email: Cancel my plan immediately. Your service was down during our product launch.\", \"questions\": { \"department\": { \"type\": \"choice\", \"instructions\": \"Route ticket to appropriate team\", \"criteria\": { \"executive_escalations\": \"high-value customer cancellation threats\", \"support\": \"general technical inquiries\", \"billing\": \"standard invoice updates\" } }, \"urgency\": { \"type\": \"score\", \"instructions\": \"Rate ti"
+},
+{
+"code": "# pip install hanzoai import os from hanzoai . cloud import ApiClient , Configuration from hanzoai . cloud . api import AiApi from hanzoai . cloud . models . ai_decisions_request import AiDecisionsRequest ai = AiApi ( ApiClient ( Configuration ( access_token=os . environ [ \" HANZO_API_KEY \" ]))) decision = ai . post_decisions ( AiDecisionsRequest . from_dict ({ \" model \" : \" kai \" , \" state \" : { \" ticket_id \" : 4821 , \" text \" : \" Can I get an extension on my payment due date? \" }, \" questions \" : { \" team \" : { \" type \" : \" choice \" , \" instructions \" : \" Which team handles this? \" , \" crite"
+},
+{
+"code": "// npm install hanzoai import { AiApi , Configuration } from ' hanzoai ' const ai = new AiApi ( new Configuration ({ accessToken : process.env.HANZO_API_KEY })) const { data : decision } = await ai. postDecisions ({ aiDecisionsRequest : { model : ' kai ' , state : { pull_request : 104 , diff_lines : 480 , files : [ ' auth.ts ' , ' token.go ' ] }, questions : { risk : { type : ' score ' , instructions : ' Rate security risk of code change ' , criteria : [ ' low: documentation or cosmetic ' , ' medium: internal logic ' , ' high: security or auth paths ' ], }, }, }, }) console. log ( decision.ans"
+}
+],
+[
+{
+"p": "Limits"
+},
+{
+"h2": "What a request may hold"
+}
+],
+[
+{
+"p": "Recipes & Blueprints"
+},
+{
+"h2": "Composable Decision Recipes"
+},
+{
+"p": "Modular Rust structs and TypeScript workflows that sit inside your pipelines: retail triage, industrial diagnostics, confidence routing, and agent loops."
+},
+{
+"a": "Read the Recipes Guide",
+"href": "https://docs.hanzo.ai/docs/guides/cookbook/recipes"
+},
+{
+"a": "View All Cookbook Pipelines",
+"href": "https://docs.hanzo.ai/docs/guides/cookbook"
+},
+{
+"a": "Kai recipes on GitHub ↗",
+"href": "https://github.com/hanzoai/kai/tree/main/recipes"
+}
+],
+[
+{
+"p": "Coming from Jev"
+},
+{
+"h2": "Change the URL, the key and the model"
+},
+{
+"p": "Kai takes the request body Jev takes. The same endpoint also serves typesafe/jev-1.13 with a Hanzo key, at Jev’s price."
+},
+{
+"code": "# Jev on OpenRouter curl https://openrouter.ai/api/alpha/decisions \\ -H \" Authorization: Bearer $ OPENROUTER_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"model\": \"typesafe/jev-1.13\", \"state\": \"…\", \"questions\": {…}} '"
+},
+{
+"code": "# Kai on Hanzo: the same body curl https://api.hanzo.ai/v1/decisions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"model\": \"kai\", \"state\": \"…\", \"questions\": {…}} '"
+},
+{
+"a": "The runs →",
+"href": "/kai#benchmarks"
+}
+]
+]

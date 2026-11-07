@@ -1,0 +1,92 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Minimax Models via Hanzo AI"
+},
+{
+"p": "10 models available"
+},
+{
+"p": "Access all 10 Minimax models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Hailuo 2.3 Hailuo 2.3 is a video generation model from MiniMax. It accepts text prompts and reference images as input and generates video output, supporting both text-to-video and image-to-video workflows. It is... video",
+"href": "/models/minimax/hailuo-2.3"
+},
+{
+"a": "H3 MiniMax H3 is a lightweight, open-weights video generation model from MiniMax. It is designed for precise multimodal editing and controlled content generation, including instruction-guided edits, text and brand rendering, and... video",
+"href": "/models/minimax/hailuo-3"
+},
+{
+"a": "H3 Max MiniMax H3 Max is a video-generation model from MiniMax, jointly released with fal.ai. Derived through additional training from MiniMax H3, it is designed for faster text-to-video and image-to-video generation with... video",
+"href": "/models/minimax/hailuo-3-max"
+},
+{
+"a": "MiniMax M1 1M MiniMax-M1 is a large-scale, open-weight reasoning model designed for extended context and high-efficiency inference. It leverages a hybrid Mixture-of-Experts (MoE) architecture paired with a custom \"lightning attention\" mechanism, allowing it... text",
+"href": "/models/minimax/minimax-m1"
+},
+{
+"a": "MiniMax M2.5 205K MiniMax-M2.5 is a SOTA large language model designed for real-world productivity. Trained in a diverse range of complex real-world digital working environments, M2.5 builds upon the coding expertise of M2.1... text",
+"href": "/models/minimax/minimax-m2.5"
+},
+{
+"a": "MiniMax M2.7 205K MiniMax-M2.7 is a next-generation large language model designed for autonomous, real-world productivity and continuous improvement. Built to actively participate in its own evolution, M2.7 integrates advanced agentic capabilities through multi-agent... text",
+"href": "/models/minimax/minimax-m2.7"
+},
+{
+"a": "MiniMax M3 1M MiniMax-M3 is a multimodal foundation model from MiniMax. It supports text, image, and video inputs with text output, a 1M-token context window, and is suited for long-horizon agentic work, coding,... text",
+"href": "/models/minimax/minimax-m3"
+},
+{
+"a": "MiniMax M3.1 Flash 1M MiniMax-M3.1-Flash is a multimodal model from MiniMax. Compared with M3, it delivers significant improvements across multiple benchmarks, particularly in complex agentic tasks, coding, and cybersecurity. It is built for complex,... text",
+"href": "/models/minimax/minimax-m3.1-flash"
+},
+{
+"a": "Speech 2.8 HD MiniMax Speech 2.8 HD is a text-to-speech model from MiniMax. It is suited for applications that generate spoken audio from text and accepts arbitrary MiniMax voice IDs. speech",
+"href": "/models/minimax/speech-2.8-hd"
+},
+{
+"a": "Speech 2.8 Turbo MiniMax Speech 2.8 Turbo is a text-to-speech model from MiniMax. It is suited for applications that generate spoken audio from text and accepts arbitrary MiniMax voice IDs. speech",
+"href": "/models/minimax/speech-2.8-turbo"
+}
+],
+[
+{
+"h2": "Use Minimax models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

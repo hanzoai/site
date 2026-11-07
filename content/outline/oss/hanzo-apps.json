@@ -1,0 +1,307 @@
+[
+[
+{
+"h1": "Hanzo Apps"
+},
+{
+"p": "[Legacy] Hanzo app templates — see github.com/hanzoai for current projects"
+},
+{
+"a": "hanzo-apps on GitHub",
+"href": "https://github.com/hanzo-apps"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/hanzo-apps"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 148 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of hanzo-apps, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "hanzo-apps/world TypeScript 0 0 Hanzo World — real-time global intelligence dashboard: AI-powered news, markets, geopolitical and infrastructure monitoring in one view. Pushed Nov 5, 2026 10,273 commits this year Forge",
+"href": "https://github.com/hanzo-apps/world"
+},
+{
+"li": "hanzo-apps/waitlist-launchpad TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/waitlist-launchpad"
+},
+{
+"li": "hanzo-apps/waitlist TypeScript 0 0 Monochromatic, brand-neutral viral waitlist. Backed by Hanzo Base. Pushed Nov 5, 2026 24 commits this year Forge",
+"href": "https://github.com/hanzo-apps/waitlist"
+},
+{
+"li": "hanzo-apps/upvote TypeScript 0 0 A feature-request board where users post and upvote ideas. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzo-apps/upvote"
+},
+{
+"li": "hanzo-apps/university TypeScript 0 0 Pushed Nov 5, 2026 26 commits this year Forge",
+"href": "https://github.com/hanzo-apps/university"
+},
+{
+"li": "hanzo-apps/templates JavaScript 0 0 1000+ OSS one-click deploy templates for the Hanzo PaaS — served at templates.hanzo.ai Pushed Nov 5, 2026 19 commits this year Forge",
+"href": "https://github.com/hanzo-apps/templates"
+},
+{
+"li": "hanzo-apps/team-roster TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/team-roster"
+},
+{
+"li": "hanzo-apps/tabs TypeScript 0 0 Keep tabs on your agents — a browser terminal workspace for the machines you have linked Pushed Nov 5, 2026 56 commits this year Forge",
+"href": "https://github.com/hanzo-apps/tabs"
+},
+{
+"li": "hanzo-apps/standup TypeScript 0 0 An async standup tracker for small teams — yesterday, today, blockers. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/standup"
+},
+{
+"li": "hanzo-apps/sprint-retro TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/sprint-retro"
+},
+{
+"li": "hanzo-apps/smartlink TypeScript 0 0 A single-release smart link page — one release, every store. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 5 commits this year Forge",
+"href": "https://github.com/hanzo-apps/smartlink"
+},
+{
+"li": "hanzo-apps/shop-storefront TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzo-apps/shop-storefront"
+},
+{
+"li": "hanzo-apps/shop TypeScript 0 0 A minimal editorial product storefront. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzo-apps/shop"
+},
+{
+"li": "hanzo-apps/setlist TypeScript 0 0 A band's public show calendar and setlist archive. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/setlist"
+},
+{
+"li": "hanzo-apps/roster TypeScript 0 0 A searchable team directory. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/roster"
+},
+{
+"li": "hanzo-apps/roadmap TypeScript 0 0 A public product roadmap — Now, Next, Later. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/roadmap"
+},
+{
+"li": "hanzo-apps/retro TypeScript 0 0 Team retrospectives — a three-column sticky board with voting and actions. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/retro"
+},
+{
+"li": "hanzo-apps/resume-curriculum TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/resume-curriculum"
+},
+{
+"li": "hanzo-apps/resume TypeScript 0 0 A polished, print-friendly online resume. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/resume"
+},
+{
+"li": "hanzo-apps/releases TypeScript 0 0 A public product changelog paired with a longer-form blog. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/releases"
+},
+{
+"li": "hanzo-apps/release-smartlink TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/release-smartlink"
+},
+{
+"li": "hanzo-apps/reading-shelf TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/reading-shelf"
+},
+{
+"li": "hanzo-apps/reading TypeScript 0 0 Track your books and reading progress. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/reading"
+},
+{
+"li": "hanzo-apps/rally TypeScript 0 0 A single-event RSVP page — one event, one page, one tap. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/rally"
+},
+{
+"li": "hanzo-apps/proposal-quotewright TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/proposal-quotewright"
+},
+{
+"li": "hanzo-apps/proposal TypeScript 0 0 Build line-item proposals and share a clean read-only link. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/proposal"
+},
+{
+"li": "hanzo-apps/product-trailmap TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/product-trailmap"
+},
+{
+"li": "hanzo-apps/press HTML 0 0 Hanzo AI press kit and media resources Pushed Nov 5, 2026 14 commits this year Forge",
+"href": "https://github.com/hanzo-apps/press"
+},
+{
+"li": "hanzo-apps/photoessay TypeScript 0 0 Scroll a visual photo essay like a film. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/photoessay"
+},
+{
+"li": "hanzo-apps/photo-essay TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/photo-essay"
+},
+{
+"li": "hanzo-apps/one TypeScript 0 0 Hanzo One - All-in-One Business Suite Pushed Nov 5, 2026 33 commits this year Forge",
+"href": "https://github.com/hanzo-apps/one"
+},
+{
+"li": "hanzo-apps/network TypeScript 0 0 Hanzo Network - Decentralized AI Compute Marketplace Pushed Nov 5, 2026 54 commits this year Forge",
+"href": "https://github.com/hanzo-apps/network"
+},
+{
+"li": "hanzo-apps/meetup-gather TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/meetup-gather"
+},
+{
+"li": "hanzo-apps/meetup TypeScript 0 0 Community meetup pages with RSVPs. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/meetup"
+},
+{
+"li": "hanzo-apps/magazine TypeScript 0 0 An issue-based digital magazine — issues, articles and a cover. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/magazine"
+},
+{
+"li": "hanzo-apps/longform-essays TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/longform-essays"
+},
+{
+"li": "hanzo-apps/links TypeScript 0 0 A link-in-bio page you own — profile, links and click counts. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/links"
+},
+{
+"li": "hanzo-apps/link-onepage TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/link-onepage"
+},
+{
+"li": "hanzo-apps/launchpad TypeScript 0 0 A launch landing page — countdown, live signup counter and one call to action. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/launchpad"
+},
+{
+"li": "hanzo-apps/kanban-lane TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/kanban-lane"
+},
+{
+"li": "hanzo-apps/kanban TypeScript 0 0 A focused, drag-free kanban board — To Do, Doing, Done. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/kanban"
+},
+{
+"li": "hanzo-apps/issue-press TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/issue-press"
+},
+{
+"li": "hanzo-apps/inventory-stockroom TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/inventory-stockroom"
+},
+{
+"li": "hanzo-apps/inventory TypeScript 0 0 A dense inventory tracker with low-stock alerts. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/inventory"
+},
+{
+"li": "hanzo-apps/industries TypeScript 1 0 Pushed Nov 5, 2026 207 commits this year Forge",
+"href": "https://github.com/hanzo-apps/industries"
+},
+{
+"li": "hanzo-apps/helpdesk-deskline TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/helpdesk-deskline"
+},
+{
+"li": "hanzo-apps/hanzo.io CSS 0 0 Pushed Nov 5, 2026 8 commits this year Forge",
+"href": "https://github.com/hanzo-apps/hanzo.io"
+},
+{
+"li": "hanzo-apps/hanzo-starter TypeScript 0 0 Canonical Hanzo app starter — Vite + React 19 + @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/hanzo-apps/hanzo-starter"
+},
+{
+"li": "hanzo-apps/habits TypeScript 0 0 Build habits with streaks and a calendar heatmap of daily check-ins. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/habits"
+},
+{
+"li": "hanzo-apps/habit-streak TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/habit-streak"
+},
+{
+"li": "hanzo-apps/gear-locker TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzo-apps/gear-locker"
+},
+{
+"li": "hanzo-apps/gear TypeScript 0 0 Assign and track company equipment, per person and per item. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzo-apps/gear"
+},
+{
+"li": "hanzo-apps/gallery HTML 0 0 Hanzo AI Templates Gallery - Showcase of 100+ production-ready templates Pushed Nov 5, 2026 83 commits this year Forge",
+"href": "https://github.com/hanzo-apps/gallery"
+},
+{
+"li": "hanzo-apps/foundation TypeScript 0 0 Hanzo Foundation website Pushed Nov 5, 2026 9 commits this year Forge",
+"href": "https://github.com/hanzo-apps/foundation"
+},
+{
+"li": "hanzo-apps/feedback-signal TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 3 commits this year Forge",
+"href": "https://github.com/hanzo-apps/feedback-signal"
+},
+{
+"li": "hanzo-apps/feedback TypeScript 0 0 A two-pane triage inbox for product feedback — read, tag and route. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/feedback"
+},
+{
+"li": "hanzo-apps/feature-upvote TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/hanzo-apps/feature-upvote"
+},
+{
+"li": "hanzo-apps/expenses TypeScript 0 0 Log expenses by category and see where the money goes. Vite + React 19 on @hanzo/gui + @hanzo/iam + @hanzo/base. Fork it on hanzo.app. Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/expenses"
+},
+{
+"li": "hanzo-apps/expense-spend TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/expense-spend"
+},
+{
+"li": "hanzo-apps/event-rally TypeScript 0 0 Mirrored from git.hanzo.ai Pushed Nov 5, 2026 1 commit this year Forge",
+"href": "https://github.com/hanzo-apps/event-rally"
+},
+{
+"button": "Show all 90"
+}
+]
+]

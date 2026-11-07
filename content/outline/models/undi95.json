@@ -1,0 +1,56 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Undi95 Models via Hanzo AI"
+},
+{
+"p": "1 models available"
+},
+{
+"p": "Access all 1 Undi95 model through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "ReMM SLERP 13B 6K A recreation trial of the original MythoMax-L2-B13 but with updated models. #merge text",
+"href": "/models/undi95/remm-slerp-l2-13b"
+}
+],
+[
+{
+"h2": "Use Undi95 models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

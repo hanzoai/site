@@ -1,0 +1,314 @@
+[
+[
+{
+"h1": "Hanzo Payments"
+},
+{
+"p": "One integration, and the processor becomes a routing decision."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Explore APIs",
+"href": "https://docs.hanzo.ai/docs/openapi"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "Cards, wallets, bank debits, buy-now-pay-later and crypto through the same API"
+},
+{
+"p": "Numbers are tokenized in the vault, so this service never holds one"
+},
+{
+"p": "Send each payment to the processor most likely to approve it"
+},
+{
+"p": "A decline cascades to a backup rather than to your customer"
+},
+{
+"li": "One integration"
+},
+{
+"li": "No card data"
+},
+{
+"li": "Route on outcome"
+},
+{
+"li": "Retry elsewhere"
+}
+],
+[
+{
+"h2": "What sits behind the one integration"
+},
+{
+"p": "Each processor has its own API, its own idea of an error, and its own webhook format. This normalises all three, so your code sees one shape whichever of them took the payment."
+},
+{
+"h3": "Unified Payments Suite"
+},
+{
+"h4": "Smart routing"
+},
+{
+"p": "Choose the processor per payment on cost, success rate or latency. The rule lives here, so tuning it is a config change rather than a deploy."
+},
+{
+"h4": "Cascading retries"
+},
+{
+"p": "A soft decline is often a fact about one processor, not about the card. Failed attempts fall through to a backup automatically, and the customer sees one outcome."
+},
+{
+"h4": "Normalized webhooks"
+},
+{
+"p": "Every processor announces a settlement differently. You subscribe to one event shape and keep it when you add or drop a provider."
+},
+{
+"h3": "What you can see once it is one pipe"
+},
+{
+"li": "• Approval rates, cost and latency compared across processors, on one screen."
+},
+{
+"li": "• 3D Secure where the issuer asks for it, without a second integration."
+},
+{
+"li": "• Open source, so the routing logic is readable before you trust it."
+}
+],
+[
+{
+"h2": "Automatic Global Tax Compliance"
+},
+{
+"p": "Focus on your business while Hanzo handles the complexity of global tax regulations and compliance."
+},
+{
+"h3": "Automated Tax Management"
+},
+{
+"p": "Automatically handle VAT, GST, and regional taxes (including sales tax)."
+},
+{
+"li": "• Real-time tax rate calculation"
+},
+{
+"li": "• Tax exemption handling"
+},
+{
+"li": "• Automated tax reporting"
+},
+{
+"h3": "Fraud Protection"
+},
+{
+"p": "Automatic fraud detection and prevention built-in to protect your business."
+},
+{
+"li": "• Machine learning fraud detection"
+},
+{
+"li": "• Adaptive risk rules"
+},
+{
+"li": "• Chargeback protection"
+}
+],
+[
+{
+"h2": "Customizable Checkout Experiences"
+},
+{
+"p": "Create beautiful, high-converting checkout flows that drive revenue growth and customer satisfaction."
+},
+{
+"h3": "Global Payment Methods"
+},
+{
+"li": "• Cards, wallets, bank debits, buy-now-pay-later and crypto"
+},
+{
+"li": "• Local methods handled by whichever processor supports them best"
+},
+{
+"li": "• The method someone expects to see, in the country they are in"
+},
+{
+"h3": "Checkout Interface"
+},
+{
+"p": "Fully customizable checkout UI that matches your brand and maximizes conversions."
+},
+{
+"h3": "Global Reach"
+},
+{
+"p": "Regional processors are connectors like any other, so entering a market is a routing rule rather than a new integration."
+},
+{
+"h3": "Mobile Optimized"
+},
+{
+"p": "Responsive checkout flows designed for high conversion on all devices and screen sizes."
+},
+{
+"h3": "Fully Customizable"
+},
+{
+"p": "Customize every aspect of the checkout experience to match your brand identity."
+}
+],
+[
+{
+"h2": "One API in front of all of them"
+},
+{
+"p": "The connectors are the product. Each is a real implementation of one processor’s API, kept behind a single interface so your side never learns their differences."
+},
+{
+"h3": "The processor is not in your code"
+},
+{
+"p": "You ask for a payment. Which company took it is an answer, not an argument."
+},
+{
+"code": "// Take a payment. You do not name the processor. const payment = await hanzo.payments. create ({ amount : 2000 , currency : ' usd ' , customer : customer.id , metadata : { order_id : ' 6735 ' }, }); // The routing rule picked one, and says so. // If it had declined, the cascade would already // have tried the next and told you that instead. console. log ( payment.status ); // 'succeeded' console. log ( payment.connector ); // 'adyen'"
+},
+{
+"a": "API Reference",
+"href": "https://docs.hanzo.ai/docs/openapi"
+},
+{
+"h3": "Easy to Implement"
+},
+{
+"p": "Quick integration with just a few lines of code, with SDKs for all major programming languages."
+},
+{
+"h3": "Comprehensive Documentation"
+},
+{
+"p": "Detailed guides, API reference, and code examples to help you integrate Hanzo Payments quickly."
+},
+{
+"h3": "Explore Our APIs"
+},
+{
+"p": "Get started with quickstart guides, examples, and developer tools."
+},
+{
+"a": "API Reference",
+"href": "https://docs.hanzo.ai/docs/openapi"
+}
+],
+[
+{
+"h2": "When a switch earns its place"
+},
+{
+"p": "One processor and one country does not need one. These four do."
+},
+{
+"h3": "Selling in several countries"
+},
+{
+"p": "You sell in more than one country and each one wants a different payment method. Add the connector, write the rule, leave the checkout alone."
+},
+{
+"h4": "Key Features"
+},
+{
+"h3": "Recovering declines"
+},
+{
+"p": "Renewals fail for reasons that have nothing to do with the customer. Retrying through a second processor turns some of those failures back into payments."
+},
+{
+"h4": "Key Features"
+},
+{
+"h3": "Leaving a processor"
+},
+{
+"p": "The reason nobody switches is the rewrite. When the integration is here, moving is a routing change, and you can move a percentage first."
+},
+{
+"h4": "Key Features"
+},
+{
+"h3": "Comparing two of them"
+},
+{
+"p": "Run both and read the approval rates side by side. The argument about which processor is better becomes a measurement."
+},
+{
+"h4": "Key Features"
+}
+],
+[
+{
+"h2": "Explore Further"
+},
+{
+"p": "The API reference, and the guide to putting the checkout on your site."
+},
+{
+"h3": "API Reference"
+},
+{
+"p": "Detailed documentation on all Hanzo Payments APIs and integration options."
+},
+{
+"a": "View API Docs",
+"href": "https://docs.hanzo.ai/docs/openapi"
+},
+{
+"h3": "Checkout Integration"
+},
+{
+"p": "Step-by-step guide to integrating Hanzo Payments checkout into your website or app."
+},
+{
+"a": "Integration Guide",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+},
+{
+"h2": "Put one payment through it"
+},
+{
+"p": "Point it at the processor you already use, send a live payment, and add the second one when you want to see the difference. Nothing has to move on day one."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "Get Payments"
+},
+{
+"p": "Payments processor"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

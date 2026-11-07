@@ -1,0 +1,104 @@
+[
+[
+{
+"h1": "Hanzo PubSub"
+},
+{
+"p": "The bus everything else rides"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/pubsub"
+},
+{
+"img": "/models/mori.webp",
+"alt": ""
+},
+{
+"p": "A stream captures the subjects you name and keeps them by age, by count or by bytes. A consumer starts at the beginning, at the newest message, at a sequence number or at a wall-clock time, and reads at the original pace or as fast as it can take them."
+},
+{
+"p": "A message is redelivered until a consumer acknowledges it. Publishers that stamp a message id get duplicates collapsed inside a window — two minutes unless you say otherwise. Ack every message, ack a sequence to cover everything below it, or ask for no acks at all when fire-and-forget is what you meant."
+},
+{
+"p": "A bucket is a stream that keeps the last value per key, so you get watches, per-key history and expiry from the same server and the same connection. It is where Hanzo Stream keeps its consumer offsets."
+},
+{
+"p": "Send to a subject and wait for one answer. Put several instances of a service in a queue group on that subject and each request goes to exactly one of them — load balancing with nothing in front of them doing it."
+},
+{
+"p": "Payloads too big to be a message are chunked into a stream and put back together on the way out, with a watch for when one changes. Same connection, same credentials, no second system to stand up."
+},
+{
+"p": "An account walls one tenant's subjects off from another's. Credentials are nkeys or signed JWTs rather than a shared secret, permissions are granted per subject, and TLS covers the wire."
+},
+{
+"li": "Streams write it down"
+},
+{
+"li": "Acked, so nothing goes quiet"
+},
+{
+"li": "Key-value buckets"
+},
+{
+"li": "Request-Reply"
+},
+{
+"li": "Object Store"
+},
+{
+"li": "Accounts, not passwords"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Pubsub from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Pubsub in my project. Start with: hanzo pubsub publish"
+}
+],
+[
+{
+"h2": "Publish and Subscribe"
+},
+{
+"code": "nc , _ := nats . Connect ( \" nats://pubsub.hanzo.ai:4222 \" ) js , _ := nc . JetStream () // Create a durable stream js . AddStream ( &nats . StreamConfig { Name : \" EVENTS \" , Subjects : [] string { \" events.> \" }, Storage : nats . FileStorage , Replicas : 3 , }) // Publish js . Publish ( \" events.user.signup \" , [] byte ( ` {\"id\":\"usr_123\"} ` )) // Durable consumer with ack sub , _ := js . PullSubscribe ( \" events.> \" , \" my-service \" ) msgs , _ := sub . Fetch ( 10 ) for _ , msg := range msgs { process ( msg . Data ) msg . Ack () }"
+}
+],
+[
+{
+"h2": "Put it between your services"
+},
+{
+"p": "Free tier includes 1M messages/month."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/pubsub"
+}
+],
+[
+{
+"h2": "Get PubSub"
+},
+{
+"p": "Pub/sub messaging"
+},
+{
+"a": "hanzoai/pubsub",
+"href": "https://github.com/hanzoai/pubsub"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

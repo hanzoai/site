@@ -1,0 +1,282 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Enso, measured"
+},
+{
+"p": "Enso is our frontier family, and the router that picks among every model on the gateway when you ask for auto. A vendor’s published score and your own are rarely the same number, so every row below was run here, ours and theirs on the same questions, and each one links its run."
+},
+{
+"a": "Start using Enso",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "The Enso product",
+"href": "/enso"
+}
+],
+[
+{
+"h2": "Three presets"
+},
+{
+"p": "Ultra, Pro and Flash. A preset is a pool and a rate, not another name for one model; the band is what you are billed, input then output, per million tokens. The runs below measure the router itself, not a preset."
+},
+{
+"h3": "Enso Ultra"
+},
+{
+"p": "For work where a wrong answer is expensive: research, security review and long autonomous runs."
+},
+{
+"h3": "Enso Pro"
+},
+{
+"p": "For coding, code review and agents that answer while someone waits."
+},
+{
+"h3": "Enso Flash"
+},
+{
+"p": "For chat, extraction, classification and simple agent steps at volume."
+}
+],
+[
+{
+"h2": "A New Pareto Frontier of Intelligence"
+},
+{
+"p": "GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers."
+}
+],
+[
+{
+"h2": "Every row a research run"
+},
+{
+"p": "The router beside single models from other labs, on the same questions, read from api.hanzo.ai when the page opens: each run’s accuracy, its count, and what its tokens cost at list prices on the whole set."
+},
+{
+"p": "GPQA Diamond · enso.gpqa_diamond, split test · every row a research run, read from api.hanzo.ai when the page opens · sorted by accuracy"
+},
+{
+"table": [
+[
+"System",
+"Accuracy",
+"Correct",
+"Run cost",
+"Tag, date"
+],
+[
+"enso run",
+"92.9%",
+"184 of 198",
+"$5.58",
+"frontier · 2026-07-19"
+],
+[
+"enso-ultra run",
+"92.9%",
+"184 of 198",
+"$20.20",
+"frontier · 2026-07-19"
+],
+[
+"gpt-5.6-sol run",
+"91.9%",
+"182 of 198",
+"$4.08",
+"frontier · 2026-07-19"
+],
+[
+"opus-5.5 run",
+"90.9%",
+"180 of 198",
+"$3.78",
+"fill · 2026-10-16"
+],
+[
+"sonnet-5.5 run",
+"90.4%",
+"179 of 198",
+"$1.85",
+"fill · 2026-10-16"
+],
+[
+"gpt-5.5 run",
+"89.9%",
+"178 of 198",
+"$11.95",
+"frontier · 2026-07-19"
+],
+[
+"fable-5.1 run",
+"87.9%",
+"174 of 198",
+"$8.23",
+"fill · 2026-10-16"
+],
+[
+"opus-4.8 run",
+"86.4%",
+"171 of 198",
+"$3.66",
+"frontier · 2026-07-19"
+],
+[
+"haiku-5.5 run",
+"83.3%",
+"165 of 198",
+"$0.190",
+"fill · 2026-10-16"
+],
+[
+"fable-5 run",
+"82.8%",
+"164 of 198",
+"$9.87",
+"frontier · 2026-07-19"
+],
+[
+"claude-5-sonnet run",
+"77.8%",
+"154 of 198",
+"$5.66",
+"frontier · 2026-07-19"
+],
+[
+"deepseek-v4-pro run",
+"74.2%",
+"147 of 198",
+"$0.259",
+"frontier · 2026-07-19"
+],
+[
+"gpt-4o run",
+"54.5%",
+"108 of 198",
+"$1.58",
+"frontier · 2026-07-19"
+]
+]
+},
+{
+"p": "Each system's frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list's rate for its own model id, the router's included, at list prices, Nov 6, 2026; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read."
+},
+{
+"p": "LiveCodeBench · enso.livecodebench, split v6-recent-175 · every row a research run, read from api.hanzo.ai when the page opens · sorted by accuracy"
+},
+{
+"table": [
+[
+"System",
+"Accuracy",
+"Correct",
+"Run cost",
+"Tag, date"
+],
+[
+"enso run",
+"93.7%",
+"164 of 175",
+"$8.59",
+"frontier · 2026-07-19"
+],
+[
+"gpt-5.6-sol run",
+"93.1%",
+"163 of 175",
+"$6.14",
+"frontier · 2026-07-19"
+],
+[
+"gpt-5.5 run",
+"91.4%",
+"160 of 175",
+"$15.60",
+"v1 · 2026-07-16"
+],
+[
+"opus-5.5 run",
+"80.0%",
+"140 of 175",
+"$5.94",
+"fill · 2026-10-16"
+],
+[
+"fable-5.1 run",
+"80.0%",
+"140 of 175",
+"$18.40",
+"fill · 2026-10-16"
+],
+[
+"fable-5 run",
+"78.3%",
+"137 of 175",
+"$28.08",
+"frontier · 2026-07-19"
+],
+[
+"haiku-5.5 run",
+"74.9%",
+"131 of 175",
+"$0.294",
+"fill · 2026-10-16"
+],
+[
+"sonnet-5.5 run",
+"72.0%",
+"126 of 175",
+"$3.74",
+"fill · 2026-10-16"
+],
+[
+"opus-4.8 run",
+"72.0%",
+"126 of 175",
+"$13.14",
+"v1 · 2026-07-16"
+],
+[
+"deepseek-v4-pro run",
+"52.6%",
+"92 of 175",
+"$0.270",
+"frontier · 2026-07-19"
+],
+[
+"gpt-4o run",
+"21.1%",
+"37 of 175",
+"$1.40",
+"frontier · 2026-07-19"
+]
+]
+},
+{
+"p": "Each system's frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list's rate for its own model id, the router's included, at list prices, Nov 6, 2026; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read."
+}
+],
+[
+{
+"h2": "Build on the tier that fits"
+},
+{
+"p": "Start on Flash. Move a request up to Pro or Ultra when it earns the cost, by changing the model id and nothing else."
+},
+{
+"a": "Get API access",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "Explore Zen (open weights)",
+"href": "/zen"
+}
+]
+]

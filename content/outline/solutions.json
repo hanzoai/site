@@ -1,0 +1,159 @@
+[
+[
+{
+"h1": "Solutions for every team and industry"
+},
+{
+"p": "What Hanzo does for each team, each industry and each kind of work : the workflows it takes over, the products underneath, and what is true about security ."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "Close faster, with every number traced to its source."
+},
+{
+"p": "Answers in SQL you can read, from data agents can reach."
+},
+{
+"p": "Research, follow-up and a CRM that stays current."
+},
+{
+"p": "From brief to published campaign, measured."
+},
+{
+"p": "Recurring work, run by agents, with a record."
+},
+{
+"p": "Coding agents, one API, and machines to run it all."
+},
+{
+"p": "Explore visuals and ship prototypes that run."
+},
+{
+"li": "Finance"
+},
+{
+"li": "Data"
+},
+{
+"li": "Sales"
+},
+{
+"li": "Marketing"
+},
+{
+"li": "Operations"
+},
+{
+"li": "Engineering"
+},
+{
+"li": "Design"
+}
+],
+[
+{
+"h2": "Teams"
+},
+{
+"a": "Finance Close faster, with every number traced to its source.",
+"href": "/solutions/finance"
+},
+{
+"a": "Data Answers in SQL you can read, from data agents can reach.",
+"href": "/solutions/data"
+},
+{
+"a": "Sales Research, follow-up and a CRM that stays current.",
+"href": "/solutions/sales"
+},
+{
+"a": "Marketing From brief to published campaign, measured.",
+"href": "/solutions/marketing"
+},
+{
+"a": "Operations Recurring work, run by agents, with a record.",
+"href": "/solutions/operations"
+},
+{
+"a": "Engineering Coding agents, one API, and machines to run it all.",
+"href": "/solutions/engineering"
+},
+{
+"a": "Design Explore visuals and ship prototypes that run.",
+"href": "/solutions/design"
+}
+],
+[
+{
+"h2": "Industries"
+},
+{
+"a": "Cybersecurity Triage, investigation and fixes, on controls you can read.",
+"href": "/solutions/cybersecurity"
+},
+{
+"a": "Financial services Onboarding, ledgers, payments and reporting, with a trail.",
+"href": "/solutions/financial-services"
+},
+{
+"a": "Healthcare Less paperwork, with patient data kept on your terms.",
+"href": "/solutions/healthcare"
+},
+{
+"a": "Law Review, research and drafting, kept confidential.",
+"href": "/solutions/law"
+},
+{
+"a": "Retail Catalog, storefront, support and every change measured.",
+"href": "/solutions/retail"
+},
+{
+"a": "Government Inside your boundary, on software you can inspect.",
+"href": "/solutions/government"
+},
+{
+"a": "Education Tutors, teaching tools and research compute.",
+"href": "/solutions/education"
+}
+],
+[
+{
+"h2": "Use cases"
+},
+{
+"a": "Content creation Words, images, video and voice from one account.",
+"href": "/solutions/content-creation"
+},
+{
+"a": "Research Read everything, cite everything, remember what was true.",
+"href": "/solutions/research"
+},
+{
+"a": "Agents Workers you define once, budget, and audit.",
+"href": "/solutions/agents"
+}
+],
+[
+{
+"h2": "Reserved tier"
+},
+{
+"p": "Capacity set aside for your organization — dedicated compute and inference for production traffic, or the whole stack on hardware you own — on an agreement sized to your load."
+},
+{
+"a": "Explore the reserved tier",
+"href": "/solutions/reserved"
+}
+]
+]

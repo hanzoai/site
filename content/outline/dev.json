@@ -1,0 +1,299 @@
+[
+[
+{
+"h1": "Describe the change. Dev ships it."
+},
+{
+"p": "Hanzo Dev is a coding agent. It reads your repository, makes the change, runs the tests and shows you the diff — in your terminal, on the web, in the cloud and in Slack."
+},
+{
+"li": "Reads the repository, makes the change and runs the tests"
+},
+{
+"li": "Shows you the diff and waits for your review"
+},
+{
+"li": "In your terminal, on the web, in the cloud and in Slack"
+},
+{
+"li": "Enso by default, every Hanzo model by name"
+},
+{
+"a": "Open Dev",
+"href": "/login?next=%2Fdev"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/dev"
+},
+{
+"a": "Explore GitHub examples →",
+"href": "https://github.com/hanzoai/dev"
+},
+{
+"button": "(i)"
+}
+],
+[
+{
+"h2": "3.02× faster on the same coding tasks."
+},
+{
+"p": "Hanzo Dev and Claude Code were handed the same 44 coding tasks (single-fault repairs), one try each. Each clock replays that side's median time a task, at the speed it ran."
+},
+{
+"button": "Replay race"
+},
+{
+"li": "Settled by search, no model call, 24 tasks 8.22× · 95% 6.86–9.82×"
+},
+{
+"li": "The model’s first edit, 4 tasks 1.31× · 95% 1.14–1.48×"
+},
+{
+"a": "Every coding task and both runs →",
+"href": "/benchmarks#coding-agent"
+}
+],
+[
+{
+"p": "One agent"
+},
+{
+"h2": "Wherever the work is."
+},
+{
+"p": "The same agent, the same models and the same account in every place it runs."
+},
+{
+"h3": "Terminal"
+},
+{
+"h3": "Web"
+},
+{
+"h3": "Cloud"
+},
+{
+"h3": "Slack"
+},
+{
+"a": "Open Dev on the web →",
+"href": "/login?next=%2Fdev"
+}
+],
+[
+{
+"p": "Install"
+},
+{
+"h2": "One line, three ways."
+},
+{
+"p": "Linux, macOS and Windows. Dev updates itself the way it was installed."
+},
+{
+"code": "curl -fsSL https://hanzo.sh | sh"
+},
+{
+"code": "npm i -g hanzo"
+},
+{
+"code": "brew install hanzoai/tap/hanzo-dev"
+},
+{
+"code": "dev login # pick an account: Hanzo is the default dev login --hanzo # straight to your Hanzo account dev login --with-api-key # or paste a Hanzo API key, hidden"
+},
+{
+"a": "Getting started →",
+"href": "https://docs.hanzo.ai/docs/dev"
+}
+],
+[
+{
+"p": "Models"
+},
+{
+"h2": "Enso by default. Any model by name."
+},
+{
+"p": "Dev starts on enso-auto through api.hanzo.ai, so every call is metered on your Hanzo account. Every model Hanzo serves is a flag or a /model away."
+},
+{
+"code": "dev # enso-auto, through api.hanzo.ai dev --model enso-ultra # name any model Hanzo serves /model zen5-coder # or switch inside a session"
+},
+{
+"a": "Enso →",
+"href": "/enso"
+},
+{
+"a": "Every model →",
+"href": "/models"
+}
+],
+[
+{
+"p": "Controller"
+},
+{
+"h2": "Kai decides. Dev does."
+},
+{
+"p": "Kai is Dev’s own controller, not an adviser. At each step it returns an operation Dev can run, or says plainly that it abstains. The cheapest step that holds is the one taken."
+},
+{
+"a": "Kai, the decision model →",
+"href": "/kai"
+}
+],
+[
+{
+"p": "Proof"
+},
+{
+"h2": "Built to be checked."
+},
+{
+"p": "Nothing counts as done because a model said so."
+},
+{
+"h3": "Verified, not predicted"
+},
+{
+"h3": "Bound to the revision"
+},
+{
+"h3": "A ledger you can replay"
+}
+],
+[
+{
+"p": "Sandbox"
+},
+{
+"h2": "Inside the fence you set."
+},
+{
+"p": "Commands run in a sandbox and are approved inside it. Ask before every action, or lift the fence for one run. A repository’s own tool servers stay off until you say you trust it."
+},
+{
+"code": "hanzo dev --ask # ask before each action hanzo dev --no-sandbox # run unconfined, for this run only hanzo dev --project-mcp # also load this repository's .mcp.json"
+}
+],
+[
+{
+"p": "Gen"
+},
+{
+"h2": "Dev is our agent. Gen runs any agent."
+},
+{
+"p": "Hanzo Gen is the harness: Claude Code, Codex, Cursor and the rest, on Hanzo’s tools and models and linked to your account. Dev is the agent it opens when none is named."
+},
+{
+"a": "Hanzo Gen →",
+"href": "/gen"
+}
+],
+[
+{
+"p": "Open source"
+},
+{
+"h2": "Read every line."
+},
+{
+"p": "Dev is Apache-2.0 on GitHub. Build it, change it, send a pull request — hanzoai/dev ."
+},
+{
+"a": "The source →",
+"href": "https://github.com/hanzoai/dev"
+},
+{
+"a": "Releases →",
+"href": "https://github.com/hanzoai/dev/releases"
+}
+],
+[
+{
+"p": "Questions"
+},
+{
+"h2": "Questions & Answers"
+}
+],
+[
+{
+"p": "Read"
+},
+{
+"h2": "The agent, its controller, its source."
+},
+{
+"p": "Where to start, what Dev thinks with, and the code."
+},
+{
+"h3": "Start"
+},
+{
+"a": "Docs Install, sign in, the first session.",
+"href": "https://docs.hanzo.ai/docs/dev"
+},
+{
+"a": "Install hanzo.sh, npm or Homebrew.",
+"href": "#install"
+},
+{
+"a": "Hanzo CLI hanzo, and the session it opens.",
+"href": "/cli"
+},
+{
+"h3": "Models"
+},
+{
+"a": "Enso The default.",
+"href": "/enso"
+},
+{
+"a": "Kai The controller.",
+"href": "/kai"
+},
+{
+"a": "Every model",
+"href": "/models"
+},
+{
+"h3": "Source"
+},
+{
+"a": "hanzoai/dev Apache-2.0.",
+"href": "https://github.com/hanzoai/dev"
+},
+{
+"a": "Releases",
+"href": "https://github.com/hanzoai/dev/releases"
+},
+{
+"a": "Hanzo Gen The harness for every agent.",
+"href": "/gen"
+},
+{
+"a": "Hanzo Kata Test, repair, and the pull request.",
+"href": "/kata"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Dev from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Dev in my project. Start with: dev"
+}
+]
+]

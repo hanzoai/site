@@ -1,0 +1,38 @@
+[
+[
+{
+"h1": "Your laptop is the cluster"
+},
+{
+"p": "The same Hanzo cloud, booted on your own machine in seconds."
+}
+],
+[
+{
+"p": "Local"
+},
+{
+"h2": "Runs on your machine, too."
+},
+{
+"p": "One command boots the same cloud on your laptop: a Kubernetes control plane in a microVM, ready in seconds."
+},
+{
+"p": "to boot the microVM — the same on Apple silicon, Ryzen and GB10."
+},
+{
+"p": "from cold to a Ready node, every platform we ship."
+},
+{
+"p": "and no daemon, no VM manager, and no cloud account to open."
+},
+{
+"a": "Read the CLI docs",
+"href": "/cli"
+},
+{
+"a": "Run it locally",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+]
+]

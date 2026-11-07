@@ -1,0 +1,72 @@
+[
+[
+{
+"h1": "Parsis Foundation"
+},
+{
+"p": "The public repositories of parsis-foundation on GitHub, each with its stars, forks, language and last push."
+},
+{
+"a": "parsis-foundation on GitHub",
+"href": "https://github.com/parsis-foundation"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/parsis-foundation"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 0 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of parsis-foundation, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "parsis-foundation/parsis.fund TypeScript 0 0 Public goods fund for the Persian people Pushed Sep 11, 2026 12 commits this year Forge",
+"href": "https://github.com/parsis-foundation/parsis.fund"
+},
+{
+"li": "parsis-foundation/parsis.foundation TypeScript 0 0 Landing page for parsis.foundation Pushed Sep 11, 2026 19 commits this year Forge",
+"href": "https://github.com/parsis-foundation/parsis.foundation"
+}
+]
+]

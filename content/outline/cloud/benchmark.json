@@ -1,0 +1,105 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Benchmark"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/cloud"
+},
+{
+"a": "Evals",
+"href": "/cloud/evals"
+},
+{
+"a": "Benchmark",
+"href": "/cloud/benchmark"
+},
+{
+"a": "Research",
+"href": "/cloud/research"
+},
+{
+"a": "Datasets",
+"href": "/cloud/datasets"
+},
+{
+"a": "Experiments",
+"href": "/cloud/experiments"
+},
+{
+"a": "Scores",
+"href": "/cloud/scores"
+},
+{
+"a": "Score Configs",
+"href": "/cloud/score-configs"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/benchmark"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Benchmark from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Benchmark in my project."
+}
+],
+[
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Evals Measure model & agent quality",
+"href": "/cloud/evals"
+},
+{
+"a": "Research",
+"href": "/cloud/research"
+},
+{
+"a": "Datasets",
+"href": "/cloud/datasets"
+}
+]
+]

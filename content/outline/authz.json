@@ -1,0 +1,157 @@
+[
+[
+{
+"h1": "Hanzo Authz"
+},
+{
+"p": "Hanzo Authz reads a token and answers whether the caller may do the thing. It verifies the JWT that IAM signed, then asks one question: does a grant this caller holds cover this path, and does its role admit this verb. It is a library, not a service — no store, no configuration, no network call on any path — so every Hanzo service asks that question the same way and gets the same answer."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/authz"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/authz"
+},
+{
+"a": "IAM",
+"href": "/iam"
+},
+{
+"a": "Authz",
+"href": "/authz"
+},
+{
+"a": "KMS",
+"href": "/kms"
+},
+{
+"a": "Secrets",
+"href": "/cloud/secrets"
+},
+{
+"a": "Audit",
+"href": "/cloud/audit"
+},
+{
+"a": "Zero Trust",
+"href": "/cloud/zero-trust"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/authz"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Authz from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Authz in my project. Start with: hanzo authz check"
+}
+],
+[
+{
+"h3": "Where a thing is, and who may touch it"
+},
+{
+"p": "A location is a path — acme, acme/prod, acme/prod/web, and the app or site under that. Access is a grant at a prefix of one. Keeping them apart is the whole design: containment names a resource, it does not hand every ancestor's members the child."
+},
+{
+"h3": "Nothing on the decision path does I/O"
+},
+{
+"p": "No store, no config, no init, no network call. Authz is a leaf package a service imports, so the check is a function call and a request that reaches your handler has already been decided."
+},
+{
+"h3": "One rule covers every arrangement"
+},
+{
+"p": "Can is true when some grant the caller holds prefixes the target and its role admits the verb. An org-wide member holds a grant at the org; a workspace member holds one a level down; an invite-only project is a grant with no ancestor above it. There is no second mechanism."
+},
+{
+"h3": "Delegation is a narrower grant"
+},
+{
+"p": "Handing an agent or a short-lived credential part of your authority means writing a grant deeper in the path than your own, with an expiry if you want one. Nothing can be delegated that the delegator does not already hold."
+},
+{
+"h3": "The decision travels, the grant set stays"
+},
+{
+"p": "The edge resolves the requested scope once and writes the resolved path and role into the token, so the token stays the same size no matter how many grants a person has, and no service behind the edge asks IAM anything."
+},
+{
+"h3": "Only what IAM signs"
+},
+{
+"p": "Verification accepts the algorithms IAM's signer actually produces — RSA, EC, and ML-DSA-65 for a post-quantum certificate. HMAC and alg none are rejected. Key material is an argument, so the leaf never fetches a JWKS and a caller that supplies no keys verifies nothing."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Authz docs →",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/authz"
+},
+{
+"a": "IAM OIDC identity & orgs",
+"href": "/iam"
+},
+{
+"a": "KMS Managed keys",
+"href": "/kms"
+},
+{
+"a": "Secrets Store once, sync everywhere",
+"href": "/cloud/secrets"
+}
+],
+[
+{
+"h2": "Get Authz"
+},
+{
+"p": "Fine-grained authorization"
+},
+{
+"a": "hanzoai/authz",
+"href": "https://github.com/hanzoai/authz"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/authz"
+}
+]
+]

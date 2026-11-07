@@ -1,0 +1,220 @@
+[
+[
+{
+"h1": "A column store for analytical SQL"
+},
+{
+"p": "Datastore keeps each column of a table in its own file, compressed on its own terms, so a query naming four columns out of a hundred reads four."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai"
+},
+{
+"button": "ts"
+},
+{
+"button": "user_id"
+},
+{
+"button": "event"
+},
+{
+"button": "country"
+},
+{
+"button": "device"
+},
+{
+"button": "plan"
+},
+{
+"button": "revenue"
+},
+{
+"button": "duration_ms"
+},
+{
+"button": "referrer"
+},
+{
+"button": "path"
+},
+{
+"button": "session"
+},
+{
+"button": "version"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Datastore from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Datastore in my project. Start with: hanzo provisioning datastore create"
+}
+],
+[
+{
+"h2": "What it does"
+},
+{
+"p": "Scan a great many rows. Return a small answer. Do it while the rows are still arriving."
+},
+{
+"h3": "Columns, not rows"
+},
+{
+"p": "A table is stored one column at a time, so a query reads only the columns it names. Each column gets a codec suited to what it holds — deltas for a rising timestamp, dictionaries for a repeated label, general compression over the result."
+},
+{
+"h3": "Shard it and it keeps up"
+},
+{
+"p": "Tables are partitioned and spread across nodes; add nodes and both the storage and the scan spread with them. Parts merge in the background, so ingest never stops for a compaction window."
+},
+{
+"h3": "Replicas that agree"
+},
+{
+"p": "Replicated tables coordinate through a Raft quorum running inside the server itself — there is no separate coordination service to stand up beside the database. A replica that falls behind catches up part by part."
+},
+{
+"h3": "Local disks, or object storage"
+},
+{
+"p": "Run a shared-nothing cluster on local NVMe, or put the table's data on object storage and scale query nodes on their own. Old partitions expire on a TTL you write into the schema."
+},
+{
+"h3": "Events, metrics and logs are one shape"
+},
+{
+"p": "Append-heavy, partitioned by time, queried by range — the same engine serves all three. Materialized views keep rollups current as rows land, so the summary exists before anyone asks for it."
+},
+{
+"h3": "SQL, on several protocols"
+},
+{
+"p": "Query over HTTP on 8123, on the native protocol on 9000, or through the MySQL and PostgreSQL wire ports — which is how BI tools and drivers that know nothing about it still connect. A CSV, a Parquet file or a JSON stream loads without a conversion step first."
+}
+],
+[
+{
+"h2": "Where the speed comes from"
+},
+{
+"p": "Nothing exotic. Read less, decompress less, and touch memory in the order the CPU wants it."
+},
+{
+"h3": "Read only what the query names"
+},
+{
+"p": "A row store reads the whole row to answer a question about two of its fields. A column store reads the two."
+},
+{
+"p": "Fewer bytes off the disk, fewer bytes to decompress, and more of the working set fits in memory."
+},
+{
+"h3": "One instruction, many values"
+},
+{
+"p": "Values from a single column sit next to each other in memory in the same representation, so a sum or a filter runs across a block of them with vector instructions instead of once per row."
+},
+{
+"p": "That layout is also what keeps the CPU cache full rather than chasing pointers."
+},
+{
+"h3": "Sorted, so a range is contiguous"
+},
+{
+"p": "Rows are written in the order of the table's sorting key and grouped into parts by partition, so a query bounded by time reads a run of adjacent blocks instead of seeking around the disk."
+},
+{
+"p": "Marks inside each part let the scan jump straight to the block that could hold the answer."
+},
+{
+"h3": "Compression chosen per column"
+},
+{
+"p": "A rising timestamp compresses as deltas. A repeated label compresses as a dictionary. A general-purpose compressor runs over whatever is left."
+},
+{
+"p": "Less data on disk is also less data on the wire once the query is spread across nodes."
+}
+],
+[
+{
+"h2": "What people point it at"
+},
+{
+"p": "Different industries, the same shape of problem: a great many rows in, a small answer out, asked again a second later."
+},
+{
+"p": "Web and app analytics"
+},
+{
+"p": "E-commerce and finance"
+},
+{
+"p": "Time series"
+},
+{
+"p": "Advertising networks and RTB"
+},
+{
+"p": "Information security"
+},
+{
+"p": "Business intelligence"
+},
+{
+"p": "Telecommunications"
+},
+{
+"p": "Monitoring and telemetry"
+},
+{
+"p": "Online games"
+},
+{
+"p": "Internet of Things (IoT)"
+},
+{
+"p": "Observability"
+},
+{
+"p": "User behavior analytics"
+}
+],
+[
+{
+"h2": "Get Datastore"
+},
+{
+"p": "Document datastore"
+},
+{
+"a": "hanzoai/datastore",
+"href": "https://github.com/hanzoai/datastore"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/datastore"
+}
+]
+]

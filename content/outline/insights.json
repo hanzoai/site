@@ -1,0 +1,108 @@
+[
+[
+{
+"h1": "Hanzo Insights"
+},
+{
+"p": "Product analytics and feature flags"
+},
+{
+"a": "Open Insights",
+"href": "https://insights.hanzo.ai"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"p": "Autocapture gets you data before you have instrumented anything, and named events get you data you can trust. When a chart cannot express the question, write the query instead — it is the same table underneath."
+},
+{
+"p": "Roll out to a percentage, a cohort, or one account. The flag is also a kill switch, which is the reason to reach for one: turning a feature off should not require a deploy at the worst possible moment."
+},
+{
+"p": "Watch what actually happened. Heatmaps and scroll depth tell you where attention went; a replay tells you why someone gave up, which no funnel ever will."
+},
+{
+"p": "An experiment is a flag with a metric attached to it. Pick the goal before you start, and let it run until the result means something rather than until it looks good."
+},
+{
+"p": "Funnels show where people stop, retention shows whether they came back, and paths show the route nobody designed. The third one is usually where the surprise is."
+},
+{
+"p": "Error tracking sits beside the analytics, so a spike in rage clicks and the exception behind it are one investigation. If your product calls a model, the traces, latency and cost per generation land here too."
+},
+{
+"li": "Events, and SQL when you need it"
+},
+{
+"li": "Feature flags"
+},
+{
+"li": "Session replay"
+},
+{
+"li": "Experiments"
+},
+{
+"li": "Funnels, retention and paths"
+},
+{
+"li": "Errors and LLM cost"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Insights from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Insights in my project."
+}
+],
+[
+{
+"h2": "The flag and the event, in one provider"
+},
+{
+"code": "import { InsightsProvider , useFeatureFlag } from \" @hanzo/insights-react \" function App () { return ( < InsightsProvider apiKey= \" ins_proj_xxx \" host= \" https://insights.hanzo.ai \" > < MyApp /> </ InsightsProvider > ) } function MyApp () { // Feature flags const showNewUI = useFeatureFlag ( \" new-dashboard \" ) // Track events insights. capture ( \" button_clicked \" , { variant : \" primary \" }) return showNewUI ? < NewDashboard /> : < OldDashboard /> }"
+}
+],
+[
+{
+"h2": "Start with autocapture"
+},
+{
+"p": "Drop the provider in and you have data by this afternoon. Name the events that matter once you know which ones those are. There is a free tier, and the whole thing is open source if you would rather run it yourself."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/insights"
+}
+],
+[
+{
+"h2": "Get Insights"
+},
+{
+"p": "Product insights + experiments"
+},
+{
+"a": "hanzoai/insights",
+"href": "https://github.com/hanzoai/insights"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

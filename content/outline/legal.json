@@ -1,0 +1,103 @@
+[
+[
+{
+"h1": "Legal & Trust Center"
+},
+{
+"p": "The canonical home for Hanzo's legal agreements, policies, and notices. Every Hanzo product links here."
+}
+],
+[
+{
+"p": "This is the canonical home for the agreements, policies, and notices that govern the Hanzo Services. Every Hanzo product — the Console, cloud, API documentation, and signup — links to these documents at hanzo.ai/legal/<name> rather than restating them, so there is one authoritative version of each."
+},
+{
+"code": "hanzo.ai/legal/<name>"
+},
+{
+"p": "Status: draft, pending counsel. The documents below are complete drafts written to be truthful about what the platform does today. They are not yet effective . Each carries a publication gate listing what must be verified — entity address, mailboxes, retention jobs, subprocessor rows, consent pipeline — before it is published as binding. See the internal implementation checklist for the engineering gates behind these commitments."
+},
+{
+"h2": "Agreements"
+},
+{
+"li": "Terms of Service — the master agreement for all Services, including Enso routing, benchmarks, research, agents, and APIs.",
+"href": "/legal/terms"
+},
+{
+"li": "Data Processing Addendum — processor terms, SCCs, subprocessor governance, and security measures for business customers.",
+"href": "/legal/dpa"
+},
+{
+"h2": "Policies"
+},
+{
+"li": "Privacy Policy — what personal data we process, why, and the four data-use states that govern research and training.",
+"href": "/legal/privacy"
+},
+{
+"li": "Acceptable Use Policy — the conduct rules for every user, application, and agent.",
+"href": "/legal/acceptable-use"
+},
+{
+"li": "AI Research and Data Contribution Terms — the opt-in terms for using your data in Hanzo research and training, and the Verified Commons.",
+"href": "/legal/research-contribution"
+},
+{
+"li": "Consumer Health Data Privacy Policy — our posture under Washington's My Health My Data Act and similar laws.",
+"href": "/legal/consumer-health"
+},
+{
+"li": "Cybersecurity Policy — how we protect your data: who can reach it, how it is encrypted, and what happens if something goes wrong.",
+"href": "/legal/cybersecurity"
+},
+{
+"h2": "Notices and registers"
+},
+{
+"li": "Research API Supplemental Terms — terms for the /v1/research registry, evidence integrity, and durability states.",
+"href": "/legal/research-api"
+},
+{
+"li": "Subprocessor Register — the providers that process data on your behalf, including the Enso routing chain.",
+"href": "/legal/subprocessors"
+},
+{
+"li": "Cookie Notice — cookies and similar technologies, and how to control them.",
+"href": "/legal/cookies"
+},
+{
+"li": "Biometric, Voice, and Likeness Notice — how features that process faces, voices, or likeness are governed.",
+"href": "/legal/biometric-voice"
+},
+{
+"li": "Text message opt-in — how to consent to, and stop, two-factor codes and account alerts by SMS.",
+"href": "/sms-opt-in"
+},
+{
+"h2": "How these fit together"
+},
+{
+"p": "The Terms of Service is the spine; it incorporates the Acceptable Use Policy , Privacy Policy , DPA , and — only on an affirmative election — the AI Research and Data Contribution Terms . The Privacy Policy defines four data-use states ( service-only by default, then private improvement , research and training , and public commons ); no data is used for training without an affirmative election, and none is published without a separate per-artifact contribution. The Subprocessor Register names every provider a request can reach, including model providers behind an inference gateway. The remaining notices cover cookies, biometric/voice/likeness, consumer health, and the research registry."
+},
+{
+"h2": "Contact"
+},
+{
+"li": "Legal notices: [email protected]",
+"href": "/cdn-cgi/l/email-protection#660a0301070a260e07081c0948070f"
+},
+{
+"li": "Privacy requests: [email protected]",
+"href": "/cdn-cgi/l/email-protection#1f6f6d76697e7c665f777e716570317e76"
+},
+{
+"li": "Security reports: [email protected]",
+"href": "/cdn-cgi/l/email-protection#aad9cfc9dfd8c3ded3eac2cbc4d0c584cbc3"
+},
+{
+"li": "Abuse reports: [email protected]",
+"href": "/cdn-cgi/l/email-protection#543536212731143c353a2e3b7a353d"
+}
+]
+]

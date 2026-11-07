@@ -1,0 +1,225 @@
+[
+[
+{
+"p": "Benchmarks / Kai / MASSIVE"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"a": "Kai",
+"href": "/benchmarks?product=Kai#all"
+},
+{
+"h1": "MASSIVE"
+},
+{
+"p": "Kai and Jev on the same 5,100 questions of MASSIVE, one run per Kai revision."
+},
+{
+"h2": "Latest"
+},
+{
+"a": "90.7% Accuracy · kai-1.4 · c1856a77 Jev 89.0% · Win · Oct 16, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "0.064 Calibration error (ECE) · kai-1.4 · c1856a77 Jev 0.064 · Win · Oct 16, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"h2": "History"
+},
+{
+"p": "9 results across 2 metrics, newest first. Superseded runs stay, so a revision's progress can be read."
+},
+{
+"table": [
+[
+"Measured",
+"Subject",
+"Metric",
+"Value",
+"Baseline",
+"Result",
+"Status"
+],
+[
+"Oct 16, 2026",
+"kai-1.4 · c1856a77",
+"Accuracy",
+"90.7%",
+"Jev 89.0%",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Oct 16, 2026",
+"kai-1.4 · c1856a77",
+"Calibration error (ECE)",
+"0.064",
+"Jev 0.064",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Oct 3, 2026",
+"kai-1 · 0834a74f",
+"Accuracy",
+"91.0%",
+"Jev 89.0%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Oct 3, 2026",
+"kai-1 · 0834a74f",
+"Calibration error (ECE)",
+"0.060",
+"Jev 0.064",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a8 · 0cfeef05",
+"Accuracy",
+"90.6%",
+"Jev 89.0%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a7 · 0834a74f",
+"Accuracy",
+"90.9%",
+"Jev 89.0%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a6 · a211cc70",
+"Accuracy",
+"91.0%",
+"Jev 89.0%",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a7 · 0834a74f",
+"Calibration error (ECE)",
+"0.060",
+"Jev 0.064",
+"Win",
+"Superseded · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a6 · a211cc70",
+"Calibration error (ECE)",
+"0.059",
+"Jev 0.064",
+"Win",
+"Superseded · Hanzo-measured"
+]
+]
+},
+{
+"h2": "Conditions"
+},
+{
+"h2": "Hardware"
+},
+{
+"p": "CPU AS SERVED"
+},
+{
+"h2": "Source"
+},
+{
+"p": "research run massive-harness-kai-1.4.c1856a77-kai"
+},
+{
+"a": "research run massive-harness-kai-1.4.c1856a77-kai",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&id=massive-harness-kai-1.4.c1856a77-kai"
+},
+{
+"h2": "Reproduce"
+},
+{
+"p": "bench score --harness . --kai results/kai/preds.json.gz --out results/scores.json   # in hanzoai/benchmarks/decision @ 5f616dd"
+},
+{
+"code": "bench score --harness . --kai results/kai/preds.json.gz --out results/scores.json   # in hanzoai/benchmarks/decision @ 5f616dd"
+},
+{
+"h2": "More Kai benchmarks"
+},
+{
+"p": "AG News · DAIR Emotion · Banking77 · Support triage · Email spam · Phishing · Toxicity · RAG relevance · Model routing · Typed decisions · Choosing among many options · Latency of one decision"
+},
+{
+"a": "AG News",
+"href": "/benchmarks/kai-ag-news"
+},
+{
+"a": "DAIR Emotion",
+"href": "/benchmarks/kai-dair-emotion"
+},
+{
+"a": "Banking77",
+"href": "/benchmarks/kai-banking77"
+},
+{
+"a": "Support triage",
+"href": "/benchmarks/kai-support-triage"
+},
+{
+"a": "Email spam",
+"href": "/benchmarks/kai-email-spam"
+},
+{
+"a": "Phishing",
+"href": "/benchmarks/kai-phishing"
+},
+{
+"a": "Toxicity",
+"href": "/benchmarks/kai-toxicity"
+},
+{
+"a": "RAG relevance",
+"href": "/benchmarks/kai-rag-relevance"
+},
+{
+"a": "Model routing",
+"href": "/benchmarks/kai-model-routing"
+},
+{
+"a": "Typed decisions",
+"href": "/benchmarks/kai-typed-decisions"
+},
+{
+"a": "Choosing among many options",
+"href": "/benchmarks/kai-choice-size"
+},
+{
+"a": "Latency of one decision",
+"href": "/benchmarks/kai-latency"
+},
+{
+"p": "Every result for MASSIVE on the shelf · How these are measured"
+},
+{
+"a": "Every result for MASSIVE on the shelf",
+"href": "/benchmarks?q=MASSIVE#all"
+},
+{
+"a": "How these are measured",
+"href": "/benchmarks#methods"
+}
+]
+]

@@ -1,0 +1,88 @@
+[
+[
+{
+"a": "Back to all careers",
+"href": "/careers"
+},
+{
+"button": "Share position"
+},
+{
+"h1": "Senior Backend Engineer (Go/Rust)"
+},
+{
+"p": "Build scalable, high-performance backend services for our AI platform. Experience with distributed systems required."
+},
+{
+"a": "Apply for this position",
+"href": "#apply"
+},
+{
+"a": "Email resume directly",
+"href": "/cdn-cgi/l/email-protection#30535142555542437058515e4a5f1e51590f4345525a5553440d7140405c59535144595f5e15037115020063555e595f421502007251535b555e54150200755e57595e55554215020018775f1502766245434419"
+}
+],
+[
+{
+"h2": "About the Role"
+},
+{
+"p": "Our platform services handle millions of API requests daily: auth tokens, streaming completions, billing meters, webhooks, and agent fleet dispatch. You will build and scale our core microservices in Go and Rust."
+},
+{
+"p": "Hanzo builds an open AI cloud — compilers, models, distributed infrastructure, and agent tooling. Our codebases are predominantly open source, and team members operate with high autonomy and end-to-end ownership."
+},
+{
+"h2": "Key Responsibilities"
+},
+{
+"p": "Design, implement, and maintain high-throughput HTTP/gRPC backend microservices."
+},
+{
+"p": "Scale our distributed datastores (PostgreSQL, ClickHouse, Redis, S3-compatible storage)."
+},
+{
+"p": "Build robust streaming pipelines for SSE completions, telemetry, and event buses."
+},
+{
+"p": "Ensure high reliability, 99.99% uptime, zero-downtime deployments, and end-to-end security."
+},
+{
+"h2": "What We're Looking For"
+},
+{
+"p": "Extensive experience building distributed systems in Go and/or Rust."
+},
+{
+"p": "Solid knowledge of database internals, indexing, distributed transactions, and caching."
+},
+{
+"p": "Experience with Kubernetes, Linux systems internals, network socket programming, and eBPF/monitoring."
+},
+{
+"p": "High standards for code quality, automated testing, CI/CD, and post-incident reviews."
+},
+{
+"h2": "Nice to Have"
+},
+{
+"p": "Experience building payment, subscription, or billing metering systems at scale."
+},
+{
+"p": "Experience with message brokers (Kafka, NATS) and event-driven architectures."
+},
+{
+"h2": "Why Join Hanzo"
+},
+{
+"h2": "Apply for this Role"
+},
+{
+"button": "Submit Application"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#f596948790908786b59d949b8f9adb949cca8680979f909681c8b48585999c9694819c9a9bd0c6b4d0c7c5a6909b9c9a87d0c7c5b794969e909b91d0c7c5b09b929c9b909087d0c7c5ddb29ad0c7b3a7808681dc"
+}
+]
+]

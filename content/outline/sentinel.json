@@ -1,0 +1,101 @@
+[
+[
+{
+"h1": "Hanzo Sentinel"
+},
+{
+"p": "Error tracking and performance monitoring"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/guides/migrate/sentry"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+},
+{
+"p": "Identical exceptions collapse into a single issue with a count and a first-seen date. Minified frontend frames are resolved through your source maps, and the breadcrumbs leading up to the throw come with it, so you read what the person did rather than guessing."
+},
+{
+"p": "A request that crosses four services is one trace, and the span that took the time is visible in it. Profiles go a level down to the function. Session replay shows the same failure from the browser's side."
+},
+{
+"p": "Crash-free sessions per release, so a regression shows up in the first hour of a rollout rather than in a support queue on Monday. Cron monitors catch the opposite failure — the job that stopped running and threw nothing at all."
+},
+{
+"p": "Events carry the identity and the environment they came from, so an issue can be read as a list of affected accounts. That turns triage from a guess about severity into a decision about who to call."
+},
+{
+"p": "New issues, regressions and spikes route to Slack, PagerDuty, Opsgenie, Discord, Microsoft Teams, email, or a webhook of your own. It can also open the ticket — GitHub, GitLab, Jira and Bitbucket are wired both ways."
+},
+{
+"p": "Sentinel is a fork of Sentry, used under the Functional Source License with attribution kept current. Sentry is a trademark of Functional Software, Inc., and Sentinel is neither affiliated with nor endorsed by them. Naming what you forked is not the same as branding yourself with it."
+},
+{
+"li": "One issue, not ten thousand events"
+},
+{
+"li": "Traces, and profiles under them"
+},
+{
+"li": "Did this release make it worse"
+},
+{
+"li": "Which customers are hitting it"
+},
+{
+"li": "Where the alert goes"
+},
+{
+"li": "A fork, and it says so"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Sentinel from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project."
+}
+],
+[
+{
+"h2": "Get started with Hanzo Sentinel"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/guides/migrate/sentry"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Sentinel"
+},
+{
+"p": "Error tracking"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

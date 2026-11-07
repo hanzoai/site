@@ -1,0 +1,121 @@
+[
+[
+{
+"h1": "Hanzo Network"
+},
+{
+"p": "hanzo.network is the fabric that hanzod nodes form. Put a machine on it and it serves models to whoever the cluster routes there. Ask the fabric for a model and it finds a peer that already has it loaded."
+},
+{
+"a": "Buy Compute",
+"href": "https://docs.hanzo.ai/docs/network"
+},
+{
+"a": "Run a Node",
+"href": "/node"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"p": "There is no region menu to choose from. A node discovers its peers over the fabric, and the topology is whatever is connected right now — you can ask it and read the answer."
+},
+{
+"p": "A tenth of the block reward funds AI compute, and a provider's share is scaled by the level of the work it did. No subscription, no seat, nothing billed while a machine sits idle."
+},
+{
+"p": "A node's confidential-compute tier is attested rather than declared, and what it earns is scaled by that attestation and by a trust score. A claim about a machine is worth nothing on its own."
+},
+{
+"p": "Ask the cluster which models it serves, which node would answer for one, and where a model nobody has loaded should be placed. Routing follows what is really in memory."
+},
+{
+"p": "hanzo fabric join names a network and starts the node on it. If you would rather lend the machine to builds than to inference, hanzo runner offers the same box as a CI runner."
+},
+{
+"p": "Work is ordered on the Hanzo L2 and committed to Lux as a Merkle root, under a stake-weighted validator set. What you can check is what settled, not what a status page says."
+},
+{
+"li": "Peers, not regions"
+},
+{
+"li": "Metered by the work"
+},
+{
+"li": "Proof of AI"
+},
+{
+"li": "Whatever the peers have loaded"
+},
+{
+"li": "One command to join"
+},
+{
+"li": "Anchored, not asserted"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Network from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Network in my project. Start with: hanzo network list"
+}
+],
+[
+{
+"h2": "Two ends of the same fabric"
+},
+{
+"p": "Take a key and call it, or bring a machine and serve it. Most people who do the second started by doing the first."
+},
+{
+"a": "Get an API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Provide Compute",
+"href": "/node"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Network"
+},
+{
+"a": "Network docs →",
+"href": "https://docs.hanzo.ai/docs/network"
+}
+],
+[
+{
+"h2": "Get Network"
+},
+{
+"p": "Decentralized compute network"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/network"
+}
+]
+]

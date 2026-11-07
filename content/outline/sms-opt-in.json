@@ -1,0 +1,26 @@
+[
+[
+{
+"h1": "Get Hanzo text messages"
+},
+{
+"p": "Opt in to receive two-factor authentication codes, account and security alerts, and transactional notifications by SMS."
+}
+],
+[
+{
+"button": "Yes, sign me up!"
+},
+{
+"p": "By submitting, you agree to our Terms of Service and Privacy Policy . We never sell or share your mobile number with third parties for marketing."
+},
+{
+"a": "Terms of Service",
+"href": "/legal/terms"
+},
+{
+"a": "Privacy Policy",
+"href": "/legal/privacy"
+}
+]
+]

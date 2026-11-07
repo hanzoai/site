@@ -1,0 +1,220 @@
+[
+[
+{
+"h1": "One API for models, agents and tools"
+},
+{
+"p": "Every Hanzo capability answers under one base URL, behind one key."
+},
+{
+"a": "Get an API key, free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "OpenAPI Reference ↗",
+"href": "https://docs.hanzo.ai/docs/openapi/"
+},
+{
+"img": "/models/enso.webp",
+"alt": ""
+},
+{
+"p": "A completion from any model your organization can reach, streamed or buffered. Model ids come from the catalog, so the list is a request rather than a page in the docs."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-chat-completions"
+},
+{
+"p": "Stateful multi-turn responses with built-in tool calling, structured outputs, reasoning traces, and server-managed conversation state."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-responses"
+},
+{
+"p": "Sub-10ms structured classification, routing, scoring, and guardrail decisions powered by Kai at a fraction of LLM cost."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-decisions"
+},
+{
+"p": "Generate cinematic video with synchronized audio and camera motion from text or reference frames via Koma."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-videos-generations"
+},
+{
+"p": "Photorealistic image generation, inpainting, and layout-accurate typography rendering via Iro."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-images-generations"
+},
+{
+"p": "Low-latency neural speech synthesis, voice cloning, transcription, foley sound effects, and full-track music generation via Koe, Oto, and Uta."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-audio-speech"
+},
+{
+"p": "Textured 3D meshes and spatial world assets generated from text prompts or multi-view images via Mori."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-3d-generations"
+},
+{
+"p": "Vectors for search, retrieval and clustering, from the same key and the same bill as generation."
+},
+{
+"a": "Docs",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-embeddings"
+},
+{
+"li": "POST /v1/chat/completions"
+},
+{
+"li": "POST /v1/responses"
+},
+{
+"li": "POST /v1/decisions"
+},
+{
+"li": "POST /v1/videos/generations"
+},
+{
+"li": "POST /v1/images/generations"
+},
+{
+"li": "POST /v1/audio/speech · /v1/audio/music"
+},
+{
+"li": "POST /v1/3d/generations"
+},
+{
+"li": "POST /v1/embeddings"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls API from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo API in my project."
+}
+],
+[
+{
+"h2": "Base URL"
+},
+{
+"p": "https://api.hanzo.ai/v1"
+},
+{
+"p": "Authenticate with a bearer token: Authorization: Bearer <your key> . Keys are created and revoked in the console , and revoking one there is what stops it working."
+},
+{
+"a": "console",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"p": "Every route lives under /v1 , and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a 429 with a Retry-After rather than a dropped connection."
+}
+],
+[
+{
+"h2": "Core endpoints"
+},
+{
+"p": "A few of the ones people reach for first. Every parameter and error shape is in the reference."
+},
+{
+"a": "/v1/chat/completions POST A completion from any model your organization can reach, streamed or buffered. Model ids come from the catalog, so the list is a request rather than a page in the docs.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-chat-completions"
+},
+{
+"a": "/v1/responses POST Stateful multi-turn responses with built-in tool calling, structured outputs, reasoning traces, and server-managed conversation state.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-responses"
+},
+{
+"a": "/v1/decisions POST Sub-10ms structured classification, routing, scoring, and guardrail decisions powered by Kai at a fraction of LLM cost.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-decisions"
+},
+{
+"a": "/v1/videos/generations POST Generate cinematic video with synchronized audio and camera motion from text or reference frames via Koma.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-videos-generations"
+},
+{
+"a": "/v1/images/generations POST Photorealistic image generation, inpainting, and layout-accurate typography rendering via Iro.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-images-generations"
+},
+{
+"a": "/v1/audio/speech · /v1/audio/music POST Low-latency neural speech synthesis, voice cloning, transcription, foley sound effects, and full-track music generation via Koe, Oto, and Uta.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-audio-speech"
+},
+{
+"a": "/v1/3d/generations POST Textured 3D meshes and spatial world assets generated from text prompts or multi-view images via Mori.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-3d-generations"
+},
+{
+"a": "/v1/embeddings POST Vectors for search, retrieval and clustering, from the same key and the same bill as generation.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/post-embeddings"
+},
+{
+"a": "/v1/models GET What your organization may call right now — every model we serve plus any provider account you have connected, with their identifiers and pricing.",
+"href": "https://docs.hanzo.ai/docs/openapi/ai/get-models"
+},
+{
+"a": "/v1/agents GET · POST Define an agent once, run it by reference, and read its runs afterwards. The definition lives here, so everything that runs it runs the same one.",
+"href": "https://docs.hanzo.ai/docs/openapi/agent"
+},
+{
+"a": "/v1/code/search · /v1/code/ask GET · POST AST-indexed symbol search, repository context assembly, and semantic codebase Q&A across your organization’s repositories.",
+"href": "https://docs.hanzo.ai/docs/openapi/code/get-code-search"
+},
+{
+"a": "/v1/sandbox POST Lease isolated microVM sandboxes with filesystem, terminal WebSocket, headless browser screen streaming, and sub-second startup.",
+"href": "https://docs.hanzo.ai/docs/openapi/sandbox/post-sandbox"
+},
+{
+"a": "/v1/crawl · /v1/search POST Clean markdown extraction from any live web page and structured real-time web search for RAG and agent research.",
+"href": "https://docs.hanzo.ai/docs/openapi/crawl/read-page"
+},
+{
+"a": "/v1/billing/balance · /v1/billing/usage GET What is left, and what was spent. Usage is recorded per call and attributed to the organization on the token, so a bill can be traced back to the request that caused it.",
+"href": "https://docs.hanzo.ai/docs/openapi/billing/get-billing-usage"
+},
+{
+"a": "/v1/tools GET The tools your organization can call over REST or MCP. An agent picks from this list, and so can you — it is the same catalog either way.",
+"href": "https://docs.hanzo.ai/docs/openapi/tool"
+}
+],
+[
+{
+"h2": "How it fits together"
+}
+],
+[
+{
+"h2": "Next"
+},
+{
+"a": "API reference Every endpoint, parameter and response shape.",
+"href": "https://docs.hanzo.ai/docs/openapi/"
+},
+{
+"a": "Getting started An empty project to a first call that works.",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+]
+]

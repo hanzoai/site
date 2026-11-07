@@ -1,0 +1,100 @@
+[
+[
+{
+"h1": "LX"
+},
+{
+"p": "World's fastest, and only decentralized exchange capable of HFT."
+},
+{
+"a": "luxexchange on GitHub",
+"href": "https://github.com/luxexchange"
+},
+{
+"a": "On Hanzo Forge",
+"href": "https://git.hanzo.ai/luxexchange"
+},
+{
+"a": "Every organization",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Counted from GitHub"
+},
+{
+"p": "public repositories"
+},
+{
+"p": "stars"
+},
+{
+"p": "forks"
+},
+{
+"p": "Forks left out · read from GitHub Nov 6, 2026"
+}
+],
+[
+{
+"h2": "Counted on Hanzo Forge"
+},
+{
+"p": "commits in the past year, the upstream projects we keep current included"
+},
+{
+"p": "merges in the past year"
+},
+{
+"p": "repositories, 4 of them private"
+},
+{
+"p": "of those commits written by our people and agents"
+},
+{
+"p": "Every repository of luxexchange, mirrored to the forge: private ones are counted, never named, and each commit is counted once."
+}
+],
+[
+{
+"h2": "Repositories"
+},
+{
+"li": "luxexchange/tools 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/tools"
+},
+{
+"li": "luxexchange/provider TypeScript 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/provider"
+},
+{
+"li": "luxexchange/options TypeScript 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/options"
+},
+{
+"li": "luxexchange/exchange TypeScript 0 0 Pushed Nov 5, 2026 4 commits this year Forge",
+"href": "https://github.com/luxexchange/exchange"
+},
+{
+"li": "luxexchange/eslint-config JavaScript 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/eslint-config"
+},
+{
+"li": "luxexchange/dex TypeScript 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/dex"
+},
+{
+"li": "luxexchange/contracts Solidity 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/contracts"
+},
+{
+"li": "luxexchange/biome-config JavaScript 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/biome-config"
+},
+{
+"li": "luxexchange/api JavaScript 0 0 Pushed Nov 5, 2026 2 commits this year Forge",
+"href": "https://github.com/luxexchange/api"
+}
+]
+]

@@ -1,0 +1,222 @@
+[
+[
+{
+"h1": "Hanzo Pay"
+},
+{
+"p": "Take crypto payments"
+},
+{
+"p": "A complete payment gateway bridging fiat and crypto. Accept stablecoins, process card payments, enable on/off-ramps, and handle compliance—all through a single API."
+},
+{
+"h3": "Crypto Checkout"
+},
+{
+"p": "Accept USDC, USDT, ETH, and 100+ tokens. Embeddable checkout widget included."
+},
+{
+"h3": "Card Payments"
+},
+{
+"p": "Traditional card processing with instant crypto settlement."
+},
+{
+"h3": "On/Off Ramps"
+},
+{
+"p": "Let users buy crypto with cards or sell crypto to their bank account."
+},
+{
+"h3": "Multi-Currency"
+},
+{
+"p": "Accept payments in 50+ fiat currencies with automatic conversion."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Crypto Checkout"
+},
+{
+"p": "Accept USDC, USDT, ETH, and 100+ tokens. Embeddable checkout widget included."
+},
+{
+"h3": "Card Payments"
+},
+{
+"p": "Traditional card processing with instant crypto settlement."
+},
+{
+"h3": "On/Off Ramps"
+},
+{
+"p": "Let users buy crypto with cards or sell crypto to their bank account."
+},
+{
+"h3": "Multi-Currency"
+},
+{
+"p": "Accept payments in 50+ fiat currencies with automatic conversion."
+},
+{
+"h3": "KYC/AML Built-In"
+},
+{
+"p": "Integrated compliance checks. Stay compliant in 100+ countries."
+},
+{
+"h3": "Invoicing"
+},
+{
+"p": "Generate and send crypto invoices. Track payment status automatically."
+},
+{
+"h3": "Instant Settlement"
+},
+{
+"p": "Receive funds instantly in your preferred currency—crypto or fiat."
+},
+{
+"h3": "QR Payments"
+},
+{
+"p": "Generate QR codes for in-person payments. Mobile-optimized flows."
+},
+{
+"h3": "Business Dashboard"
+},
+{
+"p": "Track revenue, refunds, and disputes. Export reports for accounting."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/pay/IHanzoPay.sol\" ; import \"@hanzo/pay/IPaymentReceiver.sol\" ; import \"@openzeppelin/contracts/token/ERC20/IERC20.sol\" ; contract MerchantContract is IPaymentReceiver { IHanzoPay public hanzoPay ; mapping (bytes32 => bool) public processedPayments ; event PaymentReceived ( bytes32 indexed paymentId, address token, uint256 amount ); constructor ( address _hanzoPay) { hanzoPay = IHanzoPay ( _hanzoPay ); } // Receive payment callback from HanzoPay function onPaymentReceived ( bytes32 paymentId , address payer , address toke"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "E-Commerce"
+},
+{
+"p": "Accept crypto alongside traditional payments. Automatic conversion to your preferred currency."
+},
+{
+"h3": "SaaS Subscriptions"
+},
+{
+"p": "Recurring crypto payments with automatic retry and dunning."
+},
+{
+"h3": "Marketplaces"
+},
+{
+"p": "Split payments, escrow, and multi-party settlements for marketplace transactions."
+},
+{
+"h3": "In-Person Retail"
+},
+{
+"p": "POS integration with QR payments. Instant settlement to your bank."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Hanzo Pay"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Hanzo Pay"
+},
+{
+"p": "Crypto payments"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

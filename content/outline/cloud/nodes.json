@@ -1,0 +1,93 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Nodes"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Gateway",
+"href": "/gateway"
+},
+{
+"a": "DNS",
+"href": "/dns"
+},
+{
+"a": "Service Mesh",
+"href": "/cloud/service-mesh"
+},
+{
+"a": "Nodes",
+"href": "/cloud/nodes"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/validator"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Nodes from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Nodes in my project. Start with: hanzo validator list"
+}
+],
+[
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Gateway One API entry point",
+"href": "/gateway"
+},
+{
+"a": "DNS Authoritative DNS + DNSSEC",
+"href": "/dns"
+},
+{
+"a": "Service Mesh",
+"href": "/cloud/service-mesh"
+}
+]
+]

@@ -1,0 +1,179 @@
+[
+[
+{
+"h1": "Hanzo Registry"
+},
+{
+"p": "A private registry for your container images at oci.hanzo.ai. It serves the OCI distribution API, so docker, podman, buildkit, skopeo and crane already know how to talk to it — and the credential is a short-lived token minted by your Hanzo IAM login, not a password living in a dockerconfigjson secret."
+},
+{
+"a": "View Source",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Projects",
+"href": "/cloud/projects"
+},
+{
+"a": "Environments",
+"href": "/cloud/environments"
+},
+{
+"a": "Builds",
+"href": "/cloud/builds"
+},
+{
+"a": "Registry",
+"href": "/registry"
+},
+{
+"a": "Releases",
+"href": "/cloud/releases"
+},
+{
+"a": "Pipelines",
+"href": "/cloud/pipelines"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/registry"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Registry from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Registry in my project. Start with: hanzo registry images"
+}
+],
+[
+{
+"h2": "Built on Hanzo IAM"
+},
+{
+"p": "The credential expires on its own, so there is nothing to rotate and nothing to leak"
+},
+{
+"h3": "IAM Token Auth"
+},
+{
+"p": "An unauthenticated pull gets a 401 naming Hanzo IAM. Your client fetches a token there, the registry checks its signature against a certificate it holds, and the push goes through. No password is stored at either end."
+},
+{
+"h3": "Org-Scoped Repos"
+},
+{
+"p": "A repository name begins with your org, and what a token may do with it is decided by IAM at the moment the token is minted. Adding a teammate is one grant in one place, not a secret copied into a second."
+},
+{
+"h3": "Cosign + Attestation"
+},
+{
+"p": "cosign signatures and in-toto attestations are ordinary OCI artifacts, so they push and pull to the same repository as the image they describe. Verification happens where the image runs, against exactly what the registry stored."
+},
+{
+"h3": "OCI Compliant"
+},
+{
+"p": "The registry HTTP API v2 at /v2/, and nothing bespoke on top of it. Every client, scanner and admission controller that reads an image already speaks it, which is the whole point of not inventing one."
+},
+{
+"h3": "Tags come off cleanly"
+},
+{
+"p": "Deletes are enabled, so a tag you pushed by mistake goes away and the blobs behind it are reclaimed. A registry you can only add to is one that only grows."
+},
+{
+"h3": "The same account as everything else"
+},
+{
+"p": "Whoever signs into Hanzo Cloud is who pushes an image. One directory of people, one place to revoke someone — and no separate registry account to remember when they leave."
+}
+],
+[
+{
+"h2": "Delete the dockerconfigjson secret"
+},
+{
+"p": "Put a token IAM mints in its place, and let it expire on its own. There is nothing left to rotate."
+},
+{
+"code": "$ hanzo login oci.hanzo.ai # IAM mints a short-lived token $ docker push oci.hanzo.ai/acme/api:v1.2.3"
+},
+{
+"a": "Quickstart",
+"href": "https://docs.hanzo.ai/docs/openapi/registry/"
+},
+{
+"a": "About IAM",
+"href": "/iam"
+}
+],
+[
+{
+"h2": "Get started with Registry"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Projects The deploy unit",
+"href": "/cloud/projects"
+},
+{
+"a": "Environments Dev, staging, prod — isolated",
+"href": "/cloud/environments"
+},
+{
+"a": "Builds Source to signed image",
+"href": "/cloud/builds"
+}
+],
+[
+{
+"h2": "Get Registry"
+},
+{
+"p": "OCI image registry"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

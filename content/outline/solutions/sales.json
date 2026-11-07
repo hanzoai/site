@@ -1,0 +1,141 @@
+[
+[
+{
+"h1": "Hanzo for sales teams"
+},
+{
+"p": "Give every rep a bot that researches the account before the call, drafts the follow-up after it, and keeps the CRM current — working in the tools the rep already uses."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/koma.webp",
+"alt": ""
+},
+{
+"p": "A bot reads the prospect’s site, recent news and your notes, and hands the rep one page with every source linked."
+},
+{
+"p": "After the call a workflow writes the notes, next step and close date back to Salesforce, HubSpot or Pipedrive. The rep reviews; nobody retypes."
+},
+{
+"p": "The bot drafts the email from the call and the thread, in the tone the rep already writes in, and brings it back. The rep decides whether it goes."
+},
+{
+"p": "Slack, Teams, Discord and Telegram land in one inbox, with the agent that helps answer them sitting beside it."
+},
+{
+"p": "Ask what closed, what slipped and why. The answer comes with the SQL it ran, against the numbers in your warehouse."
+},
+{
+"li": "The brief before the meeting"
+},
+{
+"li": "A CRM that updates itself"
+},
+{
+"li": "Follow-ups in the rep’s voice"
+},
+{
+"li": "Every channel in one inbox"
+},
+{
+"li": "Pipeline questions, answered with the query"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Bot A teammate with its own computer that signs in to your tools and reports back.",
+"href": "/bot"
+},
+{
+"a": "Hanzo Auto Workflows fired by a webhook or a schedule, with runs that survive a restart.",
+"href": "/auto"
+},
+{
+"a": "Connectors The apps a workflow can read from, write to, or be started by.",
+"href": "/automations"
+},
+{
+"a": "Hanzo Crawl Turns a website into clean Markdown a model can read.",
+"href": "/crawl"
+},
+{
+"a": "Hanzo Team Channels, messages and AI teammates in one workspace.",
+"href": "https://hanzo.team"
+},
+{
+"a": "Hanzo Datastore A column store for analytical SQL.",
+"href": "/datastore"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "More teams"
+},
+{
+"a": "Finance",
+"href": "/solutions/finance"
+},
+{
+"a": "Data",
+"href": "/solutions/data"
+},
+{
+"a": "Marketing",
+"href": "/solutions/marketing"
+},
+{
+"a": "Operations",
+"href": "/solutions/operations"
+},
+{
+"a": "Engineering",
+"href": "/solutions/engineering"
+},
+{
+"a": "Design",
+"href": "/solutions/design"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

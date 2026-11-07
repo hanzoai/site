@@ -1,0 +1,39 @@
+[
+[
+{
+"h1": "Refer customers to Hanzo"
+},
+{
+"p": "Apply to become an affiliate. Every application is reviewed, and the terms are agreed with each affiliate we approve."
+},
+{
+"a": "Apply",
+"href": "/cdn-cgi/l/email-protection#8ae2efe6e6e5cae2ebe4f0e5a4ebe3b5f9ffe8e0efe9feb7cbecece3e6e3ebfeefafb8baebfafae6e3e9ebfee3e5e4"
+}
+],
+[
+{
+"h2": "How it works"
+},
+{
+"li": "Apply with POST /v1/affiliate/apply , or write to [email protected] .",
+"href": "/cdn-cgi/l/email-protection"
+},
+{
+"li": "We review the application and reply."
+},
+{
+"li": "Once approved you have a code and a link, https://hanzo.ai/?aff=<code> ."
+},
+{
+"li": "An org that signs up through the link is attributed to you: first touch, one affiliate per org, never your own."
+},
+{
+"p": "A referral on its own pays nothing."
+},
+{
+"a": "referral",
+"href": "/referral"
+}
+]
+]

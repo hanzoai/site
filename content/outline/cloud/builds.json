@@ -1,0 +1,104 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Builds"
+},
+{
+"p": "Source to signed image."
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/builder"
+},
+{
+"a": "Projects",
+"href": "/cloud/projects"
+},
+{
+"a": "Environments",
+"href": "/cloud/environments"
+},
+{
+"a": "Builds",
+"href": "/cloud/builds"
+},
+{
+"a": "Registry",
+"href": "/registry"
+},
+{
+"a": "Releases",
+"href": "/cloud/releases"
+},
+{
+"a": "Pipelines",
+"href": "/cloud/pipelines"
+},
+{
+"li": "$ hanzo"
+},
+{
+"li": "> deploy the gateway to staging"
+},
+{
+"li": "· reading the project"
+},
+{
+"li": "✓ gateway is on staging"
+},
+{
+"code": "api.hanzo.ai /v1/platform/builds"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Builds from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Builds in my project. Start with: hanzo platform builds"
+}
+],
+[
+{
+"p": "Reproducible container builds from a git push, cached and signed, pushed to your own registry. No build logic per repo — one declared pipeline."
+},
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Projects The deploy unit",
+"href": "/cloud/projects"
+},
+{
+"a": "Environments Dev, staging, prod — isolated",
+"href": "/cloud/environments"
+},
+{
+"a": "Registry Your container registry",
+"href": "/registry"
+}
+]
+]

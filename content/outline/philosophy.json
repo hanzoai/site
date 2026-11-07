@@ -1,0 +1,444 @@
+[
+[
+{
+"h1": "The Zen of Hanzo"
+},
+{
+"p": "64 patterns for intelligent systems"
+},
+{
+"p": "The I Ching is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal."
+},
+{
+"a": "Explore the 64 patterns",
+"href": "#patterns"
+},
+{
+"a": "Build with Hanzo",
+"href": "https://cloud.hanzo.ai"
+}
+],
+[
+{
+"p": "The premise"
+},
+{
+"h2": "Intelligence is always changing"
+},
+{
+"p": "No intelligent system remains fixed."
+},
+{
+"p": "Models learn. Data changes. Infrastructure fails. Organizations grow. Interfaces become dependencies. Successful architectures eventually meet conditions they were never designed to handle."
+},
+{
+"p": "The goal is not to prevent change. The goal is to build systems capable of changing without losing their integrity."
+},
+{
+"p": "That is the Zen of Hanzo."
+}
+],
+[
+{
+"p": "The synthesis"
+},
+{
+"h2": "Five operating laws"
+},
+{
+"li": "01 See the system clearly Understand the current condition before prescribing action."
+},
+{
+"li": "02 Separate what changes independently Do not bind together concepts that evolve for different reasons."
+},
+{
+"li": "03 Compose capability from complete primitives Small components should combine without central coordination or hidden behavior."
+},
+{
+"li": "04 Preserve the user's authority The user should control their models, data, keys, infrastructure and economic participation."
+},
+{
+"li": "05 Design for the next transformation Every completed system is already approaching its next condition."
+}
+],
+[
+{
+"p": "The 64 patterns"
+},
+{
+"h2": "Every hexagram is active"
+},
+{
+"p": "Each represents a condition that can appear in a model, an application, a company, a network or an entire technological ecosystem. The classical title names the condition. The Hanzo principle defines how we respond."
+},
+{
+"button": "Sequence"
+},
+{
+"button": "Matrix"
+},
+{
+"button": "Lenses"
+},
+{
+"p": "All sixty-four, in the traditional King Wen order."
+},
+{
+"h3": "Origination"
+},
+{
+"p": "Heaven over Heaven"
+},
+{
+"p": "Earth over Earth"
+},
+{
+"p": "Water over Thunder"
+},
+{
+"p": "Mountain over Water"
+},
+{
+"p": "Water over Heaven"
+},
+{
+"p": "Heaven over Water"
+},
+{
+"p": "Earth over Water"
+},
+{
+"p": "Water over Earth"
+},
+{
+"h3": "Formation"
+},
+{
+"p": "Wind over Heaven"
+},
+{
+"p": "Heaven over Lake"
+},
+{
+"p": "Earth over Heaven"
+},
+{
+"p": "Heaven over Earth"
+},
+{
+"p": "Heaven over Fire"
+},
+{
+"p": "Fire over Heaven"
+},
+{
+"p": "Earth over Mountain"
+},
+{
+"p": "Thunder over Earth"
+},
+{
+"h3": "Correction"
+},
+{
+"p": "Lake over Thunder"
+},
+{
+"p": "Mountain over Wind"
+},
+{
+"p": "Earth over Lake"
+},
+{
+"p": "Wind over Earth"
+},
+{
+"p": "Fire over Thunder"
+},
+{
+"p": "Mountain over Fire"
+},
+{
+"p": "Mountain over Earth"
+},
+{
+"p": "Earth over Thunder"
+},
+{
+"h3": "Power"
+},
+{
+"p": "Heaven over Thunder"
+},
+{
+"p": "Mountain over Heaven"
+},
+{
+"p": "Mountain over Thunder"
+},
+{
+"p": "Lake over Wind"
+},
+{
+"p": "Water over Water"
+},
+{
+"p": "Fire over Fire"
+},
+{
+"p": "Lake over Mountain"
+},
+{
+"p": "Thunder over Wind"
+},
+{
+"h3": "Adaptation"
+},
+{
+"p": "Heaven over Mountain"
+},
+{
+"p": "Thunder over Heaven"
+},
+{
+"p": "Fire over Earth"
+},
+{
+"p": "Earth over Fire"
+},
+{
+"p": "Wind over Fire"
+},
+{
+"p": "Fire over Lake"
+},
+{
+"p": "Water over Mountain"
+},
+{
+"p": "Thunder over Water"
+},
+{
+"h3": "Transformation"
+},
+{
+"p": "Mountain over Lake"
+},
+{
+"p": "Wind over Thunder"
+},
+{
+"p": "Lake over Heaven"
+},
+{
+"p": "Heaven over Wind"
+},
+{
+"p": "Lake over Earth"
+},
+{
+"p": "Earth over Wind"
+},
+{
+"p": "Lake over Water"
+},
+{
+"p": "Water over Wind"
+},
+{
+"h3": "Renewal"
+},
+{
+"p": "Lake over Fire"
+},
+{
+"p": "Fire over Wind"
+},
+{
+"p": "Thunder over Thunder"
+},
+{
+"p": "Mountain over Mountain"
+},
+{
+"p": "Wind over Mountain"
+},
+{
+"p": "Thunder over Lake"
+},
+{
+"p": "Thunder over Fire"
+},
+{
+"p": "Fire over Mountain"
+},
+{
+"h3": "Continuity"
+},
+{
+"p": "Wind over Wind"
+},
+{
+"p": "Lake over Lake"
+},
+{
+"p": "Wind over Water"
+},
+{
+"p": "Water over Lake"
+},
+{
+"p": "Wind over Lake"
+},
+{
+"p": "Thunder over Mountain"
+},
+{
+"p": "Water over Fire"
+},
+{
+"p": "Fire over Water"
+}
+],
+[
+{
+"p": "The method"
+},
+{
+"h2": "How we build"
+},
+{
+"h3": "Observe"
+},
+{
+"p": "Identify the actual condition of the system."
+},
+{
+"h3": "Separate"
+},
+{
+"p": "Untangle concerns that change for different reasons."
+},
+{
+"h3": "Reduce"
+},
+{
+"p": "Find the smallest complete set of concepts."
+},
+{
+"h3": "Compose"
+},
+{
+"p": "Combine orthogonal primitives into greater capability."
+},
+{
+"h3": "Verify"
+},
+{
+"p": "Measure behavior instead of trusting intention."
+},
+{
+"h3": "Adapt"
+},
+{
+"p": "Respond to evidence without abandoning the foundation."
+},
+{
+"h3": "Distribute"
+},
+{
+"p": "Place data, computation and authority where they belong."
+},
+{
+"h3": "Continue"
+},
+{
+"p": "Treat every completion as the beginning of another cycle."
+}
+],
+[
+{
+"p": "Across the stack"
+},
+{
+"h2": "One philosophy"
+},
+{
+"a": "Hanzo Models Open and adaptable intelligence across language, vision, audio, code, tools and physical systems.",
+"href": "/models"
+},
+{
+"a": "Hanzo Platform One control plane, assembled from services you can take apart.",
+"href": "/platform"
+},
+{
+"a": "Hanzo Engine Efficient execution built around measurable performance, hardware awareness and composable runtimes.",
+"href": "/engine"
+},
+{
+"a": "Hanzo Router Model choice treated as a changing systems problem—balancing capability, latency, cost, privacy and availability.",
+"href": "/gateway"
+},
+{
+"a": "Hanzo Network Distributed intelligence designed to reduce centralized dependence and share value with those who contribute compute, models, code and knowledge.",
+"href": "/network"
+},
+{
+"a": "Hanzo Open Source Infrastructure that can be inspected, operated, modified and carried forward by the people who depend upon it.",
+"href": "/open-source"
+}
+],
+[
+{
+"h2": "Build systems that can change"
+},
+{
+"p": "The purpose of a philosophy is not to decorate a company. It is to make difficult decisions clearer."
+},
+{
+"p": "When we design a model, an API, an agent, a database or a network, we return to the same questions:"
+},
+{
+"li": "Is it understandable?"
+},
+{
+"li": "Is it composable?"
+},
+{
+"li": "Is it verifiable?"
+},
+{
+"li": "Can it operate privately?"
+},
+{
+"li": "Can the user leave?"
+},
+{
+"li": "Can it survive failure?"
+},
+{
+"li": "Can it evolve without being destroyed?"
+},
+{
+"li": "Does it increase human agency?"
+},
+{
+"p": "The Zen of Hanzo is not a promise that systems will remain still. It is a method for building systems that remain whole while everything changes."
+},
+{
+"p": "From one line, two forces. From two forces, eight patterns. From eight patterns, sixty-four conditions. From small primitives, unbounded intelligence."
+},
+{
+"a": "Explore Hanzo",
+"href": "/"
+},
+{
+"a": "Read the research",
+"href": "https://papers.hanzo.ai"
+},
+{
+"a": "View the source",
+"href": "https://github.com/hanzoai"
+}
+]
+]

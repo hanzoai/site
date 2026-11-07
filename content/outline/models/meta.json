@@ -1,0 +1,116 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Meta Models via Hanzo AI"
+},
+{
+"p": "16 models available"
+},
+{
+"p": "Access all 16 Meta models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Llama 3.1 70B Instruct 131K Meta's latest class of model (Llama 3.1) launched with a variety of sizes & flavors. This 70B instruct-tuned version is optimized for high quality dialogue usecases. It has demonstrated strong... text",
+"href": "/models/meta/llama-3.1-70b-instruct"
+},
+{
+"a": "Llama 3.1 8B Instruct 131K Meta's latest class of model (Llama 3.1) launched with a variety of sizes & flavors. This 8B instruct-tuned version is fast and efficient. It has demonstrated strong performance compared to... text",
+"href": "/models/meta/llama-3.1-8b-instruct"
+},
+{
+"a": "Llama 3.2 1B Instruct 60K Llama 3.2 1B is a 1-billion-parameter language model focused on efficiently performing natural language tasks, such as summarization, dialogue, and multilingual text analysis. Its smaller size allows it to operate... text",
+"href": "/models/meta/llama-3.2-1b-instruct"
+},
+{
+"a": "Llama 3.2 3B Instruct 131K Llama 3.2 3B is a 3-billion-parameter multilingual large language model, optimized for advanced natural language processing tasks like dialogue generation, reasoning, and summarization. Designed with the latest transformer architecture, it... text",
+"href": "/models/meta/llama-3.2-3b-instruct"
+},
+{
+"a": "Llama 3.3 70B Instruct 131K The Meta Llama 3.3 multilingual large language model (LLM) is a pretrained and instruction tuned generative model in 70B (text in/text out). The Llama 3.3 instruction tuned text only model... text",
+"href": "/models/meta/llama-3.3-70b-instruct"
+},
+{
+"a": "Llama 4 Maverick 524K Llama 4 Maverick 17B Instruct (128E) is a high-capacity multimodal language model from Meta, built on a mixture-of-experts (MoE) architecture with 128 experts and 17 billion active parameters per forward... text",
+"href": "/models/meta/llama-4-maverick"
+},
+{
+"a": "Llama 4 Scout 328K Llama 4 Scout 17B Instruct (16E) is a mixture-of-experts (MoE) language model developed by Meta, activating 17 billion parameters out of a total of 109B. It supports native multimodal input... text",
+"href": "/models/meta/llama-4-scout"
+},
+{
+"a": "Llama Guard 4 12B 164K Llama Guard 4 is a Llama 4 Scout-derived multimodal pretrained model, fine-tuned for content safety classification. Similar to previous versions, it can be used to classify content in both LLM... text",
+"href": "/models/meta/llama-guard-4-12b"
+},
+{
+"a": "Muse Glimmer 30B 131K Muse Glimmer 30B is a dense, open-weight multimodal model from Meta Superintelligence Labs, distilled from Muse Spark and optimized for autonomous agents on consumer hardware. It is suited for long-horizon... text",
+"href": "/models/meta/muse-glimmer-30b"
+},
+{
+"a": "Muse Spark 1.1 1M Muse Spark 1.1 is a multimodal reasoning model from Meta, built for agentic tasks. It accepts text, images, video, and PDF documents and returns text, with a 1M-token context window.... text",
+"href": "/models/meta/muse-spark-1.1"
+},
+{
+"a": "Muse Spark 1.2 1M Muse Spark 1.2 is a reasoning model from Meta, designed for complex agentic tasks. It accepts text, images, video, and PDF documents, returns text, and offers a 1M-token context window.... text",
+"href": "/models/meta/muse-spark-1.2"
+},
+{
+"a": "Muse Spark 1.2 Contributor 1M Muse Spark 1.2 contributor tier is a reasoning model from Meta designed for developers who want to start building at an even lower cost. It’s meaningfully cheaper than Muse Spark... text",
+"href": "/models/meta/muse-spark-1.2-contributor"
+},
+{
+"a": "Muse Spark 1.3 1M Muse Spark 1.3 is a multimodal reasoning model from Meta for long-running agentic, multi-agent, and coding workflows. It is designed to keep track of information across extended tasks, work through... text",
+"href": "/models/meta/muse-spark-1.3"
+},
+{
+"a": "Muse Spark 1.3 Contributor 1M Muse Spark 1.3 Contributor is the cost-efficient contributor tier of Meta’s multimodal reasoning model for experimentation, learning, and early-stage agentic, multi-agent, and coding workflows. It is designed to track information... text",
+"href": "/models/meta/muse-spark-1.3-contributor"
+},
+{
+"a": "Muse Spark Open 1M Muse Spark Open is a coding-optimized open-weight model. Trained specifically for agentic coding workflows, it delivers higher first-attempt accuracy, reliable tool calling, and deep codebase understanding across the repos developers... text",
+"href": "/models/meta/muse-spark-open"
+},
+{
+"a": "Muse Wonder 1M Muse Wonder is a frontier reasoning model from Meta, designed for complex personal and professional agentic tasks. It accepts text, images, video, audio, and PDF documents and returns text, with... text",
+"href": "/models/meta/muse-wonder"
+}
+],
+[
+{
+"h2": "Use Meta models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

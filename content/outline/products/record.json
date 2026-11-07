@@ -1,0 +1,154 @@
+[
+[
+{
+"h1": "Record"
+},
+{
+"p": "Every act on every layer, by a person or an agent, in one trail."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Audit API",
+"href": "https://docs.hanzo.ai/docs/openapi/audit"
+},
+{
+"li": "Company The legal body: formation, cap table, documents and filings, as operations.",
+"href": "/products/company"
+},
+{
+"li": "Agents Workers the company keeps: a model, instructions, tools and a budget.",
+"href": "/products/agents"
+},
+{
+"li": "Models Every model behind one endpoint and one key.",
+"href": "/products/models"
+},
+{
+"li": "Memory What the company knows, and when it knew it.",
+"href": "/products/memory"
+},
+{
+"li": "Identity Who is acting — a person, a program or an agent — and what it may reach.",
+"href": "/products/identity"
+},
+{
+"li": "Machines Real computers, leased by the org, for agents and for the software they ship.",
+"href": "/products/machines"
+},
+{
+"a": "Record Every act on every layer, by a person or an agent, in one trail.",
+"href": "/products/record"
+}
+],
+[
+{
+"p": "The audit trail names who did what to which resource and how it came out. Events and usage say what the company did and what it cost. An agent’s run is recorded the same way a person’s request is, which is what lets a company read what its agents did before it gives them more room."
+}
+],
+[
+{
+"h2": "API"
+},
+{
+"p": "Operations on api.hanzo.ai. One key reaches every layer."
+},
+{
+"table": [
+[
+"Method",
+"Path",
+"What it does"
+],
+[
+"GET",
+"/v1/audit",
+"Reads the org’s own audit trail, newest first."
+],
+[
+"POST",
+"/v1/event",
+"Captures product events into the org’s warehouse."
+],
+[
+"GET",
+"/v1/usage/summary",
+"The org’s usage footprint over one window."
+],
+[
+"GET",
+"/v1/agent/runs",
+"The org’s agent runs across every agent, newest first."
+]
+]
+}
+],
+[
+{
+"h2": "Try it"
+},
+{
+"code": "curl \" https://api.hanzo.ai/v1/audit?action=machine.create&since=2026-09-01T00:00:00Z \" \\ -H \" Authorization: Bearer $ HANZO_API_KEY \""
+}
+],
+[
+{
+"h2": "Docs"
+},
+{
+"a": "Audit API",
+"href": "https://docs.hanzo.ai/docs/openapi/audit"
+},
+{
+"a": "Event API",
+"href": "https://docs.hanzo.ai/docs/openapi/event"
+},
+{
+"a": "Usage API",
+"href": "https://docs.hanzo.ai/docs/openapi/usage"
+}
+],
+[
+{
+"h2": "On this site"
+},
+{
+"a": "O11y",
+"href": "/o11y"
+},
+{
+"a": "Metrics",
+"href": "/metrics"
+},
+{
+"a": "Telemetry",
+"href": "/telemetry"
+},
+{
+"a": "Analytics",
+"href": "/analytics"
+},
+{
+"a": "Insights",
+"href": "/insights"
+},
+{
+"a": "Dashboards",
+"href": "/dashboards"
+},
+{
+"a": "Sentinel",
+"href": "/sentinel"
+},
+{
+"a": "API Platform",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "World",
+"href": "/world"
+}
+]
+]

@@ -1,0 +1,154 @@
+[
+[
+{
+"h1": "Hanzo for finance teams"
+},
+{
+"p": "Agents that reconcile, report and chase, on a ledger that refuses an unbalanced entry — and a record of every run, so the auditor reads what happened instead of asking."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "Post every movement to a double-entry ledger. An agent matches payouts against it and brings back only what does not tie, instead of a person scanning two spreadsheets."
+},
+{
+"p": "On the first of the month a workflow pulls the numbers from Stripe, Google Sheets or your warehouse, drafts the variance commentary and posts it for review. If step seven fails, the run resumes at step seven."
+},
+{
+"p": "An agent writes the SQL, shows it to you and runs it against Datastore. You read the query before you trust the number."
+},
+{
+"p": "Every agent carries a budget it cannot pass, and its spend is readable to the micro-dollar. The line on the invoice has a name next to it."
+},
+{
+"p": "Share the data room with access controls and see who opened what. Send the agreement for signature and keep the cap table beside it."
+},
+{
+"li": "Reconcile against a ledger that balances"
+},
+{
+"li": "Run the monthly pack on a schedule"
+},
+{
+"li": "Ask the warehouse in plain English"
+},
+{
+"li": "Know what AI costs, agent by agent"
+},
+{
+"li": "Diligence without the email chain"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Ledger A programmable double-entry ledger.",
+"href": "/ledger"
+},
+{
+"a": "Hanzo Auto Workflows fired by a webhook or a schedule, with runs that survive a restart.",
+"href": "/auto"
+},
+{
+"a": "Hanzo Datastore A column store for analytical SQL.",
+"href": "/datastore"
+},
+{
+"a": "Agents Define an agent once — model, instructions, tools and a budget — and run it by name.",
+"href": "/products/agents"
+},
+{
+"a": "Dataroom Share documents with access controls and see who opened what.",
+"href": "/dataroom"
+},
+{
+"a": "Hanzo Sign Send a PDF, get it signed, keep the record of who signed and when.",
+"href": "/sign"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "Security and compliance"
+},
+{
+"a": "How the controls work",
+"href": "/trust"
+},
+{
+"a": "Terms and data processing",
+"href": "/legal"
+}
+],
+[
+{
+"h2": "More teams"
+},
+{
+"a": "Data",
+"href": "/solutions/data"
+},
+{
+"a": "Sales",
+"href": "/solutions/sales"
+},
+{
+"a": "Marketing",
+"href": "/solutions/marketing"
+},
+{
+"a": "Operations",
+"href": "/solutions/operations"
+},
+{
+"a": "Engineering",
+"href": "/solutions/engineering"
+},
+{
+"a": "Design",
+"href": "/solutions/design"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

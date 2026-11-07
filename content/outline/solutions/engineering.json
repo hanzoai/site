@@ -1,0 +1,141 @@
+[
+[
+{
+"h1": "Hanzo for engineering teams"
+},
+{
+"p": "An agent that plans, edits and opens pull requests; one API for every model behind it; and the sandboxes, machines and observability to ship what it writes."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/mori.webp",
+"alt": ""
+},
+{
+"p": "Give the agent an issue. It reads the code, makes the change, runs the tests and opens a pull request for review — from the terminal, the editor or the browser."
+},
+{
+"p": "Point the OpenAI or Anthropic client you already use at api.hanzo.ai and name a model. Change the name and the model changes; the key and the bill stay the same."
+},
+{
+"p": "The MCP server gives any client a shell, a filesystem, a code index, git and HTTP. Skills load the right playbook only when the work calls for it."
+},
+{
+"p": "Lease a sandbox for the agent’s work, launch a metered machine or publish a function. There is no creation fee, and a paused computer costs nothing."
+},
+{
+"p": "Traces, metrics, logs and profiles in one place, and Sentinel catches exceptions and regressions before a user reports them."
+},
+{
+"li": "Hand off a task, get a pull request"
+},
+{
+"li": "One API for every model"
+},
+{
+"li": "Tools your agents can reach"
+},
+{
+"li": "Real computers, by the second"
+},
+{
+"li": "See it in production"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo CLI Plan, edit and ship code with a model in your terminal.",
+"href": "/cli"
+},
+{
+"a": "Hanzo IDE The VS Code workbench with an agent that remembers your codebase.",
+"href": "/ide"
+},
+{
+"a": "Hanzo API One base URL and one key for models, agents and tools.",
+"href": "/api"
+},
+{
+"a": "MCP A shell, a filesystem, a code index, git and HTTP for any MCP client.",
+"href": "/mcp"
+},
+{
+"a": "Machines Sandboxes, metered machines and functions, each the organization’s own.",
+"href": "/products/machines"
+},
+{
+"a": "Hanzo O11y Traces, metrics, logs and profiles in one place.",
+"href": "/o11y"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "More teams"
+},
+{
+"a": "Finance",
+"href": "/solutions/finance"
+},
+{
+"a": "Data",
+"href": "/solutions/data"
+},
+{
+"a": "Sales",
+"href": "/solutions/sales"
+},
+{
+"a": "Marketing",
+"href": "/solutions/marketing"
+},
+{
+"a": "Operations",
+"href": "/solutions/operations"
+},
+{
+"a": "Design",
+"href": "/solutions/design"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

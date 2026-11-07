@@ -1,0 +1,231 @@
+'use client';
+/* The rest of Hanzo's header, working: search (⌘K) across every page with Hanzo's own groups and "Ask AI", the language
+   menu with all of Hanzo's locales, the Log in choices, and Hanzo's cookie notice with its preferences. */
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'motion/react';
+import { LOGIN, LANGS, RTL, SEARCH, COOKIES } from '../lib/header';
+
+const EASE = [0.16, 1, 0.3, 1];
+const UP = { API: 1, CLI: 1, DNS: 1, HSM: 1, IAM: 1, IDE: 1, KMS: 1, MCP: 1, MQ: 1, UI: 1, GUI: 1, S3: 1, ZAP: 1, IDV: 1, SDKS: 'SDKs', O11Y: 'O11y' };
+const nameOf = (p) => {
+  const w = p.split('/').pop().split('-').map((x) => x.toUpperCase());
+  return w.map((x) => (UP[x] === 1 ? x : UP[x] || x[0] + x.slice(1).toLowerCase())).join(' ');
+};
+const go = (router, href) => { if (href.startsWith('/')) router.push(href); else window.open(href, href.startsWith('https://hanzo.ai') ? '_self' : '_blank', 'noopener'); };
+
+function Palette({ onClose }) {
+  const router = useRouter();
+  const [q, setQ] = useState('');
+  const [pages, setPages] = useState([]);
+  const [at, setAt] = useState(0);
+  const input = useRef(null);
+  const list = useRef(null);
+  useEffect(() => { input.current?.focus(); import('../lib/search.json').then((m) => setPages(m.default)); }, []);
+  const groups = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    const hit = (...xs) => !s || xs.some((x) => x && x.toLowerCase().includes(s));
+    const g = SEARCH.map(([h, items]) => [h, items.filter(([l, sub]) => hit(l, sub)).map(([l, sub, href]) => ({ l, sub, href }))]);
+    const ps = pages.filter(([p, t, d]) => p.split('/').length === 2 || s).filter(([p, t, d]) => hit(nameOf(p), t, d, p)).slice(0, s ? 30 : 400).map(([p, t]) => ({ l: nameOf(p), sub: t, href: p }));
+    const out = [...g.slice(0, 2), ['Pages', ps], ...g.slice(2)].filter(([, it]) => it.length);
+    if (s) out.push(['Ask AI', [{ l: 'Ask AI: ' + q.trim(), sub: 'Ask', href: 'https://hanzo.ai/chat?q=' + encodeURIComponent(q.trim()), ai: true }]]);
+    return out;
+  }, [q, pages]);
+  const flat = groups.flatMap(([, it]) => it);
+  useEffect(() => setAt(0), [q]);
+  useEffect(() => { list.current?.querySelector('[data-on]')?.scrollIntoView({ block: 'nearest' }); }, [at]);
+  const pick = (x) => { onClose(); go(router, x.href); };
+  const key = (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setAt((a) => Math.min(flat.length - 1, a + 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setAt((a) => Math.max(0, a - 1)); }
+    else if (e.key === 'Enter' && flat[at]) { e.preventDefault(); pick(flat[at]); }
+    else if (e.key === 'Escape') onClose();
+  };
+  let n = -1;
+  return (
+    <motion.div className="x-pal-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <motion.div className="x-pal" role="dialog" aria-modal="true" aria-label="Search Hanzo" initial={{ opacity: 0, y: -12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98 }} transition={{ duration: 0.35, ease: EASE }}>
+        <div className="x-pal-top">
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+          <input ref={input} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={key} placeholder="Search Hanzo" aria-label="Search Hanzo" role="combobox" aria-expanded="true" aria-controls="x-pal-list" aria-activedescendant={'x-pal-' + at} />
+          <span className="x-pal-ask">Ask AI</span>
+          <kbd>ESC</kbd>
+        </div>
+        <div className="x-pal-list" id="x-pal-list" role="listbox" ref={list}>
+          {groups.map(([h, items]) => (
+            <div key={h} role="group" aria-label={h}>
+              <p className="x-pal-h">{h}</p>
+              {items.map((x) => {
+                n += 1;
+                const i = n;
+                return (
+                  <button key={h + x.href + x.l} id={'x-pal-' + i} type="button" role="option" aria-selected={i === at} data-on={i === at ? '' : undefined} className="x-pal-i" onMouseMove={() => setAt(i)} onClick={() => pick(x)}>
+                    {i === at && <motion.span layoutId="x-pal-hi" className="x-pal-hi" transition={{ type: 'spring', stiffness: 600, damping: 40 }} />}
+                    <span className="x-pal-l">{x.l}</span>
+                    {x.sub && <span className="x-pal-s">{x.sub}</span>}
+                    {i === at && <span className="x-pal-k">↵</span>}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+          {!flat.length && <p className="x-pal-none">No pages match.</p>}
+        </div>
+        <div className="x-pal-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> select</span><span><kbd>⌘K</kbd></span></div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function Pop({ anchor, children, onClose, label }) {
+  const [pos, setPos] = useState(null);
+  useEffect(() => {
+    const r = anchor.getBoundingClientRect();
+    setPos({ top: r.bottom + 8, right: Math.max(12, innerWidth - r.right) });
+    const off = (e) => { if (!e.target.closest('.x-pop') && !anchor.contains(e.target)) onClose(); };
+    const esc = (e) => e.key === 'Escape' && (onClose(), anchor.focus());
+    addEventListener('mousedown', off);
+    addEventListener('keydown', esc);
+    return () => { removeEventListener('mousedown', off); removeEventListener('keydown', esc); };
+  }, [anchor, onClose]);
+  if (!pos) return null;
+  return (
+    <motion.div className="x-pop" role="menu" aria-label={label} style={pos} initial={{ opacity: 0, y: -6, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -4, scale: 0.98 }} transition={{ duration: 0.25, ease: EASE }}>
+      {children}
+    </motion.div>
+  );
+}
+
+function Consent() {
+  const [state, setState] = useState(null); // null: undecided, else the saved choice
+  const [prefs, setPrefs] = useState(false);
+  const [pick, setPick] = useState({ performance: false, marketing: false, sale: false });
+  useEffect(() => {
+    try { const v = localStorage.getItem('hz-consent'); setState(v ? JSON.parse(v) : false); } catch { setState(false); }
+  }, []);
+  const save = (choice) => {
+    const v = { necessary: true, ...choice, at: Date.now() };
+    try { localStorage.setItem('hz-consent', JSON.stringify(v)); } catch {}
+    document.cookie = 'hz-consent=' + encodeURIComponent(JSON.stringify(v)) + ';path=/;max-age=31536000;samesite=lax';
+    window.dispatchEvent(new CustomEvent('hz-consent', { detail: v })); // analytics and ads read this before loading
+    setState(v); setPrefs(false);
+  };
+  if (state === null || (state && !prefs)) return null;
+  return (
+    <AnimatePresence>
+      {!prefs ? (
+        <motion.div key="note" className="x-cookie" role="dialog" aria-label="Cookies" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.6, ease: EASE, delay: 1.2 }}>
+          <p>{COOKIES.notice}</p>
+          <div>
+            <button type="button" className="x-btn sm" onClick={() => setPrefs(true)}>Manage preferences</button>
+            <button type="button" className="x-btn sm solid" onClick={() => save({ performance: true, marketing: true, sale: true })}>Accept all</button>
+          </div>
+        </motion.div>
+      ) : (
+        <motion.div key="prefs" className="x-pal-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div className="x-prefs" role="dialog" aria-modal="true" aria-label={COOKIES.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
+            <button type="button" className="x-prefs-x" aria-label="Close" onClick={() => setPrefs(false)}>✕</button>
+            <h2>{COOKIES.title}</h2>
+            <p>{COOKIES.body} Learn more in our <a href="https://hanzo.ai/cookies">Cookie Policy</a>, <a href="https://hanzo.ai/privacy">Privacy Policy</a>, and <a href="https://hanzo.ai/terms">Terms of Service</a>.</p>
+            <ul>
+              {COOKIES.kinds.map(([k, l]) => (
+                <li key={k}>
+                  <span>{l}</span>
+                  {k === 'necessary' ? <em>Always Active</em> : (
+                    <button type="button" role="switch" aria-checked={pick[k]} aria-label={l} className={'x-switch' + (pick[k] ? ' on' : '')} onClick={() => setPick((p) => ({ ...p, [k]: !p[k] }))}>
+                      <motion.i layout transition={{ type: 'spring', stiffness: 600, damping: 35 }} />
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <div className="x-prefs-acts">
+              <button type="button" className="x-btn" onClick={() => save({ performance: true, marketing: true, sale: true })}>Accept all</button>
+              <button type="button" className="x-btn solid" onClick={() => save(pick)}>Save preferences</button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+export default function HeaderTools({ headerRef }) {
+  const [open, setOpen] = useState(null); // 'search' | 'lang' | 'login'
+  const [lang, setLang] = useState('en-US');
+  const anchors = useRef({});
+  const router = useRouter();
+
+  useEffect(() => {
+    try { const l = localStorage.getItem('hz-lang'); if (l) setLang(l); } catch {}
+  }, []);
+  useEffect(() => {
+    const base = lang.split('-')[0];
+    document.documentElement.lang = lang;
+    document.documentElement.dir = RTL.has(base) ? 'rtl' : 'ltr';
+  }, [lang]);
+
+  useEffect(() => {
+    const h = headerRef.current?.querySelector('header');
+    if (!h) return;
+    const offs = [];
+    const on = (el, ev, fn) => { el.addEventListener(ev, fn); offs.push(() => el.removeEventListener(ev, fn)); };
+    h.querySelectorAll('button').forEach((b) => {
+      const label = b.getAttribute('aria-label') || '';
+      const text = b.textContent.trim();
+      const kind = label.startsWith('Search') ? 'search' : label.startsWith('Language') ? 'lang' : text === 'Log in' ? 'login' : null;
+      if (!kind) return;
+      anchors.current[kind] = b;
+      b.setAttribute('aria-haspopup', kind === 'search' ? 'dialog' : 'menu');
+      on(b, 'click', (e) => { e.preventDefault(); setOpen((o) => (o === kind ? null : kind)); });
+    });
+    const k = (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setOpen((o) => (o === 'search' ? null : 'search')); } };
+    on(window, 'keydown', k);
+    return () => offs.forEach((f) => f());
+  }, [headerRef]);
+
+  useEffect(() => {
+    if (open !== 'search') return;
+    window.__lenis?.stop();
+    return () => window.__lenis?.start();
+  }, [open]);
+
+  const close = () => setOpen(null);
+  const cur = LANGS.find((l) => l[3] === lang);
+  // show the chosen language's short code on Hanzo's EN button
+  useEffect(() => {
+    const b = anchors.current.lang;
+    const t = b && [...b.querySelectorAll('span, p')].find((x) => /^[A-Z]{2,3}$/.test(x.textContent.trim()));
+    if (t) t.textContent = lang.split('-')[0].toUpperCase();
+  }, [lang]);
+
+  return (
+    <>
+      <AnimatePresence>{open === 'search' && <Palette onClose={close} />}</AnimatePresence>
+      <AnimatePresence>
+        {open === 'lang' && anchors.current.lang && (
+          <Pop anchor={anchors.current.lang} onClose={close} label="Language">
+            <div className="x-pop-langs">
+              {LANGS.map(([flag, native, en, code]) => (
+                <button key={code} type="button" role="menuitemradio" aria-checked={code === lang} className={'x-pop-i' + (code === lang ? ' on' : '')} lang={code} onClick={() => { setLang(code); try { localStorage.setItem('hz-lang', code); } catch {} close(); }}>
+                  <span aria-hidden="true">{flag}</span><span>{native}{native !== en && <small> ({en})</small>}</span>
+                </button>
+              ))}
+            </div>
+          </Pop>
+        )}
+        {open === 'login' && anchors.current.login && (
+          <Pop anchor={anchors.current.login} onClose={close} label="Log in">
+            {LOGIN.map((l) => (
+              <a key={l.label} role="menuitem" href={l.href} className="x-pop-i big" onClick={close}>
+                <b>{l.label}</b><span>{l.sub}</span>
+              </a>
+            ))}
+          </Pop>
+        )}
+      </AnimatePresence>
+      <Consent />
+      {cur && <span className="x-sr" aria-live="polite">Language: {cur[2]}</span>}
+    </>
+  );
+}

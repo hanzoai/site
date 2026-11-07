@@ -1,0 +1,107 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Chat"
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/chat"
+},
+{
+"a": "Chat",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot",
+"href": "/bot"
+},
+{
+"a": "Search",
+"href": "/search"
+},
+{
+"a": "Crawl",
+"href": "/crawl"
+},
+{
+"a": "Studio",
+"href": "/studio"
+},
+{
+"a": "Console",
+"href": "/console"
+},
+{
+"a": "Referrals",
+"href": "/cloud/referrals"
+},
+{
+"a": "Marketplace",
+"href": "/cloud/marketplace"
+},
+{
+"li": "Add rate limiting to the payments API."
+},
+{
+"li": "Read 14 files. The limiter belongs in the gateway, not the handler — one place, every route."
+},
+{
+"li": "Wrote gateway/limit.go and a test at 100 req/min per key. Tests pass."
+},
+{
+"code": "api.hanzo.ai /v1/chat"
+},
+{
+"a": "Open Chat",
+"href": "/chat"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Chat from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Chat in my project. Start with: hanzo chat create"
+}
+],
+[
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Chat docs →",
+"href": "https://docs.hanzo.ai/docs/chat"
+},
+{
+"a": "Bot Multi-agent platform",
+"href": "/bot"
+},
+{
+"a": "Search Retrieval & answers",
+"href": "/search"
+},
+{
+"a": "Crawl Web crawler",
+"href": "/crawl"
+}
+]
+]

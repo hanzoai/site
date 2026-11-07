@@ -1,0 +1,43 @@
+[
+[
+{
+"a": "Back to Blog",
+"href": "/blog"
+},
+{
+"h1": "A New Pareto Frontier"
+},
+{
+"p": "Better, cheaper, faster: pick all three. Hanzo Gen weaves Enso and Kai into the coding agent you already use, so every step costs what it needs to and no more."
+}
+],
+[
+{
+"h2": "The trade nobody should make"
+},
+{
+"h2": "Enso picks the model"
+},
+{
+"h2": "Kai makes the small calls"
+},
+{
+"h2": "Gen weaves them into your agent"
+},
+{
+"code": "curl -fsSL https://hanzo.sh | sh hanzo dev --claude"
+},
+{
+"a": "Hanzo Gen",
+"href": "/gen"
+},
+{
+"a": "How Enso routes",
+"href": "/enso"
+},
+{
+"a": "Kai",
+"href": "/kai"
+}
+]
+]

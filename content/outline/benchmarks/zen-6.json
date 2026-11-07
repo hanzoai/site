@@ -1,0 +1,331 @@
+[
+[
+{
+"p": "Benchmarks / Zen 6 / Zen 6 throughput & Latent Sparse Attention"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"a": "Zen 6",
+"href": "/benchmarks?product=Zen%206#all"
+},
+{
+"h1": "Zen 6 throughput & Latent Sparse Attention"
+},
+{
+"p": "Zen 6 (27.3B dense), the latest open-weight generation, measured on Hanzo hardware (NVIDIA Grace-Blackwell GB10, AMD Strix Halo, Apple silicon) and with Hierarchical Latent Sparse Attention (D-LSA / N-LSA) from 8K to 10M tokens."
+},
+{
+"h2": "Latest"
+},
+{
+"a": "42.50× D-LSA Decode speedup · Zen 6 · D-LSA (Tree) · 10M tokens (NVIDIA H200) Full Attention 1.00× · Win · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "78.57× (0.167 ms) D-LSA Decode speedup · Zen 6 · D-LSA (Tree) · 1M tokens (NVIDIA Grace-Blackwell GB10) Full Attention 1.00× (13.105 ms) · Win · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "42.75× (0.154 ms) D-LSA Decode speedup · Zen 6 · D-LSA (Tree) · 512K tokens (NVIDIA Grace-Blackwell GB10) Full Attention 1.00× (6.586 ms) · Win · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "23.35× (0.157 ms) D-LSA Decode speedup · Zen 6 · D-LSA (Tree) · 256K tokens (NVIDIA Grace-Blackwell GB10) Full Attention 1.00× (3.670 ms) · Win · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "72.40× D-LSA Prefill speedup · Zen 6 · D-LSA (Tree) · 10M tokens (NVIDIA H200) Full Attention 1.00× · Win · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "~70 tok/s Decode throughput · Zen 6 · NVIDIA Grace-Blackwell no baseline · Unscored · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "1.60× per layer N-LSA Training speedup · Zen 6 · N-LSA (Native) · 128K tokens Full Attention 1.00× · Win · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "~3,665 tok/s Prefill throughput · Zen 6 · NVIDIA Grace-Blackwell no baseline · Unscored · Nov 4, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"h2": "History"
+},
+{
+"p": "23 results across 5 metrics, newest first. Superseded runs stay, so a revision's progress can be read."
+},
+{
+"table": [
+[
+"Measured",
+"Subject",
+"Metric",
+"Value",
+"Baseline",
+"Result",
+"Status"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 10M tokens (NVIDIA H200)",
+"D-LSA Decode speedup",
+"42.50×",
+"Full Attention 1.00×",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 1M tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Decode speedup",
+"78.57× (0.167 ms)",
+"Full Attention 1.00× (13.105 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 512K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Decode speedup",
+"42.75× (0.154 ms)",
+"Full Attention 1.00× (6.586 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 256K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Decode speedup",
+"23.35× (0.157 ms)",
+"Full Attention 1.00× (3.670 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA / N-LSA · 128K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Decode speedup",
+"12.77× (0.152 ms)",
+"Full Attention 1.00× (1.944 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Flat) · 64K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Decode speedup",
+"6.46× (0.111 ms)",
+"Full Attention 1.00× (0.716 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Flat) · 32K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Decode speedup",
+"4.39× (0.135 ms)",
+"Full Attention 1.00× (0.593 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA GPU Cache · 8K tokens (Hanzo Engine live) (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Decode speedup",
+"4.92× (70.0 tok/s)",
+"Full Attention 1.00× (14.2 tok/s)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 10M tokens (NVIDIA H200)",
+"D-LSA Prefill speedup",
+"72.40×",
+"Full Attention 1.00×",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 1M tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Prefill speedup",
+"46.29× (26.40 ms)",
+"Full Attention 1.00× (1,222.10 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 512K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Prefill speedup",
+"35.75× (17.09 ms)",
+"Full Attention 1.00× (610.86 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Tree) · 256K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Prefill speedup",
+"27.50× (11.25 ms)",
+"Full Attention 1.00× (309.25 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA / N-LSA · 128K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Prefill speedup",
+"23.72× (6.46 ms)",
+"Full Attention 1.00× (153.29 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Flat) · 64K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Prefill speedup",
+"12.17× (6.71 ms)",
+"Full Attention 1.00× (81.62 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA (Flat) · 32K tokens (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Prefill speedup",
+"8.58× (4.28 ms)",
+"Full Attention 1.00× (36.70 ms)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · D-LSA GPU Cache · 8K tokens (Hanzo Engine live) (NVIDIA Grace-Blackwell GB10)",
+"D-LSA Prefill speedup",
+"5.53× (3,665.5 tok/s)",
+"Full Attention 1.00× (662.3 tok/s)",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · NVIDIA Grace-Blackwell",
+"Decode throughput",
+"~70 tok/s",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · AMD Strix Halo",
+"Decode throughput",
+"~37 tok/s",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · Apple silicon",
+"Decode throughput",
+"64–81 tok/s",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · N-LSA (Native) · 128K tokens",
+"N-LSA Training speedup",
+"1.60× per layer",
+"Full Attention 1.00×",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · NVIDIA Grace-Blackwell",
+"Prefill throughput",
+"~3,665 tok/s",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · AMD Strix Halo",
+"Prefill throughput",
+"1,150–1,452 tok/s",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+],
+[
+"Nov 4, 2026",
+"Zen 6 · Apple silicon",
+"Prefill throughput",
+"500–690 tok/s",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+]
+]
+},
+{
+"h2": "Conditions"
+},
+{
+"h2": "Hardware"
+},
+{
+"p": "NVIDIA Grace-Blackwell · AMD Strix Halo · Apple silicon · NVIDIA H200"
+},
+{
+"h2": "Source"
+},
+{
+"p": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention (Nov 4, 2026)"
+},
+{
+"a": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention (Nov 4, 2026)",
+"href": "https://papers.hanzo.ai/zen6-latent-sparse-attention/"
+},
+{
+"h2": "Reproduce"
+},
+{
+"p": "hanzo-server --port 36900 --no-paged-attn run -m zenlm/zen6 --max-seq-len 1048576"
+},
+{
+"code": "hanzo-server --port 36900 --no-paged-attn run -m zenlm/zen6 --max-seq-len 1048576"
+},
+{
+"h2": "More Zen 6 benchmarks"
+},
+{
+"p": "Engine prefill on CUDA vs llama.cpp"
+},
+{
+"a": "Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"p": "Every result for Zen 6 throughput & Latent Sparse Attention on the shelf · How these are measured"
+},
+{
+"a": "Every result for Zen 6 throughput & Latent Sparse Attention on the shelf",
+"href": "/benchmarks?q=Zen%206%20throughput%20%26%20Latent%20Sparse%20Attention#all"
+},
+{
+"a": "How these are measured",
+"href": "/benchmarks#methods"
+}
+]
+]

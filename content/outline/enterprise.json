@@ -1,0 +1,454 @@
+[
+[
+{
+"h1": "Give every team AI. Run it where you choose."
+},
+{
+"p": "Models, agents and one shared workspace for everyone in your company, in your cloud, on your servers or fully offline."
+},
+{
+"a": "Get Enterprise plan",
+"href": "/enterprise/start"
+},
+{
+"a": "Build on Hanzo Platform",
+"href": "https://platform.hanzo.ai"
+},
+{
+"img": "/models/oto.webp",
+"alt": ""
+},
+{
+"p": "We run it for you. Start today. On Hanzo Base, your organization's data is its own database."
+},
+{
+"p": "Inside your VPC. Hanzo runs in your own cloud account, on your network."
+},
+{
+"p": "On premises. On hardware in your data center, beside the systems you already run."
+},
+{
+"p": "Fully offline. Sealed inside your network, with models served on machines you control."
+},
+{
+"li": "Hanzo Cloud"
+},
+{
+"li": "Your cloud"
+},
+{
+"li": "Your servers"
+},
+{
+"li": "Air-gapped"
+}
+],
+[
+{
+"p": "What you get"
+},
+{
+"h2": "What Enterprise includes."
+},
+{
+"p": "Your own infrastructure, dedicated compute, and engineering support around the clock."
+},
+{
+"h3": "Your infrastructure"
+},
+{
+"p": "Run Hanzo in your cloud, on your own servers, or fully offline."
+},
+{
+"h3": "Dedicated compute"
+},
+{
+"p": "Compute set aside for your organization alone."
+},
+{
+"h3": "Your own models"
+},
+{
+"p": "Train and host your own models, on your own data."
+},
+{
+"h3": "Commitments in writing"
+},
+{
+"p": "An uptime guarantee and a security review, both in your contract."
+},
+{
+"h3": "24/7 engineering support"
+},
+{
+"p": "Engineering support around the clock, and hands-on onboarding to get your teams started."
+},
+{
+"h3": "Your whole company"
+},
+{
+"p": "Unlimited members, single sign-on, roles and an audit log."
+}
+],
+[
+{
+"p": "Deployment"
+},
+{
+"h2": "Run it where your data lives."
+},
+{
+"p": "One platform, four places to run it. Choose one, or start in our cloud and move when you are ready."
+},
+{
+"li": "Hanzo Cloud We run it for you Start today. On Hanzo Base, your organization's data is its own database."
+},
+{
+"li": "Your cloud Inside your VPC Hanzo runs in your own cloud account, on your network."
+},
+{
+"li": "Your servers On premises On hardware in your data center, beside the systems you already run."
+},
+{
+"li": "Air-gapped Fully offline Sealed inside your network, with models served on machines you control."
+}
+],
+[
+{
+"p": "Your own GPUs"
+},
+{
+"h2": "Run the models on machines you own."
+},
+{
+"p": "Zen 6 runs on one DGX Spark. Zen 6 Max wants a rack of Blackwell servers. What we measured, and what a rack is made of."
+},
+{
+"h3": "Zen 6 on one DGX Spark, as Hanzo measured it"
+},
+{
+"table": [
+[
+"Prompt",
+"Prefill time",
+"Prefill rate"
+],
+[
+"512 tokens",
+"1.9 s",
+"270 tokens a second"
+],
+[
+"2,048 tokens",
+"0.8 s",
+"2,658 tokens a second"
+],
+[
+"8,192 tokens",
+"4.5 s",
+"1,835 tokens a second"
+],
+[
+"16,384 tokens",
+"9.6 s",
+"1,701 tokens a second"
+],
+[
+"32,768 tokens",
+"23.2 s",
+"1,414 tokens a second"
+]
+]
+},
+{
+"p": "A cold prompt of about that many tokens on a quiet box, measured Sep 20, 2026: NVIDIA DGX Spark (GB10), 121 GiB unified memory, shared with the benchmark's other jobs; zen6, NVFP4 with FP8 attention, weights 21.6 GiB (serve-spark-zen6.sh). NVIDIA DGX Spark: GB10, 273 GB/s memory bandwidth ."
+},
+{
+"a": "NVIDIA DGX Spark: GB10, 273 GB/s memory bandwidth",
+"href": "https://www.nvidia.com/en-us/products/workstations/dgx-spark/"
+},
+{
+"a": "Zen 6 on three machines",
+"href": "/benchmarks/zen-6"
+},
+{
+"a": "Zen 6 Max",
+"href": "/zen/zen6-max"
+},
+{
+"p": "We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or B200, for Zen 6 Max on your own premises. Routing cuts the average inference work a request needs. It does not cut the memory needed to keep every specialist ready."
+},
+{
+"h2": "DGX B300"
+},
+{
+"p": "NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory"
+},
+{
+"a": "NVIDIA DGX B300 user guide: 8 x 288 GB GPU memory",
+"href": "https://docs.nvidia.com/dgx/dgxb300-user-guide/introduction-to-dgxb300.html"
+},
+{
+"h2": "DGX B200"
+},
+{
+"p": "NVIDIA DGX B200 user guide: 1,440 GB total GPU memory"
+},
+{
+"a": "NVIDIA DGX B200 user guide: 1,440 GB total GPU memory",
+"href": "https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html"
+},
+{
+"p": "Four B300 servers hold 9,216 GB of GPU memory; four B200 servers hold 5,760 GB."
+},
+{
+"h3": "Planning range"
+},
+{
+"p": "Qualification . Four 8-GPU servers is where a qualification starts."
+},
+{
+"p": "Isolated production pools . One pool for each specialist, so a busy class of work never takes memory from another."
+},
+{
+"p": "Redundant pools . Two independent replicas of those pools across failure domains."
+},
+{
+"h3": "Around the servers"
+},
+{
+"p": "NVLink and NVSwitch inside each server."
+},
+{
+"p": "400 or 800 Gb/s RDMA wherever a specialist spans servers."
+},
+{
+"p": "About 31 TB of NVMe in each server (8 x 3.84 TB)."
+},
+{
+"p": "Separate sandbox workers for coding agents."
+},
+{
+"p": "A high-availability control cluster."
+},
+{
+"p": "Final capacity and performance commitments come from qualifying your workload: context length, concurrency, routing mix, latency, and failover."
+}
+],
+[
+{
+"p": "Proof"
+},
+{
+"h2": "Results on the record."
+},
+{
+"p": "Our models' scores come from research runs anyone can open. Customer results come from the case studies of launches Hanzo ran."
+},
+{
+"a": "$8.4M in bikes sold in 30 days Damon Motorcycles · CES launch and preorders",
+"href": "/customers/damon-motorcycles"
+},
+{
+"img": "/logos/customers/damon-motorcycles.svg",
+"alt": ""
+},
+{
+"a": "$7M+ raised in preorders KANOA · Crowdfunding and preorders",
+"href": "/customers/kanoa"
+},
+{
+"img": "/logos/customers/kanoa.png",
+"alt": ""
+},
+{
+"a": "169M people watched TrillerFest Triller · Growth marketing",
+"href": "/customers#trillerfest"
+},
+{
+"img": "/logos/customers/trillerfest.png",
+"alt": ""
+},
+{
+"a": "$2.5M raised on Indiegogo SKULLY · Crowdfunding",
+"href": "/customers#skully"
+},
+{
+"img": "/logos/customers/skully.png",
+"alt": ""
+},
+{
+"a": "$650M CSPR peak market value Casper Labs · Network launch",
+"href": "/customers#casper-blockchain"
+},
+{
+"img": "/logos/customers/casper-blockchain.svg",
+"alt": ""
+},
+{
+"a": "250,000 email signups Bellabeat · Preorders",
+"href": "/customers#bellabeat"
+},
+{
+"img": "/logos/customers/bellabeat.svg",
+"alt": ""
+},
+{
+"a": "All customer stories",
+"href": "/customers"
+}
+],
+[
+{
+"p": "Partners"
+},
+{
+"h2": "Work with Hanzo."
+},
+{
+"p": "Refer customers, resell Hanzo under your own brand, or have Hanzo’s agency build it with you."
+},
+{
+"h3": "Refer customers"
+},
+{
+"p": "Apply to refer organizations to Hanzo. The terms are agreed with each affiliate we approve."
+},
+{
+"a": "The affiliate programme →",
+"href": "/affiliate"
+},
+{
+"h3": "White-label: resell under your brand"
+},
+{
+"p": "Your own AI agency, under your brand, on your domain."
+},
+{
+"p": "$999 a month"
+},
+{
+"a": "Ask about White-label →",
+"href": "/contact-sales"
+},
+{
+"h3": "Have Hanzo build it"
+},
+{
+"p": "Agency, Forward Deployed, Embedded Pod: Hanzo’s agency ships the work with you, from one workstream to an embedded team."
+},
+{
+"p": "From $4,999 a month"
+},
+{
+"a": "Hanzo Agency →",
+"href": "https://hanzo.agency"
+},
+{
+"p": "Hanzo runs in your cloud and on these. They are the clouds and the silicon Hanzo deploys on, not partners or customers."
+},
+{
+"img": "/logos/partners/amazon.svg",
+"alt": "Amazon"
+},
+{
+"img": "/logos/partners/digitalocean.svg",
+"alt": "DigitalOcean"
+},
+{
+"img": "/logos/partners/google.svg",
+"alt": "Google"
+},
+{
+"img": "/logos/partners/microsoft.svg",
+"alt": "Microsoft"
+},
+{
+"img": "/logos/partners/nvidia.svg",
+"alt": "NVIDIA"
+},
+{
+"img": "/logos/partners/nebius.svg",
+"alt": "Nebius"
+}
+],
+[
+{
+"p": "Security"
+},
+{
+"h2": "Ready for your security review."
+},
+{
+"p": "A security review is part of every Enterprise contract. We answer your questionnaire against the code, and the engineers who wrote it walk your reviewers through it."
+},
+{
+"h3": "Single sign-on"
+},
+{
+"p": "Sign in through your own OpenID Connect provider. SCIM 2.0 creates, updates and removes accounts from your directory."
+},
+{
+"h3": "Your data, apart"
+},
+{
+"p": "On Hanzo Base, each organization's data is its own database file, kept apart from every other organization. Identity comes only from a verified token."
+},
+{
+"h3": "Audit log"
+},
+{
+"p": "Every request is recorded: who acted, from where, what they called and the status it returned."
+},
+{
+"h3": "Roles and second factors"
+},
+{
+"p": "Grant access by organization, workspace and project. Every account can add an authenticator app, or a code by SMS or email."
+},
+{
+"a": "How Hanzo is secured",
+"href": "/security"
+},
+{
+"a": "Trust center",
+"href": "/trust"
+}
+],
+[
+{
+"h2": "Questions"
+},
+{
+"a": "Talk to sales",
+"href": "/contact-sales"
+},
+{
+"a": "Read the Privacy Policy",
+"href": "/privacy"
+},
+{
+"a": "Compare plans",
+"href": "/pricing"
+}
+],
+[
+{
+"h2": "Tell us what you want to build."
+},
+{
+"p": "Share a few details about your company. We come back with a plan: where Hanzo runs, what it costs and how you start."
+},
+{
+"a": "Talk to sales",
+"href": "/contact-sales"
+},
+{
+"p": "Or email [email protected]"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#e98c879d8c9b999b809a8ca98188879386c78880"
+}
+]
+]

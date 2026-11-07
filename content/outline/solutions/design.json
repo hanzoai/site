@@ -1,0 +1,135 @@
+[
+[
+{
+"h1": "Hanzo for design teams"
+},
+{
+"p": "Explore visuals in a graph you can edit, turn the direction into a working app instead of a mockup, and hand engineering the components they already build with."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "Studio chains image, video, audio and 3D models in a graph you can see. Change one node and regenerate; the rest of the look holds."
+},
+{
+"p": "Describe the flow and Hanzo App builds it with real data and sign-in. Refine it by talking to it or by editing the code — what previews is what deploys."
+},
+{
+"p": "Hanzo GUI and Hanzo UI are the open-source tokens and components every Hanzo app is drawn with, for web, mobile and desktop from the same code."
+},
+{
+"p": "Read reference sites as clean text, keep the findings in one index, and find them again by phrase or by what you meant."
+},
+{
+"li": "Generate, then direct"
+},
+{
+"li": "Prototypes that run"
+},
+{
+"li": "One system across surfaces"
+},
+{
+"li": "Research that stays findable"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Design A node graph for generating images, video, audio and 3D.",
+"href": "/design"
+},
+{
+"a": "Hanzo App Describe an app and it ships to a live URL with data, sign-in and storage wired in.",
+"href": "/dev"
+},
+{
+"a": "Hanzo GUI The cross-platform kit and tokens every Hanzo app is drawn with.",
+"href": "/gui"
+},
+{
+"a": "Hanzo UI Open-source React components built on those tokens.",
+"href": "/ui"
+},
+{
+"a": "Hanzo Crawl Turns a website into clean Markdown a model can read.",
+"href": "/crawl"
+},
+{
+"a": "Hanzo Search Keyword and meaning in one query over the documents you push.",
+"href": "/search"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "More teams"
+},
+{
+"a": "Finance",
+"href": "/solutions/finance"
+},
+{
+"a": "Data",
+"href": "/solutions/data"
+},
+{
+"a": "Sales",
+"href": "/solutions/sales"
+},
+{
+"a": "Marketing",
+"href": "/solutions/marketing"
+},
+{
+"a": "Operations",
+"href": "/solutions/operations"
+},
+{
+"a": "Engineering",
+"href": "/solutions/engineering"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

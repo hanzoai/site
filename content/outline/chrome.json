@@ -1,0 +1,214 @@
+[
+[
+{
+"h1": "Your browser, with an AI teammate built into the side panel."
+},
+{
+"p": "Hanzo in Chrome reads the live DOM, runs multi-step workflows across your web apps, debugs frontend issues from console and network traces, and respects your organization’s site allowlists and password-manager guardrails."
+},
+{
+"li": "Side-panel agent that sees your active tab, accessibility tree, console errors, and network requests in real time."
+},
+{
+"li": "Automates multi-tab workflows across CRMs, issue trackers, docs, and internal dashboards using your existing session."
+},
+{
+"li": "Enterprise site policies: allow all sites or restrict the extension to an explicit domain allowlist with wildcard patterns."
+},
+{
+"li": "Connected to Hanzo Team, Hanzo Tag (Slack), and Hanzo Bot so browser findings turn directly into code channel PRs."
+},
+{
+"a": "Add to Chrome",
+"href": "https://chromewebstore.google.com"
+},
+{
+"a": "Configure Org Policies",
+"href": "/settings/organization/products?tab=chrome"
+},
+{
+"a": "Browser docs",
+"href": "https://docs.hanzo.ai/docs/apps/browser"
+},
+{
+"p": "Governed by your organization: admins control site allowlists, blocklists, and password-manager boundaries from one console."
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Chrome from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Chrome in my project."
+}
+],
+[
+{
+"p": "What it is"
+},
+{
+"h2": "Real-time browser intelligence under enterprise control"
+},
+{
+"p": "Stop copying and pasting screenshots, stack traces, and table rows between tabs."
+},
+{
+"h3": "Acts in your live tabs"
+},
+{
+"p": "Navigates pages, fills forms, clicks controls, and extracts structured data from any web application you are already signed into."
+},
+{
+"h3": "Bridges browser to IDE & CLI"
+},
+{
+"p": "Streams live DOM styles, console logs, and network timings straight to Hanzo Dev, VS Code, JetBrains, and Code Channels over MCP."
+},
+{
+"h3": "Zero-trust admin controls"
+},
+{
+"p": "Organization owners toggle extension access, block password manager interaction, and enforce domain allowlists or blocklists across every seat."
+}
+],
+[
+{
+"p": "Capabilities"
+},
+{
+"h2": "Built for engineering, design, and operations"
+},
+{
+"h3": "Live DOM & CSS inspection"
+},
+{
+"p": "Select any element on staging or production to inspect computed tokens, contrast ratios, and component props, then generate the exact patch."
+},
+{
+"h3": "Visual QA & bug reproduction"
+},
+{
+"p": "Ask Hanzo in Chrome to reproduce a reported bug, capture the failing network request, and post a Canvas summary to your code channel."
+},
+{
+"h3": "Cross-tab synthesis"
+},
+{
+"p": "Compare specifications in one tab against a live deployment or pull request in another and flag every discrepancy."
+},
+{
+"h3": "Password manager guardrails"
+},
+{
+"p": "Keep credential vaults isolated by default; organization admins explicitly control whether agents can interact with password managers."
+},
+{
+"h3": "Wildcard site allowlists & blocklists"
+},
+{
+"p": "Configure Allow All Sites with sensitive exclusions or Block All Sites with approved internal domains in Organization Settings."
+},
+{
+"h3": "Direct handoff to Hanzo Bot & Team"
+},
+{
+"p": "Start a task in your Chrome side panel and hand long-running background execution to a cloud resident bot or Slack code channel."
+},
+{
+"a": "Explore all browser extension features",
+"href": "/extension"
+}
+],
+[
+{
+"p": "Connected surfaces"
+},
+{
+"h2": "One agent family across browser, Slack, workspace, and cloud"
+},
+{
+"h3": "Hanzo in Chrome"
+},
+{
+"p": "Interactive side-panel agent inside Chrome, Brave, Edge, and Arc with enterprise site governance."
+},
+{
+"h3": "Hanzo Team (hanzo.team)"
+},
+{
+"p": "Full workspace with Code Channels, Canvas artifacts, boards, docs, and AI teammates."
+},
+{
+"h3": "Hanzo Tag for Slack (/slack)"
+},
+{
+"p": "Bring @Hanzo and Code Channels directly into your existing Slack channels and threads."
+},
+{
+"h3": "Hanzo Bot (hanzo.bot)"
+},
+{
+"p": "Autonomous resident teammates with their own sandboxed computer, browser, terminal, and schedule."
+},
+{
+"a": "See Hanzo Tag for Slack",
+"href": "/slack"
+}
+],
+[
+{
+"a": "All Browser Extensions",
+"href": "/extension"
+},
+{
+"a": "Hanzo Tag for Slack",
+"href": "/slack"
+},
+{
+"a": "Hanzo Tag Governance",
+"href": "/tag"
+},
+{
+"a": "Hanzo Bot",
+"href": "/bot"
+}
+],
+[
+{
+"p": "Hanzo in Chrome"
+},
+{
+"h2": "Put Hanzo in every tab your team works in."
+},
+{
+"p": "Install the Chrome extension in seconds and manage organization-wide site permissions from Hanzo Admin Settings."
+},
+{
+"a": "Add to Chrome",
+"href": "https://chromewebstore.google.com"
+},
+{
+"a": "Manage Chrome Policies",
+"href": "/settings/organization/products?tab=chrome"
+},
+{
+"a": "Explore Hanzo Team",
+"href": "/team"
+}
+],
+[
+{
+"h2": "Get Hanzo in Chrome"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

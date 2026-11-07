@@ -1,0 +1,206 @@
+[
+[
+{
+"p": "Benchmarks / LoCoMo · subject scope"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"h1": "Retrieval scoped by subject"
+},
+{
+"p": "A second LoCoMo harness, in Go, with no language model anywhere in it: lexical retrieval and a fixed extractive reader, with retrieval scoped to the person a question names, against a flat index. Its numbers are on their own scale, not the engine’s."
+},
+{
+"a": "LoCoMo",
+"href": "https://github.com/snap-research/locomo"
+},
+{
+"a": "Evaluating Very Long-Term Conversational Memory of LLM Agents",
+"href": "https://arxiv.org/abs/2402.17753"
+},
+{
+"a": "hanzoai/semantic · bench/locomo",
+"href": "https://github.com/hanzoai/semantic/tree/v0.3.0/bench/locomo"
+},
+{
+"a": "Retrieval Scoped by Subject",
+"href": "https://github.com/hanzoai/papers/blob/main/site/public/pdfs/locomo-subject-scope.pdf"
+},
+{
+"a": "Linkage, Not Similarity",
+"href": "https://github.com/hanzoai/papers/blob/main/site/public/pdfs/hanzo-context-memory.pdf"
+},
+{
+"code": "go run ./bench/locomo"
+},
+{
+"p": "regenerates every table on this page from the raw runs"
+},
+{
+"h2": "Why this is a separate page"
+},
+{
+"p": "This measures the same dataset as LoCoMo and its numbers are not on the same scale, so they are not in the same table. A benchmark page is one protocol , not one dataset, and three things differ here. Retrieval is lexical — IDF-weighted stemmed terms, cosine, no embedding model anywhere. The reader is a fixed extractive one: it picks the sentence covering most of the question’s terms and returns a span, and no language model is called in any arm. And all 1986 questions are used, including the adversarial quarter, reported apart rather than excluded."
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"h2": "What is measured"
+},
+{
+"p": "Ten conversations, 272 sessions, 5,882 turns, 1986 questions, scored with LoCoMo’s own metric — ported to Go and verified against the original Python on all 1986 questions and every arm. The question is whether restricting retrieval to the person a question names changes what is found. The flat index embeds whole turns; the scoped one indexes what one person said in one turn and filters by the subject the question names. Both are cosine over the same terms."
+},
+{
+"h2": "Results"
+},
+{
+"p": "token F1 · k= 5 · abstention floor 0.30 · interval over conversations, subject scope minus the flat index · go run ./bench/locomo at v0.3.0"
+},
+{
+"code": "go run ./bench/locomo"
+},
+{
+"table": [
+[
+"questions",
+"n",
+"subject-scoped F1",
+"flat index F1",
+"paired 95% interval"
+],
+[
+"adversarial",
+"446",
+"0.502",
+"0.200",
+"[+0.247, +0.347]"
+]
+]
+},
+{
+"p": "A quarter of LoCoMo’s questions are adversarial: they ask about something the conversation never said, and the right answer is to decline. Scoping retrieval to the person a question names scores 0.502 on the 446 of them against the flat index’s 0.200, because an assertion about the wrong person is not retrieved for the right one. The mechanism is visible in retrieval alone: the scoped memory’s retrieval confidence separates answerable from adversarial questions at AUC 0.698, against the flat index’s 0.514."
+},
+{
+"h2": "The paper"
+},
+{
+"p": "Retrieval Scoped by Subject reports the subject-scope result on this page, from the same harness."
+},
+{
+"a": "Retrieval Scoped by Subject",
+"href": "https://github.com/hanzoai/papers/blob/main/site/public/pdfs/locomo-subject-scope.pdf"
+},
+{
+"h2": "Reproducing it"
+},
+{
+"p": "Go 1.25, no third-party dependencies, and the dataset is fetched on first run. From a fresh clone at v0.3.0 : go run ./bench/locomo prints the table and go run ./bench/locomo -stats out/answers.json the intervals. make check rescores the same predictions with the benchmark authors’ own Python and matches to three decimals across all 1986 questions and every arm."
+},
+{
+"code": "go run ./bench/locomo"
+},
+{
+"code": "go run ./bench/locomo -stats out/answers.json"
+},
+{
+"code": "make check"
+},
+{
+"p": "On this side, node scripts/locomo.mjs runs all of it against a checkout and writes what it prints into lib/data/benchmarks-semantic.json , which is what this page renders. Nothing above is transcribed, and the tag, commit b34efcf and dataset digest that produced it travel in the same file."
+},
+{
+"code": "node scripts/locomo.mjs"
+},
+{
+"code": "lib/data/benchmarks-semantic.json"
+},
+{
+"p": "Hanzo AI Cloud"
+},
+{
+"h3": "Build on Hanzo Cloud"
+},
+{
+"a": "Start on Hanzo Cloud",
+"href": "https://cloud.hanzo.ai"
+},
+{
+"a": "View Models & Pricing",
+"href": "/pricing"
+},
+{
+"a": "Previous RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "All Benchmarks Board",
+"href": "/benchmarks"
+},
+{
+"a": "Next LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"h3": "Related in memory"
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"p": "CronQuestions · RepoBench-R · Fleet residency · Live agent footprint · Sandbox cold start · Engine prefill on CUDA vs llama.cpp · GPQA-Diamond"
+},
+{
+"a": "CronQuestions",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "Fleet residency",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "Sandbox cold start",
+"href": "/benchmarks/sandbox"
+},
+{
+"a": "Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"a": "GPQA-Diamond",
+"href": "/benchmarks/gpqa"
+},
+{
+"p": "harness: hanzoai/semantic · bench/locomo at v0.3.0 , MIT · dataset snap-research/locomo sha256 79fa87e90f04 … · captured 2026-09-11"
+},
+{
+"a": "hanzoai/semantic · bench/locomo",
+"href": "https://github.com/hanzoai/semantic/tree/v0.3.0/bench/locomo"
+}
+]
+]

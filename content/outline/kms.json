@@ -1,0 +1,179 @@
+[
+[
+{
+"h1": "Hanzo KMS"
+},
+{
+"p": "Secrets management"
+},
+{
+"a": "Open KMS",
+"href": "https://kms.hanzo.ai"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/openapi/kms/"
+},
+{
+"a": "IAM",
+"href": "/iam"
+},
+{
+"a": "Authz",
+"href": "/authz"
+},
+{
+"a": "KMS",
+"href": "/kms"
+},
+{
+"a": "Secrets",
+"href": "/cloud/secrets"
+},
+{
+"a": "Audit",
+"href": "/cloud/audit"
+},
+{
+"a": "Zero Trust",
+"href": "/cloud/zero-trust"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/kms"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls KMS from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo KMS in my project. Start with: hanzo kms secrets create"
+}
+],
+[
+{
+"h2": "What it holds and how it holds it"
+},
+{
+"p": "A secret is a value under a path, a name and an environment, inside one organization. That is the whole model."
+},
+{
+"h3": "Sealed before it leaves you"
+},
+{
+"p": "Argon2id turns a passphrase into a key, HKDF-SHA256 turns that into the organization's key, and AES-256-GCM seals the value. The organization key stays on the client. Sharing with a colleague wraps that same key to their public key using a hybrid post-quantum exchange, so nobody has to send anybody a secret to share one."
+},
+{
+"h3": "Into the process, not into a file"
+},
+{
+"p": "Run a command with the secrets already in its environment, export a dotenv when a tool insists on one, or let the Kubernetes operator keep a Secret in step with what KMS holds. The CLI also reads your repository and its git history looking for values that escaped."
+},
+{
+"h3": "Replacing one is deliberate"
+},
+{
+"p": "Rotate is a command, and a write states the version it means to replace — so a second writer who read the old value is refused rather than quietly winning. Signing keys generate, sign and rotate through the same API, backed by threshold MPC."
+},
+{
+"h3": "Who read it, when, and why"
+},
+{
+"p": "Reads and writes land in an append-only record written by a single writer off the request path, so keeping it never slows a fetch. An AI agent's read is attributed to that agent by name, not to whichever human's key it borrowed."
+},
+{
+"h3": "One key, several languages"
+},
+{
+"p": "A CLI for a laptop and for CI. SDKs in Go, Node and Python over the same routes. In-cluster callers can take the binary ZAP transport instead of HTTP, and it enforces the identical token and role checks."
+},
+{
+"h3": "Fail closed, or do not start"
+},
+{
+"p": "Every call carries a Hanzo IAM token verified against a cached JWKS; HMAC and alg none are refused outright. The organization comes from the verified token, never from a field the caller sets. Outside development the daemon will not boot without an issuer, an audience and a JWKS URL — there is no accidental open mode. A secret can be marked so that any agent read waits for a person to approve it, or is refused."
+}
+],
+[
+{
+"h2": "Nothing lands on disk"
+},
+{
+"code": "# Sign in, then point this directory at a path kms login kms init # Start the process with its secrets already in the environment kms run -- npm start # ...or write a dotenv, for a tool that insists on one kms export --format=dotenv # Replace a value kms rotate DATABASE_PASSWORD # Find the ones that already escaped, here and in git history kms scan"
+}
+],
+[
+{
+"h2": "Take them out of the repo"
+},
+{
+"p": "Use it hosted, or run the same binary yourself. The source is MIT and the client is where the encryption happens either way."
+},
+{
+"a": "Open KMS",
+"href": "https://kms.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/kms"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "IAM OIDC identity & orgs",
+"href": "/iam"
+},
+{
+"a": "Authz Fine-grained access",
+"href": "/authz"
+},
+{
+"a": "Secrets Store once, sync everywhere",
+"href": "/cloud/secrets"
+}
+],
+[
+{
+"h2": "Get KMS"
+},
+{
+"p": "Secrets + key management"
+},
+{
+"a": "hanzoai/kms",
+"href": "https://github.com/hanzoai/kms"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

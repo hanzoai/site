@@ -1,0 +1,157 @@
+[
+[
+{
+"a": "Integrations",
+"href": "/integrations"
+},
+{
+"h1": "Use Hanzo AI with DSPy"
+},
+{
+"p": "Use DSPy to program (not prompt) Hanzo AI models. DSPy's systematic approach to LM prompting works with any OpenAI-compatible provider."
+},
+{
+"p": "Base URL: https://api.hanzo.ai/v1"
+},
+{
+"code": "https://api.hanzo.ai/v1"
+},
+{
+"p": "API Key: Get yours at platform.hanzo.ai/api-keys · Fully OpenAI-compatible · every model on the gateway available"
+},
+{
+"a": "platform.hanzo.ai/api-keys",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"p": "Created by Stanford NLP / Omar Khattab"
+},
+{
+"a": "Stanford NLP / Omar Khattab",
+"href": "https://dspy.ai"
+},
+{
+"p": "License: MIT · View source on GitHub →"
+},
+{
+"a": "View source on GitHub →",
+"href": "https://github.com/stanfordnlp/dspy"
+},
+{
+"p": "Hanzo AI is OpenAI-compatible, so existing DSPy code works with zero refactoring. We deeply appreciate the Stanford NLP / Omar Khattab team for building and maintaining this open-source project."
+},
+{
+"h2": "DSPy + Hanzo setup"
+},
+{
+"code": "pip install dspy import dspy lm = dspy . LM ( model= \" openai/zen4-pro \" , api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , ) dspy . configure ( lm=lm )"
+},
+{
+"h2": "Signature and module"
+},
+{
+"code": "class QA ( dspy . Signature ): \"\"\" Answer questions with short factual answers. \"\"\" question : str = dspy . InputField () answer : str = dspy . OutputField ( desc= \" often 1-3 sentences \" ) qa = dspy . Predict ( QA ) response = qa ( question= \" What is the Hanzo AI cloud? \" ) print ( response . answer )"
+},
+{
+"h2": "Chain of thought"
+},
+{
+"code": "class CoTQA ( dspy . Signature ): \"\"\" Answer with step-by-step reasoning. \"\"\" question : str = dspy . InputField () reasoning : str = dspy . OutputField ( desc= \" think step by step \" ) answer : str = dspy . OutputField () cot = dspy . ChainOfThought ( CoTQA ) result = cot ( question= \" Why is AI important for developers? \" )"
+},
+{
+"h2": "Optimization with MIPROv2"
+},
+{
+"code": "from dspy . teleprompt import MIPROv2 teleprompter = MIPROv2 ( metric=my_metric , auto= \" medium \" ) optimized = teleprompter . compile ( program , trainset=train_data )"
+},
+{
+"h2": "Ready to get started?"
+},
+{
+"p": "Create a free account and get your API key. The Free plan includes free model requests and Kai decisions, no card."
+},
+{
+"a": "Get API key — Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse Models",
+"href": "/models"
+},
+{
+"h2": "More integrations"
+},
+{
+"a": "OpenAI Python SDK",
+"href": "/integrations/openai-sdk"
+},
+{
+"a": "Anthropic SDK",
+"href": "/integrations/anthropic-sdk"
+},
+{
+"a": "LangChain",
+"href": "/integrations/langchain"
+},
+{
+"a": "LlamaIndex",
+"href": "/integrations/llamaindex"
+},
+{
+"a": "Vercel AI SDK",
+"href": "/integrations/vercel-ai-sdk"
+},
+{
+"a": "Hugging Face",
+"href": "/integrations/huggingface"
+},
+{
+"a": "AutoGen",
+"href": "/integrations/autogen"
+},
+{
+"a": "CrewAI",
+"href": "/integrations/crewai"
+},
+{
+"a": "Haystack",
+"href": "/integrations/haystack"
+},
+{
+"a": "Cursor",
+"href": "/integrations/cursor"
+},
+{
+"a": "Continue.dev",
+"href": "/integrations/continue-dev"
+},
+{
+"a": "GitHub Copilot",
+"href": "/integrations/github-copilot"
+},
+{
+"a": "Docker",
+"href": "/integrations/docker"
+},
+{
+"a": "Kubernetes",
+"href": "/integrations/kubernetes"
+},
+{
+"a": "Python",
+"href": "/integrations/python"
+},
+{
+"a": "TypeScript",
+"href": "/integrations/typescript"
+},
+{
+"a": "Go",
+"href": "/integrations/go"
+},
+{
+"a": "Rust",
+"href": "/integrations/rust"
+}
+]
+]

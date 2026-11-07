@@ -1,0 +1,195 @@
+[
+[
+{
+"h1": "Hanzo Console"
+},
+{
+"p": "One admin for everything you run"
+},
+{
+"a": "Open Console",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/console"
+},
+{
+"a": "Chat",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot",
+"href": "/bot"
+},
+{
+"a": "Search",
+"href": "/search"
+},
+{
+"a": "Crawl",
+"href": "/crawl"
+},
+{
+"a": "Studio",
+"href": "/studio"
+},
+{
+"a": "Console",
+"href": "/console"
+},
+{
+"a": "Referrals",
+"href": "/cloud/referrals"
+},
+{
+"a": "Marketplace",
+"href": "/cloud/marketplace"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Console from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Console in my project."
+}
+],
+[
+{
+"h2": "A module per product, one shell around them"
+},
+{
+"p": "Add what you use. Hide what you don't. The shell stays the same."
+},
+{
+"h3": "Providers and models"
+},
+{
+"p": "Every model your organization can call, and which provider serves it. Connect an account of your own and its models appear beside the ones we run."
+},
+{
+"h3": "Usage and balance"
+},
+{
+"p": "A usage record per call and one balance per organization, so spend is attributed where it happened instead of totalled at the end of the month."
+},
+{
+"h3": "Keys"
+},
+{
+"p": "Issue an API key, scope it, revoke it. The key you paste into a client is minted here, and revoking it here is what stops it working."
+},
+{
+"h3": "Applications and stores"
+},
+{
+"p": "Register an app, hand it an identity, give it a store. The console writes the same resources the CLI does, because both are clients of the same API."
+},
+{
+"h3": "Find it by typing it"
+},
+{
+"p": "A command palette reaches every module and every record without learning where anything lives. The sidebar is yours to reorder and prune."
+},
+{
+"h3": "Scoped to the org on your token"
+},
+{
+"p": "Sign-in is OIDC against Hanzo IAM. What you see is what your organization owns, and switching organization switches the whole page — there is no global view to fall into by accident."
+}
+],
+[
+{
+"h2": "The console is a client. So is your code."
+},
+{
+"p": "Everything on these screens is a call to api.hanzo.ai/v1, and the typed clients are generated from the same document."
+},
+{
+"code": "from hanzoai . cloud import ApiClient , Configuration , ChatApi # The key you issued in the console config = Configuration ( host= \" https://api.hanzo.ai \" , access_token= \" sk-... \" , ) with ApiClient ( config ) as client : print ( ChatApi ( client ). post_v1_chat_completions ()) # The call, and what it cost, are on your # organization's usage before it returns."
+}
+],
+[
+{
+"h2": "Open the console"
+},
+{
+"p": "Sign in with your Hanzo identity. The organization you land in is the one that gets billed, and everything on these screens belongs to it."
+},
+{
+"a": "Open Console",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Console docs →",
+"href": "https://docs.hanzo.ai/docs/console"
+},
+{
+"a": "Chat Conversational AI",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot Multi-agent platform",
+"href": "/bot"
+},
+{
+"a": "Search Retrieval & answers",
+"href": "/search"
+}
+],
+[
+{
+"h2": "Get Console"
+},
+{
+"p": "Operator console for the cloud"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+},
+{
+"a": "Self-host",
+"href": "https://docs.hanzo.ai/docs/console"
+}
+]
+]

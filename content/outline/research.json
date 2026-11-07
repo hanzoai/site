@@ -1,0 +1,222 @@
+[
+[
+{
+"h1": "Work we publish"
+},
+{
+"p": "Hanzo builds infrastructure that has to hold up under audit, regulation and adversaries."
+},
+{
+"a": "Explore papers.hanzo.ai ↗",
+"href": "https://papers.hanzo.ai"
+},
+{
+"a": "Specifications (HIPs) ↗",
+"href": "https://hips.hanzo.ai"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"img": "/models/oto.webp",
+"alt": ""
+},
+{
+"p": "Nov 2026. Distilled & Native Latent Sparse Attention (D-LSA / N-LSA) on 27B Dense Transformers"
+},
+{
+"p": "Oct 2026. Factorized Discrete Choice, Calibrated Distributions, and Deterministic Policy Governance"
+},
+{
+"p": "Sep 2026. What long-term agent memory has to retrieve, and how it is measured"
+},
+{
+"p": "Aug 2026. Useful-Work Mining, the Native AI Coin, and Post-Quantum Omnichain Settlement"
+},
+{
+"p": "Jun 2026. A Regulated Capital-Markets Migration Case Study"
+},
+{
+"p": "Jun 2026. Inference at the Bandwidth Wall, On-Device QLoRA, One Engine"
+},
+{
+"li": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention"
+},
+{
+"li": "Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops"
+},
+{
+"li": "Linkage, Not Similarity"
+},
+{
+"li": "Hanzo AI Chain (AIVM)"
+},
+{
+"li": "Cloud Economics of a Sovereign OSS Stack"
+},
+{
+"li": "One Native Stack for Private, Continuously-Learning AI"
+}
+],
+[
+{
+"h2": "Papers"
+},
+{
+"p": "Each one links to its page on papers.hanzo.ai, where the PDF and the LaTeX live."
+},
+{
+"a": "Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention Nov 2026 Distilled & Native Latent Sparse Attention (D-LSA / N-LSA) on 27B Dense Transformers",
+"href": "https://papers.hanzo.ai/zen6-latent-sparse-attention/"
+},
+{
+"a": "Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops Oct 2026 Factorized Discrete Choice, Calibrated Distributions, and Deterministic Policy Governance",
+"href": "https://papers.hanzo.ai/kai-decision-model/"
+},
+{
+"a": "Linkage, Not Similarity Sep 2026 What long-term agent memory has to retrieve, and how it is measured",
+"href": "https://papers.hanzo.ai/hanzo-context-memory/"
+},
+{
+"a": "Hanzo AI Chain (AIVM) Aug 2026 Useful-Work Mining, the Native AI Coin, and Post-Quantum Omnichain Settlement",
+"href": "https://papers.hanzo.ai/hanzo-ai-chain/"
+},
+{
+"a": "Cloud Economics of a Sovereign OSS Stack Jun 2026 A Regulated Capital-Markets Migration Case Study",
+"href": "https://papers.hanzo.ai/hanzo-cloud-economics/"
+},
+{
+"a": "One Native Stack for Private, Continuously-Learning AI Jun 2026 Inference at the Bandwidth Wall, On-Device QLoRA, One Engine",
+"href": "https://papers.hanzo.ai/hanzo-native-stack-thesis/"
+},
+{
+"a": "Native ROCm Inference on a Consumer RDNA3.5 APU Jun 2026 Reaching llama.cpp Decode Parity via a Unified 1-bit-to-Full Quant Core",
+"href": "https://papers.hanzo.ai/hanzo-rocm-inference/"
+},
+{
+"a": "Edge LLM Inference Across Commodity Accelerators Jun 2026 Measured AMD, NVIDIA, and Apple Performance",
+"href": "https://papers.hanzo.ai/hanzo-cross-backend-inference/"
+},
+{
+"a": "Native Training in the Hanzo Engine Jun 2026 One Engine, One Quant Format, One Backend",
+"href": "https://papers.hanzo.ai/hanzo-native-training/"
+},
+{
+"a": "Continuously-Learning Private AI Jun 2026 Self-Improvement and Privacy in the Hanzo Native Stack",
+"href": "https://papers.hanzo.ai/hanzo-continuous-learning-privacy/"
+},
+{
+"a": "Economical Serving and the hanzo.ai Platform Jun 2026 A Bandwidth-Optimal Unified Train-and-Serve Runtime",
+"href": "https://papers.hanzo.ai/hanzo-platform-infra-desktop/"
+},
+{
+"a": "The Unified Sovereign-Tenant Cloud Jul 2026 Linear Shared-Nothing Scaling via Per-Tenant SQLite and In-Process Composition",
+"href": "https://papers.hanzo.ai/hanzo-unified-tenant-cloud/"
+},
+{
+"a": "Refutation-Driven Performance Engineering Jul 2026 An Empirical Study of a Multi-Week GPU Kernel Campaign",
+"href": "https://papers.hanzo.ai/refutation-driven-perf/"
+},
+{
+"a": "Evolutionary Schedule Search in a One-Source Kernel DSL Jul 2026 And the Continual-Improvement Loop It Anchors",
+"href": "https://papers.hanzo.ai/evolutionary-schedule-search/"
+},
+{
+"a": "Hanzo Router Jul 2026 Memory-Aware, Local-First LLM Routing with a Learned SLO-Constrained Policy",
+"href": "https://papers.hanzo.ai/hanzo-router/"
+},
+{
+"a": "What a Dormant Agent Costs Sep 2026 State, Execution and Isolation Measured Separately at a Fleet of One Million",
+"href": "https://papers.hanzo.ai/hanzo-dormant-agents/"
+},
+{
+"a": "Hops Do Not Fix Multi-Hop Retrieval Sep 2026 A Negative Result on Long-Horizon Conversational Memory, and What the Failure Actually Is",
+"href": "https://papers.hanzo.ai/hanzo-multi-hop-retrieval/"
+},
+{
+"a": "Retrieval Scoped by Subject Sep 2026 A factorial measurement of conversational memory on LoCoMo, and the negative controls that locate the effect",
+"href": "https://papers.hanzo.ai/locomo-subject-scope/"
+},
+{
+"a": "Hanzo Network Whitepaper Oct 2024 L1 Blockchain for Decentralized AI Compute",
+"href": "https://papers.hanzo.ai/network-whitepaper/"
+}
+],
+[
+{
+"h2": "Specifications"
+},
+{
+"p": "HIPs. The index is hips.hanzo.ai. These are the ones the families are written against."
+},
+{
+"a": "All HIPs The specification index.",
+"href": "https://hips.hanzo.ai"
+},
+{
+"a": "HIP-0000 The architecture framework.",
+"href": "https://hips.hanzo.ai/docs/hip-0000-hanzo-ai-architecture-framework"
+},
+{
+"a": "HIP-0510 Enso, the learned router.",
+"href": "https://hips.hanzo.ai/docs/hip-0510-enso-learned-router"
+},
+{
+"a": "HIP-1332 Kai, the decision model.",
+"href": "https://hips.hanzo.ai/docs/hip-1332-kai-the-decision-model"
+},
+{
+"a": "HIP-0039 Zen model architecture.",
+"href": "https://hips.hanzo.ai/docs/hip-0039-zen-model-architecture"
+},
+{
+"a": "HIP-1334 The research runtime.",
+"href": "https://hips.hanzo.ai/docs/hip-1334-research-unified-runtime"
+},
+{
+"a": "HIP-1145 How an experiment is recorded.",
+"href": "https://hips.hanzo.ai/docs/hip-1145-research-experiment-record"
+}
+],
+[
+{
+"h2": "Standards"
+},
+{
+"p": "The standards the runtime, the gateway, and the benchmark arena are built to."
+},
+{
+"a": "HIP-0043 The inference engine.",
+"href": "https://hips.hanzo.ai/docs/hip-0043-llm-inference-engine-standard"
+},
+{
+"a": "HIP-1211 The model API.",
+"href": "https://hips.hanzo.ai/docs/hip-1211-ai-the-model-api"
+},
+{
+"a": "HIP-0004 The gateway.",
+"href": "https://hips.hanzo.ai/docs/hip-0004-llm-gateway-unified-ai-provider-interface"
+},
+{
+"a": "HIP-0019 Tensor operations.",
+"href": "https://hips.hanzo.ai/docs/hip-0019-tensor-operations-standard"
+},
+{
+"a": "HIP-1105 The benchmark arena.",
+"href": "https://hips.hanzo.ai/docs/hip-1105-benchmark-measurement-arena"
+}
+],
+[
+{
+"h2": "Open source"
+},
+{
+"p": "The systems described in these papers are open source. The cloud, the gateway, the agent runtime and the infrastructure around them are developed in the open at github.com/hanzoai , and the platform pays the open-source authors whose work runs on it."
+},
+{
+"a": "github.com/hanzoai",
+"href": "https://github.com/hanzoai"
+}
+]
+]

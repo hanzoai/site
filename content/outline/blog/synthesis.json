@@ -1,0 +1,60 @@
+[
+[
+{
+"a": "Back to Blog",
+"href": "/blog"
+},
+{
+"h1": "The Next Frontier Will Be Synthesis"
+},
+{
+"p": "A glider is five cells. Collide enough of them and you can build a computer. We are building AI the same way: small parts with one job each, made to be combined."
+}
+],
+[
+{
+"h2": "Five cells that walk"
+},
+{
+"h2": "Collisions are construction"
+},
+{
+"h2": "The emblem"
+},
+{
+"h2": "AI for AI"
+},
+{
+"a": "Hanzo Gen",
+"href": "/gen"
+},
+{
+"a": "Enso",
+"href": "/enso"
+},
+{
+"a": "Kai",
+"href": "/kai"
+},
+{
+"a": "A New Pareto Frontier",
+"href": "/blog/pareto-frontier"
+},
+{
+"a": "Glider (Conway’s Game of Life), Wikipedia",
+"href": "https://en.wikipedia.org/wiki/Glider_(Conway%27s_Game_of_Life)"
+},
+{
+"a": "Glider, LifeWiki",
+"href": "https://conwaylife.com/wiki/Glider"
+},
+{
+"a": "Salo and Törmä, “What can oracles teach us about the ultimate fate of life?” (2022)",
+"href": "https://arxiv.org/abs/2202.07346"
+},
+{
+"a": "Eric S. Raymond, “The Glider: Proposal for a Hacker Emblem”",
+"href": "http://www.catb.org/hacker-emblem/"
+}
+]
+]

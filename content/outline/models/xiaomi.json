@@ -1,0 +1,72 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Xiaomi Models via Hanzo AI"
+},
+{
+"p": "5 models available"
+},
+{
+"p": "Access all 5 Xiaomi models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "MiMo-V2.5 1M MiMo-V2.5 is a native omnimodal model by Xiaomi. It delivers Pro-level agentic performance at roughly half the inference cost, while surpassing MiMo-V2-Omni in multimodal perception across image and video understanding... text",
+"href": "/models/xiaomi/mimo-v2.5"
+},
+{
+"a": "MiMo-V2.5-Pro 1M MiMo-V2.5-Pro is Xiaomi’s flagship model, delivering strong performance in general agentic capabilities, complex software engineering, and long-horizon tasks, with top rankings on benchmarks such as ClawEval, GDPVal, and SWE-bench Pro.... text",
+"href": "/models/xiaomi/mimo-v2.5-pro"
+},
+{
+"a": "MiMo-V2.6-Flash 1M MiMo-V2.6-Flash is an open-source foundation model developed by Xiaomi. Built on a Mixture-of-Experts architecture with 309B total parameters and 15B activated per token, it employs a hybrid attention mechanism for... text",
+"href": "/models/xiaomi/mimo-v2.6-flash"
+},
+{
+"a": "MiMo-V2.6-Pro 1M MiMo-V2.6-Pro is the flagship foundation model developed by Xiaomi. Built at a scale of over 1T parameters, it is designed to push the ceiling of capability for the most demanding... text",
+"href": "/models/xiaomi/mimo-v2.6-pro"
+},
+{
+"a": "MiMo-V2.6-Pro-UltraSpeed 1M MiMo-V2.6-Pro-UltraSpeed is the fast speed edition of Xiaomi's flagship foundation model, MiMo-V2.6-Pro. Built from the same 1T MiMo-V2.6-Pro checkpoint, it matches the original model in quality while delivering roughly 10x... text",
+"href": "/models/xiaomi/mimo-v2.6-pro-ultraspeed"
+}
+],
+[
+{
+"h2": "Use Xiaomi models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

@@ -1,0 +1,792 @@
+[
+[
+{
+"h1": "Building in the open."
+},
+{
+"p": "We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Star Our Repos",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "What Hanzo is built on"
+},
+{
+"p": "The projects our platform actually runs on, each with its licence and the people who maintain it."
+},
+{
+"a": "Python",
+"href": "https://github.com/python/cpython"
+},
+{
+"a": "Python Software Foundation",
+"href": "https://python.org"
+},
+{
+"p": "The language powering our ML/AI stack"
+},
+{
+"a": "Rust",
+"href": "https://github.com/rust-lang/rust"
+},
+{
+"a": "Rust Foundation",
+"href": "https://rust-lang.org"
+},
+{
+"p": "Systems language for our high-performance runtimes"
+},
+{
+"a": "Go",
+"href": "https://github.com/golang/go"
+},
+{
+"a": "Go Authors / Google",
+"href": "https://go.dev"
+},
+{
+"p": "Powers our gateway, blockchain, and infra tooling"
+},
+{
+"a": "TypeScript",
+"href": "https://github.com/microsoft/TypeScript"
+},
+{
+"a": "Microsoft",
+"href": "https://typescriptlang.org"
+},
+{
+"p": "The backbone of our developer SDKs and web apps"
+},
+{
+"a": "React",
+"href": "https://github.com/react/react"
+},
+{
+"a": "Meta Open Source",
+"href": "https://react.dev"
+},
+{
+"p": "Powering every UI we ship"
+},
+{
+"a": "Next.js",
+"href": "https://github.com/vercel/next.js"
+},
+{
+"a": "Vercel",
+"href": "https://nextjs.org"
+},
+{
+"p": "Every hanzo.ai product is built on Next.js"
+},
+{
+"a": "PostgreSQL",
+"href": "https://github.com/postgres/postgres"
+},
+{
+"a": "PostgreSQL Global Development Group",
+"href": "https://postgresql.org"
+},
+{
+"p": "The database underlying all our stateful services"
+},
+{
+"a": "Redis",
+"href": "https://github.com/redis/redis"
+},
+{
+"a": "Redis Ltd. / Salvatore Sanfilippo",
+"href": "https://redis.io"
+},
+{
+"p": "Fast caching and pub/sub throughout our platform"
+},
+{
+"a": "PyTorch",
+"href": "https://github.com/pytorch/pytorch"
+},
+{
+"a": "Meta AI Research",
+"href": "https://pytorch.org"
+},
+{
+"p": "Foundation of our ML training and inference"
+},
+{
+"a": "Kubernetes",
+"href": "https://github.com/kubernetes/kubernetes"
+},
+{
+"a": "CNCF / Google",
+"href": "https://kubernetes.io"
+},
+{
+"p": "Orchestrates every workload in production"
+},
+{
+"a": "Docker",
+"href": "https://github.com/moby/moby"
+},
+{
+"a": "Docker / Moby Project",
+"href": "https://docker.com"
+},
+{
+"p": "Containers make our MCP tools portable"
+},
+{
+"a": "OpenTelemetry",
+"href": "https://github.com/open-telemetry/opentelemetry-specification"
+},
+{
+"a": "CNCF",
+"href": "https://opentelemetry.io"
+},
+{
+"p": "Observability across every service"
+}
+],
+[
+{
+"h2": "Our Stewardship Commitments"
+},
+{
+"p": "We hold ourselves to explicit, public commitments — not vague marketing language."
+},
+{
+"h3": "We ship open source first"
+},
+{
+"p": "Every tool we build for ourselves gets published. If it's useful to us, it belongs to the community. No internal-only forks."
+},
+{
+"h3": "We contribute upstream"
+},
+{
+"p": "When we find bugs or missing features in projects we depend on, we fix them upstream — not in private patches."
+},
+{
+"h3": "We never lock in what we open"
+},
+{
+"p": "Anything published under MIT or Apache-2.0 stays that way. We will never relicense open repos to extract commercial value."
+},
+{
+"h3": "We credit our foundations"
+},
+{
+"p": "Our platform is built on hundreds of open-source projects. We acknowledge, link to, and financially support the communities and maintainers who make this possible."
+},
+{
+"h3": "We fund what we depend on"
+},
+{
+"p": "Through GitHub Sponsors, Open Collective, and direct partnerships, we invest back into the projects that power Hanzo."
+},
+{
+"h3": "We welcome all contributors"
+},
+{
+"p": "Good code can come from anywhere. We maintain a contributor-friendly CONTRIBUTING.md, respond to PRs within 48 hours on active repos, and recognize every contributor."
+}
+],
+[
+{
+"h2": "What we publish"
+},
+{
+"p": "Read from GitHub by every build: the year of commits, the languages and the repositories of each ecosystem, then every organization."
+},
+{
+"a": "Commits 732,288 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Merges 78,421 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Commits 1,263 In the past 7 days",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "73 organizations 1,733 Original repositories",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "GitHub stars 5,125 as GitHub counts them",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "GitHub forks 3,617 as GitHub counts them",
+"href": "https://github.com/hanzoai"
+},
+{
+"li": "hanzoai/ui Merge pull request #299 from hanzoai/fix/footer-signature-no-crop Nov 6, 06:04 UTC",
+"href": "https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a"
+},
+{
+"li": "hanzoai/desktop chore(desktop): finalize 1.1.53 skin, guest/LSA integration, and UI primitive repairs Nov 6, 05:53 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/ddfcd04565afa1b27a6480fd7fc2a9de0ec84e94"
+},
+{
+"li": "hanzoai/desktop Update css Nov 6, 05:39 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/e7492134d79dc3c7c1def579a2305cba7c8092f5"
+},
+{
+"li": "hanzoai/desktop feat(desktop): hanzo.ai's app stack, macOS window controls, and the window's own skin Nov 6, 05:39 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/421d4f233bd6516367293b496c6000c3a2219cde"
+},
+{
+"li": "hanzoai/ui fix(footer): keep full Hanzo wordmark and punctuation visible at responsive widths Nov 6, 05:20 UTC",
+"href": "https://github.com/hanzoai/ui/commit/72c079f77bf1683373a719f575f3541006c72457"
+},
+{
+"li": "hanzoai/homebrew-tap hanzo 8.5.910 Nov 6, 05:10 UTC",
+"href": "https://github.com/hanzoai/homebrew-tap/commit/098a650e94d36cbf48af446d647845ff90686929"
+},
+{
+"li": "hanzoai/desktop style(desktop): use deep-black palette and dynamic --composer-fill in Linux WebKitGTK stylesheet Nov 6, 05:10 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/e92e4acd3c7ee6870e89c313209b1ee2ef5d8aad"
+},
+{
+"li": "hanzoai/desktop feat(desktop): deeper black default palette wired to @hanzo/appearance tokens Nov 6, 04:59 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/ff0784f781faa2b823e69e3cc8e95a05f164bac8"
+},
+{
+"p": "Forge listing · read Nov 6, 06:04"
+},
+{
+"a": "Read the source →",
+"href": "https://github.com/hanzoai"
+},
+{
+"p": "The primary language of each of 1,733 original repositories, as GitHub reads it"
+},
+{
+"a": "hanzoai/ai Hanzo AI — LLM control plane, RAG, and model hub. Native Go routing for 66+ models over an OpenAI-compatible /v1 API; mounts as the 'ai' subsystem inside hanzoai/cloud.",
+"href": "https://git.hanzo.ai/hanzoai/ai"
+},
+{
+"a": "hanzoai/engine Hanzo AI native inference engine - Rust-based LLM & embedding engine for foundational models",
+"href": "https://git.hanzo.ai/hanzoai/engine"
+},
+{
+"a": "hanzoai/cloud Hanzo Cloud — OSS core. One Go binary. Dual-licensed Apache-2.0 OR MIT.",
+"href": "https://git.hanzo.ai/hanzoai/cloud"
+},
+{
+"a": "hanzoai/dev Hanzo Dev — fast, local AI coding agent for your terminal (Rust CLI, powered by Hanzo AI; Apache-2.0).",
+"href": "https://git.hanzo.ai/hanzoai/dev"
+},
+{
+"a": "hanzoai/cli The Hanzo CLI — an AI coding agent and every product of the Hanzo cloud, in one Rust binary. curl -fsSL https://hanzo.sh | sh",
+"href": "https://git.hanzo.ai/hanzoai/cli"
+},
+{
+"a": "hanzoai/mcp Model Context Protocol server with 260+ tools for AI agents",
+"href": "https://git.hanzo.ai/hanzoai/mcp"
+},
+{
+"a": "hanzoai/bot Hanzo Bot — personal AI assistant across your messaging channels (WhatsApp, Telegram, Slack, Discord, Signal, iMessage, and more)",
+"href": "https://git.hanzo.ai/hanzoai/bot"
+},
+{
+"a": "hanzoai/ui React component library for AI applications",
+"href": "https://git.hanzo.ai/hanzoai/ui"
+},
+{
+"a": "hanzoai/iam Hanzo IAM v2 — proprietary identity service on zap-proto/zip + hanzoai/orm + hanzoai/base. Clean-room, original work.",
+"href": "https://git.hanzo.ai/hanzoai/iam"
+},
+{
+"a": "hanzoai/ml Hanzo ML — fast multi-backend (CPU/CUDA/Metal/ROCm/Vulkan) tensor & ML framework for Rust with quantization; the compute core of the Hanzo stack.",
+"href": "https://git.hanzo.ai/hanzoai/ml"
+},
+{
+"a": "hanzoai/chat Hanzo Chat — free, single-player AI chat with every model. Open source.",
+"href": "https://git.hanzo.ai/hanzoai/chat"
+},
+{
+"a": "hanzoai/gui The Hanzo GUI framework — one component model across web, native and desktop, on hanzoai/yoga's grid-capable layout engine. Publishes @hanzo/gui.",
+"href": "https://git.hanzo.ai/hanzoai/gui"
+},
+{
+"a": "hanzoai/base Hanzo Base — multi-tenant SQLite backend with polyglot in-process extension runtimes and age-encrypted WAL replication; the storage substrate of the Hanzo cloud.",
+"href": "https://git.hanzo.ai/hanzoai/base"
+},
+{
+"a": "hanzoai/kms Hanzo KMS — secrets at rest and in transit",
+"href": "https://git.hanzo.ai/hanzoai/kms"
+},
+{
+"a": "hanzoai/flow Visual drag-and-drop AI workflow builder",
+"href": "https://git.hanzo.ai/hanzoai/flow"
+},
+{
+"a": "hanzoai/insights Hanzo Insights — product analytics and feature flags.",
+"href": "https://git.hanzo.ai/hanzoai/insights"
+},
+{
+"a": "Commits 49,786 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Merges 3,080 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Commits 0 In the past 7 days",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "41 organizations 456 Original repositories",
+"href": "https://github.com/luxfi"
+},
+{
+"a": "GitHub stars 792 as GitHub counts them",
+"href": "https://github.com/luxfi"
+},
+{
+"a": "GitHub forks 835 as GitHub counts them",
+"href": "https://github.com/luxfi"
+},
+{
+"li": "luxfi/database fix(prefixdb): close only the prefixed view (#7) Oct 28, 03:51 UTC",
+"href": "https://git.hanzo.ai/luxfi/database/commit/57fb8251e8bd1bf6921f1170008bce36e8272668"
+},
+{
+"li": "lux-cpp/.github community: ISSUE_TEMPLATE/config.yml Oct 26, 20:35 UTC",
+"href": "https://github.com/lux-cpp/.github/commit/191ac16092e59f0468b42bef7b8059267bc6a5a8"
+},
+{
+"li": "lux-cpp/.github community: ISSUE_TEMPLATE/feature_request.yml Oct 26, 20:35 UTC",
+"href": "https://github.com/lux-cpp/.github/commit/57950eaee65e902db382467dcb3c110ac6143e6d"
+},
+{
+"li": "lux-cpp/.github community: ISSUE_TEMPLATE/bug_report.yml Oct 26, 20:35 UTC",
+"href": "https://github.com/lux-cpp/.github/commit/cd10eb472818a69b94f24ccc8f724c97bc00af8b"
+},
+{
+"li": "lux-cpp/.github community: PULL_REQUEST_TEMPLATE.md Oct 26, 20:35 UTC",
+"href": "https://github.com/lux-cpp/.github/commit/d346cf34f0fbb487d5e940c525ef7ff4154c84b9"
+},
+{
+"li": "lux-cpp/.github community: SECURITY.md Oct 26, 20:35 UTC",
+"href": "https://github.com/lux-cpp/.github/commit/dc99033a9d44e7f1ea503fe4ee7c84e66f7d002d"
+},
+{
+"li": "lux-cpp/.github community: CODE_OF_CONDUCT.md Oct 26, 20:35 UTC",
+"href": "https://github.com/lux-cpp/.github/commit/722cacd6397b0e12cae0d6129aaf34cdf2b7db86"
+},
+{
+"li": "lux-cpp/.github community: CONTRIBUTING.md Oct 26, 20:35 UTC",
+"href": "https://github.com/lux-cpp/.github/commit/d7f964fdbe158b3dcbe701f44626ae1a6f08d0ef"
+},
+{
+"p": "Forge listing · read Nov 6, 06:04"
+},
+{
+"a": "Read the source →",
+"href": "https://github.com/luxfi"
+},
+{
+"p": "The primary language of each of 456 original repositories, as GitHub reads it"
+},
+{
+"a": "luxfi/node Lux node — Go, Rust and C++ runtimes at parity behind one Makefile and one conformance corpus. ZAP-native, BSD-3-Clause.",
+"href": "https://git.hanzo.ai/luxfi/node"
+},
+{
+"a": "luxfi/consensus Quasar consensus engine: Go implementations of consensus protocols for the Lux Network.",
+"href": "https://git.hanzo.ai/luxfi/consensus"
+},
+{
+"a": "luxfi/evm ▼ LUX EVM: Launch your own Ethereum compatible EVM on Lux Network.",
+"href": "https://git.hanzo.ai/luxfi/evm"
+},
+{
+"a": "luxfi/threshold ▼ LUX multiparty CGGMP21, FROST, LSS protocol and other threshold signature schemes.",
+"href": "https://git.hanzo.ai/luxfi/threshold"
+},
+{
+"a": "luxfi/cli ▼ LUX Network CLI for launching and scaling blockchain clusters.",
+"href": "https://git.hanzo.ai/luxfi/cli"
+},
+{
+"a": "luxfhe/torus Torus — the Lux Industries FHE compiler for CPU/GPU/FPGA targets",
+"href": "https://git.hanzo.ai/luxfhe/torus"
+},
+{
+"a": "Commits 53,050 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Merges 1,376 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Commits 2 In the past 7 days",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "6 organizations 58 Original repositories",
+"href": "https://github.com/zooai"
+},
+{
+"a": "GitHub stars 124 as GitHub counts them",
+"href": "https://github.com/zooai"
+},
+{
+"a": "GitHub forks 127 as GitHub counts them",
+"href": "https://github.com/zooai"
+},
+{
+"li": "zoo-labs/zoo computer: Hanzo Computer's invoices name 1 Ferry Building, San Francisco, CA 94105 (#576) Nov 2, 00:27 UTC",
+"href": "https://github.com/zoo-labs/zoo/commit/8146cfc8563db298fba04415dd04a95baf2210fc"
+},
+{
+"li": "zoo-apps/exchange chore(deps): bump @uniswap/default-token-list from 22.3.0 to 22.33.0 Oct 27, 15:14 UTC",
+"href": "https://github.com/zoo-apps/exchange/commit/210b1a3711a27888306463670c1508f86ee47016"
+},
+{
+"li": "zooai/.github community: ISSUE_TEMPLATE/config.yml Oct 26, 20:35 UTC",
+"href": "https://github.com/zooai/.github/commit/ca0dd16f301a9ce9ea0a374d06cab5e99072fe71"
+},
+{
+"li": "zooai/.github community: ISSUE_TEMPLATE/feature_request.yml Oct 26, 20:35 UTC",
+"href": "https://github.com/zooai/.github/commit/8c84f2fe752cd36428050053530b7962b8370874"
+},
+{
+"li": "zooai/.github community: ISSUE_TEMPLATE/bug_report.yml Oct 26, 20:35 UTC",
+"href": "https://github.com/zooai/.github/commit/dbee7688b766532e1b97e6a3dd9c80c25b954082"
+},
+{
+"li": "zooai/.github community: PULL_REQUEST_TEMPLATE.md Oct 26, 20:35 UTC",
+"href": "https://github.com/zooai/.github/commit/13459cfd033f4a84ea208ee65d89b26d13c51305"
+},
+{
+"li": "zooai/.github community: SECURITY.md Oct 26, 20:35 UTC",
+"href": "https://github.com/zooai/.github/commit/63a2f4e98dc79f1d32d7cac3cab1102aaafeb119"
+},
+{
+"li": "zooai/.github community: CODE_OF_CONDUCT.md Oct 26, 20:35 UTC",
+"href": "https://github.com/zooai/.github/commit/39b9ca980d336170cb9afb12170e362c0e1982aa"
+},
+{
+"p": "Forge listing · read Nov 6, 06:04"
+},
+{
+"a": "Read the source →",
+"href": "https://github.com/zooai"
+},
+{
+"p": "The primary language of each of 58 original repositories, as GitHub reads it"
+},
+{
+"a": "zooai/ai 🧬 ZOO Chat app",
+"href": "https://git.hanzo.ai/zooai/ai"
+},
+{
+"a": "zooai/node The Zoo network node — zood",
+"href": "https://git.hanzo.ai/zooai/node"
+},
+{
+"a": "zooai/ngo Zoo AI/ML Platform - Main application",
+"href": "https://git.hanzo.ai/zooai/ngo"
+},
+{
+"a": "zooai/proofs Formal verification proofs for Zoo Labs — proofs.zoo.ngo",
+"href": "https://git.hanzo.ai/zooai/proofs"
+},
+{
+"a": "zooai/cli Zoo cli — Lux L2 blockchain infrastructure",
+"href": "https://git.hanzo.ai/zooai/cli"
+},
+{
+"a": "zooai/evm Zoo evm — Lux L2 blockchain infrastructure",
+"href": "https://git.hanzo.ai/zooai/evm"
+},
+{
+"p": "Aggregate open-source activity counted from the forge and GitHub."
+},
+{
+"p": "Commits, past year"
+},
+{
+"p": "Original public repositories"
+},
+{
+"p": "GitHub stars"
+},
+{
+"a": "OSS & research credit grants →",
+"href": "/grants"
+},
+{
+"h2": "Every organization"
+},
+{
+"h3": "Hanzo"
+},
+{
+"a": "hanzoskill hanzoskill 749 repositories 786 commits this year 38 Hanzo Skills — AI skill modules",
+"href": "/oss/hanzoskill"
+},
+{
+"a": "Hanzo AI hanzoai 463 repositories 568,900 commits this year 1,608 AI infrastructure for the agentic era — LLM gateway, MCP tools, multi-agent SDKs, and dev tools. Techstars '17.",
+"href": "/oss/hanzoai"
+},
+{
+"a": "zos-apps zos-apps 111 repositories 566 commits this year 0",
+"href": "/oss/zos-apps"
+},
+{
+"a": "Hanzo Apps hanzo-apps 91 repositories 31,664 commits this year 2 [Legacy] Hanzo app templates — see github.com/hanzoai for current projects",
+"href": "/oss/hanzo-apps"
+},
+{
+"a": "Zen LM zenlm 88 repositories 6,126 commits this year 20 Frontier language models from 600M to 480B parameters — edge to cloud. Open weights, Zen architecture.",
+"href": "/oss/zenlm"
+},
+{
+"a": "zap-proto zap-proto 55 repositories 1,214 commits this year 3",
+"href": "/oss/zap-proto"
+},
+{
+"a": "hanzo-community hanzo-community 38 repositories 260 commits this year 0",
+"href": "/oss/hanzo-community"
+},
+{
+"a": "hanzo-templates hanzo-templates 22 repositories 180 commits this year 0",
+"href": "/oss/hanzo-templates"
+},
+{
+"a": "Hanzo KMS hanzokms 20 repositories 4,521 commits this year 0 Hanzo KMS — Enterprise Secret Management & Key Infrastructure",
+"href": "/oss/hanzokms"
+},
+{
+"a": "Hanzo Apps hanzo-app 11 repositories 0 [Legacy] Hanzo app templates — see github.com/hanzoai for current projects",
+"href": "/oss/hanzo-app"
+},
+{
+"a": "Hanzo hanzo-io 9 repositories 330 commits this year 0 Hanzo business apps",
+"href": "/oss/hanzo-io"
+},
+{
+"a": "Hanzo JS hanzo-js 8 repositories 567 commits this year 0 JavaScript SDK + libraries for Hanzo Ecosystem",
+"href": "/oss/hanzo-js"
+},
+{
+"a": "Hanzo Labs hanzo-labs 8 repositories 9 commits this year 1 Accelerate growth  🚀",
+"href": "/oss/hanzo-labs"
+},
+{
+"a": "hanzo-go hanzo-go 7 repositories 303 commits this year 0",
+"href": "/oss/hanzo-go"
+},
+{
+"a": "Hanzo Core hanzo-core 5 repositories 0 Core modules for Hanzo Platform.",
+"href": "/oss/hanzo-core"
+},
+{
+"a": "hanzo-docs hanzo-docs 5 repositories 7,180 commits this year 0",
+"href": "/oss/hanzo-docs"
+},
+{
+"a": "hanzo-ds hanzo-ds 5 repositories 440 commits this year 0",
+"href": "/oss/hanzo-ds"
+},
+{
+"a": "hanzo-fi hanzo-fi 4 repositories 447 commits this year 0",
+"href": "/oss/hanzo-fi"
+},
+{
+"a": "Crowdstart crowdstart 3 repositories 4 Crowdstart is now Hanzo, a cutting-edge software stack for modern companies.",
+"href": "/oss/crowdstart"
+},
+{
+"a": "hanzo-dart hanzo-dart 3 repositories 31 commits this year 0",
+"href": "/oss/hanzo-dart"
+},
+{
+"a": "Hanzo AI hanzo-inc 3 repositories 132,707 commits this year 1",
+"href": "/oss/hanzo-inc"
+},
+{
+"a": "hanzokv hanzokv 3 repositories 280 commits this year 2 Hanzo KV — distributed key-value store",
+"href": "/oss/hanzokv"
+},
+{
+"a": "hanzo-cpp hanzo-cpp 2 repositories 34 commits this year 0",
+"href": "/oss/hanzo-cpp"
+},
+{
+"a": "hanzo-git hanzo-git 2 repositories 7 commits this year 0",
+"href": "/oss/hanzo-git"
+},
+{
+"a": "hanzo-kt hanzo-kt 2 repositories 3 commits this year 0",
+"href": "/oss/hanzo-kt"
+},
+{
+"a": "hanzo-studio hanzo-studio 2 repositories 188 commits this year 0 Hanzo Studio — AI development environment",
+"href": "/oss/hanzo-studio"
+},
+{
+"a": "hanzo-swift hanzo-swift 2 repositories 29 commits this year 0",
+"href": "/oss/hanzo-swift"
+},
+{
+"a": "hanzobot hanzobot 2 repositories 73,757 commits this year 0 Hanzo Bot — AI agent and bot framework",
+"href": "/oss/hanzobot"
+},
+{
+"a": "hanzozt hanzozt 2 repositories 38,638 commits this year 0 Hanzo Zero Trust — programmable zero-trust networking for AI infrastructure",
+"href": "/oss/hanzozt"
+},
+{
+"a": "hanzo-kotlin hanzo-kotlin 1 repository 185 commits this year 0",
+"href": "/oss/hanzo-kotlin"
+},
+{
+"a": "hanzo-py hanzo-py 1 repository 2 commits this year 0",
+"href": "/oss/hanzo-py"
+},
+{
+"a": "hanzo-rs hanzo-rs 1 repository 308 commits this year 0",
+"href": "/oss/hanzo-rs"
+},
+{
+"a": "hanzocd hanzocd 1 repository 1 commit this year 0",
+"href": "/oss/hanzocd"
+},
+{
+"a": "hanzochat hanzochat 1 repository 573 commits this year 0",
+"href": "/oss/hanzochat"
+},
+{
+"a": "Hanzo Network hanzonet 1 repository 704 commits this year 0 Hanzo Network — decentralized AI compute marketplace",
+"href": "/oss/hanzonet"
+},
+{
+"a": "hanzos3 hanzos3 1 repository 333 commits this year 0 Hanzo S3 — S3-compatible object storage",
+"href": "/oss/hanzos3"
+},
+{
+"a": "hanzoui hanzoui 1 repository 827 commits this year 0 Hanzo UI — React component library (Radix + Tailwind)",
+"href": "/oss/hanzoui"
+},
+{
+"h3": "Lux"
+},
+{
+"a": "luxfi luxfi 344 repositories 40,520 commits this year 35 Post-quantum blockchain with multi-consensus, FHE, and cross-chain interoperability.",
+"href": "/oss/luxfi"
+},
+{
+"a": "Lux FHE luxfhe 56 repositories 300 commits this year 0 Lux FHE research, examples, and SDK and tooling.",
+"href": "/oss/luxfhe"
+},
+{
+"a": "parsnetwork parsnetwork 15 repositories 40 commits this year 0",
+"href": "/oss/parsnetwork"
+},
+{
+"a": "lux-amm lux-amm 10 repositories 25 commits this year 2",
+"href": "/oss/lux-amm"
+},
+{
+"a": "LX luxexchange 9 repositories 39 commits this year 0 World's fastest, and only decentralized exchange capable of HFT.",
+"href": "/oss/luxexchange"
+},
+{
+"a": "Lux Apps lux-apps 5 repositories 1,616 commits this year 1 Lux Apps built on Lux Network.",
+"href": "/oss/lux-apps"
+},
+{
+"a": "lux-cpp lux-cpp 4 repositories 1,989 commits this year 0",
+"href": "/oss/lux-cpp"
+},
+{
+"a": "luxwallet luxwallet 4 repositories 1,598 commits this year 0",
+"href": "/oss/luxwallet"
+},
+{
+"a": "luxdao luxdao 2 repositories 171 commits this year 0 Lux DAO — on-chain governance for Lux Network",
+"href": "/oss/luxdao"
+},
+{
+"a": "Parsis Foundation parsis-foundation 2 repositories 31 commits this year 0",
+"href": "/oss/parsis-foundation"
+},
+{
+"a": "lux-js lux-js 1 repository 34 commits this year 0 Lux does JavaScript",
+"href": "/oss/lux-js"
+},
+{
+"a": "lux-rs lux-rs 1 repository 199 commits this year 0",
+"href": "/oss/lux-rs"
+},
+{
+"a": "luxdefi luxdefi 1 repository 0 Decentralized network of blockchains designed for privacy and quantum security.",
+"href": "/oss/luxdefi"
+},
+{
+"a": "luxgpu luxgpu 1 repository 12 commits this year 1",
+"href": "/oss/luxgpu"
+},
+{
+"a": "LUX Static luxstatic 1 repository 26 commits this year 0 Lux static assets and websites",
+"href": "/oss/luxstatic"
+},
+{
+"h3": "Zoo"
+},
+{
+"a": "ZOO zooai 40 repositories 51,613 commits this year 2 Protecting endangered species through regenerative finance.",
+"href": "/oss/zooai"
+},
+{
+"a": "Zoo Apps zoo-apps 13 repositories 880 commits this year 0",
+"href": "/oss/zoo-apps"
+},
+{
+"a": "ZOO zoo-labs 4 repositories 388 commits this year 4 Open AI research network — decentralized training, inference, and scientific computing. 501(c)(3) foundation.",
+"href": "/oss/zoo-labs"
+},
+{
+"a": "zoo-docs zoo-docs 1 repository 25 commits this year 0",
+"href": "/oss/zoo-docs"
+}
+],
+[
+{
+"h2": "Contribute"
+},
+{
+"p": "We welcome contributions of all kinds: code, documentation, bug reports and feature requests."
+},
+{
+"a": "Start Contributing",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Join Discord",
+"href": "https://discord.gg/XthHQQj"
+},
+{
+"a": "Founder Program",
+"href": "/founder"
+}
+]
+]

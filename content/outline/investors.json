@@ -1,0 +1,357 @@
+[
+[
+{
+"h1": "The intelligence layer for business."
+},
+{
+"p": "Models, agents and the cloud beneath them — one account, one key, one bill."
+},
+{
+"a": "Contact investor relations",
+"href": "/cdn-cgi/l/email-protection#aac3d8eac2cbc4d0c584cbc3"
+},
+{
+"a": "See the research",
+"href": "#research"
+}
+],
+[
+{
+"img": "/logos/partners/techstars.svg",
+"alt": "Techstars logo"
+},
+{
+"img": "/logos/partners/amazon.svg",
+"alt": "Amazon logo"
+},
+{
+"img": "/logos/partners/digitalocean.svg",
+"alt": "DigitalOcean logo"
+},
+{
+"img": "/logos/partners/google.svg",
+"alt": "Google logo"
+},
+{
+"img": "/logos/partners/microsoft.svg",
+"alt": "Microsoft logo"
+},
+{
+"img": "/logos/partners/nvidia.svg",
+"alt": "NVIDIA logo"
+},
+{
+"img": "/logos/partners/nebius.svg",
+"alt": "Nebius logo"
+},
+{
+"img": "/logos/partners/techstars.svg",
+"alt": "Techstars logo"
+},
+{
+"img": "/logos/partners/amazon.svg",
+"alt": "Amazon logo"
+},
+{
+"img": "/logos/partners/digitalocean.svg",
+"alt": "DigitalOcean logo"
+},
+{
+"img": "/logos/partners/google.svg",
+"alt": "Google logo"
+},
+{
+"img": "/logos/partners/microsoft.svg",
+"alt": "Microsoft logo"
+},
+{
+"img": "/logos/partners/nvidia.svg",
+"alt": "NVIDIA logo"
+},
+{
+"img": "/logos/partners/nebius.svg",
+"alt": "Nebius logo"
+},
+{
+"img": "/logos/partners/techstars.svg",
+"alt": "Techstars logo"
+},
+{
+"img": "/logos/partners/amazon.svg",
+"alt": "Amazon logo"
+},
+{
+"img": "/logos/partners/digitalocean.svg",
+"alt": "DigitalOcean logo"
+},
+{
+"img": "/logos/partners/google.svg",
+"alt": "Google logo"
+},
+{
+"img": "/logos/partners/microsoft.svg",
+"alt": "Microsoft logo"
+},
+{
+"img": "/logos/partners/nvidia.svg",
+"alt": "NVIDIA logo"
+},
+{
+"img": "/logos/partners/nebius.svg",
+"alt": "Nebius logo"
+}
+],
+[
+{
+"h2": "One account for the whole AI stack."
+},
+{
+"p": "The models people use, the agents that put them to work, and the infrastructure a company needs to run both. Each layer makes the next one more useful."
+},
+{
+"a": "Frontier models One API for intelligence, with measured accuracy, speed and cost. Explore",
+"href": "/models"
+},
+{
+"a": "Agents that do the work Coding agents and autonomous runs on the same account and tools. Explore",
+"href": "/dev"
+},
+{
+"a": "A cloud they can own Managed on Hanzo, in a customer cloud, or on their own hardware. Explore",
+"href": "/platform"
+}
+],
+[
+{
+"h2": "The latest results, with every task."
+},
+{
+"p": "Each result is read from research runs on public questions, the same for every model."
+},
+{
+"a": "Enso Ultra 95.6% GPQA Diamond 152 of 159 new questions right, against 93.1% for the best single model on the same questions.",
+"href": "/enso"
+},
+{
+"a": "Hanzo Dev 3.02× Faster on the same coding tasks Over the 42 tasks both agents solved, 95% interval 2.06–4.36×.",
+"href": "/dev"
+},
+{
+"a": "Zen 6 ~3,665 Prompt tokens a second On NVIDIA Grace-Blackwell, NVFP4 + Latent Sparse Attention (D-LSA). Measured by Hanzo, Nov 4, 2026.",
+"href": "/zen#desks"
+}
+],
+[
+{
+"h2": "Built in public. Shipping every day."
+},
+{
+"p": "The cloud, the gateway, the agents and the runtime are developed in the open. This is the public commit record, not a marketing projection."
+},
+{
+"a": "Commits 732,288 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Merges 78,421 In the past year",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "Commits 1,263 In the past 7 days",
+"href": "https://git.hanzo.ai/explore/repos"
+},
+{
+"a": "73 organizations 1,733 Original repositories",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "GitHub stars 5,125 as GitHub counts them",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "GitHub forks 3,617 as GitHub counts them",
+"href": "https://github.com/hanzoai"
+},
+{
+"li": "hanzoai/ui Merge pull request #299 from hanzoai/fix/footer-signature-no-crop Nov 6, 06:04 UTC",
+"href": "https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a"
+},
+{
+"li": "hanzoai/desktop chore(desktop): finalize 1.1.53 skin, guest/LSA integration, and UI primitive repairs Nov 6, 05:53 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/ddfcd04565afa1b27a6480fd7fc2a9de0ec84e94"
+},
+{
+"li": "hanzoai/desktop Update css Nov 6, 05:39 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/e7492134d79dc3c7c1def579a2305cba7c8092f5"
+},
+{
+"li": "hanzoai/desktop feat(desktop): hanzo.ai's app stack, macOS window controls, and the window's own skin Nov 6, 05:39 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/421d4f233bd6516367293b496c6000c3a2219cde"
+},
+{
+"li": "hanzoai/ui fix(footer): keep full Hanzo wordmark and punctuation visible at responsive widths Nov 6, 05:20 UTC",
+"href": "https://github.com/hanzoai/ui/commit/72c079f77bf1683373a719f575f3541006c72457"
+},
+{
+"li": "hanzoai/homebrew-tap hanzo 8.5.910 Nov 6, 05:10 UTC",
+"href": "https://github.com/hanzoai/homebrew-tap/commit/098a650e94d36cbf48af446d647845ff90686929"
+},
+{
+"li": "hanzoai/desktop style(desktop): use deep-black palette and dynamic --composer-fill in Linux WebKitGTK stylesheet Nov 6, 05:10 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/e92e4acd3c7ee6870e89c313209b1ee2ef5d8aad"
+},
+{
+"li": "hanzoai/desktop feat(desktop): deeper black default palette wired to @hanzo/appearance tokens Nov 6, 04:59 UTC",
+"href": "https://github.com/hanzoai/desktop/commit/ff0784f781faa2b823e69e3cc8e95a05f164bac8"
+},
+{
+"p": "Forge listing · read Nov 6, 06:04"
+},
+{
+"a": "Read the source →",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"img": "/logos/customers/damon-motorcycles.svg",
+"alt": "Damon Motorcycles logo"
+},
+{
+"img": "/logos/customers/kanoa.png",
+"alt": "KANOA logo"
+},
+{
+"img": "/logos/customers/skully.png",
+"alt": "SKULLY logo"
+},
+{
+"img": "/logos/customers/bellabeat.svg",
+"alt": "Bellabeat logo"
+},
+{
+"img": "/logos/customers/stoned.svg",
+"alt": "STONED Audio logo"
+},
+{
+"img": "/logos/customers/unikoin-gold.svg",
+"alt": "Unikrn logo"
+},
+{
+"img": "/logos/customers/arca.png",
+"alt": "Arca logo"
+},
+{
+"img": "/logos/customers/casper-blockchain.svg",
+"alt": "Casper Labs logo"
+},
+{
+"img": "/logos/customers/trillerfest.png",
+"alt": "Triller logo"
+},
+{
+"img": "/logos/customers/cover-build.svg",
+"alt": "Cover Build logo"
+},
+{
+"img": "/logos/customers/myle-tap.png",
+"alt": "Myle Tap logo"
+},
+{
+"img": "/logos/customers/keek-social.svg",
+"alt": "Personas Social logo"
+},
+{
+"img": "/logos/customers/damon-motorcycles.svg",
+"alt": "Damon Motorcycles logo"
+},
+{
+"img": "/logos/customers/kanoa.png",
+"alt": "KANOA logo"
+},
+{
+"img": "/logos/customers/skully.png",
+"alt": "SKULLY logo"
+},
+{
+"img": "/logos/customers/bellabeat.svg",
+"alt": "Bellabeat logo"
+},
+{
+"img": "/logos/customers/stoned.svg",
+"alt": "STONED Audio logo"
+},
+{
+"img": "/logos/customers/unikoin-gold.svg",
+"alt": "Unikrn logo"
+},
+{
+"img": "/logos/customers/arca.png",
+"alt": "Arca logo"
+},
+{
+"img": "/logos/customers/casper-blockchain.svg",
+"alt": "Casper Labs logo"
+},
+{
+"img": "/logos/customers/trillerfest.png",
+"alt": "Triller logo"
+},
+{
+"img": "/logos/customers/cover-build.svg",
+"alt": "Cover Build logo"
+},
+{
+"img": "/logos/customers/myle-tap.png",
+"alt": "Myle Tap logo"
+},
+{
+"img": "/logos/customers/keek-social.svg",
+"alt": "Personas Social logo"
+}
+],
+[
+{
+"h2": "Operators building for the long term."
+},
+{
+"p": "Executive leadership of Hanzo AI, Inc., with the corporate structure and governance stated plainly."
+},
+{
+"a": "Antje Worring CEO, Hanzo AI, Inc.",
+"href": "https://www.linkedin.com/in/antje-worring/"
+},
+{
+"a": "Zach Kelling CTO, Hanzo AI, Inc.",
+"href": "https://www.linkedin.com/in/zeekay/"
+},
+{
+"a": "Legal",
+"href": "/legal/terms"
+},
+{
+"a": "Security",
+"href": "/security"
+},
+{
+"a": "Press",
+"href": "/press"
+}
+],
+[
+{
+"h2": "Build the future with us."
+},
+{
+"p": "For investment enquiries, company information and requests beyond this page, write directly to our team."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#acc5deecc4cdc2d6c382cdc5"
+},
+{
+"a": "Book a call",
+"href": "https://cal.com/hanzo"
+}
+]
+]

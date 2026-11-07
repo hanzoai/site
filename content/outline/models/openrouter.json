@@ -1,0 +1,80 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "OpenRouter Models via Hanzo AI"
+},
+{
+"p": "7 models available"
+},
+{
+"p": "Access all 7 OpenRouter models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Auto Router 2M Auto is OpenRouter’s flagship model router, built for general-purpose usage. It adapts to each request, choosing cost-optimal models and adjusting reasoning effort. It balances task difficulty, benchmark results, live prices,... text image",
+"href": "/models/openrouter/auto"
+},
+{
+"a": "Auto Router (Beta) 2M The experimental version of our Auto Router where we test new improvements. Use it to get the latest and greatest version of our general purpose auto router, but expect beta... text image",
+"href": "/models/openrouter/auto-beta"
+},
+{
+"a": "Auto Code 2M Auto Code is OpenRouter’s router built specifically for coding agents and harnesses. It uses the same routing engine as the [Auto Router](https://openrouter.ai/openrouter/auto), with every request treated as part of an... text image",
+"href": "/models/openrouter/auto-code"
+},
+{
+"a": "Body Builder (beta) 128K Transform your natural language requests into structured OpenRouter API request objects. Describe what you want to accomplish with AI models, and Body Builder will construct the appropriate API calls. Example:... text",
+"href": "/models/openrouter/bodybuilder"
+},
+{
+"a": "Free Models Router 200K The simplest way to get free inference. openrouter/free is a router that selects free models at random from the models available on OpenRouter. The router smartly filters for models that... text",
+"href": "/models/openrouter/free"
+},
+{
+"a": "Fusion 1M Fusion turns your prompt into a small multi-model deliberation. A panel of expert models (see below) analyzes your prompt in parallel with web search and web fetch enabled, then a... text",
+"href": "/models/openrouter/fusion"
+},
+{
+"a": "Pareto Code Router 2M The Pareto Router maintains a tiered shortlist of strong coding models, ranked by [Artificial Analysis](https://artificialanalysis.ai/) coding percentiles. Set min_coding_score between 0 and 1 on the [pareto-router plugin](https://openrouter.ai/docs/guides/routing/routers/pareto-router#the-min_coding_score-parameter) to control how... text",
+"href": "/models/openrouter/pareto-code"
+}
+],
+[
+{
+"h2": "Use OpenRouter models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

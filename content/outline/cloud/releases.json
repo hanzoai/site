@@ -1,0 +1,107 @@
+[
+[
+{
+"a": "Cloud",
+"href": "/products"
+},
+{
+"h1": "Releases"
+},
+{
+"p": "Ship with confidence."
+},
+{
+"a": "Talk to us",
+"href": "/contact-sales"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/operator"
+},
+{
+"a": "Projects",
+"href": "/cloud/projects"
+},
+{
+"a": "Environments",
+"href": "/cloud/environments"
+},
+{
+"a": "Builds",
+"href": "/cloud/builds"
+},
+{
+"a": "Registry",
+"href": "/registry"
+},
+{
+"a": "Releases",
+"href": "/cloud/releases"
+},
+{
+"a": "Pipelines",
+"href": "/cloud/pipelines"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/platform/releases"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Releases from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Releases in my project. Start with: hanzo platform releases"
+}
+],
+[
+{
+"p": "A release is an immutable pin of image plus configuration. Roll forward or back to any previous one in a single operation, with a full history of who shipped what."
+},
+{
+"p": "A human signs a company into existence. After genesis, agents can run it."
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Projects The deploy unit",
+"href": "/cloud/projects"
+},
+{
+"a": "Environments Dev, staging, prod — isolated",
+"href": "/cloud/environments"
+},
+{
+"a": "Builds Source to signed image",
+"href": "/cloud/builds"
+}
+]
+]

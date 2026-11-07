@@ -1,0 +1,162 @@
+[
+[
+{
+"p": "Benchmarks / Kai / Latency of one decision"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"a": "Kai",
+"href": "/benchmarks?product=Kai#all"
+},
+{
+"h1": "Latency of one decision"
+},
+{
+"p": "Time to one decision, by serving mode and device. No baseline was timed on the same hardware, so these stand alone."
+},
+{
+"h2": "Latest"
+},
+{
+"a": "19.8 ms p50 latency · Kai a7 · 0834a74f · cold, ROCM BF16 no baseline · Unscored · Sep 28, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "29.0 ms p95 latency · Kai a7 · 0834a74f · cold, ROCM BF16 no baseline · Unscored · Sep 28, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"h2": "History"
+},
+{
+"p": "2 results across 2 metrics, newest first. Superseded runs stay, so a revision's progress can be read."
+},
+{
+"table": [
+[
+"Measured",
+"Subject",
+"Metric",
+"Value",
+"Baseline",
+"Result",
+"Status"
+],
+[
+"Sep 28, 2026",
+"Kai a7 · 0834a74f · cold, ROCM BF16",
+"p50 latency",
+"19.8 ms",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+],
+[
+"Sep 28, 2026",
+"Kai a7 · 0834a74f · cold, ROCM BF16",
+"p95 latency",
+"29.0 ms",
+"–",
+"Unscored",
+"Live · Hanzo-measured"
+]
+]
+},
+{
+"h2": "Conditions"
+},
+{
+"h2": "Hardware"
+},
+{
+"p": "on evo"
+},
+{
+"h2": "Source"
+},
+{
+"p": "research run latency-pool-a7.0834a74f-kai"
+},
+{
+"a": "research run latency-pool-a7.0834a74f-kai",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&id=latency-pool-a7.0834a74f-kai"
+},
+{
+"h2": "Reproduce"
+},
+{
+"p": "bench speed --states results/states.json.gz --results capability/results --who kai --kai <checkpoint>"
+},
+{
+"code": "bench speed --states results/states.json.gz --results capability/results --who kai --kai <checkpoint>"
+},
+{
+"h2": "More Kai benchmarks"
+},
+{
+"p": "AG News · DAIR Emotion · Banking77 · Support triage · Email spam · Phishing · Toxicity · RAG relevance · Model routing · Typed decisions · MASSIVE · Choosing among many options"
+},
+{
+"a": "AG News",
+"href": "/benchmarks/kai-ag-news"
+},
+{
+"a": "DAIR Emotion",
+"href": "/benchmarks/kai-dair-emotion"
+},
+{
+"a": "Banking77",
+"href": "/benchmarks/kai-banking77"
+},
+{
+"a": "Support triage",
+"href": "/benchmarks/kai-support-triage"
+},
+{
+"a": "Email spam",
+"href": "/benchmarks/kai-email-spam"
+},
+{
+"a": "Phishing",
+"href": "/benchmarks/kai-phishing"
+},
+{
+"a": "Toxicity",
+"href": "/benchmarks/kai-toxicity"
+},
+{
+"a": "RAG relevance",
+"href": "/benchmarks/kai-rag-relevance"
+},
+{
+"a": "Model routing",
+"href": "/benchmarks/kai-model-routing"
+},
+{
+"a": "Typed decisions",
+"href": "/benchmarks/kai-typed-decisions"
+},
+{
+"a": "MASSIVE",
+"href": "/benchmarks/kai-massive"
+},
+{
+"a": "Choosing among many options",
+"href": "/benchmarks/kai-choice-size"
+},
+{
+"p": "Every result for Latency of one decision on the shelf · How these are measured"
+},
+{
+"a": "Every result for Latency of one decision on the shelf",
+"href": "/benchmarks?q=Latency%20of%20one%20decision#all"
+},
+{
+"a": "How these are measured",
+"href": "/benchmarks#methods"
+}
+]
+]

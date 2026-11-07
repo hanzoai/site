@@ -1,0 +1,128 @@
+<div class="is_View _fd-column _minH-100vh"><main class="is_View _fd-column _pb-c-space-10"><section aria-labelledby="_R_1dlfiv5t75tf6bdb_" class="is_View _ox-_platformweb_clip _pos-relative _width-10037 _ox-hidden _oy-hidden _dsp-flex _fd-column _justify-center _mt-calc-1calc62003180138 _pt-calc0pxcalc447866377" data-slot="fold"><div aria-hidden="true" class="is_View _pos-absolute _t-0px _l-0px _r-0px _height-640px _pe-none _backgroundImage-radial-grad1214971095"></div><div class="is_View _fd-column _pos-relative _width-10037 _maxW-1320px _mr-auto _ml-auto _pr-page-gutter _pl-page-gutter _pt-max40pxmin8857263194 _pb-max48pxmin8857263194"><div class="is_View _dsp-grid _gridTemplateColumns-minmax01fr1234957 _items-center _gap-max36pxmin5518920252 _width-10037"><div class="is_View _text-_platformweb_center _fd-column _minW-0px _gap-c-space-4 _items-center"><div class="is_View _self-center"><div class="is_View _btlr-_platformweb_9999px _btrr-_platformweb_9999px _bbrr-_platformweb_9999px _bblr-_platformweb_9999px _dsp-_platformweb_inline-flex _width-_platformweb_fit-content _textDecoration-_platformweb_none _self-flex-start _dsp-inline-flex _fd-row _items-center _justify-center _gap-6px _pr-12px _pl-12px _pt-4px _pb-4px _btlr-9999px _btrr-9999px _bbrr-9999px _bblr-9999px _bg-transparent _btw-1px _brw-1px _borderBottomWidth-1px _borderLeftWidth-1px _btc-border-stro3513 _brc-border-stro3513 _borderBottomColor-border-stro3513 _borderLeftColor-border-stro3513 _pos-relative _ox-hidden _oy-hidden _bbs-solid _bts-solid _bls-solid _brs-solid" data-label=""><span class="is_Text font_mono _col-muted-foreg108704142 _ff-f-family _fs-f-size-1 _lh-f-lineHeigh112920 _fw-600" data-slot="text">Legal</span></div></div><h1 class="is_Text font_heading _fs-_sm_f-size-11 _fs-_lg_text-6xl _col-foreground _dsp-revert-laye114 _ws-inherit _ff-f-family _fs-f-size-10 _fw-497 _lh-1--19 _ls--0--012em _textWrap-balance _width-10037 _maxW-900px" data-slot="display" id="_R_1dlfiv5t75tf6bdb_">Subprocessor Register</h1><p class="is_Text _textWrap-_platformweb_balance _col-muted-foreg108704142 _dsp-revert-laye114 _ws-inherit _fs-f-size-4 _lh-1--65 _ls-0px _textWrap-pretty _maxW-600px" data-slot="lede">The providers Hanzo engages to process data on behalf of customers — infrastructure, inference gateways, and the model providers reached through them — with data categories, regions, transfer mechanism, and training posture.</p></div></div></div></section><section class="is_View _fd-column _pt-c-space-7 _pb-c-space-7 _pr-maxvar--pag1616741076 _pl-maxvar--pag1616741076"><div class="is_View _fd-column _width-10037"><div data-slot="document"><p><strong>Draft.</strong> <!-- -->This document is not yet in force.</p><p>Effective 2026-07-22 · Version 2026-07-22 ·<!-- --> <!-- -->Previous version: none, this is the first.</p><nav aria-labelledby="legal-contents"><h2 id="legal-contents">Contents</h2><ul><li><a href="#how-enso-routing-affects-subprocessors">How Enso routing affects subprocessors</a></li><li><a href="#infrastructure-and-platform-subprocessors">Infrastructure and platform subprocessors</a></li><li><a href="#inference-gateway-subprocessors">Inference gateway subprocessors</a></li><li><a href="#model-provider-sub-subprocessors-reached-via-gateway-or-directly">Model provider sub-subprocessors (reached via gateway or directly)</a></li><li><a href="#hanzo-operated-processing">Hanzo-operated processing</a></li><li><a href="#change-notices">Change notices</a></li></ul></nav></div></div></section><section class="is_View _fd-column _pt-c-space-7 _pb-c-space-7 _pr-maxvar--pag1616741076 _pl-maxvar--pag1616741076"><div class="is_View _fd-column _width-10037"><div data-slot="document"><p>This Register lists the subprocessors Hanzo AI, Inc. engages to process Customer Personal Data in providing the Services, as required by the <a href="/legal/dpa">Data Processing Addendum</a> and referenced by the <a href="/legal/privacy">Privacy Policy</a>. It is maintained as a living document; material additions are notified as described in DPA Section 6.</p>
+<blockquote>
+<p><strong>Draft status.</strong> The rows below are a template populated from Hanzo's current architecture. Each entry's legal entity, processing region, transfer mechanism, retention mode, and training posture must be confirmed against the executed provider DPA before this Register is published as effective. Placeholders marked <code>[confirm]</code> are not yet verified commitments.</p>
+</blockquote>
+<h2 id="how-enso-routing-affects-subprocessors">How Enso routing affects subprocessors</h2>
+<p>Enso may send a single request — or, in quality modes, transformed copies of it — to one or more approved model providers. <strong>Every model provider eligible under your plan or configuration is a subprocessor</strong>, including providers reached indirectly through an inference gateway. Organization administrators may restrict eligible providers, regions, and retention modes; Hanzo does not silently route Customer Content through an unlisted provider. Where a gateway (e.g., OpenRouter) sits between Hanzo and a model provider, Hanzo requires the gateway to bind downstream providers to substantially equivalent obligations, and the downstream providers are listed below as sub-subprocessors.</p>
+<h2 id="infrastructure-and-platform-subprocessors">Infrastructure and platform subprocessors</h2>
+<table>
+<thead>
+<tr>
+<th>Subprocessor</th>
+<th>Service</th>
+<th>Data categories</th>
+<th>Region(s)</th>
+<th>Transfer mechanism</th>
+<th>Training on Customer Content</th>
+<th>Effective</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DigitalOcean, LLC</td>
+<td>Cloud compute, managed databases, object storage, networking</td>
+<td>Account, Customer Content at rest/in transit, logs, telemetry</td>
+<td>US <code>[confirm]</code></td>
+<td>SCCs / DPF <code>[confirm]</code></td>
+<td>No</td>
+<td><code>[confirm]</code></td>
+</tr>
+<tr>
+<td><code>[Object storage / CDN provider]</code></td>
+<td>Static asset and artifact delivery</td>
+<td>Public assets, artifact blobs</td>
+<td><code>[confirm]</code></td>
+<td><code>[confirm]</code></td>
+<td>No</td>
+<td><code>[confirm]</code></td>
+</tr>
+<tr>
+<td><code>[Email / transactional messaging]</code></td>
+<td>Service and security notices</td>
+<td>Contact data, message metadata</td>
+<td><code>[confirm]</code></td>
+<td><code>[confirm]</code></td>
+<td>No</td>
+<td><code>[confirm]</code></td>
+</tr>
+<tr>
+<td><code>[Payment processor]</code></td>
+<td>Billing and card processing</td>
+<td>Billing and transaction data (card data held by processor, not Hanzo)</td>
+<td><code>[confirm]</code></td>
+<td><code>[confirm]</code></td>
+<td>No</td>
+<td><code>[confirm]</code></td>
+</tr>
+<tr>
+<td><code>[Error / observability provider]</code></td>
+<td>Crash, error, and performance monitoring</td>
+<td>Telemetry, redacted logs (raw content excluded by default)</td>
+<td><code>[confirm]</code></td>
+<td><code>[confirm]</code></td>
+<td>No</td>
+<td><code>[confirm]</code></td>
+</tr>
+</tbody></table>
+<h2 id="inference-gateway-subprocessors">Inference gateway subprocessors</h2>
+<table>
+<thead>
+<tr>
+<th>Subprocessor</th>
+<th>Service</th>
+<th>Data categories</th>
+<th>Region(s)</th>
+<th>Transfer mechanism</th>
+<th>Training on Customer Content</th>
+<th>Effective</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OpenRouter, Inc.</td>
+<td>Inference gateway routing to third-party model providers</td>
+<td>Prompt/Input content, generated Output, routing and usage metadata</td>
+<td>US <code>[confirm]</code></td>
+<td>SCCs <code>[confirm]</code></td>
+<td>No <code>[confirm — verify ZDR / no-train mode]</code></td>
+<td><code>[confirm]</code></td>
+</tr>
+</tbody></table>
+<h2 id="model-provider-sub-subprocessors-reached-via-gateway-or-directly">Model provider sub-subprocessors (reached via gateway or directly)</h2>
+<p>Eligibility depends on your plan and configuration. A provider processes Customer Content only when a request is routed to it. Each must be confirmed under a no-training / zero-data-retention posture before the row is effective.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-subprocessor</th>
+<th>Reached via</th>
+<th>Data categories</th>
+<th>Training on Customer Content</th>
+<th>Effective</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>[Model provider A]</code></td>
+<td>OpenRouter / direct</td>
+<td>Input, Output, request metadata</td>
+<td>No <code>[confirm ZDR]</code></td>
+<td><code>[confirm]</code></td>
+</tr>
+<tr>
+<td><code>[Model provider B]</code></td>
+<td>OpenRouter / direct</td>
+<td>Input, Output, request metadata</td>
+<td>No <code>[confirm ZDR]</code></td>
+<td><code>[confirm]</code></td>
+</tr>
+<tr>
+<td><code>[Additional eligible providers]</code></td>
+<td>OpenRouter / direct</td>
+<td>Input, Output, request metadata</td>
+<td>No <code>[confirm ZDR]</code></td>
+<td><code>[confirm]</code></td>
+</tr>
+</tbody></table>
+<h2 id="hanzo-operated-processing">Hanzo-operated processing</h2>
+<p>Inference served on Hanzo's own infrastructure (hosted open-source and Hanzo models via hanzo-engine) is processed by Hanzo as processor under the DPA, not by a third-party subprocessor. Enso routing, the benchmark registry, and the <code>/v1/research</code> plane are Hanzo-operated.</p>
+<h2 id="change-notices">Change notices</h2>
+<p>To receive advance notice of new subprocessors, subscribe at <code>[SUBPROCESSOR CHANGE-NOTICE MECHANISM — REQUIRED BEFORE PUBLICATION]</code>. Customers may object to a new subprocessor on documented data-protection grounds as described in the <a href="/legal/dpa">DPA</a>.</p>
+<p><strong>Publication gate:</strong> Populate every <code>[confirm]</code> from executed DPAs, verify each provider's zero-data-retention / no-training mode and transfer mechanism, stand up the change-notice subscription, and obtain counsel review before this Register is published as effective.</p>
+</div></div></section></main></div>$/$

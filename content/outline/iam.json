@@ -1,0 +1,121 @@
+[
+[
+{
+"h1": "Hanzo IAM"
+},
+{
+"p": "The sign-in behind every Hanzo service."
+},
+{
+"a": "API reference",
+"href": "https://docs.hanzo.ai/docs/openapi/iam"
+},
+{
+"a": "Discovery document",
+"href": "https://hanzo.id/.well-known/openid-configuration"
+},
+{
+"a": "Source",
+"href": "https://github.com/hanzoai/iam"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"p": "Authorization code with PKCE, always S256."
+},
+{
+"p": "The passwords that do exist are argon2id digests, and a scheme IAM does not recognize fails closed."
+},
+{
+"p": "Refresh tokens are single-use and kept only as a hash. Presenting a spent one revokes the whole family, so a stolen token cannot outlive its session."
+},
+{
+"p": "A second factor is an authenticator app, a code by SMS or email, or a passkey. Adding or dropping one signs the account out of every other browser."
+},
+{
+"p": "Sign-in arrives from Google, from GitHub or from any OIDC issuer you name, and SCIM 2.0 keeps a directory in step."
+},
+{
+"p": "Tokens are signed RS256, with ML-DSA-65 available per certificate and published in the same JWKS."
+},
+{
+"p": "Every organization is a tenancy boundary, and membership travels in the token."
+},
+{
+"p": "What you may reach once signed in is Authz’s to decide, reading the same token."
+},
+{
+"li": "PKCE"
+},
+{
+"li": "Passwords"
+},
+{
+"li": "Refresh tokens"
+},
+{
+"li": "A second factor"
+},
+{
+"li": "Federation"
+},
+{
+"li": "Signing keys"
+},
+{
+"li": "Organizations"
+},
+{
+"li": "Authorization"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls IAM from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo IAM in my project. Start with: hanzo iam whoami"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Authz Fine-grained access",
+"href": "/authz"
+},
+{
+"a": "KMS Managed keys",
+"href": "/kms"
+},
+{
+"a": "Secrets Store once, sync everywhere",
+"href": "/cloud/secrets"
+}
+],
+[
+{
+"h2": "Get IAM"
+},
+{
+"p": "Identity + access (hanzo.id)"
+},
+{
+"a": "hanzoai/iam",
+"href": "https://github.com/hanzoai/iam"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

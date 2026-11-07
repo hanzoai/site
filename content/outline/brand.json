@@ -1,0 +1,116 @@
+[
+[
+{
+"h1": "Hanzo Brand Guidelines."
+},
+{
+"p": "How to build interfaces that look like the rest of Hanzo across our platform and products."
+},
+{
+"a": "Download Assets",
+"href": "#assets"
+},
+{
+"a": "Press Kit",
+"href": "/press"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "Reduce visual noise and focus on essential elements. Each design decision should have purpose and enhance the user experience."
+},
+{
+"p": "Use subtle gradients, appropriate spacing, and thoughtful typography to create elegant and sophisticated interfaces."
+},
+{
+"p": "Maintain consistency in design patterns, spacing, and visual hierarchy to create a unified experience across all touchpoints."
+},
+{
+"li": "Minimal & Focused"
+},
+{
+"li": "Elegant & Refined"
+},
+{
+"li": "Consistent & Cohesive"
+}
+],
+[
+{
+"h2": "Color Palette"
+},
+{
+"p": "Our colors are carefully selected to create a bold, modern aesthetic."
+},
+{
+"h3": "Brand Colors"
+},
+{
+"h3": "Gray Scale"
+},
+{
+"h3": "Gradients"
+}
+],
+[
+{
+"h2": "Typography"
+},
+{
+"p": "Clean, readable typography is essential to our design language."
+}
+],
+[
+{
+"h2": "Components"
+},
+{
+"p": "Reusable UI components that maintain consistency across our products."
+},
+{
+"h3": "Buttons"
+},
+{
+"h3": "Cards"
+},
+{
+"h3": "Card Title"
+},
+{
+"p": "This is a standard card component with hover states and consistent styling."
+},
+{
+"h3": "Badges"
+}
+],
+[
+{
+"h2": "Download Assets"
+},
+{
+"p": "Get our brand assets for your projects and presentations."
+},
+{
+"a": "Press Kit Logos and brand assets (ZIP)",
+"href": "/press/hanzo-press-kit.zip"
+}
+],
+[
+{
+"h2": "Need brand assistance?"
+},
+{
+"p": "Our team can help with custom assets, co-branding requests, and other brand-related inquiries."
+},
+{
+"a": "Contact Us",
+"href": "/contact"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#a8cadac9c6cce8c0c9c6d2c786c9c1"
+}
+]
+]

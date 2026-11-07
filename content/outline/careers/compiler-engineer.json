@@ -1,0 +1,88 @@
+[
+[
+{
+"a": "Back to all careers",
+"href": "/careers"
+},
+{
+"button": "Share position"
+},
+{
+"h1": "Compiler Engineer"
+},
+{
+"p": "Build high-performance inference engines and model compilers. Experience with LLVM, MLIR, or similar frameworks preferred."
+},
+{
+"a": "Apply for this position",
+"href": "#apply"
+},
+{
+"a": "Email resume directly",
+"href": "/cdn-cgi/l/email-protection#ee8d8f9c8b8b9c9dae868f809481c08f87d19d9b8c848b8d9ad3af9e9e82878d8f9a878180cbddafcbdcdead81839e87828b9ccbdcdeab808987808b8b9c"
+}
+],
+[
+{
+"h2": "About the Role"
+},
+{
+"p": "The compiler team builds the high-throughput, low-latency execution engine that powers Hanzo Engine and edge inference. You will work on optimizing compute graphs, lowering neural network intermediate representations, and writing hardware-specific backends for GPUs, TPUs, and emerging NPUs."
+},
+{
+"p": "Hanzo builds an open AI cloud — compilers, models, distributed infrastructure, and agent tooling. Our codebases are predominantly open source, and team members operate with high autonomy and end-to-end ownership."
+},
+{
+"h2": "Key Responsibilities"
+},
+{
+"p": "Develop optimizing compilers and graph transformation passes for LLM inference pipelines."
+},
+{
+"p": "Work with MLIR, LLVM, and custom IRs to generate performant machine code and kernel invocations."
+},
+{
+"p": "Optimize KV cache memory management, speculative decoding, and paged attention engines."
+},
+{
+"p": "Benchmark, profile, and push the Pareto frontier of tokens per second per dollar."
+},
+{
+"h2": "What We're Looking For"
+},
+{
+"p": "Strong proficiency in C++ and/or Rust, with deep knowledge of compiler architecture (frontends, IRs, passes, backends)."
+},
+{
+"p": "Familiarity with MLIR, LLVM, or ML graph compilation tools (TVM, XLA, TensorRT, TorchDynamo)."
+},
+{
+"p": "Understanding of GPU hardware architectures (compute capabilities, tensor cores, shared memory, warp scheduling)."
+},
+{
+"p": "Rigorous approach to performance benchmarking, micro-benchmarks, and regression testing."
+},
+{
+"h2": "Nice to Have"
+},
+{
+"p": "Experience writing custom CUDA or Metal kernels for flash attention or fused operations."
+},
+{
+"p": "Contributions to open source compiler or runtime projects."
+},
+{
+"h2": "Why Join Hanzo"
+},
+{
+"h2": "Apply for this Role"
+},
+{
+"button": "Submit Application"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#5f3c3e2d3a3a2d2c1f373e312530713e36602c2a3d353a3c2b621e2f2f33363c3e2b3630317a6c1e7a6d6f1c30322f36333a2d7a6d6f1a313836313a3a2d"
+}
+]
+]

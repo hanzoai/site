@@ -1,0 +1,245 @@
+[
+[
+{
+"p": "Benchmarks / GPQA-Diamond"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"h1": "The router on GPQA-Diamond"
+},
+{
+"p": "One set of 198 graduate-level questions, answered by Enso's router and by single models from other labs, every row a research run."
+},
+{
+"a": "GPQA",
+"href": "https://huggingface.co/datasets/Idavidrein/gpqa"
+},
+{
+"a": "GPQA: A Graduate-Level Google-Proof Q&A Benchmark",
+"href": "https://arxiv.org/abs/2311.12022"
+},
+{
+"a": "api.hanzo.ai/v1/research",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=enso.gpqa_diamond"
+},
+{
+"code": "curl -s \"https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=enso.gpqa_diamond\""
+},
+{
+"p": "prints the table on this page — transcribed from the research API, read when the page opens"
+},
+{
+"h2": "What is measured"
+},
+{
+"p": "GPQA-Diamond is the hardest subset of GPQA: 198 multiple-choice questions in biology, physics and chemistry, written by domain PhDs and filtered to the ones that other PhDs get right and skilled non-experts get wrong even with the web open. It is a knowledge benchmark rather than an agentic one — one question, one answer, no tools — which is what makes it useful here: it isolates the choice of model from everything else a system does."
+},
+{
+"p": "What the router adds is that the choice is per question. Enso reads each one and dispatches it, so a tier is not a model — it is a pool and a willingness to spend. Every row below answers the same 198 questions, which is why a score and what its run cost belong in one table, and why a score quoted without its cost says nothing about the system it came from."
+},
+{
+"p": "GPQA Diamond · enso.gpqa_diamond, split test · every row a research run, read from api.hanzo.ai when the page opens · sorted by accuracy"
+},
+{
+"table": [
+[
+"System",
+"Accuracy",
+"Correct",
+"Run cost",
+"Tag, date"
+],
+[
+"enso run",
+"92.9%",
+"184 of 198",
+"$5.58",
+"frontier · 2026-07-19"
+],
+[
+"enso-ultra run",
+"92.9%",
+"184 of 198",
+"$20.20",
+"frontier · 2026-07-19"
+],
+[
+"gpt-5.6-sol run",
+"91.9%",
+"182 of 198",
+"$4.08",
+"frontier · 2026-07-19"
+],
+[
+"opus-5.5 run",
+"90.9%",
+"180 of 198",
+"$3.78",
+"fill · 2026-10-16"
+],
+[
+"sonnet-5.5 run",
+"90.4%",
+"179 of 198",
+"$1.85",
+"fill · 2026-10-16"
+],
+[
+"gpt-5.5 run",
+"89.9%",
+"178 of 198",
+"$11.95",
+"frontier · 2026-07-19"
+],
+[
+"fable-5.1 run",
+"87.9%",
+"174 of 198",
+"$8.23",
+"fill · 2026-10-16"
+],
+[
+"opus-4.8 run",
+"86.4%",
+"171 of 198",
+"$3.66",
+"frontier · 2026-07-19"
+],
+[
+"haiku-5.5 run",
+"83.3%",
+"165 of 198",
+"$0.190",
+"fill · 2026-10-16"
+],
+[
+"fable-5 run",
+"82.8%",
+"164 of 198",
+"$9.87",
+"frontier · 2026-07-19"
+],
+[
+"claude-5-sonnet run",
+"77.8%",
+"154 of 198",
+"$5.66",
+"frontier · 2026-07-19"
+],
+[
+"deepseek-v4-pro run",
+"74.2%",
+"147 of 198",
+"$0.259",
+"frontier · 2026-07-19"
+],
+[
+"gpt-4o run",
+"54.5%",
+"108 of 198",
+"$1.58",
+"frontier · 2026-07-19"
+]
+]
+},
+{
+"p": "Each system's frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list's rate for its own model id, the router's included, at list prices, Nov 6, 2026; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read."
+},
+{
+"h2": "What this does not establish"
+},
+{
+"p": "A benchmark score is not a capability. GPQA-Diamond is four-way multiple choice on settled science. It measures what a pool knows and rewards a router that recognises a hard question; it says nothing about whether the answer is reasoned, whether the model holds up over a long autonomous run, or whether it can use a tool. The routing overhead is real work this table does not score either."
+},
+{
+"p": "A row is a run, as of its date. Every row went through enso-bench's harness at the tag and on the date it shows; a system is the router or a single model as that run met it, not necessarily a preset the catalog serves today. What a row cost is the tokens its run records at today's list price for its own model id, the router's included, so two rows are priced by one rule."
+},
+{
+"p": "Hanzo AI Cloud"
+},
+{
+"h3": "Build on Hanzo Cloud"
+},
+{
+"a": "Start on Hanzo Cloud",
+"href": "https://cloud.hanzo.ai"
+},
+{
+"a": "View Models & Pricing",
+"href": "/pricing"
+},
+{
+"a": "Previous Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"a": "All Benchmarks Board",
+"href": "/benchmarks"
+},
+{
+"a": "Next LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"p": "LoCoMo · MemoryAgentBench · LongMemEval · CronQuestions · RepoBench-R · LoCoMo · subject scope · LoCoMo-Conv · Fleet residency · Live agent footprint · Sandbox cold start · Engine prefill on CUDA vs llama.cpp"
+},
+{
+"a": "LoCoMo",
+"href": "/benchmarks/locomo"
+},
+{
+"a": "MemoryAgentBench",
+"href": "/benchmarks/memoryagentbench"
+},
+{
+"a": "LongMemEval",
+"href": "/benchmarks/longmemeval"
+},
+{
+"a": "CronQuestions",
+"href": "/benchmarks/cronquestions"
+},
+{
+"a": "RepoBench-R",
+"href": "/benchmarks/repobench-r"
+},
+{
+"a": "LoCoMo · subject scope",
+"href": "/benchmarks/locomo-subject-scope"
+},
+{
+"a": "LoCoMo-Conv",
+"href": "/benchmarks/locomo-conv"
+},
+{
+"a": "Fleet residency",
+"href": "/benchmarks/fleet"
+},
+{
+"a": "Live agent footprint",
+"href": "/benchmarks/goroutine"
+},
+{
+"a": "Sandbox cold start",
+"href": "/benchmarks/sandbox"
+},
+{
+"a": "Engine prefill on CUDA vs llama.cpp",
+"href": "/benchmarks/inference"
+},
+{
+"p": "every figure a research run at api.hanzo.ai · the dataset: GPQA under CC BY 4.0"
+},
+{
+"a": "api.hanzo.ai",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&benchmark=enso.gpqa_diamond"
+},
+{
+"a": "GPQA",
+"href": "https://huggingface.co/datasets/Idavidrein/gpqa"
+}
+]
+]

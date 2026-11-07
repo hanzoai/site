@@ -1,0 +1,215 @@
+[
+[
+{
+"h1": "Hanzo DeFi"
+},
+{
+"p": "DeFi building blocks for any application"
+},
+{
+"p": "Modular DeFi infrastructure for staking, lending, swapping, and yield aggregation. Gasless transactions, stablecoin APIs, and pre-built strategies—all on the Lux Network."
+},
+{
+"h3": "Staking APIs"
+},
+{
+"p": "Enable token staking with customizable lock periods and reward distributions."
+},
+{
+"h3": "Lending & Borrowing"
+},
+{
+"p": "Integrate money market protocols for lending, borrowing, and collateralization."
+},
+{
+"h3": "Swap Aggregation"
+},
+{
+"p": "Find best swap rates across DEXs with single API call."
+},
+{
+"h3": "Yield Strategies"
+},
+{
+"p": "Pre-built yield optimization strategies. Auto-compound and rebalance."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "Staking APIs"
+},
+{
+"p": "Enable token staking with customizable lock periods and reward distributions."
+},
+{
+"h3": "Lending & Borrowing"
+},
+{
+"p": "Integrate money market protocols for lending, borrowing, and collateralization."
+},
+{
+"h3": "Swap Aggregation"
+},
+{
+"p": "Find best swap rates across DEXs with single API call."
+},
+{
+"h3": "Yield Strategies"
+},
+{
+"p": "Pre-built yield optimization strategies. Auto-compound and rebalance."
+},
+{
+"h3": "Gasless Transactions"
+},
+{
+"p": "Sponsor gas for your users. Pay in stablecoins, settle on-chain."
+},
+{
+"h3": "Risk Management"
+},
+{
+"p": "Position monitoring, liquidation alerts, and automated risk controls."
+},
+{
+"h3": "Analytics"
+},
+{
+"p": "Track TVL, APY, user positions, and protocol health in real-time."
+},
+{
+"h3": "Portfolio APIs"
+},
+{
+"p": "Query user positions, historical returns, and performance across protocols."
+},
+{
+"h3": "Rewards Distribution"
+},
+{
+"p": "Distribute tokens, points, or NFTs as rewards. Merkle drop support."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@hanzo/defi/IHanzoRouter.sol\" ; import \"@hanzo/defi/IHanzoStaking.sol\" ; import \"@hanzo/defi/IHanzoLending.sol\" ; import \"@openzeppelin/contracts/token/ERC20/IERC20.sol\" ; contract YieldOptimizer { IHanzoRouter public router ; IHanzoStaking public staking ; IHanzoLending public lending ; constructor ( address _router , address _staking , address _lending) { router = IHanzoRouter ( _router ); staking = IHanzoStaking ( _staking ); lending = IHanzoLending ( _lending ); } // Swap tokens using best route function swap ( address token"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Yield Aggregators"
+},
+{
+"p": "Build auto-compounding vaults that find the best yield across DeFi protocols."
+},
+{
+"h3": "Staking Platforms"
+},
+{
+"p": "Launch token staking with customizable rewards and governance integration."
+},
+{
+"h3": "Trading Apps"
+},
+{
+"p": "Integrate swap and limit orders with best-execution routing."
+},
+{
+"h3": "Portfolio Trackers"
+},
+{
+"p": "Show users their DeFi positions, earnings, and historical performance."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Hanzo DeFi"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Hanzo DeFi"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

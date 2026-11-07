@@ -1,0 +1,175 @@
+[
+[
+{
+"p": "Benchmarks / Kai / Choosing among many options"
+},
+{
+"a": "Benchmarks",
+"href": "/benchmarks"
+},
+{
+"a": "Kai",
+"href": "/benchmarks?product=Kai#all"
+},
+{
+"h1": "Choosing among many options"
+},
+{
+"p": "Accuracy at each number of listed options, every option scored, the same cases put to both models."
+},
+{
+"h2": "Latest"
+},
+{
+"a": "94.3% Accuracy · kai-1.4 · c1856a77 · 4 options Jev 90.5% · Win · Oct 16, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "92.0% Accuracy · kai-1.4 · c1856a77 · 16 options Jev 85.3% · Win · Oct 16, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"a": "88.0% Accuracy · kai-1.4 · c1856a77 · 77 options Jev 84.3% · Win · Oct 16, 2026 · Hanzo-measured",
+"href": "#history"
+},
+{
+"h2": "History"
+},
+{
+"p": "3 results, newest first. Superseded runs stay, so a revision's progress can be read."
+},
+{
+"table": [
+[
+"Measured",
+"Subject",
+"Metric",
+"Value",
+"Baseline",
+"Result",
+"Status"
+],
+[
+"Oct 16, 2026",
+"kai-1.4 · c1856a77 · 4 options",
+"Accuracy",
+"94.3%",
+"Jev 90.5%",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Oct 16, 2026",
+"kai-1.4 · c1856a77 · 16 options",
+"Accuracy",
+"92.0%",
+"Jev 85.3%",
+"Win",
+"Live · Hanzo-measured"
+],
+[
+"Oct 16, 2026",
+"kai-1.4 · c1856a77 · 77 options",
+"Accuracy",
+"88.0%",
+"Jev 84.3%",
+"Win",
+"Live · Hanzo-measured"
+]
+]
+},
+{
+"h2": "Conditions"
+},
+{
+"h2": "Hardware"
+},
+{
+"p": "CPU F32-Q8_0 on evo"
+},
+{
+"h2": "Source"
+},
+{
+"p": "research run cap.cardinality-cases-kai-1.4.c1856a77-kai"
+},
+{
+"a": "research run cap.cardinality-cases-kai-1.4.c1856a77-kai",
+"href": "https://api.hanzo.ai/v1/research/runs?org=hanzo&id=cap.cardinality-cases-kai-1.4.c1856a77-kai"
+},
+{
+"h2": "Reproduce"
+},
+{
+"p": "bench cap --harness . --who kai,jev --kai <checkpoint>   # in hanzoai/benchmarks/decision"
+},
+{
+"code": "bench cap --harness . --who kai,jev --kai <checkpoint>   # in hanzoai/benchmarks/decision"
+},
+{
+"h2": "More Kai benchmarks"
+},
+{
+"p": "AG News · DAIR Emotion · Banking77 · Support triage · Email spam · Phishing · Toxicity · RAG relevance · Model routing · Typed decisions · MASSIVE · Latency of one decision"
+},
+{
+"a": "AG News",
+"href": "/benchmarks/kai-ag-news"
+},
+{
+"a": "DAIR Emotion",
+"href": "/benchmarks/kai-dair-emotion"
+},
+{
+"a": "Banking77",
+"href": "/benchmarks/kai-banking77"
+},
+{
+"a": "Support triage",
+"href": "/benchmarks/kai-support-triage"
+},
+{
+"a": "Email spam",
+"href": "/benchmarks/kai-email-spam"
+},
+{
+"a": "Phishing",
+"href": "/benchmarks/kai-phishing"
+},
+{
+"a": "Toxicity",
+"href": "/benchmarks/kai-toxicity"
+},
+{
+"a": "RAG relevance",
+"href": "/benchmarks/kai-rag-relevance"
+},
+{
+"a": "Model routing",
+"href": "/benchmarks/kai-model-routing"
+},
+{
+"a": "Typed decisions",
+"href": "/benchmarks/kai-typed-decisions"
+},
+{
+"a": "MASSIVE",
+"href": "/benchmarks/kai-massive"
+},
+{
+"a": "Latency of one decision",
+"href": "/benchmarks/kai-latency"
+},
+{
+"p": "Every result for Choosing among many options on the shelf · How these are measured"
+},
+{
+"a": "Every result for Choosing among many options on the shelf",
+"href": "/benchmarks?q=Choosing%20among%20many%20options#all"
+},
+{
+"a": "How these are measured",
+"href": "/benchmarks#methods"
+}
+]
+]

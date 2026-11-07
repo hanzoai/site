@@ -1,0 +1,93 @@
+[
+[
+{
+"h1": "Hanzo Visor"
+},
+{
+"p": "Machines from several clouds, through one API"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "Regions, sizes and GPU instances from each provider, cached and priced, read through the same call. Ask for what you want; Visor knows which provider can give it to you and what it will cost there."
+},
+{
+"p": "Attach and detach block storage, launch from a provider image or one of your own. Batch launches name themselves in sequence and group under the prefix, so a fleet is just machines and there is no second object to learn."
+},
+{
+"p": "Node pools group machines by shape and role. Managed Kubernetes clusters are provisioned the same way, so the cluster and the machines beside it are one inventory rather than two consoles."
+},
+{
+"p": "A launch can run as a dry run: it returns the quote and spends nothing. A real launch is metered against the organization as it goes, per provider, so the bill is assembled from the same numbers the quote came from."
+},
+{
+"p": "RDP, VNC and SSH reach the machine through a gateway and render in a tab — no client to install, no key to hand out, and no bastion of your own to keep patched. The session is a record, not just a connection."
+},
+{
+"p": "Who launched it, who opened a console, who destroyed it, under which organization and project. Authorization runs through the same grant calculus the rest of the estate uses, so a machine cannot be reached by anyone whose token does not cover it."
+},
+{
+"li": "One catalogue, GPUs included"
+},
+{
+"li": "Volumes and images"
+},
+{
+"li": "Pools, and managed Kubernetes"
+},
+{
+"li": "Priced before it exists"
+},
+{
+"li": "A console in the browser"
+},
+{
+"li": "Every action leaves a row"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Visor from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list"
+}
+],
+[
+{
+"h2": "Get started with Hanzo Visor"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Visor"
+},
+{
+"p": "Machines, volumes, and clusters"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

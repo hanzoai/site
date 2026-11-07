@@ -1,0 +1,121 @@
+[
+[
+{
+"h1": "How do I change my model improvement setting?"
+},
+{
+"p": "One switch decides whether your chats and coding sessions can be used to train Hanzo’s models. You choose it before your first chat, and you can change it any time."
+}
+],
+[
+{
+"h2": "Contents"
+},
+{
+"li": "What the setting does",
+"href": "#what-it-does"
+},
+{
+"li": "Turn it off or on",
+"href": "#turn-it-off"
+},
+{
+"li": "What turning it off changes",
+"href": "#what-changes"
+},
+{
+"li": "What it does not change",
+"href": "#what-does-not"
+},
+{
+"li": "More",
+"href": "#more"
+},
+{
+"h2": "What the setting does"
+},
+{
+"p": "The setting is called Help improve Hanzo’s models . When it is on, Hanzo may use your chats and coding sessions, including what you send and what comes back, to train and evaluate Zen models and other Hanzo systems. When it is off, Hanzo does not use them for that. Agreeing to the Terms of Service does not turn it on."
+},
+{
+"h2": "Turn it off or on"
+},
+{
+"h3": "On the web and the desktop app"
+},
+{
+"li": "Click your avatar."
+},
+{
+"li": "Choose Settings ."
+},
+{
+"li": "Choose Privacy ."
+},
+{
+"li": "Switch Help improve Hanzo’s models off (or on)."
+},
+{
+"h3": "On mobile"
+},
+{
+"li": "Tap your avatar."
+},
+{
+"li": "Tap Settings , then Privacy ."
+},
+{
+"li": "Switch Help improve Hanzo’s models off (or on)."
+},
+{
+"p": "The change saves to your Hanzo account, so it follows you to every device."
+},
+{
+"h2": "What turning it off changes"
+},
+{
+"li": "Chats and coding sessions you start after you turn it off are not used to train Hanzo’s models."
+},
+{
+"li": "It applies to new conversations. Training that had already begun on earlier conversations is not undone."
+},
+{
+"li": "Hanzo still processes your chats and sessions to run the service: to answer you, keep your history, prevent abuse and meet legal duties."
+},
+{
+"h2": "What it does not change"
+},
+{
+"li": "Safety review. Content our systems flag as possibly harmful or abusive may be reviewed and kept to enforce our usage policy . With the setting off, it is not used for general training.",
+"href": "/aup"
+},
+{
+"li": "Feedback. A rating or report you send us may be used to improve Hanzo. A rating alone does not allow training on the whole conversation."
+},
+{
+"li": "Business and API accounts. Their content is not used for training unless an authorized administrator chooses it or a written agreement says so."
+},
+{
+"li": "Analytics and advertising. Those are separate. Use Privacy choices in the footer.",
+"href": "#choices"
+},
+{
+"h2": "More"
+},
+{
+"p": "The full terms are in the Terms of Service (section 5.4) and the Privacy Policy (section 6). Questions or requests: [email protected] ."
+},
+{
+"a": "Terms of Service",
+"href": "/terms"
+},
+{
+"a": "Privacy Policy",
+"href": "/privacy"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection"
+}
+]
+]

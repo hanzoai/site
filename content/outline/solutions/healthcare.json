@@ -1,0 +1,148 @@
+[
+[
+{
+"h1": "Hanzo for healthcare"
+},
+{
+"p": "Take documentation, scheduling and research off clinicians’ desks, with patient data kept in your own environment unless a Business Associate Agreement covers it."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+},
+{
+"p": "Turn a visit transcript into a structured draft note for the clinician to review, correct and sign. The model drafts; a person decides."
+},
+{
+"p": "Workflows confirm appointments, chase missing forms and route referrals, on a schedule or on a webhook from the systems you already run."
+},
+{
+"p": "Search published literature and your own protocols together, and get summaries that link each claim to the passage it came from."
+},
+{
+"p": "Push policies, protocols and runbooks once. Staff find the exact phrase or the thing they meant from one search box."
+},
+{
+"li": "Notes a clinician signs"
+},
+{
+"li": "Scheduling and follow-up"
+},
+{
+"li": "Literature with sources"
+},
+{
+"li": "Policies people can find"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Search Keyword and meaning in one query over the documents you push.",
+"href": "/search"
+},
+{
+"a": "Hanzo Auto Workflows fired by a webhook or a schedule, with runs that survive a restart.",
+"href": "/auto"
+},
+{
+"a": "Memory A graph of what was true and when it was known, answered with citations.",
+"href": "/products/memory"
+},
+{
+"a": "Hanzo Guard Catches prompt injection and pasted secrets going in, and leaks coming out.",
+"href": "/guard"
+},
+{
+"a": "Zen Open-weight models you can download and run on your own hardware.",
+"href": "/zen"
+},
+{
+"a": "Enterprise Our cloud or yours: air-gapped deployment, SSO, audit logs and a person to call.",
+"href": "/enterprise"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "Security and compliance"
+},
+{
+"a": "How the controls work",
+"href": "/trust"
+},
+{
+"a": "Terms and data processing",
+"href": "/legal"
+}
+],
+[
+{
+"h2": "More industries"
+},
+{
+"a": "Cybersecurity",
+"href": "/solutions/cybersecurity"
+},
+{
+"a": "Financial services",
+"href": "/solutions/financial-services"
+},
+{
+"a": "Law",
+"href": "/solutions/law"
+},
+{
+"a": "Retail",
+"href": "/solutions/retail"
+},
+{
+"a": "Government",
+"href": "/solutions/government"
+},
+{
+"a": "Education",
+"href": "/solutions/education"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

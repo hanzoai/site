@@ -1,0 +1,281 @@
+[
+[
+{
+"h1": "Hanzo Search"
+},
+{
+"p": "Keyword and meaning in the same query"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/search"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Chat",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot",
+"href": "/bot"
+},
+{
+"a": "Search",
+"href": "/search"
+},
+{
+"a": "Crawl",
+"href": "/crawl"
+},
+{
+"a": "Studio",
+"href": "/studio"
+},
+{
+"a": "Console",
+"href": "/console"
+},
+{
+"a": "Referrals",
+"href": "/cloud/referrals"
+},
+{
+"a": "Marketplace",
+"href": "/cloud/marketplace"
+},
+{
+"li": "gateway Ready"
+},
+{
+"li": "payments-api Ready"
+},
+{
+"li": "checkout-web Building"
+},
+{
+"li": "docs-site Ready"
+},
+{
+"p": "Every request enters here, so the limiter does too."
+},
+{
+"code": "api.hanzo.ai /v1/search"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Search from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Search in my project. Start with: hanzo search create"
+}
+],
+[
+{
+"h2": "Four ways to ask, one index"
+},
+{
+"p": "The same documents answer all four. Choose per query, not per deployment."
+},
+{
+"h3": "Full text"
+},
+{
+"p": "Typo tolerance, facets and filters. A user who types Kubernets still finds the page, and a user who wants only last quarter's docs can say so."
+},
+{
+"h3": "Vector"
+},
+{
+"p": "Bring your own embedding model — ours or anyone's — and search by meaning. Useful exactly when the user does not know the word your document uses."
+},
+{
+"h3": "Hybrid"
+},
+{
+"p": "Reciprocal Rank Fusion merges the two lists by rank rather than by score, so a keyword hit and a semantic hit compete fairly without a threshold you have to tune."
+},
+{
+"h3": "RAG chat"
+},
+{
+"p": "The retrieved passages go to a model and come back as an answer with links to what it read. Streamed, so the first sentence arrives before the last one is written."
+}
+],
+[
+{
+"h2": "How it works"
+},
+{
+"p": "Content in, ranked results out, and a model over the top if you want one."
+},
+{
+"h3": "Index your content"
+},
+{
+"p": "Push documents at build time or over the REST API. Text fields become searchable as they land; embeddings go to the vector store beside them. Adding a vector field later does not force a text reindex."
+},
+{
+"h3": "Query it from anywhere"
+},
+{
+"p": "A React hook for search-as-you-type, the REST API for everything else, and an MCP tool so an agent can search the same index a user searches. One index, three callers."
+},
+{
+"h3": "Let people ask instead"
+},
+{
+"p": "Turn on RAG chat and a question gets an answer built from the passages that were retrieved, each one linked. If the index has nothing, the answer says so rather than inventing one."
+}
+],
+[
+{
+"h2": "Works with any docs framework"
+},
+{
+"p": "Native support for Hanzo Docs, Fumadocs, Nextra, and Docusaurus. REST API for everything else."
+}
+],
+[
+{
+"h2": "Pricing"
+},
+{
+"p": "Pay for hosted search, vector, and AI. Self-host Meilisearch free forever."
+},
+{
+"h3": "Build"
+},
+{
+"li": "5 projects"
+},
+{
+"li": "10k docs per project"
+},
+{
+"li": "2,500 AI chat sessions"
+},
+{
+"li": "Unlimited searches"
+},
+{
+"li": "React hook + REST API"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/search"
+},
+{
+"h3": "Scale"
+},
+{
+"li": "25 projects"
+},
+{
+"li": "100k docs per project"
+},
+{
+"li": "50,000 AI chat sessions"
+},
+{
+"li": "Unlimited searches"
+},
+{
+"li": "Priority support"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/search"
+},
+{
+"h3": "Enterprise"
+},
+{
+"li": "Unlimited projects"
+},
+{
+"li": "Unlimited docs"
+},
+{
+"li": "Unlimited AI chat sessions"
+},
+{
+"li": "Unlimited searches"
+},
+{
+"li": "Dedicated support + SLA"
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"p": "Meilisearch is open source. Self-host free forever. Pay only for our hosted API, vector search, and AI features."
+}
+],
+[
+{
+"p": "Hanzo Search"
+},
+{
+"h2": "Make your content searchable and conversational"
+},
+{
+"p": "Index once, search everywhere. Full-text, vector, hybrid, and RAG -- all from one API."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/cli/search"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"p": "Related capabilities"
+},
+{
+"a": "Chat Conversational AI",
+"href": "/cloud/chat"
+},
+{
+"a": "Bot Multi-agent platform",
+"href": "/bot"
+},
+{
+"a": "Crawl Web crawler",
+"href": "/crawl"
+}
+],
+[
+{
+"h2": "Get Search"
+},
+{
+"p": "AI-powered search"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,104 @@
+[
+[
+{
+"h1": "Hanzo MQ"
+},
+{
+"p": "Background work, done later"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "A cron expression, a delay in milliseconds, or a job that repeats on an interval — timezone aware, and held in the store rather than in a process that might restart."
+},
+{
+"p": "Cap how many jobs a queue may start in a window, and how many a single worker runs at once. The third-party API with a quota stops being the reason your service falls over."
+},
+{
+"p": "A job carries a priority, so the urgent one goes ahead of the backlog. Inside one priority it stays first in, first out, which is what keeps ordinary work from quietly starving."
+},
+{
+"p": "Set attempts and a backoff — fixed, exponential, or a function you write. A worker that dies mid-job loses its lock and the job is handed to another, so work is attempted at least once and can be attempted twice. Write it to be idempotent and that is a property rather than a surprise."
+},
+{
+"p": "QueueEvents streams completed, failed, progress and stalled as they occur, so a job's life is something you observe rather than reconstruct from logs afterwards."
+},
+{
+"p": "A job that runs out of attempts lands in the failed set carrying its error and stack. Read it, fix the cause, retry it. Nothing disappears because it went wrong."
+},
+{
+"li": "Scheduling"
+},
+{
+"li": "Rate Limiting"
+},
+{
+"li": "Priority Queues"
+},
+{
+"li": "Retry & Backoff"
+},
+{
+"li": "Watch it happen"
+},
+{
+"li": "Failure is a state, not a deletion"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls MQ from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo MQ in my project. Start with: hanzo mq stream list"
+}
+],
+[
+{
+"h2": "Add a job here, run it there"
+},
+{
+"code": "import { Queue , Worker } from \" @hanzo/mq \" const queue = new Queue ( \" emails \" , { connection : { host : \" kv.hanzo.ai \" , port : 6379 } }) // Add jobs with options await queue. add ( \" welcome \" , { userId : \" usr_123 \" }, { priority : 1 , delay : 5000 , attempts : 3 , backoff : { type : \" exponential \" , delay : 1000 }, }) // Process jobs const worker = new Worker ( \" emails \" , async ( job ) => { await sendEmail ( job.data.userId , \" welcome \" ) }, { connection : { host : \" kv.hanzo.ai \" , port : 6379 }, concurrency : 10 , limiter : { max : 100 , duration : 60_000 }, })"
+}
+],
+[
+{
+"h2": "Add a job and walk away"
+},
+{
+"p": "Free tier includes 10K jobs/month. No job size limits."
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get MQ"
+},
+{
+"p": "Message queue"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

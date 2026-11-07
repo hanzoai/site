@@ -1,0 +1,229 @@
+[
+[
+{
+"h1": "Hanzo Extension"
+},
+{
+"p": "Your browser, as a tool an agent can use."
+},
+{
+"a": "Availability",
+"href": "https://docs.hanzo.ai/docs/apps/browser"
+},
+{
+"a": "Use Hanzo Chat",
+"href": "https://chat.hanzo.ai"
+},
+{
+"img": "/models/uta.webp",
+"alt": ""
+},
+{
+"p": "The agent drives the browser you are already signed into, so a page behind a login is a page it can read. Nothing has to be scraped from the outside."
+},
+{
+"p": "The extension talks to the local Hanzo daemon through a native messaging host over a Unix socket. There is no WebSocket, no localhost port, and nothing else on the machine can dial in."
+},
+{
+"p": "It only reports itself connected once the daemon lists it as a provider. An open pipe to a wedged process is the failure this replaced, and it is checked on every tick."
+},
+{
+"p": "Chrome, Firefox and Safari builds come out of the same source. The evaluate rule is shared, so the same snippet from a caller behaves identically in all three."
+},
+{
+"p": "Each browser registers separately, so listing tabs asks the browser that is active — and naming a tab id from another browser's list is how you reach the other one."
+},
+{
+"li": "It uses your session"
+},
+{
+"li": "No port to open"
+},
+{
+"li": "Connected means registered"
+},
+{
+"li": "Three browsers, one behaviour"
+},
+{
+"li": "Tabs are addressable"
+}
+],
+[
+{
+"h2": "How it works"
+},
+{
+"p": "The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab."
+},
+{
+"h3": "It uses your session"
+},
+{
+"p": "The agent drives the browser you are already signed into, so a page behind a login is a page it can read. Nothing has to be scraped from the outside."
+},
+{
+"h3": "No port to open"
+},
+{
+"p": "The extension talks to the local Hanzo daemon through a native messaging host over a Unix socket. There is no WebSocket, no localhost port, and nothing else on the machine can dial in."
+},
+{
+"h3": "Connected means registered"
+},
+{
+"p": "It only reports itself connected once the daemon lists it as a provider. An open pipe to a wedged process is the failure this replaced, and it is checked on every tick."
+},
+{
+"h3": "Three browsers, one behaviour"
+},
+{
+"p": "Chrome, Firefox and Safari builds come out of the same source. The evaluate rule is shared, so the same snippet from a caller behaves identically in all three."
+},
+{
+"h3": "Tabs are addressable"
+},
+{
+"p": "Each browser registers separately, so listing tabs asks the browser that is active — and naming a tab id from another browser's list is how you reach the other one."
+},
+{
+"h3": "The rest of your tools, too"
+},
+{
+"p": "The same repo carries connectors for the software your work already lives in — documents, tickets, design files, mail, calendars — so an agent reaches them the same way it reaches a tab."
+},
+{
+"h3": "Read a page as text"
+},
+{
+"p": "It hands back page content, console messages and network requests, which is what makes it useful for checking your own site rather than just browsing someone else's."
+},
+{
+"h3": "Installs from a file"
+},
+{
+"p": "Load it unpacked in Chrome or as a temporary add-on in Firefox while you are working on it. The build produces all three targets in one command."
+}
+],
+[
+{
+"h2": "Built for every major browser"
+},
+{
+"p": "Direct extension builds available for Chrome, Firefox, Safari, and Edge. Install in seconds to bring Hanzo agents into your everyday browsing."
+},
+{
+"h3": "Chrome"
+},
+{
+"p": "Full integration with Google Chrome browser with tabs context and sidebar assistance."
+},
+{
+"a": "Download for Chrome",
+"href": "https://github.com/hanzoai/extension/releases/latest"
+},
+{
+"h3": "Firefox"
+},
+{
+"p": "Fully compatible with Mozilla Firefox for privacy-conscious users and developers."
+},
+{
+"a": "Download for Firefox",
+"href": "https://github.com/hanzoai/extension/releases/latest"
+},
+{
+"h3": "Edge"
+},
+{
+"p": "Enhanced experience on Microsoft Edge with optimized performance and memory profile."
+},
+{
+"a": "Download for Edge",
+"href": "https://github.com/hanzoai/extension/releases/latest"
+},
+{
+"h3": "Safari & Others"
+},
+{
+"p": "Safari, Brave, Opera, Arc, and other Chromium-based browsers are also fully supported."
+},
+{
+"a": "All Extension Builds",
+"href": "https://github.com/hanzoai/extension/releases/latest"
+}
+],
+[
+{
+"h2": "What you would use it for"
+},
+{
+"p": "Mostly the work that only exists inside a browser window"
+},
+{
+"h3": "Check the change you just made"
+},
+{
+"p": "An agent that edited a page can open it, look at what rendered, and read the console — instead of telling you it thinks the fix worked."
+},
+{
+"h3": "Behind a login"
+},
+{
+"p": "An internal dashboard, a vendor console, an admin panel. It runs in the session you already have, so there is no service account to provision for a one-off task."
+},
+{
+"h3": "Debug the request, not the guess"
+},
+{
+"p": "Network requests and console messages come back as data. When a page misbehaves, the agent can read what the browser saw."
+},
+{
+"h3": "The long boring form"
+},
+{
+"p": "Multi-step flows that exist only in a UI and have no API behind them. It fills them in and tells you where it got stuck."
+}
+],
+[
+{
+"h2": "Get the Hanzo Extension"
+},
+{
+"p": "Available for Chrome, Firefox, Safari, and Edge. Or use Hanzo Chat directly in any browser."
+},
+{
+"a": "Download Extension",
+"href": "https://github.com/hanzoai/extension/releases/latest"
+},
+{
+"a": "Open Hanzo Chat",
+"href": "/chat"
+}
+],
+[
+{
+"h2": "Get started with Extension"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/apps/browser"
+}
+],
+[
+{
+"h2": "Get Extension"
+},
+{
+"p": "Browser extension + MCP bridge"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

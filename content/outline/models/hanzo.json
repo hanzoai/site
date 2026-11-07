@@ -1,0 +1,172 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Hanzo Models via Hanzo AI"
+},
+{
+"p": "30 models available"
+},
+{
+"p": "Access all 30 Hanzo models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "Enso 900K Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow. text",
+"href": "/models/hanzo/enso"
+},
+{
+"a": "Enso (enso-auto) 900K Routes each request to one tier by the reasoning depth it asks for: enso-flash at off, none, minimal, low, default; enso-pro at medium, high; enso-ultra at xhigh, max. It bills at the price of the tier that answers; the price shown is a request's that states no depth. When nothing pays for that tier it answers on enso-free, at no charge, and says so. text",
+"href": "/models/hanzo/enso-auto"
+},
+{
+"a": "Enso Flash 900K Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow. text",
+"href": "/models/hanzo/enso-flash"
+},
+{
+"a": "enso-free 1M text",
+"href": "/models/hanzo/enso-free"
+},
+{
+"a": "enso-pro 1M text",
+"href": "/models/hanzo/enso-pro"
+},
+{
+"a": "Enso Ultra 1M Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer. text",
+"href": "/models/hanzo/enso-ultra"
+},
+{
+"a": "free 66K text",
+"href": "/models/hanzo/free"
+},
+{
+"a": "Kai 33K Hanzo Kai is a structured decision model answering typed questions at /v1/decisions with calibrated probabilities and zero output tokens. Full multimodal decision architecture (~850M parameters, 32K reach); native vision and audio towers: Kai-2 target. Text State Vision (Kai-2 target)",
+"href": "/models/hanzo/kai"
+},
+{
+"a": "hanzo/zen 1M text",
+"href": "/models/hanzo/zen"
+},
+{
+"a": "Kai (kai-1.8) 33K Hanzo Kai is a structured decision model answering typed questions at /v1/decisions with calibrated probabilities and zero output tokens. Full multimodal decision architecture (~850M parameters, 32K reach); native vision and audio towers: Kai-2 target. Text State Vision (Kai-2 target)",
+"href": "/models/hanzo/kai-1.8"
+},
+{
+"a": "koma image",
+"href": "/models/hanzo/koma"
+},
+{
+"a": "Zen Embedding 33K Dense text embeddings for semantic search, retrieval, and clustering. embeddings",
+"href": "/models/hanzo/zen-embedding"
+},
+{
+"a": "zen-embedding-3 33K embeddings",
+"href": "/models/hanzo/zen-embedding-3"
+},
+{
+"a": "zen-free 1M text",
+"href": "/models/hanzo/zen-free"
+},
+{
+"a": "Zen Guard — Content Safety 128K Safety classifier for moderation and guardrails across a broad category and language set. text",
+"href": "/models/hanzo/zen-guard"
+},
+{
+"a": "zen-scribe Hanzo's speech-to-text model, which writes down what is said in any language, served at /v1/audio/transcriptions. transcript",
+"href": "/models/hanzo/zen-scribe"
+},
+{
+"a": "Zen VL — Vision-Language 1M Reads images and reasons over them — visual Q&A, document and chart understanding, grounded captioning. text",
+"href": "/models/hanzo/zen-vl"
+},
+{
+"a": "zen-voice-mini Hanzo's text-to-speech voice, served at /v1/audio/speech. It speaks Arabic as well as English. audio",
+"href": "/models/hanzo/zen-voice-mini"
+},
+{
+"a": "Zen5 (Default) 1M Canonical Zen5 default. a 35B frontier MoE (3B active) (35B total / 3B active per token, released Apr 2026, Apache-2.0). 256K context, agentic-trained, OpenAI + Anthropic API. The everyday Zen5 chat model. text",
+"href": "/models/hanzo/zen5"
+},
+{
+"a": "Zen5 Coder 1M Code-specialized Zen5 tier. 80B sparse MoE tuned for repo-scale code understanding, agentic refactoring, and tool-use coding loops. text",
+"href": "/models/hanzo/zen5-coder"
+},
+{
+"a": "zen5-evo 1M text",
+"href": "/models/hanzo/zen5-evo"
+},
+{
+"a": "Zen5 Flash 1M Smallest and cheapest text-only Zen5 chat tier. 4B-class dense, sub-100ms TTFT, 32K context. For high-volume routing and simple agent loops. text",
+"href": "/models/hanzo/zen5-flash"
+},
+{
+"a": "Zen5 Mini 1M Frontier agentic at the lowest cost in the family. Built on a 230B agentic MoE (10B active) (230B MoE / 10B active, released Feb 2026). 80.2% SWE-Bench Verified, 76.3% BrowseComp; trained on 200K+ real-world environments via large-scale RL. text",
+"href": "/models/hanzo/zen5-mini"
+},
+{
+"a": "Zen5 Pro 1M Zen Flash IQ2_XXS-imatrix weights (81 GB GGUF on zenlm/zen-5-pro-gguf). 284B total / 37B active per token, 1M context, asymmetric routed-MoE quant. Fits a single 128 GB Apple Silicon / DGX Spark / H100 80 GB. text",
+"href": "/models/hanzo/zen5-pro"
+},
+{
+"a": "zen5-spark 1M text",
+"href": "/models/hanzo/zen5-spark"
+},
+{
+"a": "zen6 1M text",
+"href": "/models/hanzo/zen6"
+},
+{
+"a": "zen6-coder 1M text",
+"href": "/models/hanzo/zen6-coder"
+},
+{
+"a": "zen6-flash 1M text",
+"href": "/models/hanzo/zen6-flash"
+},
+{
+"a": "zen6-free 1M text",
+"href": "/models/hanzo/zen6-free"
+},
+{
+"a": "zen6-max 1M text",
+"href": "/models/hanzo/zen6-max"
+}
+],
+[
+{
+"h2": "Use Hanzo models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

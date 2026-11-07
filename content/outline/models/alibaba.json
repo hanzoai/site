@@ -1,0 +1,76 @@
+[
+[
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"h1": "Alibaba Models via Hanzo AI"
+},
+{
+"p": "6 models available"
+},
+{
+"p": "Access all 6 Alibaba models through Hanzo's OpenAI-compatible API. One key, one bill, no rate limit juggling."
+},
+{
+"a": "Get API Access",
+"href": "/signup"
+},
+{
+"a": "API Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"p": "Test right now from your terminal. No credentials needed:"
+},
+{
+"button": "Copy"
+},
+{
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer guest_temp_key \" \\ -d ' {\"model\": \"zen-free\", \"messages\": [{\"role\": \"user\", \"content\": \"hello\"}]} '"
+}
+],
+[
+{
+"a": "HappyHorse 1.0 HappyHorse 1.0 is a video generation model from Alibaba. It generates short videos from a text prompt, a single starting image, or a set of reference images, with output up... video",
+"href": "/models/alibaba/happyhorse-1.0"
+},
+{
+"a": "HappyHorse 1.1 HappyHorse 1.1 is a video generation model from Alibaba. It generates short videos from a text prompt, a single starting image, or a set of reference images, with output up... video",
+"href": "/models/alibaba/happyhorse-1.1"
+},
+{
+"a": "Wan 2.6 Alibaba's most advanced video generation model, supporting over 10 visual creation capabilities in a unified system. Wan 2.6 generates 1080p video at 24fps from text, images, reference videos, or audio,... video",
+"href": "/models/alibaba/wan-2.6"
+},
+{
+"a": "Wan 2.7 Wan 2.7 is a video generation model from Alibaba. It supports text-to-video, image-to-video with first and last frame control, and reference-to-video, where multiple reference images guide the style and content... video",
+"href": "/models/alibaba/wan-2.7"
+},
+{
+"a": "Wan 3.0 Wan 3.0 is a video generation model from Alibaba for text-to-video, image-to-video, and reference-guided video generation. It produces 480p, 720p, or 1080p video with durations from 2 to 30 seconds. video",
+"href": "/models/alibaba/wan-3.0"
+},
+{
+"a": "Wan 3.0 Prime Wan 3.0 Prime is a fast-mode variant of [Wan 3.0](https://openrouter.ai/alibaba/wan-3.0) from Alibaba. It supports text-to-video and first-frame image-to-video generation. video",
+"href": "/models/alibaba/wan-3.0-prime"
+}
+],
+[
+{
+"h2": "Use Alibaba models via Hanzo"
+},
+{
+"p": "One key. One bill. Works with every SDK you already have."
+},
+{
+"a": "Start Free",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Browse All Models",
+"href": "/models"
+}
+]
+]

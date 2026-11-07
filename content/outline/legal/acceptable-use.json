@@ -1,0 +1,238 @@
+[
+[
+{
+"h1": "Acceptable Use Policy"
+},
+{
+"p": "What you may and may not do with Hanzo, the extra care high-risk uses need, and how we enforce it. Also called the Usage Policy."
+}
+],
+[
+{
+"p": "Effective 2026-09-30 · Version aup-2026-09-30 · Previous version: none, this is the first."
+},
+{
+"h2": "Contents"
+},
+{
+"li": "1. Universal standards",
+"href": "#1-universal-standards"
+},
+{
+"li": "2. High-risk uses",
+"href": "#2-high-risk-uses"
+},
+{
+"li": "3. Additional guidelines",
+"href": "#3-additional-guidelines"
+},
+{
+"li": "4. Enforcement",
+"href": "#4-enforcement"
+},
+{
+"li": "5. How to report",
+"href": "#5-how-to-report"
+}
+],
+[
+{
+"p": "This Acceptable Use Policy (also called our Usage Policy) applies to everyone who uses Hanzo: people chatting, developers calling the API, teams running agents, and anything acting on their behalf. It is part of the Terms of Service . It covers every model, tool and workflow reached through Hanzo, including through Enso."
+},
+{
+"a": "Terms of Service",
+"href": "/terms"
+},
+{
+"p": "Use Hanzo to do good work without harming people. The lists below are examples, not a complete map: conduct that is plainly abusive, deceptive or dangerous is out even when it is not listed. We update this policy as products, threats and the law change."
+},
+{
+"h2": "1. Universal standards"
+},
+{
+"p": "These apply to every use, with no exceptions."
+},
+{
+"h3": "1.1 Illegal activity"
+},
+{
+"p": "Do not use Hanzo to break the law or to help anyone else do so. That includes fraud, trafficking in people or illegal goods, money laundering, evading sanctions or export controls, and infringing intellectual property, trade secrets, or publicity and privacy rights."
+},
+{
+"h3": "1.2 Critical infrastructure"
+},
+{
+"p": "Do not use Hanzo to attack, disrupt or gain unauthorized access to power, water, transport, health, finance, telecommunications, or other systems society depends on, or to give operational guidance for doing so."
+},
+{
+"h3": "1.3 Compromising systems and malware"
+},
+{
+"p": "Do not probe, scan or breach any system or network without authorization. Do not create or spread malware, ransomware, credential stealers or exploits built to cause harm, or run denial-of-service and similar attacks. Authorized security research and defensive work are welcome: say what you are authorized to test, and stay inside it."
+},
+{
+"h3": "1.4 Weapons"
+},
+{
+"p": "Do not use Hanzo to develop, obtain or improve biological, chemical, radiological or nuclear weapons, high-yield explosives, or other weapons capable of mass harm. Do not use it to make or acquire illegal firearms or to help someone evade the law on weapons."
+},
+{
+"h3": "1.5 Violence, hate and harassment"
+},
+{
+"p": "Do not use Hanzo to plan, incite or glorify violence or terrorism; to threaten, stalk, bully or harass a person; or to promote hatred of people for who they are, including their race, ethnicity, religion, nationality, sex, gender, sexual orientation, disability or age."
+},
+{
+"h3": "1.6 Privacy and identity"
+},
+{
+"p": "Do not use Hanzo to collect, infer or expose private information about people without a lawful basis, to dox or track individuals, or to guess sensitive traits such as health, beliefs or immigration status from their data. Do not impersonate a person or organization, or use someone’s face, voice or likeness to identify, clone or mislead without the permission the law requires."
+},
+{
+"h3": "1.7 Child safety"
+},
+{
+"p": "Do not sexualize minors in any way, and do not create, request, store or share child sexual abuse material. Do not use Hanzo to groom, exploit or endanger children. We report apparent child sexual abuse material to the authorities as the law requires."
+},
+{
+"h3": "1.8 Harmful content"
+},
+{
+"p": "Do not use Hanzo to encourage or give instructions for suicide or self-harm, or to promote eating disorders or dangerous challenges. When someone may be at risk, Hanzo may respond with support resources rather than the answer requested."
+},
+{
+"h3": "1.9 Misinformation"
+},
+{
+"p": "Do not use Hanzo to produce disinformation, to run coordinated inauthentic campaigns, or to pass off fabricated content as real: false news, fake reviews, synthetic media of real people meant to deceive, or claims that could cause real-world harm, such as false medical advice."
+},
+{
+"h3": "1.10 Election integrity"
+},
+{
+"p": "Do not use Hanzo to interfere with democratic processes: voter suppression, deceptive information about how, when or where to vote, impersonating candidates or officials, or automated campaigns that pose as real voters or supporters."
+},
+{
+"h3": "1.11 Surveillance and law-enforcement use"
+},
+{
+"p": "Do not use Hanzo for covert or mass surveillance, for tracking or profiling people by protected characteristics, for predictive policing of individuals, or for identifying people from biometric data in ways the law prohibits. Government and law-enforcement use needs a written agreement with Hanzo first."
+},
+{
+"h3": "1.12 Fraud and deception"
+},
+{
+"p": "Do not use Hanzo to run scams, phishing, spam, pyramid schemes, or other deceptive schemes, to make deceptive claims about a product, or to get around the identity and payment checks other services rely on."
+},
+{
+"h3": "1.13 Platform abuse"
+},
+{
+"p": "Do not misuse the Services themselves. That means not:"
+},
+{
+"li": "sharing credentials or API keys, or creating accounts to dodge a limit, suspension or price;"
+},
+{
+"li": "circumventing rate limits, usage metering, safety measures, or region or provider restrictions, including jailbreak and prompt-injection techniques used to get prohibited output;"
+},
+{
+"li": "extracting model weights, system prompts, routing policies or the Enso selector, except where an open-source licence or the law permits;"
+},
+{
+"li": "using outputs to train, fine-tune or distill a model that competes with Hanzo, or reselling the Services without permission;"
+},
+{
+"li": "scraping the Services or reaching them by automation other than our documented APIs, SDKs and tools; or"
+},
+{
+"li": "gaming a benchmark or evaluation because it is being run, or presenting results as Hanzo-run when they are not (see the Research API Supplemental Terms ).",
+"href": "/legal/research-api"
+},
+{
+"h3": "1.14 Sexually explicit content"
+},
+{
+"p": "Do not use Hanzo to produce pornography or sexually explicit material, to sexualize real people without their consent, or to create sexual content involving anyone under 18 (never allowed, in any form). Romantic or sexual role-play is not a supported use."
+},
+{
+"h2": "2. High-risk uses"
+},
+{
+"p": "Some uses are allowed only with extra care. If Hanzo materially influences a decision in one of these areas, a qualified person must review the output before anyone acts on it, and you must tell the people affected that AI was involved, wherever the law or good practice calls for it:"
+},
+{
+"li": "Legal: advice, or drafting that someone will rely on in a legal matter."
+},
+{
+"li": "Healthcare: diagnosis, treatment, triage, clinical decision support, or mental-health support."
+},
+{
+"li": "Insurance: underwriting, pricing or claims decisions."
+},
+{
+"li": "Finance: credit, lending, investment, tax or accounting advice."
+},
+{
+"li": "Employment and housing: hiring, firing, promotion, screening tenants, or setting terms."
+},
+{
+"li": "Academic testing and admissions: grading, proctoring or admitting."
+},
+{
+"li": "Publishing and media: news or other content presented as factual to the public."
+},
+{
+"p": "Fully automated decisions with a legal or similarly significant effect on a person require a separate written agreement with Hanzo, plus the notices, testing, human review and appeal rights the law demands. Using Hanzo in these areas without those safeguards breaks this policy."
+},
+{
+"h2": "3. Additional guidelines"
+},
+{
+"li": "Say when it is AI. If you deploy a chatbot or other tool where people talk to Hanzo-powered AI, do not pretend it is a human, and tell people when the law requires it. If you publish AI-generated or AI-altered media, label it as required and keep any provenance marking the Services add."
+},
+{
+"li": "Minors. Hanzo is for people 18 and older. Do not build a product for minors on the Services without a separate written agreement that covers age checks, parental authorization and children’s privacy law."
+},
+{
+"li": "Agents that act. You answer for everything an agent does under your authorization as if you did it. Give agents the least access they need, keep credentials scoped, keep backups, and watch actions that matter. Never aim an agent at a system you are not authorized to touch."
+},
+{
+"li": "MCP servers and connectors. Connect only servers and connectors you trust and are allowed to use. A connector can read and write what you give it access to; do not use one to reach data you have no right to, to bypass another service’s controls, or to exfiltrate content."
+},
+{
+"li": "Hanzo Dev and autonomous agents. Agents that edit code, run commands, deploy, or call outside services are held to everything above. Do not use them to write or run malware or exploits, to attack or degrade systems you do not own, to hide what an automated change did, or to ship code you have not reviewed into systems that affect other people’s safety, money or data."
+},
+{
+"li": "Be honest about what you send. Do not send regulated data, secrets belonging to other people, or content you have no right to share."
+},
+{
+"h2": "4. Enforcement"
+},
+{
+"p": "We use automated systems and human review to find breaches of this policy. When we find one, or have good reason to think one is under way, we may warn you, remove content, decline requests, limit or throttle your access, suspend or end your account, and report to the authorities or affected parties where the law allows or requires it. We weigh how serious and how repeated the conduct is, and we act at once when waiting would cause serious harm. Where we can, we tell you what we did and give you a way to appeal. The Terms of Service set out the rest."
+},
+{
+"a": "Terms of Service",
+"href": "/terms"
+},
+{
+"h2": "5. How to report"
+},
+{
+"p": "Report abuse or a policy violation to [email protected] , or use the report option in the product. Report security vulnerabilities to [email protected] . Legal notices go to [email protected] . Give us a link or an example and what you saw; we read every report and do not reply to all of them."
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#543536212731143c353a2e3b7a353d"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#0f7c6a6c7a7d667b764f676e617560216e66"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#b5d9d0d2d4d9f5ddd4dbcfda9bd4dc"
+}
+]
+]

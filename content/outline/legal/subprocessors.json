@@ -1,0 +1,222 @@
+[
+[
+{
+"h1": "Subprocessor Register"
+},
+{
+"p": "The providers Hanzo engages to process data on behalf of customers — infrastructure, inference gateways, and the model providers reached through them — with data categories, regions, transfer mechanism, and training posture."
+}
+],
+[
+{
+"p": "Draft. This document is not yet in force."
+},
+{
+"p": "Effective 2026-07-22 · Version 2026-07-22 · Previous version: none, this is the first."
+},
+{
+"h2": "Contents"
+},
+{
+"li": "How Enso routing affects subprocessors",
+"href": "#how-enso-routing-affects-subprocessors"
+},
+{
+"li": "Infrastructure and platform subprocessors",
+"href": "#infrastructure-and-platform-subprocessors"
+},
+{
+"li": "Inference gateway subprocessors",
+"href": "#inference-gateway-subprocessors"
+},
+{
+"li": "Model provider sub-subprocessors (reached via gateway or directly)",
+"href": "#model-provider-sub-subprocessors-reached-via-gateway-or-directly"
+},
+{
+"li": "Hanzo-operated processing",
+"href": "#hanzo-operated-processing"
+},
+{
+"li": "Change notices",
+"href": "#change-notices"
+}
+],
+[
+{
+"p": "This Register lists the subprocessors Hanzo AI, Inc. engages to process Customer Personal Data in providing the Services, as required by the Data Processing Addendum and referenced by the Privacy Policy . It is maintained as a living document; material additions are notified as described in DPA Section 6."
+},
+{
+"a": "Data Processing Addendum",
+"href": "/legal/dpa"
+},
+{
+"a": "Privacy Policy",
+"href": "/legal/privacy"
+},
+{
+"p": "Draft status. The rows below are a template populated from Hanzo's current architecture. Each entry's legal entity, processing region, transfer mechanism, retention mode, and training posture must be confirmed against the executed provider DPA before this Register is published as effective. Placeholders marked [confirm] are not yet verified commitments."
+},
+{
+"code": "[confirm]"
+},
+{
+"h2": "How Enso routing affects subprocessors"
+},
+{
+"p": "Enso may send a single request — or, in quality modes, transformed copies of it — to one or more approved model providers. Every model provider eligible under your plan or configuration is a subprocessor , including providers reached indirectly through an inference gateway. Organization administrators may restrict eligible providers, regions, and retention modes; Hanzo does not silently route Customer Content through an unlisted provider. Where a gateway (e.g., OpenRouter) sits between Hanzo and a model provider, Hanzo requires the gateway to bind downstream providers to substantially equivalent obligations, and the downstream providers are listed below as sub-subprocessors."
+},
+{
+"h2": "Infrastructure and platform subprocessors"
+},
+{
+"table": [
+[
+"Subprocessor",
+"Service",
+"Data categories",
+"Region(s)",
+"Transfer mechanism",
+"Training on Customer Content",
+"Effective"
+],
+[
+"DigitalOcean, LLC",
+"Cloud compute, managed databases, object storage, networking",
+"Account, Customer Content at rest/in transit, logs, telemetry",
+"US [confirm]",
+"SCCs / DPF [confirm]",
+"No",
+"[confirm]"
+],
+[
+"[Object storage / CDN provider]",
+"Static asset and artifact delivery",
+"Public assets, artifact blobs",
+"[confirm]",
+"[confirm]",
+"No",
+"[confirm]"
+],
+[
+"[Email / transactional messaging]",
+"Service and security notices",
+"Contact data, message metadata",
+"[confirm]",
+"[confirm]",
+"No",
+"[confirm]"
+],
+[
+"[Payment processor]",
+"Billing and card processing",
+"Billing and transaction data (card data held by processor, not Hanzo)",
+"[confirm]",
+"[confirm]",
+"No",
+"[confirm]"
+],
+[
+"[Error / observability provider]",
+"Crash, error, and performance monitoring",
+"Telemetry, redacted logs (raw content excluded by default)",
+"[confirm]",
+"[confirm]",
+"No",
+"[confirm]"
+]
+]
+},
+{
+"h2": "Inference gateway subprocessors"
+},
+{
+"table": [
+[
+"Subprocessor",
+"Service",
+"Data categories",
+"Region(s)",
+"Transfer mechanism",
+"Training on Customer Content",
+"Effective"
+],
+[
+"OpenRouter, Inc.",
+"Inference gateway routing to third-party model providers",
+"Prompt/Input content, generated Output, routing and usage metadata",
+"US [confirm]",
+"SCCs [confirm]",
+"No [confirm — verify ZDR / no-train mode]",
+"[confirm]"
+]
+]
+},
+{
+"h2": "Model provider sub-subprocessors (reached via gateway or directly)"
+},
+{
+"p": "Eligibility depends on your plan and configuration. A provider processes Customer Content only when a request is routed to it. Each must be confirmed under a no-training / zero-data-retention posture before the row is effective."
+},
+{
+"table": [
+[
+"Sub-subprocessor",
+"Reached via",
+"Data categories",
+"Training on Customer Content",
+"Effective"
+],
+[
+"[Model provider A]",
+"OpenRouter / direct",
+"Input, Output, request metadata",
+"No [confirm ZDR]",
+"[confirm]"
+],
+[
+"[Model provider B]",
+"OpenRouter / direct",
+"Input, Output, request metadata",
+"No [confirm ZDR]",
+"[confirm]"
+],
+[
+"[Additional eligible providers]",
+"OpenRouter / direct",
+"Input, Output, request metadata",
+"No [confirm ZDR]",
+"[confirm]"
+]
+]
+},
+{
+"h2": "Hanzo-operated processing"
+},
+{
+"p": "Inference served on Hanzo's own infrastructure (hosted open-source and Hanzo models via hanzo-engine) is processed by Hanzo as processor under the DPA, not by a third-party subprocessor. Enso routing, the benchmark registry, and the /v1/research plane are Hanzo-operated."
+},
+{
+"code": "/v1/research"
+},
+{
+"h2": "Change notices"
+},
+{
+"p": "To receive advance notice of new subprocessors, subscribe at [SUBPROCESSOR CHANGE-NOTICE MECHANISM — REQUIRED BEFORE PUBLICATION] . Customers may object to a new subprocessor on documented data-protection grounds as described in the DPA ."
+},
+{
+"code": "[SUBPROCESSOR CHANGE-NOTICE MECHANISM — REQUIRED BEFORE PUBLICATION]"
+},
+{
+"a": "DPA",
+"href": "/legal/dpa"
+},
+{
+"p": "Publication gate: Populate every [confirm] from executed DPAs, verify each provider's zero-data-retention / no-training mode and transfer mechanism, stand up the change-notice subscription, and obtain counsel review before this Register is published as effective."
+},
+{
+"code": "[confirm]"
+}
+]
+]

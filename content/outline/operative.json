@@ -1,0 +1,309 @@
+[
+[
+{
+"h1": "Hanzo Operative"
+},
+{
+"p": "A container with a Linux desktop inside it, and a model driving that desktop by screenshot, mouse and keyboard."
+},
+{
+"a": "Get Started",
+"href": "#get-started"
+},
+{
+"a": "View Docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"img": "/models/iro.webp",
+"alt": ""
+},
+{
+"li": "Screen Vision"
+},
+{
+"li": "Multimodal Models"
+},
+{
+"li": "Cursor Control"
+},
+{
+"li": "Keyboard Actions"
+}
+],
+[
+{
+"h2": "What is in the container"
+},
+{
+"p": "A screen, a way to watch it, and the tools the model drives it with"
+},
+{
+"h3": "A desktop in the image"
+},
+{
+"p": "Xvfb and X11 give the container a screen with no monitor attached, so a real window manager and real applications run inside it."
+},
+{
+"h3": "Watch it work"
+},
+{
+"p": "VNC on 5900 for a native client, noVNC on 6080 in a browser, and the control page on 8501. You see the cursor move as it moves."
+},
+{
+"h3": "Say what you want"
+},
+{
+"p": "Type an objective and it plans, acts, looks at the result, and goes again. You can interrupt at any point."
+},
+{
+"h3": "Bash and a file editor too"
+},
+{
+"p": "Not only the screen. It can run a command or edit a file directly when that is the shorter path, instead of typing into a GUI text editor."
+},
+{
+"h3": "Blast radius is the container"
+},
+{
+"p": "Stop it and everything it touched goes with it. Give it the narrowest privileges and an allowlist of domains, and keep credentials that matter out of the image."
+},
+{
+"h3": "Where the model comes from"
+},
+{
+"p": "The API directly, AWS Bedrock, or Google Vertex — chosen with an environment variable. The container is the same in all three cases."
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "One docker run"
+},
+{
+"p": "Nothing is installed on your machine. The desktop, the tools and the agent are all inside the image"
+},
+{
+"h3": "Installation"
+},
+{
+"p": "Pull the image"
+},
+{
+"p": "Run it with your key and the four ports"
+},
+{
+"p": "Open localhost:8501 and type an objective"
+},
+{
+"button": "Copy Installation Commands"
+},
+{
+"h3": "System Requirements"
+},
+{
+"li": "• Docker. Nothing else installed on the host"
+},
+{
+"li": "• A key for the API, Bedrock, or Vertex"
+},
+{
+"li": "• Four ports free: 8501, 6080, 5900, 8080"
+},
+{
+"li": "• Give the container the fewest privileges that work"
+},
+{
+"h3": "Basic Usage"
+},
+{
+"p": "Watch it in a browser, no VNC client needed"
+},
+{
+"p": "Send the model through Bedrock instead"
+},
+{
+"p": "Or through Vertex"
+},
+{
+"p": "Keep the session between runs"
+},
+{
+"p": "Computer use is beta, and instructions written into a web page or an image can try to talk to the model as if they were you. Limit outbound traffic to domains you name, and ask for a human yes before anything with consequences outside the container."
+}
+],
+[
+{
+"h2": "Where the model comes from"
+},
+{
+"p": "One environment variable decides. The container, the desktop and the tools are identical in all four cases"
+},
+{
+"h3": "Hanzo"
+},
+{
+"p": "by The default"
+},
+{
+"li": "Runs through api.hanzo.ai"
+},
+{
+"li": "Every run shows up in the console with its cost"
+},
+{
+"li": "Bring a Hanzo key, or one you already have"
+},
+{
+"li": "Pick the model in the sidebar"
+},
+{
+"p": "docker run -e HANZO_API_KEY …"
+},
+{
+"h3": "Direct"
+},
+{
+"p": "by Straight to the model vendor"
+},
+{
+"li": "No Hanzo in the request path"
+},
+{
+"li": "Your existing key and your existing bill"
+},
+{
+"li": "Nothing here to log the run for you"
+},
+{
+"li": "Set API_PROVIDER=anthropic"
+},
+{
+"p": "docker run -e API_PROVIDER=anthropic …"
+},
+{
+"h3": "Bedrock"
+},
+{
+"p": "by Inside your AWS account"
+},
+{
+"li": "Reads your local AWS profile"
+},
+{
+"li": "Stays in the region you name"
+},
+{
+"li": "For when the model must not leave your account"
+},
+{
+"li": "Set API_PROVIDER=bedrock"
+},
+{
+"p": "docker run -e API_PROVIDER=bedrock -e AWS_PROFILE …"
+},
+{
+"h3": "Vertex"
+},
+{
+"p": "by Inside your Google Cloud project"
+},
+{
+"li": "Application default credentials"
+},
+{
+"li": "Names a region and a project id"
+},
+{
+"li": "Same container, same desktop, same tools"
+},
+{
+"li": "Set API_PROVIDER=vertex"
+},
+{
+"p": "docker run -e API_PROVIDER=vertex -e VERTEX_PROJECT_ID …"
+},
+{
+"p": "Which model a provider offers changes; the container does not. The documentation lists what each one currently accepts."
+},
+{
+"a": "documentation",
+"href": "https://docs.hanzo.ai"
+}
+],
+[
+{
+"h2": "See Operative in Action"
+},
+{
+"p": "Watch as Hanzo Operative uses multimodal AI to router interfaces, complete tasks, and solve problems autonomously."
+},
+{
+"h3": "Demo Video"
+},
+{
+"a": "View more examples →",
+"href": "https://docs.hanzo.ai"
+}
+],
+[
+{
+"h2": "Run it and watch"
+},
+{
+"p": "The most useful hour you can spend with computer use is the first one, watching where it gets stuck."
+},
+{
+"a": "Star on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Join Discord Community",
+"href": "https://discord.gg/XthHQQj"
+},
+{
+"a": "Read the Blog",
+"href": "https://hanzo.blog/blog/2025-04-20-hanzo-operative-launch/"
+},
+{
+"a": "Follow Updates",
+"href": "https://twitter.com/hanzoai"
+},
+{
+"a": "Contribute",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Read before you run it"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Operative"
+},
+{
+"p": "Computer-use harness"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,364 @@
+[
+[
+{
+"h1": "Hanzo Sign"
+},
+{
+"p": "Upload a PDF, drop the fields where people need to sign, and send it."
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/esign"
+},
+{
+"img": "/models/kai.webp",
+"alt": ""
+},
+{
+"p": "The contract you send fifty times a month gets its fields placed once. After that, sending it is choosing a recipient."
+},
+{
+"p": "Fields for a signature, initials, a date, a name, a checkbox or free text, placed where you want them on the page."
+},
+{
+"p": "Each signer gets a link and signs in their browser. Nobody installs anything and nobody prints anything."
+},
+{
+"p": "Sent, opened, signed, declined — per recipient, as it happens."
+},
+{
+"p": "The completed document carries a certificate recording each signer, the time, and the address they signed from."
+},
+{
+"li": "Upload the PDF"
+},
+{
+"li": "Place the fields"
+},
+{
+"li": "Send it"
+},
+{
+"li": "Watch it move"
+},
+{
+"li": "Keep the record"
+}
+],
+[
+{
+"h2": "What is in it"
+},
+{
+"p": "The parts of signing that are actually work: placing the fields, chasing the signers, and proving afterwards that it happened."
+},
+{
+"h3": "Signatures"
+},
+{
+"p": "Fields for a signature, initials, a date, a name, a checkbox or free text, placed where you want them on the page. The completed document carries a certificate recording each signer, the time, and the address they signed from."
+},
+{
+"h3": "Templates"
+},
+{
+"p": "The contract you send fifty times a month gets its fields placed once. After that, sending it is choosing a recipient."
+},
+{
+"h3": "Teams"
+},
+{
+"p": "Documents belong to a team rather than to whoever uploaded them, so a person leaving does not take the paperwork with them. Roles decide who can send, who can only see."
+},
+{
+"h3": "Webhooks and an API"
+},
+{
+"p": "Your system creates the document, adds the recipients and sends it. A webhook fires when somebody opens, signs or declines, so your side of the workflow moves without anybody watching an inbox."
+},
+{
+"h3": "Security & Compliance"
+},
+{
+"p": "End-to-end encryption, a signed trail on every document, and data that stays in the region you choose."
+},
+{
+"h3": "Your name on it"
+},
+{
+"p": "The signing page carries your logo and your colours on your own domain, so the person signing sees the company they are doing business with rather than the company we are."
+},
+{
+"h3": "The chasing, done for you"
+},
+{
+"p": "The invitation, the reminder for the one person who has not got to it yet, and the copy of the finished document to everybody who signed."
+},
+{
+"h3": "Signing in"
+},
+{
+"p": "A passkey, or a password kept as a bcrypt digest. A document can also demand that a recipient authenticate before it will open, so the link alone is not enough to read it."
+},
+{
+"h3": "Where it is right now"
+},
+{
+"p": "Sent, opened, signed, declined — per recipient, as it happens. You know which of five people is holding up a deal without asking any of them."
+},
+{
+"h3": "Twelve languages"
+},
+{
+"p": "German, English, Spanish, French, Italian, Japanese, Korean, Dutch, Polish, Brazilian Portuguese, Albanian and Chinese. The signer reads the page in theirs, not yours."
+}
+],
+[
+{
+"h2": "What it costs"
+},
+{
+"p": "Run it yourself and pay nothing but your own hosting. Pay us and we run it, on the same code."
+},
+{
+"h3": "Community"
+},
+{
+"p": "Self-host and own your data. Full source code on GitHub."
+},
+{
+"a": "Get on GitHub",
+"href": "https://github.com/hanzoai/"
+},
+{
+"li": "Unlimited documents"
+},
+{
+"li": "All field types"
+},
+{
+"li": "Templates"
+},
+{
+"li": "API access"
+},
+{
+"li": "Email notifications"
+},
+{
+"li": "Community support"
+},
+{
+"h3": "Starter"
+},
+{
+"p": "For individuals and small teams getting started with e-signing."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Community"
+},
+{
+"li": "Managed cloud hosting"
+},
+{
+"li": "Custom branding"
+},
+{
+"li": "Priority email support"
+},
+{
+"li": "Signing certificates"
+},
+{
+"li": "5 team members"
+},
+{
+"h3": "Business"
+},
+{
+"p": "For growing teams that need advanced features and integrations."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Starter"
+},
+{
+"li": "Unlimited team members"
+},
+{
+"li": "Custom domain"
+},
+{
+"li": "Advanced templates"
+},
+{
+"li": "Webhooks"
+},
+{
+"li": "SAML SSO"
+},
+{
+"li": "Audit logs"
+},
+{
+"li": "Priority support"
+},
+{
+"h3": "Enterprise"
+},
+{
+"p": "For organizations with advanced security and compliance needs."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+},
+{
+"li": "Everything in Business"
+},
+{
+"li": "Dedicated infrastructure"
+},
+{
+"li": "Custom SLA"
+},
+{
+"li": "On-premise deployment"
+},
+{
+"li": "Compliance certifications"
+},
+{
+"li": "Dedicated account manager"
+},
+{
+"li": "24/7 phone support"
+}
+],
+[
+{
+"h3": "Built on Open Source"
+},
+{
+"p": "Hanzo Sign is built on Documenso , an open-source document signing platform, under the AGPL. The upstream project is named here and in the licence, because naming what you forked is required and is a different act from branding yourself with it. Run our build, or run your own — the whole thing is a TypeScript application over Postgres, and you can read every line that touches a document before you trust it with one."
+},
+{
+"a": "Documenso",
+"href": "https://documenso.com"
+},
+{
+"a": "hanzoai/esign",
+"href": "https://github.com/hanzoai/esign"
+},
+{
+"a": "Upstream: documenso/documenso",
+"href": "https://github.com/documenso/documenso"
+}
+],
+[
+{
+"h2": "Send the first one"
+},
+{
+"p": "Upload a PDF and place a signature field. You will know inside five minutes whether this fits."
+},
+{
+"h3": "Start signing"
+},
+{
+"p": "Open the hosted app and send a document"
+},
+{
+"a": "Try Hanzo",
+"href": "/login"
+},
+{
+"h3": "Documentation"
+},
+{
+"p": "Setup, self-hosting, and the API reference"
+},
+{
+"a": "View Docs",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/esign"
+},
+{
+"h3": "The source"
+},
+{
+"p": "Read it before you trust a contract to it"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/esign"
+}
+],
+[
+{
+"h3": "Something more specific"
+},
+{
+"p": "Signing inside your own product, a flow with approvals before the send, or running it on your infrastructure. Tell us the shape and we will tell you whether it fits."
+},
+{
+"a": "Contact Sales",
+"href": "/contact-sales"
+}
+],
+[
+{
+"h2": "Get started with Sign"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/projects/hanzoai/esign"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/esign"
+}
+],
+[
+{
+"h2": "Get Sign"
+},
+{
+"p": "E-signature"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+],
+[
+{
+"h2": "Get Sign"
+},
+{
+"p": "E-signature"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

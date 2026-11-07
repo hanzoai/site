@@ -1,0 +1,109 @@
+[
+[
+{
+"h1": "Hanzo Auto"
+},
+{
+"p": "Workflow automation in one binary"
+},
+{
+"a": "Open Auto",
+"href": "https://auto.hanzo.ai"
+},
+{
+"a": "Documentation",
+"href": "https://docs.hanzo.ai/docs/cli/auto"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "A run is a record, not a goroutine. Step state is written down as it goes, so a crash, a deploy or a rescheduled pod resumes where it stopped rather than starting over or losing the run."
+},
+{
+"p": "GET /v1/pieces lists the connectors this build has. No plugin registry to reach at boot, so the version you deployed is the version that runs, offline and forever."
+},
+{
+"p": "POST to a trigger and a run starts. Or start one by hand against /v1/runs. Either way it is the same run object with the same history."
+},
+{
+"p": "The editor is React Flow, embedded in the binary, and it follows a run over a server-sent event stream — so the canvas you drew is the canvas you watch execute."
+},
+{
+"p": "Edit a flow freely; nothing changes for callers until you publish. What triggers fire is a published version, so editing in the afternoon does not change what runs overnight."
+},
+{
+"p": "A connection is a named credential the flow refers to. It is encrypted at rest through Hanzo KMS, and who may touch it is Hanzo IAM's answer, not a second login here."
+},
+{
+"li": "Durable execution"
+},
+{
+"li": "The catalog is in the binary"
+},
+{
+"li": "Triggers"
+},
+{
+"li": "Watch it live"
+},
+{
+"li": "Draft, then publish"
+},
+{
+"li": "Connections, not pasted keys"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Auto from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Auto in my project. Start with: hanzo auto flows list"
+}
+],
+[
+{
+"h2": "Some of what it connects"
+}
+],
+[
+{
+"h2": "Or run it yourself"
+},
+{
+"p": "One container, one port, a SQLite file for state. Nothing else to stand up first."
+},
+{
+"a": "Open Auto",
+"href": "https://auto.hanzo.ai"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Auto"
+},
+{
+"p": "Workflow automations"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

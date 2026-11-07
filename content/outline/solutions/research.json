@@ -1,0 +1,125 @@
+[
+[
+{
+"h1": "Hanzo for research"
+},
+{
+"p": "Agents that search the web and your own corpus, read the sources in full, and write answers that cite them — on a memory that knows what was true and when."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "Web search and page fetch are tools an agent calls step by step, billed per call. A fetch the domain policy refuses is stopped before the request and costs nothing."
+},
+{
+"p": "Push your papers, notes and datasets once. Hybrid search finds the exact phrase and the related idea in one request."
+},
+{
+"p": "The memory graph answers from the assertions it holds and cites each one — and can answer as of any date, so a past conclusion can be reproduced exactly."
+},
+{
+"p": "Lease a sandbox or a GPU machine for the experiment, run it, and keep the output beside the question it answers."
+},
+{
+"p": "Evals, datasets and experiments live in the same account, so a new prompt or a new model is a scored comparison, not a feeling."
+},
+{
+"li": "Search, then read"
+},
+{
+"li": "Your corpus and the web together"
+},
+{
+"li": "Answers that cite"
+},
+{
+"li": "Run the analysis"
+},
+{
+"li": "Measure the method"
+}
+],
+[
+{
+"h2": "What it runs on"
+},
+{
+"p": "The products underneath, on one account, one key and one bill."
+},
+{
+"a": "Hanzo Search Keyword and meaning in one query over the documents you push.",
+"href": "/search"
+},
+{
+"a": "Hanzo Crawl Turns a website into clean Markdown a model can read.",
+"href": "/crawl"
+},
+{
+"a": "Memory A graph of what was true and when it was known, answered with citations.",
+"href": "/products/memory"
+},
+{
+"a": "Machines Sandboxes, metered machines and functions, each the organization’s own.",
+"href": "/products/machines"
+},
+{
+"a": "Evals Score a prompt or a model change against a dataset before it ships.",
+"href": "/cloud/evals"
+},
+{
+"a": "Models Every model behind one endpoint and one key, in the wire format your client speaks.",
+"href": "/models"
+},
+{
+"a": "Every layer of Hanzo OS",
+"href": "/products"
+},
+{
+"a": "The quickstart",
+"href": "https://docs.hanzo.ai/docs/quickstart"
+}
+],
+[
+{
+"h2": "More use cases"
+},
+{
+"a": "Content creation",
+"href": "/solutions/content-creation"
+},
+{
+"a": "Agents",
+"href": "/solutions/agents"
+},
+{
+"a": "All solutions",
+"href": "/solutions"
+}
+],
+[
+{
+"h2": "Put it to work"
+},
+{
+"p": "Start in the builder today, or talk to us about your organization."
+},
+{
+"a": "Try Hanzo",
+"href": "/signup"
+},
+{
+"a": "Contact sales",
+"href": "/contact-sales"
+}
+]
+]

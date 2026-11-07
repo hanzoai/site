@@ -1,0 +1,155 @@
+[
+[
+{
+"h1": "Open Source & Research Credit Grants"
+},
+{
+"p": "Free API credits, GPU compute, and Hanzo Team access for open-source contributors, academic PhD researchers, and research interns."
+},
+{
+"a": "Apply for a Grant",
+"href": "#apply"
+},
+{
+"a": "Academic Internships",
+"href": "/careers#internships"
+},
+{
+"img": "/models/zen.webp",
+"alt": ""
+},
+{
+"p": "Share your open-source PRs, repository, or academic research topic"
+},
+{
+"p": "Our engineering and research leads review applications weekly"
+},
+{
+"p": "Receive free API & GPU credits plus full access to Hanzo Team"
+},
+{
+"p": "Publish open code, models, and papers under your own name"
+},
+{
+"li": "Apply or Contribute"
+},
+{
+"li": "Fast-Track Review"
+},
+{
+"li": "Credits & Team Access"
+},
+{
+"li": "Ship in the Open"
+}
+],
+[
+{
+"h2": "What Grant Recipients & Interns Receive"
+},
+{
+"p": "Compute, models, and workspaces to ship open research and open-source software."
+},
+{
+"h3": "Free API & Compute Credits"
+},
+{
+"p": "Receive free Hanzo Cloud, LLM API, and GPU compute credits for your open-source project, university lab, or dissertation research."
+},
+{
+"h3": "Full Hanzo Team Access"
+},
+{
+"p": "Get complimentary Hanzo Team workspaces, Hanzo Dev coding agents, and direct collaboration channels with our core research and systems engineers."
+},
+{
+"h3": "Open Weights & Papers"
+},
+{
+"p": "Everything you research or contribute ships in the open under your own name — open-source repositories, checkpoints, and peer-reviewed papers."
+},
+{
+"h3": "Frontier Checkpoints & Infra"
+},
+{
+"p": "Early access to Zen foundation models, Kai decision models, Enso routing policies, and distributed training / evaluation clusters."
+}
+],
+[
+{
+"h2": "Three Ways to Build & Research with Us"
+},
+{
+"p": "Whether you are contributing PRs to our open-source repos, running PhD experiments, or applying for a research internship."
+},
+{
+"h3": "Open Source Contributor Grants"
+},
+{
+"p": "We always welcome and accept open-source contributors across our repositories on GitHub and git.hanzo.ai. Ship pull requests, maintain SDKs or MCP servers, or build open-source tools powered by Hanzo to receive recurring API, Cloud, and Dev credit grants."
+},
+{
+"a": "Apply as OSS Contributor",
+"href": "#apply"
+},
+{
+"a": "Explore Repositories",
+"href": "/open-source"
+},
+{
+"h3": "Academic & PhD Research Grants"
+},
+{
+"p": "Investigating foundation models, RLHF/post-training, ML compilers, post-quantum cryptography, or agentic systems? Approved academic researchers receive free API & compute credits and full access to Hanzo Team for their research."
+},
+{
+"a": "Apply for Research Credits",
+"href": "#apply"
+},
+{
+"a": "Research Access Questionnaire",
+"href": "/beta/research"
+},
+{
+"h3": "Academic & PhD Research Internships"
+},
+{
+"p": "Looking to intern with our research and systems teams during your PhD or graduate studies? Work directly on Zen, Kai, Enso, Hanzo Engine, and Hanzo Dev — with free compute credits, Hanzo Team access, and co-authored publications."
+},
+{
+"a": "Apply for Internship",
+"href": "#apply"
+},
+{
+"a": "View Internship Role",
+"href": "/careers/academic-research-intern"
+}
+],
+[
+{
+"h2": "Apply for Credits or a Research Internship"
+},
+{
+"p": "Tell us about your open-source contributions, academic research, or internship goals. We review submissions every week."
+},
+{
+"button": "Open Source Contributor Grant"
+},
+{
+"button": "Academic / PhD Research Credits"
+},
+{
+"button": "PhD / Research Internship"
+},
+{
+"p": "Or email us directly at [email protected]"
+},
+{
+"a": "[email protected]",
+"href": "/cdn-cgi/l/email-protection#31525043545443427159505f4b5e1f5058"
+},
+{
+"button": "Submit Grant Application"
+}
+]
+]

@@ -1,0 +1,93 @@
+[
+[
+{
+"h1": "Hanzo Engine"
+},
+{
+"p": "The inference engine, in one binary"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+},
+{
+"img": "/models/oto.webp",
+"alt": ""
+},
+{
+"p": "One binary, three verbs. Chat with a model, put it behind an HTTP API, or measure it — the thing you benchmarked is the thing you shipped."
+},
+{
+"p": "Paged attention and continuous batching keep the card busy across concurrent requests. A disk-first KV cache carries a session across a restart, so an agent that reuses a long prefix does not pay for it twice."
+},
+{
+"p": "Vision, audio, speech, image and embeddings go through the same modality pipeline as generation, in the same process. A multimodal app is one deployment, not four."
+},
+{
+"p": "In-situ quantization of any Hugging Face model, plus GGUF from 2 to 8 bits, GPTQ, AWQ, HQQ, FP8 and bitsandbytes. Ask for a level and it takes a published prebuilt when one exists, or makes one when it doesn't."
+},
+{
+"p": "CUDA with FlashAttention and multi-GPU tensor parallelism, Metal on Apple Silicon, or plain CPU. Same engine and same commands on each, and a doctor command that reports what it found."
+},
+{
+"p": "It can call MCP servers over a process, HTTP or a WebSocket. The built-in UI at /ui shows reasoning, code execution and plots inline, and edits branch a conversation with its own state. Pass --no-ui and it is a plain API server."
+},
+{
+"li": "run, serve, bench"
+},
+{
+"li": "Built to serve, not just to run"
+},
+{
+"li": "More than text"
+},
+{
+"li": "It quantizes on the way in"
+},
+{
+"li": "The silicon you have"
+},
+{
+"li": "Tools, and a UI to watch them"
+}
+],
+[
+{
+"p": "Paste and ship"
+},
+{
+"p": "Paste this into any agent. It reads the skill manifest and calls Engine from there."
+},
+{
+"button": "Copy"
+},
+{
+"code": "Read https://hanzo.ai/skill.md and use Hanzo Engine in my project. Start with: hanzo engine serve <model>"
+}
+],
+[
+{
+"h2": "Get started with Hanzo Engine"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai"
+}
+],
+[
+{
+"h2": "Get Engine"
+},
+{
+"p": "AI inference engine"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

@@ -1,0 +1,185 @@
+[
+[
+{
+"h1": "An Agent SDK for networks that work together"
+},
+{
+"p": "An agent is a model, a set of instructions, and the tools it may call. A network is several of them behind a router that decides which one gets the turn — backed by a pure-Rust runtime (hanzoai/dev) and the Hanzo AI gateway (hanzoai/ai)."
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/openapi/agents/"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/agent"
+},
+{
+"p": "Open source (hanzoai/agent). pip install hanzo-agent or cargo add hanzo-agent. Works against api.hanzo.ai or any endpoint that speaks Chat Completions and MCP."
+},
+{
+"a": "Models",
+"href": "/models"
+},
+{
+"a": "Agents",
+"href": "/agents"
+},
+{
+"a": "Inference",
+"href": "/engine"
+},
+{
+"a": "Embeddings",
+"href": "/cloud/embeddings"
+},
+{
+"a": "Providers",
+"href": "/cloud/providers"
+},
+{
+"a": "Prompts",
+"href": "/cloud/prompts"
+},
+{
+"li": "Add rate limiting to the payments API."
+},
+{
+"li": "Read 14 files. The limiter belongs in the gateway, not the handler — one place, every route."
+},
+{
+"li": "Wrote gateway/limit.go and a test at 100 req/min per key. Tests pass."
+},
+{
+"code": "api.hanzo.ai /v1/agent"
+},
+{
+"a": "Open in the console",
+"href": "/home"
+}
+],
+[
+{
+"p": "What is Hanzo Agent"
+},
+{
+"h2": "One agent, or several with a router between them"
+},
+{
+"p": "The hard part of multi-agent work is not the prompting. It is deciding who answers, keeping what they learn where the next one can read it, and running tools inside a fast, sandboxed Rust harness."
+},
+{
+"h3": "Pure-Rust Core & Multi-Language SDKs"
+},
+{
+"p": "Built on hanzo-agent (Rust) and the hanzoai/dev Rust harness for sandboxed execution, with first-class SDKs in Rust, Python, Go, and TypeScript (hanzoai/agent)."
+},
+{
+"h3": "Networks"
+},
+{
+"p": "create_network(agents=[researcher, writer], router=SemanticRouter()) puts specialists behind one call. Route on meaning, on rules you write, or by load — and swap the router without touching the agents."
+},
+{
+"h3": "Tools & MCP"
+},
+{
+"p": "Every Hanzo MCP tool (260+ tools across files, AST, shell, browser, Kai, and 117 Cloud services) mounts over stdio or streamable HTTP without custom wrappers."
+}
+],
+[
+{
+"p": "What comes with it"
+},
+{
+"h2": "The parts you would otherwise write yourself"
+},
+{
+"h3": "Routing you can choose"
+},
+{
+"p": "SemanticRouter reads the request and picks. Rule-based routing does what you say. Load-balanced routing spreads turns across equals. Same network object either way."
+},
+{
+"h3": "Workflows, not just chat"
+},
+{
+"p": "Steps that run in parallel, branch on a condition, or loop until something holds — for the work where the order matters and a prompt cannot express it."
+},
+{
+"h3": "Shared state"
+},
+{
+"p": "Agents in a network read and write one state object, so the writer sees what the researcher found without you pasting it into the next prompt."
+},
+{
+"h3": "Memory with retrieval"
+},
+{
+"p": "A store, a retriever, and vector search over both, so an agent recalls the relevant part of a long history instead of replaying all of it."
+},
+{
+"h3": "Tracing"
+},
+{
+"p": "Spans and traces around every model call, tool call and handoff, through a processor interface you can point at your own collector."
+},
+{
+"h3": "Extras you opt into"
+},
+{
+"p": "pip install \"hanzo-agent[tee]\" adds attestation for confidential runs. [web3] adds wallets and on-chain identity. [cli] adds the command line. Nothing you skip is loaded."
+}
+],
+[
+{
+"p": "Get started"
+},
+{
+"h2": "Two agents and a router"
+},
+{
+"code": "# Rust (cargo add hanzo-agent hanzo-agents) · Python (pip install hanzo-agent) from agents import Agent from agents . network import create_network , SemanticRouter researcher = Agent ( name= \" Researcher \" , instructions= \" You find and analyze information. \" , tools= [ search_tool , analyze_tool ], ) writer = Agent ( name= \" Writer \" , instructions= \" You create content based on research. \" , tools= [ format_tool ], ) network = create_network ( agents= [ researcher , writer ], router=SemanticRouter ()) result = await network . run ( \" Research and write about quantum computing \" )"
+},
+{
+"a": "Read the docs",
+"href": "https://docs.hanzo.ai/docs/openapi/agents/"
+},
+{
+"a": "View on GitHub",
+"href": "https://github.com/hanzoai/agent"
+}
+],
+[
+{
+"h2": "Write the first one"
+},
+{
+"p": "pip install hanzo-agent, give it instructions and a tool, and run it."
+},
+{
+"a": "Deploy on Hanzo Cloud",
+"href": "https://platform.hanzo.ai"
+},
+{
+"a": "GitHub",
+"href": "https://github.com/hanzoai/agent"
+}
+],
+[
+{
+"h2": "Get Agents"
+},
+{
+"p": "Multi-agent SDK + runtime + tool harness"
+},
+{
+"a": "hanzoai",
+"href": "https://github.com/hanzoai"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]

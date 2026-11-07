@@ -1,0 +1,215 @@
+[
+[
+{
+"h1": "Bundler API"
+},
+{
+"p": "ERC-4337 UserOperation bundling service"
+},
+{
+"p": "Production-grade bundler for account abstraction. Submit, simulate, and track UserOperations across all ERC-4337 compatible chains with reliable transaction inclusion."
+},
+{
+"h3": "UserOp Bundling"
+},
+{
+"p": "Efficiently bundle multiple UserOperations into single transactions."
+},
+{
+"h3": "Fast Inclusion"
+},
+{
+"p": "Priority transaction submission for quick block inclusion."
+},
+{
+"h3": "Simulation"
+},
+{
+"p": "Pre-flight simulation to validate operations before submission."
+},
+{
+"h3": "Multi-chain Support"
+},
+{
+"p": "ERC-4337 bundling across Ethereum, Polygon, Arbitrum, and more."
+},
+{
+"a": "Back to Web3 Overview",
+"href": "/blockchain"
+},
+{
+"h2": "Get Your API Key"
+},
+{
+"p": "Start building in under 5 minutes"
+},
+{
+"button": "Try Hanzo"
+},
+{
+"button": "View Documentation"
+},
+{
+"p": "No credit card required."
+},
+{
+"p": "Trusted by developers building:"
+}
+],
+[
+{
+"h2": "Key Capabilities"
+},
+{
+"p": "Everything you need, nothing you don't."
+},
+{
+"h3": "UserOp Bundling"
+},
+{
+"p": "Efficiently bundle multiple UserOperations into single transactions."
+},
+{
+"h3": "Fast Inclusion"
+},
+{
+"p": "Priority transaction submission for quick block inclusion."
+},
+{
+"h3": "Simulation"
+},
+{
+"p": "Pre-flight simulation to validate operations before submission."
+},
+{
+"h3": "Multi-chain Support"
+},
+{
+"p": "ERC-4337 bundling across Ethereum, Polygon, Arbitrum, and more."
+},
+{
+"h3": "Auto-retry"
+},
+{
+"p": "Automatic retry with gas price adjustment for stuck operations."
+},
+{
+"h3": "Status Tracking"
+},
+{
+"p": "Real-time status updates from submission to confirmation."
+},
+{
+"h3": "Operation History"
+},
+{
+"p": "Query past UserOperations and their execution results."
+},
+{
+"h3": "Custom Mempools"
+},
+{
+"p": "Support for alternative mempools and private submission."
+},
+{
+"h3": "Analytics"
+},
+{
+"p": "Track success rates, gas usage, and operation metrics."
+}
+],
+[
+{
+"h2": "Simple to Integrate"
+},
+{
+"p": "Get started with just a few lines of code. SDKs for every language."
+},
+{
+"button": "Solidity"
+},
+{
+"button": "Node"
+},
+{
+"button": "Python"
+},
+{
+"button": "Go"
+},
+{
+"button": "Rust"
+},
+{
+"button": "C"
+},
+{
+"button": "C++"
+},
+{
+"button": "Ruby"
+},
+{
+"code": "// SPDX-License-Identifier: MIT pragma solidity ^0.8.24 ; import \"@account-abstraction/contracts/interfaces/IEntryPoint.sol\" ; import \"@account-abstraction/contracts/interfaces/UserOperation.sol\" ; contract UserOpHelper { IEntryPoint public immutable entryPoint ; constructor ( address _entryPoint) { entryPoint = IEntryPoint ( _entryPoint ); } // Encode a simple ETH transfer for UserOp callData function encodeTransfer ( address to , uint256 value ) external pure returns ( bytes memory ) { return abi. encodeWithSignature ( \"execute(address,uint256,bytes)\" , to , value , \"\" ); } // Encode ERC20 t"
+}
+],
+[
+{
+"h2": "Built For"
+},
+{
+"h3": "Smart Wallet Apps"
+},
+{
+"p": "Power account abstraction wallets with reliable bundling."
+},
+{
+"h3": "Gasless Transactions"
+},
+{
+"p": "Enable sponsored transactions with paymaster integration."
+},
+{
+"h3": "Batch Operations"
+},
+{
+"p": "Execute multiple actions in a single user signature."
+},
+{
+"h3": "Session Keys"
+},
+{
+"p": "Support for temporary permissions and automated actions."
+}
+],
+[
+{
+"h2": "Supported Chains"
+}
+],
+[
+{
+"h2": "Start Building with Bundler API"
+},
+{
+"p": "Get your free API key and ship your first request in under 5 minutes. No credit card required."
+},
+{
+"a": "Get Your API Key",
+"href": "https://platform.hanzo.ai/api-keys"
+},
+{
+"a": "Explore All Web3 Products",
+"href": "/blockchain"
+}
+],
+[
+{
+"h2": "Get Bundler API"
+},
+{
+"a": "Deploy to Cloud",
+"href": "https://platform.hanzo.ai/deploy"
+}
+]
+]
