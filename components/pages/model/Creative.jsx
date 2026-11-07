@@ -22,14 +22,15 @@ import { arrows } from './live';
 import './Creative.css';
 
 // the headline that sits beside the settled film
-function Head({ slug }) {
+// thumb (default true): the ask marks itself for the header hand-off; onFocus: called when focus enters the actions
+function Head({ slug, thumb = true, onFocus }) {
   const d = C[slug];
   return (
     <>
       <Lines id={'cr-h-' + slug} lines={[d.head]} />
       <p className="lv-lede">{d.desc}</p>
-      <div className="lv-acts">
-        <Cta kind="quiet" to={'/research-access?models=' + slug} id={slug + '.hero'} thumb>Request access</Cta>
+      <div className="lv-acts" onFocus={onFocus}>
+        <Cta kind="quiet" to={'/research-access?models=' + slug} id={slug + '.hero'} thumb={thumb}>Request access</Cta>
         <Cta to="/design" kind="link" id={slug + '.hero-design'}>Try it in Design</Cta>
       </div>
       <p className="lv-crumb"><span>{d.kind}</span><span>{d.ver}</span></p>
@@ -203,14 +204,16 @@ export function Scene({ slug, dark, className = '', children }) {
    first. flip: chapters picture-left; the fits picture on the left. The page ends on Hanzo's exact model cards and a
    closing Band that carries the research preview in Hanzo's words and repeats the hero ask.
    Optional, per page (defaults keep every other member as it is): capArt (each chapter's own picture), map={false}
-   (no studio map, when the model grid below already shows the same cards), band (a page's own closing band). */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, map = true, band }) {
+   (no studio map, when the model grid below already shows the same cards), band (a page's own closing band),
+   headThumb={false} (the header keeps its own solid ask until the band), onHeadFocus (focus enters the headline's
+   actions), fitsFirst (where-it-fits comes before the capability chapters). */
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, map = true, band, headThumb = true, onHeadFocus, fitsFirst = false }) {
   const d = C[slug];
   const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  const fits = <Fits slug={slug} flip={flip} subject={subject} pos={pos} />;
   return (
-    <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
-      {first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}
-      <Fits slug={slug} flip={flip} subject={subject} pos={pos} />
+    <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} thumb={headThumb} onFocus={onHeadFocus} />}>
+      {fitsFirst ? <>{demo}{fits}{caps}</> : <>{first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}{fits}</>}
       {map && <Map slug={slug} />}
       <ModelCards slug={slug} />
       {band || <Band

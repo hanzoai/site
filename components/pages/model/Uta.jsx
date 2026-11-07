@@ -145,7 +145,8 @@ function Roll() {
       </div>
       <div className="ut-cue">
         <figure className="ut-mon">
-          <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />
+          {/* one continuous mover at a time: while the roll plays, the monitor rests on its frame; pause the roll and the film plays */}
+          {play ? <Img src={film('uta', 'webp')} w={1200} h={1500} /> : <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />}
           <figcaption><span className="mb-mono mb-live">PLAYING · 4K 60FPS</span><span className="mb-mono">CINEMA SCORE</span><span className="mb-mono">SURROUND 7.1.4</span></figcaption>
         </figure>
         <div className="ut-cue-t">
@@ -179,7 +180,8 @@ function capArt(i, on, base) {
   return (
     <div className={'cr-art ut-art ut-art-' + i} style={base} data-on={on ? '' : undefined} aria-hidden="true">
       <Img src={film('uta', 'webp')} w={1200} h={1500} />
-      <ModelFilm slug="uta" play={on} />
+      {/* one continuous mover per screen: under the playhead (02) and the keys (04) the film rests on its frame */}
+      <ModelFilm slug="uta" play={on && i !== 1 && i !== 3} />
       {i === 1 && <span className="ut-cue-l"><i /><i /><i /><b /></span>}
       {i === 3 && <span className="ut-keys">{KEYS.map((m, k) => <i key={m} style={{ '--k': k }} />)}</span>}
     </div>
@@ -222,10 +224,38 @@ function useHold() {
   }, []);
 }
 
+// keyboard: focus entering the settled headline's links (hidden under the film until the stage settles) scrolls the
+// stage to its settled point, so every Tab stop shows
+const settleTo = () => {
+  const s = document.querySelector('.lv-stage[data-hero="uta"]');
+  if (!s || innerWidth <= 900) return;
+  const end = s.getBoundingClientRect().top + scrollY + s.offsetHeight - innerHeight;
+  if (scrollY < end - 2) scrollTo({ top: end, behavior: 'instant' });
+};
+
+// one still header: the shared header keeps its own solid "Try Hanzo" (no label swap, no width change, no icons moving)
+// from arrival to the closing band; while the band is on screen it goes quiet, so the band's "Request access" is the
+// one solid there. The page opts out of the header hand-off with data-ask="off" on <main> (Ask.jsx's own switch).
+function useStillHeader() {
+  useEffect(() => {
+    const H = document.documentElement, main = document.querySelector('main');
+    const band = document.querySelector('.ut-band');
+    if (main) main.dataset.ask = 'off';
+    if (!band) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) H.dataset.ask = 'quiet'; else delete H.dataset.ask; }, { threshold: 0.25 });
+    io.observe(band);
+    return () => { io.disconnect(); delete H.dataset.ask; if (main) delete main.dataset.ask; };
+  }, []);
+}
+
 export default function Uta() {
   useHold();
+  useStillHeader();
   return (
     <Creative
+      headThumb={false}
+      onHeadFocus={settleTo}
+      fitsFirst
       capArt={capArt}
       map={false}
       band={<Close />}
