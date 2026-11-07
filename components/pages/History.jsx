@@ -28,6 +28,7 @@ import Lines from '../v2/Lines';
 import '../v2/system.css';
 import { YEARS, ERAS } from './historyData';
 import './story.css';
+import usePhoneAsk from './usePhoneAsk';
 import './History.css';
 
 const TL = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
@@ -361,6 +362,7 @@ function Fde() {
 }
 
 export default function History() {
+  usePhoneAsk();
   return (
     <main id="main" className="xhi v2s">
       {/* JavaScript off: every line shows at rest, and the years stack */}

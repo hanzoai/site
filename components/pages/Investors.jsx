@@ -26,6 +26,7 @@ import useArrived from './company/useArrived';
 import { ECO } from './openSourceData';
 import '../v2/vc-type.css';
 import './company/deck.css';
+import usePhoneAsk from './usePhoneAsk';
 import './Investors.css';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -477,6 +478,7 @@ function Close() {
 }
 
 export default function Investors() {
+  usePhoneAsk();
   return (
     <main className="vc xin" style={{ '--acc': '#1d1d1f' }}>
       <Hero />
