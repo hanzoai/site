@@ -228,6 +228,7 @@ function Foot() {
       <div className="xbt-foot-film" aria-hidden="true"><Film key={seen ? 'on' : 'off'} src="/models/kai.webm" poster="/models/kai.webp" w={1200} h={1500} loop={false} /></div>
       <div className="xp-wrap xbt-foot-in">
         <A to="/login?next=%2Fbeta" className="xbt-big">Feedback<span aria-hidden="true">→</span></A>
+        <A to="/pricing" className="xbt-big sm" data-cta="beta.go-paid">Skip the wait, go paid<span aria-hidden="true">→</span></A>
         <a className="xbt-big sm" href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer">Book a call<span aria-hidden="true">↗</span></a>
       </div>
       <span className="xbt-curl" aria-hidden="true" />

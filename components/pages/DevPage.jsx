@@ -30,6 +30,7 @@ import './DevPage.css';
 
 const OPEN = '/login?next=%2Fdev';
 const DOCS = 'https://docs.hanzo.ai/docs/dev';
+const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fdev'; // Go is the cheapest plan with Hanzo Dev
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
 const Lk = ({ to, children, id }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{children} <i className="xdv-ar">→</i></Cta>;
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
@@ -632,7 +633,7 @@ export default function DevPage() {
       <Setup />
       <Source />
       <Paste />
-      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<Lk to={DOCS} id="dev.close-docs">Read the docs</Lk>} />
+      <Band title="Describe the change. Dev ships it." action="Get Hanzo Dev, $8/month" to={GO} note={<><Lk to={OPEN} id="dev.close-open">Open Dev</Lk><Lk to={DOCS} id="dev.close-docs">Read the docs</Lk></>} />
     </main>
   );
 }

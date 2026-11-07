@@ -663,7 +663,7 @@ function Careers() {
         lede="We hire systems programmers, AI safety researchers, and product engineers who care about open source, equitable access, privacy, and sovereign ownership. High autonomy, zero bureaucracy, and code that ships in public."
         action="Explore Open Roles"
         to="/careers"
-        note={<p className="x-band-note xab-band-note"><A to="/team">Meet the Team</A><A to="/open-source">Browse Code on GitHub</A></p>}
+        note={<p className="x-band-note xab-band-note"><A to="/pricing" data-cta="about.try">Try Hanzo</A><A to="https://cal.com/hanzo" data-cta="about.call">Book a call</A><A to="/team">Meet the Team</A><A to="/open-source">Browse Code on GitHub</A></p>}
       />
     </>
   );

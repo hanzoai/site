@@ -275,6 +275,7 @@ export default function Hero() {
             <div className="x-auth-mag">
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b solid" whileTap={{ scale: 0.97 }}>Continue with email</motion.a>
             </div>
+            <motion.a variants={rise} href="https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" className="x-arrow x-hero-price" data-cta="home.hero-go">Free to start · Go is $8/month, every model</motion.a>
             <motion.p variants={rise} className="x-terms">By continuing, you agree to Hanzo&apos;s <a href="https://hanzo.ai/terms">Terms</a> and <a href="https://hanzo.ai/privacy">Privacy Policy</a>.</motion.p>
           </motion.div>
         </motion.div>
