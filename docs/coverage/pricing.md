@@ -13,7 +13,7 @@ Forks this page deleted: the dark "recommended" Pro and Team cards, three solid 
 - [x] No dead or self-looping button; n/a for `lib/plans.js` (not merged yet)
 - [x] Open copy questions for James listed, none decided
 
-Done here: The plan rail is the picker: the lowest plan of each set (Free, Team, Pay as you go) is selected by default, and the one panel carries the one solid ask of the selected plan. On desktop the shared header ask drops to an outline while it shows; on phones the shared header keeps its solid "Try Hanzo" (shared header, not this file), so the phone's first screen shows two solid fills until the shared owner changes it. Only the visible tab's asks carry `data-thumb`; measured on the first screen: Personal 1 solid (Free) at 1470 and 375, Team 1 at 1470; the API tab at 1470 shows 2 (header and "Get API Key") because the shared `Ask.jsx` reads the page ask once per route (requested, `docs/requests/pricing.md` item 3).
+Done here: The plan rail is the picker: the lowest plan of each set (Free, Team, Pay as you go) is selected by default, and the one panel carries the one solid ask of the selected plan. On desktop the shared header ask drops to an outline while it shows; on phones the shared header keeps its solid "Try Hanzo" (shared header, not this file), so the phone's first screen shows two solid fills until the shared owner changes it. Only the visible tab's asks carry `data-thumb`; measured on the first screen: Personal 1 solid (Free) at 1470 and 375, Team 1 at 1470; the API tab at 1470 now also shows 1 (slice D, 7 Nov: the one panel has the only `data-thumb`, so the header reads outlined "Try Hanzo" beside "Get API Key"); on Team the panel ask sits below the first desktop screen, so the header carries the one solid ask until it arrives.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the shell's `#main` mark sits before the page's `<main>`)
@@ -62,7 +62,7 @@ Done here: Parity is 100/100 text. Kit `Faq` shows the first three questions ope
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii, shadows and sizes from the deck; never box plus shadow (the plan sheet is one outlined surface)
 - [x] One icon set; no icon in a rounded box
-- [x] Differs from neighbours: one morphing plan panel with a rail and rolling figures, no hero object or film
+- [x] Differs from neighbours: one morphing plan panel with a rail and rolling figures; the hero's model art answers the plan picked
 
 Done here:
 - **Scale with rhythm:** h1 52px; section headings 26px Book 497; prices 64px Air 220 (the one big thing per screen); body 15–16px.
@@ -108,7 +108,7 @@ Done here: The hero strip shows Hanzo's own Enso, Zen and Kai art (the families 
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- **Phone:** the art strip is 60px tall at 375 so the Free card starts inside the first screen; trust links and the band's link are 44px tall on phones (probe: no target under 44px except desktop-only links). The API tab's model families fold to one open (`<details>`), and "The rates" shows three with the other five behind "Read more"; measured page height on the API tab: 7,392px at 1470 and 10,799px at 375 (still long on phones: every rate and model row is Hanzo's copy and stays). The columns stack with hairlines.
+- **Phone:** the art strip is 60px tall at 375 so the Free card starts inside the first screen; trust links and the band's link are 44px tall on phones (probe: no target under 44px except desktop-only links). The API tab's model families fold to one open (`<details>`), and "The rates" shows three with the other five behind "Read more"; "How we bill" shows its first line on phones with the other three behind "Read more + 3" (slice D); measured page height on the API tab: 7,208px at 1470 and 9,552px at 375 (every rate and model row is Hanzo's copy and stays). Plan names in the rail and the panel roll through a clipped slot (slice D), so the Pro row walking its ladder never shows two names over each other. Probe: no in-page target under 44px at 375; `check.mjs /pricing` 0 errors, no overlay, scrollWidth 1470/375. The columns stack with hairlines.
 - **Compare sheet:** shows one plan at a time on phones, picked from a switch over it.
 
 ## 12. Accessibility (WCAG 2.2 AA)
@@ -122,7 +122,7 @@ Done here: Prices sit in `aria-live="polite"`. The steppers are named groups. Th
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
-- [x] No images or films; the odometer is CSS only
+- [x] Only the three model-art webp files (sized, Enso with priority); no film; the odometer is CSS only
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop (filmed in the cloud)
 
@@ -160,13 +160,13 @@ Done here: n/a. "Get API Key" (/dev) and the OpenAI-compatible endpoint line sta
 
 Done here:
 - **Steppers:** cannot go below 2 or above 100 members.
-- **JS off:** shows Pro only, with all words legible.
+- **JS off:** the panel hides and the plan index shows every plan whole (Personal, Team, API), with the API reading open; all words legible.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary. `lib/track.js` is not merged; kit `Cta` dispatches `hz-event` cta_click
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/pricing.md` verdict 8 or more (none on main yet; my own critic said 5.5 on the build before this rework, and every fix it listed is done here)
+- [x] Review read: `docs/review/pricing.md` (7.5) — its five To-reach-8 fixes are in (art answers the picker, one thumb, phone API shorter, FAQ gap and one panel, card corrected); marked Ready in slice D, 7 Nov
 
 Done here: The V2 line is updated after the critic's next walk. The critic's eight fixes are all in this build:
 1. picker, one solid ask

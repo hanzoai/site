@@ -64,6 +64,7 @@
 .xpr-pa, .xpr-pb { min-width: 0; }
 .xpr-swap { position: relative; display: block; }
 .xpr-swap-i, .xpr-line { display: block; }
+.xpr-swap.roll { overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; }
 .xpr-r-name { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; }
 .xpr-pname { margin: 0; min-width: 6ch; font-size: var(--s-h); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; color: var(--ink); }
 .xpr-d { margin: 12px 0 0; max-width: 46ch; font-size: 15px; line-height: 1.5; color: var(--soft); text-wrap: pretty; }
@@ -291,3 +292,13 @@
   .xpr-wins li:nth-child(3) .xpr-stair { --w: 30%; }
   .xpr-faq { padding: 56px 0 80px; }
 }
+
+/* phones: "How we bill" shows its first line; the other three open behind Read more (every word stays in the HTML) */
+.xpr-bills-more { display: none; }
+@media (max-width: 899px) {
+  .xpr-bills:not(.all) > li:nth-child(n + 2) { display: none; }
+  .xpr-bills-more { display: flex; align-items: center; gap: 12px; width: calc(100% + 24px); min-height: 56px; margin: 0 -12px; padding: 0 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 8px; background: none; cursor: pointer; font: 606 13px/1 var(--mono); letter-spacing: .08em; color: var(--ink); transition: background-color .15s var(--eo), transform 90ms var(--eo); }
+  .xpr-bills-more:active { transform: scale(.98); }
+  .xpr-bills-more:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+}
+html:not(.js) .xpr-bills > li { display: grid !important; }

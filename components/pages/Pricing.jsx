@@ -1,6 +1,6 @@
 'use client';
 /* Pricing, v2 (VISION archetype E, Utility: calm, precise and fast, with one delight; PLAN-COMPONENTS 5.2).
-   V2: 8/10 equal plan cards with aligned asks and prices that roll in 300ms; kit tabs, tables, FAQ and Band; no dead buttons; greys only
+   V2: 8/10 one plan panel that morphs between tabs and plans (one solid ask), the model art answering the plan picked, names that roll through a clipped slot like the odometer beside them; greys only
    Persona: a builder or a team lead choosing a plan. Goal: know the price before you ask. CTA: "Try Hanzo" on the plan
    you pick (data-cta pricing.free / pricing.go / pricing.pro); metric: cta_click on those ids.
    Thesis: know the price before you ask.
@@ -161,11 +161,13 @@ const IN = { duration: 0.3, ease: EASE };
 const NONE = { duration: 0 };
 
 // text that changes in place: the old line lifts away while the new one rises into its seat (no cut, no remount)
-function Swap({ k, children, className = '' }) {
+// `roll`: a one-line name rolls through a clipped slot like the odometer beside it (the two words never overlap)
+function Swap({ k, children, className = '', roll }) {
+  const d = roll ? '105%' : 10;
   return (
-    <span className={'xpr-swap ' + className}>
+    <span className={'xpr-swap ' + (roll ? 'roll ' : '') + className}>
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={k} className="xpr-swap-i" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={IN}>{children}</motion.span>
+        <motion.span key={k} className="xpr-swap-i" initial={{ opacity: 0, y: d }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: roll ? '-105%' : -10 }} transition={IN}>{children}</motion.span>
       </AnimatePresence>
     </span>
   );
@@ -281,7 +283,7 @@ function PlanPanel({ tab, at, setAt, s, set, open, hand, live }) {
                 <motion.button key={id} id={'xpr-rail-' + i} type="button" role="radio" aria-checked={on} tabIndex={on ? 0 : -1} className="xpr-rail-i" onClick={() => setAt(i)}
                   layout="position" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0, transition: { ...IN, delay: 0.06 * i } }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={MOVE}>
                   {on && <motion.span layoutId="xpr-rail-bg" className="xpr-rail-bg" transition={MOVE} />}
-                  <span className="xpr-rail-n"><Swap k={q.name}>{q.name}</Swap></span>
+                  <span className="xpr-rail-n"><Swap k={q.name} roll>{q.name}</Swap></span>
                   <span className={'xpr-rail-p' + (q.fig ? ' fig' : '')}>{q.fig ? <Odometer value={q.fig} /> : q.word}</span>
                 </motion.button>
               );
@@ -292,7 +294,7 @@ function PlanPanel({ tab, at, setAt, s, set, open, hand, live }) {
           <div className="xpr-detail" ref={inner}>
             <Slot className="xpr-pa">
               <div className="xpr-r-name">
-                <h2 className="xpr-pname"><Swap k={p.name}>{p.name}</Swap></h2>
+                <h2 className="xpr-pname"><Swap k={p.name} roll>{p.name}</Swap></h2>
                 <AnimatePresence mode="popLayout" initial={false}>
                   {p.ladder && <motion.div key="ladder" {...fade}><Seg opts={PRO.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); }} id="xpr-mult" label="Usage multiple" /></motion.div>}
                   {p.seats && <motion.div key="bill" className="xpr-bill" {...fade}><Seg opts={['Annual', 'Monthly']} val={s.bill} set={set.bill} id="xpr-bill" label="Billing period" /><span className="xpr-save">−20%</span></motion.div>}
@@ -475,6 +477,7 @@ function Models() {
 
 // the API set's own reading, under the panel while the API tab is on (in the HTML always)
 function ApiMore({ on }) {
+  const [allBill, setAllBill] = useState(false); // phones show the first way we bill; the rest open behind "Read more"
   return (
     <div className="xpr-api" hidden={!on}>
       <section className="xpr-ch xpr-split" aria-labelledby="xpr-bill-h">
@@ -482,7 +485,8 @@ function ApiMore({ on }) {
           <h2 id="xpr-bill-h">How we bill</h2>
           <p>Transparent pricing based on what your models, agents, and tools use. Predictable, metered, and with no hidden fees.</p>
         </header>
-        <ol className="xpr-bills">
+        <div>
+        <ol className={'xpr-bills' + (allBill ? ' all' : '')}>
           {BILL.map(([n, u, d, tiers], i) => (
             <li key={n}>
               <span className="xpr-bills-n">{String(i + 1).padStart(2, '0')}</span>
@@ -493,6 +497,8 @@ function ApiMore({ on }) {
             </li>
           ))}
         </ol>
+        {!allBill && <button type="button" className="xpr-bills-more" onClick={() => setAllBill(true)}><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {BILL.length - 1}</span></button>}
+        </div>
       </section>
 
       <section className="xpr-ch xpr-split" aria-labelledby="xpr-rates-h">
