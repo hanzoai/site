@@ -19,7 +19,7 @@ import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, rateFrom, rateText, money, missing, isLocal } from './parts';
+import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, rateFrom, rateText, money, isLocal } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
@@ -76,11 +76,10 @@ function Spec({ g, price, rate, lead }) {
 }
 
 export default function ModelSheet({ doc }) {
-  // api.hanzo.ai is asked only for a rate neither the page nor the snapshot prints
-  const need = missing(doc.id, doc.rate) || doc.siblings.some((s) => missing(s.id, s.rate));
-  const cat = useCatalog(need);
+  // the rate is read from api.hanzo.ai as hanzo.ai reads it (the captured rate is the first paint)
+  const cat = useCatalog(true);
   const rate = rateFrom(cat, doc.id, doc.rate);
-  const price = doc.price || (rate ? rateText(rate) : DASH);
+  const price = (rate && (doc.rate || !doc.price) ? rateText(rate) : doc.price) || DASH;
   const sibs = doc.siblings.map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
   // the hero figure is Hanzo's short form ("1M", "33K": the spec value, else the shelf card's); a sentence-long value
   // ("32,768 tokens (YaRN…)") stays whole in the spec sheet. Never a number Hanzo did not print.
@@ -222,6 +221,8 @@ export default function ModelSheet({ doc }) {
             <header className="xmf-sh dark">
               <h2>{doc.quick.title}</h2>
               <p className="x-mono xmf-quick-id"><i className="xmf-live" aria-hidden="true" />{doc.id}</p>
+              {/* the rate as hanzo.ai prints it under its samples, with any words that follow it (one line) */}
+              {doc.quick.price && <p className="xmf-quick-price">{price === DASH ? DASH : price + doc.quick.note}</p>}
             </header>
             <Codes samples={doc.quick.samples} keyLink={doc.quick.key} title={doc.quick.title} />
           </div>

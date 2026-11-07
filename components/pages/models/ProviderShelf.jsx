@@ -16,7 +16,7 @@ import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, CopyStatus, useCatalog, rateFrom, money, missing } from './parts';
+import { Field, CopyStatus, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
@@ -24,7 +24,7 @@ const FILM = /^\/models\/hanzo\/(enso|kai|koma|zen|iro|oto|koe|uta|mori)\/?$/;
 const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Output rate']];
 
 export default function ProviderShelf({ doc }) {
-  const cat = useCatalog(doc.cards.some((c) => missing(c.id, c.rate)));
+  const cat = useCatalog(true);
   const cards = doc.cards.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
   const [sort, setSort] = useState('shelf');
   const [mod, setMod] = useState('all');
@@ -78,14 +78,15 @@ export default function ProviderShelf({ doc }) {
           {doc.guest.code && (
             <motion.div className="xmf-guest" {...up(0.5)}>
               <div className="xmf-guest-h">
-                {doc.guest.title && <b>{doc.guest.title}</b>}
-                {doc.guest.key && <code className="x-mono">{doc.guest.key}</code>}
+                {/* spans, not <b>/<code>: each of Hanzo's lines is one plain leaf of text */}
+                {doc.guest.title && <span className="xmf-guest-t">{doc.guest.title}</span>}
+                {doc.guest.key && <span className="x-mono xmf-guest-k">{doc.guest.key}</span>}
                 {doc.guest.note && <span>{doc.guest.note}</span>}
                 {doc.guest.prompt && <p>{doc.guest.prompt}</p>}
               </div>
               <div className="xmf-term">
-                <div className="xmf-term-h"><span className="x-mono"><i aria-hidden="true" />{doc.guest.label}</span><Copy text={doc.guest.code} /></div>
-                <pre tabIndex={0}><code>{doc.guest.code}</code></pre>
+                <div className="xmf-term-h"><span className="x-mono"><i aria-hidden="true" /><span>{doc.guest.label}</span></span><Copy text={doc.guest.code} /></div>
+                <pre tabIndex={0}><code>{doc.guest.code.split('\n').map((l, i) => <span key={i} className="xmf-term-l">{l || ' '}{'\n'}</span>)}</code></pre>
               </div>
             </motion.div>
           )}

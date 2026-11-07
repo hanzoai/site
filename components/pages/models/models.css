@@ -130,6 +130,7 @@
 .xmf-quick { background: #0a0a0a; color: #fafafa; }
 .xmf-quick-g { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
 .xmf-quick-id { margin: 18px 0 0; font-size: 14px; color: #a3a3a3; overflow-wrap: anywhere; }
+.xmf-quick-price { margin: 14px 0 0; max-width: 38ch; font-size: 15px; line-height: 1.5; color: #a3a3a3; }
 .xmf-code { min-width: 0; border-radius: var(--xmf-r); background: #171717; border: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
 .xmf-code-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .xmf-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
@@ -392,9 +393,9 @@
 .xmf-maker-n > span { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 .xmf-guest { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; padding-top: 32px; border-top: 1px solid var(--ink); }
 .xmf-guest-h { grid-column: 1 / 5; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.xmf-guest-h b { font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1; }
-.xmf-guest-h code { padding: 4px 10px; border-radius: 8px; background: var(--card); font-size: 14px; }
-.xmf-guest-h span { font-size: 15px; color: var(--soft); }
+.xmf-guest-h .xmf-guest-t { font-size: 28px; font-weight: 600; letter-spacing: -.03em; line-height: 1.1; }
+.xmf-guest-h .xmf-guest-k { padding: 4px 10px; border-radius: 8px; background: var(--card); font-size: 14px; }
+.xmf-guest-h > span:not(.xmf-guest-t):not(.xmf-guest-k) { font-size: 15px; color: var(--soft); }
 .xmf-guest-h p { margin: 10px 0 0; max-width: 34ch; font-size: 17px; line-height: 1.5; color: var(--soft); }
 .xmf-term { grid-column: 5 / 13; min-width: 0; border-radius: 28px; background: #0a0a0a; color: #e5e5e5; overflow: hidden; box-shadow: 0 50px 100px -60px rgba(0, 0, 0, .55); }
 .xmf-term-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 14px 24px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
@@ -482,7 +483,7 @@
 .xmf-fig dt, .xmf-obj-id > span, .xmf-obj-l, .xmf-k, .xmf-maker-n > span { font-size: 12px; letter-spacing: .14em; font-weight: 500; }
 .xmf-obj { background: #f5f5f5; box-shadow: none; border-radius: 24px; }
 .xmf-obj-id { box-shadow: none; border-radius: 16px; }
-.xmf-sh h2, .xmf-rel .xmf-more-h h2, .xmf-spec-h, .xmf-quick .xmf-sh h2, .xmf-guest-h b { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; }
+.xmf-sh h2, .xmf-rel .xmf-more-h h2, .xmf-spec-h, .xmf-quick .xmf-sh h2, .xmf-guest-h .xmf-guest-t { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; }
 .xmf-spec { padding: 27px 0; }
 .xmf-spec dt, .xmf-spec dd { font-size: 16px; }
 .xmf-bill-big b { font-size: 64px; font-weight: 300; letter-spacing: -.04em; }

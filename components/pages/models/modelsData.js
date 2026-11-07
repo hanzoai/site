@@ -141,7 +141,12 @@ export function modelDoc(slug, model) {
       doc.facts.forEach((g) => g.facts.forEach((f) => { if (f.value == null) { f.value = after(text, f.label) || null; f.live = true; } }));
     } else if (id === 'quickstart') {
       const key = find(sec, (n) => n.t === 'a' && n.a && n.a.href);
-      doc.quick = { title: h2, key: key ? link(key) : null, samples: samples(sec) };
+      // hanzo.ai prints the rate under the samples ("<rate>. A native decision writes…"): keep the words after it
+      // (the reader keeps no data-price, so: the text span whose own first child is the "…" its script fills)
+      const dots = (k) => isN(k) && k.t === 'span' && textOf(k) === '…';
+      const pr = find(sec, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text' && dots(n.c.filter((k) => typeof k !== 'string' || k.trim())[0]));
+      const note = pr ? pr.c.filter((k) => !dots(k)).map(textOf).join('').replace(/\s+/g, ' ').trimEnd() : '';
+      doc.quick = { title: h2, key: key ? link(key) : null, samples: samples(sec), price: !!pr, note };
     } else if (id === 'family') {
       const grid = find(sec, slot('grid'));
       doc.family = { title: h2, links: (grid ? grid.c.filter(isN) : []).map((cell) => {

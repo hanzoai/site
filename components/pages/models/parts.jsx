@@ -1,7 +1,7 @@
 'use client';
 /* Parts of the /models family: the sibling field (signature), the bill comparer (beyond), the quick-start room and a
    plain drawer for any section hanzo.ai adds later. Rates are Hanzo's: printed from hanzo.ai, refreshed from
-   api.hanzo.ai/v1/models in the browser when a rate was not printed. */
+   api.hanzo.ai/v1/models in the browser, as hanzo.ai does. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
@@ -15,7 +15,7 @@ const ctxText = (t) => (t == null ? '—' : t >= 1e6 ? +(t / 1e6).toFixed(1) + '
 const bill = (r, i, o) => (r ? r.in * i + r.out * o : null);
 const dollars = (v) => (v == null ? '—' : v === 0 ? '$0' : '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2)));
 
-/* api.hanzo.ai's catalogue, asked once a page and only when a rate is missing */
+/* api.hanzo.ai's catalogue, asked once a page (the public GET hanzo.ai's own model pages read) */
 let CAT = null;
 export function useCatalog(need) {
   const [map, setMap] = useState(null);
@@ -30,7 +30,8 @@ export function useCatalog(need) {
   }, [need]);
   return map;
 }
-export const rateFrom = (cat, id, own) => own || (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;
+// api.hanzo.ai's rate, once read, wins (it is what hanzo.ai itself prints); the captured rate and the snapshot are the first paint
+export const rateFrom = (cat, id, own) => (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || own || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;
 /* a rate the page cannot print without asking api.hanzo.ai (printed rates and the snapshot need no request) */
 export const missing = (id, own) => !rateFrom(null, id, own);
 
