@@ -16,9 +16,11 @@
 .xrs-sheet.lg.hip .xrs-sheet-t { font-size: clamp(44px, 6vw, 72px); }
 
 /* ---------- hero: a staged deck ---------- */
-.xrs-hero.staged { height: 175svh; }
 .xrs-hero-stick { min-height: 100svh; display: flex; align-items: center; padding: calc(60px + clamp(32px, 4vw, 64px)) 0 clamp(48px, 6vw, 96px); }
-.xrs-hero.staged .xrs-hero-stick { position: sticky; top: 0; height: 100svh; min-height: 0; overflow: hidden; padding-bottom: 0; }
+@media (min-width: 901px) {
+  .xrs-hero.staged { height: 175svh; }
+  .xrs-hero.staged .xrs-hero-stick { position: sticky; top: 0; height: 100svh; min-height: 0; overflow: hidden; padding-bottom: 0; }
+}
 .xrs-hero-g { width: min(100% - 48px, 1392px); align-items: center; }
 .xrs-hero-c { grid-column: 1 / 7; position: relative; z-index: 2; }
 .xrs-h1 { max-width: 7ch; }
