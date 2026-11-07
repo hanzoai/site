@@ -184,7 +184,8 @@ function ZoomMap({ name, setName }) {
       const ox = r.x + (r.w - L.W * s0) / 2, oy = r.y + (r.h - L.H * s0) / 2;
       const c = L.n.coll;
       const fc = [c[0] + c[2] / 2, c[1] + c[3] / 2];
-      geo.current = { s0, s1: Math.max(sw / c[2], sh / c[3]) * 1.04, fc, f0: [ox + fc[0] * s0, oy + fc[1] * s0], f1: [sw / 2, sh / 2] };
+      // wide: the card fills the stage (cover); phones: it fills the width and stays whole, so no word is cut mid-zoom
+      geo.current = { s0, s1: wide ? Math.max(sw / c[2], sh / c[3]) * 1.04 : Math.min((sw - 24) / c[2], (sh - 32) / c[3]), fc, f0: [ox + fc[0] * s0, oy + fc[1] * s0], f1: [sw / 2, sh / 2] };
       paint(p.get());
       map.current?.setAttribute('data-ready', '');
     };
