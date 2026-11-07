@@ -172,3 +172,52 @@
 @media (prefers-reduced-motion: reduce) {
   .xkt *, .xkt *::before, .xkt *::after { animation: none !important; transition: none !important; }
 }
+
+/* round 9 (8 Nov): the arrival is the first frame of the loop. The h1 words cut in by CSS line mask from the first
+   paint (700 ms, 60 ms apart) and the hero object rises 24px without fading, so nothing is absent before hydration. */
+.xkt-h1 .xkt-w { animation: xkt-cut .7s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(50ms + var(--i, 0) * 60ms); }
+@keyframes xkt-cut { from { transform: translateY(105%); } }
+.xkt-hero-obj { animation: xkt-rise .5s cubic-bezier(.16, 1, .3, 1) .15s both; }
+@keyframes xkt-rise { from { transform: translateY(24px); } }
+@media (prefers-reduced-motion: reduce) { .xkt-h1 .xkt-w, .xkt-hero-obj { animation: none; } }
+/* JS off: the whole session is shown, as the passing state would show it */
+html:not(.js) .xkt-ln > span { opacity: 1; transform: none; }
+/* phone first screen: 80px or more of the board inside 375×660 (its top measured at 572) */
+@media (max-width: 900px) { .xkt-hero { padding-top: 80px; } .xkt-hero-grid { margin-top: 20px; } }
+/* no void after the wipe: on desktop the capabilities rise over the empty lower third of the pinned white screen,
+   so "Built for the pipeline." comes in while "0 failed" is still settling (it never reaches the caption) */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .xkt-room { margin-bottom: -30svh; }
+  .xkt-caps { position: relative; z-index: 1; background: #fff; padding-top: clamp(48px, 5vw, 80px); }
+}
+/* idle motion beyond the hero (time, not scroll; CSS only, none under reduced motion):
+   the board's dots breathe while the suite runs, the failing one rings, the passing row sends a slow wave */
+.xkt-dots i.wait { animation: xkt-wait 1.2s ease-in-out calc(var(--k, 0) * 60ms) infinite; }
+@keyframes xkt-wait { 50% { box-shadow: 0 0 0 4px rgba(0, 0, 0, .08); } }
+.xkt-dots i.fail { animation: xkt-ring 1.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xkt-ring { 0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, .22); } 100% { box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); } }
+.xkt-dots i.pass { animation: xkt-wave 2.6s ease-in-out calc(.9s + var(--k, 0) * 70ms) infinite; }
+@keyframes xkt-wave { 0%, 30%, 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } 12% { box-shadow: 0 0 0 3px rgba(0, 0, 0, .12); } }
+/* the dial's station you are on rings softly */
+.xkt-dial-st.on i::after { content: ''; position: absolute; inset: -2px; border-radius: 50%; border: 1.5px solid var(--ink); animation: xkt-st 2s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xkt-st { 0% { transform: scale(1); opacity: .5; } 100% { transform: scale(2.6); opacity: 0; } }
+/* the pinned command keeps its caret blinking */
+.xkt-wcur { display: inline-block; width: .55em; height: 1.1em; margin-left: .3em; vertical-align: -.2em; background: currentColor; animation: xkt-blink 1s steps(1) infinite; }
+/* the stack check tries itself: a ring on the chip being tried, its word lit in the sentence */
+.xkt-chips button.tried:not([aria-checked='true']) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+@media (prefers-reduced-motion: reduce) { .xkt-dots i, .xkt-dial-st.on i::after, .xkt-wcur { animation: none !important; } .xkt-dial-st.on i::after { display: none; } }
+/* the dial's chapter index answers the pointer: the number inks and its bar darkens; press dips 1px */
+.xkt .a2-ch-nav button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms; }
+@media (hover: hover) { .xkt .a2-ch-nav button:not([aria-current]):hover { color: var(--ink); } .xkt .a2-ch-nav button:not([aria-current]):hover::after { background: #a3a3a3; } }
+.xkt .a2-ch-nav button:active { transform: translateY(1px); }
+/* the questions answer the pointer: the words underline, the plus slides 4px toward them, the row presses 1px */
+.xkt-qa .a2-faq button i { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.xkt-qa .a2-faq button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms; }
+@media (hover: hover) { .xkt-qa .a2-faq button:hover > span { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; } .xkt-qa .a2-faq button:hover i { transform: translateX(-4px); } }
+.xkt-qa .a2-faq button:active { transform: translateY(1px); }
+/* the page's own Lines (Kata.jsx): the line mask in CSS, so server and client agree; Room opens flat on phones and
+   under reduced motion (CSS, not a render branch) */
+html.js .xkt-lines:not(.go) .a2-ln-in { transform: translateY(105%); }
+.xkt-lines.go .a2-ln-in { animation: xkt-cut .7s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i, 0) * 60ms); }
+@media (prefers-reduced-motion: reduce) { html.js .xkt-lines:not(.go) .a2-ln-in, .xkt-lines.go .a2-ln-in { transform: none; animation: none; } }
+@media (max-width: 899px), (prefers-reduced-motion: reduce) { .xkt-room { clip-path: none !important; } }
