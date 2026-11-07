@@ -57,12 +57,13 @@ export default function usePhoneAsk() {
         if (past && (btn.getBoundingClientRect().right > Math.max(edge, innerWidth - 16) + 1 || btn.scrollWidth > btn.clientWidth + 1)) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
       }
     };
-    const onScroll = () => { clearTimeout(t); clearTimeout(t2); t = setTimeout(update, 80); t2 = setTimeout(update, 800); }; // again once the bar has settled
+    let raf = 0; // follow the scroll as it happens (once a frame), and look again once the shared bar has settled
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; update(); }); clearTimeout(t2); t2 = setTimeout(update, 800); };
     addEventListener('scroll', onScroll, { passive: true });
     update(); // at once, so the header is never solid beside the hero's ask on arrival
     const timers = [120, 400, 1400, 2800].map((ms) => setTimeout(update, ms));
     return () => {
-      clearTimeout(t); clearTimeout(t2); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll);
+      clearTimeout(t); clearTimeout(t2); cancelAnimationFrame(raf); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll);
       delete H.dataset.pq; delete H.dataset.pqReady;
       if (btn && swapped) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
     };
