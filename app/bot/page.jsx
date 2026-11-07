@@ -1,4 +1,4 @@
-// Signature: An org chart of bots handing work to each other: a person mentions a bot, packets travel to it and on to its verifier, ten channels in turn
+// Signature: The org chart is the hero: a person mentions a bot, a packet runs down the chart to that bot and across to the teammate who verifies it, while the thread fills in beneath, ten channels in turn
 // Beyond: How many bots do you need? Slide 1 to 10 and the smallest plan that includes that many resident bots lights up, from Hanzo's plan list
 import Bot from '../../components/pages/Bot';
 import JsonLd from '../../components/JsonLd';

@@ -1,3 +1,5 @@
+// Signature: six reasons Hanzo builds as tiles that open; a tile grows into its own full sheet (shared-element morph) and folds back
+// Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off, each showing the line that holds it
 import About from '../../components/pages/About';
 import JsonLd from '../../components/JsonLd';
 

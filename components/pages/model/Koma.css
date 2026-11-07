@@ -1,7 +1,10 @@
-/* Koma (kf-): centred head, the cinema monitor, the four-shot timeline */
-.kf-head-c { max-width: 900px; margin: 0 auto clamp(48px, 6vw, 72px); text-align: center; }
-.kf-head-c .mb-lede { margin-inline: auto; }
-.kf-head-c .mb-acts { justify-content: center; }
+/* Koma (kf-): the headline split under the anamorphic frame, the cinema monitor, the four-shot timeline */
+.kf-v2 { top: auto; bottom: 5%; left: max(24px, calc((100% - var(--wrap)) / 2)); right: max(24px, calc((100% - var(--wrap)) / 2)); width: auto; transform: none; display: grid; grid-template-columns: 7fr 5fr; grid-template-areas: 'k l' 'h l' 'h a'; column-gap: 56px; align-items: end; }
+.kf-v2 .lv-kick { grid-area: k; }
+.kf-v2 .lv-lines { grid-area: h; font-size: clamp(3rem, 5.6vw, 5.5rem); }
+.kf-v2 .lv-lede { grid-area: l; margin: 0; }
+.kf-v2 .lv-acts { grid-area: a; margin-top: 24px; }
+.kf-scene .cr-studio { max-width: 1040px; margin: 0 auto; }
 .kf-mon { position: relative; aspect-ratio: 21 / 9; overflow: hidden; background: #000; }
 .kf-cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
 .kf-cam video { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -29,8 +32,8 @@
 .kf-head { position: absolute; top: 0; bottom: 0; left: -1px; width: 2px; border-radius: 2px; background: #ff453a; transition: box-shadow .25s; }
 .kf-head::before { content: ''; position: absolute; top: -4px; left: -5px; width: 12px; height: 12px; border-radius: 3px; background: inherit; }
 @media (max-width: 900px) {
-  .kf-head-c { text-align: left; }
-  .kf-head-c .mb-acts { justify-content: flex-start; }
+  .kf-v2 { left: 20px; right: 20px; bottom: 28px; display: block; }
+  .kf-v2 .lv-lede { margin-top: 16px; }
   .kf-mon { aspect-ratio: 4 / 3; }
   .kf-tag { padding: 5px 7px; }
   .kf-br { right: auto; left: 14px; bottom: 50px; }
