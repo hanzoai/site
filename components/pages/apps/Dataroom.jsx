@@ -1,29 +1,34 @@
 'use client';
-/* Dataroom (v2, archetype A "Launch", accent brass: the colour of the page someone read twice).
-   V2: 8/10 split 5/7 first screen with the reading room bleeding off the right edge, five sticky chapters with the room pinned, the features as a folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder, one closing CTA.
-   Signature: a link's views ticking in. The hero is the room after the link has gone: Deck.pdf's ten pages in a row
-   running off the right edge, each page's reading time filling as the visitor works through it, the camera following
-   them, the page they came back to marked 2×, the visits arriving in a feed (verified email, came back) and the views
-   figure ticking up with each one.
+/* Dataroom (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
+   Persona: a founder raising, or a deal team running diligence, who sends documents to people outside (metric signup_click)
+   Goal: see what a link can tell you and control after it has gone, then start sharing
+   CTA: Try Hanzo -> /login (hero, sticky AskBar, phone thumb bar, close; data-thumb, data-cta)
+   Signature: a link's views ticking in. Beside the title on the first screen, the room after the link has gone:
+   Deck.pdf's ten pages in a row running off the right edge, each page's reading time filling as the visitor works
+   through it, the camera following them, the page they came back to marked 2×, the visits arriving in a feed (verified
+   email, came back) and the views figure ticking up with each one. It pauses on its own button (WCAG 2.2.2) and stops
+   off screen.
    Beyond: "Share it ten ways". Switch a link's settings (password, verified email, NDA, expiry, downloads off,
    watermark), type your own email, and meet what the person opening it meets: the gates in order, which you clear one
    by one, then the page with your email printed across it.
-   Motion: the reading room (signature) + sticky chapters + line-masked type + files that open into their page.
-   Every word and link is Hanzo's. */
-import { useEffect, useState } from 'react';
+   Motion: the reading room (idle, signature) + sticky chapters (scroll) + headlines cut into their line (arrival) +
+   files that open into their page (state, BizOpen); the switches and gates answer the hand. Every word and link is Hanzo's.
+V2: 8/10 the live reading room beside the title on the first screen at both sizes, five pinned chapters, the folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder, greys only, one ask everywhere (hero, sticky bar, close)
+*/
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { EASE } from '../../ui';
 import { A, More } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
+import AskBar from '../../v2/AskBar';
+import { EASE_OUT_EXPO as EASE, SPRING } from '../../../lib/motion';
 import './Dataroom.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/dataroom';
 const REPO = 'https://github.com/hanzoai/dataroom';
 const two = (n) => String(n).padStart(2, '0');
-const fade = (d) => ({ initial: { opacity: 0 }, animate: { opacity: 1 }, transition: { duration: 0.9, delay: d } });
 
 const Lock = () => <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>;
 const FileI = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 1.5h6l3 3v10h-9z M9.5 1.5v3h3" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>;
@@ -51,8 +56,14 @@ const READ = [0.62, 0.4, 0.74, 0.52, 0.36, 0.84, 0.94, 0.46, 0.3, 0.2];
 const BEAT = [1100, ...READ.map((r) => 560 + r * 900), 2000, 2800];
 const BACK = 6;
 
+const PauseI = ({ held }) => (held
+  ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
+  : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
+
 function Live() {
-  const [ref, live, calm] = useLive(0.25);
+  const [ref, seen, calm] = useLive(0.25);
+  const [held, setHeld] = useState(false);
+  const live = seen && !held;
   const [s, setS] = useState(4);
   const [visit, setVisit] = useState(0);
   useEffect(() => { if (calm) setS(12); }, [calm]);
@@ -78,13 +89,14 @@ function Live() {
         <span className="dr-live-url x-mono">dataroom link</span>
         <span className="dr-live-file">Deck.pdf</span>
         <span className="dr-chip"><i aria-hidden="true" />open</span>
+        {!calm && <button type="button" className="dr-pause" onClick={() => setHeld(!held)} aria-pressed={held} aria-label={held ? 'Play the room' : 'Pause the room'}><PauseI held={held} /></button>}
       </div>
       <div className="dr-live-top">
         <div className="dr-views">
           <span className="bz-kick">views</span>
           <span className="dr-views-n" aria-live="off">
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.b key={views} className="bz-fig" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{views}</motion.b>
+              <motion.b key={views} className="bz-fig" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={SPRING.toggle}>{views}</motion.b>
             </AnimatePresence>
           </span>
         </div>
@@ -123,17 +135,17 @@ function Hero() {
     <section className="dr-hero" aria-labelledby="dr-h1">
       <div className="bz-wrap bz-grid dr-hero-grid">
         <div className="dr-hero-copy">
-          <motion.p className="bz-kick" {...fade(0.1)}>Secure Document Sharing</motion.p>
           <BizLines as="h1" id="dr-h1" className="bz-display md" lines={['Hanzo', 'Dataroom']} now delay={0.05} />
-          <motion.p className="bz-lede" {...fade(0.45)}>You send a link instead of an attachment, and the link keeps working for you after it leaves.</motion.p>
-          <motion.div className="bz-acts" {...fade(0.55)}>
-            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo">Try Hanzo</A>
-            <A to={DOCS} className="x-btn">Documentation</A>
-          </motion.div>
+          <p className="dr-tag x-mono">Secure Document Sharing</p>
+          <p className="bz-lede">You send a link instead of an attachment, and the link keeps working for you after it leaves.</p>
+          <div className="dr-acts">
+            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+            <More to={DOCS}>Documentation</More>
+          </div>
         </div>
-        <motion.div className="dr-hero-room" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
+        <div className="dr-hero-room">
           <Live />
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -243,8 +255,8 @@ function Files() {
     panel: (
       <article className="dr-open">
         <div className="dr-open-copy">
-          <p className="bz-kick">Hanzo Dataroom <span className="x-mono">/ {two(i + 1)}</span></p>
           <h3 className="bz-headline">{t}</h3>
+          <p className="dr-tag x-mono">Hanzo Dataroom / {two(i + 1)}</p>
           <p className="bz-lede">{d}</p>
         </div>
         <div className="dr-open-page" aria-hidden="true">
@@ -258,8 +270,8 @@ function Files() {
     <section className="bz-sec dr-files" aria-labelledby="dr-files-h">
       <div className="bz-wrap bz-grid">
         <header className="dr-files-head">
-          <p className="bz-kick">Data rooms</p>
           <BizLines id="dr-files-h" className="bz-display sm" lines={['Diligence is', 'forty documents', 'and a hundred', 'questions']} />
+          <p className="dr-tag x-mono">Data rooms · open a file</p>
         </header>
         <div className="dr-finder bz-obj">
           <div className="dr-finder-bar"><i /><i /><i /><span className="x-mono">Hanzo Dataroom</span><span className="dr-finder-n x-mono">10 files</span></div>
@@ -278,13 +290,13 @@ const GATE = { password: ['Enter the password', 'Unlock'], email: ['Enter the co
 function Gate({ k, mail, i, go }) {
   const [t, b] = GATE[k];
   return (
-    <motion.div className="dr-gate" style={{ zIndex: 10 - i }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: i * 14, scale: 1 - i * 0.045 }} exit={{ opacity: 0, x: 120, rotate: 5, transition: { duration: 0.4, ease: EASE } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+    <motion.div className="dr-gate" style={{ zIndex: 10 - i }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: i * 14, scale: 1 - i * 0.045 }} exit={{ opacity: 0, x: 120, rotate: 5, transition: { duration: 0.4, ease: EASE } }} transition={SPRING.sheet}>
       <span className="dr-gate-n x-mono">{i + 1}</span>
       <p className="bz-title">{t}</p>
       {k === 'password' && <span className="dr-field x-mono" aria-hidden="true">••••••••••</span>}
       {k === 'email' && <><span className="dr-gate-mail x-mono">{mail}</span><span className="dr-code" aria-hidden="true">{[0, 1, 2, 3, 4, 5].map((c) => <i key={c} />)}</span></>}
       {k === 'nda' && <span className="dr-nda" aria-hidden="true"><i /><i /><i /><i /></span>}
-      {i === 0 && <button type="button" className="x-btn solid dr-gate-go" onClick={go}>{b}</button>}
+      {i === 0 && <button type="button" className="dr-gate-go" onClick={go}>{b}</button>}
     </motion.div>
   );
 }
@@ -301,8 +313,8 @@ function Ten() {
     <section className="bz-sec dr-ten" data-room="dark" aria-labelledby="dr-ten-h">
       <div className="bz-wrap bz-grid">
         <div className="dr-ten-copy">
-          <p className="bz-kick">Share it ten ways</p>
           <BizLines id="dr-ten-h" className="bz-display sm" lines={['A link you', 'still control']} />
+          <p className="dr-tag x-mono">Share it ten ways</p>
           <p className="bz-lede">Every setting here is per link, so one document can be shared ten different ways.</p>
           <div className="dr-sets" role="group" aria-label="This link's settings">
             {SETS.map(([k, t]) => (
@@ -364,7 +376,7 @@ function Plans() {
               <p className="dr-price"><b className="bz-fig">{p}</b><span>/mo</span></p>
               <p className="dr-rung-d">{d}</p>
               <ul>{li.map((x) => <li key={x}>{x}</li>)}</ul>
-              <A to={to} className={'x-btn' + (i === 2 ? ' solid' : '')}>{cta}</A>
+              <More to={to}>{cta}</More>
             </li>
           ))}
         </ol>
@@ -380,33 +392,45 @@ function Plans() {
 
 const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
-/* The close: one action (start sharing), the other doors as quiet rows, and the Get block's facts. */
+/* The close: one sentence at Display size, the same solid ask, and full-width text rows for every other door. The
+   sticky ask steps aside while it is on screen, so one solid button shows at a time. */
+const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const DOORS = [
+  [DOCS, 'Documentation', 'Explore our guides and API references', 'View Docs'],
+  [REPO, 'For Developers', 'Integrate document sharing into your apps', 'View on GitHub'],
+  ['/contact-sales', 'Need a Custom Solution?', 'Our team can help you design a tailored data room setup for your fundraising or due diligence needs.', 'Contact Sales'],
+  [DOCS, 'Get started with Dataroom', null, 'Read the docs'],
+];
+
 function End() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current, main = el?.closest('main');
+    if (!el || !main) return;
+    const io = new IntersectionObserver(([e]) => main.toggleAttribute('data-end', e.isIntersecting), { threshold: 0.15 });
+    io.observe(el);
+    return () => { io.disconnect(); main.removeAttribute('data-end'); };
+  }, []);
   return (
-    <section className="bz-sec dr-end" aria-labelledby="dr-end-h">
-      <div className="bz-wrap bz-grid">
-        <div className="dr-end-main">
-          <p className="bz-kick">Start Sharing</p>
-          <BizLines id="dr-end-h" className="bz-display md" lines={['Upload one document', 'and send the link']} />
-          <p className="bz-lede">You will know whether it was read before you have to ask.</p>
+    <section className="bz-sec dr-end" aria-labelledby="dr-end-h" ref={ref}>
+      <div className="bz-wrap">
+        <div className="dr-end-top">
+          <div className="dr-end-main">
+            <BizLines id="dr-end-h" className="bz-display md" lines={['Upload one document', 'and send the link']} />
+            <p className="bz-lede">You will know whether it was read before you have to ask.</p>
+          </div>
           <div className="dr-end-go">
-            <A to="/login" className="x-btn solid">Try Hanzo</A>
-            <span className="bz-body">Share documents with real-time analytics</span>
+            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+            <p className="dr-end-note"><b>Start Sharing</b><span>Share documents with real-time analytics</span></p>
           </div>
         </div>
-        <ul className="dr-doors">
-          {[['Documentation', 'Explore our guides and API references', 'View Docs', DOCS], ['For Developers', 'Integrate document sharing into your apps', 'View on GitHub', REPO], ['Need a Custom Solution?', 'Our team can help you design a tailored data room setup for your fundraising or due diligence needs.', 'Contact Sales', '/contact-sales']].map(([t, d, a, to]) => (
-            <li key={t}><h3>{t}</h3><p>{d}</p><More to={to}>{a}</More></li>
+        <ul className="dr-rows">
+          {DOORS.map(([to, t, d, a]) => (
+            <li key={t}><A to={to} className="dr-row"><b>{t}</b><span>{d}</span><em>{a}</em><Arrow /></A></li>
           ))}
+          <li><A to="https://platform.hanzo.ai/deploy" className="dr-row"><b>Get Dataroom</b><span>Secure data room <i className="x-mono">License: AGPL-3.0</i></span><em>Deploy to Cloud</em><Arrow /></A></li>
+          <li><A to={REPO} className="dr-row"><b className="x-mono dr-gh"><Gh />hanzoai/dataroom</b><span>3 stars</span><em /><Arrow /></A></li>
         </ul>
-        <div className="dr-get">
-          <p className="dr-get-t"><b>Get Dataroom</b><span>Secure data room</span></p>
-          <span className="dr-get-chip x-mono"><span>License:</span> AGPL-3.0</span>
-          <A to={REPO} className="dr-get-chip x-mono"><Gh />hanzoai/dataroom<em>3 stars</em></A>
-          <span className="dr-get-gs">Get started with Dataroom</span>
-          <More to={DOCS}>Read the docs</More>
-          <More to="https://platform.hanzo.ai/deploy">Deploy to Cloud</More>
-        </div>
       </div>
     </section>
   );
@@ -414,7 +438,7 @@ function End() {
 
 export default function Dataroom() {
   return (
-    <main className="bz dr" style={{ '--acc': '#946c00' }}>
+    <main className="bz dr">
       <Hero />
       <BizChapters label="A link, shared" className="dr-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Room at={at} />}>
         <header className="bz-wrap dr-ch-head">
@@ -425,6 +449,7 @@ export default function Dataroom() {
       <Ten />
       <Plans />
       <End />
+      <AskBar title="Dataroom" label="Try Hanzo" to="/login" />
     </main>
   );
 }

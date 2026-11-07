@@ -165,3 +165,30 @@
 .xkt-fig.f.bad b { color: var(--ink); }
 .xkt-wipe-l.green { color: #0a0a0b; }
 .xkt-wipe-l.green .a2-kick { color: #6e6e73; }
+
+/* 7 Nov review: the hero fits 1470x801 (the loop on one line), docs rows preview where they go, a closing band */
+.xkt-hero { padding: clamp(104px, 13vh, 140px) 0 clamp(80px, 9vw, 140px); }
+.xkt-h1 { font-size: clamp(48px, 7.3vw, 108px); max-width: none; line-height: .95; }
+.xkt-h1 .a2-ln { display: inline-block; margin-right: .22em; }
+.xkt-auto { display: inline-block; margin: 0 0 0 .1em; vertical-align: .9em; font-size: clamp(17px, 1.5vw, 22px); color: var(--soft); }
+.xkt-hero-grid { margin-top: clamp(28px, 3.4vw, 48px); align-items: start; }
+.xkt-hero-copy { grid-column: 1 / span 5; padding-top: 8px; }
+.xkt-hero-copy .a2-lede { margin: 0 0 28px; }
+.xkt-docs { margin: 18px 0 0; }
+.xkt-hero-obj { grid-column: 6 / span 7; }
+.xkt-board { padding: 22px 24px 20px; }
+.xkt-fig b { font-size: clamp(44px, 4.2vw, 64px); }
+.xkt-term-body { min-height: 0; padding: 18px 22px 20px; }
+.xkt-link { padding: 14px 12px; margin: 0 -12px; border-radius: 12px; transition: background .25s; }
+.xkt-link:hover { background: var(--card); }
+.xkt-link em { font-style: normal; font-size: 12.5px; color: var(--faint); margin-left: auto; margin-right: 12px; opacity: 0; transform: translateX(-6px); transition: opacity .25s, transform .35s var(--a2-ease); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%; }
+.xkt-link:hover em, .xkt-link:focus-visible em { opacity: 1; transform: none; }
+.xkt-close { border-top: 1px solid var(--line); }
+.xkt-close-in { display: flex; flex-direction: column; align-items: flex-start; gap: 40px; }
+.xkt-close-h { margin: 0; }
+@media (max-width: 900px) {
+  .xkt-h1 .a2-ln { display: block; }
+  .xkt-auto { display: block; margin: 16px 0 0; vertical-align: 0; }
+  .xkt-hero-grid { row-gap: 40px; }
+  .xkt-link em { display: none; }
+}

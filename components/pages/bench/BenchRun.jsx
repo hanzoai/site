@@ -4,7 +4,7 @@
    Persona: researcher, and the developer weighing Hanzo's router and engines (PLAN-COMPONENTS 1.1).
    Goal: believe the figure by seeing how it was measured and reading the run behind it.
    CTA: "Start on Hanzo Cloud" (paper pages, from their own close) or the header's "Try Hanzo" (result pages), one solid
-   in the hero, sticky after it (AskBar on desktop, the thumb bar on phones). Metric: signup_start; GitHub or weights click.
+   in the hero (data-thumb), carried after it by the site's ask bar (components/Ask.jsx) at every width. Metric: signup_start; GitHub or weights click.
    Stage: the title at display size beside its lede, the page's one ask and its crumb; over a contour field seeded from
    the slug and its own numbers. The benchmark's own card (its table, with a live readout of the row being read) is the
    hero object, on the first screen at 1470×801 and 375×812, settling into place as you scroll. Result pages then put
@@ -29,7 +29,6 @@ import { motion, LayoutGroup, AnimatePresence, useInView, useReducedMotion } fro
 import { EASE, Copy } from '../../ui';
 import { A } from '../../kit';
 import { Magnetic } from '../../ui';
-import AskBar from '../../v2/AskBar';
 import { ui } from '../../v2/famUi';
 import { Nodes } from '../DocNodes';
 import Sigil from '../../Sigil';
@@ -405,7 +404,7 @@ function Tail({ tail, near, peek }) {
         </div>
       </section>
       {!!cta.length && (
-        <section className="xbr-band" data-room="dark" aria-label={h3 ? clean(textOf(h3.n)) : undefined}>
+        <section className="xbr-band" data-room="dark" data-ask-hide aria-label={h3 ? clean(textOf(h3.n)) : undefined}>
           <div className="v2f-wrap v2f-grid xbr-band-g">
             {h3 && <FamLines as="h2" play="view" className="v2f-display small xbr-band-h" text={clean(textOf(h3.n))} />}
             <div className="xbr-band-r">
@@ -569,7 +568,6 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
 
       <Source doc={doc} />
       <Tail tail={doc.tail} near={near} peek={peek} />
-      <AskBar title={doc.title} label={ask.label} to={ask.href} hero=".xbr-stage" />
     </main>
   );
 }

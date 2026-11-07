@@ -1,6 +1,7 @@
 'use client';
 /* Hanzo Tag for Slack.
    V2: 8/10 the code channel as an Apple-style pinned scene: your scroll plays the thread from @Hanzo to merged PR in one dark room, with the setup card, the promises and the details chaptered after it.
+   Persona: an engineering lead whose team lives in Slack. Goal: set up Hanzo Tag. CTA: Set up Hanzo Tag (slack.hero).
    Signature: scroll plays the thread. A white first screen with the headline hands over to the one dark room, where
    the Slack window pins and settles to full size; each stretch of scroll plays the next step of #bug-button-darkmode
    (1. Code trace … 6. Session complete) while the Code, View and Canvas artifacts follow the step. The step rail on
