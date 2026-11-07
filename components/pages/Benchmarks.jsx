@@ -119,6 +119,27 @@ function Table({ head, rows, caption, className = '' }) {
   return <DataTable caption={caption} cols={cols} rows={objs} className={'xbm-dt ' + className} />;
 }
 
+/* A reading marker that walks the rows of a visual (first step 1.2s after it is seen, then one row every 1.8s), so each screen has one quiet live object.
+   The lit row's band cross-fades in place (300ms ease-emphasis), so it never paints over a neighbour. Pointing at a row brings the marker to it (and the walk carries on from
+   there); a press, or keyboard focus inside, holds it (WCAG 2.2.2 pause). Off screen and under reduced motion it rests. */
+function useWalk(n, on = true, ms = 1800) {
+  const ref = useRef(null);
+  const vis = useInView(ref, { amount: 0.3 });
+  const calm = useReducedMotion();
+  const [hold, setHold] = useState(false);
+  const [k, setK] = useState(0);
+  const first = useRef(true);
+  const live = on && vis && !hold && !calm && n > 1;
+  useEffect(() => {
+    if (!live) { first.current = true; return; }
+    const t = setTimeout(() => { first.current = false; setK((v) => (v + 1) % n); }, first.current ? 1200 : ms);
+    return () => clearTimeout(t);
+  }, [k, live, n, ms]);
+  const root = { onClick: () => setHold((h) => !h), onFocusCapture: () => setHold(true), onBlurCapture: () => setHold(false), 'data-step': k };
+  const pick = (i) => ({ onPointerEnter: () => { first.current = true; setK(i); } });
+  return [ref, calm ? -1 : k, root, pick];
+}
+
 /* The sheet's contents carry the page's scope (its colours and type), since a sheet lives outside the page. */
 const In = ({ children }) => <div className="xbm-in">{children}</div>;
 
@@ -136,12 +157,13 @@ function Scatter({ pts, x0, x1, y0, y1, xt, yt, w = 640, h = 420, xLab, yLab, au
   const calm = useReducedMotion();
   const [act, setAct] = useState(null);
   const [mine, setMine] = useState(false);
+  const [pause, setPause] = useState(false);
   const step = useRef(0);
   useEffect(() => {
-    if (!auto || mine || calm || !seen || !live) return;
+    if (!auto || mine || pause || calm || !seen || !live) return;
     const t = setTimeout(() => { const p = byCost[step.current++ % byCost.length]; setAct(p.i); }, act === null ? lead : 1900);
     return () => clearTimeout(t);
-  }, [auto, mine, calm, seen, live, act, byCost]);
+  }, [auto, mine, pause, calm, seen, live, act, byCost]);
   const hold = (i) => { setMine(true); setAct(i); };
   return (
     <div className="xbm-sc" ref={ref}>
@@ -158,7 +180,7 @@ function Scatter({ pts, x0, x1, y0, y1, xt, yt, w = 640, h = 420, xLab, yLab, au
               <motion.circle r={p.kind === 'router' ? 7.5 : 5} initial={{ scale: 0, opacity: 0 }} animate={seen ? { scale: 1, opacity: 1 } : {}} transition={{ duration: 0.3, ease: EASE, delay: 0.1 + k * 0.06 }} />
               <circle r="16" className="xbm-ring" />
               {labels && (p.kind === 'router' || isF) && <text x={p.lab ? p.lab[0] : p.kind === 'router' ? -12 : 9} y={p.lab ? p.lab[1] : p.kind === 'router' ? 4 : -9} textAnchor={p.lab ? p.lab[2] : p.kind === 'router' ? 'end' : 'start'} className="xbm-lab">{p.name}</text>}
-              <circle r="15" className="xbm-hit" tabIndex={0} aria-label={p.aria} onPointerEnter={() => hold(p.i)} onFocus={() => hold(p.i)} onPointerLeave={() => setAct(null)} onBlur={() => setAct(null)} onClick={() => hold(p.i)} />
+              <circle r="15" className="xbm-hit" tabIndex={0} aria-label={p.aria} onPointerEnter={() => { setPause(true); setAct(p.i); }} onPointerLeave={() => { setPause(false); setAct(null); }} onFocus={() => hold(p.i)} onBlur={() => setAct(null)} onClick={() => hold(p.i)} />
             </g>
           );
         })}
@@ -274,7 +296,7 @@ function Figures() {
           {HEAD.map(([v, k, d, to]) => (
             <li key={v}>
               <L to={to} className="xbm-fig">
-                <span className="xbm-fig-v">{v}</span>
+                <MaskLines as="span" className="xbm-fig-v" lines={[v]} amount={0.6} />
                 <span className="xbm-fig-t"><b>{k}</b><span>{d}</span></span>
                 <i aria-hidden="true">→</i>
               </L>
@@ -518,6 +540,7 @@ function Board() {
   }, [ece, sort]);
   const max = ece ? 0.5 : 100;
   const [ref, seen] = useSeen(0.15);
+  const [wref, w, whold, wpick] = useWalk(D.BOARD.length);
   return (
     <section className="pf-sec xbm-lead" aria-labelledby="xbm-lead-h">
       <div className="pf-wrap">
@@ -547,11 +570,11 @@ function Board() {
               : <><b className="x-mono">11</b> suites won · mean accuracy across these 11 suites <b className="x-mono">84.4%</b> against <span className="x-mono">76.6%</span></>}
           </p>
           {ece && <p className="xbm-ece">Calibration error (ECE): lower is better.</p>}
-          <ol className={'xbm-rows ' + view.toLowerCase()} aria-label={'Kai against Jev, ' + metric}>
+          <ol ref={wref} {...whold} className={'xbm-rows xbm-turn s' + (w & 1) + ' ' + view.toLowerCase()} aria-label={'Kai against Jev, ' + metric}>
             {rows.map((r, i) => {
               const win = r.gap > 0;
               return (
-                <motion.li key={r.t} layout transition={SPRING} className="xbm-row">
+                <motion.li key={r.t} layout transition={SPRING} className={'xbm-row xbm-w' + (w === i ? ' lit' : '')} {...wpick(i)}>
                   <span className="xbm-row-t"><button type="button" className="xbm-mine" aria-pressed={mine.includes(r.t)} aria-label={'Count ' + r.t + ' as my kind of work'} onClick={() => pickS(r.t)}><i aria-hidden="true" /></button><em className="x-mono">{String(i + 1).padStart(2, '0')}</em><span><b>{r.t}</b><small>Kai Oct 16, 2026 · Jev Sep 25, 2026</small></span></span>
                   <span className="xbm-row-bars">
                     <span className="xbm-who">Kai</span><Bar f={r.kv / max} on={seen} d={0.05 + i * 0.03} tone="acc" /><b className="x-mono">{ece ? fmtE(r.ke) : r.kai}</b>
@@ -626,7 +649,7 @@ function Evidence() {
   );
 }
 
-function PairPanel({ t, to, foot, rows, a = 'BM25', b = 'shortlist', paired, on }) {
+function PairPanel({ t, to, foot, rows, a = 'BM25', b = 'shortlist', paired, on, lit = -1, litId, pick }) {
   const [ref, seen] = useSeen(0.35);
   const go = on ?? seen;
   const max = Math.max(...rows.flatMap((r) => (paired ? [r[1], r[3]] : [r[1], r[2]])), 1);
@@ -637,7 +660,7 @@ function PairPanel({ t, to, foot, rows, a = 'BM25', b = 'shortlist', paired, on 
         {rows.map((r, i) => {
           const [la, va, lb, vb] = paired ? r : [`${r[0]}, ${a}`, r[1], `${r[0]}, ${b}`, r[2]];
           return (
-            <li key={la}>
+            <li key={la} className={pick ? 'xbm-w' + (lit === i ? ' lit' : '') : undefined} {...(pick ? pick(i) : {})}>
               <span>{la}</span><Bar f={va / max} on={go} d={i * 0.08} /><b className="x-mono j">{va.toFixed(1)}</b>
               <span>{lb}</span><Bar f={vb / max} on={go} d={0.1 + i * 0.08} tone="acc" /><b className="x-mono">{vb.toFixed(1)}</b>
             </li>
@@ -663,12 +686,13 @@ function ToolTable({ x }) {
 /* ---------- 6. Kai, beyond the suites: seven pinned chapters ---------- */
 const pct = (s) => { const m = String(s).match(/\(([\d.]+)%\)/); return m ? parseFloat(m[1]) : 0; };
 
-function VisYesNo() {
+function VisYesNo({ on }) {
+  const [ref, w, hold, pick] = useWalk(D.YESNO.length, on);
   return (
-    <div className="pf-obj xbm-vis">
+    <div className={'pf-obj xbm-vis xbm-turn s' + (w & 1)} ref={ref} {...hold}>
       <ul className="xbm-yn">
-        {D.YESNO.map(([t, k, j]) => (
-          <li key={t}>
+        {D.YESNO.map(([t, k, j], i) => (
+          <li key={t} className={'xbm-w' + (w === i ? ' lit' : '')} {...pick(i)}>
             <span className="xbm-yn-t">{t}</span>
             <span className="xbm-yn-k"><span className="xbm-who">Kai</span><b>{k}</b></span>
             <span className="xbm-yn-j"><span className="xbm-who">Jev</span><b className="x-mono">{j}</b></span>
@@ -680,12 +704,13 @@ function VisYesNo() {
 }
 function VisTrolley({ on }) {
   const who = [['Kai', 'acc'], ['Jev', ''], ['GPT-6 Luna', 'pale']];
+  const [ref, w, hold, pick] = useWalk(D.TROLLEY.length, on);
   return (
-    <div className="pf-obj xbm-vis">
+    <div className={'pf-obj xbm-vis xbm-turn s' + (w & 1)} ref={ref} {...hold}>
       <p className="xbm-vis-h"><span>Check · lower is better</span></p>
       <ul className="xbm-tr">
         {D.TROLLEY.map((r, i) => (
-          <li key={r[0]}>
+          <li key={r[0]} className={'xbm-w' + (w === i ? ' lit' : '')} {...pick(i)}>
             <span className="xbm-tr-t">{r[0]}</span>
             {who.map(([w, tone], k) => (
               <span key={w} className="xbm-tr-r"><span className="xbm-who">{w}</span><Bar f={pct(r[k + 1]) / 100} on={on} d={i * 0.12 + k * 0.06} tone={tone} /><b className={'x-mono' + (k ? ' j' : '')}>{r[k + 1]}</b></span>
@@ -697,24 +722,33 @@ function VisTrolley({ on }) {
   );
 }
 function VisShort() {
-  return <div className="xbm-vis-pp">{D.SHORTLIST.map((s) => <PairPanel key={s.t} t={s.t} to="#shortlist" foot={s.foot} rows={s.rows} />)}</div>;
+  const n = D.SHORTLIST.reduce((a, x) => a + x.rows.length, 0);
+  const [ref, w, hold, pick] = useWalk(n);
+  let o = 0;
+  return (
+    <div className={'xbm-vis-pp s' + (w & 1)} ref={ref} {...hold}>
+      {D.SHORTLIST.map((s) => { const off = o; o += s.rows.length; return <PairPanel key={s.t} t={s.t} to="#shortlist" foot={s.foot} rows={s.rows} lit={w - off} pick={(i) => pick(off + i)} />; })}
+    </div>
+  );
 }
 function VisCode({ on }) {
+  const [ref, w, hold, pick] = useWalk(D.SETTLED.length, on);
   return (
-    <div className="pf-obj xbm-vis xbm-vis-code">
+    <div className={'pf-obj xbm-vis xbm-vis-code xbm-turn s' + (w & 1)} ref={ref} {...hold}>
       <span className="pf-moment">3.02×</span>
       <p className="xbm-vis-k"><b>faster on the 42 tasks both solved</b> 95% interval 2.06–4.36×.</p>
       <ul className="xbm-set">
-        {D.SETTLED.map((r, i) => <li key={r[0]}><span>{r[0]}</span><Bar f={parseFloat(r[2]) / 8.22} on={on} d={i * 0.1} tone={i ? '' : 'acc'} /><b className="x-mono">{r[2]}</b></li>)}
+        {D.SETTLED.map((r, i) => <li key={r[0]} className={'xbm-w' + (w === i ? ' lit' : '')} {...pick(i)}><span>{r[0]}</span><Bar f={parseFloat(r[2]) / 8.22} on={on} d={i * 0.1} tone={i ? '' : 'acc'} /><b className="x-mono">{r[2]}</b></li>)}
       </ul>
     </div>
   );
 }
 function VisTools() {
+  const [ref, w, hold, pick] = useWalk(D.TOOLS.length);
   return (
-    <ul className="xbm-vis-tools">
-      {D.TOOLS.map((x) => (
-        <li key={x.split} className="pf-obj">
+    <ul className={'xbm-vis-tools s' + (w & 1)} ref={ref} {...hold}>
+      {D.TOOLS.map((x, i) => (
+        <li key={x.split} className={'pf-obj xbm-w' + (w === i ? ' lit' : '')} {...pick(i)}>
           <span className="xbm-lbl">{x.bench} · {x.split}</span>
           <b>{x.h || x.note}</b>
           <span className="xbm-vt-r"><span>{x.rows[0][0]} · {x.rows[0][1]}</span><b className="x-mono">{x.rows[0][2]}</b></span>
@@ -726,11 +760,12 @@ function VisTools() {
   );
 }
 function VisPrice({ on }) {
+  const [ref, w, hold, pick] = useWalk(2, on);
   return (
-    <div className="pf-obj xbm-vis xbm-vis-price">
+    <div className={'pf-obj xbm-vis xbm-vis-price xbm-turn s' + (w & 1)} ref={ref} {...hold}>
       <p className="xbm-lbl">Input-token price · Kai vs Jev</p>
-      <div className="xbm-pr"><span className="xbm-who">Kai</span><Bar f={0.5} on={on} tone="acc" /><b className="x-mono">$0.021 / M</b></div>
-      <div className="xbm-pr"><span className="xbm-who">Jev</span><Bar f={1} on={on} d={0.1} /><b className="x-mono j">$0.042 / M</b></div>
+      <div className={'xbm-pr xbm-w' + (w === 0 ? ' lit' : '')} {...pick(0)}><span className="xbm-who">Kai</span><Bar f={0.5} on={on} tone="acc" /><b className="x-mono">$0.021 / M</b></div>
+      <div className={'xbm-pr xbm-w' + (w === 1 ? ' lit' : '')} {...pick(1)}><span className="xbm-who">Jev</span><Bar f={1} on={on} d={0.1} /><b className="x-mono j">$0.042 / M</b></div>
       <div className="xbm-pr0"><span className="pf-figure">$0</span><span className="xbm-lbl">Per output token</span></div>
     </div>
   );
@@ -841,18 +876,34 @@ function KaiTools() {
 }
 
 /* ---------- 7. Zen 6: the dark room, three chapters; scrolling the second sweeps the context dial ---------- */
-function Dial({ progress, from = 1 / 3, to = 2 / 3 }) {
+function Dial({ progress, on = true, from = 1 / 3, to = 2 / 3 }) {
   const [at, setAt] = useState(6);
   const ref = useRef(null);
+  const last = useRef(0);
+  const calm = useReducedMotion();
+  const [hold, setHold] = useState(false);
   useMotionValueEvent(progress, 'change', (p) => {
+    last.current = Date.now();
     const l = (p - from) / (to - from);
     if (l < 0 || l > 1) return;
     setAt(Math.min(D.LSA.length - 1, Math.floor(l * D.LSA.length)));
   });
+  // when the scroll rests (0.9s), the dial steps on by itself, one length every 1.8s; a press or keyboard focus holds it
+  useEffect(() => {
+    if (!on || calm || hold) return;
+    let t, prev = 0;
+    const step = () => {
+      const now = Date.now();
+      if (now - last.current > 900 && now - prev > 1800) { prev = now; setAt((v) => (v + 1) % D.LSA.length); }
+      t = setTimeout(step, 300);
+    };
+    t = setTimeout(step, 300);
+    return () => clearTimeout(t);
+  }, [on, calm, hold]);
   const r = D.LSA[at];
   const maxP = 72.4, maxD = 78.57;
   return (
-    <div className="xbm-dial" ref={ref}>
+    <div className="xbm-dial" ref={ref} onClick={() => setHold(true)} onFocusCapture={() => setHold(true)} onBlurCapture={() => setHold(false)}>
       <div className="xbm-dial-read">
         <p className="xbm-dial-k">Context length</p>
         <AnimatePresence mode="popLayout" initial={false}>
@@ -873,14 +924,14 @@ function Dial({ progress, from = 1 / 3, to = 2 / 3 }) {
   );
 }
 
-function Speedups({ title, col, max, on }) {
+function Speedups({ title, col, max, on, lit = -1, pick }) {
   const [ref, seen] = useSeen(0.3);
   return (
     <div className="xbm-spd" ref={ref}>
       <p className="xbm-spd-t"><A to="/benchmarks/zen-6">{title}</A></p>
       <ul>
         {[...D.LSA].reverse().map((l, i) => (
-          <li key={l[0]}>
+          <li key={l[0]} className={pick ? 'xbm-w' + (lit === D.LSA.length - 1 - i ? ' lit' : '') : undefined} {...(pick ? pick(D.LSA.length - 1 - i) : {})}>
             <span className="x-mono">{l[0]}</span>
             <Bar f={l[col + 1] / max} on={on ?? seen} d={i * 0.06} tone="acc" />
             <b className="x-mono">{l[col]}</b>
@@ -893,14 +944,15 @@ function Speedups({ title, col, max, on }) {
 }
 
 function VisHW({ on }) {
+  const [ref, w, hold, pick] = useWalk(D.HW.length, on);
   return (
-    <div className="xbm-hw">
+    <div className={'xbm-hw xbm-turn s' + (w & 1)} ref={ref} {...hold}>
       {[['Prefill, tokens a second', 1, 2, 3665, 'the low end of a range is the bar'], ['Decode, tokens a second', 3, 4, 70, 'one request']].map(([t, v, n, max, f], g) => (
         <div key={t} className="xbm-hw-g">
           <p className="xbm-spd-t"><A to="/benchmarks/zen-6">{t}</A></p>
           <ul>
             {D.HW.map((h, i) => (
-              <li key={h[0]}><span>{h[0]}</span><Bar f={h[n] / max} on={on} d={g * 0.2 + i * 0.08} tone="acc" /><b className="x-mono">{h[v]}</b></li>
+              <li key={h[0]} className={'xbm-w' + (w === i ? ' lit' : '')} {...pick(i)}><span>{h[0]}</span><Bar f={h[n] / max} on={on} d={g * 0.2 + i * 0.08} tone="acc" /><b className="x-mono">{h[v]}</b></li>
             ))}
           </ul>
           <p className="xbm-spd-f">{f}</p>
@@ -909,12 +961,13 @@ function VisHW({ on }) {
     </div>
   );
 }
-function VisDial({ progress }) { return <Dial progress={progress} />; }
+function VisDial({ progress, on }) { return <Dial progress={progress} on={on} />; }
 function VisSpeed({ on }) {
+  const [ref, w, hold, pick] = useWalk(D.LSA.length, on);
   return (
-    <div className="xbm-spds">
-      <Speedups title="Latent Sparse Attention (D-LSA) prefill speedup" col={2} max={72.4} on={on} />
-      <Speedups title="Latent Sparse Attention (D-LSA) decode speedup" col={4} max={78.57} on={on} />
+    <div className={'xbm-spds xbm-turn s' + (w & 1)} ref={ref} {...hold}>
+      <Speedups title="Latent Sparse Attention (D-LSA) prefill speedup" col={2} max={72.4} on={on} lit={w} pick={pick} />
+      <Speedups title="Latent Sparse Attention (D-LSA) decode speedup" col={4} max={78.57} on={on} lit={w} pick={pick} />
     </div>
   );
 }
