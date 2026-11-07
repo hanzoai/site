@@ -117,6 +117,7 @@ function Title({ text }) {
   const words = text.split(' ');
   return (
     <h1 id="xbg-h1" className="xbg-h1" data-morph-target>
+      <noscript><style>{'.xbg-wi,.xbg-lede{transform:none!important;opacity:1!important}'}</style></noscript>
       <span className="x-sr">{text}</span>
       {words.map((w, i) => (
         <Fragment key={i}>

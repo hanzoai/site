@@ -18,5 +18,5 @@ Template: `components/pages/post/Post.jsx` (+ `postData.js`, `Frontier.jsx`, `Li
 - **2.14 SEO and machine files:** metadata from content/pages.json and JsonLd as before; all text in server HTML (chapters, inactive code tabs).
 - **2.15 Catalogue and product pages:** not a catalogue; the next-post cards open into their page (synchronized.studio).
 - **2.16 Developer experience:** code samples keep Hanzo's highlighting, language tabs and copy; install commands copyable.
-- **2.17 States and resilience:** no live data; films fall back to their poster; reduced motion and no-JS show every word; Life board can pause, step and clear.
+- **2.17 States and resilience:** no live data; films fall back to their poster; reduced motion shows final states, and with JavaScript off a noscript rule shows the title and lede (checked); Life board can pause, step and clear.
 - **2.18 Measurement and handover:** not wired (no analytics events yet: needs the conductor's event layer). Proof films in `docs/gallery/blog/`.
