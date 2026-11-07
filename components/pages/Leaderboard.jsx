@@ -21,7 +21,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
-import { A, More, Band } from '../kit';
+import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
 import DetailSheet from '../v2/x-pascal/DetailSheet';
@@ -63,38 +63,59 @@ const ORGS = [
   ['@Aeonaby', 'Active Builder', '79 requests', 521279],
 ];
 
-// [title, tags, words, the receipt line it adds: label, points, credits]
+// [title, tags, words, the receipt line it adds: points, credits]. Tags are Hanzo's own, card for card (content/pages/
+// leaderboard.html: the merged pull request card carries "+100 pts" and "+$20 AI credits"); the receipt prints each
+// card's own title and points, so it adds no words of its own.
 const EARN = [
-  ['Verified bug report', ['+50 pts', '+$20 AI credits'], 'Report a reproducible bug in Hanzo Dev, Cloud, Console, or SDKs. Earn +50 bounty points and up to $20 in AI credits.', ['1 verified bug report', 50, 20]],
-  ['Merged bounty pull request', ['+100 pts', '+$20 AI credits'], 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.', ['1 merged bounty pull request, at +100', 100, 20]],
-  ['Qualified referral', ['+20 pts', '+$5 AI credits'], 'Invite a builder who activates a paid plan or trial. Earn +20 leaderboard points and $5 in AI credits.', ['1 qualified referral', 20, 5]],
-  ['100K tokens processed', ['+1 pts'], 'Every 100,000 tokens processed across Hanzo Cloud models automatically adds +1 point to your global standing.', ['1,000,000 tokens ÷ 100K', 10, 0]],
+  ['Verified bug report', ['+50 pts', '+$20 AI credits'], 'Report a reproducible bug in Hanzo Dev, Cloud, Console, or SDKs. Earn +50 bounty points and up to $20 in AI credits.', [50, 20]],
+  ['Merged bounty pull request', ['+100 pts', '+$20 AI credits'], 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.', [100, 20]],
+  ['Qualified referral', ['+20 pts', '+$5 AI credits'], 'Invite a builder who activates a paid plan or trial. Earn +20 leaderboard points and $5 in AI credits.', [20, 5]],
+  ['100K tokens processed', ['+1 pts'], 'Every 100,000 tokens processed across Hanzo Cloud models automatically adds +1 point to your global standing.', [1, 0]],
 ];
+
+/* Phones (≤900px) get their own composition in a few places; the server renders the desktop one. */
+function useNarrow() {
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const m = matchMedia('(max-width: 900px)');
+    const f = () => setNarrow(m.matches);
+    f();
+    m.addEventListener('change', f);
+    return () => m.removeEventListener('change', f);
+  }, []);
+  return narrow;
+}
 
 /* A number that rolls to its new value: the old figure leaves upward, the new one arrives from below. */
 function Roll({ v, className = '' }) {
   return (
     <span className={'xlb-roll ' + className}>
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: '0%', opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.3, ease: EASE }}>{v}</motion.span>
+        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: '0%', opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>{v}</motion.span>
       </AnimatePresence>
     </span>
   );
 }
 
 /* A list that reads itself: while it is on screen, one row at a time is lit (every 2.8s); off screen or under reduced
-   motion it rests. Returns [ref, lit index]. */
+   motion it rests. While the pointer is over the list the reader steps aside (no row lit by it), so the row under the
+   pointer is the only one filled. Returns [ref, lit index, pointer handlers for the list]. */
 function useReader(n, every = 2800) {
   const ref = useRef(null);
   const on = useInView(ref, { amount: 0.1 });
   const calm = useReducedMotion();
   const [lit, setLit] = useState(-1);
+  const [hold, setHold] = useState(false);
   useEffect(() => {
-    if (!on || calm) return;
+    if (!on || calm || hold) return;
     const t = setTimeout(() => setLit((v) => (v + 1) % n), lit < 0 ? 600 : every);
     return () => clearTimeout(t);
-  }, [on, calm, lit, n, every]);
-  return [ref, lit];
+  }, [on, calm, hold, lit, n, every]);
+  const hand = {
+    onPointerEnter: (e) => { if (e.pointerType === 'mouse') setHold(true); },
+    onPointerLeave: () => setHold(false),
+  };
+  return [ref, hold ? -1 : lit, hand];
 }
 
 /* The tape: one hunter's total, added line by line. */
@@ -102,13 +123,13 @@ function Tape({ h }) {
   const t = fromTokens(h[5]);
   return (
     <div className="xlb-tape" aria-live="polite">
-      <p className="xlb-tape-k pf-mono">How {h[0]} adds up</p>
+      <p className="xlb-tape-k pf-mono"><span>{h[0]}</span><span>{h[7]}</span></p>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={h[1]} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.18 } }}>
-          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.05, duration: 0.4, ease: EASE }}><span>bounty pts</span><b className="pf-mono">+{n(h[4])}</b></motion.p>
-          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.4, ease: EASE }}><span>{n(h[5])} tokens ÷ 100K</span><b className="pf-mono">+{n(t)}</b></motion.p>
-          <motion.i className="xlb-tape-rule" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.36, duration: 0.45, ease: EASE }} />
-          <motion.p className="xlb-tape-sum" initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5, duration: 0.5, ease: EASE }}>
+        <motion.div key={h[1]} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
+          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.06, duration: 0.4, ease: EASE }}><span>bounty pts</span><b className="pf-mono">+{n(h[4])}</b></motion.p>
+          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.18, duration: 0.4, ease: EASE }}><span>{n(h[5])} tokens ÷ 100K</span><b className="pf-mono">+{n(t)}</b></motion.p>
+          <motion.i className="xlb-tape-rule" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3, duration: 0.4, ease: EASE }} />
+          <motion.p className="xlb-tape-sum" initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.42, duration: 0.5, ease: EASE }}>
             <b>{n(h[2])}</b><span>pts · {h[1].split(' (')[0]}</span>
           </motion.p>
         </motion.div>
@@ -183,7 +204,7 @@ function Hero() {
         </div>
         {/* JS off: everything that arrives by motion stands at its final state */}
         <noscript dangerouslySetInnerHTML={{ __html: '<style>.xlb-hero-obj,.xlb-block{opacity:1!important;transform:none!important}.xlb-bar i{transform:scaleX(var(--w))!important}.xlb-rcpt-ls li{opacity:1!important;transform:none!important}</style>' }} />
-        <motion.div className="xlb-hero-obj" initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
+        <motion.div className="xlb-hero-obj" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
           <Podium />
         </motion.div>
       </div>
@@ -192,7 +213,7 @@ function Hero() {
 }
 
 function Contributors() {
-  const [rowsRef, lit] = useReader(HUNTERS.length, 1600);
+  const [rowsRef, lit, hand] = useReader(HUNTERS.length, 1600);
   return (
     <section className="pf-sec xlb-con" aria-labelledby="xlb-con-h">
       <div className="pf-wrap pf-grid">
@@ -211,7 +232,7 @@ function Contributors() {
             </ul>
           </DetailSheet>
         </header>
-        <ol className="xlb-rows" ref={rowsRef}>
+        <ol className="xlb-rows" ref={rowsRef} {...hand}>
           {HUNTERS.map((h) => (
             <li key={h[1]} className={'xlb-row' + (lit === HUNTERS.indexOf(h) ? ' lit' : '')}>
               <span className="xlb-rank pf-mono">{h[0]}</span>
@@ -230,10 +251,12 @@ function Contributors() {
 }
 
 function Tokens() {
-  const [scale, setScale] = useState('Log');
+  // Linear first: @hanzo's lead (17x the next org) is the picture; Log is the reveal that spreads the rest out
+  const [scale, setScale] = useState('Linear');
+  const [all, setAll] = useState(false);
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.2 });
-  const [readRef, lit] = useReader(ORGS.length, 1500);
+  const [readRef, lit, hand] = useReader(ORGS.length, 1500);
   const top = ORGS[0][3];
   const w = (t) => (scale === 'Log' ? Math.log10(t) / Math.log10(top) : t / top);
   return (
@@ -250,17 +273,18 @@ function Tokens() {
           </dl>
         </div>
         <div className="xlb-scale" role="tablist" aria-label="Bar scale">
-          {['Log', 'Linear'].map((k) => (
+          {['Linear', 'Log'].map((k) => (
             <button key={k} type="button" role="tab" aria-selected={scale === k} onClick={() => setScale(k)}>
               {scale === k && <motion.span layoutId="xlb-scale" className="xlb-scale-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="xlb-scale-t">{k}</span>
             </button>
           ))}
         </div>
-        <div ref={readRef}>
-        <ol className="xlb-board" ref={ref}>
+        <div ref={readRef} {...hand}>
+        {/* phones: the top three, then the rest behind one disclosure, so the dark room is one screen, not three */}
+        <ol className="xlb-board" ref={ref} id="xlb-board" data-all={all}>
           {ORGS.map(([who, badge, req, t], i) => (
-            <li key={who} className={'xlb-org' + (i === 0 ? ' lead' : '') + (lit === i ? ' lit' : '')}>
+            <li key={who} className={'xlb-org' + (i === 0 ? ' lead' : '') + (lit === i ? ' lit' : '')} style={{ '--i': i }}>
               <span className="xlb-org-r pf-mono">#{i + 1}</span>
               <span className="xlb-org-m"><b>{who}</b><span>{badge}</span><span className="xlb-req">{req}</span></span>
               <span className="xlb-bar" aria-hidden="true"><motion.i style={{ '--w': w(t) }} initial={{ scaleX: 0 }} animate={seen ? { scaleX: w(t) } : {}} transition={{ duration: 0.9, ease: EASE, delay: seen ? i * 0.06 : 0 }} /></span>
@@ -268,25 +292,43 @@ function Tokens() {
             </li>
           ))}
         </ol>
+        {!all && (
+          <button type="button" className="xlb-all" aria-expanded={all} aria-controls="xlb-board" onClick={() => setAll(true)}>
+            <span>Show all</span><b className="pf-mono">{ORGS.length}</b>
+          </button>
+        )}
         </div>
       </div>
     </SceneWipe>
   );
 }
 
-/* The receipt the earn chapters build: lines 0..at are printed, and the total rolls. */
-function Receipt({ at }) {
+/* The receipt the earn chapters build: lines 0..at are printed, and the total rolls. With `print` (phones, where the
+   chapters stack) there is one receipt after the four chapters, and it prints its own lines once it is reached. */
+function Receipt({ at: given, print = false }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const calm = useReducedMotion();
+  const [step, setStep] = useState(-1);
+  useEffect(() => {
+    if (!print) return;
+    if (calm) { setStep(EARN.length - 1); return; }
+    if (!seen || step >= EARN.length - 1) return;
+    const t = setTimeout(() => setStep((v) => v + 1), step < 0 ? 300 : 500);
+    return () => clearTimeout(t);
+  }, [print, seen, calm, step]);
+  const at = print ? Math.max(step, 0) : given;
   const lines = EARN.slice(0, at + 1).map((e) => e[3]);
-  const pts = lines.reduce((s, l) => s + l[1], 0);
-  const cr = lines.reduce((s, l) => s + l[2], 0);
+  const pts = lines.reduce((s, l) => s + l[0], 0);
+  const cr = lines.reduce((s, l) => s + l[1], 0);
   return (
-    <div className="xlb-rcpt pf-obj">
-      <p className="xlb-rcpt-k pf-mono"><span>Points, as the rules add them</span><span>{String(at + 1).padStart(2, '0')} / 04</span></p>
+    <div className="xlb-rcpt pf-obj" ref={ref}>
+      <p className="xlb-rcpt-k pf-mono"><span>{String(at + 1).padStart(2, '0')} / 04</span></p>
       <ul className="xlb-rcpt-ls">
         {EARN.map((e, i) => (
           <li key={e[0]} data-on={i <= at} data-new={i === at}>
-            <span>{e[3][0]}</span>
-            <b className="pf-mono">+{n(e[3][1])}</b>
+            <span>{e[0]}</span>
+            <b className="pf-mono">+{n(e[3][0])}</b>
           </li>
         ))}
       </ul>
@@ -300,6 +342,7 @@ function Receipt({ at }) {
 }
 
 function Earn() {
+  const narrow = useNarrow();
   return (
     <section className="xlb-earn" aria-labelledby="xlb-earn-h">
       <div className="pf-wrap xlb-earn-intro">
@@ -319,7 +362,8 @@ function Earn() {
             </>
           ),
         }))}
-        visual={(at) => <Receipt at={at} />}
+        // desktop: one pinned receipt that builds as the chapters pass; phones: one receipt after the last chapter
+        visual={(at) => (narrow ? (at === EARN.length - 1 ? <Receipt at={at} print /> : null) : <Receipt at={at} />)}
       />
     </section>
   );
@@ -348,7 +392,9 @@ function Calc() {
   const [k, setK] = useState(3);
   const tokens = TOKS[k];
   const pts = bugs * 50 + prs * per + refs * 20 + fromTokens(tokens);
+  // credits per card tag, as Hanzo prints them: bug +$20 (up to), merged pull request +$20, referral +$5
   const credits = bugs * 20 + prs * 20 + refs * 5;
+  const sum = `${bugs} × 50 + ${prs} × ${per} + ${refs} × 20 + ${n(fromTokens(tokens))}`;
   const place = useMemo(() => { const i = ORGS.findIndex((o) => tokens >= o[3]); return i < 0 ? null : i + 1; }, [tokens]);
   return (
     <section className="pf-sec xlb-calc-s" aria-labelledby="xlb-calc-h">
@@ -361,22 +407,24 @@ function Calc() {
             <Step label="Verified bug reports" v={bugs} set={setBugs} />
             <Step label="Merged bounty pull requests" v={prs} set={setPrs} />
             <div className="xlb-calc-row">
-              <span>Points a pull request</span>
+              <span>+100 to +500 pts</span>
               <div className="xlb-per" role="radiogroup" aria-label="Points a merged pull request earns">
                 {[100, 200, 300, 400, 500].map((p) => <button key={p} type="button" role="radio" aria-checked={per === p} onClick={() => setPer(p)} className="pf-mono">+{p}</button>)}
               </div>
             </div>
             <Step label="Qualified referrals" v={refs} set={setRefs} />
-            <label className="xlb-calc-row xlb-tok-in">
+            {/* the fill rides a CSS variable on the label (the same on server and client); the input itself carries no
+                style, and suppressHydrationWarning keeps a style attribute added before hydration from raising an issue */}
+            <label className="xlb-calc-row xlb-tok-in" style={{ '--f': (k / (TOKS.length - 1)) * 100 + '%' }}>
               <span>Tokens processed <b className="pf-mono">{n(tokens)}</b></span>
-              <input type="range" min="0" max={TOKS.length - 1} step="1" value={k} onChange={(e) => setK(+e.target.value)} aria-valuetext={n(tokens) + ' tokens'} />
+              <input type="range" min="0" max={TOKS.length - 1} step="1" value={k} onChange={(e) => setK(+e.target.value)} aria-valuetext={n(tokens) + ' tokens'} suppressHydrationWarning />
             </label>
           </div>
           <div className="xlb-calc-out" aria-live="polite">
             <div className="xlb-total"><Roll v={n(pts)} /><span className="xlb-total-l">pts</span></div>
-            <p className="xlb-calc-sum pf-mono">{bugs} × 50 + {prs} × {per} + {refs} × 20 + {n(fromTokens(tokens))}</p>
+            <p key={sum} className="xlb-calc-sum pf-mono">{sum}</p>
             <p>Up to <b>${n(credits)}</b> in AI credits</p>
-            <p>{place ? <>Your tokens would sit at <b>#{place}</b> on the global board.</> : <>Below #10 on the global board ({n(ORGS[9][3])} tokens).</>}</p>
+            <p>{place ? <><b>#{place}</b> · Global token volume leaderboard</> : <><b>#11+</b> · Global token volume leaderboard</>}</p>
           </div>
         </div>
         <div className="xlb-end">
@@ -384,6 +432,20 @@ function Calc() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* The close, page-local until the kit Band takes a line-mask reveal and a cta prop (docs/requests/leaderboard.md): the
+   page's second dark room opens from a rounded panel like the first, its words cut in by line mask at the deck's 52px,
+   and its one solid ask carries data-cta="leaderboard.band" with no extra wrapper in the tab order. */
+function Close() {
+  return (
+    <SceneWipe className="xlb-close" label="Climb the ranks. Earn AI credits.">
+      <div className="pf-wrap xlb-close-in">
+        <MaskLines as="h2" className="pf-display xlb-close-h" lines={['Climb the ranks.', 'Earn AI credits.']} />
+        <A to="/bounty" className="pf-btn solid xlb-close-btn" data-cta="leaderboard.band">Open bounties</A>
+      </div>
+    </SceneWipe>
   );
 }
 
@@ -395,8 +457,8 @@ export default function Leaderboard() {
       <Tokens />
       <Earn />
       <Calc />
-      {/* the close: one Band in the page's own words, its one solid ask, then the footer */}
-      <Band title="Climb the ranks. Earn AI credits." action="Open bounties" to="/bounty" />
+      {/* the close: one band in the page's own words, its one solid ask, then the footer */}
+      <Close />
       <AskBar title="Leaderboard" label="Open bounties" to="/bounty" cta="leaderboard.hero" />
     </main>
   );

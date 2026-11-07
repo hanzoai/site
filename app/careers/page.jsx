@@ -1,4 +1,4 @@
-// V2: 8/10 to MASTER.md: Hanzo deck type and greys, no labels over headlines, hero and its one ask fit 1470×801 and 375×812, perks a still list whose Sigil redraws for the perk you point at, the role deck opens each sheet into its page (doorway), kit Cta only, no sticky ask (careers rule)
+// V2: 8/10 re-review fixes: one quiet skill row with a gliding pill, perks crossfade and stay in view on phones, phone numerals clear of titles, a sheet opens in its own white carrying its title onto the role h1 (careers/door.js), the next section peeks at 1470×801, JS off and reduced motion clean
 // Persona: an engineer or researcher deciding whether to apply · Goal: open a role and apply · CTA: View Open Positions (careers.hero) · Metric: one contact click (cta_click careers.*)
 // Signature: the open roles are a deck of full sheets; scroll and each role rises over the last while the stack behind settles back, click one and the sheet opens into its page
 // Beyond: Match what you know: tap the skills you have, word for word from Hanzo's role descriptions, and the roles that ask for them stay lit with the words marked

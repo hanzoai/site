@@ -1,6 +1,6 @@
 'use client';
 /* Base.
-   V2: 8/10 The Base admin is the hero, a record landing every few seconds; "Declare a collection, get an API" builds the backend tile by tile as you scroll; six capabilities open in place; run it anywhere beside the example console; one dark close. Deck greys, deck scale, no springs.
+   V2: 8/10 Hero "Try Hanzo" solid on desktop and the stage pulled up (h1 baseline ~36%); collection input and reduced-motion build no longer differ server vs client; unbuilt tiles are faint sketches, pinned under the header; capabilities set 4+2 / 2+4 / 3+3 with hovers that act out each drawing; phones interleave each paragraph with its tile; tighter section steps.
    Persona: a developer who needs an app backend (data, users, files, live updates) without wiring one together.
    Goal: see that one binary and one file is the whole backend, then sign in or read the docs.
    CTA: "Try Hanzo" → /login (solid, data-cta base.hero, data-thumb); "Read the docs" → docs.hanzo.ai/…/base (link,
@@ -11,14 +11,16 @@
    Signature: the build-up. A pinned scene where a collection is declared field by field as you scroll, and the backend
    assembles around it in Hanzo's order: the four things it does the moment it exists, then Data (the records path and
    its verbs), Auth is Hanzo IAM (a token in, an identity out) and Files and live updates (one stream, records
-   arriving). Unbuilt tiles are hollow slots, built ones fill white, the one being built is ink. Phones play it once.
+   arriving). Unbuilt tiles are faint hairline sketches, built ones fill white, the one being built is ink. Phones set
+   each paragraph beside its tile and build a tile as it comes into view.
    Supporting: the Stage hero (the admin settles to the right as you scroll), capability cards that open into a sheet
    with a shared-element morph (synchronized.studio), and the closing dark room.
    Beyond: "Your collection": name the collection you would declare and the whole scene declares that one, with its
    records path /v1/collections/{name}/records written out the same second.
    Every word and link is Hanzo's; example rows are blank bars and ids, never invented data. */
 import { useEffect, useRef, useState } from 'react';
-import { useScroll, useMotionValueEvent, useInView, useReducedMotion } from 'motion/react';
+import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
+import useCalm from '../../v2/useCalm';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
 import { scrollToY } from '../../../lib/scroll';
@@ -127,22 +129,28 @@ const STAGES = ['declare', 'it exists', '01', '02', '03'];
 /* The signature: the collection is declared as you scroll and the backend assembles around it. */
 function Declare() {
   const run = useRef(null);
+  const vis = useRef(null);
   const wide = useWide();
-  const calm = useReducedMotion();
+  // reduced motion is read only after mount, so the server HTML and the first client render match
+  const calm = useCalm();
   const seen = useInView(run, { amount: 0.25 });
   const [name, setName] = useState('posts');
   const coll = name || 'posts';
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
   const [s, setS] = useState(0);
   useMotionValueEvent(p, 'change', (v) => setS(v));
-  // phones: the build plays once by itself while seen (a step every 900 ms), then rests built
-  const [auto, setAuto] = useState(1);
+  // phones: each paragraph sits beside its own tile, and a tile builds as it comes into view, then rests built
+  const [auto, setAuto] = useState(0);
   const [hand, setHand] = useState(false);
   useEffect(() => {
-    if (wide || !seen || calm || hand || auto >= 4) return;
-    const t = setTimeout(() => setAuto((a) => Math.min(4, a + 1)), 900);
-    return () => clearTimeout(t);
-  }, [wide, seen, calm, hand, auto]);
+    if (wide || calm || hand || !vis.current || typeof IntersectionObserver === 'undefined') return;
+    const tiles = [...vis.current.querySelectorAll('.bs-tile')];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { const k = tiles.indexOf(e.target); setAuto((a) => Math.max(a, k)); }
+    }), { threshold: 0.6 });
+    tiles.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, [wide, calm, hand]);
   const st = wide && !calm ? Math.min(4, Math.floor(s * 5 * 0.9999)) : calm && !hand ? 4 : auto;
   const nf = wide && !calm ? Math.min(4, Math.floor(s * 26)) : 4;
   const txt = st <= 1 ? 0 : st - 1;
@@ -166,7 +174,7 @@ function Declare() {
               </div>
               <label className="bs-name">
                 <span>collection</span>
-                <input type="text" value={name} maxLength={24} spellCheck={false} autoComplete="off" enterKeyHint="done" placeholder="posts" onChange={(e) => setName(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} aria-label="Collection name" />
+                <input suppressHydrationWarning type="text" value={name} maxLength={24} spellCheck={false} autoComplete="off" enterKeyHint="done" placeholder="posts" onChange={(e) => setName(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} aria-label="Collection name" />
               </label>
               <div className="bs-says">
                 <div className="bs-say" data-on={txt === 0 ? '' : undefined}>
@@ -185,7 +193,7 @@ function Declare() {
               </nav>
             </div>
 
-            <div className="bs-dec-v" aria-hidden="true">
+            <div className="bs-dec-v" aria-hidden="true" ref={vis}>
               <div className={cls(0) + ' bs-t-schema'}>
                 <p className="bs-k">collection</p>
                 <p className="bs-coll">{coll}</p>

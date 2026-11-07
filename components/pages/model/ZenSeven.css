@@ -11,17 +11,26 @@
 .z7-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10.5px 27px; margin-top: 27px; }
 .z7-acts .x-btn { height: 48px; padding: 0 27px; font-size: 16px; font-weight: 606; }
 .z7-acts .x-arrow { min-height: 44px; }
-.z7-crumb ol { display: flex; gap: 10.5px; margin: 27px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--z7-muted); }
+.z7-crumb li { display: inline-flex; align-items: center; min-height: 44px; }
+.z7-crumb ol { display: flex; align-items: center; gap: 10.5px; margin: 27px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--z7-muted); }
 .z7-crumb li + li::before { content: '/'; margin-right: 10.5px; }
-.z7-crumb a { color: var(--z7-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; display: inline-flex; min-height: 24px; align-items: center; }
+.z7-crumb a { color: var(--z7-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; display: inline-flex; min-height: 44px; padding-inline: 4px; margin-inline: -4px; align-items: center; }
+.z7-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* Stage: the numeral's settled box sits in the 8 right columns; --k (1 → 0) carries it up from the bottom right */
-.z7-stage { position: relative; height: 210svh; margin-top: -60px; } /* under the 60px header: pinned from the first frame */
+/* the page pause (MASTER part 12): first in the hero's DOM, 44px, holds both living fields on one frame */
+.z7-pause { position: absolute; z-index: 2; right: max(var(--z7-gut), calc((100vw - 1152px) / 2)); bottom: 72px; min-width: 72px; height: 44px; padding: 0 17px; border: 0; border-radius: 999px; background: #f5f5f5; color: var(--z7-ink); font: 497 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: background-color var(--z7-fast) var(--z7-out), transform var(--z7-fast) var(--z7-out); }
+@media (hover: hover) { .z7-pause:hover { background: #e5e5e5; } }
+.z7-pause:active { transform: scale(.97); transition-duration: var(--z7-press); }
+.z7-pause:focus-visible { outline: 2px solid var(--z7-ink); outline-offset: 3px; }
+
+/* Stage: the numeral's settled box sits in the 8 right columns; --k (1 → 0) carries it up from the bottom right.
+   At scroll 0 the whole 7 already reads (scale 1.5, not a cropped slab) */
+.z7-stage { position: relative; height: 130svh; margin-top: -60px; } /* under the 60px header: pinned from the first frame */
 .z7-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .z7-art {
   --k: 1; --gap: max(var(--z7-gut), calc((100vw - 1152px) / 2));
   position: absolute; top: 14svh; right: var(--gap); height: 76svh; width: calc(76svh * 6 / 7); background: #fff; overflow: hidden;
-  transform-origin: 0 0; transform: translate(calc(-20vw * var(--k)), calc(30svh * var(--k))) scale(calc(1 + .9 * var(--k)));
+  transform-origin: 0 0; transform: translate(calc(-12vw * var(--k)), calc(14svh * var(--k))) scale(calc(1 + .5 * var(--k)));
 }
 .z7-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .8); }
 .z7-mask { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -32,27 +41,43 @@
 .z7-h .x-line { padding: .03em 0 .05em; }
 
 /* Beyond: the lineage line; heading 5 of 13, the paragraph 8 of 13 */
-.z7-brings { padding: var(--z7-pad) 0; }
+/* the lineage is pinned for one extra screen: scroll carries the marker from Zen 6 to Zen 7 */
+.z7-brings { position: relative; height: 210svh; margin-top: -40px; background: #fff; } /* overlaps the released hero by 40px */
+.z7-brings-pin { position: sticky; top: 0; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-start; padding: 116px 0 72px; }
 .z7-brings-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; align-items: start; }
 .z7-h2 { margin: 0; max-width: 14ch; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
 .z7-para { margin: 0; max-width: 44ch; font-size: 21px; line-height: 1.42; color: var(--z7-ink); text-wrap: pretty; }
+.z7-para mark { background: none; color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; text-decoration-color: transparent; transition: text-decoration-color var(--z7-fast) var(--z7-out); }
+.z7-para mark.on { text-decoration-color: var(--z7-ink); }
 .z7-line { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr) minmax(0, 3fr); align-items: center; margin-top: 72px; }
-.z7-node { display: grid; align-content: end; gap: 6.5px; min-height: 220px; padding: 27px; border-radius: 24px; background: var(--z7-room); color: var(--z7-ink); text-decoration: none; transition: transform var(--z7-fast) var(--z7-out); }
-@media (hover: hover) { a.z7-node:hover { transform: translateY(-4px); } }
-a.z7-node:active { transform: scale(.97); transition-duration: var(--z7-press); }
+.z7-node { display: grid; align-content: end; gap: 6.5px; min-height: 220px; padding: 27px; border-radius: 24px; background: var(--z7-room); color: var(--z7-ink); text-decoration: none; transition: transform var(--z7-fast) var(--z7-out), background-color 400ms var(--z7-out), color 400ms var(--z7-out); }
+.z7-node span { font: 400 14px/1.4 var(--mono); color: var(--z7-muted); transition: transform 300ms var(--z7-emph), color 400ms var(--z7-out); }
+/* hover: Zen 6's facts part (strokes parting, up to 12px) and its arrow-free card presses */
+@media (hover: hover) {
+  a.z7-node:hover span:nth-child(2) { transform: translateX(4px); }
+  a.z7-node:hover span:nth-child(3) { transform: translateX(8px); }
+  a.z7-node:hover span:nth-child(4) { transform: translateX(12px); }
+  a.z7-node:hover { background: #ededed; }
+}
+a.z7-node:active { transform: scale(.98); transition-duration: var(--z7-press); }
 a.z7-node:focus-visible { outline: 2px solid var(--z7-ink); outline-offset: 3px; }
-.z7-node span { font: 400 14px/1.4 var(--mono); color: var(--z7-muted); }
 .z7-node .z7-node-k { margin-bottom: 10.5px; font: 497 26px/1.1 var(--sans); letter-spacing: -.02em; color: inherit; }
-.z7-node.dark { background: #0a0a0a; color: #fafafa; }
-.z7-node.dark span { color: rgba(255, 255, 255, .78); }
-.z7-node.dark .z7-node-k { color: #fafafa; }
+/* Zen 7 waits quiet and fills when the marker arrives */
+.z7-node7 { box-shadow: inset 0 0 0 1px var(--z7-line); background: #fff; }
+.z7-node7.here { background: #0a0a0a; color: #fafafa; box-shadow: none; }
+.z7-node7.here span { color: rgba(255, 255, 255, .78); }
+.z7-node7.here .z7-node-k { color: #fafafa; }
 .z7-rail { position: relative; padding: 0 17px; }
-.z7-path { position: absolute; overflow: visible; }
-.z7-path path { fill: none; stroke: var(--z7-ink); stroke-width: 1; }
-.z7-path.h { left: 0; top: 50%; width: 100%; height: 2px; margin-top: -1px; }
-.z7-path.v { display: none; }
-.z7-rail ol { position: relative; list-style: none; margin: 0; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 10.5px; }
-.z7-rail li { max-width: 12em; padding: 10.5px 17px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px var(--z7-line); font-size: 14px; line-height: 1.35; text-align: center; text-wrap: balance; }
+.z7-track, .z7-run { position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; }
+.z7-track { background: var(--z7-line); }
+.z7-run { background: var(--z7-ink); transform-origin: 0 50%; transform: scaleX(0); }
+.z7-dot { position: absolute; left: 0; right: 0; top: 50%; height: 0; pointer-events: none; z-index: 1; }
+.z7-dot b { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--z7-ink); box-shadow: 0 0 0 5px #fff; }
+.z7-rail ol { position: relative; z-index: 2; list-style: none; margin: 0; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 10.5px; }
+.z7-rail li { max-width: 12em; padding: 10.5px 17px; border-radius: 6px; background: #fff; color: var(--z7-muted); box-shadow: 0 0 0 1px var(--z7-line); font-size: 14px; line-height: 1.35; text-align: center; text-wrap: balance; cursor: default; transition: transform 300ms var(--z7-emph), background-color var(--z7-fast) var(--z7-out), color var(--z7-fast) var(--z7-out); }
+@media (hover: hover) { .z7-rail li:hover { background: #f5f5f5; color: var(--z7-ink); } }
+/* a station grows while the marker passes it, then rests lit */
+.z7-rail li.lit { background: #0a0a0a; color: #fafafa; box-shadow: 0 0 0 1px #0a0a0a; transform: scale(1.08); transition-duration: 300ms; transition-timing-function: var(--z7-emph); }
 
 /* the research room: a rounded card inside the gutters that opens to full width (--open 0 → 1) */
 .z7-access {
@@ -60,6 +85,10 @@ a.z7-node:focus-visible { outline: 2px solid var(--z7-ink); outline-offset: 3px;
   clip-path: inset(0 calc(var(--z7-gut) * (1 - var(--open))) round calc(24px * (1 - var(--open))));
 }
 .z7-sig2 { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(255, 255, 255, .3); }
+/* the room's own 7: line art drawn once, drifting toward a fine pointer (art drift, under 140px) */
+/* set right of the centred text column so its stroke never crosses the words */
+.z7-seven { position: absolute; z-index: -1; right: max(var(--z7-gut), calc((100vw - 1152px) / 2)); top: 50%; width: 300px; height: auto; margin-top: -175px; overflow: visible; transition: transform 600ms var(--z7-out); pointer-events: none; }
+.z7-seven path { fill: none; stroke: rgba(255, 255, 255, .3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .z7-access-g { display: grid; justify-items: center; }
 .z7-big { margin: 0; font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: 1.05; color: #fafafa; }
 .z7-access .z7-lede { max-width: 44ch; color: rgba(255, 255, 255, .78); }
@@ -68,25 +97,43 @@ a.z7-node:focus-visible { outline: 2px solid var(--z7-ink); outline-offset: 3px;
 @media (max-width: 899px) {
   .z7-stage { height: auto; margin-top: 0; }
   .z7-pin { position: relative; height: auto; overflow: visible; display: flex; flex-direction: column; }
-  .z7-copy { padding-top: 116px; pointer-events: auto; }
-  .z7-h { font-size: 44px; }
+  /* phone: the copy's children join the column so the breadcrumb can sit below the 7 */
+  .z7-pin { padding-top: 44px; }
+  .z7-copy { display: contents; }
+  .z7-copy > * { margin-left: var(--z7-gut); margin-right: var(--z7-gut); }
+  .z7-h { font-size: 40px; }
   .z7-lede { font-size: 17px; margin-top: 17px; }
-  .z7-art { position: relative; order: 2; top: auto; right: auto; height: 45svh; width: calc(45svh * 6 / 7); margin: 27px auto 0; transform: none !important; }
+  .z7-acts { margin-top: 17px; flex-wrap: nowrap; gap: 17px; }
+  .z7-acts .x-btn { padding: 0 20px; font-size: 15px; white-space: nowrap; }
+  .z7-acts .x-arrow { white-space: nowrap; font-size: 15px; }
+  /* the 7 sits inside the first screen and settles as you scroll (a short rise, same --k) */
+  .z7-art { position: relative; order: 2; top: auto; right: auto; height: 38svh; width: calc(38svh * 6 / 7); margin: 17px auto 0; transform-origin: 50% 100%; transform: translateY(calc(3svh * var(--k))) scale(calc(1 + .1 * var(--k))); }
+  .z7-crumb { order: 3; }
+  .z7-crumb ol { margin-top: 6.5px; }
+  .z7-seven { position: relative; display: block; right: auto; top: auto; width: 96px; margin: 0 auto 17px; }
+  .z7-pause { position: relative; order: 4; right: auto; bottom: auto; align-self: flex-end; margin: 10.5px var(--z7-gut) 0 0; }
+  .z7-brings { height: auto; }
+  .z7-brings-pin { position: relative; min-height: 0; padding: var(--z7-pad) 0; }
   .z7-brings-g { grid-template-columns: minmax(0, 1fr); gap: 17px; }
   .z7-para { font-size: 17px; }
   .z7-line { grid-template-columns: minmax(0, 1fr); margin-top: 44px; }
   .z7-node { min-height: 0; padding: 17px 17px 22px; }
   .z7-rail { padding: 27px 0 27px 56px; }
-  .z7-path.h { display: none; }
-  .z7-path.v { display: block; left: 27px; top: 0; width: 2px; height: 100%; margin-left: -1px; }
+  .z7-track, .z7-run { left: 27px; right: auto; top: 0; bottom: 0; width: 1px; height: auto; margin: 0 0 0 -.5px; }
+  .z7-run { transform-origin: 50% 0; transform: scaleY(0); }
+  .z7-dot { left: 27px; right: auto; top: 0; bottom: 0; width: 0; height: auto; }
   .z7-rail ol { flex-direction: column; align-items: flex-start; gap: 10.5px; }
-  .z7-rail li { max-width: none; text-align: left; }
+  .z7-rail li { max-width: none; text-align: left; transform-origin: 0 50%; }
+  .z7-rail li.lit { transform: scale(1.04); }
   .z7-big { font-size: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .z7-stage { height: auto; }
   .z7-pin { height: 100svh; min-height: 640px; }
   .z7-art { transform: none !important; }
+  .z7-brings { height: auto; }
+  .z7-brings-pin { position: relative; }
+  .z7-seven { transition: none; }
   .z7-h .x-line-in { transform: none !important; }
   .z7-access { --open: 1 !important; }
   a.z7-node { transition: none; }

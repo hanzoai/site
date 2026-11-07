@@ -2,7 +2,7 @@
 
 Page file: `components/pages/model/Zen.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/zen/` · metric id: `signup_start`
 
-Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
+Open copy questions for James: (1) the h1 is "Zen" with the home model card's line ("Deep reasoning for complex problems."), and live /zen's h1 "Open models. Yours to run." sits beside the settled film as an h2 with the same words: keep, or make the live line the h1 again? (2) The trace's tab names reuse Hanzo's card rows ("Open weights", "Text, images and video", "Packed ternary, 5.95 GB"), its button uses the register's "Next" and "Replay", and its tablist is named "Zen": no new words, but the tabs are a new use of them. Labels that sat above headlines now sit below or beside them as captions.
 Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our spec table and headings, raw `.x-btn` asks (now `Cta`), raw `<img>` (now `Img`, `ModelFilm`), cursor labels.
 
@@ -13,7 +13,7 @@ Forks this page deleted: our spec table and headings, raw `.x-btn` asks (now `Ct
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: model page, prices are the model's own)
 - [x] Open copy questions for James listed, none decided
 
-Done here: `app/zen/page.jsx` carries Persona, Goal, CTA, Metric `signup_start`, Signature and Beyond. The one solid ask "Try Hanzo" (/login) shows on the first screen over the film, then beside the settled headline, then in the closing Band. One h1 ("Zen") is in the server HTML.
+Done here: `app/zen/page.jsx` carries Persona, Goal, CTA, Metric `signup_start`, Signature and Beyond. The one solid ask "Try Hanzo" (/login) is solid (white on the film) on the first screen while the header ask stays quiet, solid beside the settled headline, then solid in the closing band (`zen.band`); the header turns solid only once the page's ask leaves view. One h1 ("Zen") is in the server HTML.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -31,7 +31,7 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Zen's own film plays full-bleed under the h1 cut-in within the first second. It then settles into an arch around Zen's sphere, and Hanzo's headline rises beside it. Then come Open weights, Zen 6 Flash and Zen 6 pin as chapters over Zen's film, then the reasoning trace (Zen reasons which Zen to run, lighting the row it reads on the two cards), Hanzo's model-card grid and the `Band`. Entrance states are scoped to `html.js`.
+Done here: Zen's own film plays full-bleed under the h1 cut-in within the first second. It then settles into an arch around Zen's sphere, and Hanzo's headline rises beside it. Then come Open weights, Zen 6 Flash and Zen 6 pin as chapters over Zen's film, then the reasoning trace (Zen reasons which Zen to run, lighting the row it reads on the two cards), Hanzo's model-card grid and a page-local closing band with the kit Band's words, cut in by line mask with no blur (the kit `Band`'s `Words` reveal blurs, so it is not used here; request in `docs/requests/zen-names.md`). Entrance states are scoped to `html.js`, so JS off shows the final state, band included.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: Zen's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Try Hanzo" after the hero. `data-cta` ids: `zen.first` (first screen), `zen.hero` (headline).
+Done here: "Try Hanzo" appears 4 times: the header, the first-screen ask (white fill on the film), the settled headline and the closing band; the chapters and the trace cards no longer repeat it. On desktop the first-screen and headline asks are solid while the header is quiet; on phones the header stays solid, so the settled headline's ask is outlined (one solid per screen at 375×812 and 375×667). `data-cta` ids: `zen.first` (first screen; its `data-thumb` is set by the shared Launch, which has none: requested), `zen.hero` and `zen.band` (both with `data-thumb`). The settled headline's links stay out of the tab order (`visibility: hidden`) until the headline shows.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapters that are not showing hide their links (`visibility: hidden`), so a Tab crawl never lands on an invisible stop (0 focusable links in hidden chapters, measured). The dark room's link hover is scoped to the dark room, so no link turns white on white. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -115,7 +115,7 @@ Done here: body text is #525252 on white and #a3a3a3 or better on black. The `Fi
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the trace timers stop off screen and with the page pause. CLS measured 0.000 at 1470. At 375 the trace grew and pushed the cards (0.018 on a slow walk, 0.166 in the critic's run); the trace now reserves its tallest state (620px): re-measured 0.000 at 375 on a slow walk.
+Done here: the h1 and the priority poster (`Img priority`, 1200×1500) are in server HTML. Only transform, opacity and clip-path animate; the trace timers stop off screen and with the page pause. The trace renders all three step slots, its answer row and its button from the start at fixed heights and fills them by opacity and transform only (no in-flow waiting row; the waiting dots sit in the fixed label row). Measured with a PerformanceObserver over a scroll, a 14 s untouched dwell on the trace, all three tabs and five button taps: CLS 0.0005 at 1470 (film pause disc and the shared header, not the trace) and 0.0000 at 375, two fresh runs each.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -147,7 +147,7 @@ Done here: n/a: no code block on /zen (model ids show as inline code).
 - [ ] n/a: a failed submit keeps its values and shows no success (no form)
 - [x] A thrown island does not blank the page (`app/error.jsx` keeps header and footer)
 
-Done here: JS off shows every word. Reduced motion shows the settled stage and the demo's final frame, with no pin. With media blocked, the posters and black frames stand in at their reserved size.
+Done here: JS off shows every word, unblurred, including the closing band (checked with JavaScript disabled at 1470). Reduced motion shows the settled stage and the demo's final frame, with no pin. With media blocked, the posters and black frames stand in at their reserved size.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)

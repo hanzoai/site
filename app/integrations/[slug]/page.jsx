@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import JsonLd from '../../../components/JsonLd';
 import Guide from '../../../components/pages/integrations/Guide';
+import JsonLd from '../../../components/JsonLd';
 import { SLUGS, guideDoc, indexDoc, metaOf } from '../../../components/pages/integrations/intData';
 
 export const dynamicParams = false;

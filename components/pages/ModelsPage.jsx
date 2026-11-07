@@ -1,17 +1,17 @@
 'use client';
-// V2: 8/10 (own estimate; critic pending) Hanzo's exact model grid as the hero, the black room of three families, Kai's figures, a catalogue of Hanzo's cards that open into their pages, every model linked
+// V2: 8/10 (own estimate; critic pending) the 11 on its own line; catalogue cards quiet until hover (phone: 72px rows with a thumb); Copy legible, 44px, announced; closing black room; no hero timer (pointer- and scroll-lit); SPEC grid 385/192; no hydration mismatch
 // Persona: Developer choosing a model (and the buyer comparing labs). Goal: find the model, open its page. CTA: "Get API key" (platform.hanzo.ai/api-keys). Metric: api_key_created.
 // Signature: a card opens into its page. The first screen is Hanzo's model grid exactly as live hanzo.ai draws it (SPEC.md); every card lifts into its model's page (the WebGL opener), every catalogue card's name flies into its sheet (morph).
 // Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from here, findable with Ctrl-F, so no page of the 544 is an orphan.
 /* Models, v2 (docs/VISION.md archetype C, docs/JAMES.md, docs/PLAN-COMPONENTS.md 5.4 and 2.15), one idea per screen:
-   1 The wall: nine films at once (at least six cards above the fold), the light moving through them by itself;
-     scroll flies into Enso. Phones: a swipe rail.
+   1 Hanzo's model grid exactly (SPEC.md): Enso's film plays; the light follows the pointer, or walks the cards as
+     the grid scrolls past (no timer).
    2 Three families, the one dark room: the words pin, the film changes under a clip wipe.
    3 Enso vs Zen as a two-column spec with each family's film.  4 Kai's benchmarks as hero figures.
    5 The catalogue: chips re-flow the families, each family's head pins beside its cards, every card opens; then the
      collapsed list of every model and maker.  6 Every model priced (ten rows, the rest a press away).
    7 Try any model: the request swaps its model by itself.  8 Your first request.  9 Related, over a drifting Sigil.
-   Motion mix: idle (films, the moving light, the self-switching request, the Sigil), pointer (hover plays a film,
+   Motion mix: idle (films, the self-switching request, the Sigil), scroll (the grid's light), pointer (hover plays a film,
    the Sigil leans to the cursor), state (chips re-flow, tabs, the open), arrival (headline cut-in, count-up), scroll
    (the fly-in and the pinned families). One pause stops everything that moves by itself.
    No UI hue: greys, black and white; colour arrives only through the films. Every word, id, rate and link is Hanzo's. */
@@ -26,6 +26,7 @@ import SpecCard, { useSpecTilt } from '../v2/SpecCard';
 import MaskFig from '../v2/MaskFig';
 import { media, bySlug } from '../../lib/models';
 import { ROWS, OTHERS } from './models/rates';
+import { CopyStatus } from './models/parts';
 import './ModelsPage.css';
 
 const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // the deck has no springs: ease-emphasis, 300 ms
@@ -82,11 +83,11 @@ const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
 const GRID = ['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
 const clamp = (v) => Math.min(1, Math.max(0, v));
 
-function GridCard({ m, i, play, open, setLit }) {
+function GridCard({ m, i, play, lit, open, setLit }) {
   const tilt = useSpecTilt();
   const big = i === 0;
   return (
-    <li className={'xmo-cell' + (big ? ' big' : '')}>
+    <li className={'xmo-cell' + (big ? ' big' : '') + (lit ? ' lit' : '')}>
       <a
         ref={tilt.ref}
         href={'/' + m.slug}
@@ -115,8 +116,15 @@ function GridCard({ m, i, play, open, setLit }) {
 
 function Stage() {
   const open = useOpen();
-  // no timer (MASTER 4.3): Enso's film is the first-second mover; a second film plays only under the pointer or focus
+  // no timer (MASTER 4.3): Enso's film is the first-second mover. The light is the reader's: the card under the pointer
+  // or focus plays; with no pointer on the grid, scrolling walks the light through the cards (Kai to Mori) as the grid
+  // passes. Two films at most.
   const [lit, setLit] = useState(0);
+  const [walk, setWalk] = useState(0);
+  const grid = useRef(null);
+  const { scrollYProgress: gp } = useScroll({ target: grid, offset: ['start 85%', 'end 15%'] });
+  useMotionValueEvent(gp, 'change', (v) => setWalk(v <= 0.02 || v >= 0.98 ? 0 : 1 + Math.min(7, Math.floor(v * 8))));
+  const on = lit || walk;
   const go = 'https://platform.hanzo.ai/api-keys';
   return (
     <section className="xmo-stage" aria-labelledby="xmo-h1">
@@ -133,9 +141,9 @@ function Stage() {
             </motion.div>
           </div>
         </div>
-        <ul className="xmo-grid" data-swipe-own data-cursor="">
+        <ul className="xmo-grid" data-swipe-own data-cursor="" ref={grid}>
           {GRID.map((slug, i) => (
-            <GridCard key={slug} m={bySlug[slug]} i={i} play={i === 0 || lit === i} open={open} setLit={setLit} />
+            <GridCard key={slug} m={bySlug[slug]} i={i} play={i === 0 || on === i} lit={i > 0 && on === i} open={open} setLit={setLit} />
           ))}
         </ul>
         <div className="xmo-grid-cap"><span className="x-mono">Models</span><FilmPause /></div>
@@ -351,6 +359,16 @@ function MCard({ to, name, id, ctx, d, tags, rate }) {
   return <SpecCard hush to={to} title={name} desc={d} meta={<><span>{slashes(id)}</span>{r && <><br /><b>{r}</b></>}</>} tags={[...(ctx ? [ctx] : []), ...tags]} />;
 }
 
+/* Phones: each catalogue row carries a small thumb, the family's own poster (Hanzo's media), or for another lab's model a
+   still frame of its Sigil. Hidden on wide screens, where the card itself is the object. */
+function Thumb({ fam, seed }) {
+  return (
+    <span className="xmo-thumb" aria-hidden="true" style={fam ? { backgroundImage: `url(${media(fam, 'webp')})` } : undefined}>
+      {!fam && <Sigil seed={'/models/' + seed} className="xmo-thumb-s" still />}
+    </span>
+  );
+}
+
 /* A creative model's card: its film waits as a still and plays while the pointer (or focus) is on it; it opens into
    the model's page with the WebGL opener. */
 function Tile({ m }) {
@@ -408,26 +426,26 @@ function Catalogue({ at, makers }) {
   };
   const open = useOpen();
   const show = (f) => fam === 'all' || fam === f;
-  const card = (id, name, ctx, d, tags, to) => <li key={id}><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} /></li>;
+  const card = (id, name, ctx, d, tags, to, f) => <li key={id}><Thumb fam={f} seed={id} /><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} /></li>;
   const groups = [
     ['enso', <Head slug="enso" title="Enso models" link={<Lk to="/enso" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'enso')}>Enso: the router, its presets and its runs</Lk>} />,
-      <ul className="xmo-cards">{ENSO.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id))}</ul>],
+      <ul className="xmo-cards">{ENSO.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id, 'enso'))}</ul>],
     ['zen', (
       <Head slug="zen" title="Zen models" link={<Lk to="https://docs.hanzo.ai/docs/models/zen">Run Zen: the docs</Lk>}>
         <p>Open weights, made with <A to="https://zoo.ngo">Zoo Labs Foundation</A>. Download every Zen model at <A to="https://huggingface.co/zenlm">huggingface.co/zenlm</A>, or call it here.</p>
       </Head>
     ), (
       <ul className="xmo-cards">
-        {ZEN.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id))}
-        <li><SpecCard hush to="/zen/7" title="Zen 7" meta={<><span>zen7</span><br /><b>Request access</b></>} desc="The next open-weight generation after Zen 6, in research preview." tags={['Research preview']} /></li>
+        {ZEN.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id, 'zen'))}
+        <li><Thumb fam="zen" /><SpecCard hush to="/zen/7" title="Zen 7" meta={<><span>zen7</span><br /><b>Request access</b></>} desc="The next open-weight generation after Zen 6, in research preview." tags={['Research preview']} /></li>
       </ul>
     )],
     ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,
-      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} /></li>)}</ul>],
+      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><Thumb fam="kai" /><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} /></li>)}</ul>],
     ['creative', <Head title="Creative models" link={<Lk to="/design">Make something in Design</Lk>}><p>Video, images, 3D, sound effects, voice and music, each its own model, in research preview.</p></Head>,
       <ul className="xmo-cards tiles">{CREATIVE.map((m) => <li key={m[0]}><Tile m={m} /></li>)}</ul>],
     ['labs', <Head title="Flagships from other labs" link={<Lk to="#priced">Every model, priced</Lk>} />,
-      <ul className="xmo-cards">{LABS.map(([id, name, ctx, d]) => card(id, name, ctx, d, ['text'], '/models/' + id))}</ul>],
+      <ul className="xmo-cards">{LABS.map(([id, name, ctx, d]) => card(id, name, ctx, d, ['text'], '/models/' + id, null))}</ul>],
   ];
   return (
     <section className="xmo-sec xmo-cat" id="families" aria-label="The model catalogue" ref={sec}>
@@ -750,6 +768,7 @@ export default function ModelsPage({ makers }) {
   const at = useLive(go);
   return (
     <main className="xmo">
+      <CopyStatus />
       <Stage />
       <Families />
       <Versus />

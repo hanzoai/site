@@ -1,0 +1,4 @@
+# Requests from /ui
+
+- **components/Ask.jsx (shared header ask, phones):** at ≤ 700px the header keeps a solid "Try Hanzo" for the whole page, so a page whose own ask is "GitHub" (`data-thumb`) shows two solid asks with different words on its first screen and at its close. The phone bar ("GitHub →") appears only where nothing sits under it, which on /ui is about 100px of scroll. Asked for: on phones, do what desktop does: the header button goes quiet while the page's `data-thumb` ask is on screen and carries the page's ask (label and link) after it. Until then /ui outlines its own "GitHub" / "View on GitHub" on phones (`UiPage.css`, `@media (max-width: 700px)`), so one solid shows per screen.
+- **components/v2/Scale.css `.w2-cta`:** base `#0a0a0b` and hover `#2c2c2e` are not deck values. Asked for: `#0a0a0a` and `#262626`. /ui overrides them page-locally.

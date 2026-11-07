@@ -31,7 +31,7 @@ Done here: One `<main className="zx">` after the layout's `#main` mark. Links go
 - [ ] Ends in proof strip, `Band`, footer (n/a: Hanzo's page has no proof strip; the close is its own section, not the kit `Band`, because `Band` uses blur word reveals and springs that the deck bans)
 - [x] Card-to-page links use Morph; title lands within 12px (the h1 is the `data-morph-target`)
 
-Done here: On load the name cuts in (700 ms, ease-emphasis) over the playing Zen film, with Hanzo's lede and "Talk to sales" on the first screen. The name is the 112px moment only while the film fills the screen, then settles to 52px as the film settles into its card. With JS off, a noscript rule settles the stage and shows the poster, every step and the drawer (checked with Playwright `javaScriptEnabled:false`).
+Done here: On load the name cuts in (700 ms, ease-emphasis) over the playing Zen film, with Hanzo's lede and "Talk to sales" on the first screen. On scroll the film's left edge wipes off the words first (clip-path, `--k` 1 to .8), then the card settles beside them in 8 of 13 columns, so film and words never share pixels after the wipe (checked at scroll 20, 40, 80, 120 and 400 at 1470×801). No blend mode: a white aria-hidden twin of the name, lede, link and crumb sits over the ink copy, clipped to the film's visible box, so every letter is flat ink or flat white and the split sits on the film's edge. The settled card is 62svh tall with its bottom on the crumb's baseline (9svh up), so card and words share one baseline with no empty block under the card. The name is the 112px moment only while the film fills the screen, then settles to 52px. The stage is 140svh, so the settle ends as the promises arrive, and the rack panel rises 40px beside its head. Every section has an object: film, router drawing, rack, sheet figures, Sigil. With JS off, a noscript rule settles the stage and shows the poster, the full router drawing, every step and the drawer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: On load the name cuts in (700 ms, ease-emphasis) over the playing Zen
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-cta` values are `zen6max.hero` (with `data-thumb="Talk to sales"`), `zen6max.hero.gpus` and `zen6max.close`. While the film is under the ask (desktop) the solid reads light; once the card has cleared it, the ask reads ink. It is never two solids at once. The close has `data-ask-hide`, so the shared bar makes room beside the close's own ask.
+Done here: `data-cta` values are `zen6max.hero` (with `data-thumb="Talk to sales"`), `zen6max.hero.gpus` and `zen6max.close`. While the film is under the ask (desktop) the solid reads light and inverts to ink with a white ring on hover; once the film's edge has wiped past it, the ask reads ink. The page never shows two solids of its own at once. On phones the shared header's solid "Try Hanzo" still shows beside the hero ask: filed in `docs/requests/zen6-max.md`. The close has `data-ask-hide`, so the shared bar makes room beside the close's own ask.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -55,7 +55,7 @@ Done here: 9,216 GB, 5,760 GB, 8 x 288 GB, 2,304 GB, 1,440 GB, 8 x 3.84 TB and "
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /<path>`: 0 missing
 
-Done here: Sizes come from the deck scale (112 moment, 64 figures, 52 h1, 26 headings, 21 lede, 16 body, 13 crumb, 12 mono capitals). The lede is 44ch or less and the body 64ch. The specs are the kit `DataTable` with the picked column as `subject`; on phones its cells wrap. Parity: 46/46 text, 4/4 links.
+Done here: Sizes come from the deck scale (112 moment, 64 figures, 52 h1, 26 headings, 21 lede, 17 promise lines, 16 body, 13 crumb, 12 mono capitals). The lede is 44ch or less and the body 64ch. The specs are the kit `DataTable` with the picked column as `subject`; on phones its cells wrap. Parity: 46/46 text, 4/4 links.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values are page tokens at the top of ZenMax.css until `tokens.css` lands)
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on both files. Radii: art card 20, panel 24, chips 
 - [x] Inputs 16px or larger; no bare `:hover` (n/a: no inputs; every `:hover` sits in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed below
 
-Done here: Chips, sheet columns, the drawer button and the pause control press to .97 in 90 ms. Hover changes the fill or rotates the drawer cross. The server switch is a radiogroup with arrow keys, the planning buttons use `aria-pressed`, and the drawer uses `aria-expanded`/`aria-controls`. Cta loading and disabled states come from the kit. Forks deleted: see the top of this card.
+Done here: Chips, sheet columns, the drawer button and the pause control press to .97 in 90 ms. Hover answers on every control: the hero ask inverts on the film, the pause fills white 10% and grows to 1.1, a promise row draws its hairline and sets the router drawing, a sheet column tints its cells and grows its total to three quarters, chips fill, the drawer cross rotates. The server switch is a radiogroup with arrow keys, the planning buttons use `aria-pressed`, and the drawer uses `aria-expanded`/`aria-controls`. Cta loading and disabled states come from the kit. Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +82,7 @@ Done here: Chips, sheet columns, the drawer button and the pause control press t
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the shared sound kit is not built yet)
 
-Done here: `variety.py` reports 3 techniques (scroll scrub, count-up, Sigil) and 0 fade-ups. Kinds of movement: arrival (name cut-in), idle (film, Sigil), scroll (stage settle, chapters), state (server switch, plan, drawer, column pick), time (count) and pointer (Sigil). There are no springs; durations come from the deck (90/150/300/400/500 ms, 700 ms line mask). Under reduced motion `--k` is 0, so the settled stage, unpinned steps and instant states show.
+Done here: `variety.py` reports 3 techniques (scroll scrub, count-up, Sigil) and 0 fade-ups. Kinds of movement: arrival (name cut-in, router fan wipe), idle (film, Sigil, the router's source pulsing three times, the terminal caret blinking four times), scroll (stage wipe and settle, chapters, router steps), state (server switch, plan, drawer, column pick with its total growing), time (count) and pointer (Sigil, row and column previews). All CSS moves are transform, opacity or clip-path. There are no springs; durations come from the deck (90/150/300/400/500 ms, 700 ms line mask). Under reduced motion `--k` is 0, so the settled stage, unpinned steps and instant states show.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -90,7 +90,7 @@ Done here: `variety.py` reports 3 techniques (scroll scrub, count-up, Sigil) and
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: Hanzo has one Zen film)
 
-Done here: There is one kit `Film` (`/models/zen.webm`, 248 KB, under the 500 KB hero budget; poster `/models/zen.webp`, w 1200 h 1500). It plays only on screen. A 44px Pause toggle (`aria-pressed`, register string "Pause") sits under the card. The only darkening is a gradient under the words.
+Done here: There is one kit `Film` (`/models/zen.webm`, 248 KB, under the 500 KB hero budget; poster `/models/zen.webp`, w 1200 h 1500). It plays only on screen. A 44px Pause toggle (`aria-pressed`, register string "Pause") sits 17px inside the visible film's bottom-right corner at every step of the settle. The only darkening is a gradient under the words.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -98,7 +98,7 @@ Done here: There is one kit `Film` (`/models/zen.webm`, 248 KB, under the 500 KB
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Under 900px nothing pins: the rack sits above its steps and the planning buttons drive it. scrollWidth is 375 at 375. The ask-bar sweep found 0 overlaps with page buttons at 375×812 and at 1470×801. The phone ask sits at about 340px from the top.
+Done here: Under 900px the router drawing is sticky under the header (34svh) while the promise rows scroll under it, so each row changes it at mid-screen. The full rack with its switches sits above the steps, and each planning step carries its own compact rack set to its plan (Qualification with the bracket, Isolated with the pools, Redundant with the twin rack) plus its total, built as it reaches the screen (MASTER 4.1: a pinned scene becomes static panels); the planning buttons wrap whole and scroll to their step. "Run it on your own GPUs" and the crumb "Zen" are 44px tall on phones (height only). scrollWidth is 375 at 375 and no element of `main` reaches past 375 (servers slide 16px inside their own slots on phones). The ask-bar sweep found 0 overlaps with page buttons at 375×812 and at 1470×801. The phone ask sits at about 340px from the top.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -131,7 +131,7 @@ Done here: `app/zen/zen6-max/page.jsx` keeps Hanzo's title and description from 
 - [x] Every maker and model page linked in the DOM (n/a: not a catalogue)
 - [x] One price figure everywhere (n/a: no prices)
 
-Done here: This is a model page with a spec sheet rather than prices. The B300/B200 rows are one `DataTable`, and each total appears once in the sheet and once in the rack.
+Done here: This is a model page with a spec sheet rather than prices. The B300/B200 rows are one `DataTable`, and each total appears once in the sheet and once in the rack. In the sheet both totals hold at half size until the figures pass 60% of the screen, then the picked one grows to 64px (scale, 500 ms ease-emphasis), so it arrives rather than repeating the rack's figure; the other grows in when its column is picked.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (n/a: no code on the page)
@@ -147,7 +147,7 @@ Done here: n/a: no code, install command or terminal on this page.
 - [x] A failed submit keeps its values and shows no success (n/a: no form)
 - [ ] A thrown island does not blank the page (shared: error boundaries around Sigil belong to the shell)
 
-Done here: The page fetches nothing at run time. With JS off it is complete: settled stage, poster, rack, steps and open drawer. There are no console errors with JS on at 1470×801 or 375×812.
+Done here: The page fetches nothing at run time. With JS off it is complete: settled stage, poster, rack, steps and open drawer. There are no console errors with JS on at 1470×801 or 375×812 (5 fresh loads at each size, with and without reduced motion, no hydration warning). `--k` renders as a plain `1` on the server and the first client paint and is written to the pin only after mount; `data-over` seeds `true` on both. `Count` renders its final figure in the server HTML, and the Sigil is seeded.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (the kit `Cta` sends `cta_click`; `lib/track.js` is not built yet)
@@ -155,4 +155,4 @@ Done here: The page fetches nothing at run time. With JS off it is complete: set
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more (the last review, zen-family 7/10, asked for the lede and ask on the first screen: done here)
 
-Done here: `V2: 8/10` is in ZenMax.jsx. The zen-family review fixes are done: lede and ask on the first screen, 13px floor, kit `Film` with a pause, and `data-cta`. Proof in `docs/gallery/zen/zen6-max/` was refilmed after this rework.
+Done here: `V2: 8/10` is in ZenMax.jsx. The second 7 Nov review (7/10) fixes 1–8 are done in the page: sticky phone router, a compact rack per phone step, the card on the crumb baseline, the close rising 40px into the sheet's room (72px step, Sigil at black 55% on #e4e4e7), 44px phone targets, the clipped white twin instead of the difference blend, the arriving sheet figure, and a hydration-stable `--k`. The first 7 Nov zen6-max review (6/10) fixes 1, 2, 3, 5, 6, 7 and 8 are done in the page; fix 4 (header ask on phones) is filed in `docs/requests/zen6-max.md`. The zen-family review fixes are done: lede and ask on the first screen, 13px floor, kit `Film` with a pause, and `data-cta`. Proof in `docs/gallery/zen/zen6-max/` was refilmed after this rework.

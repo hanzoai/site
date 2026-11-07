@@ -1,93 +1,214 @@
 /* ---------- world v2 (wd2-) ---------- */
+/* deck curves: ease-out for hover and colour, ease-in-out for things that move and stay, ease-emphasis for arrivals */
+.wd2 { --eo: cubic-bezier(0, 0, .2, 1); --eio: cubic-bezier(.4, 0, .2, 1); --ee: cubic-bezier(.16, 1, .3, 1); }
 
+/* the hero ask: a hover you can see on black (the brand silver) and a magnetic lean on fine pointers (World.jsx) */
+.wd2 .l2-stage [data-cta='primary'] { translate: 0 0; transition: background-color .15s var(--eo), border-color .15s var(--eo), color .15s var(--eo), transform 90ms var(--ee), translate .3s var(--eo); }
+@media (hover: hover) { .wd2 .l2-stage [data-cta='primary']:hover { background: #e4e4e7; border-color: #e4e4e7; } }
 
 /* Stage object: the planet and its panel */
-.wd2-world { position: relative; height: min(620px, 74svh); }
-.wd2-world .l2-pause { position: absolute; z-index: 2; right: 0; top: 0; }
+.wd2-world { position: relative; height: min(590px, 70svh); }
 .wd2-globe { position: absolute; left: 50%; top: 0; height: 100%; aspect-ratio: 1; transform: translateX(-50%); }
+.wd2-globe-in { position: absolute; inset: 0; transform-origin: 50% 40%; }
 .wd2-globe canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.wd2-panel { position: absolute; right: 0; bottom: 0; width: min(320px, 46%); padding: 20px; border-radius: 20px; background: #171717; color: #fafafa; }
-.wd2-k { margin: 0 0 14px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; }
+.wd2-panel { position: absolute; z-index: 1; right: 0; bottom: 0; width: min(320px, 46%); padding: 12px 12px 20px 20px; border-radius: 20px; background: #171717; color: #fafafa; }
+.wd2-panel > div:last-child { padding-right: 8px; }
+.wd2-panel-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.wd2-panel .l2-pause { position: relative; top: auto; right: auto; flex: none; }
+.wd2-k { margin: 0; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; }
 .wd2-lat { display: grid; grid-template-columns: 44px repeat(3, 1fr); align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
 .wd2-lat b { font-size: 14px; font-weight: 606; }
 .wd2-lat span { display: flex; flex-direction: column; gap: 6px; }
 .wd2-lat em { font-size: 12px; font-style: normal; color: #a3a3a3; }
 .wd2-lat i { display: block; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; }
-.wd2-lat u { display: block; height: 100%; background: #fafafa; transform-origin: 0 50%; transition: transform .6s var(--ease); }
-.wd2-drift { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(163, 163, 163, .14); color: #a3a3a3; font-size: 13px; opacity: 0; transform: translateY(6px); transition: opacity .35s, transform .5s var(--ease); }
+.wd2-lat u { display: block; height: 100%; background: #fafafa; transform-origin: 0 50%; transition: transform .5s var(--eio); }
+.wd2-drift { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(163, 163, 163, .14); color: #a3a3a3; font-size: 13px; opacity: 0; transform: translateY(6px); transition: opacity .3s var(--eo), transform .5s var(--ee); }
 .wd2-drift.on { opacity: 1; transform: none; }
 
-/* control room */
+/* ---------- control room ---------- */
 .wd2-room-h { max-width: 12ch; }
-.wd2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; margin-top: clamp(56px, 7vw, 96px); }
-.wd2-mon { display: flex; flex-direction: column; padding: 26px; border-radius: 24px; background: #f5f5f5; transition: background .3s; }
-.wd2-mon.c0 { grid-column: span 7; }
-.wd2-mon.c1 { grid-column: span 5; }
-.wd2-mon.c2, .wd2-mon.c3, .wd2-mon.c4 { grid-column: span 4; }
-.wd2-mon.c5 { grid-column: span 12; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); grid-template-rows: auto auto 1fr; column-gap: 40px; }
-.wd2-mon.c5 header { grid-column: 1; }
-.wd2-mon.c5 .wd2-pic { grid-column: 2; grid-row: 1 / span 3; margin: 0; }
-.wd2-mon.c5 .l2-title { grid-column: 1; }
-.wd2-mon.c5 .l2-body { grid-column: 1; }
-.wd2-mon header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--faint); }
+.wd2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; margin-top: 44px; }
+.wd2-mon { position: relative; display: flex; flex-direction: column; padding: 26px; border-radius: 24px; background: #f5f5f5; }
+/* stacked (phones, reduced motion): big, medium, wide; never three equal boxes in a row */
+.wd2-mon.c0, .wd2-mon.c4 { grid-column: span 7; }
+.wd2-mon.c1, .wd2-mon.c3 { grid-column: span 5; }
+.wd2-mon.c2, .wd2-mon.c5 { grid-column: span 12; }
+.wd2-mon header { display: flex; align-items: center; gap: 14px; font-size: 13px; color: #737373; }
+.wd2-mon header::after { content: ''; flex: 1; height: 1px; background: rgba(0, 0, 0, .14); transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--eio); }
+@media (hover: hover) { .wd2-mon:hover header::after { transform: none; } }
 .wd2-pic { position: relative; margin: 22px 0 26px; min-height: 180px; display: flex; align-items: center; }
 .wd2-pic > * { width: 100%; }
-.wd2-mon .l2-title { margin-top: auto; }
+.wd2-cap { margin-top: auto; }
 .wd2-mon .l2-body { margin-top: 8px; }
+.wd2-ln { display: block; overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; }
+.wd2-ln > span { display: block; }
 
+/* the pinned room (desktop, motion allowed): the heading and a numbered rail on 5, one monitor on air on 8 */
+.wd2-room.pinned { padding-block: 0; }
+.pinned .wd2-track { height: calc(100svh + 6 * 50svh); }
+.pinned .wd2-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); min-height: 560px; box-sizing: border-box; padding-block: 40px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 24px; }
+/* the side is one block sat on the floor: heading, the figure 44px under it, the rail under that */
+.pinned .wd2-side { display: flex; flex-direction: column; justify-content: flex-end; padding-right: 24px; }
+.pinned .wd2-grid { position: relative; display: block; margin: 0; }
+/* outgoing: gone in 150ms with its caption hidden at once; incoming: no delay, so two never share the stage */
+.pinned .wd2-mon { position: absolute; inset: 0; padding: 32px; opacity: 0; transform: translateY(40px); clip-path: inset(10% 0 0 0 round 24px); pointer-events: none; transition: opacity .15s var(--eo), transform .5s var(--ee), clip-path .5s var(--ee); }
+.pinned .wd2-mon:not(.on) .wd2-cap { visibility: hidden; }
+.pinned .wd2-mon.past { transform: translateY(-40px); clip-path: inset(0 0 10% 0 round 24px); }
+.pinned .wd2-mon.on { opacity: 1; transform: none; clip-path: inset(0 round 24px); pointer-events: auto; transition: opacity .3s var(--eo), transform .5s var(--ee), clip-path .5s var(--ee); }
+.pinned .wd2-pic { flex: 1; min-height: 0; margin: 20px 0 24px; justify-content: center; }
+.pinned .wd2-cap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 24px; align-items: start; }
+.pinned .wd2-cap .l2-title { font-size: 21px; font-weight: 497; letter-spacing: -.015em; }
+.pinned .wd2-cap .l2-body { margin: 2px 0 0; }
+/* on air, each drawing is sized to the stage (about 70% of the monitor's picture height), not floated in grey */
+.pinned .wd2-topo { height: clamp(260px, 48svh, 460px); }
+.pinned .wd2-drift-c { max-height: 48svh; }
+.pinned .wd2-lc p { grid-template-columns: 64px 1fr; row-gap: 10px; margin-bottom: 28px; }
+.pinned .wd2-lc p b { font-size: 17px; }
+.pinned .wd2-lc i { height: 14px; border-radius: 7px; }
+.pinned .wd2-lc p.spike { margin-top: 4px; font-size: 15px; gap: 12px; }
+.pinned .wd2-lc p.spike i { width: 12px; height: 12px; }
+.pinned .wd2-ev p { grid-template-columns: 40px 1fr auto; gap: 16px; margin-bottom: 40px; }
+.pinned .wd2-ev p:last-child { margin-bottom: 0; }
+.pinned .wd2-ev span, .pinned .wd2-ev em { font-size: 17px; }
+.pinned .wd2-ev i { height: clamp(64px, 12svh, 104px); border-radius: 14px; }
+/* the five sources sit three over two, the one view across the foot */
+.pinned .wd2-mc { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.pinned .wd2-mc li { grid-column: span 2; font-size: 21px; padding: 22px 24px; border-radius: 14px; text-align: center; }
+.pinned .wd2-mc li:nth-child(4), .pinned .wd2-mc li:nth-child(5) { grid-column: span 3; }
+.pinned .wd2-mc li.one { grid-column: 1 / -1; margin-top: 14px; padding-block: 28px; }
+.pinned .wd2-replay { padding: 28px; }
+.pinned .wd2-rp-track span { min-height: 96px; font-size: 15px; }
+.pinned .wd2-rp-now span { font-size: 26px; }
+
+/* the on-air number: a 64px figure that rolls to the monitor on air (pinned desktop; above the rail on phones) */
+.wd2-count { display: none; align-items: baseline; gap: 10px; margin: 0; }
+.pinned .wd2-count { display: flex; margin: 44px 0 28px; }
+.wd2-roll { display: block; height: 64px; overflow: hidden; }
+.wd2-roll > span { display: flex; flex-direction: column; transition: transform .5s var(--ee); }
+.wd2-roll b { display: block; height: 64px; font-size: 64px; line-height: 64px; min-width: 2ch; }
+.wd2-count em { font-size: 13px; font-style: normal; color: #737373; }
+
+/* the rail: six numbered stops; the one on air in ink, a hairline filling as scroll passes through it */
+.wd2-rail { display: flex; flex-direction: column; }
+.wd2-stop { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; row-gap: 10px; min-height: 52px; padding: 10px 0 0; border: 0; background: none; color: #737373; font: 400 16px/1.3 var(--sans); text-align: left; cursor: pointer; transition: color .15s var(--eo), transform 90ms var(--ee); }
+.wd2-stop span { font-size: 13px; }
+.wd2-stop b { font-weight: 497; transition: transform .3s var(--eio); }
+.wd2-stop i { grid-column: 1 / -1; display: block; height: 1px; background: rgba(0, 0, 0, .1); overflow: hidden; }
+.wd2-stop u { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
+.wd2-stop.on { color: var(--ink); }
+.wd2-stop.on b { font-weight: 606; }
+@media (hover: hover) { .wd2-stop:hover { color: var(--ink); } .wd2-stop:hover b { transform: translateX(6px); } }
+.wd2-stop:active { transform: scale(.98); }
+.wd2-stop:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 8px; }
+
+/* ---------- the monitors' drawings ---------- */
 .wd2-topo { position: relative; height: 240px; border-radius: 18px; background: #0a0a0a; }
 .wd2-topo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.wd2-topo line { stroke: rgba(255, 255, 255, .14); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: stroke .3s; }
+.wd2-topo line { stroke: rgba(255, 255, 255, .14); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: stroke .3s var(--eo); }
 .wd2-topo line.on { stroke: #fafafa; stroke-width: 2.5; }
-.wd2-node { position: absolute; transform: translate(-50%, -50%); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 13px; white-space: nowrap; cursor: default; }
+.wd2-topo svg g { transform-box: view-box; transform-origin: 0 0; }
+.wd2-node { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 13px; white-space: nowrap; cursor: default; }
 .wd2-node.m { cursor: pointer; color: #fafafa; min-width: 44px; min-height: 44px; display: grid; place-items: center; }
 .wd2-node.on { background: #fafafa; border-color: #fafafa; color: #000; font-weight: 606; }
 @media (hover: hover) { .wd2-node.m:hover { border-color: rgba(255, 255, 255, .5); } }
+.wd2-node.m:active { transform: translate(-50%, -50%) scale(.97); }
 .wd2-node.m:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
 .wd2-lc p { display: grid; grid-template-columns: 50px 1fr; gap: 4px 12px; align-items: center; margin: 0 0 14px; }
 .wd2-lc p b { grid-row: span 3; font-size: 14px; }
-.wd2-lc i { display: block; height: 8px; border-radius: 4px; background: #d4d4d4; }
-.wd2-lc i.q1 { background: #a3a3a3; }
-.wd2-lc i.q2 { background: var(--ac); }
+/* bars: the <i> is the bar's lane (it grows in on arrival), the <u> its fill (it re-draws while on air) */
+.wd2-lc i, .wd2-ev i { display: block; border-radius: 4px; transform-origin: 0 50%; }
+.wd2-lc u, .wd2-ev u { display: block; height: 100%; border-radius: inherit; background: #d4d4d4; transform-origin: 0 50%; transition: transform .5s var(--eio); }
+.wd2-lc i { height: 8px; }
+.wd2-lc i.q1 u { background: #a3a3a3; }
+.wd2-lc i.q2 u { background: var(--ac); }
 .wd2-lc p.spike { display: flex; gap: 10px; margin: 6px 0 0; font-size: 13px; color: #525252; }
 .wd2-lc p.spike i { width: 8px; height: 8px; border-radius: 50%; background: #737373; }
-.wd2-drift-c { width: 100%; height: auto; }
+.wd2-drift-c { width: 100%; height: auto; max-height: 280px; overflow: visible; }
 .wd2-drift-c .band { fill: rgba(163, 163, 163, .14); }
 .wd2-drift-c .ln { fill: none; stroke: var(--ink); stroke-width: 2; }
-.wd2-drift-c .al { fill: #a3a3a3; }
+/* the alert: a hollow ink ring at the line's end, and a pulse ring it sends out while on air */
+.wd2-drift-c .al { fill: #f5f5f5; stroke: var(--ink); stroke-width: 2; transform-box: fill-box; transform-origin: 50% 50%; }
+.wd2-drift-c .pu { fill: none; stroke: var(--ink); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; animation: wd2-ring .5s var(--eo); }
+@keyframes wd2-ring { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(2.6); } }
 .wd2-ev p { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 12px; margin: 0 0 14px; }
 .wd2-ev span, .wd2-ev em { font-size: 13px; font-style: normal; color: var(--soft); }
-.wd2-ev i { display: block; height: 28px; border-radius: 8px; background: #d4d4d4; }
-.wd2-ev p.b i { background: var(--ac); }
+.wd2-ev i { height: 28px; border-radius: 8px; }
+.wd2-ev p.b u { background: var(--ac); }
 .wd2-mc { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .wd2-mc li { padding: 9px 12px; border-radius: 10px; background: #fff; font-size: 16px; }
+/* each source's signal dot; the one sending lights while on air */
+.wd2-mc li:not(.one)::before { content: ''; display: inline-block; width: 6px; height: 6px; margin: 0 .5em .12em 0; border-radius: 50%; background: var(--ink); vertical-align: middle; opacity: .2; transition: opacity .3s var(--eo); }
+.wd2-mc li.sig::before { opacity: 1; }
 .wd2-mc li.one { flex-basis: 100%; margin-top: 6px; background: #0a0a0a; color: #f5f5f5; font-weight: 606; text-align: center; }
 
 .wd2-replay { padding: 24px; border-radius: 22px; background: #0a0a0a; color: #f5f5f5; }
 .wd2-rp-track { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-.wd2-rp-track span { padding: 10px 8px; border-radius: 10px; background: #171717; font-size: 13px; color: #737373; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .3s, color .3s; }
+.wd2-rp-track span { display: grid; place-items: center; min-height: 58px; box-sizing: border-box; padding: 8px 6px; border-radius: 10px; background: #171717; font-size: 13px; line-height: 1.25; color: #737373; text-align: center; overflow-wrap: anywhere; transition: background-color .3s var(--eo), color .3s var(--eo); }
 .wd2-rp-track span.done { color: #d4d4d4; }
 .wd2-rp-track span.now { background: #fafafa; color: #000; font-weight: 606; }
-.wd2-rp-scrub { display: block; margin-top: 14px; }
-.wd2-rp-scrub { color: #fafafa; }
+.wd2-rp-scrub { display: block; margin-top: 14px; color: #fafafa; }
+.wd2-rp-still { position: relative; display: block; height: 44px; }
+.wd2-rp-still i { position: absolute; left: 0; top: 20px; height: 4px; border-radius: 4px; background: currentColor; }
+.wd2-rp-still::before { content: ''; position: absolute; inset: 20px 0 auto; height: 4px; border-radius: 4px; background: rgba(127, 127, 127, .28); }
+.wd2-rp-still b { position: absolute; top: 10px; width: 24px; height: 24px; margin-left: -12px; box-sizing: border-box; border-radius: 50%; background: currentColor; border: 3px solid #fff; }
 .wd2-rp-now { min-height: 64px; margin-top: 8px; }
 .wd2-rp-now p { margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .wd2-rp-now b { font-size: 13px; color: #a3a3a3; font-weight: 500; }
 .wd2-rp-now span { font-size: 21px; letter-spacing: -.02em; }
 
+/* ---------- each monitor's one moment, played as it comes on air (desktop) or scrolls in (phone) ----------
+   Hidden only with JS (html.js), so with JS off every drawing is whole. Leaving resets after the 300ms fade-out. */
+.js .wd2-mon .wd2-node { transition: opacity 0s .3s; }
+.js .wd2-mon .wd2-ln > span, .js .wd2-mon .wd2-topo svg, .js .wd2-lc p:not(.spike) i, .js .wd2-drift-c .ln, .js .wd2-drift-c .al, .js .wd2-ev i, .js .wd2-ev em, .js .wd2-mc li { transition: opacity 0s .3s, transform 0s .3s, clip-path 0s .3s; }
+.js .wd2-mon:not(.on) .wd2-ln > span { transform: translateY(105%); }
+.js .wd2-mon:not(.on) .wd2-node { opacity: 0; }
+.js .wd2-mon:not(.on) .wd2-topo svg { clip-path: inset(0 100% 0 0); }
+.js .wd2-mon:not(.on) .wd2-lc p:not(.spike) i, .js .wd2-mon:not(.on) .wd2-ev i { transform: scaleX(0); }
+.js .wd2-mon:not(.on) .wd2-drift-c .ln { clip-path: inset(0 100% 0 0); }
+.js .wd2-mon:not(.on) .wd2-drift-c .al { opacity: 0; transform: scale(0); }
+.js .wd2-mon:not(.on) .wd2-ev em { opacity: 0; transform: translateX(-8px); }
+.js .wd2-mon:not(.on) .wd2-mc li:not(.one) { opacity: 0; transform: translate(var(--x), var(--y)); }
+.js .wd2-mon:not(.on) .wd2-mc li.one { clip-path: inset(0 100% 0 0 round 10px); }
+.js .wd2-mon:not(.on) .wd2-rp-track span { opacity: 0; transform: translateY(8px); }
+
+.wd2-mon.on .wd2-ln > span { transition: transform .5s var(--ee) .15s; }
+.wd2-mon.on .wd2-node { transition: opacity .3s var(--eo) calc(var(--d) + 150ms); }
+.js .wd2-mon.on .wd2-topo svg, .js .wd2-mon.on .wd2-drift-c .ln { clip-path: inset(0 0 0 0); }
+.js .wd2-mon.on .wd2-mc li.one { clip-path: inset(0 0 0 0 round 10px); }
+.wd2-mon.on .wd2-topo svg { transition: clip-path .9s var(--eio) .2s; }
+.wd2-mon.on .wd2-lc p:not(.spike) i { transition: transform .5s var(--ee) calc(var(--d) + 200ms); }
+.wd2-mon.on .wd2-lc p.spike i { animation: wd2-blip .4s var(--eio) .95s 2; }
+.wd2-mon.on .wd2-lc p.spike i.again { animation: wd2-blip .4s var(--eio) 2; }
+.wd2-mon.on .wd2-drift-c .ln { transition: clip-path .9s var(--eio) .2s; }
+.wd2-mon.on .wd2-drift-c .al { transition: opacity .3s var(--eo) 1.05s, transform .4s var(--ee) 1.05s; animation: wd2-blip .4s var(--eio) 1.45s 2; }
+.wd2-mon.on .wd2-ev i { transition: transform .5s var(--ee) .2s; }
+.wd2-mon.on .wd2-ev p.b i { transition: transform .5s var(--ee) .4s; }
+.wd2-mon.on .wd2-ev em { transition: opacity .3s var(--eo) .85s, transform .4s var(--ee) .85s; }
+.wd2-mon.on .wd2-mc li:not(.one) { transition: opacity .3s var(--eo) calc(var(--d) + 150ms), transform .5s var(--ee) calc(var(--d) + 150ms); }
+.wd2-mon.on .wd2-mc li.one { transition: clip-path .5s var(--eio) .65s; }
+.wd2-mon.on .wd2-rp-track span { transition: background-color .3s var(--eo), color .3s var(--eo), opacity .3s var(--eo) var(--d), transform .4s var(--ee) var(--d); }
+@keyframes wd2-blip { 50% { opacity: .2; } }
+
 @media (max-width: 900px) {
-  .wd2-world { height: auto; }
-  .wd2-world .l2-pause { top: 8px; right: 8px; }
-  .wd2-globe { position: relative; left: auto; transform: none; width: 100%; height: auto; }
-  .wd2-panel { position: relative; right: auto; bottom: auto; width: auto; margin-top: -20px; }
-  .wd2-grid { grid-template-columns: minmax(0, 1fr); }
+  .wd2 .l2-stage-pin { top: 0; } /* the pin is not sticky here, so its sticky offset would push the hero 60px into the room */
+  .wd2-world { height: auto; display: flex; flex-direction: column; }
+  .wd2-globe { order: -1; position: relative; z-index: 0; left: auto; top: auto; transform: none; width: 64%; height: auto; margin: -112px -24px 0 auto; pointer-events: none; }
+  .wd2-panel { position: relative; right: auto; bottom: auto; width: auto; margin-top: -40px; }
+  .wd2-room { padding-block: 72px; }
+  /* phones: the six ride a sideways snap rail, one card in view with the next peeking, the rolling figure above */
+  .wd2-count { display: flex; margin-top: 28px; }
+  .wd2-grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 78vw; align-items: stretch; margin: 20px -16px 0; padding: 0 16px 6px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; }
+  .wd2-grid::-webkit-scrollbar { display: none; }
   .wd2-mon.c0, .wd2-mon.c1, .wd2-mon.c2, .wd2-mon.c3, .wd2-mon.c4, .wd2-mon.c5 { grid-column: auto; }
-  .wd2-mon.c5 { display: flex; }
-  .wd2-mon.c5 .wd2-pic { margin: 22px 0 26px; }
-  .wd2-mon { padding: 22px; }
-  .wd2-topo { height: 220px; }
+  .wd2-mon { padding: 22px; scroll-snap-align: start; }
+  /* on a phone card the route runs top to bottom (edge at the top, GPU at the foot), so no two nodes collide */
+  .wd2-topo { height: 320px; }
+  .wd2-topo svg g { transform: matrix(0, 1, 1, 0, 0, 0); }
+  .wd2-node { left: var(--y); top: var(--x); }
+  .js .wd2-mon:not(.on) .wd2-topo svg { clip-path: inset(0 0 100% 0); }
   .wd2-node { font-size: 13px; padding: 6px 8px; }
   .wd2-rp-track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wd2-replay { padding: 18px; }
   .wd2-k, .wd2-drift, .wd2-mon header, .wd2-rp-track span, .wd2-ev span, .wd2-lc p.spike { font-size: 14px; }
   .wd2-lat em { font-size: 13px; }
 }

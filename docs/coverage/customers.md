@@ -10,7 +10,8 @@ Open copy questions for James:
 - (4) $8.4M and $7M+ sit on the plate beside the case year. Both come word for word from the case pages, with the year as the case copy prints it.
 
 Shared changes requested (`docs/requests/customers.md`):
-- None filed. Two shared items are noted here instead: a shared `BACKERS` module (lib, Data chat) and a register string for the em dash.
+- Filed: the media mirror into `public/`, a hold cap inside the shared `openDoor` (wrapped page-locally here), and the header ask (shared chrome, unchanged).
+- Also noted: a shared `BACKERS` module (lib, Data chat) and a register string for the em dash.
 
 Forks this page deleted:
 - The hand-rolled case tabs, now kit `Tabs`.
@@ -50,7 +51,7 @@ Done here:
 - **First screen at 1470×801:** the figure block sits in the plate's upper half, so $8.4M is on screen at y 638–739.
 - **The plate turn:** Damon to KANOA, then back to Damon, then it rests. Each case has its own tone: a graphite gradient, with a lighter Sigil on KANOA. The incoming text arrives at 0.25s, so the wipe edge reads.
 - **Rhythm:** hero, plate, launch scene, a quiet names row, the black close.
-- **JS off:** the MaskLines and page `<noscript>` rules stack both cases readably and set the phone figures in place. CSS keyframe arrivals pause only while `html.x-arriving` is set. A Playwright run with JS disabled found 0 faint or offset text.
+- **JS off:** the MaskLines and page `<noscript>` rules stack both cases readably and set the phone figures in place. Playwright with JS disabled: both cases `position: relative`, clip-path none, text opacity 1, at 1470 (526–1131, 1131–1736px) and at 375 (465–928, 928–1391px; phones get a 4/5.4 box so the text no longer overlaps); the logo boxes and the static phone strip are hidden. CSS keyframe arrivals pause only while `html.x-arriving` is set. A Playwright run with JS disabled found 0 faint or offset text.
 
 ## 4. Conversion system
 - [x] No raw `.x-btn`. The asks are one page-local pill; kit `Cta` has not merged.
@@ -112,11 +113,12 @@ Done here:
 
 Done here:
 - **Signature:** the launch stage. As each row crosses the middle, or under the pointer, the outgoing figure leaves (150ms, rising 16px), then the incoming one arrives (300ms ease-emphasis). Playwright saw at most 1 layer at a time.
-- Figures longer than 8 characters step down, and every figure stays on one line: "120,000 ETH" fits the stage exactly.
-- **Phone scene:** rows read in as they reach the middle. The name goes from #737373 to ink, and the figures settle out of their mask (500ms ease-emphasis), once. Playwright: STONED's figure went from translateY 44px to none, and the row's classes became `on read`.
+- Figures longer than 8 characters step down, and every figure stays on one line. Measured with a text Range at 1470: every stage figure is 1 line box; "120,000 ETH" is 51.45px and 282px wide with 22px to spare; "250,000" at 84px is 300px wide with 4px to spare.
+- **Phone scene:** a slim sticky strip (64px) sits right under the year rail (rail 60–121px, strip 121–185px at 375×812) and carries the first figure and label of the row crossing the middle, swapping as the desktop stage does (out 150ms rising 16px, then in 300ms ease-emphasis, `AnimatePresence mode="wait"`). Playwright, scrolling 300px at a time through the index: $2.5M → 250,000 → $135K → 120,000 ETH → $500M → $650M → €150M → 169M → Cover Build → Myle Tap → Personas Social, with exactly one strip layer each time. Rows also still read in (name to ink, figures settle once). Under reduced motion the strip swaps with no movement.
 - **Supporting:** the line-mask h1; the plate's turn (Damon, KANOA, back to Damon, rest), where the outgoing text fades in 0.15s before the edge crosses it; the closing figure rows sliding with scroll.
 - **State:** the year filter closes the list up with a 300ms glide.
-- **Kinds:** arrival, idle, pointer, state and scroll; scroll is 2 of 6.
+- **Kinds:** arrival, idle, pointer, state and scroll; scroll is 2 of 6. **Idle in the index:** the stage dot for the launch being read gives off a slow 1px ring (2.4s ease-in-out loop, off under reduced motion), so the mid-index screen is no longer still.
+- **Film** (`film.mjs motion customers-run3`, before the dot): desktop layout shift 0.000, 1 still screen (the mid-index, now answered by the dot); phone 0.000, 0 still screens. The desktop "DEAD hover" lines (asks, years, tab) are the tool's headless Chromium reporting `(hover: hover)` false (puppeteer check). Playwright shows the ask going #0a0a0a → #262626 on hover. The phone's "DEAD tap" is a tap on the already-selected case tab.
 - No springs. The kit `Tabs` pill is the kit's own.
 
 ## 10. Media
@@ -185,14 +187,14 @@ Done here: n/a. The page has no code, terminal or config.
 - [ ] n/a: no submit
 - [x] A thrown island does not blank the page (Sigil is only a fallback)
 
-Done here: with hanzo.ai blocked (this box), the page is complete with no console errors (Playwright run).
+Done here: with hanzo.ai blocked (this box), the page is complete. The only console lines are the browser's "Failed to load resource" 404s for the remote covers and logos (request 1). There are no script or hydration errors at 1470×801 or 375×812, with or without reduced motion. A reduced-motion hydration mismatch in the plate's line (`useReducedMotion` read on the first client render) was fixed by switching to the hydration-safe `useCalm`.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary. `lib/track.js` does not exist yet.
 - [x] Nothing identifier-bearing; no payload
 - [x] `V2: 8/10 …` in the page file's top comment
 - [x] Review read: `docs/review/customers.md` re-run was 7/10. Its fixes are done:
-  - the phone scene (rows read in);
+  - the phone scene (a sticky figure strip that swaps one in, one out, plus rows reading in);
   - the stage hands off in sequence;
   - "120,000 ETH" is on one line;
   - the h1 leads;

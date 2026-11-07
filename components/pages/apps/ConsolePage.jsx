@@ -18,7 +18,8 @@
 V2: 8/10 the black-room hero is the shell, the one big thing under a 52px title, driving itself with a Pause; six sticky chapters pin it on each module; the palette is real; four facts open into their page; Get Console, then a close with one ask; deck colours, radii and scale, outlined objects, no springs
    The v1 drag-to-reorder sidebar is gone (its words stay, with the palette). Every word and link is Hanzo's. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView } from 'motion/react';
+import { useCalm } from '../../ui';
 import { useRouter } from 'next/navigation';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import { A, More } from '../../kit';
@@ -26,7 +27,8 @@ import BizAsk from '../../v2/BizAsk';
 import { href } from '../../../lib/route';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
-import BizStage from '../../v2/BizStage';
+import { useScroll, useTransform } from 'motion/react';
+import '../../v2/Biz.css';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
 import './ConsolePage.css';
@@ -88,7 +90,7 @@ function focusFind() {
 
 /* A module's own moment: steps 0..n, played once each time it opens (on screen only); reduced motion shows the end. */
 function usePlay(play, n, ms, first = 500) {
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const [k, setK] = useState(0);
   useEffect(() => {
     if (calm) { setK(n); return; }
@@ -344,6 +346,36 @@ function Shell({ auto, view: want, size = 'lg' }) {
   );
 }
 
+/* The shell starts large and settles over the first scroll (the v2/BizStage move), hydration-safe: the server and the
+   first client render carry no motion style; the scroll-linked transform starts after mount. Reduced motion: settled. */
+function BizStage({ children, from = 1.14, over = 620, lift = 60, className = '' }) {
+  const calm = useCalm();
+  const [on, setOn] = useState(false);
+  useEffect(() => setOn(true), []);
+  const { scrollY } = useScroll();
+  const scale = useTransform(scrollY, [0, over], [from, 1], { clamp: true });
+  const y = useTransform(scrollY, [0, over], [lift, 0], { clamp: true });
+  return (
+    <div className={'bz-stage ' + className}>
+      <motion.div className="bz-stage-in" style={on && !calm ? { scale, y } : undefined}>{children}</motion.div>
+    </div>
+  );
+}
+
+/* A fine pointer leans the shell toward it, 2.5 degrees at most; flat on leave, never on touch or under reduced motion. */
+function Lean({ children }) {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const move = (e) => {
+    if (calm || e.pointerType !== 'mouse' || !ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    ref.current.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
+    ref.current.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
+  };
+  const leave = () => { ref.current?.style.setProperty('--rx', '0deg'); ref.current?.style.setProperty('--ry', '0deg'); };
+  return <div ref={ref} className="cs-lean" onPointerMove={move} onPointerLeave={leave}>{children}</div>;
+}
+
 /* The one dark room: the title, one line, the ask, and the shell huge under them, settling as you scroll. */
 function Hero() {
   return (
@@ -358,7 +390,7 @@ function Hero() {
           </div>
         </div>
       </div>
-      <BizStage from={1.035} over={720} lift={40} className="bz-wrap cs-stage"><Shell auto /></BizStage>
+      <BizStage from={1.035} over={720} lift={40} className="bz-wrap cs-stage"><Lean><Shell auto /></Lean></BizStage>
     </section>
   );
 }
@@ -485,7 +517,7 @@ function Client() {
         <BizOpen label="What the console stands on" className="cs-facts" cardClass="cs-fact" items={FACTS.map((x) => ({
           id: x.id,
           label: x.t,
-          card: <><b className="bz-fig">{x.f}</b><span className="cs-fact-t">{x.t}</span></>,
+          card: <><b className="bz-fig">{x.f}</b>{x.id === 'v1' && <span className="cs-fact-peek x-mono" aria-hidden="true">{CODE.split('\n').slice(0, 5).join('\n')}</span>}<span className="cs-fact-t">{x.t}</span></>,
           panel: (
             <div className={'cs-fp' + (x.id === 'v1' ? ' wide' : '')}>
               <div className="cs-fp-copy">
@@ -532,13 +564,23 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 
 /* The close: one sentence at Display size, the one ask, one text row. */
 function End() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.5, once: true });
   return (
     <section className="bz-sec cs-end" aria-labelledby="cs-end-h">
-      <div className="bz-wrap">
+      <div className="bz-wrap" ref={ref}>
         <div className="cs-end-main">
           <h2 id="cs-end-h" className="bz-display md">Open the console</h2>
           <p className="bz-lede">Sign in with your Hanzo identity. The organization you land in is the one that gets billed, and everything on these screens belongs to it.</p>
           <div className="bz-acts"><BizAsk to={APP} cta="console.close">Open Console</BizAsk></div>
+        </div>
+        {/* the organization you land in: the switcher settles on one org, then the other, and rests */}
+        <div className={'cs-end-org' + (seen ? ' on' : '')} aria-hidden="true">
+          <p className="cs-end-k x-mono">platform.hanzo.ai</p>
+          <ul>
+            <i className="cs-end-pill" />
+            {['acme', 'globex'].map((o) => <li key={o}><span className="cs-ava">{o[0]}</span><b>{o}</b><em className="x-mono">OIDC</em></li>)}
+          </ul>
         </div>
         <A to={GH} className="cs-row"><span>View on GitHub</span><Arrow /></A>
       </div>

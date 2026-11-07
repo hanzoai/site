@@ -23,6 +23,8 @@
 .xst-plate { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 17px; padding: clamp(17px, 2.4vw, 27px); color: var(--plate-ink); font-size: 21px; font-weight: 497; letter-spacing: -.015em; line-height: 1.25; text-wrap: balance; }
 .xst-plate > span { margin-top: auto; max-width: 22ch; }
 .xst-plate b { font-size: 12px; font-weight: 500; letter-spacing: .14em; }
+.xst-plate > b, .xst-plate > span { position: relative; }
+.xst-pic-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .3); }
 
 /* 1. the stage: a black room that enters as a rounded card inside the gutters and opens to full width */
 .xst-hero { position: relative; height: calc(100svh - var(--x-top, 60px) - 56px); min-height: 560px; color: #fafafa; background: #fff; overflow: hidden; }
@@ -33,7 +35,7 @@
 .xst-hero .xst-plate > span { margin-top: 0; max-width: 28ch; text-align: right; }
 .xst-scrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .55) 0%, rgba(0, 0, 0, 0) 62%); pointer-events: none; }
 .xst-sigil { position: absolute; right: 0; top: 0; width: min(64vw, 980px); height: 100%; color: rgba(255, 255, 255, .45); }
-.xst-hero[data-bare] .xst-sigil { width: 100%; color: rgba(255, 255, 255, .55); }
+.xst-hero[data-bare] .xst-sigil { color: rgba(255, 255, 255, .55); } /* same box either way: a width change here shifted layout (CLS .29) */
 .xst-hero-in { position: relative; z-index: 1; height: 100%; width: min(100% - 2 * var(--gutter), 1152px); margin-inline: auto; }
 .xst-crumb { position: absolute; top: 17px; left: 0; }
 .xst-crumb ol { list-style: none; display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; font-size: 14px; color: rgba(255, 255, 255, .55); }
@@ -45,6 +47,16 @@
 .xst-meta { display: flex; align-items: center; gap: 14px; margin-top: 27px; color: rgba(255, 255, 255, .78); }
 .xst-meta i { width: 32px; height: 1px; background: rgba(255, 255, 255, .3); }
 .xst-ask { margin-top: 27px; }
+/* the bare room's object (the picture could not load): the launch's own figures on a graphite plate, lower right */
+.xst-ledger { position: absolute; right: 0; bottom: 44px; width: min(400px, 34%); display: flex; flex-direction: column; gap: 17px; padding: 27px; border-radius: 20px; background: #262626; color: #fafafa; }
+.xst-ledger-a { display: flex; flex-direction: column; gap: 10px; }
+.xst-ledger-a .xst-fig-v { font-size: 64px; }
+.xst-ledger-a > span:last-child, .xst-ledger-r span span { font-size: 14px; line-height: 1.4; color: rgba(255, 255, 255, .78); }
+.xst-ledger-r { display: flex; flex-direction: column; }
+.xst-ledger-r > span { display: grid; grid-template-columns: minmax(0, 9ch) minmax(0, 1fr); column-gap: 17px; align-items: baseline; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, .1); }
+.xst-ledger-r b { font-size: 21px; font-weight: 220; letter-spacing: -.02em; font-feature-settings: 'tnum'; white-space: nowrap; }
+.xst-ledger .xst-ch { animation: xst-rise var(--d-slower) var(--e-em) calc(700ms + var(--k) * 60ms) both; }
+@keyframes xst-rise { from { transform: translateY(105%); } }
 
 /* 2. the lede and the figures on a rule: each figure's own characters rise into place on arrival */
 .xst-intro { padding: var(--pad) 0; }
@@ -149,6 +161,10 @@
   .xst-sigil { width: 100%; height: 72%; }
   .xst-hero .xst-plate > span { display: none; }
   .xst-hero-t { top: auto; bottom: 44px; }
+  .xst-ledger { left: 0; right: auto; bottom: auto; top: 72px; width: 100%; padding: 17px 20px; gap: 10px; }
+  .xst-ledger-a .xst-fig-v { font-size: 52px; }
+  .xst-ledger-r > span { padding: 6.5px 0; }
+  .xst-ledger-r b { font-size: 17px; }
   .xst-h1 { font-size: 44px; line-height: 1; }
   .xst-meta { flex-wrap: wrap; }
   .xst-lede { font-size: 17px; }
@@ -170,6 +186,7 @@
 @media (prefers-reduced-motion: reduce) {
   .xst-cover, .xst-h1 { clip-path: none !important; transform: none !important; }
   .xst-tile .xst-pic, .xst-scene-pic { clip-path: none !important; transition: none !important; }
-  .xst-shot, .xst-ch { transform: none !important; transition: none !important; }
+  .xst-shot, .xst-ch { transform: none !important; transition: none !important; animation: none !important; }
+  .xst-ledger { clip-path: none !important; }
   .xst-mark { animation: none !important; }
 }
