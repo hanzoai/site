@@ -61,6 +61,10 @@ Invented strings inside shared components (not this group's files):
 - `components/v2/KeynoteRoom` (used by `KeynoteClose`): renders a clip-path on the server and none on a reduced-motion client, a
   hydration mismatch on every page that uses it under reduced motion (owner: Cloud 1 chat). /functions now uses a page-local copy.
 
+- `components/kit.jsx` `CodeBlock`: its `pre` sets `overscroll-behavior: contain`, so under reduced motion (no smooth-scroll
+  wrapper) the page stops scrolling while the pointer is over a short code card such as "Paste and ship". Asked for: only
+  contain overscroll when the block actually scrolls.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
