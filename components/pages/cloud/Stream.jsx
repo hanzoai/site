@@ -86,6 +86,14 @@ function Ruler() {
       <p className="l2-mono st2-range">01 / 06 — 06 / 06</p>
     </div>
   );
+  // phones (no pin): each record inks as it crosses the middle of the screen, and the committed offset follows
+  const [seenAt, setSeenAt] = useState(0);
+  useEffect(() => {
+    if (pin || calm || !track.current) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setSeenAt((v) => Math.max(v, +e.target.dataset.k + 1)); }), { rootMargin: '-48% 0px -48% 0px' });
+    track.current.querySelectorAll('.st2-rec').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [pin, calm]);
   const x = useTransform(p, (v) => -Math.min(1, Math.max(0, (v - 0.04) / 0.92)) * span);
   useMotionValueEvent(p, 'change', (v) => {
     const el = track.current;
@@ -99,7 +107,7 @@ function Ruler() {
         <motion.div ref={track} className="st2-track" style={pin ? { x } : undefined} data-swipe-own>
           {pin && head}
           {FACTS.map(([t, d], i) => (
-            <article key={t} className={'st2-rec' + (pin && at > i ? ' read' : '')}>
+            <article key={t} data-k={i} className={'st2-rec' + ((pin ? at : seenAt) > i ? ' read' : '')}>
               <p className="st2-big l2-fig" aria-hidden="true">{String(i + 1).padStart(4, '0')}</p>
               <h3 className="l2-head">{t}</h3>
               <p className="st2-ofs l2-mono"><span>offset {String(i + 1).padStart(4, '0')}</span><span>{String(i + 1).padStart(2, '0')} / 06</span></p>
@@ -113,6 +121,9 @@ function Ruler() {
           ))}
           <ul className="st2-figs">{FIGS.map(([a, b]) => <li key={a}><b>{a}</b><span>{b}</span></li>)}</ul>
         </motion.div>
+        {!pin && !calm && (
+          <p className="st2-commit-m l2-mono" aria-hidden="true">committed offset <b>{String(seenAt).padStart(4, '0')}</b></p>
+        )}
         {pin && (
           <div className="st2-commit" aria-hidden="true">
             <i />

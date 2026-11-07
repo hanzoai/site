@@ -19,7 +19,9 @@ export function openTile(e, href, router, tone = '#000') {
   const d = document.createElement('div');
   d.setAttribute('aria-hidden', 'true');
   const from = `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 24px)`;
-  Object.assign(d.style, { position: 'fixed', inset: '0', zIndex: '2000', background: tone, pointerEvents: 'none', clipPath: from, overflow: 'hidden' });
+  // under the header (z 40), so the site's header never disappears behind a slab while the page loads
+  Object.assign(d.style, { position: 'fixed', inset: '0', zIndex: '35', background: tone, pointerEvents: 'none', clipPath: from, overflow: 'hidden' });
+  const top = document.querySelector('header')?.getBoundingClientRect().bottom || 0;
   if (pic) {
     const img = document.createElement('img');
     img.src = pic.currentSrc || pic.src; img.alt = '';
@@ -35,7 +37,7 @@ export function openTile(e, href, router, tone = '#000') {
     // the name travels to where the page's h1 will sit (top left, below the header)
     // the name lands at the size and place of the destination's headline (52px at the h1's top left; 40 on phones)
     const k = Math.max(1, (innerWidth < 900 ? 40 : 52) / parseFloat(cs.fontSize));
-    t.animate([{ transform: 'none' }, { transform: `translate(${Math.max(16, (innerWidth - 1152) / 2) - nr.left}px, ${(innerWidth < 900 ? 76 : 219) - nr.top}px) scale(${k})` }], { duration: 500, easing: CURVE, fill: 'forwards' });
+    t.animate([{ transform: 'none' }, { transform: `translate(${Math.max(16, (innerWidth - 1152) / 2) - nr.left}px, ${(innerWidth < 900 ? 76 : 219) - nr.top}px) scale(${k})` }], { duration: 420, easing: CURVE, fill: 'forwards' });
   }
   document.body.appendChild(d);
   const was = location.pathname;
@@ -46,14 +48,15 @@ export function openTile(e, href, router, tone = '#000') {
     lifted = true;
     // the cover settles onto the destination's own film (the widest picture in its first screen), then crossfades away
     const film = [...document.querySelectorAll('main img, main video')].map((x) => x.getBoundingClientRect()).find((b) => b.width > innerWidth * 0.5 && b.top < innerHeight && b.bottom > 0);
+    // the travelling name hands over to the real h1 (which now sits exactly under it), then the cover settles
     const words = d.querySelector('p');
-    if (words) words.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' });
-    const to = film ? `inset(${Math.max(0, film.top)}px ${Math.max(0, innerWidth - film.right)}px ${Math.max(0, innerHeight - film.bottom)}px ${Math.max(0, film.left)}px)` : 'inset(0px 0px 0px 0px)';
-    d.animate([{ clipPath: 'inset(0px 0px 0px 0px)' }, { clipPath: to }], { duration: 450, easing: CURVE, fill: 'forwards' }).finished
+    if (words) words.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: 'forwards' });
+    const to = film ? `inset(${Math.max(top, film.top)}px ${Math.max(0, innerWidth - film.right)}px ${Math.max(0, innerHeight - film.bottom)}px ${Math.max(0, film.left)}px)` : `inset(${top}px 0px 0px 0px)`;
+    d.animate([{ clipPath: `inset(${top}px 0px 0px 0px)` }, { clipPath: to }], { duration: 360, easing: CURVE, fill: 'forwards' }).finished
       .then(() => d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, easing: CURVE, fill: 'forwards' }).finished)
       .then(() => d.remove(), () => d.remove());
   };
-  d.animate([{ clipPath: from }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }], { duration: 500, easing: CURVE, fill: 'forwards' }).finished.then(() => {
+  d.animate([{ clipPath: from }, { clipPath: `inset(${top}px 0px 0px 0px round 0px)` }], { duration: 420, easing: CURVE, fill: 'forwards' }).finished.then(() => {
     const t0 = performance.now();
     const wait = () => {
       if (location.pathname !== was) setTimeout(lift, 60); // the new page has committed; let it paint, then crossfade

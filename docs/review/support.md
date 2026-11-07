@@ -1,37 +1,37 @@
-# /support — James-eye review (re-run)
-
+# /support/: James-eye review
 Verdict: 7/10
-First complaint: "It's tidy now. But after the little typing it's an empty box and a list, and then it's over. Where's the moment?"
+First complaint: "Why does the button up top keep changing? I'm not touching anything and it flips from Try Hanzo to a black Open Help Center and back. Now there are two black buttons fighting."
 
-Walked 7 Nov at about 15:05 UTC, page file at `24d2adc5` (`components/pages/Support.jsx`, `Support.css`), on the preview of main plus branch heads. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Judged by `JAMES.md` and `MASTER.md` (Utility, §4.5). Stills: `review/support/desktop-walk.jpg`, `review/support/phone-walk.jpg`. This replaces the 6/10 review of `e512a64`.
-
-## What works
-- The earlier complaints are fixed: no square focus box inside the pill, one letter no longer jumps to "email support", and the giant numerals that cut through "Documentation" on the phone are gone.
-- The demo is honest. Once the headline lands, the pill types Hanzo's own "support ticket", underlines those two words in the Help Center card, then clears and rests. The ask stays "Open Help Center" the whole time, and the pill has a pause button.
-- Scale has rhythm: h1 84px, the answer title about 52px, the six ways at 26px, the lede small. One big thing, the rest medium and small.
-- The hero frame finally differs from the other Company pages: one full-width line over a search pill and a live list, not a left headline beside a card.
-- It ends on a Band ("On an enterprise plan or need a dedicated channel?" with one "Email support@hanzo.ai"), then the footer.
-- Monochrome; `taste.py` passes. JS off: 0 hidden text. Reduced motion: 0 running animations. CLS 0.0002, no tap target under 44px. Parity: text 24/24, links 6/6.
+Walked 2026-11-07 17:10 UTC on the dev server at 1470x801 and 375x812, moving. I watched the first screen for 14 s untouched, did 4+ fresh cold loads, hovered, pressed and typed in the search, and ran parity.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: "How can we help?", a search pill, the best answer and the six ways, all on the first screen. The h1 cuts in at once; the typing follows about a second later.
-2. **One in, one out, or a document?** Two screens: the search room and the Band. Not a document, but very short and quiet.
-3. **A real visual object in every section?** The working search UI and the Band. At rest the pill is an empty white box with only a magnifier (the repeated placeholder was rightly removed), so the hero's main object looks blank once the demo ends.
-4. **One ask, sticky after the hero?** Yes, shared: the header's "Try Hanzo" at every width (the 15:15 system), plus "Open Help Center" as the one page solid in the answer card.
-5. **Every hover and press answers, no jumps?** Yes. Pointing at a row previews its door; press on "Open Help Center" is .98; the pill border inks on hover.
-6. **Overlaps, font swap, layout shift?** None at either size.
-7. **Which reference, is its motion there?** apple.com support calm, plus "answer as you type". It works, but the demo never shows the answer changing (it keeps the Help Center), so a visitor does not see the magic unless they type.
-8. **Different from neighbours?** Yes, now.
-9. **18 parts (MASTER §2)?** See the card check below.
-10. **Banned tells?** None found.
-11. **Copy untouched?** Yes (parity clean).
-
-## Card check (`docs/coverage/support.md`)
-- **Format.** Template format with `Done here:` lines on all 18 parts.
-- **Part 4 is out of date.** It says the shared ask bar carries "Open Help Center" after the hero at every width. Since the 15:15 system there is no desktop bar; the header's "Try Hanzo" is the sticky ask. Reword it.
-- **Verdict:** 7 on its own merits: correct and calm, but short of a moment.
+1. **First screen sells; motion inside 1 s: mostly.**
+   - "How can we help?" sits at 52px with the search, the panel and 6 rows all above the fold. It reads in 2 s.
+   - The search types itself at about 1.7 s ("sup", then "support ticket", with the matches underlined in the panel copy, then "uptime" switching the panel to System Status). By 10 s it settles back to the placeholder and the pause control goes away. This is a good Utility delight, and it is the only one.
+   - Main is blank (header only) until hydration. Raw frames at about 1.0 to 1.3 s show an empty page, and the h1 is still mid cut-in at about 1.5 s. Nothing in main moves in the first second on dev.
+2. **One in, one out:** the page is short (2,639px desktop, 3 stops): hero, black closing band, footer. That suits Utility, and the band headline cuts in word by word. It reads as a tool, not a document.
+3. **Real object per section:** the hero has one, the live search plus the panel that answers it. The band has none: a headline and 7 buttons.
+4. **One ask, nothing floating; scale rhythm:**
+   - Bug: the header ask changes on its own. Sampled every 450 ms over 4 cold loads, it reads "Try Hanzo" (quiet), then at about 1.2 s "Open Help Center" (solid #0a0a0a), then quiet again. From about 7.1 to 9.5 s it is solid "Open Help Center" again, while the panel's own solid is on screen. That makes 2 solid fills and a label swap with no input. Typing "billing" or "zzqx" does the same: header "Open Help Center" plus the panel's "Email support@hanzo.ai". The header seems to treat the hero ask as "left view" whenever the panel swaps its button.
+   - Scale is fine: h1 52, panel title 32, rows 26, lede 21, body 17. One big thing, with room around it.
+   - Shared, not this page: on phone the header "Try Hanzo" is always solid, so it sits beside the panel's solid "Open Help Center".
+5. **Hover and press answer:**
+   - Row hover indents the row, inks the title and arrow, and swaps the panel to that destination. That is a real preview.
+   - Row press: scale 0.982. Panel primary: hover #0a0a0a to #262626, press scale 0.98.
+   - Band pills: hover adds white 10% fill and the border goes from 16% to 40%. No jumps seen.
+6. **Overlap, font swap or shift:**
+   - No overlap at either size and no horizontal scroll (375 scrollWidth 375).
+   - The panel grows about 7px when the "billing" query line appears. Nothing below it moves.
+   - **Red badge:** a hydration mismatch on the search input (`placeholder={undefined}` on the client vs "support ticket" on the server). It was logged on 3 of 7 fresh loads with full text, and the dev "1 Issue" badge was present on 4 of 4 dedicated loads.
+7. **Reference:** apple.com-style calm utility. The self-running demo is the motion.dev "live demo that runs itself" pattern done properly: it starts by itself, can be paused, and ends at rest.
+8. **Distinct:** a self-typing search that drives a preview panel. I have not seen this on neighbours. Its hero medium (input plus panel) differs from a form page.
+9. **18 parts:** h1, label-for on the search (it reuses the h1 text), a pause control during the demo, 44px+ tap targets in main on phone (pills 44, rows 64, input 54), the closing Band and the footer are all present. Not met: one solid fill per viewport (see 4) and no console error (see 6).
+10. **Banned tells:** none. There is no eyebrow above the h1, no hue, and no glow. The panel is a thin-outlined tile, not raised.
+11. **Copy:** `parity.py /support`: text 24/24, links 6/6, OK.
 
 ## Fixes (in order)
-1. **Let the demo show the answer moving, once.** After "support ticket", type one more of Hanzo's own words that re-ranks the list (for example "status"): System Status rises into the answer card, then the demo clears and the card settles back on the Help Center. It runs once and pauses on pointer or focus, as now.
-2. **Do not leave the pill blank at rest.** Leave the last typed phrase dimmed in the field, or show the six ways' names as quiet chips under it, using words already on the page. No new copy.
-3. **Give the Band a small object.** For example, the six doors as a quiet row of Hanzo's own destinations, so the closing room is not text and a button only.
+1. **Fix the header ask.** It must not change label or fill while the hero panel swaps its button. Keep it on "Try Hanzo" (quiet) for as long as the hero panel is in view. Today the solid header "Open Help Center" appears with no input at about 1.2 s and from about 7.1 to 9.5 s, and on every query.
+2. **Remove the hydration mismatch.** Render the same `placeholder` on server and client for `#xsp-q`, and let the demo clear it after mount. Then confirm 0 console errors and no "1 Issue" badge on 4 cold loads.
+3. **Show the hero before hydration.** Main is empty for more than 1 s on a cold load. Start the h1 line-mask from CSS (or show the final state under `html:not(.js)` and while JS is pending) so that the h1, search and panel paint with the first HTML. Start the demo at about 0.6 s, not 1.7 s.
+4. **Make the band quieter.** The 6 outlined pills repeat the 6 rows above word for word, giving 7 equal-weight buttons in one viewport. Keep the links but set them as one hairline text row (13px, ink, 1px underline), so the white "Email support@hanzo.ai" is the band's only button.
+5. **Small polish:** during the demo, rows reorder (Email us jumps to slot 2 at about 5 s, then back), but a real query does not reorder them. Pick one behaviour, ideally no reorder, with the matched row highlighted in place.

@@ -140,7 +140,10 @@ html.x-arriving .xso-in, html.x-arriving .xso-in2 { animation-play-state: paused
 .xso-res .vc-display { font-size: clamp(40px, 5vw, 52px); }
 .xso-groups h2 button { font-size: clamp(26px, 2.6vw, 32px); }
 .xso-groups sup { font-size: 11px; }
-.xso-cat { padding-top: clamp(56px, 6vw, 96px); }
+.xso-cat { padding-top: clamp(24px, 3vw, 48px); }
+.xso-hero { padding-bottom: 24px; }
+/* the tile crossing the middle grows a little (the wall has one moment at a time, not 17 equal boxes) */
+@media (min-width: 900px) { .xso-tile { transition: transform .6s cubic-bezier(.16, 1, .3, 1); } .xso-tile.mid { transform: scale(1.025); z-index: 1; } }
 .xso-grid { margin-top: clamp(28px, 3vw, 44px); }
 /* the tile crossing the middle of the screen plays its film and shows its jobs, one at a time, with no pointer */
 .xso-tile.mid .xso-tile-a::before, .xso-tile.mid .xso-jobs { opacity: 1; }
