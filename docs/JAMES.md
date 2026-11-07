@@ -45,6 +45,17 @@ Sources:
 
    Scroll-linked effects are **at most half** of a page's motion. A page whose only motion is scroll fails.
 
+10. **Sound feedback, subtle.** (James, 7 Nov: "sound feedback… not an overwhelming amount.") The shared system owns one tiny sound kit, synthesized with Web Audio so it needs no audio files. It is very quiet (about -24 dB) and plays only after the visitor's first interaction. A mute toggle sits in the header and the choice is remembered. Sounds go only on meaningful moments:
+    - a card opening into its page (a soft whoosh);
+    - pressing the primary ask (a soft tap);
+    - tabs, toggles and switches (a tick);
+    - copy-to-clipboard succeeding (a confirm chime);
+    - ⌘K opening (a soft pop);
+    - a self-running demo finishing (a faint chime).
+
+    Never on hover, scroll or page load, and never more than one sound at once.
+11. **Hanzo's black model cards are copied exactly.** The size, grid, type, pills, video and pointer-tilt are in `docs/refs/hanzo-model-cards/SPEC.md`, measured from live hanzo.ai.
+
 ## What he reliably rejects (a page with any of these fails)
 - **Clutter:** walls of text, explaining sentences under every tile, 3 equal boxes in a row, overload.
 - **A dead page:** nothing moves without input, or only fade-ups.
