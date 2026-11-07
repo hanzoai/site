@@ -162,7 +162,7 @@ function Console() {
         <div className="xsd-dia" role="tablist" aria-label="Dialect">
           {Object.entries(DIALECTS).map(([k, v]) => (
             <button key={k} type="button" role="tab" aria-selected={dia === k} onClick={() => { setDia(k); setMine(true); }}>
-              {dia === k && <motion.span layoutId="xsd-dia" className="xsd-dia-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+              {dia === k && <motion.span layoutId="xsd-dia" className="xsd-dia-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
               <span>{v.name}</span>
             </button>
           ))}
@@ -177,7 +177,7 @@ function Console() {
       </div>
       <div className="xsd-url x-mono">
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span key={D0.url} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>{D0.url}</motion.span>
+          <motion.span key={D0.url} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{D0.url}</motion.span>
         </AnimatePresence>
         <Copy text={code} />
       </div>
@@ -215,7 +215,7 @@ function Hero() {
         </motion.div>
       </div>
       {/* every sample, in the page for search and find-in-page; the console shows one at a time */}
-      <div className="x-sr">{Object.values(DIALECTS).map((v) => LANGS.map(([k]) => <pre key={v.name + k}>{v[k][0]} {v[k][1]}</pre>))}</div>
+      <div className="x-sr" inert>{Object.values(DIALECTS).map((v) => LANGS.map(([k]) => <pre key={v.name + k}>{v[k][0]} {v[k][1]}</pre>))}</div>
     </section>
   );
 }
@@ -249,7 +249,7 @@ function Official() {
           <div className="xsd-pick-l" role="tablist" aria-label="Language" aria-orientation="vertical">
             {OFFICIAL.map(([n], i) => (
               <button key={n} type="button" role="tab" id={'xsd-ot' + i} aria-controls={'xsd-op' + i} aria-selected={k === i} onClick={() => setK(i)} onKeyDown={(e) => { if (e.key === 'ArrowDown') setK((k + 1) % 6); if (e.key === 'ArrowUp') setK((k + 5) % 6); }}>
-                {k === i && <motion.span layoutId="xsd-pick" className="xsd-pick-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                {k === i && <motion.span layoutId="xsd-pick" className="xsd-pick-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                 <span>{n}</span>
               </button>
             ))}
