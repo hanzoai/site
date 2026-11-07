@@ -250,7 +250,7 @@ function Window() {
 /* 1. Hero: the headline cuts into its lines, the one ask answers the press, and the window rises into place. */
 function Hero() {
   return (
-    <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target>
+    <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
       <div className="v2a-wrap cht-copy">
         <AppLines as="h1" id="cht-h1" className="v2a-display cht-h1" lines={['Ask anything.', 'Enso picks the model.']} soft={[1]} />
         <motion.p className="v2a-lede cht-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.3 }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</motion.p>
@@ -437,7 +437,7 @@ function Close() {
 
 export default function ChatPage() {
   return (
-    <main className="cht" data-ask-name="Hanzo Chat">
+    <main className="cht">
       <Hero />
       <Tools />
       <Who />
