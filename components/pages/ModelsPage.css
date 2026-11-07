@@ -423,8 +423,10 @@
 .xmo-cat .xmo-group:nth-last-child(2) { border-bottom: 0; padding-bottom: 44px; }
 .xmo-every { margin-top: 0; }
 .xmo-priced { padding-top: 96px; }
+.xmo-vs { padding-bottom: 112px; }
+.xmo-fig-g { padding-top: 112px; }
 .xmo-try { padding-top: 112px; }
-@media (max-width: 899px) { .xmo-priced { padding-top: 56px; } .xmo-try { padding-top: 72px; } }
+@media (max-width: 899px) { .xmo-priced { padding-top: 56px; } .xmo-try { padding-top: 72px; } .xmo-vs { padding-bottom: 72px; } .xmo-fig-g { padding-top: 72px; } }
 
 /* phone rows' thumbs: hidden on wide screens */
 .xmo-thumb { display: none; }
