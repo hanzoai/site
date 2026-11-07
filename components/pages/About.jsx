@@ -17,7 +17,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
-import { A, Band, Img } from '../kit';
+import { A, Img, Tabs, TabPanel } from '../kit';
+import StoryClose from './StoryClose';
 import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
@@ -106,7 +107,6 @@ function Frontier() {
           <circle r="10" className="xab-head" />
         </motion.g>
       </svg>
-      <p className="xab-note v2s-kick" aria-hidden="true">Illustration, not data</p>
     </div>
   );
 }
@@ -188,7 +188,7 @@ function Picks() {
         ))}
       </ul>
       <p className={'xab-picks-sum' + (all ? ' all' : '')} aria-live="polite">
-        {all ? <b>Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research.</b> : <span className="v2s-num">{on.length} of {PICKS.length} kept</span>}
+        {all && <b>Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research.</b>}
       </p>
     </div>
   );
@@ -235,6 +235,17 @@ function Why() {
     return () => clearInterval(t);
   }, [seen, calm, open]);
   const show = (i) => { setAt(i); setOpen(i); };
+  // Tab stays inside the open sheet: from its last control back to its first, and the other way round
+  const trap = (e) => {
+    const box = document.querySelector('.v2u-sheet');
+    if (!box) return;
+    const f = [...box.querySelectorAll('a[href], button:not([disabled])')];
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1], here = document.activeElement;
+    if (!box.contains(here)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && here === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && here === last) { e.preventDefault(); first.focus(); }
+  };
   const step = (d) => setAt((a) => (a + d + PILLARS.length) % PILLARS.length);
   const [t, k, d, l, to] = PILLARS[at];
   return (
@@ -250,7 +261,7 @@ function Why() {
           {PILLARS.map((p, i) => <Tile key={p[0]} p={p} i={i} cue={cue === i && open == null} onOpen={show} />)}
         </ul>
       </div>
-      <Unfold layoutId={open == null ? null : 'xab-p' + open} onClose={() => setOpen(null)} label={t} className="xab-sheet" onKey={(e) => { if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); }}>
+      <Unfold layoutId={open == null ? null : 'xab-p' + open} onClose={() => setOpen(null)} label={t} className="xab-sheet" onKey={(e) => { if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); if (e.key === 'Tab') trap(e); }}>
         <div className="xab-sheet-g">
           <div className="xab-sheet-a">
             <p className="xab-sheet-n v2s-num" aria-hidden="true">{pad(at + 1)}</p>
@@ -451,6 +462,7 @@ function Log() {
 }
 
 function Open() {
+  const [pane, setPane] = useState(0); // one pane at a time: the open code, or the safety bounds
   return (
     <section className="v2s-sec xab-open" data-room="dark" aria-labelledby="xab-open-h">
       <div className="v2s-wrap">
@@ -459,18 +471,20 @@ function Open() {
           <h2 id="xab-open-h" className="v2s-display xab-open-h">Verifiable code. <span className="xab-dim">Calibrated decisions.</span></h2>
           <p className="v2s-lede xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
         </div>
-        <div className="xab-panes">
-          {PANES.map(([t, k, d, items, l, to]) => (
-            <div key={t} className="xab-pane">
-              <h3 className="v2s-title">{t}</h3>
-              <p className="xab-pk">{k}</p>
-              <p className="v2s-body">{d}</p>
-              <ul>{items.map(([b, s]) => <li key={b}><b>{b}</b> {s}</li>)}</ul>
-              <Link2 to={to}>{l}</Link2>
-            </div>
-          ))}
+        <div className="xab-open-g">
+          <div className="xab-panes">
+            <Tabs id="xab-pane" tabs={PANES.map((x) => x[0])} value={pane} onChange={setPane} label="Open Source & Deterministic Safety" size="lg" />
+            {PANES.map(([t, k, d, items, l, to], i) => (
+              <TabPanel key={t} id="xab-pane" i={i} value={pane} className="xab-pane">
+                <p className="xab-pk">{k}</p>
+                <p className="v2s-body">{d}</p>
+                <ul>{items.map(([b, s]) => <li key={b}><b>{b}</b> {s}</li>)}</ul>
+                <Link2 to={to}>{l}</Link2>
+              </TabPanel>
+            ))}
+          </div>
+          <Log />
         </div>
-        <Log />
       </div>
     </section>
   );
@@ -496,8 +510,8 @@ function Runtime({ m }) {
           {m.slug ? <Img src={`/models/${m.slug}.webp`} w={1200} h={1500} /> : <Sigil seed={m.name} className="xab-rt-sigil" />}
         </span>
         <span className="xab-rt-t">
-          <span className="xab-rt-k">{m.kind}</span>
           <h4 className="v2s-title">{m.name}</h4>
+          <span className="xab-rt-k">{m.kind}</span>
           <span className="xab-rt-d">{m.d}</span>
           <span className="xab-rt-g">{m.tag}</span>
           <span className="xab-rt-go">Details <Arr /></span>
@@ -584,7 +598,8 @@ function Careers() {
           </div>
         </div>
       </section>
-      <Band
+      <StoryClose
+        cta="about.band"
         title="Push the Pareto frontier with us."
         lede="We hire systems programmers, AI safety researchers, and product engineers who care about open source, equitable access, privacy, and sovereign ownership. High autonomy, zero bureaucracy, and code that ships in public."
         action="Explore Open Roles"

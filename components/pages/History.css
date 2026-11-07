@@ -3,36 +3,20 @@
 
 /* 1. first screen: display type, the lede, and the eras a playhead keeps crossing */
 .xhi-hero { min-height: calc(100svh - 76px); display: flex; flex-direction: column; padding: clamp(40px, 7vh, 88px) 0 clamp(32px, 5vh, 56px); }
-.xhi-hero > .v2s-wrap { flex: 1; display: flex; flex-direction: column; }
-.xhi-hero-g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); }
-.xhi-h1 { grid-column: 1 / 8; grid-row: 1; }
-.xhi-hero-side { grid-column: 8 / 13; grid-row: 1; align-self: end; display: grid; gap: 28px; padding-bottom: .5em; }
-.xhi-hero-side .v2s-lede { font-size: clamp(18px, 1.4vw, 21px); color: var(--ink); opacity: .78; }
-.xhi-hero-side .v2s-acts .v2s-btn { min-height: 44px; padding: 0 18px; font-size: 15px; }
-.xhi-eras { position: relative; list-style: none; margin: auto 0 0; padding: clamp(48px, 7vh, 88px) 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--v2-gut); }
-.xhi-eras li { display: grid; gap: 12px; align-content: start; }
-.xhi-era-bar { position: relative; display: block; height: 2px; margin-bottom: 14px; background: var(--hair); overflow: hidden; }
-.xhi-era-bar b { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transform: scaleX(1); }
-.xhi-era-s { font: 500 13px/1 var(--mono); letter-spacing: .1em; color: var(--soft); }
-/* Techstars '17, marked on the strip where 2017 falls */
-.xhi-ts { position: absolute; left: 25%; top: calc(clamp(48px, 7vh, 88px) - 34px); padding-left: 10px; border-left: 1px solid var(--ink); font: 500 13px/1 var(--mono); letter-spacing: .06em; color: var(--ink); white-space: nowrap; }
-.xhi-era-t { margin: 0; font-size: clamp(19px, 1.6vw, 24px); font-weight: 560; line-height: 1.15; letter-spacing: -.02em; color: var(--ink); }
-.xhi-eras p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--soft); max-width: 34ch; }
-.xhi-play { position: absolute; left: 0; right: 0; top: calc(clamp(48px, 7vh, 88px) - 5px); height: 12px; pointer-events: none; display: none; }
-.xhi-play::before { content: ''; position: absolute; left: -6px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 6px rgba(10, 10, 11, .1); }
-@media (prefers-reduced-motion: no-preference) {
-  .xhi-play { display: block; animation: xhi-play 16s linear infinite; }
-  .xhi-era-bar b { animation: 16s linear infinite; }
-  .xhi-eras li:nth-of-type(1) .xhi-era-bar b { animation-name: xhi-f0; }
-  .xhi-eras li:nth-of-type(2) .xhi-era-bar b { animation-name: xhi-f1; }
-  .xhi-eras li:nth-of-type(3) .xhi-era-bar b { animation-name: xhi-f2; }
-  .xhi-eras li:nth-of-type(4) .xhi-era-bar b { animation-name: xhi-f3; }
-}
-@keyframes xhi-play { from { transform: translateX(0); } 97% { transform: translateX(100%); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
-@keyframes xhi-f0 { 0% { transform: scaleX(0); opacity: 1; } 23.5% { transform: scaleX(1); } 97% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
-@keyframes xhi-f1 { 0%, 25.2% { transform: scaleX(0); opacity: 1; } 48.5% { transform: scaleX(1); } 97% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
-@keyframes xhi-f2 { 0%, 50.2% { transform: scaleX(0); opacity: 1; } 73.5% { transform: scaleX(1); } 97% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
-@keyframes xhi-f3 { 0%, 75.2% { transform: scaleX(0); opacity: 1; } 97% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+.xhi-hero-g { flex: 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: center; }
+.xhi-hero-l { grid-column: 1 / 8; display: grid; gap: clamp(24px, 3.4vh, 36px); }
+.xhi-hero-side { display: grid; gap: 24px; max-width: 46ch; }
+.xhi-hero-side .v2s-lede { font-size: clamp(17px, 1.3vw, 20px); color: var(--ink); opacity: .78; }
+.xhi-hero-r { grid-column: 8 / 13; display: grid; gap: clamp(16px, 2.4vh, 28px); }
+.xhi-cut.hero { font-size: clamp(112px, 12.4vw, 196px); }
+.xhi-eras { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(12px, 1.8vh, 18px); }
+.xhi-eras li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; row-gap: 6px; align-items: baseline; }
+.xhi-era-bar { grid-column: 1 / -1; position: relative; display: block; height: 2px; margin-bottom: 8px; background: var(--hair); overflow: hidden; }
+.xhi-era-bar b { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; }
+.xhi-era-t { margin: 0; font-size: clamp(17px, 1.35vw, 20px); font-weight: 560; line-height: 1.2; letter-spacing: -.015em; color: var(--soft); transition: color .4s var(--ease); }
+.xhi-eras li.on .xhi-era-t { color: var(--ink); }
+.xhi-era-s { font: 500 13px/1 var(--mono); letter-spacing: .08em; color: var(--soft); white-space: nowrap; }
+.xhi-eras p { grid-column: 1 / -1; margin: 0; font-size: 14.5px; line-height: 1.45; color: var(--soft); max-width: 58ch; }
 
 /* 2. the clippings rail */
 .xhi-rec-head .v2s-kick { margin-bottom: 24px; }
@@ -50,7 +34,7 @@
 .xhi-clip-f { font-size: clamp(44px, 4.4vw, 68px); font-weight: 600; line-height: .95; letter-spacing: -.05em; color: var(--ink); }
 .xhi-clip p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--soft); }
 .xhi-clip-s { display: flex; flex-wrap: wrap; gap: 4px 16px; padding-top: 16px; border-top: 1px solid var(--hair); }
-.xhi-clip-s a { display: inline-flex; align-items: center; min-height: 40px; font: 500 13.5px/1.3 var(--mono); color: var(--ink); text-decoration: none; -webkit-user-drag: none; }
+.xhi-clip-s a { display: inline-flex; align-items: center; min-height: 44px; font: 500 13.5px/1.3 var(--mono); color: var(--ink); text-decoration: none; -webkit-user-drag: none; }
 @media (hover: hover) { .xhi-clip-s a:hover { text-decoration: underline; text-underline-offset: 4px; } }
 
 /* 3. the journey: one pinned scene, scrubbed (Signature) */
@@ -61,15 +45,16 @@
 .xhi-stage { position: sticky; top: 60px; height: calc(100svh - 60px); display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden; }
 .xhi-stage-g { position: relative; display: grid; padding-top: clamp(16px, 3vh, 40px); min-height: 0; }
 .xhi-odo-w { position: absolute; top: clamp(8px, 2vh, 28px); left: 0; z-index: 1; display: grid; gap: 4px; pointer-events: none; }
-.xhi-cut { display: grid; font-size: clamp(120px, 14.6vw, 224px); font-weight: 600; line-height: .9; letter-spacing: -.06em; color: var(--ink); font-variant-numeric: tabular-nums; overflow: hidden; padding-bottom: .05em; }
-.xhi-cut > span { grid-area: 1 / 1; transform: translateY(108%); transition: transform .55s cubic-bezier(.7, 0, .84, 0); }
+.xhi-cut { display: grid; font-size: clamp(96px, 11.5vw, 184px); font-weight: 600; line-height: .9; letter-spacing: -.06em; color: var(--ink); font-variant-numeric: tabular-nums; overflow: hidden; padding-bottom: .05em; }
+.xhi-cut > span { grid-area: 1 / 1; transform: translateY(108%); transition: transform .28s cubic-bezier(.7, 0, .84, 0); }
 .xhi-cut > span.past { transform: translateY(-108%); }
-.xhi-cut > span.on { transform: none; transition: transform .9s var(--ease) .06s; }
+.xhi-cut > span.on { transform: none; transition: transform .7s var(--ease) .3s; }
+.xhi-cut.you { font-size: clamp(64px, 6.6vw, 96px); margin-bottom: 6px; }
 .xhi-odo-era { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); padding-left: .4em; }
 .xhi-years { display: grid; min-height: 0; }
-.xhi-yr { grid-area: 1 / 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: calc(clamp(120px, 14.6vw, 224px) + 48px) minmax(0, 1fr); column-gap: var(--v2-gut); min-height: 0; }
+.xhi-yr { grid-area: 1 / 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: calc(clamp(96px, 11.5vw, 184px) + 40px) minmax(0, 1fr); column-gap: var(--v2-gut); min-height: 0; }
 .xhi-yr-n { display: none; }
-.xhi-plate { grid-column: 1 / 7; grid-row: 2; align-self: start; position: relative; width: 100%; max-height: 100%; aspect-ratio: 16 / 10; border-radius: 28px; overflow: hidden; background: #f5f5f7; display: grid; place-items: center; }
+.xhi-plate { grid-column: 1 / 6; grid-row: 2; align-self: start; position: relative; width: 100%; max-height: 100%; aspect-ratio: 16 / 10; border-radius: 28px; overflow: hidden; background: #f5f5f7; display: grid; place-items: center; }
 .xhi-plate-f { padding: 0 8%; font-size: clamp(28px, 3vw, 48px); font-weight: 600; line-height: 1.02; letter-spacing: -.04em; text-align: center; color: var(--ink); text-wrap: balance; }
 .xhi-plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s var(--ease); }
 .xhi-plate.logo img { inset: 22% 18%; width: 64%; height: 56%; object-fit: contain; }
@@ -77,29 +62,29 @@
 .xhi-plate.ok img { opacity: 1; }
 .xhi-plate.ok .xhi-plate-f { opacity: 0; }
 .xhi-plate video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.xhi-yr-t { grid-column: 8 / 13; grid-row: 1 / 3; align-self: center; display: grid; gap: 14px; padding-bottom: 12px; }
-.xhi-yr-b { justify-self: start; display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--hair); font: 500 13px/1 var(--mono); color: var(--ink); }
-.xhi-yr-t .v2s-headline { font-size: clamp(28px, 2.7vw, 42px); max-width: 18ch; }
-.xhi-yr-l { margin: 0; font-size: clamp(15.5px, 1.1vw, 17px); line-height: 1.55; color: var(--soft); max-width: 58ch; }
+.xhi-yr-t { grid-column: 7 / 13; grid-row: 1 / 3; align-self: center; display: grid; gap: 12px; padding-bottom: 12px; }
+.xhi-yr-b { justify-self: start; margin-top: -4px; display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--hair); font: 500 13px/1 var(--mono); color: var(--ink); }
+.xhi-yr-t .v2s-headline { font-size: clamp(26px, 2.4vw, 38px); max-width: 22ch; }
+.xhi-yr-l { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--soft); max-width: 66ch; }
 .xhi-hl { display: grid; gap: 4px; margin-top: 6px; padding: 16px 0 0; border-top: 1px solid var(--hair); }
-.xhi-hl-tag { font: 500 13px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+.xhi-hl-tag { margin-top: 4px; font: 500 13px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .xhi-hl b { font-size: clamp(20px, 1.6vw, 24px); font-weight: 600; letter-spacing: -.02em; }
 .xhi-hl strong { font-size: 16px; font-weight: 560; color: var(--ink); }
 .xhi-hl span:last-child { font-size: 15px; line-height: 1.5; color: var(--soft); }
 .xhi-posts { display: flex; flex-wrap: wrap; gap: 0 20px; margin: 0; }
-.xhi-posts a { display: inline-flex; align-items: center; min-height: 40px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.xhi-posts a { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; }
 @media (hover: hover) { .xhi-posts a:hover { text-decoration: underline; text-underline-offset: 4px; } }
 /* one in, one out */
-.xhi-yr .xhi-yr-t, .xhi-yr .xhi-plate { opacity: 0; transform: translateY(36px); transition: opacity .22s var(--ease), transform .6s var(--ease); }
+.xhi-yr .xhi-yr-t, .xhi-yr .xhi-plate { opacity: 0; transform: translateY(36px); transition: opacity .2s var(--ease), transform .45s var(--ease); }
 .xhi-yr.past .xhi-yr-t, .xhi-yr.past .xhi-plate { transform: translateY(-36px); }
 .xhi-yr .xhi-plate { transform: translateY(36px) scale(.97); }
 .xhi-yr.past .xhi-plate { transform: translateY(-36px) scale(.97); }
-.xhi-yr.on .xhi-yr-t, .xhi-yr.on .xhi-plate { opacity: 1; transform: none; transition: opacity .45s var(--ease) .06s, transform .9s var(--ease) .04s; }
-.xhi-rail2 { position: relative; padding: 18px 0 clamp(16px, 3vh, 32px); }
+.xhi-yr.on .xhi-yr-t, .xhi-yr.on .xhi-plate { opacity: 1; transform: none; transition: opacity .5s var(--ease) .26s, transform .9s var(--ease) .22s; }
+.xhi-rail2 { position: relative; padding: 14px 0 clamp(88px, 12vh, 104px); } /* clear of the ask bar */
 .xhi-rail2-l { position: absolute; left: 0; right: 0; top: 18px; height: 2px; background: var(--hair); }
 .xhi-rail2-l b { position: absolute; inset: 0; background: var(--acc); transform-origin: 0 50%; }
 .xhi-rail2 ol { list-style: none; margin: 0; padding: 6px 0 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
-.xhi-rail2 button { width: 100%; min-height: 44px; padding: 8px 0 0; border: 0; background: none; font: 500 13px/1 var(--mono); letter-spacing: .04em; color: var(--faint); cursor: pointer; text-align: left; transition: color .3s var(--ease); }
+.xhi-rail2 button { width: 100%; min-height: 48px; padding: 8px 0 0; border: 0; background: none; font: 500 13px/1 var(--mono); letter-spacing: .04em; color: var(--faint); cursor: pointer; text-align: left; transition: color .3s var(--ease); }
 .xhi-rail2 button.past { color: var(--soft); }
 .xhi-rail2 button.on { color: var(--ink); }
 @media (hover: hover) { .xhi-rail2 button:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; } }
@@ -116,12 +101,10 @@
 /* Hanzo's stylesheet pins inputs to 16px on touch screens (no iOS zoom); this one is far larger, so it keeps its size */
 .xhi-you .xhi-you-in input { font-size: clamp(72px, 8.9vw, 128px) !important; }
 .xhi-you-a { display: grid; gap: 14px; align-content: start; min-height: 360px; padding: clamp(28px, 3.4vw, 48px); border-radius: 28px; background: #f5f5f7; }
-.xhi-you-y { font-size: clamp(56px, 6.6vw, 96px); font-weight: 600; letter-spacing: -.04em; line-height: 1; color: var(--ink); margin-bottom: 10px; }
-.xhi-you-y span { background: linear-gradient(#fff 50%, #f0f0f3 50%); }
 .xhi-you-b { margin: 0; font: 500 13px/1.3 var(--mono); letter-spacing: .06em; color: var(--soft); }
 .xhi-you-l { margin-top: 16px; }
 .xhi-you-p { display: flex; flex-wrap: wrap; gap: 0 20px; }
-.xhi-you-p a { display: inline-flex; align-items: center; min-height: 40px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.xhi-you-p a { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; }
 .xhi-you-none { margin: 0; color: var(--soft); }
 
 /* 5. the principles: a colophon */
@@ -148,18 +131,18 @@
 /* ---------- phones: designed, not shrunk ---------- */
 @media (max-width: 900px) {
   .xhi-hero { min-height: 0; }
-  .xhi-hero-g { grid-template-columns: minmax(0, 1fr); }
-  .xhi-h1, .xhi-hero-side { grid-column: 1; }
-  .xhi-hero-side { grid-row: 3; margin-top: 28px; }
+  .xhi-hero-g { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
+  .xhi-hero-l, .xhi-hero-r { grid-column: 1; }
+  .xhi-cut.hero { font-size: clamp(88px, 28vw, 120px); }
   .xhi-hero-side .v2s-acts .v2s-btn { min-height: 48px; }
-  .xhi-eras { grid-template-columns: 1fr 1fr; row-gap: 32px; padding-top: 56px; }
-  .xhi-play { display: none !important; } /* the eras wrap two by two here, so only their bars keep filling in turn */
   .xhi-eras p { font-size: 14.5px; }
   .xhi-clip { width: min(80vw, 340px); min-height: 0; }
   .xhi-scrub { height: auto; }
   .xhi-stage { position: static; height: auto; overflow: visible; display: block; }
-  .xhi-years { gap: 72px; }
-  .xhi-yr { grid-area: auto; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: 20px; }
+  /* the thirteen years become a swipe rail: one year per card, the next one peeking */
+  .xhi-years { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; margin: 0 calc(-1 * var(--v2-pad)); padding: 0 var(--v2-pad) 8px; }
+  .xhi-years::-webkit-scrollbar { display: none; }
+  .xhi-yr { flex: 0 0 86%; scroll-snap-align: start; scroll-margin-left: var(--v2-pad); grid-area: auto; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; align-content: start; gap: 18px; }
   .xhi-yr-n { display: block; margin: 0; font-size: clamp(64px, 20vw, 96px); font-weight: 600; line-height: .9; letter-spacing: -.06em; color: var(--ink); }
   .xhi-plate, .xhi-yr-t { grid-column: 1; grid-row: auto; }
   .xhi-yr .xhi-yr-t, .xhi-yr .xhi-plate { opacity: 1; transform: none; transition: none; }

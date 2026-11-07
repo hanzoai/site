@@ -101,7 +101,7 @@ function Hero() {
             <LineMask as="h1" id="ui-h1" now className="w2-display ui-h1" lines={['Hanzo UI']} />
             <p className="ui-kick"><Img src="/models/enso.webp" alt="" w={24} h={24} />React Component Library</p>
           </div>
-          <motion.div className="ui-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="ui-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede ui-lede">The React components powering Hanzo apps</p>
             <Magnetic strength={0.25}><A to={GH} className="w2-cta" data-thumb="GitHub" data-cta="ui.hero">GitHub <i aria-hidden="true">↗</i></A></Magnetic>
           </motion.div>
@@ -187,7 +187,8 @@ function Props() {
   return (
     <div ref={ref}>
       <PinChapters id="ui-props" label="Components your design team will sign off on" className="ui-pin"
-        chapters={PROPS.map(([t, d], i) => ({ k: i === 0 ? 'Components your design team will sign off on' : `${String(i + 1).padStart(2, '0')} / 06`, t, b: <p>{d}</p> }))}
+        title="Components your design team will sign off on"
+        chapters={PROPS.map(([t, d]) => ({ t, b: <p>{d}</p> }))}
         visual={(at) => (
           <div className="ui-vis">
             {pauseBtn}

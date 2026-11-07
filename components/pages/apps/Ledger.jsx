@@ -18,7 +18,8 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, More } from '../../kit';
-import { Paste, Code, useLive } from '../cloud/Frame';
+import { Code, useLive } from '../cloud/Frame';
+import BizPaste from '../../v2/BizPaste';
 import BizLines from '../../v2/BizLines';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
@@ -351,7 +352,7 @@ function End() {
             <h3 className="bz-title">Get started with Ledger</h3>
             <p className="bz-body">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
             <div className="ld-links"><More to={GH}>View on GitHub</More></div>
-            <Paste name="Ledger" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ledger in my project." className="ld-paste" />
+            <BizPaste name="Ledger" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ledger in my project." className="ld-paste" />
           </div>
         </div>
         <A to={DEPLOY} className="ld-row" data-cta="secondary"><span>Deploy to Cloud</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>

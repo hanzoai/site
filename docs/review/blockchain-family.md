@@ -1,37 +1,32 @@
 # /blockchain/* (template) — James-eye review
 
-Reviewed: main, page files at `2b1420f`. Members walked: `/blockchain/bundler` and `/blockchain/defi`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main, page files at `6e63fa2` (second review; the first, at `2b1420f`, scored 5/10). Members walked: `/blockchain/bundler` and `/blockchain/defi`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page.
+Verdict: 7/10
 
-Verdict: 5/10
+First complaint: "Much better on the laptop: black and white, the key card right there. But on my phone nothing moves at all once it loads, and the nine capability cards still end up as a grid of little boxes."
 
-First complaint: "A little blue 'AVAILABLE NOW' tag sitting on the headline, a giant blue '09', and the DeFi page is green. Then a grid of nine boxes, each with a sentence under it. That's the overload I asked you to get rid of."
+## What changed since the first review
+Fixed: no "AVAILABLE NOW" eyebrow over the h1 (it sits under the lede), no blue or green (ink only), the dark key card with "Get Your API Key", "Try Hanzo" and the figures (HA, <50ms, 100+) is now beside the headline on the first screen, and the nine capabilities deal in one by one from a stack while a counter runs 00 → 09.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: "Bundler API" / "Hanzo DeFi" at display size with Hanzo's lede, and a ticker of chains (Ethereum, Polygon, Arbitrum…) slides by itself under it on both sizes. But the hero has no ask and no product object: the ticker is the only thing on stage.
-2. **One in, one out?** No, it reads as a document: hero, dark "Get Your API Key" card with three figures, a 3×3 grid of nine capabilities, a code block, "Built For" chips, supported chains, then two closing blocks ("Start Building with…", "Get…").
-3. **A real object in every section?** The code block and the chain ticker, yes. The nine-box capability grid and "Built For" are text in boxes.
-4. **One ask, sticky after the hero?** Partly. A floating pill carries "Try Hanzo" after the hero on desktop, and the header's "Try Hanzo" turns outlined, which is right. But the hero itself has no button; the first ask ("Try Hanzo" + "View Documentation") arrives in the dark card below the fold, and the page ends with a third ask, "Deploy to Cloud".
-5. **Every hover and press answers?** Hover on the back link answers. Capability boxes do not change on hover. No press states caught.
-6. **Overlap, font swap, layout shift?** No overlap or sideways scroll.
-7. **Which reference, and is its motion there?** apple.com stats (HA / <50ms / 100+ as big figures) and a ticker. The ticker is the only authored motion; nothing from synchronized.studio or osply.
-8. **Different from its neighbours?** The two members are the same page in a different colour. The layout matches the Cloud product pages' generic skeleton.
-9. **All 18 parts covered?** See below.
-10. **Banned tells?** Yes:
-    - An eyebrow above the h1 on both ("• AVAILABLE NOW", coloured dot, mono caps).
-    - UI hues per member: blue on bundler (dot, "HA", the giant "09", numbers), **green** on DeFi. Lavender and mint code tokens on both.
-    - Clutter: nine boxes in a 3×3 grid with an explaining sentence under each; "three equal boxes in a row", three times.
-11. **Copy untouched?** Yes: parity 146/146 and 149/149 text, 3/3 links. All figures ("HA", "<50ms", "100+", "under 5 minutes") are Hanzo's.
+1. **Sells in 5 seconds, moves within 1 second?** Desktop yes: "Bundler API" / "Hanzo DeFi", Hanzo's lede, and the key card with the chain ticker sliding. Phone: the first screen barely moves after arrival (0.5–0.7% change).
+2. **One in, one out?** Mostly: the capabilities now arrive one at a time with the counter, which works. They still finish as a 3×3 wall of boxes with a sentence each, and the page after them (code, built for, chains, start building, get) is long.
+3. **A real object in every section?** Yes until the closing blocks.
+4. **One ask, sticky after the hero?** Yes: "Try Hanzo" in the key card, the shared ask bar after it, and the close; five `data-cta` tags. "View Documentation" is the outlined second.
+5. **Every hover and press answers?** The ask answers; capability cards were not exercised.
+6. **Overlap, font swap, layout shift?** None; layout shift 0 on all walks.
+7. **Which reference, and is its motion there?** apple.com stats as hero figures, and a dealt stack of cards. Present.
+8. **Different from its neighbours?** Members share the layout; bundler and DeFi differ by words, chains and contour.
+9. **All 18 parts covered?** `docs/coverage/blockchain-family.md` exists; text reads with JavaScript off.
+10. **Banned tells?** None on the page now. The final 3×3 grid still reads as "boxes with explaining sentences".
+11. **Copy untouched?** Yes (146/146 and 149/149 on the first review; unchanged words).
 
 ## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.1 / 2.4 Conversion:** no ask in the hero; three different asks on the page ("Try Hanzo", "View Documentation", "Deploy to Cloud"); 0 `data-cta`.
-- **2.3 Narrative:** no chaptering; the capability grid is a wall.
-- **2.6 Content:** lists over six items in the main scroll (nine capabilities); plan says collapse with a true count.
+- **2.11 Mobile:** first screen and every later screen still on the phone.
+- **2.3 Narrative:** long tail after the capabilities.
 
 ## Fixes
-1. Remove "• AVAILABLE NOW" from above the h1 (it can sit beside the ticker or in the dark card).
-2. Take out the blue and green: dot, figures, the "09", code tokens all go to ink and greys.
-3. Put the member's ask ("Try Hanzo", in Hanzo's words) in the hero, solid, with "View Documentation" as a text link.
-4. Replace the 3×3 grid with one pinned object that changes per capability (the code block highlighting the line that does it, or the request walking the chains), so one comes in as one goes out.
-5. Give each member one thing of its own beyond the colour (bundler: a UserOperation travelling into a bundle; DeFi: a swap or stake running through the router).
+1. Phone: let the chain ticker run in the key card on the first screen, and deal the capabilities as a swipeable stack (one card per screen) rather than a stacked grid.
+2. Let the dealt cards leave as the next arrives (keep the stack, not the full 3×3 wall).
+3. Fold "Built For" and "Supported Chains" into the key card or a sheet, so the page ends sooner on "Start Building".

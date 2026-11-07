@@ -149,7 +149,6 @@ export default function Hsm() {
       <section className="hs-hero">
         <div className="v2-wrap v2-grid hs-hero-grid">
           <div className="hs-hero-copy">
-            <p className="v2-kick acc">Hardware security module</p>
             <Lines as="h1" className="v2-display hs-h1" lines={['Hanzo', 'HSM']} data-morph-target="" />
             <motion.p className="v2-body hs-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>One interface to the key hardware you already trust — AWS KMS, Azure Key Vault, Google Cloud KMS, or a Zymbit module over PKCS#11. Generate keys, sign with them, and unwrap with them, without the private material ever reaching your process.</motion.p>
             <div className="v2-acts"><A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A></div>
