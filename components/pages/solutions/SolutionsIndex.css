@@ -126,3 +126,8 @@ html.x-arriving .xso-in, html.x-arriving .xso-in2 { animation-play-state: paused
 /* 900–1199px: two tiles a row, so every tile's jobs fit under its name */
 @media (min-width: 900px) and (max-width: 1199px) { .xso-tile, .xso-tile.w3, .xso-tile.w4, .xso-tile.w6, .xso-tile.w12 { grid-column: span 6; } }
 @media (prefers-reduced-motion: reduce) { .xso-in, .xso-in2 { animation: none; } }
+/* the same model film on several tiles gets its own framing per tile, so neighbours never look identical */
+.xso-tile-m img, .xso-tile-m video { object-position: calc(15% + mod(var(--k, 0) * 37, 70) * 1%) calc(20% + mod(var(--k, 0) * 23, 60) * 1%); }
+.xso-tile:nth-child(3n + 1) .xso-tile-m { transform: scale(1.18); }
+.xso-tile:nth-child(3n + 2) .xso-tile-m { transform: scale(1.36) scaleX(-1); }
+.xso-pane-t { text-wrap: pretty; }
