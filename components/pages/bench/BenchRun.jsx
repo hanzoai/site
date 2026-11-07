@@ -293,7 +293,7 @@ function Parts({ c, walk, j }) {
   const [x, y] = String(r.cells[j].s).trim().split(' of ').map(num);
   const cols = Math.ceil(Math.sqrt(y * 1.5));
   return (
-    <div ref={box} className="xbr-ch-v xbr-parts" data-on={seen ? '' : undefined} aria-hidden="true">
+    <div ref={box} className="xbr-ch-v xbr-parts" data-seen={seen ? '' : undefined} aria-hidden="true">
       <div className="xbr-parts-g" style={{ '--c': cols }}>
         {Array.from({ length: y }, (_, i) => <i key={i} className={i < x ? 'on' : ''} style={{ '--i': i }} />)}
       </div>
@@ -324,7 +324,7 @@ function Scale({ c, walk }) {
   } else return null;
   const r = readout(c, k);
   return (
-    <div ref={box} className="xbr-ch-v xbr-scale" data-on={seen ? '' : undefined} aria-hidden="true">
+    <div ref={box} className={'xbr-ch-v xbr-scale' + (c.kind === 'bars' ? ' xbr-bars-sq' : '')} data-seen={seen ? '' : undefined} aria-hidden="true">
       <div className="xbr-scale-b">
         {sq.map((q, i) => <i key={i} className={'xbr-sq ' + q.t} style={{ '--s': Math.max(0.012, q.s), '--i': i }} />)}
       </div>
@@ -403,6 +403,17 @@ function Facts({ n }) {
   );
 }
 
+/* the facts as a strip under the stage: its rules draw across, one after another, when it is reached */
+function FactsStrip({ n }) {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.4, once: true });
+  return (
+    <section ref={box} className="xbr-facts-s" data-seen={seen ? '' : undefined} aria-label={clean(textOf(n.c.find((k) => k && k.t === 'dt')))}>
+      <div className="v2f-wrap"><Facts n={n} /></div>
+    </section>
+  );
+}
+
 /* ---------- beyond: ask the source ---------- */
 const ISO = (s) => (s ? s.replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : '');
 const Play = () => <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M7 4.5v11l9-5.5z" fill="currentColor" /></svg>;
@@ -420,7 +431,8 @@ function Typed({ text, delay = 0 }) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [text, delay, calm]);
-  return <span ref={ref}>{text}</span>;
+  // the finished text holds the room's height from the start (unseen), the typed text lies over it: nothing below moves
+  return <span className="xbr-ty"><span className="xbr-ty-g" aria-hidden="true">{text}</span><span ref={ref} className="xbr-ty-o">{text}</span></span>;
 }
 /* the reply as the page already transcribes it: the run ids the page links, then its own figures. It types itself once
    when the room is reached (a demo that plays and rests); a press replays it and, only if api.hanzo.ai answers within
@@ -650,11 +662,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
         )}
       </section>
 
-      {facts && (
-        <section className="xbr-facts-s" aria-label={clean(textOf(facts.n.c.find((k) => k && k.t === 'dt')))}>
-          <div className="v2f-wrap"><Facts n={facts.n} /></div>
-        </section>
-      )}
+      {facts && <FactsStrip n={facts.n} />}
 
       {lead && (
         <section className="xbr-figs v2f-sec" aria-labelledby={'xbr-latest-' + doc.slug}>
