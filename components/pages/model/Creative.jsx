@@ -36,7 +36,7 @@ function Head({ slug }) {
 }
 
 // a capability chapter's picture: the model's own film, framed closer each time, wearing its live glyph
-const CAM = [[1.08, '0%', '0%'], [1.45, '-12%', '6%'], [1.8, '10%', '-8%'], [1.3, '6%', '10%']];
+const CAM = [[1.08, '0%', '0%'], [1.45, '-12%', '6%'], [1.8, '-16%', '-6%'], [1.3, '-6%', '10%']]; // pans lean left: the films' subjects sit centre-right
 function CapArt({ slug, i, title }) {
   const [z, x, y] = CAM[i];
   return (
@@ -84,7 +84,7 @@ function Fits({ slug, flip }) {
         </div>
         <ul className={'cr-fits-grid' + (flip ? ' flip' : '')}>
           {d.fits.map(([k, t, x], i) => (
-            <li key={t} className={'cr-fit cr-fit-' + i} style={{ '--z': [1.15, 1.6, 2.1][i], '--x': ['0%', '18%', '-16%'][i], '--y': ['0%', '-10%', '12%'][i] }}>
+            <li key={t} className={'cr-fit cr-fit-' + i} style={{ '--z': [1.15, 1.6, 2.1][i], '--x': ['-4%', '-18%', '-24%'][i], '--y': ['0%', '-8%', '8%'][i] }}>
               <img src={film(slug, 'webp')} alt="" loading="lazy" />
               <div className="cr-fit-in">
                 <p className="cr-fit-k"><Glyph k={slug} i={i + 4} />{k}</p>
