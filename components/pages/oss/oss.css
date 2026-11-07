@@ -142,6 +142,9 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-open:focus-visible::after { box-shadow: inset 0 0 0 2px var(--ink); }
 .xos-name { display: block; font-size: 21px; font-weight: 497; letter-spacing: -.015em; line-height: 1.2; overflow-wrap: anywhere; }
 .xos-org { color: var(--muted); font-weight: 400; }
+.xos-nm { position: relative; display: inline-block; max-width: 100%; }
+.xos-nm-t { color: transparent; }
+.xos-nm-v { position: absolute; inset: 0; pointer-events: none; user-select: none; }
 .xos-desc { margin: 0; font-size: 15px; line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; max-width: 72ch; }
 .xos-row-s { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin: 0; font-size: 13px; color: var(--muted); }
 .xos-row-s span { display: inline-flex; align-items: center; gap: 4px; }

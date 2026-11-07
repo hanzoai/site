@@ -63,9 +63,12 @@ function Wave({ bars, label = 'Commits a month over the past year', className = 
 }
 
 /* "hanzoai/ui": the organization faint, the repository as the name */
+/* a repository's name: the real text is one piece ("org/repo", Hanzo's own line); the two-tone look (the org part
+   muted) is a visual-only copy laid over it, aria-hidden, so the page's text stays exactly Hanzo's */
 function Name({ name }) {
   const k = name.indexOf('/');
-  return k < 0 ? <>{name}</> : <><span className="xos-org">{name.slice(0, k + 1)}</span>{name.slice(k + 1)}</>;
+  if (k < 0) return <>{name}</>;
+  return <span className="xos-nm"><span className="xos-nm-t">{name}</span><span className="xos-nm-v" aria-hidden="true"><span className="xos-org">{name.slice(0, k + 1)}</span>{name.slice(k + 1)}</span></span>;
 }
 /* "2,107 commits this year": the figure, then Hanzo's words after it */
 function Split({ s }) {
@@ -335,7 +338,7 @@ export default function OrgPage({ doc }) {
                   {ghFigs.filter((f) => f.n > 0).map((f) => <div key={f.label}><dd className="v2f-num"><Digits value={f.value} /></dd><dt>{f.label}</dt></div>)}
                 </dl>
               )}
-              {ghFigs.some((f) => !(f.n > 0)) && <p className="xos-zero">{ghFigs.filter((f) => !(f.n > 0)).map((f) => <span key={f.label}><b>{f.value}</b> {f.label}</span>)}</p>}
+              {ghFigs.some((f) => !(f.n > 0)) && <p className="xos-zero">{ghFigs.filter((f) => !(f.n > 0)).map((f) => <span key={f.label}><b>{f.value}</b> <span>{f.label}</span></span>)}</p>}
             </div>
           </div>
         )}
@@ -357,13 +360,13 @@ export default function OrgPage({ doc }) {
                     return (
                       <div key={f.label}>
                         {k === growIx && forgeRows.length > 1 ? <FamGrow to={1.35}>{v}</FamGrow> : v}
-                        <dt>{f.label}{s && <Share part={s[0]} of={s[1]} />}</dt>
+                        <dt><span>{f.label}</span>{s && <Share part={s[0]} of={s[1]} />}</dt>
                       </div>
                     );
                   })}
                 </dl>
               )}
-              {forgeZero.length > 0 && <p className="xos-zero">{forgeZero.map((f) => <span key={f.label}><b>{f.value}</b> {f.label}</span>)}</p>}
+              {forgeZero.length > 0 && <p className="xos-zero">{forgeZero.map((f) => <span key={f.label}><b>{f.value}</b> <span>{f.label}</span></span>)}</p>}
             </div>
           </div>
         </section>
