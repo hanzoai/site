@@ -1,0 +1,49 @@
+{
+ "source": "https://api.github.com/search/issues (the query hanzo.ai runs)",
+ "fetched_at": "2026-11-07T23:55:03.943Z",
+ "total": 10,
+ "items": [
+  {
+   "repo": "hanzo-go/lz4",
+   "number": 1,
+   "title": "Point the README install steps and badges at hanzo.ai/lz4/v4",
+   "url": "https://github.com/hanzo-go/lz4/issues/1",
+   "tier": "starter"
+  },
+  {
+   "repo": "hanzoai/agents",
+   "number": 9,
+   "title": "Honor the lines argument in MCPManager.Logs",
+   "url": "https://github.com/hanzoai/agents/issues/9",
+   "tier": "starter"
+  },
+  {
+   "repo": "hanzoai/agents",
+   "number": 8,
+   "title": "Make the agent counts in README.md match the files",
+   "url": "https://github.com/hanzoai/agents/issues/8",
+   "tier": "starter"
+  },
+  {
+   "repo": "hanzoai/agents",
+   "number": 6,
+   "title": "Fix 103 broken relative links in the README",
+   "url": "https://github.com/hanzoai/agents/issues/6",
+   "tier": "starter"
+  },
+  {
+   "repo": "hanzoai/cli",
+   "number": 12,
+   "title": "Rewrite CONTRIBUTING.md for the Rust CLI; it describes a Python app",
+   "url": "https://github.com/hanzoai/cli/issues/12",
+   "tier": "starter"
+  },
+  {
+   "repo": "hanzoai/ci",
+   "number": 13,
+   "title": "Add bin/ignoretracked_test.sh and register it in hanzo.yml",
+   "url": "https://github.com/hanzoai/ci/issues/13",
+   "tier": "starter"
+  }
+ ]
+}

@@ -16,6 +16,9 @@ import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTra
 import { A, Cta, Faq, Field } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, ORGS, useBounties, SAY } from './Bounty.github';
+// The open bounties as GitHub listed them when this page was built (the same query hanzo.ai runs): shown from the first
+// paint, and swapped for GitHub's live answer the moment it arrives, so a rate-limited or offline visitor still sees them.
+import SNAP from './founder/bounties.json';
 import { claim, SUPPORT } from './Founder.claim';
 import '../v2/ProgramScale.css';
 import usePhoneAsk from './usePhoneAsk';
@@ -193,7 +196,7 @@ function Repos() {
   const st = useBounties();
   const room = useRef(null);
   const lit = useInView(room, { once: true, amount: 0.35 }); // the org names light one at a time, once, as the room enters
-  const items = st.kind === 'ready' ? st.open.items.slice(0, 6) : [];
+  const items = st.kind === 'ready' ? st.open.items.slice(0, 6) : SNAP.items;
   const say = st.kind === 'reading' ? SAY.reading : st.kind === 'unreachable' ? SAY.unreachable : SAY.none;
   return (
     <section ref={room} className={'xp-sec xp-dark xfo-repos' + (lit ? ' lit' : '')} data-room="dark" aria-labelledby="xfo-open-h">
