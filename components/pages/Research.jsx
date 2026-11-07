@@ -3,15 +3,15 @@
 // Goal: find the paper, specification or standard they need and read it at its source
 // CTA: Explore papers.hanzo.ai ↗ -> https://papers.hanzo.ai (hero, data-cta="research.hero", data-thumb) · each opened title page: Read on papers.hanzo.ai (data-cta="research.reader") · closing link: github.com/hanzoai (data-cta="research.close")
 // Metric: cta_click on research.hero and research.reader (a papers.hanzo.ai or hips.hanzo.ai click), research.close for GitHub (MASTER: researchers, a GitHub click)
-// Signature: the open-source statement reveals word by word as you scroll, ink rising out of grey in the one dark room (Story, MASTER §4.4).
+// Signature: the desk of title pages: point at a sheet and it lifts, press it and it opens into its full title page (Morph, 600 ms); every index row opens the same way.
 // Beyond: "When it was published". The papers' own dates become a bar per month (each bar is a count of Hanzo's list, nothing more); press a month and the index narrows to what came out then.
 /* Research. Its idea is the paper itself, typeset.
    V2: 8/10 a Story page on Hanzo's scale rhythm: the six newest title pages spread as a desk across the first screen (the one big thing) with a 52px headline over its lower left, one sheet lifting at a time and any sheet opening into its full title page; the library at a glance (19 as the screen's moment), an editorial index that re-flows, every row opening the same way; the open-source statement revealed word by word in the one dark room; deck easing only, nothing floating, every word legible with JavaScript off.
    One idea per screen, one big thing each: the desk (one sheet lifts within a second, then every few seconds; point at a
    sheet and it rises too, press it and it opens; a pause control stops the cycle), the count of papers, the index (a rail
    of kinds and a search beside an editorial list), the statement in the dark room.
-   Motion: signature, the scroll word reveal. Supporting: line-mask cut-ins (headings and figures), the open (a sheet or a
-   row → its title page, 600 ms in-out). Idle: the desk lifting one sheet at a time (pausable). Pointer: rows fill from
+   Motion: signature, the desk and the open (a sheet or a row → its title page, 600 ms in-out). Supporting: line-mask
+   cut-ins (headings and figures), the month that follows your reading in the index rail, the statement's scroll reveal. Idle: the desk lifting one sheet at a time (pausable). Pointer: rows fill from
    the left (400 ms), their sheet tilts 2°, bars and kinds fill. State: the list re-flows, the title page opens. Deck
    timings only (150 ms hover, 300 ms state, 400 ms moves, 600 ms open), no springs or overshoot. Ink only.
    Every word, date and link is Hanzo's. */
@@ -22,6 +22,7 @@ import { A, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import SceneWipe from '../v2/SceneWipe';
 import LivePause, { usePause } from '../v2/LivePause';
+import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Research.css';
@@ -106,14 +107,15 @@ const FEATURED = PAPERS.slice(0, 6);
 // where each sheet lies on the desk (% of the desk) and its tilt; the lower left stays clear for the headline
 const OPEN = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // Morph: 600 ms in-out
 const LAY = [
-  { x: 43, y: 4, r: -3 }, { x: 61, y: 14, r: 4 }, { x: 80, y: 5, r: -5 },
-  { x: 66, y: 30, r: 5 }, { x: 3, y: 3, r: 5 }, { x: 21, y: 20, r: -4 },
+  { x: 24, y: 2, r: -3 }, { x: 46, y: 12, r: 4 }, { x: 67, y: 3, r: -5 },
+  { x: 56, y: 34, r: 5 }, { x: 0, y: 6, r: 5 }, { x: 14, y: 30, r: -4 },
 ];
 
-function DeskSheet({ x, i, on, lay, hidden, pick, open }) {
+function DeskSheet({ x, i, on, lay, hidden, pick, hold, open }) {
   const lid = 'desk-' + key(x);
   return (
-    <div className="xrs-desk-s" data-on={on} style={{ '--x': lay.x + '%', '--y': lay.y + '%', '--r': lay.r + 'deg', zIndex: on ? 20 : 10 - i }}>
+    <div className="xrs-desk-s" data-on={on} style={{ '--x': lay.x + '%', '--y': lay.y + '%', '--r': lay.r + 'deg', zIndex: on ? 20 : 10 - i }}
+      onPointerEnter={(e) => { if (e.pointerType === 'mouse') hold(i); }} onPointerLeave={(e) => { if (e.pointerType === 'mouse') hold(null); }}>
       <button type="button" className="xrs-desk-b" onFocus={() => pick(i)} onClick={(e) => open(x, e.currentTarget, lid)} aria-haspopup="dialog" aria-label={`Open the title page: ${x.t}`}>
         {hidden ? <span className="xrs-desk-ghost" /> : <motion.span layoutId={lid} className="xrs-desk-p" style={{ borderRadius: 8 }} transition={OPEN} aria-hidden="true"><Sheet x={x} /></motion.span>}
       </button>
@@ -129,17 +131,26 @@ function Hero({ open, openLid }) {
   const [mine, setMine] = useState(false);
   const [dealt, setDealt] = useState(false);
   const [paused, pause] = usePause();
+  const [held, setHeld] = useState(false); // the pointer is on a sheet: it owns the desk until it leaves
+  const [n, setN] = useState(6); // phones lay out three sheets, so the cycle walks three
   useEffect(() => {
-    if (mine || calm || !live || paused) return;
-    const t = setTimeout(() => { setTop((v) => (v + 1) % 6); setDealt(true); }, dealt ? 1600 : 900); // the first lift within a second, then one every 1.6 s (each lift moves for 0.5 s)
+    const m = matchMedia('(max-width: 900px)');
+    const f = () => { setN(m.matches ? 3 : 6); setTop((v) => (m.matches ? v % 3 : v)); };
+    f(); m.addEventListener('change', f);
+    return () => m.removeEventListener('change', f);
+  }, []);
+  useEffect(() => {
+    if (mine || held || calm || !live || paused) return;
+    const t = setTimeout(() => { setTop((v) => (v + 1) % n); setDealt(true); }, dealt ? 1600 : 900); // the first lift within a second, then one every 1.6 s (each lift moves for 0.5 s)
     return () => clearTimeout(t);
-  }, [top, mine, calm, live, dealt, paused]);
-  const go = (d) => { setMine(true); setTop((v) => (v + d + 6) % 6); };
+  }, [top, mine, held, calm, live, dealt, paused, n]);
+  const hold = (i) => { if (i === null) { setHeld(false); return; } setHeld(true); setTop(i); };
+  const go = (d) => { setMine(true); setTop((v) => (v + d + n) % n); };
   const pick = (i) => { setMine(true); setTop(i); }; // a keyboard visitor takes the desk over
   return (
     <section ref={ref} className="xrs-hero" aria-labelledby="xrs-h1">
       <div className="xrs-desk">
-        {FEATURED.map((x, i) => <DeskSheet key={x.t} x={x} i={i} on={i === top} lay={LAY[i]} hidden={openLid === 'desk-' + key(x)} pick={pick} open={open} />)}
+        {FEATURED.map((x, i) => <DeskSheet key={x.t} x={x} i={i} on={i === top} lay={LAY[i]} hidden={openLid === 'desk-' + key(x)} pick={pick} hold={hold} open={open} />)}
       </div>
       <div className="pf-wrap pf-grid xrs-hero-g">
         <div className="xrs-hero-c">
@@ -158,7 +169,7 @@ function Hero({ open, openLid }) {
           <div className="xrs-caps" aria-live={mine ? 'polite' : 'off'}>
             {FEATURED.map((x, i) => (
               <p key={x.t} className="xrs-cap" hidden={i !== top}>
-                <span className="pf-mono">{pad(i + 1)} / 06</span>
+                <span className="pf-mono">{pad(i + 1)} / {pad(n)}</span>
                 <b>{x.t}</b>
                 <small>{x.date}. {x.sub}</small>
               </p>
@@ -189,10 +200,9 @@ function Glance({ mon, pickMonth }) {
           ))}
         </dl>
         <div className="xrs-when-w">
-          <h2 className="pf-title xrs-when-h">When it was published</h2>
           <div className="xrs-when" role="group" aria-label="When it was published">
-            {MONTHS.map(([m, n]) => (
-              <button key={m} type="button" aria-pressed={mon === m} onClick={() => pickMonth(mon === m ? null : m)} aria-label={`${m}: ${n} ${n === 1 ? 'paper' : 'papers'}`}>
+            {MONTHS.map(([m, n], j) => (
+              <button key={m} type="button" className={j && when(MONTHS[j - 1][0]) - when(m) > 1 ? 'xrs-when-gap' : undefined} aria-pressed={mon === m} onClick={() => pickMonth(mon === m ? null : m)} aria-label={`${m}: ${n} ${n === 1 ? 'paper' : 'papers'}`}>
                 <span className="pf-mono xrs-when-n">{n}</span>
                 <i aria-hidden="true"><b style={{ transform: `scaleY(${n / PEAK})` }} /></i>
                 <span className="pf-mono xrs-when-m">{m}</span>
@@ -211,7 +221,18 @@ function Library({ mon, setMon, open, openKey }) {
   const [q, setQ] = useState('');
   const t = q.trim().toLowerCase();
   const match = (it) => (!mon || it.date === mon) && (!t || (it.t + ' ' + it.sub + ' ' + (it.date || '')).toLowerCase().includes(t));
-  const counts = useMemo(() => Object.fromEntries(GROUPS.map(([k, , l]) => [k, l.filter(match).length])), [t, mon]); // eslint-disable-line react-hooks/exhaustive-deps
+  const counts = useMemo(() => Object.fromEntries(GROUPS.map(([k, , l]) => [k, l.filter((it) => it.t !== 'All HIPs' && match(it)).length])), [t, mon]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [all, setAll] = useState(false); // the papers index opens on the newest six; Show all opens the rest
+  const folded = !all && !t && !mon;
+  const [now, setNow] = useState(PAPERS[0].date); // the month you are reading, shown in the rail
+  const listRef = useRef(null);
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && e.target.dataset.d) setNow(e.target.dataset.d); }), { rootMargin: '-45% 0px -50% 0px' });
+    el.querySelectorAll('li[data-d]').forEach((li) => io.observe(li));
+    return () => io.disconnect();
+  }, [all, kind, t, mon]);
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
   return (
     <section className="pf-sec xrs-lib" id="papers">
@@ -228,9 +249,10 @@ function Library({ mon, setMon, open, openKey }) {
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find a paper or a HIP" aria-label="Find a paper or a HIP" />
           </label>
+          <p className="xrs-now pf-mono" aria-hidden="true"><AnimatePresence mode="popLayout" initial={false}><motion.span key={now} initial={{ y: '105%' }} animate={{ y: 0 }} exit={{ y: '-105%' }} transition={{ duration: 0.3, ease: EASE }}>{now}</motion.span></AnimatePresence></p>
           {mon && <button type="button" className="xrs-mon" onClick={() => setMon(null)} aria-label={`Showing ${mon}. Show every month`}><span className="pf-mono">{mon}</span><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>}
         </aside>
-        <div className="xrs-list">
+        <div className="xrs-list" ref={listRef}>
           {GROUPS.map(([k, lede, list]) => {
             const shown = kind === 'All' || kind === k;
             const rows = list.filter(match);
@@ -246,7 +268,7 @@ function Library({ mon, setMon, open, openKey }) {
                     const head = it.date && (!prev || prev.date !== it.date);
                     const id = key(it);
                     return (
-                      <motion.li key={it.t} layout="position" hidden={!match(it)} className={head ? 'xrs-new' : ''} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
+                      <motion.li key={it.t} layout="position" hidden={!match(it) || (folded && k === 'Papers' && i >= 6)} data-d={it.date || undefined} className={head ? 'xrs-new' : ''} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
                         <div className="xrs-row">
                           <button type="button" className="xrs-row-open" onClick={(e) => open(it, e.currentTarget)} aria-haspopup="dialog" aria-label={`Open the title page: ${it.t}`}>
                             <span className="xrs-row-d pf-mono">{it.date ? (head ? it.date : '') : pad(i)}</span>
@@ -263,6 +285,7 @@ function Library({ mon, setMon, open, openKey }) {
                     );
                   })}
                 </ol>
+                {k === 'Papers' && folded && rows.length > 6 && <button type="button" className="xrs-all" onClick={() => setAll(true)}><span>Show all</span><span className="pf-mono">{rows.length}</span></button>}
               </motion.div>
             );
           })}
@@ -351,7 +374,7 @@ export default function Research() {
   return (
     <main id="main" className="xrs pf-r">
       {/* JavaScript off: all six hero captions are listed, and nothing waits on a script to be seen */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xrs-w{opacity:1!important}.xrs-cap[hidden]{display:grid!important}.xrs-caps{display:grid!important;gap:14px}.xrs-cap{grid-area:auto!important}.xrs-deal-b{display:none!important}</style>' }} />
+      <NoJs css=".xrs-w{opacity:1!important}.xrs-cap[hidden]{display:grid!important}.xrs-caps{display:grid!important;gap:14px}.xrs-cap{grid-area:auto!important}.xrs-deal-b,.xrs-all,.xrs-now{display:none!important}.xrs-rows li[hidden]{display:block!important}" />
       <Hero open={(it, from, lid) => setOpen({ it, from, lid })} openLid={open ? open.lid : null} />
       <Glance mon={mon} pickMonth={pickMonth} />
       <Library mon={mon} setMon={setMon} open={(it, from) => setOpen({ it, from, lid: key(it) })} openKey={open ? open.lid : null} />
