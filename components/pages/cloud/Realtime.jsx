@@ -278,6 +278,61 @@ function StreamMap({ step, intro }) {
   );
 }
 
+/* ---------- the chapters' object: the hero's three clients, pinned; each chapter changes what they show ----------
+   0 one stream (it drops and reopens on its own); 1 client 3 watches one record, not the collection; 2 client 3 sits
+   on another org's broker; 3 a delete reaches only the clients whose rule can read b; 4 API and stream read one store;
+   5 the access rule decides per client; 6 a grant counts down and is spent once; 7 a third org waits on a limit of
+   two. The words are Hanzo's (the chapter titles and the map labels); records and org names are drawn. */
+function ChapterClients({ step, intro }) {
+  const [ref, live] = useLive(0.3);
+  const [paused, pause] = usePause();
+  const n = useBeat(live && !paused, 1100);
+  const s = intro ? -1 : step;
+  const beat = BEATS[n % BEATS.length];
+  const [action, rows0] = beat;
+  const drop = s === 0 && n % 6 >= 4;
+  const left = Math.max(0, 30 - (n % 8) * 5);
+  const conn = s === 0 ? (drop ? 'network dropped · reconnecting' : 'HTTP 200 · text/event-stream · open')
+    : s === 6 ? (n % 8 >= 6 ? 'grant spent · stream open' : 'grant · ' + left + 's') : s === 7 ? 'deployment · limit 2' : s === 4 ? 'one store · API and stream' : 'One open stream';
+  const who = (c) => (s === 2 ? (c < 3 ? 'org a' : 'org b') : s === 7 ? ['org a', 'org b', 'org c'][c - 1] : s === 1 && c === 3 ? 'orders/ord_42' : s === 5 ? (c === 3 ? "rule can't read b" : 'rule reads b') : 'Client ' + c);
+  const rowsFor = (c) => {
+    if (s === 7 && c === 3) return [];
+    if (s === 1 && c === 3) return ['b'];
+    if ((s === 3 || s === 5) && c === 3) return rows0.filter((r) => !r.startsWith('b'));
+    return rows0;
+  };
+  const tag = (c) => (s === 7 && c === 3 ? 'waits' : s === 3 && c === 3 && action === 'delete' ? 'not told' : s === 0 && drop ? 'reconnecting' : 'Connected');
+  return (
+    <div className={'rt-stage rt-cstage' + (drop ? ' drop' : '')} ref={ref} data-step={s} data-paused={paused || undefined}>
+      <div className="rt-conn">
+        <b>{s < 0 ? MAP[0] : MAP[s]}</b><span className="rt-cconn">{conn}</span>
+        <span className="rt-acts" aria-hidden="true">{['create', 'update', 'delete'].map((a) => <i key={a} className={a === action ? 'on' : ''}>{a}</i>)}</span>
+        <LivePause inline paused={paused} onToggle={pause} className="rt-pause" />
+      </div>
+      <div className="rt-screens" aria-hidden="true">
+        {[1, 2, 3].map((c) => {
+          const wait = s === 7 && c === 3;
+          const no = (s === 3 || s === 5) && c === 3;
+          return (
+            <div key={c} className={'rt-screen ' + ['desk', 'tab', 'hand'][c - 1] + (no || wait ? ' no' : '') + (s === 2 && c === 3 ? ' other' : '')}>
+              <div className="rt-top"><span>{who(c)}</span><em>{tag(c)}</em></div>
+              <ul>
+                <AnimatePresence initial={false} mode="popLayout">
+                  {rowsFor(c).map((r) => (
+                    <motion.li key={r[0]} layout className={r.endsWith('*') ? 'upd' : ''} initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 24, transition: ARRIVE }} transition={{ ...ARRIVE, layout: GLIDE }}>
+                      <i>{r[0]}</i><span style={{ width: W[r[0]] }} />
+                    </motion.li>
+                  ))}
+                </AnimatePresence>
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const GIVES = [
   ['One stream, server-sent', 'A single long-lived HTTP response carries every update, so nothing special has to sit in front of it. The browser notices a dropped network and reconnects on its own.'],
   ['A collection, or one record', 'Watch a whole collection and hear about everything that lands in it, or watch one record and hear only about that one. Change what you are watching without dropping the stream.'],
@@ -312,6 +367,13 @@ function Rail() {
   const wrap = useRef(null);
   const track = useRef(null);
   const x = useMotionValue(0);
+  // one hard stop for drag and arrows alike, measured from the track (a throw can never run past where Next stops)
+  const [min, setMin] = useState(0);
+  useEffect(() => {
+    const m = () => { const w = wrap.current, t = track.current; if (w && t) setMin(Math.min(0, w.offsetWidth - t.scrollWidth)); };
+    m(); addEventListener('resize', m);
+    return () => removeEventListener('resize', m);
+  }, []);
   const nudge = (d) => {
     const w = wrap.current, t = track.current;
     if (!w || !t) return;
@@ -327,7 +389,7 @@ function Rail() {
       </div>
       <div className="rt-rail-v" ref={wrap} data-cursor="" data-swipe-own>
         {/* inertia that stops hard at either end: no elastic overscroll, so nothing springs back */}
-        <motion.div className="rt-rail-in" ref={track} style={{ x }} drag="x" dragConstraints={wrap} dragElastic={0} dragTransition={{ power: 0.25, timeConstant: 260 }}>
+        <motion.div className="rt-rail-in" ref={track} style={{ x }} drag="x" dragConstraints={{ left: min, right: 0 }} dragElastic={0} dragTransition={{ power: 0.25, timeConstant: 260 }}>
           {USES.map(([t, d, k]) => (
             <article key={t} className="rt-use">
               <Vignette k={k} />
@@ -506,7 +568,7 @@ export default function Realtime() {
       <PinnedChapters label="What the stream gives you" per={66} objH={38}
         intro={{ title: ['What the stream', 'gives you'], lede: 'One connection, and the rules you already wrote deciding what goes down it' }}
         steps={steps}
-        visual={(at, intro) => <StreamMap step={at} intro={intro} />} />
+        visual={(at, intro) => <ChapterClients step={at} intro={intro} />} />
 
       <section className="lx-sec rt-uses">
         <div className="lx-wrap rt-uses-h">

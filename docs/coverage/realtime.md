@@ -133,7 +133,7 @@ Done here: `app/realtime/page.jsx` takes `metadata` from `content/pages.json` un
 - [x] Every maker and model page linked in the DOM (n/a)
 - [x] One price figure everywhere (n/a: no prices)
 
-Done here: Cloud product anatomy: identity (h1, line), the product at work (three clients), openable features (eight chapters, the calls, the notes), three spec facts, the close.
+Done here: Cloud product anatomy: identity (h1, line), the product at work (three clients), openable features (eight chapters, the calls, the notes), three spec facts, the close. The eight chapters now pin the hero's own three clients (`ChapterClients`), not the box other cloud pages share: the stream drops and reopens; client 3 watches one record; client 3 sits on org b's broker; a delete skips the client whose rule cannot read b; one store; the rule per client; a grant counting down and spent; a third org waiting on a limit of two. Its connection row and columns have fixed sizes, so the pinned scene never changes height (CLS 0.002 at 1470, 0.001 at 375 and 320). Phone h1 decision: 34px on two lines rather than MASTER's 40px on three, so the ask and the three clients start inside the first screen (noted here per MASTER §0.6). The use-case rail's drag and arrows share one measured hard stop, and a card answers hover (fill, its picture lifts 6px).
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (Frame's `Code` copies exactly what it shows)
