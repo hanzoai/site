@@ -344,12 +344,18 @@
   .xmo-cards:not(.tiles) .sc-meta br { display: none; }
   .xmo-cards:not(.tiles) .sc-meta b::before { content: ' · '; color: var(--quiet); }
   .xmo-cards:not(.tiles) .sc-d, .xmo-cards:not(.tiles) .sc-tags { display: none; }
+  /* each row leads with a 48px thumb: the family's poster, or another lab's Sigil */
+  .xmo-cards:not(.tiles) > li { position: relative; }
+  .xmo-cards:not(.tiles) .xmo-thumb { position: absolute; left: 0; top: 50%; display: block; width: 48px; height: 48px; margin-top: -24px; border-radius: 12px; overflow: hidden; background: #000 center / cover no-repeat; pointer-events: none; }
+  .xmo-thumb-s { position: absolute; inset: 0; width: 100%; height: 100%; color: #fafafa; opacity: .8; }
+  .xmo-cards:not(.tiles) .sc-card { padding-left: 64px; }
   .xmo-cards.tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .xmo-cards.tiles .sc-card { aspect-ratio: auto; min-height: 220px; }
   /* the creative tiles keep their film; the words sit on a black fade at the top, clear of the art (never a dimmed film) */
   .xmo-cards.tiles .sc-card::after { content: ''; position: absolute; inset: 0 0 35% 0; z-index: -1; background: linear-gradient(#000 55%, rgba(0, 0, 0, 0)); pointer-events: none; }
   .xmo-cards.tiles .sc-d { -webkit-line-clamp: 3; }
-  .xmo-cards.tiles .sc-meta br, .xmo-cards.tiles .sc-meta span + span { display: none; }
+  .xmo-cards.tiles .sc-meta br, .xmo-cards.tiles .sc-meta span ~ span { display: none; }
+  .xmo-cards.tiles .sc-tags .sc-pill:first-child { display: none; }
 
   .xmo-pr-t { margin-top: 27px; }
   .xmo-chips.flat { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(-1 * var(--gut)); padding: 0 var(--gut); }
@@ -403,6 +409,25 @@
   .xmo-fam-h span { opacity: 1; }
   .xmo-num { transform: none !important; }
 }
+
+/* SPEC.md to the pixel: grid-template-columns 385px repeat(4, 192px), gap 12px (1,201px); the hero's wrap is that wide
+   so the h1 lines up with Enso's edge. Narrower screens keep the same 2:1:1:1:1 proportions. */
+@media (min-width: 1265px) {
+  .xmo-stage > .x-wrap { width: 1201px; }
+  .xmo-grid { grid-template-columns: 385px repeat(4, 192px); }
+}
+/* the card the light is on (pointer, focus or scroll) leans its arrow forward while its film plays */
+.xmo-cell.lit .xmo-arr { transform: translateX(4px); }
+
+/* one section hands to the next: no double rule above "Every model", no white field after it */
+.xmo-cat .xmo-group:nth-last-child(2) { border-bottom: 0; padding-bottom: 44px; }
+.xmo-every { margin-top: 0; }
+.xmo-priced { padding-top: 96px; }
+.xmo-try { padding-top: 112px; }
+@media (max-width: 899px) { .xmo-priced { padding-top: 56px; } .xmo-try { padding-top: 72px; } }
+
+/* phone rows' thumbs: hidden on wide screens */
+.xmo-thumb { display: none; }
 
 /* the page's pause stops its CSS loops too */
 [data-mpaused] .xmo-live i, [data-mpaused] .xmo-caret { animation-play-state: paused; }
