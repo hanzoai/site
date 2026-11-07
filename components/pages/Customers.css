@@ -1,16 +1,16 @@
 /* /customers, v3 (prefix xcu-). Only the index uses this file; the case studies have their own.
    JAMES.md: 0 UI hues. Ink #0a0a0a, secondary #525252, muted #737373, raised #f5f5f5, sunken #ededed; colour only from
    the cases' own pictures. */
-.xcu { --ink2: #0a0a0a; --sec: #525252; --mut: #737373; --raised: #f5f5f5; --sunk: #ededed; overflow-x: clip; color: var(--ink2); }
+.xcu { --xi: #0a0a0a; --sec: #525252; --mut: #737373; --raised: #f5f5f5; --sunk: #ededed; overflow-x: clip; color: var(--xi); }
 /* deck space: container 1152, gutter clamp(16px, 4vw, 32px), sections clamp(72px, 11vw, 188px) */
 .xcu .vc-wrap, .xcu .vc-grid { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); }
 .xcu .vc-sec { padding: clamp(72px, 11vw, 188px) 0; }
 .xcu ::selection { background: #e4e4e7; }
-.xcu :focus-visible { outline: 2px solid var(--ink2); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
+.xcu :focus-visible { outline: 2px solid var(--xi); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
 .xcu-alt { font: 497 17px/1 var(--sans); letter-spacing: -.01em; color: inherit; white-space: nowrap; }
 
 /* the one ask: solid ink pill (white in the dark room); press is .98, hover darkens and the arrow-free label lifts 1px */
-.xcu-cta { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 28px; border-radius: 999px; background: var(--ink2); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xcu-cta { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 28px; border-radius: 999px; background: var(--xi); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .xcu-cta.lt { background: #fff; color: #0a0a0a; }
 @media (hover: hover) { .xcu-cta:hover { background: #262626; } .xcu-cta.lt:hover { background: #e5e5e5; } }
 .xcu-cta:active { transform: scale(.97); }
@@ -70,8 +70,8 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-years button { position: relative; display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 18px; border-radius: 999px; border: 0; background: none; color: var(--mut); cursor: pointer; font: 500 16px/1 var(--sans); transition: color .25s; }
 .xcu-years button > b, .xcu-years button > .xcu-dots { position: relative; }
 .xcu-years button b { font-weight: 497; }
-.xcu-years button[aria-pressed='true'], .xcu-years button.here { color: var(--ink2); }
-@media (hover: hover) { .xcu-years button:hover { color: var(--ink2); } }
+.xcu-years button[aria-pressed='true'], .xcu-years button.here { color: var(--xi); }
+@media (hover: hover) { .xcu-years button:hover { color: var(--xi); } }
 .xcu-years button:active { transform: scale(.97); }
 .xcu-years button > .xcu-pill { position: absolute; inset: 0; border-radius: 999px; background: var(--sunk); }
 .xcu-dots { display: inline-flex; gap: 4px; }
@@ -87,7 +87,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-row-d { margin: 6px 0 0; font-size: 17px; line-height: 1.55; color: var(--sec); max-width: 44ch; }
 /* on desktop the stage carries the figures; the rows keep them for screen readers */
 .xcu-row-f { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
-.xcu-row.on .xcu-row-y { color: var(--ink2); }
+.xcu-row.on .xcu-row-y { color: var(--xi); }
 .xcu-row.on .xcu-row-n h3 { transform: translateX(8px); }
 @media (hover: hover) { .xcu-row:hover::before { opacity: 1; } }
 .xcu-aside { grid-column: 9 / 13; grid-row: 2; align-self: stretch; }
@@ -100,14 +100,14 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-st-f { display: flex; flex-direction: column; gap: 20px; }
 .xcu-st-f > span { display: flex; flex-direction: column; gap: 8px; }
 .xcu-st-f b { white-space: nowrap; }
-.xcu-st-f .a b { font-size: clamp(52px, 6vw, 84px); font-weight: 220; letter-spacing: -.03em; line-height: .9; font-variant-numeric: tabular-nums; color: var(--ink2); }
-.xcu-st-f .b b { font-size: clamp(28px, 3vw, 40px); font-weight: 220; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink2); }
+.xcu-st-f .a b { font-size: clamp(52px, 6vw, 84px); font-weight: 220; letter-spacing: -.03em; line-height: .9; font-variant-numeric: tabular-nums; color: var(--xi); }
+.xcu-st-f .b b { font-size: clamp(28px, 3vw, 40px); font-weight: 220; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--xi); }
 .xcu-st-f .a.long b { font-size: clamp(36px, 3.5vw, 52px); }
 .xcu-st-f .nm b { white-space: normal;  font-size: clamp(32px, 3.4vw, 52px); font-weight: 497; letter-spacing: -.035em; }
 .xcu-st-f span span { font-size: 16px; color: var(--sec); }
 .xcu-st-dots { display: flex; gap: 6px; padding: 0 32px 28px; }
 .xcu-st-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .16); transition: background-color .3s, transform .3s var(--ease); }
-.xcu-st-dots i.on { background: var(--ink2); transform: scale(1.35); }
+.xcu-st-dots i.on { background: var(--xi); transform: scale(1.35); }
 
 /* 3. backed by builders: a calm row of names, as live shows them, no boxes */
 .xcu-back { padding-top: clamp(96px, 10vw, 160px); }
@@ -118,7 +118,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-wall .xcu-alt { font-size: clamp(22px, 2vw, 30px); letter-spacing: -.03em; }
 .xcu-wall img { height: 28px; width: auto; max-width: 160px; object-fit: contain; filter: grayscale(1) brightness(.25); opacity: .7; transition: opacity .3s, filter .3s; background: transparent !important; }
 .xcu-wall li.ts img { height: 34px; }
-@media (hover: hover) { .xcu-wall a:hover { color: var(--ink2); } .xcu-wall a:hover img { opacity: 1; filter: grayscale(1) brightness(0); } }
+@media (hover: hover) { .xcu-wall a:hover { color: var(--xi); } .xcu-wall a:hover img { opacity: 1; filter: grayscale(1) brightness(0); } }
 .xcu-wall a:active { transform: scale(.97); }
 
 /* 4. the one dark room: Hanzo's launch figures slide past each other as it scrolls by */
@@ -144,7 +144,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-years { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * clamp(16px, 4vw, 32px)); padding: 6px clamp(16px, 4vw, 32px); scrollbar-width: none; position: sticky; top: 60px; z-index: 10; background: #fff; border-bottom: 1px solid rgba(0, 0, 0, .1); }
   .xcu-years::-webkit-scrollbar { display: none; }
   .xcu-years button { flex: none; }
-  .xcu-years button.here:not([aria-pressed='true'])::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--ink2); }
+  .xcu-years button.here:not([aria-pressed='true'])::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--xi); }
   .xcu-every-g { row-gap: 24px; }
   .xcu-every-g h2, .xcu-years, .xcu-index { grid-row: auto; }
   .xcu-index { grid-column: 1 / -1; }
@@ -160,7 +160,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-row-f dt, .xcu-row-f dd { transform: translateY(110%); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
   .xcu-row-f dd { transition-delay: 60ms; }
   .xcu-row.read .xcu-row-f dt, .xcu-row.read .xcu-row-f dd { transform: none; }
-  .xcu-row-f dt { font-size: 40px; font-weight: 220; letter-spacing: -.03em; line-height: 1; color: var(--ink2); font-variant-numeric: tabular-nums; }
+  .xcu-row-f dt { font-size: 40px; font-weight: 220; letter-spacing: -.03em; line-height: 1; color: var(--xi); font-variant-numeric: tabular-nums; }
   .xcu-row-f dd { margin: 6px 0 0; font-size: 15px; color: var(--sec); }
   .xcu-row-y { line-height: 1.6; }
   .xcu-back-g h2, .xcu-wall { grid-column: 1 / -1; }
