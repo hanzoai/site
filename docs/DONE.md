@@ -1,3 +1,5 @@
+**Read `docs/COPY-RULE.md` first (James, 8 Nov): no wording changes anywhere; `node scripts/copycheck.mjs` must say missing 0.**
+
 # DONE: the finish line (James, 7 Nov). When this is met, everything stops.
 
 There is one version: the final one. ("v2" was only a label; there is no v3, v4 or v5 to wait for.)
