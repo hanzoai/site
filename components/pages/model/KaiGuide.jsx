@@ -1,27 +1,34 @@
 'use client';
-/* How to use Kai (/kai/guide), archetype F: terminal first, code as the hero.
-   Chapters: a live session on the first screen; the three question types as a spec sheet; the code in three languages
-   to copy and run; the limits beside a request checker; the recipes in the one dark room; the move from Jev as a diff.
-   Signature: the session runs itself. On the first screen the guide's own curl request is typing into a terminal, then
-   the response streams back in its documented shape (id, model, routing, usage with output_tokens 0, an answer per
-   question, state_hash, latency_ms) with no values made up: Kai writes no text, and the session shows it. The request
-   text is written into one text node through a ref, never per-letter React state; reduced motion shows it complete.
+/* How to use Kai (/kai/guide). Page type: Developer (MASTER 4.6): a typewriter terminal as the hero, Copy beside the key ask.
+   Chapters: the session; the three question types as a spec sheet; the code in three languages (kit Tabs + CodeBlock);
+   the limits beside a request checker; the recipes in the one black room; the move from Jev as a diff, the benchmark
+   as the proof figures; the key ask again.
+   Signature: the session runs itself, once. The guide's own curl request types into a terminal, then the response
+   streams back in its documented shape (id, model, routing, usage with output_tokens 0, an answer per question,
+   state_hash, latency_ms) with no values made up, then it rests. Text goes into one text node through a ref; the
+   terminal starts empty with JS on (full text with JS off and under reduced motion); a pause / replay control sits in
+   its bar; its box never changes size.
    Beyond: the request checker. Pick a limit and the checker loads that case (101 questions, a 3,982-token state, a
    state past 32,768, kai-1.4); drag the rulers to check your own request and see its input price at $0.021 per million
-   tokens beside Jev's $0.042.
-   Persona: Developer wiring Kai decisions into a pipeline (PLAN-COMPONENTS 1.1 Developer row).
-   Goal: send a first POST /v1/decisions; metric api_key_created.
-   CTA: Get an API key (the one solid ask, in the hero with data-thumb and repeated at the close) to platform.hanzo.ai/api-keys.
-   V2: 8.5/10 Rebuilt terminal-first in greys only (JAMES.md: no UI hues, nothing above the h1, one solid ask per screen): a self-running typed session as hero, a spec-sheet of question types, sticky copy-and-run code, limits that drive the checker, recipes room, Jev move as a landing diff with the benchmark as hero figures. */
-// Signature: the session runs itself: the guide's curl request typing into a terminal and its response shape streaming back
+   tokens beside Jev's $0.042. Its verdict box always holds the tallest answer, so nothing below it moves.
+   V2: 8.5/10 Deck rework (MASTER): 52/26 px rest sizes, eased tweens only, kit Tabs/CodeBlock/Cta, terminal under the h1 on phones and empty until it types, reserved boxes (no layout shift), one-shot demos that rest. */
+// Persona: Developer wiring Kai decisions into a pipeline (MASTER 1: developers).
+// Goal: copy the request, then get a key and send a first POST /v1/decisions.
+// CTA: Get an API key (Cta solid, data-cta kai-guide.hero, data-thumb), repeated at the close (kai-guide.close).
+// Metric: api_key_created
+// Signature: the session runs itself once: the guide's curl request typing into a terminal and its response shape streaming back
 // Beyond: the request checker, driven by the limit you pick or by your own rulers, priced against Jev
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Copy } from '../../ui';
-import { A, More } from '../../kit';
+import { Copy } from '../../ui';
+import { A, Cta, Tabs, TabPanel, CodeBlock } from '../../kit';
 import { check, TRAINED, MAXSTATE, MAXQ } from './kaiLimits';
 import { arrows } from './live';
 import './KaiGuide.css';
+
+// the deck's motion tokens (MASTER 3.1): durations in seconds, one emphasis curve, no springs
+const T = { press: 0.09, fast: 0.15, base: 0.3, slow: 0.4, slower: 0.5, line: 0.7 };
+const EMPH = [0.16, 1, 0.3, 1];
 
 const CURL = `curl -sS --fail-with-body https://api.hanzo.ai/v1/decisions \\
   -H "Authorization: Bearer $HANZO_API_KEY" \\
@@ -108,48 +115,58 @@ const RESP = `{
   "latency_ms": …
 }`;
 
-/* the first screen: a session that types the request and streams the response (typing into text nodes via refs) */
+/* the first screen: the request types and the response streams, once (typing into text nodes via refs), then rests */
 function Session() {
   const box = useRef(null), req = useRef(null), res = useRef(null), scr = useRef(null), say = useRef(null);
-  const seen = useInView(box, { amount: 0.35 });
+  const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
+  const [hold, setHold] = useState(false);
+  const [phase, setPhase] = useState('idle'); // idle (empty, waiting) | run | done
   const [run, setRun] = useState(0);
+  const at = useRef({ i: 0, j: 0 });
+  const lines = RESP.split('\n');
+  const show = (p, s) => { box.current.dataset.phase = p; say.current.textContent = s; };
   useEffect(() => {
-    if (calm || !seen) return;
-    const b = box.current, r = req.current, o = res.current, sc = scr.current, st = say.current;
-    const lines = RESP.split('\n');
-    let t, i = 0, j = 0;
-    const phase = (p, s) => { b.dataset.phase = p; st.textContent = s; };
+    if (calm) { req.current.textContent = CURL; res.current.textContent = RESP; show('done', '200 · output_tokens 0'); setPhase('done'); return; }
+    if (!seen || hold || phase === 'done') return;
+    const r = req.current, o = res.current, sc = scr.current, p = at.current;
+    let t;
     const pin = () => { sc.scrollTop = sc.scrollHeight; };
     const step = () => {
-      i = Math.min(CURL.length, i + 3 + ((Math.random() * 4) | 0));
-      r.textContent = CURL.slice(0, i); pin();
-      if (i < CURL.length) t = setTimeout(step, 14); else { phase('wait', 'sending'); t = setTimeout(stream, 650); }
+      p.i = Math.min(CURL.length, p.i + 3 + ((Math.random() * 4) | 0));
+      r.textContent = CURL.slice(0, p.i); pin();
+      if (p.i < CURL.length) t = setTimeout(step, 14); else { show('wait', 'sending'); t = setTimeout(stream, 600); }
     };
     const stream = () => {
-      if (!j) phase('stream', '200 · streaming');
-      o.textContent = lines.slice(0, ++j).join('\n'); pin();
-      if (j < lines.length) t = setTimeout(stream, 75); else { phase('done', '200 · output_tokens 0'); t = setTimeout(() => setRun((x) => x + 1), 6500); }
+      if (!p.j) show('stream', '200 · streaming');
+      o.textContent = lines.slice(0, ++p.j).join('\n'); pin();
+      if (p.j < lines.length) t = setTimeout(stream, 75); else { show('done', '200 · output_tokens 0'); setPhase('done'); }
     };
-    r.textContent = ''; o.textContent = ''; sc.scrollTop = 0; phase('type', 'typing');
-    t = setTimeout(step, 450);
-    return () => { clearTimeout(t); r.textContent = CURL; o.textContent = RESP; phase('done', '200 · output_tokens 0'); };
-  }, [seen, calm, run]);
+    if (phase === 'idle') { r.textContent = ''; o.textContent = ''; sc.scrollTop = 0; setPhase('run'); }
+    show(p.i < CURL.length ? 'type' : 'stream', p.i < CURL.length ? 'typing' : '200 · streaming');
+    t = setTimeout(p.i < CURL.length ? step : stream, p.i || p.j ? 0 : 450);
+    return () => clearTimeout(t);
+  }, [seen, calm, hold, phase, run]); // eslint-disable-line react-hooks/exhaustive-deps
+  const replay = () => { at.current = { i: 0, j: 0 }; setHold(false); setPhase('idle'); setRun((x) => x + 1); };
+  const label = phase === 'done' ? 'Replay' : hold ? 'Play' : 'Pause';
   return (
-    <figure className="kg-sess" ref={box} data-phase="done">
+    <figure className="kg-sess" ref={box}>
       <div className="kg-sess-bar">
-        <i /><i /><i />
         <b>POST /v1/decisions</b>
         <span className="kg-sess-st"><i aria-hidden="true" /><span ref={say}>200 · output_tokens 0</span></span>
+        <button type="button" className="kg-sess-btn" aria-label={label} aria-pressed={phase !== 'done' ? hold : undefined} onClick={() => (phase === 'done' ? replay() : setHold((h) => !h))}>
+          {phase === 'done'
+            ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            : hold
+              ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
+              : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5.5 3.5v9M10.5 3.5v9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>}
+        </button>
         <span className="kg-sess-copy"><Copy text={CURL} /></span>
       </div>
       <div className="kg-sess-scr" ref={scr} tabIndex={0} data-lenis-prevent aria-label="curl request and the shape of its response">
-        <pre className="kg-sess-req"><span className="kg-ps" aria-hidden="true">$ </span><code ref={req}>{CURL}</code><i className="kg-caret" aria-hidden="true" /></pre>
+        <pre className="kg-sess-req"><span className="kg-ps" aria-hidden="true">$ </span><code ref={req}>{CURL}</code></pre>
         <pre className="kg-sess-res"><code ref={res}>{RESP}</code></pre>
       </div>
-      <button type="button" className="kg-replay" onClick={() => setRun((x) => x + 1)}>
-        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>Replay
-      </button>
     </figure>
   );
 }
@@ -163,23 +180,21 @@ const TYPES = [
 function CallIt() {
   const [k, setK] = useState(0);
   return (
-    <figure className="kg-code">
-      <div className="kg-code-bar">
-        <div className="kg-tabs" role="tablist" aria-label="Language" onKeyDown={arrows}>
-          {CODES.map(([l], i) => (
-            <button key={l} type="button" role="tab" id={'kg-t' + i} aria-selected={k === i} aria-controls={'kg-p' + i} tabIndex={k === i ? 0 : -1} onClick={() => setK(i)}>
-              {k === i && <motion.i layoutId="kg-tab-ink" className="kg-tab-ink" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}<span>{l}</span>
-            </button>
-          ))}
-        </div>
-        <span className="kg-code-copy"><Copy text={CODES[k][1]} /></span>
-      </div>
-      {CODES.map(([l, c], i) => <pre key={l} id={'kg-p' + i} role="tabpanel" aria-labelledby={'kg-t' + i} hidden={k !== i} tabIndex={0} data-lenis-prevent><code>{c}</code></pre>)}
-    </figure>
+    <div className="kg-code">
+      <Tabs id="kg-lang" label="Language" tabs={CODES.map(([l]) => l)} value={k} onChange={setK} />
+      {CODES.map(([l, c], i) => (
+        <TabPanel key={l} id="kg-lang" i={i} value={k} className="kg-code-p">
+          <CodeBlock code={c} label={l} />
+        </TabPanel>
+      ))}
+    </div>
   );
 }
 
 const SCENES = [[0, 800, 3], [0, 3982, 3], [1, 3982, 3], [1, 36000, 3], [0, 2000, 101]];
+// the five answers kaiLimits can give, so the verdict box always holds the tallest one
+const OUTS = [check(0, 2000, 101), check(0, 36000, 3), check(0, 3982, 3), check(0, 800, 3), check(1, 800, 3)];
+const WALK = [2, 3, 4, 0, 1]; // the order the checker plays the five cases, ending where it began
 const SCENE_ROW = [3, 2, 0, 2, 1]; // which limit each checker case illustrates (Model, Questions, State, Time, Price)
 const ROW_SCENE = [2, 4, 1, 0, 0];
 const LO = Math.log2(256), HI = Math.log2(65536);
@@ -191,7 +206,7 @@ function Checker({ s, mine, setMine }) {
   const [m, tok, q] = mine || SCENES[s];
   const r = check(m, tok, q);
   const set = (i, v) => { const n = [...(mine || SCENES[s])]; n[i] = v; setMine(n); };
-  const spring = { type: 'spring', stiffness: 300, damping: 30 };
+  const glide = { duration: T.base, ease: EMPH };
   return (
     <div className="kg-check">
       <div className="kg-check-bar"><b>POST /v1/decisions</b><em>request check</em></div>
@@ -206,7 +221,7 @@ function Checker({ s, mine, setMine }) {
             <i className="kg-zone z3" style={{ left: tokPos(MAXSTATE) * 100 + '%' }} />
             <span className="kg-mk" style={{ left: tokPos(TRAINED) * 100 + '%' }}>1,024</span>
             <span className="kg-mk" style={{ left: tokPos(MAXSTATE) * 100 + '%' }}>32,768</span>
-            <motion.span className="kg-run" initial={false} animate={{ x: tokPos(tok) * 100 + '%' }} transition={spring}><i /></motion.span>
+            <motion.span className="kg-run" initial={false} animate={{ x: tokPos(tok) * 100 + '%' }} transition={glide}><i /></motion.span>
             <input type="range" min="0" max="1000" value={Math.round(tokPos(tok) * 1000)} onChange={(e) => set(1, posTok(+e.target.value / 1000))} aria-label="State tokens" />
           </span>
         </label>
@@ -215,15 +230,19 @@ function Checker({ s, mine, setMine }) {
           <span className="kg-track">
             <i className="kg-zone z3" style={{ left: (MAXQ / 101) * 100 + '%' }} />
             <span className="kg-mk" style={{ left: (MAXQ / 101) * 100 + '%' }}>100</span>
-            <motion.span className="kg-run" initial={false} animate={{ x: (q / 101) * 100 + '%' }} transition={spring}><i /></motion.span>
+            <motion.span className="kg-run" initial={false} animate={{ x: (q / 101) * 100 + '%' }} transition={glide}><i /></motion.span>
             <input type="range" min="1" max="101" value={q} onChange={(e) => set(2, +e.target.value)} aria-label="Questions" />
           </span>
         </label>
-        <div className="kg-verdict" data-bad={r.code !== 200 ? '' : undefined} aria-live={mine ? 'polite' : 'off'}>
-          <motion.b key={r.code} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.4, ease: EASE }}>{r.code}</motion.b>
-          <div>
-            <code>{r.flag}</code>
-            <p>{r.why}</p>
+        <div className="kg-verdict" data-bad={r.code !== 200 ? '' : undefined}>
+          <motion.b key={r.code} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: T.slow, ease: EMPH }}>{r.code}</motion.b>
+          <div className="kg-v-stack" aria-live={mine ? 'polite' : 'off'}>
+            {OUTS.map((o) => (
+              <div key={o.flag} data-on={o.flag === r.flag || undefined} aria-hidden={o.flag !== r.flag || undefined}>
+                <code>{o.flag}</code>
+                <p>{o.why}</p>
+              </div>
+            ))}
           </div>
         </div>
         <p className="kg-cost">
@@ -249,13 +268,14 @@ function Limits() {
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const [s, setS] = useState(1);
+  const [n, setN] = useState(0); // steps played: the checker walks Hanzo's cases once, then rests on the extrapolated one
   const [mine, setMine] = useState(null); // [model, tokens, questions] once the visitor takes over
   const [row, setRow] = useState(null);
   useEffect(() => {
-    if (!seen || mine || calm) return;
-    const t = setInterval(() => setS((x) => (x + 1) % SCENES.length), 2800);
-    return () => clearInterval(t);
-  }, [seen, mine, calm]);
+    if (!seen || mine || calm || n >= WALK.length) return;
+    const t = setTimeout(() => { setS(WALK[n]); setN(n + 1); }, 2600);
+    return () => clearTimeout(t);
+  }, [seen, mine, calm, n]);
   const lit = row !== null ? row : mine ? null : SCENE_ROW[s];
   const pick = (i) => { setRow(i); setMine([...SCENES[ROW_SCENE[i]]]); };
   return (
@@ -339,15 +359,15 @@ export default function KaiGuide() {
         <div className="kg-wrap kg-hero-g">
           <div className="kg-hero-t">
             <h1 id="kg-h" className="kg-h1">
-              <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-replay{display:none!important}'}</style></noscript>
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: EASE, delay: 0.1 }}>How to</motion.span></span>
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.05, ease: EASE, delay: 0.2 }}>Use Kai</motion.span></span>
+              <noscript><style>{'.kg-h1 .x-line-in,.kg-verdict b{transform:none!important;opacity:1!important}.kg-sess-btn{display:none!important}.kg-code [role=tabpanel]{display:block!important}.kg-code [role=tablist]{display:none!important}'}</style></noscript>
+              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.1 }}>How to</motion.span></span>
+              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.16 }}>Use Kai</motion.span></span>
             </h1>
             <p className="kg-kick kg-sub">Hanzo decision model · 0 output tokens</p>
             <p className="kg-lede">Send a state and typed questions to <code>POST /v1/decisions</code> with <code>model: &quot;kai&quot;</code>. Kai answers each question with a probability for every answer it allows, and writes no text.</p>
             <div className="kg-acts">
-              <A to="https://platform.hanzo.ai/api-keys" className="x-btn solid" data-thumb="Get an API key">Get an API key</A>
-              <More to="https://docs.hanzo.ai/docs/decisions">Read the reference</More>
+              <Cta to="https://platform.hanzo.ai/api-keys" id="kai-guide.hero" thumb>Get an API key</Cta>
+              <Cta to="https://docs.hanzo.ai/docs/decisions" kind="link" id="kai-guide.hero-reference">Read the reference</Cta>
             </div>
             <p className="kg-crumb"><A to="/models">Models</A> <span aria-hidden="true">/</span> <span>Kai Guide</span></p>
           </div>
@@ -386,8 +406,8 @@ export default function KaiGuide() {
 
       <Limits />
 
-      <section className="kg-recipes kg-sec" data-room="dark" aria-labelledby="kg-r">
-        <div className="kg-wrap">
+      <section className="kg-recipes kg-sec" aria-labelledby="kg-r">
+        <div className="kg-wrap kg-room" data-room="dark">
           <div className="kg-head">
             <div><h2 id="kg-r" className="kg-h2">Composable Decision Recipes</h2></div>
             <div className="kg-side"><p className="kg-kick">Recipes &amp; Blueprints</p><p className="kg-lede-s">Modular Rust structs and TypeScript workflows that sit inside your pipelines: retail triage, industrial diagnostics, confidence routing, and agent loops.</p></div>
@@ -396,9 +416,9 @@ export default function KaiGuide() {
             {RECIPES.map(([n, d]) => <li key={n}><code>{n}</code><p>{d}</p></li>)}
           </ul>
           <div className="kg-acts">
-            <A to="https://docs.hanzo.ai/docs/guides/cookbook/recipes" className="x-btn solid">Read the Recipes Guide</A>
-            <More to="https://docs.hanzo.ai/docs/guides/cookbook">View All Cookbook Pipelines</More>
-            <A to="https://github.com/hanzoai/kai/tree/main/recipes" className="kg-gh">Kai recipes on GitHub ↗</A>
+            <Cta to="https://docs.hanzo.ai/docs/guides/cookbook/recipes" id="kai-guide.recipes">Read the Recipes Guide</Cta>
+            <Cta to="https://docs.hanzo.ai/docs/guides/cookbook" kind="link" id="kai-guide.recipes-cookbook">View All Cookbook Pipelines</Cta>
+            <A to="https://github.com/hanzoai/kai/tree/main/recipes" className="kg-gh" data-cta="kai-guide.recipes-github">Kai recipes on GitHub ↗</A>
           </div>
         </div>
       </section>
@@ -418,8 +438,8 @@ export default function KaiGuide() {
             </div>
           </div>
           <div className="kg-acts kg-close">
-            <A to="https://platform.hanzo.ai/api-keys" className="x-btn solid">Get an API key</A>
-            <More to="https://docs.hanzo.ai/docs/decisions">Read the reference</More>
+            <Cta to="https://platform.hanzo.ai/api-keys" id="kai-guide.close">Get an API key</Cta>
+            <Cta to="https://docs.hanzo.ai/docs/decisions" kind="link" id="kai-guide.close-reference">Read the reference</Cta>
           </div>
         </div>
       </section>
