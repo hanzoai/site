@@ -73,6 +73,8 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
 
   return (
     <section ref={ref} id={id} className={'pf-pin ' + (flip ? 'flip ' : '') + className} style={{ '--n': n, '--per': step + 'svh' }} aria-label={label} data-room={dark ? 'dark' : undefined}>
+      {/* JS off: no pinning, every chapter reads in order */}
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.pf-pin{height:auto!important}.pf-pin-stick{position:static!important;height:auto!important;padding:120px 0}.pf-pin-texts{display:block!important}.pf-pin-t{opacity:1!important;transform:none!important;margin-bottom:64px}</style>' }} />
       <div className="pf-pin-stick">
         <div className="pf-wrap pf-pin-grid">
           <div className="pf-pin-copy">

@@ -200,6 +200,8 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
   .xph-stack-l a:hover::before { clip-path: inset(0 0 0 0 round 16px); }
   .xph-stack-l a:hover b { transform: translate3d(6px, 0, 0); }
 }
+.xph-stack-l .xph-hx { transition: transform .45s var(--ease); }
+.xph-stack-l a:hover .xph-hx, .xph-stack-l a:focus-visible .xph-hx { transform: scale(1.12) rotate(-4deg); }
 .xph-stack-l a:hover > i, .xph-stack-l a:focus-visible > i { background: var(--ink); color: #fff; transform: translate3d(6px, 0, 0); }
 .xph-stack-l a:active { transform: translate3d(0, 1px, 0); }
 .xph-stack-l a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }

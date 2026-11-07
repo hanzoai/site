@@ -163,7 +163,7 @@ function Bill() {
 
         <aside className="xcm-right" aria-label="The bill">
           <div className="xcm-receipt" data-morph-target ref={ref}>
-            <noscript><style>{'.xcm-lines li,.xcm-twice{opacity:1!important;transform:none!important}.xcm-stackbar i{transform:none!important}'}</style></noscript>
+            <noscript dangerouslySetInnerHTML={{ __html: '<style>.xcm-lines li,.xcm-twice{opacity:1!important;transform:none!important}.xcm-stackbar i{transform:none!important}</style>' }} />
             <div className="xcm-paper">
               <p className="xcm-r-h"><span>Run it yourself</span><span className="pf-mono">{lines.length} / {STACKS.length}</span></p>
               <div className="xcm-stackbar" aria-hidden="true">

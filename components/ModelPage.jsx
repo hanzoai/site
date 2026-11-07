@@ -1,4 +1,5 @@
 'use client';
+// Persona: a visitor who opened a flagship card (developer or creative). Goal: meet the model, then try it. CTA: the model body's own first action, in Hanzo's words. Metric: api_key_created.
 /* A model's page. Its hero is the card's film at full bleed, exactly where the open transition lands, so the card
    and the page are one continuous object. Close runs the transition back into the card. The body below is the
    model's own rebuilt page (passed as children by app/<slug>/page.jsx); a route without one falls back to the port.
@@ -15,6 +16,8 @@ import { useOpener } from './Opener';
 import Ported from './Ported';
 import { bySlug, media, MODELS } from '../lib/models';
 import { useFilms } from './pages/model/live';
+import { Img } from './kit';
+import ModelFilm from './v2/ModelFilm';
 import './pages/model/Model.css';
 
 export default function ModelPage({ slug, html, children }) {
@@ -43,8 +46,8 @@ export default function ModelPage({ slug, html, children }) {
     <main className="x-model" ref={root}>
       <section className="x-mhero" ref={hero} data-hero={slug} data-ready={ready ? '' : undefined} aria-labelledby="mh">
         <motion.div className="x-mhero-media" style={{ y, clipPath }}>
-          <img src={media(slug, 'webp')} alt="" />
-          <video src={media(slug, 'webm')} autoPlay muted loop playsInline aria-hidden="true" />
+          <Img src={media(slug, 'webp')} alt="" w={1200} h={1500} priority />
+          <ModelFilm slug={slug} />
         </motion.div>
         <motion.div className="x-mhero-copy x-wrap" style={{ y: textY, opacity: fade }}>
           <motion.p className="x-mindex" {...rise(0.12)}><span>{String(i + 1).padStart(2, '0')}</span>{` / ${String(MODELS.length).padStart(2, '0')}`}</motion.p>
@@ -69,8 +72,8 @@ export default function ModelPage({ slug, html, children }) {
       </section>
       <div className="x-model-body">{children || <Ported html={html} />}</div>
       <a href={'/' + next.slug} className="x-next" data-card={next.slug} data-cursor="Open" onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
-        <img src={media(next.slug, 'webp')} alt="" />
-        <video className="mb-next-film" src={media(next.slug, 'webm')} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
+        <Img src={media(next.slug, 'webp')} alt="" w={1200} h={1500} />
+        <ModelFilm slug={next.slug} className="mb-next-film" />
         <span className="x-next-k">Next model</span>
         <span className="x-next-n">{next.name}</span>
         <span className="x-next-d">{next.desc}</span>

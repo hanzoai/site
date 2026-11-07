@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
 import { Arrow, Copy, Mark, fine } from './ui';
+import { Tabs, TabPanel } from './kit';
 import C from '../content';
 import { SCRIPT } from '../lib/script';
 import SetupMenu from './SetupMenu';
@@ -125,9 +126,7 @@ function Steps({ open }) {
 export default function Agents() {
   const mx = useMotionValue(Infinity);
   const my = useMotionValue(Infinity);
-  const [tab, setTab] = useState('start');
-  const tabs = [['start', 'Hanzo.Start'], ['agents', 'Hanzo.Agents']];
-  const key = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const n = tab === 'start' ? 'agents' : 'start'; setTab(n); document.getElementById('hv-tab-' + n)?.focus(); } };
+  const [tab, setTab] = useState(0);
   return (
     <section className="hv-agents v2-sec" id="compatible" aria-labelledby="compatible-h">
       <div className="v2-wrap">
@@ -154,15 +153,9 @@ export default function Agents() {
             </div>
           </div>
           <div className="hv-console v2-object">
-            <div className="hv-con-tabs" role="tablist" aria-label="Start with Hanzo" onKeyDown={key}>
-              {tabs.map(([k, t]) => (
-                <button key={k} id={'hv-tab-' + k} type="button" role="tab" aria-selected={tab === k} aria-controls={'hv-pan-' + k} tabIndex={tab === k ? 0 : -1} onClick={() => setTab(k)}>
-                  {tab === k && <motion.span layoutId="hv-con-bg" className="hv-con-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
-                  <span className="hv-con-tt"><Mark size={13} /> <b>{t}</b></span>
-                </button>
-              ))}
-            </div>
-            <div className="hv-pan" id="hv-pan-start" role="tabpanel" aria-labelledby="hv-tab-start" hidden={tab !== 'start'}>
+            <span className="hv-con-mark" aria-hidden="true"><Mark size={14} /></span>
+            <Tabs id="hv-con" tabs={['Hanzo.Start', 'Hanzo.Agents']} value={tab} onChange={setTab} label="Works with every agent, bot and CLI tool." className="hv-con-tabs" />
+            <TabPanel id="hv-con" i={0} value={tab} className="hv-pan">
               <p className="hv-con-k">Install the Hanzo CLI</p>
               <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" />
               <div className="hv-or2"><span>or</span></div>
@@ -171,10 +164,10 @@ export default function Agents() {
               <Cmd bin="hanzo" rest="dev --claude" copy="hanzo dev --claude" />
               <p className="hv-con-k">Set up Codex, Cursor and more</p>
               <SetupMenu inline />
-            </div>
-            <div className="hv-pan" id="hv-pan-agents" role="tabpanel" aria-labelledby="hv-tab-agents" hidden={tab !== 'agents'}>
-              <Steps open={tab === 'agents'} />
-            </div>
+            </TabPanel>
+            <TabPanel id="hv-con" i={1} value={tab} className="hv-pan">
+              <Steps open={tab === 1} />
+            </TabPanel>
           </div>
         </div>
       </div>

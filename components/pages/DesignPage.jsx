@@ -1,22 +1,22 @@
 'use client';
-/* Hanzo Design. Signature: one conversation, every artifact. A single upload (Hanzo's own neon-horizon-master.mp3)
-   sits in the chat while the workspace window beside it morphs, tab by tab, into a music app, a deck, an ad suite,
-   a poster, a document and a video, all of the same track. The headline's own words are the tabs: the highlight
-   glides from "visuals" to "decks" as the window changes shape. The music app is live: its spectrum dances to
-   124 BPM and the four synth pads play. Further down, the six creative models sit on a dark canvas as nodes you
-   open into their pages. Beyond: "One brief" - write your own brief once, choose the artifacts you want, and the set
-   that one conversation hands back is laid out with each one's format and the model behind it. Nothing is sent; the
-   brief is yours, every other word is Hanzo's. */
+// Signature: Editorial type runs into a live workspace window: one conversation, and its tab morphs on its own between music app, deck, ad suite, visual, document and video while the matching word of the headline lights up
+// Beyond: One brief: write your own brief once, choose the artifacts you want, and the set one conversation hands back is laid out with each one's format and the model behind it
+/* Hanzo Design, v2 (Archetype A, launch: the workspace is the product).
+   V2: 8/10 editorial 5/7 hero, oversized type running into a workspace window whose artifact morphs by itself; three pinned chapters; the six capabilities as sticky stacked sheets; One brief kept as the Beyond; the models in the one dark room open into their pages
+   Motion: signature = the workspace window (the frame morphs to each artifact's shape, the headline's word follows). Supporting:
+   pinned chapters (components/v2/AppScenes), line-masked headline, sheets that stack as you scroll. Accent: magenta.
+   The music app is live: its spectrum dances to 124 BPM and the four synth pads play. Every word is Hanzo's; the brief is yours. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Copy, Mark, useTilt } from '../ui';
-import { A, Go, More, SecHead } from '../kit';
+import { Copy, Mark, Magnetic } from '../ui';
+import { A, Go, More } from '../kit';
 import { useOpener } from '../Opener';
+import Lines from '../v2/AppLines';
+import Scenes from '../v2/AppScenes';
+import '../v2/AppType.css';
 import './DesignPage.css';
 
-// the kit's Tick, drawn still: this page's motion budget goes to its signature
-const Check = ({ size = 22 }) => <svg className="x-tick" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" strokeWidth="1.5" /><path d="M7.5 12.5l3 3 6-6.5" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-
+const EASE = [0.16, 1, 0.3, 1];
 const TABS = ['Music App', 'Presentation', 'Ad Suite', 'Visual', 'Document', 'Video'];
 const KIND = ['app', 'deck', 'ad', 'visual', 'doc', 'video'];
 const BADGE = ['HTML5 app', '16:9 deck', 'Multi-aspect ads', 'Iro', 'Vector PDF', 'MP4'];
@@ -71,13 +71,13 @@ function Spectrum({ mode, live, energy }) {
   }, [mode, live, energy]);
   if (mode === 1) {
     return (
-      <svg className="dsn-wave" viewBox="0 0 400 100" preserveAspectRatio="none" aria-hidden="true">
-        <path ref={wave} d={'M0 50 L400 50'} fill="none" strokeWidth="2" strokeLinejoin="round" />
+      <svg className="dz-wave" viewBox="0 0 400 100" preserveAspectRatio="none" aria-hidden="true">
+        <path ref={wave} d="M0 50 L400 50" fill="none" strokeWidth="2" strokeLinejoin="round" />
       </svg>
     );
   }
   return (
-    <div className={'dsn-spec' + (mode === 2 ? ' radial' : '')} aria-hidden="true">
+    <div className={'dz-spec' + (mode === 2 ? ' radial' : '')} aria-hidden="true">
       {Array.from({ length: N }).map((_, i) => (
         <i key={i} ref={(el) => (bars.current[i] = el)} style={{ transform: mode === 2 ? `rotate(${i * 9}deg) translateY(-34%) scaleY(.3)` : `scaleY(${0.2 + ((i * 37) % 11) / 20})` }} />
       ))}
@@ -91,51 +91,35 @@ function MusicApp({ live }) {
   const energy = useRef(0);
   const synth = useSynth();
   return (
-    <div className="dsn-app">
-      <div className="dsn-app-top">
+    <div className="dz-app">
+      <div className="dz-app-top">
+        <span className="dz-disc" aria-hidden="true"><img src="/models/uta.webp" alt="" /></span>
         <div>
           <h3>Neon Horizon Player</h3>
           <p>Interactive HTML5 WebAudio + Canvas app with real-time 60fps FFT spectrum, waveform scrubber, 3-band EQ, and 4 playable synth pads.</p>
         </div>
       </div>
-      <div className="dsn-player">
-        <div className="dsn-track">
-          <span className="dsn-disc" aria-hidden="true"><img src="/models/uta.webp" alt="" /></span>
-          <span>
-            <b>Neon Horizon (Master Stem)</b>
-            <span className="dsn-mono">124 BPM · F# Minor · WebAudio 60fps FFT Visualizer</span>
-          </span>
-        </div>
-        <div className="dsn-viz">
-          <Spectrum mode={mode} live={live} energy={energy} />
-          <div className="dsn-modes" role="tablist" aria-label="Visualizer">
-            {MODES.map((m, i) => (
-              <button key={m} type="button" role="tab" aria-selected={mode === i} onClick={() => setMode(i)}>{m}</button>
-            ))}
-          </div>
-        </div>
-        <div className="dsn-scrub" aria-hidden="true">
-          {Array.from({ length: 64 }).map((_, i) => <i key={i} style={{ height: Math.round(18 + Math.abs(Math.sin(i * 0.9) * Math.cos(i * 0.31)) * 82) + '%' }} />)}
-          <b className="dsn-head" />
-        </div>
-        <div className="dsn-pads">
-          {PADS.map((p, i) => (
-            <motion.button
-              key={p}
-              type="button"
-              className={hit === i ? 'on' : ''}
-              whileTap={{ scale: 0.94 }}
-              onClick={() => { energy.current = 1; synth(i); setHit(i); setTimeout(() => setHit((h) => (h === i ? -1 : h)), 380); }}
-            >{p}</motion.button>
-          ))}
-        </div>
-        <p className="dsn-eq dsn-mono">LOW +2.5 dB · MID 0.0 dB · HIGH +1.8 dB</p>
+      <div className="dz-track">
+        <b>Neon Horizon (Master Stem)</b>
+        <span className="x-mono">124 BPM · F# Minor · WebAudio 60fps FFT Visualizer</span>
       </div>
+      <div className="dz-viz">
+        <Spectrum mode={mode} live={live} energy={energy} />
+        <div className="dz-modes" role="tablist" aria-label="Visualizer">
+          {MODES.map((m, i) => <button key={m} type="button" role="tab" aria-selected={mode === i} onClick={() => setMode(i)}>{m}</button>)}
+        </div>
+      </div>
+      <div className="dz-pads">
+        {PADS.map((p, i) => (
+          <motion.button key={p} type="button" className={hit === i ? 'on' : ''} whileTap={{ scale: 0.94 }}
+            onClick={() => { energy.current = 1; synth(i); setHit(i); setTimeout(() => setHit((h) => (h === i ? -1 : h)), 380); }}>{p}</motion.button>
+        ))}
+      </div>
+      <p className="dz-eq x-mono">LOW +2.5 dB · MID 0.0 dB · HIGH +1.8 dB</p>
     </div>
   );
 }
 
-/* The other five artifacts, all made from the same track. */
 function Deck({ live }) {
   const [s, setS] = useState(0);
   useEffect(() => {
@@ -144,33 +128,27 @@ function Deck({ live }) {
     return () => clearInterval(t);
   }, [live]);
   return (
-    <div className="dsn-deck">
-      <div className="dsn-slide">
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div key={s} className={'dsn-slide-in v' + s} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.5, ease: EASE }}>
-            <img src={['/models/uta.webp', '/models/oto.webp', '/models/koe.webp', '/models/iro.webp'][s]} alt="" />
-            <span className="dsn-slide-t">Neon Horizon</span>
-            <span className="dsn-mono">124 BPM · F# Minor</span>
-          </motion.div>
-        </AnimatePresence>
-        <span className="dsn-count dsn-mono">{s + 1} / 4</span>
-      </div>
-      <div className="dsn-thumbs" aria-hidden="true">
-        {[0, 1, 2, 3].map((i) => <i key={i} className={i === s ? 'on' : ''} />)}
-      </div>
+    <div className="dz-deck">
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div key={s} className="dz-slide" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.5, ease: EASE }}>
+          <img src={['/models/uta.webp', '/models/oto.webp', '/models/koe.webp', '/models/iro.webp'][s]} alt="" />
+          <span className="dz-slide-t">Neon Horizon</span>
+          <span className="dz-slide-m x-mono">124 BPM · F# Minor</span>
+        </motion.div>
+      </AnimatePresence>
+      <span className="dz-count x-mono">{s + 1} / 4</span>
     </div>
   );
 }
 
 function Ads() {
   return (
-    <div className="dsn-ads">
+    <div className="dz-ads">
       {[['9:16', 'story'], ['1:1', 'square'], ['16:9', 'banner']].map(([r, k], i) => (
-        <motion.div key={k} className={'dsn-ad ' + k} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.35 + i * 0.08 }}>
+        <motion.div key={k} className={'dz-ad ' + k} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: 0.35 + i * 0.08 }}>
           <img src="/models/uta.webp" alt="" />
-          <span className="dsn-ad-t">Neon Horizon</span>
-          <span className="dsn-ad-cta" aria-hidden="true">▶</span>
-          <span className="dsn-ad-r dsn-mono">{r}</span>
+          <span className="dz-ad-t">Neon Horizon</span>
+          <span className="dz-ad-r x-mono">{r}</span>
         </motion.div>
       ))}
     </div>
@@ -179,20 +157,20 @@ function Ads() {
 
 function Poster() {
   return (
-    <div className="dsn-poster">
+    <div className="dz-poster">
       <img src="/models/iro.webp" alt="" />
-      <span className="dsn-poster-t">Neon<br />Horizon</span>
-      <span className="dsn-poster-m dsn-mono">124 BPM · F# Minor</span>
+      <span className="dz-poster-t">Neon<br />Horizon</span>
+      <span className="dz-poster-m x-mono">124 BPM · F# Minor</span>
     </div>
   );
 }
 
 function Doc() {
   return (
-    <div className="dsn-doc">
-      <span className="dsn-mono dsn-doc-k">Neon Horizon (Master Stem)</span>
-      <span className="dsn-doc-h">Neon Horizon</span>
-      <span className="dsn-mono dsn-doc-m">124 BPM · F# Minor</span>
+    <div className="dz-doc">
+      <span className="x-mono dz-doc-k">Neon Horizon (Master Stem)</span>
+      <span className="dz-doc-h">Neon Horizon</span>
+      <span className="x-mono dz-doc-m">124 BPM · F# Minor</span>
       <img src="/models/uta.webp" alt="" />
       {[92, 100, 96, 70, 100, 88, 54].map((w, i) => <motion.i key={i} style={{ width: w + '%' }} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.7, ease: EASE, delay: 0.45 + i * 0.06 }} />)}
     </div>
@@ -203,80 +181,65 @@ function Film({ live }) {
   const v = useRef(null);
   useEffect(() => { const el = v.current; if (!el) return; if (live) el.play().catch(() => {}); else el.pause(); }, [live]);
   return (
-    <div className="dsn-film">
-      <div className="dsn-film-v">
+    <div className="dz-film">
+      <div className="dz-film-v">
         <img src="/models/koma.webp" alt="" />
         <video ref={v} src="/models/koma.webm" muted loop playsInline preload="metadata" aria-hidden="true" />
       </div>
-      <div className="dsn-tl" aria-hidden="true">
-        {[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}
-        <b className="dsn-head" />
-      </div>
+      <div className="dz-tl" aria-hidden="true">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></div>
     </div>
   );
 }
 
-/* The workspace: one conversation on the left, the artifact on the right changing shape with the tab. */
-function Workspace({ at, pick, live, mine }) {
+/* ---------- the signature: one conversation, the artifact morphing in its window ---------- */
+function Workspace({ at, pick, live, mine, calm }) {
   const art = [<MusicApp key="a" live={live && at === 0} />, <Deck key="d" live={live && at === 1} />, <Ads key="ad" />, <Poster key="p" />, <Doc key="doc" />, <Film key="f" live={live && at === 5} />][at];
+  const key = (e, i) => {
+    const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
+    const j = (i + n + TABS.length) % TABS.length; pick(j);
+    e.currentTarget.parentElement.children[j]?.focus();
+  };
   return (
-    <div className="dsn-win">
-      <div className="dsn-bar">
-        <span className="dsn-dots" aria-hidden="true"><i /><i /><i /></span>
-        <div className="dsn-tabs" role="tablist" aria-label="Artifacts">
+    <div className="dz-win">
+      <div className="dz-bar">
+        <span className="dz-dots" aria-hidden="true"><i /><i /><i /></span>
+        <div className="dz-tabs" role="tablist" aria-label="Artifacts">
           {TABS.map((t, i) => (
-            <button key={t} type="button" role="tab" aria-selected={at === i} aria-controls="dsn-art" onClick={() => pick(i)}>
-              {at === i && <motion.span layoutId="dsn-tab" className="dsn-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            <button key={t} type="button" role="tab" aria-selected={at === i} aria-controls="dz-art" tabIndex={at === i ? 0 : -1} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}>
+              {at === i && <motion.span layoutId="dz-tab" className="dz-tab-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
               <span>{t}</span>
-              {at === i && !mine && live && <i key={'p' + at} className="dsn-tab-time" aria-hidden="true" />}
+              {at === i && !mine && !calm && <i key={'p' + at} className={'dz-tab-t' + (live ? '' : ' paused')} aria-hidden="true" />}
             </button>
           ))}
         </div>
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span key={at} className="dsn-badge dsn-mono" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>{BADGE[at]}</motion.span>
+          <motion.span key={at} className="dz-badge x-mono" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>{BADGE[at]}</motion.span>
         </AnimatePresence>
       </div>
-      <div className="dsn-body">
-        <aside className="dsn-chat">
-          <div className="dsn-drop"><span aria-hidden="true">＋</span>Drop audio, image, PDF, CSV or video</div>
-          <div className="dsn-file">
-            <span className="dsn-file-i" aria-hidden="true">♪</span>
-            <span className="dsn-mono">neon-horizon-master.mp3 (4.8 MB)</span>
-          </div>
-          <p className="dsn-msg">Uploaded neon-horizon-master.mp3 — build a full interactive music player app with a 60fps FFT spectrum visualizer, 3-band EQ, and synth pads.</p>
-          <ol className="dsn-made" aria-label="Artifacts in this conversation">
-            {TABS.map((t, i) => (
-              <li key={t} className={i === at ? 'on' : i < at || mine ? 'done' : ''}>
-                <button type="button" onClick={() => pick(i)} tabIndex={-1}>
-                  <i aria-hidden="true" />{t}
-                </button>
-              </li>
-            ))}
-          </ol>
-        </aside>
-        <div className="dsn-stage" id="dsn-art" role="tabpanel" aria-label={TABS[at]}>
-          <motion.div layout className={'dsn-frame k-' + KIND[at]} style={{ borderRadius: 18 }} transition={{ layout: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }}>
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div key={at} className="dsn-art" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.45, ease: EASE, delay: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
-                {art}
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-        </div>
+      <div className="dz-stage" id="dz-art" role="tabpanel" aria-label={TABS[at]}>
+        <motion.div layout className={'dz-frame k-' + KIND[at]} style={{ borderRadius: 16 }} transition={{ layout: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }}>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div key={at} className="dz-art" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1, transition: { duration: 0.45, ease: EASE, delay: 0.4 } }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
+              {art}
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      </div>
+      <div className="dz-chat">
+        <div className="dz-file"><span className="dz-file-i" aria-hidden="true">♪</span><span className="x-mono">neon-horizon-master.mp3 (4.8 MB)</span></div>
+        <p className="dz-msg">Uploaded neon-horizon-master.mp3 — build a full interactive music player app with a 60fps FFT spectrum visualizer, 3-band EQ, and synth pads.</p>
+        <div className="dz-drop"><span aria-hidden="true">＋</span>Drop audio, image, PDF, CSV or video</div>
       </div>
     </div>
   );
 }
 
 /* Headline words that are also the tabs: the highlight follows the artifact on screen. */
-const WORD_TAB = { visuals: 3, decks: 1, docs: 4, ads: 2, videos: 5, 'interactive apps': 0 };
-
-function Word({ w, at, pick, after = '' }) {
-  const k = WORD_TAB[w];
+function Word({ w, k, at, pick, after = '' }) {
   return (
-    <span className="dsn-ww">
-      <span className={'dsn-w' + (at === k ? ' on' : '')} onClick={() => pick(k)}>
-        {at === k && <motion.span layoutId="dsn-hl" className="dsn-hl" transition={{ type: 'spring', stiffness: 300, damping: 32 }} aria-hidden="true" />}
+    <span className="dz-ww">
+      <span className={'dz-w' + (at === k ? ' on' : '')} onClick={() => pick(k)}>
+        {at === k && <motion.span layoutId="dz-hl" className="dz-hl" transition={{ type: 'spring', stiffness: 300, damping: 30 }} aria-hidden="true" />}
         <span>{w}</span>
       </span>{after}
     </span>
@@ -296,33 +259,30 @@ function Hero() {
     const t = setTimeout(() => setAtS((v) => (v + 1) % TABS.length), DWELL);
     return () => clearTimeout(t);
   }, [at, mine, live]);
+  const W = (w, k, after) => <Word w={w} k={k} at={at} pick={pick} after={after} />;
   return (
-    <section className="dsn-hero" ref={box} aria-labelledby="dsn-h1">
-      <div className="x-wrap">
-        <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Hanzo Design · Creative AI Workspace</motion.p>
-        <motion.h1 id="dsn-h1" className="dsn-h1" initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 }}>
-          Create <Word w="visuals" after="," at={at} pick={pick} /> <Word w="decks" after="," at={at} pick={pick} /> <Word w="docs" after="," at={at} pick={pick} /> <Word w="ads" after="," at={at} pick={pick} /> <Word w="videos" at={at} pick={pick} /> &amp; <Word w="interactive apps" at={at} pick={pick} />
-        </motion.h1>
-        <div className="dsn-intro">
-          <motion.p className="dsn-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}>
-            Your AI design studio inside Hanzo. Upload any file — a music track, product photo, PDF, or dataset — and turn it into visuals, presentations, documents, ads, videos, or a full-blown interactive music &amp; visualizer app.
-          </motion.p>
-          <motion.div className="dsn-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.42 }}>
-            <div className="dsn-btns">
-              <Go to="/design" solid>Open Design</Go>
-              <Go to="https://docs.hanzo.ai/docs/apps/design">Read the docs</Go>
-            </div>
-            <p className="dsn-studio">Need full multi-shot AI cinema &amp; camera rigs? <A to="https://studio.hanzo.ai">Open studio.hanzo.ai.</A></p>
-          </motion.div>
+    <section className="dz-hero" ref={box} aria-labelledby="dz-h1">
+      <div className="av-wrap dz-ed">
+        <p className="av-kick dz-kick"><b>Hanzo Design</b> · Creative AI Workspace</p>
+        <Lines as="h1" id="dz-h1" className="dz-h1" now delay={0.05}
+          lines={[<>Create {W('visuals', 3, ',')} {W('decks', 1, ',')}</>, <>{W('docs', 4, ',')} {W('ads', 2, ',')}</>, <>{W('videos', 5)} &amp;</>, W(<>interactive<br />apps</>, 0)]} />
+        <motion.div className="dz-win-wrap" initial={calm ? false : { clipPath: 'inset(8% 0 0 0 round 28px)', opacity: 0, y: 40 }} animate={{ clipPath: 'inset(0% 0 0 0 round 28px)', opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
+          <Workspace at={at} pick={pick} live={live} mine={mine} calm={calm} />
+        </motion.div>
+        <div className="dz-under-l">
+          <p className="av-lede">Your AI design studio inside Hanzo. Upload any file — a music track, product photo, PDF, or dataset — and turn it into visuals, presentations, documents, ads, videos, or a full-blown interactive music &amp; visualizer app.</p>
+          <div className="av-acts">
+            <Magnetic strength={0.25}><Go to="/design" solid>Open Design</Go></Magnetic>
+            <i hidden data-thumb="Open Design" data-href="/design" />
+            <Go to="https://docs.hanzo.ai/docs/apps/design">Read the docs</Go>
+          </div>
+          <p className="dz-studio">Need full multi-shot AI cinema &amp; camera rigs? <A to="https://studio.hanzo.ai">Open studio.hanzo.ai.</A></p>
         </div>
       </div>
-      <motion.div className="x-wrap dsn-win-wrap" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.35 }}>
-        <Workspace at={at} pick={pick} live={live} mine={mine} />
-      </motion.div>
-      <div className="x-wrap">
-        <ul className="dsn-facts">
+      <div className="av-wrap av-grid dz-under">
+        <ul className="dz-facts">
           {['Visuals, images, posters, presentations, documents, ads, video & music in tabs', 'Upload any file — even an MP3/WAV track to build a full interactive music player & visualizer app', 'Export vector PDFs, 16:9 slide decks, multi-aspect ads, MP4 clips, and standalone HTML5 apps'].map((t, i) => (
-            <li key={t}><Check size={18} /><span>{t}</span></li>
+            <li key={t}><span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</li>
           ))}
         </ul>
       </div>
@@ -330,79 +290,57 @@ function Hero() {
   );
 }
 
-function Paste() {
-  const text = 'Read https://hanzo.ai/skill.md and use Hanzo Design in my project.';
+/* ---------- what it is: three pinned chapters ---------- */
+function Files({ on }) {
   return (
-    <section className="dsn-paste">
-      <div className="x-wrap dsn-paste-in">
-        <div className="dsn-paste-l">
-          <p className="dsn-paste-k">Paste and ship</p>
-          <p className="dsn-paste-d">Paste this into any agent. It reads the skill manifest and calls Design from there.</p>
-        </div>
-        <div className="dsn-prompt">
-          <span className="dsn-prompt-k dsn-mono">Agent prompt</span>
-          <code>{text}</code>
-          <Copy text={text} />
-        </div>
-      </div>
-    </section>
+    <div className={'dz-vis dz-files' + (on ? ' on' : '')} aria-hidden="true">
+      <div className="dz-files-in">{['.mp3', '.wav', '.flac', 'PDF', 'CSV', 'JSON'].map((f, k) => <span key={f} className="x-mono" style={{ '--k': k }}>{f}</span>)}</div>
+      <div className="dz-slot"><span className="dz-file-i">♪</span><span className="x-mono">neon-horizon-master.mp3 (4.8 MB)</span></div>
+    </div>
+  );
+}
+function Shapes({ on }) {
+  return (
+    <div className={'dz-vis dz-shapes' + (on ? ' on' : '')} aria-hidden="true">
+      <span className="deck"><img src="/models/oto.webp" alt="" /><em className="x-mono">16:9</em></span>
+      <span className="doc"><b />{[90, 100, 84, 100, 62, 92, 70].map((w, j) => <i key={j} style={{ width: w + '%' }} />)}<em className="x-mono">PDF</em></span>
+      <span className="ad"><img src="/models/mori.webp" alt="" /><em className="x-mono">9:16</em></span>
+    </div>
+  );
+}
+function Eq({ on }) {
+  return (
+    <div className={'dz-vis dz-eqv' + (on ? ' on' : '')} aria-hidden="true">
+      <div className="dz-eq-bars">{Array.from({ length: 24 }).map((_, k) => <i key={k} style={{ animationDelay: -k * 0.13 + 's', animationDuration: 0.6 + (k % 4) * 0.17 + 's' }} />)}</div>
+      <div className="dz-eq-pads">{PADS.map((p) => <span key={p}>{p}</span>)}</div>
+    </div>
   );
 }
 
-/* Three steps, one line running through them: files in, artifacts out. */
 const STEPS = [
-  ['Upload any content', 'Drop in audio (.mp3, .wav, .flac), images, video clips, PDFs, Office docs, or CSV/JSON data. Every uploaded file is wired directly into the visuals, decks, and apps you create.'],
-  ['Presentations, documents & ads', 'Generate 16:9 keynote slide decks, typeset brand & technical documents with vector PDF export, and multi-format social and display ad campaigns.'],
-  ['Interactive music & visual apps', 'Upload a song or audio stem and build a full-blown interactive WebAudio music app with a 60fps FFT spectrum visualizer, waveform scrubber, 3-band EQ, and playable synth pads.'],
+  { title: 'Upload any content', body: <p className="av-body">Drop in audio (.mp3, .wav, .flac), images, video clips, PDFs, Office docs, or CSV/JSON data. Every uploaded file is wired directly into the visuals, decks, and apps you create.</p>, visual: (on) => <Files on={on} /> },
+  { title: 'Presentations, documents & ads', body: <p className="av-body">Generate 16:9 keynote slide decks, typeset brand &amp; technical documents with vector PDF export, and multi-format social and display ad campaigns.</p>, visual: (on) => <Shapes on={on} /> },
+  { title: 'Interactive music & visual apps', body: <p className="av-body">Upload a song or audio stem and build a full-blown interactive WebAudio music app with a 60fps FFT spectrum visualizer, waveform scrubber, 3-band EQ, and playable synth pads.</p>, visual: (on) => <Eq on={on} /> },
 ];
 
-function Glyph({ i }) {
-  if (i === 0) {
-    return (
-      <div className="dsn-g dsn-g-files" aria-hidden="true">
-        {['.mp3', '.wav', '.flac', 'PDF', 'CSV', 'JSON'].map((f, k) => <span key={f} style={{ animationDelay: k * 0.7 + 's' }}>{f}</span>)}
-        <b />
-      </div>
-    );
-  }
-  if (i === 1) {
-    return (
-      <div className="dsn-g dsn-g-shape" aria-hidden="true">
-        <span className="deck"><b /><em /><em /></span>
-        <span className="doc"><b /><em /><em /><em /><em /></span>
-        <span className="ad"><b /><em /></span>
-      </div>
-    );
-  }
-  return <div className="dsn-g dsn-g-eq" aria-hidden="true">{Array.from({ length: 14 }).map((_, k) => <i key={k} style={{ animationDelay: -k * 0.13 + 's', animationDuration: 0.6 + (k % 4) * 0.17 + 's' }} />)}</div>;
-}
-
 function What() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.35 });
   return (
-    <section className="x-sec dsn-what" ref={ref}>
-      <div className="x-wrap">
-        <SecHead kicker="What is Hanzo Design" title="One conversation, every creative artifact in a tab" lede="Describe what you need or drop in your raw files. Hanzo Design creates and iterates on each artifact side-by-side in live tabs you can inspect, play, and export." />
-        <div className="dsn-flow">
-          <svg className="dsn-flow-line" viewBox="0 0 1000 4" preserveAspectRatio="none" aria-hidden="true">
-            <motion.path d="M0 2H1000" strokeWidth="2" fill="none" initial={{ pathLength: 0 }} animate={seen ? { pathLength: 1 } : {}} transition={{ duration: 1.6, ease: EASE, delay: 0.2 }} />
-          </svg>
-          {STEPS.map(([t, d], i) => (
-            <motion.article key={t} className="dsn-step" initial={{ opacity: 0, y: 30 }} animate={seen ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease: EASE, delay: 0.3 + i * 0.18 }}>
-              <span className="dsn-step-n dsn-mono">{String(i + 1).padStart(2, '0')}</span>
-              <Glyph i={i} />
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </motion.article>
-          ))}
+    <>
+      <section className="av-sec dz-what">
+        <div className="av-wrap av-grid">
+          <div className="dz-what-l">
+            <p className="av-kick">What is Hanzo Design</p>
+            <h2 className="av-display s">One conversation, every creative artifact in a tab</h2>
+          </div>
+          <p className="av-lede dz-what-r">Describe what you need or drop in your raw files. Hanzo Design creates and iterates on each artifact side-by-side in live tabs you can inspect, play, and export.</p>
         </div>
-      </div>
-    </section>
+      </section>
+      <Scenes label="What is Hanzo Design" items={STEPS} flip className="dz-sc" />
+    </>
   );
 }
 
-/* What a creative team ships: each artifact drawn at its own shape, each one alive, its export named on hover. */
+/* ---------- capabilities: six sheets that stack as you scroll ---------- */
 const CAPS = [
   ['Visuals, images & posters', 'High-resolution imagery, product photography, posters, and vector brand assets powered by Iro.', 'visual', 'Powered by Iro'],
   ['Slide decks & presentations', 'Structured 16:9 slide decks with keyboard navigation, speaker flow, and vector PDF download.', 'deck', '16:9 · vector PDF'],
@@ -413,180 +351,171 @@ const CAPS = [
 ];
 
 function CapArt({ k }) {
-  const v = useRef(null);
-  useEffect(() => {
-    if (k !== 'video' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const io = new IntersectionObserver(([e]) => { const el = v.current; if (!el) return; if (e.isIntersecting) el.play().catch(() => {}); else el.pause(); }, { threshold: 0.3 });
-    io.observe(v.current);
-    return () => io.disconnect();
-  }, [k]);
-  if (k === 'visual') return <span className="dsn-ca dsn-ca-visual"><img src="/models/iro.webp" alt="" /></span>;
-  if (k === 'deck') return <span className="dsn-ca dsn-ca-deck">{[0, 1, 2].map((i) => <i key={i}><img src={['/models/oto.webp', '/models/uta.webp', '/models/koe.webp'][i]} alt="" /></i>)}</span>;
-  if (k === 'doc') return <span className="dsn-ca dsn-ca-doc"><i><b />{[90, 100, 84, 100, 62].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i></span>;
-  if (k === 'ads') return <span className="dsn-ca dsn-ca-ads">{['story', 'square', 'banner'].map((s) => <i key={s} className={s}><img src="/models/mori.webp" alt="" /></i>)}</span>;
-  if (k === 'video') return <span className="dsn-ca dsn-ca-video"><img src="/models/koma.webp" alt="" /><video ref={v} src="/models/koma.webm" muted loop playsInline preload="none" aria-hidden="true" /><b /></span>;
-  return <span className="dsn-ca dsn-ca-music">{Array.from({ length: 22 }).map((_, i) => <i key={i} style={{ animationDelay: -i * 0.11 + 's', animationDuration: 0.7 + (i % 5) * 0.13 + 's' }} />)}</span>;
-}
-
-function Cap({ c, i }) {
-  const [t, d, k, tag] = c;
-  const { rx, ry, glow, on } = useTilt(4, 'rgba(255,255,255,.35)');
-  return (
-    <div className={'dsn-cap c-' + k}>
-      <motion.div className="dsn-cap-in" style={{ rotateX: rx, rotateY: ry }} {...on} tabIndex={0}>
-        <CapArt k={k} />
-        <motion.span className="x-mglow" style={{ background: glow }} aria-hidden="true" />
-        <span className="dsn-cap-tag dsn-mono">{tag}</span>
-        <h3>{t}</h3>
-        <p>{d}</p>
-      </motion.div>
-    </div>
-  );
+  if (k === 'visual') return <span className="dz-ca dz-ca-visual"><img src="/models/iro.webp" alt="" /><b>Neon<br />Horizon</b></span>;
+  if (k === 'deck') return <span className="dz-ca dz-ca-deck">{[0, 1, 2].map((i) => <i key={i}><img src={['/models/oto.webp', '/models/uta.webp', '/models/koe.webp'][i]} alt="" /></i>)}</span>;
+  if (k === 'doc') return <span className="dz-ca dz-ca-doc">{[0, 1].map((p) => <i key={p}><b />{[90, 100, 84, 100, 62, 96, 74].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i>)}</span>;
+  if (k === 'ads') return <span className="dz-ca dz-ca-ads">{['story', 'square', 'banner'].map((s) => <i key={s} className={s}><img src="/models/mori.webp" alt="" /></i>)}</span>;
+  if (k === 'video') return <span className="dz-ca dz-ca-video"><img src="/models/koma.webp" alt="" /><span className="dz-tl">{[34, 22, 28, 16].map((w, i) => <i key={i} style={{ flexGrow: w }} />)}<b /></span></span>;
+  return <span className="dz-ca dz-ca-music">{Array.from({ length: 28 }).map((_, i) => <i key={i} style={{ animationDelay: -i * 0.11 + 's', animationDuration: 0.7 + (i % 5) * 0.13 + 's' }} />)}</span>;
 }
 
 function Caps() {
   return (
-    <section className="x-sec dsn-caps">
-      <div className="x-wrap">
-        <SecHead kicker="Capabilities" title="Everything a creative team ships" />
-        <div className="dsn-bento">{CAPS.map((c, i) => <Cap key={c[0]} c={c} i={i} />)}</div>
+    <section className="av-sec dz-caps">
+      <div className="av-wrap">
+        <div className="av-grid dz-caps-top">
+          <p className="av-kick dz-caps-k">Capabilities</p>
+          <h2 className="av-head dz-caps-h">Everything a creative team ships</h2>
+        </div>
+        <ol className="dz-stack">
+          {CAPS.map(([t, d, k, tag], i) => (
+            <li key={t} className={'dz-sheet c-' + k} style={{ '--i': i }}>
+              <div className="dz-sheet-t">
+                <span className="x-mono dz-sheet-n av-num">{String(i + 1).padStart(2, '0')} / 06</span>
+                <h3 className="av-head">{t}</h3>
+                <p className="av-body">{d}</p>
+                <span className="x-mono dz-sheet-tag">{tag}</span>
+              </div>
+              <div className="dz-sheet-a"><CapArt k={k} /></div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-/* The models as nodes on a canvas, wired to Design. Open one and its picture lifts into its own page. */
-const NODES = [
-  ['iro', 'Iro', 'Image generation and visual understanding.', 'Images', [16, 22]],
-  ['koma', 'Koma', 'Video generation and world simulation.', 'Video', [50, 9]],
-  ['oto', 'Oto', 'Sound generation and audio understanding.', 'Audio', [84, 22]],
-  ['koe', 'Koe', 'Voice synthesis and speech understanding.', 'Voice', [16, 78]],
-  ['uta', 'Uta', 'Music generation and composition.', 'Music', [50, 91]],
-  ['mori', 'Mori', '3D generation and spatial understanding.', '3D', [84, 78]],
-];
-
-function Node({ n, i, hot, setHot }) {
-  const [slug, name, desc, kind, [x, y]] = n;
-  const opener = useOpener();
-  const box = useRef(null);
-  const vid = useRef(null);
-  const play = (yes) => { const v = vid.current; if (!v || matchMedia('(prefers-reduced-motion: reduce)').matches) return; if (yes) v.play().catch(() => {}); else v.pause(); };
-  return (
-    <motion.li className={'dsn-node' + (hot === i ? ' hot' : '')} style={{ '--x': x + '%', '--y': y + '%', '--d': i * -1.3 + 's' }} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 0.8, ease: EASE, delay: 0.1 + i * 0.07 }}>
-      <a
-        href={'/' + slug}
-        ref={box}
-        className="dsn-node-a"
-        onClick={(e) => opener.open(e, { el: box.current, src: `/models/${slug}.webp`, href: '/' + slug, key: slug })}
-        onPointerEnter={() => { setHot(i); play(true); }}
-        onPointerLeave={() => { setHot(-1); play(false); }}
-        onFocus={() => setHot(i)}
-        onBlur={() => setHot(-1)}
-      >
-        <span className="dsn-node-m">
-          <img src={`/models/${slug}.webp`} alt="" />
-          <video ref={vid} src={`/models/${slug}.webm`} muted loop playsInline preload="none" aria-hidden="true" />
-        </span>
-        <span className="dsn-node-t">
-          <b>{name}</b>
-          <span className="dsn-node-d">{desc}</span>
-          <span className="dsn-node-k dsn-mono">{kind}</span>
-        </span>
-      </a>
-    </motion.li>
-  );
-}
-
-function Canvas() {
-  const [hot, setHot] = useState(-1);
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.3 });
-  return (
-    <section className="x-sec dsn-dark" data-room="dark">
-      <div className="x-wrap">
-        <SecHead dark center title="Every creative model, in one studio." lede="Video, image, 3D, sound, voice and music, each a node on the canvas. Open one to see what it makes." />
-        <div className="dsn-canvas" ref={ref}>
-          <svg className="dsn-wires" viewBox="0 0 1200 660" preserveAspectRatio="none" aria-hidden="true">
-            {NODES.map(([s, , , , [x, y]], i) => {
-              const X = x * 12, Y = y * 6.6, my = (330 + Y) / 2;
-              return <motion.path key={s} className={hot === i ? 'hot' : ''} d={`M600 330 C600 ${my}, ${X} ${my}, ${X} ${Y}`} initial={{ pathLength: 0 }} animate={seen ? { pathLength: 1 } : {}} transition={{ duration: 1.2, ease: EASE, delay: 0.2 + i * 0.08 }} />;
-            })}
-          </svg>
-          <motion.div className="dsn-hub" initial={{ opacity: 0, scale: 0.7 }} animate={seen ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.9, ease: EASE }}>
-            <Mark size={26} /><span>Hanzo Design</span>
-          </motion.div>
-          <ul className="dsn-nodes">{NODES.map((n, i) => <Node key={n[0]} n={n} i={i} hot={hot} setHot={setHot} />)}</ul>
-        </div>
-        <div className="x-row-links dsn-dark-links">
-          <More to="/pricing">Explore model pricing</More>
-          <More to="/models">View full model catalog</More>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Start() {
-  const { rx, ry, glow, on } = useTilt(5, 'rgba(0,0,0,.05)');
-  return (
-    <section className="x-sec dsn-start">
-      <div className="x-wrap dsn-start-in">
-        <div>
-          <SecHead title="Start creating in Hanzo Design" lede="Open the Design workspace in your browser and upload your first file." />
-          <div className="dsn-btns">
-            <Go to="/design" solid>Open Design</Go>
-            <Go to="https://studio.hanzo.ai">Open Hanzo Studio (Cinema)</Go>
-          </div>
-        </div>
-        <div>
-          <motion.div className="dsn-repo" style={{ rotateX: rx, rotateY: ry }} {...on}>
-            <motion.span className="x-mglow" style={{ background: glow }} aria-hidden="true" />
-            <span className="dsn-repo-mark"><Mark size={22} /></span>
-            <h2>Get Design</h2>
-            <p>Creative AI workspace for visuals, decks, documents, ads &amp; interactive apps</p>
-            <dl className="dsn-mono">
-              <div><dt>License:</dt><dd>Apache-2.0</dd></div>
-            </dl>
-            <div className="dsn-repo-acts">
-              <A to="https://github.com/hanzoai" className="dsn-gh">
-                <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.66 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z" /></svg>
-                hanzoai
-              </A>
-              <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* One brief: the visitor's words become the title of every artifact Hanzo Design lists. */
+/* ---------- Beyond: one brief, every artifact titled with it ---------- */
 function Brief() {
   const [brief, setBrief] = useState('');
   const [on, setOn] = useState(() => CAPS.map(() => true));
   const title = brief.trim() || 'Your brief';
   const picked = CAPS.filter((_, i) => on[i]);
   return (
-    <section className="x-sec dsn-brief">
-      <div className="x-wrap">
-        <p className="x-kick">One conversation, every artifact</p>
-        <h2 className="dsn-brief-h">One brief</h2>
-        <input className="dsn-brief-in" value={brief} onChange={(e) => setBrief(e.target.value)} maxLength={80} placeholder="Your brief" aria-label="Your brief" />
-        <div className="dsn-brief-pick" role="group" aria-label="Artifacts">
-          {CAPS.map(([t], i) => <button key={t} type="button" aria-pressed={on[i]} onClick={() => setOn((v) => v.map((x, k) => (k === i ? !x : x)))}>{t}</button>)}
+    <section className="av-sec dz-brief">
+      <div className="av-wrap av-grid">
+        <div className="dz-brief-l">
+          <p className="av-kick"><b>One conversation, every artifact</b></p>
+          <h2 className="av-display m">One brief</h2>
+          <input className="dz-brief-in" value={brief} onChange={(e) => setBrief(e.target.value)} maxLength={80} placeholder="Your brief" aria-label="Your brief" />
+          <div className="dz-brief-pick" role="group" aria-label="Artifacts">
+            {CAPS.map(([t], i) => <button key={t} type="button" aria-pressed={on[i]} onClick={() => setOn((v) => v.map((x, k) => (k === i ? !x : x)))}>{t}</button>)}
+          </div>
         </div>
-        {picked.length ? (
-          <ul className="dsn-brief-set" aria-live="polite">
-            {picked.map(([t, , k, tag]) => (
-              <li key={t} className={'k-' + k}>
-                <span className="dsn-brief-k x-mono">{tag}</span>
-                <b>{title}</b>
-                <span>{t}</span>
-              </li>
-            ))}
-          </ul>
-        ) : <p className="dsn-brief-none">Choose at least one artifact.</p>}
+        <div className="dz-brief-r">
+          {picked.length ? (
+            <ul className="dz-brief-set" aria-live="polite">
+              {picked.map(([t, , k, tag]) => (
+                <li key={t} className={'k-' + k}>
+                  <span className="dz-brief-art" aria-hidden="true"><CapArt k={k} /></span>
+                  <span className="dz-brief-k x-mono">{tag}</span>
+                  <b>{title}</b>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          ) : <p className="dz-brief-none">Choose at least one artifact.</p>}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- the dark room: every creative model; each opens into its page ---------- */
+const NODES = [
+  ['iro', 'Iro', 'Image generation and visual understanding.', 'Images'],
+  ['koma', 'Koma', 'Video generation and world simulation.', 'Video'],
+  ['oto', 'Oto', 'Sound generation and audio understanding.', 'Audio'],
+  ['koe', 'Koe', 'Voice synthesis and speech understanding.', 'Voice'],
+  ['uta', 'Uta', 'Music generation and composition.', 'Music'],
+  ['mori', 'Mori', '3D generation and spatial understanding.', '3D'],
+];
+
+function Model({ n }) {
+  const [slug, name, desc, kind] = n;
+  const opener = useOpener();
+  const box = useRef(null);
+  const vid = useRef(null);
+  const play = (yes) => { const v = vid.current; if (!v || matchMedia('(prefers-reduced-motion: reduce)').matches) return; if (yes) v.play().catch(() => {}); else v.pause(); };
+  return (
+    <li>
+      <a href={'/' + slug} ref={box} className="dz-model" data-cursor="Open"
+        onClick={(e) => opener.open(e, { el: box.current, src: `/models/${slug}.webp`, href: '/' + slug, key: slug })}
+        onPointerEnter={() => play(true)} onPointerLeave={() => play(false)} onFocus={() => play(true)} onBlur={() => play(false)}>
+        <span className="dz-model-m">
+          <img src={`/models/${slug}.webp`} alt="" />
+          <video ref={vid} src={`/models/${slug}.webm`} muted loop playsInline preload="none" aria-hidden="true" />
+        </span>
+        <span className="dz-model-t">
+          <span className="dz-model-k x-mono">{kind}</span>
+          <b>{name}</b>
+          <span>{desc}</span>
+        </span>
+      </a>
+    </li>
+  );
+}
+
+function Studio() {
+  return (
+    <section className="av-sec av-dark dz-dark" data-room="dark">
+      <div className="av-wrap av-grid">
+        <div className="dz-dark-l">
+          <span className="dz-hub"><Mark size={22} /><span>Hanzo Design</span></span>
+          <h2 className="av-head">Every creative model, in one studio.</h2>
+          <p className="av-body">Video, image, 3D, sound, voice and music, each a node on the canvas. Open one to see what it makes.</p>
+          <div className="dz-dark-links">
+            <More to="/pricing">Explore model pricing</More>
+            <More to="/models">View full model catalog</More>
+          </div>
+        </div>
+        <ul className="dz-models">{NODES.map((n) => <Model key={n[0]} n={n} />)}</ul>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- start ---------- */
+const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Design in my project.';
+
+function Start() {
+  return (
+    <section className="av-sec dz-start">
+      <div className="av-wrap">
+        <div className="av-grid dz-start-g">
+          <div className="dz-start-l">
+            <h2 className="av-display m">Start creating in Hanzo Design</h2>
+            <p className="av-lede">Open the Design workspace in your browser and upload your first file.</p>
+            <div className="av-acts">
+              <Go to="/design" solid>Open Design</Go>
+              <Go to="https://studio.hanzo.ai">Open Hanzo Studio (Cinema)</Go>
+            </div>
+          </div>
+          <div className="dz-repo">
+            <span className="dz-repo-mark"><Mark size={22} /></span>
+            <p className="av-title">Get Design</p>
+            <p className="av-body">Creative AI workspace for visuals, decks, documents, ads &amp; interactive apps</p>
+            <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div></dl>
+            <div className="dz-repo-acts">
+              <A to="https://github.com/hanzoai" className="dz-gh">
+                <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.66 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z" /></svg>
+                hanzoai
+              </A>
+              <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+            </div>
+          </div>
+        </div>
+        <div className="dz-paste">
+          <div className="dz-paste-l">
+            <p className="av-title">Paste and ship</p>
+            <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Design from there.</p>
+          </div>
+          <div className="dz-prompt">
+            <span className="av-kick">Agent prompt</span>
+            <code className="x-mono">{PASTE}</code>
+            <Copy text={PASTE} />
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -594,13 +523,12 @@ function Brief() {
 
 export default function DesignPage() {
   return (
-    <main className="dsn">
+    <main className="av dz" style={{ '--ac': '#ff2d78' }}>
       <Hero />
-      <Paste />
       <What />
       <Caps />
       <Brief />
-      <Canvas />
+      <Studio />
       <Start />
     </main>
   );

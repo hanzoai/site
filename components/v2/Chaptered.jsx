@@ -8,7 +8,9 @@
    - stage(i, still): the visual for chapter i (still = true for the phone copies: draw the end state, no loops);
    - head: a node shown above the pinned words (desktop) and above the story (phone);
    - flip: the visual on the left; dark: the page's one dark room (sets data-room for the header);
-   - per: viewport heights of scroll per chapter (default 0.9).
+   - per: viewport heights of scroll per chapter (default 0.9);
+   - statement: chapter titles are whole sentences (Hanzo's own step text), set at a statement size, not a headline.
+   No kicker above a chapter title (JAMES.md bans eyebrows); the rail and the object's own counter carry the order.
    Needs components/v2/ProgramScale.css. */
 import { useRef, useState } from 'react';
 import { motion, useScroll, useMotionValueEvent, useSpring } from 'motion/react';
@@ -16,7 +18,7 @@ import './Chaptered.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-export default function Chaptered({ chapters, stage, head, label, flip = false, dark = false, per = 0.9, id, className = '' }) {
+export default function Chaptered({ chapters, stage, head, label, flip = false, dark = false, per = 0.9, statement = false, id, className = '' }) {
   const ref = useRef(null);
   const n = chapters.length;
   const [at, setAt] = useState(0);
@@ -44,17 +46,16 @@ export default function Chaptered({ chapters, stage, head, label, flip = false, 
                 <motion.article key={i} className={'xpc-ch' + (i === at ? ' on' : '')} onFocusCapture={() => { if (i !== at) go(i); }}
                   initial={false} animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -28 : 36 }}
                   transition={i === at ? { duration: 0.7, ease: EASE, delay: 0.08 } : { duration: 0.28, ease: [0.4, 0, 1, 1] }}>
-                  {c.kicker && <p className="xp-kick plain xpc-k">{c.kicker}</p>}
-                  <h3 className="xp-head xpc-t">{c.title}</h3>
+                  <h3 className={'xp-head xpc-t' + (statement ? ' st' : '')}>{c.title}</h3>
                   {c.body && <div className="xp-body xpc-b">{c.body}</div>}
                 </motion.article>
               ))}
             </div>
-            <nav className="xpc-rail" aria-label={(label || 'Chapters') + ': jump to'}>
+            <nav className="xpc-rail" aria-label={label}>
               <span className="xpc-track" aria-hidden="true"><motion.i style={{ scaleY: fill }} /></span>
               {chapters.map((c, i) => (
                 <button key={i} type="button" className={i <= at ? 'on' : ''} aria-current={i === at ? 'step' : undefined} onClick={() => go(i)}>
-                  <span className="x-sr">{typeof c.title === 'string' ? c.title : 'Chapter ' + (i + 1)}</span>
+                  <span className="x-sr">{String(i + 1).padStart(2, '0')}</span>
                 </button>
               ))}
             </nav>
@@ -64,18 +65,37 @@ export default function Chaptered({ chapters, stage, head, label, flip = false, 
           </div>
         </div>
       </div>
-      {/* phones: the same chapters as a vertical story, each with its own still visual */}
-      <div className="xp-wrap xpc-story">
+      {/* phones: the same chapters as a rail you swipe, each card with its own still visual */}
+      <div className="xpc-story">
         {head && <div className="xpc-head">{head}</div>}
+        <Swipe chapters={chapters} stage={stage} statement={statement} />
+      </div>
+    </section>
+  );
+}
+
+/* The phone rail: one card per chapter, snapping; the dots follow the card in view. */
+function Swipe({ chapters, stage, statement }) {
+  const ref = useRef(null);
+  const [on, setOn] = useState(0);
+  const scroll = () => {
+    const el = ref.current;
+    if (!el || !el.firstElementChild) return;
+    const w = el.firstElementChild.getBoundingClientRect().width + 12;
+    setOn(Math.max(0, Math.min(chapters.length - 1, Math.round(el.scrollLeft / w))));
+  };
+  return (
+    <>
+      <div className="xpc-rail-p" ref={ref} onScroll={scroll} data-swipe-own>
         {chapters.map((c, i) => (
           <div className="xpc-sch" key={i}>
             <div className="xpc-sstage" aria-hidden="true">{stage(i, true)}</div>
-            {c.kicker && <p className="xp-kick plain">{c.kicker}</p>}
-            <h3 className="xp-title">{c.title}</h3>
+            <h3 className={'xp-title' + (statement ? ' st' : '')}>{c.title}</h3>
             {c.body && <div className="xp-body xpc-b">{c.body}</div>}
           </div>
         ))}
       </div>
-    </section>
+      <div className="xpc-dots" aria-hidden="true">{chapters.map((_, i) => <i key={i} className={i === on ? 'on' : ''} />)}</div>
+    </>
   );
 }

@@ -147,3 +147,6 @@
 @media (prefers-reduced-motion: reduce) {
   .xii-ring, .xii-sat, .xii-in, .xii-ln, .xii-tab-t { animation: none; }
 }
+
+/* JAMES.md: 0 UI hues. The badges are Hanzo's own (each guide's emoji), drawn in greys so the page stays monochrome */
+.xii-sat span, .xii-card-e { filter: grayscale(1) contrast(1.08); }

@@ -1,6 +1,7 @@
 'use client';
-/* Home, speed (v2): the page's one dark room. It opens like a door: the room wipes from a rounded panel to the full
-   screen as you scroll in. Each measurement is a hero figure, and beside it the race runs once at true speed (every bar
+/* Home, speed (v2): the first chapter of the page's one dark room, where speed, cost and the frontier read as one
+   argument (PLAN-COMPONENTS 5.1). The room opens like a door: it wipes from a rounded panel to the full screen as you
+   scroll in. Each measurement is a hero figure, and beside it the race runs once at true speed (every bar
    grows at the same rate, so the faster one simply stops first). Replay runs it again. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
@@ -42,9 +43,9 @@ function Run({ kicker, big, decimals, cap, note, title, lanes, extra, link, flip
   return (
     <article className={'hv-run v2-grid' + (flip ? ' flip' : '')} ref={ref}>
       <div className="hv-run-fig">
-        <p className="v2-kicker">{kicker}</p>
         <p className="v2-figure hv-run-big"><Count to={big} decimals={decimals} suffix="×" duration={1.4} /></p>
         <p className="v2-title hv-run-cap">{cap}</p>
+        <p className="v2-kicker hv-run-k">{kicker}</p>
         <p className="hv-run-note">{note}</p>
       </div>
       <div className="hv-run-data">
@@ -68,7 +69,7 @@ export default function Race() {
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.15'] });
   const clip = useTransform(p, (v) => { const e = 1 - Math.pow(1 - Math.min(1, v), 3); return `inset(0% ${(1 - e) * 5}% 0% ${(1 - e) * 5}% round ${(1 - e) * 40}px)`; });
   return (
-    <motion.section className="hv-race" data-room="dark" id="faster" aria-labelledby="faster-h" ref={ref} style={{ clipPath: clip }}>
+    <motion.section className="hv-race hv-room" data-room="dark" id="faster" aria-labelledby="faster-h" ref={ref} style={{ clipPath: clip }}>
       <div className="v2-wrap">
         <header className="hv-head v2-grid">
           <Lines as="h2" id="faster-h" className="v2-display-m hv-head-t" lines={['Faster where', 'the work happens.']} />

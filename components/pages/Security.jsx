@@ -1,4 +1,7 @@
 'use client';
+// Persona: a security reviewer or the buyer who has to sign off (arrives from /trust, /enterprise, the footer or a questionnaire link)
+// Goal: see which mechanism protects what, check each control, and reach Hanzo's security team
+// CTA: Talk to Security Team -> /contact (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="talk-to-security-team")
 /* Security. Its idea: a map you travel. The whole of it first — six layers, from the edge down to the organization's
    own file, stacked as one exploded object while a request passes through them and each layer checks itself. Then the
    camera goes into one layer at a time: it lifts out of the stack, turns to face you and shows its mechanism, while
@@ -11,7 +14,7 @@
    six are ticked the page hands you the next step, Hanzo's own security review.
    Motion: signature (layer zoom: idle auto-advance, springs, a gliding tab pill) + MaskLines headline cut-in (arrival)
    + the hero request pulse (idle) + the SceneWipe dark room (the one scroll-linked effect).
-   V2: 8/10 System rebuild in ink only: unboxed hero layer map with a live request pulse, a self-advancing layer zoom with the worksheet beside it, calm proof, one wiped-in dark room with the sign-off sheet, one ask sticky after the hero. */
+   V2: 8/10 System rebuild in ink only: unboxed hero layer map with a live request pulse, a self-advancing layer zoom with the worksheet beside it, calm proof, one wiped-in dark room with the sign-off sheet, one ask (Talk to Security Team) in the hero, sticky after it and at the close; JS off shows every control. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
@@ -42,7 +45,7 @@ const MECH = [
 ];
 const pad = (i) => String(i + 1).padStart(2, '0');
 const KEY = 'hz-security-checked';
-const DWELL = 6500; // ms each layer faces you when nobody is choosing
+const DWELL = 5000; // ms each layer faces you when nobody is choosing
 const Check = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* ---------- hero: the whole map, a request passing through every layer ---------- */
@@ -89,7 +92,7 @@ function Hero({ pick }) {
           <p className="pf-kick xsc-cap">Security Architecture</p>
           <p className="pf-lede">Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</p>
           <div className="xsc-acts">
-            <A to="/contact" className="pf-btn solid" data-thumb="Talk to Security Team">Talk to Security Team</A>
+            <A to="/contact" className="pf-btn solid" data-thumb="Talk to Security Team" data-cta="talk-to-security-team">Talk to Security Team</A>
             <More to="https://docs.hanzo.ai/docs/cli/security">Security Documentation</More>
           </div>
           <p className="xsc-audit">
@@ -297,7 +300,10 @@ function Dark() {
           <MaskLines className="pf-display m" lines={['Ask us the', 'hard question']} />
           <div className="xsc-ask-r">
             <p className="pf-lede">Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure.</p>
-            <A to="/contact-sales" className="pf-btn solid xsc-light">Schedule Security Review</A>
+            <div className="xsc-ask-acts">
+              <A to="/contact" className="pf-btn solid xsc-light" data-cta="talk-to-security-team">Talk to Security Team</A>
+              <More to="/contact-sales">Schedule Security Review</More>
+            </div>
             <p className="xsc-note"><A to="/login">Try Hanzo</A> · <A to="https://docs.hanzo.ai/docs/cli/security">Read the security documentation</A></p>
           </div>
         </div>
@@ -320,12 +326,14 @@ export default function Security() {
   };
   return (
     <main className="xsc">
+      {/* JS off: every control's words stand stacked, and the dark room is simply there */}
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xsc-panel{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:24px}.pf-wipe>div[aria-hidden]{clip-path:none!important}</style>' }} />
       <Hero pick={pick} />
       <Layers at={at} setAt={setAt} held={held} hold={hold} />
       <Infra />
       <None />
       <Dark />
-      <AskBar title="Security" label="Talk to Security Team" to="/contact" />
+      <AskBar title="Security" label="Talk to Security Team" to="/contact" cta="talk-to-security-team" />
     </main>
   );
 }

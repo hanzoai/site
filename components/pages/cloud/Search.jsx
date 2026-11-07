@@ -10,7 +10,8 @@
    Motion: scroll-pinned chapters (signature) + typing + layout re-flow + magnetic primary. Every word, price and link is
    Hanzo's; the query and its results are examples. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
 import { A } from '../../kit';
 import { Console, useLive, useSteps } from './Frame';
@@ -102,9 +103,9 @@ const NEAR = [[60, 30, 'Running containers in production'], [70, 52, 'Deploy to 
 
 /* One chapter's picture, for the chapter reached. */
 function Way({ at }) {
-  const calm = useReducedMotion();
-  const [fused, setFused] = useState(!!calm);
-  useEffect(() => { if (at !== 2 || calm) return; setFused(false); const t = setTimeout(() => setFused(true), 900); return () => clearTimeout(t); }, [at, calm]);
+  const calm = useCalm();
+  const [fused, setFused] = useState(false);
+  useEffect(() => { if (at !== 2) return; if (calm) { setFused(true); return; } setFused(false); const t = setTimeout(() => setFused(true), 900); return () => clearTimeout(t); }, [at, calm]);
   return (
     <div className="l2-obj se2-way">
       <AnimatePresence mode="wait" initial={false}>

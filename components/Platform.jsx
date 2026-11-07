@@ -33,7 +33,7 @@ export default function Platform() {
         <A className="hv-addr" to={p.addr.startsWith('hanzo.ai/') ? p.addr.slice(8) : 'https://' + p.addr} aria-label={`Open Hanzo ${p.name} at ${p.addr}`}>{p.addr}</A>
         <div className="hv-acts">
           {p.acts.map((a, k) => (
-            <a key={a.label} href={a.href} className={'hv-btn' + (k === p.acts.length - 1 ? ' solid' : '')}>{a.label}{k === p.acts.length - 1 ? ' ↗' : ''}</a>
+            <a key={a.label} href={a.href} className="hv-btn" data-cta={`home.platform.${p.name.toLowerCase()}.${k ? 'open' : 'more'}`}>{a.label}{k === p.acts.length - 1 ? ' ↗' : ''}</a>
           ))}
         </div>
       </>
@@ -46,7 +46,7 @@ export default function Platform() {
         <Lines as="h2" id="products-h" className="v2-display-m" lines={['Hanzo is the AI-native', 'company platform.']} />
         <p className="v2-lede">A vertically integrated agentic operating system for business — intelligence, applications, computer-use agents, developer tools, MCP, and cloud infrastructure designed together in one workspace.</p>
       </div>
-      <Chapters label="Hanzo products" items={items} step={0.55} />
+      <Chapters label="Hanzo products" items={items} step={0.45} />
     </section>
   );
 }
