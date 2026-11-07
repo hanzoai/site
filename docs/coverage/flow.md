@@ -2,10 +2,10 @@
 
 Page file: `components/pages/apps/Flow.jsx` · gallery: `docs/gallery/flow/`
 
-1. **Strategy and conversion.** One ask, Hanzo's "Open Flow" (https://flow.hanzo.ai): solid in the hero (`data-thumb`, `data-cta="primary"`), carried by the site's ask bar after the hero at every width, and the one solid button in the close (`data-cta="primary"`). "Documentation", "Deploy to Cloud" and "View on GitHub" are text links.
+1. **Strategy and conversion.** One ask, Hanzo's "Open Flow" (https://flow.hanzo.ai): solid in the hero (`data-thumb`, `data-cta="primary"`), carried after the hero by the v2 AskBar on desktop and the site's ask bar on phones, and the one solid button in the close (`data-cta="primary"`). "Documentation", "Deploy to Cloud" and "View on GitHub" are text links.
 2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: the canvas running, what each node does (chapters), step through it yourself (playground), four facts that open, getting it, then the two commands and the ask.
 3. **First impression and page narrative.** The first screen is the canvas itself: the h1 sits among six running nodes, a pulse travels the edges within a second, and the inspector follows the run. At 375×812 two rows of nodes show inside the first 660px. Nothing sits above the h1.
-4. **Conversion system.** `data-thumb="Open Flow"` drives the ask bar (phone and desktop). One solid button per viewport: the hero ask, then the close ask.
+4. **Conversion system.** `data-thumb="Open Flow"` drives the site's ask bar on phones; `AskBar` carries the same label on desktop (the site's bar stands aside there via `data-dock`, so only one shows). One solid button per viewport: the hero ask, then the close ask.
 5. **Trust and proof.** The facts are Hanzo's own (Python, REST, :7860, MIT); each opens into its page with Hanzo's sentence. The close shows the exact two commands with a Copy that copies what is shown.
 6. **Content presentation (copy untouched).** Parity 40/40 text and 4/4 links. Detail lives in open cards (REST opens into REST / JSON / MCP tabs) and in the chapters, one idea per screen. Chapter labels sit under their headlines.
 7. **Visual design system.** Biz grammar (`components/v2/Biz.css`): display 128/96, headline, lede, body, Zen Mono labels. Ink, greys and white only; done nodes and outputs are inverted ink chips. One dark room: the playground.
