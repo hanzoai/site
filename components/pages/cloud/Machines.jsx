@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
 import { useLive, useSteps } from './Frame';
 import { Lines, Lift } from '../../v2/LiftStage';
-import PinChapters from '../../v2/PinChapters';
+import PinChapters from '../../v2/x-hypatia/PinChapters';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
 import '../../v2/v2scale.css';

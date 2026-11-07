@@ -10,7 +10,8 @@
    - Phones and reduced motion: chapters stack, each with its own visual (visual(i) is drawn once per chapter), no pin.
    - before / after: optional nodes inside the section, above the track / below it. */
 import { useRef, useState } from 'react';
-import { useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { useScroll, useMotionValueEvent } from 'motion/react';
+import useCalm from '../useCalm';
 import { useWide } from '../useWide';
 import './Launch.css';
 
@@ -19,7 +20,7 @@ const pad = (i) => String(i + 1).padStart(2, '0');
 export default function PinScenes({ id, kick, head, lede, items, visual, flip, dark, screens = 0.9, before, after, className = '' }) {
   const track = useRef(null);
   const wide = useWide();
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const pin = wide && !calm;
   const n = items.length;
   const [at, setAt] = useState(0);

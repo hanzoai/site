@@ -7,7 +7,7 @@
      <Chapters id="eo-ch" label="Three tiers" flip={false} items={[
        { k: 'Enso Flash', title: 'At volume.', body: <p>…</p>, art: <MyPicture /> }, …
      ]} />
-   - items: k (kicker), rail (optional short label for the chapter rail, else k), title (heading text), body (node), art (node drawn inside a 28px frame; it may move by itself,
+   - items: k (a short label for the chapter rail; no eyebrow is drawn above the title), rail (overrides k on the rail), title (heading text), body (node), art (node drawn inside a 28px frame; it may move by itself,
      or a function (on) => node, where on is true while its chapter is the one being read).
    - flip puts the picture on the left. The chapter rail on the side jumps to a chapter (buttons, keyboard).
    - Phones and reduced motion get a plain vertical story (picture, then words); every word is always in the HTML. */
@@ -61,7 +61,6 @@ export default function Chapters({ id, label, items, flip, className = '' }) {
             <div className="lv-ch-texts">
               {items.map((c, i) => (
                 <article key={c.title} className="lv-ch-t" style={{ '--o': i }} data-on={!live || i === at ? '' : undefined} aria-hidden={live && i !== at ? 'true' : undefined}>
-                  <p className="lv-ch-k"><span className="mb-tnum">{String(i + 1).padStart(2, '0')}</span>{c.k}</p>
                   <h3 className="lv-ch-h"><span className="lv-ln"><span>{c.title}</span></span></h3>
                   <div className="lv-ch-b">{c.body}</div>
                 </article>

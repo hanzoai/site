@@ -1,0 +1,28 @@
+# Coverage: /enso — components/pages/model/Enso.jsx on components/v2/Launch.jsx
+
+- **2.1 Strategy and conversion:** Persona (Developer), Goal, CTA and metric `signup_start` are in the `app/enso/page.jsx` header. One solid ask, "Try Hanzo", is in the hero (`<Cta thumb>`, so the site's ask bar carries it after the hero) and repeated verbatim in the closing Band. "API Platform" is outlined, and "Docs on GitHub" is a text link.
+- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. The close button flies back to the card the page opened from. "All Enso models" and every Workbench and GitHub link are kept. The model-card grid near the end reaches every named model.
+- **2.3 First impression and page narrative:** The first screen is Enso's own film at full bleed with the h1 "Enso" cut into its line, and nothing above the h1. Then the film settles into an ensō ring and the headline "The right intelligence. Every time." rises beside it. After that comes one idea per screen: the three tiers as pinned chapters, the live router, the GPQA figures and chart, the tiers side by side, the model cards, and the closing band.
+- **2.4 Conversion system:** One filled primary per viewport: the hero ask, then the Band ask. `data-cta` ids are `enso-hero-try` and `enso-hero-platform`. There is no risk-reducer line, because the page has no such Hanzo text.
+- **2.5 Trust and proof:** The only figures shown are Hanzo's GPQA Diamond numbers, each with its own sentence: Enso Ultra 98.0%, Enso 96.5%, Enso Flash 95.5%, and the 14 other models with their prices per 1,000 questions and source links where Hanzo gives them. Nothing was added.
+- **2.6 Content presentation (copy untouched):** Parity is 0 missing (text 72/72, links 11/11). No headline, eyebrow or line of our own. The spec rows use Hanzo's own labels ("in · per 1M tokens", "out", "context"), and the sortable table keeps every result.
+- **2.7 Visual design system:** Ink, greys and white only, with no UI hue (JAMES.md 7). Colour comes only from Enso's film, which is never filtered. The type follows the v2 scale (display h1 at line-height 0.9). Radii are 28px on hero objects and 16px on cards. There is one dark middle room (the router) and a dark closing Band.
+- **2.8 UI component library:** Kit `Cta`, `More`, `A`, `Img`, `Film`, `Stat`, `DataTable` and `Band`, plus shared `v2/Launch` and `v2/x-cray/Chapters`. Hanzo's exact black model cards are in `ModelCards.jsx`, per `docs/refs/hanzo-model-cards/SPEC.md`. Gap: the switchboard's chips and sort buttons are page parts.
+- **2.9 Motion and interaction:**
+  - Signature (idle): the switchboard routes requests by itself, with comets on a canvas.
+  - Arrival: the h1 cuts in.
+  - Scroll (desktop): the stage settles into the ring, and the tier chapters wipe in.
+  - Time (phones): the stage settles by itself 1.1s after arrival, with no pin.
+  - Pointer: a 3° tilt on the model cards, and Pareto dots you can pick.
+  - State: requests sent by hand, and the table re-sorting.
+  - Scroll-linked motion is under half of the page's moves.
+  - Reduced motion shows final states.
+- **2.10 Media:** Enso's film comes from the kit `Img` (priority poster) and `Film`, which play only on screen and never under reduced motion or Save-Data. The video crossfades over its poster in 0.6s. In the model-card grid only Enso's card and the hovered card play, so at most two films run at once.
+- **2.11 Mobile and responsive:** Nothing pins at 900px and under. Chapters become picture-then-words. The router stacks and the table scrolls inside itself. The cards become a 4-column grid, then 2 columns, with Enso full width. No sideways scroll at 375. Targets are 44px or more.
+- **2.12 Accessibility (WCAG 2.2 AA):** One h1 in the server HTML. The chapters have a keyboard rail (buttons with `aria-current`). The Pareto dots are buttons with full-sentence labels. `DataTable` has a caption and row headers. Cards are single links with `aria-current="page"` on this page. Gap: no axe run in the cloud.
+- **2.13 Performance and engineering:** Only clip-path, transform and opacity animate. The canvas loop stops off screen. At most two films play. Gap: LCP, CLS and INP are not measured here (no CI Lighthouse).
+- **2.14 SEO and machine files (mirror live, add nothing new):** Title, description and `JsonLd` are unchanged.
+- **2.15 Catalogue and product pages:** Hanzo's model-card grid (Enso tall, eight beside it) with this page marked. Each card opens into its page through the WebGL opener, and "Explore model pricing" and "View full model catalog" sit under it.
+- **2.16 Developer experience:** Each tier shows its model id (`enso`, `enso-pro`, `enso-ultra`), its prices, its compatible APIs and "Open in Workbench".
+- **2.17 States and resilience:** JS off: every word shows, because the entrance states are scoped to `html.js`. If the film is blocked, its poster shows. Reduced motion shows the settled stage with no pin and no autoplay.
+- **2.18 Measurement and handover:** `data-cta` ids are on the asks. Proof is in `docs/gallery/enso/`. The `V2:` line is in the route header. Gap: no `section_view` events.

@@ -1,0 +1,27 @@
+# Coverage: /kai — components/pages/model/Kai.jsx on components/v2/Launch.jsx
+
+- **2.1 Strategy and conversion:** Persona (Developer), Goal, CTA and metric `api_key_created` are in the `app/kai/page.jsx` header. One solid ask, "Open Decisions", is in the hero (`<Cta thumb>`, carried by the ask bar after the hero) and repeated in the closing Band. "Explore models" is outlined (it jumps to `#models`), and "Docs on GitHub" is a text link. Weight changed, wording did not.
+- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. The two Kai model cards link to `/models/hanzo/kai-1.8` and `/models/hanzo/kai`. "Read the guide" leads to `/kai/guide`. The model-card grid reaches every named model.
+- **2.3 First impression and page narrative:** Kai's film at full bleed with the h1 "Kai" cut in, and nothing above it. The film settles into a decision-node diamond, and "Kai. / Made for decisions." rises beside it. Then come the three question types as pinned chapters, the live decision tree, Kai's model cards, the model-card grid and the Band.
+- **2.4 Conversion system:** One filled primary per viewport, with `data-cta` ids `kai-hero-decisions` and `kai-hero-models`. Copy request (kit `Copy`, honest "Copied") sits beside the tree.
+- **2.5 Trust and proof:** No figures are claimed. The tree's bars only draw the shape of an answer, and the note under the tree says so.
+- **2.6 Content presentation (copy untouched):** Parity is 0 missing (text 16/16, links 4/4). The chapter titles are Hanzo's own question-type names (choice, score, noul), with the guide's send and get lines. Our own headings and spec labels were removed.
+- **2.7 Visual design system:** Ink, greys and white only. Colour comes only from Kai's film, which is never filtered. One dark middle room (the tree) and a dark closing Band. The second model card is the inverted (light) tile.
+- **2.8 UI component library:** Kit `Cta`, `More`, `A`, `Img`, `Film`, `Copy` and `Band`, plus `Sigil`, shared `v2/Launch` and `v2/x-cray/Chapters`, and Hanzo's exact model cards (`ModelCards.jsx`). Gap: the tree's tabs are hand-rolled tabs that do have arrow-key support.
+- **2.9 Motion and interaction:**
+  - Signature (time and idle): the state types itself in, and each question settles on its answer by itself.
+  - Arrival: the h1 cut-in.
+  - Scroll (desktop): the stage settles into the diamond, and the chapters wipe in.
+  - State: each chapter's answer shape plays when its chapter becomes current.
+  - Pointer: the model-card tilt, and the Sigils lean toward the mouse.
+  - Phones: the stage settles by itself.
+  - Reduced motion shows final states.
+- **2.10 Media:** Kai's film comes from the kit `Img` and `Film`, playing only on screen, with a 0.6s crossfade over its poster. At most two films run in the card grid.
+- **2.11 Mobile and responsive:** No pin at 900px and under. Chapters become picture-then-words, the tree stacks its questions, and the cards stack. No sideways scroll at 375. Targets are 44px or more.
+- **2.12 Accessibility (WCAG 2.2 AA):** One h1. Tabs have `role=tab` and arrow keys. The chapter rail is made of buttons. The cards are single links. Typing writes to a text node through a ref, and the full state is in the server HTML. Gap: no axe run.
+- **2.13 Performance and engineering:** Only transform, opacity and clip-path animate. The tree's timers stop off screen. Gap: no Lighthouse run.
+- **2.14 SEO and machine files (mirror live, add nothing new):** Title, description and `JsonLd` are unchanged.
+- **2.15 Catalogue and product pages:** Kai's two model cards plus Hanzo's model-card grid, with this page marked.
+- **2.16 Developer experience:** The three requests from the Kai guide (curl, Python, TypeScript) can be copied exactly as shown, next to `POST /v1/decisions`.
+- **2.17 States and resilience:** JS off: every word shows. The server renders the resolved tree. If the film is blocked, its poster shows. Reduced motion shows the resolved tree and the settled stage.
+- **2.18 Measurement and handover:** `data-cta` ids are on the asks. Proof is in `docs/gallery/kai/`. The `V2:` line is in the route header.

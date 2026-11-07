@@ -1,6 +1,6 @@
-// Signature: open: each early-access pass is a tile that grows into its own full sheet with a shared-element morph, letter, words and Apply stub carried across
-// Beyond: say what you are after (use it first, evaluate it first, build it with the team) and the pass made for it opens, from Hanzo’s own description of each
-// V2: 8/10 display hero over the five early-access products (Kai, Enso, Zen as their own films) settling into a row on scroll; pass tiles that open into sheets; a dark closing room
+// Signature: open: each early-access pass is a tile carrying Hanzo’s own media that grows into its full sheet with a shared-element morph, picture and words carried across
+// Beyond: the five products in early access as their own tiles, Kai, Enso and Zen as their films, each opening into its page
+// V2: 8/10 grey deck, no eyebrow; one solid Apply sticky after the hero; a film on the phone’s first screen with a pause control; pass tiles with real media open into sheets; the close over Enso’s film; no added words
 import Beta from '../../components/pages/Beta';
 import JsonLd from '../../components/JsonLd';
 

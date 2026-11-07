@@ -1,8 +1,12 @@
 'use client';
+// Persona: a builder, founder or researcher deciding whether to trust Hanzo's stack, who wants to know how Hanzo thinks (arrives from About, Research, the footer or a shared link)
+// Goal: understand the premise and the five laws, then open the 64 patterns and read the ones that fit their system
+// CTA: Explore the 64 patterns -> #patterns (hero, sticky AskBar and thumb bar) · metric cta_click (data-cta="explore-patterns"); close: Explore Hanzo -> / (data-cta="explore-hanzo")
 /* Philosophy: the Zen of Hanzo, told as a chapter book. Its idea is change itself, drawn in lines.
-   V2: 8/10 an editorial chapter book in ink only: a hero hexagram that walks the sixty-four and changes at a press, the five laws pinned while one hexagram builds beside them, the 64 as a quiet index whose every pattern opens in a sheet, the belief statement filling in word by word, one ask that follows you.
-   The hero is one hexagram that never holds still: it walks the sixty-four in King Wen order, the lines that changed
-   marked with a dot, and any line you press flips. Then one idea per screen: the premise as a single sentence beside one
+   V2: 8/10 an editorial chapter book in ink only: the hexagram as a huge centred stage object that walks the sixty-four and changes at a press, the headline set across the foot of the first screen, the five laws pinned while one hexagram builds beside them, the 64 as a quiet index whose every pattern opens in a sheet, the belief statement filling in word by word, one ask that follows you; every word legible with JavaScript off.
+   The hero is a stage: one hexagram, huge and centred, that never holds still: it walks the sixty-four in King Wen
+   order, the lines that changed marked with a dot, and any line you press flips; its name and trigrams sit either side
+   of it, and "The Zen of Hanzo" runs across the foot of the screen (osply / hamol: editorial type as the floor). Then one idea per screen: the premise as a single sentence beside one
    line that keeps opening and closing; the five laws as chapters that pin while a hexagram builds itself beside them, one
    line per law, its last line never settling; the 64 patterns as a quiet index (by sequence, as the 8 x 8 matrix of
    trigrams, or by lens) where every pattern opens into a sheet with its principle, practice and question and steps to its
@@ -83,23 +87,27 @@ function Hero() {
   const [main, sub] = split(h[1]);
   return (
     <section className="xph-hero" ref={ref} aria-labelledby="xph-h1">
-      <div className="pf-wrap pf-grid xph-hero-g">
-        <div className="xph-hero-copy">
-          <MaskLines as="h1" id="xph-h1" className="pf-display xph-h1" lines={['The Zen', 'of Hanzo']} amount={0.1} />
-          <p className="pf-mono xph-cap">Philosophy</p>
-          <p className="pf-lede xph-sub">64 patterns for intelligent systems</p>
-          <p className="pf-body xph-lede">The <em>I Ching</em> is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal.</p>
-          <div className="xph-acts">
-            <a href="#patterns" className="pf-btn solid" data-thumb="Explore the 64 patterns">Explore the 64 patterns</a>
-            <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
-          </div>
-        </div>
-        <div className="xph-oracle">
-          <Hexa ls={lines(h)} size={360} hot={hot} press={press} className="xph-oracle-hx" />
-          <div className="xph-oracle-c" aria-live={Date.now() - held < 7000 ? 'polite' : 'off'}>
+      <div className="pf-wrap xph-hero-g">
+        <div className="xph-stage">
+          <div className="xph-flank l" aria-live={Date.now() - held < 7000 ? 'polite' : 'off'}>
             <span className="pf-mono xph-oracle-n">{h[0]} / 64</span>
             <b>{main}</b>
+          </div>
+          <Hexa ls={lines(h)} size={340} hot={hot} press={press} className="xph-oracle-hx" />
+          <div className="xph-flank r">
             <span>{sub} · {h[2]} over {h[3]}</span>
+          </div>
+        </div>
+        <MaskLines as="h1" id="xph-h1" className="pf-display xph-h1" lines={['The Zen', 'of Hanzo']} amount={0.1} />
+        <div className="pf-grid xph-hero-foot">
+          <div className="xph-hero-a">
+            <p className="pf-mono xph-cap">Philosophy</p>
+            <p className="xph-sub">64 patterns for intelligent systems</p>
+          </div>
+          <p className="pf-body xph-lede">The <em>I Ching</em> is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal.</p>
+          <div className="xph-acts">
+            <a href="#patterns" className="pf-btn solid" data-thumb="Explore the 64 patterns" data-cta="explore-patterns">Explore the 64 patterns</a>
+            <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
           </div>
         </div>
       </div>
@@ -244,9 +252,9 @@ function PatternSheet({ sel, setSel }) {
   }, [open, setSel]);
   const cur = sel ?? 0;
   const sheet = (
-    <div className="pf-sheet xph-sheet" data-open={open} aria-hidden={!open}>
+    <div className="pf-sheet xph-sheet" data-open={open} aria-hidden={host ? !open : undefined}>
       <div className="pf-sheet-scrim" onClick={() => setSel(null)} />
-      <div className="pf-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="xph-sheet-h" inert={!open} data-lenis-prevent>
+      <div className="pf-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="xph-sheet-h" inert={host ? !open : undefined} data-lenis-prevent>
         <div className="pf-sheet-top">
           <div>
             <p className="pf-title" id="xph-sheet-h">{HEX[cur][0]} / 64</p>
@@ -502,9 +510,9 @@ function Whole() {
   return (
     <section className="pf-sec xph-whole" ref={ref}>
       <div className="pf-wrap">
-        <p className="pf-display s xph-whole-t">
+        <h2 className="pf-display s xph-whole-t">
           {calm ? WHOLE : words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.6) / words.length}>{w}{i < words.length - 1 ? ' ' : ''}</Word>)}
-        </p>
+        </h2>
       </div>
     </section>
   );
@@ -525,9 +533,9 @@ function Close() {
           <span className="xph-gto" />
           <div className="xph-g64">{HEX.map((h, i) => <Hexa key={i} ls={lines(h)} size={15} />)}</div>
         </div>
-        <MaskLines as="p" className="pf-head xph-stanza" lines={stanza} />
+        <MaskLines as="h2" className="pf-head xph-stanza" lines={stanza} />
         <div className="xph-close-acts">
-          <A to="/" className="pf-btn solid">Explore Hanzo</A>
+          <A to="/" className="pf-btn solid" data-cta="explore-hanzo">Explore Hanzo</A>
           <More to="https://papers.hanzo.ai">Read the research</More>
           <More to="https://github.com/hanzoai">View the source</More>
         </div>
@@ -539,6 +547,8 @@ function Close() {
 export default function Philosophy() {
   return (
     <main className="xph">
+      {/* JavaScript off: the word reveal is full ink, every view and all 64 patterns are laid out in the page, tiles show their principle */}
+      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xph-w{opacity:1!important}#panel-matrix,#panel-lenses,.xph-hint{display:block!important}#panel-matrix,#panel-lenses{margin-top:96px}.xph-mx-side{position:static!important}.xph-tile-s>span{grid-area:auto!important;opacity:1!important;transform:none!important}.xph-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin-top:96px}.xph-sheet .pf-sheet-scrim,.xph-sheet .xph-sheet-nav{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}.xph-sheet .pf-sheet-top{padding:0 0 20px!important}.xph-sheet .pf-sheet-body{overflow:visible!important;padding:0!important}.xph-sheet [hidden]{display:block!important;margin-top:56px}</style>' }} />
       <Hero />
       <Premise />
       <Laws />
@@ -548,7 +558,7 @@ export default function Philosophy() {
       <Change />
       <Whole />
       <Close />
-      <AskBar title="Philosophy" label="Explore the 64 patterns" to="/philosophy#patterns" />
+      <AskBar title="Philosophy" label="Explore the 64 patterns" to="/philosophy#patterns" cta="explore-patterns" />
     </main>
   );
 }

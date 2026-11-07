@@ -22,6 +22,9 @@ import { onDomChange } from '../lib/domwatch';
 
 const HEADER_ASK = { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' }; // Hanzo's own header words
 const OVERLAY = '.x-cookie:not([hidden]), .x-sheet, .x-pal, .x-pop, .x-nav-panel, .x-sheet2-wrap, [aria-modal="true"], [data-dock], .xcr-dock';
+// an overlay counts only while it is actually showing (closed drawers often keep aria-modal in the DOM)
+const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && +getComputedStyle(el).opacity > 0.05 && !el.closest('[hidden], [inert], [aria-hidden="true"]');
+const overlayOpen = () => [...document.querySelectorAll(OVERLAY)].some(shown);
 const nameOf = (t) => (t || '').split(/\s+[—|–-]\s+/)[0].trim();
 // a wrapper with display: contents has no box for IntersectionObserver; watch the link or button inside it instead
 const boxOf = (el) => (el.getClientRects().length ? el : el.querySelector('a, button') || el.firstElementChild || el);
@@ -59,7 +62,7 @@ export default function Ask() {
       let solids = new Set();
       const update = () => {
         if (off) return;
-        const show = past && !blocking.size && !solids.size && !typing && !document.querySelector(OVERLAY);
+        const show = past && !blocking.size && !solids.size && !typing && !overlayOpen();
         setOn(show);
         setQuiet(solids.size > 0);
       };

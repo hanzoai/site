@@ -1,5 +1,7 @@
 'use client';
-/* Hanzo IDE. V2: 8/10 Stage hero (the editor arrives huge and settles into place as you scroll, memories surfacing in its gutter), the workbench exploding off its Rust engine, three pinned chapters, one dark room, detail tucked into an accordion.
+/* Hanzo IDE.
+   V2: 8/10 real code in a live editor that starts under the buttons and settles as you scroll, memories surfacing in its gutter from the first second; the workbench exploding off its Rust engine, three pinned chapters, one dark room, a start script that types itself, related apps as cards that open into their pages. Greys only.
+   Persona: a developer choosing an AI editor. Goal: open the IDE. CTA: Open the IDE (ide.hero, sticky in the ask bar).
    Signature: an editor that remembers. The hero object is the workbench itself: it starts huge and settles as you
    scroll (Stage), while a cursor walks the code and memories surface in the gutter beside the lines they belong to,
    the impact radius of a change glows through the file and the agent panel runs Hanzo's example session (live).
@@ -7,9 +9,10 @@
    chapters whose picture changes (memory, call graph, sandbox); the one dark room holds the memory tiers.
    Beyond: "Tell it something" - write one thing about your project, file it as what happened, what is true or how
    things are done here, and watch it sit in that memory, fading when unused and coming back at full strength when
-   you recall it. Nothing is saved or sent. Accent: indigo, from the editor's own selection colour. Every word is Hanzo's. */
+   you recall it. Nothing is saved or sent. Greys only (docs/JAMES.md). Every word is Hanzo's, and the editor's text is
+   Hanzo's own start script from this page. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Go } from '../kit';
 import A2Lines from '../v2/A2Lines';
@@ -22,31 +25,40 @@ import './IdePage.css';
 const IDE = 'https://ide.hanzo.ai';
 const GH = 'https://github.com/hanzoai/ide';
 
-/* The code is drawn, not written: line shapes in syntax colours. Each memory belongs to a line. */
-const LINES = [[2, 14, 3, 22], [2, 30], [], [1, 8, 2, 18, 1, 9], [3, 12, 2, 26], [3, 20, 1, 14], [3, 9], [1, 4], [], [1, 10, 2, 16], [3, 22, 2, 11], [3, 28], [3, 16, 1, 12, 2, 8], [1, 4], [], [2, 26], [1, 12, 3, 20]];
+/* The editor shows real text: Hanzo's own start script from this page. Each memory belongs to a line of it. */
+const SCRIPT_LINES = ['# Open it in the browser', 'open https://ide.hanzo.ai', '', '# Or build the desktop app from source', 'git clone https://github.com/hanzoai/ide.git', 'cd ide', 'npm install', 'npm run tauri:dev', '', '# First launch: pick a provider, paste a key, choose a model.'];
 const MEMS = [
-  [3, 'episodic', 'what happened'],
+  [4, 'episodic', 'what happened'],
   [5, 'semantic', 'what is true about the project'],
-  [10, 'procedural', 'how things are done here'],
+  [7, 'procedural', 'how things are done here'],
 ];
-const IMPACT = [4, 5, 6, 11, 12];
+const IMPACT = [4, 5, 6, 7];
+const LAST = SCRIPT_LINES.length - 1;
 const SESSION = [['$', 'hanzo'], ['>', 'deploy the gateway to staging'], ['·', 'reading the project'], ['✓', 'gateway is on staging']];
 const ramp = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
-const pairs = (segs) => segs.reduce((a, v, k) => (k % 2 ? a : [...a, [v, segs[k + 1]]]), []);
+/* one line of shell, lightly coloured in greys: comments faint, the command word bright, URLs quieter */
+const Shell = ({ l }) => {
+  if (!l) return ' ';
+  if (l.startsWith('#')) return <span className="ide-cm">{l}</span>;
+  const [w, ...rest] = l.split(' ');
+  return <><span className="ide-kw">{w}</span>{rest.length ? ' ' : ''}{rest.map((r, i) => <span key={i} className={r.includes('://') ? 'ide-url' : ''}>{r}{i < rest.length - 1 ? ' ' : ''}</span>)}</>;
+};
 
 function Editor() {
   const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.3 });
+  const seen = useInView(ref, { amount: 0.01 }); // it starts the moment any of it is on screen, so the hero is alive at once
   const calm = useReducedMotion();
   const [t, setT] = useState(99); // the finished picture is in the HTML; the browser replays it
   useEffect(() => {
     if (!seen || calm) { setT(99); return; }
     let alive = true, h = 0;
-    const tick = (v) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= 16 ? 0 : v + 1), v >= 16 ? 4200 : 480); };
+    const end = LAST + 6;
+    const tick = (v) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= end ? 0 : v + 1), v >= end ? 4200 : 520); };
     tick(0);
     return () => { alive = false; clearTimeout(h); };
   }, [seen, calm]);
-  const cursor = Math.min(t, LINES.length - 1);
+  const cursor = Math.min(t, LAST);
+  const hit = t >= LAST + 1 && t < 99 ? true : t === 99;
   return (
     <div className="ide-win" ref={ref}>
       <div className="ide-bar">
@@ -64,17 +76,17 @@ function Editor() {
         </div>
         <div className="ide-code">
           <div className="ide-crumbs x-mono"><span>api.hanzo.ai</span><span>/v1/code</span></div>
-          <ol className="ide-lines" aria-hidden="true">
-            {LINES.map((segs, i) => (
-              <li key={i} className={(i === cursor && t < 99 ? 'cur' : '') + (t >= 12 && IMPACT.includes(i) ? ' hit' : '')}>
-                <span className="ide-n x-mono">{i + 1}</span>
-                <span className="ide-src">{pairs(segs).map(([c, w], k) => <b key={k} className={'c' + c} style={{ width: w * 6 + 'px' }} />)}</span>
+          <ol className="ide-lines x-mono" aria-hidden="true">
+            {SCRIPT_LINES.map((l, i) => (
+              <li key={i} className={(i === cursor && t < 99 ? 'cur' : '') + (hit && IMPACT.includes(i) ? ' hit' : '')}>
+                <span className="ide-n">{i + 1}</span>
+                <span className="ide-src"><Shell l={l} /></span>
               </li>
             ))}
           </ol>
           <ul className="ide-mems">
             {MEMS.map(([line, kind, what]) => (
-              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 26 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} tabIndex={0}>
+              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} tabIndex={0}>
                 <span className="ide-mem-k x-mono">{kind}</span>
                 <span className="ide-mem-w">{what}</span>
               </motion.li>
@@ -84,39 +96,58 @@ function Editor() {
         <aside className="ide-agent">
           <span className="ide-agent-h"><Mark size={13} /> Hanzo</span>
           <ul>
-            {SESSION.map(([p, s], i) => <li key={s} className={'k' + i + (t >= 13 + i ? ' on' : '')}><span className="ide-p">{p}</span>{s}</li>)}
+            {SESSION.map(([p, s], i) => <li key={s} className={'k' + i + (t >= LAST + 2 + i ? ' on' : '')}><span className="ide-p">{p}</span>{s}</li>)}
           </ul>
-          <A to="https://hanzo.team/" className={'ide-open' + (t >= 16 ? ' on' : '')}>Open in the console</A>
+          <A to="https://hanzo.team/" className={'ide-open' + (t >= LAST + 5 ? ' on' : '')}>Open in the console</A>
         </aside>
       </div>
     </div>
   );
 }
 
-/* Stage: the words first, then the editor arrives huge and settles into its place as you scroll. */
+/* Stage: the words first, the editor beneath the buttons (never over them); as you scroll it rises into place and
+   settles from a little larger to its own size, while the words make way. */
 function Stage() {
   const ref = useRef(null);
+  const copy = useRef(null);
+  const obj = useRef(null);
+  const sy = useMotionValue(0); // how far below its place the editor starts (measured: just under the buttons)
+  const ss = useMotionValue(1); // how much larger it starts (never wider than the screen)
   const narrow = useNarrow();
   const calm = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const still = calm || narrow;
-  const scale = useTransform(p, [0, 0.55], still ? [1, 1] : [1.42, 1]);
-  const y = useTransform(p, [0, 0.55], still ? ['0vh', '0vh'] : ['47vh', '0vh']);
-  const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.02, 0.26))); // functions: an accelerated scroll fade does not clamp
-  const lift = useTransform(p, [0, 0.3], still ? [0, 0] : [0, -160]);
+  useEffect(() => {
+    const m = () => {
+      const c = copy.current, o = obj.current;
+      if (!c || !o) return;
+      const cb = c.getBoundingClientRect().bottom - ref.current.getBoundingClientRect().top; // the buttons' bottom, in the stage
+      const top = o.offsetTop; // where the editor sits when settled
+      sy.set(Math.max(0, cb + 40 - top));
+      ss.set(Math.min(1.08, (innerWidth - 48) / o.offsetWidth));
+    };
+    m();
+    addEventListener('resize', m);
+    return () => removeEventListener('resize', m);
+  }, [sy, ss]);
+  const k = (v) => (still ? 1 : ramp(v, 0, 0.55));
+  const scale = useTransform([p, ss], ([v, s0]) => (still ? 1 : s0 + (1 - s0) * k(v)));
+  const y = useTransform([p, sy], ([v, y0]) => (still ? 0 : y0 * (1 - k(v))));
+  const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.04, 0.3))); // functions: an accelerated scroll fade does not clamp
+  const lift = useTransform(p, (v) => (still ? 0 : -160 * ramp(v, 0, 0.3)));
   const cap = useTransform(p, (v) => (still ? 1 : ramp(v, 0.5, 0.62)));
   return (
     <section className="ide-stage" ref={ref} aria-labelledby="ide-h1">
       <div className="ide-stick">
-        <motion.div className="a2-wrap ide-copy" style={{ opacity: fade, y: lift }}>
+        <motion.div className="a2-wrap ide-copy" style={{ opacity: fade, y: lift }} ref={copy}>
           <p className="a2-kick"><b>Hanzo IDE</b> · Developers</p>
           <A2Lines as="h1" id="ide-h1" className="a2-display m ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
           <div className="ide-copy-row">
             <p className="a2-lede">The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
-            <div className="a2-acts"><span data-thumb="Open the IDE" data-href={IDE} style={{ display: 'contents' }}><Go to={IDE} solid>Open the IDE</Go></span><Go to={GH}>View on GitHub</Go></div>
+            <div className="a2-acts"><A to={IDE} className="x-btn solid" data-thumb="Open the IDE" data-cta="ide.hero">Open the IDE</A><Go to={GH}>View on GitHub</Go></div>
           </div>
         </motion.div>
-        <motion.div className="ide-obj" style={{ scale, y }}>
+        <motion.div className="ide-obj" style={{ scale, y }} ref={obj}>
           <Editor />
           <motion.div className="ide-under" style={{ opacity: cap }}>
             <p>Open source (Apache 2.0). The VS Code workbench on a Rust engine. Open VSX extensions run as they are.</p>
@@ -177,13 +208,11 @@ const EDGES = [[0, 1], [0, 2], [0, 3], [0, 4], [1, 5], [2, 5], [1, 6], [3, 6], [
 function Picture({ i }) {
   if (i === 0) return (
     <div className="ide-pic ide-pic-mem" key="m">
-      <ol className="ide-pic-code">
-        {LINES.slice(0, 12).map((segs, k) => (
-          <li key={k}><span className="x-mono">{k + 1}</span>{pairs(segs).map(([c, w], j) => <b key={j} className={'c' + c} style={{ width: w * 7 + 'px' }} />)}</li>
-        ))}
+      <ol className="ide-pic-code x-mono">
+        {SCRIPT_LINES.map((l, k) => <li key={k}><span>{k + 1}</span><span className="ide-pic-src"><Shell l={l} /></span></li>)}
       </ol>
       {MEMS.map(([line, kind, what], k) => (
-        <p key={kind} className={'ide-pic-chip k-' + kind} style={{ top: 28 + line * 30 + 'px', animationDelay: 0.12 + k * 0.14 + 's' }}><span className="x-mono">{kind}</span>{what}</p>
+        <p key={kind} className={'ide-pic-chip k-' + kind} style={{ top: 28 + line * 34 + 'px', animationDelay: 0.12 + k * 0.14 + 's' }}><span className="x-mono">{kind}</span>{what}</p>
       ))}
     </div>
   );
@@ -321,6 +350,10 @@ npm run tauri:dev
 # First launch: pick a provider, paste a key, choose a model.`;
 
 function Start() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const calm = useReducedMotion();
+  let d = 0; // each line types after the one before it (time, not scroll)
   return (
     <section className="a2-sec ide-start" aria-labelledby="ide-start-h">
       <div className="a2-wrap a2-grid">
@@ -328,9 +361,13 @@ function Start() {
           <p className="a2-kick">Get started</p>
           <A2Lines id="ide-start-h" className="a2-headline" lines={['Open it in the browser,', 'or build it on your machine']} />
         </div>
-        <div className="ide-script">
+        <div className="ide-script" ref={ref}>
           <div className="ide-script-bar"><span className="x-mono">bash</span><Copy text={SCRIPT} /></div>
-          <pre>{SCRIPT.split('\n').map((l, i) => <span key={i} className={l.startsWith('#') ? 'c' : ''}>{l || ' '}{'\n'}</span>)}</pre>
+          <pre className={seen && !calm ? 'type' : ''}>{SCRIPT.split('\n').map((l, i) => {
+            const n = Math.max(1, l.length), at = d;
+            d += n * 0.022 + 0.18;
+            return <span key={i} className={l.startsWith('#') ? 'c' : ''} style={{ '--n': n, '--d': at + 's' }}>{l || ' '}</span>;
+          })}</pre>
         </div>
       </div>
     </section>
@@ -345,17 +382,18 @@ function End() {
           <div className="ide-end-copy">
             <A2Lines id="ide-end-h" className="a2-display s" lines={['Open the IDE.', 'It already knows', 'the way around.']} />
             <p className="a2-lede">Your project, its call graph, and what the agent learned last week, in one window.</p>
-            <div className="a2-acts"><Go to={IDE} solid>Open the IDE</Go><Go to={GH}>GitHub</Go><Go to="https://platform.hanzo.ai">Hanzo Cloud</Go></div>
+            <div className="a2-acts"><A to={IDE} className="x-btn solid" data-cta="ide.close">Open the IDE</A><Go to={GH}>GitHub</Go><Go to="https://platform.hanzo.ai">Hanzo Cloud</Go></div>
           </div>
           <div className="ide-get">
             <span className="ide-get-i"><Mark size={22} /></span>
             <h2>Get IDE</h2>
-            <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+            <Go to="https://platform.hanzo.ai/deploy">Deploy to Cloud</Go>
           </div>
         </div>
         <div className="ide-rel">
-          <p className="a2-kick">Related capabilities</p>
-          <div>{[['CLI', '/cli'], ['Playground', '/playground'], ['Desktop', '/desktop']].map(([t, to]) => <A key={t} to={to} className="ide-rel-a">{t}<span aria-hidden="true">→</span></A>)}</div>
+          <p className="a2-kick show">Related capabilities</p>
+          {/* big cards: Morph flies the one you click into the next page's hero (synchronized.studio) */}
+          <div>{[['CLI', '/cli', '$ hanzo'], ['Playground', '/playground', '> _'], ['Desktop', '/desktop', '⌘']].map(([t, to, g]) => <A key={t} to={to} className="ide-rel-a"><span className="ide-rel-g x-mono" aria-hidden="true">{g}</span><b data-morph="">{t}</b><span className="ide-rel-i" aria-hidden="true">→</span></A>)}</div>
         </div>
       </div>
     </section>
@@ -364,7 +402,7 @@ function End() {
 
 export default function IdePage() {
   return (
-    <main className="a2 ide" style={{ '--acc': '#5e5ce6' }} data-acc-btn="">
+    <main className="a2 ide">
       <Stage />
       <A2Paste name="IDE" text="Read https://hanzo.ai/skill.md and use Hanzo IDE in my project. Start with: hanzo code" />
       <Engine />

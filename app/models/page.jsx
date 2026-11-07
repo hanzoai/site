@@ -1,6 +1,8 @@
-// Signature: the stage that opens. Enso's film fills the first screen, pulls back into a wall of all nine flagship films, and every film and card opens into its own page.
-// Beyond: the compare tray. Pin up to three models anywhere in the catalogue and a tray rises with their context window and rates side by side, from Hanzo's own price list.
+// Signature: the wall that opens. Nine flagship films on the first screen; scroll flies into Enso, and every film and card opens into its own page.
+// Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from /models.
 import ModelsPage from '../../components/pages/ModelsPage';
+import NoScript from '../../components/pages/models/NoScript';
+import { makerIndex } from '../../components/pages/models/modelsData';
 import JsonLd from '../../components/JsonLd';
 
 export const metadata = {
@@ -9,5 +11,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <><JsonLd route="/models" /><ModelsPage /></>;
+  return <><JsonLd route="/models" /><NoScript /><ModelsPage makers={makerIndex()} /></>;
 }

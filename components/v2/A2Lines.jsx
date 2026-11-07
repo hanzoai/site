@@ -3,7 +3,8 @@
    Usage: <A2Lines as="h1" className="a2-display" lines={['An IDE that', 'remembers', 'your codebase']} now />
    Each line rises out of its own mask, 90 ms apart. `now` plays on mount (a hero); otherwise it plays the first time the
    heading reaches the screen (watched on the heading itself: the masked lines are clipped, so they cannot be watched).
-   Reduced motion shows the final lines. The whole sentence is in the HTML. */
+   Reduced motion shows the final lines. The whole sentence is in the HTML, and with JavaScript off a <noscript> rule
+   shows every masked line (and anything a page started at opacity 0) in its final place. */
 import { useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 
@@ -16,6 +17,8 @@ export default function A2Lines({ lines, as = 'h2', className = '', now, delay =
   const Tag = as;
   const go = now || seen;
   return (
+    <>
+    <noscript><style>{'.a2-ln-in{transform:none!important}.a2 [style*="opacity:0"]{opacity:1!important;transform:none!important}'}</style></noscript>
     <Tag className={className} id={id} ref={ref}>
       {lines.map((l, i) => (
         <span className="a2-ln" key={i}>
@@ -24,5 +27,6 @@ export default function A2Lines({ lines, as = 'h2', className = '', now, delay =
         </span>
       ))}
     </Tag>
+    </>
   );
 }

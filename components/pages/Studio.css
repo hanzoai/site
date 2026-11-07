@@ -1,5 +1,5 @@
 /* ---------- studio v2 (xst-): the cutting room, then a camera that moves with your scroll ---------- */
-.xst { --tally: #ff9f0a; --rec: #ff453a; --d-line: rgba(255, 255, 255, .08); --d-soft: #a1a1a6; --d-faint: #6e6e73; }
+.xst { --tally: #b5b5b5; --rec: #8b8b8b; --d-line: rgba(255, 255, 255, .08); --d-soft: #a1a1a6; --d-faint: #6e6e73; }
 
 /* hero: the one dark room */
 .xst-hero { padding: clamp(112px, 14vh, 156px) 0 clamp(88px, 9vw, 140px); }
@@ -59,18 +59,18 @@
 .xst-track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; opacity: .72; transition: opacity .3s; }
 .xst-track.on { opacity: 1; }
 .xst-clip { position: relative; display: flex; align-items: center; gap: 2px; min-width: 0; padding: 0 6px; border-radius: 6px; background: #1c1c20; overflow: hidden; border: 1px solid transparent; transition: border-color .3s, background-color .3s; }
-.xst-clip.now { border-color: rgba(255, 159, 10, .65); }
+.xst-clip.now { border-color: rgba(181, 181, 181, .65); }
 .xst-track.v .xst-clip { background-size: cover; background-position: center; }
 .xst-track.v .xst-clip::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10, 10, 12, .85), rgba(10, 10, 12, .35)); }
 .xst-clip em { position: relative; font: 500 12px/1 var(--sans); font-style: normal; color: #f5f5f7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.xst-clip i { flex: 1; height: 72%; min-width: 1px; border-radius: 1px; background: #5e5ce6; transform-origin: 50% 50%; }
-.xst-track.a .xst-clip i { background: #64d2ff; }
-.xst-track.k .xst-clip i { background: #30d158; }
-.xst-track.u .xst-clip i { background: #bf5af2; }
+.xst-clip i { flex: 1; height: 72%; min-width: 1px; border-radius: 1px; background: #6f6f6f; transform-origin: 50% 50%; }
+.xst-track.a .xst-clip i { background: #c5c5c5; }
+.xst-track.k .xst-clip i { background: #b6b6b6; }
+.xst-track.u .xst-clip i { background: #888888; }
 .xst-clip.gap { background: transparent; border: 1px dashed rgba(255, 255, 255, .07); }
 .xst-clip.score { grid-column: 1 / -1; gap: 1px; }
 .xst-ph { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; pointer-events: none; }
-.xst-ph i { position: absolute; left: -1px; top: -4px; bottom: -4px; width: 2px; border-radius: 1px; background: var(--tally); box-shadow: 0 0 12px rgba(255, 159, 10, .6); }
+.xst-ph i { position: absolute; left: -1px; top: -4px; bottom: -4px; width: 2px; border-radius: 1px; background: var(--tally); box-shadow: 0 0 12px rgba(181, 181, 181, .6); }
 .xst-ph i::before { content: ''; position: absolute; left: -6px; top: 0; width: 14px; height: 10px; border-radius: 3px 3px 7px 7px; background: var(--tally); }
 
 /* the inspector */
@@ -88,13 +88,13 @@
 .xst-models button:hover { border-color: rgba(255, 255, 255, .3); color: #f5f5f7; }
 .xst-models button[aria-checked='true'] { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
 .xst-prompt { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 14px 0 8px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .14); background: #08080a; color: var(--d-faint); font-size: 14px; text-decoration: none; transition: border-color .2s, color .2s; }
-.xst-prompt:hover { border-color: rgba(255, 159, 10, .6); color: #d1d1d6; }
+.xst-prompt:hover { border-color: rgba(181, 181, 181, .6); color: #d1d1d6; }
 .xst-pm { padding: 6px 8px; border-radius: 7px; background: #1c1c20; color: var(--tally); font-size: 12px; }
 .xst-caret { width: 2px; height: 16px; margin-left: -6px; background: #f5f5f7; animation: xst-blink 1.1s steps(1) infinite; }
 .xst-lib { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .xst-lib button { position: relative; display: block; width: 100%; aspect-ratio: 1.15; padding: 0; border-radius: 10px; border: 1px solid transparent; overflow: hidden; background: #111; cursor: pointer; transition: border-color .25s, transform .35s var(--ease); }
 .xst-lib button:hover { border-color: rgba(255, 255, 255, .4); }
-.xst-lib button.mine { border-color: rgba(255, 159, 10, .55); }
+.xst-lib button.mine { border-color: rgba(181, 181, 181, .55); }
 .xst-lib button[aria-pressed='true'] { border-color: var(--tally); }
 .xst-lib img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .xst-lib button > span { position: absolute; inset: auto 0 0; display: grid; padding: 18px 7px 6px; background: linear-gradient(transparent, rgba(0, 0, 0, .8)); text-align: left; line-height: 1.15; }
@@ -238,3 +238,8 @@
   .xst-rel-a { grid-template-columns: 80px minmax(0, 1fr) auto; }
   .xst-get { padding: 28px; }
 }
+
+/* 0 UI hues (James 7 Nov 14:20): the accent is ink in light rooms and #f5f5f7 in dark panels */
+.xst-make button.s[aria-checked='true'], .xst-frame-rig { color: #fff; }
+.xst-film, .xst-get { --acc: #f5f5f7; }
+.xst-get .x-btn { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .3); }
