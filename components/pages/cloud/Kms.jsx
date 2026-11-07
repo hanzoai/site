@@ -6,7 +6,11 @@
 // Signature: spotlight
 // Beyond: Sealed on your machine: type into DATABASE_PASSWORD and real AES-256-GCM under an HKDF-SHA256 key seals it in the browser.
 /* KMS (v2, archetype A Launch).
-   V2: 8/10 Motion map: spotlight — the pinned "What it holds" rule panel is gone; its six rules are six sealed secrets in
+   Round 4 (7-8 Nov): the vault room, the five entrances and the light's masks are styled (they had shipped as markup
+   only); the refused write takes v2's slot instead of covering it; the seal box seals on its own until the field is
+   taken; the dark room's terminal types once; "Example project" reads as one caption; the hero ask's arrow slides in
+   on hover with the button's width held.
+   Motion map: spotlight — the pinned "What it holds" rule panel is gone; its six rules are six sealed secrets in
    a dark vault right under the hero: a light (the cursor, a tap on touch, Tab on a keyboard; left alone it glides cell
    to cell, pausable) unseals what is under it - the rule's title and its picture - and the readout beside it gives
    that rule in full. Sections enter five ways (kms/entrances.jsx): the hero vault's pieces gather like magnets, the
@@ -70,7 +74,7 @@ function Versions({ v, top, stale }) {
       <AnimatePresence>
         {stale && (
           <motion.div className="km-stale" style={{ y: 2 * ROW }} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
-            write replaces v{v - 1} · <b>refused</b>
+            <span>write replaces v{v - 1} · <b>refused</b></span>
           </motion.div>
         )}
       </AnimatePresence>
