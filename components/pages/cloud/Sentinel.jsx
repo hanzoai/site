@@ -9,7 +9,8 @@
    Motion: scroll scrub (signature) + canvas rain + the hero's ticking issue + magnetic primary. Every word and link is
    Hanzo's; the error, its frames and its counts are made-up examples. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useScroll } from 'motion/react';
+import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
 import { useLive, useEvery } from './Frame';
 import StageHero from '../../v2/StageHero';
@@ -25,7 +26,8 @@ const CRUMBS = ['navigation /cart', 'click “Apply code”', 'fetch POST /disco
 /* The Stage object: the issue as Sentinel shows it, live. Events arrive (the count and the last bar grow), the top frame
    resolves through the source map, and the breadcrumbs line up under it. */
 function Issue() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live] = useLive(0.3);
+  const calm = useCalm();
   const [n, setN] = useState(4211);
   const [bars, setBars] = useState(() => Array.from({ length: 28 }, (_, i) => 0.18 + rnd(i + 3) * 0.5 + (i > 20 ? (i - 20) * 0.04 : 0)));
   const [t, setT] = useState(0);
@@ -79,7 +81,8 @@ function Collapse() {
   const cv = useRef(null);
   const card = useRef(null);
   const num = useRef(null);
-  const [ref, live, calm] = useLive(0.15);
+  const [ref, live] = useLive(0.15);
+  const calm = useCalm();
   const wide = useWide();
   const pin = wide && !calm;
   const { scrollYProgress } = useScroll({ target: scene, offset: ['start start', 'end end'] });
@@ -225,13 +228,12 @@ function Sheets() {
 }
 
 export default function Sentinel() {
-  const calm = useReducedMotion();
   return (
     <main className="l2-page sn2" style={{ '--ac': '#7a5af8' }}>
       <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>
-      <Collapse key={calm ? 'c' : 'm'} />
+      <Collapse />
       <Sheets />
       <Finale name="Sentinel" head="Get started with Hanzo Sentinel" prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." tag="Error tracking" license="BSL-1.1" />
     </main>
