@@ -57,9 +57,12 @@ function Stage() {
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
   const k = useTransform(p, [0, 0.75], [1, 0], { clamp: true });
   const ke = useTransform(k, (v) => v * (2 - v)); // eased out
-  // the film's left edge wipes off the words between --k 1 and .8 (ZenMax.css --edge); past about .91 it has cleared the ask
-  useMotionValueEvent(ke, 'change', (v) => setOver(v > 0.91));
+  // the film's left edge wipes off the words between --k 1 and .8 (ZenMax.css --edge); past about .91 it has cleared the ask.
+  // --k is written to the pin by hand after mount, so the server and the first client paint both carry the same --k: 1.
+  const put = (v) => pin.current?.style.setProperty('--k', v.toFixed(4));
+  useMotionValueEvent(ke, 'change', (v) => { put(v); setOver(v > 0.91); });
   useEffect(() => {
+    put(ke.get());
     setOver(ke.get() > 0.91);
     const fit = () => {
       const c = card.current;
@@ -86,7 +89,7 @@ function Stage() {
     <section className="zx-stage" ref={box} aria-labelledby="zx-h">
       {/* JS off: the stage settled, the poster for the film, every step and the drawer shown (gate item 5) */}
       <noscript><style>{'.zx-stage-pin{--k:0!important}.zx-stage{height:auto!important}.zx-srv{opacity:1!important;transform:none!important}.zx-step{opacity:1!important}.zx-drawer-p[hidden]{display:block!important}.zx-pause{display:none}.zx-card .zx-film{display:none!important}.zx-card{background:#000 url(/models/zen.webp) center/cover}.zx-rt-fan,.zx-rt-tool{clip-path:none!important}.zx-rt-lit,.zx-rt-ctx{opacity:1!important}.zx-rt-lit,.zx-rt-fill{transform:none!important}'}</style></noscript>
-      <motion.div className="zx-stage-pin" ref={pin} style={{ '--k': ke }}>
+      <div className="zx-stage-pin" ref={pin} style={{ '--k': 1 }}>
         <div className="zx-card" ref={card}>
           <Film src={media('zen', 'webm')} poster={media('zen', 'webp')} w={1200} h={1500} className="zx-film" />
         </div>
@@ -109,7 +112,22 @@ function Stage() {
             <nav className="zx-crumb zx-blend"><ol><li><A to="/zen">Zen</A></li><li aria-current="page">Zen 6 Max</li></ol></nav>
           </div>
         </div>
-      </motion.div>
+        {/* the white twin of the words, clipped to the film's visible box (ZenMax.css .zx-onfilm): ink off the film, white
+            on it, the split exact at the film's edge and every letter one flat colour. Shapes only for readers (aria-hidden). */}
+        <div className="zx-onfilm" aria-hidden="true">
+          <div className="zx-w zx-stage-t">
+            <div className="zx-stage-b">
+              <div className="zx-name"><Cut load delay={0.1}>Zen 6 Max</Cut></div>
+              <p className="zx-sub">Zen 6 Max. Built for the hardest work: deep reasoning, long context, and code.</p>
+              <div className="zx-acts">
+                <span className="x-btn solid zx-ghost">Talk to sales</span>
+                <span className="x-arrow"><span>Run it on your own GPUs</span><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+              </div>
+              <div className="zx-crumb"><ol><li><span className="zx-crumb-a">Zen</span></li><li>Zen 6 Max</li></ol></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -208,8 +226,22 @@ function Rack({ k, plan, q, on, calm, dx = 40 }) {
   );
 }
 
+/* a phone's panel per step (MASTER 4.1: a pinned scene becomes static panels on a phone): the compact rack set to that
+   step's plan, and its total. It builds itself when it reaches the screen, as the desktop rack does per chapter. */
+function StepRack({ k, plan, calm }) {
+  const ref = useRef(null);
+  const on = useInView(ref, { once: true, amount: 0.5 });
+  return (
+    <div className="zx-panel zx-mini" ref={ref} aria-hidden="true">
+      <Rack k={k} plan={plan} q={plan === 0} on={on} calm={calm} dx={16} />
+      <p className="zx-mini-n"><span>{DGX[k].total.toLocaleString('en-US')} GB</span><span>{DGX[k].name}</span></p>
+    </div>
+  );
+}
+
 /* the chapters. Desktop: text steps past the pinned rack and the step at mid-screen sets its state. Phone: no pin
-   (MASTER part 11): the rack sits above its steps and the planning buttons set it. */
+   (MASTER part 11): the full rack with its switches sits above the steps, and each step carries its own compact rack set
+   to its plan; the planning buttons scroll to their step. */
 function Chapters({ k, setK }) {
   const [at, setAt] = useState(0);
   const [wide, setWide] = useState(true);
@@ -229,7 +261,7 @@ function Chapters({ k, setK }) {
   const go = (i) => {
     setAt(i + 1);
     const el = steps.current[i + 1];
-    if (!wide || !el) return;
+    if (!el) return;
     const quiet = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const y = el.getBoundingClientRect().top + scrollY - innerHeight / 2 + el.offsetHeight / 2;
     if (window.__lenis && !quiet) window.__lenis.scrollTo(y, { duration: 0.5 }); else scrollTo({ top: y, behavior: quiet ? 'auto' : 'smooth' });
@@ -251,6 +283,7 @@ function Chapters({ k, setK }) {
             <div key={t} className="zx-step" data-step={i + 1} ref={(el) => { steps.current[i + 1] = el; }} data-on={at === i + 1 || undefined}>
               <h3 className="zx-step-t">{t}</h3>
               <p className="zx-body">{x}</p>
+              <StepRack k={k} plan={i} calm={calm} />
             </div>
           ))}
         </div>
@@ -282,6 +315,9 @@ function Chapters({ k, setK }) {
 function Spec({ k, setK }) {
   const [open, setOpen] = useState(false);
   const [peek, setPeek] = useState(-1); // the column under a mouse previews its figure (ZenMax.css tints its cells)
+  // the picked figure rests at half size until the sheet is well in view (its top past 60% of the screen), then grows in
+  const figs = useRef(null);
+  const seen = useInView(figs, { once: true, margin: '0px 0px -40% 0px' });
   const hover = (i) => ({ onPointerEnter: (e) => { if (e.pointerType === 'mouse') setPeek(i); }, onPointerLeave: () => setPeek(-1) });
   const cols = [
     { key: 'row', label: '' },
@@ -291,7 +327,7 @@ function Spec({ k, setK }) {
   return (
     <section className="zx-spec">
       <div className="zx-w">
-        <div className="zx-figs" aria-hidden="true">
+        <div className="zx-figs" ref={figs} data-seen={seen || undefined} aria-hidden="true">
           <span />
           {DGX.map((d, i) => <span key={d.name} className="zx-fig" data-on={k === i || undefined} data-peek={(peek === i && k !== i) || undefined}><span>{d.total.toLocaleString('en-US')} GB</span></span>)}
         </div>

@@ -54,8 +54,6 @@ const ROWS = [
 const TIERS = ['ultra max', 'ultra', 'pro max', 'pro', 'starter'];
 const SORTS = [['hanzo', 'Hanzo’s order'], ['size', 'By size'], ['ctx', 'By context']];
 const FIGS = [['18', 'Models'], ['2M', 'Max Context'], ['$0.01/MTok', 'From'], ['MoE + Dense', 'Architectures'], ['7', 'Modalities']];
-// each figure's field is drawn from that figure's own number (2M as 2048K; the architectures as the Zen5 sizes)
-const FIG_DATA = [[18], [2048], [0.01], [284, 37, 230, 10, 4], [7]];
 const MAXP = 284, ctxW = (k) => (Math.log2(k) - 4) / (Math.log2(1024) - 4);
 
 /* desktop with motion allowed: the pinned figures run; phones and reduced motion read the same content as a list */
@@ -165,7 +163,46 @@ function Quick() {
   );
 }
 
-/* five figures, one per screen: the scene pins; the old figure leaves before the new one cuts in through its mask */
+/* each figure draws its own number as data, under the figure, growing in as the figure cuts in and then idling:
+   18 marks for the models (the five Zen5 in ink, the wave runs through them), the Zen5 contexts on a 2M ruler (a
+   playhead sweeps it), one cent of a 100-cell dollar, the five Zen5 sizes (total against active per token), and
+   seven rings for the modalities */
+const BY_CTX = [...ROWS].sort((a, b) => b.ck - a.ck || b.tot - a.tot);
+const grow = (k, prop = 'scaleX', step = 0.04) => ({
+  initial: { [prop]: 0 }, animate: { [prop]: 1 }, transition: { duration: T.slower, ease: EMPH, delay: T.fast + k * step },
+});
+function FigArt({ i }) {
+  if (i === 0) return (
+    <div className="zc-fa zc-fa-18">{Array.from({ length: 18 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...grow(k, 'scaleY', 0.025)} />)}</div>
+  );
+  if (i === 1) return (
+    <div className="zc-fa zc-fa-ctx">
+      <span className="zc-fa-axis"><span className="zc-fa-ticks" /><b className="zc-mono">2M</b></span>
+      {BY_CTX.map((r, k) => (
+        <span key={r.slug} className="zc-fa-row"><span className="zc-mono">{r.ctx}</span><span className="zc-fa-track"><motion.i style={{ width: (r.ck / 2048) * 100 + '%' }} {...grow(k)} /></span></span>
+      ))}
+      <span className="zc-fa-head" />
+    </div>
+  );
+  if (i === 2) return (
+    <div className="zc-fa zc-fa-cents">{Array.from({ length: 100 }, (_, k) => <motion.i key={k} data-z={k === 0 || undefined} {...grow(k % 10 + Math.floor(k / 10), 'scale', 0.03)} />)}</div>
+  );
+  if (i === 3) return (
+    <div className="zc-fa zc-fa-size">
+      {ROWS.map((r, k) => (
+        <span key={r.slug} className="zc-fa-srow" style={{ '--k': k }}>
+          <span className="zc-fa-n">{r.n}</span>
+          <span className="zc-fa-track"><motion.i className="zc-fa-tot" style={{ width: (r.tot / MAXP) * 100 + '%' }} {...grow(k)} />{r.act && <motion.i className="zc-fa-act" style={{ width: Math.max(1.2, (r.act / MAXP) * 100) + '%' }} {...grow(k + 4)} />}</span>
+          <span className="zc-mono">{r.big}</span>
+        </span>
+      ))}
+    </div>
+  );
+  return <div className="zc-fa zc-fa-7">{Array.from({ length: 7 }, (_, k) => <motion.i key={k} style={{ '--k': k }} {...grow(k, 'scale', 0.06)} />)}</div>;
+}
+
+/* five figures, one per screen: the scene pins; the old figure leaves before the new one cuts in through its mask,
+   and its drawing crossfades to the new figure's drawing */
 function Figures() {
   const ref = useRef(null);
   const on = useStage();
@@ -175,19 +212,11 @@ function Figures() {
   return (
     <section className="zc-figs" ref={ref} data-live={on || undefined} aria-label="Zen figures">
       <div className="zc-figs-pin">
-        {on && (
-          <AnimatePresence initial={false}>
-            <motion.div key={at} className="zc-figs-art" aria-hidden="true"
-              initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: T.slower, ease: EMPH } }}
-              exit={{ opacity: 0, transition: { duration: T.base, ease: EXIT } }}>
-              <Sigil seed={'/zen/models/' + FIGS[at][1]} data={FIG_DATA[at]} className="zc-figs-sig" />
-            </motion.div>
-          </AnimatePresence>
-        )}
         <div className="zc-wrap zc-figs-g">
           <ol className="zc-figs-idx" aria-hidden="true">
             {FIGS.map(([, l], i) => <li key={l} data-on={!on || i === at || undefined}><span className="zc-mono">{String(i + 1).padStart(2, '0')} / 05</span>{l}</li>)}
           </ol>
+          <div className="zc-figs-r">
           <dl className="zc-figs-list">
             {FIGS.map(([v, l], i) => (
               <div key={l} className="zc-fig" data-on={!on || i === at || undefined}>
@@ -200,6 +229,18 @@ function Figures() {
               </div>
             ))}
           </dl>
+          {on && (
+            <div className="zc-figs-art" aria-hidden="true">
+              <AnimatePresence initial={false}>
+                <motion.div key={at} className="zc-figs-draw"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { duration: T.slower, ease: EMPH } }}
+                  exit={{ opacity: 0, transition: { duration: T.base, ease: EXIT } }}>
+                  <FigArt i={at} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          )}
+          </div>
         </div>
       </div>
     </section>
@@ -227,8 +268,9 @@ function ModelCard({ r, big }) {
         <span className="zc-mc-d">{r.big}{r.small ? ' ' + r.small : ''} · {r.ctx}</span>
         <span className="zc-mc-tag">{r.tier}</span>
         <span className="zc-mc-sz" aria-hidden="true">
-          <span className="zc-mc-bar"><i className="zc-mc-tot" style={{ '--w': Math.max(0.015, r.tot / MAXP) }} />{r.act && <i className="zc-mc-act" style={{ '--w': Math.max(0.012, r.act / MAXP) }} />}</span>
-          <span className="zc-mc-bar"><i className="zc-mc-ctx" style={{ '--w': ctxW(r.ck) }} /></span>
+          {/* the page's own --zc-w: the shared --w is a registered length, which would void scaleX() */}
+          <span className="zc-mc-bar"><i className="zc-mc-tot" style={{ '--zc-w': Math.max(0.015, r.tot / MAXP).toFixed(3) }} />{r.act && <i className="zc-mc-act" style={{ '--zc-w': Math.max(0.012, r.act / MAXP).toFixed(3) }} />}</span>
+          <span className="zc-mc-bar"><i className="zc-mc-ctx" style={{ '--zc-w': ctxW(r.ck).toFixed(3) }} /></span>
         </span>
       </A>
     </motion.li>
@@ -335,7 +377,8 @@ export default function ZenCatalog() {
       <Figures />
       <Shelf />
       <section className="zc-end zc-sec" aria-labelledby="zc-b">
-        <Sigil seed="zen/models" data={[18, 2, 0.01, 7, 284, 37]} className="zc-sig" />
+        {/* the close's object: the figures' context ruler again, drifting slowly under the ask (no second field) */}
+        <div className="zc-end-rule" aria-hidden="true"><span /></div>
         <div className="zc-wrap zc-end-in">
           <h2 id="zc-b" className="zc-end-h">Ready to build with Zen?</h2>
           <p className="zc-lede-d">All 18 Zen models available via OpenAI-compatible API. Start building today.</p>
