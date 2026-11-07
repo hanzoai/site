@@ -4,10 +4,10 @@
 /* Hanzo API, v2 (Archetype F, developer: the request is the hero).
    V2: 8/10 Stage console types and streams all eight endpoints; How it fits together is four pinned chapters with live UI; one dark room for the base URL; endpoints are rows that open
    Motion: signature = the live console (path types, answer streams). Supporting: Stage settle, pinned chapters with
-   clip wipes (components/v2/AppScenes), line-masked headline. Accent: cobalt, from the console's method pill.
+   clip wipes (components/v2/AppScenes, the dark room opens the same way), line-masked headline. Accent: cobalt, from the console's method pill.
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Go } from '../kit';
 import Lines from '../v2/AppLines';
@@ -289,8 +289,13 @@ function Call() {
 }
 
 function Base() {
+  // the scene change: the dark room opens out of a rounded card to the full width as it arrives (no hard edge)
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.15'] });
+  const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 48px)', 'inset(0% 0% 0% 0% round 0px)']);
   return (
-    <section className="av-sec api-dark av-dark" data-room="dark">
+    <motion.section ref={ref} className="av-sec api-dark av-dark" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
       <div className="av-wrap">
         <h2 className="av-kick api-base-h">Base URL</h2>
         <div className="api-big">
@@ -306,7 +311,7 @@ function Base() {
           <div className="api-base-r"><Call /></div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
