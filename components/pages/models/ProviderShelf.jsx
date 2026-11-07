@@ -8,7 +8,8 @@
    longest-context model is one press away. */
 import { useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
-import { EASE, Copy, Count } from '../../ui';
+import { EASE, Copy } from '../../ui';
+import MaskFig from '../../v2/MaskFig';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
@@ -61,7 +62,7 @@ export default function ProviderShelf({ doc }) {
             {/* the maker's count is the hero figure */}
             <FilmPause className="xmf-maker-pause" />
             <motion.p className="xmf-maker-n" {...up(0.2)}>
-              <b>{Number.isFinite(n) ? <Count to={n} /> : null}</b>
+              <b>{Number.isFinite(n) ? <MaskFig>{n}</MaskFig> : null}</b>
               <span className="x-mono">{Number.isFinite(n) ? word : doc.count}</span>
             </motion.p>
           </div>

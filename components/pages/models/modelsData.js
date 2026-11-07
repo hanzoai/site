@@ -169,6 +169,8 @@ export function modelDoc(slug, model) {
   doc.rate = rate(doc.price);
   doc.modalities = (fact('Modalities') || fact('Modality') || {}).value || null;
   doc.siblings = providerCards(slug).filter((c) => c.href !== doc.route);
+  // the context as Hanzo's own shelf card prints it ("33K"), for the hero figure when the spec value is a sentence
+  doc.cardCtx = (providerCards(slug).find((c) => c.href === doc.route) || {}).ctx || null;
   doc.provider = { slug, name: (crumbs[1] && crumbs[1].label) || slug, route: '/models/' + slug };
   return doc;
 }
