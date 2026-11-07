@@ -314,3 +314,8 @@
   .xcf-mark { transform: none; opacity: 1; transition: none; }
   .xcf-card, .xcf-card-sig { transition: none; }
 }
+
+.xcf .x-copy-t { font-size: 13px; }
+.xcf-band-n .x-link { display: inline-flex; align-items: center; min-height: 44px; }
+@media (pointer: coarse) { a.xcf-wt { min-height: 44px; } }
+@media (max-width: 900px) { .xcf .x-copy-t, .xcf-host .xcf-path, .xcf-band-host { font-size: 14px; } }

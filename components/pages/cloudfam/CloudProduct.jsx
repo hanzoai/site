@@ -318,7 +318,7 @@ const Acts = ({ list }) => (
 );
 
 /* JS off: every line of every session shown, the genesis line at full weight (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:640!important;opacity:1!important}.xcf-sess-n{opacity:1!important;transform:none!important}';
+const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:640!important;opacity:1!important}.xcf-sess-n{opacity:1!important;transform:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}';
 
 export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
   const isLocal = doc.kind === 'local';
