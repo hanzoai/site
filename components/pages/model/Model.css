@@ -55,3 +55,9 @@
   .mb-bar em:last-child { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .mb-live::before { animation: none; } }
+
+/* the shell's v2 touches (ModelPage.jsx): the index among the nine, and the hero settling into a card on scroll */
+.x-mhero { background: #fff; }
+.x-mindex { margin: 0 0 18px; font: 500 13px/1 var(--mono); letter-spacing: .12em; color: #a1a1a6; font-feature-settings: 'tnum'; }
+.x-mindex span { color: #f5f5f7; }
+@media (prefers-reduced-motion: reduce) { .x-mhero-media { clip-path: none !important; } }

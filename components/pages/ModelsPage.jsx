@@ -1,24 +1,35 @@
 'use client';
-/* Models. Its idea is the catalogue: the model families as one grid you filter with chips; the cards re-flow with a
-   layout animation, every flagship opens into its own page with the WebGL transition, and "Enso routes. Kai decides.
-   Zen reasons." plays on its own as a triptych. The request card at the top swaps the model string by itself.
-   Every word, id, rate and link is Hanzo's (rates are Hanzo's live catalogue, refreshed from api.hanzo.ai when it answers). */
+// Signature: the stage that opens. Enso's film fills the first screen, then pulls back as you scroll into a wall of all nine flagship films; every film and every card opens into its own page (the WebGL opener for flagships, the morph for model sheets).
+// Beyond: the compare tray. Pin up to three models from anywhere in the catalogue and a tray rises with their context window and their rates side by side, from Hanzo's own price list.
+/* Models, v2 (docs/VISION.md, archetype C: catalogue), chaptered so one idea holds the screen at a time:
+   1 Stage. Enso's film, huge, settles into the wall of nine as you scroll (phones: a swipe rail).
+   2 Three families, the page's one dark room. The words pin; the film changes under a clip wipe (Apple chapters).
+   3 Enso vs Zen as a calm two-column spec.
+   4 Kai's decision benchmarks as hero figures (the anthropic.com launch reference).
+   5 The catalogue. Chips re-flow the families, each family's head pins while its cards pass, every card opens.
+   6 Every model priced, ten rows until you open the rest.
+   7 Try any model: the request swaps its model string by itself until you choose.
+   8 Your first request, in four languages.   9 Related, as an editorial index.
+   Motion: the signature (stage + open), a clip wipe, chip re-flow and count-up. No fade-ups.
+   Every word, id, rate and link is Hanzo's (rates refresh from api.hanzo.ai when it answers). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Count, Copy } from '../ui';
-import { A, SecHead, Tick } from '../kit';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { EASE, Count, Copy } from '../ui';
+import { A } from '../kit';
 import { useOpener } from '../Opener';
-import { media } from '../../lib/models';
+import { media, bySlug } from '../../lib/models';
 import './ModelsPage.css';
+
+const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
 
 /* A link with its arrow as text, the way Hanzo writes them. */
 const Lk = ({ to, children, className = '', ...r }) => {
   const inner = <><span>{children}</span><i aria-hidden="true">→</i></>;
   return to.startsWith('#')
-    ? <a href={to} className={'x-arrow ' + className} {...r}>{inner}</a>
-    : <A to={to} className={'x-arrow ' + className} {...r}>{inner}</A>;
+    ? <a href={to} className={'xmo-lk ' + className} {...r}>{inner}</a>
+    : <A to={to} className={'xmo-lk ' + className} {...r}>{inner}</A>;
 };
-const Btn = ({ to, children, solid }) => <A to={to} className={'x-btn' + (solid ? ' solid' : '')}>{children}</A>;
+const Btn = ({ to, children, solid }) => <A to={to} className={'x-btn xmo-btn' + (solid ? ' solid' : '')}>{children}</A>;
 
 /* Opens a flagship's own page with the lifted-picture transition; its close button flies back to this card. */
 function useOpen() {
@@ -26,16 +37,34 @@ function useOpen() {
   return (e, el, slug) => opener.open(e, { el, src: media(slug, 'webp'), href: '/' + slug, key: slug });
 }
 
-/* A model's film: the still is there at once, the film plays only while it is on screen. */
-function Film({ slug, className = '' }) {
+/* Desktop gets the pinned scenes; phones get plain scroll and rails (decided in CSS, read here only for films). */
+function useWide() {
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const q = matchMedia('(min-width: 901px)');
+    const on = () => setWide(q.matches);
+    on(); q.addEventListener('change', on);
+    return () => q.removeEventListener('change', on);
+  }, []);
+  return wide;
+}
+
+/* A model's film: the still is there at once; the film plays only while asked to and on screen. */
+function Film({ slug, play = true, className = '' }) {
   const v = useRef(null);
+  const [seen, setSeen] = useState(false);
   useEffect(() => {
     const el = v.current;
-    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) el.play().catch(() => {}); else el.pause(); }, { threshold: 0.25 });
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.2 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  useEffect(() => {
+    const el = v.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (play && seen) { if (el.preload === 'none') el.preload = 'auto'; el.play().catch(() => {}); } else el.pause();
+  }, [play, seen]);
   return (
     <span className={'xmo-film ' + className} aria-hidden="true">
       <img src={media(slug, 'webp')} alt="" loading="lazy" decoding="async" />
@@ -55,150 +84,257 @@ const arrows = (n, set) => (e) => {
   to[j].focus(); set(j);
 };
 
-/* ---------- 1. hero ---------- */
-const REQ = [
-  { tab: 'Enso', id: 'enso', d: "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.", ctx: '900K' },
-  { tab: 'Zen 6', id: 'zen6', d: 'Open weights for the code, the copy, the images and the voice.', ctx: '1M' },
-  { tab: 'Claude Fable 5', id: 'anthropic/claude-fable-5', d: 'Claude Fable 5 is a Mythos-class model from Anthropic, built for autonomous knowledge work and coding.', ctx: '1M' },
-];
-const FLAG = ['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
+/* The line-masked headline: each line rises once out of its own mask. */
+const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
+  <T key={t} className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: delay + i * 0.08 }}>{t}</motion.span></T>
+));
 
-function Hero() {
-  const [k, setK] = useState(0);
-  const [mine, setMine] = useState(false);
+/* ---------- 1. stage: one film, then the wall of nine ---------- */
+const WALL = ['kai', 'zen', 'iro', 'koma', 'enso', 'oto', 'koe', 'uta', 'mori']; // Enso holds the middle
+const K = 1 / 3; // the wall settles at a third of its first-screen size
+const eio = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const clamp = (v) => Math.min(1, Math.max(0, v));
+const scaleAt = (v) => Math.pow(K, eio(clamp(v / 0.72)));
+
+function Stage() {
+  const ref = useRef(null);
+  const open = useOpen();
   const calm = useReducedMotion();
-  const pick = (i) => { setK(i); setMine(true); };
-  const line = (t, d) => (
-    <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>
-  );
-  const r = REQ[k];
+  const wide = useWide();
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const s = useTransform(p, scaleAt);
+  const near = useTransform(p, (v) => clamp((0.56 - scaleAt(v)) / 0.16));
+  const far = useTransform(p, (v) => clamp((0.48 - scaleAt(v)) / 0.12));
+  const [settled, setSettled] = useState(false);
+  const [lit, setLit] = useState(4);
+  const [held, setHeld] = useState(false);
+  useMotionValueEvent(p, 'change', (v) => setSettled(v > 0.7));
+  const live = !wide || settled;
+  // once the wall has settled, the light moves through the nine films by itself; a hovered film keeps it
+  useEffect(() => {
+    if (calm || held || !live) return;
+    const t = setInterval(() => setLit((i) => (i + 1) % WALL.length), 2800);
+    return () => clearInterval(t);
+  }, [calm, held, live]);
+  const at = wide && !settled ? 4 : lit;
   return (
-    <section className="xmo-hero" aria-labelledby="xmo-h1">
-      <div className="x-wrap xmo-hero-grid">
-        <div>
-          <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Models</motion.p>
-          <h1 id="xmo-h1" className="xmo-h1">{line('Frontier AI families', 0.05)}</h1>
-          <motion.p className="xmo-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}>
-            Proprietary and open weight models for text, decisions, video, image, and more — one account, one API key.
-          </motion.p>
-          <motion.div className="xmo-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.45 }}>
-            <Btn to="https://platform.hanzo.ai/api-keys" solid>Get API key</Btn>
-            <a className="x-btn" href="#families">Every model</a>
-          </motion.div>
-        </div>
-        <motion.div className="xmo-req" initial={{ opacity: 0, y: 30, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
-          <div className="xmo-req-bar">
-            <span className="xmo-live"><i aria-hidden="true" />Live from api.hanzo.ai</span>
-            <span className="x-mono">POST /v1/chat/completions</span>
-            <span className="xmo-eg">example</span>
+    <section className="xmo-stage" ref={ref} aria-labelledby="xmo-h1">
+      <div className="xmo-pin">
+        <div className="x-wrap xmo-stage-g">
+          <div className="xmo-intro">
+            <motion.p className="xmo-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>Models</motion.p>
+            <h1 id="xmo-h1" className="xmo-display"><Lines lines={['Frontier AI', 'families']} delay={0.05} /></h1>
+            <motion.p className="xmo-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+              Proprietary and open weight models for text, decisions, video, image, and more — one account, one API key.
+            </motion.p>
+            <motion.div className="xmo-acts" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.48 }}>
+              <Btn to="https://platform.hanzo.ai/api-keys" solid>Get API key</Btn>
+              <a className="x-btn xmo-btn" href="#families">Every model</a>
+            </motion.div>
           </div>
-          <pre className="xmo-json" aria-label="Request body"><code>
-            <span>{'{ "model": '}</span>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span key={k} className="xmo-model" initial={{ y: 14, opacity: 0, filter: 'blur(6px)' }} animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }} exit={{ y: -14, opacity: 0, filter: 'blur(6px)' }} transition={{ duration: 0.3, ease: EASE }}>{`"${r.id}"`}</motion.span>
-            </AnimatePresence>
-            <span>{', "messages": [{ "role": "user", "content": "Who are you?" }] }'}</span>
-            <i className="xmo-caret" aria-hidden="true" />
-          </code></pre>
-          <div className="xmo-tabs" role="tablist" aria-label="Model" onKeyDown={arrows(REQ.length, pick)}>
-            {REQ.map((q, i) => (
-              <button key={q.tab} type="button" role="tab" aria-selected={k === i} tabIndex={k === i ? 0 : -1} onClick={() => pick(i)}>
-                {k === i && <motion.span layoutId="xmo-tab" className="xmo-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                <span>{q.tab}</span>
-                {k === i && !mine && !calm && <i className="xmo-tab-bar" aria-hidden="true" onAnimationEnd={() => setK((v) => (v + 1) % REQ.length)} />}
-              </button>
-            ))}
+          <div className="xmo-area">
+            <motion.ul className="xmo-wall" style={{ scale: s }} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.15 }} data-swipe-own>
+              {WALL.map((slug, i) => {
+                const m = bySlug[slug];
+                const ring = i === 4 ? null : i % 2 ? near : far; // edges arrive first, corners after
+                return (
+                  <motion.li key={slug} className={'xmo-tile' + (i === 4 ? ' c' : '') + (at === i ? ' lit' : '')} style={ring ? { opacity: ring } : undefined}>
+                    <a
+                      href={'/' + slug}
+                      data-card={slug}
+                      data-cursor="Open"
+                      aria-label={`${m.name}: ${m.desc}`}
+                      onClick={(e) => open(e, e.currentTarget, slug)}
+                      onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setLit(i); setHeld(true); } }}
+                      onPointerLeave={() => setHeld(false)}
+                      onFocus={() => { setLit(i); setHeld(true); }}
+                      onBlur={() => setHeld(false)}
+                    >
+                      <Film slug={slug} play={at === i} />
+                      <span className="xmo-tile-shade" aria-hidden="true" />
+                      <span className="xmo-tile-t" aria-hidden="true">
+                        {m.kicker && <em>{m.kicker}</em>}
+                        <b>{m.name}</b>
+                        <span>{m.desc}</span>
+                      </span>
+                    </a>
+                  </motion.li>
+                );
+              })}
+            </motion.ul>
           </div>
-          {/* all three descriptions are in the page; the chosen one is shown */}
-          <div className="xmo-req-d" aria-live="polite">
-            {REQ.map((q, i) => (
-              <motion.div key={q.tab} initial={false} animate={i === k ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }} transition={{ duration: 0.4, ease: EASE }} aria-hidden={i !== k}>
-                <p>{q.d}</p>
-                <p className="xmo-ctx"><b>{q.ctx}</b><span>text</span></p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-      <div className="xmo-strip" aria-hidden="true">
-        <div>
-          {[...FLAG, ...FLAG].map((s, i) => <img key={i} src={media(s, 'webp')} alt="" loading="lazy" decoding="async" />)}
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- 2. three families ---------- */
+/* ---------- 2. three families: the dark room ---------- */
 const FAM = [
   { slug: 'enso', verb: 'routes', name: 'Enso', d: 'Picks the model for every call, in every modality.', to: '/enso' },
   { slug: 'kai', verb: 'decides', name: 'Kai', d: 'Answers a choice, a score or a yes/no, with the probability of each.', to: '/kai', stat: 11 },
   { slug: 'zen', verb: 'reasons', name: 'Zen', d: 'Open weights for the code, the copy, the images and the voice.', to: '/zen', foot: 'Zen 6 and Zen 6 Flash now · Zen 7 in research preview' },
 ];
 
-/* One family is lit at a time and the light moves on by itself (the bar is the clock; it ends, the next one lights). */
-function Triptych() {
-  const [on, setOn] = useState(0);
-  const [mine, setMine] = useState(false);
-  const calm = useReducedMotion();
+function Families() {
+  const ref = useRef(null);
   const open = useOpen();
-  const set = (i) => { setOn(i); setMine(true); };
+  const wide = useWide();
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const { scrollYProgress: enter } = useScroll({ target: ref, offset: ['start end', 'start 60px'] });
+  // the room arrives as a rounded panel and opens to full bleed as it reaches the top
+  const clipPath = useTransform(enter, (v) => { const k = 1 - clamp(v); return `inset(0px ${(k * 3.2).toFixed(2)}vw round ${(k * 32).toFixed(1)}px)`; });
+  const [on, setOn] = useState(0);
+  useMotionValueEvent(p, 'change', (v) => setOn(Math.min(2, Math.floor(clamp(v) * 3.0001))));
   return (
-    <section className="x-sec xmo-tri" data-room="dark" aria-labelledby="xmo-fam">
-      <div className="x-wrap">
-        <SecHead dark kicker="Three families" title="Enso routes. Kai decides. Zen reasons." id="xmo-fam" />
-        <ul className="xmo-tri-row">
-          {FAM.map((f, i) => (
-            <li key={f.slug} className={'xmo-tri-p' + (on === i ? ' on' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') set(i); }} onFocus={() => set(i)} data-card={f.slug + '-family'}>
-              <Film slug={f.slug} />
-              <span className="xmo-tri-shade" aria-hidden="true" />
-              <div className="xmo-tri-txt">
-                <p className="xmo-verb">{f.verb}</p>
-                <h3>{f.name}</h3>
-                <p>{f.d}</p>
-                {f.stat && <p className="xmo-tri-stat"><b><Count to={f.stat} /></b><span>Suites won · Kai vs Jev</span></p>}
-                {f.foot && <p className="xmo-tri-foot">{f.foot}</p>}
-                <Lk to={f.to} onClick={(e) => open(e, e.currentTarget.closest('.xmo-tri-p'), f.slug)}>{`Explore ${f.name}`}</Lk>
-              </div>
-              <i className="xmo-tri-bar" aria-hidden="true">
-                {on === i && <b className={mine || calm ? 'full' : ''} onAnimationEnd={() => setOn((v) => (v + 1) % FAM.length)} />}
-              </i>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- 3. Enso vs Zen ---------- */
-function Versus() {
-  const col = (cls, name, tag, items, foot) => (
-    <Rise className={'xmo-vs-c ' + cls}>
-      <h3>{name}</h3>
-      <p className="xmo-vs-tag">{tag}</p>
-      <ul>{items.map((t, i) => <li key={t}><Tick size={20} delay={0.15 + i * 0.12} />{t}</li>)}</ul>
-      {foot}
-    </Rise>
-  );
-  return (
-    <section className="x-sec xmo-vs">
-      <div className="x-wrap">
-        <SecHead kicker="Enso vs Zen" title="Proprietary orchestration, on open foundations" />
-        <div className="xmo-vs-grid">
-          {col('enso', 'Enso', 'Proprietary · Hanzo Cloud only', ['Flash, Pro and Ultra presets', 'OpenAI- and Anthropic-compatible', 'Metered and audited per organization'], <Lk to="/enso">Explore Enso</Lk>)}
-          <svg className="xmo-vs-flow" viewBox="0 0 80 240" aria-hidden="true" preserveAspectRatio="none">
-            <path d="M70 120 H10" /><path d="M10 120 l12 -9 M10 120 l12 9" className="head" />
-            <circle cx="40" cy="120" r="4" />
-          </svg>
-          {col('zen', 'Zen', 'Open weights · Zoo Labs Foundation', ['Free to download and self-host', 'Or call it on Hanzo Cloud', 'From a 501(c)(3) non-profit'], <Lk to="/zen">Explore Zen</Lk>)}
+    <section className="xmo-fam" ref={ref} data-room="dark" aria-labelledby="xmo-fam-h">
+      <div className="xmo-fam-pin">
+        <motion.div className="xmo-fam-bg" style={{ clipPath }} aria-hidden="true" />
+        <div className="x-wrap xmo-fam-g">
+          <header className="xmo-fam-head">
+            <p className="xmo-kick">Three families</p>
+            <h2 id="xmo-fam-h" className="xmo-fam-h">
+              {FAM.map((f, i) => <span key={f.slug} className={on === i ? 'on' : ''}>{`${f.name} ${f.verb}. `}</span>)}
+            </h2>
+          </header>
+          <ol className="xmo-fam-list">
+            {FAM.map((f, i) => (
+              <li key={f.slug} className={'xmo-fam-c' + (on === i ? ' on' : '') + (on > i ? ' past' : '')} data-card={f.slug + '-family'} aria-current={on === i ? 'step' : undefined}>
+                <div className="xmo-fam-film">
+                  <Film slug={f.slug} play={!wide || on === i} />
+                  <span className="xmo-fam-n x-mono" aria-hidden="true">{`0${i + 1} / 03`}</span>
+                </div>
+                <div className="xmo-fam-t">
+                  <p className="xmo-verb">{f.verb}</p>
+                  <h3>{f.name}</h3>
+                  <p className="xmo-fam-d">{f.d}</p>
+                  {f.stat && <p className="xmo-fam-stat"><b className="x-mono"><Count to={f.stat} /></b><span>Suites won · Kai vs Jev</span></p>}
+                  {f.foot && <p className="xmo-fam-foot">{f.foot}</p>}
+                  <Lk to={f.to} onClick={(e) => open(e, e.currentTarget.closest('.xmo-fam-c').querySelector('.xmo-fam-film'), f.slug)}>{`Explore ${f.name}`}</Lk>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- 4-8. the catalogue ---------- */
+/* ---------- 3. Enso vs Zen ---------- */
+const VS = [
+  { k: 'enso', name: 'Enso', tag: 'Proprietary · Hanzo Cloud only', items: ['Flash, Pro and Ultra presets', 'OpenAI- and Anthropic-compatible', 'Metered and audited per organization'], to: '/enso' },
+  { k: 'zen', name: 'Zen', tag: 'Open weights · Zoo Labs Foundation', items: ['Free to download and self-host', 'Or call it on Hanzo Cloud', 'From a 501(c)(3) non-profit'], to: '/zen' },
+];
+function Versus() {
+  return (
+    <section className="xmo-sec xmo-vs" aria-labelledby="xmo-vs-h">
+      <div className="x-wrap xmo-vs-g">
+        <header>
+          <p className="xmo-kick">Enso vs Zen</p>
+          <h2 id="xmo-vs-h" className="xmo-headline">Proprietary orchestration, on open foundations</h2>
+        </header>
+        <div className="xmo-vs-t" role="table" aria-label="Enso and Zen compared">
+          <div className="xmo-vs-r head" role="row">
+            {VS.map((c) => (
+              <div key={c.k} role="columnheader" className={'xmo-vs-c ' + c.k}>
+                <h3>{c.name}</h3>
+                <p>{c.tag}</p>
+              </div>
+            ))}
+          </div>
+          {[0, 1, 2].map((r) => (
+            <div className="xmo-vs-r" role="row" key={r}>
+              {VS.map((c) => <div key={c.k} role="cell" className={'xmo-vs-c ' + c.k}><i aria-hidden="true">✓</i>{c.items[r]}</div>)}
+            </div>
+          ))}
+          <div className="xmo-vs-r foot" role="row">
+            {VS.map((c) => <div key={c.k} role="cell" className={'xmo-vs-c ' + c.k}><Lk to={c.to}>{`Explore ${c.name}`}</Lk></div>)}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- 4. Kai's decision benchmarks, as hero figures ---------- */
+const SUITES = ['AG News', 'DAIR Emotion', 'Banking77', 'Support triage', 'Email spam', 'Phishing', 'Toxicity', 'RAG relevance', 'Model routing', 'Typed decisions', 'MASSIVE, 51 languages'];
+const DUELS = [
+  { kai: 84.4, jev: 76.6, say: 'mean accuracy across these 11 suites' },
+  { kai: 100.0, jev: 44.2, say: 'of repeated requests answer identically' },
+];
+function Figures() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.3 });
+  return (
+    <section className={'xmo-sec xmo-fig' + (seen ? ' on' : '')} ref={ref} aria-labelledby="xmo-fig-h">
+      <div className="x-wrap xmo-fig-g">
+        <header className="xmo-fig-head">
+          <p className="xmo-kick">Decision Benchmarks</p>
+          <h2 id="xmo-fig-h" className="xmo-headline">Ahead of Jev on 11 suites</h2>
+          <ul className="xmo-suites">{SUITES.map((s) => <li key={s}>{s}</li>)}</ul>
+          <Lk to="/kai#benchmarks">Kai: decisions and their benchmarks</Lk>
+        </header>
+        <div className="xmo-fig-big">
+          <p className="xmo-num x-mono"><Count to={11} /></p>
+          <p className="xmo-num-k">Suites won · Kai vs Jev</p>
+        </div>
+        {DUELS.map((d, i) => (
+          <figure key={d.say} className="xmo-duel">
+            <p className="xmo-duel-n x-mono"><Count to={d.kai} decimals={1} suffix="%" delay={0.15 + i * 0.1} /></p>
+            <figcaption>{d.say}</figcaption>
+            <div className="xmo-bars" aria-hidden="true">
+              <span className="kai"><b>Kai</b><i style={{ '--v': d.kai / 100 }} /><em className="x-mono">{d.kai.toFixed(1)}%</em></span>
+              <span className="jev"><b>Jev</b><i style={{ '--v': d.jev / 100 }} /><em className="x-mono">{d.jev.toFixed(1)}%</em></span>
+            </div>
+            <p className="xmo-duel-vs">{`against Jev's ${d.jev.toFixed(1)}%`}</p>
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------- prices (used by the catalogue's cards, the compare tray and the price list) ---------- */
+// id, name, in $/M, out $/M, context. Hanzo's catalogue as api.hanzo.ai lists it; refreshed in the browser when the gateway answers.
+const ROWS = [
+  ['enso', 'Enso', 0.33, 1.65, 900000], ['enso-auto', 'Enso', 0.33, 1.65, 900000], ['enso-flash', 'Enso Flash', 0.33, 1.65, 900000],
+  ['enso-free', 'Enso Free', 0, 0, 1000000], ['enso-pro', 'Enso Pro', 4.4, 22, 1000000], ['enso-ultra', 'Enso Ultra', 5.5, 27.5, 1000000],
+  ['zen6', 'Zen6', 0.6, 2.4, 1048576], ['zen6-flash', 'Zen6 Flash', 0.6, 2.4, 1048576], ['zen6-coder', 'Zen6 Coder', 1.65, 13, 1048576],
+  ['zen6-free', 'Zen6 Free', 0, 0, 1000000], ['zen6-max', 'Zen6 Max', 28, 168, 1048576],
+  ['zen5', 'Zen5', 0, 0, 1000000], ['zen5-pro', 'Zen5 Pro', 0, 0, 1000000], ['zen5-coder', 'Zen5 Coder', 0, 0, 1000000], ['zen5-flash', 'Zen5 Flash', 0, 0, 1000000],
+  ['zen5-evo', 'Zen5 Evo', 0, 0, 1000000], ['zen5-mini', 'Zen5 Mini', 0, 0, 1000000], ['zen5-spark', 'Zen5 Spark', 0, 0, 1000000],
+  ['zen-vl', 'Zen VL — Vision-Language', 0, 0, 1000000], ['zen-embedding', 'Zen Embedding', 0.01, 0.01, 32768], ['zen-embedding-3', 'Zen Embedding 3', 0.17, 0.17, 32768],
+  ['zen-free', 'Zen Free', 0, 0, 1000000], ['zen-guard', 'Zen Guard — Content Safety', 0, 0, 128000], ['zen-scribe', 'Zen Scribe', null, null, null], ['zen-voice-mini', 'Zen Voice Mini', null, null, null],
+  ['kai', 'Kai', 0.021, 0, 32768], ['hanzo/zen', 'Zen', 0, 0, 1000000],
+];
+const OTHERS = [
+  ['anthropic/claude-fable-5', 'Claude Fable 5', 11.13025, 55.65125, 1000000], ['openai/gpt-3.5-turbo-0613', 'GPT-3.5 Turbo (older v0613)', 1.113025, 2.22605, 4095],
+  ['google/gemini-2.5-pro', 'Gemini 2.5 Pro', 1.39128125, 11.13025, 1048576], ['deepseek/deepseek-chat', 'DeepSeek V3', 0.356168, 0.99059225, 163840],
+  ['x-ai/grok-4.20', 'Grok 4.20', 1.39128125, 2.7825625, 2000000], ['meta/muse-glimmer-30b', 'Muse Glimmer 30B', 0.3339075, 1.33563, 131072], ['cohere/command-a', 'Command A', 2.7825625, 11.13025, 256000],
+];
+const dollars = (v) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3) : v.toFixed(2)));
+const cost = (r, i) => (r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
+const ctxOf = (n) => (n == null ? '—' : n >= 950000 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1000) + 'K');
+
+/* api.hanzo.ai's live rates, asked once when the catalogue comes near; the printed rates stay when it is out of reach */
+function useLive(go) {
+  const [live, setLive] = useState({});
+  useEffect(() => {
+    if (!go) return;
+    const ctl = new AbortController();
+    fetch('https://api.hanzo.ai/v1/models', { signal: ctl.signal }).then((r) => r.json()).then((j) => {
+      const m = {};
+      (j.data || []).forEach((x) => { const p = x.pricing; if (p && p.input_per_million != null) m[x.id] = [p.input_per_million, p.output_per_million, x.context_window ?? null]; });
+      setLive(m);
+    }).catch(() => {});
+    return () => ctl.abort();
+  }, [go]);
+  return (r) => (live[r[0]] ? [r[0], r[1], live[r[0]][0], live[r[0]][1], live[r[0]][2] ?? r[4]] : r);
+}
+const ALL = Object.fromEntries([...ROWS, ...OTHERS].map((r) => [r[0], r]));
+
+/* ---------- 5. the catalogue ---------- */
 const ENSO = [
   ['enso', 'Enso', '900K', "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.", ['text']],
   ['enso-flash', 'Enso Flash', '900K', 'Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow.', ['text']],
@@ -236,143 +372,179 @@ const LABS = [
   ['meta/muse-glimmer-30b', 'Muse Glimmer 30B', '131K', 'Muse Glimmer 30B is a dense, open-weight multimodal model from Meta Superintelligence Labs, distilled from Muse Spark and optimized for autonomous agents on consumer hardware. It is suited for long-horizon...'],
   ['cohere/command-a', 'Command A', '256K', 'Command A is an open-weights 111B parameter model with a 256k context window focused on delivering great performance across agentic, multilingual, and coding use cases. Compared to other leading proprietary...'],
 ];
-
 const CHIPS = [['all', 'All'], ['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai'], ['creative', 'Creative'], ['labs', 'Other labs']];
 const COUNT = { enso: ENSO.length, zen: ZEN.length + 1, kai: KAI.length, creative: CREATIVE.length, labs: LABS.length };
 COUNT.all = Object.values(COUNT).reduce((a, b) => a + b, 0);
 
-/* A family's header: its film behind its name, or plain type when it has no film of its own. */
-function Head({ slug, title, children, link }) {
+/* A model card: its name is the link (and what flies into the model's page); its rate sits under it, and it can be
+   pinned to the compare tray. */
+function MCard({ to, name, id, ctx, d, tags, rate, cmp }) {
+  const r = !rate || rate[2] == null ? null : rate[2] === 0 && rate[3] === 0 ? 'Free' : `${cost(rate, 2)} in · ${cost(rate, 3)} out`;
   return (
-    <header className={'xmo-gh' + (slug ? ' film' : '')} data-card={slug ? slug + '-head' : undefined}>
-      {slug && <><Film slug={slug} /><span className="xmo-gh-shade" aria-hidden="true" /></>}
-      <div>
-        <h2>{title}</h2>
-        {children}
-        {link}
+    <article className={'xmo-mc' + (cmp && cmp.on ? ' picked' : '')}>
+      <div className="xmo-mc-top">
+        <h3><A to={to} className="xmo-mc-a" data-morph>{name}</A></h3>
+        {ctx && <b className="xmo-mc-ctx x-mono">{ctx}</b>}
       </div>
-    </header>
+      <p className="xmo-mc-id x-mono">{id}</p>
+      {d && <p className="xmo-mc-d">{d}</p>}
+      <div className="xmo-mc-f">
+        <span className="xmo-mc-tags">{tags.map((t) => <span key={t}>{t}</span>)}</span>
+        {r && <span className="xmo-mc-rate x-mono" title="Per million tokens">{r}</span>}
+        {cmp && (
+          <button type="button" className="xmo-mc-cmp" aria-pressed={cmp.on} aria-label={`${cmp.on ? 'Remove' : 'Add'} ${name} ${cmp.on ? 'from' : 'to'} compare`} onClick={cmp.toggle} disabled={!cmp.on && cmp.full}>
+            <i aria-hidden="true">{cmp.on ? '✓' : '+'}</i><span>Compare</span>
+          </button>
+        )}
+      </div>
+    </article>
   );
 }
 
-function MCard({ to, name, id, ctx, d, tags, badge }) {
-  return (
-    <A to={to} className="xmo-mc">
-      <span className="xmo-mc-top"><b>{name}</b>{ctx && <i>{ctx}</i>}</span>
-      <span className="xmo-mc-id x-mono">{id}</span>
-      {badge && <span className="xmo-mc-badge">{badge}</span>}
-      {d && <span className="xmo-mc-d">{d}</span>}
-      <span className="xmo-mc-tags">{tags.map((t) => <span key={t}>{t}</span>)}</span>
-    </A>
-  );
-}
-
-function Tile({ m, i }) {
+function Tile({ m }) {
   const open = useOpen();
   const [slug, name, id, d, kind, ep] = m;
   return (
-    <a href={'/' + slug} className="xmo-tile" data-card={slug} onClick={(e) => open(e, e.currentTarget, slug)}>
+    <a href={'/' + slug} className="xmo-ct" data-card={slug} data-cursor="Open" onClick={(e) => open(e, e.currentTarget, slug)}>
       <Film slug={slug} />
-      <span className="xmo-tile-shade" aria-hidden="true" />
-      <span className="xmo-tile-t">
-        <span className="xmo-tile-top"><b>{name}</b><i>{id}</i></span>
+      <span className="xmo-ct-shade" aria-hidden="true" />
+      <span className="xmo-ct-t">
+        <span className="xmo-ct-top"><b>{name}</b><i className="x-mono">{id}</i></span>
         <em>Research preview</em>
-        <span className="xmo-tile-d">{d}</span>
-        <span className="xmo-tile-f"><span>{kind}</span><code>{ep}</code></span>
+        <span className="xmo-ct-d">{d}</span>
+        <span className="xmo-ct-f"><span>{kind}</span><code>{ep}</code></span>
       </span>
     </a>
   );
 }
 
-function Catalogue() {
+/* A family's head pins beside its cards while they pass; flagships carry their film and open from it. */
+function Head({ slug, title, children, link }) {
+  return (
+    <header className={'xmo-gh' + (slug ? ' film' : '')}>
+      {slug && <span className="xmo-gh-film" data-card={slug + '-head'}><Film slug={slug} /></span>}
+      <h2>{title}</h2>
+      {children}
+      {link}
+    </header>
+  );
+}
+
+function Catalogue({ at }) {
   const [fam, setFam] = useState('all');
+  const sec = useRef(null);
+  // a chip brings the catalogue's top back under the header, so the re-flowed family is what you see
+  const choose = (k) => {
+    setFam(k);
+    const top = sec.current.getBoundingClientRect().top + scrollY - 60;
+    if (scrollY > top + 4) (window.__lenis ? window.__lenis.scrollTo(top, { duration: 0.9 }) : scrollTo({ top, behavior: 'smooth' }));
+  };
+  const [picks, setPicks] = useState([]);
   const open = useOpen();
   const show = (f) => fam === 'all' || fam === f;
-  const item = (key, f, span, node) => show(f) && (
-    <motion.li
-      key={key}
-      layout="position"
-      className={'xmo-it s' + span}
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.12 }}
-      exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.25 } }}
-      transition={{ duration: 0.8, ease: EASE, layout: { type: 'spring', stiffness: 260, damping: 32 } }}
-    >{node}</motion.li>
-  );
-  const flat = [
-    item('h-enso', 'enso', 6, (
-      <Head slug="enso" title="Enso models" link={<Lk to="/enso" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh'), 'enso')}>Enso: the router, its presets and its runs</Lk>} />
-    )),
-    ...ENSO.map(([id, name, ctx, d, tags]) => item('m-' + id, 'enso', 2, <MCard to={'/models/hanzo/' + id} name={name} id={id} ctx={ctx} d={d} tags={tags} />)),
-    item('h-zen', 'zen', 6, (
+  const cmp = (id) => (ALL[id] ? {
+    on: picks.includes(id),
+    full: picks.length >= 3,
+    toggle: () => setPicks((p) => (p.includes(id) ? p.filter((x) => x !== id) : p.length < 3 ? [...p, id] : p)),
+  } : null);
+  const card = (id, name, ctx, d, tags, to) => <li key={id}><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} cmp={cmp(id)} /></li>;
+  const groups = [
+    ['enso', <Head slug="enso" title="Enso models" link={<Lk to="/enso" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'enso')}>Enso: the router, its presets and its runs</Lk>} />,
+      <ul className="xmo-cards">{ENSO.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id))}</ul>],
+    ['zen', (
       <Head slug="zen" title="Zen models" link={<Lk to="https://docs.hanzo.ai/docs/models/zen">Run Zen: the docs</Lk>}>
         <p>Open weights, made with <A to="https://zoo.ngo">Zoo Labs Foundation</A>. Download every Zen model at <A to="https://huggingface.co/zenlm">huggingface.co/zenlm</A>, or call it here.</p>
       </Head>
-    )),
-    ...ZEN.map(([id, name, ctx, d, tags]) => item('m-' + id, 'zen', 2, <MCard to={'/models/hanzo/' + id} name={name} id={id} ctx={ctx} d={d} tags={tags} />)),
-    item('m-zen7', 'zen', 2, (
-      <div className="xmo-mc soon">
-        <span className="xmo-mc-top"><b>Zen 7</b></span>
-        <span className="xmo-mc-id x-mono">zen7</span>
-        <span className="xmo-mc-d">The next open-weight generation after Zen 6, in research preview.</span>
-        <span className="xmo-mc-tags"><span>Research preview</span></span>
-        <A to="/zen/7" className="x-btn sm">Request access</A>
-      </div>
-    )),
-    item('h-kai', 'kai', 6, (
-      <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />
-    )),
-    ...KAI.map((k) => item('m-' + k.name, 'kai', 2, <MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} />)),
-    item('h-cr', 'creative', 6, (
-      <Head title="Creative models"><p>Video, images, 3D, sound effects, voice and music, each its own model, in research preview.</p></Head>
-    )),
-    ...CREATIVE.map((m, i) => item('t-' + m[0], 'creative', 2, <Tile m={m} i={i} />)),
-    item('l-design', 'creative', 6, <div className="xmo-foot"><Lk to="/design">Make something in Design</Lk></div>),
-    item('h-labs', 'labs', 6, <Head title="Flagships from other labs" />),
-    ...LABS.map(([id, name, ctx, d]) => item('m-' + id, 'labs', 3, <MCard to={'/models/' + id} name={name} id={id} ctx={ctx} d={d} tags={['text']} />)),
-    item('l-priced', 'labs', 6, <div className="xmo-foot"><Lk to="#priced">Every model, priced</Lk></div>),
+    ), (
+      <ul className="xmo-cards">
+        {ZEN.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id))}
+        <li>
+          <article className="xmo-mc soon">
+            <div className="xmo-mc-top"><h3>Zen 7</h3></div>
+            <p className="xmo-mc-id x-mono">zen7</p>
+            <p className="xmo-mc-d">The next open-weight generation after Zen 6, in research preview.</p>
+            <div className="xmo-mc-f"><span className="xmo-mc-tags"><span>Research preview</span></span><A to="/zen/7" className="x-btn sm xmo-soon-btn">Request access</A></div>
+          </article>
+        </li>
+      </ul>
+    )],
+    ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,
+      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} cmp={cmp(k.id)} /></li>)}</ul>],
+    ['creative', <Head title="Creative models" link={<Lk to="/design">Make something in Design</Lk>}><p>Video, images, 3D, sound effects, voice and music, each its own model, in research preview.</p></Head>,
+      <ul className="xmo-cards tiles">{CREATIVE.map((m) => <li key={m[0]}><Tile m={m} /></li>)}</ul>],
+    ['labs', <Head title="Flagships from other labs" link={<Lk to="#priced">Every model, priced</Lk>} />,
+      <ul className="xmo-cards">{LABS.map(([id, name, ctx, d]) => card(id, name, ctx, d, ['text'], '/models/' + id))}</ul>],
   ];
+  const picked = picks.map((id) => at(ALL[id]));
   return (
-    <section className="x-sec xmo-cat" id="families" aria-label="The model catalogue">
-      <div className="x-wrap">
-        <div className="xmo-chips" role="group" aria-label="Filter the catalogue by family">
-          {CHIPS.map(([k, t]) => (
-            <button key={k} type="button" aria-pressed={fam === k} onClick={() => setFam(k)}>
-              {fam === k && <motion.span layoutId="xmo-chip" className="xmo-chip-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-              <span>{t}<sup>{COUNT[k]}</sup></span>
-            </button>
-          ))}
+    <section className="xmo-sec xmo-cat" id="families" aria-label="The model catalogue" ref={sec}>
+      <div className="xmo-chipbar">
+        <div className="x-wrap xmo-chipbar-in">
+          <div className="xmo-chips" role="group" aria-label="Filter the catalogue by family">
+            {CHIPS.map(([k, t]) => (
+              <button key={k} type="button" aria-pressed={fam === k} onClick={() => choose(k)}>
+                {fam === k && <motion.span layoutId="xmo-chip" className="xmo-chip-bg" transition={SPRING} />}
+                <span>{t}<sup className="x-mono">{COUNT[k]}</sup></span>
+              </button>
+            ))}
+          </div>
+          <p className="xmo-chip-n x-mono" aria-live="polite">{`${COUNT[fam]} models`}</p>
         </div>
-        <ul className="xmo-grid">
-          <AnimatePresence mode="popLayout">{flat}</AnimatePresence>
-        </ul>
       </div>
+      <div className="x-wrap">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {groups.filter(([k]) => show(k)).map(([k, head, body]) => (
+            <motion.div
+              key={k}
+              layout="position"
+              className={'xmo-group g-' + k}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -24, transition: { duration: 0.22, ease: EASE } }}
+              transition={{ duration: 0.6, ease: EASE, layout: SPRING }}
+            >
+              {head}
+              {body}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+      <Tray picked={picked} drop={(id) => setPicks((p) => p.filter((x) => x !== id))} clear={() => setPicks([])} />
     </section>
   );
 }
 
-/* ---------- 9. every model, priced ---------- */
-// id, name, in $/M, out $/M, context. Hanzo's catalogue as api.hanzo.ai lists it; refreshed in the browser when the gateway answers.
-const ROWS = [
-  ['enso', 'Enso', 0.33, 1.65, 900000], ['enso-auto', 'Enso', 0.33, 1.65, 900000], ['enso-flash', 'Enso Flash', 0.33, 1.65, 900000],
-  ['enso-free', 'Enso Free', 0, 0, 1000000], ['enso-pro', 'Enso Pro', 4.4, 22, 1000000], ['enso-ultra', 'Enso Ultra', 5.5, 27.5, 1000000],
-  ['zen6', 'Zen6', 0.6, 2.4, 1048576], ['zen6-flash', 'Zen6 Flash', 0.6, 2.4, 1048576], ['zen6-coder', 'Zen6 Coder', 1.65, 13, 1048576],
-  ['zen6-free', 'Zen6 Free', 0, 0, 1000000], ['zen6-max', 'Zen6 Max', 28, 168, 1048576],
-  ['zen5', 'Zen5', 0, 0, 1000000], ['zen5-pro', 'Zen5 Pro', 0, 0, 1000000], ['zen5-coder', 'Zen5 Coder', 0, 0, 1000000], ['zen5-flash', 'Zen5 Flash', 0, 0, 1000000],
-  ['zen5-evo', 'Zen5 Evo', 0, 0, 1000000], ['zen5-mini', 'Zen5 Mini', 0, 0, 1000000], ['zen5-spark', 'Zen5 Spark', 0, 0, 1000000],
-  ['zen-vl', 'Zen VL — Vision-Language', 0, 0, 1000000], ['zen-embedding', 'Zen Embedding', 0.01, 0.01, 32768], ['zen-embedding-3', 'Zen Embedding 3', 0.17, 0.17, 32768],
-  ['zen-free', 'Zen Free', 0, 0, 1000000], ['zen-guard', 'Zen Guard — Content Safety', 0, 0, 128000], ['zen-scribe', 'Zen Scribe', null, null, null], ['zen-voice-mini', 'Zen Voice Mini', null, null, null],
-  ['kai', 'Kai', 0.021, 0, 32768], ['hanzo/zen', 'Zen', 0, 0, 1000000],
-];
-const OTHERS = [
-  ['anthropic/claude-fable-5', 'Claude Fable 5', 11.13025, 55.65125, 1000000], ['openai/gpt-3.5-turbo-0613', 'GPT-3.5 Turbo (older v0613)', 1.113025, 2.22605, 4095],
-  ['google/gemini-2.5-pro', 'Gemini 2.5 Pro', 1.39128125, 11.13025, 1048576], ['deepseek/deepseek-chat', 'DeepSeek V3', 0.356168, 0.99059225, 163840],
-  ['x-ai/grok-4.20', 'Grok 4.20', 1.39128125, 2.7825625, 2000000], ['meta/muse-glimmer-30b', 'Muse Glimmer 30B', 0.3339075, 1.33563, 131072], ['cohere/command-a', 'Command A', 2.7825625, 11.13025, 256000],
-];
-const dollars = (v) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3) : v.toFixed(2)));
-const cost = (r, i) => (r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
-const ctxOf = (n) => (n == null ? '—' : n >= 950000 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1000) + 'K');
+/* Beyond: the compare tray, rising from the bottom with up to three pinned models side by side. */
+function Tray({ picked, drop, clear }) {
+  const top = (i) => Math.max(...picked.map((r) => r[i] || 0)) || 1;
+  const bar = (r, i) => <i className="xmo-tray-bar" aria-hidden="true"><b style={{ transform: `scaleX(${r[i] ? Math.max(0.02, r[i] / top(i)) : 0})` }} /></i>;
+  return (
+    <AnimatePresence>
+      {picked.length > 0 && (
+        <motion.aside className="xmo-tray" aria-label="Compare" initial={{ y: '110%' }} animate={{ y: 0 }} exit={{ y: '110%', transition: { duration: 0.3, ease: EASE } }} transition={SPRING} data-no-morph>
+          <div className="xmo-tray-h">
+            <b>Compare</b>
+            <span className="x-mono">{`${picked.length} / 3`}</span>
+            <button type="button" onClick={clear}>Clear</button>
+          </div>
+          <div className="xmo-tray-g" style={{ '--n': picked.length }}>
+            <dl className="xmo-tray-k" aria-hidden="true"><dt>Model</dt><dd>Context</dd><dd>In $/M</dd><dd>Out $/M</dd></dl>
+            {picked.map((r) => (
+              <motion.dl key={r[0]} layout className="xmo-tray-c" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }}>
+                <dt><span>{r[1]}</span><code className="x-mono">{r[0]}</code><button type="button" aria-label={`Remove ${r[1]}`} onClick={() => drop(r[0])}>×</button></dt>
+                <dd><b className="x-mono">{ctxOf(r[4])}</b>{bar(r, 4)}</dd>
+                <dd><b className="x-mono">{cost(r, 2)}</b>{bar(r, 2)}</dd>
+                <dd><b className="x-mono">{cost(r, 3)}</b>{bar(r, 3)}</dd>
+              </motion.dl>
+            ))}
+          </div>
+        </motion.aside>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ---------- 6. every model, priced ---------- */
 const LENS = [['all', 'Everything'], ['ours', 'Ours'], ['free', 'Free'], ['under', 'Under $1 / M out'], ['million', '1M context']];
 const keep = {
   all: () => true, ours: () => true,
@@ -380,102 +552,146 @@ const keep = {
   under: (r) => r[3] != null && r[3] < 1,
   million: (r) => r[4] != null && r[4] >= 950000,
 };
+const FOLD = 10;
 
-function Priced() {
+function Priced({ at }) {
   const [lens, setLens] = useState('ours');
-  const [live, setLive] = useState({});
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.1 });
-  useEffect(() => {
-    if (!seen) return;
-    const ctl = new AbortController();
-    fetch('https://api.hanzo.ai/v1/models', { signal: ctl.signal }).then((r) => r.json()).then((j) => {
-      const m = {};
-      (j.data || []).forEach((x) => { const p = x.pricing; if (p && p.input_per_million != null) m[x.id] = [p.input_per_million, p.output_per_million, x.context_window ?? null]; });
-      setLive(m);
-    }).catch(() => {}); // the printed rates stay when the gateway is out of reach
-    return () => ctl.abort();
-  }, [seen]);
-  const at = (r) => (live[r[0]] ? [r[0], r[1], live[r[0]][0], live[r[0]][1], live[r[0]][2] ?? r[4]] : r);
+  const [all, setAll] = useState(false);
   const mine = ROWS.map(at).filter(keep[lens]);
   const theirs = lens === 'ours' ? [] : OTHERS.map(at).filter(keep[lens]);
   const n = mine.length + theirs.length;
-  const row = (r, to) => (
-    <motion.tr key={r[0]} layout="position" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>
-      <td><A to={to} className="xmo-row-n"><b>{r[1]}</b><code>{r[0]}</code></A></td>
-      <td className="x-mono">{cost(r, 2)}</td>
-      <td className="x-mono">{cost(r, 3)}<i className="xmo-bar" aria-hidden="true"><b style={{ transform: `scaleX(${r[3] ? Math.min(1, Math.log10(r[3] * 100 + 1) / 4.3) : 0})` }} /></i></td>
-      <td className="x-mono">{ctxOf(r[4])}</td>
-    </motion.tr>
-  );
+  const topOut = Math.log10(Math.max(...[...mine, ...theirs].map((r) => r[3] || 0)) * 100 + 1) || 1;
+  let k = 0;
+  const row = (r, to) => {
+    const fold = !all && k++ >= FOLD;
+    return (
+      <motion.tr key={r[0]} layout="position" hidden={fold} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>
+        <td><A to={to} className="xmo-row-n"><b>{r[1]}</b><code>{r[0]}</code></A></td>
+        <td className="x-mono">{cost(r, 2)}</td>
+        <td className="x-mono"><span className="xmo-out">{cost(r, 3)}<i className="xmo-bar" aria-hidden="true"><b style={{ transform: `scaleX(${r[3] ? Math.max(0.03, Math.log10(r[3] * 100 + 1) / topOut) : 0})` }} /></i></span></td>
+        <td className="x-mono">{ctxOf(r[4])}</td>
+      </motion.tr>
+    );
+  };
   return (
-    <section className="x-sec xmo-priced" id="priced" ref={ref}>
+    <section className="xmo-sec xmo-priced" id="priced" aria-labelledby="xmo-pr-h">
       <div className="x-wrap">
-        <SecHead kicker="Priced" title="Every model, and what it costs" lede="Dollars per million tokens, in and out, from the live catalog." />
-        <div className="xmo-lens">
-          <div className="xmo-chips flat" role="group" aria-label="Filter the price list">
-            {LENS.map(([k, t]) => (
-              <button key={k} type="button" aria-pressed={lens === k} onClick={() => setLens(k)}>
-                {lens === k && <motion.span layoutId="xmo-lens" className="xmo-chip-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                <span>{t}</span>
+        <div className="xmo-pr-g">
+          <header>
+            <p className="xmo-kick">Priced</p>
+            <h2 id="xmo-pr-h" className="xmo-headline">Every model, and what it costs</h2>
+            <p className="xmo-body">Dollars per million tokens, in and out, from the live catalog.</p>
+            <Lk to="https://docs.hanzo.ai/docs/models">How models are called and billed</Lk>
+          </header>
+          <div className="xmo-pr-t">
+            <div className="xmo-lens">
+              <div className="xmo-chips flat" role="group" aria-label="Filter the price list">
+                {LENS.map(([key, t]) => (
+                  <button key={key} type="button" aria-pressed={lens === key} onClick={() => setLens(key)}>
+                    {lens === key && <motion.span layoutId="xmo-lens" className="xmo-chip-bg" transition={SPRING} />}
+                    <span>{t}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="xmo-n x-mono" aria-live="polite">{`${n} models.`}</p>
+            </div>
+            <div className={'xmo-table' + (all ? ' all' : '')}>
+              <table>
+                <thead><tr><th scope="col">Model</th><th scope="col">In $/M</th><th scope="col">Out $/M</th><th scope="col">Context</th></tr></thead>
+                <tbody>
+                  <tr className="xmo-grp"><th scope="colgroup" colSpan={4}><A to="/models/hanzo">Hanzo</A><span>{`${mine.length} models`}</span></th></tr>
+                  <AnimatePresence initial={false}>{mine.map((r) => row(r, '/models/hanzo/' + r[0].replace('hanzo/', '')))}</AnimatePresence>
+                  {theirs.length > 0 && <tr className="xmo-grp" hidden={!all && k >= FOLD}><th scope="colgroup" colSpan={4}><span className="xmo-grp-n">Flagships from other labs</span><span>{`${theirs.length} models`}</span></th></tr>}
+                  <AnimatePresence initial={false}>{theirs.map((r) => row(r, '/models/' + r[0]))}</AnimatePresence>
+                </tbody>
+              </table>
+            </div>
+            {n > FOLD && (
+              <button type="button" className="xmo-more" aria-expanded={all} onClick={() => setAll((v) => !v)}>
+                <span>{all ? 'Show fewer' : `Show all ${n}`}</span><i aria-hidden="true">{all ? '−' : '+'}</i>
               </button>
-            ))}
+            )}
           </div>
-          <p className="xmo-n x-mono" aria-live="polite">{`${n} models.`}</p>
         </div>
-        <div className="xmo-table">
-          <table>
-            <thead><tr><th scope="col">Model</th><th scope="col">In $/M</th><th scope="col">Out $/M</th><th scope="col">Context</th></tr></thead>
-            <tbody>
-              <tr className="xmo-grp"><th scope="colgroup" colSpan={4}><A to="/models/hanzo">Hanzo</A><span>{`${mine.length} models`}</span></th></tr>
-              <AnimatePresence initial={false}>{mine.map((r) => row(r, '/models/hanzo/' + r[0].replace('hanzo/', '')))}</AnimatePresence>
-              {theirs.length > 0 && <tr className="xmo-grp"><th scope="colgroup" colSpan={4}><span className="xmo-grp-n">Flagships from other labs</span><span>{`${theirs.length} models`}</span></th></tr>}
-              <AnimatePresence initial={false}>{theirs.map((r) => row(r, '/models/' + r[0]))}</AnimatePresence>
-            </tbody>
-          </table>
-        </div>
-        <div className="x-row-links"><Lk to="https://docs.hanzo.ai/docs/models">How models are called and billed</Lk></div>
       </div>
     </section>
   );
 }
 
-/* ---------- 10. try any model ---------- */
+/* ---------- 7. try any model: the request that changes its model by itself ---------- */
+const REQ = [
+  { tab: 'Enso', id: 'enso', d: "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.", ctx: '900K' },
+  { tab: 'Zen 6', id: 'zen6', d: 'Open weights for the code, the copy, the images and the voice.', ctx: '1M' },
+  { tab: 'Claude Fable 5', id: 'anthropic/claude-fable-5', d: 'Claude Fable 5 is a Mythos-class model from Anthropic, built for autonomous knowledge work and coding.', ctx: '1M' },
+];
+
 function Try() {
   const [k, setK] = useState(0);
+  const [mine, setMine] = useState(false);
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const pick = (i) => { setK(i); setMine(true); };
+  const r = REQ[k];
   return (
-    <section className="x-sec xmo-try">
-      <div className="x-wrap xmo-try-grid">
-        <div>
-          <SecHead title="Try any model" lede="Test any model directly on the gateway. Switch models by changing one string." />
-          <Rise as="p" className="xmo-try-p" delay={0.1}>Sign in to chat with Enso, Zen, or any model on the endpoint. Pick a model, start a thread, billed to your account and kept private.</Rise>
-          <Rise className="xmo-acts" delay={0.2}>
+    <section className="xmo-sec xmo-try" aria-labelledby="xmo-try-h">
+      <div className="x-wrap xmo-try-g">
+        <header>
+          <h2 id="xmo-try-h" className="xmo-headline">Try any model</h2>
+          <p className="xmo-lede sm">Test any model directly on the gateway. Switch models by changing one string.</p>
+          <p className="xmo-body">Sign in to chat with Enso, Zen, or any model on the endpoint. Pick a model, start a thread, billed to your account and kept private.</p>
+          <div className="xmo-acts">
             <Btn to="https://platform.hanzo.ai/api-keys" solid>Get free API key</Btn>
             <Btn to="/chat">Open Hanzo Chat</Btn>
-          </Rise>
-        </div>
-        <Rise className="xmo-play" delay={0.15}>
-          <div className="xmo-tabs" role="tablist" aria-label="Pick a model" onKeyDown={arrows(REQ.length, setK)}>
+          </div>
+        </header>
+        <div className="xmo-req" ref={box}>
+          <div className="xmo-req-bar">
+            <span className="xmo-live"><i aria-hidden="true" />Live from api.hanzo.ai</span>
+            <span className="x-mono">POST /v1/chat/completions</span>
+            <span className="xmo-eg x-mono">example</span>
+          </div>
+          <pre className="xmo-json" aria-label="Request body"><code>
+            <span>{'{ "model": '}</span>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span key={k} className="xmo-model" initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{`"${r.id}"`}</motion.span>
+            </AnimatePresence>
+            <span>{', "messages": [{ "role": "user", "content": "Who are you?" }] }'}</span>
+            <i className="xmo-caret" aria-hidden="true" />
+          </code></pre>
+          <div className="xmo-tabs" role="tablist" aria-label="Model" onKeyDown={arrows(REQ.length, pick)}>
             {REQ.map((q, i) => (
-              <button key={q.tab} type="button" role="tab" aria-selected={k === i} tabIndex={k === i ? 0 : -1} onClick={() => setK(i)}>
-                {k === i && <motion.span layoutId="xmo-try" className="xmo-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+              <button key={q.tab} type="button" role="tab" aria-selected={k === i} tabIndex={k === i ? 0 : -1} onClick={() => pick(i)}>
+                {k === i && <motion.span layoutId="xmo-tab" className="xmo-tab-bg" transition={SPRING} />}
                 <span>{q.tab}</span>
+                {k === i && !mine && !calm && seen && <i className="xmo-tab-bar" aria-hidden="true" onAnimationEnd={() => setK((v) => (v + 1) % REQ.length)} />}
               </button>
             ))}
           </div>
-          <p className="xmo-play-s x-mono"><span>model</span><AnimatePresence mode="popLayout" initial={false}><motion.b key={k} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -12, opacity: 0 }} transition={{ duration: 0.28, ease: EASE }}>{REQ[k].id}</motion.b></AnimatePresence></p>
-          <div className="xmo-play-c" aria-disabled="true"><span className="xmo-effort">High</span><span className="xmo-send" aria-hidden="true">↑</span></div>
-          <div className="xmo-gate">
-            <A to="/chat" className="x-btn sm">Log in</A>
-            <A to="https://platform.hanzo.ai/api-keys" className="x-btn sm solid">Sign up for free</A>
+          {/* all three descriptions are in the page; the chosen one is shown */}
+          <div className="xmo-req-d" aria-live="polite">
+            {REQ.map((q, i) => (
+              <div key={q.tab} className={i === k ? 'on' : ''} aria-hidden={i !== k}>
+                <p>{q.d}</p>
+                <p className="xmo-ctx"><b className="x-mono">{q.ctx}</b><span className="x-mono">text</span></p>
+              </div>
+            ))}
           </div>
-        </Rise>
+          <div className="xmo-compose" aria-disabled="true">
+            <span className="xmo-effort">High</span>
+            <span className="xmo-gate">
+              <A to="/chat" className="x-btn sm">Log in</A>
+              <A to="https://platform.hanzo.ai/api-keys" className="x-btn sm solid">Sign up for free</A>
+            </span>
+            <span className="xmo-send" aria-hidden="true">↑</span>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ---------- 11. your first request ---------- */
+/* ---------- 8. your first request ---------- */
 const CODE = [
   ['cURL', `curl https://api.hanzo.ai/v1/chat/completions \\
   -H "Content-Type: application/json" \\
@@ -534,57 +750,61 @@ func main() {
 	fmt.Println(resp.Choices[0].Message.Content)
 }`],
 ];
-/* Strings and comments pick up a colour; everything else stays plain. */
+/* Strings pick up a colour; everything else stays plain. */
 const hl = (code) => code.split(/("[^"\n]*"|'[^'\n]*')/).map((s, i) => (i % 2 ? <span key={i} className="s">{s}</span> : s));
 
 function First() {
   const [k, setK] = useState(0);
   return (
-    <section className="x-sec xmo-first">
-      <div className="x-wrap xmo-first-w">
-        <SecHead center title="Your first request" lede="The chat-completions shape you already send, at api.hanzo.ai/v1, in the language you write." />
-        <Rise className="xmo-code">
-          <div className="xmo-tabs" role="tablist" aria-label="Language" onKeyDown={arrows(CODE.length, setK)}>
-            {CODE.map(([t], i) => (
-              <button key={t} type="button" role="tab" id={'xmo-tab-' + i} aria-controls={'xmo-sample-' + i} aria-selected={k === i} tabIndex={k === i ? 0 : -1} onClick={() => setK(i)}>
-                {k === i && <motion.span layoutId="xmo-lang" className="xmo-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                <span>{t}</span>
-              </button>
-            ))}
+    <section className="xmo-sec xmo-first" aria-labelledby="xmo-first-h">
+      <div className="x-wrap xmo-first-g">
+        <header>
+          <h2 id="xmo-first-h" className="xmo-headline">Your first request</h2>
+          <p className="xmo-body">The chat-completions shape you already send, at api.hanzo.ai/v1, in the language you write.</p>
+          <div className="xmo-links">
+            <Lk to="https://platform.hanzo.ai/api-keys">Get an API key</Lk>
+            <Lk to="https://docs.hanzo.ai/docs/quickstart">The quickstart</Lk>
+          </div>
+        </header>
+        <div className="xmo-code">
+          <div className="xmo-code-top">
+            <div className="xmo-tabs" role="tablist" aria-label="Language" onKeyDown={arrows(CODE.length, setK)}>
+              {CODE.map(([t], i) => (
+                <button key={t} type="button" role="tab" id={'xmo-tab-' + i} aria-controls={'xmo-sample-' + i} aria-selected={k === i} tabIndex={k === i ? 0 : -1} onClick={() => setK(i)}>
+                  {k === i && <motion.span layoutId="xmo-lang" className="xmo-tab-bg" transition={SPRING} />}
+                  <span>{t}</span>
+                </button>
+              ))}
+            </div>
+            <Copy text={CODE[k][1]} />
           </div>
           {CODE.map(([t, c], i) => (
             <div key={t} id={'xmo-sample-' + i} role="tabpanel" aria-labelledby={'xmo-tab-' + i} hidden={k !== i} className="xmo-pane">
-              <div className="xmo-pane-top"><span className="x-mono">{t}</span><Copy text={c} /></div>
               <pre tabIndex={0}><code>{hl(c)}</code></pre>
             </div>
           ))}
-        </Rise>
-        <div className="x-row-links center">
-          <Lk to="https://platform.hanzo.ai/api-keys">Get an API key</Lk>
-          <Lk to="https://docs.hanzo.ai/docs/quickstart">The quickstart</Lk>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- 12. related ---------- */
+/* ---------- 9. related, as an editorial index ---------- */
 const RELATED = [
   ['Agents', 'Build & run agents', '/agents'],
   ['Inference', null, '/engine'],
   ['Embeddings', 'Turn anything into vectors', '/cloud/embeddings'],
 ];
-
 function Related() {
   return (
-    <section className="x-sec xmo-rel">
+    <section className="xmo-sec xmo-rel" aria-labelledby="xmo-rel-h">
       <div className="x-wrap">
-        <Rise as="p" className="x-kick">Related capabilities</Rise>
+        <p className="xmo-kick" id="xmo-rel-h">Related capabilities</p>
         <ul>
           {RELATED.map(([t, d, to], i) => (
-            <Rise as="li" key={t} delay={i * 0.08} y={16}>
-              <A to={to}><b>{t}</b>{d && <span>{d}</span>}<i aria-hidden="true">→</i></A>
-            </Rise>
+            <li key={t}>
+              <A to={to}><span className="x-mono xmo-rel-n">{`0${i + 1}`}</span><b>{t}</b><span className="xmo-rel-d">{d}</span><i aria-hidden="true">→</i></A>
+            </li>
           ))}
         </ul>
       </div>
@@ -593,13 +813,18 @@ function Related() {
 }
 
 export default function ModelsPage() {
+  const near = useRef(null);
+  const go = useInView(near, { once: true, margin: '0px 0px 600px 0px' });
+  const at = useLive(go);
   return (
     <main className="xmo">
-      <Hero />
-      <Triptych />
+      <Stage />
+      <Families />
       <Versus />
-      <Catalogue />
-      <Priced />
+      <Figures />
+      <div ref={near} aria-hidden="true" />
+      <Catalogue at={at} />
+      <Priced at={at} />
       <Try />
       <First />
       <Related />
