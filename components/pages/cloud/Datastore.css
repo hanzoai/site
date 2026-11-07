@@ -387,3 +387,6 @@ html:not(.js) .ds-index li { color: var(--ink); }
   .ds-fact .ds-dn i { height: 32px; }
   .ds-fact .ds-bucket { height: 52px; }
 }
+/* copy rule (8 Nov): each industry is its own text element */
+.ds-index li .ds-index-t, .ds-index li[data-on] > .ds-index-t { flex: 0 1 auto; font: inherit; letter-spacing: inherit; color: inherit; }
+@media (max-width: 899px) { .ds-index li .ds-index-t { font-size: inherit; } }

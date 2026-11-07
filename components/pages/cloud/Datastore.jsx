@@ -415,7 +415,7 @@ function Who() {
         <ol className="ds-index" ref={ref} data-enter="rack" onPointerLeave={() => setHot(-1)}>
           {INDUSTRIES.map((t, i) => (
             <li key={t} data-on={(hot >= 0 ? hot : at) === i ? '' : undefined} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)}>
-              <span className="kn-fig">{String(i + 1).padStart(2, '0')}</span>{t}
+              <span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><span className="ds-index-t">{t}</span>
               <i className="ds-index-b" aria-hidden="true">{Array.from({ length: 6 }).map((_, j) => <b key={j} style={{ opacity: (0.2 + shade(i + 7, j) * 0.6).toFixed(2) }} />)}</i>
             </li>
           ))}
