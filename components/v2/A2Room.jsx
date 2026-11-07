@@ -2,12 +2,13 @@
 /* A2Room — a black room that enters as a rounded card inside the gutters and opens to full width as it is reached
    (Apps 2 chat; MASTER.md 3.1 "Rooms"). Usage: <A2Room className="my-dark" aria-labelledby="h">…</A2Room>
    It is a <section data-room="dark"> (the header turns dark over it); the opening is a clip-path tied to scroll, so
-   nothing reflows. Phones, reduced motion and no JavaScript see it open. At most two per page, never back to back. */
+   nothing reflows. Phones, reduced motion and no JavaScript see it open. At most two per page, never back to back.
+   room={null} drops data-room for a room that turns light inside (the page then marks the dark stretch itself). */
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import useNarrow from './A2Narrow';
 
-export default function A2Room({ className = '', children, ...rest }) {
+export default function A2Room({ className = '', room = 'dark', children, ...rest }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const narrow = useNarrow();
@@ -19,7 +20,7 @@ export default function A2Room({ className = '', children, ...rest }) {
     return `inset(0px ${g}px round ${r}px)`;
   });
   return (
-    <motion.section ref={ref} className={'a2-dark ' + className} data-room="dark" style={{ clipPath: clip }} {...rest}>
+    <motion.section ref={ref} className={'a2-dark ' + className} data-room={room || undefined} style={{ clipPath: clip }} {...rest}>
       {children}
     </motion.section>
   );

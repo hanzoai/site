@@ -23,6 +23,11 @@
 .xcf-display.s-xl { font-size: 112px; }
 .xcf-display.s-l { font-size: 84px; }
 .xcf-display.s-m { font-size: 64px; }
+.xcf-display.s-r { font-size: 52px; }
+/* the name cuts in by its line mask on arrival (700ms, ease-emphasis), then settles as the stage settles */
+.xcf-mask { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.xcf-mask > span { display: block; animation: xcf-cut 700ms var(--k-em) both; }
+@keyframes xcf-cut { from { transform: translateY(105%); } }
 .xcf-h2 { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; max-width: 18ch; text-wrap: balance; }
 .xcf-lede { margin: 0; font-size: 21px; line-height: 1.4; letter-spacing: -.01em; color: var(--k-ink); max-width: 34ch; text-wrap: pretty; }
 .xcf-body { margin: 0; font-size: 16px; line-height: 1.6; color: var(--k-body); max-width: 44ch; text-wrap: pretty; }
@@ -71,11 +76,10 @@
 .xcf-sess { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; padding: 17px 24px; border-bottom: 1px solid var(--k-line-d); background: rgba(255, 255, 255, .03); }
 .xcf-sess-g { font: 497 16px/1.5 var(--mono); color: var(--k-on); }
 .xcf-sess-t { position: relative; margin: 0; font: 400 16px/1.6 var(--mono); color: var(--k-on); overflow-wrap: anywhere; }
-.xcf-ghost { visibility: hidden; } /* the whole prompt holds its space, so typing never pushes the services down */
-.xcf-typed { position: absolute; inset: 0; }
+.xcf-ghost { color: var(--k-on-3); } /* the whole prompt is there, faint, from the first paint; typing turns it white letter by letter */
 .xcf-sess-n { grid-column: 2; margin: 2px 0 0; font-size: 14px; color: var(--k-on-4); opacity: 0; transform: translateY(4px); transition: opacity var(--k-slow) var(--k-out), transform var(--k-slow) var(--k-em); }
 .xcf-sess-n.on { opacity: 1; transform: none; }
-.xcf-caret { display: inline-block; width: 8px; height: 1.1em; margin-left: 3px; vertical-align: -.18em; background: var(--k-on); animation: xcf-blink 1.05s steps(1) infinite; }
+.xcf-caret { display: inline-block; width: 2px; height: 1.1em; margin-right: -2px; vertical-align: -.18em; background: var(--k-on); animation: xcf-blink 1.05s steps(1) infinite; }
 @keyframes xcf-blink { 50% { opacity: 0; } }
 .xcf-wbody { display: grid; grid-template-columns: 188px minmax(0, 1fr); min-height: 320px; }
 .xcf-sibs { display: flex; flex-direction: column; gap: 2px; padding: 14px 10px; border-right: 1px solid var(--k-line-d); }
@@ -116,10 +120,10 @@
 .xcf-path { color: var(--k-on); }
 .xcf-pulse { width: 8px; height: 8px; margin-left: 12px; border-radius: 50%; background: var(--k-on); animation: xcf-ping 2s var(--k-out) infinite; }
 @keyframes xcf-ping { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .6); } 80%, 100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
-.xcf-open { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; background: var(--k-on); color: var(--k-ink); font: 497 14px/1 var(--sans); text-decoration: none; transition: background-color var(--k-fast) var(--k-out), transform var(--k-press); }
+.xcf-open { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px; background: transparent; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); color: var(--k-on); font: 497 14px/1 var(--sans); text-decoration: none; transition: background-color var(--k-fast) var(--k-out), transform var(--k-press); }
 .xcf-open svg { transition: transform var(--k-fast) var(--k-out); }
 .xcf-open:active { transform: scale(.97); }
-@media (hover: hover) { .xcf-open:hover { background: var(--k-white); } .xcf-open:hover svg { transform: translateX(3px); } }
+@media (hover: hover) { .xcf-open:hover { background: var(--k-on); color: var(--k-ink); } .xcf-open:hover svg { transform: translateX(3px); } }
 .xcf-note { margin: 17px 0 0; text-align: center; font-size: 13px; color: var(--k-body); }
 
 /* /cloud/local: the terminal */
@@ -138,6 +142,24 @@
 .xcf-figs dd { margin: 0; font-size: 64px; font-weight: 220; line-height: .95; letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--k-ink); }
 .xcf-figs dt { margin-top: 14px; max-width: 30ch; font-size: 16px; line-height: 1.5; color: var(--k-body); }
 
+/* ---------- the four first screens (one per family group) ---------- */
+/* wide: the console runs edge to edge (inside the gutters) and grows from small as you arrive */
+.v-wide .xcf-stage-w { width: calc(100% - 2 * var(--gut)); max-width: none; }
+.v-wide .xcf-stage { max-width: none; }
+.v-wide .xcf-wbody { min-height: 380px; }
+/* path: the product's own endpoint is the giant object; the name rests at 52px above it */
+.xcf-path-hero { display: flex; flex-wrap: wrap; align-items: baseline; margin: 0 0 44px; font: 220 84px/1 var(--mono); letter-spacing: -.04em; color: var(--k-track); overflow-wrap: anywhere; }
+.xcf-path-hero .b { color: var(--k-ink); }
+.xcf-path-hero .xcf-pulse { align-self: center; width: 14px; height: 14px; margin-left: 20px; background: var(--k-ink); animation-name: xcf-ping-d; }
+@keyframes xcf-ping-d { 0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, .3); } 80%, 100% { box-shadow: 0 0 0 16px rgba(0, 0, 0, 0); } }
+.v-path .xcf-stage { max-width: 920px; margin: 0 0 0 auto; }
+.v-path .xcf-band { padding-bottom: 27px; }
+/* field: the product's own Sigil is a tall stage and the name sits on it */
+.v-field .xcf-band { display: flex; align-items: flex-end; min-height: 62svh; padding: 116px 0 44px; }
+.v-field .xcf-band > .xcf-wrap { width: min(100% - 2 * var(--gut), 1152px); }
+.v-field .xcf-sigil { opacity: .55; -webkit-mask-image: none; mask-image: none; }
+.v-field .xcf-stage { max-width: 1040px; }
+
 /* ---------- paste and ship: the prompt as type, and the route it takes ---------- */
 .xcf-ship { background: var(--k-quiet); }
 .xcf-ship-g { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
@@ -147,7 +169,7 @@
 .xcf-api { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 27px 0 0; font-size: 14px; color: var(--k-body); }
 .xcf-api .xcf-mono { display: inline-flex; gap: 2px; padding: 8px 14px; border-radius: 999px; background: var(--k-white); color: var(--k-ink); }
 .xcf-api-k { margin-right: 8px; color: var(--k-body); }
-.xcf-copy { margin-top: 17px; height: 44px; padding: 0 18px; border-radius: 999px; background: var(--k-ink); color: var(--k-white); border-color: var(--k-ink); }
+.xcf-copy { margin-top: 17px; height: 44px; padding: 0 18px; border-radius: 999px; background: transparent; color: var(--k-ink); border-color: rgba(0, 0, 0, .3); }
 .xcf-prompt { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 400 32px/1.25 var(--sans); letter-spacing: -.02em; color: var(--k-ink); }
 .xcf-pr-k { color: var(--k-body); }
 .xcf-prompt b { font-family: var(--mono); font-weight: 497; font-size: .86em; letter-spacing: -.02em; color: var(--k-ink); background: linear-gradient(transparent 64%, var(--k-track) 64%); }
@@ -173,15 +195,13 @@
 .xcf-n { display: block; margin-bottom: 6px; font: 497 12px/1 var(--mono); color: var(--k-dim); }
 .xcf-feats b { display: block; font-size: 17px; font-weight: 497; line-height: 1.3; letter-spacing: -.01em; }
 
-/* ---------- the motto: one variable-weight moment that grows, with Hanzo's mark in silver ---------- */
-.xcf-motto { padding: var(--sec) 0; overflow: hidden; }
-.xcf-motto-g { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 44px; }
-.xcf-motto-t { margin: 0; font-size: 44px; line-height: 1.12; letter-spacing: -.03em; color: var(--k-ink); }
-.xcf-motto-t span { display: block; white-space: nowrap; font-weight: 220; opacity: .3; transform: scale(.6); transform-origin: 0 50%; transition: font-weight 1.2s var(--k-em) calc(var(--i) * 400ms), opacity 1.2s var(--k-em) calc(var(--i) * 400ms), transform 1.2s var(--k-em) calc(var(--i) * 400ms); }
-.xcf-motto[data-seen='true'] .xcf-motto-t span { font-weight: 497; opacity: 1; transform: none; }
-.xcf-mark { display: block; width: 168px; color: var(--k-track); transform: translateY(24px); opacity: 0; transition: transform 1s var(--k-em) 300ms, opacity 800ms var(--k-out) 300ms; }
-.xcf-mark svg { display: block; width: 100%; height: auto; }
-.xcf-motto[data-seen='true'] .xcf-mark { transform: none; opacity: 1; }
+/* ---------- the genesis line: a quiet strip before the close, weight moving once from Air to Book ---------- */
+.xcf-motto { padding: 44px 0; border-top: 1px solid var(--k-line); }
+.xcf-motto-g { display: flex; align-items: center; gap: 17px; }
+.xcf-motto-t { margin: 0; font-size: 21px; line-height: 1.4; letter-spacing: -.01em; color: var(--k-ink); }
+.xcf-motto-t span { font-weight: 220; transition: font-weight 900ms var(--k-em) calc(var(--i) * 300ms); }
+.xcf-motto[data-seen='true'] .xcf-motto-t span { font-weight: 497; }
+.xcf-mark { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--k-ink); color: var(--k-white); }
 
 /* ---------- spec sheet, with the product's card ---------- */
 .xcf-specs { padding-top: 0; }
@@ -251,7 +271,7 @@
 .xcf-card-art { position: relative; display: block; flex: 1; min-height: 200px; overflow: hidden; background: var(--k-white); }
 .xcf-card-sig { position: absolute; inset: -40px; width: calc(100% + 80px); height: calc(100% + 80px); color: var(--k-ink); opacity: .45; transition: transform 800ms var(--k-em), opacity var(--k-base) var(--k-out); }
 .xcf-card-n { display: block; padding: 20px 20px 0; font-size: 21px; font-weight: 497; letter-spacing: -.015em; }
-.xcf-card-d { display: block; padding: 4px 20px 0; font-size: 14px; color: var(--k-body); }
+.xcf-card-d { display: block; min-height: 1.5em; padding: 4px 20px 0; font-size: 14px; color: var(--k-body); }
 .xcf-card-go { display: grid; place-items: center; width: 44px; height: 44px; margin: 17px 20px 20px auto; border-radius: 50%; background: var(--k-ink); color: var(--k-white); }
 @media (hover: hover) {
   .xcf-card:hover { background: var(--k-muted); }
@@ -297,10 +317,10 @@
   .xcf-about-art { margin-top: 44px; aspect-ratio: 4 / 3; }
   .xcf-feats { grid-template-columns: 1fr; }
   .xcf-desc { font-size: 21px; }
-  .xcf-motto-g { display: block; }
-  .xcf-motto-t { font-size: 26px; }
-  .xcf-motto-t span { white-space: normal; transform: none; }
-  .xcf-mark { width: 96px; margin-top: 44px; }
+  .xcf-motto-g { align-items: flex-start; }
+  .xcf-motto-t { font-size: 17px; }
+  .xcf-path-hero { font-size: 32px; margin-bottom: 27px; }
+  .v-field .xcf-band { min-height: 0; padding-top: 72px; }
   .xcf-specs-r { margin-top: 44px; }
   .xcf-dl > div { grid-template-columns: 1fr; gap: 4px; padding: 17px 0; }
   .xcf-dl dd { font-size: 17px; }
@@ -323,8 +343,8 @@
 @media (prefers-reduced-motion: reduce) {
   .xcf-caret, .xcf-pulse, .xcf-st.build i, .xcf-wire b { animation: none; }
   .xcf-turns li, .xcf-lines li, .xcf-tlines li { opacity: 1; transform: none; transition: none; }
-  .xcf-motto-t span { font-weight: 497; opacity: 1; transform: none; transition: none; }
-  .xcf-mark { transform: none; opacity: 1; transition: none; }
+  .xcf-motto-t span { font-weight: 497; transition: none; }
+  .xcf-mask > span { animation: none; }
   .xcf-gc-bg { transform: none; inset: 0; border-radius: 0; }
   .xcf-card, .xcf-card-sig { transition: none; }
 }

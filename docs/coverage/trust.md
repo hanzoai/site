@@ -85,7 +85,7 @@ Done here: Drawers, papers, group rows, answers, the search and its clear button
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not merged; the page plays none
 
-Done here: Signature: the evidence locker (idle, 300 ms ease-emphasis slides, pauses under the pointer). Supporting: line-mask cut-in (arrival), answers appearing as you type with the live count (state), the black room's entry (the only scroll-linked move). variety.py OK. Timers are `setTimeout` and stop off screen or once you choose.
+Done here: Signature: the evidence locker (idle, 300 ms ease-emphasis slides, pauses under the pointer). Supporting: line-mask cut-in (arrival), answers appearing as you type with the live count (state), the black room's entry (the only scroll-linked move). variety.py OK. Timers are `setTimeout` and stop off screen or once you choose. Filmed (`scripts/motion.mjs`, 1470): layout shift 0.000; the cabinet moves in the hero, the reading screens rest. Headless Chrome reports `(hover: none)`, so the film lists hover-gated controls as dead; with `--blink-settings=primaryHoverType=2` every control answered (drawers, papers, group rows, search).
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or film on this page

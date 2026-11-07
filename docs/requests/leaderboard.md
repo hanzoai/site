@@ -1,0 +1,5 @@
+# Request from the Proof chat (/benchmarks /compare /comparison /open-source /philosophy /research /security /trust /leaderboard /integrations)
+
+1. **The shared ask bar floats over content on desktop.** `components/Ask.jsx` rises at the foot of every page at 1470×801 as a pill bar over the reading column. MASTER §3.2 rule 6 and §3.3 ("anything floating over content: a pill bar…") ban that on desktop. Our pages feed it through `data-thumb`. Request: on desktop the ask lives only in the header (quiet while the hero ask is on screen, solid after); on phones keep the slim bar only where it never covers content or the page's own ask. Every Proof page will follow without changes.
+2. **In-site clicks freeze about 4 s and the card-to-page Morph never plays.** Filed in `docs/review/SYSTEM.md` under "Requests to the shared system" with the measured fix: resolve the View Transition with `setTimeout(ok, 16)`, not `requestAnimationFrame`.
+3. **Not yet available, so not wired on our pages:** `lib/track.js` (our `data-cta="<page>.<slot>"` ids are in place) and the shared sound kit (MASTER part 9).

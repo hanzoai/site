@@ -41,8 +41,10 @@ function Hero() {
     if (calm) { if (cmd.current) cmd.current.textContent = CMD; setDone(true); return; }
     if (!live || done) return;
     let i = 0;
-    const t = setInterval(() => { i++; if (cmd.current) cmd.current.textContent = CMD.slice(0, i); if (i >= CMD.length) { clearInterval(t); setTimeout(() => setDone(true), 350); } }, 85);
-    return () => clearInterval(t);
+    let t = 0;
+    const step = () => { i++; if (cmd.current) cmd.current.textContent = CMD.slice(0, i); t = i >= CMD.length ? setTimeout(() => setDone(true), 350) : setTimeout(step, 85); };
+    t = setTimeout(step, 85);
+    return () => clearTimeout(t);
   }, [live, calm, done]);
   return (
     <section className="tn2-hero" ref={ref}>
@@ -224,7 +226,7 @@ function Shared() {
 
 export default function Tunnel() {
   return (
-    <main className="l2-page tn2">
+    <main id="main" className="l2-page tn2">
       <Hero />
       <Scene />
       <Facts />

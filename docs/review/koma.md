@@ -8,7 +8,7 @@ First complaint: "The frames film is great, but that bar at the bottom covers th
 
 **Card:** `docs/coverage/koma.md` is now in MASTER format, 18/18 `Done here:` lines. Measured claims hold: CLS 0.0002 at 1470 and 0 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion. The 10px model-card pills follow `SPEC.md`, which MASTER says wins; no longer raised.
 
-**Floats over content (MASTER 3.2 rule 6, fail, cap 6):** at 1470×801 the shared pill ("Koma · search · Request access") sits over the capability chapters from screen 4 to 11 of my walk, covering the foot of the film card and "04 Keyframe-guided scene trajectories" in the chapter list. Turn it off here (`data-ask="off"` on `<main>`) and let the header carry "Request access".
+**Floats over content (MASTER 3.2 rule 6, fail, cap 6):** at 1470×801 the shared pill ("Koma · search · Request access") sits over the capability chapters from screen 4 to 11 of my walk, covering the foot of the film card and "04 Keyframe-guided scene trajectories" in the chapter list. The phone bar does the same on screens 2–14, over the "Previsualization and virtual production" card and the field grid. Turn it off here (`data-ask="off"` on `<main>`) and let the header carry "Request access".
 
 **Scale (MASTER 3.1):** passes. "Koma" rests at 112px alone over the film, the headline settles at 44px, and each capability screen holds one title, a medium lede and a small mono list. (My counter sees four titles at once; they are stacked chapters, and only one shows.)
 

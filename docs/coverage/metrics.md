@@ -33,7 +33,7 @@ Done here: Every link renders through kit `A`, as do the Logs card (`RelatedCard
 - [x] Ends in proof strip, `Band`, footer (the close is `LaunchClose`: the page's Sigil, "Get Metrics", the one ask, licence and repo)
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: The first screen is the h1 (52px), the lede, the ask and the live chart tile; `fs-audit.cjs` measures 32,608 changed pixels in the first 0.9 s with no input. The h1 cuts in by CSS line mask at first paint and is visible with JS off. Rhythm alternates: hero tile, a pinned table (tall), a black room, a quiet card, the close. The Logs title carries `data-morph`.
+Done here: The first screen is the h1 (52px), the lede, the ask and the live chart tile; `fs-audit.cjs` measures 32,608 changed pixels in the first 0.9 s with no input. The first spike lands about 2 s in, after the line has drawn. Its traces stay open for 3 s, with the flag riding the spike, then rest dimmed (never blank) until the next spike about 6 s later. The h1 cuts in by CSS line mask at first paint and is visible with JS off. Rhythm alternates: hero tile, a pinned table (tall), a black room, a quiet card, the close. The Logs title carries `data-morph`.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (the kit's `lx-cta` mirrors `Cta` at 48px; noted for the swap when the deck `Cta` lands)
@@ -87,7 +87,7 @@ Done here:
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
 
-Done here: The signature is the live chart (idle), with the spike landing every ~10 s and opening its traces (time). Pointer: the crosshair reads the line, and the close's ask is magnetic up to 22 px. State: split, PromQL ↔ builder and the label check. Arrival: the h1 cut-in and the timed black-room wipe. Scroll: only the pinned table and "Get Metrics" growing. `variety.py` is OK and the file has no `setInterval` and no springs.
+Done here: The signature is the live chart (idle), with a spike landing every ~5.5 s and opening its traces for 3 s (time). In the black room, a point leaves the prompt every 4 s and lands on the console's first service. Pointer: the crosshair reads the line and the legend names the series under it, a click holds the moment under the pointer (labelled "spike" only if one is there), and the close's ask is magnetic up to 22 px. State: split, PromQL ↔ builder and the label check. Arrival: the h1 cut-in and the timed black-room wipe. Scroll: only the pinned table and "Get Metrics" growing. `variety.py` is OK and the file has no `setInterval` and no springs.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no Hanzo photo or film on this page)
@@ -103,7 +103,7 @@ Done here: The objects are product UI (chart, table, console) and the page's Sig
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: On a phone the h1, lede and ask come first, then the toolbar, the chart and the traces stacked in one tile. In the pinned chapters the table sits on top and the words below, and `pinchk.cjs` passes all six chapters. The crosshair is pointer-only; the tap path is holding the chart with a tap.
+Done here: On a phone the h1, lede and ask come first, then the toolbar, the chart and the traces stacked in one tile. In the pinned chapters the table sits on top at a fixed 300px (so chapter 3's swap to the label check moves nothing) and keeps the kind column, with the words below. `pinchk.cjs` passes all six chapters. The crosshair is pointer-only; the tap path is holding the chart with a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -158,6 +158,6 @@ Done here: With the network blocked, the page still renders in full. Paused, hel
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: it does not exist yet; ids are in place)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/metrics.md` verdict 8 or more (pending the new review; the earlier 6/10 complaints are all addressed above)
+- [x] Review read: `docs/review/metrics.md` (7/10 at `9898ac2`). Each fix it lists is done: the spike timing and true flag, a hover that says something, the chart no longer shrinking on press, a distinct pinned intro, chapter 04 replaying the spike, chapter numbers under titles, a fixed phone table that keeps the kind column, and the black room's send wire. The header label belongs to the shared `Ask.jsx` (`docs/requests/metrics.md`).
 
 Done here: `metrics.hero` and `metrics.close` are set. The gallery has `d.mp4` (a whole-page scroll), `d.jpg` and `p.jpg`. The 6/10 review's complaints are each answered: no hue, no eyebrow, the product on the first screen, one ask, controls that answer, and a card that opens.

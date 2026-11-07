@@ -187,6 +187,7 @@ export default function Oto() {
   return (
     <Creative
       slug="oto"
+      subject={[0.5, 0.55]}
       shape={WAVE}
       aim={(W, H, wide) => (wide ? null : focus(0.5, 0.55, W / 2, H * 0.25, 1.2, [W * 0.05, H * 0.07, W * 0.95, H * 0.43])(W, H))}
       headClass="ot-v2"

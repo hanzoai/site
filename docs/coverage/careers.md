@@ -32,7 +32,7 @@ Done here: `python3 scripts/parity.py /careers` gives links 13/13. Every role sh
 - [x] JS off: legible; no `opacity:0` on the LCP element (`noscript` rules; checked: 0 hidden headings, paragraphs or links)
 - [x] One idea per 100svh; no 3 same-height sections in a row (hero, still perk list, deck, 7/5 Academic, dark close)
 - [~] Ends in the page's own close (dark room "Ready to join us?" with its one ask) and the footer. No proof strip: the careers copy has none.
-- [~] Card-to-page: the site Morph is broken (see requests). The sheet opens into its page by the doorway instead (its rectangle grows in #f5f5f5, the role page arrives, the cover wipes, about 1.1s). The title does not land on the h1.
+- [~] Card-to-page: the site Morph is broken (see requests). The whole white sheet grows to fill the screen (doorway, 640ms), the role page arrives under it, and the cover wipes up (760ms). That is traced end to end. The title does not land on the h1.
 
 Done here: At 1470×801 the h1 is the deck's 84px Book (4 masked lines). The lede and the ask sit above the fold (ask bottom about 660px). At 375 the ask's bottom is at 603px. A click on a sheet reaches `/careers/<slug>` through the doorway in about 1.1s.
 
@@ -134,7 +134,7 @@ Done here: `app/careers/page.jsx` sets `metadata` from `metaOf` and renders `Jso
 - n/a: Maker and model pages
 - n/a: Price
 
-Done here: The role list is the page's catalogue. A team filter swaps the deck with a 360ms slide, and every sheet opens into `/careers/<slug>`.
+Done here: The role list is the page's catalogue. The team filter is gone (each team has one role, per the review); the skill chips are the one filter. Every sheet opens into `/careers/<slug>`.
 
 ## 16. Developer experience
 - n/a: no code on the page
@@ -155,7 +155,13 @@ Done here: A blocked clipboard shows no false confirmation. JS off renders every
 - [x] `V2: 8/10 …` in the page file's top comment (`app/careers/page.jsx` and `Careers.jsx`)
 - [~] Review read: `docs/review/careers.md` was 7/10. Its fixes are done here, and a new critic walk is pending.
 
-Done here: Every complaint in the last review is addressed:
+Done here: Re-review 7/10 (7 Nov 14:45) fixes:
+- JS off: the four hiring steps read as a list;
+- reduced motion: no hydration mismatch, bars full;
+- doorway: the landing wipe no longer gets cancelled;
+- team filter removed.
+
+Earlier review fixes:
 - filter pill: painted (51×44 absolute);
 - card open: through the doorway;
 - phone titles: whole words;

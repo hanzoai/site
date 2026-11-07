@@ -1,20 +1,21 @@
 'use client';
-/* Network, v2 launch page (Cloud 3), round 2 to JAMES.md.
-   V2: 8/10 The fabric is the first screen: huge type over a live peer map where a request walks to whoever has the model loaded, and hovering a peer previews the route to it; six facts open on the section's own title and become a chain of blocks that stacks as you scroll; one dark room where the two ends of the fabric are joined by a strand your pointer sends a request down; ink and greys only.
-   Signature: ask the fabric. A full-bleed map of the peers connected right now, each wearing the models it has loaded;
-   a request leaves "you", walks the links to a peer that already has the model in memory, and a model nobody has loaded
-   gets a placement. It runs by itself (pause in its toolbar); pick a model to steer it; point at any peer to see the
-   route the fabric would take to it and what it has loaded.
-   Beyond: lend it to. In chapter five choose inference or builds and get the one command that puts the machine there
-   (hanzo fabric join or hanzo runner), with Hanzo's own line for each and a copy button.
+/* Network, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief).
+   V2: 8/10 The fabric is the hero object: title, lede and ask on the left five columns, the live peer map on the right eight, where a request walks to whoever has the model loaded and pointing at a peer previews its route; its toolbar sits in its own frame under it; six facts open on the section's own title and settle as a chain of blocks that shrink as they age; one black room where the two ends are joined by a strand your pointer sends a request down; deck greys, flat surfaces, no springs.
    Persona: Developer who needs compute (buys it on the fabric, then calls it with a key).
    Goal: buy compute on hanzo.network.
    CTA: "Buy Compute" → https://docs.hanzo.ai/docs/network (data-cta network.hero, network.close; the site's sticky ask
-   carries the same label from data-thumb). Metric: api_key_created.
-   Motion: idle = the request walking the fabric (pausable); pointer = the route preview on any peer, the strand in the
-   dark room that runs a call or a serve as you point at either end, the magnetic close; state = the model picker and
-   the lend toggle (sliding pill, spring), the placement tag springing in; arrival = the cut-in title, the timed wipe into
-   the dark room; scroll = the map easing back as you leave the hero and the pinned chain of blocks.
+   carries the same label from data-thumb).
+   Metric: api_key_created.
+   Signature: ask the fabric. A map of the peers connected right now, each wearing the models it has loaded; a request
+   leaves "you", walks the links to a peer that already has the model in memory, and a model nobody has loaded gets a
+   placement. It runs by itself (pause in its toolbar); pick a model to steer it; point at any peer to see the route the
+   fabric would take to it and what it has loaded.
+   Beyond: lend it to. In chapter five choose inference or builds and get the one command that puts the machine there
+   (hanzo fabric join or hanzo runner), with Hanzo's own line for each and a copy button.
+   Motion (1 signature + 3): idle = the request walking the fabric (the one continuous mover, pausable); pointer = the
+   route preview on any peer, the strand in the black room, the magnetic close; state = the model picker and the lend
+   toggle (a sliding pill, 300ms ease-emphasis); arrival = the cut-in title, the timed wipe into the black room; scroll
+   (under half) = the map growing as you leave the hero, the pinned chain whose blocks shrink as they settle.
    Every word and link is Hanzo's; the map, hashes and the strand are drawn, not measured. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, useInView } from 'motion/react';
@@ -29,11 +30,12 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import './Network.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/network';
-const SNAP = { type: 'spring', stiffness: 420, damping: 34 };
+const EMPH = [0.16, 1, 0.3, 1];
+const PILL = { duration: 0.3, ease: EMPH }; // MASTER §3.1: toggles slide with ease-emphasis at 300ms, never a spring
 
-/* ---------- the hero: the fabric, full-bleed ---------- */
-// peers: [x%, y%, models loaded]; index 9 is you
-const PEERS = [[55, 13, ['zen']], [73, 8, ['kai']], [92, 17, []], [64, 33, ['zen', 'kai']], [84, 37, ['enso']], [46, 49, []], [71, 55, ['koe']], [94, 57, []], [31, 60, ['enso']], [57, 84, []], [80, 63, ['zen']]];
+/* ---------- the hero object: the fabric ---------- */
+// peers: [x%, y%, models loaded] inside the map's own frame; index 9 is you
+const PEERS = [[38, 12, ['zen']], [62, 7, ['kai']], [88, 17, []], [50, 33, ['zen', 'kai']], [76, 38, ['enso']], [26, 49, []], [59, 56, ['koe']], [91, 58, []], [6, 61, ['enso']], [41, 86, []], [72, 72, ['zen']]];
 const LINKS = [[0, 1], [1, 2], [0, 3], [1, 3], [2, 4], [3, 4], [3, 5], [3, 6], [4, 6], [4, 7], [5, 8], [5, 6], [6, 7], [6, 10], [7, 10], [5, 9], [6, 9], [8, 9], [9, 10], [0, 5]];
 const YOU = 9;
 // [model asked for, path of peers from you, placed (nobody had it loaded)]
@@ -82,12 +84,12 @@ function Fabric({ at, arrived, calm, peek, setPeek }) {
       {PEERS.map(([x, y, ms], i) => {
         const k = path.indexOf(i);
         return (
-          <div key={i} className={'nw-peer' + (k >= 0 ? ' lit' : '') + (i === end && arrived ? ' end' : '') + (i === YOU ? ' you' : '') + (i === peek ? ' peek' : '')} style={{ left: x + '%', top: y + '%', '--d': Math.max(0, k) * HOP + 's' }}
+          <div key={i} className={'nw-peer' + (k >= 0 ? ' lit' : '') + (i === end && arrived ? ' end' : '') + (i === YOU ? ' you' : '') + (i === peek ? ' peek' : '') + (x > 84 ? ' l' : '')} style={{ left: x + '%', top: y + '%', '--d': Math.max(0, k) * HOP + 's' }}
             onPointerEnter={(e) => e.pointerType === 'mouse' && i !== YOU && setPeek(i)} onPointerLeave={() => setPeek(null)}>
             <i />
             <span className="nw-tags">
               {i === YOU ? <b className="nw-tag me">you</b> : ms.map((m) => <b key={m} className={'nw-tag' + (m === model && i === end && arrived ? ' hit' : '')}>{m}</b>)}
-              {placed && i === end && arrived && <motion.b key={'p' + at} className="nw-tag hit" initial={{ scale: 0.4 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 22 }}>{model}</motion.b>}
+              {placed && i === end && arrived && <motion.b key={'p' + at} className="nw-tag hit" initial={calm ? false : { scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={PILL}>{model}</motion.b>}
             </span>
           </div>
         );
@@ -98,36 +100,39 @@ function Fabric({ at, arrived, calm, peek, setPeek }) {
           className="nw-packet"
           initial={{ x: (PEERS[YOU][0] / 100) * w, y: (PEERS[YOU][1] / 100) * h, opacity: 0 }}
           animate={{ x: path.map((p) => (PEERS[p][0] / 100) * w), y: path.map((p) => (PEERS[p][1] / 100) * h), opacity: [1, 1, 0] }}
-          transition={{ duration: HOP * (path.length - 1), ease: 'easeInOut', opacity: { duration: HOP * (path.length - 1) + 0.25, times: [0, 0.8, 1] } }}
+          transition={{ duration: HOP * (path.length - 1), ease: [0.4, 0, 0.2, 1], opacity: { duration: HOP * (path.length - 1) + 0.3, times: [0, 0.8, 1] } }}
         />
       )}
     </div>
   );
 }
 
-function Ask({ at, choose, arrived, peek, paused, pause }) {
+/* the map's own toolbar, inside its frame: what it is, the model you ask for, the route and the answer, the pause */
+function Tool({ at, choose, arrived, peek, paused, pause }) {
   const [model, path, placed] = ASKS[at];
   const pv = peek === null ? null : routeTo(peek);
   const shown = pv || path;
   return (
-    <div className="nw-ask">
-      <div className="nw-ask-bar">
-        <p className="lx-kick nw-ask-k">Compute Marketplace</p>
-        <LivePause paused={paused} onToggle={pause} className="nw-pause" />
+    <div className="nw-tool">
+      <LivePause paused={paused} onToggle={pause} inline className="nw-pause" />
+      <p className="lx-kick nw-tool-k">Compute Marketplace</p>
+      <div className="nw-ask">
+        <p className="nw-ask-l" id="nw-ask-l">ask the fabric for</p>
+        <div className="nw-seg nw-models" role="radiogroup" aria-labelledby="nw-ask-l">
+          {ASKS.map(([m], i) => (
+            <button key={m} type="button" role="radio" aria-checked={at === i} onClick={() => choose(i)}>
+              {at === i && <motion.i layoutId="nw-pick" className="nw-pick" transition={PILL} />}
+              <span>{m}</span>
+            </button>
+          ))}
+        </div>
       </div>
-      <p className="nw-ask-l" id="nw-ask-l">ask the fabric for</p>
-      <div className="nw-models" role="radiogroup" aria-labelledby="nw-ask-l">
-        {ASKS.map(([m], i) => (
-          <button key={m} type="button" role="radio" aria-checked={at === i} onClick={() => choose(i)}>
-            {at === i && <motion.i layoutId="nw-pick" className="nw-pick" transition={SNAP} />}
-            <span>{m}</span>
-          </button>
-        ))}
+      <div className="nw-read">
+        <p className={'nw-route' + (pv ? ' pv' : '')} aria-hidden="true">{shown.map(peerName).join('  →  ')}</p>
+        <p className={'nw-ans' + (arrived || pv ? ' on' : '')} aria-live="polite">
+          {pv ? (PEERS[peek][2].length ? PEERS[peek][2].join(' · ') + ' loaded' : 'nothing loaded') : arrived ? (placed ? `nobody has ${model} loaded · placement` : `a peer that already has ${model} loaded`) : 'routing…'}
+        </p>
       </div>
-      <p className={'nw-route' + (pv ? ' pv' : '')} aria-hidden="true">{shown.map(peerName).join('  →  ')}</p>
-      <p className={'nw-ans' + (arrived && !pv ? ' on' : '')} aria-live="polite">
-        {pv ? (PEERS[peek][2].length ? PEERS[peek][2].join(' · ') + ' loaded' : 'nothing loaded') : arrived ? (placed ? `nobody has ${model} loaded · placement` : `a peer that already has ${model} loaded`) : 'routing…'}
-      </p>
     </div>
   );
 }
@@ -147,35 +152,37 @@ function Hero() {
     const t = setTimeout(() => setArrived(true), HOP * (ASKS[at][1].length - 1) * 1000 + 120);
     return () => clearTimeout(t);
   }, [at, calm]);
+  // scale rhythm: the map grows into the page as you leave the hero (it is the moment), and rests at 1 on arrival
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const zoom = useTransform(scrollYProgress, [0, 1], [1, 1.18]);
-  const fade = useTransform(scrollYProgress, [0.2, 0.9], [1, 0.3]);
+  const zoom = useTransform(scrollYProgress, [0, 1], [1, 1.16]);
   useEffect(() => scrollYProgress.on('change', (p) => setInView(p < 0.95)), [scrollYProgress]);
   return (
-    <section className="nw-hero" ref={ref} data-morph-target>
-      <motion.div className="nw-map-wrap" style={calm ? undefined : { scale: zoom, opacity: fade }}>
-        <Fabric at={at} arrived={arrived} calm={calm} peek={peek} setPeek={setPeek} />
-      </motion.div>
-      <div className="lx-wrap nw-hero-in">
-        <div className="nw-hero-top">
+    <section className="nw-hero" ref={ref} data-morph-target data-ask-name="Hanzo Network">
+      <div className="lx-wrap nw-hero-grid">
+        <div className="nw-hero-copy">
           <LineMask as="h1" className="lx-display nw-h1" lines={['Hanzo', 'Network']} />
-        </div>
-        <div className="nw-hero-low">
-          <div className="nw-hero-copy">
-            <p className="nw-lede">hanzo.network is the fabric that hanzod nodes form. Put a machine on it and it serves models to whoever the cluster routes there. Ask the fabric for a model and it finds a peer that already has it loaded.</p>
+          <div className="nw-hero-low">
+            <p className="lx-lede nw-lede">hanzo.network is the fabric that hanzod nodes form. Put a machine on it and it serves models to whoever the cluster routes there. Ask the fabric for a model and it finds a peer that already has it loaded.</p>
             <div className="nw-acts">
-              <A to={DOCS} className="lx-cta" data-thumb="Buy Compute" data-cta="network.hero">Buy Compute<Arr /></A>
-              <A to="/node" className="lx-text">Run a Node</A>
+              <A to={DOCS} className="lx-cta" data-thumb="Buy Compute" data-cta="network.hero" data-cursor="">Buy Compute<Arr /></A>
+              <A to="/node" className="lx-text" data-cursor="">Run a Node</A>
             </div>
           </div>
-          <Ask at={at} choose={choose} arrived={arrived} peek={peek} paused={paused} pause={pause} />
+        </div>
+        <div className="nw-fab">
+          <div className="nw-fab-win">
+            <motion.div className="nw-map-wrap" style={calm ? undefined : { scale: zoom }}>
+              <Fabric at={at} arrived={arrived} calm={calm} peek={peek} setPeek={setPeek} />
+            </motion.div>
+          </div>
+          <Tool at={at} choose={choose} arrived={arrived} peek={peek} paused={paused} pause={pause} />
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- the chapters' object: a chain of blocks that stacks ---------- */
+/* ---------- the chapters' object: a chain of blocks; older blocks shrink back as the next one settles ---------- */
 const FACTS = [
   ['Peers, not regions', 'There is no region menu to choose from. A node discovers its peers over the fabric, and the topology is whatever is connected right now — you can ask it and read the answer.'],
   ['Metered by the work', "A tenth of the block reward funds AI compute, and a provider's share is scaled by the level of the work it did. No subscription, no seat, nothing billed while a machine sits idle."],
@@ -242,9 +249,10 @@ function Chain({ step, lend }) {
     <div className="nw-chain" data-step={step}>
       {FACTS.map(([t], i) => {
         const d = step - i;
-        const style = d < 0 ? { transform: 'translateY(64px) scale(.98)', opacity: 0 } : { transform: `translateY(${-d * 22}px) scale(${1 - d * 0.045})`, opacity: d > 3 ? 0 : 1 - d * 0.22 };
+        // a settled block steps back one header-height and shrinks (--d); the next one waits below, out of sight
+        const at = d < 0 ? ' next' : d === 0 ? ' on' : d > 3 ? ' gone' : ' past';
         return (
-          <article key={t} className={'nw-block' + (d === 0 ? ' on' : '')} style={{ ...style, zIndex: 10 + i }} aria-hidden={d !== 0}>
+          <article key={t} className={'nw-block' + at} style={{ '--d': Math.max(0, d), zIndex: 10 + i }} aria-hidden={d !== 0}>
             <div className="nw-block-h"><span>block {String(i + 1).padStart(2, '0')}</span><code>{HASH[i]}</code><em>{d > 0 ? 'settled' : 'proposed'}</em></div>
             <div className="nw-block-b"><Mini i={i} lend={lend} /></div>
             <div className="nw-block-f"><span>prev</span><code>{i ? HASH[i - 1] : 'genesis'}</code></div>
@@ -259,10 +267,10 @@ function Lend({ k, setK }) {
   const [, cmd, d] = LEND[k];
   return (
     <div className="nw-lend">
-      <div className="nw-lend-c" role="group" aria-label="Lend the machine to">
+      <div className="nw-seg nw-lend-c" role="group" aria-label="Lend the machine to">
         {LEND.map(([w], i) => (
           <button key={w} type="button" aria-pressed={k === i} onClick={() => setK(i)}>
-            {k === i && <motion.i layoutId="nw-lend" className="nw-pick" transition={SNAP} />}
+            {k === i && <motion.i layoutId="nw-lend" className="nw-pick" transition={PILL} />}
             <span>{w}</span>
           </button>
         ))}
@@ -273,7 +281,7 @@ function Lend({ k, setK }) {
   );
 }
 
-/* ---------- the dark room's object: the two ends, joined by a strand of the fabric ---------- */
+/* ---------- the black room's object: the two ends, joined by a strand of the fabric ---------- */
 // the strand from you (first) to a peer with a model loaded (last), and a few peers either side of it
 const STRAND = [[5, 58], [22, 30], [40, 62], [58, 28], [76, 60], [95, 40]];
 const SPUR = [[13, 90, 0], [30, 6, 1], [49, 94, 2], [67, 4, 3], [86, 92, 4], [84, 10, 5]];
@@ -288,7 +296,7 @@ function Ends() {
   const [flow, setFlow] = useState({ way: null, n: 0 });
   useEffect(() => { if (seen && !calm) setFlow((f) => ({ way: 'call', n: f.n + 1 })); }, [seen, calm]);
   const send = (way) => (e) => { if (calm || (e.pointerType && e.pointerType !== 'mouse')) return; setFlow((f) => ({ way, n: f.n + 1 })); };
-  const Ar = () => <svg viewBox="0 0 16 16" width="28" height="28" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+  const Ar = () => <svg viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
   return (
     <div className="nw-ends-obj" ref={ref}>
       <div className="nw-strand" ref={band} data-flow={calm ? 'rest' : flow.way || undefined} aria-hidden="true">
@@ -307,11 +315,11 @@ function Ends() {
         <b className="nw-st b" style={{ left: STRAND[5][0] + '%', top: STRAND[5][1] + '%' }}>zen</b>
       </div>
       <div className="nw-two">
-        <A to="https://platform.hanzo.ai/api-keys" className="nw-end" onPointerEnter={send('call')} onFocus={() => !calm && setFlow((f) => ({ way: 'call', n: f.n + 1 }))}>
+        <A to="https://platform.hanzo.ai/api-keys" className="nw-end" data-cursor="" onPointerEnter={send('call')} onFocus={() => !calm && setFlow((f) => ({ way: 'call', n: f.n + 1 }))}>
           <span className="lx-kick">call it</span><b>Get an API Key</b><Ar />
         </A>
-        <A to="/node" className="nw-end serve" onPointerEnter={send('serve')} onFocus={() => !calm && setFlow((f) => ({ way: 'serve', n: f.n + 1 }))}>
-          <span className="lx-kick">serve it</span><b data-morph>Provide Compute</b><Ar />
+        <A to="/node" className="nw-end serve" data-cursor="" onPointerEnter={send('serve')} onFocus={() => !calm && setFlow((f) => ({ way: 'serve', n: f.n + 1 }))}>
+          <span className="lx-kick">serve it</span><b data-morph data-cursor="">Provide Compute</b><Ar />
         </A>
       </div>
     </div>
@@ -325,7 +333,7 @@ export default function Network() {
     <main className="lx nw">
       <Hero />
 
-      <PinnedChapters flip label="How the Network Works" per={76}
+      <PinnedChapters flip label="How the Network Works" per={76} objH={38}
         intro={{ title: ['How the', 'Network Works'] }}
         steps={steps}
         visual={(at) => <Chain step={at} lend={lend} />} />
@@ -341,7 +349,7 @@ export default function Network() {
         </div>
       </ClipWipe>
 
-      <section className="lx-sec nw-paste" data-ask-name="Hanzo Network">
+      <section className="lx-sec nw-paste">
         <div className="lx-wrap">
           <Paste name="Network" prompt="Read https://hanzo.ai/skill.md and use Hanzo Network in my project. Start with: hanzo network list" />
           <div className="nw-docs"><span className="lx-kick">Network</span><A to={DOCS} className="nw-docs-a">Network docs →</A></div>

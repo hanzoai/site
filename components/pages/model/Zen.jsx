@@ -211,7 +211,7 @@ export default function Zen() {
           <ul className="ze-fam">
             {FAMILY.map(([to, name, line, data], i) => (
               <li key={to} className={i === 0 ? 'big' : ''}>
-                <A to={to} className="ze-fam-a">
+                <A to={to} className="ze-fam-a" data-cursor="">
                   <Sigil seed={to} data={data} className="ze-sig" />
                   <span className="ze-fam-n" data-morph>{name}</span>
                   <span className="ze-fam-d">{line}</span>
