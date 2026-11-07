@@ -38,9 +38,9 @@
 .au2-pub i { width: 7px; height: 7px; border-radius: 50%; background: var(--ac); animation: au2-blink 2.4s var(--ease) infinite; }
 @keyframes au2-blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
 .au2-ctl .l2-pause { position: static; width: 44px; height: 44px; background: #fff; }
-@media (hover: hover) { .au2-ctl .l2-pause:hover { background: #f5f5f5; border-color: #a3a3a3; } }
+@media (hover: hover), (pointer: none) { .au2-ctl .l2-pause:hover { background: #f5f5f5; border-color: #a3a3a3; } }
 .au2-restart { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; transition: background .2s, color .2s, transform 90ms var(--ease); }
-@media (hover: hover) { .au2-restart:hover { background: var(--ink); color: #fff; } }
+@media (hover: hover), (pointer: none) { .au2-restart:hover { background: var(--ink); color: #fff; } }
 .au2-restart:active { transform: scale(.96); }
 .au2-restart:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .au2-restart.busy { background: var(--ink); color: #fff; cursor: default; }
@@ -96,7 +96,7 @@
 .au2-list .l2-ch-n { margin: 0; color: var(--muted); }
 .au2-t { font-size: 24px; font-weight: 497; letter-spacing: -.02em; line-height: 1.1; color: #525252; transition: font-size .5s var(--ease), color .3s; }
 .au2-list li.open .au2-t { font-size: 44px; letter-spacing: -.035em; color: var(--ink); }
-@media (hover: hover) { .au2-row:hover .au2-t { color: var(--ink); } .au2-row:hover .au2-x { background: #e4e4e7; } }
+@media (hover: hover), (pointer: none) { .au2-row:hover .au2-t { color: var(--ink); } .au2-row:hover .au2-x { background: #e4e4e7; } }
 .au2-row:active .au2-x { transform: scale(.94); }
 .au2-x { justify-self: end; width: 44px; height: 44px; padding: 14px; border-radius: 50%; background: #f5f5f5; transition: transform .3s var(--ease), background .3s, color .3s; }
 .au2-list li.open .au2-x { transform: rotate(45deg); background: var(--ink); color: #fff; }
@@ -107,7 +107,7 @@
 .au2-d-r { align-self: start; }
 .au2-mini { position: relative; min-height: 268px; margin: 20px 0 24px; padding: 20px 20px 22px; border-radius: 20px; background: #0a0a0a; color: #fafafa; }
 .au2-mini .l2-pause { top: 12px; right: 12px; background: #262626; border-color: #404040; color: #fafafa; }
-@media (hover: hover) { .au2-mini .l2-pause:hover { background: #404040; } }
+@media (hover: hover), (pointer: none) { .au2-mini .l2-pause:hover { background: #404040; } }
 
 /* the six live objects (dark plate) */
 .au2-mk { display: flex; justify-content: space-between; gap: 12px; margin: 0 56px 14px 0; font-size: 13px; color: #a3a3a3; }
@@ -183,7 +183,7 @@
 .au2-board { grid-column: 6 / span 7; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid #d4d4d4; align-self: start; }
 .au2-board li { border-bottom: 1px solid #d4d4d4; }
 .au2-board button { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 56px; padding: 0 12px; margin: 0 -12px; width: calc(100% + 24px); border: 0; border-radius: 12px; background: none; font: 500 17px/1 var(--sans); color: var(--soft); text-align: left; cursor: pointer; transition: background .2s, color .2s, transform 90ms var(--ease); }
-@media (hover: hover) { .au2-board button:hover { background: #e4e4e7; color: var(--ink); } .au2-board button:hover .au2-ps svg { transform: rotate(90deg); } }
+@media (hover: hover), (pointer: none) { .au2-board button:hover { background: #e4e4e7; color: var(--ink); } .au2-board button:hover .au2-ps svg { transform: rotate(90deg); } }
 .au2-board button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .au2-board button:active { transform: scale(.98); }
 .au2-board button.on { color: var(--ink); }
@@ -251,13 +251,15 @@
 .au2-cv-map i { position: absolute; border-radius: 2px; background: #404040; }
 .au2-cv-map b { position: absolute; left: 0; top: 0; border: 1.5px solid #fafafa; border-radius: 3px; }
 .au2-cv-reset { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #525252; background: #171717; color: #fafafa; cursor: pointer; transition: background .2s, color .2s, transform 90ms var(--ease); }
-@media (hover: hover) { .au2-cv-reset:hover { background: #fafafa; color: #0a0a0a; } .au2-cv-map:hover { border-color: #a3a3a3; } }
+@media (hover: hover), (pointer: none) { .au2-cv-reset:hover { background: #fafafa; color: #0a0a0a; } .au2-cv-map:hover { border-color: #a3a3a3; } }
 .au2-cv-reset:active { transform: scale(.94); }
 .au2-cv-reset:focus-visible { outline: 2px solid #f5f5f7; outline-offset: 2px; }
 
 /* text links on this page: the hover answers with a fill, not only the chevron */
 .au2 .x-arrow { min-height: 44px; padding: 0 12px; margin: 0 -12px; border-radius: 12px; transition: background .2s, transform var(--dur-press, .1s) var(--ease); }
-@media (hover: hover) { .au2 .x-arrow:hover { background: #f5f5f5; } .au2 [data-room='dark'] .x-arrow:hover { background: rgba(255, 255, 255, .1); } }
+@media (hover: hover), (pointer: none) { .au2 .x-arrow:hover { background: #f5f5f5; } .au2 [data-room='dark'] .x-arrow:hover { background: rgba(255, 255, 255, .1); } }
+/* the band's repo chip answers with a fill as well as its border */
+@media (hover: hover), (pointer: none) { .au2 a.l2-chip:hover { border-color: currentColor; background: rgba(255, 255, 255, .08); } }
 /* the prompt's copy: once it has really copied, the kit's "Copied" state reads inverted so it is seen */
 .au2 .l2-pr-bar .x-copy[aria-label='Copied'] { background: #f5f5f7; border-color: #f5f5f7; color: #0a0a0a; }
 
