@@ -3,7 +3,7 @@
 Page file: `components/pages/Affiliate.jsx` · gallery: `docs/gallery/affiliate/` · metric id: `contact_click`
 
 Open copy questions for James: none (the page uses Hanzo's words only; the copy control is icon-only until James approves "Copy").
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/requests/<page>.md`): `docs/requests/affiliate.md` (the header's ask outlines while the page's own ask is on screen, and carries it after the hero).
 Forks this page deleted: the forked xp-cta button colours (now kit `Cta` sized by `.xp-cta`), the hand-rolled case tabs (now kit `Tabs`), the browser-window hero and its placeholder bars, every invented label.
 
 
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout's `#main`; links via `A`/`Cta`; /referra
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards on this page.
 
-Done here: No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself within 1 s of being reached. `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
+Done here: No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once within 1 s of being reached (CSS from an empty first frame, so nothing is wiped and retyped; JS off shows it whole). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`

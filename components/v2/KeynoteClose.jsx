@@ -34,7 +34,7 @@ function Body({ name, tag, lead, prompt, api, cta = 'close', license = 'Apache-2
           </div>
           <div className="kn-acts knx-acts">
             {deploy && <Magnetic strength={0.2}><Cta to={deploy} id={cta} className="knx-go">Deploy to Cloud</Cta></Magnetic>}
-            {self && <Cta to={self} kind="quiet" id={cta + '-self'} className="knx-self">Self-host</Cta>}
+            {self && <Cta to={self} kind="link" id={cta + '-self'} className="knx-self">Self-host</Cta>}
           </div>
           {children}
         </div>

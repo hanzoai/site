@@ -3,7 +3,7 @@
 Page file: `components/pages/DownloadPage.jsx` (+ `DownloadPage.css`, shared `components/v2/AppType.css`, `x-edison/AppLines`) · gallery: `docs/gallery/download/` · metric id: `build_download`
 
 Open copy questions for James: none decided. On phones the main build follows the system the browser reports, as v1 and live do (an iPhone is offered the macOS build); the question of what a phone should be offered is left to James.
-Shared changes requested: see `docs/requests/apps1.md` (header ask label per page, so the header can say "Download for <system>"; a desktop-off mode for the ask bar; a `Band` with `id`). Until then `<main data-ask="off">` and the page closes on its own band with `<Cta id>`.
+Shared changes requested: `docs/requests/apps1.md` (a `Band` with an `id` prop). The ask is settled by the shared system: the header's solid "Try Hanzo" carries it at every width, with no desktop bar, and the page's own `data-thumb` ask rides the slim phone bar. The page closes on its own band with `<Cta id>`.
 Forks this page deleted: the kicker over the h1 ("Download") and over "Just your files" ("Your kit"); the floating hover tooltips on the dial (the centre now reads the build you point at); the breathing glow loop on the button; the hand-made main button and the hidden `data-thumb` `<i>` (now `<Cta thumb>`); skeleton bars in the four product pictures (now Hanzo's own lines and a model image through kit `Img`); the solid "Or open Hanzo in your browser" (now a text link beside the repeated ask); spring and overshoot curves; cursor labels; shadows on objects.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the h1 (52px), lede, the one ask and the whole dial (558
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the bar is off by request, see apps1.md)
+- [x] Sticky ask in header and bar after the hero (shared system: the header's solid "Try Hanzo" at every width, no desktop bar; on phones the slim quiet bar carries this page's `data-thumb` ask once the hero button leaves)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy` on the two CLI install lines)
 - [x] `data-cta` and `data-thumb` on every primary
 

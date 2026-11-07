@@ -176,5 +176,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .xcb-sheet { position: relative; top: 0; margin-bottom: 16px; }
-  .xcb-hire-n u.run { animation: none; transform: scaleX(1); }
+  .xcb-hire-n u.run, .xcb-hire-n u.wait { animation: none; transform: scaleX(1); }
 }

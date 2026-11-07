@@ -85,7 +85,7 @@ Done here: Tabs, map labels, worksheet toggles, rack rows and the email answer h
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not merged; the page plays none
 
-Done here: No signature (MASTER §4.2); supporting: line-mask cut-in (arrival), the one-time status pass (time, 300 ms steps), the gliding layer pill and plate crossfade (state, 300 ms ease-emphasis, no springs); the black room's entry is the only scroll-linked move. variety.py OK. Reduced motion shows all six checked at once.
+Done here: No signature (MASTER §4.2); supporting: line-mask cut-in (arrival), the one-time status pass (time, 300 ms steps), the gliding layer pill and plate crossfade (state, 300 ms ease-emphasis, no springs); the black room's entry is the only scroll-linked move. variety.py OK. Reduced motion shows all six checked at once. Filmed (`scripts/motion.mjs`, 1470): layout shift 0.000; the hero moves, the reading screens rest by design (MASTER §4.2 calm). Headless Chrome reports `(hover: none)`, so the film lists hover-gated controls as dead; with `--blink-settings=primaryHoverType=2` every control answered (map labels, tabs, rack rows, worksheet toggle, email).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set

@@ -54,7 +54,7 @@ Done here: Parity is 0 missing on all 470 model pages (run on every one) and on 
 Done here: The order follows MASTER 4.7. The sticky local nav uses the page's own section names: "Specifications", "Quick start", "More from <maker>".
 
 ## 4. Conversion system
-- [ ] ~~`<Cta>`~~ not in the kit; `.x-btn` with deck states
+- [x] `<Cta>` only: hero pair (solid with `thumb`, plus a text link), the local nav (quiet, then solid once the hero ask is gone), the close (solid plus link) and the maker hero and close
 - [x] Sticky ask: the local nav carries the hero's label (`data-thumb`), and the site Ask steps aside for it
 - [x] Copy equals the display (model ID, code)
 - [x] `data-cta` on every primary (`model.hero`, `model.local`, `model.band`, `maker.hero`, `maker.band`)
@@ -72,7 +72,7 @@ Done here: No count-up or flap anywhere. The figures rise into their line (MaskF
 ## 6. Content presentation (copy untouched)
 - [x] 13px floor (mono captions 12px; `SPEC.md` pills 10px)
 - [x] Measures and balance
-- [ ] ~~Kit tables and code~~ page-local until `DataTable`/`CodeBlock`; tabs are APG with arrows
+- [x] Quick start uses kit `Tabs` + `CodeBlock` (copy equals display, the language persists); the spec is a `dl` (label and value pairs, not a table)
 - [x] Parity 0 missing
 
 Done here: Long spec sets (Kai) show 2 groups, and the rest open with an icon button (`hidden` in the HTML until then).

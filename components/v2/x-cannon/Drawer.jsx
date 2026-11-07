@@ -89,7 +89,7 @@ export default function Drawer({ open, from: src, onClose, label, title, childre
   return (
     <div className={'v2-dr' + (live ? ' live' : '') + (open ? ' open' : '') + (className ? ' ' + className : '')} aria-hidden={!open} inert={!open}>
       <motion.div className="v2-dr-bg" onClick={onClose} initial={false} animate={{ opacity: open ? 1 : 0 }} transition={{ duration: open ? 0.4 : 0.3 }} />
-      <div ref={scope} className="v2-dr-p" role="dialog" aria-modal="true" aria-label={label || title} data-lenis-prevent>
+      <div ref={scope} className="v2-dr-p" role="dialog" aria-modal={open || undefined} aria-label={label || title} data-lenis-prevent>
         <div className="v2-dr-in">
           <div className="v2-dr-top">
             {title && <h2 className="v2-dr-h">{title}</h2>}

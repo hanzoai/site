@@ -1,11 +1,11 @@
-# Home (`/`), v2 proof
+# Home (`/`) proof
 
-Recorded at 1440×900 on desktop and 375×812 on phone, in the cloud, against the dev server.
+Recorded in the cloud against the dev server, at 1470×801 on desktop and 375×812 on phone.
 
-- `hero.mp4` (12 s): the headline rises, the app types its prompt, then on scroll the words leave, the app settles and the phone and terminal arrive.
-- `tour.mp4` (13 s): model tiles, the pinned product chapters, the dark speed room, cost, the frontier chart, open source and pricing.
-- `d01`–`d10`: desktop stills, top to bottom.
-- `p01`–`p06`: phone stills.
-- `before-hero.jpg`, `before-models.jpg`: the same screens on `main`, before v2.
+- `hero.mp4` (12 s): live hanzo.ai's own hero. The app types its prompt and answers, the phone shows the build and the agents, and the install command types itself.
+- `cards.mp4` (9 s): the model cards (`docs/refs/hanzo-model-cards/SPEC.md`) with their films and the pointer tilt.
+- `tour.mp4` (10 s): the platform chapters, the agents, the dark room (speed, cost, frontier), open source, pricing and the band.
+- `d01`–`d11`: desktop stills, top to bottom. `p01`–`p05`: phone stills.
+- `before-hero.jpg`, `before-models.jpg`: the same screens before v2.
 
-The partner and customer logos, and the images inside the Design, Bot and Team screens, load from hanzo.ai. That host can't be reached from the cloud box, so they show as blank in these files. They load normally on localhost:4180.
+Partner and customer logos, and the images inside the Design, Bot and Team screens, load from hanzo.ai. This cloud box can't reach it, so they're missing here (names stand in for the logos). They load on localhost.

@@ -3,8 +3,8 @@
 Page file: `components/pages/apps/Ledger.jsx` · gallery: `docs/gallery/ledger/` · metric id: `docs_click`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): none. The site ask bar (`components/Ask.jsx`) still floats on desktop, which MASTER 3.2 rule 6 bans; that belongs to the conductor.
-Forks this page deleted: the v1 hero step accordion, the cloud `Get` block and the v1 three-box capability grid (now one tabbed object). The page's own AskBar pill (duplicate sticky ask) and the cursor label "Watch" are also gone.
+Shared changes requested (`docs/requests/<page>.md`): none. 
+Forks this page deleted: the group's `BizAsk` button (now kit `Cta`), the v1 hero step accordion, the cloud `Get` block and the v1 three-box capability grid (now one tabbed object). The page's own AskBar pill (duplicate sticky ask) and the cursor label "Watch" are also gone.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -21,7 +21,7 @@ Done here: Header has Persona, Goal, CTA, a `Metric: docs_click` line, Signature
 - [x] Breadcrumb at depth 2 or more (n/a: depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One `<main>`, and the layout's skip link targets `#main` above it. Parity shows links 3/3 (docs, GitHub, Deploy) through `A`, `More` and `BizAsk`.
+Done here: One `<main>`, and the layout's skip link targets `#main` above it. Parity shows links 3/3 (docs, GitHub, Deploy) through `A`, `More` and kit `Cta`.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -37,12 +37,12 @@ Done here:
 - Order: hero book → three chapters → dark capability room → splitter → receipt close.
 
 ## 4. Conversion system
-- [x] `<Cta>` only; no raw `.x-btn` (n/a for `<Cta>`: not merged yet, so it uses kit-part `BizAsk`; 0 raw `.x-btn` in the page)
+- [x] `<Cta>` only; no raw `.x-btn` (kit `Cta` for the hero ask, the GitHub link and the close ask; 0 raw `.x-btn`)
 - [x] Sticky ask in header and bar after the hero, same label
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-cta="ledger.hero"` and `"ledger.close"` are on the asks and `"ledger.deploy"` on the row. `data-thumb="Read the docs"` feeds the site's ask bar, the only sticky bar (1 at each width, measured). Copy is the kit `Copy` from `ui.jsx`.
+Done here: kit `Cta` ids `ledger.hero`, `ledger.github` and `ledger.close` are written as `data-cta` and sent as `cta_click`; `ledger.deploy` is on the row. `Cta thumb` gives the header and the phone bar the same "Read the docs", and nothing floats on desktop (measured: 0 fixed bars). Copy is the kit `Copy`.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
