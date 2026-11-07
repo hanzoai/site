@@ -2,7 +2,7 @@
 /* AI Buying Specialist. Its idea is the sales desk where the quote writes itself while you talk.
    Persona: a team lead choosing a Hanzo plan (PLAN-COMPONENTS 1.1 buyer). Goal: a quote and a plan. CTA: "Start Team
    Plan →" (Hanzo's own plan button), with the conversation itself as the first action. Metric: signup_start.
-   V2: 8/10 MASTER scale: the 52px greeting with the conversation under it; Hanzo's own quote card as the dark hero object (members at 64px, prices 32px), re-pricing once by itself; on the phone the members and price ride under the greeting; the six promises as one ledger; one solid ask, carried by the header and bar after the hero.
+   V2: 8/10 0 hues; quote card re-prices within 1s; phone first screen carries a compact moving quote with a seat bar; the six promises turn one dark sheet (scroll/hover picks the scene, no numbers); "Start Team Plan →" carried by the header on desktop and a slim data-dock bar on phone; both inputs labelled; every chip hovers; added labels listed as copy questions.
    Signature: the conversation on the left; beside it a quote sheet of seats, one square per member, fills and
    re-prices by itself, and when you tell the specialist your team size the sheet takes that size and the price rolls.
    Beyond: the quote card you can drag: its seats follow the slider and the annual and monthly rates re-price from
@@ -102,11 +102,11 @@ function Sheet({ seats, setSeats, mine }) {
   return (
     <aside className="xbs-sheet" id="xbs-sheet" data-room="dark" aria-label={`Hanzo Team Configuration, ${seats} members`}>
       <div className="xbs-sheet-h"><b>Hanzo Team Configuration</b><span className="x-mono">SAVE {P.save}% ANNUALLY</span></div>
-      <p className="xbs-team x-mono" aria-hidden="true"><b>{seats}</b> members</p>
+      <label className="xbs-team x-mono" htmlFor="xbs-seats"><b>{seats}</b> members</label>
       <div className="xbs-seats" aria-hidden="true">
         {Array.from({ length: 100 }, (_, i) => <i key={i} className={i < seats ? 's' : ''} style={{ transitionDelay: (i % 20) * 8 + 'ms' }} />)}
       </div>
-      <input className="xbs-range" type="range" min={2} max={100} value={seats} aria-label="members" onChange={(e) => { mine(); setSeats(+e.target.value); }} />
+      <input id="xbs-seats" className="xbs-range" type="range" min={2} max={100} value={seats} onChange={(e) => { mine(); setSeats(+e.target.value); }} />
       <dl className="xbs-tot">
         <div><dt>Annual Rate (Recommended)</dt><dd className="x-mono"><Roll v={usd(r2(yr / 12))} /><small>/mo</small></dd><dd className="xbs-sub">Billed {usd(yr)} annually upfront</dd></div>
         <div><dt>Monthly Rate</dt><dd className="x-mono"><Roll v={usd(mo)} /><small>/mo</small></dd><dd className="xbs-sub">Cancel anytime</dd></div>
@@ -117,15 +117,44 @@ function Sheet({ seats, setSeats, mine }) {
   );
 }
 
-/* The six promises as one ledger: each row a promise, its sentence beside it. */
-function Promises() {
+/* The six promises around one object: a dark sheet beside the ledger that changes with the promise you are on
+   (scroll, hover or focus picks it). Every word stays Hanzo's; the sheet speaks only in shapes and Hanzo's prices. */
+function Scene({ i, seats }) {
+  const yr = seats * P.std, mo = seats * P.stdMo;
+  const grid = (fill, cls = '') => (
+    <div className={'xbs-sg ' + cls}>{Array.from({ length: 40 }, (_, k) => <i key={k} className={k < fill ? 's' : ''} style={{ '--k': k }} />)}</div>
+  );
+  if (i === 0) return (<>{grid(Math.min(40, Math.round(seats * 0.8)), 'sweep')}<p className="xbs-sp"><Roll v={usd(r2(yr / 12))} /></p></>);
+  if (i === 1) return (<div className="xbs-two"><s className="xbs-sp dim">{usd(mo)}</s><p className="xbs-sp"><Roll v={usd(r2(yr / 12))} /></p></div>);
+  if (i === 2) return (<>{grid(Math.min(40, Math.round(seats * 0.8)))}<div className="xbs-meter"><b className="use" /></div></>);
+  if (i === 3) return (<><div className="xbs-bubbles"><b /><b className="r" /><b /><b className="r" /></div><div className="xbs-meter"><b className="zero" /></div></>);
+  if (i === 4) return (<div className="xbs-hand"><span className="xbs-av dk">✦</span><div className="xbs-pass"><b /><b /><b /></div><span className="xbs-av dk p" /></div>);
+  return (<div className="xbs-field"><b className="ok" /><b className="mask" /><b className="mask s" /></div>);
+}
+
+function Promises({ seats }) {
+  const [on, setOn] = useState(0);
+  const rows = useRef([]);
+  useEffect(() => {
+    const io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) setOn(+e.target.dataset.i); }, { rootMargin: '-42% 0px -48% 0px' });
+    rows.current.forEach((r) => r && io.observe(r));
+    return () => io.disconnect();
+  }, []);
   return (
     <section className="xp-sec xbs-why" aria-label="The fastest path in.">
-      <div className="xp-wrap">
-        <ol className="xbs-ledger xp-obj">
+      <div className="xp-wrap xbs-why-g">
+        <div className="xbs-stage-w"><div className="xbs-stage" data-room="dark" aria-hidden="true">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={on} className="xbs-scene" initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.18 } }} transition={{ duration: 0.45, ease: EASE }}>
+              <Scene i={on} seats={seats} />
+            </motion.div>
+          </AnimatePresence>
+          <div className="xbs-pips">{PROMISES.map((_, k) => <i key={k} className={k === on ? 'on' : ''} />)}</div>
+        </div></div>
+        <ol className="xbs-ledger">
           {PROMISES.map(([b, t], i) => (
-            <li key={b}>
-              <span className="xbs-card-n x-mono">{String(i + 1).padStart(2, '0')}</span>
+            <li key={b} ref={(el) => { rows.current[i] = el; }} data-i={i} className={i === on ? 'on' : ''} onMouseEnter={() => setOn(i)} onFocus={() => setOn(i)} tabIndex={-1}>
+              <i className="xbs-mark" aria-hidden="true" />
               <strong className="xp-title">{b}</strong>
               <span className="xp-body">{t}</span>
             </li>
@@ -133,6 +162,37 @@ function Promises() {
         </ol>
       </div>
     </section>
+  );
+}
+
+/* Phone only: once the sheet's own ask has gone by, a slim bar under the thumb carries "Start Team Plan →" with the
+   sheet's live figures beside it. It steps aside for the sheet's button, the closing band, the footer and the keyboard. */
+function Dock({ seats }) {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 700px)');
+    let raf = 0;
+    const inView = (sel) => [...document.querySelectorAll(sel)].some((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.top < innerHeight && r.bottom > 0; });
+    const check = () => {
+      raf = 0;
+      const typing = document.activeElement?.matches?.('input[type="text"], textarea');
+      setOn(mq.matches && scrollY > innerHeight * 0.75 && !typing && !inView('.xbs-start, .x-band, footer, .x-cookie'));
+    };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(check); };
+    addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask); addEventListener('focusin', ask); addEventListener('focusout', ask); mq.addEventListener('change', ask);
+    const t = setInterval(ask, 1500); // the cookie note can leave without a scroll
+    check();
+    return () => { removeEventListener('scroll', ask); removeEventListener('resize', ask); removeEventListener('focusin', ask); removeEventListener('focusout', ask); mq.removeEventListener('change', ask); clearInterval(t); cancelAnimationFrame(raf); };
+  }, []);
+  return (
+    <AnimatePresence>
+      {on && (
+        <motion.div className="xbs-dock" data-dock initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%', transition: { duration: 0.2 } }} transition={{ duration: 0.4, ease: EASE }}>
+          <a className="xbs-dock-q x-mono" href="#xbs-sheet" aria-label={`Hanzo Team Configuration, ${seats} members`}><b><Roll v={seats} /></b> members <b><Roll v={usd(r2(seats * P.std / 12))} /></b>/mo</a>
+          <Cta to={`/pay/cart?plan=team&interval=year&quantity=${seats}`} id="buying-specialist.dock" kind="quiet" size="sm" className="xbs-dock-go">Start Team Plan →</Cta>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -159,7 +219,7 @@ export default function BuyingSpecialist() {
     const STEPS = [10, 25, 50, 4, 10]; // one cycle through, then it rests on 10
     const i = STEPS.indexOf(seats, cycle.current);
     if (i < 0 || i >= STEPS.length - 1) return;
-    const t = setTimeout(() => { cycle.current = i + 1; setSeats(STEPS[i + 1]); }, 2400);
+    const t = setTimeout(() => { cycle.current = i + 1; setSeats(STEPS[i + 1]); }, i === 0 ? 900 : 2400); // the first move lands inside a second
     return () => clearTimeout(t);
   }, [seats, own, calm, seen]);
 
@@ -202,7 +262,7 @@ export default function BuyingSpecialist() {
                 <motion.div key="intro" className="xbs-intro" exit={{ opacity: 0, y: -16, transition: { duration: 0.25 } }}>
                   <LineReveal as="h1" id="xbs-h1" className="xp-display xbs-h1" lines={[`Hi ${name}, let's find`, 'the right plan', 'for your team.']} />
                   <motion.p className="xp-lede xbs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>I&apos;m an AI buying specialist, here to help you figure out which plan fits, what it&apos;ll cost, and how to get your team set up. We can do all of it right here.</motion.p>
-                  <a className="xbs-mini" href="#xbs-sheet" aria-label={`Hanzo Team Configuration, ${seats} members`}><span className="x-mono"><b><Roll v={seats} /></b> members</span><span className="x-mono"><b><Roll v={usd(r2(seats * P.std / 12))} /></b>/mo</span></a>
+                  <a className="xbs-mini" href="#xbs-sheet" aria-label={`Hanzo Team Configuration, ${seats} members`}><span className="x-mono"><b><Roll v={seats} /></b> members</span><span className="x-mono"><b><Roll v={usd(r2(seats * P.std / 12))} /></b>/mo</span><i className="xbs-mini-bar" aria-hidden="true"><b style={{ transform: `scaleX(${seats / 100})` }} /></i></a>
                   <div className="xbs-asks">
                     {ASK.map((t, i) => (
                       <motion.button key={t} type="button" onClick={() => { send(t); setTimeout(() => ask.current?.focus(), 60); }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE, delay: 0.5 + i * 0.06 } }} whileTap={{ scale: 0.97, transition: { duration: 0.09 } }}>{`${t} →`}</motion.button>
@@ -237,7 +297,8 @@ export default function BuyingSpecialist() {
               </ol>
             )}
             <form className={'xbs-composer' + (started ? ' live' : '')} onSubmit={(e) => { e.preventDefault(); if (!val.trim() && started) return; send(); }}>
-              <input ref={ask} type="text" value={val} onChange={(e) => setVal(e.target.value)} maxLength={2000} placeholder={started ? 'Ask the Buying Specialist a question...' : 'Press enter to get started'} aria-label={started ? 'Ask the Buying Specialist a question' : 'Press enter to get started'} disabled={busy} />
+              <label className="x-sr" htmlFor="xbs-ask">{started ? 'Ask the Buying Specialist a question...' : 'Press enter to get started'}</label>
+              <input ref={ask} id="xbs-ask" type="text" value={val} onChange={(e) => setVal(e.target.value)} maxLength={2000} placeholder={started ? 'Ask the Buying Specialist a question...' : 'Press enter to get started'} disabled={busy} />
               <motion.button type="submit" aria-label="Send message" disabled={busy} whileTap={{ scale: 0.97, transition: { duration: 0.09 } }}>
                 <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </motion.button>
@@ -249,8 +310,9 @@ export default function BuyingSpecialist() {
           </motion.div>
         </div>
       </section>
-      <Promises />
+      <Promises seats={seats} />
       <Band title="The fastest path in." lede="You'll have a quote and a plan by the end of this conversation." action="Start Team Plan →" to={`/pay/cart?plan=team&interval=year&quantity=${seats}`} />
+      <Dock seats={seats} />
     </main>
   );
 }
