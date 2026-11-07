@@ -1,154 +1,163 @@
-# /visor: James-eye review
+# /visor: James-eye review (round 3)
 
-Walked 7 Nov 16:28–16:39 UTC on the dev server (main @ `5f1d36e`, last page commit "whole fleet console on the first screen, reserved rows"). I walked it moving at 1470×801 and at 375×812 (touch): slow scroll in 0.7-screen steps, a 2.4 s untouched dwell on every screen, hover and press on every control, a PerformanceObserver for layout shift, the h1 box tracked every frame, and console capture. I also checked reduced motion, JS off at both widths, 320 and 375×667, and a Tab crawl. `scripts/motion.mjs /visor` filmed both widths (`shots/visor/`). The site loader was skipped and the cookie card was rejected after the first frame. Proof frames are in the critic's scratchpad.
+Walked 7 Nov 16:58–17:06 UTC on the dev server (page files last touched in `d970b219`, "visor wip"). I walked it moving at 1470×801 and at 375×812 (touch). I scrolled by wheel in 0.6-screen steps and dwelt 2.4 s untouched on every screen, comparing frames at 0, 0.5 and 2.4 s. I hovered and pressed every control in `main` and Tab-crawled the whole page with 0.9 s settles. I opened, stepped and closed the card Sheet with the keyboard, and drove the naming tool. A PerformanceObserver logged layout shift, and the h1 box was tracked every frame for 4 s. I also checked font loading, console errors, reduced motion at both widths, JS off at both widths, 320×640 and 375×667. I compared the hero with /search, /machines and /sentinel. `scripts/motion.mjs` could not be used here because it launches a hard-coded macOS Chrome path, so the walk is Playwright Chromium (scripts and frames are in the critic's scratchpad, `visor-critic3/`). Consent was pre-set so the cookie card did not cover frames.
 
 Verdict: 7/10
-First complaint: "The top's right now. I can see the whole thing: one request, three clouds, the machines landing. But scroll past it and it's six dark boxes in a grid. Once they've drawn themselves nothing happens, so it's a document again. And the ending is the same 'Get started with Hanzo…' block as every other page, with nothing of Visor in it."
+First complaint: "Right, the middle's alive now, I like the list with the big picture changing. But it's the same thing three times: train-01, 02, 03, gpu-pool, cluster at the top, again in the naming bit, again at the end. And most of the time the top box has an empty grey slab where the console should be. It's starting to feel like it's repeating itself instead of going somewhere."
 
-The cap: the coverage card makes three claims the page does not bear out (see question 9). A false claim caps the page at 7, and the page would not clear 8 without that cap either.
+**The cap:** the coverage card still makes claims the page does not bear out (question 9), so the page is held at 7. Without the cap it sits at about 7.5. The repetition and the hero's dead grey block keep it under 8.
 
-## Since the last review (6/10)
+## Since the last review (7/10)
 - **Fixed:**
-  - The whole console is on the first screen at 1470×801. "launch 3 × GPU instance · prefix train", all three providers and the full inventory are readable from the first frame.
-  - The inventory reserves its rows. CLS is now 0.0035 on desktop and 0.005 on phone (it was 0.088).
-  - "Name a fleet" is gone, and nothing sits above any headline.
-  - The tiles are 01 wide, 02|03, 04|05, 06 wide, with no row of three.
-  - The words on the chips are ink on white.
-  - Each tile's picture plays once as it arrives and plays again on hover.
-  - The card is the kit Sheet: focus stays inside it, Escape closes it and focus goes back to the tile.
-  - The hero has a 47px pause control, and pausing really freezes the sequence (state identical 4 s apart).
-  - "Deploy to Cloud" is 44px tall.
-  - Phone shows all three providers as rows.
-  - Headings rest at 52 / 26 / 17, with "quote" at 64.
-  - The coverage card exists.
-- **Still open:**
-  - The tile room is a document.
-  - The close is the shared `Finale` with no object.
-  - The first screen is still /sentinel mirrored.
+  - **The tile room is one pinned room on desktop.** The six titles are a numbered list, with one picture large on the stage and a "01 / 06" figure at 64px. Scroll walks 01 → 06. At rest it steps on by itself: 01 → 02 → 03, measured at 4.5 s and 8.7 s with no input. Hovering a row previews it (row 04 → stage "04 / 06"), and so does Tab focus. Every desktop dwell in the room changed frames.
+  - **The close has a Visor object:** the inventory lands row by row, and an SSH tab opens with a caret.
+  - **The hero's resting greys are legible.**
+    - The dry-run line rests at #525252 (about 7:1 on #f5f5f5) and flashes to ink. I sampled it 20 times through the loop and it never faded.
+    - The providers sit at opacity 1 at every sample.
+  - **The phone's first screen moves.** train-01, 02 and 03 land at about 2.4–3.6 s inside the first 812px, and the console opens at about 4.8 s.
+  - **The six paragraphs are findable.** All six carry `hidden="until-found"` with JS on and are shown in place with JS off.
+  - **The prefix input has the one ring:** a 2px ink outline plus a 2px white halo.
+  - **The hero pause stops the caret too:** `vs2-blink` goes to `paused`, and the frames are identical 2.5 s apart.
 
 ## The 11 answers
-1. **Sells in 5 s, moves within 1 s?** Yes on desktop, and only partly on phone.
-   - **Desktop:** the h1 box sets once at 230–400 ms (845,358, 466×60) and never moves. Within the first 1.5 s, 10 of 15 frames change: the providers light "cached and priced", AWS takes the ink border, the dry-run line flashes, train-01 to 03 land, and the SSH tab goes dark with the caret. The whole console is in view.
-   - **The flaw on desktop:** the line "dry run · quote returned · spends nothing" sits at 30% opacity for 17 of 20 samples. That is #4d4d4d at 0.3 on #f5f5f5, about 1.6:1, so most of the time it reads as a smudge.
-   - **Phone:** the h1 (40px) cuts in, followed by the caption, the lede, "View on GitHub" (bottom at 388 on a 375×667 screen) and the request card. motion.mjs marks phone screens 1, 2 and 4 STILL. The machines land below the 812 fold, so above it only the provider rows light.
-2. **One in, one out, or a document?** The hero is a scene, and the rest is a document.
-   - **The hero:** it pins, and the console slides right from x 27 to x 160 as you scroll (s0 → s1).
-   - **The tile room:** a 26px heading and six tiles in a 2-column grid, with nothing pinned and nothing exchanged. It reads top to bottom: s3 tile 01, s4 tiles 02–05, s5 tiles 04–06, then about 160px of empty black.
-   - **The naming tool:** one quiet light screen that names its batch 01 → 02 → 03 on arrival.
-   - **The close:** "Get started with Hanzo Visor" plus "Paste and ship", then "Get Visor".
-   - Phone is a column of six 280px cards, which is right at that width, but it is still a list.
-3. **A real object in every section?** Yes, but the tile pictures are small on big dark boxes.
-   - **Hero:** the fleet console, at full size.
-   - **Tile room:** each picture is real (bars, chips, a pool, "quote", RDP/VNC/SSH with a caret, audit rows).
-     - On desktop they fill about a third of a 320px tile. Tile 01 is a 1150px-wide box with three thin bars, and tile 06 has two rows and a lot of black.
-     - After arrival only the caret moves: dwell s4 6/6 is the caret plus the arrival; phone s6 and s7 are 0/6.
-   - **Naming tool:** good. "−" and "+" step 3 → 4 → 2, the rows enter and leave with layout reflow, the prefix retypes the names ("gpu-01", "gpu-02"), and "launch" swaps the line to "metered against the organization · per provider".
-   - **Close:** a text prompt only. Unlike /sentinel, /telemetry and /tunnel, Visor passes no `object` to `Finale`.
-4. **One ask, sticky; nothing floating; scale with rhythm?** Yes, mostly.
-   - **The ask:**
-     - There is one solid button per screen: "View on GitHub" in the hero (`data-cta="primary"`, `data-thumb`, `target=_blank` with `rel`) and again in the close.
-     - Between them the only solid is the header's "Try Hanzo".
-     - No ask bar shows, and nothing floats at either width (the only fixed element besides the header is the cookie card, until it is rejected).
-   - **Scale:** one big thing per screen.
-     - Desktop: h1 52; tile room 26 + 17; "quote" 64; count 44; close 32 + 26.
-     - Phone: h1 40.
-     - The weak spot is the close, which carries two headings (32 and 26) on one screen.
+1. **Sells in 5 s, moves within 1 s?** Yes, at both widths.
+   - **Desktop:**
+     - The h1 box is set at 292 ms (159,100, 271×55) and never moves.
+     - All 7 frame pairs in the first 2 s differ: the providers light up, AWS takes the ink border, the dry-run line flashes, and the machines land in their reserved slots.
+   - **Phone:** the h1 at 40px, the caption, the lede and "View on GitHub" (bottom 381) all sit in the first screen, and the machines land inside it.
+   - **The flaw:** the console column. For about 65% of the loop (13 of 20 samples) it is a 25%-opacity grey slab with ghost "SSH / train-01" text, a dead block on the first screen at both widths.
+   - **The card also has empty cells.** Under the request card on desktop there is about 120px of empty grey.
+   - **Ragged wraps:**
+     - The dry-run line breaks as "dry run · quote returned / · spends nothing", so the second line starts with a separator.
+     - The audit line breaks as "launched · console / opened · org · project", splitting "console opened".
+2. **One in, one out, or a document?** Mostly a scene now on desktop.
+   - **Hero:** the console rises as you scroll.
+   - **Pinned room:** one picture swaps at a time, so one thing comes in as another goes out.
+   - **Naming tool:** a quiet light screen that names its batch on arrival, then sits still (dwell "moving, then still").
+   - **Close:** the inventory lands.
+   - **Phone:** the room is a column of six cards whose pictures play once. That is right below 900px, but phone screens 6, 7 and 11–16 were still on the dwell.
+3. **A real object in every section?** Yes.
+   - **Hero:** the fleet console.
+   - **Room:** the bars, the volume and machines, the pool grid, "quote", RDP/VNC/SSH with a caret, and the audit rows, each drawn large.
+   - **Naming tool:** the live inventory.
+   - **Close:** the landing inventory.
+   - **The weakness is sameness, not absence.** The inventory list (machines plus `gpu-pool` plus `cluster`) is the object of the hero, the naming tool and the close: the same rows three times on one page. The close even hard-codes `train` instead of the prefix the visitor just typed.
+   - Stage 06 is three short rows in a 300px box, about half empty.
+4. **One ask, sticky, nothing floating; scale with rhythm?** Yes.
+   - **The ask:** one solid per screen.
+     - "View on GitHub" in the hero carries `data-cta="primary"`, `data-thumb`, `target=_blank` and `rel`.
+     - The close repeats it with `data-cta="close"`.
+     - The header's "Try Hanzo" is the only solid in between.
+   - **Nothing floats.** The only fixed elements besides the header are the 2px progress line and the room's own pin.
+   - **Scale:** h1 52 (40 on phone), then 26 for sections, the room figure at 64, the room title at 17 and the count at 44.
+   - **The weak spot is the close:** two headings on one screen, "Get started with Hanzo Visor" at 32 and "Get Visor" at 26. That is the shared `Finale`.
 5. **Every hover and press answers?** Yes.
-   - "View on GitHub": hover #0a0a0a → #2c2c2e, press 0.98.
-   - Tiles: hover #171717 → #262626, the "+" disc fills #fafafa with a black "+", and the picture replays. Press is 0.97.
-   - "Fewer" and "More": the border goes to ink on hover, press 0.97.
-   - "dry run" / "launch": hover adds a 55% white fill and ink text.
-   - "Copy": "Copied" holds for 1.6 s.
-   - Pause: `aria-pressed` toggles.
-   - The sheet's Previous and Next step 02 → 03.
-   - motion.mjs logged 7 "dead" hovers on desktop (tiles 02, 04, 05, Fewer, prefix, the close ask, Copy). Computed styles and frames show the tiles and Fewer do change. Its pixel threshold misses the #171717 → #262626 step, which is a sign that the hover is faint.
-6. **Overlap, font swap, layout shift?** None of the three.
-   - No overlap at either width. The pause button sits clear of the command text.
-   - Overflow is 0 at 1470, 375 and 320.
-   - The h1 box never moves, and Zen and Zen Mono load with no swap seen.
-   - CLS is 0.0035 on desktop (0.0026 from `.vs2-name-r` when the batch names itself) and 0.005 on phone (the provider `em` labels).
-   - 0 console errors from this page at either width.
-     - One walk showed a red "1 Issue" hydration badge. It was Playwright's screenshot caret-hiding injecting `caret-color` into the prefix input. With `caret: 'initial'` it does not occur.
-     - Another chat's broken `UiPage.jsx` HMR errors appeared in one session and are not this page's.
+   - **"View on GitHub":** hover goes #0a0a0a → #2c2c2e and press scales to 0.98. That is the kit `Cta`, not 0.97.
+   - **Rows:**
+     - Hover lifts the text from white 55% to #fafafa.
+     - The plus disc fills at white 14% and turns 90°.
+     - The stage swaps to that row's picture, so the hover tells you what it opens.
+     - Press scales to 0.97.
+   - **"More" and "Fewer":** the border goes to ink on a #f5f5f5 fill, press is 0.97, and the count steps 3 → 4 → 2.
+   - **"launch":** fills with white 55% and ink text, and swaps the line to "metered against the organization · per provider".
+   - **Prefix:** typing `gpu` renames the batch to gpu-01 and gpu-02.
+   - **Copy:** the clipboard equals the displayed prompt.
+   - **Pause:** `aria-pressed` toggles and the sequence freezes.
+   - **Sheet:**
+     - It opens on press.
+     - Tab cycles Previous → Next → Close inside it.
+     - Next steps 04 → 05.
+     - Escape closes it and returns focus to row 04.
+6. **Overlap, font swap, layout shift?** None.
+   - No overlap at 1470, 375 or 320.
+   - Horizontal overflow is 0 at 1470, 375 and 320.
+   - Zen and Zen Mono finish at 313 ms on desktop and 252 ms on phone, and the h1 box never moves.
+   - CLS is 0.0011 on desktop (one 0.0009 shift from `.vs2-name-r` as the batch names itself) and 0.0000 on phone.
+   - **Console errors:** 0 from this page.
+     - A red "1 Issue" badge appears only when Playwright's default screenshot hides the caret: it injects `caret-color` into the prefix input, and that run also reports the known shared `FooterHTML` mismatch.
+     - With `caret: 'initial'` there are 0 errors and no badge at either width.
 7. **Which reference, and is its motion there?**
-   - **apple.com:** the pinned hero with the product settling as you scroll. Yes.
-   - **motion.dev:** the inventory layout reflow. Yes.
-   - **synchronized.studio:** no. The tile opens a side drawer from the right on desktop and a bottom sheet on phone. The tile's title and picture are redrawn, not carried across.
+   - **apple.com:** the pinned room, where one panel changes while the list stays. Yes, and it is the best moment on the page.
+   - **motion.dev:** the inventory layout reflow in the naming tool. Yes.
+   - **synchronized.studio:** no. A row opens a side drawer on desktop and a bottom sheet on phone. The stage picture is redrawn in the drawer, not carried into it.
    - **anthropic.com launch:** no hero figure.
-8. **Different from its neighbours?** Only by its middle.
-   - The first screen is still `StageHero look="side"`, the same as /sentinel, with `flip`: a 52px title on one side and a live panel on the other, with a mono caption under the h1.
-   - The close is the shared `Finale` ("Get started with Hanzo X / Paste and ship / Get X / License chip / hanzoai / Deploy to Cloud"), the same as /sentinel, /telemetry, /tunnel, /world, /search and others. Here it is barer than theirs because it has no object.
-   - **What is Visor's own:** the launch console and the naming tool.
-9. **All 18 parts covered?** The card has all 18 headings with a `Done here:` line, but three claims are false on the page:
-   - **Part 6:** "0 runs under 13px on desktop (mono capitals excepted)". Measured: 3 lowercase Zen Mono runs at 12px in the hero ("cached and priced", the "train-01" console tab, "launched · console opened · org · project"). They are lowercase, so the mono-capitals exception does not cover them.
-   - **Part 4:** "[x] Sticky ask in header and bar after the hero, same label". The header's ask is "Try Hanzo" and the hero's is "View on GitHub", and the bar is off (`data-ask="off"`). The tick claims a bar and a matching label, and neither is there.
-   - **Part 8:** "[x] Dialogs are native". The open card is a `DIV role=dialog` (`:modal` is false), not `<dialog>.showModal()`. It does keep focus (a Tab cycle of Previous → Next → Close) and returns it to the tile, so the behaviour is right but the claim is not.
-   - **Overstated (Part 12):** "Lowest measured text contrast 6.67:1". That holds for the settled state. The dry-run line spends about 85% of the loop at about 1.6:1, and the providers start at 45% opacity. Both are `aria-hidden`, but James sees them.
+8. **Different from its neighbours?** Partly.
+   - **The hero** is `StageHero look="rise"`, the same as /search: title, mono caption, lede and ask stacked over one full-width rounded grey console card, with a 44px pause disc at its top right. Visor's title is left-set and /search's is centred, and that is the main difference on the first screen.
+   - **The close** is the shared `Finale` frame used across Cloud 4.
+   - **Visor's own:** the pinned numbered room, the pipeline console and the naming tool.
+9. **All 18 parts covered?** The card has 18 headings, each with a `Done here:` line, but some claims are false on the page:
+   - **Part 7**, "[x] No label, tag, badge or pill above a headline": false when a row is opened. The page passes `kicker="04 / 06"` to the Sheet, which sets a 12px mono label directly above the sheet's `h2` (screenshot `i-sheet-open.png`, and on phone "02 / 06" above "Volumes and images").
+   - **Part 8**, "press is scale .97 in 90 ms": the primary "View on GitHub" presses to 0.98 (the kit `Cta`). This was flagged last round and is still claimed.
+   - **Part 6**, "(11-12px mono capitals excepted; none on the page)": the hero caption "HANZOAI/VISOR" is 12px mono capitals. That is allowed, but "none on the page" is untrue.
+   - **Part 9**, "`motion.mjs` desktop: 2 still screens of 9": cannot be reproduced. The script is hard-wired to `/Applications/Google Chrome.app`, so name the tool that actually measured it.
+   - **The page file's header comment** still says "CTA: … (hero, ask bar, close)", but the bar is off (`data-ask="off"`).
 10. **Banned tells?**
-    - None of the hard ones: 0 hues (`taste.py` OK), nothing above any headline, no floating pill or cursor label, no opacity-only hover, no `title=` tooltips, no springs, no Inter, no gradient text.
-    - **A dead stretch:** the tile room is dead once its arrivals finish. A caret is its only mover.
-    - **Close to "one template":** the close.
+    - **One:** an eyebrow over a headline, the "NN / 06" kicker above the Sheet's h2.
+    - **Otherwise clean:**
+      - `taste.py` OK and 0 hues.
+      - No gradient text, no Inter and no `title=` tooltips.
+      - No hover that only fades.
+      - Nothing floating over content.
+      - No three equal boxes.
+    - **Owned by the shared kit:** the Sheet opens on `SPRING.sheet`, a spring with stiffness 300 and damping 34 (`lib/motion.js`). It is near-critically damped, so it does not visibly overshoot, but MASTER says "no springs".
 11. **Copy untouched?** Yes.
-    - Parity is 29/29 text and 2/2 links.
-    - The demo labels are lifted from Hanzo's own sentences.
-    - Hanzo's "Volumes and images" is used twice as a heading (tile 02 and the naming tool's h2). Those are the same words, but a heading now appears where the live page has only a tile.
+    - Parity is OK: text 29/29, links 2/2.
+    - "Volumes and images" is still used as a second heading (the naming tool's h2) where the live page has it only as a tile title. Those are Hanzo's words in a new role, so list it as a copy question for James rather than deciding it.
 
 ## Missing from the 18 parts (measured)
-- **Part 1, Strategy and conversion:** the `V2: 8/10` in `Visor.jsx` is the builder's own score. The critic's is 7.
+- **Part 1, Strategy:** `V2: 8/10` in `Visor.jsx` is the builder's own score. The critic's is 7. The header comment names an ask bar that is off.
 - **Part 3, First impression:**
-  - Under 900px the hero's best moments (machines landing, the SSH console) happen below the 812 fold, so the phone's first screen barely moves.
-  - At 1470×801 the next section does not peek above the fold.
-  - Cards do not open by Morph; they open a drawer.
-  - The close has two headings.
-- **Part 4, Conversion system:** no sticky ask with the hero's label (see question 9). Either name the header's "Try Hanzo" as the sticky ask on the card, or say why the bar is off. Do not tick "same label".
-- **Part 6, Content:**
-  - 3 lowercase mono runs at 12px on desktop.
-  - The audit line wraps to leave "· project" alone on the last line at 1470.
-  - Only the open tile's paragraph is in the live DOM (the others are in `<noscript>`), so find-in-page cannot reach five of Hanzo's six paragraphs. MASTER asks for `hidden="until-found"`.
+  - At 1470×801 the next room does not peek: the hero card ends at y 727, with plain white to 801.
+  - The dark room arrives full-bleed, not as a rounded card that opens to full width.
+  - The close carries two headings.
+  - JS off: the hero's audit line is at opacity < 0.2 (it is `aria-hidden` demo text, so this is minor).
+- **Part 6, Content:** the dry-run line and the audit line wrap badly in the hero at 1470 (see question 1).
+- **Part 7, Visual system:**
+  - The Sheet kicker sits above an h2.
+  - The hero is the same `rise` frame as /search.
+  - The console's off state is a 25% grey slab, which reads as a placeholder, not a designed state.
 - **Part 8, Components:**
-  - The Sheet is not a native `<dialog>`.
-  - The prefix input's focus is a 3px black-12% box-shadow plus an ink border, not the one 2px ink ring with white halo.
-  - "View on GitHub" presses to 0.98 (the kit's), not 0.97.
+  - The primary presses to 0.98, not 0.97.
+  - The Sheet is a `div role=dialog`, not a native `<dialog>`. The card now says this honestly, and the behaviour is right: focus is held and returned, and Escape closes it.
 - **Part 9, Motion:**
-  - After the hero no scene changes with scroll, and the tile room has no idle life beyond a caret.
-  - Three carets blink forever (hero console, tile 05, close prompt) with no pause of their own. The hero's pause stops its sequence, not the tile caret.
-- **Part 12, Accessibility:** the 1.6:1 dry-run line for most of the loop, and the providers at 45% opacity.
+  - The naming tool is still after its arrival.
+  - The phone room goes still once its cards have played.
+  - Three carets blink (hero, room 05, close); only the hero's has a pause.
 - **Part 13, Performance:** JS and CSS budgets are not measured (the card says so).
+- **Part 15 / reference:** no card-to-page or picture-to-sheet carry (synchronized.studio).
 - **Passing:**
-  - one h1 and one `main#main`;
-  - JS off is legible at both widths (0 hidden runs, the six tile paragraphs in `noscript`);
-  - reduced motion shows the final frame with 0 running animations;
-  - the primary ask is above the fold at 375×667 (bottom 388);
-  - no horizontal scroll at 320;
-  - 0 targets under 44px on phone;
-  - CLS 0.0035 / 0.005;
-  - 0 console errors;
-  - parity 29/29;
-  - `taste.py` OK.
+  - One h1 and one `main#main`, with the skip link to `#main`.
+  - JS off is legible at both widths (h1 at opacity 1, all six paragraphs in place).
+  - Reduced motion shows the final frame (train-01 to 03 landed, console open), 0 running animations and the room unpinned, at both widths.
+  - Ask bottom at 374 on a 375×667 screen.
+  - 0 targets under 44px in `main` at 375 and 320.
+  - No horizontal scroll at 320.
+  - Tab crawl: 17 stops in `main`, all visible, all with a 2px ring (ink on light, #fafafa on dark).
+  - Title and canonical match, og:url equals the canonical, and 2 of 2 JSON-LD blocks parse.
+  - `taste.py` OK and parity OK.
 
 ## Fixes (in order)
-1. **Make the tile room one thing in, one thing out.** Pin the dark room on desktop (stack under 900px, as now).
-   - Show one tile's picture large at the left of the stage and the six titles as a numbered list (`01 / 06`) at the right.
-   - As you scroll, or after about 4 s idle while in view, the next title takes the ink fill and its picture swaps in, played at full size.
-   - Tapping a title still opens the Sheet with Hanzo's paragraph.
-   - That gives one big object per screen instead of six two-thirds-empty boxes, and the room is alive without input.
-   - If a pin is too much, at least grow each picture to fill its tile (tile 01's bars across the full width and 3× thicker, tile 06's three rows filling the height) and stop the room from going dead after arrival.
-2. **Give the close a Visor object.** Pass `object={<…/>}` to `Finale`, as /sentinel, /telemetry and /tunnel do.
-   - The obvious one is the settled inventory from the naming tool: the prefix the visitor typed and their count, showing the batch they named.
-   - That puts Visor's own thing in the close instead of the generic prompt alone.
-3. **Fix the false claims on `docs/coverage/visor.md`:**
-   - Part 6: raise `.vs2-prov em`, `.vs2-con p` and `.vs2-audit` to 13px, or say they are 12px.
-   - Part 4: untick "bar … same label" and write what is true: the header ask is "Try Hanzo", and the bar is off by the 15:00 note.
-   - Part 8: write "kit Sheet (div role=dialog, focus held and returned)", or ask the Sheet owner for native `<dialog>` in `docs/requests/visor.md`.
-   - Part 12: re-measure contrast across the loop, not only at rest.
-4. **Lift the hero's resting greys.**
-   - Rest `.vs2-dry span` at `opacity: .6` or more, or at full `#737373` (4.5:1 on #f5f5f5 needs #525252), and keep the flash as the ink step.
-   - Start `.vs2-prov` at 0.7, not 0.45.
-   - Give `.vs2-audit` `grid-column: 1 / -1` so "· project" does not wrap alone.
-5. **Make the phone's first screen move.** Under 900px, run the machines' arrival inside the fold. Either reorder so the inventory sits right under the request card, with the providers as one compact row of three chips, or start the sequence at the step where train-01 lands. Something product-shaped then moves in the first 812px.
-6. **Set the hero apart from /sentinel.** Pick a `StageHero` look no Cloud 4 neighbour uses (not side, split, rise or frame), or let the console be the full-width object with the title over its top edge. The left/right split must not be the first thing both pages say.
-7. **Small control fixes:**
-   - Give the prefix input the one focus ring (2px ink, white halo) and drop the box-shadow.
-   - Let the hero pause also stop the hero caret.
-   - Make the tile hover read at a glance. The #171717 → #262626 step is too faint for the filmer, so let the "+" disc fill plus the picture replay carry it, and lift the tile title to ink-white on hover.
-   - Keep the six paragraphs findable with `hidden="until-found"` copies.
+1. **Stop showing the same inventory three times.**
+   - **Close:** make it the payoff of the naming tool. Lift `prefix`, `count` and `dry` to the page and have the close land *the visitor's* batch (`gpu-01…gpu-0N` if they typed `gpu`), with the line "metered against the organization · per provider" once they chose launch. It then reads as "your fleet", not a third copy.
+   - **Or:** give the close a different Visor object, such as the SSH console at size with the audit row writing itself under it.
+2. **Fix the hero's dead block and empty cells.**
+   - Draw the console's off state as a real waiting terminal: a #0a0a0a frame with "SSH · train-01" at full contrast and an idle `$`. Do not use a 25%-opacity slab; let the "opened" step light the tab and start the caret.
+   - Put the dry-run line directly under the request card, inside the empty cell, so the pipeline reads request → quote → providers → inventory.
+   - Keep "dry run · quote returned · spends nothing" on one line (widen its column or allow it to span), and give `.vs2-audit` `grid-column: 1 / -1` so "console opened" does not split.
+3. **Remove the eyebrow over the Sheet's h2.**
+   - Drop `kicker` from `<Sheet>`. The list already numbers the rows. If the number must show, set "04 / 06" under the title as a caption, as part 7 says.
+   - Then part 7's tick is true.
+4. **Correct the coverage card.**
+   - Part 6: name the 12px "HANZOAI/VISOR" caption.
+   - Part 7: say the kicker is gone, or untick.
+   - Part 8: "primary presses 0.98 (kit `Cta`); request .97 from the kit owner in `docs/requests/visor.md`".
+   - Part 9: say which tool counted still screens.
+   - Header comment: drop "ask bar".
+5. **Give the naming tool a moment of its own after arrival.** On first arrival, type the prefix into the field letter by letter (time, about 60 ms per letter) as the names update under it, then rest. Or let "dry run" → "launch" flip once on its own with the line swapping, then return. Something should still answer the eye after the batch names itself.
+6. **Let the next room peek at 1470×801.** Trim the hero's bottom padding or the console height so the dark room's top edge shows about 56px above the fold. Have the room enter as a rounded card inside the gutters that opens to full width, per MASTER's rooms.
+7. **Make the open carry the picture (synchronized.studio).** Give the stage picture and the Sheet picture one `layoutId`, so opening a row grows the picture you were looking at into the card instead of redrawing it in a drawer.
+8. **File shared requests** (`docs/requests/visor.md`):
+   - `Finale` renders two h2s on one screen.
+   - The kit `Sheet` uses a spring (`SPRING.sheet`).
+   - The kit `Cta` press is 0.98.
+   - List "Volumes and images" used as the naming tool's h2 as a copy question for James.
