@@ -1,26 +1,34 @@
 'use client';
-/* Auto (v2, Cloud 4 chat). Archetype A, Launch: the page opens on the race itself, two tracks running edge to edge under a
-   left-hand title stack → six properties as an index whose open row shows its own small live object beside its title →
-   four figures in the one dark room, pinned while each word takes its moment → the connectors as a workflow you re-route →
-   Get Auto → one closing band.
+/* Auto (v2, Cloud 4 chat). Archetype A, Launch. Order: the race (title stack over two full-bleed tracks) → the drag
+   canvas, the one dark room → the connectors as a workflow you re-route → six properties as an index whose open row shows
+   its live object beside its title → Get Auto → one closing band. No pinned or scroll-scrubbed scene.
    Persona: a developer who wants workflows that survive a restart. Goal: open Auto.
    CTA: "Open Auto" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:auto.primary.
-   V2: 8/10 round 3: no window frame; the two runs are full-bleed tracks with the restart control in the race's own strip on the first screen; the hero entrance is CSS on .js so server and client HTML match; the figures room is a 150svh pin where the word in its moment grows to 120px and the container outline closes before the pin ends; the open index row sets its live object beside its title and closed rows are 60px
-   Signature: a run that survives the restart. The first screen is the same flow running twice on two tracks, once kept as
-   a record and once held in a goroutine. On the first run (and every other run after) the pod is rescheduled: the record
-   resumes at the step it wrote down, the goroutine starts over from the trigger and finishes last.
+   V2: 8/10 signature drag-canvas: the second screen is a dark plane you pan by mouse, finger or arrow keys (momentum, clamped, reset button, tap-to-jump minimap) holding Auto's parts as they connect (two ways in, the published flow with a token running its wires, record vs goroutine, draft vs published, GET /v1/pieces, the connection with Hanzo IAM and KMS, the four figures and the container); the pinned figures room is gone; sections reordered (race, canvas, connectors, index, band) and each enters its own way (word-shuffle, rack-focus, scroll-tilt, iris, stack-drop)
+   Signature: drag-canvas (MOTION-MAP). Auto's parts sit on one large plane the visitor drags around: the flow in the
+   middle, its two triggers to the left, the two runs and the reschedule below, the catalog and the connection to the
+   lower right, the figures and the container they live in to the right, wired together. It nudges sideways once on
+   arrival; arrows pan it (Shift for longer steps), Home or the reset button recentres it, the minimap jumps.
+   The first screen keeps the race: the same flow runs twice, once kept as a record and once held in a goroutine; on the
+   first run the pod is rescheduled and the record resumes where the goroutine starts over.
    Beyond: restart the pod yourself, at any moment, and watch which run keeps its place (Hanzo's own claim: a run is a
    record, not a goroutine).
-   Motion: the running tracks (signature, time, pausable) + pointer lean on the tracks (useSpring) + the pinned figures
-   scrubbed by scroll (useScroll) + drawn wires in the connector chain and the container (pathLength). The index line grows
-   as it opens (state). Every word and link is Hanzo's. */
+   Motion: drag with momentum (signature, in auto/Canvas.jsx) + the running tracks (time, pausable) + pointer lean on the
+   tracks (useSpring) + drawn wires in the connector chain (pathLength). The index line grows as it opens (state). One
+   section entrance each, no shared reveal. Every word and link is Hanzo's.
+   Entrances (MOTION-MAP, in order): 1 word-shuffle (hero: the h1, caption and line arrive word by word out of order and
+   swap into place) · 2 rack-focus (the drag canvas pulls into focus from a blur) · 3 scroll-tilt (the connectors tilt back
+   on rotateX, lean with scroll speed and level out) · 4 iris (the property index opens through a circular clip from its
+   centre) · 5 stack-drop (the closing band's layers drop and stack onto each other). All in auto/Entrances.jsx + Auto.css. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring, useMotionValueEvent } from 'motion/react';
-import { EASE, useCalm } from '../../ui';
+import { motion, AnimatePresence, useSpring } from 'motion/react';
+import { EASE } from '../../ui';
 import { Cta } from '../../kit';
 import Finale from '../../v2/Finale';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import Mini from './auto/Minis';
+import Canvas from './auto/Canvas';
+import { Enter, Shuffle } from './auto/Entrances';
 import './Auto.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/auto';
@@ -109,7 +117,7 @@ function Run() {
   const G = calm ? 0 : go;
   const cut = calm || crash;
   return (
-    <div className="au2-race au2-in" style={{ '--d': '.12s' }} ref={ref}>
+    <div className="au2-race" ref={ref}>
       <div className="l2-wrap au2-ctl">
         <button type="button" className={'au2-restart' + (crash ? ' busy' : '')} onClick={() => { setMine(loops); restart(); }} aria-disabled={crash || undefined} aria-label="Restart the pod">
           <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.55M13 2.5v2.5h-2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -138,10 +146,10 @@ function Hero() {
   return (
     <section className="au2-hero" aria-labelledby="au2-h1">
       <div className="l2-wrap au2-top">
-        <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><span className="au2-cut-in">Hanzo Auto</span></span></h1>
-        <p className="l2-stage-kick l2-mono au2-in" style={{ '--d': '.16s' }}>auto.hanzo.ai</p>
-        <div className="au2-sub au2-in" style={{ '--d': '.24s' }}>
-          <p className="l2-lede">Workflow automation in one binary</p>
+        <h1 id="au2-h1" className="l2-display"><Shuffle text="Hanzo Auto" /></h1>
+        <p className="l2-stage-kick l2-mono"><Shuffle text="auto.hanzo.ai" start={2} /></p>
+        <div className="au2-sub">
+          <p className="l2-lede"><Shuffle text="Workflow automation in one binary" start={3} /></p>
           <div className="l2-acts">
             <Cta to={OPEN} id="primary" size="lg" thumb data-thumb="Open Auto">Open Auto</Cta>
             <Cta to={DOCS} kind="link" id="docs">Documentation</Cta>
@@ -167,7 +175,7 @@ function Index() {
   const [open, setOpen] = useState(0);
   const [ref, live, calm, paused, toggle] = useDemo(0.2);
   return (
-    <section className="l2-sec au2-idx">
+    <Enter as="section" kind="iris" className="l2-sec au2-idx" threshold={0.12}>
       <div className="l2-wrap">
         <h2 className="l2-head">A run that survives the restart</h2>
         <ol className="au2-list" ref={ref}>
@@ -193,7 +201,7 @@ function Index() {
           ))}
         </ol>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -204,7 +212,7 @@ function Pieces() {
   const [path, setPath] = useState([0, 4, 9]);
   const add = (i) => setPath((p) => (p.includes(i) ? p : [...p.slice(1), i]));
   return (
-    <section className="l2-sec tight au2-pieces">
+    <Enter as="section" kind="tilt" className="l2-sec tight au2-pieces" threshold={0.05}>
       <div className="l2-wrap l2-grid">
         <div className="au2-pieces-l">
           <h2 className="l2-head">Some of what it connects</h2>
@@ -240,80 +248,16 @@ function Pieces() {
           })}
         </ul>
       </div>
-    </section>
+    </Enter>
   );
 }
 
-const FIGS = [['Go', 'One process'], ['SQLite', 'Per replica'], ['/v1', 'Flows and runs'], ['Apache', 'Self-hosted']];
-const SLOT = 0.15; // each word's stretch of the pin
-
-/* one figure: its word cuts up into its line once the pin reaches its stretch (a timed cut, so a resting frame is never
-   half-cut), and it is the big one while its stretch lasts */
-function Fig({ i, act, reach, k, d }) {
+/* The one dark room: Auto laid out on a plane you drag around (the figures and the container live on it). */
+function Explore() {
   return (
-    <li className={(act === i ? 'on' : '') + (reach >= i ? ' in' : '')}>
-      <b className="l2-ln"><span>{k}</span></b>
-      <span className="l2-mono">{d}</span>
-    </li>
-  );
-}
-
-/* the container outline, drawn in real pixels so the stroke closes cleanly at any size; once begun it always finishes */
-function Box({ drawn, on }) {
-  const ref = useRef(null);
-  const [sz, setSz] = useState([300, 100]);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setSz([Math.round(el.offsetWidth), Math.round(el.offsetHeight)]));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  const [w, h] = sz;
-  return (
-    <div className="au2-box" aria-hidden="true">
-      <div className="au2-ctr" ref={ref}>
-        <svg className="au2-ctr-line" viewBox={`0 0 ${w} ${h}`} width={w} height={h}>
-          <motion.rect x="0.75" y="0.75" width={w - 1.5} height={h - 1.5} rx="24" fill="none" stroke="currentColor" strokeWidth="1.5" animate={on ? { pathLength: drawn ? 1 : 0 } : undefined} transition={{ duration: 0.9, ease: EASE }} />
-        </svg>
-        <span className="l2-mono">container</span>
-        <div className="au2-ctr-in">
-          <b>auto</b>
-          <motion.i className="au2-port l2-mono" animate={on ? { opacity: drawn ? 1 : 0 } : undefined} transition={{ duration: 0.4, delay: drawn ? 0.6 : 0 }}>:port</motion.i>
-          <motion.em className="l2-mono" animate={on ? { opacity: drawn ? 1 : 0 } : undefined} transition={{ duration: 0.4, delay: drawn ? 0.75 : 0 }}>state.sqlite</motion.em>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* The one dark room: pinned while each word takes its moment, then the container that holds them closes its outline. */
-function Figures() {
-  const ref = useRef(null);
-  const calm = useCalm();
-  const [on, setOn] = useState(false);
-  const [act, setAct] = useState(-1);
-  const [reach, setReach] = useState(-1);
-  const [drawn, setDrawn] = useState(false);
-  useEffect(() => setOn(!calm), [calm]);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.6', 'end end'] });
-  useMotionValueEvent(p, 'change', (v) => {
-    const i = v < 0.02 ? -1 : Math.min(3, Math.floor((v - 0.02) / SLOT));
-    setAct(v > 0.62 ? -1 : i);
-    setReach((r) => Math.max(r, i));
-    if (v > 0.5) setDrawn(true);
-  });
-  return (
-    <section ref={ref} className={'l2-dark au2-figs' + (on ? ' pin' : '')} data-room="dark">
-      <div className="au2-figs-pin">
-        <div className="l2-wrap">
-          <ul className={on && act >= 0 ? 'has-on' : ''}>
-            {FIGS.map(([k, d], i) => <Fig key={k} i={i} act={on ? act : -1} reach={on ? reach : 3} k={k} d={d} />)}
-          </ul>
-          <Box drawn={drawn} on={on} />
-        </div>
-      </div>
-    </section>
+    <Enter as="section" kind="focus" className="l2-dark au2-cvs" data-room="dark">
+      <div className="l2-wrap"><Canvas /></div>
+    </Enter>
   );
 }
 
@@ -321,9 +265,10 @@ export default function Auto() {
   return (
     <main id="main" className="l2-page au2" data-ask="off">
       <Hero />
-      <Index />
-      <Figures />
+      <Explore />
       <Pieces />
+      <Index />
+      <Enter kind="stack" threshold={0.15}>
       <Finale
         name="Auto"
         head="Or run it yourself"
@@ -333,6 +278,7 @@ export default function Auto() {
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Auto in my project. Start with: hanzo auto flows list"
         tag="Workflow automations"
       />
+      </Enter>
     </main>
   );
 }

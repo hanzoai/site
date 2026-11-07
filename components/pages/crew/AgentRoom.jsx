@@ -1,26 +1,29 @@
 'use client';
-/* /agents/<page> (one template, Archetype A: Launch). Each member is a product launch told in chapters, carrying its own
-   data and Sigil seed: Crew is ten agents on a ring and the Bots room; the SDK is a console that runs itself, three
-   pillars on stacked sheets, a spec sheet, the code in the dark room. All wording, figures and links are Hanzo's.
-   Signature: who has the turn. The member's live object is the hero and runs by itself: a baton passes around the
-   crew's ring (the one holding it says who they are) and through the SDK console, from you to the agent and back,
-   the way a router hands a network its turns. Hover, focus or press anything to take the baton.
-   Supporting: the stage (the live object starts big and low, then settles beside the next chapter as the first
-   chapter's words leave), an ink that slides between choices, a magnetic main action. Sigil sits under the object.
-   The demos play through once each time they come into view, then rest; no colour but Hanzo's own pictures (v3 rules).
+/* /agents/<page> (one template). Each member carries its own data and Sigil seed: Crew is ten agents on a ring, its
+   roll call and the Bots room; the SDK is a console that runs itself, its install line, three pillars, the code in the
+   graphite room, the parts one at a time. All wording, figures and links are Hanzo's.
+   Signature (docs/MOTION-MAP.md: `split`, Split screen): the live object holds still on one side while the words on the
+   other side scroll past and change it. Crew: the ring stays; the headline step lets the baton run round by itself,
+   the team step hands the turn to whoever the find field matches, and in the roll call each name that crosses the
+   middle of the screen takes the turn on the ring. SDK: the console stays; the headline step lets it play, the install
+   step turns it into the pip/cargo terminal, and each pillar puts one more turn of the conversation on screen
+   (scrolling back takes it off). Phones: the headline reads first, then the object sticks under the header while the
+   steps scroll beneath it. Supporting: an ink that slides between choices (layoutId); Sigil under the object.
    Beyond: start in one step. On Crew, type what you need and the agent whose own role matches takes the baton; Enter
    opens the chat with them. On the SDK, its own install line for pip or cargo, ready to copy.
    Persona: Developer (SDK) and team buyer (Crew). Goal: start building with agents. Metric: install_copy (SDK), signup_start (Crew).
    CTA: "Read the docs" (SDK), "Launch a bot" (Crew): one solid ask, hero to close; every other action a text link.
-   V2: 8/10 h1 and lede set in the server HTML (cut-in and rise are CSS under html.js), ring drawn in its start pose with Antje in the hub before hydration, fixed-id find field with its own 44px clear (no useId mismatch, no webkit ×), a greyscale per-agent mark (initial, seat number, orbit dot) under every face, 10 faces on one line at 375, sheet titles that stay visible in the stack, the code heading level with the code, the parts as a swipe rail on phones. */
+   V2: 8/10 split screen as the signature (ring / console hold still, scrolling steps change them, at both sizes); pinned two-chapter stage, stacked sheets and clip-open rooms removed; five entrances, one per main section; Bots room readable in Light and sized to its content; roll call in type instead of coins. */
 // Persona: developer (SDK) and team buyer (Crew), from the Developer and Consumer rows of MASTER §1
 // Goal: start building with agents. Metric: install_copy (agents-sdk), signup_start (agents-crew)
 // CTA: "Read the docs" (agents-sdk.hero) and "Launch a bot" (agents-crew.hero): one solid ask, data-thumb, repeated at the close
-// Signature: who has the turn: a baton passes by itself around the agents' ring and through the console turns, the hero object settling on a pinned stage
+// Signature: split (Split screen): the ring (Crew) or the console (SDK) holds still while the scrolling steps beside it change it: the roll call hands out the ring's turn; the install step turns the console into the terminal; each pillar adds a turn
+// Entrances (MOTION-MAP row, in order): curtain-rise = the hero h1 (both); spring-snap = Crew team step / SDK install step; invert-flash = Crew roll call / SDK code room; inertia-drag = Crew Bots room window / SDK parts contour tile (draggable, springs home); count-roll = Crew "Or build your own." (the crew's 10) / SDK close (licence version)
+// Order: Crew = split (headline, team + find, roll call) → Bots room → "Or build your own."; SDK = split (headline, install, three pillars) → code room → parts → close
 // Beyond: start in one step: type a need and the agent whose own role matches takes the baton (Enter opens the chat); the SDK's own pip or cargo line, ready to copy
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
+import { motion, useInView } from 'motion/react';
 import { Copy } from '../../ui';
 import { EASE_OUT_EXPO as EASE, DUR } from '../../../lib/motion';
 import { A, Cta, CodeBlock } from '../../kit';
@@ -31,14 +34,37 @@ import './AgentRoom.css';
 const ASSET = (p) => p; // Hanzo's own pictures, by their own paths (live dev fetches files this repo lacks from hanzo.ai)
 const MOVE = [0.4, 0, 0.2, 1]; // the deck's ease-in-out, for things that move and stay (no springs)
 const INK = { duration: DUR.fade, ease: EASE };
-// a dark room enters as a rounded card inside the gutters and opens to the full width as it is reached
-const OPEN = {
-  initial: { clipPath: 'inset(0% 2.2% 0% 2.2% round 24px)' },
-  whileInView: { clipPath: 'inset(0% 0% 0% 0% round 0px)' },
-  viewport: { once: true, amount: 0.12 },
-  transition: { duration: DUR.reveal, ease: EASE },
-};
-const fade = (v, from, to) => Math.min(1, Math.max(0, (v - from) / (to - from))); // 0 at `from`, 1 at `to`
+/* entrances (docs/MOTION-MAP.md rule 7): each main section arrives its own way, once, when it first comes into view.
+   The server HTML is the final state; the start pose is CSS under html.js on [data-ent] without [data-in], and this
+   hook sets data-in straight on the element (no React state, so nothing differs at hydration). Reduced motion: none. */
+function useEnter() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches) { el.dataset.in = ''; return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.dataset.in = ''; io.disconnect(); } }, { rootMargin: '0px 0px -18% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
+function Enter({ as: Tag = 'div', kind, className = '', children, ...rest }) {
+  const ref = useEnter();
+  return <Tag ref={ref} data-ent={kind} className={className} {...rest}>{children}</Tag>;
+}
+/* count-roll: each digit is a strip 0–9 that rolls up to its value as the section arrives (the real figure is in the
+   accessible text beside it) */
+function Roll9({ text, className = '' }) {
+  return (
+    <span className={'xag-roll ' + className}>
+      <span className="x-sr">{text}</span>
+      <span aria-hidden="true">{[...text].map((ch, i) => (/\d/.test(ch)
+        ? <b key={i} style={{ '--d': +ch, '--k': i }}><span>{'0123456789'.split('').map((d) => <i key={d}>{d}</i>)}</span></b>
+        : <em key={i}>{ch}</em>))}</span>
+    </span>
+  );
+}
 
 /* client-only facts, read after mount so the server HTML and the first client render agree */
 function useMedia(q) {
@@ -70,32 +96,41 @@ function useBaton(n, ms, box, calm) {
 
 function Kick({ children, className = '' }) { return children ? <p className={'xag-kick x-mono ' + className}>{children}</p> : null; }
 
-/* ---------- the stage: chapter one leaves, chapter two arrives, the live object settles (desktop); stacked on phones ---------- */
-function Stage({ first, second, object, art, from = 1.12, low = '8%' }) {
-  const box = useRef(null);
-  const pin = useMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)'); // the same test the stylesheet pins with
-  const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  const outY = useTransform(p, [0.12, 0.46], [0, -90]);
-  const outO = useTransform(p, (v) => fade(v, 0.4, 0.12)); // a function, so Motion keeps it on the main thread in step with Lenis
-  const inY = useTransform(p, [0.4, 0.72], [70, 0]);
-  const inO = useTransform(p, (v) => fade(v, 0.42, 0.68));
-  const s = useTransform(p, [0, 0.72], [from, 1]); // starts a little big and low, settles; never wider than its six columns
-  const y = useTransform(p, [0, 0.72], [low, '0%']);
-  const [two, setTwo] = useState(false);
-  useMotionValueEvent(p, 'change', (v) => setTwo(v > 0.42));
-  const on = !pin || two;
-  // the object's start pose is in the stylesheet too (--from, --low), so the server HTML already draws it where Motion takes it over
+/* ---------- the signature, split screen: the live object holds still while the words beside it scroll and change it ----------
+   Desktop: two columns, the object sticky in the right eight, the steps scrolling past in the left five. Phone: the first
+   step (the headline) reads first, then the object sticks under the header while the other steps scroll up beneath it.
+   The step whose middle crosses the screen's middle line is the one in charge; `still(step)` draws the object for it.
+   No scroll scrub: each step is a state, changed by a short tween. Server HTML = step 0, so hydration moves nothing. */
+function useLine(refs, n, set) {
+  useEffect(() => {
+    const els = refs.current.slice(0, n).filter(Boolean);
+    if (!els.length || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver((list) => {
+      for (const e of list) if (e.isIntersecting) set(+e.target.dataset.k);
+    }, { rootMargin: '-50% 0px -50% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [refs, n, set]);
+}
+
+function Split({ steps, still, art, step, setStep, kind }) {
+  const refs = useRef([]);
+  useLine(refs, steps.length, setStep);
+  const [first, ...rest] = steps;
   return (
-    <section ref={box} className="xag-stage" data-two={on || undefined} aria-labelledby="xag-h1" style={{ '--from': from, '--low': low }}>
-      <div className="xag-pin">
-        <div className="xag-wrap xag-stage-g">
-          <motion.div className="xag-one" style={pin ? { y: outY, opacity: outO } : undefined} inert={pin && two ? true : undefined}>{first}</motion.div>
-          <motion.div className="xag-two" style={pin ? { y: inY, opacity: inO } : undefined} inert={pin && !two ? true : undefined}>{second}</motion.div>
-          <motion.div className="xag-obj" style={pin ? { scale: s, y } : undefined}>
+    <section className="xag-split" data-kind={kind} data-step={step} aria-labelledby="xag-h1">
+      <div className="xag-wrap xag-split-g">
+        <div className="xag-step xag-step-0" ref={(el) => { refs.current[0] = el; }} data-k={0} data-on={step === 0 || undefined}>{first}</div>
+        <div className="xag-still">
+          <div className="xag-still-i">
             <div className="xag-art" aria-hidden="true">{art}</div>
-            {object}
-          </motion.div>
+            {still}
+            <ol className="xag-pips" aria-hidden="true">{steps.map((_, i) => <li key={i} data-on={i === step || undefined} />)}</ol>
+          </div>
         </div>
+        {rest.map((node, j) => (
+          <div key={j + 1} className="xag-step" ref={(el) => { refs.current[j + 1] = el; }} data-k={j + 1} data-on={step === j + 1 || undefined}>{node}</div>
+        ))}
       </div>
     </section>
   );
@@ -129,8 +164,9 @@ function Acts({ list, big, solid = true, thumb, id }) {
 }
 
 /* ---------- Crew: the ring ---------- */
-/* each agent's own mark, drawn under Hanzo's portrait (and in its place wherever the picture cannot load): the initial,
-   the seat number, and a dot on a hairline orbit at the agent's own place on the ring, so no two marks are alike */
+/* each agent's own mark on the ring, drawn under Hanzo's portrait (and in its place wherever the picture cannot load):
+   the initial and a dot on a hairline orbit at the agent's own place on the ring, so no two marks are alike. The seat
+   number lives only in the hub ("04 / 10"); the room list and the close use type, not a second set of coins */
 function Face({ a, i = 0, n = 10 }) {
   const t = (i / n) * Math.PI * 2;
   return (
@@ -140,7 +176,6 @@ function Face({ a, i = 0, n = 10 }) {
         <circle className="xag-face-dot" cx={(50 + 42 * Math.sin(t)).toFixed(2)} cy={(50 - 42 * Math.cos(t)).toFixed(2)} r="5" />
       </svg>
       <b>{a.name[0]}</b>
-      <small className="x-mono">{String(i + 1).padStart(2, '0')}</small>
       {a.img && a.img.src && <i style={{ backgroundImage: `url(${ASSET(a.img.src)})` }} />}
     </span>
   );
@@ -198,11 +233,33 @@ function Find({ r, b, q, setQ }) {
   );
 }
 
+/* the roll call, the split's last step: the crew in type, each name a door to its chat with its role underneath. As each
+   row crosses the middle of the screen it takes the turn on the ring that holds still beside it */
+function Roll({ r, roll, setRoll, label }) {
+  const refs = useRef([]);
+  useLine(refs, r.agents.length, setRoll);
+  return (
+    <ul className="xag-mates" aria-label={label}>
+      {r.agents.map((a, i) => (
+        <li key={a.name} ref={(el) => { refs.current[i] = el; }} data-k={i} data-on={i === roll || undefined}>
+          <A to={a.href} className="xag-mate" onMouseEnter={() => setRoll(i)} onFocus={() => setRoll(i)}>
+            <span className="xag-mate-n">{a.name}<Chev /></span>
+            {a.role && <span className="xag-mate-r">{a.role}</span>}
+          </A>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function Crew({ doc, roster, room, build }) {
   const f = doc.fold;
   const box = useRef(null);
   const calm = useCalm();
-  const base = useBaton(roster.agents.length, 1900, box, calm);
+  const [step, setStep] = useState(0);
+  const [roll, setRoll] = useState(-1);
+  const baton = useBaton(roster.agents.length, 1900, box, calm);
+  const base = step === 2 && roll >= 0 ? { ...baton, at: roll } : baton; // in the roll call the scrolling names hand out the turn
   const [q, setQ] = useState('');
   const hit = useMemo(() => {
     const w = q.trim().toLowerCase();
@@ -215,29 +272,27 @@ function Crew({ doc, roster, room, build }) {
   const ask = room && room.actions.length ? room.actions.slice(0, 1) : null; // the crew's one ask, in Hanzo's words
   return (
     <>
-      <Stage
+      {/* order: the split (headline, the team and its finder, the roll call) → "Or build your own." → the Bots room, last */}
+      <Split kind="crew" step={step} setStep={setStep}
         art={<Sigil seed={doc.route} data={nums} className="xag-sigil" />}
-        first={<><Title f={f} />{f.lede.map((p, i) => <p key={i} className="xag-lede xag-after" style={{ '--d': 0.35 + i * 0.06 + 's' }}>{p}</p>)}<Acts list={ask} big thumb id="agents-crew.hero" /></>}
-        second={<><h2 className="xag-h2">{roster.h2}</h2><Kick className="under">{roster.eyebrow}</Kick>{roster.lede && <p className="xag-lede">{roster.lede}</p>}<Find r={roster} b={b} q={q} setQ={setQ} /></>}
-        object={<div ref={box}><Ring r={roster} b={b} /></div>}
+        still={<div ref={box}><Ring r={roster} b={b} /></div>}
+        steps={[
+          <><Title f={f} />{f.lede.map((p, i) => <p key={i} className="xag-lede">{p}</p>)}<Acts list={ask} big thumb id="agents-crew.hero" /></>,
+          <Enter kind="spring-snap"><h2 className="xag-h2">{roster.h2}</h2><Kick className="under">{roster.eyebrow}</Kick>{roster.lede && <p className="xag-lede">{roster.lede}</p>}<Find r={roster} b={b} q={q} setQ={setQ} /></Enter>,
+          <Enter kind="invert-flash"><Roll r={roster} roll={roll} setRoll={setRoll} label={roster.h2} /></Enter>,
+        ]}
       />
       {room && <Room s={room} agents={roster.agents} />}
       {build && (
         <section className="xag-sec xag-build">
-          <div className="xag-wrap">
+          <Enter kind="count-roll" className="xag-wrap">
+            {/* the crew's size, counted from the roster, rolls up beside the door to building your own */}
             <A to={build.href} className="xag-build-a" data-morph="">
+              <span className="xag-build-n x-mono" aria-hidden="true"><Roll9 text={String(roster.agents.length).padStart(2, '0')} /></span>
               <span className="xag-build-t">{build.label}</span>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </A>
-            <div className="xag-build-g">
-              <ul className="xag-mates" aria-label={roster.h2}>
-                {roster.agents.map((a, i) => (
-                  <li key={a.name} style={{ '--i': i }}><A to={a.href} className="xag-mate"><Face a={a} i={i} n={roster.agents.length} /><span className="xag-mate-n">{a.name}</span></A></li>
-                ))}
-              </ul>
-              {ask && <Acts list={ask} big id="agents-crew.close" />}
-            </div>
-          </div>
+          </Enter>
         </section>
       )}
     </>
@@ -250,14 +305,27 @@ function Room({ s, agents }) {
   const [dark, light] = s.shots.length > 1 ? s.shots : [s.shots[0], s.shots[0]];
   const shot = night ? dark : light;
   const to = s.sketch ? agents.findIndex((a) => a.name === s.sketch.to) : -1;
+  const who = agents[to] || agents[0];
+  // the window keeps the screenshot's shape only once Hanzo's picture has actually loaded; until then (or if it never
+  // does) it is as tall as the room drawn from the picture's own description, so no empty pane
+  const [pic, setPic] = useState(false);
+  useEffect(() => {
+    let live = true;
+    const im = new Image();
+    im.onload = () => { if (live) setPic(true); };
+    im.src = ASSET(dark.src);
+    return () => { live = false; };
+  }, [dark.src]);
   return (
-    <motion.section className="xag-sec xag-room" data-room="dark" {...OPEN}>
+    <section className="xag-sec xag-room" data-room="dark">
       <div className="xag-wrap">
         <div className="xag-room-h">
           <div><h2 className="xag-h2 xag-room-t">{s.h2}</h2><Kick className="under">{s.eyebrow}</Kick></div>
           <div className="xag-room-r">{s.lede && <p className="xag-lede">{s.lede}</p>}<Acts list={s.actions} big id="agents-crew.room" /></div>
         </div>
-        <figure className="xag-shot" data-night={night || undefined}>
+        {/* inertia-drag: the window is thrown in from the right and settles; grab it and throw it sideways, it springs home */}
+        <Enter kind="inertia-drag">
+        <motion.figure className="xag-shot xag-throw" data-night={night || undefined} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.32} dragTransition={{ bounceStiffness: 260, bounceDamping: 22 }}>
           <div className="xag-shot-bar">
             <span className="xag-dots" aria-hidden="true"><i /><i /><i /></span>
             <span className="xag-url x-mono"><i className="xag-live" aria-hidden="true" />{s.url}</span>
@@ -265,34 +333,38 @@ function Room({ s, agents }) {
               <span aria-hidden="true">{night ? '☾' : '☀'}</span><span className="xag-night-t">{night ? 'Dark' : 'Light'}</span>
             </button>
           </div>
-          <div className="xag-shot-i">
+          <div className="xag-shot-i" data-pic={pic || undefined}>
             {s.sketch && (
               <div className="xag-sk" aria-hidden="true">
-                <aside>{agents.slice(0, 7).map((a, i) => <span key={a.name} data-on={a.name === s.sketch.to || undefined}><Face a={a} i={i} n={agents.length} />{a.name}</span>)}</aside>
+                <aside>{agents.slice(0, 7).map((a) => <span key={a.name} data-on={a.name === s.sketch.to || undefined}><i className="xag-sk-dot" />{a.name}</span>)}</aside>
                 <div className="xag-sk-m">
-                  <p className="xag-sk-h"><Face a={agents[to] || agents[0]} i={Math.max(0, to)} n={agents.length} />{s.sketch.to}</p>
+                  <div className="xag-sk-h"><p>{s.sketch.to}</p>{who.role && <span>{who.role}</span>}</div>
                   <ul>{s.sketch.runs.map((r, i) => <li key={r} style={{ '--i': i }}><span>{r}</span><em className="x-mono">done</em></li>)}</ul>
                   <p className="xag-sk-box">{s.sketch.to}</p>
                 </div>
               </div>
             )}
-            <span className="xag-shot-p" role="img" aria-label={shot.alt} style={{ backgroundImage: `url(${ASSET(shot.src)})` }} />
+            <span className="xag-shot-p" role="img" aria-label={shot.alt} style={pic ? { backgroundImage: `url(${ASSET(shot.src)})` } : undefined} />
           </div>
-        </figure>
+        </motion.figure>
+        </Enter>
         <p className="xag-cap x-mono">{s.caption}</p>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
 /* ---------- SDK: the console ---------- */
-function Console({ c }) {
+/* drive: null = the conversation plays by itself (the hero step); a number = the split's scrolling step sets how many
+   turns are on screen, forwards and back */
+function Console({ c, drive = null }) {
   const box = useRef(null);
   const live = useInView(box, { amount: 0.15 }); // starts as soon as it shows, so the phone's first screen moves too
   const calm = useCalm();
   const [shown, setShown] = useState(c.turns.length);
   const [think, setThink] = useState(false);
   useEffect(() => {
+    if (drive !== null) { setThink(false); setShown(Math.min(c.turns.length, drive)); return; }
     if (!live || calm) { setShown(c.turns.length); setThink(false); return; }
     let i = 0, t = 0;
     const next = () => {
@@ -304,7 +376,7 @@ function Console({ c }) {
     setShown(0);
     t = setTimeout(next, 600);
     return () => clearTimeout(t);
-  }, [live, calm, c.turns]);
+  }, [live, calm, c.turns, drive]);
   const holder = think ? 'enso' : shown ? c.turns[shown - 1].who : 'you';
   return (
     <figure className="xag-con" ref={box}>
@@ -366,42 +438,46 @@ function Head({ s, className = '' }) {
   );
 }
 
-/* three pillars as sheets that stack over each other as you scroll */
-function Sheets({ s }) {
-  return (
-    <section className="xag-sec xag-sheets">
-      <div className="xag-wrap xag-sheets-g">
-        <Head s={s} className="xag-sheets-h" />
-        <ol className="xag-sheets-l">
-          {s.cards.map((c, i) => (
-            <li key={c.title} style={{ '--i': i }}>
-              <div className="xag-sheet-top"><span className="xag-sheet-n x-mono">{c.n}</span><h3 className="xag-h3">{c.title}</h3></div>
-              <p className="xag-body">{c.text}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/* the spec sheet: the parts, laid out like a product's tech specs */
+/* the parts, one open at a time: the titles are the index, the open one shows its paragraph, and the contour beside it
+   is redrawn from that part's own numbers (its place and its length), so the picture changes with the part */
 function Spec({ s, seed }) {
+  const [open, setOpen] = useState(0);
+  const n = s.cards.length;
+  const pad = (k) => String(k).padStart(2, '0');
+  const key = (e, i) => {
+    const to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
+    if (to === undefined) return;
+    e.preventDefault();
+    const k = (to + n) % n;
+    e.currentTarget.closest('ol').querySelectorAll('button')[k]?.focus();
+  };
   return (
     <section className="xag-sec xag-spec">
       <div className="xag-wrap xag-spec-g">
         <div className="xag-spec-h">
           <Head s={s} />
-          <div className="xag-spec-art" aria-hidden="true"><Sigil seed={seed} data={s.cards.map((c) => c.text.length)} className="xag-sigil" /></div>
+          {/* inertia-drag: the contour tile is thrown in and settles; grab it and throw it, it springs back to its place */}
+          <Enter kind="inertia-drag">
+            <motion.div className="xag-spec-art xag-throw" aria-hidden="true" drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.32} dragTransition={{ bounceStiffness: 260, bounceDamping: 22 }}>
+              <Sigil seed={seed + '#' + open} data={[s.cards[open].text.length, open + 1, n]} className="xag-sigil" />
+              <span className="xag-spec-tag x-mono">{pad(open + 1)} / {pad(n)}</span>
+            </motion.div>
+          </Enter>
         </div>
-        <dl className="xag-spec-l">
+        <ol className="xag-spec-l">
           {s.cards.map((c, i) => (
-            <div key={c.title}>
-              <dt><span className="x-mono">{String(i + 1).padStart(2, '0')}</span>{c.title}</dt>
-              <dd className="xag-body">{c.text}</dd>
-            </div>
+            <li key={c.title} data-open={i === open || undefined}>
+              <h3 className="xag-spec-t">
+                <button type="button" id={'xag-part-' + i} aria-expanded={i === open} aria-controls={'xag-part-p' + i} onClick={() => setOpen(i)} onKeyDown={(e) => key(e, i)}>
+                  <span className="x-mono">{pad(i + 1)}</span><span className="xag-spec-tt">{c.title}</span><i aria-hidden="true" />
+                </button>
+              </h3>
+              <div className="xag-spec-p" id={'xag-part-p' + i} role="region" aria-labelledby={'xag-part-' + i} inert={i !== open ? true : undefined}>
+                <div><p className="xag-body">{c.text}</p></div>
+              </div>
+            </li>
           ))}
-        </dl>
+        </ol>
       </div>
     </section>
   );
@@ -411,18 +487,20 @@ function Spec({ s, seed }) {
 function Code({ s }) {
   const src = s.lines.map((l) => l.map((x) => x[1]).join('')).join('\n');
   return (
-    <motion.section className="xag-sec xag-code" data-room="dark" {...OPEN}>
+    // invert-flash: the graphite room arrives as its negative for a beat, then turns dark
+    <Enter as="section" kind="invert-flash" className="xag-sec xag-code" data-room="dark">
       <div className="xag-wrap xag-code-g">
         <div className="xag-code-h"><Head s={s} /><Acts list={s.actions} id="agents-sdk.code" /></div>
         <CodeBlock code={src} label={s.lang} className="xag-pre" />
       </div>
-    </motion.section>
+    </Enter>
   );
 }
 
-function Close({ s, get, ask, install }) {
+function Close({ s, get, ask }) {
   return (
-    <section className="xag-sec xag-close">
+    // count-roll: as the close arrives, the licence's version rolls up to its figure
+    <Enter as="section" kind="count-roll" className="xag-sec xag-close">
       <div className="xag-wrap">
         <h2 className="xag-close-t">{s.h2}</h2>
         <div className="xag-close-g">
@@ -430,25 +508,19 @@ function Close({ s, get, ask, install }) {
             {s.lede && <p className="xag-lede">{s.lede}</p>}
             <Acts list={[...(ask || []), ...s.actions]} big solid={!!(ask && ask.length)} id="agents-sdk.close" />
           </div>
-          {install && install.length > 1 && (
-            <figure className="xag-term">
-              <div className="xag-pre-bar"><span className="xag-dots" aria-hidden="true"><i /><i /><i /></span></div>
-              <Install lines={install} />
-            </figure>
-          )}
         </div>
         {get && (
           <div className="xag-get">
             <div><h3 className="xag-get-t">{get.h2}</h3><p>{get.lede}</p></div>
             <div className="xag-get-c">
-              {get.license && <span className="xag-chip x-mono"><span>{get.license[0]}</span> {get.license[1]}</span>}
+              {get.license && <span className="xag-chip x-mono"><span>{get.license[0]}</span> <Roll9 text={get.license[1]} /></span>}
               {get.github && <A to={get.github.href} className="xag-chip x-mono">{get.github.label} ↗</A>}
               {get.actions.map((a) => <A key={a.href} to={a.href} className="xag-tl"><span>{a.label}</span><Chev /></A>)}
             </div>
           </div>
         )}
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -457,23 +529,53 @@ function Sdk({ doc }) {
   const by = (k) => doc.sections.filter((s) => s.k === k);
   const nums = [doc.sections.length, ...(f.console ? f.console.turns.map((t) => t.text.length) : []), f.through.length];
   const [lead, ...rest] = f.lede;
+  const [step, setStep] = useState(0);
+  const pil = by('pillars')[0];
+  const term = f.install.length > 1;
+  // the steps: the headline (the console plays itself) · the install line (the still side turns into the terminal) ·
+  // the three pillars (each one puts one more turn of the conversation on screen, and takes it off scrolling back)
+  const steps = [
+    <><Title f={f} />{lead && <p className="xag-lede">{lead}</p>}<Acts list={f.actions} big thumb id="agents-sdk.hero" /></>,
+    <Enter kind="spring-snap">
+      {rest.map((p) => <p key={p} className="xag-lede xag-lede-b">{p}</p>)}
+      {f.note && <p className="xag-note">{f.note}</p>}
+      {f.through.length > 0 && <p className="xag-thru"><span className="x-mono">{f.through[0]}</span>{f.through.slice(1).map((t) => <span key={t} className="xag-thru-c">{t}</span>)}</p>}
+    </Enter>,
+    ...(pil ? pil.cards.map((c, i) => (
+      <>
+        {i === 0 && <Head s={pil} className="xag-pil-h" />}
+        <div className="xag-pil">
+          <span className="xag-sheet-n x-mono">{c.n}</span>
+          <h3 className="xag-h3">{c.title}</h3>
+          <p className="xag-body">{c.text}</p>
+        </div>
+      </>
+    )) : []),
+  ];
+  const view = step === 1 && term ? 'term' : 'con';
+  const drive = step >= 2 ? step - 1 : null;
   return (
     <>
-      <Stage from={1.03} low="6%"
+      {/* order: the split (headline, install, the three pillars) → the code room → the parts → the close */}
+      <Split kind="sdk" step={step} setStep={setStep} steps={steps}
         art={<Sigil seed={doc.route} data={nums} className="xag-sigil" />}
-        first={<><Title f={f} />{lead && <p className="xag-lede xag-after" style={{ '--d': '0.35s' }}>{lead}</p>}<Acts list={f.actions} big thumb id="agents-sdk.hero" /></>}
-        second={<>
-          {rest.map((p) => <p key={p} className="xag-lede xag-lede-b">{p}</p>)}
-          {f.install.length > 1 && <Install lines={f.install} />}
-          {f.note && <p className="xag-note">{f.note}</p>}
-          {f.through.length > 0 && <p className="xag-thru"><span className="x-mono">{f.through[0]}</span>{f.through.slice(1).map((t) => <span key={t} className="xag-thru-c">{t}</span>)}</p>}
-        </>}
-        object={f.console ? <Console c={f.console} /> : null}
+        still={
+          <div className="xag-views" data-view={view}>
+            {f.console && <div className="xag-view xag-view-con" inert={view !== 'con' ? true : undefined}><Console c={f.console} drive={drive} /></div>}
+            {term && (
+              <div className="xag-view xag-view-term" inert={view !== 'term' ? true : undefined}>
+                <figure className="xag-term">
+                  <div className="xag-pre-bar"><span className="xag-dots" aria-hidden="true"><i /><i /><i /></span></div>
+                  <Install lines={f.install} />
+                </figure>
+              </div>
+            )}
+          </div>
+        }
       />
-      {by('pillars').map((s, i) => <Sheets key={'p' + i} s={s} />)}
-      {by('parts').map((s, i) => <Spec key={'s' + i} s={s} seed={doc.route + '#parts'} />)}
       {by('code').map((s, i) => <Code key={'c' + i} s={s} />)}
-      {by('close').map((s, i) => <Close key={'x' + i} s={s} get={i === 0 ? by('get')[0] : null} ask={f.actions.slice(0, 1)} install={f.install} />)}
+      {by('parts').map((s, i) => <Spec key={'s' + i} s={s} seed={doc.route + '#parts'} />)}
+      {by('close').map((s, i) => <Close key={'x' + i} s={s} get={i === 0 ? by('get')[0] : null} ask={f.actions.slice(0, 1)} />)}
       {!by('close').length && by('get').map((g, i) => <Close key={'g' + i} s={{ h2: '', actions: [] }} get={g} />)}
     </>
   );

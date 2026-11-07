@@ -3,24 +3,23 @@
 // Goal: see Hanzo's measured results, check how each number was taken, and start building
 // CTA: Start on Hanzo Cloud -> https://cloud.hanzo.ai (hero with the thumb bar, and the closing room)
 // Metric: cta_click (data-cta="benchmarks.hero", "benchmarks.close")
-// Signature: Stage. The GPQA frontier starts large under the headline and, as you scroll, settles into its place beside its caption while its points plot themselves and read their records out one by one.
+// Signature: race (Live race). Right under the h1, lanes race in real time at Hanzo's real ratios, and the visitor picks what races: Zen 6's three builds prefilling or decoding the same tokens at their measured rates (the fastest takes one second), D-LSA against full attention at a chosen context length (8K to 10M, its measured speed-up), or the five agent CodeRace scenarios at their latencies' ratios. Each lane counts live and reads Hanzo's own figure at the finish.
+// Entrances: sticky-stack (the three figures), glitch-in (Zen 6 room), swing-door (the GPQA frontier), line-draw (Enso's frontier figure), conveyor (Kai's duel tiles).
 // Beyond: Your suites. Tick the suites that look like your work and the board's summary re-adds itself for just those (how many Kai won, mean accuracy Kai against Jev), with the same arithmetic as Hanzo's eleven-suite mean.
 /* Benchmarks, v2: a model launch told as a story (anthropic.com's launch pages, apple.com's chapters). One idea a
    screen; every full table, method and run opens in a sheet, so the page reads in figures and the detail is a press away.
-   Supporting (three): headlines that rise out of their masks; Kai against Jev, the "try it" board whose eleven rows glide
-   into their new order when you switch the metric, the view or the sort; and pinned chapter scenes (Kai beyond the
-   suites, then Zen 6 in the black room, where scrolling sweeps the context dial from 8K to 10M tokens).
-   V2: 8/10 round 2: page-local (+) sheets fixed to the viewport, hidden and inert when closed (no sideways shove, Esc closes and returns focus, no shadow band); long lists fold behind (+) counts and phone panels swipe (29→25 screens desktop, 47→34 phone); hero lede and ask arrive after the h1; opaque sub-nav; dial number in a fixed box (no shift); CodeBlock command; no colour emoji; no hydration diff.
+   Supporting: the h1 alone cuts in from its line masks (the page's one reveal); Kai against Jev, the "try it" board whose
+   eleven rows glide into their new order when you switch the metric, the view or the sort; plain chapters (no pinning,
+   no scroll scrub). Order: statement and race, figures, Zen 6, the GPQA frontier, Enso, Kai, platform, methods, shelf.
+   V2: 8/10 signature race: a live race under the h1 at the real ratios, visitor-picked (prefill, decode, D-LSA by context length, agent CodeRace); sticky stage, pinned chapters and scroll wipes removed; five entrances; sheets stay fixed and inert when closed.
    Every word and figure is Hanzo's (hanzo.ai/benchmarks and its research API). */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { EASE } from '../ui';
 import { A, More, Cta, DataTable, CodeBlock } from '../kit';
 import MaskLines from '../v2/MaskLines';
-import PinScenes from '../v2/PinScenes';
 import Sheet from './benchmarks/Sheet';
 import NoJs from '../NoJs';
-import SceneWipe from '../v2/SceneWipe';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import * as D from './benchmarksData';
@@ -36,17 +35,6 @@ function useSeen(amount = 0.3) {
   return [ref, seen];
 }
 
-function useWide() {
-  const [wide, setWide] = useState(true);
-  useEffect(() => {
-    const m = matchMedia('(min-width: 901px)');
-    const f = () => setWide(m.matches);
-    f();
-    m.addEventListener('change', f);
-    return () => m.removeEventListener('change', f);
-  }, []);
-  return wide;
-}
 
 function Seg({ opts, val, set, id, label }) {
   const keys = (e) => {
@@ -217,15 +205,9 @@ const HEAD = [
   ['~3,665 tok/s', 'Speed · Prefill · Zen 6 on NVIDIA Grace-Blackwell', 'Decode ~70 tok/s · 141.2 tok/s with DFlash2 · 46.29× prefill & 78.57× decode at 1M context (99.8% KV pruned) · measured by Hanzo on Nov 4, 2026.', '#zen'],
 ];
 
-const NOJS = '<style>.xbm-stage-aside>*{opacity:1!important;transform:none!important}.xbm-stage.run{height:auto!important}.xbm-stage.run .xbm-stage-stick{position:static!important;height:auto!important;overflow:visible!important;padding:120px 0 80px}.xbm-stage.run .xbm-stage-head{position:static!important;opacity:1!important;transform:none!important}.xbm-stage.run .xbm-stage-grid{height:auto!important;margin-top:72px;padding-top:0!important}.xbm-stage-cap,.xbm-stage-obj{opacity:1!important;transform:none!important}.xbm-pt circle:first-child{opacity:1!important;transform:none!important}.xbm-bar b{transform:scaleX(var(--f))!important}.xbm-stack{gap:32px}.xbm-stack-i{grid-area:auto!important;opacity:1!important;transform:none!important}.xbm-mb,.xbm-b477,.xbm-b477-l{opacity:1!important;transform:none!important}.xbm-facets{height:auto!important;opacity:1!important}.xbm-sc{padding-bottom:0!important}.xbm-read{position:static!important;display:block!important;opacity:1!important;transform:none!important;width:auto!important;max-width:none!important;margin:0!important;padding:6px 0!important;background:none!important;color:inherit!important;box-shadow:none!important;border-top:1px solid rgba(0,0,0,.08)}.xbm-read span{color:#6e6e73!important}</style>';
+const NOJS = '<style>.xbm-stage-aside>*{opacity:1!important;transform:none!important}.xbm-pt circle:first-child{opacity:1!important;transform:none!important}.xbm-bar b{transform:scaleX(var(--f))!important}.xbm-trk-bar b{transform:none!important}.xbm-ix-wrap{height:auto!important}.xbm-mb,.xbm-b477,.xbm-b477-l{opacity:1!important;transform:none!important}.xbm-facets{height:auto!important;opacity:1!important}.xbm-sc{padding-bottom:0!important}.xbm-read{position:static!important;display:block!important;opacity:1!important;transform:none!important;width:auto!important;max-width:none!important;margin:0!important;padding:6px 0!important;background:none!important;color:inherit!important;box-shadow:none!important;border-top:1px solid rgba(0,0,0,.08)}.xbm-read span{color:#6e6e73!important}</style>';
 
-function Stage() {
-  const ref = useRef(null), stick = useRef(null), head = useRef(null), slot = useRef(null);
-  const wide = useWide();
-  const calm = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-  const [ready, setReady] = useState(false);
-  useEffect(() => setMounted(true), []);
+function Hero() {
   // the lede, meta and ask arrive after the h1 has cut in (same wait as MaskLines: the arrival curtain lifts first)
   const [inn, setInn] = useState(false);
   useEffect(() => {
@@ -235,45 +217,11 @@ function Stage() {
     const t = setTimeout(go, 4000);
     return () => { removeEventListener('hz-arrived', go); clearTimeout(t); };
   }, []);
-  const run = !(mounted && (calm || !wide));
-  const S = useMotionValue(1), DX = useMotionValue(0), DY = useMotionValue(0);
-  useEffect(() => {
-    if (!mounted || !run) return;
-    const fit = () => {
-      const st = stick.current, sl = slot.current, hd = head.current;
-      if (!st || !sl || !hd) return;
-      const vw = st.clientWidth, w = sl.offsetWidth, h = sl.offsetHeight;
-      const s = Math.min(1.6, (vw * 0.9) / w);
-      const top = hd.offsetTop + hd.offsetHeight + 40;
-      S.set(s);
-      DX.set(vw / 2 - (sl.offsetLeft + w / 2));
-      DY.set(top + (h * s) / 2 - (sl.offsetTop + h / 2));
-      setReady(true);
-    };
-    fit();
-    const ro = new ResizeObserver(fit);
-    ro.observe(stick.current);
-    return () => ro.disconnect();
-  }, [mounted, run, S, DX, DY]);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const k = useTransform(p, [0, 0.58], [0, 1], { clamp: true });
-  const scale = useTransform([k, S], ([v, s]) => s + (1 - s) * (1 - (1 - v) ** 2));
-  const x = useTransform([k, DX], ([v, d]) => d * (1 - v) ** 2);
-  const y = useTransform([k, DY], ([v, d]) => d * (1 - v) ** 2);
-  // function transforms on purpose: Motion hands range-mapped scroll opacity to a ScrollTimeline, which reads this
-  // sticky runway's range wrong (the headline faded back in); a function keeps the mapping in JS
-  const ramp = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
-  const headO = useTransform(p, (v) => 1 - ramp(v, 0.04, 0.24));
-  const headY = useTransform(p, (v) => -120 * ramp(v, 0, 0.3));
-  const capO = useTransform(p, (v) => ramp(v, 0.4, 0.6));
-  const capY = useTransform(p, (v) => 56 * (1 - ramp(v, 0.4, 0.6)));
-  const reported = D.GPQA.filter((q) => q.kind === 'reported');
   return (
-    <section ref={ref} className={'xbm-stage ' + (run ? 'run' : 'flat')} data-ready={ready ? 'true' : undefined} aria-labelledby="xbm-h1">
-      {/* JS off: the stage lies flat, and nothing that starts hidden or offset stays that way */}
+    <section className="xbm-hero" aria-labelledby="xbm-h1">
+      {/* JS off: nothing that starts hidden or offset stays that way */}
       <NoJs css={NOJS} />
-      <div ref={stick} className="xbm-stage-stick">
-        <motion.div ref={head} className="pf-wrap xbm-stage-head" data-in={inn ? 'true' : undefined} style={run ? { opacity: headO, y: headY } : undefined}>
+      <div className="pf-wrap xbm-stage-head" data-in={inn ? 'true' : undefined}>
           <div className="xbm-stage-hgrid">
             <MaskLines as="h1" id="xbm-h1" className="pf-display xbm-h1" lines={['Intelligence,', 'cost and speed,', 'each measured.']} amount={0.1} />
             <div className="xbm-stage-aside">
@@ -286,24 +234,34 @@ function Stage() {
               </div>
             </div>
           </div>
-        </motion.div>
+      </div>
+      {/* the signature: what was measured, raced live at its real ratios; the visitor picks what races */}
+      <RaceTrack />
+    </section>
+  );
+}
+
+/* ---------- the GPQA frontier: Enso's accuracy against cost, its points reading themselves ---------- */
+function Frontier() {
+  const reported = D.GPQA.filter((q) => q.kind === 'reported');
+  return (
+    <section className="pf-sec xbm-front-s" aria-labelledby="xbm-front-h">
         <div className="pf-wrap xbm-stage-grid">
-          <motion.div className="xbm-stage-cap" style={run ? { opacity: capO, y: capY } : undefined}>
-            <h2 className="pf-head">A New Pareto Frontier of Intelligence</h2>
+          <div className="xbm-stage-cap">
+            <h2 className="pf-head" id="xbm-front-h">A New Pareto Frontier of Intelligence</h2>
             <p className="pf-body">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
             <p className="xbm-src">
               <span className="xbm-key router">Enso</span><span className="xbm-key single">single model, same 198 questions</span><span className="xbm-key reported">reported:</span>
               {reported.map((q, i) => <span key={q.name}><A to={q.src}>{q.name}</A>{i < reported.length - 1 ? ', ' : ''}</span>)}
             </p>
-          </motion.div>
-          <div ref={slot} className="xbm-stage-slot">
-            <motion.figure className="pf-obj xbm-stage-obj" style={run ? { scale, x, y } : undefined}>
+          </div>
+          <div className="xbm-stage-slot">
+            <figure className="pf-obj xbm-stage-obj">
               <Scatter pts={D.GPQA} x0={0.7} x1={62} y0={74} y1={100} yt={[75, 80, 85, 90, 95, 100]} xt={[[1, '$1'], [3, '$3'], [10, '$10'], [30, '$30']]} w={640} h={400}
-                xLab="cheaper ← $ per 1,000 questions → dearer" yLab="GPQA Diamond %" auto labels amount={0.1} lead={900} title="GPQA Diamond: accuracy against dollars per 1,000 questions" />
-            </motion.figure>
+                xLab="cheaper ← $ per 1,000 questions → dearer" yLab="GPQA Diamond %" auto labels amount={0.3} lead={900} title="GPQA Diamond: accuracy against dollars per 1,000 questions" />
+            </figure>
           </div>
         </div>
-      </div>
     </section>
   );
 }
@@ -317,7 +275,7 @@ function Figures() {
           {HEAD.map(([v, k, d, to]) => (
             <li key={v}>
               <L to={to} className="xbm-fig">
-                <MaskLines as="span" className="xbm-fig-v" lines={[v]} amount={0.6} />
+                <span className="xbm-fig-v">{v}</span>
                 <span className="xbm-fig-t"><b>{k}</b><span>{d}</span></span>
                 <i aria-hidden="true">→</i>
               </L>
@@ -330,7 +288,7 @@ function Figures() {
 }
 
 /* ---------- the rail: products, scroll-spy, and a jump-to search ---------- */
-const RAIL = [['enso', 'Enso'], ['kai', 'Kai'], ['zen', 'Zen 6'], ['harness', 'Agent harness'], ['platform', 'Agent platform'], ['methods', 'Methods'], ['all', 'Every benchmark']];
+const RAIL = [['zen', 'Zen 6'], ['enso', 'Enso'], ['kai', 'Kai'], ['harness', 'Agent harness'], ['platform', 'Agent platform'], ['methods', 'Methods'], ['all', 'Every benchmark']];
 const JUMP = D.PAGES.flatMap(([prod, , list]) => list.map(([t, to]) => ({ t, to, prod })));
 
 function Rail() {
@@ -433,7 +391,7 @@ function Enso() {
     <section className="pf-sec xbm-enso" id="enso">
       <div className="pf-wrap xbm-enso-g">
         <div className="xbm-enso-copy">
-          <MaskLines as="h2" className="pf-head" lines={['Enso on the boards', 'it was run on.']} />
+          <h2 className="pf-head">Enso on the boards it was run on.</h2>
           <p className="xbm-cap">Enso · intelligence per dollar</p>
           <p className="pf-body">Accuracy against what the run cost at list prices, on a log axis, for each board where Enso’s router is on the frontier. Every point is a research run, read when the page opens, and its cost is the tokens it records on the whole question set at the price list’s rate for its own model id. The dashed line joins the runs no other run beats on both.</p>
           <div className="xbm-opens">
@@ -449,6 +407,8 @@ function Enso() {
           </div>
         </div>
         <figure id="frontier" className="pf-obj xbm-enso-obj">
+          {/* line-draw entrance: the figure's outline draws itself, then it fills (see .xbm-ld) */}
+          <svg className="xbm-ld" aria-hidden="true"><rect x="0" y="0" width="100%" height="100%" rx="24" pathLength="1" /></svg>
           <figcaption className="xbm-obj-h">
             <span className="xbm-obj-t">The frontier, one benchmark at a time</span>
             <span className="xbm-lbl">Benchmark</span>
@@ -797,20 +757,7 @@ function VisPrice({ on }) {
 }
 const KAI_VIS = [VisYesNo, VisTrolley, VisCode, VisPrice];
 
-function Stack({ at, list, progress }) {
-  return (
-    <div className="xbm-stack">
-      {list.map((V, i) => (
-        <div key={i} className="xbm-stack-i" data-on={i === at} aria-hidden={i !== at} inert={i !== at}>
-          <V on={i === at} progress={progress} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function KaiMore() {
-  const wide = useWide();
   const chapters = [
     {
       title: 'Yes or no, read from the state',
@@ -859,14 +806,32 @@ function KaiMore() {
       </>,
     },
   ];
+  return <Chapters className="xbm-kaimore" label="Kai" chapters={chapters} list={KAI_VIS} />;
+}
+
+/* Plain chapters: each one a quick section of its own (copy beside its visual), no pinning and no scroll scrub.
+   A chapter's visual starts its own walk when it is reached. */
+function Chapter({ c, V, i, still }) {
+  const [ref, seen] = useSeen(0.25);
   return (
-    <PinScenes
-      className="xbm-kaimore"
-      label="Kai"
-      chapters={chapters}
-      per={60}
-      visual={(at, progress) => (wide ? <Stack at={at} list={KAI_VIS} progress={progress} /> : (() => { const V = KAI_VIS[at]; return <V on />; })())}
-    />
+    <article ref={ref} className={'xbm-ch' + (i & 1 ? ' flip' : '')}>
+      <div className="xbm-ch-t">
+        {c.title && <h3 className="pf-head">{c.title}</h3>}
+        {c.kicker && <p className="pf-kick xbm-ch-cap">{c.kicker}</p>}
+        {c.body}
+      </div>
+      <div className="xbm-ch-v"><V on={seen} progress={still} /></div>
+    </article>
+  );
+}
+function Chapters({ chapters, list, className = '', label, id, dark }) {
+  const still = useMotionValue(0.5);
+  return (
+    <section id={id} className={'pf-sec xbm-chs ' + className} aria-label={label} data-room={dark ? 'dark' : undefined}>
+      <div className="pf-wrap">
+        {chapters.map((c, i) => <Chapter key={i} c={c} V={list[i]} i={i} still={still} />)}
+      </div>
+    </section>
   );
 }
 
@@ -1004,8 +969,6 @@ function VisSpeed({ on }) {
 const ZEN_VIS = [VisHW, VisDial, VisSpeed];
 
 function Zen() {
-  const wide = useWide();
-  const still = useMotionValue(0.5);
   const chapters = [
     {
       kicker: 'Zen 6 · speed on our own hardware & Latent Sparse Attention', title: <span className="pf-moment xbm-zen-n">~3,665 tok/s</span>,
@@ -1034,18 +997,7 @@ function Zen() {
       </>,
     },
   ];
-  return (
-    <SceneWipe className="xbm-zenroom" label="Zen 6" tone="#000">
-    <PinScenes
-      id="zen"
-      className="xbm-zen"
-      label="Zen 6"
-      chapters={chapters}
-      per={90}
-      visual={(at, progress) => (wide ? <Stack at={at} list={ZEN_VIS} progress={progress} /> : (() => { const V = ZEN_VIS[at]; return <V on progress={still} />; })())}
-    />
-    </SceneWipe>
-  );
+  return <Chapters id="zen" className="xbm-zen xbm-zenroom" label="Zen 6" chapters={chapters} list={ZEN_VIS} dark />;
 }
 
 /* ---------- 8. Agent harness ---------- */
@@ -1096,10 +1048,12 @@ function Race() {
     if (calm) { p.forEach((m) => m.set(1)); return; }
     p.forEach((m) => m.set(0));
     setRunning(true);
+    // real ratios: the slowest lane takes 6s and every other lane its own latency's share of that
+    const T = 6, dur = (ms) => Math.max(0.0001, (ms / sc.trad.ms) * T);
     ctl.current = [
-      animate(p[0], 1, { duration: 0.1, ease: 'linear' }),
-      animate(p[1], 1, { duration: 1.5, ease: 'linear' }),
-      animate(p[2], 1, { duration: 6, ease: 'linear', onUpdate: (v) => setStepI(Math.min(sc.trad.steps.length - 1, Math.floor(v * sc.trad.steps.length))), onComplete: () => setRunning(false) }),
+      animate(p[0], 1, { duration: dur(sc.hanzo.ms), ease: 'linear' }),
+      animate(p[1], 1, { duration: dur(sc.rag.ms), ease: 'linear' }),
+      animate(p[2], 1, { duration: T, ease: 'linear', onUpdate: (v) => setStepI(Math.min(sc.trad.steps.length - 1, Math.floor(v * sc.trad.steps.length))), onComplete: () => setRunning(false) }),
     ];
   };
   useEffect(() => { if (seen) run(); }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -1164,6 +1118,114 @@ function Race() {
   );
 }
 
+/* ---------- the signature: a live race, at the real ratios, of what the visitor picks ----------
+   Prefill and decode race Zen 6's three builds to the same token count in real time (the fastest takes one second, the
+   rest their own rate's share). Latent Sparse Attention races D-LSA against full attention at a chosen context length
+   (full attention takes 6s, D-LSA 6s divided by its measured speed-up). The agent race runs Hanzo's five CodeRace
+   scenarios at their latencies' ratios. Every lane's figure is Hanzo's own, read out when it finishes. Reduced motion:
+   every lane rests at its finish; picking still works. */
+const TRACKS = ['Prefill, tokens a second', 'Decode, tokens a second', 'Latent Sparse Attention (D-LSA) prefill speedup', 'Latent Sparse Attention (D-LSA) decode speedup', 'Agent Code Intelligence: The Race'];
+const n0 = (v) => Math.round(v).toLocaleString('en-US');
+const TONE = ['me', 'mid', 'slow'];
+
+function lanesFor(t, li) {
+  if (t < 2) {
+    const [lab, col] = t === 0 ? [1, 2] : [3, 4];
+    const top = Math.max(...D.HW.map((h) => h[col]));
+    return D.HW.map((h, i) => ({ name: h[0], secs: top / h[col], count: (v) => n0(v * top) + ' tokens', final: h[lab], tone: TONE[i] }));
+  }
+  const r = D.LSA[li], pre = t === 2, x = pre ? r[3] : r[5], T = 6;
+  return [
+    { k: 'D-LSA', name: r[1], secs: T / x, count: (v) => Math.round(v * 100) + '%', final: pre ? r[2] : r[4], tone: 'me' },
+    { k: 'Full Attention', name: 'against full attention', secs: T, count: (v) => Math.round(v * 100) + '%', final: '1.00×', tone: 'slow' },
+  ];
+}
+
+function TrackLane({ k, name, p, count, final, tone }) {
+  const txt = useTransform(p, (v) => (v >= 1 ? final : count(v)));
+  return (
+    <div className={'xbm-lane ' + tone}>
+      <div className="xbm-lane-h">
+        {k && <span className="xbm-badge">{k}</span>}
+        <span className="xbm-lane-n">{name}</span>
+        <span className="xbm-lane-f x-mono"><motion.strong>{txt}</motion.strong></span>
+      </div>
+      <i className="xbm-lane-bar xbm-trk-bar" aria-hidden="true"><motion.b style={{ scaleX: p }} /></i>
+    </div>
+  );
+}
+
+function RaceTrack() {
+  const [t, setT] = useState(0);
+  const [li, setLi] = useState(6);
+  const [running, setRunning] = useState(false);
+  const p = [useMotionValue(1), useMotionValue(1), useMotionValue(1)];
+  const box = useRef(null);
+  const seen = useInView(box, { once: true, amount: 0.3 });
+  const live = useInView(box, { amount: 0.05 });
+  const calm = useReducedMotion();
+  const ctl = useRef([]);
+  const lanes = t < 4 ? lanesFor(t, li) : [];
+  const run = (ls = lanes) => {
+    ctl.current.forEach((c) => c.stop());
+    if (calm || !ls.length) { p.forEach((m) => m.set(1)); setRunning(false); return; }
+    p.forEach((m) => m.set(0));
+    setRunning(true);
+    const end = Math.max(...ls.map((l) => l.secs));
+    ctl.current = ls.map((l, i) => animate(p[i], 1, { duration: l.secs, ease: 'linear', onComplete: l.secs === end ? () => setRunning(false) : undefined }));
+  };
+  // it runs when reached, again on every pick, and again each time it comes back into view; off screen it rests at the finish
+  useEffect(() => {
+    if (seen && live) run();
+    else { ctl.current.forEach((c) => c.stop()); p.forEach((m) => m.set(1)); setRunning(false); }
+  }, [seen, live, t, li]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => ctl.current.forEach((c) => c.stop()), []);
+  const keys = (e) => {
+    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (!k) return;
+    e.preventDefault();
+    const n = (t + k + TRACKS.length) % TRACKS.length;
+    setT(n);
+    document.getElementById('xbm-trk-' + n)?.focus();
+  };
+  return (
+    <div className="pf-wrap xbm-trk" id="race" ref={box}>
+      <div className="xbm-race-tabs xbm-trk-tabs" role="tablist" aria-label="Race" onKeyDown={keys}>
+        {TRACKS.map((r, i) => (
+          <button key={r} id={'xbm-trk-' + i} type="button" role="tab" aria-selected={t === i} aria-controls={'xbm-trkp-' + i} tabIndex={t === i ? 0 : -1} onClick={() => setT(i)}>
+            {t === i && <motion.span layoutId="xbm-trk" className="xbm-race-bg" transition={SPRING} />}
+            <span>{r}</span>
+          </button>
+        ))}
+      </div>
+      {/* every race stays in the page; the picked one is shown */}
+      {TRACKS.slice(0, 4).map((r, i) => (
+        <div key={r} role="tabpanel" id={'xbm-trkp-' + i} aria-labelledby={'xbm-trk-' + i} hidden={t !== i} className="pf-obj xbm-arena xbm-trk-a">
+          <div className="xbm-arena-h">
+            <div>
+              <p className="xbm-lbl">{i < 2 ? 'Zen 6 · speed on our own hardware & Latent Sparse Attention' : 'Context length'}</p>
+              {i >= 2 && (
+                <ol className="xbm-dial-ticks xbm-trk-ticks" aria-label="Context length">
+                  {D.LSA.map((l, k) => <li key={l[0]}><button type="button" className={k === li ? 'on' : ''} aria-pressed={k === li} onClick={() => setLi(k)}>{l[0]}</button></li>)}
+                </ol>
+              )}
+            </div>
+            <button type="button" className="xbm-run-b" onClick={() => run()} disabled={running}>
+              <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">{running ? <path d="M13 8a5 5 0 1 1-1.5-3.5M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /> : <path d="M5 3.5v9l7-4.5z" fill="currentColor" />}</svg>
+              {running ? 'Racing...' : 'Run Race Simulation'}
+            </button>
+          </div>
+          {t === i && lanes.map((l, k) => <TrackLane key={t + '-' + li + '-' + k} {...l} p={p[k]} />)}
+          <p className="xbm-spd-f">{i < 2 ? 'the low end of a range is the bar' : 'against full attention'}</p>
+        </div>
+      ))}
+      <div role="tabpanel" id="xbm-trkp-4" aria-labelledby="xbm-trk-4" hidden={t !== 4}>
+        <Race />
+      </div>
+    </div>
+  );
+}
+
 function Graph() {
   const [ref, seen] = useSeen(0.4);
   // log scale: 0.063 ms against 5,357 ms
@@ -1218,7 +1280,6 @@ function Harness() {
             <PairPanel t="RepoBench-R" to="/benchmarks/repobench-r" foot="cross-file-first · test split · R@1" rows={[['dense retrieval', 18.8, 'typed links', 31.4]]} paired />
           </div>
         </div>
-        <Race />
       </div>
     </section>
   );
@@ -1242,7 +1303,7 @@ function Platform() {
       <div className="pf-wrap">
         <div className="xbm-plat-top">
           <div>
-            <MaskLines as="h2" className="pf-head" lines={['A dormant agent costs 477 bytes.']} />
+            <h2 className="pf-head">A dormant agent costs 477 bytes.</h2>
             <p className="xbm-cap">Agent platform · what an agent costs</p>
             <A to="/benchmarks/platform-bench" className="xbm-plat-fig">
               <b className="pf-moment">477 bytes</b>
@@ -1451,30 +1512,51 @@ function Shelf() {
 /* ---------- 12. the close: the one ask again, in the closing room ---------- */
 function Close() {
   return (
-    <SceneWipe className="xbm-close" tone="#0a0a0a">
+    <section className="xbm-close" data-room="dark" aria-labelledby="xbm-close-h">
       <div className="pf-wrap xbm-close-g">
-        <MaskLines as="h2" id="xbm-close-h" className="pf-display" lines={['Build on Hanzo Cloud']} />
+        <h2 id="xbm-close-h" className="pf-display">Build on Hanzo Cloud</h2>
         <div className="xbm-close-a">
           <Cta to="https://cloud.hanzo.ai" id="benchmarks.close">Start on Hanzo Cloud</Cta>
           <p className="xbm-close-n">Hanzo AI Cloud · <A to="/pricing">View Models &amp; Pricing</A></p>
         </div>
       </div>
-    </SceneWipe>
+    </section>
   );
+}
+
+/* Entrances: each main section enters once, its own way, when it first comes into view. The final state is written
+   first; the start state applies only under html.js before the section is reached (set on the DOM, not in React state,
+   so server and client render the same), and never under reduced motion. Transform, clip-path, filter and opacity only. */
+function useEnter(amount = 0.18) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.setAttribute('data-go', ''); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.setAttribute('data-go', ''); io.disconnect(); } }, { threshold: amount });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [amount]);
+  return ref;
+}
+function Enter({ kind, children, amount }) {
+  const ref = useEnter(amount);
+  return <div ref={ref} className="xbm-ent" data-ent={kind}>{children}</div>;
 }
 
 export default function Benchmarks() {
   return (
     <main className="xbm pf-r">
-      <Stage />
-      <Figures />
+      <Hero />
+      <Enter kind="sticky-stack"><Figures /></Enter>
       <Rail />
-      <Enso />
-      <Kai />
+      <Enter kind="glitch-in"><Zen /></Enter>
+      <Enter kind="swing-door"><Frontier /></Enter>
+      <Enter kind="line-draw" amount={0.12}><Enso /></Enter>
+      <Enter kind="conveyor"><Kai /></Enter>
       <Board />
       <KaiMore />
       <KaiTools />
-      <Zen />
       <Harness />
       <Platform />
       <Methods />
