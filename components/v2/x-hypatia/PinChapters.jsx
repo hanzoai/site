@@ -6,7 +6,7 @@
        look="left|right" total={6} onAt={(i) => …} className="xx-ch" />
    - Desktop (> 900px): the section is n screens tall; a sticky full-height stage holds the chapter text (one at a time;
      each title rises out of its mask) and the visual, which receives the active index. Dots jump to a chapter.
-   - Phone: the visual sticks under the header while the chapters scroll beneath it; the one at the middle is active.
+   - Phone (MASTER part 11, nothing floats over content): no pin; each chapter stacks as its words, then its own visual.
    - Every chapter's words (and its "01 / 06" counter) are in the HTML. Reduced motion: chapters swap without moving.
    Styles: PinChapters.css (prefix pc-). The visual is the page's own; size it to fill .pc-vis. */
 import { useEffect, useRef, useState } from 'react';
@@ -68,6 +68,7 @@ export default function PinChapters({ items, visual, label, look = 'left', total
                   <p className="pc-n v2-kick">{pad(i + 1)} / {pad(tot)}</p>
                   <h3 className="pc-t"><span>{t}</span></h3>
                   {typeof d === 'string' ? <p className="pc-d">{d}</p> : <div className="pc-d">{d}</div>}
+                  <div className="pc-vis-m" aria-hidden="true">{visual(i)}</div>
                 </article>
               ))}
             </div>

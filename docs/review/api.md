@@ -1,52 +1,56 @@
 # /api — James-eye review
 
-Verdict: 6/10
-First complaint: "The thing that's meant to be the hero is cut in half at the bottom of my screen, and there's a pill bar floating over the text."
+Verdict: 7/10
+First complaint: "Much better. But the button up top still says 'Try Hanzo' on the API page, and the base URL gets chopped off on my phone."
 
-Walked 7 Nov, page file at `4b53974` (`components/pages/ApiPage.jsx`, `ApiPage.css`, shared `v2/AppStage`, `AppScenes`, `v2/x-edison/AppLines`), on the 14:43 preview of main plus the Apps branches, judged against `docs/MASTER.md` and `docs/JAMES.md`.
-- **This build:** a 9-second first-screen film at 1470×801 and 375×812 with no input, hover and press on the primary, a full scroll pass at both widths, reduced motion, JS off and phone tap targets.
-- **The earlier `f44badd` walk:** the full moving walk, with the same layout, is where the phone layout-shift figure comes from.
+Walked 7 Nov, page file at `aea817e` (`components/pages/ApiPage.jsx`, `ApiPage.css`), on the 15:08 preview (main with the shared system `648b798`, plus the Apps branches), judged against `docs/MASTER.md` and `docs/JAMES.md`. The walk covered:
+- a 9-second first-screen film at 1470×801 and 375×812 with no input;
+- hover and press on the primary;
+- a full scroll pass at both widths;
+- a layout-shift pass at both widths: 12 s idle on the hero, then a slow scroll to the end;
+- reduced motion, JS off and phone tap targets.
 
-Stills: `review/api/desktop-walk.jpg`, `review/api/phone-walk.jpg`, `review/api/desktop-first-9s.jpg`.
+The page files did not change during the walk. Stills: `review/api/desktop-walk.jpg`, `review/api/phone-walk.jpg`, `review/api/desktop-first-9s.jpg`.
 
 ## What works
-- The idea is right. A big console types each endpoint after `https://api.hanzo.ai`, streams what it returns, and plays the real model film beside it (Enso, Koma, Iro…). Colour now comes only from those films: the page is monochrome and taste.py passes.
-- "How it fits together" is a real pinned scene: four chapters, the text holds while the panel changes.
-- The base URL in a black room is a strong moment. Copy confirms. "Copy as curl" exists.
-- Press scales .98, hover darkens, every desktop hover answers. JS off hides 0 of 39 text blocks. Reduced motion leaves 0 running. Parity: text 80/80, links 18/18.
+- **The first screen now sells.** A 52px headline, lede and "Get an API key, free" sit left of the live console. The console types the path after `https://api.hanzo.ai`, streams the answer and plays the model film (Enso, Zen…). It is in view at 1470×801 and moving within the first second.
+- **One focal point per screen,** with real rhythm: big console, medium headline, small captions.
+- **The chapter panes are real now:** the route list with its bearer line, client and downstream headers, the OpenAPI and client columns.
+- **The black room** has a styled endpoint list (no browser select), and Copy as curl confirms.
+- **The page ends on a Band:** "Every Hanzo capability answers under one base URL, behind one key." with the ask once more.
+- **Checks:**
+  - no labels over headings, no floating bar;
+  - layout shift 0 at both widths;
+  - JS off hides 1 of 35 text blocks, and reduced motion leaves 0 running;
+  - no phone target under 44px;
+  - taste.py passes;
+  - parity: text 80/80, links 18/18.
 
 ## Card check
-- `docs/coverage/api.md` does not exist, so the verdict is capped at 7. All 18 parts are missing a `Done here:` line.
+- `docs/coverage/api.md` does not exist, so the verdict is capped at 7. All 18 parts are missing a `Done here:` line. The header comment does now carry Persona, Goal, CTA and the metric.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** The words sell, but at 1470×801 the console starts at y≈690, so only its top strip shows. On the slow machine the h1 was the last thing to arrive (about 7 s), after the lede and buttons. Above the fold, the only mover is a caret.
-2. **One in, one out, or a document?** The chapters are a scene. "Core endpoints" is a 15-row accordion list, a document, though the detail opens on click.
-3. **A real visual object in every section?** Mostly. The chapter panes are partly grey bars standing in for UI ("One key, one bill" is a list of stripes), not real product.
-4. **One ask, in the sticky header?** No. The header says "Try Hanzo", but the page's ask is "Get an API key, free". That ask rides in a floating pill at the bottom of the desktop screen, over the chapter text, the black room and the endpoint list. The page also never repeats the ask at the end; it closes on two equal "NEXT" cards.
-5. **Every hover and press answers, no jumps?** Desktop yes. On phone, some endpoint rows gave no visible answer to a tap. "console" (25px) and "Body and parameters" (22px) are under the 44px target.
-6. **Overlaps, font swap, layout shift?** The floating pill overlaps content at 1470×801. On phone the console changes height as each answer streams, and the sections below jump: 0.46 layout shift on the full walk (`f44badd`, same layout).
-7. **Which reference, is its motion there?** Apple product page (pinned chapters): yes. MASTER §4.6 developer hero is a code block with the existing request, the streamed response and Copy beside the key ask. That is not in the first screen, and there are no language tabs.
-8. **Different from neighbours?** Partly. Its stage, chapters and kit are shared with /bot, /desktop and /cli; the hero (console plus model film) is its own.
+1. **Sells in 5 seconds, moves within 1 second?** Yes: the console types at once. On this loaded machine the headline's cut-in came a few seconds after the console. Make sure it paints first.
+2. **One in, one out, or a document?** Scenes through the chapters and the black room. "Core endpoints" is still a 15-row list, but each row opens.
+3. **A real visual object in every section?** Yes.
+4. **One ask, in the sticky header?** The header shows "Try Hanzo" (shared header label; the page has filed a request), while the page's ask is "Get an API key, free". The hero and Band carry the right ask with one solid each.
+5. **Every hover and press answers, no jumps?** Yes: press .98, hover darkens, rows open.
+6. **Overlaps, font swap, layout shift?** None. One flaw on phone: in the black room, the display-size `https://api.hanzo.ai/v1` is clipped at the right edge ("…hanzo.ai/v").
+7. **Which reference, is its motion there?** Apple product page (product as hero, pinned chapters): yes. The MASTER §4.6 developer hero (request, streamed response, key ask beside it): yes.
+8. **Different from neighbours?** Yes: a console with model film, unlike /cli's terminal room or /gen's board.
 9. **18 parts (MASTER §2)?** No card. See below.
-10. **Banned tells?** Yes:
-    - labels directly above the h1 ("API") and above h2s ("UNDER THE HOOD", "BASE URL", "REFERENCE", "NEXT");
-    - a floating pill bar over content;
-    - a 128px h1 filling the first screen while the hero object is pushed off it.
+10. **Banned tells?** None found on this build.
 11. **Copy untouched?** Yes (parity clean).
 
 ## Missing from the 18 parts
-- **Card:** no coverage card, and no `Persona:` / `Goal:` / `CTA:` / metric lines.
-- **Part 3 First impression:** the hero object is not in the first screen. No closing `Band`.
-- **Part 4 Conversion:** the header ask does not match; the ask floats; it is not repeated after proof or at the end.
-- **Part 7 Visual system:** labels over headings; placeholder bars in the chapter panes.
-- **Part 8 Components:** the dark room's endpoint picker is a browser select.
-- **Part 11 Mobile:** phone layout shift; small targets.
-- **Part 16 Developer:** no readable request and response pair in the hero; no curl / Python / JS tabs.
+- **Card:** `docs/coverage/api.md` is missing (caps at 7).
+- **Part 4 Conversion:** the header label (shared) should read the page's ask. The two "Next" cards sit as equal boxes just before the Band.
+- **Part 11 Mobile:** the base URL is clipped at 375.
+- **Part 16 Developer:** no curl / Python / JS tabs on the request.
 
 ## Fixes (in order)
-1. **Bring the console into the first screen.** Put the h1 at rest size (52px per MASTER §3.1, or a little larger as the moment) beside the console, so the path typing and the streamed answer play above the fold within the first second. Paint the h1 first; let the mask start from its final place.
-2. **The ask goes in the header.** "Get an API key, free" in the sticky header for this page (via `lib/cta.js`; write `docs/requests/api.md` for the shared part). Turn off the floating desktop pill. End on a `Band` that repeats the ask once.
-3. **Fix the phone jump.** Give the console a fixed height (its longest answer) so nothing below moves while it streams.
-4. **Delete every label sitting directly above a heading.** Keep the mono style for chapter captions and figure labels.
-5. **Make the chapters real.** Replace the grey bars with the page's own request lines, route names and client names. Swap the browser select in the dark room for the page's own styled list.
-6. **Write `docs/coverage/api.md`**: 18 parts, each with real evidence.
+1. **Write `docs/coverage/api.md`**: 18 parts, each with real evidence. This is the only thing between the page and 8.
+2. **Fix the phone base URL.** Let it wrap after `api.hanzo.ai`, or size it to fit 375, so `/v1` is seen.
+3. **Fold "Next" into the Band.** Make "API reference" and "Getting started" two text rows under the Band's ask, not two boxes before it.
+4. **Paint the h1 first,** then start the console, so the words lead on a slow laptop.
+5. **(shared)** Follow up the header-label request so the header reads "Get an API key, free" on this page.

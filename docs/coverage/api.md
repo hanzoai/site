@@ -82,7 +82,7 @@ Done here: Chips, filter segments, endpoint rows, the endpoint list and the paus
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit is not merged; the page plays none)
+- [x] Sound only on the listed moments, through the one kit (`play('done')` when the console's walk ends; `data-sound="tick"` on chips, filter tabs, the endpoint list, rows and the pause; Copy chimes through the kit)
 
 Done here: The signature is the live console (time: path typing, answer streaming; idle: model film). Supporting: pinned chapters with clip wipes (scroll), the line-mask h1 (arrival), and the tab pill (state); the magnetic ask is pointer. variety.py OK, 0 Rise. The console walks all eight endpoints once, then rests.
 

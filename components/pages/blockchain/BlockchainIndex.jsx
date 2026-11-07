@@ -1,6 +1,7 @@
 'use client';
 /* Blockchain overview (/blockchain), v2 archetype C "Catalogue"; greys and ink only (JAMES.md 7).
-   Persona: a developer building on one chain who will need a second (metric signup_click)
+   Persona: a developer building on one chain who will need a second
+   Metric: signup_start (the catalogue's action: open a card)
    Goal: see that the chain is just an argument, find the piece they need, then start
    CTA: Try Hanzo -> /signup (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: the chain becomes a parameter. One giant line, chain: plus a value that rolls through every network Hanzo
@@ -12,13 +13,11 @@
    the next page's hero, synchronized.studio); the nine groups open one at a time; one dark room for the agent.
    Motion: the reel (idle, signature) + headlines cut into their line (arrival) + the card-to-page morph (state) + the
    matrix answering the pointer. Every word and link is Hanzo's; counts are counted from Hanzo's product pages.
-V2: 8/10 one giant chain: line rolling through every network with the products that name it lighting below, the pieces as a morphing catalogue index, groups that open, an agent dark room, the coverage matrix read across and down, greys only, one ask everywhere
+V2: 8/10 deck scale (h1 52, headings 26, the chain: reel 64 as the one moment), the reel lighting the product pages that name each chain, a catalogue index that morphs into each page, groups that open, an agent dark room on the kit CodeBlock, the coverage matrix on the kit DataTable read across and down; deck greys, no springs or hover lifts, quiet asks under the header's solid
 */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
-import { A, More } from '../../kit';
-import { Copy } from '../../ui';
-import BizAsk from '../../v2/BizAsk';
+import { A, More, Cta, DataTable, CodeBlock } from '../../kit';
 import BizLines from '../../v2/BizLines';
 import './BlockchainIndex.css';
 
@@ -53,7 +52,7 @@ function Reel({ chains, all }) {
   const lit = all.filter((p) => names(p.chains, chains[at]));
   return (
     <div className="bci-reel" ref={box}>
-      <div className="bci-line" data-cursor="Watch">
+      <div className="bci-line">
         <span className="bci-key x-mono" aria-hidden="true">chain:</span>
         <span className="bci-win" aria-hidden="true">
           <span className={'bci-roll' + (jump ? ' jump' : '')} style={{ transform: `translateY(${-i * 1.2}em)` }}>
@@ -87,7 +86,7 @@ function Hero({ doc, chains, all }) {
           </h1>
           <div className="bci-ask">
             <div className="bci-acts">
-              <BizAsk to={GO[doc.actions[0]] || '/signup'} thumb={doc.actions[0]}>{doc.actions[0]}</BizAsk>
+              <Cta to={GO[doc.actions[0]] || '/signup'} id="blockchain.hero" kind="quiet" thumb>{doc.actions[0]}</Cta>
               {doc.actions.slice(1).map((t) => <More key={t} to={GO[t] || '/signup'}>{t}</More>)}
             </div>
             <p className="bci-note"><span className="bci-chip x-mono">{doc.chip}</span>{doc.note}</p>
@@ -115,7 +114,7 @@ function Pieces({ b, all }) {
     <section className="bz-sec bci-pieces" aria-labelledby="bci-pieces-h">
       <div className="bz-wrap bz-grid">
         <header className="bci-ph">
-          <BizLines id="bci-pieces-h" className="bz-display md" lines={[b.title]} />
+          <BizLines id="bci-pieces-h" className="bz-headline" lines={[b.title]} />
           <p className="bz-body">{b.lede}</p>
           <p className="bci-ph-n x-mono">{b.cards.length} pieces · open one</p>
         </header>
@@ -178,15 +177,12 @@ function Agent({ b }) {
     <section className="bz-sec bci-agent" data-room="dark" aria-labelledby="bci-agent-h">
       <div className="bz-wrap bz-grid">
         <div className="bci-agent-copy">
-          <BizLines id="bci-agent-h" className="bz-display sm" lines={b.title} />
+          <BizLines id="bci-agent-h" className="bz-headline" lines={b.title} />
           <p className="bci-tag x-mono">{b.chip}</p>
           <p className="bz-body">{b.lede}</p>
           <ul className="bci-bul">{b.bullets.map((x) => <li key={x}>{x}</li>)}</ul>
         </div>
-        <div className="bci-code">
-          <div className="bci-code-h"><i /><i /><i /><span className="x-mono">{b.file}</span><Copy text={b.code.text} /></div>
-          <pre tabIndex={0}><code>{b.code.lines.map((l, j) => <span key={j} className="bci-ln">{l.length ? l.map(([k, t], n) => <span key={n} className={'t-' + k}>{t}</span>) : ' '}{'\n'}</span>)}</code></pre>
-        </div>
+        <CodeBlock code={b.code.text} label={b.file} className="bci-code" />
       </div>
     </section>
   );
@@ -206,44 +202,28 @@ function Matrix({ b, all }) {
     <section className="bz-sec bci-mx-sec" aria-labelledby="bci-chains-h">
       <div className="bz-wrap">
         <div className="bci-mx-head">
-          <BizLines id="bci-chains-h" className="bz-display md" lines={[b.title]} />
+          <BizLines id="bci-chains-h" className="bz-headline" lines={[b.title]} />
           <p className="bz-body">{b.lede}</p>
         </div>
-        <p className="bci-run">{b.chains.map((x, k) => <span key={x}>{x}{k < b.chains.length - 1 ? <i aria-hidden="true"> · </i> : ''}</span>)}</p>
+        <p className="bci-run">{b.chains.map((x, k) => <Fragment key={x}><span>{x}</span>{k < b.chains.length - 1 && <i aria-hidden="true"> · </i>}</Fragment>)}</p>
         <p className="bci-read x-mono" aria-live="polite">{read}</p>
-        <div className="bci-mx" role="region" aria-label="Products × chains" tabIndex={0} data-swipe-own>
-          <table onPointerLeave={() => setHot(null)} style={{ '--cols': cols.length }}>
-            <thead>
-              <tr>
-                <th scope="col" className="bci-corner"><span className="x-mono">Products × chains</span></th>
-                {cols.map(([x], j) => <th key={x} scope="col" className={c === j ? 'hot' : ''}><span>{x}</span></th>)}
-                <th scope="col" className="bci-tot"><span className="x-mono">chains</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              {all.map((p, i) => (
-                <tr key={p.slug} className={r === i ? 'hot' : ''}>
-                  <th scope="row"><A to={p.href}>{p.name}</A></th>
-                  {cols.map(([x], j) => {
-                    const on = p.chains.includes(x);
-                    return (
-                      <td key={x} className={(on ? 'on' : '') + (c === j ? ' col' : '') + (r === i && c === j ? ' me' : '')} onPointerEnter={() => setHot([i, j])} onClick={() => setHot([i, j])}>
-                        {on ? <i aria-label={`${p.name} names ${x}`} /> : <span className="x-sr">—</span>}
-                      </td>
-                    );
-                  })}
-                  <td className="bci-tot x-mono">{p.chains.length}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th scope="row" className="x-mono">products</th>
-                {cols.map(([x, k], j) => <td key={x} className={'x-mono' + (c === j ? ' col' : '')}>{k}</td>)}
-                <td />
-              </tr>
-            </tfoot>
-          </table>
+        <div className="bci-mx" data-swipe-own onPointerLeave={() => setHot(null)} style={{ '--cols': cols.length }}>
+          {hot && <style>{`.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, .bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: #f5f5f5; } .bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: #d4d4d4; } .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: #0a0a0a; font-weight: 606; }`}</style>}
+          <DataTable
+            caption="Products × chains"
+            cols={[{ key: 'p', label: 'Product' }, ...cols.map(([x], j) => ({ key: 'c' + j, label: <span className="bci-vh">{x}</span> })), { key: 'n', label: 'chains', num: true }]}
+            rows={[
+              ...all.map((p, i) => ({
+                p: <A to={p.href}>{p.name}</A>,
+                ...Object.fromEntries(cols.map(([x], j) => {
+                  const on = p.chains.includes(x);
+                  return ['c' + j, <span className={'bci-cell' + (on ? ' on' : '')} onPointerEnter={() => setHot([i, j])} onClick={() => setHot([i, j])}>{on ? <i aria-label={`${p.name} names ${x}`} /> : <span className="x-sr">—</span>}</span>];
+                })),
+                n: p.chains.length,
+              })),
+              { p: 'products', ...Object.fromEntries(cols.map(([x, k], j) => ['c' + j, k])), n: '' },
+            ]}
+          />
         </div>
       </div>
     </section>
@@ -258,10 +238,10 @@ function End({ b }) {
       <div className="bz-wrap">
         <div className="bci-end-top">
           <div className="bci-end-main">
-            <BizLines id="bci-end-h" className="bz-display" lines={[b.title]} />
+            <BizLines id="bci-end-h" className="bz-display md" lines={[b.title]} />
             <p className="bz-lede">{b.lede}</p>
           </div>
-          <BizAsk to={GO[ask] || '/signup'} className="bci-end-go" thumb={ask}>{ask}</BizAsk>
+          <Cta to={GO[ask] || '/signup'} id="blockchain.close" kind="quiet" size="lg" thumb>{ask}</Cta>
         </div>
         <ul className="bci-rows">
           {rest.map((t) => <li key={t}><A to={GO[t] || '/signup'} className="bci-row"><b>{t}</b><Arrow /></A></li>)}

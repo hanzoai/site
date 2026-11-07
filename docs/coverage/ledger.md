@@ -35,6 +35,7 @@ Done here:
 - First screen at 1470×801: "Hanzo Ledger" at 52px, cut in by line mask (700ms, 60ms per line), one lede line, the ask, and the live book posting by itself within the first second.
 - JS off: 0 hidden text runs (gate script).
 - Order: hero book → three chapters → dark capability room → splitter → receipt close.
+- "Every cent lands somewhere" (26px) sits on the pinned stage above the first scene, not alone on a white screen. The Numscript and bash labels sit under their headings.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (kit `Cta` for the hero ask, the GitHub link and the close ask; 0 raw `.x-btn`)

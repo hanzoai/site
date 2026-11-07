@@ -1,61 +1,160 @@
-# /guard coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /guard coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/cloud/Guard.jsx` · gallery: `docs/gallery/guard/`
+Page file: `components/pages/cloud/Guard.jsx` · gallery: `docs/gallery/guard/` · metric id: `cta_click guard.hero`
+
+Open copy questions for James: none.
+Shared changes requested (`docs/requests/guard.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
+Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, the typing `setInterval`
+
+Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
 ## 1. Strategy and conversion
-Done here: One ask, Hanzo's "View on GitHub": solid in the hero, carried by the shared ask bar after the hero (`data-thumb`), and repeated as the one solid button at the close. Every other Hanzo button on the page is outlined or a text link. `Persona:`, `Goal:` and `CTA:` head the page file.
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href are Hanzo's hero ask (`lib/cta.js` is not on main yet)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; no prices on this page
+- [x] Open copy questions for James listed, none decided
+
+Done here: `// Persona:` to `// Beyond:` head `components/pages/cloud/Guard.jsx`; the one ask is Hanzo's "View on GitHub" (guard.hero, guard.close). Measured with a headless walk: one solid button on the first screen at 1470×801 and 375×812.
 
 ## 2. Information architecture and navigation
-Done here: Hanzo's header and footer are unchanged. Order: the black hero with the ask and the live composer, the six detectors as pinned chapters, the agent prompt, Paste your own with the dials, the close. The agent prompt sits mid-page, so the page has one ending, not two.
+- [x] One `<main>`; the layout's skip link reaches `#main`
+- [x] Every link through `A` or the kit `Cta`; related cards are real links
+- ~~Breadcrumb at depth 2 or more~~ n/a: a depth-1 page
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: Parity 29/29 text and 2/2 links; Hanzo's header and footer are untouched; every link goes through `A`/`Cta` (`lib/route.js`).
 
 ## 3. First impression and page narrative
-Done here: The first screen is the name, Hanzo's line, the ask, and one live object: a composer (titled hanzoai/guard) where a request types itself, its card number and email snap into typed markers, the injection is measured against a threshold, and the model's reply comes back through the same detectors. The headline cuts into its lines with a CSS animation at first paint (it moves before any script runs and is legible with JavaScript off). No label sits above the h1.
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] Hero built from the kit's line mask (`Lines`) and one object (`PageHero` is not on main yet); nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; loud and quiet sections alternate
+- [x] Ends in one close in Hanzo's words ("Get Guard" with the ask), then the footer
+- [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
+
+Done here: The first screen is the name, Hanzo's line, the ask, and one live object: a composer (titled hanzoai/guard) where a request types itself, its card number and email snap into typed markers, the injection is measured against a threshold, and the model's reply comes back through the same detectors. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks.
 
 ## 4. Conversion system
-Done here: `data-thumb="View on GitHub"` drives the shared ask bar; `data-cta` is on the hero ask and the closing ask. One solid button per screen: in-page controls and Hanzo's other buttons are outlined, and "Deploy to Cloud" sit under the closing ask as text links.
+- [x] `<Cta>` only; no raw `.x-btn` in the page
+- [x] Sticky ask: the shared ask bar carries the hero label (`data-thumb`)
+- [x] Copy buttons copy exactly the displayed text (kit `CodeBlock`/`Copy`)
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: Hero `<Cta thumb id="guard.hero">View on GitHub</Cta>`; the close repeats it (`guard.close`); Hanzo's other buttons are quiet or link Ctas.
 
 ## 5. Trust and proof
-Done here: Every claim is Hanzo's own sentence; the demos show mechanisms in Hanzo's words, never figures Hanzo does not state.
+- [x] No logo, seal or invented number
+- [x] Every figure traces to Hanzo's copy
+- ~~Marquees pause, freeze, hide duplicates~~ n/a: no marquee
+- ~~Privacy link beside every submit~~ n/a: no form submits
+
+Done here: The only figures are Hanzo's own (none); demos use Hanzo's words, never invented numbers.
 
 ## 6. Content presentation (copy untouched)
-Done here: Parity is 29/29 text and 2/2 links. Section labels sit under their headlines as captions, never above. The request and reply in the composer are made-up examples, labelled as such in the file; the markers come from Hanzo's own list.
+- [x] No text under 13px (14px on phones) except 11–12px mono capitals and the kit's own copy label
+- [x] Measures held; headings balanced
+- [x] Code uses the kit `CodeBlock`
+- [x] `python3 scripts/parity.py /guard`: 0 missing
+
+Done here: Parity 29/29 text and 2/2 links. Section labels sit under their headings as captions; phone labels raised to 14px (`components/pages/cloud/Guard.css`).
 
 ## 7. Visual design system
-Done here: v2 scale from `components/v2/v2scale.css` (display, headline, title, lede, body, Zen Mono captions at 12px). Hanzo's grey deck only: ink, greys and white, no UI hue (`scripts/taste.py` passes). One dark room: the hero. Hero objects use a 28px radius.
+- [x] `python3 scripts/taste.py` passes (deck greys only; no hue)
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii 28 (objects), 16–24 (tiles); one shadow per raised object
+- ~~One icon set~~ n/a: no icons beyond the kit's
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: Greys from Hanzo's deck only; the hero. Hex literals remain in page CSS because `tokens.css` is not on main yet (listed below).
 
 ## 8. UI component library
-Done here: Kit `A` and `Copy`; Cloud 2's v2 pieces (`Lines`, `Lift`, `PinChapters`, `ShipPrompt`, `GetIt`). Buttons have a fill or ink shift on hover (never opacity) and press to .98; segmented controls show a grey veil on hover; no browser-default controls.
+- [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
+- [x] Focus ring is the shared system's
+- ~~Dialogs are native, trap focus and return it~~ n/a: no dialog on this page
+- [x] Inputs 16px or larger; no bare `:hover` in the page CSS
+- [x] Forks this page deleted: listed above
+
+Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`; segmented controls get a grey veil on hover and press .97 from `v2scale.css`.
 
 ## 9. Motion and interaction
-Done here: Signature: both directions, read live.
-- Idle: the composer types, marks, measures and replies in a loop while on screen.
-- Pointer: buttons shift fill and nudge their arrow; controls veil and press.
-- State: detector chips and marker-text radios re-run the detectors on your own text; markers spring in.
-- Scroll: the composer settles as it rises; the six detectors pin while the board changes. Scroll-linked motion is under half of the page's motion.
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups (`variety.py` OK)
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, tabs, radios and pause toggles tick (radios carry `data-sound="tick"`), copy chimes; the demos loop while seen and never finish, so no done chime
+
+Done here: Signature: both directions, read live. Idle: the composer types, marks, measures and replies in a loop while on screen. State: detector chips and marker-text radios re-run the detectors on your own text; markers spring in. Scroll: the composer settles as it rises; the six detectors pin while the board changes. No springs: every move is ease-emphasis at 300 ms.
 
 ## 10. Media
-Done here: Product-style objects drawn in HTML and CSS from Hanzo's own words; the closing Sigil is drawn from the product's own figures.
+- ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
+- ~~At most 2 videos; pause on loops~~ n/a: no video
+- [x] Nothing missing; no image without alt
+- ~~No dimmed photo; 4+ real visuals together~~ n/a: Hanzo's page has no imagery
+
+Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the close carries the product's own Sigil (its figures as data).
 
 ## 11. Mobile and responsive
-Done here: At 375px: the composer fills the width under the ask; the detector board sticks under the header while the facts scroll beneath it; the editor's dials wrap. No sideways scroll; the hero ask is on the first screen; targets are 44px or more.
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320 (scrollWidth 320)
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
 
-## 12. Accessibility
-Done here: Real buttons, radios and tabs with `aria-*`; `aria-live` where a demo answers; one focus ring from the shared system; reduced motion shows final states and stops the self-running demo.
+Done here: At 375: the composer fills the width under the ask; the detector board sticks under the header while the facts scroll beneath it; the editor's dials wrap. Measured: ask bottom at 335 of 667; pinned scenes stack under 900px, nothing floats over text.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
+- [x] Pause control (Cloud 3's `LivePause`, 44px, `aria-pressed`) on every self-running object
+- [x] Forms labelled
+- [x] One h1; no heading skips
+- [x] Keyboard reaches every control
+
+Done here: The live object is `aria-hidden` with its pause button outside it; tabs and radios carry `aria-selected`/`aria-checked`; `aria-live` where a demo answers.
 
 ## 13. Performance and engineering
-Done here: Transform, opacity and clip-path only. Demo timers run only while their object is on screen (`useLive`). No video, no blur on large areas.
+- [x] h1 and the hero object are in the server HTML
+- [x] Transform, opacity and clip-path only; demo timers run only while on screen
+- [x] No poller; no third-party request
+- [x] Nothing heavy run on James's laptop (filmed in the cloud)
+
+Done here: Timers stop off screen and when paused (`useLive` and `useTick`); bundle size not measured on this page.
 
 ## 14. SEO and machine files
-Done here: Metadata and JSON-LD unchanged (`app/guard/page.jsx`). All text is in the server HTML, including every chapter, tab panel and sheet.
+- [x] Title and description from `content/pages.json`
+- [x] Canonical through the shared `<JsonLd route="/guard" />`
+- [x] `<JsonLd route>` renders; no broken URL
+- [x] Every card is a real link
+
+Done here: `app/guard/page.jsx` unchanged: metadata from `content/pages.json` and `<JsonLd route="/guard" />`.
 
 ## 15. Catalogue and product pages
-Done here: A cloud product launch page (archetype A): hero object, chapters, the Beyond, the agent prompt, one close.
+- ~~Model card matches `SPEC.md`~~ n/a: not a catalogue or model page
+- ~~Every card opens by Morph~~ n/a: no catalogue cards
+- ~~Every maker and model page linked~~ n/a: not /models
+- ~~One price figure everywhere~~ n/a: no prices
+
+Done here: n/a: a top-level cloud product launch page; its h1 is the `data-morph-target` for cards that open into it.
 
 ## 16. Developer experience
-Done here: Hanzo's agent prompt with a working Copy button; Hanzo's docs and source links kept.
+- [x] One `CodeBlock`; copy equals display
+- ~~Config blocks parse on their own~~ n/a: no config block
+- ~~Terminal pauses and ends on a static frame~~ n/a: no typed terminal
+- [x] No hand-typed version number
+
+Done here: Hanzo's agent prompt use the kit `CodeBlock`, whose Copy copies exactly what is shown.
 
 ## 17. States and resilience
-Done here: Static Hanzo copy, so no loading state. With JavaScript off every word is visible (chapter hide-states are scoped to `html.js`); checked headless with JavaScript disabled: 0 text blocks hidden. Paste your own runs in the page with nothing sent; empty text shows "Type something above." and no markers shows "No markers".
+- [x] Every state looks intended: static copy, reduced motion and JS off checked
+- [x] No live data, so nothing to block; no console errors
+- ~~A failed submit keeps its values~~ n/a: n/a: no form posts anywhere; the page's inputs are in-page demos and nothing is sent
+- [x] A thrown island leaves the page: the shared `app/error.jsx` keeps header and footer
+
+Done here: Paste your own runs in the page with nothing sent; empty text shows "Type something above." and no markers shows "No markers".
 
 ## 18. Measurement and handover
-Done here: `data-cta` on the asks for the shared `cta_click` event. Gallery: `docs/gallery/guard/`. Owner: Cloud 2 chat (components/pages/cloud/Guard.jsx).
+- [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
+- [x] Nothing identifier-bearing; no field value in any payload
+- [x] `V2: 8/10` line in the page file's top comment
+- [x] Review read: no `docs/review/guard.md` yet
+
+Done here: `guard.hero` and `guard.close` on the asks. Gallery: `docs/gallery/guard/` (desktop film and phone stills).

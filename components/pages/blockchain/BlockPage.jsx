@@ -15,20 +15,22 @@
    Beyond: "Your chain". This product's own Supported Chains are buttons; pick one (or any chain Hanzo lists across its
    Web3 products) and see at once whether this product names it (a tick or a dash) and which other products do (each a
    link), from every product page's own lists.
-   Each member has its own living object: its own code types itself in when it reaches the screen, its own chains run
+   The hero deck and the console run one round, then settle with the sound kit's quiet 'done' (so does the code when it
+   finishes typing). Each member has its own living object: its own code types itself in when it reaches the screen, its own chains run
    across its key card, its own contour drifts behind it.
    Motion: idle (the chain stream, the contour, the exchange console) · time (the code typing in) · pointer (magnetic
    ask, the stream holds under a pointer, sibling rail drags with inertia, cards lift) · state (the deck's cards, the
    chain picker, console tabs) · scroll (the stage settle, which card the deck shows).
    V2: 8/10 the ask beside a 52px headline and this product's own capability deck turning in the hero (its contour per card), the key card as a proof room after it, the exchange's console and pinned deck at 25svh a card, chips that drive the chain finder, real controls (hover and press on every one, plain language list, GitHub as a link), no inner scroll on phones, resting sizes, tokens only, no springs or setInterval. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { useScroll, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { Copy, Magnetic } from '../../ui';
 import Sigil from '../../Sigil';
 import { A } from '../../kit';
 import FamLines from '../../v2/FamLines';
 import FamNext from '../../v2/FamNext';
 import { ui } from '../../v2/famUi';
+import { play } from '../../../lib/sound';
 import '../../v2/fam.css';
 import './blockchain.css';
 import './BlockPage.css';
@@ -76,7 +78,7 @@ function Typed({ file, code, langs }) {
       io.disconnect();
       let k = 0;
       const step = () => {
-        if (k >= lines.length) { el.classList.add('done'); return; }
+        if (k >= lines.length) { el.classList.add('done'); play('done'); return; }
         lines[k].classList.add('on');
         k++;
         t = setTimeout(step, lines[k - 1].textContent.trim() ? 70 : 20);
@@ -99,16 +101,18 @@ function HeroDeck({ b, seed }) {
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
+  const [done, setDone] = useState(false);
+  const seen = useInView(box, { amount: 0.3 });
+  // one round through the deck, then it settles on the first card with the sound kit's quiet 'done'
   useEffect(() => {
-    if (calm || held || n < 2) return;
-    let seen = true;
-    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; });
-    box.current && io.observe(box.current);
-    let t = 0;
-    const tick = () => { if (seen && !document.hidden) setAt((k) => (k + 1) % n); t = setTimeout(tick, 4200); };
-    t = setTimeout(tick, 4200);
-    return () => { clearTimeout(t); io.disconnect(); };
-  }, [calm, held, n]);
+    if (calm || held || done || !seen || n < 2) return;
+    const t = setTimeout(() => {
+      const nx = (at + 1) % n;
+      setAt(nx);
+      if (nx === 0) { setDone(true); play('done'); }
+    }, 4200);
+    return () => clearTimeout(t);
+  }, [calm, held, done, seen, n, at]);
   const cur = b.items[at];
   return (
     <div ref={box} className="xb2-hd" onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)} onFocus={() => setHeld(true)} onBlur={() => setHeld(false)}>
@@ -131,7 +135,7 @@ function HeroDeck({ b, seed }) {
       </div>
       <div className="xb2-marks2 xb2-hd-marks" role="group" aria-label={b.title}>
         {b.items.map((it, k) => (
-          <button key={it.title} type="button" aria-label={it.title + ', ' + ui('chapter') + ' ' + (k + 1) + ' ' + ui('of') + ' ' + n} aria-current={k === at ? 'step' : undefined} className={(k < at ? 'past' : '') + (k === at && !held && !calm ? ' run' : '')} onClick={() => { setAt(k); setHeld(true); }}><i><b /></i></button>
+          <button key={it.title} type="button" aria-label={it.title + ', ' + ui('chapter') + ' ' + (k + 1) + ' ' + ui('of') + ' ' + n} aria-current={k === at ? 'step' : undefined} className={(k < at ? 'past' : '') + (k === at && !held && !calm && !done ? ' run' : '')} onClick={() => { setAt(k); setHeld(true); }}><i><b /></i></button>
         ))}
       </div>
     </div>
@@ -322,17 +326,19 @@ function Console({ b, seed }) {
   const box = useRef(null);
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
+  const [done, setDone] = useState(false);
+  const seen = useInView(box, { amount: 0.3 });
   const n = b.items.length;
+  // one round through the products, then it settles on the first with the sound kit's quiet 'done'
   useEffect(() => {
-    if (calm || held) return;
-    let seen = true;
-    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; });
-    box.current && io.observe(box.current);
-    let t = 0;
-    const tick = () => { if (seen && !document.hidden) setAt((k) => (k + 1) % n); t = setTimeout(tick, 3600); };
-    t = setTimeout(tick, 3600);
-    return () => { clearTimeout(t); io.disconnect(); };
-  }, [calm, held, n]);
+    if (calm || held || done || !seen || n < 2) return;
+    const t = setTimeout(() => {
+      const nx = (at + 1) % n;
+      setAt(nx);
+      if (nx === 0) { setDone(true); play('done'); }
+    }, 3600);
+    return () => clearTimeout(t);
+  }, [calm, held, done, seen, n, at]);
   const it = b.items[at];
   return (
     <div ref={box} className="xb2-con v2f-obj" onPointerEnter={(e) => e.pointerType === 'mouse' && setHeld(true)} onPointerLeave={() => setHeld(false)}>
@@ -345,7 +351,7 @@ function Console({ b, seed }) {
           {b.items.map((x, i) => (
             <button key={x.title} type="button" role="tab" id={'xb2-tab-' + i} aria-controls={'xb2-pan-' + i} aria-selected={i === at} onClick={() => { setAt(i); setHeld(true); }}>
               <b>{x.title}</b>
-              {i === at && !calm && !held && <i className="xb2-con-t" aria-hidden="true" />}
+              {i === at && !calm && !held && !done && <i className="xb2-con-t" aria-hidden="true" />}
             </button>
           ))}
         </div>

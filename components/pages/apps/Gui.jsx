@@ -1,8 +1,9 @@
 'use client';
 /* GUI (v2, archetype A "Launch"): one component, four platforms, in step.
    Persona: a front-end or mobile developer who wants one UI kit for iOS, Android, web and desktop
+   Metric: github_click
    Goal: see one component render the same on four platforms, set its props from the tokens, then go to the source
-   CTA: View on GitHub -> https://github.com/hanzoai/gui (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
+   CTA: View on GitHub -> https://github.com/hanzoai/gui (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta gui.hero / gui.close)
    Signature: one component, four platforms, in step. Under a centred two-line title, four device frames stand in one row
    (an iOS phone, an Android phone, a web window, a desktop window) and settle as you scroll. Hanzo's own Welcome
    component (a YStack with a Text and a Button) renders in all four; its props (p, bg, rounded) change by themselves in
@@ -12,12 +13,13 @@
    Not only scroll: the frames change by themselves (idle), the editor and the platform cards answer the hand (state);
    Stage and chapters are the scroll half.
    Motion: the four frames in step (signature) + Stage (the row settles) + sticky chapters + platform cards that open.
-V2: 8/10 centred title over four live device frames in step with a Pause; five sticky chapters explain the one component across four platforms; the dark room is the token editor with a real typecheck; platform cards open into their device; one ask; greys only, nothing above the h1
+V2: 8/10 a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
    Every word and link is Hanzo's. */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A, Go, More } from '../../kit';
-import { SPRING } from '../../../lib/motion';
+import { A, More, Cta } from '../../kit';
+import BizLines from '../../v2/BizLines';
+import { EASE_OUT_EXPO } from '../../../lib/motion';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
 import BizStage from '../../v2/BizStage';
@@ -27,11 +29,12 @@ import './Gui.css';
 
 const GH = 'https://github.com/hanzoai/gui';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
-const SPR = SPRING.morph;
+const SPR = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // deck: no springs; the frames move and stay (ease-in-out, slow)
+const ARRIVE = { duration: 0.3, ease: EASE_OUT_EXPO };
 
 /* the tokens the shorthands accept */
 const SPACE = { $2: 8, $3: 12, $4: 16, $6: 24 };
-const BG = { $background: '#ffffff', $color2: '#e8e8ed', $accent: '#0a0a0a' };
+const BG = { $background: '#ffffff', $color2: '#e5e5e5', $accent: '#0a0a0a' };
 const ROUND = { $2: 6, $4: 14, $8: 26 };
 const TOK = { p: SPACE, bg: BG, rounded: ROUND };
 const PRESETS = [{ p: '$4', bg: '$background', rounded: '$4' }, { p: '$6', bg: '$color2', rounded: '$8' }, { p: '$3', bg: '$accent', rounded: '$2' }];
@@ -44,8 +47,8 @@ function Welcome({ v, parts }) {
   const r = ROUND[v.rounded];
   return (
     <motion.div layout className={'gu-w' + (parts ? ' parts' : '')} data-part="YStack" style={{ '--pad': SPACE[v.p] }} initial={false} animate={{ borderRadius: r, backgroundColor: BG[v.bg] }} transition={SPR}>
-      <motion.span layout="position" className="gu-t" data-part="Text" initial={false} animate={{ color: dark ? '#f5f5f7' : '#0a0a0a' }} transition={SPR}>Hello, Hanzo</motion.span>
-      <motion.span layout="position" className="gu-b" data-part="Button" initial={false} animate={{ backgroundColor: dark ? '#f5f5f7' : '#0a0a0a', color: dark ? '#0a0a0a' : '#ffffff', borderRadius: r * 0.6 }} transition={SPR}>Get started</motion.span>
+      <motion.span layout="position" className="gu-t" data-part="Text" initial={false} animate={{ color: dark ? '#f5f5f5' : '#0a0a0a' }} transition={SPR}>Hello, Hanzo</motion.span>
+      <motion.span layout="position" className="gu-b" data-part="Button" initial={false} animate={{ backgroundColor: dark ? '#f5f5f5' : '#0a0a0a', color: dark ? '#0a0a0a' : '#ffffff', borderRadius: r * 0.6 }} transition={SPR}>Get started</motion.span>
     </motion.div>
   );
 }
@@ -88,7 +91,7 @@ function Bar({ v, hold, setHold }) {
       <p className="x-mono" aria-live="polite">
         <span className="gu-code-t">{'<YStack'}</span>
         {['p', 'bg', 'rounded'].map((k) => (
-          <span key={k} className="gu-code-p">{k}=<span className="gu-code-v"><AnimatePresence mode="popLayout" initial={false}><motion.b key={v[k]} initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-100%', opacity: 0 }} transition={SPRING.pill}>"{v[k]}"</motion.b></AnimatePresence></span></span>
+          <span key={k} className="gu-code-p">{k}=<span className="gu-code-v"><AnimatePresence mode="popLayout" initial={false}><motion.b key={v[k]} initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-100%', opacity: 0 }} transition={ARRIVE}>"{v[k]}"</motion.b></AnimatePresence></span></span>
         ))}
         <span className="gu-code-t">{'/>'}</span>
       </p>
@@ -115,10 +118,10 @@ function Hero() {
   return (
     <section ref={ref} className="gu-hero" aria-labelledby="gu-h1">
       <div className="bz-wrap gu-top">
-        <h1 id="gu-h1" className="bz-display md gu-h1"><span>Hanzo GUI</span> <span className="gu-h1-2">One UI kit. Every platform.</span></h1>
+        <BizLines as="h1" id="gu-h1" className="bz-display gu-h1" lines={['Hanzo GUI', 'One UI kit. Every platform.']} now />
         <p className="gu-pkg x-mono">@hanzo/gui — Cross-Platform UI Kit</p>
         <div className="bz-acts gu-acts">
-          <span data-thumb="View on GitHub" data-cta="primary"><Go to={GH} solid>View on GitHub</Go></span>
+          <Cta to={GH} id="gui.hero" thumb>View on GitHub</Cta>
         </div>
       </div>
       <BizStage from={1.03} over={700} lift={20} className="bz-wrap gu-stage">
@@ -156,7 +159,7 @@ function Chapters() {
   return (
     <BizChapters label="Build it once. Ship it everywhere." className="gu-ch" items={PROPS.slice(0, 5).map(([t, d]) => ({ t, d }))} stage={(at) => <ChStage at={at} />}>
       <header className="bz-wrap gu-ch-head">
-        <h2 className="bz-display md">Build it once. Ship it everywhere.</h2>
+        <h2 className="bz-headline">Build it once. Ship it everywhere.</h2>
       </header>
     </BizChapters>
   );
@@ -174,7 +177,7 @@ function Editor() {
   return (
     <section className="bz-sec gu-api" data-room="dark" aria-labelledby="gu-api-h">
       <div className="bz-wrap bz-grid gu-api-top">
-        <h2 id="gu-api-h" className="bz-display md">The shorthands are the API</h2>
+        <h2 id="gu-api-h" className="bz-headline">The shorthands are the API</h2>
         <p className="bz-body">{PROPS[5][1]}</p>
       </div>
       <div className="bz-wrap bz-grid gu-api-obj">
@@ -284,7 +287,7 @@ function End() {
         <div className="gu-end-main">
           <h2 id="gu-end-h" className="bz-display md">The design system that ships your product</h2>
           <p className="bz-lede">Runs every Hanzo app in production, on web, native, and desktop.</p>
-          <div className="bz-acts"><span data-cta="primary"><Go to={GH} solid>View on GitHub</Go></span></div>
+          <div className="bz-acts"><Cta to={GH} id="gui.close">View on GitHub</Cta></div>
         </div>
         <A to={DEPLOY} className="gu-row"><span>Deploy to Cloud</span><Arrow /></A>
       </div>

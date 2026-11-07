@@ -1,16 +1,15 @@
 'use client';
-// Signature: the docs as a transit map: a train rides the Start-here line by itself and stops at each station, whose guide opens beneath it.
-// Beyond: your route: pick what you came to do and the stations for it line up in order, each one a link.
 /* Learn Hanzo. The page is the map of the documentation, so it is drawn as one.
+   Signature: the docs as a transit map: a train rides the Start-here line once and stops at each station, whose guide opens beneath it.
    Persona: a developer arriving to learn Hanzo (PLAN-COMPONENTS 1.1 developer row). Goal: a first working request.
    CTA: "Get started" (the quickstart). Metric: api_key_created (via the quickstart).
-   V2: 8/10 grey deck, no eyebrows; rebuilt: "Learn Hanzo" at full display size over a full-width transit map whose train rides the Start-here line by itself, each station's guide opening beneath it and linked by its own name; the things to try and go further as a tile grid whose cards open into their pages; the blog as an editorial index; the thinking as the dark room; questions.
-   Motion: the riding train (signature, idle/time) + tiles lifting and the station dots answering the pointer + stations
-   you pick (state) + line-mask headline from the first paint; cards open into their pages through the site's morph.
+   V2: 8/10 MASTER scale: "Learn Hanzo" at 52px over a full-width transit map whose train rides the Start-here line once and rests, each station's guide opening beneath it and linked by its own name; what to try and go further as one index; the blog and the thinking together in the dark room; questions.
+   Motion: the riding train (signature, time) + station dots answering the pointer + stations you pick (state) +
+   line-mask headline from the first paint; rows open into their pages through the site's morph.
    0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { A, More, Faq } from '../kit';
+import { A, Cta, More, Faq, Img } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
@@ -62,8 +61,8 @@ function Metro() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.4 });
   useEffect(() => {
-    if (mine || calm || !seen) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % START.length), 3600);
+    if (mine || calm || !seen || at >= START.length - 1) return; // one ride along the line, then it rests on MCP
+    const t = setTimeout(() => setAt((v) => v + 1), 2800);
     return () => clearTimeout(t);
   }, [at, mine, calm, seen]);
   const keys = (e) => {
@@ -77,8 +76,8 @@ function Metro() {
     <div className="xlr-map xp-obj" ref={ref}>
       <div className="xlr-map-top"><span className="xlr-map-k">Learn</span><span className="xlr-line-tag">Start here</span><span className="xlr-map-n x-mono">{String(at + 1).padStart(2, '0')} / {String(START.length).padStart(2, '0')}</span></div>
       <div className="xlr-track">
-        <i className="xlr-rail" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / (START.length - 1) }} transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }} /></i>
-        <motion.span className="xlr-train" aria-hidden="true" initial={false} animate={{ x: (at / (START.length - 1)) * 100 + '%' }} transition={{ duration: 1.1, ease: [0.76, 0, 0.24, 1] }}><i /></motion.span>
+        <i className="xlr-rail" aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at / (START.length - 1) }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} /></i>
+        <motion.span className="xlr-train" aria-hidden="true" initial={false} animate={{ x: (at / (START.length - 1)) * 100 + '%' }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}><i /></motion.span>
         <div className="xlr-stops" role="tablist" aria-label="Start here" onKeyDown={keys}>
           {START.map(([t], i) => (
             <button key={t} type="button" role="tab" id={'xlr-t' + i} aria-controls={'xlr-p' + i} aria-selected={at === i} tabIndex={at === i ? 0 : -1} className={i < at ? 'past' : ''} onClick={() => { setAt(i); setMine(true); }}>
@@ -109,15 +108,15 @@ function Hero() {
           <div className="xlr-hero-h">
             <LineReveal as="h1" id="xlr-h1" className="xp-display" lines={['Learn Hanzo']} />
           </div>
-          <motion.div className="xlr-hero-side" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <motion.div className="xlr-hero-side" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
             <p className="xp-lede">Start with a working request, then go as deep as you need.</p>
             <div className="xlr-acts">
-              <A to={DOCS + 'quickstart'} className="x-btn solid xp-cta" data-thumb="Get started" data-cta="learn.hero">Get started<i aria-hidden="true">→</i></A>
+              <Cta to={DOCS + 'quickstart'} id="learn.hero" thumb className="xp-cta">Get started</Cta>
               <A to="https://hanzo.university" className="xlr-link">Hanzo University</A>
             </div>
           </motion.div>
         </div>
-        <motion.div className="xp-grid xlr-hero-map" initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
+        <motion.div className="xp-grid xlr-hero-map" initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
           <Metro />
         </motion.div>
       </div>
@@ -125,74 +124,71 @@ function Hero() {
   );
 }
 
-/* A branch line as a tile grid: every card opens into its page (the site's morph carries the title across). */
-function Tiles({ tag, title, items, kind }) {
+/* What to try and where to go further, as one index: each row a page, its title carried across by the site's morph. */
+function Rows({ items }) {
   return (
-    <section className={'xp-sec tight xlr-tiles xlr-' + kind} aria-labelledby={'xlr-' + kind + '-h'}>
-      <div className="xp-wrap">
-        <div className="xlr-sec-head"><h2 id={'xlr-' + kind + '-h'} className="xp-head">{title}</h2></div>
-        <ul className={'xlr-grid n' + items.length}>
-          {items.map(([t, d, h], i) => (
-            <li key={t + h} className={'t' + i}>
-              <A to={h} className="xlr-tile">
-                {h === '/zen' && <img className="xlr-tile-img" src="/models/zen.webp" alt="" width="600" height="750" loading="lazy" />}
-                <span className="xlr-tile-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-                <b className="xlr-tile-t" data-morph>{t}</b>
-                <span className="xlr-tile-d">{d}</span>
-                <i className="xlr-tile-go" aria-hidden="true">→</i>
-              </A>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
+    <ul className="xlr-rows">
+      {items.map(([t, d, h]) => (
+        <li key={t + h}>
+          <A to={h} className="xlr-row">
+            <b className="xlr-row-t" data-morph>{t}</b>
+            <span className="xlr-row-d">{d}</span>
+            <i aria-hidden="true">→</i>
+          </A>
+        </li>
+      ))}
+    </ul>
   );
 }
 
-function Uni() {
+function Index() {
   return (
-    <section className="xlr-uni" aria-labelledby="xlr-uni-h">
-      <div className="xp-wrap">
-        <A to="https://hanzo.university" className="xlr-uni-a">
-          <img src="/models/zen.webp" alt="" width="320" height="320" loading="lazy" />
-          <span><h2 id="xlr-uni-h" className="xp-head">Hanzo University</h2><span className="xp-lede">Courses and certifications live on Hanzo University.</span></span>
-          <i aria-hidden="true">↗</i>
-        </A>
-      </div>
-    </section>
-  );
-}
-
-function Blog() {
-  return (
-    <section className="xp-sec xlr-blog" aria-labelledby="xlr-blog-h">
+    <section className="xp-sec xlr-index" aria-label="Pick what to try, Go further">
       <div className="xp-wrap xp-grid">
-        <div className="xlr-sticky"><h2 id="xlr-blog-h" className="xp-head">From the blog</h2></div>
-        <ol className="xlr-posts">
-          {BLOG.map(([t, date, d, h]) => (
-            <li key={h}>
-              <A to={h} className="xlr-post">
-                <time className="x-mono" dateTime={date}>{date}</time>
-                <b>{t}</b>
-                <span>{d}</span>
-              </A>
-            </li>
-          ))}
-        </ol>
+        <div className="xlr-col try">
+          <h2 id="xlr-try-h" className="xp-head">Pick what to try</h2>
+          <Rows items={TRY} />
+        </div>
+        <div className="xlr-col further">
+          <h2 id="xlr-further-h" className="xp-head">Go further</h2>
+          <Rows items={FURTHER} />
+          <A to="https://hanzo.university" className="xlr-uni-a">
+            <Img src="/models/zen.webp" w={320} h={320} alt="" />
+            <span><b id="xlr-uni-h">Hanzo University</b><span>Courses and certifications live on Hanzo University.</span></span>
+            <i aria-hidden="true">↗</i>
+          </A>
+        </div>
       </div>
     </section>
   );
 }
 
-function Think() {
+/* The dark room: the blog and the thinking, side by side. */
+function Read() {
   return (
     <section className="xp-sec xp-dark xlr-think" data-room="dark" aria-labelledby="xlr-think-h">
-      <div className="xp-wrap">
-        <LineReveal onView id="xlr-think-h" className="xp-display md" lines={['Read the thinking']} />
-        <div className="xlr-think-grid">
-          {THINK.map(([t, d, h]) => (
-            <A key={t} to={h} className="xlr-think-a"><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A>
-          ))}
+      <div className="xp-wrap xp-grid">
+        <div className="xlr-blog">
+          <h2 id="xlr-blog-h" className="xp-head">From the blog</h2>
+          <ol className="xlr-posts">
+            {BLOG.map(([t, date, d, h]) => (
+              <li key={h}>
+                <A to={h} className="xlr-post">
+                  <time className="x-mono" dateTime={date}>{date}</time>
+                  <b>{t}</b>
+                  <span>{d}</span>
+                </A>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div className="xlr-thk">
+          <h2 id="xlr-think-h" className="xp-head">Read the thinking</h2>
+          <div className="xlr-think-grid">
+            {THINK.map(([t, d, h]) => (
+              <A key={t} to={h} className="xlr-think-a"><b>{t}</b><span>{d}</span><i aria-hidden="true">→</i></A>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -204,11 +200,8 @@ export default function Learn() {
     <main className="xp xlr">
       <NoJs />
       <Hero />
-      <Tiles tag="Try" title="Pick what to try" items={TRY} kind="try" />
-      <Uni />
-      <Tiles tag="Further" title="Go further" items={FURTHER} kind="further" />
-      <Blog />
-      <Think />
+      <Index />
+      <Read />
       <section className="xp-sec tight xlr-qa" aria-labelledby="xlr-qa-h">
         <div className="xp-wrap xp-grid">
           <div className="xlr-sticky"><h2 id="xlr-qa-h" className="xp-head">Questions</h2></div>
