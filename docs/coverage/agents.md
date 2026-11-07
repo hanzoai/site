@@ -41,10 +41,10 @@ Done here: Links parity 4/4. The ask lands on `#headless` (the literal sequence)
 - n/a: Morph. No cards to pages.
 
 Done here: At 1470×801:
-- The black room, with Koma's film uncovered at the left middle and the 52px h1 over a gradient.
+- The black room, with Koma's film standing between the words and the terminal (clear of the paragraph) and the 52px h1 over a gradient.
 - On the right, the numbered terminal. It writes its first request within about 1 s and plays once over about 8 s.
 
-Order: hero, install, `#headless` (pinned), prompt, questions, `Band`.
+Order: hero, questions (live chat), prompt, `#headless` (unpinned; the scroll hands each step the stage), install, proof figures, `Band`.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -110,7 +110,7 @@ Done here: Kinds of movement:
 - arrival: the h1 line mask and the terminal entry
 - state: ticks land, the detail panel swaps at 300 ms, the reached index step grows
 - pointer: step and index previews
-- scroll: `agent.ts` only
+- scroll: `agent.ts` only, with no pin: as the file passes, each step takes the stage in turn (about every 190px at 1470), its lines light, and its requests write themselves under the code before its answer rises; a click holds a step until the scroll crosses into the next
 
 Koma's film plays once and rests on its last frame.
 
@@ -120,7 +120,7 @@ Koma's film plays once and rests on its last frame.
 - [x] Budgets met; nothing missing; alt on every image (`koma.webm` is 187 KB; the film is decorative, `aria-hidden`)
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (one film: the page has only Koma)
 
-Done here: The film is uncovered between the headline and the terminal. The only dimming is a gradient under the text side, and there is no filter.
+Done here: The film is uncovered between the headline and the terminal, moved off the paragraph at 1470 and above the h1 on phones, so no words sit on it. The only dimming is a gradient under the text side, and there is no filter.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -128,7 +128,7 @@ Done here: The film is uncovered between the headline and the terminal. The only
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: On phone: the film sits behind the top, then the h1 (3 lines at 40px), lede, ask and link, with the terminal starting on the first screen. `agent.ts` plays once instead of pinning, and its index is a swipe row.
+Done here: On phone: the film stands above the words (never behind them), then the h1 (3 lines at 40px), lede, ask and link, with the terminal starting on the first screen. `agent.ts` plays once instead of pinning, and its index is a swipe row.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -145,7 +145,7 @@ Done here: The terminal's final frame (all requests, all steps ticked) is in the
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: CLS is 0.011 at 1470×801 and 0.000 at 375×812, down from 0.18 and 0.21. Requests are written into nodes through refs. The demo clock pauses off screen and in hidden tabs.
+Done here: CLS is 0.0008 at 1470×801 and 0.0012 at 375×812 (walked 7 Nov); the hero run card holds 552px (desktop) and 559px (phone) through all five steps. Requests are written into nodes through refs. The demo clock pauses off screen and in hidden tabs.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (unchanged)
@@ -182,4 +182,4 @@ Done here: JS off and reduced motion show the finished run and the whole script 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment (after review)
 - [x] Review read: `docs/review/agents.md` verdict 8 or more (the critic gave 6 before these fixes; pending re-review)
 
-Done here: Proof is in `docs/gallery/agents/` (`desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`).
+Done here: Proof is in `docs/gallery/agents/` (`desktop-hero.jpg`, `phone-1..3.jpg`: hero, the script mid-scene, the proof row; plus the older `desktop.mp4`, `desktop.jpg`).
