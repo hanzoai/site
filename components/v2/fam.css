@@ -44,6 +44,11 @@
 .v2f-card { position: relative; border-radius: var(--r-card); background: var(--card); }
 .v2f-hair { border: 0; border-top: 1px solid var(--hair); margin: 0; }
 
+/* dark rooms (FamRoom): graphite or black, white text ranks #fafafa / white 78% / white 55% */
+.v2f-room { position: relative; color: #fafafa; }
+.v2f-room.graphite { background: #171717; }
+.v2f-room.black { background: #000; }
+
 /* kinetic type: words rise out of their own masks, once (FamLines) */
 .v2f-lines .v2f-w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .02em .14em; margin: 0 -.02em -.14em; }
 .v2f-lines .v2f-w > span { display: inline-block; }
