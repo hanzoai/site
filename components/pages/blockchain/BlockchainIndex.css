@@ -271,6 +271,7 @@
   .bci-mx .x-table th, .bci-mx .x-table td, .bci-cell, .bci-mx .x-table tbody th a { height: 44px; min-height: 44px; }
   .bci-vh, .bci-mx .x-table caption, .bci-mx .x-table thead th, .bci-mx .x-table tbody tr:last-child > * { font-size: 14px; }
   .bci-run { font-size: 17px; }
+  .bci-read { min-height: 66px; } /* the readout runs to 3 lines on a phone; hold them so the matrix never moves */
 
   .bci-chip, .bci-reel-n, .bci-lit, .bci-ph-n, .bci-card-n, .bci-card-c, .bci-tag, .bci-facts dt, .bci-glist button .x-mono, .bci-mx .x-table tbody td.num { font-size: 14px; }
   .bci .x-arrow { min-height: 44px; }
