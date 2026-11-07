@@ -1,44 +1,68 @@
 'use client';
-/* HSM. Signature: the key that never comes out. Bytes and a key id go into the module, a signature comes back, and the
-   key glows inside the boundary the whole time; the module behind the one interface changes (AWS KMS, Azure Key
-   Vault, Google Cloud KMS, a Zymbit module over PKCS#11) while the call stays the same. The six facts are read beside a
-   module drawing that shows each one. Beyond: "Pick your module" - choose the module you already have and read, in
-   Hanzo's words, where its key lives, whether it can sign by threshold, and where ML-DSA-65 runs on it: the honest
-   answer per module, including the ones that cannot. Every word and link is Hanzo's. */
+/* HSM (v2, archetype A Launch).
+   V2: 8/10 The module as a product shot: it signs in the hero while its provider changes under the same call, then explodes layer by layer in a black room as the six facts are read; pick-your-module answers honestly per module.
+   Signature: the module, exploded. One hardware module drawn as a stack of plates (the handle Hanzo holds, the
+   boundary, the key, the firmware, the module itself). In the hero it is closed and signing: key id and bytes go in, a
+   signature comes out, and the module under the interface changes (AWS KMS, Azure Key Vault, Google Cloud KMS, a Zymbit
+   module over PKCS#11) while the call stays the same. In the pinned chapters it opens apart, plate by plate, each fact
+   lighting the layer it is about, with labels on leader lines like a product exploded view.
+   Supporting: kinetic title lines; the module settles from huge on scroll (Stage); pinned chapters (the one dark room).
+   Beyond: "Pick your module" - choose the module you already have and read where its key lives, whether it can sign by
+   threshold, and where ML-DSA-65 runs on it, in Hanzo's words, including what it cannot do.
+   Accent: copper, from the module. Every word and link is Hanzo's. */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Rise } from '../../ui';
-import { Hero, Paste, Get, useLive, useSteps } from './Frame';
+import { A } from '../../kit';
+import { useLive, useSteps } from './Frame';
+import { Lines, Lift } from '../../v2/LiftStage';
+import PinChapters from '../../v2/x-hypatia/PinChapters';
+import ShipPrompt from '../../v2/ShipPrompt';
+import GetIt from '../../v2/GetIt';
+import '../../v2/v2scale.css';
 import './Hsm.css';
 
+const EASE = [0.16, 1, 0.3, 1];
 const MODULES = ['AWS KMS', 'Azure Key Vault', 'Google Cloud KMS', 'Zymbit · PKCS#11'];
+const LAYERS = ['handle', 'boundary', 'key', 'firmware', 'module'];
 
+/* The module: five plates in one 3D stack. gap opens it; lit picks the plate in the light; labels sit on leader lines. */
+function Module({ gap = 14, lit = [2], labels = {}, base, shares, small }) {
+  return (
+    <div className={'hm' + (small ? ' small' : '')} style={{ '--gap': gap + 'px' }}>
+      <div className="hm-stack">
+        {LAYERS.map((l, i) => (
+          <div key={l} className={'hm-plate hm-' + l + (lit.includes(i) ? ' lit' : '')} style={{ '--z': 2 - i }}>
+            {l === 'key' && (
+              <div className={'hm-core' + (shares ? ' split' : '')}>
+                {[0, 1, 2].map((k) => <i key={k} />)}
+              </div>
+            )}
+            {l === 'firmware' && <div className="hm-grid" />}
+            {l === 'module' && <span className="hm-name">{base}</span>}
+          </div>
+        ))}
+      </div>
+      <ul className="hm-labels">
+        {LAYERS.map((l, i) => labels[i] && (
+          <li key={l} className={lit.includes(i) ? 'lit' : ''} style={{ '--z': 2 - i }}><i />{labels[i]}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* Hero: the closed module signing, its provider changing under the same call. */
 function Sign() {
   const [ref, live] = useLive(0.3);
-  const [m] = useSteps(MODULES.length, 3200, live);
+  const [m] = useSteps(MODULES.length, 3400, live);
   return (
     <div className="hs-sign" ref={ref} aria-hidden="true">
-      <div className="hs-proc">
-        <p className="hs-k">your process</p>
-        <div className="hs-chip">key id</div>
-        <div className="hs-chip">bytes</div>
-        <motion.div key={'s' + m} className="hs-chip sig" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.5, duration: 0.6, ease: EASE }}>signature</motion.div>
-      </div>
-      <div className="hs-pipe">
-        <motion.i key={'a' + m} className="in" initial={{ x: '-100%' }} animate={{ x: '100%' }} transition={{ duration: 0.9, ease: [0.6, 0, 0.3, 1], delay: 0.2 }} />
-        <motion.i key={'b' + m} className="out" initial={{ x: '100%' }} animate={{ x: '-100%' }} transition={{ duration: 0.9, ease: [0.6, 0, 0.3, 1], delay: 1.1 }} />
-      </div>
-      <div className="hs-mod">
-        <div className="hs-bound">
-          <span className="hs-key"><svg viewBox="0 0 24 24" width="30" height="30"><circle cx="8" cy="12" r="4.5" /><path d="M12.5 12H21v3M17.5 12v2.5" /></svg></span>
-          <p>the key stays here</p>
-        </div>
-        <div className="hs-names">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.p key={m} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.35, ease: EASE }}>{MODULES[m]}</motion.p>
-          </AnimatePresence>
-        </div>
-      </div>
+      <Module gap={22} base={MODULES[m]} />
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.p key={'in' + m} className="hs-io in" initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30, transition: { duration: 0.3 } }} transition={{ duration: 0.8, ease: EASE }}>key id + bytes</motion.p>
+        <motion.p key={'out' + m} className="hs-io out" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.8, ease: EASE, delay: 1.1 }}>signature ✓</motion.p>
+      </AnimatePresence>
+      <p className="hs-call">One interface <span>→</span> <AnimatePresence mode="wait" initial={false}><motion.b key={m} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>{MODULES[m]}</motion.b></AnimatePresence></p>
     </div>
   );
 }
@@ -51,72 +75,69 @@ const FACTS = [
   ['Threshold signing, where the hardware can do it', 'Some modules can run key generation and signing rounds internally, so no share is ever assembled anywhere. Shares are attested and encrypted at rest, and a share that arrives unattested is refused. Cloud key services cannot do this, and the interface says so rather than pretending.'],
   ['Bring the module you already have', 'AWS KMS, Google Cloud KMS, Azure Key Vault, a Zymbit secure compute module over local PKCS#11, or an in-memory signer for development. One Go interface behind all of them, so which module you use is a line of configuration rather than a rewrite.'],
 ];
-// what the drawing shows for each fact: [outside the boundary, inside the boundary]
-const DRAW = [['a handle', 'the key'], ['key id + bytes → signature', 'the private key'], ['encrypted password', 'decrypted at boot'], ['in the process, without the firmware', 'ML-DSA-65'], ['attested shares', 'no share assembled'], ['one Go interface', 'the module you have']];
 
-function What() {
-  const [at, setAt] = useState(0);
+/* Each fact opens the module its own way (gap), lights its layer and labels it in the fact's own words. */
+const SCENES = [
+  { gap: 62, lit: [0, 2], labels: { 0: 'a handle', 2: 'the key' } },
+  { gap: 80, lit: [2], labels: { 0: 'key id + bytes → signature', 2: 'the private key' } },
+  { gap: 80, lit: [1], labels: { 1: 'encrypted password', 2: 'decrypted at boot' } },
+  { gap: 96, lit: [3], labels: { 0: 'in the process, without the firmware', 3: 'ML-DSA-65' } },
+  { gap: 96, lit: [2], labels: { 1: 'no share assembled', 2: 'attested shares' }, shares: true },
+  { gap: 70, lit: [4], labels: { 0: 'one Go interface', 4: 'the module you have' } },
+];
+
+function Exploded({ at }) {
+  const s = SCENES[at];
+  const [m] = useSteps(MODULES.length, 1600, at === 5);
   return (
-    <section className="x-sec hs-what">
-      <div className="x-wrap hs-what-grid">
-        <div className="hs-draw" aria-hidden="true">
-          <p className="hs-draw-k">What it is · {String(at + 1).padStart(2, '0')} / 06</p>
-          <div className="hs-box">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div key={at} className="hs-box-in" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>
-                <span className="hs-out">{DRAW[at][0]}</span>
-                <span className="hs-in">{DRAW[at][1]}</span>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-        <div>
-          <Rise as="h2" className="hs-what-h">What it is</Rise>
-          <ol className="hs-facts">
-            {FACTS.map(([t, d], i) => (
-              <li key={t} className={at === i ? 'on' : ''}>
-                <button type="button" onClick={() => setAt(i)} onMouseEnter={() => setAt(i)} onFocus={() => setAt(i)} aria-pressed={at === i}>
-                  <span className="hs-n">{String(i + 1).padStart(2, '0')} / 06</span>
-                  <span className="hs-t">{t}</span>
-                </button>
-                <p>{d}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
+    <div className="hs-exp" aria-hidden="true">
+      <Module gap={s.gap} lit={s.lit} labels={s.labels} shares={s.shares} base={at === 5 ? MODULES[m] : 'HSM'} />
+    </div>
   );
 }
 
-// [module, where the key lives, threshold signing, ML-DSA-65]: each line is Hanzo's, said of that kind of module
 const PQ = 'On a module with post-quantum firmware it runs inside the boundary like any other key; without one it runs in the process.';
-const CLOUD = ['Inside the module. Hanzo holds a handle, never the key.', 'Cloud key services cannot do this, and the interface says so rather than pretending.', PQ];
+const CLOUD = ['Signing and unwrapping happen inside the module. Hanzo holds a handle, never the key.', 'Cloud key services cannot do this, and the interface says so rather than pretending.', PQ];
 const PICK = [
   ['AWS KMS', ...CLOUD],
   ['Azure Key Vault', ...CLOUD],
   ['Google Cloud KMS', ...CLOUD],
-  ['Zymbit · PKCS#11', 'Inside the secure compute module, over local PKCS#11. Hanzo holds a handle, never the key.', 'Where the hardware can do it: key generation and signing rounds run internally, so no share is ever assembled anywhere. A share that arrives unattested is refused.', PQ],
-  ['In-memory signer', 'An in-memory signer, for development.', 'Not here: threshold signing is for modules whose hardware can do it.', 'Without post-quantum firmware it runs in the process.'],
+  ['Zymbit · PKCS#11', 'A Zymbit secure compute module over local PKCS#11. Hanzo holds a handle, never the key.', 'Some modules can run key generation and signing rounds internally, so no share is ever assembled anywhere. A share that arrives unattested is refused.', PQ],
+  ['In-memory signer', 'An in-memory signer for development.', 'Threshold signing, where the hardware can do it.', 'Without post-quantum firmware it runs in the process.'],
 ];
 
+/* Beyond: pick your module. */
 function Pick() {
   const [at, setAt] = useState(0);
   const [, key, thr, pq] = PICK[at];
   return (
-    <section className="x-sec hs-pick">
-      <div className="x-wrap">
-        <p className="x-kick">Bring the module you already have</p>
-        <h2 className="hs-pick-h">Pick your module</h2>
+    <section className="v2-sec hs-pick">
+      <div className="v2-wrap">
+        <div className="hs-pick-head v2-grid">
+          <div className="hs-pick-hl">
+            <p className="v2-kick acc">Bring the module you already have</p>
+            <h2 className="v2-display s">Pick your module</h2>
+          </div>
+          <p className="v2-lede hs-pick-f">One Go interface behind all of them, so which module you use is a line of configuration rather than a rewrite.</p>
+        </div>
         <div className="hs-pick-tabs" role="tablist" aria-label="Module">
-          {PICK.map(([m], i) => <button key={m} type="button" role="tab" aria-selected={at === i} aria-controls="hs-pick-p" onClick={() => setAt(i)}>{m}</button>)}
+          {PICK.map(([m], i) => (
+            <button key={m} type="button" role="tab" aria-selected={at === i} aria-controls="hs-pick-p" onClick={() => setAt(i)}>
+              {at === i && <motion.span layoutId="hs-tab" className="hs-tab-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              <span className="hs-tab-t">{m}</span>
+            </button>
+          ))}
         </div>
         <dl className="hs-pick-p" id="hs-pick-p" role="tabpanel" aria-live="polite">
-          <div><dt>The key</dt><dd>{key}</dd></div>
-          <div><dt>Threshold signing</dt><dd>{thr}</dd></div>
-          <div><dt>ML-DSA-65</dt><dd>{pq}</dd></div>
+          {[['The key', key], ['Threshold signing', thr], ['ML-DSA-65', pq]].map(([t, d]) => (
+            <div key={t}>
+              <dt>{t}</dt>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.dd key={at + t} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ duration: 0.45, ease: EASE }}>{d}</motion.dd>
+              </AnimatePresence>
+            </div>
+          ))}
         </dl>
-        <p className="hs-pick-f">One Go interface behind all of them, so which module you use is a line of configuration rather than a rewrite.</p>
       </div>
     </section>
   );
@@ -124,24 +145,28 @@ function Pick() {
 
 export default function Hsm() {
   return (
-    <main className="hs">
-      <Hero
-        dark
-        title="Hanzo HSM"
-        lede="One interface to the key hardware you already trust — AWS KMS, Azure Key Vault, Google Cloud KMS, or a Zymbit module over PKCS#11. Generate keys, sign with them, and unwrap with them, without the private material ever reaching your process."
-        acts={[['View on GitHub', 'https://github.com/hanzoai']]}
-      >
-        <Sign />
-      </Hero>
-      <What />
-      <Pick />
-      <section className="x-sec hs-paste">
-        <div className="x-wrap">
-          <Rise as="h2" className="hs-start">Get started with HSM</Rise>
-          <Paste name="HSM" prompt="Read https://hanzo.ai/skill.md and use Hanzo HSM in my project." />
+    <main className="v2 hs">
+      <section className="hs-hero">
+        <div className="v2-wrap v2-grid hs-hero-grid">
+          <div className="hs-hero-copy">
+            <p className="v2-kick acc">Hardware security module</p>
+            <Lines as="h1" className="v2-display hs-h1" lines={['Hanzo', 'HSM']} data-morph-target="" />
+            <motion.p className="v2-body hs-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>One interface to the key hardware you already trust — AWS KMS, Azure Key Vault, Google Cloud KMS, or a Zymbit module over PKCS#11. Generate keys, sign with them, and unwrap with them, without the private material ever reaching your process.</motion.p>
+            <div className="v2-acts"><A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A></div>
+          </div>
+          <Lift className="hs-hero-obj" from={1.2} y={20} origin="50% 50%" offset={['start end', 'start 0.1']}>
+            <Sign />
+          </Lift>
         </div>
       </section>
-      <Get name="HSM" tag="Hardware security module" />
+
+      <PinChapters className="hs-ch" dark label="What it is" items={FACTS} look="right" head={<p className="v2-kick hs-ch-k">What it is</p>} visual={(at) => <Exploded at={at} />} />
+
+      <Pick />
+
+      <ShipPrompt name="HSM" prompt="Read https://hanzo.ai/skill.md and use Hanzo HSM in my project." />
+
+      <GetIt name="HSM" tag="Hardware security module" seed="hsm" data={[65, 11, 4]} lead="Get started with HSM" />
     </main>
   );
 }

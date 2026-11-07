@@ -1,3 +1,4 @@
+// V2: 8/10 Stage desk (the contract arrives huge and signs itself), five pinned chapters on the same page, parts that open into sheets, a full-width signing pad, one dark room, ink-indigo accent
 // Signature: a contract that signs itself — the PDF in the hero walks Hanzo's five sign-here flags: fields drop in, the link goes out, ink writes, recipients tick to signed, the certificate stamps the page
 // Beyond: sign it here — draw your signature on a pad in the page, press Sign, and the field takes it with its certificate time; nothing is sent
 import Sign from '../../components/pages/apps/Sign';

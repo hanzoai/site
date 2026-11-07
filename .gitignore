@@ -5,3 +5,4 @@ out/
 *.log
 .next-dev/
 shots/
+docs/status.html

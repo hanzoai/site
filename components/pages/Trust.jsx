@@ -1,18 +1,29 @@
 'use client';
-/* Trust. Its idea is the evidence locker. Signature moment: the hero is a cabinet of the six things a review gets;
-   its drawers pull themselves out one at a time (or at your hand), each with a live status chip — published and
-   readable now, or on request — and the open drawer's contents in the tray beneath. Further down, every control is a
-   drawer of its own that opens to the evidence, grouped as Hanzo groups them. Every word is Hanzo's.
-   Signature: the evidence locker whose drawers pull themselves out, each with its published / on-request chip.
-   Beyond: "Find a control". Type what your questionnaire asks (PKCE, SCIM, argon2id, HKDF) and every group opens the
-   drawer that answers it, the rest dim, and the count says how many of Hanzo's controls match; nothing matching is met
-   with Hanzo's own line: if a control you need is not on this page, ask. */
+/* Trust. Its idea is calm proof: big statements, and the evidence kept in drawers you open. The first screen is the
+   headline over one wide product object — the evidence locker, a cabinet of the six things a review gets, whose
+   drawers pull themselves out one at a time (or at your hand), each marked Published or On request, its contents in
+   the tray beside it. Then the two published papers, which open into their pages; where Hanzo stands, said plainly;
+   and every control, grouped as Hanzo groups them, as a quiet list whose rows open their evidence in a sheet. It
+   closes in the one dark room with the address for what you find and the one ask. Every word is Hanzo's.
+   No accent hue: hierarchy from ink alone, a filled or hollow mark for Published / On request.
+   Signature: the evidence locker — a wide cabinet under the headline whose drawers pull themselves out one by one, each with its Published or On request mark and its contents in the tray beside it.
+   Beyond: "Find a control". Type what your questionnaire asks (PKCE, SCIM, argon2id, HKDF): the answers appear in
+   place under each group as you type, each opening the drawer that holds it; the count says how many of Hanzo's
+   controls match, and nothing matching is met with Hanzo's own line: if a control you need is not on this page, ask.
+   Motion: signature (drawers on springs, idle) + MaskLines headline cut-in (arrival) + answers re-flowing as you type
+   (state; sheets rise) + the SceneWipe dark room (the one scroll-linked effect).
+   V2: 8/10 calm-proof rebuild in ink only: headline over a wide self-opening evidence cabinet, papers that open into their pages, plain statements, five control groups as a quiet list of evidence sheets with answer-as-you-type, one ask sticky after the hero. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise } from '../ui';
-import { A, More, Band } from '../kit';
+import { A, More } from '../kit';
+import MaskLines from '../v2/MaskLines';
+import SceneWipe from '../v2/SceneWipe';
+import DetailSheet from '../v2/DetailSheet';
+import AskBar from '../v2/AskBar';
+import '../v2/ProofScale.css';
 import './Trust.css';
 
+const ASK = 'Request a review or an enterprise deployment';
 const REVIEW = [
   ['The Data Processing Addendum', 'The processor terms in full — roles and instructions, subprocessor governance, security measures, the Standard Contractual Clause modules for EEA and UK transfers, and the U.S. state service-provider terms. Still a draft pending counsel, which the page says at the top, so read it as terms proposed rather than terms signed.', '/legal/dpa'],
   ['The subprocessor register', 'Which providers can process your data, what each one does, where it runs, and whether it may train on your content — including the model providers a routed request reaches through a gateway. Rows still being confirmed against a provider’s signed terms are marked as such rather than left to look settled.', '/legal/subprocessors'],
@@ -23,44 +34,59 @@ const REVIEW = [
 ];
 const pad = (i) => String(i + 1).padStart(2, '0');
 
+/* ---------- signature: the evidence locker ---------- */
 function Locker() {
-  const [at, setAt] = useState(0);
+  const [at, setAt] = useState(-1); // -1: every drawer shut, as the page arrives
   const [mine, setMine] = useState(false);
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   useEffect(() => {
-    if (mine || calm || !live) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 6), 3200);
+    if (calm) { setAt((v) => (v < 0 ? 0 : v)); return; }
+    if (mine || !live) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % 6), at < 0 ? 650 : 3400);
     return () => clearTimeout(t);
   }, [at, mine, calm, live]);
   const pick = (i) => { setMine(true); setAt(i); };
+  const keys = (e) => {
+    const k = { ArrowDown: 1, ArrowUp: -1 }[e.key];
+    if (!k) return;
+    e.preventDefault();
+    const n = (Math.max(at, 0) + k + 6) % 6;
+    pick(n);
+    document.getElementById('xtr-dr-' + n)?.focus();
+  };
   return (
     <div className="xtr-locker" ref={ref}>
-      <div className="xtr-locker-h">
-        <span>What a review gets</span>
-        <span className="x-mono">{pad(at)} / 06</span>
-      </div>
-      <div className="xtr-cab" role="tablist" aria-label="What a review gets">
-        {REVIEW.map(([t, , to], i) => (
-          <motion.button key={t} type="button" role="tab" aria-selected={at === i} aria-controls={'xtr-tray-' + i} id={'xtr-dr-' + i}
-            className={'xtr-drawer' + (at === i ? ' on' : '')} onClick={() => pick(i)}
-            animate={{ x: at === i ? 22 : 0 }} transition={{ type: 'spring', stiffness: 260, damping: 24 }}>
-            <span className="xtr-dr-n x-mono">{pad(i)}</span>
-            <span className="xtr-dr-t">{t}</span>
-            <span className={'xtr-chip' + (to ? ' pub' : '')}><i aria-hidden="true" />{to ? 'Published' : 'On request'}</span>
-            <span className="xtr-handle" aria-hidden="true" />
-          </motion.button>
-        ))}
+      <div className="xtr-cab-w">
+        <p className="xtr-locker-h">
+          <span>What a review gets</span>
+          <span className="pf-mono">{pad(Math.max(at, 0))} / 06</span>
+        </p>
+        <div className="xtr-cab" role="tablist" aria-label="What a review gets" aria-orientation="vertical" onKeyDown={keys}>
+          {REVIEW.map(([t, , to], i) => (
+            <motion.button
+              key={t} type="button" role="tab" id={'xtr-dr-' + i} aria-selected={at === i} aria-controls={'xtr-tray-' + i} tabIndex={at === i || (at < 0 && i === 0) ? 0 : -1}
+              className={'xtr-drawer' + (at === i ? ' on' : '')} onClick={() => pick(i)}
+              initial={false} animate={{ x: at === i ? 28 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <span className="xtr-dr-n pf-mono">{pad(i)}</span>
+              <span className="xtr-dr-t">{t}</span>
+              <span className={'xtr-chip' + (to ? ' pub' : '')}><i aria-hidden="true" />{to ? 'Published' : 'On request'}</span>
+              <span className="xtr-handle" aria-hidden="true" />
+            </motion.button>
+          ))}
+        </div>
       </div>
       <div className="xtr-tray">
         {/* every drawer's contents are in the page; the open one is shown */}
         {REVIEW.map(([t, d, to], i) => (
-          <motion.div key={t} id={'xtr-tray-' + i} role="tabpanel" aria-labelledby={'xtr-dr-' + i} className="xtr-tray-p" initial={false}
-            animate={at === i ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }} transition={{ duration: 0.4, ease: EASE }} aria-hidden={at !== i} inert={at !== i}>
+          <div key={t} id={'xtr-tray-' + i} role="tabpanel" aria-labelledby={'xtr-dr-' + i} className="xtr-tray-p" data-on={at === i || (at < 0 && i === 0)} inert={!(at === i || (at < 0 && i === 0))}>
+            <span className="xtr-tray-n" aria-hidden="true">{pad(i)}</span>
+            <b className="pf-title">{t}</b>
             <p>{d}</p>
             {to ? <More to={to}>Read {t.replace(/^The /, 'the ')}</More> : <More to="/contact-sales">Ask for it</More>}
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
@@ -68,44 +94,42 @@ function Locker() {
 }
 
 function Hero() {
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
   return (
     <section className="xtr-hero" aria-labelledby="xtr-h1">
-      <div className="x-wrap xtr-hero-g">
-        <div className="xtr-hero-c">
-          <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Trust</motion.p>
-          <h1 id="xtr-h1" className="xtr-h1">{line('Security', 0.05)}{line('you can read', 0.15)}</h1>
-          <motion.p className="xtr-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>How you get in, what a credential reaches, what gets written down, and where the keys live — each one a mechanism you can point at in the source.</motion.p>
-          <motion.div className="xtr-seal" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: EASE, delay: 0.5 }} aria-hidden="true">
-            <img src="/models/kai.webp" alt="" />
-          </motion.div>
+      <div className="pf-wrap">
+        <div className="xtr-hero-top">
+          <div>
+            <MaskLines as="h1" id="xtr-h1" className="pf-display" lines={['Security', 'you can read']} />
+            <p className="pf-kick xtr-cap">Trust</p>
+          </div>
+          <div className="xtr-hero-r">
+            <p className="pf-lede">How you get in, what a credential reaches, what gets written down, and where the keys live — each one a mechanism you can point at in the source.</p>
+            <A to="/contact-sales" className="pf-btn solid" data-thumb={ASK}>{ASK}</A>
+          </div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 }}>
-          <Locker />
-        </motion.div>
+        <Locker />
       </div>
     </section>
   );
 }
 
+/* ---------- the two papers you can read now; each opens into its page ---------- */
 function Docs() {
   return (
-    <section className="x-sec xtr-docs">
-      <div className="x-wrap xtr-docs-g">
-        <div>
-          <h2 className="xtr-h2">What you can read, and what you can ask for</h2>
-          <p className="xtr-p">The two documents a review opens first are published — read them now, no email. The other four we send on request: the questionnaire, the review session and the control detail come back the same week.</p>
+    <section className="pf-sec xtr-docs" aria-labelledby="xtr-docs-h">
+      <div className="pf-wrap xtr-docs-g">
+        <div className="xtr-docs-c">
+          <MaskLines id="xtr-docs-h" className="pf-head" lines={['What you can read,', 'and what you can ask for']} />
+          <p className="pf-body">The two documents a review opens first are published — read them now, no email. The other four we send on request: the questionnaire, the review session and the control detail come back the same week.</p>
         </div>
         <div className="xtr-papers">
           {REVIEW.slice(0, 2).map(([t, d, to], i) => (
-            <Rise key={t} delay={i * 0.1}>
-              <A to={to} className="xtr-paper" data-thumb={i === 0 ? 'Read the Data Processing Addendum' : undefined}>
-                <span className="xtr-paper-k x-mono">{to}</span>
-                <b>{t}</b>
-                <span>{d}</span>
-                <i aria-hidden="true">→</i>
-              </A>
-            </Rise>
+            <A key={t} to={to} className={'xtr-paper p' + i}>
+              <span className="xtr-paper-k pf-mono">{to}</span>
+              <b data-morph>{t}</b>
+              <span className="xtr-paper-d">{d}</span>
+              <i className="xtr-paper-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i>
+            </A>
           ))}
         </div>
       </div>
@@ -113,22 +137,25 @@ function Docs() {
   );
 }
 
+/* ---------- where we stand today: said plainly ---------- */
 function Stand() {
   return (
-    <section className="x-sec xtr-stand">
-      <div className="x-wrap xtr-stand-g">
-        <h2 className="xtr-h2">Where we stand today</h2>
+    <section className="pf-sec xtr-stand" aria-labelledby="xtr-stand-h">
+      <div className="pf-wrap xtr-stand-g">
+        <MaskLines id="xtr-stand-h" className="pf-head" lines={['Where we', 'stand today']} />
         <div>
           <p className="xtr-say">We run the controls those audits examine, and this page is the evidence — every mechanism below was read in the source before it was written here. Bring your questionnaire and we will answer it against the code rather than against a summary of it.</p>
-          <p className="xtr-p">On frameworks: we audit ourselves continually and send the report on request — ask and it comes back, no questionnaire first. If your review runs on a named framework, tell us which one and what your reviewer needs to see. We scope it with you as part of the engagement, at the speed of the engagement rather than a calendar.</p>
-          <p className="xtr-p">If a control you need is not on this page, ask. Where we have it we will show you the code, and where we do not you will get a straight answer the same day.</p>
+          <div className="xtr-stand-p">
+            <p className="pf-body">On frameworks: we audit ourselves continually and send the report on request — ask and it comes back, no questionnaire first. If your review runs on a named framework, tell us which one and what your reviewer needs to see. We scope it with you as part of the engagement, at the speed of the engagement rather than a calendar.</p>
+            <p className="pf-body">If a control you need is not on this page, ask. Where we have it we will show you the code, and where we do not you will get a straight answer the same day.</p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- the controls, each an evidence drawer ---------- */
+/* ---------- the controls: a quiet list, each group's evidence in a sheet ---------- */
 const GROUPS = [
   ['Getting in', 'One service issues every credential. Hanzo IAM is the only thing that holds a password or runs a login, and nothing else in the stack has its own.', [
     ['Signing in is a redirect, not a form', 'An application hands you to Hanzo IAM and gets back a code. A client with no registered secret — anything running in a browser or on a laptop — must present a PKCE challenge, and only S256 is accepted. Offer the plain method and the request is refused rather than quietly downgraded.'],
@@ -157,46 +184,83 @@ const GROUPS = [
     ['Signing keys are held by the platform', 'Signing goes through one interface that takes a key id and some bytes and gives back a signature. Today every implementation behind it runs in our own process: the key material is held on the platform and parsed by the running binary. An external key module — where the private key is made inside the module and never enters our memory — is the shape we want and is not what runs now. If your deployment requires it, say so and we will scope it; do not read this row as custody you have not been given.'],
   ]],
 ];
-
+const ALL = GROUPS.flatMap((g) => g[2]);
 const has = (q) => ([t, d]) => !!q && (t + ' ' + d).toLowerCase().includes(q);
 
-function Group({ g, gi, q }) {
+/* open a group's sheet from outside it (an answer under the search), then bring that control into view inside it */
+const openAt = (gi, i) => {
+  document.querySelector('.xtr-g-btn-' + gi)?.click();
+  setTimeout(() => document.getElementById(`xtr-c-${gi}-${i}`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 380);
+};
+
+function Group({ g, gi, k }) {
   const [name, lede, items] = g;
-  const [open, setOpen] = useState(0);
-  const hit = has(q);
-  const hits = items.filter(hit).length;
-  useEffect(() => { if (q) setOpen(items.findIndex(hit)); }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
+  const hit = has(k);
+  const hits = items.map((it, i) => [it, i]).filter(([it]) => hit(it));
   return (
-    <section className={'xtr-grp' + (gi % 2 ? ' alt' : '') + (q && !hits ? ' miss' : '')} aria-labelledby={'xtr-g' + gi}>
-      <div className="x-wrap xtr-grp-g">
-        <div className="xtr-grp-h">
-          <span className="xtr-grp-n x-mono">{pad(gi)} / 05</span>
-          <h2 id={'xtr-g' + gi} className="xtr-h2">{name}</h2>
-          <p className="xtr-p">{lede}</p>
-          <span className="xtr-count x-mono">{q ? hits + ' of ' : ''}{items.length} {items.length === 1 ? 'drawer' : 'drawers'}</span>
-        </div>
-        <ul className="xtr-drawers">
+    <li className={'xtr-grp' + (k && !hits.length ? ' miss' : '')}>
+      <span className="xtr-grp-n" aria-hidden="true">{pad(gi)}</span>
+      <div className="xtr-grp-c">
+        <DetailSheet label={name} title={name} className={'xtr-g-btn xtr-g-btn-' + gi} wide>
+          <p className="xtr-sh-lede">{lede}</p>
           {items.map(([t, d], i) => (
-            <Rise as="li" key={t} delay={i * 0.05} y={16} className={(open === i ? 'on' : '') + (hit([t, d]) ? ' hit' : '')}>
-              <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
-                <span className="xtr-tag x-mono">{name} · {pad(i)}</span>
-                <span className="xtr-dt">{t}</span>
-                <motion.span className="xtr-pull" animate={{ rotate: open === i ? 180 : 0 }} transition={{ duration: 0.4, ease: EASE }} aria-hidden="true">
-                  <svg viewBox="0 0 16 16" width="14" height="14"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </motion.span>
-              </button>
-              {/* the evidence stays in the page; a closed drawer is collapsed */}
-              <motion.div className="xtr-ev" initial={false} animate={open === i ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} aria-hidden={open !== i} inert={open !== i}>
-                <p>{d}</p>
-              </motion.div>
-            </Rise>
+            <article key={t} id={`xtr-c-${gi}-${i}`} className={'xtr-sh-c' + (hit([t, d]) ? ' hit' : '')}>
+              <h3><span className="pf-mono">{pad(i)}</span>{t}</h3>
+              <p>{d}</p>
+            </article>
           ))}
-        </ul>
+        </DetailSheet>
+        <p className="xtr-grp-l">{lede}</p>
+        <AnimatePresence initial={false}>
+          {k && hits.length > 0 && (
+            <motion.ul className="xtr-ans" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+              {hits.map(([[t], i]) => (
+                <li key={t}><button type="button" onClick={() => openAt(gi, i)}><span className="pf-mono">{pad(i)}</span>{t}</button></li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
+      </div>
+      <span className="xtr-dots" aria-hidden="true">
+        {items.map((it, i) => <i key={i} data-hit={hit(it)} />)}
+      </span>
+    </li>
+  );
+}
+
+function Controls() {
+  const [q, setQ] = useState('');
+  const k = q.trim().toLowerCase();
+  const n = k ? ALL.filter(has(k)).length : ALL.length;
+  return (
+    <section className="pf-sec xtr-ctl" id="controls" aria-label="Find a control">
+      <div className="pf-wrap">
+        <div className="xtr-find">
+          <label className="xtr-find-l" htmlFor="xtr-q">Find a control</label>
+          <div className="xtr-find-f">
+            <svg viewBox="0 0 20 20" width="22" height="22" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M13 13l4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
+            <input id="xtr-q" type="search" className="xtr-find-i" value={q} placeholder="PKCE, SCIM, argon2id, HKDF…" autoComplete="off" spellCheck="false" onChange={(e) => setQ(e.target.value)} />
+            {q && <button type="button" className="xtr-find-x" aria-label="Clear" onClick={() => setQ('')}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></button>}
+          </div>
+          <p className="xtr-find-n pf-mono" aria-live="polite"><b>{n}</b> / {ALL.length}</p>
+        </div>
+        <AnimatePresence initial={false}>
+          {k && !n && (
+            <motion.div className="xtr-none" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+              <p className="pf-title">If a control you need is not on this page, ask.</p>
+              <More to="/contact-sales">Ask for it</More>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <ol className="xtr-grps">
+          {GROUPS.map((g, i) => <Group key={g[0]} g={g} gi={i} k={k} />)}
+        </ol>
       </div>
     </section>
   );
 }
 
+/* ---------- where we stand: the first email, answered ---------- */
 const FACTS = [
   ['Frameworks.', <>Our controls are built to be compatible with SOC 2, and we audit them continually. The audit report is available upon request — ask and it comes back, no questionnaire first. If your review runs on a named framework, the fourth card above is how that conversation starts.</>],
   ['FIPS:', <>our code implements published standards, ML-KEM and ML-DSA among them, but implementing a standard is not the same as holding a validation, and a 140-3 validation belongs to the vendor of a module rather than to us. Nor do we run one today: signing happens in our own process, not inside an external module. If your deployment requires validated hardware custody, tell us and we will scope it with you rather than imply you already have it.</>],
@@ -204,76 +268,61 @@ const FACTS = [
   ['Availability.', <>An uptime number is a contractual commitment, so ours lives in the agreement where it has consequences rather than on a marketing page where it does not. Ask for the number your agreement would carry and we will put it in writing.</>],
 ];
 
-const ALL = GROUPS.flatMap((g) => g[2]);
-
-function Find({ q, k, setQ }) {
-  const n = k ? ALL.filter(has(k)).length : ALL.length;
-  return (
-    <section className="xtr-find" aria-label="Find a control">
-      <div className="x-wrap xtr-find-g">
-        <label className="xtr-find-l" htmlFor="xtr-q">Find a control</label>
-        <input id="xtr-q" type="search" className="xtr-find-i" value={q} placeholder="PKCE, SCIM, argon2id, HKDF…" autoComplete="off"
-          onChange={(e) => setQ(e.target.value)} />
-        <p className="xtr-find-n x-mono" aria-live="polite">{k ? `${n} of ${ALL.length} controls` : `${ALL.length} controls`}</p>
-      </div>
-      {k && !n && (
-        <div className="x-wrap xtr-find-none">
-          <p>If a control you need is not on this page, ask.</p>
-          <More to="/contact-sales">Ask for it</More>
-        </div>
-      )}
-    </section>
-  );
-}
-
 function Facts() {
   return (
-    <section className="x-sec xtr-facts">
-      <div className="x-wrap">
+    <section className="pf-sec xtr-facts" aria-labelledby="xtr-facts-h">
+      <div className="pf-wrap xtr-facts-g">
         <div className="xtr-facts-h">
-          <h2 className="xtr-h2">Where we stand</h2>
-          <p className="xtr-p">Everything a reviewer establishes in the first email, answered here instead.</p>
+          <MaskLines id="xtr-facts-h" className="pf-display s" lines={['Where we stand']} />
+          <p className="pf-lede">Everything a reviewer establishes in the first email, answered here instead.</p>
         </div>
-        <div className="xtr-facts-g">
-          {FACTS.map(([k, t], i) => (
+        <dl className="xtr-fact-l">
+          {FACTS.map(([k, t]) => (
             <div key={k} className="xtr-fact">
-              <span className="xtr-fact-k">{k}</span>
-              <p>{t}</p>
+              <dt className="pf-title">{k}</dt>
+              <dd>{t}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </div>
     </section>
   );
 }
 
-function Found() {
+/* ---------- the one dark room: the address, then the one ask ---------- */
+function Close() {
   return (
-    <section className="xtr-found">
-      <div className="x-wrap">
-        <div className="xtr-found-c">
-          <h2 className="xtr-h2">Found something</h2>
-          <p className="xtr-found-p">Send it to <a href="mailto:security@hanzo.ai">security@hanzo.ai</a>. The same address is published at <a href="/.well-known/security.txt">/.well-known/security.txt</a> under RFC 9116, so a scanner finds it without reading this page. Tell us what you did and what came back; we do not need a proof-of-concept exploit to take a report seriously, and we will not threaten anyone who sends one in good faith.</p>
-          <p className="xtr-p">For the mechanisms in more detail — encryption, infrastructure, what an enterprise agreement adds — see <A to="/security">the security page</A>.</p>
+    <SceneWipe className="xtr-dark" label="Found something">
+      <div className="pf-sec">
+        <div className="pf-wrap xtr-found">
+          <h2 className="pf-head">Found something</h2>
+          <div>
+            <p className="xtr-found-p">Send it to <a href="mailto:security@hanzo.ai">security@hanzo.ai</a>. The same address is published at <a href="/.well-known/security.txt">/.well-known/security.txt</a> under RFC 9116, so a scanner finds it without reading this page. Tell us what you did and what came back; we do not need a proof-of-concept exploit to take a report seriously, and we will not threaten anyone who sends one in good faith.</p>
+            <p className="pf-body">For the mechanisms in more detail — encryption, infrastructure, what an enterprise agreement adds — see <A to="/security">the security page</A>.</p>
+          </div>
+        </div>
+        <div className="pf-wrap xtr-band">
+          <MaskLines className="pf-display m" lines={['Bring us the', 'hard questions']} />
+          <div className="xtr-band-r">
+            <p className="pf-lede">Your questionnaire, your architecture review, your framework. We answer against the code, we move at the speed of your review, and you will always know which of those two you are getting.</p>
+            <A to="/contact-sales" className="pf-btn solid xtr-light">{ASK}</A>
+          </div>
         </div>
       </div>
-    </section>
+    </SceneWipe>
   );
 }
 
 export default function Trust() {
-  const [q, setQ] = useState('');
-  const k = q.trim().toLowerCase();
   return (
     <main className="xtr">
       <Hero />
       <Docs />
       <Stand />
-      <Find q={q} k={k} setQ={setQ} />
-      {GROUPS.map((g, i) => <Group key={g[0]} g={g} gi={i} q={k} />)}
+      <Controls />
       <Facts />
-      <Found />
-      <Band title="Bring us the hard questions" lede="Your questionnaire, your architecture review, your framework. We answer against the code, we move at the speed of your review, and you will always know which of those two you are getting." action="Request a review or an enterprise deployment" to="/contact-sales" />
+      <Close />
+      <AskBar title="Trust" label={ASK} to="/contact-sales" />
     </main>
   );
 }

@@ -1,8 +1,11 @@
 'use client';
+/* Home, pricing (v2, calm). One word as the headline, three plans on hairlines; the price rolls to its new value when
+   you change the plan or the billing, up when it rises and down when it falls. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
-import { EASE, Words } from './ui';
+import { EASE } from './ui';
 import { More } from './kit';
+import Lines from './v2/Lines';
 
 const go = 'https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
 const TIERS = {
@@ -56,7 +59,6 @@ function Plan({ name, desc, price, unit, sub, cta, href, note, head, items, top,
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
       transition={{ duration: 0.7, ease: EASE, delay: i * 0.07 }}
-      whileHover={{ y: -4 }}
     >
       <motion.h3 layout="position">{name}</motion.h3>
       {top}
@@ -89,10 +91,12 @@ export default function Pricing() {
   const [bill, setBill] = useState('Annual');
   const t = TIERS[x];
   return (
-    <section className="x-sec x-pricing" id="pricing" aria-labelledby="pricing-h">
-      <div className="x-wrap">
-        <header className="x-head center"><Words text="Pricing" /></header>
-        <div className="x-center"><Seg opts={['Personal', 'Team', 'API']} val={tab} set={setTab} id="price-tab" /></div>
+    <section className="hv-pricing v2-sec" id="pricing" aria-labelledby="pricing-h">
+      <div className="v2-wrap">
+        <header className="hv-price-head">
+          <Lines as="h2" id="pricing-h" className="v2-display" lines={['Pricing']} />
+          <Seg opts={['Personal', 'Team', 'API']} val={tab} set={setTab} id="price-tab" />
+        </header>
         <LayoutGroup>
           <motion.div layout className={'x-plans n' + (tab === 'Personal' ? 3 : 2)}>
             <AnimatePresence mode="popLayout" initial={false}>
@@ -123,7 +127,7 @@ export default function Pricing() {
             </AnimatePresence>
           </motion.div>
         </LayoutGroup>
-        <div className="x-row-links"><More to="/pricing">Every plan, model rate and tool price</More></div>
+        <div className="hv-links"><More to="/pricing">Every plan, model rate and tool price</More></div>
       </div>
     </section>
   );

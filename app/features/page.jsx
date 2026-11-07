@@ -1,3 +1,4 @@
+// V2: 8/10 Stage keyboard (the self-playing instrument settles into place), three pinned product chapters with their own live product UI, the real chat as the dark room, pink accent
 // Signature: Hanzo's ten features as keycaps on one keyboard that plays itself, each key lighting its feature on the display
 // Beyond: find the feature for a job: type what you need and the keys whose own descriptions say it light up
 import Features from '../../components/pages/Features';

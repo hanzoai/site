@@ -1,3 +1,5 @@
+// Signature: a camera through the stack: eleven plates as one slab, the night opens from it, the plates pull apart and the camera travels down group by group
+// Beyond: ask the map: type a word and the plates whose own Hanzo descriptions use it light up, each with the matching phrase and its sheet
 import Platform from '../../components/pages/Platform';
 import JsonLd from '../../components/JsonLd';
 

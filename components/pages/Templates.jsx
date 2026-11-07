@@ -1,14 +1,20 @@
 'use client';
 // Signature: a deck of live browser windows that riffles itself; pull one forward (drag, arrows or a dot) and its address bar types its .hanzo.app name.
 // Beyond: the commands for the template in front, with its slug and its source repository filled in, ready to copy.
-/* Templates. Hanzo's twelve products with previews, as a deck of browser windows: the one in front is the one you
+/* Templates, v2. V2: 8/10 Stage deck (the riffling deck of live windows arrives huge and settles), a shelf of all twelve whose tiles open into sheets, the setup room in the dark, orange accent
+   Motion budget: signature = the riffling deck (drag); supporting = Stage (Settle), Open (shelf sheets), layout chips.
+   Templates. Hanzo's twelve products with previews, as a deck of browser windows: the one in front is the one you
    open, the next three wait behind it, the ones you passed fly off to the left. The chips re-deal the deck by kind.
    Under it, Hanzo's own setup prompt is spelled out as the commands it runs, for whichever template is in front. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
-import { A, SecHead } from '../kit';
+import { EASE, Copy, Magnetic } from '../ui';
+import { A } from '../kit';
 import SetupMenu from '../SetupMenu';
+import LineMask from '../v2/x-gauss/LineMask';
+import Settle from '../v2/Settle';
+import { OpenCards } from '../v2/OpenSheet';
+import '../v2/Scale.css';
 import './Templates.css';
 
 // [slug, title, kind, what it is] — Hanzo's list (GET api.hanzo.ai/v1/templates, the ones with previews), by kind then title
@@ -113,7 +119,6 @@ function Deck({ kind, setKind, at, setAt, list }) {
       <div className="xtp-kinds" role="tablist" aria-label="Kind of template">
         {KINDS.map((k) => (
           <button key={k} type="button" role="tab" aria-selected={kind === k} onClick={() => { setKind(k); setAt(0); setMine(true); }}>
-            {kind === k && <motion.span layoutId="xtp-kind" className="xtp-kind-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
             <span>{k}<i className="x-mono">{pad(k === 'All' ? ALL.length : ALL.filter((t) => t[2] === k).length)}</i></span>
           </button>
         ))}
@@ -149,14 +154,15 @@ function Commands({ t }) {
     ['hanzo dev', 'in it, to start building'],
   ];
   return (
-    <section className="x-sec xtp-cmd" data-room="dark" aria-labelledby="xtp-cmd-h">
-      <div className="x-wrap xtp-cmd-in">
+    <section className="w2-sec xtp-cmd w2-dark" data-room="dark" aria-labelledby="xtp-cmd-h">
+      <div className="w2-wrap xtp-cmd-in">
         <div>
-          <SecHead dark kicker="Setup" title="Open one. Edit it in Hanzo." id="xtp-cmd-h" />
+          <p className="w2-kicker acc">Setup</p>
+          <h2 id="xtp-cmd-h" className="w2-display s xtp-cmd-h">Open one. Edit it in Hanzo.</h2>
           <div className="xtp-setup2"><SetupMenu inline up /></div>
           <Strip />
         </div>
-        <Rise className="xtp-term">
+        <div className="xtp-term">
           <div className="xtp-term-top">
             <span className="xtp-lights" aria-hidden="true"><i /><i /><i /></span>
             <AnimatePresence mode="wait" initial={false}>
@@ -174,7 +180,27 @@ function Commands({ t }) {
               <span className="xtp-caret" aria-hidden="true" />
             </motion.pre>
           </AnimatePresence>
-        </Rise>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* The shelf: all twelve as tiles; each opens into a sheet with its preview, what it is, and its commands. */
+function Shelf() {
+  return (
+    <section className="w2-sec xtp-shelf" aria-label="Every template">
+      <div className="w2-wrap">
+        <p className="xtp-shelf-k w2-kicker">All <span className="x-mono">{pad(ALL.length)}</span></p>
+        <OpenCards cols={3} className="xtp-tiles" items={ALL.map(([slug, title, kind, what]) => ({
+          id: 'xtp-' + slug, k: kind, t: title, d: what,
+          art: <span className="xtp-tile-img"><img src={`https://hanzo.ai/templates/${slug}.webp`} alt="" width="1280" height="800" loading="lazy" decoding="async" /><span className="x-mono">{slug}.hanzo.app</span></span>,
+          body: (<>
+            <p>{what}</p>
+            <p className="xtp-sheet-cmd x-mono">git clone https://github.com/hanzo-apps/template-{slug}</p>
+            <p><A to={'/chat?template=' + encodeURIComponent(slug)} className="w2-cta acc">Edit in Hanzo <i aria-hidden="true">→</i></A></p>
+          </>),
+        }))} />
       </div>
     </section>
   );
@@ -185,28 +211,35 @@ export default function Templates() {
   const [at, setAt] = useState(0);
   const list = useMemo(() => (kind === 'All' ? ALL : ALL.filter((t) => t[2] === kind)), [kind]);
   const front = list[Math.min(at, list.length - 1)];
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
   return (
-    <main className="xtp">
-      <section className="xtp-hero" aria-labelledby="xtp-h1">
-        <div className="x-wrap xtp-grid">
-          <div className="xtp-copy">
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>Templates</motion.p>
-            <h1 id="xtp-h1" className="xtp-h1">{line('Start from', 0.05)}{line('a product.', 0.16)}</h1>
-            <motion.p className="xtp-lede" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>Open one. Edit it in Hanzo.</motion.p>
-            <motion.div className="xtp-front" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} aria-live="polite">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.p key={front[0]} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }}>
-                  <span className="x-mono">{front[2]}</span><b>{front[1]}</b>
-                </motion.p>
-              </AnimatePresence>
+    <main className="xtp w2">
+      <section className="xtp-hero" aria-labelledby="xtp-h1" data-morph-target>
+        <div className="w2-wrap">
+          <div className="xtp-top">
+            <div>
+              <motion.p className="w2-kicker acc xtp-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Templates</motion.p>
+              <LineMask as="h1" id="xtp-h1" now className="w2-display xtp-h1" lines={['Start from', 'a product.']} />
+            </div>
+            <motion.div className="xtp-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+              <p className="w2-lede xtp-lede">Open one. Edit it in Hanzo.</p>
+              <div className="xtp-front" aria-live="polite">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.p key={front[0]} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }}>
+                    <span className="x-mono">{front[2]}</span><b>{front[1]}</b>
+                  </motion.p>
+                </AnimatePresence>
+                <Magnetic strength={0.25}><A to={'/chat?template=' + encodeURIComponent(front[0])} className="w2-cta acc" data-thumb="Edit in Hanzo">Edit in Hanzo <i aria-hidden="true">→</i></A></Magnetic>
+              </div>
             </motion.div>
           </div>
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
-            <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} />
-          </motion.div>
+          <Settle from={1.06} lift={60}>
+            <div className="xtp-stage">
+              <Deck kind={kind} setKind={setKind} at={Math.min(at, list.length - 1)} setAt={setAt} list={list} />
+            </div>
+          </Settle>
         </div>
       </section>
+      <Shelf />
       <Commands t={front} />
     </main>
   );

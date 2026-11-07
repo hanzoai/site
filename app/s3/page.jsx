@@ -1,5 +1,6 @@
 // Signature: an object, kept — it breaks into ten data shards and four parity that fly to fourteen volume servers, any four go dark and it still reads
 // Beyond: lose four yourself — tap any volumes dark, up to the four Hanzo says can be lost, and watch the object keep reading
+// V2: 8/10 The object comes first: a full-width stage where an object breaks into fourteen shards and survives four going dark, huge type beneath; four facts as one pinned diagram of the binary's four roles; big spec figures; one dark room
 import S3 from '../../components/pages/cloud/S3';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';

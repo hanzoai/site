@@ -1,4 +1,4 @@
-// Signature: The agent is a flag: Gen's four rails frame one agent and the flag flips through all 23, swapping the agent in place
+// Signature: The agent is a flag: Gen's four rails frame one split-flap board, and the flag flips through all 23 agents, each letter tile clattering through the alphabet until the next agent's name lands in place
 // Beyond: A command builder: pick the agent, switch Gen's rails on or off, and copy the exact gen command and its hanzo dev twin
 import Gen from '../../components/pages/Gen';
 import JsonLd from '../../components/JsonLd';
