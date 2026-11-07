@@ -1,7 +1,5 @@
 # /products/* (template) — James-eye review
 
-Ready: 7 Nov 21:20, held up next to /api and /affiliate (James's new bar, no score). Entrances on measured cards, OS rows and band; the Hanzo OS row flies into the next page's h1; phone Measured rows fixed (name and text were split into two columns). taste/unique/parity OK; 0 console errors at 1470 and 375.
-
 Verdict: 5/10
 First complaint: "Where's the product? The name's tiny, and then it's the same six API lines three times in grey boxes. That's developer docs, not an Apple launch page."
 
