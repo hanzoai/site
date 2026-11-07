@@ -2,27 +2,27 @@
 // Persona: an agent, or the developer behind one, that must sign up and pay by itself (MASTER 1: machine agents).
 // Goal: the headless sign-up. Metric: api_key_created (and the llms.txt fetch).
 // CTA: "Sign up headless" -> #headless (hero, header ask bar, closing Band).
-// Signature: the five steps as a numbered terminal; an agent signs itself up once, writing Hanzo's own requests, then rests.
-// Beyond: agent.ts as a scene, each step bringing in its own lines and playing its request and answer once.
+// Signature (docs/MOTION-MAP.md `live-chat`): Questions as a live conversation; the visitor picks a question and Hanzo
+// answers on screen, word by word, in the page's own words (scripted, never a live call).
 /* Hanzo for agents (MASTER 4.1: hero, the literal sequence at #headless as a numbered code block, one AgentPrompt, Band;
-   a terminal demo with pause and a static final frame).
-     1. The black room: Koma's film between the words and the terminal, feathered into the room, a gradient only under
-        the words; the numbered terminal is a box of fixed height (the tallest step) so nothing moves while it plays.
-        The h1 cuts in by CSS on the first paint (no wait for hydration); the run starts at 01 / 05.
-     2. Install: Hanzo's first line writes itself once, large; the rest of its lines follow as quiet rows.
-     3. Headless (#headless): agent.ts as a scene. Each step brings in its own lines, writes its requests and lands
-        its answer, once. Pinned for about half a screen on desktop; unpinned and complete with JS off.
-     4. The agent prompt streams into its card once, with a pause. 5. Questions. 6. Proof: figures already in the copy,
-        counting once. 7. The Band, with the five ticks landing beside the ask.
-   Motion mix (JAMES.md 9): time (the run, the install line, the prompt stream, the scene), arrival (h1 line mask),
-   state (steps open, ticks land, answers rise), pointer (step previews, link underlines), scroll (the scene's pin only).
+   a terminal demo with pause and a static final frame). Nothing pins; the order is its own:
+     1. The black room: Koma's film between the words and the terminal; the numbered terminal runs the five steps once.
+        The h1 cuts in by CSS on the first paint (the page's one reveal style).
+     2. Questions, as the live conversation (enters by squash-land).
+     3. The agent prompt streams into its card once (enters by ripple).
+     4. Headless (#headless): agent.ts as a plain numbered code block; a step in the index marks its lines
+        (enters by venetian-type, line by line from alternating sides).
+     5. Install: Hanzo's first line writes itself once, large (enters by grow-from-point).
+     6. Proof: figures already in the copy, counting once (enters by stretch-scroll). 7. The Band, with the five ticks.
    Deck greys; colour only through Koma's film. Every word and line of code is Hanzo's. */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValueEvent, useScroll } from 'motion/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView } from 'motion/react';
 import { useDemo } from '../v2/AppDemo';
 import { EASE, Copy, useCalm } from '../ui';
-import { More, Faq, Film, Cta, Band, Stat } from '../kit';
-import AppLines from '../v2/AppLines';
+import { More, Film, Cta, Band, Stat } from '../kit';
+import { Enter, ven } from './agents-index/entrances';
+import LiveChat from './agents-index/LiveChat';
+import '../v2/AppLines.css';
 import './AgentsPage.css';
 
 const INSTALL = "npm i -g hanzo              # any OS; or: curl -fsSL https://hanzo.sh | sh\nhanzo auth login            # a person approves once; headless agents use a key\nhanzo                       # a coding session in this repo (fetches the agent)\nhanzo mcp                   # the MCP server over stdio (fetched on first run)\nhanzo engine serve <model>  # local inference (fetched on first run)\n\n# Register the MCP server with nothing installed first:\nclaude mcp add --scope user hanzo -- npx -y hanzo mcp";
@@ -49,18 +49,6 @@ const CALLS = [
 const split = (c) => { const at = c.indexOf(' '); return [c.slice(0, at), c.slice(at + 1)]; };
 const RM = '(prefers-reduced-motion: reduce)';
 const still = () => typeof matchMedia === 'function' && matchMedia(RM).matches;
-const STOP = Symbol('stop');
-
-const useWide = () => {
-  const [w, setW] = useState(false);
-  useEffect(() => {
-    const m = matchMedia('(min-width: 901px)');
-    const f = () => setW(m.matches);
-    f(); m.addEventListener('change', f);
-    return () => m.removeEventListener('change', f);
-  }, []);
-  return w;
-};
 
 /* The demo control (the same 44px icon button and register labels as AppDemo's DemoCtl), drawn the same on the server
    and on the first client render, so reduced motion never makes the two disagree; it steps aside once mounted. */
@@ -226,10 +214,10 @@ function Install() {
     for (let r = 1; r <= rest.length; r++) { setShown(r); await sleep(r === 1 ? 300 : 150); }
   }, { amount: 0.4 });
   return (
-    <section className="v2a-sec agt-install" aria-labelledby="agt-in-h">
-      <div className="v2a-wrap v2a-grid agt-install-in">
+    <Enter as="section" move="grow-from-point" className="v2a-sec agt-install" aria-labelledby="agt-in-h">
+      <div className="v2a-wrap v2a-grid agt-install-in agx-g">
         <div className="agt-install-l">
-          <AppLines as="h2" view id="agt-in-h" className="v2a-head" lines={['One command installs the whole stack']} />
+          <h2 className="v2a-head" id="agt-in-h">One command installs the whole stack</h2>
           <p className="v2a-folio">Install</p>
           <p className="v2a-body agt-in-lede">The CLI, the coding agent, the MCP server and the inference engine are native Rust binaries. npm installs a small launcher; each binary downloads, checksum-verified, the first time it runs. Any OS, Windows included.</p>
         </div>
@@ -259,7 +247,7 @@ function Install() {
           </ul>
         </div>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -278,10 +266,9 @@ function hl(line) {
   return out;
 }
 
-/* 3. Hanzo's agent.ts as a scene. Each step brings in its own lines of the file, writes the requests it makes and lands
-   its answer (the step's own line), once, then the next. It starts as soon as the stage is reached; on desktop the
-   stage pins for about half a screen and scrolling on hurries the run to where you are, scrolling back shows a step
-   again. The index jumps to a step. The server HTML is the finished run (JS off and reduced motion read it whole). */
+/* 4. Hanzo's agent.ts as a plain numbered code block (no pin, no scrub). The index marks a step's lines in the file
+   and shows the requests it makes and its answer. It enters by venetian-type: each line of type slides in from
+   alternating sides. JS off lists every step's requests and answer under the file. */
 function Script() {
   const lines = useMemo(() => SCRIPT.split('\n'), []);
   const chunks = useMemo(() => {
@@ -289,118 +276,25 @@ function Script() {
     const s = [0, f('// 2.'), f('// 3.'), f('// 4.'), lines.length - 1];
     return s.map((a, i) => [a, i < LAST ? s[i + 1] - 1 : lines.length - 1]);
   }, [lines]);
-  const wide = useWide();
   const calm = useCalm();
-  const [live, setLive] = useState(false);
-  const scrub = wide && !calm && live;
-  // the finished run is the first frame (server, JS off, reduced motion)
-  const [ln, setLn] = useState(lines.length - 1);
-  const [view, setView] = useState(LAST);
-  const [done, setDone] = useState(LAST);
-  const [playing, setPlaying] = useState(-1);
-  const [cur, setCur] = useState({ j: 99, k: 0 });
-  const [state, setState] = useState('idle');
-  const [band, setBand] = useState({ y: 0, h: 0 });
-  const track = useRef(null);
-  const stage = useRef(null);
+  const [view, setView] = useState(0);
+  const [band, setBand] = useState(null);
   const code = useRef(null);
   const rows = useRef([]);
-  const seen = useInView(stage, { amount: 0.35 });
-  const r = useRef({ want: -1, played: -1, auto: true, paused: false, away: true, token: 0 });
-  const [run, setRun] = useState(0);
+  const [va, vb] = chunks[view];
 
-  useEffect(() => { if (!still()) { setLive(true); setLn(-1); setView(0); setDone(-1); setCur({ j: 0, k: 0 }); } }, []);
-  useEffect(() => { if (calm && live) { r.current.token++; setLive(false); setLn(lines.length - 1); setView(LAST); setDone(LAST); setPlaying(-1); setCur({ j: 99, k: 0 }); setState('idle'); } }, [calm, live, lines.length]);
-  useEffect(() => { r.current.away = !seen; }, [seen]);
-  const [go, setGo] = useState(false);
-  useEffect(() => { if (seen && live) setGo(true); }, [seen, live]);
-
-  // the runner: plays steps one after another, each once; a later want hurries the step in hand
   useEffect(() => {
-    if (!go || !live) return;
-    const s = r.current;
-    const id = ++s.token;
-    const sleep = (ms) => new Promise((ok, no) => {
-      let left = ms, last = performance.now();
-      const tick = () => {
-        if (s.token !== id) { no(STOP); return; }
-        const now = performance.now();
-        if (!(s.paused || s.away || document.hidden)) left -= now - last;
-        last = now;
-        if (left <= 0) ok(); else setTimeout(tick, Math.min(left, 50));
-      };
-      setTimeout(tick, Math.min(ms, 50));
-    });
-    (async () => {
-      try {
-        setState('play');
-        for (;;) {
-          const target = s.auto ? LAST : s.want;
-          if (s.played >= target) { if (s.played >= LAST || !s.auto) break; }
-          const i = s.played + 1;
-          if (i > LAST) break;
-          // a step the reader has scrolled or jumped past still plays, at five times the pace
-          const pace = (ms) => sleep(s.want > i ? ms / 5 : ms);
-          const [a, b] = chunks[i];
-          setView(i); setPlaying(i); setCur({ j: 0, k: 0 });
-          for (let l = a; l <= b; l++) { setLn(l); await pace(lines[l].trim() ? 34 : 12); }
-          await pace(220);
-          for (const [j, c] of CALLS[i].entries()) {
-            const len = split(c)[1].length;
-            for (let k = 3; k < len; k += s.want > i ? 9 : 3) { setCur({ j, k }); await pace(14); }
-            setCur({ j: j + 1, k: 0 });
-            await pace(160);
-          }
-          setDone(i); setPlaying(-1);
-          s.played = i;
-          if (i < LAST && s.auto && s.want <= i) await sleep(900);
-        }
-        setState('done');
-      } catch (e) { if (e !== STOP) throw e; }
-    })();
-    return () => { s.token++; };
-  }, [go, live, run, chunks, lines]);
-
-  const toggle = useCallback(() => {
-    const s = r.current;
-    if (state === 'done' || state === 'idle') {
-      Object.assign(s, { want: -1, played: -1, auto: true, paused: false });
-      setLn(-1); setView(0); setDone(-1); setCur({ j: 0, k: 0 }); setGo(true); setRun((v) => v + 1);
-      return;
-    }
-    s.paused = !s.paused;
-    setState(s.paused ? 'pause' : 'play');
-  }, [state]);
-
-  // desktop: the scroll through the pin chooses the step; ahead hurries the run, behind shows a finished step again
-  const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    if (!scrub) return;
-    const s = r.current;
-    const at = Math.max(0, Math.min(LAST, Math.floor(v * STEPS.length)));
-    if (at > s.played) { s.want = Math.max(s.want, at); if (state === 'done' && go) { s.auto = true; setRun((x) => x + 1); } }
-    else if (playing < 0) setView(at);
-  });
+    const a = rows.current[va], b = rows.current[vb];
+    if (a && b) setBand({ y: a.offsetTop, h: b.offsetTop + b.offsetHeight - a.offsetTop });
+  }, [va, vb]);
 
   const jump = (i) => {
-    const s = r.current;
-    if (live) {
-      if (i <= s.played) { if (playing < 0) setView(i); }
-      else {
-        // a step ahead of the run: the run hurries there and stops on it
-        s.want = Math.max(s.want, i); s.auto = false;
-        if (state === 'play' || state === 'pause') { s.paused = false; setState('play'); }
-        else { setGo(true); setRun((v) => v + 1); }
-      }
-    } else setView(i);
-    if (!scrub) return;
-    const t = track.current;
-    const top = t.getBoundingClientRect().top + scrollY;
-    const y = top + ((i + 0.5) / STEPS.length) * (t.offsetHeight - innerHeight);
-    if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.2 }); else scrollTo({ top: y, behavior: 'smooth' });
+    setView(i);
+    const c = code.current, row = rows.current[chunks[i][0]];
+    if (c && row) c.scrollTo({ top: Math.max(0, row.offsetTop - 18), behavior: calm ? 'auto' : 'smooth' });
   };
 
-  // phones: the index is a row of pills; the step on stage slides into its view (the row scrolls, never the page)
+  // phones: the index is a row of pills; the chosen step slides into its view (the row scrolls, never the page)
   const index = useRef(null);
   useEffect(() => {
     const ol = index.current, li = ol?.children[view];
@@ -408,76 +302,58 @@ function Script() {
     ol.scrollTo({ left: Math.max(0, li.offsetLeft - 16), behavior: calm ? 'auto' : 'smooth' });
   }, [view, calm]);
 
-  const [va, vb] = chunks[view];
-  const mark = playing >= 0 ? Math.max(ln, va) : va;
-  useEffect(() => {
-    const row = rows.current[mark], c = code.current;
-    if (!row || !c) return;
-    const end = playing >= 0 ? row : rows.current[vb];
-    setBand({ y: rows.current[playing >= 0 ? mark : va].offsetTop, h: playing >= 0 ? row.offsetHeight : end.offsetTop + end.offsetHeight - rows.current[va].offsetTop });
-    const want = Math.max(0, row.offsetTop - c.clientHeight * 0.3);
-    const far = Math.abs(c.scrollTop - want);
-    if (far > 4) c.scrollTo({ top: want, behavior: calm || far > c.clientHeight * 1.5 ? 'auto' : 'smooth' });
-  }, [mark, va, vb, playing, calm]);
-
   return (
-    <section className="agt-script" id="headless" aria-labelledby="agt-sc-h">
+    <Enter as="section" move="venetian-type" className="agt-script" id="headless" aria-labelledby="agt-sc-h">
       <div className="v2a-wrap agt-script-head">
-        <AppLines as="h2" view id="agt-sc-h" className="v2a-head" lines={['The five steps, as one script']} />
-        <p className="v2a-lede agt-sc-lede">Every step is one request. This file makes them all, as it was run against production.</p>
-        <p className="v2a-folio">Headless</p>
+        <h2 className="v2a-head agx-v" id="agt-sc-h" style={ven(0, 90)}>The five steps, as one script</h2>
+        <p className="v2a-lede agt-sc-lede agx-v" style={ven(1, 90)}>Every step is one request. This file makes them all, as it was run against production.</p>
+        <p className="v2a-folio agx-v" style={ven(2, 90)}>Headless</p>
       </div>
-      <div className="agt-track" ref={track}>
-        <div className="agt-pin">
-          <div className="v2a-wrap agt-ed" ref={stage}>
-            <ol className="agt-index" ref={index} aria-label="The five steps in the script">
-              {STEPS.map(([t], i) => (
-                <li key={t} className={(view === i ? 'on' : '') + (done >= i ? ' done' : '') + (playing === i ? ' run' : '')}>
-                  <button type="button" onClick={() => jump(i)} aria-pressed={view === i}>
-                    <span className="agt-ix-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="agt-ix-t">{t}</span>
-                    <span className="agt-ix-ln x-mono" aria-hidden="true">{chunks[i][0] === chunks[i][1] ? chunks[i][0] + 1 : `${chunks[i][0] + 1}–${chunks[i][1] + 1}`}</span>
-                    <svg className="agt-ix-ok" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </button>
-                </li>
+      <div className="v2a-wrap agt-ed">
+        <ol className="agt-index" ref={index} aria-label="The five steps in the script">
+          {STEPS.map(([t], i) => (
+            <li key={t} className={'agx-v' + (view === i ? ' on' : '')} style={ven(i + 3, 70)}>
+              <button type="button" onClick={() => jump(i)} aria-pressed={view === i} aria-controls="agt-resp">
+                <span className="agt-ix-n x-mono">{String(i + 1).padStart(2, '0')}</span>
+                <span className="agt-ix-t">{t}</span>
+                <span className="agt-ix-ln x-mono" aria-hidden="true">{chunks[i][0] === chunks[i][1] ? chunks[i][0] + 1 : `${chunks[i][0] + 1}–${chunks[i][1] + 1}`}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+        <div className="agt-file">
+          <div className="agt-file-bar">
+            <span className="x-mono">agent.ts</span>
+            <span className="agt-file-n x-mono" aria-hidden="true">{n2(view)}</span>
+            <Copy text={SCRIPT} />
+          </div>
+          <div className="agt-code" ref={code} tabIndex={0} role="region" aria-label="agent.ts" data-lenis-prevent>
+            <i className="agt-band" style={band ? { transform: `translateY(${band.y}px)`, height: band.h, opacity: 1 } : { opacity: 0 }} aria-hidden="true" />
+            <pre><code>
+              {lines.map((l, i) => (
+                <span key={i} ref={(el) => (rows.current[i] = el)} className={'agt-ln agx-v' + (i >= va && i <= vb ? ' cur' : '')} style={ven(i + 4, 26, 24)}>
+                  <span className="agt-num" aria-hidden="true">{i + 1}</span>
+                  <span className="agt-src">{l ? hl(l) : ' '}</span>
+                  {'\n'}
+                </span>
               ))}
-            </ol>
-            <div className="agt-file">
-              <div className="agt-file-bar">
-                <span className="x-mono">agent.ts</span>
-                <span className="agt-file-n x-mono" aria-hidden="true">{n2(view)}</span>
-                <Ctl state={state} onClick={toggle} dark className="agt-file-ctl" />
-                <Copy text={SCRIPT} />
+            </code></pre>
+          </div>
+          {/* each step's requests and its answer, stacked in one cell sized by the tallest */}
+          <div className="agt-resp" id="agt-resp">
+            {STEPS.map(([t, d], i) => (
+              <div key={t} className={'agt-resp-b' + (view === i ? ' on' : '')} aria-hidden={view !== i}>
+                <div className="agt-out x-mono">
+                  {CALLS[i].map((c, j) => <Req key={j} c={c} />)}
+                </div>
+                <p className="agt-resp-a">{d}</p>
               </div>
-              <div className="agt-code" ref={code} tabIndex={0} role="region" aria-label="agent.ts" data-lenis-prevent={scrub ? undefined : ''}>
-                <i className="agt-band" style={{ transform: `translateY(${band.y}px)`, height: band.h, opacity: ln >= 0 ? 1 : 0 }} aria-hidden="true" />
-                <pre><code>
-                  {lines.map((l, i) => (
-                    <span key={i} ref={(el) => (rows.current[i] = el)} className={'agt-ln' + (i <= ln ? ' ran' : '') + (i >= va && i <= vb ? ' cur' : '')}>
-                      <span className="agt-num" aria-hidden="true">{i + 1}</span>
-                      <span className="agt-src">{l ? hl(l) : ' '}</span>
-                      {'\n'}
-                    </span>
-                  ))}
-                </code></pre>
-              </div>
-              {/* each step's requests and its answer, stacked in one cell sized by the tallest */}
-              <div className="agt-resp">
-                {STEPS.map(([t, d], i) => (
-                  <div key={t} className={'agt-resp-b' + (view === i ? ' on' : '') + (done >= i ? ' done' : '')} aria-hidden={view !== i}>
-                    <div className="agt-out x-mono">
-                      {CALLS[i].map((c, j) => <Req key={j} c={c} shown={i <= done ? undefined : i !== playing ? 0 : j < cur.j ? undefined : j > cur.j ? 0 : cur.k} />)}
-                    </div>
-                    <p className="agt-resp-a"><span>{d}</span></p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
-      <div className="v2a-wrap"><p className="agt-note">Keep the wallet key and the API key in your secret store: the wallet is the account, and the API key is shown once. A deposit address lasts 24 hours and is credited when the chain confirms; send only the token and chain it names.</p></div>
-    </section>
+      <div className="v2a-wrap"><p className="agt-note agx-v" style={ven(9, 90)}>Keep the wallet key and the API key in your secret store: the wallet is the account, and the API key is shown once. A deposit address lasts 24 hours and is credited when the chain confirms; send only the token and chain it names.</p></div>
+    </Enter>
   );
 }
 
@@ -512,8 +388,9 @@ function Prompt() {
   const stop = () => { follow.current = false; };
   const streaming = n < PROMPT.length && demo.state !== 'done';
   return (
-    <section className="v2a-sec agt-prompt" aria-labelledby="agt-pr-h">
-      <div className="v2a-wrap v2a-grid agt-prompt-in">
+    <Enter as="section" move="ripple" className="v2a-sec agt-prompt" aria-labelledby="agt-pr-h">
+      <span className="agx-rings" aria-hidden="true"><i /><i style={{ '--i': 1 }} /><i style={{ '--i': 2 }} /></span>
+      <div className="v2a-wrap v2a-grid agt-prompt-in agx-rip">
         <div className="agt-prompt-l">
           <h2 className="v2a-head" id="agt-pr-h">Paste this into your agent</h2>
           <p className="v2a-body agt-pr-lede">What Hanzo is, the base URL, how to discover the API and the headless path, in one block an agent keeps in its context.</p>
@@ -536,7 +413,7 @@ function Prompt() {
           </div>
         </div>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -549,15 +426,12 @@ const QA = [
   ['Which tools can my agent use?', 'The native Hanzo MCP server, over stdio from one line in Claude Code, Codex, Cursor and Zed: npx -y hanzo mcp. It carries the Kai decision tools beside files, shell, git, code search, the browser and the computer.'],
 ];
 
-/* 5. Questions. */
+/* 2. Questions, as the live conversation (the signature): it lands by squash-land, window first, then the chips. */
 function Questions() {
   return (
-    <section className="v2a-sec agt-faq" aria-labelledby="agt-qa-h">
-      <div className="v2a-wrap v2a-grid agt-faq-in">
-        <div className="agt-faq-l"><h2 className="v2a-head" id="agt-qa-h">Questions</h2></div>
-        <div className="agt-faq-r"><Faq items={QA} multi /></div>
-      </div>
-    </section>
+    <Enter as="section" move="squash-land" className="v2a-sec agt-ask" aria-labelledby="agt-qa-h">
+      <LiveChat items={QA} head={<h2 className="v2a-head" id="agt-qa-h">Questions</h2>} />
+    </Enter>
   );
 }
 
@@ -571,15 +445,15 @@ const PROOF = [
 ];
 function Proof() {
   return (
-    <section className="agt-proof">
+    <Enter as="section" move="stretch-scroll" className="agt-proof">
       <div className="v2a-wrap">
         <ul className="agt-proof-row">
-          {PROOF.map((p) => (
-            <li key={p.v}><Stat value={p.v} note={p.pre || undefined} label={p.post} className="agt-fig" /></li>
+          {PROOF.map((p, i) => (
+            <li key={p.v} className="agx-st" style={{ '--i': i }}><Stat value={p.v} note={p.pre || undefined} label={p.post} className="agt-fig" /></li>
           ))}
         </ul>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -609,10 +483,10 @@ export default function AgentsPage() {
   return (
     <main className="agt">
       <Hero />
-      <Install />
-      <Script />
-      <Prompt />
       <Questions />
+      <Prompt />
+      <Script />
+      <Install />
       <Proof />
       <Band title="No human required." action="Sign up headless" to="#headless" note={<><Ticks /><Docs id="agents.close-docs" /></>} />
     </main>

@@ -1,5 +1,5 @@
-// Signature: an agent signs itself up live, the five steps lighting as it reaches each request
-// Beyond: who is installing, the install block keeps only the lines your path needs
+// Signature (docs/MOTION-MAP.md `live-chat`): pick one of the page's questions and Hanzo answers it live, word by word
+// Entrances, in order: squash-land, ripple, venetian-type, grow-from-point, stretch-scroll (components/pages/agents-index)
 import AgentsPage from '../../components/pages/AgentsPage';
 import JsonLd from '../../components/JsonLd';
 

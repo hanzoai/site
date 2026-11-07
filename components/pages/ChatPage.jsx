@@ -2,32 +2,37 @@
 // Persona: a consumer choosing a chat app (MASTER 1: consumers).
 // Goal: open Hanzo Chat. Metric: first_chat.
 // CTA: "Open Hanzo Chat" -> /login?next=%2Fchat (hero, header ask bar, closing Band).
-// Signature: the live chat runs itself once; each question visibly routes through Enso to the model that answers.
+// Signature (docs/MOTION-MAP.md): `card-stack`, the six things it does as a stack of cards you flick away one at a time.
+// The hero's live chat still runs itself once; each question visibly routes through Enso to the model that answers.
 // Beyond: who answers what, Enso's card that opens into each model's page.
-/* Hanzo Chat, v4 (JAMES.md, MASTER 4.1). Persona: consumer choosing a chat app. Goal: open Hanzo Chat.
-   One idea per screen:
+/* Hanzo Chat, v5 (motion map, 7 Nov). Persona: consumer choosing a chat app. Goal: open Hanzo Chat.
+   One idea per screen, in this order (no pinned scene: the old AppChapters dark room is gone):
      1. Hero: "Ask anything. Enso picks the model." over the chat window at 100%. The window paints with the first
         question already in it; the run (route, answer, second question, answer) takes about 7 s, then rests with
-        replay in its title bar. The h1 cuts into its lines in CSS from the server's first paint.
-     2. Six chapters in the dark room: each panel plays a short scene on arrival and keeps a quiet idle after.
-        Chapter 01 is the routing moment (a question, Enso, the one model that answers), not the model list.
-     3. Proof: the card of whoever answers. Point at a name and the card swaps; open the card and it lifts into
-        that model's page. The model list is said once in full here (names), once live in the hero rail.
-     4. Close: the kit's Band.
+        replay in its title bar. Entrance: glitch-in (the h1, CSS from the first paint).
+     2. The signature: six cards, one idea each, each its own scripted panel that plays when it reaches the top.
+        Drag or flick (swipe on phones) the top card away; Previous / Next, the index or the arrow keys from the
+        keyboard. Entrance: tilt-3d-hover.
+     3. The ask, early: the Band. Entrance: line-draw (its outline draws, then it fills).
+     4. The statement: "A chat that does the work, not just the talking". Entrance: underline-sweep.
+     5. Proof, last: the card of whoever answers. Point at a name and the card swaps; open the card and it lifts into
+        that model's page. Entrance: scramble (the heading and the names decode).
    Every "Open Hanzo Chat" press shows its hand-off state (aria-busy, ~320 ms) before it leaves.
    Demo words: /chat's own recents and copy, and Hanzo's own black holes and aurora exchange and Dev session from
    hanzo.ai's home (content/live/index.json). Greys only: colour arrives through Hanzo's model artwork. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
-import { A, Img, Cta, Band } from '../kit';
+import { A, Img, Cta, Go } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
-import AppLines from '../v2/AppLines';
-import AppChapters from '../v2/AppChapters';
 import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
+import CardStack from './chat/CardStack';
+import { useEnter, Scr, scrambleIn, Mark, Outline } from './chat/entrances';
+import '../v2/AppLines.css'; // the v2a layout classes (wrap, grid, display, lede) this page has always used
 import './ChatPage.css';
+import './chat/chat-motion.css';
 
 const OPEN = '/login?next=%2Fchat';
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
@@ -282,16 +287,16 @@ function Window() {
   );
 }
 
-/* 1. Hero: the headline cuts into its lines (CSS, from first paint); on the right the whole window, already talking. */
+/* 1. Hero: the headline glitches in (glitch-in, CSS from the first paint); on the right the whole window, already talking. */
 function Hero() {
   const lines = ['Ask anything.', 'Enso picks the model.'];
   return (
     <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
       <div className="v2a-wrap cht-hero-in">
         <div className="cht-copy">
-          <h1 className="v2a-lines v2a-display cht-h1" id="cht-h1">
+          <h1 className="v2a-display cht-h1" id="cht-h1">
             {lines.map((l, i) => (
-              <span key={i} className="v2a-line"><span className="v2a-line-in cht-cut" style={{ '--i': i }}>{l}</span>{i < lines.length - 1 ? ' ' : ''}</span>
+              <span key={i} className="cht-gl" style={{ '--i': i }}>{l}{i < lines.length - 1 ? ' ' : ''}</span>
             ))}
           </h1>
           <p className="v2a-lede cht-lede cht-up" style={{ '--d': '.3s' }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</p>
@@ -308,8 +313,8 @@ function Hero() {
   );
 }
 
-/* 2. The six tools, each with its own UI, in the dark room. Each art plays its short scene when its chapter comes in,
-   then keeps a quiet idle while you rest there. */
+/* 2. The six tools, each with its own UI, as the card stack. Each art plays its short scene when its card reaches the
+   top, then keeps a quiet idle while you rest there. */
 const TOOLS = [
   ['The right model, every time', 'Enso sends each question to the model that answers it best. Pick one by name whenever you want to.', 'route'],
   ['Search and code', 'It searches the web for what is current and runs code when an answer needs working out.', 'search'],
@@ -424,44 +429,48 @@ function Art({ k }) {
   );
 }
 
-/* The dark room's heading starts big, as the moment, and shrinks back to a section heading as the pinned scene
-   takes over (MASTER 3.1: some things start big and shrink as things happen). */
-function ToolsHead() {
-  const ref = useRef(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.7', 'start 0.05'] });
-  const scale = useTransform(p, (v) => 1 - 0.62 * Math.min(1, Math.max(0, v)));
-  return (
-    <div className="v2a-wrap cht-ch-head" ref={ref}>
-      <motion.div className="cht-ch-hw" style={{ scale }}>
-        <AppLines as="h2" view className="cht-ch-h" lines={['A chat that does the work,', 'not just the talking']} soft={[1]} />
-      </motion.div>
-    </div>
-  );
-}
+const SAY = 'A chat that does the work, not just the talking';
+const CARDS = TOOLS.map(([title, body, k]) => ({ key: k, title, body, icon: <Ico k={k} />, art: <Art k={k} /> }));
 
+/* 2. The signature, the card stack (tilt-3d-hover entrance in CardStack and chat-motion.css). */
 function Tools() {
+  const enter = useEnter(0.3);
   return (
-    <AppChapters
-      className="cht-ch"
-      dark
-      id="cht-tools"
-      label="A chat that does the work, not just the talking"
-      head={<ToolsHead />}
-      items={TOOLS.map(([title, body, k]) => ({ key: k, title, body, icon: <Ico k={k} />, art: <Art k={k} /> }))}
-    />
+    <section className="cht-tools" id="cht-tools" aria-label={SAY}>
+      <div className="v2a-wrap">
+        <CardStack items={CARDS} label={SAY} id="cht-stack" enter={enter} />
+      </div>
+    </section>
   );
 }
 
-/* 3. Proof, who answers: Enso and the eight models it routes to, as one card. Point at (or tap) a name and the card
-   swaps to that model; open the card and the picture lifts into the model's own page (the WebGL opener). */
+/* 4. The statement, said once on its own: underlines sweep under its key words in turn (underline-sweep). */
+function Say() {
+  const ref = useEnter(0.35);
+  return (
+    <section className="cht-say-sec" ref={ref} aria-labelledby="cht-say-h">
+      <div className="v2a-wrap">
+        <h2 className="cht-say-h" id="cht-say-h">
+          <span className="cht-say-l">A <Mark n={0}>chat</Mark> that does the <Mark n={1}>work</Mark>,</span>{' '}
+          <span className="cht-say-l soft">not just the <Mark n={2}>talking</Mark></span>
+        </h2>
+      </div>
+    </section>
+  );
+}
+
+/* 5. Proof, who answers: Enso and the eight models it routes to, as one card. Point at (or tap) a name and the card
+   swaps to that model; open the card and the picture lifts into the model's own page (the WebGL opener).
+   Entrance: scramble, the heading and the names decode as the section arrives. */
 function Answers() {
   const [k, setK] = useState('enso');
   const opener = useOpener();
   const frame = useRef(null);
+  const sec = useEnter(0.3, scrambleIn);
   const m = MODELS.find((x) => x.slug === k) || ENSO;
   const go = (e) => { if (opener && frame.current) opener.open(e, { el: frame.current, src: pic(m.slug), href: '/' + m.slug, key: m.slug }); };
   return (
-    <section className="v2a-sec cht-who-sec" aria-labelledby="cht-who-h">
+    <section className="v2a-sec cht-who-sec cht-scr" aria-labelledby="cht-who-h" ref={sec}>
       <div className="v2a-wrap v2a-grid cht-who-grid">
         <div className="cht-who-l">
           <A to={'/' + m.slug} className="cht-pic" ref={frame} data-card={m.slug} onClick={go}>
@@ -470,13 +479,13 @@ function Answers() {
           </A>
         </div>
         <div className="cht-who-r">
-          <h2 className="v2a-head cht-who-h" id="cht-who-h">{ENSO.desc}</h2>
+          <h2 className="v2a-head cht-who-h" id="cht-who-h"><Scr text={ENSO.desc} /></h2>
           <ul className="cht-roster" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setK('enso'); }}>
             {MODELS.map((x) => (
               <li key={x.slug} className={x.slug === k ? 'on' : ''}>
                 <button type="button" className="cht-row" aria-pressed={x.slug === k} aria-controls="cht-who-d" onPointerEnter={(e) => { if (e.pointerType === 'mouse') setK(x.slug); }} onFocus={() => setK(x.slug)} onClick={() => setK(x.slug)}>
                   <Img className="cht-row-pic" src={pic(x.slug)} alt="" w={44} h={44} />
-                  <b className="cht-row-n">{x.name}</b>
+                  <b className="cht-row-n"><Scr text={x.name} /></b>
                   <span className="cht-row-t x-mono">{x.tags[0]}</span>
                 </button>
               </li>
@@ -492,9 +501,22 @@ function Answers() {
   );
 }
 
-/* 4. The close: the kit's Band, in Hanzo's words, with the one ask. */
+/* 3. The ask, brought forward: the kit's Band (its markup and classes), drawn page-locally so its entrance is this
+   page's own line-draw instead of the kit's shared word blur: the outline draws on the white page, then it fills. */
 function Close() {
-  return <Band title="Ask anything" action="Open Hanzo Chat" to={OPEN} note={<Docs />} />;
+  const ref = useEnter(0.3);
+  return (
+    <section className="x-band cht-band" data-room="dark" ref={ref}>
+      <Outline />
+      <div className="x-wrap">
+        <h2>Ask anything</h2>
+        <div className="x-band-act">
+          <Magnetic><Go to={OPEN} solid>Open Hanzo Chat</Go></Magnetic>
+          <Docs />
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default function ChatPage() {
@@ -503,8 +525,9 @@ export default function ChatPage() {
     <main className="cht" onClickCapture={handoff}>
       <Hero />
       <Tools />
-      <Answers />
       <Close />
+      <Say />
+      <Answers />
     </main>
   );
 }

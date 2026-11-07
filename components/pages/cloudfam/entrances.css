@@ -1,0 +1,44 @@
+/* /cloud/* entrances (entrances.jsx). The waiting pose lives only under html.js and only until .in, so JS-off and
+   reduced-motion visitors always see the section. Transform, opacity and clip-path only (no layout shift). */
+.xcf { overflow-x: clip; }
+.xe { --xe-t: 900ms; }
+
+/* swing-door: swings in on a vertical hinge at its left edge */
+.xe-swing { transform-origin: 0 50%; transition: transform var(--xe-t) cubic-bezier(.2, .9, .25, 1), opacity 500ms cubic-bezier(0, 0, .2, 1); }
+html.js .xe-swing:not(.in) { transform: perspective(1600px) rotateY(68deg); opacity: 0; }
+
+/* opposite-drift: the left half comes from the left and the right half from the right, following the scroll in */
+.xe-drift [data-half='l'] { transform: translate3d(calc(var(--xd, 0) * -28vw), 0, 0); }
+.xe-drift [data-half='r'] { transform: translate3d(calc(var(--xd, 0) * 28vw), 0, 0); }
+html.js .xe-drift { --xd: 1; }
+.xe-drift [data-half] { will-change: transform; }
+
+/* letter-cascade: the heading's letters fall into place one by one; the rest of the section waits, then shows */
+.xe-w { display: inline-block; white-space: nowrap; }
+.xe-l { display: inline-block; transition: transform 620ms cubic-bezier(.2, 1.3, .4, 1), opacity 260ms cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--i) * 32ms); }
+html.js .xe-cascade:not(.in) .xe-l { transform: translateY(-1.1em) rotate(-10deg); opacity: 0; }
+.xe-cascade [data-half] { transition: opacity 600ms cubic-bezier(0, 0, .2, 1) 420ms; }
+html.js .xe-cascade:not(.in) [data-half] > :not(:has(.xe-l)):not(.xro), html.js .xe-cascade:not(.in) .xcf-gc-list { opacity: 0; }
+.xe-cascade [data-half] > *, .xe-cascade .xcf-gc-list { transition: opacity 600ms cubic-bezier(0, 0, .2, 1) 520ms; }
+
+/* iris: a circular clip opens from the centre */
+.xe-iris { clip-path: circle(150% at 50% 50%); transition: clip-path 1100ms cubic-bezier(.65, 0, .35, 1); }
+html.js .xe-iris:not(.in) { clip-path: circle(0% at 50% 50%); }
+
+/* squash-land: drops from above, lands with a squash and stretch, settles */
+.xe-squash { transform-origin: 50% 100%; }
+html.js .xe-squash:not(.in) { transform: translateY(-14vh) scaleY(1.06) scaleX(.97); opacity: 0; }
+html.js .xe-squash.in { animation: xe-squash 900ms cubic-bezier(.3, 0, .3, 1) both; }
+@keyframes xe-squash {
+  0% { transform: translateY(-14vh) scaleY(1.06) scaleX(.97); opacity: 0; }
+  45% { transform: translateY(0) scaleY(1.04) scaleX(.98); opacity: 1; }
+  60% { transform: translateY(0) scaleY(.9) scaleX(1.04); }
+  78% { transform: translateY(0) scaleY(1.02) scaleX(.99); }
+  100% { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .xe:not(.in), html.js .xe-cascade:not(.in) .xe-l, html.js .xe-cascade:not(.in) [data-half] > *, html.js .xe-cascade:not(.in) .xcf-gc-list { transform: none; opacity: 1; clip-path: none; }
+  .xe, .xe-l, .xe [data-half], .xe [data-half] > * { transition: none !important; animation: none !important; }
+  .xe-drift [data-half] { transform: none; }
+}

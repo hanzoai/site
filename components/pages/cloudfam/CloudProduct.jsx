@@ -8,9 +8,13 @@
    Signature: the product's own console. It is built only from the page's own data: its status chip, its place in its
    family as the one figure (01 / 08 Compute), its endpoint, its features (or its Start with command), its Google Cloud
    pair. The agent prompt types itself in the session bar while the body plays once (6 to 10 s) and settles. Pointing at
-   a sibling in its sidebar shows that product's own endpoint and lede. Further down the same console is pinned while
-   the page's facts scroll past it and drive its panel (the prompt's route, the feature you open, the family member you
-   point at): one thing in, one thing out.
+   a sibling in its sidebar shows that product's own endpoint and lede.
+   Motion signature (docs/MOTION-MAP.md, `rows-open`): the family as a tight list whose rows open in place on hover or
+   tap into that member's full detail panel (RowsOpen.jsx); this product's own row opens first, onto its console view
+   (its features lit in turn, or its Start with command). No pinned scene: every section after the hero is a plain,
+   quick section that arrives its own way (entrances.jsx: swing-door, opposite-drift, letter-cascade, iris,
+   squash-land, in that order), and the order differs by group: stage and wide open with the rows, path with the
+   endpoint (the Paste and ship prompt and its route), field with the genesis line.
    The shared example project Hanzo prints on most product pages (gateway, payments-api, ...) is not the hero: it sits
    behind its own note ("Example project. ...") and opens on demand, so every page leads with its own product.
    Each family group has its own first screen (MASTER 3.2 rule 7): stage (the console on a lid that settles flat:
@@ -19,17 +23,20 @@
    Science, Web3, Data), field (the product's own Sigil as a tall stage the console rises out of: Security, Network).
    Scale rhythm: the name rests at 52 to 64px (64 settling to 52 on scroll); the console is the one big thing; the
    figure 64px; headings 26px; the close says the name at 52px. Never a hue: greys, ink and white only.
-   Motion mix: time (typing, the session playing, the feature cycle), pointer (sidebar and pill previews, related rows),
-   state (the lit row glides by layoutId, the pinned panel swaps), scroll (the stage settles, the name settles, the
-   pinned console follows the chapters), arrival (the name's line mask). Coverage: docs/coverage/cloud.md. */
-import { useEffect, useMemo, useRef, useState } from 'react';
+   Motion mix: time (typing, the session playing, the feature cycle), pointer (sidebar previews, rows that open, related
+   rows), state (the lit row glides by layoutId), scroll (the stage settles, the name settles, opposite-drift),
+   arrival (the name's line mask, the five entrances). Coverage: docs/coverage/cloud.md. */
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../../ui';
 import { A, Band, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import StageSettle from '../../v2/StageSettle';
 import useCalm from '../../v2/useCalm';
+import RowsOpen, { useMounted } from './RowsOpen';
+import { ENTRANCES, Enter, Letters } from './entrances';
 import './cloudfam.css';
+import './entrances.css';
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const Arrow = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -285,7 +292,7 @@ function Boot({ boot }) {
 }
 
 /* Beyond: the Google Cloud service you use now, and its Hanzo counterpart */
-function Finder({ pairs, here }) {
+function Finder({ pairs, here, e }) {
   const [q, setQ] = useState('');
   const [lit, setLit] = useState(0);
   const [held, setHeld] = useState(false);
@@ -304,18 +311,17 @@ function Finder({ pairs, here }) {
     const id = setTimeout(() => setLit((i) => i + 1), 800);
     return () => clearTimeout(id);
   }, [calm, seen, q, held, list.length, lit]);
-  // the black room (MASTER 3.1): a rounded card inside the gutters that opens past the edges as it is reached (transform only)
-  const { scrollYProgress: rp } = useScroll({ target: box, offset: ['start end', 'start start'] });
-  const roomS = useTransform(rp, (v) => 0.94 + 0.1 * Math.min(1, Math.max(0, (v - 0.35) / 0.55)));
   if (!pairs.length) return null;
   const head = 'Google Cloud';
+  const lc = e === 'letter-cascade';
   const clear = <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
+  // the black room (MASTER 3.1): a rounded card inside the gutters; it arrives by the page's entrance, not by scroll
   return (
-    <section ref={box} className="xcf-gc" data-room="dark" aria-labelledby="xcf-gc-h">
-      <motion.span className="xcf-gc-bg" style={still ? undefined : { scale: roomS }} aria-hidden="true" />
-      <div className="xcf-wrap xcf-gc-g">
-        <div className="xcf-gc-l">
-          <h2 id="xcf-gc-h" className="xcf-gc-h"><span>{head}</span><svg viewBox="0 0 40 16" aria-hidden="true"><path d="M2 8h34M30 3l6 5-6 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>Hanzo</span></h2>
+    <Enter kind={e} className="xcf-gc" data-room="dark" aria-labelledby="xcf-gc-h">
+      <span className="xcf-gc-bg" aria-hidden="true" />
+      <div ref={box} className="xcf-wrap xcf-gc-g">
+        <div className="xcf-gc-l" data-half="l">
+          <h2 id="xcf-gc-h" className="xcf-gc-h"><span><Letters text={head} on={lc} /></span><svg viewBox="0 0 40 16" aria-hidden="true"><path d="M2 8h34M30 3l6 5-6 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span><Letters text="Hanzo" on={lc} /></span></h2>
           <label className="xcf-gc-in">
             <span className="x-sr">{head}</span>
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.4 10.4 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
@@ -324,7 +330,7 @@ function Finder({ pairs, here }) {
           </label>
           <p className="xcf-gc-n" aria-live="polite"><b>{list.length}</b> / {pairs.length}</p>
         </div>
-        <ul className="xcf-gc-list" onPointerEnter={() => setHeld(true)} onPointerLeave={() => setHeld(false)}>
+        <ul className="xcf-gc-list" data-half="r" onPointerEnter={() => setHeld(true)} onPointerLeave={() => setHeld(false)}>
           <AnimatePresence initial={false}>
             {list.map((p, i) => (
               <motion.li key={p.slug} layout={!still} hidden={!q && i >= SHOWN} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}>
@@ -344,22 +350,22 @@ function Finder({ pairs, here }) {
           )}
         </ul>
       </div>
-    </section>
+    </Enter>
   );
 }
 
-/* Hanzo's genesis line, a quiet strip before the close: its two sentences move from Air to Book weight once */
-function Motto({ text }) {
+/* Hanzo's genesis line, a quiet strip: its two sentences move from Air to Book weight once */
+function Motto({ text, e }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   const parts = text.split(/(?<=\.)\s+/);
   return (
-    <section ref={ref} className="xcf-motto" data-seen={seen}>
-      <div className="xcf-wrap xcf-motto-g">
-        <span className="xcf-mark" aria-hidden="true"><Mark size={28} /></span>
-        <p className="xcf-motto-t">{parts.map((s, i) => <span key={i} style={{ '--i': i }}>{s}{i < parts.length - 1 ? ' ' : ''}</span>)}</p>
+    <Enter kind={e} className={'xcf-motto' + (seen ? ' seen' : '')}>
+      <div ref={ref} className="xcf-wrap xcf-motto-g">
+        <span className="xcf-mark" aria-hidden="true" data-half="l"><Mark size={28} /></span>
+        <p className="xcf-motto-t" data-half="r">{parts.map((s, i) => <span key={i} style={{ '--i': i }}><Letters text={s} on={e === 'letter-cascade'} />{i < parts.length - 1 ? ' ' : ''}</span>)}</p>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -369,8 +375,7 @@ function Prompt({ text }) {
   return <>{text.slice(0, at)}<span className="xcf-pr-k">Start with: </span><b>{text.slice(at + 12)}</b></>;
 }
 
-/* ---------- the pinned console: the page's facts scroll past and drive its panel ---------- */
-/* panel 1: the prompt's route, drawn from its own words (the skill manifest it reads, the agent, the endpoint) */
+/* the prompt's route, drawn from its own words (the skill manifest it reads, the agent, the endpoint) */
 const Route = ({ ship }) => {
   const url = (ship.prompt.match(/https?:\/\/\S+?\.md/) || [''])[0];
   return (
@@ -383,134 +388,54 @@ const Route = ({ ship }) => {
     </div>
   );
 };
-/* panel 2: the feature you opened, as the one big thing */
-const FeatPanel = ({ list, at }) => (
-  <div className="xcf-fp">
-    <p className="xcf-fp-n"><b>{String(at + 1).padStart(2, '0')}</b><span>/ {String(list.length).padStart(2, '0')}</span></p>
-    <AnimatePresence mode="popLayout" initial={false}>
-      <motion.p key={at} className="xcf-fp-t" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.15 } }} transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}>{list[at]}</motion.p>
-    </AnimatePresence>
-    <span className="xcf-fp-bar" aria-hidden="true">{list.map((f, i) => <i key={f} className={i === at ? 'on' : ''} />)}</span>
-  </div>
-);
-/* panel 3: the family member you point at, in its own words (this product when you point at none) */
-const FamPanel = ({ doc, at, previews }) => {
-  const s = doc.window.siblings.find((x) => x.href === at) || doc.window.siblings.find((x) => x.current);
-  const own = { name: doc.name, label: doc.label, lede: doc.lede, api: (doc.meta.find((m) => m.k === 'API') || {}).v || '' };
-  const p = s.current ? own : previews[s.href];
+/* the endpoint: the Paste and ship prompt on the left, its route as the object on the right */
+function Ship({ doc, e }) {
+  const s = doc.ship;
   return (
-    <div className="xcf-famp">
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div key={s.href} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.35, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}><Peek s={s} p={p} /></motion.div>
-      </AnimatePresence>
-      <span className="xcf-ticks" aria-hidden="true">{doc.window.siblings.map((x) => <i key={x.href} className={x.href === s.href ? 'on' : ''} />)}</span>
-    </div>
-  );
-};
-
-function Chapter({ i, of, on, onSeen, children, obj }) {
-  const ref = useRef(null);
-  const inMid = useInView(ref, { margin: '-42% 0px -42% 0px' });
-  useEffect(() => { if (inMid) onSeen(i); }, [inMid]); // eslint-disable-line react-hooks/exhaustive-deps
-  return (
-    <div ref={ref} className={'xcf-ch' + (on ? ' on' : '')}>
-      <p className="xcf-ch-k" aria-hidden="true">{String(i + 1).padStart(2, '0')} / {String(of).padStart(2, '0')}</p>
-      {children}
-      <div className="xcf-ch-obj" aria-hidden="true">{obj}</div>
-    </div>
+    <Enter kind={e} className="xcf-sec xcf-ship" aria-labelledby="xcf-ship-h">
+      <div className="xcf-wrap xcf-ship-g">
+        <div className="xcf-ship-l" data-half="l">
+          <h2 id="xcf-ship-h" className="xcf-h2"><Letters text={s.eyebrow} on={e === 'letter-cascade'} /></h2>
+          <p className="xcf-body">{s.lede}</p>
+          <pre className="xcf-prompt"><Prompt text={s.prompt} /></pre>
+          <div className="xcf-ship-a">
+            <p className="xcf-api"><span className="xcf-api-l">{s.label}</span><span className="xcf-mono">{s.api.map((t, k) => <span key={k} className={k ? '' : 'xcf-api-k'}>{t}</span>)}</span></p>
+            <Copy text={s.prompt} className="xcf-copy" />
+          </div>
+        </div>
+        <div className="xcf-ship-r" data-half="r" aria-hidden="true">
+          <div className="xcf-win xcf-ship-win" data-room="dark"><Route ship={s} /></div>
+        </div>
+      </div>
+    </Enter>
   );
 }
 
-function Pinned({ doc, previews, sigil }) {
+/* the signature's section: the family's name and this product's own words on the left, the rows that open on the right */
+function Family({ doc, previews, e }) {
   const sibs = doc.window ? doc.window.siblings : [];
-  const fam = sibs.length > 1 && doc.crumb[1] ? doc.crumb[1].label : '';
+  if (sibs.length < 2) return null;
+  const fam = doc.crumb[1] ? doc.crumb[1].label : doc.label;
   const source = doc.actions.find((a) => /github\.com/.test(a.href));
-  const [on, setOn] = useState(0);
-  const [feat, setFeat] = useState(0);
-  const [held, setHeld] = useState(false);
-  const [pk, setPk] = useState(null);
-  const calm = useReducedMotion();
-  const chs = [doc.ship && 'ship', (doc.desc.length || doc.features.length) && 'about', fam && 'fam'].filter(Boolean);
-  const ia = chs.indexOf('about');
-  // while the features chapter is the one in view, its features open in turn once (until you pick one)
-  useEffect(() => {
-    if (calm || held || on !== ia || feat >= doc.features.length - 1) return;
-    const id = setTimeout(() => setFeat((f) => f + 1), 2200);
-    return () => clearTimeout(id);
-  }, [calm, held, on, ia, feat, doc.features.length]);
-  if (!chs.length) return null;
-  const title = doc.window ? doc.window.title.map((t, i) => <span key={i} className={i ? 'xcf-wt-b' : ''}>{t}</span>) : doc.name;
-  const objs = {
-    ship: doc.ship && <Route ship={doc.ship} />,
-    about: doc.features.length ? <FeatPanel list={doc.features} at={feat} /> : <Sigil seed={sigil.seed + '/about'} data={sigil.data} still className="xcf-about-sig" />,
-    fam: fam && <FamPanel doc={doc} at={pk} previews={previews} />,
+  const api = (doc.meta.find((m) => m.k === 'API') || {}).v || '';
+  const google = (doc.meta.find((m) => m.k === 'Google Cloud') || {}).v || '';
+  const own = {
+    preview: { name: doc.name, label: doc.label, lede: doc.lede, api, google },
+    features: doc.features, cmd: cmdOf(doc), console: doc.window.console && { label: doc.window.console.label, href: doc.liveLinks[0] || doc.window.console.href },
   };
-  const open = (i) => { setHeld(true); setFeat(i); };
   return (
-    <section className="xcf-pin" aria-label={doc.name}>
-      <div className="xcf-wrap xcf-pin-g">
-        <div className="xcf-pin-l">
-          {chs.map((c, i) => (
-            <Chapter key={c} i={i} of={chs.length} on={on === i} onSeen={setOn} obj={objs[c]}>
-              {c === 'ship' && (
-                <>
-                  <h2 id="xcf-ship-h" className="xcf-h2">{doc.ship.eyebrow}</h2>
-                  <p className="xcf-body">{doc.ship.lede}</p>
-                  <pre className="xcf-prompt"><Prompt text={doc.ship.prompt} /></pre>
-                  <div className="xcf-ship-a">
-                    <p className="xcf-api"><span className="xcf-api-l">{doc.ship.label}</span><span className="xcf-mono">{doc.ship.api.map((t, k) => <span key={k} className={k ? '' : 'xcf-api-k'}>{t}</span>)}</span></p>
-                    <Copy text={doc.ship.prompt} className="xcf-copy" />
-                  </div>
-                </>
-              )}
-              {c === 'about' && (
-                <>
-                  {doc.desc.map((p) => <p key={p} className="xcf-desc">{p}</p>)}
-                  {!!doc.features.length && (
-                    <ol className="xcf-feats">
-                      {doc.features.map((f, k) => (
-                        <li key={f}>
-                          <button type="button" className={'xcf-feat' + (feat === k ? ' on' : '')} aria-pressed={feat === k} onClick={() => open(k)} onPointerEnter={() => open(k)} onFocus={() => open(k)}>
-                            <span className="xcf-n">{String(k + 1).padStart(2, '0')}</span><b>{f}</b><Arrow />
-                          </button>
-                        </li>
-                      ))}
-                    </ol>
-                  )}
-                </>
-              )}
-              {c === 'fam' && (
-                <>
-                  <h2 className="xcf-h2">{fam}</h2>
-                  <ul className="xcf-fam" onPointerLeave={() => setPk(null)}>
-                    {sibs.map((s) => (
-                      <li key={s.href}>
-                        <A to={s.href} className={(s.current ? 'on' : '') + (pk === s.href ? ' pk' : '')} aria-current={s.current ? 'page' : undefined} onPointerEnter={() => setPk(s.href)} onFocus={() => setPk(s.href)}>{s.label}</A>
-                      </li>
-                    ))}
-                  </ul>
-                  {source && <A to={source.href} className="xcf-go"><span>{source.label}</span><Arrow /></A>}
-                </>
-              )}
-            </Chapter>
-          ))}
+    <Enter kind={e} className="xcf-sec xcf-famsec" aria-labelledby="xcf-fam-h">
+      <div className="xcf-wrap xcf-fam-g">
+        <div className="xcf-fam-l" data-half="l">
+          <h2 id="xcf-fam-h" className="xcf-h2 xcf-fam-h"><Letters text={fam} on={e === 'letter-cascade'} /></h2>
+          {doc.desc.map((p) => <p key={p} className="xcf-desc">{p}</p>)}
+          {source && <A to={source.href} className="xcf-go"><span>{source.label}</span><Arrow /></A>}
         </div>
-        <div className="xcf-pin-r" aria-hidden="true">
-          <div className="xcf-pin-st">
-            <div className="xcf-win xcf-pwin" data-room="dark">
-              <div className="xcf-bar">
-                <span className="xcf-dots"><i /><i /><i /></span>
-                <span className="xcf-wt">{title}</span>
-                <span className="xcf-pin-k">{chs.map((c, i) => <i key={c} className={on === i ? 'on' : ''} />)}</span>
-              </div>
-              <div className="xcf-pin-b">
-                {chs.map((c, i) => <div key={c} className={'xcf-obj o-' + c + (on === i ? ' on' : '')}>{objs[c]}</div>)}
-              </div>
-            </div>
-          </div>
+        <div className="xcf-fam-r" data-half="r">
+          <RowsOpen doc={doc} previews={previews} own={own} />
         </div>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -537,8 +462,8 @@ const Acts = ({ list, slug }) => (
   </div>
 );
 
-/* JS off: every line of every session shown, the genesis line at full weight (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important}.xcf-mask>span{animation:none!important}.xcf-ch{opacity:1!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}';
+/* JS off: every line of every session shown, every row open, the genesis line at full weight (PLAN-COMPONENTS 2.3 and 2.17) */
+const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important}.xcf-mask>span{animation:none!important}.xro-p{grid-template-rows:1fr!important}.xro-pi{opacity:1!important;transform:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}';
 
 /* the name rests at 52 to 64px (MASTER 3.1): a short name arrives at 64 and settles to 52 as the stage settles */
 function Name({ name, small }) {
@@ -550,17 +475,17 @@ function Name({ name, small }) {
 }
 
 /* related: a rail of rows; pointing at one previews that product (its endpoint, status, lede) without moving the rows */
-function Related({ rel, cards, previews }) {
+function Related({ rel, cards, previews, e }) {
   const [at, setAt] = useState(0);
   const it = rel.items[at];
   const p = previews[it.href];
   const sg = cards[it.href] || { seed: it.href, data: [] };
   return (
-    <section className="xcf-sec xcf-rel" aria-labelledby="xcf-rel-h">
+    <Enter kind={e} className="xcf-sec xcf-rel" aria-labelledby="xcf-rel-h">
       <div className="xcf-wrap xcf-rel-g">
-        <div className="xcf-rel-l">
+        <div className="xcf-rel-l" data-half="l">
           <div className="xcf-rel-top">
-            <h2 id="xcf-rel-h" className="xcf-h2">{rel.eyebrow}</h2>
+            <h2 id="xcf-rel-h" className="xcf-h2"><Letters text={rel.eyebrow} on={e === 'letter-cascade'} /></h2>
             {rel.more.map((m) => <A key={m.href} to={m.href} className="xcf-go"><span>{m.label}</span></A>)}
           </div>
           <ol className="xcf-rr">
@@ -576,7 +501,7 @@ function Related({ rel, cards, previews }) {
             ))}
           </ol>
         </div>
-        <div className="xcf-rel-r" aria-hidden="true">
+        <div className="xcf-rel-r" data-half="r" aria-hidden="true">
           <div className="xcf-rp">
             <Sigil seed={sg.seed} data={sg.data} className="xcf-rp-sig" />
             <AnimatePresence mode="popLayout" initial={false}>
@@ -590,9 +515,88 @@ function Related({ rel, cards, previews }) {
           </div>
         </div>
       </div>
-    </section>
+    </Enter>
   );
 }
+
+/* /cloud/local's boot story: its heading block, then its three figures as rows that open onto the boot lines that
+   prove them (the figure's own line, and the commands and output up to the one whose time it is) */
+function BootHead({ boot, e }) {
+  return (
+    <Enter kind={e} id={boot.id} className="xcf-sec xcf-boot" aria-labelledby="xcf-boot-h">
+      <div className="xcf-wrap xcf-boot-head">
+        <div data-half="l">
+          <h2 id="xcf-boot-h" className="xcf-h2"><Letters text={boot.title} on={e === 'letter-cascade'} /></h2>
+          <p className="xcf-tag">{boot.eyebrow}</p>
+        </div>
+        <p className="xcf-body" data-half="r">{boot.lede}</p>
+      </div>
+    </Enter>
+  );
+}
+const lead = (s) => { const m = /^\d+(?:\.\d+)?/.exec(s || ''); return m ? Math.floor(Number(m[0])) : null; };
+function proofOf(boot, f) {
+  const L = boot.lines.filter((l) => l.text);
+  const n = lead(f.value);
+  const hit = n === null ? -1 : L.findIndex((l) => l.time && lead(l.time) === n);
+  if (hit < 0) return L.slice(0, L.findIndex((l, i) => i > 0 && l.cmd));
+  let from = hit;
+  while (from > 0 && !L[from].cmd) from--;
+  return L.slice(from, hit + 1);
+}
+function BootRows({ boot, e }) {
+  const [at, setAt] = useState(0);
+  const dwell = useRef(0);
+  const mounted = useMounted();
+  useEffect(() => () => clearTimeout(dwell.current), []);
+  const lc = e === 'letter-cascade';
+  return (
+    <Enter kind={e} className="xcf-sec xcf-bootrows" aria-labelledby="xcf-boot-h">
+      <div className="xcf-wrap">
+        <ol className="xro xro-figs" data-half="r" onPointerLeave={() => clearTimeout(dwell.current)}>
+          {boot.figures.map((f, i) => {
+            const open = at === i;
+            return (
+              <li key={f.value} className={'xro-r' + (open ? ' open' : '')}>
+                <h3 className="xro-h">
+                  <button type="button" id={'xro-boot-h' + i} className="xro-head" aria-expanded={open} aria-controls={'xro-boot-p' + i}
+                    onClick={() => setAt(i)} onFocus={() => setAt(i)}
+                    onPointerEnter={(ev) => { if (ev.pointerType !== 'mouse') return; clearTimeout(dwell.current); dwell.current = setTimeout(() => setAt(i), 110); }}
+                    onPointerLeave={() => clearTimeout(dwell.current)}>
+                    <span className="xcf-n">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="xro-l xro-fv"><Letters text={f.value} on={lc} /></span>
+                    <i className="xro-x" aria-hidden="true" />
+                  </button>
+                </h3>
+                <div id={'xro-boot-p' + i} role="region" aria-labelledby={'xro-boot-h' + i} className="xro-p" inert={(mounted && !open) || undefined}>
+                  <div className="xro-pi">
+                    <div className="xro-win" data-room="dark">
+                      <div className="xro-body xro-boot">
+                        <p className="xro-lede">{f.label}</p>
+                        <ol className="xro-tl" aria-hidden="true">
+                          {proofOf(boot, f).map((l, k) => <li key={k} className={l.cmd ? 'cmd' : 'out'}>{l.cmd && <b>$</b>}<span>{l.text}</span>{l.time && <em>{l.time}</em>}</li>)}
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </Enter>
+  );
+}
+
+/* the order of the sections after the hero, by first screen (MOTION-MAP rule 2: no fixed sequence) */
+const ORDER = {
+  stage: ['family', 'ship', 'finder', 'related', 'motto'],
+  wide: ['family', 'finder', 'related', 'ship', 'motto'],
+  path: ['ship', 'family', 'related', 'finder', 'motto'],
+  field: ['motto', 'family', 'ship', 'related', 'finder'],
+  local: ['boothead', 'bootrows'],
+};
 
 export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, previews = {} }) {
   const isLocal = doc.kind === 'local';
@@ -600,6 +604,24 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
   const v = VARIANT[group] || 'stage';
   const rest = isLocal ? doc.boot.actions.filter((a) => a !== ask) : doc.actions.slice(1);
   const fig = isLocal ? null : figureOf(doc);
+  // the sections after the hero, in this group's order, each with its entrance in the map's order (on /cloud/local
+  // the hero's terminal takes the first); the closing Band takes the next one when there are fewer than five
+  const SEC = {
+    family: (e) => <Family doc={doc} previews={previews} e={e} />,
+    ship: (e) => doc.ship && <Ship doc={doc} e={e} />,
+    finder: (e) => <Finder pairs={pairs} here={doc.slug} e={e} />,
+    related: (e) => <Related rel={doc.related} cards={cards} previews={previews} e={e} />,
+    motto: (e) => <Motto text={doc.motto} e={e} />,
+    boothead: (e) => <BootHead boot={doc.boot} e={e} />,
+    bootrows: (e) => <BootRows boot={doc.boot} e={e} />,
+  };
+  const has = {
+    family: !!(doc.window && doc.window.siblings.length > 1), ship: !!doc.ship, finder: pairs.some((p) => p.slug === doc.slug),
+    related: !!doc.related, motto: !!doc.motto, boothead: isLocal, bootrows: isLocal,
+  };
+  const secs = ORDER[isLocal ? 'local' : v].filter((k) => has[k]);
+  const E = isLocal ? ENTRANCES.slice(1) : ENTRANCES;
+  const bandE = E[secs.length] && E[secs.length] !== 'letter-cascade' ? E[secs.length] : undefined;
   return (
     <main className={'xcf v-' + v + (isLocal ? ' k-local' : '')} data-ask-name={doc.name}>
       <noscript><style>{NOJS}</style></noscript>
@@ -629,36 +651,15 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
         <div className="xcf-wrap xcf-stage-w">
           {v === 'path' && <Facts doc={doc} />}
           <StageSettle className="xcf-stage" over={560} from={POSE[v]}>
-            {isLocal ? <Boot boot={doc.boot} /> : doc.window && <Console doc={doc} v={v} fig={fig} previews={previews} sigil={sigil} />}
+            {isLocal ? <Enter as="div" kind={ENTRANCES[0]}><Boot boot={doc.boot} /></Enter> : doc.window && <Console doc={doc} v={v} fig={fig} previews={previews} sigil={sigil} />}
           </StageSettle>
         </div>
         {!isLocal && v !== 'path' && <div className="xcf-wrap"><Facts doc={doc} /></div>}
       </section>
 
-      {isLocal && (
-        <section id={doc.boot.id} className="xcf-sec xcf-boot" aria-labelledby="xcf-boot-h">
-          <div className="xcf-wrap">
-            <div className="xcf-boot-head">
-              <div>
-                <h2 id="xcf-boot-h" className="xcf-h2">{doc.boot.title}</h2>
-                <p className="xcf-tag">{doc.boot.eyebrow}</p>
-              </div>
-              <p className="xcf-body">{doc.boot.lede}</p>
-            </div>
-            <dl className="xcf-figs">
-              {doc.boot.figures.map((f) => <div key={f.value}><dd>{f.value}</dd><dt>{f.label}</dt></div>)}
-            </dl>
-          </div>
-        </section>
-      )}
+      {secs.map((k, i) => <Fragment key={k}>{SEC[k](E[i])}</Fragment>)}
 
-      {!isLocal && <Pinned doc={doc} previews={previews} sigil={sigil} />}
-
-      {pairs.some((p) => p.slug === doc.slug) && <Finder pairs={pairs} here={doc.slug} />}
-
-      {doc.related && <Related rel={doc.related} cards={cards} previews={previews} />}
-
-      {!isLocal && doc.motto && <Motto text={doc.motto} />}
+      <Enter as="div" kind={bandE} className="xcf-bandw">
       <Band
         title={doc.name}
         lede={doc.lede || undefined}
@@ -671,6 +672,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
           </span>
         )}
       />
+      </Enter>
     </main>
   );
 }
