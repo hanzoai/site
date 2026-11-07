@@ -5,8 +5,12 @@
    "Hanzo" (/h/ /æ/ /n/ /z/ /oʊ/) light in step; each acting preset re-performs the same word (dramatic is slow and
    wide, documentary breathy and soft, gritty rough, commercial brisk and even). Tap the waveform to seek, pick a
    preset, or pause. (A drawn illustration of a performance, not Koe's audio.)
-   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
-import { useMemo, useRef, useState } from 'react';
+   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour.
+   Persona: creative studio (researcher audience). Goal: request research access. CTA: Request access
+   (/research-access?models=koe). Metric: contact_sales_submit.
+   V2: 8/10 phone pill keeps speaking at rest (film breathes, playhead sweeps, 28-bar level meter; ~15% change, one Pause stops all), pill starts under the close and ends 28px above the headline, close inverts on hover */
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useReducedMotion } from 'motion/react';
 import { Studio } from './Studio';
 import Creative, { Scene } from './Creative';
 import { box as frame, focus } from '../../v2/Launch';
@@ -118,19 +122,61 @@ function Booth() {
   );
 }
 
-// the film closes into a tall capsule on the left (a horizontal one on phones); the headline sits right of it
+// the film closes into a tall capsule on the left (a horizontal one on phones: it starts under the × close, 20 + 48 + 8,
+// and ends where Koe.css starts the headline, 47% of the stage, 41% on short phones); the headline sits right of it
+const PILL = (W, H) => { const t = 76, h = H * (H < 641 ? 0.41 : 0.47) - t; return { l: 20, t, w: W - 40, h, r: h / 2 }; };
 const CAPSULE = frame((W, H, wide) => {
   if (wide) { const w = Math.min(W * 0.2, H * 0.4), h = H * 0.84; return { l: W * 0.26 - w / 2, t: (H - h) / 2, w, h, r: w / 2 }; }
-  const h = H * 0.36; return { l: 20, t: H * 0.07, w: W - 40, h, r: h / 2 };
+  return PILL(W, H);
 });
 
+// phones: the settled capsule keeps speaking. A playhead sweeps the film once per 6s loop (the film's own length) and
+// a level meter of 28 bars breathes at its foot, the booth's waveform in miniature. CSS only (transform), so the
+// page's one Pause stops it ([data-mpaused]) and reduced motion never shows it (Launch hides the layer when calm).
+const LEVELS = Array.from({ length: 28 }, (_, i) => [0.62 + ((i * 37) % 11) / 14, -((i * 53) % 17) / 13, 0.3 + (((i * 29) % 13) / 13) * 0.7]);
+function Meter(W, H, wide) {
+  if (wide) return null;
+  const b = PILL(W, H);
+  return (
+    <div className="ko-pill" style={{ left: b.l, top: b.t, width: b.w, height: b.h, borderRadius: b.r, '--pw': b.w + 'px' }}>
+      <i className="ko-sweep" />
+      <span className="ko-meter">{LEVELS.map(([d, o, a], i) => <i key={i} style={{ animationDuration: d + 's', animationDelay: o + 's', '--a': a }} />)}</span>
+    </div>
+  );
+}
+
+/* the settled capsule shows under a fifth of the stage film, and ModelFilm's on-screen test (ratio > 0.15, measured
+   after the clip-path) then reads it as off screen and pauses it while the page's Pause still says "playing". Koe keeps
+   its own stage film honest: while the stage is on screen, the tab is visible and the page is not paused, a pause it
+   did not ask for is undone. The page's Pause ([data-mpaused]) and reduced motion still stop it. */
+function useStageFilm() {
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const stage = document.querySelector('.lv-stage[data-hero="koe"]'), v = stage && stage.querySelector('video');
+    if (!v || calm || navigator.connection?.saveData) return;
+    let shown = false, raf = 0;
+    const want = () => shown && !document.hidden && !document.documentElement.hasAttribute('data-mpaused');
+    const nudge = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { if (want() && v.paused && v.currentSrc) v.play().catch(() => {}); }); };
+    const io = new IntersectionObserver(([e]) => { shown = e.intersectionRatio > 0.3; if (shown) nudge(); }, { threshold: [0, 0.3, 0.6] });
+    io.observe(stage);
+    const mo = new MutationObserver(nudge); // the page's Pause pressed again: play resumes here too
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mpaused'] });
+    document.addEventListener('visibilitychange', nudge);
+    v.addEventListener('pause', nudge);
+    v.addEventListener('loadeddata', nudge);
+    return () => { io.disconnect(); mo.disconnect(); document.removeEventListener('visibilitychange', nudge); cancelAnimationFrame(raf); v.removeEventListener('pause', nudge); v.removeEventListener('loadeddata', nudge); };
+  }, [calm]);
+}
+
 export default function Koe() {
+  useStageFilm();
   return (
     <Creative
       slug="koe"
       subject={[0.68, 0.45]}
       shape={CAPSULE}
-      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.35, [20, H * 0.07, W - 20, H * 0.43]))(W, H)}
+      over={Meter}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, PILL(W, H).t + PILL(W, H).h / 2, 1.35, [20, PILL(W, H).t, W - 20, PILL(W, H).t + PILL(W, H).h]))(W, H)}
       headClass="ko-v2"
       first="chapters"
       demo={

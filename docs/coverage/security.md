@@ -3,7 +3,7 @@
 Page file: `components/pages/Security.jsx` · gallery: `docs/gallery/security/` · metric id: `contact_sales_submit` (cta_click on `security.hero`, `security.band`)
 
 Open copy questions for James: none decided. MASTER §4.2 lists "DPA and subprocessors, security.txt link" for /security, but on hanzo.ai those live on /trust; no copy or link was added here, and /security links /trust ("The controls, and how to check them").
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/requests/<page>.md`): `docs/requests/security.md` — restore the native-dialog `components/v2/DetailSheet.jsx` (a merge left the JSX and CSS mismatched); the page uses a local copy, `components/pages/security/Sheet.jsx`, until then.
 Forks this page deleted: the page-level AskBar pill (the shared ask bar in `components/Ask.jsx` carries the ask), the self-advancing 3D layer zoom and its spring physics, the looping hero pulse, the rack's dark chassis.
 Conflict noted (MASTER §0.6): §4.2 says "no signature" while JAMES.md asks for something moving within 1 s; the page keeps no signature and moves once (the six layers check themselves in a 0.4 s-step pass on arrival, then rest).
 
@@ -34,7 +34,7 @@ Done here: One `<main>` after the layout's `#main` skip target; links use `A`/`M
 - [x] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards lead to pages here
 
-Done here: The h1 (52px, line-mask cut-in), caption, lede, ask and the honest status row fit the first screen; the six-layer map starts its one-time check pass at 0.4 s. `PageHero` is not merged yet, so the hero is built from the kit (`MaskLines`). A `<noscript>` rule stacks every control with JS off; checked headless with JavaScript disabled, no text is invisible.
+Done here: The h1 (52px, line-mask cut-in), caption, lede, ask and the honest status row fit the first screen; the six-layer map starts its one-time check pass at 0.4 s. `PageHero` is not merged yet, so the hero is built from the kit (`MaskLines`). The shared `<NoJs>` rule (no `<noscript>`, so no hydration badge) stacks every control with JS off; checked headless with JavaScript disabled, no text is invisible.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -42,7 +42,7 @@ Done here: The h1 (52px, line-mask cut-in), caption, lede, ask and the honest st
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: the only copy is the kit's `Copy` of security@hanzo.ai, which copies the displayed address
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta>` is not merged yet; the asks are `A` with the kit's `.pf-btn` (no `.x-btn`). `data-thumb="Talk to Security Team"` hands the label to the shared ask bar; `data-cta="security.hero"` and `"security.band"`.
+Done here: Both asks are the kit `<Cta>` (`security.hero` with `thumb`, `security.band`). On desktop the shared header takes the hero's label ("Talk to Security Team", checked at 1470); on phones the shared header still reads "Try Hanzo" — that is the shared header's choice, not this page's file.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -76,7 +76,7 @@ Done here: taste.py OK on both files; only deck values (#0a0a0a, #525252, #73737
 - ~~Inputs 16px or larger; no bare `:hover`~~ n/a: no inputs; every hover sits inside `@media (hover:hover)`
 - [x] Forks this page deleted: listed below
 
-Done here: Tabs, map labels, worksheet toggles, rack rows and the email answer hover with a transform, press at scale .97 in 90 ms, focus with a 2px ink ring (white in the black room). The sheet is the kit's `DetailSheet` (focus trap, Esc, return). Deleted: the page-level AskBar and the auto-advancing zoom.
+Done here: Tabs, map labels, worksheet toggles, rack rows and the email answer hover with a transform, press at scale .97 in 90 ms, focus with a 2px ink ring (white in the black room). The sheet is a native `<dialog>` opened with `showModal()` (page-local `security/Sheet.jsx`): focus trapped, Esc and the scrim close it, focus returns to the button (checked headless: activeElement `pf-plus` after Esc, scroll position unchanged on open). Deleted: the page-level AskBar and the auto-advancing zoom.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -101,7 +101,7 @@ Done here: One Hanzo image (koma.webp) on the organization's-file layer, with wi
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `scripts/phone.mjs /security` OK (375/375). On phones the controls become a snap rail of 48px pills above one plate; the ask sits at about y 430 at 375.
+Done here: Headless probe after the sheet fix: scrollWidth equals the viewport at 1470, 375 and 320; the closed sheet is a native `<dialog>` and draws nothing at rest. On phones the six-layer stack now sits inside the first 812px under the ask, the controls are a snap rail of 48px pills above the lifted-layer stack; the ask sits at about y 430 at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -158,4 +158,4 @@ Done here: Static Hanzo copy with no live fetch, so nothing loads or fails; the 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="security.hero"` and `"security.band"`; the page fires nothing itself. V2 line present. No critic review exists yet on origin/main.
+Done here: `data-cta="security.hero"` and `"security.band"`; the page fires nothing itself. V2 line present. `docs/review/security.md` read (7/10 on the walk before this build); its fixes are in: the chosen plate now rises above the stack on every tab (z-index), the rack grows to its moment as its units power on, the place stack moves at full size on desktop, the band ask presses to .98, the phone place labels stay on one line, and reduced motion no longer mismatches on hydration (page-local `proof/MaskLines` and `proof/SceneWipe`).

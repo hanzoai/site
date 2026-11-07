@@ -1,53 +1,41 @@
 # /cli — James-eye review
 
-Verdict: 6/10
-First complaint: "The install button went a dull grey, so 'Open in the console' shouts louder than it. And there's a pill bar floating over the text."
+Verdict: 7/10
+First complaint: "It shows me the whole answer, then wipes it and types it again. That looks like it glitched, not like it's alive."
 
-Walked 7 Nov, page file at `4b53974` (`components/pages/CliPage.jsx`, `CliPage.css`, shared `v2/AppStage`, `AppScenes`), on the 14:43 preview of main plus the Apps branches, judged against `docs/MASTER.md` and `docs/JAMES.md`.
-- **This build:** a 9-second first-screen film at 1470×801 and 375×812 with no input, a full scroll pass at both widths, reduced motion, JS off and phone tap targets.
-- **The earlier `a1dcdca` walk:** the full moving walk with hovers and taps; the layout is the same.
-
-Stills: `review/cli/desktop-walk.jpg`, `review/cli/phone-walk.jpg`, `review/cli/desktop-first-9s.jpg`.
+Walked at build `e88d5f71`, dev server http://localhost:4180/cli/. Playwright Chromium with video at 1470×801 and at 375×812 (isMobile, hasTouch, DPR 2). I watched the first 3 s with no input, then scrolled with the wheel (touch scroll on phone) 200 px at a time with dwells. I hovered and pressed every control on desktop and tapped them on phone: the hero Copy, Pause/Replay, tree folders and leaves, the rail arrows, the add-to-script toggles, Copy script, and the hero tab links. I also ran reduced motion, JS off, console capture, a PerformanceObserver for layout shift with per-source attribution, small-target, hue and above-heading scans, the neighbours' first screens (/api, /desktop, /playground, /sdks, /mcp), `parity.py /cli` and `taste.py` on `CliPage.jsx`, `CliPage.css` and `cli/Cut.jsx`. Frames are in `docs/review/cli/desktop-walk.jpg`, `phone-walk.jpg` and `desktop-first-2s.jpg` (video frames at 5 fps over the first 2.4 s).
 
 ## What works
-- Still the best first screen in the Apps group. The whole first screen is one dark terminal window that types Hanzo's own session by itself (`hanzo`, "deploy the gateway to staging", reading the project, "gateway is on staging"), with the install line and Copy beside it. That is MASTER §4.6's developer hero.
-- The resource tree is a real object: open a folder and the command it prints lands big beside it.
-- "What the binary carries" is a rail of real commands with Copy. The script builder copies line by line. Copy confirms.
-- Monochrome now (taste.py passes). JS off hides 0 of 32 text blocks. Reduced motion leaves 0 running. Parity: text 82/82, links 10/10.
-
-## Card check
-- `docs/coverage/cli.md` does not exist, so the verdict is capped at 7. All 18 parts are missing a `Done here:` line.
+- **The hero is the product.** The first screen is a black terminal room: the h1 cuts in by line mask (seen mid-cut at about 0.8 s), then `hanzo` and "deploy the gateway to staging" type and the session streams to "✓ gateway is on staging", ending on a blinking caret. It sells in 5 seconds, and nothing on the neighbouring pages looks like it (/api is a white request card, /sdks a code panel, /mcp a tool list, /desktop an app frame).
+- **One solid, used properly.** The white "Install from hanzo.sh" is the hero's only fill, with GitHub and the console as text links. Below it, the Copy copies exactly `curl -fsSL https://hanzo.sh | sh` (checked on the clipboard) and the label flips to "Copied". On desktop the header ask now becomes the solid "Install from hanzo.sh" once the hero leaves view, and it goes quiet while the closing band's solid is on screen, so only one fill is on screen at a time.
+- **Real interactive objects lower down.** The resource tree (role tree, a gliding selection, the print pane typing `$ hanzo auth login`). The three claims as small terminal windows, with `hanzo api` struck through. The script builder: pressing "+" adds a block with a clip wipe, the line count goes from 16 to 22, and Copy script returns the assembled script.
+- **Clean measurements.** Parity text 82/82 and links 10/10; taste OK on all 3 files. 0 console errors at both sizes and under reduced motion. 0 hue. 0 labels above any h1 or h2. 0 targets under 44px at 375. No horizontal scroll. Under reduced motion, 0 animations are running after 3.5 s and the final frame shows. With JS off, all 28 headings and paragraphs are visible.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes, the terminal types at once. On the slow machine the h1 arrived after the terminal had started; paint it first.
-2. **One in, one out, or a document?** Mostly scenes. "A coding session, metered" is three numbered paragraphs, a document moment.
-3. **A real visual object in every section?** Yes, apart from the "metered" list.
-4. **One ask, in the sticky header?** No.
-    - The header says "Try Hanzo", while the page's ask is "Install from hanzo.sh".
-    - That ask rides in a floating pill at the bottom of the desktop screen, over the "metered" text and the script.
-    - The palette swap turned the lime primary into a mid-grey (`#a3a3a3`) fill on black. The white "Open in the console" now reads as the main button, and the hierarchy is upside down.
-    - The page still ends twice: "Install the CLI" (solid), then a "Get CLI" card with a grey solid "Deploy to Cloud".
-5. **Every hover and press answers, no jumps?** Desktop yes on the full walk. Phone: "Open in the console" is a 15px-tall target; "Read the docs" and "View on GitHub" are 21px.
-6. **Overlaps, font swap, layout shift?** The floating pill overlaps content at 1470×801. On phone, opening a tree folder pushed the section down: 0.42 layout shift on the full walk (`a1dcdca`, same layout).
-7. **Which reference, is its motion there?** Apple's product-as-hero: yes. osply's copy-in-place: yes.
-8. **Different from neighbours?** Yes in the hero, the only Apps page that opens in its own dark room.
-9. **18 parts (MASTER §2)?** No card. See below.
-10. **Banned tells?** Yes:
-    - labels directly above the h1 ("~ HANZO CLI · DEVELOPERS") and above h2s ("WHAT IS HANZO CLI", "CAPABILITIES", "GET STARTED");
-    - a floating pill bar over content.
-11. **Copy untouched?** Yes (parity clean).
+1. **5 s / 1 s.** Yes, it sells, and the h1 cut-in moves within 1 s. But the server-rendered final session is fully readable from about 0.8 s to 1.6 s. Then rows 1 and 2 blank, then all rows blank, then it types from `$`. The visitor reads the answer and watches it vanish (see `desktop-first-2s.jpg`; the same happens on phone). That is the first thing he would notice.
+2. **One in, one out?** Mostly. Each screen holds one idea: hero, agent prompt, tree, claims, rail, script, Get CLI, band. But past the hero the page turns into a white document. The motion is small clip wipes and carets, and the end runs long: about 300 px of empty white between Get CLI and the band, and about 170 px after the band's rows before the footer.
+3. **A real object in every section?** Yes. Every section has a terminal, tree, window, rail card or script. The rail cards are tall grey tiles whose bottom 40% is empty at 1470, which reads unfinished.
+4. **One ask, nothing floating, scale rhythm?** Yes on the ask. Only the shared cookie card floats. Scale works: the hero h1 is 52 px against a 32 px session, section h2s are 26 px, the tree statement is 32 px and the band is 44 px. It is never all big at once.
+5. **Hover and press?** Every control answers: tree nodes fill and their count pill inverts, the rail arrows border and disable at the ends, the add toggles fill to a black tick, the "related" arrows slide 6 px, and the claim windows lift 2 px. No layout jump on hover. The hovers are colour and fill changes; few of them tell you something new.
+6. **Overlap, font swap, shift?** No overlap at either size and no font swap. Layout shift: on phone the tree's self-running tour collapses `auth` and opens `share` with no input. The rows jump 88 px inside the window, and CLS is **0.036** (attributed to `LI.cli-res` and `BUTTON.cli-node`, reproduced twice). That is over the 0.02 lab target. Desktop is 0.008.
+7. **Reference?** apple.com product page (the product as hero, one idea per screen) and a bit of motion.dev's typed patterns. The apple-style pinned or scrubbed scene is absent. The reference shows up in the hero only.
+8. **Different from neighbours?** Yes. It is the only first screen in the group that is a full black terminal room.
+9. **18 parts?** The card has all 18 headings and `Done here:` lines, but two claims are false or stale (see Card check).
+10. **Banned tells?** None outright. Two smaller rule breaks. First, the tree window is both outlined and given a large floating shadow ("raise or outline, never both"). Second, the closing band has four identical blinking `$ hanzo █` carets in one viewport, and up to 7 carets blink at once on the page, against MASTER's "at most one continuous mover per viewport". The four repeats also read as filler.
+11. **Copy untouched?** Yes, parity is 82/82 and 10/10.
 
-## Missing from the 18 parts
-- **Card:** no coverage card, and no `Persona:` / `Goal:` / `CTA:` / metric lines.
-- **Part 3:** two endings, no single `Band`.
-- **Part 4:** header ask mismatch; floating ask; the primary is weaker than the secondary.
-- **Part 7:** labels over headings; a grey fill that reads disabled (MASTER §3.1: white 30% / grey is the disabled rank on black).
-- **Part 11:** phone layout shift; small targets.
+## Card check
+- Format: 18 `## N.` headings with `Done here:` lines, plus the 3 header lines. **OK.**
+- Part 11, "phone film layout shift 0.000". **False:** measured 0.036 on phone from the tree tour, with no input. This caps the verdict at 7.
+- Part 4, "The header carries the shared solid 'Try Hanzo' (it cannot be relabelled from a page)". **Stale:** on desktop the header now swaps to the solid "Install from hanzo.sh" after the hero. On phone it still says "Try Hanzo".
+- Part 11, "0 targets under 44px". **True** (0 at 375×812).
+- Part 7 / 3, "0 labels directly above any h1/h2". **True.**
+- Part 17, "console errors: none at both sizes and reduced motion". **True.**
 
 ## Fixes (in order)
-1. **Fix the hierarchy.** "Install from hanzo.sh" becomes the one white solid on the black room. "Open in the console" and "View on GitHub" become text links with a chevron. "Deploy to Cloud" stops being a filled grey.
-2. **The ask goes in the header.** "Install from hanzo.sh" in the sticky header for this page (via `lib/cta.js`; write `docs/requests/cli.md` for the shared part). Turn off the floating desktop pill.
-3. **One ending.** Let "Install once. It comes with you." be the closing `Band` with the hero's verb as its one solid. Move "Get CLI" and the related links above it.
-4. **Stop the phone jump.** Give the tree's output pane and the hero terminal fixed heights. Make every phone target 44px.
-5. **Delete every label sitting directly above a heading.**
-6. **Write `docs/coverage/cli.md`.**
+1. **Kill the flash in the hero.** On the first run, do not render the SSR final frame and then clear it. Under `html.js`, start the rows already empty (or masked) from first paint, and keep the final frame only for JS off and reduced motion. The session should only ever grow, never reset in front of the visitor.
+2. **Stop the phone tree tour from reflowing.** Either do not auto-collapse the previous folder while the tour runs (only open the next one), or keep the tree at fixed row slots so opening and closing never moves rows. Re-measure CLS to under 0.02 on phone, and correct part 11 and the stale part 4 line on the card.
+3. **Fix the ending.** Keep one caret in the band's four "$ hanzo" rows (on the row in focus, or one that steps down the list), so at most one mover is in the viewport. Close the dead white above the band (about 300 px) and after it (about 170 px) so proof, Band and footer run on with no gap.
+4. **Tighten the rail.** Size the capability cards to their content (or put the command window at the bottom) so the bottom 40% is not empty grey.
+5. **Raise or outline.** Drop either the tree window's 1 px outline or its big shadow.
+6. **Give the white half of the page one authored moment.** It needs more than wipes and carets, for example the script builder's lines counting up, or a pinned tree scene where one panel changes as you scroll. Otherwise everything after the hero reads as a quiet document.

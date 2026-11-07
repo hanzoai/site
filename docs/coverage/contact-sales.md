@@ -7,7 +7,7 @@ Open copy questions for James:
 - The success state reuses the lede's own sentence ("We come back with a plan for your company…"), because Hanzo has no thank-you wording for this form. Is there one?
 
 Shared changes requested (`docs/requests/<page>.md`):
-- None filed.
+- `docs/requests/contact-sales.md`: (1) the header ask stays the shared "Try Hanzo"; the review wants "Talk to sales" there; (2) the kit `Band`'s `Magnetic` is a spring (ui.jsx); (3) the customer logos are not in `public/` and 404 in this box.
 - Noted for the Company kit owner: the masked h1 lets the tops of tall letters peek out of the mask before its cut-in. A 120% start would hide them.
 
 Forks this page deleted:
@@ -54,18 +54,19 @@ Done here:
 
 Done here:
 - **Arrival.** After the curtain, the h1 cuts in by line and the card rises in 0.4s (the Utility entry).
-- **Idle.** The contour field drifts and redraws (a 0.4s cross-fade) with every answer.
-- **Fit.** At 1470×801 the h1, the lede and the arrow are above the fold (the arrow ends at y=624). The page ends on the logo rail (proof), the kit `Band` "Tell us what you want to build." / "Talk to sales", then the footer.
+- **Idle, with a purpose.** Before anyone types, the conversation plays once from Hanzo's own field labels: from about 1.0s after load "Full name" types into the first field (80ms a letter, an aria-hidden overlay, never the field's value), at about 2.1s it lifts away and "Work email" rises with the progress line, a "Full name" chip lands, it rests, and at about 4.2s the empty live form returns (measured at 1470×801 by sampling every 150ms). The first pointer, key or focus on the card ends it at once (tested: a click mid-demo returns "Full name" and typing works). It never submits (0 requests to the intercepted API), never writes the draft and never moves focus. Reduced motion: no demo. The contour field still drifts and redraws (a 0.4s cross-fade) with every answer.
+- **Ending.** The page ends on the logo rail (proof), the kit `Band` "Tell us what you want to build." (the lede's own first sentence) with one solid "Talk to sales", then the footer with a measured gap of 0px at both sizes. The Band's button glides back to the card (smooth `scrollIntoView`, centred) and focuses the question you are on, without a navigation (URL unchanged; tested at 1470 and 375, card measured in view at y=191–677 and y=319–561).
+- **Fit.** At 1470×801 the h1, the lede and the arrow are above the fold (the arrow ends at y=624).
 - **JS off.** All five questions are stacked and legible; the step controls are hidden.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` — no kit `Cta` exists yet; the submit is its own ink button (`.xcs-send`), and the Band uses the kit `Go`
-- [x] Sticky ask in header and bar after the hero, same label
+- [ ] Sticky ask in header and bar after the hero, same label — not met: the header's ask is shared chrome ("Try Hanzo"), requested in `docs/requests/contact-sales.md`
 - [ ] Copy button copies exactly the displayed text — n/a: no copy button
 - [x] `data-cta` and `data-thumb` on every primary
 
 Done here:
-- **Sticky ask.** `data-thumb="Talk to sales"` on the card drives the shared ask bar; `data-ask-hide` is removed from the rail, so the bar carries "Talk to sales" from the end of the hero to the Band.
+- **Sticky ask.** The page's own ask is not in the header: the sticky header carries the site's solid "Try Hanzo", which this page cannot relabel (requested). The floating pill bar was removed site-wide (d2b5ab8c), so nothing floats over content: a probe of fixed and sticky elements at 1470×801 and 375×812 found only the header, the progress line, the cookie notice and the page's own sticky section heading. The ask "Talk to sales" lives in the card (last step) and in the closing Band.
 - **data-cta.** contact-sales.next and contact-sales.submit; the Band's button is the kit's.
 - **Sending state.** The send stays ink (#0a0a0a) with a white turning ring and `aria-busy` (measured: background rgb(10,10,10), ring present).
 
@@ -120,7 +121,7 @@ Done here:
 - **Buttons.** They are 48px: the round arrows, the send, the size pills and the picks.
 - **Fields.** They are 56px with 16px text, `autocomplete`, `inputmode` and `enterkeyhint`.
 - **Focus.** The ring is 2px ink with a white halo; on fields it is an inset 2px ink ring, so it no longer doubles the underline.
-- **States.** Every hover sits in `@media (hover:hover)`, and press is scale .98. The send's loading state keeps its width.
+- **States.** Every hover sits in `@media (hover:hover)`. Press is scale .98 on the round buttons, the send, the size pills, the picks and now every inclusion row (`li:active`, 90ms), where the numeral also inks at once. The send's loading state keeps its width.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -132,8 +133,9 @@ Done here:
 Done here:
 - **Signature.** The one-question conversation.
 - **Supporting.** The line-mask h1, the contour field redrawing per answer, and the rail.
-- **Kinds of movement.** Arrival, idle (field drift, rail), state (step lift and rise, progress glide, chips) and pointer (numerals lighting, picks reading out their sentence). Scroll motion is one section heading's cut-in.
-- **Tokens.** The deck's ease-emphasis at 300ms; no springs anywhere (they were removed).
+- **Kinds of movement.** Arrival, idle and time (the self-playing conversation once, field drift, rail), state (step lift and rise, progress glide, chips) and pointer (numerals lighting, picks reading out their sentence). Scroll motion is one section heading's cut-in.
+- **Tokens.** The progress line, the chips (entry and layout glide, `transition={{ ...T, layout: T }}`) and the inclusion toggles' glyph all use ease-emphasis `cubic-bezier(.16,1,.3,1)` at 300ms; the page file has no spring. The one spring left on the page is the shared kit `Band`'s `Magnetic` lean (ui.jsx), which this page cannot edit (requested).
+- **Every control answers.** A click or tap anywhere on an inclusion row adds it (tested on the phone with a touch tap: the row turns `on`, `aria-pressed="true"`, the numeral is ink `rgb(10,10,10)`); the + stays the keyboard control.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set — the logos use kit `Img` with width and height
@@ -163,6 +165,7 @@ Done here:
 
 Done here:
 - **Contrast.** Text is `#0a0a0a`, `#525252` on white and on `#f5f5f5`, and `#737373` on white only.
+- **Demo.** The self-playing conversation lasts about 4.2s, under WCAG 2.2.2's 5s, so it needs no pause; it is aria-hidden, leaves the field values, `inert` and focus untouched, and stops on the first pointer, key or focus.
 - **Size step.** Arrow keys only choose; Enter or a click moves on (WCAG 3.2.2).
 - **Focus moves.** The list's + changes neither focus nor step. On success the status takes focus.
 - **Errors.** A missing answer sets `aria-invalid` and an alert named by its own label, and focuses that step.
@@ -213,7 +216,7 @@ Done here:
 - [x] `data-cta` on every primary; events only through `lib/track.js` — `lib/track.js` has not merged; nothing is sent
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/contact-sales.md` (6/10). Every fix it lists is applied here.
+- [x] Review read: `docs/review/contact-sales.md` (6/10). Fixes 2–5 are applied here; fix 1 (the header ask) needs the shared header and is requested.
 
 Done here:
 - **Payload.** It is identical in shape to `content/forms.json` (name, email, company, size, need, source, visit). Inclusions join `need` only at send, one sentence per line after your own words.

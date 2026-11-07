@@ -2,7 +2,7 @@
 
 Page file: `components/pages/cloud/Realtime.jsx` (+ `Realtime.css`) · route: `app/realtime/page.jsx` · gallery: `docs/gallery/realtime/` · metric id: `api_key_created`
 
-Open copy questions for James: none decided. Listed: the header says "Try Hanzo" while this page's ask is "Start Building"; the handshake room says "Three calls, then it is live" and the strip before the close says "Two calls and the page keeps itself current" (both kept word for word); the demo's drawn product words ("rule reads b", "heard", "told · delete b", …) are not in `content/ui-strings.json` yet.
+Open copy questions for James: none decided. Listed: on desktop the header takes this page's ask ("Start Building", checked at 1470 once the hero scrolls by), but on phones the shared header keeps "Try Hanzo" all the way down while the bar says "Start Building" (shared header; requested in `docs/requests/pricing.md` item 1); the handshake room says "Three calls, then it is live" and the strip before the close says "Two calls and the page keeps itself current" (both kept word for word); the demo's drawn product words ("rule reads b", "heard", "told · delete b", …) are not in `content/ui-strings.json` yet.
 Shared changes requested (`docs/requests/realtime.md`): Frame's Code on the deck; light-code comment contrast in the kit; the sticky ask label and the floating desktop pill; a press on `lx-text`; `Copy` press .97; the UI-strings register; `lib/cta.js`, `lib/track.js` and the sound kit; the PinnedChapters rail with eight chapters on phones.
 Forks this page deleted: the three equal client boxes (now a desktop, a tablet and a phone of three widths), the mono-caps "Live record updates" label (now the lede), the "View Documentation" outline button (now a text secondary), the always-open handshake paragraph and three always-open call notes, the three always-open growth notes, the 32px statement, the 50px growth figures, the 52px "What happens as it grows" and "Two calls…", the live-dot pulse (a second continuous mover), the elastic rail overscroll, the arrow nudges on hover, the header "Try Hanzo" override in page CSS, every spring, every raised shadow and every Apple-grey literal.
 
@@ -75,7 +75,7 @@ Done here: `taste.py` OK; `c3pal.cjs`: 0 computed colours off the deck at both w
 - [x] Inputs 16px or larger; no bare `:hover` (n/a for inputs: none)
 - [x] Forks this page deleted: listed at the top
 
-Done here: Rule switches (`aria-pressed`), the three calls and growth figures (`aria-expanded` + `aria-controls`), the disclosure, rail arrows and pauses are real controls; hover changes ink, edge or fill inside `@media (hover:hover)`; press is .97 for 90 ms (text links too). `c3rt2.cjs`: a rule switch flips, a call opens its words and marks "subscriptions" in the wire, the disclosure opens, a hovered figure opens its note and adds the fourth tenant, the rail moves 822px, 0 console errors.
+Done here: Rule switches (`aria-pressed`), the three calls and growth figures (`aria-expanded` + `aria-controls`), the disclosure, rail arrows and pauses are real controls; hover changes ink, edge or fill inside `@media (hover:hover)`; press is .97 for 90 ms (text links too). `c3rt2.cjs`: a rule switch flips, a call opens its words and marks "subscriptions" in the wire, the disclosure opens, a hovered figure opens its note and adds the fourth tenant, the rail moves 822px, 0 console errors from this page (one walk saw a hydration warning from the shared footer under load; single loads are clean). Each client's list now has a fixed height (148px desktop, 112px phone), so a create or delete moves nothing below the hero (probe CLS 0 at 1470, 375 and 320; the earlier phone walk measured 0.051 before this fix).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -157,4 +157,4 @@ Done here: The product's states are designed in the demo: connected, a dropped n
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/realtime.md` verdict 8 or more (no review file exists yet; round 2's self-score of 7.5 for overload is answered above)
 
-Done here: `realtime.hero` and `realtime.close` are set; `V2: 8/10` heads `Realtime.jsx` and the route. Gallery: `docs/gallery/realtime/d.mp4`, `d.jpg`, `p.jpg`. Checks at push: 200, parity 0 missing, taste OK, variety OK, unique OK, fs-audit clear, pinchk 9/9.
+Done here: `realtime.hero` and `realtime.close` are set; `V2:` heads `Realtime.jsx` and the route (the builder's own line; the verdict that counts is `docs/review/realtime.md`). Gallery: `docs/gallery/realtime/d.mp4`, `d.jpg`, `p.jpg`. Checks at push: 200, parity 0 missing, taste OK, variety OK, unique OK, fs-audit clear, pinchk 9/9.

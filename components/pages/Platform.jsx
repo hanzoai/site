@@ -183,6 +183,7 @@ function Journey({ openLayer }) {
     const ro = new ResizeObserver(([r]) => {
       const { width: w, height: h } = r.contentRect;
       k.current = pinned ? clamp(Math.min(w / 560, h / 760), 0.42, 1.15) : clamp(Math.min(w / 520, h / 600), 0.4, 1);
+      el.dataset.sized = ''; // the art shows only once it has its size, so it never paints large over the hero's words
       if (pinned) frame(p.get());
       else { camS.set(k.current); camY.set(LIFT * zMid(-1, e.get()) * k.current); }
     });
@@ -251,7 +252,7 @@ function Journey({ openLayer }) {
       <label className="xpl-ask-in">
         <span className="x-sr">Find in the stack</span>
         <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.4 10.4 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-        <input type="search" value={q} onChange={(ev) => setQ(ev.target.value)} autoComplete="off" spellCheck={false} aria-describedby="xpl-ask-n" />
+        <input type="search" value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Find in the stack" autoComplete="off" spellCheck={false} aria-describedby="xpl-ask-n" />
         {q && <button type="button" className="xpl-ask-x" onClick={() => setQ('')} aria-label="Clear"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>}
       </label>
       <p id="xpl-ask-n" className="xpl-ask-n" aria-live="polite">{hits ? `${hits.length} / ${N}` : ''}</p>
@@ -302,8 +303,9 @@ function Journey({ openLayer }) {
         <motion.div id="stack" className="xpl-map" data-ask-hide style={pinned ? { opacity: mapO } : undefined}>
           <i className="xpl-map-room" data-room="dark" aria-hidden="true" />
           <div className="xpl-bar xpl-bar-t" onFocus={follow(0.24, ph === 1)}>
-            <span className={'xpl-hint' + (g >= 0 || lit ? ' off' : '')}>Select a layer</span>
-            {finder}
+            {/* the hint is a caption beside the finder, never a label above the room's headline */}
+            <span aria-hidden="true" />
+            <span className="xpl-ask-row"><span className={'xpl-hint' + (g >= 0 || lit ? ' off' : '')}>Select a layer</span>{finder}</span>
           </div>
 
           <motion.header className="xpl-intro" onFocus={follow(0.24, ph === 1 && g < 0)} style={pinned ? { opacity: introO, y: introY } : undefined}>
@@ -510,7 +512,7 @@ const FACTS = [
 function Loop() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.4 });
-  const calm = useReducedMotion();
+  const calm = useCalm(); // read after mount: the pause button renders the same on server and client
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [run, setRun] = useState(true);

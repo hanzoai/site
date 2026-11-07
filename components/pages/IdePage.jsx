@@ -31,6 +31,7 @@ import A2Room from '../v2/A2Room';
 import A2Grow from '../v2/A2Grow';
 import { MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
+import usePhoneAsk from './usePhoneAsk';
 import './IdePage.css';
 
 const IDE = 'https://ide.hanzo.ai';
@@ -97,7 +98,7 @@ function Editor() {
           </ol>
           <ul className="ide-mems">
             {MEMS.map(([line, kind, what]) => (
-              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={MOVE} tabIndex={0}>
+              <motion.li key={kind} className={'ide-mem k-' + kind} style={{ top: line * 28 + 'px' }} initial={false} animate={t >= line + 1 ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 16, scale: 0.94 }} transition={MOVE}>
                 <span className="ide-mem-k x-mono">{kind}</span>
                 <span className="ide-mem-w">{what}</span>
               </motion.li>
@@ -112,12 +113,11 @@ function Editor() {
           <A to="https://hanzo.team/" className={'ide-open' + (t >= LAST + 5 ? ' on' : '')}>Open in the console</A>
         </aside>
       </div>
-      {/* an editor's own idiom: Hanzo's apps sit in the status bar, not in a tab row like the /cli and /desktop windows */}
-      <nav className="ide-tabs ide-status" aria-label="Hanzo apps">
-        <span className="ide-status-dot" aria-hidden="true" />
-        <A to={IDE} className="on">IDE</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/desktop">Desktop</A><A to="/cloud/api-keys">API Keys</A>
-        <span className="ide-status-r x-mono" aria-hidden="true">Rust · Open VSX</span>
-      </nav>
+      {/* an editor's own status bar; the app links shared with /cli and /desktop moved to the close (End) */}
+      <div className="ide-status" aria-hidden="true">
+        <span className="ide-status-dot" />
+        <span className="ide-status-r x-mono">Rust · Open VSX</span>
+      </div>
     </div>
   );
 }
@@ -282,7 +282,7 @@ function Teach() {
             <h2 id="ide-teach-h" className="a2-headline">It remembers</h2>
           </div>
           <form className="ide-teach-f" onSubmit={add}>
-            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={120} aria-label="One thing about your project" />
+            <input value={text} onChange={(e) => setText(e.target.value)} maxLength={120} aria-label="One thing about your project" placeholder="One thing about your project" />
             <div role="radiogroup" aria-label="Kind of memory">
               {MEMS.map(([, k, d], i) => <button key={k} type="button" role="radio" aria-checked={kind === i} onClick={() => setKind(i)}>{d}</button>)}
             </div>
@@ -383,7 +383,7 @@ function Start() {
           <div className="ide-script-bar"><span className="x-mono">bash</span><Copy text={SCRIPT} /></div>
           <pre className={seen && !calm ? 'type' : ''}>{SCRIPT.split('\n').map((l, i) => {
             const n = Math.max(1, l.length), at = d;
-            d += n * 0.022 + 0.18;
+            d += n * 0.01 + 0.07; // the whole script lands in about 3 s
             return <span key={i} className={l.startsWith('#') ? 'c' : ''} style={{ '--n': n, '--d': at + 's' }}>{l || ' '}</span>;
           })}</pre>
         </div>
@@ -406,6 +406,9 @@ function End() {
             <p className="a2-kick show">Related capabilities</p>
             {/* big cards: Morph flies the one you click into the next page's hero (synchronized.studio) */}
             <div>{[['CLI', '/cli', '$ hanzo'], ['Playground', '/playground', '> _'], ['Desktop', '/desktop', '⌘']].map(([t, to, g]) => <A key={t} to={to} className="ide-rel-a"><span className="ide-rel-g x-mono" aria-hidden="true">{g}</span><b data-morph="">{t}</b><span className="ide-rel-i" aria-hidden="true">→</span></A>)}</div>
+            <nav className="ide-apps" aria-label="Hanzo apps">
+              <A to={IDE} aria-current="page">IDE</A><A to="/cli">CLI</A><A to="/playground">Playground</A><A to="/desktop">Desktop</A><A to="/cloud/api-keys">API Keys</A>
+            </nav>
           </div>
         </div>
       </div>
@@ -414,6 +417,7 @@ function End() {
 }
 
 export default function IdePage() {
+  usePhoneAsk();
   return (
     <main className="a2 ide">
       <Stage />

@@ -53,7 +53,30 @@
 .xs2-shot { position: relative; height: clamp(320px, 54svh, 520px); overflow: hidden; border-radius: var(--r-art); background: var(--hz-black); color: var(--hz-white); isolation: isolate; }
 .xs2-shot .xsl-film { position: absolute; inset: 0; }
 /* each job's own framing, on the still and on the playing film */
-.xs2-shot .xsl-film img, .xs2-shot .xsl-film video { object-position: var(--p); transform-origin: var(--p); transform: scale(var(--s)); }
+.xs2-shot .xsl-film img, .xs2-shot .xsl-film video { object-position: var(--p); transform-origin: var(--p); transform: rotate(var(--r, 0deg)) scale(calc(var(--s) * var(--f, 1)), var(--s)); }
+/* the hero: the film alone, its products as one quiet line (not pills that look like buttons), a pause first */
+.xs2-names.plain { display: block; max-width: 640px; font: 500 14px/1.5 var(--mono); color: rgba(255, 255, 255, .78); text-align: right; }
+.xs2-film-pause { position: absolute; z-index: 3; right: clamp(16px, 4vw, 32px); top: 18px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .4); background: rgba(0, 0, 0, .25); color: #fff; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xs2-film-pause:hover { background: rgba(255, 255, 255, .18); } }
+.xs2-film-pause:active { transform: scale(.97); }
+.xs2-film-top { padding-right: 60px; }
+/* every quiet control answers the pointer: the second ask and the two sheet rows */
+.xs2 .xs2-ask2, .xs2 .v2f-spec-btn { transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xs2 .xs2-ask2:hover span { text-decoration: underline; text-underline-offset: 4px; } .xs2 .xs2-ask2:hover svg { transform: translateX(4px); } .xs2 .v2f-spec-btn:hover { background: #f5f5f5; border-color: rgba(0, 0, 0, .3); } }
+.xs2 .xs2-ask2 svg { transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xs2 .v2f-spec-btn:active { transform: scale(.97); }
+.xs2-strip-c { display: inline-flex; gap: 12px; }
+/* the overlap finder's drifting rings sit behind the tabs, never across them */
+.xs2-ovl-sig { opacity: .07; }
+.xs2-ovl .xsl-ovl-pick { position: relative; z-index: 1; background: #fff; border-radius: 999px; }
+@media (max-width: 899px) {
+  /* phones: the rail keeps a 16px gutter (scroll padding), the product line reads left and balanced */
+  .xs2-strip-v { scroll-padding-inline: 16px; }
+  .xs2-names.plain { text-align: left; text-wrap: balance; display: block !important; font-size: 13px; }
+}
+/* deck rhythm: the headline rests at 52 */
+.xs2 .xs2-h1 { font-size: clamp(40px, 5vw, 52px) !important; }
+.xs2-more { padding-top: clamp(56px, 6vw, 96px); }
 .xs2-shot-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, .55)); }
 .xs2-shot-n { position: absolute; z-index: 1; left: 24px; bottom: 18px; font-size: 64px; font-weight: 220; line-height: .9; letter-spacing: -.04em; font-feature-settings: 'tnum'; color: var(--hz-white); }
 

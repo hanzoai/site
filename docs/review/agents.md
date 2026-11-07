@@ -1,31 +1,53 @@
-# /agents/* (template) — James-eye review
-
-Reviewed 2026-11-07, walked moving at 1470x801 and 375x812. Members walked: /agents/crew/ and /agents/sdk/ (wheel scroll 400px every 700 ms, rest shots ~1 s apart, hover and press on the asks, seats, find field, console nav, You/Agent, pip/cargo, Copy, the Bots room Dark/Light switch and the close's faces). Proofs in `docs/review/agents/`.
-
-Verdict: 7/10
-
-First complaint: "Press the Light switch on the Bots room and half the room disappears: the names and the DONE marks go white on white. And the agents are still just letters in circles, three times over: the ring, the list, the row at the end. Where are the faces?"
+# /agents — James-eye review
+Reviewed: 2026-11-07 16:40 UTC, walked at 1470x801 and 375x812 (touch). I filmed it with motion.mjs (shots/agents/d.webm, p.webm and the sheets) and ran my own Playwright walks: idle, hover, press, step click, FAQ, JS off and reduced motion.
+Verdict: 5/10
+First complaint: "The top's nice, the little run ticks through by itself. Then I scroll and it's a document. Code, more code, a big block of text, questions. Nothing comes in, nothing goes out, it just sits there. And why does the box in the hero keep getting taller?"
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes on both. Crew: the h1 cuts into its mask at about 300 ms, the ring hands the turn from Antje to the next seat, and a contour field drifts behind it. SDK: the console plays a scripted exchange ("Add rate limiting to the payments API." then two agent replies) and the You/Agent pill flips. Both h1s are 52px on desktop and 40px on phone, with nothing above them.
-2. **One in, one out?** Mostly. On crew desktop the pinned stage works: "The agents in every workspace" hands over to "People and agents. One workspace." while the ring stays put, then the black Bots room opens. On SDK the stacked sheets (01 / 02 / 03) slide over each other. Then "The parts you would otherwise write yourself" is a 2x3 grid of six headed paragraphs, which reads as a document. Crew on phone is short and loses the ring after the hero: chapter two is a heading and an empty find field with no object.
-3. **A real object in every section?** Partly. There is an object everywhere: ring, Bots room, row of faces, console, sheets, contour tile, code, terminal. But crew's only "people" are initials in grey coins, because the pictures 404, and the same coin is reused in the ring, the room list and the close row. The Bots room's main pane holds three rows and then about 350px of empty dark panel above "→ Dev". The SDK close repeats the hero's own pip/cargo terminal and Copy.
-4. **One ask, sticky after the hero?** Yes. The header changes to "Launch a bot" / "Read the docs" (solid) once the hero ask leaves view, with one solid per viewport on desktop. The ask appears 3 times per page (hero, room or code, close). Scale has rhythm: 52 h1, 26 sections, 64 mono numerals on the SDK sheets, 44 close. On phone the shared bottom ask bar ("Read the docs →", y 758–802) covers the first rail tile of the SDK parts. That is shared chrome, already noted on the card.
-5. **Every hover and press answers?** Mostly. Hero asks fill (#0a0a0a to rgb(44,44,46)) and press to scale .98, and a cross-origin press shows a busy spinner. Seats take the turn (hub swaps to "Einstein · Legal & IP Counsel · 04 / 10"). The close faces lift and turn ink and show the name ("Dev"). Console nav items darken. The find field picks the matching agent. **Broken:** the Bots room's Light state makes the sidebar names (Antje…Maya) and the DONE labels invisible. The Bots room sidebar rows are not controls: hovering or clicking Feynman does nothing, though the room looks like an app you could click. The hover fill rgb(44,44,46) (#2c2c2e) is not a deck value; it is probably the kit's.
-6. **Overlap, font swap, layout shift?** No overlap and no horizontal overflow at either size. CLS is 0.0004 at most, from the shared header. The h1 box does not move. One hydration-mismatch warning and a "1 Issue" badge appeared in the first run, but did not reproduce in 3 clean reloads at each size for each member, so I put it down to shared-server load. The two parse errors seen came from `cloud/Authz.jsx` and `cloud/Analytics.jsx` (other pages), and an HMR reload from them reset the header mid-walk once.
-7. **Which reference, and is its motion there?** Apple's pinned stage (crew ring held while the chapter changes) and a motion.dev-style layoutId ink, both present. The SDK console comes closest to an anthropic-launch "product as hero". osply/hamol pointer detail is thin: the ring has no pointer response beyond taking the turn on hover.
-8. **Different from its neighbours?** Yes. Ring versus console heroes, black Bots room versus graphite code room, and neither reuses the /agents index stack.
-9. **All 18 parts covered (docs/coverage/agents-family.md, claims true on the page)?** 18 headings filled. Claims checked true: one solid in the first view, the cut-in, the seats as real `/chat/?agent=` links, faces lifting and naming on hover, the find field with a 44px clear, parity 31/31 and 94/94. **Not true:** part 6 claims "no text under 13px except 12px Zen Mono capitals", but the seat numbers "01"–"10" are 9px Zen Mono (28 instances on crew desktop, 8px on phone). Part 18 cites `docs/review/agents-family.md` as the review read; this file is `docs/review/agents.md`.
-10. **Banned tells?** None of the hard list (no hue, gradient text, Inter, kicker above an h1; every caption sits below its heading). Near-misses: the SDK spec grid (six headed paragraphs) is an "explaining sentence under every tile". The crew close row of ten overlapping coins reads as a lazy placeholder for faces.
-11. **Copy untouched?** Yes: parity /agents/crew text 31/31, links 12/12; /agents/sdk text 94/94, links 13/13.
+1. **First screen, 5 seconds, motion within 1 s.** Mostly yes. The five-step run plays on its own (01/05 to 05/05, ticks, pause/replay), and the glass-frame art behind it is alive. But the film shows a black stage with only the art for about 2 s before the h1, body copy and asks cut in, and the desktop d-sheet-01 starts on a blank white frame. The body copy sits on top of the frame art at both widths ("A small… over… No" at 1470; "API key… No" at 375), so the art is behind words that need to be read.
+2. **One in, one out, or a document?** It is a document. After the hero, motion.mjs reports STILL on screens 2 to 7 at 1470 (6 still screens) and 9 of 11 at 375. The pinned "five steps" stage is 2,400 px tall and only moves a line highlight and the step label size. d-sheet-06 shows 12 identical frames (4 s of scrolling with nothing changing). Install, Prompt and FAQ only fade in.
+3. **A real visual object in every section?** Partly. Hero: the live run plus the frame art. Install: a large `$ npm i -g hanzo` with a command list. Script: a code window. Prompt: a text block in a card. FAQ: nothing. Band: type only. Three sections in a row have mono text as their only object, so it reads as one object repeated.
+4. **One ask, in the sticky header, nothing floating; scale rhythm.**
+   - The ask is not one. At 1470 the header says "Try Hanzo" on the first screen, the hero says "Sign up headless", and after scrolling the header swaps to "Sign up headless". At 375 the header stays "Try Hanzo" for the whole page.
+   - The cookie banner floats over content at the bottom centre of every screen on both widths (on the phone it covers the hero run).
+   - Scale is fine: h1 52, h2 26, the install command big, and the 88 px band line as the one big moment.
+5. **Does every hover and press answer?** No. The primary ask's hover brightens the fill and its press is scale 0.98 (good). Copy buttons answer, and so do the step rows in the script stage. These do not:
+   - "Read the docs" in the hero barely changes (about 1 px of underline), and DEAD in the band.
+   - "Agents SDK" and "llms.txt" are DEAD on one pass and give a 1-pixel change on another; "Book a call" also changes about 1 pixel.
+   - The FAQ rows ("Can an agent sign up…", "How do I keep…", "Which tools…") are DEAD.
+   - The pinned step list rows (01, 02, 04) are DEAD; they only change through scroll.
+   - The prompt card is DEAD.
+   In total motion.mjs counts 15 dead controls at 1470. Clicking hero step 02 jumps to 02/05 but shows ticks on all five rows, so the state reads as wrong.
+6. **Overlaps, font swap, layout shift?** Yes:
+   - **The hero run card grows.** At 1470 it is about 478 px tall at load and about 530 to 550 px as the steps run (bottom edge from 626 to 699).
+   - **Text overlaps on the phone.** In the hero run's description, the outgoing and incoming step texts sit on top of each other mid-crossfade ("POST /v1/chat/completions…" over "…token. It is"), shown in p-scroll-01.
+   - **Layout shift.** motion.mjs measures CLS 0.024 at 1470; my walk measured 0.012.
+   - **No overlap of header, hero and buttons.** The h1 box is stable (52 px).
+7. **Which reference, and is its motion there?** It wants to be an Apple pinned scene for the five-step script. The pin is there, but the scene barely changes: no scrubbed reveal of each request and no response landing. An anthropic.com-style launch with figures as the hero is absent. Pointer-aware detail (osply/hamol) is absent beyond the primary button.
+8. **Different from its neighbours?** Yes, the hero is its own: a stack of glass frames plus a self-running step console. Below the hero, the install, code and prompt blocks look like every other developer page.
+9. **The 18 parts.**
+   - **Matches the brief.** The MASTER /agents brief is met literally: hero, the #headless sequence as a numbered code block, the AgentPrompt, the Band, and a terminal demo with pause and a static final frame.
+   - **Missing.** The 4.1 Launch frame's "proof" screen. No figure or count-up anywhere.
+   - **Broken without JS.** The band's "No human required." stays blurred and unreadable, and the pinned script section leaves a screen-tall empty grey void.
+   - **Broken with reduced motion.** A React hydration error ("server rendered HTML didn't match", Pause vs Replay button in the hero run) puts a red "1 Issue" badge on screen in dev.
+10. **Banned tells?** None hard. The palette is monochrome; there are no gradients, no Inter and no kicker over the h1. "FOR AGENTS" sits in the terminal chrome and "—— INSTALL" / "—— HEADLESS" sit below their headings, which is allowed. The floating cookie bar is the "floating over content" smell.
+11. **Copy untouched?** It appears so. All headings and body text read as Hanzo's own. I did not diff against the original.
 
-## Fixes (ordered, most important first)
-- **Bots room Light state (crew, `.xag-night`):** in Light, the sidebar names and the "DONE" labels are white on #fff/#f5f5f5 and invisible. Give the light state its own ink ramp (#0a0a0a names, #525252 or #737373 DONE) or drop the toggle.
-- **Faces:** every agent is an initial in a grey coin, used three times (ring, room list, close row). Mirror the agent pictures into `public/` so the ring and the close show real faces, as MASTER part 10 requires. Until then, make the close row different from the ring (for example names with a hairline, not a second set of the same coins), and stop the ten 64px coins overlapping like a checker stack.
-- **9px seat numbers:** the "01"–"10" inside the seats and coins are 9px Zen Mono (8px on phone), under the 12px floor. Set them to 12px, or drop them from the coins and keep only "04 / 10" in the hub.
-- **Bots room pane is dead:** three static rows, then about 350px of empty panel, and the sidebar rows are not clickable. Either make the sidebar rows real tabs that swap the pane (tick sound, ink slide), or shorten the pane to its content so the room does not read as an empty window.
-- **SDK "The parts you would otherwise write yourself":** six headed paragraphs in a 2x3 grid is a wall of text next to one contour tile. Make it one-in-one-out: one part open at a time, tied to the contour (the tile changes per part), with the others as 17px titles you open.
-- **SDK close repeats the hero:** the pip/cargo terminal with Copy appears in the hero and again in "Write the first one". Give the close its own object, or move the install to the close only. Also on desktop "GitHub →" wraps onto its own line under "Read the docs · Deploy on Hanzo Cloud"; keep the three on one row or stack them on purpose.
-- **SDK sheets:** each stacked sheet (01 Pure-Rust Core…) has about 200px of blank card between its title and its paragraph at 1470x801. Tighten the sheet height so the text sits under the title.
-- **Crew phone chapter two** has no object: "People and agents. One workspace." plus an empty find field. Bring a compact ring (or the hub card with the current agent) into that screen on phone.
-- **Coverage card:** correct part 6 (9px numbers) and part 18 (the review file is `docs/review/agents.md`).
+## Fixes (ranked)
+1. **Make the pinned "five steps" stage a real scene.**
+   - As each step pins, scrub the step's lines into view and stream that step's response under the code (token, key, `"ready"`, deposit address), so the scroll changes something you can see every 100 px.
+   - Cut the dead first 4 s of the pin.
+   - Without JS, render the stage unpinned so there is no empty void.
+2. **Fix the hero run card height.** Reserve the description panel's height for the tallest step, so the card never grows from 478 to 550 px. Crossfade the step descriptions in one grid cell with the outgoing text fully gone before the new one shows: no superimposed text on the phone.
+3. **One ask in the header, everywhere.** Have "Sign up headless" in the sticky header from the first frame at both widths, or keep "Try Hanzo" everywhere, but not one word on the first screen and another after scroll. The phone header never swaps today.
+4. **Give every remaining control an answer that is not opacity:**
+   - "Read the docs" (hero and band), "Agents SDK", "llms.txt", "Book a call": move the arrow and draw the underline.
+   - FAQ rows: rotate the plus and shift the row tint.
+   - Pinned step rows: preview that step's line number on hover; click to scrub to it.
+   - Prompt card: lift the Copy affordance on hover.
+5. **Fix the hydration mismatch in the hero run** (Pause on the server vs Replay on the client under reduced motion). It throws a page error and shows the dev issue badge.
+6. **Bring the hero copy in with the h1, not about 2 s after a black frame.** Land the headline cut-in within 1 s and start the run at 01/05, not on a pre-ticked 05/05 frame. Fix the step click so a jump to 02 does not tick 03 to 05.
+7. **Add the proof beat from MASTER 4.1.** One quiet row of real numbers already in the copy (Kai at $0.021 per million input tokens, a 24-hour deposit address, the five requests), with count-ups. It breaks the run of mono text blocks and gives the page a figure moment.
+8. **Give the band one more alive thing,** for example the "No human required." line cutting in with the run's final tick. Fix its no-JS state, where the headline stays blurred.
+9. **Move the hero frame art off the body copy.** Keep it clear of the paragraph at both widths, or put a gradient under the text; no art behind words that need reading.
+10. **Dock the cookie consent to the bottom edge** (a full-width slim bar, or a corner on desktop) so it stops floating over the hero run on the phone.

@@ -18,51 +18,79 @@ import { A, Cta } from '../../kit';
 import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../../v2/ModelFilm';
-import { href } from '../../../lib/route';
 import SpecCard from '../../v2/SpecCard';
-import { Field, Bill, Codes, Loose, useCatalog, rateFrom, rateText, money } from './parts';
+import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, rateFrom, rateText, money, missing, isLocal } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const size = (name) => (name.length <= 14 ? 's' : name.length <= 24 ? 'm' : 'l');
-const FOLD = 2; // spec groups shown before the rest opens
+const FOLD = 1; // spec groups shown before the rest opens (the first, in MASTER 4.7's four groups when it is long)
 const DASH = '—'; // a value Hanzo has not printed yet (PLAN-COMPONENTS 0.6: never "…")
+const RAIL = 6; // sibling cards at most, every one a page of this site
 const idParts = (id) => id.split('/').map((p, i) => <span key={i}>{i ? <>/<wbr /></> : null}{p}</span>);
+// a "#section" ask stays on this page (the kit opens anything that is not a site path in a new tab)
+const here = (h) => (h && h.startsWith('#') ? { target: undefined, rel: undefined } : {});
 
-function Spec({ g, price }) {
+/* MASTER 4.7: a long spec reads in four groups, Identity, Limits, Price, Modalities (empty groups omitted) */
+const PARTS = [
+  ['Identity', () => true],
+  ['Limits', (l) => /context|latency|output tokens|memory|limit|throughput|max/i.test(l)],
+  ['Price', (l) => /price|cost/i.test(l)],
+  ['Modalities', (l) => /^modalit|encoder/i.test(l)],
+];
+const parted = (facts) => {
+  const at = (l) => PARTS.reduce((k, [, t], i) => (i && t(l) ? i : k), 0);
+  return PARTS.map(([title], i) => [title, facts.filter((f) => at(f.label) === i)]).filter(([, f]) => f.length);
+};
+
+function Facts({ facts, price }) {
   return (
-    <div className="xmf-spec">
-      <h3 className="xmf-spec-h">{g.title || 'Specifications'}</h3>
+    <dl>
+      {facts.map((f) => (
+        <div key={f.label} className={f.label === 'Model ID' ? 'id' : undefined}>
+          <dt>{f.label}</dt>
+          <dd>{f.label === 'Price' ? price : f.value || DASH}{f.label === 'Model ID' && f.value && <Copy text={f.value} label="Copy model ID" />}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function Spec({ g, price, rate, lead }) {
+  const split = lead && g.facts.length > 6;
+  return (
+    <div className={'xmf-spec' + (lead ? ' lead' : '')}>
+      <div className="xmf-spec-l">
+        <h3 className="xmf-spec-h">{g.title || 'Specifications'}</h3>
+        {/* the sheet's one object: the model's two rates drawn to scale */}
+        {lead && <RateBars rate={rate} />}
+      </div>
       <div className="xmf-spec-b">
         {g.notes.map((n) => <p key={n} className="xmf-note x-mono">{n}</p>)}
-        <dl>
-          {g.facts.map((f) => (
-            <div key={f.label} className={f.label === 'Model ID' ? 'id' : undefined}>
-              <dt>{f.label}</dt>
-              <dd>{f.label === 'Price' ? price : f.value || DASH}{f.label === 'Model ID' && f.value && <Copy text={f.value} label="Copy model ID" />}</dd>
-            </div>
-          ))}
-        </dl>
+        {split
+          ? parted(g.facts).map(([t, f]) => <div key={t} className="xmf-spec-p"><h4>{t}</h4><Facts facts={f} price={price} /></div>)
+          : <Facts facts={g.facts} price={price} />}
       </div>
     </div>
   );
 }
 
 export default function ModelSheet({ doc }) {
-  const need = !doc.rate || doc.siblings.some((s) => !s.rate);
+  // api.hanzo.ai is asked only for a rate neither the page nor the snapshot prints
+  const need = missing(doc.id, doc.rate) || doc.siblings.some((s) => missing(s.id, s.rate));
   const cat = useCatalog(need);
   const rate = rateFrom(cat, doc.id, doc.rate);
   const price = doc.price || (rate ? rateText(rate) : DASH);
   const sibs = doc.siblings.map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
-  const self = { name: doc.name, href: doc.route, rate, tokens: doc.tokens, ctx: doc.ctx };
+  // the hero figure is Hanzo's short form ("1M", "33K": the spec value, else the shelf card's); a sentence-long value
+  // ("32,768 tokens (YaRN…)") stays whole in the spec sheet. Never a number Hanzo did not print.
+  const ctxFig = doc.ctx && doc.ctx.length <= 6 ? doc.ctx : doc.cardCtx;
+  const self = { name: doc.name, href: doc.route, rate, tokens: doc.tokens, ctx: ctxFig || doc.ctx };
   const field = [self, ...sibs];
   const plotted = field.filter((p) => p.tokens && p.rate).length;
   const groups = doc.facts;
   const [all, setAll] = useState(false);
   const first = doc.actions[0];
-  // the hero figure is Hanzo's short form ("1M", "33K": the spec value, else the shelf card's); a sentence-long value
-  // ("32,768 tokens (YaRN…)") stays whole in the spec sheet. Never a number Hanzo did not print.
-  const ctxFig = doc.ctx && doc.ctx.length <= 6 ? doc.ctx : doc.cardCtx;
   const ctxLabel = doc.ctx ? (doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx) || {}).label : null;
   const hero = useRef(null);
   const paused = usePaused();
@@ -79,11 +107,19 @@ export default function ModelSheet({ doc }) {
   const artY = useTransform(hp, [0, 1], ['0%', '18%']);
   const moreTitle = (doc.more && doc.more.title) || doc.provider.name;
   const film = (/^\/models\/hanzo\/(enso|kai|koma|zen)/.exec(doc.route) || [])[1];
-  // Hanzo's "More from" cards, those with a page in this rebuild first (they open by Morph); the rest open Hanzo's
-  // live page in a new tab and say so (SpecCard)
-  const cards = doc.more ? [...doc.more.cards].sort((a, b) => (/^https?:/.test(href(a.href)) ? 1 : 0) - (/^https?:/.test(href(b.href)) ? 1 : 0)) : [];
+  // the sibling rail: only models with a page on this site (each opens by Morph), Hanzo's own "More from" picks first,
+  // then the maker's nearest by context and output rate; six at most. Hanzo's other "More from" cards follow as one-line
+  // links (Also), the ones without a page here opening hanzo.ai in a new tab and saying so.
+  const near = (s) => Math.abs(Math.log10((s.tokens || 1) / (doc.tokens || 1))) + (s.rate && rate ? Math.abs(Math.log10((s.rate.out + 0.01) / (rate.out + 0.01))) : 3);
+  const more = doc.more ? doc.more.cards : [];
+  const rail = [
+    ...more.filter((c) => isLocal(c.href)),
+    ...sibs.filter((s) => isLocal(s.href) && !more.some((c) => c.href === s.href)).sort((a, b) => near(a) - near(b)),
+  ].slice(0, RAIL);
+  const also = more.filter((c) => !rail.includes(c));
   return (
     <main className="xmf xmf-model">
+      <CopyStatus />
       <section className="xmf-launch" ref={hero} aria-labelledby="xmf-h1">
         <div className="x-wrap xmf-launch-g">
           <div className="xmf-launch-t">
@@ -92,8 +128,8 @@ export default function ModelSheet({ doc }) {
             </h1>
             {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
             <motion.div className="xmf-acts" {...up(0.42)}>
-              {first && <Cta to={first.href} id="model.hero" thumb>{first.label}</Cta>}
-              {doc.actions.slice(1).map((a) => <Cta key={a.label} to={a.href} kind="link" id="model.hero.2">{a.label}</Cta>)}
+              {first && <Cta to={first.href} id="model.hero" thumb {...here(first.href)}>{first.label}</Cta>}
+              {doc.actions.slice(1).map((a) => <Cta key={a.label} to={a.href} kind="link" id="model.hero.2" {...here(a.href)}>{a.label}</Cta>)}
             </motion.div>
             {doc.links.length > 0 && (
               <motion.ul className="xmf-links" {...up(0.5)}>
@@ -150,14 +186,15 @@ export default function ModelSheet({ doc }) {
             {doc.quick && <a href="#quickstart">{doc.quick.title}</a>}
             {(doc.more || (rate && plotted > 1)) && <a href="#more">{moreTitle}</a>}
           </span>
-          {first && <Cta to={first.href} kind={past ? 'solid' : 'quiet'} size="sm" id="model.local">{first.label}</Cta>}
+          {first && <Cta to={first.href} kind={past ? 'solid' : 'quiet'} size="sm" id="model.local" {...here(first.href)}>{first.label}</Cta>}
         </div>
       </nav>
 
       {doc.family && (
         <nav className="xmf-fam" aria-label={doc.family.title}>
           <div className="x-wrap xmf-fam-in">
-            <h2 className="xmf-h3">{doc.family.title}</h2>
+            {/* a caption, not a heading: "More from <maker>" is the h2 of the related chapter further down */}
+            <p className="xmf-h3">{doc.family.title}</p>
             <ul data-swipe-own data-cursor="">{doc.family.links.map((l) => {
               const inner = <><span>{l.label}</span>{l.note && <i className="x-mono">{l.note}</i>}</>;
               return <li key={l.label}>{l.href ? <A to={l.href}>{inner}</A> : <span className="xmf-fam-here" aria-current="page">{inner}</span>}</li>;
@@ -169,7 +206,7 @@ export default function ModelSheet({ doc }) {
       {groups.length > 0 && (
         <section className="xmf-sec xmf-specs" id="specs" aria-label="Specifications">
           <div className="x-wrap">
-            {groups.map((g, k) => (k < FOLD || all ? <Spec key={k} g={g} price={price} /> : <div key={k} hidden><Spec g={g} price={price} /></div>))}
+            {groups.map((g, k) => (k < FOLD || all ? <Spec key={k} g={g} price={price} rate={rate} lead={k === 0} /> : <div key={k} hidden><Spec g={g} price={price} /></div>))}
             {groups.length > FOLD && (
               <button type="button" className="xmf-more-spec" aria-expanded={all} aria-label={all ? `Show ${FOLD}` : `Show all (${groups.length})`} onClick={() => setAll((v) => !v)}>
                 <i aria-hidden="true" className={all ? 'on' : ''} />
@@ -191,11 +228,18 @@ export default function ModelSheet({ doc }) {
         </section>
       )}
 
-      {doc.extra.map((e, i) => (
-        <section className="xmf-sec xmf-loose" key={i}>
-          <div className="x-wrap"><Loose nodes={e.nodes} /></div>
-        </section>
-      ))}
+      {doc.extra.map((e, i) => {
+        // "Limits" gets its object: the context the model reaches, drawn against what it was trained on
+        const reach = /^Limits$/i.test(e.title) && doc.tokens ? <Reach value={doc.ctx} tokens={doc.tokens} /> : null;
+        return (
+          <section className={'xmf-sec xmf-loose' + (reach ? ' drawn' : '')} key={i}>
+            <div className="x-wrap xmf-loose-g">
+              <div className="xmf-loose-t"><Loose nodes={e.nodes} /></div>
+              {reach}
+            </div>
+          </section>
+        );
+      })}
 
       {/* related: Hanzo's "More from <maker>" heads the whole chapter: where this model sits, what it costs beside a
           sibling, and the siblings themselves, each opening into its page */}
@@ -208,18 +252,19 @@ export default function ModelSheet({ doc }) {
             </div>
             {rate && plotted > 1 && <Field points={field} here={doc.route} label={`${doc.provider.name} models by context window and output rate`} />}
             {rate && <div className="xmf-cost"><Bill self={self} others={sibs} /></div>}
-            {doc.more && (
-              <ul className="xmf-rail" data-swipe-own data-cursor="">
-                {cards.map((c) => {
+            {rail.length > 0 && (
+              <ul className={'xmf-rail' + (rail.length < 4 ? ' few' : '')} data-swipe-own data-cursor="">
+                {rail.map((c) => {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
-                      <SpecCard to={c.href} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : []} meta={sib && sib.rate ? <b>{`${money(sib.rate.in)} → ${money(sib.rate.out)}`}</b> : null} />
+                      <SpecCard hush to={c.href} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : []} meta={sib && sib.rate ? <b>{`${money(sib.rate.in)} → ${money(sib.rate.out)}`}</b> : null} />
                     </li>
                   );
                 })}
               </ul>
             )}
+            <Also cards={also} />
           </div>
         </section>
       )}
@@ -233,7 +278,7 @@ export default function ModelSheet({ doc }) {
               {doc.band.lede && <p>{doc.band.lede}</p>}
               {doc.band.nodes && <Loose nodes={doc.band.nodes.filter((n) => !(n && n.t === 'h2'))} />}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'model.band.2' : 'model.band'}>{a.label}</Cta>)}
+                {doc.band.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'model.band.2' : 'model.band'} {...here(a.href)}>{a.label}</Cta>)}
               </div>
             </div>
           </div>

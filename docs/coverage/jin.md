@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Jin.jsx` (+ `Jin.css`) · gallery: `docs/gallery/jin/` · metric id: `docs_click` (researchers: a GitHub or docs click)
 
 Open copy questions for James: none (Hanzo's "Read the docs" stays the ask; the live page's two buttons both remain, "View on GitHub" as a text link).
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/requests/<page>.md`): `docs/requests/jin.md` (Cta hover off-ramp, phone header second solid, header glass smudges, FooterHTML hydration).
 Forks this page deleted: the raw `.x-btn` asks and `BizAsk` (now kit `Cta`), the v2 `AskBar`, the raw `<img>` and `<table>` (now kit `Img` and `DataTable`), Frame's fading `Paste` (now `BizPaste`), every `data-cursor` label, every spring (`useSpring`, `dragSnapToOrigin` bounce, `SPRING.*`) and hover lift.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -33,7 +33,7 @@ Done here: One `<main>`; the shell's skip link targets `#main`. Links go through
 - [x] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph~~ n/a: no cards lead to pages here
 
-Done here: The h1 "Research on learning without labels" (52px, CSS line cut-in) with its byline and the ask sits beside Figure 1, which starts its saccade within a second. Server HTML has 0 `opacity:0` runs in the hero. Six sections alternate three layouts (numeral|text|figure, figure|text|numeral, wide figure under), then the dark plate, then the close (one sentence, the ask, rows).
+Done here: Round 2: the first screen is a title page: the h1 "Research on learning without labels" (52px, CSS line cut-in), byline and ask over the Abstract set as a side note, then Figure 1 full width (a | b | losses and caption), which starts its saccade within a second. Server HTML has 0 `opacity:0` runs in the hero. Rhythm: chapter 2 ("Ours") is the loud one in a quiet `#f5f5f5` room (numeral 112, heading 44, figure across 8 columns); 1 and 3 rest at 26px; 4-6 drop to 21px headings, 44px numerals, smaller figures and tighter padding; then the dark plate, then the close: one proof line (`hanzoai/jin`, `License: Apache-2.0`), the sentence and ask, rows, footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -66,7 +66,7 @@ Done here: 0 text under 14px at 375 except 12px mono capitals; parity text 37/37
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste OK; greys snapped to the deck ramp and `--bz-*` tokens; radii 6/8/12/24/full; no drop shadows (frames outlined, the image flat); sizes: h1 52, section headings 26, numerals 64 (44 on phones), body 16–17. Byline, "Abstract" and "Figure N" labels sit beside or under headings. Hero medium is a two-panel research figure, unlike any app page.
+Done here: taste OK; greys snapped to the deck ramp and `--bz-*` tokens; radii 6/8/12/24/full; no drop shadows (frames outlined, the image flat); sizes: h1 52, section headings 26, numerals 64 (44 on phones), body 16–17. Byline, "Abstract" and "Figure N" labels sit beside or under headings. Hero medium is a research figure set full width under the title (round 2), so it no longer shares /ledger's "copy left, panel with pause right, abstract under a rule" layout. Chapter 3's losses are one weighted axis (Huber large, cycle and VICReg smaller), not three equal glyphs.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -84,7 +84,7 @@ Done here: Pause (fill on hover, press .98, ring), the draggable image (outline 
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the page plays no sound of its own
 
-Done here: Signature: Figure 1's saccade (idle); supporting: line cut-ins (arrival), the drag (pointer), the sheet (state); variety OK, 0 Rise. Tweens only: 0.5s ease-in-out for the image, 0.3s ease-out for the prediction following, 0.4s for the loss bars. Timers are `setTimeout` only while seen and not paused; reduced motion shows the predicted state, still.
+Done here: Signature: Figure 1's saccade (idle); supporting: line cut-ins (arrival), the drag (pointer), the sheet (state), and Figures 2-7 drawing in once at 60% visible (arrival: strokes by `pathLength` 1.1s ease-in-out 50 ms apart, marks and mask cells after, a point travelling the round trip in Figures 3 and 4, UMAP clusters separating in Figure 6); variety OK (drag + svg line draw), 0 Rise. Tweens only. Figures already on screen at load, JS off and reduced motion all show the finished drawing (0 armed figures, 0 running animations under reduced motion after 3.2s).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -117,7 +117,7 @@ Done here: Text uses ink, `#525252` and `#737373` on white (`#a3a3a3`+ on black)
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: The h1 and Figure 1 are in server HTML; the image has intrinsic size; motion is transform and opacity only; the drag throttles its state to 25 fps. Filmed in the cloud container.
+Done here: The h1 and Figure 1 are in server HTML; the image has intrinsic size; the drag throttles its state to 25 fps. Round 2: CLS 0.207 -> 0.001 desktop, 0 phone (the step chip has its own nowrap line, the Abstract no longer sits in a row the figure spans, Figure 8's status chip reserves two lines); 0 shifts from the page over 10 s idle. Filmed in the cloud container.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -157,4 +157,4 @@ Done here: No live data; the page is whole in server HTML. Figure 1: playing, pa
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="jin.hero"` and `"jin.close"`; `Cta` dispatches `cta_click` with the id only. V2 line updated; no `docs/review/jin.md` yet, so the verdict is pending a critic.
+Done here: `data-cta="jin.hero"` and `"jin.close"`; `Cta` dispatches `cta_click` with the id only. `docs/review/jin.md` read (6/10); fixes 1-8 done in round 2, fix 9 (shared chrome) in `docs/requests/jin.md`; V2 line updated; awaiting a fresh critic.

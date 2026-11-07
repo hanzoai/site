@@ -1,101 +1,118 @@
-# /features: James-eye review
+# /features — James-eye review
+Verdict: 7/10
+First complaint: "The keyboard is great, that's the idea. Then it's the same block three times: a list on one side, a black video on the other, flipped. When a feature lights up, the picture doesn't change. Only a little number does. And there's a big empty white gap after the keyboard."
+(walked 7 Nov 2026 on the dev server at HEAD `915e945a`, 1470×801 fine pointer and 375×812 touch, plus 320, 375×667, reduced motion and JS off)
 
-Verdict: 5/10
-First complaint: "The keyboard is the idea, and it's broken. The black screen is meant to show the feature I press, but it shows a sentence with an empty gap where the name should be and '3 / 0' in the corner. I can't see the keys until I scroll, and on my phone the screen is off the top by the time I tap one. Then at the bottom there are two 'Ask Hanzo anything' boxes, one after the other. Under the keyboard it's the same page as the others."
+Method: Playwright from Node.
+- **Arrival and idle:** bursts of 5 to 6 frames, 180 ms apart, then 8 samples 500 ms apart.
+- **Scroll:** wheel steps of 500px with 900 ms dwells on desktop; 450px steps on phone.
+- **Rooms:** 7 s idle per product room.
+- **Input:** hover and press on the ask, text link, keys, rows, film cards and band cards. I typed in the finder, did a 45-stop Tab crawl, tapped keys and rows on the phone, and clicked one film card to see the transition.
+- **Measured:** layout shift (PerformanceObserver) and console errors.
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `ffe7921` (not on main). The walk started at `514188b`. The branch moved twice while I worked (phone 14px floor, hero lede no longer starts at opacity 0, PinChapters rail hover and a phone layout change), and every finding below was re-checked on the current tree. Files hash: `b55ac7178f72`.
-Walked 7 Nov 14:15–14:40 UTC on the dev server at 1470×801 and 375×812 (touch). I used a wheel-driven screencast, arrival and idle frame bursts with a frame-difference log, hover and press probes with real hover media, JS off, 320 wide and reduced motion. The cookie note was skipped. Every request to api.hanzo.ai was intercepted: the chat was tested only with a local mock reply and with an aborted request, and nothing reached the live API. No hanzo.ai images are used on this page; the Enso avatar is local and loads.
-Proof: `img/features.jpg` (desktop first screen | phone first screen, settled). Both show the empty title band on the display and the "3 / 0" counter.
+api.hanzo.ai was aborted; nothing was sent. The "1 Issue" badge in my frames is a hydration warning that only appears when Playwright screenshots during hydration. A clean load with no screenshots gives 0 console errors on both sizes.
+
+## What works
+- **The hero keyboard is alive and answers.**
+  - **Autoplay:** it plays itself every 2.1 s with no input: `01 / 10` → `02` at ~1.0 s after idle → `03` at ~3.1 s, on both widths.
+  - **Hover:** hovering key 7 with the mouse sets the display to "Sandboxed Execution · 07 / 10".
+  - **Press:** the key travels 4px (`matrix(1,0,0,1,0,4)`).
+  - **Finder:** "code" gives 5 of 10; "image" gives 0 of 10 and dims all 10 keys.
+- **Last round's big problems are fixed.**
+  - **Phone rooms stack:** film, then heading, then rows. Nothing pins over text.
+  - **Real Hanzo media:** the Enso, Zen and Iro films are in.
+  - **Rooms open their product.** Clicking the Dev film runs a black title stage with "Hanzo Dev" and lands on /dev.
+  - **Phone ask:** the header swaps to a filled "Open Chat" from scroll 450 to the end. It is outlined while the hero ask is on screen, and back to quiet while the band ask is in view.
+- **Rooms step by themselves.** In each room one row opens every 2.6 s while it is in view (01 → 02 at 2.9 s → 03 at 5.5 s), and the film card's counter and progress bar follow. Hovering row 3 opens it and sets the film counter to `03 / 04`. A tap on phone does the same (row 4 gives `04 / 04`).
+- **Hover and press answer.**
+  - **Primary:** magnetic, fill #0a0a0b → #2c2c2e, press scale .98.
+  - **Text link:** the underline goes from 30% to full ink.
+  - **Film card:** the video scales to 1.03 and the arrow moves 6px.
+  - **Band cards:** they lift.
+- **Stable.**
+  - **CLS:** 0.00024 desktop, all from the shared header cluster; 0 on phone.
+  - **Width:** scrollWidth 320 at 320.
+  - **Tap targets:** 0 targets under 44px in `<main>` at 375.
+  - **Films:** at most 2 play at once.
+  - **Reduced motion:** the counter rests at `01 / 10`, `getAnimations()` is 0 and 0 videos play.
+  - **JS off:** the h1 is opacity 1, one feature shows on the display, and one row is open per room.
+- **Scale has rhythm.** On desktop the sizes are 52 (h1, once) / 26 (display name, h2s) / 21 lede / 17 / 16 / 14 / 13 / 12 mono. There is one big thing, and the rest is medium and small.
+- **Clean.** `taste.py` OK and 0 hues measured in `<main>`. Fonts are Zen and Zen Mono only. Nothing sits above the h1: "Platform Features" is a caption under it.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Half.
-   - **Desktop.** The h1 is strong: 91px with line-height .92, and it cuts in by line mask. The keyboard's display swaps feature every 2.1s with no input. But the object under the title is a black panel holding a description, a 60px empty band where the feature name should be (`.xft-feat h3` computes `rgb(10,10,10)` on `#0a0a0a`, 1.0:1) and a "3 / 0" counter, with the finder bar on the fold. The keys, which are what make it an instrument, start about 835px down, below 801.
-   - **Phone.** The h1 runs 4 lines at 41px, then the label, the lede and three pills on two rows. Below that, the top 160px of the display shows its label wrapping into the pause button ("HANZO CHAT · / DEFAULT", "3 / / 0"). The keys are a full screen further down.
-   - **Dev-mode note.** "PLATFORM FEATURES" sits alone in white for about 0.8s before the h1 rises. This may be dev hydration only.
-2. **One in, one out, or a document?** At section level, yes: keyboard, then three pinned chapters (rail 01–03, words swap with 48px travel, the product UI changes), then the dark room. Inside each chapter, no. The words column shows 4 titles and 4 two-line descriptions at once, which is a list. Across the page each feature name appears four times (keycap, display, chapter list, chapter UI chip or terminal line) and each description twice. That is the "overload" James named.
-3. **A real object in every section?**
-   - **Hero:** the keyboard, a built object with real travel.
-   - **Chapters:** illustrations made of words, not Hanzo product. The chat mock is a bubble whose user message is the placeholder "Ask Hanzo anything", plus chips of the four feature names. The Dev mock is a terminal ticking the four names under an invented `$ hanzo dev`. The Design mock is a node graph labelled agent/model/tool/memory.
-   - **Dark room:** the live chat, which is real.
-   - **Media:** apart from a 36px Enso avatar there is no Hanzo media anywhere, so the page is white, grey and black from top to bottom with no colour moment.
-4. **One ask, sticky after the hero?** Mostly.
-   - **What works.** "Open Chat" is the one solid in the hero (`data-thumb`, `data-cta="features.hero"`), and the ask bar carries it.
-   - **Three pills in the hero.** The hero has "Open Chat", "Launch Dev" and "Try Hanzo", and "Try Hanzo" appears twice on the first screen (header and hero ghost, same /signup).
-   - **The bar arrives late.** It waits until the whole hero section, keyboard included, has left. Between about 470px and 1,215px of scroll on desktop, and about 600px to 1,800px on phone, the only solid on screen is the header's "Try Hanzo", not the page's ask.
-   - **The close.** It has no "Open Chat" except inside the error line.
-5. **Every hover and press answers?** Mostly, and the keys are the best touch on the page.
-   - **Primary:** it follows the pointer (12px), darkens to #2c2c2e, nudges its arrow 3px and presses at .98.
-   - **Ghosts:** ink border plus a 4% veil, press .98.
-   - **Keys:** a 1px lift on hover and 4px of travel on press with the shadow collapsing. But hovering a key does not preview its feature on the display, so the hover tells you nothing.
-   - **Suggestion chips:** border and text brighten, press .98.
-   - **Pause:** 92% to 100% white, which is barely visible, and press .94.
-   - **Rail:** colour and bar growth (new on this branch).
-   - **No response:** the chapter rows and the chapter UIs react to nothing.
-   - **Finder:** "pdf" and "voice" each light one key ("1 of 10"). "image" dims all ten keys to .35 and says only "0 of 10".
-   - No jumps anywhere.
-6. **Overlap, font swap, layout shift?**
-   - **Stable:** CLS 0 on load and 0 shifts across a full wheel walk. The h1 box holds (Zen loaded, no swap). No horizontal scroll at 320 or 375.
-   - **Phone display:** the label and counter (`.xft-screen-top`, 14px) wrap into the 44px pause button.
-   - **Phone dark room:** as it rises, the ask bar sits on the first suggestion chip, "How does Enso route a prompt?".
-   - **Desktop dark room:** the ask bar crosses the "Try Hanzo" heading as the room enters (transient).
-   - **Desktop chapters:** the pause button floats alone 60px above the visual at the right edge (`top:-60`), detached from what it pauses.
-7. **Which reference, and is its motion there?** apple.com product page: the pinned chapters with a progress rail are there. synchronized.studio: no. Nothing opens into its page; the Hanzo Chat, Dev and Design chapters do not link to /chat, /dev or /design, and the keys open nothing. The self-playing keyboard is its own idea and a good one.
-8. **Different from its neighbours?** The hero medium and signature are its own. The frame is the Business 2 template shared with /tabs, /risk, /sign, /treasury and /ui: LineMask h1, lede and buttons row, Settle stage, PinChapters with the 01–03 rail, one dark room, magnetic ink pill. Under the keyboard it reads as the same page.
-9. **All 18 parts covered?** No; see below. `docs/coverage/features.md` exists but claims two things that are not true on screen: "its feature lighting on the display" (the name is invisible) and "JS off: NoJs" (the display smears).
-10. **Banned tells?** Yes:
-    - **An eyebrow above a headline.** `p.w2-kicker.acc` "Hanzo Chat" sits above the `h2` "Try Hanzo" in the dark room. It is also invisible: `rgb(10,10,10)` on `#050506`, 1.03:1.
-    - **A browser-default tooltip.** The mic button carries `title=` ("Talk to Hanzo", "Listening — click to stop").
-    - **Clean:** a computed-colour scan of `<main>` finds 0 hues. There is no green, and no button fades on hover (`.xft-ctl:disabled` .5 and `.xft-key.dim` .35 are states). The blue "Privacy choices" toggle belongs to the shared footer, not this page.
-11. **Copy untouched?** Hanzo's copy is all there. All 30 page-content units (indices 10–39 of `content/live/features.json`) are in `<main>` at both widths, and the three hero links (/chat?skip=login, /dev, /signup) are present. `parity.py` reports MISSING only for the header and footer units outside `<main>`. "Platform Features" moved from above the h1 (live) to below it, a reorder only. But the page adds visible strings that are neither Hanzo's nor in `content/ui-strings.json`:
-    - the three suggestion questions ("How does Enso route a prompt?", "What can Hanzo Dev do in my repository?", "What is sandboxed execution?");
-    - the finder placeholder "Find a feature: PDF, refactor, voice…";
-    - "No answer came back this time.";
-    - the "N / 0" counter;
-    - `$ hanzo dev` and agent/model/tool/memory;
-    - the tooltip strings.
+1. **5 s / 1 s.** Yes.
+   - **Desktop:** the h1 (124–238), lede, ask (284–340) and the live display (392–555) are all on the first screen, and the display changes on its own at about 1 s after idle.
+   - **Gaps:** the second key row ends at 838–842, past the 801 fold. On a first visit the shared cookie card (716–785) covers the first key row's labels.
+   - **Phone:** the h1 is 4 lines at 40px (MASTER asks for 3). The ask sits at 416–468, and the display starts at 508, so 159px of product is visible at 375×667.
+2. **One in, one out?** Mostly. Each room is one ~751px screen with one idea, and white, quiet grey and white alternate.
+   - **Dead band:** there is about 230px of empty white between the keyboard and "Hanzo Chat": `.xft-hero` padding-bottom 116 plus `.xft-prod` padding-top 116 (frame d-s01).
+   - **Repeats:** the feature names still appear three times (keycap, display, room row), and the product names four times (cluster label, h2, film caption, band card).
+3. **A real object in every section?** Yes:
+   - **Hero:** the keyboard.
+   - **Rooms:** Hanzo's films.
+   - **Band:** three film cards.
 
-## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy / 4 Common gate:**
-  - `Persona:`, `Goal:`, `CTA:` and metric `first_chat` are present.
-  - The hero carries three pills (one solid, two outlined), and "Try Hanzo" appears twice on the first screen.
-  - The page ask is absent for about 750px on desktop and about 1,200px on phone after the hero CTA leaves.
-- **2.3 First impression:**
-  - The signature object's keys are below the fold at 1470×801. On phone, a tapped key's feature lights on a display about 570px above the viewport (measured: display bottom at −280 when key 9 is tapped), so the tap answers out of sight.
-  - JS off: the ten `.xft-feat` blocks all render at opacity 1 in one grid cell, an unreadable smear of ten descriptions on the first screen.
-  - The close is a chat, not a Band repeating "Open Chat".
-- **2.4 Conversion:** `data-cta` is only on the hero. The chat send, which is the page's literal first_chat moment, carries no `data-cta` or event.
-- **2.6 Content:**
-  - The display title has 1.0:1 contrast.
-  - Feature names repeat four times and descriptions twice.
-  - 10 text runs at 13px on phone remain inside the aria-hidden chapter UIs (bar labels, "routes each prompt", graph nodes). The new floor exempts them, but they are visible.
-- **2.7 Visual system:**
-  - `Features.css` holds 48 hex literals (18 unique) and 27 `rgba()` literals instead of the `--hz` and `--room` tokens.
-  - No Hanzo media, so no colour moment.
-  - Stale header comment "pink accent" at `Features.jsx` line 3.
-- **2.8 Components:**
-  - `title=` tooltip on the mic.
-  - 2 bare `:hover` rules (`.xft-key:hover`, `.xft-asks button:hover`).
-- **2.9 Motion:** the mix is good (arrival, idle autoplay, pointer, typing and streaming, key state, scroll). But the self-playing display is `aria-live="polite"`, so it announces every 2.1s, and autoplay runs whenever it is in view.
-- **2.10 Media:** one 36px avatar. The chapters could hold real Hanzo Chat, Dev and Design product renders or films and do not.
-- **2.11 Mobile:**
-  - The display label collides with the pause button.
-  - The ask bar covers a suggestion chip.
-  - The hero pills wrap to two rows and push the object down.
-  - The chapters' pause button floats alone between the keyboard and the chat mock.
-- **2.12 Accessibility:**
-  - Heading skip: h1 is followed by ten `h3`s in the display before the first `h2`.
-  - Contrast fails: display label and counter `#6e6e73` on `#0a0a0a` at 3.9:1; terminal dim lines 3.9:1; display h3 1.0:1; dark-room kicker 1.03:1.
-- **2.15 Product pages:** nothing on the page links its three products to /chat, /dev or /design, and there is no Morph.
-- **2.17 States:** the chat shows thinking, streaming, done and error (verified with a mock and an abort). But the `fetch` has no timeout or AbortController, so a stalled network leaves it "thinking" forever, and the error sentence is invented copy.
-- **Passing:** one h1, one main, no horizontal scroll at 320 and 375, CLS 0, reduced motion static (0 running animations), 44px targets, pause on both demos, 0 API calls on load, all 30 copy units present.
+   But the films are abstract model art (Enso ring, Zen sphere, Iro mountains), not the product. They don't change with the open row: only the `NN / 04` caption and the bar move. Each film shows the same frame whichever feature is open.
+4. **One ask, nothing floating, scale?**
+   - **Ask:** yes. One solid fill per viewport ("Open Chat" in the hero, then in the header, then in the band with the header quiet).
+   - **Floating:** nothing floats over content. On phone the sticky display (64–284) slides over the keys above it by design, and the tapped key stays in view below it (key 9 top at 383).
+   - **Scale:** OK.
+5. **Every hover and press answers?** Yes for the keys, rows, ask, text link, film cards, band cards and pause. Two gaps:
+   - **Row hover:** it changes no background (`rgba(0,0,0,0)` before and after). Only the row opening tells you.
+   - **Finder:** a 1406px-wide empty white bar with only a magnifier and no visible words. With focus it gets a 1px ink ring, which reads as a lazy plain box.
+6. **Overlaps, font swap, shift?** No font swap (Zen loaded, h1 box holds), and no shift above 0.0003. Nothing overlaps at 1470×801 or 375×812 apart from the intended sticky display on phone.
+7. **Reference?** It feels like apple.com feature rows, with a list beside a product film and a progress bar.
+   - **synchronized.studio is half there.** The film card opens into /dev through a title stage, but the stage title "Hanzo Dev" does not land on /dev's h1 ("Describe the change. Dev ships it.", top 219), so it is a page transition, not a card that becomes the hero.
+   - **anthropic.com and apple.com are missing their key move:** the product changing state as each feature lights.
+8. **Different from neighbours?** The hero medium (a keyboard instrument) and signature are its own. The rooms (numbered accordion rows beside a black media card, mirrored) are a common pattern and read as one block repeated three times.
+9. **18 parts.** The card has all 18 with evidence. No false claim found (see below). Part 18's "review 8 or more" box is honestly unchecked.
+10. **Banned tells.** None found:
+    - 0 hues;
+    - no eyebrow above a heading;
+    - no gradient text, Inter or springs;
+    - no fade-on-hover;
+    - no 3 equal boxes (band cards measure about 365 / 292 / 219 wide).
+
+    On the edge: `Features.css` still has 39 lines with literal hex or `rgba()` (MASTER part 7 says tokens only).
+11. **Copy untouched?** Yes.
+    - **Parity:** `parity.py /features` reports only the shared header and footer units as missing (44 text, 40 links, all chrome).
+    - **Page links:** /chat?skip=login and /dev are present.
+    - **Display label:** it wraps on phone instead of truncating.
+
+## Card check (docs/coverage/features.md)
+- **True:**
+  - header comment fields; one h1; one solid fill per viewport;
+  - `data-cta` and `data-thumb` on `features.hero` and `features.close`;
+  - phone ask swap (measured at 450 px and onward);
+  - rooms stack on phone; films via `ModelFilm`, at most 2 playing;
+  - rows step every 2.6 s and drive the film counter; hover previews the feature; keys travel 4px;
+  - JS off shows one feature; reduced motion rests;
+  - 0 targets under 44px at 375; scrollWidth 320;
+  - blocked network gives 0 console errors; finder states; `taste.py` passes;
+  - the display and first key row are on the first screen at 1470×801 (bottom 744; second row is below);
+  - the `V2:` line is in `Features.jsx`.
+- **Half-true:**
+  - **Part 3, "the card's title carries `data-morph`".** The attribute is there, but the morph lands on a different h1 (not within 12px of the destination title).
+  - **The parity note.** It is right about chrome-only misses.
+- **Stale, not on the card but worth fixing:** `app/features/page.jsx` line 1 still says "three pinned product chapters".
+- **False:** none found. The verdict is not capped.
 
 ## Fixes (in order)
-1. **Make the display work.** Give `.xft-feat h3` the screen's ink (`color: #f5f5f7`); the global heading colour is beating `.xft-screen`. Replace "N / 0" with the keycap number alone, or "3 of 10" using the register's "of". Make the ten display features `p`/`strong` (or put an `h2` above them) so the outline stops jumping h1 → h3. Drop `aria-live` while autoplaying and announce only a key the visitor presses.
-2. **Put the keys on the first screen at both widths.**
-   - **Desktop:** at 801 high, show the display and at least the top row of keys. Cut the hero's 100px top padding and the 120px minimum on the display, or set the display beside the board.
-   - **Phone:** keep the display in view while keys are tapped. Make it sticky above the board, or let the lit key itself expand to show its feature.
-   - **Hero pills:** reduce them to one solid plus text links ("Launch Dev"; drop the hero's second "Try Hanzo", which repeats the header), so they fit one row and the object rises.
-3. **One chat, no eyebrow.** Delete the "Hanzo Chat" kicker above "Try Hanzo". Then either drop the page's dark-room prism in favour of the footer's own, or give the dark room that prism and suppress the footer copy on this page; never two in a row. Put `data-ask-hide` on the room so the bar stops covering the chips. Add `data-cta="features.chat"` to send, and a 6s AbortController timeout.
-4. **Strip invented copy.** Delete the three suggestion questions. Drop the finder's visible placeholder, keep "Find a feature" as its aria-label, and add that string to the register for James's yes. Replace "No answer came back this time." with the register's `failed` string plus Hanzo's "Open Hanzo Chat" link. Remove `title=` and keep `aria-label`. Delete `$ hanzo dev` and the agent/model/tool labels unless they come from Hanzo's copy.
-5. **One thing in, one thing out in the chapters.** Show one feature per scroll step: the chapter's list lights one row at a time while the visual answers that row. Replace the word-chip and terminal mocks with real Hanzo Chat, Dev and Design product renders or films; that is also where the page's only colour should come from. Link each chapter to /chat, /dev and /design with Morph, so the product opens into its page.
-6. **JS off and phone polish.** Under no-JS show only the first `.xft-feat`. Move the chapters' pause into the visual's corner, not `top:-60`. Raise the display label to `#a1a1a6`. Make key hover preview its feature on the display. Swap the literal hexes for tokens, wrap the two bare hovers, and fix the stale "pink accent" comment.
+1. **Make each room's picture answer the feature.**
+   - **What changes:** when a row opens, the film card must visibly change, not only `.xft-film-cap .x-mono`. For example, give each row its own crop or time of the film. Set `video.currentTime` to a per-row offset with a 300 ms crossfade, or step `object-position` / scale (1 → 1.08) per row on `.xft-film video` with ease-in-out at 400 ms.
+   - **Better, if Hanzo has them:** show the product's own UI frame per feature via `Pic` (Chat window, Dev CLI, Design canvas).
+   - **Why:** this is the one thing keeping the rooms from feeling alive.
+2. **Break the three-identical-rooms pattern.** Keep the copy and give each room its own layout and move:
+   - **Chat:** keep the current split.
+   - **Dev:** a full-bleed black room with the film as background and the rows on it in `#fafafa`. This is one of the 2 allowed black rooms, entering as a rounded card that opens to full width.
+   - **Design & Cloud** (2 features): a wide film over its two rows side by side.
+3. **Close the dead band.** `.xft-hero { padding-bottom: 44px }` and `.xft-prod.p0 { padding-top: 72px }`, so the Chat room peeks into the first scroll. Pull `.xft-inst` up about 40px (`.xft-hero` padding-top 64 → 44, or a smaller `.xft-top` margin) so the second key row clears 801.
+4. **The finder is a blank box.** Shrink `.xft-find` to the board's first column (about 360px) or set it inline right of the cluster labels, with a visible hint. The hint needs a `content/ui-strings.json` entry (request it), or reuse the existing "Find a feature" aria-label text as the placeholder. A 1406px empty bar reads as unfinished.
+5. **Phone h1 to 3 lines.** At ≤599px, set `.xft-h1` to 38px with `max-width: none` (or `letter-spacing: -0.02em`), so "Everything you need to" holds one line. Then lift the display above 480.
+6. **Morph lands true.** Either send the film-card title into /dev's h1 position and size (within 12px), or drop `data-morph` from `.xft-film-cap b` and call it a page transition on the card.
+7. **Row hover fill.** Inside `@media (hover:hover)`, set `.xft-rows button:hover { background: #f5f5f5 }` (`#ededed` in the grey room `.p1`), so hover answers before it opens.
+8. **Cut one repeat of the product name.** Drop the visible `<b data-morph>` name from `.xft-film-cap` (keep it for the morph via `aria-hidden` and visually hidden), since the h2 sits right beside it.
+9. **Housekeeping.**
+   - Swap the 39 hex/`rgba()` lines in `Features.css` for tokens.
+   - Update `app/features/page.jsx` line 1's stale `V2:` text.
+   - Set `aria-hidden` band cards to `tabIndex={-1}` plus `role="presentation"`, or make them real labelled links. Right now they are tappable links hidden from assistive tech.

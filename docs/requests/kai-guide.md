@@ -1,0 +1,9 @@
+# Requests from /kai/guide (shared files, not edited by this page)
+
+1. **Phone sticky ask (Chrome / Nav / ask owner).** At 375×812 the header keeps a solid "Try Hanzo" beside the hero's solid "Get an API key", so the first screen shows two solid fills, and the header never swaps to the page's ask after the hero leaves view (checked at y=2500). Desktop already swaps ("Try Hanzo" → "Get an API key" once the hero ask leaves view, and goes quiet while the closing solid is on screen). Please apply the same swap at phone widths, with the header ask quiet while the hero ask is visible (MASTER part 4: one solid fill in one place at a time).
+
+2. **Kit `CodeBlock` (kit.jsx owner).** `CodeBlock` always sets `data-room="dark"`, and the header (Chrome.jsx) turns dark over any `[data-room=dark]`. This page shows its code on a white tile, so the header went dark over light code. Page-local workaround: a layout effect in `KaiGuide.jsx` re-marks its three blocks `data-room="light"` before the header starts watching. Request: a `room` prop on `CodeBlock` (default `dark`) so a light code tile can say so.
+
+3. **Kit `Band` (kit.jsx / globals.css owner).** `Band` renders a black room (`.x-band`, `#000`) with `#f5f5f7` / `#a1a1a6` text (not deck values) and its action is a `Go` with no `data-cta`. On pages that already have two dark rooms it cannot be used without breaking "at most 2 black or graphite rooms". Request: a `light` (Quiet `#f5f5f5`) variant, deck greys, and a `ctaId` prop passed to the action as `data-cta`. Until then this page's close is page-local (`.kg-end`).
+
+4. **FooterHTML hydration warning (shared shell).** Still logs one hydration mismatch on load at both sizes (the footer's `__html` differs between server and client).

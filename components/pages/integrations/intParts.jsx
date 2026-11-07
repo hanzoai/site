@@ -148,8 +148,12 @@ export function CodeCard({ sample, only, Loose, name, tabs, at }) {
   return (
     <div className="xig-card">
       <div className="xig-card-bar">
-        <span className="xig-tabs" aria-hidden="true">
-          {tabs.map((t, k) => <span key={t + k} className={'xig-tabs-i' + (k === at ? ' on' : '')}>{t}</span>)}
+        <span className="xig-tabs">
+          {/* each tab takes you to its chapter (the scene's own chapter marks do the scrolling) */}
+          {tabs.map((t, k) => (
+            <button key={t + k} type="button" tabIndex={-1} className={'xig-tabs-i' + (k === at ? ' on' : '')} aria-current={k === at ? 'step' : undefined}
+              onClick={(e) => e.currentTarget.closest('.v2f-ch')?.querySelectorAll('.v2f-ch-nav button')[k]?.click()}>{t}</button>
+          ))}
         </span>
         <span className="xig-card-t">{sample.title}</span>
         {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
@@ -159,4 +163,15 @@ export function CodeCard({ sample, only, Loose, name, tabs, at }) {
       {code ? <Lines code={code} only={only} label={name + ': ' + sample.title} /> : <div className="xig-prose"><Loose nodes={sample.nodes} /></div>}
     </div>
   );
+}
+
+/* each tool's mark, set in type (no emoji, no borrowed logo): two letters from its own name, like a table of elements.
+   Words such as SDK, AI and .dev are dropped; a single word gives its first two letters, several give their initials. */
+const SKIP = /^(sdk|ai|\.dev)$/i;
+export function monoOf(name = '') {
+  const words = name.replace(/\.dev$/i, '').split(/\s+/).filter((w) => w && !SKIP.test(w));
+  const parts = words.length > 1 ? words : (words[0] || '').split(/(?<=[a-z])(?=[A-Z])/).filter((w) => !SKIP.test(w));
+  if (parts.length > 1 && parts[0].length > 1) return (parts[0][0] + parts[1][0]).toUpperCase();
+  const w = parts.join('');
+  return w.slice(0, 1).toUpperCase() + w.slice(1, 2).toLowerCase();
 }

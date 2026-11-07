@@ -1,180 +1,165 @@
 # /templates: James-eye review
 
-Verdict: 5/10
-First complaint: "The best thing here is the deck of sites, and on my laptop I get a strip of it at the bottom of the screen. I grab the window to flick it and it throws me into chat. Then I get the same twelve pictures again underneath, three in a row with a sentence under each, for four screens. That's a catalogue, not a moment. And on my phone I can't get back to 'All', because the filter row starts at E-commerce and the pause button sits on top of Portfolio."
+Verdict: 7/10
+First complaint: "That's the same layout as Gallery: big title on the left, button on the right, a grey box with a pause button. Then I scroll and get the same twelve sites again as a wall. And the windows at the back of the deck all print their 'Edit in Hanzo' buttons on top of each other on the right."
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `30e721f`, plus the uncommitted shared `x-gauss/LineMask.jsx` and `Rhythm.css` edits in the tree at 14:51. Files hash: `61c1312bbdcd` (page, CSS, SetupMenu, route, Scale, Settle, OpenSheet, x-gauss).
-The page and the standard both changed while I walked. I first walked `bf5c941` at 14:18. Then `ffe7921` landed (white chip thumb, greyed agent icons), JAMES.md changed at 14:41 (scale rhythm, ask in the header, nothing floating), `c647368` changed the shared Ask so the desktop pill bar no longer shows, and `30e721f` set h1 52 and h2 26 and dropped springs. Every finding below was re-measured at 14:51–14:55 on `30e721f`, and the review applies the 14:41 JAMES.md.
-Walked 7 Nov 14:18–14:55 UTC on the dev server at 1470×801 (fine pointer, hover on) and at 375×812 (touch). I used screencasts, 6- and 10-frame bursts with pixel diffs, a layout-shift observer, hover and press style diffs, mouse and touch drags, the keyboard, JS off, reduced motion, and widths of 320 and 375. The previews at hanzo.ai/templates/*.webp cannot load in this sandbox. I served 1280×800 stand-ins of the same size so the layout reads as it will on hanzo.ai.
-Proof: `img/templates.jpg` (desktop first screen | phone first screen, with stand-in previews).
+Walked 7 Nov, about 16:00–16:49 UTC, on the dev server at http://localhost:4180/templates/. The tree was at `b484e9d` plus uncommitted work, and other pages were being edited at the same time.
+- **Sizes:** 1470×801 (fine pointer) and 375×812 (touch), plus 320×640.
+- **Load:** screenshots at 150, 600, 1000, 2000 and 4200 ms after load.
+- **Scroll walk:** half-screen steps with 0.7 s dwells.
+- **Measurements:** an idle check of the deck over 8 s with no input, a PerformanceObserver for layout shift, and the h1 box sampled every frame for 3 s.
+- **Controls:** computed styles at rest, hover and press for ten controls; four mouse drags across the front preview; the arrow keys; the kind filter; a wall tile opened into its sheet and closed with Esc; Copy read back from the clipboard; "+25 more".
+- **Modes:** JS off, reduced motion, and `scripts/motion.mjs /templates` (film at `shots/templates/`).
+
+Hanzo's preview images (hanzo.ai/templates/*.webp) are blocked in this sandbox: every request fails with ERR_TUNNEL_CONNECTION_FAILED. What I judged is what a blocked visitor sees: the grey drawn page under each preview.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Half.
-   - **What moves:** the h1 cuts in by line mask, the right column rises, and the deck now riffles at load: `02/12 → 03/12` with no input, the readout ("E-commerce / Savor") follows it, and the address bar types the name.
-   - **Desktop, 1470×801:** the first screen is a 52px two-line h1 at the left, the lede, readout and ask at the right, then 140px of empty white, then the grey stage with its chip row. Of the front window, only 154px shows (`.xtp-card.front` top 647), and 111px of that is preview. The thing that sells the page sits under the fold.
-   - **Phone, 375×812:** 111px of the front card shows, 69px of it preview.
-   - **On `bf5c941`** (h1 120px), the preview showed 0px and the first screen did not move at all after 1.6s.
-2. **One in, one out, or a document?**
-   - **The deck:** this is the one good moment. It settles (Settle 1.06→1, 60px lift) and riffles while in view.
-   - **The shelf:** next comes "All 12", the same twelve previews again as 4 rows × 3 tiles, each with a kind label, a title and Hanzo's sentence. That is about four screens on desktop (y≈1080–2880) and about 5.5 on phone (y≈1218–5684). The tiles have no entrance and no idle motion; only hover lifts them.
-   - **The dark room:** a 26px h2, the setup pill, agent chips and a terminal. The terminal only re-types when the deck changes, three screens up, so nobody ever sees it react.
-   - After the hero, the page is a document.
-3. **A real object in every section?** Yes:
-   - **Hero:** the window deck with real previews.
-   - **Shelf:** twelve previews.
-   - **Dark room:** the terminal.
-   - **Problem 1, the deck:** on desktop it does not read as a deck. The back cards peek 0–4px past the front window, because `scale: 1 - d*.06` from the bottom centre cancels the `x: d*22, y: -d*26` offset. Riffling looks like one window swapping. On phone the back cards do show (21, 41 and 59px).
-   - **Problem 2, a failed preview:** it leaves a flat #0a0a0a slab with no name or Sigil.
-4. **One ask in the sticky header, nothing floating over content, scale with rhythm?** Mostly no.
-   - **Hero ask:** "Edit in Hanzo" is solid, with `data-thumb` and `data-cta="templates.hero"`, and it follows the template in front.
-   - **After the hero:** the sticky solid is the header's "Try Hanzo". That is shared-system behaviour, but the page's own verb is gone from y=720 on, and the deck's "Edit in Hanzo" is an outline.
-   - **Dark room:** the white "Copy setup prompt" pill and the header's solid "Try Hanzo" show together. On desktop that lasts from y=3240 to 3600; on phone from y=5684 to 6090.
-   - **Sheet ask:** in each shelf sheet, the "Edit in Hanzo" sits below the sheet's own fold (CTA top 782 against sheet bottom 745 at 801 high).
-   - **Floating:** on phone, the pause disc floats over the chip row.
-   - **Scale:** the h1 rests at 52px, as the new rule says. The other sizes are out of step:
-     - The readout name beside the h1 is 38px.
-     - Shelf tile titles are 28px, bigger than the dark room's 26px h2.
-     - The sheet title falls to 17px, because `.gx h3` reaches the sheet that is portalled into `main.gx`. Opening a tile makes its headline smaller than the tile's own title.
-5. **Every hover and press answers?** Mostly, and nothing fades.
-   - **Hero ask:** the fill goes from #0a0a0b to #2c2c2e, the arrow moves 3px, it has a magnetic pull, and press scales to .98.
-   - **Tiles:** they lift 4px, the image zooms to 1.04 and the "+" turns; press scales to .99.
-   - **Card ask:** the border turns ink over a veil; press scales to .98.
-   - **Pause:** now inverts on hover.
-   - **Weak:**
-     - The kind chips change text colour only.
-     - The arrows grow 1.05 on hover but have no press.
-     - The agent chips have no press.
-     - Eight bare `:hover` rules in `Templates.css` stick on touch: after a tap on phone, the Next arrow stays at scale 1.05.
-   - **Broken:**
-     - A mouse drag on the front preview, where `data-cursor="Drag"` invites it, advances the deck and then follows the link to `/chat/?template=drive`, the card you just threw away. It failed this way in 5 of 6 runs; a drag by the address bar or title works.
-     - At 11/12 and 12/12 the dots mark dot 1 or dot 2 as current, because only 10 dots exist (`list.slice(0, 10)`, `at % 10`).
-6. **Overlap, font swap, layout shift?**
-   - **Layout shift:** CLS 0 over full walks at both widths, and the h1 box is steady. One phone walk logged CLS 2 while the file was being hot-reloaded by its owner; a re-walk gave 0.
-   - **Overlap at 375×812:**
-     - The pause button (x 311–356, y 579–624) covers the "Portfolio 06" chip.
-     - "All 12" and "Business 01" sit off the left edge at x −187 and −115 and cannot be scrolled to. The row's `scrollLeft` minimum is 0, because `.xtp-kinds` keeps `justify-content: center` inside an `overflow-x: auto` row.
-   - **At 320px:** the dark room's column is 345px wide (SetupMenu's minimum width), so 41px is clipped: the terminal's Copy button, the right edge of the "Copy setup prompt" pill and the chips. The page itself does not scroll sideways.
-7. **Which reference, and is its motion there?**
-   - **synchronized.studio:** yes for the shelf. A tile grows into its sheet as a shared element, and Esc folds it back with focus returned.
-   - **apple.com stage:** Settle is there.
-   - **The deck:** it has no reference behind it. On desktop it reads as a 0.3s swap of one window, not a riffle.
-8. **Different from its neighbours?**
-   - **Different:** the hero medium (browser windows) is its own.
-   - **The same:** the composition matches /gallery, /features, /zap and /ledger: a two-line h1 at the left, lede and ask at the right, and a grey rounded stage under it with a pause disc at the top right.
-   - **/gallery** ("Curated template showcase") is its nearest neighbour in content, and it shows its object on the first screen.
-9. **All 18 parts covered?** No; see below. `docs/coverage/templates.md` exists, but three of its claims do not hold.
-10. **Banned tells or reject-list items?**
-    - **None found:**
-      - No hue: agent icons are greyed by the filter, and the 0-hue probe found nothing.
-      - No gradient.
-      - No eyebrow above the h1 or h2 ("Templates" and "Setup" sit under them).
-      - No fade on hover.
-    - **Reject-list hits:**
-      - Overlap at 375×812: the pause disc covers a chip.
-      - "3 equal boxes in a row" plus "explaining sentences under every tile": the shelf's 4 × 3 tiles.
-      - Something floating over content: the same pause disc.
-11. **Copy untouched?** Yes: parity 96/96 text and 45/45 links. Additions and doubts:
-    - **New strings:** "Setup", "MCP client", "No agents match." and the "Filter agents..." placeholder are new UI strings, in neither the live copy nor `content/ui-strings.json`.
-    - **Paraphrase:** the terminal notes paraphrase Hanzo's setup prompt (it lives in the `title` of the live button).
-    - **Unverified clone URL:** `git clone https://github.com/hanzo-apps/template-<slug>` is in neither Hanzo's copy nor Hanzo's hanzo-apps repo list. The list has only `hanzo-apps/templates`, and none of the 60 named repos is `template-<slug>`. The page shows it twice and copies it to the clipboard.
-    - **Repeated line:** "Open one. Edit it in Hanzo." is used twice, as the hero lede and as the dark room's h2. Live uses it once.
 
-## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy / 4 Common gate:**
-  - `Persona:`, `Goal:`, `CTA:` and `Metric: first_chat` are present.
-  - Two solid buttons share the dark-room viewport.
-  - The header comment still says "orange accent" and self-scores "8/10" (`Templates.jsx` line 5).
-- **2.3 First impression:**
-  - At 1470×801 only 111px of the hero object shows; at 375×812, 69px.
-  - The page ends in the dark room, with "Copy setup prompt" as its solid. There is no closing Band repeating "Edit in Hanzo".
-- **2.4 Conversion:**
-  - `data-cta` exists only on the hero ask. The 12 deck-card asks and the 12 sheet asks have none.
-  - The hidden ask-bar link still carries `/chat/?template=drive` while the hero offers Kinetic. The shared bar reads the href once; it is harmless only while the bar stays hidden.
-- **2.5 Proof:** the `hanzo-apps/template-<slug>` clone line is unverifiable (see 11).
-- **2.6 Content:**
-  - The 12 shelf address labels (`.xtp-tile-img span`) are 13px on phone.
-  - The phone counter wraps to two lines, "02 /" over "12" (`.xtp-count`, 66×44).
-  - The phone card description is clamped with an ellipsis.
-  - The heading outline skips from h1 to h3: the deck cards are h3 with no h2, and the shelf has no heading.
-- **2.7 Visual system:**
-  - The deck is 35px left of the centred chip row: `.xtp-slot { right: 66px }` reserves room for a fan that does not show.
-  - Literal hexes instead of tokens: #161617, #0b0b0c, #e3e3e8, #a1a1a6.
-  - Dead CSS: `.xtp-kind-bg`, `.xtp-grid`, `.xtp-agents`.
-  - Duplicate rules: `.xtp-kick`, `.xtp-card` radius, `.xtp-kinds button i`.
-- **2.8 Components:**
-  - 8 bare `:hover` rules.
-  - The arrows and agent chips have no press.
-  - The kind chips are `role="tab"` with no tabpanel and no arrow-key movement. ArrowRight on "All" leaves focus there.
-  - The dots: 10 for 12 templates, and the wrong one is current at 11/12.
-- **2.9 Motion:**
-  - A mouse drag on the preview navigates.
-  - The shelf has no entrance or idle motion across its 4 to 5.5 screens.
-  - The terminal's re-type is never seen.
-  - Scroll-linked motion stays under half (Settle only), which passes.
-- **2.10 Media:**
-  - All 24 template images are `loading="lazy"` and none has `priority`, the front window included. The coverage says "the three cards in front load eagerly".
-  - A failed preview leaves a #0a0a0a slab.
-- **2.11 Mobile:**
-  - "All" and "Business" are unreachable.
-  - The pause disc sits on a chip.
-  - At 320 the dark room is clipped by 41px.
-  - The shelf is about 5.5 screens of stacked tiles.
-- **2.12 Accessibility:**
-  - The h1 → h3 skip.
-  - `aria-current` sits on the wrong dot.
-  - The tabs have no panels.
-- **2.16 Developer:** Copy gives the five commands without `$ ` and without the `# notes`. The displayed text includes the notes, so Copy does not equal what is shown.
-- **2.17 States:** a preview that fails to load has no designed fallback.
-- **2.18 Measurement:**
-  - `data-cta` is on the hero ask only.
-  - There is no ledger entry for what this page deleted.
-- **Coverage:** `docs/coverage/templates.md` claims three things that are not true:
-  - "only the three cards in front load eagerly" (all are lazy);
-  - "chips scroll sideways inside their own row" (two cannot be reached);
-  - "one solid per screen" (two in the dark room).
-- **Passing:**
-  - One h1 in the server HTML.
-  - CLS 0.
-  - No page sideways scroll at 320 or 375.
-  - JS off is legible: 0 hidden text runs outside the closed menu.
-  - Reduced motion is still: the deck holds and no animations run after 6s.
-  - 0 hues.
-  - No eyebrow over a headline.
-  - Sheets trap focus, close on Esc and return focus to the tile.
-  - Copy never says "Copied" without copying.
-  - Parity is clean.
+1. **Does it sell in 5 seconds, and does something move within 1 second?** Yes.
+   - **Desktop:** the h1 "Start from a product." (52px) cuts in. The address bar types `drive.hanzo.app` from 0.25 s. The front preview drifts on a 14 s loop. The deck deals forward by itself (`01/12 → 02/12` by about 3.6 s, then `03/12`).
+   - **Above the fold:** at 1470×801 the front preview spans y 494–949, so 67% of it is on the first screen. At 375×812, 269px of preview shows (y 482–751).
+   - **What a blocked visitor sees:** a grey wireframe with the template's name in 84px type. On the real site this will be Hanzo's screenshot.
+2. **One in, one out, or a document?** Better than before, but the middle repeats.
+   - **The order:** deck, then a wall of twelve, then the dark setup room, then the closing band.
+   - **The wall:** it deals in once by a clip-path wipe, 60 ms apart, and a ring follows the deck's front card (an "←" after the title). It is still the same twelve sites the deck just showed.
+   - **Wall size:** 4×3 tiles over about 1.6 screens on desktop and about 3 screens on phone. After the wipe it has no idle motion (motion.mjs, screen 2: 0 pixel changes).
+   - **The dark room:** the terminal lines come in again each time the room enters view.
+3. **A real visual object in every section?** Mostly.
+   - **With an object:** the deck, the wall and the terminal.
+   - **Without:** the closing band is a name, an address and a button, with no object.
+   - **Stand-ins:** with images blocked, every object is a drawn grey page. That reads as a wireframe kit, not twelve products.
+4. **One ask in the sticky header, nothing floating, and scale with rhythm?** Mostly on desktop, not yet on phone.
+   - **Desktop header:** it switches from "Try Hanzo" (outlined at the top) to "Edit in Hanzo" once the hero ask has scrolled away. Good.
+   - **Phone, first screen:** the header's "Try Hanzo" is a solid black fill (rgb 10,10,10) beside the page's solid "Edit in Hanzo". That is two black buttons on the first screen.
+   - **Phone, further down:** the header never changes to "Edit in Hanzo". The shared "Edit in Hanzo" bar floats over the dark room's terminal.
+   - **Scale:** the h1 is 52px, the readout 21px, tile titles 17px, and the sheet title 26px.
+   - **Too much big type on the wall:** each stand-in tile draws its name at about 40px, so twelve big words show at once. That is a stand-in artefact, but it is what a blocked visitor gets.
+5. **Does every hover and press answer, with no jumps?** Yes, with small gaps.
+   - **Asks:** the hero and band asks fill #0a0a0a → #262626, the arrow moves 3px, and press scales to 0.98. Both are magnetic.
+   - **Deck controls:** the arrows grow 1.05 on hover and press to 0.98. The card ask's border turns ink on hover and it presses to 0.98. The pause inverts and presses to 0.94.
+   - **Tiles:** they lift 4px, but press only scales to 0.997, which you cannot see.
+   - **Copy:** hover and press work, and it copies exactly `hanzo login\nhanzo template list\nhanzo template get drive\nhanzo dev`.
+   - **Weak:** the kind chips change text colour only. motion.mjs marks the dark room's agent marks ("A") and one back-card "Edit in Hanzo" as dead hovers.
+   - **Drag:** 4 of 4 mouse drags across the front preview advanced the deck (01→05) and never left /templates. ArrowRight on the deck advanced it too.
+6. **Overlap, font swap or layout shift?**
+   - **Layout shift:** CLS 0.0002 on desktop, from the shared header's right cluster at 2.8 s, and 0 on phone. The h1 box held the same place from the first sampled frame (24,157 700×114 desktop; 16,140 343×88 phone). No font swap seen.
+   - **Overlap, desktop:** the three back windows keep their footers, so their outlined "Edit in Hanzo →" buttons stack in a ghosted staircase at the deck's right edge ("n Hanzo →", "→"). The coverage note says back windows hide their labels; it hides only the address and kind.
+   - **Overlap, phone:**
+     - The address bar truncates to "hygg .hanzo…" while the "E-commerce" label keeps its full width.
+     - The nav row splits: ← and the counter sit on one line; the dots, → and pause sit on the next.
+   - **The setup control in the dark room (both widths):** a square-cornered 1px rectangle is drawn around the rounded pill and its chevron, so you see a double outline. It comes from the page's own `box-shadow: inset 0 0 0 1px` rule on `.xtp-setup2 .x-setup`.
+   - **At 320:** nothing passes the right edge, and `scrollWidth` is 320.
+   - **Errors:** during my first walk, the console once showed a hydration-mismatch error and the phone showed a red "1 Issue" badge. At that moment another page's file (`model/Creative.jsx`) had a parse error. Four clean reloads afterwards showed 0 errors and no badge, so I do not count it against this page.
+7. **Which reference does it feel like, and is its motion there?**
+   - **synchronized.studio:** yes for the wall. A tile grows into its sheet, Esc folds it back, and focus returns to the tile.
+   - **apple.com:** Settle on the stage, yes.
+   - **The deck:** the riffle (0.3 s, ease 0.16,1,0.3,1) now reads as a fanned stack, with the back cards peeking about 49px. No reference stands behind it.
+8. **Different from its neighbours?** The hero medium is, the composition is not.
+   - **Same composition:** at 1470 /gallery has the identical frame: a short h1 at the left with a mono caption under it, the lede and a solid ask at the right, then a grey rounded stage with a white pause disc.
+   - **Own medium:** the browser-window deck is this page's own.
+9. **Are all 18 parts covered?** No; see the next section. Also, the coverage card makes claims that are false (listed there).
+10. **Banned tells?**
+    - **None found:**
+      - `taste.py` passes; no hue, no gradient, no Inter, no emoji.
+      - No eyebrow above the h1 or h2 ("Templates" sits under the h1).
+      - No button fades on hover, and no cursor glow.
+    - **Reject-list hits:**
+      - The ghosted back-card buttons and the double outline on the setup pill are visible craft slips.
+      - Broken-image icons with alt text show at first paint and with JS off. That is a "lazy" look for a blocked visitor.
+      - The page shares /gallery's frame ("every page being the same").
+11. **Is the copy untouched?** Yes.
+    - `parity.py /templates`: text 96/96, links 45/45.
+    - **Open strings:** "No agents match.", "Filter agents..." and "MCP client" are UI strings that are not in `content/ui-strings.json`.
+    - **Two different counts side by side:** "+25 more" (the strip) and "+26" (the shared SetupMenu pill) sit together in the dark room.
+
+## Coverage claims checked (`docs/coverage/templates.md`)
+
+**False:**
+- **Part 10 says:** "if Hanzo's screenshot fails it is hidden ... never a broken-image icon".
+  - With JS on, the hero shows a broken-image icon and the alt text "Drive template preview" over the drawn page at 150 ms. It is gone by 600 ms.
+  - With JS off, all 24 previews show broken-image icons and alt text (`complete && !naturalWidth`, visible) at both widths.
+  - The fallback runs only after hydration. **This false claim caps the verdict at 7.**
+- **Part 17 says:** "Blocked images leave a complete page". Not with JS off.
+- **Part 3 says:** "JS off legible". The words are legible, but the deck and wall carry broken icons. The arrows, dots, pause and filter render but do nothing.
+- **Part 9 says:** "0 fade-ups".
+  - The terminal's title fades and rises (`opacity 0, y 6`).
+  - Each command line fades in from `x -8`. "Types" overstates it: nothing is typed character by character.
+- **Part 9 says:** back cards "peek 48px across and 30px up". Measured: 49px across but 11px up, because the scale from the bottom right cancels most of the rise.
+
+**Imprecise:**
+- **Part 7:** the list of literals leaves out #525252, #737373, #f5f5f5, #e5e5e5 and #fff. `taste.py` accepts them, but MASTER part 7 asks for tokens, not literals.
+- **Part 11:** "Targets 44px+". The shared setup pill is 40px tall on phone.
+
+**True:**
+- One h1, painted by the server.
+- 67% of the preview on the first screen at 1470, and 269px at 375.
+- The drag never opens chat.
+- The phone chips start at "All".
+- The pause sits in the nav row.
+- Hover rules are all inside `@media (hover:hover)`.
+- `aria-pressed` on the chips.
+- `data-cta` on the hero, card, sheet and close asks.
+- The sheet ask sits at y 587 of 801.
+- Copy equals the four commands shown.
+- Reduced motion holds the deck still (01/12 after 8 s; only the cookie bar animates).
+- No sideways scroll at 320.
+- `parity.py` and `taste.py` pass.
+
+## Missing from the 18 parts
+
+- **1 Strategy:** on the phone's first screen there are two solid fills (the shared header "Try Hanzo" and the page's "Edit in Hanzo").
+- **2 Navigation:** the agent links open a new tab (`target="_blank"`) with no hidden "opens in a new tab" text, and they are raw `<a>`.
+- **3 Narrative:**
+  - The wall repeats the deck's twelve.
+  - The band has no object.
+  - JS off shows broken images and controls that do nothing.
+- **6 Content:** the phone address bar truncates the template's name.
+- **7 Visual system:**
+  - Literal hexes in the page CSS.
+  - A square rectangle drawn around the rounded setup pill (double outline).
+  - Tiles carry a 5% border as well as a fill.
+- **8 Components:**
+  - The kind chips' hover is colour only.
+  - The tile press of 0.997 cannot be seen.
+  - The back cards' asks render ghosted over each other.
+  - The phone nav splits ← and → onto different rows.
+- **9 Motion:**
+  - Small fade-ups in the terminal.
+  - The wall is still after its one wipe.
+  - No signature reference behind the deck.
+- **10 Media:** the `onError` fallback depends on JS, so first paint and JS off show broken icons.
+- **11 Mobile:** the setup pill is 40px tall.
+- **12 Accessibility:**
+  - No new-tab notice on the external agent links.
+  - JS off leaves the arrows, dots, pause and filter in place but inert.
+- **18 Handover:** no `V2:` line, and the review is under 8 (open on the card itself).
 
 ## Fixes (in order)
-1. **Make the deck the first screen's one big thing.** At 1470×801, at least 60% of the front window's preview should show. At 375×812, at least 240px of it.
-   - Cut `.xtp-hero` top padding and the `.xtp-top` bottom margin.
-   - Drop Settle's 60px lift, or start the deck small and let it grow (the rhythm rule).
-   - Move the readout row under the deck, or onto the window's own bar.
-   - On phone, put the chips under the deck.
-2. **Stop the drag from opening chat.** Record `onDragStart` in a ref and, in `onClickCapture` on `.xtp-shot` and `.xtp-edit`, `preventDefault()` when the pointer moved more than 6px. Or take the link off the preview so only "Edit in Hanzo" navigates.
-3. **Let the deck read as a deck on desktop.** The back cards must clear the scale shrink, at least 24px each. For example: `x: d*48, y: -d*30`, `scale: 1 - d*.035`, origin `100% 100%`. Measured peeks today are 0–4px.
-4. **Delete the repeat.**
-   - Either drop the 4 × 3 shelf, since the deck plus chips already is the catalogue and the sheet can open from the deck card.
-   - Or turn it into one dense wall or rail of 12 previews with titles only, entering as you scroll. Hanzo's sentence stays in the sheet, where it already is, so copy parity holds.
-   - Three equal tiles in a row with a sentence under each is on the reject list.
-5. **Fix the phone chip row and the pause.**
-   - Give `.xtp-kinds` `justify-content: flex-start` (or `safe center`) at ≤900px.
-   - Move the pause off the row: `usePause({ right: 8, top: <under the chips> })` or the window's top-right corner. It should never cover a chip or the preview text.
-6. **One solid in the dark room, and an ending.**
-   - Make "Copy setup prompt" an outline in this room.
-   - Close the page with a Band carrying "Edit in Hanzo" (`data-cta="templates.close"`).
-   - Put `data-cta` on the deck-card and sheet asks.
-   - Place the sheet's ask beside its title, or shrink the art, so it shows without scrolling the sheet.
-   - Request that the shared sheet title is exempt from `.gx h3` (17px). A sheet's headline should not be smaller than the tile you clicked (28px).
-7. **Prove or drop the clone line.** Snapshot the `/v1/templates` response with each template's `source` into `content/` and read the URL from it. Otherwise show only `hanzo template get <slug>`, which names the repository in Hanzo's own prompt.
-8. **Fix the dots.** Render one dot per template (12), or drop the dots and keep the counter. Give the counter `white-space: nowrap`.
-9. **Fix 320.** Give `.xtp-cmd-in > div` `min-width: 0`, and let `.x-setup` shrink (`max-width: 100%`, the label truncating), so the terminal's Copy button and the chips are not clipped.
-10. **Small, but James will touch them:**
-    - Wrap the 8 bare `:hover` rules in `@media (hover: hover)`.
-    - Give the arrows and agent chips press .98.
-    - Make the kind chips buttons with `aria-pressed` (a filter, not tabs), or full APG tabs.
-    - Add an h2 for the deck and the shelf.
-    - Make the shelf address labels 14px on phone.
-    - Give the front window's image `priority`.
-    - Put a Sigil or the name on a failed preview.
-    - Remove "orange accent" and the self-score from the header comment.
-    - Correct the three coverage claims.
+
+1. **Hide failed previews without JS.**
+   - Put the drawn page above a failed image with CSS, not only after hydration. For example, give the `<img>` `color: transparent` and `font-size: 0` so the alt text and icon never paint.
+   - Or render it with `opacity: 0` in a `<noscript>`-safe rule and fade it in on `load`, while keeping LCP painted.
+   - Then check at 150 ms and with JS off that no broken-image icon or alt text shows at 1470 or 375.
+2. **Stop the back windows printing their asks.** Hide `.xtp-foot` (or at least `.xtp-edit` and the text) on `.xtp-card:not(.front)`, as was already done for the address and kind.
+3. **Fix the double outline on the setup pill.** Drop the `box-shadow: inset 0 0 0 1px` on the `.xtp-setup2 .x-setup` wrapper and keep it only on the pill and chevron (lines 183 and 203 of `Templates.css`).
+4. **Break the /gallery frame.** Change the first screen's composition:
+   - Let the deck own the left two thirds, with the h1 sitting over or beside the deck.
+   - Or start the deck small under the h1 and grow it as you scroll, then settle it.
+   - Remove the grey rounded stage plus white pause disc, which /gallery also uses.
+5. **Make the wall earn its screen.**
+   - Either cut it to a single dense rail or strip that scrubs with scroll, with the ring following the deck.
+   - Or give it idle life (each tile's preview drifting like the front window), so it is not the deck's twelve again, still.
+6. **Phone deck controls.**
+   - Keep ←, the counter and → on one row, with the dots under them or dropped.
+   - Shrink the kind label in the address bar (or hide it under 400px) so `hygge.hanzo.app` shows in full.
+7. **Phone ask.** Ask the shared-header owner to let the header take the page's thumb label ("Edit in Hanzo") on phone, as desktop does. Keep the header outlined while the hero ask is in view, so the first screen has one solid. The page then needs no floating bar over the terminal.
+8. **Terminal.**
+   - Either type the commands character by character, as the coverage says, or change the claim.
+   - Drop the `opacity 0, y 6` on the terminal title (swap it with a clip or a cut instead).
+9. **Small, but James will touch them:**
+   - Tile press 0.98.
+   - Give the kind chips a hover that does more than recolour, such as a background lift.
+   - Add an "opens in a new tab" label to the agent links.
+   - Move the three strings into `content/ui-strings.json`.
+   - Put the close band on an object, such as the front window's preview at small size.
+10. **Correct the coverage card.** Fix the broken-icon claim, "Blocked images leave a complete page", "0 fade-ups", "types", the 30px peek and the hex list. Then ask for a re-walk.

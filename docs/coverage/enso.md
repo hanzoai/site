@@ -47,7 +47,7 @@ Done here: the header carries the one solid "Try Hanzo"; the page's own asks are
 - [ ] n/a: marquees pause, freeze under reduced motion, hide duplicates (no marquee)
 - [ ] n/a: Privacy link and owner line beside every submit (no form on this page)
 
-Done here: GPQA Diamond hero figures (98.0%, 96.5%, 95.5%) with the Pareto chart, the sortable table (17 models, source links) and the three tiers side by side. Numbers: Hanzo's GPQA Diamond figures and tier prices ($0.33/$1.65, $4.40/$22, $5.50/$27.50 per 1M tokens), each from content/live/enso.json.
+Done here: GPQA Diamond figures with one lead: Enso Ultra 98.0% alone across 8 of 13 columns (132px at 1470, 72px at 375, counting up once via kit `Stat`), Enso 96.5% and Enso Flash 95.5% stacked beside it at 32px (26px side by side on the phone), measured by computed font-size; then the Pareto chart, the sortable table (17 models, source links) and the three tiers side by side. Numbers: Hanzo's GPQA Diamond figures and tier prices ($0.33/$1.65, $4.40/$22, $5.50/$27.50 per 1M tokens), each from content/live/enso.json.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -73,7 +73,7 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail rows (01 Enso Flash, 02 Enso Pro, 03 Enso Ultra) step in 6px and darken on hover (measured transform matrix(1,0,0,1,6,0)) and press to scale .97; the chapter links underline on hover; links of chapters not being read go `visibility: hidden` after their fade, so no invisible link sits under the live one. The × close takes the kit hover page-locally (background .14 to .3 white, rim .22 to .55, measured) beside its quarter turn. Page hovers apply under `(hover: hover), not all and (pointer: coarse)`, so every mouse or trackpad gets them and fingers do not. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +82,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Ch
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
 - [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
 
-Done here: Signature: the live switchboard (requests route themselves to their tier; send one by hand). Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
+Done here: Signature: the live switchboard (requests route themselves to their tier; send one by hand). Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. Idle: the GPQA tour now starts when the plot itself is 35% in view (it read the whole tall section before and never started), and the spec heading's ensō breathes (5s sway and swell, stops with the page pause and reduced motion). Film run `enso-run3` desktop: 0 still screens (was 2 at y=5400 and y=7200), layout shift 0.001. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, `Film`, shared `ModelFilm`)
@@ -155,4 +155,4 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/enso.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `app/enso/page.jsx`. Proof is in `docs/gallery/enso/` (desktop film and 4 phone stills). This card is refreshed after each review.
+Done here: the `V2:` line is in `app/enso/page.jsx`. Proof is in `docs/gallery/enso/` (desktop film, 4 phone stills, and the film-strip sheets `desktop-sheet.jpg` and `phone-sheet.jpg` from run `enso-run3`). Fixes from the 7/10 review (GPQA lead figure, × hover) are in; open shared items are in `docs/requests/enso.md`. This card is refreshed after each review.

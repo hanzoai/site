@@ -4,7 +4,7 @@
 // Metric: signup_start
 // Signature: a sales desk where the greeting sits at display size over the live conversation, and Hanzo’s own dark quote card beside it re-prices seat by seat and takes the size you tell it
 // Beyond: the quote card you can drag: its seats follow the slider and the annual and monthly rates re-price from Hanzo’s own seat prices, before you type a word
-// V2: 8/10 MASTER scale: 52px greeting, the quote card with members at 64px and prices at 32px re-pricing once then resting; on the phone members and price ride under the greeting; promises as one ledger; no orb above the h1, no floating composer, kit Cta
+// V2: 8/10 0 hues; quote card re-prices within 1s; compact moving quote on the phone first screen; promises turn one dark sheet; Start Team Plan carried by the header (desktop) and a slim dock (phone); inputs labelled; every chip hovers
 import BuyingSpecialist from '../../components/pages/BuyingSpecialist';
 import JsonLd from '../../components/JsonLd';
 

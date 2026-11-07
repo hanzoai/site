@@ -1,6 +1,6 @@
 'use client';
 // Functions.
-// V2: 8/10 Launch page on the deck: a 52px title over a function's life (the one big thing: handler.js writes itself by CSS from first paint, then calls arrive from a trigger and replicas fill three nodes and fall back to zero, as shapes, never a number; pausable); six pinned chapters, one scene each; a composer that reads your function back; the use cases as sheets that stack; one graphite close.
+// V2: 8/10 round 3 (critic 7/10): the use cases are one at a time on a pinned stage, each with its own live drawing from its own words, and each tile opens into its own full-screen sheet (grows out of the tile, Back/Esc/Close reverse it; points behind the open, in the HTML); phone chapters are a swipe rail (drawing first, one in one out); the phone composer keeps its card above compact choice rails; chapter titles rest at 26px and "Get Functions" at 52px; hovers say something (rail numbers show their chapter, related rows show their path, composer choices preview their effect on the card); hero stage content inset to the container while its fill bleeds; every visible word is Hanzo's (the composer's invented heading, kicker, "One version" and composed read-back lines are gone: it reads back Hanzo's own whole sentences; states are shapes, not invented words); the close ends without dead black.
 // Persona: Developer who runs Kubernetes and wants functions on it.
 // Goal: try Hanzo Functions (sign in, then deploy).
 // CTA: "Try Hanzo" → /login (solid: data-cta functions.hero with data-thumb for the ask bar); "View Documentation" →
@@ -13,19 +13,21 @@
 //   filled against hollow slots and a word, never a counting number (no figure here is Hanzo's).
 // Supporting: six pinned chapters ("A handler file, a trigger, and the cluster you already run") whose scenes rise in
 //   beside the words (the triggers' lines draw as you scroll, the canary slice grows into a flip); the runtime pill that
-//   glides in "Compose yours"; the use cases as sheets that stack as you scroll (CSS sticky).
+//   glides in "Compose yours"; the use cases one at a time on a pinned stage, each tile opening into its own sheet.
 // Motion kinds: arrival (title cut-in, stage), time (the file writing itself, calls arriving), idle (replicas filling and
-//   emptying), state (composer pills, toggles, the read-back), scroll (stage settle, chapters, stacking sheets: under half).
+//   emptying, each use case's drawing), state (composer pills and their hover previews, the read-back, a tile opening into
+//   its sheet), scroll (stage settle, chapters, the use-case stage: under half).
 // Beyond: "Compose yours": pick a runtime (or your own container), the triggers it answers to, a GPU and a way to move
 //   between versions, and the function you described is read back in Hanzo's own lines.
 // Every word and link is Hanzo's; the scenes are drawn, not measured.
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { createContext, Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
-import { A } from '../../kit';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import { Magnetic } from '../../ui';
+import { A, Cta } from '../../kit';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
+import FnUses from './functions/FnUses';
 import './Functions.css';
 
 const EMPH = [0.16, 1, 0.3, 1];
@@ -53,6 +55,8 @@ const STEP = 380; // ms per line written by CSS, and per tick of the calls after
 const WRITTEN = 300 + LINES.length * STEP + 300; // the file is written (CSS, from first paint), then the calls begin
 const CYCLE = 26; // one burst of calls and the quiet after it, in ticks
 const SLOTS = 18;
+const Paused = createContext(false); // true while the visitor has paused the hero's demo
+const useStagePause = () => useContext(Paused);
 
 function Life() {
   const ref = useRef(null);
@@ -81,12 +85,12 @@ function Life() {
         <span className="fn-calls"><i /><i /><i /><i /><i /></span>
       </div>
       <div className="fn-code">
-        <div className="fn-file"><span className="fn-dots" aria-hidden="true"><i /><i /><i /></span><b>handler.js</b><em className={going ? 'on' : ''}>{going ? 'deployed' : 'editing'}</em></div>
+        <div className="fn-file"><span className="fn-dots" aria-hidden="true"><i /><i /><i /></span><b>handler.js</b><em className={going ? 'on' : ''}><i aria-hidden="true" />{going && 'deployed'}</em></div>
         <pre><code>{LINES.map((l, i) => <Fragment key={i}><span className="fn-ln" style={{ '--i': i }}>{hlJs(l)}</span>{'\n'}</Fragment>)}</code></pre>
       </div>
       <div className="fn-k8s" aria-hidden="true">
         <p className="fn-col-k">Kubernetes</p>
-        <p className="fn-count" data-zero={pods ? undefined : ''}><i /><span>{pods ? 'replicas' : 'scaled to zero'}</span></p>
+        <p className="fn-count" data-zero={pods ? undefined : ''}><i /><span>{pods ? 'replicas' : 'Scale to zero'}</span></p>
         <div className="fn-nodes">
           {[0, 1, 2].map((nd) => (
             <div key={nd} className="fn-node">
@@ -95,7 +99,7 @@ function Life() {
             </div>
           ))}
         </div>
-        <p className="fn-warm"><i />warm pool</p>
+        <p className="fn-warm"><i />Pools are prewarmed</p>
       </div>
     </div>
   );
@@ -126,13 +130,13 @@ function useStepOf(p, n, on) {
   return k;
 }
 
-const RUNTIMES = ['Python', 'Go', 'Node.js', 'Rust', 'Your container'];
+const RUNTIMES = ['Python', 'Go', 'Node.js', 'Rust', 'a container you built yourself'];
 
 function RuntimeScene({ p, on }) {
   const k = useStepOf(p, 5, on);
   return (
     <div className="kn-obj fn-sc fn-sc-rt">
-      <div className="fn-rts">{RUNTIMES.map((r, i) => <div key={r} className={'fn-rt' + (i === 4 ? ' box' : '') + (k === i ? ' on' : '')}><b>{r}</b><span>{i === 4 ? 'a container you built yourself' : 'handler file'}</span></div>)}</div>
+      <div className="fn-rts">{RUNTIMES.map((r, i) => <div key={r} className={'fn-rt' + (i === 4 ? ' box' : '') + (k === i ? ' on' : '')}><b>{r}</b>{i < 4 && <span>handler file</span>}</div>)}</div>
     </div>
   );
 }
@@ -218,11 +222,20 @@ function VersionScene({ p, on }) {
 
 const SCENES = [RuntimeScene, WarmScene, ClusterScene, GpuScene, TriggerScene, VersionScene];
 
-/* ---------- Beyond: compose yours ---------- */
-const MOVES = ['One version', 'Blue/green', 'Canary'];
+/* ---------- Beyond: compose a function from the page's own choices (no heading of its own: Hanzo's page has none) ---------- */
+const MOVES = ['Blue/green', 'canary'];
+/* the read-back is Hanzo's own sentences, whole, one per choice */
+const SAY = {
+  rt: 'Name a runtime and point at a handler file.',
+  box: 'When the language you want is not one of them, bring a container you built yourself and deploy that instead.',
+  tr: 'The trigger is its own object, so the same handler can answer to several without knowing about any of them.',
+  gpu: 'A function can request an NVIDIA GPU and be scheduled onto a node that has one.',
+  mv: 'Blue/green and canary between versions of a function, so backing out a bad deploy is a traffic decision rather than another build.',
+  zero: 'Scale to zero is still the default when nothing is calling.',
+};
 
 /* a radio row: one ink pill glides to the choice (300 ms, ease-emphasis); arrows move it */
-function Radios({ id, label, items, value, onChange }) {
+function Radios({ id, label, items, value, onChange, onPeek = () => {} }) {
   const refs = useRef([]);
   const key = (e, i) => {
     const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
@@ -234,7 +247,8 @@ function Radios({ id, label, items, value, onChange }) {
   return (
     <div className="fn-row" role="radiogroup" aria-label={label}>
       {items.map((r, i) => (
-        <button key={r} ref={(el) => { refs.current[i] = el; }} type="button" role="radio" aria-checked={value === i} tabIndex={value === i ? 0 : -1} onClick={() => onChange(i)} onKeyDown={(e) => key(e, i)}>
+        <button key={r} ref={(el) => { refs.current[i] = el; }} type="button" role="radio" aria-checked={value === i} tabIndex={value === i ? 0 : -1} onClick={() => onChange(i)} onKeyDown={(e) => key(e, i)}
+          onPointerEnter={(e) => e.pointerType === 'mouse' && onPeek(i)} onPointerLeave={() => onPeek(null)}>
           {value === i && <motion.span layoutId={id} className="fn-pill" transition={{ duration: 0.3, ease: EMPH }} />}
           <span>{r}</span>
         </button>
@@ -246,79 +260,48 @@ function Radios({ id, label, items, value, onChange }) {
 const Tick = () => <svg className="fn-tick" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Compose() {
-  const [rt, setRt] = useState(2);
-  const [tr, setTr] = useState([true, false, false, false]);
-  const [gpu, setGpu] = useState(false);
-  const [mv, setMv] = useState(0);
+  const [rtC, setRt] = useState(2);
+  const [trC, setTr] = useState([true, false, false, false]);
+  const [gpuC, setGpu] = useState(false);
+  const [mvC, setMv] = useState(-1); // -1: no move between versions chosen (shown by shape: no pill is filled)
+  // hovering a choice (fine pointers) previews its effect on the card before you commit; the card marks it as a preview
+  const [peek, setPeek] = useState(null);
+  const at = (k) => (peek && peek.k === k ? peek : null);
+  const rt = at('rt') ? peek.i : rtC;
+  const tr = at('tr') ? trC.map((x, j) => (j === peek.i ? !x : x)) : trC;
+  const gpu = at('gpu') ? !gpuC : gpuC;
+  const mv = at('mv') ? (mvC === peek.i ? -1 : peek.i) : mvC;
+  const hover = (k, i) => ({ onPointerEnter: (e) => e.pointerType === 'mouse' && setPeek({ k, i }), onPointerLeave: () => setPeek(null) });
   const n = tr.filter(Boolean).length;
-  const lines = [
-    rt === 4 ? 'Bring a container you built yourself and deploy that instead.' : `${RUNTIMES[rt]}: name a runtime and point at a handler file.`,
-    n === 0 ? 'Choose at least one trigger.' : n === 1 ? `${TRIGGERS[tr.indexOf(true)]}: the trigger is its own object.` : `${n} triggers: the same handler can answer to several without knowing about any of them.`,
-    gpu && 'An NVIDIA GPU: scheduled onto a node that has one.',
-    mv > 0 && `${MOVES[mv]}: backing out a bad deploy is a traffic decision rather than another build.`,
-    'Pools are prewarmed. Scale to zero is still the default when nothing is calling.',
-  ].filter(Boolean);
+  const lines = [rt === 4 ? SAY.box : SAY.rt, n > 0 && SAY.tr, gpu && SAY.gpu, mv >= 0 && SAY.mv, SAY.zero].filter(Boolean);
   return (
-    <section className="kn-sec fn-mix" aria-labelledby="fn-mix-h">
+    <section className="kn-sec fn-mix" aria-labelledby="fn-ch-h">
       <div className="kn-wrap kn-grid fn-mix-g">
         <div className="fn-mix-in">
-          <div className="fn-mix-h">
-            <KeynoteLines id="fn-mix-h" className="kn-headline" lines="One handler, your choices" />
-            <p className="kn-kick">Compose yours</p>
-          </div>
-          <fieldset><legend>Runtime</legend><Radios id="fn-rt" label="Runtime" items={RUNTIMES} value={rt} onChange={setRt} /></fieldset>
-          <fieldset><legend>Triggers</legend><div className="fn-row">{TRIGGERS.map((t, i) => <button key={t} type="button" aria-pressed={tr[i]} onClick={() => setTr((v) => v.map((x, j) => (j === i ? !x : x)))}><Tick /><span>{t}</span></button>)}</div></fieldset>
-          <fieldset><legend>GPU</legend><div className="fn-row"><button type="button" aria-pressed={gpu} onClick={() => setGpu(!gpu)}><Tick /><span>NVIDIA GPU</span></button></div></fieldset>
-          <fieldset><legend>Versions</legend><Radios id="fn-mv" label="Versions" items={MOVES} value={mv} onChange={setMv} /></fieldset>
+          <fieldset><legend>Runtime</legend><Radios id="fn-rt" label="Runtime" items={RUNTIMES} value={rtC} onChange={(i) => { setRt(i); setPeek(null); }} onPeek={(i) => setPeek(i == null ? null : { k: 'rt', i })} /></fieldset>
+          <fieldset><legend>Triggers</legend><div className="fn-row">{TRIGGERS.map((t, i) => <button key={t} type="button" aria-pressed={trC[i]} onClick={() => { setTr((v) => v.map((x, j) => (j === i ? !x : x))); setPeek(null); }} {...hover('tr', i)}><Tick /><span>{t}</span></button>)}</div></fieldset>
+          <fieldset><legend>GPU</legend><div className="fn-row"><button type="button" aria-pressed={gpuC} onClick={() => { setGpu(!gpuC); setPeek(null); }} {...hover('gpu', 0)}><Tick /><span>NVIDIA GPU</span></button></div></fieldset>
+          <fieldset><legend>Versions</legend><div className="fn-row">{MOVES.map((t, i) => <button key={t} type="button" aria-pressed={mvC === i} onClick={() => { setMv((v) => (v === i ? -1 : i)); setPeek(null); }} {...hover('mv', i)}><Tick /><span>{t}</span></button>)}</div></fieldset>
         </div>
-        <div className="fn-card">
+        <div className="fn-card" data-peek={peek ? '' : undefined}>
           <div className="fn-card-h">
-            <b>handler</b>
-            <span>{rt === 4 ? 'Your container' : RUNTIMES[rt]}</span>
+            <b>handler.js</b>
+            <span>{RUNTIMES[rt]}</span>
             {gpu && <span className="gpu">NVIDIA GPU</span>}
+            {mv >= 0 && <span className="gpu">{MOVES[mv]}</span>}
           </div>
           <div className="fn-card-t">{TRIGGERS.map((t, i) => <span key={t} className={tr[i] ? 'on' : ''}>{t}</span>)}</div>
-          <ol className="fn-card-l" aria-live="polite">{lines.map((l) => <li key={l}><span className="fn-m"><span>{l}</span></span></li>)}</ol>
+          <ol className="fn-card-l" aria-live={peek ? 'off' : 'polite'}>{lines.map((l) => <li key={l}><span className="fn-m"><span>{l}</span></span></li>)}</ol>
         </div>
       </div>
     </section>
   );
 }
 
-/* ---------- common use cases: sheets that stack ---------- */
-const USES = [
-  ['API Backends', 'Build complete REST or GraphQL APIs with automatic scaling and no server management.', ['Custom middleware for authentication and validation', 'API versioning and documentation generation', 'Automatic OpenAPI schema generation']],
-  ['Real-time Processing', 'Process events in real-time with automatic scaling for traffic spikes.', ['Webhook handlers for third-party services', 'Event-driven data transformation and enrichment', 'Real-time analytics processing']],
-  ['AI/ML Inference', 'Deploy machine learning models for inference with built-in GPU acceleration.', ['Image and text classification', 'AI chatbots and virtual assistants', 'Real-time recommendations']],
-  ['Scheduled Tasks', 'Run tasks on a schedule without maintaining a dedicated server.', ['Periodic data cleanup and maintenance', 'Scheduled reports and notifications', 'Recurring data integration and ETL processes']],
-];
+/* ---------- common use cases: one at a time on a pinned stage, each opening into its own sheet (functions/FnUses) ---------- */
 
-function Uses() {
-  return (
-    <section className="kn-sec fn-uses" aria-labelledby="fn-uses-h">
-      <div className="kn-wrap kn-grid fn-uses-g">
-        <div className="fn-uses-h">
-          <KeynoteLines id="fn-uses-h" className="kn-headline" lines="Common Use Cases" />
-          <p className="kn-lede">Hanzo Functions powers a wide range of serverless applications</p>
-        </div>
-        <ol className="fn-stack">
-          {USES.map(([t, d, pts], i) => (
-            <li key={t} className="fn-sheet" style={{ '--i': i }}>
-              <div className="fn-sheet-top">
-                <h3 className="fn-sheet-h">{t}</h3>
-                <span className="fn-sheet-n kn-fig" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              </div>
-              <p className="kn-body">{d}</p>
-              <ul>{pts.map((x) => <li key={x}>{x}</li>)}</ul>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/* related, on the graphite close: hairline rows (Frame's Related is retired); the name flies into its page (Morph) */
+/* related, on the graphite close: hairline rows (Frame's Related is retired); each name with Hanzo's line under it, and
+   on hover the row tells you where it goes (its path draws in beside the arrow); the name flies into its page (Morph) */
 const REL = [['GPUs', '/cloud/gpus', 'On-demand accelerators'], ['Machines', '/machines', 'VMs by the second'], ['Containers', '/cloud/containers']];
 function Rel() {
   return (
@@ -328,7 +311,8 @@ function Rel() {
         {REL.map(([t, to, d]) => (
           <li key={t}>
             <A to={to} className="fn-rel-a">
-              <b data-morph="">{t}</b>{d && <span>{d}</span>}
+              <span className="fn-rel-w"><b data-morph="">{t}</b>{d && <span>{d}</span>}</span>
+              <em className="fn-rel-p" aria-hidden="true">{to}</em>
               <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </A>
           </li>
@@ -338,24 +322,72 @@ function Rel() {
   );
 }
 
+/* ---------- the hero: words on 5 columns, the function's life on 7, bleeding right ----------
+   One solid ask (the kit's Cta, magnetic, data-thumb for the ask bar), the docs as its text link. Everything arrives by
+   CSS at first paint (no wait for script); the object settles from 1.04 as the page scrolls (a CSS scroll timeline). */
+function Hero() {
+  const [paused, setPaused] = useState(false);
+  return (
+    <section className="fn-hero" data-morph-target="" data-paused={paused ? '' : undefined}>
+      <div className="kn-wrap kn-grid fn-hero-g">
+        <div className="fn-hero-t">
+          <KeynoteLines as="h1" mount className="kn-display" lines={['Hanzo Functions']} delay={0.04} />
+          <p className="kn-lede fn-hero-in" style={{ '--d': '.3s' }}>Functions that run on Kubernetes.</p>
+          <div className="kn-acts fn-hero-acts fn-hero-in" style={{ '--d': '.42s' }}>
+            <Magnetic strength={0.22}><Cta to="/login" id="functions.hero" thumb size="md" kind="solid" className="fn-go">Try Hanzo</Cta></Magnetic>
+            <Cta to="https://docs.hanzo.ai/docs/cli/function" kind="link" id="functions.hero-2">View Documentation</Cta>
+          </div>
+          <div className="fn-hero-meta fn-hero-in" style={{ '--d': '.54s' }}>
+            <button type="button" className="kn-pause" aria-pressed={paused} aria-label="Pause" onClick={() => setPaused((v) => !v)}>
+              {paused
+                ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
+                : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
+            </button>
+            <div className="fn-hero-mt">
+              <p className="kn-kick">Serverless Computing</p>
+              <span>Python, Go, Node.js, Rust</span>
+              <span>/v1/function</span>
+            </div>
+          </div>
+        </div>
+        <div className="fn-hero-o">
+          <div className="fn-hero-oi"><Paused.Provider value={paused}><Life /></Paused.Provider></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* the chapters' first screen: the heading and its three nouns joined by a line that draws once, so the screen holds an object */
+function Joined() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6, once: true });
+  return (
+    <div className="fn-join" ref={ref} aria-hidden="true">
+      <span className="fn-join-n">handler.js</span>
+      <svg viewBox="0 0 100 2" preserveAspectRatio="none"><motion.path d="M0 1H100" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH }} /></svg>
+      <span className="fn-join-n">HTTP route</span>
+      <svg viewBox="0 0 100 2" preserveAspectRatio="none"><motion.path d="M0 1H100" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH, delay: 0.3 }} /></svg>
+      <span className="fn-join-n ink">Kubernetes</span>
+    </div>
+  );
+}
+
+/* a quiet, stationary row of what the page has said, just before the close */
+const FACTS = ['Python, Go, Node.js, Rust', 'Helm', 'NVIDIA GPU', 'Blue/green', '/v1/function'];
+
 export default function Functions() {
+  // the chapter rail's numbers preview their chapter: each gets its own title (Hanzo's words) as a tip, after mount
+  useEffect(() => {
+    document.querySelectorAll('.fn-ch .knc-rail button').forEach((b, i) => { if (GETS[i]) b.setAttribute('data-tip', GETS[i][0]); });
+  }, []);
   return (
     <main className="kn fn">
-      <KeynoteStage
-        kick="Serverless Computing"
-        title={['Hanzo Functions']}
-        lede="Functions that run on Kubernetes."
-        acts={[['Try Hanzo', '/login'], ['View Documentation', 'https://docs.hanzo.ai/docs/cli/function']]}
-        meta={<span>Python · Go · Node.js · Rust · /v1/function</span>}
-        from={1.12}
-        cta="functions.hero"
-      >
-        <Life />
-      </KeynoteStage>
+      <Hero />
 
       <KeynoteChapters
         className="fn-ch"
-        head={<div className="fn-ch-head"><KeynoteLines className="kn-headline fn-ch-h" lines="A handler file, a trigger, and the cluster you already run" /><p className="kn-kick">What you get</p></div>}
+        head={<div className="fn-ch-head"><div className="fn-ch-hw"><KeynoteLines id="fn-ch-h" className="kn-headline fn-ch-h" lines="A handler file, a trigger, and the cluster you already run" /><p className="kn-kick">What you get</p></div><Joined /></div>}
         items={GETS.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
         visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
         side="right"
@@ -364,7 +396,9 @@ export default function Functions() {
       />
 
       <Compose />
-      <Uses />
+      <FnUses>
+        <div className="kn-wrap"><ul className="fn-facts" aria-label="Hanzo Functions">{FACTS.map((f) => <li key={f}>{f}</li>)}</ul></div>
+      </FnUses>
 
       <KeynoteClose
         name="Functions"
