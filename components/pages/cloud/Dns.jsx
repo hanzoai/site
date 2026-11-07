@@ -21,7 +21,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useTransform } from 'motion/react';
 import { EASE, useCalm } from '../../ui';
 import { Cta, CodeBlock } from '../../kit';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteRoom from '../../v2/KeynoteRoom';
 import KeynoteClose from '../../v2/KeynoteClose';

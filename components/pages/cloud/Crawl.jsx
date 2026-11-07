@@ -28,7 +28,7 @@ import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useScr
 import { A, Cta } from '../../kit';
 import { useCalm } from '../../ui';
 import { scrollToY } from '../../../lib/scroll';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteSpec, { Fig } from '../../v2/KeynoteSpec';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
@@ -219,6 +219,14 @@ function Scene() {
     return () => clearTimeout(t);
   }, [k, wide, seen, mine, calm, hold]);
 
+  // the stage leans toward a fine pointer, 2.5 degrees at most (none on touch or under reduced motion)
+  const lean = (e) => {
+    if (calm || e.pointerType !== 'mouse') return;
+    const el = e.currentTarget, r = el.getBoundingClientRect();
+    el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
+    el.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
+  };
+  const unlean = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
   const go = (i) => {
     if (!wide) { setMine(true); setK(i); return; }
     const el = run.current;
@@ -259,10 +267,15 @@ function Scene() {
                 {BEATS.map(([t, d], i) => <p key={t} className="kn-body" data-on={beat === i ? '' : undefined}>{d}</p>)}
               </div>
             </div>
-            <motion.div className="kn-obj cr-map" style={{ '--p': p6 }} aria-hidden="true">
+            <motion.div className="kn-obj cr-map" style={{ '--p': p6 }} aria-hidden="true" onPointerMove={lean} onPointerLeave={unlean}>
               <CrawlMap beat={beat} />
               <span className="cr-map-bar"><i style={{ '--k': 0 }} /><i style={{ '--k': 1 }} /><i style={{ '--k': 2 }} /><i style={{ '--k': 3 }} /><i style={{ '--k': 4 }} /><i style={{ '--k': 5 }} /></span>
             </motion.div>
+            {/* phones: the chapter the chips point at, read right under the stage */}
+            <div className="cr-now" aria-hidden="true">
+              <p className="cr-now-t"><span className="kn-fig">{pad(beat + 1)}</span>{BEATS[beat][0]}</p>
+              <p className="kn-body">{BEATS[beat][1]}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -292,7 +305,16 @@ function StepArt({ k }) {
     </div>
   );
 }
-const Step = ({ k, t, d }) => <div className="cr-step"><div><p className="kn-title cr-st">{t}</p><p>{d}</p></div><StepArt k={k} /></div>;
+// pointing at a step (or focusing into it) plays its object again
+function Step({ k, t, d }) {
+  const [n, setN] = useState(0);
+  return (
+    <div className="cr-step" onPointerEnter={(e) => e.pointerType === 'mouse' && setN((v) => v + 1)}>
+      <div><p className="kn-title cr-st">{t}</p><p>{d}</p></div>
+      <StepArt key={n} k={k} />
+    </div>
+  );
+}
 
 /* ---------- Beyond: which plan covers it (three stops, Hanzo's three allowances, nothing in between) ---------- */
 const PLANS = [
@@ -423,7 +445,7 @@ function Send() {
           <KeynoteLines className="kn-headline" lines="Send it a URL" />
           <p className="kn-lede">One call, and the page comes back as Markdown.</p>
           <p className="kn-body">From your code over HTTP, or from a model over MCP.</p>
-          <div className="kn-acts"><Cta to={DOCS} id="crawl.send">Read the docs</Cta><Cta to={GH} kind="quiet" id="crawl.send-gh">View on GitHub</Cta></div>
+          <div className="kn-acts"><Cta to={DOCS} kind="quiet" id="crawl.send">Read the docs</Cta><Cta to={GH} kind="link" id="crawl.send-gh">View on GitHub</Cta></div>
         </div>
         <div className="cr-send-r">
           <Desk />

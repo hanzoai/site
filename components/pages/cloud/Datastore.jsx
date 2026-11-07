@@ -22,7 +22,7 @@ import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
 import { useLive } from './Frame';
 import { useCalm } from '../../ui';
 import { scrollToY } from '../../../lib/scroll';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteChapters, { useWide } from '../../v2/KeynoteChapters';
 import KeynoteLines from '../../v2/KeynoteLines';
 import KeynoteClose from '../../v2/KeynoteClose';
