@@ -1,19 +1,25 @@
 'use client';
-// Signature: The agent is a flag: Gen's four rails frame one split-flap board, and the flag flips through all 23 agents, each letter tile clattering through the alphabet until the next agent's name lands in place
+// Signature: The agent is a flag: Gen's four rails frame one split-flap board, and the flag flips through all 23 agents, each letter tile flipping in place until the next agent's name lands
 // Beyond: A command builder: pick the agent, switch Gen's rails on or off, and copy the exact gen command and its hanzo dev twin
-/* Hanzo Gen, v2 (Archetype F, developer: the agent is a flag).
-   V2: 8/10 a 4/8 first screen: a small copy column beside one huge object, a departure board framed by Gen's four rails whose tiles flip from one agent to the next; install is one tabbed code window where every line copies; the agents are keys that drive the builder; one dark room for the source
-   Motion: signature = the split-flap board (tiles written through refs, stopped off screen). Supporting: the line-masked
-   headline, the tab underline that glides (layoutId), a magnetic primary button. Accent: signal red, the rails' beacons.
-   Every word and link is Hanzo's. */
+// Persona: a developer who already runs a coding agent and wants Hanzo's tools, models and sessions around it.
+// Goal: get an API key, then run `gen --<agent>` with the exact flags built on the page.
+// CTA: Get API key (platform.hanzo.ai/keys): hero solid + ask bar (data-thumb) + the closing band; everything else is a text link.
+// Metric: api_key_created
+/* Hanzo Gen (Archetype: Developer, the agent is a flag).
+   V2: 8/10 round 2: kickers gone (their words became the page's own index under the hero); the h1 paints first (no mask holding it); the shared ask (header Try Hanzo, the slim phone bar carries Get API key); the walk ends on the faint chime; Read and Paste moved above the FAQ; one solid ask in the hero and again in the one closing band with Read the docs beside it (the black "MIT, in the open." room, which now opens out of a rounded card); the board flips each tile once (no scrambled letters), walks the 23 once and rests, with Pause; deck scale (h1 52); kit Tabs and FAQ; the native select became Previous/Next; no springs
+   Motion: signature = the split-flap board (tiles written through refs, stopped off screen, one pass then rest).
+   Supporting: the line-masked headlines, the black room opening to full width as it arrives (clip, scroll-linked),
+   the added rail switches. Colour: Hanzo's deck greys only. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'motion/react';
-import { Copy, Magnetic } from '../ui';
-import { A } from '../kit';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { Copy } from '../ui';
+import { A, Cta, Tabs, TabPanel, Faq } from '../kit';
+import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import '../v2/AppType.css';
 import './Gen.css';
 
+const KEYS = 'https://platform.hanzo.ai/keys';
 const AGENTS = [
   ['Hanzo Dev', 'dev'], ['Claude Code', 'claude'], ['Codex', 'codex'], ['Cursor', 'cursor'], ['Antigravity', 'agy'], ['Gemini CLI', 'gemini'],
   ['OpenCode', 'opencode'], ['Kilo Code', 'kilo'], ['Crush', 'crush'], ['Pi', 'pi'], ['GitHub Copilot CLI', 'copilot'], ['Amp', 'amp'],
@@ -29,10 +35,15 @@ const RAILS = [
 const n23 = (i) => String(i + 1).padStart(2, '0') + ' / ' + AGENTS.length;
 const flagOf = (f) => (f === 'dev' ? '' : '--' + f);
 const capOf = (name, f) => (f === 'dev' ? 'no agent named: Hanzo Dev' : `--${f}: ${name}`);
+const EASE = 'cubic-bezier(.16,1,.3,1)';
+
+const IconPause = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5.5 3.5v9M10.5 3.5v9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
+const IconPlay = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg>;
+const IconPrev = () => <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const IconNext = () => <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* ---------- the board: twelve tiles a row, two rows; a name breaks between words ---------- */
 const COLS = 12;
-const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-';
 function rows(name) {
   const out = [''];
   name.split(' ').forEach((w) => {
@@ -47,13 +58,15 @@ function rows(name) {
 
 function Board({ at, setAt, mine }) {
   const box = useRef(null);
-  const seen = useInView(box, { amount: 0.35 });
+  const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const cells = useRef([]);
   const flag = useRef(null);
   const [first] = useState(() => [rows(AGENTS[at][0]), flagOf(AGENTS[at][1])]); // the tiles are written by hand after this
+  const [paused, setPaused] = useState(false);
+  const [walked, setWalked] = useState(0); // it walks the 23 once, then rests on the last
   const live = seen && !calm;
-  // the flip: every tile that changes clatters through a few letters, left to right and row by row, then settles
+  // the flip: every tile that changes turns over once, in place, left to right and row by row; no letters it is not
   useEffect(() => {
     const [name, f] = AGENTS[at];
     const to = rows(name), fl = flagOf(f);
@@ -64,32 +77,32 @@ function Board({ at, setAt, mine }) {
     els.forEach((el, i) => {
       if (!el || el.textContent === to[i]) return;
       const c = i % COLS, r = Math.floor(i / COLS);
-      const n = 3 + ((i * 7 + at) % 4);
-      for (let k = 1; k <= n; k++) {
+      timers.push(setTimeout(() => {
+        el.animate?.([{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(-90deg)' }], { duration: 90, easing: 'cubic-bezier(.4,0,1,1)' });
         timers.push(setTimeout(() => {
-          el.textContent = k === n ? to[i] : ABC[(i * 5 + k * 11 + at * 3) % ABC.length];
-          el.animate?.([{ transform: 'rotateX(-78deg)', opacity: 0.35 }, { transform: 'rotateX(0deg)', opacity: 1 }], { duration: 90, easing: 'cubic-bezier(.16,1,.3,1)' });
-        }, c * 26 + r * 80 + k * 62));
-      }
+          el.textContent = to[i];
+          el.animate?.([{ transform: 'rotateX(90deg)' }, { transform: 'rotateX(0deg)' }], { duration: 150, easing: EASE });
+        }, 90));
+      }, c * 30 + r * 60));
     });
     const fe = flag.current;
     if (fe && fe.textContent !== fl) {
-      for (let k = 1; k <= 6; k++) {
-        timers.push(setTimeout(() => {
-          fe.textContent = k === 6 ? fl : '--' + [...f].map((ch, j) => ABC[(j * 3 + k * 7 + at) % 52]).join('').toLowerCase();
-        }, 120 + k * 60));
-      }
+      timers.push(setTimeout(() => {
+        fe.textContent = fl;
+        fe.animate?.([{ transform: 'translateY(60%)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 300, easing: EASE });
+      }, 120));
     }
     return () => { timers.forEach(clearTimeout); settle(); };
   }, [at, live]);
-  // it walks the 23 by itself until you take it
   useEffect(() => {
-    if (mine || !live) return;
-    const t = setTimeout(() => setAt((at + 1) % AGENTS.length, false), 2600);
+    if (mine || !live || paused || walked >= AGENTS.length - 1) return;
+    const t = setTimeout(() => { setWalked((w) => w + 1); setAt((at + 1) % AGENTS.length, false); }, 2200);
     return () => clearTimeout(t);
-  }, [at, mine, live, setAt]);
+  }, [at, mine, live, paused, walked, setAt]);
+  useEffect(() => { if (walked === AGENTS.length - 1) play('done'); }, [walked]); // the walk is over: the faint chime
   const [name, f] = AGENTS[at];
   const step = (d) => setAt((at + d + AGENTS.length) % AGENTS.length, true);
+  const walking = !mine && !calm && walked < AGENTS.length - 1;
   return (
     <div className="xgn-obj av-obj" ref={box} data-morph-target="">
       <div className="xgn-frame" aria-hidden="true">
@@ -103,8 +116,12 @@ function Board({ at, setAt, mine }) {
         </span>
       ))}
       <div className="xgn-in">
-        <p className="xgn-k x-mono">gen runs</p>
-        <button type="button" className="xgn-board" onClick={() => step(1)} aria-label={`${name}, ${capOf(name, f)}. Next agent`}>
+        <div className="xgn-top">
+          <p className="xgn-k x-mono">gen runs</p>
+          <p className="xgn-who x-mono">Hanzo Gen · Self-upgrading harness</p>
+          <button type="button" className="xgn-pause" onClick={() => setPaused((p) => !p)} aria-label="Pause" aria-pressed={paused} hidden={!walking}>{paused ? <IconPlay /> : <IconPause />}</button>
+        </div>
+        <button type="button" className="xgn-board" onClick={() => step(1)} aria-label={`${name}, ${capOf(name, f)}. Next`}>
           {[...first[0]].map((ch, i) => (
             <span key={i} className={'xgn-tile' + (i >= COLS ? ' r2' : '')} aria-hidden="true">
               <span ref={(el) => (cells.current[i] = el)}>{ch}</span>
@@ -112,14 +129,14 @@ function Board({ at, setAt, mine }) {
           ))}
         </button>
         <p className="xgn-line x-mono" aria-hidden="true">
-          <span className="xgn-ps">$</span>gen <span className="xgn-fl" ref={flag}>{first[1]}</span><span className="xgn-cur" />
+          <span className="xgn-ps">$</span>gen <span className="xgn-fl-w"><span className="xgn-fl" ref={flag}>{first[1]}</span></span><span className="xgn-cur" />
         </p>
         <div className="xgn-meta">
           <span className="xgn-cap x-mono" aria-live="polite">{capOf(name, f)}</span>
           <span className="xgn-ctl">
             <span className="xgn-count x-mono av-num">{n23(at)}</span>
-            <button type="button" onClick={() => step(-1)} aria-label="Previous agent"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
-            <button type="button" onClick={() => step(1)} aria-label="Next agent"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+            <button type="button" onClick={() => step(-1)} aria-label="Previous"><IconPrev /></button>
+            <button type="button" onClick={() => step(1)} aria-label="Next"><IconNext /></button>
           </span>
         </div>
       </div>
@@ -132,18 +149,29 @@ function Hero({ at, setAt, mine }) {
     <section className="xgn-hero" aria-labelledby="xgn-h1">
       <div className="av-wrap av-grid xgn-hero-g">
         <div className="xgn-copy">
-          <p className="av-kick"><b>Hanzo Gen</b> · Self-upgrading harness</p>
-          <Lines as="h1" id="xgn-h1" className="xgn-h1" lines={['Recursive agent harness.', 'Mod anything.']} now delay={0.1} />
-          <p className="av-body">Gen is a recursively self-upgrading agentic harness that runs the coding agent you use — Hanzo Dev, Claude Code, Codex, and custom loops — with full hackability, MCP tools attached, and every session linked to your Hanzo account.</p>
+          <h1 id="xgn-h1" className="av-display xgn-h1"><span>Recursive agent harness.</span> <span>Mod anything.</span></h1>
+          <p className="av-body xgn-lede">Gen is a recursively self-upgrading agentic harness that runs the coding agent you use — Hanzo Dev, Claude Code, Codex, and custom loops — with full hackability, MCP tools attached, and every session linked to your Hanzo account.</p>
           <div className="xgn-acts">
-            <Magnetic strength={0.25}><A to="https://platform.hanzo.ai/keys" className="x-btn solid" data-thumb="Get API key">Get API key</A></Magnetic>
-            <A to="https://github.com/hanzoai/gen" className="x-btn">Explore GitHub examples →</A>
-            <A to="https://docs.hanzo.ai/docs/coding" className="xgn-doc">Read the docs →</A>
+            <Cta to={KEYS} id="gen.hero" thumb>Get API key</Cta>
+            <A to="https://github.com/hanzoai/gen" className="xgn-arrow" data-cta="gen.hero-github">Explore GitHub examples →</A>
+            <A to="https://docs.hanzo.ai/docs/coding" className="xgn-arrow" data-cta="gen.hero-docs">Read the docs →</A>
           </div>
         </div>
         <div className="xgn-stage"><Board at={at} setAt={setAt} mine={mine} /></div>
       </div>
     </section>
+  );
+}
+
+/* ---------- the page's own index: the section names, as a row you can jump from ---------- */
+const INDEX = [['#install', 'Install'], ['#two', 'Gen and Dev'], ['#agents', 'Agents'], ['#rails', 'Our rails'], ['#cli', 'In the Hanzo CLI'], ['#read', 'Read'], ['#qa', 'Questions'], ['#source', 'Open source']];
+function Index() {
+  return (
+    <nav className="xgn-index" aria-label="Hanzo Gen">
+      <div className="av-wrap">
+        <ol>{INDEX.map(([h, t], i) => <li key={h}><a href={h}><span className="x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t}</a></li>)}</ol>
+      </div>
+    </nav>
   );
 }
 
@@ -175,38 +203,33 @@ function Lns({ lines, out }) {
 }
 
 function Install() {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(2); // the session tab first: the whole install-and-run story in one window
   return (
     <section className="av-sec xgn-install" id="install" aria-labelledby="xgn-inst-h">
       <div className="av-wrap av-grid">
-        <div className="xgn-inst-l">
-          <p className="av-kick">Install</p>
-          <h2 id="xgn-inst-h" className="av-head">One line, then any agent.</h2>
-          <p className="av-body">Linux and macOS. hanzo.sh downloads gen’s native build and checks it: its checksum always, its provenance with a signed-in gh. Run it again to upgrade.</p>
-          <p className="xgn-note">Sign in once with the Hanzo CLI, <code>hanzo auth login</code>, and every session is linked to your account.</p>
-          <div className="xgn-rel">
-            <A to="https://github.com/hanzoai/gen/releases/tag/v0.1.0" className="xgn-arrow">Latest release v0.1.0 →</A>
-            <A to="https://github.com/hanzoai/gen/releases" className="xgn-arrow">Every build →</A>
-          </div>
-        </div>
         <div className="xgn-win av-obj">
           <div className="xgn-win-bar">
             <span className="xgn-dots" aria-hidden="true"><i /><i /><i /></span>
-            <div className="xgn-tabs" role="tablist" aria-label="Install and run">
-              {TABS.map(([t], i) => (
-                <button key={t} type="button" role="tab" id={'xgn-t' + i} aria-controls={'xgn-p' + i} aria-selected={tab === i} onClick={() => setTab(i)}>
-                  {tab === i && <motion.span layoutId="xgn-tab" className="xgn-tab-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
-                  <span>{t}</span>
-                </button>
-              ))}
-            </div>
+            <Tabs id="xgn-inst" label="Install and run" tabs={TABS.map(([t]) => t)} value={tab} onChange={setTab} />
             <span className="xgn-win-k x-mono">bash</span>
           </div>
-          {TABS.map(([t, lines], i) => (
-            <div key={t} id={'xgn-p' + i} role="tabpanel" aria-labelledby={'xgn-t' + i} hidden={tab !== i} className="xgn-panel">
-              <Lns lines={lines} out={i === 2} />
-            </div>
-          ))}
+          {/* fixed height: the longest tab (terminal) sets it, so switching never moves the page */}
+          <div className="xgn-panels">
+            {TABS.map(([t, lines], i) => (
+              <TabPanel key={t} id="xgn-inst" i={i} value={tab} className="xgn-panel">
+                <Lns lines={lines} out={i === 2} />
+              </TabPanel>
+            ))}
+          </div>
+        </div>
+        <div className="xgn-inst-l">
+          <Lines as="h2" id="xgn-inst-h" className="av-head" lines={['One line, then any agent.']} />
+          <p className="av-body">Linux and macOS. hanzo.sh downloads gen’s native build and checks it: its checksum always, its provenance with a signed-in gh. Run it again to upgrade.</p>
+          <p className="xgn-note">Sign in once with the Hanzo CLI, <code>hanzo auth login</code>, and every session is linked to your account.</p>
+          <div className="xgn-rel">
+            <A to="https://github.com/hanzoai/gen/releases/tag/v0.1.0" className="xgn-arrow" data-cta="gen.release">Latest release v0.1.0 →</A>
+            <A to="https://github.com/hanzoai/gen/releases" className="xgn-arrow" data-cta="gen.builds">Every build →</A>
+          </div>
         </div>
       </div>
     </section>
@@ -218,19 +241,16 @@ function Two() {
   return (
     <section className="av-sec xgn-two" id="two" aria-labelledby="xgn-two-h">
       <div className="av-wrap">
-        <p className="av-kick">Gen and Dev</p>
         <Lines as="h2" id="xgn-two-h" className="av-display s xgn-two-h" lines={['One runs agents.', 'One is an agent.']} />
         <div className="xgn-pair">
           <div className="xgn-card gen">
             <span className="xgn-ring" aria-hidden="true">{RAILS.map(([r]) => <i key={r} />)}<b /></span>
-            <p className="av-kick">Gen</p>
             <h3 className="av-title">The recursive harness. Mod anything.</h3>
             <p className="av-body">A recursively self-upgrading agentic harness you can modify and remix. It launches any coding agent with Hanzo’s tools attached, routes model calls through Hanzo, and links the session to your account.</p>
-            <A to="https://github.com/hanzoai/gen" className="xgn-arrow">hanzoai/gen →</A>
+            <A to="https://github.com/hanzoai/gen" className="xgn-arrow" data-cta="gen.repo">hanzoai/gen →</A>
           </div>
-          <A to="/dev" className="xgn-card dev">
+          <A to="/dev" className="xgn-card dev" data-cta="gen.dev">
             <span className="xgn-core-dot" aria-hidden="true" />
-            <span className="av-kick">Dev</span>
             <span className="av-title">Our agent.</span>
             <span className="av-body">The coding agent Hanzo builds, with Kai deciding each step. It is the agent Gen opens when none is named.</span>
             <span className="xgn-arrow">Hanzo Dev →</span>
@@ -241,14 +261,13 @@ function Two() {
   );
 }
 
-/* ---------- agents: twenty-three keys; the one you press is the flag the builder uses ---------- */
+/* ---------- agents: twenty-three keys; the one you press is the flag the board and the builder use ---------- */
 function Agents({ at, pick }) {
   return (
     <section className="av-sec xgn-agents" id="agents" aria-labelledby="xgn-ag-h">
       <div className="av-wrap av-grid">
         <div className="xgn-ag-l">
-          <p className="av-kick">Agents</p>
-          <h2 id="xgn-ag-h" className="av-head">The agent you use is a flag.</h2>
+          <Lines as="h2" id="xgn-ag-h" className="av-head" lines={['The agent you use is a flag.']} />
           <p className="av-body">Each launches as itself, with its own interface and its own habits, and Gen around it. gen --help lists every one.</p>
         </div>
         <ul className="xgn-keys" role="list">
@@ -281,12 +300,12 @@ function Rails({ at, pick }) {
   const args = build(flag, on);
   const gen = ('gen ' + args).trim(), dev = ('hanzo dev ' + args).trim();
   const flip = (k) => setOn((o) => ({ ...o, [k]: !o[k] }));
+  const step = (d) => pick((at + d + AGENTS.length) % AGENTS.length);
   return (
     <section className="av-sec xgn-rails" id="rails" aria-labelledby="xgn-rails-h">
       <div className="av-wrap av-grid">
         <div className="xgn-rails-l">
-          <p className="av-kick">Our rails</p>
-          <h2 id="xgn-rails-h" className="av-head">What Gen puts around it.</h2>
+          <Lines as="h2" id="xgn-rails-h" className="av-head" lines={['What Gen puts around it.']} />
           <p className="av-lede">Tools, models, sessions and fences, each set by a flag.</p>
           <ol className="xgn-rail-list">
             {RAILS.map(([t, d, f], i) => (
@@ -325,23 +344,18 @@ function Rails({ at, pick }) {
         </div>
         <div className="xgn-build-wrap">
           <div className="xgn-build av-obj">
-            <div className="xgn-build-top">
-              <span className="av-kick">Your command</span>
-              <label className="xgn-pick">
-                <span className="x-sr">Agent</span>
-                <select value={at} onChange={(e) => pick(+e.target.value)}>
-                  {AGENTS.map(([n], i) => <option key={n} value={i}>{n}</option>)}
-                </select>
-                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </label>
+            <p className="xgn-build-k">Your command</p>
+            <div className="xgn-pick">
+              <button type="button" onClick={() => step(-1)} aria-label="Previous"><IconPrev /></button>
+              <p className="xgn-build-a" aria-live="polite">{name}</p>
+              <button type="button" onClick={() => step(1)} aria-label="Next"><IconNext /></button>
             </div>
-            <p className="xgn-build-a">{name}</p>
             <div className="xgn-build-row">
-              <code className="x-mono" aria-live="polite"><span className="xgn-ps">$</span>{gen}</code>
+              <code className="x-mono"><span className="xgn-ps" aria-hidden="true">$</span>{gen}</code>
               <Copy text={gen} label="Copy" />
             </div>
             <div className="xgn-build-row twin">
-              <code className="x-mono"><span className="xgn-ps">$</span>{dev}</code>
+              <code className="x-mono"><span className="xgn-ps" aria-hidden="true">$</span>{dev}</code>
               <Copy text={dev} label="Copy" />
             </div>
             <p className="xgn-build-n" hidden={!on.cloud}>Only when you pass --cloud, and only an agent that can name another endpoint. Without it, each agent keeps the account it is signed in to.</p>
@@ -358,10 +372,9 @@ function Cli() {
     <section className="av-sec tight xgn-cli" id="cli" aria-labelledby="xgn-cli-h">
       <div className="av-wrap av-grid">
         <div className="xgn-cli-l">
-          <p className="av-kick">In the Hanzo CLI</p>
-          <h2 id="xgn-cli-h" className="av-head">The same harness, as hanzo dev.</h2>
+          <Lines as="h2" id="xgn-cli-h" className="av-head" lines={['The same harness, as hanzo dev.']} />
           <p className="av-body">The Hanzo CLI links Gen, so hanzo dev takes the same flags and runs the same session. Use whichever is on your path.</p>
-          <A to="/cli" className="xgn-arrow">The Hanzo CLI →</A>
+          <A to="/cli" className="xgn-arrow" data-cta="gen.cli">The Hanzo CLI →</A>
         </div>
         <div className="xgn-code xgn-cli-r"><div className="xgn-code-top"><span className="x-mono">bash</span></div><Lns lines={[['hanzo dev', '# gen'], ['hanzo dev --claude', '# gen --claude'], ['hanzo dev --codex --cloud', '# gen --codex --cloud']]} /></div>
       </div>
@@ -369,28 +382,7 @@ function Cli() {
   );
 }
 
-/* ---------- the one dark room: the source ---------- */
-function Source() {
-  return (
-    <section className="av-sec xgn-src av-dark" id="source" data-room="dark" aria-labelledby="xgn-src-h">
-      <div className="av-wrap av-grid">
-        <div className="xgn-src-l">
-          <p className="av-kick">Open source</p>
-          <h2 id="xgn-src-h" className="av-display m">MIT, in the open.</h2>
-        </div>
-        <div className="xgn-src-r">
-          <p className="av-lede">The harness, every agent's launcher and how its output is read are on GitHub, one file an agent.</p>
-          <A to="https://github.com/hanzoai/gen" className="x-btn solid xgn-src-btn">The source →</A>
-        </div>
-      </div>
-      <ul className="xgn-src-flags x-mono" aria-hidden="true">
-        {AGENTS.map(([, f]) => <li key={f}>--{f}</li>)}
-      </ul>
-    </section>
-  );
-}
-
-/* ---------- questions: one opens at a time ---------- */
+/* ---------- questions (the kit FAQ: every answer in the HTML, each with its own address) ---------- */
 const QA = [
   ['How do I install it?', <><code>curl -fsSL https://hanzo.sh | sh -s gen</code> installs gen alone; <code>curl -fsSL https://hanzo.sh | sh</code> installs every Hanzo tool, gen and the Hanzo CLI included. Run either again to upgrade. On Windows, take the build from the release page.</>],
   ['Is gen the same as hanzo dev?', 'The same harness. The Hanzo CLI links it, so gen --claude and hanzo dev --claude take the same flags and run the same session. Bare gen, like bare hanzo dev, opens Hanzo Dev.'],
@@ -401,27 +393,13 @@ const QA = [
 ];
 
 function Questions() {
-  const [open, setOpen] = useState(0);
   return (
-    <section className="av-sec xgn-qa" aria-labelledby="xgn-qa-h">
+    <section className="av-sec xgn-qa" id="qa" aria-labelledby="xgn-qa-h">
       <div className="av-wrap av-grid">
         <div className="xgn-qa-l">
-          <p className="av-kick">Questions</p>
-          <h2 id="xgn-qa-h" className="av-head">Questions &amp; Answers</h2>
+          <Lines as="h2" id="xgn-qa-h" className="av-head" lines={['Questions & Answers']} />
         </div>
-        <ul className="xgn-qs">
-          {QA.map(([q, a], i) => (
-            <li key={q} className={open === i ? 'open' : ''}>
-              <button type="button" id={'xgn-q' + i} aria-expanded={open === i} aria-controls={'xgn-a' + i} onClick={() => setOpen(open === i ? -1 : i)}>
-                <span className="av-title">{q}</span>
-                <i aria-hidden="true" />
-              </button>
-              <div id={'xgn-a' + i} role="region" aria-labelledby={'xgn-q' + i} className="xgn-a" hidden={open !== i}>
-                <p className="av-body">{a}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div className="xgn-qs"><Faq items={QA} multi /></div>
       </div>
     </section>
   );
@@ -437,19 +415,16 @@ const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Gen in my project. S
 
 function Read() {
   return (
-    <section className="av-sec xgn-read" aria-labelledby="xgn-read-h">
+    <section className="av-sec xgn-read" id="read" aria-labelledby="xgn-read-h">
       <div className="av-wrap">
         <div className="av-grid xgn-read-top">
-          <div className="xgn-read-l">
-            <p className="av-kick">Read</p>
-            <h2 id="xgn-read-h" className="av-head">The harness, the agent, the CLI.</h2>
-          </div>
+          <Lines as="h2" id="xgn-read-h" className="av-head xgn-read-l" lines={['The harness, the agent, the CLI.']} />
           <p className="av-body xgn-read-r">Where to get Gen, what it runs, and the same harness in the CLI.</p>
         </div>
         <div className="xgn-cols">
           {READ.map(([h, items]) => (
             <div key={h}>
-              <h3 className="xgn-col-h x-mono">{h}</h3>
+              <h3 className="xgn-col-h">{h}</h3>
               <ul className="xgn-links">
                 {items.map(([to, t, d]) => {
                   const inner = <><span><b>{t}</b>{d && <span className={to === '#install' ? 'x-mono' : ''}>{d}</span>}</span><i aria-hidden="true">→</i></>;
@@ -465,12 +440,40 @@ function Read() {
             <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Gen from there.</p>
           </div>
           <div className="xgn-prompt">
-            <div className="xgn-prompt-top"><span className="av-kick">Agent prompt</span><Copy text={PASTE} label="Copy the agent prompt" /></div>
             <pre className="x-mono">{PASTE}</pre>
+            <div className="xgn-prompt-f"><span className="xgn-prompt-k x-mono">Agent prompt</span><Copy text={PASTE} label="Copy the agent prompt" /></div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/* ---------- the one ending: the black room (the source), which opens out of a rounded card as it arrives ---------- */
+function Source() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
+  const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
+  return (
+    <motion.section ref={ref} className="x-band av-sec xgn-src av-dark" id="source" data-room="dark" aria-labelledby="xgn-src-h" style={calm ? undefined : { clipPath: clip }}>
+      <div className="av-wrap av-grid">
+        <div className="xgn-src-l">
+          <Lines as="h2" id="xgn-src-h" className="av-display m" lines={['MIT, in the open.']} />
+          <p className="av-lede">The harness, every agent's launcher and how its output is read are on GitHub, one file an agent.</p>
+        </div>
+        <div className="xgn-src-r">
+          <Cta to={KEYS} id="gen.band" size="lg">Get API key</Cta>
+          <div className="xgn-src-links">
+            <A to="https://docs.hanzo.ai/docs/coding" className="xgn-arrow" data-cta="gen.band-docs">Read the docs →</A>
+            <A to="https://github.com/hanzoai/gen" className="xgn-arrow" data-cta="gen.source">The source →</A>
+          </div>
+        </div>
+      </div>
+      <ul className="xgn-src-flags x-mono" aria-hidden="true">
+        {AGENTS.map(([, f]) => <li key={f}>--{f}</li>)}
+      </ul>
+    </motion.section>
   );
 }
 
@@ -482,14 +485,15 @@ export default function Gen() {
   return (
     <main className="av xgn" style={{ '--ac': '#737373' }}>
       <Hero at={at} setAt={setAt} mine={mine} />
+      <Index />
       <Install />
       <Two />
       <Agents at={at} pick={pick} />
       <Rails at={at} pick={pick} />
       <Cli />
-      <Source />
-      <Questions />
       <Read />
+      <Questions />
+      <Source />
     </main>
   );
 }

@@ -35,6 +35,7 @@ function Card({ m, big, here, live, setLive }) {
         href={'/' + m.slug}
         className="mc-card"
         data-card={m.slug}
+        data-cursor=""
         aria-current={here ? 'page' : undefined}
         onPointerEnter={() => setLive(m.slug)}
         onPointerMove={tilt}

@@ -1,104 +1,139 @@
 'use client';
-/* Parts of the /integrations/<tool> guide: the editor that types its first sample by itself, the still code card each
-   chapter shows, and the "Only the Hanzo lines" switch they all share. Code is always in the HTML in full; the typing
-   only blanks and refills the text nodes in the browser (no React state per character). Ink and greys only: tokens
-   differ by weight and grey step, never by hue (JAMES.md 7); Hanzo's own lines are marked in the gutter, not striped. */
-import { useEffect, useRef, useState } from 'react';
+/* Parts of the /integrations/<tool> guide: the window that types Hanzo's own lines into a sample, the window each
+   chapter shows (one window: its tabs are every sample, the one on screen marked), and the "Only the Hanzo lines"
+   switch they all share. Code is always in the HTML in full. Ink and greys only: tokens differ by weight and grey
+   step (every grey at 4.5:1 or better), never by hue (MASTER.md 3.1); Hanzo's lines are marked in the gutter. */
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
 import { ui } from '../../v2/famUi';
+import { play } from '../../../lib/sound';
 
 export const HANZO = /hanzo/i;
-const lineText = (l) => l.map((t) => t[1]).join('');
+export const lineText = (l) => l.map((t) => t[1]).join('');
 export const hitsOf = (code) => {
   const lines = code ? code.lines : [];
   return { hits: lines.filter((l) => HANZO.test(lineText(l))).length, of: lines.filter((l) => l.length).length };
 };
+
+/* a JSON sample that opens with // comment lines does not parse: the comment becomes a caption over the code (the
+   same words), and Copy hands over only the JSON (MASTER.md part 16) */
+export function splitSample(sample) {
+  const code = sample.code;
+  if (!code || !/^json/i.test(sample.lang || '')) return { code, caption: [] };
+  let k = 0;
+  while (k < code.lines.length && /^\s*\/\//.test(lineText(code.lines[k]))) k++;
+  if (!k) return { code, caption: [] };
+  const lines = code.lines.slice(k);
+  return { caption: code.lines.slice(0, k).map((l) => lineText(l).trim()), code: { ...code, lines, text: lines.map(lineText).join('\n').trim() } };
+}
 
 /* the code itself: numbered lines, tokens set apart by weight and grey, Hanzo's lines marked in the gutter */
 export function Lines({ code, only, typed, label }) {
   return (
     <pre className={'xig-pre' + (only ? ' only' : '')} tabIndex={0} aria-label={label} data-lenis-prevent data-swipe-own>
       <code>
-        {code.lines.map((l, j) => (
-          <span key={j} className={'xig-ln' + (HANZO.test(lineText(l)) ? ' hz' : '')}>
-            {l.length ? l.map(([k, x], n) => <span key={n} className={'c-' + k} data-t={typed ? '' : undefined}>{x}</span>) : ' '}{'\n'}
-          </span>
-        ))}
+        {code.lines.map((l, j) => {
+          const hz = HANZO.test(lineText(l));
+          return (
+            <span key={j} className={'xig-ln' + (hz ? ' hz' : '')}>
+              {l.length ? l.map(([k, x], n) => <span key={n} className={'c-' + k} data-t={typed && hz ? '' : undefined}>{x}</span>) : ' '}{'\n'}
+            </span>
+          );
+        })}
       </code>
     </pre>
   );
 }
 
-/* the switch: dims every line that is not about Hanzo, in every window on the page (an icon; its name is registered) */
+/* the switch: dims every line that is not about Hanzo, in every window on the page. It only appears where it means
+   something (some lines point at Hanzo, not all of them). */
 export function Only({ only, setOnly, code, dark }) {
   const { hits, of } = hitsOf(code);
+  if (!hits || hits >= of) return null;
   return (
     <div className={'xig-only' + (dark ? ' dark' : '')}>
-      <button type="button" aria-pressed={only} aria-label={ui('int_only')} onClick={() => setOnly(!only)} className="xig-switch">
+      <button type="button" aria-pressed={only} onClick={() => setOnly(!only)} className="xig-switch">
         <i aria-hidden="true" />
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 4h12M2 8h7M2 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="12.5" cy="8" r="1.6" fill="currentColor" /></svg>
+        <span>{ui('int_only')}</span>
       </button>
       <span className="x-mono xig-hits" aria-live="polite"><b>{hits}</b><span aria-hidden="true"> / </span><span className="x-sr"> {ui('of')} </span>{of}<span className="x-sr"> {ui('int_hits')}</span></span>
     </div>
   );
 }
 
-/* the hero's editor: the first sample types itself, once, when the window is first seen */
-export function Editor({ sample, only, setOnly, aside, name }) {
+/* the hero's window: the sample is whole from the first paint except Hanzo's own lines, which type themselves in
+   (CSS keeps them invisible from the first paint, so nothing blinks). Speed is by time, not frames. Stop finishes it
+   at once; replay types the Hanzo lines again (WCAG 2.2.2). Reduced motion and JS off show every line. */
+export function Editor({ sample, only, setOnly, aside, name, face }) {
   const box = useRef(null);
-  const seen = useInView(box, { once: true, amount: 0.25 });
+  const seen = useInView(box, { once: true, amount: 0.15 });
   const calm = useReducedMotion();
-  const [state, setState] = useState('rest'); // rest (full code, as served) → typing → done
+  const [state, setState] = useState('rest'); // rest (Hanzo lines waiting) → typing → done
+  const [run, setRun] = useState(0);
+  const stop = useRef(null);
+  const { code, caption } = useMemo(() => splitSample(sample), [sample]);
   useEffect(() => {
-    if (!seen || calm || !sample.code) return;
+    if (calm || !code) { setState('done'); return; }
+    if (!seen) return;
     const pre = box.current.querySelector('.xig-pre');
     const spans = [...pre.querySelectorAll('[data-t]')];
     const full = spans.map((s) => s.textContent);
-    const total = full.reduce((a, s) => a + s.length, 0);
-    if (!total) return;
+    const total = full.reduce((a, t) => a + t.length, 0);
+    if (!total) { setState('done'); return; }
+    const parts = spans.map((s, n) => {
+      const typed = document.createTextNode('');
+      const ghost = document.createElement('span');
+      ghost.className = 'xig-ghost';
+      ghost.textContent = full[n];
+      s.textContent = '';
+      s.append(typed, ghost);
+      return { typed, ghost };
+    });
     const caret = document.createElement('i');
     caret.className = 'xig-caret';
     caret.setAttribute('aria-hidden', 'true');
-    spans.forEach((s) => { s.textContent = ''; });
     setState('typing');
-    const per = Math.max(1, Math.ceil(total / (4.2 * 60))); // the whole sample in about four seconds
-    let i = 0, j = 0, raf = 0, wait = 0;
-    const start = performance.now() + 450;
+    const ms = Math.min(2200, Math.max(900, total * 18)); // Hanzo's lines in about a second or two
+    let raf = 0;
+    const t0 = performance.now() + 250;
+    const finish = () => { cancelAnimationFrame(raf); caret.remove(); spans.forEach((s, n) => { s.textContent = full[n]; }); setState('done'); };
+    stop.current = finish;
     const step = (t) => {
-      if (t < start) { raf = requestAnimationFrame(step); return; }
-      if (wait > 0) { wait--; raf = requestAnimationFrame(step); return; }
-      let k = per;
-      while (k > 0 && i < spans.length) {
-        const take = Math.min(k, full[i].length - j);
-        j += take; k -= take;
-        spans[i].textContent = full[i].slice(0, j);
-        if (j >= full[i].length) {
-          i++; j = 0;
-          // a short breath at the end of each line, like a person typing
-          if (i < spans.length && spans[i].parentNode !== spans[i - 1].parentNode) { wait = 3; break; }
-        }
-      }
-      const at = spans[Math.min(i, spans.length - 1)];
-      if (at && at.nextSibling !== caret) at.after(caret);
-      if (i < spans.length) raf = requestAnimationFrame(step);
-      else { caret.remove(); setState('done'); }
+      const want = Math.max(0, Math.min(total, Math.round(((t - t0) / ms) * total)));
+      let left = want, at = null;
+      parts.forEach((p, n) => {
+        const take = Math.min(left, full[n].length);
+        left -= take;
+        if (p.typed.data.length !== take) { p.typed.data = full[n].slice(0, take); p.ghost.textContent = full[n].slice(take); }
+        if (!at && take < full[n].length) at = p;
+      });
+      if (at && at.ghost.previousSibling !== caret) at.ghost.before(caret);
+      if (want < total) raf = requestAnimationFrame(step);
+      else { finish(); play('done'); } // the demo has finished on its own: the kit's faint chime
     };
     raf = requestAnimationFrame(step);
-    return () => { cancelAnimationFrame(raf); caret.remove(); spans.forEach((s, n) => { s.textContent = full[n]; }); };
-  }, [seen, calm, sample.code]);
+    return () => { cancelAnimationFrame(raf); caret.remove(); spans.forEach((s, n) => { s.textContent = full[n]; }); stop.current = null; };
+  }, [seen, calm, code, run]);
+  const ctl = state === 'typing'
+    ? <button type="button" className="xig-ctl" aria-label={ui('stop')} onClick={() => stop.current && stop.current()}><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="3.5" y="3.5" width="9" height="9" rx="1.5" fill="currentColor" /></svg></button>
+    : state === 'done' && !calm
+      ? <button type="button" className="xig-ctl" aria-label={ui('replay')} onClick={() => setRun((r) => r + 1)}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.2 8a4.8 4.8 0 1 0 1.5-3.5M3.2 2.6v2.6h2.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      : null;
   return (
-    <div className="xig-ed" ref={box} data-state={state}>
+    <div className={'xig-ed ' + face} ref={box} data-state={state}>
       <div className="xig-ed-bar">
         <span className="xig-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="xig-tab">{sample.title}</span>
         {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
-        {sample.code && <Copy text={sample.code.text} label={ui('int_copy')} className="xig-copy" />}
+        <span className="xig-ctl-slot">{ctl}</span>
+        {code && <Copy text={code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
       <div className="xig-ed-g">
         <div className="xig-ed-code">
-          {sample.code ? <Lines code={sample.code} only={only} typed label={name + ': ' + sample.title} /> : null}
-          {sample.code && <Only only={only} setOnly={setOnly} code={sample.code} />}
+          {caption.map((c) => <p key={c} className="xig-cap x-mono">{c}</p>)}
+          {code ? <Lines code={code} only={only} typed label={name + ': ' + sample.title} /> : null}
+          {code && <Only only={only} setOnly={setOnly} code={code} />}
         </div>
         {aside && <aside className="xig-ed-side">{aside}</aside>}
       </div>
@@ -106,16 +141,22 @@ export function Editor({ sample, only, setOnly, aside, name }) {
   );
 }
 
-/* a chapter's picture: one sample, still, in a card */
-export function CodeCard({ sample, only, Loose, name }) {
+/* a chapter's picture: one window. Its tabs are every sample of the chapters (the one on screen marked), so as the
+   chapters change, the same window turns to its next tab and its code changes with the heading. */
+export function CodeCard({ sample, only, Loose, name, tabs, at }) {
+  const { code, caption } = useMemo(() => splitSample(sample), [sample]);
   return (
     <div className="xig-card">
       <div className="xig-card-bar">
-        <span className="xig-tab">{sample.title}</span>
+        <span className="xig-tabs" aria-hidden="true">
+          {tabs.map((t, k) => <span key={t + k} className={'xig-tabs-i' + (k === at ? ' on' : '')}>{t}</span>)}
+        </span>
+        <span className="xig-card-t">{sample.title}</span>
         {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
-        {sample.code && <Copy text={sample.code.text} label={ui('int_copy')} className="xig-copy" />}
+        {code && <Copy text={code.text} label={ui('int_copy')} className="xig-copy" />}
       </div>
-      {sample.code ? <Lines code={sample.code} only={only} label={name + ': ' + sample.title} /> : <div className="xig-prose"><Loose nodes={sample.nodes} /></div>}
+      {caption.map((c) => <p key={c} className="xig-cap x-mono">{c}</p>)}
+      {code ? <Lines code={code} only={only} label={name + ': ' + sample.title} /> : <div className="xig-prose"><Loose nodes={sample.nodes} /></div>}
     </div>
   );
 }

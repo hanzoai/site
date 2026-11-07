@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { A } from '../../kit';
+import { A, Tabs, TabPanel, CodeBlock } from '../../kit';
 import { SNAP } from './rates';
 
 export const money = (v) => (v == null ? '—' : v === 0 ? 'Free' : '$' + (v < 1 ? v.toFixed(3) : v.toFixed(2)));
@@ -83,7 +83,6 @@ export function Field({ points, here, label = 'Models by context window and outp
               aria-current={me ? 'page' : undefined}
               onPointerEnter={() => setHot(d.href)} onPointerLeave={() => setHot(null)}
               onFocus={() => setHot(d.href)} onBlur={() => setHot(null)}
-              data-cursor={me ? 'Here' : 'Open'}
             >
               <b aria-hidden="true" />
             </A>
@@ -140,9 +139,9 @@ export function Bill({ self, others }) {
   const row = (m, v, me) => (
     <div className={'xmf-brow' + (me ? ' me' : '')} key={m.name + (me ? '*' : '')}>
       <span className="xmf-bname">{m.name}</span>
-      <span className="xmf-bar" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: v == null ? 0 : Math.max(0.012, v / top) }} transition={{ type: 'spring', stiffness: 170, damping: 26 }} /></span>
+      <span className="xmf-bar" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: v == null ? 0 : Math.max(0.012, v / top) }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></span>
       <b className="x-mono">{dollars(v)}</b>
-      <span className="xmf-bctx" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: m.tokens ? m.tokens / ctxTop : 0 }} transition={{ type: 'spring', stiffness: 170, damping: 26 }} /></span>
+      <span className="xmf-bctx" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: m.tokens ? m.tokens / ctxTop : 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></span>
       <span className="x-mono xmf-bctx-t">{m.ctx || ctxText(m.tokens)}</span>
     </div>
   );
@@ -164,10 +163,10 @@ export function Bill({ self, others }) {
         {other && row(other, b, false)}
       </div>
       {priced.length > 0 && (
-        <div className="xmf-pick" role="group" aria-label="Compare with" data-swipe-own>
+        <div className="xmf-pick" role="group" aria-label="Compare with" data-swipe-own data-cursor="">
           {priced.map((p) => (
             <button key={p.href} type="button" aria-pressed={p.href === pick} onClick={() => setPick(p.href)}>
-              {p.href === pick && <motion.span layoutId="xmf-pick" className="xmf-pick-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+              {p.href === pick && <motion.span layoutId="xmf-pick" className="xmf-pick-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
               <span>{p.name}</span><i className="x-mono">{money(p.rate.out)}</i>
             </button>
           ))}
@@ -199,29 +198,11 @@ export function Codes({ samples, keyLink, title }) {
   };
   return (
     <div className="xmf-code" ref={box}>
-      <div className="xmf-code-top">
-        <div className="xmf-tabs" role="tablist" aria-label={title} onKeyDown={keys}>
-          {samples.map((s, i) => (
-            <button key={s.lang} type="button" role="tab" id={'xmf-tab-' + i} aria-selected={on === i} aria-controls={'xmf-pane-' + i} tabIndex={on === i ? 0 : -1} onClick={() => choose(i)}>
-              {on === i && <motion.span layoutId="xmf-tab" className="xmf-tab-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-              <span>{s.lang}</span>
-            </button>
-          ))}
-        </div>
-        <Copy text={samples[on] ? samples[on].text : ''} />
-      </div>
-      {samples.map((s, i) => (
-        <div key={s.lang} role="tabpanel" id={'xmf-pane-' + i} aria-labelledby={'xmf-tab-' + i} hidden={on !== i} className="xmf-pane">
-          <p className="xmf-lang x-mono" aria-hidden="true">{s.lang}</p>
-          <pre tabIndex={0}><code>
-            {s.lines.map((l, j) => (
-              <motion.span key={j + ':' + on} className="xmf-ln" initial={on === i ? { opacity: 0, x: -6 } : false} animate={{ opacity: 1, x: 0 }} transition={calm ? { duration: 0 } : { duration: 0.38, ease: EASE, delay: Math.min(j, 18) * 0.03 }}>
-                {l.length ? l.map(([k, t], n) => <span key={n} className={'c-' + k}>{t}</span>) : ' '}
-                {'\n'}
-              </motion.span>
-            ))}
-          </code></pre>
-        </div>
+      <Tabs id="xmf-lang" tabs={samples.map((x) => x.lang)} value={on} onChange={choose} label={title} />
+      {samples.map((x, i) => (
+        <TabPanel key={x.lang} id="xmf-lang" i={i} value={on} className="xmf-pane">
+          <CodeBlock code={x.text} label={x.lang} />
+        </TabPanel>
       ))}
       {keyLink && <A to={keyLink.href} className="xmf-key x-arrow">{keyLink.label}</A>}
     </div>

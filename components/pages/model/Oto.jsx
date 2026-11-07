@@ -9,6 +9,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Film } from '../../kit';
 import { Studio } from './Studio';
+import { usePaused } from '../../v2/ModelFilm';
 import Creative, { Scene } from './Creative';
 import { lerp, film, focus } from '../../v2/Launch';
 import { useLoop, fit, audio, burst, tone, hush } from './live';
@@ -63,7 +64,11 @@ function Board() {
     if (soundRef.current) { const ac = audio(); if (ac) SYNTH[i](ac); }
   };
 
-  useLoop(stage, (_, dt, still) => {
+  const paused = usePaused();
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+  useLoop(stage, (_, dt, still0) => {
+    const still = still0 || pausedRef.current;
     const c = cv.current, s = S.current;
     if (!c) return;
     const r = c.getBoundingClientRect();
@@ -182,6 +187,7 @@ export default function Oto() {
   return (
     <Creative
       slug="oto"
+      subject={[0.5, 0.55]}
       shape={WAVE}
       aim={(W, H, wide) => (wide ? null : focus(0.5, 0.55, W / 2, H * 0.25, 1.2, [W * 0.05, H * 0.07, W * 0.95, H * 0.43])(W, H))}
       headClass="ot-v2"

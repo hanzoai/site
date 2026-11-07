@@ -1,33 +1,33 @@
 # /enso — James-eye review
 
-Reviewed: main, page files at `d37d413` (second review; the first, at `d3752c2`, scored 7/10). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Reviewed: main at `648b798` (page files at `f68c8e5`; shared ask fix `d2b5ab8c` in), re-walked 7 Nov 15:12 UTC, under MASTER.md. Earlier: 7/10 at `d3752c2`, `d37d413` and `1417fde`; 6/10 at `25b197c` (before the shared ask fix). Built on the shared model-launch template (`components/pages/model/`). Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
-Verdict: 7/10 (unchanged)
+Verdict: 7/10 (three equal big figures in a row)
 
-First complaint: "It's black and white now and the ring is beautiful. But I still land on 'Enso' with no button, and on my phone the circle stops moving once it lands."
+First complaint: "The three percentages all shout at the same size, in three equal boxes. Make Ultra the big one."
 
-## What changed since the first review
-Fixed: no "FLAGSHIP MODEL" eyebrow over the h1, no vermilion anywhere (the film itself is now in Hanzo's black and white, and the tier labels, chips and router are ink), text reads with JavaScript off, and `data-cta` is on the ask.
+**Card:** `docs/coverage/enso.md` is now in MASTER format, 18/18 `Done here:` lines. The claims I could measure hold: CLS 0.0003 at 1470 and 0.0004 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, the Pause at the stage foot.
+
+**Floats over content (MASTER 3.2 rule 6):** passes since the shared fix (`d2b5ab8c`): no pill on desktop; on the phone the bar showed at no rest stop.
+
+**Scale (MASTER 3.1) and space (3 equal boxes banned):** the stage passes ("Enso" 112px alone over the film, then the 44px headline). The GPQA screen sets three 64px figures side by side (98.0%, 96.5%, 95.5%) on desktop and stacks them on the phone: three big things at once, in three equal columns. Let Enso Ultra's figure lead and set the other two at medium.
+
+## What changed since the last review
+The shared fix took the floating pill away. Now on the MASTER card. The name rests at 112px (was 176px) and the headline settles at 44px. The phone keeps "Try Hanzo" on the first screen.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Desktop: the ring film plays full-bleed under "Enso" and "Orchestrates every model for higher intelligence, faster and at lower cost."; **still no ask on the first screen**. Phone: the film settles into a circle above "The right intelligence. Every time." with "Try Hanzo", then stops (0% change).
-2. **One in, one out?** Yes on desktop: ring settles, three tiers pin one per screen, live router room, GPQA figures and Pareto chart. Phone screens after the hero are mostly still.
+1. **Sells in 5 seconds, moves within 1 second?** Yes on both sizes: the ring film, "Enso" and "Try Hanzo" on the first screen, settling into "The right intelligence. Every time."
+2. **One in, one out?** Yes: stage, tiers, live router room, GPQA figures, Pareto chart, table, close.
 3. **A real object in every section?** Yes.
-4. **One ask, sticky after the hero?** After the hero, yes ("Try Hanzo" solid, "API Platform" outlined, then the ask bar); not on the desktop first screen.
-5. **Every hover and press answers?** Not reliably measured (hero buttons hidden under the film during the hover pass).
-6. **Overlap, font swap, layout shift?** None; layout shift 0 and 0.0003.
+4. **One ask, sticky after the hero?** Yes: "Try Hanzo" solid in the sticky header at every width. (The first screen now shows two solid "Try Hanzo" buttons, the header's and the hero's; that is the shared header, see `_shared.md`.)
+5. **Every hover and press answers?** "Try Hanzo" and Pause answer. The × close presses but shows no hover change.
+6. **Overlap, font swap, layout shift?** None; layout shift 0.0003 and 0.0004.
 7. **Which reference, and is its motion there?** synchronized.studio (card opens into the page) and the anthropic launch (GPQA as hero figures). Both there.
-8. **Different from its neighbours?** Yes.
-9. **All 18 parts covered?** `docs/coverage/enso.md` exists.
-10. **Banned tells?** None.
-11. **Copy untouched?** Yes (parity clean).
-
-## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.1 / 2.4:** no ask on the desktop first screen.
-- **2.6 Type floor:** 50 pieces of text under 13px (11px "ROUTING / AGENTS / MULTI-MODAL" chips, tier and router meta).
-- **2.11 Mobile:** the circle's film stops after it settles.
+8. **Different from its neighbours?** Yes: router room and GPQA tour are its own.
+9. **All 18 parts covered?** Card 18/18; the claims I measured hold.
+10. **Banned tells?** Three equal boxes in a row (the GPQA figures).
+11. **Copy untouched?** Card states parity 72/72 text, 11/11 links; not contradicted.
 
 ## Fixes
-1. Put "Try Hanzo" (solid) and "API Platform" (outlined) on the desktop first screen under the lede.
-2. Keep the film playing in the phone's circle.
-3. Raise chips and meta to 13px or more.
+1. GPQA row: one big figure (Enso Ultra 98.0%), the other two at medium, not three equal columns.
+2. Give the × close the kit hover.

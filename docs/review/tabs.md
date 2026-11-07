@@ -1,48 +1,208 @@
 # /tabs: James-eye review
 
-Verdict: 5/10
-First complaint: "Green again. The little label over the title, the bars, the cursors, the chapter labels, all terminal green, when I said black, white and greys. And when it opens I get a big title on white with the actual product hiding under the bottom of my screen. On my phone I can't see it at all. It's the same first screen as Sign."
+Verdict: 7/10
+First complaint: "The top is right now. The window splits itself and the tree keeps up, on my phone too. But the further down I go, the deader it gets. The machine map has already finished playing before I reach it. One of the 'What you get' panes is a blank white block. And it ends on a single button in an empty black box."
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `86852aa` (since merged to main; main's copy of the page files is identical). Files hash: `3f2a58166c65`
-Walked 7 Nov 13:59–14:02 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
-Proof: `img/tabs.jpg` (desktop first screen | phone first screen).
+Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `2eb72b7f`. The page files last changed in `14f1655` (Tabs.css: the phone tree height) and `30e721f` (Tabs.jsx). Files hash (sha256 of `Tabs.jsx`, `Tabs.css`, `tabsTree.js` and `app/tabs/page.jsx`, first 12 characters): `84f48d9ed285`.
+The shared ask (`components/Ask.jsx`) was replaced in `0ebd0a44` while I was walking. Every ask finding below was measured again on `2eb72b7f`.
+Walked 7 Nov 14:55–15:12 UTC on the dev server, moving, at 1470×801 and 375×812 with touch emulation. I kept:
+- load bursts (8 frames, 150 ms apart);
+- per-screen bursts (6 frames, 150 ms apart) with frame differences;
+- a tree sampler (every 100 ms for 12 s, at both widths);
+- user split and close runs;
+- a hover and press probe with a hover-capable pointer;
+- a tab crawl, a JS-off render and a reduced-motion run;
+- wheel-scroll ask logs.
+
+The cookie note was skipped.
+Proof: `img/tabs.jpg`.
+- Top row: the desktop first screen and the phone first screen.
+- Bottom row: the close (one still button, then the footer); the "Closing a pane loses nothing" tile with its blank white pane; the ink focus ring on the black window; the phone key row with "Ctrl" cut to "Ctr".
+
+## Since the last review (fixes 1–8)
+1. **Done: the tree.** It is keyed by id and no longer shares a `layoutId`.
+   - Sampled every 100 ms for 12 s: 0 of 119 samples were illegible more than 600 ms after a change, at both widths. Before, 77–90% of samples failed.
+   - The tree went through 4 distinct layouts in those 12 s, and the leaf count always matched the pane count.
+   - User splits and closes read cleanly 700 ms later.
+2. **Done: a running shell on the phone's first screen.**
+   - Pane content starts at y=470, so 190px of it sits inside 660.
+   - The first self-split comes at about 1.3 s (`useLive(0.12)`).
+   - Still open: the tree itself starts at y=742, so the phone fold shows only "layout / split ⇄". With four panes its 180px box holds 313px of tree and scrolls inside itself.
+3. **Done: panes work on a phone.** "Split right" folds away, the glyphs have 44px hit areas, and splits stop at 4 panes. At 375 every pane keeps Split down and Close, and 0 targets are under 44px.
+4. **Done at the close.**
+   - The close has `data-thumb`, and its ↗ nudges on hover.
+   - The map's tile is no longer a black button.
+   - At rest there is one page solid per screen. The header's "Try Hanzo" is now always solid (shared, see answer 4).
+5. **Half done: the dead bands.**
+   - At scroll 801 the lede ends at y=105 and the chapter card starts at y=351, so there are about 250px of white before the next object. The chapter heading is still about 435px below the lede (the old review measured 410px).
+   - There is no gap between the chapters and the map.
+   - On phone, the 62svh blanks are gone.
+   - Still: no Band. The page ends on one button with about 165px of black under it.
+6. **Done, but one tile is broken.** The term tile pages its scrollback, the phone tile presses its keys, and MIT is the link. The "keep" tile is broken (fix 1 below). All three loops run forever with no pause control.
+7. **Not done: kit `<Tabs>`.**
+   - Browser/Phone is still a hand-rolled radiogroup. ArrowRight changes the selection but leaves focus on the button that just became `tabindex=-1`. There's no Home/End and no gliding thumb.
+   - The phone dots are still `role=tablist` with 0 tabpanels.
+   - Done: the labels are now icons with aria-labels.
+8. **Partly done: template and polish.**
+   - **Done:**
+     - The composition is new: a one-line h1 and the ask over a full-width app window.
+     - The "HANZO TABS" eyebrow is gone (the name is in the window bar).
+     - The phone chapter pause is off the pane.
+     - Bare `:hover` rules went from 4 to 0.
+     - Machine cards slide 6px with an ink ring.
+   - **Not done:**
+     - Chapter 3 still jumps 7px on phone (274 → 281px; 0 on desktop).
+     - Literal hexes went from 18 to 23, worse.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Half. The words are clear ("Keep tabs on your agents."), and the title cuts in by line mask (film 0.5–1.5 s). After that the first screen is nearly still: 1 of 25 frames moves in the first second after paint (max 0.92), and 6 of 54 in the next 3 s. All of that motion is in the strip of the stage at the bottom edge. At 1470×801 the stage shows only its top ~200px: the Browser/Phone switch, the window bar, two pane headers ("build", "work") with green bars, and the first two lines of the tree. The page's best idea, panes splitting while the tree grows, plays below the fold. On the phone the first screen is a green "HANZO TABS" label, the title, a five-line lede, the button and the switch at y=664. Below them is about 85px of the window's empty title bar, so there is no product to see.
-2. **One in, one out, or a document?** Mostly one in, one out. Three pinned chapters ("There is no backend", "A shell is a URL", "The layout is a tree") hold the words while the drawing beside them changes. That is the Apple move, and each drawing runs by itself. But at one stop (y≈2967) the film holds chapters 1 and 2 on top of each other, both half-faded, for about 4–5 s: the "browser" and "machine" pills sit on the "tabs.hanzo.ai/build" bar and the words go grey (d-sheet-07). After the chapters it goes back to being a document: a "Link a machine" block, then a dark room of four equal tiles, each with an explaining paragraph.
-3. **A real object in every section?** Hero: yes, a live browser window of shell panes plus the tree, with a Phone flip (key row, swipeable pages). But on both widths it starts below the first screen. Chapters: yes (wire diagram, URL bar with two tmux sessions, a closing pane). "Link a machine": a laptop / workstation / GPU box list wired to an "Open Tabs" card. Dark room: four tiles whose "objects" are a cursor, three grey blocks, a key row and the word "MIT" in a box. That is type and icons, not a thing.
-4. **One ask, sticky after the hero?** Yes, the best answer in this group. The hero has one solid "Open Tabs ↗". After the hero, a desktop bar ("Keep tabs on your agents · Open Tabs →") appears from s2 and the header's "Try Hanzo" turns outlined (§0.9). On the phone the bottom bar carries "Open Tabs →" from s3. The dark room's white "Open Tabs" and the bar's "Open Tabs" show together, but it is the same verb. On the phone the page ends on the "Open source, MIT" tile and goes straight into the footer, with the ask left above the tiles.
-5. **Every hover and press answers?** No. The close's "Open Tabs" and "Read the source" are DEAD on hover and have no press: the last ask on the page does nothing when you touch it. The hero "Open Tabs ↗" leans to the pointer (magnetic) but has no press state. The chapter numbers 01/02/03 have no hover, and pressing one scrolls the page (1300→1575, 1593→2933, 3683→2597) instead of changing the scene. The selected "Browser" pill and the phone's page dot show no hover. Good: "Phone" (hover, press 0.98, and it flips the stage), the key row ("Send ↓" press 0.94) and Copy (0.92, shows "Copied").
-6. **Overlap, font swap, layout shift?** No font swap (one h1 box entry at 676 ms, steady). CLS 0.002 on desktop. On the phone it is 0.021, from the pinned section (0.016) and the tree drawing (0.006). No overlap measured, and no horizontal scroll at 375 or 320. Two things the numbers miss. First, the ghosted chapter 1/2 frame above. Second, on the phone the hero's "layout" card grows and shrinks as the tree changes, which moves the section below it up and down (phone film 7.5–11.2 s).
-7. **Which reference, and is its motion there?** apple.com product page: the pinned chapters with a numbered rail are there. motion.dev layout animation is really there: panes split and close on springs (300/30) and the tree moves with them. That is the "tabs that morph" pattern from JAMES.md rule 9. The motion mix is the page's strongest part: arrival (line-mask cut-in), idle (the tree tends itself every 1.3 s, chapter scenes swap, wires flow, cursors blink), state (split/close, Browser/Phone flip), pointer (magnetic ask, swipe on the phone flip) and scroll (stage settle, pins). Scroll is well under half. There is no synchronized.studio card-open: the "Open Tabs" card in "Link a machine" goes nowhere.
-8. **Different from its neighbours?** No. It is the same template as /sign and /risk (same chat, same branch): a label over a two-line title on the left, lede and one black button on the right, the product strip on the fold, numbered pinned chapters with "· 0N" labels on the same rail, one dark room. /ledger and /metrics share it too. The /sign review's own first complaint is "It's the same first screen as Tabs." The object (a tiling window plus its tree, with a phone flip) is its own idea, but it sits in the same slot as everyone else's object.
-9. **All 18 parts covered?** No; see below. `docs/coverage/tabs.md` is missing.
-10. **Banned tells?** Yes:
-   - A green UI accent, declared in the file as "terminal-green accent" (`--acc: #2fb34a`). It is on the labels, pane bars, `$` prompts, the active pane outline, "build" in the URL bar, the wires, the mini-tile in the "Open Tabs" card and the dark room's cursor and tile. Counts: desktop color 17 / background 35, phone 13 / 25. Green accents are a JAMES.md reject.
-   - Orange (`#ff9f0a`) glow on the pane about to close (an inset shadow, so the hue scan misses it; it is visible in the phone film at 8.8 s).
-   - "HANZO TABS" label 20px above the h1.
-   - "WHY IT IS SHAPED THIS WAY", "WHY · 02" and "WHY · 03" labels above each chapter heading.
-   - Dead buttons in the close ("Open Tabs", "Read the source").
-   - Four equal explained tiles in the dark room.
-11. **Copy untouched?** Yes. Parity 26/26 text and 2/2 links. The 10 added strings are demo and UI labels ("split ⇄", "split ⇅ · two siblings", "shell 3", "tmux ·", "tabs.hanzo.ai/", "$ hanzo link", "Copy"). "its own network · nothing exposed" paraphrases Hanzo's "nothing is exposed to the network it sits on". "Why · 02" and "Why · 03" are invented labels, and they only feed the label-over-headline problem. None is a new claim or number.
+1. **Does it sell in 5 seconds, and does something move within 1 second?** Yes, at both widths.
+   - **Desktop:**
+     - "Keep tabs on your agents." is 52px at y=191, with "Open Tabs" on the same row.
+     - The window starts at y=297. The h1 cuts in at first paint (CSS LineMask), then the panes split themselves from 1.3 s while the tree grows in the sidebar.
+     - The lede starts at y=833, below the fold.
+   - **Phone:**
+     - The h1 is 2 lines at 40px (y 156–240), and the ask sits at y 258–310.
+     - Four live panes show above the fold.
+     - The lede starts at y=926, below the fold.
+2. **One in, one out, or a document?** The first half is one in, one out. The second half is a document.
+   - The first half: the hero, then three pinned chapters, one diagram each, with the 01–03 rail. Frame bursts: desktop screens 0–2 moved in 5/5 frames, screens 3–4 in 2/5.
+   - At scroll 4005 (the map), only the "What you get" heading moved (1/5). The map's packets run twice from page load (`xtb-out 2.4s linear 2`), so they're over before you arrive.
+   - The close moved in 0/5.
+   - **Phone:**
+     - Screens at 1624 and 2436 moved in 0/5. The map's wires are `display: none` there, so it is a static list.
+     - The chapters pin their visual at the top while the text scrolls under it. MASTER part 11 says to stack pinned scenes under 900px.
+     - At scroll 1624 the pinned visual shows chapter 3's diagram while the text on screen is still chapter 2's.
+3. **Does every section hold a real object?** Yes, except the close.
+   - Hero: the window and its tree.
+   - Chapters: three diagrams.
+   - Map: three machines wired to a tabs.hanzo.ai card.
+   - Dark room: four running objects.
+   - Close: one button.
+4. **One ask, sticky after the hero? Nothing floating? Scale rhythm?**
+   - **Ask:** the words are Hanzo's ("Open Tabs", `data-thumb`, `data-cta` tabs.hero and tabs.close).
+   - **Shared system (since `0ebd0a44`):** the header's "Try Hanzo" is solid at every width.
+     - The first screen therefore carries two solid black pills with different words and destinations: "Try Hanzo" at y=13 and "Open Tabs" at y=183. The close carries two light ones.
+     - After the hero, the page's own ask is gone until the close. Desktop has no bar by design. On phone the quiet bar never found a clear spot at the rest positions I checked (900, 1700, 2600, 3500).
+   - **Nothing floats over content:** pass.
+   - **Scale rhythm:** pass.
+     - h1 52/40, h2 26/24, h3 17, lede 21, body 16–19.
+     - One big thing per screen: the window, then the chapter card, the map, the tiles.
+5. **Does every hover and press answer, with no jumps?** Mostly. Tested with a hover-capable pointer.
+   - **Answer:**
+     - The hero ask: #0a0a0b → #2c2c2e, a magnetic pull and the ↗ nudge; press 0.98.
+     - Browser/Phone: grey → white; press 0.98.
+     - Pause: inverts; press 0.94.
+     - Pane buttons: a #26262b fill; press 0.98.
+     - The rail: inks; press 1px.
+     - Copy: a veil; press 0.93.
+     - Machines: slide 6px with an ink ring.
+     - Tiles: lift 4px and pause their loop.
+     - MIT: inverts and underlines.
+     - The close ask: its ↗ nudges; press 0.98.
+   - **Weak:** the close's fill goes from #f5f5f7 to #fff, which you can't see. No hover tells you anything (JAMES rule 5): the machines slide but say nothing.
+   - **Dead:** the tree leaves (hovering "shell 3" doesn't light its pane) and the tabs.hanzo.ai card in the map.
+   - **Jumps:** none.
+6. **Overlaps, font swap or layout shift?**
+   - **Steady:** the h1 box doesn't move (3 readings at each width), and there's no horizontal scroll at 320, 375 or 1470.
+   - **CLS:** 0.0025 on desktop and 0.0077 on phone. The sources are the keep tile, which animates `flex-grow` and `padding` and logs a shift on every cycle, and phone chapter 3 (274 → 281px).
+   - **Clipping:**
+     - On phone, the hero pause is cut by the stage: 4px at 375, 7px at 320.
+     - The window bar's three dots squash into 4–5px slits at 375.
+     - On phone, "Ctrl" overflows its key cap (46px of text in a 35px cap) and reads "Ctr".
+     - In the term tile, scrollback lines run through the "$ ▮" line.
+7. **Which reference, and is its motion there?**
+   - **apple.com product page:** yes. The product is the hero, Settle runs on scroll, and the chapters pin and swap.
+   - **motion.dev:** the tree's layout re-flow now reads. Browser/Phone isn't a gliding pill.
+   - **synchronized.studio:** n/a (no cards).
+   - **osply/hamol pointer detail:** only the magnetic ask and the machine slide.
+8. **Different from its neighbours?** Yes, mostly.
+   - It no longer has /sign and /risk's title-left, stage-right first screen (contact sheet kept by the critic).
+   - A one-line h1 over a full-width dark app window with its own tree is its own hero.
+   - It still shares the "title row over a wide stage" layout with /ui and /treasury, and the PinChapters rail with a sideways mono title with /sign.
+9. **Are all 18 parts covered?** No; see below. Six of the card's claims fail the walk.
+10. **Banned tells?** None outright.
+    - 0 hued values in `<main>` at 1470, 375 and 320. The blue "Privacy choices" toggle is in the shared footer.
+    - Nothing sits above the h1, there's no gradient text, and nothing fades on hover.
+    - **Borderline:**
+      - The magnetic ask is a spring: released at 19.4px, it overshoots to −0.6px. The rule is no springs and no overshoot, and the card says "no springs".
+      - The keep tile's pane names render in italic, because `<i>` is the wrapper.
+11. **Is the copy untouched?** Yes: `parity.py /tabs` gives text 26/26 and links 2/2. Still unlisted on the card for James:
+    - Hanzo's order is hero, Link a machine, Why it is shaped this way, What you get. Here, Link moves after Why.
+    - Hanzo's section heading "Why it is shaped this way" is now a 13px `aria-hidden` rail label (14px on phone).
 
-## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy / 4 Common gate:** no `Persona:`, `Goal:`, `CTA:` or metric id in the page header, which instead claims "V2: 8/10" and a green accent. Two solid "Open Tabs" buttons share the dark-room viewport (the room's own and the bar's).
-- **2.3 First impression:** with JS off, the h1 shows, but 15 text runs are hidden, including the hero lede, the "Open Tabs" button and the Browser switch. That fails a P1 row. The phone fold has no app peeking: the window starts at about y=725, past the plan's 660px. The page does not end on the ask; on the phone it ends on the MIT tile.
-- **2.4 Conversion:** 0 `data-cta` (1 `data-thumb`). The hero ask has no press, and the closing ask has neither hover nor press.
-- **2.6 Content:** 11 text runs under 13px on desktop (12.5px window address, pane names "build", "work", "shell 3", "layout"), and 2 under 14px on the phone ("tabs.hanzo.ai", "Copy"). The dark room is four tiles with a paragraph each.
-- **2.7 Visual system:** the green `--acc` and the orange closing glow break the 0-hue override. The override's "status colour only with a shape or text cue" does not cover a whole-page accent.
-- **2.8 Components:** 13 bare `:hover` rules and 4 `.x-btn` uses. Dead hovers: close buttons, chapter rail, selected switch pill, phone page dot.
-- **2.9 Motion:** 2 `setInterval` timers (the stage beat at 1.3 s and the chapter scenes at 1.5/1.8 s). The self-running stage and scenes have no pause control (2.12, WCAG 2.2.2). The chapter rail jumps the page up to 1,340px instead of swapping the scene. One stop shows two chapter scenes half-faded on top of each other. Reduced motion is good: 0 running after 3 s.
-- **2.11 Mobile:** in Browser mode the phone stage keeps splitting panes into slivers about 25px wide (film 10.8–11.2 s), which is the very thing the page's own "Works on a phone" tile says Tabs avoids. The phone tree card is broken. It shows "split ⇄", a long empty line and a stray "work" chip, with "build", "shell 3" and the inner split missing, and its height jumps. Touch targets pass (0 under 44px).
-- **2.12 Accessibility:** green labels measure 2.7:1 ("Hanzo Tabs", "Why it is shaped this way", "Why · 02", "Why · 03"), under 4.5:1. The auto-moving stage has no pause.
-- **Coverage:** `docs/coverage/tabs.md` is missing.
-- Passing: one h1 (111.7px, line height 0.92), one main, no horizontal scroll at 320, 0 `title=` tooltips, no raw img/video/table, reduced motion settles, desktop CLS 0.002, h1 box steady, copy parity, a sticky ask after the hero at both widths.
+## Missing from the 18 parts (MASTER part 2, measured)
+- **Gate and part 1:**
+  - The hero is a hand-written `function Hero`, not `PageHero`.
+  - The first screen shows two solid fills: the shared header's and the hero's.
+  - The lede misses the first screen at both widths. The h1 baseline sits at 29% of the height (target 38%), and nothing of the next section peeks.
+- **Part 3:** there's no Band. The page ends on a lone `.w2-cta` and about 165px of black, then the footer.
+- **Part 4:** the card says "sticky ask in header and bar after the hero, same label". The header carries "Try Hanzo", there's no desktop bar, and no phone bar appeared at rest.
+- **Part 6:**
+  - Desktop text under 13px that isn't mono capitals and isn't `aria-hidden`: pane names, "layout" and "split ⇄/⇅" at 12.5px.
+  - Phone art under 14px, `aria-hidden`: "server" at 11.2px, "tmux · build" at 13px.
+  - The page called Tabs doesn't use the kit `<Tabs>`. The radiogroup drops focus on arrow keys, and the dots form a tablist with no panels.
+- **Part 7:** 23 distinct literal hexes in `Tabs.css`.
+  - Many are off the deck ramp: #f5f5f7, #a1a1a6, #d1d1d6, #86868b, #d2d2d7 and #e3e3e8.
+  - There are blue-cast near-blacks: #1c1c20, #26262b, #2c2c32, #3a3a40 and #48484f.
+  - The card calls these "deck-grey literals".
+- **Part 8:**
+  - The focus ring is invisible on 15 stops. The Browser/Phone radio (one stop), Pause and the 12 pane buttons draw a 2px #0a0a0b ring on #141417–#3a3a3c, and Copy draws one inside its black pill. The card says the "focus ring is visible on every stop".
+  - The keep tile animates `flex-grow` and `padding` (only transform, opacity and clip-path are allowed).
+- **Part 9:**
+  - The card says "no springs: every transition is ease-emphasis 300ms". The magnetic ask is a spring, and the CSS uses .15s, .2s, .25s, .35s, .4s and .5s with the default `ease`.
+  - The map's packets run at page load, not on arrival.
+  - Passes:
+    - Reduced motion is fully still: 0 running animations after 3.5 s and no self-splits.
+    - Pause stops the tree and the chapter loops.
+    - The motion mix covers idle, pointer, state, arrival and scroll.
+- **Part 11:**
+  - On phone the chapters pin instead of stacking.
+  - The hero pause is clipped, the window dots are squashed, and "Ctrl" is clipped.
+  - The phone tree is cut in its 180px box.
+- **Part 12:** the dark-room loops (scrollback 7 s, keep 4.8 s, keys 4.2 s, all infinite) have no pause control. Hover holds them, which does nothing on touch or keyboard. The card says "pause control on every moving item".
+- **Part 13:** the h1 sits at byte 24,476 of the server HTML, past the first 14 KB. That's mostly the shared head and header.
+- **Coverage card:**
+  - Parts 4, 6, 8, 9, 11 and 12 claim things the walk disproves.
+  - Part 2 says the shared chrome has no skip link. It has one (`.x-skip`, "Skip to content").
+  - The copy-questions line lacks the section reorder and the demoted heading.
+- **Passing:**
+  - One h1 and one `<main id="main">`.
+  - JS off: every word is legible at both widths (1 hidden run on phone, the URL, by design).
+  - No raw img, video, table or `.x-btn`, and 0 `title=`.
+  - `data-cta` ×3 and `data-thumb` ×2.
+  - Canonical and title from `content/pages.json`.
+  - Taste OK, parity 26/26.
 
 ## Fixes (in order)
-1. **Take the green and the orange out.** Set `--acc` to ink. Make the pane bars, `$` prompts, URL "build", wires, mini-tile and dark-room cursor and tile white or greys. Mark the active pane with a white outline. Mark the pane about to close with a dashed outline (a shape cue) instead of the orange glow.
-2. **Delete the "HANZO TABS" label above the h1, and the "Why it is shaped this way" / "Why · 02" / "Why · 03" labels above the chapter headings.** The rail's 01–03 already counts, and "Why it is shaped this way" is already the section's accessible name.
-3. **Put the window on the first screen at both widths.** On desktop, cut the hero's top padding and the gap under the title, or set the window beside the title, so the whole window and tree show at 801 high with the panes splitting in view. On the phone, show the title, the "Open Tabs" button and then the window, with the five-line lede after it. Render the lede and the button visible in the server HTML.
-4. **Fix the phone stage.** At phone width, open on the Phone flip (swipeable pages with the Esc / Ctrl / Tab / arrows row) instead of tiling the browser into slivers. Give the tree card a fixed height and draw every leaf, so it stops jumping and stops showing an empty line.
-5. **Make every control answer.** Give the close's "Open Tabs" and "Read the source" a hover that is not opacity (fill or ink shift, arrow nudge) and a press of 0.98. Give the hero "Open Tabs ↗" the same press. Give the chapter numbers a hover, and make a click swap the scene in place instead of scrolling the page. Add a pause control to the self-running stage. Make chapter scenes cut cleanly so two never show half-faded together.
-6. **Stop being /sign's twin, and give the dark room one object.** Open on the window full width under a one-line title, with the panes splitting behind the words, so the first screen is unlike /sign and /risk. Replace the four explained tiles with the hero's window, where each Hanzo line ("Your terminal, not a viewer", "Closing a pane loses nothing", "Works on a phone", "Open source, MIT") lights up its part, and end the page on the "Open Tabs" ask.
+1. **Repair "Closing a pane loses nothing".**
+   - The old v2 rules still win: `.xtb-tile.keep i { width: 30%; height: 72px }` and `.xtb-tile.keep i:nth-child(2) { background: #f5f5f7 }`. They make the "work" pane a blank white block with a white label, and leave a 48px black band under 72px panes. Delete both rules.
+   - Set `font-style: normal` on `.xtb-keep i` (the labels are italic).
+   - Animate the close and reopen with `transform: scaleX` and opacity, or a clip-path, on a pane of fixed width. Today it's `flex-grow` and `padding`, which shifts layout every 4.8 s.
+2. **Wake the second half.**
+   - Start the map's packets when `.xtb-map` is half in view (toggle a class from `useLive`), not at page load.
+   - Make the machine hover tell you something: hovering "a GPU box" sends its packet and lights its pane in the mini window. On phone, where the wires are hidden, light the mini window's panes in turn.
+   - Hovering a tree leaf should light its pane in the window.
+3. **Make focus visible in the dark window.**
+   - Put `data-room="dark"` on `.xtb-stage` and `.xtb-cmd`, so the shared ring turns #f5f5f7, or set `.xtb-stage :focus-visible { outline-color: #fafafa }`.
+   - Acceptance: a tab crawl shows a ring of at least 3:1 on all 15 stops.
+4. **End on a Band, not a lone button.**
+   - Close with the kit Band in the page's own words, with "Open Tabs" as its one ask. Give it a small live object (the window at rest, its tree settled), so the last screen isn't still.
+   - Cut the 165px of empty black under it.
+5. **Phone polish.**
+   - Let the key caps size to their labels, for example `grid-template-columns: repeat(3, auto) repeat(4, 1fr)`, so "Ctrl" fits.
+   - Give `.xtb-win-bar > i` `flex: none` (the dots squash to 4px).
+   - Bring the hero pause inside the stage (it is cut 4px at 375 and 7px at 320).
+   - Let the phone tree grow to its content, or lay it out across, instead of a 180px box that scrolls.
+   - Stack the chapters on phone instead of pinning the visual on top.
+6. **Use the kit `<Tabs>` for Browser/Phone,** with a gliding thumb, arrows that move focus, and Home/End. Turn the phone dots into plain buttons with `aria-current`, or real tabs with panels.
+7. **Put the lede on the first screen.**
+   - Desktop: set it beside the ask on the h1 row, or under the h1 before the window. Let the window peek, so the h1 baseline moves toward 38%.
+   - Phone: move it above the window.
+8. **Hygiene, then the card.**
+   - Map the 23 literals onto the deck ramp: #f5f5f7 → #f5f5f5, #a1a1a6 → #a3a3a3, #86868b → #737373, #1c1c20 → #171717, #26262b → #262626, #0b0b0c → #0a0a0a, and so on.
+   - Replace `Magnetic` (it overshoots) with a 300ms ease-emphasis tween, or drop it.
+   - Move transitions onto the deck durations.
+   - Add a pause, or pause-when-off-screen, to the dark-room loops.
+   - Raise the desktop pane and tree labels to 13px.
+   - Correct parts 2, 4, 6, 8, 9, 11 and 12 of the card. Add the section reorder and the demoted heading to the copy questions.
+   - File `docs/requests/tabs.md` asking the shared owner to let `data-thumb` put the page's own words in the header ("Open Tabs"), so the first screen stops showing two solid pills with different verbs.

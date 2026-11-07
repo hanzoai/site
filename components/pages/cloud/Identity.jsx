@@ -1,6 +1,12 @@
 'use client';
+// Persona: a product team that needs sign-in for its own users.
+// Goal: see the hosted sign-in working, what the token carries, and one session across every app.
+// CTA: Try Hanzo (identity.hero, identity.mid, identity.close).
+// Metric: signup_start (cta_click identity.hero)
+// Signature: the card that never leaves: the first screen pins and three stages step in beside the same hosted card.
+// Beyond: Wear your name: the hosted card redrawn from your hostname, name and ways in.
 /* Identity (v2, archetype A Launch).
-   V2: 8/10 The hosted sign-in card is the hero and never leaves: the first screen pins, and as you scroll the title gives way to three chapters while the same card signs someone in, shows what the token carries and lights every app; features as a bento of tiles; large-organization detail in tabs; wear-your-name.
+   V2: 8/10 The hosted sign-in card never leaves while the first screen pins through three stages (stacked on phones); features as a bento; large-org tabs; wear-your-name; greys only, one ask.
    Signature: the card that never leaves. The hosted hanzo.id sign-in card sits beside the title signing someone in by
    itself (password, then a second factor). Scroll, and the first screen pins: the title steps out and the three stages
    step in one at a time while the same card changes to show each one - the ways in, what the token carries, one
@@ -9,12 +15,16 @@
    detail in tabs (all of it in the HTML).
    Beyond: "Wear your name" - type your hostname and your name, choose the ways in, and the hosted card redraws
    white-labelled as yours. Nothing is saved or sent.
-   Accent: rose, from the sign-in button. Every word and link is Hanzo's; the hostname is an example. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; the hostname is an example.
+   Persona: a product team that needs sign-in for its own users and does not want to hand-roll OAuth.
+   Goal: see the hosted sign-in working, what the token carries, and that one session covers every app.
+   CTA: Try Hanzo (hero, the sticky ask bar, Add sign-in and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
-import { Lines } from '../../v2/LiftStage';
+import { Lines, useTick } from '../../v2/LiftStage';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Identity.css';
 
@@ -28,7 +38,9 @@ const STAGES = [
 
 /* The hosted card. at 0: signing someone in by itself; 1 the ways in; 2 the token; 3 every app. */
 function SignCard({ at }) {
-  const [ref, live] = useLive(0.3);
+  const [ref, seen] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [t, setT] = useState(0); // hero loop: 0 password, 1 continue, 2 code, 3 signed in
   useEffect(() => {
     if (!live || at !== 0) return;
@@ -36,14 +48,12 @@ function SignCard({ at }) {
     return () => clearTimeout(id);
   }, [t, live, at]);
   const [w, setW] = useState(0); // which way in is lit
-  useEffect(() => {
-    if (!live || at !== 1) return;
-    const id = setInterval(() => setW((v) => (v + 1) % 5), 900);
-    return () => clearInterval(id);
-  }, [live, at]);
+  useTick(900, live && at === 1, () => setW((v) => (v + 1) % 5));
   return (
+    <div className="lp-host">
+    <LivePause paused={paused} onToggle={togglePause} className="id-pause" />
     <div className="id-card" ref={ref} aria-hidden="true">
-      <p className="id-url"><i />hanzo.id</p>
+      <p className="id-url"><i />hanzo.id<span>Sign-in</span></p>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className="id-screen" initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.18 } }} transition={{ duration: 0.55, ease: EASE }}>
           {at === 0 && (
@@ -79,12 +89,13 @@ function SignCard({ at }) {
           )}
           {at === 3 && (
             <div className="id-apps">
-              <div>{Array.from({ length: 9 }).map((_, i) => <motion.i key={i} initial={{ opacity: 0.15, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15 + i * 0.09, type: 'spring', stiffness: 300, damping: 22 }} />)}</div>
+              <div>{Array.from({ length: 9 }).map((_, i) => <motion.i key={i} initial={{ opacity: 0.15, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15 + i * 0.06, duration: 0.3, ease: EASE }} />)}</div>
               <p>one session</p>
             </div>
           )}
         </motion.div>
       </AnimatePresence>
+    </div>
     </div>
   );
 }
@@ -98,12 +109,8 @@ function Pin() {
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
   useEffect(() => { const m = matchMedia('(min-width: 901px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
   useMotionValueEvent(scrollYProgress, 'change', (p) => { if (wide) setAt(Math.max(0, Math.min(3, Math.floor(p * 4 * 0.9999)))); });
-  useEffect(() => {
-    if (wide) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.i)), { rootMargin: '-50% 0px -45% 0px' });
-    arts.current.forEach((a) => a && io.observe(a));
-    return () => io.disconnect();
-  }, [wide]);
+  // phones: no pin and nothing floating; each stage carries its own card, and the hero card keeps signing in
+  useEffect(() => { if (!wide) setAt(0); }, [wide]);
   const layer = (i) => ({ ref: (el) => (arts.current[i] = el), 'data-i': i, 'data-on': at === i ? '' : undefined, 'data-past': at > i ? '' : undefined });
   return (
     <section ref={sec} className="id-pin" aria-label="Hanzo Identity">
@@ -111,12 +118,11 @@ function Pin() {
         <div className="v2-wrap v2-grid id-pin-grid">
           <div className="id-layers">
             <div className="id-layer id-hero" {...layer(0)}>
-              <p className="v2-kick acc">Sign-in</p>
               <Lines as="h1" className="v2-display id-h1" lines={['Hanzo', 'Identity']} data-morph-target="" />
-              <p className="v2-lede id-sub">The sign-in your users actually see.</p>
+              <p className="v2-lede id-sub v2-in" style={{ animationDelay: '.3s' }}>The sign-in your users actually see.</p>
               <div className="v2-acts">
-                <A to="/login" className="v2-btn solid">Try Hanzo</A>
-                <A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn">View Documentation</A>
+                <Cta to="/login" id="identity.hero" thumb>Try Hanzo</Cta>
+                <Cta to="https://docs.hanzo.ai/docs/openapi/iam" kind="quiet" id="identity.view-documentation">View Documentation</Cta>
               </div>
             </div>
             {STAGES.map(([t, d], i) => (
@@ -124,6 +130,7 @@ function Pin() {
                 <p className="v2-kick acc">{String(i + 1).padStart(2, '0')} / 03</p>
                 <h2 className="v2-headline"><span>{t}</span></h2>
                 <p className="v2-body">{d}</p>
+                <div className="id-card-m" aria-hidden="true"><SignCard at={i + 1} /></div>
               </article>
             ))}
           </div>
@@ -172,7 +179,7 @@ function Large() {
         <div className="id-tabs" role="tablist" aria-label="Running it for a large organization">
           {LARGE.map(([t], i) => (
             <button key={t} type="button" role="tab" id={'id-t' + i} aria-selected={at === i} aria-controls={'id-p' + i} onClick={() => setAt(i)}>
-              {at === i && <motion.span layoutId="id-tab" className="id-tab-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              {at === i && <motion.span layoutId="id-tab" className="id-tab-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="id-tab-t">{t}</span>
             </button>
           ))}
@@ -208,8 +215,8 @@ function Wear() {
     <section className="v2-sec id-wear">
       <div className="v2-wrap v2-grid">
         <div className="id-wear-l">
-          <p className="v2-kick acc">White-labelled by hostname</p>
           <h2 className="v2-display s">Wear your name</h2>
+          <p className="v2-kick acc id-wear-cap">White-labelled by hostname</p>
           <p className="v2-lede">Your mark on your domain, never ours.</p>
           <label className="id-wear-f">
             <span>Hostname</span>
@@ -279,7 +286,7 @@ export default function Identity() {
           <div className="id-add-l">
             <h2 className="v2-display m">Add sign-in</h2>
             <p className="v2-lede">Register the app, set the callback your framework already uses, install the SDK. That is the whole integration.</p>
-            <div className="v2-acts"><A to="/login" className="v2-btn solid">Try Hanzo</A><A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn">Read Documentation</A></div>
+            <div className="v2-acts"><Cta to="/login" id="identity.mid">Try Hanzo</Cta><Cta to="https://docs.hanzo.ai/docs/openapi/iam" kind="quiet" id="identity.read-documentation">Read Documentation</Cta></div>
           </div>
           <ol className="id-three" aria-hidden="true">
             {['Register the app', 'set the callback', 'install the SDK'].map((s, i) => <li key={s}><span>{i + 1}</span>{s}</li>)}
@@ -290,7 +297,7 @@ export default function Identity() {
       <section className="id-end">
         <div className="v2-wrap id-end-in">
           <h2 className="v2-display">Get started with Identity</h2>
-          <div className="v2-acts"><A to="https://docs.hanzo.ai/docs/projects/hanzoai/iam" className="v2-btn solid">Read the docs</A><A to="https://github.com/hanzoai" className="v2-btn">View on GitHub</A></div>
+          <div className="v2-acts"><Cta to="/login" id="identity.close">Try Hanzo</Cta><Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/iam" kind="quiet" id="identity.read-the-docs">Read the docs</Cta><Cta to="https://github.com/hanzoai" kind="link" id="identity.view-on-github">View on GitHub</Cta></div>
         </div>
       </section>
     </main>

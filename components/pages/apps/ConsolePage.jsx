@@ -1,8 +1,9 @@
 'use client';
 /* Console (v2, archetype A "Launch"): one admin for everything you run, shown as the shell itself.
    Persona: a developer or operator running Hanzo services for an organization (keys, usage, apps, models)
+   Metric: api_key_created
    Goal: watch the console's modules open one by one, find anything by typing, then open the console
-   CTA: Open Console -> https://platform.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
+   CTA: Open Console -> https://platform.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta console.hero / console.close)
    Signature: the shell, driving itself. The console window fills the dark hero: its command palette types a module's
    name, the module opens in the shell (projects, keys, usage, apps, models, organization) and plays its own moment (a
    build finishes, a key is revoked, usage records land, an app gets an identity and a store, your own provider
@@ -14,13 +15,14 @@
    Not only scroll: the shell runs by itself (idle) and types (time); the palette and the fact cards answer the hand
    (state); Stage and chapters are the scroll half.
    Motion: the shell (signature) + Stage (it settles as you scroll) + sticky chapters + cards that open into their page.
-V2: 8/10 the dark-room hero is the shell, huge under the title and driving itself, with a Pause; six sticky chapters pin it on each module; the palette is real and wide; four facts open into their page; Get Console, then a close with one ask; greys only, nothing above a headline
+V2: 8/10 the black-room hero is the shell, the one big thing under a 52px title, driving itself with a Pause; six sticky chapters pin it on each module; the palette is real; four facts open into their page; Get Console, then a close with one ask; deck colours, radii and scale, outlined objects, no springs
    The v1 drag-to-reorder sidebar is gone (its words stay, with the palette). Every word and link is Hanzo's. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useRouter } from 'next/navigation';
-import { EASE_OUT_EXPO as EASE, SPRING as SP } from '../../../lib/motion';
-import { A, Go, More } from '../../kit';
+import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
+import { A, More } from '../../kit';
+import BizAsk from '../../v2/BizAsk';
 import { href } from '../../../lib/route';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
@@ -34,7 +36,8 @@ const DOCS = 'https://docs.hanzo.ai/docs/console';
 const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
 const TEAM = 'https://hanzo.team/';
-const SPRING = SP.sheet;
+const ARRIVE = { duration: 0.3, ease: EASE }; // deck: no springs; arrivals take ease-emphasis at 300ms
+const GLIDE = { duration: 0.3, ease: [0.4, 0, 0.2, 1] }; // things that move and stay
 
 /* the sidebar: Hanzo's products, as the console shows them */
 const SIDE = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
@@ -140,7 +143,7 @@ function Usage({ org, play }) {
         <div className="cs-use-fig">
           <span className="cs-roll">
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.b key={n} className="bz-fig" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={SPRING}>{n}</motion.b>
+              <motion.b key={n} className="bz-fig" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={ARRIVE}>{n}</motion.b>
             </AnimatePresence>
           </span>
           <span className="cs-use-l">usage records</span>
@@ -203,7 +206,7 @@ function Org({ org, play, flip }) {
         <span className="cs-oidc x-mono">OIDC</span>
         <span className="cs-org-n">
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.b key={org} initial={{ y: '80%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-80%', opacity: 0 }} transition={SPRING}>{org}</motion.b>
+            <motion.b key={org} initial={{ y: '80%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-80%', opacity: 0 }} transition={ARRIVE}>{org}</motion.b>
           </AnimatePresence>
         </span>
         <em>what your organization owns</em>
@@ -228,7 +231,7 @@ function View({ id, ...p }) {
 function Pal({ q, go }) {
   const hits = find(q).slice(0, 5);
   return (
-    <motion.div className="cs-pal" aria-hidden="true" initial={{ opacity: 0, y: -14, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.16 } }} transition={SPRING}>
+    <motion.div className="cs-pal" aria-hidden="true" initial={{ opacity: 0, y: -14, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } }} transition={ARRIVE}>
       <div className="cs-pal-in">
         <Glass />
         <span className="cs-pal-q">{q || <em>Type a module or a product</em>}<i className="cs-caret" /></span>
@@ -302,13 +305,13 @@ function Shell({ auto, view: want, size = 'lg' }) {
             <span className="cs-ava">{org[0]}</span>
             <span className="cs-orgsw-n">
               <AnimatePresence mode="popLayout" initial={false}>
-                <motion.b key={org} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={SPRING}>{org}</motion.b>
+                <motion.b key={org} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={ARRIVE}>{org}</motion.b>
               </AnimatePresence>
             </span>
             <span className="cs-oidc x-mono">OIDC</span>
           </div>
           <ul className="cs-mods" aria-label="Modules">
-            <motion.i className="cs-pill" aria-hidden="true" initial={false} animate={{ y: idx * 44 }} transition={SPRING} />
+            <motion.i className="cs-pill" aria-hidden="true" initial={false} animate={{ y: idx * 44 }} transition={GLIDE} />
             {MODS.map((x) => (
               <li key={x.id} className={x.id === view ? 'on' : ''}>
                 {auto
@@ -321,12 +324,12 @@ function Shell({ auto, view: want, size = 'lg' }) {
         <div className="cs-main">
           <div className="cs-head">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.h3 key={view} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.14 } }} transition={{ duration: 0.4, ease: EASE }}>{m.t}</motion.h3>
+              <motion.h3 key={view} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>{m.t}</motion.h3>
             </AnimatePresence>
             <button type="button" className="cs-k" onClick={focusFind} aria-label="Find it by typing it: open the command palette"><Glass /><span>Find it by typing it</span><kbd>/</kbd></button>
           </div>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div key={view} className="cs-vw" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.14 } }} transition={{ duration: 0.5, ease: EASE }}>
+            <motion.div key={view} className="cs-vw" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.5, ease: EASE }}>
               <View id={view} org={org} play={live} flip={flip} />
             </motion.div>
           </AnimatePresence>
@@ -350,7 +353,7 @@ function Hero() {
         <div className="cs-intro">
           <p className="bz-lede">One admin for everything you run</p>
           <div className="bz-acts">
-            <span data-thumb="Open Console" data-cta="primary"><Go to={APP} solid>Open Console</Go></span>
+            <BizAsk to={APP} thumb="Open Console" cta="console.hero">Open Console</BizAsk>
             <More to={DOCS}>Documentation</More>
           </div>
         </div>
@@ -374,7 +377,7 @@ function Chapters() {
   return (
     <BizChapters label="A module per product, one shell around them" className="cs-ch" items={CH} stage={(at) => <div className="cs-ch-stage"><Shell view={CH[at].id} size="md" /></div>}>
       <header className="bz-wrap cs-ch-head">
-        <h2 className="bz-display md">A module per product, one shell around them</h2>
+        <h2 className="bz-headline">A module per product, one shell around them</h2>
       </header>
     </BizChapters>
   );
@@ -415,7 +418,7 @@ function Find() {
   return (
     <section className="bz-sec cs-find" aria-labelledby="cs-find-h">
       <div className="bz-wrap bz-grid cs-find-top">
-        <h2 id="cs-find-h" className="bz-display md">Find it by typing it</h2>
+        <h2 id="cs-find-h" className="bz-headline">Find it by typing it</h2>
         <p className="bz-body">A command palette reaches every module and every record without learning where anything lives. The sidebar is yours to reorder and prune.</p>
       </div>
       <div className="bz-wrap">
@@ -535,7 +538,7 @@ function End() {
         <div className="cs-end-main">
           <h2 id="cs-end-h" className="bz-display md">Open the console</h2>
           <p className="bz-lede">Sign in with your Hanzo identity. The organization you land in is the one that gets billed, and everything on these screens belongs to it.</p>
-          <div className="bz-acts"><span data-cta="primary"><Go to={APP} solid>Open Console</Go></span></div>
+          <div className="bz-acts"><BizAsk to={APP} cta="console.close">Open Console</BizAsk></div>
         </div>
         <A to={GH} className="cs-row"><span>View on GitHub</span><Arrow /></A>
       </div>
@@ -545,7 +548,8 @@ function End() {
 
 export default function ConsolePage() {
   return (
-    <main className="bz cs" data-ask-name="Hanzo Console">
+    <main className="bz cs">
+      <span data-ask-name="Hanzo Console" hidden />
       <Hero />
       <Chapters />
       <Find />

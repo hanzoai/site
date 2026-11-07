@@ -1,195 +1,162 @@
 'use client';
-/* The ask bar (mounted once in app/layout.jsx): one solid ask, in Hanzo's words, that arrives once the hero has gone by,
-   on every page and at every width. Desktop: a small bar at the bottom centre (Hanzo mark, page name, search, the ask).
-   Phones and tablets (≤ 900 px): a full-width bar under the thumb. While it is on, the header's own "Try Hanzo" turns
-   from solid to outline, so exactly one solid button is ever on screen; it is also an outline while the page's own
-   hero ask ([data-thumb]) or closing band is in view, and solid otherwise.
-   HOW TO USE on a page (all optional):
-   - data-thumb on your hero's main button or link: the bar carries the same words and href
-     (<Go to="/contact-sales" solid data-thumb="Talk to sales">Talk to sales</Go>). Without one it carries the header's
-     "Try Hanzo". The bar also steps aside whenever any [data-thumb] button is itself on screen.
-   - data-ask-name="Hanzo Dev" anywhere in <main> to name the page in the bar (default: the first part of its <title>);
-     data-ask-note="No card needed" for the 12 px risk line beside the button (desktop), only with Hanzo's own words.
-   - data-ask-hide on a section whose bottom edge holds something the bar must not cover (a caption, a dock).
-   - data-ask="off" on <main> for a page with no ask at all (use sparingly). data-dock on your own fixed bottom bar.
-   It also yields to the footer, the closing band (.x-band), open menus, search, sheets, the cookie note and the
-   phone keyboard. Arrival: opacity, scale .96 → 1 and y 12 → 0 in 250 ms (BRIEF-v3 §3.3 rule 3). */
-import { useEffect, useRef, useState } from 'react';
+/* The phone ask (mounted once in app/layout.jsx). MASTER 3.2 rule 6: the one solid ask lives in Hanzo's sticky header
+   ("Try Hanzo") at every width; nothing floats over content on desktop. On phones (≤ 700 px) a slim, quiet bar carries
+   the page's OWN ask once the hero's button has gone by, and only where it covers nothing:
+   - only when the page marks its own ask with data-thumb and its words differ from the header's "Try Hanzo";
+   - never while that ask, or any button with the same words, is on screen;
+   - never while scrolling (it settles in at rest), and never where text, a picture or a control sits under it;
+   - never over the footer, the closing band (.x-band), [data-ask-hide], menus, search, sheets, the cookie note or the
+     keyboard.
+   Desktop (> 700 px), the Apple local-nav move: once the hero's own ask has scrolled away, the header's solid button
+   carries the page's ask (its words and link); while the hero's ask is on screen the header's button is an outline,
+   so one solid ask shows at a time. Pages without data-thumb keep Hanzo's "Try Hanzo".
+   HOW TO USE on a page: data-thumb on your hero's main button (<Cta thumb> or data-thumb="Talk to sales"). That's all. */
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { EASE_CALM } from '../lib/motion';
 import { onDomChange } from '../lib/domwatch';
 
-const HEADER_ASK = { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' }; // Hanzo's own header words
-const OVERLAY = '.x-cookie:not([hidden]), .x-sheet, .x-pal, .x-pop, .x-nav-panel, .x-sheet2-wrap, [aria-modal="true"], [data-dock], .xcr-dock';
-// an overlay counts only while it is actually showing (closed drawers often keep aria-modal in the DOM)
-const shown = (el) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && +getComputedStyle(el).opacity > 0.05 && !el.closest('[hidden], [inert], [aria-hidden="true"]');
-const overlayOpen = () => [...document.querySelectorAll(OVERLAY)].some(shown);
-// a page button counts as "a solid ask on screen" only if you can see it as one: filled, opaque, not mid-entrance
-const seenNow = (el) => {
-  if (!el || !el.isConnected || !shown(el)) return false;
-  for (let x = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false;
-  return true;
-};
-const filled = (box) => {
-  if (box.matches('.x-band')) return shown(box);
-  const el = box.matches('a, button') ? box : box.querySelector('a, button'); // the control, not a card around it
-  if (!seenNow(el)) return false;
-  const m = getComputedStyle(el).backgroundColor.match(/[\d.]+/g);
-  return !!m && !(m[3] !== undefined && +m[3] < 0.5);
-};
-const nameOf = (t) => (t || '').split(/\s+[—|–-]\s+/)[0].trim();
-// a wrapper with display: contents has no box for IntersectionObserver; watch the link or button inside it instead
+const HEADER_ASK = 'Try Hanzo';
+const PHONE = '(max-width: 700px)';
+const OVERLAY = '.x-cookie, .x-sheet, .x-pal, .x-pop, .x-nav-panel, .x-sheet2-wrap, [aria-modal="true"], [data-dock], .xcr-dock';
+const words = (t) => (t || '').replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
 const boxOf = (el) => (el.getClientRects().length ? el : el.querySelector('a, button') || el.firstElementChild || el);
-const SOLID = 'main .x-btn.solid, main a.solid, main button.solid, main [data-thumb], .x-band';
+const shown = (el) => el.isConnected && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && !el.closest('[hidden], [inert], [aria-hidden="true"]');
+const visible = (el) => { if (!shown(el)) return false; for (let x = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false; const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
+const MEDIA = 'img, video, canvas, svg, picture, iframe, button, a, input, textarea, select, label';
+// is anything readable, tappable or boxed (a card) in the band where the bar would sit? Full-width section
+// backgrounds are only surfaces; a card's surface, text, pictures and controls are content.
+const painted = (cs) => !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) || parseFloat(cs.borderTopWidth) > 0 || cs.boxShadow !== 'none';
+function covered() {
+  const base = innerHeight - 10; // the bar spans base-44 … base
+  for (const y of [base - 2, base - 22, base - 42, base - 54]) for (let x = 14; x < innerWidth - 8; x += 22) {
+    for (const el of document.elementsFromPoint(x, y)) {
+      if (el.closest('.x-ask')) continue;
+      if (el === document.documentElement || el === document.body || el.tagName === 'MAIN') break;
+      if (el.matches(MEDIA) || el.closest('button, a')) return true;
+      if ([...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) return true;
+      if (el.getBoundingClientRect().width < innerWidth * 0.92 && painted(getComputedStyle(el))) return true; // a card
+    }
+  }
+  return false;
+}
 
 export default function Ask() {
   const path = usePathname();
-  const [ask, setAsk] = useState(null); // { label, href, name, note }
+  const [ask, setAsk] = useState(null); // { label, href }
   const [on, setOn] = useState(false);
-  const [quiet, setQuiet] = useState(false); // another solid ask (hero data-thumb, closing band) is on screen
   const [dark, setDark] = useState(false);
-  const bar = useRef(null);
 
   useEffect(() => {
-    setOn(false); setQuiet(false);
-    let off = false;
-    const cleanups = [];
-    // pages render after the route change; read them once they are in the DOM
+    setOn(false); setAsk(null);
+    const mq = matchMedia(PHONE);
+    let stop = () => {};
     const start = () => {
-      if (off) return;
+      stop(); setOn(false);
+      if (!mq.matches) { setAsk(null); return; }
       const main = document.querySelector('main');
-      if (!main || main.closest('[data-ask="off"]') || main.matches('[data-ask="off"]') || main.querySelector('[data-ask="off"]')) { setAsk(null); return; }
-      const own = main.querySelector('[data-thumb]');
-      const label = own ? (own.getAttribute('data-thumb') || own.textContent.trim()) : HEADER_ASK.label;
-      const href = own ? (own.getAttribute('href') || own.querySelector('a')?.getAttribute('href') || own.dataset.href || HEADER_ASK.href) : HEADER_ASK.href;
-      const name = main.querySelector('[data-ask-name]')?.getAttribute('data-ask-name') || nameOf(document.title) || 'Hanzo AI';
-      const note = main.querySelector('[data-ask-note]')?.getAttribute('data-ask-note') || '';
-      setAsk({ label, href, name, note });
+      const own = main?.querySelector('[data-thumb]');
+      if (!main || !own || main.closest('[data-ask="off"]') || main.matches('[data-ask="off"]')) { setAsk(null); return; }
+      const label = own.getAttribute('data-thumb') || own.textContent.trim();
+      if (!label || words(label) === words(HEADER_ASK)) { setAsk(null); return; } // the header already carries it
+      const href = own.getAttribute('href') || own.querySelector('a')?.getAttribute('href') || own.dataset.href;
+      if (!href) { setAsk(null); return; }
+      setAsk({ label, href });
 
-      // the hero: the first block of the page that is more than a strip
-      // the trigger: the hero's own ask button when the page marks one in its first screen (the bar arrives as soon as
-      // it scrolls away, even if the hero is a tall pinned scene), otherwise the first block that is more than a strip
-      const ownBox = own && boxOf(own);
-      const hero = ownBox && ownBox.getBoundingClientRect().top < innerHeight * 1.2 && ownBox.getBoundingClientRect().height > 0
-        ? ownBox
-        : [...main.children].find((c) => c.getBoundingClientRect().height > 200) || main;
-      const phone = matchMedia('(max-width: 900px)');
-      let past = false, typing = false;
-      const blocking = new Set();
-      let solids = new Set();
-      const twins = new WeakSet();
+      const trigger = boxOf(own);
+      let typing = false, scrolling = false, rest = 0, recheck = [0, 0];
+      const twins = () => [...main.querySelectorAll('a, button, [data-thumb]')].filter((el) => el === own || words(el.getAttribute('data-thumb') || el.textContent) === words(label));
+      const blockers = () => [...document.querySelectorAll('footer, .x-band, [data-ask-hide]')];
       const update = () => {
-        if (off) return;
-        const seen = [...solids].some(filled);
-        const twin = [...solids].some((el) => twins.has(el) && seenNow(el)); // the page's own ask, solid or not
-        // a hero ask that stays pinned on screen but has faded out also counts as gone, once you are past the first screen
-        if (!past && hero === ownBox && scrollY > innerHeight * 0.8 && !filled(ownBox)) past = true;
-        if (past && hero === ownBox && scrollY < innerHeight * 0.5 && filled(ownBox)) past = false;
-        // the footer, the closing band and [data-ask-hide] always make room; a page's own ask only once you can see it
-        const blocked = [...blocking].some((el) => (el.closest('[data-thumb]') || el.matches('[data-thumb]') ? filled(el) : true));
-        const show = past && !blocked && !seen && !twin && !typing && !overlayOpen();
+        const r = trigger.getBoundingClientRect();
+        const past = r.bottom < 60 || (scrollY > innerHeight * 0.8 && !visible(trigger)); // gone by, or faded in a pinned hero
+        const show = past && !scrolling && !typing
+          && !twins().some((el) => visible(boxOf(el)))
+          && !blockers().some(visible)
+          && ![...document.querySelectorAll(OVERLAY)].some(shown)
+          && !covered();
         setOn(show);
-        setQuiet(seen);
+        // headlines and pictures can slide in under it a moment later: look again while it shows
+        clearTimeout(recheck[0]); clearTimeout(recheck[1]);
+        if (show) recheck = [setTimeout(update, 600), setTimeout(update, 1500)];
+        const under = document.elementsFromPoint(innerWidth / 2, innerHeight - 30).find((el) => !el.closest('.x-ask'));
+        setDark(!!under?.closest('[data-room=dark]'));
       };
-      const io = new IntersectionObserver((es) => {
-        es.forEach((e) => {
-          if (e.target === hero) past = !e.isIntersecting && e.boundingClientRect.top < 0;
-          else if (e.isIntersecting) blocking.add(e.target); else blocking.delete(e.target);
-        });
-        update();
-      }, { rootMargin: '-64px 0px 0px 0px' });
-      io.observe(hero);
-      document.querySelectorAll('footer, .x-band, [data-ask-hide], main [data-thumb]').forEach((el) => io.observe(boxOf(el)));
-      // every solid button in the page: while one is on screen, the header's ask is an outline (one solid at a time)
-      solids = new Set();
-      // entrances fade buttons in after they enter the screen: look again once they have settled
-      let again = 0;
-      const sio = new IntersectionObserver((es) => {
-        es.forEach((e) => (e.isIntersecting ? solids.add(e.target) : solids.delete(e.target)));
-        update(); clearTimeout(again); again = setTimeout(update, 1300);
-      }, { rootMargin: '-60px 0px 0px 0px' });
-      // sticky buttons never re-enter the screen, and fades finish later: look again whenever scrolling settles
-      let settle = 0;
-      const onScroll = () => { clearTimeout(settle); settle = setTimeout(update, 180); };
-      addEventListener('scroll', onScroll, { passive: true });
-      // the page's own ask is also any link or button with the bar's words (a close's "Launch a bot", a card's CTA):
-      // while one is on screen the bar steps aside, so it never lands on top of it (phones especially)
-      const same = (el) => el.textContent.replace(/[→↗\s]+/g, ' ').trim().toLowerCase() === label.replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
-      const watchSolids = () => {
-        document.querySelectorAll(SOLID).forEach((el) => sio.observe(boxOf(el)));
-        main.querySelectorAll('a, button').forEach((el) => { if (same(el)) { twins.add(el); sio.observe(el); } });
-      };
-      watchSolids();
-      // heroes fade their buttons in over the first seconds: look again a few times while the page settles
-      const settleTimers = [400, 1300, 2600, 4200].map((ms) => setTimeout(update, ms));
-
-      // the room under the bar: a dark one turns the bar dark
-      const rooms = new Set();
-      let roomIo = null;
-      const watchRooms = () => {
-        roomIo?.disconnect(); rooms.clear();
-        roomIo = new IntersectionObserver((es) => {
-          es.forEach((e) => (e.isIntersecting ? rooms.add(e.target) : rooms.delete(e.target)));
-          setDark(rooms.size > 0);
-        }, { rootMargin: `-${Math.max(0, innerHeight - 56)}px 0px -24px 0px` });
-        document.querySelectorAll('[data-room=dark]').forEach((r) => roomIo.observe(r));
-      };
-      watchRooms();
-      addEventListener('resize', watchRooms);
-
-      const fin = (e) => { typing = phone.matches && /INPUT|TEXTAREA|SELECT/.test(e.target.tagName); update(); };
+      const onScroll = () => { scrolling = true; setOn(false); clearTimeout(rest); rest = setTimeout(() => { scrolling = false; update(); }, 260); };
+      const fin = (e) => { typing = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName); update(); };
       const fout = () => { typing = false; setTimeout(update, 60); };
+      addEventListener('scroll', onScroll, { passive: true });
       addEventListener('focusin', fin); addEventListener('focusout', fout);
-      // menus, sheets, search and the cookie note come and go without telling anyone; late sections bring new asks
-      const watchMore = () => { document.querySelectorAll('.x-band, [data-ask-hide], main [data-thumb]').forEach((el) => io.observe(boxOf(el))); watchSolids(); update(); };
-      const offDom = onDomChange(watchMore);
-      cleanups.push(() => { settleTimers.forEach(clearTimeout); clearTimeout(again); clearTimeout(settle); removeEventListener('scroll', onScroll); io.disconnect(); sio.disconnect(); roomIo?.disconnect(); offDom(); removeEventListener('resize', watchRooms); removeEventListener('focusin', fin); removeEventListener('focusout', fout); });
+      const offDom = onDomChange(update);
+      const first = setTimeout(update, 400);
+      stop = () => { clearTimeout(rest); clearTimeout(first); recheck.forEach(clearTimeout); removeEventListener('scroll', onScroll); removeEventListener('focusin', fin); removeEventListener('focusout', fout); offDom(); };
     };
-    const r = requestAnimationFrame(() => setTimeout(start, 120));
-    return () => { off = true; cancelAnimationFrame(r); cleanups.forEach((f) => f()); };
+    const t = setTimeout(start, 150);
+    mq.addEventListener('change', start);
+    return () => { clearTimeout(t); stop(); mq.removeEventListener('change', start); };
   }, [path]);
 
-  // one solid ask on screen: the header's own ask steps back to an outline while the bar carries the ask, and while
-  // the page's own hero ask or closing band is in view (PLAN 0.9: outlined while the hero CTA is in view)
+  // desktop: the header's ask slot carries the page's own ask after the hero
   useEffect(() => {
-    const h = document.documentElement;
-    if (ask && (on || quiet)) h.dataset.ask = 'on'; else delete h.dataset.ask;
-    return () => { delete h.dataset.ask; };
-  }, [on, quiet, ask]);
+    const H = document.documentElement;
+    const btn = document.querySelector('header[data-slot=masthead] a[href="https://hanzo.ai/signup"], header[data-slot=masthead] a[data-x-ask]');
+    if (!btn) return;
+    if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }
+    const restore = () => { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); btn.removeAttribute('data-cta'); delete H.dataset.ask; };
+    restore();
+    const mq = matchMedia('(min-width: 701px)');
+    let off = () => {};
+    const start = () => {
+      off(); restore();
+      const main = document.querySelector('main');
+      const own = main?.querySelector('[data-thumb]');
+      if (!mq.matches || !own || main.matches('[data-ask="off"]')) return;
+      const label = own.getAttribute('data-thumb') || own.textContent.trim();
+      const href = own.getAttribute('href') || own.querySelector('a')?.getAttribute('href') || own.dataset.href;
+      if (!label || !href) return;
+      const twins = () => [...main.querySelectorAll('a, button, [data-thumb]')].filter((el) => el === own || words(el.getAttribute('data-thumb') || el.textContent) === words(label));
+      let shown = null, t = 0;
+      const update = () => {
+        const heroAsk = twins().some((el) => visible(boxOf(el)));
+        const page = boxOf(own).getBoundingClientRect().bottom < 60 || !heroAsk; // the hero's ask has gone by
+        if (page !== shown) {
+          shown = page;
+          btn.textContent = page ? label : btn.dataset.xAsk;
+          btn.setAttribute('href', page ? href : btn.dataset.xHref);
+          if (page) btn.setAttribute('data-cta', 'header-ask'); else btn.removeAttribute('data-cta');
+        }
+        if (heroAsk) H.dataset.ask = 'quiet'; else delete H.dataset.ask; // one solid at a time
+      };
+      const onScroll = () => { clearTimeout(t); t = setTimeout(update, 80); };
+      addEventListener('scroll', onScroll, { passive: true });
+      const offDom = onDomChange(update);
+      const timers = [200, 1300, 2600].map((ms) => setTimeout(update, ms));
+      off = () => { clearTimeout(t); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll); offDom(); };
+    };
+    const k = setTimeout(start, 150);
+    mq.addEventListener('change', start);
+    return () => { clearTimeout(k); off(); mq.removeEventListener('change', start); restore(); };
+  }, [path]);
 
   if (!ask) return null;
   const ext = /^https?:/.test(ask.href);
-  const search = () => dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true }));
-  const top = () => { window.__lenis ? window.__lenis.scrollTo(0) : scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
-  const track = () => dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'cta_click', where: 'ask-bar', label: ask.label, path } }));
   return (
     <AnimatePresence>
       {on && (
-        <motion.div
-          ref={bar}
+        <motion.a
           key="ask"
+          href={ask.href}
           className="x-ask"
           data-tone={dark ? 'dark' : 'light'}
-          role="region"
-          aria-label="Get started"
-          initial={{ opacity: 0, y: 12, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.97, transition: { duration: 0.2, ease: [0.7, 0, 0.84, 0] } }}
-          transition={{ duration: 0.25, ease: EASE_CALM }}
+          {...(ext ? { rel: 'noopener' } : {})}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 8, transition: { duration: 0.15 } }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          onClick={() => dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'cta_click', where: 'phone-ask', label: ask.label, path } }))}
         >
-          <button type="button" className="x-ask-name" onClick={top} aria-label={`${ask.name}: back to top`}>
-            <svg viewBox="0 0 67 67" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22.21 67V44.6369H0V67H22.21Z" /><path d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" /><path d="M22.21 0H0V22.3184H22.21V0Z" /><path d="M66.7198 0H44.5098V22.3184H66.7198V0Z" /><path d="M66.7198 44.6369H44.5098V67H66.7198V44.6369Z" /></svg>
-            <span>{ask.name}</span>
-          </button>
-          <button type="button" className="x-ask-s" aria-label="Search Hanzo" onClick={search}>
-            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="m13.2 13.2 3.6 3.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
-          </button>
-          {ask.note && <span className="x-ask-note">{ask.note}</span>}
-          <a href={ask.href} className="x-ask-a" onClick={track} {...(ext ? { rel: 'noopener' } : {})}>
-            <span>{ask.label}</span><i aria-hidden="true">→</i>
-          </a>
-        </motion.div>
+          <span>{ask.label}</span><i aria-hidden="true">→</i>
+        </motion.a>
       )}
     </AnimatePresence>
   );

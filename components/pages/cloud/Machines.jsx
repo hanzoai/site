@@ -1,6 +1,12 @@
 'use client';
+// Persona: an ML engineer who needs a GPU by the hour.
+// Goal: price a machine before it exists and see how renting works through the API.
+// CTA: Try Hanzo (machines.hero, machines.close).
+// Metric: signup_start (cta_click machines.hero)
+// Signature: priced before it exists: H100 cards wake as the dry-run quote rolls in.
+// Beyond: the dry-run quote for every size: an hour, a working day and a month before anything is created.
 /* Machines (v2, archetype A Launch).
-   V2: 8/10 A black product-shot hero where H100 cards wake in a rack as the dry-run quote rolls in huge (the hour, the working day, the month); an Apple-style tech-spec sheet; the six renting steps as pinned chapters over one API console; four reasons as a tile grid.
+   V2: 8/10 Black product shot: H100 cards wake as the dry-run quote rolls in; tech specs; renting steps as chapters (stacked on phones); use-case tiles; greys only, one ask.
    Signature: priced before it exists. A rack of H100 cards sits in the dark; choose 1, 2 or 4 (or let it choose) and
    that many cards wake, the dryRun request rewrites itself and the quote rolls in at the price list's rate.
    Supporting: kinetic title lines; the rack settles from huge on scroll (Stage); the six steps as pinned chapters
@@ -9,12 +15,13 @@
    created, exactly what the API's dryRun answers.
    Accent: green, from the card LED. Every word, figure and link is Hanzo's. */
 import { motion, AnimatePresence } from 'motion/react';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import { useLive, useSteps } from './Frame';
 import { Lines, Lift } from '../../v2/LiftStage';
 import PinChapters from '../../v2/x-hypatia/PinChapters';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Machines.css';
 
@@ -31,7 +38,7 @@ function Roll({ v, k }) {
   return (
     <span className="mc-roll">
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={k + v} initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-100%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{v}</motion.span>
+        <motion.span key={k + v} initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-100%', opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{v}</motion.span>
       </AnimatePresence>
     </span>
   );
@@ -39,7 +46,9 @@ function Roll({ v, k }) {
 
 /* The rack and the quote: choose a size and that many cards wake while the dry-run quote rolls in. */
 function Rent() {
-  const [ref, live] = useLive(0.3);
+  const [ref, seen] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [at, choose] = useSteps(3, 4000, live);
   const [label, cards, vram, hour, day, month] = SIZES[at];
   return (
@@ -57,11 +66,12 @@ function Rent() {
         <div className="mc-req-bar">
           <span className="mc-verb">POST /v1/compute/machines</span>
           <span className="mc-dry">dryRun</span>
+          <LivePause paused={paused} onToggle={togglePause} inline dark className="mc-pause" />
         </div>
         <div className="mc-sizes" role="tablist" aria-label="Machine size">
           {SIZES.map(([s], i) => (
             <button key={s} type="button" role="tab" aria-selected={at === i} onClick={() => choose(i)}>
-              {at === i && <motion.span layoutId="mc-size" className="mc-size-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              {at === i && <motion.span layoutId="mc-size" className="mc-size-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span>{s}</span>
             </button>
           ))}
@@ -150,12 +160,12 @@ export default function Machines() {
     <main className="v2 mc">
       <section className="mc-hero v2-dark" data-room="dark">
         <div className="v2-wrap mc-hero-t">
-          <p className="v2-kick acc">High-Performance Computing</p>
           <Lines as="h1" className="v2-display mc-h1" lines={['Hanzo Machines']} data-morph-target="" />
-          <p className="v2-lede mc-sub">Rent a machine by the hour, metered to your organization.</p>
+          <p className="v2-kick mc-cap">High-Performance Computing</p>
+          <p className="v2-lede mc-sub v2-in" style={{ animationDelay: '.3s' }}>Rent a machine by the hour, metered to your organization.</p>
           <div className="v2-acts mc-acts">
-            <A to="/login" className="v2-btn solid">Try Hanzo</A>
-            <A to="https://docs.hanzo.ai" className="v2-btn">View Documentation</A>
+            <Cta to="/login" id="machines.hero" thumb>Try Hanzo</Cta>
+            <Cta to="https://docs.hanzo.ai" kind="quiet" id="machines.view-documentation">View Documentation</Cta>
           </div>
         </div>
         <Lift className="v2-wrap mc-lift" from={1.12} y={40} origin="50% 0%" offset={['start end', 'start 0.2']}>
@@ -232,7 +242,7 @@ export default function Machines() {
         flip
       />
 
-      <GetIt name="Machines" tag="Long-running compute machines" seed="machines" data={[3.48, 27.84, 2540, 80, 16896, 528]} />
+      <GetIt name="Machines" tag="Long-running compute machines" seed="machines" data={[3.48, 27.84, 2540, 80, 16896, 528]} ask={['Try Hanzo', '/login', 'machines.close']} />
     </main>
   );
 }

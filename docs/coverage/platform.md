@@ -1,106 +1,160 @@
-# Coverage: /platform (components/pages/Platform.jsx, Platform.css, platformData.js; app/platform/page.jsx)
+# /platform coverage (MASTER.md part 2, the 18 parts)
 
-Shared parts used: `components/v2/IsoStack`, `PinChapters`, `SheetPanel`, `useCalm` (all owned by this chat), plus the kit's `A`, `Band`, `Tabs`/`TabPanel` and `Copy`, and the site's ask bar (`components/Ask.jsx`, through `data-thumb`).
+Page file: `components/pages/Platform.jsx` (+ `Platform.css`, `platformData.js`, `app/platform/page.jsx`; own v2 parts `IsoStack`, `PinChapters`, `SheetPanel`, `useCalm`) · gallery: `docs/gallery/platform/` · metric id: `api_key_created`
 
-- **2.1 Strategy and conversion:**
-  - The file header holds Persona (Developer, then the enterprise buyer), Goal (`api_key_created`) and CTA ("Start building" → platform.hanzo.ai/api-keys).
-  - One solid button per screen:
-    - The hero has "Start building" (solid, `data-thumb`, `data-cta="platform.hero"`) and "Inspect the stack" (outline).
-    - After the hero, the site's ask bar carries the same words, and the header's "Try Hanzo" turns to outline while the bar is up.
-    - The closing Band has the same solid ask.
-  - Gaps: there is no `lib/cta.js` yet. The Band's button is rendered by the kit, so it carries no `data-cta`.
-- **2.2 Information architecture and navigation:**
-  - The header and footer are untouched. Every link on the old page is kept (link parity 129/129).
-  - The directory keeps all 7 planes and every item in them, plus "The complete catalog" → /products.
-  - "Inspect the stack" carries the camera to the map's opening state (`#stack`). It falls back to a plain jump on phones and with JS off.
-- **2.3 First impression and page narrative:**
-  - The hero opens on the h1 "The AI‑native cloud." with no eyebrow. "Hanzo Platform" sits under it as a mono label.
-  - The hero object is the whole stack as one white slab. It turns toward the pointer, and the marquee moves without input.
-  - One idea per screen: hero, then the map (intro, then API, MIND, ACT, RUN and SILICON, each a pinned chapter), Kernel, the tile grid, the loop, the cloud plane by plane (six sticky chapters), One API, Open, the directory, the Band.
-  - The night opens as a disc from the stack and closes back into it, so the dark room has no hard edge on either side.
-  - Gap: the kit has no `PageHero` yet. The Band is the kit's.
-- **2.4 Conversion system:**
-  - The install commands (`docker run …`, `curl -fsSL https://hanzo.sh | sh`, `hanzo serve cloud`) copy exactly the displayed text. The `$` prompt is a separate span that is not selectable and not copied.
-  - The ask never appears as three or more equal buttons.
-  - Gap: the kit's `Copy` still shows its tick when the clipboard is blocked (kit behaviour, not this page).
-- **2.5 Trust and proof:**
-  - Only Hanzo's own figures appear, each beside its own method line: 95.6% (GPQA Diamond, with the sheet's "Historical multi-model research evaluation · new questions"), 3.02× (with the 42-task pairing and the interval), 2.0× (with the LoCoMo split), 11 layers and 4 GPU backends.
-  - There are no badges, seals or invented numbers.
-- **2.6 Content presentation (copy untouched):**
-  - Parity: text 330/330, links 129/129.
-  - Type uses five levels: display 56–124 px (line height .92), headline 36–56, title 28, lede 21–24, body 17–19. Mono labels are 13 px (14 on phones). Headlines use `text-wrap: balance`.
-  - Detail lives in things you open: the layer inspector sheet, the console's tabs and the directory preview.
-  - Measured floors: no visible text under 13 px on desktop or under 14 px at 375 px (`audit.cjs`).
-- **2.7 Visual design system:**
-  - 0 UI hues: ink, greys and silvers only.
-    - The lit plates are white with a white glow in the dark room.
-    - Status shows by shape: Ready is a filled dot, Building a turning ring.
-    - The GET pill is white on black.
-  - One dark middle room (the map) plus the dark closing Band.
-  - Radii are 28 px on hero objects and 16–22 px on cards.
-  - Gap: no CANON tokens file exists yet, so radii are literal values in `Platform.css`.
-- **2.8 UI component library:**
-  - The console's kinds-of-work tabs are the kit's APG `Tabs`/`TabPanel`.
-  - The layer inspector is `v2/SheetPanel`, because the kit's `Sheet` unmounts when it closes, which would take the 11 layers' text out of the HTML. SheetPanel keeps it in, inert. SheetPanel has `role=dialog`, `aria-modal`, Esc to close, a focus trap, and returns focus to whatever opened it.
-  - Every hover sits inside `@media (hover: hover)` and changes something other than opacity: a nudge, an ink fill, a lift or the plate lighting.
-  - Presses are `scale(.98)`/`(.99)` or `translateY(1px)`.
-  - Gap: the hero asks are raw `<a class="x-btn">`, because the kit's `Go` cannot carry `data-thumb` or `data-cta` and there is no `Cta` yet.
-- **2.9 Motion and interaction:**
-  - Signature: the camera (scroll). The stack explodes, the night opens and the camera zooms group by group.
-  - The other kinds of motion, so scroll is 2 of 6:
-    - Pointer: the stack turns to the pointer, tiles play their own drawing on hover, the directory previews a row, the ring holds a step.
-    - Time: One API types each call path, the improvement ring turns by itself, the marquee drifts.
-    - State: sheets rise, and the endpoint pill and tab pill glide.
-    - Arrival: headlines cut into their line masks.
-  - `variety.py` passes: 4 techniques (scroll scrub, typing, layoutId, Sigil) and 0 fade-ups.
-  - Reduced motion shows final states: the stack is open and still, there is no typing, the ring stays put, the marquee stops, and the scenes stack in flow.
-- **2.10 Media:**
-  - Hanzo publishes no platform film or photo, so the objects are real product UI and drawings: the API Platform console, the One API terminal, the Open terminal, the plate stack, the kernel fan, the graph, AST tree, commit line, request flow and trace, and the directory's Sigil.
-- **2.11 Mobile and responsive:**
-  - At 375×812 there is no sideways scroll.
-  - The pinned scenes become a vertical story. The map's groups each get a mini stack diagram, the chapters run words then picture, and the directory runs two columns of 48 px rows.
-  - No tap target is under 44 px (measured). CLS while scrolling the whole page: 0.021 on phone, 0 on desktop.
-- **2.12 Accessibility (WCAG 2.2 AA):**
-  - One h1. Plates and drawings are `aria-hidden`, and every plate has a real button twin in the group rows.
-  - Focusing a part of the map that is off screen brings the camera there.
-  - The One API replay has a Play/Pause control.
-  - Text on white is #6e6e73 or darker. Small text in dark rooms is white at .62 or above.
-  - Gaps: the marquee only pauses on hover, with no pause button. No axe or screen-reader run has been done.
-- **2.13 Performance and engineering:**
-  - Animation is transform and opacity only. The night is a 200 px disc scaled up, so there is no clip-path and no huge layer. The camera is one translate and scale, and each plate is one translateZ.
-  - Timers and typing stop when their section is off screen, and there is one Sigil canvas on the page.
-  - Not measured: LCP and INP.
-- **2.14 SEO and machine files:**
-  - Title, description and JSON-LD are unchanged, and every word is in the server HTML.
-  - The directory's preview text comes from each product's own meta description, looked up on the server and passed in, so nothing is fetched in the browser.
-- **2.15 Catalogue and product pages:**
-  - PLAN-COMPONENTS 5.9 directory:
-    - 44 px rows in four columns, with plane headers that carry `data-morph`.
-    - Hover or focus on a row reveals that product's existing description and its Sigil in a sticky preview card.
-    - The description comes from its own page's meta description or, for a cloud product without one, that page's lede.
-  - 5.9 asked for a "group accent". JAMES 7 (0 hues) wins, so the colour is left out.
-- **2.16 Developer experience:**
-  - The One API replay walks the existing paths, `/v1/models` to `/v1/billing/usage`.
-  - The copy buttons copy exactly the displayed text.
-- **2.17 States and resilience:**
-  - With JS off, a `noscript` sheet lays every scene out in flow. Measured: 0 hidden text runs beyond the empty search counter and the ring's 0-size anchors. The closing Band and inactive tab panels also show.
-  - Ask the map: below 2 characters nothing lights. With no match, every plate dims and the count reads "0 / 11". The clear control is an icon button.
-  - Gap: no error boundary around IsoStack or Sigil.
-- **2.18 Measurement and handover:**
-  - `data-cta` is on the hero primary.
-  - Gaps: no `lib/track.js` exists, so no events fire.
-  - Proof is in `docs/gallery/platform/`. Checks: 200, parity 0 missing, `variety.py` OK, `audit.cjs` (floors, taps, CLS), and a JS-off render.
+Open copy questions for James: none. Live /platform has no sales ask, so the System-type "sales ask" is not added; Hanzo's own "Start building" stays.
+Shared changes requested (`docs/requests/platform.md`): the site ask bar (`components/Ask.jsx`) should not float over content on desktop (header-only there); kit `Band` should accept an `id` so its primary carries `data-cta`; kit `Copy` should not show its tick when the clipboard write fails; `lib/cta.js`, `lib/track.js` and a kit `PageHero` do not exist yet.
+Forks this page deleted: the page-local ask bar (the site `Ask` reads `data-thumb` instead), the Kernel section (now inside layer 11's sheet), the five-tile grid (now five rows and one stage), the marquee (now a static row), the separate proof strip and facts row (now one figures section), the closing of the black room (it left a blank screen).
 
-## §4 common gate
-1. Persona, Goal and CTA: yes (file header). A metric id: yes (`api_key_created`).
-2. One h1 in server HTML: yes. Band: yes. `PageHero`: not in the kit yet. No raw `<video>`, `<img>` or `<table>`. Raw `.x-btn` is on the two hero asks (see 2.8).
-3. Tokens: system.css greys and room tokens, plus literal radii. One filled primary per screen: yes. `data-thumb` and `data-cta`: yes, on the hero.
-4. Copy parity 0 missing; link parity 0 unexpected. UI strings: only control labels in `aria-label`s (Clear, Pause, Play, Previous layer, Next layer, Find in the stack). They wait for the `content/ui-strings.json` register.
-5. Reduced motion shows final states. JS off is legible. Every motion has a keyboard path (the rows mirror the plates, the ring steps are buttons, tabs follow APG).
-6. 375×812 and 1470×801 pass, with no sideways scroll at 375. CLS is 0.021 or less. LCP and INP are not measured.
-7. Contact sheet: `docs/gallery/platform/`.
-8. Ledger (what this page deleted):
-   - The page's own console tab set (replaced by the kit `Tabs`).
-   - The page's own closing section (replaced by the kit `Band`).
-   - The v1 page AskBar (replaced by the site ask bar).
-   - The iris accent and every clip-path wipe.
+Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js` (n/a for the second half: `lib/cta.js` does not exist; the label is Hanzo's own "Start building" → `platform.hanzo.ai/api-keys`, one constant `KEY_URL`)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; prices from `lib/plans.js` (n/a for prices: no price on this page)
+- [x] Open copy questions for James listed, none decided
+
+Done here: Top comment of `Platform.jsx` names Persona (developer, buyer second), Goal and metric `api_key_created`, CTA, Signature, Beyond. One solid ("Start building") on the hero, the same words in the site ask and the closing Band; "Inspect the stack" is quiet. `audit.cjs`: h1 count 1 at both sizes.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it (the layout's skip link targets `#main`, a marker the layout places before every page's `<main>`)
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- [x] Breadcrumb at depth 2 or more (n/a: /platform is depth 1)
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: Every anchor is the kit `A` (or `Go`, a local wrapper around it); directory rows and heads are real links. `python3 scripts/parity.py /platform`: links 129/129.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [ ] `PageHero`; nothing above the h1 (nothing above the h1: yes; `PageHero` does not exist in the kit, requested)
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer
+- [x] Card-to-page links use Morph; title lands within 12px
+
+Done here: First screen: the h1 cuts in by line mask at once and from 0.7 s each of the eleven plates slides out and names itself (450 ms a plate, one pass, under 5 s). Order: hero and map, directory, planes, capabilities, One API, loop, open, figures, Band, about 15 screens at 1470×801 (14,430 px with footer) and 19 at 375 before the footer. JS off: 211 of 215 text blocks visible (the 4 "hidden" are `display: contents` rows that do render). Directory rows and heads mark their label `data-morph`, so the shared Morph flies it into the destination page.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label
+- [x] Copy button copies exactly the displayed text; failure never says Copied (first half yes; the failure state is kit `Copy`, requested)
+- [ ] `data-cta` and `data-thumb` on every primary (hero yes: `data-cta="platform.hero"` + `data-thumb`; the Band's primary is kit `Band`, which takes no id: requested)
+
+Done here: Hero asks are kit `Cta` (`platform.hero`, `platform.stack`, `platform.inspect`). The hero primary carries `data-thumb`, so the site ask shows "Start building" after the hero and steps aside over the map and the chapters (`data-ask-hide`). Kit `CodeBlock` copies the command it shows.
+
+## 5. Trust and proof
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- [x] Marquees pause, freeze under reduced motion, hide duplicates (the marquee is gone: a static row)
+- [x] Privacy link and owner line beside every submit (n/a: no form)
+
+Done here: Figures are Hanzo's only: 95.6% (GPQA Diamond, with "152 of 159 new questions"), 3.02× (with its 95% interval), 2.0× (LoCoMo, 37.5% vs 18.8%), 11 and 4; each sits beside its method line and links to its measurement page. No count-up flashes a number that is not Hanzo's: figures settle by scale, the value is in the HTML.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] Tables, FAQ, tabs and code use the kit parts
+- [x] `python3 scripts/parity.py /platform`: 0 missing
+
+Done here: `audit.cjs` lists only 12px mono-capital labels (map bar, group keys, ring numbers) under 13px on desktop; phone chapter numbers raised to 14px. Headings use `text-wrap: balance`, body 62ch. Kit `Tabs`/`TabPanel`, `CodeBlock`, `Band`. Parity: text 330/330, links 129/129.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: `taste.py` OK on `Platform.jsx/.css`, `SheetPanel.css`, `IsoStack.css`, `PinChapters.css`; every value is a `--k-*` deck token declared once at the top of each stylesheet. The "architecture map" label moved from above the map headline to the bottom bar; mono tags under headings became captions under their objects (14px sans). The isometric stack and camera are this page's alone (`unique.py` OK).
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading (disabled/loading n/a: no async control)
+- [x] Focus ring visible on every stop of a Tab crawl
+- [x] Dialogs are native, trap focus and return it
+- [x] Inputs 16px or larger; no bare `:hover`
+- [x] Forks this page deleted: listed below
+
+Done here: Rows, pills, links, ring steps, capability rows and pause buttons change fill, colour or position on hover and press (`translateY(1px)` or `scale(.97)`, 90 ms); all hovers sit in `@media (hover: hover)`. The layer sheet (`SheetPanel`) is a `role="dialog"` with focus trap, Esc, focus return and `inert` when closed; it now starts below the 60px header, so its close button is on top (checked by `elementFromPoint`). The map finder input is 16px. Forks deleted: see the line at the top.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [x] Sound only on the listed moments, through the one kit
+
+Done here: Signature: the camera through the stack. Supporting: pinned chapters, typing (One API), Sigil preview; `variety.py` OK, no `Rise`. Kinds: scroll (camera, chapters), idle (arrival walk, capability walk, One API replay, ring), pointer (stack turns, previews), state (sheets, gliding pills), arrival (line masks). All auto-advancing parts are one-shot `setTimeout` steps that stop when off screen, with a pause control where they run past 5 s. Reduced motion: the stack rests open, no loops. No page-local sound; kit parts carry the shared ones.
+
+## 10. Media
+- [x] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video on the page)
+- [x] At most 2 videos playing; pause button on loops over 5 s (n/a: no video; animated loops have pause buttons)
+- [x] Budgets met; nothing missing; alt on every image (n/a: no images; every drawing is inline SVG, `aria-hidden`)
+- [x] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: Hanzo's /platform has no photography)
+
+Done here: The objects are drawn, not filmed: the iso stack, the console window, data shapes, wires, locks, the release rail, tapes, the capability drawings, the ring, the Sigil preview. No raw `img` or `video`.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: `audit.cjs`: scrollWidth equals width at 375 and 1470, taps list empty (all ≥44px), CLS 0 desktop / 0.003 phone. Phone first screen: h1, lede, "Start building", then the stack itself (300px) naming its plates and opening. Chapters become a vertical story; capability rows tap to the stage.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better
+- [x] Pause control on every moving item
+- [x] Forms labelled; first error focused (n/a for errors: the only field is the map finder, labelled "Find in the stack")
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: Smallest text is #525252 or #737373 on white (7.8:1 and 4.7:1) and #a3a3a3 on black (8.4:1). Pause buttons on the capability walk, the ring and the One API replay; the arrival walk is one pass under 5 s; the kernel bus dot lives inside the sheet. Keyboard focus inside the pinned map moves the camera to it (`follow`).
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [x] JS and CSS inside budget; every image and video sized
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop
+
+Done here: The h1 is server-rendered (line spans shown by the `now` flag). Transform and opacity only; one CSS file per part; no images. No fetch from the page; the directory text is read at build time from `content/pages.json`.
+
+## 14. SEO and machine files
+- [x] Title and description match live (or are listed for James)
+- [x] Canonical equals og:url equals the live URL
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: `app/platform/page.jsx` metadata equals `content/pages.json['/platform']` ("Hanzo Platform — one stack, down to the kernel"); canonical and og:url come from the shared layout; `<JsonLd route="/platform" />`.
+
+## 15. Catalogue and product pages
+- [x] Model card matches `SPEC.md` (n/a: no model card on /platform)
+- [x] Every card opens by Morph
+- [x] Every maker and model page linked in the DOM (n/a: not a model catalogue; every product route in the directory is linked)
+- [x] One price figure everywhere (n/a: no price)
+
+Done here: The 5.9 directory (MASTER 4.2 /platform) sits right after the map: seven planes, 44px rows in four even CSS columns, and the preview shows each product's own existing description with its Sigil on hover or focus. Labels carry `data-morph`.
+
+## 16. Developer experience
+- [x] One `CodeBlock`; copy equals display
+- [x] Config blocks parse on their own (n/a: no config blocks)
+- [x] Terminal pauses and ends on a static frame
+- [x] No hand-typed version number
+
+Done here: Commands are kit `CodeBlock` (docker run, curl install, hanzo serve), command first with Copy at the line's end, wrapping on phones instead of clipping. The One API replay has play/pause and rests on its typed path.
+
+## 17. States and resilience
+- [x] Loading, empty, error and offline states designed (n/a for loading/error/offline: no live data; empty: the map finder shows "0 / 11")
+- [x] Blocked live data leaves a complete page, no console errors
+- [ ] A failed submit keeps its values and shows no success (n/a: no form)
+- [ ] A thrown island does not blank the page (no page-local error boundary; requested as a kit part)
+
+Done here: Nothing on the page calls a network API. Console errors: 0 on load and scroll at both sizes (`look.cjs`). JS off reads in full (NOJS rules lay every scene out in flow and open the sheets' text).
+
+## 18. Measurement and handover
+- [ ] `data-cta` on every primary; events only through `lib/track.js` (hero and asks yes; Band primary blocked on kit; `lib/track.js` does not exist)
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [ ] `V2: <score>/10 <one line>` in the page file's top comment (added after the critic's verdict)
+- [ ] Review read: `docs/review/platform.md` verdict 8 or more (re-review requested after this rework)
+
+Done here: The page sends nothing; `data-cta` ids `platform.hero`, `platform.stack`, `platform.inspect`. Gallery proof in `docs/gallery/platform/`. Critic verdict before this rework: 6/10; this card is updated with the new verdict.

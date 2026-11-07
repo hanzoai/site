@@ -1,6 +1,7 @@
 'use client';
 /* Ledger (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
-   Persona: a developer building payments or a marketplace who needs money to balance (metric docs_click)
+   Persona: a developer building payments or a marketplace who needs money to balance
+   Metric: docs_click
    Goal: see that a one-sided entry cannot be written, then open the docs
    CTA: Read the docs -> https://docs.hanzo.ai/docs/cli/books (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: the book that balances itself. The live ledger sits beside the title on the first screen: four accounts
@@ -12,12 +13,12 @@
    Numscript that says the same thing are written for you, and the two sides always balance.
    Motion: the book (idle, signature) + Stage (it settles as you scroll) + sticky chapters (scroll) + the capability
    switch in the dark room (state, a gliding pill); headlines cut into their line. The request lives in a sheet.
-V2: 8/10 the live book on the first screen at both sizes, greys only, three sticky chapters, a dark room with a real object per capability, the splitter, one ask everywhere (hero, sticky bar, close)
+V2: 8/10 deck scale (h1 52, headings 26, one figure big per screen), the live book beside the title at both sizes, chapters stacked on phones, the receipt close; greys only, no springs, nothing floating
 */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../../ui';
-import { A, More } from '../../kit';
+import { A, More, Cta } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
 import BizLines from '../../v2/BizLines';
@@ -55,6 +56,7 @@ const two = (n) => String(n).padStart(2, '0');
 function Book() {
   const [ref, seen, calm] = useLive(0.2);
   const [held, setHeld] = useState(false);
+  const [pt, setPt] = useState(null); // what the pointer is on: { tx } or { acct }
   const live = seen && !held;
   const [at, setAt] = useState(0);
   const [f, setF] = useState(2);
@@ -67,9 +69,13 @@ function Book() {
   }, [f, at, live]);
   const fr = FILM[at][Math.min(f, FILM[at].length - 1)];
   const lastTx = fr.j[fr.j.length - 1];
-  const hot = new Set(lastTx && !fr.bad ? lastTx.p.flatMap(([s, d]) => [s, d]) : []);
+  const touched = (t) => t.p.flatMap(([s, d]) => [s, d]);
+  // the pointer answers: a journal row lights the accounts it touched, an account lights its postings
+  const ptTx = pt?.tx && fr.j.find((t) => t.id === pt.tx);
+  const hot = new Set(ptTx ? touched(ptTx) : pt?.acct != null ? [pt.acct] : lastTx && !fr.bad ? touched(lastTx) : []);
+  const lit = (t) => (pt?.tx === t.id) || (pt?.acct != null && touched(t).includes(pt.acct));
   return (
-    <div className="ld-book bz-obj" ref={ref} data-cursor="Watch">
+    <div className="ld-book bz-obj" ref={ref}>
       <div className="ld-bar">
         <span className="ld-bar-t"><i aria-hidden="true" />Double-Entry Ledger</span>
         <AnimatePresence mode="wait" initial={false}>
@@ -87,11 +93,11 @@ function Book() {
       <div className="ld-body">
         <div className="ld-accts">
           {ACC.map((a, i) => (
-            <div key={a} className={'ld-acct' + (i === 0 ? ' world' : '') + (hot.has(i) ? ' hot' : '')}>
+            <div key={a} className={'ld-acct' + (i === 0 ? ' world' : '') + (hot.has(i) ? ' hot' : '')} onPointerEnter={() => setPt({ acct: i })} onPointerLeave={() => setPt(null)}>
               <span className="x-mono">@{a}</span>
               <span className="ld-bal">
                 <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.b key={fr.b[i]} className="bz-fig" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{fmt(fr.b[i])}</motion.b>
+                  <motion.b key={fr.b[i]} className="bz-fig" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{fmt(fr.b[i])}</motion.b>
                 </AnimatePresence>
               </span>
               <em>{i === 0 ? 'may go below zero' : 'stays at or above zero'}</em>
@@ -103,7 +109,7 @@ function Book() {
           <ol>
             <AnimatePresence initial={false}>
               {fr.j.map((t, k) => (
-                <motion.li key={t.id} layout="position" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} className={(fr.hit === t.id ? 'hit' : '') + (t.back ? ' back' : '')}>
+                <motion.li key={t.id} layout="position" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} className={(fr.hit === t.id ? 'hit' : '') + (t.back ? ' back' : '') + (lit(t) ? ' lit' : '')} onPointerEnter={() => setPt({ tx: t.id })} onPointerLeave={() => setPt(null)}>
                   <span className="ld-tx x-mono">tx {t.id}{t.back ? ` ↩ ${t.back}` : ''}</span>
                   <div className="ld-posts">
                     {t.p.map(([s, d, v], i) => (
@@ -132,11 +138,11 @@ function Hero() {
   return (
     <section className="ld-hero" aria-labelledby="ld-h1">
       <div className="bz-wrap ld-hero-grid">
-        <BizLines as="h1" id="ld-h1" className="bz-display md ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
+        <BizLines as="h1" id="ld-h1" className="bz-display ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
         <p className="ld-copy"><span className="bz-lede ld-one">A double-entry ledger you post to over HTTP.</span> <span className="bz-body ld-more">Money here only ever moves: a posting names a source account, a destination account, an amount and an asset. There is no way to write a debit without its credit, because a one-sided entry is not something the API can express.</span></p>
         <div className="bz-acts ld-acts">
-          <A to={DOCS} className="x-btn solid" data-thumb="Read the docs" data-cta="primary">Read the docs</A>
-          <More to={GH}>GitHub</More>
+          <Cta to={DOCS} id="ledger.hero" thumb>Read the docs</Cta>
+          <Cta to={GH} kind="link" id="ledger.github">GitHub</Cta>
         </div>
         <BizStage from={1.03} over={560} lift={40} className="ld-stage"><Book /></BizStage>
       </div>
@@ -147,42 +153,50 @@ function Hero() {
 /* Chapter stages: one big idea each, drawn from the step it explains. */
 const Arrow = () => <svg viewBox="0 0 64 16" aria-hidden="true"><path d="M0 8h60M53 2l7 6-7 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
+/* Only the lit chapter's scene is in the page at a time (so with JS off nothing sits hidden); it crossfades on change. */
 function Scenes({ at }) {
+  const scene = [
+    <>
+      <div className="ld-post-row">
+        <p><span className="bz-kick">source</span><b className="x-mono">@users:001</b></p>
+        <span className="ld-post-arrow"><Arrow /><i className="ld-dot" /></span>
+        <p><span className="bz-kick">destination</span><b className="x-mono">@merchants:042</b></p>
+      </div>
+      <div className="ld-post-row two">
+        <p><span className="bz-kick">amount</span><b className="bz-fig">9500</b></p>
+        <p><span className="bz-kick">asset</span><b className="bz-fig">USD/2</b></p>
+      </div>
+      <p className="ld-seal"><b className="bz-fig">Σ 0</b><span>debit and credit, one movement</span></p>
+    </>,
+    <>
+      {[T1, T2, T3].map((t, i) => (
+        <div key={t.id} className={'ld-link-row' + (t.back ? ' back' : '')}>
+          <span className="ld-chain-tx bz-fig">tx {t.id}</span>
+          <div className="ld-chain-p x-mono">{t.p.map(([s, d, v], j) => <p key={j}>@{ACC[s]} → @{ACC[d]} <b>{fmt(v)}</b></p>)}</div>
+          <span className="ld-chain-h x-mono">{i ? 'sha256 of tx ' + i : 'sha256'}</span>
+        </div>
+      ))}
+      <svg className="ld-back" viewBox="0 0 40 160" aria-hidden="true"><path d="M6 150 C 38 150, 38 84, 6 84" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M12 78 L5 84 L12 90" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
+      <p className="ld-chain-n">a reversing transaction points back at the original</p>
+    </>,
+    <>
+      {[['POST', 'order_42_payout', 'tx 2', ''], ['POST', 'order_42_payout', 'the original — tx 2', 'hit'], ['POST', 'order_42_payout', 'different postings — caught', 'bad']].map(([m, k, r, c], i) => (
+        <div key={i} className={'ld-req ' + c}>
+          <span className="x-mono ld-req-m">{m}</span>
+          <span className="x-mono ld-req-k">Idempotency-Key: {k}</span>
+          <span className="ld-req-r">{r}</span>
+        </div>
+      ))}
+      <p className="ld-seal"><b className="bz-fig">1</b><span>transaction 2, posted once</span></p>
+    </>,
+  ];
   return (
     <div className="ld-scenes">
-      <div className={'ld-scene ld-post' + (at === 0 ? ' on' : '')} aria-hidden={at !== 0}>
-        <div className="ld-post-row">
-          <p><span className="bz-kick">source</span><b className="x-mono">@users:001</b></p>
-          <span className="ld-post-arrow"><Arrow /><i className="ld-dot" /></span>
-          <p><span className="bz-kick">destination</span><b className="x-mono">@merchants:042</b></p>
-        </div>
-        <div className="ld-post-row two">
-          <p><span className="bz-kick">amount</span><b className="bz-fig">9500</b></p>
-          <p><span className="bz-kick">asset</span><b className="bz-fig">USD/2</b></p>
-        </div>
-        <p className="ld-seal"><b className="bz-fig">Σ 0</b><span>debit and credit, one movement</span></p>
-      </div>
-      <div className={'ld-scene ld-chain' + (at === 1 ? ' on' : '')} aria-hidden={at !== 1}>
-        {[T1, T2, T3].map((t, i) => (
-          <div key={t.id} className={'ld-link-row' + (t.back ? ' back' : '')}>
-            <span className="ld-chain-tx bz-fig">tx {t.id}</span>
-            <div className="ld-chain-p x-mono">{t.p.map(([s, d, v], j) => <p key={j}>@{ACC[s]} → @{ACC[d]} <b>{fmt(v)}</b></p>)}</div>
-            <span className="ld-chain-h x-mono">{i ? 'sha256 of tx ' + i : 'sha256'}</span>
-          </div>
-        ))}
-        <svg className="ld-back" viewBox="0 0 40 160" aria-hidden="true"><path d="M6 150 C 38 150, 38 84, 6 84" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M12 78 L5 84 L12 90" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
-        <p className="ld-chain-n">a reversing transaction points back at the original</p>
-      </div>
-      <div className={'ld-scene ld-retry' + (at === 2 ? ' on' : '')} aria-hidden={at !== 2}>
-        {[['POST', 'order_42_payout', 'tx 2', ''], ['POST', 'order_42_payout', 'the original — tx 2', 'hit'], ['POST', 'order_42_payout', 'different postings — caught', 'bad']].map(([m, k, r, c], i) => (
-          <div key={i} className={'ld-req ' + c}>
-            <span className="x-mono ld-req-m">{m}</span>
-            <span className="x-mono ld-req-k">Idempotency-Key: {k}</span>
-            <span className="ld-req-r">{r}</span>
-          </div>
-        ))}
-        <p className="ld-seal"><b className="bz-fig">1</b><span>transaction 2, posted once</span></p>
-      </div>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={at} className={'ld-scene on ' + ['ld-post', 'ld-chain', 'ld-retry'][at]} initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.2 } }} transition={{ duration: 0.6, ease: EASE }}>
+          {scene[at]}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -223,7 +237,9 @@ function CapObject({ i }) {
 }
 
 function Caps() {
-  const [i, setI] = useState(0);
+  const [i, setI0] = useState(0);
+  const [moved, setMoved] = useState(false);
+  const setI = (k) => { setMoved(true); setI0(k); };
   const key = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setI((i + 1) % 3); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setI((i + 2) % 3); } };
   return (
     <section className="bz-sec ld-caps" data-room="dark" aria-labelledby="ld-caps-h">
@@ -235,13 +251,13 @@ function Caps() {
         <div className="ld-caps-tabs" role="tablist" aria-label="Capabilities" onKeyDown={key}>
           {CAPS.map(([g], k) => (
             <button key={g} type="button" role="tab" id={'ld-cap-t' + k} aria-selected={i === k} aria-controls={'ld-cap-p' + k} tabIndex={i === k ? 0 : -1} onClick={() => setI(k)} className="x-mono">
-              {i === k && <motion.span layoutId="ld-cap-pill" className="ld-caps-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+              {i === k && <motion.span layoutId="ld-cap-pill" className="ld-caps-pill" transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} />}
               <span>{g}</span>
             </button>
           ))}
         </div>
         {CAPS.map(([g, t, d], k) => (
-          <div key={t} className="ld-cap" role="tabpanel" id={'ld-cap-p' + k} aria-labelledby={'ld-cap-t' + k} hidden={i !== k}>
+          <div key={t} className={'ld-cap' + (moved ? ' moved' : '')} role="tabpanel" id={'ld-cap-p' + k} aria-labelledby={'ld-cap-t' + k} hidden={i !== k}>
             <div className="ld-cap-copy">
               <span className="ld-glyph x-mono" aria-hidden="true">{g}</span>
               <h3 className="bz-title">{t}</h3>
@@ -319,8 +335,8 @@ function Numscript() {
     <section className="bz-sec ld-nsec" aria-labelledby="ld-ns-h">
       <div className="bz-wrap bz-grid">
         <div className="ld-nsec-copy">
-          <p className="bz-kick">Numscript</p>
           <BizLines id="ld-ns-h" className="bz-display sm" lines={['One transaction,', 'however many', 'parties']} />
+          <p className="bz-kick">Numscript</p>
           <BizSheet label="See the request" kick="bash" title="One transaction, however many parties">
             <Code tabs={[{ k: 'bash', code: CODE }]} light mark="Idempotency-Key: order_42_payout" />
           </BizSheet>
@@ -333,41 +349,42 @@ function Numscript() {
 
 const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
-/* The close: one sentence at Display size, the same one ask, and one full-width row for the secondary. */
+/* The close: one sentence at Display size and the same one ask; beside it the "Get Ledger" receipt (licence, source,
+   the agent prompt) that balances to Σ 0 like everything else here; then one full-width row for the secondary. */
 function End() {
   return (
-    <section className="bz-sec ld-end" aria-labelledby="ld-get">
-      <div className="bz-wrap">
-        <div className="bz-grid">
-          <div className="ld-end-get">
-            <BizLines id="ld-get" className="bz-display md" lines={['Get Ledger']} />
-            <p className="bz-lede">Double-entry accounting ledger</p>
-            <div className="ld-chips">
-              <span className="ld-chip"><span>License:</span> Apache-2.0</span>
-              <A to={GH} className="ld-chip"><Gh />hanzoai</A>
-            </div>
-            <div className="bz-acts"><A to={DOCS} className="x-btn solid" data-cta="primary">Read the docs</A></div>
-          </div>
-          <div className="ld-end-start">
-            <h3 className="bz-title">Get started with Ledger</h3>
-            <p className="bz-body">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
-            <div className="ld-links"><More to={GH}>View on GitHub</More></div>
-            <BizPaste name="Ledger" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ledger in my project." className="ld-paste" />
-          </div>
+    <section className="bz-sec ld-end" aria-labelledby="ld-start-h">
+      <div className="bz-wrap bz-grid">
+        <div className="ld-end-say">
+          <BizLines id="ld-start-h" className="bz-display md" lines={['Get started', 'with Ledger']} />
+          <p className="bz-lede">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
+          <div className="bz-acts"><Cta to={DOCS} id="ledger.close">Read the docs</Cta></div>
         </div>
-        <A to={DEPLOY} className="ld-row" data-cta="secondary"><span>Deploy to Cloud</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
+        <div className="ld-receipt bz-obj">
+          <h2 className="bz-title">Get Ledger</h2>
+          <p className="ld-rc-tag">Double-entry accounting ledger</p>
+          <dl className="ld-rc-rows x-mono">
+            <div><dt>License:</dt><dd>Apache-2.0</dd></div>
+            <div><dt><Gh /></dt><dd><A to={GH} className="ld-rc-a">hanzoai</A></dd></div>
+          </dl>
+          <div className="ld-links"><More to={GH}>View on GitHub</More></div>
+          <BizPaste name="Ledger" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ledger in my project." className="ld-paste" />
+          <p className="ld-rc-sum x-mono" aria-hidden="true"><span>Σ</span><b>0</b></p>
+        </div>
       </div>
+      <div className="bz-wrap"><A to={DEPLOY} className="ld-row" data-cta="ledger.deploy"><span>Deploy to Cloud</span><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></div>
     </section>
   );
 }
 
 export default function Ledger() {
   return (
-    <main className="bz ld" data-ask-name="Hanzo Ledger">
+    <main className="bz ld">
+      <span data-ask-name="Hanzo Ledger" hidden />
       <Hero />
-      <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Scenes at={at} />}>
+      <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <><h2 className="bz-headline ld-ch-h">Every cent lands somewhere</h2><Scenes at={at} /></>}>
         <header className="bz-wrap ld-ch-head">
-          <BizLines className="bz-display md" lines={['Every cent', 'lands somewhere']} />
+          <h2 className="bz-headline">Every cent lands somewhere</h2>
         </header>
       </BizChapters>
       <Caps />

@@ -1,6 +1,7 @@
 'use client';
 /* Dataroom (v2, archetype A "Launch"; greys and ink only, JAMES.md 7).
-   Persona: a founder raising, or a deal team running diligence, who sends documents to people outside (metric signup_click)
+   Persona: a founder raising, or a deal team running diligence, who sends documents to people outside
+   Metric: signup_start
    Goal: see what a link can tell you and control after it has gone, then start sharing
    CTA: Try Hanzo -> /login (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: a link's views ticking in. Beside the title on the first screen, the room after the link has gone:
@@ -13,16 +14,16 @@
    by one, then the page with your email printed across it.
    Motion: the reading room (idle, signature) + sticky chapters (scroll) + headlines cut into their line (arrival) +
    files that open into their page (state, BizOpen); the switches and gates answer the hand. Every word and link is Hanzo's.
-V2: 8/10 the live reading room beside the title on the first screen at both sizes, five pinned chapters, the folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder, greys only, one ask everywhere (hero, the site's sticky bar, close)
+V2: 8/10 deck scale (h1 52, headings 26, the views figure 64 as the one big thing), the live reading room beside the title at both sizes, five chapters, the folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder; deck greys, outline-or-raise, no springs, nothing floating, one ask (hero, the site's bar, close)
 */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A, More } from '../../kit';
+import { A, More, Cta } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
-import { EASE_OUT_EXPO as EASE, SPRING } from '../../../lib/motion';
+import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import './Dataroom.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/dataroom';
@@ -82,7 +83,7 @@ function Live() {
     { id: 'o' + visit, b: 'verified email', t: 'opened the link' },
   ].filter(Boolean);
   return (
-    <div className="dr-live bz-obj" ref={ref} data-cursor="Watch">
+    <div className="dr-live bz-obj" ref={ref}>
       <div className="dr-live-bar">
         <span className="dr-lock"><Lock /></span>
         <span className="dr-live-url x-mono">dataroom link</span>
@@ -95,14 +96,14 @@ function Live() {
           <span className="bz-kick">views</span>
           <span className="dr-views-n" aria-live="off">
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.b key={views} className="bz-fig" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={SPRING.toggle}>{views}</motion.b>
+              <motion.b key={views} className="bz-fig" initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{views}</motion.b>
             </AnimatePresence>
           </span>
         </div>
         <ol className="dr-feed" aria-label="Visits">
           <AnimatePresence initial={false} mode="popLayout">
             {feed.map((e) => (
-              <motion.li key={e.id} layout="position" className={e.hot ? 'hot' : ''} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.5, ease: EASE }}>
+              <motion.li key={e.id} layout="position" className={e.hot ? 'hot' : ''} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>
                 <i aria-hidden="true" /><b>{e.b}</b><span>{e.t}</span>
               </motion.li>
             ))}
@@ -134,11 +135,11 @@ function Hero() {
     <section className="dr-hero" aria-labelledby="dr-h1">
       <div className="bz-wrap bz-grid dr-hero-grid">
         <div className="dr-hero-copy">
-          <BizLines as="h1" id="dr-h1" className="bz-display md" lines={['Hanzo', 'Dataroom']} now delay={0.05} />
+          <BizLines as="h1" id="dr-h1" className="bz-display" lines={['Hanzo', 'Dataroom']} now delay={0.05} />
           <p className="dr-tag x-mono">Secure Document Sharing</p>
           <p className="bz-lede">You send a link instead of an attachment, and the link keeps working for you after it leaves.</p>
           <div className="dr-acts">
-            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+            <Cta to="/login" id="dataroom.hero" kind="quiet" thumb>Try Hanzo</Cta>
             <More to={DOCS}>Documentation</More>
           </div>
         </div>
@@ -269,7 +270,7 @@ function Files() {
     <section className="bz-sec dr-files" aria-labelledby="dr-files-h">
       <div className="bz-wrap bz-grid">
         <header className="dr-files-head">
-          <BizLines id="dr-files-h" className="bz-display sm" lines={['Diligence is', 'forty documents', 'and a hundred', 'questions']} />
+          <BizLines id="dr-files-h" className="bz-headline" lines={['Diligence is forty documents', 'and a hundred questions']} />
           <p className="dr-tag x-mono">Data rooms · open a file</p>
         </header>
         <div className="dr-finder bz-obj">
@@ -289,7 +290,7 @@ const GATE = { password: ['Enter the password', 'Unlock'], email: ['Enter the co
 function Gate({ k, mail, i, go }) {
   const [t, b] = GATE[k];
   return (
-    <motion.div className="dr-gate" style={{ zIndex: 10 - i }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: i * 14, scale: 1 - i * 0.045 }} exit={{ opacity: 0, x: 120, rotate: 5, transition: { duration: 0.4, ease: EASE } }} transition={SPRING.sheet}>
+    <motion.div className="dr-gate" style={{ zIndex: 10 - i }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: i * 14, scale: 1 - i * 0.045 }} exit={{ opacity: 0, x: 120, rotate: 5, transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }} transition={{ duration: 0.3, ease: EASE }}>
       <span className="dr-gate-n x-mono">{i + 1}</span>
       <p className="bz-title">{t}</p>
       {k === 'password' && <span className="dr-field x-mono" aria-hidden="true">••••••••••</span>}
@@ -312,7 +313,7 @@ function Ten() {
     <section className="bz-sec dr-ten" data-room="dark" aria-labelledby="dr-ten-h">
       <div className="bz-wrap bz-grid">
         <div className="dr-ten-copy">
-          <BizLines id="dr-ten-h" className="bz-display sm" lines={['A link you', 'still control']} />
+          <BizLines id="dr-ten-h" className="bz-headline" lines={['A link you still control']} />
           <p className="dr-tag x-mono">Share it ten ways</p>
           <p className="bz-lede">Every setting here is per link, so one document can be shared ten different ways.</p>
           <div className="dr-sets" role="group" aria-label="This link's settings">
@@ -411,7 +412,7 @@ function End() {
             <p className="bz-lede">You will know whether it was read before you have to ask.</p>
           </div>
           <div className="dr-end-go">
-            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+            <Cta to="/login" id="dataroom.close" kind="quiet" size="lg" thumb>Try Hanzo</Cta>
             <p className="dr-end-note"><b>Start Sharing</b><span>Share documents with real-time analytics</span></p>
           </div>
         </div>
@@ -429,11 +430,12 @@ function End() {
 
 export default function Dataroom() {
   return (
-    <main className="bz dr" data-ask-name="Hanzo Dataroom">
+    <main className="bz dr">
+      <span data-ask-name="Hanzo Dataroom" hidden />
       <Hero />
       <BizChapters label="A link, shared" className="dr-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Room at={at} />}>
         <header className="bz-wrap dr-ch-head">
-          <BizLines className="bz-display md" lines={['A link, shared']} />
+          <BizLines className="bz-headline" lines={['A link, shared']} />
         </header>
       </BizChapters>
       <Files />

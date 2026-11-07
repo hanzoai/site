@@ -1,28 +1,26 @@
 /* ---------- world v2 (wd2-) ---------- */
-.wd2 .l2-stage.l2-dark { background: radial-gradient(80% 60% at 50% 90%, rgba(163, 163, 163, .1), transparent 70%), #000; }
-.wd2 .l2-stage-kick i { background: var(--ac); box-shadow: 0 0 0 4px rgba(163, 163, 163, .18); }
-.wd2 .l2-stage-obj > * { width: min(100%, 1280px); }
+
 
 /* Stage object: the planet and its panel */
-.wd2-world { position: relative; height: min(760px, 84svh); }
+.wd2-world { position: relative; height: min(620px, 74svh); }
+.wd2-world .l2-pause { position: absolute; z-index: 2; right: 0; top: 0; }
 .wd2-globe { position: absolute; left: 50%; top: 0; height: 100%; aspect-ratio: 1; transform: translateX(-50%); }
 .wd2-globe canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.wd2-panel { position: absolute; right: 0; bottom: 8%; width: min(340px, 30%); padding: 20px; border-radius: 22px; background: rgba(18, 18, 22, .86); border: 1px solid rgba(255, 255, 255, .12); color: #f5f5f7; box-shadow: 0 40px 100px -40px #000; }
-.wd2-k { margin: 0 0 14px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #86868b; }
+.wd2-panel { position: absolute; right: 0; bottom: 0; width: min(320px, 46%); padding: 20px; border-radius: 20px; background: #171717; color: #fafafa; }
+.wd2-k { margin: 0 0 14px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; }
 .wd2-lat { display: grid; grid-template-columns: 44px repeat(3, 1fr); align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
-.wd2-lat b { font-size: 14px; font-weight: 600; }
+.wd2-lat b { font-size: 14px; font-weight: 606; }
 .wd2-lat span { display: flex; flex-direction: column; gap: 6px; }
-.wd2-lat em { font-size: 11px; font-style: normal; color: #86868b; }
+.wd2-lat em { font-size: 12px; font-style: normal; color: #a3a3a3; }
 .wd2-lat i { display: block; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; }
-.wd2-lat u { display: block; height: 100%; background: var(--ac); transform-origin: 0 50%; transition: transform .6s var(--ease); }
+.wd2-lat u { display: block; height: 100%; background: #fafafa; transform-origin: 0 50%; transition: transform .6s var(--ease); }
 .wd2-drift { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(163, 163, 163, .14); color: #a3a3a3; font-size: 13px; opacity: 0; transform: translateY(6px); transition: opacity .35s, transform .5s var(--ease); }
 .wd2-drift.on { opacity: 1; transform: none; }
 
 /* control room */
 .wd2-room-h { max-width: 12ch; }
 .wd2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; margin-top: clamp(56px, 7vw, 96px); }
-.wd2-mon { display: flex; flex-direction: column; padding: 26px; border-radius: 28px; background: #f5f5f7; transition: background .3s; }
-.wd2-mon:hover { background: #eff4f7; }
+.wd2-mon { display: flex; flex-direction: column; padding: 26px; border-radius: 24px; background: #f5f5f5; transition: background .3s; }
 .wd2-mon.c0 { grid-column: span 7; }
 .wd2-mon.c1 { grid-column: span 5; }
 .wd2-mon.c2, .wd2-mon.c3, .wd2-mon.c4 { grid-column: span 4; }
@@ -32,19 +30,20 @@
 .wd2-mon.c5 .l2-title { grid-column: 1; }
 .wd2-mon.c5 .l2-body { grid-column: 1; }
 .wd2-mon header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--faint); }
-.wd2-led { width: 8px; height: 8px; border-radius: 50%; background: #a3a3a3; box-shadow: 0 0 0 4px rgba(163, 163, 163, .16); }
 .wd2-pic { position: relative; margin: 22px 0 26px; min-height: 180px; display: flex; align-items: center; }
 .wd2-pic > * { width: 100%; }
 .wd2-mon .l2-title { margin-top: auto; }
-.wd2-mon .l2-body { margin-top: 10px; font-size: 17px; }
+.wd2-mon .l2-body { margin-top: 8px; }
 
-.wd2-topo { position: relative; height: 240px; border-radius: 18px; background: #0b0b0c; }
+.wd2-topo { position: relative; height: 240px; border-radius: 18px; background: #0a0a0a; }
 .wd2-topo svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .wd2-topo line { stroke: rgba(255, 255, 255, .14); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: stroke .3s; }
-.wd2-topo line.on { stroke: var(--ac); stroke-width: 2.5; }
-.wd2-node { position: absolute; transform: translate(-50%, -50%); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); background: #1c1c1f; color: #a1a1a6; font-size: 13px; white-space: nowrap; cursor: default; }
-.wd2-node.m { cursor: pointer; color: #f5f5f7; min-height: 36px; }
-.wd2-node.on { background: var(--ac); border-color: var(--ac); color: #171717; font-weight: 600; }
+.wd2-topo line.on { stroke: #fafafa; stroke-width: 2.5; }
+.wd2-node { position: absolute; transform: translate(-50%, -50%); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 13px; white-space: nowrap; cursor: default; }
+.wd2-node.m { cursor: pointer; color: #f5f5f5; min-height: 36px; }
+.wd2-node.on { background: #fafafa; border-color: #fafafa; color: #000; font-weight: 606; }
+@media (hover: hover) { .wd2-node.m:hover { border-color: rgba(255, 255, 255, .5); } }
+.wd2-node.m:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
 .wd2-lc p { display: grid; grid-template-columns: 50px 1fr; gap: 4px 12px; align-items: center; margin: 0 0 14px; }
 .wd2-lc p b { grid-row: span 3; font-size: 14px; }
 .wd2-lc i { display: block; height: 8px; border-radius: 4px; background: #d4d4d4; }
@@ -61,23 +60,24 @@
 .wd2-ev i { display: block; height: 28px; border-radius: 8px; background: #d4d4d4; }
 .wd2-ev p.b i { background: var(--ac); }
 .wd2-mc { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.wd2-mc li { padding: 9px 12px; border-radius: 10px; background: #fff; font-size: 15px; }
-.wd2-mc li.one { flex-basis: 100%; margin-top: 6px; background: #0b0b0c; color: #f5f5f7; font-weight: 600; text-align: center; }
+.wd2-mc li { padding: 9px 12px; border-radius: 10px; background: #fff; font-size: 16px; }
+.wd2-mc li.one { flex-basis: 100%; margin-top: 6px; background: #0a0a0a; color: #f5f5f5; font-weight: 606; text-align: center; }
 
-.wd2-replay { padding: 24px; border-radius: 22px; background: #0b0b0c; color: #f5f5f7; }
+.wd2-replay { padding: 24px; border-radius: 22px; background: #0a0a0a; color: #f5f5f5; }
 .wd2-rp-track { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-.wd2-rp-track span { padding: 10px 8px; border-radius: 10px; background: #1c1c1f; font-size: 13px; color: #6e6e73; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .3s, color .3s; }
-.wd2-rp-track span.done { color: #d1d1d6; }
-.wd2-rp-track span.now { background: var(--ac); color: #171717; font-weight: 600; }
+.wd2-rp-track span { padding: 10px 8px; border-radius: 10px; background: #171717; font-size: 13px; color: #737373; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .3s, color .3s; }
+.wd2-rp-track span.done { color: #d4d4d4; }
+.wd2-rp-track span.now { background: #fafafa; color: #000; font-weight: 606; }
 .wd2-rp-scrub { display: block; margin-top: 14px; }
-.wd2-rp-scrub input { width: 100%; height: 44px; margin: 0; accent-color: var(--ac); cursor: grab; }
+.wd2-rp-scrub { color: #fafafa; }
 .wd2-rp-now { min-height: 64px; margin-top: 8px; }
 .wd2-rp-now p { margin: 0; display: flex; flex-direction: column; gap: 6px; }
-.wd2-rp-now b { font-size: 14px; color: var(--ac); font-weight: 500; }
-.wd2-rp-now span { font-size: 20px; letter-spacing: -.02em; }
+.wd2-rp-now b { font-size: 13px; color: #a3a3a3; font-weight: 500; }
+.wd2-rp-now span { font-size: 21px; letter-spacing: -.02em; }
 
 @media (max-width: 900px) {
   .wd2-world { height: auto; }
+  .wd2-world .l2-pause { top: 8px; right: 8px; }
   .wd2-globe { position: relative; left: auto; transform: none; width: 100%; height: auto; }
   .wd2-panel { position: relative; right: auto; bottom: auto; width: auto; margin-top: -20px; }
   .wd2-grid { grid-template-columns: minmax(0, 1fr); }

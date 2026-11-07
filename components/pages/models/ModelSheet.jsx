@@ -1,4 +1,5 @@
 'use client';
+// V2: 8/10 (own estimate; critic pending) a model launch: name and three figures, the model's Sigil with its id, a sticky local nav, spec, quick start, Hanzo's 'More from' chapter with the field, the bill and Hanzo's cards
 // Persona: Developer picking a model. Goal: pick it and try it. CTA: the page's first action in Hanzo's words (usually "Get API key"). Metric: api_key_created.
 // Signature: the open. The card you pressed on /models (or a sibling) lands as this page's name (morph), and the page answers with the model's own living contour field.
 // Beyond: the bill comparer. Set a monthly volume, pick any sibling, see both bills and the context each gives, from Hanzo's own rates (rate × volume, nothing estimated).
@@ -10,13 +11,14 @@
    Motion mix: arrival (the name cuts in, split-flap context), idle (the Sigil drifts; the field's light sweeps),
    pointer (the Sigil leans to the cursor; dots answer with their rates), state (bill sliders, sibling picks, code
    tabs), scroll (the Sigil eases up as you leave the first screen). Readable with animations and JavaScript off. */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
-import { FilmPause, usePaused } from '../../v2/ModelFilm';
+import ModelFilm, { FilmPause, usePaused } from '../../v2/ModelFilm';
+import { href } from '../../../lib/route';
 import SpecCard from '../../v2/SpecCard';
 import { Field, Bill, Codes, Loose, useCatalog, rateFrom, rateText, money } from './parts';
 import './models.css';
@@ -64,9 +66,22 @@ export default function ModelSheet({ doc }) {
   const ctxLabel = doc.ctx ? (doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx) || {}).label : null;
   const hero = useRef(null);
   const paused = usePaused();
+  // the local nav's ask turns solid only once the hero's own ask has left the screen (one solid fill at a time)
+  const [past, setPast] = useState(false);
+  useEffect(() => {
+    const el = hero.current && hero.current.querySelector('[data-cta="model.hero"]');
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setPast(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const { scrollYProgress: hp } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const artY = useTransform(hp, [0, 1], ['0%', '18%']);
   const moreTitle = (doc.more && doc.more.title) || doc.provider.name;
+  const film = (/^\/models\/hanzo\/(enso|kai|koma|zen)/.exec(doc.route) || [])[1];
+  // Hanzo's "More from" cards, those with a page in this rebuild first (they open by Morph); the rest open Hanzo's
+  // live page in a new tab and say so (SpecCard)
+  const cards = doc.more ? [...doc.more.cards].sort((a, b) => (/^https?:/.test(href(a.href)) ? 1 : 0) - (/^https?:/.test(href(b.href)) ? 1 : 0)) : [];
   return (
     <main className="xmf xmf-model">
       <section className="xmf-launch" ref={hero} aria-labelledby="xmf-h1">
@@ -77,8 +92,8 @@ export default function ModelSheet({ doc }) {
             </h1>
             {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
             <motion.div className="xmf-acts" {...up(0.42)}>
-              {first && <A to={first.href} className="x-btn solid xmf-btn" data-thumb="" data-cta="model.hero">{first.label}</A>}
-              {doc.actions.slice(1).map((a) => <A key={a.label} to={a.href} className="x-btn xmf-btn">{a.label}</A>)}
+              {first && <Cta to={first.href} id="model.hero" thumb>{first.label}</Cta>}
+              {doc.actions.slice(1).map((a) => <Cta key={a.label} to={a.href} kind="link" id="model.hero.2">{a.label}</Cta>)}
             </motion.div>
             {doc.links.length > 0 && (
               <motion.ul className="xmf-links" {...up(0.5)}>
@@ -90,21 +105,24 @@ export default function ModelSheet({ doc }) {
           <dl className="xmf-figs" aria-label={price}>
             <div className="xmf-fig ctx">
               <dt>{ctxLabel || 'Context Window'}</dt>
-              <dd><b>{ctxFig ? <MaskFig delay={0.5}>{ctxFig}</MaskFig> : (doc.ctx || DASH)}</b></dd>
+              <dd><b>{ctxFig ? <MaskFig now delay={0.12} dur={0.55}>{ctxFig}</MaskFig> : (doc.ctx || DASH)}</b></dd>
             </div>
             <div className="xmf-fig">
               <dt>In</dt>
-              <dd><b className="x-mono"><MaskFig delay={0.58}>{rate ? money(rate.in) : DASH}</MaskFig></b><span>per million tokens</span></dd>
+              <dd><b className="x-mono"><MaskFig now delay={0.18} dur={0.55}>{rate ? money(rate.in) : DASH}</MaskFig></b><span>per million tokens</span></dd>
             </div>
             <div className="xmf-fig">
               <dt>Out</dt>
-              <dd><b className="x-mono"><MaskFig delay={0.66}>{rate ? money(rate.out) : DASH}</MaskFig></b><span>per million tokens</span></dd>
+              <dd><b className="x-mono"><MaskFig now delay={0.24} dur={0.55}>{rate ? money(rate.out) : DASH}</MaskFig></b><span>per million tokens</span></dd>
             </div>
           </dl>
           {/* the hero object: the model's own contour field at 4:5, where it sits in the catalogue (the breadcrumb, so
               nothing labels the headline from above), its maker label and its ID to copy */}
-          <motion.figure className="xmf-obj" style={{ y: artY }} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
-            <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" still={paused} />
+          <motion.figure className={'xmf-obj' + (film ? ' film' : '')} style={{ y: artY }} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}>
+            {/* Hanzo's own models show their film (colour only through Hanzo's media); every other maker's model its Sigil */}
+            {film
+              ? <span className="xmf-obj-film" aria-hidden="true"><ModelFilm slug={film} /></span>
+              : <Sigil seed={doc.route} data={[doc.tokens, rate && rate.in, rate && rate.out].filter((v) => v != null)} className="xmf-obj-sigil" still={paused} />}
             <div className="xmf-obj-top">
               <nav className="xmf-crumbs" aria-label="Breadcrumb">
                 {doc.crumbs.map((c, i) => (
@@ -123,11 +141,24 @@ export default function ModelSheet({ doc }) {
         </div>
       </section>
 
+      {/* the sticky local nav: the page's own section names and its ask (MASTER.md 4.7) */}
+      <nav className="xmf-local" aria-label={doc.name}>
+        <div className="x-wrap xmf-local-in">
+          <span className="xmf-local-n">{doc.name}</span>
+          <span className="xmf-local-l">
+            {groups.length > 0 && <a href="#specs">{groups[0].title || 'Specifications'}</a>}
+            {doc.quick && <a href="#quickstart">{doc.quick.title}</a>}
+            {(doc.more || (rate && plotted > 1)) && <a href="#more">{moreTitle}</a>}
+          </span>
+          {first && <Cta to={first.href} kind={past ? 'solid' : 'quiet'} size="sm" id="model.local">{first.label}</Cta>}
+        </div>
+      </nav>
+
       {doc.family && (
         <nav className="xmf-fam" aria-label={doc.family.title}>
           <div className="x-wrap xmf-fam-in">
             <h2 className="xmf-h3">{doc.family.title}</h2>
-            <ul data-swipe-own>{doc.family.links.map((l) => {
+            <ul data-swipe-own data-cursor="">{doc.family.links.map((l) => {
               const inner = <><span>{l.label}</span>{l.note && <i className="x-mono">{l.note}</i>}</>;
               return <li key={l.label}>{l.href ? <A to={l.href}>{inner}</A> : <span className="xmf-fam-here" aria-current="page">{inner}</span>}</li>;
             })}</ul>
@@ -178,8 +209,8 @@ export default function ModelSheet({ doc }) {
             {rate && plotted > 1 && <Field points={field} here={doc.route} label={`${doc.provider.name} models by context window and output rate`} />}
             {rate && <div className="xmf-cost"><Bill self={self} others={sibs} /></div>}
             {doc.more && (
-              <ul className="xmf-rail" data-swipe-own>
-                {doc.more.cards.map((c) => {
+              <ul className="xmf-rail" data-swipe-own data-cursor="">
+                {cards.map((c) => {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
@@ -202,7 +233,7 @@ export default function ModelSheet({ doc }) {
               {doc.band.lede && <p>{doc.band.lede}</p>}
               {doc.band.nodes && <Loose nodes={doc.band.nodes.filter((n) => !(n && n.t === 'h2'))} />}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-cta': 'model.band' })}>{a.label}</A>)}
+                {doc.band.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'model.band.2' : 'model.band'}>{a.label}</Cta>)}
               </div>
             </div>
           </div>

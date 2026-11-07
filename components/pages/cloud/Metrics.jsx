@@ -1,9 +1,9 @@
 'use client';
 /* Metrics, v2 launch page (Cloud 3).
-   V2: 8/10 The live chart is the first screen: it runs full-bleed behind the title, a crosshair follows the pointer, the spike opens its traces; six points as one pinned table opened by the section's own statement; one dark room; Logs as a card that opens; grey only.
-   Signature: the spike that opens. Three series stream full-bleed under the title, split by the label you pick; every
-   seven seconds a spike rises, the cursor lands on it and the traces for that window open beside it, because they were
-   never in a different system. Click the chart to hold a moment and keep its traces open.
+   V2: 8/10 MASTER: title, lede and ask on the 8/5 split with the query toolbar; the live chart and its traces side by side on one flat tile (nothing floats over anything); a crosshair reads the line under the pointer; six points as one pinned table opened by the section's own statement; one black room; Logs card opens; "Get Metrics" grows as you reach it; deck greys.
+   Signature: the spike that opens. Three series stream across the chart, split by the label you pick; every ten
+   seconds a spike rises, the cursor lands on it and the traces for that window open beside it, because they were never
+   in a different system. Click the chart to hold a moment and keep its traces open.
    Beyond: Label check. Tick per-model, per-route, per-tenant in chapter three: the table grows a column for each while
    a time-series database would multiply series, Hanzo's own cardinality point made concrete before you pick a store.
    Persona: Developer. Goal: try Hanzo Metrics (read the source, then deploy).
@@ -29,51 +29,84 @@ const GH = 'https://github.com/hanzoai/metrics';
 
 /* ---------- the hero object: the live chart, full-bleed ---------- */
 const SPLIT = { 'per-model': ['zen', 'kai', 'enso'], 'per-route': ['/v1/chat', '/v1/embed', '/v1/search'], 'per-tenant': ['org a', 'org b', 'org c'] };
-const N = 96, CUR = Math.round(N * 0.62), STEP = 0.075, SPEED = 0.42;
-const wave = (t, k) => 0.36 + 0.11 * Math.sin(t * 0.8 + k * 2.1) + 0.05 * Math.sin(t * 2.1 + k) - k * 0.08 + (k === 0 ? Math.max(0, Math.sin(t * 1.6)) ** 14 * 0.52 : 0);
-const Y = (w) => 96 - w * 58; // field y in %: the spike peaks near 38%, well under the title
+const N = 96, CUR = Math.round(N * 0.62), STEP = 0.075, SPEED = 0.42, F = 2.72; // a spike every ~5.5 s
+const wave = (t, k) => 0.36 + 0.11 * Math.sin(t * 0.8 + k * 2.1) + 0.05 * Math.sin(t * 2.1 + k) - k * 0.08 + (k === 0 ? Math.max(0, Math.sin(t * F)) ** 16 * 0.52 : 0);
+const Y = (w) => 96 - w * 58; // y in % of the chart: the spike peaks near 38%
 const pts = (t, k) => Array.from({ length: N }, (_, i) => [(i * 100) / (N - 1), Y(wave(t + i * STEP, k))]);
 const line = (p) => p.map(([x, y], i) => (i ? 'L' : 'M') + x.toFixed(2) + ' ' + y.toFixed(2)).join('');
 const area = (p) => line(p) + 'L100 100L0 100Z';
 const SPANS = [['gateway', 0, 92], ['chat.completion', 6, 78], ['datastore.query', 14, 18], ['model.generate', 34, 48]];
-const T0 = (Math.PI / 2 + 2 * Math.PI) / 1.6 - CUR * STEP; // the first frame has the spike under the cursor, so the server HTML shows it
-const CX = (CUR * 100) / (N - 1);
+const TS = (Math.PI / 2 + 4 * Math.PI) / F - CUR * STEP; // the moment a spike sits under the cursor
+const T0 = TS - 1.9 * SPEED; // the first spike lands 1.9 s in, after the line has drawn and the title has cut in
+const isSpike = (t, i) => wave(t + i * STEP, 0) > 0.6;
+const X = (i) => (i * 100) / (N - 1);
 
 function Field({ lead }) {
   const [ref, live, calm] = useLive(0.15);
   const [paused, pause] = usePause();
   const [split, setSplit] = useState('per-model');
-  const [spike, setSpike] = useState(true);
-  const [held, setHeld] = useState(false);
-  const el = useRef({ p: [], a: null, x: null, dot: null, t: T0 });
-  useFrame(live && !held && !paused, (_, dt) => {
+  const [flag, setFlag] = useState(false); // a spike is really under the cursor line
+  const [open, setOpen] = useState(false); // the traces for that window are open (3 s after a spike, or held, or hovered)
+  const [seen, setSeen] = useState(false); // traces have opened once: between spikes they rest, dimmed, not blank
+  const [held, setHeld] = useState(null); // the index the hand is holding, or null
+  const [hk, setHk] = useState(null); // the series under the crosshair
+  const el = useRef({ p: [], a: null, x: null, dot: null, flag: null, cur: null, t: T0, ts: 0, until: 0, was: false });
+  const draw = (t) => {
     const r = el.current;
-    r.t += dt * SPEED;
     for (let k = 0; k < 3; k++) {
-      const p = pts(r.t, k);
+      const p = pts(t, k);
       r.p[k]?.setAttribute('d', line(p));
       if (k === 0) r.a?.setAttribute('d', area(p));
     }
-    const s = wave(r.t + CUR * STEP, 0) > 0.6;
-    setSpike((v) => (v === s ? v : s));
+  };
+  // reduced motion: the moment itself, set: the spike under the cursor and its traces open
+  useEffect(() => { if (calm) { el.current.t = TS; draw(TS); setFlag(true); setOpen(true); setSeen(true); } }, [calm]);
+  useFrame(live && held === null && !paused, (_, dt) => {
+    const r = el.current;
+    r.t += dt * SPEED;
+    draw(r.t);
+    const s = isSpike(r.t, CUR);
+    const now = performance.now();
+    if (s && !r.was) { r.until = now + 3000; r.ts = r.t; setSeen(true); }
+    r.was = s;
+    const o = now < r.until;
+    // while its traces are open, the flag and the cursor ride the spike as it moves left, so the label is always on it
+    const x = X(o ? CUR - (r.t - r.ts) / STEP : CUR);
+    r.flag?.style.setProperty('left', x + '%');
+    r.cur?.setAttribute('x1', x); r.cur?.setAttribute('x2', x);
+    setFlag((v) => (v === o ? v : o));
+    setOpen((v) => (v === o ? v : o));
   });
-  // the crosshair reads the line under a fine pointer: transforms only, no React state per move
+  // the crosshair reads the line under a fine pointer (transforms only) and names the series it is nearest
   const move = (e) => {
     if (e.pointerType !== 'mouse' || calm) return;
     const r = el.current, box = e.currentTarget.getBoundingClientRect();
     const fx = Math.min(1, Math.max(0, (e.clientX - box.left) / box.width));
-    const y = Y(wave(r.t + fx * (N - 1) * STEP, 0)) / 100 * box.height;
+    const h = box.height - 24; // the chart sits 24px down
+    const ys = [0, 1, 2].map((k) => (Y(wave(r.t + fx * (N - 1) * STEP, k)) / 100) * h);
+    const py = e.clientY - box.top - 24;
+    const k = ys.reduce((b, y, i) => (Math.abs(y - py) < Math.abs(ys[b] - py) ? i : b), 0);
     r.x?.style.setProperty('transform', `translate3d(${e.clientX - box.left}px,0,0)`);
-    r.dot?.style.setProperty('transform', `translate3d(0,${y}px,0)`);
+    r.dot?.style.setProperty('transform', `translate3d(0,${ys[k]}px,0)`);
     r.x?.setAttribute('data-on', '');
+    setHk((v) => (v === k ? v : k));
   };
-  const out = () => el.current.x?.removeAttribute('data-on');
-  const open = calm || held || spike;
+  const out = () => { el.current.x?.removeAttribute('data-on'); setHk(null); };
+  // a click holds the moment under the pointer; the line only says "spike" if a spike is really there
+  const hold = (e) => {
+    if (held !== null) { setHeld(null); return; }
+    const box = e.currentTarget.getBoundingClientRect();
+    const i = e.detail === 0 ? CUR : Math.round(Math.min(1, Math.max(0, (e.clientX - box.left) / box.width)) * (N - 1));
+    setHeld(i); setFlag(isSpike(el.current.t, i)); setSeen(true);
+  };
+  const at = held ?? CUR;
   const series = SPLIT[split];
+  const who = hk !== null ? series[hk] : series[0];
+  const show = calm || held !== null || hk !== null || open;
   const p0 = pts(T0, 0);
   return (
     <div className="mt-live" ref={ref}>
-      <div className="lx-wrap mt-tools">
+      <div className="lx-wrap mt-top">
         {lead}
         <div className="mt-tool">
           <span className="mt-host">metrics.hanzo.ai</span>
@@ -81,30 +114,32 @@ function Field({ lead }) {
           <div className="mt-split" role="group" aria-label="Split by label">
             {Object.keys(SPLIT).map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
           </div>
-          <ul className="mt-legend" aria-label="Series">{series.map((s, k) => <li key={s} className={'s' + k}><i />{s}</li>)}</ul>
-          <LivePause paused={paused} onToggle={pause} className="mt-pause" />
+          <ul className="mt-legend" aria-label="Series">{series.map((s, k) => <li key={s} className={'s' + k + (hk === k ? ' hl' : '')}><i />{s}</li>)}</ul>
+          <LivePause paused={paused} onToggle={pause} inline className="mt-pause" />
         </div>
       </div>
-      <button type="button" className="mt-field" aria-label={held ? 'Let the chart run again' : 'Hold this moment and open its traces'} aria-pressed={held} onClick={() => setHeld((h) => !h)} onPointerMove={move} onPointerLeave={out} data-cursor={held ? 'Run' : 'Hold'}>
+      <div className="lx-wrap mt-stage">
+      <button type="button" className="mt-field" aria-label={held !== null ? 'Let the chart run again' : 'Hold this moment and open its traces'} aria-pressed={held !== null} onClick={hold} onPointerMove={move} onPointerLeave={out} data-cursor="">
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <defs><linearGradient id="mt-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1d1d1f" stopOpacity=".1" /><stop offset="1" stopColor="#1d1d1f" stopOpacity="0" /></linearGradient></defs>
+          <defs><linearGradient id="mt-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0a0a0a" stopOpacity=".1" /><stop offset="1" stopColor="#0a0a0a" stopOpacity="0" /></linearGradient></defs>
           {[40, 60, 80].map((y) => <line key={y} x1="0" x2="100" y1={y} y2={y} className="grid" />)}
           <path ref={(e) => (el.current.a = e)} className="fill" d={area(p0)} />
           {[2, 1, 0].map((k) => <path key={k} ref={(e) => (el.current.p[k] = e)} className={'s' + k} d={line(pts(T0, k))} />)}
-          <line x1={CX} x2={CX} y1="18" y2="100" className={'cur' + (open ? ' on' : '')} />
+          <line ref={(e) => (el.current.cur = e)} x1={X(at)} x2={X(at)} y1="18" y2="100" className={'cur' + (flag || held !== null ? ' on' : '')} />
         </svg>
-        <span className={'mt-flag' + (open ? ' on' : '')} style={{ left: CX + '%' }} aria-hidden="true">
+        <span ref={(e) => (el.current.flag = e)} className={'mt-flag' + (flag ? ' on' : '')} style={{ left: X(at) + '%' }} aria-hidden="true">
           <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 2l9 6-4 1-2 4z" fill="currentColor" /></svg>spike · {series[0]}
         </span>
-        <span className="mt-x" ref={(e) => (el.current.x = e)} aria-hidden="true"><i ref={(e) => (el.current.dot = e)} /><b>{series.join(' · ')}</b></span>
+        <span className="mt-x" ref={(e) => (el.current.x = e)} aria-hidden="true"><i ref={(e) => (el.current.dot = e)} /></span>
       </button>
-      <div className={'mt-traces' + (open ? ' on' : '')}>
-        <p className="mt-tk" aria-live="polite">{open ? <>traces for that window · <b>{series[0]}</b></> : 'a spike is the start of a question'}</p>
+      <div className={'mt-traces' + (show ? ' on' : seen ? ' rest' : '')}>
+        <p className="mt-tk" aria-live="polite">{show || seen ? <>traces for that window · <b>{who}</b></> : 'a spike is the start of a question'}</p>
         <ol className="mt-fall">
           {SPANS.map(([n, x, w], i) => (
             <li key={n} style={{ '--i': i }}><span className="mt-sn">{n}</span><span className="mt-sb" aria-hidden="true"><b style={{ left: x + '%', width: w + '%' }} /></span></li>
           ))}
         </ol>
+      </div>
       </div>
     </div>
   );
@@ -123,7 +158,7 @@ const ROWS = [
 const TAGS = ['per-model', 'per-route', 'per-tenant'];
 const COL = { 'per-model': 'model', 'per-route': 'route', 'per-tenant': 'tenant' };
 
-function Table({ step, on, lab }) {
+function Table({ step, on, lab, intro }) {
   const [ref, live] = useLive(0.3);
   const [alt, setAlt] = useState(false);
   useEffect(() => {
@@ -135,7 +170,7 @@ function Table({ step, on, lab }) {
   const by = picked.length ? `sum by (${picked.join(', ')}) ` : '';
   const mode = step === 1 ? (alt ? 'builder' : 'PromQL') : step === 4 ? 'kept as a rule' : step === 5 ? 'org from your token' : 'one query';
   return (
-    <div className="mt-tab" ref={ref} data-step={step}>
+    <div className="mt-tab" ref={ref} data-step={intro ? 'intro' : step}>
       <div className="mt-tab-bar">
         <span className="mt-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="mt-store">Hanzo Datastore</span>
@@ -155,8 +190,8 @@ function Table({ step, on, lab }) {
           {['kind', 'name', 'value', 'model', 'route', 'tenant'].map((c) => <span key={c} role="columnheader" className={'c-' + c + ((picked.includes(c) && step === 2) || (c === 'tenant' && step === 5) ? ' lit' : '')}>{c}</span>)}
         </div>
         {ROWS.map(([kind, name, v, model, route, tenant], i) => {
-          const hot = step === 0 || (step === 1 && kind === 'metric') || (step === 3 && i < 3) || (step === 4 && i === 0);
-          const gone = step === 5 && tenant !== 'org a';
+          const hot = intro ? kind === 'metric' : step === 0 || (step === 1 && kind === 'metric') || (step === 3 && i < 3) || (step === 4 && i === 0);
+          const gone = (step === 5 && tenant !== 'org a') || (intro && kind !== 'metric');
           return (
             <div key={i} role="row" className={'mt-row' + (hot ? ' hot' : '') + (gone ? ' gone' : '') + (step === 3 && i === 0 ? ' spike' : '')} style={{ '--i': i }}>
               <span role="cell" className="c-kind"><i className={'k-' + kind} />{kind}</span>
@@ -207,9 +242,9 @@ export default function Metrics() {
   return (
     <main className="lx mt">
       <section className="mt-hero" data-morph-target data-ask-name="Hanzo Metrics">
-        <div className="lx-wrap"><LineMask as="h1" className="lx-display mt-h1" lines={['Hanzo Metrics']} /></div>
         <Field lead={(
           <div className="mt-lead">
+            <LineMask as="h1" className="lx-display mt-h1" lines={['Hanzo Metrics']} />
             <p className="lx-lede mt-sub">The metrics half of Hanzo O11y</p>
             <A to={GH} className="lx-cta" data-thumb="View on GitHub" data-cta="metrics.hero">View on GitHub<Arr /></A>
           </div>
@@ -219,7 +254,7 @@ export default function Metrics() {
       <PinnedChapters label="What a metric is here" per={78}
         intro={{ title: ['What a metric', 'is here'], lede: 'A row in a column store rather than a series in a store of its own.' }}
         steps={steps}
-        visual={(at) => <Table step={at} on={on} lab={<LabelCheck on={on} setOn={setOn} where="in-table" />} />} />
+        visual={(at, intro) => <Table step={at} intro={intro} on={on} lab={<LabelCheck on={on} setOn={setOn} where="in-table" />} />} />
 
       <ClipWipe dark className="mt-send">
         <div className="lx-wrap mt-send-grid">
@@ -227,6 +262,7 @@ export default function Metrics() {
             <h2 className="lx-headline">Send a metric, then follow it</h2>
             <Paste dark name="Metrics" api="/v1/event/insights" prompt="Read https://hanzo.ai/skill.md and use Hanzo Metrics in my project. Start with: hanzo metrics query" className="lx-paste" />
           </div>
+          <i className="mt-wire" aria-hidden="true"><b /></i>
           <div className="mt-send-r">
             <LaunchConsole name="Metrics" api="/v1/event/insights" cap="The service the session above is changing." side={SIDE} />
             <p className="mt-note">Example project. Every name in it is one you would give your own.</p>

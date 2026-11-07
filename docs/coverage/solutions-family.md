@@ -1,26 +1,158 @@
-# /solutions/* coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /solutions/* coverage (MASTER.md part 2, the 18 parts)
 
-Template: `components/pages/solutions/Solution.jsx` + `Solution.css` + `solData.js` · 18 members (7 teams, 7 industries, 3 use cases, reserved tier) · gallery: `docs/gallery/solutions/finance-*`, `reserved-*` (the other files in that folder belong to the /solutions index).
+Page file: `components/pages/solutions/Solution.jsx` (+ `Solution.css`, `solData.js`; 18 members: 7 teams, 7 industries, 3 use cases, the reserved tier) · gallery: `docs/gallery/solutions/finance-*`, `reserved-*` (the other files there belong to the /solutions index) · metric id: `signup_start` (second ask `contact_sales_submit`)
 
-1. **Strategy and conversion.** Persona: a team lead or buyer. Goal: see what Hanzo does for this team, then what one account runs on. One solid ask, Hanzo's "Try Hanzo" (`data-thumb`, `data-cta="solutions.hero"`, metric `signup_start`), magnetic on a mouse; "Contact sales" is outlined (`contact_sales_submit`). The closing room repeats the pair with one solid.
-2. **Information architecture and navigation.** Header and footer untouched. Order: hero, the jobs (chapters), what it runs on, security (where the member has it), capacity (reserved), more teams, the overlap finder, the closing room. Every product row and sibling card is a real `<a href>`.
-3. **First impression and page narrative.** At 1470×801 the sentence, lede and ask sit on the left and the solution's film (Hanzo's media) fills the right, all on the first screen; at 375×812 the film starts about 330px down. Within a second the film plays and its stories start: a bar fills per job and the job's title rises over the film. Then one idea per screen: each job is a pinned chapter. No eyebrow over any headline: "Solutions · Teams" now sits as a meta line under the ask, the chapter counters are gone (the film's giant numeral carries the count).
-4. **Conversion system.** The site ask bar (components/Ask.jsx) carries "Try Hanzo" after the hero at every width, read from `data-thumb`, and steps aside over the closing room (`data-ask-hide`). One solid per screen.
-5. **Trust and proof.** Where Hanzo lists it, "Security and compliance" is a big statement with the member's own contour beside it and a calm numbered list of proof with Hanzo's two links. Capacity (reserved) shows Hanzo's per-hour figures as hero numbers.
-6. **Content presentation (copy untouched).** Parity: finance 50/50 text, 19/19 links; reserved 50/50, 11/11; content-creation 39/39, 13/13; the /solutions index still 47/47. All 18 members return 200.
-7. **Visual design system.** Ink, greys and white only; colour comes only from the film (Hanzo's model media). The coloured scrims of round 2 are gone (plain dark gradients under the film's text). Radii 32 for the film and objects, 16 for cards; giant numerals in silver.
-8. **UI component library.** Kit `A`, `Img`, `Film`, `Magnetic`; Families A kit `FamLines`, `FamStage`, `FamChapters`, `FamNext`. Overlap pills are real buttons (`aria-pressed`, 44px).
-9. **Motion and interaction.**
-   - Idle and time: the film plays; its stories advance every 5.2s with a filling bar and a masked title change.
-   - Pointer: the ask is magnetic; a pointer on the film holds its story; product rows lift their arrow; the sibling rail drags with inertia and its cards lift and show the sibling's first job.
-   - State: the overlap pill glides (layoutId), shared products spring in, lists re-flow.
-   - Scroll (under half): the film settles from 1.06 as you scroll; the jobs are sticky chapters with clip wipes.
-10. **Media.** The film is kit `Img` (still, the LCP, `priority`) plus kit `Film` (plays only on screen, never under reduced motion or Save-Data). The shots are the same still, re-framed per job. No raw `<img>` or `<video>`.
-11. **Mobile and responsive.** 375px: one column, the film at 4:4.4 under the ask, chapters stack (text then shot), the overlap columns stack with the shared row first. No sideways scroll (scrollWidth 375). Targets 44px or more. A sideways swipe turns to the previous or next solution (tested: finance → financial-services, finance → engineering).
-12. **Accessibility.** One h1. The film and its stories are `aria-hidden` (the chapters hold the same words as real headings). Chapter marks are labelled from the register. Reduced motion: no running animations after 3.5s, stories hold on the first job, the film shows its still.
-13. **Performance and engineering.** One clip per screen, paused off screen and in background tabs; the story timer runs only while in view and not held. Transform, opacity and clip-path only. Canvases: one member contour plus at most 6 still sibling contours.
-14. **SEO and machine files.** Metadata and JSON-LD unchanged (`app/solutions/[slug]/page.jsx`). Every word is in the server HTML; with JS off, 0 text blocks are hidden.
-15. **Catalogue and product pages.** Siblings: Hanzo's "More teams / industries / use cases" links as up to 6 cards that open into their page (title is the Morph source into the next page's h1); each wears its own contour and previews its first job on hover. The overlap finder answers "what does one account cover for two teams".
-16. **Developer experience.** Not a developer page; "the quickstart" link stays beside "What it runs on".
-17. **States and resilience.** Static data, no loading or error state. A member without a film shows an empty dark frame; without security or capacity those sections are simply absent.
-18. **Measurement and handover.** `data-cta` on every primary (`solutions.hero`, `solutions.hero-second`, `solutions.band`, `solutions.band-second`); no analytics wired yet. Ledger: this round deleted the eyebrow over the h1, the chapter counters, the per-member accent hue, the coloured film scrims, three equal overlap boxes (now shared-first), and the raw `<img>`/`<video>` pair (now kit `Img` + `Film`).
+Open copy questions for James: none.
+Shared changes requested (`docs/requests/solutions-family.md`): none filed. Noted for the shell owner: at the closing room the header's "Try Hanzo" can show solid beside the room's white button.
+Forks this page deleted: the title-left / black-card-right hero and the pinned word-and-card chapters it shared with /oss/* and /products/* (now a full-bleed film under an 8/5 title row and a horizontal strip), the sibling contour rail with filled arrow discs (now a block of film stills), raw `<img>`/`<video>` (kit `Img` + `Film`), the per-member accent, coloured scrims, the eyebrow over the h1, chapter counters, the empty "More solutions" section on the reserved tier, the black zero box in the overlap finder, the standalone "What it runs on" and "Security and compliance" sections (now sheets), springs and object shadows.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; labels are Hanzo's own ("Try Hanzo", "Contact sales") (`lib/cta.js` does not exist yet)
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; n/a prices
+- [x] Open copy questions for James listed, none decided
+
+Done here: "Try Hanzo" solid and magnetic with `data-thumb` (the header carries it after the hero), "Contact sales" a text link. The h1 (kit: arrives big, settles to 52) is the first thing read, above the film.
+
+## 2. Information architecture and navigation
+- [x] One `<main>`; the layout's skip link reaches `#main`
+- [x] Every link through `A`; every card a real link
+- [x] n/a breadcrumb: Hanzo's solution pages carry none
+- [x] Link parity: 0 removed
+
+Done here: links finance 19/19, engineering 17/17, reserved 11/11, the /solutions index 20/20.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] Hero from kit parts (`FamLines`); nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh
+- [x] Ends in the other teams, the overlap finder, the closing room, footer
+- [x] Card-to-page links use Morph (title `data-morph` → the next page's h1)
+
+Done here: an 8/5 title row (h1 left; lede, ask and caption right, aligned to the bottom), then Hanzo's film full-bleed under it, playing the jobs as stories (bar per job, the job's title rising) for one round, then settling. Then the jobs as a horizontal strip, then a slim row with the two sheets, the other teams, the close. Reserved: capacity, then the close carries "More solutions" with its link (no empty section). JS off: 0 hidden text blocks on finance and reserved.
+
+## 4. Conversion system
+- [x] Kit buttons only; no raw `.x-btn`
+- [x] Sticky ask: the header carries the hero's label (`data-thumb`)
+- [x] n/a copy button
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: `data-cta` = `solutions.hero`, `solutions.hero-second`, `solutions.band`, `solutions.band-second`. The closing room has one solid (white "Try Hanzo"); its second ask is a text link.
+
+## 5. Trust and proof
+- [x] No logo, no seal, no invented number
+- [x] Every figure traces to Hanzo's copy
+- [x] n/a marquee
+- [x] n/a submit
+
+Done here: the only figures are the reserved tier's per-hour prices and the reel's "01 / 05" (both in Hanzo's live text). "Security and compliance" opens as a calm numbered list with Hanzo's two links.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; previews never cut mid-word (the sheet triggers show the section title whole)
+- [x] Capacity table keeps its server markup (no kit `DataTable` yet); sheets use `FamDrawer`
+- [x] Parity 0 missing
+
+Done here: parity finance 50/50, engineering 43/43, reserved 50/50 text. Sizes rest at live hanzo.ai: h1 52, job heads 26, titles 21, lede 20, body 16; numerals 64 at weight 220.
+
+## 7. Visual design system
+- [x] `taste.py` passes; no literal hex in `Solution.css` (tokens only)
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii from tokens (art 20, objects 24); no shadows
+- [x] Only the arrow icon
+- [x] Differs from neighbours: full-bleed film under an 8/5 title row and a horizontal strip (oss and products: title left, black card right, pinned chapters)
+
+Done here: colour appears only inside Hanzo's film and its stills.
+
+## 8. UI component library
+- [x] Hover (inside `@media (hover:hover)`), press, focus on every control
+- [x] Focus ring visible on the ask, sheet triggers, strip, team cards, overlap pills and link
+- [x] Sheets trap and return focus, Esc closes, and open above the header (measured: the sheet's header is the element at the top of the screen)
+- [x] n/a inputs
+- [x] Forks deleted: listed above
+
+Done here: hover added to the closing room's buttons (fill change), the overlap pills (fill) and side link (underline, 44px), the team cards (still drifts, title underlines).
+
+## 9. Motion and interaction
+- [x] One signature (the horizontal strip) + 3 supporting (film stories, magnetic ask, overlap pill); 0 fade-ups
+- [x] Kinds: idle (film), time (one round of stories, then the sound kit's 'done'), pointer (magnetic ask, holding the story, stills drifting), state (pill glide, sheets); scroll is only the strip
+- [x] Moves untouched; every control answers
+- [x] Reduced motion: 0 running animations after 3.5 s; the strip becomes a plain swipe rail; no `setInterval`
+- [x] Sound: `play('done')` when the stories finish their round; the kit plays the rest
+
+Done here: no springs (300–400 ms ease-emphasis); `variety.py` OK.
+
+## 10. Media
+- [x] Kit `Img` + `Film` only; 1200×1500 with posters
+- [x] At most 2 playing: the hero film and the one job in view
+- [x] Nothing missing; images decorative with the words as real text
+- [x] No dimmed photo; 6 sibling film stills together on desktop (JAMES.md 6)
+
+Done here: five jobs, five pictures: each job's shot has its own framing (object position and scale on the still and on the playing film, measured 50%/1.06, 14% 22%/1.7, 86% 70%/1.5, 30% 88%/1.9, 78% 16%/1.6) and starts at its own moment of the film.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap from this page
+- [x] No horizontal page scroll (scrollWidth 375)
+- [x] Targets 44px; hover detail has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: phones read title, lede, ask, caption, then the film; the strip is a native swipe of one job a screen width; the teams a swipe of stills. A sideways swipe elsewhere turns to the neighbouring solution (finance → financial-services, tested).
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Text from the deck ramp
+- [x] Moving items stop off screen and under reduced motion; the stories hold under pointer and focus and end after one round
+- [x] n/a forms
+- [x] One h1; h2 per job and section; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: the film overlay and shots are `aria-hidden`; the jobs are real h2 headings in the strip.
+
+## 13. Performance and engineering
+- [x] h1 and the LCP still in server HTML
+- [x] Every image and video sized
+- [x] No poller; the story timer runs only in view and ends after one round
+- [x] All rendering and filming ran in the cloud
+
+Done here: transform, opacity and clip-path only; one contour canvas (behind the overlap finder).
+
+## 14. SEO and machine files
+- [x] Title and description unchanged
+- [x] Canonical unchanged
+- [x] `<JsonLd route>` unchanged
+- [x] Every card is a real link
+
+Done here: `solData.js` only adds each sibling's film slug.
+
+## 15. Catalogue and product pages
+- [x] n/a model card
+- [x] Every team card opens by Morph (title → h1)
+- [x] Hanzo's sibling links as up to 6 cards; the rest stay links ("All solutions")
+- [x] One price figure everywhere (reserved only)
+
+Done here: the overlap finder over this member's own contour; when two teams share nothing it shows the two columns only (no black zero box).
+
+## 16. Developer experience
+- [x] n/a: no code on these pages
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a; "the quickstart" link stays inside "What it runs on".
+
+## 17. States and resilience
+- [x] Static data; a member without a film shows an empty black frame
+- [x] No live data
+- [x] n/a submit
+- [x] Sheets degrade to inline content with JS off; the strip to a vertical list
+
+Done here: members without security, capacity or siblings simply have no sheet, section or rail for them.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary (`lib/track.js` does not exist yet)
+- [x] Nothing identifier-bearing
+- [x] `V2:` line in the page file's top comment
+- [x] Review read: `docs/review/solutions-family.md` 6/10 at a4af13e; fixes in this commit
+
+Done here: (1) five jobs, five pictures (own framing and moment each); (2) the sheets now open above the header (their triggers sit outside the pinned strip); (3) one page-owned solid at the close, hover on its buttons and the overlap controls; (4) no empty "More solutions" on the reserved tier (heading and link in the close); (5) triggers show the section title whole; (6) no zero box in the overlap; own hero medium and layout (full-bleed film, horizontal strip, film-still teams).

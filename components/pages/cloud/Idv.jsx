@@ -1,6 +1,12 @@
 'use client';
+// Persona: a team onboarding users that must verify identity with a vendor.
+// Goal: see that the vendor is configuration and only a proven verdict counts.
+// CTA: View on GitHub (idv.hero, idv.close).
+// Metric: cta_click idv.hero
+// Signature: a verdict, or nothing: four calls stay put while the vendor turns and each answers its honest way.
+// Beyond: Sign one, forge one: a real HMAC-SHA256 check in the browser.
 /* IDV (v2, archetype A Launch).
-   V2: 8/10 A switchboard hero where the four calls stay put while the vendor under them changes and each answers its own honest way; Hanzo's long intro read as a statement that inks in word by word with the scroll; the six facts as sheets that stack; sign-one-forge-one as the dark room.
+   V2: 8/10 A switchboard where four calls stay put while the vendor turns; Hanzo's intro inks in word by word; facts as stacking sheets; a real HMAC check in the dark room; greys only, one ask.
    Signature: a verdict, or nothing. In the hero, the same four calls go to whichever vendor is configured; the vendor
    turns (Jumio, Onfido, a forged callback, Plaid, the rest) and the verdict lane shows how each answers: a signed
    webhook that proves itself, a forgery refused, a poll to the source, or a refusal until the parsing is written.
@@ -9,15 +15,19 @@
    Beyond: "Sign one, forge one" - a real HMAC-SHA256 over the raw body, in your browser: change the body or the
    signature on the way in and it is turned away; empty the secret and it is refused (Idv.sign.mjs, self-check
    Idv.sign.test.mjs). Nothing leaves the page.
-   Accent: teal, from the verified tick. Every word and link is Hanzo's; the body and secret are examples. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; the body and secret are examples.
+   Persona: a team onboarding users that must verify identity with a vendor (Jumio, Onfido, Plaid).
+   Goal: see that the vendor is configuration, that only a proven verdict counts, and try a forged webhook.
+   CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import { useLive, useSteps } from './Frame';
 import { hmac, verify } from './Idv.sign.mjs';
 import { Lines, Lift } from '../../v2/LiftStage';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Idv.css';
 
@@ -33,15 +43,19 @@ const VENDORS = [
 
 /* The switchboard: the four calls stay put; the vendor under them turns; the verdict lane answers its own way. */
 function Board() {
-  const [ref, live] = useLive(0.3);
+  const [ref, seen] = useLive(0.3);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [v, pick] = useSteps(VENDORS.length, 3000, live);
   const [name, how, verdict, k] = VENDORS[v];
   return (
+    <div className="lp-host">
+    <LivePause paused={paused} onToggle={togglePause} className="iv-pause" />
     <div className="iv-board" ref={ref}>
       <div className="iv-vendors" role="tablist" aria-label="Vendor">
         {VENDORS.map(([n], i) => (
           <button key={n} type="button" role="tab" aria-selected={v === i} onClick={() => pick(i)}>
-            {v === i && <motion.span layoutId="iv-v" className="iv-v-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+            {v === i && <motion.span layoutId="iv-v" className="iv-v-bg" transition={{ duration: 0.3, ease: EASE }} />}
             <span className="iv-v-t">{n}</span>
           </button>
         ))}
@@ -60,6 +74,7 @@ function Board() {
         </AnimatePresence>
       </div>
     </div>
+    </div>
   );
 }
 
@@ -74,10 +89,10 @@ function Statement() {
   return (
     <section className="v2-sec iv-say">
       <div className="v2-wrap">
-        <p className="v2-kick acc">What it is</p>
         <p className="iv-say-p" ref={ref} style={{ '--p': 0 }}>
           {words.map((w, i) => <span key={i} style={{ '--i': (i / words.length).toFixed(3) }}>{w} </span>)}
         </p>
+        <p className="v2-kick acc iv-say-cap">What it is</p>
       </div>
     </section>
   );
@@ -126,12 +141,12 @@ function Forge() {
       <div className="v2-wrap">
         <div className="v2-grid iv-forge-h">
           <div className="iv-forge-hl">
-            <p className="v2-kick acc">A webhook has to prove it is one</p>
             <h2 className="v2-display s">Sign one, forge one</h2>
+            <p className="v2-kick acc iv-forge-cap">A webhook has to prove it is one</p>
           </div>
           <div className={'iv-stamp ' + (ok ? 'ok' : 'no')} aria-live="polite">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.p key={verdict + err} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ type: 'spring', stiffness: 300, damping: 26 }}>{err || SAYS[verdict] || ' '}</motion.p>
+              <motion.p key={verdict + err} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ duration: 0.3, ease: EASE }}>{err || SAYS[verdict] || ' '}</motion.p>
             </AnimatePresence>
           </div>
         </div>
@@ -171,11 +186,10 @@ export default function Idv() {
         <div className="v2-wrap v2-grid iv-hero-t">
           <Lines as="h1" className="v2-display iv-h1" lines={['Hanzo IDV']} data-morph-target="" />
           <div className="iv-hero-r">
-            <p className="v2-kick acc">Identity verification</p>
-            <A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A>
+            <Cta to="https://github.com/hanzoai" id="idv.hero" thumb className="v2-in" style={{ animationDelay: '.3s' }}>View on GitHub</Cta>
           </div>
         </div>
-        <Lift className="v2-wrap iv-lift" from={1.1} y={30} origin="50% 0%" offset={['start end', 'start 0.2']}>
+        <Lift className="v2-wrap iv-lift" from={1.05} y={20} origin="50% 0%" offset={['start end', 'start 0.4']}>
           <Board />
         </Lift>
       </section>
@@ -199,11 +213,11 @@ export default function Idv() {
         </div>
       </section>
 
-      <Forge />
-
       <ShipPrompt name="Identity verification" prompt="Read https://hanzo.ai/skill.md and use Hanzo Identity verification in my project." />
 
-      <GetIt name="IDV" tag="Identity verification" seed="idv" data={[256, 4, 6]} lead="Get started with IDV" />
+      <Forge />
+
+      <GetIt name="IDV" tag="Identity verification" seed="idv" data={[256, 4, 6]} lead="Get started with IDV" ask={['View on GitHub', 'https://github.com/hanzoai', 'idv.close']} />
     </main>
   );
 }

@@ -47,7 +47,7 @@ export default function LaunchConsole({ name, side, api, cap = 'Every request en
               const s = n === 'checkout-web' && built ? 'Ready' : st;
               return (
                 <li key={n} role="option" aria-selected={at === i} tabIndex={0} onClick={() => setAt(i)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setAt(i))} onMouseEnter={() => setAt(i)}>
-                  {at === i && <motion.span layoutId={'lx-con-' + name} className="cf-row-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {at === i && <motion.span layoutId={'lx-con-' + name} className="cf-row-bg" transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} />}
                   <i className={'cf-dot ' + (s === 'Building' ? 'b' : 'r')} />
                   <span className="cf-name">{n}</span>
                   <span className="cf-st">{s === 'Building' ? <><b className="lx-con-spin" aria-hidden="true" />{s}</> : s}</span>

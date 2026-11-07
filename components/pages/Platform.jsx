@@ -1,25 +1,27 @@
 'use client';
-/* Platform (/platform), v3. Archetype B, System: a map you travel, from the whole into one part.
-   Persona: Developer (PLAN-COMPONENTS 1.1), with the enterprise buyer second.
-   Goal: api_key_created.   CTA: "Start building" → platform.hanzo.ai/api-keys (hero, the site's sticky ask bar via data-thumb,
-   the closing Band).
-   Signature: the camera. The first screen is the whole stack, eleven plates as one white slab beside the headline,
-   turning toward the pointer. Scroll and the night opens as a circle from the stack, the plates pull apart and the
-   camera travels down the stack group by group (API, MIND, ACT, RUN, SILICON), lighting that group's plates while its
-   words pin on the left; then the night closes back into the stack. Any layer opens its inspector sheet.
-   Motion mix (JAMES 9, scroll is 2 of 6 kinds): scroll (the camera; the plane-by-plane chapters), pointer (the stack
-   turns to the pointer, tiles whose objects play on hover, the directory preview, the ring held under the pointer), time (the One API replay
-   types itself, the improvement ring turns, the marquee), state (inspector sheets rise, tabs and the endpoint pill
-   glide), arrival (headlines cut into their lines).
+/* Platform (/platform). Archetype B, System: a map you zoom into, from the whole into one part (MASTER 4.2).
+   Persona: Developer (MASTER part 1), with the enterprise buyer second.
+   Goal: api_key_created.   CTA: "Start building" → platform.hanzo.ai/api-keys (hero, the site's sticky ask via data-thumb,
+   the closing Band). Live /platform has no sales ask, so Hanzo's own label stays.
+   Signature: the camera. The first screen is the whole stack resting slightly open beside the headline; on arrival each
+   of the eleven plates slides out and names itself once (under 5 s), then the pointer turns it. Scroll and the headline
+   settles from 84 to 52px while the black room rises as a rounded card and opens to full width; the plates pull apart and
+   the camera travels down the stack group by group (API, MIND, ACT, RUN, SILICON), each group's words pinned on the left
+   and its figure growing while it is the moment. Any layer opens its sheet (layer 11 holds the kernel's four targets).
+   Order (MASTER 4.2 /platform): hero and map, the product directory, the planes, then capabilities, One API, the loop,
+   open, the figures, the Band. About 15 screens at 1470×801 before the footer.
+   Scale rhythm (MASTER 3.1): one big thing per screen; headings rest at 26px, figures at 64px, h1 at 52px.
+   Motion mix (scroll is half at most): scroll (the camera; the plane chapters), idle (the arrival walk, the capability
+   walk, the One API replay, the improvement ring; each with a pause where it runs past 5 s), pointer (the stack turns,
+   directory previews), state (sheets rise, tab and endpoint pills glide), arrival (headlines cut into their lines).
    Beyond: ask the map. Type a word (CUDA, keys, routing, memory) and the plates whose own Hanzo descriptions use it
    light up in the stack, each with the phrase that matched and a click into its sheet. Built only from Hanzo's words.
-   PLAN-COMPONENTS 5.9: the product directory, rows that reveal each product's existing description on hover or focus.
-   Colour: none. Greys, silvers, ink and white only (JAMES 7). One dark middle room (the map), one dark close (Band).
-   Every word and link is Hanzo's. Coverage: docs/coverage/platform.md. */
+   Colour: none. Deck greys, ink and white only. One dark room (the map) and the closing Band.
+   Every word and link is Hanzo's (parity 330/330, 129/129). Coverage: docs/coverage/platform.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Copy, Mark } from '../ui';
-import { A, Band, Tabs, TabPanel } from '../kit';
+import { Mark } from '../ui';
+import { A, Band, Tabs, TabPanel, Cta, CodeBlock } from '../kit';
 import Sigil from '../Sigil';
 import IsoStack, { zOf, LIFT } from '../v2/IsoStack';
 import PinChapters from '../v2/PinChapters';
@@ -108,8 +110,9 @@ const HAY = LAYERS.map((l) => [l.name, l.kick, l.d, l.why, l.extra && l.extra.st
 const Stat = ({ s }) => { const [f, ...r] = s.split(' '); return <><b>{f}</b> <span>{r.join(' ')}</span></>; };
 
 /* the journey's timeline, as fractions of its scroll */
-const T = { heroOut: [0.015, 0.085], wipe: [0.04, 0.15], explode: [0.07, 0.25], map: [0.14, 0.19], intro: [0.15, 0.2, 0.29, 0.33], g0: 0.34, close: [0.95, 0.995] };
-const GLEN = (1 - T.g0 - 0.06) / GROUPS.length;
+const REST = 0.34; // the stack rests slightly open on the first screen, so its plates read as layers, not one slab
+const T = { heroOut: [0.015, 0.085], wipe: [0.04, 0.15], explode: [0.07, 0.25], map: [0.14, 0.19], intro: [0.15, 0.2, 0.29, 0.33], g0: 0.34, close: [1.5, 1.6] }; // the room no longer closes: the map scrolls away whole and the directory follows (no blank screen)
+const GLEN = (1 - T.g0 - 0.02) / GROUPS.length;
 const groupAt = (p) => (p < T.g0 ? -1 : Math.min(GROUPS.length - 1, Math.floor((p - T.g0) / GLEN)));
 const zMid = (g, e) => { const b = IN_GROUP[g].map((i) => N - 1 - i); return (zOf(Math.min(...b), e) + zOf(Math.max(...b), e)) / 2; };
 
@@ -139,8 +142,8 @@ function Journey({ openLayer }) {
   const [hot, setHot] = useState(-1);
   const [q, setQ] = useState('');
   const k = useRef(1);
-  const e = useMotionValue(0);
-  const camY = useMotionValue(LIFT * zMid(-1, 0));
+  const e = useMotionValue(REST);
+  const camY = useMotionValue(LIFT * zMid(-1, REST));
   const camS = useMotionValue(1);
   const camX = useMotionValue(0);
   const { scrollYProgress: p } = useScroll({ target: track, offset: ['start start', 'end end'] });
@@ -149,16 +152,20 @@ function Journey({ openLayer }) {
   const heroY = useTransform(p, (v) => map(v, [0, T.heroOut[1]], [0, -90]));
   const heroO = useTransform(p, (v) => map(v, T.heroOut, [1, 0]));
   const chipsO = useTransform(p, (v) => map(v, [0, 0.04], [1, 0]));
+  const artO = useTransform(p, (v) => map(v, [T.close[0], T.close[0] + 0.025], [1, 0]));
   const mapO = useTransform(p, (v) => map(v, [T.map[0], T.map[1], T.close[0] - 0.01, T.close[0] + 0.02], [0, 1, 1, 0]));
   const introO = useTransform(p, (v) => map(v, T.intro, [0, 1, 1, 0]));
   const introY = useTransform(p, (v) => map(v, T.intro, [36, 0, 0, -36]));
-  // the night: a circle that opens from the stack and, at the end, closes back into it (scale only, no clip)
-  // the disc is 200px; 26× covers the far corner of any screen up to 2560 wide
-  const night = useTransform(p, (v) => 26 * (v < 0.6 ? io(v, ...T.wipe) : 1 - io(v, ...T.close)));
+  // the black room (MASTER 3.1): a rounded card inside the gutters that rises, then opens past the screen edges so its
+  // corners leave; at the end it closes back into a card and rises away. Transform only.
+  const roomY = useTransform(p, (v) => (v < 0.6 ? (1 - io(v, T.wipe[0], T.wipe[0] + 0.07)) * 100 : -io(v, T.close[0] + 0.02, T.close[1]) * 100) + '%');
+  const roomS = useTransform(p, (v) => (v < 0.6 ? 0.94 + 0.1 * io(v, T.wipe[0] + 0.05, T.wipe[1]) : 1.04 - 0.1 * io(v, T.close[0], T.close[0] + 0.025)));
+  // the headline is the hero's moment: it starts at 84px and settles toward 52px as the journey begins
+  const h1S = useTransform(p, (v) => map(v, [0, T.heroOut[1]], [1, 0.62]));
 
   const frame = (v) => {
     if (!pinned) return;
-    e.set(io(v, ...T.explode));
+    e.set(REST + (1 - REST) * io(v, ...T.explode));
     const c = camAt(v, k.current);
     camY.set(c.y);
     camS.set(c.s);
@@ -189,9 +196,25 @@ function Journey({ openLayer }) {
     const sync = e.on('change', (v) => camY.set(LIFT * zMid(-1, v) * camS.get()));
     if (calm) { e.set(1); return sync; }
     if (!artSeen) return sync;
-    const c = animate(e, 1, { duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 });
+    const c = animate(e, 1, { duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 5.4 });
     return () => { c.stop(); sync(); };
   }, [pinned, calm, artSeen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // arrival: one pass down the eleven plates, each named as it lifts (450ms a plate, under 5s), then rest on the top
+  const [walk, setWalk] = useState(-1);
+  const touched = useRef(false);
+  useEffect(() => {
+    if (calm) return;
+    let i = 0;
+    let t = setTimeout(function next() {
+      if (touched.current) { setWalk(-1); return; }
+      setWalk(i);
+      i += 1;
+      t = setTimeout(i < N ? next : () => setWalk(-1), 450);
+    }, 700);
+    return () => clearTimeout(t);
+  }, [calm]);
+  const onHot = (i) => { touched.current = true; setWalk(-1); setHot(i); };
 
   // Beyond: ask the map
   const hits = useMemo(() => {
@@ -207,7 +230,7 @@ function Journey({ openLayer }) {
   }, [q]);
   const lit = hits ? new Set(hits.map((h) => h.i)) : null;
   const mark = (i) => {
-    const h = i === hot ? ' hot' : '';
+    const h = i === hot || (hot < 0 && i === walk && ph === 0) ? ' hot' : '';
     if (lit) return (lit.has(i) ? 'match' : 'dim') + h;
     if (!pinned || g < 0) return h.trim();
     return (LAYERS[i].g === g ? 'lit' : 'dim') + h;
@@ -252,43 +275,33 @@ function Journey({ openLayer }) {
     <section ref={track} className="xpl-jr" aria-labelledby="xpl-h1" data-ph={ph} data-g={g}>
       <span className="xpl-jr-dark" data-room="dark" aria-hidden="true" />
       <div className="xpl-jr-stage" onPointerMove={turn} onPointerLeave={rest}>
-        <motion.div className="xpl-jr-bg" style={pinned ? { scale: night } : undefined} aria-hidden="true" />
+        <motion.div className="xpl-jr-bg" style={pinned ? { y: roomY, scale: roomS } : undefined} aria-hidden="true" />
 
         <motion.div className="xpl-hero" style={pinned ? { y: heroY, opacity: heroO } : undefined}>
           <div className="xpl-hero-t" onFocus={follow(0, ph === 0)}>
-            <Lines as="h1" id="xpl-h1" className="xpl-display" lines={['The AI‑native', 'cloud.']} now />
+            <motion.div className="xpl-h1w" style={pinned ? { scale: h1S } : undefined}><Lines as="h1" id="xpl-h1" className="xpl-display" lines={['The AI‑native', 'cloud.']} now /></motion.div>
             <p className="xpl-tag">Hanzo Platform</p>
             <p className="xpl-lede">Run models, agents, applications, data and infrastructure through one operating plane.</p>
             <p className="xpl-body">Kubernetes-native. Fully observable. Open source. Run it on Hanzo infrastructure or infrastructure you control.</p>
             <div className="xpl-acts">
-              <A to={KEY_URL} className="x-btn solid xpl-btn" data-thumb="" data-cta="platform.hero">Start building</A>
-              <a className="x-btn xpl-btn" href="#stack" onClick={(ev) => { ev.preventDefault(); goTo(0.235); }}>Inspect the stack</a>
+              <Cta to={KEY_URL} id="platform.hero" thumb>Start building</Cta>
+              <Cta to="#stack" kind="quiet" id="platform.stack" onClick={(ev) => { ev.preventDefault(); goTo(0.235); }}>Inspect the stack</Cta>
             </div>
-            <div className="xpl-run">
-              <code>docker run -p 8080:8080 ghcr.io/hanzoai/cloud</code>
-              <Copy text="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" />
-            </div>
+            <CodeBlock code="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" prompt className="xpl-run" />
           </div>
         </motion.div>
 
-        <div ref={art} className="xpl-art">
-          <IsoStack items={ITEMS} explode={e} camX={camX} camY={camY} camScale={camS} tone="light" mark={mark} onPick={openLayer} onHot={setHot} className="xpl-iso" />
-        </div>
-
-        <motion.div className="xpl-chips" aria-label="What runs on it" style={pinned ? { opacity: chipsO } : undefined}>
-          <div className="xpl-chips-t">
-            {[0, 1].map((r) => (
-              <ul key={r} aria-hidden={r === 1 ? 'true' : undefined}>
-                {['400+ callable models', 'GPUs', 'Functions', 'Containers', 'Databases', 'Observability', 'One API'].map((c) => <li key={c}>{c}</li>)}
-              </ul>
-            ))}
-          </div>
+        <motion.div ref={art} className="xpl-art" style={pinned ? { opacity: artO } : undefined}>
+          <IsoStack items={ITEMS} explode={e} camX={camX} camY={camY} camScale={camS} tone="light" mark={mark} onPick={openLayer} onHot={onHot} className="xpl-iso" />
         </motion.div>
 
-        <motion.div id="stack" className="xpl-map" style={pinned ? { opacity: mapO } : undefined}>
+        <motion.ul className="xpl-chips" aria-label="What runs on it" style={pinned ? { opacity: chipsO } : undefined}>
+          {['400+ callable models', 'GPUs', 'Functions', 'Containers', 'Databases', 'Observability', 'One API'].map((c) => <li key={c}>{c}</li>)}
+        </motion.ul>
+
+        <motion.div id="stack" className="xpl-map" data-ask-hide style={pinned ? { opacity: mapO } : undefined}>
           <i className="xpl-map-room" data-room="dark" aria-hidden="true" />
           <div className="xpl-bar xpl-bar-t" onFocus={follow(0.24, ph === 1)}>
-            <span>Hanzo / architecture map</span>
             <span className={'xpl-hint' + (g >= 0 || lit ? ' off' : '')}>Select a layer</span>
             {finder}
           </div>
@@ -297,7 +310,7 @@ function Journey({ openLayer }) {
             <Lines className="xpl-h2" lines={['One stack.', 'Down to the kernel.']} />
             <p className="xpl-tag">The native AI stack</p>
             <p className="xpl-lede">Build with agents. Route with Enso. Reason with Zen. Decide with Kai. Run on infrastructure you control.</p>
-            <button type="button" className="x-btn xpl-btn xpl-btn-dk" onClick={() => openLayer(0)} aria-haspopup="dialog">Inspect every layer</button>
+            <Cta kind="quiet" id="platform.inspect" onClick={() => openLayer(0)} aria-haspopup="dialog" className="xpl-btn-dk">Inspect every layer</Cta>
           </motion.header>
 
           <div className="xpl-groups">
@@ -326,6 +339,7 @@ function Journey({ openLayer }) {
           </div>
 
           <div className="xpl-bar xpl-bar-b" onFocus={follow(0.24, ph === 1)}>
+            <span>Hanzo / architecture map</span>
             <span>01—11 / owned and connected</span>
             <span>Interactive drawing · not telemetry</span>
             <span className="xpl-zap">
@@ -352,6 +366,7 @@ function Inspector({ sel, open, onClose, step }) {
           <p className="xpl-ins-d">{l.d}</p>
           <ul className="xpl-pills">{l.links.map(([t, h]) => <li key={t}><A to={h} className="xpl-pill">{t}</A></li>)}</ul>
           <div className="xpl-why"><p className="xpl-why-k">Why this layer matters</p><p>{l.why}</p></div>
+          {l.n === '11' && <KernelFan />}
           {l.extra && (
             <div className="xpl-proof">
               {l.extra.stat && <p className="xpl-proof-s"><Stat s={l.extra.stat} /></p>}
@@ -380,92 +395,98 @@ const TARGETS = [
   ["03 / Cross-GPU", 'Vulkan', "SPIR-V shader paths and portable GPU execution.", 'https://github.com/hanzoai/ml/tree/main/hanzo-ml/src/vulkan'],
   ["04 / Apple", 'Metal', "Apple Silicon kernels and GPU-validated execution paths.", 'https://github.com/hanzoai/ml/tree/main/hanzo-metal-kernels'],
 ];
-const FAN = [100, 300, 500, 700];
 
-function Kernel() {
+/* opened from layer 11 (Kernel DSL): one expression fanning out to four targets; a target lights its wire */
+function KernelFan() {
   const [hot, setHot] = useState(-1);
   return (
-    <section className="xpl-sec xpl-kernel" aria-labelledby="xpl-kn-h">
-      <div className="xpl-wrap xpl-kn-g">
-        <div className="xpl-kn-l">
-          <Lines id="xpl-kn-h" className="xpl-h2" lines={['One kernel DSL.', 'Four targets.']} />
-          <p className="xpl-body">Four parallel acceleration backends, not four extra hops. First-party kernels and performance tuning for supported workloads.</p>
-        </div>
-        <div className="xpl-fan" data-hot={hot}>
-          <div className="xpl-fan-src" aria-hidden="true"><Mark size={22} /></div>
-          <svg className="xpl-fan-svg" viewBox="0 0 800 160" aria-hidden="true">
-            {FAN.map((x, i) => <path key={x} className={hot === i ? 'on' : ''} d={`M400 0 C400 90 ${x} 70 ${x} 160`} />)}
-            {FAN.map((x, i) => <circle key={'d' + x} r="5" className="xpl-fan-dot" style={{ offsetPath: `path('M400 0 C400 90 ${x} 70 ${x} 160')`, animationDelay: i * 0.45 + 's' }} />)}
-          </svg>
-          <ul className="xpl-targets">
-            {TARGETS.map(([k, n, d, to], i) => (
-              <li key={n} onPointerEnter={() => setHot(i)} onPointerLeave={() => setHot(-1)} onFocus={() => setHot(i)} onBlur={() => setHot(-1)}>
-                <h3>{n}</h3>
-                <p className="xpl-tag">{k}</p>
-                <p>{d}</p>
-                <A to={to} className="xpl-go"><span>Explore<span className="x-sr"> {n}</span></span><Arrow /></A>
-              </li>
-            ))}
-          </ul>
-        </div>
+    <div className="xpl-kernel">
+      <h4 className="xpl-kn-h">One kernel DSL. Four targets.</h4>
+      <p className="xpl-body">Four parallel acceleration backends, not four extra hops. First-party kernels and performance tuning for supported workloads.</p>
+      <div className="xpl-fan" data-hot={hot}>
+        <div className="xpl-fan-src" aria-hidden="true"><Mark size={20} /></div>
+        <i className="xpl-fan-dot" aria-hidden="true" />
+        <ul className="xpl-targets">
+          {TARGETS.map(([k, n, d, to], i) => (
+            <li key={n} onPointerEnter={() => setHot(i)} onPointerLeave={() => setHot(-1)} onFocus={() => setHot(i)} onBlur={() => setHot(-1)}>
+              <h5>{n}</h5>
+              <p className="xpl-cap-s">{k}</p>
+              <p>{d}</p>
+              <A to={to} className="xpl-go"><span>Explore<span className="x-sr"> {n}</span></span><Arrow /></A>
+            </li>
+          ))}
+        </ul>
       </div>
-    </section>
+    </div>
   );
 }
 
 /* ---------- intelligence that connects to every layer: an Apple tile grid; each tile's object plays on hover ---------- */
 const Pills = ({ list }) => <ul className="xpl-pills">{list.map(([t, h]) => <li key={t}><A to={h} className="xpl-pill">{t}</A></li>)}</ul>;
 
+const CAPS = [
+  { k: 'mem', t: 'Semantic + Graph', tag: 'Retrieve / remember', d: 'Semantic retrieval, durable memory, provenance and connected knowledge for agent work.', fig: '2.0× multi-hop evidence recall vs cosine', sd: 'LoCoMo, held-out test split: every evidence turn of a multi-hop question in the top 20 for 37.5% of questions, against 18.8% for cosine search.', pills: [['Product', '/products/memory'], ['Docs', 'https://docs.hanzo.ai/docs/openapi/graph'], ['Source', 'https://github.com/hanzoai/semantic'], ['The LoCoMo run', '/benchmarks/locomo']],
+    art: <svg className="xpl-graph" viewBox="0 0 220 160" aria-hidden="true"><path d="M30 80 L100 30 L190 60 L150 135 L60 128 Z M100 30 L150 135 M30 80 L190 60 M60 128 L190 60" />{[[30, 80], [100, 30], [190, 60], [150, 135], [60, 128]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="6" style={{ '--i': i }} />)}</svg> },
+  { k: 'code', t: 'Code Intelligence', tag: 'Understand / edit', d: 'Symbols, ASTs, references and repository-aware code navigation for coding agents.', pills: [['Product', '/dev'], ['Docs', 'https://docs.hanzo.ai/docs/openapi/code'], ['Source', 'https://github.com/hanzoai/lsp']],
+    art: <svg className="xpl-tree" viewBox="0 0 240 110" aria-hidden="true"><path d="M120 12 V36 M120 36 H52 V60 M120 36 H188 V60 M52 60 V84 M52 84 H24 V100 M52 84 H80 V100 M188 60 V100" />{[[120, 12], [52, 60], [188, 60], [24, 100], [80, 100], [188, 100]].map(([x, y], i) => <rect key={i} x={x - 9} y={y - 6} width="18" height="12" rx="3" style={{ '--i': i }} />)}</svg> },
+  { k: 'forge', t: 'Hanzo Forge', tag: 'Build / ship', d: 'Source hosting, builds, CI/CD and deployments connecting agents to shipped software.', pills: [['Product', 'https://forge.hanzo.ai'], ['Docs', 'https://docs.hanzo.ai/docs/cli/platform'], ['Source', 'https://github.com/hanzoai/forge']],
+    art: <svg className="xpl-commits" viewBox="0 0 240 60" aria-hidden="true"><path d="M8 30 H232 M60 30 C80 30 84 12 104 12 H160 C180 12 184 30 204 30" />{[8, 60, 104, 160, 204, 232].map((x, i) => <circle key={x} cx={x} cy={i === 2 || i === 3 ? 12 : 30} r="6" style={{ '--i': i }} />)}</svg> },
+  { k: 'edge', t: 'In. Out. Under control.', tag: 'Edge / ingress + egress · Request boundary', d: 'Admission, auth, routing, streaming and responses are boundary functions around the stack rather than another inference step. Outbound calls carry delegated credentials that stay in KMS.', pills: [['Product', '/ingress'], ['Ingress', 'https://github.com/hanzoai/ingress'], ['Egress', 'https://github.com/hanzoai/egress']],
+    art: <div className="xpl-flow" aria-hidden="true"><i /><i /><i /><u /></div> },
+  { k: 'trace', t: 'Everything leaves a trace.', tag: 'Telemetry / observability · End to end', d: 'Follow a request across models, decisions, tools and infrastructure to cost, quality, latency, usage and evaluation.', pills: [['Product', '/o11y'], ['Docs', 'https://docs.hanzo.ai/docs/openapi/o11y'], ['Source', 'https://github.com/hanzoai/o11y']],
+    art: <svg className="xpl-trace" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 90 L60 90 L90 24 L140 102 L190 54 L240 78 L300 18 L360 90 L420 60 L480 84 L540 36 L600 66" /></svg> },
+];
+
+const PauseIcon = ({ on }) => (on
+  ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
+  : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>);
+
 function Reach() {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.2 });
+  const seen = useInView(ref, { amount: 0.35 });
+  const calm = useCalm();
+  const [at, setAt] = useState(0);
+  const [run, setRun] = useState(true);
+  const live = run && !calm;
+  useEffect(() => {
+    if (!seen || !live) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % CAPS.length), 3600);
+    return () => clearTimeout(t);
+  }, [seen, live, at]);
+  const pick = (i) => { setAt(i); setRun(false); };
   return (
-    <section ref={ref} className="xpl-sec xpl-reach" aria-labelledby="xpl-rc-h" data-seen={seen}>
+    <section ref={ref} className="xpl-sec xpl-reach" aria-labelledby="xpl-rc-h">
       <div className="xpl-wrap">
         <header className="xpl-head">
           <Lines id="xpl-rc-h" className="xpl-h2" lines={['Intelligence that connects', 'to every layer.']} />
           <p className="xpl-body">Agent capabilities sit alongside the inference path; not every request crosses every subsystem.</p>
         </header>
-        <div className="xpl-tiles">
-          <article className="xpl-tile t-mem">
-            <h3>Semantic + Graph</h3>
-            <p className="xpl-tag">Retrieve / remember</p>
-            <p className="xpl-tile-d">Semantic retrieval, durable memory, provenance and connected knowledge for agent work.</p>
-            <p className="xpl-tile-fig"><Stat s="2.0× multi-hop evidence recall vs cosine" /></p>
-            <p className="xpl-tile-sd">LoCoMo, held-out test split: every evidence turn of a multi-hop question in the top 20 for 37.5% of questions, against 18.8% for cosine search.</p>
-            <Pills list={[['Product', '/products/memory'], ['Docs', 'https://docs.hanzo.ai/docs/openapi/graph'], ['Source', 'https://github.com/hanzoai/semantic'], ['The LoCoMo run', '/benchmarks/locomo']]} />
-            <svg className="xpl-graph" viewBox="0 0 220 160" aria-hidden="true"><path d="M30 80 L100 30 L190 60 L150 135 L60 128 Z M100 30 L150 135 M30 80 L190 60 M60 128 L190 60" />{[[30, 80], [100, 30], [190, 60], [150, 135], [60, 128]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="6" style={{ '--i': i }} />)}</svg>
-          </article>
-          <article className="xpl-tile t-code">
-            <h3>Code Intelligence</h3>
-            <p className="xpl-tag">Understand / edit</p>
-            <p className="xpl-tile-d">Symbols, ASTs, references and repository-aware code navigation for coding agents.</p>
-            <svg className="xpl-tree" viewBox="0 0 240 110" aria-hidden="true"><path d="M120 12 V36 M120 36 H52 V60 M120 36 H188 V60 M52 60 V84 M52 84 H24 V100 M52 84 H80 V100 M188 60 V100" />{[[120, 12], [52, 60], [188, 60], [24, 100], [80, 100], [188, 100]].map(([x, y], i) => <rect key={i} x={x - 9} y={y - 6} width="18" height="12" rx="3" style={{ '--i': i }} />)}</svg>
-            <Pills list={[['Product', '/dev'], ['Docs', 'https://docs.hanzo.ai/docs/openapi/code'], ['Source', 'https://github.com/hanzoai/lsp']]} />
-          </article>
-          <article className="xpl-tile t-forge">
-            <h3>Hanzo Forge</h3>
-            <p className="xpl-tag">Build / ship</p>
-            <p className="xpl-tile-d">Source hosting, builds, CI/CD and deployments connecting agents to shipped software.</p>
-            <svg className="xpl-commits" viewBox="0 0 240 60" aria-hidden="true"><path d="M8 30 H232 M60 30 C80 30 84 12 104 12 H160 C180 12 184 30 204 30" />{[8, 60, 104, 160, 204, 232].map((x, i) => <circle key={x} cx={x} cy={i === 2 || i === 3 ? 12 : 30} r="6" style={{ '--i': i }} />)}</svg>
-            <Pills list={[['Product', 'https://forge.hanzo.ai'], ['Docs', 'https://docs.hanzo.ai/docs/cli/platform'], ['Source', 'https://github.com/hanzoai/forge']]} />
-          </article>
-          <article className="xpl-tile t-edge">
-            <h3>In. Out. Under control.</h3>
-            <p className="xpl-tag">Edge / ingress + egress · Request boundary</p>
-            <p className="xpl-tile-d">Admission, auth, routing, streaming and responses are boundary functions around the stack rather than another inference step. Outbound calls carry delegated credentials that stay in KMS.</p>
-            <div className="xpl-flow" aria-hidden="true"><i /><i /><i /><u /></div>
-            <Pills list={[['Product', '/ingress'], ['Ingress', 'https://github.com/hanzoai/ingress'], ['Egress', 'https://github.com/hanzoai/egress']]} />
-          </article>
-          <article className="xpl-tile t-trace">
-            <div>
-              <h3>Everything leaves a trace.</h3>
-              <p className="xpl-tag">Telemetry / observability · End to end</p>
-              <p className="xpl-tile-d">Follow a request across models, decisions, tools and infrastructure to cost, quality, latency, usage and evaluation.</p>
-              <Pills list={[['Product', '/o11y'], ['Docs', 'https://docs.hanzo.ai/docs/openapi/o11y'], ['Source', 'https://github.com/hanzoai/o11y']]} />
-            </div>
-            <svg className="xpl-trace" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 90 L60 90 L90 24 L140 102 L190 54 L240 78 L300 18 L360 90 L420 60 L480 84 L540 36 L600 66" /></svg>
-          </article>
+        <div className="xpl-cap-g">
+          <div className="xpl-cap-l">
+            <ol className="xpl-cap-list">
+              {CAPS.map((c, i) => (
+                <li key={c.k}>
+                  <button type="button" className={i === at ? 'on' : ''} aria-pressed={i === at} aria-controls={'xpl-cap-' + c.k} onClick={() => pick(i)} onPointerEnter={(ev) => ev.pointerType === 'mouse' && pick(i)}>
+                    <span className="xpl-cap-n">{pad(i + 1)}</span><b>{c.t}</b>{i === at && live && seen && <i className="xpl-cap-t" aria-hidden="true" />}
+                  </button>
+                </li>
+              ))}
+            </ol>
+            <button type="button" className="xpl-play" onClick={() => setRun((v) => !v)} aria-label={live ? 'Pause' : 'Play'} aria-pressed={live}><PauseIcon on={live} /></button>
+          </div>
+          <div className="xpl-cap-stage">
+            {CAPS.map((c, i) => (
+              <article key={c.k} id={'xpl-cap-' + c.k} className={'xpl-cap-p t-' + c.k} data-on={i === at} aria-hidden={i !== at} inert={i !== at}>
+                <div className="xpl-cap-art">{c.art}</div>
+                <h3 className="x-sr">{c.t}</h3>
+                <p className="xpl-cap-s">{c.tag}</p>
+                <p className="xpl-cap-d">{c.d}</p>
+                {c.fig && <p className="xpl-tile-fig"><Stat s={c.fig} /></p>}
+                {c.sd && <p className="xpl-tile-sd">{c.sd}</p>}
+                <Pills list={c.pills} />
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -492,24 +513,24 @@ function Loop() {
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
+  const [run, setRun] = useState(true);
   useEffect(() => {
-    if (!seen || calm || held) return;
-    const t = setInterval(() => setAt((v) => (v + 1) % LOOP.length), 1900);
-    return () => clearInterval(t);
-  }, [seen, calm, held]);
+    if (!seen || calm || held || !run) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % LOOP.length), 1900);
+    return () => clearTimeout(t);
+  }, [seen, calm, held, run, at]);
   return (
     <section className="xpl-sec xpl-loop" aria-labelledby="xpl-lp-h">
       <div className="xpl-wrap xpl-lp-g">
         <div className="xpl-lp-l">
           <Lines id="xpl-lp-h" className="xpl-h2" lines={['Not just running.', 'Learning.']} />
-          <p className="xpl-tag">Research / recursive improvement</p>
           <div className="xpl-links"><Go to="/research">Research</Go><Go to="/benchmarks">Benchmarks</Go><Go to="https://github.com/hanzoai/benchmarks">Harness</Go></div>
           <p className="xpl-body xpl-small">A modular feedback architecture, not a claim of unattended production self-modification. Only candidates that meet the relevant evaluation and release gates are promoted.</p>
         </div>
         <div ref={ref} className="xpl-ring" style={{ '--at': at }} onPointerLeave={() => setHeld(false)}>
           <span className="xpl-ring-c" aria-hidden="true" />
           <span className="xpl-ring-arc" aria-hidden="true" />
-          <p className="xpl-ring-mid" aria-hidden="true"><b>{pad(at + 1)}</b><span>/ {pad(LOOP.length)}</span></p>
+          <p className="xpl-ring-mid" aria-hidden="true"><b>{LOOP[at][1]}</b><span>{LOOP[at][2]}</span></p>
           <ol>
             {LOOP.map(([n, t, s], i) => (
               <li key={n} style={{ '--i': i }} className={i === at ? 'on' : ''}>
@@ -524,19 +545,10 @@ function Loop() {
               </li>
             ))}
           </ol>
+          <p className="xpl-ring-cap"><span className="xpl-cap-s">Research / recursive improvement</span>
+            <button type="button" className="xpl-play" onClick={() => setRun((v) => !v)} aria-label={run && !calm ? 'Pause' : 'Play'} aria-pressed={run && !calm}><PauseIcon on={run && !calm} /></button>
+          </p>
         </div>
-      </div>
-      <div className="xpl-wrap">
-        <ul className="xpl-facts">
-          {FACTS.map(([f, h, d, l, to]) => (
-            <li key={h}>
-              <p className="xpl-fact-h">{f && <b>{f}</b>} <span>{h}</span></p>
-              <p className="xpl-fact-d">{d}</p>
-              <Go to={to}>{l}</Go>
-            </li>
-          ))}
-        </ul>
-        <p className="xpl-foot">GPU targets are parallel hardware backends, not sequential stages. Zen is generative reasoning; Kai provides decision intelligence. ZAP is a native RPC protocol for supported interconnect paths. Research and evaluation form a gated improvement loop. “Native” describes Hanzo’s architecture surfaces; not every implementation, weight, driver or operating system is owned or open sourced by Hanzo.</p>
       </div>
     </section>
   );
@@ -676,7 +688,7 @@ const PLANES = [
 
 function Planes() {
   return (
-    <section className="xpl-planes" aria-label="The cloud, plane by plane">
+    <section className="xpl-planes" aria-label="The cloud, plane by plane" data-ask-hide>
       <PinChapters label="Planes" chapters={PLANES} className="xpl-pc" />
     </section>
   );
@@ -727,11 +739,11 @@ function OneApi() {
           <p className="xpl-body">The same key, organization, project, policy and usage ledger behind every path. The interface changes; the system does not.</p>
         </header>
         <div ref={box} className="xpl-term" data-room="dark">
-          <ul className="xpl-eps">
+          <ul className="xpl-eps" style={{ '--at': Math.min(at, 6) }}>
+            <li className="xpl-ep-bg" aria-hidden="true" data-on={at < 6} />
             {OPS.slice(0, 6).map((o, i) => (
               <li key={o.p}>
                 <button type="button" className={at === i ? 'on' : ''} aria-pressed={at === i} onClick={() => { setAt(i); setPlay(false); }}>
-                  {at === i && <motion.span layoutId="xpl-ep-bg" className="xpl-ep-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
                   <span>api.hanzo.ai</span><b>{o.p}</b>
                 </button>
               </li>
@@ -744,7 +756,6 @@ function OneApi() {
               <button type="button" className="xpl-play" onClick={() => setPlay((v) => !v)} aria-label={on ? 'Pause' : 'Play'} aria-pressed={on}>
                 <svg className="a" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
                 <svg className="b" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
-                <span className="b">Pause</span>
               </button>
             </div>
             <p className="xpl-term-s">Five operations, one key, no glue. Each is checked against the published OpenAPI document on every build.</p>
@@ -774,15 +785,13 @@ function OpenSec() {
       <div className="xpl-wrap xpl-op-g">
         <div>
           <Lines id="xpl-op-h" className="xpl-h2 xpl-op-h" lines={['Your cloud should', 'not lock you in.']} />
-          <p className="xpl-tag">Open</p>
           <p className="xpl-lede xpl-op-l">The platform is open source, and the image we operate is the image you can pull: the same API and console on your cluster, in your network or on a laptop.</p>
           <div className="xpl-links"><Go to="https://docs.hanzo.ai/docs/quickstart">Quickstart</Go><Go to="/open-source">Open source</Go><Go to="https://github.com/hanzoai/cloud">Source</Go></div>
         </div>
-        <div className="xpl-tty" data-room="dark">
-          <div className="xpl-tty-bar"><span className="xpl-dots" aria-hidden="true"><i /><i /><i /></span><span className="xpl-tty-t" aria-hidden="true">~</span></div>
-          {[['curl -fsSL https://hanzo.sh | sh', '1'], ['hanzo serve cloud', '2']].map(([c, n]) => (
-            <div key={c} className="xpl-cmd"><span aria-hidden="true">{n}</span><code><i aria-hidden="true">$ </i>{c}</code><Copy text={c} /></div>
-          ))}
+        <div className="xpl-tty">
+          <CodeBlock code="curl -fsSL https://hanzo.sh | sh" prompt />
+          <CodeBlock code="hanzo serve cloud" prompt />
+          <p className="xpl-cap-s">Open</p>
         </div>
       </div>
     </section>
@@ -800,18 +809,18 @@ function Catalog({ about = {} }) {
       <div className="xpl-wrap">
         <header className="xpl-head xpl-cat-head">
           <Lines id="xpl-cat-h" className="xpl-h2" lines={['Explore the platform.']} />
-          <div><p className="xpl-tag">Catalog</p><p className="xpl-body">Every plane, and what is in it.</p></div>
+          <p className="xpl-body">Every plane, and what is in it.</p>
         </header>
         <div className="xpl-dir">
           <div className="xpl-dir-cols">
             {CAT.map(([n, to, items], i) => (
               <div key={n} className="xpl-dir-g">
-                <A to={to} className="xpl-dir-h" data-morph onPointerEnter={show(n, to)} onFocus={show(n, to)}><span>{pad(i + 1)}</span><b>{n}</b><Arrow /></A>
+                <A to={to} className="xpl-dir-h" onPointerEnter={show(n, to)} onFocus={show(n, to)}><span>{pad(i + 1)}</span><b data-morph>{n}</b><Arrow /></A>
                 <ul>
                   {items.map(([t, h]) => (
                     <li key={t}>
                       <A to={h} className={'xpl-dir-r' + (pick.to === h ? ' on' : '')} onPointerEnter={show(t, h)} onFocus={show(t, h)}>
-                        <span>{t}</span><Arrow />
+                        <span data-morph>{t}</span><Arrow />
                       </A>
                     </li>
                   ))}
@@ -820,6 +829,7 @@ function Catalog({ about = {} }) {
             ))}
           </div>
           <aside className="xpl-dir-pv" aria-live="polite">
+            <p className="xpl-cap-s">Catalog</p>
             <div className="xpl-dir-art" aria-hidden="true"><Sigil seed={pick.to} data={[d.length, pick.name.length]} className="xpl-dir-sig" /></div>
             <p className="xpl-dir-n">{pick.name}</p>
             {d && <p className="xpl-dir-d">{d}</p>}
@@ -831,8 +841,41 @@ function Catalog({ about = {} }) {
   );
 }
 
+/* ---------- the proof strip before the close (MASTER part 3): Hanzo's measured figures, each to its method ---------- */
+const PROOF = [
+  ['95.6%', 'on GPQA Diamond', '/benchmarks/gpqa'],
+  ['3.02×', 'faster coding', '/benchmarks#coding-agent'],
+  ['2.0×', 'multi-hop evidence recall vs cosine', '/benchmarks/locomo'],
+];
+function Proof() {
+  return (
+    <section className="xpl-sec xpl-proofs" aria-label="View the measurements">
+      <div className="xpl-wrap">
+        <div className="xpl-facts">
+          {FACTS.map(([f, h, d, l, to], i) => (
+            <div key={h} className={'xpl-fact' + (i ? '' : ' big')}>
+              <p className="xpl-fact-h">{f && <b>{f}</b>} <span>{h}</span></p>
+              <p className="xpl-fact-d">{d}</p>
+              <Go to={to}>{l}</Go>
+            </div>
+          ))}
+          <ul className="xpl-pfs">
+            {PROOF.map(([f, l, to]) => (
+              <li key={f}><A to={to} className="xpl-pf"><b>{f}</b><span>{l}</span><Arrow /></A></li>
+            ))}
+          </ul>
+        </div>
+        <details className="xpl-foot">
+          <summary>GPU targets are parallel hardware backends, not sequential stages.<Arrow /></summary>
+          <p>Zen is generative reasoning; Kai provides decision intelligence. ZAP is a native RPC protocol for supported interconnect paths. Research and evaluation form a gated improvement loop. “Native” describes Hanzo’s architecture surfaces; not every implementation, weight, driver or operating system is owned or open sourced by Hanzo.</p>
+        </details>
+      </div>
+    </section>
+  );
+}
+
 /* JS off: every scene readable in flow (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}`;
+const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.xpl-cap-p{position:static!important;opacity:1!important;visibility:visible!important;transform:none!important;margin-bottom:44px}.xpl-cap-stage{display:block!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}.xpl-ring{aspect-ratio:auto!important;width:100%!important;margin:44px 0 0!important}.xpl-ring-c,.xpl-ring-arc,.xpl-ring-mid,.xpl-ring-d,.xpl-ring-cap .xpl-play{display:none!important}.xpl-ring li{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;border-top:1px solid rgba(0,0,0,.1)}.xpl-ring li button{position:static!important;transform:none!important;width:auto!important;text-align:left!important;padding:12px 0!important}.xpl-ring small{display:block!important}.xpl-ring-cap{position:static!important;justify-content:flex-start!important;margin-top:17px!important}`;
 
 export default function Platform({ about }) {
   const [sel, setSel] = useState(0);
@@ -843,19 +886,19 @@ export default function Platform({ about }) {
     <main className="xpl" data-ask-name="Hanzo Platform">
       <noscript><style>{NOJS}</style></noscript>
       <Journey openLayer={openLayer} />
-      <Kernel />
-      <Reach />
-      <Loop />
-      <Planes />
-      <OneApi />
-      <OpenSec />
       <Catalog about={about} />
+      <Planes />
+      <Reach />
+      <OneApi />
+      <Loop />
+      <OpenSec />
+      <Proof />
       <Band
         title="Build on the stack. Or run it yourself."
         lede="Models, agents, compute, data, security and observability behind one API, from prototype to production."
         action="Start building"
         to={KEY_URL}
-        note={<span className="xpl-band-n"><span className="xpl-band-cmd"><code>docker run -p 8080:8080 ghcr.io/hanzoai/cloud</code><Copy text="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" /></span><A to="https://docs.hanzo.ai/docs/quickstart" className="x-link">Read the docs</A></span>}
+        note={<A to="https://docs.hanzo.ai/docs/quickstart" className="x-link xpl-band-l">Read the docs</A>}
       />
       <Inspector sel={sel} open={open} onClose={() => setOpen(false)} step={step} />
     </main>

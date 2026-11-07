@@ -1,79 +1,211 @@
-# /customers coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /customers coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Customers.jsx` + `Customers.css` · route: `app/customers/page.jsx` · gallery: `docs/gallery/customers/` (desktop.mp4, desktop-1.jpg, desktop-2.jpg, phone.jpg)
+Page file: `components/pages/Customers.jsx` + `Customers.css` · route: `app/customers/page.jsx` · gallery: `docs/gallery/customers/` · metric id: `contact_sales_submit`
 
-1. **Strategy and conversion.**
-   - Persona: an enterprise buyer in the Buy journey. Goal: see what Hanzo built and sold, then talk to it.
-   - One ask in Hanzo's words, "Talk to us" (/contact). It appears solid in the hero, in the shared ask bar after the hero, and solid white in the closing room.
-   - Metric: contact_sales_submit. `data-cta` values: `customers.hero` and `customers.close`.
-   - Proof order (2.1): this page holds only the 2015–2020 launches. There is no current proof on it to move above them, so the cases stay in Hanzo's order.
-2. **Information architecture and navigation.**
-   - Hanzo's header and footer are unchanged.
-   - Order: headline and ask, then the case plate (two case studies), every launch, backers, close. One idea per screen.
-   - The plate links to `/customers/damon-motorcycles` and `/customers/kanoa`.
-   - All 10 live links are present.
-3. **First impression and page narrative.**
-   - At 1470×801 the first screen holds the h1 (line-mask cut-in, 0.94 line height), the lede and the one ask. The top of the case plate peeks below them.
-   - At 375×812 the h1, the lede, "Talk to us" and the plate's first band all fit.
-   - Nothing sits above the h1: the "Customers" kicker is gone. The word now names the hero section (`aria-label`) and the ask bar (`data-ask-name`).
-   - The ending is the dark room with "Launch with us" and its one ask.
-4. **Conversion system.**
-   - `data-thumb="Talk to us"` sits on the hero ask, so the site's shared ask bar carries it at every width.
-   - The bar steps aside while the closing "Talk to us" (also `data-thumb`) is on screen.
-   - One solid button per viewport. The case plate's open is an outlined round arrow, and the year chips are quiet toggles, not buttons.
-5. **Trust and proof.**
-   - Every figure is Hanzo's.
-   - The plate's $8.4M and $7M+ come from the case studies' own copy ("in bikes sold in 30 days", "raised in preorders").
-   - Years show only where the case copy prints them (2015–2020). Launches without a year show an em dash.
-   - "Backed by builders." keeps Hanzo's live links. The logos are shown as on live, still and greyscale, with names as fallback. Permission for the logos is James's decision (PLAN 1.3 #3); see the note at the end.
-6. **Content presentation (copy untouched).**
-   - Parity: text 72/72, links 10/10.
-   - No new visible words: the invented "Read the case study", "All" and "Undated" are deleted, and the open control is an arrow icon inside the plate link.
-   - Measures: lede 40ch, row text 44ch. Figures use tabular numerals.
-7. **Visual design system.**
-   - No UI hue. Ink #1d1d1f, secondary #424245 and muted #6e6e73, with #f5f5f7 and #ececf0 surfaces.
-   - Colour arrives only through the case covers.
-   - When a cover fails, the plate is a grey gradient with a Sigil seeded by the case.
-   - The hero object uses a 28px radius and tiles use 16px. There is one dark room (the close).
-8. **UI component library.**
-   - Kit parts: `A` and `Img` (wrapped so a failed picture shows its fallback). Company kit: `MaskLines`. Shared: `Sigil` and the site ask bar.
-   - The year chips are real buttons with `aria-pressed`, and the case tabs use `role=tab`.
-   - No native `title=` tooltips and no browser-default controls.
-9. **Motion and interaction.**
-   - Arrival: headline cut-in, plus a CSS rise for the lede, ask and plate that runs without JS.
-   - Idle: the plate wipes to the other case once and rests. Its tab bar fills while it waits.
-   - Pointer: the index carries a preview on a spring (the launch's logo and its first figure); rows lift onto a grey sheet; the plate photo eases in and the arrow fills.
-   - State: the year pill glides between years (layoutId). Press is .98 everywhere, and tabs move 1px.
-   - Scroll: nothing is scroll-linked, so scroll stays well under half.
-   - The closing Sigil drifts slowly and bends to the pointer.
-10. **Media.**
-    - The case covers (`/customers/*/cover.webp`, `athlete.webp`) and customer and partner logos come from Hanzo's own /public, through kit `Img` with width and height reserved.
-    - Only the first cover is `priority`.
-    - In this cloud box the covers and logos are blocked, so the films show the grey and Sigil fallbacks.
-11. **Mobile and responsive.**
-    - At 375 the plate becomes 4:5.4 and the figure sits above the case text.
-    - The year chips become a swipe rail and the index rows stack.
-    - Tap targets are 44px or larger, the smallest text is 13px mono, and there is no sideways scroll at 320 or 375.
-12. **Accessibility.**
-    - One h1. The hero is a labelled section.
-    - Hidden plate cases are `inert` and `aria-hidden`. The index list announces filtering (`aria-live`), and each year chip has a full accessible name ("2018: 3 launches").
-    - The focus ring is a two-tone ink ring.
-    - Reduced motion: the headline, plate and fills sit still, the plate does not advance, and the Sigil draws one frame.
-13. **Performance and engineering.**
-    - Transform, opacity and clip-path only.
-    - The plate timer runs only while the plate is in view, and stops after one turn.
-    - The preview follows the pointer through springs and does no layout reads per frame beyond one rect.
-    - No marquee and no video.
-14. **SEO and machine files.** Metadata and JSON-LD are unchanged. Every word sits in the server HTML, including the hidden case and every row; JS off shows the headline through MaskLines' `<noscript>` rule and the CSS arrival.
-15. **Catalogue and product pages.**
-    - The index is the catalogue: year filter, rows, and a preview on hover.
-    - Each case plate opens into its page (`data-morph` on the picture).
-16. **Developer experience.** Does not apply.
-17. **States and resilience.**
-    - A missing cover shows a Sigil plate, and a missing logo shows the company name in type.
-    - A filtered year with no launches cannot happen, because only printed years are chips.
-18. **Measurement and handover.**
-    - `data-cta` is on both primaries. No analytics are wired: `lib/track.js` doesn't exist yet (PLAN 2.18).
-    - Ledger, what this page deleted: the 32-second logo marquee, the teal accent, the "Read the case study" pill, the "All" and "Undated" chips, the plate's scroll scaling, the kickers above the h1 and the plate, and the opacity:0 arrival states.
+Open copy questions for James:
+- (1) May the backer names and logos show? PLAN 1.3 #3 / MASTER part 5. They show as live shows them, as names only, with no tiles.
+- (2) May "Case studies" stay as the caption under the plate? It is Hanzo's heading, moved below the plate.
+- (3) There is no current proof (benchmarks, GitHub figures) on this page's copy to put above the 2015–2020 cases. Should any be linked in?
+- (5) The index keeps Hanzo's own order: SKULLY first, as on hanzo.ai. An earlier build moved it after Triller; that change is reverted, so there is nothing to decide.
+- (4) $8.4M and $7M+ sit on the plate beside the case year. Both come word for word from the case pages, with the year as the case copy prints it.
 
-**Open for James:** whether to show the partner logos (PLAN 1.3 #3; today they show as live has them); and whether "Case studies" should stay as the caption for the plate's tabs (it is Hanzo's heading, now set under the plate).
+Shared changes requested (`docs/requests/customers.md`):
+- None filed. Two shared items are noted here instead: a shared `BACKERS` module (lib, Data chat) and a register string for the em dash.
+
+Forks this page deleted:
+- The hand-rolled case tabs, now kit `Tabs`.
+- The overprinting stage hand-off: it now runs exit then enter (`mode="wait"`).
+- The pointer preview card, replaced by the stage.
+- The seven backer tiles.
+- The `data-morph` plate, now doorway.
+- The springs.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`. Hanzo's own "Talk to us"; `lib/cta.js` does not exist yet.
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button. n/a: prices (none on this page).
+- [x] Open copy questions for James listed, none decided
+
+Done here: one ask, "Talk to us" (/contact), sits beside the lede at 1470×801 (x=820, y=425–473) and at 375×812 (y≈408). It appears again in the shared bar after the hero and in the close. The header's "Try Hanzo" turns to outline while it shows.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it. Both come from the layout.
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- [ ] n/a: breadcrumb (depth 1 page)
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: parity links 10/10. Both case plates are real `<a href>` links to `/customers/damon-motorcycles` and `/customers/kanoa`.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] `PageHero` (the kit equivalent until it merges: MaskLines h1, lede, one ask); nothing above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer. The close is the page's own "Launch with us" band.
+- [x] Card-to-page links open into their page. The doorway is used instead of Morph, which times out site-wide (reported by the conductor).
+
+Done here:
+- **Arrival order:** the h1 cuts in first, as the company MaskLines CSS at first paint (+0.5s). Then the lede and ask (CSS, 0.95s), then the plate (1.15s). Playwright saw the h1 visible at 1.34s, the lede at 1.46s and the plate at 1.72s.
+- **First screen at 1470×801:** the figure block sits in the plate's upper half, so $8.4M is on screen at y 638–739.
+- **The plate turn:** Damon to KANOA, then back to Damon, then it rests. Each case has its own tone: a graphite gradient, with a lighter Sigil on KANOA. The incoming text arrives at 0.25s, so the wipe edge reads.
+- **Rhythm:** hero, plate, launch scene, a quiet names row, the black close.
+- **JS off:** the MaskLines and page `<noscript>` rules stack both cases readably and set the phone figures in place. CSS keyframe arrivals pause only while `html.x-arriving` is set. A Playwright run with JS disabled found 0 faint or offset text.
+
+## 4. Conversion system
+- [x] No raw `.x-btn`. The asks are one page-local pill; kit `Cta` has not merged.
+- [x] Sticky ask in header and bar after the hero, same label
+- [ ] n/a: copy button (none on this page)
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: `data-cta="customers.hero"` and `customers.close`, both with `data-thumb="Talk to us"`. The hero is now its own section, so the shared bar takes over as soon as the hero ask leaves view. This closes the gap the review found.
+
+## 5. Trust and proof
+- [x] No seal; no invented number. Logo permission is an open question (above).
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- [x] Marquees: none. The closing figure rows move only with scroll.
+- [ ] n/a: Privacy link (no form on this page)
+
+Done here:
+- Figures come from the page copy, plus $8.4M and $7M+ from the case pages' own copy.
+- Years appear only where the case copy prints them. Undated launches show an `aria-hidden` dash.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] Tables, FAQ, tabs and code use the kit parts. The case tabs are kit `Tabs`.
+- [x] `python3 scripts/parity.py /customers`: 0 missing
+
+Done here: parity text 72/72, links 10/10. The lede is 44ch and the row text 44ch. The "01"/"02" marks are gone.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py <files>` passes. Literal hex values are deck values only (#0a0a0a, #525252, #737373, #f5f5f5, #ededed, #262626, #000).
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow. The plate shadow was removed, and the stage and plate are flat fills.
+- [x] One icon set (one arrow glyph); no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here:
+- `deck.css` is imported. The h1 is the deck's clamp(52px, 7vw, 84px) at 1.02. Headings are 497, and the hero and stage figures are Air 220.
+- Container 1152, sections clamp(72px, 11vw, 188px), buttons 48px.
+- Radii are deck values: plate 20 (art card), stage 24 (tile), pills full. These are literals in page CSS because `tokens.css` has not merged.
+- The row sheet ends 12px short of the stage.
+- One black room (the close). The plate is a card, not a room.
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading (n/a: nothing loads)
+- [x] Focus ring visible on every stop of a Tab crawl. The ring is 2px ink with a white halo.
+- [ ] n/a: dialogs (none)
+- [ ] n/a: inputs (none); no bare `:hover`. All hovers sit in `@media (hover: hover)`.
+- [x] Forks this page deleted: listed above
+
+Done here:
+- The year chips are `aria-pressed` buttons whose gliding pill now has size (111×48).
+- The case tabs are kit `Tabs` (arrow keys, Home/End). Every page control presses at .97: the asks, the years, the wall and the plate arrow.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [ ] n/a: sound (the shared kit has not merged)
+
+Done here:
+- **Signature:** the launch stage. As each row crosses the middle, or under the pointer, the outgoing figure leaves (150ms, rising 16px), then the incoming one arrives (300ms ease-emphasis). Playwright saw at most 1 layer at a time.
+- Figures longer than 8 characters step down, and every figure stays on one line: "120,000 ETH" fits the stage exactly.
+- **Phone scene:** rows read in as they reach the middle. The name goes from #737373 to ink, and the figures settle out of their mask (500ms ease-emphasis), once. Playwright: STONED's figure went from translateY 44px to none, and the row's classes became `on read`.
+- **Supporting:** the line-mask h1; the plate's turn (Damon, KANOA, back to Damon, rest), where the outgoing text fades in 0.15s before the edge crosses it; the closing figure rows sliding with scroll.
+- **State:** the year filter closes the list up with a 300ms glide.
+- **Kinds:** arrival, idle, pointer, state and scroll; scroll is 2 of 6.
+- No springs. The kit `Tabs` pill is the kit's own.
+
+## 10. Media
+- [x] `Pic` (kit `Img` with a fallback) only; sizes set
+- [ ] n/a: videos (none)
+- [x] Alt on every image (covers carry their case alt, logos are decorative or named)
+- [x] No dimmed or filtered photo. The plate uses only a gradient under its text. 4+ visuals together: n/a, the page has two covers.
+
+Done here: covers and logos are referenced at Hanzo's /public paths. They are not mirrored into this repo's `public/` (MASTER part 10, a shared media task): dev pulls them from hanzo.ai by rewrite, and the static export would need the mirror. In this cloud box they are blocked, so the films show the Sigil fallback and the names.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here:
+- At 375 the ask's bottom is at y≈471.
+- At 375 the year chips become a sticky rail under the header. It marks the year being read and scrolls to keep it in view.
+- Row figures show inline on phones; the stage is desktop-only.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better: #525252 on white is 7.8:1, #737373 on white 4.7:1, white on #000.
+- [x] Pause control on every moving item. The plate moves once and stops; the tabs stop it.
+- [ ] n/a: forms
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here:
+- Plate cases are `role=tabpanel`, labelled by the kit tabs; inactive ones are `inert`.
+- Row figures stay in the accessibility tree on desktop (visually hidden), while the stage is `aria-hidden`.
+- A year tap announces one line through a `role=status` count ("2018: 3 launches"), not the whole list.
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [x] Every image sized
+- [x] No poller (one IntersectionObserver); no third-party request
+- [x] Nothing heavy run on James's laptop (filmed in the cloud)
+
+Done here: transform, opacity and clip-path only. The plate timer runs only while it is in view and after arrival.
+
+## 14. SEO and machine files
+- [x] Title and description match live
+- [x] Canonical: from the layout (shared owner)
+- [x] `<JsonLd route="/customers">` unchanged
+- [x] Every card is a real link
+
+Done here: metadata unchanged in `app/customers/page.jsx`. All rows, both cases and every figure are in the server HTML.
+
+## 15. Catalogue and product pages
+- [ ] n/a: model card (not a model page)
+- [x] Every card opens into its page (doorway; Morph is broken site-wide)
+- [ ] n/a: maker and model pages
+- [ ] n/a: prices
+
+Done here: the plate opens Damon and KANOA by the doorway. The ink grows from the plate's rectangle, and the case page lifts it (`useArrival` in Story.jsx). The hold is capped at 700ms: if the page hasn't lifted the ink by then, the page cuts to it.
+
+## 16. Developer experience
+- [ ] n/a: no code on the page
+
+Done here: n/a. The page has no code, terminal or config.
+
+## 17. States and resilience
+- [x] Loading and error: a missing cover shows a Sigil plate, a missing logo shows its name. Empty and offline: n/a (static copy).
+- [x] Blocked live data leaves a complete page, no console errors
+- [ ] n/a: no submit
+- [x] A thrown island does not blank the page (Sigil is only a fallback)
+
+Done here: with hanzo.ai blocked (this box), the page is complete with no console errors (Playwright run).
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary. `lib/track.js` does not exist yet.
+- [x] Nothing identifier-bearing; no payload
+- [x] `V2: 8/10 …` in the page file's top comment
+- [x] Review read: `docs/review/customers.md` re-run was 7/10. Its fixes are done:
+  - the phone scene (rows read in);
+  - the stage hands off in sequence;
+  - "120,000 ETH" is on one line;
+  - the h1 leads;
+  - $8.4M is above the fold;
+  - each case has its own tone, and text arrives at 0.25s;
+  - the sheet stops short of the stage;
+  - press is .97;
+  - radii are 20 and 24;
+  - the doorway hold is capped;
+  - Hanzo's order is kept;
+  - `aria-live` is narrowed;
+  - the card is corrected.
+
+  The next review is pending.
+
+Done here: verified by Playwright on the dev server: filter 11→3→11, pill 111×48, row sheet opacity 1, stage figures Bellabeat 250,000 → Unikrn 120,000 ETH → Palladium €150M as you scroll, no console errors.

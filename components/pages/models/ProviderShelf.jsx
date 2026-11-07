@@ -10,7 +10,7 @@ import { useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import MaskFig from '../../v2/MaskFig';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
@@ -53,7 +53,7 @@ export default function ProviderShelf({ doc }) {
               </h1>
               {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
               <motion.div className="xmf-acts" {...up(0.42)}>
-                {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '', 'data-cta': 'maker.hero' })}>{a.label}</A>)}
+                {doc.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'maker.hero.2' : 'maker.hero'} thumb={!i}>{a.label}</Cta>)}
               </motion.div>
             </div>
             {/* the maker's count is the hero figure */}
@@ -102,7 +102,7 @@ export default function ProviderShelf({ doc }) {
             <div className="xmf-seg" role="group" aria-label="Sort">
               {SORTS.map(([k, t]) => (
                 <button key={k} type="button" aria-pressed={sort === k} onClick={() => setSort(k)}>
-                  {sort === k && <motion.span layoutId="xmf-seg" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {sort === k && <motion.span layoutId="xmf-seg" className="xmf-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                   <span>{t}</span>
                 </button>
               ))}
@@ -111,7 +111,7 @@ export default function ProviderShelf({ doc }) {
               <div className="xmf-seg" role="group" aria-label="Modality">
                 {['all', ...mods].map((k) => (
                   <button key={k} type="button" aria-pressed={mod === k} onClick={() => setMod(k)}>
-                    {mod === k && <motion.span layoutId="xmf-mod" className="xmf-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                    {mod === k && <motion.span layoutId="xmf-mod" className="xmf-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                     <span>{k === 'all' ? 'All' : k}</span>
                   </button>
                 ))}
@@ -121,7 +121,7 @@ export default function ProviderShelf({ doc }) {
           <LayoutGroup>
             <ul className="xmf-grid">
               {[...shown, ...cards.filter((c) => hidden.has(c.href))].map((c) => (
-                <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ type: 'spring', stiffness: 260, damping: 30 }} hidden={hidden.has(c.href)}>
+                <motion.li key={c.href} layout={anim ? 'position' : false} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} hidden={hidden.has(c.href)}>
                   <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...c.tags]} meta={c.rate ? <b>{`${money(c.rate.in)} → ${money(c.rate.out)}`}</b> : null} />
                 </motion.li>
               ))}
@@ -138,7 +138,7 @@ export default function ProviderShelf({ doc }) {
               <h2>{doc.band.title}</h2>
               {doc.band.lede && <p>{doc.band.lede}</p>}
               <div className="xmf-acts">
-                {doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-cta': 'maker.band' })}>{a.label}</A>)}
+                {doc.band.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'maker.band.2' : 'maker.band'}>{a.label}</Cta>)}
               </div>
             </div>
           </div>

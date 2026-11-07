@@ -1,9 +1,11 @@
 'use client';
 /* Conway's Game of Life, as the post describes it: a glider walks the board by itself (the board wraps, so it never
    leaves); press cells to draw your own pattern. Cells are buttons with one tab stop (arrow keys move it); each turn
-   writes data-on straight to the cells, so React does not re-render per turn. Stops off screen; still for reduced motion. */
+   writes data-on straight to the cells, so React does not re-render per turn. Turns run on one rAF clock (no setInterval), stop off screen and stay
+   still for reduced motion. The controls are kit Cta buttons. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
+import { Cta } from '../../kit';
 import { W, H, glider, step } from './life';
 
 export default function Life({ beside }) {
@@ -28,8 +30,10 @@ export default function Life({ beside }) {
   useEffect(() => { if (calm) setRun(false); }, [calm]);
   useEffect(() => {
     if (!run || !seen) return;
-    const id = setInterval(tick, 260);
-    return () => clearInterval(id);
+    let raf = 0, last = 0;
+    const loop = (t) => { if (t - last >= 260) { last = t; tick(); } raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
   }, [run, seen, tick]);
   useEffect(() => { const up = () => { paint.current = null; }; addEventListener('pointerup', up); return () => removeEventListener('pointerup', up); }, []);
 
@@ -46,7 +50,7 @@ export default function Life({ beside }) {
 
   return (
     <figure className="xbg-life" ref={box}>
-      <div className="xbg-board" role="group" aria-label="Game of Life board" style={{ gridTemplateColumns: `repeat(${W}, minmax(0, 1fr))` }} data-swipe-own data-cursor="Draw">
+      <div className="xbg-board" role="group" aria-label="Game of Life board" style={{ gridTemplateColumns: `repeat(${W}, minmax(0, 1fr))` }} data-swipe-own>
         {Array.from({ length: W * H }, (_, i) => {
           const on = grid.current[i] ? '1' : '';
           return (
@@ -59,10 +63,10 @@ export default function Life({ beside }) {
         })}
       </div>
       <div className="xbg-life-bar">
-        <button type="button" className="x-btn sm" aria-pressed={run} onClick={() => setRun((r) => !r)}>{run ? 'Pause' : 'Run'}</button>
-        <button type="button" className="x-btn sm" onClick={tick}>Step</button>
-        <button type="button" className="x-btn sm" onClick={() => reset(glider())}>Glider</button>
-        <button type="button" className="x-btn sm" onClick={() => reset(new Uint8Array(W * H))}>Clear</button>
+        <Cta kind="quiet" size="sm" aria-pressed={run} onClick={() => setRun((r) => !r)}>{run ? 'Pause' : 'Run'}</Cta>
+        <Cta kind="quiet" size="sm" onClick={tick}>Step</Cta>
+        <Cta kind="quiet" size="sm" onClick={() => reset(glider())}>Glider</Cta>
+        <Cta kind="quiet" size="sm" onClick={() => reset(new Uint8Array(W * H))}>Clear</Cta>
         <span className="xbg-turn x-mono" aria-live="off">Turn <b ref={turn}>0</b></span>
       </div>
       {beside && <figcaption className="xbg-p">{beside}</figcaption>}

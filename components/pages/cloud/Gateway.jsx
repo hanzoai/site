@@ -1,6 +1,12 @@
 'use client';
+// Persona: a developer or platform engineer putting a service behind api.hanzo.ai.
+// Goal: see in one request that the token is checked once at the edge and identity is written, not trusted.
+// CTA: Read the docs (gateway.hero, gateway.close).
+// Metric: cta_click gateway.hero
+// Signature: the gate, running: one request at a time checked, stripped, stamped or turned away (429) across a full-width lane.
+// Beyond: Forge one yourself: pick a credential and fake headers, see what the service behind the gate receives.
 /* Gateway (v2, archetype A Launch).
-   V2: 8/10 Full-bleed lane hero where one request at a time is checked, stripped, stamped or turned away at a glowing gate; six rules as pinned chapters with a request inspector; forge-it-yourself as the one dark room.
+   V2: 8/10 One request at a time checked, stripped, stamped or turned away (429) at the gate across a full-width lane; the six rules pinned beside a request inspector; forge-one-yourself as the dark room; greys only, 52px h1, one ask.
    Signature: the gate, running across the whole screen. One request at a time arrives from the left carrying a token and
    a forged X-Org-Id; at the gate the token is checked against JWKS, the forged header is torn off, the real identity is
    stamped on from the claims and the request walks through to Hanzo Cloud. A token bucket on the gate drains with each
@@ -9,15 +15,19 @@
    chapters whose request inspector changes with each rule.
    Beyond: "Forge one yourself" - build a request (a JWT, an opaque API key or nothing, plus whichever identity headers
    you want to fake) and see what the service behind the gate receives under Hanzo's two rules.
-   Accent: amber, from the gate. Every word and link is Hanzo's; header values are examples. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; header values are examples.
+   Persona: a developer or platform engineer putting a service behind api.hanzo.ai.
+   Goal: see, in one request, that the token is checked once at the edge and identity is written, not trusted.
+   CTA: Read the docs (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A } from '../../kit';
+import { A, Cta } from '../../kit';
 import { Console, useLive } from './Frame';
 import { Lines, Lift } from '../../v2/LiftStage';
 import PinChapters from '../../v2/x-hypatia/PinChapters';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
+import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Gateway.css';
 
@@ -27,7 +37,9 @@ const CALLERS = ['payments-api', 'checkout-web', 'docs-site'];
 /* The lane: one request at a time through the gate (arrive, token checked, forged header torn off, identity stamped,
    through), or a 429 when the bucket is empty. Runs only while on screen. */
 function Lane() {
-  const [ref, live] = useLive(0.25);
+  const [ref, seen] = useLive(0.25);
+  const [paused, togglePause] = usePause();
+  const live = seen && !paused;
   const [n, setN] = useState(0);
   const [phase, setPhase] = useState(0);
   const [bucket, setBucket] = useState(4);
@@ -47,6 +59,8 @@ function Lane() {
   const x = limited ? (phase >= 2 ? '-150%' : '-108%') : phase >= 4 ? '70%' : '-108%';
   const gone = limited ? phase >= 2 : phase >= 4;
   return (
+    <div className="lp-host">
+    <LivePause paused={paused} onToggle={togglePause} className="gw-pause" />
     <div className="gw-lane" ref={ref} aria-hidden="true">
       <div className="gw-gate"><span className="gw-gate-k">Gateway</span><i /></div>
       <p className="gw-side l">client</p>
@@ -67,7 +81,7 @@ function Lane() {
       </ul>
       <div className="gw-bucket">
         <span>Token bucket</span>
-        <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} />)}</div>
+        <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ duration: 0.3, ease: EASE }} />)}</div>
       </div>
       <AnimatePresence>
         <motion.div
@@ -80,7 +94,7 @@ function Lane() {
         >
           <p className="gw-req-top"><b>GET</b> api.hanzo.ai/v1/…<span>{who}</span></p>
           <p className={'gw-h' + (phase >= 1 && !limited ? ' ok' : '')}>Authorization: Bearer <em>JWT</em>
-            {phase >= 1 && !limited && <motion.span className="gw-chip" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 22 }}>✓ JWKS</motion.span>}
+            {phase >= 1 && !limited && <motion.span className="gw-chip" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }}>✓ JWKS</motion.span>}
           </p>
           <AnimatePresence>
             {(phase < 2 || limited) && (
@@ -92,11 +106,12 @@ function Lane() {
               <motion.p key={h} className="gw-h set" initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}>{h} <em>← {c}</em></motion.p>
             ))}
             {limited && phase >= 1 && (
-              <motion.p className="gw-429" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 24 }}>429 <span>Retry-After</span></motion.p>
+              <motion.p className="gw-429" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: EASE }}>429 <span>Retry-After</span></motion.p>
             )}
           </div>
         </motion.div>
       </AnimatePresence>
+    </div>
     </div>
   );
 }
@@ -160,13 +175,13 @@ function Forge() {
       <div className="v2-wrap">
         <div className="gw-forge-head v2-grid">
           <div className="gw-forge-hl">
-            <p className="v2-kick acc">Identity headers are written, not trusted</p>
             <h2 className="v2-display s">Forge one yourself</h2>
+            <p className="v2-kick acc gw-forge-cap">Identity headers are written, not trusted</p>
           </div>
           <div className="gw-forge-pick" role="radiogroup" aria-label="Credential">
             {CRED.map((c, i) => (
-              <button key={c} type="button" role="radio" aria-checked={cred === i} onClick={() => setCred(i)}>
-                {cred === i && <motion.span layoutId="gw-pick" className="gw-pick-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              <button key={c} type="button" role="radio" data-sound="tick" aria-checked={cred === i} onClick={() => setCred(i)}>
+                {cred === i && <motion.span layoutId="gw-pick" className="gw-pick-bg" transition={{ duration: 0.3, ease: EASE }} />}
                 <span>{c}</span>
               </button>
             ))}
@@ -219,21 +234,17 @@ export default function Gateway() {
       <section className="gw-hero">
         <div className="v2-wrap v2-grid gw-hero-top">
           <div className="gw-hero-t">
-            <p className="v2-kick gw-kick">
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>
-              api.hanzo.ai
-            </p>
             <Lines as="h1" className="v2-display gw-h1" lines={['Hanzo', 'Gateway']} data-morph-target="" />
           </div>
           <div className="gw-hero-r">
-            <motion.p className="v2-lede gw-sub" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>The trust boundary in front of the API</motion.p>
-            <div className="v2-acts">
-              <A to="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" className="v2-btn solid">Read the docs</A>
-              <A to="https://github.com/hanzoai" className="v2-btn">View on GitHub</A>
+            <p className="v2-lede gw-sub v2-in" style={{ animationDelay: '.3s' }}>The trust boundary in front of the API</p>
+            <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}>
+              <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" id="gateway.hero" thumb>Read the docs</Cta>
+              <Cta to="https://github.com/hanzoai" kind="quiet" id="gateway.view-on-github">View on GitHub</Cta>
             </div>
           </div>
         </div>
-        <Lift className="gw-lift" from={1.14} y={40} origin="50% 30%" offset={['start end', 'start 0.12']}>
+        <Lift className="gw-lift" from={1.08} y={24} origin="50% 30%" offset={['start end', 'start 0.4']}>
           <Lane />
         </Lift>
       </section>
@@ -247,12 +258,18 @@ export default function Gateway() {
 
       <PinChapters className="gw-ch" label="How Gateway decides" items={RULES} look="right" visual={(at) => <Inspector at={at} />} />
 
+      <ShipPrompt
+        name="Gateway"
+        api="/v1/gateway"
+        prompt="Read https://hanzo.ai/skill.md and use Hanzo Gateway in my project. Start with: hanzo gateway config get"
+        related={[['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']]}
+      />
+
       <Forge />
 
       <section className="v2-sec gw-proj">
         <div className="v2-wrap v2-grid">
           <div className="gw-proj-t">
-            <p className="v2-kick acc">Example project</p>
             <p className="v2-title gw-proj-l">Example project. Every name in it is one you would give your own.</p>
           </div>
           <div className="gw-proj-c">
@@ -261,14 +278,7 @@ export default function Gateway() {
         </div>
       </section>
 
-      <ShipPrompt
-        name="Gateway"
-        api="/v1/gateway"
-        prompt="Read https://hanzo.ai/skill.md and use Hanzo Gateway in my project. Start with: hanzo gateway config get"
-        related={[['Gateway docs →', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway'], ['DNS', '/dns', 'Authoritative DNS + DNSSEC'], ['Service Mesh', '/cloud/service-mesh'], ['Nodes', '/cloud/nodes']]}
-      />
-
-      <GetIt name="Gateway" tag="API gateway" seed="gateway" data={[429, 6]} self="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" />
+      <GetIt name="Gateway" tag="API gateway" seed="gateway" data={[429, 6]} self="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" ask={['Read the docs', 'https://docs.hanzo.ai/docs/projects/hanzoai/gateway', 'gateway.close']} />
     </main>
   );
 }

@@ -16,7 +16,7 @@ import { A, More } from '../kit';
 import { Count } from '../ui';
 import { href } from '../../lib/route';
 import MaskLines from '../v2/MaskLines';
-import DetailSheet from '../v2/DetailSheet';
+import DetailSheet from '../v2/x-pascal/DetailSheet';
 import { ECO, TOTAL, ORGS } from './openSourceData';
 import '../v2/ProofRhythm.css';
 import './OpenSource.css';

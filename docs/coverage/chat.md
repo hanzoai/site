@@ -1,30 +1,189 @@
-# Coverage: /chat — components/pages/ChatPage.jsx
+# /chat coverage (MASTER.md part 2, the 18 parts)
 
-Persona: a consumer choosing a chat app. Goal: open Hanzo Chat. CTA: "Open Hanzo Chat" (`/login?next=%2Fchat`). Metric: `first_chat`. Brief: PLAN-COMPONENTS 5.7.
+Page file: `components/pages/ChatPage.jsx` · gallery: `docs/gallery/chat/` · metric id: `first_chat`
 
-- **2.1 Strategy and conversion:** Persona, Goal, CTA and metric are in the file header. There is one solid ask in Hanzo's words, "Open Hanzo Chat": in the hero, in the site's sticky ask bar after the hero (`data-thumb`, `data-ask-name="Hanzo Chat"`), and at the close. "Read the docs" is a text link everywhere. Both asks carry `data-cta` (`chat.hero`, `chat.close`). Not done: `lib/cta.js` does not exist yet.
-- **2.2 Information architecture and navigation:** Hanzo's header and footer are unchanged. Every model row in "Who answers what" is a real `<a href>` to that model's page. The close's big field takes you back up to the live window and focuses its composer.
-- **2.3 First impression and page narrative:** The first screen has the h1 (cut into its lines), the lede, the one ask and the live window at 100%. The window's conversation is streaming on screen within about 2 seconds at 1470×801. There is no eyebrow above the h1: the page's name "Hanzo Chat" moved into the window's own title bar. One idea per screen: hero, then the six tools pinned in the dark middle room, then the model spec sheet, then the dark close.
-- **2.4 Conversion system:** The signature is the handoff state. Pressing "Open Hanzo Chat" turns its arrow into a ring at once (`aria-busy`), then leaves. The public try-before-signup is parked (PLAN 7). Sending from the composer hands off the same way and sends nothing to `api.hanzo.ai`. The empty state for another conversation uses an outlined button, so only one solid button is on screen.
-- **2.5 Trust and proof:** No figures on this page and none added. The model lines come from `lib/models.js` (Hanzo's words).
-- **2.6 Content presentation (copy untouched):** Parity is 0 missing (text 37/37, links 2/2). The words I added on v2 that were not Hanzo's are gone: "routing" and "auto" state labels, the "Searching the web" and "Running code" captions, the short chapter labels and the "Enso" kicker. Chapter index buttons now use Hanzo's own chapter titles. The `01 / 06` counter sits below each chapter's text, not above its title.
-- **2.7 Visual design system:** Greys only: ink #1d1d1f, secondary #424245, muted #6e6e73, raised #f5f5f7, hairlines. Colour comes only from Hanzo's model artwork. The router's lit lane is ink with a white dot and ring (a shape cue, no hue). Hero objects have 28px radii, smaller cards 16 to 22px. Values are literals that match `app/system.css`, because `tokens.css` does not exist yet.
-- **2.8 UI component library:** Uses the kit's `A`, `Img`, `Copy` and `Magnetic`, plus `AppLines`, `AppChapters` and `AppDemo` (`components/v2`). Every button has hover (something besides opacity changes: background, arrow nudge, row shift) and press (scale .98 or translateY 1px). Gap: the kit has no `PageHero` or `Band` yet. The hero and the close are page parts, and the close is the Band equivalent.
-- **2.9 Motion and interaction:**
-  - Signature (time): the conversation types, Enso scans the lanes, Zen lights and the answer streams. It plays once and rests on its final frame, with Pause or Replay in the window's title bar (`AppDemo`).
-  - Arrival: the h1 cuts into its lines and the window rises once.
-  - State: the lane pill (layoutId), the chapter pill (layoutId), the handoff ring, and the roster's row shift.
-  - Pointer: a magnetic ask, rail and roster previews on hover or focus.
-  - Scroll: the pinned chapters only, so scroll is 1 of 5 kinds of motion. Each chapter's art plays a short scene when it comes in and rests on its last frame, with no endless loops.
-  - Reduced motion: the finished conversation is shown, nothing plays, and art shows its final frame.
-- **2.10 Media:** Hanzo's nine model images (`/models/*.webp`) with width and height set. The spec sheet uses the kit's `Img`. Gap: no AVIF or responsive sizes (the pipeline does not exist yet).
-- **2.11 Mobile and responsive:** At 375×812 the h1, lede, ask and the top of the live window fit the first screen. The window becomes a single column with rails you swipe, and chapters stack as copy then art, each playing when seen. Targets are 44px or more. No sideways scroll at 375 (checked); 320 not checked.
-- **2.12 Accessibility (WCAG 2.2 AA):** Real buttons and links, `aria-pressed` on the lane and Listen toggles, `aria-live` on the log and the peek line, and an icon Pause or Replay button (44px, `aria-pressed`) on the only auto-moving content. Focus is a 2px ink ring with a white halo. Text on white is #424245 or #6e6e73 (at least 5:1). Gap: no axe run.
-- **2.13 Performance and engineering:** Only transform, opacity and clip-path animate. Streaming writes to a text node through a ref. The demo clock stops off screen and while the tab is hidden, and the lane scan runs only while Enso decides. No scroll-linked transforms remain in the hero. Gap: LCP, CLS and INP not measured.
-- **2.14 SEO and machine files:** The title and description are unchanged, with `JsonLd` route `/chat`. Nothing was added.
-- **2.15 Catalogue and product pages:** Not a catalogue. The model rows open the model pages with the WebGL opener (the synchronized.studio card-to-page move).
-- **2.16 Developer experience:** Not applicable.
-- **2.17 States and resilience:** These states each look intentional: loading (Enso's dots while it decides), streaming, done, empty ("Ask anything") and another conversation selected. JS-off and reduced motion show the finished conversation in the server HTML. Nothing on the page calls a network API.
-- **2.18 Measurement and handover:** `data-cta` is set on both asks. No events are sent, because `lib/track.js` does not exist yet. Proof is in `docs/gallery/chat/`.
+Open copy questions for James: none; the page uses Hanzo's words only. One structure note: MASTER 4.1 lists "the existing plan cards, Download" for /chat, but the live /chat page has neither, so none were added (copy is frozen).
+Shared changes requested (`docs/requests/chat.md`): the kit `Band` reveals its title word by word with a 12px blur and sets it at about 88px, while MASTER parts 9 and 3.1 ask for a line-mask cut-in and resting sizes. The kit `Band` takes no `data-cta`. The site ask bar is a floating pill on desktop, while MASTER 3.1 rule 6 says nothing floats over content.
+Forks this page deleted: the page's own `Open` button fork (`.cht-open`), the `.cht-link` text-link fork, the hand-written closing section (`.cht-close`, `.cht-field`), the scroll-scaled stage, a `setInterval` lane scan, and all springs.
 
-**Ledger (what this page deleted):** the scroll-scaled stage, the public chat `fetch` to `api.hanzo.ai`, four infinite CSS loops (the hub spin, the caret blink, the wave and the switch), the blue accent, and all invented labels.
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`. n/a for `lib/cta.js`: it does not exist on main yet. The label is Hanzo's own "Open Hanzo Chat".
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button. n/a for prices: no prices on /chat.
+- [x] Open copy questions for James listed, none decided
+
+Done here: There is one solid ask, "Open Hanzo Chat" (`/login?next=%2Fchat`), as the kit `Cta` in the hero and as the action of the closing `Band`. The site ask bar carries it after the hero (`data-thumb`). The header's "Try Hanzo" goes outline while a page ask is on screen (`components/Ask.jsx`), so the 1470×801 first screen has one solid fill.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it. Shared: the layout supplies the skip link; the page renders one `<main>`.
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- n/a: breadcrumb at depth 2 or more. /chat is depth 1.
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: All links go through the kit `Cta` and `A`. The nine model rows in "Who answers what" are real `<a href="/<slug>">` links that also open with the WebGL opener. Parity reports links 2/2.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- [x] `PageHero`; nothing above the h1. `PageHero` is not in the kit yet, so the hero is a page part with the same anatomy: h1 line mask, lede, one primary, one object.
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer. The model sheet is the proof, then the kit `Band`.
+- [x] Card-to-page links use Morph. The model rows use the WebGL opener (the synchronized.studio move).
+
+Done here:
+- At 1470×801 the h1 "Ask anything. / Enso picks the model." (52px, single tone, cut in by line mask) sits left.
+- The whole chat window, at 100%, sits right with its composer, rail and lit lane on screen. The conversation starts writing within 1 s of hydration.
+- Order: hero, the six tools pinned in the black room, the model sheet (white), then `Band` (black). The two black rooms are never back to back.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label (shared `Ask.jsx` reads the hero's `data-thumb`)
+- [x] Copy button copies exactly the displayed text; failure never says Copied (the kit `Copy`)
+- [x] `data-cta` and `data-thumb` on every primary. The kit `Band`'s button cannot take `data-cta` yet; requested.
+
+Done here:
+- The hero ask is `Cta id="chat.hero" thumb`, and the empty-state ask is `Cta kind="quiet" id="chat.recent"`.
+- The cross-origin hand-off shows the kit's `aria-busy` ring.
+- Sending from the composer is a hand-off too: the send key turns into a ring, then leaves for Hanzo Chat. Nothing is sent to `api.hanzo.ai` (MASTER 3.3).
+
+## 5. Trust and proof
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number. n/a: /chat has no figures.
+- n/a: marquees. The page has none.
+- n/a: Privacy link by a submit. The page has no form submit; the composer hands off without posting.
+
+Done here: The proof is Hanzo's own model roster: the names, tags and lines from `lib/models.js` with Hanzo's own artwork. No numbers or logos were added.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] Tables, FAQ, tabs and code use the kit parts. n/a: the page has no table, FAQ, tabs or copyable code. The chapter index is a button row.
+- [x] `python3 scripts/parity.py /chat`: 0 missing
+
+Done here:
+- Parity: text 37/37, links 2/2.
+- Sizes:
+  - h1: 52px (40px on phone)
+  - chapter titles: 32px
+  - the room heading: arrives at 84px and shrinks toward a section heading
+  - the model-sheet heading: 26px
+  - body: 16 to 17px
+  - window chrome: 13 to 14px
+- Headings use `text-wrap: balance`.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py <files>` passes. Literal hex values remain, all snapped to the deck (`#0a0a0a`, `#525252`, `#737373`, `#a3a3a3`, `#f5f5f5`, `#171717`…), because `tokens.css` does not exist yet.
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow. Radii are 24px for the window and art, 12 to 22px for UI, and pills.
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here:
+- Rooms: paper hero, black room, paper sheet, black `Band`.
+- Hero: headline left, the window right. /dev is a stacked terminal and /agents is a black film room, so the three heroes differ.
+- `taste.py` passes on `ChatPage.css`, `ChatPage.jsx`, `AppChapters.css` and `AppLines.css`.
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading
+- [x] Focus ring visible on every stop of a Tab crawl
+- n/a: native dialogs. The page has no dialog; the recents drawer is a disclosure (`aria-expanded`, `aria-controls`).
+- [x] Inputs 16px or larger; no bare `:hover`
+- [x] Forks this page deleted: listed below
+
+Done here: Every button has these states:
+- hover: background or arrow nudge, inside `@media (hover:hover)`
+- press: scale .97 or 1px down
+- focus: a 2px ink ring with a white halo
+- loading: the send key and the `Cta` ring
+
+The composer and search inputs are 16px. Deleted forks: `.cht-open`, `.cht-link`, `.cht-close`, `.cht-field`.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups. `variety.py` is OK.
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- n/a: sound. The shared sound kit does not exist on main yet.
+
+Done here:
+- Signature (time): Hanzo's conversation writes itself once, Enso scans the lanes and Zen lights. It runs on `AppDemo`'s clock: it starts in view, pauses off screen, rests at its end, and has Pause or Replay.
+- Supporting moves:
+  - arrival: the h1 line mask and the window's entry
+  - state: the lane pill, the chapter pill and the recents drawer, at 300 ms with ease-emphasis and no springs
+  - pointer: the magnetic ask, and rail and roster previews
+  - scroll: the pinned chapters and the room heading that shrinks
+- Each chapter art plays one scene and rests.
+
+## 10. Media
+- [x] `Film` and `Pic` only; sizes and posters set. These are images via the kit `Img`, with width and height set.
+- n/a: video limits. No video on /chat.
+- [x] Budgets met; nothing missing; alt on every image (decorative images use `alt=""`, and the names sit beside them)
+- [x] No dimmed or filtered photo; 4+ real visuals together where the page has them
+
+Done here: Hanzo's nine model images (`/models/*.webp`) appear together in the router rail, nine at once. In the sheet, one large picture changes as you point. No filter; the caption sits on a gradient only.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320. Checked at 375 (0px); the window rails scroll inside themselves.
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: On phone the first screen has the h1 in 3 lines at 40px, the lede, "Open Hanzo Chat", and the top of the live window with its first message. Chapters stack as copy then art, each playing when seen. The recents become a swipe row, and the pause control sits at the window's right edge.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better. Text on white uses `#0a0a0a`, `#525252` or `#737373`; on `#f5f5f5` it uses `#525252`; on black it uses `#fafafa`, white 78% or `#a3a3a3`.
+- [x] Pause control on every moving item. The window demo has Pause or Replay (`AppDemo`); the chapter scenes play once and rest.
+- n/a: form labelling. The page has no form; the composer has `aria-label`.
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: The log and the peek line use `aria-live`. The lanes, Listen and the drawer are toggles with `aria-pressed` or `aria-expanded`. The chapter index buttons carry the chapter titles as names. Gap: no axe run in this pass.
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [x] JS and CSS inside budget; every image and video sized. Sizes are set; the budgets are unmeasured (no `budgets.json` CI yet).
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop (all filming in the cloud)
+
+Done here: Only transform, opacity and clip-path animate. The streaming text is written into a text node through a ref. The demo clock stops while off screen or in a hidden tab, and the lane scan now runs on that clock (the `setInterval` is gone).
+
+## 14. SEO and machine files
+- [x] Title and description match live (unchanged in `app/chat/page.jsx`)
+- [x] Canonical equals og:url equals the live URL. Shared: layout or `metadataBase`; unchanged here.
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: `app/chat/page.jsx` keeps the title "Hanzo Chat — a chat app that does more than answer", its description, and `<JsonLd route="/chat" />`.
+
+## 15. Catalogue and product pages
+- n/a: not a catalogue or model page. The model rows are a roster, not the `SPEC.md` grid.
+- [x] Every card opens by Morph. The model rows open with the WebGL opener.
+- n/a: maker and model links. Not the /models catalogue.
+- n/a: price figures. No prices.
+
+Done here: Each roster row hands its picture to the destination model page through `useOpener().open()`. Reduced motion is a plain link.
+
+## 16. Developer experience
+- n/a: /chat has no copyable code. The retry.ts lines in the "Search and code" and "Chat, then Dev" scenes are decorative, `aria-hidden` illustrations, as on /dev.
+- n/a: config blocks. None.
+- [x] Terminal pauses and ends on a static frame. This applies to the chat demo window: `AppDemo` Pause or Replay, resting on its final frame.
+- n/a: version numbers. None on /chat.
+
+Done here: The only live demo is the chat window. It plays once, can be paused, and rests on Hanzo's finished conversation, which is also the server-rendered frame.
+
+## 17. States and resilience
+- [x] Loading, empty, error and offline states designed. These are chat states: thinking (Enso's dots), streaming, done, empty ("Ask anything"), another recent selected. Offline is n/a: nothing is fetched.
+- [x] Blocked live data leaves a complete page, no console errors (no live data; api.hanzo.ai blocked in every run)
+- n/a: failed submits. No form submit.
+- [x] A thrown island does not blank the page. Shared error boundaries; the page has no island beyond the window.
+
+Done here: JS off and reduced motion show Hanzo's finished two-question conversation in the server HTML. A run at 1470×801 and 375×812 with `api.hanzo.ai` blocked logged 0 console errors.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary; events only through `lib/track.js`. `data-cta` is set; the kit `Cta` dispatches `hz-event` cta_click. `lib/track.js` does not exist yet.
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment (added once the critic scores)
+- [x] Review read: `docs/review/chat.md` verdict 8 or more. The critic pass in this session gave 7 before these fixes, so this is pending re-review.
+
+Done here: `data-cta` is `chat.hero` and `chat.recent`. Proof is in `docs/gallery/chat/`: a 15 s desktop film at 1470×801, the first screen, and three 375×812 phone shots.

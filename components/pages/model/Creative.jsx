@@ -15,7 +15,7 @@ import { useOpener } from '../../Opener';
 import Launch, { Lines, film } from '../../v2/Launch';
 import Chapters from '../../v2/x-cray/Chapters';
 import ModelCards from './ModelCards';
-import ModelFilm from '../../v2/ModelFilm';
+import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import { C, ORDER, FIELDS } from './creative';
 import { Glyph } from './Studio';
 import { arrows } from './live';
@@ -29,31 +29,35 @@ function Head({ slug }) {
       <Lines id={'cr-h-' + slug} lines={[d.head]} />
       <p className="lv-lede">{d.desc}</p>
       <div className="lv-acts">
-        <Cta to={'/research-access?models=' + slug} id={slug + '-hero-access'} thumb>Request access</Cta>
-        <Cta to="/design" kind="quiet" id={slug + '-hero-design'}>Try it in Design</Cta>
+        <Cta to={'/research-access?models=' + slug} id={slug + '.hero'} thumb>Request access</Cta>
+        <Cta to="/design" kind="quiet" id={slug + '.hero-design'}>Try it in Design</Cta>
       </div>
       <p className="lv-crumb"><span>{d.kind}</span><span>{d.ver}</span></p>
     </>
   );
 }
 
-// a capability chapter's picture: the model's own film, framed closer each time, wearing its live glyph
-const CAM = [[1.08, '0%', '0%'], [1.45, '-12%', '6%'], [1.8, '-16%', '-6%'], [1.3, '-6%', '10%']]; // pans lean left: the films' subjects sit centre-right
-function CapArt({ slug, i, title, on }) {
-  const [z, x, y] = CAM[i];
+// a capability chapter's picture: the model's own film, each chapter a different framing aimed at the film's own
+// subject (subject = where it sits in Hanzo's 4:5 frame; pos = the film's object-position), playing while read
+const LOOK = [[1.12, 0, 0], [1.55, 0.09, -0.05], [2.1, -0.07, 0.06], [1.35, 0.05, 0.09]];
+const clampPct = (v, z) => Math.max(-(z - 1) * 50, Math.min((z - 1) * 50, v));
+function frame(i, subject, pos) {
+  const [z, ox, oy] = LOOK[i];
+  const fx = subject[0] + ox, fy = subject[1] + oy, py = parseFloat(String(pos || '50% 50%').split(' ')[1] || 50) / 100;
+  const dx = fx - 0.5, dy = fy * (1.25 / 0.75) - (0.25 / 0.75) * 2 * py - 0.5; // offset from the box centre (4:3 box, 4:5 film)
+  return { '--z': z, '--x': clampPct(-dx * 100 * z, z).toFixed(1) + '%', '--y': clampPct(-dy * 100 * z, z).toFixed(1) + '%' };
+}
+function CapArt({ slug, i, on, subject, pos }) {
   return (
-    <div className="cr-art" style={{ '--z': z, '--x': x, '--y': y }}>
+    <div className="cr-art" style={frame(i, subject, pos)}>
       <Img src={film(slug, 'webp')} w={1200} h={1500} />
       <ModelFilm slug={slug} play={on} />
-      <div className="cr-art-chip" aria-hidden="true">
-        <Glyph k={slug} i={i} />
-        <span><em>{C[slug].code} · {String(i + 1).padStart(2, '0')}</em><b>{title}</b></span>
-      </div>
+      <Glyph k={slug} i={i} />
     </div>
   );
 }
 
-function Caps({ slug, flip }) {
+function Caps({ slug, flip, subject, pos }) {
   const d = C[slug];
   return (
     <>
@@ -67,37 +71,51 @@ function Caps({ slug, flip }) {
         id={'cr-ch-' + slug}
         label={`What ${d.name} does`}
         flip={flip}
-        items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => <CapArt slug={slug} i={i} title={t} on={on} /> }))}
+        items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} /> }))}
       />
     </>
   );
 }
 
-// where it fits: three rooms as a tile grid of the model's own film, one big and two stacked
-function Fits({ slug, flip }) {
+// where it fits: the three rooms as a quiet list beside one picture of the model at work
+function Fits({ slug, flip, subject, pos }) {
   const d = C[slug];
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.3 });
   return (
-    <section className="lv-sec cr-fits" aria-labelledby={'cr-fits-' + slug}>
-      <div className="x-wrap">
-        <div className="lv-sh">
-          <h2 id={'cr-fits-' + slug} className="lv-h">Where {d.name} fits</h2>
-          <p className="lv-side">In production</p>
-        </div>
-        <ul className={'cr-fits-grid' + (flip ? ' flip' : '')}>
-          {d.fits.map(([k, t, x], i) => (
-            <li key={t} className={'cr-fit cr-fit-' + i} style={{ '--z': [1.15, 1.6, 2.1][i], '--x': ['-4%', '-18%', '-24%'][i], '--y': ['0%', '-8%', '8%'][i] }}>
-              <Img src={film(slug, 'webp')} w={1200} h={1500} />
-              <div className="cr-fit-in">
+    <section className="lv-sec cr-fits" ref={box} aria-labelledby={'cr-fits-' + slug}>
+      <div className={'x-wrap cr-fits-in' + (flip ? ' flip' : '')}>
+        <div className="cr-fits-l">
+          <div className="lv-sh">
+            <h2 id={'cr-fits-' + slug} className="lv-h">Where {d.name} fits</h2>
+            <p className="lv-side">In production</p>
+          </div>
+          <ol className="cr-fits-list">
+            {d.fits.map(([k, t, x], i) => (
+              <li key={t}>
+                <span className="cr-fit-n mb-tnum" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <h3>{t}</h3>
                 <p className="cr-fit-x">{x}</p>
-                <p className="cr-fit-k"><Glyph k={slug} i={i + 4} />{k}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <p className="cr-fit-k">{k}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <figure className="cr-fits-art" style={frame(1, subject, pos)}>
+          <Img src={film(slug, 'webp')} w={1200} h={1500} />
+          <ModelFilm slug={slug} play={seen} />
+        </figure>
       </div>
     </section>
   );
+}
+
+// the model card's pointer tilt (SPEC.md: up to 3°, flat on leave, none on touch or under reduced motion)
+function tilt(e) {
+  if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = e.currentTarget, r = el.getBoundingClientRect();
+  const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
+  el.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg)`;
 }
 
 function Map({ slug }) {
@@ -109,11 +127,12 @@ function Map({ slug }) {
   const [f, setF] = useState(first);
   const [mine, setMine] = useState(false);
   const [play, setPlay] = useState(null);
+  const paused = usePaused();
   useEffect(() => {
-    if (!seen || mine || calm) return;
+    if (!seen || mine || calm || paused) return;
     const t = setInterval(() => setF((x) => (x + 1) % FIELDS.length), 3200);
     return () => clearInterval(t);
-  }, [seen, mine, calm]);
+  }, [seen, mine, calm, paused]);
   const [, list] = FIELDS[f];
   return (
     <section className="lv-sec cr-map" ref={box} aria-labelledby={'cr-map-' + slug}>
@@ -126,7 +145,7 @@ function Map({ slug }) {
           {FIELDS.map(([name], i) => (
             <button key={name} type="button" role="tab" id={'cr-f' + i} aria-controls="cr-fields" aria-selected={i === f} className="cr-tab" onClick={() => { setF(i); setMine(true); }}>
               {name}
-              {i === f && <motion.span layoutId="cr-tab-ink" className="cr-tab-ink" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
+              {i === f && <motion.span layoutId="cr-tab-ink" className="cr-tab-ink" transition={{ duration: 0.3, ease: EASE }} />}
             </button>
           ))}
         </div>
@@ -142,6 +161,9 @@ function Map({ slug }) {
                     href={'/' + s}
                     className="cr-mc"
                     data-card={s}
+                    data-cursor=""
+                    onPointerMove={tilt}
+                    onPointerOut={(e) => { e.currentTarget.style.transform = ''; }}
                     aria-current={here ? 'page' : undefined}
                     onPointerEnter={() => setPlay(s)}
                     onPointerLeave={() => setPlay((p) => (p === s ? null : p))}
@@ -172,27 +194,6 @@ function Map({ slug }) {
   );
 }
 
-function Preview({ slug }) {
-  const d = C[slug];
-  return (
-    <section className="lv-sec cr-pre" aria-labelledby={'cr-pre-' + slug}>
-      <div className="x-wrap cr-pre-in">
-        <div className="cr-pre-l">
-          <Lines id={'cr-pre-' + slug} lines={[`Try ${d.name} on your own work`]} reveal />
-        </div>
-        <div className="cr-pre-r">
-          <p className="lv-p">Samples of {d.name}&apos;s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.</p>
-          <div className="lv-acts">
-            <Cta to={'/research-access?models=' + slug} kind="quiet" id={slug + '-preview-access'}>Request access</Cta>
-            <More to="/models">Every model</More>
-          </div>
-          <p className="lv-side"><A to="/beta/research">Research preview</A></p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // a model's live studio scene (the demo itself comes from the model's file); it carries no words of ours
 export function Scene({ slug, dark, className = '', children }) {
   return (
@@ -202,20 +203,26 @@ export function Scene({ slug, dark, className = '', children }) {
   );
 }
 
-/* slug, shape, aim, over: as Launch. demo: the model's Scene. first: 'demo' puts the demo straight after the stage,
-   else the chapters come first. flip: chapters picture-left; fits big tile on the right. The page ends on Hanzo's
-   exact model cards and a closing Band that repeats the hero ask. */
-export default function Creative({ slug, shape, aim, over, headClass, demo, first = 'demo', flip }) {
+/* slug, shape, aim, over, pos: as Launch. subject: where the film's subject sits in its 4:5 frame (aims every
+   framing). demo: the model's Scene. first: 'demo' puts the demo straight after the stage, else the chapters come
+   first. flip: chapters picture-left; the fits picture on the left. The page ends on Hanzo's exact model cards and a
+   closing Band that carries the research preview in Hanzo's words and repeats the hero ask. */
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip }) {
   const d = C[slug];
-  const caps = <Caps slug={slug} flip={flip} />;
+  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} />;
   return (
-    <Launch slug={slug} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '-hero-access' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
+    <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
       {first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}
-      <Fits slug={slug} flip={flip} />
+      <Fits slug={slug} flip={flip} subject={subject} pos={pos} />
       <Map slug={slug} />
-      <Preview slug={slug} />
       <ModelCards slug={slug} />
-      <Band title={d.head} action="Request access" to={'/research-access?models=' + slug} />
+      <Band
+        title={`Try ${d.name} on your own work`}
+        lede={`Samples of ${d.name}'s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.`}
+        action="Request access"
+        to={'/research-access?models=' + slug}
+        note={<p className="cr-band-note"><More to="/models">Every model</More><A to="/beta/research">Research preview</A></p>}
+      />
     </Launch>
   );
 }

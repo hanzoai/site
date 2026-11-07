@@ -11,16 +11,18 @@
      through that chapter (desktop), for scrubbing; null on phones. Keep idle loops gated on `on`.
    - swap: how one visual replaces the last: 'wipe' (clip from below), 'rise', 'scale' or 'fade'.
    - side: 'left' (words left on 5 columns, visual right on 7) or 'right'.
-   - count: prints "01 / 06" over each chapter. rail: false hides the clickable chapter rail.
+   - count: prints "01 / 06" under each chapter's words (with its kick), never above the headline.
+   - rail: false hides the clickable chapter rail.
    Phones (≤ 900 px): no pinning; each chapter is its words then its visual, played as it scrolls into view.
-   Every chapter's words stay in the HTML. Reduced motion: chapters still change with scroll, with no transition. */
+   JS off: every chapter stands stacked, words and visual, all legible. Reduced motion: chapters change with no transition. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useInView } from 'motion/react';
+import { scrollToY } from '../../lib/scroll';
 import './Keynote.css';
 import './KeynoteChapters.css';
 
-/* true on screens wider than 900 px (the server renders the wide layout) */
-export function useWide(q = '(min-width: 901px)') {
+/* true on screens 900 px and wider (the server renders the wide layout) */
+export function useWide(q = '(min-width: 900px)') {
   const [w, setW] = useState(true);
   useEffect(() => {
     const m = matchMedia(q);
@@ -45,10 +47,14 @@ function Chapter({ it, i, n, p, at, wide, visual, swap, count }) {
   return (
     <article ref={ref} className="knc-a">
       <div className="knc-t" data-on={!wide || at === i ? '' : undefined} data-pos={pos}>
-        {count && <p className="knc-count kn-fig">{pad(i + 1)} / {pad(n)}</p>}
-        {it.kick && <p className="kn-kick ac">{it.kick}</p>}
         <h3 className="kn-headline knc-h">{it.title}</h3>
         {it.body && <div className="knc-body">{it.body}</div>}
+        {(count || it.kick) && (
+          <div className="knc-foot">
+            {count && <p className="knc-count kn-fig">{pad(i + 1)} / {pad(n)}</p>}
+            {it.kick && <p className="kn-kick">{it.kick}</p>}
+          </div>
+        )}
       </div>
       <div className={'knc-v ' + swap} data-on={on ? '' : undefined} data-pos={wide ? pos : 'next'}>
         {visual(i, on, wide ? local : null)}
@@ -71,7 +77,7 @@ export default function KeynoteChapters({ items, visual, swap = 'wipe', side = '
     const top = el.getBoundingClientRect().top + window.scrollY;
     const span = el.offsetHeight - window.innerHeight;
     const y = top + (span * (i + 0.5)) / n;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : window.scrollTo({ top: y, behavior: 'smooth' });
+    scrollToY(y, { duration: 1.1 });
   };
   return (
     <section className={`knc ${side} ${className}`} style={{ '--n': n, '--tall': tall + 'svh' }}>
@@ -82,9 +88,9 @@ export default function KeynoteChapters({ items, visual, swap = 'wipe', side = '
           {items.map((it, i) => <Chapter key={i} it={it} i={i} n={n} p={p} at={at} wide={wide} visual={visual} swap={swap} count={count} />)}
           {rail && (
             <nav className="knc-rail" aria-label="Chapters">
-              <span className="knc-track" aria-hidden="true"><motion.i style={{ scaleY: fill }} /></span>
+              <span className="knc-track" aria-hidden="true"><motion.i style={{ scaleX: fill }} /></span>
               {items.map((it, i) => (
-                <button key={i} type="button" aria-current={at === i ? 'step' : undefined} onClick={() => go(i)} aria-label={`Chapter ${i + 1}: ${typeof it.title === 'string' ? it.title : ''}`}>
+                <button key={i} type="button" data-sound="tick" aria-current={at === i ? 'step' : undefined} onClick={() => go(i)} aria-label={`Chapter ${i + 1}: ${typeof it.title === 'string' ? it.title : ''}`}>
                   <span className="kn-fig">{pad(i + 1)}</span>
                 </button>
               ))}

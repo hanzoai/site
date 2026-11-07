@@ -1,7 +1,7 @@
 'use client';
 /* Affiliates. Its idea is the link that remembers who sent it.
    Persona: a partner who refers organizations to Hanzo. Goal: apply. CTA: "Apply" (mailto hello@hanzo.ai, Hanzo's own
-   subject line). Metric: no id in PLAN-COMPONENTS 1.1 for affiliate applications yet (counted as a contact click).
+   subject line). Metric: contact_click (no dedicated id in MASTER section 1 for affiliate applications).
    V2: 8/10 grey deck: the affiliate link itself, at display size in its own screen, writes itself once and rests with its code marked (it leans to the pointer); the four steps are sticky chapters told in Hanzo's own sentences with one object changing beside them (a swipe rail on phones); the dark room is Hanzo's three rules as the headline, each drawn as a diagram that runs itself; one Apply, sticky from the end of the hero.
    Signature: sticky chapters: Hanzo's four step sentences pin on the left while one object on the right turns from the
    apply request into the reply, the code and link, and an org landing on the link.
@@ -12,7 +12,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Mark, useTilt } from '../ui';
-import { A, Tabs, TabPanel } from '../kit';
+import { A, Cta, Tabs, TabPanel } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import Chaptered from '../v2/Chaptered';
 import '../v2/ProgramScale.css';
@@ -22,36 +22,23 @@ const EASE = [0.16, 1, 0.3, 1];
 const MAIL = 'mailto:hello@hanzo.ai?subject=Affiliate%20application';
 const LINK = 'https://hanzo.ai/?aff=<code>';
 const RULES = ['first touch', 'one affiliate per org', 'never your own'];
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* The hero object, in its own section: the affiliate link itself at display size. It writes itself once when it is
    reached, then rests with its code marked; it leans toward the pointer. */
 function Link() {
   const box = useRef(null);
-  const out = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.4 });
-  const calm = useReducedMotion();
-  const [done, setDone] = useState(false);
   const tilt = useTilt(2.5, 'rgba(255,255,255,0)');
-  useEffect(() => {
-    if (calm) { if (out.current) out.current.textContent = LINK.slice(0, 22); setDone(true); return; }
-    if (!seen) return;
-    let live = true;
-    (async () => {
-      const head = LINK.slice(0, 22);
-      for (let i = 0; i <= head.length && live; i++) { if (out.current) out.current.textContent = head.slice(0, i); await wait(i < 8 ? 40 : 62); }
-      if (live) setDone(true);
-    })();
-    return () => { live = false; };
-  }, [seen, calm]);
+  // the link writes itself once (CSS, from an empty first frame, so nothing is wiped and retyped); it waits until it is seen
   return (
     <section className="xaf-link" aria-label={LINK}>
+      <noscript><style>{'.xaf-lnk-t,.xaf-lnk-code{animation:none!important}.xaf-caret{display:none}'}</style></noscript>
       <div className="xp-wrap" ref={box}>
-        <motion.div className="xaf-link-in" style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
-          <span className="xaf-lnk"><span ref={out}>{LINK.slice(0, 22)}</span><b className={'xaf-caret' + (done ? ' rest' : '')} /></span>
-          <motion.span className="xaf-lnk-code" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={done ? { clipPath: 'inset(0 0% 0 0)' } : { clipPath: 'inset(0 100% 0 0)' }} transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}>&lt;code&gt;</motion.span>
+        <motion.div className={'xaf-link-in' + (seen ? ' on' : '')} style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
+          <span className="xaf-lnk"><span className="xaf-lnk-t">{LINK.slice(0, 22)}</span><b className="xaf-caret" /></span>
+          <span className="xaf-lnk-code">&lt;code&gt;</span>
         </motion.div>
-        <p className="xaf-link-k"><span>Affiliates</span><span className="x-mono">?aff=&lt;code&gt;</span></p>
+        <p className="xaf-link-k"><span>Affiliates</span></p>
       </div>
     </section>
   );
@@ -68,7 +55,7 @@ function Hero() {
           <div className="xaf-side">
             <p className="xp-lede">Apply to become an affiliate. Every application is reviewed, and the terms are agreed with each affiliate we approve.</p>
             <span className="xaf-apply">
-              <a href={MAIL} className="x-btn solid xp-cta" data-thumb="Apply" data-cta="affiliate.hero" aria-describedby="xaf-to">Apply<i aria-hidden="true">→</i></a>
+              <Cta to={MAIL} id="affiliate.hero" thumb className="xp-cta" aria-describedby="xaf-to">Apply</Cta>
               <span className="xaf-to x-mono" id="xaf-to">hello@hanzo.ai</span>
             </span>
           </div>
@@ -88,7 +75,7 @@ function Stage({ at, still }) {
     </div>,
     <div className="xaf-s xaf-reply" key="1">
       <div className="xaf-row"><span className="xaf-av">@</span><span className="xaf-mt"><b>Affiliate application</b><small>hello@hanzo.ai</small></span><span className="xaf-out" aria-hidden="true">↗</span></div>
-      <motion.div className="xaf-row in" initial={still ? false : { opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.35 }}>
+      <motion.div className="xaf-row in" initial={still ? false : { opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}>
         <span className="xaf-av h"><Mark size={16} /></span><span className="xaf-mt"><b>Affiliate application</b><small>hello@hanzo.ai</small></span><span className="xaf-out" aria-hidden="true">↩</span>
       </motion.div>
     </div>,
@@ -97,7 +84,7 @@ function Stage({ at, still }) {
       <span className="xaf-code-l">https://hanzo.ai/?aff=<em>&lt;code&gt;</em></span>
     </div>,
     <div className="xaf-s xaf-land" key="3">
-      <motion.span className="xaf-org" initial={still ? false : { y: -90, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 24, delay: 0.25 }}>
+      <motion.span className="xaf-org" initial={still ? false : { y: -90, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}>
         <span className="xaf-org-i">org</span>signs up through the link
       </motion.span>
       <span className="xaf-you">attributed to you</span>
@@ -107,7 +94,7 @@ function Stage({ at, still }) {
   return (
     <div className="xaf-stage xp-obj">
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div key={at} className="xaf-s-wrap" initial={{ opacity: 0, y: 44, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -30, scale: 0.98, transition: { duration: 0.25 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+        <motion.div key={at} className="xaf-s-wrap" initial={{ opacity: 0, y: 44, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -30, scale: 0.98, transition: { duration: 0.25 } }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
           {views[at]}
         </motion.div>
       </AnimatePresence>
@@ -118,7 +105,7 @@ function Stage({ at, still }) {
 
 function How() {
   const chapters = [
-    { title: <>Apply with <code className="xaf-code-in">POST /v1/affiliate/apply</code><Copy text="POST /v1/affiliate/apply" />, or write to <a href={MAIL}>hello@hanzo.ai</a>.</> },
+    { title: <>Apply with <span className="xaf-keep"><code className="xaf-code-in">POST /v1/affiliate/apply</code><Copy text="POST /v1/affiliate/apply" />,</span> or write to <a href={MAIL}>hello@hanzo.ai</a>.</> },
     { title: 'We review the application and reply.' },
     { title: <>Once approved you have a code and a link, <code className="xaf-code-in">{LINK}</code>.</> },
     { title: 'An org that signs up through the link is attributed to you: first touch, one affiliate per org, never your own.' },
@@ -194,7 +181,7 @@ function Close() {
           <LineReveal onView as="p" id="xaf-close-h" className="xp-head xaf-close-h" lines={['Apply to become', 'an affiliate.']} />
         </div>
         <div className="xaf-close-act">
-          <a href={MAIL} className="x-btn solid xp-cta" data-cta="affiliate.close">Apply<i aria-hidden="true">→</i></a>
+          <Cta to={MAIL} id="affiliate.close" className="xp-cta">Apply</Cta>
           <p className="xp-body">A <A to="/referral" className="x-link">referral</A> on its own pays nothing.</p>
         </div>
       </div>

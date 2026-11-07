@@ -27,12 +27,12 @@
 @keyframes hm-in { from { opacity: 0; transform: translate(-10px, -50%); } }
 
 /* hero: light, copy left, the module signing on the right */
-.hs-hero { padding: clamp(112px, 10vw, 152px) 0 clamp(80px, 8vw, 120px); }
-.hs-hero-grid { align-items: center; min-height: min(78svh, 760px); }
+.hs-hero { padding: clamp(96px, 7.4vw, 116px) 0 clamp(80px, 8vw, 120px); }
+.hs-hero-grid { align-items: center; min-height: min(70svh, 640px); }
 .hs-hero-copy { grid-column: 1 / span 5; }
-.hs-h1 { margin: 22px 0 32px; font-size: clamp(64px, 8.4vw, 128px); }
+.hs-h1 { margin: 0 0 24px; }
 .hs-lede { margin-bottom: 36px; max-width: 44ch; }
-.hs-hero-obj { grid-column: 6 / -1; height: clamp(440px, 46vw, 640px); }
+.hs-hero-obj { grid-column: 6 / -1; height: clamp(420px, 38vw, 560px); }
 .hs-hero-obj > div { height: 100%; }
 .hs-sign { position: relative; height: 100%; border-radius: 28px; background: radial-gradient(60% 60% at 50% 55%, rgba(163, 163, 163, .16), transparent 70%), #f5f5f7; overflow: hidden; }
 .hs-sign .hm { --s: clamp(200px, 21vw, 300px); }
@@ -44,7 +44,7 @@
 .hs-call b { color: var(--ink); font-weight: 600; display: inline-block; }
 
 /* chapters: the black room */
-.hs-ch-k { color: var(--glow); }
+.hs-ch-k { margin-top: 12px; color: #a3a3a3; }
 .hs-ch .pc-n { color: var(--glow); }
 .hs-ch .hm { --plate: #161617; --edge: rgba(255, 255, 255, .16); --ink2: #f5f5f7; }
 .hs-ch .hm-handle { background: rgba(255, 255, 255, .05); }
@@ -59,7 +59,6 @@
 /* pick your module */
 .hs-pick-head { align-items: end; margin-bottom: 56px; row-gap: 24px; }
 .hs-pick-hl { grid-column: 1 / span 7; }
-.hs-pick-hl .v2-kick { margin-bottom: 22px; }
 .hs-pick-f { grid-column: 9 / -1; padding-bottom: 8px; }
 .hs-pick-tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; background: #f5f5f7; width: max-content; max-width: 100%; box-sizing: border-box; }
 .hs-pick-tabs button { position: relative; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: none; font: 500 16px/1 var(--sans); color: var(--soft); cursor: pointer; }
@@ -77,7 +76,6 @@
   .hm-labels li { left: calc(50% + var(--s) * .5); max-width: 130px; font-size: 12px; gap: 6px; }
   .hm-labels li i { width: 16px; }
   .hs-hero-grid { min-height: 0; }
-  .hs-h1 { font-size: 72px; }
   .hs-hero-obj { height: 420px; }
   .hs-sign .hm { --s: 170px; }
   .hs-io { font-size: 12px; padding: 10px 12px; }
@@ -90,3 +88,7 @@
   .hs-pick-p { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .hs-pick-p > div { min-height: 0; padding: 24px; }
 }
+
+/* the live object's pause control */
+.hs-pause { top: 16px; right: 16px; }
+.hs-hero-obj .lp-host { height: 100%; }

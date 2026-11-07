@@ -7,22 +7,27 @@
    Goal: find their solution and open it, then try Hanzo or talk to sales.
    CTA: "Try Hanzo" (/signup) in the hero and the shared sticky ask bar (data-thumb), data-cta solutions.hero; metric
    signup_start. "Contact sales" stays a quiet outline beside it; "Explore the reserved tier" is the dark room's ask.
-   Signature: the film wall. Teams, Industries and Use cases are the section's own headline; press one and the tiles
-   leave and glide into the gap (rows of 6 + 3 + 3 like a wall of screens); a tile's film plays under the pointer and
-   its jobs rise over it; press it and its name opens into the solution's page (Morph).
-   Supporting (3): masked headline cut-in, once; the hero reel walking the seventeen once (pause control); the tile's
-   film and jobs answering the pointer.
+   Signature: the film wall. Teams, Industries and Use cases are the section's own headline; press one and a pill
+   glides to it while the tiles leave and glide into the gap (rows of 6 + 3 + 3 like a wall of screens, numbered
+   01 / 17); a tile's film plays under the pointer and its jobs rise over it; press it and the tile opens into the
+   solution's page (openTile.js; Morph times out site-wide).
+   Supporting (3): masked headline cut-in once, after the curtain; the hero reel walking the seventeen once (pause
+   control); the tile's film and jobs answering the pointer. Deck curves only (no springs).
    Beyond: each tile lists that solution's actual jobs, so you can tell Finance from Financial services before you open
    either; the hero reel shows the same jobs on phones, where there is no pointer.
    Deletes: the crimson accent, the "Solutions" kicker over the h1, the invented "All" chip, the group label on every
    tile, the endless reel loop, raw <img>/<video> (kit Img and Film), opacity:0 arrival states. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import { A, Img, Film } from '../../kit';
 import { Loose } from '../models/parts';
 import { media } from '../../../lib/models';
 import MaskLines from '../company/MaskLines';
+import useArrived from '../company/useArrived';
+import { openTile } from './openTile';
 import '../../v2/vc-type.css';
+import '../company/deck.css';
 import './solutions.css';
 import './SolutionsIndex.css';
 
@@ -45,8 +50,9 @@ function useWalk(n, box, ms) {
   const [held, setHeld] = useState(false);
   const seen = useInView(box, { amount: 0.35 });
   const calm = useReducedMotion();
+  const ok = useArrived(); // nothing walks behind the arrival curtain
   const done = steps >= n;
-  const run = seen && !held && !paused && !calm && !done;
+  const run = ok && seen && !held && !paused && !calm && !done;
   useEffect(() => {
     if (!run) return;
     const t = setTimeout(() => { setAt((a) => (a + 1) % n); setSteps((s) => s + 1); }, ms);
@@ -56,18 +62,20 @@ function useWalk(n, box, ms) {
   return { at, run, done, paused, toggle, hold: { onPointerEnter: () => setHeld(true), onPointerLeave: () => setHeld(false) } };
 }
 
-function Tile({ it, d, w }) {
+function Tile({ it, d, w, k, n }) {
+  const router = useRouter();
   const [hot, setHot] = useState(false);
   const on = (e) => { if (e.pointerType === 'mouse' && !matchMedia('(prefers-reduced-motion: reduce)').matches) setHot(true); };
   return (
     <motion.li layout="position" className={'xso-tile w' + w}
       initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.22 } }}
-      transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 }, duration: 0.45, ease: EASE }}>
-      <A to={it.href} className="xso-tile-a" onPointerEnter={on} onPointerLeave={() => setHot(false)}>
+      transition={{ layout: { duration: 0.3, ease: EASE }, duration: 0.3, ease: EASE }}>
+      <A to={it.href} className="xso-tile-a" data-no-morph onClick={(e) => openTile(e, it.href, router)} onPointerEnter={on} onPointerLeave={() => setHot(false)}>
         <span className="xso-tile-m" aria-hidden="true">
           {d.film && <Img src={media(d.film, 'webp')} alt="" w={1200} h={1500} />}
           {d.film && hot && <Film src={media(d.film, 'webm')} w={1200} h={1500} className="xso-tile-v" />}
         </span>
+        <span className="xso-tile-no vc-num" aria-hidden="true">{pad(k + 1)} / {pad(n)}</span>
         <span className="xso-tile-go" aria-hidden="true">
           <svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
@@ -75,7 +83,7 @@ function Tile({ it, d, w }) {
           <span className="xso-jobs">{d.steps.map((s) => <span key={s}>{s}</span>)}</span>
         )}
         <span className="xso-tile-b">
-          <span className="xso-tile-n" data-morph>{it.name}</span>
+          <span className="xso-tile-n">{it.name}</span>
           <span className="xso-tile-t">{it.text}</span>
         </span>
       </A>
@@ -95,7 +103,7 @@ export default function SolutionsIndex({ doc, data }) {
   const lines = [words.slice(0, 2).join(' '), words.slice(2, 4).join(' '), words.slice(4).join(' ')];
   const [ask, other] = doc.actions;
   return (
-    <main className="vc xso" style={{ '--acc': '#1d1d1f' }}>
+    <main className="vc xso" style={{ '--acc': '#0a0a0a' }}>
       <section className="xso-hero vc-scene" aria-label={doc.label} data-ask-name={doc.label}>
         <div className="vc-grid xso-hero-g">
           <div className="xso-hero-c">
@@ -150,14 +158,15 @@ export default function SolutionsIndex({ doc, data }) {
             {doc.groups.map((g) => (
               <h2 key={g.title}>
                 <button type="button" aria-pressed={group === g.title} onClick={() => setGroup(group === g.title ? null : g.title)}>
-                  {g.title}<sup className="vc-num">{pad(g.items.length)}</sup>
+                  {group === g.title && <motion.span layoutId="xso-pill" className="xso-pill" transition={{ duration: 0.3, ease: EASE }} />}
+                  <span className="xso-g-t">{g.title}</span><sup className="vc-num">{pad(g.items.length)}</sup>
                 </button>
               </h2>
             ))}
           </div>
           <ul className="xso-grid">
             <AnimatePresence mode="popLayout" initial={false}>
-              {shown.map((it, i) => <Tile key={it.href} it={it} d={data[it.slug] || {}} w={span(i, shown.length)} />)}
+              {shown.map((it, i) => <Tile key={it.href} it={it} d={data[it.slug] || {}} w={span(i, shown.length)} k={i} n={shown.length} />)}
             </AnimatePresence>
           </ul>
         </div>

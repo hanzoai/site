@@ -1,25 +1,26 @@
 'use client';
-/* One integration guide (/integrations/<tool>, 19 of them, one template): terminal-first, code as the hero
-   (Developer archetype). The first screen says the guide's promise at display size, with Hanzo's lede, the tool's badge
-   and the one ask beside it; under it the hero object is an editor window, whole on the first screen, whose left pane
-   types the guide's first sample by itself (Hanzo's own lines marked in the gutter) and whose right pane is the
-   connection: the route to Hanzo's base URL over the guide's own still contour, the base URL to copy and the API key
-   line. The other samples follow as sticky code chapters; then the credit, the other integrations as cards that open,
-   and a dark close with the guide's contour drifting behind Hanzo's "Ready to …" and its one ask.
-   Persona: Developer (PLAN-COMPONENTS 1.1). Goal: connect this tool to Hanzo with one paste.
-   CTA: the guide's own first action (e.g. "Get API Key"), in the hero and in the close; data-thumb, so the site's ask
-   bar carries it after the hero. Metric: api_key_created (leading: install_copy).
-   Signature: the typed session. The first sample writes itself into the editor, line by line with a caret, once;
-   it is real code from the guide, ready to copy the moment it lands.
-   Beyond: "Only the Hanzo lines". One switch, in the editor and beside every chapter, dims every line of every sample
-   except the ones that point at Hanzo, with the count, so you can see how little of your code changes.
-   Motion, by kind (scroll is two of them): time, the typing; state, the switch dimming every window at once and the
-   card that opens into a sibling guide; pointer, the magnetic ask and the sibling rail that drags with inertia (a
-   hovered card shows Hanzo's own line for it); idle, the guide's contour drifting in the close; arrival, the promise's
-   masked rise; scroll, the editor settling and the chapters wiping.
-   Colour: none of our own (JAMES.md 7): code by weight and grey step; the tools' own badges are their only colour.
-   V2: 8/10 v3: editor whole on the first screen with the ask beside the promise, no labels above headings (badge and crumbs under the lede), 0 hues in code and UI, icon controls named from the register, own Sigil per guide, siblings before a dark close. */
-import { useState } from 'react';
+/* One integration guide (/integrations/<tool>, 19 of them, one template): code as the hero (Developer type).
+   The first screen says the guide's promise with Hanzo's lede, its breadcrumb (the guide's category inside it) and the
+   one ask; then the guide's first sample in a window, whole from the first paint, where only Hanzo's own lines type
+   themselves in, beside the route to Hanzo's base URL over the guide's own still contour. The window's face follows
+   the tool's category, so a swipe to a neighbour lands somewhere new: a light editor for SDKs and frameworks, the same
+   editor mirrored for languages, a graphite editor for platforms and editors, and for infrastructure a graphite
+   terminal beside the title. The other samples follow as one pinned window whose tab and code change with each
+   heading; then the credit, the nearest guides (same category first) as cards that open, and a black close.
+   Persona: Developer (MASTER.md 1). Goal: connect this tool to Hanzo with one paste.
+   CTA: the guide's own first action (e.g. "Get API key — Free"), in the hero and in the close; data-thumb, so the
+   site's ask carries it as soon as the hero's ask has gone. Metric: api_key_created (leading: install_copy).
+   Signature: the typed lines. Into an otherwise complete sample, only the lines that point at Hanzo type themselves
+   in, once, so you see exactly what changes; stop finishes it, replay types it again.
+   Beyond: "Only the Hanzo lines". One switch, in the window and beside every chapter, dims every line of every sample
+   except the ones that point at Hanzo, with the count (shown only where it means something).
+   Motion, by kind (scroll is two of them): time, the typed lines; idle, a request travelling the route to Hanzo once
+   typing is done, and the guide's contour drifting in the close; state, the switch dimming every window at once, the
+   window turning to its next tab, the card that opens into a sibling guide; pointer, the magnetic ask and the sibling
+   rail that drags with inertia; arrival, the promise's masked rise; scroll, the window settling and the chapters.
+   Colour: none of our own (MASTER.md 3.1); the tool's emoji appears once, greyed, in the credit tile.
+   V2: 8/10 v5: only Hanzo's lines type (no blink, by time not frames), one pinned window that changes tab with the heading, a face per category (light, mirrored, graphite editor, terminal beside the title), ask bar from the moment the hero ask leaves, siblings ranked by category, JSON comments as a caption so Copy parses, phone lines wrap, 44px links, live hanzo.ai type sizes. */
+import { useMemo, useState } from 'react';
 import { Copy, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import Sigil from '../../Sigil';
@@ -32,6 +33,8 @@ import { ui } from '../../v2/famUi';
 import { Editor, CodeCard, Only } from './intParts';
 import './guide.css';
 
+const FACES = { Infrastructure: 'term', 'Platforms & Editors': 'ide', Languages: 'mirror' };
+
 export default function Guide({ doc, emojis }) {
   const [only, setOnly] = useState(false);
   const name = doc.crumbs.length ? doc.crumbs[doc.crumbs.length - 1].label : doc.title;
@@ -39,22 +42,25 @@ export default function Guide({ doc, emojis }) {
   const ends = doc.models.length ? doc.models : many ? [many] : [];
   const [first, ...rest] = doc.samples;
   const ask = doc.band && doc.band.actions[0];
+  const face = FACES[doc.category] || 'editor';
   const seedData = [doc.samples.length, ends.length, doc.i];
   const side = (
     <>
       <Sigil seed={doc.route} data={seedData} className="xig-sigil" still />
       <div className="xig-route" aria-hidden="true">
-        <span className="xig-node"><span className="xig-emo">{doc.emoji}</span>{name}</span>
+        <i className="xig-pulse" />
+        <span className="xig-node">{name}</span>
         <span className="xig-node hub x-mono">{doc.base.replace(/^https:\/\//, '')}</span>
         {ends.length > 0 && <span className="xig-ends">{ends.map((m) => <span key={m} className="xig-node end x-mono">{m}</span>)}</span>}
       </div>
       <div className="xig-cfg">
-        <p className="xig-base"><strong>Base URL:</strong> <code className="x-mono">{doc.base}</code><Copy text={doc.base} label={ui('int_copy_base')} /></p>
+        <p className="xig-base"><strong>Base URL:</strong> <span className="xig-base-u"><code className="x-mono">{doc.base}</code><Copy text={doc.base} label={ui('int_copy_base')} /></span></p>
         {doc.keyLine && <p className="xig-key"><Loose nodes={doc.keyLine} /></p>}
       </div>
     </>
   );
-  const chapters = rest.map((s) => ({
+  const tabs = rest.map((s) => s.title);
+  const chapters = rest.map((s, k) => ({
     key: s.title,
     name: s.title,
     text: (
@@ -64,36 +70,53 @@ export default function Guide({ doc, emojis }) {
         {s.code && <div className="xig-ch-acts"><Only only={only} setOnly={setOnly} code={s.code} /></div>}
       </div>
     ),
-    visual: <CodeCard sample={s} only={only} Loose={Loose} name={name} />,
+    visual: <CodeCard sample={s} only={only} Loose={Loose} name={name} tabs={tabs} at={k} />,
   }));
-  const near = doc.more ? doc.more.links.map((l) => {
-    const slug = l.href.split('/').pop();
-    return { href: l.href, title: l.label, preview: l.desc || '', meta: [l.emoji || emojis[slug] || '', l.tag].filter(Boolean).join('  '), seed: '/integrations/' + slug };
-  }) : [];
+  // the nearest guides: the same category first, in Hanzo's order
+  const near = useMemo(() => {
+    if (!doc.more) return [];
+    const all = doc.more.links.map((l, k) => {
+      const slug = l.href.split('/').pop();
+      return { k, href: l.href, title: l.label, preview: l.desc || '', meta: l.tag || '', seed: '/integrations/' + slug, emoji: l.emoji || emojis[slug] || '', same: (l.tag || '').toLowerCase() === (doc.category || '').toLowerCase() };
+    });
+    return [...all.filter((x) => x.same), ...all.filter((x) => !x.same)];
+  }, [doc, emojis]);
+  const words = (
+    <div className="xig-words">
+      <FamLines as="h1" id="xig-h1" text={doc.title} className="v2f-display xig-h1" data-morph-target />
+      <div className="xig-hero-r">
+        <p className="v2f-lede xig-lede">{doc.lede}</p>
+        <nav className="xig-crumbs" aria-label="Breadcrumb">
+          {doc.crumbs.map((c, i) => <span key={i}>{c.href ? <A to={c.href}>{c.label}</A> : <span aria-current="page">{c.label}</span>}</span>)}
+          {doc.category && <span className="xig-cat">{doc.category}</span>}
+        </nav>
+        {ask && <Magnetic strength={0.2}><A to={ask.href} className="v2f-btn solid xig-ask" data-thumb="" data-cta="integrations.hero">{ask.label}</A></Magnetic>}
+      </div>
+    </div>
+  );
+  const editor = first && <Editor sample={first} only={only} setOnly={setOnly} aside={face === 'term' ? null : side} name={name} face={face} />;
   return (
-    <main className="v2f xig">
-      <section className="xig-hero" aria-labelledby="xig-h1">
-        <div className="v2f-wrap">
-          <div className="v2f-grid xig-hero-g">
-            <FamLines as="h1" id="xig-h1" text={doc.title} className="v2f-display mid xig-h1" data-morph-target />
-            <div className="xig-hero-r">
-              <p className="v2f-lede xig-lede">{doc.lede}</p>
-              <div className="xig-meta">
-                <span className="xig-badge"><span className="xig-emo" aria-hidden="true">{doc.emoji}</span><span className="v2f-kick">{doc.category}</span></span>
-                <nav className="xig-crumbs" aria-label="Breadcrumb">
-                  {doc.crumbs.map((c, i) => <span key={i}>{c.href ? <A to={c.href}>{c.label}</A> : <span aria-current="page">{c.label}</span>}</span>)}
-                </nav>
-              </div>
-              {ask && <Magnetic strength={0.2}><A to={ask.href} className="v2f-btn solid xig-ask" data-thumb="" data-cta="integrations.hero">{ask.label}</A></Magnetic>}
-            </div>
+    <main className={'v2f xig face-' + face}>
+      {face === 'term' ? (
+        <section className="xig-hero xig-hero-t" aria-labelledby="xig-h1">
+          <div className="v2f-wrap v2f-grid xig-hero-tg">
+            {words}
+            {first && <FamStage className="xig-stage" from={1.04} span={420}>{editor}</FamStage>}
           </div>
+          <div className="v2f-wrap xig-term-cfg">{side}</div>
+        </section>
+      ) : (
+        <>
+          <section className="xig-hero" aria-labelledby="xig-h1">
+            <div className="v2f-wrap">{words}</div>
+          </section>
           {first && (
-            <FamStage className="xig-stage" from={1.05} span={460}>
-              <Editor sample={first} only={only} setOnly={setOnly} aside={side} name={name} />
-            </FamStage>
+            <section className="xig-stage-s" aria-label={first.title}>
+              <div className="v2f-wrap"><FamStage className="xig-stage" from={1.04} span={420}>{editor}</FamStage></div>
+            </section>
           )}
-        </div>
-      </section>
+        </>
+      )}
 
       {chapters.length > 0 && <FamChapters label={doc.title} items={chapters} className="xig-ch" id="guide" />}
 
@@ -117,7 +140,7 @@ export default function Guide({ doc, emojis }) {
             <FamNext items={near.slice(0, 6)} label={doc.more.title} className="xig-next" />
             {near.length > 6 && (
               <ul className="xig-rest" aria-label={doc.more.title}>
-                {near.slice(6).map((l) => <li key={l.href}><A to={l.href} className="xig-rest-a"><span className="xig-rest-n">{l.title}</span><span className="xig-rest-m" aria-hidden="true">{l.meta}</span></A></li>)}
+                {near.slice(6).map((l) => <li key={l.href}><A to={l.href} className="xig-rest-a"><span className="xig-rest-n">{l.title}</span><span className="xig-rest-m" aria-hidden="true">{l.meta}</span><span className="x-sr">{l.emoji}</span></A></li>)}
               </ul>
             )}
           </div>

@@ -33,7 +33,7 @@ const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0
 
 /* Hero: the command types into a text node; the URL lands as the headline's second act. */
 function Hero() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive(0.05);
   const calm = useCalm();
   const cmd = useRef(null);
   const [done, setDone] = useState(false);
@@ -41,8 +41,10 @@ function Hero() {
     if (calm) { if (cmd.current) cmd.current.textContent = CMD; setDone(true); return; }
     if (!live || done) return;
     let i = 0;
-    const t = setInterval(() => { i++; if (cmd.current) cmd.current.textContent = CMD.slice(0, i); if (i >= CMD.length) { clearInterval(t); setTimeout(() => setDone(true), 350); } }, 85);
-    return () => clearInterval(t);
+    let t = 0;
+    const step = () => { i++; if (cmd.current) cmd.current.textContent = CMD.slice(0, i); t = i >= CMD.length ? setTimeout(() => setDone(true), 350) : setTimeout(step, 85); };
+    t = setTimeout(step, 85);
+    return () => clearTimeout(t);
   }, [live, calm, done]);
   return (
     <section className="tn2-hero" ref={ref}>
@@ -160,6 +162,7 @@ function Facts() {
               <h3 className="l2-title">{FACTS[i][0]}</h3>
               <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
               <p className="l2-body">{FACTS[i][1]}</p>
+              {i === 1 && <div className="tn2-name-in-list"><Name /></div>}
               {i === 5 && (
                 <div className="tn2-modes">
                   <div role="group" aria-label="Mode">{MODES.map(([m], k) => <button key={m} type="button" aria-pressed={mode === k} onClick={() => setMode(k)}>{m}</button>)}</div>
@@ -203,22 +206,32 @@ function One() {
           <h2 className="l2-head">One command, one URL</h2>
           <p className="l2-body">Install the CLI, sign in once, and name a port. It is the same sign-in that runs your agents and bills your usage, so there is nothing else to set up.</p>
           <div className="l2-acts"><Cta to="https://docs.hanzo.ai/docs/cli" kind="quiet" id="install-cli">Install the CLI</Cta><Cta to="/pricing" kind="link" id="pricing">See Pricing</Cta></div>
-          <div className="tn2-code"><Code title="Tunnel terminal" tabs={[{ k: 'terminal', code: '$ hanzo share 3000\n→ sharing 3000\nhttps://wispyfox7421.share.hanzo.ai → localhost:3000' }]} /></div>
         </div>
-        <div className="tn2-one-r"><Name /></div>
+        <div className="tn2-one-r"><Code title="Tunnel terminal" tabs={[{ k: 'terminal', code: '$ hanzo share 3000\n→ sharing 3000\nhttps://wispyfox7421.share.hanzo.ai → localhost:3000' }]} /></div>
       </div>
     </section>
   );
 }
 
+/* The close's object: the share as it stands while the terminal is open. */
+function Shared() {
+  return (
+    <div className="tn2-end" aria-hidden="true">
+      <p className="tn2-end-k l2-mono"><span>$</span> hanzo share 3000</p>
+      <p className="tn2-end-u"><i />wispyfox7421<b>.share.hanzo.ai</b></p>
+      <p className="tn2-end-t l2-mono"><span>→ localhost:3000</span><span>127.0.0.1:3000</span></p>
+    </div>
+  );
+}
+
 export default function Tunnel() {
   return (
-    <main className="l2-page tn2">
+    <main id="main" className="l2-page tn2">
       <Hero />
       <Scene />
       <Facts />
       <One />
-      <Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
+      <Finale name="Tunnel" head="Get started with Tunnel" ask={['View on GitHub', GH]} object={<Shared />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Tunnel in my project. Start with: hanzo share" tag="Secure tunnels" />
     </main>
   );
 }

@@ -1,83 +1,94 @@
-/* Zen 7 (z7-) v2: the 7 that rises and settles, the lineage line, the research room (the page's one dark room) */
-.z7-w { width: min(100% - 48px, 1440px); margin-inline: auto; }
-.z7-lede { margin: 32px 0 0; max-width: 28ch; font-size: clamp(19px, 1.7vw, 24px); line-height: 1.38; color: var(--soft); text-wrap: pretty; }
-.z7-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 36px; }
+/* Zen 7 (z7-): the 7 that rises and settles, the lineage line, the research room (the page's one black room).
+   Hanzo's deck only (docs/MASTER.md 3.1): neutrals, sizes from the scale (the 7 is the one big thing), 1152 container,
+   13-column 5/8 split, radii 6/24, deck durations and curves. Deck values are page tokens until tokens.css lands. */
+.z7 {
+  --z7-ink: #0a0a0a; --z7-muted: #525252; --z7-quiet: #737373; --z7-room: #f5f5f5; --z7-line: rgba(0, 0, 0, .1);
+  --z7-gut: clamp(16px, 4vw, 32px); --z7-pad: clamp(72px, 11vw, 188px);
+  --z7-out: cubic-bezier(0, 0, .2, 1); --z7-emph: cubic-bezier(.16, 1, .3, 1); --z7-press: 90ms; --z7-fast: 150ms;
+}
+.z7-w { width: min(100% - 2 * var(--z7-gut), 1152px); margin-inline: auto; }
+.z7-lede { margin: 27px 0 0; max-width: 34ch; font-size: 21px; line-height: 1.38; color: var(--z7-muted); text-wrap: pretty; }
+.z7-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10.5px 27px; margin-top: 27px; }
+.z7-acts .x-btn { height: 48px; padding: 0 27px; font-size: 16px; font-weight: 606; }
 .z7-acts .x-arrow { min-height: 44px; }
-.z7-btn { height: 52px; padding: 0 28px; font-size: 16px; }
+.z7-crumb ol { display: flex; gap: 10.5px; margin: 27px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--z7-muted); }
+.z7-crumb li + li::before { content: '/'; margin-right: 10.5px; }
+.z7-crumb a { color: var(--z7-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; display: inline-flex; min-height: 24px; align-items: center; }
 
-/* Stage: the numeral's settled box is fixed in viewport units; --k (1 → 0) carries it up from the bottom right */
-.z7-stage { position: relative; height: 210svh; margin-top: -60px; } /* under the 60px header: pinned from the first frame, nothing jumps */
+/* Stage: the numeral's settled box sits in the 8 right columns; --k (1 → 0) carries it up from the bottom right */
+.z7-stage { position: relative; height: 210svh; margin-top: -60px; } /* under the 60px header: pinned from the first frame */
 .z7-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .z7-art {
-  --k: 1; --gap: max(4vw, calc((100vw - 1440px) / 2 + 24px));
+  --k: 1; --gap: max(var(--z7-gut), calc((100vw - 1152px) / 2));
   position: absolute; top: 14svh; right: var(--gap); height: 76svh; width: calc(76svh * 6 / 7); background: #fff; overflow: hidden;
   transform-origin: 0 0; transform: translate(calc(-20vw * var(--k)), calc(30svh * var(--k))) scale(calc(1 + .9 * var(--k)));
 }
-.z7-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .85); }
+.z7-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255, 255, 255, .8); }
 .z7-mask { position: absolute; inset: 0; width: 100%; height: 100%; }
-.z7-glyph { font: 600 820px/1 var(--sans); letter-spacing: -.06em; fill: #000; }
-.z7-copy { position: relative; padding-top: 13svh; }
-.z7-h { margin: 0; font-size: min(clamp(56px, 7.4vw, 112px), 12.5svh); font-weight: 600; line-height: .92; letter-spacing: -.05em; }
-.z7-h .x-line { padding: .03em 0 .07em; } /* line pitch 1.02: display type reads like a logo */
+.z7-glyph { font: 497 820px/1 var(--sans); letter-spacing: -.06em; fill: #000; }
+.z7-copy { position: relative; padding-top: 17svh; pointer-events: none; } /* the copy never shields the 7: the field answers the pointer */
+.z7-copy > * { width: fit-content; pointer-events: auto; }
+.z7-h { margin: 0; font-size: 52px; font-weight: 497; line-height: 1; letter-spacing: -.03em; }
+.z7-h .x-line { padding: .03em 0 .05em; }
 
-/* Beyond: the lineage line */
-.z7-brings { padding: clamp(120px, 15vw, 240px) 0; }
-.z7-brings-g { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 24px; align-items: start; }
-.z7-h2 { margin: 0; max-width: 10ch; font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; letter-spacing: -.04em; line-height: 1; text-wrap: balance; }
-.z7-para { margin: 0; max-width: 44ch; font-size: clamp(21px, 1.7vw, 24px); line-height: 1.42; color: var(--ink); text-wrap: pretty; }
-.z7-line { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 3fr); align-items: center; margin-top: clamp(80px, 9vw, 140px); }
-.z7-node { display: grid; align-content: end; gap: 8px; min-height: 260px; padding: 28px; border-radius: 28px; background: var(--card); color: var(--ink); text-decoration: none; transition: transform .45s var(--ease); }
-a.z7-node:hover { transform: translateY(-4px); }
-a.z7-node:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-.z7-node span { font: 500 14px/1.35 var(--mono); color: var(--soft); }
-.z7-node .z7-node-k { margin-bottom: 14px; font: 600 clamp(36px, 3.9vw, 56px)/1 var(--sans); letter-spacing: -.04em; color: inherit; }
-.z7-node.dark { background: var(--ink); color: #fff; }
-.z7-node.dark span { color: #a1a1a6; }
-.z7-node.dark .z7-node-k { color: #fff; }
-.z7-rail { position: relative; padding: 0 20px; }
+/* Beyond: the lineage line; heading 5 of 13, the paragraph 8 of 13 */
+.z7-brings { padding: var(--z7-pad) 0; }
+.z7-brings-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; align-items: start; }
+.z7-h2 { margin: 0; max-width: 14ch; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+.z7-para { margin: 0; max-width: 44ch; font-size: 21px; line-height: 1.42; color: var(--z7-ink); text-wrap: pretty; }
+.z7-line { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr) minmax(0, 3fr); align-items: center; margin-top: 72px; }
+.z7-node { display: grid; align-content: end; gap: 6.5px; min-height: 220px; padding: 27px; border-radius: 24px; background: var(--z7-room); color: var(--z7-ink); text-decoration: none; transition: transform var(--z7-fast) var(--z7-out); }
+@media (hover: hover) { a.z7-node:hover { transform: translateY(-4px); } }
+a.z7-node:active { transform: scale(.97); transition-duration: var(--z7-press); }
+a.z7-node:focus-visible { outline: 2px solid var(--z7-ink); outline-offset: 3px; }
+.z7-node span { font: 400 14px/1.4 var(--mono); color: var(--z7-muted); }
+.z7-node .z7-node-k { margin-bottom: 10.5px; font: 497 26px/1.1 var(--sans); letter-spacing: -.02em; color: inherit; }
+.z7-node.dark { background: #0a0a0a; color: #fafafa; }
+.z7-node.dark span { color: rgba(255, 255, 255, .78); }
+.z7-node.dark .z7-node-k { color: #fafafa; }
+.z7-rail { position: relative; padding: 0 17px; }
 .z7-path { position: absolute; overflow: visible; }
-.z7-path path { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+.z7-path path { fill: none; stroke: var(--z7-ink); stroke-width: 1; }
 .z7-path.h { left: 0; top: 50%; width: 100%; height: 2px; margin-top: -1px; }
 .z7-path.v { display: none; }
-.z7-rail ol { position: relative; list-style: none; margin: 0; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.z7-rail li { max-width: 12em; padding: 10px 16px; border-radius: 18px; border: 1px solid rgba(0, 0, 0, .16); background: #fff; font-size: 15px; line-height: 1.3; text-align: center; text-wrap: balance; }
+.z7-rail ol { position: relative; list-style: none; margin: 0; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 10.5px; }
+.z7-rail li { max-width: 12em; padding: 10.5px 17px; border-radius: 6px; background: #fff; box-shadow: 0 0 0 1px var(--z7-line); font-size: 14px; line-height: 1.35; text-align: center; text-wrap: balance; }
 
-/* the research room */
-.z7-access { position: relative; overflow: hidden; isolation: isolate; padding: clamp(140px, 16vw, 260px) 0; background: #000; color: #f5f5f7; }
-.z7-sig2 { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(255, 255, 255, .26); }
-.z7-access-g { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: end; }
-.z7-big { margin: 0; max-width: 8ch; font-size: clamp(56px, 8.9vw, 128px); font-weight: 600; letter-spacing: -.05em; line-height: .92; color: #f5f5f7; }
-.z7-access .z7-lede { margin: 0; color: #a1a1a6; }
-.z7-access .x-btn.solid { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
-.z7-access .x-btn.solid:hover { background: #fff; }
+/* the research room: a rounded card inside the gutters that opens to full width (--open 0 → 1) */
+.z7-access {
+  --open: 1; position: relative; overflow: hidden; isolation: isolate; padding: var(--z7-pad) 0; background: #000; color: #fafafa; text-align: center;
+  clip-path: inset(0 calc(var(--z7-gut) * (1 - var(--open))) round calc(24px * (1 - var(--open))));
+}
+.z7-sig2 { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(255, 255, 255, .3); }
+.z7-access-g { display: grid; justify-items: center; }
+.z7-big { margin: 0; font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: 1.05; color: #fafafa; }
+.z7-access .z7-lede { max-width: 44ch; color: rgba(255, 255, 255, .78); }
+.z7-access .z7-acts { justify-content: center; }
 
-@media (max-width: 900px) {
-  .z7-w { width: min(100% - 32px, 1440px); }
+@media (max-width: 899px) {
   .z7-stage { height: auto; margin-top: 0; }
   .z7-pin { position: relative; height: auto; overflow: visible; display: flex; flex-direction: column; }
-  .z7-copy { padding-top: 104px; }
-  .z7-h { font-size: clamp(48px, 14vw, 56px); }
-  .z7-lede { margin-top: 24px; }
-  .z7-art { position: relative; order: 2; top: auto; right: auto; width: min(100% - 32px, 420px); height: auto; aspect-ratio: 6 / 7; margin: 48px auto 0; transform: none !important; }
-  .z7-brings { padding: 120px 0; }
-  .z7-brings-g { grid-template-columns: minmax(0, 1fr); }
-  .z7-line { grid-template-columns: minmax(0, 1fr); margin-top: 64px; }
-  .z7-node { min-height: 0; padding: 24px; border-radius: 22px; }
-  .z7-node .z7-node-k { font-size: 36px; }
-  .z7-rail { padding: 28px 0 28px 64px; }
+  .z7-copy { padding-top: 116px; pointer-events: auto; }
+  .z7-h { font-size: 44px; }
+  .z7-lede { font-size: 17px; margin-top: 17px; }
+  .z7-art { position: relative; order: 2; top: auto; right: auto; height: 45svh; width: calc(45svh * 6 / 7); margin: 27px auto 0; transform: none !important; }
+  .z7-brings-g { grid-template-columns: minmax(0, 1fr); gap: 17px; }
+  .z7-para { font-size: 17px; }
+  .z7-line { grid-template-columns: minmax(0, 1fr); margin-top: 44px; }
+  .z7-node { min-height: 0; padding: 17px 17px 22px; }
+  .z7-rail { padding: 27px 0 27px 56px; }
   .z7-path.h { display: none; }
-  .z7-path.v { display: block; left: 32px; top: 0; width: 2px; height: 100%; margin-left: -1px; }
-  .z7-rail ol { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .z7-path.v { display: block; left: 27px; top: 0; width: 2px; height: 100%; margin-left: -1px; }
+  .z7-rail ol { flex-direction: column; align-items: flex-start; gap: 10.5px; }
   .z7-rail li { max-width: none; text-align: left; }
-  .z7-access { padding: 140px 0; }
-  .z7-access-g { grid-template-columns: minmax(0, 1fr); gap: 32px; }
-  .z7-big { font-size: 56px; }
+  .z7-big { font-size: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .z7-stage { height: auto; }
   .z7-pin { height: 100svh; min-height: 640px; }
   .z7-art { transform: none !important; }
   .z7-h .x-line-in { transform: none !important; }
+  .z7-access { --open: 1 !important; }
   a.z7-node { transition: none; }
 }
-@media (prefers-reduced-motion: reduce) and (max-width: 900px) { .z7-pin { height: auto; min-height: 0; } }
+@media (prefers-reduced-motion: reduce) and (max-width: 899px) { .z7-pin { height: auto; min-height: 0; } }

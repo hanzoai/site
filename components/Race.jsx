@@ -33,18 +33,21 @@ function Run({ kicker, big, decimals, cap, note, title, lanes, extra, link, flip
   const max = Math.max(...lanes.map((l) => l.ms));
   const t = useMotionValue(0);
   const [runs, setRuns] = useState(0);
+  const [racing, setRacing] = useState(false);
   useEffect(() => {
     if (!seen) return;
     if (calm) { t.set(max); return; }
     t.set(0);
-    const c = animate(t, max, { duration: max / 1000, ease: 'linear' });
+    setRacing(true);
+    const c = animate(t, max, { duration: max / 1000, ease: 'linear', onComplete: () => setTimeout(() => setRacing(false), 600) });
     return () => c.stop();
   }, [seen, runs]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <article className={'hv-run v2-grid' + (flip ? ' flip' : '')} ref={ref}>
       <div className="hv-run-fig">
-        <p className="v2-figure hv-run-big"><Count to={big} decimals={decimals} suffix="×" duration={1.4} /></p>
-        <p className="v2-title hv-run-cap">{cap}</p>
+        {/* the figure rests at 64px and grows only while its race is the moment, then settles (MASTER 3.1) */}
+        <motion.p className="v2-figure hv-run-big" initial={false} animate={{ scale: racing ? 1.6 : 1 }} transition={{ duration: 0.5, ease: EASE }}><Count to={big} decimals={decimals} suffix="×" duration={1.2} /></motion.p>
+        <p className="hv-cap hv-run-cap">{cap}</p>
         <p className="v2-kicker hv-run-k">{kicker}</p>
         <p className="hv-run-note">{note}</p>
       </div>
@@ -72,8 +75,8 @@ export default function Race() {
     <motion.section className="hv-race hv-room" data-room="dark" id="faster" aria-labelledby="faster-h" ref={ref} style={{ clipPath: clip }}>
       <div className="v2-wrap">
         <header className="hv-head v2-grid">
-          <Lines as="h2" id="faster-h" className="v2-display-m hv-head-t" lines={['Faster where', 'the work happens.']} />
-          <div className="hv-head-r"><p className="v2-lede">Hanzo Dev and Kai, each measured side by side.</p></div>
+          <Lines as="h2" id="faster-h" className="hv-h2 hv-head-t" lines={['Faster where the work happens.']} />
+          <div className="hv-head-r"><p className="hv-lead">Hanzo Dev and Kai, each measured side by side.</p></div>
         </header>
         <Run
           kicker="Hanzo Dev vs Claude Code"

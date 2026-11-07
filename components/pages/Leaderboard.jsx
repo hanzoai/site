@@ -24,7 +24,7 @@ import { EASE } from '../ui';
 import { A, More, Band } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
-import DetailSheet from '../v2/DetailSheet';
+import DetailSheet from '../v2/x-pascal/DetailSheet';
 import SceneWipe from '../v2/SceneWipe';
 import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';

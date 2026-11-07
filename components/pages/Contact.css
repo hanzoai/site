@@ -1,120 +1,129 @@
-/* /contact, v3 (prefix xct-). Ink, greys and white only (JAMES.md 7): no UI hue anywhere. */
-.xct { overflow-x: clip; --ink: #1d1d1f; }
-.xct ::selection { background: rgba(0, 0, 0, .12); }
+/* /contact (prefix xct-). Hanzo's deck only (MASTER.md 3.1): the neutral ramp, Book 497 headings, 48px buttons, deck
+   durations and curves (no springs), flat surfaces (a fill or a hairline, never both with a shadow).
+   Tokens come from components/pages/company/deck.css on .vc. */
+.xct { overflow-x: clip; }
+.xct ::selection { background: rgba(0, 0, 0, .1); }
 .xct :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
-.xct-big { height: 52px; padding: 0 28px; font-size: 16px; }
-.xct .x-btn { transition: background .2s, border-color .2s, transform .12s var(--ease); }
-.xct .x-btn:active, .xct-jack:active, .xct-cp:active { transform: scale(.98); }
-@media (hover: hover) { .xct .x-btn.solid:hover { background: #3a3a3c; } }
+.xct-big { height: 48px; padding: 0 27px; font-size: 16px; }
+/* the hero's buttons only (the closing Band keeps the kit's own hover) */
+.xct-route .x-btn { transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out); }
+@media (hover: hover) { .xct-route .x-btn.solid:hover { background: #262626; border-color: #262626; } }
 .xct-go { display: inline-flex; }
-/* arrivals in CSS (JS off still shows every word); held while the site's arrival curtain is up, so they play in view */
-.xct-in { animation: xct-in .9s var(--ease) .45s both; }
-.xct-in2 { animation: xct-up 1.1s var(--ease) .15s both; }
-html.x-arriving .xct-in, html.x-arriving .xct-in2 { animation-play-state: paused; }
+/* Utility entries, 0.4s (MASTER 4.5), in CSS so JS off still shows every word. They wait for the page's go (after
+   the arrival curtain has cleared the top, see useGo), then follow the h1: panel at +150ms, lede at +300ms. */
+.xct-in { animation: xct-in .4s var(--e-em) .3s both paused; }
+.xct-in2 { animation: xct-up .4s var(--e-em) .15s both paused; }
+.xct[data-go] .xct-in, .xct[data-go] .xct-in2 { animation-play-state: running; }
 @keyframes xct-in { from { opacity: 0; } }
-@keyframes xct-up { from { opacity: 0; transform: translateY(48px); } }
+@keyframes xct-up { from { opacity: 0; transform: translateY(24px); } }
 
 /* 1. the question beside the patch panel */
-.xct-hero { padding: 88px 0 56px; }
-.xct-hero-g { align-items: center; row-gap: 56px; }
-.xct-hero-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 32px; }
-.xct-hero-c .vc-display { font-size: clamp(56px, 9.2vw, 136px); }
+.xct-hero { padding: clamp(72px, 9vw, 116px) 0 72px; }
+.xct-hero-g { align-items: center; row-gap: 44px; }
+.xct-hero-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 27px; }
 .xct-hero-o { grid-column: 7 / 13; }
 
-.xct-obj { position: relative; padding: 24px; background: #fff; display: flex; flex-direction: column; min-height: 560px; }
-.xct-jacks { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.xct-jack { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-height: 120px; padding: 16px 14px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--soft); text-align: left; cursor: pointer; transition: border-color .3s var(--ease), color .3s, background .3s, transform .12s var(--ease); }
+.xct-obj { position: relative; padding: 24px; background: #fff; border: 1px solid var(--line); border-radius: 28px; display: flex; flex-direction: column; }
+.xct-jacks { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6.5px; }
+.xct-jack { position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 17px; min-height: 120px; padding: 17px 13px 13px; border: 1px solid var(--line); border-radius: 16px; background: #fff; color: var(--ink2); text-align: left; cursor: pointer; transition: border-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xct-jack:active { transform: scale(.97); }
 .xct-jack.on { color: var(--ink); border-color: var(--ink); }
-.xct-hole { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(0, 0, 0, .18); background: var(--card); transition: border-color .3s; }
-.xct-hole i { width: 8px; height: 8px; border-radius: 50%; background: rgba(0, 0, 0, .22); transition: background .25s, transform .4s var(--ease); }
+.xct-hole { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(0, 0, 0, .18); background: var(--quiet); transition: border-color var(--d-fast) var(--e-out); }
+.xct-hole i { width: 8px; height: 8px; border-radius: 50%; background: rgba(0, 0, 0, .22); transition: background var(--d-fast) var(--e-out), transform var(--d-base) var(--e-io); }
 .xct-jack.on .xct-hole, .xct-jack.lit .xct-hole { border-color: var(--ink); }
-.xct-jack.lit .xct-hole i { background: var(--ink); transform: scale(1.35); }
-.xct-k { font: 600 17px/1.2 var(--sans); letter-spacing: -.015em; transition: transform .45s var(--ease); }
-/* hover tells you what the line does: its action slides up under the name (Hanzo's own button words) */
-.xct-peek { position: absolute; left: 14px; right: 10px; bottom: 12px; font: 500 13px/1.25 var(--sans); color: #6e6e73; opacity: 0; transform: translateY(8px); transition: opacity .25s var(--ease), transform .35s var(--ease); pointer-events: none; }
+.xct-jack.lit .xct-hole i, .xct-jack.on .xct-hole i { background: var(--ink); transform: scale(1.35); }
+/* the jack's name and its action share one slot: pointing swaps the name for what the line does (Hanzo's own button
+   words), so two-line names never collide with it */
+.xct-jt { display: grid; width: 100%; overflow: hidden; }
+.xct-k, .xct-peek { grid-area: 1 / 1; align-self: end; transition: transform var(--d-base) var(--e-io), opacity var(--d-fast) var(--e-out); }
+.xct-k { font: 606 17px/1.2 var(--sans); letter-spacing: -.01em; }
+.xct-peek { font: 400 16px/1.25 var(--sans); color: var(--ink); opacity: 0; transform: translateY(100%); }
 @media (hover: hover) {
-  .xct-jack:hover { color: var(--ink); border-color: rgba(0, 0, 0, .28); }
-  .xct-jack:hover .xct-k { transform: translateY(-6px); }
-  .xct-jack:hover .xct-peek { opacity: 1; transform: none; }
+  .xct-jack:hover { color: var(--ink); border-color: rgba(0, 0, 0, .3); }
   .xct-jack:hover .xct-hole { border-color: var(--ink); }
+  .xct-jack:hover .xct-k { opacity: 0; transform: translateY(-100%); }
+  .xct-jack:hover .xct-peek { opacity: 1; transform: none; }
 }
 .xct-cable { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 2; overflow: visible; }
 .xct-wire { fill: none; stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
 .xct-nub { fill: var(--ink); }
-.xct-panel { position: relative; margin-top: 104px; display: grid; padding: 44px 32px 32px; border-radius: 20px; background: var(--card); min-height: 320px; }
-.xct-plug { position: absolute; left: 50%; top: -8px; width: 18px; height: 24px; margin-left: -9px; border-radius: 6px; background: var(--ink); box-shadow: 0 0 0 4px var(--card); }
-.xct-route { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 16px; align-self: start; }
-.xct-cp { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color .2s, transform .12s var(--ease); }
+.xct-panel { position: relative; margin-top: 104px; display: grid; padding: 44px 27px 27px; border-radius: 16px; background: var(--card); min-height: 320px; }
+.xct-plug { position: absolute; left: 50%; top: -8px; width: 18px; height: 24px; margin-left: -9px; border-radius: 6px; background: var(--ink); box-shadow: 0 0 0 4px var(--card); transition: opacity var(--d-fast) var(--e-out); }
+/* the plug shows only once its wire is drawn */
+.xct-obj:not([data-wired]) .xct-plug { opacity: 0; }
+.xct-route { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 17px; align-self: start; }
+.xct-cp { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xct-cp:active { transform: scale(.97); }
 @media (hover: hover) { .xct-cp:hover { border-color: rgba(0, 0, 0, .4); } }
-.xct-rh { margin: 4px 0 0; font-size: clamp(30px, 2.8vw, 42px); font-weight: 600; line-height: 1.04; letter-spacing: -.035em; max-width: 16ch; text-wrap: balance; color: var(--ink); }
-.xct-rp { margin: 0; max-width: 44ch; font-size: 17px; line-height: 1.5; color: var(--soft); text-wrap: pretty; }
-.xct-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 10px; }
+.xct-rh { margin: 4px 0 0; font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; line-height: 1.1; letter-spacing: -.025em; max-width: 16ch; text-wrap: balance; color: var(--ink); }
+.xct-rp { margin: 0; max-width: 44ch; font-size: 17px; line-height: 1.55; color: var(--ink2); text-wrap: pretty; }
+.xct-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10.5px 17px; margin-top: 10px; }
 .xct-more { display: flex; flex-wrap: wrap; gap: 10px 22px; }
 .xct-more .x-arrow { min-height: 44px; }
 
-/* 2. the dark middle room: the address beside a big live San Francisco clock (no map: the clock is the object) */
-.xct-visit { position: relative; background: #000; color: #f5f5f7; padding: clamp(112px, 12vw, 176px) 0; }
-.xct-visit-g { align-items: center; row-gap: 56px; }
-.xct-visit-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 28px; }
-.xct-visit-c .vc-display { color: #f5f5f7; }
-.xct-addr { color: #f5f5f7; max-width: 14ch; }
-.xct-city { color: #a1a1a6; }
-.xct-clock { grid-column: 7 / 13; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 24px; }
+/* 2. the dark middle room: the address beside a big live San Francisco clock */
+.xct-visit { position: relative; background: #000; color: #fafafa; padding: clamp(72px, 11vw, 188px) 0; }
+.xct-visit-g { align-items: center; row-gap: 44px; }
+.xct-visit-c { grid-column: 1 / 7; display: flex; flex-direction: column; gap: 27px; }
+.xct-visit-c .vc-display, .xct .xct-addr { color: #fafafa; }
+.xct-addr { max-width: 14ch; }
+.xct .xct-city { color: #a3a3a3; }
+.xct-clock { grid-column: 7 / 13; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 27px; }
 .xct-dial { width: min(100%, 440px); height: auto; }
 .xct-face { fill: rgba(255, 255, 255, .03); stroke: rgba(255, 255, 255, .2); stroke-width: .8; }
-.xct-tk { stroke: rgba(255, 255, 255, .28); stroke-width: .8; }
-.xct-tk.big { stroke: #f5f5f7; stroke-width: 2.2; }
-.xct-h { stroke: #f5f5f7; stroke-linecap: round; transform-origin: 100px 100px; opacity: 0; transition: opacity .5s var(--ease); }
+.xct-tk { stroke: rgba(255, 255, 255, .3); stroke-width: .8; }
+.xct-tk.big { stroke: #fafafa; stroke-width: 2.2; }
+.xct-h { stroke: #fafafa; stroke-linecap: round; transform-origin: 100px 100px; opacity: 0; transition: opacity var(--d-slower) var(--e-out); }
 .xct-dial.live .xct-h { opacity: 1; }
 .xct-h.hr { stroke-width: 6; }
 .xct-h.mn { stroke-width: 3.5; }
-.xct-h.sc { stroke: #a1a1a6; stroke-width: 1.4; }
-.xct-pin { fill: #f5f5f7; }
-.xct-clock-t { margin: 0; font-size: clamp(28px, 2.6vw, 40px); font-weight: 600; letter-spacing: -.03em; line-height: 1; color: #f5f5f7; }
+.xct-h.sc { stroke: #a3a3a3; stroke-width: 1.4; }
+.xct-pin { fill: #fafafa; }
+.xct-clock-t { margin: 0; font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; letter-spacing: -.025em; line-height: 1; color: #fafafa; }
 
 /* 3. the community: a big index; the plate follows the row you reach or point at */
-.xct-com-l { grid-column: 1 / 6; align-self: start; position: sticky; top: 104px; display: flex; flex-direction: column; gap: 40px; }
-.xct-plate { position: relative; overflow: hidden; aspect-ratio: 5 / 4; background: #f5f5f7; color: rgba(0, 0, 0, .55); }
+.xct-com { padding: clamp(72px, 11vw, 188px) 0; }
+.xct-com-l { grid-column: 1 / 6; align-self: start; position: sticky; top: 104px; display: flex; flex-direction: column; gap: 44px; }
+.xct-plate { position: relative; overflow: hidden; aspect-ratio: 5 / 4; border-radius: 24px; background: var(--quiet); color: rgba(0, 0, 0, .5); }
 .xct-plate-s { position: absolute; inset: 0; }
 .xct-plate-s canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.xct-plate::after { content: ''; position: absolute; inset: auto 0 0 0; height: 45%; background: linear-gradient(180deg, transparent, rgba(245, 245, 247, .95)); pointer-events: none; }
-.xct-plate-w { position: absolute; left: 28px; right: 28px; bottom: 22px; z-index: 1; overflow: hidden; padding-bottom: .08em; }
-.xct-plate-n { display: block; font-size: clamp(40px, 4.4vw, 64px); font-weight: 600; letter-spacing: -.05em; line-height: 1; color: var(--ink); }
+.xct-plate::after { content: ''; position: absolute; inset: auto 0 0 0; height: 45%; background: linear-gradient(180deg, rgba(245, 245, 245, 0), rgba(245, 245, 245, .95)); pointer-events: none; }
+.xct-plate-w { position: absolute; left: 27px; right: 27px; bottom: 22px; z-index: 1; overflow: hidden; padding-bottom: .08em; }
+.xct-plate-n { display: block; font-size: clamp(40px, 4.4vw, 52px); font-weight: 497; letter-spacing: -.035em; line-height: 1; color: var(--ink); }
 .xct-nets { grid-column: 7 / 13; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-.xct-net { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; min-height: 104px; padding: 12px 0; border-top: 1px solid var(--line); color: #6e6e73; text-decoration: none; transition: color .35s var(--ease); }
-.xct-net-n { font-size: clamp(36px, 3.9vw, 60px); font-weight: 600; letter-spacing: -.045em; line-height: 1; transition: transform .5s var(--ease); }
-.xct-net svg { color: #86868b; transition: color .3s, transform .5s var(--ease); }
+.xct-net { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; min-height: 96px; padding: 10.5px 0; border-top: 1px solid var(--line); color: var(--muted); text-decoration: none; transition: color var(--d-fast) var(--e-out); }
+.xct-net-n { font-size: clamp(32px, 3.6vw, 52px); font-weight: 497; letter-spacing: -.035em; line-height: 1; transition: transform var(--d-base) var(--e-io); }
+.xct-net svg { color: var(--muted); transition: color var(--d-fast) var(--e-out), transform var(--d-base) var(--e-io); }
 .xct-net.on { color: var(--ink); }
 .xct-net.on .xct-net-n { transform: translateX(10px); }
 .xct-net.on svg { color: var(--ink); transform: translate(3px, -3px); }
 .xct-net:active .xct-net-n { transform: translate(10px, 1px); }
 
-@media (max-width: 900px) {
-  .xct-hero { padding: 88px 0 48px; min-height: 0; }
-  .xct-hero-c .vc-display { font-size: clamp(56px, 17vw, 72px); }
-  .xct-hero-c { gap: 22px; }
-  .xct-obj { min-height: 0; padding: 14px; border-radius: 24px; }
-  .xct-hero-g { row-gap: 32px; }
-  .xct-jacks { display: flex; gap: 6px; overflow-x: auto; margin: -2px -14px 0; padding: 2px 14px; scrollbar-width: none; }
+@media (max-width: 899px) {
+  .xct-hero { padding: 88px 0 44px; }
+  .xct-hero-c { gap: 17px; }
+  .xct-obj { padding: 13px; border-radius: 24px; }
+  .xct-hero-g { row-gap: 27px; }
+  /* phones: the jacks are one swipe row with soft edges; the wire drops from the chosen pill into its route */
+  .xct-jacks { display: flex; gap: 6.5px; overflow-x: auto; margin: -2px -13px 0; padding: 2px 13px; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 13px, #000 calc(100% - 27px), transparent); mask-image: linear-gradient(90deg, transparent, #000 13px, #000 calc(100% - 27px), transparent); }
   .xct-jacks::-webkit-scrollbar { display: none; }
-  .xct-jack { flex: none; flex-direction: row; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 10px; border-radius: 999px; overflow: visible; }
+  .xct-jack { flex: none; flex-direction: row; align-items: center; gap: 10px; min-height: 44px; padding: 0 17px 0 10px; border-radius: 999px; }
   .xct-hole { width: 24px; height: 24px; }
-  .xct-k { font-size: 15px; white-space: nowrap; }
-  .xct-peek, .xct-cable { display: none; }
-  .xct-panel { margin-top: 12px; padding: 24px 20px 22px; min-height: 340px; }
-  .xct-plug { display: none; }
-  .xct-rh { font-size: 32px; }
-  .xct-visit { padding: 104px 0; }
+  .xct-jt { width: auto; }
+  .xct-k { font-size: 16px; white-space: nowrap; }
+  .xct-peek { display: none; }
+  .xct-panel { margin-top: 40px; padding: 27px 20px 22px; min-height: 340px; }
+  .xct-visit-c .vc-display { font-size: clamp(40px, 11vw, 52px); }
   .xct-dial { width: min(100%, 300px); }
   .xct-clock { justify-items: start; }
   /* the plate rides at the top of the screen while the rows pass beneath it */
   .xct-com-l { display: contents; }
   .xct-com-l .vc-headline { margin-bottom: 24px; }
-  .xct-plate { position: sticky; top: 64px; z-index: 2; aspect-ratio: 16 / 7; margin-bottom: 8px; box-shadow: 0 18px 30px -18px rgba(0, 0, 0, .25); }
+  .xct-plate { position: sticky; top: 64px; z-index: 2; aspect-ratio: 16 / 7; margin-bottom: 8px; }
   .xct-plate-w { left: 20px; bottom: 14px; }
   .xct-plate-n { font-size: 40px; }
-  .xct-net { min-height: 84px; }
-  .xct-net-n { font-size: 36px; }
+  .xct-net { min-height: 80px; }
+  .xct-net-n { font-size: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xct-in, .xct-in2 { animation: none; }

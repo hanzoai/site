@@ -5,7 +5,7 @@
 /* hero: the name, and the vault rising over it */
 .km-hero { padding: clamp(104px, 9vw, 136px) 0 clamp(96px, 10vw, 160px); background: radial-gradient(50% 40% at 50% 70%, rgba(212, 212, 212, .10), transparent 70%); }
 .km-hero-t { text-align: center; }
-.km-h1 { margin-top: 18px; font-size: clamp(76px, 13.4vw, 200px); line-height: .86; white-space: nowrap; }
+.km-h1 { margin: 0 auto; }
 .km-hero-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px 32px; margin-top: 28px; }
 .km-sub { color: var(--ink); }
 .km-lift { margin-top: clamp(48px, 5vw, 72px); max-width: 1180px; position: relative; z-index: 2; }
@@ -17,10 +17,10 @@
 .km-val { margin: 0; min-height: 2.4em; font: 500 clamp(22px, 2.4vw, 34px)/1.2 var(--mono); letter-spacing: .06em; color: #f5f5f7; word-break: break-all; transition: color .4s; }
 .km-val.sealed { color: var(--glow); letter-spacing: 0; }
 .km-chain { display: flex; flex-wrap: wrap; gap: 8px; }
-.km-chain span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(255, 255, 255, .06); font: 500 14px/1 var(--mono); color: #737373; transition: background .4s, color .4s; }
+.km-chain span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; background: rgba(255, 255, 255, .06); font: 500 14px/1 var(--mono); color: #a3a3a3; transition: background .4s, color .4s; }
 .km-chain span i { width: 8px; height: 8px; border-radius: 99px; background: currentColor; }
 .km-chain span.on { background: rgba(212, 212, 212, .16); color: var(--glow); }
-.km-client { margin: 0; font: 500 13px/1 var(--mono); color: #737373; }
+.km-client { margin: 0; font: 500 13px/1 var(--mono); color: #a3a3a3; }
 .km-side { display: flex; flex-direction: column; gap: 12px; }
 .km-vers { position: relative; display: grid; gap: 8px; padding: 16px; border-radius: 22px; background: #f5f5f5; }
 .km-ver { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 16px; border-radius: 14px; background: #fff; font: 500 14px/1 var(--mono); color: var(--soft); }
@@ -57,8 +57,10 @@
 .km-holds-l { grid-column: 1 / span 5; height: 100%; }
 .km-pin { position: sticky; top: 120px; }
 .km-holds-h { max-width: 16ch; }
-.km-num { margin: 12px 0 16px; font-weight: 600; font-size: clamp(160px, 20vw, 300px); line-height: .85; letter-spacing: -.07em; color: var(--glow); -webkit-text-stroke: 1px var(--acc); }
+.km-num { margin: 12px 0 16px; font-weight: 220; font-size: 112px; line-height: .95; letter-spacing: -.05em; color: var(--glow); -webkit-text-stroke: 1px var(--acc); }
 .km-holds-lede { max-width: 36ch; }
+.km-roll { position: relative; display: inline-flex; overflow: hidden; }
+.km-roll > span { display: inline-block; }
 .km-rules { grid-column: 7 / -1; list-style: none; margin: 0; padding: 0; }
 .km-rule { min-height: 62svh; display: flex; flex-direction: column; justify-content: center; border-top: 1px solid var(--line); padding: 48px 0; }
 .km-rule-n { font: 500 13px/1 var(--mono); color: var(--acc); letter-spacing: .12em; }
@@ -83,7 +85,6 @@
 
 @media (max-width: 900px) {
   .km-hero { padding: 100px 0 88px; }
-  .km-h1 { font-size: 72px; white-space: normal; }
   .km-vault { grid-template-columns: minmax(0, 1fr); padding: 10px; border-radius: 24px; }
   .km-secret { padding: 20px; gap: 16px; }
   .km-val { font-size: 18px; }
@@ -91,7 +92,7 @@
   .km-stale { right: 8px; bottom: -14px; }
   .km-holds-l { height: auto; }
   .km-pin { position: static; }
-  .km-num { font-size: 120px; }
+  .km-num { font-size: 84px; }
   .km-rule { min-height: 0; padding: 32px 0; }
   .km-disk { padding: 120px 0; }
   .km-figs { grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -99,3 +100,10 @@
 }
 /* greys only: the vault and the ciphertext are dark objects inside a light room */
 .km-secret, .km-ct { --glow: #e5e5e5; }
+
+/* the live object's pause control */
+.km-pause { top: auto; bottom: 28px; right: 28px; }
+.km-host { margin: 0; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #a3a3a3; }
+
+/* phones: no text under 14px except 11-12px mono capitals */
+@media (max-width: 900px) { .km-seal-k, .km-seal-k span, .km-rule-n { font-size: 14px; } }

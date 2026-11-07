@@ -1,48 +1,59 @@
 'use client';
-/* Hanzo Cloud products (/cloud/<slug>, 42 pages, one template), v3. Archetype A, Launch: stage hero, chapters, a spec
-   sheet, a compare, one action. Pages in the family differ by their own console, their own Sigil (seeded by the slug
-   and the product's own figures) and their own words; never by a hue (JAMES 7: greys, silvers, ink and white only).
-   Persona: Developer, with the enterprise buyer (PLAN-COMPONENTS 1.1).
+/* Hanzo Cloud products (/cloud/<slug>, 42 pages, one template). Launch (MASTER 4.1, cloud products): the product as the
+   object, the product doing the thing, chapters, proof, one action. Pages in the family differ by their own console,
+   their own Sigil (seeded by the slug and the product's own figures), their own words, and by family group, one of four
+   first screens (MASTER 3.2 rule 7): stage (the console on a lid that settles flat: Compute, Infrastructure, Local),
+   wide (the console full width, growing as you arrive: AI, Apps, Observe, Dev), path (the product's own endpoint as
+   the giant object, the name resting at 52px: Science, Web3, Data), field (the product's own Sigil as a tall stage:
+   Security, Network). Never a hue: greys, silvers, ink and white only.
+   Persona: Developer, with the enterprise buyer.
    Goal: contact_sales_submit (the product's first action, "Talk to us"; /cloud/local: "Run it locally").
-   CTA: the product's own first action: hero (solid, data-thumb), the site's sticky ask bar after the hero, the closing Band.
-   One solid per screen.
-   Signature: the session runs in the console. The product's console is the hero object on a stage (it starts tipped
-   back like a lid and settles flat as you scroll) while the agent prompt from "Paste and ship" types itself into its
-   session bar and the example plays: the request walks the project's services, or the conversation with the agent
-   arrives turn by turn, or the CLI session prints line by line. Click a service and the walk holds on it; the pause
-   control in the window's bar stops the whole session (WCAG 2.2.2).
-   Motion mix (JAMES 9, scroll is 1 of 5 kinds): scroll (the stage settles), time (the session types and plays; the
-   prompt's request travels from skill.md to the endpoint; Hanzo's genesis line grows bold once as you reach it),
-   pointer (the magnetic ask, the Sigil fields lean to the pointer, related cards lift and their field grows), state
-   (the lit service glides, the finder re-flows as you type), arrival (the stage).
-   Beyond: Google Cloud to Hanzo, in one lookup. A dark-room finder over every cloud page that names its Google Cloud
-   counterpart (18 of them): type the Google Cloud service you use now and its Hanzo product and endpoint come forward,
-   each a link. Built only from those pages' own "Google Cloud" and "API" lines.
-   Every section holds an object: the console; the prompt's route; the product's Sigil; Hanzo's mark; the spec card;
-   the finder; the related cards; the endpoint in the Band. Coverage: docs/coverage/cloud-family.md. */
+   CTA: the product's own first action: hero (solid, data-cta "cloud.<slug>.hero", data-thumb), the site's sticky ask
+   after the hero, the closing Band. One solid per screen; the console link and Copy are outlines.
+   Signature: the session runs in the console. The agent prompt from "Paste and ship" is in its session bar in full
+   (faint) from the first paint and types itself white over the same wrapping while the example plays: the request walks
+   the project's services, or the conversation with the agent arrives turn by turn, or the CLI session prints line by
+   line. Click a service and the walk holds on it; the pause control in the window's bar stops the session (WCAG 2.2.2).
+   Scale rhythm (MASTER 3.1): the name is the hero's moment, cut in by its line mask at 112px (84/64 for longer names)
+   and settling to 52px as the stage settles; headings rest at 26px; figures 64px; the genesis line is a quiet 21px
+   strip before the close, its weight moving once from Air to Book.
+   Motion mix: scroll (the stage settles and the name shrinks; the finder's room opens), time (the prompt types, the
+   session plays, the request travels from skill.md to the endpoint), pointer (Sigil fields lean, related cards drift),
+   state (the lit service glides, the finder re-flows as you type), arrival (the name's line mask).
+   Beyond: Google Cloud to Hanzo, in one lookup, on the 18 pages that name a Google Cloud counterpart: type the service
+   you use now and its Hanzo product and endpoint come forward. Built only from those pages' own "Google Cloud" and "API"
+   lines. Coverage: docs/coverage/cloud-family.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Copy, Mark, Magnetic } from '../../ui';
-import { A, Band } from '../../kit';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { EASE, Copy, Mark } from '../../ui';
+import { A, Band, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import StageSettle from '../../v2/StageSettle';
 import './cloudfam.css';
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-const size = (name) => (name.length <= 9 ? 'xl' : name.length <= 14 ? 'l' : 'm');
+const size = (name) => (name.length <= 9 ? 'xl' : name.length <= 14 ? 'l' : 'm'); // 112 · 84 · 64px while they are the moment
 const Arrow = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Check = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+/* each family gets its own first screen, so neighbouring groups differ in hero medium and move (MASTER 3.2 rule 7):
+   stage, the console on a lid that settles flat; wide, the console full-bleed, growing from small as you arrive;
+   path, the product's own API path as the giant object; field, the product's own Sigil as a tall stage. */
+const VARIANT = { Compute: 'stage', Infrastructure: 'stage', AI: 'wide', Apps: 'wide', Observe: 'wide', Dev: 'wide', Science: 'path', Web3: 'path', Data: 'path', Security: 'field', Network: 'field', Local: 'stage' };
+const POSE = { stage: { rotateX: 10, scale: 1.03, y: 0 }, wide: { rotateX: 0, scale: 0.9, y: 0 }, path: { rotateX: 0, scale: 1, y: 24 }, field: { rotateX: 0, scale: 0.96, y: 32 } };
+
 /* status told by shape, not colour: Generally available is a filled dot, Beta a half dot, a family name a ring */
 const shape = (label) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
 
-/* the typing: text goes into a text node a character at a time (no React state per character); resolves when done */
-function typing(el, text, cps, alive) {
+/* the typing: the whole prompt is always in flow (faint), and each character moves from the faint part into the
+   white part, so the lines wrap the same from first paint to last character (no React state per character) */
+function typing(el, rest, text, cps, alive) {
   return new Promise((done) => {
     let i = 0;
     el.textContent = '';
     const step = () => {
       if (!alive()) return done(false);
       el.textContent = text.slice(0, ++i);
+      rest.textContent = text.slice(i);
       if (i < text.length) setTimeout(step, 1000 / cps); else done(true);
     };
     setTimeout(step, 1000 / cps);
@@ -57,6 +68,8 @@ function Console({ doc }) {
   const w = doc.window;
   const box = useRef(null);
   const typed = useRef(null);
+  const ghost = useRef(null);
+  const full = () => { if (typed.current) typed.current.textContent = prompt; if (ghost.current) ghost.current.textContent = ''; };
   const seen = useInView(box, { amount: 0.12 }); // starts on the first screen, phones included, within a second
   const calm = useReducedMotion();
   const kind = w.rows.length ? 'rows' : w.turns.length ? 'turns' : 'lines';
@@ -71,32 +84,32 @@ function Console({ doc }) {
 
   // type the prompt once, then play the example; it only runs while the console is on screen and not paused
   useEffect(() => {
-    if (calm || !run) { setPhase('done'); setAt(kind === 'rows' ? 0 : count); if (typed.current) typed.current.textContent = prompt; return; }
+    if (calm || !run) { setPhase('done'); setAt(kind === 'rows' ? 0 : count); full(); return; }
     if (typedOnce.current) { setPhase('play'); return; }
     if (!seen) return;
     let alive = true;
     (async () => {
       setPhase('typing');
-      if (kind !== 'rows') setAt(0);
+      if (kind !== 'rows') setAt(1); // the first turn or line is already there while the prompt types
       await wait(250);
-      if (typed.current && prompt && !(await typing(typed.current, prompt, 44, () => alive))) return;
+      if (typed.current && ghost.current && prompt && !(await typing(typed.current, ghost.current, prompt, 44, () => alive))) return;
       if (!alive) return;
       typedOnce.current = true;
       setPhase('play');
     })();
-    return () => { alive = false; if (!typedOnce.current && typed.current) typed.current.textContent = prompt; };
+    return () => { alive = false; if (!typedOnce.current) full(); };
   }, [seen, calm, run]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the walk: rows light in turn; turns and lines arrive one by one, rest two beats, then the session replays
   useEffect(() => {
     if (!live || !seen || phase !== 'play') return;
-    const id = setInterval(() => {
-      if (Date.now() < hold.current) return;
+    const beat = kind === 'rows' ? 1900 : 1400;
+    const id = setTimeout(() => {
       if (kind === 'rows') setAt((a) => (a + 1) % count);
       else setAt((a) => (a >= count + 2 ? 0 : a + 1));
-    }, kind === 'rows' ? 1900 : 1400);
-    return () => clearInterval(id);
-  }, [seen, live, phase, kind, count]);
+    }, Math.max(beat, hold.current - Date.now())); // one step per beat; a pick holds the walk for 9 s
+    return () => clearTimeout(id);
+  }, [seen, live, phase, kind, count, at]);
 
   const alt = doc.liveLinks[0];
   const title = w.title.map((t, i) => <span key={i} className={i ? 'xcf-wt-b' : ''}>{t}</span>);
@@ -113,7 +126,7 @@ function Console({ doc }) {
         {prompt && (
           <div className={'xcf-sess' + (phase === 'typing' ? ' typing' : '')}>
             <span className="xcf-sess-g" aria-hidden="true">›</span>
-            <p className="xcf-sess-t"><span className="xcf-ghost" aria-hidden="true">{prompt}<i className="xcf-caret" /></span><span className="xcf-typed"><span ref={typed}>{prompt}</span><i className="xcf-caret" aria-hidden="true" /></span></p>
+            <p className="xcf-sess-t"><span ref={typed} className="xcf-typed" />{phase !== 'done' && <i className="xcf-caret" aria-hidden="true" />}<span ref={ghost} className="xcf-ghost">{prompt}</span></p>
             {note && <p className={'xcf-sess-n' + (phase === 'typing' ? '' : ' on')}>{note}</p>}
           </div>
         )}
@@ -131,7 +144,7 @@ function Console({ doc }) {
                 {w.rows.map((r, i) => (
                   <li key={r.name}>
                     <button type="button" className={'xcf-row' + (at === i ? ' on' : '')} aria-pressed={at === i} onClick={() => pick(i)}>
-                      {at === i && <motion.span layoutId={'xcf-lit-' + doc.slug} className="xcf-lit" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                      {at === i && <motion.span layoutId={'xcf-lit-' + doc.slug} className="xcf-lit" transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} />}
                       <span className="xcf-row-n">{r.name}</span>
                       <span className={'xcf-st ' + (/build/i.test(r.state) ? 'build' : 'ok')}><i aria-hidden="true" />{r.state}</span>
                     </button>
@@ -226,17 +239,22 @@ function Finder({ pairs, here }) {
     const all = [...pairs].sort((a, b) => (b.slug === here) - (a.slug === here));
     return k ? all.filter((p) => (p.google + ' ' + p.name + ' ' + p.api).toLowerCase().includes(k)) : all;
   }, [q, pairs, here]);
-  // idle scan: the rows are read one after another until you type or point at the list
+  const SHOWN = 6; // with no query: this page's pair and five more; every row stays in the HTML, the rest hidden
+  // idle scan: the rows are read once, one after another (under 5 s), and it stops for good when you type or point
   useEffect(() => {
-    if (calm || !seen || q || held) return;
-    const id = setInterval(() => setLit((i) => (i + 1) % Math.max(1, list.length)), 1700);
-    return () => clearInterval(id);
-  }, [calm, seen, q, held, list.length]);
+    if (calm || !seen || q || held || lit >= Math.min(SHOWN, list.length) - 1) return;
+    const id = setTimeout(() => setLit((i) => i + 1), 800);
+    return () => clearTimeout(id);
+  }, [calm, seen, q, held, list.length, lit]);
+  // the black room (MASTER 3.1): a rounded card inside the gutters that opens past the edges as it is reached (transform only)
+  const { scrollYProgress: rp } = useScroll({ target: box, offset: ['start end', 'start start'] });
+  const roomS = useTransform(rp, (v) => 0.94 + 0.1 * Math.min(1, Math.max(0, (v - 0.35) / 0.55)));
   if (!pairs.length) return null;
   const head = 'Google Cloud';
   const clear = <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
   return (
     <section ref={box} className="xcf-gc" data-room="dark" aria-labelledby="xcf-gc-h">
+      <motion.span className="xcf-gc-bg" style={calm ? undefined : { scale: roomS }} aria-hidden="true" />
       <div className="xcf-wrap xcf-gc-g">
         <div className="xcf-gc-l">
           <h2 id="xcf-gc-h" className="xcf-gc-h"><span>{head}</span><svg viewBox="0 0 40 16" aria-hidden="true"><path d="M2 8h34M30 3l6 5-6 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>Hanzo</span></h2>
@@ -251,7 +269,7 @@ function Finder({ pairs, here }) {
         <ul className="xcf-gc-list" onPointerEnter={() => setHeld(true)} onPointerLeave={() => setHeld(false)}>
           <AnimatePresence initial={false}>
             {list.map((p, i) => (
-              <motion.li key={p.slug} layout={!calm} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>
+              <motion.li key={p.slug} layout={!calm} hidden={!q && i >= SHOWN} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}>
                 <A to={'/cloud/' + p.slug} className={'xcf-gc-row' + (p.slug === here ? ' here' : '') + (!q && !held && i === lit ? ' lit' : '')} aria-current={p.slug === here ? 'page' : undefined}>
                   <span className="xcf-gc-from">{p.google}</span>
                   <i className="xcf-gc-ar" aria-hidden="true" />
@@ -272,8 +290,8 @@ function Finder({ pairs, here }) {
   );
 }
 
-/* the one variable-weight moment: Hanzo's line grows bold, sentence by sentence, once, as you reach it (time, not
-   scroll); its object is Hanzo's own mark, in silver */
+/* Hanzo's genesis line, a quiet strip before the close (it is on every product page, so it never takes a screen): its
+   two sentences move from Air to Book weight once as you reach it; its object is Hanzo's own mark */
 function Motto({ text }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
@@ -281,8 +299,8 @@ function Motto({ text }) {
   return (
     <section ref={ref} className="xcf-motto" data-seen={seen}>
       <div className="xcf-wrap xcf-motto-g">
+        <span className="xcf-mark" aria-hidden="true"><Mark size={28} /></span>
         <p className="xcf-motto-t">{parts.map((s, i) => <span key={i} style={{ '--i': i }}>{s}{i < parts.length - 1 ? ' ' : ''}</span>)}</p>
-        <span className="xcf-mark" aria-hidden="true"><Mark size={200} /></span>
       </div>
     </section>
   );
@@ -309,16 +327,25 @@ function Prompt({ text }) {
   return <>{text.slice(0, at)}<span className="xcf-pr-k">Start with: </span><b>{text.slice(at + 12)}</b></>;
 }
 
-const Acts = ({ list }) => (
+const Acts = ({ list, slug }) => (
   <div className="xcf-acts">
     {list.map((a, i) => (i
-      ? <A key={a.href} to={a.href} className="x-btn xcf-btn">{a.label}</A>
-      : <Magnetic key={a.href}><A to={a.href} className="x-btn xcf-btn solid" data-thumb="" data-cta="cloud.hero">{a.label}</A></Magnetic>))}
+      ? <Cta key={a.href} to={a.href} kind="quiet" id={'cloud.' + slug + '.hero-' + i}>{a.label}</Cta>
+      : <Cta key={a.href} to={a.href} id={'cloud.' + slug + '.hero'} thumb>{a.label}</Cta>))}
   </div>
 );
 
 /* JS off: every line of every session shown, the genesis line at full weight (PLAN-COMPONENTS 2.3 and 2.17) */
-const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:640!important;opacity:1!important}.xcf-sess-n{opacity:1!important;transform:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}';
+const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important}.xcf-mask>span{animation:none!important}.xcf-sess-n{opacity:1!important;transform:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}';
+
+/* the product's name is the hero's moment: it starts large and settles to 52px as the stage settles (scroll) */
+function Name({ name, rest }) {
+  const calm = useReducedMotion();
+  const { scrollY } = useScroll();
+  const k = rest ? 1 : { xl: 52 / 112, l: 52 / 84, m: 52 / 64 }[size(name)];
+  const s = useTransform(scrollY, (v) => 1 - (1 - k) * Math.min(1, Math.max(0, v / 560)));
+  return <motion.h1 id="xcf-h1" className={'xcf-display s-' + (rest ? 'r' : size(name))} style={calm || rest ? undefined : { scale: s }}><span className="xcf-mask"><span>{name}</span></span></motion.h1>;
+}
 
 export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
   const isLocal = doc.kind === 'local';
@@ -326,31 +353,37 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
   const sibs = doc.window ? doc.window.siblings : [];
   const source = !isLocal && doc.actions.find((a) => /github\.com/.test(a.href));
   const ask = isLocal ? doc.boot.actions[doc.boot.actions.length - 1] : doc.actions[0];
+  const v = VARIANT[group] || 'stage';
   const rest = isLocal ? doc.boot.actions.filter((a) => a !== ask) : doc.actions.slice(1);
   return (
-    <main className={'xcf k-' + kind} data-ask-name={doc.name}>
+    <main className={'xcf k-' + kind + ' v-' + v} data-ask-name={doc.name}>
       <noscript><style>{NOJS}</style></noscript>
       <section className="xcf-hero" aria-labelledby="xcf-h1">
         <div className="xcf-band" data-morph-target>
           <Sigil seed={sigil.seed} data={sigil.data} className="xcf-sigil" />
           <div className="xcf-wrap xcf-head">
-            <h1 id="xcf-h1" className={'xcf-display s-' + size(doc.name)}>{doc.name}</h1>
+            <Name name={doc.name} rest={v === 'path'} />
             <div className="xcf-head-r">
               {doc.lede && <p className="xcf-lede">{doc.lede}</p>}
-              <Acts list={isLocal ? [ask, ...rest] : doc.actions} />
+              <Acts list={isLocal ? [ask, ...rest] : doc.actions} slug={doc.slug} />
               <div className="xcf-meta">
                 {!!(doc.crumb && doc.crumb.length) && (
                   <nav className="xcf-crumb" aria-label="Breadcrumb">
                     {doc.crumb.map((c, i) => <span key={i}>{i > 0 && <i aria-hidden="true">/</i>}{c.href ? <A to={c.href} className="x-link">{c.label}</A> : <span>{c.label}</span>}</span>)}
                   </nav>
                 )}
-                <p className={'xcf-label ' + shape(doc.label)}><i aria-hidden="true" />{doc.label}</p>
+                <p className={'xcf-label ' + shape(doc.label) + (shape(doc.label) === 'fam' && (doc.crumb || []).some((c) => c.label === doc.label) ? ' x-sr' : '')}><i aria-hidden="true" />{doc.label}</p>
               </div>
             </div>
           </div>
         </div>
+        {v === 'path' && doc.window && (
+          <div className="xcf-wrap">
+            <p className="xcf-path-hero" aria-hidden="true">{doc.window.host.map((h, i) => <span key={i} className={i ? 'b' : ''}>{h}</span>)}<i className="xcf-pulse" /></p>
+          </div>
+        )}
         <div className="xcf-wrap xcf-stage-w">
-          <StageSettle className="xcf-stage" over={620} from={{ rotateX: 24, scale: 1.04, y: 0 }}>
+          <StageSettle className="xcf-stage" over={560} from={POSE[v]}>
             {isLocal ? <Boot boot={doc.boot} /> : doc.window && <Console doc={doc} />}
           </StageSettle>
         </div>
@@ -377,7 +410,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
         <section className="xcf-sec xcf-ship" aria-labelledby="xcf-ship-h">
           <div className="xcf-wrap xcf-ship-g">
             <div className="xcf-ship-l">
-              <h2 id="xcf-ship-h" className="xcf-title">{doc.ship.eyebrow}</h2>
+              <h2 id="xcf-ship-h" className="xcf-h2">{doc.ship.eyebrow}</h2>
               <p className="xcf-body">{doc.ship.lede}</p>
               <p className="xcf-api"><span className="xcf-api-l">{doc.ship.label}</span><span className="xcf-mono">{doc.ship.api.map((t, i) => <span key={i} className={i ? '' : 'xcf-api-k'}>{t}</span>)}</span></p>
               <Copy text={doc.ship.prompt} className="xcf-copy" />
@@ -406,7 +439,6 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
         </section>
       )}
 
-      {!isLocal && doc.motto && <Motto text={doc.motto} />}
 
       {!isLocal && (
         <section className="xcf-sec xcf-specs" aria-labelledby="xcf-sp-h">
@@ -434,13 +466,13 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
         </section>
       )}
 
-      <Finder pairs={pairs} here={doc.slug} />
+      {pairs.some((p) => p.slug === doc.slug) && <Finder pairs={pairs} here={doc.slug} />}
 
       {doc.related && (
         <section className="xcf-sec xcf-rel" aria-labelledby="xcf-rel-h">
           <div className="xcf-wrap">
             <div className="xcf-rel-top">
-              <h2 id="xcf-rel-h" className="xcf-title">{doc.related.eyebrow}</h2>
+              <h2 id="xcf-rel-h" className="xcf-h2">{doc.related.eyebrow}</h2>
               {doc.related.more.map((m) => <A key={m.href} to={m.href} className="xcf-go"><span>{m.label}</span></A>)}
             </div>
             <ul className="xcf-cards">
@@ -462,6 +494,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {} }) {
         </section>
       )}
 
+      {!isLocal && doc.motto && <Motto text={doc.motto} />}
       <Band
         title={doc.name}
         lede={doc.lede || undefined}

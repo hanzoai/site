@@ -259,6 +259,10 @@ textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize:
 @media (pointer: coarse) { .x-mq-pause::before { content: ''; position: absolute; inset: -6px; } }
 @media (prefers-reduced-motion: reduce) { .x-mq-pause { display: none; } }
 
+/* ---------- Hanzo's footer: the "Privacy choices" toggle icon in ink, not blue (0 UI hues, MASTER 3.1) ---------- */
+footer a[href='#choices'] svg path[fill='#0072CE'] { fill: currentColor; }
+footer a[href='#choices'] svg path:not([fill='#0072CE']) { fill: var(--background, #fff); }
+
 /* ---------- utilities ---------- */
 .x-tnum { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 .x-vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -268,12 +272,14 @@ textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize:
 .x-ratio > img, .x-ratio > video, .x-ratio > picture > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .x-media { display: block; max-width: 100%; height: auto; background: var(--room-fill); }
 
-/* ---------- Hanzo's header: its ask never fades, and it steps back while the ask bar carries the ask ---------- */
-header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { transition: background-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), box-shadow var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
-@media (hover: hover) { header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); } }
-header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
-html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
-@media (hover: hover) { html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--hover, rgba(0, 0, 0, .05)); } }
+/* ---------- Hanzo's header: its ask is the one solid ask at every width (MASTER 3.2 rule 6); it never fades.
+   On desktop it carries the page's own ask after the hero (components/Ask.jsx), and is an outline only while the
+   hero's own solid ask is on screen. ---------- */
+header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { transition: background-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), box-shadow var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
+html[data-ask=quiet] header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+header[data-slot=masthead] a[data-x-ask] { max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) { header[data-slot=masthead] a[data-x-ask]:hover, header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); } }
+header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
 
 /* ---------- header menus: the stage (a preview of the link under the pointer) and the phone sheet ---------- */
 .x-nav-panel { display: flex; align-items: stretch; background: #fff; } /* opaque: nothing of the page shows through */
@@ -302,29 +308,22 @@ html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .x-sheet-login span { font-size: 12.5px; color: var(--soft); }
 .x-sheet-ask { width: 100%; }
 
-/* ---------- the ask bar (components/Ask.jsx): one solid ask, after the hero, on every page and width ---------- */
-.x-ask { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .06); translate: -50% 0; max-width: calc(100vw - 32px); }
-.x-ask[data-tone=dark] { --room-raised: #1c1c1e; --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-line: rgba(255, 255, 255, .14); --room-fill-strong: rgba(255, 255, 255, .12); --btn-solid-bg: #f5f5f7; --btn-solid-ink: #0a0a0b; --btn-solid-hover: #fff; --focus: #f5f5f7; box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .04); }
-.x-ask-name { border: 0; background: none; color: inherit; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 9px; margin-right: 10px; font: 560 14px/1 var(--sans); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30ch; }
-.x-ask-name svg { flex: none; transition: transform .35s var(--ease-out-expo); }
-@media (hover: hover) { .x-ask-name:hover svg { transform: translateY(-2px); } }
-.x-ask-name span { overflow: hidden; text-overflow: ellipsis; }
-.x-ask-s { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: none; color: var(--room-soft); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
-@media (hover: hover) { .x-ask-s:hover { background: var(--room-fill-strong); color: var(--room-ink); } }
-.x-ask-s:active { transform: scale(.92); }
-.x-ask-a { flex: none; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 20px; border-radius: var(--x-radius-pill); background: var(--btn-solid-bg); color: var(--btn-solid-ink); font: 560 14.5px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
-@media (hover: hover) { .x-ask-a:hover { background: var(--btn-solid-hover); } }
-.x-ask-a:active { transform: scale(.98); transition-duration: 0s; }
-.x-ask-a i { font-style: normal; display: inline-block; transition: transform .35s var(--ease-out-expo); }
-@media (hover: hover) { .x-ask-a:hover i { transform: translateX(3px); } }
-.x-ask-note { margin-left: 4px; margin-right: 8px; font-size: 12px; color: var(--room-faint); white-space: nowrap; }
-@media (max-width: 900px) {
-  /* phones: a full-width bar under the thumb, 52 px targets */
-  .x-ask { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); translate: none; max-width: none; padding: 0; gap: 8px; border: 0; background: none; box-shadow: none; }
-  .x-ask-name, .x-ask-note { display: none; }
-  .x-ask-s { width: 52px; height: 52px; background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .35); }
-  .x-ask-a { flex: 1; justify-content: space-between; height: 52px; padding: 0 22px; font-size: 16px; box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .55); }
-}
+/* ---------- sound toggle (components/Sound.jsx): in Hanzo's header, before the language button ---------- */
+.x-snd-slot { display: inline-flex; align-items: center; }
+.x-snd { width: 34px; height: 34px; border: 0; border-radius: 999px; background: transparent; color: var(--muted-foreground, #6e6e73); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
+@media (hover: hover) { .x-snd:hover { background: var(--hover, rgba(0, 0, 0, .05)); color: var(--foreground, #0a0a0b); } }
+.x-snd:active { transform: scale(.92); }
+.x-snd[aria-pressed='false'] { color: var(--faint); }
+@media (max-width: 700px) { .x-snd-slot { display: none; } }
+.x-sheet-snd { width: 44px; height: 44px; border: 1px solid var(--line); background: #fff; color: var(--ink); margin-right: 8px; }
+
+/* ---------- the phone ask (components/Ask.jsx): slim and quiet, phones only, only where it covers nothing ---------- */
+.x-ask { position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 10px 28px -16px rgba(0, 0, 0, .35); font: 500 15px/1 var(--sans); text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.x-ask[data-tone=dark] { background: #171717; color: #fafafa; border-color: rgba(255, 255, 255, .14); }
+.x-ask i { font-style: normal; transition: transform var(--dur-hover) var(--ease-out-expo); }
+.x-ask:active { transform: scale(.98); }
+.x-ask:active i { transform: translateX(3px); }
+@media (min-width: 701px) { .x-ask { display: none; } }
 
 /* ---------- reduced motion: final states, no travel ---------- */
 @media (prefers-reduced-motion: reduce) {

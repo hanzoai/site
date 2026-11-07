@@ -1,4 +1,4 @@
-# /integrations/* (template) — James-eye review
+# /integrations/* — James-eye review
 
 Reviewed: main, page files at `f4231e5` (second review; the first, at `3389ac0`, scored 5/10). Members walked: `/integrations/openai-sdk` and `/integrations/langchain`, moving, at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 

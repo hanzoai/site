@@ -102,7 +102,7 @@ function Monitor() {
           aria-valuemin={0}
           aria-valuemax={LEN}
           aria-valuenow={6}
-          data-cursor="Drag"
+         
           onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); S.current.drag = true; vid.current.pause(); seek(fromX(e)); }}
           onPointerMove={(e) => { if (S.current.drag) seek(fromX(e)); }}
           onPointerUp={() => { S.current.drag = false; }}
@@ -137,6 +137,7 @@ export default function Koma() {
   return (
     <Creative
       slug="koma"
+      subject={[0.75, 0.5]}
       shape={SCOPE}
       aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.64, H * 0.31, 1.14, [W * 0.06, H * 0.06, W * 0.94, H * 0.56])(W, H) : focus(0.72, 0.5, W / 2, H * 0.25, 1.3, [16, H * 0.08, W - 16, H * 0.42])(W, H))}
       headClass="kf-v2"

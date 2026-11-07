@@ -49,12 +49,14 @@ function Streamed({ run, big }) {
     let i = 0;
     setDone(false);
     if (out.current) out.current.textContent = '';
-    const t = setInterval(() => {
+    let t = 0;
+    const step = () => {
       i++;
       if (out.current) out.current.textContent = words.slice(0, i).join(' ');
-      if (i >= words.length) { clearInterval(t); setDone(true); }
-    }, 90);
-    return () => clearInterval(t);
+      if (i >= words.length) setDone(true); else t = setTimeout(step, 90);
+    };
+    t = setTimeout(step, 90);
+    return () => clearTimeout(t);
   }, [run]);
   return (
     <div className={'se2-rag' + (big ? ' big' : '')}>
@@ -78,12 +80,14 @@ function Ask() {
     let i = 0;
     setTyped(false);
     if (box.current) box.current.textContent = '';
-    const t = setInterval(() => {
+    let t = 0;
+    const step = () => {
       i++;
       if (box.current) box.current.textContent = Q.slice(0, i);
-      if (i >= Q.length) { clearInterval(t); setTyped(true); }
-    }, 105);
-    return () => clearInterval(t);
+      if (i >= Q.length) setTyped(true); else t = setTimeout(step, 105);
+    };
+    t = setTimeout(step, 105);
+    return () => clearTimeout(t);
   }, [at, live, calm]);
   const rows = at === 0 ? TEXT : at === 1 ? VEC : RRF;
   return (
@@ -97,7 +101,7 @@ function Ask() {
       <div className="se2-modes" role="tablist" aria-label="Search mode">
         {MODES.map(([m, d], i) => (
           <button key={m} type="button" role="tab" aria-selected={at === i} onClick={() => choose(i)}>
-            {at === i && <motion.span layoutId="se2-mode" className="se2-mode-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+            {at === i && <motion.span layoutId="se2-mode" className="se2-mode-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
             <b>{m}</b><span>{d}</span>
           </button>
         ))}
@@ -106,7 +110,7 @@ function Ask() {
         {at < 3 ? (
           <ol className="se2-rows">
             {rows.map((r, i) => (
-              <motion.li key={r} layout="position" initial={{ opacity: 0, y: 10 }} animate={{ opacity: typed ? 1 : 0.12, y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30, opacity: { duration: 0.3, delay: typed ? i * 0.05 : 0 } }}>
+              <motion.li key={r} layout="position" initial={{ opacity: 0, y: 10 }} animate={{ opacity: typed ? 1 : 0.12, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], opacity: { duration: 0.3, delay: typed ? i * 0.05 : 0 } }}>
                 <span className="se2-rk l2-mono">{i + 1}</span>
                 <span className="se2-doc"><b>{r}</b><em>docs · {at === 2 ? FROM[r] : at === 0 ? 'text' : 'vector'}</em></span>
                 {at === 0 && i === 0 && <span className="se2-fix l2-mono">typo fixed</span>}
@@ -163,7 +167,7 @@ function Way({ at }) {
             <div className={'se2-w2' + (fused ? ' fused' : '')}>
               {!fused && <ol className="a">{TEXT.map((r) => <motion.li key={r} layoutId={'f-' + r}>{r}</motion.li>)}</ol>}
               {!fused && <ol className="b">{VEC.filter((r) => !TEXT.includes(r)).map((r) => <motion.li key={r} layoutId={'f-' + r}>{r}</motion.li>)}</ol>}
-              {fused && <ol className="m">{RRF.map((r, i) => <motion.li key={r} layoutId={'f-' + r} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: i * 0.04 }}><span className="l2-mono">{i + 1}</span>{r}<em className="l2-mono">{FROM[r]}</em></motion.li>)}</ol>}
+              {fused && <ol className="m">{RRF.map((r, i) => <motion.li key={r} layoutId={'f-' + r} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.04 }}><span className="l2-mono">{i + 1}</span>{r}<em className="l2-mono">{FROM[r]}</em></motion.li>)}</ol>}
             </div>
           )}
           {at === 3 && (
@@ -193,7 +197,7 @@ function HowBar({ at }) {
       <div className="se2-hb-bar"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span className="l2-mono">/v1/search</span><b className="l2-mono">one index</b></div>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className="se2-hb-in" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.18 } }} transition={{ duration: 0.45, ease: EASE }}>
-          {at === 0 && <ol className="se2-hb-docs">{LANDING.map((d, i) => <motion.li key={d} initial={{ opacity: 0, y: -18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 + i * 0.09, type: 'spring', stiffness: 300, damping: 30 }}><span className="l2-mono">text</span>{d}<em className="l2-mono">vector</em></motion.li>)}</ol>}
+          {at === 0 && <ol className="se2-hb-docs">{LANDING.map((d, i) => <motion.li key={d} initial={{ opacity: 0, y: -18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 + i * 0.09, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}><span className="l2-mono">text</span>{d}<em className="l2-mono">vector</em></motion.li>)}</ol>}
           {at === 1 && <div className="se2-hb-call">{CALLERS.map((c, i) => <motion.span key={c} className="l2-mono" initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1, duration: 0.4, ease: EASE }}>{c}<i /></motion.span>)}<b className="l2-mono">one index</b></div>}
           {at === 2 && <Streamed run />}
         </motion.div>
@@ -325,7 +329,7 @@ function EndBar() {
 
 export default function Search() {
   return (
-    <main className="l2-page se2">
+    <main id="main" className="l2-page se2">
       <StageHero look="rise" kick="Hybrid Search + RAG" title="Hanzo Search" sub="Keyword and meaning in the same query" acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Ask />
       </StageHero>

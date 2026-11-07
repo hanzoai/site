@@ -6,7 +6,7 @@
    in the header and the ask bar. Buttons Hanzo gave no destination (Dev, Max, Ultra, Enterprise, Volume) are hidden, not
    looped back to /pricing (PLAN-COMPONENTS 1.3 #4). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE } from './ui';
 import { More, Tabs, TabPanel } from './kit';
 import Lines from './v2/Lines';
@@ -55,9 +55,14 @@ function List({ head, items }) {
 }
 
 /* Every plan has the same eight rows, so names, prices and buttons line up across the plans (CSS subgrid). */
-function Plan({ id, name, desc, price, unit, sub, cta, href, note, head, items, top }) {
+/* James, 7 Nov: switching Personal, Team or API plays the earlier motion again: the plans rise into place one after
+   another (30px, 0.7s, 70ms apart). n counts tab switches, so a switch remounts the plans; the first load is still. */
+function Plan({ id, name, desc, price, unit, sub, cta, href, note, head, items, top, i = 0, n = 0 }) {
+  const still = useReducedMotion();
   return (
-    <article className="x-plan hv-plan" aria-labelledby={id}>
+    <motion.article key={n} className="x-plan hv-plan" aria-labelledby={id}
+      initial={n && !still ? { opacity: 0, y: 30 } : false} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: EASE, delay: i * 0.07 }}>
       <h3 id={id}>{name}</h3>
       <div className="hv-plan-top">{top}</div>
       <p className="x-plan-d">{desc}</p>
@@ -66,7 +71,7 @@ function Plan({ id, name, desc, price, unit, sub, cta, href, note, head, items, 
       {href ? <a href={href} className="hv-btn hv-plan-b" data-cta={`home.pricing.${name.toLowerCase().replace(/\W+/g, '-')}`}>{cta}</a> : <span aria-hidden="true" />}
       {note ? <p className="x-plan-note">{note}</p> : <span aria-hidden="true" />}
       <List head={head} items={items} />
-    </article>
+    </motion.article>
   );
 }
 
@@ -85,7 +90,7 @@ function Seg({ opts, val, set, id, by }) {
     <div className="x-seg" role="radiogroup" aria-labelledby={by}>
       {opts.map((o, i) => (
         <button key={o} ref={(el) => { refs.current[i] = el; }} type="button" role="radio" aria-checked={val === o} tabIndex={val === o ? 0 : -1} onClick={() => set(o)} onKeyDown={(e) => key(e, i)}>
-          {val === o && <motion.span layoutId={id} className="x-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+          {val === o && <motion.span layoutId={id} className="x-seg-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
           <span>{o}</span>
         </button>
       ))}
@@ -95,6 +100,8 @@ function Seg({ opts, val, set, id, by }) {
 
 export default function Pricing() {
   const [tab, setTab] = useState(0);
+  const [n, setN] = useState(0);
+  const pick = (v) => { setTab(v); setN((k) => k + 1); };
   const [x, setX] = useState('3x');
   const [bill, setBill] = useState('Annual');
   const t = TIERS[x];
@@ -102,17 +109,17 @@ export default function Pricing() {
     <section className="hv-pricing v2-sec" id="pricing" aria-labelledby="pricing-h">
       <div className="v2-wrap">
         <header className="hv-price-head">
-          <Lines as="h2" id="pricing-h" className="v2-display" lines={['Pricing']} />
-          <Tabs id="hv-price" tabs={['Personal', 'Team', 'API']} value={tab} onChange={setTab} label="Pricing" size="lg" />
+          <Lines as="h2" id="pricing-h" className="hv-h2" lines={['Pricing']} />
+          <Tabs id="hv-price" tabs={['Personal', 'Team', 'API']} value={tab} onChange={pick} label="Pricing" size="lg" />
         </header>
         <TabPanel id="hv-price" i={0} value={tab} className="x-plans hv-plans n3">
-          <Plan id="hv-plan-free" name="Free" desc="Chat and build with Hanzo, free." price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Instant access · Free forever" head="What’s included" items={['Chat on the web with Enso Free and Zen Free', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks']} />
-          <Plan id="hv-plan-go" name="Go" desc="Your everyday AI development toolkit, with access to every model and more included usage." price={8} sub="Billed monthly" cta="Try Hanzo" href={go} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included']} />
-          <Plan id="hv-plan-pro" name={t.name} desc={t.desc} price={t.price} sub="Billed monthly" cta="Try Hanzo" href={t.href} note="No commitment · Cancel anytime" head={t.after} items={[...t.f, ...COMMON]}
+          <Plan i={0} n={n} id="hv-plan-free" name="Free" desc="Chat and build with Hanzo, free." price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Instant access · Free forever" head="What’s included" items={['Chat on the web with Enso Free and Zen Free', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks']} />
+          <Plan i={1} n={n} id="hv-plan-go" name="Go" desc="Your everyday AI development toolkit, with access to every model and more included usage." price={8} sub="Billed monthly" cta="Try Hanzo" href={go} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included']} />
+          <Plan i={2} n={n} id="hv-plan-pro" name={t.name} desc={t.desc} price={t.price} sub="Billed monthly" cta="Try Hanzo" href={t.href} note="No commitment · Cancel anytime" head={t.after} items={[...t.f, ...COMMON]}
             top={<Seg opts={['3x', '5x', '15x', '∞']} val={x} set={setX} id="hv-mult" by="hv-plan-pro" />} />
         </TabPanel>
         <TabPanel id="hv-price" i={1} value={tab} className="x-plans hv-plans n2">
-          <Plan id="hv-plan-team" name="Team" desc="For teams of 2 to 100: every model and usage for each member, one workspace, one bill." sub="Standard & Premium seats · From 2 members" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Organizations can mix Standard and Premium seats · Cancel anytime"
+          <Plan i={0} n={n} id="hv-plan-team" name="Team" desc="For teams of 2 to 100: every model and usage for each member, one workspace, one bill." sub="Standard & Premium seats · From 2 members" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Organizations can mix Standard and Premium seats · Cancel anytime"
             top={(
               <>
                 <div className="x-bill"><Seg opts={['Annual', 'Monthly']} val={bill} set={setBill} id="hv-bill" by="hv-plan-team" /><span className="x-save">−20%</span></div>
@@ -123,11 +130,11 @@ export default function Pricing() {
               </>
             )}
             head="" items={['Add premium seats to raise the team\'s shared usage', 'One shared workspace: chat, meetings, calendar and contacts', 'Single sign-on, roles and an audit log', 'One bill for the whole team', 'Automations, with daily runs included']} />
-          <Plan id="hv-plan-ent" name="Enterprise" desc="For large businesses operating at scale" price="Seat price + usage at API rates" unit="" sub="US$20/seat/month, billed annually, 20 seat minimum. Usage cost scales with model and task." note="Chat with buying specialist" head="All Team plan features, plus:" items={['Audit logs', 'SCIM provisioning through Hanzo IAM']} />
+          <Plan i={1} n={n} id="hv-plan-ent" name="Enterprise" desc="For large businesses operating at scale" price="Seat price + usage at API rates" unit="" sub="US$20/seat/month, billed annually, 20 seat minimum. Usage cost scales with model and task." note="Chat with buying specialist" head="All Team plan features, plus:" items={['Audit logs', 'SCIM provisioning through Hanzo IAM']} />
         </TabPanel>
         <TabPanel id="hv-price" i={2} value={tab} className="x-plans hv-plans n2">
-          <Plan id="hv-plan-payg" name="Pay as you go" desc="Direct metered access to all frontier models, coding agents, and tools with zero commitments." price="Pay as you go" unit="" sub="Metered per token & second" cta="Open" href="https://platform.hanzo.ai" head="What’s included" items={['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts']} />
-          <Plan id="hv-plan-vol" name="Volume & Dedicated" desc="For organizations with high-throughput inference, custom routing, or dedicated VPC deployments." price="Custom rates" unit="" sub="Volume discounts from $5k/mo · Dedicated GPU clusters & custom routing SLAs" note="Dedicated VPC & 24/7 Slack support available" head="Everything in Pay as you go, plus:" items={['Committed-use volume discounts starting at $5k/mo', 'Dedicated GPU clusters (H100, B200) in your cloud or VPC', 'Custom rate limits exceeding 100k+ RPM', 'Zero data retention & HIPAA / BAA compliance', '24/7 dedicated engineering Slack & priority routing']} />
+          <Plan i={0} n={n} id="hv-plan-payg" name="Pay as you go" desc="Direct metered access to all frontier models, coding agents, and tools with zero commitments." price="Pay as you go" unit="" sub="Metered per token & second" cta="Open" href="https://platform.hanzo.ai" head="What’s included" items={['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts']} />
+          <Plan i={1} n={n} id="hv-plan-vol" name="Volume & Dedicated" desc="For organizations with high-throughput inference, custom routing, or dedicated VPC deployments." price="Custom rates" unit="" sub="Volume discounts from $5k/mo · Dedicated GPU clusters & custom routing SLAs" note="Dedicated VPC & 24/7 Slack support available" head="Everything in Pay as you go, plus:" items={['Committed-use volume discounts starting at $5k/mo', 'Dedicated GPU clusters (H100, B200) in your cloud or VPC', 'Custom rate limits exceeding 100k+ RPM', 'Zero data retention & HIPAA / BAA compliance', '24/7 dedicated engineering Slack & priority routing']} />
         </TabPanel>
         <div className="hv-links"><More to="/pricing">Every plan, model rate and tool price</More></div>
       </div>

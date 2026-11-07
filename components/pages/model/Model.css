@@ -4,40 +4,40 @@
 .mb-kick { margin: 0 0 22px; font: 500 13px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 .mb-kick a { color: inherit; text-decoration: none; transition: color .2s; }
 .mb-kick a:hover { color: var(--ink); }
-.mb-h { margin: 0; font-size: clamp(3rem, 7.2vw, 6.75rem); font-weight: 560; letter-spacing: -.05em; line-height: .95; text-wrap: balance; color: var(--ink); }
+.mb-h { margin: 0; font-size: clamp(3rem, 7.2vw, 6.75rem); font-weight: 497; letter-spacing: -.05em; line-height: .95; text-wrap: balance; color: var(--ink); }
 .mb-h .mb-l2 { display: block; color: var(--faint); }
-.mb-h2 { margin: 0; font-size: clamp(2.2rem, 4.4vw, 4rem); font-weight: 560; letter-spacing: -.04em; line-height: 1.02; text-wrap: balance; color: var(--ink); }
+.mb-h2 { margin: 0; font-size: clamp(2.2rem, 4.4vw, 4rem); font-weight: 497; letter-spacing: -.04em; line-height: 1.02; text-wrap: balance; color: var(--ink); }
 .mb-lede { margin: 24px 0 0; max-width: 46ch; font-size: clamp(1.1rem, 1.45vw, 1.32rem); line-height: 1.45; color: var(--soft); text-wrap: pretty; }
 .mb-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 34px; }
 .mb-acts .x-arrow { min-height: 44px; }
 .mb-tnum { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 
 /* the instrument: a black panel on the white page */
-.mb-panel { position: relative; border-radius: 28px; background: #0a0a0a; color: #f5f5f7; overflow: hidden; isolation: isolate; box-shadow: 0 40px 90px -50px rgba(0, 0, 0, .55); }
-.mb-bar { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); font: 500 13px/1 var(--mono); color: #8e8e93; }
-.mb-bar i { width: 9px; height: 9px; border-radius: 50%; background: #2c2c2e; }
-.mb-bar b { margin-left: 8px; font-weight: 500; color: #8e8e93; }
-.mb-bar b span { color: #f5f5f7; }
-.mb-bar em { margin-left: auto; font-style: normal; padding: 4px 8px; border-radius: 6px; background: #1c1c1e; color: #a1a1a6; }
+.mb-panel { position: relative; border-radius: 28px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; isolation: isolate; box-shadow: 0 40px 90px -50px rgba(0, 0, 0, .55); }
+.mb-bar { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); font: 500 13px/1 var(--mono); color: #a3a3a3; }
+.mb-bar i { width: 9px; height: 9px; border-radius: 50%; background: #262626; }
+.mb-bar b { margin-left: 8px; font-weight: 500; color: #a3a3a3; }
+.mb-bar b span { color: #f5f5f5; }
+.mb-bar em { margin-left: auto; font-style: normal; padding: 4px 8px; border-radius: 6px; background: #171717; color: #a3a3a3; }
 .mb-bar em + em { margin-left: 0; }
-.mb-mono { font: 500 13px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #8e8e93; }
+.mb-mono { font: 500 13px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #a3a3a3; }
 .mb-live::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #737373; vertical-align: 1px; animation: mb-blink 1.4s steps(2, jump-none) infinite; }
 @keyframes mb-blink { 50% { opacity: .2; } }
 
 /* pill controls on a panel; pressed is white */
-.mb-chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: transparent; color: #d1d1d6; font: 500 13px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: background .25s, color .25s, border-color .25s, transform .25s var(--ease); }
+.mb-chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); background: transparent; color: #d4d4d4; font: 500 13px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: background .25s, color .25s, border-color .25s, transform .25s var(--ease); }
 .mb-chip:hover { border-color: rgba(255, 255, 255, .42); color: #fff; }
 .mb-chip:active { transform: scale(.96); }
-.mb-chip[aria-pressed='true'], .mb-chip[aria-checked='true'], .mb-chip[aria-selected='true'] { background: #f5f5f7; border-color: #f5f5f7; color: #0a0a0a; }
+.mb-chip[aria-pressed='true'], .mb-chip[aria-checked='true'], .mb-chip[aria-selected='true'] { background: #f5f5f5; border-color: #f5f5f5; color: #0a0a0a; }
 .mb-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* three spec rows under a demo: label, value, detail */
 .mb-specs { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255, 255, 255, .08); }
 .mb-specs > div { padding: 20px 22px 22px; border-left: 1px solid rgba(255, 255, 255, .08); }
 .mb-specs > div:first-child { border-left: 0; }
-.mb-specs dt { margin: 0 0 10px; font: 500 13px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #8e8e93; }
-.mb-specs dd { margin: 0; font-size: 17px; font-weight: 560; letter-spacing: -.01em; color: #f5f5f7; }
-.mb-specs dd + dd { margin-top: 4px; font: 400 13.5px/1.4 var(--mono); color: #a1a1a6; }
+.mb-specs dt { margin: 0 0 10px; font: 500 13px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #a3a3a3; }
+.mb-specs dd { margin: 0; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: #f5f5f5; }
+.mb-specs dd + dd { margin-top: 4px; font: 400 13.5px/1.4 var(--mono); color: #a3a3a3; }
 .mb-cap { margin: 16px 4px 0; font-size: 14px; line-height: 1.5; color: var(--faint); }
 
 /* the next model's card plays its film */
@@ -45,10 +45,11 @@
 .x-next:hover .mb-next-film { opacity: 1; transform: scale(1.03); }
 
 @media (max-width: 900px) {
+  .mb-specs dd + dd { font-size: 14px; }
   .mb-specs { grid-template-columns: 1fr; }
   .mb-specs > div { border-left: 0; border-top: 1px solid rgba(255, 255, 255, .08); padding: 16px 18px; }
   .mb-specs > div:first-child { border-top: 0; }
-  .mb-panel { border-radius: 22px; }
+  .mb-panel { border-radius: 24px; }
   .mb-chip { min-height: 44px; font-size: 14px; }
   .mb-bar { font-size: 13px; gap: 8px; }
   .mb-mono { font-size: 13px; letter-spacing: .06em; }
@@ -58,6 +59,16 @@
 
 /* the shell's v2 touches (ModelPage.jsx): the index among the nine, and the hero settling into a card on scroll */
 .x-mhero { background: #fff; }
-.x-mindex { margin: 0 0 18px; font: 500 13px/1 var(--mono); letter-spacing: .12em; color: #a1a1a6; font-feature-settings: 'tnum'; }
-.x-mindex span { color: #f5f5f7; }
+.x-mindex { margin: 0 0 18px; font: 500 13px/1 var(--mono); letter-spacing: .12em; color: #a3a3a3; font-feature-settings: 'tnum'; }
+.x-mindex span { color: #f5f5f5; }
 @media (prefers-reduced-motion: reduce) { .x-mhero-media { clip-path: none !important; } }
+
+/* MASTER.md scale: the flagship's name is the one big thing on its screen (112px at most), anchored bottom-left so it
+   shrinks toward its corner as you scroll; the dark hero is flat black, white type */
+.x-model .x-mhero { background: #fff; }
+.x-model .x-mhero-name { font-size: clamp(56px, 7.6vw, 112px); font-weight: 497; letter-spacing: -.045em; line-height: .95; transform-origin: 0 100%; }
+.x-model .x-mhero-desc { font-size: clamp(17px, 1.46vw, 21px); color: rgba(255, 255, 255, .78); }
+.x-mindex { font-size: 12px; letter-spacing: .14em; color: #a3a3a3; }
+.x-mindex span { color: #fafafa; }
+.x-mindex { margin: 0 0 10.5px; font-family: var(--mono); text-transform: uppercase; }
+.x-mindex b { font-weight: 500; color: #fafafa; }

@@ -1,28 +1,32 @@
 'use client';
+// Persona: a platform engineer running the stack on Kubernetes.
+// Goal: install the operator.
+// CTA: View on GitHub (operator.hero); the close is Deploy to Cloud in the Band.
+// Metric: cta_click operator.hero
+// Signature: drift, reverted, said out loud: a live cluster board where something drifts and the next sweep puts it back.
+// Beyond: drag any resource out of place yourself (or press it) and watch the next sweep revert it, with the log saying so.
 /* Hanzo Operator.
-   V2: 8/10 a dark control room as the hero where the cluster drifts and the operator puts it back (drag a resource yourself), thirty objects collapsing into one declaration, the six points on a scroll-driven horizontal track.
-   Persona: a platform engineer running the stack on Kubernetes. Goal: install the operator. CTA: View on GitHub (operator.hero).
-   Metric: cta_click on operator.hero and operator.close (data-cta; the event layer is the conductor's).
+   V2: 8/10 the deck scale (h1 52, sections 26, card titles 21); a dark control room as the hero where the cluster drifts and the operator puts it back (pausable, drag a resource yourself), thirty objects collapsing into one declaration, the six points on a scroll-driven horizontal track, kit Cta and Band. Greys only.
    Signature: drift, reverted, said out loud. The hero is a live cluster board: ten Kinds in their desired places, a
-   sweep crossing them on a loop. Between sweeps something drifts out of place; on the next sweep the operator springs
-   it back and the log says what it did (created, reverted, or already in sync). You can drag any resource out of place
-   yourself (or press it) and watch the next sweep revert it.
+   sweep crossing them on a loop. Between sweeps something drifts out of place; on the next sweep the operator moves it
+   back and the log says what it did (created, reverted, or already in sync). A pause control stops the loop.
    Then "Declare the thing, not the thirty objects": thirty loose objects converge, scrubbed by scroll, into one
    declared Kind. The six points ride a horizontal track that your vertical scroll drives (a swipe rail on phones).
-   Beyond: the drift you make is yours to test: any Kind, any distance, and the log tells you what the sweep did.
-   Accent: teal, from the in-sync state. Every word is Hanzo's. */
+   Every word is Hanzo's; the log uses only Hanzo's own words (drift, sweep, created, reverted, already in sync). */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { A, Go } from '../kit';
+import { A, Cta, Band } from '../kit';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import useNarrow from '../v2/A2Narrow';
+import A2Pause from '../v2/A2Pause';
+import { T, EMPH } from '../v2/A2Motion';
 import '../v2/A2.css';
 import './Operator.css';
 
 const GH = 'https://github.com/hanzoai';
 const KINDS = [['Service'], ['Datastore', 'SQL · KV · DocDB · S3'], ['Gateway'], ['Ingress'], ['DNS'], ['Base'], ['IAM'], ['KMS'], ['MPC'], ['KMSSecret', 'kms.hanzo.ai']];
-const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
+const SPRING = { duration: T.slower, ease: EMPH }; // a tween, not a spring (no overshoot)
 
 function Tile({ k, sub, i, mv, onDrift }) {
   return (
@@ -46,38 +50,39 @@ function Board() {
   const [n, setN] = useState(0);
   const [log, setLog] = useState([{ id: 0, t: 'operator up', k: '' }]);
   const [lit, setLit] = useState(-1);
+  const [paused, setPaused] = useState(false);
   const drifted = useRef(new Set());
   const id = useRef(1);
   const say = (lines) => setLog((l) => [...lines.map(([t, k]) => ({ id: id.current++, t, k })).reverse(), ...l].slice(0, 7));
-  const onDrift = (i) => { drifted.current.add(i); say([[KINDS[i][0] + ' edited by hand in the cluster', 'drift']]); };
+  const onDrift = (i) => { drifted.current.add(i); say([[KINDS[i][0], 'drift']]); };
   const sweep = (s) => {
     const lines = [];
-    if (s === 1) lines.push(['sweep 1', 'created']);
+    if (s === 1) lines.push(['sweep', 'created']);
     else {
       KINDS.forEach((kd, i) => {
         const off = Math.abs(xs[i].get()) + Math.abs(ys[i].get()) > 2;
         if (off || drifted.current.has(i)) { lines.push([kd[0], 'reverted']); animate(xs[i], 0, SPRING); animate(ys[i], 0, SPRING); }
       });
       drifted.current.clear();
-      lines.push(['sweep ' + s + ' · the rest', 'already in sync']);
+      lines.push(['sweep', 'already in sync']);
     }
     say(lines);
   };
   useEffect(() => {
-    if (!seen || calm) return;
+    if (!seen || calm || paused) return;
     let s = n, t1 = 0, t2 = 0, t3 = 0;
     const lap = () => {
       s += 1; setN(s); setLit(s);
       t1 = setTimeout(() => sweep(s), 1100);
-      if (!drifted.current.size) t2 = setTimeout(() => { const i = (s * 3) % KINDS.length; animate(xs[i], s % 2 ? 34 : -30, SPRING); animate(ys[i], s % 3 ? 18 : -16, SPRING); drifted.current.add(i); say([[KINDS[i][0] + ' edited by hand in the cluster', 'drift']]); }, 2400);
+      if (!drifted.current.size) t2 = setTimeout(() => { const i = (s * 3) % KINDS.length; animate(xs[i], s % 2 ? 34 : -30, SPRING); animate(ys[i], s % 3 ? 18 : -16, SPRING); drifted.current.add(i); say([[KINDS[i][0], 'drift']]); }, 2400);
       t3 = setTimeout(lap, 4600);
     };
     t3 = setTimeout(lap, 600);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [seen, calm, paused]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <div className="xop-board" ref={ref}>
-      <div className="xop-board-top x-mono"><span><i className="xop-live" />cluster</span><span>sweep {Math.max(n, 1)}</span></div>
+    <div className={'xop-board' + (paused ? ' a2-paused' : '')} ref={ref}>
+      <div className="xop-board-top"><A2Pause paused={paused} onChange={setPaused} label="Pause" /><span className="x-mono"><i className="xop-live" />sweep</span></div>
       <div className="xop-grid">
         {KINDS.map(([k, sub], i) => <Tile key={k} k={k} sub={sub} i={i} mv={{ x: xs[i], y: ys[i] }} onDrift={onDrift} />)}
         <span className="xop-sweep" key={lit} aria-hidden="true" />
@@ -85,7 +90,6 @@ function Board() {
       <ol className="xop-log x-mono" aria-live="polite" aria-label="Operator log">
         {log.map((l) => <li key={l.id} className={'k-' + l.k.replace(/ /g, '-')}><span>{l.t}</span>{l.k && <b>{l.k}</b>}</li>)}
       </ol>
-      <p className="xop-hint">Drag a resource out of place, or press it. The next sweep puts it back.</p>
     </div>
   );
 }
@@ -95,12 +99,11 @@ function Hero() {
     <section className="a2-dark xop-hero" data-room="dark" aria-labelledby="xop-h1">
       <div className="a2-wrap a2-grid xop-hero-grid">
         <div className="xop-hero-copy">
-          <p className="a2-kick"><A to={GH} className="xop-repo">hanzoai/operator</A></p>
           <A2Lines as="h1" id="xop-h1" className="a2-display xop-h1" lines={['Hanzo', 'Operator']} now />
           <p className="a2-lede">One binary that runs the stack on Kubernetes</p>
-          <div className="a2-acts"><A to={GH} className="x-btn solid" data-thumb="View on GitHub" data-cta="operator.hero">View on GitHub</A></div>
+          <div className="a2-acts"><Cta to={GH} id="operator.hero" thumb>View on GitHub</Cta><A to={GH} className="xop-repo x-mono">hanzoai/operator</A></div>
         </div>
-        <motion.div className="xop-hero-obj" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
+        <motion.div className="xop-hero-obj" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: T.slower, ease: EMPH, delay: 0.15 }}>
           <Board />
         </motion.div>
       </div>
@@ -114,13 +117,13 @@ const LOOSE = Array.from({ length: 30 }, (_, i) => [((i * 47) % 100) - 50, ((i *
 function Declare() {
   const ref = useRef(null);
   const calm = useReducedMotion();
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'center center'] });
-  const k = useTransform(p, (v) => (calm ? 1 : Math.min(1, Math.max(0, (v - 0.15) / 0.75))));
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.55'] });
+  const k = useTransform(p, (v) => (calm ? 1 : Math.min(1, Math.max(0, (v - 0.1) / 0.7))));
   return (
     <section className="a2-sec xop-declare" ref={ref} aria-labelledby="xop-declare-h">
       <div className="a2-wrap a2-grid">
         <div className="xop-declare-copy">
-          <A2Lines id="xop-declare-h" className="a2-display m" lines={['Declare the thing,', 'not the thirty', 'objects']} />
+          <A2Lines id="xop-declare-h" className="a2-headline" lines={['Declare the thing,', 'not the thirty objects']} />
         </div>
         <motion.div className="xop-converge" style={{ '--k': k }} aria-hidden="true">
           {LOOSE.map(([x, y, r], i) => <i key={i} style={{ '--x': x, '--y': y, '--r': r + 'deg' }} />)}
@@ -162,10 +165,9 @@ function Track() {
         <motion.ol className="xop-row" ref={row} style={{ x }}>
           {POINTS.map(([t, d, code], i) => (
             <li key={t} className="xop-card">
-              <span className="a2-kick">{String(i + 1).padStart(2, '0')} / 06</span>
-              <h3 className="a2-title">{t}</h3>
+              <h3 className="xop-card-t">{t}</h3>
               <p>{d}</p>
-              <code className="x-mono">{code}</code>
+              <span className="xop-card-f"><code className="x-mono">{code}</code><span className="xop-card-n x-mono">{String(i + 1).padStart(2, '0')} / 06</span></span>
             </li>
           ))}
         </motion.ol>
@@ -178,16 +180,14 @@ function Track() {
 function Get() {
   return (
     <section className="a2-sec xop-get" aria-labelledby="xop-get-h">
-      <div className="a2-wrap a2-grid">
-        <div className="xop-get-copy">
-          <A2Lines id="xop-get-h" className="a2-display s" lines={['Get started with', 'Hanzo Operator']} />
-        </div>
+      <div className="a2-wrap">
         <div className="xop-get-card">
-          <h2>Get Operator</h2>
-          <p>K8s operator</p>
+          <div>
+            <h2 id="xop-get-h" className="a2-headline">Get Operator</h2>
+            <p>K8s operator</p>
+          </div>
           <p className="xop-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
           <p className="xop-get-cmd x-mono" aria-hidden="true">operator up</p>
-          <A to="https://platform.hanzo.ai/deploy" className="x-btn solid" data-cta="operator.close">Deploy to Cloud</A>
         </div>
       </div>
     </section>
@@ -202,6 +202,7 @@ export default function Operator() {
       <Track />
       <A2Paste name="Operator" text="Read https://hanzo.ai/skill.md and use Hanzo Operator in my project." />
       <Get />
+      <Band title="Get started with Hanzo Operator" action="Deploy to Cloud" to="https://platform.hanzo.ai/deploy" />
     </main>
   );
 }

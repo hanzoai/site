@@ -11,10 +11,12 @@
      <SpecCard to="/models/hanzo/enso" title="Enso" desc="…" tags={['text']} meta={<code>enso</code>} />
      <SpecCard to="/koma" slug="koma" play={hovered} title="Koma" desc="…" tags={['Video']} card="koma" onOpen={open} />
        slug: the model's film and poster; card: data-card key for the WebGL opener (then onOpen(e, el) opens it);
-       big: Enso's size (44px title, kicker pill above it); meta: one extra line under the title (ids, context, rate). */
+       big: Enso's size (44px title, kicker pill above it); meta: one extra line under the title (ids, context, rate);
+       hush: in a long catalogue the description waits (still in the HTML) and arrives on hover or focus, on wide screens. */
 import { useRef } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { A } from '../kit';
+import { href } from '../../lib/route';
 import ModelFilm from './ModelFilm';
 import './SpecCard.css';
 
@@ -33,15 +35,19 @@ export function useSpecTilt() {
   return { ref, onPointerMove, onPointerLeave };
 }
 
-export default function SpecCard({ to, title, desc, tags = [], meta, slug, play = false, big = false, kicker, card, onOpen, onHot, className = '', label }) {
+export default function SpecCard({ to, title, desc, tags = [], meta, slug, play = false, big = false, hush = false, kicker, card, onOpen, onHot, className = '', label }) {
   const tilt = useSpecTilt();
   const hot = (v) => onHot && onHot(v);
+  // a model this rebuild has no page for opens Hanzo's live page in a new tab: it says so (↗ and a spoken hint) and
+  // makes no Morph promise
+  const away = /^https?:/.test(href(to) || '');
   return (
     <A
       to={to}
+      {...(away ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       ref={tilt.ref}
-      className={'sc-card' + (big ? ' big' : '') + (slug ? ' film' : '') + ' ' + className}
-      data-cursor="Open"
+      className={'sc-card' + (big ? ' big' : '') + (slug ? ' film' : '') + (hush ? ' hush' : '') + ' ' + className}
+      data-cursor=""
       {...(card ? { 'data-card': card } : {})}
       {...(label ? { 'aria-label': label } : {})}
       onPointerMove={tilt.onPointerMove}
@@ -54,7 +60,7 @@ export default function SpecCard({ to, title, desc, tags = [], meta, slug, play 
       {slug && <span className="sc-media" aria-hidden="true"><ModelFilm slug={slug} play={play} /></span>}
       <span className="sc-top">
         {kicker && <span className="sc-pill sc-flag">{kicker}</span>}
-        <span className="sc-t"><span {...(card ? {} : { 'data-morph': '' })}>{title}</span>{' '}<span className="sc-arr" aria-hidden="true">→</span></span>
+        <span className="sc-t"><span {...(card || away ? {} : { 'data-morph': '' })}>{title}</span>{' '}<span className={'sc-arr' + (away ? ' away' : '')} aria-hidden="true">{away ? '↗' : '→'}</span>{away && <span className="x-sr"> (opens in a new tab)</span>}</span>
         {meta && <span className="sc-meta">{meta}</span>}
         {desc && <span className="sc-d">{desc}</span>}
       </span>

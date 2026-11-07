@@ -18,7 +18,7 @@
    wipe into the light room; scroll = the pinned chapters only.
    States differ by fill, weight, dash and a shape, never by hue. Every word, figure and link is Hanzo's; sequence
    numbers and values are drawn. */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
 import { Paste, Code, useLive } from './Frame';
@@ -47,9 +47,12 @@ function useFan(run, calm) {
   const [t, setT] = useState(2);
   const [seq, setSeq] = useState(41);
   useEffect(() => { if (calm) setT(4); }, [calm]);
+  const first = useRef(true);
   useEffect(() => {
     if (calm || !run) return;
-    const id = setTimeout(() => { if (t >= 4) { setT(0); setSeq((s) => s + 1); } else setT(t + 1); }, [900, 900, 1300, 1500, 1300][t]);
+    // the first step comes within half a second, so the first screen is moving before you look for it
+    const ms = first.current ? 450 : [900, 900, 1300, 1500, 1300][t];
+    const id = setTimeout(() => { first.current = false; if (t >= 4) { setT(0); setSeq((s) => s + 1); } else setT(t + 1); }, ms);
     return () => clearTimeout(id);
   }, [t, run, calm]);
   return [t, seq];

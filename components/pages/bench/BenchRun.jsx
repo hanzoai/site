@@ -20,16 +20,19 @@
    the source is a repository, the panel hands you the exact command to run it yourself.
    Motion, not only scroll: idle (the playhead reads the rows, the readout rolls), state (table to chart re-flow, view
    switch, sheets), pointer (rows answer hover with their figure, the ask is magnetic, the sibling rail drags with
-   inertia), time (the source types its reply), scroll (stage settle, chapter wipes). Colour: 0 UI hues, ink and greys.
+   inertia), time (the source types its reply), scroll (stage settle, chapter wipes, the latest figure grows while it is the
+   moment). Scale has rhythm (MASTER.md): title 52, section heads 26, figures rest at 64; one big thing per screen.
+   Colour: 0 UI hues, ink and greys.
    Ledger: deletes the crumb/kicker eyebrow over the title, the per-member accent, the invented "Source", "Table", "Chart",
    "Previous", "Next" labels (icons with names from content/ui-strings.json), and the duplicated readout rail.
    V2: 8/10 hero card on the first screen beside a display title and one magnetic ask, 0-hue ink system, chapters with Hanzo-worded sheets, sticky ask, sibling rail that drags, source room without invented labels */
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { motion, LayoutGroup, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Copy } from '../../ui';
-import { A } from '../../kit';
+import { EASE } from '../../ui';
+import { A, Cta, DataTable, CodeBlock } from '../../kit';
 import { Magnetic } from '../../ui';
 import { ui } from '../../v2/famUi';
+import { play } from '../../../lib/sound';
 import { Nodes } from '../DocNodes';
 import Sigil from '../../Sigil';
 import FamLines from '../../v2/FamLines';
@@ -37,10 +40,13 @@ import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamDrawer from '../../v2/FamDrawer';
 import FamNext from '../../v2/FamNext';
+import FamGrow from '../../v2/FamGrow';
+import FamRoom from '../../v2/FamRoom';
 import './bench.css';
 
 const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
 const textOf = (n) => (n && typeof n === 'object' ? n.c.map(textOf).join('') : n || '');
+const measure = (s) => /^[~<>≈$]?\s*\d/.test(String(s).trim()) || /^[—–-]?$/.test(String(s).trim());
 const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 
 /* the playhead: one index the card and every chapter read. It walks the rows once (a demo plays and rests,
@@ -65,7 +71,7 @@ function makeWalk() {
       id = setInterval(() => {
         if (document.hidden || Date.now() < hold) return;
         i = (i + 1) % n; left -= 1;
-        if (left <= 0) { i = 0; stop(); } else emit();
+        if (left <= 0) { i = 0; stop(); play('done'); } else emit(); // the demo ends at rest, with the kit's quiet 'done'
       }, 1900);
       return () => clearInterval(id);
     },
@@ -247,23 +253,25 @@ function Turn({ c, walk, slug }) {
 }
 
 /* a captured table, drawn in the new design; every cell stays, wide ones scroll inside their own frame */
-function Table({ n }) {
-  const head = (n.c.find((k) => k.t === 'thead') || { c: [] });
-  const label = clean(textOf(head));
-  return (
-    <div className="xbr-tw" tabIndex={0} role="region" aria-label={label || 'Table'} data-lenis-prevent data-swipe-own>
-      <table><Nodes nodes={n.c} /></table>
-    </div>
-  );
+/* a captured table, as the kit's one DataTable: every cell as Hanzo wrote it (links included), the first column the row
+   header, figures in tabular numerals; the caption is the section it belongs to (Hanzo's own heading) */
+const isEl = (k) => k && typeof k === 'object';
+function Table({ n, caption }) {
+  const rowsOf = (sec) => (sec ? sec.c.filter((r) => isEl(r) && r.t === 'tr') : []);
+  const thead = n.c.find((k) => isEl(k) && k.t === 'thead');
+  const tbody = n.c.find((k) => isEl(k) && k.t === 'tbody') || n;
+  const head = rowsOf(thead)[0];
+  const heads = head ? head.c.filter(isEl).map((th) => clean(textOf(th))) : [];
+  const body = rowsOf(tbody).filter((r) => r.c.some((k) => isEl(k) && k.t === 'td'));
+  const width = Math.max(heads.length, ...body.map((r) => r.c.filter(isEl).length));
+  const cols = Array.from({ length: width }, (_, j) => ({ key: 'c' + j, label: heads[j] || '', num: j > 0 && body.every((r) => { const c = r.c.filter(isEl)[j]; return !c || measure(clean(textOf(c)), true); }) }));
+  const rows = body.map((r) => Object.fromEntries(r.c.filter(isEl).map((td, j) => ['c' + j, <Nodes key={j} nodes={td.c} />])));
+  return <DataTable caption={caption || heads.join(' · ')} cols={cols} rows={rows} className="xbr-dt" />;
 }
 
+/* a command, as the kit's one CodeBlock: copies exactly what it shows, the "$ " is drawn, not copied */
 function Cmd({ text }) {
-  return (
-    <div className="xbr-cmd">
-      <pre className="x-mono"><span aria-hidden="true">$ </span>{text}</pre>
-      <Copy text={text} />
-    </div>
-  );
+  return <CodeBlock code={text} prompt className="xbr-code" />;
 }
 
 /* one block of a section, as Hanzo wrote it */
@@ -345,7 +353,7 @@ function Source({ doc }) {
   };
   const shown = src ? src.url.replace(/^https:\/\//, '') : '';
   return (
-    <section className="xbr-src" data-room="dark" aria-label={src ? 'api.hanzo.ai' : doc.command}>
+    <FamRoom className="xbr-src" aria-label={src ? 'api.hanzo.ai' : doc.command}>
       <div className="v2f-wrap v2f-grid xbr-src-g">
         <div className="xbr-src-l">
           {src ? (
@@ -392,7 +400,7 @@ function Source({ doc }) {
           </div>
         </div>
       </div>
-    </section>
+    </FamRoom>
   );
 }
 
@@ -430,19 +438,19 @@ function Tail({ tail, near, peek }) {
         </div>
       </section>
       {!!cta.length && (
-        <section className="xbr-band" data-room="dark" data-ask-hide aria-label={h3 ? clean(textOf(h3.n)) : undefined}>
+        <FamRoom className="xbr-band" tone="black" data-ask-hide aria-label={h3 ? clean(textOf(h3.n)) : undefined}>
           <div className="v2f-wrap v2f-grid xbr-band-g">
             {h3 && <FamLines as="h2" play="view" className="v2f-display small xbr-band-h" text={clean(textOf(h3.n))} />}
             <div className="xbr-band-r">
               <div className="xbr-band-acts">
                 {links.map((b, i) => (i === 0
-                  ? <Magnetic key={i}><A to={b.n.a.href} className="v2f-btn xbr-band-solid" data-cta="benchmarks.band">{clean(textOf(b.n))}</A></Magnetic>
-                  : <A key={i} to={b.n.a.href} className="v2f-link xbr-band-link">{clean(textOf(b.n))}</A>))}
+                  ? <Magnetic key={i}><Cta to={b.n.a.href} id="benchmarks.band" size="lg" className="xbr-band-solid">{clean(textOf(b.n))}</Cta></Magnetic>
+                  : <Cta key={i} to={b.n.a.href} kind="link" id="benchmarks.band-2" className="xbr-band-link">{clean(textOf(b.n))}</Cta>))}
               </div>
               {notes.map((b, i) => <p key={i} className="v2f-kick xbr-band-k">{clean(textOf(b.n))}</p>)}
             </div>
           </div>
-        </section>
+        </FamRoom>
       )}
     </>
   );
@@ -488,7 +496,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
         </div>
       ),
       visual: table ? (
-        <div className="xbr-ch-v v2f-obj"><Table n={table.n} /></div>
+        <div className="xbr-ch-v v2f-obj"><Table n={table.n} caption={s.title} /></div>
       ) : (
         <div className={'xbr-ch-v xbr-ch-fig ' + TONES[k % TONES.length]}>{c ? <Readout c={c} walk={walk} big /> : <p className="xbr-ch-q">{s.title}</p>}</div>
       ),
@@ -501,15 +509,17 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
       <section className="xbr-stage" aria-labelledby={'xbr-h1-' + doc.slug}>
         <Sigil seed={'bench/' + doc.slug} data={seedData} className="xbr-sigil" />
         <div className="v2f-wrap v2f-grid xbr-top-g">
-          <FamLines as="h1" id={'xbr-h1-' + doc.slug} className={'v2f-display xbr-h1' + size} text={doc.title} data-morph-target />
-          <div className="xbr-side">
-            {doc.lede && <p className="v2f-lede xbr-lede"><Nodes nodes={doc.lede.c} /></p>}
-            <div className="xbr-acts">
-              <Magnetic><A to={ask.href} className="v2f-btn solid" data-thumb={ask.label} data-cta="benchmarks.hero">{ask.label}<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></Magnetic>
-            </div>
+          <div className="xbr-head">
+            <FamLines as="h1" id={'xbr-h1-' + doc.slug} className={'v2f-display xbr-h1' + size} text={doc.title} data-morph-target />
             <div className="xbr-meta">
               {doc.crumb && <p className="xbr-crumb"><Nodes nodes={doc.crumb.c} /></p>}
               {doc.kicker && <p className="xbr-kicker x-mono"><Nodes nodes={doc.kicker.c} /></p>}
+            </div>
+          </div>
+          <div className="xbr-side">
+            {doc.lede && <p className="v2f-lede xbr-lede"><Nodes nodes={doc.lede.c} /></p>}
+            <div className="xbr-acts">
+              <Magnetic><Cta to={ask.href} id="benchmarks.hero" thumb size="lg">{ask.label}</Cta></Magnetic>
             </div>
           </div>
         </div>
@@ -537,7 +547,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
           <div className="v2f-wrap v2f-grid">
             <h2 id={'xbr-latest-' + doc.slug} className="v2f-head xbr-figs-h">Latest</h2>
             <a href={lead.href} className="xbr-fig big">
-              <b className="v2f-num">{lead.parts[0]}</b>
+              <FamGrow to={1.75}><b className="v2f-num">{lead.parts[0]}</b></FamGrow>
               <span className="xbr-fig-l">{lead.parts[1]}</span>
               {lead.parts[2] && <span className="xbr-fig-s">{lead.parts[2]}</span>}
             </a>
@@ -571,7 +581,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
                 {c && <div className="xbr-one-ro"><Readout c={c} walk={walk} /></div>}
               </div>
               <div className="xbr-one-r">
-                {table && <div className="v2f-obj xbr-one-t"><Table n={table.n} /></div>}
+                {table && <div className="v2f-obj xbr-one-t"><Table n={table.n} caption={s.title} /></div>}
                 {!!rest.length && <Blocks blocks={rest} />}
               </div>
             </div>

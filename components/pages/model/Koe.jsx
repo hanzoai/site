@@ -99,7 +99,7 @@ function Booth() {
         <p className="ko-tc mb-tnum"><span>00:0</span><span ref={sEl}>1</span>.<span ref={csEl}>90</span> <span className="ko-tc-of">/ 00:05.00 · TTFT: 180ms</span></p>
         <button type="button" className="mb-chip" aria-pressed={play} onClick={() => setPlay(!play)}>{play ? 'Pause' : 'Play'}</button>
       </div>
-      <div className="ko-wave" data-cursor="Seek" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={1.9} onKeyDown={(e) => { const k = { ArrowRight: 0.25, ArrowLeft: -0.25 }[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>
+      <div className="ko-wave" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={1.9} onKeyDown={(e) => { const k = { ArrowRight: 0.25, ArrowLeft: -0.25 }[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>
         <canvas ref={cv} aria-hidden="true" onPointerDown={seek} />
       </div>
       <div className="ko-script">
@@ -121,15 +121,16 @@ function Booth() {
 // the film closes into a tall capsule on the left (a horizontal one on phones); the headline sits right of it
 const CAPSULE = frame((W, H, wide) => {
   if (wide) { const w = Math.min(W * 0.2, H * 0.4), h = H * 0.84; return { l: W * 0.26 - w / 2, t: (H - h) / 2, w, h, r: w / 2 }; }
-  const h = H * 0.3; return { l: 20, t: H * 0.07, w: W - 40, h, r: h / 2 };
+  const h = H * 0.36; return { l: 20, t: H * 0.07, w: W - 40, h, r: h / 2 };
 });
 
 export default function Koe() {
   return (
     <Creative
       slug="koe"
+      subject={[0.68, 0.45]}
       shape={CAPSULE}
-      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.35, [20, H * 0.07, W - 20, H * 0.37]))(W, H)}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, H * 0.22, 1.35, [20, H * 0.07, W - 20, H * 0.43]))(W, H)}
       headClass="ko-v2"
       first="chapters"
       demo={

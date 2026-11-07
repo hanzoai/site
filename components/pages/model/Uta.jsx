@@ -129,7 +129,7 @@ function Roll() {
             </li>
           ))}
         </ul>
-        <div className="ut-roll" data-cursor="Add note">
+        <div className="ut-roll">
           <canvas ref={cv} role="img" aria-label="Piano roll in D minor at 96 BPM; tap to add or remove a melody note" onPointerDown={tap} />
         </div>
       </div>
@@ -156,7 +156,7 @@ function Roll() {
 // the film splits into Uta's four stems: four faders rising left to right from one floor
 const STEMS = (t, W, H, wide) => {
   const x0 = wide ? W * 0.5 : W * 0.06, x1 = wide ? W * 0.94 : W * 0.94, B = wide ? H * 0.9 : H * 0.47, gap = wide ? 18 : 10;
-  const tops = wide ? [0.5, 0.36, 0.22, 0.08] : [0.3, 0.22, 0.14, 0.06]; // a crescendo, rising with the film's fan of lines
+  const tops = wide ? [0.5, 0.36, 0.22, 0.08] : [0.33, 0.26, 0.19, 0.13]; // a crescendo, rising with the film's fan of lines
   const bw = (x1 - x0 - 3 * gap) / 4, M = Math.max(W, H) * 0.5;
   const pts = [];
   tops.forEach((f, i) => {
@@ -171,7 +171,9 @@ export default function Uta() {
     <Creative
       slug="uta"
       shape={STEMS}
-      aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.7, H * 0.5, 1.1, [W * 0.5, H * 0.08, W * 0.94, H * 0.9]) : focus(0.75, 0.5, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47]))(W, H)}
+      pos="50% 88%"
+      subject={[0.7, 0.66]}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.66, W * 0.72, H * 0.55, 1.12, [W * 0.5, H * 0.08, W * 0.94, H * 0.9], [0.5, 0.88]) : focus(0.7, 0.66, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47], [0.5, 0.88]))(W, H)}
       headClass="ut-v2"
       first="demo"
       demo={

@@ -7,6 +7,7 @@
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useMemo, useRef, useState } from 'react';
 import { Specs } from './Studio';
+import { usePaused } from '../../v2/ModelFilm';
 import Creative from './Creative';
 import { poly, dense, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
@@ -41,7 +42,11 @@ function Viewport() {
   const [mode, setMode] = useState(0);
   const S = useRef({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3) });
 
-  useLoop(stage, (t, dt, still) => {
+  const paused = usePaused();
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+  useLoop(stage, (t, dt, still0) => {
+    const still = still0 || pausedRef.current;
     const c = cv.current, s = S.current;
     if (!c) return;
     const { w, h, d } = fit(c, 1.5);
@@ -97,8 +102,8 @@ function Viewport() {
       }
       quads.sort((x, y) => y[0] - x[0]);
       for (const [, a, b, c2, e] of quads) {
-        if (m === 1) { const lit = Math.max(0, -nz[a] * 0.4 - nz[a + 1] * 0.55 - nz[a + 2] * 0.73); const v = Math.round(28 + lit * 215); g.fillStyle = `rgb(${v},${v},${v + 4})`; }
-        else g.fillStyle = `rgb(${Math.round((nz[a] * 0.5 + 0.5) * 255)},${Math.round((nz[a + 1] * 0.5 + 0.5) * 255)},${Math.round((-nz[a + 2] * 0.5 + 0.5) * 255)})`;
+        if (m === 1) { const lit = Math.max(0, -nz[a] * 0.35 - nz[a + 1] * 0.6 - nz[a + 2] * 0.72); const v = Math.round(64 + Math.pow(lit, 0.8) * 186); g.fillStyle = `rgb(${v},${v},${v})`; }
+        else { const v = Math.round(40 + (nz[a] * 0.3 + nz[a + 1] * 0.25 - nz[a + 2] * 0.45 + 0.5) * 200); const c = Math.max(24, Math.min(240, v)); g.fillStyle = `rgb(${c},${c},${c})`; } // normals as a grey relief, no hue
         g.beginPath(); g.moveTo(proj[a], proj[a + 1]); g.lineTo(proj[b], proj[b + 1]); g.lineTo(proj[c2], proj[c2 + 1]); g.lineTo(proj[e], proj[e + 1]); g.closePath(); g.fill();
       }
     }
@@ -119,7 +124,7 @@ function Viewport() {
   return (
     <div className="mr-view" ref={stage}>
       <div className="mb-bar mr-bar"><i /><i /><i /><b>studio.hanzo.ai / <span>mori-1</span></b><em>mori</em><em>example</em></div>
-      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} data-cursor="Drag" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
+      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
       <div className="mr-hud mr-tl">
         <p className="mb-mono">SDF ➔ QUAD MESH: 245,820 TRIS</p>
         <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" />SPINNING · 360°</p>
@@ -155,7 +160,9 @@ export default function Mori() {
     <Creative
       slug="mori"
       shape={HEX}
-      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.6, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46])(W, H))}
+      pos="50% 75%"
+      subject={[0.6, 0.62]}
+      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.62, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46], [0.5, 0.75])(W, H))}
       over={EDGES}
       headClass="mr-v2"
       first="chapters"

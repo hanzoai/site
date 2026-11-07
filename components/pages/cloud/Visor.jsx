@@ -1,18 +1,21 @@
 'use client';
 /* Visor (v2, Cloud 4 chat). Archetype B, System: the fleet console arriving beside the title (Stage, side, flipped) →
-   six tiles in a dark room that open into their pages → a batch you name → close. Accent: fleet magenta.
-   V2: 8/10 one request launching a fleet from three clouds as the hero, the six facts as tiles that open into full cards with a shared-element morph, a batch-launch preview
-   Signature: every tile opens (synchronized.studio). The six things you get are tiles; tap one and it grows, with a
-   shared-element morph, into a full card with its own working picture; close it and it folds back into its place.
+   six tiles in the one dark room that open into their cards → a batch you name → Get Visor → one closing band.
+   Persona: a platform engineer running machines on more than one cloud. Goal: open the repo and try the API.
+   CTA: "View on GitHub" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:visor.primary.
+   V2: 8/10 one request launches a fleet from three clouds as the hero; six tiles open into full cards in the kit Sheet; a batch you name; greys only, one ask, a closing band
+   Signature: every tile opens. The six things you get are tiles with their own small working picture; tap one and its
+   card rises with the picture large and Hanzo's paragraph beside it; Previous and Next walk the six; Escape or Back close.
    Beyond: "Name a fleet". Choose a prefix and a count and see the machines a batch launch will name, in sequence under
    the prefix, beside the node pool and the cluster in the same inventory, and whether it is a dry run that spends nothing.
-   Motion: shared-element open (signature) + the hero's launch sequence + layout re-flow of the inventory + magnetic
-   primary. Every word and link is Hanzo's; providers, regions and machine names are examples. */
+   Motion: tile open (signature, state) + the hero's launch sequence (time, pausable) + inventory re-flow (state).
+   Every word and link is Hanzo's; providers, regions and machine names are examples. */
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
 import { useLive } from './Frame';
+import { Sheet, Cta } from '../../kit';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import './Visor.css';
@@ -82,63 +85,37 @@ function Pic({ i }) {
   return <ul className="vs2-p5">{['launched', 'console opened', 'destroyed'].map((x) => <li key={x} className="l2-mono"><i />{x}<span>org · project</span></li>)}</ul>;
 }
 
-/* Signature: tiles that open into their page and fold back. */
+/* Signature: every tile opens into its full card (the kit Sheet: focus held inside, Escape and Back close it, focus
+   returns to the tile). The tile presses in; the card rises with its picture large. */
 function Tiles() {
   const [open, setOpen] = useState(-1);
-  const calm = useCalm();
-  useEffect(() => {
-    if (open < 0) return;
-    const k = (e) => { if (e.key === 'Escape') setOpen(-1); };
-    addEventListener('keydown', k);
-    window.__lenis?.stop();
-    return () => { removeEventListener('keydown', k); window.__lenis?.start(); };
-  }, [open]);
-  const spring = calm ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 30 };
+  const at = Math.max(0, open);
   return (
     <section className="l2-sec l2-dark vs2-tiles" data-room="dark">
       <div className="l2-wrap">
-        <div className="vs2-tiles-h">
-          <h2 className="l2-display m">What you get for the price of one integration</h2>
-          <p className="l2-mono vs2-range">01 / 06 — 06 / 06</p>
-        </div>
-        <LayoutGroup>
-          <ul className="vs2-grid">
-            {FACTS.map(([t, d], i) => (
-              <li key={t}>
-                <motion.button type="button" layoutId={'vs2-t' + i} transition={spring} className={'vs2-tile' + (open === i ? ' gone' : '')} onClick={() => setOpen(i)} aria-haspopup="dialog" data-cursor="Open">
-                  <motion.span layoutId={'vs2-n' + i} transition={spring} className="vs2-n l2-mono">{String(i + 1).padStart(2, '0')} / 06</motion.span>
-                  <span className="vs2-st l2-mono"><i />ready</span>
-                  <motion.span layoutId={'vs2-pic' + i} transition={spring} className="vs2-tp" aria-hidden="true"><Pic i={i} /></motion.span>
-                  <motion.span layoutId={'vs2-h' + i} transition={spring} className="vs2-th">{t}</motion.span>
-                  <span className="vs2-d" hidden>{d}</span>
-                </motion.button>
-              </li>
-            ))}
-          </ul>
-          <AnimatePresence>
-            {open >= 0 && (
-              <motion.div key="scrim" className="vs2-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={() => setOpen(-1)} />
-            )}
-            {open >= 0 && (
-              <motion.div key={'card' + open} layoutId={'vs2-t' + open} transition={spring} className="vs2-card" role="dialog" aria-modal="true" aria-label={FACTS[open][0]} data-lenis-prevent>
-                <motion.span layoutId={'vs2-n' + open} transition={spring} className="vs2-n l2-mono">{String(open + 1).padStart(2, '0')} / 06</motion.span>
-                <button type="button" className="vs2-x" onClick={() => setOpen(-1)} aria-label="Close" autoFocus>×</button>
-                <div className="vs2-card-in">
-                  <div>
-                    <motion.h3 layoutId={'vs2-h' + open} transition={spring} className="l2-head">{FACTS[open][0]}</motion.h3>
-                    <motion.p className="l2-body" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0, transition: { delay: 0.18, duration: 0.5, ease: EASE } }} exit={{ opacity: 0, transition: { duration: 0.1 } }}>{FACTS[open][1]}</motion.p>
-                    <div className="vs2-nav">
-                      <button type="button" className="x-btn sm" onClick={() => setOpen((open + 5) % 6)}>Previous</button>
-                      <button type="button" className="x-btn sm" onClick={() => setOpen((open + 1) % 6)}>Next</button>
-                    </div>
-                  </div>
-                  <motion.div layoutId={'vs2-pic' + open} transition={spring} className="vs2-cp" aria-hidden="true"><Pic i={open} /></motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </LayoutGroup>
+        <h2 className="l2-head vs2-tiles-h">What you get for the price of one integration</h2>
+        <ul className="vs2-grid">
+          {FACTS.map(([t], i) => (
+            <li key={t}>
+              <button type="button" className="vs2-tile" onClick={() => setOpen(i)} aria-haspopup="dialog">
+                <span className="vs2-n l2-mono">{String(i + 1).padStart(2, '0')} / 06</span>
+                <span className="vs2-tp" aria-hidden="true"><Pic i={i} /></span>
+                <span className="vs2-th">{t}</span>
+                <svg className="vs2-plus" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
+      <Sheet open={open >= 0} onClose={() => setOpen(-1)} title={FACTS[at][0]} kicker={String(at + 1).padStart(2, '0') + ' / 06'} wide className="vs2-sheet">
+        <div className="vs2-cp" aria-hidden="true"><Pic i={at} /></div>
+        <p className="l2-body vs2-cd">{FACTS[at][1]}</p>
+        <div className="vs2-nav">
+          <Cta kind="quiet" id="tile-prev" onClick={() => setOpen((open + 5) % 6)}>Previous</Cta>
+          <Cta kind="quiet" id="tile-next" onClick={() => setOpen((open + 1) % 6)}>Next</Cta>
+        </div>
+      </Sheet>
+      <noscript><div className="l2-wrap vs2-ns">{FACTS.map(([t, d]) => <p key={t} className="l2-body"><b>{t}.</b> {d}</p>)}</div></noscript>
     </section>
   );
 }
@@ -153,13 +130,12 @@ function Name() {
     <section className="l2-sec vs2-name">
       <div className="l2-wrap l2-grid">
         <div className="vs2-name-l">
-          <p className="l2-kick ac">Name a fleet</p>
           <h2 className="l2-head">{FACTS[1][0]}</h2>
           <div className="vs2-form">
             <label><span className="l2-mono">prefix</span><input value={prefix} onChange={(e) => setPrefix(e.target.value)} spellCheck="false" autoComplete="off" /></label>
             <div className="vs2-count" role="group" aria-label="Machines">
               <span className="l2-mono">machines</span>
-              <div><button type="button" onClick={() => setCount((c) => Math.max(1, c - 1))} aria-label="Fewer">−</button><b className="l2-fig">{count}</b><button type="button" onClick={() => setCount((c) => Math.min(8, c + 1))} aria-label="More">+</button></div>
+              <div><button type="button" onClick={() => setCount((c) => Math.max(1, c - 1))} aria-label="Fewer"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg></button><b className="l2-fig">{count}</b><button type="button" onClick={() => setCount((c) => Math.min(8, c + 1))} aria-label="More"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg></button></div>
             </div>
             <div className="vs2-dryt" role="group" aria-label="Launch">
               <button type="button" aria-pressed={dry} onClick={() => setDry(true)}>dry run</button>
@@ -191,7 +167,7 @@ function Name() {
 
 export default function Visor() {
   return (
-    <main className="l2-page vs2" style={{ '--ac': '#525252' }}>
+    <main id="main" className="l2-page vs2">
       <StageHero look="side" flip kick="hanzoai/visor" title="Hanzo Visor" sub="Machines from several clouds, through one API" acts={[['View on GitHub', GH]]}>
         <Fleet />
       </StageHero>
