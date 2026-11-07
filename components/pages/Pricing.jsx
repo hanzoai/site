@@ -737,7 +737,7 @@ export default function Pricing() {
         title="Need help sizing seats or configuring the right plan?"
         action="Talk to our AI Buying Specialist →"
         to="/buying-specialist"
-        note={<p className="xpr-band-note">Need dedicated VPC clusters, custom fine-tuning, or high-volume enterprise SLAs? <A to="/enterprise">Contact our engineering team →</A></p>}
+        note={<p className="xpr-band-note"><span>Need dedicated VPC clusters, custom fine-tuning, or high-volume enterprise SLAs?</span> <A to="/enterprise">Contact our engineering team →</A></p>}
       />
 
       <Drawer open={!!src} from={src} onClose={close} title="Compare plans" label="Compare plans">
