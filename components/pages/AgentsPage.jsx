@@ -81,7 +81,7 @@ function Ctl({ state, onClick, dark, className = '' }) {
 }
 
 /* A request line that writes itself: the whole line holds its place (so nothing grows), the written part lies over it. */
-function Req({ c, shown }) {
+function Req({ c, shown, caret }) {
   const [verb, body] = split(c);
   const full = shown === undefined;
   const part = full ? body : body.slice(0, shown);
@@ -89,7 +89,7 @@ function Req({ c, shown }) {
     <p className={'agt-req' + (full ? ' full' : '') + (!full && shown > 0 ? ' on' : '')}>
       <span className="x-sr">{c}</span>
       <span className="agt-req-g" aria-hidden="true"><b>{verb}</b> {body}</span>
-      <span className="agt-req-t" aria-hidden="true"><b>{verb}</b> {part}</span>
+      <span className="agt-req-t" aria-hidden="true"><b>{verb}</b> {part}{caret && <i className="agt-caret" />}</span>
     </p>
   );
 }
@@ -124,6 +124,12 @@ function Run() {
   }, { amount: 0.35 });
   // reduced motion: the final frame, at once
   useEffect(() => { if (demo.calm) { setAt(LAST); setDone(LAST); setCur({ j: 99, k: 0 }); } }, [demo.calm]);
+  // the cursor sits where the run is writing, and rests blinking after the open step's last request
+  const caretAt = (i) => {
+    const n = CALLS[i].length;
+    if (i <= done || cur.j >= n) return n - 1;
+    return cur.k > 0 ? cur.j : cur.j - 1;
+  };
   // a step chosen by hand: the run goes on from there (the steps before it ticked, the ones after it not yet);
   // under reduced motion it simply opens that step
   const pick = (i) => {
@@ -161,7 +167,7 @@ function Run() {
           <div key={title} className={'agt-step-b' + (i === at ? ' on' : '')} aria-hidden={i !== at}>
             <p className="agt-step-d">{d}</p>
             <div className="agt-out x-mono">
-              {CALLS[i].map((c, j) => <Req key={j} c={c} shown={shownOf(i, j, at, done, cur)} />)}
+              {CALLS[i].map((c, j) => <Req key={j} c={c} shown={shownOf(i, j, at, done, cur)} caret={i === at && j === caretAt(i)} />)}
             </div>
           </div>
         ))}
@@ -333,20 +339,21 @@ function Script() {
           if (s.played >= target) { if (s.played >= LAST || !s.auto) break; }
           const i = s.played + 1;
           if (i > LAST) break;
-          const hurry = () => s.want > i;
+          // a step the reader has scrolled or jumped past still plays, at five times the pace
+          const pace = (ms) => sleep(s.want > i ? ms / 5 : ms);
           const [a, b] = chunks[i];
           setView(i); setPlaying(i); setCur({ j: 0, k: 0 });
-          for (let l = a; l <= b; l++) { if (hurry()) { setLn(b); break; } setLn(l); await sleep(lines[l].trim() ? 34 : 12); }
-          if (!hurry()) await sleep(220);
+          for (let l = a; l <= b; l++) { setLn(l); await pace(lines[l].trim() ? 34 : 12); }
+          await pace(220);
           for (const [j, c] of CALLS[i].entries()) {
             const len = split(c)[1].length;
-            for (let k = 3; k < len && !hurry(); k += 3) { setCur({ j, k }); await sleep(14); }
+            for (let k = 3; k < len; k += s.want > i ? 9 : 3) { setCur({ j, k }); await pace(14); }
             setCur({ j: j + 1, k: 0 });
-            if (!hurry()) await sleep(160);
+            await pace(160);
           }
           setDone(i); setPlaying(-1);
           s.played = i;
-          if (!hurry() && i < LAST && s.auto) await sleep(900);
+          if (i < LAST && s.auto && s.want <= i) await sleep(900);
         }
         setState('done');
       } catch (e) { if (e !== STOP) throw e; }

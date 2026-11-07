@@ -27,6 +27,14 @@
 .agt [data-room='dark'] .x-arrow, .agt .x-band .x-arrow { color: #fafafa; }
 .agt [data-room='dark'] .x-arrow > span::before, .agt .x-band .x-arrow > span::before { opacity: .4; }
 
+/* Copy and the demo controls answer a mouse too (the shared hovers sit behind (hover: hover)) */
+.agt .x-copy, .agt .v2a-demo-ctl { transition: translate .3s var(--em), background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+@media not all and (pointer: coarse) {
+  .agt .x-copy:hover { translate: 0 -2px; color: var(--ink); border-color: rgba(0, 0, 0, .3); }
+  .agt .agt-file-bar .x-copy:hover { color: #fafafa; border-color: rgba(255, 255, 255, .4); }
+  .agt .v2a-demo-ctl:hover { translate: 0 -2px; background: #f5f5f5; border-color: rgba(0, 0, 0, .3); }
+  .agt .v2a-demo-ctl.dark:hover { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .3); }
+}
 /* the page's demo control: AppDemo's look; under reduced motion it keeps its place but is not shown */
 .agt-ctl[hidden] { display: grid; visibility: hidden; }
 

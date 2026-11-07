@@ -121,7 +121,7 @@ export function TiltRail({ children }) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
-    if (!el || !matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!el || !matchMedia('(pointer: fine), (pointer: none)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let last = null;
     const flat = (c) => { if (c) { c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); } };
     const move = (e) => {
