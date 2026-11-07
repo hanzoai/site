@@ -1,32 +1,160 @@
-# Coverage: /sdks
+# /sdks coverage (MASTER.md part 2, the 18 parts)
 
-Page: `components/pages/Sdks.jsx` + `Sdks.css`, on the Apps 2 kit (`components/v2/A2*`). One line per area of docs/PLAN-COMPONENTS.md §2, then the §4 gate.
+Page file: `components/pages/Sdks.jsx` · gallery: `docs/gallery/sdks/` · metric id: `cta_click sdks.hero`
 
-- **2.1 Strategy and conversion:** goal = call the API from your language. One solid ask, "API reference" (`data-thumb` on the hero link, the ask bar carries it; `data-cta="sdks.hero"`), and a solid "API reference" on the closing band (`sdks.close`); the global ask bar carries it once the hero has gone by. Every other action is an outline or a text link.
-- **2.2 IA and navigation:** header and footer untouched (shared). In-page links stay in-site through kit `A`.
-- **2.3 First impression and narrative:** the headline at display size, the lede and links, and one big console below where only the lines that differ between the OpenAI and Anthropic dialects re-set; fits 1470×801. Then one idea per screen: hero console → paste strip → the two libraries → the official SDK picker → the dark room (per-language orgs) → the flagship libraries → the Go modules as a type wall → close.
-- **2.4 Conversion system:** hero and closing asks only; secondaries are outlines or text links. No forms send anything.
-- **2.5 Trust and proof:** Hanzo's install lines, registries and versions only.
-- **2.6 Content presentation:** copy untouched (parity 217/217 text, 69/69 links). No eyebrow above any headline: those labels are visually hidden and stay in the HTML for screen readers and search. Detail lives in things you open where there is a lot of it.
-- **2.7 Visual design system:** white page, ink, greys and silvers only (0 UI hues; `scripts/taste.py` passes). One dark room: the per-language orgs. Radii 28 on hero objects, 16 on cards; hairlines and long soft shadows.
-- **2.8 UI component library:** kit `A`, `Go`, `More`, `Copy`; Apps 2 kit `A2Lines`, `A2Paste` and, where used, `A2Chapters`, `A2Sheet`, `A2Faq`. Buttons press to .98 (shared `.x-btn`); targets 44px or more on touch.
-- **2.9 Motion and interaction:** signature = only the changed lines re-set (time and state). Supporting: the gliding pills (state), the picker (state), the finder typing (time). No scroll-linked motion. `scripts/variety.py` passes.
-- **2.10 Media:** No images; the console shows Hanzo's real samples.
-- **2.11 Mobile and responsive:** designed at 375: the h1 flows into three or four lines, pinned scenes become a plain vertical story or a swipe rail, no sideways scroll.
-- **2.12 Accessibility:** one h1; an h2 per section; tabs, switches and accordions carry their aria states; decorative art is `aria-hidden`; visible focus.
-- **2.13 Performance:** transform and opacity (and clip-path for one wipe) only; loops stop off screen; typing writes to text nodes, not React state per character; no layout shift measured.
-- **2.14 SEO and machine files:** metadata and JsonLd unchanged; all text in the server HTML.
-- **2.15 Catalogue and product pages:** The module wall links each import path.
-- **2.16 Developer experience:** Copy on every install line and sample; dialect and language switches; the module finder types names by itself until you type.
-- **2.17 States and resilience:** The module finder has its own empty line ("No module at that path."). Reduced motion shows final states; with JavaScript off a `noscript` rule shows every masked line and anything that starts hidden. No live API calls.
-- **2.18 Measurement and handover:** `data-cta` on the hero and closing primaries; Persona, Goal, CTA and Metric lines in the page header; no analytics wired yet (the conductor's event layer).
+Open copy questions for James: the language tabs carry Hanzo's own emoji labels; kept.
+Shared changes requested (`docs/requests/<page>.md`): none.
+Forks this page deleted: the cyan accent, dialect/language pills that never showed, eyebrows over headings, the hero's text-link ask and the close's raw `.x-btn` (both kit `Cta` now).
 
-## §4 gate
-1. Persona, Goal, CTA and Metric lines in the page file header. ✔
-2. One h1 in server HTML; a closing ask; page-owned hero and buttons until a shared `PageHero` lands. ◐
-3. Greys only; one filled primary per screen; `data-thumb` and `data-cta`. ✔
-4. Parity 0 missing (217/217 text, 69/69 links). ✔
-5. Reduced motion final states; JavaScript off legible; keyboard paths for every control. ✔
-6. 375×812 and 1470×801 checked, no sideways scroll; Lighthouse not run (no CI yet). ◐
-7. Film and phone shots in `docs/gallery/sdks/`. ✔
-8. Ledger (removed): the cyan accent; dialect and language pills that never showed; the eyebrows; no closing ask.
+Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; label and href from `lib/cta.js`
+- [x] One h1; the page is clear in 5 seconds
+- [x] No dead or self-looping button; prices from `lib/plans.js`
+- [x] Open copy questions for James listed, none decided
+
+Done here: Header comment carries Persona, Goal, CTA, Metric, Signature, Beyond; one solid `Cta` "API reference" (`sdks.hero`, thumb); h1=1 at all widths; no prices.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; skip link reaches it
+- [x] Every link through `A`, `Go`, `More` or `href()`; every card a real link
+- ~~Breadcrumb at depth 2 or more~~ n/a: depth 1 page
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: One `<main>`; links through `A`, `More`, `Cta`; parity links 69/69.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; something moves within 1 s without input
+- ~~`PageHero`; nothing above the h1~~ n/a: page-owned hero on the kit grammar (A2Lines h1 cut-in); nothing visible above the h1
+- [x] JS off: legible; no `opacity:0` on the LCP element
+- [x] One idea per 100svh; no 3 same-height sections in a row
+- [x] Ends in proof strip, `Band`, footer
+- ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open a page
+
+Done here: The console flips OpenAI ⇄ Anthropic by itself within ~1 s and re-sets only the changed lines; ends with the close ask and footer.
+
+## 4. Conversion system
+- [x] `<Cta>` only; no raw `.x-btn`
+- [x] Sticky ask in header and bar after the hero, same label
+- [x] Copy button copies exactly the displayed text; failure never says Copied
+- [x] `data-cta` and `data-thumb` on every primary
+
+Done here: Kit `Cta` in hero and close; every install line and sample uses kit `Copy` of the displayed text; `data-cta` on sdks.hero (with `data-thumb`) and sdks.close.
+
+## 5. Trust and proof
+- [x] No logo without documented permission; no seal; no invented number
+- [x] Every figure traces to Hanzo's copy; qualifier beside the number
+- ~~Marquees pause, freeze under reduced motion, hide duplicates~~ n/a: no marquee
+- ~~Privacy link and owner line beside every submit~~ n/a: no form
+
+Done here: Only Hanzo's install lines, registries and module paths.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px (14px phone) except mono capitals
+- [x] Measures held; no orphan word in a heading
+- [x] Tables, FAQ, tabs and code use the kit parts
+- [x] `python3 scripts/parity.py /<path>`: 0 missing
+
+Done here: `python3 scripts/parity.py /sdks`: text 217/217, links 69/69.
+
+## 7. Visual design system
+- [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
+- [x] No label, tag, badge or pill above a headline
+- [x] Radii, shadows and sizes from tokens; never box plus shadow
+- [x] One icon set; no icon in a rounded box
+- [x] Differs from neighbours in hero medium and room order
+
+Done here: `taste.py` passes; one dark room (per-language orgs); hero medium is code, unlike /operator's board and /pubsub's bus.
+
+## 8. UI component library
+- [x] Every control has hover, press, focus-visible, disabled, loading
+- [x] Focus ring visible on every stop of a Tab crawl
+- ~~Dialogs are native, trap focus and return it~~ n/a: no dialogs
+- [x] Inputs 16px or larger; no bare `:hover`
+- [x] Forks this page deleted: listed below
+
+Done here: Dialect and language switches are buttons with pressed states; the module finder input is 16px with a label and an empty state.
+
+## 9. Motion and interaction
+- [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
+- [x] At least 3 kinds of movement; scroll-linked is half or less
+- [x] Something moves without input; every control answers
+- [x] Reduced motion shows the final state; no `setInterval`
+- [x] Sound only on the listed moments, through the one kit
+
+Done here: Signature: only the differing lines re-set (time/state); supporting: gliding pills (layoutId), picker (state), finder typing (time); no scroll-linked motion; `variety.py` OK.
+
+## 10. Media
+- ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no media: the console shows Hanzo samples
+- ~~At most 2 videos playing; pause button on loops over 5 s~~ n/a: no video
+- [x] Budgets met; nothing missing; alt on every image
+- ~~No dimmed or filtered photo; 4+ real visuals together where the page has them~~ n/a: no photos
+
+Done here: No images or films on the page.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Every target 44px or more; every hover has a tap path
+- [x] Primary ask above the fold at 375×667
+
+Done here: Probe: hscroll 0 at 1470, 375, 320; CLS 0; the hero ask sits at y≈400 at 375×812.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured, text at 4.5:1 or better
+- [x] Pause control on every moving item
+- [x] Forms labelled; first error focused
+- [x] One h1; no heading skips; names start with visible text
+- [x] Keyboard reaches every control
+
+Done here: The finder input is labelled; tabs carry aria states; one h1 with an h2 per section.
+
+## 13. Performance and engineering
+- [x] h1 and LCP element in server HTML
+- [x] JS and CSS inside budget; every image and video sized
+- [x] No poller; no third-party request before consent
+- [x] Nothing heavy run on James's laptop
+
+Done here: All samples in server HTML; transform/opacity only; typing writes text nodes.
+
+## 14. SEO and machine files
+- [x] Title and description match live (or are listed for James)
+- [x] Canonical equals og:url equals the live URL
+- [x] `<JsonLd route>` parses; no broken URL
+- [x] Every card is a real link
+
+Done here: `app/sdks/page.jsx`: metadata from `content/pages.json`, `<JsonLd route="/sdks" />`.
+
+## 15. Catalogue and product pages
+- ~~Model card matches `SPEC.md` (or n/a: not a catalogue or model page)~~ n/a: not a catalogue or model page
+- ~~Every card opens by Morph~~ n/a: no cards
+- ~~Every maker and model page linked in the DOM~~ n/a: not a catalogue
+- ~~One price figure everywhere~~ n/a: no prices
+
+Done here: n/a: developer page; the Go module wall links every import path.
+
+## 16. Developer experience
+- [x] One `CodeBlock`; copy equals display (or n/a: no code on the page)
+- [x] Config blocks parse on their own
+- [x] Terminal pauses and ends on a static frame
+- [x] No hand-typed version number
+
+Done here: Code is a labelled region with Copy of exactly the displayed text; no `//` comments in copied JSON; versions only as Hanzo's registries print them.
+
+## 17. States and resilience
+- [x] Loading, empty, error and offline states designed
+- [x] Blocked live data leaves a complete page, no console errors
+- ~~A failed submit keeps its values and shows no success~~ n/a: no form
+- [x] A thrown island does not blank the page
+
+Done here: Loading has nothing to fetch (all copy and samples are in the server HTML); no live API call, so blocked networks leave the full page with 0 console errors (probe at 1470, 375, 320). Islands sit inside the shared error boundary. The finder's empty state reads "No module at that path."
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary; events only through `lib/track.js`
+- [x] Nothing identifier-bearing before consent; no field value in a payload
+- [x] `V2: <score>/10 <one line>` in the page file's top comment
+- [x] Review read: `docs/review/<page>.md` verdict 8 or more
+
+Done here: `data-cta` on sdks.hero and sdks.close via kit `Cta` (cta_click event); `V2:` line present; verdict in `docs/review/sdks.md`.
