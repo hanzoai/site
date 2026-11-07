@@ -68,9 +68,9 @@ export default function Pareto() {
     <motion.section className="hv-pareto hv-room v2-sec" data-room="dark" id="pareto" aria-labelledby="pareto-h" ref={sec} style={{ clipPath: door }}>
       <div className="v2-wrap">
         <header className="hv-head v2-grid">
-          <Lines as="h2" id="pareto-h" className="v2-display-s hv-head-t" lines={['A New Pareto Frontier', 'of Intelligence']} />
+          <Lines as="h2" id="pareto-h" className="hv-h2 hv-head-t" lines={['A New Pareto Frontier of Intelligence']} />
           <div className="hv-head-r">
-            <p className="v2-lede">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
+            <p className="hv-lead">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
             <div className="hv-links">
               <Arrow href="/enso">How Enso routes</Arrow>
               <Arrow href="https://docs.hanzo.ai/docs/guides/cookbook/route">Route your own requests with Enso</Arrow>
@@ -90,7 +90,7 @@ export default function Pareto() {
             {[1, 3, 10, 30].map((v) => <text key={v} x={lx(v)} y={B + 26} textAnchor="middle" className="tick">${v}</text>)}
             <text x={L} y={T - 8} className="tick">GPQA Diamond %</text>
             <text x={R} y={B + 50} textAnchor="end" className="tick">cheaper ← $ per 1,000 questions → dearer</text>
-            <motion.rect x={L} y={T} height={B - T} width={cap - L} className="x-plot-zone" initial={false} animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
+            <motion.rect x={L} y={T} height={B - T} width={cap - L} className="x-plot-zone" initial={false} animate={{ width: cap - L }} transition={{ duration: 0.3, ease: [0, 0, 0.2, 1] }} />
             <motion.path d={path} className="front" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 1.6, ease: EASE, delay: 0.9 }} />
             {hot && (
               <g className="guide" aria-hidden="true">
@@ -115,7 +115,7 @@ export default function Pareto() {
                   onPointerEnter={() => show(p)} onPointerLeave={hide} onFocus={() => show(p)} onBlur={() => hide()}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={seen ? { opacity: lit ? 1 : 0.28, scale: 1 } : {}}
-                  transition={{ type: 'spring', stiffness: 360, damping: 20, delay: seen && !hot ? 0.15 + i * 0.05 : 0 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: seen && !hot ? 0.15 + i * 0.05 : 0 }}
                   style={{ originX: p.x + 'px', originY: p.y + 'px', transformBox: 'view-box' }}
                 >
                   {p.src ? <a href={p.src} target="_blank" rel="noopener noreferrer" aria-label={p.say}>{body}</a> : body}
