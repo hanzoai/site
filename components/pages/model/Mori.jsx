@@ -102,8 +102,8 @@ function Viewport() {
       }
       quads.sort((x, y) => y[0] - x[0]);
       for (const [, a, b, c2, e] of quads) {
-        if (m === 1) { const lit = Math.max(0, -nz[a] * 0.4 - nz[a + 1] * 0.55 - nz[a + 2] * 0.73); const v = Math.round(28 + lit * 215); g.fillStyle = `rgb(${v},${v},${v + 4})`; }
-        else g.fillStyle = `rgb(${Math.round((nz[a] * 0.5 + 0.5) * 255)},${Math.round((nz[a + 1] * 0.5 + 0.5) * 255)},${Math.round((-nz[a + 2] * 0.5 + 0.5) * 255)})`;
+        if (m === 1) { const lit = Math.max(0, -nz[a] * 0.35 - nz[a + 1] * 0.6 - nz[a + 2] * 0.72); const v = Math.round(64 + Math.pow(lit, 0.8) * 186); g.fillStyle = `rgb(${v},${v},${v})`; }
+        else { const v = Math.round(40 + (nz[a] * 0.3 + nz[a + 1] * 0.25 - nz[a + 2] * 0.45 + 0.5) * 200); const c = Math.max(24, Math.min(240, v)); g.fillStyle = `rgb(${c},${c},${c})`; } // normals as a grey relief, no hue
         g.beginPath(); g.moveTo(proj[a], proj[a + 1]); g.lineTo(proj[b], proj[b + 1]); g.lineTo(proj[c2], proj[c2 + 1]); g.lineTo(proj[e], proj[e + 1]); g.closePath(); g.fill();
       }
     }
@@ -160,7 +160,9 @@ export default function Mori() {
     <Creative
       slug="mori"
       shape={HEX}
-      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.6, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46])(W, H))}
+      pos="50% 75%"
+      subject={[0.6, 0.62]}
+      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.62, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46], [0.5, 0.75])(W, H))}
       over={EDGES}
       headClass="mr-v2"
       first="chapters"

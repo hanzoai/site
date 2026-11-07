@@ -17,5 +17,5 @@ export default async function Page({ params }) {
   const { slug } = await params;
   if (!SLUGS().includes(slug)) notFound();
   const doc = productDoc(slug);
-  return <><JsonLd route={'/blockchain/' + slug} />{doc.kind === 'directory' ? <Directory doc={doc} /> : <BlockPage doc={doc} all={coverage()} />}</>;
+  return <><JsonLd route={'/blockchain/' + slug} />{doc.kind === 'directory' ? <Directory doc={doc} all={coverage()} /> : <BlockPage doc={doc} all={coverage()} />}</>;
 }

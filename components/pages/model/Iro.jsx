@@ -132,6 +132,7 @@ export default function Iro() {
   return (
     <Creative
       slug="iro"
+      subject={[0.62, 0.55]}
       shape={SQUARE}
       headClass="ir-head"
       aim={(W, H, wide) => (wide ? null : [-0.12 * W, -0.25 * H])}

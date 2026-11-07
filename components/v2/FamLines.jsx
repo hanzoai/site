@@ -5,27 +5,24 @@
    - play="view" plays when it first reaches the screen (headings further down); it never hides text that is already
      on screen, and reduced motion shows the words still.
    The full text is in the HTML once for readers (x-sr) and once as the masked words (aria-hidden).
-   An h1 starts big and settles (MASTER.md, scale has rhythm): on a desktop it arrives as large as its column and the
-   space above allow (up to 84px from its 52px rest) and settles to its rest over the first 360px of scroll
-   (transform only; nothing reflows). settle={false} turns it off; phones and reduced motion keep it at rest. */
+   An h1 starts big and settles (MASTER.md, scale has rhythm): on a desktop it arrives at up to 72px (CSS, so the first
+   paint is already big) and shrinks to its 52px rest over the first 360px of scroll (transform only; nothing reflows).
+   settle={false} turns it off; phones and reduced motion keep it at rest. */
 import { useEffect, useRef } from 'react';
 
-/* the h1's arrival size: the largest scale that fits its column and the room above it, at most 84/52 */
+/* the h1 starts big and settles: its arrival size is plain CSS (.v2f-display[data-settle], up to 72px on a desktop),
+   so the server's first paint is already big and nothing pops after hydration; scroll then shrinks it to its 52px rest
+   over the first 360px (transform only, origin bottom left, so nothing reflows) */
 function useSettle(ref, on) {
   useEffect(() => {
     const el = ref.current;
     if (!on || !el || matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)').matches) return;
-    const words = el.querySelector('span[aria-hidden]');
-    const fit = () => {
-      const r = el.getBoundingClientRect(), w = words.getBoundingClientRect().width || 1, col = el.parentElement.getBoundingClientRect().width;
-      const above = r.top + scrollY - 76; // room under the header
-      return Math.max(1, Math.min(84 / 52, col / w, 1 + above / Math.max(1, r.height)));
-    };
-    let s0 = fit(), raf = 0;
+    const end = () => Math.min(1, 52 / (parseFloat(getComputedStyle(el).fontSize) || 52));
+    let e = end(), raf = 0;
     el.style.transformOrigin = '0% 100%';
-    const set = () => { raf = 0; const p = Math.min(1, Math.max(0, scrollY / 360)); el.style.transform = 'scale(' + (1 + (s0 - 1) * (1 - p)).toFixed(4) + ')'; };
+    const set = () => { raf = 0; const p = Math.min(1, Math.max(0, scrollY / 360)); el.style.transform = p ? 'scale(' + (1 - (1 - e) * p).toFixed(4) + ')' : ''; };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(set); };
-    const onResize = () => { el.style.transform = ''; s0 = fit(); set(); };
+    const onResize = () => { e = end(); set(); };
     set();
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onResize);
@@ -54,7 +51,7 @@ export default function FamLines({ text, as: Tag = 'h2', className = '', play = 
   }, [play]);
   const words = String(text || '').split(/\s+/).filter(Boolean);
   return (
-    <Tag ref={ref} className={'v2f-lines ' + className} data-play={play} style={{ '--d': delay + 'ms' }} {...rest}>
+    <Tag ref={ref} className={'v2f-lines ' + className} data-play={play} data-settle={settle && Tag === 'h1' ? '' : undefined} style={{ '--d': delay + 'ms' }} {...rest}>
       <span className="x-sr">{text}</span>
       <span aria-hidden="true">
         {words.map((w, i) => (

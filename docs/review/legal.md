@@ -1,166 +1,194 @@
 # /legal (index): James-eye review
 
-Verdict: 6/10
-First complaint: "The first screen's fine: big title, the paper moves. But the paper has grey bars where the words should be, so it looks like it's still loading, and the top sheet just blinks out instead of going to the back. After that it's a dead document: a paragraph, twelve grey boxes in rows of three, a bar chart that doesn't move, a list of emails. Nothing comes in as I scroll."
+Verdict: 7/10
+First complaint: "Much better. It's an index now, and I can find a document in a second. But the paper still doesn't go to the back: the next sheet just pops in front. On my phone the stamps stick out of the sheets in little bits, with the pause button sitting on the pile. And under the hero the list doesn't come in, it's just there."
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `303ba52` ("legal: JAMES.md pass"). Files hash (LegalIndex.jsx, LegalIndex.css, legalData.js, DocNodes.jsx, app/legal/page.jsx): `ffa4d97758f6`
-Walked 7 Nov 14:05–14:28 UTC on the dev server, moving, at 1470×801 and at 375×812 (touch emulation). I used load bursts, per-frame logs of the stack, a filter re-flow trace, hover and press probes, a card-open trace, JS off, reduced motion, and 320/375 width checks. The cookie note was skipped.
+Reviewed: branch `claude/youthful-gauss-hiiqm9`, walked at `9e2c486`. The page files last changed in `30e721f` (rhythm pass: h1 52px, no springs, `main#main`); before that, `2daa8e8` ("legal: stack deals real sheets…"). Files hash (LegalIndex.jsx, LegalIndex.css, legalData.js, app/legal/page.jsx): `8e5b538d13f0`. While I wrote this, HEAD moved to `2eb72b7`. That commit only touches shared files (NoJs refactor, rail-title wrap, slider CSS). The working tree also has one uncommitted Rhythm.css line. None of it changes the findings below.
+Walked: 7 Nov, 14:45–15:14 UTC, on the dev server, moving, at 1470×801 and 375×812 (touch emulation), plus 320 wide, JS off and reduced motion. I kept:
+- 10-frame load bursts and idle bursts;
+- a half-screen walk with a solid-button count at each stop;
+- a 15fps screencast of the deal;
+- a screencast scroll through the lower half;
+- entrance sampling every 100ms;
+- a fine-pointer hover and press log;
+- a deep-link test (`/legal#policies`);
+- a row-to-document open filmed at 10fps.
+
+The cookie note was skipped.
 Proof: `img/legal.jpg` (desktop first screen | phone first screen).
-Note: at 14:30, after this walk, another chat left uncommitted edits in two shared pieces this page uses: `components/v2/Settle.jsx` and `components/v2/x-gauss/LineMask.jsx`. Both change only the reduced-motion path, so the findings below stand.
 
-## The ask: is `data-ask="off"` right? Yes.
-- PLAN-COMPONENTS 2.4 says "none on legal and careers".
-- The persona is a reviewer trying to reach one document. On a phone, a sales bar under the thumb would sit over the very list they came to tap.
-- The page still has one solid ask in Hanzo's words. The header's "Try Hanzo" stayed solid and on screen at every scroll position I checked: 9 on desktop and 14 on phone. On this page the sticky header does the job of JAMES.md #5's "sticky after the hero". No `data-thumb` is needed.
-- What is still missing is measurement, not an ask. The header declares "Metric: document open", but no card carries `data-cta` (fix 6).
+Since the last review (6/10 at `303ba52`):
+- **These landed:**
+  - Every sheet prints Hanzo's own line for its document, so there are no grey bars.
+  - Sheets stay mounted.
+  - The pile fits 1470×801: the top sheet ends at y≈770, not 848.
+  - The 12 grey boxes became a ruled index. Each row has a 13px mono group label, a 28px title, Hanzo's sentence at 16px and an arrow disc. On hover the row fills #f2f2f2, shows `hanzo.ai/legal/<slug>`, and the arrow inverts and moves 3px.
+  - The chips are sticky (top 60px). The selected chip is an ink ring on white, not a second black pill.
+  - `#agreements`, `#policies` and `#notices-and-registers` select their chip and scroll to it. `/legal#policies` lands with Policies pressed and 5 rows.
+  - The status blockquote has margin 0.
+  - The mail links are 44px tall.
+  - There are 12 `data-cta`.
+  - "How these fit together" and "Contact" cut in when first scrolled to.
+  - The ladder grows (scaleY 0.3 → 1, 80ms stagger, about 800ms).
+  - The page is 5,621px on desktop (was 6,123) and 8,944px on phone (was 10,188).
+- **These did not land:**
+  - The deal still reads as a cut.
+  - The phone stamps and the pause on the pile.
+  - The index rows rising.
+  - The group h2s.
+  - The aria-labels "Show" and "Documents" in the register.
+  - The pause hidden with JS off.
+  - Print CSS.
+  - The stale "sepia" comments (LegalIndex.jsx line 3, LegalIndex.css line 1).
+  - The bare chip `:hover` (LegalIndex.css line 41).
+
+## The ask: still right to keep it off
+- `data-ask="off"` follows PLAN-COMPONENTS 2.4 ("none on legal and careers").
+- Since 15:01, MASTER 3.2 rule 6 says the one solid ask lives in the sticky header. The header's "Try Hanzo" is that ask here: solid and on screen at 15 of 15 stops on desktop and 23 of 23 on phone, and the only solid button at each one. Nothing floats over the content.
 
 ## The 11 answers
-1. **Does it sell in 5 seconds, and does something move within 1 second?** Yes on both.
-   - **What it is:** "Legal & Trust Center" at 120.5px with line height 0.92, the lede, and a fanned pile of paper.
-   - **Within 1 second:** the h1 lines cut in (frames 1–3 of the load burst) and the lede rises. The pile deals its first sheet about 2.4s after it comes into view.
-   - **But the hero object is cut and fake:**
-     - At 1470×801 the top sheet ends at y=848, 47px under the fold. That is Settle's 1.08 scale plus its 50px lift. The "draft · pending counsel" stamp sits on the fold line, and the 5th sheet runs to x=1475.
-     - At 375 the pile starts at y=500. The stamp wraps to two lines ("draft · pending / counsel") and the fold cuts it. The address is truncated to "hanzo.ai/legal/priva…".
-     - Each sheet shows 5 grey bars (`.lgi-sheet-l i`) instead of words, so it reads as a loading skeleton.
-2. **One in, one out, or a document?** A document.
-   - Page height is 6,123px on desktop and 10,188px on phone.
-   - Below the hero there are four static blocks:
-     - intro, 778px: a 38px statement plus a status card;
-     - catalogue, 1,679px on desktop and 3,232px on phone;
-     - "How these fit together", 881px;
-     - Contact, 780px.
-   - Nothing is pinned. No element below the first screen has any entrance, not even a fade. The h2s "How these fit together" and "Contact" are static, and the ladder and the mail rows are just there.
-3. **A real object in every section?** 2 of 5.
-   - **Hero:** the paper pile (yes, with skeleton bars).
-   - **"How these fit together":** the ladder, four bars at 176/264/352/440px with the first one inverted. It is an object, but it is static.
-   - **Intro:** no object, just a paragraph and a grey card with a dot that pings twice.
-   - **Catalogue:** chips and 12 grey text cards. The only graphic is a 40px arrow disc.
-   - **Contact:** type only.
-4. **One ask, sticky after the hero?** Yes, by design: the header's "Try Hanzo" (see above). Per viewport:
-   - The only other ink-filled pill is the selected "All 12" chip. It shares the screen with "Try Hanzo" at y≈1442 on desktop and from 1462 to 2192 on phone.
-   - It is a selected state, not an ask, but at squint it is a second black pill.
-5. **Does every hover and press answer?** Mostly.
-   - **Card hover answers well:** the card lifts 4px, the fill goes #f2f2f2 → #ececf0, and the arrow disc turns ink and nudges 3px.
-   - **Card press: nothing.** The transform stays at `translateY(-4px)`, with no scale and no 1px drop.
-   - **Chips:** hover turns the border ink, and press is scale 0.98 (from the shared button rule).
-   - **Mail links:** the underline draws in from 0 to 100%. No press state.
-   - **Pause:** press is 0.94.
-   - **Pointer on the hero:** none. The pile has no hover or tilt and cannot be clicked.
-   - **Bare `:hover`:** the chip, card, card-arrow and mail hovers are not wrapped in `@media (hover:hover)`, so on a phone a tapped card stays lifted when you come back.
-6. **Overlap, font swap, layout shift?**
-   - **Layout shift:** CLS is 0.0000 on both desktop and phone.
-   - **Font swap:** none seen in the 8-frame load burst; the h1 paints in Zen with its box steady.
-   - **Horizontal scroll:** none at 320 or 375.
-   - **Overlap:** on phone the pause disc (top 8, right 8 of `.lgi-stack`) sits on the fanned corners of the sheets.
-   - **Fold:** the pile is cut by the fold at both widths (see 1).
+1. **Sells in 5 seconds, moves within 1 second?** Yes.
+   - **Desktop:** the h1 "Legal & / Trust Center" is 52px (the Rhythm.css resting size, down from 120px) at y 280–389. "LEGAL" sits under it in mono, then the 21px lede, and the paper pile on the right is the big thing.
+   - **Phone:** the h1 sits at 164–248, then the lede, then the top two-thirds of the front sheet (pile 541–915).
+   - **Moves:** the h1 cuts in at first paint (CSS LineMask; mid-cut in the 554–603ms frames). The deal starts at 2.4s.
+   - **Squint:** the pile and the h1 are the two masses, and "Try Hanzo" is the only black pill.
+2. **One in, one out, or a document?** Better, but still five blocks in a row.
+   - **The blocks:**
+     - the hero;
+     - the statement (38px, 7 lines) and the status card;
+     - the index (about 1,150px on desktop);
+     - "How these fit together" with the ladder;
+     - Contact.
+   - **What arrives:** the two h2 cut-ins and the ladder.
+   - **What doesn't: the index rows.** Their `initial={{ y: 24 }}` is cancelled by `AnimatePresence initial={false}`, so the transform is `none` at every scroll position, sampled every 100ms through the catalogue.
+   - **The ladder triggers late:** `amount: 0.6` on bars already scaled to 0.3 means they sit as stubs until the ladder's top is about 35% down the screen.
+3. **A real object in every section?** 3 of 5, which is enough for a utility page.
+   - **Hero:** the paper pile, now printed with real lines.
+   - **Index:** the ruled list is itself the object, and its hover preview tells you something.
+   - **"How these fit together":** the ladder.
+   - **Statement and status:** no object, only a dot that pings twice.
+   - **Contact:** type only (32px addresses on hairlines).
+4. **One ask in the header, nothing floating, scale with rhythm?**
+   - **The ask:** yes; see above.
+   - **Rhythm:** mostly. Each screen has one big thing:
+     - the pile;
+     - then the 38px statement (MASTER's statement step is 32px);
+     - then the 28px row titles;
+     - then the ladder;
+     - then the 32px addresses under a 26px "Contact".
+5. **Every hover and press answers?** Mostly.
+   - **Rows:** the fill, the address and the arrow all answer. Press is `scale(.995)`, which you cannot see (the standard is 0.98 or a 1px drop).
+   - **Chips:** the border goes to ink, press 0.98. The hover is a bare `:hover` (line 41), so it sticks after a tap on phone.
+   - **Mail:** the underline draws in, press 1px.
+   - **Pause:** it inverts to ink, press 0.94.
+   - **The pile:** it does not answer the pointer at all.
+6. **Overlaps, font swap, layout shift?**
+   - **Clean:**
+     - CLS 0 on phone and 0.0002 on desktop (from the shared header);
+     - no font swap;
+     - no horizontal scroll at 320 or 375.
+   - **The phone stamps overflow their sheets.** `.lgi-sheet-s` is `white-space: nowrap`, and its rotated box runs past each sheet's right edge:
+     - front stamp at 53–284 against its sheet's 13–280;
+     - the back sheets' stamps at 84–305, 115–326 and 146–347.
+
+     So fragments ("el" and stamp corners) poke out to the right of and below the front sheet. They are visible in the proof's phone panel.
+   - **The phone pause sits on the pile:** 320–366 × 526–571, on the 4th sheet's corner (114–358 × 541–822).
+   - **The desktop pause floats:** 1421–1468, 2px from the viewport edge and apart from the pile's corner.
+   - **The sticky chip bar is see-through:** `rgba(255,255,255,.96)`, so the rows scrolling under it ghost through (the "Terms of Service" title shows behind the chips at y≈80).
 7. **Which reference, and is its motion there?**
-   - **chatgpt.com/business/enterprise (calm trust):** the closest. But "proof listed quietly" is undercut by the 3-up grey boxes, which are louder than the statement.
+   - **chatgpt.com/business/enterprise (calm trust):** yes now. A ruled index listed quietly, with the status beside the statement.
    - **apple (one idea per screen):** only the hero has it.
-   - **synchronized.studio (card opens into its page):** the wiring is there. The card title carries `data-morph`, and LegalDoc's h1 is the `data-morph-target`. I could not see the open in this walk: on the dev server, clicking "Privacy Policy" at scrollY 1639 scrolled the old page back to 0 over about 700ms, and /legal/privacy arrived about 3.5s later (see the shared-system notes). Re-check on a build.
+   - **synchronized.studio (a card opens into its page):** not seen. `data-morph` is on the row title, and the target is LegalDoc's h1. On the dev server a click on "Privacy Policy" faded /legal to white, held white for about 2.5s, and then /legal/privacy's h1 slid in. The title did not fly into the h1. This is shared Morph and dev-server speed; re-check on a build.
 8. **Different from its neighbours?** Partly.
-   - The paper pile is its own object.
-   - The composition matches /security's: a two-line h1 on the left and a stack of thin plates on the right. /trust is centred, and /legal/* opens on a numbered chapter card.
-   - The catalogue's grey 3-up cards look like most catalogue pages.
-9. **Are all 18 parts covered?** No; see below. `docs/coverage/legal.md` exists and is accurate, apart from two claims:
-   - "the top sheet slides to the back" (it unmounts; see 10);
-   - "a card opens into its document" (not verified here).
+   - **Its own:** the printed pile and the ruled index.
+   - **Shared with /security:** the first screen is still a two-line h1 on the left and a stack of thin plates on the right.
+9. **All 18 parts covered?** No; see below. `docs/coverage/legal.md` is stale:
+   - it uses the old numbered format, not MASTER §6's 18-heading card;
+   - it still describes "cards" that "re-flow" and "the top sheet slides to the back".
 10. **Banned tells?**
-    - **3 equal boxes in a row, with an explaining sentence under every tile.** These are on the clutter reject list. The catalogue is 4 rows of 3 equal grey cards. Each is `min-height: 300px`, and its title is pushed down by `margin-top: auto`, which leaves about 120px of empty grey between the mono label and the title. The sentences are Hanzo's and must stay; the box grid is the problem.
-    - **A lazy, browser-default look.** The status note is a `<blockquote>` that keeps the browser's `margin: 14px 40px`. Its text column is squeezed to 183px inside a 343px card on phone, and to 290px of 450px on desktop.
-    - **A broken signature.** The deal is a blink, not a deal. The per-frame log shows "Terms of Service" (z 10) removed from the DOM in one frame at 763ms; the other sheets then spring forward one step. The cause is that `k > 4 → return null`, with no exit animation, so the top sheet never travels to the back as the header comment says.
-    - **Clean on the rest of the list:**
-      - 0 UI hues on the page (the only hue is the shared footer's "Privacy choices" icon, #0072ce);
-      - no eyebrow: the "LEGAL" mono line sits 20px below the h1;
-      - no green, no gradient text, no fading buttons, no Inter.
-11. **Copy untouched?** Yes. Parity is 62/62 for text and 16/16 for links.
-    - **Decorative, `aria-hidden` additions:**
-      - the sheet addresses, "hanzo.ai/legal/<slug>", follow Hanzo's own "hanzo.ai/legal/<name>";
-      - the stamp "draft · pending counsel" re-punctuates "Status: draft, pending counsel.";
-      - the ladder numerals 01–04 are added; its words come from Hanzo's sentence.
-    - **New aria-labels:** "Show" (the chip group) and "Documents" (the catalogue section) are not in `content/ui-strings.json`.
+    - **Clean:**
+      - 0 UI hues (the only hue is the shared footer's privacy icon, rgb(0,114,206));
+      - no eyebrow over the h1 ("LEGAL" sits 20px under it);
+      - the 3-up box grid is gone;
+      - no fades, no green, no gradient text;
+      - nothing floats over content.
+    - **Remaining:**
+      - **Overlap on phone:** the stamp fragments and the pause on the pile. MASTER 3.3 bans overlap.
+      - **Repeated labels on phone:** every row repeats a 14px mono group label directly above its title, 12 times. MASTER allows tags that are not over an h1 or h2, but the chip above already says it.
+    - **`taste.py` passes.** The off-deck literals are #0a0a0b ×2 and #c7c7cc, plus a 10px radius on the stamp.
+11. **Copy untouched?** Yes. Parity 62/62 text and 16/16 links.
+    - **Decorative, `aria-hidden` additions:** the sheet addresses, the stamp "draft · pending counsel" and the ladder numerals 01–04.
+    - **Not in `content/ui-strings.json`:** the aria-labels "Show" (the chip group) and "Documents" (the section).
 
-## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy.** `Persona:`, `Goal:`, `CTA:` and `Metric:` are in the header of `LegalIndex.jsx`. But the goal is "reach the right document in one step", and the documents start at y=1628 on desktop and y=2114 on phone, two to three screens down, behind the statement.
-- **2.2 Navigation.** The anchors are kept, but `/legal#policies` lands on the chip row without selecting "Policies".
-- **2.3 First impression.** The hero is 790px at 801 high, so the next section does not peek. The hero object is cut by the fold at both widths.
-- **2.4 Conversion.** `data-ask="off"` is correct. `data-cta` count: 0.
-- **2.5 Legal typesetting.** The plan row asks for a "sticky index"; there is none. The chip row scrolls away.
-- **2.6 Content.**
-  - The 3-up box grid and the blockquote margins (see 10).
-  - Phone text floor: passes, with 0 runs under 14px. Desktop meta is 13px mono, which is within CANON.
-- **2.7 Visual system.**
-  - Radii 12, 20 and 28 are off CANON (6/10/16/24/32).
-  - Literal hex values: `#efefF2`, `#ececf0`, `#a1a1a6`, `#c7c7cc`.
-  - Three stale "sepia" comments: `LegalIndex.jsx` line 3, `LegalIndex.css` line 1, `app/legal/page.jsx` line 1. The colour itself is ink.
-- **2.8 Components.**
-  - 4 bare `:hover` rules.
-  - The card has no press state.
-  - Transitions use literal `.3s` and `.45s` instead of `--dur-*`.
-- **2.9 Motion.** The mix is good on the first screen and in the catalogue:
-  - arrival: the h1 cut-in and the lede rise;
-  - idle: the deal and the dot ping;
-  - scroll: Settle;
-  - state: the chip filter re-flows with a layout spring in about 200ms;
-  - pointer: card hover.
-
-  Scroll-linked motion is well under half. What is missing:
-  - nothing arrives below the catalogue;
-  - the hero object ignores the pointer;
-  - the signature's exit is a cut.
-- **2.11 Mobile.**
-  - The mail links are 22px tall (the plan asks for 44px).
-  - Hover stays stuck after a tap.
-  - The stamp wraps to two lines.
-  - The pause disc sits over the sheet corners.
-- **2.12 Accessibility.**
-  - Hanzo's three group h2s (Agreements, Policies, Notices and registers) now exist only as button text, so heading navigation cannot reach a group.
-  - "Show" and "Documents" are not in the register.
-  - With JS off, the pause button still renders and does nothing.
-- **2.18 Measurement.** There is no `data-cta` on the document links, so "document open" cannot be counted.
+## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18 and MASTER §2, measured)
+- **2.1 Strategy:**
+  - Persona, Goal, CTA, Metric, Signature and Beyond are in the header.
+  - But lines 3–7 still describe a "sepia accent", "cards that re-flow" and a top sheet that "slides to the back".
+  - There is no Ledger entry.
+- **2.3 First impression:** a hand-written hero, not `PageHero`. No Band ending, which is right for legal.
+- **2.5 Legal typesetting:** the sticky index is there. Print CSS is not (0 `@media print` rules for `lgi-`).
+- **2.6 Content:** the statement is 38px over 7 lines (MASTER's statement step is 32px).
+- **2.8 Components:**
+  - The row press is 0.995.
+  - The chip hover is bare.
+- **2.9 Motion:**
+  - The rows never arrive.
+  - The ladder triggers late.
+  - The deal is a cut: on the 15fps screencast, "Terms of Service" is on top in one frame and "Data Processing Addendum" is fully in front 67ms later. The outgoing sheet then fades behind the pile; you never see it travel to the back.
+- **2.11 Mobile:**
+  - The stamp fragments.
+  - The pause on the fan.
+  - The address truncated to "hanzo.ai/legal/priva…".
+- **2.12 Accessibility:**
+  - Hanzo's three group h2s (Agreements, Policies, Notices and registers) still exist only as chip text, so heading navigation reaches only "How these fit together" and "Contact".
+  - "Show" and "Documents" are not registered.
+  - With JS off the pause renders (display grid) and does nothing.
+  - A hydration error is logged under reduced motion (shared Settle).
+- **2.18 Measurement:** there are 12 `data-cta`, but each id repeats "legal" (`legal.doc.legal.terms`).
 - **Passing:**
-  - one h1 and one `main`;
-  - JS off legible at both widths, with 0 hidden text runs (the pile collapses to one sheet);
-  - reduced motion: 0 running animations after 4s, and the pile and dot hold still;
-  - one timer (`useEvery`), which stops off screen and while paused;
-  - the filter keeps hidden cards in the HTML (`ul[hidden]`, 7 when Policies is on);
-  - no raw `img`, `video` or `table`;
-  - no horizontal scroll at 320.
+  - one h1 and one main;
+  - JS off is legible at both widths (0 hidden text runs; the ladder shows at full height);
+  - reduced motion: 0 running animations, the h1 and pile hold still;
+  - one timer, which stops off screen and while paused;
+  - hidden rows stay in the HTML while a filter is on;
+  - no raw img, video or table;
+  - deep links select their chip.
 
-## Shared-system notes (not the page's fault, but they hurt it)
-- **The card open on the dev server.** Morph's 700ms cut-over calls `scrollTo(0)` on the old page. The click at y=1639 therefore showed the /legal hero again before the document arrived. This may be dev-compile slowness only; check on a build.
-- **The header at 320 wide.** "Try Hanzo" is clipped at the right edge.
-- **The only hue on the page** is the footer's "Privacy choices" toggle icon, #0072ce.
+## Shared-system notes (not the page's fault, but they touch it)
+- **The row-to-document open** showed a white hold of about 2.5s on the dev server, and the title did not land in the destination h1 (see 7).
+- **The header changed:** since 15:01 it is always solid and carries a sound toggle. Here that is the intended single ask.
+- **Settle** logs a hydration mismatch under reduced motion.
 
 ## Fixes (in order)
-1. **Make the signature a real deal on real paper.**
-   - **Keep the leaving sheet mounted.** Render the outgoing top sheet until its exit finishes: `AnimatePresence`, or render k ≤ 5 and only hide at k = 5. Animate it out and down-left (x −40, y +30, rotate −6), then back under the pile at z 0, so it visibly goes to the back.
-   - **Print words, not bars.** Replace the 5 grey bars with the document's own first line. That is Hanzo's lede for each doc, already read by `legalDoc(slug).lede`; keep it `aria-hidden` like the titles.
-   - **Fit the pile on the first screen.** At 1470×801 the bottom must be at 780 or less, not 848: lower Settle's `lift` to 0 and/or move `.lgi-sheet` from `top: 14%` to about 6%.
-   - **Phone fixes.** Keep the stamp on one line at 375, either with `white-space: nowrap` or a 13px stamp inside the 14px floor rule. Move the pause disc off the fan (bottom-left of the stack).
-2. **Replace the 12 grey boxes with a ruled index.** "Proof listed quietly", as on chatgpt enterprise:
-   - One row per document: the title at 28–30px on the left, Hanzo's sentence at 17px on the right, a mono group label and an arrow, on hairlines, with rows of about 88px.
-   - On hover, the arrow slides and the row shows its `hanzo.ai/legal/<slug>` address, so the hover tells you something.
-   - This keeps every word, removes the "3 equal boxes" reject, and roughly halves the catalogue (1,679px to about 1,000px on desktop, 3,232px to about 1,700px on phone).
-   - Make the chip row `position: sticky; top: 60px` inside the catalogue. That is the plan's sticky index.
-   - Let `#agreements`, `#policies` and `#notices-and-registers` select their chip.
-3. **Make the lower half arrive: one thing in per section.**
-   - The ladder bars grow from 0 on first view: `scaleY` from the bottom, 80ms stagger, 800ms, `--ease-out-expo`.
-   - "How these fit together" and "Contact" cut in with `LineMask`, like the h1.
-   - The index rows rise once as a list.
-   - The mail hairlines draw left to right.
-   - Under reduced motion, everything shows its final state.
-4. **Fix the status card.** Set `.lgi-status blockquote { margin: 0 }` so the note uses the card's full width, and align the dot to the first line.
-5. **Make every tap answer on touch.**
-   - Press: `.lgi-card:active` gets `scale(.98)`, or `translateY(1px)` on index rows.
-   - Wrap the chip, card and card-arrow hovers in `@media (hover:hover)`.
-   - Mail links on phone: at least 44px tall (`display: inline-block; padding: 11px 0`), up from 22px.
-6. **Measurement, register and outline.**
-   - Put `data-cta="legal.<slug>"` on each document link so "document open" exists.
-   - Add "Show" and "Documents" to `content/ui-strings.json`, or drop those aria-labels.
-   - Give each group a visually hidden h2 with Hanzo's group title, so heading navigation still reaches Agreements, Policies, and Notices and registers.
-   - Hide `.lgi-stack .w2-pause` in the `NoJs` sheet.
-7. **Tidy.**
-   - Make the selected chip an ink ring on white, not a solid ink pill, so "Try Hanzo" stays the only solid pill on screen.
-   - Move radii to CANON values.
-   - Swap the literal hex values for tokens.
-   - Delete the three stale "sepia" comments.
+1. **Make the deal a deal.**
+   - Keep the leaving sheet on top while it travels out: x −110%, rotate −8°, 450ms ease-emphasis.
+   - Only then drop its z-index and slide it in under the pile.
+   - Bring the next sheet forward after that, with a 200ms delay, not in the same frame.
+   - Under reduced motion it stays a cut.
+2. **Clean up the pile on phone, and seat the pause.**
+   - Keep the stamp inside its sheet: allow it to wrap at 375, or give `.lgi-sheet` `overflow: hidden`.
+   - Show the stamp on the top sheet only.
+   - Move the pause off the fan, to the stack's bottom-left or inside the front sheet's top-right corner.
+   - On desktop, bring the pause in from the viewport edge to the pile's own top corner.
+3. **Let the index arrive once.**
+   - Drop `initial={false}` on the `AnimatePresence`, or move the rise to the list: rows 16px → 0, 400ms, 60ms stagger, once.
+   - Lower the ladder's `amount` to about 0.25 so it grows as it enters.
+   - Under reduced motion, show the final state.
+4. **Make every tap visible.**
+   - Make the sticky chip bar opaque #fff, with a hairline under it while stuck.
+   - Wrap `.lgi-chips button:hover` in `@media (hover: hover)`.
+   - Change the row press to `translateY(1px)` or a scale of 0.98.
+5. **Fix the outline and the register.**
+   - Add a visually hidden h2 per group, with Hanzo's group titles.
+   - Register "Show" and "Documents", or drop them.
+   - Hide `.lgi-stack .w2-pause` in the NoJs sheet.
+   - Add print CSS for the index (one column, no pile, no chips).
+6. **Calm the middle.**
+   - Set the statement at the 32px statement step.
+   - On phone, drop the repeated mono group label above each row title (the chip already says it), or move it under the sentence.
+7. **Housekeeping.**
+   - Delete the stale comments.
+   - Rewrite `docs/coverage/legal.md` as MASTER's 18-heading card.
+   - Swap #0a0a0b and #c7c7cc for deck values.
+   - Change `data-cta` to `legal.doc.<slug>`.
+   - Add the Ledger line.

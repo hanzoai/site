@@ -24,6 +24,11 @@
 /* type: resting sizes of live hanzo.ai; at most three sizes among headline, lede and body in one view */
 .v2f-display { margin: 0; font-size: clamp(40px, 3.6vw, 52px); font-weight: 497; line-height: 1.04; letter-spacing: -.03em; text-wrap: balance; max-width: 18ch; }
 .v2f-display.mid, .v2f-display.small { font-size: clamp(36px, 3.1vw, 44px); }
+/* an h1 that settles arrives big (CSS, first paint) and shrinks to its 52px rest as you scroll (FamLines) */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .v2f-display[data-settle] { font-size: clamp(52px, 4.9vw, 72px); }
+  .v2f-display.mid[data-settle], .v2f-display.small[data-settle] { font-size: clamp(44px, 4.3vw, 64px); }
+}
 .v2f-head { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.2; letter-spacing: -.02em; text-wrap: balance; max-width: 24ch; }
 .v2f-title { margin: 0; font-size: 21px; font-weight: 497; line-height: 1.25; letter-spacing: -.015em; text-wrap: balance; }
 .v2f-lede { margin: 0; font-size: 20px; line-height: 1.45; letter-spacing: -.01em; color: var(--soft); max-width: 44ch; text-wrap: pretty; }

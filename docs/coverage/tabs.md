@@ -3,7 +3,7 @@
 Page file: `components/pages/Tabs.jsx` (+ `Tabs.css`, `tabsTree.js`) · gallery: `docs/gallery/tabs/` · metric id: `signup_start` (app hand-off to tabs.hanzo.ai)
 
 Open copy questions for James: "Browser", "Phone" and "Reset" are icon buttons with aria-labels only (not in `content/ui-strings.json`); add them to the register if visible labels are wanted.
-Shared changes requested (`docs/requests/tabs.md`): none yet. Noted for shared owners: no skip link exists in the shared chrome; `useEvery` (cloud/Frame.jsx) uses `setInterval`; `tokens.css` is not merged, so page CSS still carries deck-grey literals.
+Shared changes requested (`docs/requests/tabs.md`): none yet. Noted for shared owners (`docs/requests/templates.md` covers all Business 2 pages): the header's "Try Hanzo" is now always solid beside the page ask; `useEvery` (cloud/Frame.jsx) uses `setInterval`; `tokens.css` is not merged, so page CSS still carries deck-grey literals.
 Forks this page deleted: the old title-left/stage-under hero, the eyebrow-styled "HANZO TABS" label, the dark room's duplicate "Read the source" button (now the MIT tile itself), the map's black button-like "Open Tabs" tile, every spring transition.
 
 ## 1. Strategy and conversion
@@ -16,7 +16,7 @@ Forks this page deleted: the old title-left/stage-under hero, the eyebrow-styled
 Done here: Persona developers running coding agents in shells, metric `signup_start`. Gate script: 1 h1, max 1 solid per desktop viewport ("Open Tabs ↗" at y 0); the closing ask carries `data-thumb` so the bar steps aside.
 
 ## 2. Information architecture and navigation
-- [x] One `<main id="main">`; n/a skip link (shared chrome has none; noted above)
+- [x] One `<main id="main">`; the shared skip link reaches it
 - [x] Every link through `A`; the MIT tile is a real link to the source
 - [x] n/a breadcrumb: depth 1
 - [x] Link parity: 0 removed, 0 unexpected
@@ -28,10 +28,10 @@ Done here: `<main id="main" className="xtb w2 gx">`; `parity.py /tabs` → links
 - [x] Hero is the h1 line-mask cut-in + one primary + one object; nothing above the h1
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
-- [x] Ends in one ask in the dark room, then footer
+- [x] Ends in a band ("Keep tabs on your agents.", a small window closing and reopening a pane, "Open Tabs"), then footer
 - [x] n/a Morph: no cards that open into pages
 
-Done here: h1 "Keep tabs on your agents." (52px) and "Open Tabs" share one line; the window below is the composition and splits its own panes from load (tree grows in its sidebar). Gate: JS-off hidden text 0. Sections: window hero → pinned chapters → light map → dark room of 4 objects → one ask.
+Done here: h1 "Keep tabs on your agents." (52px) and "Open Tabs" share one line; the window below is the composition and splits its own panes from load (tree grows in its sidebar). Gate: JS-off hidden text 0. Sections: window hero → pinned chapters → light map (packets start when it is seen; hovering a machine sends its packet faster) → dark room of 4 objects with a pause → closing band.
 
 ## 4. Conversion system
 - [x] Kit `A` with `.w2-cta` (no raw `.x-btn`); n/a `<Cta>` until it merges
@@ -102,12 +102,12 @@ Done here: phone first screen shows h1 (2 lines at 40px), "Open Tabs", and four 
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: pane text #d1d1d6 / #a1a1a6 on #0b0b0c, body #48484a on white
-- [x] Pause control on every moving item (window bar, chapter visual)
+- [x] Pause control on every moving item (window bar, chapter visual, the dark room's heading row)
 - [x] n/a forms
 - [x] One h1; h2 → h3 order; names start with visible text
 - [x] Keyboard reaches every control (arrow keys on Browser/Phone)
 
-Done here: the chapter pause now sits under the visual (not on a pane); the hero pause lives in the window bar.
+Done here: the chapter pause sits under the visual; the hero pause lives in the window bar; the dark window and the command block draw a light focus ring (`data-room="dark"`).
 
 ## 13. Performance and engineering
 - [x] h1 and lede in server HTML
@@ -155,4 +155,4 @@ Done here: look.cjs at both widths reports errors none; closing every pane is re
 - [x] `V2:` line in `app/tabs/page.jsx`
 - [ ] Review read: `docs/review/tabs.md` verdict 8 or more (re-review pending after this rework)
 
-Done here: `tabs.hero`, `tabs.close`, `tabs.source`. Previous review 5/10; every numbered fix in it is addressed in this push.
+Done here: `tabs.hero`, `tabs.close`, `tabs.source`. Reviews: 5/10, then 7/10; the second review's five fixes are addressed (keep tile animates by transform only, map wakes in view, light focus on dark, closing band, phone key caps, tree 330px).

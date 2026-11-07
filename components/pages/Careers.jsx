@@ -16,7 +16,7 @@
    hiring card, the second solid button in Academic, solid "Apply" on every sheet.
    The role pages (/careers/<slug>) keep Careers.css; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
@@ -29,7 +29,7 @@ import './company/deck.css';
 import './CareersBoard.css';
 
 const EASE = [0.16, 1, 0.3, 1];
-const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}</style>' }; // JS off: the hero is legible
+const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n{display:none!important}</style>' }; // JS off: the hero is legible
 
 /* How we hire: the four steps slide through a mask by themselves (never two titles at once); tap a step to hold it. */
 function Hire({ how }) {
@@ -64,7 +64,7 @@ function Hire({ how }) {
         {how.steps.map(([t], i) => (
           <li key={t}>
             <button type="button" aria-pressed={i === at} onClick={() => { setMine(true); setAt(i); }}>
-              <i>{i < at && <u className="done" />}{i === at && <u key={at + (mine ? 'm' : '')} className={mine || calm ? 'done' : seen ? 'run' : 'wait'} />}</i>
+              <i>{i < at && <u className="done" />}{i === at && <u key={at + (mine ? 'm' : '')} className={mine ? 'done' : seen ? 'run' : 'wait'} />}</i>
               <span>{t}</span>
             </button>
           </li>
@@ -107,25 +107,26 @@ function Marked({ text, know }) {
 /* One role, one sheet. It sticks a little lower than the one before, and settles back as later sheets cover it. */
 /* The sheet opens into its page: its rectangle grows to fill the screen in the sheet's own grey, the role page
    arrives, and the cover wipes away (doorway.js). The site Morph is skipped here (data-no-morph): it times out today. */
-const open = (e, to, router) => openDoor(e, hrefOf(to), router, '#f5f5f7');
+const open = (e, to, router, el) => openDoor(e, hrefOf(to), router, '#fff', el);
 
 function Sheet({ r, i, n, know, progress }) {
   const router = useRouter();
+  const card = useRef(null);
   const [where, kind, team] = r.chips;
   const miss = know.length > 0 && !know.some((k) => asks(r, k));
   const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.028]);
   return (
     <li id={r.id} className={'xcb-sheet' + (miss ? ' miss' : '')} style={{ '--i': i }}>
-      <motion.div className="xcb-sheet-in" style={{ scale }}>
-        <A to={r.href} className="xcb-sheet-a" data-no-morph onClick={(e) => open(e, r.href, router)}>
+      <motion.div className="xcb-sheet-in" style={{ scale }} ref={card}>
+        <A to={r.href} className="xcb-sheet-a" data-no-morph onClick={(e) => open(e, r.href, router, card.current)}>
           <span className="xcb-sheet-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
           <span className="xcb-sheet-t">{r.title}</span>
           <span className="xcb-sheet-tags"><span>{team}</span><span>{where}</span><span>{kind}</span></span>
           <span className="xcb-sheet-d"><Marked text={r.desc} know={know} /></span>
         </A>
         <div className="xcb-sheet-act">
-          <Cta to={r.acts[0].href} kind="quiet" className="xcb-big" id={'careers.role.' + r.id} data-no-morph onClick={(e) => open(e, r.acts[0].href, router)}>{r.acts[0].text}</Cta>
-          <Cta to={r.acts[1].href} kind="link" className="xcb-tap" data-no-morph onClick={(e) => open(e, r.acts[1].href, router)}>{r.acts[1].text}</Cta>
+          <Cta to={r.acts[0].href} kind="quiet" className="xcb-big" id={'careers.role.' + r.id} data-no-morph onClick={(e) => open(e, r.acts[0].href, router, card.current)}>{r.acts[0].text}</Cta>
+          <Cta to={r.acts[1].href} kind="link" className="xcb-tap" data-no-morph onClick={(e) => open(e, r.acts[1].href, router, card.current)}>{r.acts[1].text}</Cta>
           <CopyDirect id={r.id} title={r.title} />
         </div>
       </motion.div>
@@ -181,10 +182,8 @@ const fig = (t) => /^([\d,]+\+)\s+(.*)$/.exec(t);
 export default function Careers({ d }) {
   useArrival();
   const roles = d.pos.leaves;
-  const teams = [...new Set(roles.map((l) => l.chips[2]))];
-  const [team, setTeam] = useState(null);
   const [know, setKnow] = useState([]);
-  const shown = roles.filter((l) => !team || l.chips[2] === team);
+  const shown = roles;
   const skills = SKILLS.filter((k) => roles.some((r) => asks(r, k)));
   const hits = shown.filter((r) => know.some((k) => asks(r, k))).length;
   const words = d.lines.join(' ').split(' ');
@@ -229,14 +228,6 @@ export default function Careers({ d }) {
             <p className="vc-lede">{d.pos.lede}</p>
           </div>
           <div className="xcb-tools">
-            <div className="xcb-filter" role="group" aria-label="Filter by team">
-              {[null, ...teams].map((t) => (
-                <button key={t || 'all'} type="button" aria-pressed={team === t} onClick={() => setTeam(t)}>
-                  {team === t && <motion.span layoutId="xcb-pill" className="xcb-pill" transition={{ duration: 0.3, ease: EASE }} />}
-                  <span>{t || 'All'}</span>
-                </button>
-              ))}
-            </div>
             <div className="xcb-know" role="group" aria-label="Match what you know">
               <span className="xcb-know-i" aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="10" r=".9" fill="currentColor" /></svg></span>
               {skills.map((k) => {
@@ -255,11 +246,7 @@ export default function Careers({ d }) {
           </div>
         </div>
         <div className="vc-wrap">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div key={team || 'all'} initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.36, ease: EASE }}>
-              <Deck roles={shown} know={know} dont={d.pos.dont} dontA={d.pos.dontA} />
-            </motion.div>
-          </AnimatePresence>
+          <Deck roles={shown} know={know} dont={d.pos.dont} dontA={d.pos.dontA} />
         </div>
       </section>
 

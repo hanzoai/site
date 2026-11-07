@@ -1,26 +1,27 @@
 'use client';
-/* Auto (v2, Cloud 4 chat). Archetype A, Launch: the page opens on the editor itself → six properties as an editorial index
-   with a preview that follows the cursor → the connectors → four figures in the one dark room → run it yourself. Accent:
-   flow indigo.
-   V2: 8/10 the hero is the flow editor, two runs racing a pod restart you can trigger; the six properties as a big-type index with a cursor-following preview (hamol/grubogrubo)
+/* Auto (v2, Cloud 4 chat). Archetype A, Launch: the page opens on the editor itself → six properties as an index that
+   opens one at a time → four figures in the one dark room → the connectors → Get Auto → one closing band.
+   Persona: a developer who wants workflows that survive a restart. Goal: open Auto.
+   CTA: "Open Auto" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:auto.primary.
+   V2: 8/10 the hero is the flow editor, two runs racing a pod restart you can trigger; six properties as an index whose open line grows and shows its picture; greys only, one ask, a closing band
    Signature: a run that survives the restart. The first screen is a React-Flow-style canvas; the same flow runs twice, once
    kept as a record and once held in a goroutine. Every other run the pod is rescheduled: the record resumes at the step it
    wrote down, the goroutine starts over from the trigger.
-   Beyond: "Restart the pod" yourself, at any moment, and watch which run keeps its place (Hanzo's own claim: a run is a
+   Beyond: restart the pod yourself, at any moment, and watch which run keeps its place (Hanzo's own claim: a run is a
    record, not a goroutine).
-   Motion: the running canvas (signature) + spring-follow preview + layout re-flow of the connector path + magnetic
-   primary. Every word and link is Hanzo's. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useSpring } from 'motion/react';
-import { EASE, Magnetic, fine } from '../../ui';
-import { A } from '../../kit';
-import { useLive, useEvery } from '../cloud/Frame';
+   Motion: the running canvas (signature, time, pausable) + the index line growing as it opens (state) + the connector
+   path re-flowing (state). Every word and link is Hanzo's. */
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { EASE } from '../../ui';
+import { Cta } from '../../kit';
 import Finale from '../../v2/Finale';
+import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import './Auto.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/auto';
 const OPEN = 'https://auto.hanzo.ai';
-const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, ease: EASE, delay: d } });
 const NODES = ['trigger', 'GitHub', 'Postgres', 'Slack', 'done'];
 const N = NODES.length;
 
@@ -43,24 +44,24 @@ function Lane({ label, at, crashed, kind }) {
 
 /* The canvas: both runs step together; every other run the pod is rescheduled at step 3. */
 function Run() {
-  const [ref, live] = useLive(0.25);
+  const [ref, live, , paused, toggle] = useDemo(0.25);
   const [rec, setRec] = useState(2);
   const [go, setGo] = useState(2);
   const [crash, setCrash] = useState(false);
   const [saved, setSaved] = useState(null);
   const [mine, setMine] = useState(false);
   const [loops, setLoops] = useState(0);
-  useEvery(950, live && !crash, () => {
+  useTick(950, live && !crash, () => {
     if (rec >= N) { setRec(0); setGo(0); setLoops((l) => l + 1); return; }
     setRec(rec + 1);
     setGo((v) => Math.min(N, v + 1));
   });
   useEffect(() => { if (!mine && live && !crash && rec === 2 && go === 2 && loops % 2 === 1) restart(); }, [rec, go, loops, live]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (crash) { const t = setTimeout(() => { setGo(0); setCrash(false); }, 1500); return () => clearTimeout(t); } }, [crash]);
   const restart = () => {
     if (crash) return;
     setSaved(rec);
     setCrash(true);
-    setTimeout(() => { setGo(0); setCrash(false); }, 1500);
   };
   return (
     <div className="au2-ed" ref={ref}>
@@ -68,6 +69,7 @@ function Run() {
         <span className="au2-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="l2-mono">React Flow · SSE</span>
         <span className="au2-pub l2-mono"><i />published</span>
+        <PauseBtn paused={paused} onClick={toggle} />
       </div>
       <div className="au2-canvas">
         <Lane label="A run kept as a record" at={rec} crashed={crash} kind="rec" />
@@ -82,7 +84,9 @@ function Run() {
         </AnimatePresence>
       </div>
       <div className="au2-foot">
-        <button type="button" className="x-btn solid" onClick={() => { setMine(true); restart(); }} disabled={crash}>Restart the pod</button>
+        <button type="button" className="au2-restart" onClick={() => { setMine(true); restart(); }} disabled={crash} aria-label="Restart the pod">
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.55M13 2.5v2.5h-2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
         <span className="l2-mono">Step state is written down as it goes.</span>
       </div>
     </div>
@@ -94,15 +98,17 @@ function Hero() {
     <section className="au2-hero" aria-labelledby="au2-h1">
       <div className="l2-wrap">
         <div className="au2-top">
-          <motion.p className="au2-url l2-mono" {...up(0)}><img src="/models/zen.webp" alt="" />auto.hanzo.ai</motion.p>
-          <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><motion.span initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.15, ease: EASE, delay: 0.08 }}>Hanzo Auto</motion.span></span></h1>
-          <motion.p className="l2-lede" {...up(0.3)}>Workflow automation in one binary</motion.p>
-          <motion.div className="l2-acts" {...up(0.42)}>
-            <Magnetic strength={0.25}><A to={OPEN} className="x-btn solid" data-thumb="Open Auto">Open Auto</A></Magnetic>
-            <A to={DOCS} className="x-btn">Documentation</A>
+          <div className="au2-name">
+            <h1 id="au2-h1" className="l2-display"><span className="l2-ln"><motion.span initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.06 }}>Hanzo Auto</motion.span></span></h1>
+            <motion.p className="l2-stage-kick l2-mono" {...up(0.2)}>auto.hanzo.ai</motion.p>
+          </div>
+          <motion.p className="l2-lede" {...up(0.28)}>Workflow automation in one binary</motion.p>
+          <motion.div className="l2-acts" {...up(0.36)}>
+            <Cta to={OPEN} id="primary" size="lg" thumb data-thumb="Open Auto">Open Auto</Cta>
+            <Cta to={DOCS} kind="link" id="docs">Documentation</Cta>
           </motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
+        <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}>
           <Run />
         </motion.div>
       </div>
@@ -129,43 +135,28 @@ function Mini({ i }) {
   return <div className="au2-m5 l2-mono"><span>connection</span><span className="k">Hanzo KMS</span><span className="k">Hanzo IAM</span></div>;
 }
 
-/* The six properties as an index of big lines; the open one shows its words, and a preview card follows the cursor. */
+/* The six properties as an index: each line rests small; the open one grows and shows its words and its picture. */
 function Index() {
   const [open, setOpen] = useState(0);
-  const [hover, setHover] = useState(-1);
-  const box = useRef(null);
-  const x = useSpring(0, { stiffness: 300, damping: 30 });
-  const y = useSpring(0, { stiffness: 300, damping: 30 });
-  const move = (e) => {
-    if (!fine(e)) return;
-    const r = box.current.getBoundingClientRect();
-    x.set(e.clientX - r.left + 28);
-    y.set(e.clientY - r.top - 90);
-  };
   return (
-    <section className="l2-sec au2-idx" ref={box} onPointerMove={move} onPointerLeave={() => setHover(-1)}>
+    <section className="l2-sec au2-idx">
       <div className="l2-wrap">
-        <div className="au2-idx-h">
-          <h2 className="l2-display m">A run that survives the restart</h2>
-        </div>
+        <h2 className="l2-head">A run that survives the restart</h2>
         <ol className="au2-list">
           {PROPS.map(([t, d], i) => (
-            <li key={t} className={open === i ? 'open' : ''} onPointerEnter={(e) => fine(e) && setHover(i)}>
+            <li key={t} className={open === i ? 'open' : ''}>
               <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
                 <span className="l2-ch-n">{String(i + 1).padStart(2, '0')} / 06</span>
                 <span className="au2-t">{t}</span>
-                <i aria-hidden="true">+</i>
+                <svg className="au2-x" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
               </button>
-              <div className="au2-d" aria-hidden={open !== i} inert={open !== i}>
-                <div><p className="l2-body">{d}</p><div className="au2-inline" aria-hidden="true"><Mini i={i} /></div></div>
+              <div className="au2-d" inert={open !== i}>
+                <div className="au2-d-in"><p className="l2-body">{d}</p><div className="au2-mini" aria-hidden="true"><Mini i={i} /></div></div>
               </div>
             </li>
           ))}
         </ol>
       </div>
-      <motion.div className={'au2-peek' + (hover >= 0 ? ' on' : '')} style={{ x, y }} aria-hidden="true">
-        {hover >= 0 && <Mini i={hover} />}
-      </motion.div>
     </section>
   );
 }
@@ -224,11 +215,11 @@ function Figures() {
 
 export default function Auto() {
   return (
-    <main className="l2-page au2" style={{ '--ac': '#525252' }}>
+    <main id="main" className="l2-page au2">
       <Hero />
       <Index />
-      <Pieces />
       <Figures />
+      <Pieces />
       <Finale
         name="Auto"
         head="Or run it yourself"

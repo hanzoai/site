@@ -4,7 +4,7 @@ Page file: `components/pages/Enterprise.jsx` (+ `Enterprise.css`) · gallery: `d
 
 Open copy questions for James: the CTA labels. The hero's live label is "Get Enterprise plan" and the old close said "Talk to sales". The Band's solid now repeats the hero ask (MASTER 4.2: one identical sales ask), and "Talk to sales" stays as its text link, so no wording changed. Also: years beside the customer figures (the case copy has none, so none are shown).
 Shared changes requested (`docs/requests/enterprise.md`): dock the shared ask bar so it never floats over content; kit `Band` blurs with JS off; kit `Film` has no pause control; `lib/cta.js`, `PageHero` and `tokens.css` are pending.
-Forks this page deleted: the repeated deployment block and its second sales button; the long dark GPU room (now a light instrument plus a drawer); the clip-path wipe; the split-flap results (they showed numbers that are not Hanzo's); the scrolling logo marquee (now a still row); the kicker over the h1; the light hand-made close (now kit `Band`); `Answers` (now kit `Faq`).
+Forks this page deleted: the 3×2 results grid (now a quiet ledger), four icons in rounded boxes (now one nested-walls drawing), the repeated deployment block and its second sales button; the long dark GPU room (now a light instrument plus a drawer); the clip-path wipe; the split-flap results (they showed numbers that are not Hanzo's); the scrolling logo marquee (now a still row); the kicker over the h1; the light hand-made close (now kit `Band`); `Answers` (now kit `Faq`).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -24,11 +24,11 @@ Done here: At 1470×801 the h1, lede, ask (bottom y=354), trust strip and three 
 Done here: Parity shows 23/23 links. "How Hanzo is secured" and "Trust center" are re-homed into the first-screen trust strip.
 
 ## 3. First impression and page narrative
-- [x] Sells in 5 s; something moves within 1 s without input (the first audit row lands at 0.9 s)
+- [x] Sells in 5 s; something moves within 1 s without input (the first audit row lands at 0.9 s; the h1 cuts in by CSS at first paint, so the server HTML is never blank)
 - [x] n/a: `PageHero` (not merged). Nothing above the h1; it cuts in by line mask at 700 ms with 60 ms between lines
 - [x] JS off: legible (0 invisible blocks; log rows stack); no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
-- [x] Ends in proof (the results board and the cloud row), `Band`, footer
+- [x] Ends in proof (the results ledger and the cloud row), `Band`, footer; Security carries an object (its settings panel lights the row you read)
 - [x] Card-to-page: the rack card grows into its drawer; case results are links (Morph)
 
 Done here: The order follows MASTER 4.2: hero with the sales ask; where it runs (four places, one in focus); trust strip (first screen, then Security right after the places); results; GPU detail one click down; `Band` with the same ask.
@@ -47,7 +47,7 @@ Done here: The ids are enterprise.hero, enterprise.platform and the Band's ask. 
 - [x] Marquee removed: the clouds are a still row, so there is no motion to pause
 - [x] n/a: no form on this page
 
-Done here: Results rise out of their masks once and show only Hanzo's value at every frame. The split-flap, which flashed other numbers, is gone.
+Done here: "16 of 16" is the one big figure (64px). The six commerce results are a quiet hairline ledger: figure 32px, line, company and case link. Each figure rises out of its mask once and shows only Hanzo's value at every frame.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals (the workspace render is decorative and `aria-hidden`)
@@ -73,7 +73,7 @@ Done here: The scale has rhythm. The h1 is 52px Book 497 and section headings 26
 - [x] n/a: no inputs
 - [x] Forks this page deleted: listed above
 
-Done here: Hovers change fill and tell you something (a prompt size reads on the instrument). Card lifts, the "+" spin and cursor labels are gone.
+Done here: Result rows have a press state. Text links reach 44px on touch (`pointer: coarse`). Hovers change fill and tell you something (a prompt size reads on the instrument). Card lifts, the "+" spin and cursor labels are gone.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups (`variety.py` OK)

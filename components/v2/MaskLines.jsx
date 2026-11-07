@@ -1,6 +1,7 @@
 'use client';
 /* MaskLines (components/v2, owned by the Wave 2 "Proof" chat). Kinetic type: each line of a heading rises out of its
-   own mask, once, when the heading is reached (VISION.md motion 4, "line-masked reveals, played once").
+   own mask, once, when the heading is reached (MASTER part 3: translateY 105% to 0, 700 ms, ease-emphasis, 60 ms
+   between lines).
    Usage:  <MaskLines as="h1" className="pf-display" lines={['Security', 'you can read.']} />
    - lines: the heading broken where it should break (12-18ch). The whole text is in the server HTML.
    - delay (s), amount (how much must be in view), id. Reduced motion: the final state, no movement. JS off: legible.
@@ -36,9 +37,9 @@ export default function MaskLines({ as = 'h2', lines, className = '', delay = 0,
         <span key={i} className="pf-mask-l">
           <motion.span
             className="pf-mask-in"
-            initial={reduce ? false : { y: '110%' }}
-            animate={(seen && ready) || reduce ? { y: '0%' } : { y: '110%' }}
-            transition={{ duration: 1, ease: EASE, delay: delay + i * 0.075 }}
+            initial={reduce ? false : { y: '105%' }}
+            animate={(seen && ready) || reduce ? { y: '0%' } : { y: '105%' }}
+            transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.06 }}
           >
             {l}
           </motion.span>

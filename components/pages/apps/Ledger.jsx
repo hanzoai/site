@@ -18,10 +18,9 @@ V2: 8/10 deck scale (h1 52, headings 26, one figure big per screen), the live bo
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../../ui';
-import { A, More } from '../../kit';
+import { A, More, Cta } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
-import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
@@ -142,8 +141,8 @@ function Hero() {
         <BizLines as="h1" id="ld-h1" className="bz-display ld-h1" lines={['Hanzo', 'Ledger']} now delay={0.05} />
         <p className="ld-copy"><span className="bz-lede ld-one">A double-entry ledger you post to over HTTP.</span> <span className="bz-body ld-more">Money here only ever moves: a posting names a source account, a destination account, an amount and an asset. There is no way to write a debit without its credit, because a one-sided entry is not something the API can express.</span></p>
         <div className="bz-acts ld-acts">
-          <BizAsk to={DOCS} thumb="Read the docs" cta="ledger.hero">Read the docs</BizAsk>
-          <More to={GH}>GitHub</More>
+          <Cta to={DOCS} id="ledger.hero" thumb>Read the docs</Cta>
+          <Cta to={GH} kind="link" id="ledger.github">GitHub</Cta>
         </div>
         <BizStage from={1.03} over={560} lift={40} className="ld-stage"><Book /></BizStage>
       </div>
@@ -238,7 +237,9 @@ function CapObject({ i }) {
 }
 
 function Caps() {
-  const [i, setI] = useState(0);
+  const [i, setI0] = useState(0);
+  const [moved, setMoved] = useState(false);
+  const setI = (k) => { setMoved(true); setI0(k); };
   const key = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setI((i + 1) % 3); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setI((i + 2) % 3); } };
   return (
     <section className="bz-sec ld-caps" data-room="dark" aria-labelledby="ld-caps-h">
@@ -256,7 +257,7 @@ function Caps() {
           ))}
         </div>
         {CAPS.map(([g, t, d], k) => (
-          <div key={t} className="ld-cap" role="tabpanel" id={'ld-cap-p' + k} aria-labelledby={'ld-cap-t' + k} hidden={i !== k}>
+          <div key={t} className={'ld-cap' + (moved ? ' moved' : '')} role="tabpanel" id={'ld-cap-p' + k} aria-labelledby={'ld-cap-t' + k} hidden={i !== k}>
             <div className="ld-cap-copy">
               <span className="ld-glyph x-mono" aria-hidden="true">{g}</span>
               <h3 className="bz-title">{t}</h3>
@@ -334,8 +335,8 @@ function Numscript() {
     <section className="bz-sec ld-nsec" aria-labelledby="ld-ns-h">
       <div className="bz-wrap bz-grid">
         <div className="ld-nsec-copy">
-          <p className="bz-kick">Numscript</p>
           <BizLines id="ld-ns-h" className="bz-display sm" lines={['One transaction,', 'however many', 'parties']} />
+          <p className="bz-kick">Numscript</p>
           <BizSheet label="See the request" kick="bash" title="One transaction, however many parties">
             <Code tabs={[{ k: 'bash', code: CODE }]} light mark="Idempotency-Key: order_42_payout" />
           </BizSheet>
@@ -357,7 +358,7 @@ function End() {
         <div className="ld-end-say">
           <BizLines id="ld-start-h" className="bz-display md" lines={['Get started', 'with Ledger']} />
           <p className="bz-lede">Post your first transaction over HTTP, or describe the whole split once in Numscript and let the ledger do the arithmetic.</p>
-          <div className="bz-acts"><BizAsk to={DOCS} cta="ledger.close">Read the docs</BizAsk></div>
+          <div className="bz-acts"><Cta to={DOCS} id="ledger.close">Read the docs</Cta></div>
         </div>
         <div className="ld-receipt bz-obj">
           <h2 className="bz-title">Get Ledger</h2>
@@ -381,9 +382,9 @@ export default function Ledger() {
     <main className="bz ld">
       <span data-ask-name="Hanzo Ledger" hidden />
       <Hero />
-      <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Scenes at={at} />}>
+      <BizChapters label="Every cent lands somewhere" className="ld-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <><h2 className="bz-headline ld-ch-h">Every cent lands somewhere</h2><Scenes at={at} /></>}>
         <header className="bz-wrap ld-ch-head">
-          <BizLines className="bz-display md" lines={['Every cent', 'lands somewhere']} />
+          <h2 className="bz-headline">Every cent lands somewhere</h2>
         </header>
       </BizChapters>
       <Caps />

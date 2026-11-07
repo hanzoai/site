@@ -7,11 +7,11 @@ header._z-z-header { view-transition-name: hz-header; }
 html[data-morph=open]::view-transition-old(root), html[data-morph=open]::view-transition-new(root),
 html[data-morph=land]::view-transition-old(root), html[data-morph=land]::view-transition-new(root) { animation: none; }
 ::view-transition-group(hz-morph) { animation-duration: .6s; animation-timing-function: cubic-bezier(.16, 1, .3, 1); z-index: 2; }
-::view-transition-old(hz-morph), ::view-transition-new(hz-morph) { height: 100%; width: 100%; object-fit: cover; overflow: clip; }
-html[data-morph=open]::view-transition-old(hz-morph) { animation: hz-fade-out .45s cubic-bezier(.22, 1, .36, 1) both; }
-html[data-morph=open]::view-transition-new(hz-morph) { animation: hz-fade-in .3s .12s cubic-bezier(.22, 1, .36, 1) both; }
-html[data-morph=land]::view-transition-old(hz-morph) { animation: hz-fade-out .5s .1s cubic-bezier(.22, 1, .36, 1) both; }
-html[data-morph=land]::view-transition-new(hz-morph) { animation: hz-fade-in .35s cubic-bezier(.22, 1, .36, 1) both; }
+::view-transition-old(hz-morph), ::view-transition-new(hz-morph) { height: 100%; width: 100%; object-fit: cover; overflow: clip; } /* the browser's own crossfade (plus-lighter): no dip between the two */
+::view-transition-group(hz-title) { animation-duration: .6s; animation-timing-function: cubic-bezier(.16, 1, .3, 1); z-index: 3; }
+::view-transition-old(hz-title), ::view-transition-new(hz-title) { height: 100%; width: auto; object-fit: none; object-position: left top; }
+html[data-morph=open]::view-transition-old(hz-morph) { animation: hz-fade-out .22s cubic-bezier(.22, 1, .36, 1) both; } /* the card's own text never shows magnified */
+html[data-morph=open]::view-transition-new(hz-morph) { animation: hz-fade-in .22s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes hz-fade-out { to { opacity: 0; } }
 @keyframes hz-fade-in { from { opacity: 0; } }
 .x-stage { position: fixed; inset: 0; z-index: 250; overflow: hidden; pointer-events: none; }
