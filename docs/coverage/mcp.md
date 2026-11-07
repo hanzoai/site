@@ -3,7 +3,7 @@
 Page file: `components/pages/McpPage.jsx` (+ `McpPage.css`) · gallery: `docs/gallery/mcp/` · metric id: `cta_click mcp.hero` (and `mcp.close`)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/mcp.md`): none new (the kit Copy now only says Copied when the clipboard write succeeds; the PageHero kit part is still not used here).
+Shared changes requested (`docs/requests/mcp.md`): the phone header should carry the page ask the way it does at 1470; the header ask clips at 320; the cookie card covers the phone hero; PageHero kit part.
 Forks this page deleted: the hand-written hero and close buttons (now kit Cta), the kit Band at the close (replaced by a page-local light close so the close holds one solid and a real object), the hand-built code panels (now kit CodeBlock), the orange tool stream and coloured bars, the 196px figures, sheet outlines and shadows, numbers above card titles, the drag cursor label, springs, setInterval, the stream's layout-animated rows (now transform-only).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -33,7 +33,7 @@ Done here: One <main class="a2 mcp"> inside the layout; every link through kit A
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px
 
-Done here: Nothing above the h1 (Hanzo's "Hanzo MCP · 260+ tools · 117 cloud services" sits under it as a grey mono caption); the tool-call stream runs from the first second. Hand-built hero, not PageHero. Order: hero, three figures, stacked runtime sheets, paste, domain rail, dark config room, light close, footer; the close replaces Band with the same words plus the repo card. Domain cards open by shared-element morph (layoutId).
+Done here: Nothing above the h1 (Hanzo's "Hanzo MCP · 260+ tools · 117 cloud services" sits under it as a grey mono caption); the tool-call stream runs from the first second. Phone is its own order: h1 (40px, 4 lines: Hanzo's words cannot fit 3 lines at 40 in 343px, they need about 29px), caption, the stream at three rows (top at y=374, 180px of it inside 660), then lede and asks. Hand-built hero, not PageHero. Order: hero, three figures, stacked runtime sheets, paste, domain rail, dark config room, light close, footer; the close replaces Band with the same words plus the repo card. Domain cards open by shared-element morph (layoutId).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -57,7 +57,7 @@ Done here: Only Hanzo's figures: 38, 1,538, 260+, 117, 34, 2ms, 6.4ms, Apache-2.
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /mcp`: 0 missing
 
-Done here: h1 52px (27.75px at 375, 24px at 320: 3 lines at each), section headings 26, lede 21, figures 64 growing 1.45x while they cross; mono captions 11.5px capitals. Parity: text 72/72, links 5/5. Code in kit CodeBlock (labels ".mcp.json" and "bash").
+Done here: h1 52px in 3 lines (40px in 4 lines at 375; 33px in the same 4 lines at 320); config captions wrap (nothing past x=375 or x=320), section headings 26, lede 21, figures 64 growing 1.45x while they cross; mono captions 11.5px capitals. Parity: text 72/72, links 5/5. Code in kit CodeBlock (labels ".mcp.json" and "bash").
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -75,7 +75,7 @@ Done here: taste.py OK on both files; zero hue: primary, "1,538" and the "+" in 
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Cards press to .98, the sheet close to .96, pause buttons grow 1.06 on hover, the repo link gets a grey fill, Copy brightens on dark; all hovers inside (hover: hover). The open sheet is a role=dialog div (not native <dialog>, because the card morphs into it): Escape closes, Tab stays inside, focus returns to the card (checked). Forks: see the line above part 1.
+Done here: Domain cards lift 4px on hover or focus and their chip row swaps to a preview with two more tool names and what remains ("+8"); Copy buttons are 44px tall at every width. Cards press to .98, the sheet close to .96, pause buttons grow 1.06 on hover, the repo link gets a grey fill, Copy brightens on dark; all hovers inside (hover: hover). The open sheet is a role=dialog div (not native <dialog>, because the card morphs into it): Escape closes, Tab stays inside, focus returns to the card (checked). Forks: see the line above part 1.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Cards press to .98, the sheet close to .96, pause buttons grow 1.06 o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the domain card morphs into its sheet (layoutId, 400ms ease-emphasis). Supporting: the live tool stream (time, 900ms timeouts, transform-only rows), the drag rail with fling (pointer) whose cards call one tool chip at a time (idle), stacked sheets and growing figures (scroll), and the close's terminal typing `npx -y hanzo mcp` once and resting on a static frame. Reduced motion stops every loop and shows the typed command whole. Sound comes only from the shared kit.
+Done here: Signature: the domain card morphs into its sheet (layoutId, 400ms ease-emphasis). Supporting: the live tool stream (time, 900ms timeouts, transform-only rows), the drag rail with fling (pointer), where only the card nearest the centre calls its tools and pulses its "+" (idle, one mover), stacked sheets where only the sheet on top runs its art, and growing figures (scroll). Arrival idles that end under 5 s: the figures' "+" breathe 3 times, the bash rows light in turn once, the close's terminal types `npx -y hanzo mcp` once and rests. Reduced motion stops every loop and shows the typed command whole. Sound comes only from the shared kit.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or films, every visual is drawn in the DOM
@@ -98,9 +98,9 @@ Done here: No media; the stream, sheets, rail and terminal are drawn with Hanzo'
 - [x] 375×812 and 1470×801 pass with no overlap
 - [x] No horizontal scroll at 320
 - [x] Every target 44px or more; every hover has a tap path
-- [x] Primary ask above the fold at 375×667
+- [ ] Primary ask above the fold at 375×667
 
-Done here: 375x812: h1 3 lines, "Browse 260+ tools" bottom at 555px (inside 667 and 812). 320: scrollWidth 320, h1 3 lines. Phone audit of main a/button finds 0 targets under 44px (CodeBlock Copy raised to 44px page-locally; links 44px min-height). 1470x801: the stacked sheets overlap by design (each covers the last).
+Done here: 375x812: h1 40px in 4 lines, stream inside 660, "Browse 260+ tools" bottom at 790px (inside 812; below 667 because the stream now comes first). 320: scrollWidth 320, 0 elements past x=320, the sheet chips tighten under 360px. Phone audit of main a/button finds 0 targets under 44px (CodeBlock Copy raised to 44px page-locally; links 44px min-height). 1470x801: the stacked sheets overlap by design (each covers the last).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -141,7 +141,7 @@ Done here: Not a catalogue; the six domain cards open in place by morph.
 - [x] Terminal pauses and ends on a static frame
 - [x] No hand-typed version number
 
-Done here: Two kit CodeBlocks, each with its own Copy: ".mcp.json" (pure JSON, JSON.parse of the copied text passes in Playwright) and "bash" (npm i -g hanzo / hanzo mcp / hanzo mcp -t sse). Hanzo's two comment lines sit above each block as captions. The close's terminal types once and rests on "hanzo mcp · stdio". No version numbers.
+Done here: ".mcp.json" is a kit CodeBlock (pure JSON, JSON.parse of the copied text passes in Playwright). "bash" is a page-local block in the CodeBlock's skin with one kit Copy per command: copies are exactly `npm i -g hanzo`, `hanzo mcp`, `hanzo mcp -t sse` (checked), so a paste runs in default zsh and never queues a blocking `hanzo mcp`; "$ " and Hanzo's `#` notes are shown with user-select:none. Hanzo's two comment lines sit above each block as captions. The close's terminal types once and rests on "hanzo mcp · stdio". No version numbers.
 
 ## 17. States and resilience
 - [x] Loading, empty, error and offline states designed

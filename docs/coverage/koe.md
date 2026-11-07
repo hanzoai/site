@@ -1,6 +1,6 @@
 # /koe coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/model/Koe.jsx` on `components/pages/model/Creative.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/koe/` · metric id: `contact_sales_submit`
+Page file: `components/pages/model/Koe.jsx` on its page-local `KoeCreative.jsx` (Koe's copy of the family `Creative.jsx`) and `KoePanels.jsx`, on `components/v2/Launch.jsx` · gallery: `docs/gallery/koe/` · metric id: `contact_sales_submit`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
 Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
@@ -13,7 +13,7 @@ Forks this page deleted: our scene headings, raw `.x-btn` asks (now `Cta`), raw 
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: model page, prices are the model's own)
 - [x] Open copy questions for James listed, none decided
 
-Done here: `app/koe/page.jsx` carries Persona, Goal, CTA, Metric `contact_sales_submit`, Signature and Beyond. The one solid fill on each screen is Hanzo's header "Try Hanzo"; the page's ask "Request access" (/research-access?models=koe, outlined) shows on the first screen over the film, then beside the settled headline, then in the closing Band. One h1 ("Koe") is in the server HTML.
+Done here: `app/koe/page.jsx` carries Persona, Goal, CTA, Metric `contact_sales_submit`, Signature and Beyond. One solid fill per screen, measured at 1470×801, 375×812 and 375×667: Koe's own "Request access" (/research-access?models=koe) is the solid one while it shows. It is white on the film on the first screen and ink beside the settled headline (`KoeCreative.jsx`), and the header's ask is outlined meanwhile (`html[data-ko-ask]`, Koe.jsx + Koe.css). Once it has scrolled by, the header's ask is the solid one. The closing Band repeats it. One h1 ("Koe") is in the server HTML and stays visible after the settle.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -31,7 +31,13 @@ Done here: the skip link in `app/layout.jsx` reaches `#main`. Every link goes th
 - [x] Ends in proof strip, `Band`, footer
 - [x] Card-to-page links use Morph; title lands within 12px (the model cards use the WebGL opener, which lands the picture as this page's hero)
 
-Done here: Koe's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a tall voice capsule left of the headline (a pill on phones), and Hanzo's headline rises beside it. On phones the settled pill keeps speaking: the film keeps playing and slowly breathes (scale 1 to 1.1 over 7s), a playhead sweeps it every 6s and a 28-bar level meter moves at its foot (measured 15% of the 375×812 screen changing over 2.5s at rest; 0% once Pause is pressed). Then come four capability chapters first, then the demo; each chapter frames Koe's own film and plays it while its chapter is read, then the booth: a voice waveform streams while the phonemes of "Hanzo" light in step, four acting presets, with Pause, Hanzo's model-card grid and the `Band`. Entrance states are scoped to `html.js`.
+Done here: Koe's own film plays full-bleed under the h1 cut-in within the first second. It then settles into a tall voice capsule left of the headline (a pill on phones), and Hanzo's headline rises beside it. On phones the settled pill keeps speaking: the film keeps playing and slowly breathes (scale 1 to 1.1 over 7s), a playhead sweeps it every 6s and a 28-bar level meter moves at its foot (measured 15% of the 375×812 screen changing over 2.5s at rest; 0% once Pause is pressed). Once settled, the h1 "Koe" rests visibly at 52px above the headline on desktop and at 44px in the white band above the pill on phones. Then come four capability chapters, then the demo. Each chapter draws its own booth-derived picture (`KoePanels.jsx`, canvas):
+- a pitch contour re-performing over level bars (emotional modulation);
+- two waveforms under one shared envelope (cross-lingual cloning);
+- the mouth shape of each phoneme of "Hanzo" opening on its timeline slot (viseme dubbing);
+- a watermarked waveform with a provenance chain filling block by block (likeness rights).
+
+So Koe's wave film shows only on the stage, the map card and the model card. Then the booth: a voice waveform streams while the phonemes of "Hanzo" light in step, four acting presets, with Pause, Hanzo's model-card grid and the `Band`. Entrance states are scoped to `html.js`.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -39,7 +45,7 @@ Done here: Koe's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: the header carries the one solid "Try Hanzo"; the page's own asks are outlined (`<Cta kind="quiet" thumb>`), and on phones the shared bar carries "Request access" after the hero. `data-cta` ids: `koe.first` (first screen), `koe.hero` (headline), `koe.preview` (preview).
+Done here: the page's own ask is solid while it shows: `<Cta thumb>` beside the settled headline, and the film ask filled white on the first screen. The header's ask is outlined while either shows and solid after (desktop: Hanzo's header swaps to "Request access"). On phones the shared bar carries "Request access" after the hero. `data-cta` ids: `koe.first` (first screen), `koe.hero` (headline), `koe.preview` (preview).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -64,7 +70,7 @@ Done here: parity text 58/58, links 4/4. Section headings rest at 26px, the sett
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a0a, #525252, #737373, #a3a3a3 on black), Book 497 headings, radii 24 on tiles and 20 on Hanzo's art cards. Black rooms: the closing Band (the studio window is the black object). /koe has its own settle shape (a tall voice capsule left of the headline (a pill on phones)), its own demo and its own scene order among the six creative pages.
+Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a0a, #525252, #737373, #a3a3a3 on black), Book 497 headings, radii 24 on tiles and 20 on Hanzo's art cards. Black rooms: the closing Band (the studio window is the black object, a flat fill with no shadow, since it is a static tile). Section captions ("In production", "Hanzo Creative AI") sit under their headings. /koe has its own settle shape (a tall voice capsule left of the headline (a pill on phones)), its own demo and its own scene order among the six creative pages.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -73,7 +79,14 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. The stage's × close inverts on hover (white fill and ink glyph over the film; ink fill and white glyph once the film has settled onto the white page) and turns 90°; it presses to scale .9 with a darker fill. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. The stage's × close inverts on hover (white fill and ink glyph over the film; ink fill and white glyph once the film has settled onto the white page) and turns 90°; it presses to scale .9 with a darker fill. Measured with hover emulated:
+- the solid hero ask goes #0a0a0a to #2c2c2e and presses to .97;
+- the white film ask goes #fafafa to #e5e5e5;
+- "Try it in Design →" moves its arrow 4px right and takes a 1px ink underline (offset 3px, 150ms);
+- the outlined header ask fills #f5f5f5;
+- any quiet button in the body fills #f5f5f5 with a black-18% border.
+
+Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -82,7 +95,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Ch
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
 - [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
 
-Done here: Signature: the booth: a voice waveform streams while the phonemes of "Hanzo" light in step, four acting presets, with Pause. Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin, and the settled pill keeps its playhead and level meter moving (CSS transforms only, stopped by the page Pause through `[data-mpaused]`, hidden under reduced motion). Koe also undoes the stage film's own off-screen pause while the stage is on screen, so the film never freezes while Pause says playing. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
+Done here: Signature: the booth: a voice waveform streams while the phonemes of "Hanzo" light in step, four acting presets, with Pause. Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). The chapter and fits pictures loop on screen only, are held by the page Pause, and show one still frame under reduced motion. Phones settle the stage by time, with no pin, and the settled pill keeps its playhead and level meter moving (CSS transforms only, stopped by the page Pause through `[data-mpaused]`, hidden under reduced motion). Koe also undoes the stage film's own off-screen pause while the stage is on screen, so the film never freezes while Pause says playing. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, `Film`, shared `ModelFilm`)
@@ -90,7 +103,7 @@ Done here: Signature: the booth: a voice waveform streams while the phonemes of 
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them
 
-Done here: Hanzo's own films are unfiltered; the only dimming is a gradient under the name. `ModelFilm` holds at most two films playing at once. The stage's `FilmPause` stops every film and the page's self-running demos. The model-card grid puts nine real model films and posters on screen together.
+Done here: Hanzo's own films are unfiltered; the only dimming is a gradient under the name. Koe's one film (`koe.webm`) appears three times: the stage, the map card and the model card. The chapters and "Where Koe fits" carry five different drawn Koe pictures instead. `ModelFilm` holds at most two films playing at once. The stage's `FilmPause` stops every film, the booth and the drawn pictures. The model-card grid puts nine real model films and posters on screen together.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -98,7 +111,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. The pill starts 8px under the × close and ends 28px above the headline (measured at 375×812: pill 136 to 413, headline from 441; at 320×568: pill 136 to 306, headline from 330). Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. The pill starts 8px under the × close and ends 28px above the headline (measured at 375×812: pill 136 to 413, headline from 441). Short phones get a slimmer pill, and the ask comes straight under the headline. At 375×667 the solid "Request access" sits at y 373 to 417, clear above the cookie card (top 448). The pause disc docks on the settled pill's right end (desktop: the capsule's foot), not on white. The map's field tabs are one row that scrolls sideways, with the next field peeking, and the chosen field scrolls into view. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -147,7 +160,7 @@ Done here: n/a: no code block on this page.
 - [ ] n/a: a failed submit keeps its values and shows no success (no form)
 - [x] A thrown island does not blank the page (`app/error.jsx` keeps header and footer)
 
-Done here: JS off shows every word. Reduced motion shows the settled stage and the demo's final frame, with no pin. With media blocked, the posters and black frames stand in at their reserved size.
+Done here: JS off shows every word. Reduced motion shows the calm layout: the full-bleed film with "Koe", its lede and ask, then the headline, lede and asks below it. It also shows the demo's final frame and one still frame in each drawn picture, with no pin. With media blocked, the posters and black frames stand in at their reserved size.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
@@ -155,4 +168,10 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/koe.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`: first screens `desktop-1470.png` and `phone-375.png`, filmed sheets `d-sheet-01.jpg` and `p-sheet-01.jpg`, plus the earlier desktop film and phone stills. This card is refreshed after each review.
+Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`:
+- settled first screens: `desktop-1470.png`, `phone-375.png` and `phone-375x667-cookie.png`;
+- two drawn chapter panels: `chapter-2-clone.png` and `chapter-3-visemes.png`;
+- filmed sheets: `d-sheet-01.jpg` and `p-sheet-01.jpg`;
+- the earlier desktop film and phone stills.
+
+The filmed walk measured 0 still screens on desktop. On phone the only still screen is the one right after the tool taps Pause. This card is refreshed after each review.

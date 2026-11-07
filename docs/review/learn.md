@@ -1,39 +1,42 @@
 # /learn — James-eye review
 
-Reviewed: main at `648b798` (page files at `57dfa0a`; shared ask fix `d2b5ab8c` in), 7 Nov 15:18 UTC, under MASTER.md. Earlier: 6/10 at `84c407e`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
+Verdict: 7/10
+First complaint: "The map at the top is lovely, then I scroll and there's a whole screen of nothing, then a row of grey boxes with big numbers in them. That's the lazy look. And it just stops at the questions; where's the ask at the end?"
 
-Verdict: 6/10 (no card; a document after the map)
-
-First complaint: "The map at the top is good. After it, it's a pile of cards, a banner, a list of blog posts and questions. It goes on and on."
-
-**Cap: part card (MASTER section 6).** There is no `docs/coverage/learn.md`. Capped at 7 until the card is copied from `docs/coverage/_TEMPLATE.md` with 18 `Done here:` lines true on the page.
-
-**Floats over content (MASTER 3.2 rule 6):** passes; nothing fixed over content on either size.
-
-**Scale (MASTER 3.1):** no screen is everything big at once. But after the hero nothing is big at all: card titles, the University banner and the blog titles sit at the same medium size for six screens, so there is no rhythm either. Give each section one thing that leads.
-
-## What changed since the last review
-Fixed: the teal is gone (stops, train, pills and arrows in greys), "• LEARN" no longer sits above the h1, and the section pills are gone from above the headlines. The lede now sits beside the h1 (8/5 split).
+Walked: 7 Nov 2026 (session clock), dev server, route warmed first. 1470x801 (wheel in 8 steps per screen, dwell ~2 s, frame diffs at rest, video recorded) and 375x812 (isMobile, touch; CDP touch swipes of ~780px, one real screen per step, dwell and frame diffs). Hover with fine pointer emulated via CDP (`(hover: hover)` confirmed true). Clicked and keyed the stations, stepped/dragged/threw the rail, swiped it on phone, paused and resumed both films, hovered/opened FAQ items and deep-linked `#q-how-much-does-it-cost-to-use`. Checked 320 width, 375x667 fold, reduced motion, JS off, CLS, console. `parity.py /learn`: 69/69 text, 26/26 links. `taste.py` on Learn.jsx/.css: OK.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: "Learn Hanzo", "Get started", and the transit map whose train rides the Start-here line by itself (Getting started → CLI → API reference → Agents → MCP).
-2. **One in, one out?** Only for the map. After it: numbered cards (01–06), the "Hanzo University" banner, "From the blog", "Read the thinking", "Questions". A document.
-3. **A real object in every section?** The map, yes. The rest are text cards and lists.
-4. **One ask, sticky after the hero?** The sticky header carries a solid "Try Hanzo"; the page's "Get started" is solid on the first screen too (the shared header, see `_shared.md`). "Get started" itself does not follow you.
-5. **Every hover and press answers?** The map stops and cards answer. "Hanzo University" (the hero link) does not change on hover.
-6. **Overlap, font swap, layout shift?** None; layout shift 0.0002 and 0.0005.
-7. **Which reference, and is its motion there?** hamol.studio numbered catalogue and an Apple-style self-running demo. Present for the map only.
-8. **Different from its neighbours?** Yes: the transit map is its own.
-9. **All 18 parts covered?** No card (cap above).
-10. **Banned tells?** A document after the hero (six sections of cards and links).
-11. **Copy untouched?** Words unchanged since parity 69/69 text, 26/26 links; the route words flagged last time are gone.
+1. **Sells in 5 s / moves within 1 s?** Sells: "Learn Hanzo" (52px, baseline at 316px = 39% of 801), lede, solid "Get started" all in the first screen at both sizes (phone CTA bottom at 295px, also above the fold at 375x667). Within 1 s only the arrival plays (h1 line cut-in, side and map fade-ups). The live object, the train, makes its first move at 2.8 s (`setTimeout(…, 2800)`), not "within a second" as the coverage card claims. It then rides to MCP and stops; at ~14 s the hero frame diff is 0.0000.
+2. **One in, one out, or a document?** Mostly scenes, but the desktop seam between the map and the rail is a dead screen: at scrollY 720 about 330px of empty white sits between the map's foot and "Pick what to try" (hero bottom padding up to 200px plus section padding). The Questions screen and everything after it are fully still (rest diff 0.0000 at desktop screen 5 and phone screens 5–9). No closing ask: Questions runs straight into the footer.
+3. **A real visual object in every section?** Hero: yes, the transit map is a real, working object. Go further: yes, Zen's film (720px, 8 s, loops, pausable). Dark room: Kai's film in the third post, but the 44px lead post is a 440px-tall #171717 slab whose top half is empty. "Pick what to try": six grey #f5f5f7 tiles, each a 64px grey numeral over a big empty middle and a title. A numeral is not a product visual; it reads as placeholder cards. "Read the thinking": three text links. Questions: the 64px number, fine.
+4. **One ask, sticky, nothing floating; scale rhythm?** Good. Header ask is outlined while the hero's "Get started" is visible, then turns solid and relabels "Get started" (desktop). One solid per viewport measured on the first screen. Nothing of the page floats over content (the cookie card is site chrome; on phone it covers about the bottom 220px). Rhythm mostly holds: one 52/64/44px thing per screen with 21px titles and 16px body. Exception: the rail shows four 64px numerals at once, so it is the one screen where everything is the same size.
+5. **Every hover and press answers, no jumps?** Mostly. Hero CTA bg #0a0a0a to #2c2c2e. University link arrow +4px. Stations: ring inks. Guide arrow translate(3,-3). Rail card: numeral inks and lifts 4px, title underlines (the tile fill does not change: card and hover both resolve to #e8e8ed after the idle ink). Rows and thinking arrows move 4px. Film cards scale video 1.03. Presses use scale .97. Rail: Next steps 327px ("02 / 06"), a mouse throw went 327 to 627 to 795 px with inertia and fired no click, a phone touch swipe moved 300px. Stations: click and ArrowLeft/Right work, focus follows. **Bug:** hovering an FAQ question underlines the whole button, and that underline is drawn under the "+" glyph too, so the open state's 45° rotation renders as a broken "\x" icon while the pointer is still on it (screenshot `faq-icon.png`). Cause: `.xlr-qa .x-faq button:hover { text-decoration: underline }` reaching the `<i>`.
+6. **Overlaps, font swap, layout shift?** CLS 0.0004 desktop and 0.0011 phone, both tiny. No horizontal scroll at 375 or 320 (scrollWidth 320). No overlap of h1, CTA or nav. In the first desktop load the dev badge showed "1 Issue" (React hydration attribute mismatch). It did not come back in 4 later loads at 1470 and 375 with 0 console errors, so it is intermittent, likely from parallel edits or shared chrome, but someone should check it. Reduced motion: the train stays on 01, only one `xp-cut` animation is left, final state shown. JS off: h1 and all copy legible.
+7. **Which reference, and is its motion there?** Closest is osply/hamol in its editorial restraint plus an Apple-style one-object hero. The pointer and state micro-motion is real (throwable rail, the pointer-following question number, station tabs). Nothing from synchronized.studio (the rail cards carry `data-morph`, but nothing visibly opens into a page here). No pinned scene, no scrub.
+8. **Different from neighbours?** Yes. A transit map with a riding train is its own hero medium and signature; no other page I know of uses it.
+9. **18 parts?** See below. The main gaps: no closing `Band`/ask, fade-up budget, FAQ hash sync is one-way, no 4+ media block.
+10. **Banned tells?** No hue, gradient text, Inter, emoji, stripe or kicker over the h1. Borderline: "Read the thinking" is three equal columns in a row (unboxed, but it reads as the banned trio), and the map is outlined *and* holds a raised filled panel (MASTER 7: raise or outline, never both). Site-wide note, not this page's fault: the greys in use are Apple's (#f5f5f7, #e8e8ed, #6e6e73, #86868b, #a1a1a6, #2c2c2e from `app/globals.css`/`system.css`), not the deck ramp (#f5f5f5, #ededed, #737373, #525252). No hard banned tell found, so no cap applies.
+11. **Copy untouched?** Yes: parity 69/69 text, 26/26 links. Title "Learn Hanzo — Hanzo AI", canonical https://hanzo.ai/learn/.
 
-## Missing from the 18 parts (MASTER, measured)
-- **Part 3 narrative:** one idea per screen after the hero; detail behind clicks.
-- **Part 4 conversion:** 0 `data-cta` on desktop, 1 on the phone.
+## Missing from the 18 parts
+- Part 3: no closing `Band`; the page ends on the FAQ with no ask. The card says the live page has none, but the existing "Get started" label in a closing strip is not new copy. Something moves within 1 s: only the arrival does; the train waits 2.8 s.
+- Part 8/9: fade-up budget broken. The hero side (opacity+y16), the map (opacity+y32), every station panel swap (opacity+y24) and the kit `Faq` `Rise` per item make 3+ fade-ups against a limit of 2. The kit FAQ also animates `height`.
+- Part 6: `#q-slug` opens on load (verified), but clicking a question does not update the hash: the hash stayed on the previous value after opening another question.
+- Part 7: the map is outlined and has a filled panel inside it (raise *or* outline).
+- Part 10: only 2 films on the page; no block of 4+ real Hanzo media, though the TRY items (Chat, Playground, Dev, Zen, MCP, Agents) all have Hanzo renders or model media.
+- Part 11: on phone the station names are visually hidden (`.xlr-stops button span` clipped under 900px), so the hero object is five unlabeled dots. The map only makes sense once you read the panel.
+- Part 15 (Morph): `data-morph` is on rail/row titles, but none of the targets visibly opens from the card in this walk.
 
-## Fixes
-1. Write the 18-part card (lifts the cap).
-2. Fold the sections after the map into two: the 01–06 cards as one rail, the blog and "Read the thinking" as one row; questions stay collapsed.
-3. Give each remaining section one big moment (a figure, a film still or the University film) so the scale has rhythm.
-4. Add `data-cta` to "Get started" on desktop and give "Hanzo University" the kit hover.
+## Fixes (in order)
+1. **Kill the dead screen after the map (desktop).** `.xlr-hero { padding-bottom: clamp(120px,14vw,200px) }` → about `clamp(56px,6vw,88px)`, and pull `.xlr-index` padding-top down so "Pick what to try" peeks about 56px under the map at scrollY ≈ 700. Target: no 1470x801 screen with more than ~150px of empty paper.
+2. **Give the rail cards a real object.** In `.xlr-card`, replace the empty 1fr middle with each product's own Hanzo visual (the existing `components/render/` UI for Chat/Playground/Dev, the Zen and Agents model media through `Film`/`Pic`, the MCP terminal line) at true size, cropped. Drop the numeral to 32px, or keep 64px only on the lit/hovered card so one numeral is big at a time. This also gives the page its 4+ real media block.
+3. **Add a closing ask.** After `Questions`, add the kit `Band` with the existing "Get started" `Cta` (`data-cta="learn.band"`) and the Hanzo University link, so the page ends on the ask and not on a still FAQ.
+4. **Fix the FAQ icon glitch.** Scope the underline to the text: `.xlr-qa .x-faq button:hover > span { text-decoration: underline … }` instead of the whole `button`, so the rotated "+" never carries an underline stroke.
+5. **Make the hero alive within 1 s and keep it breathing.** First train step at ~900 ms instead of 2800 ms, and give the resting state one quiet idle move, e.g. the current station's ring breathing opacity .16 to .3 over 3 s, or the train idling 2px. Stop it on reduced motion.
+6. **Get within the 2 fade-up budget.** Make the hero side and map arrive by clip/line mask, or let only the map rise. Change the station panel swap to a horizontal clip-path wipe in the train's direction (300 ms, ease-emphasis), not opacity+y24.
+7. **Phone map labels.** Under 900px show the current station's name under the train (one 13px label that slides with it), or a 12px Zen Mono label under each dot, so the five dots read as a line of guides.
+8. **Lead post needs its object.** Give `.lead .xlr-post` the post's own hero media (the headless-commerce post image, mirrored to `public/`) in the empty top half, or cut its `min-height: 440px` to its content height.
+9. **Raise or outline the map, not both.** Remove the `.xlr-map` outline, or make `.xlr-panels` a hairline-divided area instead of a #f5f5f7 fill.
+10. **"Read the thinking" trio.** Break the equal 3-up: make it a hairline row list (like `.xlr-rows`), or an 8/5 split with Source as the single larger item.
+11. Hash sync: on FAQ toggle, `history.replaceState(null,'','#'+slug)` (kit request if it has to live in `Faq`).
+12. Shared, for the conductor: site greys are Apple values (#f5f5f7/#6e6e73/#e8e8ed), not the deck ramp. Also check the intermittent hydration "1 Issue" badge seen on first load.

@@ -77,7 +77,7 @@ Done here: the sticky chip bar is opaque white (#fff, no blur) and draws its hai
 
 ## 9. Motion and interaction
 - [x] Signature (the dealing pile), supporting: line-mask cut-ins, the stage settle (`Rise`), rows rising once, the ladder; 0 fade-ups
-- [x] Idle (pile; on the index screens a reading lamp lights one row at a time, 1.8s each, once through, the way the pile deals), state (chips, with a tick), arrival (h1, rows rise 16px once in 400ms with 60ms stagger, ladder grows from 25% in view), scroll (settle)
+- [x] Idle (pile; on the index screens a reading lamp lights one row at a time, 1.3s each, once through, the way the pile deals), state (chips, with a tick), arrival (h1, rows rise 16px once in 400ms with 60ms stagger, ladder grows from 25% in view), scroll (settle)
 - [x] Moves without input; every control answers
 - [x] Reduced motion: the pile cuts (no travel), rows, ladder and stage sit in their final place from first paint; no springs; no hydration error
 - [x] Sound: a tick on a chip, through `lib/sound`

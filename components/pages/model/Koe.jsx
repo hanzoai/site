@@ -8,11 +8,15 @@
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour.
    Persona: creative studio (researcher audience). Goal: request research access. CTA: Request access
    (/research-access?models=koe). Metric: contact_sales_submit.
-   V2: 8/10 phone pill keeps speaking at rest (film breathes, playhead sweeps, 28-bar level meter; ~15% change, one Pause stops all), pill starts under the close and ends 28px above the headline, close inverts on hover */
+   Body: KoeCreative.jsx (Koe's page-local copy of Creative.jsx) with KoePanels.jsx, so each chapter and "Where Koe
+   fits" draws its own booth-derived picture and Koe's wave film shows only on the stage, the map card and the model card.
+   V2: 8/10 own picture per chapter (contour, two-lane clone, visemes, watermark chain) and fits; one steady solid ask (hero solid, header outlined while it shows); h1 stays visible after the settle; every hover answers; gaps closed; phone tabs one row, pause docked on the pill, ask clear of the cookie card */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Studio } from './Studio';
-import Creative, { Scene } from './Creative';
+import { Scene } from './Creative';
+import KoeCreative from './KoeCreative';
+import { usePaused } from '../../v2/ModelFilm';
 import { box as frame, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
 import './Koe.css';
@@ -50,6 +54,7 @@ function Booth() {
   const stage = useRef(null), cv = useRef(null), sEl = useRef(null), csEl = useRef(null), cells = useRef([]), letters = useRef([]);
   const [pi, setPi] = useState(0);
   const [play, setPlay] = useState(true);
+  const pagePaused = usePaused(); // the stage's one Pause holds the booth too
   const S = useRef({ t: 1.9, hold: 0, k: -2 });
   const amps = useMemo(() => PRESETS.map((p, i) => shape(p, 11 + i)), []);
 
@@ -71,7 +76,7 @@ function Booth() {
     const c = cv.current, s = S.current;
     if (!c) return;
     if (still) s.t = LEN;
-    else if (play) {
+    else if (play && !pagePaused) {
       if (s.t < LEN) s.t = Math.min(LEN, s.t + dt);
       else if ((s.hold += dt) > 1.1) { s.t = 0; s.hold = 0; }
     }
@@ -123,8 +128,9 @@ function Booth() {
 }
 
 // the film closes into a tall capsule on the left (a horizontal one on phones: it starts under the × close, 20 + 48 + 8,
-// and ends where Koe.css starts the headline, 47% of the stage, 41% on short phones); the headline sits right of it
-const PILL = (W, H) => { const t = 76, h = H * (H < 641 ? 0.41 : 0.47) - t; return { l: 20, t, w: W - 40, h, r: h / 2 }; };
+// and ends where Koe.css starts the headline, 47% of the stage; on short phones a slimmer pill ending at 34%, so the ask
+// clears the cookie card at 375x667); the headline sits right of it. "Koe" (the h1) rests in the band above the pill.
+const PILL = (W, H) => { const t = 76, h = H * (H < 641 ? 0.34 : 0.47) - t; return { l: 20, t, w: W - 40, h, r: h / 2 }; };
 const CAPSULE = frame((W, H, wide) => {
   if (wide) { const w = Math.min(W * 0.2, H * 0.4), h = H * 0.84; return { l: W * 0.26 - w / 2, t: (H - h) / 2, w, h, r: w / 2 }; }
   return PILL(W, H);
@@ -168,17 +174,41 @@ function useStageFilm() {
   }, [calm]);
 }
 
+/* one solid ask per screen: while Koe's own "Request access" shows (white on the film, then solid ink beside the
+   settled headline), html[data-ko-ask] outlines the header's ask (Koe.css); once it has scrolled by, the header's ask is
+   the solid one again. */
+function useOneAsk() {
+  useEffect(() => {
+    const H = document.documentElement;
+    let raf = 0;
+    const shown = (el, ok) => { if (!el || !ok(el)) return false; const r = el.getBoundingClientRect(); return r.bottom > 60 && r.top < innerHeight && r.width > 0; };
+    const check = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const first = shown(document.querySelector('[data-cta="koe.first"]'), (el) => !el.closest('.lv-name[data-gone]'));
+        const hero = shown(document.querySelector('[data-cta="koe.hero"]'), (el) => !!el.closest('.lv-head[data-on], .lv[data-calm]'));
+        H.toggleAttribute('data-ko-ask', first || hero);
+      });
+    };
+    const stage = document.querySelector('.lv-stage[data-hero="koe"]');
+    const mo = new MutationObserver(check);
+    if (stage) mo.observe(stage, { attributes: true, subtree: true, attributeFilter: ['data-gone', 'data-on'] });
+    addEventListener('scroll', check, { passive: true });
+    addEventListener('resize', check);
+    const timers = [0, 400, 1400, 3000].map((ms) => setTimeout(check, ms));
+    return () => { mo.disconnect(); removeEventListener('scroll', check); removeEventListener('resize', check); timers.forEach(clearTimeout); cancelAnimationFrame(raf); H.removeAttribute('data-ko-ask'); };
+  }, []);
+}
+
 export default function Koe() {
   useStageFilm();
+  useOneAsk();
   return (
-    <Creative
-      slug="koe"
-      subject={[0.68, 0.45]}
+    <KoeCreative
       shape={CAPSULE}
       over={Meter}
       aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, PILL(W, H).t + PILL(W, H).h / 2, 1.35, [20, PILL(W, H).t, W - 20, PILL(W, H).t + PILL(W, H).h]))(W, H)}
       headClass="ko-v2"
-      first="chapters"
       demo={
         <Scene slug="koe" className="ko-scene">
           <Studio slug="koe" engine="" specs={[['Zero-Shot Cloning', 'Reference Audio', '3.0s Clean Sample'], ['Sub-Second Latency', 'First Token', '< 200ms'], ['Synthesis Engine', 'Hanzo Koe-1 Engine', 'Neural Flow-Matching']]}>

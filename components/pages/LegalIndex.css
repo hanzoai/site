@@ -1,152 +1,183 @@
-/* ---------- /legal index (lgi-): ink and greys, calm; no dark room ---------- */
-.lgi { --acc: #0a0a0a; --acc-ink: #fff; }
-.lgi-kick { margin: -8px 0 0; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
-.lgi-stack > .w2-pause { z-index: 20; }
+/* ---------- /legal index (lgi-): ink and greys, calm; one paper language; deck tokens only ---------- */
+/* the page's tokens, all from the deck (globals.css / system.css), named once here */
+.lgi {
+  --lgi-paper: var(--bg, #fff);
+  --lgi-ink: var(--ink, #0a0a0a);
+  --lgi-quiet: var(--hz-50, #f5f5f7);
+  --lgi-soft: var(--soft);
+  --lgi-faint: var(--faint);
+  --lgi-line: var(--line);
+  --lgi-line-strong: var(--room-line-strong, rgba(0, 0, 0, .16));
+  --lgi-raise: var(--shadow-2, 0 24px 48px -28px rgba(0, 0, 0, .28));
+  --lgi-on-ink: var(--hz-300, #a1a1a6);
+  --lgi-r: var(--x-radius-sm, 12px);
+  --lgi-gap: clamp(56px, 6vw, 88px); /* the air between two rooms: the next one always peeks */
+  --acc: var(--lgi-ink); --acc-ink: var(--lgi-paper);
+}
+.lgi-kick { margin: -8px 0 0; font-size: 12px; font-weight: 606; letter-spacing: .14em; text-transform: uppercase; color: var(--lgi-soft); }
 .lgi-anchor { position: relative; top: -120px; }
 
-/* hero */
-.lgi-hero { padding: clamp(104px, 8.4vw, 128px) 0 clamp(96px, 10vw, 160px); overflow: hidden; }
-.lgi-hero-g { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(32px, 5vw, 96px); align-items: center; }
-.lgi-hero-copy { display: flex; flex-direction: column; gap: 28px; }
-.lgi-h1 { font-size: clamp(56px, 8.2vw, 124px); }
-.lgi-lede { color: var(--ink); max-width: 30ch; }
+/* section rhythm: no dead white; each room peeks into the next (overrides Rhythm's golden padding for this page) */
+.lgi .lgi-intro.w2-sec { padding: 40px 0 var(--lgi-gap) !important; }
+.lgi .lgi-cat.w2-sec { padding: 0 0 var(--lgi-gap) !important; }
+.lgi .lgi-how.w2-sec { padding: var(--lgi-gap) 0 !important; }
+.lgi .lgi-other.w2-sec { padding: var(--lgi-gap) 0 0 !important; }
+.lgi .lgi-contact.w2-sec { padding: var(--lgi-gap) 0 clamp(72px, 8vw, 116px) !important; }
 
-/* the stack of paper */
-.lgi-stack { position: relative; height: clamp(360px, 32vw, 460px); }
-.lgi-sheet { position: absolute; left: 6%; top: 12%; width: 66%; aspect-ratio: 8.5 / 10; display: flex; flex-direction: column; gap: 14px; padding: 8% 9%; border-radius: 12px; background: #fff; border: 1px solid rgba(0, 0, 0, .07); box-shadow: 0 1px 0 rgba(0, 0, 0, .03), 0 30px 70px -36px rgba(0, 0, 0, .35); transform-origin: 50% 100%; }
-.lgi-sheet-u { font-size: 13px; color: var(--acc); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lgi-sheet b { font-size: clamp(22px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.035em; line-height: 1.05; text-wrap: balance; }
-.lgi-sheet-p { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.lgi-sheet-s { align-self: flex-start; margin-top: auto; padding: 8px 12px; border: 1.5px solid var(--acc); border-radius: 10px; font-size: 13px; color: var(--acc); white-space: nowrap; transform: rotate(-4deg); }
+/* hero: the h1 baseline near 38% of the screen; the pile close to the copy */
+.lgi-hero { padding: 84px 0 var(--lgi-gap); overflow: hidden; }
+.lgi-hero-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(24px, 3vw, 48px); align-items: start; }
+.lgi-hero-copy { display: flex; flex-direction: column; gap: 24px; padding-top: clamp(40px, 6vh, 72px); }
+.lgi-lede { color: var(--lgi-ink); max-width: 30ch; }
 
-/* intro */
-.lgi-intro { padding-top: 0; }
-.lgi-intro-g { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 24px clamp(32px, 5vw, 96px); align-items: start; }
-.lgi-big p { margin: 0; font-size: clamp(26px, 2.6vw, 38px); font-weight: 500; line-height: 1.22; letter-spacing: -.03em; color: var(--ink); text-wrap: pretty; }
-.lgi-big code, .lgi-prose code { padding: 2px 8px; border-radius: 8px; background: var(--card); font: 400 .82em var(--mono); color: var(--acc); }
-.lgi-big a, .lgi-prose a { color: var(--ink); text-underline-offset: 4px; }
-.lgi-status { position: relative; display: flex; gap: 14px; padding: 28px; border-radius: 28px; background: var(--card); }
-.lgi-status blockquote, .lgi-prose blockquote { margin: 0; padding: 0; }
-.lgi-status-dot { flex: none; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 0 rgba(10, 10, 10, .35); animation: lgi-ping 2.4s ease-out 2; }
-@keyframes lgi-ping { to { box-shadow: 0 0 0 12px rgba(10, 10, 10, 0); } }
-.lgi-prose p { margin: 0 0 14px; font-size: clamp(16px, 1.2vw, 18px); line-height: 1.62; color: var(--soft); }
+/* the stack of paper (raised by shadow only, no outline) */
+.lgi-stack { position: relative; height: clamp(380px, 34vw, 480px); }
+.lgi-pile { position: absolute; inset: 0; }
+.lgi-sheet { position: absolute; left: 18%; top: 14%; width: 52%; aspect-ratio: 8.5 / 10; display: flex; flex-direction: column; gap: 14px; padding: 7% 8%; border-radius: var(--lgi-r); background: var(--lgi-paper); box-shadow: var(--lgi-raise); transform-origin: 50% 100%; overflow: hidden; }
+.lgi-sheet-u { font-size: 13px; color: var(--lgi-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lgi-sheet b { font-size: clamp(22px, 2vw, 30px); font-weight: 497; letter-spacing: -.03em; line-height: 1.08; text-wrap: balance; }
+.lgi-sheet-p { font-size: clamp(14px, 1.05vw, 16px); line-height: 1.5; color: var(--lgi-soft); text-wrap: pretty; }
+/* the stamp: Hanzo's own status words, set like an ink stamp */
+.lgi-stamp { align-self: flex-start; margin-top: auto; max-width: 100%; padding: 6px 10px; border: 1.5px solid var(--lgi-ink); border-radius: 6px; font: 606 12px/1.3 var(--mono); letter-spacing: .02em; color: var(--lgi-ink); transform: rotate(-3deg); }
+.lgi-pause { position: absolute; right: 0; top: -12px; display: grid; place-items: center; width: 44px; height: 44px; z-index: 50; }
+.lgi-pause .w2-pause { background: var(--lgi-quiet); color: var(--lgi-ink); box-shadow: none; }
+
+/* intro: a 21px statement beside the status, which is a sheet on the desk with its stamp */
+.lgi-intro-g { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px clamp(32px, 5vw, 96px); align-items: center; }
+.lgi-big p { margin: 0; max-width: 34ch; font-size: 21px; font-weight: 400; line-height: 1.45; letter-spacing: -.01em; color: var(--lgi-ink); text-wrap: pretty; }
+.lgi-big code, .lgi-prose code { padding: 2px 7px; border-radius: 6px; background: var(--lgi-quiet); font: 400 .86em var(--mono); color: var(--lgi-ink); }
+.lgi-big a, .lgi-prose a { color: var(--lgi-ink); text-underline-offset: 3px; }
+.lgi-status { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 28px 28px 32px; border-radius: var(--lgi-r); background: var(--lgi-paper); box-shadow: var(--lgi-raise); transform: rotate(1.2deg); transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) and (pointer: fine) { .lgi-status:hover { transform: rotate(-1deg); } }
+.lgi-status blockquote, .lgi-prose blockquote { margin: 0; padding: 0; border: 0; }
+.lgi-status p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--lgi-soft); }
+.lgi-status p > strong:first-child { display: table; margin: 0 0 14px; padding: 6px 10px; border: 1.5px solid var(--lgi-ink); border-radius: 6px; font: 606 13px/1.3 var(--mono); color: var(--lgi-ink); transform: rotate(-3deg); }
+.lgi-prose p { margin: 0 0 14px; font-size: 16px; line-height: 1.6; color: var(--lgi-soft); }
 .lgi-prose p:last-child { margin-bottom: 0; }
-.lgi-prose strong { color: var(--ink); font-weight: 600; }
+.lgi-prose strong { color: var(--lgi-ink); font-weight: 606; }
 
 /* catalogue: chips over a ruled index; every row opens its document */
-.lgi-cat { padding-top: clamp(64px, 7vw, 112px); }
-.lgi-chips { position: sticky; top: 60px; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 -8px clamp(16px, 2vw, 24px); padding: 12px 8px; background: rgba(255, 255, 255, .96); }
-.lgi-chips button { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px; border: 1px solid rgba(0, 0, 0, .1); border-radius: 999px; background: #fff; color: var(--ink); font: 600 clamp(16px, 1.3vw, 19px)/1 var(--sans); letter-spacing: -.015em; cursor: pointer; transition: background .3s var(--ease), color .3s, border-color .3s; }
-.lgi-chips button .x-mono { font-size: 13px; font-weight: 500; color: var(--faint); }
-@media (hover: hover) { .lgi-chips button:hover { border-color: var(--ink); } }
-.lgi-chips button[aria-pressed='true'] { background: #fff; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
-.lgi-chips button[aria-pressed='true'] .x-mono { color: var(--ink); }
-.lgi-cards { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.lgi-cards > li { display: flex; }
-.lgi-card { position: relative; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 4fr) minmax(0, 5fr) 48px; align-items: center; gap: 24px; width: 100%; min-height: 96px; padding: 20px 4px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background .25s var(--ease), padding .0s; }
-.lgi-card:active { transform: translateY(1px); }
-.lgi-card-u { position: absolute; right: 64px; top: 10px; font-size: 13px; color: var(--soft); opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s var(--ease); }
-@media (hover: hover) { .lgi-card:hover { background: var(--card); } .lgi-card:hover .lgi-card-u { opacity: 1; transform: none; } }
-.lgi-card-k { font-size: 13px; color: var(--soft); }
-.lgi-card-t { font-size: clamp(22px, 1.9vw, 28px); font-weight: 600; line-height: 1.1; letter-spacing: -.03em; text-wrap: balance; }
-.lgi-card-d { font-size: 16px; line-height: 1.5; color: var(--soft); }
-.lgi-card-d code { padding: 1px 6px; border-radius: 6px; background: #fff; font: 400 .9em var(--mono); color: var(--ink); }
-.lgi-dash { color: var(--faint); }
-.lgi-card-go { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--card); transition: background .3s, color .3s, transform .45s var(--ease); }
-@media (hover: hover) { .lgi-card:hover .lgi-card-go { background: #0a0a0a; color: #fff; transform: translateX(3px); } }
-
-/* how these fit together */
-.lgi-how { background: var(--card); }
-.lgi-how-g { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; }
-.lgi-how-p { margin-top: 32px; }
-.lgi-ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; height: clamp(320px, 30vw, 440px); }
-.lgi-ladder li { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; height: calc(40% + var(--k) * 20%); padding: 18px; border-radius: 20px; background: #fff; }
-.lgi-ladder li:first-child { background: var(--acc); color: #fff; }
-.lgi-ladder li:first-child .lgi-step-n, .lgi-ladder li:first-child em { color: #a3a3a3; }
-.lgi-step-n { font-size: 13px; color: var(--acc); margin-bottom: auto; }
-.lgi-ladder b { font-size: clamp(15px, 1.3vw, 20px); font-weight: 600; letter-spacing: -.02em; line-height: 1.1; hyphens: auto; overflow-wrap: break-word; }
-.lgi-ladder em { font-style: normal; font-size: 14px; color: var(--soft); }
-
-/* contact */
-.lgi-contact-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(32px, 5vw, 96px); align-items: start; }
-.lgi-mail { list-style: none; margin: 0; padding: 0; }
-.lgi-mail li { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; gap: 16px; padding: 28px 0; border-top: 1px solid var(--line); }
-.lgi-mail li:last-child { border-bottom: 1px solid var(--line); }
-.lgi-mail li > span { font-size: 16px; color: var(--soft); }
-.lgi-mail a { display: inline-flex; align-items: center; min-height: 44px; font-size: clamp(22px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.03em; color: var(--ink); text-decoration: none; background: linear-gradient(var(--acc), var(--acc)) 0 100% / 0 2px no-repeat; transition: background-size .45s var(--ease), translate .3s var(--ease); }
-@media (hover: hover) { .lgi-mail a:hover { background-size: 100% 2px; translate: 4px 0; } }
-.lgi-mail a:active { transform: translateY(1px); }
-
-@media (max-width: 900px) {
-  .lgi-hero { padding-top: 104px; }
-  .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { grid-template-columns: minmax(0, 1fr); }
-  .lgi-h1 { font-size: clamp(48px, 14vw, 64px); }
-  .lgi-stack { height: 360px; margin-top: 52px; }
-  .lgi-sheet { width: 72%; left: 4%; }
-  .lgi-sheet-s { font-size: 12px; }
-  .lgi-card { grid-template-columns: minmax(0, 1fr) 44px; gap: 6px 12px; padding: 18px 0; }
-  .lgi-card-k { grid-column: 1; }
-  .lgi-card-t, .lgi-card-d { grid-column: 1; }
-  .lgi-card-go { grid-column: 2; grid-row: 1 / span 3; }
-  .lgi-card-u { display: none; }
-  .lgi-chips { top: 56px; }
-  .lgi-chips button { min-height: 48px; padding: 0 16px; }
-  .lgi-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; }
-  .lgi-ladder li { height: auto; min-height: 140px; }
-  .lgi-mail li { grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 20px 0; }
-  .lgi-sheet-u, .lgi-sheet-s, .lgi-card-k, .lgi-step-n, .lgi-chips button .x-mono { font-size: 14px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .lgi-status-dot { animation: none; }
-  /* settled at first paint: the pile's stage, the rows and the ladder sit in their final place */
-  .lgi-settle, .lgi-cards > li, .lgi-ladder li { transform: none !important; }
-}
-
-/* the pile stays inside its sheets; the pause sits on the pile's own corner, clear of every sheet; opaque chip bar; print */
-.lgi-pile { position: absolute; inset: 0; }
-.lgi-sheet { overflow: hidden; }
-.lgi-sheet-s { white-space: normal !important; max-width: 100%; }
-.lgi-pause { position: absolute; right: 24px; top: -24px; display: grid; place-items: center; width: 44px; height: 44px; z-index: 50; }
-.lgi-pause .w2-pause { background: #f2f2f2; color: #0a0a0a; box-shadow: none; }
-.lgi-big p { font-size: 32px !important; font-weight: 500; line-height: 1.2 !important; letter-spacing: -.022em !important; }
-.lgi-chips { background: #fff !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-bottom: 1px solid transparent; transition: border-color .3s var(--ease); }
-.lgi-chips[data-stuck] { border-bottom-color: rgba(0, 0, 0, .1); }
 .lgi-pin { display: block; height: 0; }
+.lgi-chips { position: sticky; top: 60px; z-index: 5; display: flex; align-items: center; gap: 8px; margin: 0 -8px 16px; padding: 10px 8px; background: var(--lgi-paper); border-bottom: 1px solid transparent; transition: border-color .3s var(--ease); }
+.lgi-chips[data-stuck] { border-bottom-color: var(--lgi-line); }
+.lgi-chips-r { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.lgi-chips-r button { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 1px solid var(--lgi-line-strong); border-radius: 999px; background: var(--lgi-paper); color: var(--lgi-ink); font: 500 16px/1 var(--sans); letter-spacing: -.01em; cursor: pointer; transition: background .2s cubic-bezier(0, 0, .2, 1), border-color .2s, box-shadow .2s, transform .09s; }
+.lgi-chips-r button .x-mono { font-size: 13px; font-weight: 500; color: var(--lgi-faint); }
+@media (hover: hover) { .lgi-chips-r button:hover { background: var(--lgi-quiet); border-color: var(--lgi-ink); } }
+.lgi-chips-r button:active { transform: scale(.98); }
+.lgi-chips-r button[aria-pressed='true'] { background: var(--lgi-paper); border-color: var(--lgi-ink); box-shadow: inset 0 0 0 1px var(--lgi-ink); }
+.lgi-chips-r button[aria-pressed='true'] .x-mono { color: var(--lgi-ink); }
+.lgi-chips-p { display: grid; place-items: center; margin-left: auto; flex: none; }
+.lgi-chips-p .w2-pause { background: var(--lgi-quiet); color: var(--lgi-ink); box-shadow: none; }
 .lgi-group[hidden] { display: none; }
-/* the reading lamp: the lit row looks like a hovered one (fill, address, ink arrow); a pointer over the list takes over */
-.lgi-card.lit { background: var(--card); }
+.lgi-cards { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--lgi-line); }
+.lgi-cards > li { display: flex; }
+.lgi-card { position: relative; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 4fr) minmax(0, 5fr) 48px; align-items: center; gap: 24px; width: 100%; min-height: 80px; padding: 16px 4px; border-bottom: 1px solid var(--lgi-line); color: var(--lgi-ink); text-decoration: none; transition: background .25s var(--ease); }
+.lgi-card:active { transform: translateY(1px); }
+.lgi-card-u { position: absolute; right: 64px; top: 8px; font-size: 12px; color: var(--lgi-soft); opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s var(--ease); }
+@media (hover: hover) { .lgi-card:hover { background: var(--lgi-quiet); } .lgi-card:hover .lgi-card-u { opacity: 1; transform: none; } }
+.lgi-card-k { font-size: 12px; letter-spacing: .04em; color: var(--lgi-soft); }
+.lgi-card-t { font-size: 21px; font-weight: 497; line-height: 1.2; letter-spacing: -.02em; text-wrap: balance; }
+.lgi-card-d { max-width: 52ch; font-size: 15px; line-height: 1.5; color: var(--lgi-soft); }
+.lgi-card-d code { padding: 1px 6px; border-radius: 6px; background: var(--lgi-paper); font: 400 .9em var(--mono); color: var(--lgi-ink); }
+.lgi-dash { color: var(--lgi-faint); }
+.lgi-card-go { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--lgi-quiet); transition: background .3s, color .3s, transform .45s var(--ease); }
+@media (hover: hover) { .lgi-card:hover .lgi-card-go { background: var(--lgi-ink); color: var(--lgi-paper); transform: translateX(3px); } }
+/* the reading lamp: the lit row looks like a hovered one (fill, address, ink arrow), with a timing hairline; a pointer over the list takes over */
+.lgi-card.lit { background: var(--lgi-quiet); }
 .lgi-card.lit .lgi-card-u { opacity: 1; transform: none; }
-.lgi-card.lit .lgi-card-go { background: #0a0a0a; color: #fff; transform: translateX(3px); }
+.lgi-card.lit .lgi-card-go { background: var(--lgi-ink); color: var(--lgi-paper); transform: translateX(3px); }
+.lgi-card.lit::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--lgi-ink); transform-origin: 0 50%; animation: lgi-lamp 1.3s linear both; }
+@keyframes lgi-lamp { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (hover: hover) {
   .lgi-cards:hover .lgi-card.lit:not(:hover) { background: none; }
+  .lgi-cards:hover .lgi-card.lit:not(:hover)::after { opacity: .25; }
   .lgi-cards:hover .lgi-card.lit:not(:hover) .lgi-card-u { opacity: 0; transform: translateY(4px); }
-  .lgi-cards:hover .lgi-card.lit:not(:hover) .lgi-card-go { background: var(--card); color: inherit; transform: none; }
+  .lgi-cards:hover .lgi-card.lit:not(:hover) .lgi-card-go { background: var(--lgi-quiet); color: inherit; transform: none; }
 }
-.lgi-chips-p { display: grid; place-items: center; margin-left: auto; align-self: center; }
-.lgi-chips .lgi-chips-p .w2-pause, .lgi-chips .lgi-chips-p .w2-pause[aria-pressed='true'] { flex: none; width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; background: #f2f2f2; color: #0a0a0a; box-shadow: none; }
-@media (hover: hover) { .lgi-chips .lgi-chips-p .w2-pause:hover { background: #0a0a0a; color: #fff; } }
+
+/* how these fit together */
+.lgi-how { background: var(--lgi-quiet); }
+.lgi-how-g { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; }
+.lgi-how-p { margin-top: 24px; }
+.lgi-ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: end; height: clamp(300px, 26vw, 380px); }
+.lgi-ladder li { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; height: calc(40% + var(--k) * 20%); padding: 18px; border-radius: 16px; background: var(--lgi-paper); }
+.lgi-ladder li:first-child { background: var(--lgi-ink); color: var(--lgi-paper); }
+.lgi-ladder li:first-child .lgi-step-n, .lgi-ladder li:first-child em { color: var(--lgi-on-ink); }
+.lgi-step-n { font-size: 13px; color: var(--lgi-soft); margin-bottom: auto; }
+.lgi-ladder b { font-size: 17px; font-weight: 497; letter-spacing: -.01em; line-height: 1.15; hyphens: auto; overflow-wrap: break-word; }
+.lgi-ladder em { font-style: normal; font-size: 14px; color: var(--lgi-soft); }
+
+/* contact: four addresses beside one last sheet from the pile, which shows the address you point at */
+.lgi-contact-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px clamp(32px, 5vw, 96px); align-items: start; }
+.lgi-contact-l { display: flex; flex-direction: column; gap: 32px; }
+.lgi-env { position: relative; left: auto; top: auto; width: min(100%, 300px); aspect-ratio: 8.5 / 7; transform: rotate(-2deg); }
+.lgi-env .lgi-sheet-u { color: var(--lgi-ink); animation: lgi-type .3s cubic-bezier(0, 0, .2, 1) both; }
+@keyframes lgi-type { from { opacity: 0; transform: translateY(6px); } }
+.lgi-env b { font-size: 21px; }
+.lgi-mail { list-style: none; margin: 0; padding: 0; }
+.lgi-mail li { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; gap: 16px; padding: 22px 0; border-top: 1px solid var(--lgi-line); }
+.lgi-mail li:last-child { border-bottom: 1px solid var(--lgi-line); }
+.lgi-mail li > span { font-size: 16px; color: var(--lgi-soft); }
+.lgi-mail a { display: inline-flex; align-items: center; min-height: 44px; font-size: clamp(21px, 1.8vw, 26px); font-weight: 497; letter-spacing: -.02em; color: var(--lgi-ink); text-decoration: none; background: linear-gradient(var(--lgi-ink), var(--lgi-ink)) 0 100% / 0 2px no-repeat; transition: background-size .45s var(--ease), translate .3s var(--ease); }
+@media (hover: hover) { .lgi-mail a:hover { background-size: 100% 2px; translate: 4px 0; } }
+.lgi-mail a:focus-visible { background-size: 100% 2px; }
+.lgi-mail a:active { transform: translateY(1px); }
+
 @media (max-width: 899px) {
-  .lgi-big p { font-size: 26px !important; }
-  .lgi-card-k { display: none !important; }
-  .lgi-sheet-s { font-size: 14px !important; }
-  /* phone: the pause sits just under the pile, never on a sheet */
-  .lgi-pause { right: auto; left: 0; top: calc(100% + 8px); }
-  .lgi-hero { padding-bottom: 120px; }
+  .lgi-hero { padding: 84px 0 48px; }
+  .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { grid-template-columns: minmax(0, 1fr); }
+  .lgi-hero-copy { padding-top: 64px; gap: 20px; }
+  .lgi-stack { height: 360px; margin-top: 56px; }
+  .lgi-sheet { width: 70%; left: 2%; top: 12%; }
+  .lgi-sheet b { font-size: 22px; }
+  .lgi-sheet-u, .lgi-step-n, .lgi-chips-r button .x-mono { font-size: 14px; }
+  /* the stamp lives on the status sheet on phones, so the pile's own line is never cut */
+  .lgi-pile .lgi-stamp { display: none; }
+  /* the pause sits above the pile's right corner, clear of every sheet and inside the first screen */
+  .lgi-pause { right: 0; top: -64px; }
+  .lgi-intro-g { gap: 40px; }
+  .lgi-big p { font-size: 20px; }
+  .lgi-status { transform: none; }
+  .lgi-status p { font-size: 16px; }
+  /* chips: one row of 44px chips that scrolls sideways, so the stuck bar stays 64px tall */
+  .lgi-chips { top: 56px; margin: 0 -16px 12px; padding: 8px 16px; gap: 8px; }
+  .lgi-chips-r { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .lgi-chips-r::-webkit-scrollbar { display: none; }
+  .lgi-chips-r button { scroll-snap-align: start; padding: 0 14px; font-size: 15px; }
+  .lgi-card { grid-template-columns: minmax(0, 1fr) 44px; gap: 6px 12px; padding: 16px 0; }
+  .lgi-card-k, .lgi-card-u { display: none; }
+  .lgi-card-t, .lgi-card-d { grid-column: 1; }
+  .lgi-card-t { font-size: 20px; }
+  .lgi-card-go { grid-column: 2; grid-row: 1 / span 2; }
+  .lgi-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; }
+  .lgi-ladder li { height: auto; min-height: 132px; }
+  .lgi-contact-l { gap: 24px; }
+  .lgi-env { width: min(100%, 260px); }
+  .lgi-mail li { grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 18px 0; }
+  .lgi-mail a { font-size: 21px; }
 }
+@media (prefers-reduced-motion: reduce) {
+  /* settled at first paint: the rows and the ladder sit in their final place */
+  .lgi-cards > li, .lgi-ladder li { transform: none !important; }
+  .lgi-card.lit::after, .lgi-env .lgi-sheet-u { animation: none; }
+  .lgi-status, .lgi-chips-r button, .lgi-mail a { transition: none; }
+}
+
 @media print {
-  .lgi-pin, .lgi-stack, .lgi-chips, .w2-pause, .lgi-card-go, .lgi-card-u { display: none !important; }
+  .lgi-pin, .lgi-stack, .lgi-chips, .w2-pause, .lgi-card-go, .lgi-card-u, .lgi-env { display: none !important; }
   body:has(.lgi) .x-skip, body:has(.lgi) a[href="#main"], body:has(.lgi) header:not(main header), body:has(.lgi) footer:not(main footer), body:has(.lgi) .x-cookie { display: none !important; }
-  .lgi-cat { padding-top: 0 !important; }
-  .lgi-cards { border-top: 0; }
-  .lgi-hero { padding: 0 0 16pt; }
-  .lgi-h1 { font-size: 36pt; }
-  .lgi-big p { font-size: 16pt !important; }
-  .lgi-card-t { font-size: 14pt; }
-  .lgi-card-d, .lgi-prose p { font-size: 11pt; }
-  .lgi-cards > li, .lgi-settle, .lgi-ladder li { transform: none !important; }
-  .w2-sec { padding: 16pt 0 !important; }
-  .lgi-how { background: none; }
   .lgi-group[hidden] { display: block !important; }
   .lgi-card { display: block; padding: 8px 0; break-inside: avoid; }
   .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { display: block !important; }
+  .lgi-hero, .lgi-hero-copy { padding: 0 0 12pt; }
+  .lgi-h1 { font-size: 30pt; }
+  .lgi-big p { font-size: 13pt; }
+  .lgi-status { box-shadow: none; transform: none; padding: 0; margin-top: 12pt; }
+  .lgi-card-t { font-size: 13pt; }
+  .lgi-card-d, .lgi-prose p { font-size: 10.5pt; }
+  .lgi-cards > li, .lgi-ladder li { transform: none !important; }
+  .lgi .w2-sec { padding: 12pt 0 !important; }
+  .lgi-how { background: none; }
+  .lgi-mail a { font-size: 13pt; }
 }
