@@ -1,32 +1,152 @@
-# Coverage: /history
+# /history coverage (MASTER.md part 2, the 18 parts)
 
-Page: `components/pages/History.jsx` + `History.css` + `story.css` (page-owned Story grammar) + `historyData.js`. Signature: the timeline scrub (one pinned scene; the year is cut into its line, the old year clearing before the new one arrives, as each year's story comes in and the last goes out). One line per area of docs/PLAN-COMPONENTS.md §2, then the §4 gate.
+Page file: `components/pages/History.jsx` (+ `History.css`, `historyData.js`, `story.css`, `StoryClose.jsx`, `StoryPause.jsx`) · gallery: `docs/gallery/history/` · metric id: `contact_sales_submit` (`data-cta="history.*"`)
 
-- **2.1 Strategy and conversion:** goal = see twelve years of shipped work and trust it, then talk to Hanzo FDE. One solid ask per screen: "Explore Our History" in the hero (`data-cta="history.hero"`), and "Talk to Hanzo FDE" (`data-thumb`, `data-cta="history.band"`) in the closing Band and in the global ask bar, named "History", once the hero has gone by. Everything else is a text link.
-- **2.2 IA and navigation:** header and footer untouched. "About Hanzo" and "Return to About Hanzo" link the Story pages; the 13-year rail jumps to any year.
-- **2.3 First impression and narrative:** screen one: the h1 at display size (cut into its lines) with the lede and one ask under it; beside it the hero's object, a giant year that runs from 2014 to 2026 by itself while the four eras' bars fill in turn (each era's dates after its title). All of it fits 1470×801. Then: clippings, the year-by-year scene, Your year, the principles, and the FDE Band (with its four steps and the way back to /about).
-- **2.4 Conversion system:** hero ask, ask bar, Band ask; no second solid button anywhere. No forms.
-- **2.5 Trust and proof:** every figure is Hanzo's (year metrics, clippings); each clipping keeps its press source link (TechCrunch, Crunchbase News, Nasdaq, Startland News, hanzo.blog).
-- **2.6 Content presentation:** copy untouched (parity 214/214 text, 42/42 links). No eyebrow above any headline: labels sit beside headlines (Track record, Full History) or after them (Your year, Operating Principles). One year on screen at a time; all 13 stay in the HTML.
-- **2.7 Visual design system:** white page, ink, greys and silvers only (the gold accent is gone). Colour comes only from the customers' own photos and logos and the Zen film. The dark room is the closing Band. Radii 28 on plates, 16 on clippings.
-- **2.8 UI component library:** kit `A`, `Img`, `Film`, `StoryClose`; year rail buttons with `aria-current`; the year input has −/+ buttons (56px) and a numeric keyboard.
-- **2.9 Motion and interaction:** signature = the scroll scrub (the year cut into its line, the old year clearing before the new one, one story in, one out). Supporting: the hero's years running by themselves (time, idle), the clippings rail you throw (pointer, drag with inertia, one nudge on arrival), "Your year" cutting its year in (state). Also: principles' giant numerals lift on hover. The odometer digits and the split-flap board are gone (no invented digits ever show). Scroll-linked motion is the minority. Variety: 2 techniques, 0 fade-ups.
-- **2.10 Media:** customer photos and logos via kit `Img` with sizes; the 2026 Zen film via kit `Film`, rendered only while that year is on stage. Plates fall back to the year's own figure when an image cannot load.
-- **2.11 Mobile and responsive:** at 375 the hero stacks (h1, ask, the giant year, the eras), the clippings swipe natively with snap, and the 13 years become a swipe rail, one year per card with the next one peeking (no pinning; the page is half its old length). Links are 44px tall. No sideways scroll.
-- **2.12 Accessibility:** one h1; years are `article`s labelled by their titles; inactive years are `inert`; the rail marks the current year; decorative year cut `aria-hidden`; keyboard focus slides a clipping into view.
-- **2.13 Performance:** transform and opacity only; the scrub sets state only when the year changes; the film loads only on its year; CLS 0 measured on the v2 build.
-- **2.14 SEO and machine files:** metadata and JsonLd unchanged; all 13 years in server HTML.
-- **2.15 Catalogue and product pages:** not a catalogue; case-study links go to /customers anchors.
-- **2.16 Developer experience:** not a developer page; GitHub links kept.
-- **2.17 States and resilience:** image failure shows the figure; reduced motion shows final states (bars full, no playhead, no nudge); JavaScript off: a `noscript` rule shows every line and stacks the 13 years.
-- **2.18 Measurement and handover:** `data-cta` on the hero primary; no analytics wired yet (needs the conductor's event layer).
+Open copy questions for James: none decided. Years beside customer figures appear only where Hanzo's own year copy has them.
+Shared changes requested (`docs/requests/about.md`, shared by the Story pages): kit Band word blur; v2/Lines timing; the floating ask bar.
+Forks this page deleted: the badge above the h1; kickers above headlines, the pill above each year title and the tag above each metric (now captions after them); the gold accent; the odometer digits and the split-flap board (no invented digits); three equal hero buttons; the separate dark FDE room and back-link section (now in `StoryClose`); raw `<img>`/`<video>` on the plates.
 
-## §4 gate
-1. Persona, Goal, CTA and Metric lines in the page file header. ✔
-2. One h1; the closing Band is `StoryClose` (kit Band's room and markup, line cut instead of word blur); kit `Img` and `Film` (no raw `<img>`, `<video>`, `<table>`). No shared `PageHero` or `Cta` exists yet, so the hero and buttons are page-owned. ◐
-3. Greys only; one filled primary per screen; `data-thumb`, `data-cta`. The header's "Try Hanzo" is solid in the hero (shared chrome). ◐
-4. Parity 0 missing, links 0 unexpected, no new strings. ✔
-5. Reduced motion final states; JS off legible; keyboard paths for the rail, year input and clippings. ✔
-6. 375×812 and 1470×801 pass, no sideways scroll. Lighthouse not run (no CI yet). ◐
-7. Contact sheet and film in `docs/gallery/history/`. ✔
-8. Ledger (deleted): the badge above the h1; kickers above headlines, the pill above each year's title and the tag above each metric (now after them); the gold accent; the odometer digits and the split-flap board; three equal buttons in the hero; the hero's text-only era strip (now the running year); the separate dark FDE room and the separate back-link section (now inside the closing Band); raw `<img>`/`<video>` on the plates. The closing Band is `StoryClose` (the kit Band's room with a line cut instead of the kit's word blur).
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; labels are Hanzo's own (no `lib/cta.js` entry for /history yet)
+- [x] One h1; clear in 5 seconds
+- [x] No dead or self-looping button (the hero ask scrolls to the year-by-year scene)
+- [x] Open copy questions listed, none decided
+
+Done here: "Explore Our History" (solid) in the hero; the closing link "Talk to Hanzo FDE" is the page's one action (Story type), carried by `data-thumb` and `data-cta="history.band"`.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`
+- [x] Every link through `A`; clippings' press links keep `rel`
+- [x] n/a: breadcrumb (depth 1)
+- [x] Link parity: 0 removed, 0 unexpected
+
+Done here: parity links 42/42; the 13-year rail jumps to any year; "Return to About Hanzo" morphs into /about.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; moves within 1 s (the h1 cut-in and the year that runs by itself)
+- [x] Page-owned hero; nothing above the h1
+- [x] JS off: legible (`noscript` stacks the 13 years)
+- [x] One idea per 100svh
+- [x] Ends in proof (clippings above), Band, footer
+- [x] Morph on "Return to About Hanzo"
+
+Done here: h1 52px with lede and ask under it; beside it the hero's one big thing, a 160px Air year running 2014→2026 while the four eras' bars fill; then clippings, the pinned year scene, Your year, principles, the FDE Band.
+
+## 4. Conversion system
+- [x] Page-owned `v2s-btn` until kit `Cta`; no raw `.x-btn`
+- [x] Sticky ask: the shared bar carries "Talk to Hanzo FDE"
+- [x] n/a: no copy button
+- [x] `data-cta` and `data-thumb` on the primary
+
+Done here: `data-cta="history.hero"` and `history.band`; `data-thumb` on the Band ask.
+
+## 5. Trust and proof
+- [x] No logo strip; no seal; no invented number
+- [x] Every figure traces to Hanzo's year copy; each clipping keeps its press source
+- [x] n/a: no marquee
+- [x] n/a: no form
+
+Done here: TechCrunch, Crunchbase News, Nasdaq, Startland News and hanzo.blog sources beside their clippings.
+
+## 6. Content presentation (copy untouched)
+- [x] No text under 13px except 12px mono capitals
+- [x] Measures held; headings `balance`
+- [x] n/a: no tables, FAQ, tabs or code
+- [x] `parity.py /history`: 0 missing
+
+Done here: parity 214/214 text, 42/42 links; one year on screen at a time, all 13 in the HTML.
+
+## 7. Visual design system
+- [x] `taste.py` passes; deck greys only
+- [x] No label above a headline (captions after: Track record, Full History, Your year, Operating Principles)
+- [x] Radii 24 plates, 16 clippings; clippings are paper with one soft shadow (they are lifted objects you throw)
+- [x] One arrow and one chevron; no icon boxes
+- [x] Differs from neighbours: running year (About: frontier curve; Blog: cover)
+
+Done here: headings rest at 26px, the h1 52px, big years in Air 220 (one per screen), principles and FDE numerals 64px Air.
+
+## 8. UI component library
+- [x] Hover, press (.97), focus-visible on every control
+- [x] Focus ring 2px ink with white halo; white with black halo in the Band
+- [x] n/a: no dialogs
+- [x] Year input 64px text; −/+ buttons 56px
+- [x] Forks deleted: listed above
+
+Done here: rail buttons carry `aria-current`; the pause control is a 44px `aria-pressed` button named from the register ("Pause").
+
+## 9. Motion and interaction
+- [x] One signature, 2 supporting by script (variety OK), 0 fade-ups
+- [x] Kinds: time (the running year), pointer (drag-throw clippings), state (Your year cut, rail jump), scroll (the scrub), arrival (h1)
+- [x] Something moves without input; every control answers
+- [x] Reduced motion final states; no `setInterval`
+- [x] n/a: sound is the shared kit's
+
+Done here: signature = the scrub, the old year clearing (280 ms ease-in) before the new one rises (700 ms ease-emphasis, 300 ms later), so no frame shows two years.
+
+## 10. Media
+- [x] kit `Img` and `Film` for plates; sizes set
+- [x] One film at most (2026, only while that year is on stage)
+- [x] Alt: decorative plates `alt=""`, the year's figure stands in
+- [x] No dimmed photo
+
+Done here: customer photos and logos from Hanzo's case studies; with hanzo.ai blocked each plate shows its own figure.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass
+- [x] No horizontal scroll at 320
+- [x] 44px links; every hover has a tap path
+- [x] Ask above the fold at 375×667
+
+Done here: phone stacks the hero, swipes the clippings and the 13 years (one per card, next peeking); page 10,032px tall at 375 (was 21,889).
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast: #0a0a0a, #525252 on white; #a3a3a3 and white 78% in the Band
+- [x] Pause control first in the hero object's DOM
+- [x] n/a: no form submit (the year input is labelled)
+- [x] One h1; years are `article`s; inactive years `inert`
+- [x] Keyboard: rail, clippings (focus slides a card into view), year stepper, pause
+
+Done here: the running year has a 44px pause (`aria-pressed`); reduced motion hides it and shows 2026.
+
+## 13. Performance and engineering
+- [x] h1 in server HTML
+- [x] Images and the film sized; the film loads only on its year
+- [x] No poller
+- [x] Nothing heavy run on James's laptop
+
+Done here: the scrub sets state only when the year changes; transform and opacity only.
+
+## 14. SEO and machine files
+- [x] Title and description from content/pages.json (the doubled "— Hanzo AI — Hanzo AI" title is listed for James, untouched here)
+- [x] Canonical: shared metadata layer
+- [x] `<JsonLd route="/history" />` renders
+- [x] Case-study and press links are real links
+
+Done here: all 13 years in server HTML.
+
+## 15. Catalogue and product pages
+- [x] n/a: not a catalogue or model page
+
+Done here: n/a: Story page.
+
+## 16. Developer experience
+- [x] n/a: no code
+
+Done here: n/a: no code on the page.
+
+## 17. States and resilience
+- [x] Image failure shows the year's figure
+- [x] n/a: no live data
+- [x] n/a: no submit
+- [x] Reduced motion and JS off designed
+
+Done here: with JS off a `noscript` rule stacks the 13 years; reduced motion holds 2026 in the hero.
+
+## 18. Measurement and handover
+- [x] `data-cta` on primaries; no analytics wired yet
+- [x] Nothing identifier-bearing
+- [x] `V2:` line in the page file
+- [x] n/a: no `docs/review/history.md` yet (critic round 1: 6/10, every complaint fixed; re-review pending)
+
+Done here: `V2: 6/10` from round 1; year overlap, split-flap digits, eyebrows, hero object, ask bar overlap and phone length all fixed.
