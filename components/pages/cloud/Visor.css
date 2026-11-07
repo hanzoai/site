@@ -98,6 +98,10 @@ html:not(.js) .vs2-find[hidden] { display: block; } /* JS off: every paragraph r
   .vs2-tile .vs2-th { padding: 0; max-width: none; font-size: 17px; }
   .vs2-tile .vs2-plus { top: 50%; bottom: auto; right: 4px; margin-top: -22px; background: transparent; color: rgba(255, 255, 255, .55); }
   .vs2-grid li[data-at] .vs2-tile { color: #fafafa; }
+  /* the resting timer: a hairline fills under the current row over the 4 s before the room steps on by itself */
+  .vs2-tiles.pin .vs2-grid li { position: relative; }
+  .vs2-tiles.pin .vs2-grid li[data-at]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #fafafa; transform-origin: 0 50%; animation: vs2-timer 4s linear both; }
+  @keyframes vs2-timer { from { transform: scaleX(0); } to { transform: none; } }
   .vs2-grid li[data-at] .vs2-n { color: #fafafa; }
   .vs2-grid li[data-at] .vs2-plus { background: rgba(255, 255, 255, .14); color: #fafafa; }
   @media (hover: hover) { .vs2-tile:hover { background: transparent; color: #fafafa; } }
