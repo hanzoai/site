@@ -16,7 +16,7 @@
    files that open into their page (state, BizOpen); the switches and gates answer the hand. Every word and link is Hanzo's.
 V2: 8/10 deck scale (h1 52, headings 26, the views figure 64 as the one big thing), the live reading room beside the title at both sizes, five chapters, the folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder; deck greys, outline-or-raise, no springs, nothing floating, one ask (hero, the site's bar, close)
 */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, More, Cta } from '../../kit';
 import { useLive } from '../cloud/Frame';
@@ -75,7 +75,7 @@ function Live() {
   const cur = s >= 1 && s <= PAGES ? s - 1 : s === 11 ? BACK : -1;
   const twice = s >= 11;
   const far = s === 0 ? 0 : Math.min(s, PAGES);
-  const views = visit * 2 + 1 + (twice ? 1 : 0);
+  const views = visit * (PAGES + 1) + far + (twice ? 1 : 0); // page views: one per page read, the re-read too
   const o = s === 0 ? 0 : Math.max(0, Math.min(7, (cur < 0 ? BACK : cur) - 1));
   const feed = [
     twice && { id: 'b' + visit, b: 'came back', t: 're-read page 7', hot: true },
@@ -139,7 +139,7 @@ function Hero() {
           <p className="dr-tag x-mono">Secure Document Sharing</p>
           <p className="bz-lede">You send a link instead of an attachment, and the link keeps working for you after it leaves.</p>
           <div className="dr-acts">
-            <Cta to="/login" id="dataroom.hero" kind="quiet" thumb>Try Hanzo</Cta>
+            <Cta to="/login" id="dataroom.hero" thumb>Try Hanzo</Cta>
             <More to={DOCS}>Documentation</More>
           </div>
         </div>
@@ -290,7 +290,7 @@ const GATE = { password: ['Enter the password', 'Unlock'], email: ['Enter the co
 function Gate({ k, mail, i, go }) {
   const [t, b] = GATE[k];
   return (
-    <motion.div className="dr-gate" style={{ zIndex: 10 - i }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: i * 14, scale: 1 - i * 0.045 }} exit={{ opacity: 0, x: 120, rotate: 5, transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }} transition={{ duration: 0.3, ease: EASE }}>
+    <motion.div className={'dr-gate' + (i ? ' back' : '')} style={{ zIndex: 10 - i }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: i * 14, scale: 1 - i * 0.045 }} exit={{ opacity: 0, x: 120, rotate: 5, transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }} transition={{ duration: 0.3, ease: EASE }}>
       <span className="dr-gate-n x-mono">{i + 1}</span>
       <p className="bz-title">{t}</p>
       {k === 'password' && <span className="dr-field x-mono" aria-hidden="true">••••••••••</span>}
@@ -359,8 +359,27 @@ const PLANS = [
   ['Data Rooms', '$99', 'Full data room capabilities for fundraising and due diligence.', ['Contact Sales', '/contact-sales'], ['Everything in Business', 'Unlimited data rooms', 'Data room analytics', 'NDA agreements', 'Dynamic watermark', 'Granular permissions', 'Custom data room domain', '24/7 email support']],
 ];
 
-/* Plans as a ladder: each rung a step up from the last. */
+/* Plans as one panel that changes: the four rungs are tabs (name and price), the panel shows the chosen plan's words,
+   its list and its door. In view it walks the ladder once by itself and rests on Most Popular; a hand takes over.
+   Every plan's words stay in the page (inactive panels are hidden, not removed). Reduced motion: no walk. */
 function Plans() {
+  const [at, setAt] = useState(0);
+  const mine = useRef(false);
+  const [ref, live] = useLive(0.45);
+  useEffect(() => {
+    if (!live || mine.current) return undefined;
+    const ts = [1, 2, 3, 2].map((k, i) => setTimeout(() => { if (!mine.current) setAt(k); }, 1400 + i * 1700));
+    return () => ts.forEach(clearTimeout);
+  }, [live]);
+  const pick = (i) => { mine.current = true; setAt(i); };
+  const key = (e) => {
+    const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    const n = (at + d + PLANS.length) % PLANS.length;
+    pick(n);
+    document.getElementById('dr-plan-t' + n)?.focus();
+  };
   return (
     <section className="bz-sec dr-plans" aria-labelledby="dr-plans-h">
       <div className="bz-wrap bz-grid dr-ladder">
@@ -368,22 +387,41 @@ function Plans() {
           <h2 id="dr-plans-h" className="bz-headline">Simple, Transparent Pricing</h2>
           <p className="bz-body">Start free and scale as you grow. Self-host for free forever or let us handle the infrastructure.</p>
         </header>
-        <ol className="dr-rungs">
-          {PLANS.map(([t, p, d, [cta, to], li], i) => (
-            <li key={t} className={'dr-rung r' + i + (i === 2 ? ' pop' : '')}>
-              <p className="dr-rung-k">{i === 2 && <span className="dr-popular x-mono">Most Popular</span>}<span className="x-mono">{two(i + 1)}</span></p>
-              <h3 className="bz-title">{t}</h3>
-              <p className="dr-price"><b className="bz-fig">{p}</b><span>/mo</span></p>
-              <p className="dr-rung-d">{d}</p>
-              <ul>{li.map((x) => <li key={x}>{x}</li>)}</ul>
-              <More to={to}>{cta}</More>
-            </li>
-          ))}
-        </ol>
+        <div className="dr-plan bz-obj" ref={ref} onPointerDown={() => { mine.current = true; }}>
+          <div className="dr-plan-tabs" role="tablist" aria-label="Plans" onKeyDown={key}>
+            {PLANS.map(([t, p], i) => (
+              <button key={t} id={'dr-plan-t' + i} type="button" role="tab" aria-selected={at === i} aria-controls={'dr-plan-p' + i} tabIndex={at === i ? 0 : -1} className={'dr-plan-tab' + (i === 2 ? ' pop' : '')} onClick={() => pick(i)} style={{ '--i': i }}>
+                <span className="dr-plan-step" aria-hidden="true" />
+                <span className="x-mono">{two(i + 1)}</span>
+                <b>{t}</b>
+                <em>{p}<span>/mo</span></em>
+              </button>
+            ))}
+          </div>
+          <div className="dr-plan-body">
+            {PLANS.map(([t, p, d, [cta, to], li], i) => (
+              <div key={t} id={'dr-plan-p' + i} role="tabpanel" aria-labelledby={'dr-plan-t' + i} hidden={at !== i} className="dr-plan-p">
+                <p className="dr-rung-k">{i === 2 && <span className="dr-popular x-mono">Most Popular</span>}<span className="x-mono">{two(i + 1)} / 04</span></p>
+                <h3 className="bz-title">{t}</h3>
+                <p className="dr-price"><b className="bz-fig">{p}</b><span>/mo</span></p>
+                <p className="dr-rung-d">{d}</p>
+                <ul>{li.map((x, k) => <li key={x} style={{ '--k': k }}>{x}</li>)}</ul>
+                <More to={to}>{cta}</More>
+              </div>
+            ))}
+          </div>
+        </div>
         <div className="dr-oss">
-          <h3 className="bz-title">Built on Open Source</h3>
-          <p className="bz-body">Hanzo Dataroom is built on <A to="https://www.papermark.io">Papermark</A>, the open-source DocSend alternative. We contribute back to the community and extend it with Hanzo IAM integration, multi-tenant workspaces, and enterprise features.</p>
-          <div className="x-row-links tight"><More to={REPO}>hanzoai/dataroom</More><More to="https://github.com/mfts/papermark">Upstream: mfts/papermark</More></div>
+          <div className="dr-oss-copy">
+            <h3 className="bz-title">Built on Open Source</h3>
+            <p className="bz-body">Hanzo Dataroom is built on <A to="https://www.papermark.io">Papermark</A>, the open-source DocSend alternative. We contribute back to the community and extend it with Hanzo IAM integration, multi-tenant workspaces, and enterprise features.</p>
+          </div>
+          {/* the two repositories, upstream feeding ours and ours sending work back along the same line */}
+          <div className="dr-repos">
+            <A to="https://github.com/mfts/papermark" className="dr-repo up"><span className="dr-repo-i"><Gh /></span><b className="x-mono">Upstream: mfts/papermark</b><Arrow /></A>
+            <span className="dr-repo-line" aria-hidden="true"><i /><i /></span>
+            <A to={REPO} className="dr-repo"><span className="dr-repo-i"><Gh /></span><b className="x-mono">hanzoai/dataroom</b><Arrow /></A>
+          </div>
         </div>
       </div>
     </section>
@@ -412,7 +450,7 @@ function End() {
             <p className="bz-lede">You will know whether it was read before you have to ask.</p>
           </div>
           <div className="dr-end-go">
-            <Cta to="/login" id="dataroom.close" kind="quiet" size="lg" thumb>Try Hanzo</Cta>
+            <Cta to="/login" id="dataroom.close" size="lg" thumb>Try Hanzo</Cta>
             <p className="dr-end-note"><b>Start Sharing</b><span>Share documents with real-time analytics</span></p>
           </div>
         </div>
