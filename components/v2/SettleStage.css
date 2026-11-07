@@ -1,4 +1,4 @@
 .lx-settle { position: relative; }
 .lx-settle-in { transform-origin: 50% 0; position: relative; }
-.lx-settle-shade { position: absolute; inset: 2% 3% 0; border-radius: 28px; box-shadow: 0 50px 120px -30px rgba(0, 0, 0, .26); pointer-events: none; }
-.lx-settle-clip { position: relative; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+/* outlined, not raised (MASTER part 7): a 1px hairline, no shadow */
+.lx-settle-clip { position: relative; background: #fff; box-shadow: inset 0 0 0 1px var(--line, rgba(0, 0, 0, .1)); }
