@@ -139,7 +139,7 @@ Done here: on phones the stage lies flat. The dark plate spans the width, light 
   - #a3a3a3 on #000: 8.3:1
   - white 78% on #000: about 13:1
   - #525252 on white: 7.8:1
-- [x] Pause control: n/a. Nothing loops; every motion is scroll-linked or plays once.
+- [x] Pause control: n/a. Nothing loops forever; the hero plate's sheen crosses three times (about 14 s) and rests, off under reduced motion.
 - [ ] n/a: forms
 - [x] One h1, no heading skips
 - [x] Keyboard reaches every control; focusing a news row shows that story in the still column
