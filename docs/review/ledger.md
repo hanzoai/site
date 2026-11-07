@@ -24,16 +24,20 @@ Proof: `img/ledger.jpg` (desktop first screen | phone first screen).
    - Dead hover on the two solid buttons.
 11. **Copy untouched?** Yes. Parity 55/55 text and 3/3 links. Additions are demo data (accounts, amounts, hashes, Numscript) plus labels such as "may go below zero", "a reversing transaction points back at the original" and "transaction 2, posted once". They paraphrase Hanzo's own sentences on the page, and none is a new claim.
 
-## Missing from the 18 parts
-The component master plan (`docs/PLAN-COMPONENTS.md`) has not landed, so this uses the parts BRIEF-v3 implies. It will be rechecked when the plan lands.
-- **Product on the first screen**: missing at both widths.
-- **Sticky ask on desktop and local sub-nav**: missing.
-- **Hero figure**: none, though the balances could carry it.
-- **Card-to-page continuity**: missing.
-- **Closing Band** that repeats the hero ask verbatim: the close uses "Deploy to Cloud" instead.
-- **Pointer layer**: none (hover detail, magnetic ask).
-- **Loading/error states** for the live book and the splitter: not seen.
-- **Coverage file**: `docs/coverage/ledger.md` is missing.
+## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
+- **2.1 Strategy / 4 Common gate:** no `Persona:`, `Goal:`, `CTA:` or metric id in the page header. More than one solid button shows per viewport.
+- **2.3 First impression:** with JS off, the hero lede, the "Money here only ever moves…" paragraph and the "Read the docs" button are invisible (15 hidden runs), which fails a P1 row. The phone fold has no product peeking (plan: ≥80px of app within 660px). The close is not a Band that repeats the hero ask.
+- **2.4 Conversion:** 0 `data-cta`. The thumb bar's verb ("Read the docs") differs from the close ("Deploy to Cloud").
+- **2.5 Proof:** no figure is staged, even though the balances could be one.
+- **2.6 Content:** 51 text runs under 14px on phone (journal rows, labels).
+- **2.7 Visual system:** emerald and red break the 0-hue override. The override's "status colour only with a shape or text cue" does not cover a whole-page accent.
+- **2.8 Components:** 10 bare `:hover` rules. The solid buttons have no press state, and their hover changes only an invisible border.
+- **2.9 Motion:** 2 `setInterval` timers. The self-posting book has no pause control (2.12, WCAG 2.2.2). Reduced motion settles.
+- **2.11 Mobile:** the close's "Read the docs" and "View on GitHub" text links are 21px tall (plan: 44px), and the "hanzoai" chip is 40px.
+- **2.12 Accessibility:** green figures "10,000" and "Σ 0" measure 4.1:1, under 4.5:1.
+- **2.17 States:** no loading or failure state for the book or the splitter.
+- **Coverage:** `docs/coverage/ledger.md` is missing.
+- Passing: one h1, one main, no horizontal scroll at 320, no raw img/video/table, CLS 0.
 
 ## Fixes (in order)
 1. **Strip the emerald and the red.** Use ink for balances and Σ 0, grey for the chain highlight and the slider, and an inverted ink chip for "caught". Contrast and weight do the work that colour did.

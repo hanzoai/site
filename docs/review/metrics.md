@@ -24,15 +24,19 @@ Proof: `img/metrics.jpg` (desktop first screen | phone first screen).
    - Opacity-only hover on the chapter dots.
 11. **Copy untouched?** Yes. Parity 59/59 text and 12/12 links. The added strings are drawn demo data (query, table rows, service names) plus a few labels ("a spike is the start of a question", "series = models", "1 more column"). They read as UI, not as new claims.
 
-## Missing from the 18 parts
-The component master plan (`docs/PLAN-COMPONENTS.md`) has not landed, so this uses the 18 parts BRIEF-v3 implies. It will be rechecked against the plan when it lands.
-- **Sticky ask on desktop**: there is no page-ask bar or sub-nav after the hero.
-- **Local sub-nav**: no product sub-nav with tabs and the ask (BRIEF 3.3 rule 3).
-- **Proof / figures**: none, though "4 stars" sits in the close. That is fine if Hanzo has no figure, but nothing is a hero number.
-- **Card-to-page continuity**: "Related capabilities" does not open into its page.
-- **Pointer layer**: no hover detail on the console or table rows.
-- **Loading/error states** for the live chart are not visible.
-- **Coverage file**: `docs/coverage/metrics.md` is missing.
+## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
+- **2.1 Strategy / 4 Common gate:** no `Persona:`, `Goal:`, `CTA:` or metric id in the page header. More than one solid button shows per viewport (see answer 4).
+- **2.3 First impression:** with JS off, the h1 shows, but 21 pieces of text are hidden (chapters 02–06 and their lines). Plan 2.3 says JS-off must be legible. The "Related capabilities" card does not open into its page (Morph row).
+- **2.4 Conversion:** 0 `data-cta` on any primary. The thumb bar's verb differs from the close's.
+- **2.6 Content:** 32 text runs at 13px on phone, below the 14px floor ("per-model", series names, console labels).
+- **2.7 Visual system:** the orange and the green "api" tag break the 0-hue override.
+- **2.8 Components:** 8 `title=` tooltips on links/buttons (plan: 0). 11 bare `:hover` rules outside `@media (hover:hover)`. The hero button and tabs have no press state.
+- **2.9 Motion:** 2 `setInterval` timers in the page. The live chart has no pause control (WCAG 2.2.2 row in 2.12). Reduced motion is good: everything comes to rest.
+- **2.11 Mobile:** the "hanzoai/metrics 4 stars" chip (32px) and "Open in the console" (36px) are under 44px tall.
+- **2.12 Accessibility:** contrast under 4.5:1 on the chart legend "zen" (3.1:1), "01 / 06" (3.1:1), "one query" (3.0:1) and the dark room's "Example project…" (3.3:1).
+- **2.17 States:** no loading or failure state for the live chart or the "4 stars" figure.
+- **Coverage:** `docs/coverage/metrics.md` is missing.
+- Passing: one h1, one main, no horizontal scroll at 320, no raw img/video/table, reduced motion settles, CLS ≈ 0.
 
 ## Fixes (in order)
 1. **Take the orange out.** Draw the zen/kai/enso series as ink, mid grey and light grey (weight or dash to tell them apart), and make the trace bars, pills, tenant column and arrow grey or ink. Remove the green "api" tag too.
