@@ -1,28 +1,55 @@
 /* ---------- visor v2 (vs2-) ---------- */
 
+/* Hero: the one Cloud page whose console runs left to right as a pipeline under a left-set title (request → every
+   provider answers → one inventory → the console), rising into place; Sentinel and World sit beside their object,
+   Search centres, Telemetry and Billing split, Stream frames. */
+.vs2-hero.rise .l2-stage-copy { text-align: left; align-items: flex-start; padding-top: clamp(28px, 5svh, 64px); }
+.vs2-hero.rise .l2-lede { margin-inline: 0; }
+.vs2-hero.rise .l2-acts { justify-content: flex-start; }
+.vs2-hero.rise .l2-stage-obj { padding-top: clamp(20px, 3.4svh, 40px); transform-origin: 0 0; }
+.vs2-hero .l2-stage-obj > * { width: min(100%, 1152px); }
+@media (min-width: 901px) {
+  .vs2-hero .vs2-fleet { grid-template-columns: minmax(0, .95fr) minmax(0, .8fr) minmax(0, 1fr) minmax(0, .95fr);
+    grid-template-areas: 'req cat k con' 'req cat ul con' 'dry cat ul audit'; grid-template-rows: auto 1fr auto; gap: 10px 12px; padding: 12px; }
+  .vs2-hero .vs2-req { grid-area: req; }
+  .vs2-hero .vs2-dry { grid-area: dry; height: auto; padding: 0 4px; }
+  .vs2-hero .vs2-cat { grid-area: cat; grid-template-columns: minmax(0, 1fr); align-content: start; }
+  .vs2-hero .vs2-inv { display: contents; }
+  .vs2-hero .vs2-inv > .vs2-k { grid-area: k; margin: 0; padding: 6px 4px 0; }
+  .vs2-hero .vs2-inv > ul { grid-area: ul; }
+  .vs2-hero .vs2-inv li { background: #fff; }
+  .vs2-hero .vs2-con { grid-area: con; }
+  .vs2-hero .vs2-audit { grid-area: audit; margin: 0; padding: 0 4px; text-wrap: balance; }
+  .vs2-hero .vs2-cmd { font-size: 21px; line-height: 1.3; }
+}
+
 /* Stage object: the fleet console */
 .vs2-fleet { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; padding: 10px; background: #f5f5f5; }
 .vs2-req, .vs2-cat, .vs2-dry { grid-column: 1 / -1; }
+.vs2-fleet[data-paused] .vs2-caret { animation-play-state: paused; }
 .vs2-pause.l2-pause { top: 20px; right: 20px; }
 .vs2-req { padding: 22px 64px 22px 24px; border-radius: 20px; background: #0a0a0a; color: #f5f5f5; }
-.vs2-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.vs2-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #525252; }
 .vs2-req .vs2-k { color: #a3a3a3; }
 .vs2-cmd { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.02em; }
 .vs2-cmd b { color: #a3a3a3; font-weight: 606; }
 .vs2-cat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.vs2-prov { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; background: #fff; border: 1.5px solid transparent; opacity: .45; transform: translateY(6px); transition: opacity .5s var(--ease), transform .6s var(--ease), border-color .4s; }
-.vs2-prov.on { opacity: 1; transform: none; }
+/* resting states are legible (4.5:1 or better); an unanswered provider is dashed and waiting, not faded */
+.vs2-prov { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; background: #fff; border: 1.5px dashed #d4d4d4; transform: translateY(6px); transition: transform .6s var(--ease), border-color .4s, background-color .4s; }
+.vs2-prov.on { transform: none; border-style: solid; border-color: transparent; }
 .vs2-prov.pick { border-color: var(--ink); }
 .vs2-prov b { font-size: 17px; font-weight: 606; }
 .vs2-prov span { font-size: 14px; color: var(--soft); }
-.vs2-prov em { font-size: 12px; font-style: normal; color: var(--ac); }
-.vs2-dry { height: 38px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: var(--faint); }
-.vs2-dry span { opacity: .3; transform: translateY(4px); transition: opacity .35s, transform .5s var(--ease); }
-.vs2-dry span.on { opacity: 1; transform: none; color: var(--ac); }
+.vs2-prov em { font-size: 13px; font-style: normal; color: #525252; }
+.vs2-prov.on em { color: var(--ac); }
+.vs2-dry { height: 38px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: #525252; }
+.vs2-dry span { transform: translateY(2px); transition: color .35s, transform .5s var(--ease); }
+.vs2-dry span.on { transform: none; color: var(--ink); font-weight: 606; }
 .vs2-inv { grid-column: 1 / -1; padding: 20px; border-radius: 20px; background: #fff; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 0 16px; }
 .vs2-inv .vs2-k { grid-column: 1 / -1; }
 .vs2-fleet .vs2-inv ul { min-height: 190px; gap: 5px; } /* five rows reserved: adding machines never moves the console */
 .vs2-inv ul li { height: 34px; }
+.vs2-inv li.ph, .vs2-hero .vs2-inv li.ph { background: transparent; border: 1px dashed #d4d4d4; }
 .vs2-req { padding-top: 18px; padding-bottom: 18px; }
 .vs2-inv { padding: 16px 20px; }
 .vs2-prov { padding: 14px 16px; }
@@ -36,26 +63,60 @@ i.k { background: #d4d4d4; }
 .vs2-inv li span, .vs2-inv2 li span { margin-left: auto; font-size: 13px; color: var(--soft); }
 .vs2-con { align-self: start; border-radius: 14px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; opacity: .25; transform: scale(.96); transform-origin: 0 0; transition: opacity .4s, transform .6s var(--ease); }
 .vs2-con.on { opacity: 1; transform: none; }
-.vs2-con p { display: flex; gap: 2px; margin: 0; padding: 8px 8px 0; font-size: 12px; }
+.vs2-con p { display: flex; gap: 2px; margin: 0; padding: 8px 8px 0; font-size: 13px; }
 .vs2-con p span { padding: 6px 10px; border-radius: 8px 8px 0 0; background: #171717; color: #a3a3a3; }
 .vs2-con p span:first-child { color: #a3a3a3; }
 .vs2-con.on p span:first-child { background: #262626; color: #fafafa; }
 .vs2-con code { display: block; height: 96px; padding: 12px; background: #171717; font-size: 14px; }
-.vs2-audit { grid-column: 2; margin: 8px 0 0; font-size: 12px; color: var(--faint); opacity: 0; transition: opacity .4s; }
+.vs2-audit { grid-column: 2; margin: 8px 0 0; font-size: 13px; color: #525252; opacity: 0; transition: opacity .4s; text-wrap: balance; }
 .vs2-audit.on { opacity: 1; }
 
-/* signature: tiles that open into their card (the one dark room) */
+/* signature: the one dark room. Phones (and reduced motion): the rows stack as cards, each with its own picture that
+   plays as it arrives. Desktop: one pinned stage, the numbered list left and one picture large on the right. */
+.vs2-tiles { position: relative; padding: clamp(72px, 11vw, 188px) 0; }
 .vs2-tiles-h { max-width: 22ch; }
-.vs2-grid { list-style: none; margin: clamp(40px, 5vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
-.vs2-grid li:nth-child(1), .vs2-grid li:nth-child(6) { grid-column: span 2; }
-.vs2-tile { position: relative; width: 100%; height: clamp(260px, 26vw, 320px); display: flex; flex-direction: column; align-items: flex-start; padding: 24px; border: 0; border-radius: 24px; background: #171717; color: #fafafa; text-align: left; cursor: pointer; overflow: hidden; transition: background .3s var(--ease), transform 90ms var(--ease); }
-@media (hover: hover) { .vs2-tile:hover { background: #262626; } .vs2-tile:hover .vs2-plus { background: #fafafa; color: #000; } }
+.vs2-grid { list-style: none; margin: clamp(32px, 4vw, 48px) 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.vs2-tile { position: relative; width: 100%; height: 280px; display: flex; flex-direction: column; align-items: flex-start; padding: 20px; border: 0; border-radius: 24px; background: #171717; color: #fafafa; font: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: background-color .3s var(--ease), transform 90ms var(--ease); }
 .vs2-tile:active { transform: scale(.97); }
 .vs2-tile:focus-visible { outline: 2px solid #fafafa; outline-offset: 3px; }
 .vs2-n { font-size: 13px; color: #a3a3a3; }
 .vs2-tp { position: relative; flex: 1; width: 100%; margin: 16px 0; display: flex; align-items: center; pointer-events: none; }
 .vs2-th { display: block; padding-right: 56px; font-size: 17px; font-weight: 606; letter-spacing: -.01em; line-height: 1.3; max-width: 26ch; }
-.vs2-plus { position: absolute; right: 20px; bottom: 20px; width: 44px; height: 44px; padding: 14px; border-radius: 50%; background: rgba(255, 255, 255, .1); color: #fafafa; transition: background .3s var(--ease), color .3s var(--ease); }
+.vs2-plus { position: absolute; right: 20px; bottom: 20px; width: 44px; height: 44px; padding: 14px; border-radius: 50%; background: rgba(255, 255, 255, .1); color: #fafafa; transition: background-color .3s var(--ease), color .3s var(--ease), transform .3s var(--ease); }
+@media (hover: hover) { .vs2-tile:hover { background: #262626; } .vs2-tile:hover .vs2-plus { background: #fafafa; color: #000; transform: rotate(90deg); } }
+.vs2-find { margin: 12px 4px 0; color: rgba(255, 255, 255, .78); }
+.vs2-stage { display: none; }
+
+@media (min-width: 901px) {
+  .vs2-room { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
+  .vs2-side { grid-column: 1 / span 5; }
+  .vs2-grid { gap: 0; border-top: 1px solid rgba(255, 255, 255, .14); }
+  .vs2-grid li { border-bottom: 1px solid rgba(255, 255, 255, .14); }
+  .vs2-tile { height: auto; min-height: 56px; flex-direction: row; align-items: center; gap: 18px; padding: 12px 64px 12px 4px; border-radius: 0; background: transparent; color: rgba(255, 255, 255, .55); transition: color .3s var(--ease); }
+  .vs2-tile .vs2-tp { display: none; }
+  .vs2-tile .vs2-th { padding: 0; max-width: none; font-size: 17px; }
+  .vs2-tile .vs2-plus { top: 50%; bottom: auto; right: 4px; margin-top: -22px; background: transparent; color: rgba(255, 255, 255, .55); }
+  .vs2-grid li[data-at] .vs2-tile { color: #fafafa; }
+  .vs2-grid li[data-at] .vs2-n { color: #fafafa; }
+  .vs2-grid li[data-at] .vs2-plus { background: rgba(255, 255, 255, .14); color: #fafafa; }
+  @media (hover: hover) { .vs2-tile:hover { background: transparent; color: #fafafa; } }
+  .vs2-stage { grid-column: 7 / span 6; display: flex; flex-direction: column; gap: 16px; }
+  .vs2-sn { margin: 0; font-size: 13px; color: #a3a3a3; }
+  .vs2-sn b { font-size: 64px; font-weight: 220; letter-spacing: -.04em; line-height: 1; color: #fafafa; }
+  .vs2-big { display: flex; align-items: center; min-height: 300px; padding: 32px; border-radius: 24px; background: #171717; }
+  .vs2-big > * { width: 100%; }
+  .vs2-big .vs2-p0 b, .vs2-big .vs2-p1 span, .vs2-big .vs2-p2 span { font-size: 17px; }
+  .vs2-big .vs2-p0 i { height: 16px; }
+  .vs2-big .vs2-p2 i { height: 48px; }
+  .vs2-big .vs2-p3 b { font-size: 112px; }
+  .vs2-st { margin: 0; font-size: 21px; font-weight: 497; letter-spacing: -.01em; color: #fafafa; }
+  .vs2-prog { display: block; height: 1px; background: rgba(255, 255, 255, .14); }
+  .vs2-prog i { display: block; height: 100%; background: #fafafa; transform-origin: 0 50%; transition: transform .5s var(--ease); }
+  /* pinned: the room stays on screen for six steps of scroll */
+  .vs2-tiles.pin { height: 340svh; padding: 0; }
+  .vs2-tiles.pin .vs2-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); display: flex; align-items: center; }
+  .vs2-tiles.pin .vs2-room { width: 100%; }
+}
 .vs2-sheet .vs2-cp { display: flex; align-items: center; min-height: 220px; padding: 24px; border-radius: 20px; background: #0a0a0a; color: #fafafa; }
 .vs2-sheet .vs2-cp > * { width: 100%; }
 .vs2-sheet .vs2-cd { margin-top: 24px; }
@@ -97,9 +158,25 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 @keyframes vs2-cut { from { transform: translateY(105%); } to { transform: none; } }
 @keyframes vs2-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
 .vs2-p0 i { transform-origin: 0 50%; }
-li[data-on] .vs2-p0 i { animation: vs2-bar .7s var(--ease) var(--d, 0ms) both; }
-li[data-on] .vs2-p1 .vm, li[data-on] .vs2-p2 i, li[data-on] .vs2-p4 span, li[data-on] .vs2-p5 li { animation: vs2-pop .5s cubic-bezier(.16, 1, .3, 1) calc(var(--d, 0ms) + 200ms) both; }
-li[data-on] .vs2-p3 b { animation: vs2-cut .7s cubic-bezier(.16, 1, .3, 1) .25s both; }
+:is(li, .vs2-big)[data-on] .vs2-p0 i { animation: vs2-bar .7s var(--ease) var(--d, 0ms) both; }
+:is(li, .vs2-big)[data-on] :is(.vs2-p1 .vm, .vs2-p2 i, .vs2-p4 span, .vs2-p5 li) { animation: vs2-pop .5s cubic-bezier(.16, 1, .3, 1) calc(var(--d, 0ms) + 200ms) both; }
+:is(li, .vs2-big)[data-on] .vs2-p3 b { animation: vs2-cut .7s cubic-bezier(.16, 1, .3, 1) .25s both; }
+/* the close's inventory lands row by row once */
+.vs2-close { padding: 20px; border-radius: 20px; background: #171717; color: #fafafa; }
+.vs2-close .vs2-k { color: #a3a3a3; }
+.vs2-close .vs2-k b { color: #fafafa; }
+.vs2-close ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.vs2-close li { display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 14px; border-radius: 12px; background: rgba(255, 255, 255, .06); }
+.vs2-close li i { width: 10px; height: 10px; border-radius: 3px; }
+.vs2-close li i.m { background: #fafafa; } .vs2-close li i.p { background: #737373; } .vs2-close li i.k { background: #404040; }
+.vs2-close li b { font-size: 14px; font-weight: 606; }
+.vs2-close li span { margin-left: auto; font-size: 13px; color: #a3a3a3; }
+.vs2-close-con { display: flex; align-items: center; gap: 2px; margin: 12px 0 0; font-size: 13px; }
+.vs2-close-con span { padding: 6px 10px; border-radius: 8px; background: rgba(255, 255, 255, .08); color: #a3a3a3; }
+.vs2-close-con span:first-child { background: #fafafa; color: #0a0a0a; }
+.vs2-close-con code { margin-left: 10px; font-size: 14px; }
+.vs2-close[data-on] li { animation: vs2-pop .5s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms) both; }
+@media (prefers-reduced-motion: no-preference) { html.js .vs2-close:not([data-on]) li { opacity: 0; } }
 @media (prefers-reduced-motion: no-preference) {
   html.js .vs2-grid li:not([data-on]) .vs2-p0 i { transform: scaleX(0); }
   html.js .vs2-grid li:not([data-on]) :is(.vs2-p1 .vm, .vs2-p2 i, .vs2-p4 span, .vs2-p5 li) { opacity: 0; }
@@ -120,9 +197,10 @@ li[data-on] .vs2-p3 b { animation: vs2-cut .7s cubic-bezier(.16, 1, .3, 1) .25s 
 .vs2-name-l { grid-column: 1 / span 5; }
 .vs2-form { display: flex; flex-direction: column; gap: 18px; margin-top: 36px; }
 .vs2-form label, .vs2-count { display: flex; flex-direction: column; gap: 8px; }
-.vs2-form label span, .vs2-count > span { font-size: 13px; color: var(--faint); }
-.vs2-form input { width: 100%; height: 56px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--hair); background: #f5f5f5; font: 500 20px/1 var(--mono); color: var(--ink); outline: none; transition: border-color .2s, background .2s, box-shadow .2s; }
-.vs2-form input:focus-visible { background: #fff; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(0, 0, 0, .12); }
+.vs2-form label span, .vs2-count > span { font-size: 13px; color: #525252; }
+.vs2-form input { width: 100%; height: 56px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--hair); background: #f5f5f5; font: 500 20px/1 var(--mono); color: var(--ink); caret-color: var(--ink); outline: 2px solid transparent; outline-offset: 2px; transition: border-color .2s, background .2s, outline-color .15s; }
+/* the one focus ring: 2px ink with a white halo */
+.vs2-form input:focus-visible { background: #fff; border-color: var(--ink); outline-color: var(--ink); box-shadow: 0 0 0 2px #fff; }
 @media (hover: hover) { .vs2-form input:hover { border-color: rgba(0, 0, 0, .3); } }
 .vs2-count div { display: flex; align-items: center; gap: 18px; }
 .vs2-count button { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--hair); background: #fff; color: var(--ink); cursor: pointer; transition: transform 90ms var(--ease), border-color .2s, background .2s; }
@@ -145,10 +223,17 @@ li[data-on] .vs2-p3 b { animation: vs2-cut .7s cubic-bezier(.16, 1, .3, 1) .25s 
 
 @media (max-width: 900px) {
   .vs2-fleet { grid-template-columns: minmax(0, 1fr); }
-  .vs2-cat { grid-template-columns: minmax(0, 1fr); }
-  .vs2-cat { gap: 6px; }
-  .vs2-prov { flex-direction: row; align-items: center; justify-content: space-between; min-height: 48px; padding: 10px 16px; border-radius: 14px; }
-  .vs2-prov span { display: none; }
+  /* phone: the three providers answer side by side and the machines land first in the inventory, so the batch
+     arrives inside the first screen */
+  .vs2-cat { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .vs2-prov { justify-content: center; min-height: 48px; padding: 8px 10px; border-radius: 14px; gap: 2px; }
+  .vs2-prov b { font-size: 14px; }
+  .vs2-prov span, .vs2-prov em { display: none; }
+  .vs2-req { padding-top: 16px !important; padding-bottom: 16px !important; }
+  .vs2-req .vs2-k { margin-bottom: 6px; }
+  .vs2-dry { height: 28px; }
+  .vs2-inv li.mc { order: -1; }
+  .vs2-fleet .vs2-inv ul { min-height: 0; }
   .vs2-pause.l2-pause { top: 16px; right: 16px; }
   .vs2-req { padding: 20px 64px 20px 20px; }
   .vs2-inv { grid-template-columns: minmax(0, 1fr); gap: 12px; }
