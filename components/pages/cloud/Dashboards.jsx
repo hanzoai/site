@@ -25,7 +25,7 @@ import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from 
 import { A, Cta } from '../../kit';
 import { useCalm } from '../../ui';
 import KeynoteStage, { useStagePause } from './SafeStage';
-import KeynoteClose from '../../v2/KeynoteClose';
+import KeynoteClose from './SafeClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import ExampleConsole from './ExampleConsole';
 import { CursorLens, Lens } from './MqEntrances';

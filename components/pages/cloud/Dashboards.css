@@ -55,7 +55,7 @@
 .db-w-c { flex: 1; }
 
 /* ---------- the signature: the board builds itself ---------- */
-.db-build { position: relative; padding-top: clamp(72px, 11vw, 188px); }
+.db-build { position: relative; padding-top: clamp(44px, 6vw, 96px); }
 .db-build-h { align-items: end; row-gap: 17px; }
 .db-build-t { grid-column: 1 / span 6; }
 .db-build-l { grid-column: 8 / -1; }
@@ -154,7 +154,7 @@
 .db-hot i.on { background: var(--ink); }
 
 /* ---------- the four words, marked (the proof strip) ---------- */
-.db-figs-s { padding: 0 0 clamp(72px, 11vw, 188px); }
+.db-figs-s { padding: 0 0 clamp(56px, 7vw, 112px); }
 .db-figs { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
 .db-figs li { display: flex; flex-direction: column; gap: 12px; padding: 27px 24px 0 0; }
 .db-figs li + li { padding-left: 24px; border-left: 1px solid var(--line); }
@@ -222,7 +222,7 @@
 /* ---------- hover preview on the hero tabs, the chapter number as the moment ---------- */
 .db-w-c { position: relative; min-height: 0; }
 .db-ghost { position: absolute; inset: 0; opacity: .28; pointer-events: none; }
-.js .db-say-a[data-on] .db-n { transform-origin: 0 100%; animation: db-big 1.2s var(--e-in) both; }
+.js .db-say-a[data-on] .db-n { transform-origin: 0 0; animation: db-big 1.2s var(--e-in) both; }
 @keyframes db-big { from { transform: scale(3.4); color: var(--ink); } 55% { transform: scale(3.4); color: var(--ink); } }
 
 /* ---------- entrances (arrive.js sets data-arm below the fold, then data-in) ---------- */
@@ -255,17 +255,28 @@
 .db .mq-lens-copy { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: translate(calc(88px - var(--x, 0px) * 1.6), calc(88px - var(--y, 0px) * 1.6)) scale(1.6); }
 
 /* ---------- phones: one sticky board, the parts scroll under it ---------- */
-.db-mob-board { position: sticky; top: 64px; z-index: 2; height: 44svh; gap: 6px; padding: 10px 0; background: #fff; }
-.db-mob-p { padding: 8px; gap: 6px; border-radius: 12px; opacity: 0; transform: translateY(16px) scale(.92); transition: opacity .4s var(--e-in), transform .5s var(--e-in), outline-color .3s var(--e-out); }
-.db-mob-p[data-in] { opacity: 1; transform: none; }
+.db-mob-board { position: sticky; top: 60px; z-index: 2; height: 44svh; gap: 6px; padding: 10px 0; background: #fff; }
+.db-mob-p { padding: 8px; gap: 6px; border-radius: 12px; overflow: hidden; transition: opacity .4s var(--e-in), transform .5s var(--e-in), outline-color .3s var(--e-out); }
+.js .db-mob-p:not([data-in]) { opacity: 0; transform: translateY(16px) scale(.92); }
 .db-mob-p .db-ph span, .db-mob-p .db-tbl-chips, .db-mob-p .db-ch-bars em { display: none; }
-.db-mob-p .db-store li { padding: 6px 8px; }
+.db-mob-p .db-store li { padding: 6px 8px; overflow: hidden; white-space: nowrap; }
+.db-mob-p .db-store i { flex: none; }
+.db-mob-p .db-perm span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.db-mob-p .db-perm svg { flex: none; }
 .db-mob .db-li { padding: 32px 0; }
 @media (min-width: 900px) { .db-mob { display: none; } }
 
+/* the first screen: the saved query and its chart sit inside 1470x801 (the shared stage starts lower) */
+@media (min-width: 900px) {
+  .db > .kns { padding-top: clamp(32px, calc(26svh - 128px), 120px); }
+  .db > .kns .kns-g { row-gap: 36px; }
+  .db > .kns { padding-bottom: clamp(44px, 5vw, 72px); }
+  .db-hero { aspect-ratio: 16 / 6.4; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .db-hero, .db-say-a[data-on] .db-n { animation: none !important; }
-  .db-mob-p { opacity: 1; transform: none; transition: none; }
+  .db-hero, .db-say-a[data-on] .db-n, .db .kns-in, .db .kns-obj-in, .db .knl-t { animation: none !important; }
+  .db-mob-p { opacity: 1 !important; transform: none !important; transition: none; }
   .db-l, .db-ch .ln, .db-ch-bars i, .db-watch-top pre em { animation: none !important; }
   .db-say-a, .db-say-a[data-on], .db-li-p, .db-figs b i, .db-panel, .db-ch .pt { transition: none !important; }
 }
