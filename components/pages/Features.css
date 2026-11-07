@@ -28,7 +28,7 @@
 .xft-feat .xft-feat-t { margin: 0; color: #fafafa; font: 497 26px/1.15 var(--sans); letter-spacing: -.02em; }
 .xft-feat p:not(.xft-feat-t) { margin: 8px 0 0; max-width: 70ch; font-size: 16px; line-height: 1.5; color: #d4d4d4; }
 .xft-find { display: flex; align-items: center; gap: 10px; height: 48px; margin: 12px 0; padding: 0 16px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); color: #525252; }
-.xft-find:focus-within { box-shadow: 0 0 0 1px #0a0a0a; color: #0a0a0a; }
+.xft-find:focus-within { box-shadow: 0 0 0 2px #0a0a0a; color: #0a0a0a; }
 .xft-find input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; font: 400 16px/1 var(--sans); color: #0a0a0a; }
 .xft-find-n { font-size: 13px; color: #525252; white-space: nowrap; }
 .xft-board { display: grid; grid-template-columns: 2fr 2fr 1.05fr; gap: clamp(10px, 1.2vw, 16px); }
@@ -42,6 +42,7 @@
 @media (hover: hover) { .xft-key:hover { transform: translateY(-1px); } }
 .xft-key.down, .xft-key:active { transform: translateY(4px); box-shadow: 0 1px 0 #d4d4d4, 0 4px 10px -8px rgba(0, 0, 0, .3); }
 .xft-key.on { background: #e4e4e7; color: #0a0a0a; transform: translateY(4px); box-shadow: inset 0 0 0 1.5px #0a0a0a, 0 1px 0 #d4d4d4; }
+.xft-key.on:active { transform: translateY(5px); box-shadow: inset 0 0 0 2px #0a0a0a; }
 .xft-key.dim { opacity: .35; }
 .xft-key.hit:not(.on) { box-shadow: 0 5px 0 #d4d4d4, 0 0 0 2px #0a0a0a; }
 .xft-key:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
@@ -68,10 +69,6 @@
 @media (hover: hover) { .xft-rows button:hover { background: rgba(0, 0, 0, .04); color: #0a0a0a; } }
 .xft-rows button:active { transform: scale(.99); }
 .xft-rows button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
-.xft-row-d { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s var(--eio); }
-.xft-row-d > p { min-height: 0; overflow: hidden; margin: 0; padding-left: 32px; max-width: 54ch; font-size: 16px; line-height: 1.55; color: #525252; }
-.xft-rows li.on .xft-row-d { grid-template-rows: 1fr; }
-.xft-rows li.on .xft-row-d > p { padding-bottom: 16px; }
 .xft-film-w { position: relative; }
 .xft-film { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 20px; background: #000; overflow: hidden; color: #fafafa; text-decoration: none; isolation: isolate; }
 .xft-film .v2-mfilm { z-index: -1; transition: transform .6s var(--ez); }
@@ -96,6 +93,7 @@
 .xft-bc::after { content: ''; position: absolute; inset: 40% 0 0; z-index: -1; background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, .7)); }
 .xft-bc b { font: 497 17px/1.2 var(--sans); }
 @media (hover: hover) { .xft-bc:hover { transform: translateY(-4px); } }
+.xft-bc:active { transform: scale(.98); transition-duration: .09s; }
 
 /* round 3: the film answers the open row (it moves to a new crop), each room has its own layout, tighter first screen */
 .xft-hero { padding: 44px 0 44px; }
@@ -117,7 +115,6 @@
 .xft-prod.p1 .xft-film-cap, .xft-prod.p1 .xft-film-bar { left: auto; right: clamp(16px, 4vw, 32px); width: min(420px, 40%); }
 .xft-prod.p1 .xft-prod-h, .xft-prod.p1 .xft-rows li.on button { color: #fafafa; }
 .xft-prod.p1 .xft-prod-tag, .xft-prod.p1 .xft-rows button { color: rgba(255, 255, 255, .55); }
-.xft-prod.p1 .xft-row-d > p { color: rgba(255, 255, 255, .78); }
 .xft-prod.p1 .xft-rows, .xft-prod.p1 .xft-rows li { border-color: rgba(255, 255, 255, .14); }
 .xft-prod.p1 .xft-rows button:focus-visible { outline-color: #fafafa; }
 /* Hanzo Design & Cloud: a wide film above, its two rows side by side */
@@ -126,37 +123,25 @@
 .xft-prod.p2 .xft-film { aspect-ratio: 21 / 9; }
 .xft-prod.p2 .xft-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; border-bottom: 0; }
 .xft-prod.p2 .xft-rows li { border-bottom: 1px solid rgba(0, 0, 0, .1); }
-.xft-prod.p2 .xft-row-d { grid-template-rows: 1fr; }
-.xft-prod.p2 .xft-row-d > p { padding-bottom: 16px; }
-.xft-prod.p2 .xft-rows li:not(.on) .xft-row-d > p { color: #737373; }
-.xft-prod.p2 .xft-prod-w { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 0 clamp(32px, 5vw, 96px); align-items: start; }
-.xft-prod.p2 .xft-prod-h { grid-column: 1; }
-.xft-prod.p2 .xft-rows { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+/* the title first, then the wide film, then the two rows side by side and the description under them */
+.xft-prod.p2 .xft-prod-in { align-items: start; }
+.xft-prod.p2 .xft-prod-w { display: contents; }
+.xft-prod.p2 .xft-prod-h { grid-row: 1; }
+.xft-prod.p2 .xft-film-w { grid-row: 2; }
+.xft-prod.p2 .xft-rows { grid-row: 3; margin-top: 0; }
 
 /* round 4: one description panel (no height change as rows step), phone rooms stack for real, a two-line phone h1 */
 .xft-desc { display: grid; margin-top: 20px; }
 .xft-desc p { grid-area: 1 / 1; margin: 0; max-width: 54ch; font-size: 16px; line-height: 1.55; color: #525252; opacity: 0; transform: translateY(8px); transition: opacity .3s var(--eo), transform .4s var(--ez); }
-.xft-desc p.on { opacity: 1; transform: none; }
+.xft-desc p.on { opacity: 1; transform: none; transition: opacity .3s var(--eo) .12s, transform .4s var(--ez) .12s; }
+.xft-desc p:not(.on) { transition-duration: .12s, .4s; }
 .xft-prod.p1 .xft-desc p { color: rgba(255, 255, 255, .78); }
-.xft-prod.p2 .xft-desc { grid-column: 2; }
+.xft-prod.p2 .xft-desc { grid-row: 4; margin-top: 0; }
 .xft-rows button[aria-pressed='true'] { color: #0a0a0a; }
 .xft-prod.p1 .xft-rows button[aria-pressed='true'] { color: #fafafa; }
 .xft-top { margin-bottom: 8px; }
 .xft-find { margin: 8px 0; }
-@media (max-width: 899px) {
-  .xft-hero h1.xft-h1 { font-size: 30px !important; letter-spacing: -.02em; }
-  .xft-prod.p1 .xft-prod-in, .xft-prod.p2 .xft-prod-in { grid-template-columns: minmax(0, 1fr); }
-  .xft-prod.p1 .xft-film-w { position: relative; inset: auto; z-index: 0; order: -1; }
-  .xft-prod.p1 .xft-film { position: relative; inset: auto; aspect-ratio: 16 / 9; border-radius: 20px; }
-  .xft-prod.p1 .xft-film-cap, .xft-prod.p1 .xft-film-bar { left: 16px; right: 16px; width: auto; }
-  .xft-prod.p1 { padding: 44px 0 72px; }
-  .xft-prod { padding: 44px 0; }
-  .xft-film { aspect-ratio: 16 / 9; }
-  .xft-film-t { font-size: 17px; }
-  .xft-prod.p2 .xft-desc { grid-column: 1; }
-  .xft-desc p { font-size: 15px; }
-}
-@media (prefers-reduced-motion: reduce) { .xft-row-d, .xft-key, .xft-film .v2-mfilm, .xft-bc, .xft-desc p { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .xft-key, .xft-film .v2-mfilm, .xft-bc, .xft-desc p { transition: none; } }
 
 /* the sideways gallery (h-gallery, 7 Nov): the three rooms on one track. Wide screens with JS: the section is as tall
    as the track is long, its stage sticks and enter.js moves the track sideways (--gx) for that stretch, then lets go.
@@ -171,36 +156,22 @@
   html.js .xft-gal .xft-prod .w2-wrap { width: 100%; padding-inline: clamp(32px, 4vw, 72px); box-sizing: border-box; }
   html.js .xft-gal .xft-prod.p0 .xft-film { aspect-ratio: auto; height: min(calc(100svh - 240px), 460px); }
   html.js .xft-gal .xft-prod.p2 .xft-prod-in { gap: 24px; }
-  html.js .xft-gal .xft-prod.p2 .xft-film { aspect-ratio: auto; height: clamp(180px, calc(100svh - 520px), 400px); }
+  html.js .xft-gal .xft-prod.p2 .xft-film { aspect-ratio: auto; height: clamp(180px, calc(100svh - 450px), 400px); }
   html.js .xft-gal .xft-prod.p2 .xft-rows button { min-height: 48px; padding-block: 10px; }
-  html.js .xft-gal .xft-prod.p2 .xft-desc { margin-top: 12px; }
+  html.js .xft-gal .xft-prod.p2 .xft-desc { margin-top: -8px; }
   html.js .xft-gal-bar { position: absolute; left: 6vw; right: 6vw; bottom: 10px; display: block; height: 2px; border-radius: 2px; background: #e4e4e4; overflow: hidden; }
   html.js .xft-gal-bar i { position: absolute; inset: 0; background: #0a0a0a; transform: scaleX(var(--gp, 0)); transform-origin: 0 50%; }
 }
-@media (max-width: 899px) {
-  .xft-gal-track { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; padding: 8px 16px 24px; overscroll-behavior-x: contain; scrollbar-width: none; }
-  .xft-gal-track::-webkit-scrollbar { display: none; }
-  .xft .xft-gal .xft-prod { flex: 0 0 calc(100% - 36px); min-width: 0; scroll-snap-align: start; border-radius: 24px; overflow: hidden; background: #f5f5f5; padding: 0 0 28px; }
-  .xft .xft-gal .xft-prod.p1 { background: #000; padding: 0 0 28px; }
-  .xft-gal .xft-prod .w2-wrap { padding-inline: 0; }
-  .xft-gal .xft-prod-w { padding-inline: 18px; }
-  .xft .xft-gal .xft-prod .xft-film { border-radius: 0; }
-}
+/* phones (one block): the h1 on two lines; the display sits in the instrument (never sticky over the keys); the three
+   rooms ride the swipe rail, each with its own order: Chat film then rows, Dev words then a film strip, Design title,
+   then film, then rows; every film 16:9 */
 @media (max-width: 899px) {
   .xft-hero { padding-top: 32px; }
-  .xft-h1 { font-size: 32px !important; max-width: none; }
+  .xft-h1 { font-size: 32px !important; max-width: none; letter-spacing: -.02em; }
   .xft-find { max-width: none; }
-  .xft-prod.p1 { padding: 0 0 72px; }
-  .xft-prod.p1 .xft-film-w { position: relative; inset: auto; z-index: 0; order: -1; }
-  .xft-prod.p1 .xft-film { position: relative; aspect-ratio: 4 / 3; }
-  .xft-prod.p1 .xft-film::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .7)); }
-  .xft-prod.p1 .xft-film-cap, .xft-prod.p1 .xft-film-bar { left: 21px; right: 21px; width: auto; }
-  .xft-prod.p2 .xft-prod-w { grid-template-columns: minmax(0, 1fr); }
-  .xft-prod.p2 .xft-rows { grid-column: 1; grid-row: auto; grid-template-columns: 1fr; margin-top: 20px; }
-  .xft-prod.p2 .xft-film { aspect-ratio: 4 / 3; }
   .xft-inst { border-radius: 24px; padding: 10px; }
-  .xft-screen { position: sticky; top: 64px; z-index: 2; }
   .xft-screen-top { font-size: 12px; }
+  .xft-screen-body { align-items: center; }
   .xft-feat .xft-feat-t { font-size: 21px; }
   .xft-feat p:not(.xft-feat-t) { font-size: 15px; }
   .xft-board { grid-template-columns: 1fr; }
@@ -208,12 +179,32 @@
   .xft-key { min-height: 80px; }
   .xft-key-t { font-size: 14.5px; }
   .xft-cl-h, .xft-cl-h span, .xft-kick { font-size: 14px; }
-  .xft-prod-in { grid-template-columns: minmax(0, 1fr); }
+  .xft-prod-in, .xft-prod.p1 .xft-prod-in, .xft-prod.p2 .xft-prod-in { grid-template-columns: minmax(0, 1fr); }
+  .xft-prod { padding: 44px 0; }
+  .xft-film, .xft-prod.p1 .xft-film, .xft-prod.p2 .xft-film { aspect-ratio: 16 / 9; }
+  .xft-film-t, .xft-film-cap b { font-size: 17px; }
   .xft-prod .xft-film-w { order: -1; }
-  .xft-prod.p1 .xft-prod-w { order: 0; }
-  .xft-film { aspect-ratio: 4 / 3; }
-  .xft-film-cap b { font-size: 21px; }
-  .xft-row-d > p { font-size: 15px; padding-left: 0; }
+  .xft-prod.p1 .xft-film-w { position: relative; inset: auto; z-index: 0; order: 2; }
+  .xft-prod.p1 .xft-prod-w { order: 1; }
+  .xft-prod.p1 .xft-film { position: relative; inset: auto; }
+  .xft-prod.p1 .xft-film::after { background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, .7)); }
+  .xft-prod.p1 .xft-film-cap, .xft-prod.p1 .xft-film-bar { left: 16px; right: 16px; width: auto; }
+  .xft-prod.p2 .xft-prod-h, .xft-prod.p2 .xft-film-w, .xft-prod.p2 .xft-rows, .xft-prod.p2 .xft-desc { grid-row: auto; }
+  .xft-prod.p2 .xft-prod-h { order: -2; padding-inline: 18px; }
+  .xft-prod.p2 .xft-film-w { order: -1; }
+  .xft-prod.p2 .xft-rows { grid-template-columns: 1fr; margin-top: 4px; padding-inline: 18px; }
+  .xft-prod.p2 .xft-desc { padding-inline: 18px; }
+  .xft-desc p { font-size: 15px; }
   .xft-band-cards { grid-template-columns: 1fr; }
   .xft-bc { height: 96px; }
+  /* the swipe rail */
+  .xft-gal-track { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; padding: 8px 16px 24px; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .xft-gal-track::-webkit-scrollbar { display: none; }
+  .xft .xft-gal .xft-prod { flex: 0 0 calc(100% - 36px); min-width: 0; scroll-snap-align: start; border-radius: 24px; overflow: hidden; background: #f5f5f5; padding: 0 0 28px; }
+  .xft .xft-gal .xft-prod.p1 { background: #000; padding: 24px 0 0; }
+  .xft .xft-gal .xft-prod.p2 { padding-top: 20px; }
+  .xft .xft-gal .xft-prod.p1 .xft-prod-in { gap: 24px; }
+  .xft-gal .xft-prod .w2-wrap { padding-inline: 0; }
+  .xft-gal .xft-prod-w { padding-inline: 18px; }
+  .xft .xft-gal .xft-prod .xft-film { border-radius: 0; }
 }

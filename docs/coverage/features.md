@@ -31,7 +31,7 @@ Done here: see the parity note above; page links 2/2.
 - [x] Ends on the band (three film cards and the one ask), then footer
 - [x] Each room's film card and heading open its product (/chat, /dev, /design) as a page transition; no `data-morph` (its title would not land on those pages' h1s)
 
-Done here: the display and the top row of keys sit on the first screen at 1470×801; on phone the display is sticky above the board, so a tapped key answers in view.
+Done here: the display and the top row of keys sit on the first screen at 1470×801; the first self-press lands 0.9 s after arrival. On phone the display sits in the instrument above the board (no longer sticky, so it never covers keys), and a tapped key and the display share the first 812px.
 
 ## 4. Conversion system
 - [x] Kit `A` + `.w2-cta`
@@ -98,7 +98,7 @@ Done here: Enso (Hanzo Chat), Zen (Hanzo Dev) and Iro (Design & Cloud) films are
 - [x] Targets 44px+
 - [x] Primary above the fold at 375×667
 
-Done here: `.xft-hero` uses `overflow: clip` so the phone display can stick; the product rooms stack on phones (a 16:9 film, then rows, then the one description panel; round 4 fixed the Dev room, which a desktop rule had kept two-column at 375), nothing pins over text; idle CLS beside a self-stepping room on phone 0.0027 over 12 s (round 4: the descriptions share one fixed cell, so stepping changes no height, and hover no longer opens rows); qc crawl: 0 targets under 44px at 375 (headings are 44px links), scrollWidth 320 at 320.
+Done here (8 Nov): the three rooms ride one sideways gallery on wide screens and a swipe rail on phones (scroll-snap, never pinned). On phones every film is 16:9 and each room has its own order: Chat film then rows, Dev words then a film strip, Design title then film then rows (one `@media (max-width: 899px)` block in Features.css). On desktop the Design room reads title, wide film, then its two rows and the description. Room descriptions announce only after a hand picks a row (`aria-live` off while they step); the description crossfade lets the old line go before the new one lands. The spring-snap entrance now lands on a hard ease-out with no overshoot.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: display text #d4d4d4 / #a3a3a3 on #0a0a0a
