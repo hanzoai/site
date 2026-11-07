@@ -126,6 +126,19 @@ const LAST = STAGES.length; // index of the "Not here?" panel
 const ROLE = ['a change in it starts a run', 'read from it', 'write to it'];
 const EMPH = [0.16, 1, 0.3, 1];
 const K = 0.8; // px of vertical scroll per px the track travels
+/* the track rests on each panel for the first part of its share of the scroll, then glides to the next, so a panel is
+   read whole (one in, one out) instead of two halves sliding past; HOLD is that resting share. */
+const HOLD = 0.5;
+const ease3 = (x) => x * x * (3 - 2 * x);
+const uneas3 = (y) => 0.5 - Math.sin(Math.asin(1 - 2 * Math.min(1, Math.max(0, y))) / 3);
+const held = (raw, step, travel) => { // page scroll (px of track) -> where the track sits
+  const p = raw / step, i = Math.floor(p), f = p - i;
+  return Math.min(travel, (i + (f < HOLD ? 0 : ease3((f - HOLD) / (1 - HOLD)))) * step);
+};
+const unheld = (left, step) => { // where the track sits -> page scroll (px of track), the middle of the glide
+  const p = left / step, i = Math.floor(p), f = p - i;
+  return (i + (f < 0.001 ? HOLD / 2 : HOLD + (1 - HOLD) * uneas3(f))) * step;
+};
 const self = { target: '_self', rel: undefined }; // kit A treats an in-page #hash as external; keep these in the tab
 
 /* Entrances: a section waits in its start state only after mount and only while out of view; on first view it runs its
@@ -370,8 +383,8 @@ function Gallery({ flow, mine, drop }) {
   const count = (c) => (c === 'All' ? APPS.length : APPS.filter((a) => a[2] === c).length);
   const stick = () => parseFloat(getComputedStyle(pin.current).top) || 0;
   const want = () => { // where the track should be for the page's scroll
-    const { travel } = geo.current;
-    return Math.min(travel, Math.max(0, (stick() - outer.current.getBoundingClientRect().top) / K));
+    const { travel, step } = geo.current;
+    return held(Math.max(0, (stick() - outer.current.getBoundingClientRect().top) / K), step, travel);
   };
   const mark = (left) => {
     const { travel, step } = geo.current;
@@ -392,7 +405,8 @@ function Gallery({ flow, mine, drop }) {
       pin.current.style.setProperty('--side-h', narrow ? side.current.offsetHeight + 'px' : '0px');
       const panels = t.children;
       geo.current = { travel: Math.max(0, t.scrollWidth - t.clientWidth), step: panels[1] ? panels[1].offsetLeft - panels[0].offsetLeft : 1 };
-      outer.current.style.height = pin.current.offsetHeight + geo.current.travel * K + 'px';
+      const { travel, step } = geo.current; // every glide, then a last rest on the final panel
+      outer.current.style.height = pin.current.offsetHeight + (travel ? (Math.ceil(travel / step - 0.001) + HOLD) * step : 0) * K + 'px';
       sync();
     };
     const ro = new ResizeObserver(fit);
@@ -409,14 +423,14 @@ function Gallery({ flow, mine, drop }) {
     if (performance.now() - userAt.current > 900 || Math.abs(t.scrollLeft - want()) < 2) return;
     touched(); // momentum after the finger lifts still belongs to the visitor
     if (top > stick() + 2 || top + outer.current.offsetHeight < innerHeight - 2) { mark(t.scrollLeft); return; }
-    scrollToY(top + window.scrollY - stick() + t.scrollLeft * K, { immediate: true });
+    scrollToY(top + window.scrollY - stick() + unheld(t.scrollLeft, geo.current.step) * K, { immediate: true });
     mark(t.scrollLeft);
   };
   const go = (i) => {
     setQ('');
     const { travel, step } = geo.current;
     const top = outer.current.getBoundingClientRect().top + window.scrollY;
-    scrollToY(top - stick() + Math.min(travel, i * step) * K + 1, { duration: 1 });
+    scrollToY(top - stick() + (Math.min(i, Math.ceil(travel / step - 0.001)) + HOLD / 2) * step * K, { duration: 1 });
   };
   useEffect(() => { // keep the current chip in view on the phone's swipe row
     const row = chips.current, b = row?.children[Math.min(idx, CATS.length - 1)];
@@ -474,7 +488,7 @@ function Gallery({ flow, mine, drop }) {
                   <div key={CATS[i]} className={'am2-panel' + (!s && i === idx ? ' on' : '')}>
                     <div className="am2-panel-h"><h3>{i === 0 ? 'Popular' : CATS[i]}</h3><span className="l2-mono">{String(i + 1).padStart(2, '0')} / {LAST + 1}</span></div>
                     <ul>
-                      {apps.map((a) => <li key={a[1]} className="am2-card"><Tile a={a} flow={flow} drop={drop} id={i > 0 ? slug(a[1]) : undefined} lit={lit} /></li>)}
+                      {apps.map((a, j) => <li key={a[1]} className="am2-card" style={{ '--k': j }}><Tile a={a} flow={flow} drop={drop} id={i > 0 ? slug(a[1]) : undefined} lit={lit} /></li>)}
                     </ul>
                   </div>
                 ))}
