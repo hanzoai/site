@@ -148,8 +148,12 @@ export function CodeCard({ sample, only, Loose, name, tabs, at }) {
   return (
     <div className="xig-card">
       <div className="xig-card-bar">
-        <span className="xig-tabs" aria-hidden="true">
-          {tabs.map((t, k) => <span key={t + k} className={'xig-tabs-i' + (k === at ? ' on' : '')}>{t}</span>)}
+        <span className="xig-tabs">
+          {/* each tab takes you to its chapter (the scene's own chapter marks do the scrolling) */}
+          {tabs.map((t, k) => (
+            <button key={t + k} type="button" tabIndex={-1} className={'xig-tabs-i' + (k === at ? ' on' : '')} aria-current={k === at ? 'step' : undefined}
+              onClick={(e) => e.currentTarget.closest('.v2f-ch')?.querySelectorAll('.v2f-ch-nav button')[k]?.click()}>{t}</button>
+          ))}
         </span>
         <span className="xig-card-t">{sample.title}</span>
         {sample.lang && <span className="x-mono xig-lang">{sample.lang}</span>}
