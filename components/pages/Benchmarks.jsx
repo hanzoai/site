@@ -902,7 +902,8 @@ function Dial({ progress, on = true, from = 1 / 3, to = 2 / 3 }) {
             <motion.p key={at} className="xbm-dial-n" initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -24, opacity: 0 }} transition={SPRING}>{r[0]}</motion.p>
           </AnimatePresence>
         </div>
-        <p className="xbm-dial-s">{r[1]}</p>
+        {/* every length's line sits in one cell, sized by the longest, so the dial never changes height as it steps */}
+        <div className="xbm-dial-sb">{D.LSA.map((l, i) => <p key={l[0]} className={'xbm-dial-s' + (i === at ? ' on' : '')} aria-hidden={i === at ? undefined : true}>{l[1]}</p>)}</div>
         <div className="xbm-dial-x">
           <div><span>Prefill</span><b>{r[2]}</b><i className="xbm-gauge"><motion.em animate={{ scaleX: r[3] / maxP }} transition={SPRING} /></i></div>
           <div><span>Decode</span><b>{r[4]}</b><i className="xbm-gauge"><motion.em animate={{ scaleX: r[5] / maxD }} transition={SPRING} /></i></div>

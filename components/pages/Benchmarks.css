@@ -842,3 +842,11 @@ html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(n+4) { 
   .xbm-trk .xbm-race-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding: 2px 16px; }
   .xbm-trk-a .xbm-lane-f { margin-left: 0; }
 }
+
+/* 8 Nov (Ready pass): the dial's line for each length shares one grid cell, so stepping never moves the page (phone CLS) */
+.xbm-dial-sb { display: grid; }
+.xbm-dial-sb > .xbm-dial-s { grid-area: 1 / 1; visibility: hidden; }
+.xbm-dial-sb > .xbm-dial-s.on { visibility: visible; }
+.xbm-dial-x b { min-height: 2.4em; }
+@media (max-width: 600px) { .xbm-dial-x b { min-height: 0; } .xbm-dial-x { grid-template-columns: minmax(0, 1fr); gap: 14px; } .xbm-dial-x b { font-size: 18px; white-space: nowrap; } }
+@media (max-width: 900px) { .xbm-rail-l a { padding-block: 15px; } } /* 44px rail tabs on phones */
