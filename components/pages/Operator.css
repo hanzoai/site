@@ -7,7 +7,7 @@
 .xop-hero-copy .a2-kick { margin-bottom: 28px; }
 .xop-repo { color: var(--acc); text-decoration: none; }
 .xop-hero-copy .a2-lede { margin: 32px 0 36px; color: #a1a1a6; }
-.xop-hero .x-btn.solid { background: var(--acc); border-color: var(--acc); color: #00201c; }
+.xop-hero .x-btn.solid { background: var(--acc); border-color: var(--acc); color: #1b1b1b; }
 .xop-hero-obj { grid-column: 6 / span 7; }
 .xop-board { position: relative; padding: 24px; border-radius: var(--r-hero); background: #0f1112; border: 1px solid rgba(255, 255, 255, .08); box-shadow: 0 60px 120px -60px color-mix(in srgb, var(--acc) 50%, transparent); }
 .xop-board-top { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 13px; color: #86868b; }
@@ -26,7 +26,7 @@
 .xop-log li { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; color: #a1a1a6; animation: xop-line .5s var(--a2-ease) both; }
 .xop-log li:first-child { color: #f5f5f7; }
 .xop-log b { font-weight: 500; white-space: nowrap; }
-.xop-log .k-reverted b { color: #ffb340; } .xop-log .k-drift b { color: #ff6b6f; } .xop-log .k-created b, .xop-log .k-already-in-sync b { color: var(--acc); }
+.xop-log .k-reverted b { color: #c2c2c2; } .xop-log .k-drift b { color: #9b9b9b; } .xop-log .k-created b, .xop-log .k-already-in-sync b { color: var(--acc); }
 @keyframes xop-line { from { opacity: 0; transform: translateY(-8px); } }
 .xop-hint { margin: 14px 0 0; font-size: 14px; color: #86868b; }
 
@@ -61,7 +61,7 @@
 .xop-get-meta { display: flex; gap: 20px; font-size: 13.5px; }
 .xop-get-meta a { color: var(--acc); }
 .xop-get-cmd { margin: 8px 0 16px !important; padding: 10px 14px; border-radius: 10px; background: #1c1c1f; font-size: 14px; color: var(--acc) !important; }
-.xop-get-card .x-btn.solid { background: var(--acc); color: #00201c; border-color: var(--acc); }
+.xop-get-card .x-btn.solid { background: var(--acc); color: #1b1b1b; border-color: var(--acc); }
 
 @media (max-width: 900px) {
   .xop-hero { padding-top: 112px; }
@@ -82,3 +82,6 @@
 @media (prefers-reduced-motion: reduce) {
   .xop *, .xop *::before, .xop *::after { animation: none !important; }
 }
+
+/* 0 UI hues (James 7 Nov 14:20): the accent is ink in light rooms and #f5f5f7 in dark panels */
+.xop-one, .xop-get-card { --acc: #f5f5f7; }

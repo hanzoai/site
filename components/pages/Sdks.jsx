@@ -200,7 +200,7 @@ function Hero() {
           <div className="xsd-top-r">
             <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
             <div className="x-row-links tight xsd-hero-links">
-              <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
+              <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/" data-cta="sdks.hero"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
               <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
             </div>
           </div>
@@ -370,7 +370,7 @@ function Mods() {
 
 export default function Sdks() {
   return (
-    <main className="a2 xsd" style={{ '--acc': '#0891b2' }}>
+    <main className="a2 xsd">
       <Hero />
       <A2Paste name="SDKs" text={PROMPT} />
       <Two />
