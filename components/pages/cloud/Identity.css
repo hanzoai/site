@@ -373,7 +373,9 @@
   .id-panel-art { min-height: 268px; margin-bottom: 20px; }
   .id-art { padding: 20px; }
   .id-art-pin { top: 14px; right: 14px; }
-  .id-art-region { padding-top: 56px; }
+  .id-art-region { padding-top: 56px; grid-template-columns: minmax(0, 1fr) 56px; }
+  .id-art-org.ghost { min-width: 0; padding: 12px; }
+  .id-art-org.ghost .id-art-k { display: none; }
   .id-art-node { min-width: 0; flex: 1 1 100%; }
   .id-art-wire { flex-basis: 100%; min-height: 44px; }
   .id-art-wire i { width: 2px; height: 28px; transform-origin: 50% 0; animation-name: id-wire-y; }
