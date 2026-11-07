@@ -5,7 +5,18 @@
 .xbt-h1 { font-size: clamp(2.5rem, 3.6vw, 3.25rem); }
 .xbt-side { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px; margin-top: clamp(28px, 3vw, 48px); }
 .xbt-side .xp-lede { max-width: 30ch; }
-.xbt-strip-s { padding: clamp(32px, 4vw, 64px) 0 clamp(120px, 12vw, 200px); }
+.xbt-strip-s { padding: clamp(32px, 4vw, 64px) 0 clamp(40px, 4vw, 64px); }
+/* desktop: the words take one row (h1 left, Hanzo's line and Apply on the right) so the five tiles sit whole in the first screen */
+@media (min-width: 901px) {
+  .xbt-hero { padding: clamp(28px, 3.2vw, 56px) 0 clamp(16px, 1.6vw, 28px); }
+  .xbt-hero .xp-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px 64px; }
+  .xbt-hero .xbt-h1 { margin: 0; }
+  .xbt-side { margin-top: 0; flex-wrap: nowrap; justify-content: flex-end; }
+  .xbt-strip-s { padding-top: 8px; }
+  .xbt-tiles .xbt-tile { height: clamp(360px, calc(100svh - 360px), 600px); }
+}
+/* JS off: the browser would show its own controls on a film; keep the poster only */
+.xbt video::-webkit-media-controls, .xbt video::-webkit-media-controls-panel, .xbt video::-webkit-media-controls-start-playback-button, .xbt video::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }
 .xbt-prod { color: var(--hz-950); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .14em; text-decoration-color: var(--hz-300); transition: text-decoration-color .2s; }
 @media (hover: hover) { .xbt-prod:hover { text-decoration-color: var(--hz-950); } }
 .xbt-shelf { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -63,6 +74,12 @@
 .xbt-pass.dark .xbt-pass-m::after { content: ''; position: absolute; inset: 45% 0 0 0; background: linear-gradient(transparent, rgba(0, 0, 0, .7)); }
 .xbt-pass-sk { position: absolute; inset: 0 0 46% 0; }
 .xbt-pass-sk .xbt-sk { inset: 28px; }
+/* Design partner: Dev's window takes the right side under the "+", the words keep the left */
+@media (min-width: 901px) {
+  .xbt-cell.c2 .xbt-pass-sk { inset: 0 0 0 54%; }
+  .xbt-cell.c2 .xbt-pass-sk .xbt-sk { inset: clamp(84px, 7vw, 100px) clamp(20px, 2.4vw, 32px) clamp(20px, 2.4vw, 32px) 0; }
+  .xbt-cell.c2 .xbt-pass-b { max-width: 54%; }
+}
 .xbt-hit { position: absolute; inset: 0; z-index: 1; border: 0; background: transparent; cursor: pointer; border-radius: 28px; }
 .xbt-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
 .xbt-pass-b { position: relative; z-index: 2; display: grid; gap: 12px; justify-items: start; padding: clamp(28px, 3vw, 44px); pointer-events: none; }
@@ -91,7 +108,7 @@
 .xbt-close:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 /* the dark close, over Enso's film */
-.xbt-passes { padding: clamp(40px, 5vw, 80px) 0 clamp(120px, 14vw, 200px) !important; }
+.xbt-passes { padding: clamp(24px, 3vw, 48px) 0 clamp(48px, 5vw, 80px) !important; }
 .xbt-foot { position: relative; overflow: hidden; min-height: 70svh; display: flex; align-items: center; background: #000; }
 .xbt-foot-film { position: absolute; top: 0; bottom: 0; right: 0; width: min(46%, 640px); opacity: .9; }
 .xbt-foot-film video { width: 100%; height: 100%; object-fit: cover; }
@@ -122,6 +139,9 @@
   .xbt-cell.c0, .xbt-cell.c1, .xbt-cell.c2 { grid-column: 1; grid-row: auto; }
   .xbt-pass { min-height: 420px; border-radius: 24px; }
   .xbt-pass-b { padding: 24px; }
+  .xbt-cell.c2 .xbt-pass { min-height: 480px; }
+  .xbt-cell.c2 .xbt-pass-sk { inset: 0 0 auto 0; height: 230px; }
+  .xbt-cell.c2 .xbt-pass-sk .xbt-sk { inset: 84px 20px 0 20px; }
   .xbt-sheet { inset: auto 0 0 0; top: 64px; border-radius: 24px 24px 0 0; padding: 28px 20px calc(28px + env(safe-area-inset-bottom)); }
   .xbt-sheet-in { justify-items: stretch; }
   .xbt-foot { min-height: 0; }
@@ -131,5 +151,5 @@
 }
 .xbt-sheet.dark .xp-lede { color: var(--hz-300); }
 
-@media (prefers-reduced-motion: reduce) { .xbt-sk.run i, .xbt-sk.run b { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .xbt-sk.run i, .xbt-sk.run b { animation: none; } .xbt-tiles, .xbt-tiles > li, .xbt-tiles > li > div { transform: none !important; } }
 [data-off] .xbt-sk i, [data-off] .xbt-sk b { animation-play-state: paused; }

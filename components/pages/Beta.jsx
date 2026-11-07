@@ -2,7 +2,7 @@
 /* Hanzo beta. Its idea is getting there first: the products in early access, and three ways in.
    Persona: a builder or researcher who wants Hanzo's releases early. Goal: apply. CTA: "Apply" (/beta/apply, Hanzo's
    Beta access link). Metric: signup_start (an apply click).
-   V2: 8/10 (v3: every product tile answers hover: films step up, Dev rewrites its diff, Studio runs its cut again, hairline strengthens, the arrow joins the name; press .97) grey deck: "Get there first." with one Apply, then the five products in early access in their own screen (Kai, Enso and Zen as films, Dev and Studio as windows that come alive; a pause control stops all of them), settling into one row; the three passes wipe in one by one, carry Hanzo's own media and open into a full sheet that holds focus; one solid Apply, sticky after the hero; a dark close with Kai's film behind Feedback and Book a call, cutting in.
+   V2: 8/10 (round 2: words in one row so the five tiles sit whole in the first screen, posters server-drawn, one solid on the phone, gaps closed, Design partner's window clear of the "+"; v3: every product tile answers hover: films step up, Dev rewrites its diff, Studio runs its cut again, hairline strengthens, the arrow joins the name; press .97) grey deck: "Get there first." with one Apply, then the five products in early access in their own screen (Kai, Enso and Zen as films, Dev and Studio as windows that come alive; a pause control stops all of them), settling into one row; the three passes wipe in one by one, carry Hanzo's own media and open into a full sheet that holds focus; one solid Apply, sticky after the hero; a dark close with Kai's film behind Feedback and Book a call, cutting in.
    Signature: open: each pass is a tile that grows into a full sheet with a shared-element morph (synchronized.studio),
    its picture and words carried across, the one Apply inside.
    Beyond: the five products in early access are their own tiles, each opening into its page.
@@ -44,17 +44,19 @@ function Sketch({ kind, paused, beat = 0 }) {
   );
 }
 
-const DROP = [0, 140, 60, 190, 90]; // where each tile starts below the row it settles into
+const DROP = [0, 90, 40, 110, 60]; // where each tile starts below the row it settles into (small enough that the server-drawn row stays in the first screen)
 
 /* Hover tells you what the product is: a film steps up out of its frame; Dev's window writes its diff again and
-   Studio's playhead runs the cut again (the sketch is re-keyed so its animation replays). */
+   Studio's playhead runs the cut again (the sketch is re-keyed so its animation replays).
+   Reduced motion: Beta.css pins the row (no drop, no scale), so server and client render the same. */
 function Tile({ p, i, n, to, film, paused }) {
   const y = useTransform(p, [0, 1], [DROP[i], 0]);
   const [beat, setBeat] = useState(0);
   const replay = (e) => { if (!film && e.pointerType === 'mouse') setBeat((b) => b + 1); };
   return (
     <motion.li style={{ y }}>
-      <motion.div initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 + i * 0.06 }}>
+      {/* the posters are in the server HTML and visible at once; the tiles only land the last 24px (no fade) */}
+      <motion.div initial={{ y: 24 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.05 + i * 0.05 }}>
         <A to={to} className={'xbt-tile' + (film ? ' film' : '')} aria-label={n} onPointerEnter={replay} onFocus={() => !film && setBeat((b) => b + 1)}>
           {film ? (paused
             ? <Img src={`/models/${film}.webp`} w={1200} h={1500} alt="" className="xbt-film" />
@@ -67,7 +69,29 @@ function Tile({ p, i, n, to, film, paused }) {
   );
 }
 
+/* Phones keep Hanzo's "Try Hanzo" solid in the header; while this hero's own solid Apply is on screen the header's
+   button reads as an outline (the same html[data-ask=quiet] the shell sets on desktop), so one solid shows at a time. */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const mq = matchMedia('(max-width: 900px)');
+    const el = document.querySelector('main.xbt [data-cta="beta.hero"]');
+    if (!el) return;
+    let mine = false, vis = false;
+    const apply = () => {
+      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine) { delete H.dataset.ask; mine = false; }
+    };
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
+    io.observe(el);
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
 function Hero() {
+  useOneSolidOnPhone();
   return (
     <section className="xbt-hero" aria-labelledby="xbt-h1" data-ask-name="Hanzo beta">
       <div className="xp-wrap">
