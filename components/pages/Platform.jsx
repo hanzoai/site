@@ -4,9 +4,11 @@
    Goal: api_key_created.   CTA: "Start building" → platform.hanzo.ai/api-keys (hero, the site's sticky ask bar via data-thumb,
    the closing Band).
    Signature: the camera. The first screen is the whole stack, eleven plates as one white slab beside the headline,
-   turning toward the pointer. Scroll and the night opens as a circle from the stack, the plates pull apart and the
-   camera travels down the stack group by group (API, MIND, ACT, RUN, SILICON), lighting that group's plates while its
-   words pin on the left; then the night closes back into the stack. Any layer opens its inspector sheet.
+   turning toward the pointer. Scroll and the headline settles from 84 to 52px while the black room rises as a rounded
+   card inside the gutters and opens to full width; the plates pull apart and the camera travels down the stack group by
+   group (API, MIND, ACT, RUN, SILICON), lighting that group's plates while its words pin on the left and its figure grows
+   while it is the moment; then the room closes back into a card and leaves. Any layer opens its inspector sheet.
+   Scale rhythm (MASTER 3.1): one big thing per screen; headings rest at 26px, figures at 64px, h1 at 52px.
    Motion mix (JAMES 9, scroll is 2 of 6 kinds): scroll (the camera; the plane-by-plane chapters), pointer (the stack
    turns to the pointer, tiles whose objects play on hover, the directory preview, the ring held under the pointer), time (the One API replay
    types itself, the improvement ring turns, the marquee), state (inspector sheets rise, tabs and the endpoint pill
@@ -18,8 +20,8 @@
    Every word and link is Hanzo's. Coverage: docs/coverage/platform.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { Copy, Mark } from '../ui';
-import { A, Band, Tabs, TabPanel } from '../kit';
+import { Mark } from '../ui';
+import { A, Band, Tabs, TabPanel, Cta, CodeBlock } from '../kit';
 import Sigil from '../Sigil';
 import IsoStack, { zOf, LIFT } from '../v2/IsoStack';
 import PinChapters from '../v2/PinChapters';
@@ -152,9 +154,12 @@ function Journey({ openLayer }) {
   const mapO = useTransform(p, (v) => map(v, [T.map[0], T.map[1], T.close[0] - 0.01, T.close[0] + 0.02], [0, 1, 1, 0]));
   const introO = useTransform(p, (v) => map(v, T.intro, [0, 1, 1, 0]));
   const introY = useTransform(p, (v) => map(v, T.intro, [36, 0, 0, -36]));
-  // the night: a circle that opens from the stack and, at the end, closes back into it (scale only, no clip)
-  // the disc is 200px; 26× covers the far corner of any screen up to 2560 wide
-  const night = useTransform(p, (v) => 26 * (v < 0.6 ? io(v, ...T.wipe) : 1 - io(v, ...T.close)));
+  // the black room (MASTER 3.1): a rounded card inside the gutters that rises, then opens past the screen edges so its
+  // corners leave; at the end it closes back into a card and rises away. Transform only.
+  const roomY = useTransform(p, (v) => (v < 0.6 ? (1 - io(v, T.wipe[0], T.wipe[0] + 0.07)) * 100 : -io(v, T.close[0] + 0.02, T.close[1]) * 100) + '%');
+  const roomS = useTransform(p, (v) => (v < 0.6 ? 0.94 + 0.1 * io(v, T.wipe[0] + 0.05, T.wipe[1]) : 1.04 - 0.1 * io(v, T.close[0], T.close[0] + 0.025)));
+  // the headline is the hero's moment: it starts at 84px and settles toward 52px as the journey begins
+  const h1S = useTransform(p, (v) => map(v, [0, T.heroOut[1]], [1, 0.62]));
 
   const frame = (v) => {
     if (!pinned) return;
@@ -252,22 +257,19 @@ function Journey({ openLayer }) {
     <section ref={track} className="xpl-jr" aria-labelledby="xpl-h1" data-ph={ph} data-g={g}>
       <span className="xpl-jr-dark" data-room="dark" aria-hidden="true" />
       <div className="xpl-jr-stage" onPointerMove={turn} onPointerLeave={rest}>
-        <motion.div className="xpl-jr-bg" style={pinned ? { scale: night } : undefined} aria-hidden="true" />
+        <motion.div className="xpl-jr-bg" style={pinned ? { y: roomY, scale: roomS } : undefined} aria-hidden="true" />
 
         <motion.div className="xpl-hero" style={pinned ? { y: heroY, opacity: heroO } : undefined}>
           <div className="xpl-hero-t" onFocus={follow(0, ph === 0)}>
-            <Lines as="h1" id="xpl-h1" className="xpl-display" lines={['The AI‑native', 'cloud.']} now />
+            <motion.div className="xpl-h1w" style={pinned ? { scale: h1S } : undefined}><Lines as="h1" id="xpl-h1" className="xpl-display" lines={['The AI‑native', 'cloud.']} now /></motion.div>
             <p className="xpl-tag">Hanzo Platform</p>
             <p className="xpl-lede">Run models, agents, applications, data and infrastructure through one operating plane.</p>
             <p className="xpl-body">Kubernetes-native. Fully observable. Open source. Run it on Hanzo infrastructure or infrastructure you control.</p>
             <div className="xpl-acts">
-              <A to={KEY_URL} className="x-btn solid xpl-btn" data-thumb="" data-cta="platform.hero">Start building</A>
-              <a className="x-btn xpl-btn" href="#stack" onClick={(ev) => { ev.preventDefault(); goTo(0.235); }}>Inspect the stack</a>
+              <Cta to={KEY_URL} id="platform.hero" thumb>Start building</Cta>
+              <Cta to="#stack" kind="quiet" id="platform.stack" onClick={(ev) => { ev.preventDefault(); goTo(0.235); }}>Inspect the stack</Cta>
             </div>
-            <div className="xpl-run">
-              <code>docker run -p 8080:8080 ghcr.io/hanzoai/cloud</code>
-              <Copy text="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" />
-            </div>
+            <CodeBlock code="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" prompt className="xpl-run" />
           </div>
         </motion.div>
 
@@ -285,7 +287,7 @@ function Journey({ openLayer }) {
           </div>
         </motion.div>
 
-        <motion.div id="stack" className="xpl-map" style={pinned ? { opacity: mapO } : undefined}>
+        <motion.div id="stack" className="xpl-map" data-ask-hide style={pinned ? { opacity: mapO } : undefined}>
           <i className="xpl-map-room" data-room="dark" aria-hidden="true" />
           <div className="xpl-bar xpl-bar-t" onFocus={follow(0.24, ph === 1)}>
             <span>Hanzo / architecture map</span>
@@ -297,7 +299,7 @@ function Journey({ openLayer }) {
             <Lines className="xpl-h2" lines={['One stack.', 'Down to the kernel.']} />
             <p className="xpl-tag">The native AI stack</p>
             <p className="xpl-lede">Build with agents. Route with Enso. Reason with Zen. Decide with Kai. Run on infrastructure you control.</p>
-            <button type="button" className="x-btn xpl-btn xpl-btn-dk" onClick={() => openLayer(0)} aria-haspopup="dialog">Inspect every layer</button>
+            <Cta kind="quiet" id="platform.inspect" onClick={() => openLayer(0)} aria-haspopup="dialog" className="xpl-btn-dk">Inspect every layer</Cta>
           </motion.header>
 
           <div className="xpl-groups">
@@ -509,7 +511,7 @@ function Loop() {
         <div ref={ref} className="xpl-ring" style={{ '--at': at }} onPointerLeave={() => setHeld(false)}>
           <span className="xpl-ring-c" aria-hidden="true" />
           <span className="xpl-ring-arc" aria-hidden="true" />
-          <p className="xpl-ring-mid" aria-hidden="true"><b>{pad(at + 1)}</b><span>/ {pad(LOOP.length)}</span></p>
+          <p className="xpl-ring-mid" aria-hidden="true"><b>{LOOP[at][1]}</b><span>{LOOP[at][2]}</span></p>
           <ol>
             {LOOP.map(([n, t, s], i) => (
               <li key={n} style={{ '--i': i }} className={i === at ? 'on' : ''}>
@@ -676,7 +678,7 @@ const PLANES = [
 
 function Planes() {
   return (
-    <section className="xpl-planes" aria-label="The cloud, plane by plane">
+    <section className="xpl-planes" aria-label="The cloud, plane by plane" data-ask-hide>
       <PinChapters label="Planes" chapters={PLANES} className="xpl-pc" />
     </section>
   );
@@ -727,11 +729,11 @@ function OneApi() {
           <p className="xpl-body">The same key, organization, project, policy and usage ledger behind every path. The interface changes; the system does not.</p>
         </header>
         <div ref={box} className="xpl-term" data-room="dark">
-          <ul className="xpl-eps">
+          <ul className="xpl-eps" style={{ '--at': Math.min(at, 6) }}>
+            <li className="xpl-ep-bg" aria-hidden="true" data-on={at < 6} />
             {OPS.slice(0, 6).map((o, i) => (
               <li key={o.p}>
                 <button type="button" className={at === i ? 'on' : ''} aria-pressed={at === i} onClick={() => { setAt(i); setPlay(false); }}>
-                  {at === i && <motion.span layoutId="xpl-ep-bg" className="xpl-ep-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
                   <span>api.hanzo.ai</span><b>{o.p}</b>
                 </button>
               </li>
@@ -778,11 +780,9 @@ function OpenSec() {
           <p className="xpl-lede xpl-op-l">The platform is open source, and the image we operate is the image you can pull: the same API and console on your cluster, in your network or on a laptop.</p>
           <div className="xpl-links"><Go to="https://docs.hanzo.ai/docs/quickstart">Quickstart</Go><Go to="/open-source">Open source</Go><Go to="https://github.com/hanzoai/cloud">Source</Go></div>
         </div>
-        <div className="xpl-tty" data-room="dark">
-          <div className="xpl-tty-bar"><span className="xpl-dots" aria-hidden="true"><i /><i /><i /></span><span className="xpl-tty-t" aria-hidden="true">~</span></div>
-          {[['curl -fsSL https://hanzo.sh | sh', '1'], ['hanzo serve cloud', '2']].map(([c, n]) => (
-            <div key={c} className="xpl-cmd"><span aria-hidden="true">{n}</span><code><i aria-hidden="true">$ </i>{c}</code><Copy text={c} /></div>
-          ))}
+        <div className="xpl-tty">
+          <CodeBlock code="curl -fsSL https://hanzo.sh | sh" prompt />
+          <CodeBlock code="hanzo serve cloud" prompt />
         </div>
       </div>
     </section>
@@ -831,6 +831,24 @@ function Catalog({ about = {} }) {
   );
 }
 
+/* ---------- the proof strip before the close (MASTER part 3): Hanzo's measured figures, each to its method ---------- */
+const PROOF = [
+  ['95.6%', 'on GPQA Diamond', '/benchmarks/gpqa'],
+  ['3.02×', 'faster coding', '/benchmarks#coding-agent'],
+  ['2.0×', 'multi-hop evidence recall vs cosine', '/benchmarks/locomo'],
+];
+function Proof() {
+  return (
+    <section className="xpl-proofs" aria-label="View the measurements">
+      <ul className="xpl-wrap">
+        {PROOF.map(([f, l, to]) => (
+          <li key={f}><A to={to} className="xpl-pf"><b>{f}</b><span>{l}</span><Arrow /></A></li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 /* JS off: every scene readable in flow (PLAN-COMPONENTS 2.3 and 2.17) */
 const NOJS = `.xpl .xpl-l>span{transform:none!important}.xpl-jr{height:auto!important;margin-top:0!important}.xpl-jr-dark,.xpl-jr-bg{display:none!important}.xpl-jr-stage{position:relative!important;height:auto!important;overflow:visible!important}.xpl-hero{position:relative!important;inset:auto!important;display:block!important;padding:72px 0 0!important;margin:0 var(--side)!important;opacity:1!important;transform:none!important}.xpl-hero-t{width:auto!important}.xpl-art{position:relative!important;width:100%!important;height:420px!important}.xpl-chips{position:relative!important;bottom:auto!important;opacity:1!important}.xpl-map{position:relative!important;inset:auto!important;opacity:1!important;pointer-events:auto!important;padding:96px var(--side) 72px!important;background:#070708}.xpl-map-room{display:block!important;position:absolute;inset:0}.xpl-bar-t,.xpl-bar-b,.xpl-intro,.xpl-groups{position:relative!important;inset:auto!important;width:auto!important;opacity:1!important;transform:none!important}.xpl-groups{display:block!important}.xpl-grp{opacity:1!important;transform:none!important;margin-top:72px}.pc{height:auto!important}.pc-stage{position:static!important;height:auto!important}.pc-grid{display:flex!important;flex-direction:column;height:auto!important}.pc-idx{display:none!important}.pc-copy{order:calc(var(--i)*2);opacity:1!important;transform:none!important;padding-top:96px}.pc-vis{order:calc(var(--i)*2 + 1);clip-path:none!important;margin-top:40px}.xpl-term-b{display:block!important}.xpl-step{opacity:1!important;transform:none!important;margin-bottom:28px}.v2s{position:static!important;visibility:visible!important}.v2s-scrim{display:none}.v2s-panel{position:static!important;transform:none!important;width:auto!important;margin:0 var(--side);box-shadow:none!important}.xpl-ins[hidden]{display:block!important;margin-bottom:48px}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}[role=tabpanel][hidden]{display:block!important}`;
 
@@ -850,12 +868,13 @@ export default function Platform({ about }) {
       <OneApi />
       <OpenSec />
       <Catalog about={about} />
+      <Proof />
       <Band
         title="Build on the stack. Or run it yourself."
         lede="Models, agents, compute, data, security and observability behind one API, from prototype to production."
         action="Start building"
         to={KEY_URL}
-        note={<span className="xpl-band-n"><span className="xpl-band-cmd"><code>docker run -p 8080:8080 ghcr.io/hanzoai/cloud</code><Copy text="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" /></span><A to="https://docs.hanzo.ai/docs/quickstart" className="x-link">Read the docs</A></span>}
+        note={<A to="https://docs.hanzo.ai/docs/quickstart" className="x-link xpl-band-l">Read the docs</A>}
       />
       <Inspector sel={sel} open={open} onClose={() => setOpen(false)} step={step} />
     </main>

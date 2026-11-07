@@ -1,28 +1,158 @@
-# /sign coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /sign coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/apps/Sign.jsx` · gallery: `docs/gallery/sign/` · Persona: teams that send contracts, and developers who embed signing · Goal and metric: `signup_start` · CTA: "Try Hanzo" → /login
+Page file: `components/pages/apps/Sign.jsx` (+ `Sign.css`) · gallery: `docs/gallery/sign/` · metric id: `signup_start`
 
-1. **Strategy and conversion.** One ask, Hanzo's "Try Hanzo": solid in the hero (`data-thumb`, `data-cta="sign.hero"`), carried by the shared ask bar after the hero, and again as the first card of the dark close ("Start signing … Try Hanzo →", `data-cta="sign.close"`). Plan buttons are outlined; in the close, "View Docs", "View on GitHub", "Contact Sales" and "Deploy to Cloud" are text links, so the close has one solid button.
-2. **Information architecture and navigation.** Header and footer unchanged. Order: one pinned story (the opening, then the five steps on the same desk), what is in it, the signing pad, what it costs and the open-source note, the dark close.
-3. **First impression and page narrative.** "Hanzo Sign" cuts in beside the desk, which already runs: fields drop, ink writes, recipients move, the certificate stamps. Scrolling keeps that same desk pinned and walks it through the five steps, one at a time (the steps are told once).
-4. **Conversion system.** One solid per viewport. The pad's "Sign" is a control, not an ask.
-5. **Trust and proof.** Hanzo's own claims only (certificate per signer, AGPL, Documenso named as upstream). Prices are Hanzo's ($30/mo, $50/mo, Free, Custom).
-6. **Content presentation (copy untouched).** Parity 106/106, 9/9. No label above any headline ("Document signing" names the desk; the invented pad sentences are gone). The eight parts show number and title only and open into sheets; all text stays in the HTML.
-7. **Visual design system.** v2 scale. 0 UI hues: fields are grey with an ink signature field, the certificate stamp is ink, recipient states read by fill (hollow sent, grey opened, ink signed). The language tile is the one inverted object. One dark room.
-8. **UI component library.** Kit `A`, `Tick`, `Img`, `Magnetic`; v2 `Settle`, `OpenCards`, `x-gauss/PinChapters`, `LineMask`, `Pause`, `NoJs`. The run toggle uses `aria-pressed`.
-9. **Motion and interaction.**
-   - Idle: the desk signs itself; five people's states move; the twelve languages turn over.
-   - Pointer: magnetic ask; cards lift and their plus turns; buttons press at .98; you draw on the pad.
-   - State: run toggle dims the plans that don't apply; sheets morph out of cards; the pad turns signed with its time.
-   - Time: the certificate time is the visitor's clock.
-   - Scroll: the desk settles; the five steps pin. Scroll is under half the motion.
-   - Pause buttons on the desk, the five recipients and the languages; the "Sign here" hint blinks three times and stops.
-10. **Media.** Hanzo's Kai model image is the document's mark (kit `Img`, 38×38). Everything else is product UI.
-11. **Mobile and responsive.** At 375px the desk stacks (step label, page, recipients); chapters pin the page above the words; the pad is 3:2; targets 44px+; no sideways scroll.
-12. **Accessibility.** One h1. The pad canvas is focusable and Enter signs it; the result is announced in text. Sheets trap focus and return it. JS off: `NoJs`.
-13. **Performance and engineering.** Transform and opacity only; loops stop off screen and when paused.
-14. **SEO and machine files.** Unchanged.
-15. **Catalogue and product pages.** Does not apply.
-16. **Developer experience.** Docs and source links as Hanzo gives them.
-17. **States and resilience.** The pad has idle, ready, signed; Clear resets. Nothing is sent.
-18. **Measurement and handover.** `data-cta` on both asks. Filmed into `docs/gallery/sign/`.
+Open copy questions for James: functional labels not in `content/ui-strings.json`: the pad's "Sign here", "draw here", "ready to sign", "signed", "Clear", "Sign", "Signed <date>"; the plan switch "Run it yourself" / "We run it" uses Hanzo's lede words as button labels.
+Shared changes requested (`docs/requests/sign.md`): none. Noted: no skip link in shared chrome; `useEvery`/`useSteps` use `setInterval`; `tokens.css` not merged.
+Forks this page deleted: the separate hero (now the pinned story's lead), the floating desk pause, the "09"/"10" tile numbers, the "Most Popular" pill (now a line), the three equal dark cards (now one ask and text links), the white "Get started with Sign" box (now a hairline row), the pad's rewritten certificate sentence, every spring, the "ink indigo" comments.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; "Try Hanzo" → /login
+- [x] One h1; clear in 5 seconds
+- [x] No dead button; prices are Hanzo's plan copy (n/a `lib/plans.js` until it merges)
+- [x] Copy questions listed
+
+Done here: gate: 1 h1, max 1 solid per desktop viewport. The pad's "Sign" is a page solid (`button.solid`), so the ask bar steps aside while it is on screen.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; n/a skip link (shared chrome)
+- [x] Every link through `A`; part cards open sheets
+- [x] n/a breadcrumb
+- [x] Link parity 0 removed
+
+Done here: parity links 9/9.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; the desk moves within 1 s (it starts at "fields placed")
+- [x] h1 CSS cut-in painted by the server; nothing above the h1
+- [x] JS off legible
+- [x] One idea per screen: hero desk → 5 steps on the same page → parts → pad → price → open source → dark close
+- [x] Ends on one ask, then footer
+- [x] n/a Morph
+
+Done here: the hero and the five steps are one pinned story on one page object; under reduced motion the desk shows the signed, stamped final state. Gate JS-off hidden 0.
+
+## 4. Conversion system
+- [x] Kit `A` + `.w2-cta`
+- [x] Sticky ask "Try Hanzo" in header and bar
+- [x] n/a copy button
+- [x] `data-cta` and `data-thumb` on the primary
+
+Done here: `sign.hero` (`data-thumb`), `sign.close`. The close has one solid; docs and source are text links.
+
+## 5. Trust and proof
+- [x] No logo, seal or invented number
+- [x] Figures are Hanzo's ($30, $50, twelve languages, five steps)
+- [x] n/a marquees
+- [x] n/a submit (the pad sends nothing)
+
+Done here: the "09"/"10" decoration numbers are gone; demo names are "signer 1–3" and "person 1–5".
+
+## 6. Content presentation (copy untouched)
+- [x] Phone text 14px+ (gate small375 fixed for "Most Popular")
+- [x] Measures held; long language names step down a size so "Brazilian Portuguese" fits
+- [x] Part sentences live in their sheets; n/a tables
+- [x] `parity.py /sign`: 0 missing
+
+Done here: parity `text 106/106 links 9/9`.
+
+## 7. Visual design system
+- [x] `taste.py` passes (0 hues)
+- [x] No label above a headline; the sheet kicker now sits under its title
+- [x] Plans legible when not chosen (muted price, full opacity)
+- [x] One icon set
+- [x] Differs from neighbours: a paper desk with a contract, not a window or editor
+
+Done here: gate hues []. Headings rest at 26px (Rhythm.css); "$30"/"$50" are the figures.
+
+## 8. UI component library
+- [x] Hover inside `@media (hover:hover)`, press .97–.98, focus-visible
+- [x] Focus ring on every stop; the pad canvas is focusable (Enter writes the ink line)
+- [x] Sheets trap Tab, close on Esc and return focus to the card
+- [x] No bare `:hover`; chips 44px with hover and press
+- [x] Forks deleted: listed above
+
+Done here: `components/v2/OpenSheet.jsx` now traps Tab and restores focus on close.
+
+## 9. Motion and interaction
+- [x] Signature (the self-signing page), supporting: PinChapters, sheets, magnetic; 0 fade-ups
+- [x] Idle (desk, five recipients, languages), state (sheets, plan switch), pointer (pad, magnetic), arrival (h1 and five headings cut into their line), scroll (pin)
+- [x] Something moves without input; every control answers
+- [x] Reduced motion: signed final state; no springs
+- [x] n/a sound (shared kit)
+
+Done here: `variety.py` OK; chapter 04 advances its three recipients one by one; the ink path is hidden until it draws (no stray dots).
+
+## 10. Media
+- [x] Kit `Img` only (the file icon)
+- [x] n/a video
+- [x] Sized (38×38)
+- [x] n/a photos
+
+Done here: one decorative `Img` with `alt=""`.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Targets 44px+
+- [x] Primary above the fold at 375×667
+
+Done here: the phone desk has one top bar (name left, pause right) and the step counter below it; the checkbox tick sits in its own box, off the label.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured (muted plan price #737373 on #f5f5f7 is large text)
+- [x] Pause on every moving item, in the object's bar or above its rows
+- [x] n/a forms; the pad's result line is `role="status"`
+- [x] One h1; h2 → h3 order ("Built on Open Source" is now an h2)
+- [x] Keyboard reaches every control
+
+Done here: sheets trap focus; the desk's step names are repeated in an `x-sr` line.
+
+## 13. Performance and engineering
+- [x] h1 and lede in server HTML
+- [x] One small image, sized
+- [x] No poller, no third party
+- [x] Nothing heavy on James's laptop
+
+Done here: one client island.
+
+## 14. SEO and machine files
+- [x] Title and description from `content/pages.json`
+- [x] Canonical from shared layout
+- [x] `<JsonLd route="/sign" />`
+- [x] n/a cards
+
+Done here: `app/sign/page.jsx`.
+
+## 15. Catalogue and product pages
+- [x] n/a
+- [x] n/a
+- [x] n/a
+- [x] Prices shown once each (plan cards)
+
+Done here: n/a, not a catalogue or model page.
+
+## 16. Developer experience
+- [x] n/a: no code on the page
+- [x] n/a
+- [x] n/a
+- [x] n/a
+
+Done here: n/a.
+
+## 17. States and resilience
+- [x] Pad states: empty, ready, signed; Clear resets
+- [x] Blocked network leaves a complete page, no console errors
+- [x] n/a submit
+- [x] n/a islands that throw
+
+Done here: look.cjs both widths: errors none.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary
+- [x] Nothing identifier-bearing
+- [x] `V2:` line in `app/sign/page.jsx`
+- [ ] Review 8 or more (re-review pending)
+
+Done here: previous review 6/10 (on an older build); its seven fixes are addressed.
