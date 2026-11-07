@@ -105,6 +105,18 @@
   .xsm-form > .xsm-fine { order: 6; }
   .xsm-consent { font-size: 15px; line-height: 1.55; }
 }
+/* the phone answers a refused send: its To line is marked like the field (a dashed ink outline) */
+.xsm-to.fail { outline: 1.5px dashed var(--ink); outline-offset: 4px; }
+/* the dark strip, at rest: three texts in one row at medium size, then the keys */
+.xsm-kinds { padding-block: clamp(64px, 7vw, 112px) !important; }
+.xsm-bubbles { display: flex !important; flex-wrap: wrap; gap: 10px; }
+.xsm-bubbles li, .xsm-bubbles li.on { margin-left: 0 !important; max-width: none; padding: 14px 20px; font-size: 17px; color: #fafafa; background: #262626; transition: none; }
+.xsm-big-keys { margin-top: clamp(32px, 4vw, 56px) !important; }
+@media (max-width: 899px) {
+  /* phones: the part-chips sit between the field and the consent they read; the handset is a short crop */
+  .xsm-form > .xsm-parts { order: 1; }
+  .xsm-side { max-height: 45svh; }
+}
 /* no dead white between the form and the dark room */
 .xsm-hero { padding-bottom: clamp(64px, 7vw, 112px); }
 /* a refused send says why, in words, beside the submit (the number stays in the field) */
