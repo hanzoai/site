@@ -27,7 +27,7 @@
    Conflict noted on the card: MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred
    statement at the coordinator's request after the critic found /trust sharing /leaderboard's frame (JAMES.md 8,
    neighbouring pages differ).
-   V2: 8/10 calm proof with something to look at on every screen: the self-opening evidence cabinet, papers that open into their pages, a statement that inks in as you read, a pinned stance stage (an accordion on phones), a search that shows itself working, one ask. */
+   V2: 8/10 calm proof with something to look at on every screen: the self-opening evidence cabinet (on phones each drawer's contents ride in under it), ruled papers that open into their pages, a statement that inks in as you read, a pinned stance stage whose index grows as each stance enters (an accordion on phones), a search that shows itself working, one ask. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
