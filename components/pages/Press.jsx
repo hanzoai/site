@@ -2,29 +2,31 @@
 /* /press. V2: 8/10 (v3 pass, JAMES.md): no hues and no eyebrows. A masthead-size kinetic headline with its one ask beside
    the press kit dealing its three plates once; the plates as a still asymmetric spread; the boilerplate set like a
    magazine standfirst with the facts as big figures; the news as an index of huge headlines with a card that follows the
-   pointer; press contact as the one dark room over a drifting Sigil; brand and partner assets, channels, and the
+   pointer; press contact as the one black room; brand and partner assets, channels, and the
    leadership with their portraits.
    Persona: a journalist or analyst (PLAN 1.1 "Investor and press") writing about Hanzo, on diligence.
    Goal: leave with the kit, the facts and the right person to email.
    CTA: "Contact Press Team" (mailto:press@hanzo.ai) in the hero and the shared sticky ask bar (data-thumb), data-cta
    press.hero; "Request Executive Bios" (press.bios) closes the page; metric: one contact click.
-   Signature: the news index. Six headlines set huge, one per line; point at one and the others step back while a card
-   carrying its date and summary follows the pointer on a spring (osply / hamol); on phones the summary sits under its
-   headline.
-   Supporting (3): masked headline cut-in, once; the kit's plates dealing themselves to the front once; the download that
-   turns into a drawn tick. Ambient: the contact room's Sigil.
+   Signature: the belief line (MASTER 4.4 Story). Hanzo's boilerplate is read word by word: each word turns from
+   faint to ink as it scrolls through the screen, and the four facts below it settle into place once.
+   Supporting (3): masked headline cut-in, once, after the curtain; the kit's plates dealing themselves to the front once;
+   the news index, whose other headlines step back while a card with the story's date and summary rides beside the
+   row you point at (300ms ease-out, never over a headline; on phones the summary sits under its headline). State: the download draws a tick.
    Beyond: the boilerplate copies in one press, and the press email copies beside the dark room's address, so a writer
    leaves with both without retyping. Every word and link is Hanzo's.
    Deletes: the magenta accent; the kickers over the h1 ("Press & Media"), over "Meet our team" ("Leadership") and over
    the email and address; the "/blog →" text in the news card; the visible "Copy boilerplate" label (icon + aria-label);
-   the endless plate loop; raw <img> (kit Img); opacity:0 arrival states. */
+   the endless plate loop; raw <img> (kit Img); opacity:0 arrival states; the contact room's Sigil (third Sigil room among
+   the company pages); springs; the greyscale filter on the portraits; hover transforms outside the deck's list. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useSpring } from 'motion/react';
+import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Img } from '../kit';
-import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
+import useArrived from './company/useArrived';
 import '../v2/vc-type.css';
+import './company/deck.css';
 import './Press.css';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -69,13 +71,14 @@ function Hero() {
   const [top, setTop] = useState(0);
   const [steps, setSteps] = useState(0);
   const calm = useReducedMotion();
+  const ok = useArrived(); // nothing deals behind the arrival curtain
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   useEffect(() => {
-    if (calm || !live || steps >= 3) return; // deals the three plates once, then rests with the dark plate in front
+    if (calm || !ok || !live || steps >= 3) return; // deals the three plates once, then rests with the dark plate in front
     const t = setTimeout(() => { setTop((v) => (v + 1) % 3); setSteps((s) => s + 1); }, 2400);
     return () => clearTimeout(t);
-  }, [top, steps, calm, live]);
+  }, [top, steps, calm, ok, live]);
   return (
     <section className="xpe-hero vc-scene" ref={ref} aria-label="Press & Media" data-ask-name="Press & Media">
       <div className="vc-grid xpe-hero-g">
@@ -96,7 +99,7 @@ function Hero() {
               return (
                 <motion.a key={kind} href={KIT} download className="xpe-fan-c" aria-label={'Download Press Kit: ' + t} tabIndex={k === 0 ? 0 : -1}
                   initial={false} animate={{ x: k * 30, y: k * -34, rotate: [-4, 2, 7][k], scale: 1 - k * 0.07, zIndex: 3 - k, opacity: 1 - k * 0.12 }}
-                  transition={{ type: 'spring', stiffness: 170, damping: 24 }}>
+                  transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}>
                   <Plate kind={kind} big />
                   <span className="xpe-fan-l">{t}</span>
                 </motion.a>
@@ -131,6 +134,30 @@ function Kit() {
 const BOILER = 'Hanzo AI, Inc. is an AI technology company building the infrastructure for the next generation of intelligent applications. Founded in 2016 and headquartered in San Francisco, Hanzo is led by CEO Antje Worring and CTO Zach Kelling, providing AI platforms, developer tools, and cloud services to companies worldwide. Our mission is to make AI accessible, safe, and beneficial for everyone.';
 const FACTS = [['2016', 'Founded'], ['San Francisco, CA', 'Headquarters'], ['Hanzo AI, Inc.', 'Entity'], ['Techstars ’17', 'Backing']];
 
+/* The signature: the belief line, read word by word as it scrolls through the screen. */
+const NOJS_W = { __html: '<style>.xpe-w{opacity:1!important}.xpe-fig span{transform:none!important}</style>' };
+function Word({ p, a, b, children }) {
+  const o = useTransform(p, [a, b], [0.16, 1]);
+  return <motion.span className="xpe-w" style={{ opacity: o }}>{children} </motion.span>;
+}
+function Belief({ text }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.55'] });
+  const words = text.split(' ');
+  return (
+    <p ref={ref} className="xpe-boiler">
+      {calm ? text : words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.5) / words.length}>{w}</Word>)}
+    </p>
+  );
+}
+/* A fact that settles into its place once, out of its own mask. */
+function Fact({ v, k }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  return <div ref={ref}><dd className={'xpe-fig' + (seen ? ' in' : '')}><span>{v}</span></dd><dt className="vc-kick">{k}</dt></div>;
+}
+
 function About() {
   return (
     <section className="vc-sec xpe-about" aria-labelledby="xpe-about-h">
@@ -139,9 +166,10 @@ function About() {
           <MaskLines id="xpe-about-h" lines={['About Hanzo', 'AI, Inc.']} className="vc-headline" />
           <Copy text={BOILER} label="Copy boilerplate" className="xpe-icon" />
         </div>
-        <p className="xpe-boiler">{BOILER}</p>
+        <noscript dangerouslySetInnerHTML={NOJS_W} />
+        <Belief text={BOILER} />
         <dl className="xpe-facts">
-          {FACTS.map(([v, k]) => <div key={k}><dd>{v}</dd><dt className="vc-kick">{k}</dt></div>)}
+          {FACTS.map(([v, k]) => <Fact key={k} v={v} k={k} />)}
         </dl>
       </div>
     </section>
@@ -157,17 +185,18 @@ const NEWS = [
   ['February 27, 2026', 'Complete AI Pricing Breakdown: Models, Cloud, GPU, and Audio', 'Every Hanzo rate in one place — gateway, cloud, GPU, and audio.'],
 ];
 
-/* The signature: huge headlines; a card with the story's date and summary follows the pointer on a spring. */
+/* The news index: big headlines; a card with the story's date and summary rides beside the row (300ms ease-out). */
 function News() {
   const box = useRef(null);
   const [at, setAt] = useState(-1);
-  const x = useSpring(0, { stiffness: 300, damping: 30 });
-  const y = useSpring(0, { stiffness: 300, damping: 30 });
-  const move = (e) => {
-    if (e.pointerType !== 'mouse') return;
-    const r = box.current.getBoundingClientRect();
-    x.set(Math.min(r.width - 340, e.clientX - r.left + 28));
-    y.set(e.clientY - r.top - 40);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  // the card rides beside the row being pointed at, in the empty right of the index, never over a headline
+  const place = (row) => {
+    const r = box.current.getBoundingClientRect(), q = row.getBoundingClientRect();
+    const t = { duration: 0.3, ease: [0, 0, 0.2, 1] };
+    animate(x, r.width - 340 - 72, t);
+    animate(y, q.top - r.top + 16, t);
   };
   return (
     <section className="vc-sec xpe-news" aria-labelledby="xpe-news-h">
@@ -175,11 +204,11 @@ function News() {
         <MaskLines id="xpe-news-h" lines={['Recent News']} className="vc-display s" />
         <p className="vc-lede xpe-news-l">Latest press releases and company announcements.</p>
       </div>
-      <div className="vc-wrap xpe-news-w" ref={box} onPointerMove={move} onPointerLeave={() => setAt(-1)}>
+      <div className="vc-wrap xpe-news-w" ref={box} onPointerLeave={() => setAt(-1)}>
         <ol className={'xpe-feed' + (at >= 0 ? ' pointing' : '')}>
           {NEWS.map(([d, t, s], i) => (
             <li key={t} className={i === at ? 'on' : ''}>
-              <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') { move(e); setAt(i); } }} onFocus={() => setAt(i)} onBlur={() => setAt(-1)}>
+              <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') { place(e.currentTarget); setAt(i); } }} onFocus={() => setAt(i)} onBlur={() => setAt(-1)}>
                 <span className="xpe-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <span className="xpe-ts vc-num">{d}</span>
                 <span className="xpe-tt">{t}</span>
@@ -205,7 +234,6 @@ function News() {
 function Contact() {
   return (
     <section className="xpe-contact" data-room="dark" aria-labelledby="xpe-contact-h">
-      <div className="xpe-contact-s" aria-hidden="true"><Sigil seed="press@hanzo.ai" data={[2016, 94105, 17]} /></div>
       <div className="vc-grid xpe-contact-g">
         <div className="xpe-contact-h">
           <h2 id="xpe-contact-h" className="vc-headline">Press Contact</h2>
@@ -307,7 +335,7 @@ function Team() {
 
 export default function Press() {
   return (
-    <main className="vc xpe" style={{ '--acc': '#1d1d1f' }}>
+    <main className="vc xpe" style={{ '--acc': '#0a0a0a' }}>
       <Hero />
       <Kit />
       <About />
