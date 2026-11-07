@@ -2,14 +2,14 @@
 
 Page file: `components/pages/Tabs.jsx` · gallery: `docs/gallery/tabs/` · Persona: developers whose coding agents work in shells on real machines · Goal and metric: `signup_start` (app handoff to tabs.hanzo.ai) · CTA: "Open Tabs"
 
-1. **Strategy and conversion.** One ask, Hanzo's "Open Tabs": solid in the hero (`data-thumb`, `data-cta="tabs.hero"`), in the shared ask bar after the hero, and as the dark room's solid button (`data-cta="tabs.close"`). "Read the source" is outlined.
+1. **Strategy and conversion.** One ask, Hanzo's "Open Tabs": solid in the hero (`data-thumb`, `data-cta="tabs.hero"`), in the shared ask bar after the hero, and as the one solid button that ends the dark room (`data-thumb`, `data-cta="tabs.close"`, the bar steps aside there). "Read the source" is the MIT tile itself (`data-cta="tabs.source"`). The map's tabs.hanzo.ai card is a white window, not a button.
 2. **Information architecture and navigation.** Header and footer unchanged. Order: the live window and its tree, why it is shaped this way (three pinned chapters), link a machine, what you get.
-3. **First impression and page narrative.** The headline cuts in; the window under it splits and closes its own panes while the tree grows and shrinks beside it. Then one idea per screen.
+3. **First impression and page narrative.** The headline and the ask share one line; the window is the composition: it carries the name and address in its own bar, splits and closes its own panes while the tree grows and shrinks in its sidebar, and the lede follows it. Then one idea per screen. The dark room's four tiles each run a small object: scrollback that pages, a pane that closes and comes back by name, a phone key row pressing, and the source link.
 4. **Conversion system.** One solid per viewport; `hanzo link` copies exactly what is shown.
 5. **Trust and proof.** Hanzo's claims only: no backend, a shell is a URL, MIT, 10k lines of scrollback.
 6. **Content presentation (copy untouched).** Parity 26/26, 2/2. "Hanzo Tabs" names the window instead of sitting above the headline; chapter tags sit under the words.
 7. **Visual design system.** v2 scale; 0 UI hues (the old terminal green is now silver on the dark panes, ink on light). The pane about to close shows a grey ring. One dark room.
-8. **UI component library.** Kit `A`, `Copy`, `Magnetic`; v2 `Settle`, `x-gauss/PinChapters`, `LineMask`, `Pause`, `NoJs`. Browser/Phone is a `radiogroup`; the phone pages are a `tablist`.
+8. **UI component library.** Kit `A`, `Copy`, `Magnetic`; v2 `Settle`, `x-gauss/PinChapters`, `LineMask`, `Pause`, `NoJs`. Browser/Phone is an icon `radiogroup` with aria-labels and arrow keys; the phone pages are a `tablist`.
 9. **Motion and interaction.**
    - Idle: the tree tends itself (split, split, close, close); chapter visuals run (packets with no server, the URL naming sessions, a pane closing and its sibling taking the space).
    - Pointer: split and close any pane yourself; magnetic ask; the phone flip swipes.
