@@ -76,12 +76,17 @@
 }
 /* no dead stretch after the rail: the sheet row tucks under the last panel, the next section follows close */
 .xs2-strip.pin { margin-bottom: -120px; }
-.xs2-after { position: relative; z-index: 1; padding-bottom: 24px; }
+/* the strip paints in its own layer (z 0); the sheet row after it stays above by order, with no stacking context of
+   its own, so its sheets (fixed, z 960) rise over the site header */
+.xs2-strip { z-index: 0; }
+.xs2-after { position: relative; padding-bottom: 24px; }
 .xs2-after + * { padding-top: clamp(40px, 4vw, 64px) !important; }
 @media (max-width: 899px) {
   .xs2-strip.pin { margin-bottom: 0; }
   .xs2-film { height: 45svh !important; }
   .xs2-strip-v { scroll-snap-type: x proximity !important; }
+  /* one job a screen, the next one peeking in (16%) */
+  .xs2-panel { width: 84vw !important; }
 }
 /* deck rhythm: the headline rests at 52 */
 .xs2 .xs2-h1 { font-size: clamp(40px, 5vw, 52px) !important; }
@@ -205,3 +210,22 @@
   /* the strip is a plain swipe rail: nothing scrubs */
   .xs2-strip-v { overflow-x: auto; scroll-snap-type: x mandatory; }
 }
+
+/* a job with no film left (the team cards below show it) takes the solution's own Sigil on black */
+.xs2-shot-sig { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--hz-black); opacity: .9; }
+/* the overlap finder with nothing in common keeps its black strip and says 0 */
+.xsl-col.both.zero ul { display: none; }
+.xsl-col.both.zero h3 b { font-size: 22px; }
+/* arriving from a card: the card's name lands on the h1, so the h1 is simply there (no second cut-in) */
+html[data-tile-open] .xs2-h1 .v2f-w > span, .xs2-h1[data-landed] .v2f-w > span { animation: none !important; transform: none !important; }
+/* every quiet control answers the pointer with more than a hairline: arrows step forward, the sheet pills fill and
+   their plus turns, the hero pause inverts, the band's light ask lifts */
+.xs2 .x-arrow svg { transition: transform var(--ui, .2s) var(--ease-o, ease-out); }
+@media (hover: hover) {
+  .xs2 .x-arrow:hover svg { transform: translateX(3px); }
+  .xs2-sheets .v2f-spec-btn:hover { background: var(--card); border-color: var(--ink); }
+  .xs2-film-pause:hover { background: var(--hz-white); color: var(--hz-black); border-color: var(--hz-white); }
+  .xs2-band .v2f-btn.light:hover { background: var(--hz-white); border-color: var(--hz-white); transform: translateY(-1px); }
+}
+.xs2-sheets .v2f-spec-btn { transition: background-color var(--ui, .2s) var(--ease-o, ease-out), color var(--ui, .2s) var(--ease-o, ease-out), transform 90ms var(--ease-o, ease-out); }
+.xs2-sheets .v2f-spec-btn:active, .xs2-band .v2f-btn.light:active { transform: scale(.98); }

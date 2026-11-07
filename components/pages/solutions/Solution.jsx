@@ -76,13 +76,16 @@ export function useReel(n, box, ms = 5200) {
    of Hanzo's nine model films, so the page never shows one picture twice */
 const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
 const otherFilm = (own, k) => { const rest = FILMS.filter((f) => f !== own); return rest[(Math.max(0, FILMS.indexOf(own)) + k * 3) % rest.length]; }; // 3 is coprime with 8: six distinct films
+/* the films the strip and the band may use: never the hero's, never one the team cards show a screen later, so no
+   picture shows twice on the page; a job with no film left takes the solution's own Sigil instead */
+const freeFilms = (own, taken) => { const out = []; for (let k = 1; k <= 8; k++) { const f = otherFilm(own, k); if (!taken.includes(f) && !out.includes(f)) out.push(f); } return out; };
 // [where it looks, how close, mirrored, turned]: five framings that read as five different shots of one film
 const FRAMES = [['50% 50%', 1.06, 1, 0], ['40% 35%', 1.9, -1, 0], ['62% 62%', 1.4, 1, 0], ['45% 70%', 2.5, -1, 0], ['58% 40%', 1.6, 1, 0], ['50% 55%', 2.1, -1, 0]];
-function Shot({ slug, k, n, on, plain }) {
+function Shot({ slug, k, n, on, plain, seed }) {
   const [p, s, f, r] = plain ? ['50% 50%', 1.04, k % 2 ? -1 : 1, 0] : FRAMES[k % FRAMES.length];
   return (
     <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s, '--f': f, '--r': r + 'deg' }}>
-      {slug && <Film slug={slug} play={on} at={n > 1 ? k / n : 0} />}
+      {slug ? <Film slug={slug} play={on} at={n > 1 ? k / n : 0} /> : <Sigil seed={seed + '#' + k} data={[k + 1, n]} className="xs2-shot-sig" />}
       <span className="xs2-shot-scrim" />
       <b className="xs2-shot-n">{pad(k + 1)}</b>
     </div>
@@ -120,7 +123,7 @@ function Stories({ reel, n }) {
 }
 
 /* the signature: the jobs as a horizontal strip, scrubbed by scroll on desktop (pinned), swiped on phones */
-function Strip({ reel, n }) {
+function Strip({ reel, n, films, seed }) {
   const sec = useRef(null);
   const track = useRef(null);
   const rail = useRef(null);
@@ -169,7 +172,7 @@ function Strip({ reel, n }) {
           <motion.ol ref={track} className="xs2-track" style={wide ? { x } : undefined}>
             {reel.steps.map((s, k) => (
               <li key={s.title} className="xs2-panel" data-on={k === at ? '' : undefined}>
-                <Shot slug={otherFilm(reel.slug, k + 1)} plain k={k} n={n} on={k === at} />
+                <Shot slug={films[k]} seed={seed} plain k={k} n={n} on={k === at} />
                 <div className="xs2-panel-t">
                   <h2 className="v2f-head">{s.title}</h2>
                   {s.text && <p className="v2f-body">{s.text}</p>}
@@ -222,7 +225,7 @@ function Overlap({ here, me, sibs, data, seed, sig }) {
       </div>
       {other && (
         <div className="xsl-ovl-g" aria-live="polite">
-          {both.length > 0 && <div className="xsl-col both"><h3><b className="x-mono">{both.length}</b> {me} <span aria-hidden="true">∩</span> {other.label}</h3><ul><AnimatePresence initial={false}>{both.map((p) => <motion.li layout key={p} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>{p}</motion.li>)}</AnimatePresence></ul></div>}
+          <div className={'xsl-col both' + (both.length ? '' : ' zero')}><h3><b className="x-mono">{both.length}</b> {me} <span aria-hidden="true">∩</span> {other.label}</h3><ul><AnimatePresence initial={false}>{both.map((p) => <motion.li layout key={p} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>{p}</motion.li>)}</AnimatePresence></ul></div>
           <div className="xsl-col"><h3>{me}</h3><ul>{mine.map((p) => <motion.li layout key={p}>{p}</motion.li>)}</ul></div>
           <div className="xsl-col"><h3>{other.label}</h3><ul>{only.map((p) => <motion.li layout key={p}>{p}</motion.li>)}</ul><A to={other.href} className="x-arrow xsl-ovl-go"><span>{other.label}</span>{ARROW}</A></div>
         </div>
@@ -270,8 +273,23 @@ function Proof({ sec }) {
   );
 }
 
+/* arriving from a tile (the index or a team card), the hero keeps the picture that was clicked (openTile.js leaves its
+   film in sessionStorage); the cover sits over the hero while this swaps, so the open lands on the same film */
+function useTileFilm(own) {
+  const [film, setFilm] = useState(own);
+  useEffect(() => {
+    try {
+      const t = JSON.parse(sessionStorage.getItem('hz-tile-film') || 'null');
+      sessionStorage.removeItem('hz-tile-film');
+      if (t && t.film && t.href === location.pathname.replace(/\/$/, '') && FILMS.includes(t.film)) setFilm(t.film);
+    } catch { /* storage is a nicety */ }
+  }, []);
+  return film;
+}
+
 export default function Solution({ doc, data }) {
-  const reel = doc.reel;
+  const heroFilm = useTileFilm(doc.reel && doc.reel.slug);
+  const reel = doc.reel && { ...doc.reel, slug: heroFilm };
   const n = reel ? reel.steps.length : 0;
   const sibLinks = doc.more ? doc.more.links.filter((l) => /^\/solutions\/[^/]+$/.test(l.href) && data[l.href.split('/').pop()]) : [];
   const otherLinks = doc.more ? doc.more.links.filter((l) => !doc.sibs.some((s) => s.href === l.href)) : [];
@@ -281,6 +299,10 @@ export default function Solution({ doc, data }) {
     const l = doc.more.links.find((x) => x.href === s.href);
     return { href: s.href, title: s.title, preview: s.first, meta: l ? l.label : s.label, film: s.film };
   });
+  // the strip and the band take films the hero and the team cards below do not show
+  const free = reel ? freeFilms(reel.slug, cards.slice(0, 6).map((c) => c.film).filter(Boolean)) : [];
+  const stripFilms = Array.from({ length: n }, (_, k) => free[k] || null);
+  const bandFilm = free[n] || (reel && reel.slug);
   const sheets = (doc.runs || doc.security) && (
     <div className="xs2-sheets">
       {doc.runs && <FamDrawer title={doc.runs.title} preview={doc.runs.title}><Runs runs={doc.runs} /></FamDrawer>}
@@ -305,7 +327,7 @@ export default function Solution({ doc, data }) {
         {reel && <Stories reel={reel} n={n} />}
       </section>
 
-      {reel && n > 0 && <Strip reel={reel} n={n} />}
+      {reel && n > 0 && <Strip reel={reel} n={n} films={stripFilms} seed={'/solutions/' + doc.slug} />}
       {/* the two sheets open from a slim row right after the last job, outside the pinned scene, so they rise above the header */}
       {sheets && <div className="v2f-wrap xs2-after">{sheets}</div>}
 
@@ -345,7 +367,7 @@ export default function Solution({ doc, data }) {
 
       {doc.band && (
         <section className="xs2-band" data-room="dark" data-ask-hide>
-          <Film slug={reel && otherFilm(reel.slug, 6)} className="xs2-band-film" />
+          <Film slug={bandFilm} className="xs2-band-film" />
           <div className="v2f-wrap v2f-grid xs2-band-g">
             <h2 className="v2f-display small xs2-band-h">{doc.band.title}</h2>
             <div className="xs2-band-r">

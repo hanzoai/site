@@ -95,6 +95,7 @@ Done here: the reel's pause control is a 44px button named "Pause" or "Play". Th
 - [ ] n/a: sound. The kit hasn't merged.
 
 Done here:
+- 7 Nov 22:30: the first nine tiles use all nine films and the order repeats nine tiles later (never in a row or the next); a tile's open grows under the header and lands straight on the destination's film band (about 0.6 s, no black hold), the name rides above the cover and never clips, and the page opens on the film you clicked; the reserved room takes the film seen longest ago; the hero-to-filters gap is one section step (124px).
 - Signature: the film wall. The pill and the re-flow both run at 300 ms ease-emphasis, with no springs.
 - Supporting: line-mask h1; the reel walks once (3.8 s per solution) and rests; tile film and jobs.
 

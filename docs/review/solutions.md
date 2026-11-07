@@ -1,4 +1,6 @@
 # /solutions/: James-eye review
+
+Ready: 7 Nov 22:35, held up next to /api and /affiliate. The first nine tiles use all nine films, each repeat exactly nine tiles later; a tile opens straight onto the destination's film band (no black hold, name above the cover) and the page keeps the clicked film; reel and reserved room off the wall's last rows; hero-to-filters gap one section step. taste/unique/parity OK (47/47, 20/20); 0 console errors, no overlap at 1470 and 375.
 Verdict: 7/10
 First complaint: "The same pictures are bunched together. Marketing and Financial services, Operations and Cybersecurity, Finance and Design are all on one screen with the same film. And when I click a card it goes to a black screen, sits there, then the page shows a different picture."
 
