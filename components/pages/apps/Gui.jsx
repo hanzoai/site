@@ -34,14 +34,13 @@ const INK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
 const SHAPE = { ...SPR, backgroundColor: INK, color: INK };
 const ARRIVE = { duration: 0.3, ease: EASE_OUT_EXPO };
 
-/* the tokens the shorthands accept */
-const SPACE = { $2: 8, $3: 12, $4: 16, $6: 24 };
-/* token names only from the scale the page's own code uses ($4, $8): no invented names */
-const BG = { $2: '#ffffff', $4: '#e5e5e5', $8: '#0a0a0a' };
+/* the tokens the shorthands accept: only the two Hanzo's own code uses ($4 and $8), no invented names */
+const SPACE = { $4: 16, $8: 28 };
+const BG = { $4: '#ffffff', $8: '#0a0a0a' };
 const INKY = '$8';
-const ROUND = { $2: 6, $4: 14, $8: 26 };
+const ROUND = { $4: 10, $8: 24 };
 const TOK = { p: SPACE, bg: BG, rounded: ROUND };
-const PRESETS = [{ p: '$4', bg: '$2', rounded: '$4' }, { p: '$6', bg: '$4', rounded: '$8' }, { p: '$3', bg: '$8', rounded: '$2' }];
+const PRESETS = [{ p: '$4', bg: '$4', rounded: '$4' }, { p: '$8', bg: '$4', rounded: '$8' }, { p: '$4', bg: '$8', rounded: '$8' }];
 const PLAT = [['iOS', 'Native', 'ios'], ['Android', 'Native', 'android'], ['Web', 'Atomic CSS', 'web'], ['Desktop', 'macOS · Win · Linux', 'desk']];
 const OK = (k, val) => TOK[k][val] !== undefined;
 
@@ -83,8 +82,9 @@ function Flat({ v }) {
 function Dev({ k, v, parts, tag, flat, delay, children }) {
   return (
     <div className="gu-dev"><div className={'gu-frame gu-' + k}>
-      {k === 'ios' && <><i className="gu-island" aria-hidden="true" /><span className="gu-sb x-mono" aria-hidden="true">9:41</span></>}
-      {k === 'android' && <><i className="gu-hole" aria-hidden="true" /><span className="gu-sb x-mono" aria-hidden="true">9:41</span><i className="gu-gest" aria-hidden="true" /></>}
+      {/* a neutral status bar: the island or camera hole only, no invented time */}
+      {k === 'ios' && <i className="gu-island" aria-hidden="true" />}
+      {k === 'android' && <><i className="gu-hole" aria-hidden="true" /><i className="gu-gest" aria-hidden="true" /></>}
       {(k === 'web' || k === 'desk') && (
         <div className="gu-bar" aria-hidden="true"><span className="gu-lights"><i /><i /><i /></span>{k === 'web' ? <span className="gu-url" /> : <span className="gu-wt">Welcome</span>}</div>
       )}
@@ -250,8 +250,9 @@ function Editor() {
                 {Object.keys(TOK[k]).map((o) => (
                   <button key={o} type="button" role="radio" aria-checked={v[k] === o && !(draft[k] && !OK(k, draft[k]))} onClick={() => pick(k, o)} className="x-mono">{o}</button>
                 ))}
-                {/* the typed value: an empty dashed slot at the end of the row; type a drifted value and the typecheck fails */}
-                <input id={'gu-in-' + k} className={'x-mono' + (draft[k] && !OK(k, draft[k]) ? ' bad' : '')} value={draft[k] ?? ''} onChange={(e) => set(k, e.target.value)} spellCheck="false" autoComplete="off" />
+                {/* the value the YStack takes right now, shown in the field that closes the row; type over it and a value
+                    that has drifted out of the design system fails the typecheck */}
+                <input id={'gu-in-' + k} className={'x-mono' + (draft[k] && !OK(k, draft[k]) ? ' bad' : '')} value={draft[k] ?? ''} placeholder={v[k]} onChange={(e) => set(k, e.target.value)} spellCheck="false" autoComplete="off" />
               </div>
             </div>
           ))}
@@ -288,9 +289,9 @@ export function Welcome() {
 /* Each platform's own screen, built only from the kit's words: iOS a sheet rising, Android a list of the primitives,
    Web a form, Desktop a split pane. `live` (in the opened panel) cycles the tokens so the screen keeps answering. */
 const PRIMS = ['Stack', 'XStack', 'YStack', 'Text', 'Button', 'Sheet', 'Dialog'];
-/* which chapter's words each opened platform carries: native for the phones, the primitives for the Android list,
-   compile-time CSS for the web, tokens for the desktop's split pane */
-const PANEL = { ios: 0, android: 3, web: 2, desk: 1 };
+/* an opened platform carries only words that are about that platform: the web gets Hanzo's atomic-CSS sentence (its
+   own sub-label); the phones and the desktop carry their name and Hanzo's sub-label alone */
+const PANEL = { web: 2 };
 function PlatScreen({ k, v, wake }) {
   if (k === 'ios') return (
     <Dev k="ios" v={v}>
@@ -393,14 +394,15 @@ function Ship() {
         <BizOpen className="gu-plats" cardClass="gu-plat" items={PLAT.map(([t, s, k]) => ({
           id: k,
           className: 'gu-plat-' + k,
-          card: <><CardDev k={k} /><span className="gu-plat-t"><b>{t}</b><span>{s}</span></span></>,
+          /* the sub-label and, on hover or focus, the props the woken device has just taken share one line */
+          card: <><CardDev k={k} /><span className="gu-plat-t"><b>{t}</b><span className="gu-plat-sw"><span className="gu-plat-s">{s}</span><span className="gu-plat-p x-mono" aria-hidden="true">{['p', 'bg', 'rounded'].map((p) => <span key={p}>{p}="{PRESETS[1][p]}"</span>)}</span></span></span></>,
           panel: (
             <div className="gu-pp">
               <PlatLive k={k} />
               <div className="gu-pp-copy">
                 <h3 className="bz-headline">{t}</h3>
                 <p className="gu-pp-s x-mono">{s}</p>
-                <p className="bz-body">{PROPS[PANEL[k]][1]}</p>
+                {PANEL[k] !== undefined && <p className="bz-body">{PROPS[PANEL[k]][1]}</p>}
               </div>
             </div>
           ),

@@ -291,11 +291,11 @@ function Panel({ setting, w, doc, cur, leads, offLine }) {
         </button>
         {/* Hanzo's whole pair, always there at one height (a step never moves the page); the half that holds now is in ink */}
         <div className="xhp-means" aria-live="polite">
-          {setting.saved && <p className="xhp-saved" data-show={!w.on || undefined}><Tick key={w.saved} size={18} /><span>{setting.saved}</span></p>}
           <p className="xhp-pair">
             {setting.on && <span data-cur={w.on || undefined}>{setting.on}</span>}
             {offLine && <>{' '}<span data-cur={!w.on || undefined}>{offLine}</span></>}
           </p>
+          {setting.saved && <p className="xhp-saved" data-show={!w.on || undefined}><Tick key={w.saved} size={18} /><span>{setting.saved}</span></p>}
         </div>
       </div>
     </div>
