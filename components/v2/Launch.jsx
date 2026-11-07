@@ -96,13 +96,15 @@ export default function Launch({ slug, accent, ink, shape, aim, over, head, head
   const [on, setOn] = useState(false);
   const [size, setSize] = useState(null);
   const calm = useReducedMotion();
+  const [still, setStill] = useState(false); // set after mount: the server cannot know, and hydration keeps its attributes
+  useEffect(() => setStill(!!calm), [calm]);
   const i = MODELS.findIndex((x) => x.slug === slug);
   const next = MODELS[(i + 1) % MODELS.length];
 
   const { scrollYProgress: p } = useScroll({ target: stage, offset: ['start 60px', 'end end'] });
-  const t = useTransform(p, (v) => (calm ? 1 : clamp01(v / 0.8)));
+  const t = useTransform(p, (v) => (still ? 1 : clamp01(v / 0.8)));
   const clip = useTransform(t, (v) => (!size || v <= 0.002 ? 'none' : shape(settle(v), size.W, size.H, size.wide)));
-  const zoom = useTransform(t, (v) => { const a = size && aim ? aim(size.W, size.H, size.wide) : null; return 1 + (((a && a[2]) || 1.14) - 1) * v; });
+  const zoom = useTransform(t, (v) => { if (!size) return 1; const a = aim ? aim(size.W, size.H, size.wide) : null; return 1 + (((a && a[2]) || 1.14) - 1) * v; });
   // aim: the camera pans the film so its subject sits inside the settled shape ([dx, dy] px at t = 1, per layout)
   const pan = (k) => (v) => { if (!size || !aim) return 0; const a = aim(size.W, size.H, size.wide); return (a ? a[k] : 0) * settle(v); };
   const panX = useTransform(t, pan(0));
@@ -124,7 +126,7 @@ export default function Launch({ slug, accent, ink, shape, aim, over, head, head
   useFilms(root);
 
   return (
-    <main className="x-model lv" ref={root} style={{ '--ac': accent, '--ac-ink': ink || accent }} data-calm={calm ? '' : undefined}>
+    <main className="x-model lv" ref={root} style={{ '--ac': accent, '--ac-ink': ink || accent }} data-calm={still ? '' : undefined}>
       <section className="lv-stage" ref={stage} data-hero={slug} data-ready={ready ? '' : undefined} aria-label={label || m.name}>
         <div className="lv-pin" ref={pin}>
           <motion.div className="lv-film" style={{ clipPath: clip }}>
