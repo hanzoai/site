@@ -6,7 +6,7 @@
 // CTA: "Download Extension" (github.com/hanzoai/extension/releases/latest): the hero's one solid with data-thumb, repeated by the closing band
 // Metric: extension_download (data-cta extension-download, extension-download-end)
 /* Hanzo Extension (Launch: the side panel leads).
-   V2: 8/10 round 2: deck scale (h1 52); no labels over headlines; h1, lede, the one ask and the whole stack fit 1470×801 and 375×812 and the panel walks at once, with a pause; one solid and one closing band; the windows show Hanzo's own page and words instead of placeholder bars (kit Img); points change without overlapping; no springs, no cursor labels; the black room opens from a card; JS-off legible; 44px targets
+   V2: 8/10 round 3 (critic 6/10 fixes): every section below the fold now has an object that answers: use tabs each run a small browser render (console, sign-in to dashboard, requests, a form filling), numbered tabs that wrap on phone; the browser list swaps a window with its build size; connector chips and the six hops answer hover/tap with the hop's own sentence; zip tiles became hairline file rows (and a file list beside Get Extension); the hero stack arrives as one piece after the h1 with its ring inside the window; tighter black room and use-case spacing
    Motion: signature = the stack and its panel (a step loop that stops off screen). Supporting: pinned chapters with
    wipes (components/v2/AppScenes), the request travelling the path, line-masked headlines.
    Greys only; every word and link is Hanzo's; the pages inside the windows are Hanzo's own pictures. */
@@ -142,7 +142,7 @@ function Stack({ mineWin }) {
           const slot = SLOTS[order.indexOf(k)];
           const isFront = k === front;
           return (
-            <motion.div key={k} className={'xe-win w-' + k + (isFront ? ' front' : '')} initial={calm ? false : { x: '0%', y: '6%', rotate: 0, scale: 0.94, opacity: 0 }}
+            <motion.div key={k} className={'xe-win w-' + k + (isFront ? ' front' : '')} initial={calm ? false : { x: '0%', y: '6%', rotate: 0, scale: 0.94 }}
               animate={{ ...slot, opacity: 1 }} transition={{ ...DEAL, opacity: { duration: 0.4 } }} style={{ zIndex: slot.zIndex }} aria-hidden={!isFront}>
               <Chrome k={k} open={open} front={isFront} toggle={() => { setOpen(!open); setMine(true); }} />
               <div className="xe-view">
@@ -211,7 +211,9 @@ function Hero({ mineWin }) {
 /* ---------- the black room: a request travels from the fabric to a tab ---------- */
 const HOPS = ['A tab', 'Extension', 'Native messaging host', 'Unix socket', 'Local Hanzo daemon', 'The fabric'];
 
+const HOP_SAY = [POINTS[4][1], POINTS[2][1], POINTS[1][1], POINTS[1][1], POINTS[2][1], 'The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab.'];
 function How() {
+  const [hot, setHot] = useState(3);
   return (
     <section className="av-sec av-dark xe-how" data-room="dark" aria-labelledby="xe-how-h">
       <div className="av-wrap">
@@ -221,13 +223,16 @@ function How() {
         </div>
         <ol className="xe-path" aria-label="From a tab to the fabric">
           {HOPS.map((h, i) => (
-            <li key={h} style={{ '--i': i }} className={i === 0 ? 'end tab' : i === HOPS.length - 1 ? 'end fab' : ''}>
-              <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
-              <b>{h}</b>
+            <li key={h} style={{ '--i': i }} className={(i === 0 ? 'end tab' : i === HOPS.length - 1 ? 'end fab' : '') + (i === hot ? ' hot' : '')}>
+              <button type="button" aria-pressed={i === hot} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)} onClick={() => { setHot(i); play('tick'); }}>
+                <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
+                <b>{h}</b>
+              </button>
             </li>
           ))}
           <span className="xe-track" aria-hidden="true"><span className="xe-run"><i /></span></span>
         </ol>
+        <p className="xe-hop-say" aria-live="polite"><span className="x-mono av-num">{String(hot + 1).padStart(2, '0')}</span><span key={hot}>{HOP_SAY[hot]}</span></p>
       </div>
     </section>
   );
@@ -236,12 +241,14 @@ function How() {
 /* ---------- three pinned chapters ---------- */
 function Tools({ on }) {
   const sats = ['documents', 'tickets', 'design files', 'mail', 'calendars', 'A tab'];
+  const [hot, setHot] = useState(-1);
   return (
-    <div className={'xe-vis xe-tools' + (on ? ' on' : '')} aria-hidden="true">
+    <div className={'xe-vis xe-tools' + (on ? ' on' : '') + (hot >= 0 ? ' has-hot' : '')} aria-hidden="true" onPointerLeave={(e) => e.pointerType === 'mouse' && setHot(-1)}>
       <span className="xe-hub"><Mark size={22} /></span>
       {sats.map((s, i) => (
-        <span key={s} className={'xe-sat' + (s === 'A tab' ? ' tab' : '')} style={{ '--a': i * 60 - 90 + 'deg', '--i': i }}>
-          <i className="xe-spoke" /><b>{s}</b>
+        <span key={s} className={'xe-sat' + (s === 'A tab' ? ' tab' : '') + (i === hot ? ' hot' : '')} style={{ '--a': i * 60 - 90 + 'deg', '--i': i }}>
+          <i className="xe-spoke">{i === hot && <em key={'r' + i} className="xe-pulse" />}</i>
+          <b onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onClick={() => setHot(i)}>{s}</b>
         </span>
       ))}
     </div>
@@ -274,6 +281,7 @@ function Text({ on }) {
   );
 }
 
+const SIZE = { chrome: '976 KB', firefox: '956 KB', safari: '310 KB', edge: null, other: '310 KB' };
 function Build({ on }) {
   return (
     <div className={'xe-vis xe-build' + (on ? ' on' : '')} aria-hidden="true">
@@ -281,7 +289,7 @@ function Build({ on }) {
       <svg className="xe-fork" viewBox="0 0 600 72" preserveAspectRatio="none"><path d="M300 0 100 72M300 0v72M300 0l200 72" /></svg>
       <ul className="xe-zips">
         {['chrome', 'firefox', 'safari'].map((b, i) => (
-          <li key={b} className="x-mono" style={{ '--i': i }}>{`hanzo-ai-${b}-v1.9.31.zip`}</li>
+          <li key={b} style={{ '--i': i }}><span className="xe-zip-i" /><span className="x-mono">{`hanzo-ai-${b}-v1.9.31.zip`}</span><em className="x-mono">{SIZE[b]}</em></li>
         ))}
       </ul>
     </div>
@@ -304,18 +312,42 @@ const BUILDS = [
 ];
 const NAME = { chrome: 'Chrome', firefox: 'Firefox', edge: 'Edge', other: null };
 
+const LOOK = { chrome: 'chrome', firefox: 'firefox', edge: 'chrome', other: 'safari' };
+function Peek({ k }) {
+  const win = LOOK[k];
+  return (
+    <div className="xe-peek" aria-hidden="true">
+      <div className={'xe-win front w-' + win} key={k}>
+        <Chrome k={win} open front={false} toggle={() => {}} />
+        <div className="xe-view">
+          <div className="xe-page">
+            <span className="xe-page-nav"><Mark size={12} /><b>Hanzo</b></span>
+            <Img src={'/models/' + { chrome: 'koma', firefox: 'zen', edge: 'iro', other: 'uta' }[k] + '.webp'} w={1200} h={1500} alt="" />
+            <span className="xe-page-t"><b>Hanzo Extension</b><span>Your browser, as a tool an agent can use.</span></span>
+          </div>
+        </div>
+      </div>
+      <span className="xe-peek-k x-mono">{BUILDS.find((b) => b[0] === k)[1]}{SIZE[k] ? ' · ' + SIZE[k] : ''}</span>
+    </div>
+  );
+}
+
 function Builds({ mine }) {
   const order = mine ? [...BUILDS].sort((a, b) => (b[0] === mine) - (a[0] === mine)) : BUILDS;
+  const [hot, setHot] = useState(null);
+  const show = hot || mine || 'chrome';
   return (
     <section className="av-sec xe-builds" id="browsers">
       <div className="av-wrap av-grid">
         <div className="xe-builds-l">
           <h2 className="av-head">Built for every major browser</h2>
           <p className="av-body">Direct extension builds available for Chrome, Firefox, Safari, and Edge. Install in seconds to bring Hanzo agents into your everyday browsing.</p>
+          <Peek k={show} />
         </div>
         <ul className="xe-rows">
           {order.map(([k, t, d, cta]) => (
-            <motion.li key={k} layout transition={DEAL} className={k === mine ? 'yours' : ''}>
+            <motion.li key={k} layout transition={DEAL} className={(k === mine ? 'yours' : '') + (k === show ? ' hot' : '')}
+              onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(k)} onFocus={() => setHot(k)} onClick={() => setHot(k)}>
               <h3 className="av-title">{t}</h3>
               <p>{d}</p>
               {k === mine && <span className="xe-yours x-mono">{NAME[k] ? `You are on ${NAME[k]}` : 'Your browser'}</span>}
@@ -335,6 +367,33 @@ const USES = [
   ['Debug the request, not the guess', 'Network requests and console messages come back as data. When a page misbehaves, the agent can read what the browser saw.'],
   ['The long boring form', 'Multi-step flows that exist only in a UI and have no API behind them. It fills them in and tells you where it got stuck.'],
 ];
+
+/* what the agent sees, per use: a page and its console, a dashboard behind a sign-in, the requests, a form filling in */
+function UseRender({ i }) {
+  return (
+    <div className={'xe-ur u' + i} aria-hidden="true">
+      <span className="xe-mini-bar"><i /><i /><i /><span className="x-mono">hanzo.ai/extension</span></span>
+      <div className="xe-ur-v">
+        {i === 0 && <>
+          <div className="xe-ur-page"><Img src="/models/koma.webp" w={1200} h={1500} alt="" /><b>Hanzo Extension</b></div>
+          <div className="xe-ur-log"><em className="x-mono">console messages</em><i /><i /><i /></div>
+        </>}
+        {i === 1 && <>
+          <div className="xe-ur-gate"><span className="xe-ur-lock" /><i /><i /><b /></div>
+          <div className="xe-ur-dash">{[0, 1, 2, 3].map((n) => <i key={n} style={{ '--i': n }} />)}</div>
+        </>}
+        {i === 2 && <div className="xe-ur-net">
+          <em className="x-mono">network requests</em>
+          {[62, 44, 78, 36, 54].map((w, n) => <span key={n} style={{ '--i': n, '--w': w + '%' }}><b /><i /></span>)}
+        </div>}
+        {i === 3 && <div className="xe-ur-form">
+          {[0, 1, 2].map((n) => <span key={n} style={{ '--i': n }}><i /><b /></span>)}
+          <span className="xe-ur-step x-mono">{[1, 2, 3].map((n) => <i key={n} style={{ '--i': n - 1 }} />)}</span>
+        </div>}
+      </div>
+    </div>
+  );
+}
 
 function Uses() {
   const [at, setAt] = useState(0);
@@ -357,7 +416,7 @@ function Uses() {
             {USES.map(([t], i) => (
               <button key={t} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'xe-u' + i} aria-controls={'xe-up' + i} aria-selected={i === at} tabIndex={i === at ? 0 : -1} onClick={() => setAt(i)}>
                 {i === at && <motion.span layoutId="xe-tab" className="xe-tab-bg" transition={GLIDE} />}
-                <span className="xe-fav" aria-hidden="true" /><span className="xe-tt">{t}</span>
+                <span className="xe-fav x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span className="xe-tt">{t}</span>
               </button>
             ))}
           </div>
@@ -365,8 +424,9 @@ function Uses() {
             {USES.map(([t, d], i) => (
               <div key={t} id={'xe-up' + i} role="tabpanel" aria-labelledby={'xe-u' + i} className={'xe-use' + (i === at ? ' on' : '')} hidden={i !== at}>
                 <span className="x-mono av-num xe-use-n">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="av-head">{t}</h3>
+                <h3 className="x-sr">{t}</h3>
                 <p className="av-lede">{d}</p>
+                <UseRender i={i} />
               </div>
             ))}
           </div>
@@ -384,6 +444,11 @@ function Get() {
         <div className="xe-start">
           <h2 className="av-head">Get started with Extension</h2>
           <Cta to={DOCS} id="extension-docs" kind="link">Read the docs</Cta>
+          <ul className="xe-files" aria-label="v1.9.31">
+            {['chrome', 'firefox', 'safari'].map((b) => (
+              <li key={b}><A to={REL} className="xe-file"><span className="xe-zip-i" aria-hidden="true" /><span className="x-mono">{`hanzo-ai-${b}-v1.9.31.zip`}</span><em className="x-mono">{SIZE[b]}</em></A></li>
+            ))}
+          </ul>
         </div>
         <div className="xe-card2">
           <span className="xe-card2-i"><Mark size={24} /></span>
