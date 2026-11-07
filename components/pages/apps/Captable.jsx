@@ -1,29 +1,31 @@
 'use client';
-/* Cap Table (v2, archetype A "Launch" told like a model launch; greys and ink only, JAMES.md 7).
-   Persona: a founder or finance lead about to raise, who needs to know what the next round does to the table (metric signup_click)
+/* Cap Table (v2, archetype A "Launch" told like a model launch; Hanzo's deck only: greys and ink, MASTER §3).
+   Persona: a founder or finance lead about to raise, who needs to know what the next round does to the table
    Goal: see the founders' fully diluted share move with the price, then start with Hanzo
-   CTA: Try Hanzo -> /login (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
-   Signature: a round you run before you agree to it. The number is the hero: the founders' fully diluted share,
-   gigantic and live, beside the example company's table it comes from. The pre-money price drifts by itself (pause it
-   on its own button, or drag it), the SAFE converts at its cap or its discount, the new investor's shares appear, the
-   bar and the table re-flow, and the figure rolls to its new value digit by digit. It stops off screen.
+   CTA: Try Hanzo -> /login (the header's solid ask; the page's own are quiet kit Ctas in the hero, with thumb, and the close; data-cta captable.hero / captable.close)
+   Metric: signup_start
+   Signature: a round you run before you agree to it. The founders' fully diluted share is the moment: it starts at
+   112px and settles to its resting 64px as you scroll, beside the example company's table it comes from. The
+   pre-money price drifts by itself (pause it on its own button, or drag it), the SAFE converts at its cap or its
+   discount, the new investor's shares appear, the bar and the table re-flow, and the figure rolls to its new value
+   digit by digit. It stops off screen.
    Beyond: "The waterfall, by hand". Set an exit price and see who gets paid in what order: below the preference the
-   founders' share is not their percentage, which Hanzo says is exactly where it becomes visible.
-   Motion: the running round (idle, signature) + sticky chapters lighting rows (scroll) + plan cards that open
-   (state, BizOpen) + headlines cut into their line; the exit price and the round answer the hand (drag).
+   founders' share is not their percentage, which Hanzo says is exactly where it becomes visible. The exit price grows
+   from 64px to 84px only while the hand is on it.
+   Motion: the running round (idle, signature) + the figure settling (scroll) + sticky chapters lighting rows (scroll)
+   + plan cards that open (state, BizOpen); the exit price and the round answer the hand (pointer). Tweens only.
    All inputs are an example company's, labelled as such; the arithmetic is the real thing. Every word and link is Hanzo's.
-V2: 8/10 the founders' share as a gigantic live figure beside its table on the first screen at both sizes, greys only, six chapters lighting rows, term sheet in a sheet, waterfall dark room, plans that open, one ask everywhere
+V2: 8/10 on the deck: h1 52, headings 26, the founders' share settles 112→64 as you scroll beside its live table; six chapters light rows, the term sheet opens as a sheet, the waterfall is the one black room, plans open into panels, one ask
 */
-import { useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { A, More } from '../../kit';
-import { useLive, useEvery } from '../cloud/Frame';
-import BizAsk from '../../v2/BizAsk';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { A, More, Cta } from '../../kit';
+import { useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
-import { SPRING } from '../../../lib/motion';
+import { EASE_OUT_EXPO } from '../../../lib/motion';
 import './Captable.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/captable';
@@ -65,7 +67,7 @@ function Roll({ text, className = '' }) {
       {[...text].map((c, i) => (
         <span className="ct-roll-s" key={i + '/' + text.length} aria-hidden="true">
           <AnimatePresence initial={false} mode="popLayout">
-            <motion.span key={c} initial={{ y: '62%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-62%', opacity: 0 }} transition={SPRING.toggle}>{c}</motion.span>
+            <motion.span key={c} initial={{ y: '62%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-62%', opacity: 0 }} transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}>{c}</motion.span>
           </AnimatePresence>
         </span>
       ))}
@@ -107,27 +109,34 @@ const PauseIcon = ({ on }) => (on
 function Hero({ pre, setPre, mine, setMine }) {
   const [ref, live, calm] = useLive(0.3);
   const dir = useRef(1);
-  useEvery(1300, live && !mine, () => {
-    let n = pre + dir.current * 500_000;
-    if (n > 24_000_000 || n < 6_000_000) { dir.current *= -1; n = pre + dir.current * 500_000; }
-    setPre(n);
-  });
+  useEffect(() => {
+    if (!live || mine) return;
+    const t = setTimeout(() => {
+      let n = pre + dir.current * 500_000;
+      if (n > 24_000_000 || n < 6_000_000) { dir.current *= -1; n = pre + dir.current * 500_000; }
+      setPre(n);
+    }, 1300);
+    return () => clearTimeout(t);
+  }, [pre, live, mine, setPre]);
+  // the moment: the figure starts at 112px (scale 1.75 of its resting 64px) and settles as the page scrolls
+  const { scrollY } = useScroll();
+  const settle = useTransform(scrollY, [0, 360], [1.75, 1], { clamp: true });
   const m = model(pre);
   return (
     <section className="ct-hero" ref={ref} aria-labelledby="ct-h1">
       <div className="bz-wrap bz-grid ct-hero-grid">
         <div className="ct-copy">
-          <BizLines as="h1" id="ct-h1" className="bz-display sm" lines={['Hanzo Cap Table']} now />
+          <BizLines as="h1" id="ct-h1" className="bz-display" lines={['Hanzo Cap Table']} now />
           <p className="ct-cat x-mono">Equity Management Platform</p>
         </div>
         <div className="ct-big">
-          <Roll text={PCT(m.rows[0][2])} className="bz-fig ct-big-n" />
+          <motion.span className="ct-big-z" style={{ scale: settle }}><Roll text={PCT(m.rows[0][2])} className="bz-fig ct-big-n" /></motion.span>
           <p className="ct-big-s"><span className="ct-big-k x-mono">Founders, fully diluted</span><span>at a <b className="x-mono">{USD(pre)}</b> pre-money price</span></p>
         </div>
         <p className="bz-lede ct-lede">Who owns what, and what happens to that when you raise again.</p>
         <div className="ct-acts">
-          <BizAsk to="/login" thumb="Try Hanzo">Try Hanzo</BizAsk>
-          <More to={DOCS}>Documentation</More>
+          <Cta kind="quiet" to="/login" id="captable.hero" thumb>Try Hanzo</Cta>
+          <Cta kind="link" to={DOCS} id="captable.docs">Documentation</Cta>
         </div>
         <div className="ct-obj bz-obj">
           <div className="ct-slide">
@@ -243,6 +252,7 @@ function payout(exit, rows) {
 
 function Waterfall({ pre }) {
   const [exit, setExit] = useState(6_000_000);
+  const [act, setAct] = useState(false);
   const m = model(pre);
   const pay = payout(exit, m.rows);
   const order = [3, 2, 0, 1];
@@ -252,10 +262,10 @@ function Waterfall({ pre }) {
         <div className="ct-wf-copy">
           <h2 id="ct-wf-h" className="bz-headline">At an exit price, who gets paid and in what order.</h2>
           <p className="bz-body">Preferences mean the founders&apos; share is not their percentage, and this is where that becomes visible.</p>
-          <label className="ct-exit">
+          <label className={'ct-exit' + (act ? ' act' : '')}>
             <span className="ct-exit-k x-mono">Exit price</span>
             <b className="bz-fig">{USD(exit)}</b>
-            <input type="range" min="1000000" max="60000000" step="500000" value={exit} onChange={(e) => setExit(+e.target.value)} style={{ '--f': (exit - 1e6) / 59e6 }} aria-valuetext={USD(exit) + ' exit'} />
+            <input type="range" min="1000000" max="60000000" step="500000" value={exit} onChange={(e) => setExit(+e.target.value)} onPointerDown={() => setAct(true)} onPointerUp={() => setAct(false)} onPointerCancel={() => setAct(false)} onBlur={() => setAct(false)} style={{ '--f': (exit - 1e6) / 59e6 }} aria-valuetext={USD(exit) + ' exit'} />
           </label>
           <p className="ct-wf-note">The example company after the round above at {USD(pre)} pre-money, with the new investor and the SAFE taking a 1x preference, not participating.</p>
         </div>
@@ -309,7 +319,7 @@ function Plans() {
             panel: (
               <div className="ct-pp">
                 <div className="ct-pp-l">
-                  <h3 className="bz-display sm">{t}</h3>
+                  <h3 className="bz-headline">{t}</h3>
                   <p className="ct-pp-p"><b className="bz-fig">{p}</b>{per && <em>{per}</em>}{i === 2 && <span className="ct-popular">Most Popular</span>}</p>
                   <p className="bz-body">{d}</p>
                   <More to={to}>{cta}</More>
@@ -364,7 +374,7 @@ function End() {
         <div className="bz-grid ct-end-row">
           <p className="bz-lede">Import what you have today. The useful part starts when you ask what the next price does to it.</p>
           <div className="ct-end-go">
-            <BizAsk to="/login">Try Hanzo</BizAsk>
+            <Cta kind="quiet" to="/login" id="captable.close">Try Hanzo</Cta>
             <p><b>Get Started</b><span>Set up your cap table in minutes</span></p>
           </div>
         </div>
@@ -383,7 +393,7 @@ export default function Captable() {
       <Hero pre={pre} setPre={setPre} mine={mine} setMine={setMine} />
       <BizChapters label="A round, run first" className="ct-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Stage at={at} pre={pre} />}>
         <header className="bz-wrap bz-grid ct-ch-head">
-          <h2 className="bz-display md">The instruments, modelled</h2>
+          <h2 className="bz-headline">The instruments, modelled</h2>
           <p className="bz-lede">A spreadsheet can hold these numbers. It cannot tell you what they become at the next price.</p>
         </header>
       </BizChapters>
