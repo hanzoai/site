@@ -82,7 +82,8 @@
   .lx-lede { font-size: 17px; }
   .lx-body { font-size: 16px; }
   .lx-fig { font-size: 52px; }
-  .lx-kick, .lx .cf-paste-k, .lx .cf-api, .lx .x-copy-t, .lx .cf-code-k { font-size: 12px; }
+  .lx-kick { font-size: 12px; } /* Zen Mono capitals: the only text allowed under 14px on phones */
+  .lx .cf-paste-k, .lx .cf-api, .lx .x-copy-t, .lx .cf-code-k { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lx-lm .lx-line > span { animation: none !important; transform: none !important; }
