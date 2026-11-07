@@ -1,4 +1,7 @@
 'use client';
+// Persona: a developer or bug hunter who uses Hanzo and wants credits for contributing (arrives from /bounty, GitHub or the header)
+// Goal: see how ranks are earned and start on an open bounty
+// CTA: Open bounties -> /bounty (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="open-bounties")
 // Signature: every total is a sum that adds itself up: the podium's tape re-adds each hunter's score, then the four ways to earn pin as chapters while a receipt builds a total line by line.
 // Beyond: your points, worked out with the page's own rules (+50 a bug, +100 to +500 a merged pull request, +20 a referral, +1 per 100K tokens), and where your tokens would sit on the global board.
 /* Leaderboard. Hanzo's own board, as it reads today, told one idea per screen.
@@ -151,12 +154,14 @@ function Hero() {
           <div className="xlb-hero-side">
             <p className="xlb-lede">The live Hanzo leaderboard across bug bounties, open-source pull requests, and global token volume. Verified contributions earn AI credits and automatic rank updates.</p>
             <div className="xlb-acts">
-              <span data-thumb="Open bounties" data-href="/bounty"><A to="/bounty" className="pf-btn solid">Open bounties</A></span>
+              <span data-thumb="Open bounties" data-href="/bounty"><A to="/bounty" className="pf-btn solid" data-cta="open-bounties">Open bounties</A></span>
               <More to={ISSUES}>GitHub issues</More>
             </div>
           </div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
+        {/* JS off: everything that arrives by motion stands at its final state */}
+        <noscript dangerouslySetInnerHTML={{ __html: '<style>.xlb-hero-obj,.xlb-block{opacity:1!important;transform:none!important}.xlb-bar i{transform:scaleX(var(--w))!important}</style>' }} />
+        <motion.div className="xlb-hero-obj" initial={{ opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
           <Podium />
         </motion.div>
       </div>
@@ -233,7 +238,7 @@ function Tokens() {
             <li key={who} className={'xlb-org' + (i === 0 ? ' lead' : '')}>
               <span className="xlb-org-r pf-mono">#{i + 1}</span>
               <span className="xlb-org-m"><b>{who}</b><span>{badge}</span><span className="xlb-req">{req}</span></span>
-              <span className="xlb-bar" aria-hidden="true"><motion.i initial={{ scaleX: 0 }} animate={seen ? { scaleX: w(t) } : {}} transition={{ type: 'spring', stiffness: 90, damping: 20, delay: seen ? i * 0.05 : 0 }} /></span>
+              <span className="xlb-bar" aria-hidden="true"><motion.i style={{ '--w': w(t) }} initial={{ scaleX: 0 }} animate={seen ? { scaleX: w(t) } : {}} transition={{ type: 'spring', stiffness: 90, damping: 20, delay: seen ? i * 0.05 : 0 }} /></span>
               <span className="xlb-org-t pf-mono">{n(t)} tokens</span>
             </li>
           ))}
@@ -349,7 +354,7 @@ function Calc() {
           </div>
         </div>
         <div className="xlb-end">
-          <A to="/bounty" className="pf-btn solid">Open bounties</A>
+          <A to="/bounty" className="pf-btn solid" data-cta="open-bounties">Open bounties</A>
           <More to="/bounty">Browse open bounties</More>
         </div>
       </div>
@@ -365,7 +370,7 @@ export default function Leaderboard() {
       <Tokens />
       <Earn />
       <Calc />
-      <AskBar title="Leaderboard" label="Open bounties" to="/bounty" />
+      <AskBar title="Leaderboard" label="Open bounties" to="/bounty" cta="open-bounties" />
     </main>
   );
 }
