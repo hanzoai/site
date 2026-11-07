@@ -15,8 +15,8 @@
 import { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import useCalm from '../../v2/useCalm';
-import { Code, useEvery } from './Frame';
-import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
+import { Code } from './Frame';
+import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import { useWide } from '../../v2/useWide';
@@ -30,7 +30,7 @@ const CLIENTS = ['kafka-python', 'sarama', 'confluent-kafka', 'franz-go'];
 function Tape() {
   const [ref, live, , paused, toggle] = useDemo(0.1);
   const [tick, setTick] = useState(0);
-  useEvery(900, live, () => setTick((t) => t + 1));
+  useTick(900, live, () => setTick((t) => t + 1));
   const phase = Math.floor(tick / 5) % 3; // 0 consuming, 1 consumer down, 2 back where it left off
   const bad = tick % 7 === 3;
   return (
@@ -194,7 +194,7 @@ function MiniTape() {
 
 export default function Stream() {
   return (
-    <main className="l2-page st2">
+    <main id="main" className="l2-page st2">
       <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
       </StageHero>
