@@ -401,7 +401,7 @@ function Stop() {
       <div className="w2-wrap">
         <div className="ui-stop-in">
           <div className="ui-stop-l">
-            <h2 className="w2-display">Stop reinventing buttons.</h2>
+            <h2 className="w2-display gx-stay">Stop reinventing buttons.</h2>
             <p className="w2-lede">Hanzo UI gives you the components — you focus on what makes your product different.</p>
             <div className="ui-stop-acts">
               <Magnetic strength={0.25}><A to={GH} className="w2-cta" data-thumb="GitHub" data-cta="ui.close">View on GitHub <i aria-hidden="true">↗</i></A></Magnetic>
