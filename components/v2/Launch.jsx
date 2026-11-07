@@ -61,11 +61,17 @@ export const poly = (pts) => (t, W, H, wide) => {
   return `polygon(${out.join(',')})`;
 };
 // aim helper: the film's subject sits at (fx, fy) of the 4:5 frame (fractions); land it on (tx, ty) px at zoom z.
-// Returns [dx, dy, z] for Launch's aim. Keep the settled shape inside the zoomed, panned film.
-export const focus = (fx, fy, tx, ty, z = 1.14) => (W, H) => {
+// box = [l, t, r, b], the settled shape's bounds in px: the pan is held back so the zoomed film always covers it.
+// Returns [dx, dy, z] for Launch's aim.
+export const focus = (fx, fy, tx, ty, z = 1.14, box) => (W, H) => {
   const s0 = Math.max(W / 1200, H / 1500), iw = 1200 * s0, ih = 1500 * s0;
   const px = fx * iw - (iw - W) / 2, py = fy * ih - (ih - H) / 2, cx = W / 2, cy = H / 2;
-  return [tx - (cx + (px - cx) * z), ty - (cy + (py - cy) * z), z];
+  let dx = tx - (cx + (px - cx) * z), dy = ty - (cy + (py - cy) * z);
+  if (box) {
+    dx = Math.min(Math.max(dx, box[2] - cx - cx * z), box[0] - cx + cx * z);
+    dy = Math.min(Math.max(dy, box[3] - cy - cy * z), box[1] - cy + cy * z);
+  }
+  return [dx, dy, z];
 };
 // densify a closed outline so the opening frame stays a full cover (n points per edge)
 export const dense = (V, n = 6) => V.flatMap((a, i) => { const b = V[(i + 1) % V.length]; return Array.from({ length: n }, (_, k) => [lerp(a[0], b[0], k / n), lerp(a[1], b[1], k / n)]); });
