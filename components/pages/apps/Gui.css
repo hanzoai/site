@@ -368,7 +368,8 @@ a.gu-chip:active { transform: scale(.97); }
 .gu-li { transition: background-color .3s cubic-bezier(0, 0, .2, 1); }
 /* the morph: while a card flies to its sheet and back its content is hidden, then fades back once landed */
 .gu-ship .gu-plat > :not(.bz-open-plus) { transition: opacity .25s cubic-bezier(0, 0, .2, 1); }
-.gu-ship.gu-morph .gu-plat > :not(.bz-open-plus) { opacity: 0; transition-duration: .08s; }
+/* only the card in flight (Motion writes its layout transform inline) and the one whose sheet is open */
+.gu-ship.gu-morph .gu-plat:is([style*='scale'], [style*='translate'], [style*='opacity: 0']) > :not(.bz-open-plus) { opacity: 0; transition-duration: .08s; }
 /* the hero ask: a deck step on hover (not the system's #2c2c2e) and a 1px press */
 .gu .x-btn.solid { --btn-solid-hover: #262626; }
 .gu .x-btn.solid:active { translate: 0 1px; }
