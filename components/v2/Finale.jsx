@@ -11,7 +11,7 @@
      prompt when the object took row 1.
    - Row 3: related capabilities as one line of links that open into their pages (no row of equal boxes).
    - `before` renders inside the light page above the band (a page's own extra section, e.g. a builder).
-   The band has class x-band, so the site's ask bar steps aside. The only idle mover is the prompt caret. */
+   The band carries data-ask-hide, so the site's ask bar steps aside while it is on screen. The only idle mover is the prompt caret. */
 import { Copy } from '../ui';
 import { A, Cta } from '../kit';
 import './x-hamilton/Launch.css';
@@ -42,7 +42,7 @@ export default function Finale({ name, prompt, api, head, lede, small, ask, link
   return (
     <>
       {(before || children) && <section className="l2-fin-before">{before}{children && <div className="l2-wrap">{children}</div>}</section>}
-      <section className={'x-band l2-band ' + className} data-room="dark">
+      <section className={'l2-band l2-dark ' + className} data-room="dark" data-ask-hide>
         <div className="l2-wrap">
           <div className="l2-band-top">
             <div className="l2-band-copy">
