@@ -1,0 +1,45 @@
+/* /research entrances (enter.js). Five ways in, one per section, in page order; each ends in the plain final state.
+   Start states only with JS (html.js) and only when motion is welcome. Deck easing; no springs. */
+
+.xrs-scr { position: relative; display: inline-block; }
+/* the real digits stay in place (transparent fill); the scramble is drawn over them in the figure's own colour */
+.xrs-scr[data-fx] { -webkit-text-fill-color: transparent; }
+.xrs-scr[data-fx]::after { content: attr(data-fx); position: absolute; left: 0; top: 0; -webkit-text-fill-color: currentColor; white-space: nowrap; }
+.xrs-rows.p { perspective: 1200px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. split-merge (hero, from first paint): the desk slides in from the right, the words under the h1 from the left;
+     they meet as one screen. The h1 keeps its own cut-in and is never transparent (it is the LCP). */
+  .js .xrs-hero .xrs-desk { animation: xrs-from-r 1s cubic-bezier(.16, 1, .3, 1) .05s backwards; }
+  .js .xrs-hero .xrs-hero-row, .js .xrs-hero .xrs-deal { animation: xrs-from-l 1s cubic-bezier(.16, 1, .3, 1) .15s backwards; }
+  @keyframes xrs-from-r { from { opacity: 0; transform: translate3d(9vw, 0, 0); } }
+  @keyframes xrs-from-l { from { opacity: 0; transform: translate3d(-6vw, 0, 0); } }
+
+  /* 2. focus-pull: the statement sharpens out of a blur while the heading beside it softens for a beat, then both rest sharp */
+  .js [data-enter='focus']:not([data-in]) .xrs-open-t { filter: blur(10px); opacity: .4; }
+  .js [data-enter='focus'][data-in]:not([data-done]) .xrs-open-t { animation: xrs-pull 1.2s cubic-bezier(.16, 1, .3, 1) both; }
+  .js [data-enter='focus'][data-in]:not([data-done]) .xrs-open-h { animation: xrs-push 1.3s cubic-bezier(.4, 0, .2, 1) both; }
+  @keyframes xrs-pull { from { filter: blur(10px); opacity: .4; } 70% { filter: blur(0); opacity: 1; } to { filter: none; opacity: 1; } }
+  @keyframes xrs-push { 0% { filter: none; } 40% { filter: blur(4px); opacity: .5; } to { filter: none; opacity: 1; } }
+
+  /* 3. scramble: the three counts decode out of scrambled digits (enter.js draws them over the real numbers) */
+  .js [data-enter='scramble']:not([data-in]) .xrs-scr { opacity: 0; }
+  .js [data-enter='scramble'] .xrs-scr { transition: opacity .2s linear; }
+
+  /* 4. domino: the first rows tip up into place from their bottom edge, one after another */
+  .js [data-enter='domino'] > li > .xrs-row { transform-origin: 50% 100%; }
+  .js [data-enter='domino']:not([data-in]) > li > .xrs-row { opacity: 0; transform: rotateX(80deg); }
+  .js [data-enter='domino'][data-in]:not([data-done]) > li > .xrs-row { animation: xrs-tip .7s cubic-bezier(.3, .7, .2, 1) backwards; }
+  .js [data-enter='domino'] > li:nth-child(2) > .xrs-row { animation-delay: 90ms; }
+  .js [data-enter='domino'] > li:nth-child(3) > .xrs-row { animation-delay: 180ms; }
+  .js [data-enter='domino'] > li:nth-child(4) > .xrs-row { animation-delay: 270ms; }
+  .js [data-enter='domino'] > li:nth-child(5) > .xrs-row { animation-delay: 360ms; }
+  .js [data-enter='domino'] > li:nth-child(6) > .xrs-row { animation-delay: 450ms; }
+  @keyframes xrs-tip { from { opacity: 0; transform: rotateX(80deg); } 50% { opacity: 1; } to { opacity: 1; transform: none; } }
+
+  /* 5. diagonal-wipe: a diagonal edge sweeps across the specifications, then the standards, revealing each */
+  .js [data-enter='wipe']:not([data-in]) > * { clip-path: polygon(0 0, 0 0, -30% 100%, -30% 100%); }
+  .js [data-enter='wipe'][data-in]:not([data-done]) > * { animation: xrs-wipe .9s cubic-bezier(.65, 0, .35, 1) backwards; }
+  .js [data-enter='wipe'][data-in]:not([data-done]) > ol { animation-delay: .1s; }
+  @keyframes xrs-wipe { from { clip-path: polygon(0 0, 0 0, -30% 100%, -30% 100%); } to { clip-path: polygon(0 0, 130% 0, 100% 100%, -30% 100%); } }
+}

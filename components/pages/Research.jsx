@@ -15,18 +15,21 @@
    the left (400 ms), their sheet tilts 2°, bars and kinds fill. State: the list re-flows, the title page opens. Deck
    timings only (150 ms hover, 300 ms state, 400 ms moves, 600 ms open), no springs or overshoot. Ink only.
    Every word, date and link is Hanzo's.
-   V2: 8/10 slice D: h1 cuts in on CSS from first paint, filtering keeps the list's height (no footer jump), Standards numbered from 01, the rail reads HIPs over the specifications. */
+   V2: 8/10 slice D: h1 cuts in on CSS from first paint, filtering keeps the list's height (no footer jump), Standards numbered from 01, the rail reads HIPs over the specifications.
+   Entrances (MOTION-MAP, research/enter.js + enter.css, in order): split-merge (hero, CSS from first paint), focus-pull
+   (dark room), scramble (the glance's counts), domino (papers rows), diagonal-wipe (specifications, standards); each once, none scroll-linked. */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, More } from '../kit';
-import MaskLines from './proof/MaskLines';
 import SceneWipe from './proof/SceneWipe';
 import LivePause, { usePause } from '../v2/LivePause';
 import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Research.css';
+import { useEnter } from './research/enter';
+import './research/enter.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 const P = (t, date, sub, slug) => ({ kind: 'Papers', t, date, sub, to: `https://papers.hanzo.ai/${slug}/` });
@@ -193,10 +196,10 @@ function Glance({ mon, pickMonth }) {
   return (
     <section className="pf-sec xrs-glance" aria-label="The library at a glance">
       <div className="pf-wrap pf-grid xrs-glance-g">
-        <dl className="xrs-tally">
+        <dl className="xrs-tally" data-enter="scramble">
           {GROUPS.map(([k, , list], i) => (
             <div key={k} className={i ? 'xrs-tally-s' : 'xrs-tally-b'}>
-              <MaskLines as="dd" className={i ? 'pf-figure' : 'pf-moment xl'} lines={[String(list.length - (k === 'Specifications' ? 1 : 0))]} delay={i * 0.06} />
+              <dd className={i ? 'pf-figure' : 'pf-moment xl'}><span className="xrs-scr">{String(list.length - (k === 'Specifications' ? 1 : 0))}</span></dd>
               <dt className="pf-mono">{k}</dt>
             </div>
           ))}
@@ -269,12 +272,12 @@ function Library({ mon, setMon, open, openKey }) {
             const shown = kind === 'All' || kind === k;
             const rows = list.filter(match);
             return (
-              <motion.div key={k} layout="position" className="xrs-group" hidden={!shown || !rows.length} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
+              <motion.div key={k} layout="position" className="xrs-group" data-enter={k === 'Papers' ? undefined : 'wipe'} hidden={!shown || !rows.length} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
                 <div className="xrs-group-h">
                   <h2 className="pf-head">{k}</h2>
                   <p className="pf-body">{lede}</p>
                 </div>
-                <ol className={'xrs-rows ' + (k === 'Papers' ? 'p' : 'h')}>
+                <ol className={'xrs-rows ' + (k === 'Papers' ? 'p' : 'h')} data-enter={k === 'Papers' ? 'domino' : undefined}>
                   {list.map((it, i) => {
                     const prev = list[i - 1];
                     const head = it.date && (!prev || prev.date !== it.date);
@@ -364,7 +367,7 @@ function Open() {
   return (
     <SceneWipe className="xrs-open" label="Open source">
       <div className="pf-sec">
-        <div className="pf-wrap pf-grid xrs-open-g">
+        <div className="pf-wrap pf-grid xrs-open-g" data-enter="focus">
           <h2 className="pf-head xrs-open-h">Open source</h2>
           <p className="xrs-open-t" ref={ref}>
             {a.map((w, i) => W(i, w + ' '))}
@@ -379,6 +382,7 @@ function Open() {
 }
 
 export default function Research() {
+  useEnter('.xrs');
   const [mon, setMon] = useState(null);
   const [open, setOpen] = useState(null); // { it, from, lid }
   const pickMonth = (m) => {
