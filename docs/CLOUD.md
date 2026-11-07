@@ -15,6 +15,8 @@ James's 8 GB laptop could not run the chats, so the remaining work runs in the c
 - **Style.** Hanzo's way: the smallest change that fully works, reuse the kit (`components/ui.jsx`, `components/kit.jsx`), and review your own work before calling it done. Act as James: never ask him questions, and make the decisions yourself.
 - **Ownership.** Other cloud chats work on other files at the same time on their own branches, so touch only the files you own. Never edit `app/globals.css`, `lib/route.js`, `docs/PAGES.md`, `components/ui.jsx`, `components/kit.jsx` or another chat's pages. Report any shared change you need instead.
 - **Safety.** Never submit real forms or send real chat messages to Hanzo's live API; intercept requests, as `scripts/forms.mjs` does. No deploys.
+- **Push after every page, not at the end.** James watches the site build live on his localhost: the conductor merges every pushed commit about every 10 minutes. Commit and push each page as soon as it works.
+- **Mark it done.** When a page meets VISION.md, add this line to the top comment of its page file: `V2: <score>/10 <one line on what changed>`. The status board reads that line; a page without it counts as not done.
 - **Finish.** Commit, push your branch, and open a draft PR titled `Hanzo: <your task>`. The PR body gives one line per page: what changed, the evidence (200, parity, unique) and what is unverified. James reads that list to know what to look at.
 
 ## Tasks: Wave 1, the flagships that set the v2 bar
@@ -28,3 +30,22 @@ Each chat owns its pages' `components/pages/...` files, their `app/<path>/` rout
 6. **Story**: `/about`, `/history`, and the `/blog` index (editorial, osply/hamol/grubogrubo style).
 
 Later waves (the conductor launches these after Wave 1 merges): the remaining ~120 pages in archetype groups of about 10 per chat, the families not covered above, Content/Data wiring for hard-coded figures, then Build / Release (`npm run build` exits 0, preview :4181).
+
+## Wave 2 (launched 7 Nov 13:30, in parallel with Wave 1, because James wants speed)
+Same rules. Each chat owns its group's page files and routes. Archetypes are in VISION.md.
+1. **Company:** `/careers /contact /contact-sales /customers /solutions /support /team /press /investors /brand`
+2. **Proof:** `/benchmarks /compare /comparison /open-source /philosophy /research /security /trust /leaderboard /integrations`
+3. **Apps 1:** `/api /bot /chrome /cli /computer /design /desktop /download /extension /gen`
+4. **Apps 2:** `/ide /kata /mcp /operative /operator /skills /slack /studio /tag /sdks`
+5. **Cloud 1:** `/analytics /authz /base /crawl /dashboards /datastore /dns /edge /engine /functions`
+6. **Cloud 2:** `/gateway /guard /hsm /iam /identity /idv /ingress /insights /kms /machines`
+7. **Cloud 3:** `/metrics /mq /network /node /o11y /playground /pubsub /realtime /registry /s3`
+8. **Cloud 4:** `/search /sentinel /stream /telemetry /tunnel /visor /world /auto /automations /billing`
+9. **Business 1:** `/blockchain /captable /commerce /console /dataroom /flow /gui /jin /ledger /payments`
+10. **Business 2:** `/risk /sign /tabs /treasury /ui /zap /legal /templates /features /gallery`
+11. **Programs:** `/affiliate /beta /bounty /buying-specialist /founder /grants /learn /newsletter /referral /sms-opt-in /startups`
+12. **Zen family names:** `/enso /iro /kai /koe /koma /mori /oto /uta /zen`
+13. **Families A** (templates; check 2 members each): `/benchmarks/* /oss/* /integrations/* /solutions/* /blockchain/* /legal/* /careers/* /products/*`
+14. **Families B** (templates; a local chat had started these at v1, so finish them to v2): `/blog/* /customers/* /agents/* /compare/* /help/* /zen/* /kai/*`
+
+Index pages and family templates are different files, so `/customers` (group 1) and `/customers/*` (group 14) do not collide.
