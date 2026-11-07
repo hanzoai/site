@@ -273,6 +273,22 @@ a.zp-chip2:active { transform: scale(.98); }
   .zp-row:hover em { color: #fafafa; }
   .zp-row:hover i { transform: translateX(4px); }
 }
+/* v2.5: idle life. The active hero point's rule fills over its 3.6 s turn (a timer you can read); the packet that has
+   landed is read by a pointer sweeping its sixteen header bytes, the hero's pointer again, while the stage waits. */
+.zp-points.run li.on::before { transition: none; animation: zp-turn 3.6s linear both; }
+@keyframes zp-turn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.zp-hdr { position: relative; }
+.zp-packets > li.on .zp-hdr::after { content: ''; position: absolute; left: 0; bottom: -8px; width: calc(100% / 16); height: 2px; border-radius: 1px; background: #0a0a0a; animation: zp-read 2.4s cubic-bezier(.4, 0, .2, 1) .6s infinite; }
+@keyframes zp-read { 0% { transform: translateX(0); } 70%, 100% { transform: translateX(1500%); } }
+/* N:1 / 1:M / 0 are the section's figures: their cut-in lines keep the figure size (a shared span rule shrank them) */
+.zp-stats .zp-fig .lx-line, .zp-stats .zp-fig .lx-line > span { font-size: inherit; line-height: inherit; }
+/* the gateway's wires draw downwards as one stroke (a clip, so the non-scaling stroke never breaks into dashes) */
+.zp-dia-l { clip-path: inset(0 0 100% 0); transition: clip-path .9s cubic-bezier(.4, 0, .2, 1); }
+.zp-dia-l.on { clip-path: inset(0 0 0 0); }
+.zp-dia-l.late { transition-delay: .5s; }
+@media (prefers-reduced-motion: reduce) { .zp-dia-l { clip-path: none; transition: none; } }
+html:not(.js) .zp-dia-l { clip-path: none; }
+@media (prefers-reduced-motion: reduce) { .zp-points.run li.on::before, .zp-packets > li.on .zp-hdr::after { animation: none; } }
 @media (prefers-reduced-motion: reduce) { .zp-band .zp-addr span, .zp-band.live .zp-addr i, .zp-term pre span.last::after { animation: none; } .zp-packets > li { transform: none !important; } }
 @media (max-width: 899px) {
   .zp-hero { padding-bottom: 56px; }

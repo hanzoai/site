@@ -12,7 +12,7 @@
    editor bar and under the chapter visual. One dark room: the hero. Scale rhythm via Rhythm.css. Every word and link is Hanzo's; the only figures are
    the split's own. */
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
@@ -67,7 +67,8 @@ function Streams({ shown, done }) {
           </li>
         ))}
       </ul>
-      <AnimatePresence>{done && <motion.p className="ts-ok x-mono" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}>9,000 + 500 + 500 = 10,000 · balanced</motion.p>}</AnimatePresence>
+      {/* always in the layout, so the balanced line never pushes anything as the split re-writes */}
+      <motion.p className="ts-ok x-mono" initial={false} animate={{ opacity: done ? 1 : 0, y: done ? 0 : 8 }} transition={{ duration: 0.4, ease: EASE }}>9,000 + 500 + 500 = 10,000 · balanced</motion.p>
     </div>
   );
 }
@@ -216,7 +217,7 @@ function Flow({ on }) {
 function Parts() {
   const [ref, live] = useLive(0.05);
   const [paused, pauseBtn] = usePause({ right: 0, bottom: 0, top: 'auto' });
-  const lead = { rail: false, node: <p className="gx-say ts-say-p">A ledger, a language for writing transactions, and the machinery around them.</p> };
+  const lead = { rail: false, node: <LineMask as="p" className="gx-say ts-say-p" lines={['A ledger, a language for writing', 'transactions, and the machinery', 'around them.']} /> };
   return (
     <div ref={ref}>
       <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"

@@ -181,6 +181,14 @@ function YourConfig() {
   return (
     <div className="tl2-yc">
       <p className="l2-kick ac">Your config</p>
+      {/* the collector at rest, in its final state: it redraws from the choices below (state) */}
+      <div className="tl2-rest l2-mono" aria-hidden="true">
+        <div className="tl2-rest-c"><span className="tl2-rest-k">OTLP in</span>{SIG.map((s, i) => <span key={s} className="tl2-rest-p" data-off={sig[i] ? undefined : ''}>{s}</span>)}</div>
+        <i className="tl2-rest-a" />
+        <div className="tl2-rest-c core"><span className="tl2-rest-k">collector</span>{['batching', 'memory ceiling'].map((s, i) => <span key={s} className="tl2-rest-p" data-off={prc[i] ? undefined : ''}>{s}</span>)}</div>
+        <i className="tl2-rest-a" />
+        <div className="tl2-rest-c"><span className="tl2-rest-k">OTLP out</span><span className="tl2-rest-p">batch</span></div>
+      </div>
       {group('signals', SIG, sig, setSig)}
       {group('protocols', ['gRPC', 'HTTP'], pro, setPro)}
       {group('processors', ['batching', 'memory ceiling'], prc, setPrc)}

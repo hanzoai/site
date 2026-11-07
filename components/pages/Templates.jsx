@@ -2,12 +2,11 @@
 // Signature: a deck of live browser windows that riffles itself; pull one forward (drag, arrows or a dot) and its address bar types its .hanzo.app name.
 // Beyond: the commands for the template in front, with its slug and its source repository filled in, ready to copy.
 /* Persona: builders who want a finished product to start from. Goal: open a template in Hanzo. CTA: "Edit in Hanzo" → /chat?template=<slug>. Metric: first_chat.
-   Templates. The deck of live windows is the first screen's object; a dense wall of all twelve previews opens into
-   sheets; the setup room in the dark; a closing band with the one ask. Greys only.
-   Motion budget: signature = the riffling deck (drag); supporting = Settle, Open (wall sheets), magnetic. No springs.
    Templates. Hanzo's twelve products with previews, as a deck of browser windows: the one in front is the one you
    open, the next three wait behind it, the ones you passed fly off to the left. The chips re-deal the deck by kind.
-   Under it, Hanzo's own setup prompt is spelled out as the commands it runs, for whichever template is in front. */
+   Under it, a dense wall of all twelve previews that open into sheets (the ring follows the deck); the setup room in
+   the dark with the commands for the template in front; a closing band with the one ask. Deck greys only.
+   Motion budget: signature = the riffling deck (drag); supporting = Settle, Open (wall sheets), magnetic. No springs. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
@@ -180,12 +179,8 @@ function Commands({ t }) {
   const [slug, title] = t;
   const term = useRef(null);
   const seen = useInView(term, { amount: 0.5 }); // the commands type themselves again each time the room comes into view
-  const lines = [
-    ['hanzo login', 'register or sign in'],
-    ['hanzo template list', 'pick a starter'],
-    [`hanzo template get ${slug}`, 'names the repository to clone, in its source'],
-    ['hanzo dev', 'in it, to start building'],
-  ];
+  // the commands only: Copy gives exactly what the block shows (the "$ " prompt is drawn, not selectable)
+  const lines = [['hanzo login'], ['hanzo template list'], [`hanzo template get ${slug}`], ['hanzo dev']];
   return (
     <section className="w2-sec xtp-cmd w2-dark" data-room="dark" aria-labelledby="xtp-cmd-h">
       <div className="w2-wrap xtp-cmd-in">
@@ -204,9 +199,9 @@ function Commands({ t }) {
           </div>
           <AnimatePresence mode="wait" initial={false}>
             <motion.pre key={slug + (seen ? '.on' : '')} className="xtp-pre" initial="h" animate="s" exit={{ opacity: 0, transition: { duration: 0.15 } }} variants={{ s: { transition: { staggerChildren: 0.08 } } }}>
-              {lines.map(([c, note]) => (
+              {lines.map(([c]) => (
                 <motion.span key={c} className="xtp-l" variants={{ h: { opacity: 0, x: -8 }, s: { opacity: 1, x: 0, transition: { duration: 0.35, ease: EASE } } }}>
-                  <span className="xtp-ps" aria-hidden="true">$ </span>{c}{note && <span className="xtp-note">  # {note}</span>}{'\n'}
+                  <span className="xtp-ps" aria-hidden="true">$ </span>{c}{'\n'}
                 </motion.span>
               ))}
               <span className="xtp-caret" aria-hidden="true" />

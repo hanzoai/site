@@ -12,7 +12,7 @@
    typing (the terminal). No springs. Colour: none (0 UI hues): the pointer and the walked text are white and silver in the
    dark room. Pause buttons sit in each object's own bar or control row. One dark room: the hero. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
 import { A, Img } from '../../kit';
 import { useLive, useEvery, useSteps } from '../cloud/Frame';
@@ -86,7 +86,9 @@ function Hero() {
   const live = live0 && !paused;
   const [pick, setPick] = useState(2);
   const [mine, setMine] = useState(false);
-  const [at, choose] = useSteps(4, 3600, live);
+  // the four points keep stepping while they are seen, even once the wire has scrolled away (phone)
+  const [ptsRef, ptsLive] = useLive(0.4);
+  const [at, choose, chosen] = useSteps(4, 3600, ptsLive && !paused);
   useEvery(2800, live && !mine, () => setPick((p) => (p + 1) % FIELDS.length));
   return (
     <section className="zp-hero w2-dark" data-room="dark" aria-labelledby="zp-h1" data-morph-target>
@@ -118,7 +120,7 @@ function Hero() {
             </div>
           </Settle>
         </div>
-        <ol className="zp-points">
+        <ol className={'zp-points' + (ptsLive && !paused && !chosen ? ' run' : '')} ref={ptsRef}>
           {POINTS.map(([t, d], i) => (
             <li key={t} className={at === i ? 'on' : ''}>
               <button type="button" aria-pressed={at === i} onClick={() => choose(i)}>
@@ -308,12 +310,17 @@ function Fleet() {
   );
 }
 
-/* the diagram's wires draw themselves in the first time they are seen, agents to gateway, then gateway to servers */
-const Wires = ({ d, at = 0 }) => (
-  <svg className="zp-dia-l" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
-    {d.map((p) => <motion.path key={p} d={p} initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1], delay: at }} />)}
-  </svg>
-);
+/* the diagram's wires draw themselves in the first time they are seen, agents to gateway, then gateway to servers.
+   A clip wipes them downwards as whole strokes, so every line meets its box (no dash pattern on a stretched path). */
+function Wires({ d, late }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  return (
+    <svg ref={ref} className={'zp-dia-l' + (seen ? ' on' : '') + (late ? ' late' : '')} viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+      {d.map((p) => <path key={p} d={p} />)}
+    </svg>
+  );
+}
 
 /* Hanzo's gateway diagram, drawn: the same words as the ASCII (kept in the HTML, hidden, for the record). */
 function Diagram() {
@@ -329,7 +336,7 @@ function Diagram() {
         <span className="x-mono">zap://localhost:9999</span>
         <ul>{['Schema Federation', 'Request Routing', 'Capability Control'].map((t) => <li key={t}>{t}</li>)}</ul>
       </div>
-      <Wires d={['M50 0 V16', 'M50 16 H16.7 V32', 'M50 16 H83.3 V32', 'M50 16 V32']} at={0.5} />
+      <Wires d={['M50 0 V16', 'M50 16 H16.7 V32', 'M50 16 H83.3 V32', 'M50 16 V32']} late />
       <div className="zp-dia-row srv">{[['MCP Srv', 'GitHub'], ['ZAP Srv', 'Native'], ['MCP Srv', 'Slack']].map(([a, b]) => <span key={b}><b className="x-mono">{a}</b>{b}</span>)}<em aria-hidden="true">...</em></div>
       <pre className="x-mono" hidden>{ASCII}</pre>
     </figure>

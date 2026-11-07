@@ -3,7 +3,7 @@
 .ts-stage, .ts-vis { position: relative; }
 
 /* hero */
-.ts-hero { padding: clamp(64px, 5vw, 80px) 0 clamp(72px, 8vw, 116px); overflow: hidden; }
+.ts-hero { padding: clamp(44px, 3.4vw, 52px) 0 clamp(72px, 8vw, 116px); overflow: hidden; }
 .ts-top { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); gap: 24px clamp(32px, 5vw, 72px); align-items: end; margin-bottom: clamp(24px, 2.4vw, 32px); }
 .ts-h1 { white-space: nowrap; }
 .ts-top-r { display: flex; flex-direction: column; gap: 24px; padding-bottom: 6px; }
