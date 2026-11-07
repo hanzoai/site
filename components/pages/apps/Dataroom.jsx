@@ -139,7 +139,7 @@ function Hero() {
           <p className="dr-tag x-mono">Secure Document Sharing</p>
           <p className="bz-lede">You send a link instead of an attachment, and the link keeps working for you after it leaves.</p>
           <div className="dr-acts">
-            <Cta to="/login" id="dataroom.hero" thumb>Try Hanzo</Cta>
+            <Cta to="/login" id="dataroom.hero" kind="quiet" thumb>Try Hanzo</Cta>
             <More to={DOCS}>Documentation</More>
           </div>
         </div>
@@ -412,7 +412,7 @@ function End() {
             <p className="bz-lede">You will know whether it was read before you have to ask.</p>
           </div>
           <div className="dr-end-go">
-            <Cta to="/login" id="dataroom.close" size="lg" thumb>Try Hanzo</Cta>
+            <Cta to="/login" id="dataroom.close" kind="quiet" size="lg" thumb>Try Hanzo</Cta>
             <p className="dr-end-note"><b>Start Sharing</b><span>Share documents with real-time analytics</span></p>
           </div>
         </div>

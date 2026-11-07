@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header carries Persona, Metric `signup_start`, Goal, CTA, Signature, Beyond and V2. One solid fill measured per screen at 1470×801 and 375×812 (1 each); the label is Hanzo's live "Try Hanzo" → /login (`lib/cta.js` does not exist yet, so the live hero's label and href are used). Prices are the live page's four plans; `lib/plans.js` does not exist yet.
+Done here: Header carries Persona, Metric `signup_start`, Goal, CTA, Signature, Beyond and V2. The header's "Try Hanzo" is the one solid fill (SYSTEM.md §5); the page's own asks carry the same words, so they are quiet (outlined) `Cta`s: hero and close, "Try Hanzo" → /login (`lib/cta.js` does not exist yet, so the live hero's label and href are used). Prices are the live page's four plans; `lib/plans.js` does not exist yet.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -41,7 +41,7 @@ Done here: The h1 (52px, CSS line cut-in) sits beside the live room, whose readi
 - ~~Copy button copies exactly the displayed text~~ n/a: no copy button on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Both asks are `<Cta to="/login" id="dataroom.hero|dataroom.close" thumb>Try Hanzo</Cta>`; the site's ask bar (Ask.jsx) carries the same words after the hero and steps aside while either is on screen, named by `data-ask-name="Hanzo Dataroom"`.
+Done here: Both asks are `<Cta to="/login" id="dataroom.hero|dataroom.close" kind="quiet" thumb>Try Hanzo</Cta>` (quiet because the header's identical ask is solid); the site's ask bar (Ask.jsx) carries the same words after the hero and steps aside while either is on screen, named by `data-ask-name="Hanzo Dataroom"`.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
