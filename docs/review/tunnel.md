@@ -1,5 +1,7 @@
 # /tunnel: James-eye review (third walk)
 
+Ready: 7 Nov 23:10, held up next to /api and /affiliate. Phone shows one solid (header "Try Hanzo", hero "View Source" outlined; the data-ask fix landed); CLS measured 0.0016 desk / 0.0006 phone on a wheel walk; "One command" lands by line mask instead of a third typewriter, with a tighter room; the terminal Copy answers hover and press; --name stays whole. taste/unique/parity OK (38/38, 4/4); 0 console errors, no overlap at 1470 and 375. Shared, not this page: the phone header keeps "Try Hanzo" after the hero.
+
 Reviewed: main @ `0fa3c9ed`. The last page commit is `5ebd0fae` (16:45 UTC), and the tree is clean for the page files.
 Walked 7 Nov, about 16:50 to 17:05 UTC, on the dev server at 1470×801 and 375×812 (Playwright Chromium), moving.
 - **The scroll walk.** Each walk scrolled by wheel in 0.6-viewport steps. On each screen it compared two frames taken 1.6 s apart for idle motion. It recorded solid fills, the header's ask label and fixed layers per screen.

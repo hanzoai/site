@@ -334,19 +334,10 @@ function Name() {
 }
 
 function One() {
-  // the command types itself once when the block is reached (the full text is in the HTML for no-JS), then a caret waits
-  const [ref, live, calm] = useLive(0.6);
-  const [n, setN] = useState(CMD.length);
-  const ran = useRef(false);
-  useEffect(() => {
-    if (!live || calm || ran.current) return;
-    ran.current = true;
-    let i = 0, t = 0;
-    const step = () => { setN(i); if (i++ < CMD.length) t = setTimeout(step, i === 1 ? 300 : 80); };
-    step();
-    return () => clearTimeout(t);
-  }, [live, calm]);
-  const end = n >= CMD.length;
+  // the command and its output land by line mask when the block is reached (the hero and the café laptop type; this
+  // one does not), then a caret waits
+  const ref = useRef(null);
+  const end = true;
   const [eref, ein] = useEnter(0.25);
   return (
     <section className="l2-sec tn2-one" ref={eref} data-in={ein ? '' : undefined}>
@@ -363,7 +354,7 @@ function One() {
             <div className="cf-code-body tn2-one-code" tabIndex={0} role="region" aria-label="Tunnel terminal">
               {/* each line is its own block and the typed command is the line's only text node (its caret is a ::after),
                   so typing never moves anything; the output's arrow keeps "→ localhost:3000" together */}
-              <pre><code><span className="cf-ln tn2-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span><span className={'tn2-typed' + (end ? '' : ' on')}>{CMD.slice(0, n)}</span></span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>→ sharing 3000</span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>{URL_}<wbr /><span className="tn2-nb">{' → localhost:3000'}</span></span><i className={'tn2-caret tn2-wait' + (end ? '' : ' hold')} aria-hidden="true" /></code></pre>
+              <pre><code><span className="cf-ln tn2-ln"><span className="tn2-ps-c" aria-hidden="true">$ </span><span className={'tn2-typed' + (end ? '' : ' on')}>{CMD}</span></span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>→ sharing 3000</span><span className={'cf-ln tn2-ln tn2-out' + (end ? '' : ' wait')}>{URL_}<wbr /><span className="tn2-nb">{' → localhost:3000'}</span></span><i className={'tn2-caret tn2-wait' + (end ? '' : ' hold')} aria-hidden="true" /></code></pre>
             </div>
           </div>
         </div>

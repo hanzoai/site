@@ -386,3 +386,16 @@
   html.js .tn2-gl:not([data-in]) { opacity: 0; }
   html.js .tn2-gl[data-in] { animation: tn2-glitch .28s steps(1, end) both; }
 }
+
+/* ---- run 4 (D2): "One command" lands by line mask (no third typewriter); tighter room ---- */
+.tn2-one.l2-sec { padding-block: clamp(72px, 8vw, 112px); }
+.tn2-one-code .cf-ln, .tn2-one-code .tn2-caret { transition: clip-path .6s cubic-bezier(.16, 1, .3, 1), transform .6s cubic-bezier(.16, 1, .3, 1); }
+.tn2-one-code .cf-ln:nth-child(2) { transition-delay: .18s; }
+.tn2-one-code .cf-ln:nth-child(3) { transition-delay: .36s; }
+.tn2-one-code .tn2-caret { transition-delay: .54s; }
+.js .tn2-one:not([data-in]) .tn2-one-code .cf-ln, .js .tn2-one:not([data-in]) .tn2-one-code .tn2-caret { clip-path: inset(0 0 100% 0); transform: translateY(10px); }
+@media (prefers-reduced-motion: reduce) { .js .tn2-one:not([data-in]) .tn2-one-code .cf-ln, .js .tn2-one:not([data-in]) .tn2-one-code .tn2-caret { clip-path: none; transform: none; } }
+/* the terminal's Copy answers the hover (fill and ring), and the press */
+.tn2-one .cf-code-bar button { transition: background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease), transform var(--dur-press, .1s) var(--ease); }
+@media (hover: hover) { .tn2-one .cf-code-bar button:hover { background: #262626; border-color: rgba(255, 255, 255, .32); color: #fafafa; } }
+.tn2-one .cf-code-bar button:active { transform: scale(.96); }
