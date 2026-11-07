@@ -77,7 +77,7 @@ function HeroTable() {
           <p className="pf-kick">Model routing APIs</p>
           <A to="/compare/model-routing" className="xcp-obj-link">Which API should you route your model calls through? <span aria-hidden="true">→</span></A>
         </div>
-        <span className="xcp-obj-n pf-mono" aria-live="polite">{pad(at)} / 07</span>
+        <span className="xcp-obj-n pf-mono" aria-live="polite">{pad(at)} / 07<i key={at} className={'xcp-obj-tick' + (held || calm || !live ? ' held' : '')} aria-hidden="true" /></span>
       </div>
       <div className="xcp-scroll">
         <table className="xcp-t">
@@ -89,7 +89,7 @@ function HeroTable() {
           </thead>
           <tbody>
             {TABLE.map((r, i) => (
-              <tr key={r.k} className={at === i ? 'on' : ''} onClick={() => { setAt(i); toChapter(i); }} data-cursor="Read">
+              <tr key={r.k} className={at === i ? 'on' : ''} onClick={() => { setAt(i); toChapter(i); }} onPointerEnter={(e) => e.pointerType === 'mouse' && setAt(i)} data-cursor="Read">
                 <th scope="row">
                   <button type="button" className="xcp-t-row" onClick={(e) => { e.stopPropagation(); setAt(i); toChapter(i); }} onFocus={() => setAt(i)}>
                     <span className="pf-mono">{pad(i)}</span>{r.k}
@@ -162,7 +162,7 @@ function Board({ i }) {
         <div key={j} className={'xcp-lane ' + tone(c) + (j === 0 ? ' me' : '')}>
           <p className="xcp-lane-n">{j === 0 && <small>Hanzo</small>}{COLS[j]}</p>
           <div className="xcp-lane-v">
-            <AnimatePresence mode="popLayout" initial={false}>
+            <AnimatePresence initial={false}>
               <motion.div key={i} className="xcp-lane-in" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-40%', opacity: 0, transition: { duration: 0.25, ease: EASE } }} transition={{ duration: 0.7, ease: EASE, delay: j * 0.05 }}>
                 {c.v ? <b>{c.v === 'Yes' && <Check s={30} />}{c.v}</b> : <b className="xcp-lane-t">{c.d}</b>}
                 {c.v && c.d && <span>{c.d}</span>}
