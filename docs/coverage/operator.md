@@ -84,7 +84,7 @@ Done here: Kit buttons press to .97 with focus rings; the board's Kinds are butt
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: drift reverted by the sweep (time) + drag (pointer); supporting: converge (scroll), horizontal track (scroll), log lines (time). `variety.py` OK; timers are setTimeout chains that stop off screen, paused and under reduced motion.
+Done here: Signature `card-stack` on the second screen: "Declare the thing, not the thirty objects" heads a stack of Hanzo's six points, one per card (three visible, each 16px lower and 4% smaller); the top card is dragged or flicked away to either side (a throw past 110px or 600px/s, ease-in-out 400 ms, tilting at most 4°), swiped on touch (pan-y kept for page scroll), or sent with the arrow buttons / arrow keys; Previous brings the last card back from the side; the stack refills after the sixth, with a 01 / 06 count and six ticks. On arrival the top card leans 44px aside once and settles. The pinned Declare converge scene and the scroll-driven horizontal Track are removed (their words now head and fill the stack). The approved hero cluster board (sweep, drift, drag, log) is unchanged. Reduced motion: cards change instantly, no lean; JS off: the six cards read as a list (NoJs). Probe: 0 console errors at 1470×801 and 375×812 (also reduced), CLS ≤ 0.0006, hscroll 0 at 1470/375/320, no card overflows at 320; `variety.py` OK.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no media on this page: the board is drawn
@@ -100,7 +100,7 @@ Done here: No images or films; the hero object is a drawn SVG/DOM cluster board.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Probe: hscroll 0 at 1470, 375 and 320; CLS 0; the horizontal track becomes a swipe rail under 900px; hero ask above the fold at 375.
+Done here: Probe: hscroll 0 at 1470, 375 and 320; CLS 0; the card stack is a fixed 500px on phones with 48px arrow buttons under it and swipes sideways; hero ask above the fold at 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

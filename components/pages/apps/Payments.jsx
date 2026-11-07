@@ -4,26 +4,24 @@
    Goal: watch one checkout settle through the routing and the cascade, then start with Hanzo
    CTA: Try Hanzo -> /login (the header's solid ask; the page's own are quiet kit Ctas in the hero, with thumb, and the close; data-cta payments.hero / payments.close)
    Metric: signup_start
-   Signature: a checkout settling on one phone under the centred title. A method is picked, the number becomes a vault
-   token, the rule picks a processor, the first one soft-declines and the cascade settles it on the backup, ending on
-   `succeeded` from the connector Hanzo's own code names. It runs by itself while on screen, pauses on its own button
-   (WCAG 2.2.2), and a tap on a step holds it.
-   Beyond: "Move a percentage first". Drag how much traffic goes to a second processor: a hundred payments re-route
-   between the two, the shares read out at 64px and grow to 84px while the hand is on the split, and "Roll back at
-   once" sends it all home. Built only from Hanzo's use cases.
-   Motion: the checkout (idle, signature) + Stage (the phone rises and settles; scroll) + sticky chapters with the route
-   (scroll) + cards that open (state, BizOpen); the split answers the hand (pointer). Tweens only, deck timings.
-   Every word and link is Hanzo's.
-V2: 8/10 on the deck: h1 52, headings 26, figures 64 (84 only while dragged); one phone runs the checkout on the first screen at both sizes, four chapters pin it beside its route, the split is the one black room, lists open as sheets and cards, one ask
+   Signature: a live calculator on the second screen, "Move a percentage first": type the order's amount and how many
+   payments, drag the split by percentage and the soft-decline share, and every figure reprices at once: each
+   processor's payments and value, how many fall through to the backup instead of to a customer, a hundred dots
+   re-routing, and the amount on the hero phone and in the code sample. Computed only from the page's own figures
+   (amount: 2000, usd; a hundred payments; the split; the cascade) and the visitor's inputs; no invented rates.
+   Beyond: a checkout settling on one phone under the centred title (method, vault token, rule, soft decline, backup,
+   `succeeded`), self-running with its own pause (WCAG 2.2.2); a tap on a step holds it.
+   Motion: the calculator (input), the checkout (idle) + cards that open (state, BizOpen). No pinned chapters: what
+   sat behind the one integration is now a plain row list. Tweens only, deck timings. Every word and link is Hanzo's.
+V2: 8/10 on the deck: h1 52, headings 26, figures 64 (84 only while dragged); one phone runs the checkout on the first screen at both sizes, the calculator is the one black room right under it, lists open as sheets and cards, one ask
 */
+// Signature: a live calculator, "Move a percentage first": amount, payments, the split and the soft-decline share reprice every figure on the page at once, from Hanzo's own figures and the visitor's inputs.
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import { A, More, Cta } from '../../kit';
 import { Code, useLive } from '../cloud/Frame';
-import BizStage from '../../v2/BizStage';
 import BizLines from '../../v2/BizLines';
-import BizChapters from '../../v2/BizChapters';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
 import './Payments.css';
@@ -101,7 +99,10 @@ const PauseIcon = ({ on }) => (on
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
-function Phone({ at, live, big, held, onHold }) {
+const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const usd = (cents) => USD.format(cents / 100);
+
+function Phone({ at, live, big, held, onHold, amt = 2000 }) {
   const calm = useReducedMotion();
   const [ok, setOk] = useState(false);
   useEffect(() => {
@@ -115,7 +116,7 @@ function Phone({ at, live, big, held, onHold }) {
         <i className="pay-island" aria-hidden="true" />
         {onHold && <button type="button" className="pay-pause" onClick={onHold} aria-pressed={held} aria-label={held ? 'Play' : 'Pause'}><PauseIcon on={held} /></button>}
         <div className="pay-merch"><img src="/models/enso.webp" alt="" width="48" height="48" /><span><b>Order 6735</b><em className="x-mono">usd</em></span></div>
-        <p className="pay-amt"><span className="x-mono">amount: 2000</span><b className="bz-fig">$20.00</b></p>
+        <p className="pay-amt"><span className="x-mono">amount: {amt}</span><b className="bz-fig">{usd(amt)}</b></p>
         <div className="pay-scr-wrap"><Screen at={at} live={live} /></div>
         <div className={'pay-btn' + (ok ? ' ok' : '')}>
           <AnimatePresence mode="popLayout" initial={false}>
@@ -145,8 +146,11 @@ function Tracker({ at, pick, run }) {
   );
 }
 
-function Hero() {
-  const [ref, live, calm] = useLive(0.25);
+function Hero({ amt }) {
+  const [ref, live] = useLive(0.25);
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // read after hydration, so the pause button renders the same on server and client
+  useEffect(() => setCalm(!!rm), [rm]);
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -164,7 +168,7 @@ function Hero() {
       </div>
       <div className="bz-wrap bz-grid pay-hero-grid">
         <p className="bz-lede pay-lede">One integration, and the processor becomes a routing decision.</p>
-        <BizStage from={1} over={720} lift={0} className="pay-stage"><div className="pay-rise"><Phone at={at} live={live && !paused} big held={paused} onHold={calm ? null : () => setPaused(!paused)} /></div></BizStage>
+        <div className="bz-stage pay-stage"><div className="bz-stage-in"><div className="pay-rise"><Phone at={at} live={live && !paused} big held={paused} onHold={calm ? null : () => setPaused(!paused)} amt={amt} /></div></div></div>
         <div className="pay-side">
           <div className="pay-acts">
             <Cta to="/login" id="payments.hero" thumb>Try Hanzo</Cta>
@@ -177,49 +181,7 @@ function Hero() {
   );
 }
 
-/* Chapter stage: the same phone, pinned, beside the route the payment takes through Hanzo. */
-function Route({ at }) {
-  const rows = ['payments.create', 'vault', 'rule'];
-  return (
-    <div className="pay-route" aria-hidden="true">
-      <div className={'pay-wire' + (at >= 0 ? ' on' : '')}>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.span key={at === 0 ? 'm' : 't'} className="pay-wire-chip x-mono" initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 14 }} transition={{ duration: 0.35, ease: EASE }}>{at === 0 ? 'Visa' : <><Lock />vault token</>}</motion.span>
-        </AnimatePresence>
-      </div>
-      <div className="pay-hub">
-        <p className="pay-hub-k x-mono">hanzo</p>
-        {rows.map((t, i) => <p key={t} className={'x-mono' + (at === i ? ' on' : at > i ? ' past' : '')}>{t}</p>)}
-      </div>
-      <svg className="pay-fork" viewBox="0 0 400 90" preserveAspectRatio="none">
-        <path className={at === 2 ? 'on' : at === 3 ? 'no' : ''} d="M200 0 C 200 50, 100 40, 100 90" />
-        <path className={at === 3 ? 'on' : ''} d="M200 0 C 200 50, 300 40, 300 90" />
-      </svg>
-      <div className="pay-procs">
-        <div className={'pay-proc' + (at === 2 ? ' on' : at === 3 ? ' no' : '')}>
-          <span className="x-mono">processor</span>
-          <b>{at === 3 ? 'soft decline' : at === 2 ? 'most likely to approve' : '—'}</b>
-        </div>
-        <div className={'pay-proc' + (at === 3 ? ' on' : '')}>
-          <span className="x-mono">backup</span>
-          <b>{at === 3 ? "'succeeded'" : '—'}</b>
-          {at === 3 && <em className="x-mono">&apos;adyen&apos;</em>}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ChStage({ at }) {
-  const [ref, live] = useLive(0.3);
-  return (
-    <div className="pay-chs" ref={ref}>
-      <Phone at={at} live={live} />
-      <Route at={at} />
-    </div>
-  );
-}
-
+/* What sits behind the one integration: the four steps the phone runs, as plain rows (the pinned chapters are gone). */
 const Note = ({ t, d }) => <div className="pay-note"><p className="pay-note-t">{t}</p><p>{d}</p></div>;
 const CH = [
   <Note key="w" t="Normalized webhooks" d="Every processor announces a settlement differently. You subscribe to one event shape and keep it when you add or drop a provider." />,
@@ -228,9 +190,32 @@ const CH = [
   <Note key="c" t="Cascading retries" d="A soft decline is often a fact about one processor, not about the card. Failed attempts fall through to a backup automatically, and the customer sees one outcome." />,
 ];
 
-const CODE = `// Take a payment. You do not name the processor.
+function Behind() {
+  return (
+    <section className="bz-sec pay-behind" aria-labelledby="pay-behind-h">
+      <header className="bz-wrap bz-grid pay-ch-head">
+        <div className="pay-ch-h">
+          <h2 id="pay-behind-h" className="bz-headline">What sits behind the one integration</h2>
+        </div>
+        <p className="bz-body"><span className="pay-cat x-mono">Unified Payments Suite</span>Each processor has its own API, its own idea of an error, and its own webhook format. This normalises all three, so your code sees one shape whichever of them took the payment.</p>
+      </header>
+      <ol className="bz-wrap pay-steps" aria-label="A payment, routed">
+        {STEPS.map(([t, d], i) => (
+          <li key={t}>
+            <span className="pay-steps-n x-mono">{two(i + 1)}</span>
+            <h3 className="bz-title">{t}</h3>
+            <p className="bz-body">{d}</p>
+            {CH[i] || <span aria-hidden="true" />}
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+const code = (amt) => `// Take a payment. You do not name the processor.
 const payment = await hanzo.payments.create({
-  amount: 2000,
+  amount: ${amt},
   currency: 'usd',
   customer: customer.id,
   metadata: { order_id: '6735' },
@@ -245,7 +230,7 @@ console.log(payment.connector); // 'adyen'`;
 const PIPE = ['Approval rates, cost and latency compared across processors, on one screen.', '3D Secure where the issuer asks for it, without a second integration.', 'Open source, so the routing logic is readable before you trust it.'];
 const DEV = [['Easy to Implement', 'Quick integration with just a few lines of code, with SDKs for all major programming languages.'], ['Comprehensive Documentation', 'Detailed guides, API reference, and code examples to help you integrate Hanzo Payments quickly.'], ['Explore Our APIs', 'Get started with quickstart guides, examples, and developer tools.']];
 
-function OneApi() {
+function OneApi({ amt }) {
   return (
     <section className="bz-sec pay-api" aria-labelledby="pay-api-h">
       <div className="bz-wrap bz-grid">
@@ -266,7 +251,7 @@ function OneApi() {
             </BizSheet>
           </div>
         </div>
-        <div className="pay-api-code"><Code tabs={[{ k: 'javascript', code: CODE }]} light mark="'adyen'" /></div>
+        <div className="pay-api-code"><Code tabs={[{ k: 'javascript', code: code(amt) }]} light mark="'adyen'" /></div>
         <div className="pay-pipe">
           <h3 className="bz-title">What you can see once it is one pipe</h3>
           <ul>{PIPE.map((t) => <li key={t}><Check /><span>{t}</span></li>)}</ul>
@@ -357,12 +342,47 @@ const RANK = (() => {
   return a;
 })();
 
-function Move() {
+/* The calculator (signature). Built only from the page's own figures (the order's amount: 2000, usd; a hundred
+   payments; the split by percentage; a soft decline cascading to a backup) and the visitor's own numbers. Every figure
+   reprices the moment a field or slider moves, including the phone's amount and the code sample above and below. */
+const RANK2 = (() => {
+  const a = [...Array(100).keys()];
+  let s = 29;
+  for (let i = 99; i > 0; i--) { s = (s * 9301 + 49297) % 233280; const j = Math.floor((s / 233280) * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+})();
+const fmtN = (n) => n.toLocaleString('en-US');
+
+function Field({ k, unit, value, onChange, onBlur, mode, label }) {
+  return (
+    <label className="pay-calc-f">
+      <span className="x-mono">{k}</span>
+      <span className="pay-calc-in">
+        {unit === '$' && <i aria-hidden="true">$</i>}
+        <input type="text" inputMode={mode} value={value} onChange={(e) => onChange(e.target.value)} onBlur={onBlur} aria-label={label} autoComplete="off" spellCheck={false} />
+        {unit && unit !== '$' && <i aria-hidden="true">{unit}</i>}
+      </span>
+    </label>
+  );
+}
+
+function Move({ amt, setAmt }) {
   const [pct, setPct] = useState(20);
   const [act, setAct] = useState(false);
+  const [n, setN] = useState(100);
+  const [dec, setDec] = useState(0);
+  const [amtS, setAmtS] = useState((amt / 100).toFixed(2));
+  const [nS, setNS] = useState('100');
   const prev = useRef(20);
   const from = prev.current;
   useEffect(() => { prev.current = pct; }, [pct]);
+  const onAmt = (v) => { const s = v.replace(/[^\d.]/g, ''); setAmtS(s); const c = Math.round(parseFloat(s) * 100); if (c > 0 && c <= 100000000) setAmt(c); };
+  const onN = (v) => { const s = v.replace(/\D/g, '').slice(0, 7); setNS(s); const k = parseInt(s, 10); if (k > 0) setN(k); };
+  // the plan: shares of the payments, their value, and how many fall through to the backup instead of to a customer
+  const n2 = Math.round((n * pct) / 100), n1 = n - n2;
+  const k = Math.round((n1 * dec) / 100);
+  const perC = Math.round(((100 - pct) * dec) / 100); // of the hundred dots
+  const casc = new Set(RANK2.filter((r) => RANK[r] >= pct).slice(0, perC));
   return (
     <section className="bz-sec pay-move" data-room="dark" aria-labelledby="pay-move-h">
       <div className="bz-wrap">
@@ -374,20 +394,33 @@ function Move() {
         </div>
         <div className={'pay-move-obj' + (act ? ' act' : '')}>
           <p className="pay-move-k x-mono">One traffic, two routes</p>
+          <div className="pay-calc-row">
+            <Field k="amount" unit="$" mode="decimal" value={amtS} onChange={onAmt} onBlur={() => setAmtS((amt / 100).toFixed(2))} label="Order amount in US dollars" />
+            <Field k="payments" mode="numeric" value={nS} onChange={onN} onBlur={() => setNS(String(n))} label="Number of payments" />
+            <p className="pay-calc-code x-mono" aria-hidden="true">amount: {amt}<br />currency: &apos;usd&apos;</p>
+          </div>
           <div className="pay-move-figs" aria-live="polite">
-            <p className="b"><span>second processor</span><b className="bz-fig">{pct}%</b></p>
-            <p><span>current processor</span><b className="bz-fig">{100 - pct}%</b></p>
+            <p className="b"><span>second processor</span><b className="bz-fig">{pct}%</b><em className="x-mono">{fmtN(n2)} · {usd(n2 * amt)}</em></p>
+            <p><span>current processor</span><b className="bz-fig">{100 - pct}%</b><em className="x-mono">{fmtN(n1)} · {usd(n1 * amt)}</em></p>
           </div>
           <label className="pay-move-bar">
             <span className="bz-kick">Split by percentage</span>
             <input type="range" min="0" max="100" step="5" value={pct} onChange={(e) => setPct(+e.target.value)} onPointerDown={() => setAct(true)} onPointerUp={() => setAct(false)} onPointerCancel={() => setAct(false)} onBlur={() => setAct(false)} style={{ '--f': String(pct / 100) }} aria-valuetext={pct + '% to the second processor'} />
           </label>
+          <div className="pay-casc">
+            <label className="pay-casc-in">
+              <span className="x-mono">soft decline · current processor</span>
+              <input type="range" min="0" max="50" step="1" value={dec} onChange={(e) => setDec(+e.target.value)} style={{ '--f': String(dec / 50) }} aria-label="Soft declines on the current processor, in percent" aria-valuetext={dec + '% soft decline'} />
+              <b className="x-mono">{dec}%</b>
+            </label>
+            <p className="pay-casc-out" aria-live="polite"><span className="x-mono">attempt 2 · backup</span><b>{fmtN(k)} · {usd(k * amt)}</b><em>{k ? 'Failed attempts fall through to a backup automatically, and the customer sees one outcome.' : 'A decline cascades to a backup rather than to your customer'}</em></p>
+          </div>
           <div className="pay-move-dots" aria-hidden="true">
-            {RANK.map((r, i) => <i key={i} className={r < pct ? 'b' : ''} style={{ '--d': Math.min(600, Math.abs(r - from) * 14) + 'ms' }} />)}
+            {RANK.map((r, i) => <i key={i} className={r < pct ? 'b' : casc.has(i) ? 'c' : ''} style={{ '--d': Math.min(600, Math.abs(r - from) * 14) + 'ms' }} />)}
           </div>
           <div className="pay-move-acts">
             <button type="button" className="pay-back" onClick={() => setPct(0)} disabled={pct === 0}>Roll back at once</button>
-            <p className="pay-move-key x-mono"><i className="b" />second processor<i />current processor</p>
+            <p className="pay-move-key x-mono"><span><i className="b" />second processor</span><span><i />current processor</span><span><i className="c" />backup</span></p>
           </div>
         </div>
       </div>
@@ -481,22 +514,16 @@ function End() {
 }
 
 export default function Payments() {
+  const [amt, setAmt] = useState(2000); // the order's amount in cents, as Hanzo's own request sends it
   return (
     <main className="bz pay">
       <span data-ask-name="Hanzo Payments" hidden />
-      <Hero />
-      <BizChapters label="A payment, routed" className="pay-ch" items={STEPS.map(([t, d], i) => ({ t, d, x: CH[i] }))} stage={(at) => <ChStage at={at} />}>
-        <header className="bz-wrap bz-grid pay-ch-head">
-          <div className="pay-ch-h">
-            <h2 className="bz-headline">What sits behind the one integration</h2>
-          </div>
-          <p className="bz-body"><span className="pay-cat x-mono">Unified Payments Suite</span>Each processor has its own API, its own idea of an error, and its own webhook format. This normalises all three, so your code sees one shape whichever of them took the payment.</p>
-        </header>
-      </BizChapters>
-      <OneApi />
+      <Hero amt={amt} />
+      <Move amt={amt} setAmt={setAmt} />
+      <Behind />
+      <OneApi amt={amt} />
       <Checkout />
       <Tax />
-      <Move />
       <Cases />
       <Further />
       <End />

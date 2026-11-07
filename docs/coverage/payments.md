@@ -49,7 +49,7 @@ Done here: hero `<Cta to="/login" id="payments.hero" thumb>` (solid), close `<Ct
 - [x] Marquees pause, freeze under reduced motion, hide duplicates (n/a: the v1 marquees were removed)
 - [x] Privacy link and owner line beside every submit (n/a: no form)
 
-Done here: the only figures are Hanzo's code sample (amount 2000, $20.00, order 6735, 'adyen') and the split's own percentages, which are the reader's input; the payment methods are a type list, not logos.
+Done here: the only figures are Hanzo's code sample (amount 2000, $20.00, order 6735, 'adyen') and the calculator's figures, which are computed only from those and the reader's own inputs (amount, payments, split, soft-decline share); the payment methods are a type list, not logos.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -84,7 +84,7 @@ Done here: pause, tracker steps, chips, "Roll back at once", rows and sheet butt
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own)
 
-Done here: signature (the checkout, idle) + Stage (scroll) + chapters (scroll) + BizOpen (state); the split figures grow 64→84px only while dragged (pointer). variety OK, 0 `Rise`, 0 springs, tweens at 300/400/500ms with the deck curves; the film uses setTimeout only and reduced motion shows `succeeded`.
+Done here: Signature `calculator`, the black room right under the hero ("Move a percentage first"): the visitor types the order's amount (default $20.00, Hanzo's `amount: 2000`, usd) and how many payments (default a hundred), drags the split by percentage (64→84px figures while held) and the soft-decline share on the current processor (default 0, the visitor's own number; no rate is assumed). Everything reprices instantly: each processor's payments and value, the "attempt 2 · backup" count and value that fall through instead of reaching a customer, a hundred dots re-routing (filled = second processor, ring = backup), the `amount:` line beside the fields, the hero phone's amount and the code sample's `amount:`. "Roll back at once" still sends it all home. Removed: the BizChapters pinned scene and its route stage; its header, four steps and three notes are now plain rows ("What sits behind the one integration") after the calculator, and the BizStage scroll wrapper (a no-op at from=1, lift=0) is gone. Supporting: the self-running checkout (idle, pausable) and BizOpen cards (state). Probe: 0 console errors at 1470×801 and 375×812, also with reduced motion (the hero's reduced-motion read now happens after hydration); CLS ≤ 0.0002; hscroll 0; variety OK.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: one decorative `<img>`, Hanzo's enso.webp at 48×48 with width and height)
@@ -100,7 +100,7 @@ Done here: the merchant image is `/models/enso.webp` with `alt=""` (decorative) 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: film at 375×812 width 375/375, 0 targets under 44px; the ask sits at about 320px on a 375 phone. Chapters stack under 900px with a compact checkout card each; the route diagram is desktop only.
+Done here: film at 375×812 width 375/375, 0 targets under 44px; the ask sits at about 320px on a 375 phone. The calculator's fields are 56px tall and its sliders 44–88px; under 900px the fields sit two to a row and the step rows stack number-left.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

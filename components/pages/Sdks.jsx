@@ -1,6 +1,6 @@
 'use client';
-// Signature: one request in two dialects: flip OpenAI ⇄ Anthropic and only the lines that differ re-type, in Python, TypeScript or cURL.
-// Beyond: pick your language and its install line, registry, docs and org line up in one place, ready to copy; and a Go import path you can type to find.
+// Signature: peel the layers: the OpenAPI document, the generated Cloud SDK, the hand-written AI + Agents library and your application lift apart in 3D on the second screen and close again; drag across to peel it by hand, pick a layer and it rises out and explains itself.
+// Beyond: the hero console flips one request OpenAI ⇄ Anthropic, re-typing only the lines that differ; pick your language and its install line, registry, docs and org line up in one place; and a Go import path you can type to find.
 /* SDKs.
    V2: 8/10 code as the hero: one big console where only the lines that differ between the OpenAI and Anthropic dialects re-set, Hanzo's six languages as a picker, the per-language orgs as the one dark room, and the Go modules as a type wall you filter by typing.
    Persona: a developer choosing a client library. Goal: call the API from their language. CTA: API reference (sdks.hero).
@@ -9,20 +9,41 @@
    between the OpenAI and Anthropic dialects by itself (until you take over), and only the lines that change between
    them are re-set, so the difference reads at a glance (base URL, header, max_tokens). Every sample is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../ui';
 import { A, Cta, More } from '../kit';
-import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
+import NoJs from '../NoJs';
 import '../v2/A2.css';
 import './Sdks.css';
+
+/* The h1's line mask, a page-local copy of v2/A2Lines that reads reduced motion only after hydration (so the server
+   and client markup match); with JS off the NoJs rule sets every line in place. */
+function H1Lines({ lines, id, className }) {
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false);
+  useEffect(() => setCalm(!!rm), [rm]);
+  return (
+    <>
+      <NoJs css={'.a2-ln-in{transform:none!important}.a2 [style*="opacity:0"]{opacity:1!important;transform:none!important}'} />
+      <h1 className={className} id={id}>
+        {lines.map((l, i) => (
+          <span className="a2-ln" key={i}>
+            <motion.span className="a2-ln-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={calm ? { duration: 0 } : { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>{l}</motion.span>
+            {i < lines.length - 1 ? ' ' : null}
+          </span>
+        ))}
+      </h1>
+    </>
+  );
+}
 
 /* A section head in the v2 grammar. */
 function Head({ kicker, title, lede, id, dark }) {
   return (
     <header className={'xsd-head' + (dark ? ' dark' : '')}>
       <p className="a2-kick">{kicker}</p>
-      <A2Lines id={id} className="a2-display s" lines={[title]} />
+      <h2 id={id} className="a2-display s">{title}</h2>
       {lede && <p className="a2-lede">{lede}</p>}
     </header>
   );
@@ -199,7 +220,7 @@ function Hero() {
       <div className="a2-wrap a2-grid xsd-first">
         <div className="xsd-words">
           <p className="a2-kick"><b>SDKs</b></p>
-          <A2Lines as="h1" id="xsd-h1" className="a2-display s xsd-h1" lines={['SDKs for', 'every language']} now />
+          <H1Lines id="xsd-h1" className="a2-display s xsd-h1" lines={['SDKs for', 'every language']} />
           <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
           <div className="x-row-links tight xsd-hero-links">
             <Cta to="https://docs.hanzo.ai/docs/openapi/" id="sdks.hero" thumb>API reference</Cta>
@@ -220,19 +241,115 @@ function Hero() {
   );
 }
 
-function Two() {
+/* The peel. Hanzo's stack, bottom to top: the OpenAPI document the API serves, the Cloud SDK generated from it, the
+   hand-written AI + Agents library, and your application. It lifts apart into floating layers in 3D when it reaches
+   the screen and closes again when it leaves; drag sideways across it (or swipe) to peel and close it by hand, and
+   pick a layer to have it rise out of the stack and explain itself. */
+const STACK = [
+  { k: 'doc', name: 'OpenAPI', sub: 'operation ids', chips: ['models', 'agents', 'data', 'compute', 'network', 'security', 'platform', 'chain'] },
+  { k: 'cloud', name: 'Full Cloud SDK', sub: 'hanzo-<lang>/sdk', glyph: '{ }', chips: ['Python', 'Go', 'TypeScript', 'Rust', 'Swift', 'Kotlin'] },
+  { k: 'ai', name: 'AI + Agents', sub: 'hanzo · @hanzo/ai', glyph: '✦', chips: ['models', 'agents', 'tools', 'memory', 'MCP'] },
+  { k: 'app', name: 'your application', sub: 'pip install hanzoai', chips: [] },
+];
+const PEEL_EASE = [0.4, 0, 0.2, 1];
+
+function Peel() {
+  const ref = useRef(null);
+  const scene = useRef(null);
+  const seen = useInView(ref, { amount: 0.45 });
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // read after hydration, so server and client markup match
+  useEffect(() => setCalm(!!rm), [rm]);
+  const o = useMotionValue(0);
+  const [open, setOpen] = useState(false);
+  const [sel, setSel] = useState(1);
+  const [mine, setMine] = useState(false); // the first touch takes over for good
+  const [step, setStep] = useState(0);
+  const grab = useRef(null);
+  useMotionValueEvent(o, 'change', (v) => setOpen(v > 0.5));
+  const to = (v, d = 0.9) => (calm ? o.set(v) : animate(o, v, { duration: d, ease: PEEL_EASE }));
+  // the stack lifts apart as it reaches the screen and closes again as it leaves, until the visitor takes over
+  useEffect(() => { if (calm) { o.set(1); return; } if (!mine) to(seen ? 1 : 0); }, [seen, calm, mine]); // eslint-disable-line react-hooks/exhaustive-deps
+  // once open, it walks its layers once from the bottom up, each rising out of the stack in turn
+  useEffect(() => {
+    if (!seen || mine || calm || step >= STACK.length) return;
+    const t = setTimeout(() => { setSel(step); setStep(step + 1); }, step ? 1700 : 1000);
+    return () => clearTimeout(t);
+  }, [seen, mine, calm, step]);
+  const pick = (i) => { setMine(true); setSel(i); if (o.get() < 0.5) to(1, 0.5); };
+  const down = (e) => { if (e.button) return; grab.current = { x: e.clientX, o: o.get(), moved: false }; };
+  const move = (e) => {
+    const g = grab.current;
+    if (!g) return;
+    const dx = e.clientX - g.x;
+    if (!g.moved && Math.abs(dx) < 6) return;
+    if (!g.moved) { g.moved = true; setMine(true); o.stop(); scene.current?.setPointerCapture?.(e.pointerId); }
+    o.set(Math.min(1, Math.max(0, g.o + dx / (scene.current?.offsetWidth * 0.55 || 300))));
+  };
+  const up = (e) => {
+    const g = grab.current;
+    grab.current = null;
+    if (!g) return;
+    if (g.moved) { to(o.get() > 0.5 ? 1 : 0, 0.4); return; }
+    const hit = e.target.closest?.('[data-layer]');
+    if (hit) pick(+hit.dataset.layer);
+  };
   return (
-    <section className="a2-sec tight xsd-two">
-      <div className="a2-wrap xsd-two-in">
-        <div className="xsd-half">
-          <span className="xsd-glyph" aria-hidden="true">{'{ }'}</span>
-          <h2>Full Cloud SDK</h2>
-          <p>Generated from one document and never edited by hand, so every route is reachable the day it ships — models, agents, data, compute, network, security, platform and chain. Method and class names are the document&apos;s operation ids, which is what makes a client checkable against a release instead of against somebody&apos;s memory. Real code lives in <code>hanzo-&lt;lang&gt;/sdk</code>.</p>
+    <section className="xsd-peel" aria-label="The SDK stack" ref={ref}>
+      <NoJs css=".xsd-peel-stack{--o:1!important}.xsd-say{grid-area:auto!important;visibility:visible!important;opacity:1!important;transform:none!important}.xsd-peel-says{gap:28px}.xsd-peel-bar{display:none}" />
+      <div className="a2-wrap a2-grid xsd-peel-grid">
+        <div className="xsd-peel-stage">
+          <div className={'xsd-peel-scene' + (calm ? ' calm' : '')} ref={scene} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={() => { grab.current = null; }} aria-hidden="true">
+            <motion.div className="xsd-peel-stack" style={{ '--o': o }}>
+              {STACK.map((l, i) => (
+                <div key={l.k} className={'xsd-plate p' + i + (sel === i ? ' on' : '')} style={{ '--i': i }} data-layer={i}>
+                  <div className="xsd-plate-f">
+                    <span className="xsd-plate-n x-mono">{String(i + 1).padStart(2, '0')}</span>
+                    {l.chips.length > 0 && <span className="xsd-plate-c">{l.chips.map((c) => <em key={c}>{c}</em>)}</span>}
+                    <span className="xsd-plate-s x-mono">{l.sub}</span>
+                    <b>{l.glyph && <i>{l.glyph}</i>}{l.name}</b>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+          <div className="xsd-peel-bar">
+            <button type="button" className="xsd-peel-tog" aria-pressed={open} onClick={() => { setMine(true); to(open ? 0 : 1, 0.6); }}>
+              <span className="xsd-peel-ic" aria-hidden="true"><i /><i /><i /></span>{open ? 'Close the stack' : 'Lift the layers'}
+            </button>
+            <span className="xsd-peel-hint x-mono" aria-hidden="true">drag across ⇄</span>
+          </div>
         </div>
-        <div className="xsd-half dark">
-          <span className="xsd-glyph" aria-hidden="true">✦</span>
-          <h2>AI + Agents</h2>
-          <p>The hand-crafted flagship: models, agents, tools, memory, and MCP. Python <code>hanzo</code> is the most complete; Node ships <code>@hanzo/ai</code>. Distinct from the generated cloud SDK — this is the &quot;we love this language&quot; library.</p>
+        <div className="xsd-peel-side">
+          <ol className="xsd-peel-list" aria-label="Layers, top to bottom">
+            {STACK.map((l, i) => ({ l, i })).reverse().map(({ l, i }) => (
+              <li key={l.k}>
+                <button type="button" aria-pressed={sel === i} onClick={() => pick(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') pick(i); }}>
+                  <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{l.name}</b>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <div className="xsd-peel-says">
+            <div className={'xsd-say' + (sel === 0 ? ' on' : '')}>
+              <h2>OpenAPI</h2>
+              <p>A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves.</p>
+              <More to="https://docs.hanzo.ai/docs/openapi/">API reference</More>
+            </div>
+            <div className={'xsd-say' + (sel === 1 ? ' on' : '')}>
+              <h2>Full Cloud SDK</h2>
+              <p>Generated from one document and never edited by hand, so every route is reachable the day it ships — models, agents, data, compute, network, security, platform and chain. Method and class names are the document&apos;s operation ids, which is what makes a client checkable against a release instead of against somebody&apos;s memory. Real code lives in <code>hanzo-&lt;lang&gt;/sdk</code>.</p>
+            </div>
+            <div className={'xsd-say' + (sel === 2 ? ' on' : '')}>
+              <h2>AI + Agents</h2>
+              <p>The hand-crafted flagship: models, agents, tools, memory, and MCP. Python <code>hanzo</code> is the most complete; Node ships <code>@hanzo/ai</code>. Distinct from the generated cloud SDK — this is the &quot;we love this language&quot; library.</p>
+            </div>
+            <div className={'xsd-say' + (sel === 3 ? ' on' : '')}>
+              <h2>your application</h2>
+              <p>Use our official SDKs to integrate Cloud into your application</p>
+              <div className="xsd-cmd"><code>pip install hanzoai</code><Copy text="pip install hanzoai" /></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -395,8 +512,8 @@ export default function Sdks() {
   return (
     <main className="a2 xsd">
       <Hero />
+      <Peel />
       <A2Paste name="SDKs" text={PROMPT} />
-      <Two />
       <Official />
       <Orgs />
       <Flagship />

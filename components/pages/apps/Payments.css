@@ -365,6 +365,67 @@ html.js .pay-cases .pay-case { opacity: 0; transform: translate3d(0, 24px, 0); t
 html.js .pay-cases .pay-case.c1 { transition-delay: 60ms; } html.js .pay-cases .pay-case.c2 { transition-delay: 120ms; } html.js .pay-cases .pay-case.c3 { transition-delay: 180ms; }
 html.js .pay-cases.lit .pay-case { opacity: 1; transform: none; }
 .pay-move-bar input:focus-visible { outline: 2px solid #fff; outline-offset: 6px; border-radius: 16px; }
+/* what sits behind the one integration: plain rows (the pinned chapters are gone) */
+.pay-behind .pay-ch-head { margin-bottom: 44px; }
+.pay-behind .pay-ch-head .pay-cat { margin: 0 0 10px; }
+.pay-steps { list-style: none; margin-block: 0; padding: 0; border-bottom: 1px solid var(--bz-line); }
+.pay-steps li { display: grid; grid-template-columns: 44px minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr); column-gap: 24px; align-items: start; padding: 24px 0; border-top: 1px solid var(--bz-line); }
+.pay-steps-n { padding-top: 4px; font-size: 13px; color: var(--bz-quiet); }
+.pay-steps h3 { margin: 0; }
+.pay-steps .bz-body { margin: 0; }
+.pay-steps .pay-note { padding-top: 0; border-top: 0; }
+
+/* the calculator: the visitor's own numbers beside Hanzo's */
+.pay-calc-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 24px; margin-bottom: 44px; }
+.pay-calc-f { display: flex; flex-direction: column; gap: 10px; }
+.pay-calc-f > span:first-child, .pay-casc-in > span, .pay-casc-out > span { font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
+.pay-calc-in { display: flex; align-items: center; gap: 6px; height: 56px; padding: 0 18px; border-radius: 16px; background: #171717; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); transition: box-shadow .15s var(--bz-out); }
+.pay-calc-in:focus-within { box-shadow: inset 0 0 0 2px #fafafa; }
+@media (hover: hover) { .pay-calc-in:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .4); } .pay-calc-in:focus-within:hover { box-shadow: inset 0 0 0 2px #fafafa; } }
+.pay-calc-in i { font: 400 21px/1 var(--mono); font-style: normal; color: rgba(255, 255, 255, .55); }
+.pay-calc-in input { width: 9ch; min-width: 0; border: 0; padding: 0; background: none; outline: none; color: #fafafa; font: 497 21px/1 var(--mono); font-variant-numeric: tabular-nums; }
+.pay-calc-code { margin: 0 0 0 auto; padding-bottom: 4px; font-size: 13px; line-height: 1.6; color: rgba(255, 255, 255, .55); }
+.pay-move-figs em { font-style: normal; font-size: 14px; color: rgba(255, 255, 255, .78); font-variant-numeric: tabular-nums; }
+.pay-move-figs p:not(.b) em { color: rgba(255, 255, 255, .55); }
+.pay-move-dots i.c::after { opacity: 1; transform: none; background: transparent; box-shadow: inset 0 0 0 2px #fafafa; }
+.pay-move-key i.c { background: transparent; box-shadow: inset 0 0 0 2px #fafafa; }
+.pay-move-key { flex-wrap: wrap; gap: 8px 24px; }
+.pay-move-key span { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+.pay-move-key i:not(:first-child) { margin-left: 0; }
+.pay-move.bz-sec { padding-block: clamp(72px, 7vw, 116px); }
+.pay-move .pay-move-obj { margin-top: 44px; }
+.pay-casc { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px 44px; align-items: start; margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .1); }
+.pay-casc-in { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 14px 20px; }
+.pay-casc-in > span { grid-column: 1 / -1; }
+.pay-casc-in b { min-width: 4ch; text-align: right; font-size: 21px; font-weight: 497; color: #fafafa; font-variant-numeric: tabular-nums; }
+.pay-casc-in input { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; cursor: grab; touch-action: pan-y; }
+.pay-casc-in input::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #fafafa calc(100% * var(--f)), rgba(255, 255, 255, .14) calc(100% * var(--f))); }
+.pay-casc-in input::-moz-range-track { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, .14); }
+.pay-casc-in input::-moz-range-progress { height: 8px; border-radius: 4px; background: #fafafa; }
+.pay-casc-in input::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -10px; border-radius: 50%; background: #000000; box-shadow: inset 0 0 0 3px #fff; transition: transform .09s var(--bz-out); }
+.pay-casc-in input::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #000000; border: 3px solid #fff; }
+.pay-casc-in input:active::-webkit-slider-thumb { transform: scale(.97); }
+.pay-casc-in input:focus-visible { outline: 2px solid #fff; outline-offset: 6px; border-radius: 8px; }
+.pay-casc-out { display: flex; flex-direction: column; gap: 8px; min-height: 120px; margin: 0; }
+.pay-casc-out b { font-size: 26px; font-weight: 497; letter-spacing: -.02em; color: #fafafa; font-variant-numeric: tabular-nums; }
+.pay-casc-out em { font-style: normal; font-size: 16px; line-height: 1.5; color: rgba(255, 255, 255, .78); }
+@media (max-width: 899px) {
+  .pay-steps li { grid-template-columns: 34px minmax(0, 1fr); row-gap: 8px; }
+  .pay-steps li > :not(.pay-steps-n) { grid-column: 2; }
+  .pay-steps li > span[aria-hidden] { display: none; }
+  .pay-steps .pay-note { margin-top: 8px; }
+  .pay-calc-row { margin-bottom: 32px; }
+  .pay-calc-f { flex: 1 1 140px; }
+  .pay-calc-in input { width: 100%; font-size: 17px; }
+  .pay-calc-in i { font-size: 17px; }
+  .pay-calc-code { margin: 0; flex-basis: 100%; font-size: 14px; }
+  .pay-calc-f > span:first-child, .pay-casc-in > span, .pay-casc-out > span { font-size: 14px; letter-spacing: .06em; }
+  .pay-move-figs em { font-size: 14px; }
+  .pay-casc { grid-template-columns: minmax(0, 1fr); margin-top: 28px; }
+  .pay-casc-out { min-height: 150px; }
+  .pay-casc-out b { font-size: 21px; }
+  .pay-move-key { gap: 8px 18px; }
+}
 @media (prefers-reduced-motion: reduce) {
   html.js .pay-co-methods li, html.js .pay-cases .pay-case { transition: none; }
   .pay-cat, .pay-lede, .pay-side, .pay-acts, .pay-rise { animation: none; }

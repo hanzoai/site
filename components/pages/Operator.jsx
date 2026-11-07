@@ -3,26 +3,25 @@
 // Goal: install the operator.
 // CTA: View on GitHub (operator.hero); the close is Deploy to Cloud in the Band.
 // Metric: cta_click operator.hero
-// Signature: drift, reverted, said out loud: a live cluster board where something drifts and the next sweep puts it back.
-// Beyond: drag any resource out of place yourself (or press it) and watch the next sweep revert it, with the log saying so.
+// Signature: a card stack of the six points under "Declare the thing, not the thirty objects": flick or drag the top card away (swipe on touch), one idea per card, the next rising from beneath.
+// Beyond: the hero cluster board (approved): drag any resource out of place yourself (or press it) and watch the next sweep revert it, with the log saying so.
 /* Hanzo Operator.
-   V2: 8/10 the deck scale (h1 52, sections 26, card titles 21); a dark control room as the hero where the cluster drifts and the operator puts it back (pausable, drag a resource yourself), thirty objects collapsing into one declaration, the six points on a scroll-driven horizontal track, kit Cta and Band. Greys only.
+   V2: 8/10 the deck scale (h1 52, sections 26, card titles 21); a dark control room as the hero where the cluster drifts and the operator puts it back (pausable, drag a resource yourself), then the six points as a card stack you flick through (buttons and arrow keys too), kit Cta and Band. Greys only.
    Signature: drift, reverted, said out loud. The hero is a live cluster board: ten Kinds in their desired places, a
    sweep crossing them on a loop. Between sweeps something drifts out of place; on the next sweep the operator moves it
    back and the log says what it did (created, reverted, or already in sync). A pause control stops the loop.
-   Then "Declare the thing, not the thirty objects": thirty loose objects converge, scrubbed by scroll, into one
-   declared Kind. The six points ride a horizontal track that your vertical scroll drives (a swipe rail on phones).
+   Then "Declare the thing, not the thirty objects" heads a stack of six cards, Hanzo's six points, one per card: the
+   top card is flicked or dragged away to either side and the next comes up (no pinned scene, no scroll-driven track).
    Every word is Hanzo's; the log uses only Hanzo's own words (drift, sweep, created, reverted, already in sync). */
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { A, Cta, Band } from '../kit';
 import { Copy } from '../ui';
 import MaskLines from './proof/MaskLines';
-import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
-import useNarrow from '../v2/A2Narrow';
 import A2Pause from '../v2/A2Pause';
-import { T, EMPH } from '../v2/A2Motion';
+import NoJs from '../NoJs';
+import { T, EMPH, INOUT } from '../v2/A2Motion';
 import '../v2/A2.css';
 import './Operator.css';
 
@@ -122,34 +121,8 @@ function Hero() {
   );
 }
 
-/* Thirty loose objects converge into one declared Kind as you scroll. */
-const LOOSE = Array.from({ length: 30 }, (_, i) => [((i * 47) % 100) - 50, ((i * 29) % 70) - 35, (i * 37) % 360]);
-
-function Declare() {
-  const ref = useRef(null);
-  const rm = useReducedMotion();
-  const [calm, setCalm] = useState(false); // applied after hydration, so server and client markup match
-  useEffect(() => setCalm(!!rm), [rm]);
-  // pinned: the scene holds the screen while the thirty come together, centred, then lets go
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const kv = useTransform(p, (v) => Math.min(1, Math.max(0, (v - 0.08) / 0.7)));
-  const k = calm ? 1 : kv;
-  return (
-    <section className="xop-declare" ref={ref} aria-labelledby="xop-declare-h">
-      <div className="a2-wrap a2-grid xop-declare-stick">
-        <div className="xop-declare-copy">
-          <MaskLines id="xop-declare-h" className="a2-headline" lines={['Declare the thing,', 'not the thirty objects']} />
-        </div>
-        <motion.div className="xop-converge" style={{ '--k': k }} aria-hidden="true">
-          {LOOSE.map(([x, y, r], i) => <i key={i} style={{ '--x': x, '--y': y, '--r': r + 'deg' }} />)}
-          <div className="xop-one"><span className="x-mono">kind</span><b>Service</b></div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* The six points ride a horizontal track that vertical scroll drives. */
+/* The six points as a stack of cards, one idea each: flick or drag the top card away (swipe on touch), or use the
+   buttons and arrow keys; the next card comes up and the stack refills after the sixth. */
 const POINTS = [
   ['Kinds that know the stack', 'Service covers most workloads. Datastore covers the stateful ones and dispatches on its type, with SQL, KV, DocDB and S3 as thin facades over it. Gateway, Ingress, DNS, Base, IAM, KMS and MPC are their own Kinds, because each one wires up differently.', 'Service · Datastore · Gateway'],
   ['Secrets come from KMS', 'A KMSSecret is materialized beside the workload and synced from kms.hanzo.ai. What lives in git is the path to a secret, never the secret.', 'KMSSecret ← kms.hanzo.ai'],
@@ -159,34 +132,75 @@ const POINTS = [
   ['Install is one command', 'operator install lays down the CRDs, namespace, RBAC and Deployment. operator up does that and applies your resources behind it. Both are server-side apply, so running either again changes nothing.', 'operator up'],
 ];
 
-function Track() {
-  const ref = useRef(null);
-  const row = useRef(null);
-  const narrow = useNarrow();
-  const calm = useReducedMotion();
-  const [span, setSpan] = useState(0);
-  useLayoutEffect(() => {
-    const m = () => setSpan(row.current ? Math.max(0, row.current.scrollWidth - window.innerWidth) : 0);
-    m();
-    addEventListener('resize', m);
-    return () => removeEventListener('resize', m);
-  }, []);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const x = useTransform(p, (v) => (narrow || calm ? 0 : -Math.min(1, Math.max(0, (v - 0.04) / 0.92)) * span));
-  const bar = useTransform(p, (v) => Math.min(1, Math.max(0, (v - 0.04) / 0.92)));
+const N = POINTS.length;
+const two = (n) => String(n).padStart(2, '0');
+
+function Stack() {
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // applied after hydration, so server and client markup match
+  useEffect(() => setCalm(!!rm), [rm]);
+  const [top, setTop] = useState(0);
+  const busy = useRef(false);
+  const box = useRef(null);
+  const x = useMotionValue(0);
+  const rot = useTransform(x, [-480, 480], [-4, 4]);
+  const far = () => (box.current?.offsetWidth || 480) * 1.25;
+  // the top card leaves to one side; the next one is already underneath
+  const flick = (dir) => {
+    if (busy.current) return;
+    busy.current = true;
+    const done = () => { setTop((t) => (t + 1) % N); x.set(0); busy.current = false; };
+    if (calm) { done(); return; }
+    animate(x, dir * far(), { duration: T.slow, ease: INOUT }).then(done);
+  };
+  // the card before comes back from the side it left by
+  const back = () => {
+    if (busy.current) return;
+    busy.current = true;
+    setTop((t) => (t + N - 1) % N);
+    if (calm) { x.set(0); busy.current = false; return; }
+    x.set(-far());
+    animate(x, 0, { duration: T.slower, ease: EMPH }).then(() => { busy.current = false; });
+  };
+  // once, on arrival, the top card leans aside and settles, so the stack reads as something to flick
+  const seen = useInView(box, { once: true, amount: 0.6 });
+  useEffect(() => {
+    if (!seen || calm || busy.current) return;
+    const t = setTimeout(() => { animate(x, [0, -44, 0], { duration: 0.9, ease: INOUT, times: [0, 0.45, 1] }); }, 300);
+    return () => clearTimeout(t);
+  }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  const onKey = (e) => { if (e.key === 'ArrowRight') { e.preventDefault(); flick(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); back(); } };
   return (
-    <section className="xop-track" ref={ref} style={{ '--span': span + 'px' }} aria-label="Six points">
-      <div className="xop-track-stick">
-        <motion.ol className="xop-row" ref={row} style={{ x }}>
-          {POINTS.map(([t, d, code], i) => (
-            <li key={t} className="xop-card">
-              <h3 className="xop-card-t">{t}</h3>
-              <p>{d}</p>
-              <span className="xop-card-f"><code className="x-mono">{code}</code><span className="xop-card-n x-mono">{String(i + 1).padStart(2, '0')} / 06</span></span>
-            </li>
-          ))}
-        </motion.ol>
-        <div className="a2-wrap xop-bar" aria-hidden="true"><motion.i style={{ scaleX: bar }} /></div>
+    <section className="a2-sec xop-cards" aria-labelledby="xop-declare-h">
+      <NoJs css=".xop-stack{height:auto!important}.xop-sc{position:relative!important;inset:auto!important;height:auto!important;transform:none!important;opacity:1!important;margin-bottom:12px;visibility:visible!important}.xop-stack-ctl{display:none}" />
+      <div className="a2-wrap a2-grid xop-cards-grid">
+        <div className="xop-cards-copy">
+          <h2 id="xop-declare-h" className="a2-headline">Declare the thing, not the thirty objects</h2>
+          <div className="xop-stack-ctl">
+            <button type="button" className="xop-nav" onClick={back} aria-label="Previous point"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+            <span className="xop-count x-mono" aria-live="polite">{two(top + 1)} / {two(N)}</span>
+            <button type="button" className="xop-nav" onClick={() => flick(1)} aria-label="Next point"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+          </div>
+          <ol className="xop-ticks" aria-hidden="true">{POINTS.map(([t], i) => <li key={t} className={i === top ? 'on' : i < top ? 'past' : ''} />)}</ol>
+        </div>
+        <ol className="xop-stack" ref={box} tabIndex={0} onKeyDown={onKey} aria-label="Six points" aria-roledescription="card stack">
+          {POINTS.map(([t, d, code], i) => {
+            const k = (i - top + N) % N; // 0 is the top card
+            const isTop = k === 0;
+            return (
+              <motion.li key={t} className={'xop-sc' + (isTop ? ' top' : '') + (i === 2 ? ' alt' : '')} aria-hidden={!isTop}
+                style={{ x: isTop ? x : 0, rotate: isTop ? rot : 0, zIndex: N - k }}
+                animate={{ y: Math.min(k, 2) * 16, scale: 1 - Math.min(k, 2) * 0.04, opacity: k < 3 ? 1 : 0 }}
+                transition={calm || k === N - 1 ? { duration: 0 } : { duration: T.slow, ease: EMPH }}
+                drag={isTop && !calm ? 'x' : false} dragMomentum={false} dragElastic={0.9}
+                onDragEnd={(e, info) => { if (Math.abs(info.offset.x) > 110 || Math.abs(info.velocity.x) > 600) flick(Math.sign(info.offset.x || info.velocity.x) || 1); else animate(x, 0, { duration: T.base, ease: EMPH }); }}>
+                <h3 className="xop-card-t">{t}</h3>
+                <p>{d}</p>
+                <span className="xop-card-f"><code className="x-mono">{code}</code><span className="xop-card-n x-mono">{two(i + 1)} / 06</span></span>
+              </motion.li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );
@@ -213,8 +227,7 @@ export default function Operator() {
   return (
     <main className="a2 xop">
       <Hero />
-      <Declare />
-      <Track />
+      <Stack />
       <A2Paste name="Operator" text="Read https://hanzo.ai/skill.md and use Hanzo Operator in my project." />
       <Get />
       <Band title="Get started with Hanzo Operator" action="Deploy to Cloud" to="https://platform.hanzo.ai/deploy" />

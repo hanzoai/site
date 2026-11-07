@@ -84,7 +84,7 @@ Done here: Dialect and language switches are buttons with pressed states; the mo
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: only the differing lines re-set (time/state); supporting: gliding pills (layoutId), picker (state), finder typing (time); no scroll-linked motion; `variety.py` OK. Every pill and the URL swap use ease-emphasis at 300 ms (the springs are gone).
+Done here: Signature `peel` on the second screen, right under the hero: Hanzo's stack (01 OpenAPI, 02 Full Cloud SDK, 03 AI + Agents, 04 your application) sits as four CSS-3D plates that lift apart (900 ms ease-in-out) when the section reaches the screen and close again when it leaves; once open it walks the layers bottom-up, each rising 22px out of the stack and inking while its words (the old two-halves copy, re-homed) show beside it. The visitor drags or swipes sideways across the stack to peel/close it by hand (snaps to the nearest end), picks a layer (list buttons, hover with a mouse, tap a plate) or uses "Close the stack / Lift the layers". The approved hero console (OpenAI ⇄ Anthropic, only the changed lines re-set) is kept; section h2s are now plain (the line mask stays only on the h1, a page-local copy that reads reduced motion after hydration). Reduced motion: stack open, no transitions. Probe: 0 console errors at 1470×801 and 375×812 (also reduced), CLS ≤ 0.0004, hscroll 0; `variety.py` OK.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no media: the console shows Hanzo samples
