@@ -38,7 +38,10 @@ export default function usePhoneAsk() {
     const update = () => {
       if (!btn || !own) find();
       if (!btn) return;
-      const asks = [...document.querySelectorAll('main [data-cta], main [data-thumb]')].filter((el) => seen(el) && solid(el));
+      // the page's asks only: its [data-thumb] and its closing or submit buttons, never a dark product card
+      const asks = [...document.querySelectorAll('main [data-thumb], main [data-cta]')]
+        .filter((el) => el.hasAttribute('data-thumb') || /\.(hero|band|close|apply|claim|submit|send)$/.test(el.getAttribute('data-cta') || ''))
+        .filter((el) => seen(el) && solid(el));
       const bar = document.querySelector('.x-ask'); // the shared slim bar, when it rises, is the solid one
       const barOn = !!bar && seen(bar) && +getComputedStyle(bar).opacity > 0.5;
       if (asks.length || barOn) H.dataset.pq = ''; else delete H.dataset.pq;
@@ -46,10 +49,11 @@ export default function usePhoneAsk() {
       const past = own.getBoundingClientRect().bottom < 60;
       if (past !== swapped) {
         swapped = past;
+        const edge = btn.getBoundingClientRect().right; // where Hanzo's own label ends: the swapped one must end there too
         btn.textContent = past ? label : btn.dataset.xAsk;
         btn.setAttribute('href', past ? href : btn.dataset.xHref);
         // a long ask must never be clipped: if it runs past the screen's 16px gutter, keep Hanzo's own label
-        if (past && (btn.getBoundingClientRect().right > innerWidth - 16 || btn.scrollWidth > btn.clientWidth + 1)) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
+        if (past && (btn.getBoundingClientRect().right > Math.max(edge, innerWidth - 16) + 1 || btn.scrollWidth > btn.clientWidth + 1)) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
       }
     };
     const onScroll = () => { clearTimeout(t); clearTimeout(t2); t = setTimeout(update, 80); t2 = setTimeout(update, 800); }; // again once the bar has settled

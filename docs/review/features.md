@@ -1,118 +1,118 @@
 # /features — James-eye review
-Verdict: 7/10
-First complaint: "The keyboard is great, that's the idea. Then it's the same block three times: a list on one side, a black video on the other, flipped. When a feature lights up, the picture doesn't change. Only a little number does. And there's a big empty white gap after the keyboard."
-(walked 7 Nov 2026 on the dev server at HEAD `915e945a`, 1470×801 fine pointer and 375×812 touch, plus 320, 375×667, reduced motion and JS off)
+Verdict: 6/10
+First complaint: "On my phone the Dev bit is broken. There's a tiny video stuck in the corner with the words falling out of it, and the list is squashed into half the screen. And the page keeps jumping while I'm reading it."
+(walked 7 Nov 2026 at HEAD `6daba878`, 1470×801 fine pointer and 375×812 touch, plus 320, 375×667, 768, reduced motion and JS off)
 
 Method: Playwright from Node.
-- **Arrival and idle:** bursts of 5 to 6 frames, 180 ms apart, then 8 samples 500 ms apart.
-- **Scroll:** wheel steps of 500px with 900 ms dwells on desktop; 450px steps on phone.
-- **Rooms:** 7 s idle per product room.
-- **Input:** hover and press on the ask, text link, keys, rows, film cards and band cards. I typed in the finder, did a 45-stop Tab crawl, tapped keys and rows on the phone, and clicked one film card to see the transition.
-- **Measured:** layout shift (PerformanceObserver) and console errors.
+- **Arrival and idle:** a 6-frame burst 180 ms apart, then 8 samples 500 ms apart.
+- **Scroll:** wheel steps of 500px with 900 ms dwells on desktop, 450px on phone.
+- **Rooms:** 7 s idle in each room, sampling the open row, the film's transform and origin, and video time.
+- **Input:** hover and press on the ask, text link, keys, rows, film cards and band cards. I typed in the finder, did a 30-stop Tab crawl, and tapped keys and rows on the phone.
+- **Measured:** layout shift (PerformanceObserver, with sources), console errors and grid geometry.
 
-api.hanzo.ai was aborted; nothing was sent. The "1 Issue" badge in my frames is a hydration warning that only appears when Playwright screenshots during hydration. A clean load with no screenshots gives 0 console errors on both sizes.
+api.hanzo.ai was aborted and nothing was sent. The "1 Issue" badge in the frames is the hydration warning that only fires when screenshots are taken during hydration. Clean loads with no screenshots give 0 console errors at both sizes.
 
 ## What works
-- **The hero keyboard is alive and answers.**
-  - **Autoplay:** it plays itself every 2.1 s with no input: `01 / 10` → `02` at ~1.0 s after idle → `03` at ~3.1 s, on both widths.
-  - **Hover:** hovering key 7 with the mouse sets the display to "Sandboxed Execution · 07 / 10".
+- **The hero keyboard is still the idea, and it is alive.**
+  - **Autoplay:** it plays itself every 2.1 s with no input (`02 → 03 → 04 / 10` across 4 s of idle, on both widths).
+  - **Hover:** hovering key 7 sets the display to "Sandboxed Execution · 07 / 10".
   - **Press:** the key travels 4px (`matrix(1,0,0,1,0,4)`).
-  - **Finder:** "code" gives 5 of 10; "image" gives 0 of 10 and dims all 10 keys.
-- **Last round's big problems are fixed.**
-  - **Phone rooms stack:** film, then heading, then rows. Nothing pins over text.
-  - **Real Hanzo media:** the Enso, Zen and Iro films are in.
-  - **Rooms open their product.** Clicking the Dev film runs a black title stage with "Hanzo Dev" and lands on /dev.
-  - **Phone ask:** the header swaps to a filled "Open Chat" from scroll 450 to the end. It is outlined while the hero ask is on screen, and back to quiet while the band ask is in view.
-- **Rooms step by themselves.** In each room one row opens every 2.6 s while it is in view (01 → 02 at 2.9 s → 03 at 5.5 s), and the film card's counter and progress bar follow. Hovering row 3 opens it and sets the film counter to `03 / 04`. A tap on phone does the same (row 4 gives `04 / 04`).
+  - **Finder:** "code" gives 5 of 10 and "image" dims all 10 keys.
+- **Last round's main fix landed on desktop: the film answers the row.**
+  - **Chat room:** as the rows step every 2.6 s, `.v2-mfilm` goes from scale 1.02 to 1.07, 1.12 and 1.17, and its origin moves from 207 to 357 to 506px over 500 ms. The caption names the open feature.
+  - **The other rooms do the same.**
+- **The three rooms now differ on desktop.** Chat is a split with the film on the right. Dev is a full-bleed black room with the Zen sphere as its ground and the caption bottom-right. Design is a wide 21:9 film over two rows side by side. The dead band after the keyboard is gone: the hero ends at 865 and the Chat heading sits at 998.
 - **Hover and press answer.**
-  - **Primary:** magnetic, fill #0a0a0b → #2c2c2e, press scale .98.
+  - **Primary:** magnetic (+2.5px), fill #0a0a0b → #2c2c2e, press scale .98.
   - **Text link:** the underline goes from 30% to full ink.
-  - **Film card:** the video scales to 1.03 and the arrow moves 6px.
-  - **Band cards:** they lift.
-- **Stable.**
-  - **CLS:** 0.00024 desktop, all from the shared header cluster; 0 on phone.
-  - **Width:** scrollWidth 320 at 320.
-  - **Tap targets:** 0 targets under 44px in `<main>` at 375.
-  - **Films:** at most 2 play at once.
+  - **Chat row:** fills #f5f5f5.
+  - **Film card:** the arrow moves 6px.
+  - **Band card:** lifts 4px.
+- **Stable where it counts on desktop.**
+  - **Desktop:** CLS is 0.019 and there is no horizontal scroll.
+  - **320:** scrollWidth is 320.
+  - **Tap targets:** 0 under 44px in `<main>` at 375.
   - **Reduced motion:** the counter rests at `01 / 10`, `getAnimations()` is 0 and 0 videos play.
   - **JS off:** the h1 is opacity 1, one feature shows on the display, and one row is open per room.
-- **Scale has rhythm.** On desktop the sizes are 52 (h1, once) / 26 (display name, h2s) / 21 lede / 17 / 16 / 14 / 13 / 12 mono. There is one big thing, and the rest is medium and small.
-- **Clean.** `taste.py` OK and 0 hues measured in `<main>`. Fonts are Zen and Zen Mono only. Nothing sits above the h1: "Platform Features" is a caption under it.
+- **Clean.** `taste.py` OK, and 0 hues measured in `<main>`. Fonts are Zen and Zen Mono only. The caption "Platform Features" sits under the h1. Rhythm is 52 / 26 / 21 / 17 / 16 / 12.
 
 ## The 11 answers
-1. **5 s / 1 s.** Yes.
-   - **Desktop:** the h1 (124–238), lede, ask (284–340) and the live display (392–555) are all on the first screen, and the display changes on its own at about 1 s after idle.
-   - **Gaps:** the second key row ends at 838–842, past the 801 fold. On a first visit the shared cookie card (716–785) covers the first key row's labels.
-   - **Phone:** the h1 is 4 lines at 40px (MASTER asks for 3). The ask sits at 416–468, and the display starts at 508, so 159px of product is visible at 375×667.
-2. **One in, one out?** Mostly. Each room is one ~751px screen with one idea, and white, quiet grey and white alternate.
-   - **Dead band:** there is about 230px of empty white between the keyboard and "Hanzo Chat": `.xft-hero` padding-bottom 116 plus `.xft-prod` padding-top 116 (frame d-s01).
-   - **Repeats:** the feature names still appear three times (keycap, display, room row), and the product names four times (cluster label, h2, film caption, band card).
+1. **5 s / 1 s.** Yes on desktop.
+   - **Desktop:** the h1 (104–218), lede and ask (264–320), and the live display (372–535) are all on the first screen, and the display changes on its own within the first idle second.
+   - **Fold:** the second key row (733–822) is cut by the 801 fold.
+   - **Phone:** the h1 is still 4 lines at 40px. The 32px rule at ≤899px loses on specificity, because `lx-lm w2-display` wins. At 375×667 the ask is at 408–460 and the display starts at 500.
+   - **Arrival:** in the first frame (d-arr0) the shared header "Try Hanzo" is a filled black pill next to the filled hero ask, so there are 2 solid fills for under a second.
+2. **One in, one out?** On desktop, mostly. Each room is one screen with one idea.
+   - **Phone:** each step of a room's accordion grows one row and shrinks another, which pushes everything below it. On phone the film sits above the rows, so by the time you read the rows the film's answer is off-screen (after a row tap, the film top is at −135).
 3. **A real object in every section?** Yes:
    - **Hero:** the keyboard.
-   - **Rooms:** Hanzo's films.
-   - **Band:** three film cards.
-
-   But the films are abstract model art (Enso ring, Zen sphere, Iro mountains), not the product. They don't change with the open row: only the `NN / 04` caption and the bar move. Each film shows the same frame whichever feature is open.
+   - **Rooms:** Hanzo's Enso, Zen and Iro films, which now move with the open feature.
+   - **Band:** three film cards (365 / 292 / 219 wide).
 4. **One ask, nothing floating, scale?**
-   - **Ask:** yes. One solid fill per viewport ("Open Chat" in the hero, then in the header, then in the band with the header quiet).
-   - **Floating:** nothing floats over content. On phone the sticky display (64–284) slides over the keys above it by design, and the tapped key stays in view below it (key 9 top at 383).
-   - **Scale:** OK.
-5. **Every hover and press answers?** Yes for the keys, rows, ask, text link, film cards, band cards and pause. Two gaps:
-   - **Row hover:** it changes no background (`rgba(0,0,0,0)` before and after). Only the row opening tells you.
-   - **Finder:** a 1406px-wide empty white bar with only a magnifier and no visible words. With focus it gets a 1px ink ring, which reads as a lazy plain box.
-6. **Overlaps, font swap, shift?** No font swap (Zen loaded, h1 box holds), and no shift above 0.0003. Nothing overlaps at 1470×801 or 375×812 apart from the intended sticky display on phone.
-7. **Reference?** It feels like apple.com feature rows, with a list beside a product film and a progress bar.
-   - **synchronized.studio is half there.** The film card opens into /dev through a title stage, but the stage title "Hanzo Dev" does not land on /dev's h1 ("Describe the change. Dev ships it.", top 219), so it is a page transition, not a card that becomes the hero.
-   - **anthropic.com and apple.com are missing their key move:** the product changing state as each feature lights.
-8. **Different from neighbours?** The hero medium (a keyboard instrument) and signature are its own. The rooms (numbered accordion rows beside a black media card, mirrored) are a common pattern and read as one block repeated three times.
-9. **18 parts.** The card has all 18 with evidence. No false claim found (see below). Part 18's "review 8 or more" box is honestly unchecked.
-10. **Banned tells.** None found:
+   - **Ask:** yes after arrival. The header swaps to a filled "Open Chat" after the hero (measured at scroll 899) and goes quiet while the band's ask is in view.
+   - **Floating:** nothing floats over content apart from the intended sticky display on phone.
+   - **Scale:** has rhythm on desktop.
+5. **Every hover and press answers, with no jumps?** No: rows jump under the pointer.
+   - **Chat room:** hovering row 04 opens it, row 01 collapses, and the row you are pointing at moves up 65px (top 375 → 310). The pointer ends on the description, not the row.
+   - **Dev room:** row 02 moves 32px (561 → 529) and its hover fill is lost (`rgba(255,255,255,.024)` → transparent).
+   - **Everything else:** keys, ask, text link, film and band answer cleanly.
+6. **Overlaps, font swap, shift?**
+   - **Desktop:** clean (CLS 0.019, no font swap).
+   - **Phone CLS:** 0.107 with no input at all, from 5 room dwells of 6 s with only the rooms stepping themselves. It was 0.137 over the full walk. Both are past Google's 0.1 fail line. The sources are `li.on`, `LI|LI|LI`, `xft-film-cap` and `xft-prod p1/p2`.
+   - **Phone overlap, Dev room broken:** `.xft-prod.p1 .xft-prod-in { grid-template-columns: minmax(0,5fr) minmax(0,8fr) }` (CSS line 112, outside any media query) beats the phone rule `.xft-prod-in { grid-template-columns: minmax(0,1fr) }` (line 159). At 375 the film is 120×90px in the top-left corner, its caption (97px tall, "04 / 04 Inst… Hea… API") spills out of it, and the rows are squeezed into a 191px column. The same happens at 768: the film is 268px wide beside 429px of rows.
+7. **Reference?** It feels like apple.com feature rows (a list beside a product film with a progress bar), and the film now changes per feature, so the move is there on desktop. On phone the move happens off-screen.
+8. **Different from neighbours?** Yes. A keyboard instrument as the hero is its own medium and signature, and the three rooms now differ from each other on desktop.
+9. **18 parts.** All 18 headings have evidence, but part 11 makes a false claim (see the card check). Part 18's "review 8 or more" box is honestly unchecked.
+10. **Banned tells.** None:
     - 0 hues;
     - no eyebrow above a heading;
     - no gradient text, Inter or springs;
     - no fade-on-hover;
-    - no 3 equal boxes (band cards measure about 365 / 292 / 219 wide).
+    - no 3 equal boxes.
 
-    On the edge: `Features.css` still has 39 lines with literal hex or `rgba()` (MASTER part 7 says tokens only).
+    On the edge: `Features.css` now has 50 lines with literal hex or `rgba()`, up from 39 (MASTER part 7 says tokens only).
 11. **Copy untouched?** Yes.
-    - **Parity:** `parity.py /features` reports only the shared header and footer units as missing (44 text, 40 links, all chrome).
-    - **Page links:** /chat?skip=login and /dev are present.
-    - **Display label:** it wraps on phone instead of truncating.
+    - **Parity:** `parity.py /features` misses only shared header and footer units (44 text, all chrome).
+    - **Page copy and links:** every feature string is present, and /chat?skip=login and /dev are present.
 
 ## Card check (docs/coverage/features.md)
+- **False:**
+  - **Part 11, "the product rooms stack on phones (film, then rows), nothing pins over text" and "375×812 … pass with no overlap".** The Dev room does not stack at 375 or 768: it stays two columns, with a 120px film whose caption overflows it. Per the brief, the verdict is capped at 7.
+  - **Line 5, "no visible placeholder".** The input has `placeholder="Find a feature"`, and it shows in the frames. This is stale, and harmless in itself.
 - **True:**
-  - header comment fields; one h1; one solid fill per viewport;
+  - header comment fields; one h1; one solid fill per viewport after arrival;
   - `data-cta` and `data-thumb` on `features.hero` and `features.close`;
-  - phone ask swap (measured at 450 px and onward);
-  - rooms stack on phone; films via `ModelFilm`, at most 2 playing;
-  - rows step every 2.6 s and drive the film counter; hover previews the feature; keys travel 4px;
+  - the film moves to a new crop (scale and origin, 500 ms) as rows step every 2.6 s, and hover, tap or focus takes over;
+  - keys travel 4px; hover previews the feature on the display;
+  - the display and the top key row are on the first screen at 1470×801 (row 1 bottom 724);
+  - the phone header ask swap;
   - JS off shows one feature; reduced motion rests;
-  - 0 targets under 44px at 375; scrollWidth 320;
-  - blocked network gives 0 console errors; finder states; `taste.py` passes;
-  - the display and first key row are on the first screen at 1470×801 (bottom 744; second row is below);
-  - the `V2:` line is in `Features.jsx`.
-- **Half-true:**
-  - **Part 3, "the card's title carries `data-morph`".** The attribute is there, but the morph lands on a different h1 (not within 12px of the destination title).
-  - **The parity note.** It is right about chrome-only misses.
-- **Stale, not on the card but worth fixing:** `app/features/page.jsx` line 1 still says "three pinned product chapters".
-- **False:** none found. The verdict is not capped.
+  - 0 targets under 44px at 375; scrollWidth 320 at 320;
+  - a blocked network gives 0 console errors on a clean load;
+  - `taste.py` passes; the `V2:` line is present; no `data-morph`.
+- **Unproven:** part 13's "LCP in budget". Not measured here, and the card does not give a number.
 
 ## Fixes (in order)
-1. **Make each room's picture answer the feature.**
-   - **What changes:** when a row opens, the film card must visibly change, not only `.xft-film-cap .x-mono`. For example, give each row its own crop or time of the film. Set `video.currentTime` to a per-row offset with a 300 ms crossfade, or step `object-position` / scale (1 → 1.08) per row on `.xft-film video` with ease-in-out at 400 ms.
-   - **Better, if Hanzo has them:** show the product's own UI frame per feature via `Pic` (Chat window, Dev CLI, Design canvas).
-   - **Why:** this is the one thing keeping the rooms from feeling alive.
-2. **Break the three-identical-rooms pattern.** Keep the copy and give each room its own layout and move:
-   - **Chat:** keep the current split.
-   - **Dev:** a full-bleed black room with the film as background and the rows on it in `#fafafa`. This is one of the 2 allowed black rooms, entering as a rounded card that opens to full width.
-   - **Design & Cloud** (2 features): a wide film over its two rows side by side.
-3. **Close the dead band.** `.xft-hero { padding-bottom: 44px }` and `.xft-prod.p0 { padding-top: 72px }`, so the Chat room peeks into the first scroll. Pull `.xft-inst` up about 40px (`.xft-hero` padding-top 64 → 44, or a smaller `.xft-top` margin) so the second key row clears 801.
-4. **The finder is a blank box.** Shrink `.xft-find` to the board's first column (about 360px) or set it inline right of the cluster labels, with a visible hint. The hint needs a `content/ui-strings.json` entry (request it), or reuse the existing "Find a feature" aria-label text as the placeholder. A 1406px empty bar reads as unfinished.
-5. **Phone h1 to 3 lines.** At ≤599px, set `.xft-h1` to 38px with `max-width: none` (or `letter-spacing: -0.02em`), so "Everything you need to" holds one line. Then lift the display above 480.
-6. **Morph lands true.** Either send the film-card title into /dev's h1 position and size (within 12px), or drop `data-morph` from `.xft-film-cap b` and call it a page transition on the card.
-7. **Row hover fill.** Inside `@media (hover:hover)`, set `.xft-rows button:hover { background: #f5f5f5 }` (`#ededed` in the grey room `.p1`), so hover answers before it opens.
-8. **Cut one repeat of the product name.** Drop the visible `<b data-morph>` name from `.xft-film-cap` (keep it for the morph via `aria-hidden` and visually hidden), since the h2 sits right beside it.
-9. **Housekeeping.**
-   - Swap the 39 hex/`rgba()` lines in `Features.css` for tokens.
-   - Update `app/features/page.jsx` line 1's stale `V2:` text.
-   - Set `aria-hidden` band cards to `tabIndex={-1}` plus `role="presentation"`, or make them real labelled links. Right now they are tappable links hidden from assistive tech.
+1. **Fix the phone Dev room.**
+   - **Change:** inside `@media (max-width: 899px)` in `Features.css`, add `.xft-prod.p1 .xft-prod-in { grid-template-columns: minmax(0, 1fr); }`. This must match the specificity of line 112 to win.
+   - **Re-check at 375 and 768:** the film should be full width at 4:3, the caption should sit inside it, and the rows should take the full width below.
+   - **Card:** correct part 11.
+2. **Stop the rooms shifting the page (phone CLS 0.107 idle).**
+   - **Problem:** the self-stepping accordion changes the height of `.xft-rows` on every step.
+   - **Fix:** make the open description not change the room's height. For example, render the four descriptions stacked in one grid cell (`grid-area: 1/1`, like `.xft-screen-body`) in a fixed panel under the row list, and show only the open one with opacity and translate. Alternatively, give `.xft-rows` a `min-height` equal to its tallest open state, and let the closing row's description overlap the opening one rather than collapse.
+   - **Target:** CLS under 0.02 on phone across a full idle walk.
+3. **No row jumps under the pointer (desktop).**
+   - **Problem:** hovering a row must not move it.
+   - **Fix:** once the height is fixed (fix 2), rows stay put. If you keep the accordion, open on click and focus only and let hover give just the fill (`#f5f5f5`, or `rgba(255,255,255,.08)` in `.p1`).
+   - **Check:** row 04 in Chat should keep `top` 375 under hover.
+4. **On phone, keep the film's answer in view.**
+   - **Problem:** the film sits above the rows, so its crop change happens off-screen.
+   - **Fix:** at ≤599px, set `.xft-film { aspect-ratio: 16/9 }` and `.xft-prod { padding-block: 44px }`, so the film and the open row share one 812px screen. Or move `.xft-film-w` after `.xft-rows` on phone.
+5. **Phone h1 to 3 lines.**
+   - **Problem:** `.xft-h1 { font-size: 32px !important }` inside the 899px query never applies (the h1 measures 40px).
+   - **Fix:** raise its specificity to `.xft-hero h1.xft-h1` and pick a size that gives 3 lines at 375. 36px with `letter-spacing: -.02em` holds "Everything you need" on one line. Then the display starts above 480.
+6. **Clear the second key row at 801.** It ends at 822. Trim 22px: `.xft-top { margin-bottom: 8px }` and `.xft-find { margin: 8px 0 }`, or `.xft-key { min-height: 76px }`.
+7. **One solid fill on arrival.** The shared header "Try Hanzo" paints filled for under 1 s before `usePhoneAsk` and the shared Ask outline it. Set the outlined state on first paint (server class), or request it in `docs/requests/features.md` if it is shared.
+8. **Housekeeping.**
+   - Swap the 50 literal hex and `rgba()` lines in `Features.css` for tokens.
+   - Correct line 5 of the card: the placeholder is visible.

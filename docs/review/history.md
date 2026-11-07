@@ -1,124 +1,96 @@
 # /history — James-eye review
-
 Verdict: 7/10
-First complaint: "I scroll through the years at a normal speed and the screen goes blank. The year slides out and nothing comes in. And why does every year show the same number twice, once in a grey box?"
-
-Walked 7 Nov at `9afbb4b` (`components/pages/History.jsx`, `History.css`, `historyData.js`, `story.css`, `StoryPause.jsx`, `StoryClose.jsx`). Working files are in the `critic2/` scratch folder.
-- **Desktop film:** 1470×801, 103 s (`vid-history/history.webm`, sheets `sheets/history-01…13.jpg`).
-  - Pressed the pause beside the hero year, then resumed.
-  - Hovered the hero asks.
-  - Dragged the press-clipping rail left, to its end, and back.
-  - Scrolled the pinned scene slowly in 80px notches, 160 ms apart, with a 1 s dwell on each new year (13 stills, `history-d-year-00…12.png`). Then flicked back up and clicked "2019" on the year rail.
-  - Used Your year: + twice, then typed 2024, 1999, 2031 and 2017.
-  - Hovered the principles, the Band ask and "Return to About Hanzo".
-- **Phone:** 375×812 (isMobile, hasTouch), 15 screens (`sheets/history-phone-01…03.png`).
-- **Also checked:** reduced motion, JS off, console, and the card-to-page Morph into /about.
+First complaint: "Twelve of the thirteen years are the same grey squiggle. Where are the customers? SKULLY, Damon, Triller: I want to see them. And the first screen is still a wall of text next to a big number."
+(walked 7 Nov at `c95ee691`, 1470×801 fine pointer and 375×812 isMobile/hasTouch; plus 320×700, 375×667, reduced motion, JS off. Scripts and frames are in `scratchpad/critic-history-r3k7/`.)
 
 ## What works
-- **The signature exists and pins.** The scene holds for 7,257px, and the 13 years change every about 500px of scroll: 2014 at 2028, 2015 at 2815, … 2026 at 8287.
-  - The progress hairline and the 13-year rail track where you are.
-  - "2019" on the rail jumps there with Lenis. Apple's pinned stage is really here.
-- **The drag rail is real** (grubogrubo or osply).
-  - On arrival it leans −90px and back, once.
-  - A throw carries on with inertia: −871px at release, −1,112px settled.
-  - It stops with the last clipping on the gutter (right edge 1311 of 1470), and a hovered clipping straightens and lifts 6px.
-- **The first screen is alive.**
-  - The h1 is cut in by line.
-  - The giant year runs 2014 → 2026 in 15 s while each era's bar fills.
-  - The 44px pause holds the year (probe: `aria-pressed=true`, 2016 still 2016 after 2.5 s). It is also a keyboard path, and it is hidden under reduced motion.
-- **Your year answers every input.**
-  - 2024 shows that year.
-  - 1999 says "Building business software since 2014."
-  - 2031 says "Not written yet."
-  - ± step one year at a time and press to .94.
-- **Clean numbers.**
-  - 0 hues.
-  - Parity 214/214 text and 42/42 links.
-  - CLS 0.0002 (header).
-  - Reduced motion: 17 of 17 screens still, with the hero resting on 2026.
-  - JS off stacks all 13 years legibly.
-  - No sideways scroll at 375, and 0 phone targets under 44px.
-  - "Return to About Hanzo" opens /about.
+- **The stage no longer goes blank at a normal pace.** In a slow walk (one year at a time, 1.1 s dwell) all 13 years show exactly one year, its text and its plate.
+  - A hard flick test (400px wheel every 100 ms, about 4,000 px/s) gave 19 pinned samples: 0 doubles. One sample was fully empty (2025, text 0.00 / year 0.00) and three had the year fully out of its mask. Round 2 was blank at much slower speeds.
+- **The scene is now short.** Title, badge (under the h3), figure, first line and links. The rest sits behind a 44px (+) `<details>`. Opened, the text ends at 629px and the year rail starts at 637px, so it still fits.
+- **One solid per screen.** "Explore Our History" is now a text link (underline plus arrow +4px on hover). The page's one ask, "Talk to Hanzo FDE", is in the desktop header and the Band. No desktop ask bar floats over content any more (the only fixed layer is the shared cookie card).
+- **Scale is back on the deck.** The hero year is 111.7px, the scene year 111.7px, the h1 52px and the scene headings 26px.
+- **The phone stacks the 13 years** (659 to 775px each). It has no sideways rail any more, 0 overflow at 375 and at 320, and the ask's link sits at 424px on 375×667.
+- **Alive without input.** The hero year runs 2017 → 2019 in 3 s on arrival. The 44px pause holds it (`aria-pressed=true`, 2020 still 2020 after 2 s).
+- **The drag rail throws with inertia** (−600px at release, −980px settled). A hovered clipping straightens and lifts 6px. The clippings' ring is gone, so they are only raised now.
+- **Reduced motion and JS off work.** Reduced motion rests on 2026 with the pause hidden, and 0 running animations after 3.5 s. JS off shows the h1 at opacity 1 and all 13 years stacked, with 0 hidden.
+- **Clean scripts.** Parity 214/214 text and 42/42 links. `taste.py` OK. Phone CLS 0.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes: the year starts running at once.
-   - But the first screen is wordy. A 5-line lede plus four eras, each with a title, a span and a 2-line description, is about 18 lines of text beside the headline.
-2. **One in, one out, or a document?** Inside the scene, yes, but only when you scroll slowly.
-   - **At normal speed the stage goes blank.**
-     - Frames 64.5, 66.0, 68.5–70.5 s are empty: no year, just the era caption, with a half-cut year sliding under it (`fr/history-68.5.png`).
-     - Cause: every change waits 0.28 s out, then 0.3 s delay plus 0.7 s in (`.xhi-cut > span`, History.css:50–52), and the text has the same lag (:79–83). A year that changes faster than about 0.6 s never arrives.
-   - Outside the scene it is a document: the clippings, the intro and the principles.
-3. **A real visual object in every section?** Weak in the scene.
-   - When there is no photo or logo, the plate prints the year's metric ("$8.4M in 30 days · Nasdaq") in a grey box. The same words sit 110px to its right as the highlight (`history-d-year-05.png`).
-   - That is by design for 2021, 2022, 2023 and 2025 even online, and for 12 of 13 years here.
-   - Only 2026 shows real Hanzo media (the Zen art).
-4. **One ask in the sticky header, nothing floating; scale rhythm?**
-   - **Two different solids.** The hero's solid is an in-page jump ("Explore Our History" → #timeline), while the page's real action is "Talk to Hanzo FDE" (the Band and the bar).
-   - **Scale.** The hero year is 153px and the scene year 141px: both above the 112px top step, and both permanently big rather than growing for a moment.
-   - **Numeral runs.** The principles (six 64px numerals) and the FDE steps (four 64px numerals) are back to back, so there are 10 Air numerals in two screens.
-5. **Every hover and press answers, no jumps?** Yes.
-   - Clippings straighten and lift.
-   - Principle numerals turn ink and rise 4px.
-   - The rail years underline.
-   - The back-link arrow moves 8px.
-   - ± press to .94.
-6. **Overlaps, font swap, layout shift?** No font swap or shift. No page overlap at either size.
-   - On the phone the scene becomes a sideways rail of 13 cards, each 972px tall and 295px wide (scroll width 4,011px). It has no year index (`.xhi-rail2` is `display: none`), so 12 years hide behind sideways swipes with no sense of where you are.
-   - MASTER part 11 says pinned scenes stack under 900px, and the page's own comment says "On a phone the years simply stack".
-7. **Which reference, is its motion there?**
-   - Apple's pinned, scrubbed scene: there, but it blanks under a normal flick.
-   - The drag rail with inertia: there.
-   - grubogrubo or hamol tilt-cards: there.
-8. **Different from its neighbours?**
-   - The hero medium (a running year) is its own.
-   - But the page uses the same object three times: hero (153px), scene (141px) and Your year (64px), all the same `YearCut`.
-   - It closes on the same StoryClose band as /about and /blog.
-9. **The 18 parts?** See below.
-10. **Banned tells?**
-    - None of the page's own. The year badge pill and the era caption sit under their headings.
-    - Borderline: the "01 / 06" counter above each clipping figure.
-    - The rail opts into the shared "Drag" cursor label.
-11. **Copy untouched?** Yes: parity is clean.
-    - Copy question: "1,600+ repositories" (lede, era 4) against "1700+ repos" (clipping 6) on the same page.
+1. **Sells in 5 s, moves within 1 s?** It moves (the year runs from load), but the first screen is still wordy.
+   - The 5-line lede plus four eras, each with a title, a span and a 2-line description, comes to about 20 lines beside the h1.
+   - The next section peeks 16px (`.xhi-rec` top 785 of 801), not 56px.
+   - The lede and links arrive as a plain 1 s opacity fade (`motion.div` opacity 0→1, delay 0.5 s). That is a fade-up the card does not count.
+2. **One in, one out?** Yes in the pinned scene. Elsewhere it reads as a document: clippings, intro, Your year, six principles and four FDE steps.
+   - On the phone the 13 stacked years are about 9,400px of the 19,394px page.
+3. **A real visual in every section?** **No, not in the scene.**
+   - 9 of the 10 plate images 404 on localhost: `/logos/customers/{skully.png,bellabeat.svg,unikoin-gold.svg,casper-blockchain.svg,trillerfest.png,keek-social.svg}`, `/customers/kanoa/buds.webp` and `/customers/damon-motorcycles/reveal.webp`. `public/` holds only `fonts/` and `models/`.
+   - So 12 of 13 years show the same Sigil contour on #f5f5f5. Only 2026 (`/models/zen.webp`) is real Hanzo media.
+   - The clippings are text-only paper cards, with 150 to 200px of empty middle (`d-clips-drag.png`).
+4. **One ask in the header; scale rhythm?** On desktop the header ask is "Talk to Hanzo FDE": good.
+   - On the phone the header ask reads "Try Hanzo" on every screen I took, and nothing sticky carries "Talk to Hanzo FDE".
+   - **Rhythm.** Each scene screen holds two big things: the 112px year and the 44px Air metric ("120k ETH Raised · Acquired", "$2.4B+ ATH Market Cap"). The scene year never settles to a resting size.
+   - **Numeral run.** The 10 Air numerals in a row (principles 01–06 at 64px, then FDE 01–04 at 64px) are unchanged. FDE is four equal columns.
+5. **Every hover and press answers, no jumps?**
+   - Hover and press: yes. The text links underline and their arrows move 4px. Clippings straighten. Principle numerals ink and rise 4px. The Band ask goes #f5f5f7 → #fff. ± press to .94.
+   - **Your year jumps.** Typing "2024" keeps the box at 360px for 3 keystrokes, then it grows to 622px on the 4th. The principles below move from 648 to 910 (+262px).
+   - The empty states ("Not written yet.", "Type a year.") are still one line at the top of an empty 360px grey box (`d-you-2031.png`).
+6. **Overlap, font swap, layout shift?** No overlap and no font swap.
+   - Desktop CLS was 0.13, almost all from the Your year height change (0.064 + 0.065, sources `.xhi-prin`). Part of that comes from Playwright `fill()` not counting as input, but the real-typing probe confirms the 262px move.
+   - **A red "1 Issue" dev badge** (a hydration mismatch, "attributes of the server rendered HTML didn't match") showed on 2 of 7 loads, at both sizes (`d-idle.png`, `p-idle.png`). I could not reproduce it in 5 more loads, and another chat had uncommitted shared edits (`usePhoneAsk.js`), so the cause is not attributed. It must be clean before "ready".
+7. **Reference and its motion?**
+   - Apple pinned scrub: there, and robust now.
+   - grubogrubo/osply drag rail with inertia: there.
+   - What is missing is the image-led half of osply and hamol: the scene is type plus contour drawings.
+8. **Different from its neighbours?** Yes. The running year and the year-cut scene are its own (About: curve; Blog: cover). It still closes on the shared StoryClose band.
+9. **18 parts?** Mostly covered. See the card check: four claims are false.
+10. **Banned tells?** None outright.
+    - Borderline: the "01 / 06" counter still sits above each clipping's figure.
+    - The page CSS keeps literal colours: #f5f5f5, #a3a3a3, rgba(0,0,0,.1/.18/.25/.3) and rgba(255,255,255,.16) (part 7 says tokens only).
+11. **Copy untouched?** Yes: parity 214/214 and 42/42.
+    - The open question from round 2 ("1,600+ repositories" against "1700+ repos" on the same page) is still not listed on the card.
 
-## Missing from the 18 parts
-- **1 Strategy:** the hero's solid is an anchor, not the page's action. There are two solid labels.
-- **3 First impression:**
-  - No 56px peek at 1470×801.
-  - About 18 lines of text in the first screen.
-  - The scene blanks under a fast scroll.
-- **7 Visual:**
-  - The clippings are both outlined (`0 0 0 1px`) and raised (a 36px drop shadow), with literal rgba in page CSS.
-  - The years are 153 and 141px, off the scale and never settling.
-- **9 Motion:** time-delayed transitions on a scroll-driven scene. The same YearCut is used three times.
-- **10 Media:** the image fallback repeats the metric beside it instead of a Sigil.
-- **11 Mobile:** the pinned scene is a 4,011px sideways rail with no index, not a stack.
-- **17 States:** "Not written yet." and "Type a year." sit alone at the top of a 360px empty grey box.
-- **18 Coverage card:**
-  - "One idea per 100svh" fails under a normal scroll.
-  - The page comment's "on a phone the years simply stack" is false.
+## Card check (docs/coverage/history.md)
+- **False:** Part 11, "44px links". At 375 the hero links "Explore Our History", "About Hanzo" and "Open Source" and "Explore the full Zen manifesto" are 21px tall (156×21, 110×21, 111×21, 229×21).
+- **False:** Part 4, "Sticky ask: the shared bar carries Talk to Hanzo FDE". There is no ask bar on desktop (the header carries it), and the phone header says "Try Hanzo".
+- **False:** Part 10, "customer photos and logos from Hanzo's case studies". 9 of 10 image paths 404, so 12 of 13 plates are the Sigil fallback.
+- **False:** Part 18 says "all six fixes pushed", and the page's `V2:` line says "all fixed". Round 2 listed 9 fixes. Fix 8 (the Your year empty state) is not done, and the 10-numeral run and the 01 / 06 placement are unchanged.
+- **Imprecise:** Part 9, "0 fade-ups". The hero side is an opacity fade.
+- **True:**
+  - one h1;
+  - parity 214/214 and 42/42;
+  - `taste.py` passes;
+  - JS off stacks all 13 years;
+  - reduced motion holds 2026 and hides the pause;
+  - a 44px pause with `aria-pressed`;
+  - the phone stacks the years;
+  - no overflow at 320;
+  - `data-cta="history.band"` and `data-thumb`;
+  - kit `Cta` links;
+  - the disclosure is in the HTML.
+- A false claim caps this verdict at 7.
 
 ## Fixes (in order)
-1. **Never blank the scene.**
-   - Drive the cut from scroll, not timers. For each year, derive its own progress (`useTransform(p, [i/N, (i+1)/N], …)`) and map y and opacity of the year, text and plate to that progress, so any scroll position shows exactly one year.
-   - Or, if you keep CSS transitions: when the index changes less than 400 ms after the last change, set a `.fast` class that removes the 0.3 s and 0.26 s delays and crossfades in 150 ms.
-   - Test with 400px wheel flicks every 100 ms: no frame without a year.
-2. **A real plate for every year.**
-   - When there is no photo or logo, or on image error, draw `<Sigil seed={y.year}>` (ink on #f5f5f5) in the plate and drop `.xhi-plate-f`, so the metric is never printed twice.
-   - Keep the 2026 Zen art.
-3. **Thin each stage.**
-   - Show the title, the badge, the first line and the post links.
-   - Put the 2nd and 3rd lines and the highlight block (metric, htitle, desc, tag) in an inline disclosure that is in the HTML (`hidden="until-found"`) and opens on click. Detail lives in things you open.
-4. **Scale back to the deck.**
-   - Hero year at most 112px; the scene year rests at 84px and grows to 112px only while that year is current.
-   - Give Your year its own object (for example a 64px figure without the cut, or the year's Sigil), so the cut is not used three times.
-5. **Phone: stack, or give the rail an index.** Either stack the 13 years vertically (the comment's own plan), or show the 13-year rail as a sticky, scrollable strip above the swipe rail with `aria-current`, so a reader knows where they are.
-6. **Outline or raise, not both.** Drop the `0 0 0 1px` ring from `.xhi-clip` and keep one token shadow (or make the clippings flat #f5f5f5 tiles). Move "01 / 06" under the figure.
-7. **One solid.** Make "Explore Our History" a text link (`v2s-tlink`). It is a jump, and the page's action is "Talk to Hanzo FDE".
-8. **Your year empty states.** Set the message where the year title would sit, at the same size, and drop the box's 360px min-height when there is no year.
-9. **Correct `docs/coverage/history.md`** and the page comment.
-
-**Shared chrome (not scored):**
-- The desktop ask bar ("History · Talk to Hanzo FDE") floats over content. At the scene's entry it covers the "SKULLY Case Study" link (`history-d-year-00.png`), and a floating pill bar on desktop is banned.
-- "Drag" cursor label on the rail.
-- One of three pause clicks did not take on a cold dev load during the film; two direct probes paused cleanly.
+1. **Real plates.**
+   - Mirror the 9 missing files into `public/` at the paths `historyData.js` already uses (`/logos/customers/skully.png`, `bellabeat.svg`, `unikoin-gold.svg`, `casper-blockchain.svg`, `trillerfest.png`, `keek-social.svg`, `/customers/kanoa/buds.webp`, `/customers/damon-motorcycles/reveal.webp`), from Hanzo's own live assets. If `public/` is shared, file `docs/requests/history.md`.
+   - Until they exist, vary the Sigil per era (its seed alone is not reading as different), so the 12 plates are not one squiggle.
+2. **Phone tap targets.** Give `.xhi-hero .v2s-acts a` and `.xhi-prin-h a` `display:inline-flex; align-items:center; min-height:44px`. Check that all four links measure 44px or more at 375.
+3. **Your year must not jump.**
+   - Give `.xhi-you-a` one fixed height equal to the filled card (about 622px at 1470), with the plate always present.
+   - For empty or out-of-range input, keep the plate (Sigil) and set the message in the `.v2s-title` slot where the year title sits.
+   - Do not collapse while a 4-digit year is still being typed: show the last valid year until 4 digits are in.
+   - Target: `.xhi-prin` top does not move while typing.
+4. **Thin the first screen.**
+   - Show only the active era's description (`.xhi-eras li:not(.on) p { display:none }`, or a clip-path reveal on `.on`). That cuts about 6 lines.
+   - Shorten `.xhi-hero` so the next section peeks 56px (min-height `calc(100svh - 76px - 40px)`, measure until `.xhi-rec` top is about 745 at 801).
+   - Replace the hero-side opacity fade with the line mask, or no motion.
+5. **One big thing per scene screen.**
+   - Drop `.xhi-yr-fig` from 44px to 26px (or move it into the `<details>`), so the 112px year is the only big thing.
+   - Let `.xhi-odo-w .xhi-cut` rest at 84px and grow to 112px only during the cut.
+6. **Break the numeral run.** Set the FDE step numerals (`.xhi-fde-l li > span`) as 13px Zen Mono captions, or the principles' as 26px, so the page does not stack 10 Air 64px numerals across two screens.
+7. **Flick-proof the last gap.** Remove the in-delays (`.xhi-cut > span.on` .1s; `.xhi-yr.on` .08s/.06s) whenever the index changes less than 200 ms after the previous change (a `.fast` class on `.xhi-scrub`). Re-run 400px per 100 ms flicks: 0 samples with both text and year under 0.5.
+8. **Phone ask.** The phone header shows "Try Hanzo" on /history. Make `usePhoneAsk` (or a request to its owner) put "Talk to Hanzo FDE" there, as on desktop.
+9. **Tokens only in History.css.** Replace #f5f5f5, #a3a3a3 and the literal rgba borders and shadows (lines 32, 44, 47, 68, 107, 124, 132, 133, 135, 136) with `tokens.css` variables. Move "01 / 06" under the clipping figure.
+10. **Hydration badge.** Reload /history cold 10 times with the dev overlay open and fix the mismatched attribute if it is page-owned (suspects: `inert` on the inactive `.xhi-yr` articles, and the motion values in `Hero`).
+11. **Correct the card and the `V2:` line:**
+    - parts 4, 9, 10, 11 and 18;
+    - list the "1,600+ repositories" against "1700+ repos" copy question.

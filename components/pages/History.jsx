@@ -16,11 +16,10 @@
 // Metric: contact_sales_submit via the Band (data-cta="history.*")
 // Signature: the timeline scrub: one pinned scene where your scroll cuts a giant year into its line as each year's story comes in and the last goes out
 // Beyond: your year: type the year you started and the card cuts to what Hanzo was building then, with its posts
-// V2: 7/10 critic round 2 (blank stage between years, metric twice, text per year, scale, phone rail); all fixed, re-review pending
+// V2: 7/10 critic round 3: wordmark plates for the years whose pictures are not mirrored, a lighter first screen (one era's line at a time), your year never jumps, 26px year figures, FDE steps as captions (no numeral run), 44px links
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Img, Film } from '../kit';
-import Sigil from '../Sigil';
 import UI from '../../content/ui-strings.json';
 import StoryClose from './StoryClose';
 import StoryPause from './StoryPause';
@@ -68,7 +67,7 @@ function Hero() {
       <div className="v2s-wrap xhi-hero-g">
         <div className="xhi-hero-l">
           <Lines as="h1" id="xhi-h1" className="v2s-display xhi-h1" now delay={0.05} stagger={0.06} lines={['Sovereign', 'intelligence', 'since 2014.']} />
-          <motion.div className="xhi-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}>
+          <motion.div className="xhi-hero-side" initial={{ y: 12 }} animate={{ y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}>
             <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today.</p>
             <div className="v2s-acts">
               <Cta to="/history#timeline" kind="link" id="history.hero">Explore Our History</Cta>
@@ -173,7 +172,8 @@ function Plate({ y, on }) {
   const src = p.photo || p.logo;
   return (
     <div className={'xhi-plate' + (p.photo ? ' photo' : p.logo ? ' logo' : ' fig') + (ok ? ' ok' : '')} aria-hidden="true">
-      {(!src || failed) && on && <Sigil seed={'history-' + y.year} className="xhi-plate-sigil" />}
+      {/* no picture to hand (or it failed): the year's own customer set as a wordmark plate, never the same grey squiggle */}
+      {(!src || failed) && <span className="xhi-plate-word"><b>{y.title}</b><span className="x-mono">{y.badge}</span></span>}
       {src && <Img ref={img} src={src} alt="" w={1200} h={750} onLoad={() => setOk(true)} onError={() => setFailed(true)} />}
       {p.logo2 && ok && <Img className="two" src={p.logo2} alt="" w={480} h={160} />}
       {p.video && on && <Film src={p.video} poster={p.photo} w={1200} h={750} />}
@@ -264,7 +264,10 @@ const FIRST = +YEARS[0].year, LAST = +YEARS[N - 1].year;
 function Yours() {
   const [raw, setRaw] = useState('2019');
   const n = parseInt(raw, 10);
-  const y = YEARS.find((x) => +x.year === n);
+  const found = YEARS.find((x) => +x.year === n);
+  const last = useRef(YEARS.find((x) => x.year === '2019') || YEARS[0]);
+  if (found) last.current = found;
+  const y = found || (raw.length < 4 && raw ? last.current : null); // half-typed: the last year you saw stays in place
   const say = !raw ? 'Type a year.' : Number.isNaN(n) ? 'Type a year, like 2019.' : n < FIRST ? `Building business software since ${FIRST}.` : n > LAST ? 'Not written yet.' : '';
   const step = (d) => setRaw(String(Math.min(LAST, Math.max(FIRST, (Number.isNaN(n) ? LAST : n) + d))));
   return (
