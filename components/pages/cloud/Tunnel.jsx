@@ -12,7 +12,7 @@
    Motion: clip-path wipe scrub (signature) + typing + magnetic primary. Every word and link is Hanzo's; the URL is the
    example Hanzo prints. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { Code, useLive } from './Frame';
@@ -79,10 +79,8 @@ function Scene() {
   // phones: the scene plays by itself when seen, 9 s a loop
   useEffect(() => {
     if (pin || calm || !live) return;
-    let raf = 0; const t0 = performance.now();
-    const f = (now) => { clock.set(((now - t0) / 9000) % 1); raf = requestAnimationFrame(f); };
-    raf = requestAnimationFrame(f);
-    return () => cancelAnimationFrame(raf);
+    const c = animate(clock, [0, 1], { duration: 9, ease: 'linear', repeat: Infinity });
+    return () => c.stop();
   }, [pin, calm, live, clock]);
   const p = pin ? scrollYProgress : clock;
   const [q, setQ] = useState(calm ? 60 : 0);
