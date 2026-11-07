@@ -201,7 +201,7 @@ html:not(.js) .kg-more { display: none; }
 .kg-check-bar em { margin-left: auto; font-style: normal; padding: 4px 10px; border-radius: 6px; background: var(--paper); color: var(--mute); }
 .kg-check code { background: transparent; padding: 0; }
 .kg-ck-body { padding: 21px 21px 27px; display: grid; gap: 21px; }
-.kg-models { display: flex; flex-wrap: wrap; gap: 8px; }
+.kg-models { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .kg-chip { min-height: 44px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--line-2); background: transparent; color: var(--mute); font: 500 14px var(--mono); cursor: pointer; transition: background .15s var(--eo), color .15s var(--eo), transform .09s var(--eo); }
 .kg-chip:active { transform: scale(.97); }
 @media (hover: hover) { .kg-chip:hover { background: var(--paper); color: var(--ink); } }
@@ -221,7 +221,7 @@ html:not(.js) .kg-more { display: none; }
 @media (hover: hover) { .kg-ruler:hover .kg-run i { transform: scale(1.12); } }
 .kg-verdict { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 17px; align-items: center; padding: 17px; border-radius: 16px; background: var(--paper); transition: background .3s var(--eo); }
 .kg-verdict[data-bad] { background: repeating-linear-gradient(-45deg, var(--muted-tile) 0 6px, var(--paper) 6px 12px); }
-.kg-verdict b { min-width: 3ch; font: 400 44px/1 var(--mono); letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.kg-verdict b { min-width: 7ch; font: 400 32px/1 var(--mono); letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
 .kg-verdict[data-bad] b { color: var(--mute); text-decoration: line-through; text-decoration-thickness: 2px; }
 .kg-v-stack { display: grid; min-width: 0; }
 .kg-v-stack > div { grid-area: 1 / 1; visibility: hidden; }
@@ -257,7 +257,11 @@ html:not(.js) .kg-more { display: none; }
 @media (hover: hover) { .kg-rec button:hover code { color: var(--on-black); } }
 .kg-rx-stage { grid-column: 7 / -1; grid-row: 1; display: flex; flex-direction: column; gap: 27px; padding: 27px 0 0; border-top: 1px solid var(--on-black-line); }
 .kg-rx-top { display: flex; align-items: center; gap: 17px; }
-.kg-rx-ix { flex: none; min-width: 7ch; font: 500 12px var(--mono); letter-spacing: .14em; color: var(--grey-on-black); font-variant-numeric: tabular-nums; }
+/* the stage's place: six ticks (no numerals), the one on stage long and white, the ones played white 55% */
+.kg-rx-ix { flex: none; display: flex; align-items: center; gap: 2px; }
+.kg-rx-ix i { width: 17px; height: 6px; border-radius: 3px; background: var(--on-black-edge); transform: scaleX(.36); transition: background .3s var(--eo), transform .3s var(--e); }
+.kg-rx-ix i[data-past] { background: var(--on-black-3); }
+.kg-rx-ix i[data-on] { transform: none; background: var(--on-black); }
 .kg-rx-bar { position: relative; flex: 1; height: 1px; background: var(--on-black-line); overflow: hidden; }
 .kg-rx-bar i { position: absolute; inset: 0; background: var(--on-black); transform-origin: 0 50%; transform: scaleX(0); }
 .js .kg-rx-bar i { animation: kg-fill 6s linear forwards; }
@@ -369,7 +373,7 @@ html:not(.js) .kg-rx-top { display: none; }
   /* the two model ids side by side at equal width */
   .kg-models { display: grid; grid-template-columns: 1fr 1fr; }
   .kg-chip { padding: 0 6px; font-size: 13px; }
-  .kg-verdict b { font-size: 32px; }
+  .kg-verdict b { font-size: 26px; }
   .kg-room { padding: 44px 21px; border-radius: 20px; }
   /* phone: the stage on top, the six names as a two-column grid of 44px chips beneath it */
   .kg-rx { margin-top: 44px; gap: 27px; }

@@ -2,8 +2,8 @@
 
 Page file: `components/pages/cloud/Ingress.jsx` · gallery: `docs/gallery/ingress/` · metric id: `cta_click ingress.hero`
 
-Open copy questions for James (UI strings the page shows that are in neither `content/live/ingress.json` nor `content/ui-strings.json`; no register entry fits, so the live wording stays and each is a question): (1) "Chain your own pipeline" (the Beyond's h2); (2) "No middleware: straight to the backend." (empty-chain state); (3) "request" and (4) "backend" (the two ends of the chain); (5) "health check failed · out of rotation" and (6) "recovered · back in rotation" (the hero board's backend note, condensed from Hanzo's "taken out of rotation and put back when it recovers"); (7) "certificate…" (the board's pending state); (8) the board's labels "host · path", "middleware", "backends", "from disk · no pod". Round 2 dropped the duplicate "Middleware you compose by annotation" caption under "Chain your own pipeline" (it stays as scene 03's h3).
-Shared changes requested (`docs/requests/ingress.md`): the phone header ask swap (second solid fill), the cookie card over the hero board, ShipPrompt's 32px Copy (wants 44px), GetIt's h2/caption/tag spacing. Still waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
+Open copy questions for James: none. Round 3 (conductor copy rule) removed every invented visible string: the Beyond's h2 is now Hanzo's own sentence "Name one in an annotation, or chain several into a named pipeline and name that."; the chain's ends read "hanzo.ai" and "backend"; the empty chain shows an em dash; the board's labels are "hostname", "middleware", "backend", its routes are hanzo.ai/skill.md, docs/index.html and pricing.html (all on the page), its notes are Hanzo's "out of rotation", "put back when it recovers", "no reload, no dropped connection", "from disk"; the invented example hostnames, backend names, "certificate…" and the "Drag" cursor label are gone.
+Shared changes requested (`docs/requests/ingress.md`): the phone header ask swap (second solid fill), the cookie card over the hero board, ShipPrompt's 32px Copy (wants 44px), the hero ask's hover (done page-local meanwhile). GetIt's spacing is now done page-local. Still waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, Frame `useEvery` (now `useTick`)
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -13,7 +13,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] One solid fill per viewport; label and href are Hanzo's hero ask (`lib/cta.js` is not on main yet)
 - [x] One h1; the page is clear in 5 seconds
 - [x] No dead or self-looping button; no prices on this page
-- [x] Open copy questions for James listed, none decided
+- [x] Copy questions: none (invented strings removed, round 3)
 
 Done here: `// Persona:` to `// Beyond:` head `components/pages/cloud/Ingress.jsx`; the one ask is Hanzo's "View on GitHub" (ingress.hero, ingress.close). Measured with a headless walk: one solid button on the first screen at 1470×801 and 375×812.
 
@@ -33,7 +33,7 @@ Done here: Parity 29/29 text and 2/2 links; Hanzo's header and footer are untouc
 - [x] Ends in one close in Hanzo's words ("Get Ingress" with the ask), then the footer
 - [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
 
-Done here: The first screen is the name, Hanzo's line, the ask, ports 80 and 443 as figures (64px), and one live object: a routing board (titled hanzoai/ingress) where requests arrive by host and path, pass middleware and land on backends; a backend leaves rotation and comes back; a new hostname gets its certificate. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks (entrance states hide only under `html.js`). Round 2: the empty "What happens at the edge" screen is gone (the h2 rides in the first wipe scene), and the black room enters as a rounded card (inset 32px, radius 28) that opens to full width as it reaches 25% of the viewport.
+Done here: The first screen is the name, Hanzo's line, the ask, ports 80 and 443 as figures (64px), and one live object: a routing board (titled hanzoai/ingress) where requests arrive at hanzo.ai paths, pass middleware and land on a backend; a pod leaves rotation and comes back; the certificate is issued at load (Let's Encrypt) and only the middle of the loop waits for it. Round 3: the middleware box holds two chips' height, so its label no longer jumps (y 556 at all 12 samples); the board-to-"What happens at the edge" gap is down from about 360px to about 180px. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks (entrance states hide only under `html.js`). Round 2: the empty "What happens at the edge" screen is gone (the h2 rides in the first wipe scene), and the black room enters as a rounded card (inset 32px, radius 28) that opens to full width as it reaches 25% of the viewport.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` in the page
@@ -66,7 +66,7 @@ Done here: Parity 29/29 text and 2/2 links. Section labels sit under their headi
 - ~~One icon set~~ n/a: no icons beyond the kit's
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Greys from Hanzo's deck only; one dark room (Chain your own pipeline). Round 2 swapped the off-deck #f5f5f7, #161617, #2c2c2e for #f5f5f5, #171717, #262626; board tiles are flat (a 2px ring only when hit) and the scene card keeps the floating shadow with no outline. Deck hex literals remain in page CSS because `tokens.css` is not on main yet.
+Done here: Greys from Hanzo's deck only; one dark room (the pipeline). Round 3: the hero ask hovers to #262626 (was the shared #2c2c2e) with a 4px arrow nudge, styled page-local. Round 2 swapped the off-deck #f5f5f7, #161617, #2c2c2e for #f5f5f5, #171717, #262626; board tiles are flat (a 2px ring only when hit) and the scene card keeps the floating shadow with no outline. Deck hex literals remain in page CSS because `tokens.css` is not on main yet.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
@@ -84,7 +84,7 @@ Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Round 2, th
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, the pause toggle and the middleware chips tick (`aria-pressed`, `data-sound="tick"`), the ↑/↓ reorder buttons and a finished drag tick, copy chimes; the board loops while seen and never finishes, so no done chime
 
-Done here: Signature: the routing board, live. Idle: the board routes a request a second while on screen. Time (round 2): each of the six scenes plays its drawing once as it is wiped in, then rests: the three sources slide up under `networking.k8s.io/v1 Ingress` and `default IngressClass` ticks on; the lock shackle draws and closes, then "Let's Encrypt" and "wildcards included" arrive; the chips arrive 60 ms apart (the `--d` index) and a request passes through the black ones; the hollow pod empties and refills; the four paths type in one after another; 80 and 443 settle. State: middleware chips add and drag-reorder (keyboard arrows too), and a request dot steps down the chain on each change, lighting each row it passes. Scroll: the six scenes wipe up while the section pins, and when the scroll stops mid-wipe the stage settles (600 ms) to the nearest whole scene, so two scenes never rest half-drawn. Walk: idle change at all 8 desktop stops in the scene band (was 2 of 8). Reduced motion: every drawing is its final frame, no settle.
+Done here: Signature: the routing board, live. Idle: the board routes a request a second while on screen. Time (round 2): each of the six scenes plays its drawing once as it is wiped in, then rests: the three sources slide up under `networking.k8s.io/v1 Ingress` and `default IngressClass` ticks on; the lock shackle draws and closes, then "Let's Encrypt" and "wildcards included" arrive; the chips arrive 60 ms apart (the `--d` index) and a request passes through the black ones; the hollow pod empties and refills; the four paths type in one after another; 80 and 443 settle. State: middleware chips add and drag-reorder (keyboard arrows too), and a request dot steps down the chain on each change, lighting each row it passes. Scroll: the six scenes wipe up while the section pins; round 3 removed the auto-settle, so the page never moves on its own (probe: scrollTo 3500, 2700, 4100 rest exactly there; a 300px wheel flick from 2400 rests at 2670, no pull-back). Instead the handover is clean mid-wipe: the outgoing text and card fade out over the first 30% of the next wipe (`--out`), the incoming caption and h3 cut in by line mask and the body rises 16px once its wipe passes 50% (`data-t`), so two headings never stack; each drawing starts as its wipe begins, so no card arrives empty. Reduced motion: every drawing is its final frame, scenes stacked.
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -155,6 +155,6 @@ Done here: A headless JS-off pass shows every word; reduced motion stops each de
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: `docs/review/ingress.md` (7/10), fixes 1-8 done page-local, fix 9 filed in `docs/requests/ingress.md`
+- [x] Review read: `docs/review/ingress.md` (round 2, 7/10): fixes 1-4, 6, 7, 8 done page-local; fix 5 (phone header ask) filed in `docs/requests/ingress.md`
 
-Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (desktop film and phone stills; round 2: `round2-desktop.jpg`, `round2-desktop-pipeline.jpg`, `round2-phone.jpg`).
+Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (round 2: `round2-desktop.jpg`, `round2-desktop-pipeline.jpg`, `round2-phone.jpg`; round 3: `round3-desktop-wipe.jpg`, `round3-desktop-edge.jpg`, `round3-phone.jpg`).

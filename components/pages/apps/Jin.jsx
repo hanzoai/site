@@ -81,10 +81,16 @@ const PauseI = ({ held }) => (held
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
+const ReplayI = () => <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.2 6a3.8 3.8 0 1 0 1.1-2.7M2.2 1.6v2.1h2.1" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+/* MASTER 4.1: the demo runs once (two saccades, about 9 s), then rests on "check it lands where it started"; the
+   button then replays it. */
+const PASSES = 2;
 function Figure1() {
   const [ref, seen, calm] = useLive(0.3);
   const [held, setHeld] = useState(false);
-  const live = seen && !held;
+  const [done, setDone] = useState(false);
+  const live = seen && !held && !done;
   const ix = useMotionValue(0), iy = useMotionValue(0);
   const ex = useTransform([ix, iy], ([x, y]) => pct(emb(x, y)[0]));
   const ey = useTransform([ix, iy], ([x, y]) => pct(emb(x, y)[1]));
@@ -94,15 +100,19 @@ function Figure1() {
   useEffect(() => {
     if (!live) return;
     const [sx, sy] = SHIFTS[k % 4];
+    const last = k % PASSES === PASSES - 1;
     const ts = [
       [600, () => { setPh(1); animate(ix, sx, MOVE); animate(iy, sy, MOVE); }],
       [1500, () => setPh(2)],
       [2900, () => { setPh(3); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }],
       [3800, () => setPh(4)],
-      [5300, () => { setPh(0); setK((v) => v + 1); }],
+      [last ? 4700 : 5300, () => { if (last) setDone(true); else { setPh(0); setK((v) => v + 1); } }],
     ].map(([t, f]) => setTimeout(f, t));
     return () => ts.forEach(clearTimeout);
   }, [k, live, ix, iy]);
+  const press = () => {
+    if (done) { setDone(false); setHeld(false); setPh(0); setK((v) => v + 1); } else setHeld(!held);
+  };
   const [sx, sy] = SHIFTS[k % 4];
   const [tx, ty] = emb(sx, sy);
   const guess = [tx + MISS[k % 4][0], ty + MISS[k % 4][1]];
@@ -135,7 +145,7 @@ function Figure1() {
         <ol className="jn-ticks" aria-hidden="true">{PHASE.map((p, i) => <li key={p} className={i === ph ? 'on' : i < ph ? 'past' : ''} />)}</ol>
         <div className="jn-cap">
           <p><span><b>Figure 1.</b> Saccade JEPA, step by step:</span> <span className="jn-phase x-mono">{PHASE[ph]}</span></p>
-          {!calm && <button type="button" className="jn-pause" onClick={() => setHeld(!held)} aria-pressed={held} aria-label={held ? 'Play Figure 1' : 'Pause Figure 1'}><PauseI held={held} /></button>}
+          {!calm && <button type="button" className={'jn-pause' + (done ? ' done' : '')} onClick={press} aria-pressed={done ? undefined : held} aria-label={done ? 'Replay Figure 1' : held ? 'Play Figure 1' : 'Pause Figure 1'}>{done ? <ReplayI /> : <PauseI held={held} />}</button>}
         </div>
       </figcaption>
     </figure>
@@ -148,7 +158,7 @@ function Hero() {
       <div className="bz-wrap jn-hero-in">
         <div className="bz-grid jn-hero-top">
           <div className="jn-hero-copy">
-            <BizLines as="h1" id="jn-h1" className="bz-display" lines={['Research on learning', 'without labels']} now delay={0.05} />
+            <BizLines as="h1" id="jn-h1" className="bz-display" lines={['Research on learning', 'without labels']} now delay={0.2} />
             <p className="jn-byline"><span className="x-mono jn-name">Jin</span><span className="x-mono">hanzoai/jin</span></p>
             <div className="jn-acts">
               <Cta to={DOCS} id="jin.hero" thumb>Read the docs</Cta>

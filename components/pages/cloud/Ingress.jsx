@@ -6,10 +6,15 @@
 // Signature: the routing board, live: requests by host and path, a backend leaving and rejoining rotation, a certificate arriving.
 // Beyond: Chain your own pipeline: pick and reorder Hanzo's middleware and watch a request walk it.
 /* Ingress (v2, archetype A Launch).
-   V2: 8/10 Round 2 (review 7/10): each of the six wipe scenes now plays its drawing once as it arrives (sources slide in and
+   V2: 8/10 Round 3 (review 7/10): the stage never moves the page any more (the auto-settle is gone; scrollTo and wheel
+   rest where sent); mid-wipe the outgoing text and card fade out by 30% of the wipe and the incoming caption and h3 cut
+   in by line mask at 50%, so two headings never stack; each drawing starts as its wipe begins (no empty card); the
+   middleware box holds two chips so the board no longer jumps, and the board opens on the issued certificate; the
+   chip request dot runs under the lettering; the prompt wraps; GetIt spacing and the hero ask's arrow hover are
+   page-local; every invented string is gone (board and pipeline now speak only Hanzo's words from this page).
+   Round 2: each of the six wipe scenes now plays its drawing once as it arrives (sources slide in and
    the IngressClass ticks on, the lock shackle closes, a request passes the black chips, the hollow pod empties and refills,
-   the paths type in, 80 and 443 settle); the stage settles to the nearest whole scene when scrolling stops, so two
-   scenes never rest half-drawn; "What happens at the edge" rides in the first scene (no empty intro screen); the phone
+   the paths type in, 80 and 443 settle); (a scroll settle, removed in round 3); "What happens at the edge" rides in the first scene (no empty intro screen); the phone
    board keeps its middleware row; the dark room opens from a rounded card, its chips and arrows hover and press, and the
    request dot lights each step it passes; deck tokens only, tiles flat.
    Signature: the routing board, live. Requests arrive by hostname and path, pass the middleware named in annotations

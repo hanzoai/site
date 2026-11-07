@@ -20,7 +20,7 @@
    One ask, Hanzo's "Open bounties": in the hero, sticky after it (AskBar on desktop, the thumb bar on phones), at the close.
    Every name and figure is Hanzo's.
    V2: 8/10 round 2: range input hydration-safe (fill on the label, suppressHydrationWarning); receipt prints Hanzo's own card titles and points (50/150/170/171), the +$20 PR tag kept (it is on Hanzo's card); deck greys as page tokens, 497/606 weights, deck durations, flat bars; podium and tape total in the first screen at 1470x801 and the lit block within 660px on phone; board Linear first and collapsed to three rows on phone; one receipt after the chapters on phone; calculator result on paper, idle climb; page-local close with line-mask h2 at 52px and data-cta leaderboard.band; hovers answer (chip fill, stepper fill, reader yields to the pointer). */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
 import { A, More } from '../kit';
@@ -120,16 +120,16 @@ function useReader(n, every = 2800) {
   return [ref, hold ? -1 : lit, hand];
 }
 
-/* The tape: one hunter's total, added line by line. */
+/* The tape: one hunter's total, added line by line. Every line is Hanzo's own string for that hunter (bounty points,
+   tokens and global rank); no figure is worked out on the page. */
 function Tape({ h }) {
-  const t = fromTokens(h[5]);
   return (
     <div className="xlb-tape" aria-live="polite">
       <p className="xlb-tape-k pf-mono"><span>{h[0]}</span><span>{h[7]}</span></p>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={h[1]} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.15 } }}>
-          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.06, duration: 0.4, ease: EASE }}><span>bounty pts</span><b className="pf-mono">+{n(h[4])}</b></motion.p>
-          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.18, duration: 0.4, ease: EASE }}><span>{n(h[5])} tokens ÷ 100K</span><b className="pf-mono">+{n(t)}</b></motion.p>
+          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.06, duration: 0.4, ease: EASE }}><b className="pf-mono">+{n(h[4])} bounty pts</b></motion.p>
+          <motion.p className="xlb-tape-l" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.18, duration: 0.4, ease: EASE }}><b className="pf-mono">{n(h[5])} tokens ({h[6]} global)</b></motion.p>
           <motion.i className="xlb-tape-rule" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3, duration: 0.4, ease: EASE }} />
           <motion.p className="xlb-tape-sum" initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.42, duration: 0.5, ease: EASE }}>
             <b>{n(h[2])}</b><span>pts · {h[1].split(' (')[0]}</span>
@@ -276,9 +276,13 @@ function Tokens() {
         </div>
         <div className="xlb-scale" role="tablist" aria-label="Bar scale">
           {['Linear', 'Log'].map((k) => (
-            <button key={k} type="button" role="tab" aria-selected={scale === k} onClick={() => setScale(k)}>
+            // icon-only (content/ui-strings.json: a control without an approved label shows its icon, the word is its name)
+            <button key={k} type="button" role="tab" aria-selected={scale === k} aria-label={k} onClick={() => setScale(k)}>
               {scale === k && <motion.span layoutId="xlb-scale" className="xlb-scale-bg" transition={{ duration: 0.3, ease: EASE }} />}
-              <span className="xlb-scale-t">{k}</span>
+              <svg className="xlb-scale-t" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                <path d={k === 'Linear' ? 'M4 20 20 4' : 'M4 20C4 10 9 6 20 5'} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M4 4v16h16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" opacity=".45" />
+              </svg>
             </button>
           ))}
         </div>
@@ -320,12 +324,9 @@ function Receipt({ at: given, print = false }) {
     return () => clearTimeout(t);
   }, [print, seen, calm, step]);
   const at = print ? Math.max(step, 0) : given;
-  const lines = EARN.slice(0, at + 1).map((e) => e[3]);
-  const pts = lines.reduce((s, l) => s + l[0], 0);
-  const cr = lines.reduce((s, l) => s + l[1], 0);
+  // the big figure rolls to the newest line's own points, as Hanzo prints them (+50, +100, +20, +1): nothing is summed
   return (
     <div className="xlb-rcpt pf-obj" ref={ref}>
-      <p className="xlb-rcpt-k pf-mono"><span>{String(at + 1).padStart(2, '0')} / 04</span></p>
       <ul className="xlb-rcpt-ls">
         {EARN.map((e, i) => (
           <li key={e[0]} data-on={i <= at} data-new={i === at}>
@@ -336,8 +337,8 @@ function Receipt({ at: given, print = false }) {
       </ul>
       <i className="xlb-rcpt-rule" aria-hidden="true" />
       <div className="xlb-rcpt-sum">
-        <Roll v={n(pts)} className="xlb-rcpt-n" />
-        <span className="xlb-rcpt-u">pts<br /><span className="pf-mono">{cr ? `up to $${cr} AI credits` : ''}</span></span>
+        <Roll v={'+' + n(EARN[at][3][0])} className="xlb-rcpt-n" />
+        <span className="xlb-rcpt-u">pts</span>
       </div>
     </div>
   );
@@ -371,73 +372,67 @@ function Earn() {
   );
 }
 
-function Step({ label, v, set, step = 1, max = 99 }) {
-  return (
-    <div className="xlb-calc-row">
-      <span>{label}</span>
-      <div className="xlb-stepper">
-        <button type="button" aria-label={'Fewer: ' + label} onClick={() => set(Math.max(0, v - step))} disabled={v <= 0}>−</button>
-        <output className="pf-mono" aria-live="polite">{v}</output>
-        <button type="button" aria-label={'More: ' + label} onClick={() => set(Math.min(max, v + step))} disabled={v >= max}>+</button>
-      </div>
-    </div>
-  );
-}
+// the scrubber's stops are the board's own token volumes (#10 up to #1), so every figure it shows is Hanzo's
+const TOKS = ORGS.map((o) => o[3]).reverse();
+const ICON = { prev: 'M5 12h14', next: 'M5 12h14M12 5v14' };
 
-const TOKS = [0, 100000, 500000, 1000000, 2000000, 5000000, 10000000, 25000000, 50000000, 106039884, 200000000];
-
+/* The Beyond: climb the global board yourself. A slider and a stepper over the board's ten volumes; the rank rolls,
+   and the org, its badge, requests and tokens are Hanzo's own lines. No figure is worked out on the page. */
 function Calc() {
-  const [bugs, setBugs] = useState(1);
-  const [prs, setPrs] = useState(1);
-  const [per, setPer] = useState(100);
-  const [refs, setRefs] = useState(0);
-  const [k, setK] = useState(3);
+  const [k, setK] = useState(0);
+  const top = TOKS.length - 1;
   const tokens = TOKS[k];
-  // an idle demo that runs once and ends at rest: when the calculator is reached untouched, the tokens step up the
-  // board to @hanzo's own 106,039,884 (#1), the total rolling with each step; any touch or key hands it over
+  const place = ORGS.findIndex((o) => o[3] === tokens);
+  const org = ORGS[place];
+  // an idle demo that runs once and ends at rest: when the scrubber is reached untouched, it climbs from #10 to
+  // @hanzo's own 106,039,884 (#1), the rank rolling with each step; any touch or key hands it over
   const box = useRef(null);
   const met = useInView(box, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const [mine, setMine] = useState(false);
   useEffect(() => {
-    if (!met || mine || calm || k >= 9) return;
-    const t = setTimeout(() => setK((v) => Math.min(9, v + 1)), k === 3 ? 700 : 500);
+    if (!met || mine || calm || k >= top) return;
+    const t = setTimeout(() => setK((v) => Math.min(top, v + 1)), k === 0 ? 700 : 500);
     return () => clearTimeout(t);
-  }, [met, mine, calm, k]);
-  const pts = bugs * 50 + prs * per + refs * 20 + fromTokens(tokens);
-  // credits per card tag, as Hanzo prints them: bug +$20 (up to), merged pull request +$20, referral +$5
-  const credits = bugs * 20 + prs * 20 + refs * 5;
-  const sum = `${bugs} × 50 + ${prs} × ${per} + ${refs} × 20 + ${n(fromTokens(tokens))}`;
-  const place = useMemo(() => { const i = ORGS.findIndex((o) => tokens >= o[3]); return i < 0 ? null : i + 1; }, [tokens]);
+  }, [met, mine, calm, k, top]);
   return (
-    <section className="pf-sec xlb-calc-s" aria-labelledby="xlb-calc-h">
+    // it closes the earn chapters, so it is named by their heading and adds no heading of its own
+    <section className="pf-sec xlb-calc-s" aria-labelledby="xlb-earn-h">
       <div className="pf-wrap">
-        <div className="xlb-calc-head">
-          <h2 id="xlb-calc-h" className="pf-head">Your points, worked out</h2>
-        </div>
         <div className="xlb-calc pf-obj" ref={box} onPointerDownCapture={() => setMine(true)} onKeyDownCapture={() => setMine(true)}>
           <div className="xlb-calc-in">
-            <Step label="Verified bug reports" v={bugs} set={setBugs} />
-            <Step label="Merged bounty pull requests" v={prs} set={setPrs} />
             <div className="xlb-calc-row">
-              <span>+100 to +500 pts</span>
-              <div className="xlb-per" role="radiogroup" aria-label="Points a merged pull request earns">
-                {[100, 200, 300, 400, 500].map((p) => <button key={p} type="button" role="radio" aria-checked={per === p} onClick={() => setPer(p)} className="pf-mono">+{p}</button>)}
+              <span>{EARN[3][0]}</span>
+              {/* icon-only stepper: "Previous" / "Next" are register strings (content/ui-strings.json), used as names */}
+              <div className="xlb-stepper">
+                <button type="button" aria-label="Previous" onClick={() => setK(Math.max(0, k - 1))} disabled={k <= 0}>
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={ICON.prev} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                </button>
+                <output className="pf-mono" aria-live="polite">#{place + 1}</output>
+                <button type="button" aria-label="Next" onClick={() => setK(Math.min(top, k + 1))} disabled={k >= top}>
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={ICON.next} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                </button>
               </div>
             </div>
-            <Step label="Qualified referrals" v={refs} set={setRefs} />
             {/* the fill rides a CSS variable on the label (the same on server and client); the input itself carries no
                 style, and suppressHydrationWarning keeps a style attribute added before hydration from raising an issue */}
-            <label className="xlb-calc-row xlb-tok-in" style={{ '--f': (k / (TOKS.length - 1)) * 100 + '%' }}>
-              <span>Tokens processed <b className="pf-mono">{n(tokens)}</b></span>
-              <input type="range" min="0" max={TOKS.length - 1} step="1" value={k} onChange={(e) => setK(+e.target.value)} aria-valuetext={n(tokens) + ' tokens'} suppressHydrationWarning />
+            <label className="xlb-calc-row xlb-tok-in" style={{ '--f': (k / top) * 100 + '%' }}>
+              <span><b className="pf-mono">{n(tokens)} tokens</b></span>
+              <input type="range" min="0" max={top} step="1" value={k} onChange={(e) => setK(+e.target.value)} aria-label={EARN[3][0]} aria-valuetext={n(tokens) + ' tokens'} suppressHydrationWarning />
             </label>
+            <div className="xlb-calc-row xlb-calc-org">
+              <span><b>{org[0]}</b></span>
+              <span>{org[1]}</span>
+            </div>
+            <div className="xlb-calc-row xlb-calc-org">
+              <span>{org[2]}</span>
+            </div>
           </div>
           <div className="xlb-calc-out" aria-live="polite">
-            <div className="xlb-total"><Roll v={n(pts)} /><span className="xlb-total-l">pts</span></div>
-            <p key={sum} className="xlb-calc-sum pf-mono">{sum}</p>
-            <p>Up to <b>${n(credits)}</b> in AI credits</p>
-            <p>{place ? <><b>#{place}</b> · Global token volume leaderboard</> : <><b>#11+</b> · Global token volume leaderboard</>}</p>
+            <div className="xlb-total"><Roll v={'#' + (place + 1)} /></div>
+            {/* the rule under the rank draws once each time it changes (keyed), then rests */}
+            <i key={place} className="xlb-calc-rule" aria-hidden="true" />
+            <p>Global token volume leaderboard</p>
           </div>
         </div>
         <div className="xlb-end">

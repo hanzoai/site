@@ -99,24 +99,27 @@ const { data: decision } = await ai.postDecisions({
 })
 
 console.log(decision.answers.risk.score, decision.answers.risk.probabilities)`;
-const CODES = [['curl', CURL], ['Python', PY], ['TypeScript', TS]];
-// the response's documented shape: field names from the guide, values left out (nothing invented)
+// tab names in the guide's own words: its first command and the two install lines its code opens with
+const CODES = [['curl', CURL], ['pip install hanzoai', PY], ['npm install hanzoai', TS]];
+// the response's documented shape: field names from the guide, each missing value an em dash (nothing invented)
 const RESP = `{
-  "id": "…",
+  "id": —,
   "model": "kai",
-  "routing": {…},          // the checkpoint that answered: kai-1.3
+  "routing": —, // the checkpoint that answered: kai-1.3 for the model id kai
   "usage": { "output_tokens": 0 },
   "answers": {
-    "department": { "choice": …, "probabilities": {…}, "confidence": … },
-    "urgency":    { "score": …, "legend": […], "probabilities": {…} },
-    "churn_risk": { "noul": … }
+    "department": { "choice": —, "probabilities": —, "confidence": — },
+    "urgency":    { "score": —, "legend": —, "probabilities": — },
+    "churn_risk": { "noul": — }
   },
-  "state_hash": "…",
-  "latency_ms": …
+  "state_hash": —,
+  "latency_ms": —
 }`;
 
 const RLINES = RESP.split('\n');
 // the lines the session rests on: usage (output_tokens 0) and the answers block, lit in this order once it settles
+// the status line in the guide's own words: an em dash while it runs, "0 output tokens" once it rests
+const DONE = '0 output tokens';
 const KEY = RLINES.map((l, i) => (i >= 4 && i <= 9 ? i - 4 : undefined));
 
 /* the first screen: the request types and the response streams, once (typing into text nodes via refs), then rests on
@@ -140,7 +143,7 @@ function Session() {
     sc.scrollTo({ top: Math.max(0, (a + z) / 2 - sc.clientHeight / 2), behavior: smooth ? 'smooth' : 'auto' });
   };
   useEffect(() => {
-    if (calm) { req.current.textContent = CURL; [...res.current.children].forEach((l) => { l.dataset.in = ''; }); show('done', '200 · output_tokens 0'); setPhase('done'); return; }
+    if (calm) { req.current.textContent = CURL; [...res.current.children].forEach((l) => { l.dataset.in = ''; }); show('done', DONE); setPhase('done'); return; }
     if (!seen || hold || phase === 'done') return;
     const r = req.current, o = res.current, sc = scr.current, p = at.current;
     let t;
@@ -148,16 +151,16 @@ function Session() {
     const step = () => {
       p.i = Math.min(CURL.length, p.i + 3 + ((Math.random() * 4) | 0));
       r.textContent = CURL.slice(0, p.i); pin();
-      if (p.i < CURL.length) t = setTimeout(step, 14); else { show('wait', 'sending'); t = setTimeout(stream, 600); }
+      if (p.i < CURL.length) t = setTimeout(step, 14); else { show('wait', '—'); t = setTimeout(stream, 600); }
     };
     const stream = () => {
-      if (!p.j) show('stream', '200 · streaming');
+      if (!p.j) show('stream', '—');
       o.children[p.j++].dataset.in = ''; pin();
       if (p.j < RLINES.length) t = setTimeout(stream, 75);
-      else { show('done', '200 · output_tokens 0'); setPhase('done'); }
+      else { show('done', DONE); setPhase('done'); }
     };
     if (phase === 'idle') { r.textContent = ''; [...o.children].forEach((l) => { delete l.dataset.in; }); sc.scrollTop = 0; setPhase('run'); }
-    show(p.i < CURL.length ? 'type' : 'stream', p.i < CURL.length ? 'typing' : '200 · streaming');
+    show(p.i < CURL.length ? 'type' : 'stream', '—');
     t = setTimeout(p.i < CURL.length ? step : stream, p.i || p.j ? 0 : 450);
     return () => clearTimeout(t);
   }, [seen, calm, hold, phase, run]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -172,7 +175,7 @@ function Session() {
     <figure className="kg-sess" ref={box}>
       <div className="kg-sess-bar">
         <b>POST /v1/decisions</b>
-        <span className="kg-sess-st"><i aria-hidden="true" /><span ref={say}>200 · output_tokens 0</span></span>
+        <span className="kg-sess-st"><i aria-hidden="true" /><span ref={say}>{DONE}</span></span>
         <button type="button" className="kg-sess-btn" aria-label={label} aria-pressed={phase !== 'done' ? hold : undefined} onClick={() => (phase === 'done' ? replay() : setHold((h) => !h))}>
           {phase === 'done'
             ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -182,7 +185,7 @@ function Session() {
         </button>
         <span className="kg-sess-copy"><Copy text={CURL} /></span>
       </div>
-      <div className="kg-sess-scr" ref={scr} tabIndex={0} data-lenis-prevent aria-label="curl request and the shape of its response">
+      <div className="kg-sess-scr" ref={scr} tabIndex={0} data-lenis-prevent aria-label="POST /v1/decisions">
         <pre className="kg-sess-req"><span className="kg-ps" aria-hidden="true">$ </span><code ref={req}>{CURL}</code></pre>
         <pre className="kg-sess-res"><code ref={res}>{RLINES.map((l, i) => <span key={i} className="kg-rl" data-k={KEY[i]} style={KEY[i] !== undefined ? { '--k': KEY[i] } : undefined}>{l}{'\n'}</span>)}</code></pre>
       </div>
@@ -243,7 +246,7 @@ function Shape() {
 
 /* the language is shared by the hash (#curl, #python, #typescript) and remembered on this device; each block opens
    capped at 12 lines over a fade, with Show all under it (the whole text is in the HTML and Copy copies all of it) */
-const LANG = CODES.map(([l]) => l.toLowerCase());
+const LANG = ['curl', 'python', 'typescript'];
 const CAP = 12;
 function CallIt() {
   const [k, setK] = useState(1);
@@ -289,68 +292,76 @@ function CallIt() {
   );
 }
 
-const SCENES = [[0, 800, 3], [0, 3982, 3], [1, 3982, 3], [1, 36000, 3], [0, 2000, 101]];
+// the checker only ever shows the guide's own figures: the state ruler snaps to the four points the guide names
+// (1,024 trained, the 3,982-token example, 32,768, past 32,768) and the questions are up to 100 or 101; no figure is
+// worked out from another, so the old per-request price readout is gone and Price lights the guide's own price line
+const STOPS = [[1024, '1,024'], [3982, '3,982'], [32768, '32,768'], [65536, 'Past 32,768']];
+const QS = [[100, 'Up to 100'], [101, '101']];
+const SCENES = [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 3, 0], [0, 0, 1]]; // [model, state stop, questions stop]
 // the five answers kaiLimits can give, so the verdict box always holds the tallest one
-const OUTS = [check(0, 2000, 101), check(0, 36000, 3), check(0, 3982, 3), check(0, 800, 3), check(1, 800, 3)];
+const OUTS = [check(0, 1024, 101), check(0, 65536, 100), check(0, 3982, 100), check(0, 1024, 100), check(1, 1024, 100)];
 const WALK = [2, 3, 4, 0, 1]; // the order the checker plays the five cases, ending where it began
 const SCENE_ROW = [3, 2, 0, 2, 1]; // which limit each checker case illustrates (Model, Questions, State, Time, Price)
 const ROW_SCENE = [2, 4, 1, 0, 0];
 const LO = Math.log2(256), HI = Math.log2(65536);
 const tokPos = (t) => (Math.log2(Math.max(256, t)) - LO) / (HI - LO);
-const posTok = (p) => Math.round(Math.pow(2, LO + p * (HI - LO)));
-const usd = (x) => '$' + (x < 0.01 ? x.toFixed(5) : x.toFixed(3));
+const nearest = (p) => STOPS.reduce((best, [t], i) => (Math.abs(tokPos(t) - p) < Math.abs(tokPos(STOPS[best][0]) - p) ? i : best), 0);
 
 // a ruler's thumb position as one fixed string, the same on the server and in the browser (no hydration drift).
-// The range inputs carry suppressHydrationWarning: a screenshot taken before hydration writes an inline caret-color on
-// every input, and that one attribute is all React would otherwise flag (the inputs themselves render no style).
+// The range input carries suppressHydrationWarning: a screenshot taken before hydration writes an inline caret-color on
+// every input, and that one attribute is all React would otherwise flag (the input itself renders no style).
 const run = (p) => ({ transform: `translateX(${(Math.round(p * 10000) / 100).toFixed(2)}%)` });
 
 function Checker({ s, mine, setMine, price }) {
-  const [m, tok, q] = mine || SCENES[s];
-  const r = check(m, tok, q);
+  const [m, si, qi] = mine || SCENES[s];
+  const tok = STOPS[si][0];
+  const r = check(m, tok, QS[qi][0]);
   const set = (i, v) => { const n = [...(mine || SCENES[s])]; n[i] = v; setMine(n); };
+  const key = (e) => {
+    const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
+    const to = e.key === 'Home' ? 0 : e.key === 'End' ? STOPS.length - 1 : d !== undefined ? Math.min(STOPS.length - 1, Math.max(0, si + d)) : null;
+    if (to === null) return;
+    e.preventDefault(); set(1, to);
+  };
   return (
     <div className="kg-check">
-      <div className="kg-check-bar"><b>POST /v1/decisions</b><em>request check</em></div>
+      <div className="kg-check-bar"><b>POST /v1/decisions</b></div>
       <div className="kg-ck-body">
-        <div className="kg-models" role="radiogroup" aria-label="Model id" onKeyDown={arrows}>
-          {['kai', 'kai-1.4'].map((id, i) => <button key={id} type="button" role="radio" aria-checked={m === i} tabIndex={m === i ? 0 : -1} className="kg-chip" onClick={() => set(0, i)}>model: &quot;{id}&quot;</button>)}
+        <div className="kg-models" role="radiogroup" aria-label="Model" onKeyDown={arrows}>
+          {['kai', 'kai-1.4'].map((id, i) => <button key={id} type="button" role="radio" aria-checked={m === i} tabIndex={m === i ? 0 : -1} className="kg-chip" onClick={() => set(0, i)}>{id}</button>)}
         </div>
         <label className="kg-ruler">
-          <span className="kg-r-h"><span>State</span><b>{tok.toLocaleString('en-US')} tokens</b></span>
+          <span className="kg-r-h"><span>State</span><b>{STOPS[si][1]}</b></span>
           <span className="kg-track">
             <i className="kg-zone z1" style={{ transform: `scaleX(${tokPos(TRAINED)})` }} />
             <i className="kg-zone z3" style={{ left: tokPos(MAXSTATE) * 100 + '%' }} />
             <span className="kg-mk" style={{ left: tokPos(TRAINED) * 100 + '%' }}>1,024</span>
             <span className="kg-mk" style={{ left: tokPos(MAXSTATE) * 100 + '%' }}>32,768</span>
             <span className="kg-run" style={run(tokPos(tok))}><i /></span>
-            <input type="range" min="0" max="1000" value={Math.round(tokPos(tok) * 1000)} onChange={(e) => set(1, posTok(+e.target.value / 1000))} aria-label="State tokens" suppressHydrationWarning />
+            <input type="range" min="0" max="1000" value={Math.round(tokPos(tok) * 1000)} aria-valuetext={STOPS[si][1]} onChange={(e) => set(1, nearest(+e.target.value / 1000))} onKeyDown={key} aria-label="State" suppressHydrationWarning />
           </span>
         </label>
-        <label className="kg-ruler">
-          <span className="kg-r-h"><span>Questions</span><b>{q}</b></span>
-          <span className="kg-track">
-            <i className="kg-zone z3" style={{ left: (MAXQ / 101) * 100 + '%' }} />
-            <span className="kg-mk" style={{ left: (MAXQ / 101) * 100 + '%' }}>100</span>
-            <span className="kg-run" style={run(q / 101)}><i /></span>
-            <input type="range" min="1" max="101" value={q} onChange={(e) => set(2, +e.target.value)} aria-label="Questions" suppressHydrationWarning />
-          </span>
-        </label>
+        <div className="kg-ruler">
+          <span className="kg-r-h"><span>Questions</span></span>
+          <div className="kg-models" role="radiogroup" aria-label="Questions" onKeyDown={arrows}>
+            {QS.map(([, l], i) => <button key={l} type="button" role="radio" aria-checked={qi === i} tabIndex={qi === i ? 0 : -1} className="kg-chip" onClick={() => set(2, i)}>{l}</button>)}
+          </div>
+        </div>
         <div className="kg-verdict" data-bad={r.code !== 200 ? '' : undefined}>
-          <motion.b key={r.code} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: T.slow, ease: EMPH }}>{r.code}</motion.b>
+          <motion.b key={r.big} initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: T.slow, ease: EMPH }}>{r.big}</motion.b>
           <div className="kg-v-stack" aria-live={mine ? 'polite' : 'off'}>
             {OUTS.map((o) => (
               <div key={o.flag} data-on={o.flag === r.flag || undefined} aria-hidden={o.flag !== r.flag || undefined}>
-                <code>{o.flag}</code>
+                <code>{o.tag}</code>
                 <p>{o.why}</p>
               </div>
             ))}
           </div>
         </div>
         <p className="kg-cost" data-on={price || undefined}>
-          <span>Input, per 1,000 requests this size</span>
-          <b>{r.code === 200 ? usd((tok * 0.021 * 1000) / 1e6) : '—'}</b>
-          <span>Jev {r.code === 200 ? usd((tok * 0.042 * 1000) / 1e6) : '—'} · output is free</span>
+          <span>Price</span>
+          <b>$0.021</b>
+          <span>per million input tokens; output is free. Jev costs $0.042.</span>
         </p>
       </div>
     </div>
@@ -454,7 +465,7 @@ function Recipes() {
     <div className="kg-rx" ref={box} data-off={!seen || undefined} data-hold={hold || undefined}>
       <div className="kg-rx-stage">
         <div className="kg-rx-top">
-          <span className="kg-rx-ix" aria-hidden="true">{String(k + 1).padStart(2, '0')} / {String(RECIPES.length).padStart(2, '0')}</span>
+          <span className="kg-rx-ix" aria-hidden="true">{RECIPES.map(([n], i) => <i key={n} data-on={i === k || undefined} data-past={i < k || undefined} />)}</span>
           <span className="kg-rx-bar" aria-hidden="true"><i key={k} onAnimationEnd={next} /></span>
           <button type="button" className="kg-rx-btn" aria-label={hold ? 'Play' : 'Pause'} aria-pressed={hold} onClick={() => setHold((h) => !h)}>
             {hold

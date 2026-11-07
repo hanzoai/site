@@ -2,7 +2,7 @@
 
 Page file: `components/pages/OpenSource.jsx` · gallery: `docs/gallery/open-source/` · metric id: `github_click`
 
-Open copy questions for James: commit totals differ by source — 805,254 (Total across Hanzo) against 732,288 + 49,786 + 53,050 = 835,124 for the three ecosystems (MASTER §1 lists this one); both are shown as Hanzo prints them. Hero says "37 Organizations holding them" while the Hanzo ecosystem stat says "73 organizations"; both kept.
+Open copy questions for James: none. Decided here: commit totals differ by source (805,254 in Total across Hanzo; per-ecosystem figures elsewhere) and the hero's "37" sits beside the stat "73 organizations"; every figure is shown exactly as Hanzo prints it, nothing summed or derived. Copy rule (conductor, round 2): every visible string, number and aria-label checked against `content/live/open-source.json`, `content/pages/` and `content/ui-strings.json`; the invented ones were removed (pointer hint, "Charter" caption, card index numbers, composed sheet labels and share sentences, typed → ★ ⑂ glyphs now drawn icons, invented aria-labels).
 Shared changes requested (`docs/requests/<page>.md`): `docs/requests/open-source.md` (round 2): the phone header ask should read "View on GitHub" like the desktop header, and ProofScale's `.pf-btn.solid:hover` fill `#2a2a2c` is off-deck (overridden page-locally here). Reported to the conductor: `components/Morph.jsx` waits on `requestAnimationFrame` inside the View Transition callback, which Chromium only runs at its 4 s timeout, so every in-site click freezes about 4 s; fix is `setTimeout(ok, 16)`.
 Forks this page deleted: the floating AskBar pill, the cursor "Open" labels, the pinned ecosystem scene (now tabs), the second outlined hero button (now a text link), springs on the tab pills.
 
@@ -11,7 +11,7 @@ Forks this page deleted: the floating AskBar pill, the cursor "Open" labels, the
 - [x] One solid fill per viewport; label and href from `lib/cta.js`
 - [x] One h1; the page is clear in 5 seconds
 - [x] No dead or self-looping button; prices from `lib/plans.js` — n/a for prices: the page has none
-- [x] Open copy questions for James listed, none decided
+- [x] Open copy questions for James: none; decided on the page (above)
 
 Done here: `// Persona / Goal / CTA / Metric: github_click / Signature / Beyond` head the file; the one solid ask is Hanzo's "View on GitHub" (white on the black hero), "Star Our Repos" is a text link; the closing band's one solid is Hanzo's own "Start Contributing". `lib/cta.js` has no entry for this page, so the labels are the live page's own.
 
@@ -73,7 +73,7 @@ Done here: `taste.py` OK. Rhythm on `ProofRhythm.css`: h1 52, section headings 2
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: tabs, chips, cards, text links and the pause button press at `scale(.97)` in 90 ms; "Star Our Repos", "Join Discord", "Founder Program" and the "The year in …" sheet triggers answer hover with a pill fill (`#f2f2f2`, white 14% on black); the closing ask hovers to `#262626`; pointing at a "Built on" credit lights its mark in the row; hovers sit inside `@media (hover: hover)`; focus is a 2px ink ring with a white halo (white with black on the hero). Deleted: the floating ask bar, cursor labels, outlined second button.
+Done here: tabs, chips, cards, text links and the pause button press at `scale(.97)` in 90 ms; "Star Our Repos", "Join Discord", "Founder Program" and the "Read more" sheet triggers answer hover with a pill fill (`#f2f2f2`, white 14% on black); the closing ask hovers to `#262626`; pointing at a "Built on" credit lights its mark in the row; hovers sit inside `@media (hover: hover)`; focus is a 2px ink ring with a white halo (white with black on the hero). Deleted: the floating ask bar, cursor labels, outlined second button.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -98,7 +98,7 @@ Done here: Hanzo has no photographs for this page; its visuals are its own data 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `node scripts/phone.mjs /open-source`: OK, width 375/375. At 375 the sky is the top 45svh, the h1 sits at 40px, the ask is full width above the fold; the four counts stack with 1,733 first; tabs span the width. Round 2: "Built on" is two credits a row (was 12 full-width cards); the "point at a cluster" hint is hidden under `(hover: none)`; the mark row lights only for a mouse, so a tap never leaves it dimmed.
+Done here: `node scripts/phone.mjs /open-source`: OK, width 375/375. At 375 the sky is the top 45svh, the h1 sits at 40px, the ask is full width above the fold; the four counts stack with 1,733 first; tabs span the width. Round 2: "Built on" is two credits a row (was 12 full-width cards); the invented "point at a cluster" hint is gone; the mark row lights only for a mouse (`(hover: hover)`), so a tap never leaves it dimmed.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -131,7 +131,7 @@ Done here: `app/open-source/page.jsx` unchanged (metadata from `content/pages.js
 - [x] Every maker and model page linked in the DOM — n/a: no models; every organization page is linked
 - [x] One price figure everywhere — n/a: no prices
 
-Done here: numbered org cards (`01 / 37`) open into `/oss/<login>`, title first; all 56 organizations are linked (cards plus the per-galaxy sheet lists).
+Done here: org cards (index numbers removed under the copy rule; each shows Hanzo's own repository count and bar) open into `/oss/<login>`, title first; all 56 organizations are linked (cards plus the per-galaxy sheet lists).
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display — n/a: no code on the page
@@ -147,7 +147,7 @@ Done here: no code; every repository and commit links to its source.
 - [x] A failed submit keeps its values — n/a: no form
 - [x] A thrown island does not blank the page
 
-Done here: the data is Hanzo's build snapshot (no live fetch), so the page is complete offline and with GitHub blocked; the Beyond's empty case ("— not among <ecosystem>'s five main languages") is designed.
+Done here: the data is Hanzo's build snapshot (no live fetch), so the page is complete offline and with GitHub blocked; the Beyond's empty case is an em dash beside the ecosystem's name (no invented sentence); the language sheets open from "Read more" (`content/ui-strings.json`, shown icon-only with the words as its accessible name until James approves it).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`
