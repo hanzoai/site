@@ -204,7 +204,9 @@ function News() {
   const box = useRef(null);
   const [at, setAt] = useState(0);
   const [pointing, setPointing] = useState(false);
-  const calm = useReducedMotion();
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // after hydration: the server can't know the setting, so the markup must match first
+  useEffect(() => setCalm(!!rm), [rm]);
   // idle: while the card is in view and nothing holds it, it keeps walking the six stories slowly (4 s each);
   // pointer and focus hold it, the pause control stops it, reduced motion never starts it
   const [paused, pause] = usePause();

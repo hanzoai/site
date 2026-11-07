@@ -49,7 +49,7 @@ export function VelocitySkew({ children, className = '' }) {
   const v = useVelocity(scrollY);
   const raw = useTransform(v, [-1800, 0, 1800], [3, 0, -3], { clamp: true }); // a lean, not a lurch: 3° at a fast flick
   const skewY = useSpring(raw, { stiffness: 260, damping: 32, mass: 0.6 });
-  return <motion.div className={'xen ' + className} style={calm ? undefined : { skewY }}>{children}</motion.div>;
+  return <motion.div className={'xen ' + className} style={{ skewY: calm ? 0 : skewY }}>{children}</motion.div>; // same markup either way (no hydration mismatch)
 }
 
 /* orbit-in: items swing into their places along an arc around a far-off centre, one after another. `go` comes from

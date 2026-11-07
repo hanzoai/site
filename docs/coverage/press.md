@@ -180,7 +180,7 @@ Done here: n/a.
 - [ ] n/a: no submit
 - [x] A thrown island does not blank the page
 
-Done here: Playwright ran with hanzo.ai's media missing locally: the only console lines are 8 resource errors (the 2 portraits and 6 partner logos under Hanzo's /authors and /press/partners paths, which this repo does not mirror); each falls back to its Sigil plate or letter chip, and there are no script errors.
+Done here: Playwright ran with hanzo.ai's media missing locally: the only console lines are 8 resource errors (the 2 portraits and 6 partner logos under Hanzo's /authors and /press/partners paths, which this repo does not mirror); each falls back to its Sigil plate or letter chip, and there are no script errors. Reduced motion: 0 hydration errors in 2 of 2 loads (the news pause control and the velocity-skew style now render the same markup on server and client; the setting is applied after hydration).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (`lib/track.js` pending)
