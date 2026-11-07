@@ -39,11 +39,11 @@ Done here: The h1 (`MaskLines now`) and then the lede, asks and counter arrive o
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Contact investor relations" after the hero; phones: that label does not fit the shared header, so it stays "Try Hanzo", outlined while a page ask shows via `usePhoneAsk`; request filed in `docs/requests/founder.md`)
+- [x] Sticky ask in header after the hero (desktop: "Contact investor relations"; phones: the same mailto in Hanzo's shorter words, "ir@hanzo.ai", the close's own label, because the long label does not fit the shared header)
 - [x] ~~Copy button copies exactly the displayed text~~ n/a: no copy control on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: The kit's `Cta` is used with `id="investors.hero"` and `thumb`, `investors.research`, `investors.close` and `investors.call`. The ask bar reads `data-thumb="Contact investor relations"` and steps aside while the close's ir@hanzo.ai solid is on screen.
+Done here: The kit's `Cta` is used with `id="investors.hero"` and `thumb`, `investors.research`, `investors.close` and `investors.call`. The ask bar reads `data-thumb="Contact investor relations"` and steps aside while the close's ir@hanzo.ai solid is on screen. Round 9 (8 Nov), measured at 375: after the hero the phone header carries a solid "ir@hanzo.ai" (mailto:ir@hanzo.ai) at y 900, 1600, 3000 and 6000, never "Try Hanzo"; `usePhoneThumb` hands the header that label on phones and the header button keeps 3px less side padding on this page so it ends inside the 16px gutter (right edge 357).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission (Backed by listed for James); no seal; no invented number
@@ -51,10 +51,7 @@ Done here: The kit's `Cta` is used with `id="investors.hero"` and `thumb`, `inve
 - [x] Marquees pause, freeze under reduced motion, hide duplicates (the marquee is gone: a still wall)
 - [x] ~~Privacy link and owner line beside every submit~~ n/a: no form
 
-Done here:
-- Every figure is Hanzo's: 16 of 16, 93.7%, 95.6%, 0.8 ms, 3.02×, ~3,665, 732,288 and 51%. "Up to" stays beside 200× and 400×, and "~" beside 3,665.
-- The bars sit on a zero baseline: LiveCodeBench at v/100 with Enso in white and the rest in grey, and Kai's 0.3, 0.4 and 0.8 ms on a 0.8 ms scale. 400× is twice the length of 200× against the same 1× dot.
-- The page's own `--w` was dropped (`@property --w` in `public/hanzo.css` was eating it); bars now use `scaleX` values set directly. Round 2: the flat phone and reduced-motion rule (`transform: none !important`) had wiped them to full length; each bar now carries its true value as `--xin-s`, restored after that rule. Measured at 375 and with reduced motion: 93.7, 93.1, 91.4, 80, 80, 78.3% of the track, and the 400× bar is twice the 200× bar (257 vs 129px at 375).
+Done here: Every figure is Hanzo's (16 of 16, 93.7%, 95.6%, 0.8 ms, 3.02×, ~3,665, 732,288, 51%), with "Up to" beside 200× and 400× and "~" beside 3,665. Bars sit on a zero baseline and carry their true value as `--xin-s`, so phones, reduced motion and JS off draw true lengths too: measured 8 Nov at 375 and with reduced motion, LiveCodeBench 93.7/93.1/91.4/80/80/78.3% of the track, Kai 37.5/50/100%, and 400× twice 200× (257 vs 129px at 375).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -71,10 +68,7 @@ Done here: Parity is 131/131 text and 43/43 links. Hanzo's 03, 02 and 01 stay as
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here:
-- `taste.py` passes (2 checked). Colours are only the deck's: #0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #f2f2f2, #f5f5f5, #000, plus white alpha steps.
-- Tiles are flat fills with no shadow. There is one black room (results).
-- The hero's rolling figure card differs from /press (a deck) and /team (a canvas).
+Done here: `taste.py` passes; colours are the deck's only (#0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #f2f2f2, #f5f5f5, #000 and white alpha steps), `--acc` is #0a0a0a; tiles are flat fills with no shadow, one black room (results); the rolling-figure hero card differs from /press (a deck) and /team (a canvas).
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -83,10 +77,7 @@ Done here:
 - [x] ~~Inputs 16px or larger~~ n/a: no input; no bare `:hover` (all inside `@media (hover:hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here:
-- Pause/Replay, the counter steps, the source arrows and the list ticks are real buttons with `aria-pressed`. Press is .97 at 90 ms.
-- The focus ring is 2px ink with a white halo (white with a black halo in the results room).
-- The tick circle previews half its check on hover.
+Done here: Pause/Replay, counter steps, source arrows and list ticks are real buttons with `aria-pressed`, press .97 at 90 ms; every link presses 1px (slabs, stats, lead, commits, wall, dd rows, execs); the focus ring is 2px ink with a white halo (inverted in the results room); hovers measured 8 Nov: slab fill #e5e5e5 and arrow 4px, stat arrow, commit message underline, wall tile #f5f5f5 with its name to ink, Backed-by names to #0a0a0a, Legal/Security/Press underline 2px, exec arrow.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -95,12 +86,7 @@ Done here:
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] ~~Sound~~ the shared sound kit is not in yet
 
-Done here:
-- Idle: the counter rolls once through 7 figures and rests, with Pause and Replay; the Sigil fields drift.
-- State: the steps, the ticks filling the giant counter, and the figures rolling in per scene.
-- Pointer: the source arrows and the logo tiles.
-- Scroll (2 of 5 kinds): the pinned thesis and results, and the layering slabs.
-- Arrival: the line masks. `variety.py` passes, there are no springs (ease-emphasis), and reduced motion stacks the scenes in their final state.
+Done here: Idle: the counter rolls once through 7 figures with Pause and Replay, the Sigil fields drift, and (round 9) the newest heatmap day and newest commit carry a live ring, the wall's names come up to ink one at a time, each slab's Explore arrow nudges, and a pulse runs down the 51% ownership line; state: steps, ticks, figures rolling in per scene; pointer: arrows and tiles; scroll: the pinned thesis and results and the layering slabs; arrival: line masks. motion.mjs desk 8 Nov: 1 still screen of 14 (was 4; the people screen's Sigils draw only when the portraits fail), CLS 0.002. Reduced motion: 0 running animations and 0 console errors (the counter's Pause/Replay no longer branches on the preference while rendering). Sound: the shared kit is not in yet.
 
 ## 10. Media
 - [x] `Pic`/`Img` only (kit `Img` for logos and portraits); sizes set
@@ -116,11 +102,7 @@ Done here: Logos and portraits use the kit's `Img` with width and height. A fail
 - [x] Every target 44px or more (round 2: the 7 counter steps were 36px wide; now 44px each); every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here:
-- At 375 the ask ends at y≈428 and the pinned scenes stack, each with its object.
-- The wall is 3 across, with fallback names at 15px that wrap.
-- The heatmap scrolls inside a fading edge.
-- Counter steps, Read the source, Legal and Press are all 44px.
+Done here: At 375 the ask ends at y≈428 and the pinned scenes stack, each with its object; the wall is 3 across with fallback names that wrap; the heatmap scrolls inside a fading edge; counter steps measured 44×44 at 375 and 1470; Read the source, Legal and Press are 44px; 320 scrollWidth 320. check.mjs phone flags only the layering slabs (each slab covers the one before by design).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better (#525252 and #737373 on white, white 78% and 55% on black)
@@ -171,4 +153,4 @@ Done here: With hanzo.ai blocked (this cloud box), the logos show their names an
 - [x] `V2: 8/10 …` in the page file's top comment
 - [ ] Review read: `docs/review/investors.md` was 6/10; every listed fix is done, awaiting re-review
 
-Done here: All six fixes from the review are done in its order (bars, second half, hero and JS off, close, phone, hovers and portraits). Gallery: `docs/gallery/investors/`.
+Done here: Reviews read: 6/10 (7 Nov). Round 9 (8 Nov) answers it: commit stats on one line (78,421 / 1,263 / 1,733 / 5,125 / 3,617, measured), bars true at every size and under reduced motion, phone header ask, 44px counter steps, presses and hovers on every link, `--acc` on the deck ink, 0 hydration errors under reduced motion, and the copy check's missing lines restored (Hanzo's kicker and the thesis label as visually hidden text, figures and names in leaf spans). Gallery: `docs/gallery/investors/`.

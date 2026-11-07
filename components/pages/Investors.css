@@ -157,7 +157,7 @@
 .xin-commits { grid-column: 1 / 9; margin-top: 72px; }
 .xin-commits ol { list-style: none; margin: 20px 0 0; padding: 0; }
 .xin-commits a { display: grid; grid-template-columns: 180px minmax(0, 1fr) 140px; gap: 16px; align-items: baseline; min-height: 44px; padding: 12px 0; border-top: 1px solid rgba(0, 0, 0, .1); color: inherit; text-decoration: none; font-size: 16px; }
-@media (hover: hover) { .xin-commits a:hover span:nth-child(2) { text-decoration: underline; text-underline-offset: 3px; } }
+@media (hover: hover) { .xin-commits a:hover > span:nth-child(2) { text-decoration: underline; text-underline-offset: 3px; } }
 .xin-commits a .x-mono { font-size: 13px; color: #0a0a0a; }
 .xin-commits a small { font-size: 13px; color: #737373; text-align: right; }
 .xin-read { grid-column: 9 / 13; align-self: end; display: flex; flex-direction: column; gap: 12px; margin: 0; }
@@ -188,7 +188,7 @@
 .xin-ini { grid-area: i; position: relative; overflow: hidden; display: block; width: 56px; height: 56px; border-radius: 50%; background: #ededed; color: #0a0a0a; }
 .xin-ini > * { display: block; width: 100%; height: 100%; object-fit: cover; }
 .xin-exec b { grid-area: n; font-size: 21px; font-weight: 497; }
-.xin-exec span:not(.xin-ini) { grid-area: r; font-size: 16px; color: #525252; }
+.xin-exec > span:not(.xin-ini) { grid-area: r; font-size: 16px; color: #525252; }
 .xin-exec i { grid-area: x; font-style: normal; color: #737373; transition: transform 300ms cubic-bezier(.16, 1, .3, 1); }
 @media (hover: hover) { .xin-exec:hover i { transform: translate(3px, -3px); color: #0a0a0a; } }
 .xin-gov { display: flex; flex-direction: column; gap: 14px; }
@@ -299,3 +299,25 @@
 .xin-roll-n li { min-width: 44px; }
 .xin-slab:active, .xin-stats a:active, .xin-lead:active, .xin-commits a:active, .xin-wall a:active, .xin-dd-go:active, .xin-exec:active { transform: translateY(1px); transition-duration: 90ms; }
 @media (hover: hover) { .xin-gov-l a:hover { text-decoration-thickness: 2px; text-underline-offset: 4px; } .xin-backed a:hover .xin-logo-n { color: #0a0a0a !important; } }
+/* round 9 (8 Nov): on phones the header carries this page's ask in Hanzo's short words (ir@hanzo.ai, set by
+   usePhoneThumb in Investors.jsx). Its button keeps 3px less side padding on this page only, so the label ends inside
+   the 16px gutter and the shared hook does not fall back to "Try Hanzo". */
+@media (max-width: 700px) { body:has(main.xin) header[data-slot=masthead] a[data-x-ask] { padding-inline: 11px; } }
+/* idle motion past the hero (time, not scroll; CSS only; none under reduced motion): the newest day in the heatmap
+   and the newest commit carry a live ring, the wall's logos come up to full ink one at a time, and each slab's
+   Explore arrow nudges toward its page */
+.xin-heat-g i.now { position: relative; outline: 2px solid #0a0a0a; outline-offset: 1px; animation: xin-now 1.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xin-now { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .35); } 100% { box-shadow: 0 0 0 8px rgba(10, 10, 10, 0); } }
+.xin-live { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #0a0a0a; vertical-align: 1px; animation: xin-now 1.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+.xin-wall li img, .xin-wall li .xin-logo-n { animation: xin-spot 14.4s cubic-bezier(.4, 0, .2, 1) calc(var(--i, 0) * 1.2s) infinite; }
+@keyframes xin-spot { 0%, 9%, 100% { } 3%, 6% { opacity: 1; color: #0a0a0a; } }
+.xin-slab-go svg { animation: xin-nudge 3.2s cubic-bezier(.4, 0, .2, 1) infinite; }
+.xin-slabs li:nth-child(2) .xin-slab-go svg { animation-delay: .5s; } .xin-slabs li:nth-child(3) .xin-slab-go svg { animation-delay: 1s; }
+@keyframes xin-nudge { 0%, 72%, 100% { transform: none; } 84% { transform: translateX(4px); } }
+@media (hover: hover) { .xin-slab:hover .xin-slab-go svg, .xin-wall a:hover img, .xin-wall a:hover .xin-logo-n { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .xin-heat-g i.now, .xin-live, .xin-wall li img, .xin-wall li .xin-logo-n, .xin-slab-go svg { animation: none !important; } }
+/* the ownership line carries a slow pulse from the holding company down to Hanzo AI, Inc. (51% flows down it) */
+.xin-org-l i { position: relative; overflow: hidden; }
+.xin-org-l i::after { content: ''; position: absolute; left: -2px; right: -2px; top: 0; height: 28px; background: #0a0a0a; border-radius: 2px; transform: translateY(-28px); animation: xin-flow 2.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xin-flow { 0% { transform: translateY(-28px); } 70%, 100% { transform: translateY(200px); } }
+@media (prefers-reduced-motion: reduce) { .xin-org-l i::after { animation: none; display: none; } }
