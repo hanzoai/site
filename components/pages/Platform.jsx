@@ -1,7 +1,8 @@
 'use client';
 /* Platform (/platform), v3. Archetype B, System: a map you travel, from the whole into one part.
    Persona: Developer (PLAN-COMPONENTS 1.1), with the enterprise buyer second.
-   Goal: api_key_created.   CTA: "Start building" → platform.hanzo.ai/api-keys (hero, sticky AskBar, closing Band).
+   Goal: api_key_created.   CTA: "Start building" → platform.hanzo.ai/api-keys (hero, the site's sticky ask bar via data-thumb,
+   the closing Band).
    Signature: the camera. The first screen is the whole stack, eleven plates as one white slab beside the headline,
    turning toward the pointer. Scroll and the night opens as a circle from the stack, the plates pull apart and the
    camera travels down the stack group by group (API, MIND, ACT, RUN, SILICON), lighting that group's plates while its
@@ -23,7 +24,6 @@ import Sigil from '../Sigil';
 import IsoStack, { zOf, LIFT } from '../v2/IsoStack';
 import PinChapters from '../v2/PinChapters';
 import SheetPanel from '../v2/SheetPanel';
-import AskBar from '../v2/AskBar';
 import useCalm from '../v2/useCalm';
 import { CAT } from './platformData';
 import './Platform.css';
@@ -855,7 +855,7 @@ export default function Platform({ about }) {
   const openLayer = (i) => { setSel(i); setOpen(true); };
   const step = (d) => setSel((s) => (s + d + N) % N);
   return (
-    <main className="xpl">
+    <main className="xpl" data-ask-name="Hanzo Platform">
       <noscript><style>{NOJS}</style></noscript>
       <Journey openLayer={openLayer} />
       <Kernel />
@@ -873,7 +873,6 @@ export default function Platform({ about }) {
         note={<span className="xpl-band-n"><span className="xpl-band-cmd"><code>docker run -p 8080:8080 ghcr.io/hanzoai/cloud</code><Copy text="docker run -p 8080:8080 ghcr.io/hanzoai/cloud" /></span><A to="https://docs.hanzo.ai/docs/quickstart" className="x-link">Read the docs</A></span>}
       />
       <Inspector sel={sel} open={open} onClose={() => setOpen(false)} step={step} />
-      <AskBar title="Hanzo Platform" label="Start building" to={KEY_URL} hero=".xpl-jr" />
     </main>
   );
 }
