@@ -10,6 +10,8 @@
    the dark room, a magnetic ask. Greys only (v3): hierarchy comes from ink, silver and the stamps, not from hues.
    Beyond: only where they differ. One switch folds every row on which all four say the same, and counts what is left,
    so you can test the page's own claim that they differ less than any of them advertise.
+   Persona: Developer weighing OpenRouter, Portkey or LiteLLM. Goal: check the comparison and choose Enso. Metric: api_key_created.
+   CTA: "Hanzo Enso" (to /enso): the one solid ask, in the hero and in "Go deeper"; vendor sites are text links.
    V2: 8/10 From a raw ported table to a launch-style proof page: hero figure race, a ledger that files in with verdict marks and provenance stamps, a differences-only switch, one dark room; greyscale, one solid ask hero to close. */
 // Signature: the ledger files in: measured rows first, the vendors' own claims filing in under them, every cell a verdict mark, every row stamped with its provenance
 // Beyond: only where they differ: one switch folds the rows where all four say the same and counts what is left

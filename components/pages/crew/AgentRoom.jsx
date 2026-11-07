@@ -10,6 +10,8 @@
    The demos play through once each time they come into view, then rest; no colour but Hanzo's own pictures (v3 rules).
    Beyond: start in one step. On Crew, type what you need and the agent whose own role matches takes the baton; Enter
    opens the chat with them. On the SDK, its own install line for pip or cargo, ready to copy.
+   Persona: Developer (SDK) and team buyer (Crew). Goal: start building with agents. Metric: install_copy (SDK), signup_start (Crew).
+   CTA: "Read the docs" (SDK), "Launch a bot" (Crew): one solid ask, hero to close; every other action a text link.
    V2: 8.5/10 Apple-style launch: pinned stage where the live ring or console settles as chapter one hands over to chapter two; greyscale, no kicker over the h1, one solid ask repeated hero to close, demos that settle. */
 // Signature: who has the turn: a baton passes by itself around the agents' ring and through the console turns, the hero object settling on a pinned stage
 // Beyond: start in one step: type a need and the agent whose own role matches takes the baton (Enter opens the chat); the SDK's own pip or cargo line, ready to copy
