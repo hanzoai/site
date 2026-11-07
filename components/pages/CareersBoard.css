@@ -33,8 +33,13 @@
 .xcb-hire-n button[aria-pressed='true'] { color: #fafafa; }
 .xcb-hire-n i { display: block; position: relative; height: 3px; margin-bottom: 12px; border-radius: 3px; background: rgba(255, 255, 255, .16); overflow: hidden; }
 .xcb-hire-n u { position: absolute; inset: 0; background: #fafafa; transform-origin: 0 50%; }
-.xcb-hire-n u.run { transform: scaleX(0); animation: xcb-fill 3.4s linear forwards; }
-.xcb-hire-n u.wait { transform: scaleX(0); }
+.xcb-hire-n u.run, .xcb-hire-t u.run { transform: scaleX(0); animation: xcb-fill 3.4s linear forwards; }
+.xcb-hire-n u.wait, .xcb-hire-t u.wait { transform: scaleX(0); }
+.xcb-hire-t { display: none; }
+@media (max-width: 900px) {
+  .xcb-hire-t { display: block; position: relative; height: 1px; margin-top: 14px; background: rgba(255, 255, 255, .16); overflow: hidden; }
+  .xcb-hire-t u { position: absolute; inset: 0; background: rgba(255, 255, 255, .55); transform-origin: 0 50%; }
+}
 @keyframes xcb-fill { to { transform: scaleX(1); } }
 @media (hover: hover) { .xcb-hire-n button:hover { color: #fafafa; } }
 
@@ -146,7 +151,9 @@
 .xcb-sheet-t { font-size: clamp(26px, 2.2vw, 32px); line-height: 1.12; letter-spacing: -.02em; }
 .xcb-sheet.last .xcb-sheet-t { font-size: clamp(26px, 2.2vw, 32px); max-width: 22ch; }
 .xcb-sheet-d { font-size: 17px; }
-.xcb-sheet-in { min-height: min(50svh, 460px); }
+.xcb-sheet-in { min-height: min(50svh, 460px); isolation: isolate; }
+.xcb-sheet-c { position: absolute; top: 0; right: 0; width: 55%; height: 100%; z-index: -1; color: var(--ink); opacity: .14; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); mask-image: linear-gradient(90deg, transparent, #000 45%); transition: opacity var(--d-slow) var(--e-out); }
+.xcb-sheet.on .xcb-sheet-c { opacity: .22; }
 .xcb-pos-h { gap: 14px; }
 .xcb-int-h { gap: 18px; }
 .xcb-perks-hd { row-gap: 12px; }
@@ -194,5 +201,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .xcb-sheet { position: relative; top: 0; margin-bottom: 16px; }
-  .xcb-hire-n u.run, .xcb-hire-n u.wait { animation: none; transform: scaleX(1); }
+  .xcb-hire-n u.run, .xcb-hire-n u.wait, .xcb-hire-t u.run, .xcb-hire-t u.wait { animation: none; transform: scaleX(1); }
 }
