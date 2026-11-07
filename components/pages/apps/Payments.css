@@ -387,9 +387,31 @@ html.js .pay-co-methods.lit li { color: var(--bz-ink); }
 .pay-co.bz-sec, .pay-tax.bz-sec, .pay-cases.bz-sec, .pay-more.bz-sec { padding-top: clamp(48px, 6vw, 96px); }
 .pay-co.bz-sec { padding-bottom: clamp(48px, 6vw, 96px); }
 /* the four cases deal in as one list */
-html.js .pay-cases .pay-case { opacity: 0; transform: translate3d(0, 24px, 0); transition: opacity .5s var(--bz-emph), transform .5s var(--bz-emph); }
-html.js .pay-cases .pay-case.c1 { transition-delay: 60ms; } html.js .pay-cases .pay-case.c2 { transition-delay: 120ms; } html.js .pay-cases .pay-case.c3 { transition-delay: 180ms; }
-html.js .pay-cases.lit .pay-case { opacity: 1; transform: none; }
+/* ---------- entrances (top comment of Payments.jsx): once each, on data-in from useEnter; only under html.js; fill
+   "backwards", so nothing keeps a transform after it lands; reduced motion = final state (bottom of this file) ---------- */
+/* 1 stretch-scroll: Payments.jsx (useStretch) sets scaleY on the room's content from the top while it scrolls in */
+.pay-stretch { transform-origin: 50% 0; }
+/* 2 curtain-rise: the heading block and each row rise from behind a clip at their own bottom edge */
+@keyframes pay-curtain { from { clip-path: inset(0 0 100% 0); transform: translate3d(0, 48px, 0); } to { clip-path: inset(0 0 -20% 0); transform: none; } }
+html.js .pay-curtain:not([data-in]) .pay-ch-head > *, html.js .pay-curtain:not([data-in]) .pay-steps > li { clip-path: inset(0 0 100% 0); }
+html.js .pay-curtain[data-in] .pay-ch-head > *, html.js .pay-curtain[data-in] .pay-steps > li { animation: pay-curtain .8s cubic-bezier(.16, 1, .3, 1) backwards; }
+html.js .pay-curtain[data-in] .pay-ch-head > :nth-child(2) { animation-delay: .12s; }
+html.js .pay-curtain[data-in] .pay-steps > li:nth-child(1) { animation-delay: .22s; }
+html.js .pay-curtain[data-in] .pay-steps > li:nth-child(2) { animation-delay: .32s; }
+html.js .pay-curtain[data-in] .pay-steps > li:nth-child(3) { animation-delay: .42s; }
+html.js .pay-curtain[data-in] .pay-steps > li:nth-child(4) { animation-delay: .52s; }
+/* 3 word-shuffle: Payments.jsx (Shuffle) moves the words; they only need to be boxes that can move */
+.pay-w { display: inline-block; }
+/* 4 side-carousel: the methods ride in from the right in three snapping steps, like a carousel advancing */
+@keyframes pay-ride { 0% { opacity: 0; transform: translate3d(56%, 0, 0); } 28% { opacity: 1; transform: translate3d(30%, 0, 0); } 40% { transform: translate3d(30%, 0, 0); } 64% { transform: translate3d(9%, 0, 0); } 74% { transform: translate3d(9%, 0, 0); } 94% { transform: translate3d(-.6%, 0, 0); } 100% { opacity: 1; transform: none; } }
+.pay-co { overflow-x: clip; }
+html.js .pay-ride:not([data-in]) { opacity: 0; }
+html.js .pay-ride[data-in] { animation: pay-ride 1.15s cubic-bezier(.65, 0, .35, 1) backwards; }
+/* 5 stack-drop: the four tiles drop from above in turn, each landing a little heavier, and settle */
+@keyframes pay-stack { 0% { opacity: 0; transform: translate3d(0, -96px, 0) scale(.96); } 60% { opacity: 1; transform: translate3d(0, 4px, 0) scale(1.005, .99); } 80% { transform: translate3d(0, -2px, 0); } 100% { opacity: 1; transform: none; } }
+html.js .pay-stack:not([data-in]) .pay-case { opacity: 0; }
+html.js .pay-stack[data-in] .pay-case { animation: pay-stack .62s cubic-bezier(.3, 0, .2, 1) backwards; }
+html.js .pay-stack[data-in] .pay-case.c1 { animation-delay: .14s; } html.js .pay-stack[data-in] .pay-case.c2 { animation-delay: .28s; } html.js .pay-stack[data-in] .pay-case.c3 { animation-delay: .42s; }
 .pay-move-bar input:focus-visible { outline: 2px solid #fff; outline-offset: 6px; border-radius: 16px; }
 /* what sits behind the one integration: plain rows (the pinned chapters are gone) */
 .pay-behind .pay-ch-head { margin-bottom: 44px; }
@@ -453,7 +475,12 @@ html.js .pay-cases.lit .pay-case { opacity: 1; transform: none; }
   .pay-move-key { gap: 8px 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  html.js .pay-co-methods li, html.js .pay-cases .pay-case, html.js .pay-co-lines li, html.js .pay-tax .pay-tick, html.js .pay-tax-open .pay-vg, html.js .pay-tc-li > span { transition: none; }
+  html.js .pay-curtain .pay-ch-head > *, html.js .pay-curtain .pay-steps > li, html.js .pay-ride, html.js .pay-stack .pay-case { animation: none !important; clip-path: none !important; opacity: 1 !important; }
+  html.js .pay-co-lines li, html.js .pay-tc-li > span { opacity: 1; transform: none; }
+  html.js .pay-co-methods li { color: var(--bz-ink); }
+  html.js .pay-tax .pay-tick { stroke-dashoffset: 0; }
+  html.js .pay-tax-open .pay-vg { clip-path: none; transform: none; }
+  html.js .pay-co-methods li, html.js .pay-co-lines li, html.js .pay-tax .pay-tick, html.js .pay-tax-open .pay-vg, html.js .pay-tc-li > span { transition: none; }
   .pay-cat, .pay-lede, .pay-side, .pay-acts, .pay-rise { animation: none; }
   .pay-move-dots i::after, .pay-move-figs b { transition: none; }
 }
