@@ -147,6 +147,24 @@
 .xbs-ledger li.on .xbs-mark { transform: scale(1); opacity: 1; }
 @media (hover: hover) { .xbs-ledger li:hover .xp-title { color: var(--ink); } .xbs-ledger li:hover .xbs-mark { opacity: .7; } }
 
+.xbs-pcard { display: none; }
+
+/* The dark objects (quote sheet, phone quote, promise cards) take the dark room's tokens page-locally, without
+   data-room="dark": that attribute would also turn the shared header dark over this white page. */
+.xbs-ink {
+  --room-bg: #0a0a0b; --room-surface: #141416; --room-raised: #1c1c1e;
+  --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-faint: #86868b;
+  --room-line: rgba(255, 255, 255, .14); --room-line-strong: rgba(255, 255, 255, .26);
+  --room-fill: rgba(255, 255, 255, .06); --room-fill-strong: rgba(255, 255, 255, .12);
+  --focus: #f5f5f7; --xp-accent: #f5f5f7;
+  --btn-solid-bg: #f5f5f7; --btn-solid-ink: #0a0a0b; --btn-solid-hover: #fff;
+}
+
+/* One solid at a time from the first paint (the /affiliate move): the header's ask is outlined on this route until
+   the page's hook says none of its own solid asks is on screen (html[data-xbs-solid]). */
+html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[href="https://hanzo.ai/signup"],
+html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+
 /* the phone bar under the thumb */
 .xbs-dock { display: none; }
 .xbs-mini-bar { display: none; }
@@ -172,15 +190,18 @@
   .xbs-seats { grid-template-columns: repeat(10, 1fr); }
   .xbs-team b { font-size: 52px; }
   .xbs-tot dd { font-size: 26px; }
-  .xbs-why-g { grid-template-columns: 1fr; gap: 28px; }
-  .xbs-stage-w { position: sticky; top: var(--x-top, 60px); z-index: 2; margin-top: -12px; padding: 12px 0 8px; background: var(--room-bg, #fff); }
-  .xbs-stage { aspect-ratio: auto; height: 268px; padding: 20px; }
+  /* pinned scenes stack under 900px: the sticky stage goes, each promise carries its own card */
+  .xbs-why-g { grid-template-columns: 1fr; gap: 0; }
+  .xbs-stage-w { display: none; }
+  .xbs-pcard { display: block; grid-column: 1 / -1; margin-top: 18px; padding: 20px; border-radius: 20px; background: #0a0a0a; color: #fafafa; overflow: hidden; }
+  .xbs-ledger li .xp-title { color: var(--ink); }
+  .xbs-ledger li .xbs-mark { transform: scale(1); opacity: 1; }
   .xbs-scene { gap: 12px; }
   .xbs-sp { font-size: 40px; }
   .xbs-sx b { font-size: 32px; }
   .xbs-sg { gap: 4px; grid-template-columns: repeat(20, 1fr); }
   .xbs-mt b { font-size: 22px; }
-  .xbs-mb { -webkit-line-clamp: 2; font-size: 13px; }
+  .xbs-mb { -webkit-line-clamp: 4; font-size: 13px; }
   .xbs-mme { font-size: 13px; }
 }
 @media (max-width: 700px) {

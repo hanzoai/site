@@ -13,7 +13,7 @@ Forks this page deleted: its own code tabs and copy button (now kit `Tabs` + `Co
 - [x] No dead or self-looping button; n/a prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: one solid `Cta` (`blog-post.hero`, the post's first closing link, e.g. "How to use Kai") on screen one, repeated once in the closing `Band`; the header's "Try Hanzo" turns outline while it shows, then carries the post's ask once the hero has gone (desktop, shared system; no floating pill). On phones (700px and under) the post's hero ask is the one solid: while it is on screen the page sets `html[data-ask=quiet]` so the header's "Try Hanzo" reads as an outline (the /bounty pattern; measured at 375x812: one solid, "How to use Kai" / "Hanzo Gen"). Persona/Goal/CTA/Metric/Signature/Beyond are in `Post.jsx`'s top comment.
+Done here: one solid `Cta` (`blog-post.hero`, the post's first closing link, e.g. "How to use Kai") on screen one, repeated once in the closing `Band`; the header's "Try Hanzo" turns outline while it shows, then carries the post's ask once the hero has gone (desktop, shared system; no floating pill). One solid at every width, from the first paint (the /affiliate pattern): `Post.css` draws the header's ask outlined on a post, and `useQuietHeader` turns it solid only while none of the post's own asks (hero, phone chapter bar, Band) is on screen or the hero has faded under the plate. On phones the post's ask rides inline in the 56px chapter bar (`blog-post.bar`), and the stage, body and end sections carry `data-ask-hide`, so the shared rising bar never floats over the text. Measured at 375x812 while reading: one solid ("Hanzo Gen" / "How to use Kai" in the bar), header outlined, no rising bar. Persona/Goal/CTA/Metric/Signature/Beyond are in `Post.jsx`'s top comment.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; skip link reaches `#main` (layout)
@@ -21,7 +21,7 @@ Done here: one solid `Cta` (`blog-post.hero`, the post's first closing link, e.g
 - [x] Breadcrumb at depth 2: Hanzo's own "Back to Blog" link sits first on the page
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: parity links 4/4, 8/8, 9/9; next-post cards are `<A>` links that open by Morph; chapters are anchored h2s reachable from the rail (desktop) and the reading-bar sheet (phone).
+Done here: breadcrumb `nav[aria-label=Breadcrumb]` "Back to Blog / <post chip>" sits in the meta line under the h1 (last item `aria-current="page"`, not a link), so nothing sits above the title; parity links 4/4, 8/8, 9/9; next-post cards are `<A>` links that open by Morph; chapters are anchored h2s reachable from the rail (desktop) and the reading-bar sheet (phone).
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -31,7 +31,7 @@ Done here: parity links 4/4, 8/8, 9/9; next-post cards are `<A>` links that open
 - [x] Ends in proof (sources, other posts), `Band`, footer
 - [x] Card-to-page links use Morph; the card title carries `data-morph`, the h1 is `data-morph-target`
 
-Done here: screen one is the 52px title cut in by word mask (700 ms, 55 ms apart, a CSS animation from first paint, so it does not wait for hydration; the film's poster drifts from first paint too), the post's ask, and its film (Kai, Enso) or Sigil playing in a card from the first second (critic 6/10 fix: "the picture only starts when I scroll"). The scene pins and the card opens to full bleed, then chapters, sources, next posts, `Band`. At 1470x801 the film card's top sits at 176px, playing (currentTime 2.1s to 4.2s over 2s, measured on both members); the Sigil post moves too. On phones the back link sits 68px under the header and about 280px of film is in the first screen. Mid-page stays one-in-one-out: every chapter that is only paragraphs gets one object drawn from its own words (`Gist.jsx`): Pareto 01 and Kai 01 a step track whose light walks through the chapter's own three steps, Pareto 03 count-up tiles "0.27 / ms p50" and "$0.021 / per million tokens", Kai 03 "Limits" 1,024 against 32,768 as bars at their true ratio. JS off: the cut-in plays as plain CSS, so the title always lands.
+Done here: screen one is the 52px title cut in by word mask (700 ms, 55 ms apart, a CSS animation from first paint, so it does not wait for hydration; the film's poster drifts from first paint too), the post's ask, and its film (Kai, Enso) or Sigil playing in a card from the first second (critic 6/10 fix: "the picture only starts when I scroll"). The scene pins and the card opens to full bleed, then chapters, sources, next posts, `Band`. At 1470x801 the film card's top sits at 176px, playing (currentTime 2.1s to 4.2s over 2s, measured on both members); the Sigil post moves too. Nothing sits above the h1 (the breadcrumb is under it); on phones the h1 starts 68px under the header and about 280px of film is in the first screen. Mid-page stays one-in-one-out: every chapter that is only paragraphs gets one object drawn from its own words (`Gist.jsx`): Pareto 01 and Kai 01 a step track whose light walks through the chapter's own three steps, Pareto 03 count-up tiles "0.27 / ms p50" and "$0.021 / per million tokens", Kai 03 "Limits" 1,024 against 32,768 as bars at their true ratio. JS off: the cut-in plays as plain CSS, so the title always lands.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -64,7 +64,7 @@ Done here: parity text 110/110, 77/77, 45/45. Sizes are from the deck only: h1 5
 - [x] One icon set (inline 16px strokes); no icon in a box
 - [x] Differs from neighbours: hero medium is the post's own film in a card that opens to a black room
 
-Done here: `taste.py` OK on all 5 files; code samples are greys only (kit `CodeBlock`: ink lines, comments dimmed), no syntax hues; one black room (the plate) plus the closing `Band`, not back to back; colour only from Hanzo's model films.
+Done here: neighbours differ by their own data: a post whose plate holds figures (Kai) mirrors the scene (film card left, title right, figures counted up by the scroll as the plate opens, reading rail on the right); a post whose plate names products (Pareto) keeps card right, rail left; a post without a film (synthesis) shows its Sigil and the Life board. Synthesis "AI for AI" parts are asymmetric: Zen leads large with its film, the other five follow as a list with small marks (film stills or Sigils). `taste.py` OK on all 6 files; code samples are greys only (kit `CodeBlock`: ink lines, comments dimmed), no syntax hues; one black room (the plate) plus the closing `Band`, not back to back; colour only from Hanzo's model films.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press (scale .97, 90 ms), focus-visible
@@ -98,7 +98,7 @@ Done here: films are Hanzo's own `/models/*.webm` with `.webp` posters, played b
 - [x] Every target 44px or more; hovers have tap paths
 - [x] Primary ask above the fold at 375 (title, meta, lede, ask, then 45svh of film)
 
-Done here: under 900px the scene stacks (no pin): title 40px, lede 17px, the ask, then the plate with its film at 45svh; the rail becomes a sticky reading bar with a contents sheet.
+Done here: under 900px the scene stacks (no pin): title 40px, breadcrumb and meta, lede 17px, the ask, then the plate with its film at 45svh; the rail becomes a sticky reading bar with a contents sheet; at 700px and under the bar carries the post's ask on its right and the minutes left move into the sheet.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text uses room ink and room soft (#6e6e73 on white, 4.9:1); white 55–78% on black

@@ -2,7 +2,7 @@
 /* Bounties & Rewards. Its idea is the ledger of what a contribution earns.
    Persona: a developer who wants to contribute to Hanzo's open repositories. Goal: take an open bounty.
    CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: github_click.
-   V2: 8/10 grey deck: display hero beside the GitHub window of open bounties (live, or the build snapshot) where the newest bounty arrives once and the count ticks up, then a reader walks the rows; countable reward tiles; the standings as big totals; the awards as one deck that deals; the token race scrubbed as the dark room; how a bounty is taken as the PR itself, pinned while it goes open → pull request → merged.
+   V2: 8/10 grey deck: display hero beside the GitHub window of open bounties (live, or the build snapshot) where the newest bounty arrives once and the count ticks up, then a reader walks the rows; countable reward tiles; the standings as big totals; the awards as one deck that deals; the token race as one pinned scene in the dark room; how a bounty is taken as the PR itself, pinned while it goes open → pull request → merged; a closing band with the page's headline and its one ask, held in the header to the footer.
    Signature: the token race: in the dark room the ten organizations' bars race out on a log line as you scroll.
    Beyond: count on the tiles: steppers on each way to earn add up the points and AI credits Hanzo's rates give, with a
    marker placed against the standings Hanzo lists. No words but Hanzo's.
@@ -10,7 +10,7 @@
    bounty arriving and the count ticking (time, idle) + the awards deck dealing (time) + steppers gliding the marker (pointer,
    state) + line-mask headline (arrival) + the PR changing state as it is read (state). 0 UI hues. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
 import { A, Cta } from '../kit';
 import { Count } from '../ui';
 import LineReveal, { NoJs } from '../v2/LineReveal';
@@ -109,25 +109,67 @@ function useOneSolidOnPhone() {
   }, []);
 }
 
+/* Desktop: once the hero's ask has gone by, the header's button says "Every open bounty" down to the footer. The shell
+   writes it once and caches that it did; when the header's text is put back under it (a header re-render), the shell
+   does not notice and "Try Hanzo" returns mid-page. This re-asserts the page's ask, only while the hero's ask is above
+   the header, and leaves everything else to the shell (docs/requests/bounty.md). */
+function useHoldHeaderAsk() {
+  useEffect(() => {
+    const mq = matchMedia('(min-width: 701px)');
+    const hero = document.querySelector('main.xbo [data-cta="bounty.hero"]');
+    const head = document.querySelector('header[data-slot=masthead]');
+    if (!hero || !head) return;
+    const label = hero.textContent.trim();
+    const to = hero.getAttribute('href');
+    let t = 0;
+    const fix = () => {
+      const btn = head.querySelector('a[data-x-ask]');
+      if (!btn || !mq.matches || hero.getBoundingClientRect().bottom >= 60) return;
+      if (btn.textContent !== label) btn.textContent = label;
+      if (btn.getAttribute('href') !== to) btn.setAttribute('href', to);
+      if (btn.getAttribute('data-cta') !== 'header-ask') btn.setAttribute('data-cta', 'header-ask');
+    };
+    const soon = () => { clearTimeout(t); t = setTimeout(fix, 120); };
+    addEventListener('scroll', soon, { passive: true });
+    const mo = new MutationObserver(soon);
+    mo.observe(head, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['href'] });
+    return () => { clearTimeout(t); removeEventListener('scroll', soon); mo.disconnect(); };
+  }, []);
+}
+
+/* Reduced motion, read after mount: the first client render matches the server's, then the scrubbed value jumps to its
+   final state (no hydration mismatch). */
+function useCalmed(src) {
+  const calm = useMotionValue(0);
+  useEffect(() => {
+    const mq = matchMedia('(prefers-reduced-motion: reduce)');
+    const f = () => calm.set(mq.matches ? 1 : 0);
+    f(); mq.addEventListener('change', f);
+    return () => mq.removeEventListener('change', f);
+  }, [calm]);
+  return useTransform([src, calm], ([v, c]) => (c ? 1 : v));
+}
+
 function Hero({ st }) {
   useOneSolidOnPhone();
+  useHoldHeaderAsk();
   return (
     <section className="xbo-hero" aria-labelledby="xbo-h1">
       <div className="xp-wrap xp-grid">
         <div className="xbo-copy">
           <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Take an issue.', 'Ship the fix.']} />
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
+          <div className="xbo-in" style={{ '--d': '.12s' }}>
             <p className="xp-lede xbo-lede">Open issues and bug reports across Hanzo’s repositories. Ship a fix or report a verified bug to earn AI credits and climb the global leaderboard.</p>
             <div className="xbo-acts">
               <Cta to={SEARCH} id="bounty.hero" thumb className="xp-cta">Every open bounty</Cta>
               <A to="/leaderboard" className="xbo-link" data-cta="bounty.leaderboard">Leaderboard</A>
               <A to={CONTRIBUTING} className="xbo-link" data-cta="bounty.contributing">How to contribute</A>
             </div>
-          </motion.div>
+          </div>
         </div>
-        <motion.div className="xbo-hero-win" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+        <div className="xbo-hero-win xbo-in" style={{ '--d': '.05s', '--y': '32px' }}>
           <Open st={st} />
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -324,16 +366,18 @@ function Tally({ p, to }) {
   return <span ref={ref}>{n(to)}</span>;
 }
 
-/* The token race, scrubbed by the scroll, on a log line. */
+/* The token race, one pinned scene on desktop (the room holds while the ten bars race out and @hanzo's figure counts),
+   scrubbed in place on phones; on a log line. */
 function Volume() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.85'] });
-  const p = useTransform(scrollYProgress, (v) => (calm ? 1 : v));
+  const wide = useWide();
+  const { scrollYProgress } = useScroll({ target: ref, offset: wide ? ['start start', 'end end'] : ['start 0.85', 'end 0.85'] });
+  const p = useCalmed(scrollYProgress);
   const grow = useTransform(p, [0.05, 0.55], [0.62, 1], { clamp: true }); // 52px while the race waits, 84px once it has run
   return (
     <section className="xp-sec xp-dark xbo-vol" data-room="dark" aria-labelledby="xbo-vol-h">
-      <div className="xp-wrap">
+      <div className="xbo-vpin" ref={ref}>
+      <div className="xp-wrap xbo-vstage">
         <div className="xp-grid xbo-vol-head">
           <div className="xbo-vol-hl">
             <motion.p className="xbo-vol-fig xp-fig" style={{ scale: grow }}><Tally p={p} to={ORGS[0][3]} /></motion.p>
@@ -344,10 +388,11 @@ function Volume() {
             <p className="xp-body">Top 10 active organizations across 217 organizations on Hanzo Cloud by total tokens processed.</p>
           </div>
         </div>
-        <ol className="xbo-orgs" ref={ref}>
+        <ol className="xbo-orgs">
           {ORGS.map((o, i) => <Lane key={o[0]} p={p} i={i} org={o} />)}
         </ol>
         <div className="xbo-scale x-mono" aria-hidden="true"><span className="xbo-scale-in">{['100K', '1M'].map((t, i) => <span key={t} style={{ left: (i / TOP) * 100 + '%' }}>{t}</span>)}</span></div>
+      </div>
       </div>
     </section>
   );
@@ -382,15 +427,14 @@ function Glyph() {
 
 function Take({ st }) {
   const pin = useRef(null);
-  const calm = useReducedMotion();
   const wide = useWide();
   const lead = (st.kind === 'ready' && st.open.items[0]) || SNAP.items[0];
   const { scrollYProgress } = useScroll({ target: pin, offset: wide ? ['start 0.2', 'end 0.85'] : ['start 0.75', 'end 0.55'] });
-  const p = useTransform(scrollYProgress, (v) => (calm ? 1 : v));
+  const p = useCalmed(scrollYProgress);
   const at = (v) => (v >= 0.7 ? 2 : v >= 0.36 ? 1 : v >= 0.04 ? 0 : -1);
   const [step, setStep] = useState(-1);
   useMotionValueEvent(p, 'change', (v) => setStep(at(v)));
-  useEffect(() => setStep(at(p.get())), [wide, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => setStep(at(p.get())), [wide]); // eslint-disable-line react-hooks/exhaustive-deps
   const bar = useTransform(p, [0.04, 0.7], [0, 1], { clamp: true });
   return (
     <section className="xp-sec xbo-take" aria-labelledby="xbo-take-h">
@@ -420,13 +464,31 @@ function Take({ st }) {
           </div>
         </div>
       </div>
-      <div className="xp-wrap xp-grid xbo-take-foot">
+      <div className="xp-wrap xbo-take-foot">
         <div className="xbo-propose" id="propose">
-          <h3 className="xp-title">Propose a bounty</h3>
-          <p className="xp-body">Found something worth fixing? Open an issue in its repository saying what is wrong, where, and how a fix is checked, and ask for the bounty label. A maintainer decides.</p>
-          <A to={REPOS} className="xbo-link">Hanzo’s repositories</A>
+          <div className="xbo-propose-l">
+            <h3 className="xp-title">Propose a bounty</h3>
+            <p className="xp-body">Found something worth fixing? Open an issue in its repository saying what is wrong, where, and how a fix is checked, and ask for the bounty label. A maintainer decides.</p>
+          </div>
+          <div className="xbo-propose-r">
+            <A to={REPOS} className="xbo-link">Hanzo’s repositories</A>
+            <p className="xbo-sec xp-body">A security issue goes to <a href="mailto:security@hanzo.ai">security@hanzo.ai</a>, never to a public issue.</p>
+          </div>
         </div>
-        <p className="xbo-sec xp-body">A security issue goes to <a href="mailto:security@hanzo.ai">security@hanzo.ai</a>, never to a public issue.</p>
+      </div>
+    </section>
+  );
+}
+
+/* The closing band: the page's own headline and its one ask, once more. */
+function Close() {
+  return (
+    <section className="x-band xbo-band" data-room="dark" aria-labelledby="xbo-band-h">
+      <div className="xp-wrap">
+        <LineReveal as="h2" id="xbo-band-h" className="xbo-band-h" onView lines={['Take an issue.', 'Ship the fix.']} />
+        <div className="x-band-act">
+          <Cta to={SEARCH} id="bounty.band" size="lg" className="xp-cta">Every open bounty</Cta>
+        </div>
       </div>
     </section>
   );
@@ -442,6 +504,7 @@ export default function Bounty() {
       <Standings />
       <Volume />
       <Take st={st} />
+      <Close />
     </main>
   );
 }

@@ -31,7 +31,7 @@ Done here: `<main id="main">`; parity links 36/36; model cards are real `<a href
 - [x] Ends in proof strip, Band, footer
 - [x] Card-to-page links use the opener (model cards) and Morph (paper titles carry `data-morph`)
 
-Done here: h1 (52px, cut in by line by a CSS animation from first paint, 60 ms apart) with the lede and one ask to its right on 8/5 columns, at full opacity in the server HTML; the frontier, its ghost axes and its head draw by CSS from 0.1 s (no hydration wait), so JS off shows the same film ending with the head at 2026. Order: hero, statement and switches, tiles, figures, founders, Zen (the one pinned scene: the scroll turns its six principles one at a time), black room (enters as a rounded card), models and papers, roles, Band. At 1470×801 the hero leaves the next section's head peeking under the fold.
+Done here: h1 (52px, cut in by line by a CSS animation from first paint, 60 ms apart) with the lede and one ask to its right on 8/5 columns, at full opacity in the server HTML; the frontier, its ghost axes and its head draw by CSS from 0.1 s (no hydration wait), so JS off shows the same film ending with the head at 2026. The lede and asks never move (lede top measured identical at 0.3, 1 and 3 s); on phones the frontier sits straight under the h1 (curve at y 221–380 of 812), with the lede and "Get Started" below it. Order: hero, statement and switches, tiles, figures, founders, Zen (the one pinned scene: the scroll turns its six principles one at a time), black room (enters as a rounded card), models and papers, roles, Band. At 1470×801 the hero leaves the next section's head peeking under the fold.
 
 ## 4. Conversion system
 - [x] kit `Cta` only (solid, quiet, link); no raw `.x-btn`
@@ -64,7 +64,7 @@ Done here: parity 167/167 text, 36/36 links; the black room's two panes are kit 
 - [x] No icon set needed (one arrow and one chevron, 1.6px stroke)
 - [x] Differs from neighbours: hero object is a drawn frontier (History: a running year; Blog: a magazine cover)
 
-Done here: headings rest at 26px (h1 52px, Book 497; founders' names 26px, so the portraits are the one big thing), figures 64px in Air 220 and grow to 1.75× only while they are the moment; one big thing per screen.
+Done here: headings rest at 26px (h1 52px, Book 497; founders' names 26px beside 230px plates), figures 64px in Air 220 and grow to 1.75× only while they are the moment; one big thing per screen.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `hover:hover`), press (.97, 90 ms), focus-visible
@@ -82,7 +82,7 @@ Done here: switches are `role="switch"`, ease-emphasis 300 ms (no overshoot); th
 - [x] Reduced motion shows final states; no `setInterval`
 - [x] n/a: sound is the shared kit's
 
-Done here: signature = tile opens into its sheet (600 ms ease-in-out). The Zen of Hanzo pins for six steps (`AboutZen.jsx`, `useScroll`): the old principle leaves before the new one rises, a bar fills with the scroll, and a hover, key or click still picks any one (a click moves the scroll to its step). Nothing loops past 5 s: the curve draws once in 4 s, the switch hint breathes twice, the live dot is still.
+Done here: signature = tile opens into its sheet (600 ms ease-in-out). The Zen of Hanzo pins for six steps (`AboutZen.jsx`, `useScroll`): the old principle leaves before the new one rises, a bar fills with the scroll, and a hover, key or click still picks any one (a click moves the scroll to its step). The curve draws once in 4 s; after it the first screen idles by CSS: the head's halo breathes (3.2 s) and a reader walks the curve 2014 → frontier every 9 s while no hand is on it (hidden while the pointer reads a year). Both pause off screen and never run under reduced motion. The switch hint breathes twice; the live dot is still.
 
 ## 10. Media
 - [x] kit `Img` for portraits and model art, with sizes
@@ -90,7 +90,7 @@ Done here: signature = tile opens into its sheet (600 ms ease-in-out). The Zen o
 - [x] Alt on every image (portraits named; decorative art `alt=""`)
 - [x] No dimmed photo; Kai, Zen and Enso art shown together
 
-Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; the founders' portraits are not in `public/authors` yet, so `app/about/page.jsx` asks for them only when the files exist (no 404s); until then each founder is a Sigil contour field from their name with a 26px initials mark (no empty grey slab). When a portrait ships, it loads over the Sigil.
+Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; the founders' portraits are not in `public/authors` yet, so `app/about/page.jsx` asks for them only when the files exist (no 404s); no portrait exists anywhere in the repo (public, content, /team and /investors use the same missing `/authors/*` paths), so each founder is a 230px Sigil plate (contour field from their name, 26px initials) with the name, role, bio and links beside it, two cards side by side (no dead half-screen). The plate opens as a circle from its initials' corner as it scrolls in (CSS `view()` timeline), its hills lean toward a hand and darken under it. When a portrait ships, it loads over the Sigil.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -102,7 +102,7 @@ Done here: phone composition stacks the hero with the frontier cropped at true s
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white, #525252 on #f5f5f5, #a3a3a3 and white 78% on black
-- [x] n/a: nothing moves for more than 5 s by itself
+- [x] The hero's idle loops (halo breathe, curve reader) have a pause control (WCAG 2.2.2, MASTER part 12): a 44px quiet `StoryPause` button ("Pause", `aria-pressed`), first in the hero's DOM, tucked into the plot's lower right corner; it pauses both by class. They also pause off screen, and under reduced motion they never run and the button is hidden
 - [x] n/a: no forms
 - [x] One h1; h2 per section, h3 inside; names start with visible text
 - [x] Keyboard reaches every control (tiles, sheet arrows, tabs, switches, Zen index); the role rows are no longer empty tab stops

@@ -14,7 +14,7 @@ Forks this page deleted: the forked xp-cta button colours (now kit `Cta` sized b
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header comment in `app/affiliate/page.jsx` names Persona, Goal, CTA, Metric `contact_click`, Signature, Beyond. One solid per screen: the kit `Cta` "Apply" (hero `affiliate.hero`, close `affiliate.close`); the header's Try Hanzo turns outline while it is on screen (desktop by the shared header; on phones the page sets the shared `html[data-ask=quiet]` hook while its own Apply is in view). No copy questions.
+Done here: Header comment in `app/affiliate/page.jsx` names Persona, Goal, CTA, Metric `contact_click`, Signature, Beyond. One solid per screen: the kit `Cta` "Apply" (hero `affiliate.hero`, close `affiliate.close`); the header's ask is outlined from the first paint (page CSS keyed on `main.xaf`) and turns solid only when the page sets `html[data-xaf-solid]`, i.e. while none of its own Apply buttons is on screen; measured one solid at 1, 2 and 3 s on cold loads at both sizes. No copy questions.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout's `#main`; links via `A`/`Cta`; /referra
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards on this page.
 
-Done here: First screen at 1470×801 holds the h1 (52px, top 265), lede, Apply and the whole link (64px mono, bottom 650). No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once from the first paint: typed by 0.8 s, `<code>` marked by 1.1 s (CSS, so nothing is wiped and retyped; JS off shows it whole). The link band hands straight into "How it works" (no bottom padding; the stage starts 96px under the caption), and the pin is 0.55 viewport per step (2563px for 4 steps). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
+Done here: First screen at 1470×801: h1 (52px) top-left, lede and Apply top-right (8/5 split, top-aligned), then the whole link band (44px mono) with its Affiliates caption inside it. No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once from the first paint: typed by 0.8 s, `<code>` marked by 1.1 s (CSS, so nothing is wiped and retyped; JS off shows it whole). The link band hands straight into "How it works" (no bottom padding; the stage starts 96px under the caption), and the pin is 0.55 viewport per step (2563px for 4 steps). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -56,7 +56,7 @@ Done here: Only Hanzo's rule (first touch, one affiliate per org, never your own
 - ~~Tables, FAQ, tabs and code use the kit parts~~ n/a: no table or FAQ; tabs are kit `Tabs`; the endpoint is inline code with kit `Copy`.
 - [x] `python3 scripts/parity.py /affiliate`: 0 missing
 
-Done here: Parity 15/15 text. Type from MASTER: h1 52px, section headings 26px, the link 64px mono, body 16px; no text under 13px. Step titles are Hanzo's own step sentences.
+Done here: Parity 15/15 text. Type from MASTER: h1 52px, section headings 26px, the link 44px mono (26px on phones), body 16px; no text under 13px. Step titles are Hanzo's own step sentences.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states (hover fill, press .98, focus ring, busy on hand-off
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: sticky chapters (scroll). Time: the link writes itself once. Pointer: the link tilts up to 2.5° and Apply reveals hello@hanzo.ai on hover. State: rule tabs glide; the chapter object changes. Idle: after the link is written its caret keeps a slow blink and the `<code>` mark re-runs every 8 s (only while the link is on screen, none under reduced motion); the rule diagrams draw themselves. Ease-emphasis, no springs; reduced motion shows final states.
+Done here: Signature: sticky chapters (scroll). Time: the link writes itself once. Pointer: the link tilts up to 2.5° and Apply reveals hello@hanzo.ai on hover or focus (on phones too, so no address sits idle under the ask). State: rule tabs glide; the chapter object changes. Idle: after the link is written its caret keeps a slow blink and the `<code>` mark re-runs every 5 s (CSS only; none under reduced motion); the rule diagrams draw themselves. Ease-emphasis, no springs; reduced motion shows final states.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the objects are drawn (link, request, thread, diagrams).
@@ -156,4 +156,4 @@ Done here: Static Hanzo copy; nothing to load or fail. With JS off every state i
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/affiliate.md` verdict 8 or more (7/10 capped; awaiting re-review)
 
-Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the page and route headers. Review read: `docs/review/affiliate.md` gave 7/10 (capped on the old card; page itself 8); its fixes are done: card in this 18-part format, h1 rests at 52px, and the link (hero object) sits whole in the first screen at 1470×801 (top 463, bottom 650; proof `docs/gallery/affiliate/v3-desktop-first.jpg`).
+Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the page and route headers. Review read: `docs/review/affiliate.md` gave 7/10 (capped on the old card; page itself 8); its fixes are done: card in this 18-part format, h1 rests at 52px, and the link (hero object) sits whole in the first screen at 1470×801 (44px mono, top 430; proof `docs/gallery/affiliate/v3-desktop-first.jpg`). Round 4: one solid from first paint, idle beat every 5 s, the Affiliates caption inside the link band, JS-off diagram curves drawn.

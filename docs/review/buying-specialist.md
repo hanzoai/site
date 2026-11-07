@@ -1,41 +1,38 @@
 # /buying-specialist — James-eye review
 
 Verdict: 7/10
-First complaint: "The hero's lovely, then I scroll and the middle section is grey bars. It looks like a loading screen, not a product. And once I ask it something I get two price cards with different numbers and a wall of buttons. Which one am I meant to press?"
+First complaint: "On the phone the promise list slides under that black card and the headline gets sliced off, and there are two black buttons fighting at the top. Sort the phone out and this one's there."
 
-Walked 2026-11-07 16:28 UTC, HEAD 1a12c7f5, at 1470x801 and 375x812 (touch). Took idle frames at 0.2/1/3/6/7.5 s, scrolled the whole page in 200px wheel steps (300px on phone) with a 0.7 s dwell, and reloaded for a return visit. Hovered and pressed a chip and the primary ask. Clicked a chip on desktop and tapped one on phone, with all non-GET requests aborted so nothing was sent. Moved the seat slider by keyboard, typed in the composer without sending, and checked reduced motion and JS off. `taste.py`: OK. `parity.py`: 20/20 text, 1/1 links.
+Walked 2026-11-07, HEAD ca765e59, at 1470x801 and 375x812 (touch). First screen sampled at 0.2/1/3/6/9 s plus a reload; whole page scrolled in 60%-viewport wheel notches with 1 s dwell; hovered and pressed the chips and the primary; dragged the seat slider and used the arrow keys on it; tapped a chip on the phone; typed "We are 120 people" + Enter (chat and form POSTs to api.hanzo.ai blocked, so Hanzo's written fallback answers showed); reduced motion and JS off at both sizes. taste.py OK (3 files), parity OK (text 20/20, links 1/1).
 
 ## What works
-- The hero is alive without input. The seat sheet sweeps 10 → 50 → 10 by itself: 23% pixel change from 0.2 to 1 s and 25% from 1 to 3 s. The h1 cuts in by line. The 25-dot member grid, slider and both prices all move together.
-- The seat slider is a real control. Arrow keys take it from 10 to 15 seats and update the members, annual and monthly prices, and the billed line live. The sheet stays sticky beside the chat as the thread grows.
-- Chat works offline. With the API blocked, a chip still produces a full, formatted answer and a plan card, with no error state and no console error.
-- The "why" section is a pinned stage. The list sits on the right with one active square marker, and the left panel changes as each item takes focus. This gives Apple-style one-in-one-out on desktop, and the stage stays sticky on phone too.
-- Scale has rhythm. The h1 is 52px, the dark sheet is the one big object, the list rows are medium, and the black band's 88px line is the moment before the footer.
-- Hover and press answer. Chip hover changes the fill, darkens the border and lifts 1px; press scales it to 0.975. The primary goes from #f5f5f7 to #fff on hover and scales to 0.98 on press. Nothing fades.
-- Reduced motion shows the final state, with no animations running after 3 s. JS off is fully legible: h1, sheet at 10 seats and prices all render.
-- No overlap, off-screen element or horizontal scroll at either size. No page console errors.
+- The hero sells at once: the greeting cuts in by line, and beside it a black quote sheet arrives and fills its seat grid (10 to 50 desktop, 10 to 25 phone) while the price rolls. About 23% of the frame changes between 0.2 and 3 s with no input, then it settles quietly.
+- The signature is real: a chat answer re-sizes the quote. "10 developers" set the sheet to 10 seats at $200/$250; "120 people" switched it to Enterprise Configuration at $2,400/mo with the primary flipped to Start Enterprise Plan. Dragging the slider and the arrow keys re-price it and update the cart href (`quantity=16`).
+- The desktop promises are a pinned scene: the six promises scroll on the right while the card on the left changes per promise (seats, price, typing into a prompt, page dots). That's the Apple "one panel changes" move.
+- Header ask hands over cleanly on desktop: "Try Hanzo" goes quiet while the sheet's solid button is on screen, then becomes a solid "Start Team Plan →" once you scroll past it.
+- Hover/press answer: chips change fill and border, the primary brightens, and press scales it to 0.98. No fades, no layout jump.
+- Monochrome throughout. No hue, no kicker above the h1, and nothing floats over content apart from the shared cookie card.
+- Reduced motion shows the final state immediately and stays still (the idle frames are identical). With JS off, the hero, the quote sheet, the promises and the chips all read.
 
 ## The 11 answers
-1. **Sells in 5 s; moves within 1 s:** Yes on desktop. The h1, a self-running price sheet and four prompt chips together say "configure and buy here". On phone, the compact "10 members $200/mo" strip moves, but the primary ask "Start Team Plan" is not on the first screen: it sits at y≈1687.
-2. **One in, one out:** Mostly. The pinned stage swaps one panel at a time. Hero, stage and band are three distinct beats, not a document.
-3. **A real visual object in every section:** Partly. The hero sheet is a real product UI. The stage's first panel (seat grid + $200) is real. The other panels I saw (chat bubbles, form fields) are flat grey skeleton bars that read as placeholders. The band has type only, which is fine for a closing band.
-4. **One ask, sticky header, nothing floating; scale rhythm:** Mixed. The header ask says "Try Hanzo" at the top and changes to "Start Team Plan" once scrolled, so two labels compete for the same slot. The phone bottom ask bar is allowed by MASTER, but it covers the sheet's slider while you use it. After one chat answer, the first screen holds up to 8 asks: Continue with Hanzo Team, Book a Call, Start Personal/Team/Enterprise Plan, Sales Question, and the sheet's two. Scale rhythm is good.
-5. **Every hover and press answers, no jumps:** Yes for the chips, the primary and the slider. A chip click scrolls you to the composer, so the question you just asked scrolls out of view (on phone as well).
-6. **Overlaps, font swap, layout shift:** No overlaps. The annual and monthly price tiles are misaligned by about 12px: "ANNUAL RATE (RECOMMENDED)" wraps to two lines, so $200 sits lower than $250. At 801px the sheet runs past the fold, and "Start Enterprise Plan" is cut at the bottom edge. Shared (not counted): the cookie card covers the hero ask and composer on first visit.
-7. **Reference and its motion:** It feels like the apple.com product page (a configurator with a sticky price) and the chatgpt.com enterprise page (calm list of promises). The pinned scene is there. The scrubbed or count-up moment is the hero's idle seat sweep, and it is good.
-8. **Different from neighbours:** Yes. The hero medium is a live chat plus seat configurator, and the signature is the self-sweeping seat grid. Nothing else on the site looks like it.
-9. **18 parts:** Mostly covered: one h1, `data-cta` on the primary, Privacy link by the composer, reduced motion and JS off pass, chat failure falls back gracefully. Gaps: the primary is not above the fold on phone (Part 4 and Part 11), the header ask label does not match the hero ask (Part 4), and the in-chat plan card duplicates the sheet in a different style (Part 7).
-10. **Banned tells:** After a chat answer, the follow-up row "Start Personal Plan / Start Team Plan / Start Enterprise Plan" is 3 equal pill buttons in a row. The square list markers look like unchecked browser checkboxes. No hue: monochrome only, taste passes. No gradient text, no pill above an h1 or h2. "SAVE 20% ANNUALLY" sits under a card title, not above a headline.
-11. **Copy untouched:** Parity is 20/20 text and 1/1 links. Question for James: the Enterprise card shows "SAVE 20% ANNUALLY" while the annual and monthly rates are both $400/mo.
+1. Yes. Something moves within 1 s at both sizes (h1 cut-in, then the sheet arrives and the seats roll), and the offer is clear in 5 s.
+2. Mostly one-in-one-out on desktop: hero, then the pinned promise stage, then the band, then the footer. On the phone the stage is a sticky card with the list scrolling underneath, which reads as a document sliding under a lid.
+3. Yes: the quote sheet, the promise card (which renders the page's own UI), and the band. The band is the weakest: one repeated line on black.
+4. Desktop: one ask, and the header takes it over. Phone: the header keeps a solid "Try Hanzo" for the whole page while the mini-quote's solid "Start Team Plan →" sits in the same first screen, so there are two solid fills and the header never carries the page's ask. Scale has rhythm: 52px h1, a 64px-class figure in the sheet, small chips, and a big 88px band moment.
+5. Yes on both (see What works). Chips show no press transform, which is minor.
+6. Phone 375: in the promise stage the active heading lands against the sticky card's bottom edge with its top pixels cut ("A sales rep if you want one."), and list text passes under the card. The bubble inside the card is cut mid-line ("self-serve setup (20 to 500 seats) and…"). Desktop: while the dark sheet is under the header (scroll about 270–560px), the shared header switches to dark glass over a white page, so the whole header becomes a grey band. No font swap or CLS seen.
+7. Apple product page (live configurator plus a pinned scene) crossed with chatgpt.com/business calm. The pinned stage motion is genuinely there on desktop and only half there on the phone.
+8. Yes. A configurator plus chat is its own medium and signature. It is not a template hero.
+9. Mostly covered: one h1, the sticky ask, `data-cta` on the primary (`buying-specialist.quote` / `.mini`), the Privacy line by the submit, the Band then the footer, reduced motion and JS off. Not verified: sound on the primary and chips.
+10. None found. The "SAVE 20% ANNUALLY" pill sits beside the card title, not above a heading. The four suggestion chips are equal pills but read as chat prompts, not a button row.
+11. Untouched (parity 20/20, 1/1).
 
-Shared (not counted): the cookie card covers the hero ask on first visit. The "1 Issue" hydration badge seen on phone is a test artifact: the diff is `caret-color: transparent` on `#xbs-ask`, which Playwright's screenshot injects mid-load. It did not appear on 5 clean loads.
+Console: no page errors. A hydration diff appeared only when a screenshot was taken mid-hydration: Playwright's injected `caret-color` on the range input, plus the FooterHTML diff. It did not recur in 4 clean loads, so it is not the page's. BlogIndex.jsx parse error overlay belonged to another page being edited, not this one.
+Shared (not counted): FooterHTML hydration diff; kit `Band`/`Words` heading stays blurred with JS off ("The fastest path in." unreadable on the JS-off capture); cookie card covers the lower screen on both sizes.
 
 ## Fixes (in order)
-1. Replace the grey skeleton panels in the pinned stage with real renders of the page's own UI: the actual chat bubbles with a real answer line, the actual plan card, and the actual seat sheet. The first panel (seat grid + $200) shows the standard.
-2. Make the chat's plan card and the side sheet one object. When an answer proposes a plan, drive the sticky sheet to that seat count and plan instead of printing a second, differently styled card (light tiles, bold mono numerals) with different numbers beside it.
-3. Cut the post-answer ask pile to one solid ask and one text link. Fold "Start Personal/Team/Enterprise Plan" (3 equal pills) and "Sales Question?" into a single quiet secondary row, or hand them to the sheet.
-4. Phone: put "Start Team Plan" on the first screen. Make the compact seat strip carry the ask, or show the hero ask under the lede. Keep the bottom bar from covering the slider while the slider is in view.
-5. Use one header ask label: the hero's "Start Team Plan" from the top, not "Try Hanzo" then a swap.
-6. Align the rate tiles. Give both labels the same line box, or keep "(RECOMMENDED)" on one line, so $200 and $250 share a baseline. Trim the sheet's padding so "Start Enterprise Plan" clears the fold at 801px.
-7. After a chip click, keep the user's question in view: scroll to the new message, not the composer.
-8. Draw the list markers as solid ink dots or a line that grows, not hollow squares that read as checkboxes.
+1. Phone promise stage: stack it under 900px as MASTER says. Each promise gets its own card render, or the card unpins, so no heading slides under or butts against the sticky card. Give the active item at least 24px clearance, and let the in-card answer bubble end on a whole line or fade under a gradient instead of a hard cut.
+2. Phone ask: one solid fill per screen. Make the header ask quiet while the mini-quote's "Start Team Plan →" is visible, then hand the header the page's ask once it scrolls out, as desktop already does.
+3. Desktop header over the hero sheet: the sheet's `data-room="dark"` flips the shared header to dark glass over a white page (grey band at scroll 270–560). Stop that sheet from counting as a dark room for the header, or limit the flip to full-bleed dark sections.
+4. Give the closing band an object or a small live echo of the quote (seats and price), not only the repeated line.
+5. Add a press response to the suggestion chips (scale 0.98 or translateY 1px), and check the tick sound on chips and the slider.

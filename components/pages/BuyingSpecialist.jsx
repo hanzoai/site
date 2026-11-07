@@ -2,7 +2,7 @@
 /* AI Buying Specialist. Its idea is the sales desk where the quote writes itself while you talk.
    Persona: a team lead choosing a Hanzo plan (PLAN-COMPONENTS 1.1 buyer). Goal: a quote and a plan. CTA: "Start Team
    Plan →" (Hanzo's own plan button), with the conversation itself as the first action. Metric: signup_start.
-   V2: 8/10 one quote object: a chat answer moves the sheet (Team or Enterprise, seats) instead of printing a second card, one ask + one link under it; the promises sheet renders the page's own UI per promise; phone first screen has the moving quote with its ask; sheet fits 801px with aligned rates; Enterprise billed annually only (no false saving).
+   V2: 8/10 one quote object: a chat answer moves the sheet (Team or Enterprise, seats) instead of printing a second card, one ask + one link under it; the promises sheet renders the page's own UI per promise; phone first screen has the moving quote with its ask; sheet fits 801px with aligned rates; Enterprise billed annually only; phone promises stack with a card each; one solid from first paint; dark objects no longer darken the header.
    Signature: the conversation on the left; beside it a quote sheet of seats, one square per member, fills and
    re-prices by itself, and when you tell the specialist your team size the sheet takes that size and the price rolls.
    Beyond: the quote card you can drag: its seats follow the slider and the annual and monthly rates re-price from
@@ -91,7 +91,7 @@ function Sheet({ seats, setSeats, mine, plan }) {
   const fill = ent ? Math.round(seats / 5) : seats;
   const title = ent ? 'Enterprise Configuration' : 'Hanzo Team Configuration';
   return (
-    <aside className={'xbs-sheet' + (ent ? ' ent' : '')} id="xbs-sheet" data-room="dark" aria-label={`${title}, ${seats} members`}>
+    <aside className={'xbs-sheet xbs-ink' + (ent ? ' ent' : '')} id="xbs-sheet" aria-label={`${title}, ${seats} members`}>
       <div className="xbs-sheet-h"><b>{title}</b>{!ent && <span className="x-mono">SAVE {P.save}% ANNUALLY</span>}</div>
       <label className="xbs-team x-mono" htmlFor="xbs-seats"><b><Roll v={seats} /></b> members</label>
       <div className="xbs-seats" aria-hidden="true">
@@ -173,7 +173,7 @@ function Promises({ seats }) {
   return (
     <section className="xp-sec xbs-why" aria-label="The fastest path in.">
       <div className="xp-wrap xbs-why-g">
-        <div className="xbs-stage-w"><div className="xbs-stage" data-room="dark" aria-hidden="true">
+        <div className="xbs-stage-w"><div className="xbs-stage xbs-ink" aria-hidden="true">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={on} className="xbs-scene" initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.18 } }} transition={{ duration: 0.45, ease: EASE }}>
               <Scene i={on} seats={seats} />
@@ -187,12 +187,40 @@ function Promises({ seats }) {
               <i className="xbs-mark" aria-hidden="true" />
               <strong className="xp-title">{b}</strong>
               <span className="xp-body">{t}</span>
+              {/* under 900px the scenes stack: each promise carries its own small card, nothing pinned over the list */}
+              <motion.div className="xbs-pcard xbs-ink" aria-hidden="true" initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.5, ease: EASE }}>
+                <div className="xbs-scene"><Scene i={i} seats={seats} /></div>
+              </motion.div>
             </li>
           ))}
         </ol>
       </div>
     </section>
   );
+}
+
+/* One solid at a time, from the first paint: BuyingSpecialist.css outlines the header's ask on this route unless
+   <html> carries data-xbs-solid. This hook sets that flag only while none of the page's own solid asks (the phone
+   quote's, the sheet's, the closing band's) is on screen. It re-reads the DOM each time, because the chat swaps the
+   phone quote out and the sheet's ask changes with the plan. */
+function useQuietHeader() {
+  useEffect(() => {
+    const H = document.documentElement;
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const on = [...document.querySelectorAll('main.xbs .x-btn.solid, main.xbs .x-band a')].some((el) => {
+        const r = el.getBoundingClientRect();
+        return r.height > 0 && r.bottom > 0 && r.top < innerHeight;
+      });
+      if (on) delete H.dataset.xbsSolid; else H.dataset.xbsSolid = '';
+    };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(check); };
+    addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask);
+    const t = setInterval(ask, 1000); // the chat can swap asks in or out without a scroll
+    check();
+    return () => { removeEventListener('scroll', ask); removeEventListener('resize', ask); clearInterval(t); cancelAnimationFrame(raf); delete H.dataset.xbsSolid; };
+  }, []);
 }
 
 /* Phone only: once the sheet's own ask has gone by, a slim bar under the thumb carries "Start Team Plan →" with the
@@ -243,6 +271,7 @@ export default function BuyingSpecialist() {
   const seen = useInView(desk, { amount: 0.2 });
   const calm = useReducedMotion();
   const started = msgs.length > 0;
+  useQuietHeader();
 
   useEffect(() => { const n = new URLSearchParams(location.search).get('name'); if (n && n.trim()) setName(n.trim().slice(0, 40)); }, []);
   // keep the question just asked in view: the newest message of yours lands at the top, its answer arrives under it
@@ -306,7 +335,7 @@ export default function BuyingSpecialist() {
                 <motion.div key="intro" className="xbs-intro" exit={{ opacity: 0, y: -16, transition: { duration: 0.25 } }}>
                   <LineReveal as="h1" id="xbs-h1" className="xp-display xbs-h1" lines={[`Hi ${name}, let's find`, 'the right plan', 'for your team.']} />
                   <motion.p className="xp-lede xbs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>I&apos;m an AI buying specialist, here to help you figure out which plan fits, what it&apos;ll cost, and how to get your team set up. We can do all of it right here.</motion.p>
-                  <div className="xbs-mini" data-room="dark">
+                  <div className="xbs-mini xbs-ink">
                     <a className="xbs-mini-q" href="#xbs-sheet" aria-label={`Hanzo Team Configuration, ${seats} members`}><span className="x-mono"><b><Roll v={seats} /></b> members</span><span className="x-mono"><b><Roll v={usd(r2(seats * P.std / 12))} /></b>/mo</span><i className="xbs-mini-bar" aria-hidden="true"><b style={{ transform: `scaleX(${seats / 100})` }} /></i></a>
                     <Cta to={teamUrl(seats)} id="buying-specialist.mini" className="xbs-start xbs-mini-go">Start Team Plan →</Cta>
                   </div>
