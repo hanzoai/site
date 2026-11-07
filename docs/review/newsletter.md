@@ -2,6 +2,8 @@
 
 Reviewed: main, page files at `ca08189`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
+Note (7 Nov 14:12): text is now legible with JavaScript off (shared fix at 14:05, re-checked).
+
 Verdict: 6/10
 
 First complaint: "A red dot label on the headline and red marks on the paper. The issue keeps rewriting itself over and over. And 'Subscribe' doesn't react when I hover over it."
@@ -23,7 +25,6 @@ First complaint: "A red dot label on the headline and red marks on the paper. Th
 11. **Copy untouched?** Mostly: parity 7/7. The step labels "Read" and "Nothing is sent to you until you do." and the paper's "The newsletter" are not in Hanzo's copy.
 
 ## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.3 / 2.17 No-JS:** the lede ("Releases, benchmarks and engineering notes…") stays invisible with JavaScript off.
 - **2.8 Button states:** "Subscribe" has no hover.
 - **2.4:** 0 `data-cta`; on the phone two solid buttons after the hero.
 - **2.17 Submit states:** not exercised (the walk never sends real forms).
@@ -34,4 +35,4 @@ First complaint: "A red dot label on the headline and red marks on the paper. Th
 3. Let the paper type its lines once and rest.
 4. Give "Subscribe" a hover that changes something (not opacity) and keep its press.
 5. Replace "Read", "Nothing is sent to you until you do." and "The newsletter" with Hanzo's words, or get James's yes.
-6. Render the lede visible without JavaScript; on the phone keep only one solid button after the hero.
+6. On the phone keep only one solid button after the hero.

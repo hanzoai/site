@@ -2,6 +2,8 @@
 
 Reviewed: main, page files at `29e299e`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
+Note (7 Nov 14:12): text is now legible with JavaScript off (shared fix at 14:05, re-checked).
+
 Verdict: 6/10
 
 First complaint: "It's blue. The dot over the headline, the send button, the seats, the sliders, the numbers. Our colours are black and white. And on my phone the quote never shows up on the first screen, so nothing happens."
@@ -24,7 +26,6 @@ First complaint: "It's blue. The dot over the headline, the send button, the sea
 
 ## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
 - **2.4 Conversion:** no sticky ask; no phone bottom bar (`data-thumb` absent); 0 `data-cta`.
-- **2.3 / 2.17 No-JS:** with JavaScript off, the seat prices line and "More than 100 people? Start Enterprise Plan" stay invisible.
 - **2.12 Accessibility:** 2 inputs without a label (the slider and the message box rely on placeholder text).
 - **2.11 Mobile:** first screen still; the hero object is below the fold.
 
