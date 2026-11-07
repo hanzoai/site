@@ -1,6 +1,7 @@
 # /models/* (template) — James-eye review
 
 Verdict: 6/10
+Ready: 8 Nov, held up next to /api and /affiliate (no score). Rail cards are now SPEC's card exactly (description shown, 220px, rate as a pill), /models/hanzo leads with its four filmed models as SPEC black cards, the field's light is a soft band, shelf rows keep two pills on one line and the phone maker field stays off the words. taste/unique/parity OK (Aion Labs 37/37 text, 10/10 links; Aion-2.0 111/111, 9/9; Anthropic 56/56, 28/28; Opus 106/106, 10/10; Hanzo 80/80, 34/34; Kai 209/209, 9/9); 0 console errors, no overlap at 1470x801 and 375x812. Shared, not this page: the header ask duplicating the local-nav ask, the phone ask bar, the header's translucent band over dark content (docs/requests/models-family.md).
 First complaint: "I click the first card under 'More from Anthropic' and it throws me off to the old live site. And the Anthropic page is eight rows of three identical black text boxes with a bar floating over them."
 
 Walked 7 Nov on main at `b8c4ac3` (`components/pages/models/ModelSheet.jsx`, `ProviderShelf.jsx`, `parts.jsx`, `models.css`, `components/v2/SpecCard.jsx`) on the dev server. Judged against `docs/MASTER.md` (parts 1–18, section 3, 4.7), `docs/JAMES.md` and `docs/refs/hanzo-model-cards/SPEC.md`.

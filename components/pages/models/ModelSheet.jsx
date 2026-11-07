@@ -258,7 +258,7 @@ export default function ModelSheet({ doc }) {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
-                      <SpecCard hush to={c.href} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : []} meta={sib && sib.rate ? <b>{`${money(sib.rate.in)} → ${money(sib.rate.out)}`}</b> : null} />
+                      <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...(sib && sib.rate ? [`${money(sib.rate.in)} → ${money(sib.rate.out)}`] : [])]} />
                     </li>
                   );
                 })}

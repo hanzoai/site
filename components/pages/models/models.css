@@ -75,7 +75,7 @@
 .xmf-gx i { bottom: 10px; left: 6px; }
 .xmf-gy i { left: 10px; top: -15px; }
 .xmf-sweep { position: absolute; inset: 0; pointer-events: none; animation: xmf-sweep 7s linear infinite; }
-.xmf-sweep i { position: absolute; left: 0; top: 0; bottom: 0; width: 120px; translate: -120px 0; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, .03) 85%, rgba(0, 0, 0, .12) 100%); }
+.xmf-sweep i { position: absolute; left: 0; top: 0; bottom: 0; width: 120px; translate: -120px 0; background: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, .045) 50%, rgba(0, 0, 0, 0)); }
 @keyframes xmf-sweep { from { transform: translateX(0); } to { transform: translateX(calc(100% + 120px)); } }
 .xmf-dot { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; display: grid; place-items: center; border-radius: 50%; z-index: 1; }
 .xmf-dot b { width: 10px; height: 10px; border-radius: 50%; background: #0a0a0a; opacity: .5; transform: scale(0); transition: transform .7s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 28ms + .1s), opacity .25s; }
@@ -463,7 +463,7 @@
 
 /* Hanzo's model cards (SpecCard) in the rail and on the shelf */
 .xmf-rail > li, .xmf-grid > li { min-width: 0; }
-.xmf-rail .sc-card { min-height: 240px; }
+.xmf-rail .sc-card { min-height: 220px; }
 @media (max-width: 900px) { .xmf-maker-top { position: relative; justify-content: space-between; margin-top: 36px; } }
 
 
@@ -606,7 +606,6 @@
 
 /* the rail: six siblings at most, all pages of this site */
 .xmf-rail.few { grid-auto-columns: minmax(280px, calc((100% - 28px) / 3)); }
-@media (hover: hover) and (min-width: 900px) { .xmf-rail .sc-card.hush { min-height: 176px; } }
 /* Hanzo's other "More from" cards: one line each, the description on hover or focus */
 .xmf-also { margin: 44px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
 .xmf-also li { border-bottom: 1px solid var(--line); }
@@ -681,4 +680,22 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .xmf-rb-r i b, .xmf-reach-bar i, .xmf-row .sc-d, .xmf-row .sc-meta, .xmf-also-d { transition: none; }
+}
+
+/* 8 Nov: rows keep two pills on one line (a long modality never breaks inside its pill) */
+.xmf-row .sc-pill { white-space: nowrap; }
+.xmf-row .sc-tags .sc-pill:nth-child(n + 3) { display: none; }
+/* Hanzo's own shelf: its filmed models as Hanzo's black cards (SPEC: Enso spans both rows, 2fr 1fr 1fr) */
+.xmf-films { padding: 0; }
+.xmf-films ul { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 220px 220px; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.xmf-films li { min-width: 0; }
+.xmf-films li:first-child { grid-row: 1 / 3; }
+.xmf-films li:nth-child(4) { grid-column: 2 / 4; }
+.xmf-films .sc-card { height: 100%; }
+@media (max-width: 899px) {
+  .xmf-films ul { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-rows: 220px; }
+  .xmf-films li:first-child { grid-row: span 2; }
+  .xmf-films li:nth-child(4) { grid-column: auto; }
+  /* the maker's contour field stays right of the guest key's words */
+  .xmf-maker .xmf-art { -webkit-mask-image: radial-gradient(ellipse 60% 55% at 80% 40%, #000 25%, transparent 75%); mask-image: radial-gradient(ellipse 60% 55% at 80% 40%, #000 25%, transparent 75%); }
 }

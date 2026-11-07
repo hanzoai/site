@@ -20,6 +20,7 @@ import { Field, CopyStatus, useCatalog, rateFrom, money, missing } from './parts
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const FILM = /^\/models\/hanzo\/(enso|kai|koma|zen|iro|oto|koe|uta|mori)\/?$/;
 const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Output rate']];
 
 export default function ProviderShelf({ doc }) {
@@ -40,6 +41,9 @@ export default function ProviderShelf({ doc }) {
   const outs = cards.map((c) => c.rate && c.rate.out).filter((v) => v != null);
   const plotted = cards.filter((c) => c.tokens && c.rate).length;
   const paused = usePaused();
+  // Hanzo's own models that have a film (public/models/<slug>.webm) lead the shelf as Hanzo's black cards, Enso first
+  const films = cards.map((c) => ({ ...c, film: (FILM.exec(c.href || '') || [])[1] })).filter((c) => c.film).slice(0, 4);
+  const [hot, setHot] = useState(null);
   const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
   return (
     <main className="xmf xmf-prov">
@@ -87,6 +91,20 @@ export default function ProviderShelf({ doc }) {
           )}
         </div>
       </section>
+
+      {films.length >= 3 && (
+        <section className="xmf-films" aria-label={doc.name}>
+          <div className="x-wrap">
+            <ul data-swipe-own data-cursor="" onPointerLeave={() => setHot(null)}>
+              {films.map((c, i) => (
+                <li key={c.href} onPointerEnter={() => setHot(c.film)}>
+                  <SpecCard to={c.href} slug={c.film} big={!i} play={!i || hot === c.film || (!hot && i === 1)} title={c.name} desc={c.desc} tags={c.ctx ? [c.ctx] : c.tags.slice(0, 1)} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {plotted > 1 && (
         <section className="xmf-sec xmf-among" aria-labelledby="xmf-among-h">
