@@ -10,8 +10,9 @@ import { scrollToY } from '../../../lib/scroll';
 
 const calm = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Sets data-in on the element once a share of it is on screen. */
-function useArrive(amount = 0.25) {
+/* Sets data-in on the element once a share of it is on screen. `parent` watches the element's parent instead: an
+   element whose own clip-path starts empty never intersects, so the wipe watches its section. */
+function useArrive(amount = 0.25, parent = false) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
@@ -19,9 +20,9 @@ function useArrive(amount = 0.25) {
     const io = new IntersectionObserver((es) => {
       if (es.some((e) => e.isIntersecting)) { el.setAttribute('data-in', ''); io.disconnect(); }
     }, { threshold: amount });
-    io.observe(el);
+    io.observe(parent ? el.parentElement : el);
     return () => io.disconnect();
-  }, [amount]);
+  }, [amount, parent]);
   return ref;
 }
 
@@ -33,7 +34,7 @@ export function Glitch({ as: Tag = 'div', className = '', children, ...rest }) {
 
 /* diagonal-wipe: a diagonal clip sweeps across from the top-left corner. */
 export function Wipe({ as: Tag = 'div', className = '', children, ...rest }) {
-  const ref = useArrive(0.2);
+  const ref = useArrive(0.2, true);
   return <Tag ref={ref} className={'mc-dw ' + className} {...rest}>{children}</Tag>;
 }
 

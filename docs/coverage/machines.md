@@ -49,7 +49,7 @@ Done here: Hero `<Cta thumb id="machines.hero">Try Hanzo</Cta>` with a 2px rise 
 - ~~Marquees pause, freeze, hide duplicates~~ n/a: no marquee
 - ~~Privacy link beside every submit~~ n/a: no form submits
 
-Done here: $3.48, $27.84, $2,540, 80 GB and every spec value are Hanzo's; no derived price is printed: 2x and 4x show an em dash, since Hanzo's live quote covers 1x H100 only.
+Done here: $3.48, $27.84, $2,540, 80 GB and every spec value are Hanzo's; no derived price and no dash: the big quote is always Hanzo's 1x H100 figure, labelled "1x H100", and 2x/4x light their cards and rewrite the request while the quote dims to 60%.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px on phones) except 11–12px mono capitals and the kit's own copy label
@@ -57,7 +57,7 @@ Done here: $3.48, $27.84, $2,540, 80 GB and every spec value are Hanzo's; no der
 - [x] Code uses the kit `CodeBlock`
 - [x] `python3 scripts/parity.py /machines`: 0 missing
 
-Done here: Parity 106/106 text and 7/7 links. The renting console quotes fragments of each step's own sentence ("returns the price and creates nothing", "one fleet, deduplicated", "Unbinding is separate"); no label outside Hanzo's copy remains. The agent prompt now wraps instead of clipping (scrollWidth 818 = clientWidth 818).
+Done here: Parity 106/106 text and 7/7 links. The renting steps are a plain numbered list of Hanzo's own sentences (no console echoing them); the zoom sheet prints only Hanzo's H100 values; no label outside Hanzo's copy remains.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py` passes (deck greys only; no hue)
@@ -84,7 +84,7 @@ Done here: Measured hovers: size tabs `#a3a3a3` to `#fafafa`; spec rows, owner r
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
 - [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, tabs, radios and pause toggles tick (radios carry `data-sound="tick"`), copy chimes; the demos loop while seen and never finish, so no done chime
 
-Done here: Kept: the card wake-up, the rolling price, the gliding size pill, the Lift settle. Added: pointer (tile tilt, hover-run diagrams), arrival (80 counts up once from 10 as the H100 card lights; the close rack wakes card by card), time (the renting console streams its request then its answer by line mask). Step text now cuts: out in 150 ms, in from 180 ms, body by clip-path, so two steps never overlap (sampled: 1 visible step in 12 of 12 frames).
+Done here: Five entrances, one per section (8 Nov: the CSS for all five now exists in `Machines.css`): glitch-in on the hero h1 and lede, a diagonal wipe that uncovers the zoom stage (it watches its section, since its own empty clip never intersects), the uses content snapping up with an overshoot, a page curl peeling off the renting steps from the bottom-right, and a grey grain dissolving off the ownership rows. Idle: the size cycle (first tick 1.2 s, then 4 s), the lit card's LED, the ownership map walking its three parts. Pointer: zoom scrubbed by scroll on fine pointers, tile tilt, row and step hovers. State: size tabs with a gliding pill, the rail, the zoom in/out button. Arrival: 80 counts up from 10 when the sheet first shows.
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -100,7 +100,7 @@ Done here: Product objects are drawn in HTML and CSS from Hanzo's words: the her
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: At 375 the rack stacks above the quote, the spec moment then the list, each step with its own console sized to its content (no empty panel), tiles one per row and owner rows two columns. Touch: each tile's diagram runs once when it is on screen (`data-run`), the hover's tap equivalent. Walk: overflowX 0, CLS 0.0003.
+Done here: At 375 the four hero cards stand side by side so the $3.48 quote reaches the first screen; the zoom shows six racks in three columns (the lit card in the middle of the second row) and zooms itself on arrival, with a tap to zoom back out; the H100 sheet stacks (52px figure); the two spec lists stack (they ran off the right edge before 8 Nov); steps and owner rows one column; tiles on a snap rail. 320: scrollWidth 320, size tabs and account names fit their boxes.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
@@ -157,4 +157,4 @@ Done here: Server HTML carries the true 80 (the count only arms when the figure 
 - [x] `V2: 8/10` line in the page file's top comment
 - [x] Review read: `docs/review/machines.md` (6/10), all ten fixes worked through
 
-Done here: `machines.hero`, `machines.close` and `machines.deploy` on the asks. Gallery: `docs/gallery/machines/` (round 1 film and stills; round 2 `round2-desktop.jpg`, `round2-specs.jpg`, `round2-phone.jpg`).
+Done here: `machines.hero`, `machines.close` and `machines.deploy` on the asks. Gallery: `docs/gallery/machines/` (`desktop.jpg`, `phone-1.jpg`, `phone-2.jpg` refreshed 8 Nov; earlier round stills kept).

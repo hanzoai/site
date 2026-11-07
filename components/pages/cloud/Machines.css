@@ -81,7 +81,7 @@
   .js .mc-zoom { height: 230svh; }
   .js .mc-zstage { position: sticky; top: 0; height: 100svh; }
 }
-.mc-fleet { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 168px)); place-content: center; gap: 22px 16px; will-change: transform; }
+.mc-fleet { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 168px)); place-content: center; gap: 22px 16px; }
 .mc-zrack { display: grid; gap: 6px; padding: 10px; border-radius: 16px; background: var(--mc-w2); box-shadow: inset 0 0 0 1px var(--line); }
 .mc-zrack .mc-card { height: 26px; padding: 0 10px; gap: 8px; border-radius: 6px; transform: none; transition-delay: 0s; }
 .mc-zrack .mc-card-n { font: 500 11px/1 var(--mono); letter-spacing: .08em; }
@@ -96,7 +96,7 @@
 /* the card's own sheet: the same surface as a lit card, filling the stage */
 .mc-zsheet { position: absolute; inset: 0; display: flex; background: linear-gradient(180deg, var(--mc-k3), var(--mc-k2)); color: var(--mc-w5); pointer-events: none; }
 .mc-zsheet[data-on] { pointer-events: auto; }
-.mc-zsheet-in { display: flex; flex-direction: column; width: 100%; padding-top: 92px; padding-bottom: 56px; }
+.mc-zsheet-in { display: flex; flex-direction: column; padding-top: 92px; padding-bottom: 56px; }
 .mc-zbar { display: flex; align-items: center; justify-content: space-between; }
 .mc-zbar .mc-card-n { font-size: 21px; color: var(--mc-w5); }
 .mc-zbar-r { display: flex; align-items: center; gap: 20px; }
@@ -181,6 +181,75 @@ html:not(.js) .mc-zsheet { position: relative; opacity: 1 !important; }
 @keyframes mc-drain { from { transform: scaleX(1); } to { transform: scaleX(.62); } }
 .mc-con-pair { justify-content: center; }
 .mc-con-pair i { animation: mc-draw .8s var(--e) .4s both; }
+
+/* how renting one works: the heading holds the left while the six numbered rows pass on the right */
+.mc-steps { padding: 116px 0; }
+.mc-steps-in { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
+.mc-steps-h { grid-column: 1 / span 4; position: sticky; top: 112px; }
+.mc-steps-l { grid-column: 6 / -1; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.mc-step .v2-body { max-width: 60ch; }
+@media (hover: hover) {
+  .mc-step:hover::before { opacity: 1; }
+  .mc-step:hover .v2-title { transform: translateX(6px); }
+  .mc-step:hover .mc-own-n { color: var(--mc-ink); }
+}
+
+/* ---- the five entrances (MachinesEnter.jsx). Pre-states only with JS on and motion allowed; each plays once. ---- */
+/* glitch-in (hero): two sliced grey copies of the h1 and the lede jump sideways for half a second, then hold still */
+.mc-gl-t { position: relative; }
+.mc-gl-t::before, .mc-gl-t::after { content: attr(data-text) / ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+.mc-gl-t::before { color: var(--mc-s1); }
+.mc-gl-t::after { color: var(--mc-g6); }
+@media (prefers-reduced-motion: no-preference) {
+  /* held hidden until the section arrives, with a 2.5 s failsafe in case the script is slow */
+  .js .mc-gl:not([data-in]) .mc-gl-t, .js .mc-gl:not([data-in]) .mc-cap, .js .mc-gl:not([data-in]) .mc-acts, .js .mc-gl:not([data-in]) .mc-lift { animation: mc-hold 2.5s steps(1, end) both; }
+  .js .mc-gl[data-in] .mc-gl-t { animation: mc-gl-flick .6s steps(1) both; }
+  .js .mc-gl[data-in] .mc-sub { animation-delay: .12s; }
+  .js .mc-gl[data-in] .mc-gl-t::before { animation: mc-gl-a .6s steps(1) both; }
+  .js .mc-gl[data-in] .mc-gl-t::after { animation: mc-gl-b .6s steps(1) both; }
+  .js .mc-gl[data-in] .mc-sub::before, .js .mc-gl[data-in] .mc-sub::after { animation-delay: .12s; }
+  .js .mc-gl[data-in] .mc-cap { animation: mc-gl-up .5s var(--e) .35s both; }
+  .js .mc-gl[data-in] .mc-acts { animation: mc-gl-up .5s var(--e) .45s both; }
+  .js .mc-gl[data-in] .mc-lift { animation: mc-gl-up .8s var(--e) .55s both; }
+}
+@keyframes mc-gl-flick { 0% { opacity: 0; } 8% { opacity: 1; transform: translateX(-3px); } 16% { opacity: .4; transform: translateX(4px); } 28% { opacity: 1; transform: none; } 44% { transform: translateX(-2px); } 52%, 100% { opacity: 1; transform: none; } }
+@keyframes mc-gl-a { 0% { opacity: 1; clip-path: inset(10% 0 62% 0); transform: translateX(-14px); } 16% { clip-path: inset(58% 0 18% 0); transform: translateX(10px); } 32% { clip-path: inset(30% 0 46% 0); transform: translateX(-6px); } 48% { clip-path: inset(72% 0 6% 0); transform: translateX(8px); } 64%, 100% { opacity: 0; clip-path: inset(0 0 100% 0); transform: none; } }
+@keyframes mc-gl-b { 0% { opacity: 1; clip-path: inset(64% 0 12% 0); transform: translateX(12px); } 16% { clip-path: inset(6% 0 70% 0); transform: translateX(-10px); } 32% { clip-path: inset(44% 0 30% 0); transform: translateX(6px); } 48% { clip-path: inset(20% 0 60% 0); transform: translateX(-8px); } 64%, 100% { opacity: 0; clip-path: inset(0 0 100% 0); transform: none; } }
+@keyframes mc-hold { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mc-gl-up { from { opacity: 0; transform: translateY(16px); } }
+
+/* diagonal-wipe (the zoom): the stage is uncovered by a diagonal edge that sweeps in from the top-left corner */
+@media (prefers-reduced-motion: no-preference) {
+  .js .mc-dw:not([data-in]) { clip-path: polygon(0 0, 0 0, 0 0); }
+  .js .mc-dw[data-in] { animation: mc-dw 1.1s cubic-bezier(.65, 0, .25, 1) both; }
+}
+@keyframes mc-dw { from { clip-path: polygon(0 0, 0 0, 0 0); } to { clip-path: polygon(0 0, 200% 0, 0 200%); } }
+
+/* snap-sections (uses): the page settles the section under the header and its content snaps up with a small overshoot */
+@media (prefers-reduced-motion: no-preference) {
+  .js .mc-snap:not([data-in]) .mc-snap-in { opacity: 0; transform: translateY(56px); }
+  .js .mc-snap[data-in] .mc-snap-in { animation: mc-snap .7s cubic-bezier(.34, 1.4, .64, 1) both; }
+}
+@keyframes mc-snap { from { opacity: 0; transform: translateY(56px); } 40% { opacity: 1; } }
+
+/* page-curl (renting): the white page above lies over the section and peels away from the bottom-right corner, its
+   folded back a grey band that rides the fold */
+.mc-curl { position: relative; }
+.mc-curl-sheet, .mc-curl-flap { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .js .mc-curl-sheet, .js .mc-curl-flap { display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  .js .mc-curl-sheet { background: var(--mc-w); clip-path: polygon(0 0, 200% 0, 0 200%); }
+  .js .mc-curl-flap { background: linear-gradient(315deg, var(--mc-s2), var(--mc-w2) 45%, var(--mc-w) 70%); clip-path: polygon(170% 0, 200% 0, 0 200%, 0 170%); box-shadow: none; }
+  .js .mc-curl[data-in] .mc-curl-sheet { animation: mc-curl-s 1.2s cubic-bezier(.55, 0, .25, 1) both; }
+  .js .mc-curl[data-in] .mc-curl-flap { animation: mc-curl-f 1.2s cubic-bezier(.55, 0, .25, 1) both; }
+}
+@keyframes mc-curl-s { to { clip-path: polygon(0 0, 0 0, 0 0); visibility: hidden; } }
+@keyframes mc-curl-f { to { clip-path: polygon(-30% 0, 0 0, 0 0, 0 -30%); visibility: hidden; } }
+
+/* noise-dissolve (ownership): a field of grey grain over the section clears cell by cell (canvas, MachinesEnter) */
+.mc-noise { position: relative; }
+.mc-noise-cv { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; image-rendering: pixelated; }
+.mc-noise:not([data-ready]) .mc-noise-cv { display: none; }
 
 /* when you want a whole machine: tiles that tilt and run their diagram */
 .mc-uses { padding: 188px 0 116px; }
@@ -342,7 +411,18 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
   .mc-specs { padding: 72px 0 56px; }
   .mc-specs-in, .mc-close-in { display: block; }
   .mc-specs-h { position: static; }
-  .mc-specs-list { margin-top: 56px; gap: 44px; }
+  .mc-specs-list { margin-top: 0; grid-template-columns: minmax(0, 1fr); gap: 44px; }
+  .mc-specs-list .mc-group:first-child, .mc-specs-list .mc-group:last-child { grid-column: 1 / -1; }
+  /* the zoom on a phone: six racks in three columns (the lit card's rack sits in the middle of the second row) */
+  .mc-fleet { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 10px; padding-inline: 16px; }
+  .mc-zrack:nth-child(n+7) { display: none; }
+  .mc-zrack { padding: 8px; gap: 5px; border-radius: 12px; }
+  .mc-zrack .mc-card { padding: 0 8px; gap: 6px; }
+  .mc-zsheet-in { padding-top: 84px; padding-bottom: 32px; }
+  .mc-zbody { display: block; }
+  .mc-zfig { margin-top: 28px; }
+  .mc-zsheet .mc-moment dd { font-size: 52px; }
+  .mc-zsheet .mc-rows { margin-top: 16px; }
   .mc-moment dd { font-size: 52px; }
   .mc-rows dd { font-size: 17px; }
   /* phone: one console, pinned under the header above the six steps (it is never printed per step) */
@@ -363,6 +443,10 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
   .mc-con-fig { margin-top: 14px; }
   .mc-con-rack .mc-card { height: 30px; }
   .mc-uses { padding: 116px 0 72px; }
+  .mc-steps { padding: 72px 0; }
+  .mc-steps-in { display: block; }
+  .mc-steps-h { position: static; margin-bottom: 32px; }
+  .mc-step .mc-own-n { padding-top: 4px; }
   .mc-tile { flex-basis: 86%; display: flex; flex-direction: column; align-items: stretch; padding: 24px; }
   .mc-tile-art { height: 120px; margin-bottom: 20px; }
   .mc-tile-d { font-size: 16px; }
@@ -380,6 +464,12 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
   .mc-close-art { margin-top: 40px; padding: 20px; }
   /* phones: no text under 14px except 11-12px mono capitals */
   .mc-verb, .mc-dry, .mc-quote dt, .mc-own-n, .mc-con-bar, .mc-chip { font-size: 14px; }
+}
+
+/* 320: the size tabs and the account names keep inside their boxes */
+@media (max-width: 360px) {
+  .mc-sizes button { padding: 0 13px; }
+  .mc-map-accts span { padding: 10px 4px; letter-spacing: .02em; }
 }
 
 /* the live object's pause control */
