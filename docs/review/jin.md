@@ -1,4 +1,5 @@
 # /jin — James-eye review
+Ready: 2026-11-07 chapters 1-6 are one pinned stage with a break-out chapter 3 (no dwindle), Figure 8 plots the losses as a trace and makes one saccade by itself on arrival, figures walk through their lettered parts when idle, legend letters and drawing parts light each other, counter on time, native dialog for Table 1, Figure 1 runs twice and rests, Figure 8 legend no longer grey slabs.
 
 Verdict: 7/10
 First complaint: "The top is brilliant, then it turns into a paper: a number, a heading, a paragraph and a line drawing, six times over, each one smaller than the last. And the best bit, dragging the image yourself, is just the hero again at the bottom."

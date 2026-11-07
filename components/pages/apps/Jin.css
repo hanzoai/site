@@ -130,7 +130,14 @@
 
 /* a legend letter and its part of the drawing light each other: the rest of the drawing steps back */
 .jn-svg g[data-k] { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.jn-mfig .jn-svg g[data-k] { transition: opacity .45s cubic-bezier(.4, 0, .2, 1); }
 .jn-mfig[data-hot] .jn-svg g[data-k] { opacity: .16; }
+/* the idle walk-through: lighter than a hover, so the figure stays readable while it names its parts */
+.jn-mfig[data-walk]:not([data-hot]) .jn-svg g[data-k] { opacity: .38; }
+.jn-mfig[data-walk="a"]:not([data-hot]) .jn-svg g[data-k="a"], .jn-mfig[data-walk="b"]:not([data-hot]) .jn-svg g[data-k="b"],
+.jn-mfig[data-walk="c"]:not([data-hot]) .jn-svg g[data-k="c"], .jn-mfig[data-walk="d"]:not([data-hot]) .jn-svg g[data-k="d"] { opacity: 1; }
+.jn-mfig li.walk { color: var(--ink); }
+.jn-mfig li.walk b { background: #fff; color: var(--ink); transform: translateY(-2px); }
 .jn-mfig[data-hot="a"] .jn-svg g[data-k="a"], .jn-mfig[data-hot="b"] .jn-svg g[data-k="b"],
 .jn-mfig[data-hot="c"] .jn-svg g[data-k="c"], .jn-mfig[data-hot="d"] .jn-svg g[data-k="d"] { opacity: 1; }
 .jn-svg g[data-k]:not([data-k=""]) { cursor: default; }
@@ -248,7 +255,7 @@
 .jn-trc .l1 { stroke: rgba(255, 255, 255, .55); stroke-dasharray: 5 4; }
 .jn-trc .l2 { stroke: #737373; stroke-dasharray: 1.5 3.5; }
 .jn-trc-k { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(255, 255, 255, .1); display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; color: #a3a3a3; }
-.jn-trc-k li { display: inline-flex; align-items: center; gap: 10px; transition: color .3s; }
+.jn-trc-k li { display: inline-flex; align-items: center; gap: 10px; background: none; transition: color .3s; } /* Hanzo's base CSS paints a grey fill on any .l0/.l1/.l2 */
 .jn-trc-k li.on { color: #fafafa; }
 .jn-trc-k i { width: 22px; height: 0; border-top: 2px solid #f5f5f5; }
 .jn-trc-k .l1 i { border-top: 2px dashed rgba(255, 255, 255, .55); }
