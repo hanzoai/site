@@ -142,9 +142,11 @@
 
 @media (min-width: 900px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
   .iv-forge { height: 280svh; }
-  .iv-forge-pin { position: sticky; top: 0; box-sizing: border-box; min-height: 100svh; display: flex; align-items: center; padding: 72px 0 27px; }
-  .iv-forge-pin > .v2-wrap { width: 100%; }
+  .iv-forge-pin { position: sticky; top: 0; box-sizing: border-box; min-height: 100svh; display: grid; align-content: center; padding: 72px 0 27px; }
 }
+
+/* the sheet stack releases straight into Paste and ship (no dead white between them) */
+.iv .iv-sheets + .sp { padding-top: clamp(27px, 3vw, 44px); }
 
 /* the close: the label and tag get room under "Get IDV" */
 .iv .gi-lead { margin-top: 17px; }

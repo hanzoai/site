@@ -12,8 +12,8 @@
    platforms follow; type a value that has drifted out of the design system and the typecheck fails instead of shipping.
    Not only scroll: the frames change by themselves (idle), the editor and the platform cards answer the hand (state);
    Stage and chapters are the scroll half.
-   Motion: the four frames in step (signature) + Stage (the row settles) + sticky chapters + platform cards that open.
-V2: 8/10 round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
+   Motion: the four frames in step (signature) + the run (the same four pinned, one state per chapter) + platform cards that open.
+V2: 8/10 round 4: one object, many states. The hero's four frames ARE the pinned stage (no second device row): the opening cycles the props, then 01 wires the one source to the four with their render tags, 02 flips the brand token on all four, 03 collapses every screen to the flat rule, 04 takes the card apart into YStack/Text/Button with the kit's primitives under it, 05 rolls each new state across the four in a wave while the buttons press themselves. Phones keep the stage pinned and swap only the words; counters agree (01–05 / 06, the dark room 06 / 06); no invented words (token names only from the page's code scale, typecheck by shape, aria from ui-strings); each opened platform carries its own chapter's sentence; cards share one baseline and lift; the ask leans to the pointer; code scrolls instead of wrapping. Round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
@@ -29,7 +29,7 @@ const GH = 'https://github.com/hanzoai/gui';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
 const SPR = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // deck: no springs; the frames move and stay (ease-in-out, slow)
 // colours swap fast (150 ms, ease-out) while shape and padding take the slow 400 ms, so "Hello, Hanzo" never sits
-// grey on grey halfway between the light and the $accent (ink) state
+// grey on grey halfway between the light and the ink ($8) state
 const INK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
 const SHAPE = { ...SPR, backgroundColor: INK, color: INK };
 const ARRIVE = { duration: 0.3, ease: EASE_OUT_EXPO };
@@ -111,7 +111,7 @@ function Four({ v, step = -1, cls = '' }) {
 const PauseIco = ({ on }) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{on ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
 
 /* The code bar: the props the four frames are rendering right now. */
-function Bar({ v, hold, setHold }) {
+function Bar({ v, hold, setHold, off }) {
   return (
     <div className="gu-code">
       <p className="x-mono" aria-live="polite">
@@ -121,21 +121,24 @@ function Bar({ v, hold, setHold }) {
         ))}
         <span className="gu-code-t">{'/>'}</span>
       </p>
-      {setHold && <button type="button" className="gu-hold" onClick={() => setHold(!hold)} aria-pressed={hold} aria-label="Pause"><PauseIco on={hold} /></button>}
+      {/* off: kept in place (not clickable) so the bar never changes width between states */}
+      {off ? <span className="gu-hold off" aria-hidden="true"><PauseIco on={false} /></span>
+        : setHold && <button type="button" className="gu-hold" onClick={() => setHold(!hold)} aria-pressed={hold} aria-label="Pause"><PauseIco on={hold} /></button>}
     </div>
   );
 }
 
-/* Cycles the presets while on and on screen. */
-function useCycle(on, ms = 2600) {
+/* Cycles the presets (or a given list of them) while on and on screen. */
+function useCycle(on, ms = 2600, list = PRESETS) {
   const [i, setI] = useState(0);
   useEffect(() => {
     if (!on) return;
-    const t = setTimeout(() => setI((n) => (n + 1) % PRESETS.length), ms);
+    const t = setTimeout(() => setI((n) => (n + 1) % list.length), ms);
     return () => clearTimeout(t);
-  }, [i, on, ms]);
-  return PRESETS[i];
+  }, [i, on, ms, list.length]);
+  return list[i % list.length];
 }
+const WAVE = [PRESETS[1], PRESETS[2]]; // chapter 05 never rests on the plain default card
 
 /* The one ask leans toward a fine pointer (22px at most, ease-emphasis, no spring); touch and reduced motion stay put. */
 function Pull({ children }) {
@@ -178,7 +181,7 @@ const PRIMS_USED = ['YStack', 'Text', 'Button'];
 /* The run: the hero's four frames ARE the pinned stage. Before the pin they cycle the props under the title (the
    opening); once pinned, each of the five chapters puts the one object in its own state:
    01 one codebase: the four, tagged with what each renders to, wired to the one source above them;
-   02 tokens: the brand flips to the $accent token on every platform at once;
+   02 tokens: the brand flips to the ink token on every platform at once;
    03 compile-time CSS: each screen collapses to the flat rule the compiler emits;
    04 primitives: the card comes apart into YStack, Text and Button, the kit's primitives listed under it;
    05 animated: the props change by themselves, the new state rolling across the four in a wave.
@@ -191,14 +194,14 @@ function Run() {
   const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => setStep(p <= 0.002 ? -1 : Math.min(4, Math.floor((p / 0.94) * 5))));
   const intro = useCycle(live && !hold && step === -1);
-  const wave = useCycle(live && !hold && step === 4, 1500);
+  const wave = useCycle(live && !hold && step === 4, 1500, WAVE);
   const v = step === -1 ? intro : step === 4 ? wave : step === 1 ? PRESETS[2] : PRESETS[0];
   const lit = Math.max(step, 0);
   return (
     <section ref={box} className="gu-run" aria-labelledby="gu-run-h" data-step={step}>
       <div ref={seen} className="gu-run-pin">
         <Settle className="bz-wrap gu-stage">
-          <Bar v={v} hold={hold} setHold={step === -1 || step === 4 ? setHold : null} />
+          <Bar v={v} hold={hold} setHold={setHold} off={step !== -1 && step !== 4} />
           <Four v={v} step={step} cls="gu-hero-four" />
           <ul className="gu-prims x-mono" aria-hidden="true">{PRIMS.map((t) => <li key={t} className={PRIMS_USED.includes(t) ? 'on' : ''}>{t}</li>)}</ul>
         </Settle>

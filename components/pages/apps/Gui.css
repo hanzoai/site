@@ -23,11 +23,12 @@
 .gu-hold { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .18); background: #171717; color: #f5f5f5; cursor: pointer; transition: border-color .15s, transform .09s; }
 @media (hover: hover) { .gu-hold:hover { border-color: rgba(255, 255, 255, .55); } }
 .gu-hold:active { transform: scale(.97); }
+.gu-hold.off { opacity: .3; cursor: default; }
 .gu-hold:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
 
 /* the four */
 .gu-four { display: grid; gap: 24px; align-items: center; }
-.gu-hero-four { grid-template-columns: .42fr .42fr 1fr 1fr; max-width: min(1152px, calc((100svh - 400px) * 2.75)); margin: 0 auto; align-items: end; } /* one baseline for the four captions */
+.gu-hero-four { grid-template-columns: .42fr .42fr 1fr 1fr; max-width: min(1152px, calc((100svh - 400px) * 2.5)); margin: 0 auto; align-items: end; } /* one baseline for the four captions */
 .gu-fig { margin: 0; min-width: 0; }
 .gu-fig figcaption { display: flex; flex-direction: column; gap: 3px; margin-top: 18px; text-align: center; }
 .gu-fig figcaption b { font-size: 17px; font-weight: 606; letter-spacing: -.01em; }
@@ -85,6 +86,7 @@ html:not(.js) .gu-four figcaption { opacity: 1; }
 
 /* the words: the run's heading left, the lit chapter right (8/5), every chapter in one cell so nothing moves */
 .gu-run-copy { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: 24px; align-items: start; margin-top: 18px; }
+html.js .gu-run-copy { margin-block: auto; } /* pinned: the words sit in the middle of the space under the four */
 .gu-run-h { grid-column: 1 / span 4; margin: 0; }
 .gu-run-list { grid-column: 6 / span 8; display: grid; list-style: none; margin: 0; padding: 0; }
 .gu-run-i { grid-area: 1 / 1; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 5fr); gap: 6px 24px; align-items: start; }
@@ -98,11 +100,14 @@ html:not(.js) .gu-run-i { grid-area: auto; margin-bottom: 32px; }
 
 /* 01 one codebase: one source above, a hairline down to each platform, each tagged with what it renders to */
 .gu-four::before { content: ''; position: absolute; left: 10%; right: 10%; top: -10px; height: 1px; background: #0a0a0a; transform: scaleX(0); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
-.gu-fig::before { content: ''; position: absolute; left: 50%; top: -10px; width: 1px; height: 10px; background: #0a0a0a; transform: scaleY(0); transform-origin: 50% 0; transition: transform .3s cubic-bezier(.16, 1, .3, 1) .25s; }
+/* each wire runs from the frame's top edge up to the hairline (the four's top clips it, whatever the frame's height) */
+.gu-run .gu-four { clip-path: inset(-10px -40px -60px -40px); }
+.gu-run .gu-dev { position: relative; }
+.gu-run .gu-dev::before { content: ''; position: absolute; left: 50%; bottom: 100%; width: 1px; height: 600px; background: #0a0a0a; transform: scaleY(0); transform-origin: 50% 100%; transition: transform .4s cubic-bezier(.16, 1, .3, 1) .2s; pointer-events: none; }
 .gu-four[data-step='0']::before { transform: scaleX(1); }
-.gu-four[data-step='0'] .gu-fig::before { transform: scaleY(1); }
+.gu-four[data-step='0'] .gu-dev::before { transform: scaleY(1); }
 /* 03 compile-time CSS: the screen collapses to the flat rule */
-.gu-scr.flat { background: #0a0a0a; place-items: center start; }
+.gu-scr.flat { background: #171717; place-items: center start; }
 .gu-flat { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 0 6cqw; color: #a3a3a3; font-size: clamp(11px, 5.4cqw, 15px); line-height: 1.5; animation: gu-in .3s cubic-bezier(0, 0, .2, 1) both; }
 .gu-flat span:not(.gu-flat-t) { color: #fafafa; }
 .gu-ios .gu-flat, .gu-android .gu-flat { flex-direction: column; font-size: 8.4cqw; }
@@ -244,7 +249,7 @@ a.gu-chip:active { transform: scale(.97); }
   .gu-run-t { grid-row: auto; font-size: 21px; }
   .gu-run-i .bz-body { font-size: 15px; }
   .gu-run-n { grid-column: 1; }
-  .gu-prims { gap: 4px; }
+  .gu-prims { gap: 4px; bottom: -70px; }
   .gu-prims li { padding: 4px 7px; font-size: 12px; }
   .gu-plat-dev { height: 220px; }
 
@@ -350,6 +355,6 @@ a.gu-chip:active { transform: scale(.97); }
 
 @media (prefers-reduced-motion: reduce) {
   .gu-sheet, .gu-field i, .gu-flat, .gu-four[data-step='4'] .gu-b { animation: none !important; }
-  .gu-plat-dev, .gu-plat, .gu-pull, .gu-run-i, .gu-prims, .gu-four::before, .gu-fig::before, .gu-fig figcaption { transition: none !important; }
+  .gu-plat-dev, .gu-plat, .gu-pull, .gu-run-i, .gu-prims, .gu-four::before, .gu-run .gu-dev::before, .gu-fig figcaption { transition: none !important; }
   .gu-pull { translate: none !important; }
 }

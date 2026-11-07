@@ -16,8 +16,8 @@ function Library() {
   return (
     <div className="flp flp-lib">
       <ul>
-        {LIB.map((t, i) => <li key={t} style={{ '--i': i }}><i aria-hidden="true" />{t}</li>)}
-        <li className="mine" style={{ '--i': LIB.length }}><i aria-hidden="true" />anything you write yourself</li>
+        {LIB.map((t, i) => <li key={t} style={{ '--i': i }}><i aria-hidden="true" /><span>{t}</span></li>)}
+        <li className="mine" style={{ '--i': LIB.length }}><i aria-hidden="true" /><span>anything you write yourself</span></li>
       </ul>
     </div>
   );
@@ -58,11 +58,10 @@ function Steps() {
 function Agents() {
   return (
     <div className="flp flp-agents">
-      <svg className="flp-agents-wires" viewBox="0 0 300 120" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M60 40 C 110 6, 190 6, 240 40" /><path d="M60 40 C 110 74, 190 74, 240 40" />
-      </svg>
-      <span className="flp-agent a" aria-hidden="true" /><span className="flp-agent b" aria-hidden="true" /><span className="flp-agent c" aria-hidden="true" />
-      <i className="flp-msg m1" aria-hidden="true" /><i className="flp-msg m2" aria-hidden="true" />
+      <div className="flp-agents-row" aria-hidden="true">
+        <span className="flp-agent a" /><span className="flp-agent b" /><span className="flp-agent c" />
+        <i className="flp-msg m1" /><i className="flp-msg m2" />
+      </div>
       <p className="flp-agents-k x-mono">conversation state between them</p>
       <div className="flp-agents-ret"><i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" /><span className="x-mono">retrieval underneath</span></div>
     </div>
