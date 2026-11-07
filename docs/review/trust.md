@@ -1,98 +1,84 @@
 # /trust — James-eye review
 
-Verdict: 7/10
-First complaint: "On the phone the drawers pull themselves out but I can't see what's in them, because the contents are a whole screen further down. Then the paper cards tell me the same two paragraphs again. Desktop is nearly there; the phone is still a long read."
+Verdict: 8/10
+First complaint: "The top is right now: the drawers pull themselves out, the papers look like papers, the search shows itself working. But from 'Where we stand' down it turns back into paragraphs in boxes, a grey box of text and then a black box of text. And on the phone the open drawer has a big empty hole in it before 'Ask for it'."
 
-Walked on 7 Nov (second critic pass, after the owner's fixes from the 6/10 review) with Playwright Chromium against the dev server.
-- **Sizes:** 1470×801, and 375×812 (isMobile, hasTouch, DPR 2).
-- **Recording:** video at both sizes, and a frame every 4–5 wheel notches while wheel-scrolling the whole page in 100px notches with a 140ms dwell (76 notches on desktop, 96 on phone).
-- **Idle:** frames at 0.1–4.5s with no input.
-- **Hover and press:** with the cookie bar dismissed, I hovered and pressed the hero ask, the drawers, the paper cards, the group + buttons and rows, the stance buttons and the closing ask.
-- **Opening things:** I clicked drawer 05, watched the "Find a control" demo type by itself, typed "scim" and opened its answer into the sheet, closed it with Esc, typed a no-match term, scrubbed through the pinned "Where we stand" stage in 6 steps, and tapped the phone accordion.
-- **Checks:** console on 4 fresh loads per size, horizontal overflow at both sizes, reduced motion at both sizes, and a sticky-header track over 80 notches.
-- **Not counted against the page:**
-  - The red "1 Issue" badge was a Build Error in another chat's file (`components/pages/model/ZenMax.jsx`, then `ZenCatalog.jsx`). It blanked one phone walk, which I re-ran once it cleared.
-  - /trust's own loads logged 0 console errors and showed no hydration mismatch.
+Walked on 7 Nov (third critic pass) with Playwright Chromium against the dev server on :4180.
+- **Sizes:** 1470×801, and 375×812 (isMobile, hasTouch, DPR 2), plus a spot check at 320×700.
+- **Recording:** I recorded video at both sizes and wheel-scrolled the whole page in 100px notches with a 140ms dwell (68 notches on desktop, 76 on phone). I took a frame every 4 notches and idle frames at 0.1, 0.5, 1, 2 and 4 s with no input.
+- **Console and cycling:** I ran 3 fresh loads per size for console errors, plus 6 more loads to try to reproduce a hydration warning. On 3 fresh desktop loads, with the pointer off the cabinet, I tracked the cabinet's open drawer once a second for 12 s.
+- **Hover and press:** I measured computed styles on the hero ask, drawer 05, the first paper, the group +, a control row, a stance button and the closing ask.
+- **Opening things:** I clicked drawer 05, waited for the "Find a control" self-typing demo, typed "argon2id", opened group 01 and a control row into the sheet (Esc closes it), clicked a stance on the pinned stage, and tapped drawer 03 at 320.
+- **Layout checks:** horizontal overflow at 1470, 375 and 320; touch targets at 320; the reduced-motion final state at both sizes.
+- **Copy:** `scripts/parity.py /trust` gives OK, text 87/87 and links 6/6.
 
-Working files are in /tmp/claude-0/-home-user-hanzo-site/715b2a45-dd44-5306-98d1-bc0b4d91bc34/scratchpad/critic2/trust/ (r2/ holds the clean phone walk).
+Working files: /tmp/claude-0/-home-user-hanzo-site/715b2a45-dd44-5306-98d1-bc0b4d91bc34/scratchpad/critic3/trust/ (desk/, phone2/, phone3/, int/).
 
 ## What works
-- **The first screen sells and moves within 1s.**
-  - The h1 cuts in by line mask (52px desktop, 40px phone) and sits at about 34% height.
-  - At 1.0s, drawer 01 has already slid out 28px and the tray shows its big light "01", title and contents. By 4s it moves on to 02/06.
-  - It is a real object, it is the page's own signature, and it pauses under the hand.
-  - Phone: h1, lede, ask and the top of the cabinet all fit inside 812px.
-- **The last review's fixes landed:**
-  - **Header ask:** the header now carries the full "Request a review or an enterprise deployment" with no clipping (scrollWidth equals clientWidth, 313px).
-  - **Console:** no hydration error on 8 fresh loads.
-  - **Hero hover:** the hero ask hovers to `#262626`, a deck step.
-  - **Touch targets:** none under 44px on phone.
-  - **Overflow:** none at either size (scrollWidth 1470/1470 and 375/375).
-- **"Where we stand" is now a pinned stage on desktop.**
-  - The section holds while you scroll, and one stance is in focus at a time: 01 → 02 → 03 → 04 with a scrubbed 4-segment rail.
-  - The list on the left lights its row with a filled or hollow dot.
-  - This is the "one in, one out" James asked for. On phone it is an accordion with 44px+ ± buttons, and `hidden="until-found"` bodies.
-- **"Find a control" shows itself working.**
-  - About 400ms after it is 60% in view, it types "PKCE" by itself. The 64px count drops from 16 to 1, non-matching groups grey back, and then it clears.
-  - Typing "scim" gives 1 match, and its answer opens the "Getting in" sheet scrolled to the control. Esc closes it.
-  - A no-match term shows Hanzo's own "ask" line with a link.
-  - This is the best Beyond aid in the set.
-- **The "today" statement inks in word by word against scroll.** That gives the grey room a moment instead of a block of type.
+- **The first screen sells, and something moves inside 1 s.**
+  - The h1 cuts in by line mask: 52px on desktop with its top at y=163, and 40px on phone.
+  - By 1.0 s drawer 01 has slid out with its tray filled. With no input the cabinet goes 01 → 02 at about 5 s and 02 → 03 at about 9 s on all 3 loads.
+  - It waits under the hand: the pointer on the cabinet pauses it.
+  - At 375 the h1, lede, ask and the top of the cabinet all fit inside 812px.
+- **Most of the last review's fixes landed:**
+  - **Phone tray:** the tray now rides directly under the open drawer (transform only, no reflow), and the open drawer's nudge is 8px. You see what the drawer holds.
+  - **Papers:** they no longer repeat the tray's paragraphs. They are now drawn papers (path, title, ruled lines, arrow) tilted about 1.5°. On hover they straighten and lift 6px, and on press they scale to 0.97. This is a real object, not a text card.
+  - **Desktop stance stage:** the empty grey band is gone, and the section is down from 2123px to about 1585px. It is a proper pinned stage: one stance in focus, a list with a filled or hollow mark, and a scrubbed 4-segment rail.
+  - **Phone controls list:** it runs full width with the + at the right edge, with no triple indent.
+  - **Phone hero and closing asks:** they are now an intended 64px slab with a 16px radius, not a broken two-line pill.
+- **"Find a control" is the best Beyond aid in the set.**
+  - It types "PKCE" by itself when reached, the 64px Air count drops 16 → 1, and the non-matching groups grey back.
+  - Typing "argon2id" gives 1 match and lights the group's dot.
+  - Rows and groups open the native sheet, and Esc closes it.
+- **The motion mix is real, and scroll is no more than half of it:**
+  - arrival: the cut-in;
+  - idle: the cabinet;
+  - time: the typing demo;
+  - state: drawers, sheet, phone accordions;
+  - scroll: word ink, the pinned stage, and the black room opening from a rounded card to full bleed.
+- **The header ask hands over.** Once the hero ask leaves view, the desktop header's "Try Hanzo" becomes the solid "Request a review or an enterprise deployment". Only one solid fill shows at a time.
 - **Every hover answers, with no layout jump:**
-  - Drawers preview the pull (translate 6px, the border goes to 30%, the index darkens).
-  - The group + rotates 90° and scales to 1.06, and the stance title slides 4px.
-  - Paper cards straighten and lift 6px.
-  - The search field fills `#ededed`.
-  - Presses scale to 0.97–0.98.
-- **The motion mix is real:**
-  - arrival (cut-in)
-  - idle (cabinet)
-  - time (typing demo)
-  - state (drawers, sheet, accordion)
-  - scroll (word ink, pinned stage, the dark room opening from a rounded panel to full bleed)
-
-  Scroll-linked effects are about half of it.
-- **Reduced motion** shows the final state: h1 in place, drawer 01 open, every word at opacity 1, no demo, and 0 running animations after 3s.
-- **Palette:** monochrome, one black room at the end, and the Published/On request status shown as filled or hollow shape, never hue.
+  - The hero ask goes to #262626 and lifts 1px, and press scales it to 0.97.
+  - Drawers preview the pull with a 6px translate, the border goes to 30% and the handle nudges. Press scales the title.
+  - Stance titles ink from #737373 to #0a0a0a.
+  - The closing ask lifts 1px.
+- **Layout is clean:**
+  - no horizontal scroll at 1470, 375 or 320;
+  - 0 targets under 44px at 320;
+  - no overlap between hero, ask and nav at either test size.
+- **Reduced motion shows the final state** at both sizes: drawer 01 open and the cabinet not cycling, nothing below 0.5 opacity, and 0 running animations after 3.5 s.
+- **Palette and copy:**
+  - The palette is monochrome. Published and On request are shown as filled and hollow shapes, and there is one black room.
+  - "Trust" is set as a caption below the h1, not above it.
+  - The copy is untouched (parity OK).
 
 ## What fails (ranked, each with a concrete fix the owner can make in the page's own files)
-1. **On phone the cabinet's payoff is off-screen.**
-   - The locker is 1069px tall at 375. Six drawers each wrap to 2–3 lines with the chip underneath, and the tray sits below all six.
-   - So when a drawer pulls itself out, its contents are about 600px further down. You watch a box nudge right and learn nothing.
-   - The open drawer's 28px slide also pushes it against the panel's right edge (356 of 359px), so it looks jammed.
-   - Fix in `Trust.css` `@media (max-width: 899px)` plus a small branch in `Locker()`:
-     - Render the open drawer's tray panel inline, directly under that drawer (accordion-style, one open).
-     - Or keep the tray first and make the drawers a horizontal snap rail of chips above it.
-     - Set the phone slide to `x: 8` (or a 0.98→1 scale) instead of 28.
-     - Put the chip on the title's line, right-aligned in mono 12px, so each drawer is one row of about 56px.
-2. **The same two paragraphs appear twice in a row.**
-   - The DPA and subprocessor descriptions show in the cabinet tray (drawers 01 and 02 open themselves first), and then again on the two paper cards one screen later.
-   - On the cards they are also line-clamped mid-sentence ("Still a draft pending…"), which reads as cut copy.
-   - That is the "overload" James complained about.
-   - Fix in `Trust.jsx` `Docs()`: drop `xtr-paper-d` from the papers. Path, title and arrow are enough, and the words still live in the tray, so parity holds. Alternatively, show the description only on hover or focus as the "preview" and never clamp it.
-3. **The desktop stance stage is a grey box with a paragraph in it.**
-   - Inside the 685px stage card, about 200px of empty grey sits between "01 / 04" and the light "01". The body then reads as a text card, and it repeats the tray's big-light-index device a third time (tray, stage, count).
-   - The section is also 2123px tall for four short answers, so each notch of scroll buys very little.
-   - Fix in `Trust.css`:
-     - Shorten `.xtr-facts` to about 3 screens' worth.
-     - Bottom-align less: move the big index up into the empty band and let it grow from 64px to about 84px as its stance enters, then settle. That gives the "start small and grow" rhythm instead of a static figure.
-     - Or give each stance one drawn mark from its own words: a filled or hollow seal-free tick for "compatible with SOC 2", a struck-through key shape for "not inside an external module", a hollow passkey glyph. Use ink lines only.
-4. **The phone controls list wastes a third of the width.**
-   - The number column (01), the 44px + and then the title make three indents. Titles break into two lines ("What a / credential reaches") with about 110px of empty gutter on the left.
-   - Fix in `Trust.css` mobile:
-     - Hide `.xtr-grp-n`, or set it inline before the title in 12px mono.
-     - Move the + to the row's right edge.
-     - Let the title and lede run the full 343px.
-5. **"Where we stand today" on phone is still about 1.3 screens of plain paragraphs** after the statement (m-030: two body paragraphs in a grey room, no object). Desktop survives on the statement's word ink; phone does not.
-   - Fix in `Trust.css`/`Trust.jsx`: on phone, put the two follow-up paragraphs behind one inline disclosure under the statement (`hidden="until-found"`, Hanzo's words unchanged), so the room is the inking statement plus one line.
-6. **The hero and closing asks wrap to a 2-line, 70px pill at 375.** A two-line full-radius pill looks broken rather than designed.
-   - Fix in `Trust.css` mobile (page-scoped, not the shared button): `.xtr .pf-btn.solid { border-radius: 16px; text-wrap: balance; min-height: 56px; }`, so the two-line block reads as an intended slab. Alternatively, 15px type with 16px side padding.
-7. **Smaller:**
-   - The hero section leaves about 150px of white under the cabinet before the papers, and there is about 200px of white above the pinned stage. Trim `.xtr-hero` bottom padding and the gap before `.xtr-facts`, so the next object peeks into the screen.
-   - The motion technique count (cut-in, word ink, pinned stage, typing demo, room wipe, on top of the signature) is over MASTER §9's "one signature + 3 supporting". Run `scripts/variety.py`. If it flags the page, drop the room wipe, since the black room can simply be there.
+1. **The bottom half goes back to words in boxes.**
+   - The "Where we stand" stage card is a #f5f5f5 box holding a light index and a paragraph.
+   - The black "Found something" room is a 26px heading on the left, with about 500px of empty black under it, and two paragraphs on the right.
+   - So after the "Find a control" moment, the page has two rooms in a row with no object. It also repeats the big light index device a third time: the tray "01", the stage "01" and the count "16".
+   - Fix in `Trust.jsx`/`Trust.css`:
+     - **The dark room.** Give `Close()` one object made from its own words: the `/.well-known/security.txt` record drawn as a small mono file (`Contact: mailto:security@hanzo.ai`, RFC 9116 line). Set it in Zen Mono at 13.5px on graphite in the empty left column, with its lines typing in once when 60% in view. It should be static under reduced motion and use only words already in the room.
+     - **The stance stage.** Drop the light "0N" figure there and let the active stance title grow from 21px to 32px as it enters, then settle. That gives the "start small, grow" rhythm without repeating the tray device.
+2. **On the phone the open drawer has a dead hole.**
+   - The tray is a stacked grid, so every panel is as tall as the tallest one.
+   - `.xtr-tray-p .x-arrow { margin-top: auto }` pushes "Ask for it" to the bottom. Drawer 05 shows about 110px of empty white between its text and the link, and drawer 03 at 320 shows even more.
+   - Fix in `Trust.css` `@media (max-width: 899px)`: set `.xtr-tray-p .x-arrow { margin-top: 0; padding-top: 10.5px; }` so the link sits right under the text.
+   - If the white box still looks oversized, set the stacked panels `align-self: start` and drop the tray's fixed-height look by removing its border, leaving a tile fill only. Per MASTER §7 a surface is raised or outlined, never both, and it currently has a border plus the shadow from the open drawer above.
+3. **On the phone, "Where we stand today" is still 1.3 screens of plain paragraphs.**
+   - After the inking statement come the two follow-up paragraphs. They now have a grey left rule, but that only makes them read as a quote block.
+   - Fix in `Trust.jsx` `Stand()` plus mobile CSS: put the two paragraphs behind one inline disclosure under the statement (`hidden="until-found"`, Hanzo's words unchanged), and drop the left rule. The room is then the statement plus one line.
+4. **At 320 the drawer titles break mid-word** ("subprocess / or register", "questionnai / re, answered"), because the chip takes the right column.
+   - Fix in `Trust.css`: add `@media (max-width: 359px) { .xtr-drawer { grid-template-columns: 20px minmax(0,1fr); } .xtr-chip { grid-column: 2; justify-self: start; margin-top: 4px; } }`, so the chip drops under the title. Also set `overflow-wrap: normal; hyphens: none` on `.xtr-dr-t`.
+5. **Intermittent hydration warning** (2 of about 15 loads, both in recorded walks).
+   - The page's own part of the diff is `<input id="xtr-q">`: the server HTML carried `style={{caret-color:"transparent"}}` and the client did not. The current source has no caret-color, so this is probably stale HMR from an in-progress edit.
+   - Fix: make sure nothing in `useDemo` sets style on the input during render, and only toggle a `data-typing` attribute after mount (CSS can own the caret colour). Then reload 5 times clean.
+6. **Smaller:**
+   - **Group + hover.** Hovering `.xtr-g-btn` showed no computed change on the button itself. Make sure the hover rotate or scale lives on the button, inside `@media (hover:hover)`, so the + answers.
+   - **Cabinet pace.** The first drawer change takes about 5 s (650 ms + 3.4 s after hydration). A first-time visitor who stays on the hero sees one pull, then a wait. Try 2.6 s between drawers.
 
 Noted, not counted (shared chrome or another chat):
-- the ZenMax/ZenCatalog build-error badge;
-- the cookie card covering the lower content on both sizes until dismissed;
-- the phone header keeps "Try Hanzo" and has no sticky page ask or ask bar on /trust;
-- frame captures caught the glass header mid-transition a couple of times, but its live position stayed at top 0 throughout.
+- Next's "1 Issue" dev badge sits over the cookie card's "Reject all" at 375. Part of the hydration diff is in the shared `FooterHTML`.
+- The cookie card is about 200px tall at 375 and covers the lower content until it is dismissed.
+- On phone the header keeps "Try Hanzo" and /trust has no sticky page ask. At 320 the "Try Hanzo" pill is clipped at the right edge.
+- Frame captures caught the glass header offset by about 8px while scroll smoothing ran.
