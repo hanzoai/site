@@ -12,14 +12,12 @@
 .lgi-lede { color: var(--ink); max-width: 30ch; }
 
 /* the stack of paper */
-.lgi-stack { position: relative; height: clamp(380px, 36vw, 520px); }
-.lgi-sheet { position: absolute; left: 6%; top: 14%; width: 74%; aspect-ratio: 8.5 / 10; display: flex; flex-direction: column; gap: 14px; padding: 8% 9%; border-radius: 12px; background: #fff; border: 1px solid rgba(0, 0, 0, .07); box-shadow: 0 1px 0 rgba(0, 0, 0, .03), 0 30px 70px -36px rgba(0, 0, 0, .35); transform-origin: 50% 100%; }
+.lgi-stack { position: relative; height: clamp(360px, 32vw, 460px); }
+.lgi-sheet { position: absolute; left: 6%; top: 12%; width: 66%; aspect-ratio: 8.5 / 10; display: flex; flex-direction: column; gap: 14px; padding: 8% 9%; border-radius: 12px; background: #fff; border: 1px solid rgba(0, 0, 0, .07); box-shadow: 0 1px 0 rgba(0, 0, 0, .03), 0 30px 70px -36px rgba(0, 0, 0, .35); transform-origin: 50% 100%; }
 .lgi-sheet-u { font-size: 13px; color: var(--acc); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lgi-sheet b { font-size: clamp(22px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.035em; line-height: 1.05; text-wrap: balance; }
-.lgi-sheet-l { display: grid; gap: 9px; margin-top: 8px; }
-.lgi-sheet-l i { height: 7px; border-radius: 4px; background: #efefF2; }
-.lgi-sheet-l i:nth-child(2) { width: 86%; } .lgi-sheet-l i:nth-child(4) { width: 72%; } .lgi-sheet-l i:nth-child(5) { width: 54%; }
-.lgi-sheet-s { align-self: flex-start; margin-top: auto; padding: 8px 12px; border: 1.5px solid var(--acc); border-radius: 10px; font-size: 13px; color: var(--acc); transform: rotate(-4deg); }
+.lgi-sheet-p { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.lgi-sheet-s { align-self: flex-start; margin-top: auto; padding: 8px 12px; border: 1.5px solid var(--acc); border-radius: 10px; font-size: 13px; color: var(--acc); white-space: nowrap; transform: rotate(-4deg); }
 
 /* intro */
 .lgi-intro { padding-top: 0; }
@@ -28,6 +26,7 @@
 .lgi-big code, .lgi-prose code { padding: 2px 8px; border-radius: 8px; background: var(--card); font: 400 .82em var(--mono); color: var(--acc); }
 .lgi-big a, .lgi-prose a { color: var(--ink); text-underline-offset: 4px; }
 .lgi-status { position: relative; display: flex; gap: 14px; padding: 28px; border-radius: 28px; background: var(--card); }
+.lgi-status blockquote, .lgi-prose blockquote { margin: 0; padding: 0; }
 .lgi-status-dot { flex: none; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 0 rgba(10, 10, 11, .35); animation: lgi-ping 2.4s ease-out 2; }
 @keyframes lgi-ping { to { box-shadow: 0 0 0 12px rgba(10, 10, 11, 0); } }
 .lgi-prose p { margin: 0 0 14px; font-size: clamp(16px, 1.2vw, 18px); line-height: 1.62; color: var(--soft); }
@@ -36,23 +35,25 @@
 
 /* catalogue: chips, cards that re-flow and open */
 .lgi-cat { padding-top: clamp(64px, 7vw, 112px); }
-.lgi-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: clamp(32px, 4vw, 56px); }
+.lgi-chips { position: sticky; top: 60px; z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 -8px clamp(16px, 2vw, 24px); padding: 12px 8px; background: rgba(255, 255, 255, .96); }
 .lgi-chips button { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px; border: 1px solid rgba(0, 0, 0, .1); border-radius: 999px; background: #fff; color: var(--ink); font: 600 clamp(16px, 1.3vw, 19px)/1 var(--sans); letter-spacing: -.015em; cursor: pointer; transition: background .3s var(--ease), color .3s, border-color .3s; }
 .lgi-chips button .x-mono { font-size: 13px; font-weight: 500; color: var(--faint); }
 .lgi-chips button:hover { border-color: var(--ink); }
 .lgi-chips button[aria-pressed='true'] { background: #fff; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
 .lgi-chips button[aria-pressed='true'] .x-mono { color: var(--ink); }
-.lgi-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.lgi-cards { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .lgi-cards > li { display: flex; }
-.lgi-card { position: relative; display: flex; flex-direction: column; gap: 14px; width: 100%; min-height: 300px; padding: 28px 28px 32px; border-radius: 16px; background: var(--card); color: var(--ink); text-decoration: none; transition: background .3s var(--ease), transform .45s var(--ease); }
-.lgi-card:hover { background: #ececf0; transform: translateY(-4px); }
+.lgi-card { position: relative; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 4fr) minmax(0, 5fr) 48px; align-items: center; gap: 24px; width: 100%; min-height: 96px; padding: 20px 4px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background .25s var(--ease), padding .0s; }
+.lgi-card:active { transform: scale(.995); }
+.lgi-card-u { position: absolute; right: 64px; top: 10px; font-size: 13px; color: var(--soft); opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s var(--ease); }
+@media (hover: hover) { .lgi-card:hover { background: var(--card); } .lgi-card:hover .lgi-card-u { opacity: 1; transform: none; } }
 .lgi-card-k { font-size: 13px; color: var(--soft); }
-.lgi-card-t { margin-top: auto; font-size: clamp(24px, 2vw, 30px); font-weight: 600; line-height: 1.08; letter-spacing: -.035em; text-wrap: balance; }
+.lgi-card-t { font-size: clamp(22px, 1.9vw, 28px); font-weight: 600; line-height: 1.1; letter-spacing: -.03em; text-wrap: balance; }
 .lgi-card-d { font-size: 16px; line-height: 1.5; color: var(--soft); }
 .lgi-card-d code { padding: 1px 6px; border-radius: 6px; background: #fff; font: 400 .9em var(--mono); color: var(--ink); }
 .lgi-dash { color: var(--faint); }
-.lgi-card-go { position: absolute; right: 22px; top: 22px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #fff; transition: background .3s, color .3s, transform .45s var(--ease); }
-.lgi-card:hover .lgi-card-go { background: var(--acc); color: #fff; transform: translateX(3px); }
+.lgi-card-go { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--card); transition: background .3s, color .3s, transform .45s var(--ease); }
+@media (hover: hover) { .lgi-card:hover .lgi-card-go { background: #0a0a0b; color: #fff; transform: translateX(3px); } }
 
 /* how these fit together */
 .lgi-how { background: var(--card); }
@@ -72,18 +73,23 @@
 .lgi-mail li { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: baseline; gap: 16px; padding: 28px 0; border-top: 1px solid var(--line); }
 .lgi-mail li:last-child { border-bottom: 1px solid var(--line); }
 .lgi-mail li > span { font-size: 16px; color: var(--soft); }
-.lgi-mail a { font-size: clamp(22px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.03em; color: var(--ink); text-decoration: none; background: linear-gradient(var(--acc), var(--acc)) 0 100% / 0 2px no-repeat; transition: background-size .45s var(--ease); }
-.lgi-mail a:hover { background-size: 100% 2px; }
+.lgi-mail a { display: inline-flex; align-items: center; min-height: 44px; font-size: clamp(22px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.03em; color: var(--ink); text-decoration: none; background: linear-gradient(var(--acc), var(--acc)) 0 100% / 0 2px no-repeat; transition: background-size .45s var(--ease); }
+@media (hover: hover) { .lgi-mail a:hover { background-size: 100% 2px; } }
+.lgi-mail a:active { transform: translateY(1px); }
 
 @media (max-width: 900px) {
   .lgi-hero { padding-top: 104px; }
   .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { grid-template-columns: minmax(0, 1fr); }
   .lgi-h1 { font-size: clamp(48px, 14vw, 64px); }
-  .lgi-stack { height: 360px; }
+  .lgi-stack { height: 360px; margin-top: 52px; }
   .lgi-sheet { width: 72%; left: 4%; }
-  .lgi-cards { grid-template-columns: minmax(0, 1fr); }
-  .lgi-card { min-height: 0; }
-  .lgi-card-t { margin-top: 12px; }
+  .lgi-sheet-s { font-size: 12px; }
+  .lgi-card { grid-template-columns: minmax(0, 1fr) 44px; gap: 6px 12px; padding: 18px 0; }
+  .lgi-card-k { grid-column: 1; }
+  .lgi-card-t, .lgi-card-d { grid-column: 1; }
+  .lgi-card-go { grid-column: 2; grid-row: 1 / span 3; }
+  .lgi-card-u { display: none; }
+  .lgi-chips { top: 56px; }
   .lgi-chips button { min-height: 48px; padding: 0 16px; }
   .lgi-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; }
   .lgi-ladder li { height: auto; min-height: 140px; }
