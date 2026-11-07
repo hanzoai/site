@@ -234,6 +234,11 @@
 .az-fam-r { grid-column: 7 / -1; display: flex; flex-direction: column; gap: 14px; }
 .az-note { margin: 0; font-size: 14px; color: var(--quiet); }
 
+/* the close's text-link ask (kit Cta link) reads --ink, which the dark room does not flip: white on graphite here */
+.az .knx .x-arrow { color: #fafafa; }
+/* the kit's text-link asks get a 44px target (the link is 21px of text) */
+.az .x-arrow { min-height: 44px; }
+
 [data-off] .az-tag, [data-off] .az-st, [data-off] .az-why, [data-off] .az-a-t, [data-off] .az-reqs i::after { animation-play-state: paused; }
 
 @media (max-width: 899px) {
