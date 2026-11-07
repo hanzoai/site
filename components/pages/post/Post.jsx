@@ -9,7 +9,7 @@
    Signature: the reading thread. A margin rail holds the chapter you are in as a numeral that hands over to the next,
    and a spine that fills as you read, each chapter a knot (on a phone, a reading bar that opens the contents).
    Beyond: minutes left. The post's own stated read time counts down as you read, and any chapter is one press away.
-   V2: 8.5/10 MASTER rework: film or Sigil card beside the title on screen one with the post's ask (critic: "the picture only starts when I scroll"), resting scale 52/26/64, 768px reading column, kit CodeBlock/Tabs/Img/Film/Cta, closing Band, no springs, no cursor labels */
+   V2: 8.5/10 film card plays beside the title inside the first 801px (kit Film + pause), the header carries the post's ask on desktop (no floating pill), on phones the post's ask is the outline beside the header's one solid, code in greys, press on back link and next-post cards, NoJs instead of <noscript> */
 // Persona: a developer or founder reading Hanzo's thinking (arrives from /blog, search or a shared link)
 // Goal: finish the post, understand its one idea, take the post's own next step
 // CTA: the post's first closing link as the one solid ask (hero, data-thumb, data-cta "blog-post.hero"), repeated in the closing Band
@@ -21,6 +21,7 @@ import { motion, AnimatePresence, useMotionValueEvent, useScroll, useTransform }
 import { EASE } from '../../ui';
 import { A, Band, Cta, CodeBlock, Film as KitFilm, Img, Tabs, TabPanel } from '../../kit';
 import Sigil from '../../Sigil';
+import NoJs from '../../NoJs';
 import Life from './Life';
 import Frontier from './Frontier';
 import './Post.css';
@@ -90,7 +91,7 @@ function Title({ text }) {
   const words = text.split(' ');
   return (
     <h1 id="xbg-h1" className="xbg-h1" data-morph-target>
-      <noscript><style>{'.xbg-wi{transform:none!important}'}</style></noscript>
+      <NoJs css=".xbg-wi{transform:none!important}" />
       <span className="x-sr">{text}</span>
       {words.map((w, i) => (
         <Fragment key={i}>

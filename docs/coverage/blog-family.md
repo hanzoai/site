@@ -13,7 +13,7 @@ Forks this page deleted: its own code tabs and copy button (now kit `Tabs` + `Co
 - [x] No dead or self-looping button; n/a prices
 - [x] Open copy questions for James listed, none decided
 
-Done here: one solid `Cta` (`blog-post.hero`, the post's first closing link, e.g. "How to use Kai") on screen one, repeated once in the closing `Band`; the header's "Try Hanzo" turns outline while it shows (shared system). Persona/Goal/CTA/Metric/Signature/Beyond are in `Post.jsx`'s top comment.
+Done here: one solid `Cta` (`blog-post.hero`, the post's first closing link, e.g. "How to use Kai") on screen one, repeated once in the closing `Band`; the header's "Try Hanzo" turns outline while it shows, then carries the post's ask once the hero has gone (desktop, shared system; no floating pill). On phones (700px and under) the header keeps a solid "Try Hanzo", so the post's hero ask is drawn as the outline beside it: one solid on screen (measured at 375x812, 7 Nov). Persona/Goal/CTA/Metric/Signature/Beyond are in `Post.jsx`'s top comment.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; skip link reaches `#main` (layout)
@@ -31,7 +31,7 @@ Done here: parity links 4/4, 8/8, 9/9; next-post cards are `<A>` links that open
 - [x] Ends in proof (sources, other posts), `Band`, footer
 - [x] Card-to-page links use Morph; the card title carries `data-morph`, the h1 is `data-morph-target`
 
-Done here: screen one is the 52px title cut in by word mask (700 ms, 55 ms apart), the post's ask, and its film (Kai, Enso) or Sigil playing in a card from the first second (critic 6/10 fix: "the picture only starts when I scroll"). The scene pins and the card opens to full bleed, then chapters, sources, next posts, `Band`. JS off: a noscript rule shows the title; checked with a JS-off browser.
+Done here: screen one is the 52px title cut in by word mask (700 ms, 55 ms apart), the post's ask, and its film (Kai, Enso) or Sigil playing in a card from the first second (critic 6/10 fix: "the picture only starts when I scroll"). The scene pins and the card opens to full bleed, then chapters, sources, next posts, `Band`. At 1470x801 the film card's top sits at 176px, playing (currentTime 2.1s to 4.2s over 2s, measured on both members); the Sigil post moves too. JS off: a `NoJs` rule (no `<noscript>` in the client component) shows the title.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -64,7 +64,7 @@ Done here: parity text 110/110, 77/77, 45/45. Sizes are from the deck only: h1 5
 - [x] One icon set (inline 16px strokes); no icon in a box
 - [x] Differs from neighbours: hero medium is the post's own film in a card that opens to a black room
 
-Done here: `taste.py` OK on all 4 files; one black room (the plate) plus the closing `Band`, not back to back; colour only from Hanzo's model films.
+Done here: `taste.py` OK on all 5 files; code samples are greys only (kit `CodeBlock`: ink lines, comments dimmed), no syntax hues; one black room (the plate) plus the closing `Band`, not back to back; colour only from Hanzo's model films.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press (scale .97, 90 ms), focus-visible
@@ -73,7 +73,7 @@ Done here: `taste.py` OK on all 4 files; one black room (the plate) plus the clo
 - [x] n/a: no inputs; no bare `:hover`
 - [x] Forks this page deleted: listed above
 
-Done here: back link, rail knots, reading bar, chips, Life controls (kit `Cta`), next cards and the pause button all scale on press; hover changes position or fill, never only opacity.
+Done here: the back link drops 1px on press, next-post cards press to .98 and underline their title on hover; rail knots, reading bar, chips, Life controls (kit `Cta`), next cards and the pause button all scale on press; hover changes position or fill, never only opacity.
 
 ## 9. Motion and interaction
 - [x] One signature (the reading thread), 3 supporting (pinned card-to-full-bleed scene, title cut-in, Sigil/film idle); 0 fade-ups
@@ -139,7 +139,7 @@ Done here: n/a for catalogue rules; the next-post cards use Morph (`data-morph` 
 - [ ] n/a: no terminal
 - [x] No hand-typed version number (code is the post's own)
 
-Done here: the Kai post's TypeScript/Python sample sits in kit `Tabs` with a `CodeBlock` per language; the Gen post's shell sample is one `CodeBlock`.
+Done here: in greys only, the Kai post's TypeScript/Python sample sits in kit `Tabs` with a `CodeBlock` per language; the Gen post's shell sample is one `CodeBlock`.
 
 ## 17. States and resilience
 - [x] Loading: posters hold the film boxes; empty/error n/a (static content)
@@ -154,4 +154,4 @@ Done here: reduced motion, JS off and phones get the stacked layout with every w
 - [x] Nothing before consent (no tracker of our own)
 - [x] `V2:` line and this card
 
-Done here: `V2: 8.5/10` line in `Post.jsx`; events: `cta_click` with `blog-post.hero`, `blog-post.next-n`, `blog-post.close-n`.
+Done here: `V2: 8.5/10` line in `Post.jsx`; proof in `docs/gallery/blog/v3-post-*` (desktop first screen, phone first screen, phone code, desktop walk webm); events: `cta_click` with `blog-post.hero`, `blog-post.next-n`, `blog-post.close-n`.
