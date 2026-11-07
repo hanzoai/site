@@ -1,6 +1,6 @@
 'use client';
 // Persona: Developer choosing a model (and the buyer comparing labs). Goal: find the model, open its page. CTA: "Get API key" (platform.hanzo.ai/api-keys). Metric: api_key_created.
-// Signature: the wall that opens. The first screen is all nine flagship films; scrolling flies into Enso until its film is the next chapter, and every film and every card opens into its own page (the WebGL opener for flagships, the morph for model sheets).
+// Signature: a card opens into its page. The first screen is Hanzo's model grid exactly as live hanzo.ai draws it (SPEC.md); every card lifts into its model's page (the WebGL opener), every catalogue card's name flies into its sheet (morph).
 // Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from here, findable with Ctrl-F, so no page of the 544 is an orphan.
 /* Models, v2 (docs/VISION.md archetype C, docs/JAMES.md, docs/PLAN-COMPONENTS.md 5.4 and 2.15), one idea per screen:
    1 The wall: nine films at once (at least six cards above the fold), the light moving through them by itself;
@@ -27,7 +27,7 @@ import { media, bySlug } from '../../lib/models';
 import { ROWS, OTHERS } from './models/rates';
 import './ModelsPage.css';
 
-const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
+const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // the deck has no springs: ease-emphasis, 300 ms
 
 /* A link with its arrow as text, the way Hanzo writes them. */
 const Lk = ({ to, children, className = '', ...r }) => {
@@ -72,99 +72,79 @@ const arrows = (n, set) => (e) => {
 
 /* The line-masked headline: each line rises once out of its own mask. */
 const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
-  <T key={t} className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: delay + i * 0.08 }}>{t}</motion.span></T>
+  <T key={t} className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.06 }}>{t}</motion.span></T>
 ));
 
-/* ---------- 1. the wall: nine films, then the fly-in to Enso ---------- */
-const WALL = ['kai', 'zen', 'iro', 'koma', 'enso', 'oto', 'koe', 'uta', 'mori']; // Enso holds the middle
-const K = 1 / 3; // the wall is laid out at fly-in size and shown at a third of it, so every picture is drawn smaller than laid out
-const eio = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+/* ---------- 1. the hero: Hanzo's model grid, exactly as live hanzo.ai draws it (docs/refs/hanzo-model-cards/SPEC.md) ----
+   Enso tall in column 1 over both rows, Kai Zen Iro Koma over Oto Koe Uta Mori; #000 cards, 20px radii, the measured
+   tilt. Enso's film plays while it is on screen; a light moves through the other eight by itself (one at a time, so two
+   films at most), and the card under the pointer or focus plays instead. A click lifts the card into its page. */
+const GRID = ['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
 const clamp = (v) => Math.min(1, Math.max(0, v));
-const scaleAt = (v) => Math.pow(K, 1 - eio(clamp(v / 0.72)));
 
-/* One tile of the wall: Hanzo's model card (docs/refs/hanzo-model-cards/SPEC.md) at the wall's scale: title and arrow
-   top left, the description, the tag pills at the foot, Enso with its "Flagship model" pill; the film never dimmed; the
-   measured pointer tilt; a click lifts it into the model's page (WebGL opener). */
-function WallCard({ m, i, play, open, setLit, setHeld }) {
+function GridCard({ m, i, play, open, setLit, setHeld }) {
   const tilt = useSpecTilt();
+  const big = i === 0;
   return (
-    <a
-      ref={tilt.ref}
-      href={'/' + m.slug}
-      className={'xmo-card' + (i === 4 ? ' flag' : '')}
-      data-card={m.slug}
-      data-cursor="Open"
-      aria-label={`${m.name}: ${m.desc}`}
-      onClick={(e) => open(e, e.currentTarget, m.slug)}
-      onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setLit(i); setHeld(true); } }}
-      onPointerMove={tilt.onPointerMove}
-      onPointerLeave={() => { tilt.onPointerLeave(); setHeld(false); }}
-      onFocus={() => { setLit(i); setHeld(true); }}
-      onBlur={() => setHeld(false)}
-    >
-      <Film slug={m.slug} play={play} />
-      <span className="xmo-card-top" aria-hidden="true">
-        {i === 4 && m.kicker && <span className="xmo-pill flag">{m.kicker}</span>}
-        <span className="xmo-card-t">{m.name}{' '}<span className="xmo-arr">→</span></span>
-        <span className="xmo-card-d">{m.desc}</span>
-      </span>
-      <span className="xmo-card-tags" aria-hidden="true">{m.tags.map((t) => <span key={t} className="xmo-pill">{t}</span>)}</span>
-    </a>
+    <li className={'xmo-cell' + (big ? ' big' : '')}>
+      <a
+        ref={tilt.ref}
+        href={'/' + m.slug}
+        className={'xmo-card' + (big ? ' big' : '')}
+        data-card={m.slug}
+        aria-label={`${m.name}: ${m.desc}`}
+        onClick={(e) => open(e, e.currentTarget, m.slug)}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !big) { setLit(i); setHeld(true); } }}
+        onPointerMove={tilt.onPointerMove}
+        onPointerLeave={() => { tilt.onPointerLeave(); setHeld(false); }}
+        onFocus={() => { if (!big) setLit(i); setHeld(true); }}
+        onBlur={() => setHeld(false)}
+      >
+        <Film slug={m.slug} play={play} />
+        <span className="xmo-card-top" aria-hidden="true">
+          {big && m.kicker && <span className="xmo-pill flag">{m.kicker}</span>}
+          <span className="xmo-card-t">{m.name}{' '}<span className="xmo-arr">→</span></span>
+          <span className="xmo-card-d">{m.desc}</span>
+        </span>
+        <span className="xmo-card-tags" aria-hidden="true">{m.tags.map((t) => <span key={t} className="xmo-pill">{t}</span>)}</span>
+      </a>
+    </li>
   );
 }
 
 function Stage() {
-  const ref = useRef(null);
   const open = useOpen();
   const calm = useReducedMotion();
-  const wide = useWide();
   const stop = usePaused();
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const s = useTransform(p, scaleAt);
-  // as the camera flies in, the eight around Enso leave: edges first, then corners
-  const near = useTransform(p, (v) => clamp((0.56 - scaleAt(v)) / 0.16));
-  const far = useTransform(p, (v) => clamp((0.48 - scaleAt(v)) / 0.12));
-  const [zoom, setZoom] = useState(false);
-  const [lit, setLit] = useState(4);
+  const [lit, setLit] = useState(1);
   const [held, setHeld] = useState(false);
-  useMotionValueEvent(p, 'change', (v) => setZoom(scaleAt(v) > 0.45));
-  // the light moves through the nine by itself while the wall is whole; a hovered or focused film keeps it
   useEffect(() => {
-    if (calm || stop || held || zoom || !wide) return;
-    const t = setInterval(() => setLit((i) => (i + 1) % WALL.length), 2600);
+    if (calm || stop || held) return;
+    const t = setInterval(() => setLit((i) => (i % 8) + 1), 2600);
     return () => clearInterval(t);
-  }, [calm, stop, held, zoom, wide]);
-  const at = zoom ? 4 : lit;
+  }, [calm, stop, held]);
   const go = 'https://platform.hanzo.ai/api-keys';
   return (
-    <section className="xmo-stage" ref={ref} aria-labelledby="xmo-h1">
-      <div className="xmo-pin">
-        <div className="x-wrap xmo-stage-g">
-          <div className="xmo-intro">
-            <h1 id="xmo-h1" className="xmo-display"><Lines lines={['Frontier AI', 'families']} delay={0.05} /></h1>
-            <motion.p className="xmo-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+    <section className="xmo-stage" aria-labelledby="xmo-h1">
+      <div className="x-wrap">
+        <div className="xmo-intro">
+          <h1 id="xmo-h1" className="xmo-display"><Lines lines={['Frontier AI families']} delay={0.05} /></h1>
+          <div className="xmo-intro-r">
+            <motion.p className="xmo-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
               Proprietary and open weight models for text, decisions, video, image, and more — one account, one API key.
             </motion.p>
-            <motion.div className="xmo-acts" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.48 }}>
+            <motion.div className="xmo-acts" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
               <Btn to={go} solid data-thumb="" data-cta="models.hero">Get API key</Btn>
               <Lk to="#families" className="quiet">Every model</Lk>
             </motion.div>
           </div>
-          <div className="xmo-area">
-            <motion.ul className={'xmo-wall' + (zoom ? ' zoom' : '')} style={{ scale: s }} data-swipe-own>
-              {WALL.map((slug, i) => {
-                const m = bySlug[slug];
-                const ring = i === 4 ? null : i % 2 ? near : far;
-                return (
-                  <motion.li key={slug} className={'xmo-tile' + (i === 4 ? ' c' : '') + (at === i ? ' lit' : '')} style={ring ? { opacity: ring } : undefined}>
-                    <WallCard m={m} i={i} play={!wide || at === i} open={open} setLit={setLit} setHeld={setHeld} />
-                  </motion.li>
-                );
-              })}
-            </motion.ul>
-            <div className="xmo-wall-cap"><span className="x-mono">Models</span><FilmPause /></div>
-          </div>
         </div>
+        <ul className="xmo-grid" data-swipe-own>
+          {GRID.map((slug, i) => (
+            <GridCard key={slug} m={bySlug[slug]} i={i} play={i === 0 || lit === i} open={open} setLit={setLit} setHeld={setHeld} />
+          ))}
+        </ul>
+        <div className="xmo-grid-cap"><span className="x-mono">Models</span><FilmPause /></div>
       </div>
     </section>
   );
@@ -182,12 +162,15 @@ function Families() {
   const open = useOpen();
   const wide = useWide();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const { scrollYProgress: enter } = useScroll({ target: ref, offset: ['start end', 'start 60px'] });
+  // the deck's black room: it arrives as a rounded card inside the gutters and opens to full width as it is reached
+  const clipPath = useTransform(enter, (v) => { const k = 1 - clamp(v); return `inset(0px ${(k * 32).toFixed(1)}px round ${(k * 24).toFixed(1)}px)`; });
   const [on, setOn] = useState(0);
   useMotionValueEvent(p, 'change', (v) => setOn(Math.min(2, Math.floor(clamp(v) * 3.0001))));
   return (
     <section className="xmo-fam" ref={ref} data-room="dark" aria-labelledby="xmo-fam-h">
       <div className="xmo-fam-pin">
-        <div className="xmo-fam-bg" aria-hidden="true" />
+        <motion.div className="xmo-fam-bg" style={{ clipPath }} aria-hidden="true" />
         <div className="x-wrap xmo-fam-g">
           <header className="xmo-fam-head">
             <h2 id="xmo-fam-h" className="xmo-fam-h">
@@ -266,7 +249,11 @@ const DUELS = [
 ];
 function Figures() {
   const ref = useRef(null);
+  const big = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
+  // scale with rhythm: the figure rests at 64px and grows only while it is the moment (centred on screen), then settles
+  const { scrollYProgress: f } = useScroll({ target: big, offset: ['start end', 'end start'] });
+  const grow = useTransform(f, [0.2, 0.5, 0.8], [1, 1.75, 1]);
   return (
     <section className={'xmo-sec xmo-fig' + (seen ? ' on' : '')} ref={ref} aria-labelledby="xmo-fig-h">
       <div className="x-wrap xmo-fig-g">
@@ -276,8 +263,8 @@ function Figures() {
           <ul className="xmo-suites">{SUITES.map((s) => <li key={s}>{s}</li>)}</ul>
           <Lk to="/kai#benchmarks">Kai: decisions and their benchmarks</Lk>
         </header>
-        <div className="xmo-fig-big">
-          <p className="xmo-num x-mono"><MaskFig>11</MaskFig></p>
+        <div className="xmo-fig-big" ref={big}>
+          <motion.p className="xmo-num x-mono" style={{ scale: grow }}><MaskFig>11</MaskFig></motion.p>
           <p className="xmo-num-k">Suites won · Kai vs Jev</p>
         </div>
         {DUELS.map((d, i) => (
@@ -420,7 +407,7 @@ function Catalogue({ at, makers }) {
   const choose = (k) => {
     setFam(k);
     const top = sec.current.getBoundingClientRect().top + scrollY - 60;
-    if (scrollY > top + 4) (window.__lenis ? window.__lenis.scrollTo(top, { duration: 0.9 }) : scrollTo({ top, behavior: 'smooth' }));
+    if (scrollY > top + 4) (window.__lenis ? window.__lenis.scrollTo(top, { duration: 0.5 }) : scrollTo({ top, behavior: 'smooth' }));
   };
   const open = useOpen();
   const show = (f) => fam === 'all' || fam === f;
@@ -469,7 +456,7 @@ function Catalogue({ at, makers }) {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -24, transition: { duration: 0.22, ease: EASE } }}
-              transition={{ duration: 0.6, ease: EASE, layout: SPRING }}
+              transition={{ duration: 0.4, ease: EASE, layout: SPRING }}
             >
               {head}
               {body}

@@ -119,7 +119,9 @@
   .xii-hub { --r: min(148px, 39vw); width: calc(var(--r) * 2 + 48px); margin-inline: auto; }
   .xii-hub::before { inset: 24px; }
   .xii-hub::after { inset: calc(24px + var(--r) * .32); }
-  .xii-sat { width: 44px; height: 44px; left: -22px; top: -22px; border-radius: 13px; font-size: 20px; }
+  /* 19 badges on a 146px ring leave ~48px each: draw them at 36px so none touch; on a phone the ring is a picture
+     (the same 19 guides are full-size cards just below), so its badges take no taps */
+  .xii-sat { width: 36px; height: 36px; left: -18px; top: -18px; border-radius: 11px; font-size: 17px; pointer-events: none; }
   .xii-hub-u { font-size: 12px; }
   .xii-hub-t { font-size: 13px; }
   .xii .x-copy.xii-copy { height: 44px; }

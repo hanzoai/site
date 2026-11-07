@@ -8,7 +8,10 @@
    one term the fact turns on; the family settles from huge on scroll (Stage).
    Beyond: "Try to steal one" - you hold the live refresh token; copy it as the thief, then refresh as either of you, in
    any order. Whoever comes second presents a spent token and the whole family is revoked.
-   Accent: indigo, from hanzo.id. Every word and link is Hanzo's. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's.
+   Persona: a developer wiring sign-in for an app or service on Hanzo.
+   Goal: trust how hanzo.id issues and protects tokens (PKCE, single-use refresh, one tenancy per organization).
+   CTA: API reference (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
@@ -102,8 +105,8 @@ function Steal() {
     <section className="ia-steal v2-dark" data-room="dark">
       <div className="v2-wrap v2-grid ia-steal-grid">
         <div className="ia-steal-copy">
-          <p className="v2-kick acc">Refresh tokens</p>
           <h2 className="v2-display s">Try to steal one</h2>
+          <p className="v2-kick acc ia-steal-cap">Refresh tokens</p>
           <p className="v2-body">Refresh tokens are single-use and kept only as a hash. Presenting a spent one revokes the whole family.</p>
           <div className="ia-steal-acts">
             <button type="button" className="v2-btn" onClick={() => setS((v) => ({ ...v, thief: v.you }))} disabled={!!dead || !!thief}>Copy it as the thief</button>
@@ -139,13 +142,12 @@ export default function Iam() {
         </Lift>
         <div className="v2-wrap v2-grid ia-hero-t">
           <div className="ia-hero-l">
-            <p className="v2-kick acc">Identity</p>
             <Lines as="h1" className="v2-display ia-h1" lines={['Hanzo IAM']} data-morph-target="" />
           </div>
           <div className="ia-hero-r">
-            <motion.p className="v2-lede ia-sub" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>The sign-in behind every Hanzo service.</motion.p>
-            <div className="v2-acts">
-              <A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn solid">API reference</A>
+            <p className="v2-lede ia-sub v2-in" style={{ animationDelay: '.3s' }}>The sign-in behind every Hanzo service.</p>
+            <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}>
+              <A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn solid" data-thumb="API reference" data-cta="iam-api-reference">API reference</A>
               <A to="https://hanzo.id/.well-known/openid-configuration" className="v2-btn">Discovery document</A>
               <A to="https://github.com/hanzoai/iam" className="v2-link ia-src">Source →</A>
             </div>
@@ -170,8 +172,6 @@ export default function Iam() {
         )}
       />
 
-      <Steal />
-
       <ShipPrompt
         name="IAM"
         api="/v1/iam"
@@ -180,7 +180,9 @@ export default function Iam() {
         flip
       />
 
-      <GetIt name="IAM" tag="Identity + access (hanzo.id)" seed="iam" data={[256, 65, 3]} repo={['hanzoai/iam', 'https://github.com/hanzoai/iam']} stars="3 stars" />
+      <Steal />
+
+      <GetIt name="IAM" tag="Identity + access (hanzo.id)" seed="iam" data={[256, 65, 3]} repo={['hanzoai/iam', 'https://github.com/hanzoai/iam']} stars="3 stars" ask={['API reference', 'https://docs.hanzo.ai/docs/openapi/iam', 'iam-api-reference']} />
     </main>
   );
 }

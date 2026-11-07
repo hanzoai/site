@@ -36,7 +36,7 @@ function Handset({ phone, lit, done }) {
         <div className={'xsm-from' + (lit === 'What' ? ' lit' : '')}><span className="xsm-av"><Mark size={12} /></span>Hanzo AI</div>
         <ul className={'xsm-msgs' + (done ? ' done' : '') + (lit === 'What' ? ' lit' : '')}>
           {KINDS.map((k, i) => <li key={k} style={{ '--i': i }}>{k}</li>)}
-          <AnimatePresence>{done && <motion.li className="xsm-ok" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 24 }}>You&apos;re opted in</motion.li>}</AnimatePresence>
+          <AnimatePresence>{done && <motion.li className="xsm-ok" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>You&apos;re opted in</motion.li>}</AnimatePresence>
         </ul>
         <div className={'xsm-keys' + (lit === 'How to stop' ? ' lit' : '')}><span>STOP</span><span>HELP</span></div>
       </div>
@@ -52,7 +52,7 @@ function Kinds() {
         <p className="xp-kick" id="xsm-kinds-h">Hanzo AI</p>
         <ul className="xsm-bubbles">
           {KINDS.map((k, i) => (
-            <motion.li key={k} className={'b' + i} initial={{ opacity: 0, y: 60, scale: 0.92 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: i * 0.12 }}>{k}</motion.li>
+            <motion.li key={k} className={'b' + i} initial={{ opacity: 0, y: 60, scale: 0.92 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.12 }}>{k}</motion.li>
           ))}
         </ul>
         <div className="xsm-big-keys">
@@ -88,13 +88,13 @@ export default function SmsOptIn() {
             <LineReveal as="h1" id="xsm-h1" className="xp-display md" lines={['Get Hanzo', 'text messages']} />
             <motion.p className="xp-lede xsm-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}>Opt in to receive two-factor authentication codes, account and security alerts, and transactional notifications by SMS.</motion.p>
           </div>
-          <motion.div className="xsm-side" initial={{ opacity: 0, y: 120, rotate: 6 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ type: 'spring', stiffness: 120, damping: 20, delay: 0.3 }}>
+          <motion.div className="xsm-side" initial={{ opacity: 0, y: 120, rotate: 6 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}>
             <Handset phone={phone} lit={lit} done={state === 'done'} />
           </motion.div>
           <motion.div className="xsm-card" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>
             <AnimatePresence mode="wait" initial={false}>
               {state === 'done' ? (
-                <motion.div key="done" className="xsm-done" role="status" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+                <motion.div key="done" className="xsm-done" role="status" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                   <Tick size={56} />
                   <h2 className="xp-head">You&apos;re opted in</h2>
                   <p>Thanks — you&apos;ll now receive SMS from Hanzo at {phone}. You can reply <strong>STOP</strong> at any time to opt out, or <strong>HELP</strong> for help.</p>

@@ -1,0 +1,38 @@
+/* ProofRhythm (components/v2, owned by the Wave 2 "Proof" chat). MASTER.md §3.1 "Scale has rhythm" on top of
+   ProofScale: some things big, some medium, most small, one big thing per screen. Resting sizes follow live hanzo.ai
+   (h1 52px, section headings 26px, figures 64px); a thing grows past that only while it is the moment (.pf-moment),
+   then settles. Golden space, 1152px container, deck easing.
+   Opt-in and scoped, so pages that use ProofScale without it are unchanged:
+     import '../v2/ProofRhythm.css';   and   <main className="xyz pf-r">
+   Classes it re-tunes inside .pf-r: .pf-display (all steps) → h1 52 / 40 phone; .pf-head → 26; .pf-title → 21;
+   .pf-lede → 20; .pf-body → 16; .pf-num → 64 (Air 220); .pf-sec, .pf-wrap, .pf-kick, .pf-btn, .pf-obj (flat tile; .float for things that float).
+   New: .pf-moment (the one big thing on its screen: 84px, 112px with .xl), .pf-figure (a figure at rest, 64px). */
+.pf-r { --pf-emph: cubic-bezier(.16, 1, .3, 1); --pf-io: cubic-bezier(.4, 0, .2, 1); --pf-out: cubic-bezier(0, 0, .2, 1); }
+
+.pf-r .pf-wrap { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); }
+.pf-r .pf-sec { padding: clamp(72px, 11vw, 188px) 0; }
+.pf-r .pf-sec.tight { padding: clamp(44px, 7vw, 116px) 0; }
+
+.pf-r .pf-display, .pf-r .pf-display.m, .pf-r .pf-display.s { font-size: 52px; font-weight: 497; line-height: 1.04; letter-spacing: -.03em; }
+.pf-r .pf-head { max-width: 22ch; font-size: 26px; font-weight: 497; line-height: 1.18; letter-spacing: -.018em; }
+.pf-r .pf-title { font-size: 21px; font-weight: 497; line-height: 1.25; letter-spacing: -.012em; }
+.pf-r .pf-lede { max-width: 44ch; font-size: 20px; line-height: 1.45; letter-spacing: -.008em; color: #525252; }
+.pf-r .pf-body { max-width: 66ch; font-size: 16px; line-height: 1.6; color: #525252; }
+.pf-r .pf-kick { margin: 0 0 10px; font: 500 12px/1.3 var(--mono); letter-spacing: .14em; color: #737373; }
+.pf-r .pf-num, .pf-r .pf-figure { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.03em; font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
+.pf-r .pf-moment { font-size: 84px; font-weight: 220; line-height: .98; letter-spacing: -.04em; }
+.pf-r .pf-moment.xl { font-size: 112px; }
+
+.pf-r .pf-btn { min-height: 48px; font-weight: 606; transition: transform 90ms var(--pf-out), background-color 150ms var(--pf-out), border-color 150ms var(--pf-out); }
+.pf-r .pf-btn:active { transform: scale(.97); }
+.pf-r .pf-obj { border-radius: 24px; border: 0; box-shadow: none; background: #f5f5f5; }
+.pf-r .pf-obj.float { background: #fff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
+
+@media (max-width: 899px) {
+  .pf-r .pf-display, .pf-r .pf-display.m, .pf-r .pf-display.s { font-size: 40px; }
+  .pf-r .pf-head { font-size: 26px; }
+  .pf-r .pf-lede { font-size: 17px; }
+  .pf-r .pf-num, .pf-r .pf-figure { font-size: 44px; }
+  .pf-r .pf-moment { font-size: 52px; }
+  .pf-r .pf-moment.xl { font-size: 64px; }
+}

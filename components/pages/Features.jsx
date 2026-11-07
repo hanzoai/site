@@ -22,6 +22,7 @@ import PinChapters from '../v2/x-gauss/PinChapters';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
+import '../v2/x-gauss/Rhythm.css';
 import './Features.css';
 
 const API = 'https://api.hanzo.ai/v1/chat/public';
@@ -309,7 +310,7 @@ function Ask() {
 
 export default function Features() {
   return (
-    <main className="xft w2">
+    <main id="main" className="xft w2 gx">
       <NoJs />
       <Hero />
       <Products />

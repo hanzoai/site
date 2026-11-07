@@ -1,73 +1,73 @@
 'use client';
-/* Home, the models (v2, Open). A tile grid of the models' own pictures, Apple-style: Enso huge, Kai and Zen beside it,
-   the six creative models as a strip below; nine real visuals on screen at once (JAMES.md 6). Enso's film plays while
-   it is on screen; pointing at (or focusing) any other tile plays its film and brings up its tags, so at most two films
-   ever run (PLAN-COMPONENTS 2.10). A click lifts the picture off the page and opens it into the model's own page (WebGL
-   opener, synchronized.studio). Pause stops the films (WCAG 2.2.2); reduced motion and Data Saver keep the posters. */
+/* Home, section 2: hanzo.ai's model cards, replicated exactly (docs/refs/hanzo-model-cards/SPEC.md, measured on the
+   live site; James: "it needs to be the exact same"). Same place (right after a one-screen hero), same grid (Enso 2fr
+   over two rows, then Kai Zen Iro Koma / Oto Koe Uta Mori), same black cards, type, pills and links under the grid.
+   Each model's film loops over its poster while the card is on screen (0.6 s crossfade, never dimmed). The movement is
+   the live one: a pointer-follow tilt, up to about ±3°, perspective 900 px, .3 s cubic-bezier(.2,.8,.2,1), settling
+   flat on leave; no tilt for touch or reduced motion. Our only additions are the shared layers: the click lifts the
+   picture into the model's own page (WebGL opener), and a pause for the films (WCAG 2.2.2) beside the subline. */
 import { useState } from 'react';
-import { Arrow } from './ui';
 import { Img, Film } from './kit';
+import { fine } from './ui';
 import { useOpener } from './Opener';
 import { MODELS, media } from '../lib/models';
-import Lines from './v2/Lines';
 
-function Tile({ m, i, active, setActive, paused }) {
+function Card({ m, i, paused }) {
   const [box, setBox] = useState(null);
   const opener = useOpener();
-  const plays = !paused && (i === 0 || active === i);
+  const tilt = (e) => {
+    if (!box || !fine(e) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const r = box.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    box.style.transform = `perspective(900px) rotateX(${((py - 0.5) * 5.4).toFixed(2)}deg) rotateY(${(-(px - 0.5) * 5.4).toFixed(2)}deg)`;
+  };
+  const rest = () => { if (box) box.style.transform = ''; };
   return (
-    <li className={'hv-tile t' + i}>
+    <li className={'hv-mc-li' + (i === 0 ? ' enso' : '')}>
       <a
         href={'/' + m.slug}
-        className="hv-tile-a"
+        className="hv-mc"
         data-card={m.slug}
         ref={setBox}
         onClick={(e) => opener.open(e, { el: box, src: media(m.slug, 'webp'), href: '/' + m.slug, key: m.slug })}
-        onPointerEnter={() => setActive(i)}
-        onPointerLeave={() => setActive((a) => (a === i ? -1 : a))}
-        onFocus={() => setActive(i)}
-        onBlur={() => setActive((a) => (a === i ? -1 : a))}
+        onPointerMove={tilt}
+        onPointerLeave={rest}
         aria-label={`${m.name}: ${m.desc}`}
       >
-        <span className="hv-tile-media">
+        <span className="hv-mc-media" aria-hidden="true">
           <Img src={media(m.slug, 'webp')} w={1200} h={1500} priority={i === 0} />
-          {plays && <Film src={media(m.slug, 'webm')} w={1200} h={1500} onPlaying={(e) => e.currentTarget.classList.add('on')} />}
+          {!paused && <Film src={media(m.slug, 'webm')} w={1200} h={1500} onPlaying={(e) => e.currentTarget.classList.add('on')} />}
         </span>
-        <span className="hv-tile-text">
-          <span className="hv-tile-name">{m.name}<svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-          {m.kicker && <span className="hv-tile-kick">{m.kicker}</span>}
-          <span className="hv-tile-desc">{m.desc}</span>
-        </span>
-        <span className="hv-tile-tags">{m.tags.map((t) => <span key={t}>{t}</span>)}</span>
+        {m.kicker && <span className="hv-mc-pill hv-mc-flag">{m.kicker}</span>}
+        <span className="hv-mc-t">{m.name} <span aria-hidden="true">→</span></span>
+        <span className="hv-mc-d">{m.desc}</span>
+        <span className="hv-mc-tags">{m.tags.map((t) => <span className="hv-mc-pill" key={t}>{t}</span>)}</span>
       </a>
     </li>
   );
 }
 
 export default function Models() {
-  const [active, setActive] = useState(-1);
   const [paused, setPaused] = useState(false);
   return (
-    <section className="hv-models v2-sec" id="models" aria-labelledby="models-h">
-      <div className="v2-wrap">
-        <header className="hv-head v2-grid">
-          <Lines as="h2" id="models-h" className="v2-display-s hv-head-t" lines={['Frontier AI for', 'everything you build.']} />
-          <div className="hv-head-r">
-            <p className="v2-lede">Language, routing, decisions and creative models.</p>
-            <div className="hv-links">
-              <Arrow href="/pricing">Explore model pricing</Arrow>
-              <Arrow href="/models">View full model catalog</Arrow>
-            </div>
+    <section className="hv-models" id="models" aria-labelledby="models-h">
+      <div className="hv-mc-wrap">
+        <div className="hv-mc-head">
+          <div>
+            <h2 id="models-h" className="hv-mc-h">Frontier AI for everything you build.</h2>
+            <p className="hv-mc-sub">Language, routing, decisions and creative models.</p>
           </div>
-        </header>
-        <div className="hv-tiles-wrap">
           {/* WCAG 2.2.2: the films can be stopped; this control comes before them */}
-          <button type="button" className="hv-pause hv-tiles-pause" aria-label="Pause" aria-pressed={paused} onClick={() => setPaused((x) => !x)}>
+          <button type="button" className="hv-pause hv-mc-pause" aria-label="Pause" aria-pressed={paused} onClick={() => setPaused((x) => !x)}>
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
               {paused ? <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /> : <><rect x="4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /><rect x="9.4" y="3.5" width="2.6" height="9" rx=".8" fill="currentColor" /></>}
             </svg>
           </button>
-          <ul className="hv-tiles">{MODELS.map((x, i) => <Tile key={x.slug} m={x} i={i} active={active} setActive={setActive} paused={paused} />)}</ul>
+        </div>
+        <ul className="hv-mc-grid">{MODELS.map((x, i) => <Card key={x.slug} m={x} i={i} paused={paused} />)}</ul>
+        <div className="hv-mc-links">
+          <a href="/pricing" className="hv-mc-link" data-cta="home.models.pricing">Explore model pricing →</a>
+          <a href="/models" className="hv-mc-link" data-cta="home.models.catalog">View full model catalog →</a>
         </div>
       </div>
     </section>

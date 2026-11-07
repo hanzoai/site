@@ -116,7 +116,7 @@
 .mcp-code-bar .x-mono { font-size: 13px; color: #86868b; }
 .mcp-code-bar .x-copy { background: #1c1c1f; border-color: rgba(255, 255, 255, .12); color: #d1d1d6; }
 .mcp-code pre { margin: 0; padding: 28px; overflow-x: auto; font: 400 15.5px/1.8 var(--mono); color: #f5f5f7; }
-.mcp-code .c { color: #7c7c85; } .mcp-code .s { color: #c4c4c4; }
+.mcp-code .c { color: #737373; } .mcp-code .s { color: #c4c4c4; }
 
 /* add + repo */
 .mcp-add .a2-grid { align-items: end; row-gap: 48px; }
@@ -176,7 +176,7 @@
 .mcp-cfg { padding-top: clamp(96px, 10vw, 160px); }
 .mcp-codes { grid-column: 7 / span 6; display: grid; gap: 16px; }
 .mcp-codes .mcp-code { grid-column: auto; }
-.mcp-code-c { margin: 0; padding: 16px 28px 0; font-size: 13px; color: #7c7c85; }
+.mcp-code-c { margin: 0; padding: 16px 28px 0; font-size: 13px; color: #737373; }
 .mcp-code pre { padding-top: 14px; }
 @media (max-width: 900px) {
   .mcp-h1 { font-size: clamp(27px, 8vw, 31px) !important; line-height: 1.06; }

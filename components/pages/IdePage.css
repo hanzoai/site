@@ -179,7 +179,7 @@
 .ide-script-bar .x-mono { font-size: 13px; color: #86868b; }
 .ide-script-bar .x-copy { background: #1c1c1f; border-color: rgba(255, 255, 255, .12); color: #d1d1d6; }
 .ide-script pre { margin: 0; padding: 26px 28px 30px; overflow-x: auto; font: 400 15.5px/1.85 var(--mono); }
-.ide-script .c { color: #7c7c85; }
+.ide-script .c { color: #737373; }
 
 /* end */
 .ide-end { padding-top: 0; }

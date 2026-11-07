@@ -96,8 +96,9 @@ const BUILD = [['dist:', 4], ['  name: my-collector', 4], ['receivers:', 4], [' 
 const STAGES = [['OTLP in', [0]], ['pipelines', [1]], ['memory_limiter', [3]], ['batch', [2]], ['OTLP out', [5]]];
 
 /* The chapter picture: the config file with the reached fact's block lit, and the pipeline strip above it. */
-function Config({ at }) {
-  const file = at === 4 ? BUILD : CFG;
+function Config({ at, compact }) {
+  // on phones (stacked chapters) each chapter shows only its own block, not the whole file six times
+  const file = (at === 4 ? BUILD : CFG).filter(([, f]) => !compact || f === at || at === 4);
   return (
     <div className="tl2-ed">
       <div className="tl2-strip">{STAGES.map(([t, f], i) => <span key={t} className={'l2-mono' + (f.includes(at) || at === 4 ? ' on' : '')}>{t}{i < STAGES.length - 1 && <i />}</span>)}</div>
@@ -135,7 +136,7 @@ function YourConfig() {
   const group = (label, names, arr, set) => (
     <div className="tl2-g" role="group" aria-label={label}>
       <p className="l2-mono">{label}</p>
-      <div>{names.map((n, i) => <button key={n} type="button" aria-pressed={arr[i]} onClick={() => flip(arr, set, i)}>{n}</button>)}</div>
+      <div>{names.map((n, i) => <button key={n} type="button" aria-pressed={arr[i]} onClick={() => flip(arr, set, i)}><i aria-hidden="true">{arr[i] ? '✓' : ''}</i>{n}</button>)}</div>
     </div>
   );
   return (
@@ -158,10 +159,8 @@ export default function Telemetry() {
       <StageHero look="split" kick="telemetry.hanzo.ai" title="Hanzo Telemetry" sub="The collector that sits between your app and wherever the data goes" acts={[['View on GitHub', GH]]}>
         <Pipe />
       </StageHero>
-      <PinScenes dark flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <p key="k" className="tl2-key l2-mono">{k}:</p>])} visual={(at) => <Config at={at} />} />
-      <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest">
-        <YourConfig />
-      </Finale>
+      <PinScenes dark flip head="One hop you control" items={FACTS.map(([t, d, k]) => [t, d, <p key="k" className="tl2-key l2-mono">{k}:</p>])} visual={(at, p) => <Config at={at} compact={!p} />} />
+      <Finale name="Telemetry" head="Put it in front of your backend" ask={['View on GitHub', GH]} object={<YourConfig />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Telemetry in my project." tag="OpenTelemetry ingest" />
     </main>
   );
 }

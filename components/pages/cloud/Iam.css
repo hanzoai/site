@@ -3,7 +3,7 @@
 .ia .v2-dark, .ia [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
 
 /* hero: the object first, the name under it */
-.ia-hero { padding: clamp(104px, 9vw, 128px) 0 clamp(96px, 10vw, 160px); }
+.ia-hero { padding: clamp(84px, 6vw, 96px) 0 clamp(96px, 10vw, 160px); }
 .ia-lift > div { height: 100%; }
 .ia-fam { position: relative; border-radius: 28px; padding: clamp(28px, 3vw, 44px); background: linear-gradient(180deg, #f5f5f7, #f2f2f2); min-height: clamp(320px, 30vw, 400px); box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; overflow: hidden; transition: background .8s var(--e); }
 .ia-fam.dead { background: linear-gradient(180deg, #f5f5f5, #ededed); }
@@ -29,7 +29,6 @@
 
 .ia-hero-t { margin-top: clamp(40px, 4vw, 64px); align-items: end; row-gap: 28px; }
 .ia-hero-l { grid-column: 1 / span 7; }
-.ia-hero-l .v2-kick { margin-bottom: 18px; }
 .ia-h1 { font-size: clamp(64px, 9vw, 132px); white-space: nowrap; }
 .ia-hero-r { grid-column: 8 / -1; padding-bottom: 12px; }
 .ia-sub { margin-bottom: 28px; color: var(--ink); }
@@ -51,7 +50,8 @@
 .ia-steal .v2-kick.acc { color: var(--glow); }
 .ia-steal-grid { align-items: center; }
 .ia-steal-copy { grid-column: 1 / span 5; }
-.ia-steal-copy .v2-display { margin: 20px 0 24px; }
+.ia-steal-copy .v2-display { margin: 0 0 16px; }
+.ia-steal-cap { margin-bottom: 24px; }
 .ia-steal-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px; }
 .ia-steal-acts .v2-btn:disabled { opacity: .35; cursor: not-allowed; }
 .ia-steal-x { min-height: 48px; padding: 0 12px; border: 0; background: none; color: var(--glow); font: 500 17px/1 var(--sans); cursor: pointer; }

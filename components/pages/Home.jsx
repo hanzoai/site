@@ -1,21 +1,21 @@
 'use client';
 // Persona: developer evaluating Hanzo (first visit); enterprise buyers and founders pass through to /enterprise and /pricing
-// Goal: understand "one key reaches every model, for less" in 5 s, then start (PLAN-COMPONENTS 1, brief 5.1)
-// CTA: "Try Hanzo" → https://hanzo.ai/signup (header, the site ask bar after the hero, pricing, closing band); every
-//      hero button is quiet so exactly one solid ask is on screen
+// Goal: understand "one key reaches every model, for less" in 5 s, then start (MASTER 4.1)
+// CTA: "Try Hanzo" → https://hanzo.ai/signup, the sticky header's solid ask at every width (the floating ask bar is off
+//      here: nothing floats over content); the hero keeps live hanzo.ai's own sign-up group
 // Metric: api_key_created (leading: signup_start via data-cta="home.*", install_copy)
-// Signature: Stage and Open. The live desktop app sits huge under "Pick all three." and settles as you scroll while
-//   the phone slides out from behind it (Hero.jsx); every model tile lifts off and opens into its page (Models.jsx),
-//   and every product name opens into its page (Platform.jsx).
-// Beyond: the spine, a quiet chapter index at the right edge written from the page's own headings.
-/* Home, v2 (the bar-setter, docs/VISION.md, JAMES.md, PLAN-COMPONENTS 5.1). Chaptered: one idea per screen, the
-   product as the hero, every card opens. Motion by kind: time (the hero demo types, sends and answers; the install
-   line types; the roster steps), pointer (the app leans, the agent wall swells, tiles play their film and show their
-   tags), state (console tabs and pricing tabs glide, prices roll, the race replays), arrival (headlines cut into
-   their lines), scroll (the stage settles, the product chapters wipe, the argument room opens like a door).
-   Rhythm: stage → model tiles → pinned chapters → agent wall + console → the one dark room (speed, cost, frontier as
-   one argument) → figures + calendar + rail → logo wall → calm pricing → backers → closing band.
-   Colour: none in the UI (JAMES.md 7); only Hanzo's own media brings colour. */
+// Signature: a model card opens into its page (SPEC.md cards, WebGL opener), after live hanzo.ai's own hero, kept exactly.
+// Beyond: the question-count control on Enso's cost: say how many GPQA Diamond questions and every lane reprices from
+//   Hanzo's own per-1,000 rates.
+/* Home, v2 (MASTER 3.1, 4.1). The hero is live hanzo.ai's own; every section after it is chaptered, one idea per screen,
+   with scale that has rhythm: headings rest at 26px, sublines at 16px, figures at 64px in Zen Air, and a figure grows
+   only while it is the moment (the race running, a claim crossing the screen, the year's commits arriving), then
+   settles. Motion by kind: time (the hero demo types, sends, answers; the race runs at true speed; counts run once),
+   pointer (model cards tilt, the budget line drags, the calendar lens, the repo rail), state (console and pricing
+   tabs glide, prices roll, Replay), arrival (headlines cut into their lines), scroll (the product chapters wipe, the
+   argument room opens and closes like a door, figures grow and settle).
+   Order (MASTER 4.1): hero → model cards → platform chapters → agents → one dark room (speed, cost, frontier) → open
+   source → Trusted by → pricing → Backed by → closing band. Colour: none in the UI; only Hanzo's own media. */
 import { useEffect, useRef, useState } from 'react';
 import { A, Band, Img } from '../kit';
 import Hero from '../Hero';
@@ -31,27 +31,16 @@ import C from '../../content';
 import '../v2/system.css';
 import './Home.css';
 
-/* Beyond: the chapter index, read from the headings on the page (desktop only; phones have the thumb bar) */
-function Spine() {
-  const [list, setList] = useState([]);
-  const [at, setAt] = useState('');
+/* Nothing floats over content (MASTER 3.3): the site's contextual cursor stays silent on this page. It reads
+   data-cursor from the element under the pointer, so every link, card and rail here carries an empty one. */
+function useQuietCursor() {
   useEffect(() => {
-    const secs = [...document.querySelectorAll('main > section[id][aria-labelledby]')];
-    setList(secs.map((s) => [s.id, document.getElementById(s.getAttribute('aria-labelledby'))?.textContent.replace(/\s+/g, ' ').trim() || s.id]));
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
-    secs.forEach((s) => io.observe(s));
-    const hero = document.querySelector('.hv-hero');
-    const top = new IntersectionObserver(([e]) => { if (e.isIntersecting) setAt(''); }, { rootMargin: '0px 0px -60% 0px' });
-    hero && top.observe(hero);
-    return () => { io.disconnect(); top.disconnect(); };
+    const mark = () => document.querySelectorAll('main.hv a, main.hv [data-card], main.hv [data-morph], main.hv .x-rail, main.hv [role=slider]').forEach((el) => { if (!el.hasAttribute('data-cursor')) el.setAttribute('data-cursor', ''); });
+    mark();
+    const mo = new MutationObserver(mark);
+    mo.observe(document.querySelector('main.hv'), { childList: true, subtree: true });
+    return () => mo.disconnect();
   }, []);
-  if (!list.length) return null;
-  const dark = ['faster', 'cheaper', 'pareto'].includes(at);
-  return (
-    <nav className={'hv-spine' + (at ? ' on' : '') + (dark ? ' dark' : '')} aria-label="On this page">
-      <ol>{list.map(([id, t], i) => <li key={id}><a href={'#' + id} aria-current={at === id ? 'true' : undefined}><span><b>{String(i + 1).padStart(2, '0')}</b>{t}</span></a></li>)}</ol>
-    </nav>
-  );
 }
 
 /* The proof walls (PLAN-COMPONENTS 2.5): still, ordered rows of Hanzo's own logo files, grey until you point at one,
@@ -84,8 +73,13 @@ function Wall({ items, label, cta }) {
 }
 
 export default function Home() {
+  useQuietCursor();
   return (
-    <main className="hv">
+    <main className="hv" data-ask="off">
+      <A to="/beta" className="x-ann">
+        <span>Apply for Beta Access or Start Free</span>
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </A>
       <Hero />
       <Models />
       <Platform />
@@ -98,7 +92,6 @@ export default function Home() {
       <Pricing />
       <Wall items={C.backed} label="Backed by" cta="backed" />
       <Band title="Pick all three." lede="Every model behind one key." action="Try Hanzo" to="https://hanzo.ai/signup" />
-      <Spine />
     </main>
   );
 }

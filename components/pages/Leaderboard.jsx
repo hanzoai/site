@@ -1,7 +1,8 @@
 'use client';
 // Persona: a developer or bug hunter who uses Hanzo and wants credits for contributing (arrives from /bounty, GitHub or the header)
 // Goal: see how ranks are earned and start on an open bounty
-// CTA: Open bounties -> /bounty (hero, sticky AskBar and thumb bar, close) · metric cta_click (data-cta="open-bounties")
+// CTA: Open bounties -> /bounty (hero, the shared sticky ask, closing Band) · data-cta leaderboard.hero / leaderboard.band
+// Metric: cta_click on leaderboard.hero (a researcher-or-builder metric: a GitHub or bounty click)
 // Signature: every total is a sum that adds itself up: the podium's tape re-adds each hunter's score, then the four ways to earn pin as chapters while a receipt builds a total line by line.
 // Beyond: your points, worked out with the page's own rules (+50 a bug, +100 to +500 a merged pull request, +20 a referral, +1 per 100K tokens), and where your tokens would sit on the global board.
 /* Leaderboard. Hanzo's own board, as it reads today, told one idea per screen.
@@ -20,13 +21,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
-import { A, More } from '../kit';
+import { A, More, Band } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
 import DetailSheet from '../v2/DetailSheet';
 import SceneWipe from '../v2/SceneWipe';
 import AskBar from '../v2/AskBar';
 import '../v2/ProofScale.css';
+import '../v2/ProofRhythm.css';
 import './Leaderboard.css';
 
 const ISSUES = 'https://github.com/search?type=issues&s=created&o=desc&q=is%3Aissue%20is%3Aopen%20label%3Abounty%20archived%3Afalse%20org%3Ahanzoai%20org%3Ahanzo-apps%20org%3Ahanzo-go%20org%3Ahanzo-js';
@@ -74,7 +76,7 @@ function Roll({ v, className = '' }) {
   return (
     <span className={'xlb-roll ' + className}>
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: '0%', opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{v}</motion.span>
+        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: '0%', opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.2 } }} transition={{ duration: 0.3, ease: EASE }}>{v}</motion.span>
       </AnimatePresence>
     </span>
   );
@@ -155,7 +157,7 @@ function Hero() {
           <div className="xlb-hero-side">
             <p className="xlb-lede">The live Hanzo leaderboard across bug bounties, open-source pull requests, and global token volume. Verified contributions earn AI credits and automatic rank updates.</p>
             <div className="xlb-acts">
-              <span data-thumb="Open bounties" data-href="/bounty"><A to="/bounty" className="pf-btn solid" data-cta="open-bounties">Open bounties</A></span>
+              <span data-thumb="Open bounties" data-href="/bounty"><A to="/bounty" className="pf-btn solid" data-cta="leaderboard.hero">Open bounties</A></span>
               <More to={ISSUES}>GitHub issues</More>
             </div>
           </div>
@@ -222,14 +224,14 @@ function Tokens() {
             <p className="pf-body">Top 10 active organizations across 217 organizations on Hanzo Cloud by total tokens processed.</p>
           </div>
           <dl className="xlb-figs">
-            <div><dt>orgs</dt><dd className="pf-num">217</dd></div>
-            <div><dt>tokens</dt><dd className="pf-num">140.1M</dd></div>
+            <div><dt>orgs</dt><dd className="pf-figure">217</dd></div>
+            <div><dt>tokens</dt><dd className="pf-moment">140.1M</dd></div>
           </dl>
         </div>
         <div className="xlb-scale" role="tablist" aria-label="Bar scale">
           {['Log', 'Linear'].map((k) => (
             <button key={k} type="button" role="tab" aria-selected={scale === k} onClick={() => setScale(k)}>
-              {scale === k && <motion.span layoutId="xlb-scale" className="xlb-scale-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              {scale === k && <motion.span layoutId="xlb-scale" className="xlb-scale-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="xlb-scale-t">{k}</span>
             </button>
           ))}
@@ -239,7 +241,7 @@ function Tokens() {
             <li key={who} className={'xlb-org' + (i === 0 ? ' lead' : '')}>
               <span className="xlb-org-r pf-mono">#{i + 1}</span>
               <span className="xlb-org-m"><b>{who}</b><span>{badge}</span><span className="xlb-req">{req}</span></span>
-              <span className="xlb-bar" aria-hidden="true"><motion.i style={{ '--w': w(t) }} initial={{ scaleX: 0 }} animate={seen ? { scaleX: w(t) } : {}} transition={{ type: 'spring', stiffness: 90, damping: 20, delay: seen ? i * 0.05 : 0 }} /></span>
+              <span className="xlb-bar" aria-hidden="true"><motion.i style={{ '--w': w(t) }} initial={{ scaleX: 0 }} animate={seen ? { scaleX: w(t) } : {}} transition={{ duration: 0.9, ease: EASE, delay: seen ? i * 0.06 : 0 }} /></span>
               <span className="xlb-org-t pf-mono">{n(t)} tokens</span>
             </li>
           ))}
@@ -278,7 +280,7 @@ function Earn() {
   return (
     <section className="xlb-earn" aria-labelledby="xlb-earn-h">
       <div className="pf-wrap xlb-earn-intro">
-        <MaskLines as="h2" id="xlb-earn-h" className="pf-display s" lines={['How to earn points', '& AI credits']} />
+        <MaskLines as="h2" id="xlb-earn-h" className="pf-head" lines={['How to earn points', '& AI credits']} />
         <p className="pf-lede">Every verified bug report and merged pull request triggers an automatic email notification with your updated points, AI credits, and leaderboard rank.</p>
       </div>
       <PinScenes
@@ -355,7 +357,6 @@ function Calc() {
           </div>
         </div>
         <div className="xlb-end">
-          <A to="/bounty" className="pf-btn solid" data-cta="open-bounties">Open bounties</A>
           <More to="/bounty">Browse open bounties</More>
         </div>
       </div>
@@ -365,13 +366,15 @@ function Calc() {
 
 export default function Leaderboard() {
   return (
-    <main className="xlb">
+    <main className="xlb pf-r">
       <Hero />
       <Contributors />
       <Tokens />
       <Earn />
       <Calc />
-      <AskBar title="Leaderboard" label="Open bounties" to="/bounty" cta="open-bounties" />
+      {/* the close: one Band in the page's own words, its one solid ask, then the footer */}
+      <Band title="Climb the ranks. Earn AI credits." action="Open bounties" to="/bounty" />
+      <AskBar title="Leaderboard" label="Open bounties" to="/bounty" cta="leaderboard.hero" />
     </main>
   );
 }

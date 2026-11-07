@@ -22,6 +22,7 @@ import { OpenCards } from '../../v2/OpenSheet';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
 import '../../v2/Scale.css';
+import '../../v2/x-gauss/Rhythm.css';
 import './Zap.css';
 
 // the example message: field, its offset in the buffer (bytes, 8-aligned after the 16-byte header), its length in words
@@ -65,7 +66,7 @@ function Wire({ pick, auto, live }) {
               </div>
             );
           })}
-          <motion.i className="zp-ptr" animate={{ x: `${(f[1] / 8) * 100}%` }} transition={{ type: 'spring', stiffness: 300, damping: 26 }} />
+          <motion.i className="zp-ptr" animate={{ x: `${(f[1] / 8) * 100}%` }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />
         </div>
       </div>
       <div className="zp-lane json">
@@ -318,7 +319,7 @@ function Point() {
 
 export default function Zap() {
   return (
-    <main className="zp w2">
+    <main id="main" className="zp w2 gx">
       <NoJs />
       <Hero />
       <Why />

@@ -50,7 +50,7 @@ function Issue({ sent, email }) {
             <i className="xnl-rule" /><i className="xnl-rule short" />
           </motion.div>
         ) : (
-          <motion.div key="env" className="xnl-env" initial={{ opacity: 0, y: -40, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+          <motion.div key="env" className="xnl-env" initial={{ opacity: 0, y: -40, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
             <motion.i className="xnl-flap" initial={{ rotateX: 180 }} animate={{ rotateX: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.25 }} />
             <span className="xnl-stamp"><Mark size={18} /></span>
             <span className="xnl-to x-mono">To</span>

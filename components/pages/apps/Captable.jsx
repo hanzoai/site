@@ -18,6 +18,7 @@ import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, More } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
+import BizAsk from '../../v2/BizAsk';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizSheet from '../../v2/BizSheet';
@@ -125,7 +126,7 @@ function Hero({ pre, setPre, mine, setMine }) {
         </div>
         <p className="bz-lede ct-lede">Who owns what, and what happens to that when you raise again.</p>
         <div className="ct-acts">
-          <A to="/login" className="x-btn solid" data-thumb="Try Hanzo" data-cta="primary">Try Hanzo</A>
+          <BizAsk to="/login" thumb="Try Hanzo">Try Hanzo</BizAsk>
           <More to={DOCS}>Documentation</More>
         </div>
         <div className="ct-obj bz-obj">
@@ -363,7 +364,7 @@ function End() {
         <div className="bz-grid ct-end-row">
           <p className="bz-lede">Import what you have today. The useful part starts when you ask what the next price does to it.</p>
           <div className="ct-end-go">
-            <A to="/login" className="x-btn solid" data-cta="primary">Try Hanzo</A>
+            <BizAsk to="/login">Try Hanzo</BizAsk>
             <p><b>Get Started</b><span>Set up your cap table in minutes</span></p>
           </div>
         </div>
@@ -377,7 +378,8 @@ export default function Captable() {
   const [pre, setPre] = useState(12_000_000);
   const [mine, setMine] = useState(false);
   return (
-    <main className="bz ct" data-ask-name="Cap Table">
+    <main className="bz ct">
+      <span data-ask-name="Hanzo Cap Table" hidden />
       <Hero pre={pre} setPre={setPre} mine={mine} setMine={setMine} />
       <BizChapters label="A round, run first" className="ct-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Stage at={at} pre={pre} />}>
         <header className="bz-wrap bz-grid ct-ch-head">

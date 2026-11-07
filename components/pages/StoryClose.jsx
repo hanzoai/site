@@ -9,7 +9,7 @@ import Lines from '../v2/Lines';
 
 export default function StoryClose({ title, lede, action, to, note, thumb = false, cta }) {
   return (
-    <section className="x-band xst-close" data-room="dark">
+    <section className="x-band xst-close v2s-room" data-room="dark">
       <div className="x-wrap">
         <Lines as="h2" lines={[title]} amount={0.4} />
         {lede && <p>{lede}</p>}
