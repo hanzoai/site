@@ -20,7 +20,7 @@
 .xnl-sent .x-tick { flex: none; margin-top: 2px; stroke: var(--xp-accent); }
 
 /* the paper issue and its envelope */
-.xnl-stage { position: relative; display: grid; place-items: center; min-height: 620px; perspective: 1400px; }
+.xnl-stage { position: relative; display: grid; place-items: center; height: 640px; perspective: 1400px; }
 .xnl-paper { position: relative; width: min(100%, 480px); aspect-ratio: 4 / 5; padding: 32px; border-radius: 8px; background: #fff; border: 1px solid var(--line); transform-origin: 50% 100%; }
 .xnl-mast { position: relative; height: 38%; margin: -32px -32px 28px; border-radius: 6px 6px 0 0; overflow: hidden; background: var(--ink); color: rgba(255, 255, 255, .7); }
 .xnl-sigil { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -36,7 +36,7 @@
 .xnl-rule { display: block; height: 7px; margin-top: 22px; border-radius: 4px; background: var(--card); }
 .xnl-rule.short { width: 62%; margin-top: 10px; }
 .xnl-env { position: relative; width: min(100%, 500px); aspect-ratio: 16 / 10; border-radius: 12px; background: var(--card); border: 1px solid var(--line); transform-style: preserve-3d; }
-.xnl-flap { position: absolute; inset: 0 0 auto; height: 58%; background: #ececef; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 0; border-radius: 10px 10px 0 0; }
+.xnl-flap { position: absolute; inset: 0 0 auto; height: 58%; background: #e9e9e9; clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: 50% 0; border-radius: 10px 10px 0 0; }
 .xnl-stamp { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 44px; height: 52px; border: 1.5px dashed rgba(0, 0, 0, .25); border-radius: 4px; background: #fff; }
 .xnl-to { position: absolute; left: 28px; bottom: 54px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 .xnl-addr { position: absolute; left: 28px; right: 28px; bottom: 26px; font-size: 18px; font-weight: 560; letter-spacing: -.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -62,16 +62,24 @@
 .xnl-now { position: relative; height: 172px; overflow: hidden; }
 .xnl-now-n { position: absolute; left: 0; top: 0; font-size: 13px; color: #737373; font-variant-numeric: tabular-nums; }
 .xnl-now-t { position: absolute; left: 0; right: 0; bottom: 8px; margin: 0; max-width: 18ch; font: 400 44px/1.08 var(--sans); letter-spacing: -.03em; color: #0a0a0a; text-wrap: balance; }
-.xnl-index { list-style: none; margin: 32px 0 0; padding: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
-.xnl-row { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
-.xnl-row-n { font-size: 13px; color: #737373; }
-.xnl-row-t { font-size: 16px; line-height: 1.45; }
+/* desktop: the index is only its numbers over a hairline that fills as each line is set (the sentences live on the
+   stage and on the paper; the row text stays for screen readers) */
+.xnl-index { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 88px); gap: 16px; }
+.xnl-row { position: relative; display: grid; gap: 10px; padding: 0 0 12px; }
+.xnl-row::before, .xnl-row::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(0, 0, 0, .12); }
+.xnl-row::after { height: 2px; bottom: -.5px; background: #0a0a0a; transform: scaleX(0); transform-origin: 0 50%; transition: transform .6s cubic-bezier(.16, 1, .3, 1); }
+.xnl-row.on::after { transform: scaleX(1); }
+.xnl-row-n { font-size: 13px; color: #737373; transition: color .3s ease-out; }
+.xnl-row.on .xnl-row-n { color: #0a0a0a; }
+.xnl-row-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .xnl-row .xnl-caret { display: none; }
 .xnl-row.cur .xnl-row-n { color: #0a0a0a; }
 .xnl-paper-2 { width: min(100%, 420px); margin-inline: auto; }
+/* the composed issue: a line not yet set is not shown at all (no placeholder); setting it wipes it in from the left */
 .xnl-lines-2 li { transition: color .3s ease-out; }
-.xnl-lines-2 li span::after { animation: none; background: #f2f2f2; border-radius: 4px; transform: scaleX(1); transition: transform .6s cubic-bezier(.16, 1, .3, 1); }
-.xnl-lines-2 li.set span::after { transform: scaleX(0); }
+.xnl-lines-2 li span, .xnl-lines-2 li::before { clip-path: inset(0 100% 0 0); transition: clip-path .7s cubic-bezier(.16, 1, .3, 1); }
+.xnl-lines-2 li span::after { display: none; }
+.xnl-lines-2 li.set span, .xnl-lines-2 li.set::before { clip-path: inset(0 0 0 0); }
 .xnl-mark-line { position: absolute; left: -16px; top: 4px; bottom: 4px; width: 2px; background: #0a0a0a; transform: scaleY(0); transform-origin: 50% 0; transition: transform .4s cubic-bezier(.16, 1, .3, 1); }
 .xnl-lines-2 li.cur .xnl-mark-line { transform: scaleY(1); }
 
@@ -79,9 +87,8 @@
 .xnl-path { position: relative; height: 260svh; }
 .xnl-path-pin { position: sticky; top: 0; min-height: 100svh; display: grid; align-items: center; padding: 96px 0 72px; }
 .xnl-pathobj { margin-top: clamp(40px, 5vw, 72px); }
-.xp-dark .x-btn.xnl-close { background-color: transparent; color: #fafafa; border: 1px solid rgba(255, 255, 255, .4); }
 .xnl-big { position: relative; height: 128px; overflow: hidden; border-bottom: 1px solid rgba(255, 255, 255, .1); }
-.xnl-big-t { position: absolute; left: 0; bottom: 24px; margin: 0; font: 497 64px/1.05 var(--sans); letter-spacing: -.035em; color: #fafafa; white-space: nowrap; }
+.xnl-big-t { position: absolute; left: 0; bottom: 0; padding-bottom: 24px; margin: 0; font: 497 64px/1.05 var(--sans); letter-spacing: -.035em; color: #fafafa; white-space: nowrap; }
 .xnl-big-n { position: absolute; right: 0; bottom: 30px; font-size: 13px; color: #a3a3a3; font-variant-numeric: tabular-nums; }
 .xnl-steps { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .xnl-fill { position: absolute; left: 0; top: -1px; height: 1px; width: calc(100% / var(--n)); background: #fafafa; transform: translateX(calc(var(--at) * 100%)); transition: transform .4s var(--xp-ease); }
@@ -94,7 +101,9 @@
 .xnl-step.on b, .xnl-step.on .xnl-n { color: #fafafa; }
 @media (hover: hover) { .xnl-step:hover b { color: #fafafa; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 .xnl-close i { font-style: normal; }
-@media (hover: hover) { .xp-dark .xnl-close:hover { background-color: rgba(255, 255, 255, .1); border-color: #fafafa; } .xnl-close:hover i { transform: translateY(-3px); } }
+@media (hover: hover) { .xnl-close:hover i { transform: translateY(-3px); } }
+/* phones: the shared header keeps its own solid (docs/requests/newsletter.md), so the room's Subscribe is outlined there */
+@media (max-width: 700px) { .xp-dark .x-btn.solid.xnl-close { background-color: transparent; color: #fafafa; border-color: rgba(255, 255, 255, .4); } }
 @media (hover: hover) { .xnl-link { transition: text-decoration-color .15s ease-out, text-decoration-thickness .15s ease-out; } .xnl-link:hover { text-decoration-color: #0a0a0a; text-decoration-thickness: 2px; } }
 
 /* statements ink in word by word once, then a caret rests at the end, blinking */
@@ -107,13 +116,14 @@
 @keyframes xnl-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 html:not(.js) .xnl-w { color: #0a0a0a; }
 .xnl-home { margin-top: clamp(64px, 7vw, 112px); display: flex; align-items: center; gap: 16px; }
-.xnl-mark { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; color: #a1a1a6; border: 1px solid rgba(255, 255, 255, .2); transition: color .2s, border-color .2s; }
+.xnl-mark { display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; color: #a3a3a3; border: 1px solid rgba(255, 255, 255, .2); transition: color .2s, border-color .2s; }
 @media (hover: hover) { .xnl-mark:hover { color: #fff; border-color: #fff; } }
 .xnl-mark:active { transform: scale(.97); }
 .xnl-mark:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) { .xnl-lines li span::after { animation: none; transform: scaleX(0); } .xnl-w, .xnl-row .xnl-w { color: #0a0a0a; transition: none; } .xnl-ws.on .xnl-caret { animation: none; opacity: 1; } .xnl-tilt { transform: none !important; } }
-html:not(.js) .xnl-lines-2 li span::after { transform: scaleX(0); }
+html:not(.js) .xnl-lines-2 li span, html:not(.js) .xnl-lines-2 li::before { clip-path: none; }
+html:not(.js) .xnl-row::after { transform: scaleX(1); }
 html:not(.js) .xnl-row .xnl-w { color: #0a0a0a; }
 @media (max-width: 900px) {
   .xnl-hero { padding: 32px 0 72px; }
@@ -121,7 +131,7 @@ html:not(.js) .xnl-row .xnl-w { color: #0a0a0a; }
   .xnl-form input { height: 52px; text-align: center; }
   .xnl-form .xp-cta { width: 100%; }
   .xnl-terms, .xnl-err { margin-left: 4px; }
-  .xnl-stage { min-height: 440px; padding-inline: 12px; }
+  .xnl-stage { height: 440px; min-height: 0; padding-inline: 12px; }
   .xnl-paper { width: min(100% - 28px, 300px); }
   .xnl-slot { min-height: 0; }
   .xnl-inside { height: auto; padding: 72px 0; }
@@ -129,13 +139,16 @@ html:not(.js) .xnl-row .xnl-w { color: #0a0a0a; }
   .xnl-tell, .xnl-compose { grid-column: 1 / -1; }
   .xnl-compose { order: -1; padding-inline: 12px; }
   .xnl-now { display: none; }
-  .xnl-index { margin-top: 0; }
-  .xnl-row { padding: 18px 0; }
-  .xnl-row-t { font-size: 21px; line-height: 1.3; letter-spacing: -.015em; }
+  .xnl-compose { display: none; }
+  .xnl-index { margin-top: 0; display: block; border-top: 1px solid rgba(0, 0, 0, .1); }
+  .xnl-row { grid-template-columns: 40px 1fr; gap: 12px; align-items: baseline; padding: 18px 0; }
+  .xnl-row::before { height: 1px; }
+  .xnl-row::after { height: 1px; bottom: 0; }
+  .xnl-row-t { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; font-size: 21px; line-height: 1.3; letter-spacing: -.015em; }
   .xnl-path { height: auto; }
   .xnl-path-pin { position: static; min-height: 0; padding: 72px 0; }
-  .xnl-big { height: 96px; }
-  .xnl-big-t { font-size: 32px; bottom: 44px; white-space: normal; right: 0; }
+  .xnl-big { height: 104px; }
+  .xnl-big-t { font-size: 28px; padding-bottom: 48px; white-space: nowrap; right: 0; }
   .xnl-big-n { bottom: 14px; left: 0; right: auto; }
   .xnl-steps { grid-template-columns: 1fr; }
   .xnl-fill { width: 1px; height: calc(100% / var(--n)); top: 0; left: -1px; transform: translateY(calc(var(--at) * 100%)); }

@@ -3,7 +3,7 @@
 // Beyond: the double opt-in drawn before you commit: subscribe, confirm the link, then the first issue; nothing in between.
 /* The Hanzo newsletter.
    Persona: a builder who wants Hanzo's releases in the inbox. Goal: subscribe. CTA: "Subscribe". Metric: lead_submit.
-   V2: 8/10 two pinned scenes: a second issue composed line by line (one statement at 44px, a small index) and the opt-in walked by scroll; the paper tilts and writes your address; no phone shift; one solid per screen. Earlier: the 52px name with one email field under it, the paper issue tilted beside it, setting its lines once and resting; what each issue carries as three statements that grow from 48 to 64px and swell in weight only while each crosses the middle of the screen; the double opt-in as the dark room in Hanzo's own words.
+   V2: 8/10 two pinned scenes: a second issue composed line by line (one statement at 44px, numbers-only index, nothing said three times, no placeholders) and the opt-in walked by scroll; the paper tilts and writes your address; no shift; one solid per screen. Earlier: the 52px name with one email field under it, the paper issue tilted beside it, setting its lines once and resting; what each issue carries as three statements that grow from 48 to 64px and swell in weight only while each crosses the middle of the screen; the double opt-in as the dark room in Hanzo's own words.
    Motion: the paper setting its lines once and folding into an envelope (signature) + line-masked type + statements
    scrubbed by scroll (the page's one size moment) + a drawn tick when it is sent.
    0 UI hues. The form sends exactly what hanzo.ai sends: POST https://api.hanzo.ai/v1/marketing/subscribe
@@ -264,7 +264,7 @@ function PathRoom() {
           <h2 id="xnl-path-h" className="xp-head">We email a link to confirm first.</h2>
           <Path scrollAt={scrollAt} />
           <div className="xnl-home">
-            <Cta to="#subscribe" kind="quiet" id="newsletter.close" className="xp-ghost xnl-close">Subscribe <i aria-hidden="true">↑</i></Cta>
+            <Cta to="#subscribe" id="newsletter.close" className="xp-cta xnl-close">Subscribe <i aria-hidden="true">↑</i></Cta>
             <A to="/" className="xnl-mark" aria-label="Hanzo"><Mark size={22} /></A>
           </div>
         </div>
