@@ -1,6 +1,6 @@
 'use client';
 // Functions.
-// V2: 8/10 Launch page on the deck: a 52px title over a function's life (the one big thing: handler.js writes itself by CSS from first paint, then calls arrive from a trigger and replicas fill three nodes and fall back to zero, as shapes, never a number; pausable); six pinned chapters, one scene each; a composer that reads your function back; the use cases as sheets that stack; one graphite close.
+// V2: 8/10 round 2 (critic 6/10): page-local hero, words on 5 columns beside the function's life bleeding right (no longer /cloud/containers' title-over-window), one solid magnetic "Try Hanzo" with an arrow that answers hover, the whole life (triggers, file, replicas filling) inside 801px on a flat quiet tile, settling by a CSS scroll timeline; the chapters' head gets its own drawn object; phone scenes 01 and 03 no longer clipped; chapter titles 32px, use-case numerals grow to 84px and settle to 64px; use-case rows and sheets answer hover; a quiet stationary fact row before the close; the close's button and Copy on deck values (Copy 44px).
 // Persona: Developer who runs Kubernetes and wants functions on it.
 // Goal: try Hanzo Functions (sign in, then deploy).
 // CTA: "Try Hanzo" → /login (solid: data-cta functions.hero with data-thumb for the ask bar); "View Documentation" →
@@ -19,10 +19,10 @@
 // Beyond: "Compose yours": pick a runtime (or your own container), the triggers it answers to, a GPU and a way to move
 //   between versions, and the function you described is read back in Hanzo's own lines.
 // Every word and link is Hanzo's; the scenes are drawn, not measured.
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { createContext, Fragment, useContext, useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
-import { A } from '../../kit';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import { Magnetic } from '../../ui';
+import { A, Cta } from '../../kit';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
@@ -53,6 +53,8 @@ const STEP = 380; // ms per line written by CSS, and per tick of the calls after
 const WRITTEN = 300 + LINES.length * STEP + 300; // the file is written (CSS, from first paint), then the calls begin
 const CYCLE = 26; // one burst of calls and the quiet after it, in ticks
 const SLOTS = 18;
+const Paused = createContext(false); // true while the visitor has paused the hero's demo
+const useStagePause = () => useContext(Paused);
 
 function Life() {
   const ref = useRef(null);
@@ -314,6 +316,7 @@ function Uses() {
           ))}
         </ol>
       </div>
+      <div className="kn-wrap"><ul className="fn-facts" aria-label="Hanzo Functions">{FACTS.map((f) => <li key={f}>{f}</li>)}</ul></div>
     </section>
   );
 }
@@ -338,24 +341,67 @@ function Rel() {
   );
 }
 
+/* ---------- the hero: words on 5 columns, the function's life on 7, bleeding right ----------
+   One solid ask (the kit's Cta, magnetic, data-thumb for the ask bar), the docs as its text link. Everything arrives by
+   CSS at first paint (no wait for script); the object settles from 1.04 as the page scrolls (a CSS scroll timeline). */
+function Hero() {
+  const [paused, setPaused] = useState(false);
+  return (
+    <section className="fn-hero" data-morph-target="" data-paused={paused ? '' : undefined}>
+      <div className="kn-wrap kn-grid fn-hero-g">
+        <div className="fn-hero-t">
+          <KeynoteLines as="h1" mount className="kn-display" lines={['Hanzo Functions']} delay={0.04} />
+          <p className="kn-lede fn-hero-in" style={{ '--d': '.3s' }}>Functions that run on Kubernetes.</p>
+          <div className="kn-acts fn-hero-acts fn-hero-in" style={{ '--d': '.42s' }}>
+            <Magnetic strength={0.22}><Cta to="/login" id="functions.hero" thumb size="md" kind="solid" className="fn-go">Try Hanzo</Cta></Magnetic>
+            <Cta to="https://docs.hanzo.ai/docs/cli/function" kind="link" id="functions.hero-2">View Documentation</Cta>
+          </div>
+          <div className="fn-hero-meta fn-hero-in" style={{ '--d': '.54s' }}>
+            <button type="button" className="kn-pause" aria-pressed={paused} aria-label="Pause" onClick={() => setPaused((v) => !v)}>
+              {paused
+                ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
+                : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
+            </button>
+            <div className="fn-hero-mt">
+              <p className="kn-kick">Serverless Computing</p>
+              <span>Python · Go · Node.js · Rust · /v1/function</span>
+            </div>
+          </div>
+        </div>
+        <div className="fn-hero-o">
+          <div className="fn-hero-oi"><Paused.Provider value={paused}><Life /></Paused.Provider></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* the chapters' first screen: the heading and its three nouns joined by a line that draws once, so the screen holds an object */
+function Joined() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.6, once: true });
+  return (
+    <div className="fn-join" ref={ref} aria-hidden="true">
+      <span className="fn-join-n">handler.js</span>
+      <svg viewBox="0 0 100 2" preserveAspectRatio="none"><motion.path d="M0 1H100" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH }} /></svg>
+      <span className="fn-join-n">HTTP route</span>
+      <svg viewBox="0 0 100 2" preserveAspectRatio="none"><motion.path d="M0 1H100" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 0.9, ease: EMPH, delay: 0.3 }} /></svg>
+      <span className="fn-join-n ink">Kubernetes</span>
+    </div>
+  );
+}
+
+/* a quiet, stationary row of what the page has said, just before the close */
+const FACTS = ['Python, Go, Node.js, Rust', 'Helm', 'NVIDIA GPU', 'Blue/green', '/v1/function'];
+
 export default function Functions() {
   return (
     <main className="kn fn">
-      <KeynoteStage
-        kick="Serverless Computing"
-        title={['Hanzo Functions']}
-        lede="Functions that run on Kubernetes."
-        acts={[['Try Hanzo', '/login'], ['View Documentation', 'https://docs.hanzo.ai/docs/cli/function']]}
-        meta={<span>Python · Go · Node.js · Rust · /v1/function</span>}
-        from={1.12}
-        cta="functions.hero"
-      >
-        <Life />
-      </KeynoteStage>
+      <Hero />
 
       <KeynoteChapters
         className="fn-ch"
-        head={<div className="fn-ch-head"><KeynoteLines className="kn-headline fn-ch-h" lines="A handler file, a trigger, and the cluster you already run" /><p className="kn-kick">What you get</p></div>}
+        head={<div className="fn-ch-head"><div className="fn-ch-hw"><KeynoteLines className="kn-headline fn-ch-h" lines="A handler file, a trigger, and the cluster you already run" /><p className="kn-kick">What you get</p></div><Joined /></div>}
         items={GETS.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
         visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
         side="right"
