@@ -1,19 +1,24 @@
 'use client';
-/* UI. Signature: the component board that uses itself. Buttons, a field, a panel and a table sit on a board; the
+/* UI, v2. V2: 8/10 Stage board (the component board and its token panel arrive huge and settle), six pinned chapters each with its own specimen, the init room in the dark, violet accent
+   Signature: the component board that uses itself. Buttons, a field, a panel and a table sit on a board; the
    DropdownMenu and the Dialog (the two real components) open on their own with a focus ring walking the keyboard path,
    and the tokens under everything retune now and then, so the whole board changes at once.
    Beyond: "Retune the tokens". Pick an accent, drag the radius and the density: every component on the board moves
-   together because every value is a token, which is Hanzo's own claim made touchable. Also: the sixty-second init as
-   a terminal beside the component it renders. Every word and link is Hanzo's. */
+   together because every value is a token, which is Hanzo's own claim made touchable.
+   Motion budget: signature = the self-using board; supporting = Stage (Settle), Chapters (PinChapters), magnetic
+   primary. Accent: violet. One dark room: "From init to UI in 60 seconds". Every word and link is Hanzo's. */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Rise, Copy } from '../../ui';
+import { EASE, Copy, Magnetic } from '../../ui';
 import { A } from '../../kit';
-import { Paste, Code, Get, useLive, useEvery, useSteps } from '../cloud/Frame';
+import { Paste, Code, useLive, useEvery } from '../cloud/Frame';
+import LineMask from '../../v2/LineMask';
+import Settle from '../../v2/Settle';
+import PinChapters from '../../v2/PinChapters';
+import '../../v2/Scale.css';
 import './UiPage.css';
 
 const GH = 'https://github.com/hanzoai/ui';
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const ACCENTS = [['ink', '#0a0a0a'], ['blue', '#0a58ca'], ['green', '#1a7f37'], ['violet', '#6e3fd8']];
 const SCRIPT = ['menu', 'idle', 'dialog', 'idle', 'retune', 'idle'];
 
@@ -56,7 +61,7 @@ function Board({ tok, setTok, mine, setMine }) {
       <AnimatePresence>
         {dlg && (
           <motion.div className="ui-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} onClick={() => setDlg(false)}>
-            <motion.div className="ui-dialog" role="dialog" aria-label="Dialog" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.98 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }} onClick={(e) => e.stopPropagation()}>
+            <motion.div className="ui-dialog" role="dialog" aria-label="Dialog" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.98 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} onClick={(e) => e.stopPropagation()}>
               <b>Dialog</b>
               <p>Focus management, keyboard behaviour and placement that CSS cannot.</p>
               <div className="ui-row"><button type="button" className="ui-b solid" onClick={() => setDlg(false)}>Close</button></div>
@@ -83,23 +88,27 @@ function Tokens({ tok, setTok, setMine }) {
 }
 
 function Hero() {
-  const [tok, setTok] = useState({ a: 0, r: 14, d: 1 });
+  const [tok, setTok] = useState({ a: 3, r: 14, d: 1 });
   const [mine, setMine] = useState(false);
   return (
-    <section className="ui-hero" aria-labelledby="ui-h1">
-      <div className="x-wrap ui-hero-grid">
-        <div className="ui-copy">
-          <motion.p className="ui-kick" {...up(0)}><img src="/models/enso.webp" alt="" />React Component Library</motion.p>
-          <h1 id="ui-h1" className="ui-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 }}>Hanzo UI</motion.span></span></h1>
-          <motion.p className="ui-lede" {...up(0.3)}>The React components powering Hanzo apps</motion.p>
-          <motion.div className="ui-acts" {...up(0.42)}>
-            <motion.span className="x-go" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}><A to={GH} className="x-btn solid" data-thumb="GitHub">GitHub</A></motion.span>
+    <section className="ui-hero" aria-labelledby="ui-h1" data-morph-target>
+      <div className="w2-wrap">
+        <div className="ui-top">
+          <div>
+            <motion.p className="ui-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}><img src="/models/enso.webp" alt="" />React Component Library</motion.p>
+            <LineMask as="h1" id="ui-h1" now className="w2-display ui-h1" lines={['Hanzo UI']} />
+          </div>
+          <motion.div className="ui-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <p className="w2-lede ui-lede">The React components powering Hanzo apps</p>
+            <Magnetic strength={0.25}><A to={GH} className="w2-cta acc" data-thumb="GitHub">GitHub <i aria-hidden="true">↗</i></A></Magnetic>
           </motion.div>
-          <motion.div {...up(0.5)}><Tokens tok={tok} setTok={setTok} setMine={setMine} /></motion.div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 30, rotate: -1 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}>
-          <Board tok={tok} setTok={setTok} mine={mine} setMine={setMine} />
-        </motion.div>
+        <Settle from={1.08} lift={70}>
+          <div className="ui-stage">
+            <Board tok={tok} setTok={setTok} mine={mine} setMine={setMine} />
+            <Tokens tok={tok} setTok={setTok} setMine={setMine} />
+          </div>
+        </Settle>
       </div>
     </section>
   );
@@ -114,24 +123,78 @@ const PROPS = [
   ['Production Tested', 'Powers chat.hanzo.ai, platform.hanzo.ai, and every Hanzo dashboard. If it ships in our products, it ships in your code.'],
 ];
 
-function Props() {
-  const [ref, live] = useLive(0.3);
-  const [at, choose] = useSteps(6, 3200, live);
+/* Six specimens, one per chapter. */
+function Overlays() {
   return (
-    <section className="x-sec ui-props" ref={ref}>
-      <div className="x-wrap">
-        <p className="ui-props-k"><span>Components your design team will sign off on</span><span className="x-mono">{String(at + 1).padStart(2, '0')} / 06</span></p>
-        <ol className="ui-spec">
-          {PROPS.map(([t, d], i) => (
-            <li key={t} className={at === i ? 'on' : ''} onMouseEnter={() => choose(i)}>
-              <button type="button" aria-pressed={at === i} onClick={() => choose(i)}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span><h3>{t}</h3></button>
-              <p>{d}</p>
-            </li>
-          ))}
-        </ol>
-        <p className="x-sr">02 / 06 03 / 06 04 / 06 05 / 06 06 / 06</p>
-      </div>
-    </section>
+    <div className="ui-sp ov" aria-hidden="true">
+      <div className="ui-sp-real"><span className="x-mono">&lt;Dialog /&gt;</span><div className="ui-sp-dlg"><b>Dialog</b><i /><i /><em /></div></div>
+      <div className="ui-sp-real"><span className="x-mono">&lt;DropdownMenu /&gt;</span><ul className="ui-sp-menu"><li>button</li><li className="on">dialog</li><li>dropdown-menu</li></ul></div>
+      <div className="ui-sp-css x-mono">{['.button', '.panel', '.field', '.table'].map((c) => <span key={c}>{c}</span>)}</div>
+    </div>
+  );
+}
+function Keys({ on }) {
+  const [f, setF] = useState(0);
+  useEvery(700, on, () => setF((v) => (v + 1) % 4));
+  return (
+    <div className="ui-sp keys" aria-hidden="true">
+      <div className="ui-sp-row">{['Ship it', 'Options ▾', 'Field', 'Close'].map((t, i) => <span key={t} className={'ui-sp-b' + (f === i ? ' ring' : '')}>{t}</span>)}</div>
+      <div className="ui-sp-kbd x-mono"><b>Tab</b><span>aria-* · role · focus</span></div>
+    </div>
+  );
+}
+function Tokens2() {
+  return (
+    <div className="ui-sp tok" aria-hidden="true">
+      {[['a colour', 'c'], ['a size', 's'], ['a radius', 'r']].map(([n, k]) => <div key={n} className={'ui-sp-t ' + k}><i /><span className="x-mono">{n}</span></div>)}
+      <p className="x-mono">@hanzo/design</p>
+    </div>
+  );
+}
+function Everywhere({ on }) {
+  const [v, setV] = useState(0);
+  useEvery(1400, on, () => setV((x) => (x + 1) % 2));
+  return (
+    <div className="ui-sp pkg" aria-hidden="true">
+      <p className="ui-sp-cmd x-mono">pnpm add @hanzo/ui</p>
+      <div className="ui-sp-apps">{['chat', 'console', 'cloud'].map((a) => <motion.div key={a} className="ui-sp-app" animate={{ y: v ? -10 : 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">{a}</span><i /><i /></motion.div>)}</div>
+    </div>
+  );
+}
+function Atomic() {
+  return (
+    <div className="ui-sp atom" aria-hidden="true">
+      <div className="ui-sp-gone x-mono">{['styled-components', 'emotion', 'CSS-in-JS'].map((x) => <s key={x}>{x}</s>)}</div>
+      <div className="ui-sp-sheet"><span className="x-mono">one atomic stylesheet</span><div>{Array.from({ length: 18 }).map((_, i) => <i key={i} />)}</div><em className="x-mono">generated at build</em></div>
+    </div>
+  );
+}
+function Prod() {
+  return (
+    <div className="ui-sp prod" aria-hidden="true">
+      {['chat.hanzo.ai', 'platform.hanzo.ai', 'every Hanzo dashboard'].map((a) => <p key={a}><span>{a}</span><b className="x-mono"><i />in production</b></p>)}
+    </div>
+  );
+}
+
+function Props() {
+  const [ref, live] = useLive(0.05);
+  return (
+    <div ref={ref}>
+      <PinChapters id="ui-props" label="Components your design team will sign off on" className="ui-pin"
+        chapters={PROPS.map(([t, d], i) => ({ k: i === 0 ? 'Components your design team will sign off on' : `${String(i + 1).padStart(2, '0')} / 06`, t, b: <p>{d}</p> }))}
+        visual={(at) => (
+          <div className="ui-vis">
+            {[Overlays, Keys, Tokens2, Everywhere, Atomic, Prod].map((V, i) => (
+              <motion.div key={i} className="ui-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.97 }} transition={{ duration: 0.55, ease: EASE }} aria-hidden={at !== i}>
+                <V on={live && at === i} />
+              </motion.div>
+            ))}
+            <p className="ui-vis-n x-mono" aria-hidden="true">{String(at + 1).padStart(2, '0')} / 06</p>
+            <p className="x-sr">01 / 06</p>
+          </div>
+        )} />
+    </div>
   );
 }
 
@@ -150,18 +213,18 @@ export function Hello() {
 
 function Init() {
   return (
-    <section className="x-sec ui-init" data-room="dark">
-      <div className="x-wrap">
+    <section className="w2-sec ui-init w2-dark" data-room="dark">
+      <div className="w2-wrap">
         <header className="ui-init-h">
-          <h2>From <code>init</code> to UI in <span className="ui-60">60</span> seconds</h2>
-          <p>Add the components you need. Skip the ones you don't.</p>
+          <h2 className="w2-display s">From <code>init</code> to UI in <span className="ui-60">60</span> seconds</h2>
+          <p className="w2-lede">Add the components you need. Skip the ones you don't.</p>
         </header>
         <div className="ui-init-grid">
-          <Rise><Code tabs={[{ k: 'terminal', code: CODE }]} mark="npx @hanzo/ui init" /></Rise>
-          <Rise className="ui-render" delay={0.1}>
+          <Code tabs={[{ k: 'terminal', code: CODE }]} mark="npx @hanzo/ui init" />
+          <div className="ui-render">
             <p className="x-mono">Hello()</p>
             <motion.button type="button" className="ui-ship" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.95 }}>Ship it</motion.button>
-          </Rise>
+          </div>
         </div>
       </div>
     </section>
@@ -170,13 +233,26 @@ function Init() {
 
 function Stop() {
   return (
-    <section className="x-sec ui-stop">
-      <div className="x-wrap ui-stop-in">
-        <h2>Stop reinventing buttons.</h2>
-        <p>Hanzo UI gives you the components — you focus on what makes your product different.</p>
-        <div className="ui-stop-acts">
-          <A to={GH} className="x-btn solid">View on GitHub</A>
-          <span className="ui-pnpm x-mono">pnpm add @hanzo/ui <Copy text="pnpm add @hanzo/ui" /></span>
+    <section className="w2-sec ui-stop">
+      <div className="w2-wrap">
+        <div className="ui-paste"><Paste name="UI" prompt="Read https://hanzo.ai/skill.md and use Hanzo UI in my project." /></div>
+        <div className="ui-stop-in">
+          <h2 className="w2-display">Stop reinventing buttons.</h2>
+          <div className="ui-stop-r">
+            <p className="w2-lede">Hanzo UI gives you the components — you focus on what makes your product different.</p>
+            <div className="ui-stop-acts">
+              <A to={GH} className="w2-cta acc">View on GitHub</A>
+              <span className="ui-pnpm x-mono">pnpm add @hanzo/ui <Copy text="pnpm add @hanzo/ui" /></span>
+            </div>
+          </div>
+        </div>
+        <div className="ui-get">
+          <div><h2 className="w2-title">Get UI</h2><p className="ui-get-tag">Headless UI primitives</p></div>
+          <div className="ui-get-meta">
+            <span className="ui-chip"><span>License:</span> MIT</span>
+            <A to={GH} className="ui-chip">hanzoai/ui<em>8 stars</em></A>
+            <A to="https://platform.hanzo.ai/deploy" className="w2-cta">Deploy to Cloud</A>
+          </div>
         </div>
       </div>
     </section>
@@ -185,13 +261,11 @@ function Stop() {
 
 export default function UiPage() {
   return (
-    <main className="uip">
+    <main className="uip w2">
       <Hero />
       <Props />
-      <section className="x-sec ui-paste"><div className="x-wrap"><Paste name="UI" prompt="Read https://hanzo.ai/skill.md and use Hanzo UI in my project." /></div></section>
       <Init />
       <Stop />
-      <Get name="UI" tag="Headless UI primitives" license="MIT" repo={['hanzoai/ui', GH]} stars="8 stars" />
     </main>
   );
 }
