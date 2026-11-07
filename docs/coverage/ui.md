@@ -76,13 +76,14 @@ Done here: gate hues []; the off-deck #f5f5f7, #86868b, #1d1d20, #2c2c2e and #0a
 Done here: sliders are drawn (`role="slider"`, arrows, Page keys, Home/End, drag) with a hover ring.
 
 ## 9. Motion and interaction
-- [x] Signature (the board that uses itself), supporting: a page-local Stage (lift; same style on server and first client render, reduced motion read after mount), the chapter board (sticky; the chapter in the middle of the screen recomposes it), magnetic; 0 fade-ups on the page's own parts (the shared `Paste` keeps its own entrance)
-- [x] Idle (board; chapter board: 01 the DropdownMenu and the Dialog open side by side and take turns, the class-only parts as a quiet row, 02 the Tab key pressing as the ring walks down a column of four stops, 03 the radius as a 64px+ readout retuning, 04 the same parts laid out as chat, console and cloud, 05 the stylesheet filling 45 cells, 06 the three products lit in turn), time (the init room types once; "60" counts once), state (dialog, menu, tokens), pointer (sliders, magnetic, chapter preview), arrival (h1)
-- [x] Moves without input; every control answers
-- [x] Reduced motion: the init room shows its full text and "60" as is; no springs
+- [x] Signature (MOTION-MAP `magnet-grid`): a 12×4 field (6×4 on phones) of the library's parts right after the hero bends toward the cursor and ripples out from a click or tap; one rAF loop that runs only while the field is on screen and something moves; a quiet ripple starts itself after 3.5 s without a pointer. Reduced motion: still. The hero keeps the board that uses itself and the page-local Stage lift.
+- [x] Entrances (MOTION-MAP, in order, each its own code in `components/pages/apps/ui/Motion.*`): accordion (the grid's rows unfold from a top hinge, 110 ms apart), page-curl (the paper above the dark init room peels off from its bottom-left corner, a grey flap along the fold), magnet-gather (the six chapter cards start scattered and rotated and are pulled into place), cursor-trail (fine pointers: a cursor sweeps the paste and Get UI strip once, uncovering it behind a ten-dot trail, then the trail follows the visitor's cursor; touch shows it at rest), zoom-through (the closing band flies in from 720px behind the screen). All under `html.js`; JS off and reduced motion show the final state.
+- [x] No pinned chapter scene: the six chapters are cards, each with its own small board in that chapter's state, running only while on screen. Order: hero → grid → dark init room → chapters → paste/Get UI → closing band.
+- [x] Idle (hero board, grid ripples, chapter boards), time (the init room types once; "60" counts once), state (dialog, menu, tokens), pointer (grid magnet, sliders, magnetic ask, cursor trail), arrival (h1, five entrances)
+- [x] Reduced motion: the init room shows its full text and "60" as is; entrances show their final state; no springs
 - [x] n/a sound (shared kit)
 
-Done here: `variety.py` OK; "Ship it" renders in the Hello() card when `return <Button>` is typed.
+Done here: Playwright at 1470×801 and 375×812 (and reduced motion at 1470): every entrance's section gets `data-in` and plays (mid and settled screenshots), the grid moved 48 of 48 tiles under a pointer and rippled on click, a 45-press Tab crawl passed the hero, grid (not focusable) and chapters without a trap, 0 console errors, no horizontal scroll, CLS 0.0011 / 0.0024 / 0.0003. `variety.py` OK.
 
 ## 10. Media
 - [x] n/a images
@@ -98,7 +99,7 @@ Done here: no media; the page's objects are the live component boards and the te
 - [x] Targets 44px+
 - [x] Primary above the fold at 375×667
 
-Done here: on phone the chapters are a swipe rail (`scroll-snap-type: x proximity`, 16% peek) under the board, which is not sticky; the board's body is a fixed 300px so the board and its chapter card's heading fit one 812px screen together. The closing board's body takes its own height, so its third product row is whole (bottom 73px inside the body at 375).
+Done here: on phone the six chapter cards stack one per screen, each board's body a fixed 300px with its heading under it; the grid drops to 6 columns. The closing board's body takes its own height, so its third product row is whole.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: "Hello()" #525252 on #f5f5f5; terminal comments #a3a3a3 on #0f0f0f
