@@ -96,6 +96,10 @@
 .xtp-l { display: inline; }
 .xtp-ps { color: #a3a3a3; }
 .xtp-ps { -webkit-user-select: none; user-select: none; }
+/* the one ask answers the pointer: the fill lifts to graphite and the arrow leans in; press settles it */
+.xtp .w2-cta { background: #0a0a0a; }
+@media (hover: hover) { .xtp .w2-cta:hover { background: #262626; } .xtp .w2-cta:hover i { transform: translateX(3px); } }
+.xtp .w2-cta:active { transform: scale(.98); }
 /* an opened sheet shows its preview as a wide strip, so its Edit in Hanzo sits inside the sheet's first view */
 .w2-sheet-art .xtp-tile-img { aspect-ratio: 16 / 7; }
 /* the setup control in the dark room: the pill and its chevron carry the outline, the wrapper none; the agent marks sit on graphite */

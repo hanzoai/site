@@ -34,6 +34,14 @@ function Board({ tok, setTok, mine, setMine, paused }) {
   const [dlg, setDlg] = useState(false);
   const [focus, setFocus] = useState(0);
   const ship = useRef(null), opts = useRef(null), box = useRef(null), items = useRef([]);
+  // the board wakes inside the first second: its first real act (the menu opens, the ring lands on Options) about
+  // 600 ms after it is first seen, then the 1.5 s rhythm takes over
+  const woke = useRef(false);
+  useEffect(() => {
+    if (!live || mine || paused || woke.current) return undefined;
+    const t = setTimeout(() => { woke.current = true; setMenu(true); setFocus(1); }, 600);
+    return () => clearTimeout(t);
+  }, [live, mine, paused]);
   useEvery(1500, live && !mine && !paused, () => {
     const n = (k + 1) % SCRIPT.length; setK(n);
     const s = SCRIPT[n];
@@ -106,11 +114,16 @@ function Tokens({ tok, setTok, setMine, pauseBtn }) {
     set({ a: n });
     e.currentTarget.parentElement.querySelectorAll('button')[n]?.focus();
   };
+  const [hov, setHov] = useState(null); // the swatch under the pointer or focus names its token
+  const shownSw = ACCENTS[hov ?? tok.a];
   return (
     <div className="ui-tok">
       <div className="ui-tok-bar"><p className="ui-tok-k x-mono">@hanzo/design tokens</p><span className="ui-pause">{pauseBtn}</span></div>
-      <div className="ui-sw" role="radiogroup" aria-label="Accent token">
-        {ACCENTS.map(([n, c], i) => <button key={n} type="button" role="radio" aria-checked={tok.a === i} tabIndex={tok.a === i ? 0 : -1} aria-label={n} style={{ background: c }} onClick={() => set({ a: i })} onKeyDown={swKey} />)}
+      <div className="ui-sw-w">
+        <div className="ui-sw" role="radiogroup" aria-label="Accent token" onPointerLeave={() => setHov(null)}>
+          {ACCENTS.map(([n, c], i) => <button key={n} type="button" role="radio" aria-checked={tok.a === i} tabIndex={tok.a === i ? 0 : -1} aria-label={n} style={{ background: c }} onClick={() => set({ a: i })} onKeyDown={swKey} onPointerEnter={() => setHov(i)} onFocus={() => setHov(i)} onBlur={() => setHov(null)} />)}
+        </div>
+        <p className="ui-sw-cap x-mono" aria-hidden="true"><b>{shownSw[0]}</b> {shownSw[1]}</p>
       </div>
       <div className="ui-tok-r"><span>--radius <b className="x-mono">{tok.r}px</b></span><Slider label="--radius" min={0} max={24} step={1} value={tok.r} onChange={(v) => set({ r: v })} /></div>
       <div className="ui-tok-r"><span>--density <b className="x-mono">{tok.d.toFixed(2)}</b></span><Slider label="--density" min={0.8} max={1.3} step={0.05} value={tok.d} onChange={(v) => set({ d: v })} /></div>
@@ -139,7 +152,7 @@ function Hero() {
             <Magnetic strength={0.25}><A to={GH} className="w2-cta" data-thumb="GitHub" data-cta="ui.hero">GitHub <i aria-hidden="true">↗</i></A></Magnetic>
           </motion.div>
         </div>
-        <Settle from={1.02} lift={10}>
+        <Settle from={1} lift={10}>
           <div className="ui-stage">
             <Board tok={tok} setTok={setTok} mine={mine} setMine={setMine} paused={paused} />
             <Tokens tok={tok} setTok={setTok} setMine={setMine} pauseBtn={pauseBtn} />
@@ -165,7 +178,59 @@ const PROPS = [
 const SHOW_TOK = [{ r: 14, a: 0, n: 'graphite' }, { r: 4, a: 1, n: 'steel' }, { r: 22, a: 2, n: 'silver' }];
 const APPS = ['chat', 'console', 'cloud'];
 
-function ShowBoard({ at, run }) {
+const PRODUCTS = ['chat.hanzo.ai', 'platform.hanzo.ai', 'every Hanzo dashboard'];
+const SHEET = 45; // cells of the one atomic stylesheet
+
+/* Each chapter recomposes the board's body out of the same parts (a different view of the library, never the
+   hero board again): 01 the parts with their names, 02 the keyboard path, 03 the tokens as one big readout,
+   04 the same parts laid out as chat, console and cloud, 05 the stylesheet filling the board, 06 the three products. */
+function Body({ at, t, tok, app }) {
+  if (at === 2) return (
+    <div className="uc-v uc-tokv">
+      <p className="uc-big x-mono"><span>--radius</span><b>{tok.r}px</b></p>
+      <p className="uc-tokn x-mono">{tok.n} · {ACCENTS[tok.a][1]} · @hanzo/design</p>
+      <div className="ui-row"><span className="ui-b solid">Ship it</span><span className="ui-b">Options ▾</span></div>
+      <div className="uc-field"><i>@hanzo/ui</i></div>
+    </div>
+  );
+  if (at === 3) return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div key={app} className={'uc-v uc-app-v uc-' + app} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }} transition={{ duration: 0.35, ease: EASE }}>
+        {app === 'chat' && <>
+          <p className="uc-msg me">npx @hanzo/ui add button dialog dropdown-menu</p>
+          <p className="uc-msg">Focus management, keyboard behaviour and placement that CSS cannot.</p>
+          <div className="uc-compose"><i>@hanzo/ui</i><span className="ui-b solid">Ship it</span></div>
+        </>}
+        {app === 'console' && <>
+          <ul className="uc-side">{['button', 'dialog', 'dropdown-menu'].map((x, i) => <li key={x} className={i === 1 ? 'on' : ''}>{x}</li>)}</ul>
+          <div className="uc-main">
+            <div className="ui-row"><span className="ui-b solid">Ship it</span><span className="ui-b">Options ▾</span></div>
+            <ul className="ui-table">{PRODUCTS.map((a) => <li key={a}><span>{a}</span><span className="ui-live"><i />in production</span></li>)}</ul>
+          </div>
+        </>}
+        {app === 'cloud' && PRODUCTS.map((a) => <div key={a} className="uc-tile"><span>{a}</span><span className="ui-live"><i />in production</span></div>)}
+      </motion.div>
+    </AnimatePresence>
+  );
+  if (at === 4) {
+    const cells = Math.min(SHEET, 9 + t * 9);
+    return (
+      <div className="uc-v uc-sheetv">
+        <p className="uc-gone x-mono"><s>styled-components</s><s>emotion</s><s>CSS-in-JS</s></p>
+        <div className="uc-cells">{Array.from({ length: SHEET }).map((_, i) => <i key={i} className={i < cells ? 'on' : ''} />)}</div>
+        <p className="uc-tokn x-mono">one atomic stylesheet · <b>{cells}</b> / {SHEET}</p>
+      </div>
+    );
+  }
+  if (at === 5) return (
+    <ul className="uc-v uc-prod">
+      {PRODUCTS.map((a, i) => <li key={a} className={t % 3 === i ? 'on' : ''}><span>{a}</span><span className="ui-live"><i />in production</span></li>)}
+    </ul>
+  );
+  return null;
+}
+
+function ShowBoard({ at, run, bare }) {
   const [t, setT] = useState(0);
   useEffect(() => setT(0), [at]);
   useEvery(at === 1 ? 700 : 1400, run, () => setT((v) => v + 1));
@@ -177,13 +242,16 @@ function ShowBoard({ at, run }) {
   const cells = at === 4 ? Math.min(18, 6 + t * 4) : 0;
   const style = { '--ua': ACCENTS[tok.a][1], '--ur': tok.r + 'px' };
   const R = (i) => (ring === i ? ' ui-ring' : '');
+  const parts = at < 2;
   return (
-    <div className={'uc-board c' + at} style={style} inert aria-hidden="true">
+    <div className={'uc-board c' + at + (bare ? ' bare' : '')} style={style} inert aria-hidden="true">
       <div className="uc-bar"><i /><i /><i />
         <span className="uc-app x-mono"><AnimatePresence mode="popLayout" initial={false}><motion.b key={app} initial={{ y: 14, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -14, opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>{app}</motion.b></AnimatePresence></span>
       </div>
       <div className="uc-body">
-        <div className="ui-row">
+        {!parts && <Body at={at} t={t} tok={tok} app={app} />}
+        {parts && at === 1 && <kbd className="uc-tab x-mono" key={t}>Tab</kbd>}
+        {parts && <><div className="ui-row">
           <span className={'ui-b solid' + R(0)}>Ship it<em className="uc-tag x-mono">.button</em></span>
           <span className={'ui-b' + R(1)}>Options ▾<em className="uc-tag x-mono">&lt;DropdownMenu /&gt;</em></span>
           <AnimatePresence>{menu && (
@@ -206,9 +274,9 @@ function ShowBoard({ at, run }) {
               <div className="ui-row"><span className="ui-b solid">Close</span></div>
             </motion.div>
           </motion.div>)}
-        </AnimatePresence>
+        </AnimatePresence></>}
       </div>
-      <div className="uc-foot x-mono">
+      {!bare && <div className="uc-foot x-mono">
         <div className="uc-foot-in">
           {[
             <span key={0}>&lt;Dialog /&gt; · &lt;DropdownMenu /&gt; · .button .panel .field .table</span>,
@@ -220,7 +288,7 @@ function ShowBoard({ at, run }) {
           ].map((n, i) => <motion.div key={i} className="uc-foot-i" initial={false} animate={{ opacity: at === i ? 1 : 0, y: at === i ? 0 : 8 }} transition={{ duration: 0.3, ease: EASE }}>{n}</motion.div>)}
         </div>
         <span className="uc-n">{String(at + 1).padStart(2, '0')} / 06</span>
-      </div>
+      </div>}
     </div>
   );
 }
@@ -229,6 +297,7 @@ function Props() {
   const [ref, live] = useLive(0.05);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [at, setAt] = useState(0);
+  const [peek, setPeek] = useState(null); // hovering a chapter number previews that chapter on the board
   const arts = useRef([]), rail = useRef(null);
   useEffect(() => {
     const mq = matchMedia('(max-width: 899px)');
@@ -250,11 +319,11 @@ function Props() {
           <span className="ui-pause">{pauseBtn}</span>
         </div>
         <div className="uc-grid">
-          <div className="uc-stage"><ShowBoard at={at} run={live && !paused} /></div>
+          <div className="uc-stage"><ShowBoard at={peek ?? at} run={live && !paused} /></div>
           <ol className="uc-list" ref={rail} onScroll={onRail}>
             {PROPS.map(([t, d], i) => (
               <li key={t} ref={(el) => { arts.current[i] = el; }} data-i={i} className={'uc-ch' + (at === i ? ' on' : '')}>
-                <button type="button" className="uc-n2 x-mono" onClick={() => go(i)} aria-current={at === i ? 'step' : undefined}>{String(i + 1).padStart(2, '0')}</button>
+                <button type="button" className="uc-n2 x-mono" onClick={() => { setPeek(null); go(i); }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPeek(i); }} onPointerLeave={() => setPeek(null)} aria-current={at === i ? 'step' : undefined}>{String(i + 1).padStart(2, '0')}</button>
                 <h3 className="uc-t">{t}</h3>
                 <p>{d}</p>
               </li>
@@ -290,11 +359,22 @@ function Init() {
   const [ran, setRan] = useState(false);
   useEffect(() => { if (live && !ran && !calm) { setRan(true); setK(0); } }, [live, ran, calm]);
   useEvery(260, live && !paused && k < LINES.length, () => setK((v) => Math.min(LINES.length, v + 1)));
+  // the one figure Hanzo gives here, "60", counts up once as the terminal starts (the HTML carries 60)
+  const [sec, setSec] = useState(60);
+  const counted = useRef(false);
+  useEffect(() => {
+    if (!live || calm || counted.current) return undefined;
+    counted.current = true;
+    let raf = 0; const t0 = performance.now();
+    const step = (now) => { const p = Math.min(1, (now - t0) / 1100); setSec(Math.round(60 * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    return () => { cancelAnimationFrame(raf); setSec(60); };
+  }, [live, calm]);
   return (
     <section className="w2-sec ui-init w2-dark" data-room="dark" ref={ref}>
       <div className="w2-wrap">
         <header className="ui-init-h">
-          <h2 className="w2-display s">From <code>init</code> to UI in <span className="ui-60">60</span> seconds</h2>
+          <h2 className="w2-display s ui-init-t">From <code>init</code> to UI in <span className="ui-60">{sec}</span> seconds</h2>
           <p className="w2-lede">Add the components you need. Skip the ones you don't.</p>
         </header>
         <div className="ui-init-grid">
@@ -312,21 +392,25 @@ function Init() {
   );
 }
 
+/* The close is one band: the page's line and its one ask beside the board it sells, settled small and showing the
+   three products it runs; the paste prompt and the Get UI strip sit under it as quiet proof. */
 function Stop() {
+  const [ref, live] = useLive(0.3);
   return (
-    <section className="w2-sec ui-stop">
+    <section className="w2-sec ui-stop" ref={ref}>
       <div className="w2-wrap">
-        <div className="ui-paste"><Paste name="UI" prompt="Read https://hanzo.ai/skill.md and use Hanzo UI in my project." /></div>
         <div className="ui-stop-in">
-          <h2 className="w2-display">Stop reinventing buttons.</h2>
-          <div className="ui-stop-r">
+          <div className="ui-stop-l">
+            <h2 className="w2-display">Stop reinventing buttons.</h2>
             <p className="w2-lede">Hanzo UI gives you the components — you focus on what makes your product different.</p>
             <div className="ui-stop-acts">
               <Magnetic strength={0.25}><A to={GH} className="w2-cta" data-thumb="GitHub" data-cta="ui.close">View on GitHub <i aria-hidden="true">↗</i></A></Magnetic>
               <span className="ui-pnpm x-mono">pnpm add @hanzo/ui <Copy text="pnpm add @hanzo/ui" /></span>
             </div>
           </div>
+          <div className="ui-stop-obj"><ShowBoard at={5} run={live} bare /></div>
         </div>
+        <div className="ui-paste"><Paste name="UI" prompt="Read https://hanzo.ai/skill.md and use Hanzo UI in my project." /></div>
         <div className="ui-get">
           <div><h2 className="w2-title">Get UI</h2><p className="ui-get-tag">Headless UI primitives</p></div>
           <div className="ui-get-meta">
