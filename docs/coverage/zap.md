@@ -84,7 +84,7 @@ Done here: the slider is drawn (`role="slider"`, arrows, Page keys, Home/End, dr
 - [x] Reduced motion rests (no entrance arms, no skew), with no console error or issue badge (3 cold loads with reduced motion at 1470 and 375 and 3 without, measured after load); no springs (the drop-in bounce and the pendulum swing are eased keyframes)
 - [x] n/a sound (shared kit)
 
-Done here: `variety.py` OK; packet headers fill the rest of their sixteen bytes on hover. Idle while you wait: the active hero point's rule fills over its 3.6 s turn (it keeps stepping on the phone after the wire leaves view), and a pointer sweeps the landed packet's sixteen header bytes; both stop under reduced motion. The one scale moment: N:1 and 1:M arrive at 1.75× (about 106px), hold, then settle to 64px over 1.6 s (transform only, room reserved above so nothing overlaps; none under reduced motion). The sidecar squares take the largest of four sizes (48, 30, 20, 14px) at which the whole fleet fits its fixed 108px box, so a small fleet fills it.
+Done here: `variety.py` OK; packet headers fill the rest of their sixteen bytes on hover. Idle while you wait: the active hero point's rule fills over its 3.6 s turn (it keeps stepping on the phone after the wire leaves view), and a pointer sweeps the landed packet's sixteen header bytes; both stop under reduced motion. The one scale moment: N:1 and 1:M arrive at 1.75× (about 106px), hold, then settle to 64px over 1.6 s (transform only, room reserved above so nothing overlaps; none under reduced motion). The sidecar squares take the largest of four sizes (48, 30, 20, 14px) at which the whole fleet fits its fixed 108px box, so a small fleet fills it. Why bother (desktop grid): the eight packets land in turn by themselves every 1.8 s while the grid is on screen (header fills, the card rises 12px by transform, the 01 / 08 counter follows); pointing at or focusing one takes over, leaving hands it back. The hero points and the field reader resume 8 s after a tap or choice, so a tap never freezes them. motion.mjs at 1470 (7 Nov 22:40): 0 still screens of 7.
 
 ## 10. Media
 - [x] Kit `Img` only (the Enso mark beside the kicker)
@@ -100,7 +100,7 @@ Done here: one decorative `Img` with `alt=""`.
 - [x] Targets 44px+
 - [x] Primary above the fold at 375×667
 
-Done here: the diagram keeps its four agents and three servers at 14px on phone, lines meeting. At 375 the hero ask sits on its own row and "Read the Papers" and "GitHub" share the next (GitHub no longer sits alone).
+Done here: the diagram keeps its four agents and three servers at 14px on phone, lines meeting. At 375 the hero ask sits on its own row and "Read the Papers" and "GitHub" share the next (GitHub no longer sits alone). The phone terminal wraps at spaces only (whole tokens, never mid-word, each wrapped line hanging under its prompt) instead of scrolling sideways out of sight; every line is in the HTML, so its height never changes as it types.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured (#a3a3a3 on #0a0a0a)
@@ -155,6 +155,6 @@ Done here: 0 console errors at 1470×801 and 375×812, with normal and with redu
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the top comment of `components/pages/apps/Zap.jsx`
-- [ ] Review 8 or more (re-review pending)
+- [x] Review read: Ready line in docs/review/zap.md
 
-Done here: last review 7/10 (round 2); its nine fixes addressed on the page (fix 3's header half and fix 9's ui-strings half are shared and requested).
+Done here: Ready 7 Nov (James's bar: holds up next to /api and /affiliate, no score). Round-2 fixes hold on the rebuilt page; this pass: the 0 stands at figure size beside N:1 and 1:M (grey, not shrunk), the packet grid lands by itself, taps no longer freeze the hero, the phone terminal keeps whole tokens, and the gap after the packets is trimmed.

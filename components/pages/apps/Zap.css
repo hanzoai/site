@@ -223,7 +223,7 @@ a.zp-chip2:active { transform: scale(.98); }
 
 /* v2.4: the middle is a story. Tighter rhythm, a pinned packet wire, wires that draw, one black band to close */
 .zp-hero { padding-bottom: clamp(64px, 6vw, 96px); }
-.zp-why { position: relative; padding: clamp(88px, 9vw, 136px) 0; }
+.zp-why { position: relative; padding: clamp(88px, 9vw, 136px) 0 clamp(48px, 5vw, 72px); }
 .zp-why.pinned { padding: 0; }
 .zp-why.pinned .zp-why-stick { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding-top: 56px; overflow: hidden; }
 .zp-packets .zp-hdr { width: calc(100% - 52px); }
@@ -324,7 +324,7 @@ html:not(.js) .zp-dia-l { clip-path: none; }
 .zp-slide[data-press] .zp-slide-k, .zp-slide[data-press]:hover .zp-slide-k { transform: scale(.92); transition-duration: 90ms; }
 .zp-hero .w2-cta { background: #fafafa; }
 /* the zero is a fact, not a hero figure (MASTER part 5): it sits at medium beside the two figures */
-.zp-stats li.zero .zp-fig { font-size: 32px; line-height: 2; font-weight: 400; }
+.zp-stats li.zero .zp-fig { color: #525252; }
 /* the one scale moment: N:1 and 1:M arrive at hero size, hold a beat, then settle to figure size */
 .zp-stats li { padding-top: 64px; } /* room above the figures for the moment they are big, so nothing overlaps */
 .zp-stats li:not(.zero) .zp-fig { transform-origin: 0 100%; }
@@ -444,4 +444,11 @@ html:not(.js) .zp-hero .w2-cta { color: #fafafa; box-shadow: inset 0 0 0 1px rgb
   :is(.zp-e-skew, .zp-e-drop, .zp-e-swing, .zp-e-trail .zp-packets > li) { animation: none !important; opacity: 1 !important; transform: none !important; translate: none !important; }
   :is(.zp-curl-page, .zp-curl-fold, .zp-trail) { display: none !important; }
   .zp-dia-n, .zp-now { animation: none; }
+}
+/* phone: the terminal wraps at spaces only (whole tokens, never mid-word), each wrapped line hangs under its prompt;
+   every line is already in the HTML (dim until typed), so the height never changes as it types */
+@media (max-width: 899px) {
+  .zp-term pre { white-space: pre-wrap; word-break: normal; overflow-wrap: normal; overflow-x: visible; height: auto; line-height: 1.6; }
+  .zp-term pre > span { display: block; padding-left: 2ch; text-indent: -2ch; }
+  .zp-term pre > span.zp-nl { display: none; }
 }
