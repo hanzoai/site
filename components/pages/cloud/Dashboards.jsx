@@ -411,7 +411,7 @@ export default function Dashboards() {
             <div className="kn-acts"><Cta to="https://github.com/hanzoai/dashboards" id="dashboards.start">View on GitHub</Cta></div>
           </div>
           <div className="db-start-o">
-            <Lens play={play}><ExampleConsole name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} /></Lens>
+            <Lens play={play}><ExampleConsole name="Dashboards" api="/v1/o11y/dashboards" side={SIDE} cap="The service the session above is changing." /></Lens>
             <p className="db-note">Example project. Every name in it is one you would give your own.</p>
           </div>
         </div>
