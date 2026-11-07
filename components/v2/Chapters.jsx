@@ -7,7 +7,8 @@
      <Chapters id="eo-ch" label="Three tiers" flip={false} items={[
        { k: 'Enso Flash', title: 'At volume.', body: <p>…</p>, art: <MyPicture /> }, …
      ]} />
-   - items: k (kicker), title (heading text), body (node), art (node drawn inside a 28px frame; it may move by itself).
+   - items: k (kicker), title (heading text), body (node), art (node drawn inside a 28px frame; it may move by itself,
+     or a function (on) => node, where on is true while its chapter is the one being read).
    - flip puts the picture on the left. The chapter rail on the side jumps to a chapter (buttons, keyboard).
    - Phones and reduced motion get a plain vertical story (picture, then words); every word is always in the HTML. */
 import { useEffect, useRef, useState } from 'react';
@@ -78,7 +79,7 @@ export default function Chapters({ id, label, items, flip, className = '' }) {
             )}
           </div>
           <div className="lv-ch-stack">
-            {items.map((c, i) => <Layer key={c.title} p={p} i={i} n={n} live={live}>{c.art}</Layer>)}
+            {items.map((c, i) => <Layer key={c.title} p={p} i={i} n={n} live={live}>{typeof c.art === 'function' ? c.art(!live || i === at) : c.art}</Layer>)}
           </div>
         </div>
       </div>

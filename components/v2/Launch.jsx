@@ -14,7 +14,7 @@
    - Close runs the film back into the card it opened from; the page ends on the next model's card, which opens the
      same way. Reduced motion shows the settled stage, no pin. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { EASE } from '../ui';
 import { useOpener } from '../Opener';
 import { bySlug, MODELS } from '../../lib/models';
@@ -60,10 +60,13 @@ export const poly = (pts) => (t, W, H, wide) => {
 // densify a closed outline so the opening frame stays a full cover (n points per edge)
 export const dense = (V, n = 6) => V.flatMap((a, i) => { const b = V[(i + 1) % V.length]; return Array.from({ length: n }, (_, k) => [lerp(a[0], b[0], k / n), lerp(a[1], b[1], k / n)]); });
 
-// a headline whose lines rise out of a mask, staggered, when its parent says so ([data-on])
-export function Lines({ as: T = 'h2', id, className = '', lines }) {
+// a headline whose lines rise out of a mask, staggered, when its parent says so ([data-on]), or by itself the first
+// time it scrolls into view (reveal)
+export function Lines({ as: T = 'h2', id, className = '', lines, reveal }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
-    <T id={id} className={'lv-lines ' + className}>
+    <T id={id} ref={ref} className={'lv-lines ' + className} data-on={reveal && seen ? '' : undefined}>
       {lines.map((l, i) => <span key={i} className="lv-ln"><span style={{ '--i': i }}>{l}</span></span>)}
     </T>
   );
