@@ -6,7 +6,7 @@ Open copy questions for James: "Publish a new price" (`c4_publish_price`); "Rese
 Shared changes requested (`docs/requests/billing.md`): none. The shared code pane (`components/pages/cloud/Frame.jsx`) animates a multi-tab pill with a spring; this page uses single-tab panes only and holds the pane to the deck colours in `components/v2/x-hamilton/Launch.css`.
 Forks this page deleted: the hover tooltips that floated over the invoice, the invented "Change a price, not a customer" label, raw .x-btn asks and duplicate More links.
 
-Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
+Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off. Round 2 (after `docs/review/billing.md`, 7/10) re-measured at 1470×801 and 375×812: layout shift, overlaps, hovers, the drawer and the disabled state, as noted per part below.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -33,7 +33,7 @@ Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" tar
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: Hero is split (title on 8 columns, the long line and asks on 4, the machine rising under); the object is events land on the meter, the meter counts, the invoice reads it and is issued, period after period, so events arriving every 0.43 s moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Billing" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → three pinned chapters building one invoice (light) → the history (dark) → get started (light) → Get Billing and related (dark). The live page has no proof strip, so it ends on the band and the footer.
+Done here: Hero is split, re-laid page-locally on desktop: the h1 leads top-left (top at 100px on a 801px screen) with its mono caption and the asks under it on 7 columns, the long line beside it on 5, and the machine rising under both. The machine's zones are sized to the screen (`clamp(340px, 100svh − 372px, 480px)`), so at 1470×801 the whole machine sits on the first screen (310 to 788px) and the meter's 64px figure sits in the middle of its black column (about y 548), never at the fold. The object is events land on the meter, the meter counts, the invoice reads it and is issued, period after period, so events arriving every 0.43 s moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Billing" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → three pinned chapters building one invoice (light; each chapter's left column carries its own object: the price stack, the meter filling one period, the invoice stepping Draft → Preview → Issued) → the history (dark) → get started (light) → Get Billing and related (dark, opening on the machine in one line: an event lands, the meter counts to 18, the invoice is issued, once, then it rests; top padding shortened). The live page has no proof strip, so it ends on the band and the footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -57,7 +57,7 @@ Done here: No partner logos; product names appear as text only. Parity holds eve
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /billing`: 0 missing
 
-Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: a TypeScript example in the shared code pane and the agent prompt. Parity: 0 missing.
+Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px, h3 17px, hero lede 17px, body 15px, figures 64px Air (48px in the chapter 02 meter, 56px in the closing line), growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: a TypeScript example in the shared code pane and the agent prompt. Parity: 0 missing.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -75,7 +75,7 @@ Done here: `taste.py` OK on the page JSX and CSS and the Cloud 4 shared files; o
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Hover sits under `@media (hover: hover)` and changes fill or border only; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring; disabled controls drop to 40%. Nothing on the page loads data, so no loading state. Dialogs: the example console in the shared Drawer ("Open in the console", Hanzo's words). Inputs: none. Forks deleted: see the top of this card.
+Done here: Hover sits under `@media (hover: hover)` and changes fill, border or colour; press is scale .97 in 90 ms; focus-visible draws a 2px ink or white ring. Measured in round 2: the hero "GitHub" link turns #525252 with its underline and a 4px arrow nudge; the light code pane's Copy fills #f5f5f5 with a darker border and ink. "Publish a new price" disables itself once Price 3 exists and then reads as disabled: 35% opacity, a dashed border, grey fill, `not-allowed` cursor, and no hover or press (Reset brings it back). Nothing on the page loads data, so no loading state. Dialogs: the example console in the shared Drawer ("Open in the console", Hanzo's words); on desktop the sheet opens 72px from the top (page-scoped), below the 60px header, so its title and × are visible and reachable (measured: the × is the element under the pointer). Its gateway line ("…so the limiter does too.") is in this page's own outline, `content/outline/billing.json`. Inputs: none. Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border o
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: the invoice builds as you scroll (pinned scene). Supporting: the meter counting (time), capability highlight in the history (pointer), price publishing (state). `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: the invoice builds as you scroll (pinned scene). Supporting: the meter counting (time; also the chapter 02 meter filling and the closing line settling, each once when it comes on screen, under 5 s, and the chapter objects wait for their own chapter while pinned), capability highlight in the history (pointer), price publishing and the Draft → Preview → Issued steps (state). The hero's event rows now move by transform only inside a fixed, clipped window. `scripts/variety.py` OK. Kinds: idle (the hero object), time, state, pointer, with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -92,7 +92,7 @@ Done here: Signature: the invoice builds as you scroll (pinned scene). Supportin
 - [ ] Budgets met; nothing missing; alt on every image (n/a: 0 images, 0 without alt)
 - [ ] No dimmed or filtered photo; 4+ real visuals together where the page has them (n/a: no photos)
 
-Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (1 on the page): the hero machine.
+Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop over 5 s carries a 44px pause button (1 on the page): the hero machine. The chapter 02 meter, the chapter 03 steps and the closing line run once, for under 5 s, then rest, so they need none.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -100,7 +100,7 @@ Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop ove
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 537px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+Done here: Round 2 at 375×812: the ISSUED stamp keeps its rotate-and-land moment but now has its own row under "Preview one before it is issued." (text 388–409px, stamp 415–473px in one measured frame: no overlap), and the stacked chapters no longer slide 60px under the dark history room (the shared sticky offset is zeroed page-locally in stack mode), so the last invoice ends whole above it. Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 537px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 4.74:1 (0 runs flagged). Headings 12333
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /billing/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /billing/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. 0 console errors at both widths (0 desktop, 0 phone). Layout shift (round 2, PerformanceObserver over the first ~5 s at rest with the hero running): 0.0002 desktop (all from the shared header, none from the page), 0.0000 phone; it was 0.047 and climbing before the event list became a fixed window.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -157,4 +157,4 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/billing.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/apps/Billing.jsx`. Last critic verdict on file: none yet (walked an earlier version); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/apps/Billing.jsx`. Last critic verdict on file: 7/10 (`docs/review/billing.md`, round 1); round 2 fixes its list (hero meter on the first screen, CLS, phone stamp, drawer under the header, dead hovers, disabled Publish, empty chapter columns, the object-less close) and waits for the next walk.

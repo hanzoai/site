@@ -3,14 +3,14 @@
    pinned chapters while one invoice builds itself → the history room → get started → Get Billing and related.
    Persona: a developer charging for usage. Goal: read the docs and send a first meter event.
    CTA: "Read the docs" (hero, ask bar, get started; data-cta primary / start). Metric: cta_click:billing.primary.
-   V2: 8/10 the meter running under a split hero, one invoice that assembles itself line by line as you scroll the three objects, a bill's history that lights by capability; greys only, one ask per screen
+   V2: 8/10 round 2: h1 leads top-left and the whole machine fits the first screen with the meter figure centred; event rows by transform in a fixed window (CLS 0.047 → 0.0002); stamp gets its own row on phones; console sheet below the header; live hovers and a visible disabled Publish; objects in chapters 02/03 and the close
    Signature: the invoice builds as you scroll. Three pinned chapters (plans and prices, meters, invoices) assemble a single
    invoice: the subscription line arrives from its price, the metered line counts up with your scroll as events land on
    the meter, tax is calculated on the invoice, and the preview turns into an issued stamp at the end.
    Beyond: publish a new price and watch subscribers already on the old one stay where they are while new sign-ups take
    the new one: Hanzo's plan and price split, made visible.
    Motion: scroll-built invoice (signature, scroll) + the hero's running meter (time, pausable) + capability highlight in
-   the history (pointer, state). Every word, figure and link is Hanzo's; customer and meter names are the examples
+   the history (pointer, state); the chapter 02 meter, chapter 03 steps and the closing line each settle once (time). Every word, figure and link is Hanzo's; customer and meter names are the examples
    Hanzo's own code uses. */
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useMotionValue } from 'motion/react';
@@ -49,17 +49,18 @@ function Machine() {
     const t = phase === 'read' ? setTimeout(() => setPhase('issued'), 1100) : setTimeout(() => { setN(0); setPeriod((p) => p + 1); setPhase('run'); }, 2600);
     return () => clearTimeout(t);
   }, [phase, live]);
-  const ids = Array.from({ length: Math.min(6, ev) }, (_, k) => ev - k);
+  const ids = Array.from({ length: Math.min(7, ev) }, (_, k) => ev - k);
   const status = phase === 'run' ? 'Draft' : phase === 'read' ? 'Preview' : 'Issued';
   return (
     <div className="l2-obj bl2-mach" ref={ref} data-phase={phase}>
       <PauseBtn paused={paused} onClick={toggle} />
       <div className="bl2-zone bl2-ev">
         <p className="bl2-zk l2-mono"><span>billing.usage.record</span><b>{ev}</b></p>
+        {/* a fixed window: rows are stacked by transform only (each slot is 112% of a row), so nothing below them moves */}
         <ul aria-hidden="true">
           <AnimatePresence initial={false}>
             {ids.map((id, k) => (
-              <motion.li key={id} layout="position" initial={{ opacity: 0, y: -18 }} animate={{ opacity: 1 - k * 0.14, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}>
+              <motion.li key={id} initial={{ opacity: 0, y: '-112%' }} animate={{ opacity: 1 - k * 0.14, y: `${k * 112}%` }} exit={{ opacity: 0, y: `${(k + 1) * 112}%` }} transition={{ duration: 0.45, ease: EASE }}>
                 <span className="l2-mono">api_requests</span><b className="l2-mono">+1</b><em className="l2-mono">cus_abc123</em>
               </motion.li>
             ))}
@@ -121,6 +122,70 @@ function Prices() {
       <div className="bl2-pv-acts">
         <button type="button" className="bl2-ib" onClick={publish} disabled={prices >= 3} aria-label="Publish a new price"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg></button>
         <button type="button" className="bl2-ib" onClick={reset} aria-label="Reset"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.5-3.55M3 2.5v2.5h2.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      </div>
+    </div>
+  );
+}
+
+/* While the chapters pin, only the chapter on screen carries class "on"; its object waits for its turn. */
+const onShow = (ref) => { const ch = ref.current?.closest('.l2-ch'); return !ch || ch.classList.contains('on'); };
+
+/* Chapter 02: one period of events filling the meter, once, when it comes into view (under 5 s, then it rests). */
+function MeterFill() {
+  const [ref, live, calm] = useLive(0.5);
+  const [n, setN] = useState(0);
+  useEffect(() => { if (calm) setN(PERIOD); }, [calm]);
+  useTick(170, live && n < PERIOD, () => { if (onShow(ref)) setN((c) => c + 1); });
+  const done = n >= PERIOD;
+  return (
+    <div className="bl2-mf" ref={ref} aria-hidden="true">
+      <p className="bl2-mf-k l2-mono"><span>Meter · api_requests</span><b className="l2-fig">{n}</b></p>
+      <div className="bl2-mf-slots">{Array.from({ length: PERIOD }).map((_, i) => <i key={i} className={i < n ? 'on' : ''} />)}</div>
+      <p className="bl2-mf-f l2-mono"><span>billing.usage.record</span><span className={done ? 'done' : ''}>{done ? 'closed' : 'open'}</span></p>
+    </div>
+  );
+}
+
+/* Chapter 03: the invoice's three states, stepped once as it comes into view, then it rests on Issued. */
+const STEPS = ['Draft', 'Preview', 'Issued'];
+function IssueSteps() {
+  const [ref, live, calm] = useLive(0.5);
+  const [s, setS] = useState(0);
+  useEffect(() => { if (calm) setS(2); }, [calm]);
+  useTick(900, live && s < 2, () => { if (onShow(ref)) setS((v) => v + 1); });
+  return (
+    <div className="bl2-is" ref={ref} aria-hidden="true">
+      <p className="bl2-is-k l2-mono"><span>Invoice</span><span>cus_abc123</span></p>
+      <div className="bl2-is-row">
+        <b className="bl2-is-line" style={{ transform: `scaleX(${s / 2})` }} />
+        {STEPS.map((t, i) => (
+          <p key={t} className={'bl2-is-s' + (i < s ? ' past' : '') + (i === s ? ' now' : '')}>
+            <i className="bl2-is-dot" />
+            <span className="l2-mono">{t}</span>
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* The close: the hero's machine in one line, settling once (the meter counts up, the invoice is issued). */
+function Settle() {
+  const [ref, live, calm] = useLive(0.4);
+  const [n, setN] = useState(0);
+  useEffect(() => { if (calm) setN(PERIOD); }, [calm]);
+  useTick(150, live && n < PERIOD, () => setN((c) => c + 1));
+  const done = n >= PERIOD;
+  return (
+    <div className="bl2-st" ref={ref} aria-hidden="true">
+      <div className="bl2-st-c"><span className="l2-mono">billing.usage.record</span><motion.b key={Math.min(n, PERIOD)} className="bl2-st-ev l2-mono" initial={{ opacity: 0, y: -10 }} animate={{ opacity: done ? 0.4 : 1, y: 0 }} transition={{ duration: 0.25, ease: EASE }}>+1</motion.b></div>
+      <i className="bl2-st-ar" />
+      <div className="bl2-st-c bl2-st-m"><span className="l2-mono">Meter · api_requests</span><b className="l2-fig">{n}</b><em><b style={{ transform: `scaleX(${n / PERIOD})` }} /></em></div>
+      <i className="bl2-st-ar" />
+      <div className="bl2-st-c"><span className="l2-mono">Invoice · cus_abc123</span>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.b key={done ? 'i' : 'd'} className={'bl2-chip l2-mono ' + (done ? 'issued' : '')} initial={{ opacity: 0, scale: 1.25 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{done ? 'Issued' : 'Draft'}</motion.b>
+        </AnimatePresence>
       </div>
     </div>
   );
@@ -260,13 +325,13 @@ export default function Billing() {
         kick="What is Hanzo Billing"
         head="The objects you bill with"
         lede="Small pieces that compose, rather than one plan type that has to cover every case."
-        items={OBJECTS.map(([t, d], i) => [t, d, i === 0 ? <Prices key="p" /> : null])}
+        items={OBJECTS.map(([t, d], i) => [t, d, i === 0 ? <Prices key="p" /> : i === 1 ? <MeterFill key="m" /> : <IssueSteps key="s" />])}
         visual={(at, p) => <Invoice at={at} p={p} />}
         screens={1.1}
       />
       <History />
       <Start />
-      <Finale name="Billing" related={[['Logs', '/cloud/logs', 'Search every line'], ['Metrics', '/metrics', 'Time series & SLOs'], ['Dashboards', '/dashboards']]} tag="Metered billing engine" />
+      <Finale name="Billing" className="bl2-fin" object={<Settle />} related={[['Logs', '/cloud/logs', 'Search every line'], ['Metrics', '/metrics', 'Time series & SLOs'], ['Dashboards', '/dashboards']]} tag="Metered billing engine" />
     </main>
   );
 }
