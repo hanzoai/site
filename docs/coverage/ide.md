@@ -66,7 +66,7 @@ Done here: Deck sizes: h1 52, section 26, H3 17, lede 21, body 16; product rende
 - [ ] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16, no shadows on tiles; hand-drawn glyphs (pause, add, recall) until the Lucide set is in the kit; off-deck greys (#26262c, #e9e9ec, #86868b, #c5c5c5, #bababa, #b6b6b6) overridden to deck values (#262626, #e5e5e5, #737373, #a3a3a3, white 78/55%) in round 4. No three equal boxes: memory kinds 5/4/3, related apps as 72px hairline rows.
+Done here: taste.py passes; brows check: 0 labels above a headline; radii 24/16, no shadows on tiles; hand-drawn glyphs (pause, add, recall) until the Lucide set is in the kit; every off-deck grey literal in IdePage.css (#f5f5f7, #16161a, #1b1b20, #1e1e23, #1c1c1f, #48484e, #d1d1d6, #a1a1a6, #6e6e73, #0b0b0c, #86868b, #26262c, #e9e9ec and the #b5b5b5–#c7c7cc family) replaced in the file by deck values (#fafafa, #171717, #262626, #737373, #a3a3a3, #d4d4d4, #e5e5e5, #ededed) in round 5; the chapter code reads at white 55% on #171717 with whole lines. No three equal boxes: memory kinds 5/4/3, related apps as 72px hairline rows.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -100,7 +100,7 @@ Done here: No media on this page: the editor and the planes are drawn in the DOM
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask bottom at 520px on 375x667; a phone target crawl of <main> (7 Nov, round 3) finds 0 controls under 44px: View on GitHub, GitHub and Hanzo Cloud now have a 44px box, the app links in the close are 44px rows. The gutter memories are no longer focusable (their words are in the caption and the Teach room), so they are not targets.
+Done here: 1470x801 and 375x812 checked (no overlap); 320 scrollWidth 320; ask bottom at 520px on 375x667; a phone target crawl of <main> (7 Nov, round 3) finds 0 controls under 44px: View on GitHub, GitHub and Hanzo Cloud now have a 44px box, the app links in the close are 44px rows. Round 5: the memory kinds stack to one column under 900px (the 5/4/3 split is desktop only) and the keychain sits below the sandbox label on phones, re-shot at 375 with no overlap. The gutter memories are no longer focusable (their words are in the caption and the Teach room), so they are not targets.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

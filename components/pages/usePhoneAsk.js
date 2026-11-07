@@ -31,7 +31,9 @@ export default function usePhoneAsk() {
       if (!btn || !own) find();
       if (!btn || !own || !label || !href || words(label) === words(btn.dataset.xAsk)) return;
       const twins = [...document.querySelectorAll('main a, main button')].filter((el) => el === own || words(el.getAttribute('data-thumb') || el.textContent) === words(label));
-      const ask = twins.some(seen);
+      const bar = document.querySelector('.x-ask'); // the shared slim bar, when it rises, is the solid one
+      const barOn = !!bar && seen(bar) && +getComputedStyle(bar).opacity > 0.5;
+      const ask = twins.some(seen) || barOn;
       const past = own.getBoundingClientRect().bottom < 60;
       if (ask) H.dataset.ask = 'quiet'; else delete H.dataset.ask;
       if (past !== swapped) {
@@ -40,11 +42,12 @@ export default function usePhoneAsk() {
         btn.setAttribute('href', past ? href : btn.dataset.xHref);
       }
     };
-    const onScroll = () => { clearTimeout(t); t = setTimeout(update, 80); };
+    let t2 = 0;
+    const onScroll = () => { clearTimeout(t); clearTimeout(t2); t = setTimeout(update, 80); t2 = setTimeout(update, 800); }; // again once the bar has settled
     addEventListener('scroll', onScroll, { passive: true });
     const timers = [250, 1400, 2800].map((ms) => setTimeout(update, ms));
     return () => {
-      clearTimeout(t); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll);
+      clearTimeout(t); clearTimeout(t2); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll);
       delete H.dataset.ask;
       if (btn && swapped) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
     };
