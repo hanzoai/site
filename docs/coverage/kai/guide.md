@@ -39,7 +39,7 @@ Done here: Measured at 1470×801: the h1's last line ends at 305px (38% of the s
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy` / `CodeBlock`)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `Cta` ids `kai-guide.hero` (thumb), `kai-guide.hero-reference`, `kai-guide.recipes` (quiet), `kai-guide.recipes-cookbook`, `kai-guide.recipes-github`, `kai-guide.close`, `kai-guide.close-reference`.
+Done here: `Cta` ids `kai-guide.hero` (thumb), `kai-guide.hero-reference`, `kai-guide.recipes` (quiet), `kai-guide.recipes-cookbook`, `kai-guide.recipes-github`, `kai-guide.close`, `kai-guide.close-reference`. Round 9 (8 Nov): the page calls usePhoneAsk, so the header's button outlines while the hero's or the close's "Get an API key" is on screen (measured: one solid at 1200 ms and at the close, at 1470 and 375; the phone shows both for the first ~400 ms before the hook runs).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -55,7 +55,7 @@ Done here: The proof strip holds Hanzo's 84.4% (kai-1.4, ink) and 76.6% (Jev, gr
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /kai/guide`: 0 missing
 
-Done here: Only the 12px Zen Mono capital labels sit under 13px; code is the kit's 13.5px (13px in the phone terminal). Rest sizes: h1 52px (44px phone), section heads 26px, type names (h3) 21px so the h2 leads, closing sentence 32px (26px phone), recipe on stage 44px mono (26px phone), lede 21px, body 16–17px, figures 64px Air. Disclosure: the limits are a tab-style disclosure (one open, the others `hidden="until-found"`, open by `#limit-model` … `#limit-price` and by find-in-page via `beforematch`); long code opens capped at 12 lines with "Show all" (ui-strings `oss_show_all`), the full text in the HTML. Language tabs sync to `#curl` / `#python` / `#typescript` and persist in `localStorage` inside try/catch. Parity: text 184/184, links 7/7.
+Done here: Only the 12px Zen Mono capital labels sit under 13px; code is the kit's 13.5px (13px in the phone terminal). Rest sizes: h1 52px (44px phone), section heads 26px, type names (h3) 21px so the h2 leads, closing sentence 32px (26px phone), recipe on stage 44px mono (26px phone), lede 21px, body 16–17px, figures 64px Air. Disclosure: the limits are a tab-style disclosure (one open, the others `hidden="until-found"`, open by `#limit-model` … `#limit-price` and by find-in-page via `beforematch`); long code opens capped at 12 lines with "Show all" (ui-strings `oss_show_all`), the full text in the HTML. Language tabs sync to `#curl` / `#python` / `#typescript` and persist in `localStorage` inside try/catch. Parity: text 184/184, links 7/7. Round 9 copy check (offline, live side content/live/kai/guide.json, the same comparison as scripts/copycheck.mjs): missing 0 of 111. Every mixed line's loose runs and the text inside its code, b and mark sit in their own spans (W in KaiGuide.jsx), the recipe names too, and the two Jev body lines keep the JSON as one run, with the model id marked by the CSS Custom Highlight API.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside the deck ramp
@@ -82,14 +82,7 @@ Done here: Terminal and recipe-stage pause controls (44px, `aria-pressed`, white
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound: not built here (one shared kit, not merged yet)
 
-Done here:
-- Time: the session types once, streams once line by line, then rests on the answer: the request dims to white 55%, the response scrolls so usage and answers sit mid-window, and those six lines light in turn (120 ms apart).
-- Idle: the three question glyphs take turns (choice bars re-weight, the score dot steps, the noul thumb tips) in a 9 s round, one mover at a time, paused off screen; the recipe stage's hairline fills for 6 s and hands on to the next recipe (paused by its control, by the pointer on the room, by focus, and off screen); the checker walks Hanzo's five cases once, then rests.
-- Pointer and state: recipe names come on stage by line mask (name) and clip (line), the six stage ticks follow; kit tab pill; the open limit follows the checker's walk (its sentence rises in, its ink rule grows) and picking a limit loads its case; Price wipes a white tile behind the price line and steps the figure forward.
-- Walk (round 3): CLS 0.0045 at 1470×801 and 0.0048 at 375×812 (the limit slot keeps its tallest height, so the walk moves nothing).
-- Arrival: the h1 cut-in; the closing sentence cuts in by line mask.
-- Scroll-triggered: the diff lines land and the bench bars draw.
-- Walk (1470×801): 1 still stop of 11 (the footer); phone 3 of 16 (footer).
+Done here: Time: the hero is a conversation with Kai: three of the guide's own questions are asked by themselves, each answer streams in its documented shape, then it rests with Replay (Pause first in its bar); round 9 (8 Nov) fills the thread from the top like a terminal, so streaming no longer pushes the exchange above it (CLS 0.0324 → 0.0009 at 1470, 0.0005 at 375, measured). Idle: the three question glyphs take turns, the recipe stage hands on every 6 s, the checker walks Hanzo's five cases once. Pointer and state: tabs, limits that follow the checker, the tilting checker tile, recipe names on hover or focus. Arrival: the h1 cut-in. Scroll-linked: the section entrances only, under half. Reduced motion keeps the three answers settled. Sound: the shared kit is not merged yet.
 
 ## 10. Media
 - [x] `Film` and `Pic` only — n/a: the page has no image or film on hanzo.ai
