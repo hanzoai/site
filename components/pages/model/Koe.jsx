@@ -5,7 +5,10 @@
    "Hanzo" (/h/ /æ/ /n/ /z/ /oʊ/) light in step; each acting preset re-performs the same word (dramatic is slow and
    wide, documentary breathy and soft, gritty rough, commercial brisk and even). Tap the waveform to seek, pick a
    preset, or pause. (A drawn illustration of a performance, not Koe's audio.)
-   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
+   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour.
+   Persona: creative studio (researcher audience). Goal: request research access. CTA: Request access
+   (/research-access?models=koe). Metric: contact_sales_submit.
+   V2: 8/10 phone pill keeps speaking at rest (film breathes, playhead sweeps, 28-bar level meter; ~15% change, one Pause stops all), pill starts under the close and ends 28px above the headline, close inverts on hover */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Studio } from './Studio';
@@ -119,8 +122,9 @@ function Booth() {
   );
 }
 
-// the film closes into a tall capsule on the left (a horizontal one on phones, sized so the headline sits right under it); the headline sits right of it
-const PILL = (W, H) => { const t = H * 0.05, h = H * (H < 641 ? 0.36 : 0.42); return { l: 20, t, w: W - 40, h, r: h / 2 }; };
+// the film closes into a tall capsule on the left (a horizontal one on phones: it starts under the × close, 20 + 48 + 8,
+// and ends where Koe.css starts the headline, 47% of the stage, 41% on short phones); the headline sits right of it
+const PILL = (W, H) => { const t = 76, h = H * (H < 641 ? 0.41 : 0.47) - t; return { l: 20, t, w: W - 40, h, r: h / 2 }; };
 const CAPSULE = frame((W, H, wide) => {
   if (wide) { const w = Math.min(W * 0.2, H * 0.4), h = H * 0.84; return { l: W * 0.26 - w / 2, t: (H - h) / 2, w, h, r: w / 2 }; }
   return PILL(W, H);
