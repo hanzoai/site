@@ -47,15 +47,74 @@
 .mcp-figs.seen .mcp-plus { animation: mcp-breathe 1.5s ease-in-out 3; }
 .mcp-figs.seen .mcp-plus:last-of-type { animation-delay: .4s; }
 @keyframes mcp-breathe { 50% { opacity: .35; transform: scale(.8); } }
-.mcp-fig { display: inline-block; overflow: hidden; padding-bottom: .06em; }
-.mcp-fig > span { display: inline-block; }
+.mcp-fig { display: inline-flex; padding-bottom: .06em; }
+/* one box per character; the boxes never change size (count-roll draws its reel in a ::after over a clear digit) */
+.mcp-fig > .mcp-dg { position: relative; display: inline-block; height: 1em; line-height: 1em; overflow: hidden; }
+
+/* ---------- motion map: the five entrances, each its own (all start only from a client class; JS off = final) ---------- */
+/* 1 diagonal-wipe (hero): a diagonal clip sweeps left to right; fill backwards, so no clip stays once it has played */
+@keyframes mcp-diag { from { clip-path: polygon(0 0, 0 0, -45% 100%, -45% 100%); } to { clip-path: polygon(0 0, 145% 0, 100% 100%, -45% 100%); } }
+html.js .mcp-wipe { animation: mcp-diag 1s cubic-bezier(.65, 0, .25, 1) backwards; }
+html.js .mcp-hero-obj.mcp-wipe { animation-delay: .2s; }
+html.js .mcp-via.mcp-wipe { animation-delay: .42s; }
+/* 3 count-roll (figures): each digit's reel rolls up one full turn and stops on Hanzo's digit */
+.mcp-figs.e-arm .mcp-dg:not(.s) { color: transparent; }
+.mcp-figs.e-arm .mcp-dg:not(.s)::after { content: '0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9'; position: absolute; left: 0; right: 0; top: 0; white-space: pre; text-align: center; color: var(--ink); }
+.mcp-figs.e-go .mcp-dg:not(.s)::after { transform: translateY(calc(-1em * (10 + var(--n)))); transition: transform 1.3s cubic-bezier(.16, 1, .3, 1) var(--t); }
+.mcp-figs.e-arm .mcp-dg.s { opacity: 0; transform: translateY(.4em); }
+.mcp-figs.e-go .mcp-dg.s { opacity: 1; transform: none; transition: opacity .4s var(--t), transform .6s cubic-bezier(.16, 1, .3, 1) var(--t); }
+.mcp-figs.e-arm .mcp-f > span:last-child { opacity: 0; }
+.mcp-figs.e-go .mcp-f > span:last-child { opacity: 1; transition: opacity .5s .7s; }
+/* 4 side-carousel (domains): the cards ride in from the right along their snapping rail, one after another */
+.mcp-doms.e-arm .mcp-rail > li { transform: translateX(72vw); opacity: 0; }
+.mcp-doms.e-go .mcp-rail > li { transform: none; opacity: 1; transition: transform 1.05s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 80ms), opacity .35s linear calc(var(--i) * 80ms); }
+/* 5 curtain-rise (config): the words, then each block, rise from below as a clip lifts off them like a curtain */
+.mcp-cfg.e-arm .mcp-cur { clip-path: inset(100% 0 0 0); transform: translateY(56px); }
+.mcp-cfg.e-go .mcp-cur { clip-path: inset(0 0 0 0); transform: none; transition: clip-path 1s cubic-bezier(.65, 0, .25, 1) calc(var(--c, 0) * .16s), transform 1s cubic-bezier(.16, 1, .3, 1) calc(var(--c, 0) * .16s); }
+
+/* ---------- the signature: before / after (McpCompare.jsx) ---------- */
+.mcp-cmp-sec { padding-top: clamp(40px, 5vw, 72px); }
+.mcp-cmp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.mcp-cmp-head .a2-headline { max-width: none; }
+.mcp-cmp-hint { margin: 0; flex: none; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #737373; }
+.mcp-cmp { position: relative; display: grid; border-radius: var(--r-hero); overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: ew-resize; }
+.mcp-cmp-l { grid-area: 1 / 1; padding: clamp(24px, 3vw, 40px); }
+.mcp-cmp-l.before { background: #f5f5f5; color: var(--ink); }
+.mcp-cmp-l.after { background: #0a0a0a; color: #fafafa; }
+.mcp-cmp-side { margin: 0 0 24px; font: 500 13px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #525252; }
+.after .mcp-cmp-side { text-align: right; color: #a3a3a3; }
+.mcp-cmp-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; align-items: stretch; }
+.mcp-cmp-code { padding: 18px 20px; border-radius: var(--r-card); background: #fff; min-width: 0; }
+.after .mcp-cmp-code { background: #171717; }
+.mcp-cmp-code > span { display: block; margin-bottom: 12px; font-size: 13px; color: #737373; }
+.mcp-cmp-code pre { margin: 0; font-size: 14px; line-height: 1.6; white-space: pre; overflow: hidden; }
+.mcp-cmp-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; min-height: 22px; margin: 0 0 16px; font-size: 13px; color: #525252; }
+.after .mcp-cmp-bar { color: #a3a3a3; }
+.mcp-cmp-live { display: inline-flex; align-items: center; gap: 8px; color: #d4d4d4; }
+.mcp-cmp-live > span:last-child { color: #a3a3a3; }
+.mcp-cmp-tools ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.mcp-cmp-tools li { padding: 9px 13px; border: 1px solid transparent; border-radius: 10px; font-size: 14px; line-height: 1.2; }
+.before .mcp-cmp-tools li { border: 1px dashed #a3a3a3; color: transparent; }
+.after .mcp-cmp-tools li { background: #262626; color: #fafafa; }
+.mcp-cmp-div { position: absolute; top: 0; bottom: 0; left: var(--p); width: 2px; margin-left: -1px; background: #a3a3a3; pointer-events: none; }
+.mcp-cmp-h { position: absolute; top: 50%; left: var(--p); display: flex; align-items: center; justify-content: center; gap: 4px; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: #fafafa; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16); font: 400 20px/1 var(--sans); translate: -50% -50%; cursor: ew-resize; touch-action: none; transition: scale .2s var(--a2-ease); }
+.mcp-cmp-h:focus-visible { outline: 3px solid #737373; outline-offset: 3px; }
+.mcp-cmp.drag .mcp-cmp-h { scale: .94; }
+@media (hover: hover) { .mcp-cmp-h:hover { scale: 1.08; } }
+/* entrance 2, cursor-trail: a cursor and a trail of dots (difference blend, so they read on both halves) */
+.mcp-cmp-cur, .mcp-cmp-trail i { position: absolute; left: 0; top: 0; border-radius: 50%; background: #fafafa; mix-blend-mode: difference; pointer-events: none; will-change: transform; }
+.mcp-cmp-cur { width: 22px; height: 22px; margin: -11px 0 0 -11px; opacity: 0; transition: opacity .35s; }
+.mcp-cmp.intro .mcp-cmp-cur { opacity: 1; }
+.mcp-cmp-trail { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.mcp-cmp-trail i { width: 10px; height: 10px; margin: -5px 0 0 -5px; opacity: 0; }
 
 /* the runtime: sheets that stack, flat fills (no outline, no shadow) */
 .mcp-parts { padding-top: 0; padding-bottom: 72px; }
 .mcp-parts-in { position: relative; }
 .mcp-parts-pause { position: absolute; right: 0; top: -60px; }
-.mcp-stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 48px; }
-.mcp-sheet { position: sticky; top: calc(96px + var(--i) * 28px); display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 48px; align-items: start; min-height: min(580px, 70vh); padding: clamp(32px, 4vw, 56px); border-radius: var(--r-hero); background: #f5f5f5; }
+/* motion map: plain sheets one after another (they used to pin and stack while scrolling) */
+.mcp-stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.mcp-sheet { position: relative; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 48px; align-items: start; padding: clamp(32px, 4vw, 56px); border-radius: var(--r-hero); background: #f5f5f5; }
 .mcp-sheet:nth-child(2) { background: #ededed; }
 .mcp-sheet:nth-child(3) { background: #e5e5e5; }
 .mcp-sheet-n { display: block; font-size: 13px; letter-spacing: .08em; color: #737373; }
@@ -242,6 +301,20 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
   .mcp-hero-obj { order: 3; margin-top: 20px; }
   .mcp-hero-copy > .mcp-lede { order: 4; margin: 20px 0 20px; }
   .mcp-hero-copy > .a2-acts { order: 5; }
+  /* the copy is display:contents here (no box to clip), so each of its parts takes the diagonal wipe in turn */
+  html.js .mcp-hero-copy.mcp-wipe { animation: none; }
+  html.js .mcp-hero-copy > * { animation: mcp-diag 1s cubic-bezier(.65, 0, .25, 1) backwards; }
+  html.js .mcp-hero-copy > .mcp-cap { animation-delay: .1s; }
+  html.js .mcp-hero-copy > .mcp-lede { animation-delay: .32s; }
+  html.js .mcp-hero-copy > .a2-acts { animation-delay: .42s; }
+  html.js .mcp-via.mcp-wipe { animation-delay: .5s; }
+  .mcp-cmp-head { flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .mcp-cmp-in { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .mcp-cmp-l { padding: 20px 16px; }
+  .mcp-cmp-side { margin-bottom: 16px; }
+  .mcp-cmp-code { padding: 14px 16px; }
+  .mcp-cmp-code pre { font-size: 13px; }
+  .mcp-cmp-tools li { padding: 8px 11px; font-size: 13px; }
   .mcp-stream-top { height: 44px; }
   .mcp-pause { top: 0; }
   .mcp-rows { height: 136px; padding: 8px 0; }

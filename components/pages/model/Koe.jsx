@@ -1,21 +1,29 @@
 'use client';
-/* Koe: performance in every word. v2 launch page (Creative on Launch + Chapters, Hanzo's black and white). The film settles
+/* Koe: performance in every word. v2 launch page (Creative on Launch, Hanzo's black and white). The film settles
    into a tall capsule left of the headline.
-   Signature: a voice waveform with its transcript. The waveform streams out of the playhead while the phonemes of
-   "Hanzo" (/h/ /æ/ /n/ /z/ /oʊ/) light in step; each acting preset re-performs the same word (dramatic is slow and
-   wide, documentary breathy and soft, gritty rough, commercial brisk and even). Tap the waveform to seek, pick a
-   preset, or pause. (A drawn illustration of a performance, not Koe's audio.)
-   Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour.
+   Signature: waveform. The booth is the first screen after the stage: a live waveform of one performance of "Hanzo"
+   that plays by itself (it streams out of the playhead while the phonemes /h/ /æ/ /n/ /z/ /oʊ/ light in step), scrubs
+   (drag or click anywhere on it, a finger works the same and vertical swipes still scroll; arrow keys step a quarter
+   second, Page keys a second, Home/End jump, Space or Enter plays and pauses) and reacts to the pointer: the bars
+   under it lift and the performance still to come shows through around it, with a ghost playhead reading its time.
+   Each acting preset re-performs the same word (dramatic slow and wide, documentary breathy and soft, gritty rough,
+   commercial brisk and even). (A drawn illustration of a performance, not Koe's audio.) Reduced motion: the whole
+   performance drawn still, and scrubbing still moves the playhead and the phonemes.
+   Entrances (each page-local, once, as the section comes into view; reduced motion and JS off show the final layout):
+   typewriter (the booth's captions, timecode and specs type themselves out behind a caret, and the take starts at
+   00:00), slot-roll (What Koe does), pendulum (Where Koe fits), inertia-drag (Find your field), noise-dissolve (the
+   model cards). The capability chapters no longer pin: they are a plain section (KoeCreative.jsx).
+   Beyond: the studio map (KoeCreative.jsx): every creative model serving your field, in its own words and colour.
    Persona: creative studio (researcher audience). Goal: request research access. CTA: Request access
    (/research-access?models=koe). Metric: contact_sales_submit.
-   Body: KoeCreative.jsx (Koe's page-local copy of Creative.jsx) with KoePanels.jsx, so each chapter and "Where Koe
+   Body: KoeCreative.jsx (Koe's page-local copy of Creative.jsx) with KoePanels.jsx, so each capability and "Where Koe
    fits" draws its own booth-derived picture and Koe's wave film shows only on the stage, the map card and the model card.
-   V2: 8/10 own picture per chapter (contour, two-lane clone, visemes, watermark chain) and fits; one steady solid ask (hero solid, header outlined while it shows); h1 stays visible after the settle; every hover answers; gaps closed; phone tabs one row, pause docked on the pill, ask clear of the cookie card */
+   V2: 9/10 motion pass: the booth's waveform is the signature (plays, scrubs by drag, click, touch and keys, follows the pointer) right after the stage; five different entrances; the pinned chapters became a plain section */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Studio } from './Studio';
 import { Scene } from './Creative';
-import KoeCreative from './KoeCreative';
+import KoeCreative, { useEnter } from './KoeCreative';
 import { usePaused } from '../../v2/ModelFilm';
 import { box as frame, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
@@ -30,6 +38,7 @@ const PRESETS = [
 ];
 const LEN = 5, BARS = 160;
 const at = (pr, k) => [0.55 + (PH[k][1] - 0.55) * pr[1], 0.55 + (PH[k][2] - 0.55) * pr[1]];
+const stamp = (t) => { const s = Math.min(LEN, Math.max(0, t)); return '00:0' + Math.floor(s) + '.' + String(s >= LEN ? 0 : Math.floor((s % 1) * 100)).padStart(2, '0'); };
 
 // the performance: one amplitude per bar across the 5 seconds
 function shape(pr, seed) {
@@ -50,16 +59,89 @@ function shape(pr, seed) {
   return out;
 }
 
+/* entrance 1, typewriter: the booth's words type themselves out behind a caret. One line of the booth at a time with
+   the caret (its caption, the timecode, the preset label), and the spec rows and the figure caption type alongside it.
+   Clip-path only, line by line for wrapped text; the caret is a fixed 2px bar in the text's own colour. */
+const MAIN = ['.ko-top .mb-mono', '.ko-tc', '.ko-presets .mb-mono'], SIDE = ['.mb-specs dt', '.mb-specs dd', '.mb-cap'];
+function typer(fig, onStart) {
+  const main = MAIN.map((s) => fig.querySelector(s)).filter(Boolean), side = SIDE.flatMap((s) => [...fig.querySelectorAll(s)]);
+  const all = [...main, ...side];
+  const hide = (el) => { el.style.clipPath = 'inset(0 100% 0 0)'; };
+  all.forEach(hide);
+  let raf = 0, caret = null;
+  const geo = (el) => {
+    const r = el.getBoundingClientRect(), rg = document.createRange();
+    rg.selectNodeContents(el);
+    const lines = [...rg.getClientRects()].filter((q) => q.width > 0).reduce((acc, q) => { const l = acc[acc.length - 1]; if (l && Math.abs(l.top - q.top) < 4) { l.right = Math.max(l.right, q.right); l.bottom = Math.max(l.bottom, q.bottom); } else acc.push({ left: q.left, right: q.right, top: q.top, bottom: q.bottom }); return acc; }, []);
+    return { r, lines, total: lines.reduce((n, l) => n + l.right - l.left, 0) || 1, n: Math.max(1, (el.textContent || '').length) };
+  };
+  // the clip that shows the first k of the text's width: every line above in full, the current one up to its edge
+  const clip = (el, g, k) => {
+    let left = g.total * k, cur = g.lines[g.lines.length - 1], edge = cur ? cur.right : 0;
+    for (const l of g.lines) { const w = l.right - l.left; if (left <= w) { cur = l; edge = l.left + left; break; } left -= w; }
+    if (!cur) return null;
+    const x = edge - g.r.left, top = cur.top - g.r.top, bot = cur.bottom - g.r.top + 2, W = g.r.width;
+    el.style.clipPath = `polygon(0 0, ${W}px 0, ${W}px ${top}px, ${x}px ${top}px, ${x}px ${bot}px, 0 ${bot}px)`;
+    return { x: edge, top: cur.top, h: cur.bottom - cur.top };
+  };
+  const api = {
+    play() {
+      onStart();
+      const MS = 22; // per character
+      let t0 = 0;
+      const plan = [];
+      main.forEach((el) => { const n = Math.max(1, (el.textContent || '').length); plan.push({ el, at: t0, dur: n * MS, caret: true }); t0 += n * MS + 90; });
+      side.forEach((el, i) => { const n = Math.max(1, (el.textContent || '').length); plan.push({ el, at: 260 + i * 70, dur: Math.min(1100, n * 16) }); });
+      const end = Math.max(...plan.map((p) => p.at + p.dur)) + 500;
+      caret = document.createElement('i');
+      caret.className = 'ko-caret';
+      caret.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(caret);
+      const start = performance.now();
+      const tick = (now) => {
+        const ms = now - start;
+        let pos = null;
+        plan.forEach((p) => {
+          if (p.done) return;
+          const k = Math.min(1, Math.max(0, (ms - p.at) / p.dur));
+          if (ms < p.at) return;
+          const g = geo(p.el);
+          const q = clip(p.el, g, Math.round(k * g.n) / g.n);
+          if (p.caret && q && k < 1) pos = [q, getComputedStyle(p.el).color];
+          if (p.caret && q && k >= 1 && !pos) pos = [q, getComputedStyle(p.el).color];
+          if (k >= 1) { p.el.style.clipPath = ''; p.done = true; }
+        });
+        if (pos) {
+          const [q, col] = pos;
+          caret.style.transform = `translate(${q.x + 1}px, ${q.top}px)`;
+          caret.style.height = q.h + 'px';
+          caret.style.background = col;
+          caret.style.opacity = ms % 900 < 520 || ms < t0 ? '1' : '0';
+        }
+        if (ms < end) raf = requestAnimationFrame(tick);
+        else api.cancel();
+      };
+      raf = requestAnimationFrame(tick);
+    },
+    cancel() { cancelAnimationFrame(raf); all.forEach((el) => { el.style.clipPath = ''; }); if (caret) caret.remove(); caret = null; },
+  };
+  return api;
+}
+
 function Booth() {
-  const stage = useRef(null), cv = useRef(null), sEl = useRef(null), csEl = useRef(null), cells = useRef([]), letters = useRef([]);
+  const stage = useRef(null), wave = useRef(null), cv = useRef(null), sEl = useRef(null), csEl = useRef(null), cells = useRef([]), letters = useRef([]);
   const [pi, setPi] = useState(0);
   const [play, setPlay] = useState(true);
   const pagePaused = usePaused(); // the stage's one Pause holds the booth too
-  const S = useRef({ t: 1.9, hold: 0, k: -2 });
+  const calm = useReducedMotion();
+  // t: playhead (s); hx: the pointer over the wave (0..1) or null; lift: how much the pointer is felt (eases in/out)
+  const S = useRef({ t: 1.9, hold: 0, k: -2, hx: null, lx: 0.5, lift: 0, drag: false, still: false, aria: '' });
   const amps = useMemo(() => PRESETS.map((p, i) => shape(p, 11 + i)), []);
+  const piRef = useRef(0);
+  piRef.current = pi;
 
   const mark = (t) => {
-    const pr = PRESETS[pi];
+    const pr = PRESETS[piRef.current];
     let k = -1;
     PH.forEach((_, j) => { const [s, e] = at(pr, j); if (t >= s && t < e) k = j; });
     const done = PH.filter((_, j) => t >= at(pr, j)[1]).length;
@@ -72,34 +154,97 @@ function Booth() {
     });
   };
 
-  useLoop(stage, (_, dt, still) => {
+  const draw = () => {
     const c = cv.current, s = S.current;
     if (!c) return;
-    if (still) s.t = LEN;
-    else if (play && !pagePaused) {
-      if (s.t < LEN) s.t = Math.min(LEN, s.t + dt);
-      else if ((s.hold += dt) > 1.1) { s.t = 0; s.hold = 0; }
-    }
     const { w, h, d } = fit(c);
-    const g = c.getContext('2d'), A = amps[pi], bw = w / BARS, mid = h / 2;
+    const g = c.getContext('2d'), A = amps[piRef.current], bw = w / BARS, mid = h / 2;
+    const hx = s.hx == null ? s.lx : s.hx, L = s.still ? (s.hx == null ? 0 : 1) : s.lift;
     g.clearRect(0, 0, w, h);
     for (let i = 0; i < BARS; i++) {
       const t = (i / BARS) * LEN, x = i * bw + bw * 0.2, bwid = Math.max(1, bw * 0.6);
-      if (t > s.t) { g.fillStyle = 'rgba(255,255,255,.14)'; g.fillRect(x, mid - d, bwid, 2 * d); continue; }
-      const grow = Math.min(1, (s.t - t) / 0.12), a = A[i] * grow * (h * 0.46);
-      g.fillStyle = s.t - t < 0.25 ? '#ffffff' : 'rgba(245,245,247,.78)';
+      const near = L * Math.exp(-Math.pow(((i + 0.5) / BARS - hx) * BARS / 7, 2)); // the pointer's pull, 0..1
+      if (t > s.t) {
+        // still to come: a flat line, and around the pointer the performance ahead shows through
+        const a = A[i] * near * (h * 0.46);
+        g.fillStyle = `rgba(255,255,255,${(0.14 + near * 0.24).toFixed(3)})`;
+        g.fillRect(x, mid - Math.max(d, a), bwid, Math.max(2 * d, a * 2));
+        continue;
+      }
+      const grow = s.still ? 1 : Math.min(1, (s.t - t) / 0.12), a = A[i] * grow * (h * 0.46) * (1 + near * 0.18);
+      g.fillStyle = s.t - t < 0.25 || near > 0.5 ? '#ffffff' : 'rgba(245,245,247,.78)';
       g.fillRect(x, mid - a, bwid, Math.max(2 * d, a * 2));
     }
     g.fillStyle = '#f5f5f5';
     g.fillRect(Math.min(w - 2 * d, (s.t / LEN) * w), 0, 2 * d, h);
-    const sec = Math.floor(s.t), cs = Math.floor((s.t % 1) * 100);
+    // the ghost playhead under the pointer, with the time it would seek to
+    if (L > 0.02 && !s.drag) {
+      const px = Math.min(w - d, hx * w);
+      g.globalAlpha = Math.min(1, L);
+      g.fillStyle = 'rgba(255,255,255,.4)';
+      g.fillRect(px, 0, d, h);
+      g.font = `500 ${Math.round(12 * d)}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+      g.textBaseline = 'top';
+      const label = stamp(hx * LEN), tw = g.measureText(label).width, lx = px + 8 * d + tw > w ? px - 8 * d - tw : px + 8 * d;
+      g.fillStyle = '#d4d4d4';
+      g.fillText(label, lx, 10 * d);
+      g.globalAlpha = 1;
+    }
+    const sec = Math.floor(Math.min(LEN, s.t)), cs = Math.floor((s.t % 1) * 100);
     if (sEl.current) sEl.current.textContent = String(Math.min(5, sec));
     if (csEl.current) csEl.current.textContent = String(s.t >= LEN ? 0 : cs).padStart(2, '0');
+    const now = stamp(s.t);
+    if (wave.current && now !== s.aria) { s.aria = now; wave.current.setAttribute('aria-valuenow', s.t.toFixed(2)); wave.current.setAttribute('aria-valuetext', now + ' of 00:05.00'); }
     mark(s.t);
+  };
+
+  useLoop(stage, (_, dt, still) => {
+    const s = S.current;
+    if (still) { if (!s.still) { s.still = true; s.t = LEN; } draw(); return; }
+    s.still = false;
+    if (play && !pagePaused && !s.drag) {
+      if (s.t < LEN) s.t = Math.min(LEN, s.t + dt);
+      else if ((s.hold += dt) > 1.1) { s.t = 0; s.hold = 0; }
+    }
+    s.lift += ((s.hx == null ? 0 : 1) - s.lift) * Math.min(1, dt * 10);
+    if (s.hx != null) s.lx = s.hx;
+    draw();
   });
 
-  const seek = (e) => { const r = cv.current.getBoundingClientRect(); S.current.t = Math.max(0, Math.min(LEN, ((e.clientX - r.left) / r.width) * LEN)); S.current.hold = 0; };
+  const xAt = (e) => { const r = cv.current.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); };
+  const seekTo = (t) => { const s = S.current; s.t = Math.max(0, Math.min(LEN, t)); s.hold = 0; if (s.still || calm) draw(); };
+  const down = (e) => {
+    if (e.button > 0) return;
+    const s = S.current;
+    s.drag = true; s.hx = xAt(e);
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+    seekTo(s.hx * LEN);
+  };
+  const move = (e) => {
+    const s = S.current;
+    if (e.pointerType !== 'mouse' && !s.drag) return; // touch: the wave answers the finger only while it scrubs
+    s.hx = xAt(e);
+    if (s.drag) seekTo(s.hx * LEN);
+    else if (s.still || calm) draw();
+  };
+  const up = (e) => {
+    const s = S.current;
+    s.drag = false;
+    if (e.pointerType !== 'mouse' || e.type === 'pointerleave' || e.type === 'pointercancel') s.hx = null;
+    if (s.still || calm) draw();
+  };
+  const keys = (e) => {
+    const s = S.current;
+    const k = { ArrowRight: 0.25, ArrowUp: 0.25, ArrowLeft: -0.25, ArrowDown: -0.25, PageUp: 1, PageDown: -1 }[e.key];
+    if (k) { e.preventDefault(); seekTo(s.t + k); return; }
+    if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); seekTo(e.key === 'Home' ? 0 : LEN); return; }
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setPlay((p) => !p); }
+  };
   const choose = (i) => { setPi(i); S.current.t = 0; S.current.hold = 0; S.current.k = -2; setPlay(true); };
+  useEffect(() => { if (calm) draw(); }, [pi]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // entrance 1: the booth types itself in, and the take starts from the top as it does
+  useEnter(stage, null, (el) => typer(el.closest('.cr-studio') || el, () => { S.current.t = 0; S.current.hold = 0; S.current.k = -2; }));
 
   return (
     <div className="ko-booth" ref={stage}>
@@ -108,8 +253,8 @@ function Booth() {
         <p className="ko-tc mb-tnum"><span>00:0</span><span ref={sEl}>1</span>.<span ref={csEl}>90</span> <span className="ko-tc-of">/ 00:05.00 · TTFT: 180ms</span></p>
         <button type="button" className="mb-chip" aria-pressed={play} onClick={() => setPlay(!play)}>{play ? 'Pause' : 'Play'}</button>
       </div>
-      <div className="ko-wave" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={1.9} onKeyDown={(e) => { const k = { ArrowRight: 0.25, ArrowLeft: -0.25 }[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>
-        <canvas ref={cv} aria-hidden="true" onPointerDown={seek} />
+      <div className="ko-wave" ref={wave} role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={1.9} aria-valuetext="00:01.90 of 00:05.00" onKeyDown={keys}>
+        <canvas ref={cv} aria-hidden="true" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={up} />
       </div>
       <div className="ko-script">
         <ol className="ko-ph" aria-label="Phonemes">

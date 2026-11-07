@@ -1,18 +1,22 @@
 'use client';
 /* Learn Hanzo. The page is the map of the documentation, so it is drawn as one.
-   Signature: the docs as a transit map: a train rides the Start-here line once and stops at each station, whose guide opens beneath it.
+// Signature: word-light — Hanzo's own answer to "What is Hanzo and how does it work?" lights word by word as it is read (scroll reads it; hover, tap or arrow keys move the reading point), right under the transit map.
+// Entrances: tile-flip, fold-out, opposite-drift, spiral-in, depth-parallax
+   The transit map stays: a train rides the Start-here line once and stops at each station, whose guide opens beneath it.
    Persona: a developer arriving to learn Hanzo (PLAN-COMPONENTS 1.1 developer row). Goal: a first working request.
    CTA: "Get started" (the quickstart; data-cta learn.hero, data-thumb). Metric: api_key_created (via the quickstart).
    Beyond: the documentation drawn as a line you ride: each station opens its own guide in place, linked by its own name.
-   V2: 8/10 round 2: the rail peeks under the map (no dead screen), each 01–06 card carries its Hanzo model still with one numeral big at a time, Uta's film on Hanzo University, the 44px lead post as a full-width 8/5 row with Kai's film beside its post, the thinking as a hairline list, questions sync #q- to the address, and the page closes on "Get started".
-   Motion: the riding train leaving within 1 s, then breathing at rest under 5 s (signature, idle) + the rail thrown
-   with inertia and the question number (pointer) + stations that wipe their guide in the train's direction and
-   answers that open (state) + line-mask headlines (arrival); scroll-linked: none. Fade-ups: the map and the kit Faq.
-   0 UI hues. Every line and link is Hanzo's own. */
+   V2: 9/10 motion-map pass (7 Nov): the second screen is a word-light statement (Hanzo's own first answer, lit as it is read);
+   the five sections enter five ways in order: hero by a tile grid flipping away (CSS, from first paint), the index folding
+   out like paper from a top hinge, the dark room's halves drifting in from opposite sides, the questions spiralling in
+   from the edges, the close arriving in three depth layers at three speeds. Line-mask headlines and the map fade-up removed.
+   Motion kept: the riding train leaving within 1 s, then breathing at rest under 5 s (idle) + the rail thrown with inertia,
+   its numerals inking once, the question number (pointer) + stations that wipe their guide in the train's direction and
+   answers that open (state). Fade-ups: the kit Faq. 0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, More, Faq, Film, Img } from '../kit';
-import LineReveal, { NoJs } from '../v2/LineReveal';
+import { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
 
@@ -110,28 +114,117 @@ function Metro() {
   );
 }
 
+/* Entrance 1, tile-flip: a 8×5 grid of paper tiles (5×8 on a phone) covers the hero and flips away corner to corner,
+   each on its own vertical axis, so the title, the ask and the map are formed tile by tile. Pure CSS from first paint
+   (the hero is on screen at arrival); the tiles end edge-on and invisible, take no pointer, and are absent under reduced
+   motion and with JavaScript off. */
+const TILES = Array.from({ length: 40 }, (_, i) => ({ '--a': (i % 8) + Math.floor(i / 8), '--b': (i % 5) + Math.floor(i / 5) }));
+
 function Hero() {
   return (
     <section className="xlr-hero" aria-labelledby="xlr-h1">
-      <div className="xp-wrap">
+      <div className="xp-wrap xlr-hero-wrap">
         <div className="xp-grid xlr-hero-top">
           <div className="xlr-hero-h">
-            <LineReveal as="h1" id="xlr-h1" className="xp-display" lines={['Learn Hanzo']} />
+            <h1 id="xlr-h1" className="xp-display">Learn Hanzo</h1>
           </div>
-          <motion.div className="xlr-hero-side" initial={{ clipPath: 'inset(0% 0% 100% 0%)' }} animate={{ clipPath: 'inset(0% 0% 0% 0%)', transitionEnd: { clipPath: 'none' } }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
+          <div className="xlr-hero-side">
             <p className="xp-lede">Start with a working request, then go as deep as you need.</p>
             <div className="xlr-acts">
               <Cta to={DOCS + 'quickstart'} id="learn.hero" thumb className="xp-cta">Get started</Cta>
               <Cta to="https://hanzo.university" kind="link" id="learn.university" className="xlr-link">Hanzo University</Cta>
             </div>
-          </motion.div>
+          </div>
         </div>
-        <motion.div className="xp-grid xlr-hero-map" initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+        <div className="xp-grid xlr-hero-map">
           <Metro />
-        </motion.div>
+        </div>
+        <span className="xlr-tiles" aria-hidden="true">{TILES.map((st, i) => <i key={i} style={st} />)}</span>
       </div>
     </section>
   );
+}
+
+/* The signature, word-light: Hanzo's own first answer (the FAQ's "What is Hanzo and how does it work?", word for word)
+   set at display size and lit word by word as it is read. Scroll is the reader: the lit edge follows the statement up
+   the screen. A mouse over a word moves the reading point there while it hovers; a tap or click pins it there (scrolling
+   on resumes the reading); with the statement focused, ← → step a word, Home and End go to either end, Esc lets scroll
+   read again. Server HTML, JavaScript off and reduced motion show it fully lit. */
+const SAY = 'Hanzo is an AI cloud on one account. Chat with frontier models, build and ship with Hanzo Dev, and call the same models from one API: Enso, our frontier model, and Kai, which makes a decision in one call.';
+const WORDS = SAY.split(' ');
+
+function Say() {
+  const N = WORDS.length;
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const [read, setRead] = useState(N);
+  const [hover, setHover] = useState(null);
+  const [own, setOwn] = useState(null);
+  const pin = useRef(null);
+  useEffect(() => {
+    if (calm) { setRead(N); return undefined; }
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const el = ref.current; if (!el) return;
+      const r = el.getBoundingClientRect(); const vh = window.innerHeight;
+      const p = (vh * 0.85 - r.top) / (vh * 0.4 + r.height);
+      setRead(Math.max(0, Math.min(N, Math.round(p * N))));
+      if (pin.current != null && Math.abs(window.scrollY - pin.current) > 120) { pin.current = null; setOwn(null); }
+    };
+    const on = () => { if (!raf) raf = requestAnimationFrame(measure); };
+    measure();
+    window.addEventListener('scroll', on, { passive: true });
+    window.addEventListener('resize', on);
+    return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); if (raf) cancelAnimationFrame(raf); };
+  }, [calm, N]);
+  const n = hover ?? own ?? read;
+  const set = (v) => { pin.current = window.scrollY; setOwn(Math.max(0, Math.min(N, v))); };
+  const keys = (e) => {
+    const cur = own ?? read;
+    if (e.key === 'ArrowRight') set(cur + 1);
+    else if (e.key === 'ArrowLeft') set(cur - 1);
+    else if (e.key === 'Home') set(0);
+    else if (e.key === 'End') set(N);
+    else if (e.key === 'Escape') { pin.current = null; setOwn(null); return; }
+    else return;
+    e.preventDefault();
+  };
+  return (
+    <section className="xp-sec xlr-say" aria-labelledby="xlr-say-k">
+      <div className="xp-wrap xp-grid">
+        <div className="xlr-say-top">
+          <span id="xlr-say-k" className="xlr-say-k">{QA[0][0]}</span>
+          <span className="xlr-say-n x-mono" aria-hidden="true">{String(n).padStart(2, '0')} / {N}</span>
+        </div>
+        <p className="xlr-say-t" ref={ref} tabIndex={0} onKeyDown={keys} onPointerLeave={() => setHover(null)}>
+          {WORDS.map((w, i) => (
+            <span key={i}>
+              <span className={i < n ? 'on' : undefined} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHover(i + 1); }} onClick={() => set(i + 1)}>{w}</span>{i < N - 1 ? ' ' : ''}
+            </span>
+          ))}
+        </p>
+        <div className="xlr-say-more"><More to="/platform">How the platform fits together</More></div>
+      </div>
+    </section>
+  );
+}
+
+/* Entrances 2–5 are set by data-e on each part and played once, part by part, as each enters the screen (one observer for
+   the page). Before it plays a part waits in its start pose only when JavaScript runs and motion is allowed (Learn.css);
+   every animation fills backwards only, so it ends at the true layout and leaves hover and press transforms free. */
+function useEnter(root) {
+  useEffect(() => {
+    const el = root.current; if (!el) return undefined;
+    const parts = [...el.querySelectorAll('[data-e]')];
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) { parts.forEach((p) => p.setAttribute('data-in', '')); return undefined; }
+    const io = new IntersectionObserver((list) => list.forEach((x) => {
+      if (!x.isIntersecting) return;
+      x.target.setAttribute('data-in', ''); io.unobserve(x.target);
+    }), { rootMargin: '0px 0px -10% 0px' });
+    parts.forEach((p) => io.observe(p));
+    return () => io.disconnect();
+  }, [root]);
 }
 
 /* What to try: one rail of six numbered cards. Proximity snap with a 16% peek; a mouse can throw it (drag with inertia),
@@ -193,7 +286,7 @@ function Rail() {
   };
   const click = (e) => { if (ref.current?.dataset.thrown) { e.preventDefault(); e.stopPropagation(); } };
   return (
-    <div className="xlr-rail-scene">
+    <div className="xlr-rail-scene" data-e="fold">
       <div className="xlr-rail-top">
         <h2 id="xlr-try-h" className="xp-head">Pick what to try</h2>
         <div className="xlr-rail-ctl">
@@ -281,7 +374,7 @@ function Index() {
     <section className="xp-sec xlr-index" aria-label="Pick what to try, Go further">
       <div className="xp-wrap">
         <Rail />
-        <div className="xp-grid xlr-further">
+        <div className="xp-grid xlr-further" data-e="fold">
           <Uni />
           <div className="xlr-col further">
             <h2 id="xlr-further-h" className="xp-head">Go further</h2>
@@ -300,17 +393,17 @@ function Read() {
   return (
     <section className="xp-sec xp-dark xlr-think" data-room="dark" aria-labelledby="xlr-blog-h">
       <div className="xp-wrap">
-        <h2 id="xlr-blog-h" className="xp-head">From the blog</h2>
+        <h2 id="xlr-blog-h" className="xp-head" data-e="drift-l">From the blog</h2>
         <ol className="xp-grid xlr-posts">
-          <li className="lead">
+          <li className="lead" data-e="drift-split">
             <A to={lead[3]} className="xlr-post">
               <time className="x-mono" dateTime={lead[1]}>{lead[1]}</time>
               <b>{lead[0]}</b>
               <span>{lead[2]}</span>
             </A>
           </li>
-          {rest.map(([t, date, d, h]) => (/introducing-kai/.test(h) ? (
-            <li key={h}>
+          {rest.map(([t, date, d, h], k) => (/introducing-kai/.test(h) ? (
+            <li key={h} data-e={k % 2 ? 'drift-r' : 'drift-l'}>
               <div className="xlr-post has-film">
                 <Loop className="xlr-post-m" src="/learn/kai-640.webm" poster="/models/kai.webp" />
                 <time className="x-mono" dateTime={date}>{date}</time>
@@ -319,7 +412,7 @@ function Read() {
               </div>
             </li>
           ) : (
-            <li key={h}>
+            <li key={h} data-e={k % 2 ? 'drift-r' : 'drift-l'}>
               <A to={h} className="xlr-post">
                 <time className="x-mono" dateTime={date}>{date}</time>
                 <b>{t}</b>
@@ -328,7 +421,7 @@ function Read() {
             </li>
           )))}
         </ol>
-        <div className="xp-grid xlr-thk">
+        <div className="xp-grid xlr-thk" data-e="drift-split">
           <h2 id="xlr-think-h" className="xp-head">Read the thinking</h2>
           <ul className="xlr-think-grid">
             {THINK.map(([t, d, h]) => (
@@ -361,8 +454,8 @@ function useHeroAsk(ref) {
 function Close() {
   return (
     <section className="xp-sec xlr-close" aria-labelledby="xlr-close-h">
-      <div className="xp-wrap xp-grid">
-        <LineReveal as="h2" id="xlr-close-h" className="xp-display sm xlr-close-h" lines={['Start with a working request, ', 'then go as deep as you need.']} onView />
+      <div className="xp-wrap xp-grid" data-e="depth">
+        <h2 id="xlr-close-h" className="xp-display sm xlr-close-h"><span className="xlr-d1">Start with a working request, </span><span className="xlr-d2">then go as deep as you need.</span></h2>
         <div className="xlr-close-act">
           <Cta to={DOCS + 'quickstart'} id="learn.close" className="xp-cta">Get started</Cta>
           <Cta to="https://hanzo.university" kind="link" id="learn.close-university" className="xlr-link">Hanzo University</Cta>
@@ -392,7 +485,7 @@ function Questions() {
   };
   return (
     <section className="xp-sec tight xlr-qa" aria-labelledby="xlr-qa-h">
-      <div className="xp-wrap xp-grid">
+      <div className="xp-wrap xp-grid" data-e="spiral">
         <div className="xlr-sticky">
           <h2 id="xlr-qa-h" className="xp-head">Questions</h2>
           <span className="xlr-qa-fig" aria-hidden="true">
@@ -409,10 +502,12 @@ function Questions() {
 export default function Learn() {
   const ref = useRef(null);
   useHeroAsk(ref);
+  useEnter(ref);
   return (
     <main className="xp xlr" data-ask-on="" ref={ref}>
       <NoJs />
       <Hero />
+      <Say />
       <Index />
       <Read />
       <Questions />
