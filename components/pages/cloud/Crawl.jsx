@@ -24,8 +24,9 @@
 //   Only Hanzo's numbers ever show: the slider has three stops and nothing in between.
 // Every word, price and link is Hanzo's; example.com and its pages are an example.
 import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../../kit';
+import { useCalm } from '../../ui';
 import { scrollToY } from '../../../lib/scroll';
 import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
 import KeynoteSpec, { Fig } from '../../v2/KeynoteSpec';
@@ -74,7 +75,7 @@ function Wire({ big }) {
 function Reader() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.25 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const paused = useStagePause();
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -126,11 +127,12 @@ const BEATS = [
 // the example site, in a 400 x 300 box: [x, y, parent, path, when in the spread 0..1, minor]
 const SITE = [
   [200, 34, -1, 'example.com', 0],
-  [86, 104, 0, '/docs', 0.08], [200, 108, 0, '/blog', 0.14], [314, 104, 0, '/pricing', 0.2],
-  [40, 178, 1, '/docs/start', 0.3, 1], [134, 184, 1, '/docs/api', 0.36], [222, 190, 2, '/blog/launch', 0.44], [330, 178, 3, '/pricing/faq', 0.5],
-  [80, 252, 5, '/docs/api/auth', 0.6, 1], [170, 258, 5, '/docs/api/errors', 0.68, 1],
+  // spaced so no two labels touch at 1470 or 375 (each pair's centres are wider apart than half their labels)
+  [80, 104, 0, '/docs', 0.08], [200, 108, 0, '/blog', 0.14], [322, 104, 0, '/pricing', 0.2],
+  [40, 178, 1, '/docs/start', 0.3, 1], [128, 184, 1, '/docs/api', 0.36], [242, 190, 2, '/blog/launch', 0.44], [358, 178, 3, '/pricing/faq', 0.5],
+  [54, 252, 5, '/docs/api/auth', 0.6, 1], [172, 250, 5, '/docs/api/errors', 0.68, 1],
 ];
-const META = [262, 282];
+const META = [290, 290];
 const LANES = [['/docs/start', 0], ['/docs/api', 0], ['/blog/launch', 0], ['/app', 1], ['/pricing', 0], ['/pricing/faq', 0]];
 
 function CrawlMap({ beat }) {
@@ -168,13 +170,13 @@ function CrawlMap({ beat }) {
           <svg viewBox="0 0 400 300" className="cr-edges">
             {SITE.map(([x, y, pa, , t], i) => pa >= 0 && <line key={i} x1={SITE[pa][0]} y1={SITE[pa][1]} x2={x} y2={y} pathLength="1" style={{ '--t': t }} />)}
             <line className="bad" x1={SITE[6][0]} y1={SITE[6][1]} x2={META[0] - 4} y2={META[1] - 14} pathLength="1" style={{ '--t': 0.78 }} />
-            <path className="hop" d="M330 178 C 378 188, 390 214, 366 232" pathLength="1" />
+            <path className="hop" d="M358 178 C 394 188, 394 208, 368 222" pathLength="1" />
           </svg>
           {SITE.map(([x, y, , path, t, minor]) => (
             <span key={path} className={'cr-n' + (minor ? ' minor' : '') + (t === 0 ? ' root' : '')} style={{ left: x / 4 + '%', top: y / 3 + '%', '--t': t === 0 ? -0.15 : t }}><i /><span>{t > 0.1 && <span className="cr-tab-d">{path.slice(0, path.lastIndexOf('/'))}</span>}{t > 0.1 ? path.slice(path.lastIndexOf('/')) : path}</span></span>
           ))}
           <span className="cr-n bad" style={{ left: META[0] / 4 + '%', top: META[1] / 3 + '%', '--t': 0.86 }}><i />169.254.169.254<b>refused</b></span>
-          <span className="cr-guard" style={{ left: 366 / 4 + '%', top: 232 / 3 + '%' }}><b>302</b><span>refused at the hop</span></span>
+          <span className="cr-guard" style={{ left: 368 / 4 + '%', top: 222 / 3 + '%' }}><b>302</b><span>refused at the hop</span></span>
         </div>
         <div className="cr-ports">
           <p><b>HTTP</b><span>/v1/crawl</span></p>
@@ -190,7 +192,7 @@ function Scene() {
   const run = useRef(null);
   const box = useRef(null);
   const wide = useWide();
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const p = useMotionValue(0);
   const p6 = useTransform(p, (v) => v * 6);
   const [beat, setBeat] = useState(0);
@@ -267,6 +269,30 @@ function Scene() {
     </section>
   );
 }
+
+/* ---------- How it works: each step gets its own small object, played once as the row is reached ---------- */
+function StepArt({ k }) {
+  const ref = useRef(null);
+  const on = useInView(ref, { amount: 0.7, once: true });
+  return (
+    <div ref={ref} className={'cr-sa cr-sa-' + k} data-on={on ? '' : undefined} aria-hidden="true">
+      {k === 'f' && <>
+        <span className="cr-sa-u"><i /></span>
+        <span className="cr-sa-ln"><b /></span>
+        <svg className="cr-sa-sh" viewBox="0 0 24 24" width="26" height="26"><path d="M12 2.5 4.5 5.5v6c0 4.6 3.2 8.4 7.5 10 4.3-1.6 7.5-5.4 7.5-10v-6z" /><path className="t" d="M8.5 12.2l2.5 2.5 4.6-5" /></svg>
+        <span className="cr-sa-pg">{[70, 92, 84, 56].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}</span>
+      </>}
+      {k === 'x' && <span className="cr-sa-pg big">
+        <span className="c nav" /><span className="c side" /><span className="c ad" />
+        <span className="art">{[64, 96, 88, 92, 70].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}</span>
+      </span>}
+      {k === 'r' && <span className="cr-sa-md">
+        {[['#', 46], ['', 88], ['##', 58], ['-', 66], ['-', 52], ['```', 74]].map(([g, w], i) => <span key={i} style={{ '--i': i }}><em>{g}</em><i style={{ width: w + '%' }} /></span>)}
+      </span>}
+    </div>
+  );
+}
+const Step = ({ k, t, d }) => <div className="cr-step"><div><p className="kn-title cr-st">{t}</p><p>{d}</p></div><StepArt k={k} /></div>;
 
 /* ---------- Beyond: which plan covers it (three stops, Hanzo's three allowances, nothing in between) ---------- */
 const PLANS = [
@@ -355,7 +381,7 @@ const REL = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Mult
 function Desk() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const [done, setDone] = useState(false);
   // the session runs once when it is first seen: the step reads the project, then the gateway lands on staging
   useEffect(() => {
@@ -443,9 +469,9 @@ export default function Crawl() {
         title="How it works"
         aside={<p className="kn-lede">Each step is its own file and can be tested without the other two.</p>}
         rows={[
-          ['Step 01', <><p className="kn-title cr-st">Fetch</p><p>One guarded HTTP request. The dialer refuses private and link-local addresses on every hop, so a URL that redirects somewhere it should not reach is stopped there rather than after the fact.</p></>],
-          ['Step 02', <><p className="kn-title cr-st">Extract</p><p>The document is reduced to the subtree a reader would call the content, plus the title, description and canonical URL the page claims for itself. If the HTML alone is not enough, this is where a headless browser gets involved.</p></>],
-          ['Step 03', <><p className="kn-title cr-st">Render</p><p>That subtree becomes Markdown with its structure intact — headings, lists, code and links, with relative URLs resolved against the page. It is the format a model reads best and a person can still diff.</p></>],
+          ['Step 01', <Step k="f" t="Fetch" d="One guarded HTTP request. The dialer refuses private and link-local addresses on every hop, so a URL that redirects somewhere it should not reach is stopped there rather than after the fact." />],
+          ['Step 02', <Step k="x" t="Extract" d="The document is reduced to the subtree a reader would call the content, plus the title, description and canonical URL the page claims for itself. If the HTML alone is not enough, this is where a headless browser gets involved." />],
+          ['Step 03', <Step k="r" t="Render" d="That subtree becomes Markdown with its structure intact — headings, lists, code and links, with relative URLs resolved against the page. It is the format a model reads best and a person can still diff." />],
           ['Two ways to call it', <><p className="cr-ways" aria-hidden="true"><span><b>HTTP</b>/v1/crawl</span><span><b>MCP</b></span></p><p>Over HTTP at /v1/crawl when your code is doing the asking, or over MCP when a model is.</p></>],
           ['Reads', <ul className="cr-kinds">{['Static Sites', 'SPAs', 'Documentation', 'E-Commerce', 'Forums', 'REST API'].map((t) => <li key={t}>{t}</li>)}</ul>],
           ['Returns', <div className="cr-figs">{[['JS', 'Full rendering'], ['Parallel', 'High throughput'], ['LLM', 'Structured extraction'], ['MD', 'Clean Markdown']].map(([a, b]) => <Fig key={a} n={a} u={b} />)}</div>],

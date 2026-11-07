@@ -18,7 +18,8 @@
 V2: 8/10 the black-room hero is the shell, the one big thing under a 52px title, driving itself with a Pause; six sticky chapters pin it on each module; the palette is real; four facts open into their page; Get Console, then a close with one ask; deck colours, radii and scale, outlined objects, no springs
    The v1 drag-to-reorder sidebar is gone (its words stay, with the palette). Every word and link is Hanzo's. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useCalm } from '../../ui';
 import { useRouter } from 'next/navigation';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import { A, More } from '../../kit';
@@ -88,7 +89,7 @@ function focusFind() {
 
 /* A module's own moment: steps 0..n, played once each time it opens (on screen only); reduced motion shows the end. */
 function usePlay(play, n, ms, first = 500) {
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const [k, setK] = useState(0);
   useEffect(() => {
     if (calm) { setK(n); return; }
