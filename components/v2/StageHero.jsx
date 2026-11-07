@@ -12,6 +12,7 @@
      side  = copy on 5 columns, the object on 7, arriving from the right edge (flip: object left, copy right);
      frame = the object full-bleed behind the copy, then clipped into a 28px card.
    - Desktop pins for ~75svh so the settle reads. Phones and reduced motion get the settled state with no pin.
+   - travel={{ s: [from, to], y: [from, to] }} overrides the look's scale or travel for an object that needs it.
    - Put the page accent on <main style={{ '--ac': '#…' }}> (see components/v2/Launch.css). */
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, useMotionTemplate } from 'motion/react';
@@ -29,12 +30,12 @@ const LOOKS = {
   frame: { s: [1.08, 1], y: ['0svh', '0svh'], x: ['0%', '0%'], clip: [0, 1] },
 };
 
-export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', flip, dark, cue, thumb, children, className = '', id }) {
+export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', travel, flip, dark, cue, thumb, children, className = '', id }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const wide = useWide();
   const on = wide && !calm;
-  const L = LOOKS[look] || LOOKS.rise;
+  const L = { ...(LOOKS[look] || LOOKS.rise), ...travel };
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const s = useTransform(p, [0, 0.85], L.s);
   const y = useTransform(p, [0, 0.85], L.y);
