@@ -1,19 +1,25 @@
 'use client';
-/* Tabs. Keep tabs on your agents.
+/* Tabs, v2. V2: 8/10 Stage window (shell panes and their tree arrive huge and settle), three pinned chapters on why it is shaped this way, a linked-machines map, a dark tile room, terminal-green accent
+   Keep tabs on your agents.
    Signature: the layout is a tree, drawn live. Shell panes split themselves inside a browser window while the tree
    beside them grows a branch for every split; close a pane and its sibling takes the space, and nothing else moves.
    Split and close them yourself.
    Beyond: the phone flip. The same tree, turned into what Tabs does on a phone: swipeable pages instead of slivers,
-   with the key row a soft keyboard lacks (Esc, Ctrl, Tab and the arrows). Every word is Hanzo's. */
+   with the key row a soft keyboard lacks (Esc, Ctrl, Tab and the arrows).
+   Motion budget: signature = the live tree (layout re-flow); supporting = Stage (Settle), Chapters (PinChapters),
+   magnetic primary. Accent: terminal green. One dark room: "What you get". Every word is Hanzo's. */
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
-import { A, Go } from '../kit';
+import { EASE, Copy, Magnetic } from '../ui';
+import { A } from '../kit';
 import { useLive, useEvery } from './cloud/Frame';
 import { leaf, split, close, leaves, isLeaf } from './tabsTree';
+import LineMask from '../v2/LineMask';
+import Settle from '../v2/Settle';
+import PinChapters from '../v2/PinChapters';
+import '../v2/Scale.css';
 import './Tabs.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const START = { id: 's0', dir: 'row', a: leaf('p1', 'build'), b: leaf('p2', 'work') };
 // the tree tends itself until you take over: two splits, then two closes, and it is back where it began
 const SCRIPT = [
@@ -26,7 +32,7 @@ const DOOMED = [null, null, 'p3', 'p4']; // the pane about to close glows first
 
 function Pane({ p, act, doomed, hand }) {
   return (
-    <motion.div layout layoutId={'xtb-' + p.id} className={'xtb-pane' + (doomed ? ' doomed' : '')} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 30 }}>
+    <motion.div layout layoutId={'xtb-' + p.id} className={'xtb-pane' + (doomed ? ' doomed' : '')} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
       <div className="xtb-pane-bar">
         <span className="x-mono">{p.name}</span>
         <span className="xtb-pane-acts">
@@ -112,73 +118,50 @@ function Hero() {
   };
   const list = leaves(t);
   return (
-    <section className="xtb-hero" ref={ref} aria-labelledby="xtb-h1">
-      <div className="x-wrap xtb-hero-grid">
-        <div className="xtb-copy">
-          <motion.p className="x-kick" {...up(0)}>Hanzo Tabs</motion.p>
-          <h1 id="xtb-h1" className="xtb-h1">{['Keep tabs on', 'your agents.'].map((l, i) => <span className="x-line" key={l}><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 + i * 0.12 }}>{l}</motion.span></span>)}</h1>
-          <motion.p className="xtb-lede" {...up(0.35)}>Your coding agents work in shells on real machines. Tabs puts every one of those shells in front of you — split, tiled, and reachable from anywhere you can open a browser.</motion.p>
-          <motion.div className="xtb-acts" {...up(0.48)}><A to="https://tabs.hanzo.ai" className="x-btn solid" data-thumb>Open Tabs</A></motion.div>
-        </div>
-        <motion.div className="xtb-stage" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
-          <div className="xtb-bar">
-            <div className="xtb-seg" role="radiogroup" aria-label="Show it on">
-              {['Browser', 'Phone'].map((k, i) => (
-                <button key={k} type="button" role="radio" aria-checked={phone === !!i} onClick={() => setPhone(!!i)}>
-                  {phone === !!i && <motion.span layoutId="xtb-seg" className="xtb-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                  <span>{k}</span>
-                </button>
-              ))}
-            </div>
-            {mine && <button type="button" className="xtb-reset" onClick={() => { setT(START); setN(0); setMine(false); }}>Reset</button>}
+    <section className="xtb-hero" aria-labelledby="xtb-h1" data-morph-target>
+      <div className="w2-wrap">
+        <div className="xtb-top">
+          <div>
+            <motion.p className="w2-kicker acc xtb-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Hanzo Tabs</motion.p>
+            <LineMask as="h1" id="xtb-h1" now className="w2-display xtb-h1" lines={['Keep tabs on', 'your agents.']} />
           </div>
-          <div className="xtb-room">
-            <AnimatePresence mode="wait" initial={false}>
-              {phone ? (
-                <motion.div key="p" className="xtb-room-in" initial={{ opacity: 0, rotateY: -20 }} animate={{ opacity: 1, rotateY: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}><Phone list={list} /></motion.div>
-              ) : (
-                <motion.div key="b" className="xtb-room-in" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
-                  <div className="xtb-win">
-                    <div className="xtb-win-bar"><i /><i /><i /><span className="x-mono">tabs.hanzo.ai</span></div>
-                    <div className="xtb-win-body"><Panes t={t} n={list.length} doomed={warn ? DOOMED[n] : null} hand={hand} /></div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <div className="xtb-tree" aria-label="The layout as a tree">
-              <p className="x-mono">layout</p>
-              <ul><Tree t={t} /></ul>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-const MACHINES = ['a laptop', 'a workstation', 'a GPU box'];
-
-function Machines() {
-  return (
-    <section className="x-sec xtb-link" aria-labelledby="xtb-link">
-      <div className="x-wrap xtb-link-grid">
-        <div>
-          <h2 id="xtb-link">Link a machine, and it appears here</h2>
-          <p>Run <code className="x-mono">hanzo link</code> on a laptop, a workstation, a GPU box — anything with a shell. The machine keeps the connection, and nothing is exposed to the network it sits on. Open Tabs and the shells are there.</p>
-          <div className="xtb-cmd"><span className="x-mono">$ hanzo link</span><Copy text="hanzo link" /></div>
+          <motion.div className="xtb-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <p className="w2-lede">Your coding agents work in shells on real machines. Tabs puts every one of those shells in front of you — split, tiled, and reachable from anywhere you can open a browser.</p>
+            <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
+          </motion.div>
         </div>
-        <Rise className="xtb-map" delay={0.1} aria-hidden="true">
-          <div className="xtb-lan">
-            <span className="xtb-lan-k x-mono">its own network · nothing exposed</span>
-            {MACHINES.map((m, i) => (
-              <div key={m} className="xtb-mach" style={{ '--i': i }}>
-                <b>{m}</b><span className="x-mono">hanzo link</span>
-                <i className="xtb-wire"><em /></i>
+        <div ref={ref}>
+          <Settle from={1.06} lift={60}>
+            <div className="xtb-stage w2-object">
+              <div className="xtb-bar">
+                <div className="xtb-seg" role="radiogroup" aria-label="Show it on">
+                  {['Browser', 'Phone'].map((k, i) => (
+                    <button key={k} type="button" role="radio" aria-checked={phone === !!i} onClick={() => setPhone(!!i)}><span>{k}</span></button>
+                  ))}
+                </div>
+                {mine && <button type="button" className="xtb-reset" onClick={() => { setT(START); setN(0); setMine(false); }}>Reset</button>}
               </div>
-            ))}
-          </div>
-          <div className="xtb-you"><span className="x-mono">tabs.hanzo.ai</span><b>Open Tabs</b><div className="xtb-mini">{MACHINES.map((m) => <i key={m} />)}</div></div>
-        </Rise>
+              <div className="xtb-room">
+                <AnimatePresence mode="wait" initial={false}>
+                  {phone ? (
+                    <motion.div key="p" className="xtb-room-in" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease: EASE }}><Phone list={list} /></motion.div>
+                  ) : (
+                    <motion.div key="b" className="xtb-room-in" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
+                      <div className="xtb-win">
+                        <div className="xtb-win-bar"><i /><i /><i /><span className="x-mono">tabs.hanzo.ai</span></div>
+                        <div className="xtb-win-body"><Panes t={t} n={list.length} doomed={warn ? DOOMED[n] : null} hand={hand} /></div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <div className="xtb-tree" aria-label="The layout as a tree">
+                  <p className="x-mono">layout</p>
+                  <ul><Tree t={t} /></ul>
+                </div>
+              </div>
+            </div>
+          </Settle>
+        </div>
       </div>
     </section>
   );
@@ -190,25 +173,88 @@ const WHY = [
   ['The layout is a tree', 'A list of rectangles is the shape that looks easier and then cannot answer the only question that matters: close a pane, and who gets the space? With a tree the space belongs to the sibling, so closing replaces the split with that sibling and nothing else moves.', 'tree'],
 ];
 
-function Glyph({ k }) {
-  if (k === 'none') return <div className="xtb-g none"><b>browser</b><i><em /></i><s>server</s><i><em /></i><b>machine</b></div>;
-  if (k === 'url') return <div className="xtb-g url x-mono"><span>/</span><span className="xtb-url"><em>build</em><em>work</em></span></div>;
-  return <svg className="xtb-g tree" viewBox="0 0 120 64"><path d="M60 8v14M60 22H24v14M60 22h36v14M96 36H76v14M96 36h20v14" /><circle cx="60" cy="8" r="4" /><circle cx="24" cy="40" r="4" /><circle cx="76" cy="54" r="4" /><circle cx="116" cy="54" r="4" /></svg>;
+/* Chapter visuals: each idea drawn large. */
+function NoServer() {
+  return (
+    <div className="xtb-v none" aria-hidden="true">
+      <b>browser</b>
+      <i className="xtb-v-wire"><em /><em /><em /></i>
+      <s className="x-mono">server</s>
+      <i className="xtb-v-wire back"><em /><em /><em /></i>
+      <b>machine</b>
+    </div>
+  );
+}
+function ShellUrl({ on }) {
+  const [k, setK] = useState(0);
+  useEvery(1500, on, () => setK((v) => (v + 1) % 2));
+  return (
+    <div className="xtb-v url" aria-hidden="true">
+      <div className="xtb-v-bar x-mono">tabs.hanzo.ai/<AnimatePresence mode="popLayout" initial={false}><motion.b key={k} initial={{ y: '80%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-80%', opacity: 0 }} transition={{ duration: 0.4, ease: EASE }}>{['build', 'work'][k]}</motion.b></AnimatePresence></div>
+      <div className="xtb-v-two">
+        {['build', 'work'].map((s, i) => <div key={s} className={'xtb-v-sess' + (k === i ? ' on' : '')}><span className="x-mono">tmux · {s}</span><i /><i /><i /></div>)}
+      </div>
+    </div>
+  );
+}
+function SpaceTree({ on }) {
+  const [shut, setShut] = useState(false);
+  useEvery(1800, on, () => setShut((v) => !v));
+  return (
+    <div className="xtb-v tree" aria-hidden="true">
+      <div className="xtb-v-grid">
+        <motion.div layout className="xtb-v-p a" transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">build</span></motion.div>
+        <motion.div layout className="xtb-v-col" transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+          <motion.div layout className="xtb-v-p b" transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">work</span></motion.div>
+          {!shut && <motion.div layout className="xtb-v-p c" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}><span className="x-mono">shell 3</span></motion.div>}
+        </motion.div>
+      </div>
+      <p className="xtb-v-note x-mono">{shut ? 'closed · the sibling takes the space' : 'split ⇅ · two siblings'}</p>
+    </div>
+  );
 }
 
 function Why() {
+  const [ref, live] = useLive(0.05);
   return (
-    <section className="x-sec xtb-why" aria-labelledby="xtb-why">
-      <div className="x-wrap">
-        <h2 id="xtb-why" className="xtb-why-h">Why it is shaped this way</h2>
-        <div className="xtb-why-grid">
-          {WHY.map(([t, d, k], i) => (
-            <article key={t}>
-              <div aria-hidden="true"><Glyph k={k} /></div>
-              <h3>{t}</h3>
-              <p>{d}</p>
-            </article>
-          ))}
+    <div ref={ref}>
+      <PinChapters id="xtb-why" label="Why it is shaped this way" className="xtb-pin"
+        chapters={WHY.map(([t, d], i) => ({ k: i === 0 ? 'Why it is shaped this way' : `Why · ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
+        visual={(at) => (
+          <div className="xtb-vis">
+            {[NoServer, ShellUrl, SpaceTree].map((V, i) => (
+              <motion.div key={i} className="xtb-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.96 }} transition={{ duration: 0.6, ease: EASE }} aria-hidden={at !== i}>
+                <V on={live && at === i} />
+              </motion.div>
+            ))}
+          </div>
+        )} />
+    </div>
+  );
+}
+
+const MACHINES = ['a laptop', 'a workstation', 'a GPU box'];
+
+function Machines() {
+  return (
+    <section className="w2-sec xtb-link" aria-labelledby="xtb-link">
+      <div className="w2-wrap xtb-link-grid">
+        <div className="xtb-link-copy">
+          <h2 id="xtb-link" className="w2-headline">Link a machine, and it appears here</h2>
+          <p className="w2-body">Run <code className="x-mono">hanzo link</code> on a laptop, a workstation, a GPU box — anything with a shell. The machine keeps the connection, and nothing is exposed to the network it sits on. Open Tabs and the shells are there.</p>
+          <div className="xtb-cmd"><span className="x-mono">$ hanzo link</span><Copy text="hanzo link" /></div>
+        </div>
+        <div className="xtb-map" aria-hidden="true">
+          <div className="xtb-lan">
+            <span className="xtb-lan-k x-mono">its own network · nothing exposed</span>
+            {MACHINES.map((m, i) => (
+              <div key={m} className="xtb-mach" style={{ '--i': i }}>
+                <b>{m}</b><span className="x-mono">hanzo link</span>
+                <i className="xtb-wire"><em /></i>
+              </div>
+            ))}
+          </div>
+          <div className="xtb-you"><span className="x-mono">tabs.hanzo.ai</span><b>Open Tabs</b><div className="xtb-mini">{MACHINES.map((m) => <i key={m} />)}</div></div>
         </div>
       </div>
     </section>
@@ -224,14 +270,14 @@ const GET = [
 
 function What() {
   return (
-    <section className="x-sec xtb-what" data-room="dark" aria-labelledby="xtb-what">
-      <div className="x-wrap">
+    <section className="w2-sec xtb-what w2-dark" data-room="dark" aria-labelledby="xtb-what">
+      <div className="w2-wrap">
         <div className="xtb-what-top">
-          <h2 id="xtb-what">What you get</h2>
-          <div className="xtb-acts"><Go to="https://tabs.hanzo.ai" solid>Open Tabs</Go><Go to="https://github.com/hanzo-apps/tabs">Read the source</Go></div>
+          <h2 id="xtb-what" className="w2-display s">What you get</h2>
+          <div className="xtb-acts"><A to="https://tabs.hanzo.ai" className="w2-cta">Open Tabs</A><A to="https://github.com/hanzo-apps/tabs" className="w2-ghost">Read the source</A></div>
         </div>
         <div className="xtb-tiles">
-          {GET.map(([t, d, k], i) => (
+          {GET.map(([t, d, k]) => (
             <article key={t} className={'xtb-tile ' + k}>
               <div className="xtb-tile-v" aria-hidden="true">
                 {k === 'term' && <span className="x-mono"><b>$</b><em /></span>}
@@ -239,7 +285,7 @@ function What() {
                 {k === 'phone' && KEYS.map((x) => <b key={x} className="x-mono">{x}</b>)}
                 {k === 'mit' && <b className="x-mono">MIT</b>}
               </div>
-              <h3>{t}</h3>
+              <h3 className="w2-title">{t}</h3>
               <p>{d}</p>
             </article>
           ))}
@@ -251,10 +297,10 @@ function What() {
 
 export default function Tabs() {
   return (
-    <main className="xtb">
+    <main className="xtb w2">
       <Hero />
-      <Machines />
       <Why />
+      <Machines />
       <What />
     </main>
   );
