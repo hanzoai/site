@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout's `#main`; links via `A`/`Cta`; /referra
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards on this page.
 
-Done here: No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once within 1 s of being reached (CSS from an empty first frame, so nothing is wiped and retyped; JS off shows it whole). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
+Done here: First screen at 1470×801 holds the h1 (52px, top 265), lede, Apply and the whole link (64px mono, bottom 650). No label above the h1; "Refer customers to Hanzo" (52px) cuts in by CSS line mask from the first paint, then the link writes itself once within 1 s of being reached (CSS from an empty first frame, so nothing is wiped and retyped; JS off shows it whole). `PageHero` is not in the kit yet: the hero is page-local (headline, lede, one Cta). The page ends on its own light close (headline + Apply) then the footer; kit `Band` would be a second dark room back to back with the rule room. JS off: `NoJs` shows every final state.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -154,6 +154,6 @@ Done here: Static Hanzo copy; nothing to load or fail. With JS off every state i
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/affiliate.md` verdict 8 or more
+- [ ] Review read: `docs/review/affiliate.md` verdict 8 or more (7/10 capped; awaiting re-review)
 
-Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/affiliate.md` gave 8/10 (ready); re-checked after the MASTER scale change.
+Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the page and route headers. Review read: `docs/review/affiliate.md` gave 7/10 (capped on the old card; page itself 8); its fixes are done: card in this 18-part format, h1 rests at 52px, and the link (hero object) sits whole in the first screen at 1470×801 (top 463, bottom 650; proof `docs/gallery/affiliate/v3-desktop-first.jpg`).

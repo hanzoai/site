@@ -2,7 +2,7 @@
 /* Affiliates. Its idea is the link that remembers who sent it.
    Persona: a partner who refers organizations to Hanzo. Goal: apply. CTA: "Apply" (mailto hello@hanzo.ai, Hanzo's own
    subject line). Metric: contact_click (no dedicated id in MASTER section 1 for affiliate applications).
-   V2: 8/10 grey deck: the affiliate link itself, at display size in its own screen, writes itself once and rests with its code marked (it leans to the pointer); the four steps are sticky chapters told in Hanzo's own sentences with one object changing beside them (a swipe rail on phones); the dark room is Hanzo's three rules as the headline, each drawn as a diagram that runs itself; one Apply, sticky from the end of the hero.
+   V2: 8/10 grey deck: h1 rests at 52px and the affiliate link (64px mono, the hero object) now sits whole in the first screen at 1470x801; writes itself once and rests with its code marked (it leans to the pointer); the four steps are sticky chapters told in Hanzo's own sentences with one object changing beside them (a swipe rail on phones); the dark room is Hanzo's three rules as the headline, each drawn as a diagram that runs itself; one Apply, sticky from the end of the hero.
    Signature: sticky chapters: Hanzo's four step sentences pin on the left while one object on the right turns from the
    apply request into the reply, the code and link, and an org landing on the link.
    Beyond: the rule, drawn: first touch, one affiliate per org, never your own, each as a small diagram that plays
