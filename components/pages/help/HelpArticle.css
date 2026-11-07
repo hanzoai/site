@@ -354,3 +354,25 @@
   .xhp-panel[data-rest] .xhp-cap-t.xhp-cap-last { display: flex !important; }
   .xhp-panel[data-rest] .xhp-cap-dots[data-walk] i { background: var(--ink); }
 }
+
+/* 8 Nov (review round 6): the panel shows, the text says. One switch at a time (the panel's own steps aside while 01's
+   scene shows the setting); 04's rows are the checklist themselves; the phone mock clips inside its bezel; the demo
+   switch answers the pointer; the close reads as one unit */
+.xhp-try[data-away] { display: none; } /* the panel sits in the sticky aside, so its height changing never moves the text */
+/* the rows tick themselves on phones only: on the desktop the panel's ledger beside them already ticks them */
+.xhp-row-tick { display: none; }
+@media (max-width: 899px) { .xhp-row-tick { display: block; } .xhp-ul.leads li:has(.xhp-row-tick) { grid-template-columns: minmax(0, 15ch) minmax(0, 1fr) 16px; } }
+.xhp-row-tick { align-self: start; margin-top: 5px; color: var(--ink); opacity: .2; transition: opacity var(--d-base) var(--e-out); }
+.xhp-ul.leads li[data-on] .xhp-row-tick { opacity: 1; }
+.xhp-screen[data-device='phone'] .xhp-set, .xhp-screen[data-device='phone'] .xhp-app { overflow: hidden; clip-path: inset(0 round 22px); }
+@media (hover: hover) {
+  .xhp-screen .xhp-sw[data-t]:hover { background: #a3a3a3; }
+  .xhp-screen .xhp-sw[data-t][data-on]:hover { background: #262626; }
+  .xhp-screen .xhp-sw[data-t]:hover i { transform: translateX(2px); }
+  .xhp-screen .xhp-sw[data-t][data-on]:hover i { transform: translateX(16px); }
+}
+.xhp-close .xhp-end .xhp-h2 { grid-row: 1 / span 2; align-self: end; }
+@media (max-width: 899px) { .xhp-close .xhp-end .xhp-h2 { grid-row: auto; } }
+@media (prefers-reduced-motion: reduce) { .xhp-row-tick { transition: none; } }
+.xhp-screen .xhp-sw[data-t] { transition: background-color var(--d-base) var(--e-out), transform var(--d-fast) var(--e-out); }
+.xhp-screen .xhp-sw[data-t]:active { transform: scale(.94); }
