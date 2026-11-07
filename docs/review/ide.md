@@ -1,74 +1,93 @@
 # /ide — James-eye review
 Verdict: 6/10
-First complaint: "Three grey boxes in a row, twice: the memory tiers and then CLI, Playground, Desktop. That's the template look I said no to, and the arrow is jammed right into 'Playground'. And turn JavaScript off and the editor sits on top of the headline and the button."
-(Walked 7 Nov 16:16 UTC, HEAD `c73ec2f5`, at 1470×801 (fine pointer) and 375×812 (isMobile, hasTouch), plus 320×700, 375×667, reduced motion and JS off. Frames are in the critic's scratch folder; nothing was added to the repo.)
+First complaint: "On my phone the memory part is broken: three skinny grey boxes squeezed side by side, the words falling down one letter at a time, and 'procedural' cut off the edge. Then in 'safe by default' the keychain sits on top of the word Sandbox. It looks unfinished."
+(Walked 7 Nov 16:20–16:33 UTC, HEAD `a070a06d` → `915e945a` (the later commit touched only the shared phone ask for /ide), at 1470×801 (fine pointer) and 375×812 (isMobile, hasTouch), plus 320×700, 375×667, reduced motion and JS off. Frames are in the critic's scratch folder; nothing was added to the repo.)
 
 ## What works
-- The hero is the product. The h1 is cut in by line mask, and at 400 ms you can see it rising. A live editor running Hanzo's own start script sits under the ask. Memories (episodic, semantic, procedural) surface in its gutter, and the agent panel runs "deploy the gateway to staging". Two screenshots 1 s apart differ with no input, on both sizes.
-- The dark room is the best screen on the page. The orbiting tiers have a working Pause (hover lifts the fill from #171717 to #262626 and the border from 14% to 30% white), and the accordion rows brighten on hover (#a1a1a6 to #f5f5f7) and press to .99.
-- The header ask swaps on desktop. It reads "Try Hanzo" at the top, then a solid "Open the IDE" once you scroll, and it turns white in the dark room. The primary darkens on hover (#0a0a0a to #2c2c2e) and presses to .98. The related cards lift 4px on hover. Copy puts the exact displayed prompt on the clipboard (verified by reading it back).
-- CLS 0.0004 on desktop (only the header tools) and 0 on phone. With reduced motion, 0 animations are running after 3.5 s and the top screen is still. Scroll width at 320 is 320.
+- The hero is the product, and it is alive. The h1 (52px desktop, 40px phone) is cut in by line mask. The editor runs Hanzo's own start script, and its memories (EPISODIC, SEMANTIC, PROCEDURAL) land in the gutter. The agent panel walks "deploy the gateway to staging". Two frames 1 s apart differ with no input, at both sizes.
+- The fixes from the last review landed:
+  - JS off is clean at 1470 and 375. `elementFromPoint` on "Open the IDE" returns the primary, and 0 text blocks are hidden.
+  - The related apps are now 72px hairline rows (64px on phone). Every arrow sits 20px from its title, and each row fills #f5f5f5 on hover with the arrow sliding 4px.
+  - The editor Pause fills white 8%. The memory kinds take a #f5f5f5 fill and a 30% border.
+  - `.ide-mem-w` no longer animates width.
+- Every primary control presses: scale .97–.98, or .99 on rows. The hero primary darkens from #0a0a0a to #2c2c2e. "View on GitHub" slides its arrow 4px. The Tiers Pause goes from #171717 to #262626.
+- The dark room is the best screen. An orbit of three tiers drifts on its own, with a working pause, and sits beside a one-open accordion.
+- Measured:
+  - CLS 0.00036 on desktop (all from the shared header tools) and 0 on phone.
+  - With reduced motion, 0 animations are running after 3.5 s and the hero is a still frame.
+  - Scroll width at 320 is 320.
+  - The primary's bottom edge is at 520px on 375×667.
+  - On phone the header swaps to a solid "Open the IDE" after the hero (y = 1500 and 4000).
 - `taste.py` passes on both files. Parity is 75/75 text and 10/10 links.
 
 ## The 11 answers
-1. **Sells in 5 s, moves within 1 s?** Yes. The h1 (52px), lede, "Open the IDE" and the editor all fit 1470×801. The editor moves untouched.
-2. **One in, one out, or a document?** Mostly a scene: stage, then planes, then three pinned chapters, then "Tell it something", then the dark room. Three moments read as a document:
-   - The "Paste and ship" strip, a row of form text right after the hero.
-   - About 250px of empty white before "The workbench you know" and again before the memory demo.
-   - "Open it in the browser, or build it on your machine": a small heading floating in a 560px-wide void beside a terminal that is still typing line 10 after 6 s.
-3. **A real object in every section?** Yes: editor, planes, call graph, sandbox, memory cards, orbit, terminal, the Get IDE card, the related cards.
+1. **Sells in 5 s, moves within 1 s?** Yes. The h1, lede, "Open the IDE" and the top of the editor all fit 1470×801, and the editor moves untouched. On phone the h1 (3 lines), lede, primary and the editor's title bar fit the first 812px.
+2. **One in, one out, or a document?** Mostly a scene: the stage settles, the planes explode, three pinned chapters change their picture (01 → 03, verified), then Teach, the dark room, Start, the close and the Band. It still has dead air. At 1470 there is about 380px of empty white between the end of the planes and the chapter tabs (frame d-s-06), so for one whole scroll step the screen shows nothing but the bottom edge of a black card.
+3. **A real object in every section?** Yes: the editor, the planes, the memory picture, the call graph, the sandbox, the memory cards, the orbit, the terminal, the Get IDE card, the related rows and the Band.
 4. **One ask, sticky; scale rhythm?**
-   - Desktop: yes, the header swaps to "Open the IDE".
-   - Phone: the header says solid "Try Hanzo" at y = 0, 900, 3000 and 6000, and no ask bar ever rises, even after cookies are rejected. So the first phone screen has two solid fills ("Try Hanzo" and "Open the IDE"), and the page's own ask never sticks. This is shared, but real.
-   - Scale has rhythm: 52 / 32 / 26 headings, and one 88px statement in the Band.
-5. **Every hover and press answers?** No. These show no hover change:
-   - the editor's Pause (`.ide-pause` in the stage: colour #a3a3a3, transparent before and after);
-   - the memory kind radios ("what happened", "what is true about the project", "how things are done here");
-   - the plane chips (those are decorative, which is fine).
-6. **Overlaps, font swap, layout shift?**
-   - Overlap at rest: in the related card, the "Playground" title and its arrow touch, with a measured gap of 0px. The CLI gap is 47px and Desktop 17px.
-   - JS off: the editor overlaps the h1, the lede and the primary. `elementFromPoint` at the centre of "Open the IDE" returns `li.k3` from the editor, so the ask cannot be clicked.
-   - In the first walk the dev overlay showed a red "1 Issue" badge in every frame on both sizes. It was a hydration attribute mismatch (`console.error`). It did not recur in 9 later loads, so it is intermittent, but it is real.
-   - No font swap; CLS is about 0.
-7. **Which reference, is its motion there?** Apple product page: the stage settles, there are pinned chapters, and one statement closes the page. Yes. synchronized.studio: the related cards carry `data-morph`. Present.
-8. **Different from neighbours?** Yes. The hero is a self-running editor with a memory gutter, not the /cli or /desktop window. The tab row "IDE · CLI · Playground · Desktop · API Keys" now sits in the close as Hanzo's link row, not in the editor.
-9. **18 parts?** The card is complete in form, but some ticks are false (see below).
-10. **Banned tells?** Yes, two cases of "three equal boxes in a row":
-    - the memory tier cards `.ide-teach-g` (`repeat(3, 1fr)`, measured 368×240 ×3);
-    - the related cards CLI / Playground / Desktop (223×168 ×3).
+   - The ask: yes on desktop, where the header turns to solid "Open the IDE" after the hero, and now on phone too (after the shared fix).
+   - Scale: h1 52, sections 26–32, H3 17, one large Band statement. Big, medium and small are all present.
+5. **Every hover and press answers?** Nearly. These do not answer hover:
+   - the chapter tabs 01/02/03 (`.a2-ch` buttons: #737373 before and after);
+   - "Deploy to Cloud" (quiet Cta in the Get IDE card: no computed change);
+   - the script's Copy (`.ide-script-bar button`): only an inset `rgba(128,128,128,.1)` wash on #1c1c1f, effectively invisible.
 
-    Smaller breaks:
-    - `.ide-mem-w` animates `max-width`, and part 8 bans animating width.
-    - `.ide-mem-k` sets lowercase mono labels at 11.5px, under the 13px floor.
-    - Off-deck greys are hard-coded in `IdePage.css`: #26262c, #e9e9ec, #86868b, #c5c5c5, #bababa, #b6b6b6.
+   Every press answers.
+6. **Overlaps, font swap or layout shift?** Desktop is clean: no font swap and CLS about 0. **The phone has two real breaks:**
+   - **`.ide-teach-g` at 375 keeps three columns** (133 / 106 / 80px). Line 348 of `IdePage.css` (`grid-template-columns: minmax(0,5fr) minmax(0,4fr) minmax(0,3fr)`) sits outside any media query, after the `max-width: 899px` rule at line 232, so it wins. The result:
+     - "gateway is on staging" and any memory you add ("uses pnpm") wrap one letter per line;
+     - the `procedural` chip overflows its 80px card (scrollWidth 116);
+     - the Recall button hangs off the right card's edge.
+   - **The sandbox picture at 375:** the `.ide-key` chip (x 85–339) covers the "SANDBOX" label (x 52–116). It reads "SAND".
+   - The console showed a hydration attribute mismatch, with the red "1 Issue" badge in every frame, on 2 of 8 loads (both walk loads, 0 of 6 re-loads). It is intermittent, but James would see the badge.
+7. **Which reference, is its motion there?** The Apple product page: the stage settles, the chapters pin while their panel changes, and one statement closes the page. Present. synchronized.studio: the related rows carry `data-morph`. Present.
+8. **Different from neighbours?** Yes. The hero is a self-running editor with a memory gutter, and the signature is the orbiting memory tiers. It is not the /cli terminal or the /desktop window.
+9. **18 parts?** The card is complete in form, with honest gaps left unticked, but the part 11 claim is false (see below).
+10. **Banned tells?**
+    - None outright.
+    - **Low-contrast dark mode** in the chapter 01 picture. Its code is #48484e on #16161a, about 2.0:1. `.ide-pic-src { padding-right: 230px; text-overflow: ellipsis }` cuts every line to its first word ("open", "git", "cd", "npm"), so the picture reads as broken, not as a dimmed backdrop. It is `aria-hidden`, but James sees it.
+    - The kit Band's headline arrives with `filter: blur(12px)` easing to 0. Part 9 says no opacity-and-blur reveal and blur of 4px or less. The Band is shared, but it is on this page.
+    - The Teach tiles are still three grey boxes in a row at 460 / 368 / 276px. They are unequal, so this passes the letter of the rule, but it is the weakest-looking screen on desktop.
+    - Apple-style greys still render: #f5f5f7, #16161a, #1b1b20, #48484e, #d1d1d6, #a1a1a6, #6e6e73 and #0a0a0b. `taste.py` passes them (low chroma), but they are not deck values.
 11. **Copy untouched?** Yes (parity is clean).
 
-## Card check (`docs/coverage/ide.md`)
-- **Part 3, false:** "JS off: legible … 0 hidden text blocks". With JS off, the editor covers the h1, the lede and the primary, and 13 of 99 text blocks are hidden: the chapter visuals `.a2-ch-vis`, the `.ide-pic-chip` labels and the sandbox list. A false claim caps the verdict at 7.
-- **Part 4, false on phone:** "Sticky ask in header and bar after the hero, same label". At 375 the header stays "Try Hanzo" and there is no bar (shared). It is true on desktop.
-- **Part 8, false:** "Every control has hover…". The editor Pause and the three memory kind radios do not change on hover.
-- **Part 6, partly false:** "No text under 13px except mono capitals". `.ide-mem-k` is 11.5px lowercase.
-- **Part 11, partly false:** "Every target 44px". At 375 the editor's gutter memories ("episodic what happened" and the others) are focusable at 102–118 × 28px.
-- **Part 17 / 3, partly false:** "no console errors". A hydration mismatch fired on the first walk (intermittent).
-- **True:** one h1; the h1 and editor are in the server HTML; parity is clean; `taste.py` passes; reduced motion shows the final state; no horizontal scroll at 320; the ask's bottom edge is at 520px on 375×667; Copy copies exactly what it shows; `data-cta="ide.hero"` and `data-thumb` are on the primary; the related cards Morph.
-- **Honest gaps, already unticked:** `lib/cta.js`, `PageHero`, kit tables and code, the icon set, budgets, `CodeBlock`, an error boundary, the review at 8 or more.
+## Card check (docs/coverage/ide.md)
+- **Part 11, false:** "375×812 and 1470×801 pass with no overlap". At 375 the Teach grid stays three columns and its text breaks letter by letter, `procedural` overflows its card, and the keychain chip covers "SANDBOX". A false claim caps the verdict at 7.
+- **Part 7, misleading:** "off-deck greys … overridden to deck values". The six named greys no longer render, true. But the computed styles of `main` still show #f5f5f7, #16161a, #1b1b20, #1e1e23, #48484e, #d1d1d6, #a1a1a6, #6e6e73, #0a0a0b, #b5b5b5, #c7c7c7, #aeaeae and #959595. The "no literal hex" box is honestly unticked.
+- **Part 8, partly false:** "Every control has hover". The chapter tabs, the quiet "Deploy to Cloud" and the script Copy show no visible hover. The chapter tabs and Deploy to Cloud may be kit-owned; the script Copy is not.
+- **Part 12, partly false:** "Contrast measured, text at 4.5:1". The chapter 01 picture code and the editor line numbers are #48484e on #16161a/#1b1b20, about 2:1 (decorative and `aria-hidden`, but visible).
+- **Part 3 / 17, partly false:** "no console errors". A hydration mismatch fired on 2 of 8 loads.
+- **True:**
+  - JS off is legible, with 0 hidden blocks and the primary clickable at both sizes.
+  - One h1; the h1 and the editor are in the server HTML.
+  - Reduced motion shows the final state (0 running animations).
+  - No horizontal scroll at 320.
+  - The ask's bottom edge is at 520px on 375×667.
+  - 0 targets under 44px in `main` on phone.
+  - `data-cta="ide.hero"` and `data-thumb` are on the primary.
+  - The related rows Morph, and the sticky ask swaps on desktop and phone.
+  - Parity is 75/75 and 10/10; `taste.py` passes.
 
 ## Fixes (in order)
-1. **Break the three equal boxes.**
-   - `.ide-teach-g`: make it one wide card and two narrow ones, for example `grid-template-columns: minmax(0,5fr) minmax(0,4fr) minmax(0,3fr)` with the episodic card the tallest. Or make it a single sheet with three rows divided by 1px hairlines.
-   - Related cards (`.ide-rel-a` big cards): use 8/5 asymmetry (CLI large, Playground and Desktop stacked small), or a hairline list of three 72px rows with the glyph as the hover preview.
-2. **Fix the arrow collision.** Inside the card, give `.ide-rel-a b` `flex: 1` and `.ide-rel-i` `margin-left: auto`, so every arrow sits at the right edge with an equal gap (currently 47 / 0 / 17px).
-3. **Make JS off safe.**
-   - Add `html:not(.js) .ide-stage{height:auto} html:not(.js) .ide-stick{position:static;height:auto;display:block} html:not(.js) .ide-obj{transform:none!important;margin:48px auto 0}`, so the editor sits below the ask and does not cover it.
-   - Add `html:not(.js) .a2-ch-vis, html:not(.js) .ide-pic-chip{opacity:1!important;visibility:visible!important}`.
-   - Re-measure until 0 hidden text blocks remain and `elementFromPoint` on the primary returns the primary.
-4. **Make the last controls answer hover.**
-   - `@media (hover:hover){ .ide-pause:hover{color:#fafafa;background:rgba(255,255,255,.08)} }`.
-   - For the memory kind radios (`.ide-teach-f [role=radio]`): on hover, a border of black 30% and the `#f5f5f5` fill.
-5. **Find the hydration mismatch.** Look for anything in `Stage`/`Editor` that reads `useNarrow`, `matchMedia`, time or random values during render, and move it into `useEffect`, so the dev overlay never shows "1 Issue".
-6. **Stop animating width.** Replace the `.ide-mem-w` `max-width` transition with `clip-path: inset(0 100% 0 0)` → `inset(0)` (or a transform), and raise `.ide-mem-k` to 12px (with mono capitals) or 13px.
-7. **Close the dead air.**
-   - Cut the empty band above `.ide-engine` and above the "Tell it something" block to one section padding (about 116px), not two.
-   - In `Start`, bottom-align the heading with the terminal (the 8/5 rule) and speed the typed script so it finishes within 3 s of the section entering view.
-8. **Move the literal greys onto deck tokens.** Replace #26262c, #e9e9ec, #86868b, #c5c5c5, #bababa and #b6b6b6 with #262626, #e5e5e5, #737373 and white at 78% / 55% on black.
-9. **Report the phone ask (shared).** In `docs/requests/ide.md`, note that at 375 the header keeps a solid "Try Hanzo" and no ask bar rises after the hero. Until it is fixed, untick the part 4 box for phone.
+1. **Phone Teach grid.** Move the 5/4/3 rule inside a desktop query, or re-assert the phone rule after it:
+   - `@media (min-width: 900px){ .ide-teach-g{grid-template-columns:minmax(0,5fr) minmax(0,4fr) minmax(0,3fr)} }`, and delete the bare rule at line 348;
+   - or append `@media (max-width: 899px){ .ide-teach-g{grid-template-columns:minmax(0,1fr)} }` at the end of the file.
+
+   Re-measure at 375 that each `.ide-teach-c` is 343px wide and has no scrollWidth overflow.
+2. **Phone sandbox label.** Under 899px, take `.ide-key` out of absolute positioning (`position:static; margin:56px auto 0; justify-self:center`), or move it below the dashed box (`top:auto; bottom:20px; right:20px`). Check that `.ide-box .x-mono` and `.ide-key` rectangles do not intersect at 375 and 320.
+3. **Chapter 01 picture code.**
+   - Remove `padding-right:230px` and the ellipsis from `.ide-pic-src`, or limit it to the three lines that carry chips, so the whole command shows.
+   - Lift its colour from #48484e to white 55% (`rgba(255,255,255,.55)`, about 6:1 on #16161a). Comments can go to white 30% only if they stay readable.
+   - Swap `.ide-pic-mem`'s #16161a for #171717.
+4. **Close the gap above the chapters.** Trim the bottom padding of `.ide-engine` or the top of `.a2-ch` on this page so no scroll step at 1470×801 shows more than about 116px of empty white between the planes and the 01/02/03 tabs.
+5. **Last hovers.**
+   - `@media (hover:hover){ .ide-script-bar button:hover{background:#262626;color:#fafafa;border-color:rgba(255,255,255,.3)} }`.
+   - Request kit hover states for the quiet Cta (a #f5f5f5 fill, or white 8% on dark) and for the `.a2-ch` tab buttons (#737373 → #0a0a0a). Write both in `docs/requests/ide.md`.
+6. **Deck greys.** Replace #f5f5f7 → #fafafa, #16161a/#1b1b20/#1e1e23/#1c1c1f → #171717, #48484e → white 30%, #d1d1d6 → white 78%, #a1a1a6 → #a3a3a3, #6e6e73 → #737373, #0a0a0b → #0a0a0a, and #b5b5b5/#c7c7c7/#aeaeae/#959595 → #a3a3a3 or #d4d4d4.
+7. **Hydration mismatch.** Find the attribute that differs between server and client. Likely candidates:
+   - `inert` or `aria-hidden` on `.ide-acc-a`;
+   - a `style` set from `useNarrow`, or the Teach `MID` counter.
+
+   Make the first render match the server, so the "1 Issue" badge never appears on a cold load.
+8. **Band blur (shared).** Ask the Band owner to replace `filter: blur(12px)` with the line-mask cut-in (translateY 105% → 0, 700 ms, ease-emphasis), or blur of 4px or less. Note it in `docs/requests/ide.md`.
+9. **Card.** Untick part 11 until fixes 1 and 2 are measured. Correct the part 7 sentence to list the greys that still render, and add the part 12 contrast exception.

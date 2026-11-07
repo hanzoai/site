@@ -3,7 +3,7 @@
 Page file: `components/pages/Gallery.jsx` (+ `.css`) · gallery: `docs/gallery/gallery/` · metric id: `signup_start` (gallery hand-off; `data-cta` gallery.hero, gallery.viewer, gallery.close)
 
 Open copy questions for James: the wall label reads "Image + video gallery" beside "Curated template showcase for Hanzo products"; both are Hanzo's words and they disagree (kept as live). "Close", "Previous template" and "Next template" are aria-labels only, awaiting the register.
-Shared changes requested (`docs/requests/gallery.md`): none new; the phone header ask swap is the shared Ask owner's.
+Shared changes requested: the phone header ask (filed in `docs/requests/founder.md` for all my pages; meanwhile the page-local `usePhoneAsk` does it); the cookie card can cover a phone dialog's bottom edge (the viewer's controls moved to its top under 899px).
 Forks this page deleted: the hand-written hero and close buttons (now kit `Cta`), the six Sigil canvases (each frame now holds a render of its own words), the three equal move cards (one stage with three states), the text-only plaque (now the Zen film card), the `data-cursor="View"` label, the `aria-live` counter, `saturate(.6)`, the off-deck greys.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; n/a prices: no prices on the page
 - [x] Open copy questions for James listed, none decided
 
-Done here: "Browse the Gallery" is the one solid in the hero (`Cta thumb`, `gallery.hero`) and again only in the dark close; Documentation, Deploy to Cloud and View on GitHub are quiet or text links.
+Done here: one solid per screen at both widths (phones via `usePhoneAsk`, which outlines the header's "Try Hanzo" while the page's ask shows). "Browse the Gallery" is the one solid in the hero (`Cta thumb`, `gallery.hero`) and again only in the dark close; Documentation, Deploy to Cloud and View on GitHub are quiet or text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -37,7 +37,7 @@ Done here: the h1 cuts in at first paint and the Zen film and walking light move
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (desktop; phone follows the shared Ask)
+- [x] Sticky ask in the header after the hero, same label (desktop by the shared Ask; phones by `usePhoneAsk`: outlined while the page's ask shows, "Browse the Gallery" after it; no bottom bar)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -117,7 +117,7 @@ Done here: the self-walking counter has no `aria-live`; the plaque's read-out is
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop (cloud only)
 
-Done here: CLS 0.0007 desktop, 0.0001 phone; the typed prompt types over a hidden full copy, so the box never changes height.
+Done here: CLS 0.0007 desktop, 0.0004 phone on a full walk, and 0.0000 over 12 s idle beside the Moves stage on phone (round 2: every move's words stay open, so its self-stepping changes no height); the typed prompt types over a hidden full copy.
 
 ## 14. SEO and machine files
 - [x] Title and description match live
@@ -133,7 +133,7 @@ Done here: `app/gallery/page.jsx` keeps "Gallery — Hanzo AI" and the live desc
 - n/a: maker and model pages
 - n/a: prices
 
-Done here: the viewer opens from the clicked frame's box (layoutId) and closes back into it, with no hole and no frame crossing its neighbours.
+Done here: the viewer opens from the clicked frame's box (layoutId) and, while it still shows that frame, closes back into it. After stepping with ←/→ or the index it closes by a plain fade (the morph only joins the same picture), so nothing doubles or flies across the wall.
 
 ## 16. Developer experience
 - [x] One prompt block; copy equals display (kit `Copy`)

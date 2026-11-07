@@ -36,6 +36,9 @@ const REPO = 'https://github.com/hanzo-apps/gallery';
 
 /* A small product render for each frame, drawn only from that frame's own words (aria-hidden: the words are in the caption). */
 function Render({ i, on }) {
+  return <span className="xga-app"><span className="xga-r-chrome"><i /><i /><i /></span><Body i={i} on={on} /></span>;
+}
+function Body({ i, on }) {
   const c = 'xga-r xga-r' + i + (on ? ' on' : '');
   if (i === 0) return (
     <span className={c}>
@@ -98,7 +101,8 @@ function Viewer({ at, from, setAt, close }) {
   const [t, d] = FRAMES[at];
   return (
     <motion.div ref={box} className="xga-view" role="dialog" aria-modal="true" aria-label={t} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={(e) => e.target === e.currentTarget && close()} data-lenis-prevent>
-      <motion.div className="xga-view-in" layoutId={'xga-f' + from} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}>
+      {/* it morphs only while it shows the frame it opened from; after stepping, closing is a clean fade (no double image) */}
+      <motion.div className="xga-view-in" layoutId={at === from ? 'xga-f' + from : undefined} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={at} className="xga-view-body" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
             <div className={'xga-view-art' + (at === 1 || at === 3 ? ' dk' : '')}><Render i={at} on /></div>
@@ -107,6 +111,9 @@ function Viewer({ at, from, setAt, close }) {
               <h3>{t}</h3>
               <p>{d}</p>
               <A to={GALLERY} className="xga-link" data-cta="gallery.viewer">Browse the Gallery <i aria-hidden="true">↗</i></A>
+              <ol className="xga-view-idx">
+                {FRAMES.map(([ft], k) => <li key={ft}><button type="button" data-sound="tick" aria-current={k === at ? 'true' : undefined} onClick={() => setAt(k)}><span className="x-mono">{pad(k + 1)}</span>{ft}</button></li>)}
+              </ol>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -143,21 +150,22 @@ function Wall() {
   return (
     <section className="xga-wall-sec" ref={box} aria-labelledby="xga-h1" data-morph-target>
       <div className="w2-wrap">
-        <div className="xga-top">
-          <div>
-            <LineMask as="h1" id="xga-h1" now className="w2-display xga-h1" lines={['Gallery']} />
-            <p className="xga-kick x-mono">gallery.hanzo.ai</p>
-          </div>
-          <motion.div className="xga-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
-            <p className="w2-lede xga-lede">Curated template showcase for Hanzo products</p>
-            <div className="xga-acts">
-              <Magnetic strength={0.25}><Cta to={GALLERY} id="gallery.hero" thumb size="lg">Browse the Gallery</Cta></Magnetic>
-              <Cta to="https://docs.hanzo.ai/docs/studio" kind="link">Documentation</Cta>
-            </div>
-          </motion.div>
-        </div>
         <Settle from={1.04} lift={30}>
         <div className="xga-wall">
+          {/* the title hangs on the wall itself, as the first label of the hang */}
+          <div className="xga-top">
+            <div>
+              <LineMask as="h1" id="xga-h1" now className="w2-display xga-h1" lines={['Gallery']} />
+              <p className="xga-kick x-mono">gallery.hanzo.ai</p>
+            </div>
+            <motion.div className="xga-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+              <p className="w2-lede xga-lede">Curated template showcase for Hanzo products</p>
+              <div className="xga-acts">
+                <Magnetic strength={0.25}><Cta to={GALLERY} id="gallery.hero" thumb size="lg">Browse the Gallery</Cta></Magnetic>
+                <Cta to="https://docs.hanzo.ai/docs/studio" kind="link">Documentation</Cta>
+              </div>
+            </motion.div>
+          </div>
           <div className="xga-plaque">
             <ModelFilm slug="zen" play={!paused} className="xga-film" />
             <div className="xga-plaque-t">
@@ -186,6 +194,7 @@ function Wall() {
               transition={{ duration: 0.9, ease: EASE, delay: 0.2 + i * 0.06 }}
               aria-haspopup="dialog"
               data-cursor=""
+              data-sound="whoosh"
             >
               <span className={'xga-art' + (i === 1 || i === 3 ? ' dk' : '')} aria-hidden="true"><Render i={i} on={lit === i} /></span>
               <span className="xga-cap"><span className="x-mono">{pad(i + 1)}</span><b>{t}</b><span className="xga-d">{d}</span></span>
@@ -271,7 +280,7 @@ function Moves() {
                 <span className="xga-move-n x-mono">{pad(i + 1)}</span>
                 <h3>{t}</h3>
               </button>
-              <div className="xga-move-x" inert={at !== i}>
+              <div className="xga-move-x">
                 <p className="w2-body">{d}</p>
                 <A to={to} className="xga-link">{cta} <i aria-hidden="true">→</i></A>
               </div>
@@ -282,7 +291,7 @@ function Moves() {
           <span className="xga-moves-bar"><i /><i /><i /><b className="x-mono">hanzo-apps/gallery</b></span>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={at} className={'xga-moves-st' + (at === 0 ? ' dk' : '')} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
-              <Render i={MOVES[at][4]} on />
+              <Body i={MOVES[at][4]} on />
             </motion.div>
           </AnimatePresence>
           <span className="xga-moves-dots">{MOVES.map((m, i) => <i key={i} className={at === i ? 'on' : ''} />)}</span>
