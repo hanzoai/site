@@ -23,8 +23,9 @@
    timed wipe are gone. Every word and link is Hanzo's. */
 import { useEffect, useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
-import { A } from '../../kit';
-import { Paste, useLive } from './Frame';
+import { A, Img } from '../../kit';
+import { useLive } from './Frame';
+import { LeafPaste as Paste } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from './close3/Close';
 import Peel from './s3/Peel';
@@ -155,7 +156,7 @@ export default function S3() {
       <section className="s3-room lx-dark" data-room="dark">
         <div className="lx-wrap">
           <Shutter><SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <LineMask as="span" lines={[String(v)]} delay={i * 0.06} inView />, l }))} /></Shutter>
-          <CursorLens><Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" /></CursorLens>
+          <CursorLens><Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" aside={<div className="s3-kai"><Img src="/models/kai.webp" alt="" w={1200} h={1500} /></div>} /></CursorLens>
         </div>
       </section>
 
