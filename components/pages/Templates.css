@@ -23,9 +23,10 @@
 /* kinds */
 .xtp-kinds { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; padding: 4px; margin: 0 auto 8px; border-radius: 999px; background: #e3e3e8; width: fit-content; max-width: 100%; }
 .xtp-kinds button { position: relative; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: none; font: 500 15px/1 var(--sans); color: var(--soft); cursor: pointer; transition: color .2s, background .3s var(--ease); }
-.xtp-kinds button[aria-selected='true'] { background: #fff; color: #0a0a0b !important; box-shadow: 0 1px 2px rgba(0, 0, 0, .1), 0 0 0 .5px rgba(0, 0, 0, .06); }
+.xtp-kinds button[aria-pressed='true'] { background: #fff; color: #0a0a0b !important; box-shadow: 0 1px 2px rgba(0, 0, 0, .1), 0 0 0 .5px rgba(0, 0, 0, .06); }
 .xtp-kinds button i { margin-left: 6px; font-style: normal; font-size: 12px; opacity: .6; }
-.xtp-kinds button:hover, .xtp-kinds button[aria-selected='true'] { color: var(--ink); }
+.xtp-kinds button[aria-pressed='true'] { color: var(--ink); }
+@media (hover: hover) { .xtp-kinds button:hover { color: var(--ink); } }
 .xtp-kinds button span { position: relative; }
 .xtp-kind-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
 
@@ -50,19 +51,19 @@
 .xtp-card { border-radius: 22px; }
 .xtp-card.front .xtp-shot img { animation: xtp-scroll 14s var(--ease) infinite alternate; }
 @keyframes xtp-scroll { 0%, 15% { transform: translateY(0) scale(1.02); } 85%, 100% { transform: translateY(-4%) scale(1.06); } }
-.xtp-shot:hover img { transform: scale(1.04); }
+@media (hover: hover) { .xtp-shot:hover img { transform: scale(1.04); } }
 .xtp-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; flex: none; }
 .xtp-foot > div { min-width: 0; }
 .xtp-foot h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.02em; }
 .xtp-foot p { margin: 2px 0 0; font-size: 13.5px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .xtp-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 22px; padding-right: 66px; }
 .xtp-arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-size: 16px; cursor: pointer; transition: border-color .2s, transform .2s var(--ease); }
-.xtp-arrow:hover { border-color: rgba(0, 0, 0, .3); transform: scale(1.05); }
+@media (hover: hover) { .xtp-arrow:hover { border-color: rgba(0, 0, 0, .3); transform: scale(1.05); } }
 .xtp-count { font-size: 13px; letter-spacing: .06em; color: var(--soft); min-width: 64px; text-align: center; }
 .xtp-dots { display: flex; }
 .xtp-dots button { display: grid; place-items: center; width: 22px; height: 44px; border: 0; background: none; cursor: pointer; padding: 0; }
 .xtp-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .18); transition: transform .3s var(--ease), background .3s; }
-.xtp-dots button:hover i { background: rgba(0, 0, 0, .45); }
+@media (hover: hover) { .xtp-dots button:hover i { background: rgba(0, 0, 0, .45); } }
 .xtp-dots button[aria-current='true'] i { background: var(--acc); transform: scale(1.5); }
 
 /* commands: the one dark room */
@@ -76,7 +77,7 @@
 .xtp-tiles .w2-oc-plus { top: 26px; right: 26px; }
 .xtp-tile-img { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 10px; overflow: hidden; background: #e8e8ed; }
 .xtp-tile-img img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 1.2s var(--ease); }
-.w2-oc-card:hover .xtp-tile-img img { transform: scale(1.04); }
+@media (hover: hover) { .w2-oc-card:hover .xtp-tile-img img { transform: scale(1.04); } }
 .xtp-tile-img span { position: absolute; left: 10px; bottom: 10px; padding: 6px 10px; border-radius: 8px; background: rgba(255, 255, 255, .92); font-size: 13px; color: var(--ink); }
 .w2-sheet .xtp-tile-img { border-radius: 16px; }
 .xtp-sheet-cmd { padding: 14px 16px; border-radius: 12px; background: #0b0b0c; color: #f5f5f7 !important; font-size: 14px !important; overflow-wrap: anywhere; }
@@ -90,7 +91,7 @@
 .xtp-term-top .xtp-lights i { background: rgba(255, 255, 255, .18); }
 .xtp-term-top > span.x-mono { flex: 1; font-size: 13px; color: #a1a1a6; }
 .xtp-term .x-copy { background: transparent; border-color: rgba(255, 255, 255, .16); color: #d2d2d7; }
-.xtp-term .x-copy:hover { color: #fff; border-color: rgba(255, 255, 255, .4); }
+@media (hover: hover) { .xtp-term .x-copy:hover { color: #fff; border-color: rgba(255, 255, 255, .4); } }
 .xtp-pre { margin: 0; padding: 28px 28px 32px; font: 400 clamp(14px, 1.1vw, 16px)/1.9 var(--mono); color: #f5f5f7; white-space: pre-wrap; overflow-wrap: anywhere; }
 .xtp-l { display: inline; }
 .xtp-ps { color: #86868b; }
@@ -122,7 +123,7 @@
 .xtp-strip-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #86868b; }
 .xtp-strip-l { display: flex; flex-wrap: wrap; gap: 6px; }
 .xtp-strip-l a, .xtp-strip-l button { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .14); background: none; color: #d2d2d7; font: 500 14px/1 var(--sans); text-decoration: none; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
-.xtp-strip-l a:hover, .xtp-strip-l button:hover { color: #fff; border-color: rgba(255, 255, 255, .4); }
+@media (hover: hover) { .xtp-strip-l a:hover, .xtp-strip-l button:hover { color: #fff; border-color: rgba(255, 255, 255, .4); } }
 .xtp-strip-l button { font-family: var(--mono); font-size: 13px; }
 .xtp-strip-l button[aria-expanded='true'] { background: #f5f5f7; color: var(--ink); }
 .xtp-all { margin-top: 12px; padding: 12px; border-radius: 16px; background: #161617; border: 1px solid rgba(255, 255, 255, .1); }
@@ -130,7 +131,7 @@
 .xtp-all input:focus-visible { border-color: #f5f5f7; }
 .xtp-all ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; max-height: 300px; overflow-y: auto; overscroll-behavior: contain; }
 .xtp-all a { display: grid; gap: 2px; padding: 8px 10px; border-radius: 8px; color: #f5f5f7; text-decoration: none; transition: background .2s; }
-.xtp-all a:hover { background: rgba(255, 255, 255, .08); }
+@media (hover: hover) { .xtp-all a:hover { background: rgba(255, 255, 255, .08); } }
 .xtp-all b { font-size: 14px; font-weight: 500; }
 .xtp-all a span { font-size: 13px; color: #86868b; }
 .xtp-none { margin: 12px 0 4px; text-align: center; font-size: 14px; color: #86868b; }
@@ -147,3 +148,58 @@
 }
 .xtp-setup2 svg, .xtp-setup2 img, .xtp-strip svg, .xtp-strip img { filter: grayscale(1); }
 @media (max-width: 900px) { .xtp-setup2 *, .xtp-kick, .xtp-cmd-k { font-size: max(14px, 1em); } }
+
+/* v2.3: the deck is the first screen's object; the readout and pause live in the deck's own nav row */
+.xtp-hero { padding: clamp(88px, 6.6vw, 100px) 0 clamp(72px, 8vw, 116px) !important; overflow: clip !important; }
+.xtp-top { margin-bottom: clamp(20px, 2vw, 28px) !important; }
+.xtp-top-r { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.xtp-nav { position: relative; padding-right: 0 !important; }
+.xtp-front { position: absolute; left: 0; top: 50%; translate: 0 -50%; display: flex; align-items: baseline; gap: 10px; margin: 0; }
+.xtp-front .x-mono { font-size: 13px; color: #525252; }
+.xtp-front b { font-size: 21px; font-weight: 500; letter-spacing: -.02em; }
+.xtp-pause { position: absolute; right: 0; top: 50%; translate: 0 -50%; display: grid; place-items: center; width: 44px; height: 44px; }
+.xtp-count { white-space: nowrap; }
+.xtp-dots button { width: 18px; }
+.xtp-arrow:active, .xtp-strip-l a:active, .xtp-strip-l button:active, .xtp-kinds button:active { transform: scale(.98); }
+.xtp-shot-name { position: absolute; inset: 0; display: grid; place-items: center; color: #737373; font-size: 26px; font-weight: 500; }
+.xtp-shot img { position: relative; }
+.xtp-tiles .w2-oc-t { font-size: 17px !important; }
+.xtp-sheet-cmd { color: #525252; }
+.xtp-cmd-in > div { min-width: 0; }
+.xtp-setup2 .x-setup { max-width: 100%; }
+.xtp-setup2 .x-setup, .xtp-setup2 button { background: transparent !important; color: #fafafa !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28) !important; }
+.xtp-band { background: #f5f5f5; }
+.xtp-band-in { display: grid; justify-items: center; gap: 24px; text-align: center; }
+.xtp-band-t { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.02em; }
+.xtp-band-t .x-mono { display: block; margin-top: 6px; font-size: 14px; color: #525252; letter-spacing: 0; }
+@media (max-width: 899px) {
+  .xtp-hero { padding-top: 88px !important; }
+  .xtp-deckwrap { display: flex; flex-direction: column; }
+  .xtp-kinds { order: 3; justify-content: flex-start !important; margin: 12px 0 0 !important; }
+  .xtp-nav { order: 2; flex-wrap: wrap; justify-content: center; }
+  .xtp-front { position: static; translate: none; flex: 1 1 100%; justify-content: center; margin-bottom: 4px; }
+  .xtp-pause { position: static; translate: none; }
+  .xtp-front .x-mono, .xtp-tile-img span, .xtp-count { font-size: 14px; }
+  .xtp-tiles .w2-oc-t { font-size: 17px !important; }
+}
+/* agent marks in the shared setup menu render in the room's ink (no brand hues on this page) */
+.xtp .x-setup-i svg, .xtp .x-setup-i svg *, .xtp .x-menu-i svg, .xtp .x-menu-i svg * { color: currentColor !important; }
+.xtp .x-setup-i, .xtp .x-menu-i { color: inherit !important; filter: grayscale(1); }
+/* a preview that has not loaded is a quiet card with the template's name, never a black slab */
+.xtp-shot { background: #ededed !important; }
+.xtp-setup2 a, .xtp-setup2 .x-setup-main { background: transparent !important; color: #fafafa !important; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28) !important; }
+@media (max-width: 899px) { .xtp-setup2 .x-setup-ics, .xtp-setup2 .x-setup-ics * { font-size: 14px !important; } }
+@media (max-width: 899px) { .xtp-setup2 .x-setup-main b { font-size: 14px !important; } }
+
+/* the deck leads; the kind filter sits under it at every width */
+.xtp-deckwrap { display: flex; flex-direction: column; }
+.xtp-deck { order: 1; }
+.xtp-nav { order: 2; }
+.xtp-kinds { order: 3; margin: 14px auto 0 !important; }
+.xtp-stage { padding-top: clamp(12px, 1.4vw, 20px) !important; }
+@media (max-width: 899px) {
+  .xtp-kinds { margin: 12px 0 0 !important; }
+  .xtp-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+  .xtp-tiles .w2-oc-card { padding: 8px 8px 14px; }
+  .xtp-tile-img span { display: none; }
+}
