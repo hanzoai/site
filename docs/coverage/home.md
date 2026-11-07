@@ -52,7 +52,7 @@ Done here: The order is hero, model cards, platform chapters, agents, one dark r
 - [x] The hero's copy buttons are live's own. The console's kit `Copy` copies exactly the displayed command.
 - [x] `data-cta="home.*"` on every action
 
-Done here: The header's "Try Hanzo" is the one solid ask after the hero. Pricing buttons are quiet outlines aligned on one line (subgrid).
+Done here: The header's "Try Hanzo" is the one solid ask after the hero. Pricing buttons are quiet outlines aligned on one line (subgrid). 8 Nov: the hero terminal's Copy is a real button that copies exactly `curl -fsSL https://hanzo.sh | sh`, says Copied in a `role=status`, has a hover, a .97 press and a 44px hit area (`data-cta=home.install_copy`).
 
 ## 5. Trust and proof
 - [x] No seal; no invented number
@@ -68,7 +68,7 @@ Done here: Parity shows 570/570 texts. The figures are Hanzo's: 3.02×, 9.6×, 1
 - [x] Tabs use the kit (`Tabs`/`TabPanel`); the pricing choices are radio groups with arrow keys
 - [x] `python3 scripts/parity.py /`: 0 missing
 
-Done here: Section headings rest at 26px and sublines at 16px; figures rest at 64px in Zen Air, plan prices are 44px and captions are 12–13px Zen Mono capitals, so each screen has one big thing.
+Done here: Section headings rest at 26px and sublines at 16px; figures rest at 64px in Zen Air, plan prices are 44px and captions are 12–13px Zen Mono capitals, so each screen has one big thing. Plan feature lists beyond the first three stay in the HTML (hidden list items) so parity is 570/570.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py` passes on every home file
@@ -100,7 +100,7 @@ Done here: Kit `Tabs` (console, pricing), `Img`/`Film` (model cards), `Band`, `M
 - [x] Reduced motion shows the final state. `setInterval` remains only inside live's hero port (`Hero.jsx`, kept exactly) and the agent sign-up typing.
 - [ ] n/a: sound is a shared layer
 
-Done here: No springs (MASTER 3.1). Tweens use ease-emphasis (.16,1,.3,1) at 300–700 ms. Figures grow only while they are the moment, then settle at 64px.
+Done here: Hero.jsx keeps live's three springs (bubble, roster, pointer) as part of live's own hero; other tweens use ease-emphasis. The hero lede no longer reveals with blur (opacity and rise only).
 
 ## 10. Media
 - [x] `Film` and `Img` (kit) on the model cards; sizes and posters set
@@ -116,7 +116,7 @@ Done here: Model media is `/models/<slug>.webp|webm`. Logos and the images insid
 - [x] Targets 44px or more; hover detail has a tap path
 - [x] The primary ask (the sign-up group) is above the fold at 375×667
 
-Done here: Pinned chapters stack below 900px, model cards go to 2 and 4 columns, and the hero follows live's own phone layout.
+Done here: Pinned chapters stack below 900px, model cards go to 2 and 4 columns, and the hero follows live's own phone layout. 8 Nov: the frontier has its own phone drawing (640×660 viewBox, 12px labels, 8px dots, a 96-unit/45px budget handle); the agent panels no longer push past 375px; arrow links, Terms/Privacy and source links are 44px tall on phones.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Muted text #525252 on white (7.8:1); on black #a3a3a3 and white 78%
@@ -125,7 +125,7 @@ Done here: Pinned chapters stack below 900px, model cards go to 2 and 4 columns,
 - [x] One h1, then h2s per section and h3s in pricing
 - [x] Keyboard reaches every control (kit tabs follow APG; the budget line is a slider with arrow keys)
 
-Done here: Inactive chapters are `inert`. Every panel is in the HTML.
+Done here: Inactive chapters are `inert`. Every panel is in the HTML. 8 Nov: the hero demo has a 44px pause (A2Pause, aria-pressed) first in the stage; pausing holds the typing loop and the roster.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP (the hero headline) in server HTML
@@ -170,7 +170,7 @@ Done here: The console tabs (Hanzo.Start, Hanzo.Agents) hold every command and t
 - [ ] n/a: no submit
 - [x] JS off: the page is legible
 
-Done here: The `scripting: none` rules keep every word visible.
+Done here: The `scripting: none` rules keep every word visible. 8 Nov: with JS off the hero words show (CSS override on `html:not(.js)`) and the terminal shows the command from `data-cmd`.
 
 ## 18. Measurement and handover
 - [x] `data-cta="home.*"` on every action
@@ -178,4 +178,4 @@ Done here: The `scripting: none` rules keep every word visible.
 - [ ] `V2: <score>/10`: pending the critic
 - [ ] Review read: pending `docs/review/home.md`
 
-Done here: Proof is in `docs/gallery/home/`. The critic verdict is pending.
+Done here: Proof is in `docs/gallery/home/` (desktop-hero, phone-1..3, 8 Nov). Ready by the new bar, no score.

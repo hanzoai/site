@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
-import { EASE, Count, fine, Mark } from './ui';
+import { EASE, Count, fine, Mark, copyText } from './ui';
+import A2Pause from './v2/A2Pause';
 import C from '../content';
 import SetupMenu from './SetupMenu';
 
@@ -168,6 +169,14 @@ export default function Hero() {
   const live = useRef(true);
   live.current = inView;
   const user = useRef(false);
+  // the demo can be stopped (WCAG 2.2.2): the loop holds, the roster rests
+  const [paused, setPaused] = useState(false);
+  const stop = useRef(false);
+  stop.current = paused;
+  // the terminal's Copy copies exactly the command it shows, and says so
+  const [copied, setCopied] = useState(false);
+  const copyT = useRef(0);
+  const copy = async () => { if (!(await copyText(CMD))) return; setCopied(true); clearTimeout(copyT.current); copyT.current = setTimeout(() => setCopied(false), 1600); };
 
   const [typed, setTypedState] = useState(0);
   const promptEl = useRef(null);
@@ -183,8 +192,9 @@ export default function Hero() {
   useEffect(() => {
     if (calm) { setTyped(PROMPT.length); setCmd(CMD.length); setPhase(4); setLog(4); return; }
     let dead = false;
-    const w = (ms) => new Promise((r) => setTimeout(r, ms));
-    const held = async () => { while (!dead && !live.current) await w(400); };
+    const nap = (ms) => new Promise((r) => setTimeout(r, ms));
+    const w = async (ms) => { await nap(ms); while (!dead && stop.current) await nap(300); };
+    const held = async () => { while (!dead && (!live.current || stop.current)) await nap(400); };
     (async () => {
       await w(1100);
       (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await w(i < 4 ? 90 : 36); } })();
@@ -244,7 +254,7 @@ export default function Hero() {
   );
 
   return (
-    <section className="x-hero" ref={host} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
+    <section className="x-hero" ref={host} data-off={paused ? '' : undefined} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
       <Dots host={host} />
       <div className="x-wrap x-hero-grid">
         <motion.div className="x-hero-copy" style={{ y: copyY, opacity: copyO }}>
@@ -257,13 +267,13 @@ export default function Hero() {
             <span className="x-h1-a">{line('Smarter, Faster, Open Source.', 0.1)}</span>
             <span className="x-h1-b">{line('Pick all three.', 0.25)}</span>
           </h1>
-          <motion.p className="x-hero-lede" initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 1, ease: EASE, delay: 0.5 }}>
+          <motion.p className="x-hero-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.5 }}>
             Frontier intelligence over <b><Count to={200} suffix="×" duration={1.8} delay={0.6} /></b> faster and <b><Count to={400} suffix="×" duration={2} delay={0.7} /></b> cheaper. Every model behind one key.
           </motion.p>
           <motion.div className="x-auth" initial="h" animate="s" variants={{ s: { transition: { staggerChildren: 0.07, delayChildren: 0.75 } } }}>
             <div className="x-auth-row">
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
-                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6a5.1 5.1 0 0 1-2.2 3.4v2.8h3.6c2.1-2 3.2-4.9 3.2-8.2z" /><path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.7l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.9A11 11 0 0 0 12 23z" /><path fill="#FBBC05" d="M5.7 14c-.2-.7-.4-1.3-.4-2s.1-1.4.4-2V7.1H2a11 11 0 0 0 0 9.8L5.7 14z" /><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2 7.1L5.7 10C6.6 7.4 9.1 5.4 12 5.4z" /></svg>
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6a5.1 5.1 0 0 1-2.2 3.4v2.8h3.6c2.1-2 3.2-4.9 3.2-8.2z" /><path fill="currentColor" d="M12 23c3 0 5.5-1 7.4-2.7l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.9A11 11 0 0 0 12 23z" /><path fill="currentColor" d="M5.7 14c-.2-.7-.4-1.3-.4-2s.1-1.4.4-2V7.1H2a11 11 0 0 0 0 9.8L5.7 14z" /><path fill="currentColor" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2 7.1L5.7 10C6.6 7.4 9.1 5.4 12 5.4z" /></svg>
                 Continue with Google
               </motion.a>
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
@@ -280,6 +290,7 @@ export default function Hero() {
         </motion.div>
 
         <motion.div className="x-hero-stage" ref={fit} style={{ y: stageY, scale: stageS, height: `calc(var(--sh) * ${k})` }}>
+          <A2Pause paused={paused} onChange={setPaused} label={paused ? 'Play the demo' : 'Pause the demo'} className="xh-pause" />
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               {/* the desktop app */}
@@ -320,10 +331,11 @@ export default function Hero() {
               <motion.div className="x-term" initial={{ opacity: 0, z: -120, y: 70 }} animate={{ opacity: 1, z: 70, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}>
                 <div className="x-term-bar"><i /><i /><i /><span>install</span></div>
                 <div className="x-term-body x-mono">
-                  <span className="x-dim">$ </span><span ref={cmdEl} /><Caret />
+                  <span className="x-dim">$ </span><span ref={cmdEl} className="xh-cmd" data-cmd={CMD} /><Caret />
                 </div>
                 <div className="x-term-f">
-                  <span className="x-term-copy">Copy</span>
+                  <button type="button" className="x-term-copy xh-copy" onClick={copy} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy'}</button>
+                  <span className="xh-sr" role="status">{copied ? 'Copied' : ''}</span>
                   <a href="https://docs.hanzo.ai/docs/cli">Install CLI ↗</a>
                 </div>
               </motion.div>

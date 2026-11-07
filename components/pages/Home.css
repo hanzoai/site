@@ -25,3 +25,37 @@
 .x-pricing .x-plan > .x-btn { height: 40px; }
 .x-pricing .x-plan-l { padding-top: 14px; }
 @media (max-width: 700px) { .x-pricing > .x-wrap { padding: 28px 16px 20px; border-radius: 24px; } }
+
+/* Hero: the terminal's Copy is a real button (44px hit area inside the scaled mock), the demo's pause, JS-off words */
+.x-term-f .xh-copy { position: relative; padding: 5px 10px; border: 0; border-radius: 8px; background: #171717; color: #d4d4d4; font: 500 11px/1.2 var(--sans); cursor: pointer; transition: background-color .2s var(--ease), color .2s var(--ease), transform .15s var(--ease); }
+.x-term-f .xh-copy::after { content: ''; position: absolute; inset: -12px -6px; }
+.x-term-f .xh-copy[data-on] { background: #e5e5e5; color: #0a0a0a; }
+.x-term-f .xh-copy:active { transform: scale(.97); transition-duration: 90ms; }
+.x-term-f .xh-copy:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.x-term-f { align-items: center; }
+.x-term-f .xh-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; background: none; }
+.xh-pause { position: absolute; right: 0; bottom: -54px; z-index: 5; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--soft); cursor: pointer; transition: color .2s var(--ease), border-color .2s var(--ease), transform .15s var(--ease); }
+.xh-pause:active { transform: scale(.97); transition-duration: 90ms; }
+.xh-pause:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (hover: hover) {
+  .x-term-f .xh-copy:hover { background: #404040; color: #fff; }
+  .xh-pause:hover { color: var(--ink); border-color: rgba(0, 0, 0, .18); }
+  .x-auth-b.solid:hover { background: #262626; border-color: #262626; }
+}
+html:not(.js) .xh-cmd:empty::after { content: attr(data-cmd); }
+html:not(.js) .x-hero [style*='opacity'], html:not(.js) .x-hero .x-line-in { opacity: 1 !important; transform: none !important; }
+
+/* Agents: the two panels may not grow wider than the phone (the command rows were cut at the right edge) */
+.x-agents .x-panels > *, .x-agents .x-panel { min-width: 0; }
+
+/* Phones: every tap target 44px tall; the frontier's own phone drawing reads at 12px */
+@media (max-width: 599px) {
+  .x-pareto .x-plot .tick { font-size: 25px; }
+  .x-pareto .x-plot-zone { y: 40px; }
+  .x-pareto .x-plot .pt text { font-size: 26px; }
+  .x-pareto .x-plot .pt.enso:not(.best):not(.hot) text { opacity: 0; }
+  .x-plot-src a, .x-row-links a, .x-race-end a, .x-sec .x-head + * a.x-arrow { display: inline-flex; align-items: center; min-height: 44px; }
+}
+@media (max-width: 640px) {
+  .xh-pause { top: 0; bottom: auto; }
+}
