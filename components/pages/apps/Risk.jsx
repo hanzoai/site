@@ -108,7 +108,7 @@ function Hero() {
             <Magnetic strength={0.25}><A to="/contact-sales" className="w2-cta" data-thumb="Talk to us">Talk to us <i aria-hidden="true">→</i></A></Magnetic>
           </motion.div>
         </div>
-        <Settle from={1.1} lift={60}><Dial /></Settle>
+        <Settle from={1.1} lift={60} bleed={56}><Dial /></Settle>
       </div>
     </section>
   );
