@@ -107,7 +107,7 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .mt-ch-rail i { position: relative; display: block; width: 100%; height: 3px; border-radius: 3px; background: #d4d4d4; overflow: hidden; }
 .mt-ch-rail i::after { content: ''; position: absolute; inset: 0; border-radius: 3px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
 .mt-ch-rail button[data-at='past'] i::after { transform: scaleX(1); background: #737373; }
-.mt-ch-rail button[aria-current] i::after { animation: mt-fill 2.6s cubic-bezier(.4, 0, .2, 1) forwards; }
+.mt-ch-rail button[aria-current] i::after { animation: mt-fill 3.2s cubic-bezier(.4, 0, .2, 1) forwards; }
 @keyframes mt-fill { from { transform: scaleX(.08); } to { transform: scaleX(1); } }
 .mt-ch-rail i { transition: transform .15s cubic-bezier(0, 0, .2, 1); transform-origin: 50% 100%; }
 @media (hover: hover) {

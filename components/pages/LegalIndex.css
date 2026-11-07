@@ -115,10 +115,14 @@
 .lgi-group[hidden] { display: none; }
 /* the reading lamp: the lit row looks like a hovered one (fill, address, ink arrow); a pointer over the list takes over */
 .lgi-card.lit { background: var(--card); }
+/* its timing hairline, like the cover's bar on each document */
+.lgi-card.lit::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: #0a0a0a; transform-origin: 0 50%; animation: lgi-lamp 1.3s linear both; }
+@keyframes lgi-lamp { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .lgi-card.lit .lgi-card-u { opacity: 1; transform: none; }
 .lgi-card.lit .lgi-card-go { background: #0a0a0a; color: #fff; transform: translateX(3px); }
 @media (hover: hover) {
   .lgi-cards:hover .lgi-card.lit:not(:hover) { background: none; }
+  .lgi-cards:hover .lgi-card.lit:not(:hover)::after { opacity: .25; }
   .lgi-cards:hover .lgi-card.lit:not(:hover) .lgi-card-u { opacity: 0; transform: translateY(4px); }
   .lgi-cards:hover .lgi-card.lit:not(:hover) .lgi-card-go { background: var(--card); color: inherit; transform: none; }
 }

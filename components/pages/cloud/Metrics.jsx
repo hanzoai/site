@@ -191,7 +191,7 @@ const TAGS = ['per-model', 'per-route', 'per-tenant'];
 const COL = { 'per-model': 'model', 'per-route': 'route', 'per-tenant': 'tenant' };
 // how many beats each chapter plays when it arrives (intro = -1), one every BEAT ms, then it rests on the last
 const BEATS = { '-1': 3, 0: 3, 1: 0, 2: 2, 3: 3, 4: 2, 5: 3 };
-const BEAT = 640;
+const BEAT = 900;
 
 /* the beat a chapter is on: 0 when it arrives, +1 every BEAT while seen, resting at its last (calm: the last at once) */
 function useBeat(key, live, calm) {
@@ -200,7 +200,7 @@ function useBeat(key, live, calm) {
   const p = calm ? max : s.k === key ? s.p : 0;
   useEffect(() => {
     if (!live || calm || p >= max) return;
-    const t = setTimeout(() => setS({ k: key, p: p + 1 }), p === 0 ? 320 : BEAT);
+    const t = setTimeout(() => setS({ k: key, p: p + 1 }), p === 0 ? 500 : BEAT);
     return () => clearTimeout(t);
   }, [key, live, calm, p, max]);
   return p;
