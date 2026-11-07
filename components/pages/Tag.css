@@ -306,7 +306,7 @@
 .xtg-head .a2-lede { margin-top: 28px; }
 .xtg-head.dark .a2-kick { color: var(--acc); }
 .xtg-quad li i { color: var(--acc) !important; }
-.xtg-setup { background: #fdf6fa; }
+.xtg-setup { background: #fafafa; }
 .xtg-setup-h h2 { font-size: clamp(44px, 5.56vw, 80px); }
 .xtg-wire-l b { background: var(--acc); }
 .xtg-wire li.on .xtg-wire-n { background: var(--acc); border-color: var(--acc); }
