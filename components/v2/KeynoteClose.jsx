@@ -42,7 +42,7 @@ function Body({ name, tag, lead, prompt, api, cta = 'close', license = 'Apache-2
           <div className="knx-paste">
             <p className="kn-title knx-pt">Paste and ship</p>
             <p className="knx-pd">Paste this into any agent. It reads the skill manifest and calls {name} from there.</p>
-            {api && <p className="knx-api"><i>api</i>{api}</p>}
+            {api && <p className="knx-api"><span className="x-sr">api {api}</span><i aria-hidden="true">api</i><span aria-hidden="true">{api}</span></p>}
             <CodeBlock code={prompt} label="Agent prompt" className="knx-code" />
           </div>
         )}

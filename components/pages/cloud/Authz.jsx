@@ -283,7 +283,7 @@ function Family() {
             {REL.map(([t, to, d]) => (
               <li key={t}>
                 <A to={to} className="az-rel-a">
-                  <b>{t}</b>{d && <span>{d}</span>}
+                  <b><span>{t}</span></b>{d && <span>{d}</span>}
                   {!t.endsWith('→') && <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                 </A>
               </li>
@@ -295,7 +295,7 @@ function Family() {
           <div className="az-throw">
             <motion.div className="az-drag" drag={!calm} dragControls={grab} dragListener={false} dragSnapToOrigin dragElastic={0.5} dragTransition={{ power: 0.25, timeConstant: 220 }}>
               <span className="az-grip" aria-hidden="true" onPointerDown={(e) => grab.start(e)}><i /></span>
-              <ExampleConsole name="Authz" api="/v1/authz" side={SIDE} />
+              <ExampleConsole name="Authz" api="/v1/authz" side={SIDE} cap="The service the session above is changing." />
             </motion.div>
           </div>
           <p className="az-note">Example project. Every name in it is one you would give your own.</p>

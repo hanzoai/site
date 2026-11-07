@@ -452,7 +452,7 @@ function Deploy({ coll }) {
           return <li key={n}><i className={s === 'Building' ? 'b' : ''} aria-hidden="true" /><span>{n}</span><em>{s}</em></li>;
         })}
       </ul>
-      <p className="bs-dep-cap">Every request enters here, so the limiter does too.</p>
+      <p className="bs-dep-cap">The service the session above is changing.</p>
       <div className="bs-dep-foot">
         <span>api.hanzo.ai<b>/v1/base</b></span>
         <A to="https://hanzo.team/" className="bs-dep-open">Open in the console ↗</A>
