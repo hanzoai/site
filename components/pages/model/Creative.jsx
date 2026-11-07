@@ -57,7 +57,7 @@ function CapArt({ slug, i, on, subject, pos }) {
   );
 }
 
-function Caps({ slug, flip, subject, pos }) {
+function Caps({ slug, flip, subject, pos, capArt }) {
   const d = C[slug];
   return (
     <Chapters
@@ -66,13 +66,13 @@ function Caps({ slug, flip, subject, pos }) {
       flip={flip}
       className="cr-caps"
       head={<><h2 id={'cr-caps-' + slug} className="cr-caps-h">What {d.name} does</h2><p className="lv-side cr-caps-side">Capabilities</p></>}
-      items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} /> }))}
+      items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => (capArt ? capArt(i, on) : <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} />) }))}
     />
   );
 }
 
 // where it fits: the three rooms as a quiet list beside one picture of the model at work
-function Fits({ slug, flip, subject, pos }) {
+function Fits({ slug, flip, subject, pos, fitsArt }) {
   const d = C[slug];
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
@@ -95,10 +95,12 @@ function Fits({ slug, flip, subject, pos }) {
             ))}
           </ol>
         </div>
-        <figure className="cr-fits-art" style={frame(1, subject, pos)}>
-          <Img src={film(slug, 'webp')} w={1200} h={1500} />
-          <ModelFilm slug={slug} play={seen} />
-        </figure>
+        {fitsArt ? fitsArt(seen) : (
+          <figure className="cr-fits-art" style={frame(1, subject, pos)}>
+            <Img src={film(slug, 'webp')} w={1200} h={1500} />
+            <ModelFilm slug={slug} play={seen} />
+          </figure>
+        )}
       </div>
     </section>
   );
@@ -201,14 +203,19 @@ export function Scene({ slug, dark, className = '', children }) {
    framing). demo: the model's Scene. first: 'demo' puts the demo straight after the stage, else the chapters come
    first. flip: chapters picture-left; the fits picture on the left. The page ends on Hanzo's exact model cards and a
    closing Band that carries the research preview in Hanzo's words and repeats the hero ask. */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip }) {
+/* Optional, per model (additive; models that omit them are unchanged): capArt(i, on) draws chapter i's own picture
+   instead of the film; fitsArt(seen) replaces the fits picture; first='tail' puts the demo between the studio map and
+   the model cards, so the two card grids never sit back to back. */
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt }) {
   const d = C[slug];
-  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} />;
+  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  const tail = first === 'tail';
   return (
     <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
-      {first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}
-      <Fits slug={slug} flip={flip} subject={subject} pos={pos} />
+      {first === 'demo' ? <>{demo}{caps}</> : tail ? caps : <>{caps}{demo}</>}
+      <Fits slug={slug} flip={flip} subject={subject} pos={pos} fitsArt={fitsArt} />
       <Map slug={slug} />
+      {tail && demo}
       <ModelCards slug={slug} />
       <Band
         title={`Try ${d.name} on your own work`}
