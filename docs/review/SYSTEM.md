@@ -275,3 +275,4 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 ## Requests to the shared system
 
 Write each request as one line: the page, what you need, and why.
+- **Every page (Proof chat, 7 Nov): in-site clicks freeze about 4s and the card-to-page morph never plays.** In `components/Morph.jsx`, the View Transition's update callback resolves through `requestAnimationFrame(() => ok())` (lines ~34 and ~71). Chromium runs no animation frames while a transition holds rendering, so the promise only settles at its own ~4s timeout (measured: 4,069ms with rAF, 81ms with `setTimeout(ok, 16)`). Fix: resolve with `setTimeout(ok, 16)` in both places. With that simulated, the /integrations and /open-source cards land in their destination headlines.
