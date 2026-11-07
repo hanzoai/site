@@ -1,4 +1,5 @@
 'use client';
+// V2: 8/10 (own estimate; critic pending) a model launch: name and three figures, the model's Sigil with its id, a sticky local nav, spec, quick start, Hanzo's 'More from' chapter with the field, the bill and Hanzo's cards
 // Persona: Developer picking a model. Goal: pick it and try it. CTA: the page's first action in Hanzo's words (usually "Get API key"). Metric: api_key_created.
 // Signature: the open. The card you pressed on /models (or a sibling) lands as this page's name (morph), and the page answers with the model's own living contour field.
 // Beyond: the bill comparer. Set a monthly volume, pick any sibling, see both bills and the context each gives, from Hanzo's own rates (rate × volume, nothing estimated).

@@ -1,4 +1,5 @@
 'use client';
+// V2: 8/10 (own estimate; critic pending) Hanzo's exact model grid as the hero, the black room of three families, Kai's figures, a catalogue of Hanzo's cards that open into their pages, every model linked
 // Persona: Developer choosing a model (and the buyer comparing labs). Goal: find the model, open its page. CTA: "Get API key" (platform.hanzo.ai/api-keys). Metric: api_key_created.
 // Signature: a card opens into its page. The first screen is Hanzo's model grid exactly as live hanzo.ai draws it (SPEC.md); every card lifts into its model's page (the WebGL opener), every catalogue card's name flies into its sheet (morph).
 // Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from here, findable with Ctrl-F, so no page of the 544 is an orphan.
@@ -120,9 +121,9 @@ function Stage() {
   const [held, setHeld] = useState(false);
   useEffect(() => {
     if (calm || stop || held) return;
-    const t = setInterval(() => setLit((i) => (i % 8) + 1), 2600);
-    return () => clearInterval(t);
-  }, [calm, stop, held]);
+    const t = setTimeout(() => setLit((i) => (i % 8) + 1), 2600); // one step, then this effect schedules the next
+    return () => clearTimeout(t);
+  }, [calm, stop, held, lit]);
   const go = 'https://platform.hanzo.ai/api-keys';
   return (
     <section className="xmo-stage" aria-labelledby="xmo-h1">
@@ -384,7 +385,7 @@ function Every({ makers }) {
   if (!makers || !makers.length) return null;
   return (
     <details className="xmo-every" id="every">
-      <summary>
+      <summary data-sound="tick">
         <span className="xmo-every-t">Every model</span>
         <i aria-hidden="true" />
       </summary>
