@@ -164,3 +164,23 @@
 .mcp-stream, .mcp-open-card.d5 { --acc: #f5f5f7; }
 .mcp-card.d5 .mcp-card-open { background: #f5f5f7; color: #000; }
 .mcp-repo .x-btn { background: #fff; }
+
+/* 7 Nov review: one silver for the tool bars (the newest call in white), neutral sheets, the config split, no blank screens */
+.mcp-row .mcp-tool i, .mcp-lane b { background: #737373 !important; }
+.mcp-rows li:first-child .mcp-tool i, .mcp-rows li:first-child .mcp-lane b { background: #fafafa !important; }
+.mcp-rows li:first-child .mcp-tool { color: #fff; }
+.mcp-sheet:nth-child(2) { background: #fafafa; } .mcp-sheet:nth-child(3) { background: #f5f5f5; }
+.mcp-sheet-n { display: inline-block; margin-left: 16px; vertical-align: .55em; font-size: 13px; font-weight: 400; letter-spacing: .08em; color: var(--faint); }
+.mcp-parts { padding-bottom: 72px; }
+.mcp-doms { padding-bottom: 96px; }
+.mcp-cfg { padding-top: clamp(96px, 10vw, 160px); }
+.mcp-codes { grid-column: 7 / span 6; display: grid; gap: 16px; }
+.mcp-codes .mcp-code { grid-column: auto; }
+.mcp-code-c { margin: 0; padding: 16px 28px 0; font-size: 13px; color: #7c7c85; }
+.mcp-code pre { padding-top: 14px; }
+@media (max-width: 900px) {
+  .mcp-h1 { font-size: clamp(27px, 8vw, 31px) !important; line-height: 1.06; }
+  .mcp-h1 .a2-ln, .mcp-h1 .a2-ln-in { display: inline; overflow: visible; } /* the sentence flows into three lines on a phone */
+  .mcp-codes { grid-column: 1 / -1; }
+  .mcp-code-c { padding: 14px 20px 0; }
+}
