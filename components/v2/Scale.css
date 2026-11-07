@@ -1,7 +1,8 @@
 /* v2 type, space and material for the Business 2 pages (w2- prefix). Usage: import '../../v2/Scale.css' (or via any
-   w2 component) and use the classes below; set --acc on the page's <main> for its one accent. Values are VISION.md's
-   v2 system: Display 128/96/80 (56/48 phone), Headline 56/36, Title 28, Lede 24/21, Body 19/17, Kicker mono 13 caps. */
-.w2 { --acc: #0a0a0a; --acc-ink: #fff; --shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 24px 60px -24px rgba(0, 0, 0, .22), 0 60px 140px -60px rgba(0, 0, 0, .18); }
+   w2 component) and use the classes below. JAMES.md: 0 UI hues, so --acc is ink (silver in a dark room); colour comes
+   only from Hanzo's own media. No eyebrow above any headline: .w2-kicker is a mono meta line that sits below or beside.
+   Values: Display 128/96/80 (56/48 phone), Headline 56/36, Title 28, Lede 24/21, Body 19/17, meta mono 13. */
+.w2 { --acc: #0a0a0b; --acc-ink: #fff; --faint: #6e6e73; --soft: #48484a; --shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 24px 60px -24px rgba(0, 0, 0, .22), 0 60px 140px -60px rgba(0, 0, 0, .18); }
 .w2-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
 .w2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
 .w2-sec { position: relative; padding: clamp(120px, 15vw, 240px) 0; }
@@ -18,7 +19,7 @@
 .w2-body strong, .w2-body em, .w2-lede strong { color: var(--ink); font-weight: 560; font-style: normal; }
 .w2-body a, .w2-lede a { color: var(--ink); text-underline-offset: 3px; }
 .w2-kicker { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
-.w2-kicker.acc { color: var(--acc); }
+.w2-kicker.acc { color: var(--ink); }
 .w2-fig { font-family: var(--mono); font-feature-settings: 'tnum'; font-weight: 400; letter-spacing: -.04em; }
 
 /* material: hero objects 28px, cards 16px, hairlines, soft long shadows (no glass) */
@@ -27,25 +28,33 @@
 .w2-rule { height: 1px; background: var(--line); border: 0; margin: 0; }
 
 /* the one dark room */
-.w2-dark { background: #050506; color: #f5f5f7; --soft: #a1a1a6; --faint: #86868b; --line: rgba(255, 255, 255, .1); --card: #111113; }
+.w2-dark { background: #050506; color: #f5f5f7; --soft: #a1a1a6; --faint: #86868b; --line: rgba(255, 255, 255, .1); --card: #111113; --acc: #f5f5f7; --acc-ink: #0a0a0b; }
 .w2-dark :is(h1, h2, h3, h4) { color: #f5f5f7; }
 .w2-dark .w2-object { background: #0e0e10; border-color: rgba(255, 255, 255, .08); box-shadow: 0 40px 120px -40px rgba(0, 0, 0, .9); }
 
 /* the primary button: ink pill, magnetic in the page */
-.w2-cta { display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 30px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 17px/1 var(--sans); letter-spacing: -.01em; text-decoration: none; transition: background .2s; }
-.w2-cta:hover { background: #262626; }
+.w2-cta { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 56px; padding: 0 30px; border: 0; border-radius: 999px; background: #0a0a0b; color: #fff; font: 500 17px/1 var(--sans); letter-spacing: -.01em; text-decoration: none; cursor: pointer; transition: background var(--dur-hover, .2s) var(--ease), transform var(--dur-press, .1s) var(--ease); touch-action: manipulation; }
 .w2-cta i { font-style: normal; transition: transform .3s var(--ease); }
-.w2-cta:hover i { transform: translateX(3px); }
-.w2-cta.acc { background: var(--acc); color: var(--acc-ink); }
-.w2-ghost { display: inline-flex; align-items: center; gap: 8px; height: 56px; padding: 0 24px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); color: var(--ink); font: 500 17px/1 var(--sans); text-decoration: none; background: none; cursor: pointer; transition: border-color .2s, background .2s; }
-.w2-ghost:hover { border-color: var(--ink); }
-.w2-dark .w2-cta { background: #f5f5f7; color: #0a0a0a; }
+.w2-cta:active { transform: scale(.98); }
+.w2-cta.acc { background: #0a0a0b; color: #fff; }
+.w2-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 56px; padding: 0 24px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .16); color: var(--ink); font: 500 17px/1 var(--sans); text-decoration: none; background: transparent; cursor: pointer; transition: border-color var(--dur-hover, .2s), background var(--dur-hover, .2s), transform var(--dur-press, .1s) var(--ease); touch-action: manipulation; }
+.w2-ghost:active { transform: scale(.98); }
+@media (hover: hover) {
+  .w2-cta:hover { background: #2c2c2e; }
+  .w2-cta:hover i { transform: translateX(3px); }
+  .w2-ghost:hover { border-color: var(--ink); background: rgba(0, 0, 0, .04); }
+  .w2-dark .w2-cta:hover { background: #fff; }
+  .w2-dark .w2-ghost:hover { border-color: #f5f5f7; background: rgba(255, 255, 255, .06); }
+}
+.w2-cta[disabled], .w2-ghost[disabled] { opacity: .35; cursor: default; transform: none; }
+.w2-dark .w2-cta, .w2-dark .w2-cta.acc { background: #f5f5f7; color: #0a0a0b; }
 .w2-dark .w2-ghost { color: #f5f5f7; border-color: rgba(255, 255, 255, .24); }
 
 .w2-pill { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 12px; border-radius: 999px; font: 500 13px/1 var(--mono); letter-spacing: .02em; white-space: nowrap; background: var(--card); color: var(--ink); }
 .w2-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.w2-pill.live { background: #e8f5ec; color: #1a7f37; }
-.w2-pill.dev { background: #fff4e0; color: #9a5b00; }
+.w2-pill.live { background: #0a0a0b; color: #fff; }
+.w2-pill.dev { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2); }
+.w2-pill.dev::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
 
 @media (max-width: 900px) {
   .w2-wrap { width: min(100% - 32px, 1440px); }
@@ -56,3 +65,9 @@
   .w2-kicker, .w2-pill { font-size: 14px; }
   .w2-cta, .w2-ghost { height: 52px; }
 }
+
+/* pause control for a self-running demo (WCAG 2.2.2): icon only, 44px */
+.w2-pause { position: absolute; z-index: 4; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); color: #0a0a0b; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08), 0 6px 16px -8px rgba(0, 0, 0, .3); cursor: pointer; transition: transform var(--dur-press, .1s) var(--ease), background .2s; }
+.w2-pause:active { transform: scale(.94); }
+@media (hover: hover) { .w2-pause:hover { background: #fff; } }
+.w2-dark .w2-pause { background: rgba(28, 28, 30, .92); color: #f5f5f7; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12); }

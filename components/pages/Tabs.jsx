@@ -1,5 +1,6 @@
 'use client';
-/* Tabs, v2. V2: 8/10 Stage window (shell panes and their tree arrive huge and settle), three pinned chapters on why it is shaped this way, a linked-machines map, a dark tile room, terminal-green accent
+/* Persona: developers who run coding agents in shells on their own machines. Goal: open Tabs. CTA: "Open Tabs" → tabs.hanzo.ai. Metric: signup_start (app handoff).
+   Tabs, v2. V2: 8/10 Stage window (shell panes and their tree arrive huge and settle), three pinned chapters on why it is shaped this way, a linked-machines map, a dark tile room, greys only
    Keep tabs on your agents.
    Signature: the layout is a tree, drawn live. Shell panes split themselves inside a browser window while the tree
    beside them grows a branch for every split; close a pane and its sibling takes the space, and nothing else moves.
@@ -7,7 +8,8 @@
    Beyond: the phone flip. The same tree, turned into what Tabs does on a phone: swipeable pages instead of slivers,
    with the key row a soft keyboard lacks (Esc, Ctrl, Tab and the arrows).
    Motion budget: signature = the live tree (layout re-flow); supporting = Stage (Settle), Chapters (PinChapters),
-   magnetic primary. Accent: terminal green. One dark room: "What you get". Every word is Hanzo's. */
+   magnetic primary. Colour: none (0 UI hues; no terminal green). Pause buttons on the self-running tree and chapter
+   visuals. One dark room: "What you get". Every word is Hanzo's. */
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
@@ -17,6 +19,8 @@ import { leaf, split, close, leaves, isLeaf } from './tabsTree';
 import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
 import PinChapters from '../v2/x-gauss/PinChapters';
+import NoJs from '../v2/x-gauss/NoJs';
+import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
 import './Tabs.css';
 
@@ -99,12 +103,13 @@ function Phone({ list }) {
 
 function Hero() {
   const [ref, live] = useLive(0.3);
+  const [paused, pauseBtn] = usePause({ right: 16, top: 16 });
   const [t, setT] = useState(START);
   const [n, setN] = useState(0);
   const [mine, setMine] = useState(false);
   const [phone, setPhone] = useState(false);
   const [warn, setWarn] = useState(false);
-  useEvery(1300, live && !mine && !phone, () => {
+  useEvery(1300, live && !mine && !phone && !paused, () => {
     // odd beats warn the pane that is about to close, even beats change the tree
     if (DOOMED[n] && !warn) { setWarn(true); return; }
     setWarn(false); setT((v) => SCRIPT[n](v)); setN((v) => (v + 1) % SCRIPT.length);
@@ -122,18 +127,19 @@ function Hero() {
       <div className="w2-wrap">
         <div className="xtb-top">
           <div>
-            <motion.p className="w2-kicker acc xtb-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Hanzo Tabs</motion.p>
             <LineMask as="h1" id="xtb-h1" now className="w2-display xtb-h1" lines={['Keep tabs on', 'your agents.']} />
           </div>
           <motion.div className="xtb-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="w2-lede">Your coding agents work in shells on real machines. Tabs puts every one of those shells in front of you — split, tiled, and reachable from anywhere you can open a browser.</p>
-            <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
+            <Magnetic strength={0.25}><A to="https://tabs.hanzo.ai" className="w2-cta" data-thumb="Open Tabs" data-cta="tabs.hero">Open Tabs <i aria-hidden="true">↗</i></A></Magnetic>
           </motion.div>
         </div>
         <div ref={ref}>
           <Settle from={1.06} lift={60}>
-            <div className="xtb-stage w2-object">
+            <div className={'xtb-stage w2-object' + (paused ? ' paused' : '')}>
+              {pauseBtn}
               <div className="xtb-bar">
+                <p className="xtb-name x-mono">Hanzo Tabs</p>
                 <div className="xtb-seg" role="radiogroup" aria-label="Show it on">
                   {['Browser', 'Phone'].map((k, i) => (
                     <button key={k} type="button" role="radio" aria-checked={phone === !!i} onClick={() => setPhone(!!i)}><span>{k}</span></button>
@@ -216,15 +222,17 @@ function SpaceTree({ on }) {
 
 function Why() {
   const [ref, live] = useLive(0.05);
+  const [paused, pauseBtn] = usePause();
   return (
     <div ref={ref}>
       <PinChapters id="xtb-why" label="Why it is shaped this way" className="xtb-pin"
         chapters={WHY.map(([t, d], i) => ({ k: i === 0 ? 'Why it is shaped this way' : `Why · ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
         visual={(at) => (
-          <div className="xtb-vis">
+          <div className={'xtb-vis' + (paused ? ' paused' : '')}>
+            {pauseBtn}
             {[NoServer, ShellUrl, SpaceTree].map((V, i) => (
               <motion.div key={i} className="xtb-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, scale: at === i ? 1 : 0.96 }} transition={{ duration: 0.6, ease: EASE }} aria-hidden={at !== i}>
-                <V on={live && at === i} />
+                <V on={live && !paused && at === i} />
               </motion.div>
             ))}
           </div>
@@ -274,7 +282,7 @@ function What() {
       <div className="w2-wrap">
         <div className="xtb-what-top">
           <h2 id="xtb-what" className="w2-display s">What you get</h2>
-          <div className="xtb-acts"><A to="https://tabs.hanzo.ai" className="w2-cta">Open Tabs</A><A to="https://github.com/hanzo-apps/tabs" className="w2-ghost">Read the source</A></div>
+          <div className="xtb-acts"><A to="https://tabs.hanzo.ai" className="w2-cta" data-cta="tabs.close">Open Tabs</A><A to="https://github.com/hanzo-apps/tabs" className="w2-ghost">Read the source</A></div>
         </div>
         <div className="xtb-tiles">
           {GET.map(([t, d, k]) => (
@@ -298,6 +306,7 @@ function What() {
 export default function Tabs() {
   return (
     <main className="xtb w2">
+      <NoJs />
       <Hero />
       <Why />
       <Machines />

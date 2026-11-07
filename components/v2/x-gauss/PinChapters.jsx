@@ -7,7 +7,8 @@
    - visual(i) renders the pinned object for chapter i (the same object, changing, reads best).
    - Every chapter's words are always in the page (find-in-page, screen readers); only the active one is shown.
    - The numbered rail jumps to a chapter. Phones: the visual pins on top and the chapters scroll under it.
-   - Reduced motion: chapters swap without travel. Owned by the Business 2 chat. */
+   - c.k is a mono meta line under the words (never an eyebrow above the headline).
+   - Reduced motion: chapters swap without travel. JS off: <NoJs/> stacks every chapter. Owned by the Business 2 chat. */
 import { useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import './PinChapters.css';
@@ -47,9 +48,9 @@ export default function PinChapters({ id, label, chapters, visual, className = '
                 <motion.article key={i} className={'w2-pin-t' + (at === i ? ' on' : '')} initial={false}
                   animate={calm ? { opacity: at === i ? 1 : 0 } : { opacity: at === i ? 1 : 0, y: at === i ? 0 : at > i ? -48 : 48 }}
                   transition={{ duration: at === i ? 0.7 : 0.35, ease: EASE, delay: at === i ? 0.12 : 0 }}>
-                  {c.k && <p className="w2-kicker acc">{c.k}</p>}
                   <h2 className="w2-headline">{c.t}</h2>
                   <div className="w2-pin-b">{c.b}</div>
+                  {c.k && <p className="w2-pin-meta x-mono">{c.k}</p>}
                 </motion.article>
               ))}
             </div>

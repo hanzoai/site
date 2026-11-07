@@ -16,8 +16,8 @@
    Rhythm: stage → model tiles → pinned chapters → agent wall + console → the one dark room (speed, cost, frontier as
    one argument) → figures + calendar + rail → logo wall → calm pricing → backers → closing band.
    Colour: none in the UI (JAMES.md 7); only Hanzo's own media brings colour. */
-import { useEffect, useState } from 'react';
-import { Marquee } from '../Chrome';
+import { useEffect, useRef, useState } from 'react';
+import { A, Band, Img } from '../kit';
 import Hero from '../Hero';
 import Models from '../Models';
 import Platform from '../Platform';
@@ -54,11 +54,39 @@ function Spine() {
   );
 }
 
+/* The proof walls (PLAN-COMPONENTS 2.5): still, ordered rows of Hanzo's own logo files, grey until you point at one,
+   which then shows its own colour and its name. If a logo file cannot load, its name stands in for it. */
+function Wall({ items, label, cta }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    ref.current?.querySelectorAll('img').forEach((im) => {
+      const fail = () => im.closest('a')?.setAttribute('data-fail', '');
+      if (im.complete && !im.naturalWidth) fail(); else im.addEventListener('error', fail, { once: true });
+    });
+  }, []);
+  return (
+    <section className="hv-proof" aria-label={label} ref={ref}>
+      <div className="v2-wrap hv-proof-in">
+        <p className="hv-proof-t">{label}</p>
+        <ul style={{ '--n': items.length > 7 ? 6 : items.length }}>
+          {items.map((l) => (
+            <li key={l.name}>
+              <A to={l.href} className="hv-logo" data-cta={`home.${cta}.${l.name.toLowerCase().replace(/\W+/g, '-')}`}>
+                <Img src={l.src} alt={l.name} w={160} h={40} />
+                <span>{l.name}</span>
+              </A>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <main className="hv">
       <Hero />
-      <Marquee items={C.backed} label="Backed by" />
       <Models />
       <Platform />
       <Agents />
@@ -66,8 +94,10 @@ export default function Home() {
       <Cheaper />
       <Pareto />
       <Open />
+      <Wall items={C.trusted} label="Trusted by" cta="trusted" />
       <Pricing />
-      <Marquee items={C.trusted} label="Trusted by" reverse />
+      <Wall items={C.backed} label="Backed by" cta="backed" />
+      <Band title="Pick all three." lede="Every model behind one key." action="Try Hanzo" to="https://hanzo.ai/signup" />
       <Spine />
     </main>
   );

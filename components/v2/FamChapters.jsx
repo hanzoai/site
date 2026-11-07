@@ -13,6 +13,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import { ui } from './famUi';
 
+/* with scripts off the chapters read as a plain stack (PLAN-COMPONENTS 2.3: JS off is legible) */
+const NOJS = '.v2f-ch{height:auto}.v2f-ch-pin{position:static;height:auto;display:block;overflow:visible}.v2f-ch-g{display:flex;flex-direction:column;gap:96px}.v2f-ch-i{display:flex;flex-direction:column;gap:32px}.v2f-ch-t,.v2f-ch-v{opacity:1!important;transform:none!important;clip-path:none!important;pointer-events:auto!important}.v2f-ch-v{height:auto}.v2f-ch-nav{display:none}';
+
 export default function FamChapters({ items, label, className = '', onStep, id }) {
   const ref = useRef(null);
   const [at, setAt] = useState(0);
@@ -33,6 +36,7 @@ export default function FamChapters({ items, label, className = '', onStep, id }
   const focusIn = (k) => () => { if (k !== at && matchMedia('(min-width: 901px)').matches) jump(k); };
   return (
     <section ref={ref} id={id} className={'v2f-ch ' + className} style={{ '--n': n }} aria-label={label}>
+      <noscript><style>{NOJS}</style></noscript>
       <div className="v2f-ch-pin">
         <div className="v2f-wrap v2f-grid v2f-ch-g">
           {items.map((it, k) => (

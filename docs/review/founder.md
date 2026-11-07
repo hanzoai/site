@@ -2,6 +2,8 @@
 
 Reviewed: main, page files at `4350f66`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
+Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
+
 Verdict: 6/10
 
 First complaint: "There's a label on the headline again, and it's purple bars and green buttons. The pull request merges, goes back to open, and merges again, forever. And the page ends on a list of questions, not on the thing I came to do."
@@ -12,7 +14,7 @@ First complaint: "There's a label on the headline again, and it's purple bars an
 3. **A real object in every section?** Hero, levels and open bounties: yes. The claim form and questions are plain.
 4. **One ask, sticky after the hero?** Yes on desktop: a floating pill carries "Claim a merged pull request" after the hero, and the header's "Try Hanzo" turns outlined. On the phone the pill and the header's solid "Try Hanzo" show together. The page does not end on the ask: it ends on the FAQ.
 5. **Every hover and press answers?** "Claim a merged pull request" answers on hover; no press. "Find an issue" does not change on hover. "Send the claim" stays a grey disabled pill until the field is filled, with no hint why.
-6. **Overlap, font swap, layout shift?** None; layout shift 0. A hydration error fires on desktop load (red "1 Issue" badge on localhost).
+6. **Overlap, font swap, layout shift?** None; layout shift 0.
 7. **Which reference, and is its motion there?** apple.com pinned counter with panels changing beside it. Present.
 8. **Different from its neighbours?** Yes: the self-merging pull request and the merge counter are its own.
 9. **All 18 parts covered?** See below. No `docs/coverage/founder.md`.
@@ -24,9 +26,7 @@ First complaint: "There's a label on the headline again, and it's purple bars an
 
 ## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
 - **2.3 Page endings:** no closing band; the page ends on the FAQ.
-- **2.3 / 2.17 No-JS:** with JavaScript off, the lede and the FAQ answers (as visible text) stay hidden (5 of 25 blocks).
 - **2.17 Submit states:** the disabled "Send the claim" has no visible reason.
-- **2.13:** hydration error on desktop.
 - **2.4:** 0 `data-cta`.
 
 ## Fixes
@@ -35,4 +35,3 @@ First complaint: "There's a label on the headline again, and it's purple bars an
 3. Let the hero pull request merge once and rest on "Merged".
 4. End the page on the ask: a closing band with "Claim a merged pull request" after the questions (or move the questions above the claim form).
 5. Drop "Where do yours land?" or use Hanzo's own wording for the stepper.
-6. Fix the hydration mismatch; render the lede visible without JavaScript.

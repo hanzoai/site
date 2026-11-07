@@ -441,3 +441,9 @@
   .xmf-rel .xmf-plot { aspect-ratio: 4 / 5; border-radius: 22px; }
   .xmf-rel .xmf-more-h h2 { font-size: 36px; }
 }
+
+/* one pause (ModelFilm's FilmPause) stops every loop on the page: the Sigils, the field's light, the rings */
+.xmf-obj-pause { position: absolute; right: 14px; top: 14px; }
+.xmf-maker-pause { position: absolute; right: 0; top: 0; }
+.xmf-maker-g { position: relative; }
+[data-mpaused] .xmf-sweep, [data-mpaused] .xmf-dot.me::after, [data-mpaused] .xmf-field.on .xmf-dot b { animation-play-state: paused; }

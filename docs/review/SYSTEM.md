@@ -171,6 +171,18 @@ const [i, setI] = useState(0);
 - Downloads only when near the screen.
 - No autoplaying clip over 1.5 MB, and nothing autoplays above the fold before first paint.
 
+**Measured** (production build, 7 Nov, `next build` exit 0, 1,792 static pages):
+
+- **Typical page:** about 170 KB of first-load JS (gzipped), which is over the utility (90 KB) and model (100 KB) budgets.
+- **Where it goes:**
+  - React and Next: 103 KB, shared by every page.
+  - The shared layout: about 70 KB in all. Motion is 49 KB of that, and the shell layers (header, menus, search, ask bar, transitions) about 16 KB.
+  - The page itself: 2 to 9 KB.
+- **What this system already removed:**
+  - Hanzo's header and footer HTML now render on the server. Before, the whole 375 KB `content.js` shipped to every page.
+  - Lenis now loads after first paint, and only for mouse and trackpad.
+- **What is left is mostly Motion.** It comes down only when pages import `m` under `LazyMotion` instead of `motion`. That is a codemod across every page, planned for after the page chats merge (PLAN 6.2). New code: prefer CSS transitions (the tokens above) for hover, press and simple entrances.
+
 **Also:**
 - Put `.x-cv` on long sections far below the fold. It applies `content-visibility: auto` with a 900px intrinsic height; set your own if you know it.
 - Animate only transform, opacity, clip-path and filter. No `transition: all`.
@@ -243,14 +255,24 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 - **Arrival curtain** (`components/arrival.js`): home only, on the first visit in 7 days. It never runs on deep links, Save-Data, slow networks, reduced motion or bots. It holds 700ms at most, and the page behind is no longer dimmed or moved. A CSS failsafe lifts it at 3.5s. Do not wait for its `hz-arrived` event; it rarely fires now.
 - **Cookie notice:** "Reject all" sits beside "Accept all" at equal weight. Global Privacy Control is honoured. Any link to `#choices` reopens the preferences, or use `dispatchEvent(new Event('hz-consent-open'))`.
 - **The 1.5s DOM pollers** in the shell became one observer.
+- **Logo marquee** (home): it now has a pause button (icon only, named Pause or Play) and stands still under reduced motion.
+- **Phone keyboard:** the viewport uses `interactive-widget=resizes-content`, so the keyboard never covers the field being typed in.
+- **Lenis:** mouse and trackpad only, loaded after first paint. `window.__lenis` can be undefined for the first moments and on touch; `lib/scroll.js` handles both.
 
 ## Known breaks on main, owned by their page chats
 
-These are not changed by this system:
+- The `Crawl.css` and `Metrics.jsx` build errors are fixed on main, and `next build` passes.
+- **Closed drawers keep `aria-modal="true"` in the DOM.** The ask bar now ignores overlays that are not showing. If you build a modal, still drop `aria-modal` while it is closed (or unmount it).
+- **Shared complaints in the 7 Nov reviews are fixed by this system:**
+  - Two solid buttons at the top.
+  - No desktop sticky ask.
+  - The header and phone bar showing two solids.
+  - "Try Hanzo" fading on hover.
+  - The phone bar overlapping the closing button.
 
-- `components/pages/cloud/Crawl.css` has an extra `}` at line 94, which shows a build error overlay on every page in dev. It is fixed on the Cloud 1 branch, waiting to merge.
-- `components/pages/cloud/Metrics.jsx` declares `LABELS` twice, which is a build error.
+  Page-level ones stay with each page: several equal solid buttons in one view, a hydration mismatch on `/agents/*` and `/integrations/*` members, and text hidden by page CSS when JS is off.
 
 ## Requests to the shared system
 
 Write each request as one line: the page, what you need, and why.
+- **Every page (Proof chat, 7 Nov): in-site clicks freeze about 4s and the card-to-page morph never plays.** In `components/Morph.jsx`, the View Transition's update callback resolves through `requestAnimationFrame(() => ok())` (lines ~34 and ~71). Chromium runs no animation frames while a transition holds rendering, so the promise only settles at its own ~4s timeout (measured: 4,069ms with rAF, 81ms with `setTimeout(ok, 16)`). Fix: resolve with `setTimeout(ok, 16)` in both places. With that simulated, the /integrations and /open-source cards land in their destination headlines.

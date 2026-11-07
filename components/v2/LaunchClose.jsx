@@ -3,6 +3,8 @@
    (a living contour field drawn from the product's real figures), the one-line tagline, licence and source as quiet
    facts, and ONE solid button: the page's ask, the same label and link as its hero, thumb bar and AskBar (JAMES 5).
    Deploy to Cloud and Self-host stay as text links. The button leans toward a fine pointer (magnetic, spring).
+   It carries data-thumb, so the site's sticky ask bar (components/Ask.jsx) steps aside while it is on screen: one solid
+   ask per viewport. Pages do not add their own sticky bar; they put data-thumb on the hero ask and data-ask-name on <main>.
    Usage:
      <LaunchClose name="MQ" tag="Message queue" seed="mq" data={[6379, 10, 100, 60000]}
                   ask={['GitHub', 'https://github.com/hanzoai']} cta="mq.close"
@@ -45,7 +47,7 @@ export default function LaunchClose({ name, tag, seed, data = [], ask, cta, repo
           <LineMask as="h2" className="lx-display lx-close-h" lines={[`Get ${name}`]} inView />
           {tag && <p className="lx-lede lx-close-tag">{tag}</p>}
           <div className="lx-close-acts">
-            <Pull><A to={to} className="lx-cta" data-cta={cta}>{label}<Arr /></A></Pull>
+            <Pull><A to={to} className="lx-cta" data-cta={cta} data-thumb={label}>{label}<Arr /></A></Pull>
             {deploy && !deployIsAsk && <A to={deploy} className="lx-text">Deploy to Cloud</A>}
             {self && <A to={self} className="lx-text">Self-host</A>}
           </div>

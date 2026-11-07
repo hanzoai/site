@@ -2,6 +2,8 @@
 
 Reviewed: main, page files at `c2fa6e5`. Walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped). The desktop film was lost to a second tab the walk opened; desktop is judged from the dwell screenshots and the motion log.
 
+Note (7 Nov 14:12): a hydration error seen in the first walks came from the shared shell and is gone on main; it is not counted against this page. Text is now legible with JavaScript off (shared fix at 14:05, re-checked).
+
 Verdict: 6/10
 
 First complaint: "Green tags, green dots, a purple dot, and a green label sitting on the headline. Hanzo is black and white. And once the list loads, the first screen just sits there."
@@ -12,7 +14,7 @@ First complaint: "Green tags, green dots, a purple dot, and a green label sittin
 3. **A real object in every section?** Hero (live list), podium with "How #1 adds up", token race: yes. The awards list and the propose-a-bounty card are text only.
 4. **One ask, sticky after the hero?** Yes on desktop: a floating bar with "Every open bounty" follows you, and the header's "Try Hanzo" turns outlined after the hero. That is the right pattern. On the phone, header "Try Hanzo" stays solid beside the bottom bar.
 5. **Every hover and press answers?** Hovers answer on the ask and the text links. No press state on "Every open bounty" or "Leaderboard".
-6. **Overlap, font swap, layout shift?** No overlap, no sideways scroll. Layout shift 0.022 on desktop, 0 on phone. A hydration error fires on desktop load (red "1 Issue" badge on localhost).
+6. **Overlap, font swap, layout shift?** No overlap, no sideways scroll. Layout shift 0.022 on desktop, 0 on phone.
 7. **Which reference, and is its motion there?** anthropic.com launch (a hero figure, "1,510 pts", with how it adds up) and the scrubbed token race. Both are there.
 8. **Different from its neighbours?** Yes: live GitHub list, podium, race.
 9. **All 18 parts covered?** See below. No `docs/coverage/bounty.md`.
@@ -22,15 +24,12 @@ First complaint: "Green tags, green dots, a purple dot, and a green label sittin
 11. **Copy untouched?** Yes: parity 102/102 text, 5/5 links. The issue titles and "starter" labels are live GitHub data.
 
 ## Missing from the 18 parts (PLAN-COMPONENTS 2.1–2.18, measured)
-- **2.3 / 2.17 No-JS:** with JavaScript off, the lede ("Open issues and bug reports across Hanzo's repositories…") and two more lines stay invisible.
 - **2.6 Content:** 10 pieces of text at 13px on the page (request counts, meta).
 - **2.4 / 2.18:** 0 `data-cta`; no press states.
-- **2.13:** hydration error on desktop.
 
 ## Fixes
 1. Remove "• BOUNTIES & REWARDS" from above the h1.
 2. Take every green and purple out: dots, chips, points, arrows and the timeline go to ink and greys (weight or a filled ink dot can say "open" / "merged").
 3. Give the first screen one quiet idle move after it loads (for example the newest bounty arriving at the top, once).
 4. Turn the awards list and the "How a bounty is taken" steps into one object each (a pinned step that changes, or the PR itself), so they stop reading as paragraphs.
-5. Render the lede visible without JavaScript; fix the hydration mismatch.
-6. Add a press state (scale 0.98 or 1px down) to "Every open bounty".
+5. Add a press state (scale 0.98 or 1px down) to "Every open bounty".
