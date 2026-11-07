@@ -126,11 +126,12 @@ function Specs() {
     // only count when the figure arrives from below; a deep link or reduced motion keeps the true value
     if (calm || !ref.current || ref.current.getBoundingClientRect().top < innerHeight) return;
     armed.current = true;
-    setN(0);
+    setN(10);
   }, [calm]);
   useEffect(() => {
+    // 10 to 80: always two tabular digits, so "GB HBM3" never moves while it counts
     if (!seen || !armed.current) return;
-    const c = animate(0, 80, { duration: 1.1, ease: EASE, delay: 0.25, onUpdate: (v) => setN(Math.round(v)) });
+    const c = animate(10, 80, { duration: 1.1, ease: EASE, delay: 0.25, onUpdate: (v) => setN(Math.round(v)) });
     return () => c.stop();
   }, [seen]);
   const lit = seen || calm;

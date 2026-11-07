@@ -22,7 +22,8 @@
 /* 1. hero: the headline, then the podium as the hero object, all in the first screen */
 .xlb-hero { padding: clamp(44px, 3.8vw, 56px) 0 44px; }
 .xlb-hero-top { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); gap: 24px; align-items: end; margin-bottom: 27px; }
-.xlb-cap { margin: 17px 0 0; }
+/* the caption sits clear of the h1's mask box (which runs about 20px past its last line), not tucked under it */
+.xlb-cap { margin: 34px 0 0; }
 .xlb-lede { margin: 0 0 17px; max-width: 40ch; font-size: 17px; line-height: 1.5; color: var(--k-body); text-wrap: pretty; }
 .xlb-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 
@@ -208,30 +209,36 @@
 
 @media (max-width: 900px) {
   .xlb-hero { padding: 27px 0 44px; }
-  .xlb-hero-top { grid-template-columns: minmax(0, 1fr); gap: 17px; margin-bottom: 20px; }
-  .xlb-cap { margin-top: 12px; }
-  .xlb-lede { margin-bottom: 17px; font-size: 16px; }
+  .xlb-hero-top { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-bottom: 17px; }
+  .xlb-cap { margin-top: 27px; }
+  .xlb-lede { margin-bottom: 12px; font-size: 16px; }
   /* phones: a cropped podium, the three blocks and the lit hunter's total side by side in one band */
-  .xlb-pod { padding: 6px 12px 12px; }
-  .xlb-pod-top { gap: 8px; padding-bottom: 6px; font-size: 14px; }
+  .xlb-pod { padding: 4px 12px 12px; }
+  .xlb-pod-top { flex-wrap: wrap; gap: 0 8px; padding-bottom: 8px; font-size: 14px; }
   .xlb-pod-top b { font-size: 14px; }
-  .xlb-pod-top span { font-size: 12px; }
-  .xlb-pause { margin: -2px 0 -2px -8px; }
+  .xlb-pod-top span { flex: 1 1 100%; padding-left: 36px; font-size: 12px; }
+  .xlb-pause { margin: 0 0 -6px -8px; }
   .xlb-pod-body { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-top: 10px; }
   .xlb-steps { gap: 6px; }
   .xlb-step { gap: 6px; }
-  .xlb-who { font-size: 14px; }
-  .xlb-pts { font-size: 13px; }
+  .xlb-who { font-size: 13px; }
+  .xlb-pts { font-size: 12px; }
   .xlb-line, .xlb-handle { display: none; }
-  .xlb-step.s0 .xlb-block { height: 88px; }
-  .xlb-step.s1 .xlb-block { height: 64px; }
-  .xlb-step.s2 .xlb-block { height: 48px; }
-  .xlb-block { padding: 10px; border-radius: 12px 12px 6px 6px; }
+  .xlb-step-t { padding: 0 2px; }
+  .xlb-step.s0 .xlb-block { height: 76px; }
+  .xlb-step.s1 .xlb-block { height: 56px; }
+  .xlb-step.s2 .xlb-block { height: 42px; }
+  .xlb-block { padding: 8px 10px; border-radius: 12px 12px 6px 6px; }
   .xlb-block b { font-size: 21px; }
-  .xlb-tape { order: -1; padding: 12px 14px 14px; }
+  /* the tape sits first and level: the total on the left, the two lines it adds on the right */
+  .xlb-tape { order: -1; padding: 10px 14px 12px; }
   .xlb-tape-k { margin-bottom: 4px; font-size: 12px; }
-  .xlb-tape-l { margin-top: 4px; font-size: 14px; }
-  .xlb-tape-rule { margin: 8px 0 8px; }
+  .xlb-tape-k span:last-child { display: none; }
+  .xlb-tape > div { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: end; }
+  .xlb-tape-sum { grid-column: 1; grid-row: 1 / span 3; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .xlb-tape-sum span { font-size: 12px; }
+  .xlb-tape-l { grid-column: 2; flex-wrap: wrap; gap: 0 8px; margin-top: 2px; font-size: 12px; line-height: 1.35; }
+  .xlb-tape-rule { grid-column: 2; margin: 6px 0 2px; }
   .xlb-tape-sum b { font-size: 52px; }
   .xlb-rcpt-n, .xlb-total .xlb-roll { font-size: 52px; }
 
