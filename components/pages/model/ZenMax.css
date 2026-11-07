@@ -11,7 +11,7 @@
 
 /* Stage: a sticky screen; the film card's settled box is fixed in viewport units, --k (1 → 0) carries it from cover */
 .zx-stage { position: relative; height: 240svh; margin-top: -60px; } /* the stage starts under the 60px header, so it is pinned from the first frame */
-.zx-stage-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; } /* the white the title blends against (sticky makes its own stacking context) */
+.zx-stage-pin { --zx-gap: max(4vw, calc((100vw - 1440px) / 2 + 24px)); position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; } /* the white the title blends against (sticky makes its own stacking context) */
 .zx-card {
   /* settled: a landscape card at the top right (50vw x 46svh); --k = 1 opens it full width from the header down */
   --k: 1; --gap: max(4vw, calc((100vw - 1440px) / 2 + 24px));
@@ -20,13 +20,25 @@
   transform: translate(calc((var(--gap) - 54vw) * var(--k)), calc((60px - 14svh) * var(--k))) scale(calc(1 + 1.16 * var(--k))); /* 108vw wide: the corners sit off screen */
   box-shadow: 0 60px 120px -70px rgba(0, 0, 0, .55);
 }
-.zx-film { width: 100%; height: 100%; object-fit: cover; display: block; }
+.zx-card .zx-film { width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; background: #000; }
+.zx-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(20deg, rgba(0, 0, 0, .6), rgba(0, 0, 0, 0) 52%); } /* a gradient under the words, never a dimmed film */
+.zx-pause { position: absolute; z-index: 2; top: calc(60svh + 16px); right: var(--zx-gap); display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1.5px solid currentColor; border-radius: 50%; background: transparent; color: #fff; mix-blend-mode: difference; cursor: pointer; transition: transform var(--dur-press, .1s) var(--ease); }
+.zx-pause:active { transform: scale(.94); }
+@media (hover: hover) { .zx-pause:hover svg { transform: scale(1.12); } }
+.zx-pause svg { transition: transform .2s var(--ease); }
 .zx-stage-t { position: relative; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 9svh; pointer-events: none; }
 .zx-stage-t a, .zx-stage-t button { pointer-events: auto; }
 .zx-blend { color: #fff; mix-blend-mode: difference; }
 .zx-name { margin: 0; font-size: clamp(80px, 8.9vw, 128px); font-weight: 600; line-height: .92; letter-spacing: -.05em; white-space: nowrap; }
-.zx-stage-more { max-width: min(560px, 48vw); }
+.zx-stage-b { max-width: min(640px, 48vw); }
+/* the asks while the film is under them (desktop, motion on, JS on): a light solid and a light link */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .js .zx-acts[data-over] .x-btn.solid { background: #f5f5f7; border-color: #f5f5f7; color: #0a0a0a; }
+  .zx-acts .x-arrow { color: #fff; mix-blend-mode: difference; } /* the link reads on the film and on white, wherever the card edge is */
+}
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) and (hover: hover) { .js .zx-acts[data-over] .x-btn.solid:hover { background: #fff; border-color: #fff; } }
 .zx-sub { margin: 28px 0 0; max-width: 28ch; font-size: clamp(21px, 1.7vw, 24px); line-height: 1.35; color: var(--soft); text-wrap: pretty; }
+.zx-sub.zx-blend { color: #fff; } /* white on the film, ink once it settles (difference against white) */
 
 /* the promises: an editorial index, one line each */
 .zx-prom { padding: clamp(120px, 15vw, 220px) 0; }
@@ -53,7 +65,9 @@
 .zx-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px 12px 12px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .zx-seg { display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: #1c1c1e; }
 .zx-chip { min-height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid transparent; background: transparent; color: #a1a1a6; font: 500 14px/1 var(--sans); white-space: nowrap; cursor: pointer; transition: background .25s, color .25s, border-color .25s; }
-.zx-chip:hover { color: #fff; }
+@media (hover: hover) { .zx-chip:hover { color: #fff; } }
+.zx-chip:active, .zx-col:active, .zx-drawer-b:active { transform: scale(.98); }
+.zx-chip, .zx-col, .zx-drawer-b { transition-property: background, color, border-color, transform; }
 .zx-chip[aria-checked='true'], .zx-chip[aria-pressed='true'] { background: #f5f5f7; color: #0a0a0a; border-color: #f5f5f7; }
 .zx-chip.sm { border-color: rgba(255, 255, 255, .16); }
 .zx-chip:focus-visible, .zx-col:focus-visible, .zx-drawer-b:focus-visible { outline: 2px solid var(--zx-silver); outline-offset: 2px; }
@@ -65,7 +79,7 @@
 .zx-slot { border-radius: 12px; background: rgba(255, 255, 255, .03); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
 .zx-rack.twin .zx-slot { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .025) 0 6px, transparent 6px 12px); }
 .zx-srv { display: grid; gap: 9px; padding: 11px 12px 12px; border-radius: 12px; background: #1c1c1f; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
-.zx-srv-n { font: 500 12px/1 var(--mono); letter-spacing: .06em; color: #8e8e93; }
+.zx-srv-n { font: 500 13px/1 var(--mono); letter-spacing: .06em; color: #8e8e93; }
 .zx-gpus { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 5px; }
 .zx-gpus i { height: 16px; border-radius: 4px; background: #2c2c2e; transition: background .45s var(--ease); }
 .zx-rack[data-go] .zx-gpus i { background: #f5f5f7; }
@@ -91,7 +105,7 @@
 .zx-col { display: block; width: 100%; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer; }
 .zx-col-n { display: block; font-size: var(--zx-title); font-weight: 600; letter-spacing: -.04em; line-height: 1; transition: color .3s var(--ease); }
 .zx-col[aria-pressed='false'] .zx-col-n { color: #b0b0b6; }
-.zx-col[aria-pressed='false']:hover .zx-col-n { color: var(--soft); }
+@media (hover: hover) { .zx-col[aria-pressed='false']:hover .zx-col-n { color: var(--soft); } }
 .zx-sheet-r > [role='cell'] { font-size: var(--zx-body); line-height: 1.45; color: var(--faint); transition: color .3s var(--ease); }
 .zx-sheet-r > [role='cell'][data-on] { color: var(--ink); }
 .zx-sheet-r > .zx-sheet-big { font-size: var(--zx-title); font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
@@ -123,8 +137,10 @@
   .zx-stage-t { height: auto; display: block; padding: 112px 0 0; }
   .zx-blend { mix-blend-mode: normal; color: var(--ink); }
   .zx-name { font-size: clamp(48px, 15vw, 64px); }
-  .zx-stage-more { max-width: none; opacity: 1 !important; transform: none !important; }
+  .zx-stage-b { max-width: none; }
+  .zx-pause { top: auto; bottom: 16px; right: 32px; }
   .zx-sub { margin-top: 20px; }
+  .zx-sub.zx-blend { color: var(--soft); }
   .zx-acts { margin-top: 28px; }
   .zx-card { position: relative; order: 2; top: auto; right: auto; width: calc(100% - 32px); height: auto; aspect-ratio: 4 / 5; transform-origin: 50% 50%; margin: 40px auto 0; border-radius: 22px; transform: none !important; }
   .zx-prom { padding: 120px 0; }
@@ -172,7 +188,6 @@
   .zx-stage { height: auto; }
   .zx-stage-pin { height: 100svh; min-height: 640px; }
   .zx-card { transform: none !important; }
-  .zx-stage-more { opacity: 1 !important; transform: none !important; }
   .zx-step, .zx-gpus i, .zx-brk, .zx-domain, .zx-col-n, .zx-drawer-b i { transition: none; }
   .zx-drawer-p li { animation: none; }
 }
