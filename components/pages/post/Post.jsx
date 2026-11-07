@@ -5,12 +5,12 @@
    as heroes. Then the text runs in chapters: each opens with its number and a headline, the copy at 66ch on the right
    of an 8/4 split, figures and code breaking wide. It closes on Hanzo's own next steps as big rows and the other posts
    as cards that open into their page (the card's title becomes the next hero; synchronized.studio).
-   One accent per post, drawn from its seed, colours the plate's contours and the thread. All words, figures and code
-   are Hanzo's.
+   No brand hues (JAMES.md): greys, black and white; colour and imagery come only from Hanzo's own model films, on the
+   plate, on the parts a post names and on the cards. All words, figures and code are Hanzo's.
    Signature: the reading thread. A margin rail holds the chapter you are in as a big numeral that hands over to the
-   next, and a spine that fills as you read, each chapter a knot (on a phone, a reading bar that opens the contents).
+   next, and a spine that fills as you read, each chapter a knot, the one you are in ringed (on a phone, a reading bar that opens the contents).
    Beyond: minutes left. The post's own stated read time counts down as you read, and any chapter is one press away.
-   V2: 8.5/10 chaptered editorial rebuild: display cover, Sigil plate that opens to full bleed with hero figures, chapter openers, wide figures, next posts that open into their page; Flap and decor sparks removed (5 → 4 techniques). */
+   V2: 8.5/10 chaptered editorial rebuild: display cover (no eyebrow over the h1), a plate with the post's own model film or Sigil that opens to full bleed with hero figures, chapter openers, model films on the parts, next posts that open into their page; monochrome; Flap and decor sparks removed (5 → 4 techniques). */
 // Signature: the reading thread: a rail whose chapter numeral hands over as you read and a spine that fills, each chapter a knot
 // Beyond: minutes left: the post's own read time counting down as you read, with a jump to any chapter
 import { Fragment, useEffect, useRef, useState } from 'react';
@@ -23,6 +23,22 @@ import Frontier from './Frontier';
 import './Post.css';
 
 const pad = (n) => String(n).padStart(2, '0');
+const FILMS = ['enso', 'kai', 'zen', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta'];
+const film = (slug, ext) => '/models/' + slug + '.' + ext;
+
+/* Hanzo's model films play only while on screen, and stay on their poster for reduced motion */
+function Film({ slug, className }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { v.pause(); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return <video ref={ref} className={className} src={film(slug, 'webm')} poster={film(slug, 'webp')} muted loop playsInline preload="metadata" aria-hidden="true" />;
+}
 
 const go = (id) => {
   const el = document.getElementById(id);
@@ -74,6 +90,7 @@ function Parts({ cards }) {
     <ul className="xbg-parts" style={{ '--n': Math.min(cards.length, 3) }}>
       {cards.map(([role, name, note], i) => (
         <li key={name + i}>
+          {FILMS.includes(name.toLowerCase()) && <Film slug={name.toLowerCase()} className="xbg-part-film" />}
           <span className="xbg-role x-mono">{role}</span>
           <b className="xbg-name">{name}</b>
           <span className="xbg-note">{note}</span>
@@ -118,9 +135,9 @@ function Plate({ doc, nums }) {
   const scale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
   const figs = doc.facts.some((c) => /\d/.test(c[1]));
   return (
-    <section className="xbg-plate" data-room="dark" ref={ref} aria-label={doc.chip}>
+    <section className={'xbg-plate' + (doc.film ? ' film' : '')} data-room="dark" ref={ref} aria-label={doc.chip}>
       <motion.div className="xbg-plate-in" style={{ scale: calm ? 1 : scale }}>
-        <Sigil seed={doc.route} data={nums} className="xbg-sigil" />
+        {doc.film ? <Film slug={doc.film} className="xbg-plate-film" /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}
         <div className="xbg-plate-c xbg-w">
           <p className="xbg-plate-k x-mono"><span>{doc.chip}</span><span>{doc.date}</span></p>
           {doc.facts.length > 0 ? (
@@ -228,7 +245,7 @@ function End({ doc, cta, sources }) {
             {doc.next.map((n, i) => (
               <li key={n.href} className={i === 0 ? 'big' : ''}>
                 <A to={n.href} className="xbg-card" data-cursor="Open">
-                  <span className="xbg-card-art" style={{ '--acc': n.acc }}><Sigil seed={n.href} data={[parseInt(n.read, 10) || 0, n.title.length]} className="xbg-sigil" /></span>
+                  <span className="xbg-card-art">{n.film ? <img src={film(n.film, 'webp')} alt="" width="1200" height="1500" loading="lazy" decoding="async" /> : <Sigil seed={n.href} data={[parseInt(n.read, 10) || 0, n.title.length]} className="xbg-sigil" />}</span>
                   <span className="xbg-card-k x-mono"><span>{n.chip}</span><span>{n.date}</span><span className="xbg-card-r">{n.read}</span></span>
                   <span className="xbg-card-t" data-morph>{n.title}</span>
                 </A>
@@ -254,14 +271,14 @@ export default function Post({ doc }) {
   });
   const nums = [doc.minutes, doc.title.length];
   return (
-    <main className="xbg" style={{ '--acc': doc.acc }}>
+    <main className="xbg">
       <section className="xbg-cover" aria-labelledby="xbg-h1">
         <div className="xbg-w xbg-cover-g">
           <div className="xbg-top">
             <A to={doc.back.href} className="xbg-back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{doc.back.label}</span></A>
-            <p className="xbg-meta x-mono"><span className="xbg-chip">{doc.chip}</span><span>{doc.date}</span><span>{doc.read}</span></p>
           </div>
           <Title text={doc.title} />
+          <p className="xbg-meta x-mono"><span className="xbg-chip">{doc.chip}</span><span>{doc.date}</span><span>{doc.read}</span></p>
           <motion.p className="xbg-lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, ease: EASE, delay: 0.55 }}>{doc.lede}</motion.p>
         </div>
       </section>
