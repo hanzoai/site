@@ -221,6 +221,19 @@ function Hero() {
   );
 }
 
+/* ---------- the sticky local band: the page's name, the live read, the ask (quiet; the solid stays in the hero) ---------- */
+function Local() {
+  return (
+    <div className="xos-local">
+      <div className="pf-wrap xos-local-in">
+        <span className="xos-local-t"><span className="xos-dash-dot" aria-hidden="true" /><span className="pf-mono">Open Source First</span></span>
+        <span className="pf-mono xos-local-r">{ECO[0].read}</span>
+        <A to="https://github.com/hanzoai" className="pf-btn xos-local-a" data-cta="open-source.sticky">View on GitHub</A>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- what we publish: one chapter per ecosystem ---------- */
 const MONTHS = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
 const LANGC = ['#0a0a0a', '#404040', '#737373', '#a3a3a3', '#d4d4d4', '#e4e4e7'];
@@ -571,12 +584,15 @@ export default function OpenSource() {
       {/* JS off: the tabs cannot switch, so every ecosystem and galaxy panel shows, one after another */}
       <noscript dangerouslySetInnerHTML={{ __html: '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!important;margin-top:64px}.xos-eco,.xos-chips{display:none!important}[data-arrive]>li{opacity:1!important;transform:none!important}</style>' }} />
       <Hero />
-      <Publish />
-      <Totals />
-      <Orgs />
-      <Built />
-      <Charter />
-      <Contribute />
+      <div className="xos-after">
+        <Local />
+        <Publish />
+        <Totals />
+        <Orgs />
+        <Built />
+        <Charter />
+        <Contribute />
+      </div>
     </main>
   );
 }

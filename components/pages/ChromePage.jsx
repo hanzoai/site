@@ -6,7 +6,7 @@
 // CTA: Add to Chrome (chromewebstore.google.com): hero solid + the one closing ask row; Configure Org Policies and every other link are text links.
 // Metric: signup_start (install hand-off to the Chrome Web Store)
 /* Hanzo in Chrome (Archetype: Launch, then System governance).
-   V2: 8/10 round 2: kickers gone (their words sit under the window and the headings as captions); one solid ask in the hero and in one closing ask row; no floating ask bar and no PR pill flying over the window (the patch now lands in the window's own #bug-button-darkmode tab); the run plays once and rests, with Pause/Replay; grey tab stripes replaced by Hanzo's own tab names; h1 paints first at 52; the governance room opens out of a rounded card; no springs
+   V2: 8/10 round 2: kickers gone (their words sit under the window and the headings as captions); one solid ask in the hero and in one closing ask row (the slim phone bar carries it too); no PR pill flying over the window (the patch now lands in the window's own #bug-button-darkmode tab); the run plays once and rests, with Pause/Replay; grey tab stripes replaced by Hanzo's own tab names; h1 paints first at 52; the governance room opens out of a rounded card; no springs
    Motion: signature = the agent run in the window (steps, inspector panes, the channel tab). Supporting: Stage settle,
    pinned chapters with clip wipes (components/v2/AppScenes), the black room opening to full width (scroll-linked clip).
    Colour: Hanzo's deck greys only. Every word is Hanzo's, including the example checkout, its policy and the agent's steps. */
@@ -14,6 +14,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../ui';
 import { A, Cta } from '../kit';
+import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import Stage from '../v2/AppStage';
 import Scenes from '../v2/AppScenes';
@@ -90,6 +91,7 @@ function Window() {
     return () => clearTimeout(t);
   }, [n, seen, calm, paused, ran, runKey]);
   const done = n >= STEPS.length;
+  useEffect(() => { if (done && ran === runKey && !calm) play('done'); }, [done, ran, runKey, calm]); // the run is over: the faint chime
   const ctl = () => { if (done) { setPaused(false); setRunKey((k) => k + 1); } else setPaused((p) => !p); };
   const step = Math.min(n + 1, STEPS.length);
   const pane = own >= 0 ? own : FOLLOW[n];
@@ -374,7 +376,7 @@ function Policy() {
         <div className="xch-tester">
           <div className="xch-mode" role="radiogroup" aria-label="Policy">
             {[['list', 'Allowlist'], ['all', 'Allow all sites']].map(([k, l]) => (
-              <button key={k} type="button" role="radio" aria-checked={mode === k} onClick={() => setMode(k)}>
+              <button key={k} type="button" role="radio" aria-checked={mode === k} onClick={() => setMode(k)} data-sound="tick">
                 {mode === k && <motion.span layoutId="xch-mode" className="xch-mode-bg" transition={{ duration: 0.3, ease: EASE }} />}
                 <span>{l}</span>
               </button>
@@ -394,7 +396,7 @@ function Policy() {
             <input value={v} onChange={(e) => setV(e.target.value)} spellCheck="false" autoComplete="off" className="x-mono" />
           </label>
           <p className="xch-mirror x-mono" aria-hidden="true"><Marked v={v} res={mode === 'list' ? res : null} /></p>
-          <div className="xch-try">{TRY.map((t) => <button key={t} type="button" className={'x-mono' + (v === t ? ' on' : '')} onClick={() => setV(t)}>{t}</button>)}</div>
+          <div className="xch-try">{TRY.map((t) => <button key={t} type="button" className={'x-mono' + (v === t ? ' on' : '')} onClick={() => setV(t)} data-sound="tick">{t}</button>)}</div>
           <div className="xch-verdict" aria-live="polite">
             <AnimatePresence mode="wait" initial={false}>
               {res && (
@@ -481,7 +483,7 @@ function Close() {
 
 export default function ChromePage() {
   return (
-    <main className="av xch" style={{ '--ac': '#737373' }} data-ask="off">
+    <main className="av xch" style={{ '--ac': '#737373' }}>
       <Hero />
       <Paste />
       <What />

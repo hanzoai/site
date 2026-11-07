@@ -259,6 +259,10 @@ textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize:
 @media (pointer: coarse) { .x-mq-pause::before { content: ''; position: absolute; inset: -6px; } }
 @media (prefers-reduced-motion: reduce) { .x-mq-pause { display: none; } }
 
+/* ---------- Hanzo's footer: the "Privacy choices" toggle icon in ink, not blue (0 UI hues, MASTER 3.1) ---------- */
+footer a[href='#choices'] svg path[fill='#0072CE'] { fill: currentColor; }
+footer a[href='#choices'] svg path:not([fill='#0072CE']) { fill: var(--background, #fff); }
+
 /* ---------- utilities ---------- */
 .x-tnum { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 .x-vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

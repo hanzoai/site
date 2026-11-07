@@ -74,6 +74,9 @@
 @keyframes cr-dim { to { opacity: .14; } }
 @keyframes cr-ring { from { clip-path: inset(0 100% 0 0 round 12px); } to { clip-path: inset(0 0 0 0 round 12px); } }
 
+/* the hero's text-link ask (the kit's secondary) keeps a 44px target */
+.cr .kns-acts .x-arrow { min-height: 44px; }
+
 /* ---------- the signature scene: one scroll value (--p, 0 to 6) drives every part ---------- */
 .cr-sc-head { padding: clamp(72px, 11vw, 188px) 0 clamp(27px, 4vw, 44px); align-items: end; row-gap: 17px; }
 .cr-sc-h { grid-column: 1 / span 6; }

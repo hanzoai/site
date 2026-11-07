@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; ~~prices from `lib/plans.js`~~ n/a: no prices on this page
 - [x] Open copy questions for James listed, none decided
 
-Done here: "Try Hanzo" → /login is the hero's one solid (`analytics.hero`, `data-thumb`), again after the script (`analytics.script`); "Deploy to Cloud" is the close's solid (`analytics.close`). Request Demo, the docs and GitHub links are quiet `Cta`s; the screenshots show the header's Try Hanzo turning outline whenever a page solid is on screen.
+Done here: "Try Hanzo" → /login is the hero's one solid (`analytics.hero`, `data-thumb`), again after the script (`analytics.script`); "Deploy to Cloud" is the close's solid (`analytics.close`). Request Demo (in the hero, by the kit Stage, and after the script), Read the docs and View on GitHub are text-link `Cta`s. Decision: since the shared change of 7 Nov 15:01 (SYSTEM.md §5) the header's "Try Hanzo" is always solid, so the page keeps one solid of its own per view and every secondary ask is a link.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; the layout's skip link reaches its `#main` mark
@@ -41,7 +41,7 @@ Done here: At first paint, by CSS with no script: the title cuts in, the activit
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: 17 `data-cta` ids under `analytics.*` (hero, hero-2, script, script-2, close, close-docs, close-github, reports-docs, resources, api-*, oss-*). Copy is the kit's `CodeBlock`/`Copy` (copies the displayed code; the `$ ` prompt is not copied).
+Done here: The header carries "Try Hanzo" at every width, the same words as the page's ask (so the phone bar stays away, by SYSTEM.md §5). 17 `data-cta` ids under `analytics.*` (hero, hero-2, script, script-2, close, close-docs, close-github, reports-docs, resources, api-*, oss-*). Copy is the kit's `CodeBlock`/`Copy` (copies the displayed code; the `$ ` prompt is not copied).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

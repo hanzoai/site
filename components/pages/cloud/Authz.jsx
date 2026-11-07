@@ -4,8 +4,8 @@
    Persona: a developer adding authorization to a service (Hanzo's own words: "a library, not a service").
    Goal: understand the one rule in one look, then read the docs or take the library.
    CTA: "Read the docs" → https://docs.hanzo.ai/docs/projects/hanzoai/authz (solid, data-cta authz.hero, data-thumb);
-        "View on GitHub" → https://github.com/hanzoai/authz (quiet, authz.hero-2); "Deploy to Cloud" →
-        https://platform.hanzo.ai/deploy (solid in the close, authz.close); "Self-host" → the docs (quiet, authz.close-self).
+        "View on GitHub" → https://github.com/hanzoai/authz (link, authz.hero-2); "Deploy to Cloud" →
+        https://platform.hanzo.ai/deploy (solid in the close, authz.close); "Self-host" → the docs (link, authz.close-self).
    Metric: api_key_created (developers).
    Signature: the check, answered live. A relationship graph of callers and locations (acme, acme/prod, acme/prod/web,
    the app or site under that): a request arrives and the path from the caller through its grant down the tree fills

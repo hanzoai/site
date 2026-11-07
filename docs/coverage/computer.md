@@ -3,7 +3,7 @@
 Page file: `components/pages/ComputerPage.jsx` (+ `ComputerPage.css`, shared `components/v2/AppType.css`, `AppStage`, `AppScenes`) · gallery: `docs/gallery/computer/` · metric id: `signup_start`
 
 Open copy questions for James: none decided.
-Shared changes requested (`docs/requests/apps1.md`): the header ask should carry the page's own label ("Try Hanzo Computer"); a desktop-off mode for the ask bar (until then `data-ask="off"` on `<main>`); and `Band` with an `id` prop.
+Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
 Forks this page deleted: two kickers over headlines ("computer.hanzo.ai", "Before you run it"; both now captions under their text), the outlined "Documentation" and "View on GitHub" buttons (now text links), the solid "Deploy to Cloud" (now a text link before the Band), the "-with-ocr" / "-with-som" chips and the voice pill that floated over the desktop (the voice now lights in the desktop's own menu bar), raw `<img>` (now kit `Img`), spring transitions, the motion `pathLength` tick (now a CSS stroke), the violet hue, grey bars where the desktop's windows had text (now Hanzo's lines).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470×801 the h1 (52px), lede, "Try Hanzo Computer" and the deskto
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (the header's ask stays; the floating bar is off per MASTER 3.3; request filed in `docs/requests/apps1.md`)
+- [x] Sticky ask in header and bar after the hero, same label (the shared header always carries a solid "Try Hanzo"; on phones the slim quiet bar carries this page's own `data-thumb` ask; no floating bar on desktop)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -82,9 +82,9 @@ Done here: The three checks are `role="checkbox"` buttons with `aria-checked`, a
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
-- ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not merged
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`; tabs, switches and pressed buttons tick through `components/Sound.jsx`)
 
-Done here: Idle (the cursor works the desktop through six modes), pointer (magnetic ask), state (tab pill at 300ms ease-emphasis, ticks drawing), time (the field fills after the click), arrival (h1 line cut-in), scroll (Stage settle, pinned lenses, the Band opening). No springs.
+Done here: Idle (the cursor works the desktop through six modes), pointer (magnetic ask), state (tab pill at 300ms ease-emphasis, ticks drawing), time (the field fills after the click), arrival (h1 line cut-in), scroll (Stage settle, pinned lenses, the Band opening). No springs. Sound: `play('done')` when all three pre-flight warnings are checked; `data-sound="tick"` on the three checks.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, 1600×900, `priority` on the desktop wallpaper)

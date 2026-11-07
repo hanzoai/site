@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Mark } from '../ui';
 import { A, Cta } from '../kit';
+import { play } from '../../lib/sound';
 import Lines from '../v2/x-edison/AppLines';
 import '../v2/AppType.css';
 import './CliPage.css';
@@ -60,7 +61,7 @@ function Session({ onDone, paused, runKey }) {
           for (let f = 0; f < 24 && alive; f++) { if (spin.current) spin.current.textContent = SPIN[f % SPIN.length]; await wait(80); }
         } else await wait(260);
       }
-      if (alive) setN(SESSION.length + 1); // it ends at rest on the final frame
+      if (alive) { setN(SESSION.length + 1); play('done'); } // it ends at rest on the final frame, with the faint chime
     };
     run();
     return () => { alive = false; clearTimeout(t); fill(); setN(SESSION.length + 1); };
@@ -92,7 +93,7 @@ function Hero() {
   const ctl = () => { if (done) { setPaused(false); setRunKey((k) => k + 1); } else setPaused((p) => !p); };
   return (
     <section className="cli-hero av-dark" data-room="dark" aria-labelledby="cli-h1">
-      <div className="cli-term">
+      <div className="cli-term" data-morph-target="">
         <div className="cli-bar">
           <span className="cli-dots" aria-hidden="true"><i /><i /><i /></span>
           <nav className="cli-tabs" aria-label="Hanzo apps">
@@ -232,7 +233,7 @@ function Tree() {
             const last = r === TREE.length - 1;
             return (
               <li key={name} role="treeitem" aria-expanded={isOpen} className={'cli-res' + (isOpen ? ' open' : '')}>
-                <button type="button" className={'cli-node' + (sel[0] === r ? ' path' : '')} onClick={() => toggle(r)}>
+                <button type="button" className={'cli-node' + (sel[0] === r ? ' path' : '')} onClick={() => toggle(r)} data-sound="tick">
                   <span className="cli-gl x-mono" aria-hidden="true">{last ? '└─' : '├─'}</span>
                   <svg className="cli-dir" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h3l1.5 1.5h4.5A1.5 1.5 0 0 1 14 6v5.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5z" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /></svg>
                   <span className="x-mono cli-node-t">{name}</span>
@@ -243,7 +244,7 @@ function Tree() {
                     const on = sel[0] === r && sel[1] === ci;
                     return (
                       <li key={line} role="treeitem" aria-selected={on} style={{ '--i': ci }}>
-                        <button type="button" className={'cli-leaf' + (on ? ' on' : '')} onClick={() => pick(r, ci)} data-cursor="Print">
+                        <button type="button" className={'cli-leaf' + (on ? ' on' : '')} onClick={() => pick(r, ci)} data-sound="tick">
                           {on && <motion.span layoutId="cli-leaf" className="cli-leaf-bg" transition={{ duration: 0.3, ease: EASE }} />}
                           <span className="cli-gl x-mono" aria-hidden="true">{last ? '   ' : '│  '}{ci === list.length - 1 ? '└─' : '├─'}</span>
                           <span className="x-mono">{c || name}</span>
@@ -491,7 +492,7 @@ function Band() {
 
 export default function CliPage() {
   return (
-    <main className="av cli" style={{ '--ac': '#a3a3a3' }} data-ask="off">
+    <main className="av cli" style={{ '--ac': '#a3a3a3' }}>
       <Hero />
       <Paste />
       <What />

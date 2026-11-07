@@ -35,7 +35,7 @@ Done here: the h1 "Building in the open." cuts in by line mask; the sky pulls ba
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` — `.pf-btn` kit class until `<Cta>` merges
-- [ ] Sticky ask in header and bar after the hero, same label — n/a: the conductor's "nothing floats over content" rule removed the bar; the phone thumb bar (site chrome) carries it via `data-thumb`
+- [x] Sticky ask in header and bar after the hero, same label — an in-page sticky band (not floating) under Hanzo's header carries "View on GitHub" (quiet) from the end of the hero to the footer; the phone thumb bar uses `data-thumb`
 - [x] Copy button copies exactly the displayed text — n/a: no copy button on this page
 - [x] `data-cta` and `data-thumb` on every primary
 

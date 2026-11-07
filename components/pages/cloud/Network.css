@@ -191,6 +191,8 @@ html:not(.js) .nw-block { position: relative; inset: auto; transform: none; opac
 }
 
 @media (max-width: 899px) {
+  /* phone floor (14px) for the kit's lowercase mono captions on this page */
+  .nw .cf-paste-k, .nw .cf-api, .nw .cf-api i, .nw .lx-close-facts { font-size: 14px; }
   .nw-hero { min-height: 0; padding: 20px 0 64px; }
   .nw-hero-grid { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
   .nw-hero-copy { padding-top: 0; gap: 16px; }
