@@ -132,3 +132,36 @@ export function cloudDoc(slug) {
   doc.liveLinks = L.links.filter((h) => /^https?:/.test(h) && !hrefs.has(h));
   return (DOCS[slug] = doc);
 }
+
+/* v2: each product's own accent. One hue per family (its group on hanzo.ai), and each sibling turned a few degrees
+   from the next, so no two neighbouring pages share a colour. oklch keeps every hue at the same perceived weight. */
+const HUES = { AI: 325, Science: 355, Observe: 25, Compute: 55, Infrastructure: 85, Web3: 115, Security: 145, Network: 175, Local: 195, Data: 205, Dev: 235, Apps: 265 };
+export const groupOf = (doc) => (doc.kind === 'local' ? 'Local' : (doc.crumb[1] && doc.crumb[1].label) || doc.label);
+let BYGROUP;
+export function accentOf(slug) {
+  BYGROUP ||= MEMBERS().reduce((m, s) => { const g = groupOf(cloudDoc(s)); (m[g] ||= []).push(s); return m; }, {});
+  const g = groupOf(cloudDoc(slug));
+  const sibs = BYGROUP[g] || [slug];
+  const n = sibs.length, i = sibs.indexOf(slug);
+  const h = ((HUES[g] ?? 265) + (n > 1 ? (i - (n - 1) / 2) * Math.min(7, 26 / (n - 1)) : 0) + 360) % 360;
+  const warm = h > 65 && h < 135; // yellows and limes need more light to read as colour, not mud
+  return { hue: Math.round(h), acc: `oklch(${warm ? 0.7 : 0.62} 0.17 ${h.toFixed(1)})`, hi: `oklch(0.82 0.12 ${h.toFixed(1)})`, group: g };
+}
+
+/* the numbers that shape a product's Sigil: its own figures (a family size, a feature count, numbers in its words) */
+const nums = (s) => (String(s).match(/\d+(?:\.\d+)?/g) || []).map(Number);
+export function sigilOf(slug) {
+  const d = cloudDoc(slug);
+  const data = d.kind === 'local'
+    ? d.boot.figures.flatMap((f) => nums(f.value))
+    : [d.window ? d.window.siblings.length : 0, d.features.length, ...nums([d.lede, ...d.desc, ...d.features].join(' '))].slice(0, 6);
+  return { seed: 'cloud/' + slug, data };
+}
+/* a related card shows the picture its page opens with, so the card can open into that page */
+export function relatedSigils(doc) {
+  if (!doc.related) return {};
+  return Object.fromEntries(doc.related.items.map((it) => {
+    const m = /^\/cloud\/([^/#?]+)$/.exec(it.href);
+    return [it.href, m && MEMBERS().includes(m[1]) ? sigilOf(m[1]) : { seed: it.href, data: [] }];
+  }));
+}

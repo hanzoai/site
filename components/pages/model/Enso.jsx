@@ -1,15 +1,18 @@
 'use client';
-/* Enso: one endpoint that routes every request.
+/* Enso: one endpoint that routes every request. v2 launch page (Launch + Chapters, accent vermilion).
+   V2: 8/10 film settles into an ensō ring beside the headline; the three tiers are pinned chapters over Enso's own film; the live router is the one dark room; GPQA as hero figures, a Pareto chart and a spec sheet
    Signature: the switchboard. Requests stream in by themselves, pass through Enso, which weighs quality, speed and
    cost, and land in the tier made for them (Flash at volume, Pro while someone waits, Ultra where a wrong answer is
-   expensive). The three lanes are the tier cards themselves; send any of Hanzo's own task words by hand.
+   expensive). Send any of Hanzo's own task words by hand.
    Beyond: the GPQA Diamond explorer. Pick any model (or let it tour) and see it beside Enso's three tiers in
-   Hanzo's own figures and words, with a table you can re-sort by score or by cost. */
+   Hanzo's own figures and words, with every result in a drawer you can re-sort by score or by cost. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, More } from '../../kit';
 import { useLoop, fit } from './live';
+import Launch, { Lines, ring, film } from '../../v2/Launch';
+import Chapters from '../../v2/x-cray/Chapters';
 import './Enso.css';
 
 const TIERS = [
@@ -134,18 +137,10 @@ function Switchboard() {
         {TIERS.map((tr, i) => (
           <li key={tr.code} className="eo-lane" ref={(el) => (lanes.current[i] = el)} data-hit={hit === i ? '' : undefined}>
             <div className="eo-lane-top">
-              <h3>{tr.name}</h3>
+              <b>{tr.name}</b>
               <code>{tr.code}</code>
-              <span className="eo-why">{AXES[tr.axis]} · {tr.why}</span>
             </div>
-            <p className="eo-price mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span></p>
-            <p className="eo-desc">{tr.desc}</p>
-            <p className="eo-meta">{tr.ctx && <span>1M context</span>}<span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
-            <p className="eo-acts">
-              <A to="/login" className="eo-l">Try Hanzo</A>
-              <A to={tr.wb} className="eo-l">Open in Workbench</A>
-              <A to="https://github.com/hanzoai/enso" className="eo-l">Docs on GitHub</A>
-            </p>
+            <span className="eo-why">{AXES[tr.axis]} · {tr.why}</span>
             <p className="eo-last" aria-hidden="true"><i />{last[i]}</p>
           </li>
         ))}
@@ -184,8 +179,8 @@ const GPQA = [
 const ENSO = GPQA.filter((g) => g[0].startsWith('Enso'));
 const OTHERS = GPQA.filter((g) => !g[0].startsWith('Enso'));
 const LX = [Math.log10(0.8), Math.log10(60)];
-const px = (c) => 70 + ((Math.log10(c) - LX[0]) / (LX[1] - LX[0])) * 900;
-const py = (s) => 540 - ((s - 75) / 25) * 500;
+const px = (c) => Math.round((70 + ((Math.log10(c) - LX[0]) / (LX[1] - LX[0])) * 900) * 100) / 100; // rounded: server and browser maths agree
+const py = (s) => Math.round((540 - ((s - 75) / 25) * 500) * 100) / 100;
 const money = (c) => '$' + (c < 1 ? c.toFixed(3) : c.toFixed(2));
 
 function Gpqa() {
@@ -206,11 +201,22 @@ function Gpqa() {
   const rows = [...GPQA].sort(sort === 'score' ? (a, b) => b[1] - a[1] : (a, b) => a[2] - b[2]);
   const frontier = ENSO.map((g) => `${px(g[2])},${py(g[1])}`).join(' ');
   return (
-    <section className="eo-gpqa mb-sec" ref={box} aria-labelledby="eo-gpqa-h">
+    <section className="eo-gpqa lv-sec" ref={box} aria-labelledby="eo-gpqa-h">
       <div className="x-wrap">
-        <div className="eo-gpqa-head">
-          <h2 id="eo-gpqa-h" className="mb-h2">A New Pareto Frontier of Intelligence</h2>
-          <p className="mb-lede">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
+        <div className="lv-sh">
+          <div>
+            <p className="lv-kick">GPQA Diamond</p>
+            <h2 id="eo-gpqa-h" className="lv-h">A New Pareto Frontier of Intelligence</h2>
+          </div>
+          <p className="lv-p">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
+        </div>
+        <div className="lv-figs eo-figs">
+          {[...ENSO].reverse().map((g, i) => (
+            <div key={g[0]} className={'lv-fig' + (i === 0 ? ' ac' : '')}>
+              <b>{g[1].toFixed(1)}<small>%</small></b>
+              <span>{g[0]}, {money(g[2])} per 1,000 questions</span>
+            </div>
+          ))}
         </div>
         <div className="eo-plotwrap">
           <svg className="eo-plot" viewBox="0 0 1000 600" role="group" aria-label="GPQA Diamond % against $ per 1,000 questions">
@@ -271,7 +277,8 @@ function Gpqa() {
             </ul>
           </aside>
         </div>
-        <div className="eo-table">
+        <details className="lv-drawer eo-table">
+          <summary>Every result, sortable</summary>
           <div className="eo-sort" role="group" aria-label="Sort">
             <button type="button" className="eo-sortb" aria-pressed={sort === 'score'} onClick={() => setSort('score')}>By score</button>
             <button type="button" className="eo-sortb" aria-pressed={sort === 'cost'} onClick={() => setSort('cost')}>By cost</button>
@@ -291,6 +298,77 @@ function Gpqa() {
               })}
             </tbody>
           </table>
+        </details>
+      </div>
+    </section>
+  );
+}
+
+const RING = ring((W, H, wide) => (wide ? { x: W * 0.71, y: H * 0.5, r: Math.min(H * 0.39, W * 0.24) } : { x: W / 2, y: H * 0.25, r: Math.min(W * 0.34, H * 0.17) }));
+const TIER_TITLE = ['At volume.', 'While someone waits.', 'Where a wrong answer is expensive.'];
+const TIER_TASKS = TIERS.map((_, i) => TASKS.filter(([, k]) => k === i).map(([w]) => w));
+
+// a chapter's picture: Enso's own film, framed a little closer each tier, with that tier's card laid on it
+function TierArt({ i }) {
+  const tr = TIERS[i];
+  return (
+    <div className="eo-art" style={{ '--z': 1.12 + i * 0.22, '--x': ['-4%', '6%', '-2%'][i], '--y': ['3%', '-5%', '2%'][i], ...[{}, { '--cl': 'auto', '--cr': '32px', '--ct': '32px', '--cb': 'auto' }, { '--cl': 'auto', '--cr': '32px' }][i] }}>
+      <img src={film('enso', 'webp')} alt="" loading="lazy" />
+      <div className="eo-tcard" aria-hidden="true">
+        <p className="eo-tcard-top"><b>{tr.name}</b><code>{tr.code}</code></p>
+        <p className="eo-tcard-ax">{AXES[tr.axis]}</p>
+        <ul>{TIER_TASKS[i].map((w) => <li key={w}>{w}</li>)}</ul>
+        <p className="eo-tcard-p mb-tnum"><b>{tr.inp}</b> in <b>{tr.out}</b> out</p>
+      </div>
+    </div>
+  );
+}
+
+const CHAPTERS = TIERS.map((tr, i) => ({
+  k: tr.name,
+  title: TIER_TITLE[i],
+  art: <TierArt i={i} />,
+  body: (
+    <>
+      <p className="eo-ch-price mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span></p>
+      <p>{tr.desc}</p>
+      <p className="eo-meta">{tr.ctx && <span><b>1M</b> context</span>}<span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
+      <p className="eo-acts">
+        <A to="/login" className="eo-l">Try Hanzo</A>
+        <A to={tr.wb} className="eo-l">Open in Workbench</A>
+        <A to="https://github.com/hanzoai/enso" className="eo-l">Docs on GitHub</A>
+      </p>
+    </>
+  ),
+}));
+
+function Spec() {
+  const rows = [
+    ['Model', (tr) => <code>{tr.code}</code>],
+    ['Input', (tr) => <><b>{tr.inp}</b> per 1M tokens</>],
+    ['Output', (tr) => <><b>{tr.out}</b> per 1M tokens</>],
+    ['Context', (tr) => (tr.ctx ? '1M' : '—')],
+    ['API', () => 'OpenAI-compatible · Anthropic-compatible'],
+    ['Workbench', (tr) => <A to={tr.wb}>Open in Workbench</A>],
+  ];
+  return (
+    <section className="lv-sec eo-spec" aria-labelledby="eo-spec-h">
+      <div className="x-wrap">
+        <div className="lv-sh">
+          <div>
+            <p className="lv-kick">Spec sheet</p>
+            <h2 id="eo-spec-h" className="lv-h">Three tiers, one endpoint.</h2>
+          </div>
+        </div>
+        <div className="eo-spec-scroll">
+          <table className="lv-spec">
+            <thead><tr><th scope="col"><span className="x-sr">Fact</span></th>{TIERS.map((tr) => <th key={tr.code} scope="col">{tr.name}</th>)}</tr></thead>
+            <tbody>
+              {rows.map(([label, cell]) => (
+                <tr key={label}><th scope="row">{label}</th>{TIERS.map((tr) => <td key={tr.code}>{cell(tr)}</td>)}</tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -299,28 +377,41 @@ function Gpqa() {
 
 export default function Enso() {
   return (
-    <>
-      <section className="eo-intro mb-sec" aria-labelledby="eo-h">
+    <Launch
+      slug="enso"
+      accent="#e5412d"
+      ink="#c0331d"
+      shape={RING}
+      headClass="eo-head"
+      head={
+        <>
+          <p className="lv-kick">Hanzo / Enso</p>
+          <Lines id="eo-h" lines={['The right intelligence.', 'Every time.']} />
+          <p className="lv-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
+          <div className="lv-acts">
+            <A to="/login" className="x-btn solid" data-thumb="Try Hanzo">Try Hanzo</A>
+            <A to="https://platform.hanzo.ai" className="x-btn">API Platform</A>
+            <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
+          </div>
+        </>
+      }
+    >
+      <Chapters id="eo-tiers" label="Enso's three tiers" items={CHAPTERS} />
+      <section className="lv-room lv-sec eo-live" aria-labelledby="eo-live-h">
         <div className="x-wrap">
-          <div className="eo-top">
+          <div className="lv-sh">
             <div>
-              <p className="mb-kick">Hanzo / Enso</p>
-              <h2 id="eo-h" className="mb-h">The right intelligence.<span className="mb-l2">Every time.</span></h2>
+              <p className="lv-kick eo-live-k"><span className="mb-live">Live</span></p>
+              <h2 id="eo-live-h" className="lv-h">Every request finds its tier.</h2>
             </div>
-            <div className="eo-top-r">
-              <p className="mb-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
-              <div className="mb-acts">
-                <A to="/login" className="x-btn solid" data-thumb="Try Hanzo">Try Hanzo</A>
-                <A to="https://platform.hanzo.ai" className="x-btn">API Platform</A>
-                <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
-              </div>
-            </div>
+            <p className="lv-p">Enso weighs quality, speed and cost, then sends each request where it belongs: Flash at volume, Pro while someone waits, Ultra where a wrong answer is expensive.</p>
           </div>
           <Switchboard />
           <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
         </div>
       </section>
       <Gpqa />
-    </>
+      <Spec />
+    </Launch>
   );
 }

@@ -1,7 +1,10 @@
 'use client';
 /* Hanzo's header menus, working. Their header buttons open a panel that drops from the header; moving between menus
    morphs the panel and slides the columns in the direction you moved; links arrive in a short cascade. On phones the
-   Hanzo AI chevron opens a full-screen sheet with each menu as an accordion. Escape, the backdrop or a link closes it. */
+   Hanzo AI chevron opens a full-screen sheet with each menu as an accordion. Escape, the backdrop or a link closes it.
+   Keyboard: Enter, Space or ↓ on a heading opens its menu and moves focus to the first link; ↑ ↓ move through the
+   links; Tab past the last link closes it and goes on to the next heading; Shift+Tab from the first link goes back to
+   the heading; Escape closes and returns focus. The items and words are Hanzo's own (lib/nav.js); pages add nothing. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -65,6 +68,7 @@ export default function Nav({ headerRef }) {
     const offs = [];
     const on = (el, ev, fn, o) => { el.addEventListener(ev, fn, o); offs.push(() => el.removeEventListener(ev, fn, o)); };
     let rest = 0, origin = null;
+    const intoPanel = (name) => { let n = 0; const t = () => { const a = document.querySelector(`#x-nav-panel .x-nav-grid[data-menu="${name}"] a`); if (a) a.focus(); else if (n++ < 20) requestAnimationFrame(t); }; requestAnimationFrame(t); };
     const nameOf = (b) => (b.getAttribute('aria-label') === 'Company' ? 'Company' : b.textContent.trim());
     h.querySelectorAll('button').forEach((b) => {
       const name = nameOf(b);
@@ -80,9 +84,14 @@ export default function Nav({ headerRef }) {
         rest = setTimeout(() => { if (b.matches(':hover')) { origin = b.getBoundingClientRect(); show(name); } }, cur && cur !== name ? 160 : 70);
       });
       on(b, 'pointerleave', () => clearTimeout(rest));
+      on(b, 'keydown', (e) => {
+        if (e.key !== 'ArrowDown' || innerWidth <= 900) return;
+        e.preventDefault(); origin = b.getBoundingClientRect(); show(name); intoPanel(name);
+      });
       on(b, 'click', (e) => {
         e.preventDefault();
         if (innerWidth <= 900) { setSheet((s) => !s); return; } // on phones the chevron opens the sheet
+        if (e.detail === 0 && openRef.current !== name) intoPanel(name); // opened from the keyboard: focus goes into the menu
         // a click right after hover opened the menu keeps it open (hover-then-click must not close it)
         const fresh = openedAt.current.name === name && performance.now() - openedAt.current.t < 900;
         origin = b.getBoundingClientRect();
@@ -113,6 +122,23 @@ export default function Nav({ headerRef }) {
   }, [headerRef, show, later, close]);
 
   useEffect(() => { Object.entries(btns.current).forEach(([n, b]) => b.setAttribute('aria-expanded', String(open === n || (sheet && n === 'Company')))); }, [open, sheet]);
+
+  // keyboard inside the open panel: arrows walk the links; Tab off either end hands focus back to the header
+  const panelKey = (e) => {
+    const links = [...e.currentTarget.querySelectorAll(`.x-nav-grid[data-menu="${open}"] a`)];
+    const i = links.indexOf(document.activeElement);
+    if (i < 0) return;
+    const trigger = btns.current[open];
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); links[(i + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length].focus(); }
+    else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); links[e.key === 'Home' ? 0 : links.length - 1].focus(); }
+    else if (e.key === 'Tab' && e.shiftKey && i === 0) { e.preventDefault(); trigger?.focus(); }
+    else if (e.key === 'Tab' && !e.shiftKey && i === links.length - 1) {
+      e.preventDefault();
+      const all = [...(headerRef.current?.querySelectorAll('header a[href], header button') || [])];
+      const next = all[all.indexOf(trigger) + 1];
+      close(); (next || trigger)?.focus();
+    }
+  };
   useEffect(() => {
     if (!sheet) return;
     window.__lenis?.stop();
@@ -136,12 +162,14 @@ export default function Nav({ headerRef }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6, transition: { duration: 0.22, ease: [0.7, 0, 0.84, 0] } }}
               transition={{ duration: 0.35, ease: EASE }}
+              onKeyDown={panelKey}
               layout
             >
               <span className="x-nav-bridge" aria-hidden="true" />
               <AnimatePresence mode="popLayout" initial={false} custom={dir}>
                 <motion.div
                   key={open}
+                  data-menu={open}
                   className="x-nav-grid"
                   custom={dir}
                   variants={{ i: (d) => ({ opacity: 0, x: d * 40 }), a: { opacity: 1, x: 0 }, o: (d) => ({ opacity: 0, x: d * -40 }) }}

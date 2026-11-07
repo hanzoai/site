@@ -1,5 +1,6 @@
-// Signature: the four steps of a grant sit round a dial a hand sweeps, like the weekly review, the step it points at opening
+// Signature: stacked sheets: in the dark room the three ways to build and research arrive as full sheets, each pinning while the next slides over it and the one beneath settles back
 // Beyond: your application as Hanzo files it: a filing card beside the form shows the track, role and every field sent
+// V2: 8/10 display hero beside the page’s own living contour field; the four steps as one drawn timeline; benefits as an editorial list; the three ways as stacked sheets in the dark room; the application with its filing card
 import Grants from '../../components/pages/Grants';
 import JsonLd from '../../components/JsonLd';
 

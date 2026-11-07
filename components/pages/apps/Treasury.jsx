@@ -1,20 +1,25 @@
 'use client';
-/* Treasury. Signature: the split that writes itself, in a dark room. Hanzo's split.num is written line by line and,
-   as each destination is named, its stream of money pours out of @users:001 into its account: 90%, 5%, and the
-   remaining, which Numscript works out. When the three meet the amount, the split is marked balanced, then it runs again.
+/* Treasury, v2. V2: 8/10 the dark-room Stage (split.num writes itself and the money pours out as the object settles), five pinned chapters each drawing its part of the ledger, a wallet with a hold you drive, gold accent
+   Signature: the split that writes itself, in a dark room. Hanzo's split.num is written line by line and, as each
+   destination is named, its stream of money pours out of @users:001 into its account: 90%, 5%, and the remaining,
+   which Numscript works out. When the three meet the amount, the split is marked balanced, then it runs again.
    Beyond: "Hold it, then pay". A wallet with a hold you drive: take $100 at checkout, hold it, then pay the seller on
    delivery or release it, and watch each change of state arrive as an event. Hanzo's wallets-with-holds, made playable.
-   Also: what it is made of, as a strip whose parts open one at a time. Every word and link is Hanzo's. */
+   Motion budget: signature = the split (line draw); supporting = Stage (Settle), Chapters (PinChapters), magnetic
+   primary. Accent: gold. One dark room: the hero. Every word and link is Hanzo's; the only figures are the split's own. */
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
-import { EASE, Rise } from '../../ui';
-import { A, Go } from '../../kit';
-import { Get, useLive, useEvery, useSteps } from '../cloud/Frame';
+import { motion, AnimatePresence } from 'motion/react';
+import { EASE, Magnetic } from '../../ui';
+import { A } from '../../kit';
+import { useLive, useEvery } from '../cloud/Frame';
+import LineMask from '../../v2/x-gauss/LineMask';
+import Settle from '../../v2/Settle';
+import PinChapters from '../../v2/x-gauss/PinChapters';
+import '../../v2/Scale.css';
 import './Treasury.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/treasury';
 const GH = 'https://github.com/hanzoai';
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 
 const CODE = [
   ['c', '// A $100 order, split three ways, written once.'],
@@ -31,6 +36,7 @@ const CODE = [
 ];
 const DEST = [['@merchants:042', '90%', 9000], ['@fees:processing', '5%', 500], ['@platform:revenue', 'remaining', 500]];
 const N = CODE.length;
+const fmt = (v) => v.toLocaleString('en-US');
 
 /* Three streams out of one source, widths in proportion to the split (with a floor so 5% still reads). */
 function Streams({ shown, done }) {
@@ -42,16 +48,14 @@ function Streams({ shown, done }) {
       <svg viewBox="0 0 400 360" preserveAspectRatio="none">
         {DEST.map((_, i) => {
           const s = 130 + (i === 0 ? -8 : i === 1 ? 54 : 70);
-          return (
-            <motion.path key={i} d={`M0 ${s} C 180 ${s}, 220 ${y[i]}, 400 ${y[i]}`} strokeWidth={w[i]} initial={false} animate={{ pathLength: shown[i] ? 1 : 0, opacity: shown[i] ? 1 : 0 }} transition={{ duration: 0.9, ease: EASE }} />
-          );
+          return <motion.path key={i} d={`M0 ${s} C 180 ${s}, 220 ${y[i]}, 400 ${y[i]}`} strokeWidth={w[i]} initial={false} animate={{ pathLength: shown[i] ? 1 : 0, opacity: shown[i] ? 1 : 0 }} transition={{ duration: 0.9, ease: EASE }} />;
         })}
       </svg>
       <ul className="ts-dst">
         {DEST.map(([a, p, v], i) => (
           <li key={a} className={shown[i] ? 'on' : ''} style={{ top: (i === 0 ? 70 : i === 1 ? 200 : 300) / 3.6 + '%' }}>
             <span className="x-mono">{a}</span>
-            <b className="x-mono">{shown[i] ? v.toLocaleString('en-US') : '—'}</b>
+            <b className="x-mono">{shown[i] ? fmt(v) : '—'}</b>
             <em>{p}</em>
           </li>
         ))}
@@ -62,39 +66,43 @@ function Streams({ shown, done }) {
 }
 
 function Hero() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive(0.25);
   const [k, setK] = useState(N); // lines written; the page's HTML carries all of them
   useEffect(() => { if (!calm) setK(0); }, [calm]);
   useEvery(380, live, () => setK((v) => (v >= N + 9 ? 0 : v + 1)));
   const has = (tag) => CODE.findIndex((l) => l[0] === tag) < k;
   const shown = [has('d0'), has('d1'), has('d2')];
   return (
-    <section className="ts-hero" data-room="dark" ref={ref} aria-labelledby="ts-h1">
-      <div className="x-wrap">
+    <section className="ts-hero w2-dark" data-room="dark" aria-labelledby="ts-h1" data-morph-target>
+      <div className="w2-wrap">
         <div className="ts-top">
           <div>
-            <motion.p className="ts-kick" {...up(0)}>Treasury Operations</motion.p>
-            <h1 id="ts-h1" className="ts-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 }}>Hanzo Treasury</motion.span></span></h1>
+            <motion.p className="w2-kicker acc ts-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>Treasury Operations</motion.p>
+            <LineMask as="h1" id="ts-h1" now className="w2-display ts-h1" lines={['Hanzo Treasury']} />
           </div>
-          <div>
-            <motion.p className="ts-lede" {...up(0.3)}>A double-entry ledger for money moving inside your product</motion.p>
-            <motion.div className="ts-acts" {...up(0.42)}>
-              <motion.span className="x-go" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}><A to={DOCS} className="x-btn solid" data-thumb="Read the docs">Read the docs</A></motion.span>
-              <Go to={GH}>GitHub</Go>
-            </motion.div>
-          </div>
+          <motion.div className="ts-top-r" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+            <p className="w2-lede ts-lede">A double-entry ledger for money moving inside your product</p>
+            <div className="ts-acts">
+              <Magnetic strength={0.25}><A to={DOCS} className="w2-cta acc" data-thumb="Read the docs">Read the docs <i aria-hidden="true">→</i></A></Magnetic>
+              <A to={GH} className="w2-ghost">GitHub</A>
+            </div>
+          </motion.div>
         </div>
-        <motion.div className="ts-stage" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}>
-          <div className="ts-ed">
-            <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span></div>
-            <pre className="x-mono"><code>
-              {CODE.map(([t, l], i) => (
-                <span key={i} className={'ts-l ' + (t === 'c' ? 'c' : '') + (i < k ? ' in' : '') + (t.startsWith('d') && i < k ? ' d' : '')}>{l || ' '}{'\n'}</span>
-              ))}
-            </code></pre>
-          </div>
-          <Streams shown={shown} done={k >= N} />
-        </motion.div>
+        <div ref={ref}>
+          <Settle from={1.08} lift={70}>
+            <div className="ts-stage">
+              <div className="ts-ed">
+                <div className="ts-ed-bar"><i /><i /><i /><span className="x-mono">split.num</span></div>
+                <pre className="x-mono"><code>
+                  {CODE.map(([t, l], i) => (
+                    <span key={i} className={'ts-l ' + (t === 'c' ? 'c' : '') + (i < k ? ' in' : '') + (t.startsWith('d') && i < k ? ' d' : '')}>{l || ' '}{'\n'}</span>
+                  ))}
+                </code></pre>
+              </div>
+              <Streams shown={shown} done={k >= N} />
+            </div>
+          </Settle>
+        </div>
       </div>
     </section>
   );
@@ -108,30 +116,83 @@ const PARTS = [
   ['Flows and webhooks', 'Longer sequences — capture, split, pay out, retry — run as orchestrated flows, and every change of financial state is delivered as an event you can subscribe to.'],
 ];
 
-/* The five parts as a strip: one is open, the others stand as spines; it walks by itself until you choose. */
-function Parts() {
-  const [ref, live] = useLive(0.35);
-  const [at, choose] = useSteps(PARTS.length, 3800, live);
+/* Chapter visuals: the same ledger, drawn for each part. Only the split's own figures appear. */
+function Postings() {
   return (
-    <section className="x-sec ts-parts" ref={ref}>
-      <div className="x-wrap">
-        <header className="ts-h">
-          <Rise as="h2" y={20}>What it is made of</Rise>
-          <p>A ledger, a language for writing transactions, and the machinery around them.</p>
-        </header>
-        <LayoutGroup>
-          <ol className="ts-strip">
-            {PARTS.map(([t, d], i) => (
-              <motion.li layout key={t} className={at === i ? 'on' : ''} transition={{ type: 'spring', stiffness: 160, damping: 24 }} onMouseEnter={() => choose(i)}>
-                <button type="button" aria-expanded={at === i} onClick={() => choose(i)}>
-                  <motion.span layout="position" className="ts-n x-mono">{String(i + 1).padStart(2, '0')}</motion.span>
-                  <motion.span layout="position" className="ts-t">{t}</motion.span>
-                </button>
-                <motion.p initial={false} animate={{ opacity: at === i ? 1 : 0, y: at === i ? 0 : 10 }} transition={{ duration: 0.4, ease: EASE, delay: at === i ? 0.2 : 0 }} aria-hidden={at !== i}>{d}</motion.p>
-              </motion.li>
+    <div className="ts-v" aria-hidden="true">
+      <p className="ts-v-k x-mono"><span>transaction</span><span>USD/2</span></p>
+      <div className="ts-v-row h x-mono"><span>source</span><span>destination</span><span>amount</span></div>
+      {DEST.map(([a, , v]) => <div key={a} className="ts-v-row x-mono"><span>@users:001</span><span>{a}</span><b>{fmt(v)}</b></div>)}
+      <div className="ts-v-sum x-mono"><span>balanced</span><b>10,000 = 10,000</b></div>
+    </div>
+  );
+}
+function Recon() {
+  return (
+    <div className="ts-v" aria-hidden="true">
+      <p className="ts-v-k x-mono"><span>ledger</span><span>provider</span></p>
+      {['@merchants:042', '@fees:processing', '@platform:revenue'].map((a, i) => (
+        <div key={a} className={'ts-v-row two x-mono' + (i === 1 ? ' brk' : '')}><span>{a}</span><span>{i === 1 ? 'disagrees' : 'agrees'}</span><i>{i === 1 ? '!' : '✓'}</i></div>
+      ))}
+      <div className="ts-v-sum x-mono"><span>output</span><b>the breaks</b></div>
+    </div>
+  );
+}
+function Balances() {
+  return (
+    <div className="ts-v" aria-hidden="true">
+      <p className="ts-v-k x-mono"><span>accounts</span><span>per currency</span></p>
+      {DEST.map(([a, , v]) => <div key={a} className="ts-v-row x-mono"><span>{a}</span><span>USD/2</span><b>{fmt(v)}</b></div>)}
+      <div className="ts-v-sum x-mono"><span>settles against</span><b>per deployment</b></div>
+    </div>
+  );
+}
+function Wallet() {
+  return (
+    <div className="ts-v" aria-hidden="true">
+      <p className="ts-v-k x-mono"><span>wallet</span><span>hold</span></p>
+      <div className="ts-v-hold"><span className="x-mono">@users:001</span><b className="x-mono">10,000</b><em>held at checkout</em></div>
+      <div className="ts-v-sum x-mono"><span>on delivery</span><b>@merchants:042</b></div>
+    </div>
+  );
+}
+function Flow({ on }) {
+  const [k, setK] = useState(0);
+  useEvery(900, on, () => setK((v) => (v + 1) % 5));
+  return (
+    <div className="ts-v" aria-hidden="true">
+      <p className="ts-v-k x-mono"><span>flow</span><span>events</span></p>
+      <ol className="ts-v-flow">
+        {['capture', 'split', 'pay out', 'retry'].map((s, i) => <li key={s} className={i < k ? 'on' : ''}><i /><span className="x-mono">{s}</span>{i < k && <em className="x-mono">event →</em>}</li>)}
+      </ol>
+    </div>
+  );
+}
+
+function Parts() {
+  const [ref, live] = useLive(0.05);
+  return (
+    <div ref={ref}>
+      <PinChapters id="ts-parts" label="What it is made of" className="ts-pin"
+        chapters={PARTS.map(([t, d], i) => ({ k: i === 0 ? 'What it is made of' : `Part ${String(i + 1).padStart(2, '0')}`, t, b: <p>{d}</p> }))}
+        visual={(at) => (
+          <div className="ts-vis">
+            {[Postings, Recon, Balances, Wallet, Flow].map((V, i) => (
+              <motion.div key={i} className="ts-vis-i" initial={false} animate={{ opacity: at === i ? 1 : 0, y: at === i ? 0 : at > i ? -24 : 24 }} transition={{ duration: 0.55, ease: EASE }} aria-hidden={at !== i}>
+                <V on={live && at === i} />
+              </motion.div>
             ))}
-          </ol>
-        </LayoutGroup>
+          </div>
+        )} />
+    </div>
+  );
+}
+
+function Lede() {
+  return (
+    <section className="w2-sec tight ts-say" aria-label="A ledger and a language">
+      <div className="w2-wrap">
+        <p className="ts-say-p">A ledger, a language for writing transactions, and the machinery around them.</p>
       </div>
     </section>
   );
@@ -158,41 +219,43 @@ function Hold() {
     <div className={'ts-w ' + k}>
       <span>{label}</span>
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.b key={v[k]} className="x-mono" initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }} transition={{ type: 'spring', stiffness: 420, damping: 30 }}>{v[k].toLocaleString('en-US')}</motion.b>
+        <motion.b key={v[k]} className="w2-fig" initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{fmt(v[k])}</motion.b>
       </AnimatePresence>
       <em>{sub}</em>
     </div>
   );
   return (
-    <section className="x-sec ts-hold" ref={ref}>
-      <div className="x-wrap ts-hold-grid">
-        <div>
-          <p className="x-kick">Wallets with holds</p>
-          <h2 className="ts-hold-h">Take money at checkout and pay a seller on delivery</h2>
-          <p className="ts-hold-l">Multi-currency virtual wallets that can hold an amount and release it later, without the balance lying in between. Every change of financial state is delivered as an event you can subscribe to.</p>
-          <div className="ts-hold-acts">
-            <button type="button" className="x-btn sm solid" disabled={s === 'held'} onClick={() => go('held')}>Take at checkout</button>
-            <button type="button" className="x-btn sm" disabled={s !== 'held'} onClick={() => go('paid')}>Delivered: pay the seller</button>
-            <button type="button" className="x-btn sm" disabled={s !== 'held'} onClick={() => go('back')}>Release the hold</button>
-            <button type="button" className="x-btn sm" onClick={() => go('idle')}>Reset</button>
-          </div>
+    <section className="w2-sec ts-hold" ref={ref}>
+      <div className="w2-wrap">
+        <div className="ts-hold-head">
+          <p className="w2-kicker acc">Wallets with holds</p>
+          <h2 className="w2-display s ts-hold-h">Take money at checkout and pay a seller on delivery</h2>
+          <p className="w2-lede">Multi-currency virtual wallets that can hold an amount and release it later, without the balance lying in between. Every change of financial state is delivered as an event you can subscribe to.</p>
         </div>
-        <Rise className="ts-wallet" delay={0.1}>
+        <div className="ts-wallet w2-object">
           <div className="ts-ws">
             {cell('buyer', '@users:001', 'available')}
             {cell('held', 'held', 'not spendable, not paid')}
             {cell('seller', '@merchants:042', 'paid on delivery')}
           </div>
-          <div className="ts-ev">
-            <p className="x-mono">events</p>
-            <ol aria-live="polite">
-              <AnimatePresence initial={false}>
-                {v.ev.map((e, k) => <motion.li key={s + k} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE, delay: k * 0.12 }} className="x-mono">{e}</motion.li>)}
-              </AnimatePresence>
-              {!v.ev.length && <li className="x-mono none">nothing held yet</li>}
-            </ol>
+          <div className="ts-wallet-b">
+            <div className="ts-hold-acts">
+              <button type="button" className="ts-b solid" disabled={s === 'held'} onClick={() => go('held')}>Take at checkout</button>
+              <button type="button" className="ts-b" disabled={s !== 'held'} onClick={() => go('paid')}>Delivered: pay the seller</button>
+              <button type="button" className="ts-b" disabled={s !== 'held'} onClick={() => go('back')}>Release the hold</button>
+              <button type="button" className="ts-b ghost" onClick={() => go('idle')}>Reset</button>
+            </div>
+            <div className="ts-ev">
+              <p className="x-mono">events</p>
+              <ol aria-live="polite">
+                <AnimatePresence initial={false}>
+                  {v.ev.map((e, k) => <motion.li key={s + k} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE, delay: k * 0.12 }} className="x-mono">{e}</motion.li>)}
+                </AnimatePresence>
+                {!v.ev.length && <li className="x-mono none">nothing held yet</li>}
+              </ol>
+            </div>
           </div>
-        </Rise>
+        </div>
       </div>
     </section>
   );
@@ -200,10 +263,20 @@ function Hold() {
 
 function First() {
   return (
-    <section className="x-sec ts-first">
-      <div className="x-wrap ts-first-in">
-        <h2>Post your first transaction</h2>
-        <div className="ts-first-acts"><A to={DOCS} className="x-btn solid">Read the docs</A><A to={GH} className="x-btn">View on GitHub</A></div>
+    <section className="w2-sec ts-first">
+      <div className="w2-wrap">
+        <h2 className="w2-display m ts-first-h">Post your first transaction</h2>
+        <div className="ts-first-row">
+          <div className="ts-first-acts"><A to={DOCS} className="w2-cta acc">Read the docs <i aria-hidden="true">→</i></A><A to={GH} className="w2-ghost">View on GitHub</A></div>
+          <div className="ts-get">
+            <div><h2 className="w2-title">Get Treasury</h2><p className="ts-get-tag">Treasury management</p></div>
+            <div className="ts-get-meta">
+              <span className="ts-chip"><span>License:</span> Apache-2.0</span>
+              <A to="https://github.com/hanzoai" className="ts-chip">hanzoai</A>
+              <A to="https://platform.hanzo.ai/deploy" className="w2-cta">Deploy to Cloud</A>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -211,12 +284,12 @@ function First() {
 
 export default function Treasury() {
   return (
-    <main className="ts">
+    <main className="ts w2">
       <Hero />
+      <Lede />
       <Parts />
       <Hold />
       <First />
-      <Get name="Treasury" tag="Treasury management" />
     </main>
   );
 }

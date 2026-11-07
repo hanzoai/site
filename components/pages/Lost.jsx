@@ -26,11 +26,17 @@ function rank(q, path) {
 export default function Lost() {
   const [path, setPath] = useState('');
   const [q, setQ] = useState('');
-  useEffect(() => { setPath(decodeURIComponent(location.pathname)); }, []);
+  const [back, setBack] = useState(false);
+  useEffect(() => {
+    let p = location.pathname;
+    try { p = decodeURIComponent(p); } catch { /* a malformed address (/%E0%A4%A) stays as typed */ }
+    setPath(p);
+    setBack(history.length > 1 && !!document.referrer && new URL(document.referrer).origin === location.origin);
+  }, []);
   const hits = useMemo(() => rank(q || path.replace(/[/-]+/g, ' '), path), [q, path]);
   const rise = (d) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
   return (
-    <main className="xlo" data-room="dark">
+    <main className="xlo" data-room="dark" data-ask="off">
       <div className="xlo-map" aria-hidden="true">
         {path && <Sigil seed={path} data={[path.length, words(path).length]} className="xlo-sigil" />}
         <motion.span className="xlo-pin" initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.5 }}><i /></motion.span>
@@ -42,7 +48,7 @@ export default function Lost() {
         {path && <motion.p className="xlo-path x-mono" {...rise(0.3)}>{path}</motion.p>}
         <motion.div className="xlo-acts" {...rise(0.35)}>
           <A to="/" className="x-btn solid">Go home</A>
-          <button type="button" className="x-btn" onClick={() => history.back()}>Go back</button>
+          {back && <button type="button" className="x-btn" onClick={() => history.back()}>Go back</button>}
         </motion.div>
         <motion.div className="xlo-find" {...rise(0.45)}>
           <label htmlFor="xlo-q" className="x-vh">Search every page</label>

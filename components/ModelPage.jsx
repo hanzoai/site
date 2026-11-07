@@ -3,6 +3,8 @@
    and the page are one continuous object. Close runs the transition back into the card. The body below is the
    model's own rebuilt page (passed as children by app/<slug>/page.jsx); a route without one falls back to the port.
    The page ends on the next model, whose film is already playing.
+   v2: the hero settles as you scroll: the full-bleed film draws in to a rounded card (clip only), the way it arrived,
+   and an index (01 / 09) places the model among Hanzo's nine.
    Signature: the open. The card's film lands as this hero (WebGL opener), Close runs it back into the card, and the
    next model's card opens the same way; on phones a sideways swipe turns to the neighbouring model.
    Beyond: carried by each model's own body (passed as children); this shell adds none of its own. */
@@ -24,6 +26,7 @@ export default function ModelPage({ slug, html, children }) {
   const y = useTransform(p, [0, 1], ['0%', '18%']);
   const textY = useTransform(p, [0, 1], [0, -80]);
   const fade = useTransform(p, [0, 0.7], [1, 0]);
+  const clipPath = useTransform(p, [0, 0.9], ['inset(0% 0% 0% 0% round 0px)', 'inset(5% 4% 20% 4% round 28px)']);
   const i = MODELS.findIndex((x) => x.slug === slug);
   const next = MODELS[(i + 1) % MODELS.length];
 
@@ -39,11 +42,12 @@ export default function ModelPage({ slug, html, children }) {
   return (
     <main className="x-model" ref={root}>
       <section className="x-mhero" ref={hero} data-hero={slug} data-ready={ready ? '' : undefined} aria-labelledby="mh">
-        <motion.div className="x-mhero-media" style={{ y }}>
+        <motion.div className="x-mhero-media" style={{ y, clipPath }}>
           <img src={media(slug, 'webp')} alt="" />
           <video src={media(slug, 'webm')} autoPlay muted loop playsInline aria-hidden="true" />
         </motion.div>
         <motion.div className="x-mhero-copy x-wrap" style={{ y: textY, opacity: fade }}>
+          <motion.p className="x-mindex" {...rise(0.12)}><span>{String(i + 1).padStart(2, '0')}</span>{` / ${String(MODELS.length).padStart(2, '0')}`}</motion.p>
           {m.kicker && <motion.p className="x-mkick" {...rise(0.15)}>{m.kicker}</motion.p>}
           <h1 id="mh" className="x-mhero-name">
             <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{m.name}</motion.span></span>

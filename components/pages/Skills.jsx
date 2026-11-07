@@ -1,112 +1,77 @@
 'use client';
-/* Skills. The page is the trade Hanzo describes: coverage costs context. The hero is an agent with almost nothing loaded;
-   say a word and the gateway that notices it wakes, hands over its files and gets out of the way. The six points are
-   a deck of markdown files; then a thread followed file to file, linked instead of repeated.
-   Signature: Gateway wake-up: say a word (Postgres, comptime) and its gateway skill (discover-database, discover-zig) wakes, pulls its markdown cards and slots them into the agent, whose context bar grows only by what it loaded.
-   Beyond: Follow a thread: API design → rate limiting → Redis, three files read, the paragraphs they share linked rather than repeated.
-   Every word and link is Hanzo's; file contents are drawn as blank lines because Hanzo does not list them, and the bars
-   are relative, never a token count. */
+/* Skills. V2: 8/10 an editorial paper page: the skill file is the hero and a word wakes its gateway, the trade drawn as one monolith against five small reads, the six points set like a printed essay with a highlighter that strikes as you read.
+   Signature: say a word, a gateway wakes. The hero is a markdown skill file beside an agent's context tray. A prompt
+   types a word on its own (Postgres, then comptime); the gateway that notices it (discover-database, discover-zig)
+   lights, and its specific files fly into the tray while everything else stays on the shelf.
+   Then the trade, scrubbed by scroll: one monolithic guide against five focused reads (relative lengths, never a
+   token count). The six points are set like an essay (huge numerals, asymmetric columns), each with a yellow
+   highlighter that strikes its key line once as it reaches the screen. The one dark room is the thread.
+   Beyond: follow a thread, API design → rate limiting → Redis: three files read, one after another, linked rather
+   than repeated. Accent: highlighter yellow. Every word and link is Hanzo's; file contents are drawn as blank lines. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
-import { A, More } from '../kit';
-import { useLive, useEvery, useSteps, Paste, Get } from './cloud/Frame';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { Copy } from '../ui';
+import { A, Go } from '../kit';
+import A2Lines from '../v2/A2Lines';
+import A2Paste from '../v2/A2Paste';
+import '../v2/A2.css';
 import './Skills.css';
 
-const WORDS = [
-  { say: 'Postgres', gate: 'discover-database' },
-  { say: 'comptime', gate: 'discover-zig' },
-];
-const FILES = 2; // cards each gateway hands over in this demo
-const pad = (n) => String(n).padStart(2, '0');
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
-const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
+const GH = 'https://github.com/hanzoai';
+const WAKE = [['Postgres', 'discover-database'], ['comptime', 'discover-zig']];
+const SHELF = ['discover-database', 'discover-zig', '', '', '']; // Hanzo names two gateways; the rest of the shelf is drawn blank
 
-/* A markdown file drawn as its shape: frontmatter (name, description), then prose as blank lines. */
-function Md({ id, tone }) {
-  return (
-    <motion.span layoutId={id} className={'xsk-md ' + tone} transition={{ type: 'spring', stiffness: 260, damping: 28 }} aria-hidden="true">
-      <span className="xsk-md-fm"><i>---</i><i><em>name:</em><b /></i><i><em>description:</em><b className="l" /></i><i>---</i></span>
-      <span className="xsk-md-p"><b /><b /><b className="s" /></span>
-    </motion.span>
-  );
+/* One clock: type the word, wake the gateway, pull the files, rest; then the next word. */
+function useWake(ref) {
+  const seen = useInView(ref, { amount: 0.3 });
+  const calm = useReducedMotion();
+  const typed = useRef(null);
+  const [w, setW] = useState(0);
+  const [phase, setPhase] = useState(3); // 0 typing, 1 awake, 2 pulled, 3 rest (the server shows the pulled state)
+  useEffect(() => {
+    if (!seen || calm) return;
+    let alive = true, t = 0, i = 0;
+    const word = WAKE[w][0];
+    setPhase(0);
+    const typing = () => {
+      if (!alive) return;
+      i += 1;
+      if (typed.current) typed.current.textContent = word.slice(0, i);
+      if (i < word.length) t = setTimeout(typing, 90);
+      else t = setTimeout(() => { setPhase(1); t = setTimeout(() => { setPhase(2); t = setTimeout(() => { setPhase(3); t = setTimeout(() => setW((v) => (v + 1) % WAKE.length), 1400); }, 2200); }, 900); }, 300);
+    };
+    if (typed.current) typed.current.textContent = '';
+    t = setTimeout(typing, 500);
+    return () => { alive = false; clearTimeout(t); if (typed.current) typed.current.textContent = word; };
+  }, [seen, calm, w]);
+  return [typed, w, phase];
 }
 
-// auto plays both words, the first word's files staying loaded while the second runs; a chosen word plays alone
-const phase = (mode, step) => (mode === 'auto' ? { w: step < 6 ? 0 : 1, ls: step % 6, keep: step >= 6 } : { w: mode, ls: step, keep: false });
-
 function Wake() {
-  const [ref, live, calm] = useLive(0.3);
-  const [mode, setMode] = useState('auto');
-  const [step, setStep] = useState(0);
-  const typed = useRef(null);
-  const { w, ls, keep } = phase(mode, step);
-  const loaded = (u, j) => (u === w ? ls >= 2 + j : keep && u === 0);
-  const awake = (u) => u === w && ls >= 1 && ls <= 3;
-  const done = (u) => u === w ? ls >= 4 : keep && u === 0;
-  useEffect(() => { if (calm) setStep(mode === 'auto' ? 11 : 5); }, [calm, mode]);
-  useEvery(700, live, () => setStep((s) => (mode === 'auto' ? (s + 1) % 12 : Math.min(5, s + 1))));
-  // the word types into the agent's prompt, written to the text node
-  useEffect(() => {
-    const el = typed.current, word = WORDS[w].say;
-    if (!el) return;
-    if (ls !== 0 || calm) { el.textContent = word; return; }
-    let i = 0, t = 0;
-    const tick = () => { el.textContent = word.slice(0, ++i); if (i < word.length) t = setTimeout(tick, 70); };
-    el.textContent = '';
-    t = setTimeout(tick, 80);
-    return () => clearTimeout(t);
-  }, [w, ls, mode, calm]);
-  const say = (i) => { setMode(i); setStep(calm ? 5 : 0); };
-  const segs = WORDS.flatMap((x, u) => Array.from({ length: FILES }, (_, j) => loaded(u, j) && { k: u + '-' + j, u })).filter(Boolean);
+  const ref = useRef(null);
+  const [typed, w, phase] = useWake(ref);
+  const gate = WAKE[w][1];
   return (
-    <div className="xsk-stage" ref={ref}>
-      <div className="xsk-say" role="radiogroup" aria-label="Say a word">
-        <span className="x-mono">Say</span>
-        {WORDS.map((x, i) => (
-          <button key={x.say} type="button" role="radio" aria-checked={w === i} className={'t' + i} onClick={() => say(i)}>{x.say}</button>
-        ))}
-        {mode !== 'auto' && <button type="button" className="xsk-both" onClick={() => { setMode('auto'); setStep(calm ? 11 : 0); }}>Both</button>}
+    <div className="xsk-wake" ref={ref} aria-hidden="true">
+      <div className="xsk-file">
+        <div className="xsk-file-top x-mono"><span>hanzo.md</span><span>markdown</span></div>
+        <pre className="xsk-fm x-mono"><span className="d">---</span>{'\n'}<span className="k">name:</span> <i style={{ width: '9ch' }} />{'\n'}<span className="k">description:</span> <i style={{ width: '18ch' }} />{'\n'}<span className="d">---</span></pre>
+        <div className="xsk-prose">{[92, 84, 96, 60, 0, 88, 72, 90, 40].map((v, i) => (v ? <i key={i} style={{ width: v + '%' }} /> : <br key={i} />))}</div>
+        <div className="xsk-links x-mono">{['discover-database', 'discover-zig'].map((l) => <span key={l}>→ {l}</span>)}</div>
       </div>
-      <LayoutGroup>
-        <div className="xsk-shelf">
-          {WORDS.map((x, u) => (
-            <div key={x.gate} className={'xsk-gate t' + u + (awake(u) ? ' awake' : '') + (done(u) ? ' rest' : '')}>
-              <span className="xsk-gate-h">
-                <i className="xsk-eye" aria-hidden="true" />
-                <b className="x-mono">{x.gate}</b>
-                <em className="x-mono">{awake(u) ? 'wakes up' : done(u) ? 'out of the way' : 'noticing'}</em>
-              </span>
-              <span className="xsk-gate-w x-mono">“{x.say}”</span>
-              <span className="xsk-gate-f">
-                {Array.from({ length: FILES }, (_, j) => (
-                  <span key={j} className="xsk-gate-slot">{!loaded(u, j) && <Md id={`md-${u}-${j}`} tone={'t' + u} />}</span>
-                ))}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="xsk-agent">
-          <div className="xsk-agent-h">
-            <img src="/models/kai.webp" alt="" />
-            <span><b>Your coding agent</b><em className="x-mono">loads only what it needs</em></span>
-          </div>
-          <p className="xsk-input x-mono"><span aria-hidden="true">›</span><span ref={typed}>{WORDS[0].say}</span><i className="xsk-caret" aria-hidden="true" /></p>
-          <div className="xsk-slots">
-            {WORDS.flatMap((x, u) => Array.from({ length: FILES }, (_, j) => (loaded(u, j) ? <Md key={`${u}-${j}`} id={`md-${u}-${j}`} tone={'t' + u} /> : null)))}
-            {!segs.length && <span className="xsk-empty">Nothing loaded yet</span>}
-          </div>
-          <div className="xsk-ctx">
-            <span className="xsk-ctx-k x-mono">context</span>
-            <span className="xsk-ctx-bar">
-              <AnimatePresence initial={false}>
-                {segs.map((s) => <motion.i key={s.k} className={'t' + s.u} initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }} exit={{ scaleX: 0, opacity: 0 }} transition={{ duration: 0.5, ease: EASE }} />)}
-              </AnimatePresence>
-            </span>
-            <span className="xsk-ghost"><i /><span className="x-mono">one monolithic guide</span></span>
+      <div className="xsk-agent">
+        <div className="xsk-say x-mono"><span className="xsk-caret-k">›</span><span ref={typed}>{WAKE[w][0]}</span><b className="xsk-caret" /></div>
+        <ul className="xsk-shelf x-mono">
+          {SHELF.map((s, i) => <li key={i} className={(s && s === gate && phase >= 1 ? 'on' : '') + (s ? '' : ' blank')}>{s || <i />}</li>)}
+        </ul>
+        <div className="xsk-tray">
+          <span className="x-mono">context</span>
+          <div className="xsk-tray-in">
+            <b className="xsk-base" />
+            {[0, 1].map((k) => <b key={w + '-' + k} className={'xsk-sheet' + (phase >= 2 ? ' in' : '')} style={{ transitionDelay: k * 0.14 + 's' }} />)}
           </div>
         </div>
-      </LayoutGroup>
+      </div>
     </div>
   );
 }
@@ -114,16 +79,14 @@ function Wake() {
 function Hero() {
   return (
     <section className="xsk-hero" aria-labelledby="xsk-h1">
-      <div className="x-wrap xsk-hero-grid">
-        <div className="xsk-intro">
-          <motion.p className="xsk-repo" {...up(0)}><A to="https://github.com/hanzoai" className="x-mono"><Gh />hanzoai/skills</A></motion.p>
-          <h1 id="xsk-h1" className="xsk-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 }}>Skills</motion.span></span></h1>
-          <motion.p className="xsk-sub" {...up(0.3)}>Development knowledge your coding agent loads only when it needs it</motion.p>
-          <motion.div className="xsk-acts" {...up(0.42)}>
-            <motion.span className="x-go" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}><A to="https://github.com/hanzoai" className="x-btn solid" data-thumb="View on GitHub">View on GitHub</A></motion.span>
-          </motion.div>
+      <div className="a2-wrap a2-grid xsk-hero-grid">
+        <div className="xsk-hero-copy">
+          <p className="a2-kick"><A to={GH} className="xsk-repo">hanzoai/skills</A></p>
+          <A2Lines as="h1" id="xsk-h1" className="a2-display xsk-h1" lines={['Skills']} now />
+          <p className="a2-lede">Development knowledge your coding agent loads <mark>only when it needs it</mark></p>
+          <div className="a2-acts"><span data-thumb="View on GitHub" data-href={GH} style={{ display: 'contents' }}><Go to={GH} solid>View on GitHub</Go></span></div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
+        <motion.div className="xsk-hero-obj" initial={{ opacity: 0, y: 40, rotate: 1.5 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
           <Wake />
         </motion.div>
       </div>
@@ -131,112 +94,113 @@ function Hero() {
   );
 }
 
-const POINTS = [
-  ['A skill is a markdown file', 'Frontmatter carries a name and a description. Below it is prose, code, and links to related skills. Nothing to compile, nothing to run — you can read one before you trust it.'],
-  ['Gateway skills do the finding', 'A gateway is a small skill whose whole job is to notice. Say Postgres and discover-database wakes up; say comptime and discover-zig does. It pulls the specific files and gets out of the way.'],
-  ['Install it in one line', <><code>npx skills add https://hanzoskills.com/hanzo.md</code> adds the Hanzo skill to your agent, and hanzoskills.com/llms.txt lists every other one as plain markdown.</>],
-  ['Written small on purpose', 'One topic per file, a few hundred lines each. Five focused reads cost less than one monolithic guide, and you get the five that matter instead of the one that covers everything badly.'],
-  ['Cross-referenced, not duplicated', 'Skills link to the skills next to them, so an agent following a thread from API design into rate limiting into Redis reads three files and never the same paragraph twice.'],
-  ['Add your own', 'Drop a markdown file in a category, give it a name and a description, and it joins discovery. Your house conventions load the same way the public ones do.'],
-];
-
-/* The six points as a deck of markdown files: the one you read is on top, the rest wait behind it. */
+/* The trade, scrubbed: one monolithic guide, then five focused reads. Lengths are relative, never a count. */
 function Trade() {
-  const [ref, live] = useLive(0.35);
-  const [at, choose] = useSteps(POINTS.length, 5200, live);
-  const n = POINTS.length;
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'end center'] });
+  const mono = useTransform(p, (v) => (calm ? 1 : Math.min(1, Math.max(0, (v - 0.2) / 0.3))));
+  const five = useTransform(p, (v) => (calm ? 1 : Math.min(1, Math.max(0, (v - 0.45) / 0.35))));
   return (
-    <section className="x-sec xsk-trade" data-room="dark" ref={ref} aria-labelledby="xsk-trade-h">
-      <div className="x-wrap xsk-trade-grid">
-        <div className="xsk-trade-l">
-          <h2 id="xsk-trade-h" className="xsk-h2">Coverage costs context. This is the trade.</h2>
-          <p className="xsk-count x-mono" aria-live="polite">{pad(at + 1)} / {pad(n)}</p>
-          <ul className="xsk-tabs" role="tablist" aria-label="Six points" data-swipe-own="">
-            {POINTS.map(([t], i) => (
-              <li key={t} role="presentation">
-                <button type="button" role="tab" aria-selected={at === i} aria-controls={'xsk-card-' + i} onClick={() => choose(i)}>
-                  <span className="x-mono">{pad(i + 1)}</span>{t}
-                  {at === i && live && <motion.i key={at} className="xsk-tab-fill" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 5.2, ease: 'linear' }} aria-hidden="true" />}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="xsk-nav">
-            <button type="button" aria-label="Previous point" onClick={() => choose((at + n - 1) % n)}>←</button>
-            <button type="button" aria-label="Next point" onClick={() => choose((at + 1) % n)}>→</button>
-          </div>
-        </div>
-        <div className="xsk-deck">
-          {POINTS.map(([t, d], i) => {
-            const k = (i - at + n) % n; // 0 is on top; the last one is the card that just left
-            const gone = k === n - 1;
-            return (
-              <motion.article
-                key={t} id={'xsk-card-' + i} role="tabpanel" className={'xsk-file' + (k === 0 ? ' on' : '')}
-                initial={false}
-                animate={{ y: gone ? 46 : k * -16, scale: gone ? 1.02 : 1 - k * 0.045, opacity: gone ? 0 : k > 2 ? 0 : 1 - k * 0.28, zIndex: n - k }}
-                transition={{ type: 'spring', stiffness: 220, damping: 28 }}
-                aria-hidden={k !== 0} inert={k !== 0}
-              >
-                <p className="xsk-file-bar x-mono"><span>{pad(i + 1)}</span><span>markdown</span></p>
-                <div className="xsk-fm x-mono">
-                  <span>---</span>
-                  <div className="xsk-fm-n"><em>name:</em><h3>{t}</h3></div>
-                  <span><em>description:</em><b aria-hidden="true" /></span>
-                  <span>---</span>
-                </div>
-                <p className="xsk-file-d">{d}</p>
-                {i === 2 && <Copy text="npx skills add https://hanzoskills.com/hanzo.md" label="Copy" className="xsk-copy" />}
-              </motion.article>
-            );
-          })}
+    <section className="a2-sec xsk-trade" ref={ref} aria-labelledby="xsk-trade-h">
+      <div className="a2-wrap">
+        <A2Lines id="xsk-trade-h" className="a2-display m xsk-trade-h" lines={['Coverage costs context.', 'This is the trade.']} />
+        <div className="xsk-bars" aria-hidden="true">
+          <div className="xsk-bar-row"><span className="x-mono">one monolithic guide</span><motion.b className="xsk-mono" style={{ scaleX: mono }} /></div>
+          <div className="xsk-bar-row"><span className="x-mono">five focused reads</span><motion.div className="xsk-five" style={{ '--f': five }}>{[0, 1, 2, 3, 4].map((k) => <b key={k} style={{ '--k': k }} />)}</motion.div></div>
         </div>
       </div>
     </section>
   );
 }
 
+/* The six points, set like an essay; the highlighter strikes once as each reaches the screen. */
+const POINTS = [
+  ['A skill is a markdown file', <>Frontmatter carries a name and a description. Below it is prose, code, and links to related skills. <Hl>Nothing to compile, nothing to run</Hl> — you can read one before you trust it.</>],
+  ['Gateway skills do the finding', <>A gateway is a small skill whose whole job is to notice. Say Postgres and discover-database wakes up; say comptime and discover-zig does. <Hl>It pulls the specific files and gets out of the way.</Hl></>],
+  ['Install it in one line', <><code>npx skills add https://hanzoskills.com/hanzo.md</code> adds the Hanzo skill to your agent, and <Hl>hanzoskills.com/llms.txt lists every other one as plain markdown.</Hl></>],
+  ['Written small on purpose', <>One topic per file, a few hundred lines each. <Hl>Five focused reads cost less than one monolithic guide</Hl>, and you get the five that matter instead of the one that covers everything badly.</>],
+  ['Cross-referenced, not duplicated', <>Skills link to the skills next to them, so an agent following a thread from API design into rate limiting into Redis <Hl>reads three files and never the same paragraph twice.</Hl></>],
+  ['Add your own', <>Drop a markdown file in a category, give it a name and a description, and it joins discovery. <Hl>Your house conventions load the same way the public ones do.</Hl></>],
+];
+
+function Hl({ children }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5, margin: '0px 0px -15% 0px' });
+  return <mark ref={ref} className={'xsk-hl' + (seen ? ' on' : '')}>{children}</mark>;
+}
+
+function Essay() {
+  return (
+    <section className="a2-sec xsk-essay" aria-label="Six points">
+      <div className="a2-wrap">
+        <ol className="xsk-points">
+          {POINTS.map(([t, d], i) => (
+            <li key={t} className={'xsk-pt p' + i}>
+              <span className="xsk-num a2-fig" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div className="xsk-pt-copy">
+                <span className="a2-kick">{String(i + 1).padStart(2, '0')} / 06</span>
+                <h2 className="a2-headline">{t}</h2>
+                <p className="a2-body">{d}</p>
+                {i === 2 && <div className="xsk-cmd"><code className="x-mono">npx skills add https://hanzoskills.com/hanzo.md</code><Copy text="npx skills add https://hanzoskills.com/hanzo.md" /></div>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+/* The one dark room: follow a thread, file to file. */
 const THREAD = ['API design', 'rate limiting', 'Redis'];
 
-/* Beyond: the thread from the fifth point, followed file by file. Linked, the shared paragraph lives in one file and the
-   others point at it; duplicated, every file carries its own copy and the agent reads it again. */
 function Thread() {
-  const [ref, live] = useLive(0.4);
-  const [at, choose] = useSteps(THREAD.length + 1, 1500, live);
-  const [dup, setDup] = useState(false);
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [at, setAt] = useState(2);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!seen || calm || mine) return;
+    setAt(0);
+    const t = setInterval(() => setAt((v) => (v + 1) % 4), 1300);
+    return () => clearInterval(t);
+  }, [seen, calm, mine]);
   return (
-    <section className="x-sec xsk-thread" ref={ref}>
-      <div className="x-wrap">
-        <header className="xsk-thread-h">
-          <p className="x-kick">Follow a thread</p>
-          <Rise as="h2" className="xsk-h2" y={20}>API design → rate limiting → Redis</Rise>
-        </header>
-        <ol className="xsk-files">
-          {THREAD.map((t, i) => {
-            const read = at > i, now = at === i + 1;
-            return (
-              <li key={t}>
-                <button type="button" aria-pressed={read} className={'xsk-tf' + (read ? ' read' : '') + (now ? ' now' : '')} onClick={() => choose(i + 1)}>
-                  <span className="xsk-tf-h"><span className="x-mono">{pad(i + 1)}</span><b>{t}</b>{read && <em className="x-mono">read</em>}</span>
-                  <span className="xsk-tf-fm" aria-hidden="true"><i /><i className="l" /></span>
-                  <span className="xsk-tf-p" aria-hidden="true"><b /><b /><b className="s" /></span>
-                  {/* the paragraph a neighbour also needs: one link in the linked thread, a second copy in the duplicated one */}
-                  {i < THREAD.length - 1 && (dup
-                    ? <span className="xsk-tf-dup" aria-hidden="true"><b /><b className="s" /></span>
-                    : <span className="xsk-tf-link x-mono">→ {THREAD[i + 1]}</span>)}
-                  {i > 0 && <span className={'xsk-tf-share' + (dup ? ' twice' : '')} aria-hidden="true"><b /><b className="s" /></span>}
-                </button>
-                {i < THREAD.length - 1 && <span className={'xsk-wire' + (at > i + 1 ? ' on' : '')} aria-hidden="true"><i /></span>}
-              </li>
-            );
-          })}
-        </ol>
-        <div className="xsk-read">
-          <p className="x-mono"><span>Files read</span><b>{Math.min(at, 3)} / 3</b></p>
-          <p className={'x-mono' + (dup ? ' warn' : '')}><span>Paragraphs</span><b>{dup ? 'the same one, read twice' : 'never the same paragraph twice'}</b></p>
-          <button type="button" className="xsk-toggle" aria-pressed={dup} onClick={() => setDup(!dup)}>
-            <i aria-hidden="true" /><span>{dup ? 'Show it linked' : 'Show it duplicated'}</span>
-          </button>
+    <section className="a2-sec a2-dark xsk-thread" data-room="dark" ref={ref} aria-labelledby="xsk-thread-h">
+      <div className="a2-wrap a2-grid">
+        <div className="xsk-thread-copy">
+          <p className="a2-kick">Follow a thread</p>
+          <h2 id="xsk-thread-h" className="a2-headline">Cross-referenced, not duplicated</h2>
+          <div className="xsk-steps" role="group" aria-label="The thread">
+            {THREAD.map((t, i) => <button key={t} type="button" aria-pressed={at >= i} onClick={() => { setMine(true); setAt(i); }}>{t}</button>)}
+          </div>
+        </div>
+        <div className="xsk-files" aria-hidden="true">
+          {THREAD.map((t, i) => (
+            <div key={t} className={'xsk-f' + (at >= i ? ' on' : '')} style={{ '--i': i }}>
+              <span className="x-mono">{t}</span>
+              {[88, 70, 94, 52].map((v, k) => <i key={k} style={{ width: v + '%' }} />)}
+              {i < 2 && <em className="x-mono">→ {THREAD[i + 1]}</em>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Get() {
+  return (
+    <section className="a2-sec xsk-get" aria-labelledby="xsk-get-h">
+      <div className="a2-wrap a2-grid">
+        <div className="xsk-get-copy"><A2Lines id="xsk-get-h" className="a2-display s" lines={['Get started', 'with Skills']} /></div>
+        <div className="xsk-get-card">
+          <h2>Get Skills</h2>
+          <p>Reusable agent skills</p>
+          <p className="xsk-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
+          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
         </div>
       </div>
     </section>
@@ -245,20 +209,13 @@ function Thread() {
 
 export default function Skills() {
   return (
-    <main className="xsk">
+    <main className="a2 xsk" style={{ '--acc': '#ffd60a' }}>
       <Hero />
       <Trade />
+      <Essay />
       <Thread />
-      <section className="x-sec xsk-start">
-        <div className="x-wrap">
-          <div className="xsk-start-h">
-            <Rise as="h2" className="xsk-h2" y={20}>Get started with Skills</Rise>
-            <More to="https://github.com/hanzoai">View on GitHub</More>
-          </div>
-          <Paste name="Skills" prompt="Read https://hanzo.ai/skill.md and use Hanzo Skills in my project. Start with: hanzo tools skills list" />
-        </div>
-      </section>
-      <Get name="Skills" tag="Reusable agent skills" mark={<span className="xsk-mark" aria-hidden="true"><i /><i /><i /></span>} />
+      <A2Paste name="Skills" text="Read https://hanzo.ai/skill.md and use Hanzo Skills in my project. Start with: hanzo tools skills list" />
+      <Get />
     </main>
   );
 }

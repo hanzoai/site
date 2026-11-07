@@ -1,0 +1,47 @@
+/* IsoStack (v2): plates in isometric view. Orthographic: no perspective, one rotated layer, plates move on Z. */
+.iso { --iso-acc: #8b5cf6; --iso-w: 400px; --iso-h: 270px; position: relative; display: grid; place-items: center; pointer-events: none; }
+.iso-cam { position: relative; width: 0; height: 0; transform-style: preserve-3d; }
+.iso-rot { position: absolute; left: 0; top: 0; transform: rotateX(56deg) rotateZ(-38deg); transform-style: preserve-3d; }
+.iso-plate {
+  position: absolute; left: calc(var(--iso-w) / -2); top: calc(var(--iso-h) / -2); width: var(--iso-w); height: var(--iso-h);
+  border-radius: 22px; pointer-events: auto; cursor: pointer;
+  background:
+    linear-gradient(rgba(0, 0, 0, .045) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(90deg, rgba(0, 0, 0, .045) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(135deg, #fff, #f4f4f6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .1) inset, 0 1px 0 rgba(255, 255, 255, .9) inset;
+  transition: opacity .5s ease, box-shadow .5s ease, background-color .5s ease;
+}
+.iso-n, .iso-name { position: absolute; font-style: normal; pointer-events: none; }
+.iso-n { left: 22px; top: 18px; font: 500 15px/1 var(--mono); letter-spacing: .06em; color: rgba(0, 0, 0, .4); }
+.iso-name { left: 22px; bottom: 18px; font: 600 26px/1 var(--sans); letter-spacing: -.03em; color: var(--ink); opacity: 0; transform: translateY(6px); transition: opacity .4s ease, transform .5s var(--ease); }
+.iso-shadow {
+  position: absolute; left: -330px; top: 40px; width: 660px; height: 240px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, .16), rgba(0, 0, 0, .05) 60%, transparent); transform: rotate(-8deg);
+}
+/* dark tone: plates of smoked glass with a hairline edge */
+.iso.dark .iso-plate {
+  background:
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(135deg, #1d1d20, #121214);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .12) inset;
+}
+.iso.dark .iso-n { color: rgba(255, 255, 255, .45); }
+.iso.dark .iso-name { color: #fff; }
+.iso.dark .iso-shadow { background: radial-gradient(closest-side, color-mix(in srgb, var(--iso-acc) 26%, transparent), transparent); }
+.iso-plate.dim { opacity: .2; }
+.iso-plate.lit, .iso-plate.match {
+  box-shadow: 0 0 0 1.5px var(--iso-acc) inset, 0 0 60px -10px color-mix(in srgb, var(--iso-acc) 70%, transparent);
+}
+.iso.dark .iso-plate.lit, .iso.dark .iso-plate.match {
+  background:
+    linear-gradient(color-mix(in srgb, var(--iso-acc) 22%, transparent) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(90deg, color-mix(in srgb, var(--iso-acc) 22%, transparent) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(135deg, color-mix(in srgb, var(--iso-acc) 34%, #1d1d20), #141416);
+}
+.iso-plate.lit .iso-name, .iso-plate.match .iso-name, .iso-plate.hot .iso-name { opacity: 1; transform: none; }
+.iso-plate.lit .iso-n, .iso-plate.match .iso-n { color: var(--iso-acc); }
+.iso.dark .iso-plate.lit .iso-n, .iso.dark .iso-plate.match .iso-n { color: color-mix(in srgb, var(--iso-acc) 50%, #fff); }
+.iso-plate.hot { opacity: 1; box-shadow: 0 0 0 1.5px currentColor inset; }
+@media (prefers-reduced-motion: reduce) { .iso-plate, .iso-name { transition: none; } }

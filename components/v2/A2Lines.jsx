@@ -1,0 +1,28 @@
+'use client';
+/* A2Lines — line-masked kinetic type, played once (Apps 2 chat; styles in A2.css).
+   Usage: <A2Lines as="h1" className="a2-display" lines={['An IDE that', 'remembers', 'your codebase']} now />
+   Each line rises out of its own mask, 90 ms apart. `now` plays on mount (a hero); otherwise it plays the first time the
+   heading reaches the screen (watched on the heading itself: the masked lines are clipped, so they cannot be watched).
+   Reduced motion shows the final lines. The whole sentence is in the HTML. */
+import { useRef } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+
+const EASE = [0.16, 1, 0.3, 1];
+
+export default function A2Lines({ lines, as = 'h2', className = '', now, delay = 0, id }) {
+  const calm = useReducedMotion();
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.3 });
+  const Tag = as;
+  const go = now || seen;
+  return (
+    <Tag className={className} id={id} ref={ref}>
+      {lines.map((l, i) => (
+        <span className="a2-ln" key={i}>
+          <motion.span className="a2-ln-in" initial={calm ? false : { y: '108%' }} animate={go ? { y: 0 } : undefined} transition={{ duration: 1.05, ease: EASE, delay: delay + i * 0.09 }}>{l}</motion.span>
+          {i < lines.length - 1 ? ' ' : null}
+        </span>
+      ))}
+    </Tag>
+  );
+}
