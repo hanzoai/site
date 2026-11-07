@@ -1,0 +1,28 @@
+/* KeynoteStage (Cloud 1 chat): see KeynoteStage.jsx */
+.kns { position: relative; padding: clamp(48px, 6vw, 104px) 0 clamp(120px, 13vw, 220px); }
+.kns-g { row-gap: clamp(48px, 5vw, 72px); }
+.kns-t { grid-column: 1 / span 8; display: flex; flex-direction: column; gap: 28px; }
+.kns-r { grid-column: 9 / span 4; align-self: end; display: flex; flex-direction: column; gap: 28px; padding-bottom: .5em; }
+.kns-obj-wrap { grid-column: 1 / -1; position: relative; }
+.kns-obj { transform-origin: 50% 0; }
+.kns-meta { font: 500 13px/1.5 var(--mono); color: var(--faint); letter-spacing: .02em; }
+.kns-meta a { color: var(--soft); }
+
+.kns.side { padding-top: clamp(40px, 5vw, 88px); }
+.kns.side .kns-g { row-gap: 32px; align-items: center; }
+.kns.side .kns-t { grid-column: 1 / span 5; grid-row: 1; align-self: end; }
+.kns.side .kns-r { grid-column: 1 / span 5; grid-row: 2; align-self: start; padding: 0; }
+.kns.side .kns-obj-wrap { grid-column: 6 / -1; grid-row: 1 / span 2; margin-right: calc((100vw - min(100vw - 48px, 1440px)) / -2); }
+.kns.side .kns-obj { transform-origin: 0 50%; }
+.kns.side .kn-lede { max-width: 30ch; }
+
+@media (max-width: 900px) {
+  .kns { padding: 32px 0 120px; }
+  .kns-g { row-gap: 28px; }
+  .kns-t, .kns-r, .kns.side .kns-t, .kns.side .kns-r { grid-column: 1 / -1; grid-row: auto; padding: 0; }
+  .kns-r { gap: 24px; }
+  .kns-obj-wrap, .kns.side .kns-obj-wrap { grid-column: 1 / -1; grid-row: auto; margin: 24px 0 0; }
+  .kns.side .kns-obj { transform-origin: 50% 0; }
+  .kns-acts .kn-btn { flex: 1 1 auto; }
+  .kns-meta { font-size: 14px; }
+}
