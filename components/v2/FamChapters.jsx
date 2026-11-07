@@ -11,6 +11,7 @@
    - onStep: the index of the chapter on screen, for a live object elsewhere to follow. */
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
+import { ui } from './famUi';
 
 export default function FamChapters({ items, label, className = '', onStep, id }) {
   const ref = useRef(null);
@@ -42,9 +43,9 @@ export default function FamChapters({ items, label, className = '', onStep, id }
           ))}
         </div>
         {n > 1 && (
-          <nav className="v2f-ch-nav" aria-label={label ? label + ': chapters' : 'Chapters'}>
+          <nav className="v2f-ch-nav" aria-label={label || ui('chapter')}>
             {items.map((it, k) => (
-              <button key={k} type="button" aria-label={(it.name || 'Chapter ' + (k + 1))} aria-current={k === at ? 'step' : undefined} className={k < at ? 'past' : ''} onClick={() => jump(k)}><i><b /></i></button>
+              <button key={k} type="button" aria-label={(it.name ? it.name + ', ' : '') + ui('chapter') + ' ' + (k + 1) + ' ' + ui('of') + ' ' + n} aria-current={k === at ? 'step' : undefined} className={k < at ? 'past' : ''} onClick={() => jump(k)}><i><b /></i></button>
             ))}
           </nav>
         )}
