@@ -8,17 +8,20 @@
    this product's own contour (Sigil seeded with its slug) drifting behind it; it settles as you scroll. The product
    line without a key card (the exchange) puts its products up as the hero object instead: a console that walks
    through them by itself and holds when you point at it.
-   Signature: the exploded deck. The product's capabilities arrive as one stacked deck of sheets in a pinned scene; as
-   you scroll, the sheets are dealt off the top one by one into their places, until the deck is the full grid. A huge
-   counter keeps how many are out. Phones read the grid as it is.
+   Signature: the deck, one capability at a time. The product's capabilities sit as one deck in a pinned scene: the
+   words stay on the left while the deck on the right shows a single capability; as you scroll the top card lifts
+   away and the next comes forward. Marks under the words show where you are and jump to any card. Phones swipe the
+   same cards one at a time. No counters: the only numbers on the page are Hanzo's.
    Beyond: "Your chain". Pick any chain Hanzo lists across its Web3 products and see at once whether this product
    names it (a tick or a dash) and which other products do (each a link), from every product page's own lists.
-   Motion: idle (the chain stream, the contour, the exchange console) · pointer (magnetic ask, the stream holds under
-   a pointer, sibling rail drags with inertia, cards lift) · state (the chain picker, console tabs) · scroll (the stage
-   settle and the dealt deck).
-   V2: 8/10 key card beside the headline on the first screen with the member's own contour, no eyebrows, ink only (code in grey steps), Hanzo-worded chain finder with icons, magnetic ask, siblings that drag and open. */
+   Each member has its own living object: its own code types itself in when it reaches the screen, its own chains run
+   across its key card, its own contour drifts behind it.
+   Motion: idle (the chain stream, the contour, the exchange console) · time (the code typing in) · pointer (magnetic
+   ask, the stream holds under a pointer, sibling rail drags with inertia, cards lift) · state (the deck's cards, the
+   chain picker, console tabs) · scroll (the stage settle, which card the deck shows).
+   V2: 8/10 key card (or product console) whole beside the headline with its ask and the member's contour, the capabilities as one pinned deck showing one card at a time (no grid, no counters), the member's own code typing in, ink only, no eyebrows, siblings that drag and open. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { Copy, Magnetic } from '../../ui';
 import Sigil from '../../Sigil';
 import { A } from '../../kit';
@@ -30,13 +33,11 @@ import '../../v2/fam.css';
 import './blockchain.css';
 import './BlockPage.css';
 
-const pad = (n) => String(n).padStart(2, '0');
 const GO = { 'Try Hanzo': '/signup', 'View Documentation': 'https://docs.hanzo.ai', 'View Pricing': '/pricing?tab=blockchain' };
-const out3 = (v) => 1 - Math.pow(1 - v, 3);
 
 export function Stream({ chains, label }) {
   if (!chains.length) return null;
-  const row = (k) => chains.map((c, i) => <li key={k + c} aria-hidden={k ? true : undefined}><span className="x-mono">{pad(i + 1)}</span><b>{c}</b></li>);
+  const row = (k) => chains.map((c) => <li key={k + c} aria-hidden={k ? true : undefined}><i className="xb2-blk" aria-hidden="true" /><b>{c}</b></li>);
   return (
     <div className="xbc-stream" aria-label={label}>
       <ul style={{ '--n': chains.length }}>{row('')}{row('b')}</ul>
@@ -57,60 +58,90 @@ export function Code({ file, code, langs }) {
   );
 }
 
-/* ---------- the signature: a deck of sheets, dealt into the grid by scroll ---------- */
-function Sheet({ it, i, n, off, p }) {
-  const a = 0.04 + (i / n) * 0.5;
-  const e = useTransform(p, [a, a + 0.36], [0, 1], { clamp: true });
-  const k = (v) => 1 - out3(v);
-  const x = useTransform(e, (v) => (off ? k(v) * off.dx : 0));
-  const y = useTransform(e, (v) => (off ? k(v) * (off.dy + i * 9) : 0));
-  const rotate = useTransform(e, (v) => (off ? k(v) * ((i % 2 ? 1 : -1) * (1.5 + (i % 3) * 1.2)) : 0));
-  const scale = useTransform(e, (v) => (off ? 1 - k(v) * Math.min(0.12, i * 0.014) : 1));
-  return (
-    <motion.li className="xb2-sheet" style={off ? { x, y, rotate, scale, zIndex: n - i } : undefined}>
-      <span className="xb2-sheet-n x-mono">{pad(i + 1)}</span>
-      <h3>{it.title}</h3>
-      {it.text && <p>{it.text}</p>}
-      {it.link && <A to={it.link.href} className="x-arrow">{it.link.label}</A>}
-    </motion.li>
-  );
+/* this product's own code, typed in once when it reaches the screen: every line is in the HTML from the start (and
+   copies whole); the lines light up one after another by class, through refs, never a re-render per line. Reduced
+   motion and no-JS show it whole. */
+function Typed({ file, code, langs }) {
+  const box = useRef(null);
+  useEffect(() => {
+    const el = box.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const lines = [...el.querySelectorAll('.xbc-ln')];
+    const r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) return; // already on screen: leave it whole
+    el.classList.add('xb2-type');
+    let t = 0;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      let k = 0;
+      const step = () => {
+        if (k >= lines.length) { el.classList.add('done'); return; }
+        lines[k].classList.add('on');
+        k++;
+        t = setTimeout(step, lines[k - 1].textContent.trim() ? 70 : 20);
+      };
+      step();
+    }, { threshold: 0.3 });
+    io.observe(el);
+    return () => { clearTimeout(t); io.disconnect(); };
+  }, []);
+  return <div ref={box}><Code file={file} code={code} langs={langs} /></div>;
 }
 
-function Explode({ b }) {
+/* ---------- the signature: the deck, one capability at a time ---------- */
+/* The capabilities as one pinned deck (desktop): the words stay on the left while the deck on the right shows one
+   capability at a time; as you scroll the top card lifts away and the next one comes forward (state changes with
+   springs, not a scrub). Marks under the words show where you are and jump to any card. Phones swipe the same cards
+   one at a time. Hanzo's numbers only: no counters. */
+function Deck({ b }) {
   const sec = useRef(null);
-  const grid = useRef(null);
-  const calm = useReducedMotion();
-  const [off, setOff] = useState(null);
-  const [dealt, setDealt] = useState(0);
+  const rail = useRef(null);
   const n = b.items.length;
+  const [at, setAt] = useState(0);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    let k = 0;
-    for (let i = 0; i < n; i++) if (p >= 0.04 + (i / n) * 0.5 + 0.2) k = i + 1;
-    if (k !== dealt) setDealt(k);
+    if (!matchMedia('(min-width: 901px)').matches) return;
+    const k = Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.999)));
+    if (k !== at) setAt(k);
   });
+  // phones: the rail itself says which card is in view
   useEffect(() => {
-    const measure = () => {
-      const g = grid.current;
-      if (!g || calm || !matchMedia('(min-width: 901px)').matches) { setOff(null); return; }
-      const cx = g.clientWidth / 2, cy = g.clientHeight / 2;
-      setOff([...g.children].map((li) => ({ dx: cx - (li.offsetLeft + li.offsetWidth / 2), dy: cy - (li.offsetTop + li.offsetHeight / 2) })));
-    };
-    measure();
-    addEventListener('resize', measure);
-    return () => removeEventListener('resize', measure);
-  }, [calm, n]);
+    const el = rail.current;
+    if (!el) return;
+    const on = () => { if (matchMedia('(max-width: 900px)').matches) setAt(Math.round(el.scrollLeft / Math.max(1, el.firstElementChild ? el.firstElementChild.offsetWidth + 12 : 1))); };
+    el.addEventListener('scroll', on, { passive: true });
+    return () => el.removeEventListener('scroll', on);
+  }, []);
+  const jump = (k) => {
+    if (matchMedia('(max-width: 900px)').matches) { const el = rail.current; const c = el && el.children[k]; c && el.scrollTo({ left: c.offsetLeft - el.offsetLeft, behavior: 'smooth' }); return; }
+    const el = sec.current;
+    const top = el.getBoundingClientRect().top + scrollY + ((el.offsetHeight - innerHeight) * (k + 0.5)) / n;
+    window.__lenis ? window.__lenis.scrollTo(top, { duration: 1 }) : scrollTo({ top, behavior: 'smooth' });
+  };
+  const titleId = 'xb2-deck-' + b.title.length;
   return (
-    <section ref={sec} className={'xb2-ex' + (off ? ' pin' : '')} aria-labelledby={'xb2-ex-' + b.title.length}>
-      <div className="xb2-ex-pin">
-        <div className="v2f-wrap v2f-grid xb2-ex-g">
-          <header className="xb2-ex-h">
-            <FamLines as="h2" id={'xb2-ex-' + b.title.length} play="view" className="v2f-head" text={b.title} />
+    <section ref={sec} className="xb2-deckx" style={{ '--n': n }} aria-labelledby={titleId}>
+      <noscript><style>{'.xb2-deckx{height:auto}.xb2-deckx-pin{position:static;height:auto}.xb2-cards{display:grid;gap:12px;height:auto}.xb2-card{position:static!important;opacity:1!important;transform:none!important;visibility:visible!important}.xb2-card>*{opacity:1!important}.xb2-marks2{display:none}'}</style></noscript>
+      <div className="xb2-deckx-pin">
+        <div className="v2f-wrap v2f-grid xb2-deckx-g">
+          <header className="xb2-deckx-h">
+            <FamLines as="h2" id={titleId} play="view" className="v2f-head" text={b.title} />
             {b.lede && <p className="v2f-lede">{b.lede}</p>}
-            <p className="xb2-ex-c" aria-hidden="true"><b className="v2f-num">{pad(off ? dealt : n)}</b><span className="x-mono">/ {pad(n)}</span></p>
+            <div className="xb2-marks2" role="group" aria-label={b.title}>
+              {b.items.map((it, k) => (
+                <button key={it.title} type="button" aria-label={it.title + ', ' + ui('chapter') + ' ' + (k + 1) + ' ' + ui('of') + ' ' + n} aria-current={k === at ? 'step' : undefined} className={k < at ? 'past' : ''} onClick={() => jump(k)}><i><b /></i></button>
+              ))}
+            </div>
           </header>
-          <ul ref={grid} className="xb2-deck">
-            {b.items.map((it, i) => <Sheet key={it.title} it={it} i={i} n={n} off={off && off[i]} p={scrollYProgress} />)}
+          <ul ref={rail} className="xb2-cards" data-swipe-own>
+            {b.items.map((it, k) => (
+              <li key={it.title} className="xb2-card" data-s={k < at ? 'gone' : k === at ? 'on' : k - at < 4 ? 'next' : 'far'} style={{ '--d': Math.max(0, k - at) }}>
+                <h3>{it.title}</h3>
+                {it.text && <p>{it.text}</p>}
+                {it.link && <A to={it.link.href} className="x-arrow">{it.link.label}</A>}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -130,7 +161,6 @@ function Rows({ b }) {
         <ol className="xb2-rl">
           {b.items.map((it, i) => (
             <li key={it.title} className="v2f-grid">
-              <span className="xb2-rl-n" aria-hidden="true">{pad(i + 1)}</span>
               <h3>{it.title}</h3>
               <div className="xb2-rl-t">
                 {it.text && <p>{it.text}</p>}
@@ -156,7 +186,6 @@ function Tiles({ b }) {
         <ul className="xb2-tl">
           {b.items.map((it, i) => (
             <li key={it.title} className="v2f-card">
-              <span className="xb2-sheet-n x-mono">{pad(i + 1)}</span>
               <h3 className="v2f-title">{it.title}</h3>
               {it.text && <p>{it.text}</p>}
               {it.bullets.length > 0 && <ul className="xbc-bul">{it.bullets.map((x) => <li key={x}>{x}</li>)}</ul>}
@@ -221,7 +250,7 @@ function Console({ b, seed }) {
         <div className="xb2-con-tabs" role="tablist" aria-label={b.title}>
           {b.items.map((x, i) => (
             <button key={x.title} type="button" role="tab" id={'xb2-tab-' + i} aria-controls={'xb2-pan-' + i} aria-selected={i === at} onClick={() => { setAt(i); setHeld(true); }}>
-              <span className="x-mono">{pad(i + 1)}</span><b>{x.title}</b>
+              <b>{x.title}</b>
               {i === at && !calm && !held && <i className="xb2-con-t" aria-hidden="true" />}
             </button>
           ))}
@@ -230,7 +259,6 @@ function Console({ b, seed }) {
       <div className="xb2-con-r">
         {b.items.map((x, i) => (
           <div key={x.title} role="tabpanel" id={'xb2-pan-' + i} aria-labelledby={'xb2-tab-' + i} hidden={i !== at} className="xb2-con-p">
-            <p className="xb2-con-n v2f-num" aria-hidden="true">{pad(i + 1)}</p>
             <h3 className="v2f-head">{x.title}</h3>
             {x.text && <p className="v2f-lede">{x.text}</p>}
             {x.bullets.length > 0 && <ul className="xbc-bul xb2-con-b">{x.bullets.map((y) => <li key={y}>{y}</li>)}</ul>}
@@ -290,7 +318,7 @@ export default function BlockPage({ doc, all }) {
                     <div className="xb2-key-l">
                       <h2>{key.title}</h2>
                       {key.sub && <p className="xb2-key-sub">{key.sub}</p>}
-                      <div className="xb2-acts">{key.actions.map((t, i) => (i ? <A key={t} to={GO[t] || '/signup'} className="v2f-btn ghost" data-cta="blockchain.key-second">{t}</A>
+                      <div className="xb2-acts">{key.actions.map((t, i) => (i ? <A key={t} to={GO[t] || '/signup'} className="x-arrow xb2-key-link" data-cta="blockchain.key-second"><span>{t}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
                         : <Magnetic key={t} strength={0.25}><A to={GO[t] || '/signup'} className="v2f-btn light" data-cta="blockchain.key" {...(h.actions.length ? {} : { 'data-thumb': t })}>{t}</A></Magnetic>))}</div>
                       {key.note && <p className="xb2-note">{key.note}</p>}
                     </div>
@@ -312,7 +340,7 @@ export default function BlockPage({ doc, all }) {
       {doc.blocks.map((b, i) => {
         if (i === conAt) return null;
         if (b.kind === 'items') {
-          if (i === deckAt) return <Explode key={i} b={b} />;
+          if (i === deckAt) return <Deck key={i} b={b} />;
           if (b.items.some((it) => it.bullets.length)) return <Tiles key={i} b={b} />;
           return <Rows key={i} b={b} />;
         }
@@ -324,7 +352,7 @@ export default function BlockPage({ doc, all }) {
                 {b.lede && <p className="v2f-lede">{b.lede}</p>}
                 {b.items.length > 0 && <ul className="xb2-int-i">{b.items.map((it) => <li key={it.title}><b>{it.title}</b>{it.text && <span>{it.text}</span>}</li>)}</ul>}
               </header>
-              <div className="xb2-code"><Code file={b.file} code={b.code} langs={b.langs} /></div>
+              <div className="xb2-code"><Typed file={b.file} code={b.code} langs={b.langs} /></div>
             </div>
           </section>
         );

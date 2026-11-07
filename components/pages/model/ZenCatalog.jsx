@@ -18,7 +18,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
 import { EASE, Copy } from '../../ui';
-import { A, More } from '../../kit';
+import { A, Cta, Film } from '../../kit';
 import Sigil from '../../Sigil';
 import './ZenCatalog.css';
 
@@ -61,19 +61,26 @@ function useStage() {
 }
 
 function Stage() {
-  const film = useRef(null);
+  const box = useRef(null);
+  const [held, setHeld] = useState(false); // the visitor paused the film
   useEffect(() => {
-    const v = film.current;
-    if (!v || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); }, { threshold: 0.1 });
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
+    const v = box.current?.querySelector('video');
+    if (!v) return;
+    const keep = () => { if (held) v.pause(); };
+    if (held) v.pause(); else if (v.currentSrc && !matchMedia('(prefers-reduced-motion: reduce)').matches) v.play?.().catch(() => {});
+    v.addEventListener('play', keep);
+    return () => v.removeEventListener('play', keep);
+  }, [held]);
   return (
     <section className="zc-stage" aria-labelledby="zc-h">
       <div className="zc-wrap">
-        <div className="zc-frame" data-morph-target>
-          <video ref={film} className="zc-film" src="/models/zen.webm" poster="/models/zen.webp" muted loop playsInline preload="metadata" aria-hidden="true" />
+        <div className="zc-frame" data-morph-target ref={box}>
+          <Film src="/models/zen.webm" poster="/models/zen.webp" w={1200} h={1500} className="zc-film" />
+          <button type="button" className="zc-hold" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((x) => !x)}>
+            {held
+              ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
+              : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
+          </button>
           <div className="zc-frame-in">
             <h1 id="zc-h" className="zc-h1">
               <noscript><style>{'.zc-h1 .x-line-in,.zc-cell{transform:none!important;opacity:1!important}'}</style></noscript>
@@ -84,9 +91,9 @@ function Stage() {
             <div className="zc-frame-foot">
               <p className="zc-lede">Built for agentic coding and multimodal work. <b>18</b> foundation models from <A to="https://zoo.industries">Zoo Labs Foundation</A> across language, code, vision, image, audio, and retrieval. Zen MoDE (Mixture of Diverse Experts) architecture. From $0.01/MTok.</p>
               <div className="zc-acts">
-                <A to="https://platform.hanzo.ai/api-keys" className="x-btn solid" data-thumb="Get API key">Get API key</A>
-                <a href="#zen5" className="x-arrow"><span>Explore Models</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
-                <More to="/pricing">Full Pricing</More>
+                <Cta to="https://platform.hanzo.ai/api-keys" id="zen-models-hero-api-key" thumb>Get API key</Cta>
+                <a href="#zen5" className="x-arrow" data-cta="zen-models-hero-explore"><span>Explore Models</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
+                <Cta to="/pricing" kind="link" id="zen-models-hero-pricing">Full Pricing</Cta>
               </div>
             </div>
           </div>
@@ -153,12 +160,14 @@ function Figures() {
           </ol>
           <dl className="zc-figs-list">
             {FIGS.map(([v, l], i) => (
-              <motion.div key={l} className="zc-fig" initial={false}
-                animate={!on ? { opacity: 1, y: 0 } : i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? '-22%' : '22%' }}
-                transition={{ duration: 0.75, ease: EASE }}>
-                <dt>{l}</dt>
-                <dd data-short={v.length < 4 || undefined}>{v}</dd>
-              </motion.div>
+              <div key={l} className="zc-fig" data-on={!on || i === at || undefined}>
+                <motion.div className="zc-fig-in" initial={false}
+                  animate={!on || i === at ? { y: '0%' } : { y: i < at ? '-104%' : '104%' }}
+                  transition={!on || i === at ? { duration: 0.8, ease: EASE, delay: 0.24 } : { duration: 0.26, ease: [0.7, 0, 0.84, 0] }}>
+                  <dt>{l}</dt>
+                  <dd data-short={v.length < 4 || undefined}>{v}</dd>
+                </motion.div>
+              </div>
             ))}
           </dl>
           {on && <motion.i className="zc-figs-line" aria-hidden="true" style={{ scaleY: scrollYProgress }} />}
@@ -168,29 +177,38 @@ function Figures() {
   );
 }
 
-function Card({ r, size, seen, i }) {
+function Card({ r, size, seen, i, open, onOpen }) {
+  const body = 'zc-more-' + r.slug;
   return (
-    <motion.li layout className="zc-cell" data-size={size}
+    <motion.li layout className="zc-cell" data-size={size} data-open={open || undefined}
       initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
       transition={{ layout: { type: 'spring', stiffness: 300, damping: 30 }, duration: 0.4, ease: EASE }}>
-      <A to={'/models/hanzo/' + r.slug} className="zc-card" data-morph>
-        <motion.span layout="position" className="zc-card-top">
-          <em className="zc-tier" data-t={r.tier}>{r.tier.toUpperCase()}</em>
-          <span className="zc-open" aria-hidden="true">Open<svg viewBox="0 0 16 16" width="14" height="14"><path d="M4 12 12 4M6 4h6v6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-        </motion.span>
-        <motion.b layout="position" className="zc-name">{r.n}</motion.b>
-        <motion.span layout="position" className="zc-p"><span className="zc-lab">Params</span><span className="zc-big">{r.big}</span> {r.small && <span className="zc-small">{r.small}</span>}</motion.span>
+      <div className="zc-card">
+        <A to={'/models/hanzo/' + r.slug} className="zc-card-a" data-morph data-cta={'zen-models-card-' + r.slug}>
+          <motion.span layout="position" className="zc-card-top">
+            <em className="zc-tier" data-t={r.tier}>{r.tier.toUpperCase()}</em>
+            <span className="zc-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M4 12 12 4M6 4h6v6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+          </motion.span>
+          <motion.b layout="position" className="zc-name">{r.n}</motion.b>
+          <motion.span layout="position" className="zc-p"><span className="zc-lab">Params</span><span className="zc-big">{r.big}</span> {r.small && <span className="zc-small">{r.small}</span>}</motion.span>
+          <motion.span layout="position" className="zc-line" aria-hidden="true">{r.arch} · {r.ctx}</motion.span>
+        </A>
         <motion.span layout="position" className="zc-meter" aria-hidden="true">
           <span className="zc-bar"><i className="zc-tot" style={{ transform: `scaleX(${seen ? Math.max(0.015, r.tot / MAXP) : 0})`, transitionDelay: 0.1 + i * 0.06 + 's' }} />{r.act && <i className="zc-act" style={{ transform: `scaleX(${seen ? Math.max(0.012, r.act / MAXP) : 0})`, transitionDelay: 0.45 + i * 0.06 + 's' }} />}</span>
           <span className="zc-bar ctx"><i className="zc-ctx" style={{ transform: `scaleX(${seen ? ctxW(r.ck) : 0})`, transitionDelay: 0.25 + i * 0.06 + 's' }} /></span>
         </motion.span>
-        <motion.span layout="position" className="zc-d">{r.d}</motion.span>
-        <motion.dl layout="position" className="zc-spec">
-          <div><dt>Context</dt><dd>{r.ctx}</dd></div>
-          <div><dt>Arch</dt><dd>{r.arch}</dd></div>
-          <div><dt>Availability</dt><dd>$0 / $0</dd></div>
-        </motion.dl>
-      </A>
+        <button type="button" className="zc-more" aria-expanded={!!open} aria-controls={body} aria-label={r.n} onClick={onOpen}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+        </button>
+        <motion.div layout="position" id={body} className="zc-more-body">
+          <p className="zc-d">{r.d}</p>
+          <dl className="zc-spec">
+            <div><dt>Context</dt><dd>{r.ctx}</dd></div>
+            <div><dt>Arch</dt><dd>{r.arch}</dd></div>
+            <div><dt>Availability</dt><dd>$0 / $0</dd></div>
+          </dl>
+        </motion.div>
+      </div>
     </motion.li>
   );
 }
@@ -205,6 +223,7 @@ function Shelf() {
     .filter((r) => tier === 'all' || r.tier === tier);
   const spans = SPANS[shown.length] || [];
   const ink = { type: 'spring', stiffness: 300, damping: 30 };
+  const [open, setOpen] = useState(null);
   return (
     <section className="zc-shelf" id="zen5" ref={box} aria-labelledby="zc-cat-h">
       <div className="zc-wrap">
@@ -237,7 +256,7 @@ function Shelf() {
         </div>
         <ul className="zc-grid" aria-label="Zen5 models" aria-live="polite">
           <AnimatePresence mode="popLayout" initial={false}>
-            {shown.map((r, i) => <Card key={r.slug} r={r} i={i} size={spans[i]} seen={seen} />)}
+            {shown.map((r, i) => <Card key={r.slug} r={r} i={i} size={spans[i]} seen={seen} open={open === r.slug} onOpen={() => setOpen(open === r.slug ? null : r.slug)} />)}
           </AnimatePresence>
         </ul>
       </div>
@@ -259,9 +278,9 @@ export default function ZenCatalog() {
           <div className="zc-end-r">
             <p className="zc-lede-d">All 18 Zen models available via OpenAI-compatible API. Start building today.</p>
             <div className="zc-acts">
-              <A to="/signup" className="x-btn solid">Get Started</A>
-              <More to="/dev">Try Hanzo Dev</More>
-              <More to="/pricing">View Pricing</More>
+              <Cta to="/signup" id="zen-models-close-get-started">Get Started</Cta>
+              <Cta to="/dev" kind="link" id="zen-models-close-dev">Try Hanzo Dev</Cta>
+              <Cta to="/pricing" kind="link" id="zen-models-close-pricing">View Pricing</Cta>
             </div>
           </div>
         </div>

@@ -1,51 +1,145 @@
 # /treasury: James-eye review
 
-Verdict: 5/10
-First complaint: "It's gold this time. I said greys, silvers, blacks and whites, but the money stream, the code, the labels, the dots and even the last button are yellow. There's a little label over the headline again. And it's the same page as the others: big name on the left, buttons on the right, numbered chapters, white cards that just sit there."
+Verdict: 6/10
+First complaint: "When it opens, the split is already done, then the title drops in and the whole thing wipes itself. I'm looking at an empty black box for three seconds while it types again. On my phone the 'balanced' pill and the pause button sit on top of the last account, and at the bottom the bar covers the 'Read the docs' button, so I get two of the same button. And the wallet keeps jumping the page while I read."
 
-Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `86852aa`. Files hash: `ea28f3957845`
-Walked 7 Nov 14:02–14:05 UTC on the dev server, moving, at 1470×801 and 375×812 (videos, frame sheets and a frame-difference motion log kept by the critic; the site loader was skipped).
-Proof: `img/treasury.jpg` (desktop first screen | phone first screen).
+Reviewed: branch `claude/youthful-gauss-hiiqm9` @ `ffe7921`. The Treasury files last changed in `2daa8e8`. The walk began on `a343de2`; the branch moved during the review, so every finding below was measured again on the current tree. Files hash: `2e75d4843c0a`
+Walked 7 Nov 14:15–14:42 UTC on the dev server, moving, at 1470×801 and 375×812:
+- Desktop: once with a fine pointer and Lenis, once without.
+- Phone: touch emulation.
+- Kept by the critic: screencasts of the load and of a full scroll, 6-frame bursts every half screen with a frame-difference motion log, a 100 ms state timeline of the hero, a CLS observer, and hover and press diffs on every control.
+
+Proof: `img/treasury.jpg`, four panels:
+1. Desktop first screen.
+2. Phone first screen.
+3. Phone, the streams' payoff: the pill and the pause button sit on the third account.
+4. Phone, the close: the ask bar sits on the close's own "Read the docs".
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Half. The words are clear ("Hanzo Treasury / A double-entry ledger for money moving inside your product"), and the object is the page's best idea: Hanzo's split.num writes itself line by line in a dark room and money pours out of @users:001 into three accounts. But at 1470×801 only the top 320px of it is on the first screen: the first code lines, the "10,000" source box and the top of the gold stream. The third account and the "balanced" pill are under the fold. Desktop does not move in the first second (1 of 25 frames). On the dev server the dark stage is empty for about 1.5 s, the lede, buttons and a finished split fade in at about 2 s, the title cuts in last at about 3 s, and then the finished split wipes itself out and starts writing from nothing. The first thing the object does is undo itself. Phone is better: the code pane is on the first screen and types (9 of 25 frames move), but the money streams are below it.
-2. **One in, one out, or a document?** The five pinned chapters do the Apple move: a 01–05 rail, the words swap, and the card on the right swaps with them. Around them it is a document. After the hero comes a white screen with one big sentence and nothing else. Then four of the five chapter cards are still tables: desktop screens s4, s5, s7 and s8 are STILL, and s6 and s10 barely move (max diff under 1). Only the "Flows and webhooks" card steps on its own. The page also repeats itself: 9,000 / 500 / 500 shows in the hero, in chapter 01 and again in chapter 03, and the wallet is a still card in chapter 04 and then a whole section straight after. The desktop film stops at y≈6,900 of 9,226, before the wallet and the close (the walker's chapter-number presses kept jumping the page back up). Those two are judged from the phone film and the source.
-3. **A real object in every section?** Hero: yes (editor and money streams). The "A ledger, a language for writing transactions…" screen: no, it is type only. Chapters: yes, but four are static tables. Wallet: yes, the best part after the hero (three balances, four buttons, an event log, numbers that roll). Close ("Post your first transaction" and "Get Treasury"): no object.
-4. **One ask, sticky after the hero?** Nearly. "Read the docs" is the hero's ask, the desktop bottom pill ("Hanzo Treasury · search · Read the docs →") carries it from the second screen on, the phone bar carries it, and the close repeats it. That is the right idea. But the first screen has two solid buttons at both widths (the header's "Try Hanzo" and "Read the docs"). The close's "Read the docs" is filled gold. On phone, one screen shows the gold "Read the docs", the black "Deploy to Cloud" and the bar's "Read the docs": three solid buttons together.
-5. **Every hover and press answers?** No. Hero "Read the docs": the arrow nudges and the button follows the pointer (magnetic), which is good, but there is no press. "GitHub": the border changes on hover, with no press. The five chapter numbers: no hover at all. Four press to 0.98 ("03" has no press), and every press scroll-jumps the page (1300→1849, 2541→3889, 5354→2912, 5212→4780). The wallet's "Take at checkout" is the main button, but you arrive with it greyed out at 35% (the wallet starts in "held"), so hover is dead. On phone, "Take at checkout" answers, and "Reset" showed no visible change when tapped. The close's gold button keeps its gold on hover; only the arrow moves.
-6. **Overlap, font swap, layout shift?** No overlaps measured, no horizontal scroll, and the h1 box is steady after its first entry. CLS is 0 on desktop and 0.048 on phone, all from the wallet changing state (`div.ts-wallet-b`, `div.ts-w.seller`, `em`; plan budget under 0.02). In the phone film the rolling wallet numbers pass over their own labels for a frame ("9,000" runs through "@merchants:042").
-7. **Which reference, and is its motion there?** apple.com product page: pinned chapters and the persistent ask pill are there. "One idea per screen" is broken by the wallet appearing twice. anthropic launch: no hero figure. The "9,000 + 500 + 500 = 10,000 · balanced" sum, which could be one, is a 13px pill. synchronized.studio card-open: absent. osply/hamol pointer detail: only the hero ask is magnetic, and nothing else answers the pointer. motion.dev: the stream draw (pathLength) and the wallet's spring number roll are real and good.
-8. **Different from its neighbours?** Not enough. Business 2 (/risk, /sign, /tabs, /ui, all walked) shares the kit: a kicker, then "Hanzo X" big on the left, lede and a solid plus an outlined button on the right, a product strip on the fold, a 01–05 rail of pinned chapters with a white card, the same "Hanzo X · search · ask" pill as /ui, and a "Get X" block. Each of them has its own accent colour, which is the opposite of rule 7. Treasury's own moves are real: the hero is the dark room (the others are white), and the money pour is its own signature. But /ledger uses the same accounts (@users:001, @merchants:042), the same 10,000 USD/2 Numscript split and the same "Read the docs / GitHub" pair. Side by side they read as one page in two colours.
-9. **All 18 parts covered?** No; see below. `docs/coverage/treasury.md` is missing.
-10. **Banned tells?** Yes:
-   - Gold UI hue throughout (`--acc: #d4a72c`, declared in the file as "Accent: gold"; hue 45 on 85 text colours, 22 backgrounds and 13 borders on desktop): the 90% stream, the destination lines in the code, the "balanced" pill, the rail marks, "disagrees" and its "!" dot, the flow dots and "event →" tags, the beige-gold hatched hold box, the event-log arrows and the gold-filled closing button. JAMES.md rule 7: the UI has 0 hues.
-   - "TREASURY OPERATIONS" eyebrow 20px above the h1, at both widths.
-   - More gold kickers above every chapter heading ("What it is made of", "Part 02" to "Part 05") and above the wallet heading ("Wallets with holds").
-   - Dead hover on the chapter numbers and on the greyed-out wallet button.
-   - Low-contrast dark room: the code comments are 3.8:1.
-11. **Copy untouched?** No. Parity is 57/57 text and 3/3 links, and the code, the figures and the UI labels ("agrees", "available", "not spendable, not paid", the four wallet buttons) are fine. But the wallet section rewrites Hanzo. Its heading, "Take money at checkout and pay a seller on delivery", is a clause cut from the middle of Hanzo's "Wallets with holds" sentence. Its lede joins half of that sentence to half of the "Flows and webhooks" sentence ("…release it later, without the balance lying in between. Every change of financial state is delivered as an event you can subscribe to."), which is a sentence Hanzo never wrote. "Part 02" to "Part 05" are new labels. The file's claim "Every word and link is Hanzo's" is not true.
+1. **Sells in 5 seconds, moves within 1 second?** The parts are right: name, lede, "Read the docs" and the product (split.num plus the money streams) are on the desktop first screen, and the title cuts in by line mask. The order is wrong.
+   - **Load sequence.** The server HTML paints the finished, balanced split with an empty black band where the h1 goes; LineMask starts the line at y 108%. On hydration, `useEffect(() => setK(0))` wipes it: 11 lines go to 0 and 3 streams go to 0. It then re-types at 380 ms a line.
+   - **The empty panel.** The streams panel (58% of the stage) is black with one white "@users:001" chip for 2.7 s. "balanced" returns 4.2 s after hydration. Every 8 s loop repeats the 2.7 s blank.
+   - **Desktop fold.** The stage's bottom 24 px and the "balanced" pill (y 766–805) sit under the fold.
+   - **Phone.** Title, lede, ask and the editor fit the first screen. The money streams, the signature, start at y 877, below the fold.
+2. **One in, one out, or a document?** The five pinned parts work: a 01–05 rail, and one card changing beside the words. Around them it reads as a document:
+   - Right after the hero, a full white screen holds one static sentence (`.ts-say`). It has 0% pixel change in a burst at both widths and no object.
+   - At 1470×801, the Hold section's h2, label and lede fill one screen, and the wallet arrives on the next. The words and their object never share a screen.
+   - The close is words plus a card of chips.
+   - Chapter 04 already shows the wallet ("10,000 held at checkout"). The Hold section then repeats the same idea a screen later, with the same sentence.
+3. **A real object in every section?** Partly:
+   - **Hero:** yes (editor and streams).
+   - **Statement:** no.
+   - **Chapters:** yes, but cards 01–03 are three near-identical white mono tables, and 01–04 are static (0% change in bursts). Only "Flows and webhooks" moves by itself.
+   - **Hold:** yes, the wallet you drive.
+   - **Close:** no.
+4. **One ask, sticky after the hero?** The word is right everywhere ("Read the docs", with `data-thumb` and `data-cta`), and the ask bar carries it after the hero at both widths. But:
+   - **At the close,** `.ts-first .w2-cta` is a second solid "Read the docs" on the same screen as the bar's (desktop y 7218: button at 531, bar at 734). On phone the bar sits on top of it.
+   - **In the wallet,** "Take at checkout" (`.ts-b.solid`, ink) is a second solid whenever it is enabled.
+   - **After the hero,** no ask is on screen from scroll ≈400 to ≈1200 (desktop) and ≈400 to ≈1600 (phone). The bar waits for the 957 px / 1298 px hero to pass.
+5. **Every hover and press answers?** Most do:
+   - **Answer well:**
+     - Hero ask: magnetic pull up to 23 px, arrow nudge 3 px, press .98.
+     - Close ask: ink to #2c2c2e.
+     - Ghosts: border and veil.
+     - Rail: ink, and the bar widens.
+     - Every press is .98 or .94.
+   - **Dead:**
+     - "Take at checkout" hover changes nothing (ink border on ink fill).
+     - The `hanzoai` chip has no hover and no press.
+     - The hero pause has no hover in the dark room. The other pauses go from 92% to 100% white, which can't be seen.
+     - `.ts-b:hover` is a bare `:hover` that sticks after a tap.
+   - **Jumps.** While the wallet runs by itself on phone, its buttons jump 29 px under the thumb (see 6).
+   - **Hover detail.** No hover tells you anything (no number, no preview).
+6. **Overlap, font swap, layout shift?** The load itself is clean: CLS 0 on both widths, the h1 box is steady, and there is no horizontal scroll at 320 or 375. Three problems after that:
+   - **Wallet shift, desktop.** The wallet's height goes 497 → 545 → 503 px as it plays by itself, and the close moves with it. CLS is 0.047 over one desktop scroll.
+   - **Wallet shift, phone.** On phone the "held" tile grows from 103 to 131 px when "not spendable, not paid" wraps. CLS 0.038–0.055.
+   - **Overlap at 375×812 (reject list):**
+     - In the streams panel, the "balanced" pill (38–361 × 1144–1204), the "@platform:revenue" card (229–349 × 1124–1192) and the pause button (301–346 × 1166–1211) sit on top of each other.
+     - The ask bar covers the close's "Read the docs".
+7. **Which reference, and is its motion there?** Mostly the apple.com product page: pinned chapters with a rail. The chapter swap is a timed crossfade (opacity and 24 px) at thresholds, not a scrubbed scene. The streams pouring is the page's own idea and it is good. The synchronized.studio card-to-page is absent: nothing on the page opens into a page. There is no anthropic-style hero figure, though 9,000 / 500 / 500 could be one; today they are 20 px labels.
+8. **Different from its neighbours?** Partly. The hero medium is its own: a dark room with code and money streams, unlike /ledger's light book, /sign's desk and /risk's dial. The skeleton is shared:
+   - The composition is the /tabs and /billing first screen: "Hanzo X" at 136 px left, lede and two buttons right, a two-part stage strip on the fold.
+   - The rail chapters are /sign's component.
+   - The "Get X" card close repeats from page to page.
+   - The subject overlaps /ledger: the same @users:001 → @merchants:042 $100 split. That is Hanzo's own copy, so the treatment has to carry the difference.
+9. **All 18 parts covered?** No; see below. `docs/coverage/treasury.md` exists, but two of its claims fail measurement ("One solid per viewport", "targets 44px").
+10. **Banned tells?** None of the hard ones:
+    - 0 hues in `<main>`, checked at 14 scroll positions.
+    - No eyebrow: "Treasury Operations" moved into the editor bar, which is right.
+    - No button fades on hover.
+    - Soft tells:
+      - Inconsistent spacing: the destination column steps 12 px between rows in the Postings and Balances cards, because each row is its own grid with an `auto` amount column.
+      - The wallet's three equal grey tiles in a row are close to "3 equal boxes".
+11. **Copy untouched?** Mostly. Parity is 57/57 text and 3/3 links, and split.num, "Treasury Operations" and "What it is made of" are Hanzo's. Demo labels (agrees/disagrees, held, available, event lines) are UI data. New strings remain:
+    - The four wallet control labels ("Take at checkout", "Delivered: pay the seller", "Release the hold", "Reset") are not in `content/ui-strings.json`. Override 2 says icon plus aria-label until James approves.
+    - The Hold h2 "Take money at checkout and pay a seller on delivery" is a new heading cut from Hanzo's sentence.
+    - The Hold lede splices two Hanzo sentences.
 
 ## Missing from the 18 parts (PLAN-COMPONENTS §2.1–2.18, measured)
-- **2.1 Strategy / 4 Common gate:** no `Persona:`, `Goal:`, `CTA:` or metric id in the page header. More than one solid button shows per viewport: two on the first screen, three on the phone close (see answer 4).
-- **2.3 First impression:** with JS off, the h1 shows, but 21 text runs are hidden, including the hero's "Treasury Operations", the lede, both buttons, and chapters 02–05 with their lines. At 1470×801 only the top 320px of the stage is on the first screen. The finished split wipes itself about 1.5 s after it first appears. The "A ledger, a language…" screen has no object. No card opens into its page (Morph).
-- **2.4 Conversion:** 0 `data-cta` on any primary. The close adds "Deploy to Cloud" as a second solid next to "Read the docs".
-- **2.5 Proof:** no figure is staged. The balanced sum is a 13px pill.
-- **2.6 Content:** 8 text runs at 13px on phone (the split.num code, whose `!important` 13px beats the 14px phone rule). The same figures repeat in three places, and the wallet in two.
-- **2.7 Visual system:** gold accent and a beige hatch break the 0-hue override.
-- **2.8 Components:** the chapter numbers have no hover. The hero and close asks have no press. The wallet buttons change only a border on a bare `:hover` (10 bare `:hover` rules across the page's files, 9 of them in the shared Frame.css). The wallet's main button sits disabled at 35% opacity on arrival.
-- **2.9 Motion:** three demos run on `setInterval` (the split every 380 ms, flows every 900 ms, the wallet every 2.6 s). There is no pause control for the endlessly looping split or the wallet autoplay (WCAG 2.2.2 row in 2.12). Pressing a chapter number jumps the page by up to 2,442px. Reduced motion is good: 0 animations running after 3 s.
-- **2.11 Mobile:** the "hanzoai" chip is 40px tall (plan: 44px). The chapter card pins at the top of the phone screen (up to 56svh) while the words scroll under it. The plan says no big sticky at 900px and below.
-- **2.12 Accessibility:** contrast under 4.5:1 on the gold kickers "What it is made of" (2.2:1), "Part 02" to "Part 05" (2.2:1) and "Wallets with holds" (2.0:1), on the dark room's code comments (3.8:1) and on "Take at checkout" (3.1:1).
-- **2.13 Performance:** phone CLS 0.048 from the wallet (budget under 0.02). The hero lede and buttons start at opacity 0 in the server HTML.
-- **2.16 Developer experience:** split.num is Hanzo's own Numscript, but it has no Copy and runs at 13px on phone (plan: 13.5px).
-- **2.17 States:** JS-off hides the hero ask (see 2.3). On phone, the wallet's "Reset" showed no visible change when tapped.
-- **Coverage:** `docs/coverage/treasury.md` is missing.
-- Passing: one h1 (one line, line height 0.92), one main, no horizontal scroll at 320, no raw img/video/table, 0 `title=` tooltips, no native selects, link parity 3/3, CLS 0 on desktop, h1 box steady, reduced motion settles, no sound, a sticky "Read the docs" after the hero on both widths whose verb matches the hero and the close.
+- **2.1 Strategy / 4 Common gate:** `Persona:`, `Goal:`, `CTA:` and metric are present. The page fails one solid per viewport: the close plus the bar, and the wallet's solid plus the bar.
+- **2.3 First impression:** the h1 is not visible in the server paint (it is masked until hydration). The hero object un-writes on hydration. The phone fold has code but not the streams. The close is not a Band (`.x-band`), so the ask bar never yields there.
+- **2.4 Conversion:** two identical solid asks at the close. There is no ask on screen for about one screen after the hero.
+- **2.6 Content:** phone type is now at least 14px (fixed in `2daa8e8`). At 375 the three account names in the streams are cut with an ellipsis ("@merchant…", "@fees:pro…", "@platform:…"), and they are the object's content.
+- **2.7 Visual system:**
+  - At scroll 0, Settle's scale is capped to exactly the viewport, so the stage runs 0→1470. The editor's left border and the streams panel's right border sit on the screen edges: it is neither inset nor deliberately full-bleed.
+  - Duplicate rules: `.ts-ed` and `.ts-flow` are each declared twice (radius 28 vs 22, min-height 420 vs 380), and `.ts-ed pre` twice with `!important`.
+  - `.ts-kick` is unused.
+  - The CSS header still says "gold".
+- **2.8 Components:**
+  - One bare `:hover` (`.ts-b`).
+  - The solid wallet button has no hover.
+  - The `hanzoai` chip has no states.
+  - The dark-room pause has no hover.
+- **2.9 Motion:**
+  - Three `setInterval` loops (via `useEvery`, at 380, 900 and 2600 ms). They stop off screen and when paused.
+  - Reduced motion settles: final state, 0 running animations.
+  - Four of the five chapter visuals are static.
+  - The wallet's numbers roll in place; the money never travels between accounts.
+- **2.11 Mobile:**
+  - The `hanzoai` chip is 40 px tall (plan: 44).
+  - The streams panel is cramped at 375: overlap and truncation.
+- **2.12 Accessibility:** the editor's comment lines are #6e6e73 on #0f0f11, 3.8:1. "nothing held yet" is about 3.9:1. Both are under 4.5:1.
+- **2.17 States:** while the events list changes state, stale lines linger next to the new state ("paid out to @merchants:042" beside "nothing held yet"), because exits carry the entry stagger delay.
+- **Coverage:** the file exists. Correct its one-solid and 44 px claims.
+- **Passing:**
+  - One h1 and one main.
+  - JS off is fully legible (`NoJs`).
+  - No raw img, video or table; no `title=`.
+  - No horizontal scroll at 320 or 375.
+  - Load CLS 0.
+  - `data-thumb` and `data-cta` are on both asks.
+  - Pause controls work (`aria-pressed`).
+  - No hue in `<main>`.
+  - The footer's blue "Privacy choices" toggle belongs to the shared footer, not this page.
 
 ## Fixes (in order)
-1. **Take the gold out.** Draw the 90% stream white like the 5% stream (width already tells them apart). Make the code's destination lines white and the "balanced" pill an ink-on-white chip. The rail marks, "disagrees" and the "!" dot become ink (keep the "!" shape), and so do the flow dots and "event →" tags. The hold box becomes a grey hatch, the event-log arrows go grey, and the close's "Read the docs" goes black.
-2. **Nothing above the headlines.** Move "Treasury Operations" out from above the h1, into the split.num editor bar or under the lede. Drop the "Part 02" to "Part 05" labels: they are not Hanzo's words, and the rail numbers already count. Set "What it is made of" once as the chapters' own heading, not as a kicker over chapter 01. Take "Wallets with holds" off the top of the wallet heading.
-3. **Put Hanzo's words back in the wallet section.** Delete the joined sentence and the headline cut out of Hanzo's sentence. Chapter 04 already says it in Hanzo's words, so the wallet needs at most Hanzo's own "Wallets with holds" as its title.
-4. **Fix the arrival and fit the split on the first screen.** Do not wipe the finished split on load. Start the loop from the written state and reset only after the balance has held. Render the lede and both buttons visible in the server HTML. Pull the stage up (the hero's 128px top padding and the gap under the title) so all three accounts and the "balanced" pill are on the 801px screen.
-5. **Make the chapter cards move on their own.** When a card becomes the active chapter, it plays its one beat with what is already on it. The three postings write in and "10,000 = 10,000" lands. Reconciliation checks row by row and stops on "disagrees". The balances count up to 9,000 / 500 / 500. The hold box fills to 10,000. Add one pause control for the hero loop and the wallet autoplay.
-6. **One ask, and presses that answer.** In the close, keep "Read the docs" as the one solid button and make "Deploy to Cloud" a text link in the Get row. Give the hero and close asks a press of scale 0.98. Give the chapter numbers a hover that is not opacity (ink, plus the rail mark growing), and make a click swap the pinned card instead of jumping the page. Start the wallet idle so "Take at checkout" is black and ready when you arrive.
+1. **Never un-write the first screen.**
+   - Let the server-painted balanced split hold first, then dim it and re-type: start `k` at `N` and let the loop run from the hold, instead of `setK(0)` on mount.
+   - Draw each stream as its line is typed, so the right panel is never an empty black box for 2.7 s.
+   - Render the h1 visible in the server HTML: the cut-in may play, but never from nothing.
+   - Bring the stage up about 30 px (`lift`) so the "balanced" pill and the card bottoms sit inside 801.
+2. **Clear the phone overlaps and the double ask.**
+   - Put `data-thumb="Read the docs"` on `.ts-first .w2-cta`, or make the close an `.x-band`. The bar then steps aside, which also removes the two-solid screen on desktop.
+   - In `.ts-flow` at ≤900px, move `.ts-ok` out of the bottom-left (under the panel, or into the @users:001 chip) and move the pause to the top-right.
+   - Give the destination names a full line, so nothing is cut or covered.
+3. **Stop the wallet from moving the page.**
+   - Fix the `.ts-w` tile height at every width (keep `em` on its own line).
+   - Give `.ts-ev` a fixed height, and drop the delay on exits.
+   - Nothing below the wallet may move while it plays (target CLS 0).
+4. **One solid per screen in the wallet.**
+   - "Take at checkout" becomes a selected or outlined control (for example the `.w2-seg` thumb), not an ink button.
+   - Move `.ts-b:hover` inside `@media (hover:hover)`, with a fill shift that also shows on the dark variant.
+   - Give the chip hover and press, and the dark-room pause a hover.
+   - Raise the chip to 44 px.
+5. **Make the money move, once.**
+   - Merge chapter 04 and the Hold section: the playable wallet is chapter 04's pinned object. That deletes the repeated idea, the cut h2 and the spliced lede (or list them for James).
+   - In the wallet, the 10,000 should travel from @users:001 into "held" and on to @merchants:042, instead of three numbers rolling in three equal tiles.
+   - Put the four control labels in `ui-strings.json`, or render them icon-only with aria-labels until James approves.
+6. **Give the dead screens something alive.**
+   - The `.ts-say` statement is a full static screen. Cut it in with LineMask over the settling split, or let the hero's three destinations shrink into chapter 01's rows while it reads (the "same ledger" idea, authored).
+   - Carry the small balanced split into the close beside "Post your first transaction".
+7. **Craft.**
+   - Inset the hero stage, or make it deliberately full-bleed (no radius or border at the edges).
+   - Use one grid for the chapter tables so the destination column stops stepping 12 px.
+   - Lighten the editor comments and "nothing held yet" to ≥4.5:1.
+   - Delete the duplicate `.ts-ed`, `.ts-flow` and `pre` rules, `.ts-kick`, and the "gold" comment.

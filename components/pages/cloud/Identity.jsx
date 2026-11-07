@@ -9,7 +9,10 @@
    detail in tabs (all of it in the HTML).
    Beyond: "Wear your name" - type your hostname and your name, choose the ways in, and the hosted card redraws
    white-labelled as yours. Nothing is saved or sent.
-   Accent: rose, from the sign-in button. Every word and link is Hanzo's; the hostname is an example. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; the hostname is an example.
+   Persona: a product team that needs sign-in for its own users and does not want to hand-roll OAuth.
+   Goal: see the hosted sign-in working, what the token carries, and that one session covers every app.
+   CTA: Try Hanzo (hero, the sticky ask bar, Add sign-in and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import { A } from '../../kit';
@@ -43,7 +46,7 @@ function SignCard({ at }) {
   }, [live, at]);
   return (
     <div className="id-card" ref={ref} aria-hidden="true">
-      <p className="id-url"><i />hanzo.id</p>
+      <p className="id-url"><i />hanzo.id<span>Sign-in</span></p>
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={at} className="id-screen" initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.18 } }} transition={{ duration: 0.55, ease: EASE }}>
           {at === 0 && (
@@ -111,11 +114,10 @@ function Pin() {
         <div className="v2-wrap v2-grid id-pin-grid">
           <div className="id-layers">
             <div className="id-layer id-hero" {...layer(0)}>
-              <p className="v2-kick acc">Sign-in</p>
               <Lines as="h1" className="v2-display id-h1" lines={['Hanzo', 'Identity']} data-morph-target="" />
-              <p className="v2-lede id-sub">The sign-in your users actually see.</p>
+              <p className="v2-lede id-sub v2-in" style={{ animationDelay: '.3s' }}>The sign-in your users actually see.</p>
               <div className="v2-acts">
-                <A to="/login" className="v2-btn solid">Try Hanzo</A>
+                <A to="/login" className="v2-btn solid" data-thumb="Try Hanzo" data-cta="identity-try-hanzo">Try Hanzo</A>
                 <A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn">View Documentation</A>
               </div>
             </div>
@@ -208,8 +210,8 @@ function Wear() {
     <section className="v2-sec id-wear">
       <div className="v2-wrap v2-grid">
         <div className="id-wear-l">
-          <p className="v2-kick acc">White-labelled by hostname</p>
           <h2 className="v2-display s">Wear your name</h2>
+          <p className="v2-kick acc id-wear-cap">White-labelled by hostname</p>
           <p className="v2-lede">Your mark on your domain, never ours.</p>
           <label className="id-wear-f">
             <span>Hostname</span>
@@ -279,7 +281,7 @@ export default function Identity() {
           <div className="id-add-l">
             <h2 className="v2-display m">Add sign-in</h2>
             <p className="v2-lede">Register the app, set the callback your framework already uses, install the SDK. That is the whole integration.</p>
-            <div className="v2-acts"><A to="/login" className="v2-btn solid">Try Hanzo</A><A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn">Read Documentation</A></div>
+            <div className="v2-acts"><A to="/login" className="v2-btn solid" data-cta="identity-try-hanzo">Try Hanzo</A><A to="https://docs.hanzo.ai/docs/openapi/iam" className="v2-btn">Read Documentation</A></div>
           </div>
           <ol className="id-three" aria-hidden="true">
             {['Register the app', 'set the callback', 'install the SDK'].map((s, i) => <li key={s}><span>{i + 1}</span>{s}</li>)}
@@ -290,7 +292,7 @@ export default function Identity() {
       <section className="id-end">
         <div className="v2-wrap id-end-in">
           <h2 className="v2-display">Get started with Identity</h2>
-          <div className="v2-acts"><A to="https://docs.hanzo.ai/docs/projects/hanzoai/iam" className="v2-btn solid">Read the docs</A><A to="https://github.com/hanzoai" className="v2-btn">View on GitHub</A></div>
+          <div className="v2-acts"><A to="/login" className="v2-btn solid" data-cta="identity-try-hanzo">Try Hanzo</A><A to="https://docs.hanzo.ai/docs/projects/hanzoai/iam" className="v2-btn">Read the docs</A><A to="https://github.com/hanzoai" className="v2-link id-gh">View on GitHub →</A></div>
         </div>
       </section>
     </main>

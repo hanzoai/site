@@ -86,6 +86,9 @@
 .tn2-code { margin-top: 40px; }
 .tn2-code .cf-code { border-radius: 22px; }
 .tn2-one-r { grid-column: 8 / span 5; align-self: center; }
+.tn2-one-r .cf-code { border-radius: 22px; }
+.tn2-name-in-list { margin-top: 24px; }
+.tn2-name-in-list .tn2-name { box-shadow: none; }
 .tn2-name { padding: 30px; border-radius: 28px; background: #fff; border: 1px solid var(--hair); box-shadow: 0 40px 100px -50px rgba(0, 0, 0, .3); }
 .tn2-name-in { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 10px; margin-top: 18px; }
 .tn2-name label { display: flex; flex-direction: column; gap: 8px; }
@@ -120,3 +123,20 @@
   .tn2-bar, .tn2-ps, .tn2-none, .tn2-net, .tn2-bind, .tn2-name label span, .tn2-open-k, .tn2-wire span { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .tn2-caret, .tn2-wire b { animation: none; } }
+
+/* the close's object */
+.tn2-end { padding: 30px; border-radius: 28px; background: #f5f5f7; color: var(--ink); }
+.tn2-end-k { margin: 0; font-size: 16px; color: #3a3a3c; }
+.tn2-end-k span { color: #6e6e73; }
+.tn2-end-u { display: flex; align-items: baseline; flex-wrap: wrap; margin: 18px 0 0; font-size: clamp(30px, 3vw, 46px); font-weight: 600; letter-spacing: -.04em; line-height: 1.05; }
+.tn2-end-u b { font-weight: 600; color: #6e6e73; }
+.tn2-end-u i { width: 14px; height: 14px; margin-right: 12px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 5px rgba(10, 10, 10, .1); align-self: center; }
+.tn2-end-t { display: flex; justify-content: space-between; gap: 12px; margin: 18px 0 0; padding-top: 16px; border-top: 1px solid rgba(0, 0, 0, .1); font-size: 14px; color: #3a3a3c; }
+@media (max-width: 900px) {
+  .tn2-scene:not(.pin) .tn2-scene-in { display: flex; flex-direction: column; }
+  .tn2-scene:not(.pin) .tn2-cap { display: contents; }
+  .tn2-scene:not(.pin) .tn2-cap-i:first-child { order: 1; }
+  .tn2-scene:not(.pin) .tn2-stage { order: 2; margin: 40px 0 48px; }
+  .tn2-scene:not(.pin) .tn2-cap-i:last-child { order: 3; }
+  .tn2-end-u { font-size: 26px; }
+}

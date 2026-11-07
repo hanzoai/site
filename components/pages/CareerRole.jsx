@@ -3,7 +3,8 @@
    grubogrubo.com. The hero is the same white sheet you clicked on /careers (synchronized.studio): same title type,
    same giant numeral from the deck, the same tags and line, so the click reads as one continuous open (the sheet is the
    Morph target). Inside it the role's own contour (Sigil seeded with its slug) drifts behind the numeral, and its
-   contents open any chapter. Then the role reads one chapter a screen, Why Join Hanzo is set as an editorial list, and
+   contents open any chapter; a role whose words name Hanzo's own models (the research internship: Enso, Kai, Zen)
+   wears their renders there instead, one of them playing. Then the role reads one chapter a screen, Why Join Hanzo is set as an editorial list, and
    the application closes the page in its one dark room. Ink, greys and white only. All wording is Hanzo's.
    Persona: an engineer, designer or researcher deciding whether to apply
    Goal: apply for this role
@@ -26,7 +27,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../ui';
-import { A } from '../kit';
+import { A, Img, Film } from '../kit';
 import Sigil from '../Sigil';
 import FamLines from '../v2/FamLines';
 import FamChapters from '../v2/FamChapters';
@@ -193,6 +194,8 @@ export default function CareerRole({ role, no, peers = [] }) {
       ),
     };
   });
+  // a role that names Hanzo's own models wears their renders in its sheet (colour only from Hanzo's media)
+  const media = !!(role.models && role.models.length);
   const sibs = peers.map((p) => ({ href: '/careers/' + p.slug, title: p.title, preview: p.lede, meta: p.chips.join(' · '), seed: '/careers/' + p.slug }));
   return (
     <main className="v2f xcj">
@@ -215,7 +218,7 @@ export default function CareerRole({ role, no, peers = [] }) {
           </div>
           {/* the deck's own sheet, opened: the Morph target for the sheet you clicked on /careers */}
           <article className="xcj-sheet" data-morph-target>
-            <Sigil seed={'/careers/' + role.slug} data={[total, role.blocks.length, role.form.fields.length]} className="xcj-sheet-s" />
+            <Sigil seed={'/careers/' + role.slug} data={[total, role.blocks.length, role.form.fields.length]} className="xcj-sheet-s" still={media} />
             <div className="xcj-sheet-l">
               <FamLines as="h1" id="xcj-h1" text={role.title} className="xcj-h1" />
               <ul className="xcj-tags">{role.chips.map((c) => <li key={c}>{c}</li>)}</ul>
@@ -227,7 +230,19 @@ export default function CareerRole({ role, no, peers = [] }) {
             </div>
             <div className="xcj-sheet-r">
               {no && <span className="xcj-no v2f-num" aria-hidden="true">{no}</span>}
-              <ol className="xcj-toc">
+              {media && (
+                <ul className="xcj-media">
+                  {role.models.slice(0, 3).map(([m, name], i) => (
+                    <li key={m}>
+                      {i === 0
+                        ? <Film src={'/models/' + m + '.webm'} poster={'/models/' + m + '.webp'} w={1200} h={1500} label={name} />
+                        : <Img src={'/models/' + m + '.webp'} alt={name} w={1200} h={1500} />}
+                      <span className="x-mono" aria-hidden="true">{name}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <ol className={'xcj-toc' + (media ? ' slim' : '')}>
                 {toc.map((t, i) => (
                   <li key={t}>
                     <a href={i < chapters.length ? '#xcj-ch-' + i : i === toc.length - 1 ? '#apply' : '#xcj-why'} onClick={tocAt(i)}>

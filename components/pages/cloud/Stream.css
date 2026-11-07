@@ -33,7 +33,9 @@
 .st2-rul-stick { position: relative; }
 .st2-rul.pin .st2-rul-stick { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); min-height: 600px; overflow: hidden; display: flex; align-items: center; }
 .st2-track { display: flex; align-items: stretch; gap: 20px; padding: 0 24px; width: max-content; }
-.st2-rul:not(.pin) .st2-track { width: auto; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; padding: 120px 16px; scrollbar-width: none; }
+.st2-rul:not(.pin) { padding-block: clamp(96px, 10vw, 140px); }
+.st2-rul:not(.pin) > .st2-rul-stick > .st2-rul-h { width: min(100% - 48px, 1440px); margin: 0 auto 40px; padding: 0; }
+.st2-rul:not(.pin) .st2-track { width: auto; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 24px; padding: 0 24px 8px; scrollbar-width: none; }
 .st2-rul:not(.pin) .st2-track > * { scroll-snap-align: start; }
 .st2-rul-h { flex: none; width: min(640px, 80vw); display: flex; flex-direction: column; justify-content: center; padding-right: 48px; }
 .st2-rul-h .l2-display { max-width: 9ch; }
@@ -91,3 +93,19 @@
   .st2-ofs, .st2-apis li, .st2-range, .st2-p, .st2-mark, .st2-bad, .st2-run b { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .st2-strip, .st2-bad { animation: none; } }
+
+/* the close's object: one partition and the committed offset */
+.st2-mini { position: relative; padding: 24px 0 22px; border-radius: 28px; background: #0b0b0c; border: 1px solid rgba(255, 255, 255, .12); overflow: hidden; color: #f5f5f7; }
+.st2-mini-k { display: flex; justify-content: space-between; gap: 12px; margin: 0 76px 18px 24px; font-size: 13px; color: #a1a1a6; }
+.st2-mini-k b { font-weight: 500; color: #f5f5f7; }
+.st2-mini-lane { position: relative; display: flex; align-items: center; height: 76px; border-block: 1px solid rgba(255, 255, 255, .08); overflow: hidden; }
+.st2-mini-lane .st2-strip { animation-duration: 30s; }
+.st2-mini-lane.still .st2-strip { animation-play-state: paused; }
+.st2-mini-lane .st2-mark { left: 38%; }
+.st2-mini .l2-pause { top: 12px; right: 12px; }
+@media (max-width: 900px) {
+  .st2-rul:not(.pin) > .st2-rul-stick > .st2-rul-h { width: min(100% - 32px, 1440px); margin-bottom: 28px; }
+  .st2-rul:not(.pin) .st2-track { scroll-padding-inline: 16px; padding: 0 16px 8px; }
+  .st2-rul:not(.pin) .st2-rec { width: 82vw; }
+  .st2-mini-k { font-size: 14px; }
+}

@@ -68,11 +68,10 @@
 .xcm-odo { display: inline-block; }
 .xcm-odo-v { display: inline-flex; align-items: flex-start; font-family: var(--sans); font-weight: 600; font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; letter-spacing: -.035em; line-height: 1.1; color: var(--ink); }
 .xcm-odo.big .xcm-odo-v { margin-top: 10px; font-size: clamp(48px, calc(2.6vw + 20px), 64px); }
-.xcm-odo-d { display: inline-block; height: 1.1em; overflow: hidden; }
-.xcm-odo-d > span { display: flex; flex-direction: column; transition: transform 1s var(--ease); }
-.xcm-odo-d i { display: block; height: 1.1em; font-style: normal; text-align: center; }
+.xcm-odo-m { display: inline-grid; overflow: hidden; }
+.xcm-odo-s { grid-area: 1 / 1; display: block; white-space: nowrap; }
 .xcm-odo-c { display: inline-block; }
-.xcm-odo.big .xcm-odo-c:nth-last-child(-n + 3) { font-size: .42em; align-self: flex-end; margin-bottom: .32em; letter-spacing: 0; color: var(--soft); margin-left: .08em; }
+.xcm-odo.big .xcm-odo-c { font-size: .42em; align-self: flex-end; margin-bottom: .32em; letter-spacing: 0; color: var(--soft); margin-left: .08em; }
 
 /* the sheet: every stack's images (the sheet lives on <body>, so these stand on their own) */
 .xcm-t { width: 100%; border-collapse: collapse; }
@@ -149,5 +148,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .xcm-slip { transform: none; transition: none; }
-  .xcm-odo-d > span, .xcm-u li, .xcm-lines li, .xcm-lines button i, .xcm-l-n { transition: none; }
+  .xcm-u li, .xcm-lines li, .xcm-lines button i, .xcm-l-n { transition: none; }
 }
