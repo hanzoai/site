@@ -18,7 +18,8 @@ import { Count } from '../ui';
 import { href } from '../../lib/route';
 import DetailSheet from '../v2/x-pascal/DetailSheet';
 import { SnapIn, Gather, Tilt, Cascade, Ripple } from './openSource/entrances';
-import { ECO, TOTAL, ORGS } from './openSourceData';
+import SNAP from './openSource/snapshot';
+import { OSSData, useOSS } from './openSource/live';
 import '../v2/ProofRhythm.css';
 import './OpenSource.css';
 
@@ -46,7 +47,7 @@ const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 function build() {
   const centers = [[0, 0], [-380, -260], [330, 290]]; // Hanzo, Lux above-left of it, Zoo below-right
   const clusters = [], dots = [];
-  ORGS.forEach((g, gi) => {
+  SNAP.orgs.forEach((g, gi) => {
     const placed = [];
     [...g.orgs].sort((a, b) => num(b.repos) - num(a.repos)).forEach((o) => {
       const n = num(o.repos), r = Math.sqrt(n) * 5.2 + 7;
@@ -67,7 +68,7 @@ function build() {
       }
     });
   });
-  const gal = ORGS.map((g, gi) => {
+  const gal = SNAP.orgs.map((g, gi) => {
     const mine = clusters.filter((c) => c.g === g.name);
     const top = Math.min(...mine.map((c) => c.y - c.r));
     return { name: g.name, sub: g.sub, x: centers[gi][0], y: top - 26 };
@@ -184,9 +185,8 @@ function Sky({ paused = false }) {
 }
 
 /* ---------- hero: the sky, and the count ---------- */
-const HERO_STATS = [['1,733', 'Original public repositories'], ['37', 'Organizations holding them'], ['732,288', 'Commits, past year'], ['5,125', 'GitHub stars']];
-
 function Hero() {
+  const { hero } = useOSS();
   const [held, setHeld] = useState(false);
   return (
     <section className="xos-hero" data-room="dark" aria-labelledby="xos-h1">
@@ -208,7 +208,7 @@ function Hero() {
         </div>
         <div className="xos-hero-b">
           <dl className="xos-hstats">
-            {HERO_STATS.map(([v, k], i) => (
+            {hero.map(([v, k], i) => (
               <div key={k} className={i ? '' : 'xos-hs-m'}><dd className={i ? '' : 'pf-figure'}>{v}</dd><dt>{k}</dt></div>
             ))}
           </dl>        </div>
@@ -219,11 +219,12 @@ function Hero() {
 
 /* ---------- the sticky local band: the page's name, the live read, the ask (quiet; the solid stays in the hero) ---------- */
 function Local() {
+  const { eco } = useOSS();
   return (
     <div className="xos-local">
       <div className="pf-wrap xos-local-in">
         <span className="xos-local-t"><span className="xos-dash-dot" aria-hidden="true" /><span className="pf-mono">Open Source First</span></span>
-        <span className="pf-mono xos-local-r">{ECO[0].read}</span>
+        <span className="pf-mono xos-local-r">{eco[0].read}</span>
         <A to="https://github.com/hanzoai" className="pf-btn xos-local-a" data-cta="open-source.sticky">View on GitHub</A>
       </div>
     </div>
@@ -235,9 +236,9 @@ const MONTHS = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', '
 const LANGC = ['#0a0a0a', '#404040', '#737373', '#a3a3a3', '#d4d4d4', '#e4e4e7'];
 
 function Dash({ at }) {
-  const e = ECO[at];
+  const e = useOSS().eco[at];
   let left = 0;
-  const segs = e.langs.map(([l, pc], j) => { const s = { l, pc: +pc, left, c: LANGC[j] }; left += +pc; return s; });
+  const segs = e.langs.map(([l, pc], j) => { const s = { l, t: pc, pc: +pc, left, c: LANGC[j] }; left += +pc; return s; });
   return (
     <figure className="pf-obj xos-dash">
       <header className="xos-dash-h">
@@ -247,17 +248,18 @@ function Dash({ at }) {
       </header>
       <div className="xos-heat">
         <div className="xos-heat-m" aria-hidden="true">{MONTHS.map((m, i) => <span key={i}>{m}</span>)}</div>
-        <div className="xos-heat-g" role="img" aria-label={e.heatLabel}>
+        <div className="xos-heat-g" role="img" aria-label={e.window}>
           {[...e.heat].map((c, i) => <i key={i} data-l={c} style={{ '--d': Math.floor(i / 7) * 9 + 'ms' }} />)}
         </div>
         <div className="xos-heat-f">
           <span>Commits a day</span>
-          <span className="xos-leg" aria-hidden="true">Less {[0, 1, 2, 3, 4].map((l) => <i key={l} data-l={l} />)} More</span>
+          <span className="xos-leg" aria-hidden="true"><span>Less</span>{[0, 1, 2, 3, 4].map((l) => <i key={l} data-l={l} />)}<span>More</span></span>
         </div>
+        <p className="pf-mono xos-heat-w">{e.window}</p>
       </div>
       <div className="xos-lang">
         <div className="xos-lbar" aria-hidden="true">{segs.map((s, j) => <i key={j} style={{ transform: `translateX(${s.left}%) scaleX(${s.pc / 100})`, background: s.c }} />)}</div>
-        <ul className="xos-langs">{segs.map((s, j) => <li key={at + s.l} style={{ '--j': j }}><i style={{ background: s.c }} />{s.l}<b className="pf-mono">{s.pc}%</b></li>)}</ul>
+        <ul className="xos-langs">{segs.map((s, j) => <li key={at + s.l} style={{ '--j': j }}><i style={{ background: s.c }} /><span>{s.l} {s.t}%</span></li>)}</ul>
       </div>
       <ol className="xos-dash-c">
         {e.commits.slice(0, 3).map(([repo, msg, when, to], j) => (
@@ -269,27 +271,27 @@ function Dash({ at }) {
 }
 
 function EcoSheet({ e, i }) {
+  const { orgs } = useOSS();
   return (
-    <DetailSheet label="Read more" kicker={ORGS[i].sub} title={NAMES[i]} wide>
+    <DetailSheet label="Read more" kicker={orgs[i].sub} title={NAMES[i]} wide>
       <h3>Commits a day</h3>
-      <p>{e.heatLabel}</p>
-      <p className="xos-sh-note">Commits a day, from Nov 7, 2025 to Nov 6, 2026</p>
+      <p className="xos-sh-note">{e.window}</p>
       <h3>Latest commits</h3>
       <ol className="xos-sh-commits">
         {e.commits.map(([repo, msg, when, to]) => (
-          <li key={to}><A to={to}><span className="pf-mono">{repo}</span><span>{msg}</span><span className="pf-mono">{when} <small>UTC</small></span></A></li>
+          <li key={to}><A to={to}><span className="pf-mono">{repo}</span><span>{msg}</span><span className="pf-mono">{when + ' UTC'}</span></A></li>
         ))}
       </ol>
       <p className="xos-sh-note"><span>{e.read}</span> · <A to={e.readTo}>Read the source</A></p>
       <h3>What it is written in</h3>
-      <ul className="xos-sh-langs">{e.langs.map(([l, pc], j) => <li key={l}><i style={{ background: LANGC[j] }} />{l}<b className="pf-mono">{pc}<small>%</small></b></li>)}</ul>
+      <ul className="xos-sh-langs">{e.langs.map(([l, pc], j) => <li key={l}><i style={{ background: LANGC[j] }} /><span>{l} {pc}%</span></li>)}</ul>
       <p className="xos-sh-note">{e.langCap}</p>
       <h3>Repositories</h3>
       <ul className="xos-sh-repos">
         {e.repos.map((r) => (
           <li key={r.name}>
             <A to={r.to}>
-              <b className="pf-mono">{r.name}</b>
+              <span className="pf-mono xos-sh-n">{r.name}</span>
               <span className="xos-sh-d">{r.desc}</span>
               <span className="xos-sh-m pf-mono">
                 <span>{r.lang}</span><span><Star />{r.stars}</span><span><Fork />{r.forks}</span>
@@ -305,6 +307,7 @@ function EcoSheet({ e, i }) {
 }
 
 function Publish() {
+  const { eco: ECO, orgs: ORGS } = useOSS();
   const [at, setAt] = useState(0);
   const swapped = useRef(false);
   if (at) swapped.current = true;
@@ -338,7 +341,7 @@ function Publish() {
                 <p className="xos-cap">{ORGS[i].sub}</p>
                 <ul className="xos-stats">
                   {e.stats.map(([k, v, sub], j) => (
-                    <li key={j}><A to={e.statTo[j]}><b className="pf-mono">{v}</b><span className="xos-st-k">{k}</span><span className="xos-st-s">{sub}</span></A></li>
+                    <li key={j}><A to={e.statTo[j]}><span className="pf-mono xos-st-v">{v}</span><span className="xos-st-k">{k}</span><span className="xos-st-s">{sub}</span></A></li>
                   ))}
                 </ul>
                 <EcoSheet e={e} i={i} />
@@ -354,6 +357,7 @@ function Publish() {
 
 /* ---------- the total, as figures ---------- */
 function Totals() {
+  const { total } = useOSS();
   return (
     <section className="pf-sec xos-total">
       <div className="pf-wrap pf-grid">
@@ -362,15 +366,27 @@ function Totals() {
           <p className="pf-body">Aggregate open-source activity counted from the forge and GitHub.</p>
           <p className="xos-grants"><A to="/grants">OSS &amp; research credit grants</A></p>
         </header>
-        <Gather className="xos-total-n" items={TOTAL}
-          render={([v, k], i, style) => <li key={k} style={style}><b className={i ? 'pf-num xos-tot-s' : 'pf-moment'}>{i ? v : <Count to={num(v)} duration={1.2} />}</b><span>{k}</span></li>} />
+        <Gather className="xos-total-n" items={total}
+          render={([v, k], i, style) => <li key={k} style={style}><span className={i ? 'pf-num xos-tot-s' : 'pf-moment'}>{i ? v : <Count to={num(v)} duration={1.2} />}</span><span>{k}</span></li>} />
       </div>
     </section>
   );
 }
 
+/* an organization's commits a month over the past year, the months Hanzo's build counts (13, the first and last partial) */
+function Months({ m }) {
+  if (!m || !m.length) return null;
+  const max = Math.max(1, ...m);
+  return (
+    <span className="xos-oc-mo" role="img" aria-label="Commits a month over the past year">
+      {m.map((v, k) => <i key={k} data-z={v ? undefined : ''} style={{ '--h': v ? Math.max(0.08, v / max) : 0.06, '--k': k }} />)}
+    </span>
+  );
+}
+
 /* ---------- every organization: cards that open ---------- */
 function Orgs() {
+  const { orgs: ORGS } = useOSS();
   const [g, setG] = useState(0);
   const keys = (e) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
@@ -403,9 +419,11 @@ function Orgs() {
               <ul className="xos-ocards">
                 {top.map((o, j) => (
                   <li key={o.login} style={{ '--k': j }}>
-                    <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>                      <span className="xos-oc-top"><b data-morph>{o.name}</b><small className="pf-mono">{o.login}</small></span>
-                      <span className="xos-oc-n"><b className="pf-mono">{o.repos.split(' ')[0]}</b> {o.repos.split(' ').slice(1).join(' ')}</span>
+                    <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>
+                      <span className="xos-oc-top"><span className="xos-oc-name" data-morph>{o.name}</span><span className="pf-mono xos-oc-login">{o.login}</span></span>
+                      <span className="xos-oc-n">{o.repos}</span>
                       <span className="xos-oc-bar" aria-hidden="true"><i style={{ transform: `scaleX(${Math.max(0.02, num(o.repos) / max)})` }} /></span>
+                      <Months m={o.months} />
                       <span className="xos-oc-f pf-mono"><span>{o.commits || ''}</span><span><Star />{o.stars}</span></span>
                       {o.desc && <span className="xos-oc-d">{o.desc}</span>}
                       <span className="xos-oc-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
@@ -418,7 +436,7 @@ function Orgs() {
                   {x.orgs.map((o) => (
                     <li key={o.login}>
                       <A to={'/oss/' + o.login}>
-                        <span><b>{o.name}</b><small className="pf-mono">{o.login}</small></span>
+                        <span><span className="xos-sh-on">{o.name}</span><span className="pf-mono xos-sh-ol">{o.login}</span></span>
                         <span className="pf-mono">{o.repos}</span>
                         <span className="pf-mono">{o.commits || ''}</span>
                         <span className="pf-mono"><Star />{o.stars}</span>
@@ -579,7 +597,7 @@ function Charter() {
 }
 
 /* ---------- contribute, in your language (Beyond) ---------- */
-const ALL = ECO.flatMap((e, i) => e.repos.map((r) => ({ ...r, eco: NAMES[i] })));
+const ALL = SNAP.eco.flatMap((e, i) => e.repos.map((r) => ({ ...r, eco: NAMES[i] })));
 const LANGS = Object.entries(ALL.reduce((m, r) => ((m[r.lang] = (m[r.lang] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1]).map(([l]) => l);
 
 function Contribute() {
@@ -587,7 +605,7 @@ function Contribute() {
   const swapped = useRef(false);
   if (lang !== LANGS[0]) swapped.current = true;
   const repos = ALL.filter((r) => r.lang === lang);
-  const share = ECO.map((e, i) => { const hit = e.langs.find(([l]) => l === lang); return [NAMES[i], hit ? hit[1] : null, e.stats[3][1]]; });
+  const share = SNAP.eco.map((e, i) => { const hit = e.langs.find(([l]) => l === lang); return [NAMES[i], hit ? hit[1] : null, e.stats[3][1]]; });
   return (
     <Ripple className="pf-sec xos-con" aria-labelledby="xos-con-h">
       <div className="pf-wrap pf-grid">
@@ -604,14 +622,14 @@ function Contribute() {
           <p className="xos-share" aria-live="polite">
             {share.map(([n, pc]) => (
               pc
-                ? <span key={n}><b className="pf-mono">{pc}%</b> {n}</span>
-                : <span key={n} className="off"><b className="pf-mono">—</b> {n}</span>
+                ? <span key={n}><span className="pf-mono xos-share-v">{pc}%</span> {n}</span>
+                : <span key={n} className="off"><span className="pf-mono xos-share-v">—</span> {n}</span>
             ))}
           </p>
           <ul className={'xos-lrepos' + (swapped.current ? ' sw' : '')} key={lang}>
             {repos.map((r, j) => (
               <li key={r.name} style={{ '--j': j }}>
-                <A to={r.to}><span className="pf-mono">{r.name}</span><small>{r.eco} · <Star />{r.stars}</small></A>
+                <A to={r.to}><span className="pf-mono">{r.name}</span><span className="xos-lr-m">{r.eco} · <Star />{r.stars}</span></A>
               </li>
             ))}
           </ul>
@@ -654,6 +672,7 @@ const NOSCRIPT = '<style>.xos-panel[hidden],.xos-opanel[hidden]{display:block!im
 
 export default function OpenSource() {
   return (
+    <OSSData>
     <main className="xos pf-r">
       <noscript dangerouslySetInnerHTML={{ __html: NOSCRIPT }} />
       <Hero />
@@ -668,5 +687,6 @@ export default function OpenSource() {
       </div>
       <Close />
     </main>
+    </OSSData>
   );
 }

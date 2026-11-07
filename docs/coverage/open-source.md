@@ -2,7 +2,7 @@
 
 Page file: `components/pages/OpenSource.jsx` · gallery: `docs/gallery/open-source/` · metric id: `github_click`
 
-Open copy questions for James: none. Decided here: commit totals differ by source (805,254 in Total across Hanzo; per-ecosystem figures elsewhere) and the hero's "37" sits beside the stat "73 organizations"; every figure is shown exactly as Hanzo prints it, nothing summed or derived. Copy rule (conductor, round 2): every visible string, number and aria-label checked against `content/live/open-source.json`, `content/pages/` and `content/ui-strings.json`; the invented ones were removed (pointer hint, "Charter" caption, card index numbers, composed sheet labels and share sentences, typed → ★ ⑂ glyphs now drawn icons, invented aria-labels).
+Open copy questions for James: none. Decided here: commit totals differ by source (803,822 in Total across Hanzo; per-ecosystem figures elsewhere) and the hero's "38" sits beside the stat "73 organizations"; every figure is shown exactly as Hanzo prints it, nothing summed or derived. Copy rule (conductor, round 2): every visible string, number and aria-label checked against `content/live/open-source.json`, `content/pages/` and `content/ui-strings.json`; the invented ones were removed (pointer hint, "Charter" caption, card index numbers, composed sheet labels and share sentences, typed → ★ ⑂ glyphs now drawn icons, invented aria-labels).
 Shared changes requested (`docs/requests/<page>.md`): `docs/requests/open-source.md` (round 2): the phone header ask should read "View on GitHub" like the desktop header, and ProofScale's `.pf-btn.solid:hover` fill `#2a2a2c` is off-deck (overridden page-locally here). Reported to the conductor: `components/Morph.jsx` waits on `requestAnimationFrame` inside the View Transition callback, which Chromium only runs at its 4 s timeout, so every in-site click freezes about 4 s; fix is `setTimeout(ok, 16)`.
 Forks this page deleted: the floating AskBar pill, the cursor "Open" labels, the pinned ecosystem scene (now tabs), the second outlined hero button (now a text link), springs on the tab pills.
 
@@ -47,7 +47,7 @@ Done here: `data-cta="open-source.hero"` with `data-thumb="View on GitHub"`; `da
 - [x] Marquees pause, freeze under reduced motion, hide duplicates — n/a: no marquee
 - [x] Privacy link and owner line beside every submit — n/a: no form
 
-Done here: every figure is from `openSourceData.js` (Hanzo's build read of GitHub and the forge) with its own qualifier beside it ("In the past year", "as GitHub counts them"); the dashboard carries "Forge listing · read Nov 6, 06:04". Language shares in the Beyond are Hanzo's percentages, unchanged.
+Done here: every figure is from `openSource/snapshot.js`, written by `openSource/read.mjs` from the very read hanzo.ai's build baked in (api.hanzo.ai/v1/git/activity and GitHub, read Nov 7, 08:16), each with its own qualifier beside it ("In the past year", "as GitHub counts them"); the dashboard carries "Forge listing · read Nov 7, 08:16" and "Commits a day, from Nov 8, 2025 to Nov 7, 2026". On the hanzo.ai origin (the only one the API's CORS admits) `openSource/live.jsx` GETs /v1/git/activity after first paint and refreshes the forge figures it serves with the same meaning (each ecosystem's year of commits and merges, latest commits and their read time, every organization's commits this year and months, the total's commits); day cells, the past 7 days and GitHub figures stay as the build read them. Language shares are Hanzo's percentages, unchanged.
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -64,7 +64,7 @@ Done here: parity 417/417 text, 139/139 links. Mono 12px only for captions and f
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` OK. Rhythm on `ProofRhythm.css`: h1 52, section headings 26, one moment per screen: the hero's 1,733 rests at 64px (deck figure size) so the h1 is the one big thing there, and 805,254 counts up at 84 in Total; other figures 44/32. "Built on" shows Hanzo's twelve glyphs once, as a greyscale mark row on a `#f5f5f5` strip (not as 32px tile icons). Tiles are flat `#f5f5f5` fills (no outline, no shadow); only the hero tooltip floats and carries the deck's black shadow. Hero medium: a canvas of every repository, unlike /integrations' hub or /research's papers.
+Done here: `taste.py` OK. Rhythm on `ProofRhythm.css`: h1 52, section headings 26, one moment per screen: the hero's 1,734 rests at 64px (deck figure size) so the h1 is the one big thing there, and 803,822 counts up at 84 in Total; other figures 44/32. "Built on" shows Hanzo's twelve glyphs once, as a greyscale mark row on a `#f5f5f5` strip (not as 32px tile icons). Tiles are flat `#f5f5f5` fills (no outline, no shadow); only the hero tooltip floats and carries the deck's black shadow. Hero medium: a canvas of every repository, unlike /integrations' hub or /research's papers.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -98,7 +98,7 @@ Done here: Hanzo has no photographs for this page; its visuals are its own data 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `node scripts/phone.mjs /open-source`: OK, width 375/375. At 375 the sky is the top 45svh, the h1 sits at 40px, the ask is full width above the fold; the four counts stack with 1,733 first; tabs span the width. Round 2: "Built on" is two credits a row (was 12 full-width cards); the invented "point at a cluster" hint is gone; the mark row lights only for a mouse (`(hover: hover)`), so a tap never leaves it dimmed.
+Done here: `node scripts/phone.mjs /open-source`: OK, width 375/375. At 375 the sky is the top 45svh, the h1 sits at 40px, the ask is full width above the fold; the four counts stack with 1,734 first; tabs span the width. Round 2: "Built on" is two credits a row (was 12 full-width cards); the invented "point at a cluster" hint is gone; the mark row lights only for a mouse (`(hover: hover)`), so a tap never leaves it dimmed.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
