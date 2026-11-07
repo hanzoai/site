@@ -33,7 +33,7 @@ Done here: Parity shows 34/34 links; each of the 31 rows keeps its paper or HIP 
 - [x] Ends in the dark room's closing link (github.com/hanzoai), then the footer
 - [x] Sheets and rows open into the paper's full title page (shared element, 600 ms in-out); Back/Esc closes
 
-Done here: First screen at 1470×801: the desk across the full width, the 52px headline over its lower left, caption, lede, one ask; JS off measured 0 of 149 blocks hidden at 1470 and 375.
+Done here: First screen at 1470×801: the headline, lede and one ask on clean paper at the left (5 of 13 columns), the desk of six title pages to the right (no sheet touches the text), a one-line caption under the desk; JS off measured 0 of 149 blocks hidden at 1470 and 375.
 
 ## 4. Conversion system
 - [x] Kit ask (`.pf-btn.solid`) only; no raw `.x-btn`
@@ -84,7 +84,7 @@ Done here: Hovers fill (rows from the left, 400 ms; kinds; bars; ↗) and the ro
 - [x] Reduced motion: the desk holds still, the statement shows in full; no `setInterval`
 - [x] n/a: sound is a shared kit, not wired here
 
-Done here: Deck timings only (150 ms hover, 300 ms state, 400 ms moves, 600 ms open), no springs; `variety.py` OK.
+Done here: Signature: the desk — pointing at a sheet holds it lifted (one at a time) and pressing opens it into its title page (600 ms); supporting: line-mask cut-ins, the month in the rail following your reading, the statement's scroll reveal. Deck timings only, no springs; `variety.py` OK. Reduced motion: the final state with no hydration mismatch (the reveal and the cut-ins apply the setting after hydration; checked: 0 console errors at 375 and 1470 with reduced motion).
 
 ## 10. Media
 - [x] n/a: no Hanzo photo or film on the live page; the objects are typeset title pages
@@ -100,7 +100,7 @@ Done here: Title pages are drawn in HTML (date, title, subtitle, rule, text line
 - [x] Every target 44px or more; sheets and rows open on tap
 - [x] Primary ask above the fold at 375
 
-Done here: Phone desk is two loose rows of three sheets under a 40px headline; the tally stacks as rows; the kinds rail is a 2 × 2 grid.
+Done here: Phone desk is three fanned sheets (one large in front) 16px under the header, the headline below it; the caption takes the full width with pause and arrows on their own row; the ask ends at y 633 at 375×667; the index opens on the six newest papers ("Show all 19"); the list keeps a 60svh minimum so a filter never collapses the page.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text #0a0a0a / #525252 on white and #f5f5f5; #fafafa on black
@@ -155,6 +155,6 @@ Done here: JS off measured 0 hidden text blocks at 1470 and 375; nothing on the 
 - [x] `data-cta` on every primary (`research.hero`, `research.reader`, `research.close`); n/a: `lib/track.js` wiring is shared
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [ ] Review read: `docs/review/research.md` (not written yet)
+- [x] Review read: `docs/review/research.md` (7/10 on the walk before these fixes; its five points are addressed in this build)
 
 Done here: Filmed with `scripts/motion.mjs` (desktop) and `scripts/shot.mjs` (phone); gallery `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`.

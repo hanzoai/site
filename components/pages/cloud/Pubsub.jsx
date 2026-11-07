@@ -300,7 +300,7 @@ function Inspector({ step, intro, ack, from }) {
   };
   return (
     <div className="ps-ins" ref={ref}>
-      <LivePause paused={paused} onToggle={pause} className="ps-ipause" />
+      <LivePause dark paused={paused} onToggle={pause} className="ps-ipause" />
       <div className="ps-ins-h">
         <span className="ps-dot" aria-hidden="true" />
         <AnimatePresence mode="wait" initial={false}>

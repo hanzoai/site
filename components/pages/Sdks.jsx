@@ -11,7 +11,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../ui';
-import { A, More } from '../kit';
+import { A, Cta, More } from '../kit';
 import A2Lines from '../v2/A2Lines';
 import A2Paste from '../v2/A2Paste';
 import '../v2/A2.css';
@@ -202,7 +202,7 @@ function Hero() {
           <A2Lines as="h1" id="xsd-h1" className="a2-display s xsd-h1" lines={['SDKs for', 'every language']} now />
           <p className="a2-lede xsd-lede">A <b>full Cloud SDK</b> generated from the OpenAPI document the API itself serves, and a hand-written <b>AI + Agents</b> library.</p>
           <div className="x-row-links tight xsd-hero-links">
-            <span data-thumb="API reference" data-href="https://docs.hanzo.ai/docs/openapi/" data-cta="sdks.hero"><More to="https://docs.hanzo.ai/docs/openapi/">API reference</More></span>
+            <Cta to="https://docs.hanzo.ai/docs/openapi/" id="sdks.hero" thumb>API reference</Cta>
             <More to="https://github.com/hanzoai/sdk">hanzoai/sdk</More>
           </div>
           <p className="xsd-ex x-mono">Code Examples</p>
@@ -373,7 +373,7 @@ function Close() {
     <section className="a2-sec xsd-close" aria-label="API reference">
       <div className="a2-wrap xsd-close-in">
         <p className="a2-display xsd-close-h" aria-hidden="true">SDKs for every language</p>
-        <div className="a2-acts"><A to="https://docs.hanzo.ai/docs/openapi/" className="x-btn solid" data-cta="sdks.close">API reference</A><More to="https://docs.hanzo.ai/docs/sdks">SDKs docs →</More></div>
+        <div className="a2-acts"><Cta to="https://docs.hanzo.ai/docs/openapi/" id="sdks.close">API reference</Cta><More to="https://docs.hanzo.ai/docs/sdks">SDKs docs →</More></div>
       </div>
     </section>
   );
