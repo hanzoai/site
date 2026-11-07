@@ -49,7 +49,7 @@
 .zp-points li::before { content: ''; position: absolute; left: 0; right: 24px; top: -1px; height: 2px; background: var(--acc); transform: scaleX(0); transform-origin: 0 50%; transition: transform .6s var(--ease); }
 .zp-points li.on::before { transform: scaleX(1); }
 .zp-points button { display: grid; gap: 10px; width: 100%; height: 100%; padding: 24px 24px 8px 0; border: 0; background: none; color: inherit; text-align: left; font: inherit; cursor: pointer; }
-.zp-points span { font-size: 13px; color: #a3a3a3; }
+.zp-points button > span { font-size: 13px; color: #a3a3a3; }
 .zp-points b { font-size: clamp(24px, 2.4vw, 36px); font-weight: 600; letter-spacing: -.04em; line-height: 1.05; transition: color .3s; }
 .zp-points em { font-style: normal; font-size: 16px; color: #a3a3a3; }
 .zp-points li:not(.on) b { color: #737373; }
@@ -112,10 +112,6 @@
 .zp-point-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px clamp(32px, 5vw, 96px); align-items: end; }
 .zp-point-copy { display: flex; flex-direction: column; gap: 20px; }
 .zp-chip { display: inline-flex; align-self: flex-start; gap: 6px; margin: 0; padding: 10px 14px; border-radius: 999px; background: var(--card); font-size: 13px; color: var(--faint); }
-.zp-chip span { animation: zp-lang 4.5s steps(1) 2; }
-.zp-chip span:nth-child(2) { animation-delay: 1.5s; }
-.zp-chip span:nth-child(3) { animation-delay: 3s; }
-@keyframes zp-lang { 0% { color: var(--ink); } 33.3% { color: var(--faint); } }
 .zp-strong { color: var(--ink) !important; font-weight: 600; }
 .zp-point .zp-acts { margin-top: 8px; }
 .zp-note { padding: 32px; border-radius: 28px; background: var(--card); }
@@ -132,7 +128,7 @@
 .zp-addr i { width: 8px; height: 1.1em; background: #0a0a0a; animation: zp-blink 1.1s steps(1) 4; }
 @keyframes zp-blink { 50% { opacity: 0; } }
 
-@media (prefers-reduced-motion: reduce) { .zp-chip span, .zp-addr i, .zp-procs i { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .zp-addr i, .zp-procs i { animation: none; } }
 
 @media (max-width: 900px) {
   .zp-hero { padding-top: 104px; }
@@ -157,7 +153,7 @@
   .zp-pick button { min-height: 44px; }
   .zp-lane-k, .zp-pick > span, .zp-term-bar > span, .zp-topo-n, .zp-chip { font-size: 14px; }
 }
-@media (max-width: 900px) { .zp-kick, .zp-points span { font-size: 14px; } }
+@media (max-width: 900px) { .zp-kick, .zp-points button > span { font-size: 14px; } }
 
 /* v2.3: rhythm, quiet links, object bars hold the pauses, a drawn gateway, a drawn slider */
 .zp-lede { font-size: 21px !important; font-weight: 500; line-height: 1.35; letter-spacing: -.01em; max-width: 22ch; color: #fafafa; }
@@ -241,7 +237,8 @@ a.zp-chip2:active { transform: scale(.98); }
 .zp-why-at b { font-weight: 500; color: #0a0a0a; }
 .zp-why-at i { position: relative; flex: 0 0 160px; height: 1px; margin-left: 14px; background: #e4e4e4; overflow: hidden; }
 .zp-why-at i::after { content: ''; position: absolute; inset: 0; background: #0a0a0a; transform-origin: 0 50%; transform: scaleX(var(--p)); transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
-.zp-ps { user-select: none; color: #737373; }
+.zp-term pre > span.cmd { display: inline-block; }
+.zp-term pre > span.cmd::first-letter { color: #737373; } /* the $ prompt; the line stays one run of text, as Hanzo writes it */
 .zp-term pre span.last::after { content: ''; display: inline-block; width: .55em; height: 1.05em; margin-left: 2px; vertical-align: -.15em; background: #fafafa; animation: zp-blink 1.1s steps(1) infinite; }
 .zp-term pre span span { opacity: 1; }
 .zp-fig { margin: 0; font-size: 64px; font-weight: 300; line-height: .9; letter-spacing: -.03em; color: #0a0a0a; }

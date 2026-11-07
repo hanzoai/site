@@ -1,5 +1,7 @@
 # /zap: James-eye review (re-review)
 
+Ready: 8 Nov 23:17, copycheck missing 0 of 49 (captured page), Hanzo's images kept. The kicker, the four points, the terminal's command lines and the Go · Rust · TypeScript line now read as one run of text each, as Hanzo writes them (the $ prompt is shaded with ::first-letter instead of its own element). taste/unique/parity OK (71/71, 7/7); 0 console errors, no overlap at 1470 and 375.
+
 
 Reviewed: the zap files as of `33b0215e` "wip(zap): fixes in progress" (`Zap.jsx` and `Zap.css` clean in the working tree).
 Walked 7 Nov, 16:10 to 16:50 UTC, on the dev server (`localhost:4180/zap/`), moving, at 1470×801 and 375×812 (touch).

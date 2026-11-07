@@ -117,7 +117,7 @@ function Hero() {
         <div className="zp-top">
           <div>
             <LineMask as="h1" id="zp-h1" now className="w2-display zp-h1" lines={['ZAP']} />
-            <p className="zp-kick x-mono"><Img src="/models/enso.webp" alt="" w={26} h={26} />Zero-Copy Agent Protocol</p>
+            <p className="zp-kick x-mono"><Img src="/models/enso.webp" alt="" w={26} h={26} /><span>Zero-Copy Agent Protocol</span></p>
           </div>
           <motion.div className="zp-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
             <p className="zp-lede">The wire format is the data structure</p>
@@ -145,7 +145,7 @@ function Hero() {
           {POINTS.map(([t, d], i) => (
             <li key={t} className={at === i ? 'on' : ''}>
               <button type="button" aria-pressed={at === i} onClick={() => choose(i)}>
-                <span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span><b>{t}</b><em>{d}</em>
+                <span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span><b><span>{t}</span></b><em><span>{d}</span></em>
               </button>
             </li>
           ))}
@@ -263,7 +263,7 @@ function Running() {
           <div className="zp-term-bar"><i /><i /><i /><span className="x-mono">Terminal</span><Copy text={lines.filter((l) => l.startsWith('$')).map((l) => l.slice(2)).join('\n')} /><span className="zp-pause">{pauseBtn}</span></div>
           {/* every line keeps its row (no wrapping, a fixed height), and the cursor sits at the end of the typed line:
               the line break lives outside the line's span, so the cursor never opens an extra row */}
-          <pre className="x-mono" tabIndex={0} role="region" aria-label="Terminal">{lines.map((l, i) => <Fragment key={i}><span className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '')}>{l.startsWith('$ ') ? <><span className="zp-ps">$ </span>{l.slice(2)}</> : l}</span>{i < lines.length - 1 ? <span className="zp-nl">{'\n'}</span> : ''}</Fragment>)}</pre>
+          <pre className="x-mono" tabIndex={0} role="region" aria-label="Terminal">{lines.map((l, i) => <Fragment key={i}><span className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '') + (l.startsWith('$ ') ? ' cmd' : '')}>{l}</span>{i < lines.length - 1 ? <span className="zp-nl">{'\n'}</span> : ''}</Fragment>)}</pre>
         </div>
       </div>
       </Curl>
@@ -424,7 +424,7 @@ function Point() {
         <div className="zp-point-grid">
           <div className="zp-point-copy">
             <LineMask as="h2" className="w2-display s" lines={['Point one agent at it']} />
-            <p className="zp-chip x-mono"><span>Go</span> · <span>Rust</span> · <span>TypeScript</span></p>
+            <p className="zp-chip x-mono"><span>Go · Rust · TypeScript</span></p>
             <p className="w2-lede">Start the daemon, add the MCP servers you already run, change one address in your agent.</p>
             <p className="w2-lede zp-strong">Nothing else about your setup has to move.</p>
             <div className="zp-acts"><Magnetic strength={0.25}><A to="https://zap-proto.dev/docs" className="w2-cta" data-thumb="Read the docs" data-cta="zap.close">Read the docs <i aria-hidden="true">→</i></A></Magnetic><A to="https://github.com/zap-proto/spec" className="zp-tlink">View on GitHub</A></div>
