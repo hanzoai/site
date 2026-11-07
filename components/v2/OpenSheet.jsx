@@ -13,7 +13,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import './OpenSheet.css';
 
 const EASE = [0.16, 1, 0.3, 1];
-const MORPH = { type: 'spring', stiffness: 300, damping: 34, mass: 0.9 };
+const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // Morph: 600ms in-out, no springs (MASTER 3.1)
 
 export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, art }) {
   const box = useRef(null);

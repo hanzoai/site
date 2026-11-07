@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { DAYS } from '../lib/commits';
 import { Arrow, Count } from './ui';
 import C from '../content';
@@ -78,7 +78,7 @@ function Calendar() {
               initial={{ opacity: 0, y: 6, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1, left: `${((hc + 0.5) / 53) * 100}%`, top: `${(hr / 7) * 100}%` }}
               exit={{ opacity: 0, y: 6 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+              transition={{ duration: 0.15, ease: [0, 0, 0.2, 1] }}
             >
               <b>{h.c.toLocaleString('en-US')} commits</b> {h.label}
             </motion.span>
@@ -94,11 +94,19 @@ function Calendar() {
   );
 }
 
+/* the year's commits arrive large and shrink to their resting 64px as they settle into the row (MASTER 3.1) */
+function Big({ n }) {
+  const ref = useRef(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.4'] });
+  const scale = useTransform(p, [0, 1], [1.75, 1]);
+  return <motion.span ref={ref} className="hv-stat-big" style={{ scale }}><Count className="v2-figure hv-stat-n" to={n} duration={1.2} /></motion.span>;
+}
+
 function Tile({ t, i }) {
   const [label, n, sub, href, spark] = t;
   return (
     <a href={href} className={'hv-stat' + (i === 0 ? ' hero' : '')}>
-      {i === 0 ? <Count className="v2-figure hv-stat-n" to={n} duration={2.2} /> : <span className="hv-stat-n">{n.toLocaleString('en-US')}</span>}
+      {i === 0 ? <Big n={n} /> : <span className="hv-stat-n">{n.toLocaleString('en-US')}</span>}
       <span className="hv-stat-k">{label}</span>
       <span className="hv-stat-s">{sub}</span>
       {spark !== undefined && <span className="hv-stat-spark" dangerouslySetInnerHTML={{ __html: C.spark[spark] }} />}
@@ -139,7 +147,7 @@ function Way({ w, i }) {
   return (
     <a href={w[3]} className="hv-way" data-cta={`home.oss.way${i + 1}`}>
       <span className="hv-way-n x-mono" aria-hidden="true">0{i + 1}</span>
-      <b className="v2-title">{w[0]}</b>
+      <b className="hv-way-t">{w[0]}</b>
       <span className="hv-way-d">{w[1]}</span>
       <em>{w[2]} <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></em>
     </a>
@@ -151,8 +159,8 @@ export default function Open() {
     <section className="hv-oss v2-sec" id="open-source" aria-labelledby="open-source-h">
       <div className="v2-wrap">
         <header className="hv-head v2-grid">
-          <Lines as="h2" id="open-source-h" className="v2-display-s hv-head-t" lines={['We ship every day.', 'Fork anything.', 'Build your own.']} />
-          <div className="hv-head-r"><p className="v2-lede">Every layer of the stack is open, hackable and modifiable — recursively self-upgrading AI from the ground up. Fork, remix, and build the apps only you can imagine.</p></div>
+          <Lines as="h2" id="open-source-h" className="hv-h2 hv-head-t" lines={['We ship every day. Fork anything. Build your own.']} />
+          <div className="hv-head-r"><p className="hv-lead">Every layer of the stack is open, hackable and modifiable — recursively self-upgrading AI from the ground up. Fork, remix, and build the apps only you can imagine.</p></div>
         </header>
         <div className="hv-stats">{TILES.map((t, i) => <Tile key={i} t={t} i={i} />)}</div>
         <Calendar />

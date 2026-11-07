@@ -11,7 +11,7 @@ import { motion } from 'motion/react';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-export default function Lines({ as = 'h2', lines, className = '', id, now = false, delay = 0, stagger = 0.09, amount = 0.6, ...rest }) {
+export default function Lines({ as = 'h2', lines, className = '', id, now = false, delay = 0, stagger = 0.06, amount = 0.6, ...rest }) {
   const Tag = motion[as];
   // the same props on the server and in the browser, so hydration never leaves a line hidden
   const play = now ? { initial: 'h', animate: 's' } : { initial: 'h', whileInView: 's', viewport: { once: true, amount } };
@@ -19,7 +19,7 @@ export default function Lines({ as = 'h2', lines, className = '', id, now = fals
     <Tag id={id} className={'v2-lines ' + className} {...play} variants={{ h: {}, s: { transition: { staggerChildren: stagger, delayChildren: delay } } }} {...rest}>
       {lines.map((l, i) => (
         <span className="v2-line" key={i}>
-          <motion.span variants={{ h: { y: '108%' }, s: { y: '0%', transition: { duration: 1.05, ease: EASE } } }}>{l}</motion.span>
+          <motion.span variants={{ h: { y: '108%' }, s: { y: '0%', transition: { duration: 0.7, ease: EASE } } }}>{l}</motion.span>
           {i < lines.length - 1 ? ' ' : null}
         </span>
       ))}

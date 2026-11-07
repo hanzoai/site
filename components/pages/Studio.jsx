@@ -72,7 +72,6 @@ function Cinema() {
     if (ret.current) ret.current.style.transform = k === 2 ? `scale(${0.82 + 0.3 * p})` : 'scale(1)'; // the zolly's subject holds while the world stretches
     if (ph.current) ph.current.style.transform = `translate3d(${(T / LEN) * 100}%, 0, 0)`;
     if (bar.current) bar.current.style.transform = `scaleX(${p})`;
-    if (tc.current) tc.current.textContent = `00:00:${pad(Math.floor(T))}:${pad(Math.floor((T % 1) * 24))}`;
     if (lanes.current && Math.floor(T) !== sec.current) { sec.current = Math.floor(T); lanes.current.setAttribute('aria-valuenow', sec.current); lanes.current.setAttribute('aria-valuetext', `${sec.current} seconds, shot ${k + 1}, ${SHOTS[k].rig}`); }
     if (k !== cur.current) { cur.current = k; setShot(k); }
   };
@@ -113,7 +112,7 @@ function Cinema() {
             </AnimatePresence>
             <span>Shot {pad(shot + 1)} · {s.title}</span>
           </div>
-          <div className="xst-hud tr x-mono"><i className="xst-rec" aria-hidden="true" />REC <span ref={tc}>00:00:00:00</span></div>
+          <div className="xst-hud tr x-mono"><i className="xst-rec" aria-hidden="true" />REC</div>
           <div className="xst-hud bl x-mono">35mm Anamorphic 2.39:1 · f/1.4</div>
           <div className="xst-hud br x-mono">Actor Lock: {s.actor}</div>
         </div>
@@ -341,9 +340,9 @@ function Graph() {
         <ol className="xst-net">
           {CAPS.map(([h, d, tag], i) => (
             <li key={h} className={'xst-node' + (i === lit ? ' on' : '') + (i < lit ? ' done' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)} onPointerLeave={() => setHov(-1)}>
-              <span className="xst-node-h"><span className="x-mono">{pad(i + 1)}</span><em className="x-mono">{tag}</em><i aria-hidden="true" /></span>
               <h3>{h}</h3>
               <p>{d}</p>
+              <span className="xst-node-h"><span className="x-mono">{pad(i + 1)}</span><em className="x-mono">{tag}</em><i aria-hidden="true" /></span>
             </li>
           ))}
         </ol>

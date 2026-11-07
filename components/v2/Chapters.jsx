@@ -32,7 +32,7 @@ function Visual({ i, n, p, pinned, item, onOpen }) {
   const scale = useTransform(q, (v) => { const t = Math.max(0, Math.min(1, (v - i - 0.4) / 0.6)); return 1 - t * 0.06; });
   const on = pinned !== false;
   return (
-    <motion.div className="v2-ch-vis" style={on ? { clipPath: clip, scale } : { clipPath: 'none', scale: 1 }} onClick={(e) => { if (!e.target.closest('a, button')) onOpen(); }} data-cursor="Open">
+    <motion.div className="v2-ch-vis" style={on ? { clipPath: clip, scale } : { clipPath: 'none', scale: 1 }} onClick={(e) => { if (!e.target.closest("a, button")) onOpen(); }} data-cursor="">
       {item.visual}
     </motion.div>
   );
@@ -69,7 +69,7 @@ export default function Chapters({ items, label, step = 0.8, className = '' }) {
           {items.map((it, i) => (
             <div className="v2-ch-item" key={it.key} data-on={!live || at === i} role="group" aria-label={`${i + 1} of ${n}: ${it.title}`}>
               <div className="v2-ch-text" inert={live && pinned && at !== i ? true : undefined}>
-                <A id={`v2-ch-${it.key}`} to={it.to} className="v2-ch-title v2-display-s" data-morph="">{it.title}</A>
+                <A id={`v2-ch-${it.key}`} to={it.to} className="v2-ch-title" data-morph="">{it.title}</A>
                 <p className="v2-kicker v2-ch-count"><span>{pad(i + 1)}</span> / {pad(n)}</p>
                 <div className="v2-ch-body">{it.text}</div>
               </div>

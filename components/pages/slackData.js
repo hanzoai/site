@@ -93,8 +93,9 @@ export const DIFF = {
 export const VIEW = {
   before: 'BEFORE (LOW CONTRAST · 1.9:1)', after: 'AFTER FIX (#1A1A1A ON #a3a3a3 · 8.9:1)', button: 'Buy Now — $49',
   note: 'Live preview sandboxes the branch build so design and engineering can approve visual changes directly inside the channel.',
-  // the two renders, in the colours of the diff
-  old: { color: '#e5e7eb', background: '#737373' }, fix: { color: '#1a1a1a', background: '#a3a3a3' },
+  // the two renders as the greys of equal luminance to the diff's colours, so the contrast they show is the same and no
+  // hue reaches the page (deck greys only); the diff itself keeps Hanzo's text
+  old: { color: '#e7e7e7', background: '#888888' }, fix: { color: '#1a1a1a', background: '#9f9f9f' },
 };
 
 export const WHAT = {

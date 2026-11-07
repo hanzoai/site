@@ -3,7 +3,7 @@
    Usage:
      <AppLines as="h1" id="x-h1" className="v2a-display" lines={['Ask anything.', 'Enso picks the model.']} soft={[1]} />
      <AppLines as="h2" lines={['Kai decides.', 'Dev does.']} view />      // plays when it reaches the screen
-   Each line rises out of its own mask once, 80 ms apart, on EASE. The heading itself is what is watched (a masked
+   Each line rises out of its own mask once (translateY 105% to 0, 700 ms, 60 ms apart, ease-emphasis). The heading itself is what is watched (a masked
    line is clipped, so it could never be "seen" on its own). The server HTML holds every word; reduced motion
    (MotionConfig "user", set site-wide) shows the lines at rest. `soft` lists the line indexes drawn in the faint ink.
    A line may be a string or a node (e.g. a figure wrapped in its own span). */
@@ -11,11 +11,11 @@ import { motion } from 'motion/react';
 import { EASE } from '../ui';
 import './AppLines.css';
 
-const line = { h: { y: '108%' }, s: { y: 0, transition: { duration: 1.05, ease: EASE } } };
+const line = { h: { y: '105%' }, s: { y: 0, transition: { duration: 0.7, ease: EASE } } }; // MASTER part 3: 700 ms, 60 ms apart
 
 export default function AppLines({ as = 'h2', lines, soft = [], view = false, delay = 0, className = '', id }) {
   const Tag = motion[as];
-  const play = { staggerChildren: 0.08, delayChildren: delay };
+  const play = { staggerChildren: 0.06, delayChildren: delay };
   const run = view
     ? { initial: 'h', whileInView: 's', viewport: { once: true, amount: 0.4 } }
     : { initial: 'h', animate: 's' };

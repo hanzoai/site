@@ -3,11 +3,11 @@
 .iv .v2-dark, .iv [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
 
 /* hero: one huge name on one line, the switchboard under it */
-.iv-hero { padding: clamp(112px, 10vw, 150px) 0 clamp(40px, 5vw, 72px); }
+.iv-hero { padding: clamp(88px, 6.4vw, 104px) 0 clamp(40px, 5vw, 72px); }
 .iv-hero-t { align-items: end; row-gap: 24px; }
 .iv-h1 { grid-column: 1 / span 9; font-size: clamp(72px, 12vw, 176px); white-space: nowrap; }
 .iv-hero-r { grid-column: 10 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding-bottom: 18px; }
-.iv-lift { margin-top: clamp(40px, 4vw, 64px); }
+.iv-lift { margin-top: clamp(24px, 2.4vw, 36px); }
 
 .iv-board { border-radius: 28px; background: #f5f5f7; padding: clamp(20px, 2.4vw, 32px); }
 .iv-vendors { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; background: #fff; width: max-content; max-width: 100%; box-sizing: border-box; box-shadow: 0 0 0 1px rgba(0, 0, 0, .05); }
@@ -16,9 +16,9 @@
 .iv-vendors button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
 .iv-v-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
 .iv-v-t { position: relative; }
-.iv-wire { display: grid; grid-template-columns: minmax(0, 5fr) minmax(40px, 2fr) minmax(0, 5fr); align-items: center; margin-top: clamp(20px, 2.4vw, 32px); min-height: clamp(260px, 24vw, 340px); }
+.iv-wire { display: grid; grid-template-columns: minmax(0, 5fr) minmax(40px, 2fr) minmax(0, 5fr); align-items: center; margin-top: clamp(16px, 1.6vw, 24px); min-height: clamp(240px, 20vw, 300px); }
 .iv-calls { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.iv-calls li { display: flex; align-items: center; gap: 16px; min-height: 60px; padding: 0 22px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .05); font: 500 clamp(15px, 1.4vw, 20px)/1.2 var(--mono); letter-spacing: -.01em; }
+.iv-calls li { display: flex; align-items: center; gap: 16px; min-height: 54px; padding: 0 22px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .05); font: 500 clamp(15px, 1.4vw, 20px)/1.2 var(--mono); letter-spacing: -.01em; }
 .iv-calls span { color: var(--acc); font-size: 13px; }
 .iv-line { height: 2px; background: rgba(0, 0, 0, .08); position: relative; }
 .iv-line i { position: absolute; inset: 0; background: var(--acc); transform-origin: left; }
@@ -31,9 +31,9 @@
 .iv-verdict.no .iv-says { color: #262626; }
 
 /* the statement, inked in with the scroll */
-.iv-say .v2-kick { margin-bottom: 36px; }
+.iv-say-cap { margin-top: 32px; }
 .iv-say-p { margin: 0; max-width: 30ch; font-weight: 600; font-size: clamp(30px, 3.5vw, 52px); line-height: 1.16; letter-spacing: -.035em; text-wrap: pretty; }
-.iv-say-p span { opacity: clamp(.16, calc((var(--p) - var(--i)) * 14 + .16), 1); transition: opacity .2s linear; }
+.js .iv-say-p span { opacity: clamp(.16, calc((var(--p) - var(--i)) * 14 + .16), 1); transition: opacity .2s linear; }
 
 /* the six facts: sheets that stack */
 .iv-sheets { padding: 0 0 clamp(120px, 14vw, 200px); }
@@ -50,7 +50,7 @@
 .iv-forge .v2-kick.acc { color: var(--glow); }
 .iv-forge-h { align-items: end; margin-bottom: 56px; row-gap: 28px; }
 .iv-forge-hl { grid-column: 1 / span 7; }
-.iv-forge-hl .v2-kick { margin-bottom: 22px; }
+.iv-forge-cap { margin-top: 20px; }
 .iv-stamp { grid-column: 8 / -1; min-height: 120px; display: flex; align-items: center; padding: 24px 28px; border-radius: 24px; box-sizing: border-box; transition: background .4s; }
 .iv-stamp.ok { background: rgba(163, 163, 163, .14); color: var(--glow); }
 .iv-stamp.no { background: rgba(115, 115, 115, .14); color: #737373; }

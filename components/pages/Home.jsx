@@ -31,27 +31,16 @@ import C from '../../content';
 import '../v2/system.css';
 import './Home.css';
 
-/* Beyond: the chapter index, read from the headings on the page (desktop only; phones have the thumb bar) */
-function Spine() {
-  const [list, setList] = useState([]);
-  const [at, setAt] = useState('');
+/* Nothing floats over content (MASTER 3.3): the site's contextual cursor stays silent on this page. It reads
+   data-cursor from the element under the pointer, so every link, card and rail here carries an empty one. */
+function useQuietCursor() {
   useEffect(() => {
-    const secs = [...document.querySelectorAll('main > section[id][aria-labelledby]')];
-    setList(secs.map((s) => [s.id, document.getElementById(s.getAttribute('aria-labelledby'))?.textContent.replace(/\s+/g, ' ').trim() || s.id]));
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(e.target.id); }), { rootMargin: '-45% 0px -50% 0px' });
-    secs.forEach((s) => io.observe(s));
-    const hero = document.querySelector('.hv-hero');
-    const top = new IntersectionObserver(([e]) => { if (e.isIntersecting) setAt(''); }, { rootMargin: '0px 0px -60% 0px' });
-    hero && top.observe(hero);
-    return () => { io.disconnect(); top.disconnect(); };
+    const mark = () => document.querySelectorAll('main.hv a, main.hv [data-card], main.hv [data-morph], main.hv .x-rail, main.hv [role=slider]').forEach((el) => { if (!el.hasAttribute('data-cursor')) el.setAttribute('data-cursor', ''); });
+    mark();
+    const mo = new MutationObserver(mark);
+    mo.observe(document.querySelector('main.hv'), { childList: true, subtree: true });
+    return () => mo.disconnect();
   }, []);
-  if (!list.length) return null;
-  const dark = ['faster', 'cheaper', 'pareto'].includes(at);
-  return (
-    <nav className={'hv-spine' + (at ? ' on' : '') + (dark ? ' dark' : '')} aria-label="On this page">
-      <ol>{list.map(([id, t], i) => <li key={id}><a href={'#' + id} aria-current={at === id ? 'true' : undefined}><span><b>{String(i + 1).padStart(2, '0')}</b>{t}</span></a></li>)}</ol>
-    </nav>
-  );
 }
 
 /* The proof walls (PLAN-COMPONENTS 2.5): still, ordered rows of Hanzo's own logo files, grey until you point at one,
@@ -84,8 +73,13 @@ function Wall({ items, label, cta }) {
 }
 
 export default function Home() {
+  useQuietCursor();
   return (
-    <main className="hv">
+    <main className="hv" data-ask="off">
+      <A to="/beta" className="x-ann">
+        <span>Apply for Beta Access or Start Free</span>
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </A>
       <Hero />
       <Models />
       <Platform />
@@ -98,7 +92,6 @@ export default function Home() {
       <Pricing />
       <Wall items={C.backed} label="Backed by" cta="backed" />
       <Band title="Pick all three." lede="Every model behind one key." action="Try Hanzo" to="https://hanzo.ai/signup" />
-      <Spine />
     </main>
   );
 }

@@ -1,10 +1,10 @@
 'use client';
 /* A product of Hanzo OS (/products/<name>, seven of them, one template), as an apple.com launch page.
-   The product's name runs at display size beside its one line and its one ask; right under them, on the first screen,
-   the product itself, a live api.hanzo.ai console, starts close and settles into place as you scroll (Stage). Then one
-   idea per screen: its paragraph lights word by word as you read it, its API is a spec sheet whose rows light as they
-   pass the middle of the screen while the heading and the count stay pinned, Hanzo's measurements stand as hero
-   figures, and the seven layers of Hanzo OS close the page as rows that open into their own page. Ink, greys and
+   The product's name runs at display size with its one line and its one ask on the left; beside them, whole on the
+   first screen, the product itself: a live api.hanzo.ai console that starts typing on arrival. Then one idea per
+   screen: each sentence of Hanzo's paragraph pins in turn beside the operations it describes (from Hanzo's own API
+   table), the API is a spec sheet whose rows light as they pass the middle of the screen, Hanzo's measurements stand
+   as hero figures, and the seven layers of Hanzo OS close the page as rows that open into their own page. Ink, greys and
    white only (JAMES.md 7): each product is told apart by its own contour (Sigil seeded with its slug) and its own data.
    Persona: Developer (and the founder wiring a company of agents)
    Goal: make the first call to this layer of the API
@@ -15,19 +15,21 @@
    press on any operation in the spec sheet sends the console to that operation.
    Beyond: peek the seven. The Hanzo OS stack shows every layer's operation count from its own API table and its line
    on hover or focus, so you can choose the next product without opening six pages; each opens into its page.
-   Motion (not only scroll): time (the console types and answers), state (pick an operation, the console follows;
-   replay), pointer (magnetic ask, counts that surface on hover), scroll (stage settle, the lit statement).
+   Motion (not only scroll): time (the console types and answers on arrival), state (point at an operation and its line
+   slides in; replay), pointer (magnetic ask, counts that surface on hover), scroll (the sentence chapters wipe).
    Ledger: deleted the per-product accent colours, the green live dot, syntax hues, the kicker over the h1, the
-   coloured hover stripe and the invented "operations" / "Replay" labels.
-   V2: 8/10 launch page in ink: display-size name with its ask, the live console on the first screen at 1470×801 and
-   375×812, lit statement, pinned API spec sheet that drives the console, measured figures, Hanzo OS layers that open. */
+   coloured hover stripe, the invented "operations" / "Replay" labels, the word-lit paragraph (a wall of text) and the
+   Stage zoom that pushed the console under the fold.
+   V2: 8/10 launch page in ink: name, line and ask beside the live console, whole on the first screen at 1470×801;
+   Hanzo's paragraph as one sentence per screen beside its own operations; API spec sheet; measured figures; Hanzo OS
+   layers that open. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
+import { useInView, useReducedMotion } from 'motion/react';
 import { Copy, Magnetic } from '../ui';
 import { A, More } from '../kit';
 import Sigil from '../Sigil';
 import FamLines from '../v2/FamLines';
-import FamStage from '../v2/FamStage';
+import FamChapters from '../v2/FamChapters';
 import { ui } from '../v2/famUi';
 import '../v2/fam.css';
 import './ProductPage.css';
@@ -68,7 +70,7 @@ function Console({ p }) {
     toks.forEach((n) => { n.textContent = ''; });
     const timers = [];
     let raf = 0;
-    const t0 = performance.now() + 450;
+    const t0 = performance.now() + 250;
     const tick = (now) => {
       let n = Math.max(0, Math.floor(((now - t0) / 1000) * CPS));
       let cur = -1;
@@ -125,18 +127,38 @@ function Console({ p }) {
   );
 }
 
-/* the paragraph, lit word by word as it is read (scroll-linked; reduced motion shows it lit) */
-function Statement({ text }) {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.82', 'end 0.42'] });
-  const words = text.split(/\s+/).filter(Boolean);
-  const put = (v) => { ref.current && ref.current.style.setProperty('--p', (v * (words.length + 6)).toFixed(2)); };
-  useEffect(() => { put(scrollYProgress.get()); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  useMotionValueEvent(scrollYProgress, 'change', put);
+/* Hanzo's paragraph, one sentence a screen, each beside the operations it describes (matched by the words they share in
+   Hanzo's own API table); every word stays, nothing is added */
+const STOP = new Set('the and for its one org org’s org\'s own any that with from are can each every what who how when this they their them into than then also not but has have had was were will just same way does did out per'.split(' '));
+const stems = (t) => new Set((t.toLowerCase().match(/[a-z_]{3,}/g) || []).filter((w) => !STOP.has(w)).map((w) => w.slice(0, 5)));
+const split = (t) => t.split(/(?<=[.!?]["”’)]?)\s+(?=[A-Z“"‘(])/).map((x) => x.trim()).filter(Boolean);
+function opsFor(sentence, ops, k) {
+  const a = stems(sentence);
+  const scored = ops.map((o, i) => [i, [...stems(o[1].replace(/[{}/]/g, ' ') + ' ' + o[2])].filter((w) => a.has(w)).length]).filter((x) => x[1] > 0).sort((x, y) => y[1] - x[1]);
+  return (scored.length ? scored.slice(0, 2).map((x) => x[0]).sort((x, y) => x - y) : [k % ops.length]).map((i) => ops[i]);
+}
+function Said({ p, text }) {
+  const sents = split(text);
+  const items = sents.map((t, k) => ({
+    key: 's' + k,
+    text: <p className="xpd-said" aria-hidden="true">{t}</p>,
+    visual: (
+      <div className="xpd-said-v v2f-obj" aria-hidden="true">
+        <Sigil seed={'/products/' + p.slug + '/' + k} data={[t.length, p.api.ops.length]} className="xpd-said-s" still />
+        <ul className="xpd-said-o">
+          {opsFor(t, p.api.ops, k).map((o) => (
+            <li key={o[0] + o[1]}><b className="xpd-m x-mono" data-m={o[0]}>{o[0]}</b><code className="xpd-path">{o[1]}</code><span>{o[2]}</span></li>
+          ))}
+        </ul>
+      </div>
+    ),
+  }));
+  // the paragraph is read whole once (screen readers, search, JS off); the sentences on screen are its picture
   return (
-    <p ref={ref} className="xpd-say-p" style={{ '--p': 9999 }}>
-      {words.map((w, k) => <span key={k} style={{ '--k': k }}>{w}{k < words.length - 1 ? ' ' : ''}</span>)}
-    </p>
+    <>
+      <p className="x-sr">{text}</p>
+      <FamChapters label={p.title} items={items} className="xpd-saych" />
+    </>
   );
 }
 
@@ -215,24 +237,20 @@ export default function ProductPage({ p, peek = {} }) {
     <main className="v2f xpd">
       <section className="xpd-hero" aria-labelledby="xpd-h1" data-ask-name={p.title}>
         <Sigil seed={'/products/' + p.slug} data={nums} className="xpd-sigil" />
-        <div className="v2f-wrap xpd-hero-in">
-          <div className="v2f-grid xpd-hero-g">
+        <div className="v2f-wrap v2f-grid xpd-hero-g">
+          <div className="xpd-hero-l">
             <FamLines as="h1" id="xpd-h1" text={p.title} className="v2f-display xpd-h1" data-morph-target />
-            <div className="xpd-hero-r">
-              <p className="v2f-lede xpd-lede">{p.lede}</p>
-              <div className="xpd-acts">
-                <Magnetic strength={0.22}><A to={p.acts[0].href} className="v2f-btn solid" data-thumb={p.acts[0].text} data-cta="products.hero">{p.acts[0].text}</A></Magnetic>
-                <A to={p.acts[1].href} className="v2f-btn">{p.acts[1].text}</A>
-              </div>
+            <p className="v2f-lede xpd-lede">{p.lede}</p>
+            <div className="xpd-acts">
+              <Magnetic strength={0.22}><A to={p.acts[0].href} className="v2f-btn solid" data-thumb={p.acts[0].text} data-cta="products.hero">{p.acts[0].text}</A></Magnetic>
+              <A to={p.acts[1].href} className="v2f-btn">{p.acts[1].text}</A>
             </div>
           </div>
+          <div className="xpd-stage"><Console p={p} /></div>
         </div>
-        <FamStage className="v2f-wrap xpd-stage" from={1.1}><Console p={p} /></FamStage>
       </section>
 
-      <section className="xpd-say v2f-sec" aria-label={p.title}>
-        <div className="v2f-wrap"><Statement text={intro} /></div>
-      </section>
+      <Said p={p} text={intro} />
 
       <Spec api={p.api} />
 

@@ -1,28 +1,54 @@
 'use client';
 /* Realtime, v2 launch page (Cloud 3).
-   V2: 8/10 Split launch: three live client screens settle under a two-line title, the stream's eight promises pin over one stream map, use cases on a drag rail, the handshake as the one dark room, growth as huge figures.
+   V2: 8/10 Split launch in grey: three live client screens (with a pause and a rule switch per client) settle under a
+   two-line title beside the one ask; the statement opens eight pinned chapters over one stream map; use cases on a
+   drag rail with its own toolbar; the handshake as the one dark room; growth as three figures you press beside one
+   tenant map that changes; "Subscribe to your first collection" as a card that opens.
    Signature: the same record landing on three client screens at once. A record is created, updated, then deleted;
    each change pulses down the one open stream and lands on every screen in the same instant, except that the delete
    reaches only the clients whose rule would have let them read it.
    Beyond: the rule switch. Flip each client's access rule (reads record b, or cannot) and the same create, update and
    delete replay: a client whose rule cannot read b never sees it arrive, change or leave, Hanzo's "deletes are checked
    too" played out instead of told.
-   Motion: signature = the three screens; supporting = Stage settle and pinned chapters (scroll), the drag rail of use
-   cases, the clip wipe into the dark room. Every word and link is Hanzo's; record contents are examples. */
+   Persona: Developer. Goal: get an API key and open a first stream.
+   CTA: "Start Building" → https://platform.hanzo.ai/api-keys (data-cta realtime.hero, realtime.close; the site's sticky
+   ask carries the same words). Metric: api_key_created.
+   Motion: idle = the three screens, the stream map, the handshake and the tenant map step by themselves (each with a
+   pause); pointer = the use-case rail you throw (drag with inertia), a growth figure under the cursor changes the tenant
+   map, the card that lifts, the magnetic ask at the close; state = each client's rule switch, the handshake's three
+   calls; arrival = the cut-in title, the timed wipe into the dark room; scroll = the stage settle and the pinned
+   chapters only.
+   States differ by fill, weight, dash and a shape, never by hue. Every word and link is Hanzo's; record contents,
+   ids and org names are examples. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react';
 import { A } from '../../kit';
-import { Code, useLive, useEvery, useSteps } from './Frame';
+import { Code, useLive, useSteps } from './Frame';
 import SettleStage from '../../v2/SettleStage';
 import PinnedChapters from '../../v2/PinnedChapters';
 import ClipWipe from '../../v2/ClipWipe';
 import SpecDrawer from '../../v2/SpecDrawer';
-import LaunchClose from '../../v2/LaunchClose';
+import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
+import LivePause, { usePause } from '../../v2/LivePause';
+import RelatedCards from '../../v2/RelatedCards';
 import './Realtime.css';
 
+const KEYS = 'https://platform.hanzo.ai/api-keys';
+const DOCS = 'https://docs.hanzo.ai';
 const EASE = [0.16, 1, 0.3, 1];
 const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
+
+/* a counter that steps every ms while run is true (a timeout chain: nothing ticks off screen or paused) */
+function useBeat(run, ms = 1000) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!run) return;
+    const id = setTimeout(() => setN((v) => v + 1), ms);
+    return () => clearTimeout(id);
+  }, [n, run, ms]);
+  return n;
+}
 
 const WATCH = `// Watch a collection
 const stop = await base
@@ -40,21 +66,23 @@ const W = { a: '64%', b: '46%', c: '72%' };
 
 function Screens() {
   const [ref, live, calm] = useLive(0.3);
+  const [paused, pause] = usePause();
   const [i, setI] = useState(1);
   const [deny, setDeny] = useState([false, false, true]); // client 3's rule cannot read record b, until you flip it
   useEffect(() => { if (calm) setI(2); }, [calm]);
   useEffect(() => {
-    if (calm || !live) return;
+    if (calm || !live || paused) return;
     const t = setTimeout(() => setI((v) => (v + 1) % BEATS.length), 2300);
     return () => clearTimeout(t);
-  }, [i, live, calm]);
+  }, [i, live, calm, paused]);
   const [action, rows] = BEATS[i];
   const hitsB = action !== 'create' || i === 0;
   return (
-    <div className="rt-stage" ref={ref}>
+    <div className="rt-stage" ref={ref} data-paused={paused || undefined}>
       <div className="rt-conn">
         <b>Live connection</b><span>One open stream</span><span>Records arrive as they change</span>
         <span className="rt-acts" aria-hidden="true">{['create', 'update', 'delete'].map((a) => <i key={a} className={a === action ? 'on' : ''}>{a}</i>)}</span>
+        <LivePause inline paused={paused} onToggle={pause} className="rt-pause" />
       </div>
       <div className="rt-pipes" aria-hidden="true">{[0, 1, 2].map((c) => <i key={c + '-' + i} className={deny[c] && hitsB && action !== 'create' ? 'mute' : 'go'} style={{ animationDelay: c * 40 + 'ms' }} />)}</div>
       <div className="rt-screens">
@@ -85,6 +113,26 @@ function Screens() {
 
 /* ---------- the chapters' object: the stream, mapped ---------- */
 const MAP = ['GET /v1/realtime', 'subscriptions', 'brokers', 'delete · b', 'one store', 'access rule', 'grant', 'deployment'];
+/* the intro: one open stream, and the rule deciding what goes down it */
+const FLOW = [['messages', 'create', true], ['orders', 'update', false], ['messages', 'update', true], ['messages', 'delete', true], ['orders', 'create', false]];
+
+function Intro({ n }) {
+  const rows = Array.from({ length: 4 }, (_, k) => FLOW[(n + k) % FLOW.length]);
+  return (
+    <div className="rt-p">
+      <p className="rt-net"><i />HTTP 200 · text/event-stream · open</p>
+      <div className="rt-flow">
+        <AnimatePresence initial={false} mode="popLayout">
+          {rows.map(([c, a, ok], k) => (
+            <motion.p key={n + '-' + k} layout className={ok ? 'ok' : 'no'} initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>
+              <code>event: {c} · {a}</code><span><i aria-hidden="true">{ok ? '✓' : '×'}</i><em>access rule</em></span>
+            </motion.p>
+          ))}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
 
 function Panel({ step, n }) {
   if (step === 0) {
@@ -95,7 +143,7 @@ function Panel({ step, n }) {
         <p className={'rt-net' + (drop ? ' drop' : '')}><i />{drop ? 'network dropped · reconnecting' : 'HTTP 200 · text/event-stream · open'}</p>
         <div className="rt-sse">
           <AnimatePresence initial={false} mode="popLayout">
-            {lines.map((a, k) => <motion.code key={n + '-' + k} layout initial={{ opacity: 0, y: -12 }} animate={{ opacity: drop ? 0.35 : 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>event: messages · {a}</motion.code>)}
+            {lines.map((a, k) => <motion.code key={n + '-' + k} layout className={drop ? 'dim' : ''} initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>event: messages · {a}</motion.code>)}
           </AnimatePresence>
         </div>
       </div>
@@ -171,7 +219,7 @@ function Panel({ step, n }) {
       <div className="rt-p">
         <ol className="rt-grant">
           <li className={k >= 0 ? 'on' : ''}><code>POST /v1/realtime/token</code><span>authenticated</span></li>
-          <li className={k >= 1 ? 'on' : ''}><code>grant</code><span className="lx-num">{k >= 5 ? 'spent' : left + 's'}</span></li>
+          <li className={(k >= 1 ? 'on' : '') + (k >= 5 ? ' spent' : '')}><code>grant</code><span className="lx-num">{k >= 5 ? 'spent' : left + 's'}</span></li>
           <li className={k >= 5 ? 'on' : ''}><code>EventSource · ?token=grant</code><span>once</span></li>
         </ol>
         <p className="rt-bus"><s>token in the URL</s> nothing for a proxy log to keep</p>
@@ -190,21 +238,23 @@ function Panel({ step, n }) {
   );
 }
 
-function StreamMap({ step }) {
+function StreamMap({ step, intro }) {
   const [ref, live] = useLive(0.3);
-  const [n, setN] = useState(0);
-  useEvery(1100, live, () => setN((v) => v + 1));
+  const [paused, pause] = usePause();
+  const n = useBeat(live && !paused, 1100);
+  const cur = intro ? -1 : step;
   return (
     <div className="rt-map" ref={ref}>
       <div className="rt-map-h">
         <span className="rt-live" aria-hidden="true" />
         <AnimatePresence mode="wait" initial={false}>
-          <motion.code key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>{MAP[step]}</motion.code>
+          <motion.code key={cur} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>{cur < 0 ? MAP[0] : MAP[cur]}</motion.code>
         </AnimatePresence>
+        <LivePause inline paused={paused} onToggle={pause} className="rt-mpause" />
       </div>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={step} className="rt-map-b" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.16 } }} transition={{ duration: 0.45, ease: EASE }}>
-          <Panel step={step} n={n} />
+        <motion.div key={cur} className="rt-map-b" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, transition: { duration: 0.16 } }} transition={{ duration: 0.45, ease: EASE }}>
+          {cur < 0 ? <Intro n={n} /> : <Panel step={cur} n={n} />}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -253,6 +303,11 @@ function Rail() {
   };
   return (
     <div className="rt-rail">
+      <div className="lx-wrap rt-rail-ctl">
+        <p className="rt-rail-k">Popular Use Cases</p>
+        <button type="button" aria-label="Previous use cases" onClick={() => nudge(-1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+        <button type="button" aria-label="Next use cases" onClick={() => nudge(1)}><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      </div>
       <div className="rt-rail-v" ref={wrap} data-cursor="Drag" data-swipe-own>
         <motion.div className="rt-rail-in" ref={track} style={{ x }} drag="x" dragConstraints={wrap} dragElastic={0.08} dragTransition={{ power: 0.25, timeConstant: 260 }}>
           {USES.map(([t, d, k]) => (
@@ -263,10 +318,6 @@ function Rail() {
             </article>
           ))}
         </motion.div>
-      </div>
-      <div className="lx-wrap rt-rail-ctl">
-        <button type="button" aria-label="Previous use cases" onClick={() => nudge(-1)}>←</button>
-        <button type="button" aria-label="Next use cases" onClick={() => nudge(1)}>→</button>
       </div>
     </div>
   );
@@ -308,7 +359,8 @@ const CALLS = [
 
 function Handshake() {
   const [ref, live] = useLive(0.35);
-  const [at, choose] = useSteps(3, 3600, live);
+  const [paused, pause] = usePause();
+  const [at, choose] = useSteps(3, 3600, live && !paused);
   return (
     <div className="lx-wrap rt-hand" ref={ref}>
       <div className="rt-hand-l">
@@ -326,33 +378,98 @@ function Handshake() {
         <p className="rt-hp">There is no hidden protocol here. A grant is minted on a normal authenticated request, the stream spends it once, and the client id that comes back is how you tell the server which collections and records you want. The SDK does all three for you; the raw calls are there if you would rather do it yourself.</p>
       </div>
       <div className="rt-hand-r">
-        <p className="lx-kick">The wire, without the SDK</p>
+        <div className="rt-hand-bar">
+          <p className="lx-kick">The wire, without the SDK</p>
+          <LivePause inline dark paused={paused} onToggle={pause} />
+        </div>
         <Code title="Wire" mark={CALLS[at][2]} tabs={[{ k: 'realtime.js', code: WIRE }]} className="rt-wire" />
       </div>
     </div>
   );
 }
 
+/* ---------- growth: three figures beside one tenant map that changes ---------- */
 const GROW = [
   ['A change costs its audience', 'A record is written once and handed to the subscribers already attached to it. The work is the number of people watching, not the size of the collection they are watching.', 'Cost of a write', 'Per subscriber'],
   ['A stream is a response', 'Not a process, not a socket server beside the API — an HTTP response left open. They are cheap to hold, and one that goes away releases what it held without anything needing to be told.', '', 'One open response'],
   ['Isolated by tenant', "Every org's subscribers sit on that org's own broker, over that org's own data. Adding a tenant adds a broker rather than widening a shared one, so nobody's growth is anybody else's problem.", 'Blast radius', 'One tenant'],
 ];
+const ORGS = [['org a', 4], ['org b', 6], ['org c', 3], ['org d', 2]];
+
+function TenantMap({ at, n }) {
+  const orgs = at === 2 ? ORGS : ORGS.slice(0, 3);
+  const k = n % 6;
+  return (
+    <div className="rt-tm" data-at={at} aria-hidden="true">
+      <div className="rt-tm-col">
+        <p className="rt-tm-k">messages</p>
+        <div className="rt-tm-rows">{Array.from({ length: 12 }, (_, r) => <i key={r} className={r === 4 ? 'w' : ''} />)}</div>
+      </div>
+      <div className="rt-tm-lanes">
+        <AnimatePresence initial={false}>
+          {orgs.map(([o, subs], j) => {
+            const lit = at === 0 ? j === 0 : at === 1 ? j === 0 : j === 3;
+            return (
+              <motion.div key={o} layout className={'rt-lane' + (lit ? ' on' : '')} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={SPRING}>
+                <p>{o} · broker</p>
+                <span className="rt-lane-s">
+                  {Array.from({ length: subs }, (_, s) => {
+                    const on = at === 0 ? j === 0 && s < Math.min(subs, k) : at === 1 ? j === 0 && s === 0 && k < 4 : lit;
+                    const gone = at === 1 && j === 0 && s === 0 && k >= 4;
+                    return <i key={s} className={(on ? 'on' : '') + (gone ? ' gone' : '')} />;
+                  })}
+                </span>
+                {at === 1 && j === 0 && <em className={k >= 4 ? 'gone' : ''}>HTTP 200 · text/event-stream · open</em>}
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function Grow() {
+  const [ref, live] = useLive(0.3);
+  const [paused, pause] = usePause();
+  const run = live && !paused;
+  const [at, choose] = useSteps(3, 5200, run);
+  const n = useBeat(run, 700);
+  return (
+    <div className="rt-grow-b" ref={ref}>
+      <div className="rt-gl">
+        {GROW.map(([t, d, k, v], i) => (
+          <article key={t} className={'rt-g' + (at === i ? ' on' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && at !== i && choose(i)}>
+            <p className="rt-g-row">
+              <button type="button" className="rt-g-v" aria-pressed={at === i} onClick={() => choose(i)}>{v}</button>
+              {k && <span className="rt-g-k">{k}</span>}
+            </p>
+            <h3 className="lx-title">{t}</h3>
+            <p className="rt-g-d">{d}</p>
+          </article>
+        ))}
+      </div>
+      <div className="rt-tm-w">
+        <LivePause paused={paused} onToggle={pause} className="rt-tpause" />
+        <TenantMap at={at} n={n} />
+      </div>
+    </div>
+  );
+}
 
 export default function Realtime() {
   const steps = GIVES.map(([t, d]) => ({ t, d }));
   return (
     <main className="lx rt">
-      <section className="rt-hero" data-morph-target>
+      <section className="rt-hero" data-morph-target data-ask-name="Hanzo Realtime">
         <div className="lx-wrap">
-          <p className="lx-kick"><b>●</b> Live record updates</p>
           <LineMask as="h1" className="lx-display m rt-h1" lines={['Your screen updates', 'when the data does']} />
           <div className="rt-hero-grid">
             <SettleStage from={1.04} lift={30} className="rt-hero-obj"><Screens /></SettleStage>
             <div className="rt-hero-r">
-              <A to="https://platform.hanzo.ai/api-keys" className="lx-cta" data-thumb="Start Building">Start Building</A>
-              <A to="https://docs.hanzo.ai" className="lx-ghost">View Documentation</A>
-              <p className="rt-hint">tap a client's rule ↙</p>
+              <p className="rt-tagk"><i aria-hidden="true" />Live record updates</p>
+              <A to={KEYS} className="lx-cta" data-thumb="Start Building" data-cta="realtime.hero">Start Building<Arr /></A>
+              <A to={DOCS} className="lx-ghost">View Documentation</A>
             </div>
           </div>
         </div>
@@ -365,18 +482,13 @@ export default function Realtime() {
         </div>
       </section>
 
-      <section className="lx-sec rt-gives-h">
-        <div className="lx-wrap">
-          <LineMask as="h2" className="lx-display m" lines={['What the stream', 'gives you']} inView />
-          <p className="lx-lede rt-gives-l">One connection, and the rules you already wrote deciding what goes down it</p>
-        </div>
-      </section>
-
-      <PinnedChapters label="What the stream gives you" steps={steps} per={66} visual={(at) => <StreamMap step={at} />} />
+      <PinnedChapters label="What the stream gives you" per={66}
+        intro={{ title: ['What the stream', 'gives you'], lede: 'One connection, and the rules you already wrote deciding what goes down it' }}
+        steps={steps}
+        visual={(at, intro) => <StreamMap step={at} intro={intro} />} />
 
       <section className="lx-sec rt-uses">
         <div className="lx-wrap rt-uses-h">
-          <p className="lx-kick">Popular Use Cases</p>
           <h2 className="lx-headline">Build Interactive Experiences</h2>
           <p className="lx-lede">Hanzo Realtime powers a wide range of applications that demand immediate data updates</p>
         </div>
@@ -391,36 +503,20 @@ export default function Realtime() {
             <h2 className="lx-display s">What happens as it grows</h2>
             <p className="lx-lede">The parts that scale, and the parts that are simply not in the way</p>
           </div>
-          <div className="rt-three">
-            {GROW.map(([t, d, k, v]) => (
-              <article key={t} className="rt-g">
-                <p className="lx-kick">{k || ' '}</p>
-                <p className="rt-g-v">{v}</p>
-                <h3 className="lx-title">{t}</h3>
-                <p className="rt-g-d">{d}</p>
-              </article>
-            ))}
-          </div>
+          <Grow />
           <SpecDrawer className="rt-spec" rows={[{ v: 'No polling', l: 'The client asks once, not every second' }, { v: 'Reconnects itself', l: 'A dropped stream reopens with a fresh grant' }, { v: 'Nothing extra to run', l: 'The same binary that serves the API serves the stream' }]} />
         </div>
       </section>
 
-      <section className="lx-sec rt-open">
-        <div className="lx-wrap rt-open-grid">
-          <div>
-            <p className="lx-kick"><b>●</b> Open a stream</p>
-            <h2 className="lx-display s">Two calls and the page keeps itself current</h2>
-            <p className="lx-lede">Mint a grant, open the stream, name a collection. No credit card to start.</p>
-            <div className="rt-open-acts"><A to="https://platform.hanzo.ai/api-keys" className="lx-cta">Start Building</A><A to="https://docs.hanzo.ai" className="lx-ghost">Documentation</A></div>
-          </div>
-          <A to="https://github.com/hanzoai" className="rt-first">
-            <span className="lx-title">Subscribe to your first collection</span>
-            <span className="rt-first-b">View on GitHub</span>
-          </A>
+      <RelatedCards className="rt-open" title="Open a stream" items={[['Subscribe to your first collection', 'https://github.com/hanzoai', 'View on GitHub']]}>
+        <div className="rt-open-l">
+          <h2 className="lx-display s">Two calls and the page keeps itself current</h2>
+          <p className="lx-lede">Mint a grant, open the stream, name a collection. No credit card to start.</p>
+          <div className="rt-open-acts"><A to={KEYS} className="lx-text">Start Building</A><A to={DOCS} className="lx-text">Documentation</A></div>
         </div>
-      </section>
+      </RelatedCards>
 
-      <LaunchClose name="Realtime" tag="Realtime channels + presence" seed="realtime" data={[30, 3, 2]} />
+      <LaunchClose name="Realtime" tag="Realtime channels + presence" seed="realtime" data={[30, 3, 2]} ask={['Start Building', KEYS]} cta="realtime.close" />
     </main>
   );
 }
