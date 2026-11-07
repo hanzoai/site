@@ -1,115 +1,140 @@
 'use client';
-/* Hanzo CLI. Signature: the resource tree. hanzo <resource> <command> laid out like a file system: open a resource,
-   choose a command, and the terminal beside it prints the line and what it does. It walks itself until you take it.
-   The hero is a tilted terminal running Hanzo's own example session; the capabilities read as the binary's --help
-   in the dark room; the install script lights its steps as they come into view.
-   Beyond: "Add to the script". The install script takes any of the binary's own commands (scan, share, status, link,
-   auth show) as one press each, under Hanzo's own heading for it, and Copy hands you the script you built.
-   Every word is Hanzo's. */
+// Signature: The terminal is the first screen: a full-bleed black room that is one giant terminal window, where hanzo is typed, the request streams and the gateway lands on staging, all in Hanzo's own example session
+// Beyond: Add to the script: the install script takes any of the binary's own commands (scan, share, status, link, auth show) as one press each, under Hanzo's own heading for it, and every block and the whole script copy as you built them
+/* Hanzo CLI, v2 (Archetype F, developer: terminal-first, code as the hero).
+   V2: 8/10 the hero is no longer a tilted card beside a headline: the whole first screen is a terminal in the page's one dark room; the resource tree is rebuilt big as a file system you open, with the command it prints; capabilities became a swipe rail of commands you copy; the script builder stays and every block copies
+   Motion: signature = the typed session in the hero terminal (text nodes via refs, stops off screen). Supporting: the tree's
+   selection that glides between leaves (layoutId), the added script block that wipes in (clip), a magnetic install button.
+   Accent: lime, the terminal's prompt. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy, Mark, useTilt } from '../ui';
-import { A, Go, More, SecHead } from '../kit';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { EASE, Copy, Mark, Magnetic } from '../ui';
+import { A, Go, More } from '../kit';
+import Lines from '../v2/AppLines';
+import '../v2/AppType.css';
 import './CliPage.css';
 
+const DOCS = 'https://docs.hanzo.ai/docs/cli';
+const GH = 'https://github.com/hanzoai/cli';
 const SESSION = [['$', 'hanzo'], ['>', 'deploy the gateway to staging'], ['·', 'reading the project'], ['✓', 'gateway is on staging']];
+const SPIN = '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏';
+const INSTALL = 'curl -fsSL https://hanzo.sh | sh';
 
-/* The hero terminal: Hanzo's example session, typed once each time it comes into view (the tree below is the page's
-   one thing that keeps moving). */
+/* ---------- the hero: the first screen is one terminal; Hanzo's example session types and streams in it ---------- */
 function Session() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.4 });
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
-  const [n, setN] = useState(SESSION.length + 1); // the whole session is in the HTML; the browser replays it
   const rows = useRef([]);
+  const spin = useRef(null);
+  const [n, setN] = useState(SESSION.length + 1); // the whole session is in the HTML; the browser replays it
   useEffect(() => {
-    if (!seen || calm) return;
+    const fill = () => rows.current.forEach((el, i) => { if (el) el.textContent = SESSION[i][1]; });
+    if (!seen || calm) { fill(); setN(SESSION.length + 1); return; }
     let alive = true, t = 0;
+    const wait = (ms) => new Promise((r) => { t = setTimeout(r, ms); });
     const run = async () => {
-      const wait = (ms) => new Promise((r) => { t = setTimeout(r, ms); });
-      setN(0);
-      await wait(500);
-      for (let i = 0; i < SESSION.length && alive; i++) {
-        setN(i + 1);
-        await wait(30);
-        const el = rows.current[i], txt = SESSION[i][1];
-        if (el && i < 2) { for (let k = 1; k <= txt.length && alive; k++) { el.textContent = txt.slice(0, k); await wait(45); } }
-        await wait(i === 2 ? 1500 : 420);
+      while (alive) {
+        rows.current.forEach((el, i) => { if (el && i < 2) el.textContent = ''; });
+        setN(1);
+        await wait(650);
+        for (let i = 0; i < SESSION.length && alive; i++) {
+          setN(i + 1);
+          const el = rows.current[i], txt = SESSION[i][1];
+          if (i < 2) {
+            await wait(i ? 380 : 120);
+            for (let k = 1; k <= txt.length && alive; k++) { el.textContent = txt.slice(0, k); await wait(i ? 38 + (k % 5) * 6 : 110); }
+            await wait(420);
+          } else if (i === 2) {
+            for (let f = 0; f < 24 && alive; f++) { if (spin.current) spin.current.textContent = SPIN[f % SPIN.length]; await wait(80); }
+          } else await wait(260);
+        }
+        if (!alive) return;
+        setN(SESSION.length + 1);
+        await wait(5600);
       }
-      if (alive) setN(SESSION.length + 1);
     };
     run();
-    return () => { alive = false; clearTimeout(t); };
+    return () => { alive = false; clearTimeout(t); fill(); };
   }, [seen, calm]);
-  const { rx, ry, on } = useTilt(4);
   return (
-    <div className="cli-stage" ref={ref} {...on}>
-      <motion.div className="cli-term" style={{ rotateX: rx, rotateY: ry }}>
-        <div className="cli-bar">
-          <span className="cli-dots" aria-hidden="true"><i /><i /><i /></span>
-          <span className="cli-title"><b>CLI</b> — Hanzo</span>
-        </div>
-        <nav className="cli-tabs" aria-label="Hanzo apps">
-          <A to="/cli" className="on">CLI</A><A to="/playground">Playground</A><A to="/desktop">Desktop</A><A to="/cloud/api-keys">API Keys</A>
-        </nav>
-        <ul className="cli-body">
-          {SESSION.map(([p, t], i) => (
-            <li key={t} className={'cli-l k' + i + (i < n ? ' on' : '')}>
-              <span className="cli-p">{p}</span>
-              <span ref={(el) => (rows.current[i] = el)}>{t}</span>
-              {i === 2 && n === 3 && <span className="cli-spin" aria-hidden="true" />}
-              {i === n - 1 && i < 2 && <span className="cli-caret" aria-hidden="true" />}
-            </li>
-          ))}
-          <li className={'cli-l cli-open' + (n > SESSION.length ? ' on' : '')}><A to="https://hanzo.team/">Open in the console</A></li>
-        </ul>
-      </motion.div>
-      <p className="cli-note">Example project. Every name in it is one you would give your own.</p>
+    <div className="cli-sess" ref={box}>
+      <ul className="cli-lines">
+        {SESSION.map(([p, t], i) => (
+          <li key={t} className={'cli-l k' + i + (i < n ? ' on' : '')}>
+            <span className="cli-p" aria-hidden={i > 1 ? 'true' : undefined}>{p}</span>
+            <span ref={(el) => (rows.current[i] = el)}>{t}</span>
+            {i === 2 && n === 3 && <span className="cli-spin" ref={spin} aria-hidden="true">{SPIN[0]}</span>}
+            {i === n - 1 && i < 2 && <span className="cli-caret" aria-hidden="true" />}
+          </li>
+        ))}
+      </ul>
+      <div className={'cli-open' + (n > SESSION.length ? ' on' : '')}>
+        <A to="https://hanzo.team/">Open in the console<span aria-hidden="true">↗</span></A>
+        <p className="cli-note">Example project. Every name in it is one you would give your own.</p>
+      </div>
     </div>
   );
 }
 
 function Hero() {
   return (
-    <section className="cli-hero" aria-labelledby="cli-h1">
-      <div className="x-wrap cli-hero-grid">
-        <div>
-          <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Hanzo CLI · Developers</motion.p>
-          <h1 id="cli-h1" className="cli-h1">
-            {['An AI engineer', 'in your terminal'].map((t, i) => (
-              <span className="x-line" key={t}><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 + i * 0.12 }}>{t}</motion.span></span>
-            ))}
-          </h1>
-          <motion.p className="cli-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
-            Type <code>hanzo</code> in a repo and you get a coding session. Type <code>hanzo</code> and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.
-          </motion.p>
-          <motion.div className="cli-acts" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.45 }}>
-            <Go to="https://docs.hanzo.ai/docs/cli" solid>Install from hanzo.sh</Go>
-            <Go to="https://github.com/hanzoai/cli">View on GitHub</Go>
-          </motion.div>
-          <motion.p className="cli-fine" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.6 }}>Open source (MIT). One static Rust binary — macOS and Linux on amd64 and arm64, Windows on amd64. No runtime, no daemon.</motion.p>
+    <section className="cli-hero av-dark" data-room="dark" aria-labelledby="cli-h1">
+      <div className="cli-term">
+        <div className="cli-bar">
+          <span className="cli-dots" aria-hidden="true"><i /><i /><i /></span>
+          <nav className="cli-tabs" aria-label="Hanzo apps">
+            <A to="/cli" className="on" aria-current="page"><b>CLI</b> — Hanzo</A>
+            <A to="/playground">Playground</A>
+            <A to="/desktop">Desktop</A>
+            <A to="/cloud/api-keys">API Keys</A>
+          </nav>
         </div>
-        <motion.div initial={{ opacity: 0, y: 40, rotate: -2 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 }}>
+        <div className="cli-body">
+          <div className="cli-head">
+            <p className="av-kick cli-kick"><span aria-hidden="true">~ </span>Hanzo CLI · Developers</p>
+            <Lines as="h1" id="cli-h1" className="av-display cli-h1" lines={['An AI engineer', 'in your terminal']} now delay={0.1} />
+          </div>
+          <div className="cli-side">
+            <p className="av-lede">Type <code>hanzo</code> in a repo and you get a coding session. Type <code>hanzo</code> and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
+            <div className="cli-inst">
+              <code><span aria-hidden="true">$ </span>{INSTALL}</code>
+              <Copy text={INSTALL} />
+            </div>
+            <div className="av-acts">
+              <Magnetic strength={0.25}><Go to={DOCS} solid className="cli-go">Install from hanzo.sh</Go></Magnetic>
+              <Go to={GH} className="cli-ghost">View on GitHub</Go>
+            </div>
+          </div>
           <Session />
-        </motion.div>
+        </div>
+        <p className="cli-status">Open source (MIT). One static Rust binary — macOS and Linux on amd64 and arm64, Windows on amd64. No runtime, no daemon.</p>
       </div>
     </section>
   );
 }
 
+/* ---------- paste and ship: the agent prompt is the big line, the label sits beside it ---------- */
 function Paste() {
   const text = 'Read https://hanzo.ai/skill.md and use Hanzo CLI in my project. Start with: hanzo auth login';
   return (
     <section className="cli-paste">
-      <div className="x-wrap cli-paste-in">
-        <div><p className="cli-paste-k">Paste and ship</p><p className="cli-paste-d">Paste this into any agent. It reads the skill manifest and calls CLI from there.</p></div>
-        <div className="cli-prompt"><span className="x-mono cli-prompt-k">Agent prompt</span><code>{text}</code><Copy text={text} /></div>
+      <div className="av-wrap av-grid">
+        <div className="cli-prompt">
+          <span className="av-kick">Agent prompt</span>
+          <code>{text}</code>
+          <Copy text={text} />
+        </div>
+        <div className="cli-paste-r">
+          <p className="av-title">Paste and ship</p>
+          <p className="av-body">Paste this into any agent. It reads the skill manifest and calls CLI from there.</p>
+        </div>
       </div>
     </section>
   );
 }
 
-/* The tree: resources open like folders; each command prints its line and what it does. */
+/* ---------- the resource tree: open a resource like a folder; the command it prints fills the pane ---------- */
 const TREE = [
   ['auth', [['login', 'hanzo auth login', 'Sign in. Interactive picker, or name a provider.'], ['show', 'hanzo auth show', 'hanzo auth show says which one is answering right now.']]],
   ['usage', [['summary', 'hanzo usage summary', 'What did that cost, and what is left']]],
@@ -123,75 +148,95 @@ const TREE = [
 ];
 const TOUR = [[0, 0], [5, 0], [3, 0], [6, 0], [4, 0], [8, 1], [1, 0]];
 
-function Out({ cmd, desc }) {
+function Print({ cmd, desc }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
-    if (!el || calm) return;
+    if (!el) return;
+    if (calm) { el.textContent = cmd; return; }
     let i = 0, t = 0;
     el.textContent = '';
-    const step = () => { el.textContent = cmd.slice(0, ++i); if (i < cmd.length) t = setTimeout(step, 28); };
-    t = setTimeout(step, 80);
-    return () => clearTimeout(t);
+    const step = () => { el.textContent = cmd.slice(0, ++i); if (i < cmd.length) t = setTimeout(step, 26); };
+    t = setTimeout(step, 90);
+    return () => { clearTimeout(t); el.textContent = cmd; };
   }, [cmd, calm]);
   return (
-    <div className="cli-out-in">
-      <p className="cli-cmd"><span className="cli-p">$</span><span ref={ref}>{cmd}</span><span className="cli-caret" aria-hidden="true" /></p>
-      <motion.p className="cli-what" key={desc} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: Math.min(1, cmd.length * 0.028 + 0.1) }}># {desc}</motion.p>
+    <div className="cli-print">
+      <p className="cli-cmd"><span className="cli-pp" aria-hidden="true">$</span><span ref={ref}>{cmd}</span><span className="cli-caret" aria-hidden="true" /></p>
+      <motion.p className="cli-what" key={desc + cmd} initial={calm ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE, delay: Math.min(0.9, cmd.length * 0.026 + 0.15) }}>
+        <span aria-hidden="true"># </span>{desc}
+      </motion.p>
     </div>
   );
 }
 
 function Tree() {
-  const [open, setOpen] = useState(new Set([0]));
+  const [open, setOpen] = useState(() => new Set([0]));
   const [sel, setSel] = useState([0, 0]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
   const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.4 });
+  const seen = useInView(ref, { amount: 0.35 });
   const calm = useReducedMotion();
   useEffect(() => {
     if (mine || !seen || calm) return;
     const t = setTimeout(() => {
       const nk = (k + 1) % TOUR.length, [r, c] = TOUR[nk];
       setK(nk); setOpen(new Set([r])); setSel([r, c]);
-    }, 3600);
+    }, 3800);
     return () => clearTimeout(t);
   }, [k, mine, seen, calm]);
-  const toggle = (r) => { setMine(true); setOpen((o) => { const n = new Set(o); n.has(r) ? n.delete(r) : n.add(r); return n; }); };
+  const toggle = (r) => { setMine(true); setOpen((o) => { const s = new Set(o); s.has(r) ? s.delete(r) : s.add(r); return s; }); };
   const pick = (r, c) => { setMine(true); setSel([r, c]); };
-  const [, , cmd, desc] = [0, 0, ...TREE[sel[0]][1][sel[1]].slice(1)];
+  const [res, cmds] = TREE[sel[0]];
+  const [leaf, cmd, desc] = cmds[sel[1]];
   return (
-    <div className="cli-tree-box" ref={ref}>
-      <ul className="cli-tree" role="tree" aria-label="hanzo">
-        <li className="cli-root x-mono"><Mark size={14} />hanzo</li>
-        {TREE.map(([res, cmds], r) => {
-          const isOpen = open.has(r);
-          return (
-            <li key={res} role="treeitem" aria-expanded={isOpen} className="cli-res">
-              <button type="button" className={'cli-node' + (sel[0] === r ? ' path' : '')} onClick={() => toggle(r)}>
-                <motion.svg viewBox="0 0 16 16" width="12" height="12" animate={{ rotate: isOpen ? 90 : 0 }} transition={{ duration: 0.25, ease: EASE }} aria-hidden="true"><path d="m6 4 4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></motion.svg>
-                <span className="x-mono">{res}</span>
-                <span className="cli-n x-mono">{cmds.length}</span>
-              </button>
-              <motion.ul role="group" className="cli-cmds" initial={false} animate={isOpen ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.35, ease: EASE }} inert={!isOpen}>
-                {cmds.map(([c, line], ci) => (
-                  <li key={line} role="treeitem" aria-selected={sel[0] === r && sel[1] === ci}>
-                    <button type="button" className={'cli-leaf' + (sel[0] === r && sel[1] === ci ? ' on' : '')} onClick={() => pick(r, ci)} data-cursor="Print">
-                      {sel[0] === r && sel[1] === ci && <motion.span layoutId="cli-leaf" className="cli-leaf-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                      <span className="x-mono">{c || res}</span>
-                    </button>
-                  </li>
-                ))}
-              </motion.ul>
-            </li>
-          );
-        })}
-      </ul>
-      <div className="cli-out" aria-live="polite">
-        <div className="cli-out-bar x-mono"><span>hanzo &lt;resource&gt; &lt;command&gt;</span><A to="/home">Open in the console</A></div>
-        <Out cmd={cmd} desc={desc} />
+    <div className="cli-fs" ref={ref}>
+      <div className="cli-fs-bar">
+        <span className="cli-crumb x-mono" aria-label="Path">
+          <Mark size={13} /><span>hanzo</span><i aria-hidden="true">/</i><span>{res}</span>{leaf && <><i aria-hidden="true">/</i><b>{leaf}</b></>}
+        </span>
+        <span className="cli-fs-k x-mono">hanzo &lt;resource&gt; &lt;command&gt;</span>
+      </div>
+      <div className="cli-fs-main">
+        <ul className="cli-tree" role="tree" aria-label="hanzo">
+          {TREE.map(([name, list], r) => {
+            const isOpen = open.has(r);
+            const last = r === TREE.length - 1;
+            return (
+              <li key={name} role="treeitem" aria-expanded={isOpen} className={'cli-res' + (isOpen ? ' open' : '')}>
+                <button type="button" className={'cli-node' + (sel[0] === r ? ' path' : '')} onClick={() => toggle(r)}>
+                  <span className="cli-gl x-mono" aria-hidden="true">{last ? '└─' : '├─'}</span>
+                  <svg className="cli-dir" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 4.5A1.5 1.5 0 0 1 3.5 3h3l1.5 1.5h4.5A1.5 1.5 0 0 1 14 6v5.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 11.5z" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /></svg>
+                  <span className="x-mono cli-node-t">{name}</span>
+                  <span className="cli-n x-mono av-num">{list.length}</span>
+                </button>
+                <ul role="group" className="cli-cmds" hidden={!isOpen}>
+                  {list.map(([c, line], ci) => {
+                    const on = sel[0] === r && sel[1] === ci;
+                    return (
+                      <li key={line} role="treeitem" aria-selected={on} style={{ '--i': ci }}>
+                        <button type="button" className={'cli-leaf' + (on ? ' on' : '')} onClick={() => pick(r, ci)} data-cursor="Print">
+                          {on && <motion.span layoutId="cli-leaf" className="cli-leaf-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                          <span className="cli-gl x-mono" aria-hidden="true">{last ? '   ' : '│  '}{ci === list.length - 1 ? '└─' : '├─'}</span>
+                          <span className="x-mono">{c || name}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="cli-out" aria-live="polite">
+          <Print cmd={cmd} desc={desc} />
+          <div className="cli-out-f">
+            <Copy text={cmd.replace(' <model>', '')} label="Copy command" />
+            <A to="/home" className="cli-out-a">Open in the console</A>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -205,16 +250,20 @@ const WHAT = [
 
 function What() {
   return (
-    <section className="x-sec cli-what-sec">
-      <div className="x-wrap">
-        <SecHead kicker="What is Hanzo CLI" title="A resource tree, not a pile of flags" lede="hanzo <resource> <command>. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has." />
-        <div><Tree /></div>
+    <section className="av-sec cli-what-sec" aria-labelledby="cli-tree-h">
+      <div className="av-wrap">
+        <div className="cli-what-top">
+          <p className="av-kick">What is Hanzo CLI</p>
+          <Lines as="h2" id="cli-tree-h" className="av-display s cli-tree-h" lines={['A resource tree,', 'not a pile of flags']} />
+          <p className="av-lede cli-what-lede"><code>hanzo &lt;resource&gt; &lt;command&gt;</code>. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has.</p>
+        </div>
+        <Tree />
         <ol className="cli-three">
           {WHAT.map(([t, d], i) => (
             <li key={t}>
-              <span className="cli-three-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{t}</h3>
-              <p>{d}</p>
+              <span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 className="av-title">{t}</h3>
+              <p className="av-body">{d}</p>
             </li>
           ))}
         </ol>
@@ -223,7 +272,7 @@ function What() {
   );
 }
 
-/* The binary's --help, in the dark: each row a command, its heading and what it does. */
+/* ---------- capabilities: the binary's --help as a rail of commands you swipe and copy ---------- */
 const CAPS = [
   ['hanzo auth show', 'Several identities at once', 'Hold as many principals as you need and switch between them. A second login never clobbers the first, and hanzo auth show says which one is answering right now.'],
   ['--token -', 'Secrets arrive on stdin', 'Pass --token - and the credential is read from the pipe, never from argv — so nothing lands in shell history, ps, or a CI log. It is stored in the OS keychain, or an owner-only file where there is none.'],
@@ -234,25 +283,50 @@ const CAPS = [
 ];
 
 function Caps() {
+  const rail = useRef(null);
+  const [edge, setEdge] = useState([true, false]);
+  const onScroll = () => {
+    const el = rail.current; if (!el) return;
+    setEdge([el.scrollLeft < 8, el.scrollLeft + el.clientWidth > el.scrollWidth - 8]);
+  };
+  const go = (d) => {
+    const el = rail.current; if (!el) return;
+    const card = el.querySelector('li');
+    el.scrollBy({ left: d * ((card?.offsetWidth || 360) + 20), behavior: 'smooth' });
+  };
   return (
-    <section className="x-sec cli-dark" data-room="dark">
-      <div className="x-wrap">
-        <SecHead dark kicker="Capabilities" title="What the binary carries" />
-        <p className="cli-help-k x-mono">$ hanzo --help</p>
-        <ul className="cli-help">
-          {CAPS.map(([c, t, d], i) => (
-            <Rise as="li" key={t} delay={i * 0.05} y={16}>
-              <span className="cli-help-c x-mono">{c}</span>
-              <div className="cli-help-b"><h3>{t}</h3><p>{d}</p></div>
-            </Rise>
-          ))}
-        </ul>
+    <section className="av-sec cli-caps" aria-labelledby="cli-caps-h">
+      <div className="av-wrap av-grid cli-caps-top">
+        <div className="cli-caps-l">
+          <p className="av-kick">Capabilities</p>
+          <h2 id="cli-caps-h" className="av-head">What the binary carries</h2>
+        </div>
+        <div className="cli-caps-r">
+          <p className="cli-help-k x-mono" aria-hidden="true"><span>$</span> hanzo --help</p>
+          <div className="cli-arrows">
+            <button type="button" onClick={() => go(-1)} disabled={edge[0]} aria-label="Previous capability"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+            <button type="button" onClick={() => go(1)} disabled={edge[1]} aria-label="Next capability"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+          </div>
+        </div>
       </div>
+      <ul className="cli-rail" ref={rail} onScroll={onScroll} aria-label="Capabilities">
+        {CAPS.map(([c, t, d], i) => (
+          <li key={t} className="cli-cap">
+            <div className="cli-cap-cmd">
+              <code><span aria-hidden="true">$ </span>{c}</code>
+              <Copy text={c} label={'Copy ' + c} />
+            </div>
+            <span className="cli-cap-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')} / 06</span>
+            <h3 className="av-title">{t}</h3>
+            <p>{d}</p>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
 
-/* The install script: its steps light as they come into view. */
+/* ---------- get started: the install script, and the Beyond builder that adds the binary's own commands ---------- */
 const SCRIPT = `# Install the CLI — the same line Hanzo prints everywhere
 curl -fsSL https://hanzo.sh | sh
 npm i -g hanzo
@@ -269,39 +343,61 @@ hanzo "add rate limiting to the /v1/chat endpoint"
 # What did that cost, and what is left
 hanzo usage summary
 hanzo billing balance`;
+const BASE = SCRIPT.split('\n\n');
+const EXTRA = CAPS.filter(([c]) => c.startsWith('hanzo ')).map(([c, t]) => ['# ' + t + '\n' + c, t, c]);
 
-function Block({ b, i }) {
-  const ref = useRef(null);
-  const lit = useInView(ref, { margin: '-30% 0px -40% 0px' });
+function Block({ b, i, added }) {
   const [c, ...lines] = b.split('\n');
-  return (
-    <div ref={ref} className={'cli-blk' + (lit ? ' lit' : '')}>
-      <span className="cli-blk-n x-mono">{i + 1}</span>
+  const calm = useReducedMotion();
+  const body = (
+    <>
+      <span className="cli-blk-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
       <pre><span className="cli-c">{c}</span>{'\n'}{lines.map((l) => <span key={l} className="cli-ln">{l}{'\n'}</span>)}</pre>
-    </div>
+      <Copy text={lines.join('\n')} label="Copy" className="cli-blk-cp" />
+    </>
+  );
+  if (!added) return <div className="cli-blk">{body}</div>;
+  return (
+    <motion.div className="cli-blk add" initial={calm ? false : { clipPath: 'inset(0 100% 0 0)', opacity: 0.4 }} animate={{ clipPath: 'inset(0 0% 0 0)', opacity: 1 }} transition={{ duration: 0.6, ease: EASE }}>
+      {body}
+    </motion.div>
   );
 }
 
-/* Beyond: the binary's own commands, each under its own heading, added to the script you copy. */
-const EXTRA = CAPS.filter(([c]) => c.startsWith('hanzo ')).map(([c, t]) => '# ' + t + '\n' + c);
-
 function Start() {
   const [add, setAdd] = useState([]);
-  const blocks = [...SCRIPT.split('\n\n'), ...add.map((i) => EXTRA[i])];
+  const blocks = [...BASE, ...add.map((i) => EXTRA[i][0])];
   const flip = (i) => setAdd((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i]));
+  const lines = blocks.join('\n\n').split('\n').length;
   return (
-    <section className="x-sec cli-start">
-      <div className="x-wrap cli-start-in">
-        <div className="cli-sticky">
-          <SecHead kicker="Get started" title="Install, sign in, start working" />
-          <div className="x-row-links tight cli-start-l"><More to="https://docs.hanzo.ai/docs/cli">Read the docs</More><More to="https://github.com/hanzoai/cli">View on GitHub</More></div>
+    <section className="av-sec cli-start" aria-labelledby="cli-start-h">
+      <div className="av-wrap av-grid">
+        <div className="cli-start-l">
+          <p className="av-kick">Get started</p>
+          <h2 id="cli-start-h" className="av-head">Install, sign in, start working</h2>
+          <div className="cli-start-links"><More to={DOCS}>Read the docs</More><More to={GH}>View on GitHub</More></div>
+          <div className="cli-add" role="group" aria-labelledby="cli-add-k">
+            <p id="cli-add-k" className="av-kick">Add to the script</p>
+            {EXTRA.map(([, t, c], i) => {
+              const on = add.includes(i);
+              return (
+                <button key={c} type="button" aria-pressed={on} onClick={() => flip(i)}>
+                  <span className="cli-chk" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d={on ? 'M3.5 8.5l3 3 6-6.5' : 'M8 3.5v9M3.5 8h9'} fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                  <span className="cli-add-t">{t}</span>
+                  <span className="cli-add-c x-mono">{c}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="cli-script">
-          <div className="cli-script-bar"><span className="x-mono">bash</span><Copy text={blocks.join('\n\n')} /></div>
-          <div className="cli-script-body">{blocks.map((b, i) => <Block key={b} b={b} i={i} />)}</div>
-          <div className="cli-add" role="group" aria-label="Add to the script">
-            <span className="x-mono">+</span>
-            {EXTRA.map((b, i) => <button key={b} type="button" className="x-mono" aria-pressed={add.includes(i)} onClick={() => flip(i)}>{b.split('\n')[1]}</button>)}
+        <div className="cli-script av-obj">
+          <div className="cli-script-bar">
+            <span className="x-mono">bash</span>
+            <span className="cli-script-n x-mono av-num" aria-live="polite">{lines} lines</span>
+            <Copy text={blocks.join('\n\n')} label="Copy script" />
+          </div>
+          <div className="cli-script-body">
+            {blocks.map((b, i) => <Block key={b} b={b} i={i} added={i >= BASE.length} />)}
           </div>
         </div>
       </div>
@@ -309,58 +405,53 @@ function Start() {
   );
 }
 
-/* Install once: the same prompt, wherever you are. */
+/* ---------- install once: the same prompt wherever you are, then the repository ---------- */
 const PLACES = ['A local repo', 'a CI job', 'a machine you sshed into', 'a fix at 2am'];
 
 function Carry() {
   return (
-    <section className="x-sec cli-carry">
-      <div className="x-wrap">
-        <div className="cli-carry-top">
-          <SecHead title="Install once. It comes with you." lede="A local repo, a CI job, a machine you sshed into, a fix at 2am. Same binary, same identity, same commands." />
-          <div className="cli-carry-acts">
-            <Go to="https://docs.hanzo.ai/docs/cli" solid>Install the CLI</Go>
-            <Go to="https://github.com/hanzoai/cli">GitHub</Go>
-            <Go to="https://platform.hanzo.ai">Hanzo Platform</Go>
-          </div>
-        </div>
-        <div className="cli-places" aria-hidden="true">
-          {PLACES.map((p, i) => (
-            <Rise key={p} className="cli-place" delay={i * 0.08}>
-              <span className="cli-place-k">{p}</span>
-              <span className="cli-place-t x-mono"><span className="cli-p">$</span> hanzo<i style={{ animationDelay: i * 0.25 + 's' }} /></span>
-            </Rise>
-          ))}
-        </div>
-        <div className="cli-related">
-          <p className="x-kick">Related capabilities</p>
-          <div className="cli-related-l">
-            {[['Playground', '/playground'], ['Desktop', '/desktop'], ['API Keys', '/cloud/api-keys']].map(([t, to]) => <A key={t} to={to} className="cli-rel">{t}<span aria-hidden="true">→</span></A>)}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Get() {
-  const { rx, ry, glow, on } = useTilt(4, 'rgba(0,0,0,.05)');
-  return (
-    <section className="cli-get">
-      <div className="x-wrap">
-        <div>
-          <motion.div className="cli-repo" style={{ rotateX: rx, rotateY: ry }} {...on}>
-            <motion.span className="x-mglow" style={{ background: glow }} aria-hidden="true" />
-            <div>
-              <h2>Get CLI</h2>
-              <p>One CLI for the whole stack</p>
+    <section className="av-sec cli-carry" aria-labelledby="cli-carry-h">
+      <div className="av-wrap">
+        <div className="av-grid cli-carry-top">
+          <Lines as="h2" id="cli-carry-h" className="av-display m cli-carry-h" lines={['Install once.', 'It comes with you.']} />
+          <div className="cli-carry-r">
+            <p className="av-lede">A local repo, a CI job, a machine you sshed into, a fix at 2am. Same binary, same identity, same commands.</p>
+            <div className="av-acts">
+              <Go to={DOCS} solid>Install the CLI</Go>
+              <Go to={GH}>GitHub</Go>
+              <Go to="https://platform.hanzo.ai">Hanzo Platform</Go>
             </div>
-            <dl className="x-mono"><div><dt>License:</dt><dd>Apache-2.0</dd></div><div><dt>★</dt><dd>11 stars</dd></div></dl>
+          </div>
+        </div>
+        <ul className="cli-places" aria-hidden="true">
+          {PLACES.map((p) => (
+            <li key={p}>
+              <span className="cli-place-k">{p}</span>
+              <span className="cli-place-t x-mono"><span>$</span> hanzo<i /></span>
+            </li>
+          ))}
+        </ul>
+        <div className="av-grid cli-get">
+          <div className="cli-repo">
+            <div className="cli-repo-h">
+              <h2 className="av-head">Get CLI</h2>
+              <p className="av-body">One CLI for the whole stack</p>
+            </div>
+            <dl className="cli-repo-dl x-mono">
+              <div><dt>License:</dt><dd>Apache-2.0</dd></div>
+              <div><dt aria-label="Stars">★</dt><dd>11 stars</dd></div>
+            </dl>
             <div className="cli-repo-acts">
-              <A to="https://github.com/hanzoai/cli" className="cli-gh x-mono">hanzoai/cli</A>
+              <A to={GH} className="cli-gh x-mono">hanzoai/cli</A>
               <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
             </div>
-          </motion.div>
+          </div>
+          <div className="cli-related">
+            <p className="av-kick">Related capabilities</p>
+            {[['Playground', '/playground'], ['Desktop', '/desktop'], ['API Keys', '/cloud/api-keys']].map(([t, to]) => (
+              <A key={t} to={to} className="cli-rel">{t}<span aria-hidden="true">→</span></A>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -369,15 +460,14 @@ function Get() {
 
 export default function CliPage() {
   return (
-    <main className="cli">
+    <main className="av cli" style={{ '--ac': '#7ed321' }}>
       <Hero />
       <Paste />
       <What />
       <Caps />
       <Start />
       <Carry />
-      <Get />
-      <i hidden data-thumb="Install from hanzo.sh" data-href="https://docs.hanzo.ai/docs/cli" />
+      <i hidden data-thumb="Install from hanzo.sh" data-href={DOCS} />
     </main>
   );
 }
