@@ -83,7 +83,7 @@ function Diff() {
         <tbody>
           {DIFF.lines.map(([a, b, s, t], i) => (
             <tr key={i} className={s === '+' ? 'add' : s === '-' ? 'del' : ''} style={{ '--i': i }}>
-              <td>{a ?? ''}</td><td>{b ?? ''}</td><td><span className={`${P}-sign`}>{s.trim()}</span>{t}</td>
+              <td>{a ?? ''}</td><td>{b ?? ''}</td><td><span className={`${P}-sign`}>{s.trim()}</span><span className={`${P}-t`}>{t}</span></td>
             </tr>
           ))}
         </tbody>
@@ -245,7 +245,6 @@ function Hero() {
     <section className={`${P}-hero`} aria-labelledby="xsq-h1">
       <div className="a2-wrap a2-grid">
         <div className={`${P}-hero-l`}>
-          <p className="a2-kick"><i className={`${P}-dot`} aria-hidden="true" />{HERO.kick}</p>
           <A2Lines as="h1" id="xsq-h1" className={`a2-display ${P}-h1`} lines={HERO.title} now />
         </div>
         <div className={`${P}-hero-r`}>
@@ -255,6 +254,7 @@ function Hero() {
             <A to={HERO.acts[1][1]} className={`x-btn ${P}-quiet`}>{HERO.acts[1][0]}</A>
           </div>
           <p className={`${P}-docs`}><More to={HERO.acts[2][1]}>{HERO.acts[2][0]}</More></p>
+          <p className={`a2-kick show ${P}-kick`}>{HERO.kick}</p>
         </div>
       </div>
     </section>
@@ -301,9 +301,9 @@ function Notes() {
     <section className={`a2-sec ${P}-notes`} aria-labelledby="xsq-notes-h">
       <div className="a2-wrap a2-grid">
         <div className={`${P}-notes-h`}>
-          <p className="a2-kick"><b>{CODE.kick}</b></p>
           <A2Lines id="xsq-notes-h" className="a2-headline" lines={[CODE.title]} />
           <p className="a2-body">{CODE.lede}</p>
+          <p className={`a2-kick show ${P}-kick`}>{CODE.kick}</p>
           <Crop on={on} />
         </div>
         <div className={`${P}-notes-l`}>
@@ -343,10 +343,10 @@ function Setup() {
       <div className="a2-wrap">
         <div className={`${P}-card`}>
           <div className={`${P}-card-a`}>
-            <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" />{SETUP.verified}</b></p>
-            <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b id="xsq-setup-h">{SETUP.name}</b><span>{SETUP.sub}</span></span></div>
+            <p className={`${P}-card-t`}><span>{SETUP.title}</span><b className={s >= 3 ? 'on' : ''}><i aria-hidden="true" /><span className={`${P}-t`}>{SETUP.verified}</span></b></p>
+            <div className={`${P}-card-h`}><Face who="hanzo" p={P} size={34} /><span><b id="xsq-setup-h"><span className={`${P}-t`}>{SETUP.name}</span></b><span>{SETUP.sub}</span></span></div>
             <ol className={`${P}-card-steps`}>
-              {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b>{t}</b><span>{d}</span></span></li>)}
+              {SETUP.steps.map(([t, d], i) => <li key={t} className={s > i ? 'on' : ''}><i aria-hidden="true">{s > i ? '✓' : i + 1}</i><span><b><span className={`${P}-t`}>{t}</span></b><span>{d}</span></span></li>)}
             </ol>
             <p className={`${P}-card-m`}><span>{SETUP.model}</span><span>{SETUP.retention}</span></p>
           </div>

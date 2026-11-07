@@ -158,20 +158,18 @@ export const CLOSE = {
 /* The thread's grammar, drawn by both pages under their own class prefix (p). */
 export const Parts = ({ body, p }) => body.map((x, i) => (typeof x === 'string' ? x : <span key={i} className={`${p}-${x[0]}`}>{x[1]}</span>));
 
-/* A face: the person's initial on a drawn disc. Hanzo's memoji (dev.svg, sci.svg) belong in public/memoji/; hanzo.ai was
-   unreachable from the build machine, so nothing is hotlinked and no broken picture or failed request reaches the page.
-   Once the files are mirrored, MEMOJI turns them on (drawn over the disc, which stays as the fallback). */
-const MEMOJI = false;
+/* A face: the person's initial on a drawn disc, with Hanzo's own memoji (dev.svg, sci.svg, as on hanzo.ai/slack) drawn over
+   it from hanzo.ai, the same way /team draws its crew. If the picture can't load, the disc and initial stand in. */
 export function Face({ who, p, size = 32 }) {
   const m = PEOPLE[who];
-  const pic = MEMOJI && m.face ? { backgroundImage: `url(/memoji/${m.face}.svg)`, backgroundSize: 'cover' } : null;
-  return <span className={`${p}-face ${who}`} style={pic || undefined} aria-hidden="true">{m.init}</span>;
+  const pic = m.face ? { '--img': `url(https://hanzo.ai/memoji/${m.face}.svg)` } : undefined;
+  return <span className={`${p}-face ${who}` + (m.face ? ' pic' : '')} style={pic} aria-hidden="true">{m.init}</span>;
 }
 
 /* One message: a person, a system line, or the merged-PR banner. */
 export function Msg({ m, p }) {
   if (m.sys) return <p className={`${p}-sys`}>{m.sys}</p>;
-  if (m.done) return <p className={`${p}-merged`}><i aria-hidden="true" />{m.done}</p>;
+  if (m.done) return <p className={`${p}-merged`}><i aria-hidden="true" /><span className={`${p}-t`}>{m.done}</span></p>;
   const who = PEOPLE[m.who];
   return (
     <div className={`${p}-msg`}>
@@ -181,7 +179,7 @@ export function Msg({ m, p }) {
         {m.trace && (
           <ol className={`${p}-trace`}>
             {m.trace.map(([k, d, files], i) => (
-              <li key={k} style={{ '--i': i }}><b>{k}</b>{d && <span>{d}</span>}{files && files.map((f) => <span key={f} className={`${p}-code`}>{f}</span>)}</li>
+              <li key={k} style={{ '--i': i }}><b><span className={`${p}-t`}>{k}</span></b>{d && <span>{d}</span>}{files && files.map((f) => <span key={f} className={`${p}-code`}>{f}</span>)}</li>
             ))}
           </ol>
         )}
@@ -189,7 +187,7 @@ export function Msg({ m, p }) {
         {m.canvas && (
           <div className={`${p}-canvas-card`}>
             <span className={`${p}-canvas-ico`} aria-hidden="true" />
-            <span><b>{CANVAS.title}</b><span>{CANVAS.meta}</span></span>
+            <span><b><span className={`${p}-t`}>{CANVAS.title}</span></b><span>{CANVAS.meta}</span></span>
             <span className={`${p}-canvas-open`}>{CANVAS.open}</span>
           </div>
         )}

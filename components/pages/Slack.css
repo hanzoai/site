@@ -472,3 +472,11 @@
 .xsq-rt:active { transform: scale(.97); }
 .xsq-canvas-card:active { transform: translateY(-1px) scale(.98); }
 .xsq-who-i:active { transform: translateY(-1px) scale(.98); }
+
+/* Copy rule (8 Nov): a plain text leaf inside a styled b/em/code, so every Hanzo line stands on its own; it takes the parent's look */
+span.xsq-t.xsq-t.xsq-t { display: inline; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; min-height: 0; width: auto; height: auto; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; opacity: 1; transform: none; animation: none; }
+/* Hanzo's eyebrow labels, kept visible but below their headline (never above it) */
+.xsq-kick.a2-kick.show { margin: 16px 0 0; }
+/* Hanzo's memoji over the initial disc (Dev, Qa) */
+.xsq-face.pic { position: relative; overflow: hidden; }
+.xsq-face.pic::after { content: ''; position: absolute; inset: 0; background: var(--img) center / cover no-repeat; }
