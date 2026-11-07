@@ -3,65 +3,52 @@
 // Goal: trust how hanzo.id issues and protects tokens.
 // CTA: API reference (iam.hero, iam.close).
 // Metric: cta_click iam.hero
-// Signature: the sign-in, live: authorize, PKCE S256, code, token light in turn; the refresh-token family grows link by link and is revoked at once when a spent token is replayed.
-// Beyond: Try to steal one: copy the token as the thief and refresh in any order.
+// Signature: the sign-in, drawn: a line runs from hanzo.id through the authorization code, PKCE (S256) and the RS256 signature to the JWKS, and the token assembles as it goes.
+// Beyond: the refresh family in the dark room: press the live token to refresh, press a spent one and the whole family is revoked.
 /* IAM (v2, archetype A Launch).
-   V2: 8/10 round 2: name first (h1, lede, API reference at the left, the live sign-in at the right, h1 near 38% of the screen); the stage holds rt1 from the first frame and changes within 1 s (authorize, PKCE S256, code, token light in turn, then the family grows and is revoked); the card tilts 2.5° to a fine pointer and recedes as you scroll on; the eight facts light one at a time as each reaches the middle of the rail (its term grows 44 to 64px); the steal room has one solid next move; deck greys only, one ask.
-   Signature: the sign-in, live. A sign-in at hanzo.id lights authorize, the PKCE exchange (S256), the code and the token in
-   turn and mints the first refresh token; each refresh spends the last one and issues the next; then a spent one is
-   presented again and the whole family turns over to revoked at once (a CSS flip, so reduced motion lands on the end).
-   Supporting: kinetic title lines; the eight facts as a scroll-scrubbed sideways rail (ScrubRail) where the card in the
-   middle is the one lit; the stage recedes as the rail comes in (scroll); a 2.5° pointer tilt on the stage.
-   Beyond: "Try to steal one" - you hold the live refresh token; copy it as the thief, then refresh as either of you, in
-   any order. Whoever comes second presents a spent token and the whole family is revoked. The next move is the one solid button.
-   Greys only (Hanzo's deck). Every word and link is Hanzo's.
+   V2: 8/10 round 3: the hero is a line drawing of the sign-in (hanzo.id, Authorization code, PKCE · S256, RS256, JWKS), not KMS's numbered boxes; the eight facts pin for about two and a half screens, start and end centred, each with its own drawn object (stacked, every one reachable, on phones and under reduced motion); the refresh family is a press-the-token room that never changes height and enters as a rounded card opening to full width; every visible word is Hanzo's own; section heads rest at 26px; deck greys only, one ask.
+   Signature: the sign-in, drawn. Five stations on one hairline, each lit as the line reaches it; under them the token's
+   three parts fill in (the signature at RS256) and a tick lands at JWKS. The server paints the finished sign-in, so JS
+   off and reduced motion show the whole line; within a second it starts over and runs by itself (pausable).
+   Supporting: kinetic title lines; the eight facts as a pinned sideways rail where the card in the middle is the one lit
+   and its object draws in; the stage recedes as the rail comes in; the dark room opens from a rounded card to full width.
+   Beyond: the refresh family. Press the live refresh token and the next one is issued; press a spent one and the whole
+   family is revoked, the sentence's own clause lighting up. Status is shape only (filled live, hollow spent, struck revoked).
+   Greys only (Hanzo's deck). Every visible word and link is Hanzo's; controls carry Hanzo's terms or ui-strings as names.
    Persona: a developer wiring sign-in for an app or service on Hanzo.
    Goal: trust how hanzo.id issues and protects tokens (PKCE, single-use refresh, one tenancy per organization).
    CTA: API reference (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { Cta } from '../../kit';
 import { useLive } from './Frame';
 import { Lines } from '../../v2/LiftStage';
-import ScrubRail from '../../v2/ScrubRail';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
 import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Iam.css';
 
-/* the stage's beats. f: how many of authorize, PKCE S256, code, token are lit; n: refresh tokens minted;
-   r: rt1 presented again; d: the family revoked. Beat 0 is what the server paints: signed in, rt1 live. */
-const BEATS = [
-  { f: 4, n: 1, ms: 1000 },
-  { f: 4, n: 2, ms: 1000 },
-  { f: 4, n: 3, ms: 1100 },
-  { f: 4, n: 3, r: 1, ms: 1500 },
-  { f: 4, n: 3, d: 1, ms: 2800 },
-  { f: 1, n: 0, ms: 650 },
-  { f: 2, n: 0, ms: 650 },
-  { f: 3, n: 0, ms: 650 },
-];
-const END = 4;
+/* the sign-in's stations, in Hanzo's words (hanzo.id; "Authorization code with PKCE, always S256"; "signed RS256 … the same JWKS") */
+const STATIONS = ['hanzo.id', 'Authorization code', 'PKCE · S256', 'RS256', 'JWKS'];
+const ALL = STATIONS.length;
+/* s: stations lit. The server paints the finished line (s = 5); then it starts over and runs. */
+const BEAT = [1700, 520, 640, 640, 640, 640];
 
-function Arrow() {
-  return <svg className="ia-arr" viewBox="0 0 24 8" width="24" height="8" aria-hidden="true"><path d="M0 4h21M18 1l3 3-3 3" fill="none" stroke="currentColor" strokeWidth="1.2" /></svg>;
-}
-
-/* hero stage: the sign-in, then the refresh-token family */
-function Family() {
+function SignIn() {
   const [ref, seen, calm] = useLive(0.3);
   const [paused, togglePause] = usePause();
-  const live = seen && !paused;
-  const [t, setT] = useState(0);
+  const live = seen && !paused && !calm;
+  const [s, setS] = useState(ALL);
+  const [first, setFirst] = useState(true);
   const card = useRef(null);
-  useEffect(() => { if (calm) setT(END); }, [calm]);
   useEffect(() => {
     if (!live) return;
-    const id = setTimeout(() => setT((v) => (v + 1) % BEATS.length), BEATS[t].ms);
+    const ms = first ? 800 : BEAT[s];
+    const id = setTimeout(() => { setFirst(false); setS((v) => (v >= ALL ? 0 : v + 1)); }, ms);
     return () => clearTimeout(id);
-  }, [t, live]);
-  const b = BEATS[t];
+  }, [s, live, first]);
+  useEffect(() => { if (calm) setS(ALL); }, [calm]);
   // a fine pointer tilts the card up to 2.5°; touch and reduced motion leave it flat
   const tilt = (e) => {
     const el = card.current;
@@ -71,37 +58,24 @@ function Family() {
     el.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
   };
   const flat = () => { const el = card.current; if (el) { el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); } };
-  const flow = [<span key="a">authorize</span>, <b key="p">PKCE · S256</b>, <span key="c">code</span>, <span key="t">token</span>];
   return (
     <div className="lp-host ia-host-wrap">
       <LivePause paused={paused} onToggle={togglePause} className="ia-pause" />
-      <div className={'ia-fam' + (b.d ? ' dead' : '')} ref={(el) => { ref.current = el; card.current = el; }} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat}>
-        <div className="ia-fam-top">
-          <p className="ia-host"><i />hanzo.id</p>
-          <p className="ia-flow" aria-label="code → token">
-            {flow.map((x, i) => (
-              <span key={i} className={'ia-node' + (i < b.f ? ' on' : '') + (i === b.f - 1 && b.n <= 1 && !b.d ? ' now' : '')}>{i > 0 && <Arrow />}{x}</span>
-            ))}
-          </p>
-        </div>
-        <ol className="ia-chain">
-          {[1, 2, 3].map((k) => (
-            <li key={k} className={k > b.n ? 'slot' : b.d ? 'dead' : k < b.n ? 'spent' : 'live'}>
-              <span className="ia-face">
-                <span className="ia-flip" style={{ transitionDelay: (k - 1) * 90 + 'ms' }}>
-                  <span className="ia-tok">rt{k}</span>
-                  <span className="ia-st">{k < b.n ? 'spent' : 'live'}</span>
-                  <span className="ia-back">revoked</span>
-                </span>
-              </span>
+      <div className="ia-sign" ref={(el) => { ref.current = el; card.current = el; }} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat} data-s={s}>
+        <ol className="ia-path">
+          {STATIONS.map((t, i) => (
+            <li key={t} className={'ia-st' + (i < s ? ' on' : '') + (i === s - 1 ? ' now' : '')}>
+              {i > 0 && <i className="ia-seg"><i /></i>}
+              <span className="ia-dot" />
+              <span className="ia-lab">{t}</span>
             </li>
           ))}
         </ol>
-        <div className="ia-fam-foot">
-          <p className="ia-k">refresh tokens <span>single-use · kept as a hash</span></p>
-          <p className={'ia-replay' + (b.r || b.d ? ' on' : '') + (b.d ? ' dead' : '')} key={b.d ? 'd' : b.r ? 'r' : 'x'}>
-            {b.d ? 'a spent one was presented · the whole family is revoked' : b.r ? 'rt1 presented again' : ''}
-          </p>
+        <div className="ia-jwt">
+          <span className={'ia-part h' + (s >= 2 ? ' on' : '')}><i /></span>
+          <span className={'ia-part p' + (s >= 3 ? ' on' : '')}><i /></span>
+          <span className={'ia-part g' + (s >= 4 ? ' on' : '')}><i /></span>
+          <span className={'ia-ok' + (s >= 5 ? ' on' : '')}><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
         </div>
       </div>
     </div>
@@ -132,20 +106,40 @@ const FACTS = [
   ['Authorization', 'What you may reach once signed in is Authz’s to decide, reading the same token.', 'Authz'],
 ];
 
-/* a fact card: lit while it sits in the middle of the rail (its term grows, its sentence shows), quiet either side */
+/* each fact's own drawn object (no words): the S256 hash of a verifier, a gate that fails closed, a refresh chain with a
+   struck link, a device and a key, three issuers meeting in one, two keys in one set, organizations as boundaries, a
+   token reaching a gate. Lines draw in while the card is the lit one. */
+const OBJ = [
+  ['M4 28h34', 'M46 28a10 10 0 1 0 20 0a10 10 0 1 0 -20 0', 'M66 28h12', 'M84 19h32M84 28h32M84 37h32'],
+  ['M4 28h58', 'M70 8v40M80 8v40', 'M70 8h10M70 48h10', 'M56 22l6 6-6 6'],
+  ['M18 28h16M46 28h16M74 28h16', 'M6 28a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M34 28a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M62 28a6 6 0 1 0 12 0a6 6 0 1 0 -12 0', 'M90 28a6 6 0 1 0 12 0a6 6 0 1 0 -12 0', 'M106 20l10 16M116 20l-10 16'],
+  ['M10 6h26a4 4 0 0 1 4 4v36a4 4 0 0 1 -4 4h-26a4 4 0 0 1 -4 -4v-36a4 4 0 0 1 4 -4z', 'M18 42h10', 'M60 28a9 9 0 1 0 18 0a9 9 0 1 0 -18 0', 'M78 28h36M104 28v9M112 28v6'],
+  ['M4 10C40 10 52 28 82 28', 'M4 28h78', 'M4 46C40 46 52 28 82 28', 'M82 28a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M98 28h18'],
+  ['M8 6v44M8 6h8M8 50h8M112 6v44M112 6h-8M112 50h-8', 'M24 28a7 7 0 1 0 14 0a7 7 0 1 0 -14 0M38 28h16M48 28v7', 'M66 28a7 7 0 1 0 14 0a7 7 0 1 0 -14 0M80 28h16M90 28v7', 'M58 14v28'],
+  ['M4 6h112v44h-112z', 'M14 16h42v24h-42z', 'M64 16h42v24h-42z', 'M28 28h14M78 28h14'],
+  ['M4 28h44', 'M48 28l10-10 10 10-10 10z', 'M68 28h24', 'M96 10v36M96 10h20M96 46h20'],
+];
+
+/* a fact card: lit while it sits in the middle of the rail (or of the screen on phones); its object draws in */
 function Fact({ f: [t, d, big], i }) {
   const ref = useRef(null);
-  const [on, setOn] = useState(false); // reduced motion: the CSS shows every sentence, so the server and client agree
+  const [on, setOn] = useState(false); // reduced motion and JS off: the CSS shows every card lit
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: '0px -49.5% 0px -49.5%' });
+    const narrow = matchMedia('(max-width: 900px)').matches;
+    const io = new IntersectionObserver(([e]) => setOn(e.isIntersecting), { rootMargin: narrow ? '-45% 0px -45% 0px' : '0px -49.5% 0px -49.5%' });
     io.observe(el);
     return () => io.disconnect();
   }, []);
   return (
     <article ref={ref} className="ia-card" data-on={on || undefined}>
-      <p className="ia-card-n">{String(i + 1).padStart(2, '0')} / 08</p>
+      <div className="ia-card-top">
+        <p className="ia-card-n">{String(i + 1).padStart(2, '0')} / 08</p>
+        <svg className="ia-obj" viewBox="0 0 120 56" width="120" height="56" aria-hidden="true">
+          {OBJ[i].map((p, k) => <path key={k} d={p} style={{ transitionDelay: k * 120 + 'ms' }} />)}
+        </svg>
+      </div>
       <p className="ia-card-big" aria-hidden="true"><span>{big}</span></p>
       <div>
         <h3 className="v2-title">{t}</h3>
@@ -155,52 +149,87 @@ function Fact({ f: [t, d, big], i }) {
   );
 }
 
-/* Beyond: try to steal one. Two holders, one family; a spent token presented by anyone revokes the family.
-   The next move that teaches something is the one solid button; the rest are outlined. */
-function Steal() {
-  const [s, setS] = useState({ n: 1, you: 1, thief: 0, dead: '' });
-  const use = (who) => setS((v) => {
-    if (v.dead) return v;
-    const tok = v[who];
-    if (tok < v.n) return { ...v, dead: who };
-    return { ...v, n: v.n + 1, [who]: v.n + 1 };
-  });
-  const { n, you, thief, dead } = s;
-  const next = dead ? '' : !thief ? 'copy' : you < n ? 'you' : thief < n ? 'thief' : 'thief';
-  const say = dead
-    ? `${dead === 'you' ? 'You' : 'The thief'} presented spent rt${s[dead]}: the whole family is revoked, so a stolen token cannot outlive its session.`
-    : thief ? `The thief holds rt${thief}. Refresh as either of you.` : `You hold rt${you}. Copy it as the thief.`;
+/* the eight facts: a pinned sideways rail (about two and a half screens) that starts and ends with a card in the middle.
+   Phones and reduced motion: the cards stack, every one in the page's own scroll. */
+function FactRail() {
+  const sec = useRef(null);
+  const rail = useRef(null);
+  const [dist, setDist] = useState(0);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
+  const x = useTransform(scrollYProgress, (p) => (calm ? 0 : -dist * Math.min(1, Math.max(0, p))));
+  useEffect(() => {
+    const m = () => { const r = rail.current; if (r) setDist(innerWidth > 900 ? Math.max(0, r.offsetWidth - innerWidth) : 0); };
+    m();
+    const ro = new ResizeObserver(m);
+    rail.current && ro.observe(rail.current);
+    addEventListener('resize', m);
+    return () => { ro.disconnect(); removeEventListener('resize', m); };
+  }, []);
   return (
-    <section className="ia-steal v2-dark" data-room="dark">
-      <div className="v2-wrap v2-grid ia-steal-grid">
-        <div className="ia-steal-copy">
-          <h2 className="v2-display s">Try to steal one</h2>
-          <p className="v2-kick acc ia-steal-cap">Refresh tokens</p>
-          <p className="v2-body">Refresh tokens are single-use and kept only as a hash. Presenting a spent one revokes the whole family.</p>
-        </div>
-        <div className={'ia-steal-box' + (dead ? ' dead' : '')}>
-          <ol className="ia-steal-chain">
-            {Array.from({ length: n }, (_, i) => i + 1).map((k) => (
-              <motion.li key={k} className={dead ? 'dead' : k < n ? 'spent' : 'live'} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-                <b>rt{k}</b><span>{dead ? 'revoked' : k < n ? 'spent' : 'live'}</span>
-                <em>{you === k && 'you'}{you === k && thief === k && ' · '}{thief === k && 'thief'}</em>
-              </motion.li>
-            ))}
-          </ol>
-          <p className="ia-steal-say" aria-live="polite">{say}</p>
-        </div>
-        <div className="ia-steal-acts">
-          <Cta kind={next === 'copy' ? 'solid' : 'quiet'} onClick={() => setS((v) => ({ ...v, thief: v.you }))} disabled={!!dead || !!thief}>Copy it as the thief</Cta>
-          <Cta kind={next === 'you' ? 'solid' : 'quiet'} onClick={() => use('you')} disabled={!!dead}>Refresh as you</Cta>
-          <Cta kind={next === 'thief' ? 'solid' : 'quiet'} onClick={() => use('thief')} disabled={!!dead || !thief}>Refresh as the thief</Cta>
-          <button type="button" className="ia-steal-x" onClick={() => setS({ n: 1, you: 1, thief: 0, dead: '' })}>Start again</button>
+    <section ref={sec} className="ia-fr" aria-label="hanzo.id">
+      <div className="ia-fr-stage">
+        <div className="v2-wrap ia-rail-h"><h2 className="v2-headline">hanzo.id</h2><p className="v2-kick">01 / 08 — 08 / 08</p></div>
+        <div className="ia-fr-view">
+          <motion.ol ref={rail} className="ia-fr-rail" style={{ x }}>
+            {FACTS.map((f, i) => <li key={f[0]}><Fact f={f} i={i} /></li>)}
+          </motion.ol>
         </div>
       </div>
     </section>
   );
 }
 
-const NOJS = '.ia-card .ia-card-d{opacity:1!important}';
+/* the dark room enters as a rounded card inside the gutters and opens to full width as it is reached */
+function Room({ children }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.3'] });
+  const clip = useTransform(scrollYProgress, (p) => { const g = (24 * (1 - Math.min(1, Math.max(0, p)))).toFixed(1); return `inset(0px ${g}px round ${g}px)`; });
+  return <motion.section ref={ref} className="ia-room v2-dark" data-room="dark" style={{ clipPath: clip }}>{children}</motion.section>;
+}
+
+/* Beyond: the refresh family. Press the live token: it is spent and the next one is issued. Press a spent one: the whole
+   family is revoked. Eight places are drawn from the start, so the room never changes height. */
+const MAX = 8;
+function Family() {
+  const [s, setS] = useState({ n: 1, dead: false });
+  const { n, dead } = s;
+  const present = (k) => setS((v) => (v.dead ? v : k < v.n ? { ...v, dead: true } : v.n < MAX ? { ...v, n: v.n + 1 } : v));
+  return (
+    <Room>
+      <div className="v2-wrap v2-grid ia-fam-grid">
+        <div className="ia-fam-copy">
+          <h2 className="v2-headline">Refresh tokens</h2>
+          <p className={'v2-body ia-fam-p' + (dead ? ' dead' : '')}>
+            <span>Refresh tokens are single-use and kept only as a hash. </span>
+            <span className="ia-fam-k">Presenting a spent one revokes the whole family</span>
+            <span>, so a stolen token cannot outlive its session.</span>
+          </p>
+        </div>
+        <div className={'ia-fam-box' + (dead ? ' dead' : '')}>
+          <button type="button" className="ia-fam-x" aria-label="Replay" onClick={() => setS({ n: 1, dead: false })}>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <ol className="ia-fam-track" aria-label="Refresh tokens">
+            {Array.from({ length: MAX }, (_, i) => i + 1).map((k) => {
+              const st = k > n ? 'slot' : dead ? 'dead' : k < n ? 'spent' : 'live';
+              return (
+                <li key={k} className={st}>
+                  {k > 1 && <i className="ia-fam-seg" />}
+                  {k <= n
+                    ? <button type="button" className="ia-tok" aria-label={`Refresh tokens ${k}`} aria-pressed={st === 'live'} disabled={dead} onClick={() => present(k)}><i /></button>
+                    : <span className="ia-tok" aria-hidden="true"><i /></span>}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </div>
+    </Room>
+  );
+}
+
+const NOJS = '.ia-card .ia-card-d{opacity:1!important}.ia-obj path{stroke-dashoffset:0!important}';
 
 export default function Iam() {
   return (
@@ -217,17 +246,11 @@ export default function Iam() {
               <Cta to="https://github.com/hanzoai/iam" kind="link" id="iam.source">Source</Cta>
             </div>
           </div>
-          <Recede><Family /></Recede>
+          <Recede><SignIn /></Recede>
         </div>
       </section>
 
-      <ScrubRail
-        className="ia-rail"
-        label="How hanzo.id signs you in"
-        head={<div className="ia-rail-h"><h2 className="v2-headline">hanzo.id</h2><p className="v2-kick">01 / 08 — 08 / 08</p></div>}
-        items={FACTS}
-        card={(f, i) => <Fact f={f} i={i} />}
-      />
+      <FactRail />
 
       <ShipPrompt
         name="IAM"
@@ -237,7 +260,7 @@ export default function Iam() {
         flip
       />
 
-      <Steal />
+      <Family />
 
       <GetIt name="IAM" tag="Identity + access (hanzo.id)" seed="iam" data={[256, 65, 3]} repo={['hanzoai/iam', 'https://github.com/hanzoai/iam']} stars="3 stars" ask={['API reference', 'https://docs.hanzo.ai/docs/openapi/iam', 'iam.close']} />
     </main>

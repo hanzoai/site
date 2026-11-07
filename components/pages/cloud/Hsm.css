@@ -124,7 +124,7 @@
 .hs-pick-p { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); margin: 27px 0 0; border-radius: 24px; background: #f5f5f5; overflow: hidden; }
 .hs-pick-main { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; gap: 17px; padding: 27px 27px 27px 0; }
 .hs-pick-obj { position: relative; height: 300px; }
-.hs-pick-obj .hm { --s: 150px; }
+.hs-pick-obj .hm { --s: 150px; --gk: 1.7; }
 .hs-pick-obj .hm-name { font-size: 14px; }
 /* the picker draws the module as line art (the hero's is solid silver, the stage's is dark): hollow plates, the layer
    that answers for this module filled in ink */
@@ -189,7 +189,7 @@
   .hs-pick-p { grid-template-columns: minmax(0, 1fr); border-radius: 20px; }
   .hs-pick-main { grid-template-columns: minmax(0, 1fr); padding: 0 20px 20px; gap: 0; }
   .hs-pick-obj { height: 200px; }
-  .hs-pick-obj .hm { --s: 110px; }
+  .hs-pick-obj .hm { --s: 110px; --gk: 1.5; }
   .hs-pick-name { font-size: 21px; }
   .hs-pick-key dd { font-size: 17px; }
   .hs-pick-rows { padding: 0 20px 10px; border-left: 0; }

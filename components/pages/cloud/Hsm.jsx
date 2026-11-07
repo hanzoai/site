@@ -6,7 +6,7 @@
 // Signature: the module, exploded: a plate stack that signs in the hero and opens layer by layer as the facts are read.
 // Beyond: Pick your module: where its key lives, threshold signing and ML-DSA-65 per module, in Hanzo's words.
 /* HSM (v2, archetype A Launch).
-   V2: 8/10 round 2: the hero paints at its final size (lede and ask on screen at once) and recedes on scroll; chapter counters are captions under the words, dots name their step; pick-your-module is one 8/5 sheet whose plate stack, name and words change per tab (phone: a snapping rail); no white bands; deck greys only, one ask.
+   V2: 8/10 round 3: one hero style on server and client (no reduced-motion hydration diff); the hero signs from the first second (a bead runs bytes → key → signature) and tilts to a fine pointer; phone keeps the stage as one sticky module with the chapters swapping beneath it; dots ring on hover with their name below the row; 26px section heads with stepped gaps; the picker draws each module as line art with its own lit layers and cross-fades; deck greys only, one ask.
    Signature: the module, exploded. One hardware module drawn as a stack of plates (the handle Hanzo holds, the
    boundary, the key, the firmware, the module itself). In the hero it is closed and signing: key id and bytes go in, a
    signature comes out, and the module under the interface changes (AWS KMS, Azure Key Vault, Google Cloud KMS, a Zymbit
