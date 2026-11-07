@@ -2,7 +2,7 @@
 
 Page file: `components/pages/apps/Flow.jsx` · gallery: `docs/gallery/flow/` · metric id: `app_handoff`
 
-Open copy questions for James: none (node names are Hanzo's own component list; "received"/"returned" and "in"/"out" are the playground's UI labels from Hanzo's "shows what each one received and returned").
+Open copy questions for James: "Step through it" is both a chapter heading and the playground's heading (kept both, live wording). Shared request: the phone header keeps a solid "Try Hanzo" beside the hero's solid "Open Flow", and is clipped at 320 (shared chrome). Node names are Hanzo's own component list; "received"/"returned" and "in"/"out" are the playground's UI labels from Hanzo's "shows what each one received and returned").
 Shared changes requested (`docs/requests/<page>.md`): none; `lib/cta.js` is not on main yet, so the ask label is the live hero's own "Open Flow".
 Forks this page deleted: the v1 hand-written `Hero`, the props accordion, the `Get` block from cloud/Frame, `Rise` fade-ups, raw `.x-btn` asks and the wrapping data-thumb spans (now kit `Cta`), the duplicate desktop `AskBar`.
 

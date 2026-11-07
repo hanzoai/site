@@ -14,7 +14,7 @@
    ways (REST, JSON, MCP) as tabs.
    Not only scroll: the run is idle motion; the playground answers the hand; the facts open (state); chapters are scroll.
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
-V2: 8/10 the dotted canvas is the hero with the run travelling it and a Pause (h1 52 among the nodes); six sticky chapters step the run with its inspector; a graphite playground steps it by hand; four facts are nodes that open (REST into three tabs); the close is the two commands and one ask; deck colours, radii and scale, outlined nodes, no springs
+V2: 8/10 round 2: words on the left 5 columns with the h1 near 38%, the running canvas on the right 8 and its inspector docked under it; the pinned chapter graph now builds one node per chapter (phones: one sticky mini-graph that follows the chapter); nodes carry a mono index, not an icon box, and never truncate; the fact figures take turns being the big one; Python and :7860 open onto their own object; a quiet closing band with the one ask, then the footer; deck hover greys
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -25,8 +25,8 @@ import BizAsk from '../../v2/BizAsk';
 import { useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
 import BizLines from '../../v2/BizLines';
-import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
+import FlowChapters from './flow/FlowChapters';
 import './Flow.css';
 
 const APP = 'https://flow.hanzo.ai';
@@ -36,16 +36,16 @@ const DEPLOY = 'https://platform.hanzo.ai/deploy';
 
 /* the components, what each received and what it returned */
 const NODES = [
-  { t: 'Document loader', r: 'a file', o: 'documents', d: 'M4 1.8h5.2L12.5 5v9.2H4zM9 1.8V5.2h3.4M6 8h4.5M6 10.5h4.5' },
-  { t: 'Text splitter', r: 'documents', o: 'chunks', d: 'M2.5 3.5h11M2.5 6.5h11M2.5 9.5h5M2.5 12.5h5M10.5 9l3 2-3 2' },
-  { t: 'Vector store', r: 'chunks', o: 'stored vectors', d: 'M3 4c0-1 2.2-1.8 5-1.8s5 .8 5 1.8v8c0 1-2.2 1.8-5 1.8S3 13 3 12zM3 4c0 1 2.2 1.8 5 1.8S13 5 13 4M3 8c0 1 2.2 1.8 5 1.8s5-.8 5-1.8' },
-  { t: 'Retriever', r: 'a question', o: 'matching chunks', d: 'M7 2.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9ZM10.5 10.5 14 14' },
-  { t: 'Model', r: 'question and chunks', o: 'an answer', d: 'M8 1.8 13.5 5v6L8 14.2 2.5 11V5zM2.5 5 8 8l5.5-3M8 8v6.2' },
-  { t: 'Output parser', r: 'an answer', o: 'structured output', d: 'M5.5 2.5c-1.6 0-2 .8-2 2.2v1.6c0 1-.6 1.7-1.5 1.7.9 0 1.5.7 1.5 1.7v1.6c0 1.4.4 2.2 2 2.2M10.5 2.5c1.6 0 2 .8 2 2.2v1.6c0 1 .6 1.7 1.5 1.7-.9 0-1.5.7-1.5 1.7v1.6c0 1.4-.4 2.2-2 2.2' },
+  { t: 'Document loader', r: 'a file', o: 'documents' },
+  { t: 'Text splitter', r: 'documents', o: 'chunks' },
+  { t: 'Vector store', r: 'chunks', o: 'stored vectors' },
+  { t: 'Retriever', r: 'a question', o: 'matching chunks' },
+  { t: 'Model', r: 'question and chunks', o: 'an answer' },
+  { t: 'Output parser', r: 'an answer', o: 'structured output' },
 ];
 // where each node sits on a canvas (% of its width and height): desktop, then phone
 const LAY = {
-  hero: [[[11, 24], [31, 15], [51, 25], [70, 15], [88, 31], [86, 66]], [[23, 42], [77, 42], [77, 56], [23, 56], [23, 70], [77, 70]]],
+  hero: [[[52, 17], [70, 11], [88, 20], [87, 46], [69, 40], [52, 49]], [[23, 39], [77, 39], [77, 53], [23, 53], [23, 67], [77, 67]]],
   snake: [[[17, 18], [50, 18], [83, 18], [83, 64], [50, 64], [17, 64]], [[22, 16], [78, 16], [78, 50], [22, 50], [22, 84], [78, 84]]],
   row: [[[9, 36], [25.4, 66], [41.8, 36], [58.2, 66], [74.6, 36], [91, 66]], [[22, 16], [78, 16], [78, 50], [22, 50], [22, 84], [78, 84]]],
 };
@@ -89,7 +89,7 @@ function useRun(live, calm, on = true) {
 const nodeOf = (s) => (s >= END ? 5 : Math.floor(s / 2));
 
 /* The graph on a canvas. s is the run's step; lit picks out one node; pick makes nodes tappable. */
-function Graph({ lay, s, lit = -1, pulse = true, pick, cls = '' }) {
+function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }) {
   const box = useRef(null);
   const [dim, setDim] = useState(null);
   useEffect(() => {
@@ -110,10 +110,10 @@ function Graph({ lay, s, lit = -1, pulse = true, pick, cls = '' }) {
   const go = s < END && s % 2 ? (s - 1) / 2 : -1;
   const Tag = pick ? 'button' : 'div';
   return (
-    <div ref={box} className={'fl-g fl-' + lay + ' ' + cls}>
+    <div ref={box} className={'fl-g fl-lay-' + lay + ' ' + cls}>
       <svg className="fl-edges" width={dim?.w || 0} height={dim?.h || 0} aria-hidden="true">
         {E.map((e, i) => (
-          <g key={i} className={s > 2 * i + 1 ? 'done' : go === i ? 'go' : ''}>
+          <g key={i} className={(s > 2 * i + 1 ? 'done' : go === i ? 'go' : '') + (i >= upto ? ' off' : '')}>
             <path d={e.d} />
             <circle cx={e.p0[0]} cy={e.p0[1]} r="4.5" /><circle cx={e.p3[0]} cy={e.p3[1]} r="4.5" />
           </g>
@@ -127,10 +127,11 @@ function Graph({ lay, s, lit = -1, pulse = true, pick, cls = '' }) {
         const done = s > 2 * i;
         return (
           <Tag key={n.t} {...(pick ? { type: 'button', onClick: () => pick(i), 'aria-pressed': lit === i, 'aria-label': n.t } : {})}
-            className={'fl-node' + (run ? ' run' : '') + (done ? ' done' : '') + (lit === i ? ' lit' : '')}
+            className={'fl-node' + (run ? ' run' : '') + (done ? ' done' : '') + (lit === i ? ' lit' : '') + (i > upto ? ' off' : '')}
+            aria-hidden={i > upto || undefined}
             style={{ '--x': LAY[lay][0][i][0] + '%', '--y': LAY[lay][0][i][1] + '%', '--px': LAY[lay][1][i][0] + '%', '--py': LAY[lay][1][i][1] + '%' }}>
             <span className="fl-node-h">
-              <i className="fl-node-i"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d={n.d} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" strokeLinecap="round" /></svg></i>
+              <span className="fl-node-n x-mono" aria-hidden="true">{two(i + 1)}</span>
               <b>{n.t}</b>
             </span>
             <span className="fl-node-o x-mono">{done ? <><em>out</em>{n.o}</> : run ? <><em>in</em>{n.r}</> : <><em>in</em>{n.r}</>}</span>
@@ -209,24 +210,26 @@ const PROPS = [
 
 function Chapters() {
   return (
-    <BizChapters
+    <FlowChapters
       label="The canvas is not the ceiling"
-      className="fl-ch"
-      items={PROPS.map(([t, d], i) => ({
-        k: NODES[i].t, t, d,
-        x: <p className="fl-io x-mono"><span><em>received</em> {NODES[i].r}</span><span><em>returned</em> {NODES[i].o}</span></p>,
-      }))}
+      items={PROPS.map(([t, d]) => ({ t, d }))}
       stage={(at) => (
         <div className="fl-ch-stage">
-          <Graph lay="snake" s={2 * at + 1} lit={at} pulse={false} cls="fl-board" />
+          <Graph lay="snake" s={2 * at + 1} lit={at} upto={at} pulse={false} cls="fl-board" />
           <Inspect s={2 * at + 1} i={at} cls="fl-ch-insp" />
+        </div>
+      )}
+      mini={(at) => (
+        <div className="fl-mini-g">
+          <ol>{NODES.map((n, k) => <li key={n.t} className={k === at ? 'on' : k < at ? 'done' : ''}><span className="x-mono">{two(k + 1)}</span></li>)}</ol>
+          <p><b>{NODES[at].t}</b><span className="x-mono"><em>received</em> {NODES[at].r} <i>→</i> <em>returned</em> {NODES[at].o}</span></p>
         </div>
       )}
     >
       <header className="bz-wrap fl-ch-head">
         <BizLines className="bz-headline" lines={['The canvas is not the ceiling']} />
       </header>
-    </BizChapters>
+    </FlowChapters>
   );
 }
 
@@ -301,10 +304,27 @@ function Ways() {
 const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
 /* Four facts, each a node on the strip that opens into its own page (synchronized.studio). */
+/* A component, as the canvas draws it: a Python class with an input and an output. */
+const PyNode = () => (
+  <div className="fl-pyn" aria-hidden="true">
+    <span className="fl-fact-port in" /><span className="fl-fact-port out" />
+    <p className="fl-pyn-h"><span className="x-mono">02</span><b>Text splitter</b><em className="x-mono">Python</em></p>
+    <p className="fl-pyn-r x-mono"><span>received</span><b>documents</b></p>
+    <p className="fl-pyn-r x-mono"><span>returned</span><b>chunks</b></p>
+  </div>
+);
+/* The two commands, as the terminal at the close shows them. */
+const Term = ({ copy }) => (
+  <div className="fl-term">
+    <div className="fl-term-bar"><span aria-hidden="true"><i /><i /><i /></span><span className="x-mono">terminal</span>{copy && <Copy text={'uv pip install hanzoflow\nuv run hanzoflow run'} />}</div>
+    <pre className="x-mono"><span className="fl-cmd"><i>$</i>uv pip install hanzoflow</span>{'\n'}<span className="fl-cmd"><i>$</i>uv run hanzoflow run</span>{'\n'}<span className="fl-out">→ 127.0.0.1:7860<span className="fl-caret" /></span></pre>
+  </div>
+);
+
 const FACTS = [
-  { id: 'py', f: 'Python', t: 'Every component', d: 'A component is a Python class. Edit it in the browser and the change is live on the next run — no rebuild, no plugin format, no waiting for someone to add the parameter you need.' },
+  { id: 'py', f: 'Python', t: 'Every component', d: 'A component is a Python class. Edit it in the browser and the change is live on the next run — no rebuild, no plugin format, no waiting for someone to add the parameter you need.', x: <PyNode /> },
   { id: 'rest', f: 'REST', t: 'Or JSON, or MCP', d: 'As a REST endpoint, as JSON your Python app loads directly, or as an MCP server — after which the flow is a tool your coding agent can call.', x: <Ways /> },
-  { id: 'port', f: ':7860', t: 'On your machine', d: 'uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.' },
+  { id: 'port', f: ':7860', t: 'On your machine', d: 'uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.', x: <Term /> },
   { id: 'mit', f: 'MIT', t: 'Self-hosted', x: <><div className="fl-chips"><span className="fl-chip"><span>License:</span> Apache-2.0</span><A to={GH} className="fl-chip"><Gh />hanzoai</A></div><div className="fl-get-links"><More to={GH}>View on GitHub</More><More to={DEPLOY}>Deploy to Cloud</More></div></> },
 ];
 
@@ -330,16 +350,27 @@ function useWires(ref) {
 function Facts() {
   const ref = useRef(null);
   const w = useWires(ref);
+  const [sec, live] = useLive(0.4);
+  const [big, setBig] = useState(0);
+  const [hand, setHand] = useState(false);
+  // one figure is the moment at a time: it walks the wire by itself while seen; a pointer or focus takes it over
+  useEffect(() => {
+    if (!live || hand) return;
+    const t = setTimeout(() => setBig((b) => (b + 1) % FACTS.length), 2400);
+    return () => clearTimeout(t);
+  }, [big, live, hand]);
+  const take = (e) => { const c = e.target.closest?.('.fl-facts > li'); if (!c) return; setHand(true); setBig([...c.parentNode.children].indexOf(c)); };
   return (
-    <section className="bz-sec fl-facts-sec" aria-label="Flow in four facts">
-      <div ref={ref} className="bz-wrap fl-strip">
+    <section ref={sec} className="bz-sec fl-facts-sec" aria-label="Flow in four facts">
+      <div ref={ref} className="bz-wrap fl-strip" onPointerOver={(e) => e.pointerType === 'mouse' && take(e)} onPointerLeave={() => setHand(false)} onFocus={take} onBlur={() => setHand(false)}>
         <svg className="fl-wires" width="100%" height={w.h} aria-hidden="true">{w.d.map((d, k) => <path key={k} d={d} />)}</svg>
-        <BizOpen label="Flow in four facts" className="fl-facts" cardClass="fl-fact" items={FACTS.map((x) => ({
+        <BizOpen label="Flow in four facts" className="fl-facts" cardClass="fl-fact" items={FACTS.map((x, k) => ({
           id: x.id,
+          className: big === k ? 'big' : undefined,
           label: x.f + ', ' + x.t,
           card: <><span className="fl-fact-port in" aria-hidden="true" /><b className="bz-fig">{x.f}</b><span className="fl-fact-t">{x.t}</span><span className="fl-fact-port out" aria-hidden="true" /></>,
           panel: (
-            <div className={'fl-fp' + (x.id === 'rest' ? ' wide' : '')}>
+            <div className={'fl-fp' + (x.x && x.id !== 'mit' ? ' wide' : '')}>
               <div className="fl-fp-copy">
                 <b className="bz-fig">{x.f}</b>
                 <h3 className="bz-title">{x.t}</h3>
@@ -379,15 +410,26 @@ function End() {
         <div className="fl-end-copy">
           <BizLines id="fl-end-h" className="bz-display md" lines={['Run it', 'locally first']} />
           <p className="bz-body">uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.</p>
-          <div className="bz-acts"><BizAsk to={APP} cta="flow.close">Open Flow</BizAsk></div>
         </div>
-        <div className="fl-term">
-          <div className="fl-term-bar"><span aria-hidden="true"><i /><i /><i /></span><span className="x-mono">terminal</span><Copy text={'uv pip install hanzoflow\nuv run hanzoflow run'} /></div>
-          <pre className="x-mono"><span className="fl-cmd"><i>$</i>uv pip install hanzoflow</span>{'\n'}<span className="fl-cmd"><i>$</i>uv run hanzoflow run</span>{'\n'}<span className="fl-out">→ 127.0.0.1:7860<span className="fl-caret" /></span></pre>
-        </div>
+        <Term copy />
       </div>
       <div className="bz-wrap">
-        <A to={GH} className="fl-row"><span>View on GitHub</span><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
+        <A to={GH} className="fl-gh"><span>View on GitHub</span><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
+      </div>
+    </section>
+  );
+}
+
+/* The closing band: the page's own line, the one ask, nothing after it but the footer. A run crosses it once. */
+function Close() {
+  const [ref, live, calm] = useLive(0.5);
+  const [s] = useRun(live, calm);
+  return (
+    <section ref={ref} className="fl-band" aria-labelledby="fl-band-h">
+      <ol className="fl-band-run" aria-hidden="true">{NODES.map((n, k) => <li key={n.t} className={s > 2 * k ? 'done' : s === 2 * k ? 'run' : ''}><span className="x-mono">{two(k + 1)}</span></li>)}</ol>
+      <div className="bz-wrap fl-band-in">
+        <h2 id="fl-band-h" className="bz-display md">Build an AI workflow on a canvas, ship it as an API</h2>
+        <div className="bz-acts"><BizAsk to={APP} cta="flow.close">Open Flow</BizAsk><More to={DOCS}>Documentation</More></div>
       </div>
     </section>
   );
@@ -403,6 +445,7 @@ export default function Flow() {
       <Facts />
       <GetFlow />
       <End />
+      <Close />
     </main>
   );
 }
