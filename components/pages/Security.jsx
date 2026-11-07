@@ -21,7 +21,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
-import { A, More } from '../kit';
+import { A, Cta, More } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import SceneWipe from '../v2/SceneWipe';
 import Sheet from './security/Sheet';
@@ -95,7 +95,7 @@ function Hero({ pick }) {
           <p className="pf-kick xsc-cap">Security Architecture</p>
           <p className="pf-lede">Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</p>
           <div className="xsc-acts">
-            <A to="/contact" className="pf-btn solid" data-thumb="Talk to Security Team" data-cta="security.hero">Talk to Security Team</A>
+            <Cta to="/contact" id="security.hero" thumb>Talk to Security Team</Cta>
             <More to="https://docs.hanzo.ai/docs/cli/security">Security Documentation</More>
           </div>
           <p className="xsc-audit">
@@ -322,7 +322,7 @@ function Dark() {
           <div className="xsc-ask-r">
             <p className="pf-lede">Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure.</p>
             <div className="xsc-ask-acts">
-              <A to="/contact" className="pf-btn solid xsc-light" data-cta="security.band">Talk to Security Team</A>
+              <Cta to="/contact" id="security.band" className="xsc-light">Talk to Security Team</Cta>
               <More to="/contact-sales">Schedule Security Review</More>
             </div>
             <p className="xsc-note"><A to="/login">Try Hanzo</A> · <A to="https://docs.hanzo.ai/docs/cli/security">Read the security documentation</A></p>

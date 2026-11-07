@@ -176,9 +176,9 @@
 .xsc-ask .pf-lede { margin-bottom: 27px; }
 .xsc-ask-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 17px 27px; }
 .xsc-dark .x-arrow { color: #fafafa; }
-.pf-btn.xsc-light { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
-.pf-btn.xsc-light { transition: background-color var(--f) var(--pf-out), transform var(--f) var(--pf-out); }
-@media (hover: hover) { .pf-btn.xsc-light:hover { background: var(--brand); transform: translate3d(0, -2px, 0); } }
+.x-btn.xsc-light { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+.x-btn.xsc-light { transition: background-color var(--f) var(--pf-out), transform var(--f) var(--pf-out); }
+@media (hover: hover) { .x-btn.xsc-light:hover { background: var(--brand); transform: translate3d(0, -2px, 0); } }
 .xsc-note { margin: 17px 0 0; font-size: 14px; color: #a3a3a3; }
 .xsc-note a { color: #fafafa; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-underline-offset var(--f) var(--pf-out); }
 @media (hover: hover) { .xsc-note a:hover { text-underline-offset: 6px; } }
@@ -245,3 +245,7 @@
 /* the sheet is a native dialog inside the black room: its contents read in ink on paper */
 .xsc-dark .pf-sheet .x-arrow { color: var(--ink); }
 .xsc-dark .pf-sheet :focus-visible { outline-color: var(--ink); }
+@media (max-width: 899px) {
+  /* every text link gets a 44px target on touch */
+  .xsc .x-arrow, .xsc-note a { display: inline-flex; align-items: center; min-height: 44px; }
+}
