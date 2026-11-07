@@ -9,7 +9,7 @@
    Signature: the reading thread. A margin rail holds the chapter you are in as a numeral that hands over to the next,
    and a spine that fills as you read, each chapter a knot (on a phone, a reading bar that opens the contents).
    Beyond: minutes left. The post's own stated read time counts down as you read, and any chapter is one press away.
-   V2: 8/10 round 3: one ask everywhere (header outlined from first paint while the post's own ask shows; on phones the ask rides in the chapter bar and the shared rising bar never floats over text); "Back to Blog / <chip>" breadcrumb under the h1; each post's data sets its rhythm (a figures post mirrors the scene, counts its figures with the scroll and keeps its rail on the right); synthesis parts lead with one large film and list the rest. Round 2: CSS title cut-in, poster drift, chapter gists, counter on every scroll */
+   V2: 8/10 round 4: Life cells sized to their tracks (a real grid); closing band drawn page-locally with a line-mask cut-in (no blur); gradient under Kai's figures; synthesis chapters 02/03 get the board's own collision and the glider emblem; reduced motion shows the hero art beside the title; Frontier sources on one caption line; next-post hover raises the tag and read time. Round 3: one ask everywhere (header outlined from first paint while the post's own ask shows; on phones the ask rides in the chapter bar and the shared rising bar never floats over text); "Back to Blog / <chip>" breadcrumb under the h1; each post's data sets its rhythm (a figures post mirrors the scene, counts its figures with the scroll and keeps its rail on the right); synthesis parts lead with one large film and list the rest. Round 2: CSS title cut-in, poster drift, chapter gists, counter on every scroll */
 // Persona: a developer or founder reading Hanzo's thinking (arrives from /blog, search or a shared link)
 // Goal: finish the post, understand its one idea, take the post's own next step
 // CTA: the post's first closing link as the one solid ask (hero, data-thumb, data-cta "blog-post.hero"), repeated in the closing Band
@@ -18,8 +18,8 @@
 // Beyond: minutes left: the post's own read time counting down as you read, with a jump to any chapter
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
-import { EASE } from '../../ui';
-import { A, Band, Cta, CodeBlock, Film as KitFilm, Img, Tabs, TabPanel } from '../../kit';
+import { EASE, Magnetic } from '../../ui';
+import { A, Cta, CodeBlock, Film as KitFilm, Img, Tabs, TabPanel } from '../../kit';
 import Sigil from '../../Sigil';
 import Gist, { gist } from './Gist';
 import Life from './Life';
@@ -234,6 +234,7 @@ function Stage({ doc, nums, ask, alt }) {
               {ask && <div className="xbg-ask"><Cta to={ask.href} id="blog-post.hero" thumb>{ask.label}</Cta></div>}
             </div>
             <i className="xbg-slot" ref={slot} aria-hidden="true" />
+            <span className="xbg-rest" aria-hidden="true">{doc.film ? <Img src={film(doc.film, 'webp')} alt="" w={1200} h={1500} /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}</span>
           </div>
         </motion.div>
       </div>
@@ -317,7 +318,46 @@ function Thread({ doc, chapters, body, ask }) {
 
 const Chevron = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* the close: the sources, the other posts as cards that open into their page, then the Band with the post's own ask */
+/* The closing band, page-local: the kit Band reveals its headline word by word with opacity and blur (against MASTER
+   part 9), so this draws the same .x-band (same look, same words) with the headline cut in by line mask when it
+   arrives, the post's own ask as a kit Cta (magnetic, as the Band's was) and the other closing links beside it.
+   Request to the kit owner: docs/requests/blog-family.md. */
+function Close({ cta }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.dataset.in = 'true'; io.disconnect(); } }, { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const words = cta.label.split(' ');
+  return (
+    <section className="x-band xbg-band" data-room="dark" ref={ref}>
+      <div className="x-wrap">
+        <h2 className="xbg-band-h">
+          <span className="x-sr">{cta.label}</span>
+          {words.map((w, i) => (
+            <Fragment key={i}>
+              <span className="xbg-bm" aria-hidden="true"><span className="xbg-bi" style={{ '--i': i }}>{w}</span></span>
+              {i < words.length - 1 ? ' ' : ''}
+            </Fragment>
+          ))}
+        </h2>
+        <div className="x-band-act">
+          <Magnetic><Cta to={cta.links[0].href} id="blog-post.close-1" size="lg">{cta.links[0].label}</Cta></Magnetic>
+          {cta.links.length > 1 && (
+            <span className="xbg-band-more">
+              {cta.links.slice(1).map((l, i) => <A key={l.href} to={l.href} className="x-arrow" data-cta={'blog-post.close-' + (i + 2)}><span>{l.label}</span><Chevron /></A>)}
+            </span>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* the close: the sources, the other posts as cards that open into their page, then the band with the post's own ask */
 function End({ doc, cta, sources }) {
   return (
     <>
@@ -334,7 +374,10 @@ function End({ doc, cta, sources }) {
               {doc.next.map((n, i) => (
                 <li key={n.href} className={i === 0 ? 'big' : ''}>
                   <A to={n.href} className="xbg-card" data-cta={'blog-post.next-' + (i + 1)}>
-                    <span className="xbg-card-art">{n.film ? <Img src={film(n.film, 'webp')} alt="" w={1200} h={1500} /> : <Sigil seed={n.href} data={[parseInt(n.read, 10) || 0, n.title.length]} className="xbg-sigil" />}</span>
+                    <span className="xbg-card-art">
+                      {n.film ? <Img src={film(n.film, 'webp')} alt="" w={1200} h={1500} /> : <Sigil seed={n.href} data={[parseInt(n.read, 10) || 0, n.title.length]} className="xbg-sigil" />}
+                      <span className="xbg-card-peek x-mono" aria-hidden="true"><span>{n.chip}</span><span>{n.read}</span></span>
+                    </span>
                     <span className="xbg-card-t" data-morph>{n.title}</span>
                     <span className="xbg-card-k x-mono"><span>{n.chip}</span><span>{n.date}</span><span className="xbg-card-r">{n.read}</span></span>
                   </A>
@@ -344,14 +387,7 @@ function End({ doc, cta, sources }) {
           )}
         </div>
       </section>
-      {cta && (
-        <Band title={cta.label} action={cta.links[0].label} to={cta.links[0].href}
-          note={cta.links.length > 1 ? (
-            <span className="xbg-band-more">
-              {cta.links.slice(1).map((l, i) => <A key={l.href} to={l.href} className="x-arrow" data-cta={'blog-post.close-' + (i + 2)}><span>{l.label}</span><Chevron /></A>)}
-            </span>
-          ) : null} />
-      )}
+      {cta && <Close cta={cta} />}
     </>
   );
 }
@@ -368,6 +404,12 @@ export default function Post({ doc }) {
     else if (chapters.length) chapters[chapters.length - 1].blocks.push({ b, i });
   });
   chapters.forEach((c) => { c.gist = gist(c.blocks); });
+  // a post that holds the Game of Life gives its other text-only chapters the board's own moves: the collision, then
+  // the glider alone as the emblem (after the chapter's first paragraph)
+  if (doc.body.some((b) => b.k === 'figure' && b.kind === 'life')) {
+    const kinds = ['collide', 'emblem'];
+    chapters.forEach((c) => { if (!c.gist && c.blocks.length && c.blocks.every(({ b }) => b.k === 'p') && kinds.length) c.gist = { kind: kinds.shift(), after: 0 }; });
+  }
   const nums = [doc.minutes, doc.title.length];
   const ask = cta && cta.links[0];
   // each post's own data sets its rhythm: a post whose plate holds figures (Kai) mirrors the scene (film card on the

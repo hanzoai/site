@@ -69,11 +69,14 @@ export default function Frontier({ f }) {
           return (
             <li key={i}>
               <button type="button" aria-pressed={i === at} onClick={() => pick(i)} className={p.kind}>{p.short}</button>
-              {p.href && <A to={p.href} className="xbg-a xbg-chip-src">Source</A>}
             </li>
           );
         })}
       </ul>
+      {/* the reported scores' sources: one caption line under the chart, out of the chip row */}
+      <p className="xbg-srcs">
+        {order.filter((i) => f.dots[i].href).map((i) => <span key={i}>{f.dots[i].short} <A to={f.dots[i].href} className="xbg-a">Source</A></span>)}
+      </p>
     </figure>
   );
 }
