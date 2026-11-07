@@ -1,6 +1,7 @@
 # /desktop coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/DesktopPage.jsx` (+ `DesktopPage.css`, page-local `components/pages/desktop/Lines.jsx`, shared `components/v2/AppType.css`, `AppScenes`, `AppSheet`) · gallery: `docs/gallery/desktop/` · metric id: `desktop_download`
+Page file: `components/pages/DesktopPage.jsx` (+ `DesktopPage.css`, page-local `components/pages/desktop/Lines.jsx`, `Terminal.jsx`, `enter.jsx`, `enter.css`, shared `components/v2/AppType.css`, `AppSheet`)
+Motion map (James, 7 Nov, overrides older motion limits): signature `terminal`; entrances swing-door, domino, inertia-drag, shrink-to-card, page-curl. The pinned chapters (`AppScenes`) are removed; the three points are a plain list. Where the map clashes with MASTER: the thrown agent card snaps back on a spring with a slight overshoot (the map's `inertia-drag`), and shrink-to-card is scroll-linked (it is defined as happening while you leave). · gallery: `docs/gallery/desktop/` · metric id: `desktop_download`
 
 Open copy questions for James: none decided. "Download" goes to Hanzo's own docs page (docs.hanzo.ai/docs/apps/desktop), as on live; the builds themselves are on /download, linked from the spec drawer ("Every build").
 Shared changes requested: `docs/requests/desktop.md` (sticky ask: no request needed, measured working; the AppScenes rail is hidden without JS by design) and `docs/requests/apps1.md` (a `Band` with an `id` prop). The sticky ask: once the hero "Download" leaves view, the shared header's solid swaps to this page's `data-thumb` ask, "Download" (seen at 1470×801, 7 Nov).
@@ -35,7 +36,7 @@ Done here: parity links 9/9. Every link is `A` or `Cta`; the window's app tabs (
 - [x] Ends in proof strip (n/a: no proof figures; the licence and repo sit in the card above the band), `Band` (the page's own closing band, "Download it and build one"), footer
 - [x] Card-to-page links use Morph (the hero window carries `data-morph-target`; /download's Desktop card flies into it)
 
-Done here: At 1470×801 the h1, lede, ask and the whole window (top 232, bottom 772) share the first screen and it assembles and builds at once (film run 4, screen 1 "moves"). JS off, measured: 0 hidden text blocks, including masked headline lines (`html:not(.js)` sets lines in place, opens the notes and lays the spec out inline).
+Done here: At 1470×801 the h1, lede, ask and the whole window (top 232, bottom 772) share the first screen and it assembles and builds at once. Second screen: "What you can build in it" beside the live terminal (the signature). Order: hero window → terminal → three points (one list) → black room → systems → paste and ship → band. JS off, measured: 0 hidden or transformed text blocks (entrance start states are `html.js` only; the terminal's server HTML is the full transcript).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`

@@ -14,14 +14,14 @@
 }
 
 /* hero: a centred statement over the cabinet */
-.xtr-hero { padding: clamp(72px, 7vw, 116px) 0 clamp(44px, 4vw, 72px); }
+.xtr-hero { padding: clamp(72px, 7vw, 116px) 0 clamp(17px, 2vw, 27px); }
 .xtr-hero-top { display: flex; flex-direction: column; align-items: center; text-align: center; margin: 0 auto 44px; }
 .xtr-hero-top .xtr-cap.pf-kick { margin: 17px 0 0; }
 .xtr-hero-top .pf-lede { max-width: 52ch; margin-top: 17px; }
 .xtr-hero-top .pf-btn { margin-top: 27px; }
 @media (hover: hover) { .xtr-hero .pf-btn.solid:hover { background: #262626; border-color: #262626; } }
 
-.xtr-locker { max-width: 1152px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 61.8fr) minmax(0, 38.2fr); border-radius: 24px; background: var(--tile); overflow: hidden; }
+.xtr-locker { position: relative; max-width: 1152px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 61.8fr) minmax(0, 38.2fr); border-radius: 24px; background: var(--tile); overflow: hidden; }
 .xtr-cab-w { padding: 17px 44px 17px 17px; }
 .xtr-locker-h { display: flex; justify-content: space-between; margin: 0; padding: 6.5px 6.5px 17px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); }
 .xtr-locker-h .pf-mono { color: var(--ink); letter-spacing: .04em; font-size: 13px; }
@@ -52,17 +52,19 @@
 .xtr-tray-p .x-arrow { margin-top: auto; padding-top: 10.5px; }
 
 /* papers you can read now: close under the cabinet, so the papers peek in as the cabinet leaves */
-.pf-r .pf-sec.xtr-docs { padding-top: clamp(44px, 5vw, 72px); padding-bottom: clamp(72px, 8vw, 116px); }
+.pf-r .pf-sec.xtr-docs { padding-top: clamp(27px, 3vw, 44px); padding-bottom: clamp(72px, 8vw, 116px); }
 .xtr-docs-g { display: grid; grid-template-columns: minmax(0, 38.2fr) minmax(0, 61.8fr); column-gap: 44px; align-items: center; }
 .xtr-docs-c .pf-body { margin-top: 17px; }
 .xtr-papers { display: grid; grid-template-columns: 1fr 1fr; gap: 27px; padding: 17px 0; }
-.xtr-paper { position: relative; display: flex; flex-direction: column; gap: 17px; min-height: 400px; padding: 27px; border-radius: 16px; background: #fff; box-shadow: var(--float); color: var(--ink); text-decoration: none; transition: transform var(--b) var(--pf-io); }
+.xtr-paper { position: relative; display: flex; flex-direction: column; gap: 17px; min-height: 360px; padding: 27px; border-radius: 16px; background: #fff; box-shadow: var(--float); color: var(--ink); text-decoration: none; transition: transform var(--b) var(--pf-io); }
 .xtr-paper.p0 { transform: rotate(-1.5deg) translate3d(0, 17px, 0); }
 .xtr-paper.p1 { transform: rotate(1.5deg); }
 .xtr-paper:active { transform: rotate(0) translate3d(0, -6px, 0) scale(.97); transition-duration: 90ms; }
 .xtr-paper-k { font-size: 13px; color: var(--quiet); }
 .xtr-paper b { font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.018em; text-wrap: balance; }
-.xtr-paper-d { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; line-height: 1.6; color: var(--mute); }
+/* the page's ruled lines: an object to look at, not words to read twice */
+.xtr-paper-r { display: grid; gap: 13px; margin-top: 10.5px; }
+.xtr-paper-r i { display: block; height: 2px; border-radius: 2px; background: var(--tile2); }
 .xtr-paper-go { display: grid; place-items: center; width: 44px; height: 44px; margin-top: auto; border-radius: 50%; background: var(--tile); color: var(--ink); transition: transform var(--f) var(--pf-out), background-color var(--f) var(--pf-out), color var(--f) var(--pf-out); }
 @media (hover: hover) {
   .xtr-paper:hover { transform: rotate(0) translate3d(0, -6px, 0); }
@@ -162,8 +164,10 @@
   .xtr-fact-b:hover .pf-title { transform: translate3d(4px, 0, 0); }
 }
 @media (min-width: 900px) {
-  /* the section is three and a half screens tall; its stage holds still for the length of it, one stance per step */
-  .xtr-facts { height: 265svh; }
+  /* the section is about two screens tall; its stage holds still for the length of it, one stance per step. It starts
+     under the list above, so the pinned stage arrives without a white screen first (its empty top is click-through) */
+  .xtr-facts { height: 205svh; margin-top: -88px; pointer-events: none; }
+  .xtr-facts-g { pointer-events: auto; }
   .xtr-pin { position: sticky; top: 0; display: flex; align-items: center; height: 100svh; padding-top: 60px; box-sizing: border-box; }
   .xtr-facts-g { display: grid; grid-template-columns: minmax(0, 38.2fr) minmax(0, 61.8fr); grid-template-rows: auto repeat(4, auto) minmax(0, 1fr); column-gap: 44px; align-items: start; }
   .xtr-facts-h { grid-column: 1; grid-row: 1; padding-bottom: 44px; }
@@ -173,10 +177,12 @@
   .xtr-fact:nth-child(2) dt { grid-row: 3; }
   .xtr-fact:nth-child(3) dt { grid-row: 4; }
   .xtr-fact:nth-child(4) dt { grid-row: 5; }
-  .xtr-stage { grid-column: 2; grid-row: 1 / -1; align-self: stretch; align-items: flex-start; min-height: min(520px, calc(100svh - 150px)); padding: 27px 44px; box-sizing: border-box; }
-  .xtr-fact dd { grid-column: 2; grid-row: 1 / -1; align-self: end; z-index: 1; display: flex; flex-direction: column; gap: 10.5px; padding: 44px; opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--b) var(--pf-emph), transform var(--b) var(--pf-emph); pointer-events: none; }
+  .xtr-stage { grid-column: 2; grid-row: 1 / -1; align-self: stretch; align-items: flex-start; padding: 27px 44px; box-sizing: border-box; }
+  .xtr-fact dd { grid-column: 2; grid-row: 1 / -1; align-self: start; z-index: 1; display: flex; flex-direction: column; gap: 10.5px; padding: 64px 44px 44px; opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--b) var(--pf-emph), transform var(--b) var(--pf-emph); pointer-events: none; }
   .xtr-fact[data-on='true'] dd { opacity: 1; transform: none; pointer-events: auto; }
-  .xtr-fact-big { margin-bottom: 6.5px; }
+  /* the index starts small and grows as its stance takes the stage (64 → 84px, a transform), then rests */
+  .xtr .xtr-fact-big { margin-bottom: 6.5px; font-size: 84px; line-height: .9; transform: scale(.762); transform-origin: 0 100%; transition: transform 500ms var(--pf-emph) 90ms; }
+  .xtr-fact[data-on='true'] .xtr-fact-big { transform: none; }
   .xtr-fact-in { max-width: 56ch; }
 }
 
@@ -198,28 +204,45 @@
 @media (hover: hover) { .pf-btn.xtr-light:hover { background: #fff; } }
 
 @media (max-width: 899px) {
-  .xtr-hero { padding: 44px 0 72px; }
-  .xtr-hero-top .pf-btn { width: 100%; height: auto; min-height: 52px; padding: 14px 20px; line-height: 1.25; }
+  .xtr-hero { padding: 44px 0 27px; }
+  /* the ask as an intended slab: one line where it fits, a balanced two-line block with a 16px radius where it does not */
+  .xtr .pf-btn.solid { width: 100%; height: auto; min-height: 56px; padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.25; text-align: center; text-wrap: balance; }
   .xtr-docs-g, .xtr-stand-g, .xtr-facts-g, .xtr-found, .xtr-band { grid-template-columns: minmax(0, 1fr); row-gap: 27px; }
-  .xtr-locker { grid-template-columns: minmax(0, 1fr); border-radius: 16px; }
-  .xtr-cab-w { padding: 17px 30px 17px 10.5px; }
+  /* the cabinet: each drawer one row (number, title, its mark on the same line); the open drawer pulls 8px and its
+     contents ride directly under it (Locker() carries the tray there; the drawers below step down) */
+  .xtr-locker { display: block; padding-bottom: 17px; border-radius: 16px; }
+  .xtr-cab-w { padding: 17px 17px 0 10.5px; }
   .xtr-locker-h { font-size: 12px; letter-spacing: .1em; }
-  .xtr-drawer { grid-template-columns: 26px minmax(0, 1fr); grid-template-rows: auto auto; row-gap: 6.5px; min-height: 64px; padding: 10.5px 36px 10.5px 10.5px; font-size: 15px; }
-  .xtr-dr-n { font-size: 14px; grid-row: span 2; }
-  .xtr-dr-t { white-space: normal; }
-  .xtr-chip { justify-self: start; font-size: 14px; }
-  .xtr-tray { padding: 27px 17px; border-top: 1px solid var(--line); }
+  .xtr-drawer { z-index: 1; grid-template-columns: 20px minmax(0, 1fr) auto; column-gap: 8px; min-height: 56px; padding: 8px 28px 8px 12px; font-size: 15px; line-height: 1.25; }
+  .xtr-dr-n { font-size: 13px; }
+  .xtr-dr-t { white-space: normal; text-wrap: balance; }
+  .xtr-chip { height: 24px; padding: 0 6.5px; gap: 5px; font-size: 13px; }
+  .xtr-handle { right: 10px; width: 12px; }
+  .xtr-tray { margin: 6.5px 17px 0 10.5px; padding: 17px; border: 1px solid var(--line); border-radius: 12px; }
+  .xtr-tray-n, .xtr-tray-p > b { display: none; } /* the drawer right above already says which */
+  .xtr-tray-p { gap: 0; }
+  .xtr-tray-p p { font-size: 15px; line-height: 1.55; }
   .xtr-papers { grid-template-columns: minmax(0, 1fr); gap: 17px; padding: 0; }
-  .xtr-paper { min-height: 0; }
+  .xtr-paper { min-height: 0; gap: 10.5px; padding: 20px; }
+  .xtr-paper b { font-size: 21px; }
+  .xtr-paper-r { display: none; }
+  .xtr-paper-go { position: absolute; right: 13px; top: 13px; }
   .xtr-paper.p0, .xtr-paper.p1 { transform: none; }
   .xtr-say { font-size: 21px; }
-  .xtr-stand-p { grid-template-columns: minmax(0, 1fr); margin-top: 27px; }
+  /* the two follow-ups: a quieter measure beside a hairline, so the room is the inking statement first */
+  .xtr-stand-p { grid-template-columns: minmax(0, 1fr); gap: 13px; margin-top: 27px; padding: 0 0 0 17px; border-top: 0; border-left: 1px solid var(--line); }
+  .xtr-stand-p .pf-body { font-size: 15px; line-height: 1.55; }
+  .pf-r .pf-sec.xtr-stand { padding-top: 56px; padding-bottom: 56px; }
   .xtr-find { grid-template-columns: minmax(0, 1fr) auto; row-gap: 17px; }
   .xtr-find-f { grid-column: 1 / -1; grid-row: 2; }
   .xtr-find-n b { font-size: 44px; }
-  .xtr-grp { grid-template-columns: 40px minmax(0, 1fr); row-gap: 10.5px; padding: 27px 0; }
-  .xtr-grp-n { font-size: 14px; }
-  .xtr-dots { grid-column: 2; justify-content: flex-start; padding-top: 0; }
+  /* the controls: titles run the full width, the + at the row's right edge, the number left to the sheet */
+  .xtr-grp { grid-template-columns: minmax(0, 1fr); row-gap: 10.5px; padding: 20px 0; }
+  .xtr-grp-n { display: none; }
+  .xtr-grp-h { gap: 10.5px; }
+  .xtr-grp-t { order: 1; flex: 1; min-width: 0; }
+  .xtr-grp-h .pf-plus { order: 2; }
+  .xtr-dots { grid-column: 1; justify-content: flex-start; padding-top: 0; }
   .xtr-grp-t { font-size: 21px; }
   .xtr-grp-l, .xtr-ans { margin-left: 0; }
   .xtr-facts-t { font-size: 32px; }
@@ -228,7 +251,7 @@
   .xtr-found-p { font-size: 17px; }
   /* 44px tap heights on the arrow links (tray, the no-match note) */
   .xtr .x-arrow { display: inline-flex; align-items: center; min-height: 44px; }
-  .xtr-tray-p .x-arrow { padding-top: 0; margin-top: 6.5px; }
+  .xtr-tray-p .x-arrow { padding-top: 6.5px; margin-top: auto; }
   /* where we stand: an accordion, one stance open, a + that turns to × */
   .xtr-facts { padding: 72px 0; }
   .xtr-facts-h { margin-bottom: 27px; }
@@ -242,6 +265,7 @@
   .xtr-fact-pm::after { transform: rotate(90deg); }
   .xtr-fact[data-open='true'] .xtr-fact-pm { transform: rotate(45deg); }
   .xtr-fact dd { padding: 0 0 27px 44px; }
+  .xtr-fact dd[hidden] { padding-bottom: 0; } /* a closed row is just its 64px button */
   .xtr-fact-in { font-size: 16px; }
   .pf-plus.xtr-g-btn { min-width: 44px; justify-content: center; }
   .xtr-fact[data-open='true'] .xtr-fact-in { animation: xtr-open var(--b) var(--pf-emph) both; }

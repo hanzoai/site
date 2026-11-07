@@ -33,7 +33,7 @@ Done here: `parity.py /tag` reports links 10/10. The `Go`/`.x-btn` links in the 
 - [ ] Ends in proof strip, `Band`, footer
 - [x] ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards open into pages
 
-Done here: At 375x812 the phone first screen holds the h1, the lede, the solid ask, two text links (WIMSE moved below the docs link) and about 190px of the mention map. After the hero, every section now holds an object: the PR card, the room stage, the Built panel, the see room and the product frames.
+Done here: The hero thread drawer is a fixed 216px (236px phone) instead of the tallest moment's 322px/381px, so no empty black slab; the hero dropped from 1291px to 1082px (bottom padding 56px) and every section uses `clamp(72px, 6.5vw, 96px)`. Page height 9329 → 8432px desktop, 14171 → 12607px phone. Built is now a pinned numbered strip with a sheet under it, so it no longer repeats What's rows-and-stage shape.
 
 ## 4. Conversion system
 - [ ] `<Cta>` only; no raw `.x-btn`
@@ -66,7 +66,7 @@ Done here: The overlapping h3 is fixed: `.xtg-rows h3` rests at 21px with line-h
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` passes, and the "pink accent" wording is gone from the header. The "@" icon chips were removed, and the Built panel became the quiet `#f5f5f5` room, so the dark rooms are only the hero moment panel and the "see" room, not back to back.
+Done here: `taste.py` passes. Off-deck neutrals were mapped to the deck ramp (`#0f0f12`→`#0f0f0f`, `#fbfbfd`→`#fbfbfb`, `#9f9f9f`/`#86868b`/`#a1a1a6`→`#a3a3a3`, `#808080`→`#737373`, `#050506`→`#000`, and the rest likewise). In the see room the verdict is now 21–26px and the "Questions" head is visually hidden, so the 32px h2 is the biggest thing there.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +75,7 @@ Done here: `taste.py` passes, and the "pink accent" wording is gone from the hea
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: On hover the promise captions fill `#f5f5f5` with a 1px underline, and the product frames lift 3px with an ink border. Rows and index buttons press at scale .98 and buttons at .97, each over 90ms.
+Done here: On hover, a platform frame lifts 4px and scales to 1.03 with an ink border, and the cross's centre dot grows. Each frame also changes: the Chrome button swaps to its after-fix render, the tagged channel and PR chip go ink, and the trace steps shift. Frames press at .97, runtime chips at .97 (measured), Built tabs at .97 and see radios at .98, each over 90ms.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,13 @@ Done here: On hover the promise captions fill `#f5f5f5` with a 1px underline, an
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] ~~Sound only on the listed moments, through the one kit~~ n/a: the shared kit owns sounds
 
-Done here: `variety.py` passes with 3 techniques (Sigil, pathLength, useScroll). As the critic asked, the What rows and the Built index now follow scroll and their bars fill with it, and a Built click takes over; the map and the see picker stay the idle movers, and the PR lines wipe in by clip-path. `useEvery` now uses setTimeout instead of setInterval.
+Done here: `variety.py` passes with 3 techniques (Sigil, pathLength, useScroll). No progress cue was removed, but each now has its own shape:
+- The promises count their turn in 7 dots.
+- The What row fills a rail down its left edge as you scroll.
+- The Built number's ring draws (pathLength) as the pinned strip steps.
+- The picked see option's outline wipes round by clip-path.
+
+Long hero moments read themselves upward (transform, 1.4s in-out). Under reduced motion there are 0 running animations after 3s, and a long moment scrolls by hand.
 
 ## 10. Media
 - [x] ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no photos or films; the map, frames and Sigil are drawn
@@ -100,7 +106,13 @@ Done here: The memoji hotlinks were removed (hanzo.ai is unreachable here), so f
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: On the phone, the hero top padding dropped to 84px and the map top shows on the first screen. The rooms' art renders inline under each row, since the side stage hides on phone. A target scan at 375 finds 0 under 44px, and scrollWidth equals the viewport at 320 and 375.
+Done here: The map top shows on the phone's first screen at y=607. The phone layout changed in four places:
+- The four promises and the four platform products are snap rails (84% cards, `scroll-snap-type: x proximity`).
+- Built's tabs are a pill rail pinned with their sheet, so the sheet changes in view.
+- The map's channel labels hang inward above their dots.
+- The window title is hidden under 600px.
+
+A target scan at 375 finds 0 targets under 44px, and scrollWidth is 375.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -117,7 +129,7 @@ Done here: Inactive moments, room stages and Built panels are `aria-hidden` and 
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: The hero moments stack in one grid cell, so the panel is as tall as its tallest moment and nothing below jumps while the map walks; the 520px min-height is gone. New motion animates only transform, opacity and clip-path.
+Done here: The drawer measured 216px on all 12 walk steps, the next section's top held at 1142px, and CLS over a full wheel walk is 0.0006. All new motion animates only transform, opacity, clip-path and SVG pathLength.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -133,7 +145,13 @@ Done here: Route metadata is untouched. All moments and panels stay in the serve
 - [x] ~~Every maker and model page linked in the DOM~~ n/a: not a catalogue
 - [x] ~~One price figure everywhere~~ n/a: no prices
 
-Done here: Not a catalogue. The platform cross keeps its travelling signal and now shows each product's surface as a drawn frame beside its name.
+Done here: Not a catalogue. The platform frames are no longer grey bars; each draws from the page's own data:
+- Tag: the `#bug-button-darkmode` thread with "@Hanzo" and "PR ready".
+- Team: `WINDOW.groups`.
+- Bot: Dev's trace.
+- Chrome: the `VIEW` button in the side-panel browser.
+
+The cross's travelling signal stays, and on phone it runs above the rail.
 
 ## 16. Developer experience
 - [x] ~~One `CodeBlock`; copy equals display~~ n/a: the diff is product UI, not a copyable block
@@ -157,4 +175,4 @@ Done here: 0 console errors from /tag on desktop, phone, 320 and reduced motion.
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more
 
-Done here: The `V2:` line was rewritten for this pass, and `docs/review/tag.md` (6/10) was worked through fixes 1 to 9, with the shared notes filed. A fresh critic verdict is pending.
+Done here: The `V2:` line was rewritten for the second pass. Fixes 1 to 8 of `docs/review/tag.md` (7/10) were worked in order, and the FAQ now opens closed in a quiet `#f5f5f5` room after the see room. A fresh critic verdict is pending.

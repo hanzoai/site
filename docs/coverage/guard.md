@@ -2,7 +2,7 @@
 
 Page file: `components/pages/cloud/Guard.jsx` · gallery: `docs/gallery/guard/` · metric id: `cta_click guard.hero`
 
-Open copy questions for James: none.
+Open copy questions for James: the hero console and the playground show demo DATA that is not Hanzo copy: data-shaped values with no prose (the standard test card number 4111 1111 1111 1111, jane@example.com, the test-key-shaped string sk-test-51Hx9Qb2aZ, the documentation IP 192.0.2.1), so the redaction is visible on arrival. Decided by the page owner (7 Nov) on the rule that demo data may be values, never sentences; James to confirm or replace with Hanzo's own example.
 Shared changes requested (`docs/requests/guard.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, the typing `setInterval`
 

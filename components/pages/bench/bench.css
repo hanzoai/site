@@ -76,6 +76,8 @@
 .xbr-bars ul { margin: 0; padding: 0; list-style: none; }
 .xbr-bars li { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 20px; grid-template-areas: 'l va' 'ba ba'; align-items: center; gap: 4px 16px; padding: 11px 2px; border-bottom: 1px solid var(--xbr-hl); cursor: default; }
 .xbr-bars.chart li { grid-template-areas: 'l l' 'ba va'; }
+.xbr-bars:not(.vs) li { grid-template-columns: minmax(0, 1fr) var(--xbr-vw, 8ch); }
+.xbr-bars:not(.vs) .xbr-v { justify-self: stretch; text-align: right; }
 .xbr-bars.vs li, .xbr-bars.vs.chart li { grid-template-rows: auto auto auto; grid-template-areas: 'l l' 'ba va' 'bb vb'; }
 .xbr-bars li.none { opacity: .45; }
 .xbr-bl { grid-area: l; font-size: 15px; line-height: 1.35; color: var(--ink); overflow-wrap: anywhere; }
@@ -138,7 +140,8 @@
 .xbr-cmd .x-copy:hover { color: #fff; }
 
 /* facts: a spec line under the stage */
-.xbr-facts-s { padding: clamp(24px, 3vw, 48px) 0 clamp(40px, 5vw, 72px); }
+.xbr-facts-s { padding: 0 0 clamp(24px, 3vw, 40px); }
+.xbr-stage { padding-bottom: clamp(56px, 6vw, 96px); }
 .xbr-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 0 var(--gut); margin: 0; }
 .xbr-facts > div { padding: 20px 0; border-top: 1px solid var(--ink); }
 .xbr-facts dt { font: 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
@@ -278,7 +281,7 @@
 .xbr-more .xbr-chip { background: none; padding: 0; font: 500 13px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-top: 16px; }
 
 @media (max-width: 900px) {
-  .xbr-stage { padding: 8px 0 120px; }
+  .xbr-stage { padding: 8px 0 56px; }
   .xbr-sigil { width: 130vw; right: -40%; height: 520px; }
   .xbr-head, .xbr-side, .xbr-intro-c, .xbr-intro-n { grid-column: 1 / -1; }
   .xbr-head { gap: 8px; }
@@ -338,9 +341,14 @@
 .xbr-ch-fig { position: relative; min-height: 420px; }
 .xbr-ch-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: currentColor; opacity: .5; }
 .xbr-ch-fig .xbr-ch-q { position: absolute; left: 0; bottom: 0; padding: clamp(24px, 3vw, 40px); font-size: 21px; max-width: 18ch; }
-/* chapter tables fit their cell: cells wrap instead of running off the right edge */
-.xbr-ch-v .x-table th, .xbr-ch-v .x-table td, .xbr-one-t .x-table th, .xbr-one-t .x-table td { white-space: normal; overflow-wrap: anywhere; min-width: 0; padding: 12px 14px; font-size: 14px; }
-.xbr-ch-v .x-table thead th, .xbr-one-t .x-table thead th { white-space: nowrap; }
+/* tables never break a value or a name: cells stay on one line; the first column (the row's name) is pinned by the kit
+   and the rest scrolls inside the table's own frame, with a fade at the right edge while there is more to see */
+.xbr-dt .x-table th, .xbr-dt .x-table td { white-space: nowrap; padding: 12px 14px; font-size: 14px; }
+.xbr-dt .x-table td:last-child, .xbr-dt .x-table th:last-child { padding-right: 28px; }
+@media (max-width: 720px) {
+  .xbr-dt { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); }
+  .xbr-dt .x-table th, .xbr-dt .x-table td { padding: 11px 12px; }
+}
 /* the detail sheet opens below the site header, so its title and close stay in view */
 @media (min-width: 901px) { .xbr .v2f-sheet-p { top: 72px; } }
 /* the source's reply: the run ids the page links, then the page's own figures */
@@ -351,10 +359,113 @@
 /* sibling cards say where they go: their figure darkens and the title underlines */
 @media (hover: hover) { .xbr-next a:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 
+/* a chapter whose table is the card's own: the questions as squares (filled where the row got them right), or the rows
+   as nested squares whose area is the figure. Both follow the row being read on the card. */
+.xbr-parts, .xbr-scale { display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding: clamp(24px, 3vw, 40px); border-radius: var(--r-hero); background: var(--card); }
+.xbr-parts-g { display: grid; grid-template-columns: repeat(var(--c), minmax(0, 1fr)); gap: 4px; }
+.xbr-parts-g i { aspect-ratio: 1; border-radius: 3px; background: var(--ink); opacity: .12; transition: transform .6s var(--out) calc(var(--i) * 5ms), opacity .45s var(--out) calc(var(--i) * 5ms); }
+.xbr-parts-g i.on { opacity: 1; }
+html.js .xbr-parts:not([data-seen]) .xbr-parts-g i { transform: scale(.2); opacity: 0; }
+.xbr-parts-f { display: flex; flex-direction: column; gap: 8px; }
+.xbr-parts-l { font-size: 17px; font-weight: 500; color: var(--ink); }
+.xbr-parts-f b { font-size: clamp(26px, 2.4vw, 34px); font-weight: 500; letter-spacing: -.02em; color: var(--ink); white-space: nowrap; }
+.xbr-scale-b { position: relative; flex: 1; min-height: 0; width: auto; max-width: 100%; aspect-ratio: 1; align-self: flex-start; }
+.xbr-sq { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; border-radius: 6px; transform-origin: 0 100%; transform: scale(var(--s)); transition: transform 1s var(--out) calc(var(--i) * 70ms); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .22); }
+.xbr-sq.b { background: #e4e4e7; box-shadow: none; }
+.xbr-sq.a { background: var(--ink); box-shadow: none; }
+.xbr-scale .xbr-sq.o { box-shadow: inset 0 0 0 2px var(--ink); }
+.xbr-bars-sq .xbr-sq.a { background: rgba(0, 0, 0, .1); box-shadow: inset 0 0 0 2px var(--ink); }
+html.js .xbr-scale:not([data-seen]) .xbr-sq { transform: scale(0); }
+.xbr-scale-k { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--soft); }
+.xbr-scale-k > span { display: inline-flex; align-items: center; gap: 8px; }
+.xbr-scale-k .xbr-key.b { background: #e4e4e7; }
+@media (max-width: 900px) {
+  .xbr-parts, .xbr-scale { min-height: 0; }
+  .xbr-parts-g { gap: 3px; }
+  .xbr-scale-b { flex: none; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .xbr-parts-g i, .xbr-sq { transition: none; } }
+
+/* the facts strip: each rule draws across in turn, its words rising after it */
+.xbr-facts-s .xbr-facts > div { position: relative; border-top: 0; }
+.xbr-facts-s .xbr-facts > div::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--ink); transform-origin: 0 50%; transition: transform 1.4s var(--out) calc(var(--k, 0) * .2s); }
+.xbr-facts-s .xbr-facts dt, .xbr-facts-s .xbr-facts dd { transition: opacity .8s var(--out) calc(var(--k, 0) * .2s + .3s), transform 1s var(--out) calc(var(--k, 0) * .2s + .3s); }
+.xbr-facts-s .xbr-facts > div:nth-child(2) { --k: 1; } .xbr-facts-s .xbr-facts > div:nth-child(3) { --k: 2; } .xbr-facts-s .xbr-facts > div:nth-child(n+4) { --k: 3; }
+html.js .xbr-facts-s:not([data-seen]) .xbr-facts > div::before { transform: scaleX(0); }
+html.js .xbr-facts-s:not([data-seen]) .xbr-facts dt, html.js .xbr-facts-s:not([data-seen]) .xbr-facts dd { opacity: 0; transform: translateY(10px); }
+@media (prefers-reduced-motion: reduce) { .xbr-facts-s .xbr-facts > div::before, .xbr-facts-s .xbr-facts dt, .xbr-facts-s .xbr-facts dd { transition: none; } }
+
+/* the source's reply holds its finished height while it types, so nothing below it moves */
+.xbr-ty { position: relative; display: block; }
+.xbr-ty-g { visibility: hidden; }
+.xbr-ty-o { position: absolute; inset: 0; }
+
+/* pinned chapters cut, never crossfade: the outgoing words wipe up and away, then the next chapter's words wipe in */
+@media (min-width: 901px) {
+  /* (keyframes, not a resting clip-path: a clip left on the words would also clip the sheet they open) */
+  html.js .xbr-ch .v2f-ch-t[data-on] { animation: xbr-cut-in .5s cubic-bezier(.76, 0, .24, 1) .34s backwards; transition: opacity .2s linear .34s, transform .6s var(--out) .34s; }
+  html.js .xbr-ch .v2f-ch-t:not([data-on]) { animation: xbr-cut-out .3s cubic-bezier(.76, 0, .24, 1) forwards; opacity: 0; transform: translateY(-24px); transition: opacity .2s linear .1s, transform .3s var(--out); }
+  /* the chapter marks: numbered, and they answer the pointer */
+  .xbr-ch .v2f-ch-nav { counter-reset: xbr-step; gap: 18px; }
+  .xbr-ch .v2f-ch-nav button { counter-increment: xbr-step; gap: 10px; padding: 0 2px; }
+  .xbr-ch .v2f-ch-nav button::before { content: counter(xbr-step, decimal-leading-zero); font: 500 12px/1 var(--mono); letter-spacing: .08em; color: var(--faint); transition: color var(--ui) var(--out); }
+  .xbr-ch .v2f-ch-nav button[aria-current='step']::before { color: var(--ink); }
+  .xbr-ch .v2f-ch-nav button i { transition: transform var(--reveal) var(--out), background-color var(--ui) var(--out); transform-origin: 0 50%; }
+  .xbr-ch .v2f-ch-nav button[aria-current='step'] i { transform: scaleX(1.6); }
+  .xbr-ch .v2f-ch-nav button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 6px; }
+}
+@keyframes xbr-cut-in { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes xbr-cut-out { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 0 100% 0); } }
+@media (prefers-reduced-motion: reduce) { html.js .xbr-ch .v2f-ch-t[data-on], html.js .xbr-ch .v2f-ch-t:not([data-on]) { animation: none; } }
+@media (hover: hover) {
+  .xbr-ch .v2f-ch-nav button:hover::before { color: var(--ink); }
+  .xbr-ch .v2f-ch-nav button:hover i { background: rgba(0, 0, 0, .3); transform: scaleX(1.25); }
+  .xbr-ch .v2f-ch-nav button[aria-current='step']:hover i { transform: scaleX(1.9); }
+}
+
+/* a closed sheet takes no room on screen (it stays in the HTML), once its slide-out has finished */
+.xbr .v2f-sheet { transition: visibility 0s .5s, transform 0s .5s; }
+.xbr .v2f-sheet:not([data-open]) { transform: scale(0); }
+.xbr .v2f-sheet[data-open] { transition: none; }
+
+/* every control answers the pointer with more than a shade */
+@media (hover: hover) {
+  .xbr-code pre { transition: box-shadow var(--ui) var(--out); }
+  .xbr-code pre:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); }
+}
+@media (hover: hover) {
+  .xbr-crumb a, .xbr-more a, .xbr-facts a, .xbr-p a, .xbr-spec a { border-radius: 4px; transition: background-color var(--ui) var(--out), box-shadow var(--ui) var(--out), text-underline-offset var(--ui) var(--out), text-decoration-color var(--ui) var(--out); }
+  .xbr-crumb a:hover, .xbr-more a:hover, .xbr-facts a:hover, .xbr-p a:hover, .xbr-spec a:hover { background-color: rgba(0, 0, 0, .06); box-shadow: 0 0 0 3px rgba(0, 0, 0, .06); }
+  .xbr-turn-v button:not([aria-pressed='true']):hover { color: var(--ink); background: rgba(0, 0, 0, .06); }
+  .xbr-turn-v button svg { transition: transform var(--reveal) var(--out); }
+  .xbr-turn-v button[aria-pressed='true']:hover svg { transform: scale(1.15); }
+  .xbr-cols button[aria-pressed='true']:hover { background: #262626; border-color: #262626; }
+}
+.xbr-turn-v button { transition: color .3s var(--ease), background-color var(--ui) var(--out); }
+.xbr-turn-v button:active, .xbr-cols button:active { transform: scale(.98); }
+
+/* closing rail: one big card, the next two smaller, the last peeking past the edge; a card shows its benchmark's
+   figure when pointed at */
+.xbr-next .v2f-next-m > span:first-child { font: 500 clamp(28px, 2.6vw, 40px)/1 var(--sans); letter-spacing: -.02em; color: var(--ink); font-feature-settings: 'tnum'; transition: opacity var(--ui) var(--out), transform var(--reveal) var(--out); }
+@media (hover: hover) {
+  .xbr-next .v2f-next-m > span:first-child { opacity: 0; transform: translateY(12px); }
+  .xbr-next .v2f-next-c:hover .v2f-next-m > span:first-child, .xbr-next .v2f-next-c:focus-visible .v2f-next-m > span:first-child { opacity: 1; transform: none; }
+  .xbr-next .v2f-next-c:hover { transform: translateY(-4px); }
+}
+@media (min-width: 901px) {
+  .xbr-next.v2f-next { grid-template-columns: 50%; grid-auto-columns: 32%; }
+  .xbr-next .v2f-next-c:first-child { min-height: 400px; }
+  .xbr-next .v2f-next-c:first-child .v2f-next-t { font-size: 34px; }
+  .xbr-next .v2f-next-c:not(:first-child) { min-height: 400px; }
+}
+.xbr-more { max-width: none; }
+
 /* kit parts in this template: DataTable (captured tables), CodeBlock (commands), Cta (asks) */
 .xbr-dt { max-width: 100%; }
 .xbr-ch-v .xbr-dt { flex: 1; max-height: 100%; overflow: auto; }
 .xbr-code { margin: 0; }
+/* a one-line command scrolls sideways only: a wheel over it still scrolls the page */
+.xbr-code pre { overscroll-behavior-y: auto; overflow-y: hidden; }
 .xbr-band-solid.x-btn.solid { background: #fafafa; color: #000; border-color: #fafafa; }
 @media (hover: hover) { .xbr-band-solid.x-btn.solid:hover { background: #fff; border-color: #fff; } }
 .xbr-band-link.x-arrow { color: #fafafa; min-height: 44px; }

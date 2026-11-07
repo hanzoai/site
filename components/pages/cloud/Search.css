@@ -1,6 +1,6 @@
 /* ---------- search v2 (se2-): ink, greys and white only ---------- */
 /* page-scoped deck tokens (docs/original/brand-deck.html): every grey below reads from these */
-.se2, .se2-note { --se-paper: #ffffff; --se-stage: #fbfbfb; --se-room: #f5f5f5; --se-card: #f2f2f2; --se-tile: #ededed; --se-track: #d4d4d4; --se-on-dim: #a3a3a3; --se-mid: #404040; --se-body: #525252; }
+.se2, .se2-note { --se-paper: #ffffff; --se-stage: #fbfbfb; --se-room: #f5f5f5; --se-card: #f2f2f2; --se-tile: #ededed; --se-track: #d4d4d4; --se-on: #fafafa; --se-graphite: #171717; --se-on-dim: #a3a3a3; --se-mid: #404040; --se-body: #525252; }
 .se2 .l2-stage-obj > * { width: min(100%, 1040px); }
 
 /* Stage object: a search bar the size of the screen */
@@ -136,10 +136,11 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 .se2-end .se2-hb-bar span { font-size: 17px; font-weight: 500; font-family: var(--sans); }
 .se2-end ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .se2-end li { display: flex; align-items: center; gap: 14px; height: 54px; padding: 0 16px; border-radius: 12px; background: var(--se-paper); border: 1px solid rgba(0, 0, 0, .08); font-size: 16px; font-weight: 500; }
-.se2-end li:first-child { background: var(--ink); color: var(--se-paper); border-color: var(--ink); }
+.se2-end ol.m:not(.wait) li:first-child { background: var(--ink); color: var(--se-paper); border-color: var(--ink); }
 .se2-end li > span { font-size: 13px; color: var(--se-body); }
 .se2-end li em { margin-left: auto; font-size: 13px; font-style: normal; color: var(--se-body); }
-.se2-end li:first-child > span, .se2-end li:first-child em { color: var(--se-track); }
+.se2-end ol.m:not(.wait) li:first-child > span, .se2-end ol.m:not(.wait) li:first-child em { color: var(--se-track); }
+.se2-end-out ol.a li, .se2-end-out ol.b li { color: var(--ink); }
 
 /* pricing */
 .se2-price { background: var(--se-room); }
@@ -192,6 +193,8 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 @media (max-width: 900px) {
   .se2 .l2-acts a, .se2-fin .l2-band-acts a, .se2-fin .l2-get-meta a { display: inline-flex; align-items: center; min-height: 44px; }
   .se2-fixc, .se2-fix { white-space: nowrap; flex: none; }
+  .se2-rows .se2-fix { display: none; } /* chapter 01 shows the fix; the phone hero row reads the title in full */
+  .se2-doc b { white-space: normal; overflow: visible; }
   .se2-w0 li { min-width: 0; }
   .se2 .l2-stage-obj { padding-inline: 16px; box-sizing: border-box; }
   .se2-end-bar { height: 60px; }
@@ -212,7 +215,12 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
   .se2-doc b { font-size: 16px; }
   .se2-fused { display: none; }
   .se2-rag-a { font-size: 17px; }
-  .se2-way { height: 470px; }
+  .se2 .l2-pin.stack { padding-bottom: 72px; }
+  .se2 .l2-pin-stick { top: auto; } /* stacked chapters: the sticky offset would push the last picture 60px into the dark room */
+  .se2-way { height: auto; min-height: 470px; }
+  .se2-way-in { position: relative; inset: auto; min-height: 470px; } /* stacked: the picture grows to hold its content */
+  .se2-rag.big .se2-rag-a { font-size: 21px; padding: 20px 22px; }
+  .se2-w3 { height: auto; min-height: 426px; }
   .se2-way-in { padding: 22px; }
   .se2-w0-q { font-size: 44px; }
   .se2-w0 li, .se2-w2 li { height: 52px; font-size: 16px; padding: 0 14px; }
@@ -242,3 +250,76 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
   .se2-plan .x-btn { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .se2-caret { animation: none; } .se2-w1 line { animation: none; opacity: 1; } }
+/* phone: the shared header keeps its solid "Try Hanzo", so the hero's ask is the quiet one (one solid per screen) */
+@media (max-width: 700px) {
+  .se2 .l2-acts [data-thumb] { background: transparent !important; color: var(--ink) !important; box-shadow: inset 0 0 0 1.5px var(--ink) !important; border-color: var(--ink) !important; }
+}
+/* the hero's text link answers hover: the arrow steps out and the label underlines */
+@media (hover: hover) {
+  .se2 .l2-acts .x-arrow span { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color .15s cubic-bezier(0, 0, .2, 1); }
+  .se2 .l2-acts .x-arrow svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+  .se2 .l2-acts .x-arrow:hover span { text-decoration-color: currentColor; }
+  .se2 .l2-acts .x-arrow:hover svg { transform: translateX(4px); }
+}
+/* phone close: the header's "Try Hanzo" is the solid there, so the band's "Read the docs" is outlined in white */
+@media (max-width: 700px) {
+  .se2-fin .l2-band-acts .x-btn.solid { background: transparent !important; color: var(--se-on) !important; box-shadow: inset 0 0 0 1.5px var(--se-on) !important; border-color: var(--se-on) !important; }
+}
+.se2 .l2-pin.stack .l2-pin-stick { top: auto; } /* reduced motion stacks on desktop too */
+
+/* ---------- motion map: flip board (signature) ---------- */
+.se2-board-wrap { display: flex; flex-direction: column; gap: 12px; height: 100%; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.se2-board-wrap.wait { opacity: .3; }
+.se2-board { display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 16px; background: var(--ink); }
+.se2-board-row { display: flex; gap: 2px; perspective: 400px; }
+.se2-tile { position: relative; flex: 1 1 0; min-width: 0; height: 52px; display: grid; place-items: center; background: var(--se-graphite); color: var(--se-on); font: 500 18px/1 var(--mono); transform-origin: 50% 0; animation: se2-flap 70ms cubic-bezier(.4, 0, .2, 1); }
+.se2-tile::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, .55); }
+.se2-tile.rk { flex-grow: 1.6; font-weight: 606; }
+.se2-tile.src { color: var(--se-on-dim); }
+.se2-board-row.top .se2-tile:not(.src) { color: var(--se-paper); }
+@keyframes se2-flap { from { transform: rotateX(80deg); } to { transform: none; } }
+.se2-board-cap { margin: 0 0 0 4px; font-size: 13px; color: var(--se-body); }
+
+/* ---------- motion map: entrances, in page order ---------- */
+/* 1 hero object: blinds (eight strips open like a venetian blind) */
+.se2-blinds { position: absolute; inset: 0; z-index: 7; display: flex; flex-direction: column; pointer-events: none; }
+.se2-blinds i { flex: 1; background: var(--se-paper); transform-origin: 50% 0; transition: transform .55s cubic-bezier(.4, 0, .2, 1); }
+.se2-e-blinds.in .se2-blinds i { transform: scaleY(0); }
+html:not(.js) .se2-blinds { display: none; }
+
+/* 2 four ways: sticky-stack (each card sticks a little lower than the last, so they pile up at the top) */
+.se2-ways-h { max-width: 640px; }
+.se2-ways-h .l2-lede { margin-top: 18px; }
+.se2-stack { list-style: none; margin: 56px 0 0; padding: 0 0 48px; display: flex; flex-direction: column; gap: 40px; }
+.se2-card { position: sticky; top: calc(88px + var(--i) * 18px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: center; padding: 32px; border-radius: 24px; background: var(--se-paper); border: 1px solid rgba(0, 0, 0, .1); }
+.se2-card-n { margin: 12px 0 0; font-size: 13px; letter-spacing: .12em; color: var(--se-body); }
+.se2-card .l2-body { margin-top: 16px; }
+.se2-card .se2-way { height: min(480px, 60svh); }
+
+/* 3 dark room: zoom-through (its content flies in from far behind the screen) */
+.se2-e-zoom .se2-e-in { transform: perspective(1200px) translateZ(0); transition: transform .9s cubic-bezier(.16, 1, .3, 1), opacity .5s cubic-bezier(0, 0, .2, 1); }
+html.js .se2-e-zoom:not(.in) .se2-e-in { transform: perspective(1200px) translateZ(-2400px); opacity: 0; }
+
+/* 4 pricing: pull-back (starts zoomed right into the plans and pulls back to the whole sheet) */
+.se2-e-pull { overflow: hidden; }
+.se2-e-pull .se2-e-in { transform-origin: 72% 30%; transition: transform 1.1s cubic-bezier(.16, 1, .3, 1), opacity .6s cubic-bezier(0, 0, .2, 1); }
+html.js .se2-e-pull:not(.in) .se2-e-in { transform: scale(2.6); opacity: .35; }
+
+/* 5 frameworks: grow-from-point (opens as a circle from where you last pressed or pointed) */
+.se2-e-grow .se2-e-in { clip-path: circle(150% at var(--gx, 50%) var(--gy, 50%)); transform-origin: var(--gx, 50%) var(--gy, 50%); transition: clip-path .9s cubic-bezier(.16, 1, .3, 1), transform .9s cubic-bezier(.16, 1, .3, 1); }
+html.js .se2-e-grow:not(.in) .se2-e-in { clip-path: circle(0 at var(--gx, 50%) var(--gy, 50%)); transform: scale(.8); }
+
+@media (max-width: 900px) {
+  .se2-tile { height: 44px; font-size: 13px; }
+  .se2-tile.src { display: none; }
+  .se2-board { padding: 8px; gap: 5px; }
+  .se2-board-row { gap: 1px; }
+  .se2-stack { margin-top: 40px; gap: 24px; }
+  .se2-card { top: calc(68px + var(--i) * 12px); grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 20px; }
+  .se2-card .se2-way { height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .se2-blinds { display: none; }
+  .se2-tile { animation: none; }
+  html.js .se2-e-zoom:not(.in) .se2-e-in, html.js .se2-e-pull:not(.in) .se2-e-in, html.js .se2-e-grow:not(.in) .se2-e-in { transform: none; opacity: 1; clip-path: none; }
+}

@@ -36,7 +36,7 @@
 
 /* what recipients receive */
 .xgr-gets .xp-grid { align-items: start; row-gap: 48px; }
-.xgr-gets-l { grid-column: 1 / span 5; display: grid; gap: 28px; position: sticky; top: 120px; }
+.xgr-gets-l { grid-column: 1 / span 5; display: grid; gap: 28px; }
 .xgr-gets-g { grid-column: 7 / span 6; list-style: none; margin: 0; padding: 8px clamp(24px, 3vw, 40px); }
 .xgr-gets-g li { display: grid; grid-template-columns: 40px 1fr; gap: 8px 16px; padding: 28px 0; border-bottom: 1px solid var(--line); }
 .xgr-gets-g li:last-child { border-bottom: 0; }
@@ -49,14 +49,19 @@
 .xgr-gets-n .x-tick { stroke: currentColor; }
 .xgr-gets-g .xp-title { font-size: 21px; }
 
-/* the three ways: sheets that stack */
+/* the three ways: plain sheets, each stamped down (grants/enter.css) */
 .xgr-ways-head { align-items: end; row-gap: 24px; }
 .xgr-ways-head .xp-head { grid-column: 1 / span 7; }
 .xgr-ways-head .xp-lede { grid-column: 9 / span 4; }
 .xgr-stack { list-style: none; margin: clamp(64px, 7vw, 112px) 0 0; padding: 0; display: grid; gap: 40px; }
-.xgr-sheet-li { position: sticky; top: calc(96px + var(--i) * 24px); }
-.xgr-sheet-li:focus-within { z-index: 4; }
-.xgr-sheet { position: relative; min-height: min(64svh, 600px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 32px; align-items: stretch; padding: clamp(32px, 4.5vw, 72px); border-radius: 24px; overflow: hidden; transform-origin: 50% 0; background: #f5f5f5; color: var(--ink); }
+.xgr-sheet { position: relative; min-height: min(64svh, 600px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 32px; align-items: stretch; padding: clamp(32px, 4.5vw, 72px); border-radius: 24px; overflow: hidden; background: #f5f5f5; color: var(--ink); }
+/* the sheets' asks are outlines only: the header's ask stays the one solid */
+.xgr-way-a .xp-ghost { background: transparent !important; border: 1px solid rgba(0, 0, 0, .14) !important; color: inherit !important; }
+.xgr-sheet.s1 .xgr-way-a .xp-ghost { border-color: rgba(255, 255, 255, .3) !important; color: #fafafa !important; }
+/* JS off: the ledger ticks and the steps in their final state */
+html:not(.js) .xgr-sheetlist .x-tick :is(circle, path) { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
+html:not(.js) .xgr-steps li .xp-title { color: #0a0a0a; }
+html:not(.js) .xgr-steps li .xgr-dot { background: var(--xp-accent); }
 .xgr-sheet.s1 { background: #171717; color: #fafafa; border: 1px solid rgba(255, 255, 255, .1); }
 .xgr-sheet.s2 { background: var(--hz-white); }
 .xgr-sheet-n { align-self: start; font-size: 64px; line-height: 1; color: var(--hz-400); }
@@ -90,8 +95,46 @@ html.js .xgr-static { display: none; }
 .xgr-sheet.s1 .xgr-fact-big:not(.num) { color: #a3a3a3; }
 .xgr-gets-g.xp-obj { border: 0; padding-left: 0; padding-right: 0; background: transparent; }
 .xgr-how { padding-top: clamp(56px, 6vw, 88px) !important; }
-.xgr-gets { padding-bottom: clamp(56px, 6vw, 88px) !important; }
+.xgr-gets { padding-top: clamp(72px, 8vw, 116px) !important; padding-bottom: clamp(56px, 6vw, 88px) !important; }
 .xgr-file dl > div:not(.on):not(:nth-child(-n + 3)) { display: none; }
+/* round 5: the hero rises from the server HTML (no JS wait), the ledger is one sheet whose rows light, tighter rooms, a quiet end */
+.xgr-rise { animation: xgr-rise .5s cubic-bezier(.16, 1, .3, 1) .3s both; }
+.xgr-rise.late { animation-delay: .2s; }
+@keyframes xgr-rise { from { transform: translateY(16px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .xgr-rise { animation: none; } }
+.xgr-how { padding-bottom: clamp(40px, 5vw, 72px) !important; }
+.xgr-ways { padding-top: clamp(72px, 8vw, 116px) !important; }
+.xgr-sheetlist { padding: 8px 28px !important; border-radius: 24px; background: #f5f5f5 !important; }
+.xgr-sheetlist li { grid-template-columns: 40px 1fr 24px; }
+.xgr-sheetlist li .xgr-gets-n { font-size: 12px; color: #737373; padding-top: 4px; }
+.xgr-sheetlist li .xp-title, .xgr-sheetlist li .xp-body { transition: color .4s cubic-bezier(0, 0, .2, 1); }
+.xgr-sheetlist li:not(.on) .xp-title { color: #525252; }
+.xgr-sheetlist li .xgr-gets-t { opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.xgr-sheetlist li.on .xgr-gets-t { opacity: 1; }
+html:not(.js) .xgr-sheetlist li .xp-title { color: #0a0a0a; }
+html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .xgr-sheetlist li .xp-title { color: #0a0a0a !important; }
+  .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
+  .xgr-line i { transform: none !important; }
+  .xgr-sheet { transform: none !important; }
+  .xgr-steps li .xp-title { color: #0a0a0a !important; }
+  .xgr-steps li .xgr-dot { background: var(--xp-accent); }
+}
+@media (max-width: 899px) {
+  .xgr-sheetlist { padding: 4px 16px !important; }
+  .xgr-sheetlist li { grid-template-columns: 28px 1fr 22px; gap: 6px 12px; }
+}
+.xgr-apply { padding-bottom: clamp(56px, 6vw, 88px) !important; }
+.xgr-proof-big { display: block; font: 220 64px/1 var(--sans); letter-spacing: -.04em; color: #0a0a0a; font-variant-numeric: tabular-nums; }
+.xgr-sheetlist li .xgr-gets-t { grid-column: 3; grid-row: 1; color: #0a0a0a; }
+.xgr-sheetlist li::before { inset: 0 -12px; }
+@media (hover: hover) { .xgr-sheetlist li:hover::before { background: #ededed; } }
+.xgr-sheet-o { justify-content: flex-start; }
+.xgr-err a { display: inline-block; padding: 12px 0; margin: -12px 0; }
+.xgr-proof { padding: 0 0 clamp(72px, 8vw, 116px); }
+.xgr-proof-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 28px; border-top: 1px solid rgba(0, 0, 0, .1); }
+.xgr-proof-in .x-mono { margin: 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #525252; }
 .xgr-way-m { margin: 0; font-size: 14px; color: var(--soft); }
 .xgr-sheet.s1 .xgr-way-m { color: #a3a3a3; }
 .xgr-way-t { color: inherit !important; max-width: 18ch; font-size: 32px !important; letter-spacing: -.025em; }
@@ -100,7 +143,6 @@ html.js .xgr-static { display: none; }
 .xgr-sheet:not(.s1) .xgr-way-d, .xgr-sheet:not(.s1) .xgr-way-m { color: var(--soft); }
 .xgr-sheet:not(.s1) .xgr-link { color: var(--ink); }
 .xgr-way-a { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 8px; }
-.xgr-sheet-dim { position: absolute; inset: 0; background: var(--hz-black); pointer-events: none; border-radius: inherit; }
 
 /* the application */
 .xgr-apply-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(40px, 6vw, 112px); align-items: start; }
@@ -122,8 +164,8 @@ html.js .xgr-static { display: none; }
 .xgr-tracks button:focus-visible { outline: 2px solid var(--xp-accent); outline-offset: 1px; }
 @media (hover: hover) { .xgr-tracks button:hover { color: var(--ink); } }
 .xgr-tracks button:active { transform: scale(.97); }
-.xgr-tracks span { position: relative; }
-.xgr-track-bg { position: absolute; inset: 0; border-radius: 12px; background: #fff; border: 1px solid var(--hz-300); }
+.xgr-tracks button > span:not(.xgr-track-bg) { position: relative; }
+.xgr-tracks .xgr-track-bg { position: absolute; inset: 0; border-radius: 12px; background: var(--hz-white); border: 1px solid #0a0a0a; }
 .xgr-f { display: grid; gap: 10px; }
 .xgr-f label { font: 497 15px/1.3 var(--sans); color: var(--ink); }
 .xgr-f .x-input2 { width: 100%; box-sizing: border-box; height: 56px; border-radius: 12px; }
@@ -152,10 +194,9 @@ html.js .xgr-static { display: none; }
   .xgr-gets-g { padding: 4px 20px; }
   .xgr-way-t { font-size: 26px !important; }
   .xgr-stack { gap: 16px; margin-top: 48px; }
-  .xgr-sheet-li { position: static; }
-  .xgr-sheet { transform: none !important; grid-template-columns: 1fr; min-height: 0; border-radius: 24px; padding: 28px 24px; }
+  .xgr-sheet { grid-template-columns: 1fr; min-height: 0; border-radius: 24px; padding: 28px 24px; }
   .xgr-sheet-n { font-size: 44px; }
-  .xgr-sheet-dim { display: none; }
+  .xgr-pix { grid-column: 1 / -1; }
   .xgr-way-a { width: 100%; }
   .xgr-way-a .xp-cta, .xgr-way-a .xp-ghost { width: 100%; height: auto; min-height: 48px; padding-block: 12px; white-space: normal; text-align: center; }
   .xgr-file:not(.some) { display: none; }

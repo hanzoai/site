@@ -6,7 +6,8 @@
    Signature: the six reasons Hanzo builds are tiles that open. Click one and the tile itself grows into a full sheet
    (shared-element morph, synchronized.studio); previous / next turn through the six inside it; it folds back on close.
    Supporting (three): the frontier draws itself and answers the pointer; the startups figure counts up on a rising
-   staircase of figures; the Zen of Hanzo is the one pinned scene, the scroll turning its six principles one at a time.
+   staircase of figures. Motion map (James, 7 Nov): signature word-light (about/WordLight.jsx) and five section entrances
+   (about/enter.js); no pinned scene.
    Beyond: "Pick two? Keep all four." The lede's four trade-offs as switches; nothing switches anything else off, and
    each shows the line on this page that holds it.
    Every word, figure and link is Hanzo's (content/live/about.json). */
@@ -14,9 +15,9 @@
 // Goal: believe the team and its record, then start building
 // CTA: Get Started (/pricing) in the hero and in the sticky ask ("Start Building" after the track record is a text link); the close is the careers ask
 // Metric: signup_start (data-cta="about.*")
-// Signature: six reasons Hanzo builds as tiles that open into their own sheet
+// Signature: word-light on the pick-two belief (lit word by word as read), then six reasons Hanzo builds that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
-// V2: 8/10 round 5: hero idles after the draw (head breathes, a reader walks the curve; CSS, paused off screen); founders are side-by-side plate cards that draw in; lede never shifts; tiles and every text link answer a hover; phone frontier under the h1
+// V2: 8/10 motion map: signature word-light (the Why belief statement lights word by word as it is read; a hand reads ahead); entrances ink-spread (Why figure + switches + principles), magnet-gather (track record), squash-land (founders), letter-cascade (Zen of Hanzo, now a plain index, no pinned scene), accordion (the dark room); phone chart labels clear of the curve
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
@@ -28,6 +29,8 @@ import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import StorySheet from './StorySheet';
 import Zen from './AboutZen';
+import WordLight from './about/WordLight';
+import { useEntrances } from './about/enter';
 import '../v2/system.css';
 import './story.css';
 import './About.css';
@@ -44,24 +47,69 @@ const X = (t) => PL + t * (W - PL - PR);
 const Y = (v) => H - PB - v * (H - PB - PT);
 const trace = (g) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
 const FRONT = trace(f);
-const AXES = [
-  ['Intelligence', 0.42, 1.6, 0.3],
-  ['Speed', 0.55, 1.2, 0.44],
-  ['Deterministic safety', 0.66, 2.1, 0.58],
-  ['Equitable cost', 0.78, 1.4, 0.72],
-].map(([name, a, q, at]) => { const g = (t) => f(t) * (a + (1 - a) * Math.pow(t, q)); return { name, d: trace(g), lx: X(at), ly: Y(g(at)) + 24 }; });
 const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
+
+/* phones get the same frontier drawn on its own, taller plot, so the whole 2014–2026 curve, Techstars '17 and the four
+   axis names fit 343px at a readable size (both plots are in the HTML; CSS shows one) */
+// ph: the phone plot sets the four axis names as a right-aligned stack in the empty lower right of the plot (in the
+// order their lines run), clear of the curve, the head and the plot's edges
+const geo = (W, H, PL, PR, PT, PB, ph = false) => {
+  const X = (t) => PL + t * (W - PL - PR);
+  const Y = (v) => H - PB - v * (H - PB - PT);
+  const tr = (g) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
+  const axes = [['Intelligence', 0.42, 1.6, 0.3], ['Speed', 0.55, 1.2, 0.44], ['Deterministic safety', 0.66, 2.1, 0.58], ['Equitable cost', 0.78, 1.4, 0.72]]
+    .map(([name, a, q, at], i) => { const g = (t) => f(t) * (a + (1 - a) * Math.pow(t, q)); return ph ? { name, d: tr(g), lx: X(1), ly: Y(0.12 + i * 0.11) } : { name, d: tr(g), lx: X(at), ly: Y(g(at)) + 24 }; });
+  return { W, H, PT, X, Y, front: tr(f), axes, ph };
+};
+const DESK = geo(W, H, PL, PR, PT, PB);
+const PH = geo(700, 470, 40, 44, 56, 60, true);
+
+function Plot({ g, cls, children }) {
+  const { W, H, X, Y, front, axes, ph } = g;
+  const tx = X(0.25), ty = Y(f(0.25));
+  return (
+    <svg className={'xab-front-svg ' + cls} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
+      {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
+      <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
+      {YEARS.map((yr) => { const x = X((yr - 2014) / 12); return <g key={yr} className="xab-tick"><line x1={x} x2={x} y1={Y(0)} y2={Y(0) + 10} /><text x={x} y={H - 18} textAnchor="middle">{yr}</text></g>; })}
+      {axes.map((a) => (
+        <g key={a.name}>
+          <path d={a.d} className="xab-ghost" pathLength={1} />
+          <text x={a.lx} y={a.ly} textAnchor={ph ? 'end' : undefined} className="xab-axis">{a.name}</text>
+        </g>
+      ))}
+      <path d={front} className="xab-line" pathLength={1} />
+      <g className="xab-ts">
+        <circle cx={tx} cy={ty} r="7" />
+        {ph
+          ? <text x={tx - 16} y={ty - 46} textAnchor="end"><tspan x={tx - 16}>Techstars</tspan><tspan x={tx - 16} dy="30">’17</tspan></text> /* above and left of the marker, on two lines: the curve there runs below it */
+          : <><line x1={tx} x2={tx} y1={ty - 14} y2={ty - 46} /><text x={tx} y={ty - 58} textAnchor="middle">Techstars ’17</text></>}
+      </g>
+      {children}
+      {/* idle: a reader walks the curve from 2014 to the frontier, slowly, until a hand takes over */}
+      <g className="xab-glide" style={{ offsetPath: `path('${front}')` }} aria-hidden="true">
+        <line x1="0" x2="0" y1="-18" y2="18" />
+        <circle r="6" />
+      </g>
+      {/* the head rides the curve on a CSS motion path, in step with the line's dash */}
+      <g className="xab-ride" style={{ offsetPath: `path('${front}')` }}>
+        <circle r="26" className="xab-halo" />
+        <circle r="10" className="xab-head" />
+      </g>
+    </svg>
+  );
+}
 
 function Frontier() {
   // the curve, its four ghost axes, Techstars '17 and the head all draw by CSS from first paint (About.css, xab-draw):
-  // nothing waits on hydration, JS off shows the same film, and reduced motion shows the drawn frontier at rest
+  // nothing waits on hydration, reduced motion and JS off show the drawn frontier at rest
   // pointer: the hand reads the year under it, on the curve
   const hand = useMotionValue(-1);
   const cx = useTransform(hand, (t) => X(Math.max(0, t)));
   const cy = useTransform(hand, (t) => Y(f(Math.max(0, t))));
   const [yr, setYr] = useState(null);
   const move = (e) => {
-    if (e.pointerType !== 'mouse') return;
+    if (e.pointerType !== 'mouse' || matchMedia('(max-width: 900px)').matches) return;
     const r = e.currentTarget.getBoundingClientRect();
     const t = Math.max(0, Math.min(1, ((e.clientX - r.left) / r.width * W - PL) / (W - PL - PR)));
     hand.set(t);
@@ -80,38 +128,14 @@ function Frontier() {
   }, []);
   return (
     <div className={'xab-front-w' + (yr ? ' read' : '')} ref={wrap} onPointerMove={move} onPointerLeave={() => setYr(null)}>
-      <svg className="xab-front-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
-        {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
-        <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
-        {YEARS.map((yr) => { const x = X((yr - 2014) / 12); return <g key={yr} className="xab-tick"><line x1={x} x2={x} y1={Y(0)} y2={Y(0) + 10} /><text x={x} y={H - 18} textAnchor="middle">{yr}</text></g>; })}
-        {AXES.map((a) => (
-          <g key={a.name}>
-            <path d={a.d} className="xab-ghost" pathLength={1} />
-            <text x={a.lx} y={a.ly} className="xab-axis">{a.name}</text>
-          </g>
-        ))}
-        <path d={FRONT} className="xab-line" pathLength={1} />
-        <g className="xab-ts">
-          <circle cx={X(0.25)} cy={Y(f(0.25))} r="7" />
-          <line x1={X(0.25)} x2={X(0.25)} y1={Y(f(0.25)) - 14} y2={Y(f(0.25)) - 46} />
-          <text x={X(0.25)} y={Y(f(0.25)) - 58} textAnchor="middle">Techstars ’17</text>
-        </g>
+      <Plot g={DESK} cls="dk">
         <motion.g className="xab-hand" style={{ x: cx }} aria-hidden="true">
           <line x1="0" x2="0" y1={PT - 10} y2={Y(0)} />
           <text x="10" y={PT + 8}>{yr}</text>
         </motion.g>
         <motion.circle className="xab-hand-dot" r="8" cx={cx} cy={cy} />
-        {/* idle: a reader walks the curve from 2014 to the frontier, slowly, until a hand takes over */}
-        <g className="xab-glide" style={{ offsetPath: `path('${FRONT}')` }} aria-hidden="true">
-          <line x1="0" x2="0" y1="-18" y2="18" />
-          <circle r="6" />
-        </g>
-        {/* the head rides the curve on a CSS motion path, in step with the line's dash */}
-        <g className="xab-ride" style={{ offsetPath: `path('${FRONT}')` }}>
-          <circle r="26" className="xab-halo" />
-          <circle r="10" className="xab-head" />
-        </g>
-      </svg>
+      </Plot>
+      <Plot g={PH} cls="ph" />
     </div>
   );
 }
@@ -203,10 +227,32 @@ const PICKS = [
   ['Control over your data', 'Hanzo runs identically on our global cloud, inside your VPC, or completely air-gapped on your own GPUs.', 'Ownership & Sovereignty', '/platform'],
 ];
 
-function Picks() {
-  const [on, setOn] = useState([0, 1]);
-  const [touched, setTouched] = useState(false);
-  const flip = (i) => { setTouched(true); setOn((o) => (o.includes(i) ? o.filter((x) => x !== i) : [...o, i])); };
+/* the one figure of the section: the four trade-offs as a diamond. A switch kept pushes its corner out to the edge; all
+   four kept is the full frontier. A hand on a principle in the index swaps the diamond for that principle's own radar */
+const DIA = PICKS.map((_, i) => -Math.PI / 2 + (i * Math.PI) / 2);
+const dpt = (i, k) => [200 + Math.cos(DIA[i]) * 160 * k, 200 + Math.sin(DIA[i]) * 160 * k];
+// corner names: top and bottom centred on their corner, the side ones set above their corner, inside the frame
+const DLAB = [[200, 18, 'middle'], [400, 176, 'end'], [200, 398, 'middle'], [0, 158, 'start']];
+const dlines = (t, i) => (i === 3 ? ['Control over', 'your data'] : [t]);
+
+function Figure({ on, peek }) {
+  const calm = useReducedMotion();
+  const shape = PICKS.map((_, i) => dpt(i, on.includes(i) ? 1 : 0.36).map((v) => v.toFixed(1)).join(',')).join(' ');
+  const all = on.length === PICKS.length;
+  return (
+    <div className={'xab-fig' + (peek != null ? ' peek' : '') + (all ? ' all' : '')} aria-hidden="true">
+      <svg viewBox="0 0 400 410" className="xab-dia">
+        {[0.36, 0.68, 1].map((k) => <polygon key={k} points={PICKS.map((_, i) => dpt(i, k).join(',')).join(' ')} className="xab-ring" />)}
+        {PICKS.map((_, i) => <line key={i} x1="200" y1="200" x2={dpt(i, 1)[0]} y2={dpt(i, 1)[1]} className="xab-ring" />)}
+        <motion.polygon className="xab-shape" initial={false} animate={{ points: shape }} transition={{ duration: calm ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }} />
+        {PICKS.map(([t], i) => <text key={t} x={DLAB[i][0]} y={DLAB[i][1]} textAnchor={DLAB[i][2]} className={'xab-dia-l' + (on.includes(i) ? ' on' : '')}>{dlines(t, i).map((l, j) => <tspan key={l} x={DLAB[i][0]} dy={j ? 18 : 0}>{l}</tspan>)}</text>)}
+      </svg>
+      {peek != null && <div className="xab-fig-r" key={peek}><Radar at={peek} /><span className="xab-fig-n v2s-num">{pad(peek + 1)}</span></div>}
+    </div>
+  );
+}
+
+function Picks({ on, flip, touched }) {
   const all = on.length === PICKS.length;
   // until a hand touches them, the next switch still off breathes, asking to be kept too
   const hint = touched ? -1 : PICKS.findIndex((_, i) => !on.includes(i));
@@ -231,20 +277,17 @@ function Picks() {
   );
 }
 
-const SPANS = ['xab-s7', 'xab-s5', 'xab-s5', 'xab-s7', 'xab-s8', 'xab-s4'];
-
-function Tile({ p, i, cue, onOpen }) {
+/* the six principles as a compact index: a hand on one shows its radar in the figure; a click grows the row into its sheet */
+function Tile({ p, i, cue, onOpen, onPeek }) {
   const [t, k, d, l, to] = p;
   return (
-    <li className={SPANS[i]}>
-      <motion.button type="button" layoutId={'xab-p' + i} className={'xab-tile' + (cue ? ' cue' : '')} style={{ borderRadius: 24 }} onClick={() => onOpen(i)} aria-haspopup="dialog" aria-label={`${t}: ${k}. Open`}>
+    <li>
+      <motion.button type="button" layoutId={'xab-p' + i} className={'xab-tile' + (cue ? ' cue' : '')} style={{ borderRadius: 16 }} onClick={() => onOpen(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && onPeek(i)} onPointerLeave={() => onPeek(null)} onFocus={() => onPeek(i)} onBlur={() => onPeek(null)} aria-haspopup="dialog" aria-label={`${t}: ${k}. Open`}>
         <span className="xab-tile-n v2s-num" aria-hidden="true">{pad(i + 1)}</span>
-        <span className="xab-tile-art" aria-hidden="true"><Radar at={i} /></span>
         <span className="xab-tile-t" aria-hidden="true">
           <b>{t}</b>
           <span>{k}</span>
         </span>
-        <span className="xab-tile-peek" aria-hidden="true">{d.split('. ')[0]}.</span>
         <span className="xab-tile-plus" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg></span>
       </motion.button>
       {/* the full text stays in the page (hidden, so no invisible stops for the keyboard); the sheet is its reading view */}
@@ -272,6 +315,11 @@ function Why() {
     return () => clearTimeout(t);
   }, [seen, calm]);
   const show = (i) => { setAt(i); setOpen(i); };
+  const [on, setOn] = useState([0, 1]);
+  const [touched, setTouched] = useState(false);
+  const flip = (i) => { setTouched(true); setOn((o) => (o.includes(i) ? o.filter((x) => x !== i) : [...o, i])); };
+  const [peek, setPeek] = useState(null);
+  const shown = peek;
   // Tab stays inside the open sheet: from its last control back to its first, and the other way round
   const trap = (e) => {
     const box = document.querySelector('.v2u-sheet');
@@ -288,15 +336,19 @@ function Why() {
   return (
     <section className="v2s-sec xab-why" id="why" aria-labelledby="xab-why-h">
       <div className="v2s-wrap">
-        <div className="v2s-head side xab-why-head">
+        <div className="v2s-head xab-why-head">
           <h2 id="xab-why-h" className="v2s-headline xab-why-h">Moving the frontier without trading away safety, privacy, or ownership.</h2>
           <p className="v2s-cap">Why We Build</p>
-          <p className="v2s-lede xab-why-l">Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research.</p>
         </div>
-        <Picks />
-        <ul className="xab-tiles" ref={grid}>
-          {PILLARS.map((p, i) => <Tile key={p[0]} p={p} i={i} cue={cue === i && open == null} onOpen={show} />)}
-        </ul>
+        {/* the signature: Hanzo's belief, lit word by word as it is read */}
+        <WordLight className="xab-why-l" text="Most AI platforms ask you to pick two: raw capability, low latency, affordable cost, or control over your data. Chasing the Pareto frontier means advancing every axis at once through better systems engineering and open research." />
+        <div className="xab-why-g" ref={grid} data-enter="ink-spread">
+          <Figure on={on} peek={shown} />
+          <Picks on={on} flip={flip} touched={touched} />
+          <ul className="xab-tiles">
+            {PILLARS.map((p, i) => <Tile key={p[0]} p={p} i={i} cue={cue === i && open == null && seen} onOpen={show} onPeek={setPeek} />)}
+          </ul>
+        </div>
       </div>
       <StorySheet layoutId={open == null ? null : 'xab-p' + open} onClose={() => setOpen(null)} label={t} className="xab-sheet" onKey={(e) => { if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); if (e.key === 'Tab') trap(e); }}>
         <div className="xab-sheet-g">
@@ -330,20 +382,35 @@ const MILES = [
 ];
 
 function Record() {
-  // the three figures rest at 64px and grow while they are the moment (MASTER 3.1: scale has rhythm), then settle back
+  // the three figures rest at 64px; only the one nearest the middle of the screen grows (MASTER 3.1: one big thing at a
+  // time), handing over as the staircase passes the middle
   const figs = useRef(null);
-  const moment = useInView(figs, { amount: 0.6 });
+  const seen = useInView(figs, { amount: 0.2 });
+  const [big, setBig] = useState(-1);
+  useEffect(() => {
+    if (!seen) { setBig(-1); return; }
+    const pick = () => {
+      const mid = innerHeight / 2;
+      let best = -1, d = Infinity;
+      [...(figs.current?.children || [])].forEach((el, i) => { const r = el.querySelector('dt').getBoundingClientRect(); const x = Math.abs(r.top + r.height / 2 - mid); if (x < d) { d = x; best = i; } });
+      setBig(d < innerHeight * 0.3 ? best : -1);
+    };
+    // three rects per scroll event, only while the figures are on screen; React skips the render when nothing changed
+    pick();
+    addEventListener('scroll', pick, { passive: true });
+    return () => removeEventListener('scroll', pick);
+  }, [seen]);
   return (
-    <section className="v2s-sec xab-rec" aria-labelledby="xab-rec-h">
+    <section className="v2s-sec xab-rec" aria-labelledby="xab-rec-h" data-enter="magnet-gather">
       <div className="v2s-wrap">
         <div className="v2s-head">
           <h2 id="xab-rec-h" className="v2s-headline">Built with founders, scaled to public markets.</h2>
           <p className="v2s-cap">Proven Track Record</p>
         </div>
-        <dl className={'xab-figs' + (moment ? ' moment' : '')} ref={figs}>
-          <div><dt className="v2s-num"><Count to={100} suffix="+" duration={1.8} /></dt><dd>Startups built &amp; funded</dd></div>
-          <div><dt className="v2s-num">$1B+</dt><dd>Client revenue generated</dd></div>
-          <div><dt className="v2s-num">2024</dt><dd>Went public on Nasdaq (2024)</dd></div>
+        <dl className="xab-figs" ref={figs}>
+          <div className={big === 0 ? 'big' : ''}><dt className="v2s-num"><Count to={100} suffix="+" duration={1.8} /></dt><dd>Startups built &amp; funded</dd></div>
+          <div className={big === 1 ? 'big' : ''}><dt className="v2s-num">$1B+</dt><dd>Client revenue generated</dd></div>
+          <div className={big === 2 ? 'big' : ''}><dt className="v2s-num">2024</dt><dd>Went public on Nasdaq (2024)</dd></div>
         </dl>
         <ol className="xab-miles">
           {MILES.map(([y, t]) => <li key={y}><b className="v2s-num">{y}</b><span>{t}</span></li>)}
@@ -389,7 +456,7 @@ function Portrait({ p, has }) {
 
 function Founders({ portraits = [] }) {
   return (
-    <section className="v2s-sec tight xab-people" aria-label="Founders">
+    <section className="v2s-sec tight xab-people" aria-label="Founders" data-enter="squash-land">
       <div className="v2s-wrap xab-people-g">
         {FOUNDERS.map((p, i) => (
           <article key={p.name} className={'xab-person' + (i ? ' two' : '')}>
@@ -437,7 +504,7 @@ function Log() {
       </div>
       <ul>
         {COMMITS.map(([repo, msg, sha, when, to], i) => (
-          <li key={sha + i} style={{ '--i': COMMITS.length - 1 - i }}>
+          <li key={sha + i} style={{ '--n': i }}>
             <span className="xab-repo">{repo}</span>
             <A to={to} className="xab-msg">{msg}</A>
             <code>{sha}</code>
@@ -463,7 +530,7 @@ function Open() {
           <p className="v2s-cap">Open Source &amp; Deterministic Safety</p>
           <p className="v2s-lede xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
         </div>
-        <div className="xab-open-g">
+        <div className="xab-open-g" data-enter="accordion">
           <div className="xab-panes">
             <Tabs id="xab-pane" tabs={PANES.map((x) => x[0])} value={pane} onChange={setPane} label="Open Source & Deterministic Safety" size="lg" />
             {PANES.map(([t, k, d, items, l, to], i) => (
@@ -603,9 +670,12 @@ function Careers() {
 }
 
 export default function About({ portraits = [] }) {
+  useEntrances(); // the five section entrances (about/enter.js)
   return (
     <main id="main" className="xab v2s">
-      {/* JavaScript off needs nothing: the hero's cut-in and the frontier's draw are CSS and run from first paint */}
+      {/* JavaScript off: the frontier shows drawn at rest (no film to stop part way), and the idle loops and their pause
+          button (which needs JS) are off */}
+      <noscript><style>{'.xab-line,.xab-ghost,.xab-ride,.xab-ts,.xab-axis,.xab-halo,.xab-glide{animation:none!important}.xab-glide,.xab-pause{display:none!important}'}</style></noscript>
       <Hero />
       <Why />
       <Record />

@@ -26,13 +26,11 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A } from '../../kit';
 import { Paste, Code, useLive } from './Frame';
-import SettleStage from '../../v2/SettleStage';
-import PinnedChapters from '../../v2/PinnedChapters';
-import ClipWipe from '../../v2/ClipWipe';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
-import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
+import MqGlobe from './MqGlobe';
+import { ShrinkToCard, Iris, Scramble, Scr, CountRoll, Roll, CursorLens, Lens } from './MqEntrances';
 import './Mq.css';
 
 const GH = 'https://github.com/hanzoai';
@@ -268,7 +266,7 @@ function Failed() {
   );
 }
 
-function Inspector({ step, intro }) {
+function Inspector({ cur, go }) {
   const [ref, live] = useLive(0.3);
   const [paused, pause] = usePause();
   const run = live && !paused;
@@ -278,17 +276,6 @@ function Inspector({ step, intro }) {
     const t = setTimeout(() => setN((v) => v + 1), 1000);
     return () => clearTimeout(t);
   }, [n, run]);
-  const cur = intro ? -1 : step;
-  // a tab takes you to its chapter: the same scroll the chapter rail makes
-  const go = (i) => {
-    const el = ref.current?.closest('.lx-pin');
-    if (!el || !el.hasAttribute('data-live')) return;
-    const total = el.querySelectorAll('.lx-pin-step').length;
-    const lead = total - TABS.length;
-    const y = el.getBoundingClientRect().top + scrollY + ((i + lead + 0.5) / total) * (el.offsetHeight - innerHeight);
-    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) }) : scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
-  };
   return (
     <div className="mq-ins" ref={ref}>
       <LivePause paused={paused} onToggle={pause} className="mq-pause" />
@@ -296,7 +283,7 @@ function Inspector({ step, intro }) {
         <span className="mq-chip"><i aria-hidden="true" />emails</span>
         <nav className="mq-tabs" aria-label="emails">
           {TABS.map((t, i) => (
-            <button key={t} type="button" aria-current={i === cur ? 'step' : undefined} onClick={() => go(i)}>
+            <button key={t} type="button" aria-current={i === cur ? 'step' : undefined} onClick={() => go(i === cur ? -1 : i)}>
               {i === cur && <motion.span layoutId="mq-tab" className="mq-tab-u" transition={ARRIVE} />}
               {t}
             </button>
@@ -344,37 +331,55 @@ const worker = new Worker("emails", async (job) => {
   limiter: { max: 100, duration: 60_000 },
 })`;
 
+/* the globe's key: its shapes, named in the words this page already uses */
+const KEY = [['q', 'Queue'], ['w', 'Worker'], ['ok', 'completed'], ['back', 'backoff · exponential'], ['bad', 'failed set']];
+const pad = (i) => String(i).padStart(2, '0');
+
 export default function Mq() {
-  const steps = FACTS.map(([t, d]) => ({ t, d }));
+  const [sel, setSel] = useState(-1);
   return (
     <main className="lx mq" data-cursor="">
-      <section className="mq-hero" data-morph-target data-ask-name="Hanzo MQ">
+      {/* 1 · shrink-to-card: the globe's quiet room becomes a card as you leave it */}
+      <ShrinkToCard className="mq-hero" data-morph-target data-ask-name="Hanzo MQ">
         <div className="lx-wrap mq-top">
-          <LineMask as="h1" className="lx-display mq-h1" lines={['Hanzo MQ']} />
           <div className="mq-lead">
+            <h1 className="lx-display mq-h1">Hanzo MQ</h1>
             <p className="lx-lede mq-sub">Background work, done later</p>
             <A to={GH} className="lx-cta" data-thumb="GitHub" data-cta="mq.hero" data-cursor="">GitHub<Arr /></A>
+            <ul className="mq-key" aria-hidden="true">
+              {KEY.map(([k, t]) => <li key={k} className={k}><i />{t}</li>)}
+            </ul>
           </div>
+          <MqGlobe label="Add a job here, run it there" />
         </div>
-        <div className="lx-wrap"><SettleStage from={1.04} lift={24} className="mq-stage"><Conveyor /></SettleStage></div>
-      </section>
+      </ShrinkToCard>
 
-      <PinnedChapters flip label="The queue is data, the workers are yours" per={80} objH={44}
-        intro={{ title: ['The queue is data,', 'the workers are yours'] }}
-        steps={steps}
-        visual={(at, intro) => <Inspector step={at} intro={intro} />} />
+      {/* 2 · iris: the conveyor opens from its centre */}
+      <Iris className="mq-convsec">
+        <div className="lx-wrap"><div className="mq-stage"><Conveyor /></div></div>
+      </Iris>
 
-      <ClipWipe dark className="mq-room">
-        <div className="lx-wrap mq-room-grid">
-          <div className="mq-room-l">
-            <h2 className="lx-headline">Add a job here, run it there</h2>
-            <Paste dark name="MQ" prompt="Read https://hanzo.ai/skill.md and use Hanzo MQ in my project. Start with: hanzo mq stream list" className="lx-paste" />
+      {/* 3 · scramble: the heading and the six facts decode; a fact (or a tab) puts the inspector on it */}
+      <Scramble className="lx-sec mq-facts" aria-label="The queue is data, the workers are yours">
+        <div className="lx-wrap">
+          <div className="mq-facts-top">
+            <h2 className="lx-headline mq-facts-h"><Scr>The queue is data,</Scr> <Scr>the workers are yours</Scr></h2>
+            <Inspector cur={sel} go={setSel} />
           </div>
-          <Code title="MQ" tabs={[{ k: 'worker.ts', code: CODE }]} className="mq-code" />
+          <ol className="mq-facts-list">
+            {FACTS.map(([t, d], i) => (
+              <li key={t} className={i === sel ? 'on' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && setSel(i)}>
+                <span className="mq-facts-n">{pad(i + 1)} / {pad(FACTS.length)}</span>
+                <h3 className="mq-facts-t"><button type="button" aria-pressed={i === sel} onClick={() => setSel(i === sel ? -1 : i)}><Scr>{t}</Scr></button></h3>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
         </div>
-      </ClipWipe>
+      </Scramble>
 
-      <section className="lx-sec mq-walk">
+      {/* 4 · count-roll: the free tier's figure rolls into place */}
+      <CountRoll className="lx-sec mq-walk">
         <div className="lx-wrap">
           <div className="mq-walk-top">
             <div className="mq-walk-l">
@@ -382,13 +387,26 @@ export default function Mq() {
               <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
             </div>
             <div className="mq-walk-r">
-              <LineMask as="p" className="lx-fig mq-fig" aria-hidden="true" lines={['10K']} inView />
+              <p className="lx-fig mq-fig" aria-hidden="true"><Roll value="10K" /></p>
               <p className="lx-lede mq-free">Free tier includes 10K jobs/month. No job size limits.</p>
             </div>
           </div>
           <SpecDrawer className="mq-spec" rows={[{ v: 'Library', l: 'No broker to run' }, { v: 'Cron', l: '' }, { v: 'Retries', l: 'With backoff' }, { v: 'At-least-once', l: 'Delivery' }]} />
         </div>
-      </section>
+      </CountRoll>
+
+      {/* 5 · cursor-lens: a lens sweeps worker.ts as the black room arrives, then follows the pointer */}
+      <CursorLens className="lx-dark mq-room" data-room="dark">
+        {(play) => (
+          <div className="lx-wrap mq-room-grid">
+            <div className="mq-room-l">
+              <h2 className="lx-headline">Add a job here, run it there</h2>
+              <Paste dark name="MQ" prompt="Read https://hanzo.ai/skill.md and use Hanzo MQ in my project. Start with: hanzo mq stream list" className="lx-paste" />
+            </div>
+            <Lens play={play}><Code title="MQ" tabs={[{ k: 'worker.ts', code: CODE }]} className="mq-code" /></Lens>
+          </div>
+        )}
+      </CursorLens>
 
       <LaunchClose name="MQ" tag="Message queue" seed="mq" data={[6379, 10, 100, 60000]} ask={['GitHub', GH]} cta="mq.close" repo={['hanzoai', GH]} />
     </main>

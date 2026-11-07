@@ -2,7 +2,10 @@
 /* Search (v2, Cloud 4 chat). Archetype A, Launch: Stage hero → four chapters → a dark "how it works" room driven by its
    three steps → frameworks → pricing with a fit-finder → Get Search → one closing band. Ink, greys and white only.
    Persona: a developer adding search to their docs or product. Goal: read the docs and create an index.
-   CTA: "Read the docs" (hero, sticky header on desktop, close; data-cta primary / close).
+   CTA: "Read the docs" (hero solid, data-thumb; data-cta primary / close). Desktop: the shared header outlines its
+   "Try Hanzo" while a "Read the docs" is on screen and carries "Read the docs" solid once the hero ask scrolls away.
+   Phone (≤700px): the header keeps a solid "Try Hanzo", so the hero's "Read the docs" sits quiet (outlined) and the
+   shared slim bar carries it after the hero; one solid per viewport at both widths.
    Metric: api_key_created (developers, MASTER §1).
    V2: 8/10 a Spotlight-size search types on arrival and settles; one query answered four ways in pinned chapters (phone pictures run when seen); the dark room runs its three steps by itself (pausable, hover holds); the close replays the hero query centred under one merged rank; page-scoped deck tokens, 44px phone targets
    Signature: one query, four answers. "Kubernets" types itself into a search bar the size of the screen, and as you scroll
@@ -24,7 +27,6 @@ import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
 import Console from '../../v2/x-hamilton/Console';
 import Drawer from '../../v2/Drawer';
 import StageHero from '../../v2/StageHero';
-import PinScenes from '../../v2/x-hamilton/PinScenes';
 import Finale from '../../v2/Finale';
 import './Search.css';
 
@@ -40,6 +42,66 @@ const FROM = { 'Deploy to Kubernetes': 'text · vector', 'Kubernetes ingress': '
 const RAG_Q = 'How does RAG chat answer?';
 const RAG_A = 'The retrieved passages go to a model and come back as an answer with links to what it read.';
 const SRC = ['RAG chat', 'How it works'];
+
+/* Entrances (MOTION-MAP /search): each main section arrives its own way, once, when it enters view. The hidden
+   start states live in Search.css under html.js only, and reduced motion shows the final state. */
+function useEnter(ref, amount = 0.2) {
+  const seen = useInView(ref, { amount, once: true });
+  return seen ? ' in' : '';
+}
+// grow-from-point: the last place the visitor pressed or pointed, in page coordinates
+const lastPoint = { x: null, y: null };
+if (typeof window !== 'undefined') {
+  const keep = (e) => { lastPoint.x = e.pageX; lastPoint.y = e.pageY; };
+  window.addEventListener('pointerdown', keep, { passive: true });
+  window.addEventListener('pointermove', keep, { passive: true });
+}
+
+/* Signature: the flip board. The results are a departure board: rank, document and where it matched, one tile per
+   character. When the mode changes, every tile that differs flips through a few letters and lands on the new value,
+   left to right, like a station board. One timer drives the board; reduced motion sets the values at once. */
+const FLAP = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789·';
+const COLS = [1, 32, 13];
+const pad = (v, n) => (v + ' '.repeat(n)).slice(0, n);
+const lineOf = (row) => COLS.map((n, i) => pad(row[i] || '', n)).join('');
+function FlipBoard({ rows, calm }) {
+  const want = rows.map(lineOf);
+  const key = want.join('|');
+  const [shown, setShown] = useState(want);
+  const left = useRef(null);
+  useEffect(() => {
+    if (calm) { setShown(want); return; }
+    // each tile that changes gets a few random letters first; tiles further right wait a little longer
+    left.current = want.map((w, r) => [...w].map((ch, c) => (shown[r][c] === ch ? 0 : 2 + ((c + r * 3) % 4) + Math.floor(c / 9))));
+    let t = 0;
+    const tick = () => {
+      let busy = false;
+      const next = want.map((line, r) => [...line].map((ch, c) => {
+        const n = left.current[r][c];
+        if (n <= 0) return ch;
+        left.current[r][c] = n - 1;
+        busy = true;
+        return n === 1 ? ch : FLAP[(c * 7 + n * 13 + r) % FLAP.length];
+      }).join(''));
+      setShown(next);
+      if (busy) t = setTimeout(tick, 70);
+    };
+    t = setTimeout(tick, 70);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, calm]);
+  return (
+    <div className="se2-board" aria-hidden="true">
+      {shown.map((line, r) => (
+        <div className={'se2-board-row' + (r === 0 ? ' top' : '')} key={r}>
+          {[...line].map((ch, c) => (
+            <span key={c + ':' + ch} className={'se2-tile' + (c === 0 ? ' rk' : c > COLS[0] + COLS[1] - 1 ? ' src' : '')}>{ch === ' ' ? '\u00a0' : ch}</span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /* An answer that streams in word by word (written into a text node), sources after it. */
 function Streamed({ run, big }) {
@@ -74,6 +136,7 @@ function Streamed({ run, big }) {
 function Ask() {
   const [ref, live, calm, paused, toggle] = useDemo(0.05);
   const [at, choose] = useSteps(4, 4200, live);
+  const enter = useEnter(ref, 0.1);
   const box = useRef(null);
   const [typed, setTyped] = useState(true);
   useEffect(() => {
@@ -93,8 +156,9 @@ function Ask() {
   }, [at, live, calm]);
   const rows = at === 0 ? TEXT : at === 1 ? VEC : RRF;
   return (
-    <div className="l2-obj se2-ask" ref={ref}>
+    <div className={'l2-obj se2-ask se2-e-blinds' + enter} ref={ref}>
       <PauseBtn paused={paused} onClick={toggle} />
+      <div className="se2-blinds" aria-hidden="true">{Array.from({ length: 8 }, (_, i) => <i key={i} style={{ transitionDelay: i * 55 + 'ms' }} />)}</div>
       <div className="se2-bar">
         <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
         <span className="se2-q" ref={box} aria-hidden="true">{Q}</span><i className="se2-caret" aria-hidden="true" />
@@ -110,16 +174,10 @@ function Ask() {
       </div>
       <div className="se2-out" aria-hidden="true">
         {at < 3 ? (
-          <ol className="se2-rows">
-            {rows.map((r, i) => (
-              <motion.li key={r} layout="position" initial={{ opacity: 0, y: 10 }} animate={{ opacity: typed ? 1 : 0.12, y: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], opacity: { duration: 0.3, delay: typed ? i * 0.05 : 0 } }}>
-                <span className="se2-rk l2-mono">{i + 1}</span>
-                <span className="se2-doc"><b>{r}</b><em>docs · {at === 2 ? FROM[r] : at === 0 ? 'text' : 'vector'}</em></span>
-                {at === 0 && i === 0 && <span className="se2-fix l2-mono">typo fixed</span>}
-                {at === 2 && <span className="se2-fused l2-mono">one merged rank</span>}
-              </motion.li>
-            ))}
-          </ol>
+          <div className={'se2-board-wrap' + (typed ? '' : ' wait')}>
+            <FlipBoard calm={calm} rows={[0, 1, 2, 3].map((i) => (rows[i] ? [String(i + 1), rows[i], at === 2 ? FROM[rows[i]] : at === 0 ? 'text' : 'vector'] : ['', '', '']))} />
+            <p className="se2-board-cap l2-mono">{at === 0 ? 'typo fixed' : at === 2 ? 'one merged rank' : 'docs · vector'}</p>
+          </div>
         ) : (
           <Streamed run={live} />
         )}
@@ -195,11 +253,61 @@ function Way({ at }) {
   );
 }
 
+/* The four ways, as cards that stack at the top as you scroll past them (sticky-stack); each card keeps its picture. */
+function Ways() {
+  const ref = useRef(null);
+  const enter = useEnter(ref, 0.05);
+  return (
+    <section className={'l2-sec se2-ways se2-e-stack' + enter} ref={ref}>
+      <div className="l2-wrap">
+        <div className="se2-ways-h">
+          <h2 className="l2-head">Four ways to ask, one index</h2>
+          <p className="l2-lede">The same documents answer all four. Choose per query, not per deployment.</p>
+        </div>
+        <ol className="se2-stack">
+          {WAYS.map(([t, d], i) => (
+            <li key={t} className="se2-card" style={{ '--i': i }}>
+              <div className="se2-card-copy">
+                <h3 className="l2-title">{t}</h3>
+                <p className="se2-card-n l2-mono">{String(i + 1).padStart(2, '0')} / {String(WAYS.length).padStart(2, '0')}</p>
+                <p className="l2-body">{d}</p>
+              </div>
+              <div className="se2-card-vis" aria-hidden="true"><Way at={i} /></div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
 const STEPS = [
   ['Index your content', 'Push documents at build time or over the REST API. Text fields become searchable as they land; embeddings go to the vector store beside them. Adding a vector field later does not force a text reindex.'],
   ['Query it from anywhere', 'A React hook for search-as-you-type, the REST API for everything else, and an MCP tool so an agent can search the same index a user searches. One index, three callers.'],
   ['Let people ask instead', 'Turn on RAG chat and a question gets an answer built from the passages that were retrieved, each one linked. If the index has nothing, the answer says so rather than inventing one.'],
 ];
+
+/* Page-local stepper: auto-advances every ms while live. A press holds for good (pick); hover or focus holds only
+   while the pointer or focus stays (peek / leave), then the cycle resumes from that step after 1.5 s. */
+function useCycle(n, ms, live) {
+  const [at, setAt] = useState(0);
+  const [held, setHeld] = useState(false);
+  const [peeking, setPeeking] = useState(false);
+  const back = useRef(false);
+  useEffect(() => {
+    if (!live || held || peeking) return;
+    const wait = back.current ? 1500 : ms;
+    back.current = false;
+    const t = setTimeout(() => setAt((v) => (v + 1) % n), wait);
+    return () => clearTimeout(t);
+  }, [at, live, held, peeking, n, ms]);
+  return {
+    at,
+    pick: (i) => { setAt(i); setHeld(true); },
+    peek: (i) => { setAt(i); setPeeking(true); },
+    leave: () => { back.current = true; setPeeking(false); },
+  };
+}
 
 const CALLERS = ['React hook', 'REST API', 'MCP tool'];
 const LANDING = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Cluster quotas', 'Scaling a service'];
@@ -224,10 +332,11 @@ function HowBar({ at }) {
 
 function How() {
   const [ref, live, , paused, toggle] = useDemo(0.35);
-  const [at, setAt] = useSteps(3, 4200, live);
+  const { at, pick, peek, leave } = useCycle(3, 4200, live);
+  const enter = useEnter(ref, 0.15);
   return (
-    <section className="l2-sec l2-dark se2-how" data-room="dark" ref={ref}>
-      <div className="l2-wrap l2-grid">
+    <section className={'l2-sec l2-dark se2-how se2-e-zoom' + enter} data-room="dark" ref={ref}>
+      <div className="l2-wrap l2-grid se2-e-in">
         <div className="se2-how-l">
           <PauseBtn paused={paused} onClick={toggle} className="se2-how-pause" />
           <h2 className="l2-head">How it works</h2>
@@ -242,11 +351,11 @@ function How() {
         </div>
         <ol className="se2-steps">
           {STEPS.map(([t, d], i) => (
-            <li key={t} className={at === i ? 'on' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && setAt(i)}>
+            <li key={t} className={at === i ? 'on' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && peek(i)} onPointerLeave={(e) => e.pointerType === 'mouse' && leave()}>
               <h3 className="l2-title">{t}</h3>
               <span className="se2-step l2-mono">Step {String(i + 1).padStart(2, '0')}</span>
               <p className="l2-body">{d}</p>
-              <button type="button" className="se2-step-hit" aria-pressed={at === i} aria-label={t} onClick={() => setAt(i)} onFocus={() => setAt(i)} />
+              <button type="button" className="se2-step-hit" aria-pressed={at === i} aria-label={t} onClick={() => pick(i)} onFocus={() => peek(i)} onBlur={leave} />
             </li>
           ))}
         </ol>
@@ -260,10 +369,20 @@ const FW = ['Hanzo Docs', 'Fumadocs', 'Nextra', 'Docusaurus', 'REST API'];
 /* Frameworks: pick one and the bar shows where its docs come from (native, or the REST API for everything else). */
 function Frameworks() {
   const [ref, live] = useDemo(0.5);
-  const [at, setAt] = useSteps(FW.length, 2600, live);
+  const { at, pick, peek, leave } = useCycle(FW.length, 2600, live);
+  const enter = useEnter(ref, 0.3);
+  const [pt, setPt] = useState(null);
+  useEffect(() => {
+    if (!enter || !ref.current) return;
+    const r = (ref.current.querySelector('.se2-e-in') || ref.current).getBoundingClientRect();
+    const x = lastPoint.x == null ? r.width / 2 : lastPoint.x - (r.left + scrollX);
+    const y = lastPoint.y == null ? r.height / 2 : lastPoint.y - (r.top + scrollY);
+    setPt({ '--gx': Math.round(Math.max(0, Math.min(r.width, x))) + 'px', '--gy': Math.round(Math.max(0, Math.min(r.height, y))) + 'px' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enter]);
   return (
-    <section className="l2-sec tight se2-fw" ref={ref}>
-      <div className="l2-wrap l2-grid">
+    <section className={'l2-sec tight se2-fw se2-e-grow' + (enter && pt ? ' in' : '')} ref={ref} style={pt || undefined}>
+      <div className="l2-wrap l2-grid se2-e-in">
         <div className="se2-fw-h">
           <h2 className="l2-head">Works with any docs framework</h2>
           <p className="l2-body">Native support for Hanzo Docs, Fumadocs, Nextra, and Docusaurus. REST API for everything else.</p>
@@ -277,7 +396,7 @@ function Frameworks() {
         <ul className="se2-fw-l">
           {FW.map((f, i) => (
             <li key={f} className={(i === 4 ? 'rest' : '') + (at === i ? ' on' : '')}>
-              <button type="button" aria-pressed={at === i} onClick={() => setAt(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setAt(i)} onFocus={() => setAt(i)}><span>{f}</span><em className="l2-mono">{i === 4 ? 'everything else' : 'native'}</em></button>
+              <button type="button" aria-pressed={at === i} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && peek(i)} onPointerLeave={(e) => e.pointerType === 'mouse' && leave()} onFocus={() => peek(i)} onBlur={leave}><span>{f}</span><em className="l2-mono">{i === 4 ? 'everything else' : 'native'}</em></button>
             </li>
           ))}
         </ul>
@@ -296,13 +415,16 @@ const DOCN = [1000, 5000, 10000, 25000, 50000, 100000, 250000, 1000000];
 const k = (n) => (n >= 1000000 ? n / 1000000 + 'M' : n >= 1000 ? n / 1000 + 'k' : String(n));
 
 /* Beyond: set projects and docs per project; the plan whose limits cover both lights up. */
-const fillOf = (el, i, n) => el && el.style.setProperty('--p', (i / (n - 1)) * 100 + '%');
+const fillOf = (i, n) => ({ '--p': (i / (n - 1)) * 100 + '%' }); // the track fill, rendered once hydrated
 
 function Pricing() {
   const [p, setP] = useState(3);
   const [d, setD] = useState(2);
-  const pr = useRef(null), dr = useRef(null);
   const box = useRef(null);
+  const sec = useRef(null);
+  const enter = useEnter(sec, 0.2);
+  const [up, setUp] = useState(false); // the fill renders after hydration, so server and client HTML match
+  useEffect(() => setUp(true), []);
   const seen = useInView(box, { amount: 0.6, once: true });
   const calm = useCalm();
   const touched = useRef(false);
@@ -315,19 +437,18 @@ function Pricing() {
     t = setTimeout(go, 200);
     return () => clearTimeout(t);
   }, [seen, calm]);
-  useEffect(() => { fillOf(pr.current, p, PROJ.length); fillOf(dr.current, d, DOCN.length); }, [p, d]);
   const proj = PROJ[p], docs = DOCN[d];
   const fit = PLANS.findIndex(([, , , , , [mp, md]]) => proj <= mp && docs <= md);
   return (
-    <section className="l2-sec se2-price" id="pricing">
-      <div className="l2-wrap l2-grid">
+    <section className={'l2-sec se2-price se2-e-pull' + enter} id="pricing" ref={sec}>
+      <div className="l2-wrap l2-grid se2-e-in">
         <div className="se2-price-h">
           <h2 className="l2-head">Pricing</h2>
           <p className="l2-body">Pay for hosted search, vector, and AI. Self-host Meilisearch free forever.</p>
           <div className="se2-fit" role="group" aria-label="Which plan fits" ref={box} onPointerDown={() => { touched.current = true; }} onKeyDown={() => { touched.current = true; }}>
             <p className="l2-kick">Which plan fits</p>
-            <label><span>Projects</span><b className="l2-mono">{proj}</b><input ref={pr} className="l2-range" type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
-            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input ref={dr} className="l2-range" type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
+            <label><span>Projects</span><b className="l2-mono">{proj}</b><input className="l2-range" style={up ? fillOf(p, PROJ.length) : undefined} type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
+            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input className="l2-range" style={up ? fillOf(d, DOCN.length) : undefined} type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
             <p className="se2-fit-r" aria-live="polite"><span className="l2-mono">fits</span> <b>{PLANS[fit][0]}</b></p>
           </div>
         </div>
@@ -389,14 +510,14 @@ const SIDE = [['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], [
 
 export default function Search() {
   return (
-    <main id="main" className="l2-page se2" data-ask="off">
+    <main id="main" className="l2-page se2">
       <StageHero look="rise" kick="Hybrid Search + RAG" title="Hanzo Search" sub="Keyword and meaning in the same query" acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Ask />
       </StageHero>
-      <PinScenes head="Four ways to ask, one index" lede="The same documents answer all four. Choose per query, not per deployment." items={WAYS} visual={(at) => <Way at={at} />} />
+      <Ways />
       <How />
-      <Frameworks />
       <Pricing />
+      <Frameworks />
       <Finale
         name="Search"
         head="Make your content searchable and conversational"

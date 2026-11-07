@@ -33,7 +33,7 @@ Done here: Every link goes through kit `A`/`More` (the close's `Go` became `More
 - [ ] Ends in proof strip, `Band`, footer
 - [x] ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards open into pages here
 
-Done here: The h1 cuts in by line mask and the pulsing dot and "Working" status move within 1 s; the window peeks into the first screen at 1470x801 and 375x812. The page still uses its own hero markup until a shared `PageHero` lands (the kicker is visually hidden), and it ends on its own close, not on a `Band`.
+Done here: The h1 cuts in by line mask and the pulsing dot and "Working" status move within 1 s; the window peeks into the first screen at 1470x801 and 375x812. Every section after the scene opens at 72px (Setup, What, Platform, Questions, Close; Notes, Setup and What close at 103px), so the white between moments fell from about 320px to about 175px. The page still uses its own hero markup until a shared `PageHero` lands (the kicker is visually hidden), and it ends on its own close, not on a `Band`.
 
 ## 4. Conversion system
 - [ ] `<Cta>` only; no raw `.x-btn`
@@ -57,7 +57,7 @@ Done here: Every figure on the page is Hanzo's own (42 channels, 1.9:1, 8.9:1, 2
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /<path>`: 0 missing
 
-Done here: `parity.py /slack` reports text 196/196 and links 10/10. Row titles are 21px, the h1 is 52px, the section heads 26 to 32px, and the room numbers are 13px mono captions, not 96px figures.
+Done here: `parity.py /slack` reports text 196/196 and links 10/10. The invented headings are gone: the setup card is labelled by its own name ("Hanzo Tag Setup") and Hanzo's sentence "Connect @Hanzo to your Slack workspace in three steps." appears once, as the close h2, as on live; the FAQ h2 is visually hidden since Hanzo gives it no label. Unlit promises draw at 17px (21px scaled .81) and only the lit one grows to 21px; the h1 is 52px and the room numbers are 13px mono captions.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -75,7 +75,7 @@ Done here: `taste.py` passes on all 5 files; the "aubergine" wording is gone fro
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Measured: the outlined secondary goes from white to `#f2f2f2` on hover. The "How each one works" trigger also fills `#f2f2f2` and nudges its + by 2px, and both press at scale .97 (90ms). New hovers sit inside `@media (hover:hover)`, and the room tabs press at .98.
+Done here: Measured: the outlined secondary goes from white to `#f2f2f2` on hover. The "How each one works" trigger also fills `#f2f2f2` and nudges its + by 2px, and both press at scale .97 (90ms). New hovers sit inside `@media (hover:hover)`, and the room tabs press at .98. The four platform items are now focusable (tabIndex 0, focus inks the item like hover), press at .98 in 90ms and show a 2px ink focus ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Measured: the outlined secondary goes from white to `#f2f2f2` on hove
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] ~~Sound only on the listed moments, through the one kit~~ n/a: no page sounds; the shared kit owns them
 
-Done here: `variety.py` passes with 3 techniques (useScroll, layoutId, rAF) and 0 Rise. The tab pill moved from a spring to a 300ms ease-emphasis tween, the setup card moved from setInterval to setTimeout, and new idle motion was added: a runtime signal and a WIMSE token draw. Under reduced motion there are 0 running animations after 3 s on desktop and phone.
+Done here: `variety.py` passes with 3 techniques (useScroll, layoutId, rAF) and 0 Rise. The tab pill moved from a spring to a 300ms ease-emphasis tween. The setup demo (setTimeout, no setInterval) starts at 60% in view with the ask already in the channel, ticks the three steps, answers, and ends at rest after 9 s; it pauses out of view and never loops. On desktop the scene's thread now scrolls inside the window (grid row `minmax(0, 1fr)`), so at step 6 the merged PR (y 707-746) and Archive Channel sit inside the window (bottom 767) at 1470x801. New idle motion was added: a runtime signal and a WIMSE token draw. Under reduced motion there are 0 running animations after 3 s on desktop and phone.
 
 ## 10. Media
 - [x] ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no photos or films; every visual is drawn
@@ -109,7 +109,7 @@ Done here: The phone now has its own scene: a compact window pinned under a 44px
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Inactive promises dim to opacity .56 (about 4.6:1) and inactive titles use `#737373` on white (4.7:1). The rooms are an APG vertical tablist (aria-selected/controls, inert panels), and the rail keeps arrow keys. The contrast-slider loop has no separate pause control; dragging stops it, and it freezes under reduced motion.
+Done here: Inactive promises dim to opacity .56 (renders about #767676, 4.5:1) and draw at 17px and inactive titles use `#737373` on white (4.7:1). The rooms are an APG vertical tablist (aria-selected/controls, inert panels), and the rail keeps arrow keys. The contrast-slider loop has no separate pause control; dragging stops it, and it freezes under reduced motion.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -157,4 +157,4 @@ Done here: With hanzo.ai blocked the page is complete, with 0 console errors on 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/<page>.md` verdict 8 or more
 
-Done here: The `V2:` line was rewritten to describe this pass, and `docs/review/slack.md` (6/10) was worked through fixes 1 to 11, with 12 filed as requests. A fresh critic verdict is still to come.
+Done here: The `V2:` line was rewritten for this pass, and `docs/review/slack.md` (7/10) was worked through fixes 1 to 7 in order; the two shared notes stay filed in `docs/requests/slack.md`. A fresh critic verdict is still to come.

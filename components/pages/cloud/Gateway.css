@@ -222,3 +222,146 @@
 .gw .gw-tk { font-style: normal; }
 /* the shared console's checkout-web line ("A build is running…") is not in Hanzo's Gateway copy: not shown on this page */
 .gw .cf-cap > p:nth-child(2) { display: none; }
+
+/* round 3 ------------------------------------------------------------------------------------------------------- */
+/* hero: the lede and asks sit on the h1's baseline; the landed requests get their own lane at the top right, so the
+   card walking through the gate never crosses them; the lane leans toward a fine pointer */
+.gw-hero-r { padding-bottom: 6px; }
+.gw-log { top: 24px; right: 88px; transform: none; gap: 8px; }
+.gw-log li { padding: 9px 12px; }
+.gw-lane { transition: transform .5s cubic-bezier(.16, 1, .3, 1); transform-origin: 50% 50%; }
+.gw-req { margin-top: -100px; }
+/* Hanzo's words keep Hanzo's case on the diagrams */
+.gw-gate-k, .gw-arrow span { text-transform: none; letter-spacing: .02em; }
+.gw-forge .gw-pane .v2-kick { text-transform: none; letter-spacing: 0; font-size: 14px; }
+.gw-forge-hs li.gone span { text-transform: none; letter-spacing: 0; font-size: 13px; }
+
+/* the statement cuts in by its line once it arrives (server HTML: whole and visible) */
+.gw-say-h.cut .gw-say-in { display: block; clip-path: inset(0 0 100% 0); transform: translateY(24px); transition: clip-path .9s cubic-bezier(.16, 1, .3, 1), transform .9s cubic-bezier(.16, 1, .3, 1); }
+.gw-say-h.cut.in .gw-say-in { clip-path: inset(0 -4% -12% 0); transform: none; }
+
+/* chapter 02, opened: no heading of its own, just its place in the chapters and the pick */
+.gw-forge { padding: clamp(56px, 6vw, 96px) 0; }
+.gw-forge-head { margin-bottom: 40px; align-items: center; }
+.gw-forge-n { margin: 0; color: #a3a3a3; }
+.gw-forge-hs li { padding: 0; }
+.gw-forge-hs li.gone, .gw-forge-hs li.set, .gw-forge-auth { padding: 0 16px; }
+.gw-tog { width: 100%; padding: 0 16px; border: 0; background: none; font: inherit; text-align: left; border-radius: 14px; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
+.gw-tog .gw-tog-ui { transition: background-color .25s cubic-bezier(0, 0, .2, 1); }
+.gw-tog[aria-checked='true'] .gw-tog-ui { background: #e5e5e5; }
+.gw-tog[aria-checked='true'] .gw-tog-ui::after { transform: translateX(14px); background: #0a0a0a; }
+.gw-forge-hs li:not(.on) .gw-tog > span:last-child { color: #737373; }
+.gw-tog:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
+.gw-tog:active .gw-tog-ui { transform: scale(.97); }
+@media (hover: hover) {
+  .gw .gw-tog:hover { background: rgba(255, 255, 255, .06); }
+  .gw .gw-tog:hover .gw-tog-ui { background: #525252; }
+  .gw .gw-tog[aria-checked='true']:hover .gw-tog-ui { background: #fafafa; }
+}
+
+/* related rows: straight hairlines (a rounded row bent the ends of its bottom border) */
+.gw .sp-rel-a { border-radius: 0; margin: 0; padding-inline: 0; }
+
+/* one section-padding step between blocks, not two */
+.gw .v2-sec.gw-ship, .gw .v2-sec.gw-proj, .gw .v2-sec.gw-relsec { padding-top: clamp(64px, 6vw, 104px); padding-bottom: clamp(64px, 6vw, 104px); }
+.gw .v2-sec.gw-proj { padding-top: 0; }
+.gw .v2-sec.gw-relsec { padding-top: 0; }
+.gw .gw-relsec .sp-rel { padding-top: 32px; }
+
+/* the console: its caption sits at the top, beside the window */
+.gw-proj .v2-grid { align-items: start; }
+.gw-proj-t { padding: 20px 0 0; border-bottom: 0; border-top: 1px solid var(--line); }
+
+/* hovers that answer: console rows fill, the active product icon inks, the close's text links draw their underline */
+.gw .cf-con-main li { transition: background-color .15s cubic-bezier(0, 0, .2, 1); border-radius: 10px; }
+.gw .cf-con-ico { transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+.gw .gi-more a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; transition: text-underline-offset .15s cubic-bezier(0, 0, .2, 1), text-decoration-thickness .15s cubic-bezier(0, 0, .2, 1); }
+.gw .gi-more a:active { transform: translateY(1px); }
+@media (hover: hover) {
+  .gw .cf-con-main li:hover { background: #f5f5f5; }
+  .gw .cf-con-ico:hover, .gw .cf-con-ico.on:hover { background: #e4e4e7; color: #0a0a0a; }
+  .gw .gi-more a:hover { text-underline-offset: 7px; text-decoration-thickness: 2px; }
+}
+
+@media (max-width: 900px) {
+  .gw-req { margin-top: -112px; }
+  /* "Hanzo Cloud /v1" sits up by the pause, clear of the card's path */
+  .gw-side.r { top: 38px; bottom: auto; left: 84px; }
+  .gw-forge { padding: 64px 0; }
+  .gw-forge-head { margin-bottom: 24px; }
+  .gw-proj-t { padding-bottom: 20px; border-top: 0; }
+}
+/* the narrowest phones: the card is narrower and the gate further right, so the card stays inside the lane */
+@media (max-width: 400px) {
+  .gw-lane { --gate: 88%; --cw: 224px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gw-lane { transition: none; }
+  .gw-say-h.cut .gw-say-in { clip-path: none; transform: none; transition: none; }
+}
+
+/* round 4 ------------------------------------------------------------------------------------------------------- */
+/* hero: the request is checked on the line (centred on the gate) and crosses into the Hanzo Cloud ledger on the far
+   side; the token bucket has its own lane at the top of the gate, "Gateway" names the line at its foot */
+.gw-lane { height: clamp(460px, 34vw, 520px); }
+.gw-req { margin-top: -132px; margin-left: calc(var(--cw) * -0.5); z-index: 2; will-change: transform; }
+.gw-bucket { top: 20px; bottom: auto; z-index: 3; }
+.gw-gate-k { top: auto; bottom: 22px; left: 0; transform: translateX(-50%); padding: 7px 10px; border-radius: 999px; background: #f5f5f5; }
+.gw-cloud { position: absolute; top: 50%; right: 32px; width: 260px; transform: translateY(-50%); display: grid; gap: 14px; }
+.gw-cloud .gw-side.r { position: static; margin: 0; color: var(--ink); }
+.gw-cloud .gw-log { position: static; transform: none; display: grid; gap: 8px; }
+.gw-cloud .gw-log li { min-width: 0; }
+.gw-queue { z-index: 1; }
+
+/* the dark room (chapter 02, opened): no stray counter, just the pick */
+.gw-forge-head { display: flex; justify-content: flex-start; margin-bottom: 32px; }
+.gw-forge-pick { justify-self: auto; }
+
+/* chapter scenes: flat quiet tiles (no outline, no shadow), the scene is the object */
+.gw .gws.v2-obj { background: #f5f5f5; box-shadow: none; border: 0; }
+
+/* example project: the window spans the container, its caption above it */
+.gw-proj-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.gw-proj-in .gw-proj-t, .gw-proj-in .gw-proj-c { grid-column: 1 / -1; }
+.gw-proj-in .gw-proj-t { padding: 20px 0 0; border-top: 1px solid var(--line); }
+.gw-proj-in .gw-proj-l { max-width: none; }
+/* the console's window bar keeps its title, not three grey dots */
+.gw .cf-con-bar > i { display: none; }
+
+/* related: Hanzo's own "→" sits in the right-hand arrow slot, where the other rows draw theirs */
+.gw .sp-rel-a b { position: static; }
+.gw-rel-arw { position: absolute; right: 2px; top: 21px; line-height: 1; font-size: 15px; font-weight: 600; transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.gw .sp-rel-a svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .gw .sp-rel-a:hover svg, .gw .sp-rel-a:hover .gw-rel-arw { transform: translateX(4px); }
+}
+
+@media (max-width: 1100px) and (min-width: 901px) {
+  .gw-queue { display: none; }
+  .gw-cloud { width: 220px; right: 24px; }
+}
+
+@media (max-width: 900px) {
+  .gw-lane { height: 420px; }
+  /* phone: the card is checked just left of the gate (shifted by 58% of its own width) and walks on past it */
+  .gw-req { margin-top: -118px; margin-left: calc(var(--cw) * -1.08); }
+  .gw-bucket { top: auto; bottom: 18px; left: 20px; transform: none; }
+  .gw-gate-k { top: 76px; bottom: auto; left: auto; right: 12px; transform: none; padding: 0; background: none; }
+  .gw-cloud { top: 38px; right: auto; left: 84px; width: auto; transform: none; }
+  .gw-cloud .gw-log { display: none; }
+  /* the switches and what every service behind it receives sit side by side, so a tap answers on the same screen */
+  .gw-forge-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; }
+  .gw-arrow { display: none; }
+  .gw-pane { padding: 16px 10px; border-radius: 18px; }
+  .gw-pane .v2-kick { margin-bottom: 14px; font-size: 12px !important; }
+  .gw-forge-hs { font-size: 12px; gap: 6px; }
+  .gw-forge-hs li { min-height: 40px; }
+  .gw-forge-hs li.gone, .gw-forge-hs li.set, .gw-forge-auth { padding: 6px 8px; flex-wrap: wrap; gap: 2px 6px; }
+  .gw-forge-hs li.gone span { font-size: 11px; }
+  .gw-tog { padding: 0 8px; gap: 8px; min-height: 44px; }
+  .gw-tog-ui { width: 30px; height: 18px; }
+  .gw-tog-ui::after { width: 12px; height: 12px; }
+  .gw-tog[aria-checked='true'] .gw-tog-ui::after { transform: translateX(12px); }
+  .gw-forge-hs li.set em { margin-left: 0; }
+  .gw-rel-arw { top: 50%; transform: translateY(-50%); }
+}

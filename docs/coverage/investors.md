@@ -39,7 +39,7 @@ Done here: The h1 (`MaskLines now`) and then the lede, asks and counter arrive o
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label
+- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Contact investor relations" after the hero; phones: that label does not fit the shared header, so it stays "Try Hanzo", outlined while a page ask shows via `usePhoneAsk`; request filed in `docs/requests/founder.md`)
 - [x] ~~Copy button copies exactly the displayed text~~ n/a: no copy control on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -54,7 +54,7 @@ Done here: The kit's `Cta` is used with `id="investors.hero"` and `thumb`, `inve
 Done here:
 - Every figure is Hanzo's: 16 of 16, 93.7%, 95.6%, 0.8 ms, 3.02×, ~3,665, 732,288 and 51%. "Up to" stays beside 200× and 400×, and "~" beside 3,665.
 - The bars sit on a zero baseline: LiveCodeBench at v/100 with Enso in white and the rest in grey, and Kai's 0.3, 0.4 and 0.8 ms on a 0.8 ms scale. 400× is twice the length of 200× against the same 1× dot.
-- The page's own `--w` was dropped (`@property --w` in `public/hanzo.css` was eating it); bars now use `scaleX` values set directly.
+- The page's own `--w` was dropped (`@property --w` in `public/hanzo.css` was eating it); bars now use `scaleX` values set directly. Round 2: the flat phone and reduced-motion rule (`transform: none !important`) had wiped them to full length; each bar now carries its true value as `--xin-s`, restored after that rule. Measured at 375 and with reduced motion: 93.7, 93.1, 91.4, 80, 80, 78.3% of the track, and the 400× bar is twice the 200× bar (257 vs 129px at 375).
 
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px (14px phone) except mono capitals
@@ -113,7 +113,7 @@ Done here: Logos and portraits use the kit's `Img` with width and height. A fail
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
 - [x] No horizontal scroll at 320
-- [x] Every target 44px or more; every hover has a tap path
+- [x] Every target 44px or more (round 2: the 7 counter steps were 36px wide; now 44px each); every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
 Done here:

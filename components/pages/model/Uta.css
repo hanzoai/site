@@ -44,16 +44,29 @@
   .ut-mon figcaption span { font-size: 13px; }
 }
 
-/* one solid fill per screen: on desktop the header ask goes quiet while a page ask is in view, so Uta's own asks are
-   solid there; on phones the header keeps its solid "Try Hanzo", so the page's asks stay outlined */
-@media (min-width: 901px) {
-  .lv-stage[data-hero='uta'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
-  .cr-head.ut-v2 .lv-acts .x-btn { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+/* one solid fill per screen, at every width: the header's "Try Hanzo" is the one solid from arrival to the closing
+   band (the page's own asks carry no data-thumb, so the header never swaps its label or weight); the first-screen and
+   headline asks are outlined; the band's ask is solid while the header goes quiet */
+/* "Try it in Design" answers hover (underline, arrow nudges) and press */
+.cr-head.ut-v2 .lv-acts .x-arrow { text-underline-offset: 4px; transition: transform 90ms var(--ease); }
+.cr-head.ut-v2 .lv-acts .x-arrow svg { transition: transform .15s var(--ease); }
+@media (hover: hover) {
+  .cr-head.ut-v2 .lv-acts .x-arrow:hover { text-decoration: underline; }
+  .cr-head.ut-v2 .lv-acts .x-arrow:hover svg { transform: translateX(4px); }
 }
-@media (min-width: 901px) and (hover: hover) {
-  .lv-stage[data-hero='uta'] .lv-name-ask .x-btn:hover { background: #e5e5e5; border-color: #e5e5e5; }
-  .cr-head.ut-v2 .lv-acts .x-btn:hover { background: #262626; border-color: #262626; }
+.cr-head.ut-v2 .lv-acts .x-arrow:active { transform: scale(.97); }
+/* phone: once the film settles into the stems, the pause rides inside the stage (top right of the stems), never alone on white */
+@media (max-width: 900px) {
+  html:not([data-ut-hold]) .lv-stage[data-hero='uta'] .lv-pause { top: calc(47% - 60px); bottom: auto; right: calc(6% + 8px); }
 }
+/* phone: the studio's spec rows and the fits list each carry a hairline that draws across in turn, so no screen sits still */
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .ut-scene .mb-specs > div, .cr-fits:has(#cr-fits-uta) .cr-fits-list li { position: relative; }
+  .ut-scene .mb-specs > div::after, .cr-fits:has(#cr-fits-uta) .cr-fits-list li::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: #0a0a0a; transform: scaleX(0); transform-origin: 0 50%; animation: ut-line 4.5s var(--ease) infinite; }
+  .ut-scene .mb-specs > div:nth-child(2)::after, .cr-fits:has(#cr-fits-uta) .cr-fits-list li:nth-child(2)::after { animation-delay: 1.5s; }
+  .ut-scene .mb-specs > div:nth-child(3)::after, .cr-fits:has(#cr-fits-uta) .cr-fits-list li:nth-child(3)::after { animation-delay: 3s; }
+}
+@keyframes ut-line { 0% { transform: scaleX(0); opacity: 1; } 30% { transform: scaleX(1); opacity: 1; } 45%, 100% { transform: scaleX(1); opacity: 0; } }
 /* the film pause answers hover and press */
 .lv-stage[data-hero='uta'] .lv-pause { transition: transform .15s var(--ease), background .15s var(--ease); }
 @media (hover: hover) { .lv-stage[data-hero='uta'] .lv-pause:hover { transform: scale(1.08); background: rgba(255, 255, 255, .22); } }
@@ -88,15 +101,17 @@
 @keyframes ut-play { to { transform: translateX(calc(88cqw)); } }
 .ut-art-1 { container-type: inline-size; }
 .ut-keys { position: absolute; left: 6%; right: 6%; bottom: 7%; height: 16%; display: grid; grid-template-columns: repeat(13, 1fr); gap: 4px; }
-.ut-keys i { border-radius: 4px; background: rgba(255, 255, 255, .14); }
-.ut-art-3[data-on] .ut-keys i { animation: ut-key 3.25s var(--ease) infinite; animation-delay: calc(var(--k) * .25s); }
-@keyframes ut-key { 0%, 12% { background: rgba(255, 255, 255, .92); } 30%, 100% { background: rgba(255, 255, 255, .14); } }
+.ut-keys i { position: relative; border-radius: 4px; background: rgba(255, 255, 255, .14); }
+/* a key lights by an overlay's opacity (no animated background) */
+.ut-keys i::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: rgba(255, 255, 255, .92); opacity: 0; }
+.ut-art-3[data-on] .ut-keys i::after { animation: ut-key 3.25s var(--ease) infinite; animation-delay: calc(var(--k) * .25s); }
+@keyframes ut-key { 0%, 12% { opacity: 1; } 30%, 100% { opacity: 0; } }
 /* closing band */
 .ut-band .lv-lines { margin: 0 auto; max-width: 18ch; font-size: clamp(2.6rem, 5vw, 4rem); color: #f5f5f5; }
 .ut-band-note a { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: #fafafa; text-decoration: none; text-underline-offset: 4px; transition: transform 90ms var(--ease); }
 @media (hover: hover) { .ut-band-note a:hover { text-decoration: underline; } }
 .ut-band-note a:active { transform: scale(.97); }
-@media (prefers-reduced-motion: reduce) { .ut-art[data-on] :is(.ut-cue-l b, .ut-keys i) { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .ut-art[data-on] .ut-cue-l b, .ut-art[data-on] .ut-keys i::after { animation: none; } }
 
 /* elite bar: type floor, balanced headings, thumb-sized taps */
 .ut-scene :is(h1, h2) { text-wrap: balance; }

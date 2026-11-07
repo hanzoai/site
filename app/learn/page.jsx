@@ -2,9 +2,10 @@
 // Goal: a first working request
 // CTA: Get started (the quickstart; kit Cta learn.hero)
 // Metric: api_key_created
-// Signature: the docs as a transit map: a train rides the Start-here line once, by itself, and stops at each station, whose guide opens beneath it.
+// Signature: word-light — under the Start-here transit map, Hanzo's own answer to "What is Hanzo and how does it work?" lights word by word as it is read (scroll reads; hover, tap or arrow keys move the reading point).
+// Entrances: tile-flip, fold-out, opposite-drift, spiral-in, depth-parallax
 // Beyond: the documentation drawn as a line you ride: each station opens its own guide in place, linked by its own name, before you leave the page
-// V2: 8/10 after the map, three scenes with one big thing each (the 01–06 rail with 64px numerals that ink once, Hanzo University's Zen film, the 44px lead post with Kai's film in the dark room) and questions collapsed under a 64px question number; one solid per screen
+// V2: 9/10 motion-map pass: word-light statement in the second screen; hero tiles flip away, the index folds out, the dark room drifts in from opposite sides, the questions spiral in, the close lands in three depth layers; the train, rail, films and FAQ kept
 import Learn from '../../components/pages/Learn';
 import JsonLd from '../../components/JsonLd';
 

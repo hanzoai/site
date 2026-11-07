@@ -1,23 +1,28 @@
 'use client';
-/* Visor (v2, Cloud 4 chat). Archetype B, System: the fleet console running left to right under a left-set title
-   (Stage, rise, the only pipeline hero in Cloud 4) → one pinned dark room: the six things you get as a numbered list
-   with one picture large, each opening into its card → a batch you name → Get Visor, closing on the inventory itself.
+/* Visor (v2, Cloud 4 chat; MOTION-MAP build). Archetype B, System. Order: the fleet console hero → the living fleet
+   graph (the signature, second screen) → a batch you name → the six things you get as cards that open → Get Visor,
+   closing on that same batch as a console session over its machines. No pinned chapter scene (Visor is not `split`).
    Persona: a platform engineer running machines on more than one cloud. Goal: open the repo and try the API.
-   CTA: "View on GitHub" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:visor.primary.
-   V2: 8/10 one request launches a fleet from three clouds as the hero; six tiles open into full cards in the kit Sheet; a batch you name; greys only, one ask, a closing band
-   Signature: the pinned room. Scroll walks 01 → 06 (or it steps by itself after 4 s at rest; a hover previews a row) and
-   the stage plays that item's picture large; open any row and its card rises with the picture and Hanzo's paragraph;
-   Previous and Next walk the six; Escape or Back close. Phones: the six stack as cards whose pictures play on arrival.
+   CTA: "View on GitHub" (hero and close; data-cta primary / close). Metric: cta_click:visor.primary.
+   V2: 7/10 motion-map build: graph signature, five page-local entrances, pinned room removed (own guess, not a critic score)
+   Signature: graph. The living fleet graph (visor/Graph.jsx): one API at the centre, the providers on the inner ring,
+   the machines, node pool and cluster on the outer ring; the nodes orbit in and settle like a damped spring, then
+   drift; hover, focus or tap a node and its path to the API lights and is named; at rest it names one path after
+   another. Radial, unlike Telemetry's left-to-right pipeline.
+   Entrances: diagonal-wipe, orbit-in, underline-sweep, word-shuffle, curtain-rise (hero console, graph, name a
+   batch, the six cards, the close; each built here, never one shared reveal).
    Beyond: "Name a fleet". Choose a prefix and a count and see the machines a batch launch will name, in sequence under
-   the prefix, beside the node pool and the cluster in the same inventory, and whether it is a dry run that spends nothing.
-   Motion: pinned room (signature: scroll + idle step + hover preview, state) + the hero's launch sequence (time,
-   pausable) + inventory re-flow (state) + the close's inventory landing once (time).
+   the prefix, beside the node pool and the cluster in the same inventory, and whether it is a dry run that spends
+   nothing. The close lands the batch you named.
+   Motion: graph (signature: arrival + idle naming + pointer/focus/tap, pausable) + the hero's launch sequence (time,
+   pausable) + inventory re-flow (state) + each card's picture playing on arrival and hover + the close's console
+   session landing once (time).
    Every word and link is Hanzo's; providers, regions and machine names are examples. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useScroll, useMotionValueEvent } from 'motion/react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
-import { useWide } from '../../v2/useWide';
 import { EASE } from '../../ui';
+import Graph from './visor/Graph';
 import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
 import { Sheet, Cta } from '../../kit';
 import StageHero from '../../v2/StageHero';
@@ -26,8 +31,12 @@ import './Visor.css';
 
 const GH = 'https://github.com/hanzoai';
 const PROVIDERS = ['DigitalOcean', 'AWS', 'GCP'];
+// a phrase that wraps only at its own dots: each piece stays whole, so a line never starts with "·" and never splits a pair
+const Nw = ({ parts }) => parts.map((p, i) => <span key={i}><span className="vs2-nw">{p}</span>{i < parts.length - 1 ? ' ' : ''}</span>);
+const DRY = ['dry run ·', 'quote returned ·', 'spends nothing'];
+const AUDIT = ['launched ·', 'console opened ·', 'org · project'];
 
-/* Stage object: one request; every provider's catalogue answers; a dry run quotes; the launch names machines in order
+/* Stage object: one request; a dry run quotes; every provider's catalogue answers; the launch names machines in order
    into one inventory; a console opens in a tab; the audit row is written. Loops by itself. */
 function Fleet() {
   const [ref, live, , paused, toggle] = useDemo(0.3);
@@ -40,13 +49,17 @@ function Fleet() {
     return () => clearTimeout(id);
   }, [t, live, calm]);
   const n = Math.max(0, Math.min(3, t - 2));
+  // entrance 1, diagonal-wipe: the console is uncovered by a diagonal clip from its top-left corner once the page is up
+  const [wiped, setWiped] = useState(false);
+  useEffect(() => { const id = requestAnimationFrame(() => setWiped(true)); return () => cancelAnimationFrame(id); }, []);
   return (
-    <div className="l2-obj vs2-fleet" ref={ref} data-paused={paused ? '' : undefined}>
+    <div className="l2-obj vs2-fleet" ref={ref} data-paused={paused ? '' : undefined} data-in={wiped ? '' : undefined}>
       <PauseBtn paused={paused} onClick={toggle} className="dk vs2-pause" />
       <div className="vs2-req" aria-hidden="true">
         <p className="vs2-k l2-mono">one API</p>
         <p className="vs2-cmd">launch <b>3</b> × GPU instance · prefix <b>train</b></p>
       </div>
+      <div className="vs2-dry l2-mono" aria-hidden="true"><span className={t === 2 ? 'on' : ''}><Nw parts={DRY} /></span></div>
       <div className="vs2-cat" aria-hidden="true">
         {PROVIDERS.map((p, i) => (
           <div key={p} className={'vs2-prov' + (t >= 1 ? ' on' : '') + (t >= 2 && i === 1 ? ' pick' : '')} style={{ transitionDelay: i * 90 + 'ms' }}>
@@ -54,7 +67,6 @@ function Fleet() {
           </div>
         ))}
       </div>
-      <div className="vs2-dry l2-mono" aria-hidden="true"><span className={t === 2 ? 'on' : ''}>dry run · quote returned · spends nothing</span></div>
       <div className="vs2-inv" aria-hidden="true">
         <p className="vs2-k l2-mono">one inventory</p>
         <ul>
@@ -65,8 +77,9 @@ function Fleet() {
             ? <motion.li key={'m' + i} className="mc" initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE }}><i className="m" /><b className="l2-mono">train-0{i + 1}</b><span>machine</span></motion.li>
             : <li key={'e' + i} className="mc ph" />))}
         </ul>
-        <div className={'vs2-con' + (t >= 6 ? ' on' : '')}><p className="l2-mono"><span>SSH</span><span>train-01</span></p><code className="l2-mono">{t >= 6 ? <>$ <i className="vs2-caret">▍</i></> : ''}</code></div>
-        <p className={'vs2-audit l2-mono' + (t >= 6 ? ' on' : '')}>launched · console opened · org · project</p>
+        {/* the console is a real terminal waiting from the first frame; "opened" lights its tab and starts the caret */}
+        <div className={'vs2-con' + (t >= 6 ? ' on' : '')}><p className="l2-mono"><span>SSH</span><span>train-01</span></p><code className="l2-mono">$ {t >= 6 ? <i className="vs2-caret">▍</i> : <i className="vs2-idle">▍</i>}</code></div>
+        <p className={'vs2-audit l2-mono' + (t >= 6 ? ' on' : '')}><Nw parts={AUDIT} /></p>
       </div>
     </div>
   );
@@ -92,22 +105,32 @@ function Pic({ i }) {
   return <ul className="vs2-p5">{['launched', 'console opened', 'destroyed'].map((x, k) => <li key={x} className="l2-mono" style={d(k * 3)}><i />{x}<span>org · project</span></li>)}</ul>;
 }
 
-/* One row of the numbered list. On a phone it is a card with its own small picture, which plays its sequence once as
-   the card arrives (time, not scroll): the bars price, the machines name themselves, the pool fills, "quote" cuts in,
-   the console is picked, the audit rows land. On desktop the row is a line in the pinned list; hovering or focusing it
-   shows its picture on the stage (the hover tells you what it opens). Its paragraph stays in the HTML, findable. */
+/* Entrance 4, word-shuffle: each title's words come in out of order, from alternating sides, and swap into place.
+   Offsets and delays come from the word's index (no randomness, so server and browser agree). */
+function Shuffle({ text, at = 0 }) {
+  const w = text.split(' ');
+  return w.map((word, i) => (
+    <Fragment key={i}>
+      <span className="vs2-w" style={{ '--sx': ((i % 2 ? -1 : 1) * (26 + ((i * 13) % 30))) + 'px', '--sd': at + ((i * 5 + 2) % w.length) * 70 + 'ms' }}>{word}</span>
+      {i < w.length - 1 ? ' ' : ''}
+    </Fragment>
+  ));
+}
+
+/* One card of the six. Its own small picture plays its sequence once as the card arrives and again on hover. Its
+   paragraph stays in the HTML, findable; the card opens it in the kit Sheet. */
 // React renders `hidden` as a boolean, so the paragraph upgrades itself to hidden="until-found" (find in page opens it)
 const untilFound = (el) => { if (el) el.setAttribute('hidden', 'until-found'); };
 
-function Row({ t, d, i, at, onOpen, onPeek }) {
+function Row({ t, d, i, onOpen }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.45 });
   return (
-    <li ref={ref} data-on={seen ? '' : undefined} data-at={at === i ? '' : undefined}>
-      <button type="button" className="vs2-tile" onClick={() => onOpen(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && onPeek(i)} onFocus={() => onPeek(i)} aria-haspopup="dialog">
+    <li ref={ref} data-on={seen ? '' : undefined}>
+      <button type="button" className="vs2-tile" onClick={() => onOpen(i)} aria-haspopup="dialog">
         <span className="vs2-n l2-mono">{String(i + 1).padStart(2, '0')}</span>
         <span className="vs2-tp" aria-hidden="true"><Pic i={i} /></span>
-        <span className="vs2-th">{t}</span>
+        <span className="vs2-th"><Shuffle text={t} at={200 + i * 90} /></span>
         <svg className="vs2-plus" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
       </button>
       <p className="vs2-find" hidden ref={untilFound}>{d}</p>
@@ -115,48 +138,23 @@ function Row({ t, d, i, at, onOpen, onPeek }) {
   );
 }
 
-/* Signature: one pinned stage (desktop). The six things you get are a numbered list on the left; the stage on the right
-   shows one picture large. Scrolling walks 01 → 06; resting 4 s without scrolling steps to the next by itself; hovering
-   a row previews it. Every row opens into its full card (the kit Sheet: focus held inside, Escape and Back close it,
-   focus returns to the row). Phones and reduced motion: no pin, the rows stack as cards with their own pictures. */
+/* The six things you get, as one plain dark section of cards (no pin): every card opens into its full card in the
+   kit Sheet (focus held inside, Escape and Back close it, focus returns to the card). */
 function Tiles() {
   const [open, setOpen] = useState(-1);
   const at = Math.max(0, open);
   const sec = useRef(null);
-  const calm = useCalm();
-  const wide = useWide();
-  const pin = wide && !calm;
-  const [cur, setCur] = useState(0);
-  const [idle, setIdle] = useState(0); // bumps on every scroll; the idle step waits on it
-  const live = useInView(sec, { amount: 0.25 });
-  const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end end'] });
-  useMotionValueEvent(p, 'change', (v) => { if (!pin || !live) return; setCur(Math.min(5, Math.max(0, Math.floor(v * 6.0001)))); setIdle((k) => k + 1); });
-  useEffect(() => {
-    if (!pin || !live || open >= 0) return;
-    const id = setTimeout(() => setCur((c) => (c + 1) % 6), 4000);
-    return () => clearTimeout(id);
-  }, [pin, live, open, cur, idle]);
+  const seen = useInView(sec, { once: true, amount: 0.15 });
   return (
-    <section className={'l2-dark vs2-tiles' + (pin ? ' pin' : '')} data-room="dark" ref={sec}>
-      <div className="vs2-pin">
-        <div className="l2-wrap vs2-room">
-          <div className="vs2-side">
-            <h2 className="l2-head vs2-tiles-h">What you get for the price of one integration</h2>
-            <ol className="vs2-grid">
-              {FACTS.map(([t, d], i) => <Row key={t} t={t} d={d} i={i} at={cur} onOpen={setOpen} onPeek={setCur} />)}
-            </ol>
-          </div>
-          <div className="vs2-stage" aria-hidden="true">
-            <p className="vs2-sn l2-mono"><b className="l2-tnum">{String(cur + 1).padStart(2, '0')}</b> / 06</p>
-            <div className="vs2-big" key={cur} data-on="">
-              <Pic i={cur} />
-            </div>
-            <p className="vs2-st">{FACTS[cur][0]}</p>
-            <i className="vs2-prog"><i style={{ transform: `scaleX(${(cur + 1) / 6})` }} /></i>
-          </div>
-        </div>
+    <section className="l2-dark vs2-tiles" data-room="dark" ref={sec} data-in={seen ? '' : undefined}>
+      <div className="l2-wrap">
+        <h2 className="l2-head vs2-tiles-h"><Shuffle text="What you get for the price of one integration" /></h2>
+        <ol className="vs2-grid">
+          {FACTS.map(([t, d], i) => <Row key={t} t={t} d={d} i={i} onOpen={setOpen} />)}
+        </ol>
       </div>
-      <Sheet open={open >= 0} onClose={() => setOpen(-1)} title={FACTS[at][0]} kicker={String(at + 1).padStart(2, '0') + ' / 06'} wide className="vs2-sheet">
+      <Sheet open={open >= 0} onClose={() => setOpen(-1)} title={FACTS[at][0]} wide className="vs2-sheet">
+        <p className="vs2-cap l2-mono">{String(at + 1).padStart(2, '0')} / 06</p>
         <div className="vs2-cp" aria-hidden="true"><Pic i={at} /></div>
         <p className="l2-body vs2-cd">{FACTS[at][1]}</p>
         <div className="vs2-nav">
@@ -168,41 +166,46 @@ function Tiles() {
   );
 }
 
-/* Beyond: name a fleet; see what a batch launch will create, and in which inventory. */
-function Name() {
-  const [prefix, setPrefix] = useState('train');
-  const [count, setCount] = useState(3);
-  const [dry, setDry] = useState(true);
+const clean = (prefix) => prefix.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24) || 'train';
+
+/* Beyond: name a fleet; see what a batch launch will create, and in which inventory. The batch lives on the page, so
+   the close lands the batch named here. */
+function Name({ prefix, setPrefix, count, setCount, dry, setDry }) {
   const sec = useRef(null);
   const here = useInView(sec, { once: true, amount: 0.4 });
   const calm = useCalm();
   const armed = useRef(false);
-  /* Arrival: the batch names itself, 01 then 02 then 03, the first time the section is reached (untouched only). */
+  /* Arrival, untouched only: the prefix types itself in letter by letter (60 ms a letter) as the names follow it, then
+     the batch names itself 01, 02, 03. */
   useEffect(() => {
     if (calm || !sec.current || sec.current.getBoundingClientRect().top < innerHeight) return;
-    armed.current = true; setCount(1);
-  }, [calm]);
+    armed.current = true; setPrefix(''); setCount(1);
+  }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!here || !armed.current) return;
-    const a = setTimeout(() => armed.current && setCount(2), 500), b = setTimeout(() => { if (armed.current) setCount(3); armed.current = false; }, 1000);
-    return () => { clearTimeout(a); clearTimeout(b); };
-  }, [here]);
-  const touch = (fn) => () => { armed.current = false; fn(); };
-  const px = prefix.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24) || 'train';
+    const word = 'train';
+    const ids = word.split('').map((_, k) => setTimeout(() => armed.current && setPrefix(word.slice(0, k + 1)), 120 + k * 60));
+    ids.push(setTimeout(() => armed.current && setCount(2), 700), setTimeout(() => { if (armed.current) setCount(3); armed.current = false; }, 1200));
+    return () => ids.forEach(clearTimeout);
+  }, [here]); // eslint-disable-line react-hooks/exhaustive-deps
+  const touch = (fn) => () => { if (armed.current) { armed.current = false; setPrefix((v) => v || 'train'); } fn(); };
+  const px = clean(prefix);
   return (
-    <section className="l2-sec vs2-name" ref={sec}>
+    // entrance 3, underline-sweep: as the section arrives, underlines sweep under its key words in turn (the heading,
+    // prefix, machines, then the line that says what the launch will cost)
+    <section className="l2-sec vs2-name" ref={sec} data-in={here ? '' : undefined}>
       <div className="l2-wrap l2-grid">
         <div className="vs2-name-l">
-          <h2 className="l2-head">{FACTS[1][0]}</h2>
+          <h2 className="l2-head"><span className="vs2-us">{FACTS[1][0]}</span></h2>
           <div className="vs2-form">
-            <label><span className="l2-mono">prefix</span><input value={prefix} onChange={(e) => { armed.current = false; setPrefix(e.target.value); }} spellCheck="false" autoComplete="off" /></label>
+            <label><span className="l2-mono"><span className="vs2-us" style={{ '--d': '260ms' }}>prefix</span></span><input value={prefix} onChange={(e) => { armed.current = false; setPrefix(e.target.value); }} spellCheck="false" autoComplete="off" /></label>
             <div className="vs2-count" role="group" aria-label="Machines">
-              <span className="l2-mono">machines</span>
+              <span className="l2-mono"><span className="vs2-us" style={{ '--d': '420ms' }}>machines</span></span>
               <div><button type="button" onClick={touch(() => setCount((c) => Math.max(1, c - 1)))} aria-label="Fewer"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg></button><b className="l2-fig">{count}</b><button type="button" onClick={touch(() => setCount((c) => Math.min(8, c + 1)))} aria-label="More"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg></button></div>
             </div>
             <div className="vs2-dryt" role="group" aria-label="Launch">
-              <button type="button" aria-pressed={dry} onClick={() => setDry(true)}>dry run</button>
-              <button type="button" aria-pressed={!dry} onClick={() => setDry(false)}>launch</button>
+              <button type="button" aria-pressed={dry} onClick={touch(() => setDry(true))}>dry run</button>
+              <button type="button" aria-pressed={!dry} onClick={touch(() => setDry(false))}>launch</button>
             </div>
           </div>
         </div>
@@ -212,7 +215,7 @@ function Name() {
             <motion.ul layout>
               <AnimatePresence initial={false}>
                 {Array.from({ length: count }).map((_, i) => (
-                  <motion.li key={px + i} layout initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }} className={dry ? 'dry' : ''}>
+                  <motion.li key={i} layout initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }} className={dry ? 'dry' : ''}>
                     <i className="m" /><b className="l2-mono">{px}-{String(i + 1).padStart(2, '0')}</b><span>machine</span>
                   </motion.li>
                 ))}
@@ -220,7 +223,7 @@ function Name() {
               <motion.li layout><i className="p" /><b className="l2-mono">gpu-pool</b><span>node pool</span></motion.li>
               <motion.li layout><i className="k" /><b className="l2-mono">cluster</b><span>managed Kubernetes</span></motion.li>
             </motion.ul>
-            <p className={'vs2-out l2-mono' + (dry ? '' : ' live')}>{dry ? 'dry run · quote returned · spends nothing' : 'metered against the organization · per provider'}</p>
+            <p className={'vs2-out l2-mono' + (dry ? '' : ' live')}><span className="vs2-us" style={{ '--d': '600ms' }}>{dry ? 'dry run · quote returned · spends nothing' : 'metered against the organization · per provider'}</span></p>
           </div>
         </div>
       </div>
@@ -228,33 +231,52 @@ function Name() {
   );
 }
 
-/* The close's object: Visor in miniature. The inventory the visitor ends with: the batch lands machine by machine
-   under its prefix beside the node pool and the cluster, then the console opens. Plays once on arrival. */
-function Close() {
+/* The close's object: the batch you named, as a console session. The window opens with one tab per machine in your
+   batch (your prefix, your count); the first tab is live with its prompt; the audit row writes itself under it, and the
+   line says whether it was a dry run or metered. Plays once on arrival. */
+function Close({ px, count, dry }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
+  const names = Array.from({ length: count }, (_, i) => `${px}-${String(i + 1).padStart(2, '0')}`);
+  const shown = names.slice(0, 3);
   return (
     <div className="vs2-close" ref={ref} data-on={seen ? '' : undefined} aria-hidden="true">
-      <p className="vs2-k l2-mono">one inventory · prefix <b>train</b></p>
-      <ul>
-        {['train-01', 'train-02', 'train-03'].map((m, i) => <li key={m} style={{ '--d': i * 160 + 'ms' }}><i className="m" /><b className="l2-mono">{m}</b><span>machine</span></li>)}
-        <li style={{ '--d': '480ms' }}><i className="p" /><b className="l2-mono">gpu-pool</b><span>node pool</span></li>
-        <li style={{ '--d': '640ms' }}><i className="k" /><b className="l2-mono">cluster</b><span>managed Kubernetes</span></li>
-      </ul>
-      <p className="vs2-close-con l2-mono"><span>SSH</span><span>train-01</span><code>$ <i className="vs2-caret">▍</i></code></p>
+      <p className="vs2-close-tabs l2-mono">
+        <span className="ssh">SSH</span>
+        {shown.map((m, i) => <span key={m} className={i === 0 ? 'on' : ''} style={{ '--d': 200 + i * 140 + 'ms' }}>{m}</span>)}
+        {names.length > 3 && <span className="more" style={{ '--d': '620ms' }}>+{names.length - 3}</span>}
+      </p>
+      <div className="vs2-close-body">
+        <code className="l2-mono">$ <i className="vs2-caret">▍</i></code>
+        <p className="vs2-close-audit l2-mono"><Nw parts={AUDIT} /></p>
+        <p className="vs2-close-out l2-mono">{dry ? <Nw parts={DRY} /> : 'metered against the organization · per provider'}</p>
+      </div>
     </div>
   );
 }
 
+/* Entrance 5, curtain-rise: the close rises from below behind a clip, like a curtain going up. */
+function Curtain({ children }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.2 });
+  return <div className="vs2-fin" ref={ref} data-in={seen ? '' : undefined}>{children}</div>;
+}
+
 export default function Visor() {
+  const [prefix, setPrefix] = useState('train');
+  const [count, setCount] = useState(3);
+  const [dry, setDry] = useState(true);
   return (
     <main id="main" className="l2-page vs2" data-ask="off">
       <StageHero look="rise" className="vs2-hero" kick="hanzoai/visor" title="Hanzo Visor" sub="Machines from several clouds, through one API" acts={[['View on GitHub', GH]]} travel={{ s: [1.04, 1], y: ['1svh', '-10svh'] }}>
         <Fleet />
       </StageHero>
+      <Graph />
+      <Name prefix={prefix} setPrefix={setPrefix} count={count} setCount={setCount} dry={dry} setDry={setDry} />
       <Tiles />
-      <Name />
-      <Finale name="Visor" head="Get started with Hanzo Visor" ask={['View on GitHub', GH]} object={<Close />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
+      <Curtain>
+        <Finale name="Visor" head="Get started with Hanzo Visor" ask={['View on GitHub', GH]} object={<Close px={clean(prefix)} count={count} dry={dry} />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Visor in my project. Start with: hanzo visor machines list" tag="Machines, volumes, and clusters" />
+      </Curtain>
     </main>
   );
 }

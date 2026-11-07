@@ -3,8 +3,8 @@
 Page file: `components/pages/Operative.jsx` (+ `.css`) · gallery: `docs/gallery/operative/` · metric id: `cta_click operative.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/operative.md`): data-cta on the kit Band; the desktop ask bar floating over content; the Terminal and PageHero kit parts.
-Forks this page deleted: the raw hero anchor and Go buttons (now kit Cta), the raw <img> (now kit Img), the dimmed and greyscale photos, the gradient crate and shadowed slabs, the Interrupt/Resume button and the interrupted label (now the kit pause control), the autoplaying provider switch, the blue accent, springs, setInterval.
+Shared changes requested (`docs/requests/operative.md`): Band headline reveal by line mask instead of blur; Cta solid hover #262626; data-cta (and a quiet option) on the kit Band; the desktop ask bar floating over content; the Terminal and PageHero kit parts.
+Forks this page deleted: the raw hero anchor and Go buttons (now kit Cta), the raw <img> (now kit Img), the dimmed and greyscale photos, the gradient crate and shadowed slabs, the Interrupt/Resume button and the interrupted label (now the kit pause control), the autoplaying provider switch, the blue accent, springs, setInterval. Round 2: the four equal provider cards (now one tab panel), the height-animated chapter accordion (now one fixed slot), the open requirements/usage blocks (now native disclosures), the invented desktop/key/port labels and glyphs.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
 
@@ -23,7 +23,7 @@ Done here: Header lines Persona/Goal/CTA/Metric/Signature/Beyond in Operative.js
 - ~~Breadcrumb at depth 2 or more~~ n/a: depth 1
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: One <main> inside the layout's #main marker; links via kit A and Cta; parity links 6/6; depth 1.
+Done here: `<main id="main">` (the layout's skip-link marker also exists, noted in requests); links via kit A and Cta; parity links 6/6; depth 1.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,7 +33,7 @@ Done here: One <main> inside the layout's #main marker; links via kit A and Cta;
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px
 
-Done here: h1 "Hanzo Operative" 52px by line mask; the desktop's hands move within 1 s (alive: moving). JS off: 0 of 124 text blocks hidden. Ends: Get Operative card, kit Band, footer.
+Done here: h1 "Hanzo Operative" 52px by line mask, lede line-masked 180 ms after it and bottom-aligned to it on the right (h1 top 164, lede top 175, both bottom 272), acts under the lede; the hands move within 1 s. Pinned scene 400svh: explode over the first 10%, then each of six layers lifts out and opens across the rest, so every scroll step moves something. Gaps between blocks cut to 24–116px. JS off: noscript shows every chapter text. Ends: Get Operative (the box closing again), kit Band, footer.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -57,7 +57,7 @@ Done here: Only Hanzo's words, ports (8501, 6080, 5900, 8080) and commands; no l
 - [ ] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /operative`: 0 missing
 
-Done here: Deck sizes: h1 52, section headings 26, card titles 21, list 17, body 16, ports 44; the loop rests at 26 and grows to 1.3x while it is the moment; 13px floor. Parity 104/104 text, 6/6 links. Usage commands stay inline code (short, not copyable).
+Done here: Deck sizes: h1 52, section headings 26, provider name 26, list 17, body 16, ports 44; the loop grows to 1.3x only while it is the moment; 13px floor. Disclosure: chapter text in one fixed slot (inactive aria-hidden, in HTML), providers as APG tabs with hidden panels in the DOM, requirements and usage in native `<details>` (find-in-page opens them). Commands wrap only between words; long tokens scroll in `tabindex=0` regions. Parity 104/104 text, 6/6 links; every visible string traced to live/pages/ui-strings.
 
 ## 7. Visual design system
 - [ ] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -66,7 +66,7 @@ Done here: Deck sizes: h1 52, section headings 26, card titles 21, list 17, body
 - [ ] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: taste.py passes (greys only); brows check 0 labels above a headline; flat fills, outline or fill, never with a shadow (only the render's window keeps its own shadow); the photo shows undimmed. Literal greys still to move onto tokens.
+Done here: taste.py passes; the deck ramp is named once on `.xov` (--g50…--g900, --ink) and every rule reads those vars; the Apple greys #f5f5f7/#d2d2d7/#e5e5ea are gone; 0 labels above a headline; flat fills, never fill plus shadow (only the render's window keeps its own).
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +75,7 @@ Done here: taste.py passes (greys only); brows check 0 labels above a headline; 
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the raw hero anchor and Go buttons (now kit Cta), the raw <img> (now kit Img), the dimmed and greyscale photos, the gradient crate and shadowed slabs, the Interrupt/Resume button and the interrupted label (now the kit pause control), the autoplaying provider switch, the blue accent, springs, setInterval. listed below
 
-Done here: Hands, segments, cards, Replay and links press (.97 to .98 or 1px); focus ring from the system and on Replay; hovers only inside (hover: hover); no inputs.
+Done here: Walk: 0/14 dead hovers on desktop. Hand tabs preview their hand (ghost cursor plus its sign on the desktop); chapter rows ink and lift their slab 12px; provider tabs preview their variable in the command; ports light on hover; pause, links, summaries all answer; everything presses (.97/.98 or 1px); hovers inside (hover: hover), transform/colour only; the hero pause glyph is 14px in its 44px button again.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hands, segments, cards, Replay and links press (.97 to .98 or 1px); f
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the exploded container (scroll); supporting: the hands working the desktop (time), the provider switch (state, layoutId), the typed docker run (time, once); variety.py OK; reduced motion shows the final state; timeouts only.
+Done here: Signature: the exploded container, now scrubbed across the whole pin (each layer flattens, lifts and opens); supporting: the hands working the desktop (idle), the provider tabs (state, layoutId), the typed docker run (time); pointer: a 2.5° tilt on the hero crate (mouse only), hover previews. variety.py OK (4 techniques). Reduced motion: final state, no tilt. CLS 0.001 desktop, 0.0005 phone (was 0.074).
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -100,7 +100,7 @@ Done here: Hanzo's iro image through kit Img with width, height and sizes (prior
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375x812 and 1470x801: 0 overlaps; 320 scrollWidth 320; ask bottom at 437px on 375x667; 44px targets.
+Done here: 375x812 and 1470x801: 0 overlaps, overflowX 0; phone stack shows one layer open at a time, stepped by tapping its row; the provider command is three fixed lines on phone; no mid-token wraps; 44px targets.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -157,4 +157,4 @@ Done here: No live data, so nothing loads or fails.
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/operative.md` verdict 8 or more
 
-Done here: data-cta on operative.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; no critic review yet.
+Done here: data-cta on operative.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line updated for round 2; review read (6/10) and fixes 1–9 worked (gallery round2-*.jpg).

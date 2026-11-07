@@ -25,11 +25,10 @@ import { motion, useScroll, useTransform, useReducedMotion, useInView } from 'mo
 import { Copy } from '../../ui';
 import { A, Img } from '../../kit';
 import { Paste } from './Frame';
-import PinnedChapters from '../../v2/PinnedChapters';
-import ClipWipe from '../../v2/ClipWipe';
+import '../../v2/LaunchType.css';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
-import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
+import { Enter, Typed, useEnter } from '../network/Enter';
 import './Network.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/network';
@@ -75,35 +74,106 @@ const MARK = { zen: [0.67, 0.48], kai: [0.65, 0.5], enso: [0.7, 0.37], koe: [0.6
 const Thumb = ({ m }) => <span className="nw-th" style={{ '--cx': MARK[m][0], '--cy': MARK[m][1] }}><Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" /></span>;
 const Tag = ({ m, hit }) => <b className={'nw-tag' + (hit ? ' hit' : '')}><Thumb m={m} />{m}</b>;
 
-function Fabric({ at, arrived, calm, peek, setPeek, idle }) {
+/* the signature: a living graph. The peers start bunched in the middle and settle outward on springs (each link pulls
+   toward its own length, every peer repels its neighbours, an anchor holds the shape), then keep breathing a little.
+   Drag a peer and let go: it springs back and pulls its links with it. Point at a peer (tap on a phone): its paths
+   light (the route from you and every link it has) and each peer on them is named. Reduced motion: the settled map. */
+function useGraph(calm, peerEls, lineEls, box, onSettle) {
+  useEffect(() => {
+    const els = peerEls.current, ls = lineEls.current, el = box.current;
+    if (!el) return;
+    const place = (P) => {
+      P.forEach((q, i) => { const n = els[i]; if (n) { n.style.left = q.x.toFixed(2) + '%'; n.style.top = q.y.toFixed(2) + '%'; } });
+      LINKS.forEach(([a, b], k) => { const l = ls[k]; if (l) { l.setAttribute('x1', P[a].x.toFixed(2)); l.setAttribute('y1', P[a].y.toFixed(2)); l.setAttribute('x2', P[b].x.toFixed(2)); l.setAttribute('y2', P[b].y.toFixed(2)); } });
+    };
+    if (calm) { onSettle(); return; }
+    // start bunched toward the middle, a little turned, so the settle reads as a graph finding its shape
+    const P = PEERS.map(([x, y], i) => ({ x: 50 + (x - 50) * 0.18 + Math.sin(i * 2.3) * 3, y: 50 + (y - 50) * 0.18 + Math.cos(i * 1.7) * 3, vx: 0, vy: 0 }));
+    const REST = LINKS.map(([a, b]) => Math.hypot(PEERS[a][0] - PEERS[b][0], PEERS[a][1] - PEERS[b][1]));
+    let ptr = null, drag = -1, raf = 0, t0 = performance.now(), last = t0, seen = true, settledOnce = false;
+    const pos = (e) => { const r = el.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 }; };
+    const move = (e) => { if (e.pointerType !== 'mouse') return; ptr = pos(e); };
+    const leave = () => { ptr = null; };
+    const down = (e) => { if (e.pointerType !== 'mouse') return; const i = els.indexOf(e.target.closest('.nw-peer')); if (i < 0) return; drag = i; el.setPointerCapture?.(e.pointerId); e.preventDefault(); };
+    const up = () => { drag = -1; };
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerleave', leave);
+    el.addEventListener('pointerdown', down);
+    addEventListener('pointerup', up);
+    const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) { last = performance.now(); raf = requestAnimationFrame(step); } }, { threshold: 0 });
+    io.observe(el);
+    function step(now) {
+      raf = 0;
+      if (!seen) return;
+      const dt = Math.min(2, (now - last) / 16.67); last = now;
+      const t = (now - t0) / 1000;
+      for (let s = 0; s < 2; s++) {
+        const h = dt / 2;
+        // link springs toward their own length
+        LINKS.forEach(([a, b], k) => {
+          const A = P[a], B = P[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 0.01, f = (d - REST[k]) * 0.012 * h;
+          A.vx += (dx / d) * f; A.vy += (dy / d) * f; B.vx -= (dx / d) * f; B.vy -= (dy / d) * f;
+        });
+        P.forEach((q, i) => {
+          // repel any peer closer than 9 (and the pointer, a little, so the graph leans away from the cursor)
+          for (let j = i + 1; j < P.length; j++) { const o = P[j], dx = o.x - q.x, dy = o.y - q.y, d = Math.hypot(dx, dy) || 0.01; if (d < 9) { const f = ((9 - d) / 9) * 0.25 * h; q.vx -= (dx / d) * f; q.vy -= (dy / d) * f; o.vx += (dx / d) * f; o.vy += (dy / d) * f; } }
+          if (ptr && i !== drag) { const dx = q.x - ptr.x, dy = q.y - ptr.y, d = Math.hypot(dx, dy) || 0.01; if (d < 12 && d > 2.5) { const f = ((12 - d) / 12) * 0.12 * h; q.vx += (dx / d) * f; q.vy += (dy / d) * f; } }
+          // the anchor: where the peer lives, breathing a little (about ±0.7)
+          const ax = PEERS[i][0] + Math.sin(t * 0.6 + i * 1.9) * 0.7, ay = PEERS[i][1] + Math.cos(t * 0.5 + i * 2.7) * 0.7;
+          q.vx += (ax - q.x) * 0.006 * h; q.vy += (ay - q.y) * 0.006 * h;
+        });
+        P.forEach((q, i) => {
+          if (i === drag && ptr) { q.x += (ptr.x - q.x) * 0.5; q.y += (ptr.y - q.y) * 0.5; q.vx = 0; q.vy = 0; return; }
+          q.vx *= Math.pow(0.9, h); q.vy *= Math.pow(0.9, h); q.x += q.vx * h; q.y += q.vy * h;
+        });
+      }
+      place(P);
+      if (!settledOnce && t > 1.5) { settledOnce = true; onSettle(); }
+      raf = requestAnimationFrame(step);
+    }
+    place(P);
+    raf = requestAnimationFrame(step);
+    return () => { cancelAnimationFrame(raf); io.disconnect(); el.removeEventListener('pointermove', move); el.removeEventListener('pointerleave', leave); el.removeEventListener('pointerdown', down); removeEventListener('pointerup', up); };
+  }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+}
+
+function Fabric({ at, arrived, calm, peek, setPeek, idle, live, onSettle }) {
   const box = useRef(null);
+  const peerEls = useRef([]);
+  const lineEls = useRef([]);
   const { w, h } = useSize(box);
-  const [model, path, placed] = ASKS[at];
+  useGraph(calm, peerEls, lineEls, box, onSettle);
+  const [model, fullPath, placed] = ASKS[at];
+  const path = live ? fullPath : [];
   const end = path[path.length - 1];
   const pv = peek === null ? [] : routeTo(peek);
+  const named = peek === null ? new Set() : new Set([peek, ...pv, ...ADJ[peek]]);
+  const tap = (i) => (e) => { if (e.pointerType === 'mouse' || i === YOU) return; setPeek(peek === i ? null : i); };
   return (
     <div className="nw-map" ref={box} aria-hidden="true" data-peek={peek === null ? undefined : ''}>
       <svg className="nw-links" viewBox="0 0 100 100" preserveAspectRatio="none">
-        {LINKS.map(([a, b]) => {
+        {LINKS.map(([a, b], j) => {
           const k = onPath(path, a, b);
           const v = onPath(pv, a, b);
-          return <line key={a + '-' + b} x1={PEERS[a][0]} y1={PEERS[a][1]} x2={PEERS[b][0]} y2={PEERS[b][1]} className={(k > 0 ? 'on' : '') + (v > 0 ? ' pv' : '')} style={k > 0 ? { transitionDelay: (k - 1) * HOP + 's' } : undefined} />;
+          const nb = peek !== null && (a === peek || b === peek);
+          return <line key={a + '-' + b} ref={(n) => { lineEls.current[j] = n; }} x1={PEERS[a][0]} y1={PEERS[a][1]} x2={PEERS[b][0]} y2={PEERS[b][1]} className={(k > 0 ? 'on' : '') + (v > 0 ? ' pv' : '') + (nb ? ' nb' : '')} style={k > 0 ? { transitionDelay: (k - 1) * HOP + 's' } : undefined} />;
         })}
       </svg>
       {PEERS.map(([x, y, ms], i) => {
         const k = path.indexOf(i);
         return (
-          <div key={i} className={'nw-peer' + (k >= 0 ? ' lit' : '') + (i === end && arrived ? ' end' : '') + (i === YOU ? ' you' : '') + (i === peek ? ' peek' : '') + (x > 84 ? ' l' : '')} style={{ left: x + '%', top: y + '%', '--d': Math.max(0, k) * HOP + 's' }}
-            onPointerEnter={(e) => e.pointerType === 'mouse' && i !== YOU && setPeek(i)} onPointerLeave={() => setPeek(null)}>
+          <div key={i} ref={(n) => { peerEls.current[i] = n; }} className={'nw-peer' + (k >= 0 ? ' lit' : '') + (i === end && arrived ? ' end' : '') + (i === YOU ? ' you' : '') + (i === peek ? ' peek' : '') + (named.has(i) ? ' named' : '') + (x > 84 ? ' l' : '')} style={{ left: x + '%', top: y + '%', '--d': Math.max(0, k) * HOP + 's' }}
+            onPointerEnter={(e) => e.pointerType === 'mouse' && i !== YOU && setPeek(i)} onPointerLeave={(e) => e.pointerType === 'mouse' && setPeek(null)} onPointerUp={tap(i)}>
             <i />
             <span className="nw-tags">
+              {named.has(i) && i !== YOU && <b className="nw-tag nm">{peerName(i)}</b>}
               {i === YOU ? <b className="nw-tag me">you</b> : ms.map((m) => <Tag key={m} m={m} hit={m === model && i === end && arrived} />)}
               {placed && i === end && arrived && <motion.b key={'p' + at} className="nw-tag hit" initial={calm ? false : { scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={PILL}><Thumb m={model} />{model}</motion.b>}
             </span>
           </div>
         );
       })}
-      {!calm && w > 0 && (
+      {!calm && live && w > 0 && (
         <motion.span
           key={'pk' + at}
           className="nw-packet"
@@ -114,7 +184,7 @@ function Fabric({ at, arrived, calm, peek, setPeek, idle }) {
       )}
       {/* at rest the screen is never still: a small bead keeps walking the resting route, quietly and forever
           (the one mover here; stops while paused, pointed at or off screen; absent under reduced motion) */}
-      {idle && w > 0 && (
+      {idle && live && w > 0 && (
         <motion.span
           key={'idle' + at}
           className="nw-packet idle"
@@ -169,29 +239,35 @@ function Hero() {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const [done, setDone] = useState(false);
+  // the demo waits for the graph to settle (about 1.5 s), then walks
+  const [live, setLive] = useState(false);
   useEffect(() => {
-    if (!run || mine || done) return;
+    if (!live || !run || mine || done) return;
     const t = setTimeout(() => (at >= ASKS.length - 1 ? setDone(true) : setAt(at + 1)), 2600);
     return () => clearTimeout(t);
-  }, [at, run, mine, done]);
+  }, [at, run, mine, done, live]);
   const choose = (i) => { setAt(i); setMine(true); };
   const toggle = () => { if (done || mine) { setDone(false); setMine(false); setAt(0); if (paused) pause(); } else pause(); };
   const [arrived, setArrived] = useState(true);
   useEffect(() => {
     if (calm) { setArrived(true); return; }
     setArrived(false);
+    if (!live) return;
     const t = setTimeout(() => setArrived(true), HOP * (ASKS[at][1].length - 1) * 1000 + 120);
     return () => clearTimeout(t);
-  }, [at, calm]);
+  }, [at, calm, live]);
+  const enterRef = useRef(null);
+  const st = useEnter(enterRef, 0.05);
   // scale rhythm: the map grows into the page as you leave the hero (it is the moment), and rests at 1 on arrival
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const zoom = useTransform(scrollYProgress, [0, 1], [1, 1.16]);
   useEffect(() => scrollYProgress.on('change', (p) => setInView(p < 0.95)), [scrollYProgress]);
   return (
     <section className="nw-hero" ref={ref} data-morph-target data-ask-name="Hanzo Network">
-      <div className="lx-wrap nw-hero-grid">
+      {/* entrance 1, split-merge: the words slide in from the left, the graph from the right, and meet */}
+      <div className="lx-wrap nw-hero-grid nw-en nw-en-split" ref={enterRef} data-enter={st}>
         <div className="nw-hero-copy">
-          <LineMask as="h1" className="lx-display nw-h1" lines={['Hanzo', 'Network']} />
+          <h1 className="lx-display nw-h1"><span className="nw-h1-a">Hanzo</span> <span className="nw-h1-b">Network</span></h1>
           <div className="nw-hero-low">
             <p className="lx-lede nw-lede">hanzo.network is the fabric that hanzod nodes form. Put a machine on it and it serves models to whoever the cluster routes there. Ask the fabric for a model and it finds a peer that already has it loaded.</p>
             <div className="nw-acts">
@@ -203,7 +279,7 @@ function Hero() {
         <div className="nw-fab">
           <div className="nw-fab-win">
             <motion.div className="nw-map-wrap" style={calm ? undefined : { scale: zoom }}>
-              <Fabric at={at} arrived={arrived} calm={calm} peek={peek} setPeek={setPeek} idle={(done || mine) && arrived && inView && !paused && !calm && peek === null} />
+              <Fabric at={at} arrived={arrived} calm={calm} peek={peek} setPeek={setPeek} live={live || !!calm} onSettle={() => setLive(true)} idle={(done || mine) && arrived && inView && !paused && !calm && peek === null} />
             </motion.div>
           </div>
           <Tool at={at} choose={choose} arrived={arrived} peek={peek} paused={paused || done || mine} pause={toggle} />
@@ -374,19 +450,51 @@ function Ends() {
   );
 }
 
+/* the six facts, not pinned: the list on one side, the same fabric on the other; point at a fact (or tap it) and the
+   map changes to show it; left alone, the map walks the six by itself (5 s each) until you pick one */
+function Facts({ lend, setLend }) {
+  const ref = useRef(null);
+  const st = useEnter(ref, 0.15);
+  const calm = useReducedMotion();
+  const seen = useInView(ref, { amount: 0.3 });
+  const [step, setStep] = useState(0);
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    if (held || !seen || calm || st === 'armed') return;
+    const t = setTimeout(() => setStep((step + 1) % FACTS.length), 5000);
+    return () => clearTimeout(t);
+  }, [step, held, seen, calm, st]);
+  const pick = (i) => { setStep(i); setHeld(true); };
+  return (
+    <section ref={ref} className="nw-how nw-en nw-en-type" data-kind="type" data-enter={st} aria-labelledby="nw-how-h">
+      <div className="lx-wrap">
+        {/* entrance 3, typewriter: the heading types itself with a caret, then the facts and the map come in */}
+        <h2 className="lx-headline nw-how-h" id="nw-how-h"><Typed text="How the Network Works" on={st === 'in'} /></h2>
+        <div className="nw-how-grid">
+          <ol className="nw-facts">
+            {FACTS.map(([t, d], i) => (
+              <li key={t} className={'nw-fact' + (i === step ? ' on' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)}>
+                <h3 className="nw-fact-t"><button type="button" aria-pressed={i === step} onClick={() => pick(i)}><span className="nw-fact-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t}</button></h3>
+                <p className="nw-fact-d">{d}</p>
+                {i === 4 && <Lend k={lend} setK={(k) => { setLend(k); pick(4); }} />}
+              </li>
+            ))}
+          </ol>
+          <div className="nw-how-obj"><Story step={step} intro={false} lend={lend} /><p className="lx-kick nw-how-count" aria-live="polite">{String(step + 1).padStart(2, '0')} / {String(FACTS.length).padStart(2, '0')}</p></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Network() {
   const [lend, setLend] = useState(0);
-  const steps = FACTS.map(([t, d], i) => ({ t, d, extra: i === 4 ? <Lend k={lend} setK={setLend} /> : null }));
   return (
     <main className="lx nw">
       <Hero />
 
-      <PinnedChapters flip label="How the Network Works" per={76} objH={42}
-        intro={{ title: ['How the', 'Network Works'] }}
-        steps={steps}
-        visual={(at, intro) => <Story step={at} intro={intro} lend={lend} />} />
-
-      <ClipWipe dark className="nw-ends">
+      {/* entrance 2, grow-from-point: the black room grows out of wherever the pointer last was */}
+      <Enter kind="grow" as="section" className="lx-dark nw-ends" data-room="dark" threshold={0.12}>
         <div className="lx-wrap">
           <div className="nw-ends-h">
             <h2 className="lx-headline">Two ends of the same fabric</h2>
@@ -394,15 +502,23 @@ export default function Network() {
           </div>
           <Ends />
           <div className="nw-gh"><A to="https://github.com/hanzoai" className="lx-ghost">View on GitHub</A></div>
-          {/* the agent prompt lives with "call it": paste it into an agent and it calls Network */}
-          <div className="nw-paste">
-            <Paste dark name="Network" prompt="Read https://hanzo.ai/skill.md and use Hanzo Network in my project. Start with: hanzo network list" />
-            <div className="nw-docs"><span className="lx-kick">Network</span><A to={DOCS} className="nw-docs-a">Network docs →</A></div>
-          </div>
         </div>
-      </ClipWipe>
+      </Enter>
 
-      <LaunchClose name="Network" tag="Decentralized compute network" seed="network" data={[10, 6]} ask={['Buy Compute', DOCS]} cta="network.close" self={DOCS} />
+      <Facts lend={lend} setLend={setLend} />
+
+      {/* entrance 4, zoom-through: the agent prompt flies in from far behind the screen */}
+      <Enter kind="zoom" as="section" className="nw-pastes" threshold={0.25}>
+        <div className="lx-wrap nw-paste">
+          <Paste name="Network" prompt="Read https://hanzo.ai/skill.md and use Hanzo Network in my project. Start with: hanzo network list" />
+          <div className="nw-docs"><span className="lx-kick">Network</span><A to={DOCS} className="nw-docs-a">Network docs →</A></div>
+        </div>
+      </Enter>
+
+      {/* entrance 5, invert-flash: the close arrives inverted for a beat, then settles to paper */}
+      <Enter kind="flash" className="nw-close" threshold={0.3}>
+        <LaunchClose name="Network" tag="Decentralized compute network" seed="network" data={[10, 6]} ask={['Buy Compute', DOCS]} cta="network.close" self={DOCS} />
+      </Enter>
     </main>
   );
 }

@@ -10,7 +10,7 @@ Forks this page deleted: the two browser range inputs (now `components/v2/x-gaus
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
 - [x] One solid fill per viewport; "GitHub" → github.com/hanzoai/ui
 - [x] One h1; clear in 5 seconds
-- [x] No dead button
+- [x] No dead button: the rendered "Ship it" in the Hello() card answers a press (a tick lands beside it, `aria-pressed`, and the card rings once for 1.8 s)
 - [x] Copy questions listed
 
 Done here: desktop (> 700px): the hero "GitHub" is the one solid while it is on screen (the shared header's ask goes quiet), then the header carries "GitHub", and at the close "View on GitHub" is the one solid. Phone (≤ 700px): the shared header keeps its solid "Try Hanzo", so the page's "GitHub" and "View on GitHub" are outlines (`@media (max-width: 700px)` in `UiPage.css`): one solid per screen, shared request filed above. The board's accents are deck greys (#404040, #525252, #737373).
@@ -28,10 +28,10 @@ Done here: parity links 2/2.
 - [x] h1 CSS cut-in painted by the server; "React Component Library" sits under the h1
 - [x] JS off legible
 - [x] Board hero → six chapters, each recomposing one sticky board → dark init room with the "60" figure → closing band
-- [x] Ends on one band ("Stop reinventing buttons." with "View on GitHub" beside the board it sells), the paste prompt and Get UI strip under it, then footer
+- [x] Proof first, then the page ends on one band ("Stop reinventing buttons." with "View on GitHub" beside the board it sells), then the footer
 - [x] n/a Morph
 
-Done here: the close is one band: the 64px line, the lede, the ask and `pnpm add`, beside a small board cycling Hanzo's three products; Paste and Get UI sit under it as quiet proof. JS off: every word is in the HTML (gate hidden 0).
+Done here: the paste prompt (on paper, hairline, no black card) and the Get UI strip come first, then the close is one band: the 64px line, the lede, the ask and `pnpm add`, beside the hero board itself settled small (its tokens at rest, one product row lit at a time); measured h2 order in the section: "Get UI", "Stop reinventing buttons.". JS off: every word is in the HTML (gate hidden 0).
 
 ## 4. Conversion system
 - [x] Kit `A` + `.w2-cta`
@@ -55,12 +55,12 @@ Done here: production rows are Hanzo's three named products; "60" counts up once
 - [x] The code is Hanzo's text, line for line
 - [x] `parity.py /ui`: 0 missing
 
-Done here: parity `text 59/59 links 2/2`.
+Done here: parity `text 59/59 links 2/2`. The h1 has no `white-space: nowrap` (measured `normal`).
 
 ## 7. Visual design system
 - [x] `taste.py` passes (0 hues); page greys are deck values (#f5f5f5, #737373, #a3a3a3, #262626, #171717, #0a0a0a)
 - [x] No label above a headline
-- [x] Tiles flat; the board and token panel are one stage
+- [x] Tiles flat, one surface each: no tray behind the hero (the board is paper with a hairline, the token panel a flat #f5f5f5 tile) and none behind the closing board
 - [x] One icon set
 - [x] Differs from neighbours: a live component board with a token panel; chapters recompose the board's body
 
@@ -68,7 +68,7 @@ Done here: gate hues []; the off-deck #f5f5f7, #86868b, #1d1d20, #2c2c2e and #0a
 
 ## 8. UI component library
 - [x] Hover in `@media (hover:hover)`, press on every control: board buttons, chips and the hero/close asks .98, chapter numbers and swatches .97, "Deploy to Cloud" translateY(1px)
-- [x] The board's Dialog moves focus in, keeps Tab inside, closes on Esc and returns focus to "Ship it" (`aria-modal`)
+- [x] The board's Dialog, when the visitor opens it ("Ship it"), moves focus in, keeps Tab inside, closes on Esc and returns focus to "Ship it" (`aria-modal`). The self-running script never takes focus: it holds while focus is anywhere on the hero stage and puts away anything it had open, so a Tab crawl runs Ship it → Options ▾ → Field → Pause → swatch → --radius → --density and on (measured at 600 ms per press, the Dialog never opened)
 - [x] The DropdownMenu takes arrow keys and Esc; the swatches are one tab stop with arrows
 - [x] Hover says something: a swatch under the pointer or focus names its token and value ("graphite #404040"); a chapter number under the pointer previews its chapter on the board
 - [x] Forks deleted: listed above
@@ -76,13 +76,14 @@ Done here: gate hues []; the off-deck #f5f5f7, #86868b, #1d1d20, #2c2c2e and #0a
 Done here: sliders are drawn (`role="slider"`, arrows, Page keys, Home/End, drag) with a hover ring.
 
 ## 9. Motion and interaction
-- [x] Signature (the board that uses itself), supporting: Settle (lift), the chapter board (sticky; the chapter in the middle of the screen recomposes it), magnetic; 0 fade-ups
-- [x] Idle (board; chapter board: 01 tags on the parts with the menu and Dialog, 02 the Tab key pressing as the ring walks, 03 the radius as a 64px+ readout retuning, 04 the same parts laid out as chat, console and cloud, 05 the stylesheet filling 45 cells, 06 the three products lit in turn), time (the init room types once; "60" counts once), state (dialog, menu, tokens), pointer (sliders, magnetic, chapter preview), arrival (h1)
-- [x] Moves without input; every control answers
-- [x] Reduced motion: the init room shows its full text and "60" as is; no springs
+- [x] Signature (MOTION-MAP `magnet-grid`): a 12×4 field (6×4 on phones) of the library's parts right after the hero bends toward the cursor and ripples out from a click or tap; one rAF loop that runs only while the field is on screen and something moves; a quiet ripple starts itself after 3.5 s without a pointer. Reduced motion: still. The hero keeps the board that uses itself and the page-local Stage lift.
+- [x] Entrances (MOTION-MAP, in order, each its own code in `components/pages/apps/ui/Motion.*`): accordion (the grid's rows unfold from a top hinge, 110 ms apart), page-curl (the paper above the dark init room peels off from its bottom-left corner, a grey flap along the fold), magnet-gather (the six chapter cards start scattered and rotated and are pulled into place), cursor-trail (fine pointers: a cursor sweeps the paste and Get UI strip once, uncovering it behind a ten-dot trail, then the trail follows the visitor's cursor; touch shows it at rest), zoom-through (the closing band flies in from 720px behind the screen). All under `html.js`; JS off and reduced motion show the final state.
+- [x] No pinned chapter scene: the six chapters are cards, each with its own small board in that chapter's state, running only while on screen. Order: hero → grid → dark init room → chapters → paste/Get UI → closing band.
+- [x] Idle (hero board, grid ripples, chapter boards), time (the init room types once; "60" counts once), state (dialog, menu, tokens), pointer (grid magnet, sliders, magnetic ask, cursor trail), arrival (h1, five entrances)
+- [x] Reduced motion: the init room shows its full text and "60" as is; entrances show their final state; no springs
 - [x] n/a sound (shared kit)
 
-Done here: `variety.py` OK; "Ship it" renders in the Hello() card when `return <Button>` is typed.
+Done here: Playwright at 1470×801 and 375×812 (and reduced motion at 1470): every entrance's section gets `data-in` and plays (mid and settled screenshots), the grid moved 48 of 48 tiles under a pointer and rippled on click, a 45-press Tab crawl passed the hero, grid (not focusable) and chapters without a trap, 0 console errors, no horizontal scroll, CLS 0.0011 / 0.0024 / 0.0003. `variety.py` OK.
 
 ## 10. Media
 - [x] n/a images
@@ -98,7 +99,7 @@ Done here: no media; the page's objects are the live component boards and the te
 - [x] Targets 44px+
 - [x] Primary above the fold at 375×667
 
-Done here: on phone the chapters are a swipe rail (`scroll-snap-type: x proximity`, 16% peek) under the board, which is not sticky; the board's body is a fixed 268px so the board and its chapter card fit one 812px screen together.
+Done here: on phone the six chapter cards stack one per screen, each board's body a fixed 300px with its heading under it; the grid drops to 6 columns. The closing board's body takes its own height, so its third product row is whole.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: "Hello()" #525252 on #f5f5f5; terminal comments #a3a3a3 on #0f0f0f
@@ -107,7 +108,7 @@ Done here: on phone the chapters are a swipe rail (`scroll-snap-type: x proximit
 - [x] One h1; h2 order
 - [x] Keyboard reaches every control; the terminal is a focusable labelled region
 
-Done here: dialog focus is trapped and returned.
+Done here: dialog focus is trapped and returned only for a Dialog the visitor opened; the script's own Dialog is never a trap.
 
 ## 13. Performance and engineering
 - [x] h1 in server HTML
@@ -115,7 +116,7 @@ Done here: dialog focus is trapped and returned.
 - [x] No poller, no third party
 - [x] Nothing heavy on James's laptop
 
-Done here: one client island; the chapter board's body has a fixed height per width, so recomposing never moves the page (CLS 0.0035 at 1470 and 0.0063 at 375 over a full walk).
+Done here: one client island; the chapter board's body has a fixed height per width, so recomposing never moves the page (CLS 0.0020 at 1470 and 0.0020 at 375 over a full walk).
 
 ## 14. SEO and machine files
 - [x] Title and description from `content/pages.json`
@@ -147,7 +148,7 @@ Done here: `pnpm add @hanzo/ui` has its own Copy at the close.
 - [x] n/a submit
 - [x] n/a
 
-Done here: 0 console errors on 6 cold loads (3 at 1470×801, 3 at 375×812). The earlier critic saw one hydration-mismatch on 1 of 6 cold loads; nothing in this page's render differs between server and client (no Date, random or window reads in render), so if it recurs it comes from shared parts (Settle, LineMask, usePause, the header); unverified.
+Done here: 0 console errors on 8 cold loads waiting for load before any screenshot: 1 normal and 3 reduced-motion at 1470×801, the same at 375×812. The reduced-motion hydration mismatch came from the shared `Settle` (it reads `useReducedMotion()` during render); /ui now uses a page-local Stage instead, and the shared fix is requested in `docs/requests/ui.md`.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
@@ -155,4 +156,4 @@ Done here: 0 console errors on 6 cold loads (3 at 1470×801, 3 at 375×812). The
 - [x] `V2:` line in `UiPage.jsx`
 - [ ] Review 8 or more (re-review pending)
 
-Done here: previous review 7/10; its fixes 1–6 addressed (card made true, phone one solid, chapters recompose the board, "60" figure and closing band, the board wakes in 1 s, presses and hover labels, deck greys, proximity rail, no wrap at 375). Fresh critic pending.
+Done here: previous review 7/10 (round 3); its fixes 1–6 addressed (no keyboard trap, no reduced-motion hydration error, "Ship it" answers, chapters 01 and 02 and the close each have their own composition, the page ends on the band, the title bar names an app only in chapter 04, phone closing board whole, h1 wraps, less white above the h1, one surface per object). Fresh critic pending.

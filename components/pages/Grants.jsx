@@ -2,23 +2,29 @@
 /* Grants & Research. Its idea is the stack of ways in: contribute, research, intern.
    Persona: an open-source contributor, PhD researcher or research intern (PLAN-COMPONENTS 1.1 researcher row). Goal:
    apply for credits or an internship. CTA: "Apply for a Grant" (the form on this page). Metric: lead_submit.
-   V2: 8/10 MASTER scale: a 52px hero beside the page's own contour field with a pause control; the four steps as one timeline that draws across; what recipients receive as one ledger ticked in row by row; the three ways in as sheets that stack in the dark room (number 64px, title 32px, a quiet ask each); the application with kit Fields and its filing card.
-   Signature: stacked sheets: in the dark room the three ways to build and research arrive as full sheets, each one
-   pinning while the next slides over it and the one beneath settles back.
+   V2: motion map (7 Nov): the pinned sheet stack is gone; the three ways now stamp down as plain sheets, and each section enters its own way.
+   Signature: stamp: the three ways' sheets land with weight (a short drop, a squash, a settle, the number pressed in
+   after, an impression ring); a click or tap stamps a sheet again from that point; each answer is pressed onto the
+   filing card as it is typed.
+   Entrances: grid-wave (hero art: tiles clear by distance from the pointer, and ripple again where pointed or tapped),
+   stack-drop (How grants work), pixel-resolve (What recipients receive), cover-slide (Three ways: the dark room slides
+   up over the ledger), shrink-to-card (the application folds into a card as you leave it). Built in grants/enter.*.
    Beyond: your application, as it will be sent. Beside the form a card writes itself as you type, under the form's
    own labels: the track and exactly the fields that will be sent.
-   Motion: stacked sheets (signature) + line-masked hero type + the timeline drawing across + ticks drawn on the ledger
+   Motion: stamp (signature) + the five entrances + the timeline drawing across + ticks drawn on the ledger
    + the track chip gliding.
    0 UI hues. The form sends what hanzo.ai sends. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Field, Tick } from '../kit';
 import Sigil from '../Sigil';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { TRACKS, apply } from './Grants.apply';
 import '../v2/ProgramScale.css';
 import usePhoneAsk from './usePhoneAsk';
+import useEnter from './grants/enter';
 import './Grants.css';
+import './grants/enter.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 const STEPS = [
@@ -28,30 +34,34 @@ const STEPS = [
   ['Ship in the Open', 'Publish open code, models, and papers under your own name'],
 ];
 const pad = (n) => String(n).padStart(2, '0');
+const TILES = Array.from({ length: 42 }, (_, i) => i);
+/* pixel-resolve blocks, each with a fixed scattered delay (same on server and client) */
+const blocks = (n, span) => Array.from({ length: n }, (_, i) => <span key={i} style={{ '--d': Math.round(((i * 7) % n) * (span / n)) + 'ms' }} />);
 
 function Hero() {
   const [paused, setPaused] = useState(false);
   return (
-    <section className="xgr-hero" aria-labelledby="xgr-h1">
+    <section className="xgr-hero" data-enter="grid-wave" aria-labelledby="xgr-h1">
       <div className="xp-wrap xp-grid">
         <div className="xgr-copy">
           <LineReveal as="h1" id="xgr-h1" className="xp-display md" lines={['Open Source & Research', 'Credit Grants']} />
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
+          <div className="xgr-rise">{/* CSS rise from the server HTML: never waits for JS, never starts invisible */}
             <p className="xp-lede xgr-lede">Free API credits, GPU compute, and Hanzo Team access for open-source contributors, academic PhD researchers, and research interns.</p>
             <div className="xgr-acts">
               <Cta to="/grants#apply" id="grants.hero" thumb className="xp-cta">Apply for a Grant</Cta>
               <A to="/careers#internships" className="xgr-link">Academic Internships</A>
             </div>
-          </motion.div>
+          </div>
         </div>
-        <motion.div className="xgr-art" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+        <div className="xgr-art xgr-rise late">
           <svg className="xgr-static" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{[40, 72, 104, 136, 168, 200, 232].map((r) => <ellipse key={r} cx="230" cy="210" rx={r * 1.15} ry={r * 0.85} fill="none" stroke="currentColor" strokeOpacity=".22" />)}</svg>
           <Sigil key={paused ? 'still' : 'live'} seed="grants" data={[2137, 122, 4]} className="xgr-sigil" still={paused} />
+          <div className="xgr-grid" aria-hidden="true">{TILES.map((i) => <span key={i} />)}</div>
           <span className="xgr-art-k x-mono">Grants &amp; Research</span>
           <button type="button" className="xgr-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((v) => !v)}>
             {paused ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg> : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
           </button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -62,12 +72,14 @@ function How() {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 85%', 'end 45%'] });
-  const line = useTransform(scrollYProgress, (v) => (calm ? 1 : Math.min(1, Math.max(0, v))));
-  const [at, setAt] = useState(calm ? 3 : -1);
+  // nothing here branches on the preference while rendering (it would differ from the server): the effect lights every
+  // step after mount, and CSS draws the full line under reduced motion
+  const line = useTransform(scrollYProgress, (v) => Math.min(1, Math.max(0, v)));
+  const [at, setAt] = useState(-1);
   useMotionValueEvent(line, 'change', (v) => setAt(v < 0.02 ? -1 : Math.min(3, Math.floor(v * 4)))); // step i sits at i/4 of the line
   useEffect(() => { if (calm) setAt(3); }, [calm]);
   return (
-    <section ref={ref} className="xp-sec tight xgr-how" aria-labelledby="xgr-how-h">
+    <section ref={ref} className="xp-sec tight xgr-how" data-enter="stack-drop" aria-labelledby="xgr-how-h">
       <div className="xp-wrap">
         <h2 id="xgr-how-h" className="xp-head xgr-how-h">How grants work</h2>
         <div className="xgr-line" aria-hidden="true"><motion.i style={{ scaleX: line }} /></div>
@@ -93,23 +105,35 @@ const GETS = [
   ['Frontier Checkpoints & Infra', 'Early access to Zen foundation models, Kai decision models, Enso routing policies, and distributed training / evaluation clusters.'],
 ];
 
+/* one row of the ledger: it lights, and its tick draws, as it scrolls into view */
+function Get({ t, d, i }) {
+  const ref = useRef(null);
+  const on = useInView(ref, { once: true, amount: 0.6 });
+  return (
+    <li ref={ref} className={on ? 'on' : ''}>
+      <span className="xgr-gets-n x-mono">{pad(i + 1)}</span>
+      <h3 className="xp-title">{t}</h3>
+      <p className="xp-body">{d}</p>
+      <span className="xgr-gets-t"><Tick /></span>
+    </li>
+  );
+}
+
 function Gets() {
   return (
-    <section className="xp-sec tight xgr-gets" aria-labelledby="xgr-gets-h">
+    <section className="xp-sec tight xgr-gets" data-enter="pixel-resolve" aria-labelledby="xgr-gets-h">
       <div className="xp-wrap xp-grid">
         <div className="xgr-gets-l">
           <h2 id="xgr-gets-h" className="xp-head">What Grant Recipients &amp; Interns Receive</h2>
           <p className="xp-lede">Compute, models, and workspaces to ship open research and open-source software.</p>
         </div>
-        <ul className="xgr-gets-g xp-obj">
-          {GETS.map(([t, d], i) => (
-            <li key={t}>
-              <span className="xgr-gets-n"><Tick delay={i * 0.06} /></span>
-              <h3 className="xp-title">{t}</h3>
-              <p className="xp-body">{d}</p>
-            </li>
-          ))}
-        </ul>
+        <div className="xgr-pix">
+          <ul className="xgr-gets-g xgr-sheetlist">
+            {GETS.map(([t, d], i) => <Get key={t} t={t} d={d} i={i} />)}
+          </ul>
+          <div className="xgr-pix-b f" aria-hidden="true">{blocks(48, 300)}</div>
+          <div className="xgr-pix-b c" aria-hidden="true">{blocks(12, 240)}</div>
+        </div>
       </div>
     </section>
   );
@@ -136,15 +160,12 @@ function Facts({ meta }) {
   );
 }
 
-function Sheet({ way, i, n, pick, p }) {
+/* One sheet: it stamps down once in view, and again wherever it is clicked or tapped (grants/enter.js). */
+function Sheet({ way, i, pick }) {
   const [k, t, meta, d, cta, [more, to]] = way;
-  const last = i === n - 1;
-  const calm = useReducedMotion();
-  const scale = useTransform(p, [i / n, (i + 1) / n], [1, last || calm ? 1 : 0.92], { clamp: true });
-  const dim = useTransform(p, [i / n, (i + 1) / n], [0, last || calm ? 0 : 0.55], { clamp: true });
   return (
-    <li className="xgr-sheet-li" style={{ '--i': i }}>
-      <motion.article className={'xgr-sheet s' + i} data-room={i === 1 ? undefined : 'light'} style={calm ? undefined : { scale }}>
+    <li className="xgr-sheet-li" data-stamp="">
+      <article className={'xgr-sheet s' + i} data-room={i === 1 ? undefined : 'light'}>
         <div className="xgr-sheet-o">
           <span className="xgr-sheet-n xp-fig" aria-hidden="true">{pad(i + 1)}</span>
           <Facts meta={meta} />
@@ -157,25 +178,22 @@ function Sheet({ way, i, n, pick, p }) {
             <A to={to} className="xgr-link">{more}</A>
           </div>
         </div>
-        {!calm && <motion.i className="xgr-sheet-dim" style={{ opacity: dim }} aria-hidden="true" />}
-      </motion.article>
+        <i className="xgr-ink" aria-hidden="true" />
+      </article>
     </li>
   );
 }
 
 function Ways({ pick }) {
-  const list = useRef(null);
-  const { scrollYProgress } = useScroll({ target: list, offset: ['start start', 'end end'] });
   return (
-    <section className="xp-sec xp-dark xgr-ways" data-room="dark" aria-labelledby="xgr-ways-h">
+    <section className="xp-sec xp-dark xgr-ways" data-room="dark" data-enter="cover-slide" aria-labelledby="xgr-ways-h">
       <div className="xp-wrap">
         <div className="xp-grid xgr-ways-head">
           <h2 id="xgr-ways-h" className="xp-head">Three Ways to Build &amp; Research with Us</h2>
           <p className="xp-lede">Whether you are contributing PRs to our open-source repos, running PhD experiments, or applying for a research internship.</p>
         </div>
-        <noscript><style>{'.xgr-sheet-dim{display:none}'}</style></noscript>
-        <ol className="xgr-stack" ref={list}>
-          {WAYS.map((w, i) => <Sheet key={w[0]} way={w} i={i} n={WAYS.length} pick={pick} p={scrollYProgress} />)}
+        <ol className="xgr-stack">
+          {WAYS.map((w, i) => <Sheet key={w[0]} way={w} i={i} pick={pick} />)}
         </ol>
       </div>
     </section>
@@ -234,7 +252,7 @@ function Apply({ track, setTrack }) {
   const label = TRACKS.find(([k]) => k === track)[1];
   const shown = [['Program Track', label], ['Full Name', f.name], ['Email (.edu or work/personal)', f.email], ['University / Lab / Open Source Project', f.affiliation], ['GitHub / Forge Profile or PR Links', f.github], ['Google Scholar / ArXiv / Personal Website (optional)', f.scholar], ['Research Proposal, OSS Contributions, or Internship Goals', f.summary]];
   return (
-    <section className="xp-sec xgr-apply" id="apply" aria-labelledby="xgr-apply-h">
+    <section className="xp-sec xgr-apply" id="apply" data-enter="shrink-to-card" aria-labelledby="xgr-apply-h">
       <div className="xp-wrap xgr-apply-in">
         <div className="xgr-apply-l">
           <h2 id="xgr-apply-h" className="xp-head xgr-apply-h">Apply for Credits or a Research Internship</h2>
@@ -288,15 +306,21 @@ function Apply({ track, setTrack }) {
 
 export default function Grants() {
   usePhoneAsk();
+  const root = useRef(null);
+  useEnter(root);
   const [track, setTrack] = useState('oss');
   return (
-    <main className="xp xgr">
+    <main className="xp xgr" ref={root}>
       <NoJs />
       <Hero />
       <How />
       <Gets />
       <Ways pick={setTrack} />
       <Apply track={track} setTrack={setTrack} />
+      {/* a quiet end in the page's own words: the scale behind the grants */}
+      <section className="xgr-proof" aria-label="Open Source Contributor Grants">
+        <div className="xp-wrap xgr-proof-in"><p><span className="xgr-proof-big">2,137+</span><span className="x-mono">repositories · 122 organizations</span></p><A to="/open-source" className="xgr-link">Explore Repositories</A></div>
+      </section>
     </main>
   );
 }

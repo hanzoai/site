@@ -8,26 +8,25 @@
 .xcu ::selection { background: #e4e4e7; }
 .xcu :focus-visible { outline: 2px solid var(--xi); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
 .xcu-alt { font: 497 17px/1 var(--sans); letter-spacing: -.01em; color: inherit; white-space: nowrap; }
+/* scale with rhythm (JAMES 1): resting sizes are live hanzo.ai's (h1 52, section headings 26, figures 64); one big
+   thing per screen: the plate's figure on the first, the stage's figure in the index, the sliding figures in the close.
+   Page-local overrides of the company deck's display and headline sizes. */
+.vc.xcu .xcu-h1.vc-display { font-size: 52px; line-height: 1.04; letter-spacing: -.03em; }
+.vc.xcu .vc-headline, .vc.xcu .xcu-close .vc-display { font-size: 26px; line-height: 1.15; letter-spacing: -.02em; }
 
-/* the one ask: solid ink pill (white in the dark room); press is .98, hover darkens and the arrow-free label lifts 1px */
+/* the one ask: solid ink pill (white in the dark room); press is .97 (90ms), hover darkens */
 .xcu-cta { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 28px; border-radius: 999px; background: var(--xi); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .xcu-cta.lt { background: #fff; color: #0a0a0a; }
 @media (hover: hover) { .xcu-cta:hover { background: #262626; } .xcu-cta.lt:hover { background: #e5e5e5; } }
 .xcu-cta:active { transform: scale(.97); }
 
-/* arrival without JS: CSS keyframes play even when scripts never run, so no text waits on hydration */
-@keyframes xcu-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-.xcu-in { animation: xcu-up .8s var(--ease) .95s both; }
-.xcu-in2 { animation: xcu-up 1s var(--ease) 1.15s both; } /* the h1 leads (MaskLines, 0.5s), then lede and ask, then the plate */
-html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused; }
-
-/* 1. hero: the headline, then its lede and its ask side by side; 2. the case plate, its own section */
+/* 1. hero: the headline and its ask (entrances and the statement's word-light live in customers/enter.css) */
 .xcu-hero { padding: clamp(96px, 8vw, 120px) 0 0; }
 .xcu-hero-g { row-gap: 28px; align-items: end; }
 .xcu-h1 { grid-column: 1 / -1; }
 .xcu-hero-f { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 24px 48px; }
-.xcu-lede { max-width: 44ch; }
-.xcu-cases { padding-top: clamp(40px, 3.6vw, 56px); }
+.vc.xcu .xcu-lede.xcu-wl { max-width: 30ch; font-size: clamp(26px, 3vw, 44px); line-height: 1.2; color: #0a0a0a; }
+.xcu-cases { padding-top: 0; }
 .xcu-plate { position: relative; aspect-ratio: 16 / 8.4; border-radius: 20px; overflow: hidden; background: linear-gradient(160deg, #262626 0%, #0a0a0a 55%, #000000 100%); }
 .xcu-line { position: absolute; z-index: 4; left: clamp(24px, 3vw, 48px); right: clamp(24px, 3vw, 48px); top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; pointer-events: none; }
 .xcu-line i { position: relative; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .22); overflow: hidden; }
@@ -74,44 +73,28 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 @media (hover: hover) { .xcu-years button:hover { color: var(--xi); } }
 .xcu-years button:active { transform: scale(.97); }
 .xcu-years button > .xcu-pill { position: absolute; inset: 0; border-radius: 999px; background: var(--sunk); }
-.xcu-strip { display: none; }
 .xcu-dots { display: inline-flex; gap: 4px; }
 .xcu-dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .55; }
-.xcu-index { grid-column: 1 / 9; grid-row: 2; align-self: start; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
-.xcu-row { position: relative; isolation: isolate; display: grid; grid-template-columns: 72px minmax(0, 5fr) minmax(0, 5fr); column-gap: 24px; align-items: start; padding: 44px 0; border-top: 1px solid rgba(0, 0, 0, .1); transition: opacity .4s var(--ease); }
+.xcu-index { grid-column: 1 / -1; grid-row: 2; align-self: start; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.xcu-row { position: relative; isolation: isolate; display: grid; grid-template-columns: 72px minmax(0, 4fr) minmax(0, 5fr) minmax(0, 4fr); column-gap: 24px; align-items: start; padding: 36px 0; border-top: 1px solid rgba(0, 0, 0, .1); transition: opacity .4s var(--ease); }
 .xcu-row[hidden] { display: none; }
 .xcu-row::before { content: ''; position: absolute; inset: 0 -12px 0 -24px; border-radius: 16px; background: var(--raised); opacity: 0; transition: opacity .35s var(--ease); z-index: -1; }
 .xcu-row-y { font: 500 15px/2.2 var(--mono); color: var(--mut); transition: color .3s; }
 .xcu-row-n { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-.xcu-row-n h3 { margin: 0; font-size: clamp(26px, 2.8vw, 40px); font-weight: 497; letter-spacing: -.035em; line-height: 1.05; transition: transform .5s var(--ease); }
+.xcu-row-n h3 { margin: 0; font-size: 21px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; transition: transform .5s var(--ease); }
 .xcu-kind { font: 606 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mut); }
 .xcu-row-d { margin: 6px 0 0; font-size: 17px; line-height: 1.55; color: var(--sec); max-width: 44ch; }
-/* on desktop the stage carries the figures; the rows keep them for screen readers */
-.xcu-row-f { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
+/* each row carries its own figures; they rise out of their masks once, as the row reaches the middle (or is pointed at) */
+.xcu-row-f { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.xcu-row-f > div { overflow: hidden; }
+.xcu-row-f dt { font-size: 32px; font-weight: 220; letter-spacing: -.03em; line-height: 1; color: var(--xi); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.xcu-row-f dd { margin: 6px 0 0; font-size: 14px; color: var(--sec); }
+.js .xcu-row-f dt, .js .xcu-row-f dd { transform: translateY(110%); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+.js .xcu-row-f dd { transition-delay: 60ms; }
+.js .xcu-row.read .xcu-row-f dt, .js .xcu-row.read .xcu-row-f dd { transform: none; }
 .xcu-row.on .xcu-row-y { color: var(--xi); }
 .xcu-row.on .xcu-row-n h3 { transform: translateX(8px); }
 @media (hover: hover) { .xcu-row:hover::before { opacity: 1; } }
-.xcu-aside { grid-column: 9 / 13; grid-row: 2; align-self: stretch; }
-.xcu-st { position: sticky; top: calc(50svh - 220px); height: 440px; display: flex; flex-direction: column; border-radius: 24px; background: var(--raised); overflow: hidden; }
-.xcu-st-in { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 32px; }
-.xcu-st-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 44px; }
-.xcu-st-logo img { display: block; max-height: 36px; max-width: 180px; width: auto; object-fit: contain; filter: grayscale(1) brightness(.15); background: transparent !important; }
-.xcu-st-logo b { font-size: 26px; font-weight: 497; letter-spacing: -.025em; }
-.xcu-st-top .vc-kick { color: var(--mut); }
-.xcu-st-f { display: flex; flex-direction: column; gap: 20px; }
-.xcu-st-f > span { display: flex; flex-direction: column; gap: 8px; }
-.xcu-st-f b { white-space: nowrap; }
-.xcu-st-f .a b { font-size: clamp(52px, 6vw, 84px); font-weight: 220; letter-spacing: -.03em; line-height: .9; font-variant-numeric: tabular-nums; color: var(--xi); }
-.xcu-st-f .b b { font-size: clamp(28px, 3vw, 40px); font-weight: 220; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--xi); }
-.xcu-st-f .a.long b { font-size: clamp(36px, 3.5vw, 52px); }
-.xcu-st-f .nm b { white-space: normal;  font-size: clamp(32px, 3.4vw, 52px); font-weight: 497; letter-spacing: -.035em; }
-.xcu-st-f span span { font-size: 16px; color: var(--sec); }
-.xcu-st-dots { display: flex; gap: 6px; padding: 0 32px 28px; }
-.xcu-st-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .16); transition: background-color .3s, transform .3s var(--ease); }
-.xcu-st-dots i.on { background: var(--xi); transform: scale(1.35); }
-/* idle: the launch being read breathes in the stage's dot row while you read it (one slow mover in view) */
-.xcu-st-dots i.on::after { content: ''; display: block; width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 0 1px var(--xi); animation: xcu-breathe 2.4s cubic-bezier(.4, 0, .2, 1) infinite; }
-@keyframes xcu-breathe { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.6); opacity: 0; } }
 
 /* 3. backed by builders: a calm row of names, as live shows them, no boxes */
 .xcu-back { padding-top: clamp(96px, 10vw, 160px); }
@@ -135,9 +118,10 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 
 @media (max-width: 899px) {
   .xcu-hero { padding-top: 96px; }
+  .vc.xcu .xcu-h1.vc-display { font-size: 40px; }
   .xcu-hero-g { row-gap: 22px; }
   .xcu-hero-f { gap: 22px; }
-  .xcu-cases { padding-top: 32px; }
+  .xcu-cases { padding-top: 0; }
   .xcu-plate { aspect-ratio: 4 / 5.4; border-radius: 20px; }
   .xcu-case-in { grid-template-columns: minmax(0, 1fr); row-gap: 18px; top: auto; bottom: 24px; }
   .xcu-ph::after { background: linear-gradient(180deg, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, .66) 100%); }
@@ -149,29 +133,17 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-years::-webkit-scrollbar { display: none; }
   .xcu-years button { flex: none; }
   .xcu-years button.here:not([aria-pressed='true'])::after { content: ''; position: absolute; left: 18px; right: 18px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--xi); }
-  /* the phone scene: a slim strip under the rail carries the figure of the row being read, one in and one out */
-  .xcu-strip { display: flex; align-items: center; grid-column: 1 / -1; position: sticky; top: 121px; z-index: 10; margin: -24px calc(-1 * clamp(16px, 4vw, 32px)) 0; padding: 0 clamp(16px, 4vw, 32px); height: 64px; overflow: hidden; background: #fff; border-bottom: 1px solid rgba(0, 0, 0, .1); }
-  .xcu-strip-in { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
-  .xcu-strip-in b { flex: none; font-size: 32px; font-weight: 220; letter-spacing: -.03em; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--xi); }
-  .xcu-strip-in span { min-width: 0; font-size: 14px; line-height: 1.3; color: var(--sec); }
-  .xcu-strip-in.nm b { font-size: 21px; font-weight: 497; letter-spacing: -.02em; }
   .xcu-every-g { row-gap: 24px; }
-  .xcu-every-g h2, .xcu-years, .xcu-strip, .xcu-index { grid-row: auto; }
-  .xcu-index { grid-column: 1 / -1; }
-  .xcu-aside { display: none; }
+  .xcu-every-g h2, .xcu-years, .xcu-index { grid-row: auto; }
   .xcu-row { grid-template-columns: 56px minmax(0, 1fr); row-gap: 16px; padding: 32px 0; }
   .xcu-row::before { inset: 0 -12px; }
-  .xcu-row-d { grid-column: 2; }
+  .xcu-row-d, .xcu-row-f, .xcu-row-f0 { grid-column: 2; }
+  .xcu-row-f0 { display: none; }
   .xcu-row.on .xcu-row-n h3 { transform: none; }
-  .xcu-row-f { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; grid-column: 2; display: flex; flex-direction: column; gap: 14px; }
-  .xcu-row-n h3 { transition: color .3s cubic-bezier(0, 0, .2, 1); }
-  .xcu-row:not(.read) .xcu-row-n h3 { color: #737373; }
-  .xcu-row-f > div { overflow: hidden; }
-  .xcu-row-f dt, .xcu-row-f dd { transform: translateY(110%); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
-  .xcu-row-f dd { transition-delay: 60ms; }
-  .xcu-row.read .xcu-row-f dt, .xcu-row.read .xcu-row-f dd { transform: none; }
-  .xcu-row-f dt { font-size: 40px; font-weight: 220; letter-spacing: -.03em; line-height: 1; color: var(--xi); font-variant-numeric: tabular-nums; }
-  .xcu-row-f dd { margin: 6px 0 0; font-size: 15px; color: var(--sec); }
+  .xcu-row-n h3 { font-size: 17px; transition: color .3s cubic-bezier(0, 0, .2, 1); }
+  .js .xcu-row:not(.read) .xcu-row-n h3 { color: #737373; }
+  .xcu-row-f dt { font-size: 40px; }
+  .xcu-row-f dd { font-size: 15px; }
   .xcu-row-y { line-height: 1.6; }
   .xcu-back-g h2, .xcu-wall { grid-column: 1 / -1; }
   .xcu-wall { gap: 4px 32px; }
@@ -179,8 +151,6 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-close .xcu-cta { justify-self: start; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xcu-in, .xcu-in2 { animation: none; }
   .xcu-line u.run { animation: none; transform: scaleX(1); }
-  .xcu-st-dots i.on::after { animation: none; opacity: 0; }
   .xcu-row-f dt, .xcu-row-f dd { transform: none !important; transition: none; }
 }

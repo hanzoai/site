@@ -1,15 +1,67 @@
-/* Zen (ze-): figures, the Zen 6 chapters, the reasoning console beside its two cards, the spec, the family */
+/* Zen (ze-): the particle room with the figures, the reasoning console beside its two cards, the three parts, the
+   family, five page-local entrances */
 .ze-head { width: min(48%, 600px); }
-/* one solid ask per screen: the header goes quiet while a page ask is in view, so the first-screen ask is the solid one */
-.lv-stage[data-hero='zen'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
-@media (hover: hover) { .lv-stage[data-hero='zen'] .lv-name-ask .x-btn:hover { background: #e5e5e5; border-color: #e5e5e5; } }
-/* the settled headline's links leave the tab order until the headline is shown */
-.js .ze-head:not([data-on]) .lv-acts { visibility: hidden; }
+/* one solid ask per screen, in step with the shared header: Ask.jsx sets html[data-ask=quiet] (desktop only) while a
+   page "Try Hanzo" is on screen. Then the page's own ask fills; otherwise it stays outlined and the header is the solid. */
+.lv-stage[data-hero='zen'] :is(.lv-name-ask, .lv-acts) .x-btn { transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1), border-color .3s cubic-bezier(0, 0, .2, 1); }
+:root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+:root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow) { background: #0a0a0a; border-color: #0a0a0a; color: #fafafa; }
+@media (hover: hover) {
+  :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-name-ask .x-btn:hover { background: #e4e4e7; border-color: #e4e4e7; }
+  :root[data-ask='quiet'] .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { background: #262626; border-color: #262626; }
+  .lv-stage[data-hero='zen'] .lv-acts .x-btn:not(.x-arrow):hover { border-color: #0a0a0a; }
+}
+.ze-art-sig { background: #000; color: rgba(255, 255, 255, .5); }
+.ze-sigart { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* keyboard: the settled headline's links stay in the tab order; focusing one scrolls the stage to its settled point */
 /* the film pause rides inside the settled arch, never alone on white */
 @media (min-width: 901px) { .lv-head.ze-head[data-on] ~ .lv-pause { right: calc(40% - min(32%, 64svh) + 16px); bottom: calc(9svh + 16px); } }
-.ze-figs-sec { padding-bottom: 0; }
-@media (min-width: 901px) { .ze-figs-sec { padding-top: 27px; } }
-.ze-figs { --c: 3; }
+/* the signature room: the particle picture beside Zen's three figures */
+.ze-swarm { padding-block: 44px 72px; }
+.ze-swarm-g { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 44px; align-items: center; }
+.ze-swarm-art { position: relative; aspect-ratio: 1; max-height: 640px; }
+.ze-swarm-cv { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; cursor: crosshair; }
+.ze-figs { --c: 1; }
+.ze-figs > .x-stat + .x-stat { padding-left: 0; border-left: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+
+/* the three parts (no pinned chapters): unequal columns, the picture above its words */
+.ze-parts-g { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr); gap: 27px; align-items: start; perspective: 1400px; }
+.ze-part { --rx: 0deg; --ry: 0deg; transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .4s cubic-bezier(0, 0, .2, 1); transform-style: preserve-3d; }
+.ze-part-art { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; background: #000; }
+.ze-part h3 { margin: 22px 0 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
+.ze-part-b { margin-top: 10px; display: grid; gap: 10px; font-size: 16px; line-height: 1.5; color: #525252; }
+.ze-part-b p { margin: 0; }
+.ze-part .ze-mcard, .ze-part .ze-open { left: 16px; right: 16px; bottom: 16px; width: auto; padding: 18px; }
+
+/* ---- the five entrances, each its own (scoped to html.js; JS off and reduced motion show the final state) ---- */
+/* 1 diagonal-wipe: the signature room is revealed by a diagonal clip that sweeps left to right */
+/* (the clip sits on the inner wrap: an observer cannot see a section clipped to nothing) */
+.js .ze-e-wipe > .x-wrap { clip-path: polygon(0 0, 130% 0, 100% 100%, -30% 100%); transition: clip-path 1.1s cubic-bezier(.16, 1, .3, 1); }
+.js .ze-e-wipe:not([data-in]) > .x-wrap { clip-path: polygon(0 0, 0 0, -30% 100%, -30% 100%); }
+/* 2 letter-cascade: the reasoning room's tab and card names fall into place letter by letter */
+.ze-lt { display: inline-block; white-space: pre; }
+.js .ze-e-letters .ze-lt { transition: transform .5s cubic-bezier(.16, 1, .3, 1), opacity .4s cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--i) * 28ms); }
+.js .ze-e-letters:not([data-in]) .ze-lt { transform: translateY(-0.9em); opacity: 0; }
+/* 3 tilt-3d-hover: the parts arrive tipped back in depth and level out one after another, then tilt toward the pointer */
+.js .ze-e-tilt .ze-part { transition: transform .9s cubic-bezier(.16, 1, .3, 1), opacity .6s cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--d) * 120ms); }
+.js .ze-e-tilt[data-in] .ze-part { transition: transform .4s cubic-bezier(0, 0, .2, 1), opacity .6s cubic-bezier(0, 0, .2, 1); transition-delay: 0s; }
+.js .ze-e-tilt:not([data-in]) .ze-part { transform: rotateX(24deg) translateY(44px); opacity: 0; }
+/* 4 glitch-in: the family tiles glitch in, monochrome, for 0.45 s, then hold still */
+.js .ze-e-glitch:not([data-in]) .ze-fam li { opacity: 0; }
+.js .ze-e-glitch[data-in] .ze-fam li { animation: ze-glitch .45s steps(1, end) both; animation-delay: calc(var(--d) * 90ms); }
+@keyframes ze-glitch {
+  0% { opacity: 1; clip-path: inset(38% 0 48% 0); transform: translateX(-10px); }
+  18% { clip-path: inset(8% 0 76% 0); transform: translateX(8px); }
+  36% { clip-path: inset(66% 0 6% 0); transform: translateX(-5px); }
+  54% { clip-path: inset(22% 0 30% 0); transform: translateX(3px); }
+  72% { clip-path: inset(0 0 0 0); transform: translateX(-1px); opacity: .7; }
+  100% { clip-path: inset(0 0 0 0); transform: none; opacity: 1; }
+}
+/* 5 focus-pull-scroll: driven by the scroll in Zen.jsx (blur 4px to 0, the page's one blur) */
+@media (prefers-reduced-motion: reduce) {
+  .js .ze-e-wipe > .x-wrap, .js .ze-e-wipe:not([data-in]) > .x-wrap { clip-path: none; }
+  .js .ze-e-letters .ze-lt, .js .ze-e-tilt .ze-part, .js .ze-e-glitch .ze-fam li { transform: none; opacity: 1; animation: none; }
+}
 .ze-art { position: absolute; inset: 0; overflow: hidden; background: #000; }
 .ze-art img, .ze-art video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transform: scale(var(--z)); }
 .ze-mcard, .ze-open { position: absolute; left: 32px; right: 32px; bottom: 32px; padding: 28px; border-radius: 16px; background: #fff; color: var(--ink); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .7); }
@@ -24,6 +76,8 @@
 .ze-open p { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 14px; font-size: 15px; }
 .ze-ch-specs { display: flex; flex-wrap: wrap; gap: 6px; }
 .ze-ch-specs span { padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); font: 500 13px/1 var(--mono); color: var(--soft); }
+.ze-live { background: #000; color: #fafafa; }
+@media (min-width: 901px) { .ze-live { padding-block: 72px; } } /* the room fits one 801px screen */
 .ze-console { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; }
 .ze-trace { position: relative; padding: 26px 28px 24px; border-right: 1px solid rgba(255, 255, 255, .08); display: flex; flex-direction: column; }
 .ze-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -71,10 +125,6 @@
 .ze-acts { display: flex; flex-wrap: wrap; gap: 2px 16px; margin: 12px 0 0; }
 .ze-l { display: inline-flex; align-items: center; min-height: 32px; font-size: 14px; color: #f5f5f5; text-decoration: none; text-underline-offset: 4px; }
 @media (hover: hover) { .ze-live .ze-l:hover { text-decoration: underline; color: #fff; } }
-/* a chapter that is not showing keeps its links out of the tab order */
-#ze-ch[data-live] .lv-ch-t[aria-hidden='true'] :is(a, button) { visibility: hidden; }
-/* phones: the header carries the solid ask, so the settled headline's ask is outlined */
-@media (max-width: 900px) { .ze-head .x-btn.solid { background: transparent; color: #0a0a0a; border-color: rgba(10, 10, 10, .3); } }
 /* trace slots waiting to be filled read as empty slots, not a black void */
 .js .ze-steps li:not([data-in]) { opacity: 1; transform: none; background: transparent; border-style: dashed; border-color: rgba(255, 255, 255, .1); color: transparent; }
 .js .ze-steps li:not([data-in]) .ze-n { color: #404040; }
@@ -86,7 +136,8 @@
 .ze-fam li.big .ze-fam-a { min-height: 560px; background: #000; color: #fff; }
 .ze-fam li.big .ze-fam-d { color: rgba(255, 255, 255, .82); }
 .ze-fam li.big .ze-sig { color: rgba(255, 255, 255, .4); }
-@media (hover: hover) { .ze-fam-a:hover { background: #ededed; } .ze-fam li.big .ze-fam-a:hover { background: #0a0a0a; } }
+@media (hover: hover) { .ze-fam-a:hover { background: #ededed; } .ze-fam li.big .ze-fam-a:hover { background: #171717; } .ze-fam li.big .ze-fam-a:hover .ze-sig { color: rgba(255, 255, 255, .6); } }
+.ze-sig { transition: color .4s var(--ease); }
 .ze-fam-a:active { transform: scale(.98); }
 .ze-sig { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; color: rgba(0, 0, 0, .28); }
 .ze-fam-n { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
@@ -103,10 +154,22 @@
   .ze-open p { grid-template-columns: auto 1fr; font-size: 14px; }
   .ze-open em { display: none; }
   .ze-console { grid-template-columns: 1fr; }
-  .ze-trace { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .08); padding: 20px 16px; min-height: 620px; } /* the trace's tallest state, reserved so the cards never move */
-  .ze-steps { min-height: 300px; }
-  .ze-steps li { font-size: 14px; padding: 11px 12px; grid-template-columns: 28px 1fr; }
-  .ze-cards { padding: 14px; }
+  .ze-trace { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .08); padding: 20px 16px; }
+  /* every slot holds the longest step (3 lines at 375), so switching needs never moves the cards */
+  .ze-steps li { font-size: 14px; padding: 11px 12px; grid-template-columns: 28px 1fr; min-height: 85px; align-items: start; }
+  /* phones: the two cards sit above the trace, compact, so the row a step reads is on screen with the step */
+  .ze-cards { order: -1; padding: 14px; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ze-card { padding: 14px; border-radius: 16px; }
+  .ze-card h3 { font-size: 17px; }
+  .ze-card code, .ze-card .ze-price, .ze-card .ze-acts { display: none; }
+  .ze-card .ze-row { font-size: 14px; }
+  .ze-card .ze-specs { flex-direction: column; align-items: flex-start; }
+  .ze-swarm { padding-block: 27px 44px; }
+  .ze-swarm-g { grid-template-columns: 1fr; gap: 17px; }
+  .ze-swarm-art { max-height: 360px; aspect-ratio: auto; height: min(92vw, 360px); }
+  .ze-parts-g { grid-template-columns: 1fr; gap: 44px; }
+  .ze-part-art { aspect-ratio: 4 / 3; }
+  .ze-part h3 { font-size: 21px; }
   .ze-fam { grid-template-columns: 1fr; gap: 16px; }
   .ze-fam-a, .ze-fam li.big .ze-fam-a { min-height: 240px; padding: 24px; }
 }

@@ -22,8 +22,14 @@
 .wd2-lat em { font-size: 12px; font-style: normal; color: #a3a3a3; }
 .wd2-lat i { display: block; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .1); overflow: hidden; }
 .wd2-lat u { display: block; height: 100%; background: #fafafa; transform-origin: 0 50%; transition: transform .5s var(--eio); }
-.wd2-drift { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(163, 163, 163, .14); color: #a3a3a3; font-size: 13px; opacity: 0; transform: translateY(6px); transition: opacity .3s var(--eo), transform .5s var(--ee); }
-.wd2-drift.on { opacity: 1; transform: none; }
+.wd2-drift { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(163, 163, 163, .14); color: #fafafa; font-size: 13px; opacity: .3; transform: translateY(4px); transition: opacity .3s var(--eo), transform .5s var(--ee); }
+/* the drift line is always in its slot: dim while production holds, bright when it fires */
+.wd2-drift.on { opacity: .92; transform: none; }
+/* reduced motion on desktop: the stage shortens to fit, so the planet and its panel shorten with it and end inside the dark room */
+@media (prefers-reduced-motion: reduce) and (min-width: 901px) {
+  .wd2-world { height: min(520px, 62svh); }
+  .wd2 .l2-stage-pin { top: 0; } /* not sticky here either, so its sticky offset would push the object 60px past the stage */
+}
 
 /* ---------- control room ---------- */
 .wd2-room-h { max-width: 12ch; }
@@ -50,11 +56,14 @@
 /* the side is one block sat on the floor: heading, the figure 44px under it, the rail under that */
 .pinned .wd2-side { display: flex; flex-direction: column; justify-content: flex-end; padding-right: 24px; }
 .pinned .wd2-grid { position: relative; display: block; margin: 0; }
-/* outgoing: gone in 150ms with its caption hidden at once; incoming: no delay, so two never share the stage */
-.pinned .wd2-mon { position: absolute; inset: 0; padding: 32px; opacity: 0; transform: translateY(40px); clip-path: inset(10% 0 0 0 round 24px); pointer-events: none; transition: opacity .15s var(--eo), transform .5s var(--ee), clip-path .5s var(--ee); }
-.pinned .wd2-mon:not(.on) .wd2-cap { visibility: hidden; }
+/* outgoing: gone alone in 150ms, its header and caption hidden at once; incoming: its opacity waits those 150ms, so two
+   never share the stage (its rise and clip start at once, unseen until it shows) */
+.pinned .wd2-mon { position: absolute; inset: 0; padding: 32px; opacity: 0; transform: translateY(40px); clip-path: inset(10% 0 0 0 round 24px); pointer-events: none; transition: opacity .15s var(--eo), transform .3s var(--eio), clip-path .3s var(--eio); }
+.pinned .wd2-mon:not(.on) :is(header, .wd2-cap) { visibility: hidden; }
 .pinned .wd2-mon.past { transform: translateY(-40px); clip-path: inset(0 0 10% 0 round 24px); }
-.pinned .wd2-mon.on { opacity: 1; transform: none; clip-path: inset(0 round 24px); pointer-events: auto; transition: opacity .3s var(--eo), transform .5s var(--ee), clip-path .5s var(--ee); }
+.pinned .wd2-mon.on { opacity: 1; transform: none; clip-path: inset(0 round 24px); pointer-events: auto; transition: opacity .3s var(--eo) .15s, transform .5s var(--ee), clip-path .5s var(--ee); }
+/* pinned, the 64px figure and the rail already count; the monitor keeps only its header hairline (phones keep its 0n / 06) */
+.pinned .wd2-mon header span { display: none; }
 .pinned .wd2-pic { flex: 1; min-height: 0; margin: 20px 0 24px; justify-content: center; }
 .pinned .wd2-cap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); column-gap: 24px; align-items: start; }
 .pinned .wd2-cap .l2-title { font-size: 21px; font-weight: 497; letter-spacing: -.015em; }
@@ -62,20 +71,23 @@
 /* on air, each drawing is sized to the stage (about 70% of the monitor's picture height), not floated in grey */
 .pinned .wd2-topo { height: clamp(260px, 48svh, 460px); }
 .pinned .wd2-drift-c { max-height: 48svh; }
+.pinned .wd2-lc-key { padding-left: 76px; margin-bottom: 26px; font-size: 15px; }
+.pinned .wd2-lc-key s { width: 24px; height: 10px; border-radius: 5px; }
 .pinned .wd2-lc p { grid-template-columns: 64px 1fr; row-gap: 10px; margin-bottom: 28px; }
 .pinned .wd2-lc p b { font-size: 17px; }
 .pinned .wd2-lc i { height: 14px; border-radius: 7px; }
 .pinned .wd2-lc p.spike { margin-top: 4px; font-size: 15px; gap: 12px; }
 .pinned .wd2-lc p.spike i { width: 12px; height: 12px; }
-.pinned .wd2-ev p { grid-template-columns: 40px 1fr auto; gap: 16px; margin-bottom: 40px; }
+.pinned .wd2-ev p { grid-template-columns: 40px minmax(0, 1fr) 7ch; gap: 16px; margin-bottom: 40px; }
 .pinned .wd2-ev p:last-child { margin-bottom: 0; }
 .pinned .wd2-ev span, .pinned .wd2-ev em { font-size: 17px; }
-.pinned .wd2-ev i { height: clamp(64px, 12svh, 104px); border-radius: 14px; }
-/* the five sources sit three over two, the one view across the foot */
-.pinned .wd2-mc { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
-.pinned .wd2-mc li { grid-column: span 2; font-size: 21px; padding: 22px 24px; border-radius: 14px; text-align: center; }
-.pinned .wd2-mc li:nth-child(4), .pinned .wd2-mc li:nth-child(5) { grid-column: span 3; }
-.pinned .wd2-mc li.one { grid-column: 1 / -1; margin-top: 14px; padding-block: 28px; }
+/* on air the two scores are thin score rows on a shared track, not slabs */
+.pinned .wd2-ev i { height: 16px; border-radius: 8px; }
+.pinned .wd2-ev .lane::before { top: -10px; bottom: -10px; }
+/* the five sources size to their names and wrap on a staggered edge (never a row of equal tiles), the one view a hairline frame across the foot */
+.pinned .wd2-mc { gap: 14px; align-items: flex-start; }
+.pinned .wd2-mc li { flex: none; font-size: 21px; padding: 18px 22px; border-radius: 14px; }
+.pinned .wd2-mc li.one { flex: 1 0 100%; margin-top: 14px; padding-block: 24px; }
 .pinned .wd2-replay { padding: 28px; }
 .pinned .wd2-rp-track span { min-height: 96px; font-size: 15px; }
 .pinned .wd2-rp-now span { font-size: 26px; }
@@ -121,6 +133,12 @@
 .wd2-lc i { height: 8px; }
 .wd2-lc i.q1 u { background: #a3a3a3; }
 .wd2-lc i.q2 u { background: var(--ac); }
+/* the lanes' key: the hero panel's own P50 / P95 / P99, each beside a swatch of its lane's fill */
+.wd2-lc-key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 16px; padding-left: 62px; font-size: 13px; color: #525252; }
+.wd2-lc-key span { display: inline-flex; align-items: center; gap: 8px; }
+.wd2-lc-key s { display: block; width: 18px; height: 6px; border-radius: 3px; background: #d4d4d4; }
+.wd2-lc-key .q1 s { background: #a3a3a3; }
+.wd2-lc-key .q2 s { background: var(--ac); }
 .wd2-lc p.spike { display: flex; gap: 10px; margin: 6px 0 0; font-size: 13px; color: #525252; }
 .wd2-lc p.spike i { width: 8px; height: 8px; border-radius: 50%; background: #737373; }
 .wd2-drift-c { width: 100%; height: auto; max-height: 280px; overflow: visible; }
@@ -132,14 +150,20 @@
 @keyframes wd2-ring { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(2.6); } }
 .wd2-ev p { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 12px; margin: 0 0 14px; }
 .wd2-ev span, .wd2-ev em { font-size: 13px; font-style: normal; color: var(--soft); }
-.wd2-ev i { height: 28px; border-radius: 8px; }
+.wd2-ev i { height: 14px; border-radius: 7px; }
+.wd2-ev p { margin-bottom: 24px; }
+/* each score runs on its own pale track, with a 1px ink tick at the baseline */
+.wd2-ev .lane { position: relative; display: block; text-decoration: none; border-radius: 8px; background: rgba(0, 0, 0, .06); }
+.wd2-ev .lane::before { content: ''; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; background: linear-gradient(var(--ink), var(--ink)) 0 0 / 1px 100% no-repeat, repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), rgba(0, 0, 0, .08) calc(25% - 1px) 25%); }
+.wd2-ev .lane i { position: relative; }
+.wd2-ev p { grid-template-columns: 30px minmax(0, 1fr) 7ch; }
 .wd2-ev p.b u { background: var(--ac); }
 .wd2-mc { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .wd2-mc li { padding: 9px 12px; border-radius: 10px; background: #fff; font-size: 16px; }
 /* each source's signal dot; the one sending lights while on air */
 .wd2-mc li:not(.one)::before { content: ''; display: inline-block; width: 6px; height: 6px; margin: 0 .5em .12em 0; border-radius: 50%; background: var(--ink); vertical-align: middle; opacity: .2; transition: opacity .3s var(--eo); }
 .wd2-mc li.sig::before { opacity: 1; }
-.wd2-mc li.one { flex-basis: 100%; margin-top: 6px; background: #0a0a0a; color: #f5f5f5; font-weight: 606; text-align: center; }
+.wd2-mc li.one { flex-basis: 100%; margin-top: 6px; background: transparent; border: 1px solid var(--ink); color: var(--ink); font-weight: 606; text-align: center; }
 
 .wd2-replay { padding: 24px; border-radius: 22px; background: #0a0a0a; color: #f5f5f5; }
 .wd2-rp-track { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
@@ -201,6 +225,8 @@
   .wd2-grid::-webkit-scrollbar { display: none; }
   .wd2-mon.c0, .wd2-mon.c1, .wd2-mon.c2, .wd2-mon.c3, .wd2-mon.c4, .wd2-mon.c5 { grid-column: auto; }
   .wd2-mon { padding: 22px; scroll-snap-align: start; }
+  /* every card is as tall as the tallest (Replay): the drawing takes the spare height and centres in it */
+  .wd2-pic { flex: 1; min-height: 0; }
   /* on a phone card the route runs top to bottom (edge at the top, GPU at the foot), so no two nodes collide */
   .wd2-topo { height: 320px; }
   .wd2-topo svg g { transform: matrix(0, 1, 1, 0, 0, 0); }

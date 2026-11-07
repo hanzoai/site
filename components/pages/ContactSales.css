@@ -28,22 +28,27 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 @media (hover: hover) { .xcs-ai:hover { text-decoration-thickness: 2px; text-underline-offset: 6px; } }
 .xcs-ai:active { transform: translateY(1px); }
 
-.xcs-stagewrap { grid-column: 7 / 13; grid-row: 1 / span 2; position: relative; padding: 27px 27px 27px clamp(72px, 9vw, 116px); border-radius: 28px; overflow: hidden; background: var(--quiet); }
+/* the stage fills the hero's height, so the contour field shows around and below a card sized to its one question */
+.xcs-stagewrap { grid-column: 7 / 13; grid-row: 1 / span 2; align-self: stretch; position: relative; padding: 40px 40px 40px clamp(72px, 9vw, 116px); border-radius: 28px; overflow: hidden; background: var(--quiet); }
 .xcs-field { position: absolute; inset: 0; }
-.xcs-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .45); }
+/* the field in ink: its lines draw at 16-38% (the focus line 90%), so on the quiet fill they read as live grey contours */
+.xcs-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--ink); }
+/* page-local rest sizes (James: h1 near 52px, section headings near 26px; one big thing per screen) */
+.xcs .xcs-copy .vc-display { font-size: clamp(40px, 3.6vw, 52px); line-height: 1.04; }
 .xcs-card { position: relative; background: #fff; border-radius: 24px; box-shadow: none; padding: clamp(27px, 2.6vw, 36px); display: flex; flex-direction: column; scroll-margin: 88px 0 96px; }
 .xcs-form { flex: 1; display: flex; flex-direction: column; }
 .xcs-top { display: flex; align-items: center; }
 .xcs-progress { flex: 1; display: block; height: 3px; border-radius: 3px; background: #ededed; overflow: hidden; }
 .xcs-progress b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
-/* every step shares one cell, so the stage is the tallest step's height from the start: nothing grows as you go */
-.xcs-stage { position: relative; display: grid; margin-top: 27px; }
-.xcs-step { grid-area: 1 / 1; align-self: start; position: relative; }
+/* the stage is the height of the step on screen (JS eases it, 300ms ease-emphasis); the others lie over it, faded */
+.xcs-stage { position: relative; display: block; margin-top: 27px; }
+.xcs-step { position: absolute; inset: 0 0 auto 0; }
+.xcs-step.on { position: relative; }
 /* the demo's typed answer: drawn over the empty first field, never its value (aria-hidden, no pointer) */
 .xcs-ghost { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; display: flex; align-items: center; padding: 0 17px; font: 400 16px/1.5 var(--sans); color: var(--ink); pointer-events: none; white-space: nowrap; overflow: hidden; }
 .xcs-chips li.xcs-demo-chip { color: var(--ink2); }
 .xcs-step label { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; cursor: text; }
-.xcs-q { font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; line-height: 1.1; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
+.xcs-q { font-size: clamp(24px, 2vw, 28px); font-weight: 497; line-height: 1.1; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
 .xcs-choose { font-size: 17px; color: var(--muted); }
 .xcs-bang { display: inline-grid; color: var(--ink); }
 /* fields: 56px, 16px text, a quiet fill; focus is the one ring (2px ink with a white halo), drawn inside so nothing doubles */
@@ -84,34 +89,37 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-sent-i { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--ink); color: #fff; }
 .xcs .xcs-sent-t { max-width: 20ch; font-size: clamp(26px, 2.6vw, 32px); line-height: 1.15; letter-spacing: -.025em; }
 
-/* 2. what Enterprise includes: five giant numerals you light and add to your enquiry */
-.xcs-inc-h { grid-column: 1 / 5; align-self: start; position: sticky; top: 120px; display: flex; flex-direction: column; gap: 28px; }
+/* 2. what Enterprise includes: a plain list (no pinned scene), numerals at a 64px rest; it grows in from your last
+   pointer point (contact-sales/enter.css) and an added numeral stamps into ink */
+.xcs .xcs-inc-h .vc-headline { font-size: clamp(26px, 2.4vw, 36px); line-height: 1.08; letter-spacing: -.025em; }
+.xcs-inc-h { grid-column: 1 / 5; align-self: start; display: flex; flex-direction: column; gap: 20px; }
 .xcs-inc-l { grid-column: 5 / 13; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-/* every row presses (.98, 90ms) and a click or tap anywhere on it adds it; on a press the numeral inks at once */
+/* every row presses (.98, 90ms) and a click or tap on it adds it; on a press the numeral inks at once */
 .xcs-inc-l li { cursor: pointer; -webkit-tap-highlight-color: transparent; transform-origin: 50% 50%; transition: transform var(--d-press) var(--e-out); }
 .xcs-inc-l li:active { transform: scale(.98); }
 .xcs-inc-l li:active .xcs-inc-n { color: var(--ink); transition-duration: var(--d-press); }
-.xcs-inc-l li { display: grid; grid-template-columns: clamp(120px, 13vw, 188px) minmax(0, 1fr) auto; align-items: center; gap: 27px; padding: 27px 0; border-top: 1px solid var(--line); }
-.xcs-inc-n { font: 220 clamp(72px, 9vw, 112px)/.9 var(--sans); letter-spacing: -.03em; color: #d4d4d4; transition: color var(--d-slow) var(--e-out), transform var(--d-base) var(--e-io); }
+.xcs-inc-l li { display: grid; grid-template-columns: clamp(96px, 9vw, 132px) minmax(0, 1fr); align-items: center; gap: 27px; padding: 24px 0; border-top: 1px solid var(--line); }
+.xcs-inc-x { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 27px; }
+.xcs-inc-n { display: inline-block; font: 220 64px/.9 var(--sans); letter-spacing: -.03em; color: #d4d4d4; transform-origin: 0 100%; transition: color var(--d-slow) var(--e-out), transform var(--d-slower) var(--e-em); }
 .xcs-inc-l li.lit .xcs-inc-n { color: var(--muted); transform: translateX(10px); }
 .xcs-inc-l li.on .xcs-inc-n { color: var(--ink); }
-.xcs-inc-t { font-size: clamp(21px, 2vw, 26px); font-weight: 497; line-height: 1.2; letter-spacing: -.02em; color: var(--ink); text-wrap: balance; }
+.xcs-inc-t { font-size: clamp(21px, 1.8vw, 26px); font-weight: 497; line-height: 1.2; letter-spacing: -.02em; color: var(--ink); text-wrap: balance; }
 .xcs-inc-l .xcs-round[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
 .xcs-g { display: grid; place-items: center; }
+.xcs-chips .xcs-stamp { max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: top; }
 
-/* 3. the launches Hanzo built, a slow rail you can pause */
-.xcs-logos { padding: 0 0 clamp(72px, 11vw, 188px); }
-.xcs-logos-h { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 40px; }
-.xcs-rail { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
-.xcs-track { display: flex; width: max-content; animation: xcs-rail 48s linear infinite; }
-.xcs-track.held, .xcs-rail:hover .xcs-track { animation-play-state: paused; }
-@keyframes xcs-rail { to { transform: translateX(-50%); } }
-.xcs-logo { flex: none; display: grid; place-items: center; width: 200px; height: 88px; color: var(--ink); text-decoration: none; }
-.xcs-logo img { max-height: 30px; max-width: 128px; width: auto; height: auto; object-fit: contain; filter: grayscale(1); opacity: .6; transition: opacity var(--d-base) var(--e-out); }
-.xcs-logo > * { transition: transform var(--d-base) var(--e-em), opacity var(--d-base) var(--e-out), color var(--d-base) var(--e-out); }
-@media (hover: hover) { .xcs-logo:hover img { opacity: 1; } .xcs-logo:hover span { color: var(--ink); } .xcs-logo:hover > * { transform: translateY(-4px); } }
-.xcs-logo.bad img { display: none; }
-.xcs-logo span { font: 497 21px/1 var(--sans); letter-spacing: -.02em; color: var(--muted); transition: color var(--d-base) var(--e-out); }
+/* 3. the launches Hanzo built: their names as a type rail whose speed answers the scroll; pause, hover or focus holds it */
+.xcs-logos { padding: clamp(48px, 6vw, 88px) 0 clamp(56px, 7vw, 104px); }
+.xcs-logos-h { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+.xcs-rail { overflow: hidden; border-block: 1px solid var(--line); -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.xcs-track { display: flex; width: max-content; will-change: transform; }
+.xcs-logo { flex: none; position: relative; display: flex; align-items: center; height: clamp(96px, 9vw, 128px); padding: 0 clamp(28px, 3vw, 44px); color: var(--ink); text-decoration: none; }
+/* a small grey dot between names (drawn, not typed) */
+.xcs-logo::after { content: ''; position: absolute; right: -3px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #d4d4d4; }
+.xcs-logo span { display: inline-block; font: 497 clamp(28px, 2.8vw, 40px)/1 var(--sans); letter-spacing: -.03em; color: var(--muted); white-space: nowrap; transition: transform var(--d-base) var(--e-em), color var(--d-base) var(--e-out); }
+@media (hover: hover) { .xcs-logo:hover span { color: var(--ink); transform: translateY(-4px); } }
+.xcs-logo:focus-visible span { color: var(--ink); }
+.xcs-logo:active span { transform: translateY(1px); }
 
 @media (min-width: 900px) {
   /* the hero card is the stage's height for every step, so its button never moves; chips share one line and shrink */
@@ -130,27 +138,21 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
   .xcs-ai { display: inline-flex; align-items: center; min-height: 44px; }
   .xcs-stagewrap { margin-inline: -20px; padding: 40px 16px 16px; border-radius: 0; }
   .xcs-card { padding: 24px 20px; border-radius: 24px; }
-  /* phones: the stage follows the step you are on (it only grows after your own tap) */
-  .xcs-stage { display: block; margin-top: 24px; }
-  .xcs-step { position: absolute; inset: 0 0 auto 0; }
-  .xcs-step.on { position: relative; }
-  .xcs-q { font-size: 26px; }
+  .xcs-stage { margin-top: 24px; }
+  .xcs-q { font-size: 24px; }
   .xcs-picks { gap: 6px; }
-  /* the chips get their own wrapping row above the buttons */
-  .xcs-acts { flex-wrap: wrap; }
-  .xcs-chips { flex-basis: 100%; }
-  .xcs-chips:empty { display: none; }
+  /* the chips get their own row above the buttons, reserved from the start, so a chip landing (the demo's too) moves nothing */
+  .xcs-acts { flex-wrap: wrap; row-gap: 12px; }
+  .xcs-chips { flex-basis: 100%; min-height: 32px; }
   .xcs-btns { margin-left: auto; }
-  .xcs-inc-h { position: static; margin-bottom: 32px; }
-  .xcs-inc-l li { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'n b' 't t'; gap: 12px 16px; padding: 24px 0; }
-  .xcs-inc-n { grid-area: n; font-size: 72px; }
-  .xcs-inc-t { grid-area: t; font-size: 21px; }
-  .xcs-inc-l .xcs-round { grid-area: b; }
-  .xcs-logo { width: 160px; }
+  .xcs-inc-h { position: static; margin-bottom: 24px; }
+  .xcs-inc-l li { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 24px 0; }
+  .xcs-inc-t { font-size: 21px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xcs-in, .xcs-up { animation: none; }
-  .xcs-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
+  .xcs-track { flex-wrap: wrap; justify-content: center; width: auto; transform: none !important; }
+  .xcs-logo::after { display: none; }
   .xcs-rail { -webkit-mask-image: none; mask-image: none; }
   .xcs-ring { animation-duration: 2s; }
 }

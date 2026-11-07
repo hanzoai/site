@@ -2,7 +2,7 @@
 .xbl { --acc: #0a0a0a; overflow-x: clip; background: #fff; }
 
 /* 1. masthead and cover (Signature) */
-.xbl-hero { padding: clamp(28px, 4vh, 56px) 0 clamp(56px, 7vw, 96px); }
+.xbl-hero { padding: clamp(28px, 4vh, 56px) 0 clamp(28px, 3vw, 44px); }
 .xbl-h1 { font-size: clamp(40px, 3.6vw, 52px); }
 /* the masthead arrives by CSS from the first paint, not after scripts: the h1 cuts up into its line, then the lede and
    ask wipe in (a clip, never opacity, so the shared header logic always sees the ask as on screen) */
@@ -11,6 +11,11 @@
 @keyframes xbl-rise { from { transform: translateY(108%); } }
 .xbl-mast-r > * { animation: xbl-wipe .8s cubic-bezier(.16, 1, .3, 1) both; }
 .xbl-mast-r > :nth-child(2) { animation-delay: .12s; }
+.xbl-mast-r > .xbl-wl { animation: none; } /* the lede is the signature (word-light), not a wipe */
+/* MOTION-MAP: no pinned or scroll-scrubbed scenes on /blog: the month headings no longer pin, and the band's
+   scroll-linked opening is replaced by its diagonal-wipe entrance */
+.xbl .xbl-month-h { position: static; }
+.xbl .v2s-room { animation: none !important; }
 @keyframes xbl-wipe { from { clip-path: inset(0 0 100% 0); transform: translateY(14px); } to { clip-path: inset(-20% -10% -20% -10%); transform: none; } }
 /* one solid at a time from the first paint: on desktop the header's ask is outlined (the shared quiet look) until the
    page's hook says none of its own solid asks is on screen (html[data-xbl-solid]); phones keep the header's solid and
@@ -116,8 +121,12 @@
 .xbl-bar:focus-visible, .xbl-allbtn:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; border-radius: 8px; }
 .xbl-allbtn { flex: none; align-self: flex-end; min-height: 44px; padding: 0 16px; margin-left: 10px; border-radius: 999px; border: 1px solid var(--hair); background: #fff; font: 500 14px/1 var(--mono); color: var(--soft); cursor: pointer; }
 @media (hover: hover) { .xbl-allbtn:hover { border-color: rgba(0, 0, 0, .3); color: var(--ink); } }
-.xbl-allbtn.on { background: var(--ink); border-color: var(--ink); color: #fff; }
-@media (hover: hover) { .xbl-allbtn.on:hover { background: #262626; color: #fff; } }
+/* active: an ink outline, never a fill (one solid per screen belongs to the header's ask) */
+.xbl-allbtn.on { background: #fff; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.xbl-allbtn { display: inline-flex; align-items: center; gap: 8px; transition: border-color .2s var(--ease), transform .12s var(--ease); }
+.xbl-allbtn:active { transform: scale(.98); }
+.xbl-allbtn svg { transition: transform .3s var(--ease); }
+@media (hover: hover) { .xbl-allbtn:not(.on):hover svg { transform: translateY(2px); } }
 .xbl-toc { margin-top: clamp(44px, 5vw, 72px); border-top: 2px solid var(--ink); scroll-margin-top: 120px; }
 .xbl-more { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; margin-top: 28px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--hair); background: #fff; font: 500 15px/1 var(--mono); color: var(--ink); cursor: pointer; transition: border-color .2s var(--ease), transform .12s var(--ease); }
 @media (hover: hover) { .xbl-more:hover { border-color: rgba(0, 0, 0, .3); } .xbl-more:hover svg { transform: translateY(2px); } }
@@ -163,13 +172,13 @@
   .xbl-here-g { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: 12px; }
   .xbl-here-g .big, .xbl-here-g .small { grid-column: 1; grid-row: auto; }
   .xbl-here-g .big .xbl-here-t { font-size: 21px; }
-  .xbl-strip { height: 150px; gap: 4px; overflow-x: auto; scrollbar-width: none; margin-right: calc(-1 * var(--v2-pad)); padding-right: var(--v2-pad); }
-  .xbl-strip::-webkit-scrollbar { display: none; }
-  .xbl-bar { flex: 0 0 44px; }
+  /* all nine months fit the column: nine equal columns, each a full-height tap target (≥ 44px tall), no sideways rail */
+  .xbl-strip { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); height: 150px; gap: 0; overflow: visible; margin: 0; padding: 0; }
+  .xbl-bar { min-width: 0; }
+  .xbl-bar-c { width: 70%; }
   .xbl-strip-w { flex-direction: column; align-items: flex-start; min-width: 0; width: 100%; }
   .xbl-c-strip { min-width: 0; }
-  .xbl-strip { width: 100%; max-width: 100%; box-sizing: border-box; scroll-snap-type: x proximity; }
-  .xbl-bar { scroll-snap-align: start; }
+  .xbl-strip { width: 100%; max-width: 100%; box-sizing: border-box; }
   .xbl-allbtn { margin-left: 0; align-self: flex-start; }
   .xbl-count { font-size: 52px; }
   .xbl-bar-k { font-size: 13px; letter-spacing: -.04em; }

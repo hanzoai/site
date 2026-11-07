@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; n/a prices: no prices on the page
 - [x] Open copy questions for James listed, none decided
 
-Done here: one solid per screen at both widths (phones via `usePhoneAsk`, which outlines the header's "Try Hanzo" while the page's ask shows). "Browse the Gallery" is the one solid in the hero (`Cta thumb`, `gallery.hero`) and again only in the dark close; Documentation, Deploy to Cloud and View on GitHub are quiet or text links.
+Done here: one solid per screen at both widths, from the first paint: `usePhoneAsk.css` outlines the header's button in the server HTML on this route (measured outlined at 0, 250, 500 and 1,500 ms after load), and the hook keeps it outlined while the page's ask shows. "Browse the Gallery" is the one solid in the hero (`Cta thumb`, `gallery.hero`) and again only in the dark close; Documentation, Deploy to Cloud and View on GitHub are quiet or text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -31,13 +31,13 @@ Done here: `parity.py /gallery` links 5/5; the "hanzoai" org link keeps `rel` an
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per 100svh; no 3 same-height sections in a row
 - [ ] Ends in proof strip, `Band`, footer (a page-local dark close, because the kit Band holds no second link and no object)
-- [x] Card-to-page links use Morph (frame to viewer, 600 ms in-out, closes back into the same frame)
+- [ ] Card-to-page links use Morph (the frames open a viewer, not a page: it grows from the clicked frame's centre and shrinks back, without shared-layout projection)
 
 Done here: the h1 cuts in at first paint and the Zen film and walking light move with no input; the wall, one changing stage, the prompt and a dark close with the wall in miniature are four different rooms.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in the header after the hero, same label (desktop by the shared Ask; phones by `usePhoneAsk`: outlined while the page's ask shows, "Browse the Gallery" after it; no bottom bar)
+- [ ] Sticky ask in the header after the hero, same label: desktop yes (the shared Ask); phones keep "Try Hanzo" because "Browse the Gallery" does not fit the phone header unclipped (outlined while the page's ask shows, solid after); no bottom bar
 - [x] Copy button copies exactly the displayed text; failure never says Copied (kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -100,7 +100,7 @@ Done here: Hanzo's own `zen.webm` over `zen.webp` leads the wall; six product re
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: qc crawl 7 Nov: scrollWidth 320 at 320, 0 controls under 44px in `<main>` at 375; the phone viewer sits above the header (z 310) and a tap on its × closes it (hit-tested); the header keeps "Try Hanzo" on phones because "Browse the Gallery" does not fit it unclipped; the Zen plaque is on the phone's first screen and the label strip moves below the frames.
+Done here: qc crawl 7 Nov: scrollWidth 320 at 320, 0 controls under 44px in `<main>` at 375; the dark close's miniature wall is 2 columns of 167×120 tiles at 375 with 0 overlaps (measured round 4); the phone viewer sits above the header (z 310) and a tap on its × closes it (hit-tested); the header keeps "Try Hanzo" on phones because "Browse the Gallery" does not fit it unclipped; the Zen plaque is on the phone's first screen and the label strip moves below the frames.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #525252 and #737373 on white, white 78% on black
@@ -129,11 +129,11 @@ Done here: `app/gallery/page.jsx` keeps "Gallery — Hanzo AI" and the live desc
 
 ## 15. Catalogue and product pages
 - n/a: Model card SPEC (not a model grid; the Zen film is used as media only)
-- [x] Every frame opens by Morph into the viewer and back
+- [x] Every frame opens into the viewer from its own position and closes back to it
 - n/a: maker and model pages
 - n/a: prices
 
-Done here: the viewer opens from the clicked frame's box (layoutId) and, while it still shows that frame, closes back into it. After stepping with ←/→ or the index it closes by a plain fade and the wall's shared-layout ids are renewed, so no frame flies from a stale box (round 3, filmed at 80/250/450 ms after close at 1470: the wall is still).
+Done here: the viewer grows out of the clicked frame (its transform origin is that frame's centre; 500 ms ease-emphasis) and shrinks back the same way; after stepping it closes as a short fade. No shared-layout projection is used any more, so nothing on the wall can fly. Round 4, measured: every frame's box at +40, +80, +160 and +240 ms after closing a stepped viewer matches its slot to 0px, at 1470×801 and 375×812.
 
 ## 16. Developer experience
 - [x] One prompt block; copy equals display (kit `Copy`)
@@ -149,7 +149,7 @@ Done here: the agent prompt copies exactly "Read https://hanzo.ai/skill.md and u
 - n/a: Failed submit (no form)
 - [x] A thrown island does not blank the page (film failure leaves the black plaque and its words)
 
-Done here: qc with api.hanzo.ai blocked: 0 page errors, 0 console errors at 1470, 375 and 320 on warm loads. Critics saw an intermittent hydration warning on some cold dev loads, traced on other pages to the shared footer; not reproduced here.
+Done here: qc with api.hanzo.ai blocked: 0 page errors, 0 console errors at 1470, 375 and 320 on warm loads. An intermittent hydration warning (red "1 Issue" dev badge) shows on about 2 of 13 cold dev loads; critics on /kata and /gen traced it to the shared footer's `FooterHTML`, not this page's files.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (gallery.hero, gallery.viewer, gallery.close)

@@ -206,15 +206,17 @@ export function Scene({ slug, dark, className = '', children }) {
    closing Band that carries the research preview in Hanzo's words and repeats the hero ask.
    Optional, per page (defaults keep every other member as it is): capArt(i, on, base) (each chapter's own picture),
    fitsArt(seen) (replaces the fits picture), map={false} (no studio map), band (a page's own closing band),
-   first='tail' (the demo sits between the studio map and the model cards). */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band }) {
+   first='tail' (the demo sits between the studio map and the model cards), headThumb={false} (the header keeps its own
+   solid ask until the band), onHeadFocus (focus enters the headline's actions), fitsFirst (where-it-fits comes before
+   the capability chapters), renderCaps(d) (the model draws its own capabilities section in place of the pinned chapters). */
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band, headThumb = true, onHeadFocus, fitsFirst = false, renderCaps }) {
   const d = C[slug];
-  const caps = <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  const caps = renderCaps ? renderCaps(d) : <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
+  const fits = <Fits slug={slug} flip={flip} subject={subject} pos={pos} fitsArt={fitsArt} />;
   const tail = first === 'tail';
   return (
-    <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
-      {first === 'demo' ? <>{demo}{caps}</> : tail ? caps : <>{caps}{demo}</>}
-      <Fits slug={slug} flip={flip} subject={subject} pos={pos} fitsArt={fitsArt} />
+    <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} thumb={headThumb} onFocus={onHeadFocus} />}>
+      {fitsFirst ? <>{demo}{fits}{caps}</> : tail ? <>{caps}{fits}</> : <>{first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}{fits}</>}
       {map && <Map slug={slug} />}
       {tail && demo}
       <ModelCards slug={slug} />

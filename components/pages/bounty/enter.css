@@ -1,0 +1,41 @@
+/* /bounty's five entrances. Start states only under .xbe (added on <main> after mount, never under reduced motion), so
+   the server HTML and JS off show everything. Transform, opacity, clip-path and mask only. */
+
+/* 1. conveyor: the flow and its summary ride in from the right on a moving belt, one after the other */
+.xbo-take { overflow-x: clip; }
+.xbo-flow { position: relative; }
+.xbe [data-enter='conveyor'] > * { transition: transform 1s cubic-bezier(.22, .8, .2, 1), opacity .4s linear; transition-delay: calc(var(--k, 0) * 160ms); }
+.xbe [data-enter='conveyor']:not(.in) > * { transform: translateX(min(70vw, 900px)); opacity: 0; }
+.xbo-flow::after { content: ''; position: absolute; left: 0; right: 0; bottom: -18px; height: 2px; opacity: 0; pointer-events: none; background: repeating-linear-gradient(90deg, var(--hz-300) 0 14px, transparent 14px 28px); background-size: 28px 2px; }
+.xbe [data-enter='conveyor'].in::after { animation: xbe-belt 1.3s cubic-bezier(.22, .8, .2, 1) both; }
+@keyframes xbe-belt { 0% { opacity: 1; transform: translateX(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateX(-112px); } }
+
+/* 2. fold-out: each tile unfolds like paper from its top hinge */
+.xbe [data-enter='fold-out'] { perspective: 1600px; }
+.xbe [data-enter='fold-out'] > * { transform-origin: 50% 0; transition: transform .7s cubic-bezier(.2, .9, .3, 1.08), opacity .35s linear, border-color .3s var(--xp-ease); transition-delay: calc(var(--k, 0) * 130ms), calc(var(--k, 0) * 130ms), 0s; }
+.xbe [data-enter='fold-out']:not(.in) > * { transform: rotateX(-92deg); opacity: 0; }
+
+/* 3. domino: the standings tip up from their bottom edge, each as the one before lands */
+.xbe [data-enter='domino'] { perspective: 900px; }
+.xbe [data-enter='domino'] > * { transform-origin: 0 100%; transition: transform .5s cubic-bezier(.34, 1.45, .5, 1), opacity .2s linear; transition-delay: calc(var(--k, 0) * 230ms); }
+.xbe [data-enter='domino']:not(.in) > * { transform: rotateX(78deg) rotate(-3deg); opacity: 0; }
+
+/* 4. blinds: the dark race opens through horizontal strips that widen into the whole */
+@property --xbe-b { syntax: '<percentage>'; inherits: false; initial-value: 100%; }
+.xbe [data-enter='blinds']:not(.done) { -webkit-mask-image: linear-gradient(#000 var(--xbe-b), transparent var(--xbe-b)); mask-image: linear-gradient(#000 var(--xbe-b), transparent var(--xbe-b)); -webkit-mask-size: 100% 48px; mask-size: 100% 48px; transition: --xbe-b .95s cubic-bezier(.65, 0, .35, 1); }
+.xbe [data-enter='blinds']:not(.in) { --xbe-b: 0%; }
+
+/* 5. typewriter: the band's headline types itself out with a caret, line by line */
+.xbo-tw { display: block; width: fit-content; margin: 0 auto; position: relative; }
+.xbo-tw > span { display: inline-block; }
+.xbe [data-enter='typewriter']:not(.in) .xbo-tw > span { clip-path: inset(0 100% 0 0); }
+.xbe [data-enter='typewriter'].in .xbo-tw > span { animation: xbe-type var(--t, .8s) steps(var(--n, 14), end) var(--d, 0ms) both; }
+@keyframes xbe-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.xbo-tw::after { content: ''; position: absolute; left: 0; top: .08em; bottom: .08em; width: 3px; border-radius: 2px; background: #f5f5f7; opacity: 0; transform: translateX(var(--w, 0)); }
+.xbe [data-enter='typewriter'].in .xbo-tw::after { animation: xbe-caret var(--t, .8s) steps(var(--n, 14), end) var(--d, 0ms) forwards, xbe-blink 1.6s steps(1) calc(var(--d, 0ms) + var(--t, .8s)) 1 forwards; }
+@keyframes xbe-caret { from { opacity: 1; transform: translateX(0); } to { opacity: 1; transform: translateX(var(--w, 0)); } }
+@keyframes xbe-blink { 0%, 50% { opacity: 1; } 25%, 75%, 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .xbe [data-enter] > *, .xbe [data-enter] .xbo-tw > span, .xbe [data-enter] { transform: none !important; opacity: 1 !important; clip-path: none !important; -webkit-mask-image: none !important; mask-image: none !important; }
+}

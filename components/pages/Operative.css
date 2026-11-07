@@ -14,7 +14,37 @@
   .xov-acts { grid-column: 8 / span 5; grid-row: 2; }
 }
 .xov-stage { margin-top: clamp(40px, 4.5vw, 56px); }
-.xov-crate { position: relative; padding: 12px; border-radius: 32px; background: var(--g100); transform: perspective(1800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s var(--e-out); }
+.xov-crate { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 12px; border-radius: 32px; background: var(--g100); transform: perspective(1800px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s var(--e-out); }
+@media (min-width: 900px) { .xov-crate { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); } }
+
+/* the signature, live-chat: pick an objective; Operative's steps stream in and the desktop beside it acts them out */
+.xov-chat { display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: 20px; background: #fff; color: var(--ink); }
+.xov-chat-h { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 17px; }
+.xov-chat-h b { font-weight: 497; letter-spacing: -.01em; }
+.xov-asks { display: flex; flex-wrap: wrap; gap: 8px; }
+.xov-asks button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 14px/1 var(--sans); cursor: pointer; transition: background-color .15s var(--e-out), color .15s var(--e-out), border-color .15s var(--e-out), transform .09s var(--e-out); }
+.xov-asks button:active { transform: scale(.97); }
+.xov-asks button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.xov-asks button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (hover: hover) { .xov-asks button:not(.on):hover { border-color: var(--ink); background: var(--g100); } }
+/* the three conversations share one cell, so the box is the tallest one's height and never changes */
+.xov-logs { display: grid; flex: 1; }
+.xov-log { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 12px; }
+.xov-log:not(.on) { visibility: hidden; }
+.xov-you { align-self: flex-end; margin: 0; max-width: 85%; padding: 10px 14px; border-radius: 16px 16px 4px 16px; background: var(--ink); color: #fff; font-size: 14px; }
+.xov-says { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.xov-says li { position: relative; padding: 8px 0; border-top: 1px solid var(--line); }
+.xov-say { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 2px 10px; }
+.xov-verb { grid-column: 1 / -1; font-size: 12px; color: var(--g500); }
+.xov-say b { font-size: 14px; font-weight: 500; }
+.xov-say code { font-size: 13px; color: var(--g600); overflow-wrap: anywhere; }
+.xov-says li:not(.on) .xov-say { visibility: hidden; }
+/* a step streams in left to right, a few characters at a time; the next one shows three dots while it thinks */
+.xov-chat.going .xov-says li.on .xov-say { animation: xov-stream .6s steps(18) both; }
+@keyframes xov-stream { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.xov-says li.next::before { content: ''; position: absolute; left: 0; top: 16px; width: 6px; height: 6px; border-radius: 50%; background: var(--g400); box-shadow: 12px 0 0 var(--g400), 24px 0 0 var(--g400); animation: xov-think 1s var(--e-io) infinite; }
+@keyframes xov-think { 50% { opacity: .35; } }
+.xov-chat-f { margin: 0; font-size: 13px; color: var(--g600); }
 .xov-crate-tag { position: absolute; left: 32px; top: -11px; padding: 4px 10px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 13px; z-index: 2; }
 .xov-desk { border-radius: 20px; overflow: hidden; background: var(--ink); }
 .xov-desk-bar { display: flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px; background: var(--g900); }
@@ -30,17 +60,18 @@
 .xov-win-h { margin: 0; font-size: 17px; font-weight: 497; letter-spacing: -.02em; color: var(--ink); }
 .xov-win-p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--g600); }
 .xov-field { position: relative; display: flex; align-items: center; height: 40px; padding: 0 12px; border-radius: 10px; border: 1.5px solid var(--g300); transition: border-color .3s var(--e-out); }
-/* the objective types itself: a clip, not a width */
-.xov-typed { color: var(--ink); font-size: 14px; white-space: nowrap; clip-path: inset(0 100% 0 0); transition: clip-path 1.4s steps(9); }
-.xov-desk.h3 .xov-typed { clip-path: inset(0 0 0 0); }
-.xov-field b { width: 2px; height: 18px; margin-left: 3px; background: var(--ink); animation: xov-blink 1s steps(1) infinite; }
+/* the objective types itself into the field (text, so the caret always sits at its end) */
+.xov-typed { min-width: 0; overflow: hidden; color: var(--ink); font-size: 14px; white-space: nowrap; }
+.xov-field b { flex: none; width: 2px; height: 18px; margin-left: 2px; background: var(--ink); animation: xov-blink 1s steps(1) infinite; }
 @keyframes xov-blink { 50% { opacity: 0; } }
-.xov-win-btn { justify-self: end; padding: 9px 20px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 13px; font-weight: 600; }
+.xov-win-btn { justify-self: end; display: inline-flex; align-items: center; height: 34px; padding: 0 16px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 13px; font-weight: 500; white-space: nowrap; }
+.xov-desk.h2 .xov-win-btn { animation: xov-press .3s var(--e-out) .5s; }
+@keyframes xov-press { 40% { transform: scale(.94); background: var(--g700); } }
 .xov-scan { position: absolute; inset: 0; border: 3px solid var(--g50); opacity: 0; pointer-events: none; transition: opacity .3s var(--e-out); }
 .xov-read { position: absolute; right: 6%; top: 10%; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; background: #fff; color: #000; opacity: 0; transform: translateY(10px); transition: opacity .4s var(--e-out), transform .5s var(--a2-ease); }
 .xov-read span { font-size: 13px; font-weight: 500; }
 .xov-keys { position: absolute; left: 50%; bottom: 7%; display: flex; gap: 8px; translate: -50% 0; opacity: 0; transition: opacity .4s var(--e-out); }
-.xov-keys b { padding: 9px 13px; border-radius: 9px; background: rgba(255, 255, 255, .92); color: #000; font: 600 13px/1 var(--sans); box-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+.xov-keys b { display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 9px; background: rgba(255, 255, 255, .92); box-shadow: 0 2px 0 rgba(0, 0, 0, .25); color: var(--ink); font-size: 13px; font-weight: 400; }
 .xov-aim-w { position: absolute; inset: 0; pointer-events: none; }
 .xov-aim { position: absolute; left: 0; top: 0; display: block; }
 .xov-ring { position: absolute; left: -16px; top: -16px; width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--g50); animation: xov-ring 1s var(--a2-ease) .5s both; }
@@ -48,8 +79,8 @@
 /* each hand shows itself */
 .xov-desk.h0 .xov-scan { animation: xov-scan 2.2s var(--a2-ease); }
 @keyframes xov-scan { 0% { opacity: 0; } 15% { opacity: 1; } 60% { opacity: .8; } 100% { opacity: 0; } }
-.xov-desk.h1 .xov-read { opacity: 1; transform: none; }
-.xov-desk.h2 .xov-field { border-color: var(--ink); }
+.xov-desk.h1 .xov-read, .xov-desk.rest .xov-read { opacity: 1; transform: none; }
+.xov-desk.h3 .xov-field { border-color: var(--ink); }
 .xov-desk.h3 .xov-keys { opacity: 1; }
 .xov-desk.h3 .xov-keys b { animation: xov-key 1.2s var(--a2-ease) calc(var(--k) * .2s) both; }
 @keyframes xov-key { 30% { transform: translateY(2px); box-shadow: none; } 60% { transform: none; } }
@@ -58,7 +89,8 @@
 .xov-ghost-w.on { opacity: .9; }
 .xov-desk.pk0 .xov-scan { opacity: .5; }
 .xov-desk.pk1 .xov-read { opacity: .7; transform: none; }
-.xov-desk.pk2 .xov-field { border-color: var(--g600); }
+.xov-desk.pk2 .xov-win-btn { background: var(--g700); }
+.xov-desk.pk3 .xov-field { border-color: var(--g600); }
 .xov-desk.pk3 .xov-keys { opacity: .6; }
 
 .xov-hands { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
@@ -71,16 +103,14 @@
 .xov-hands li button:active { transform: scale(.97); }
 .xov-hands li button.on .x-mono { color: var(--g400); }
 .xov-hands li button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
-.xov-hands li button.on i { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: #fff; transform-origin: 0 50%; animation: xov-time 2.4s linear both; }
+.xov-hands li button.on i { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; background: #fff; transform-origin: 0 50%; animation: xov-time 1.5s linear both; }
 @keyframes xov-time { from { transform: scaleX(0); } }
 @media (hover: hover) { .xov-hands li button:not(.on):hover { border-color: var(--ink); background: var(--g100); } }
 
-/* inside: the stack explodes, then each layer lifts out and opens */
-.xov-inside { position: relative; height: 400svh; }
-.xov-inside-stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
-.xov-inside-grid { align-items: center; padding-top: 40px; }
-/* the scene's last screen already leaves room below it: the next block starts close, no dead band */
-.xov .xov-run { padding-top: clamp(24px, 3vw, 48px); }
+/* inside: a plain section; the stack explodes once in view (not pinned), and a row lifts its layer out */
+.xov-inside-grid { align-items: center; }
+.xov-stack { cursor: pointer; }
+@media (hover: hover) { .xov .a2-pause:hover { border-color: var(--ink); transform: scale(1.04); } .xov .a2-pause:active { transform: scale(.97); } .xov .xov-act .a2-pause:hover { border-color: rgba(255, 255, 255, .4); } }
 .xov-inside-copy { grid-column: 1 / span 5; }
 .xov-inside-copy .a2-headline { margin: 0 0 28px; }
 .xov-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
@@ -90,13 +120,14 @@
 .xov-list button b { font-weight: inherit; transition: transform .3s var(--a2-ease); }
 .xov-list button:active { transform: scale(.98); }
 .xov-list li.on button { color: var(--ink); }
-@media (hover: hover) { .xov-list button:hover { color: var(--ink); } .xov-list button:hover b { transform: translateX(4px); } }
+@media (hover: hover) { .xov-list button:hover { color: var(--ink); box-shadow: inset 0 -1px 0 var(--ink); } .xov-list button:hover b { transform: translateX(4px); } }
 /* one fixed slot for the open layer's words: rows never change height */
 .xov-slot { display: grid; margin-top: 20px; }
 .xov-slot p { grid-area: 1 / 1; margin: 0; max-width: 62ch; font-size: 16px; line-height: 1.55; color: var(--g600); text-wrap: pretty; opacity: 0; transform: translateY(10px); clip-path: inset(0 0 100% 0); transition: opacity .15s var(--e-out), transform .4s var(--a2-ease), clip-path .4s var(--a2-ease); }
 .xov-slot p.on { opacity: 1; transform: none; clip-path: inset(0 0 0 0); transition-delay: .08s; }
 .xov-oss { margin: 24px 0 0; font-size: 15px; color: var(--g600); }
-.xov-oss a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.xov-oss a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; border-radius: 4px; transition: background-color .15s var(--e-out), box-shadow .15s var(--e-out); }
+@media (hover: hover) { .xov-oss a:hover, .xov-note a:hover { background-color: var(--g200); box-shadow: 0 0 0 3px var(--g200); } }
 
 .xov-stack { --sh: 150px; --gap: 58px; --push: 40px; --lift: 30px; --open: 40deg; grid-column: 7 / span 6; position: relative; height: min(640px, 76vh); perspective: 1800px; }
 .xov-slab, .xov-base { position: absolute; left: 8%; right: 8%; top: 59%; height: var(--sh); border-radius: 24px; transform-origin: 50% 50%; }
@@ -104,7 +135,10 @@
   transform: translateY(calc((var(--i) * var(--gap) * -1 - var(--lift) - var(--s) * var(--push)) * var(--e) - var(--i) * 5px)) rotateX(calc(48deg - var(--open) * var(--f) * var(--e))) translateZ(calc(var(--f) * 60px * var(--e)));
   transition: background-color .3s var(--e-out), border-color .3s var(--e-out), color .3s var(--e-out), translate .3s var(--e-out); }
 .xov-slab.on { z-index: 20; background: var(--ink); border-color: var(--ink); color: #fff; }
-.xov-slab.hov { translate: 0 -12px; }
+/* a hovered row previews its layer: the slab lifts out a little, outlines in ink and shows its sign faintly */
+.xov-slab.hov:not(.on) { translate: 0 -28px; border-color: var(--ink); background: var(--g50); }
+.xov-slab.hov:not(.on) .xov-face { opacity: max(var(--f), .75); transition: opacity .3s var(--e-out); }
+.xov-slab.hov:not(.on) .xov-slab-k b { font-weight: 500; }
 .xov-slab-k { position: absolute; left: 0; right: 0; top: 50%; display: flex; justify-content: center; gap: 10px; font-size: 17px; letter-spacing: -.01em; translate: 0 -50%; transform: translateY(calc(var(--f) * 26px)); }
 .xov-slab-k b { display: inline-block; font-weight: 497; transform: translateX(calc(var(--j) * 14px * var(--f))); }
 .xov-slab-k b + b::before { content: '·'; margin-right: 10px; opacity: .5; }
@@ -187,7 +221,7 @@
 @keyframes xov-drop { from { opacity: 0; transform: translateY(-8px); } }
 .xov-req, .xov-usage { list-style: none; margin: 0 0 12px; padding: 0; }
 .xov-req li { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); font-size: 16px; line-height: 1.45; }
-.xov-chk { color: var(--ink); font-weight: 700; }
+.xov-chk { flex: none; width: 6px; height: 11px; margin: 3px 4px 0 3px; border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); rotate: 45deg; }
 .xov-usage li { padding: 14px 0; border-top: 1px solid var(--line); }
 .xov-usage p { margin: 0 0 6px; font-size: 16px; color: var(--g600); }
 .xov-usage code { display: block; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: normal; }
@@ -262,7 +296,7 @@
 .xov-social li { border-bottom: 1px solid var(--line); }
 .xov-soc { display: flex; align-items: center; justify-content: space-between; min-height: 56px; font-size: 17px; font-weight: 497; color: var(--ink); text-decoration: none; transition: transform .3s var(--a2-ease); }
 .xov-soc:active { transform: translateY(1px); }
-.xov-soc i { font-style: normal; color: var(--g500); transition: transform .3s var(--a2-ease), color .15s var(--e-out); }
+.xov-soc i { display: inline-grid; font-style: normal; color: var(--g500); transition: transform .3s var(--a2-ease), color .15s var(--e-out); }
 @media (hover: hover) { .xov-soc:hover { transform: translateX(4px); } .xov-soc:hover i { transform: translate(3px, -3px); color: var(--ink); } }
 .xov-get { grid-column: 8 / span 5; display: flex; flex-direction: column; gap: 32px; padding: 32px; border-radius: var(--r-hero); background: var(--g100); }
 .xov-get-t { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -285,13 +319,15 @@
   .xov-desk-r { display: none; }
   .xov-win { left: 6%; width: 70%; }
   .xov-win-p { display: none; }
-  .xov-keys b { padding: 7px 9px; font-size: 12px; }
-  .xov-hands { flex-direction: column; align-items: flex-start; }
-  .xov-hands li button { height: 44px; padding: 0 14px; font-size: 14px; }
-  /* the pinned scene stacks: one layer open at a time, stepped by tapping its row */
-  .xov-inside { height: auto; padding: 72px 0; }
-  .xov-inside-stick { position: static; height: auto; display: block; overflow: visible; }
-  .xov-inside-grid { padding-top: 0; row-gap: 32px; }
+  .xov-keys b { height: 28px; scale: .8; }
+  /* phone: the pause and the count on one line, then the four hands as a 2 × 2 grid of equal pills */
+  .xov-hands { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; }
+  .xov-hands-k { margin: 0; align-items: center; justify-content: space-between; }
+  .xov-hands ul { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xov-hands li button { width: 100%; height: 56px; padding: 0 14px; gap: 8px; border-radius: 16px; font-size: 14px; line-height: 1.15; text-align: left; }
+  /* phone: the stack sits above its rows; one layer open at a time, stepped by tapping its row */
+  .xov-inside-grid { row-gap: 32px; }
+  .xov-chat { padding: 16px; border-radius: 18px; }
   .xov-stack { --sh: 84px; --gap: 40px; --push: 22px; --lift: 18px; --e: 1 !important; order: -1; height: 400px; }
   .xov-slab, .xov-base { left: 2%; right: 2%; border-radius: 18px; }
   .xov-slab-k { font-size: 14px; transform: translateY(calc(var(--f) * 16px)); }
@@ -307,13 +343,44 @@
   .xov-seg { display: flex; width: 100%; }
   .xov-seg button { flex: 1; padding: 0 12px; font-size: 15px; }
   .xov-cmd { padding: 18px; font-size: 14px; }
+  /* three fixed lines on a phone (docker run / the one variable / the image), so switching never changes its height */
+  .xov-env { display: flex; width: max-content; margin: 4px 0; }
+  .xov-env span { white-space: nowrap; }
+  .xov-same { display: block; white-space: nowrap; }
   .xov-way { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 24px; }
   .xov-way-k { font-size: 21px; }
   .xov-loop li { font-size: 26px; }
   .xov-get { padding: 24px; }
   .xov-box { height: 180px; }
 }
+/* ---------- the five section entrances (MOTION-MAP rule 7), in page order; entrances.jsx sets data-enter ----------
+   `wait` is the hidden pose (transform, opacity, clip-path only: nothing reflows); `in` plays once and fills
+   backwards, so the finished section carries nothing. The server HTML has neither, so JS off shows the final state. */
+/* 1 iris: One docker run opens from a circle at its centre */
+.xov-run [data-enter='wait'] { clip-path: circle(0% at 50% 50%); }
+.xov-run [data-enter='in'] { animation: xov-iris 1.1s var(--a2-ease) backwards; }
+@keyframes xov-iris { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(75% at 50% 50%); } }
+/* 2 accordion: the rows unfold one after another, each pleat folding the other way from the last */
+.xov-fold { --ax: -90deg; transform-origin: 50% 0; }
+.xov-list li.xov-fold:nth-child(even) { --ax: 90deg; transform-origin: 50% 100%; }
+.xov-inside[data-enter='wait'] .xov-fold { opacity: 0; transform: perspective(700px) rotateX(var(--ax)); }
+.xov-inside[data-enter='in'] .xov-fold { animation: xov-pleat .5s var(--a2-ease) calc(var(--n) * 70ms) backwards; }
+@keyframes xov-pleat { from { opacity: 0; transform: perspective(700px) rotateX(var(--ax)); } }
+/* 3 zoom-through: the dark room's contents fly in from far behind the screen */
+.xov-zoom[data-enter='wait'] > * { opacity: 0; transform: perspective(900px) translateZ(-1600px); }
+.xov-zoom[data-enter='in'] > * { animation: xov-zoom .9s var(--a2-ease) backwards; }
+.xov-zoom[data-enter='in'] > :nth-child(2) { animation-delay: .08s; }
+.xov-zoom[data-enter='in'] > :nth-child(3) { animation-delay: .16s; }
+@keyframes xov-zoom { from { opacity: 0; transform: perspective(900px) translateZ(-1600px); } }
+/* 4 sticky-stack: the five links are cards that stack at the top as you scroll past them */
+.xov-social li { position: sticky; top: calc(var(--x-top, 64px) + 12px + var(--n) * 8px); background: #fff; box-shadow: 0 -1px 0 var(--line); }
+/* 5 orbit-in: the four ways in swing round on a curve into their places (the two rotations cancel, so only the path curves) */
+.xov-ways [data-enter='wait'] .xov-orb { opacity: 0; transform: rotate(-70deg) translateX(-240px) rotate(70deg); }
+.xov-ways [data-enter='in'] .xov-orb { animation: xov-orbit .9s var(--a2-ease) calc(var(--n) * 60ms) backwards; }
+@keyframes xov-orbit { from { opacity: 0; transform: rotate(-70deg) translateX(-240px) rotate(70deg); } }
+
 @media (prefers-reduced-motion: reduce) {
   .xov *, .xov *::before, .xov *::after { animation: none !important; transition: none !important; }
   .xov-crate { transform: none; }
+  .xov-social li { position: static; }
 }

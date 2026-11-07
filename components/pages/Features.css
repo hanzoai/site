@@ -133,7 +133,59 @@
 .xft-prod.p2 .xft-prod-h { grid-column: 1; }
 .xft-prod.p2 .xft-rows { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
 
-@media (prefers-reduced-motion: reduce) { .xft-row-d, .xft-key, .xft-film .v2-mfilm, .xft-bc { transition: none; } }
+/* round 4: one description panel (no height change as rows step), phone rooms stack for real, a two-line phone h1 */
+.xft-desc { display: grid; margin-top: 20px; }
+.xft-desc p { grid-area: 1 / 1; margin: 0; max-width: 54ch; font-size: 16px; line-height: 1.55; color: #525252; opacity: 0; transform: translateY(8px); transition: opacity .3s var(--eo), transform .4s var(--ez); }
+.xft-desc p.on { opacity: 1; transform: none; }
+.xft-prod.p1 .xft-desc p { color: rgba(255, 255, 255, .78); }
+.xft-prod.p2 .xft-desc { grid-column: 2; }
+.xft-rows button[aria-pressed='true'] { color: #0a0a0a; }
+.xft-prod.p1 .xft-rows button[aria-pressed='true'] { color: #fafafa; }
+.xft-top { margin-bottom: 8px; }
+.xft-find { margin: 8px 0; }
+@media (max-width: 899px) {
+  .xft-hero h1.xft-h1 { font-size: 30px !important; letter-spacing: -.02em; }
+  .xft-prod.p1 .xft-prod-in, .xft-prod.p2 .xft-prod-in { grid-template-columns: minmax(0, 1fr); }
+  .xft-prod.p1 .xft-film-w { position: relative; inset: auto; z-index: 0; order: -1; }
+  .xft-prod.p1 .xft-film { position: relative; inset: auto; aspect-ratio: 16 / 9; border-radius: 20px; }
+  .xft-prod.p1 .xft-film-cap, .xft-prod.p1 .xft-film-bar { left: 16px; right: 16px; width: auto; }
+  .xft-prod.p1 { padding: 44px 0 72px; }
+  .xft-prod { padding: 44px 0; }
+  .xft-film { aspect-ratio: 16 / 9; }
+  .xft-film-t { font-size: 17px; }
+  .xft-prod.p2 .xft-desc { grid-column: 1; }
+  .xft-desc p { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { .xft-row-d, .xft-key, .xft-film .v2-mfilm, .xft-bc, .xft-desc p { transition: none; } }
+
+/* the sideways gallery (h-gallery, 7 Nov): the three rooms on one track. Wide screens with JS: the section is as tall
+   as the track is long, its stage sticks and enter.js moves the track sideways (--gx) for that stretch, then lets go.
+   JS off or reduced motion: the rooms stack as before. Phones: a swipe rail (scroll-snap), never pinned. */
+.xft-gal-bar { display: none; }
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  html.js .xft-gal { position: relative; height: calc(100svh + 170vw + 32px); }
+  html.js .xft-gal-stage { position: sticky; top: 0; height: 100svh; overflow: clip; display: flex; align-items: center; }
+  html.js .xft-gal-track { display: flex; gap: 16px; padding: 64px 6vw 24px; transform: translate3d(var(--gx, 0px), 0, 0); will-change: transform; }
+  html.js .xft-gal .xft-prod { flex: 0 0 86vw; height: calc(100svh - 112px); padding: 0; display: grid; align-content: center; border-radius: 28px; overflow: hidden; background: #f5f5f5; }
+  html.js .xft-gal .xft-prod.p1 { background: #000; }
+  html.js .xft-gal .xft-prod .w2-wrap { width: 100%; padding-inline: clamp(32px, 4vw, 72px); box-sizing: border-box; }
+  html.js .xft-gal .xft-prod.p0 .xft-film { aspect-ratio: auto; height: min(calc(100svh - 240px), 460px); }
+  html.js .xft-gal .xft-prod.p2 .xft-prod-in { gap: 24px; }
+  html.js .xft-gal .xft-prod.p2 .xft-film { aspect-ratio: auto; height: clamp(180px, calc(100svh - 520px), 400px); }
+  html.js .xft-gal .xft-prod.p2 .xft-rows button { min-height: 48px; padding-block: 10px; }
+  html.js .xft-gal .xft-prod.p2 .xft-desc { margin-top: 12px; }
+  html.js .xft-gal-bar { position: absolute; left: 6vw; right: 6vw; bottom: 10px; display: block; height: 2px; border-radius: 2px; background: #e4e4e4; overflow: hidden; }
+  html.js .xft-gal-bar i { position: absolute; inset: 0; background: #0a0a0a; transform: scaleX(var(--gp, 0)); transform-origin: 0 50%; }
+}
+@media (max-width: 899px) {
+  .xft-gal-track { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; padding: 8px 16px 24px; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .xft-gal-track::-webkit-scrollbar { display: none; }
+  .xft .xft-gal .xft-prod { flex: 0 0 calc(100% - 36px); min-width: 0; scroll-snap-align: start; border-radius: 24px; overflow: hidden; background: #f5f5f5; padding: 0 0 28px; }
+  .xft .xft-gal .xft-prod.p1 { background: #000; padding: 0 0 28px; }
+  .xft-gal .xft-prod .w2-wrap { padding-inline: 0; }
+  .xft-gal .xft-prod-w { padding-inline: 18px; }
+  .xft .xft-gal .xft-prod .xft-film { border-radius: 0; }
+}
 @media (max-width: 899px) {
   .xft-hero { padding-top: 32px; }
   .xft-h1 { font-size: 32px !important; max-width: none; }

@@ -245,13 +245,8 @@
 .xtp-card.front .xtp-ghost { animation: xtp-scroll 14s var(--ease) infinite alternate; }
 .xtp-tile-img > .x-mono { z-index: 2; }
 
-/* the wall deals in once (a wipe up, 60ms apart) and marks the template the deck has in front */
+/* the gallery marks the template the deck has in front */
 .xtp-hero { padding-bottom: clamp(44px, 5vw, 72px) !important; }
-.xtp-shelf.arm .w2-oc > li { clip-path: inset(100% 0 0 0 round 16px); translate: 0 24px; transition: clip-path .7s var(--ease-emphasis, cubic-bezier(.16,1,.3,1)), translate .7s var(--ease-emphasis, cubic-bezier(.16,1,.3,1)); }
-.xtp-shelf.arm.in .w2-oc > li { clip-path: inset(0 0 0 0 round 16px); translate: 0 0; }
-.xtp-shelf .w2-oc > li:nth-child(2) { transition-delay: 60ms; } .xtp-shelf .w2-oc > li:nth-child(3) { transition-delay: 120ms; } .xtp-shelf .w2-oc > li:nth-child(4) { transition-delay: 180ms; }
-.xtp-shelf .w2-oc > li:nth-child(5) { transition-delay: 240ms; } .xtp-shelf .w2-oc > li:nth-child(6) { transition-delay: 300ms; } .xtp-shelf .w2-oc > li:nth-child(7) { transition-delay: 360ms; } .xtp-shelf .w2-oc > li:nth-child(8) { transition-delay: 420ms; }
-.xtp-shelf .w2-oc > li:nth-child(9) { transition-delay: 480ms; } .xtp-shelf .w2-oc > li:nth-child(10) { transition-delay: 540ms; } .xtp-shelf .w2-oc > li:nth-child(11) { transition-delay: 600ms; } .xtp-shelf .w2-oc > li:nth-child(12) { transition-delay: 660ms; }
 .xtp-tile-img::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: inherit; box-shadow: inset 0 0 0 2px #0a0a0a; opacity: 0; transition: opacity .3s var(--ease); }
 .xtp-tile-img.on::after { opacity: 1; }
 .w2-oc-card:has(.xtp-tile-img.on) .w2-oc-t::after { content: ' ←'; font-family: var(--mono); font-size: 13px; font-weight: 400; color: #525252; }
@@ -271,7 +266,6 @@
   .xtp-foot h3 { grid-column: 1; grid-row: 1; }
   .xtp-foot p { grid-column: 1 / -1; grid-row: 2; }
   .xtp-edit { grid-column: 2; grid-row: 1; padding: 0 14px; }
-  .xtp-shelf.arm .w2-oc > li { transition-delay: 0ms !important; }
 }
 @media (prefers-reduced-motion: reduce) { .xtp-card.front .xtp-ghost { animation: none; } }
 [data-off] .xtp-card.front .xtp-ghost { animation-play-state: paused; }
@@ -285,3 +279,128 @@
 .xtp-ghost[data-k='Business'] .xtp-ghost-row, .xtp-ghost[data-k='Web3'] .xtp-ghost-row { grid-template-columns: 1fr 1fr; }
 .xtp-ghost[data-k='Business'] .xtp-ghost-row i:nth-child(3), .xtp-ghost[data-k='Web3'] .xtp-ghost-row i:nth-child(3) { display: none; }
 .xtp-note, .xtp-ps { user-select: none; -webkit-user-select: none; } /* Copy gives exactly the selectable text: the commands */
+
+/* v2.5 (round 2 of the James-eye walk) */
+/* a broken or blocked preview paints its own drawn page (the image's ::before only renders when the image fails):
+   no broken-image icon and no alt text at any moment, with or without JS. JS then swaps in the fuller drawn page. */
+.xtp-shot img::before, .xtp-tile-img img::before {
+  content: attr(data-t); position: absolute; inset: 0; display: flex; align-items: center; padding: 0 6%;
+  background:
+    linear-gradient(#d4d4d4, #d4d4d4) 6% 7% / 16% 6px no-repeat,
+    linear-gradient(#d4d4d4, #d4d4d4) 78% 7% / 7% 5px no-repeat, linear-gradient(#d4d4d4, #d4d4d4) 88% 7% / 7% 5px no-repeat,
+    linear-gradient(#e5e5e5, #e5e5e5) 6% 92% / 28% 20% no-repeat, linear-gradient(#e5e5e5, #e5e5e5) 50% 92% / 28% 20% no-repeat, linear-gradient(#e5e5e5, #e5e5e5) 94% 92% / 28% 20% no-repeat,
+    #f5f5f5;
+  font: 500 clamp(18px, 7cqw, 84px)/.95 var(--sans); letter-spacing: -.045em; color: #0a0a0a;
+}
+
+/* the back windows show only their bars: no footer, no ask, so nothing stacks down the deck's right edge */
+.xtp-card:not(.front) .xtp-foot { visibility: hidden; }
+
+/* first screen: the deck owns the right two thirds, the headline and the ask stand beside it (no grey stage) */
+@media (min-width: 900px) {
+  .xtp-hero-g { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(24px, 3vw, 48px); align-items: center; }
+  .xtp-hero-g .xtp-top { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; margin: 0 !important; }
+  .xtp-hero-g .xtp-h1 { font-size: clamp(52px, 5.4vw, 84px); }
+  .xtp-hero-g .xtp-top-r { padding: 0; }
+  /* the fanned windows stay inside the column (3 back windows × 48px), and the deck, its readout and arrows fit 801 */
+  .xtp-hero-g .xtp-deck { aspect-ratio: 1.95; }
+  .xtp-hero-g .xtp-slot { right: 150px; top: 92px; }
+}
+.xtp-stage { background: transparent !important; padding: 0 !important; border-radius: 0; }
+.xtp-stage .xtp-deckwrap { max-width: none; }
+.xtp-pause.in { position: absolute; left: 0; top: 0; right: auto; translate: none; z-index: 60; }
+
+/* the wall drifts: each preview scrolls slowly down its own page, out of step, only while the wall is in view */
+/* drift uses `translate`, so the tile's hover zoom (`transform`) still answers on top of it */
+@keyframes xtp-drift { 0%, 15% { translate: 0 0; } 85%, 100% { translate: 0 -5%; } }
+.xtp-shelf .xtp-tile-img img, .xtp-shelf .xtp-tile-img .xtp-ghost { animation: xtp-drift 16s var(--ease) infinite alternate; animation-play-state: paused; }
+.xtp-tile-img img { height: 106% !important; }
+.xtp-shelf.here .xtp-tile-img img, .xtp-shelf.here .xtp-tile-img .xtp-ghost { animation-play-state: running; }
+.xtp-shelf .w2-oc > li:nth-child(3n+2) .xtp-tile-img :is(img, .xtp-ghost) { animation-delay: -5s; }
+.xtp-shelf .w2-oc > li:nth-child(3n) .xtp-tile-img :is(img, .xtp-ghost) { animation-delay: -10s; }
+.xtp-tiles .w2-oc-card:active { transform: scale(.98); }
+@media (hover: hover) { .xtp-kinds button:hover { background: rgba(255, 255, 255, .7); } }
+
+/* the terminal types: the untyped rest is in the HTML in transparent ink, so the block never changes size */
+.xtp-rest { color: transparent; }
+.xtp-pre .xtp-caret { margin-right: -8px; } /* the caret takes no room, so the line never moves while it types */
+.xtp-l[data-wait] .xtp-ps { color: transparent; }
+.xtp-term-t { animation: xtp-cut .3s var(--ease) both; }
+@keyframes xtp-cut { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* the close: the window in front, small, above the line and the ask */
+.xtp-band-win { display: block; width: min(320px, 80vw); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); text-decoration: none; transition: transform .3s var(--ease); }
+.xtp-band-win .xtp-bar { height: 30px; }
+.xtp-band-win .xtp-url { font-size: 12px; }
+.xtp-band-win .xtp-tile-img { border-radius: 0; }
+.xtp-band-win .xtp-tile-img img, .xtp-band-win .xtp-ghost { animation: xtp-scroll 14s var(--ease) infinite alternate; }
+
+@media (max-width: 899px) {
+  /* one row: the readout, ←, the count, →, the pause; the dots give way to the arrows on a phone */
+  .xtp-nav { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .xtp-front { flex: 1 1 100%; }
+  .xtp-dots { display: none; }
+  /* the shared header carries the solid ask on a phone, so the page's own asks are outlined there */
+  .xtp .w2-cta { background: transparent !important; color: #0a0a0a !important; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .3); }
+  .xtp-setup2 button, .xtp-setup2 .x-setup-main, .xtp-setup2 a { min-height: 44px; }
+}
+@media (max-width: 899px) and (hover: hover) { .xtp .w2-cta:hover { background: rgba(0, 0, 0, .04) !important; } }
+@media (max-width: 399px) { .xtp-bar .xtp-kind { display: none; } .xtp-url { text-overflow: clip; } }
+/* JS off: the window in front only (the back windows have no fan without script), and no pause with nothing to pause */
+html:not(.js) .xtp-card:not(.front), html:not(.js) .xtp-pause { display: none; }
+@media (prefers-reduced-motion: reduce) { .xtp-shelf .xtp-tile-img :is(img, .xtp-ghost), .xtp-band-win :is(img, .xtp-ghost), .xtp-term-t { animation: none; } }
+
+/* ===== motion-map build: h-gallery signature and five page-local entrances ===== */
+/* the signature: one sideways rail of all twelve. Server, JS off, phones and reduced motion: a native horizontal rail
+   you swipe or scroll (snap proximity, 14% peek). Wide screens with motion: the section grows by the rail's overflow
+   and its rail sticks for that stretch while the vertical scroll drives it sideways, then lets go. */
+.xtp-hg { position: relative; padding: clamp(44px, 5vw, 72px) 0; }
+.xtp-hg-pin { overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: none; padding: 8px 0 24px; }
+.xtp-hg-pin::-webkit-scrollbar { display: none; }
+.xtp-hg-track { width: max-content; padding: 0 max(16px, calc((100vw - 1152px) / 2)); }
+.xtp-hg ul.w2-oc.xtp-tiles { display: flex !important; gap: 16px !important; width: max-content; margin: 0; padding: 0; grid-template-columns: none !important; }
+.xtp-hg ul.w2-oc.xtp-tiles > li { flex: none; width: min(34vw, 460px); scroll-snap-align: start; }
+.xtp-hg.wide { padding: 0; }
+.xtp-hg.wide .xtp-hg-pin { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: clip; padding: 0; scroll-snap-type: none; }
+@media (max-width: 899px) { .xtp-hg ul.w2-oc.xtp-tiles > li { width: 86vw; } .xtp-hg-track { padding: 0 16px; } }
+
+/* 1. velocity-skew: the deck leans with the scroll speed (set in JS on .xtp-stage) */
+.xtp-stage { will-change: transform; }
+
+/* 2. fold-out: a tile arriving from the right unfolds down from its top hinge */
+.xtp-hg .w2-oc > li { transform-origin: 50% 0; transition: transform .7s cubic-bezier(.16, 1, .3, 1), opacity .45s cubic-bezier(0, 0, .2, 1); }
+.xtp-hg .w2-oc > li[data-fold]:not([data-in]) { transform: perspective(1100px) rotateX(-78deg); opacity: 0; }
+
+/* 3. count-roll: the twelve by kind, one big figure and six small; each digit rolls through 0–9 to its value */
+.xtp-counts-l { list-style: none; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px clamp(20px, 3vw, 44px); margin: 0; padding: 0; }
+.xtp-counts-l button { display: grid; justify-items: start; gap: 6px; min-height: 44px; padding: 0; border: 0; background: none; color: #525252; font: inherit; cursor: pointer; text-align: left; }
+.xtp-counts-l button[aria-pressed='true'] { color: #0a0a0a; }
+.xtp-counts-k { font: 500 14px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.xtp-roll { display: inline-flex; overflow: hidden; height: 1em; font: 220 64px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: #0a0a0a; }
+.xtp-counts-l li.all .xtp-roll { font-size: clamp(84px, 9vw, 112px); }
+.xtp-roll-c { display: block; height: 1em; overflow: hidden; }
+.xtp-roll-d { display: flex; flex-direction: column; transform: translateY(calc(var(--d) * -1em)); transition: transform 1.1s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 90ms); }
+.xtp-roll-d > span { display: block; height: 1em; }
+.xtp-counts.arm:not(.in) .xtp-roll-d { transform: translateY(0); transition: none; }
+.xtp-counts-l li:nth-child(n + 2) .xtp-roll-d { transition-delay: calc(var(--i) * 90ms + 120ms); }
+@media (hover: hover) { .xtp-counts-l button:hover { color: #0a0a0a; } .xtp-counts-l button:hover .xtp-roll-d { transform: translateY(calc(var(--d) * -1em + 0.08em)); } }
+.xtp-counts-l button:active { transform: scale(.98); }
+@media (max-width: 899px) { .xtp-roll { font-size: 44px; } .xtp-counts-l li.all { flex: 1 1 100%; } .xtp-counts-l li.all .xtp-roll { font-size: 84px; } }
+
+/* 4. explode-gather: five pieces of the setup room start scattered and gather */
+.xtp-eg { transition: transform .9s cubic-bezier(.16, 1, .3, 1) calc(var(--k) * 70ms), opacity .5s cubic-bezier(0, 0, .2, 1) calc(var(--k) * 70ms); }
+.xtp-cmd.arm:not(.in) .xtp-eg { transform: translate(var(--ex), var(--ey)) rotate(var(--er)) scale(.88); opacity: 0; }
+.xtp-cmd { overflow: clip; }
+
+/* 5. shutter: two ink bars close from the top and bottom, then open on the close */
+.xtp-band { position: relative; overflow: clip; }
+.xtp-band::before, .xtp-band::after { content: ''; position: absolute; left: 0; right: 0; height: 50.5%; z-index: 4; background: #0a0a0a; transform: scaleY(0); pointer-events: none; }
+.xtp-band::before { top: 0; transform-origin: 50% 0; }
+.xtp-band::after { bottom: 0; transform-origin: 50% 100%; }
+.xtp-band.arm:not(.in) .xtp-band-in { opacity: 0; }
+.xtp-band.arm.in::before, .xtp-band.arm.in::after { animation: xtp-shut 1s cubic-bezier(.4, 0, .2, 1) both; }
+.xtp-band.arm.in .xtp-band-in { animation: xtp-shut-in 1s linear both; }
+@keyframes xtp-shut { 0% { transform: scaleY(0); } 42%, 52% { transform: scaleY(1); } 100% { transform: scaleY(0); } }
+@keyframes xtp-shut-in { 0%, 47% { opacity: 0; } 48%, 100% { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) { .xtp-roll-d, .xtp-eg, .xtp-hg .w2-oc > li { transition: none; } .xtp-band::before, .xtp-band::after { display: none; } }

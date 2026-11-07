@@ -5,6 +5,8 @@
 .mcp-hero-grid { align-items: start; row-gap: 48px; }
 .mcp-hero-copy { grid-column: 1 / span 7; }
 .mcp-h1 { max-width: none; }
+.mcp-h1-d { display: block; }
+.mcp-h1-p { display: none; }
 /* Hanzo's label lines sit under their headline as a caption, never over it */
 .mcp-cap.a2-kick.show { margin: 18px 0 0; color: #737373; text-wrap: balance; }
 .mcp-cfg .mcp-cap.a2-kick.show { color: #a3a3a3; }
@@ -31,6 +33,8 @@
 .mcp-via-l { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px 28px; }
 .mcp-via-l ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 28px; }
 .mcp-via-l li { font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: var(--ink); }
+.mcp-via.seen .mcp-via-l li { animation: mcp-client .9s calc(var(--k) * .75s) ease-in-out 1 both; }
+@keyframes mcp-client { 0%, 100% { color: var(--ink); transform: none; } 40%, 60% { color: #a3a3a3; transform: translateY(-3px); } }
 
 /* figures: 64px at rest; the row grows while it crosses the screen (A2Grow) */
 .mcp-figs { padding-bottom: clamp(72px, 8vw, 128px); }
@@ -38,16 +42,79 @@
 .mcp-f { display: grid; gap: 12px; justify-items: start; }
 .mcp-f .a2-fig { font-size: 64px; color: var(--ink); }
 .mcp-f > span:last-child { font-size: 16px; color: #525252; }
-.mcp-plus { font-size: 32px; font-weight: 300; line-height: 2; color: #a3a3a3; }
-.mcp-fig { display: inline-block; overflow: hidden; padding-bottom: .06em; }
-.mcp-fig > span { display: inline-block; }
+.mcp-plus { display: inline-block; font-size: 32px; font-weight: 300; line-height: 2; color: #a3a3a3; }
+/* arrival: the two "+" breathe three times (under 5 s), then rest */
+.mcp-figs.seen .mcp-plus { animation: mcp-breathe 1.5s ease-in-out 3; }
+.mcp-figs.seen .mcp-plus:last-of-type { animation-delay: .4s; }
+@keyframes mcp-breathe { 50% { opacity: .35; transform: scale(.8); } }
+.mcp-fig { display: inline-flex; padding-bottom: .06em; }
+/* one box per character; the boxes never change size (count-roll draws its reel in a ::after over a clear digit) */
+.mcp-fig > .mcp-dg { position: relative; display: inline-block; height: 1em; line-height: 1em; overflow: hidden; }
+
+/* ---------- motion map: the five entrances, each its own (all start only from a client class; JS off = final) ---------- */
+/* 1 diagonal-wipe (hero): a diagonal clip sweeps left to right; fill backwards, so no clip stays once it has played */
+@keyframes mcp-diag { from { clip-path: polygon(0 0, 0 0, -45% 100%, -45% 100%); } to { clip-path: polygon(0 0, 145% 0, 100% 100%, -45% 100%); } }
+html.js .mcp-wipe { animation: mcp-diag 1s cubic-bezier(.65, 0, .25, 1) backwards; }
+html.js .mcp-hero-obj.mcp-wipe { animation-delay: .2s; }
+html.js .mcp-via.mcp-wipe { animation-delay: .42s; }
+/* 3 count-roll (figures): each digit's reel rolls up one full turn and stops on Hanzo's digit */
+.mcp-figs.e-arm .mcp-dg:not(.s) { color: transparent; }
+.mcp-figs.e-arm .mcp-dg:not(.s)::after { content: '0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9'; position: absolute; left: 0; right: 0; top: 0; white-space: pre; text-align: center; color: var(--ink); }
+.mcp-figs.e-go .mcp-dg:not(.s)::after { transform: translateY(calc(-1em * (10 + var(--n)))); transition: transform 1.3s cubic-bezier(.16, 1, .3, 1) var(--t); }
+.mcp-figs.e-arm .mcp-dg.s { opacity: 0; transform: translateY(.4em); }
+.mcp-figs.e-go .mcp-dg.s { opacity: 1; transform: none; transition: opacity .4s var(--t), transform .6s cubic-bezier(.16, 1, .3, 1) var(--t); }
+.mcp-figs.e-arm .mcp-f > span:last-child { opacity: 0; }
+.mcp-figs.e-go .mcp-f > span:last-child { opacity: 1; transition: opacity .5s .7s; }
+/* 4 side-carousel (domains): the cards ride in from the right along their snapping rail, one after another */
+.mcp-doms.e-arm .mcp-rail > li { transform: translateX(72vw); opacity: 0; }
+.mcp-doms.e-go .mcp-rail > li { transform: none; opacity: 1; transition: transform 1.05s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 80ms), opacity .35s linear calc(var(--i) * 80ms); }
+/* 5 curtain-rise (config): the words, then each block, rise from below as a clip lifts off them like a curtain */
+.mcp-cfg.e-arm .mcp-cur { clip-path: inset(100% 0 0 0); transform: translateY(56px); }
+.mcp-cfg.e-go .mcp-cur { clip-path: inset(0 0 0 0); transform: none; transition: clip-path 1s cubic-bezier(.65, 0, .25, 1) calc(var(--c, 0) * .16s), transform 1s cubic-bezier(.16, 1, .3, 1) calc(var(--c, 0) * .16s); }
+
+/* ---------- the signature: before / after (McpCompare.jsx) ---------- */
+.mcp-cmp-sec { padding-top: clamp(40px, 5vw, 72px); }
+.mcp-cmp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.mcp-cmp-head .a2-headline { max-width: none; }
+.mcp-cmp-hint { margin: 0; flex: none; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #737373; }
+.mcp-cmp { position: relative; display: grid; border-radius: var(--r-hero); overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: ew-resize; }
+.mcp-cmp-l { grid-area: 1 / 1; padding: clamp(24px, 3vw, 40px); }
+.mcp-cmp-l.before { background: #f5f5f5; color: var(--ink); }
+.mcp-cmp-l.after { background: #0a0a0a; color: #fafafa; }
+.mcp-cmp-side { margin: 0 0 24px; font: 500 13px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #525252; }
+.after .mcp-cmp-side { text-align: right; color: #a3a3a3; }
+.mcp-cmp-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; align-items: stretch; }
+.mcp-cmp-code { padding: 18px 20px; border-radius: var(--r-card); background: #fff; min-width: 0; }
+.after .mcp-cmp-code { background: #171717; }
+.mcp-cmp-code > span { display: block; margin-bottom: 12px; font-size: 13px; color: #737373; }
+.mcp-cmp-code pre { margin: 0; font-size: 14px; line-height: 1.6; white-space: pre; overflow: hidden; }
+.mcp-cmp-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; min-height: 22px; margin: 0 0 16px; font-size: 13px; color: #525252; }
+.after .mcp-cmp-bar { color: #a3a3a3; }
+.mcp-cmp-live { display: inline-flex; align-items: center; gap: 8px; color: #d4d4d4; }
+.mcp-cmp-live > span:last-child { color: #a3a3a3; }
+.mcp-cmp-tools ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.mcp-cmp-tools li { padding: 9px 13px; border: 1px solid transparent; border-radius: 10px; font-size: 14px; line-height: 1.2; }
+.before .mcp-cmp-tools li { border: 1px dashed #a3a3a3; color: transparent; }
+.after .mcp-cmp-tools li { background: #262626; color: #fafafa; }
+.mcp-cmp-div { position: absolute; top: 0; bottom: 0; left: var(--p); width: 2px; margin-left: -1px; background: #a3a3a3; pointer-events: none; }
+.mcp-cmp-h { position: absolute; top: 50%; left: var(--p); display: flex; align-items: center; justify-content: center; gap: 4px; width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: #fafafa; color: #0a0a0a; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16); font: 400 20px/1 var(--sans); translate: -50% -50%; cursor: ew-resize; touch-action: none; transition: scale .2s var(--a2-ease); }
+.mcp-cmp-h:focus-visible { outline: 3px solid #737373; outline-offset: 3px; }
+.mcp-cmp.drag .mcp-cmp-h { scale: .94; }
+@media (hover: hover) { .mcp-cmp-h:hover { scale: 1.08; } }
+/* entrance 2, cursor-trail: a cursor and a trail of dots (difference blend, so they read on both halves) */
+.mcp-cmp-cur, .mcp-cmp-trail i { position: absolute; left: 0; top: 0; border-radius: 50%; background: #fafafa; mix-blend-mode: difference; pointer-events: none; will-change: transform; }
+.mcp-cmp-cur { width: 22px; height: 22px; margin: -11px 0 0 -11px; opacity: 0; transition: opacity .35s; }
+.mcp-cmp.intro .mcp-cmp-cur { opacity: 1; }
+.mcp-cmp-trail { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.mcp-cmp-trail i { width: 10px; height: 10px; margin: -5px 0 0 -5px; opacity: 0; }
 
 /* the runtime: sheets that stack, flat fills (no outline, no shadow) */
 .mcp-parts { padding-top: 0; padding-bottom: 72px; }
 .mcp-parts-in { position: relative; }
 .mcp-parts-pause { position: absolute; right: 0; top: -60px; }
-.mcp-stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 48px; }
-.mcp-sheet { position: sticky; top: calc(96px + var(--i) * 28px); display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 48px; align-items: start; min-height: min(580px, 70vh); padding: clamp(32px, 4vw, 56px); border-radius: var(--r-hero); background: #f5f5f5; }
+/* motion map: plain sheets one after another (they used to pin and stack while scrolling) */
+.mcp-stack { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.mcp-sheet { position: relative; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 48px; align-items: start; padding: clamp(32px, 4vw, 56px); border-radius: var(--r-hero); background: #f5f5f5; }
 .mcp-sheet:nth-child(2) { background: #ededed; }
 .mcp-sheet:nth-child(3) { background: #e5e5e5; }
 .mcp-sheet-n { display: block; font-size: 13px; letter-spacing: .08em; color: #737373; }
@@ -69,6 +136,8 @@
 .mcp-cmds span.stop b { background: #a3a3a3; animation-name: mcp-stop; }
 @keyframes mcp-pass { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 80% { transform: translateX(360%); opacity: 1; } 100% { transform: translateX(360%); opacity: 0; } }
 @keyframes mcp-stop { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 45%, 80% { transform: translateX(160%); opacity: 1; } 100% { transform: translateX(160%); opacity: 0; } }
+/* one mover per screen: only the sheet on top runs its art; the ones under it hold their frame */
+.mcp-sheet:not(.on) .mcp-art, .mcp-sheet:not(.on) .mcp-art * { animation-play-state: paused !important; }
 
 /* tool domains: a rail of cards that open */
 .mcp-doms { padding-top: clamp(56px, 6vw, 96px); padding-bottom: 96px; }
@@ -83,18 +152,34 @@
 .mcp-rail.grab { cursor: grabbing; scroll-snap-type: none; }
 .mcp-rail { scroll-padding-inline: max(var(--gut), (100% - 1152px) / 2); }
 .mcp-rail li { flex: none; scroll-snap-align: start; }
-.mcp-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; width: min(360px, 82vw); height: 440px; padding: 28px; border: 0; border-radius: var(--r-hero); background: var(--card); color: var(--ink); text-align: left; cursor: pointer; user-select: none; transition: transform .09s; }
+.mcp-card { position: relative; display: flex; flex-direction: column; align-items: flex-start; width: min(360px, 82vw); height: 440px; padding: 28px; border: 0; border-radius: var(--r-hero); background: var(--card); color: var(--ink); text-align: left; cursor: pointer; user-select: none; transition: transform .09s, translate .35s var(--a2-ease); }
 .mcp-card:active { transform: scale(.98); }
 .mcp-card-n { position: absolute; left: 28px; top: 28px; font-size: 13px; color: #737373; }
 .mcp-card h3 { margin: 4px 64px 14px 0; font-size: 17px; font-weight: 500; line-height: 1.35; overflow-wrap: anywhere; }
 .mcp-card p { margin: 0; font-size: 15px; line-height: 1.55; color: #525252; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.mcp-card-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-.mcp-card-tools i { font-style: normal; padding: 7px 10px; border-radius: 8px; background: #fff; font-size: 13px; animation: mcp-chip 7.2s var(--cd, 0s) ease-in-out infinite; }
-/* idle: one tool on each card is called in turn, so the rail is alive before you touch it */
+.mcp-card-tools { position: relative; width: 100%; margin-top: auto; }
+.mcp-chips { display: flex; flex-wrap: wrap; gap: 6px; transition: opacity .25s, transform .35s var(--a2-ease); }
+.mcp-chips.peek { position: absolute; left: 0; right: 0; bottom: 0; opacity: 0; transform: translateY(8px); }
+.mcp-card-tools i { font-style: normal; padding: 7px 10px; border-radius: 8px; background: #fff; font-size: 13px; }
+/* idle: the card nearest the rail's centre calls its tools in turn (one mover on the rail) */
+.mcp-card.live .mcp-chips.rest i { animation: mcp-chip 7.2s var(--cd, 0s) ease-in-out infinite; }
 @keyframes mcp-chip { 0%, 6% { background: #0a0a0a; color: #fafafa; } 12%, 100% { background: #fff; color: var(--ink); } }
-.mcp-card.d5 .mcp-card-tools i { animation-name: mcp-chip-d; }
+.mcp-card.d5.live .mcp-chips.rest i { animation-name: mcp-chip-d; }
 @keyframes mcp-chip-d { 0%, 6% { background: #fafafa; color: #0a0a0a; } 12%, 100% { background: #262626; color: #fafafa; } }
-.mcp-card-tools i.more { animation: none; }
+.mcp-card.live .mcp-chips.rest i.more { animation: none; }
+.mcp-card.live .mcp-card-open { animation: mcp-ring 2.4s ease-out infinite; }
+@keyframes mcp-ring { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .28); } 70%, 100% { box-shadow: 0 0 0 12px rgba(10, 10, 10, 0); } }
+.mcp-card.d5.live .mcp-card-open { animation-name: mcp-ring-d; }
+@keyframes mcp-ring-d { 0% { box-shadow: 0 0 0 0 rgba(250, 250, 250, .35); } 70%, 100% { box-shadow: 0 0 0 12px rgba(250, 250, 250, 0); } }
+/* hover or keyboard focus previews the sheet: the card lifts 4px and two more of its tools slide in with what remains */
+.mcp-card:focus-visible { translate: 0 -4px; }
+.mcp-card:focus-visible .mcp-chips.rest:has(+ .peek) { opacity: 0; transform: translateY(-6px); }
+.mcp-card:focus-visible .mcp-chips.peek { opacity: 1; transform: none; }
+@media (hover: hover) {
+  .mcp-card:hover { translate: 0 -4px; }
+  .mcp-card:hover .mcp-chips.rest:has(+ .peek) { opacity: 0; transform: translateY(-6px); }
+  .mcp-card:hover .mcp-chips.peek { opacity: 1; transform: none; }
+}
 .mcp-card-open { position: absolute; top: 20px; right: 20px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 22px; line-height: 1; transition: transform .3s var(--a2-ease); }
 @media (hover: hover) { .mcp-card:hover .mcp-card-open { transform: rotate(90deg); } }
 .mcp-card.d5 { background: #0a0a0a; color: #fafafa; }
@@ -132,8 +217,21 @@
 .mcp-ref span { display: inline-block; transition: transform .3s var(--a2-ease); }
 .mcp-ref:active span { transform: translateX(2px); }
 @media (hover: hover) { .mcp-ref:hover span { transform: translateX(5px); } }
-.mcp-codes { grid-column: 7 / span 6; display: grid; gap: 24px; }
-.mcp-code-c { margin: 0 0 10px; font-size: 13px; color: #a3a3a3; }
+.mcp-codes { grid-column: 7 / span 6; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; min-width: 0; }
+.mcp-codes > div { min-width: 0; }
+.mcp-code-c { margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #a3a3a3; white-space: normal; overflow-wrap: anywhere; }
+/* the bash block: one row per command, each with its own Copy; "$ " and Hanzo's "#" notes are shown, never copied */
+.mcp-sh-rows { list-style: none; margin: 0; padding: 8px 6px; }
+.mcp-sh-rows li { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 6px 6px 12px; border-radius: 10px; }
+.mcp-sh-line { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; font-size: 14px; line-height: 1.5; color: #e5e5e5; }
+.mcp-sh-line code { font: inherit; white-space: nowrap; }
+.mcp-sh-p, .mcp-sh-note { color: #737373; user-select: none; -webkit-user-select: none; }
+.mcp-sh-cmd { white-space: nowrap; }
+.mcp-sh-note { color: #a3a3a3; }
+.mcp-sh .x-copy { flex: none; }
+.mcp-sh.go li { animation: mcp-sh-step 1.4s calc(var(--k) * 1.3s) ease-in-out 1 both; }
+@keyframes mcp-sh-step { 0%, 100% { background: transparent; } 30%, 70% { background: rgba(255, 255, 255, .07); } }
+main.mcp .x-copy { height: 44px; padding: 0 16px; }
 .mcp-cfg .x-codeblock pre { font-size: 14px; }
 
 /* the close: the one solid ask, light, beside the repository card (the dark room stays the config's alone) */
@@ -189,9 +287,38 @@
 }
 
 @media (max-width: 900px) {
-  .mcp-hero { padding-top: 104px; }
-  .mcp-h1 { font-size: clamp(24px, 7.4vw, 32px) !important; line-height: 1.1; }
-  .mcp-rows { height: 368px; }
+  /* phone hero, its own composition: the h1 at the deck's phone size in four lines, Hanzo's caption, then the live
+     stream (three rows, so the product is on screen inside 660px), then the lede and the asks */
+  .mcp-hero { padding-top: 80px; }
+  .mcp-h1-d { display: none; }
+  .mcp-h1-p { display: block; }
+  .mcp-h1 { font-size: 40px !important; line-height: 1.04; }
+  .mcp-hero-grid { row-gap: 0; }
+  .mcp-hero-copy { display: contents; }
+  .mcp-hero-grid > *, .mcp-hero-copy > * { grid-column: 1 / -1; }
+  .mcp-hero-copy > .mcp-h1 { order: 1; }
+  .mcp-hero-copy > .mcp-cap { order: 2; margin-top: 14px; }
+  .mcp-hero-obj { order: 3; margin-top: 20px; }
+  .mcp-hero-copy > .mcp-lede { order: 4; margin: 20px 0 20px; }
+  .mcp-hero-copy > .a2-acts { order: 5; }
+  /* the copy is display:contents here (no box to clip), so each of its parts takes the diagonal wipe in turn */
+  html.js .mcp-hero-copy.mcp-wipe { animation: none; }
+  html.js .mcp-hero-copy > * { animation: mcp-diag 1s cubic-bezier(.65, 0, .25, 1) backwards; }
+  html.js .mcp-hero-copy > .mcp-cap { animation-delay: .1s; }
+  html.js .mcp-hero-copy > .mcp-lede { animation-delay: .32s; }
+  html.js .mcp-hero-copy > .a2-acts { animation-delay: .42s; }
+  html.js .mcp-via.mcp-wipe { animation-delay: .5s; }
+  .mcp-cmp-head { flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .mcp-cmp-in { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .mcp-cmp-l { padding: 20px 16px; }
+  .mcp-cmp-side { margin-bottom: 16px; }
+  .mcp-cmp-code { padding: 14px 16px; }
+  .mcp-cmp-code pre { font-size: 13px; }
+  .mcp-cmp-tools li { padding: 8px 11px; font-size: 13px; }
+  .mcp-stream-top { height: 44px; }
+  .mcp-pause { top: 0; }
+  .mcp-rows { height: 136px; padding: 8px 0; }
+  .mcp-row { top: 8px; }
   .mcp-row { padding: 0 16px; height: 40px; }
   .mcp-via { grid-template-columns: minmax(0, 1fr); margin-top: 56px; }
   .mcp-via-l { justify-content: flex-start; }
@@ -202,7 +329,9 @@
   .mcp-parts-pause { position: static; margin: 0 0 16px auto; display: flex; }
   .mcp-sheet { position: relative; top: auto; grid-template-columns: minmax(0, 1fr); padding: 24px; gap: 24px; min-height: 0; }
   .mcp-stack { gap: 16px; }
-  .mcp-sheet-art { min-height: 220px; }
+  .mcp-sheet-art { min-height: 180px; }
+  .mcp-art.a0 { padding: 20px; gap: 8px; }
+  .mcp-art.a0 span { padding: 8px 12px; font-size: 13px; }
   .mcp-art.a1 { grid-template-columns: repeat(13, 10px); gap: 7px; }
   .mcp-art.a1 i { width: 10px; height: 10px; }
   .mcp-art.a2 { min-height: 220px; }
@@ -216,8 +345,16 @@
   .mcp-codes { grid-column: 1 / -1; }
   .mcp-repo { padding: 24px; }
   .mcp-close-copy, .mcp-repo { grid-column: 1 / -1; }
-  .mcp .x-codeblock .x-copy { height: 44px; padding: 0 16px; }
   .mcp-cfg { padding-top: 72px; }
+  .mcp-sh-rows li { padding-left: 10px; }
+}
+/* below 375 the four lines keep their breaks: the size follows the width (about 33px at 320) */
+@media (max-width: 374px) {
+  .mcp-h1 { font-size: calc((100vw - 32px) / 8.7) !important; }
+}
+@media (max-width: 360px) {
+  .mcp-art.a0 { padding: 16px 12px; gap: 6px; }
+  .mcp-art.a0 span { padding: 8px 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mcp *, .mcp *::before, .mcp *::after { animation: none !important; }

@@ -6,7 +6,19 @@
 // CTA: "Download Extension" (github.com/hanzoai/extension/releases/latest): the hero's one solid with data-thumb, repeated by the closing band
 // Metric: extension_download (data-cta extension-download, extension-download-end)
 /* Hanzo Extension (Launch: the side panel leads).
-   V2: 8/10 round 5 (critic round 3, 6/10 fixes): the path runs down a left rail up to 599px (no colliding labels); the
+   V2: 8/10 round 7 (critic round 5, 7/10 fixes): "Get started" folds into the closing band as a quiet mono caption row
+   under its ask, so Download shows once per screen; the hero ring is measured to the picture (4px outside it); the
+   "How it works" line fills exactly to the lit stop, and pointing at a stop previews it; phone file names wrap whole with
+   the size on its own line; the phone hero is one flat window under its browser switch (back windows fade, no fan past
+   the edges), swapping in 300 ms; text links thicken their underline and nudge their arrow; the 01–05 steps are 44px.
+   Round 6 (critic round 4, 7/10 fixes): the phone hero's film pane is true size (160px) and framed on all sides
+   with the browser switcher above it in the first screen; the window no longer repeats the h1 (its tab says "Hanzo", no
+   title/lede inside); the switcher's dot follows your pick; Hanzo's "Browser extension" sits as a caption under the lede;
+   "Get started" is one quiet hairline strip (both headings, the proof line and two text links; no icon tile); the
+   chapters sit on one room tone with flat tiles, and "Read a page as text" has its three rows before the wipe lands;
+   every browser row is the same text-link ask with its size, yours marked by a dot and weight; hero links draw their
+   underline; file names end in an ellipsis; slide titles are not headings, chapter heads 21px under the 26px h2s.
+   Round 5 (critic round 3, 6/10 fixes): the path runs down a left rail up to 599px (no colliding labels); the
    headlines are a page-local CSS line mask and the window stack renders its final slots from the server, so a
    reduced-motion load hydrates clean and "How it works" always shows; the hub keeps its full height on phones; your
    browser's build row is an ink-outlined ask (the header holds the one solid); only Hanzo's words (stops named as its
@@ -100,6 +112,28 @@ const SLOTS = [ // front, back left, back right
   { x: '12%', y: '-11%', rotate: 5, scale: 0.88, zIndex: 2 },
 ];
 
+/* the ring that points at the picture: measured to the picture's own box (layout offsets, so the window's tilt and fan
+   never skew it) and drawn 4px outside it; re-measured whenever the window resizes. Written to the element's style
+   after mount, so the server HTML and the first client render are the same. */
+function Probe() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current, view = el && el.parentElement, img = view && view.querySelector('img');
+    if (!img) return;
+    const fit = () => {
+      const s = el.style;
+      s.left = img.offsetLeft - 4 + 'px'; s.top = img.offsetTop - 4 + 'px';
+      s.width = img.offsetWidth + 8 + 'px'; s.height = img.offsetHeight + 8 + 'px';
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(view); ro.observe(img);
+    img.addEventListener('load', fit);
+    return () => { ro.disconnect(); img.removeEventListener('load', fit); };
+  }, []);
+  return <span className="xe-probe" ref={ref} aria-hidden="true" />;
+}
+
 function Chrome({ k, open, toggle, front }) {
   // only the window in front has a live button; the ones behind draw the same icon
   const ext = front
@@ -120,7 +154,7 @@ function Chrome({ k, open, toggle, front }) {
     <div className={'xe-bar s-' + k}>
       <div className="xe-strip" aria-hidden="true">
         <span className="xe-dots"><i /><i /><i /></span>
-        <span className="xe-tab"><Mark size={10} /><span>Hanzo Extension</span></span>
+        <span className="xe-tab"><Mark size={10} /><span>Hanzo</span></span>
         <span className="xe-tab dim"><span>Hanzo Chat</span></span>
       </div>
       <div className="xe-tool">{nav}{k === 'firefox' && <span className="xe-shield" aria-hidden="true" />}{url}<span className="xe-puz" aria-hidden="true" />{ext}</div>
@@ -178,7 +212,7 @@ function Stack({ mineWin }) {
             <button key={k} type="button" role="tab" aria-selected={front === k} onClick={() => deal(k)}>
               {front === k && <motion.span layoutId="xe-deal" className="xe-deal-bg" transition={GLIDE} />}
               <span className="xe-deal-n">{n}</span>
-              {mineWin === k && <i className="xe-mine" aria-hidden="true" />}
+              {front === k && <motion.i layoutId="xe-mine" className="xe-mine" aria-hidden="true" transition={GLIDE} />}
             </button>
           ))}
         </div>
@@ -196,9 +230,8 @@ function Stack({ mineWin }) {
                 <div className="xe-page">
                   <span className="xe-page-nav" aria-hidden="true"><Mark size={12} /><b>Hanzo</b></span>
                   <Img src={'/models/' + ['koma', 'zen', 'uta'][wi] + '.webp'} w={1200} h={1500} alt="" priority={isFront && wi === 0} />
-                  <span className="xe-page-t" aria-hidden="true"><b>Hanzo Extension</b><span>Your browser, as a tool an agent can use.</span></span>
                 </div>
-                <span className="xe-probe" aria-hidden="true" />
+                <Probe />
               </div>
             </motion.div>
           );
@@ -214,7 +247,7 @@ function Stack({ mineWin }) {
             <div className="xe-cards">
               {POINTS.map(([t, d], i) => (
                 <div key={t} className={'xe-card' + (i === at ? ' on' : i < at ? ' past' : '')} aria-hidden={i !== at}>
-                  <h2 className="xe-card-t">{t}</h2>
+                  <p className="xe-card-t">{t}</p>
                   <p>{d}</p>
                 </div>
               ))}
@@ -243,6 +276,7 @@ function Hero({ mineWin }) {
         <div className="xe-hero-l">
           <Lines as="h1" id="xe-h1" className="av-display xe-h1" lines={['Hanzo Extension']} now delay={0.05} />
           <p className="av-lede">Your browser, as a tool an agent can use.</p>
+          <p className="xe-kick x-mono">Browser extension</p>
           <div className="xe-acts">
             <Cta to={REL} id="extension-download" thumb size="lg" {...brief}>Download Extension</Cta>
             <div className="xe-links">
@@ -267,6 +301,22 @@ const [NMH, PORT] = POINTS[1][1].split(/(?<=socket\.) /);
 const HOP_SAY = [POINTS[4][1], POINTS[0][1], NMH, PORT, POINTS[2][1], 'The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab.'];
 function How() {
   const [hot, setHot] = useState(3);
+  const path = useRef(null);
+  // the progress line fills exactly to the lit stop's dot: measured from layout (offsets), written to a CSS variable
+  useEffect(() => {
+    const ol = path.current;
+    if (!ol) return;
+    const fit = () => {
+      const li = ol.children[hot];
+      if (!li) return;
+      ol.style.setProperty('--fx', li.offsetLeft + 5 + 'px');
+      ol.style.setProperty('--fy', li.offsetTop + 9 + 'px');
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(ol);
+    return () => ro.disconnect();
+  }, [hot]);
   return (
     <section className="av-sec av-dark xe-how" data-room="dark" aria-labelledby="xe-how-h">
       <div className="av-wrap">
@@ -274,18 +324,19 @@ function How() {
           <Lines as="h2" id="xe-how-h" className="av-display s xe-how-h" lines={['How it works']} />
           <p className="av-lede xe-how-l">The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab.</p>
         </div>
-        <ol className="xe-path" aria-labelledby="xe-how-h">
+        <ol className="xe-path" aria-labelledby="xe-how-h" ref={path}>
           {HOPS.map((h, i) => (
             <li key={h} style={{ '--i': i }} className={(i === 0 ? 'end tab' : i === HOPS.length - 1 ? 'end fab' : '') + (i === hot ? ' hot' : i < hot ? ' past' : ' ahead')}>
-              <button type="button" aria-pressed={i === hot} onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(i)} onFocus={() => setHot(i)} onClick={() => { setHot(i); play('tick'); }}>
+              {/* pointing at a stop previews it: the line fills to it and its own sentence shows underneath */}
+              <button type="button" aria-pressed={i === hot} aria-describedby="xe-hop-say" onPointerEnter={(e) => e.pointerType !== 'touch' && setHot(i)} onFocus={() => setHot(i)} onClick={() => { setHot(i); play('tick'); }}>
                 <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
                 <b>{h}</b>
               </button>
             </li>
           ))}
-          <span className="xe-track" aria-hidden="true"><span className="xe-run"><i /></span></span>
+          <span className="xe-track" aria-hidden="true"><span className="xe-fill" /><span className="xe-run"><i /></span></span>
         </ol>
-        <p className="xe-hop-say" aria-live="polite"><span className="x-mono av-num">{String(hot + 1).padStart(2, '0')}</span><span key={hot}>{HOP_SAY[hot]}</span></p>
+        <p className="xe-hop-say" id="xe-hop-say" aria-live="polite"><span className="x-mono av-num">{String(hot + 1).padStart(2, '0')}</span><span key={hot}>{HOP_SAY[hot]}</span></p>
       </div>
     </section>
   );
@@ -346,7 +397,7 @@ function Build({ on }) {
       <svg className="xe-fork" viewBox="0 0 600 72" preserveAspectRatio="none"><path d="M300 0 100 72M300 0v72M300 0l200 72" /></svg>
       <ul className="xe-zips">
         {['chrome', 'firefox', 'safari'].map((b, i) => (
-          <li key={b} style={{ '--i': i }}><span className="xe-zip-i" /><span className="x-mono">{`hanzo-ai-${b}-v1.9.31.zip`}</span><em className="x-mono">{SIZE[b]}</em></li>
+          <li key={b} style={{ '--i': i }}><span className="xe-zip-i" /><span className="x-mono xe-zip-n">{`hanzo-ai-${b}-v1.9.31.zip`}</span><em className="x-mono">{SIZE[b]}</em></li>
         ))}
       </ul>
     </div>
@@ -400,14 +451,13 @@ function Builds({ mine }) {
         </div>
         <ul className="xe-rows">
           {order.map(([k, t, d, cta]) => (
-            <motion.li key={k} layout transition={DEAL} className={(k === mine ? 'yours' : '') + (k === show ? ' hot' : '')}
+            <motion.li key={k} layout transition={DEAL} className={(k === lead ? 'yours' : '') + (k === show ? ' hot' : '')}
               onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(k)} onFocus={() => setHot(k)} onClick={() => setHot(k)}>
-              <h3 className="av-title">{t}</h3>
+              <h3 className="av-title">{k === lead && <i className="xe-yours-dot" aria-hidden="true" />}{t}</h3>
               <p>{d}</p>
-              {/* your browser's row leads with a strong outlined ask: the header carries the one solid "Download Extension" here */}
-              {k === lead
-                ? <Cta to={REL} id={'extension-build-' + k} kind="quiet" className="xe-lead" {...brief}>{cta}</Cta>
-                : <span className="xe-row-a"><Cta to={REL} id={'extension-build-' + k} kind="link">{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>}
+              {/* one ask style for every row: a text link with its size beside it; your browser's row is marked by a filled dot
+                  and bold weight (the header carries the one solid "Download Extension" here) */}
+              <span className="xe-row-a"><Cta to={REL} id={'extension-build-' + k} kind="link" {...(k === lead ? brief : {})}>{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>
             </motion.li>
           ))}
         </ul>
@@ -496,36 +546,8 @@ function Uses() {
   );
 }
 
-/* ---------- before the end: the docs, the repo and the spec ---------- */
-function Get() {
-  return (
-    <section className="av-sec tight xe-get">
-      {/* one card, two halves: the docs ask on the left, the repo on the right; no lone heading beside empty space */}
-      <div className="av-wrap">
-        <div className="xe-card2">
-          <div className="xe-start">
-            <span className="xe-card2-i"><Mark size={24} /></span>
-            <h2 className="av-head">Get started with Extension</h2>
-            <Cta to={DOCS} id="extension-docs" kind="link">Read the docs</Cta>
-          </div>
-          <div className="xe-card2-r">
-            <h2 className="av-title">Get Extension</h2>
-            <p>Browser extension + MCP bridge</p>
-            <dl className="xe-meta x-mono">
-              <div><dt>License:</dt><dd>Apache-2.0</dd></div>
-              <div><dd><A to="https://github.com/hanzoai" data-cta="extension-repo">hanzoai</A></dd></div>
-            </dl>
-            <div className="xe-card2-a">
-              <Cta to="https://platform.hanzo.ai/deploy" id="extension-deploy" kind="quiet">Deploy to Cloud</Cta>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- the one closing band: the hero's ask again ---------- */
+/* ---------- the one closing band: the hero's ask again, and under it Hanzo's "Get started" words as a quiet caption row
+   (the docs, the repo's proof and the deploy link), so the page ends on one ask and Download never shows twice ---------- */
 function End() {
   const brief = useBrief();
   return (
@@ -536,6 +558,19 @@ function End() {
         <div className="xe-band-acts">
           <Cta to={REL} id="extension-download-end" size="lg" {...brief}>Download Extension</Cta>
           <Cta to="/chat" id="extension-chat-end" kind="link">Open Hanzo Chat</Cta>
+        </div>
+        <div className="xe-band-meta x-mono" aria-label="Get started with Extension">
+          <p className="xe-bm">
+            <span className="xe-bm-h">Get started with Extension</span>
+            <Cta to={DOCS} id="extension-docs" kind="link">Read the docs</Cta>
+          </p>
+          <p className="xe-bm">
+            <span className="xe-bm-h">Get Extension</span>
+            <span>Browser extension + MCP bridge</span>
+            <span><span>License:</span> <span>Apache-2.0</span></span>
+            <A to="https://github.com/hanzoai" data-cta="extension-repo" className="xe-bm-a">hanzoai</A>
+            <Cta to="https://platform.hanzo.ai/deploy" id="extension-deploy" kind="link">Deploy to Cloud</Cta>
+          </p>
         </div>
       </div>
     </section>
@@ -548,10 +583,9 @@ export default function ExtensionPage() {
     <main className="av xe" style={{ '--ac': '#737373' }}>
       <Hero mineWin={win} />
       <How />
-      <Scenes label="Hanzo Extension" items={CHAPTERS} tone={['#ffffff', '#f5f5f5', '#fafafa']} />
+      <Scenes label="Hanzo Extension" items={CHAPTERS} />
       <Builds mine={build} />
       <Uses />
-      <Get />
       <End />
     </main>
   );

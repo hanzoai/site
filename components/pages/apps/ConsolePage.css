@@ -194,18 +194,49 @@
 .cs-win.md .cs-org-n { font-size: 32px; }
 .cs-win.md .cs-org em { margin-left: 0; flex-basis: 100%; text-align: left; }
 
-/* chapters */
-.cs-ch { padding-top: clamp(120px, 16.5vw, 240px); }
-.cs-ch-head { position: relative; z-index: 1; margin-bottom: -4svh; }
-.cs-ch-head .bz-display { max-width: 13ch; }
-.cs-ch-note { margin: 0; font-size: 13px; line-height: 1.5; color: var(--faint); max-width: 40ch; }
-.cs-ch .bz-ch-i > .bz-kick { order: 1; }
-.cs-ch .bz-ch-i > .bz-body { order: 2; }
-.cs-ch .bz-ch-i > .cs-ch-note { order: 3; }
+/* the signature: the six modules on a dark canvas you pull around (components/pages/x-tender/PanCanvas) */
+.cs .cs-cv { padding-top: clamp(72px, 8vw, 116px); }
+.cs-cv-head { margin-bottom: 27px; }
+.cs-pan { display: flex; flex-direction: column; border-radius: 28px; background: #0a0a0a; color: #e9e9e9; overflow: hidden; }
+.cs-pan .xt-pan-bar { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 10px 10px 14px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.cs-cv-mods { flex: 1; min-width: 0; display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; overflow-x: auto; scrollbar-width: none; }
+.cs-cv-mods::-webkit-scrollbar { display: none; }
+.cs-cv-mods button { display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px 0 12px; border: 0; border-radius: 12px; background: none; color: #a3a3a3; font: 497 15px/1 var(--sans); white-space: nowrap; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .cs-cv-mods button:hover { color: #f5f5f5; background: #171717; } }
+.cs-cv-mods button:active { transform: scale(.97); }
+.cs-cv-mods button[aria-pressed='true'] { color: #0a0a0a; background: #f5f5f5; }
+.cs-cv-mods button:focus-visible, .cs-pan .xt-pan-reset:focus-visible { outline: 2px solid #f5f5f5; outline-offset: 2px; }
+.cs-pan .xt-pan-tools { flex: none; display: flex; align-items: center; gap: 6px; padding-left: 10px; border-left: 1px solid rgba(255, 255, 255, .08); }
+.cs-pan .xt-pan-hand { display: grid; place-items: center; width: 44px; height: 44px; color: #737373; }
+.cs-pan .xt-pan-reset { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .16); background: #171717; color: #f5f5f5; cursor: pointer; transition: border-color .15s cubic-bezier(0, 0, .2, 1), transform .09s; }
+@media (hover: hover) { .cs-pan .xt-pan-reset:hover { border-color: rgba(255, 255, 255, .45); } .cs-pan .xt-pan-reset:hover svg { transform: rotate(-40deg); } }
+.cs-pan .xt-pan-reset svg { transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
+.cs-pan .xt-pan-reset:active { transform: scale(.97); }
+/* the view: a dot field that travels with the world */
+.cs-pan .xt-pan-view { height: clamp(560px, 74vh, 660px); cursor: grab; outline: none; background-color: #000000; background-image: radial-gradient(rgba(255, 255, 255, .14) 1px, transparent 1.4px); background-size: 28px 28px; background-position: var(--pan-x, 0) var(--pan-y, 0); }
+.cs-pan .xt-pan-view.is-drag { cursor: grabbing; }
+.cs-pan .xt-pan-view:focus-visible { box-shadow: inset 0 0 0 2px #f5f5f5; }
+/* the world: three columns, two rows, the middle column set lower so the canvas reads as laid out, not a grid */
+.cs-world { display: grid; grid-template-columns: repeat(3, 820px); column-gap: 116px; row-gap: 116px; padding: 72px 96px 116px; }
+.cs-world > :nth-child(3n + 2) { margin-top: 188px; margin-bottom: -188px; }
+.cs-world > :nth-child(3n) { margin-top: 44px; margin-bottom: -44px; }
+.cs-card { display: grid; grid-template-columns: 268px minmax(0, 1fr); gap: 27px; align-items: start; padding: 27px; border-radius: 24px; background: #0a0a0a; border: 1px solid rgba(255, 255, 255, .1); opacity: .5; transition: opacity .4s cubic-bezier(.4, 0, .2, 1), border-color .4s cubic-bezier(.4, 0, .2, 1); }
+.cs-card.on { opacity: 1; border-color: rgba(255, 255, 255, .3); }
+.cs-card-copy { display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }
+.cs-card-k { display: flex; gap: 10px; margin: 0; font: 606 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #a3a3a3; }
+.cs-card-k .x-mono { color: #f5f5f5; }
+.cs-card-t { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.18; letter-spacing: -.02em; color: #ffffff; text-wrap: balance; }
+.cs-card-d { margin: 0; font-size: 16px; line-height: 1.6; color: #a3a3a3; text-wrap: pretty; }
+.cs-card .cs-ch-note { margin: 0; font-size: 13px; line-height: 1.5; color: #737373; }
+.cs-win.cs-card-win { border-radius: 20px; border-color: rgba(255, 255, 255, .1); }
+.cs-card-bar { display: flex; align-items: center; gap: 14px; height: 40px; padding: 0 14px; background: #0a0a0a; border-bottom: 1px solid rgba(255, 255, 255, .08); font-size: 12px; color: #737373; }
+.cs-card-bar .cs-lights i { width: 9px; height: 9px; }
+.cs-win.md.cs-card-win .cs-main { min-height: 360px; padding: 22px; overflow: visible; }
+@media (prefers-reduced-motion: reduce) { .cs-card { transition: none; } }
 
 /* beyond: find it by typing it */
 .cs-find-top { align-items: end; margin-bottom: clamp(56px, 6vw, 88px); }
-.cs-find-top h2 { grid-column: 1 / span 7; }
+.cs-find-top .cs-tk { grid-column: 1 / span 7; }
 .cs-find-top .bz-body { grid-column: 9 / span 4; }
 .cs-find-obj { background: #ffffff; }
 .cs-find-in { display: flex; align-items: center; gap: 20px; height: 116px; padding: 0 36px; border-bottom: 1px solid var(--line); color: var(--faint); }
@@ -327,8 +358,27 @@
 @keyframes cs-org { 0%, 38% { transform: none; } 50%, 88% { transform: translateY(56px); } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .cs-lean { transform: none; } .cs-end-org.on .cs-end-pill { animation: none; } }
 
+/* the palette's preview is the target panel alone, larger, with no window chrome (not a third copy of the window) */
+.cs-find-shell .cs-bar, .cs-find-shell .cs-foot, .cs-find-shell .cs-rail, .cs-find-shell .cs-nav { display: none; }
+.cs-find-shell .cs-win { border: 0; box-shadow: none; border-radius: 20px; }
+.cs-find-shell .cs-body, .cs-find-shell .cs-win.md .cs-body { grid-template-columns: minmax(0, 1fr); height: 532px; }
+.cs-find-shell .cs-win.md .cs-main { padding: 26px 28px; }
+/* the hero window: no dead pane under short views */
+.cs-win:not(.md) .cs-body { height: 540px; }
+@media (hover: hover) { .cs-rel a:hover { background: var(--bz-room); } }
+.cs-rel a { padding-left: 4px; padding-right: 4px; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
+
 @media (max-width: 900px) {
   .cs-end .bz-wrap { grid-template-columns: minmax(0, 1fr); row-gap: 44px; }
+  .cs-find-shell .cs-body, .cs-find-shell .cs-win.md .cs-body { height: auto; }
+  .cs-find-shell .cs-main { overflow: visible; }
+  .cs-win:not(.md) .cs-body { height: 404px; }
+  /* phone keys card: key and scope on the left (the scope may wrap), the state under them, the button right */
+  .cs-win.md .cs-key, .cs-key { grid-template-columns: minmax(0, 1fr) auto; }
+  .cs-win.md .cs-key .cs-tag, .cs-key .cs-tag { grid-column: 1; grid-row: 3; justify-self: start; }
+  .cs-win.md .cs-key-l, .cs-key-l { grid-column: 1; grid-row: 1 / span 2; }
+  .cs-win.md .cs-key-b, .cs-key-b { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
+  .cs-key-l span { white-space: normal; }
   .cs-facts > :first-child, .cs-facts > :last-child { grid-column: auto; grid-row: auto; }
   .cs-fact-peek { display: none; }
 }
@@ -401,25 +451,25 @@
   .cs-foot { height: 46px; padding: 0 8px 0 14px; }
   .cs-open { height: 44px; }
 
-  .cs-ch-head { margin-bottom: 24px; }
-  .cs-ch .bz-ch-i > .bz-kick { font-size: 14px; }
-  .cs-ch .cs-win { border-radius: 16px; }
-  .cs-ch .cs-bar, .cs-ch .cs-foot { display: none; }
-  .cs-ch .cs-win.md .cs-body { height: 262px; }
-  .cs-ch .cs-win.md .cs-main { padding: 14px 14px; }
-  .cs-ch .cs-th { display: none; }
-  .cs-ch .cs-win.md .cs-tr { height: 44px; }
-  .cs-ch .cs-win.md .cs-key { padding: 14px; }
-  .cs-ch .cs-win.md .cs-roll { font-size: 32px; }
-  .cs-ch .cs-win.md .cs-use-list li:nth-child(n + 3) { display: none; }
-  .cs-ch .cs-win.md .cs-org { padding: 14px; }
-  .cs-ch .cs-win.md .cs-org-n { font-size: 26px; }
-  .cs-ch .cs-win.md .cs-org em { display: none; }
-  .cs-ch .cs-vk, .cs-ch .cs-cap { display: none; }
-  .cs-ch .cs-win.md .cs-head { margin-bottom: 12px; }
-  .cs-ch .cs-win.md .cs-head h3 { font-size: 21px; }
-  .cs-ch .cs-pv em { display: none; }
-  .cs-ch .cs-orgs { margin-top: 10px; }
+  /* phone canvas: icon-only module buttons, cards a column wide, two columns to pull between */
+  .cs-pan { border-radius: 24px; }
+  .cs-pan .xt-pan-bar { min-height: 60px; padding: 8px 8px 8px 8px; gap: 6px; }
+  .cs-cv-mods { gap: 2px; }
+  .cs-cv-mods button { width: 44px; padding: 0; justify-content: center; }
+  .cs-cv-mods button span { display: none; }
+  .cs-pan .xt-pan-tools { gap: 2px; padding-left: 4px; }
+  .cs-pan .xt-pan-hand { display: none; }
+  .cs-pan .xt-pan-view { height: min(620px, 74svh); }
+  .cs-world { grid-template-columns: repeat(2, 292px); column-gap: 44px; row-gap: 44px; padding: 20px 24px 72px; }
+  .cs-world > :nth-child(3n + 2), .cs-world > :nth-child(3n) { margin-top: 0; margin-bottom: 0; }
+  .cs-world > :nth-child(2n) { margin-top: 116px; margin-bottom: -116px; }
+  .cs-card { grid-template-columns: minmax(0, 1fr); gap: 17px; padding: 17px; border-radius: 20px; }
+  .cs-card-t { font-size: 21px; }
+  .cs-card-d { font-size: 14px; line-height: 1.55; }
+  .cs-card-k { font-size: 14px; letter-spacing: .08em; }
+  .cs-card .cs-ch-note { font-size: 14px; }
+  .cs-win.md.cs-card-win .cs-main { min-height: 0; padding: 14px; }
+  .cs-card-bar { font-size: 14px; }
 
   .cs-find-top { display: flex; flex-direction: column; align-items: stretch; gap: 22px; margin-bottom: 40px; }
   .cs-find-in { height: 76px; gap: 12px; padding: 0 16px 0 18px; }

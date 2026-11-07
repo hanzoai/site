@@ -1,0 +1,53 @@
+/* /features only: its five entrances, top to bottom (enter.js adds .xft-in when a section is about 25% in view).
+   Hidden starting states live under html.js only, so with JS off everything shows; reduced motion shows final states. */
+
+/* 1. pixel-resolve (the hero's words): coarse pixel blocks that refine to sharp type (an SVG mosaic filter) */
+.xft-px-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+html.js .xft-top[data-enter]:not(.xft-done) { filter: url(#xft-px); }
+
+/* 2. grid-wave (the keyboard): the keys ripple in by their distance from the pointer */
+html.js .xft-inst[data-enter]:not(.xft-in) .xft-key { opacity: 0; transform: translateY(10px) scale(.92); }
+.xft-inst.xft-in:not(.xft-done) .xft-key { animation: xft-wave .6s cubic-bezier(.16, 1, .3, 1) backwards; animation-delay: var(--d, 0ms); }
+@keyframes xft-wave {
+  0% { opacity: 0; transform: translateY(10px) scale(.92); }
+  45% { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+
+/* 3. tilt-3d-hover (Hanzo Chat): the film arrives leaning toward the pointer, levels, then follows it (2.5° at most) */
+.xft-prod[data-enter='tilt'] .xft-film-w { transform: perspective(1100px) rotateY(var(--tx, 0deg)) rotateX(var(--ty, 0deg)); transform-style: preserve-3d; }
+html.js .xft-prod[data-enter='tilt']:not(.xft-in) .xft-film-w { opacity: 0; transform: perspective(1100px) rotateY(var(--tx, 14deg)) rotateX(var(--ty, -6deg)) scale(.94); }
+.xft-prod[data-enter='tilt'].xft-in .xft-film-w { transition: transform .9s cubic-bezier(.16, 1, .3, 1), opacity .5s cubic-bezier(0, 0, .2, 1); }
+.xft-prod[data-enter='tilt'].xft-done .xft-film-w { transition: transform .3s cubic-bezier(0, 0, .2, 1); }
+
+/* 4. underline-sweep (Hanzo Dev): a hairline sweeps under the heading, then under each feature in turn */
+.xft-prod[data-enter='sweep'] .xft-rows b { position: relative; }
+.xft-prod[data-enter='sweep'] .xft-rows b::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; }
+.xft-prod[data-enter='sweep'].xft-in .xft-rows b::after { animation: xft-sweep .9s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(.3s + var(--i, 0) * .14s); }
+.xft-prod[data-enter='sweep'] .xft-prod-h a { background-size: 100% 1px; }
+html.js .xft-prod[data-enter='sweep']:not(.xft-in) .xft-prod-h a { background-size: 0 1px; }
+.xft-prod[data-enter='sweep'].xft-in .xft-prod-h a { transition: background-size .6s cubic-bezier(.16, 1, .3, 1); }
+@keyframes xft-sweep {
+  0% { transform: scaleX(0); transform-origin: 0 50%; }
+  50% { transform: scaleX(1); transform-origin: 0 50%; }
+  51% { transform: scaleX(1); transform-origin: 100% 50%; }
+  100% { transform: scaleX(0); transform-origin: 100% 50%; }
+}
+
+/* 5. spring-snap (Hanzo Design & Cloud): the room snaps in from the side and overshoots on a spring */
+html.js .xft-prod[data-enter='snap']:not(.xft-in) .xft-prod-in { opacity: 0; transform: translateX(120px); }
+.xft-prod[data-enter='snap'].xft-in:not(.xft-done) .xft-prod-in { animation: xft-snap .85s linear backwards; }
+@keyframes xft-snap {
+  0% { opacity: 0; transform: translateX(120px); animation-timing-function: cubic-bezier(.3, 0, .5, 1); }
+  40% { opacity: 1; transform: translateX(-16px); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+  65% { transform: translateX(6px); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
+  85% { transform: translateX(-2px); }
+  100% { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .xft-top[data-enter]:not(.xft-done) { filter: none; }
+  html.js .xft-inst[data-enter] .xft-key, html.js .xft-prod[data-enter] .xft-film-w, html.js .xft-prod[data-enter] .xft-prod-in { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .xft-prod[data-enter='sweep'] .xft-rows b::after { animation: none !important; }
+  html.js .xft-prod[data-enter='sweep'] .xft-prod-h a { background-size: 100% 1px; }
+}

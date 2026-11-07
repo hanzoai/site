@@ -4,18 +4,23 @@
    Metric: api_key_created
    Goal: watch the console's modules open one by one, find anything by typing, then open the console
    CTA: Open Console -> https://platform.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta console.hero / console.close)
-   Signature: the shell, driving itself. The console window fills the dark hero: its command palette types a module's
-   name, the module opens in the shell (projects, keys, usage, apps, models, organization) and plays its own moment (a
-   build finishes, a key is revoked, usage records land, an app gets an identity and a store, your own provider
-   connects, the organization switches the whole page), and the palette comes back for the next one. A Pause sits on
-   the window; tapping a module also takes over.
+   Signature: drag the console's six modules around a dark canvas (projects, models, usage, keys, apps, organization), each card its chapter's words beside the live module, which plays its moment as you pull it to the middle.
+   Hero: the shell, driving itself. The console window fills the dark hero: its command palette types a module's
+   name, the module opens in the shell and plays its own moment, and the palette comes back for the next one. A Pause
+   sits on the window; tapping a module also takes over.
+   The canvas (components/pages/x-tender/PanCanvas): pointer or finger drag with inertia, arrow keys, a reset, the
+   module names above it glide each card to the middle; the card in the middle is lit and plays (a build finishes, a key
+   is revoked, usage records land, an app gets an identity and a store, your own provider connects, the organization
+   switches every card on the canvas).
+   Entrances (components/pages/console/Entrances): canvas sticky-stack, facts depth-parallax, Find vertical-ticker,
+   Get spring-snap, close velocity-skew.
    Beyond: "Find it by typing it", for real. Click the palette (or press / anywhere) and type: every module and every
    product in the sidebar answers as you type, the letters marked where they match; Enter opens a module in the shell
    beside it, or takes you to the product's page.
-   Not only scroll: the shell runs by itself (idle) and types (time); the palette and the fact cards answer the hand
-   (state); Stage and chapters are the scroll half.
-   Motion: the shell (signature) + Stage (it settles as you scroll) + sticky chapters + cards that open into their page.
-V2: 8/10 the black-room hero is the shell, the one big thing under a 52px title, driving itself with a Pause; six sticky chapters pin it on each module; the palette is real; four facts open into their page; Get Console, then a close with one ask; deck colours, radii and scale, outlined objects, no springs
+   Not only scroll: the shell runs by itself (idle) and types (time); the canvas follows the hand (pointer, inertia);
+   the palette and the fact cards answer the hand (state); Stage is the scroll half.
+   Motion: the canvas (signature) + the self-driving shell + Stage (it settles as you scroll) + cards that open.
+V2: 8/10 motion map: drag-canvas — the pinned BizChapters scene is gone; its six chapters are cards on a pannable dark canvas, each beside its live module; order is hero, canvas, facts, palette, Get, close
    The v1 drag-to-reorder sidebar is gone (its words stay, with the palette). Every word and link is Hanzo's. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
@@ -29,8 +34,9 @@ import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
 import { useScroll, useTransform } from 'motion/react';
 import '../../v2/Biz.css';
-import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
+import PanCanvas from '../x-tender/PanCanvas';
+import { useStickyStack, useDepthParallax, useTicker, useSpringSnap, useVelocitySkew } from '../console/Entrances';
 import './ConsolePage.css';
 
 const APP = 'https://platform.hanzo.ai';
@@ -269,7 +275,7 @@ function Shell({ auto, view: want, size = 'lg' }) {
     const ts = [];
     const at = (ms, fn) => ts.push(setTimeout(fn, ms));
     setPal(false); setGo(false);
-    let t = first.current ? 1500 : 3600;
+    let t = first.current ? 700 : 3600;
     first.current = false;
     at(t, () => { setQ(''); setPal(true); });
     t += 560;
@@ -395,7 +401,7 @@ function Hero() {
   );
 }
 
-/* Chapters: the shell pinned, one module lit per chapter. */
+/* The six chapters: each one card on the canvas, beside its module. */
 const CH = [
   { id: 'projects', k: 'Projects', t: 'Add what you use. Hide what you don’t.', d: 'The shell stays the same.', x: <p className="cs-ch-note x-mono">Example project. Every name in it is one you would give your own.</p> },
   { id: 'models', k: 'Models', t: 'Providers and models', d: 'Every model your organization can call, and which provider serves it. Connect an account of your own and its models appear beside the ones we run.' },
@@ -405,13 +411,49 @@ const CH = [
   { id: 'org', k: 'Organization', t: 'Scoped to the org on your token', d: 'Sign-in is OIDC against Hanzo IAM. What you see is what your organization owns, and switching organization switches the whole page — there is no global view to fall into by accident.' },
 ];
 
-function Chapters() {
+/* The signature: the six chapters as cards on a dark canvas you pull around. The card nearest the middle is lit and
+   its module plays; the module names above the canvas glide each card in. One organization for the whole canvas. */
+function Canvas() {
+  const pan = useRef(null);
+  const ref = useStickyStack();
+  const [lit, setLit] = useState('projects');
+  const [org, setOrg] = useState('acme');
+  const flip = useCallback(() => setOrg((o) => (o === 'acme' ? 'globex' : 'acme')), []);
+  const bar = (
+    <ul className="cs-cv-mods" aria-label="Modules">
+      {CH.map((c) => (
+        <li key={c.id}>
+          <button type="button" aria-pressed={lit === c.id} aria-label={c.k} onClick={() => pan.current?.to(c.id)}><Ico d={MODS.find((m) => m.id === c.id).d} /><span>{c.k}</span></button>
+        </li>
+      ))}
+    </ul>
+  );
   return (
-    <BizChapters label="A module per product, one shell around them" className="cs-ch" items={CH} stage={(at) => <div className="cs-ch-stage"><Shell view={CH[at].id} size="md" /></div>}>
-      <header className="bz-wrap cs-ch-head">
-        <h2 className="bz-headline">A module per product, one shell around them</h2>
+    <section ref={ref} className="bz-sec cs-cv" aria-labelledby="cs-cv-h">
+      <header className="bz-wrap cs-cv-head">
+        <h2 id="cs-cv-h" className="bz-headline">A module per product, one shell around them</h2>
       </header>
-    </BizChapters>
+      <div className="bz-wrap cs-cv-card">
+        <PanCanvas ref={pan} label="A module per product, one shell around them" className="cs-pan" bar={bar} onFocus={(id) => id && setLit(id)}>
+          <div className="cs-world">
+            {CH.map((c, i) => (
+              <article key={c.id} data-pan-item={c.id} className={'cs-card' + (lit === c.id ? ' on' : '')} aria-labelledby={'cs-card-' + c.id}>
+                <div className="cs-card-copy">
+                  <p className="cs-card-k"><span className="x-mono">{String(i + 1).padStart(2, '0')}</span>{c.k}</p>
+                  <h3 id={'cs-card-' + c.id} className="cs-card-t">{c.t}</h3>
+                  <p className="cs-card-d">{c.d}</p>
+                  {c.x}
+                </div>
+                <div className="cs-win md cs-card-win">
+                  <div className="cs-card-bar" aria-hidden="true"><span className="cs-lights"><i /><i /><i /></span><span className="x-mono">platform.hanzo.ai</span></div>
+                  <div className="cs-main"><View id={c.id} org={org} play={lit === c.id} flip={flip} /></div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </PanCanvas>
+      </div>
+    </section>
   );
 }
 
@@ -423,6 +465,7 @@ function Find() {
   const [open, setOpen] = useState('projects');
   const [went, setWent] = useState('');
   const inp = useRef(null);
+  const tk = useTicker();
   const hits = useMemo(() => find(q), [q]);
   const h = Math.min(hi, hits.length - 1);
   const pick = (r) => {
@@ -448,9 +491,14 @@ function Find() {
     else if (e.key === 'Escape') { setQ(''); setHi(0); }
   };
   return (
-    <section className="bz-sec cs-find" aria-labelledby="cs-find-h">
+    <section ref={tk} className="bz-sec cs-find" aria-labelledby="cs-find-h">
       <div className="bz-wrap bz-grid cs-find-top">
-        <h2 id="cs-find-h" className="bz-headline">Find it by typing it</h2>
+        <div className="cs-tk">
+          <div className="cs-tk-in">
+            <ol className="cs-tk-reel" aria-hidden="true">{MODS.map((m) => <li key={m.id}>{m.nav}</li>)}</ol>
+            <h2 id="cs-find-h" className="bz-headline">Find it by typing it</h2>
+          </div>
+        </div>
         <p className="bz-body">A command palette reaches every module and every record without learning where anything lives. The sidebar is yours to reorder and prune.</p>
       </div>
       <div className="bz-wrap">
@@ -466,7 +514,7 @@ function Find() {
                 {hits.map((r, i) => (
                   <li key={r.x.kind + r.x.name} id={'cs-o-' + i} role="option" aria-selected={i === h} className={(i === h ? 'hi' : '') + (went === r.x.kind + r.x.name ? ' went' : '')} onMouseEnter={() => setHi(i)} onClick={() => { setHi(i); pick(r); }}>
                     <span className="cs-find-i"><Ico d={r.x.d} /></span>
-                    <span className="cs-find-n"><Hl name={r.x.name} at={r.at} n={q.trim().length} /><em>{r.x.sub}</em></span>
+                    <span className="cs-find-n"><span><Hl name={r.x.name} at={r.at} n={q.trim().length} /></span><em>{r.x.sub}</em></span>
                     <span className="cs-find-k x-mono">{i === h ? (r.x.kind === 'module' ? '↵ open' : '↵ go') : r.x.kind}</span>
                   </li>
                 ))}
@@ -507,8 +555,9 @@ const FACTS = [
 ];
 
 function Client() {
+  const ref = useDepthParallax();
   return (
-    <section className="bz-sec cs-client" aria-labelledby="cs-client-h">
+    <section ref={ref} className="bz-sec cs-client" aria-labelledby="cs-client-h">
       <div className="bz-wrap bz-grid">
         <div className="cs-client-copy">
           <h2 id="cs-client-h" className="bz-headline">The console is a client. So is your code.</h2>
@@ -536,8 +585,9 @@ function Client() {
 
 /* Getting it: the licence, the ways to run it, the agent prompt and the related products. Text links only. */
 function GetConsole() {
+  const ref = useSpringSnap();
   return (
-    <section className="bz-sec cs-get" aria-labelledby="cs-get-h">
+    <section ref={ref} className="bz-sec cs-get" aria-labelledby="cs-get-h">
       <div className="bz-wrap bz-grid">
         <div className="cs-get-main">
           <h2 id="cs-get-h" className="bz-headline">Get Console</h2>
@@ -566,8 +616,9 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 function End() {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
+  const skew = useVelocitySkew();
   return (
-    <section className="bz-sec cs-end" aria-labelledby="cs-end-h">
+    <section ref={skew} className="bz-sec cs-end" aria-labelledby="cs-end-h">
       <div className="bz-wrap" ref={ref}>
         <div className="cs-end-main">
           <h2 id="cs-end-h" className="bz-display md">Open the console</h2>
@@ -593,9 +644,9 @@ export default function ConsolePage() {
     <main className="bz cs">
       <span data-ask-name="Hanzo Console" hidden />
       <Hero />
-      <Chapters />
-      <Find />
+      <Canvas />
       <Client />
+      <Find />
       <GetConsole />
       <End />
     </main>

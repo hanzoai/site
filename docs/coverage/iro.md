@@ -73,14 +73,14 @@ Done here: `taste.py` passes on the page and shell files. Deck greys only (#0a0a
 - [x] Inputs 16px or larger; no bare `:hover` (no inputs; hovers sit in `@media (hover: hover)`)
 - [x] Forks this page deleted: listed above
 
-Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers and press to .98. Focus uses the shared ring.
+Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Chapter rail buttons press to scale .97. Model cards tilt on fine pointers; their .98 press is overridden by the inline tilt transform in the shared `ModelCards.jsx` (not this page's file; reported to its owner). Focus uses the shared ring.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
-- [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
+- [x] Sound only on the listed moments, through the one shared kit (`lib/sound.js`, on main; the page adds no sound of its own)
 
 Done here: Signature: the live canvas: an image resolves out of noise by flow matching, step 1 to 50, with Pause, a step slider, New seed and aspect buttons. Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
 
@@ -95,7 +95,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
 - [x] No horizontal scroll at 320
-- [x] Every target 44px or more; every hover has a tap path
+- [ ] Every target 44px or more (all but two: "Every model" and "Research preview" in the shared Creative close are 25px tall on phones; reported to its owner); every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
 Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.

@@ -2,27 +2,102 @@
 .ig { --acc: #0a0a0a; --glow: #525252; }
 .ig .v2-dark, .ig [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
 
-/* hero: the name, the two ports, the board */
-.ig-hero { padding: clamp(84px, 6vw, 100px) 0 clamp(80px, 8vw, 120px); }
+/* hero: the name, the two ports, the globe */
+.ig-hero { padding: clamp(84px, 6vw, 100px) 0 clamp(44px, 5vw, 72px); }
 .ig-hero-t { align-items: end; row-gap: 24px; }
 .ig-hero-l { grid-column: 1 / span 7; }
 .ig-ports { grid-column: 8 / -1; display: flex; flex-direction: column; align-items: flex-end; font-weight: 220; font-size: 64px; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--glow); padding-bottom: .04em; }
 .ig-ports span:first-child { color: #d4d4d4; }
 .ig-hero-b { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
 .ig-sub { color: var(--ink); max-width: none; }
-.ig-lift { margin-top: clamp(24px, 2.4vw, 36px); }
+
+/* the signature's stage: a quiet room holding the globe, its legend and the live note in the page's words */
+.ig-stage { margin-top: clamp(24px, 2.4vw, 36px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; padding: clamp(24px, 2.8vw, 40px); border-radius: 28px; background: #f5f5f5; box-sizing: border-box; }
+.ig-stage-l { grid-column: 1 / span 4; display: flex; flex-direction: column; justify-content: flex-end; gap: 17px; }
+.ig-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ig-legend li { display: flex; align-items: center; gap: 12px; font: 500 14px/1.2 var(--mono); color: var(--ink); }
+.ig-legend i { flex: none; display: grid; place-items: center; width: 22px; height: 22px; }
+.ig-legend i::before { content: ''; display: block; }
+.ig-legend .dot::before { width: 6px; height: 6px; border-radius: 50%; background: #0a0a0a; }
+.ig-legend .edge::before { width: 8px; height: 8px; border-radius: 50%; background: #0a0a0a; box-shadow: 0 0 0 5px #f5f5f5, 0 0 0 6.5px #737373; }
+.ig-legend .back::before { width: 11px; height: 11px; background: #0a0a0a; }
+.ig-stage-note { margin: 0; padding-top: 17px; border-top: 1px solid var(--line); font: 500 14px/1.3 var(--mono); color: #525252; min-height: 2.6em; }
+.ig-stage-note.down { color: #0a0a0a; }
+
+.ig-globe { grid-column: 5 / -1; justify-self: center; position: relative; width: min(100%, 600px); aspect-ratio: 1; }
+.ig-globe-disc { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle closest-side, #fff 0 92%, transparent 92.4%); cursor: grab; touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+.ig-globe[data-drag] .ig-globe-disc { cursor: grabbing; }
+.ig-globe-disc:focus { outline: none; }
+.ig-globe-disc:focus-visible { outline: 2px solid #0a0a0a; outline-offset: -2%; box-shadow: 0 0 0 4px #fff inset; }
+.ig-globe-disc canvas { display: block; width: 100%; height: 100%; }
+.ig-globe-pause { top: 0; right: 0; }
+
+/* entrance 1, side-carousel: the six facts on a snapping track; the cards glide in from the right and snap */
+.ig-facts { padding: clamp(72px, 9vw, 140px) 0 clamp(44px, 5vw, 72px); }
+.ig-facts-h { margin-bottom: 44px; }
+.ig-edge { max-width: 11ch; margin: 0; }
+.ig-car { --gut: max(24px, calc((100% - 1440px) / 2)); }
+.ig-car-track { list-style: none; margin: 0; padding: 0 var(--gut) 4px; display: grid; grid-auto-flow: column; grid-auto-columns: min(80%, 1080px); gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); scrollbar-width: none; }
+.ig-car-track::-webkit-scrollbar { display: none; }
+.ig-car-track:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; border-radius: 24px; }
+.ig-car-card { scroll-snap-align: start; display: flex; transition: transform .9s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i) * 60ms); }
+.js .ig-car:not([data-in]) .ig-car-card { transform: translateX(calc(42vw + var(--i) * 72px)); }
+.ig-fact { flex: 1; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(24px, 3vw, 44px); align-items: center; min-height: 460px; padding: clamp(24px, 3vw, 44px); border-radius: 24px; background: #f5f5f5; box-sizing: border-box; }
+.ig-fact.s1 { background: #ededed; }
+.ig-fact-l .v2-headline { margin: 0; }
+.ig-fact-l .v2-kick { margin: 10px 0 24px; }
+.ig-fact-l .v2-body { color: #525252; }
+.ig-fact-r { align-self: stretch; min-height: 380px; display: flex; align-items: center; justify-content: center; border-radius: 20px; background: #fff; padding: clamp(24px, 2.6vw, 40px); box-sizing: border-box; }
+.ig-car-nav { width: min(100% - 48px, 1440px); margin: 17px auto 0; display: flex; justify-content: flex-end; gap: 8px; }
+.ig-car-nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .12); background: #fff; color: #0a0a0a; font: 500 16px/1 var(--sans); cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+.ig-car-nav button:active:not(:disabled) { transform: scale(.97); transition-duration: 90ms; }
+.ig-car-nav button:disabled { color: #a3a3a3; cursor: default; }
+.ig-car-nav button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; box-shadow: 0 0 0 4px #fff; }
+@media (hover: hover) { .ig-car-nav button:not(:disabled):hover { background: #0a0a0a; color: #fff; } }
+
+/* entrance 2, stretch-scroll: the board arrives stretched from its top edge and relaxes (the jsx eases it back and
+   stretches it a little with scroll speed while it is on screen) */
+.ig-board-s { padding: clamp(44px, 6vw, 96px) 0 clamp(72px, 8vw, 116px); }
+.ig-stretch-in { will-change: transform; }
+.js .ig-stretch:not([data-in]) .ig-stretch-in { transform: translateY(48px) scaleY(1.16); transform-origin: 50% 0%; }
+
+/* entrance 3, inertia-drag: the prompt card is thrown in from the left and coasts to rest; drag and throw it */
+.ig-throw { overflow-x: clip; }
+.ig-throw .sp-card { transform: translateX(var(--tx, 0px)); touch-action: pan-y; cursor: grab; }
+.ig-throw[data-drag] .sp-card { cursor: grabbing; -webkit-user-select: none; user-select: none; }
+.js .ig-throw:not([data-in]) { --tx: calc(min(520px, 42vw) * -1); }
+
+/* entrance 4, count-roll: the pipeline's step numbers roll up into their values (the digits are text in the HTML) */
+.ig-roll { position: relative; display: inline-block; }
+.ig-roll-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.ig-roll-s { display: inline-flex; }
+.ig-roll-c { display: inline-block; height: 1em; line-height: 1; overflow: hidden; }
+.ig-roll-c > span { display: flex; flex-direction: column; transform: translateY(calc((var(--d) + 10) * -1em)); transition: transform .9s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(.15s + var(--j) * 80ms); }
+.ig-roll-c i { display: block; height: 1em; font-style: normal; font-variant-numeric: tabular-nums; }
+.js .ig-pipe:not([data-in]) .ig-roll-c > span { transform: translateY(0); }
+
+/* entrance 5, curtain-rise: the close rises from below behind a clip */
+.ig-curtain-in { transition: clip-path 1s cubic-bezier(.16, 1, .3, 1), transform 1s cubic-bezier(.16, 1, .3, 1); }
+.js .ig-curtain:not([data-in]) .ig-curtain-in { clip-path: inset(100% 0 0 0); transform: translateY(96px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ig-car-card, .ig-roll-c > span, .ig-curtain-in { transition: none; }
+}
 
 .ig-board { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr) minmax(0, 1fr); gap: clamp(16px, 2vw, 32px); padding: clamp(24px, 2.8vw, 40px); border-radius: 28px; background: linear-gradient(180deg, #f7f7f7, #f2f2f2); }
 .ig-board-t { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 0; font: 500 13px/1 var(--mono); color: var(--soft); }
 .ig-board-t i { width: 8px; height: 8px; border-radius: 99px; background: var(--ink); }
 .ig-col { display: flex; flex-direction: column; gap: 10px; }
 .ig-col.mid { justify-content: center; }
+/* the chain box holds two chips' height and sits from the top, so the column never re-centres as chips swap */
+.ig-col.mid .ig-chain { min-height: 84px; justify-content: flex-start; }
 .ig-k { margin: 0 0 6px; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 /* tiles are flat; the one being hit takes a 2px ring (outline only, no raise) */
 .ig-host, .ig-svc { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 0 18px; border-radius: 16px; background: #fff; font: 500 clamp(14px, 1.2vw, 17px)/1.2 var(--mono); transition: box-shadow .3s var(--e), transform .3s var(--e); }
 .ig-host.hit, .ig-svc.hit { box-shadow: 0 0 0 2px var(--glow); transform: translateX(4px); }
-.ig-host em { font-style: normal; color: var(--faint); }
-.ig-lock { color: #525252; display: grid; }
+.ig-host em { font-style: normal; color: var(--faint); margin-right: -10px; }
+.ig-svc .ig-pods:first-child { margin-left: 0; }
+.ig-lock { flex: none; color: #525252; display: grid; }
 .ig-lock svg { fill: none; stroke: currentColor; stroke-width: 1.6; }
 .ig-lock.wait { color: var(--faint); }
 .ig-cert { margin-left: auto; font-size: 12px; color: var(--faint); white-space: nowrap; }
@@ -39,16 +114,7 @@
 .ig-note { margin: 6px 0 0; font: 500 13px/1.3 var(--mono); color: #525252; }
 .ig-note.down { color: #262626; }
 
-/* six scenes that wipe up; the section's h2 rides in the first scene, so no screen holds a heading alone */
-.ig-scene { height: 100%; display: flex; align-items: center; background: #fff; }
-.ig-scene.s1 { background: #f6f6f6; }
-.ig-scene.s2 { background: #fafafa; }
-.ig-scene-g { align-items: center; padding-top: 56px; }
-.ig-scene-l { grid-column: 1 / span 5; }
-.ig-scene-l .v2-headline { margin: 22px 0 24px; }
-.ig-edge { max-width: 11ch; margin: 0 0 44px; }
-/* the moment's card floats (a raise, no outline) */
-.ig-scene-r { grid-column: 7 / -1; min-height: 420px; display: flex; align-items: center; justify-content: center; border-radius: 28px; background: #fff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); padding: clamp(28px, 3vw, 48px); box-sizing: border-box; }
+/* each fact's drawing plays once as its card comes into view */
 .ig-d { --e: cubic-bezier(.16, 1, .3, 1); }
 
 /* 01 sources: the primary source lands, the other three slide up into it, then the default IngressClass ticks on */
@@ -70,9 +136,13 @@
 .ig-d-cert p { margin: 8px 0 0; font: 500 15px/1.3 var(--mono); color: var(--soft); }
 .ig-d-cert .t { margin-top: 20px; font: 600 clamp(36px, 3.6vw, 56px)/1 var(--sans); letter-spacing: -.045em; color: var(--ink); }
 .ig-d-cert .w { display: inline-block; margin-top: 18px; padding: 8px 14px; border-radius: 999px; background: rgba(115, 115, 115, .1); color: var(--acc); }
+/* the new hostname arrives first, then its certificate closes on it */
+.ig-d-cert .h { margin: 0 0 22px; }
+.ig-d-cert .h span { display: inline-block; padding: 10px 16px; border-radius: 12px; background: #f5f5f5; font: 500 clamp(15px, 1.3vw, 18px)/1 var(--mono); color: var(--ink); }
 .js .ig-d-cert:not(.play) .sh { stroke-dashoffset: 1; transform: translateY(-7px); }
 .js .ig-d-cert:not(.play) p { opacity: 0; }
-.ig-d-cert.play .sh { animation: ig-shut .9s var(--e) both; }
+.ig-d-cert.play .h { animation: ig-up .6s var(--e) both; }
+.ig-d-cert.play .sh { animation: ig-shut .9s var(--e) .2s both; }
 .ig-d-cert.play .t { animation: ig-up .7s var(--e) .6s both; }
 .ig-d-cert.play .r { animation: ig-up .6s var(--e) .72s both; }
 .ig-d-cert.play .w { animation: ig-up .6s var(--e) .84s both; }
@@ -81,7 +151,7 @@
 .ig-d-mw { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .ig-d-mw span { position: relative; overflow: hidden; padding: 14px 18px; border-radius: 999px; background: #f5f5f5; font: 500 clamp(14px, 1.2vw, 17px)/1 var(--mono); }
 .ig-d-mw span:nth-child(3n + 1) { background: var(--acc); color: #fff; }
-.ig-d-mw span:nth-child(3n + 1)::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle 4px at 10px 50%, #fff 90%, transparent 100%); opacity: 0; pointer-events: none; }
+.ig-d-mw span:nth-child(3n + 1)::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle 3px at 10px calc(100% - 6px), #fff 90%, transparent 100%); opacity: 0; pointer-events: none; }
 .js .ig-d-mw:not(.play) span { opacity: 0; }
 .ig-d-mw.play span { animation: ig-chip .5s var(--e) both; animation-delay: calc(var(--d) * 60ms); }
 .ig-d-mw.play span:nth-child(3n + 1)::after { animation: ig-pass .7s cubic-bezier(.4, 0, .2, 1) both; animation-delay: calc(.75s + var(--k) * 520ms); }
@@ -131,7 +201,7 @@
 .ig-pipe { padding: clamp(120px, 16vw, 240px) 0; }
 .ig-pipe .v2-grid { align-items: start; }
 .ig-pipe-l { grid-column: 1 / span 6; }
-.ig-pipe-l .v2-display { margin: 0 0 22px; }
+.ig-pipe-h { margin: 0; max-width: 24ch; color: #fafafa; }
 .ig-pipe-pick { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 36px; }
 .ig-pipe-pick button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); background: transparent; color: #a3a3a3; font: 500 15px/1 var(--sans); cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .ig-pipe-pick button[aria-pressed='true'] { background: var(--glow); border-color: var(--glow); color: #000; }
@@ -140,6 +210,7 @@
 .ig-pipe-run { grid-column: 8 / -1; position: relative; padding: 28px; border-radius: 28px; background: #171717; }
 .ig-pipe-end { margin: 0; padding: 10px 0; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #a3a3a3; text-align: center; transition: color .15s cubic-bezier(0, 0, .2, 1); }
 .ig-pipe-end.lit { color: #fafafa; }
+.ig-pipe-end:first-child { text-transform: none; letter-spacing: .04em; }
 .ig-pipe-chain { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 8px; }
 .ig-pipe-chain li { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 0 10px 0 20px; border-radius: 16px; background: #262626; color: #f5f5f5; font: 500 18px/1 var(--sans); cursor: grab; touch-action: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
 .ig-pipe-chain li.lit { background: #e5e5e5; color: #000; }
@@ -158,8 +229,9 @@
   .ig-pipe-mv button:not(:disabled):hover { background: rgba(255, 255, 255, .14); color: #fafafa; }
 }
 .ig-pipe-none { margin: 12px 0; text-align: center; color: #a3a3a3; }
-/* the request: an 8px dot on the left rail that steps to each row it lights */
-.ig-pipe-walk { position: absolute; left: 10px; top: 0; width: 8px; height: 8px; border-radius: 99px; background: #fafafa; opacity: 0; pointer-events: none; transition: transform .3s cubic-bezier(.4, 0, .2, 1), opacity .15s cubic-bezier(0, 0, .2, 1); }
+/* the request: an 8px dot inside the rows' left edge that steps to each row it lights (difference blend keeps it
+   readable on the dark rows and the lit one) */
+.ig-pipe-walk { position: absolute; left: 34px; top: 0; mix-blend-mode: difference; width: 8px; height: 8px; border-radius: 99px; background: #fafafa; opacity: 0; pointer-events: none; transition: transform .3s cubic-bezier(.4, 0, .2, 1), opacity .15s cubic-bezier(0, 0, .2, 1); }
 .ig-pipe-walk.on { opacity: 1; }
 
 @media (max-width: 900px) {
@@ -171,6 +243,7 @@
   .ig-col { gap: 8px; }
   .ig-col.mid .ig-k { margin-bottom: 2px; }
   .ig-chain { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  .ig-col.mid .ig-chain { min-height: 33px; }
   .ig-chain span { padding: 10px 12px; border-radius: 10px; font-size: 13px; }
   .ig-wire { margin-top: 6px; }
   .ig-scene { padding: 72px 0; }
@@ -180,8 +253,24 @@
   .ig-d-live .pods i { width: 48px; height: 48px; }
   .ig-pipe { padding: 120px 0; }
   .ig-pipe-run { margin-top: 32px; padding: 16px; }
-  .ig-pipe-walk { left: 4px; }
+  .ig-pipe-walk { left: 22px; }
+  .ig-pipe-chain li { padding-left: 22px; }
 }
+
+/* the hero ask (shared Cta, styled here): hover darkens on the deck ramp and an arrow parts 4px to say "this leaves" */
+.ig-hero-b .x-btn.solid::after { content: ''; width: 14px; height: 14px; margin-left: 2px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .ig-hero-b .x-btn.solid:hover { background: #262626; border-color: #262626; }
+  .ig-hero-b .x-btn.solid:hover::after { transform: translateX(4px); }
+}
+
+/* the closing band (shared GetIt, spaced here): the h2, its caption and the tag on golden steps */
+.ig .gi-h { margin-bottom: 0; }
+.ig .gi-lead { margin-top: 17px; line-height: 1.4; }
+.ig .gi-tag { margin-top: 27px; }
+
+/* the agent prompt (shared ShipPrompt): it wraps, so the whole command you copy is in view at every width */
+.ig .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 /* the live object's pause control */
 .ig-pause { top: 14px; right: 14px; }

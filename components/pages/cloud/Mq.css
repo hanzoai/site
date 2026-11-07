@@ -3,12 +3,76 @@
    kit's sizes (h1 52, headings 26, the one figure 64); this file only sets the objects. */
 .mq { --fill: #f2f2f2; --rule: rgba(0, 0, 0, .16); }
 
-/* hero: the name left (8), its line and the one ask right (5), bottom-aligned; the live conveyor whole beneath */
-.mq-hero { padding: clamp(56px, 11svh, 120px) 0 clamp(72px, 9vw, 120px); }
-.mq-top { display: grid; grid-template-columns: 8fr 5fr; gap: 16px clamp(24px, 4vw, 56px); align-items: end; }
+/* hero: the name, its line, the one ask and the globe's key left (5); the globe right (8), in the quiet room */
+.mq-hero { position: relative; padding: clamp(24px, 4svh, 48px) 0; }
+.mq-shrink-bg { position: absolute; inset: 0; background: #f5f5f5; transform-origin: 50% 0; }
+.mq-shrink-in { position: relative; transform-origin: 50% 0; }
+.mq-top { display: grid; grid-template-columns: 5fr 8fr; gap: 16px clamp(24px, 4vw, 56px); align-items: center; }
 .mq-lead { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
 .mq-sub { color: var(--ink); }
-.mq-stage { margin-top: clamp(32px, 5svh, 48px); }
+.mq-key { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 18px; font: 500 13px/1 var(--mono); color: var(--muted); }
+.mq-key li { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.mq-key i { width: 10px; height: 10px; box-sizing: border-box; flex: none; }
+.mq-key .q i { border-radius: 50%; border: 1.6px solid var(--ink); background: #fff; }
+.mq-key .w i { width: 8px; height: 8px; background: var(--ink); }
+.mq-key .ok i { border-radius: 50%; border: 1.2px solid var(--ink); opacity: .6; width: 12px; height: 12px; }
+.mq-key .back i { border-radius: 50%; border: 1.2px dashed var(--ink); width: 12px; height: 12px; }
+.mq-key .bad i { position: relative; border-radius: 50%; border: 1.2px dashed var(--ink); width: 12px; height: 12px; background: linear-gradient(45deg, transparent 44%, var(--ink) 44% 56%, transparent 56%), linear-gradient(-45deg, transparent 44%, var(--ink) 44% 56%, transparent 56%); }
+
+/* the globe: a fixed box, so it never shifts the page */
+.mq-globe { position: relative; }
+.mq-globe-pause { top: 0; right: 0; }
+.mq-globe-cv { position: relative; height: clamp(360px, calc(100svh - 150px), 660px); cursor: grab; touch-action: pan-y; outline: none; border-radius: 24px; -webkit-user-select: none; user-select: none; }
+.mq-globe-cv[data-drag] { cursor: grabbing; }
+.mq-globe-cv:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); }
+.mq-globe-cv canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.mq-globe-still { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: rgba(0, 0, 0, .16); stroke-width: .5; transition: opacity .3s var(--e-out); }
+.mq-globe[data-ready] .mq-globe-still { opacity: 0; }
+
+/* 2 · the conveyor, opened by an iris */
+.mq-convsec { padding: clamp(56px, 8vw, 116px) 0 0; }
+.mq-stage { border-radius: 24px; border: 1px solid var(--line); overflow: hidden; }
+.mq-iris[data-iris='armed'] .mq-iris-in { clip-path: circle(0% at 50% 50%); }
+.mq-iris[data-iris='play'] .mq-iris-in { clip-path: circle(75% at 50% 50%); transition: clip-path .9s cubic-bezier(.4, 0, .2, 1); }
+
+/* 3 · the facts, decoded: the heading and the inspector, then six facts in two columns */
+.mq-facts-top { display: grid; grid-template-columns: 5fr 8fr; gap: 32px clamp(32px, 5vw, 72px); align-items: start; margin-bottom: clamp(44px, 5vw, 72px); }
+.mq-facts-h { max-width: 14ch; }
+.mq-facts-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 clamp(32px, 5vw, 72px); }
+.mq-facts-list li { padding: 24px 0 28px; border-top: 1px solid var(--line); transition: border-color .3s var(--e-io); }
+.mq-facts-list li.on { border-top-color: var(--ink); }
+.mq-facts-n { display: block; margin-bottom: 14px; font: 500 12px/1 var(--mono); letter-spacing: .14em; color: var(--muted); }
+.mq-facts-t { margin: 0 0 10px; font: 497 17px/1.3 var(--sans); letter-spacing: -.01em; }
+.mq-facts-t button { padding: 0; border: 0; background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; transition: text-decoration-color .15s var(--e-out), transform .15s var(--e-out); touch-action: manipulation; }
+.mq-facts-t button:active { transform: translateY(1px); transition-duration: .09s; }
+.mq-facts-list li.on .mq-facts-t button { text-decoration-color: currentColor; }
+.mq-facts-list p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--muted); max-width: 52ch; }
+@media (hover: hover) { .mq-facts-t button:hover { text-decoration-color: rgba(0, 0, 0, .3); } }
+.mq-scr { position: relative; display: inline; }
+.mq-scr-f { display: none; }
+.mq-scr[data-on] .mq-scr-r { visibility: hidden; }
+.mq-scr[data-on] .mq-scr-f { display: block; position: absolute; inset: 0; white-space: inherit; color: inherit; }
+.mq-facts-h .mq-scr { display: inline-block; }
+
+/* 4 · the free tier's figure rolls each digit into place */
+.mq-rl { display: inline-flex; line-height: 1; }
+.mq-rl-d { position: relative; display: inline-block; height: 1em; overflow: hidden; }
+.mq-rl-w { visibility: hidden; display: block; }
+.mq-rl-s { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; transform: translateY(calc(var(--d) * -1em)); }
+.mq-rl-s span { display: block; height: 1em; text-align: center; }
+.mq-rl-c { display: inline-block; }
+.mq-roll[data-roll='armed'] .mq-rl-s { transform: translateY(0); }
+.mq-roll[data-roll='armed'] .mq-rl-c { opacity: 0; transform: translateY(.4em); }
+.mq-roll[data-roll='play'] .mq-rl-s { transition: transform 1.2s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 120ms); }
+.mq-roll[data-roll='play'] .mq-rl-c { transition: opacity .3s cubic-bezier(.16, 1, .3, 1) .5s, transform .3s cubic-bezier(.16, 1, .3, 1) .5s; }
+
+/* 5 · the lens over worker.ts */
+.mq-lens-box { position: relative; min-width: 0; }
+.mq-lens { position: absolute; left: 0; top: 0; width: 176px; height: 176px; margin: -88px 0 0 -88px; border-radius: 50%; overflow: hidden; pointer-events: none; background: #171717; transform: translate(var(--x, 0px), var(--y, 0px)); opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); z-index: 2; }
+.mq-lens::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
+.mq-lens[data-on='1'] { opacity: 1; }
+.mq-lens-copy { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: translate(calc(88px - var(--x, 0px) * 1.6), calc(88px - var(--y, 0px) * 1.6)) scale(1.6); }
+.mq-lens-copy .cf-code { margin: 0; }
 
 /* the conveyor */
 .mq-conv { position: relative; background: #fff; }
@@ -81,7 +145,7 @@
 .mq-tabs button:active { transform: scale(.97); transition-duration: .09s; }
 .mq-tab-u { position: absolute; left: 9px; right: 9px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--ink); }
 @media (hover: hover) { .mq-tabs button:not([aria-current]):hover { color: var(--ink); box-shadow: inset 0 -2px 0 var(--rule); } }
-.mq-ins-body { padding: 28px; min-height: 372px; }
+.mq-ins-body { padding: 28px; height: 384px; overflow: hidden; }
 .mq-p { display: flex; flex-direction: column; gap: 16px; }
 .mq-pk { margin: 0; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 /* intro: rows of data and two workers */
@@ -175,10 +239,17 @@
 .mq-spec .lx-spec-v { font-family: var(--sans); font-size: 32px; letter-spacing: -.02em; white-space: normal; }
 
 @media (max-width: 899px) {
-  .mq-hero { padding: 32px 0 64px; }
+  .mq-hero { padding: 28px 0 24px; }
   .mq-top { grid-template-columns: minmax(0, 1fr); }
   .mq-lead { gap: 16px; }
-  .mq-stage { margin-top: 28px; }
+  .mq-key { margin-top: 8px; gap: 10px 14px; }
+  .mq-globe-cv { height: 360px; }
+  .mq-convsec { padding-top: 56px; }
+  .mq-stage { border-radius: 16px; }
+  .mq-facts-top { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-bottom: 40px; }
+  .mq-facts-list { grid-template-columns: minmax(0, 1fr); }
+  .mq-facts-list p { font-size: 15px; }
+  .mq-lens { display: block; }
   .mq-bar { height: 52px; padding: 0 62px 0 16px; gap: 10px; }
   .mq-chip, .mq-lim, .mq-tk span, .mq-tabs button, .mq-sched li span, .mq-proc, .mq-store, .mq-pri li span, .mq-at, .mq-lock span:not(.mq-lock-k), .mq-fail-h span, .mq-rows li, .mq-ev-row p, .mq-stream p { font-size: 14px; }
   .mq-peek { display: none; }
@@ -188,13 +259,13 @@
   .mq-lane:first-child .mq-stack > :nth-child(n + 4), .mq-lane:nth-child(3) .mq-stack > :nth-child(n + 3) { display: none; }
   .mq-ev { display: none; }
   .mq-ins { border-radius: 16px; }
-  /* the inspector keeps one height on phones, so a chapter's words never move when the panel changes */
-  .mq .lx-pin[data-live] .mq-ins { height: 44svh; }
   .mq-ins .mq-pause { top: 2px; right: 4px; }
   .mq-ins-bar { height: 48px; padding: 0 54px 0 12px; }
-  .mq-tabs button { display: none; height: 48px; }
-  .mq-tabs button[aria-current] { display: block; }
-  .mq-ins-body { padding: 12px 14px; min-height: 0; }
+  .mq-ins-bar > .mq-chip { display: none; }
+  .mq-tabs { overflow-x: auto; scrollbar-width: none; }
+  .mq-tabs button { height: 48px; }
+  /* one height on phones, so the facts below never move when the panel changes */
+  .mq-ins-body { padding: 12px 14px; min-height: 0; height: 290px; overflow: hidden; }
   .mq-p { gap: 10px; }
   .mq-held { gap: 6px; }
   .mq-proc, .mq-store { height: 36px; }

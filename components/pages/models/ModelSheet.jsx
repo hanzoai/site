@@ -1,5 +1,5 @@
 'use client';
-// V2: 8/10 (own estimate; critic pending) a model launch: name and three figures, the model's Sigil with its id, a sticky local nav, spec, quick start, Hanzo's 'More from' chapter with the field, the bill and Hanzo's cards
+// V2: 8/10 (own estimate; critic pending) no card leaves the site unannounced (rail = pages here, ≤6; the rest one-line rows, ↗ in a new tab); spec in 4.7's four groups with drawn rates; Kai's Limits drawn; field padded and labelled; maker shelf as 72px rows; Copy 44px + status; no hydration mismatch
 // Persona: Developer picking a model. Goal: pick it and try it. CTA: the page's first action in Hanzo's words (usually "Get API key"). Metric: api_key_created.
 // Signature: the open. The card you pressed on /models (or a sibling) lands as this page's name (morph), and the page answers with the model's own living contour field.
 // Beyond: the bill comparer. Set a monthly volume, pick any sibling, see both bills and the context each gives, from Hanzo's own rates (rate × volume, nothing estimated).
@@ -221,7 +221,7 @@ export default function ModelSheet({ doc }) {
           <div className="x-wrap xmf-quick-g">
             <header className="xmf-sh dark">
               <h2>{doc.quick.title}</h2>
-              <p className="x-mono xmf-quick-id">{doc.id}</p>
+              <p className="x-mono xmf-quick-id"><i className="xmf-live" aria-hidden="true" />{doc.id}</p>
             </header>
             <Codes samples={doc.quick.samples} keyLink={doc.quick.key} title={doc.quick.title} />
           </div>

@@ -1,4 +1,4 @@
-// Signature: the container comes apart: six slabs pressed into one box explode upward, then each layer lifts out and opens as you scroll (components/pages/Operative.jsx)
+// Signature: live-chat: pick an objective and Operative answers on screen while the hero desktop acts it out (components/pages/Operative.jsx)
 // Beyond: pick the provider and only the one environment variable in the command changes; the container stays the same
 import Operative from '../../components/pages/Operative';
 import JsonLd from '../../components/JsonLd';

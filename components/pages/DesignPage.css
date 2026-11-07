@@ -276,6 +276,77 @@
 .x-band h2.dz-band-h { font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: 1.08; max-width: 16ch; }
 .dz-band .x-arrow { color: #fafafa; }
 
+.dz-ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.dz-ln-in { display: block; }
+.js .dz-ln-in { animation: dz-ln .7s cubic-bezier(.16, 1, .3, 1) calc(.05s + var(--i) * .06s) both; }
+@keyframes dz-ln { from { transform: translateY(108%); } to { transform: none; } }
+
+/* ---------- section entrances, one per section (set by useEnter in DesignPage.jsx) ---------- */
+/* 1 drop-in: the section's two rows fall in from above and settle with a small bounce */
+.dz-e-drop[data-enter='pre'] > .av-wrap { opacity: 0; transform: translateY(-72px); }
+.dz-e-drop[data-enter='go'] > .av-wrap { animation: dz-drop .9s cubic-bezier(.16, 1, .3, 1) both; }
+.dz-e-drop[data-enter='go'] > .av-wrap + .av-wrap { animation-delay: .14s; }
+@keyframes dz-drop { 0% { opacity: 0; transform: translateY(-72px); } 55% { opacity: 1; transform: translateY(8px); } 78% { transform: translateY(-3px); } 100% { opacity: 1; transform: none; } }
+/* 2 explode-gather: the six model cards start flung apart and collapse into the grid */
+.dz-e-gather .dz-models li { transition: transform 1s cubic-bezier(.16, 1, .3, 1), opacity .6s cubic-bezier(0, 0, .2, 1); }
+.dz-e-gather[data-enter='pre'] .dz-models li { opacity: 0; transition: none; }
+.dz-e-gather[data-enter='pre'] .dz-models li:nth-child(1) { transform: translate(-140px, -90px) rotate(-14deg) scale(.82); }
+.dz-e-gather[data-enter='pre'] .dz-models li:nth-child(2) { transform: translate(40px, -160px) rotate(10deg) scale(.82); }
+.dz-e-gather[data-enter='pre'] .dz-models li:nth-child(3) { transform: translate(180px, -60px) rotate(16deg) scale(.82); }
+.dz-e-gather[data-enter='pre'] .dz-models li:nth-child(4) { transform: translate(-170px, 80px) rotate(12deg) scale(.82); }
+.dz-e-gather[data-enter='pre'] .dz-models li:nth-child(5) { transform: translate(-20px, 170px) rotate(-10deg) scale(.82); }
+.dz-e-gather[data-enter='pre'] .dz-models li:nth-child(6) { transform: translate(160px, 110px) rotate(-16deg) scale(.82); }
+.dz-e-gather[data-enter='go'] .dz-models li:nth-child(2) { transition-delay: .05s; } .dz-e-gather[data-enter='go'] .dz-models li:nth-child(3) { transition-delay: .1s; }
+.dz-e-gather[data-enter='go'] .dz-models li:nth-child(4) { transition-delay: .15s; } .dz-e-gather[data-enter='go'] .dz-models li:nth-child(5) { transition-delay: .2s; }
+.dz-e-gather[data-enter='go'] .dz-models li:nth-child(6) { transition-delay: .25s; }
+.dz-dark { overflow: hidden; }
+/* 3 opposite-drift: the brief's two halves drift in opposite directions with scroll and meet when centred */
+.dz-e-drift .dz-brief-l { transform: translate3d(calc(var(--dz-d, 0) * -96px), 0, 0); }
+.dz-e-drift .dz-brief-r { transform: translate3d(calc(var(--dz-d, 0) * 96px), 0, 0); }
+.dz-brief { overflow: hidden; }
+/* 4 word-shuffle (driven in JS, see shuffleIn): words are inline-block so they can move */
+.dz-sw { display: inline-block; white-space: pre; will-change: transform; }
+.dz-shuf { white-space: normal; }
+/* 5 count-roll: each "0n / 06" rolls in a digit at a time */
+.dz-sheet-n { display: inline-block; overflow: hidden; }
+.dz-sheet-n.roll { animation: dz-roll .11s cubic-bezier(0, 0, .2, 1); }
+@keyframes dz-roll { from { transform: translateY(60%); opacity: .3; } to { transform: none; opacity: 1; } }
+.dz-e-roll[data-enter='pre'] .dz-sheet { opacity: .35; }
+.dz-e-roll .dz-sheet { transition: opacity .6s cubic-bezier(0, 0, .2, 1); }
+@media (prefers-reduced-motion: reduce) { .dz-e-drift .dz-brief-l, .dz-e-drift .dz-brief-r { transform: none; } }
+
+/* ---------- motion map: compare. The raw upload left, what it became right; drag the divider ---------- */
+.dz-cmp-g { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 44px; align-items: center; margin-top: clamp(44px, 5vw, 72px); }
+.dz-cmp { --x: 50%; position: relative; height: min(560px, 66svh); border-radius: 24px; overflow: hidden; cursor: ew-resize; touch-action: pan-y; user-select: none; background: #f5f5f5; }
+.dz-cmp-a, .dz-cmp-b { position: absolute; inset: 0; }
+.dz-cmp-b { clip-path: inset(0 0 0 var(--x)); }
+.dz-cmp-art { position: absolute; inset: 0; }
+.dz-cmp-art .dz-vis { border-radius: 0; }
+.dz-raw { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: clamp(24px, 4vw, 56px); background: #fafafa; }
+.dz-raw .dz-file { align-self: flex-start; }
+.dz-raw-w { display: flex; align-items: center; gap: 3px; height: 120px; }
+.dz-raw-w i { flex: 1; border-radius: 2px; background: #d4d4d4; }
+.dz-raw .dz-drop { align-self: stretch; min-height: 56px; }
+.dz-cmp-line { position: absolute; top: 0; bottom: 0; left: var(--x); width: 2px; margin-left: -1px; background: #fafafa; box-shadow: 0 0 0 1px #0a0a0a; pointer-events: none; }
+.dz-cmp-h { position: absolute; top: 50%; left: var(--x); display: grid; place-items: center; width: 48px; height: 48px; margin: -24px 0 0 -24px; border: 0; border-radius: 50%; background: #fafafa; color: #0a0a0a; box-shadow: 0 0 0 1px #0a0a0a; cursor: ew-resize; transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+.dz-cmp-h:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
+@media (hover: hover) { .dz-cmp:hover .dz-cmp-h { transform: scale(1.08); } }
+.dz-cmp.held .dz-cmp-h { transform: scale(.97); }
+.dz-steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+.dz-steps li { border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.dz-steps button { display: flex; align-items: baseline; gap: 14px; width: 100%; min-height: 56px; padding: 17px 0 10px; border: 0; background: none; color: #737373; font: 497 17px/1.3 var(--sans); text-align: left; cursor: pointer; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.dz-steps button .x-mono { font-size: 12px; }
+.dz-steps button.on, .dz-steps button:focus-visible { color: #0a0a0a; }
+@media (hover: hover) { .dz-steps button:hover { color: #0a0a0a; } }
+.dz-steps button:active { transform: translateY(1px); }
+.dz-step-b { padding: 0 0 17px 34px; }
+.dz-step-b .av-body { margin: 0; font-size: 15px; }
+.js .dz-steps li:not(:has(button.on)) .dz-step-b { display: none; }
+/* the six capabilities: a plain grid, no sheets stacking on scroll */
+.dz-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.dz-stack .dz-sheet { position: relative; top: auto; display: flex; flex-direction: column; gap: 20px; min-height: 0; margin: 0; }
+.dz-stack .dz-sheet-a { min-height: 220px; }
+
 @media (prefers-reduced-motion: reduce) {
   .dz *, .dz *::before, .dz *::after { animation: none !important; }
   .dz-files-in span { opacity: 1 !important; }
@@ -314,4 +385,11 @@
   .dz-prompt { grid-template-columns: 1fr; }
   .dz-prompt .x-copy { justify-self: start; }
   .x-band h2.dz-band-h { font-size: 32px; }
+  .dz-cmp-g { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .dz-cmp { height: 420px; border-radius: 20px; }
+  .dz-raw-w { height: 80px; gap: 2px; }
+  .dz-steps button { font-size: 16px; }
+  .dz-step-b { padding-left: 30px; }
+  .dz-step-b .av-body { font-size: 14px; }
+  .dz-stack { grid-template-columns: minmax(0, 1fr); }
 }

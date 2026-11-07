@@ -1,0 +1,64 @@
+/* Authz section entrances (see Entrances.jsx). Each runs once, under .9 s, by transform / clip-path / filter only;
+   the written state is the final one, the start state only under html.js before data-in. */
+
+/* 1 curtain-rise: the dark room's top edge rises 160px behind a clip while its contents rise with it */
+@media (prefers-reduced-motion: no-preference) {
+  .js .az-in-curtain:not([data-in]) { clip-path: inset(160px 0 0 0); }
+  .js .az-in-curtain:not([data-in]) > * { transform: translate3d(0, 160px, 0); }
+  .js .az-in-curtain[data-in] { animation: az-curtain .85s cubic-bezier(.16, 1, .3, 1) both; }
+  .js .az-in-curtain[data-in] > * { animation: az-curtain-c .85s cubic-bezier(.16, 1, .3, 1) both; }
+
+  /* 2 vertical-ticker: the spec sheet rides up into place in three ticks, like a departures ticker, inside its own clip */
+  .az-in-ticker .kfs { overflow: clip; }
+  .js .az-in-ticker:not([data-in]) .kfs > .kn-wrap { transform: translate3d(0, 240px, 0); }
+  .js .az-in-ticker[data-in] .kfs > .kn-wrap { animation: az-tick .85s linear both; }
+
+  /* 3 slot-roll: the heading lines, the picker labels and the answer roll down into their slots and settle */
+  .js .az-in-slot:not([data-in]) :is(.az-roll, .az-pk-k, .az-dg-a .az-a-t, .az-dg-w) { transform: translate3d(0, -120%, 0); }
+  .js .az-in-slot[data-in] :is(.az-roll, .az-pk-k, .az-dg-a .az-a-t, .az-dg-w) { animation: az-slot .7s cubic-bezier(.2, .7, .2, 1) both; }
+  .js .az-in-slot[data-in] .az-roll:nth-child(2) { animation-delay: .08s; }
+  .js .az-in-slot[data-in] .az-pk:nth-of-type(2) .az-pk-k { animation-delay: .14s; }
+  .js .az-in-slot[data-in] .az-dg-a .az-a-t { animation-delay: .2s; }
+  .js .az-in-slot[data-in] .az-dg-w { animation-delay: .26s; }
+
+  /* 4 inertia-drag: the example console is thrown in from the right, overshoots, settles (and can be thrown again) */
+  .az-in-throw { overflow-x: clip; }
+  .js .az-in-throw:not([data-in]) .az-throw { transform: translate3d(42vw, 0, 0) rotate(5deg); }
+  .js .az-in-throw[data-in] .az-throw { animation: az-throw .9s cubic-bezier(.12, .9, .25, 1) both; }
+
+  /* 5 spiral-in: the closing room spirals in from the lower left, turning, to its place */
+  .az-in-spiral { overflow: clip; }
+  .js .az-in-spiral:not([data-in]) > * { transform: translate3d(-34%, 26%, 0) rotate(-14deg) scale(.6); }
+  .js .az-in-spiral[data-in] > * { animation: az-spiral .9s cubic-bezier(.3, .7, .2, 1) both; transform-origin: 50% 40%; }
+}
+
+/* the kit's own reveals inside these sections give way to the entrance (one entrance per section) */
+.az-in .knl .knl-t { transform: none !important; transition: none !important; animation: none !important; }
+.az-in .kfs-row { opacity: 1 !important; }
+
+@keyframes az-curtain { from { clip-path: inset(160px 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes az-curtain-c { from { transform: translate3d(0, 160px, 0); } to { transform: none; } }
+@keyframes az-tick {
+  0% { transform: translate3d(0, 240px, 0); }
+  22%, 34% { transform: translate3d(0, 160px, 0); }
+  56%, 68% { transform: translate3d(0, 80px, 0); }
+  100% { transform: none; }
+}
+@keyframes az-slot {
+  0% { transform: translate3d(0, -120%, 0); filter: blur(3px); }
+  60% { transform: translate3d(0, 14%, 0); filter: blur(0); }
+  80% { transform: translate3d(0, -5%, 0); }
+  100% { transform: none; }
+}
+@keyframes az-throw {
+  0% { transform: translate3d(42vw, 0, 0) rotate(5deg); }
+  62% { transform: translate3d(-18px, 0, 0) rotate(-1deg); }
+  82% { transform: translate3d(5px, 0, 0) rotate(.2deg); }
+  100% { transform: none; }
+}
+@keyframes az-spiral {
+  0% { transform: translate3d(-34%, 26%, 0) rotate(-14deg) scale(.6); }
+  40% { transform: translate3d(10%, 12%, 0) rotate(7deg) scale(.82); }
+  72% { transform: translate3d(-3%, 2%, 0) rotate(-2deg) scale(.96); }
+  100% { transform: none; }
+}

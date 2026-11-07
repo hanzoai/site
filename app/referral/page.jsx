@@ -1,6 +1,6 @@
-// Signature: the counts in motion: Referred → Pending → Qualified at display size over a small rail of the link, answering the scroll, with a pause
-// Beyond: the four steps as one object that happens, runs once and rests; pick any step to replay it
-// V2: 8/10 one facet per section, only Hanzo's words; the dark room opens from a card with two pay tracks; closes on the ask; one ask at every width
+// Signature: one referral's journey: a pinned screen where one builder leaves the link and travels Referred → Pending → Qualified, one word big at a time
+// Beyond: the four steps as one continuous strip under their sentences, drawn once; press a step to replay it
+// V2: 8/10 one moment per section, no tiled marquee; the steps are one strip; the close ends on the card at rest; the dark room never crops on phones
 import Referral from '../../components/pages/Referral';
 import JsonLd from '../../components/JsonLd';
 

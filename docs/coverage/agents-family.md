@@ -4,7 +4,8 @@ Page file: `components/pages/crew/AgentRoom.jsx` (+ `AgentRoom.css`, `agentsData
 
 Open copy questions for James: none (the ask labels are the pages' own: "Launch a bot", "Read the docs").
 Shared changes requested (`docs/requests/<page>.md`): none filed. Noted: the shared desktop ask bar floats at the bottom centre over content (MASTER §3.2 rule 6 bans floating pills on desktop); it is the shared chat's to change.
-Forks this page deleted: the hand-made buttons (now kit `Cta`), the hand-made `<pre>` code block (now kit `CodeBlock`), the raw search `<input>` (now kit `Field`), the hand-written h1 line mask (now `Lines`), `Magnetic` and every spring.
+Forks this page deleted: the hand-made buttons (now kit `Cta`), the hand-made `<pre>` code block (now kit `CodeBlock`), `Magnetic` and every spring.
+Page-local on purpose (round 2, docs/review/agents.md): the h1 uses the shared `.x-line` / `.x-line-in` mask markup but its cut-in is CSS under `html.js` (the shared `Lines` writes `translateY(110%)` inline into the server HTML, which hid the h1 until hydration); the find field uses the kit Field's markup and classes (`x-field`, `x-input2`) with a fixed id, because the kit `Field`'s `useId` differed between server and client here (hydration mismatch).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -25,13 +26,14 @@ Done here: parity links 12/12 (crew) and 13/13 (SDK); the server copy's "/home" 
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input (the ring's first turn at 650 ms; the console's first turn at 600 ms)
-- [x] Hero by the shared `Lines` cut-in (`PageHero` is not in the kit yet); nothing above the h1
-- [x] JS off: legible (stage unpins because the pin is scoped to `.js`; checked by screenshot); h1 never at opacity 0
+- [x] Hero headline cuts into its line mask (CSS keyframes under `html.js`, 1.1 s ease-emphasis, from first paint); nothing above the h1
+- [x] JS off: legible (no inline transform or opacity in the server HTML; the stage unpins because the pin is scoped to `.js`; checked by screenshot with JavaScript disabled at both sizes)
+- [x] The ring is server-rendered in its start pose (`--from` / `--low` on the stage, the same scale and offset the scroll scrub starts from) with "Antje · 01 / 10" in the hub, so nothing moves at hydration
 - [x] One idea per 100svh: stage (chapter one hands to chapter two), room / sheets, spec, code, close
 - [x] Ends in the close's object (crew faces / install terminal), then the footer (no `Band`: the live page has no band copy)
 - [x] n/a card-to-page Morph: no card here leads to a page with a hero image
 
-Done here: crew first screen: 52px h1, ring passing the turn, "Launch a bot"; SDK: h1, console typing its first turn, "Read the docs".
+Done here: screenshot 500 ms after the h1 reaches the DOM (warm load): crew shows h1, lede, "Launch a bot" and the ring with Antje; SDK shows h1, lede and "Read the docs" beside the console.
 
 ## 4. Conversion system
 - [x] `<Cta>` only for solids; secondary actions are text links with a chevron
@@ -52,7 +54,7 @@ Done here: the Bots room's sketch is drawn only from the screenshot's own alt te
 ## 6. Content presentation (copy untouched)
 - [x] No text under 13px except 12px Zen Mono capitals (kickers, counters, table-free labels)
 - [x] Headings 12–18ch with `text-wrap: balance`; body 64ch
-- [x] Code uses the kit `CodeBlock`; the search uses the kit `Field`; n/a tables, FAQ
+- [x] Code uses the kit `CodeBlock`; the search uses the kit Field's markup and classes (fixed id, see the note above); n/a tables, FAQ
 - [x] `parity.py`: crew 31/31, SDK 94/94
 
 Done here: deck sizes only: 52 (h1, 40 on phones), 44 (close), 32 (hub name), 26 (sections), 21 (lede), 17, 16, 14, 13, 12.
@@ -60,7 +62,7 @@ Done here: deck sizes only: 52 (h1, 40 on phones), 44 (close), 32 (hub name), 26
 ## 7. Visual design system
 - [x] `taste.py` passes; colours are page-local custom properties holding deck values (no `tokens.css` on the branch yet)
 - [x] No label above a headline: every kicker sits under its heading
-- [x] Radii 24 tiles, 20 art, 6 chips, full buttons; no tile has both an outline and a shadow (no shadows at all)
+- [x] Radii 24 tiles, 20 art, 6 chips, full buttons; no tile has both an outline and a shadow (no drop shadows; the stacked sheets carry only a 1px hairline on their top edge so each covered sheet's strip reads)
 - [x] n/a icon set: no icons beyond the kit chevron
 - [x] Differs from neighbours: ring / console heroes, not the /agents index's stack
 
@@ -70,10 +72,10 @@ Done here: one black room (crew Bots room) or one graphite room (SDK code), each
 - [x] Every control has hover (fill or underline, chevron nudge, inside `@media (hover:hover)`), press (scale .97 / 1px), focus-visible
 - [x] Focus ring visible: seats outline 6px, kit controls use the shared ring
 - [x] n/a dialogs: none
-- [x] The search field is the kit's 16px `Field`
+- [x] The search field has the kit field's 16px look; the browser's webkit search-cancel × is hidden and the field has its own 44×44 clear button (hover fill, press .97, focus ring, Escape also clears)
 - [x] Forks deleted: listed above
 
-Done here: a script hovered all 25 crew and 27 SDK controls at 1440×900: every one changes position, ring or shadow except the fill-only ones (pip/cargo, Copy, the Dark/Light toggle), whose hover is a background fill.
+Done here: the close's face links lift 6px, turn ink and show the agent's name on hover; seats and the Bots room toggle keep their earlier answers.
 
 ## 9. Motion and interaction
 - [x] Signature (who has the turn) + 3: pinned stage scrub, ink that slides (layoutId, tweened), room clip opening; `variety.py` OK (4)
@@ -85,12 +87,12 @@ Done here: a script hovered all 25 crew and 27 SDK controls at 1440×900: every 
 Done here: no springs anywhere (deck tweens: 400 ms ease-in-out baton, 400 ms ease-emphasis ink and entrances, 1.1 s room opening).
 
 ## 10. Media
-- [x] Faces and the Bots room screenshots by Hanzo's paths as backgrounds over a letter / sketch fallback (n/a `Film`, `Pic`: no video; no raw `<img>`)
+- [x] Faces and the Bots room screenshots by Hanzo's paths as backgrounds over a designed fallback (n/a `Film`, `Pic`: no video; no raw `<img>`)
 - [x] n/a videos
 - [x] Alt: the screenshot carries its own alt via `role="img"`; faces are decorative
 - [x] No dimmed photo
 
-Done here: images 404 in the cloud sandbox (hanzo.ai blocked), so the films show the letter monograms and the room sketch; on localhost the dev proxy loads Hanzo's pictures.
+Done here: the pictures 404 on this dev server, so every face shows its greyscale mark: the initial, the seat number in mono (Des 02, Dev 03, so no two marks match) and a dot on a hairline orbit at the agent's own place on the ring, on alternating #f2f2f2 / #e5e5e5 tones; the one holding the turn turns ink. The Bots room list uses the same mark at 22px, and the room's sketch is drawn from the screenshot's alt text.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap (walked)
@@ -98,12 +100,12 @@ Done here: images 404 in the cloud sandbox (hanzo.ai blocked), so the films show
 - [x] Targets 44px or more (seats 54px, nav 44px, Copy 44px)
 - [x] Primary ask above the fold at 375×667: crew yes (top at y≈406), SDK yes (y≈422)
 
-Done here: under 900px the stage stacks (h1, object, chapter two), the console nav scrolls sideways, the room shot crops at true size (4:5).
+Done here: under 900px the stage stacks (h1, object, chapter two), the console nav scrolls sideways, the room shot crops at true size (4:5); the close's 10 faces sit on one line at 375 (x 16 to 344, measured); the SDK parts become a swipe rail of tiles under the contour.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text #0a0a0a / #525252 / #737373 on white; on black #fafafa / white 78% / 55%
 - [x] n/a pause control: both demos run once and rest (no loop)
-- [x] Field labelled by the kit
+- [x] Find field labelled with `<label for="xag-find-q">`; clear button named "Clear"
 - [x] One h1; h2 per section; h3 in sheets
 - [x] Keyboard: install switch is a radiogroup with arrow keys; hidden stage panel is `inert`
 
@@ -139,12 +141,12 @@ Done here: n/a: launch-type family (MASTER §4.1).
 Done here: install line (pip / cargo) copies exactly the line shown.
 
 ## 17. States and resilience
-- [x] Picture failure: letters and the room sketch; JS off: legible; reduced motion: final state
+- [x] Picture failure: the per-agent mark and the room sketch; JS off: legible; reduced motion: final state
 - [x] Blocked data: n/a live data; hanzo.ai blocked leaves a complete page
 - [x] n/a forms
 - [x] Find with no match shows "—"
 
-Done here: no console errors at 1470×801 and 375×812 (other than the sandbox's blocked pictures).
+Done here: no console errors and no hydration mismatch at 1470×801 and 375×812 (3 clean reloads of crew and 2 of SDK each, caught from first byte; other than the blocked pictures).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary (kit `Cta` sends `cta_click`)
@@ -152,4 +154,4 @@ Done here: no console errors at 1470×801 and 375×812 (other than the sandbox's
 - [x] `V2:` line in the page file's top comment
 - [x] Review read: `docs/review/agents-family.md` (8/10 at `fca5513`)
 
-Done here: films and phone stills in `docs/gallery/agents/`.
+Done here: films and phone stills in `docs/gallery/agents/`; round 2 first screens: `crew-desktop-r2.jpg`, `crew-phone-r2.jpg`, `sdk-desktop-r2.jpg`, `sdk-phone-r2.jpg`.

@@ -40,6 +40,7 @@
 .xab-hero-side .v2s-lede { max-width: 58ch; font-size: clamp(17px, 1.32vw, 19px); color: var(--ink); opacity: .78; }
 .xab-front-w { position: relative; flex: 1; display: flex; align-items: flex-end; min-height: 200px; margin-top: clamp(4px, 1.4vh, 16px); }
 .xab-front-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.xab-front-svg.ph { display: none; }
 .xab-grid { stroke: var(--hair); stroke-width: 1; }
 .xab-base { stroke: rgba(0, 0, 0, .3); stroke-width: 1.2; }
 .xab-tick line { stroke: rgba(0, 0, 0, .3); stroke-width: 1.2; }
@@ -62,13 +63,23 @@
 
 /* 2. why we build */
 .xab-why-h { max-width: 15ch; }
-.xab-why-l { padding-bottom: 6px; }
-.xab-picks { margin: 72px 0 0; }
-.xab-picks ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--hair); }
-.xab-picks li { position: relative; padding: 28px 28px 8px 0; display: grid; align-content: start; gap: 14px; }
-.xab-picks li + li { padding-left: 28px; border-left: 1px solid var(--hair); }
-.xab-picks button { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 0; border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer; min-height: 44px; }
-.xab-picks button .v2s-title { font-size: clamp(20px, 1.7vw, 26px); }
+.xab-why-l.xab-wl { margin-top: clamp(24px, 4vh, 40px); } /* the signature statement (about/wordlight.css) */
+/* one screen: the figure (one object, driven by the switches), the four switches, the six principles as an index */
+.xab-why-g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: start; margin-top: clamp(28px, 4vh, 48px); }
+.xab-fig { grid-column: 1 / 5; grid-row: 1 / span 2; position: relative; aspect-ratio: 400 / 410; max-width: 400px; }
+.xab-dia { display: block; width: 100%; height: auto; overflow: visible; transition: opacity .35s var(--ease); }
+.xab-dia .xab-shape { fill: rgba(10, 10, 11, .06); stroke-width: 2.4; }
+.xab-fig.all .xab-dia .xab-shape { fill: rgba(10, 10, 11, .12); }
+.xab-dia-l { font: 500 15px var(--mono); letter-spacing: .06em; text-transform: uppercase; fill: var(--faint); transition: fill .35s var(--ease); }
+.xab-dia-l.on { fill: var(--ink); }
+.xab-fig-r { position: absolute; inset: 6% 6% 6% 6%; animation: xab-show .45s var(--ease) both; }
+.xab-fig-n { position: absolute; left: 0; top: 0; font-size: 40px; font-weight: 220; line-height: 1; letter-spacing: -.03em; }
+.xab-fig.peek .xab-dia { opacity: 0; }
+.xab-picks { grid-column: 5 / 9; margin: 0; }
+.xab-picks ul { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--hair); }
+.xab-picks li { position: relative; padding: 6px 0 10px; display: grid; justify-items: start; row-gap: 2px; border-bottom: 1px solid var(--hair); }
+.xab-picks button { display: flex; align-items: center; gap: 14px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer; }
+.xab-picks button .v2s-title { font-size: 19px; }
 .xab-picks button:focus-visible { outline: 2px solid var(--acc); outline-offset: 6px; border-radius: 10px; }
 .xab-sw { position: relative; flex: none; width: 56px; height: 32px; border-radius: 16px; background: rgba(0, 0, 0, .12); transition: background .35s var(--ease); }
 .xab-sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .18), 0 0 0 .5px rgba(0, 0, 0, .06); transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
@@ -80,7 +91,8 @@
 /* a hand on a switch leans its knob toward the other side, so it says what a click will do */
 .xab-picks button:hover .xab-sw::after { transform: translateX(5px); }
 .xab-picks li.on button:hover .xab-sw::after { transform: translateX(19px); }
-.xab-picks li p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--faint); transition: color .4s var(--ease); }
+.xab-picks li p { margin: 0; padding-left: 70px; font-size: 14px; line-height: 1.45; color: var(--faint); transition: color .4s var(--ease); }
+.xab-picks li > .x-arrow { margin-left: 70px; }
 .xab-picks li.on p { color: var(--ink); }
 .xab-picks .x-arrow { font-size: 15px; color: var(--soft); transition: color .3s var(--ease), transform var(--dur-press, .12s) var(--ease); }
 /* every text link on the page answers a hand: ink, an underline under its words, the arrow steps on */
@@ -91,27 +103,22 @@
   .xab .x-arrow:hover span { text-decoration-color: currentColor; }
   .xab .x-arrow:hover svg { transform: translateX(4px); }
 }
-.xab-picks-sum { margin: 28px 0 0; min-height: 3.2em; font: 500 15px/1.5 var(--mono); color: var(--faint); }
-.xab-picks-sum.all { font: 497 21px/1.35 var(--sans); letter-spacing: -.02em; color: var(--acc); max-width: 48ch; }
+.xab-picks-sum { margin: 14px 0 0; min-height: 0; font: 500 15px/1.5 var(--mono); color: var(--faint); }
+.xab-picks-sum.all { font: 497 18px/1.35 var(--sans); letter-spacing: -.02em; color: var(--acc); max-width: 48ch; }
 .xab-picks-sum b { font-weight: inherit; }
 
-/* the six tiles (Signature) */
-.xab-tiles { list-style: none; margin: 72px 0 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--v2-gut); }
-.xab-s7 { grid-column: span 7; } .xab-s5 { grid-column: span 5; } .xab-s8 { grid-column: span 8; } .xab-s4 { grid-column: span 4; }
-.xab-tile { position: relative; display: grid; grid-template-rows: auto 1fr auto; width: 100%; height: clamp(320px, 25vw, 380px); padding: clamp(24px, 2.6vw, 40px); border: 0; background: #f5f5f5; color: var(--ink); text-align: left; cursor: pointer; overflow: hidden; font: inherit; transition: background-color .4s var(--ease); }
-@media (hover: hover) { .xab-tile:hover { background: #e4e4e7; } } /* the tile itself answers, not only its + */
-.xab-tile:focus-visible { outline: 2px solid var(--acc); outline-offset: 4px; }
-.xab-tile-n { font: 500 15px/1 var(--mono); color: var(--faint); letter-spacing: .06em; }
-.xab-tile-art { position: absolute; top: 50%; right: clamp(12px, 2vw, 32px); width: auto; height: 64%; aspect-ratio: 46 / 44; translate: 0 -54%; opacity: .9; transition: transform .7s var(--ease); }
-.xab-tile:hover .xab-tile-art, .xab-tile.cue .xab-tile-art { transform: rotate(-8deg) scale(1.04); }
-.xab-tile-t { grid-row: 3; display: grid; gap: 10px; max-width: min(58%, 520px); padding-right: 0; transition: transform .6s var(--ease); }
-.xab-tile-t span { max-width: 30ch; }
-.xab-tile-t b { font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; }
-.xab-tile-t span { font-size: clamp(16px, 1.3vw, 19px); line-height: 1.35; color: var(--soft); }
-.xab-tile-peek { position: absolute; left: clamp(24px, 2.6vw, 40px); right: 45%; bottom: clamp(24px, 2.6vw, 40px); font-size: 16px; line-height: 1.45; color: var(--ink); opacity: 0; transform: translateY(14px); transition: opacity .45s var(--ease), transform .6s var(--ease); max-width: 46ch; }
-.xab-tile:hover .xab-tile-t, .xab-tile.cue .xab-tile-t { transform: translateY(-64px); }
-.xab-tile:hover .xab-tile-peek, .xab-tile.cue .xab-tile-peek { opacity: 1; transform: none; transition-delay: .08s; }
-.xab-tile-plus { position: absolute; right: clamp(20px, 2.2vw, 32px); bottom: clamp(20px, 2.2vw, 32px); width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .06); transition: background .3s var(--ease), color .3s var(--ease), transform .5s var(--ease); }
+/* the six principles (Signature): a compact index; each row grows into its sheet */
+.xab-tiles { grid-column: 9 / 13; list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.xab-tile { position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr) 36px; column-gap: 12px; align-items: center; width: 100%; min-height: 64px; padding: 10px 12px 10px 16px; border: 0; background: #f5f5f5; color: var(--ink); text-align: left; cursor: pointer; overflow: hidden; font: inherit; transition: background-color .4s var(--ease); }
+@media (hover: hover) { .xab-tile:hover { background: #e4e4e7; } } /* the row itself answers, not only its + */
+.xab-tile.cue { background: #e4e4e7; }
+.xab-tile:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+.xab-tile-n { font: 500 13px/1 var(--mono); color: var(--faint); letter-spacing: .06em; }
+.xab-tile-t { display: grid; gap: 2px; transition: transform .5s var(--ease); }
+.xab-tile-t b { font-size: 17px; font-weight: 497; line-height: 1.2; letter-spacing: -.01em; }
+.xab-tile-t span { font-size: 13.5px; line-height: 1.35; color: var(--soft); }
+.xab-tile:hover .xab-tile-t, .xab-tile.cue .xab-tile-t { transform: translateX(4px); }
+.xab-tile-plus { position: relative; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, .06); transition: background .3s var(--ease), color .3s var(--ease), transform .5s var(--ease); }
 .xab-tile:hover .xab-tile-plus, .xab-tile.cue .xab-tile-plus { background: var(--acc); color: #fff; transform: rotate(90deg); }
 .xab-radar { display: block; width: 100%; height: auto; overflow: visible; }
 .xab-ring { fill: none; stroke: rgba(0, 0, 0, .12); stroke-width: 1.2; }
@@ -132,14 +139,14 @@
 .xab-step:hover { color: var(--ink); }
 
 /* 3. track record: three figures that climb like the frontier */
-.xab-why { padding-bottom: clamp(48px, 5.4vw, 80px); }
+.xab-why { padding-bottom: clamp(40px, 4vw, 56px); }
 @media (min-width: 901px) { .xab .xab-why { padding-top: 24px; } } /* the next idea peeks under the first screen */
 .xab-rec { padding-top: clamp(48px, 5.4vw, 80px); }
 .xab-figs { margin: clamp(48px, 6vw, 88px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--v2-gut); align-items: start; }
 .xab-figs > div { display: grid; gap: 14px; padding-top: 64px; border-top: 1px solid var(--ink); } /* room for a figure while it grows */
 .xab-figs > div:nth-child(1) { margin-top: clamp(72px, 8vw, 116px); }
 .xab-figs > div:nth-child(2) { margin-top: clamp(36px, 4vw, 58px); }
-.xab-figs.moment dt { transform: scale(1.75); } /* the figures grow while they are the moment, then settle */
+.xab-figs > div.big dt { transform: scale(1.75); } /* only the figure at the middle of the screen grows; the others rest at 64px */
 .xab-figs dt { font-size: 64px; font-weight: 220; line-height: .92; letter-spacing: -.03em; transform-origin: 0 100%; transition: transform .5s cubic-bezier(.16, 1, .3, 1);}
 .xab-figs dd { margin: 0; font: 500 13px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); }
 .xab-miles { list-style: none; margin: 72px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--v2-gut); }
@@ -158,12 +165,10 @@
 .xab-person-t { display: grid; gap: 12px; align-content: start; }
 .xab-person .v2s-headline { margin: 0; font-size: 26px;}
 .xab-person-t .v2s-body { margin: 0; max-width: 40ch; }
-/* the plate draws itself in as it arrives (a circle opening from the initials' corner, tied to the scroll where the
-   browser can); the contour field drifts and its hills lean toward a hand over it (Sigil) and darken while it is there */
+/* the plate's contour field drifts and its hills lean toward a hand over it (Sigil) and darken while it is there;
+   the cards arrive with the section's `squash-land` entrance (about/enter.css) */
 .xab-pic-sigil { transition: opacity .5s var(--ease); }
 .xab-person:hover .xab-pic-sigil { opacity: .85; }
-.xab-pic.none { animation: xab-plate both linear; animation-timeline: view(); animation-range: entry 10% cover 45%; }
-@keyframes xab-plate { from { clip-path: circle(0% at 0% 100%); } to { clip-path: circle(150% at 0% 100%); } }
 .xab-pic .xab-mono { transition: transform .5s var(--ease); }
 .xab-person:hover .xab-mono { transform: translateY(-4px); }
 .xab-role { margin: 0; font: 500 13px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--soft); }
@@ -176,36 +181,26 @@
 .xab-pic.wait .xab-pic-sigil, .xab-pic.none .xab-pic-sigil { animation: xab-sig-in .9s var(--ease) both; }
 @keyframes xab-sig-in { from { opacity: 0; } to { opacity: .55; } }
 .xab-pic.ok .xab-mono { opacity: 0; }
-.xab-socials { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.xab-socials { list-style: none; margin: 6px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, max-content); column-gap: 28px; } /* a clean 2 × 2 */
 .xab-socials a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; font-size: 16px; font-weight: 500; color: var(--ink); text-decoration: none; }
 .xab-socials a:hover { text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
 
 /* 5. the Zen of Hanzo: an index and its plate */
 .xab-zen-h { font-size: 26px; }
 .xab-zen-l { grid-column: 9 / 13; grid-row: 1; align-self: end; display: grid; gap: 18px; padding-bottom: 10px; }
-.xab-zen-g { margin-top: clamp(32px, 5vh, 56px); align-items: start; }
-.xab-zen-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
-.xab-zen-list li { border-bottom: 1px solid var(--hair); }
-.xab-zen-list button { display: flex; align-items: baseline; gap: 22px; width: 100%; min-height: 64px; padding: 16px 0; border: 0; background: none; color: var(--faint); text-align: left; cursor: pointer; font: inherit; transition: color .35s var(--ease); }
-.xab-zen-list button span { font: 500 14px/1 var(--mono); letter-spacing: .06em; }
-.xab-zen-list button b { font-size: 21px; font-weight: 497; letter-spacing: -.03em; line-height: 1.1; transition: transform .5s var(--ease); }
-.xab-zen-list li.on button { color: var(--ink); }
-.xab-zen-list li.on button b { transform: translateX(10px); }
-.xab-zen-list li.on button span { color: var(--acc); }
-.xab-zen-d { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; } /* read by screen readers; the plate shows it */
-/* the pinned scene: the section is a track six steps long; the stage holds still inside it while the scroll turns the principles */
-.xab-zen.v2s-sec { padding-block: 0; height: calc(100svh + 6 * 30svh); }
-.xab-zen-pin { position: sticky; top: 0; height: 100svh; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; padding: 88px 0 40px; }
-.xab-zen-plate { position: relative; display: grid; min-height: 400px; }
-.xab-zen-bar { position: absolute; left: clamp(32px, 4vw, 56px); right: clamp(32px, 4vw, 56px); bottom: clamp(28px, 3vw, 44px); height: 2px; background: rgba(10, 10, 11, .1); border-radius: 2px; overflow: hidden; }
-.xab-zen-bar i { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; }
-/* the plate stays; its words change: the old principle leaves first, then the new one rises in (never two at once) */
-.xab-zen-plate { border-radius: 24px; background: #f5f5f5; }
-.xab-zen-card { grid-area: 1 / 1; align-self: stretch; display: grid; align-content: start; gap: 22px; padding: clamp(32px, 4vw, 56px); opacity: 0; transform: translateY(-10px); transition: opacity .16s cubic-bezier(.7, 0, .84, 0), transform .16s cubic-bezier(.7, 0, .84, 0); pointer-events: none; }
-.xab-zen-card:not(.on) { transform: translateY(14px); }
-.xab-zen-card.on { opacity: 1; transform: none; transition: opacity .4s var(--ease) .2s, transform .7s var(--ease) .2s; }
-.xab-zen-n { font-size: 64px; font-weight: 220; line-height: .92; letter-spacing: -.03em; }
-.xab-zen-card .v2s-lede { color: var(--ink); max-width: 32ch; font-size: 21px; line-height: 1.4; letter-spacing: -.01em; }
+/* a plain 3 × 2 index of the six principles, each with its line; a hand on one brings it up to ink */
+.xab-zen-h { font-size: clamp(32px, 3.6vw, 52px); }
+.xab-zen-list { list-style: none; margin: clamp(32px, 5vh, 56px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 var(--v2-gut); border-top: 1px solid var(--hair); }
+.xab-zen-list li { display: grid; align-content: start; gap: 10px; padding: 24px 0 28px; border-bottom: 1px solid var(--hair); }
+.xab-zen-n { font: 500 13px/1 var(--mono); letter-spacing: .06em; color: var(--faint); transition: color .35s var(--ease); }
+.xab-zen-t { display: block; font-size: 21px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; transition: transform .5s var(--ease); }
+.xab-zen-d { margin: 0; font-size: 16px; line-height: 1.5; color: var(--soft); max-width: 36ch; transition: color .35s var(--ease); }
+@media (hover: hover) {
+  .xab-zen-list li:hover .xab-zen-t { transform: translateX(6px); }
+  .xab-zen-list li:hover .xab-zen-d, .xab-zen-list li:hover .xab-zen-n { color: var(--ink); }
+}
+.xab-lc { display: inline; }
+.xab-lc > span { display: inline-block; white-space: pre; }
 
 /* 6. the dark room */
 .xab-open { border-radius: clamp(24px, 3vw, 40px); margin-inline: clamp(8px, 1vw, 16px); background: #0a0a0a; color: #f5f5f5; --ink: #f5f5f5; --soft: #a3a3a3; --faint: #737373; --hair: rgba(255, 255, 255, .12); }
@@ -244,8 +239,6 @@
 .xab-log code { font: inherit; color: var(--faint); }
 .xab-log time { text-align: right; color: var(--faint); }
 /* the commits land oldest first, newest on top, once */
-.xab-log.in li { animation: xab-land .7s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(var(--i) * 110ms + 150ms); }
-@keyframes xab-land { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
 .xab-log-f { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 22px clamp(20px, 3vw, 36px); border-top: 1px solid var(--hair); }
 .xab-log-f p { margin: 0; font-size: 15px; color: var(--soft); }
 /* the kit's quiet button in the dark room: light outline on black, filling with light on hover (it read the room's
@@ -263,16 +256,15 @@
 .xab-rt-media { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; background: #0a0a0a; }
 .xab-rt-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 .xab-rt-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: #0a0a0a; }
-@media (hover: hover) { .xab-rt:hover .xab-rt-media img { transform: scale(1.04); } }
-.xab-rt:active .xab-rt-media { transform: scale(.98); transition-duration: .12s; }
 .xab-rt.plain .xab-rt-media { background: #f5f5f5; }
-/* a hand on a runtime card lifts its render and brings its tag line up to ink: the card says what it is before the click */
-.xab-rt-media { transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
-@media (hover: hover) {
-  .xab-rt:hover .xab-rt-media { transform: translateY(-6px); box-shadow: 0 18px 36px -24px rgba(0, 0, 0, .5); }
-  .xab-rt:hover .xab-rt-k { color: var(--ink); }
-  .xab-rt:active .xab-rt-media { transform: translateY(-6px) scale(.98); }
+/* a hand on a runtime card tilts its render toward the reader (the model-card SPEC: perspective tilt under 3°, no scale,
+   no lift, no shadow) and brings its kind line up to ink */
+.xab-rt-media { transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .xab-rt:hover .xab-rt-media { transform: perspective(900px) rotateX(1.8deg) rotateY(-2.2deg); }
+  .xab-rt:active .xab-rt-media { transform: perspective(900px) rotateX(1.8deg) rotateY(-2.2deg) scale(.98); transition-duration: .12s; }
 }
+@media (hover: hover) { .xab-rt:hover .xab-rt-k { color: var(--ink); } }
 .xab-rt-k { transition: color .35s var(--ease); }
 .xab-rt-t { display: grid; gap: 8px; align-content: start; padding: 20px 4px 0; }
 .xab-rt-k { font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
@@ -291,6 +283,17 @@
 .xab-paper-go { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: 15px; font-weight: 500; color: var(--soft); transition: color .3s var(--ease); }
 .xab-paper:hover .xab-paper-t { transform: translateX(8px); }
 .xab-paper:hover .xab-paper-go { color: var(--acc); }
+/* a paper row answers as a whole: a soft fill comes up under it and its kind and date step into ink */
+.xab-paper { position: relative; }
+.xab-paper::before { content: ''; position: absolute; inset: 0 -16px; border-radius: 16px; background: #f5f5f5; opacity: 0; transition: opacity .3s var(--ease); z-index: -1; }
+.xab-papers li { position: relative; z-index: 0; }
+.xab-paper-m { transition: color .3s var(--ease); }
+@media (hover: hover) {
+  .xab-paper:hover::before { opacity: 1; }
+  .xab-paper:hover .xab-paper-m { color: var(--ink); }
+}
+/* the row-head links (View Model Catalog, Papers, Blog) rest grey and come up to ink, underlined, under a hand */
+.xab-row-h .x-arrow { color: var(--soft); }
 
 /* 8. careers: three tracks, one frontier; then the closing Band */
 .xab-car-g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: center; }
@@ -314,6 +317,10 @@
 .xab-band-note a { display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 5px; }
 
 /* ---------- phones: designed, not shrunk ---------- */
+/* the narrowest phones: the plot's labels grow in its own units so they still read at 12px or more */
+@media (max-width: 360px) {
+  .ph .xab-tick text, .ph .xab-axis, .ph .xab-ts text { font-size: 30px !important; }
+}
 @media (max-width: 900px) {
   .xab-hero { min-height: 0; padding-top: 24px; }
   .xab-hero-top { grid-template-columns: minmax(0, 1fr); }
@@ -323,27 +330,44 @@
   .xab-h1, .xab-hero-side { width: min(100% - 2 * var(--v2-pad), var(--v2-max)); margin-inline: auto; }
   .xab-h1 { order: 1; }
   .xab-front-w { order: 2; }
-  .xab-pause { order: 3; margin: -96px 16px 52px 0; }
+  .xab-pause { order: 2; align-self: flex-start; margin: 12px 0 -56px var(--v2-pad, 16px); } /* the plot's empty top-left corner, above the curve */
   .xab-hero-side { order: 4; margin-top: 20px; gap: 20px; }
   .xab-front-w { margin-top: 12px; min-height: 0; }
   .xab-front-svg { max-height: none; }
-  /* the frontier cropped at true scale; its labels set larger in SVG units so they read at about 13px */
-  .xab-tick text { font-size: 28px; }
-  .xab-axis { font-size: 26px; }
-  .xab-ts text, .xab-ts line { display: none; }
+  /* the phone plot: the whole 2014–2026 frontier at 343px, labels set in its units so they read at 12–13px */
+  .xab-front-svg.dk { display: none; }
+  .xab-front-svg.ph { display: block; width: min(100% - 2 * var(--v2-pad), var(--v2-max)); margin-inline: auto; }
+  .ph .xab-tick text { font-size: 26px; }
+  .ph .xab-axis { font-size: 25px; }
+  .ph .xab-ts text { font-size: 27px; }
+  .ph .xab-line { stroke-width: 5; }
+  .ph .xab-ts line { display: none; }
+  .ph .xab-ghost, .ph .xab-grid, .ph .xab-base { stroke-width: 1.8; }
+  .ph .xab-head { r: 14px; }
+  .ph .xab-halo { r: 34px; }
+  .ph .xab-glide circle { r: 10px; }
   .xab-front-w { flex-direction: column; align-items: stretch; }
+  .xab .x-arrow { min-height: 44px; } /* every text link is a 44px tap target on phones */
+  /* phones: the figure, then the four switches two by two, then the six principles as a two-column index */
+  .xab-why-g { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; row-gap: 8px; margin-top: 8px; }
+  .xab-fig { grid-column: 1 / -1; grid-row: auto; width: min(100%, 200px); justify-self: center; }
+  .xab-picks { grid-column: 1 / -1; }
+  .xab-dia-l { display: none; } /* the switches right under the figure name its corners */
   .xab-picks ul { grid-template-columns: 1fr 1fr; }
-  .xab-picks li, .xab-picks li + li { padding: 22px 16px 18px 0; border-left: 0; }
-  .xab-picks li:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--hair); }
-  .xab-picks li:nth-child(n+3) { border-top: 1px solid var(--hair); }
-  .xab-picks li p { font-size: 14px; }
-  .xab-tiles { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .xab-tiles > li { grid-column: 1; }
-  .xab-tile { height: auto; min-height: 340px; }
-  .xab-tile-art { width: 112px; }
-  .xab-tile-peek { display: none; }
+  .xab-picks li { padding: 8px 10px 10px 0; }
+  .xab-picks li:nth-child(even) { padding-left: 12px; border-left: 1px solid var(--hair); }
+  .xab-picks li p, .xab-picks li > .x-arrow { padding-left: 0; margin-left: 0; }
+  .xab-picks li p { font-size: 13px; line-height: 1.4; }
+  .xab-picks li > .x-arrow { font-size: 14px; }
+  .xab-picks button { gap: 10px; }
+  .xab-picks button .v2s-title { font-size: 16px; }
+  .xab-tiles { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .xab-tile { grid-template-columns: minmax(0, 1fr) 28px; min-height: 52px; padding: 6px 8px 6px 12px; }
+  .xab-tile-n { display: none; }
+  .xab-tile-t b { font-size: 14.5px; }
+  .xab-tile-t span { display: none; }
+  .xab-tile-plus { width: 28px; height: 28px; }
   .xab-tile:hover .xab-tile-t, .xab-tile.cue .xab-tile-t { transform: none; }
-  .xab-tile-t { padding-right: 56px; }
   .xab-sheet-g { grid-template-columns: minmax(0, 1fr); }
   .xab-sheet-a { display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 16px; }
   .xab-sheet-a .xab-radar { max-width: 160px; justify-self: end; }
@@ -352,7 +376,7 @@
   .xab-figs { grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .xab-figs > div:nth-child(1), .xab-figs > div:nth-child(2) { margin-top: 0; }
   .xab-figs dt { font-size: 52px; }
-  .xab-figs.moment dt { transform: scale(1.4); }
+  .xab-figs > div.big dt { transform: scale(1.4); }
   .xab-miles { grid-template-columns: 1fr 1fr; row-gap: 32px; }
   .xab-rec-acts { justify-content: flex-start; }
   .xab-people-g { grid-template-columns: minmax(0, 1fr); row-gap: 48px; }
@@ -360,30 +384,16 @@
   .xab-person .xab-pic { max-width: none; aspect-ratio: 4 / 5; border-radius: 18px; }
   .xab-person .xab-mono { left: 12px; bottom: 10px; font-size: 20px; }
   .xab-person .v2s-headline { font-size: 22px; }
-  /* the pinned scene on a phone: the plate on top, the six as a row of numbers under it */
-  .xab-zen.v2s-sec { height: calc(100svh + 6 * 26svh); }
-  .xab-zen-pin { padding: 76px 0 24px; justify-content: flex-start; }
-  .xab-zen-g { margin-top: 24px; display: flex; flex-direction: column-reverse; align-items: stretch; gap: 8px; }
-  .xab-zen-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 0; }
-  .xab-zen-list li { border: 0; }
-  .xab-zen-list button { justify-content: center; min-height: 44px; padding: 0; border-top: 2px solid var(--hair); transition: color .35s var(--ease), border-color .35s var(--ease); }
-  .xab-zen-list li.on button { border-top-color: var(--ink); }
-  .xab-zen-list button b { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .xab-zen-list li.on button b { transform: none; }
-  .xab-zen-plate { display: grid; min-height: 0; height: 330px; }
-  .xab-zen-card { padding: 28px 24px 40px; gap: 14px; }
-  .xab-zen-n { font-size: 52px; }
-  .xab-zen-card .v2s-lede { font-size: 18px; }
-  .xab-zen-bar { left: 24px; right: 24px; bottom: 22px; }
+  .xab-zen-list { grid-template-columns: minmax(0, 1fr); }
+  .xab-zen-list li { padding: 18px 0 20px; gap: 6px; }
+  .xab-zen-t { font-size: 19px; }
+  .xab-zen-d { font-size: 15px; }
   .xab-open-g { grid-template-columns: minmax(0, 1fr); }
   .xab-panes, .xab-open-g > .xab-log { grid-column: 1; }
   .xab-pic { aspect-ratio: 1; max-width: 72%; }
   .xab-open-g .xab-log li { grid-template-columns: minmax(0, 1fr) auto; }
   .xab-panes .x-tablist { flex-wrap: wrap; border-radius: 24px; }
-  .xab-front-w { overflow: hidden; }
-  .xab-front-svg { width: 200%; max-width: none; margin-left: -100%; } /* the frontier cropped at true scale, not shrunk */
-  .xab-tile-art { height: 38%; top: 16px; translate: none; }
-  .xab-tile-t { max-width: 100%; padding-right: 56px; }
+  .xab-front-w { overflow: visible; }
   .xab-log li { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-size: 14px; }
   .xab-log li .xab-msg { grid-column: 1 / -1; grid-row: 2; }
   .xab-log li code { display: none; }
@@ -399,8 +409,8 @@
   .xab-open { margin-inline: 6px; border-radius: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xab-h1-ln > span, .xab-glide, .xab-line, .xab-ghost, .xab-ride, .xab-ts, .xab-axis, .xab-pic-sigil, .xab-pic.none { animation: none !important; }
+  .xab-h1-ln > span, .xab-glide, .xab-line, .xab-ghost, .xab-ride, .xab-ts, .xab-axis, .xab-pic-sigil { animation: none !important; }
   .xab-halo, .xab-live, .xab-picks li.hint .xab-sw::before { animation: none; }
-  .xab-log.in li { animation: none; }
-  .xab-tile-art, .xab-tile-t, .xab-tile-peek, .xab-tile-plus, .xab-zen-card, .xab-zen-list button b, .xab-sw::after { transition: none; }
+  .xab-fig-r { animation: none; }
+  .xab-tile-t, .xab-tile-plus, .xab-zen-t, .xab-sw::after { transition: none; }
 }

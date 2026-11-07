@@ -1,18 +1,17 @@
 'use client';
 /* Enterprise, v2 (VISION archetype B, System: a map you travel; the calm trust of chatgpt.com/business/enterprise;
    PLAN-COMPONENTS 5.3).
-   V2: 7.5/10 the review's six fixes: 240px+ of the live log in the first screen, hero in place in server HTML (cut-in on hydration), no hydration mismatch, results a quiet 28px ledger under one 64px figure, figures rest small and grow only as the moment, 44px phone links, no 404 logos
+   V2: 7.5/10 MOTION-MAP pass: the pinned four-walls chapter is gone; the hero is Hanzo's workspace writing its audit log inside the four walls (unpinned); the four places are rows that open in place (signature); five entrances, one per section; review fixes kept (hero in server HTML, quiet ledger, figures rest small, 44px phone links, no 404 logos, no hydration mismatch)
    Persona: an IT, security or platform lead choosing where Hanzo runs. Goal: see it runs where you need it, and that
    you can verify it. CTA: "Get Enterprise plan" (data-cta enterprise.hero, the page's ask) and one "Talk to sales" in
    the closing Band; metric: cta_click on enterprise.hero and the Band.
    Thesis: it runs where you need it, and you can verify it.
-   Signature: the boundary zoom. The first screen is Hanzo's own workspace, open on its audit log and already writing
-   (who acted, from where, what they called, the status it returned). As you scroll it settles inside four walls -
-   Hanzo Cloud, your cloud, your servers, air-gapped - and the camera travels in one wall per chapter while the words for
-   each place come in as the last go out (the apple.com sticky chapter). Phones, reduced motion and JS off get the same
-   story by tap or as a list, without the pin.
-   Supporting: results rising out of their own masks (never a number that is not Hanzo's), the GPU detail opening as a sheet out of its card, and the clouds Hanzo
-   deploys on as a slow wall in motion. Everything else sits still and reads.
+   Hero object: Hanzo's own workspace, open on its audit log and writing (who acted, from where, what they called, the
+   status it returned), inside four walls (Hanzo Cloud, your cloud, your servers, air-gapped) that turn while idle.
+   Signature (rows-open, second screen): the four places as a tight list; a row opens in place on hover (fine pointers)
+   or tap into its full detail (the walls with that place solid, what it means, where it sits); the rows below slide.
+   Entrances (enterprise/enter.jsx, in page order): scramble (the places), snap-sections (results), inertia-drag
+   (includes), diagonal-wipe (security), line-draw (your own GPUs).
    Beyond: the prefill instrument. Pick a prompt size and read the prefill time and rate Hanzo measured for Zen 6 on one
    DGX Spark, against every other size on one bar chart.
    Removed (ledger): the repeated deployment block ("Which wall is yours"), the second sales button in it, the long dark
@@ -21,11 +20,13 @@
 // Persona: an IT, security or platform lead choosing where Hanzo runs
 // Goal: see it runs where you need it, and that you can verify it
 // CTA: Get Enterprise plan (hero, then the header's solid ask on desktop / the phone ask bar, and the Band); metric: cta_click on enterprise.hero and enterprise.band
-// Signature: the boundary zoom: Hanzo's live audit log settles inside four walls and the camera travels in, one wall per scrolled chapter
+// Signature: rows-open (Rows that open): the four places, a tight list whose rows open in place on hover or tap into a full detail panel
+// Entrances: scramble, snap-sections, inertia-drag, diagonal-wipe, line-draw
 // Beyond: the prefill instrument: pick a prompt size and read Hanzo's measured prefill time and rate for Zen 6 on one DGX Spark
 import { useEffect, useRef, useState } from 'react';
 import { useCallback } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, animate, AnimatePresence, LayoutGroup, useInView, useMotionValue, useReducedMotion } from 'motion/react';
+import { Enter, useEnter, Scramble } from './enterprise/enter';
 import { EASE } from '../ui';
 import { A, More, Cta, Faq, Film, Img, DataTable, Band } from '../kit';
 import Drawer from '../v2/x-cannon/Drawer';
@@ -39,39 +40,6 @@ const PLACES = [
   ['Your servers', 'On premises', 'On hardware in your data center, beside the systems you already run.'],
   ['Air-gapped', 'Fully offline', 'Sealed inside your network, with models served on machines you control.'],
 ];
-
-/* ---------- the boundary: geometry ---------- */
-// The map is built at its closest zoom and scaled down, so the workspace is crisp when the camera arrives.
-// walls 48px apart (were 64) and a taller window: the first screen at 1470×801 now holds 240px+ of the log writing
-const WIN = [640, 470], STEP = 48;
-const MAP = [WIN[0] + STEP * 8, WIN[1] + STEP * 8];
-const ring = (i) => [MAP[0] - STEP * 2 * i, MAP[1] - STEP * 2 * i];
-const P0 = 0.15, L = (1 - P0) / 4; // the arrival, then four chapters
-const startOf = (i) => P0 + i * L;
-
-// camera keyframes for this window size: the workspace big under the headline, then each wall filling the stage
-function shots(vw, vh, introBottom) {
-  const gut = Math.min(32, Math.max(16, vw * 0.04));
-  const wrap = Math.min(vw - 2 * gut, 1152), col = (wrap - 12 * 24) / 13;
-  const stageW = 8 * col + 7 * 24 + gut, stageH = vh - 64 - 96;
-  const fit = (i) => { const [w, h] = ring(i); return Math.min(stageW / w, stageH / h); };
-  const x1 = 5 * (col + 24) + (8 * col + 7 * 24) / 2 - wrap / 2 + gut / 2;
-  const y1 = 32;
-  // the first screen is the diagram itself: the four walls around the live workspace, words on the left
-  const ps = [0, P0], xs = [x1, x1], ys = [y1, y1], ss = [fit(0), fit(0)];
-  for (let i = 0; i < 3; i++) { ps.push(startOf(i) + L * 0.5, startOf(i + 1)); xs.push(x1, x1); ys.push(y1, y1); ss.push(fit(i), fit(i + 1)); }
-  ps.push(1); xs.push(x1); ys.push(y1); ss.push(fit(3));
-  return { ps, xs, ys, ss };
-}
-const ramp = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
-// piecewise, eased inside each segment
-function seg(v, ps, vals) {
-  if (v <= ps[0]) return vals[0];
-  for (let k = 1; k < ps.length; k++) {
-    if (v <= ps[k]) { const t = (v - ps[k - 1]) / (ps[k] - ps[k - 1] || 1); const e = t * t * (3 - 2 * t); return vals[k - 1] + (vals[k] - vals[k - 1]) * e; }
-  }
-  return vals[vals.length - 1];
-}
 
 /* ---------- the workspace: Hanzo's audit log, writing ---------- */
 // Hanzo's audit log records who acted, from where, what they called and the status it returned
@@ -134,91 +102,28 @@ function Workspace({ at }) {
   );
 }
 
-function Step({ p, i, on, label, go }) {
-  const fill = useTransform(p, (v) => ramp(v, startOf(i), startOf(i + 1)));
-  return (
-    <button type="button" className={'xe-step' + (on ? ' on' : '')} aria-current={on ? 'step' : undefined} onClick={() => go(i)}>
-      <i className="xe-step-bar"><motion.b style={{ scaleX: fill }} /></i>
-      <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
-      <span>{label}</span>
-    </button>
-  );
-}
-
-// four nested walls, the chosen one drawn solid (phones and the tiles use this small one)
-function Boundary() {
+/* ---------- the hero: the words, and Hanzo's workspace writing its audit log inside the four walls (unpinned) ---------- */
+function Hero({ at: chosen, mine }) {
   const ref = useRef(null);
-  const intro = useRef(null);
   const calm = useReducedMotion();
-  const [scrub, setScrub] = useState(false);
-  const [ready, setReady] = useState(false);
-  const [at, setAt] = useState(0);
-  const [lit, setLit] = useState(false); // on arrival the four walls stand equal; a wall lights once its words are in
-  const [mine, setMine] = useState(false);
-  const g = useMotionValue(0);
-  const geo = useRef(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-
+  // the walls turn by themselves while the hero is on screen; once a hand opens a place in the rows below, they show it
+  const seen = useInView(ref, { amount: 0.3 });
+  const [idle, setIdle] = useState(0);
   useEffect(() => {
-    const mq = matchMedia('(min-width: 901px) and (prefers-reduced-motion: no-preference)');
-    const on = () => {
-      const b = intro.current ? intro.current.offsetTop + intro.current.offsetHeight : 520; // layout box, not the moved one
-      geo.current = shots(document.documentElement.clientWidth, innerHeight, b);
-      setScrub(mq.matches);
-      g.set(g.get() + 1);
-    };
-    on();
-    setReady(true);
-    mq.addEventListener('change', on);
-    addEventListener('resize', on);
-    return () => { mq.removeEventListener('change', on); removeEventListener('resize', on); };
-  }, [g]);
-
-  const cam = (k, d) => ([v]) => (geo.current ? seg(v, geo.current.ps, geo.current[k]) : d);
-  const x = useTransform([p, g], cam('xs', 0));
-  const y = useTransform([p, g], cam('ys', 0));
-  const scale = useTransform([p, g], cam('ss', 1));
-  // function transforms on purpose: they run on the main thread in step with the camera (a range transform of opacity
-  // would be handed to the browser's scroll timeline, which measures this pinned section differently).
-  // In the left column the hero words go out as the chapter words come in; the map stays where it is.
-  const introO = useTransform(p, (v) => 1 - ramp(v, 0, 0.06));
-  const introY = useTransform(p, (v) => -40 * ramp(v, 0, 0.08));
-  const chO = useTransform(p, (v) => ramp(v, 0.07, 0.13));
-  const chY = useTransform(p, (v) => 24 * (1 - ramp(v, 0.07, 0.14)));
-
-  useMotionValueEvent(p, 'change', (v) => {
-    if (!scrub) return;
-    setLit(v > 0.07);
-    // the next place takes over as the camera starts toward it, so a wall it has passed fades before it grows past the words
-    setAt(Math.max(0, Math.min(3, Math.floor((v - P0) / L + 0.5))));
-  });
-
-  // phones and calm screens: the places turn by themselves until a hand takes over
-  const seen = useInView(ref, { amount: 0.25 });
-  useEffect(() => {
-    if (scrub || mine || calm || !seen) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % 4), 3600);
+    if (mine || calm || !seen) return;
+    const t = setTimeout(() => setIdle((v) => (v + 1) % 4), 3600);
     return () => clearTimeout(t);
-  }, [at, scrub, mine, calm, seen]);
-
-  const go = (i) => {
-    setMine(true);
-    if (!scrub) { setAt(i); return; }
-    const el = ref.current;
-    const top = el.getBoundingClientRect().top + scrollY;
-    const to = top + (startOf(i) + L * 0.2) * (el.offsetHeight - innerHeight);
-    if (window.__lenis) window.__lenis.scrollTo(to, { duration: 1.4 });
-    else scrollTo({ top: to, behavior: 'smooth' });
-  };
+  }, [idle, mine, calm, seen]);
+  const at = mine ? chosen : idle;
 
   const line = (t, d) => (
     <span className="xe-line"><span style={{ animationDelay: d + 's' }}>{t}</span></span>
   );
 
   return (
-    <section className="xe-stage" ref={ref} aria-labelledby="xe-h1">
-      <div className="xe-pin">
-        <motion.div className="xe-intro xe-w" ref={intro} style={{ opacity: introO, y: introY }}>
+    <section className="xe-hero" ref={ref} aria-labelledby="xe-h1">
+      <div className="xe-hero-g xe-w">
+        <div className="xe-intro">
           <h1 id="xe-h1" className="xe-d">{line('Give every team AI.', 0)}{line('Run it where you choose.', 0.06)}</h1>
           <div className="xe-intro-row">
             <p className="xe-lede">
@@ -236,39 +141,74 @@ function Boundary() {
             </ul>
             <div className="xe-trust-l"><More to="/security">How Hanzo is secured</More><More to="/trust">Trust center</More></div>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div className={'xe-cam' + (ready ? ' ready' : '')} style={{ x, y, scale }}>
-          <div className="xe-map" data-at={at}>
-            <div className="xe-rings">
-              {PLACES.map((pl, i) => (
-                <div key={pl[0]} className={'xe-ring' + (i === at && (lit || !scrub) ? ' on' : i < at ? ' out' : '')} style={{ inset: i * STEP + 'px', '--i': i }}>
-                  <span className="xe-ring-l">{pl[0]}</span>
-                </div>
-              ))}
-            </div>
-            <div className="xe-seat"><Workspace at={at} /></div>
-          </div>
-        </motion.div>
-
-        <motion.div className="xe-ch" style={{ opacity: chO, y: chY }} data-ask-hide>
-          <h2 className="xe-h">Run it where your data lives.</h2>
-          <p className="xe-b xe-soft">One platform, four places to run it. Choose one, or start in our cloud and move when you are ready.</p>
-          <p className="xe-k xe-tag">Deployment</p>
-          <div className="xe-steps" role="group" aria-label="Where it runs">
-            {PLACES.map((pl, i) => <Step key={pl[0]} p={p} i={i} on={at === i} label={pl[0]} go={go} />)}
-          </div>
-          <div className="xe-scale" aria-hidden="true"><span>Fastest start</span><span>Most control</span></div>
-          <div className="xe-caps" aria-live="polite">
+        <div className="xe-map" data-at={at}>
+          <div className="xe-rings" aria-hidden="true">
             {PLACES.map((pl, i) => (
-              <div key={pl[0]} className={'xe-cap' + (i === at ? ' on' : i < at ? ' gone' : '')} aria-hidden={i !== at}>
-                <h3>{pl[0]}</h3>
-                <p><b>{pl[1]}.</b> {pl[2]}</p>
-                <p className="xe-cap-n"><span>Where it runs</span><span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span></p>
+              <div key={pl[0]} className={'xe-ring' + (i === at ? ' on' : '')} style={{ '--i': i }}>
+                <span className="xe-ring-l">{pl[0]}</span>
               </div>
             ))}
           </div>
-        </motion.div>
+          <div className="xe-seat"><Workspace at={at} /></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- the signature, rows that open: the four places as a tight list; a row opens in place on hover (fine
+   pointers) or tap into its full detail: the walls with its own drawn solid, what it means, where it sits ---------- */
+function Glyph({ at }) {
+  return (
+    <span className="xe-glyph" aria-hidden="true">
+      {PLACES.map((pl, i) => <i key={pl[0]} className={i === at ? 'on' : i < at ? 'out' : undefined} style={{ inset: `${i * 12}%` }} />)}
+      <b />
+    </span>
+  );
+}
+
+function Places({ at, open }) {
+  const [ref, inn] = useEnter(0.25);
+  const fine = useRef(false);
+  useEffect(() => { fine.current = matchMedia('(hover: hover) and (pointer: fine)').matches; }, []);
+  return (
+    <section ref={ref} className={'xe-sec xe-places xe-en xe-en-scramble' + (inn ? ' in' : '')} aria-labelledby="xe-pl-h" data-ask-hide>
+      <div className="xe-w">
+        <header className="xe-head">
+          <h2 id="xe-pl-h" className="xe-h"><Scramble text="Run it where your data lives." run={inn} /></h2>
+          <p className="xe-l xe-soft">One platform, four places to run it. Choose one, or start in our cloud and move when you are ready.</p>
+          <p className="xe-k xe-tag">Deployment</p>
+        </header>
+        <div className="xe-scale" aria-hidden="true"><span>Fastest start</span><span>Most control</span></div>
+        <LayoutGroup>
+          <ul className="xe-rows-l" role="list" aria-label="Where it runs">
+            {PLACES.map((pl, i) => {
+              const on = i === at;
+              return (
+                <motion.li key={pl[0]} layout="position" transition={{ layout: { duration: 0.4, ease: EASE } }} className={on ? 'on' : undefined} style={{ '--n': i }}
+                  onPointerEnter={(e) => { if (e.pointerType === 'mouse' && fine.current) open(i); }}>
+                  <h3 className="xe-row-h">
+                    <button type="button" aria-expanded={on} aria-controls={'xe-pl-' + i} onClick={() => open(i)}>
+                      <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="xe-row-n"><Scramble text={pl[0]} run={inn} delay={200 + i * 90} ms={500} /></span>
+                      <span className="xe-row-s">{pl[1]}</span>
+                      <span className="xe-row-x" aria-hidden="true" />
+                    </button>
+                  </h3>
+                  <div className="xe-row-d" id={'xe-pl-' + i} hidden={!on}>
+                    <Glyph at={i} />
+                    <div className="xe-cap">
+                      <p><b>{pl[1]}.</b> {pl[2]}</p>
+                      <p className="xe-cap-n"><span>Where it runs</span><span className="x-mono">{String(i + 1).padStart(2, '0')} / 04</span></p>
+                    </div>
+                  </div>
+                </motion.li>
+              );
+            })}
+          </ul>
+        </LayoutGroup>
       </div>
     </section>
   );
@@ -302,16 +242,28 @@ function PauseFilm() {
 }
 
 /* ---------- what Enterprise includes: a tile grid, one idea a tile ---------- */
+/* entrance 3, inertia-drag: the tiles are thrown in from the right and decay to rest; then they can be dragged and
+   thrown (on phones a rail you fling through; on desktop the grid gives under the hand and settles back) */
 function Includes() {
+  const [ref, inn] = useEnter(0.15);
+  const wrap = useRef(null);
+  const x = useMotionValue(0);
+  useEffect(() => {
+    if (!inn || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    x.set(280);
+    const a = animate(x, 0, { type: 'inertia', velocity: -1800, timeConstant: 320, modifyTarget: () => 0, restDelta: 0.5 });
+    return () => a.stop();
+  }, [inn, x]);
   return (
-    <section className="xe-sec xe-inc" aria-labelledby="xe-inc-h">
+    <section ref={ref} className={'xe-sec xe-inc xe-en xe-en-inertia' + (inn ? ' in' : '')} aria-labelledby="xe-inc-h">
       <div className="xe-w">
         <header className="xe-head">
           <h2 id="xe-inc-h" className="xe-h">What Enterprise includes.</h2>
           <p className="xe-l xe-soft">Your own infrastructure, dedicated compute, and engineering support around the clock.</p>
           <p className="xe-k xe-tag">What you get</p>
         </header>
-        <div className="xe-tiles">
+        <div className="xe-tiles-v" ref={wrap}>
+        <motion.div className="xe-tiles" style={{ x }} drag="x" dragConstraints={wrap} dragElastic={0.25} dragTransition={{ power: 0.3, timeConstant: 320, bounceStiffness: 260, bounceDamping: 40 }}>
           <article className="xe-tile t-infra">
             <div className="xe-tile-walls" aria-hidden="true">
               {PLACES.map((pl, i) => <span key={pl[0]} style={{ inset: `${i * 10}% ${i * 8}%`, '--i': i }}><em>{pl[0]}</em></span>)}
@@ -355,6 +307,7 @@ function Includes() {
             <h3>Your whole company</h3>
             <p>Unlimited members, single sign-on, roles and an audit log.</p>
           </article>
+        </motion.div>
         </div>
       </div>
     </section>
@@ -394,6 +347,8 @@ function Prefill() {
   const [, t, r] = PREFILL[k];
   return (
     <div className={'xe-pf' + (hot ? ' hot' : '')} ref={box}>
+      {/* entrance 5, line-draw: this outline draws itself, then the instrument fills (enterprise/enter.css) */}
+      <svg className="xe-pf-line" aria-hidden="true"><rect x="1" y="1" rx="24" pathLength="1" /></svg>
       <div className="xe-pf-read">
         <p className="xe-k">Zen 6 on one DGX Spark, as Hanzo measured it</p>
         <div className="xe-pf-figs" aria-live={mine ? 'polite' : 'off'}>
@@ -405,7 +360,7 @@ function Prefill() {
         {PREFILL.map(([s, , rate], i) => (
           <button key={s} type="button" role="radio" aria-checked={k === i} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} data-cursor="">
             <span className="xe-pf-s">{s}</span>
-            <i className="xe-pf-bar"><b style={{ transform: `scaleX(${rate / TOP})` }} /></i>
+            <i className="xe-pf-bar" style={{ '--n': i }}><b style={{ transform: `scaleX(${rate / TOP})` }} /></i>
             <span className="xe-pf-v x-mono">{rate.toLocaleString('en-US')}</span>
           </button>
         ))}
@@ -427,10 +382,10 @@ function Rack({ name, total, specs, guide, to }) {
   );
 }
 
-// four 8-GPU servers, drawn: the 32 GPUs light one by one the first time the card is reached
+// four 8-GPU servers, drawn: the 32 GPUs light one by one each time the card comes fully into view
 function RackGlyph() {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.6 });
+  const seen = useInView(ref, { amount: 1, margin: '0px 0px -20% 0px' });
   return (
     <span ref={ref} className={'xe-rackglyph' + (seen ? ' on' : '')} aria-hidden="true">
       {Array.from({ length: 4 }, (_, s) => <span key={s}>{Array.from({ length: 8 }, (__, k) => <i key={k} style={{ '--k': s * 8 + k }} />)}</span>)}
@@ -444,7 +399,7 @@ function Gpus() {
   const open = useCallback((e) => setSrc(e.currentTarget), []);
   const close = useCallback(() => setSrc(null), []);
   return (
-    <section className="xe-sec xe-gpu" aria-labelledby="xe-gpu-h">
+    <Enter k="draw" className="xe-sec xe-gpu" amount={0.12} aria-labelledby="xe-gpu-h">
       <div className="xe-w">
         <header className="xe-head">
           <h2 id="xe-gpu-h" className="xe-h">Run the models on machines you own.</h2>
@@ -499,19 +454,14 @@ function Gpus() {
           <DataTable caption="Zen 6 on one DGX Spark, as Hanzo measured it" cols={[{ key: 'p', label: 'Prompt' }, { key: 't', label: 'Prefill time', num: true }, { key: 'r', label: 'Prefill rate', num: true }]} rows={PREFILL.map(([pp, tt, rr]) => ({ p: pp, t: tt + ' s', r: rr.toLocaleString('en-US') + ' tokens a second' }))} className="xe-pf-table" />
         </div>
       </Drawer>
-    </section>
+    </Enter>
   );
 }
 
 /* ---------- proof, on a split-flap board ---------- */
-// a figure that rises out of its own mask once, showing only Hanzo's own value at every frame
+// a figure, Hanzo's own value, in place in the server HTML (the section's snap entrance carries it in)
 function Fig({ value, className = '' }) {
-  return (
-    // the frame is watched (the moving figure starts clipped, so it can never be "seen" itself)
-    <motion.span className={'xe-fig ' + className} initial="h" whileInView="s" viewport={{ once: true, amount: 0.6 }}>
-      <motion.span variants={{ h: { y: '105%' }, s: { y: '0%', transition: { duration: 0.5, ease: EASE } } }}>{value}</motion.span>
-    </motion.span>
-  );
+  return <span className={'xe-fig ' + className}><span>{value}</span></span>;
 }
 
 const PROOF = [
@@ -536,7 +486,7 @@ function Mark({ src }) {
 // sixteen marks, one per task of the suite, filled one by one the first time the figure is reached
 function Tally({ n }) {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const seen = useInView(ref, { once: true, amount: 1, margin: '0px 0px -25% 0px' });
   return (
     <span ref={ref} className={'xe-tally' + (seen ? ' on' : '')} aria-hidden="true">
       {Array.from({ length: n }, (_, i) => <i key={i} style={{ '--k': i }} />)}
@@ -546,14 +496,16 @@ function Tally({ n }) {
 
 function Proof() {
   return (
-    <section className="xe-sec xe-proof" aria-labelledby="xe-proof-h">
+    // entrance 2, snap-sections: each block snaps up into place a full step at a time (and on touch the section snaps
+    // to the top of the screen as it is reached)
+    <Enter k="snap" className="xe-sec xe-proof" amount={0.15} aria-labelledby="xe-proof-h">
       <div className="xe-w xe-g">
-        <header className="xe-head xe-proof-head">
+        <header className="xe-head xe-proof-head xe-snap-b" style={{ '--n': 0 }}>
           <h2 id="xe-proof-h" className="xe-h">Results on the record.</h2>
           <p className="xe-b xe-soft">Our models&apos; scores come from research runs anyone can open. Customer results come from the case studies of launches Hanzo ran.</p>
           <p className="xe-k xe-tag">Proof</p>
         </header>
-        <A to="/benchmarks#decision-suite" className="xe-hero-fig">
+        <A to="/benchmarks#decision-suite" className="xe-hero-fig xe-snap-b" style={{ '--n': 1 }}>
           <Fig value="16 of 16" className="big" />
           <Tally n={16} />
           <span className="xe-what">Decision Suite tasks won · Kai vs Jev</span>
@@ -563,8 +515,8 @@ function Proof() {
       </div>
       <div className="xe-w">
         <ol className="xe-ledger">
-          {PROOF.map(([fig, what, who, how, to, logo]) => (
-            <li key={who}>
+          {PROOF.map(([fig, what, who, how, to, logo], i) => (
+            <li key={who} className="xe-snap-b" style={{ '--n': i + 2 }}>
               <A to={to} className="xe-led">
                 <Fig value={fig} />
                 <span className="xe-what">{what}</span>
@@ -576,7 +528,7 @@ function Proof() {
         </ol>
         <div className="xe-links"><More to="/customers">All customer stories</More></div>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -636,15 +588,16 @@ function Security() {
     return () => io.disconnect();
   }, []);
   return (
-    <section className="xe-sec xe-secu" aria-labelledby="xe-sec-h">
-      <div className="xe-w">
+    // entrance 4, diagonal-wipe: a diagonal clip sweeps across the whole section, left to right
+    <Enter k="wipe" className="xe-sec xe-secu" amount={0.15} aria-labelledby="xe-sec-h">
+      <div className="xe-w xe-wipe">
         <header className="xe-head">
           <h2 id="xe-sec-h" className="xe-h">Ready for your security review.</h2>
           <p className="xe-l xe-soft">A security review is part of every Enterprise contract. We answer your questionnaire against the code, and the engineers who wrote it walk your reviewers through it.</p>
           <p className="xe-k xe-tag">Security</p>
         </header>
         <div className="xe-g xe-sec-g">
-          <div className="xe-stick xe-sec-obj">
+          <div className="xe-sec-obj">
             <SecPanel at={at} />
             <div className="xe-links"><More to="/security">How Hanzo is secured</More><More to="/trust">Trust center</More></div>
           </div>
@@ -659,7 +612,7 @@ function Security() {
           </ul>
         </div>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -731,12 +684,17 @@ function Questions() {
 export default function Enterprise() {
   const [cut, setCut] = useState(false);
   useEffect(() => setCut(true), []);
+  // one place in focus, shared by the hero's walls and the rows that open; a hand choosing a place stops the idle turn
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  const open = useCallback((i) => { setMine(true); setAt(i); }, []);
   return (
     <main className={'xe' + (cut ? ' xe-cut' : '')}>
-      <Boundary />
-      <Security />
-      <Includes />
+      <Hero at={at} mine={mine} />
+      <Places at={at} open={open} />
       <Proof />
+      <Includes />
+      <Security />
       <Gpus />
       <Partners />
       <Questions />

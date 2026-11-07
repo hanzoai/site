@@ -1,33 +1,79 @@
-# /mori — James-eye review (independent critic, 7 Nov)
+# /mori — James-eye review (independent critic, 7 Nov, second pass)
 
 Verdict: 7/10
-First complaint: "It's the same wireframe mountain over and over. The hero, the cube, all four chapters, the fits picture, the card. Too many repeats. Then I press 'shaded' and the shape has a tear down it."
+First complaint: "I scroll to the next chapter and the picture goes black. There's just an empty box, then the thing draws itself in. And on my phone the words are cut off: 'Gaussian spla…', and 'Ambient occlusion' spills out of its tile."
 
-Walked at 1470×801 and 375×812, moving, with the cookie card shown and then dismissed: arrival, idle waits, a half-screen scroll walk with stillness checks, hover and press on every control type, the viewport's mode chips, drag, and the close X. Console: 0 errors or warnings at both sizes. CLS 0.0015 on desktop (from the shared header, 0.0002 per shift) and 0 on phone. No horizontal scroll at 375. `parity.py /mori`: OK, text 52/52, links 4/4. `taste.py` on the Mori and Creative files: OK. `scripts/motion.mjs /mori` finished late:
-- **Desktop:** 0 still screens, layout shift 0.001, and 14 dead hovers. These are the pinned chapter-rail items, the film's Pause, and the asks while the pinned film covers them; the rail items do go ink on hover when they are not active.
-- **Phone:** 1 still screen (y=131, as the hero settles into the cube) and 0 dead controls.
-- **Dev overlay:** a parse error in `components/pages/Newsletter.jsx`. That is another page's file, and this page's console was clean. Proof: `img/mori-shaded-tear.jpg` (the signature viewport in shaded mode) and `img/mori-walk.jpg` (the desktop walk, one frame every 722px).
+How I walked it: Playwright, moving, at 1470×801 (fine-pointer hover enabled) and at 375×812. The cookie bar was dismissed and there is no loader on this route. On each half-screen of the wheel walk I took two frames 1 s apart, and I recorded video. I hovered and pressed the asks, links, rail, tabs, tiles, model cards and view chips, switched the viewport between wireframe, shaded and normals, dragged the mesh and used the arrow keys.
+
+What the checks found:
+- **Parity:** `parity.py /mori` is OK (text 52/52, links 4/4).
+- **Layout shift:** CLS is 0.0007 on desktop (all from the shared header's tool cluster) and 0 on phone.
+- **Scroll and overlap:** no horizontal scroll at 375. No overlap found at either size.
+- **Console errors:** none from the page. The one console error is a hydration mismatch in the shared `FooterHTML`, which shows the red "1 Issue" badge (shared chrome). There are also font-preload warnings (shared).
+- **A reload I did not cause:** once during the desktop walk the dev server reloaded the page. That is HMR from concurrent edits, not this page.
+- Proof: `img/mori-clips.jpg`. The left side shows the phone canvas text clipping. The right side shows the desktop chapter pane resting empty while the rail still says 01.
 
 ## The 11 answers
 
-1. **Sells in 5 s, moves within 1 s?** Yes. The film fills the screen from the first frame. The h1 "Mori" cuts in by line mask and is fully in by about 1 s. Lede, `3D` pill and the white "Request access" all sit in the first screen. On phone the film settles into the cube on its own after about 2 s, and "Build worlds, not just images." plus the ask then fit the first screen.
-2. **One in, one out, or a document?** Mostly one in, one out. Desktop: the hero is pinned and the film closes into the cube as you scroll. Then come pinned chapters where one panel changes, and the dark viewport room. After "Where Mori fits" it turns into a document. There is about 300px of dead white before "Find your field" and again before "Frontier AI for everything you build.". The map grid of six creative cards is followed straight away by the model-card grid, which shows the same six creative models again.
-3. **A real visual in every section?** Yes, but it is nearly always the same one. The terrain film is the hero, the cube, all four chapter pictures (only the crop changes), the "Where Mori fits" picture and Mori's own card. That makes seven views of one image. The point-cloud viewport is the only other Mori visual.
-4. **One ask, nothing floating; scale rhythm?** The ask holds. One solid fill shows per viewport: white "Request access" on the film, ink beside the cube, and the header switches to a solid "Request access" once the page's ask leaves the screen. On phone the header keeps a solid "Try Hanzo" and the page's "Request access" is outlined, so the phone's one solid ask is not Mori's ask. Nothing floats over copy apart from the film's pause button and the close X, which belong to the kit. Scale has rhythm: h1 112px as the moment, then 44px, then 26px section heads with 13px mono under them.
-5. **Every hover and press answers, no jumps?** Mostly. Both asks deepen their fill on hover and press to translateY(1px) and scale 0.98. Tabs, rail items and chips go to ink. Model cards tilt and play their film. "Try it in Design" changes nothing on hover; it only gets a 1px press. The header ask's hover is a fade to opacity 0.88, which is the banned "button that fades on hover". That is shared chrome, but it is on this page. No layout jumps.
-6. **Overlap, font swap, layout shift?** None found at either size. The h1 box holds its position from 700 ms to 6 s.
-7. **Which reference, and is its motion there?** Mainly the apple.com product page (a pinned hero that settles, pinned chapters, the product as the object), plus the synchronized.studio close-and-return X. The motion is really there: a scroll-scrubbed settle, pinned chapter swaps, a self-running orbit with drag inertia, a field tour that runs itself, a gliding tab ink and the card tilt. The page mixes idle, pointer, state and arrival motion.
-8. **Different from its neighbours?** Only partly. Iro, Koma, Oto, Koe and Uta use the same skeleton: film hero settles into a shape, headline beside it, four chapters on the film, dark demo room, Fits, Find your field, model cards, Band. Mori's own parts are the cube and the point-cloud viewport. Koma also uses chapters-first. A visitor clicking through the family will feel the template.
-9. **All 18 parts?** Mostly covered: one h1, `data-cta` on every ask, a sticky ask, a pause control on the film, kit tables and specs, Morph close, JSON-LD, parity 0 missing. These are weak: Part 3 "loud and quiet alternate" (the white tail of Fits, Map and Cards is three quiet sections in a row), Part 10 "4 or more real images together" (the six cards do it, but Mori's own media is one film), and Part 7 "never an icon in a rounded box" (the glyph chip in the corner of each chapter picture).
-10. **Banned tells?** The header ask fades on hover (shared chrome). There is a small icon in a rounded box on the chapter art. No hue, no eyebrow above a headline (the 13px mono captions sit under their h2s), no gradient text, no Inter.
-11. **Copy untouched?** Yes. Parity is 52/52 text and 4/4 links. The viewport HUD strings ("245,820 TRIS", "PBR CHANNELS…", "EXPORTS…") are Hanzo's own, from `content/live/mori.json`.
+1. **Does the first screen sell in 5 s, and does something move within 1 s?** Yes. The terrain film is full-bleed from the first frame. "Mori", the lede, the `3D` pill and the white "Request access" are all in by about 1 s. On phone it settles into the cube by itself after about 2 s, and "Build worlds, not just images." plus the ask then fit the first screen. One weak spot: halfway through the desktop settle (scrollY about 360) the screen is film only, with no words and no ask.
+2. **One thing in, one thing out, or a document?** On desktop it is mostly one in, one out. The pinned film closes into a cube whose near edges draw in. Then come the pinned chapters, where one panel changes, then Fits, the map, the dark viewport, the cards and the Band. The flaw is in the chapter swap. The next pane wipes up about 20% of a chapter's run before the text changes, and its drawing only starts once the text changes. So at rest between chapters you get a black, empty pane under the old chapter's words (`desk` y=2166: the rail says 01 and the pane shows only a sliver of the sphere). The same thing gives a half environments, half icosahedron split at y=2888. On phone the chapters stack, as the rule allows.
+3. **Does every section hold a real visual object?** Yes, and now each one is its own:
+   - topology: a quad sphere drawing in by latitude, its poles closed by triangle fans;
+   - materials: six lit material spheres;
+   - environments: rooms rising on a metric grid;
+   - export: the formats landing beside a turning icosahedron;
+   - Fits: a camera scanning a cube;
+   - the turning point-cloud viewport;
+   - the creative cards and Hanzo's model cards.
 
-## Fixes needed to reach 8
+   The film now belongs only to the hero and the cube. In the viewport, though, the left 40% of the room is empty black: the mesh sits at x≈64% with nothing to balance it.
+4. **One ask, nothing floating? Does scale have rhythm?**
+   - **Desktop: yes.** The page's "Request access" is the one solid until it leaves the screen, then the header carries a solid "Request access".
+   - **Phone:** the header's sticky ask is still "Try Hanzo" (solid) once Mori's own ask has gone. The bottom ask bar briefly carries "Request access" at the viewport, while "Try Hanzo" also stays solid in the header. That is shared `Ask.jsx`, but it is what a phone visitor sees on this page.
+   - **During arrival:** for about the first second, the header's solid "Try Hanzo" and the film's white "Request access" are both solid.
+   - **Scale:** it has rhythm. The h1 is 112px as the moment, then 44px, then 26px section heads with 13px mono under them, and the Band headline is 88px.
+5. **Does every hover and press answer, with no jumps?** Mostly.
+   - The hero ask deepens from #0a0a0a to #262626 and presses at translateY(1px) scale(.98).
+   - The arrow on "Try it in Design" moves 4px on hover.
+   - Rail items go to ink and press at .97. View chips brighten their outline and press. Map tiles and model cards tilt about 3°.
+   - In the Band, "Every model →" is 15px and moves its arrow, but "Research preview" sits beside it at 20.6px and only underlines. These two sibling links don't match. (`cr-band-note` in `Creative.jsx`.)
+   - The Band's "Request access" goes from #f5f5f7 to #fff on hover, which is barely visible (kit `Band`).
+   - The header ask fades to opacity .88 on hover, which is the banned "button that fades" (shared `Ask.jsx`).
+   - There are no layout jumps.
+6. **Overlap, font swap or layout shift?** None found at either size. The only shifts come from the shared header.
+7. **Which reference does it feel like, and is its motion there?** The apple.com product page: a pinned hero that settles, pinned chapters where one panel changes, the product as the object. Its motion is really there. The page has:
+   - a scroll-scrubbed settle;
+   - the chapter wipe;
+   - self-drawing canvases;
+   - an orbit you can drag, with inertia;
+   - a field tour that runs itself, with a gliding tab ink;
+   - card tilt;
+   - the Morph close X.
 
-1. **Stop repeating the one film.** The four chapters and the Fits picture are the same terrain loop at different zooms. Give each chapter its own object drawn from the page's facts: the topology chapter shows the mesh's quad wireframe, the PBR chapter splits albedo, normal, roughness and metallic as four greyscale tiles, the environments chapter shows a layout grid, and the export chapter shows the format list landing. At the least, keep the film only for the hero and cube and make the chapters something else. (`Creative.jsx` `CapArt`/`Fits`, overridden for Mori.)
-2. **Fix the tear in the signature.** In shaded and normals modes the twisted torus shows a slit or seam where `u` wraps. In `mesh()`, `b` is offset by `a*0.5`, so at `u = U-1 → 0` the neighbour index `(u+1)%U` joins vertices half a turn apart in `v`. Make the twist a whole number of turns, or offset the wrap index by `V/2`. The shaded render is also a flat mid-grey (most quads around rgb 64). Light it so it reads as a sculpted object, not a grey lump (`img/mori-shaded-tear.jpg`).
-3. **Don't show the six creative cards twice in a row.** Either the "Find your field" grid or the model-card grid has to go, or the model cards must not follow the map directly. As it stands, the same six cards appear back to back.
-4. **Close the dead white gaps** between Fits and Find your field, and between the map and the model cards (about 300px each at 1470). Let the next object peek, and give the tail of the page a loud and quiet rhythm instead of three quiet white sections in a row.
-5. **Make every hover answer.** "Try it in Design" needs a hover state (its arrow moving is enough). The header ask's opacity fade is banned; request a fill change in shared `Ask.jsx` (`docs/requests/`).
-6. **Remove the boxed glyph** from the corner of each chapter picture, or let it stand free without its rounded chip.
-7. **Phone:** the solid ask is "Try Hanzo" while Mori's "Request access" is outlined. Let Mori's own ask be the one solid button on phone too (or make the header carry it), so the page has one ask in its own words at both sizes.
+   Idle, pointer, state and arrival motion are all present, so scroll is well under half the page's motion.
+8. **Is it different from its neighbours?** Better than before. Mori now owns the cube, five drawn objects and the viewport. The skeleton is still the creative family's: film hero settles into a shape, four chapters, Fits, map, demo room, model cards, Band. Someone clicking Iro, then Koma, then Mori will feel that.
+9. **Are all 18 parts covered?** Largely. The page has:
+   - one h1;
+   - the header comment with Persona, Goal, CTA, Metric, Signature and Beyond;
+   - `data-cta` and `data-thumb` on the ask;
+   - the pause control on the film;
+   - keyboard orbit (arrow keys) and radio-group modes with a 2px focus ring;
+   - kit specs;
+   - JSON-LD;
+   - parity at 0 missing.
+
+   These parts are weak:
+   - **Part 6 (craft at 375):** text is clipped or overflows inside the canvases.
+   - **Part 1 and Part 4 (phone):** the solid sticky ask is not the page's ask.
+   - **Part 3 (alternate loud and quiet):** the white run of Fits, map and cards is mostly quiet.
+10. **Any banned tells?** None that belong to the page. The header's fade on hover is shared. There is no hue: the viewport's radial `#121216` is near-neutral and `taste.py` allows it. Nothing sits above a headline, there is no gradient text and no Inter.
+11. **Is the copy untouched?** Yes: parity is 52/52 text and 4/4 links. The HUD strings in the viewport are Hanzo's own.
+
+## Fixes to reach 8
+
+1. **Never rest on an empty chapter pane.** In `MoriCap`/`Draw`, start the incoming chapter's build when its wipe starts, not when `at` changes. Or let each canvas draw its settled final frame whenever it is not `on`, so the pane that wipes in is never black. The swap should read as one object replacing another, not black and then a redraw.
+2. **Fix the phone canvas text.** In `exporter()` at narrow widths, the "3D Gaussian splats" chip runs off the pane. Measure the chip widths and start `fx` so the widest chip fits, or wrap that chip onto two rows. In `materials()`, "AMBIENT OCCLUSION" is wider than its tile at 375. Fit the label to the tile (smaller tracking, or two lines), or lay the six maps out as 2×3 on phone.
+3. **Balance the dark viewport.** The left 40% of the room is empty at 1470. Either centre the mesh when nothing sits on the left, or put the room's own existing words (the specs or the caption) in that space.
+4. **Make the Band's two closing links one pair.** They should be the same size and treatment, both with an arrow that moves on hover. Right now one is 15px and the other is 20.6px.
+5. **Keep words on screen through the hero settle.** At about a half-screen of scroll on desktop, the frame is film only. Keep the h1 or the ask in view until the settled headline arrives, so no screen is wordless.
+6. **Shared, request rather than edit:** the phone header's sticky ask should carry Mori's "Request access" (as desktop does), with only one solid at a time. The header ask needs a fill change instead of the opacity fade. The footer hydration mismatch needs fixing, because it raises the red badge on every page.

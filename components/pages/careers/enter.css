@@ -1,0 +1,80 @@
+/* Careers entrances (MOTION-MAP.md). Hidden starts only under html.js and only until [data-in]; reduced motion and
+   JS off read the final state. Transform, opacity, clip-path and filter only. ease-emphasis unless the map's own words
+   ask for more (drop-in's small bounce, MOTION.md). */
+
+/* ---------- /careers ---------- */
+
+/* 1. line-draw (hero object): the hiring card's outline draws itself, then the card fills */
+.xce-draw { position: relative; }
+.xce-draw-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
+.xce-draw-svg rect { fill: none; stroke: #0a0a0a; stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; opacity: 0; }
+html.js .xce-draw:not([data-in]) .xcb-hire { opacity: 0; }
+html.js .xce-draw[data-in] .xce-draw-svg rect { animation: xce-draw 1100ms cubic-bezier(.65, 0, .35, 1) both; }
+html.js .xce-draw[data-in] .xcb-hire { animation: xce-fill 400ms cubic-bezier(0, 0, .2, 1) 760ms both; }
+@keyframes xce-draw { 0% { stroke-dashoffset: 1; opacity: 1; } 70% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes xce-fill { from { opacity: 0; } }
+
+/* 2. swing-door (perks): the tile and the list swing in on vertical hinges, like a pair of doors */
+.xce-swing { perspective: 1600px; }
+.xce-swing .xcb-perk-v { transform-origin: 0% 50%; }
+.xce-swing .xcb-perk-l { transform-origin: 100% 50%; }
+.xce-swing .xcb-perk-v, .xce-swing .xcb-perk-l { transition: transform 900ms cubic-bezier(.16, 1, .3, 1), opacity 500ms cubic-bezier(0, 0, .2, 1); }
+.xce-swing .xcb-perk-l { transition-delay: 120ms; }
+html.js .xce-swing:not([data-in]) .xcb-perk-v { transform: perspective(1600px) rotateY(-78deg); opacity: 0; }
+html.js .xce-swing:not([data-in]) .xcb-perk-l { transform: perspective(1600px) rotateY(60deg); opacity: 0; }
+
+/* 3. iris (open positions): the title, lede and skill row open from a circle at the centre */
+.xce-iris { clip-path: circle(150% at 50% 50%); transition: clip-path 1000ms cubic-bezier(.65, 0, .35, 1); }
+html.js .xce-iris:not([data-in]) { clip-path: circle(0% at 50% 50%); }
+
+/* 4. count-roll (internships): the figure's digits roll into their values */
+.xce-roll-v { display: inline-flex; align-items: flex-start; line-height: 1; }
+.xce-roll-d { display: inline-block; height: 1em; overflow: hidden; }
+.xce-roll-d > span { display: block; transform: translateY(calc(var(--d) * -1em)); transition: transform 1400ms cubic-bezier(.16, 1, .3, 1); transition-delay: calc(150ms + var(--k) * 90ms); }
+.xce-roll-d i { display: block; height: 1em; font-style: normal; }
+html.js .xce-count:not([data-in]) .xce-roll-d > span { transform: translateY(0); }
+
+/* 5. sticky-stack (the close): Academic holds at the bottom of the screen and the dark close slides up and stacks on
+   it as a card, which opens to full width as it lands; the card beneath steps back */
+.xce-under { position: sticky; z-index: 0; transition: transform 700ms cubic-bezier(.16, 1, .3, 1), opacity 700ms cubic-bezier(0, 0, .2, 1); transform-origin: 50% 100%; }
+.xce-under[data-under] { transform: scale(.95); opacity: .5; }
+.xce-stack { position: relative; z-index: 1; transition: clip-path 800ms cubic-bezier(.16, 1, .3, 1); clip-path: inset(0 0 0 0 round 0); }
+html.js .xce-stack:not([data-in]) { clip-path: inset(0 clamp(16px, 4vw, 32px) 0 clamp(16px, 4vw, 32px) round 32px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .xce-under { position: relative; top: 0 !important; }
+  .xce-under[data-under] { transform: none; opacity: 1; }
+  .xce-draw-svg { display: none; }
+}
+
+/* ---------- /careers/<role> ---------- */
+
+/* 1. drop-in (the role's sheet): falls in from above and settles with a small bounce */
+html.js .xcje-drop:not([data-in]) { transform: translateY(-80px); opacity: 0; }
+html.js .xcje-drop[data-in] { animation: xcje-drop 900ms both; }
+@keyframes xcje-drop {
+  0% { transform: translateY(-80px); opacity: 0; animation-timing-function: cubic-bezier(.55, 0, .9, .4); }
+  55% { transform: translateY(0); opacity: 1; animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+  75% { transform: translateY(-8px); animation-timing-function: cubic-bezier(.6, 0, .8, .4); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* 2. shrink-to-card (chapters): each chapter is full width while you read it and shrinks into a card as you leave it
+   (scroll-linked scale and corner radius, CareerRole.jsx) */
+.xcje-shrink { transform-origin: 50% 0%; }
+
+/* 3. magnet-gather (why join): the rows start scattered and are pulled together into the list */
+.xcje-gather li { transition: transform 1000ms cubic-bezier(.16, 1, .3, 1), opacity 500ms cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--g, 0) * 70ms); }
+html.js .xcje-gather:not([data-in]) li { transform: translate(var(--gx, 0), var(--gy, 0)) rotate(var(--gr, 0)); opacity: 0; }
+
+/* 4. stack-drop (apply): the room's layers drop and stack onto each other: heading, meter, note, then the form card */
+.xcje-stack > * { transition: transform 700ms cubic-bezier(.16, 1, .3, 1), opacity 400ms cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--s, 0) * 140ms); }
+html.js .xcje-stack:not([data-in]) > * { transform: translateY(-64px) scale(.97); opacity: 0; }
+
+/* 5. rack-focus (the other roles): comes into focus from a blur, like a camera pulling focus */
+.xcje-focus { transition: filter 900ms cubic-bezier(.16, 1, .3, 1), opacity 600ms cubic-bezier(0, 0, .2, 1), transform 900ms cubic-bezier(.16, 1, .3, 1); }
+html.js .xcje-focus:not([data-in]) { filter: blur(4px); opacity: .2; transform: scale(1.03); }
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .xcje-drop[data-in] { animation: none; }
+}

@@ -5,20 +5,33 @@
 .bs-chip.ink { background: var(--t-ink, #0a0a0a); color: var(--t-inv, #fff); }
 .bs-chip.file { background: #ededed; color: #0a0a0a; }
 
-/* the hero's one ask. KeynoteStage draws "Try Hanzo" quiet (the header's words); here it is the page's one solid on the
-   first screen from 701px, where the header outlines while it is in view (Ask.jsx), so one solid per screen. Phones keep
-   the header's solid "Try Hanzo" (Ask.jsx does not quiet it there), so the hero's stays outlined on phones. */
-@media (min-width: 701px) {
-  .bs .kns-acts .x-btn[data-cta='base.hero'] { background-color: var(--btn-solid-bg); border-color: var(--btn-solid-bg); color: var(--btn-solid-ink); }
-  .bs .kns-acts .x-btn[data-cta='base.hero']:active { transform: scale(.98); }
+/* one solid per screen. KeynoteStage draws the hero's "Try Hanzo" quiet (the header's words); here it is the page's
+   solid at every size. While any of the page's own asks (hero, "Deploy on Hanzo Cloud", "Deploy to Cloud") is on screen,
+   useOwnAsk() sets html.bs-own-ask and the header's "Try Hanzo" steps back to its outline; between them the header
+   carries the one solid. The solid hover is the deck's #262626 (light rooms), not the kit's #2c2c2e. */
+.bs { --btn-solid-hover: #262626; }
+.bs [data-room='dark'] { --btn-solid-hover: #fff; }
+.bs .kns-acts .x-btn[data-cta='base.hero'] { background-color: var(--btn-solid-bg); border-color: var(--btn-solid-bg); color: var(--btn-solid-ink); }
+.bs .kns-acts .x-btn[data-cta='base.hero']:active { transform: scale(.98); }
+@media (hover: hover) { .bs .kns-acts .x-btn[data-cta='base.hero']:hover { background-color: var(--btn-solid-hover); border-color: var(--btn-solid-hover); } }
+html.bs-own-ask header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+/* the text-link asks answer on hover: the words underline and the arrow steps 4px */
+@media (hover: hover) {
+  .bs .x-arrow:hover span { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  .bs .x-arrow:hover svg { transform: translate3d(4px, 0, 0); }
 }
-@media (min-width: 701px) and (hover: hover) { .bs .kns-acts .x-btn[data-cta='base.hero']:hover { background-color: var(--btn-solid-hover); border-color: var(--btn-solid-hover); } }
+.bs .x-arrow svg { transition: transform .3s var(--e-move); }
 /* the stage sits higher: the h1 baseline near 38% of the screen, the admin starting just under the header */
 @media (min-width: 900px) {
   .bs .kns.side { padding-top: clamp(32px, calc(14svh - 24px), 112px); }
   .bs .kns.side .kns-g { grid-template-rows: auto 1fr; }
   .bs .kns.side .kns-t { align-self: start; padding-top: clamp(24px, 6svh, 64px); }
 }
+/* no dead band between the hero and "one file": the binary card follows the admin by one step */
+.bs .kns { padding-bottom: clamp(44px, 5vw, 72px); }
+/* the dark room ends with its content: the related links run in two columns, the room's floor is one step */
+.bs .knx { padding-bottom: clamp(72px, 7vw, 116px); }
+@media (min-width: 900px) { .bs-rel ul { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; } .bs .bs-rel a { flex-direction: column; align-items: flex-start; gap: 2px; } }
 
 /* the hero object: the Base admin (an outlined window: paper inside, hairlines between its parts) */
 .bs-adm { display: flex; flex-direction: column; min-height: min(680px, 74svh); }
@@ -27,6 +40,11 @@
 .bs-adm-t { margin-left: 12px; font: 497 16px/1 var(--sans); letter-spacing: -.01em; }
 .bs-adm-url { margin-left: auto; margin-right: clamp(0px, 9vw, 140px); padding: 9px 14px; border-radius: 999px; background: #f5f5f5; font: 400 14px/1 var(--mono); color: var(--ink); white-space: nowrap; }
 .bs-adm-url b { color: #525252; font-weight: 606; margin-right: .5em; }
+.bs-adm-url em { font-style: normal; font-weight: 606; }
+.bs-adm-url.one { background: #e4e4e7; color: var(--ink); }
+.bs-adm-url { transition: background-color .25s var(--e-out), color .25s var(--e-out); }
+.bs-tr.hov { background: #fafafa; }
+.bs-tr.hov code { color: var(--ink); font-weight: 606; }
 .bs-adm-b { flex: 1; display: grid; grid-template-columns: 200px minmax(0, 1fr); min-height: 0; }
 .bs-adm-side { display: flex; flex-direction: column; gap: 4px; padding: 22px 14px; border-right: 1px solid var(--hair); }
 .bs-adm-k { margin: 0 8px 10px; font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); }
@@ -34,7 +52,7 @@
 .bs-adm-side span i { width: 14px; height: 14px; border-radius: 6px; border: 1.5px solid currentColor; }
 .bs-adm-side span.on { background: #f5f5f5; color: var(--ink); }
 .bs-adm-side span.on i { background: currentColor; }
-.bs-adm-live { margin: auto 8px 0; display: flex; align-items: center; gap: 8px; font: 497 13px/1 var(--mono); color: var(--body); }
+.bs-adm-live { margin: 22px 8px 0; display: flex; align-items: center; gap: 8px; font: 497 13px/1 var(--mono); color: var(--body); }
 .bs-adm-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
 .js .bs-adm-live i { animation: bs-beat 1.5s var(--e-move) infinite; }
 @keyframes bs-beat { 50% { transform: scale(.55); } }
@@ -70,46 +88,115 @@
 .bs-adm-tabs button:active { transform: scale(.97); transition-duration: 90ms; }
 .bs-adm-tabs button:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
 
-/* the one file: Hanzo's sentence beside the binary it describes */
-.bs-one { padding-top: clamp(44px, 6vw, 116px); }
-.bs-one-g { align-items: center; row-gap: 44px; }
-.bs-one-say { grid-column: 1 / span 5; color: var(--ink); }
-.bs-one-v { grid-column: 7 / -1; display: flex; flex-direction: column; gap: 17px; }
-.bs-one-bin { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'k k' 'n l' 'a l'; column-gap: 32px; row-gap: 8px; padding: 32px; border-radius: 24px; background: var(--ink); color: #fafafa; }
-.bs-one-bin .bs-k { grid-area: k; color: #a3a3a3; margin-bottom: 8px; }
-.bs-one-n { grid-area: n; margin: 0; font: 497 44px/1 var(--mono); letter-spacing: -.03em; color: #fafafa; }
-.bs-one-api { grid-area: a; align-self: end; margin: 0; font: 400 14px/1.2 var(--mono); color: rgba(255, 255, 255, .78); }
-.bs-one-api b { color: #fafafa; font-weight: 606; }
-.bs-one-bin ul { grid-area: l; list-style: none; margin: 0; padding: 0 0 0 27px; border-left: 1px solid rgba(255, 255, 255, .14); display: grid; gap: 10px; }
-.bs-one-bin li { font-size: 17px; color: #fafafa; }
-.bs-one-copies { display: grid; gap: 10px; }
-.bs-one-copies p { margin: 0; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--hair); font-size: 16px; color: var(--body); }
-.bs-one-copies i { width: 24px; height: 1px; background: #737373; position: relative; }
-.bs-one-copies i::after { content: ''; position: absolute; right: 0; top: -3px; border: 3.5px solid transparent; border-left: 5px solid #737373; border-right: 0; }
+/* ---------- the signature: zoom-map. The whole system as one map in the quiet room; scroll zooms into the
+   collection, which fills the screen and declares itself. The map's one transform is written by ZoomMap. ---------- */
+.bs-zm { position: relative; background: #f5f5f5; --quiet: #525252; --body: #525252; }
+.bs-zm-run { position: relative; }
+.bs-zm-stage { position: relative; overflow: hidden; }
+.bs-zm-half { position: absolute; inset: 0; }
+.bs-zm-map { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+.js .bs-zm-map:not([data-ready]) { opacity: 0; }
+.bs-zm-lines { position: absolute; inset: 0; overflow: visible; }
+.bs-zm-lines line { stroke: #a3a3a3; stroke-width: 1.5; stroke-dasharray: 4 6; }
+.bs-zn { position: absolute; display: flex; flex-direction: column; gap: 14px; padding: 22px; border-radius: 22px; background: #fff; color: #0a0a0a; border: 1px solid rgba(0, 0, 0, .06); overflow: hidden; }
+.bs-zn .bs-k { font-size: 15px; }
+.bs-zn-tbl { display: grid; gap: 8px; }
+.bs-zn-tbl div { display: flex; align-items: center; gap: 12px; height: 30px; padding: 0 10px; border-radius: 8px; background: #f5f5f5; }
+.bs-zn-tbl code { font: 400 16px/1 var(--mono); }
+.bs-zn-tbl i, .bs-zn-stream i { flex: 1; max-width: 60%; height: 8px; border-radius: 999px; background: #e4e4e7; }
+.bs-zn-path { font: 400 19px/1.35 var(--mono); overflow-wrap: anywhere; }
+.bs-zn-path b { font-weight: 606; }
+.bs-zn .bs-verbs span { font-size: 16px; }
+.bs-zn-bin { background: #0a0a0a; color: #fafafa; border-color: #0a0a0a; justify-content: center; }
+.bs-zn-bin .bs-k { color: #a3a3a3; }
+.bs-zn-n { margin: 0; font: 497 52px/1 var(--mono); letter-spacing: -.03em; }
+.bs-zn-api { margin: 0; font: 400 16px/1 var(--mono); color: rgba(255, 255, 255, .78); }
+.bs-zn-api b { color: #fafafa; font-weight: 606; }
+.bs-zn .bs-chip { font-size: 16px; min-height: 36px; }
+.bs-zn-iam .bs-iam > i, .bs-zn-live .bs-up > i { width: 28px; height: 1px; background: #525252; }
+.bs-zn-stream { display: grid; gap: 6px; }
+.bs-zn-stream div { display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 10px; border-radius: 8px; background: #f5f5f5; }
+.bs-zn-stream code { font: 400 16px/1 var(--mono); }
+.bs-zn .bs-up { font-size: 16px; color: #525252; }
+.bs-zn-file { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.bs-zn-file ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.bs-zn-file li { font-size: 16px; color: #525252; }
+/* the collection: the one part you can press; it takes the camera in */
+.bs-zn-coll { text-align: left; font: inherit; cursor: zoom-in; border: 2px solid #0a0a0a; transition: transform .2s var(--e-out); }
+.bs-zn-name { font: 497 40px/1 var(--mono); letter-spacing: -.03em; overflow-wrap: anywhere; }
+.bs-zn-fields { display: flex; flex-wrap: wrap; gap: 6px; }
+.bs-zn-fields code { padding: 7px 10px; border-radius: 8px; background: #f5f5f5; font: 400 16px/1 var(--mono); }
+.bs-zn-coll:focus-visible { outline: 3px solid var(--focus, #0a0a0a); outline-offset: 4px; }
+@media (hover: hover) { .bs-zn-coll:hover { background: #fafafa; } }
+.bs-zn-coll:active { transform: scale(.98); }
+/* the collection, filled to the screen: it declares itself */
+.bs-zm-say { position: absolute; inset: 0; display: flex; align-items: center; background: #fff; opacity: 0; pointer-events: none; }
+.bs-zm-say[data-on] { pointer-events: auto; }
+.bs-zm-g { align-items: center; row-gap: 24px; }
+.bs-zm-say .bs-name { background: #f5f5f5; }
+.bs-zm-l { grid-column: 1 / span 6; display: flex; flex-direction: column; gap: 24px; }
+.bs-zm-p { margin: 0; font-size: 17px; line-height: 1.6; color: #525252; max-width: 46ch; }
+.bs-zm-card { grid-column: 8 / -1; --t-ink: #0a0a0a; --t-soft: #525252; --t-fill: #f5f5f5; --t-inv: #fff; display: flex; flex-direction: column; gap: 14px; padding: 28px; border-radius: 24px; border: 2px solid #0a0a0a; }
+.bs-zm-card .bs-coll { font-size: 44px; }
+.bs-zm-fields { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.bs-zm-fields li { display: flex; justify-content: space-between; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 12px; background: #f5f5f5; }
+.bs-zm-fields code { font: 400 16px/1 var(--mono); }
+.bs-zm-fields em { font: 400 14px/1 var(--mono); font-style: normal; color: #525252; }
+.bs-zm-prom { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+.bs-zm-prom li { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+.bs-zm-prom li i { flex: none; position: relative; width: 20px; height: 20px; border-radius: 50%; background: #0a0a0a; }
+.bs-zm-prom li i::after { content: ''; position: absolute; left: 7px; top: 4px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+/* Hanzo's sentence about the whole system, beside the whole map (scrolls away as the camera goes in) */
+.bs-zm-say0 { position: relative; z-index: 2; padding: 56px 0 24px; }
+.bs-zm-say0 .kn-lede { color: #0a0a0a; }
+@media (min-width: 900px) {
+  .js .bs-zm:not([data-calm]) .bs-zm-run { height: 320svh; }
+  .js .bs-zm:not([data-calm]) .bs-zm-stage { position: sticky; top: 60px; height: calc(100svh - 60px); }
+  .js .bs-zm:not([data-calm]) .bs-zm-say0 { position: absolute; left: 0; right: 0; top: 60px; height: calc(100svh - 60px); display: flex; align-items: center; padding: 0; pointer-events: none; }
+  .js .bs-zm:not([data-calm]) .bs-zm-say0 .kn-lede { max-width: 30ch; width: 38%; }
+}
+@media (max-width: 899px) {
+  .js .bs-zm:not([data-calm]) .bs-zm-run { height: 300svh; }
+  .js .bs-zm:not([data-calm]) .bs-zm-stage { position: sticky; top: 60px; height: calc(100svh - 60px); }
+  .bs-zm-say0 { padding: 44px 0 8px; }
+  .bs-zm-say0 .kn-lede { font-size: 19px; }
+  .bs-zm-say { align-items: flex-start; overflow-y: auto; padding: 20px 0; }
+  .bs-zm-l, .bs-zm-card { grid-column: 1 / -1; }
+  .bs-zm-l { gap: 14px; }
+  .bs-zm-p { font-size: 16px; line-height: 1.5; }
+  .bs-zm-card { padding: 16px; gap: 10px; border-radius: 18px; }
+  .bs-zm-card .bs-coll { font-size: 28px; }
+  .bs-zm-fields { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .bs-zm-fields li { min-height: 36px; padding: 0 10px; }
+  .bs-zm-fields em { display: none; }
+  .bs-zm-prom { grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .bs-zm-prom li { font-size: 14px; align-items: flex-start; }
+  .bs-zm-prom li i { width: 16px; height: 16px; margin-top: 1px; }
+  .bs-zm-prom li i::after { left: 5px; top: 2px; }
+  .bs-exists { display: none; }
+}
+/* reduced motion and JS off: no camera; the whole map stands, the declared collection under it */
+.bs-zm[data-calm] .bs-zm-stage, html:not(.js) .bs-zm-stage { height: auto; overflow: visible; }
+.bs-zm[data-calm] .bs-zm-half, html:not(.js) .bs-zm-half { position: relative; height: min(560px, 70svh); overflow: hidden; }
+.bs-zm[data-calm] .bs-zm-say, html:not(.js) .bs-zm-say { position: relative; opacity: 1; pointer-events: auto; padding: 56px 0 88px; background: transparent; }
+html:not(.js) .bs-zm-half { display: none; }
 
-/* the signature: declare a collection, get an API, in the quiet room */
-.bs-dec { position: relative; background: #f5f5f5; --quiet: #525252; --body: #525252; }
-.bs-dec-run { position: relative; }
-.bs-dec-g { align-items: center; row-gap: 32px; }
-.bs-dec-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 27px; }
 .bs-dec-hd { display: flex; flex-direction: column; gap: 10px; }
 .bs-dec-h { max-width: 16ch; }
 .bs-name { display: flex; align-items: center; gap: 12px; align-self: flex-start; min-height: 56px; padding: 0 8px 0 16px; border-radius: 12px; background: #fff; cursor: text; }
 .bs-name span { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
 .bs-name input { width: 14ch; min-height: 44px; border: 0; background: none; font: 497 17px/1 var(--mono); color: var(--ink); outline: none; caret-color: var(--ink); }
 .bs-name:focus-within { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
-.bs-says { display: grid; }
-.bs-say { display: flex; flex-direction: column; gap: 10px; }
-.bs-say p { margin: 0; font-size: 16px; line-height: 1.6; color: #525252; max-width: 46ch; }
-.bs-say .bs-say-n { font: 606 12px/1 var(--mono); color: #525252; letter-spacing: .14em; }
-.bs-steps { display: flex; flex-wrap: wrap; gap: 4px; }
-.bs-steps button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; font: 497 13px/1 var(--mono); color: #525252; cursor: pointer; transition: background-color .3s var(--e-in), color .3s var(--e-in), transform .15s var(--e-out); }
-.bs-steps button[aria-current] { background: var(--ink); color: #fff; }
-@media (hover: hover) { .bs-steps button:not([aria-current]):hover { background: #ededed; color: var(--ink); } }
-.bs-steps button:active { transform: scale(.97); transition-duration: 90ms; }
-.bs-steps button:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
-
-.bs-dec-v { grid-column: 6 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: repeat(3, auto); grid-template-areas: 'schema prom' 'schema api' 'iam live'; gap: 12px; }
+/* Data / Auth / Files: plain rows, each beside its drawing, in the quiet room */
+.bs .bs-pil { background: #f5f5f5; --quiet: #525252; --body: #525252; padding-top: clamp(44px, 5vw, 88px); }
+.bs-pil-w { display: grid; gap: clamp(44px, 6vw, 88px); }
+.bs-pil-r { align-items: center; row-gap: 20px; }
+.bs-pil-t { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 10px; }
+.bs-pil-t p { margin: 0; font-size: 16px; line-height: 1.6; color: #525252; max-width: 46ch; }
+.bs-pil-t .bs-say-n { font: 606 12px/1 var(--mono); color: #525252; letter-spacing: .14em; }
+.bs-pil-v { grid-column: 7 / -1; display: grid; }
+.bs-pil-r:nth-child(2) .bs-pil-t { grid-column: 8 / -1; grid-row: 1; }
+.bs-pil-r:nth-child(2) .bs-pil-v { grid-column: 1 / span 6; grid-row: 1; }
 /* a tile's own ink, soft, fill and line, so the one being built can turn ink with everything inside it */
 .bs-tile { --t-ink: #0a0a0a; --t-soft: #525252; --t-fill: #f5f5f5; --t-line: rgba(0, 0, 0, .1); --t-inv: #fff; position: relative; display: flex; flex-direction: column; gap: 14px; padding: clamp(17px, 1.8vw, 27px); border-radius: 24px; border: 1px solid transparent; background: #fff; color: var(--t-ink); transition: background-color .4s var(--e-move), border-color .4s var(--e-move), color .4s var(--e-move); }
 .bs-tile.now { --t-ink: #fafafa; --t-soft: #a3a3a3; --t-fill: #262626; --t-line: rgba(255, 255, 255, .14); --t-inv: #0a0a0a; background: #0a0a0a; }
@@ -144,39 +231,45 @@
 @keyframes bs-arrive { from { transform: translate3d(0, -34px, 0); } to { transform: none; } }
 .bs-up { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 400 14px/1 var(--mono); color: var(--t-soft); }
 
-/* the build-up (JS only: with JS off every tile stands built, every sentence stacked). A tile not yet built is a
-   hairline sketch of itself: its parts are already drawn, faint, so the scene never opens on empty boxes. */
-.bs-tile > *, .bs-t-schema li > * { transition: opacity .4s var(--e-move); }
-.js .bs-tile:not(.on) { background: rgba(255, 255, 255, .45); border-color: rgba(0, 0, 0, .1); }
-.js .bs-tile:not(.on) > * { opacity: .22; }
-.js .bs-t-schema li:not(.in) { background: transparent; border-color: var(--t-line); }
-.js .bs-t-schema li:not(.in) > * { opacity: .32; }
-.js .bs-exists { transform: scale(.8); opacity: 0; transition: opacity .3s var(--e-in), transform .4s var(--e-in); }
-.js .bs-exists.on { transform: none; opacity: 1; }
-.js .bs-t-prom:not(.on) li i { background: transparent; }
+.bs-pil .bs-tile { max-width: 560px; }
+.bs-pil-r:nth-child(2) .bs-tile { justify-self: end; width: 100%; }
 
-@media (min-width: 900px) {
-  .js .bs-dec-run { height: 480svh; }
-  /* pinned under the 60px glass header, so no tile's top edge hides behind it */
-  .js .bs-dec-pin { position: sticky; top: 60px; height: calc(100svh - 60px); display: flex; align-items: center; overflow: hidden; }
-  /* compact enough that all five tiles stand inside the pinned screen with air above and below */
-  .js .bs-dec-v { gap: 10px; }
-  .js .bs-tile { gap: 11px; padding: clamp(16px, 1.4vw, 21px); }
-  .js .bs-t-schema ul { gap: 7px; }
-  .js .bs-t-schema li { min-height: 44px; }
-  .js .bs-t-prom ul { gap: 8px; }
-  .js .bs-stream { height: 110px; gap: 4px; }
-  .js .bs-stream div { height: 24px; }
-  .js .bs-say { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 24px, 0); visibility: hidden; transition: opacity .3s var(--e-move), transform .4s var(--e-move), visibility 0s linear .4s; }
-  .js .bs-say[data-on] { opacity: 1; transform: none; visibility: visible; transition: opacity .5s var(--e-in) .1s, transform .5s var(--e-in) .06s, visibility 0s; }
-}
-html:not(.js) .bs-dec { padding: clamp(72px, 11vw, 188px) 0; }
-html:not(.js) .bs-say { margin-bottom: 27px; }
-html:not(.js) .bs-steps { display: none; }
+/* ---------- entrances (one per main section, in MOTION-MAP order; armed only after mount, below the fold) ---------- */
+/* 1 split-merge: the sentence from the left, the map from the right; they meet */
+.bs-zm-half { transition: transform .8s var(--e-in), opacity .6s var(--e-in); }
+.bs-zm-l0 { transition: transform .8s var(--e-in), opacity .6s var(--e-in); }
+.bs-zm[data-arm]:not([data-in]) .bs-zm-half { transform: translate3d(22%, 0, 0); opacity: 0; }
+.bs-zm[data-arm]:not([data-in]) .bs-zm-l0 { transform: translate3d(-40%, 0, 0); opacity: 0; }
+/* 2 snap-sections: each row snaps up a whole step into place, with a hard stop */
+.bs-pil-r { transition: transform .45s cubic-bezier(.2, 1.4, .4, 1), opacity .2s linear; }
+.bs-pil-r[data-arm]:not([data-in]) { transform: translate3d(0, 33%, 0); opacity: 0; }
+/* 3 tile-flip: the deploy window's parts flip in as tiles, one after another */
+.bs-run .bs-dep { perspective: 900px; }
+.bs-run .bs-dep > *, .bs-run .bs-dep-places button, .bs-run .bs-dep-proj li { transition: transform .5s var(--e-in), opacity .3s var(--e-in); transform-origin: 50% 0; }
+.bs-run[data-arm]:not([data-in]) .bs-dep > *, .bs-run[data-arm]:not([data-in]) .bs-dep-places button, .bs-run[data-arm]:not([data-in]) .bs-dep-proj li { transform: rotateX(-88deg); opacity: 0; }
+.bs-run[data-in] .bs-dep > :nth-child(2) { transition-delay: .06s; } .bs-run[data-in] .bs-dep > :nth-child(3) { transition-delay: .12s; }
+.bs-run[data-in] .bs-dep > :nth-child(4) { transition-delay: .3s; } .bs-run[data-in] .bs-dep > :nth-child(5) { transition-delay: .36s; } .bs-run[data-in] .bs-dep > :nth-child(6) { transition-delay: .42s; }
+.bs-run[data-in] .bs-dep-places button:nth-child(2), .bs-run[data-in] .bs-dep-proj li:nth-child(2) { transition-delay: .18s; }
+.bs-run[data-in] .bs-dep-places button:nth-child(3), .bs-run[data-in] .bs-dep-proj li:nth-child(3) { transition-delay: .24s; }
+.bs-run[data-in] .bs-dep-places button:nth-child(4), .bs-run[data-in] .bs-dep-proj li:nth-child(4) { transition-delay: .3s; }
+/* 4 pull-back: the section starts zoomed right in and pulls back to the whole grid */
+.bs-caps > .kn-wrap { transition: transform .9s var(--e-in), opacity .5s var(--e-in); transform-origin: 50% 30%; }
+.bs-caps { overflow: clip; }
+.bs-caps[data-arm]:not([data-in]) > .kn-wrap { transform: scale(1.35); opacity: 0; }
+/* 5 venetian-type: each line of the close slides in from alternating sides (the kit's line mask stands still here) */
+.bs-close .knl-t { transform: none !important; animation: none !important; transition: none !important; }
+.bs-close .knx-in > *, .bs-close .knx-l > *, .bs-close .knx-paste > * { transition: transform .6s var(--e-in), opacity .4s var(--e-in); }
+.bs-close[data-arm]:not([data-in]) :is(.knx-in > *, .knx-l > *, .knx-paste > *):nth-child(odd) { transform: translate3d(-56px, 0, 0); opacity: 0; }
+.bs-close[data-arm]:not([data-in]) :is(.knx-in > *, .knx-l > *, .knx-paste > *):nth-child(even) { transform: translate3d(56px, 0, 0); opacity: 0; }
+.bs-close[data-in] .knx-l > :nth-child(2), .bs-close[data-in] .knx-paste > :nth-child(2) { transition-delay: .08s; }
+.bs-close[data-in] .knx-l > :nth-child(3), .bs-close[data-in] .knx-paste > :nth-child(3) { transition-delay: .16s; }
+.bs-close[data-in] .knx-l > :nth-child(n+4), .bs-close[data-in] .knx-paste > :nth-child(n+4) { transition-delay: .24s; }
+/* the hero object holds still: the map below is the page's one scroll-linked motion */
+.bs .kns-obj { transform: none !important; }
 
 /* capabilities: cards that open, set as an uneven six-column composition (wide + narrow, narrow + wide, two halves),
    never three equal boxes in a row */
-.bs .bs-caps { padding-bottom: clamp(72px, 8vw, 116px); }
+.bs .bs-caps { padding-top: clamp(44px, 5vw, 88px); padding-bottom: clamp(72px, 8vw, 116px); }
 .bs-caps-h { display: flex; flex-direction: column; gap: 10px; margin-bottom: clamp(44px, 5vw, 72px); }
 @media (min-width: 901px) {
   .bs-open .kno-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
@@ -205,6 +298,19 @@ html:not(.js) .bs-steps { display: none; }
   .bs-open .kno-card:hover .bs-art-box span:first-of-type { background: var(--ink); color: #fff; }
   .bs-open .kno-card:hover .a-fn s { transform: translate3d(0, 3px, 0); }
 }
+/* arrival: as a card comes 60% into view (Caps sets data-play for 1.4 s) its drawing plays the same idea once, then
+   rests; the next card's turn comes as you reach it, so the six arrive one at a time, not as a still wall */
+.bs-open .kno-card[data-play] .a-schema .bs-art-arr { height: 40px; }
+.bs-open .kno-card[data-play] .a-schema code { background: var(--ink); color: #fff; }
+.bs-open .kno-card[data-play] .a-stream .bs-art-line i { background: var(--ink); border-color: var(--ink); }
+.bs-open .kno-card[data-play] .a-rules li.out { transform: translate3d(14px, 0, 0); }
+.bs-open .kno-card[data-play] .a-rules .bs-chip { transform: scale(1.08); }
+.bs-open .kno-card[data-play] .bs-art-file { transform: translate3d(8px, -4px, 0) rotate(-4deg); }
+.bs-open .kno-card[data-play] .bs-art-dbs { gap: 24px; }
+.bs-open .kno-card[data-play] .bs-art-wal i { transform: scaleX(1.5); }
+.bs-open .kno-card[data-play] .bs-art-box span:first-of-type { background: var(--ink); color: #fff; }
+.bs-open .kno-card[data-play] .a-fn s { transform: translate3d(0, 3px, 0); }
+.bs-open .kno-card[data-play] .kno-plus { transform: rotate(90deg); }
 .bs-art { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; }
 .bs-art code { font: 400 14px/1 var(--mono); color: var(--ink); padding: 8px 12px; border-radius: 8px; background: #fff; }
 .bs-art-arr { width: 1px; height: 26px; background: #737373; position: relative; }
@@ -248,12 +354,56 @@ html:not(.js) .bs-steps { display: none; }
 
 /* run the binary: a tighter step from the cards above and to the dark room below */
 .bs .bs-run { padding-top: clamp(44px, 4vw, 72px); padding-bottom: clamp(72px, 7vw, 116px); }
-.bs-run-g { align-items: start; row-gap: 44px; }
+.bs-run-g { align-items: center; row-gap: 44px; }
 .bs-run-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 27px; }
-.bs-places { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink); }
-.bs-places li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--hair); }
-.bs-places span { font-size: 17px; font-weight: 497; letter-spacing: -.01em; }
-.bs-places code { font: 400 14px/1.2 var(--mono); color: var(--body); }
+/* the object: the same Base in four places (an outlined paper window like the hero's admin) */
+.bs-dep { border: 1px solid rgba(0, 0, 0, .1); border-radius: 16px; background: #fff; color: #0a0a0a; overflow: hidden; }
+.bs-dep-bar { display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 16px; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.bs-dep-bar > i { width: 10px; height: 10px; border-radius: 50%; background: #e4e4e7; }
+.bs-dep-t { margin-left: 10px; display: inline-flex; align-items: center; min-height: 44px; font: 497 14px/1 var(--mono); color: #525252; text-decoration: none; transition: color .15s var(--e-out); }
+.bs-dep-nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 10px; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.bs-dep-nav a { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 8px; font: 400 14px/1 var(--sans); color: #525252; text-decoration: none; transition: background-color .15s var(--e-out), color .15s var(--e-out), transform .15s var(--e-out); }
+.bs-dep-nav a[aria-current] { color: #0a0a0a; font-weight: 606; }
+.bs-dep-nav a[aria-current]::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 2px; border-radius: 999px; background: #0a0a0a; }
+.bs-dep-b { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+.bs-dep-places { display: flex; flex-direction: column; padding: 8px; border-right: 1px solid rgba(0, 0, 0, .1); }
+.bs-dep-places button { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; text-align: left; cursor: pointer; color: #525252; font: inherit; transition: background-color .3s var(--e-in), color .3s var(--e-in), transform .15s var(--e-out); }
+.bs-dep-places span { font-size: 16px; font-weight: 497; letter-spacing: -.01em; }
+.bs-dep-places code { font: 400 13px/1.2 var(--mono); color: #737373; overflow-wrap: anywhere; transition: color .3s var(--e-in); }
+.bs-dep-places button[aria-pressed='true'] { background: #0a0a0a; color: #fafafa; }
+.bs-dep-places button[aria-pressed='true'] code { color: #d4d4d4; }
+.bs-dep-places button[aria-pressed='true'] code b { color: #fff; }
+.bs-dep-places code b { font-weight: 606; }
+.bs-dep-res { display: flex; flex-direction: column; gap: 10px; padding: 16px; min-width: 0; }
+.bs-dep-req { margin: 0; font: 400 13px/1.5 var(--mono); color: #0a0a0a; overflow-wrap: normal; }
+.bs-dep-req b { font-weight: 606; color: #525252; margin-right: .4em; }
+.bs-dep-rows { display: grid; gap: 6px; animation: bs-push .5s var(--e-in) both; }
+.bs-dep-rows div { display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border-radius: 8px; background: #f5f5f5; }
+.bs-dep-rows div:first-child { animation: bs-dep-land 1.5s var(--e-out) both; }
+@keyframes bs-dep-land { from { background-color: #d4d4d4; } to { background-color: #f5f5f5; } }
+.bs-dep-rows code { font: 400 13px/1 var(--mono); color: #0a0a0a; }
+.bs-dep-rows i { height: 8px; border-radius: 999px; background: #e4e4e7; }
+.bs-dep-proj { list-style: none; margin: 0; padding: 12px 16px 0; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid rgba(0, 0, 0, .1); }
+.bs-dep-proj li { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border-radius: 999px; background: #f5f5f5; font: 400 13px/1 var(--mono); }
+.bs-dep-proj em { font: 400 13px/1 var(--sans); font-style: normal; color: #525252; }
+/* status is a shape: filled ink is Ready, a hollow ring that turns is Building */
+.bs-dep-proj i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #0a0a0a; }
+.bs-dep-proj i.b { width: 10px; height: 10px; background: transparent; border: 2px solid #0a0a0a; border-right-color: transparent; }
+.js .bs-dep-proj i.b { animation: bs-turn 1s linear infinite; }
+@keyframes bs-turn { to { transform: rotate(360deg); } }
+.bs-dep-cap { margin: 0; padding: 10px 16px 14px; font-size: 14px; line-height: 1.5; color: #525252; }
+.bs-dep-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; padding: 8px 12px 8px 16px; border-top: 1px solid rgba(0, 0, 0, .1); font: 497 14px/1.3 var(--mono); color: #737373; }
+.bs-dep-foot b { font-weight: 497; color: #0a0a0a; }
+.bs-dep-open { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .1); font: 497 14px/1 var(--sans); color: #0a0a0a; text-decoration: none; transition: background-color .15s var(--e-out), color .15s var(--e-out), transform .15s var(--e-out); }
+@media (hover: hover) {
+  .bs-dep-t:hover { color: #0a0a0a; }
+  .bs-dep-nav a:hover { background: #f5f5f5; color: #0a0a0a; }
+  .bs-dep-places button[aria-pressed='false']:hover { background: #f5f5f5; color: #0a0a0a; }
+  .bs-dep-open:hover { background: #f5f5f5; }
+}
+.bs-dep-nav a:active, .bs-dep-places button:active, .bs-dep-open:active { transform: scale(.97); transition-duration: 90ms; }
+.bs-dep-t:focus-visible, .bs-dep-nav a:focus-visible, .bs-dep-places button:focus-visible, .bs-dep-open:focus-visible { outline: 2px solid var(--focus, #0a0a0a); outline-offset: 2px; }
+[data-off] .bs-dep-proj i.b, [data-off] .bs-dep-rows { animation-play-state: paused; }
 .bs-run-r { grid-column: 7 / -1; display: flex; flex-direction: column; gap: 14px; }
 .bs-note { margin: 0; font-size: 14px; color: var(--quiet); }
 
@@ -290,32 +440,8 @@ html:not(.js) .bs-steps { display: none; }
   .bs-tbl { height: 360px; flex: none; }
   .bs-sch code { font-size: 16px; }
 
-  .bs-one-say, .bs-one-v { grid-column: 1 / -1; }
-  .bs-one-bin { padding: 22px; column-gap: 20px; }
-  .bs-one-bin ul { padding-left: 17px; }
-  .bs-one-bin li { font-size: 16px; }
-  .bs-one-n { font-size: 32px; }
-  .bs-one-copies p { font-size: 14px; flex-wrap: wrap; gap: 10px; }
-
-  .bs-dec { padding: 72px 0; }
-  /* one thing in, one out: each paragraph is followed by its own tile (the four promises -> collection + promises,
-     Data -> the records path, Auth -> IAM, Files -> the stream), not three paragraphs and then the tiles */
-  .bs-dec-g { row-gap: 17px; }
-  .bs-dec-l, .bs-says, .bs-dec-v { display: contents; }
-  .bs-dec-hd, .bs-name, .bs-say { grid-column: 1 / -1; }
-  .bs-dec-hd { order: 1; }
-  .bs-name { order: 2; margin-bottom: 10px; justify-self: start; }
-  .bs-say:nth-child(1) { order: 3; }
-  .bs-t-schema { order: 4; }
-  .bs-t-prom { order: 5; }
-  .bs-say:nth-child(2) { order: 6; margin-top: 27px; }
-  .bs-t-api { order: 7; }
-  .bs-say:nth-child(3) { order: 8; margin-top: 27px; }
-  .bs-t-iam { order: 9; }
-  .bs-say:nth-child(4) { order: 10; margin-top: 27px; }
-  .bs-t-live { order: 11; }
-  .bs-steps { display: none; }
-  .bs-tile { grid-area: auto / 1 / auto / -1; }
+  .bs-pil-t, .bs-pil-v, .bs-pil-r:nth-child(2) .bs-pil-t, .bs-pil-r:nth-child(2) .bs-pil-v { grid-column: 1 / -1; grid-row: auto; }
+  .bs-pil .bs-tile { max-width: none; }
   .bs-tile { padding: 17px; }
   .bs-path { font-size: 14px; }
   .bs-verbs span, .bs-stores span, .bs-nos s, .bs-stream div code, .bs-up, .bs-chip { font-size: 14px; }
@@ -324,10 +450,12 @@ html:not(.js) .bs-steps { display: none; }
   .bs-art code, .bs-art-dbs span, .bs-art-wal, .bs-art-box b, .bs-art-box span, .a-fn s, .bs-art-rec b, .bs-art-card b { font-size: 14px; }
   .bs-run-l, .bs-run-r { grid-column: 1 / -1; }
   .bs-run-acts > * { flex: 1 1 auto; }
-  .bs-places li { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .bs-dep-b { grid-template-columns: minmax(0, 1fr); }
+  .bs-dep-places { border-right: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+  .bs-dep-places code, .bs-dep-req, .bs-dep-rows code, .bs-dep-proj li, .bs-dep-proj em { font-size: 14px; }
   .bs-rel a { flex-direction: column; gap: 2px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bs-adm-live i, .bs-rows, .bs-tr.new, .bs-stream.run div { animation: none !important; }
-  .bs-say, .bs-tile, .bs-t-schema li, .bs-t-prom li i, .bs-exists { transition: none !important; }
+  .bs-adm-live i, .bs-rows, .bs-tr.new, .bs-stream.run div, .bs-dep-rows, .bs-dep-rows div, .bs-dep-proj i.b { animation: none !important; }
+  .bs-tile, .bs-zm-half, .bs-zm-l0, .bs-pil-r, .bs-dep > *, .bs-dep-places button, .bs-dep-proj li, .bs-caps > .kn-wrap, .bs-close * { transition: none !important; }
 }

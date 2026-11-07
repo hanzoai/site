@@ -8,7 +8,7 @@
    3 export: one solid turning while the formats the chapter names land beside it, one by one, each on its own wire;
    fits: spatial understanding: a camera circles a cube, its view cone sweeping, and the points it has seen gather.
    Each builds when its chapter arrives (on), then idles; the page pause and reduced motion leave the final frame. */
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePaused } from '../../v2/ModelFilm';
 import { useLoop, fit } from './live';
 
@@ -24,23 +24,56 @@ function proj(p, yaw, pitch, cx, cy, sc) {
   return [cx + x * sc * k, cy + y2 * sc * k, z2];
 }
 
-// one canvas that draws while on screen; `on` restarts the build each time its chapter arrives
-function Draw({ on = true, draw, className = 'cr-art mr-art' }) {
+/* one canvas that draws while on screen; `on` restarts the build each time its chapter arrives.
+   rest (the chapters): the pane is never an empty black box. While its chapter is not the active one it shows the
+   object's settled frame (so the pane that wipes in already holds its object); when the chapter arrives, the build
+   starts part-way and draws itself in bright over a faint copy of that settled frame. */
+function Draw({ on = true, draw, rest = false, className = 'cr-art mr-art' }) {
   const box = useRef(null), cv = useRef(null);
   const paused = usePaused();
-  const st = useRef({ t: 0, on: false, seen: false });
+  const st = useRef({ t: 0, on: false, key: '', img: null, shown: '' });
   const p = useRef(paused); p.current = paused;
   const o = useRef(on); o.current = on;
+  // paint the settled frame at mount and on every resize, even before the loop runs (a pane that is clipped or under
+  // the wipe is not "on screen" to the loop, but must already hold its object when it is revealed)
+  useEffect(() => {
+    if (!rest) return;
+    const paint = () => {
+      const c = cv.current, s = st.current;
+      if (!c || s.on) return;
+      const { w, h, d } = fit(c, 1.5);
+      if (w < 2 || h < 2) return;
+      const g = c.getContext('2d');
+      g.clearRect(0, 0, w, h); draw(g, w, h, d, 9, 0);
+      s.shown = w + 'x' + h;
+    };
+    paint();
+    const ro = new ResizeObserver(paint);
+    ro.observe(cv.current);
+    return () => ro.disconnect();
+  }, [rest, draw]);
   useLoop(box, (t, dt, still) => {
     const c = cv.current, s = st.current;
     if (!c) return;
-    if (o.current && !s.on) { s.on = true; s.t = 0; }
-    if (!o.current) s.on = false;
-    const frozen = still || p.current;
-    if (!frozen && s.on) s.t += dt;
     const { w, h, d } = fit(c, 1.5);
     const g = c.getContext('2d');
+    if (rest && s.key !== w + 'x' + h) { // the settled frame, drawn once per size off screen
+      const k = s.img || document.createElement('canvas');
+      k.width = w; k.height = h;
+      const kg = k.getContext('2d'); kg.clearRect(0, 0, w, h); draw(kg, w, h, d, 9, 0);
+      s.img = k; s.key = w + 'x' + h; s.shown = '';
+    }
+    if (o.current && !s.on) { s.on = true; s.t = rest ? 0.55 : 0; }
+    if (!o.current) s.on = false;
+    const frozen = still || p.current;
+    if (rest && !s.on) { // resting: the settled object, redrawn only when the size changes
+      if (s.shown !== s.key) { g.clearRect(0, 0, w, h); g.drawImage(s.img, 0, 0); s.shown = s.key; }
+      return;
+    }
+    s.shown = '';
+    if (!frozen && s.on) s.t += dt;
     g.clearRect(0, 0, w, h);
+    if (rest && !frozen && s.t < 3.2) { g.globalAlpha = 0.28 * (1 - ease((s.t - 2.2) / 1)); g.drawImage(s.img, 0, 0); g.globalAlpha = 1; }
     draw(g, w, h, d, frozen ? Math.max(s.t, 9) : s.t, frozen ? 0 : dt);
   });
   return (
@@ -84,7 +117,7 @@ function materials(state) {
   return (g, w, h, d, t, dt) => {
     state.a += dt * 0.6;
     const cols = w > h * 1.1 ? 3 : 2, rows = Math.ceil(6 / cols), pad = 16 * d;
-    const cw = (w - pad * (cols + 1)) / cols, ch = (h - pad * (rows + 1)) / rows, r = Math.min(cw, ch - 30 * d) * 0.36;
+    const cw = (w - pad * (cols + 1)) / cols, ch = (h - pad * (rows + 1)) / rows, r = Math.min(cw, ch - 44 * d) * 0.38; // leaves room under each sphere for a two-line label
     const lx = Math.cos(state.a) * 0.55, ly = -0.45 + Math.sin(state.a) * 0.2;
     MAPS.forEach((m, k) => {
       const q = ease((t - 0.15 - k * 0.22) / 0.6);
@@ -92,7 +125,7 @@ function materials(state) {
       const x0 = pad + (k % cols) * (cw + pad), y0 = pad + Math.floor(k / cols) * (ch + pad);
       g.save(); g.globalAlpha = q; g.translate(0, (1 - q) * 16 * d);
       g.fillStyle = '#0f0f0f'; g.beginPath(); g.roundRect(x0, y0, cw, ch, 12 * d); g.fill();
-      const cx = x0 + cw / 2, cy = y0 + (ch - 22 * d) / 2, hx = cx + lx * r, hy = cy + ly * r;
+      const cx = x0 + cw / 2, cy = y0 + (ch - 36 * d) / 2, hx = cx + lx * r, hy = cy + ly * r;
       let gr;
       g.save(); g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.clip();
       if (m === 'albedo') { // flat colour, no light: two tones in a check
@@ -117,8 +150,13 @@ function materials(state) {
       }
       g.restore();
       g.strokeStyle = W8(0.14); g.lineWidth = d; g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.stroke();
+      // the label fits its tile: one line when it fits, else one word a line (never cut, never spilling out)
       g.fillStyle = '#a3a3a3'; g.font = `606 ${12 * d}px ${MONO}`; g.textAlign = 'center';
-      g.fillText(m.toUpperCase(), cx, y0 + ch - 12 * d);
+      const word = m.toUpperCase(), room = cw - 16 * d;
+      const lines = g.measureText(word).width <= room ? [word] : word.split(' ');
+      const fs = Math.min(12, ...lines.map((l) => (12 * room) / Math.max(1, g.measureText(l).width)));
+      g.font = `606 ${fs * d}px ${MONO}`;
+      lines.forEach((l, j) => g.fillText(l, cx, y0 + ch - 12 * d - (lines.length - 1 - j) * 14 * d));
       g.restore();
     });
   };
@@ -168,13 +206,22 @@ ICO.forEach((a, i) => ICO.forEach((b, j) => { if (j > i && Math.hypot(a[0] - b[0
 function exporter(state) {
   return (g, w, h, d, t, dt) => {
     state.yaw += dt * 0.5;
-    const wide = w > h * 0.85, cx = wide ? w * 0.3 : w / 2, cy = wide ? h / 2 : h * 0.3, sc = Math.min(w, h) * (wide ? 0.22 : 0.18);
+    // measure the widest chip first, so every format fits whole on the pane: side by side when there is room, else
+    // the solid on top and the formats in one column under it
+    let fs = 15;
+    g.font = `497 ${fs * d}px "Zen", system-ui, sans-serif`;
+    const chipW = (f) => Math.max(g.measureText(f).width + 32 * d, 72 * d);
+    let maxW = Math.max(...FORMATS.map(chipW));
+    if (maxW > w - 32 * d) { fs = Math.max(11, (fs * (w - 32 * d)) / maxW); g.font = `497 ${fs * d}px "Zen", system-ui, sans-serif`; maxW = Math.max(...FORMATS.map(chipW)); }
+    const scW = Math.min(w, h) * 0.22;
+    const wide = w * 0.3 + scW * 1.15 + 24 * d + maxW + 16 * d <= w && w > h * 0.85;
+    const cx = wide ? w * 0.3 : w / 2, cy = wide ? h / 2 : h * 0.22, sc = wide ? scW : Math.min(w, h) * 0.13;
     const V = ICO.map((p) => proj(p, state.yaw, 0.5 + Math.sin(state.yaw * 0.7) * 0.2, cx, cy, sc));
     g.lineWidth = 1.2 * d;
     for (const [i, j] of ICO_E) { const z = (V[i][2] + V[j][2]) / 2; g.strokeStyle = W8(z < 0 ? 0.9 : 0.25); g.beginPath(); g.moveTo(V[i][0], V[i][1]); g.lineTo(V[j][0], V[j][1]); g.stroke(); }
-    const n = FORMATS.length, rowH = Math.min(52 * d, (wide ? h * 0.8 : h * 0.5) / n);
-    const fx = wide ? w * 0.6 : w * 0.14, fy = (wide ? h / 2 : h * 0.72) - (rowH * n) / 2, live = Math.floor(t / 1.1) % n;
-    g.font = `497 ${15 * d}px "Zen", system-ui, sans-serif`; g.textAlign = 'left'; g.textBaseline = 'middle';
+    const n = FORMATS.length, rowH = Math.min(52 * d, (wide ? h * 0.8 : h * 0.6) / n);
+    const fx = wide ? Math.min(w - maxW - 16 * d, Math.max(w * 0.6, cx + sc * 1.15 + 24 * d)) : (w - maxW) / 2, fy = (wide ? h / 2 : h * 0.67) - (rowH * n) / 2, live = Math.floor(t / 1.1) % n;
+    g.textAlign = 'left'; g.textBaseline = 'middle';
     FORMATS.forEach((f, k) => {
       const q = ease((t - 0.5 - k * 0.3) / 0.6);
       if (q <= 0) return;
@@ -215,7 +262,7 @@ function scan(state) {
       g.fillStyle = W8(q.seen * (p[2] < 0 ? 0.9 : 0.35)); g.fillRect(p[0] - d, p[1] - d, 2 * d, 2 * d);
     }
     const V = CUBE.map((p) => proj(p, yaw, pitch, cx, cy, sc));
-    g.strokeStyle = W8(0.4 * ease(t / 0.8));
+    g.strokeStyle = W8(0.16 + 0.24 * ease(t / 0.8)); // the cube is there from the first frame, then firms up
     for (const [i, j] of CUBE_E) { g.beginPath(); g.moveTo(V[i][0], V[i][1]); g.lineTo(V[j][0], V[j][1]); g.stroke(); }
     // the view cone: the camera to the cube's silhouette
     g.strokeStyle = W8(0.35); g.fillStyle = W8(0.05);
@@ -231,7 +278,7 @@ const makers = [topology, materials, environment, exporter];
 export function MoriCap({ i, on }) {
   const s = useRef(null);
   if (!s.current) s.current = makers[i]({ yaw: 0.4, a: 0.8 });
-  return <Draw on={on} draw={s.current} />;
+  return <Draw on={on} draw={s.current} rest />;
 }
 
 export function MoriFits({ seen }) {

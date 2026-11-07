@@ -1,21 +1,25 @@
 'use client';
-// Signature: The terminal is the first screen: a full-bleed black room that is one giant terminal window, where hanzo is typed, the request streams and the gateway lands on staging, all in Hanzo's own example session
+// Signature: compare (Before / after slider, docs/MOTION-MAP.md): in the second screen, under "A resource tree, not a pile of flags", the visitor drags a divider across the CLI's own commands: left of it they lie as a pile of flags, right of it the same commands stand as the resource tree (pointer, finger on the handle, or arrow keys); on arrival it sweeps once, then rests
+// Entrances: noise-dissolve (the statement and its slider), shutter (paste and ship), side-carousel (the capabilities rail), curtain-rise (get started), cursor-trail (the closing band)
 // Beyond: Add to the script: the install script takes any of the binary's own commands (scan, share, status, link, auth show) as one press each, under Hanzo's own heading for it, and every block and the whole script copy as you built them
 // Persona: a developer deciding whether to put one more binary on their path.
 // Goal: install the CLI (the line is right there to copy) after seeing it work in a real session.
-// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid (data-thumb) + the closing band; everything else is a text link. The header keeps the shared "Try Hanzo" (page ask requested in docs/requests/cli.md).
+// CTA: Install from hanzo.sh (docs.hanzo.ai/docs/cli): hero solid (data-thumb) + the closing band; everything else is a text link. On desktop the shared header swaps to the same ask after the hero; phone header label requested in docs/requests/cli.md.
 // Metric: api_key_created (developer: copy the install line, then sign in with hanzo auth login)
 /* Hanzo CLI (Archetype: Developer, terminal-first, code as the hero).
-   V2: 8/10 round 4: the hero session is masked from first paint and only grows (0 resets); the tree starts fully open so the tour never reflows rows (phone CLS 0.0017); one caret steps down the band's places; the script window arrives block by block while its line count rolls up; rail cards fit their content; tree window outlined only; ending runs on (145/44 px). Round 3:the hero ask is the one pure-white solid on the black room (was the room's #f5f5f7 grey); the h1 cuts in on first paint and the session waits for fonts plus that cut-in before typing; "Hanzo CLI · Developers" moved from the bar above the h1 to the status line below it; the three claims are small terminal windows that type their command in (stepped clip) with the missing verb struck after; h2s use page-local cli/Cut (no reduced-motion hydration error, legible with JS off); resting carets keep the hero, prompt and script alive; 44 px tabs; every hover answers
-   Motion: signature = the typed session in the hero terminal (text nodes via refs, stops off screen, runs once then rests).
-   Supporting: the tree's selection that glides between leaves (layoutId, 300 ms ease), the added script block and the claim
-   windows that wipe in (clip), the line-masked headlines. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
+   V2: 8/10 motion-map pass: the signature is now the before / after slider (pile of flags vs resource tree) right after the hero; the five main sections each enter a different way (noise-dissolve, shutter, side-carousel, curtain-rise, cursor-trail), once, on scroll into view; the h2 line-mask cut-ins and the sticky builder column are gone; the typing hero terminal stays (approved). Round 4: the hero session is masked from first paint and only grows (0 resets); the tree starts fully open so the tour never reflows rows (phone CLS 0.0017); one caret steps down the band's places; the script window arrives block by block while its line count rolls up; rail cards fit their content; tree window outlined only; ending runs on (145/44 px). Round 3:the hero ask is the one pure-white solid on the black room (was the room's #f5f5f7 grey); the h1 cuts in on first paint and the session waits for fonts plus that cut-in before typing; "Hanzo CLI · Developers" moved from the bar above the h1 to the status line below it; the three claims are small terminal windows that type their command in (stepped clip) with the missing verb struck after; h2s use page-local cli/Cut (no reduced-motion hydration error, legible with JS off); resting carets keep the hero, prompt and script alive; 44 px tabs; every hover answers
+   Motion: signature = the compare slider (cli/Compare.jsx); the hero terminal still types Hanzo's own session (approved, kept).
+   Entrances: cli/enter.jsx + enter.css. Supporting: the tree's gliding selection (layoutId, 300 ms), the added script block and
+   claim windows that wipe in (clip), the script line count roll. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Mark } from '../ui';
 import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
 import Lines from './cli/Cut';
+import Compare from './cli/Compare';
+import { Enter, Trail } from './cli/enter';
+import './cli/enter.css';
 import '../v2/AppType.css';
 import './CliPage.css';
 
@@ -143,10 +147,13 @@ function Hero() {
 function Paste() {
   const text = 'Read https://hanzo.ai/skill.md and use Hanzo CLI in my project. Start with: hanzo auth login';
   return (
-    <section className="cli-paste">
+    // entrance 2, shutter: two ink bars close from top and bottom, then open on the agent prompt
+    <Enter kind="shutter" as="section" className="cli-paste">
+      <i className="cli-shut t" aria-hidden="true" />
+      <i className="cli-shut b" aria-hidden="true" />
       <div className="av-wrap av-grid">
         <div className="cli-prompt">
-          <code>{text}</code>
+          <code>{text}<span className="cli-caret cli-prompt-caret" aria-hidden="true" /></code>
           <Copy text={text} />
           <span className="cli-prompt-k x-mono">Agent prompt</span>
         </div>
@@ -155,7 +162,7 @@ function Paste() {
           <p className="av-body">Paste this into any agent. It reads the skill manifest and calls CLI from there.</p>
         </div>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -208,6 +215,7 @@ function Tree() {
   // it only moves the selection and scrolls the tree's own pane to it. A press still opens and closes folders by hand.
   const [open, setOpen] = useState(() => new Set(TREE.map((_, r) => r)));
   const pane = useRef(null);
+  const [over, setOver] = useState(false);
   const [sel, setSel] = useState([0, 0]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
@@ -220,7 +228,7 @@ function Tree() {
   const calm = up && rm; // the server and the first client render agree; reduced motion applies after mount
   const touring = !mine && !calm && k < TOUR.length - 1;
   useEffect(() => {
-    if (!touring || !seen || paused) return; // it walks the tree once, then rests; a press anywhere hands it to you
+    if (!touring || !seen || paused || over) return; // it walks the tree once, then rests; a press anywhere hands it to you; it holds while a pointer is over the window
     const t = setTimeout(() => {
       const nk = k + 1, [r, c] = TOUR[nk];
       setK(nk); setSel([r, c]);
@@ -228,13 +236,13 @@ function Tree() {
       if (ul && li) ul.scrollTo({ top: Math.max(0, li.offsetTop - 12), behavior: 'smooth' }); // the pane scrolls, never the page
     }, 3800);
     return () => clearTimeout(t);
-  }, [k, touring, seen, paused]);
+  }, [k, touring, seen, paused, over]);
   const toggle = (r) => { setMine(true); setOpen((o) => { const s = new Set(o); s.has(r) ? s.delete(r) : s.add(r); return s; }); };
   const pick = (r, c) => { setMine(true); setSel([r, c]); };
   const [res, cmds] = TREE[sel[0]];
   const [leaf, cmd, desc] = cmds[sel[1]];
   return (
-    <div className="cli-fs" ref={ref}>
+    <div className="cli-fs" ref={ref} onPointerEnter={(e) => e.pointerType === 'mouse' && setOver(true)} onPointerLeave={() => setOver(false)}>
       <div className="cli-fs-bar">
         <span className="cli-crumb x-mono" aria-label="Path">
           <Mark size={13} /><span>hanzo</span><i aria-hidden="true">/</i><span>{res}</span>{leaf && <><i aria-hidden="true">/</i><b>{leaf}</b></>}
@@ -308,13 +316,19 @@ function Claim({ c, t, d, i }) {
 }
 
 function What() {
+  const [go, setGo] = useState(false);
   return (
     <section className="av-sec cli-what-sec" aria-labelledby="cli-tree-h">
       <div className="av-wrap">
-        <div className="cli-what-top">
-          <Lines as="h2" id="cli-tree-h" className="av-display s cli-tree-h" lines={['A resource tree,', 'not a pile of flags']} />
-          <p className="av-lede cli-what-lede"><code>hanzo &lt;resource&gt; &lt;command&gt;</code>. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has.</p>
-        </div>
+        {/* entrance 1, noise-dissolve: the statement and its before / after slider (the signature) dissolve in from grain */}
+        <Enter kind="noise" className="cli-what-in" onIn={() => setGo(true)}>
+          <span className="cli-noise" aria-hidden="true" />
+          <div className="cli-what-top">
+            <Lines as="h2" id="cli-tree-h" className="av-display s cli-tree-h" lines={['A resource tree,', 'not a pile of flags']} />
+            <p className="av-lede cli-what-lede"><code>hanzo &lt;resource&gt; &lt;command&gt;</code>. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has.</p>
+          </div>
+          <Compare tree={TREE} labelledBy="cli-tree-h" go={go} />
+        </Enter>
         <Tree />
         <ol className="cli-three">
           {WHAT.map(([c, t, d], i) => <Claim key={t} c={c} t={t} d={d} i={i} />)}
@@ -347,7 +361,8 @@ function Caps() {
     el.scrollBy({ left: d * ((card?.offsetWidth || 360) + 20), behavior: 'smooth' });
   };
   return (
-    <section className="av-sec cli-caps" aria-labelledby="cli-caps-h">
+    // entrance 3, side-carousel: the cards ride in from the right one after another and snap into the rail
+    <Enter kind="carousel" as="section" className="av-sec cli-caps" aria-labelledby="cli-caps-h">
       <div className="av-wrap av-grid cli-caps-top">
         <Lines as="h2" id="cli-caps-h" className="av-head cli-caps-h" lines={['What the binary carries']} />
         <div className="cli-caps-r">
@@ -360,7 +375,7 @@ function Caps() {
       </div>
       <ul className="cli-rail" ref={rail} onScroll={onScroll} aria-label="Capabilities">
         {CAPS.map(([c, t, d], i) => (
-          <li key={t} className="cli-cap">
+          <li key={t} className="cli-cap" style={{ '--c': i }}>
             <div className="cli-cap-cmd">
               <code><span aria-hidden="true">$ </span>{c}</code>
               <Copy text={c} label={'Copy ' + c} />
@@ -370,7 +385,7 @@ function Caps() {
           </li>
         ))}
       </ul>
-    </section>
+    </Enter>
   );
 }
 
@@ -444,7 +459,8 @@ function Start() {
   const win = useRef(null);
   const arrived = useInView(win, { once: true, amount: 0.3 });
   return (
-    <section className="av-sec cli-start" aria-labelledby="cli-start-h">
+    // entrance 4, curtain-rise: the builder and its script rise from below behind a clip
+    <Enter kind="curtain" as="section" className="av-sec cli-start" aria-labelledby="cli-start-h">
       <div className="av-wrap av-grid">
         <div className="cli-start-l">
           <Lines as="h2" id="cli-start-h" className="av-head" lines={['Install, sign in,', 'start working']} />
@@ -478,7 +494,7 @@ function Start() {
           </div>
         </div>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -526,8 +542,12 @@ function Band() {
     const t = setTimeout(() => setAt((a) => (a + 1) % PLACES.length), 2400);
     return () => clearTimeout(t);
   }, [seen, calm, at]);
+  const host = useRef(null);
+  const [run, setRun] = useState(false);
   return (
-    <section className="x-band cli-band" aria-labelledby="cli-band-h">
+    // entrance 5, cursor-trail: a trail of carets sweeps across once and uncovers the band, then follows a fine pointer
+    <Enter kind="trail" as="section" className="x-band cli-band" aria-labelledby="cli-band-h" ref={host} onIn={() => setRun(true)}>
+      <Trail host={host} run={run} />
       <div className="av-wrap av-grid">
         <Lines as="h2" id="cli-band-h" className="av-display m cli-band-h" lines={['Install once.', 'It comes with you.']} />
         <div className="cli-band-r">
@@ -547,7 +567,7 @@ function Band() {
           ))}
         </ul>
       </div>
-    </section>
+    </Enter>
   );
 }
 
@@ -555,8 +575,8 @@ export default function CliPage() {
   return (
     <main className="av cli" style={{ '--ac': '#a3a3a3' }}>
       <Hero />
-      <Paste />
       <What />
+      <Paste />
       <Caps />
       <Start />
       <Get />

@@ -1,23 +1,69 @@
-/* Hanzo for agents v3. Greys only (JAMES.md 7); colour only through Koma's film. One dark room: the hero. */
-.agt { --ink: #0a0a0a; --mute: #525252; }
+/* Hanzo for agents v4. Greys only (JAMES.md 7); colour only through Koma's film. One dark room: the hero (the Band closes). */
+.agt { --ink: #0a0a0a; --mute: #525252; --em: cubic-bezier(.16, 1, .3, 1); }
 
-/* links: ink with a 1px underline (MASTER 3.1); the asks are the kit's Cta */
-.agt .x-arrow { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(0, 0, 0, .3); min-height: 44px; }
-.agt [data-room='dark'] .x-arrow, .x-band .x-arrow { color: #fafafa; text-decoration-color: rgba(255, 255, 255, .4); }
-@media (hover: hover) { .agt .x-arrow:hover { text-decoration-color: currentColor; } }
+/* hovers live under "not (pointer: coarse)": every mouse and pen (and a headless browser, which reports no hover at all),
+   never a finger, so a tap never leaves a hover stuck on */
+/* the asks on black: the deck's #fafafa, and a hover you can see (#d4d4d4); never the off-deck #f5f5f7 */
+.agt [data-room='dark'] { --btn-solid-bg: #fafafa; --btn-solid-hover: #d4d4d4; --room-ink: #fafafa; --focus: #fafafa; }
+.agt .x-band { color: #fafafa; }
+.agt .x-band h2 { color: #fafafa; }
+.agt .x-band .x-btn.solid { background-color: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+@media not all and (pointer: coarse) {
+  .agt [data-room='dark'] .x-btn.solid:hover, .agt .x-band .x-btn.solid:hover { background-color: #d4d4d4; border-color: #d4d4d4; }
+}
 
-/* ---------- 1. hero (the black room): Koma's film on the left, the terminal on the right ---------- */
+/* links: ink with a 1px underline (MASTER 3.1); on hover a solid line draws across and the arrow moves on */
+.agt .x-arrow { color: var(--ink); text-decoration: none; min-height: 44px; }
+.agt .x-arrow > span { position: relative; text-decoration: none !important; }
+.agt .x-arrow > span::before, .agt .x-arrow > span::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor; pointer-events: none; }
+.agt .x-arrow > span::before { opacity: .3; }
+.agt .x-arrow > span::after { transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--em); }
+.agt .x-arrow svg { transition: transform .4s var(--em); }
+@media not all and (pointer: coarse) {
+  .agt .x-arrow:hover > span::after { transform: scaleX(1); }
+  .agt .x-arrow:hover svg { transform: translateX(6px); }
+}
+.agt .x-arrow:focus-visible > span::after { transform: scaleX(1); }
+.agt [data-room='dark'] .x-arrow, .agt .x-band .x-arrow { color: #fafafa; }
+.agt [data-room='dark'] .x-arrow > span::before, .agt .x-band .x-arrow > span::before { opacity: .4; }
+
+/* Copy and the demo controls answer a mouse too (the shared hovers sit behind (hover: hover)) */
+.agt .x-copy, .agt .v2a-demo-ctl { transition: translate .3s var(--em), background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+@media not all and (pointer: coarse) {
+  .agt .x-copy:hover { translate: 0 -2px; color: var(--ink); border-color: rgba(0, 0, 0, .3); }
+  .agt .agt-file-bar .x-copy:hover { color: #fafafa; border-color: rgba(255, 255, 255, .4); }
+  .agt .v2a-demo-ctl:hover { translate: 0 -2px; background: #f5f5f5; border-color: rgba(0, 0, 0, .3); }
+  .agt .v2a-demo-ctl.dark:hover { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .3); }
+}
+/* the page's demo control: AppDemo's look; under reduced motion it keeps its place but is not shown */
+.agt-ctl[hidden] { display: grid; visibility: hidden; }
+
+/* JS off: every word at rest (no masks, no blurs waiting for a script) */
+html:not(.js) .agt .v2a-line-in { transform: none !important; }
+html:not(.js) .agt [style*='opacity:0'], html:not(.js) .agt [style*='opacity: 0'] { opacity: 1 !important; transform: none !important; filter: none !important; }
+html:not(.js) .agt .agt-ctl { display: none; }
+
+/* ---------- 1. hero (the black room) ---------- */
 .agt-hero { position: relative; overflow: hidden; background: #000; color: #fafafa; padding: clamp(56px, 6vw, 88px) 0 clamp(72px, 9vw, 116px); }
-.agt-bg { position: absolute; top: 0; left: 0; bottom: 0; width: 56%; pointer-events: none; }
+/* Koma's film, feathered into the black at its edge (no hard cut); never dimmed or filtered */
+.agt-bg { position: absolute; top: 0; left: 0; bottom: 0; width: 60%; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, #000 62%, transparent 96%); mask-image: linear-gradient(90deg, #000 62%, transparent 96%); }
 .agt-film { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 45%; background: #000; }
-/* dimming is only a gradient under the text, never a filter on the film */
-.agt-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .78) 0%, rgba(0, 0, 0, .45) 38%, rgba(0, 0, 0, .03) 62%), linear-gradient(90deg, rgba(0, 0, 0, .03) 80%, #000 100%); }
+/* without a script Chrome draws its own controls on a video: the film is art, so none */
+.agt-film::-webkit-media-controls, .agt-film::-webkit-media-controls-enclosure, .agt-film::-webkit-media-controls-panel, .agt-film::-webkit-media-controls-start-playback-button, .agt-film::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }
 .agt-hero-in { position: relative; align-items: start; row-gap: 44px; }
-.agt-hero-copy { grid-column: 1 / 7; padding-top: clamp(24px, 4vw, 72px); }
+.agt-hero-copy { grid-column: 1 / 7; padding-top: clamp(24px, 4vw, 72px); position: relative; isolation: isolate; }
+/* the one gradient: under the words only */
+.agt-hero-copy::before { content: ''; position: absolute; z-index: -1; inset: -12% -22% -14% -40%; background: radial-gradient(closest-side, rgba(0, 0, 0, .8), rgba(0, 0, 0, .55) 55%, rgba(0, 0, 0, 0)); pointer-events: none; }
 .agt-h1 { color: #fafafa; max-width: 12ch; }
 .agt-lede { margin: 22px 0 0; max-width: 38ch; font-size: 1.0625rem; line-height: 1.55; color: rgba(255, 255, 255, .78); text-wrap: pretty; }
 .agt-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; margin-top: 26px; }
 .agt-hero-run { grid-column: 7 / 14; }
+
+/* arrival by CSS, so it plays from the first paint (the server HTML is the page) */
+@keyframes agt-cut { from { transform: translateY(105%); } }
+@keyframes agt-rise { from { opacity: 0; transform: translateY(var(--y, 16px)); } }
+.agt-cut { animation: agt-cut .7s var(--em) both; animation-delay: calc(var(--i, 0) * 60ms + 60ms); }
+.agt-rise { animation: agt-rise .5s var(--em) both; animation-delay: var(--d, .28s); }
 
 /* the run: the five steps as a numbered terminal */
 .agt-run { border-radius: 28px; background: rgba(10, 10, 10, .94); border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 80px 140px -60px #000, 0 0 0 1px rgba(0, 0, 0, .6); overflow: hidden; }
@@ -25,31 +71,47 @@
 .agt-run-dots { display: flex; gap: 7px; }
 .agt-run-dots i { width: 12px; height: 12px; border-radius: 50%; background: #404040; }
 .agt-run-k { margin-left: 6px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #a3a3a3; }
-.agt-run-n { display: inline-block; margin-left: auto; font-size: 13px; color: #f5f5f5; }
-.agt-ctl { width: 40px; height: 40px; border-color: transparent !important; background: none !important; }
+.agt-run-n { position: relative; display: inline-block; margin-left: auto; min-width: 7ch; height: 1.4em; overflow: hidden; font-size: 13px; color: #fafafa; text-align: right; }
+.agt-run-n > span { position: absolute; right: 0; top: 0; }
+.agt-run-nf { display: none; margin-left: auto; font-size: 13px; color: #fafafa; }
+.agt-run .agt-ctl { width: 40px; height: 40px; border-color: transparent; background: none; }
 .agt-steps { list-style: none; margin: 0; padding: 6px 22px 0; }
 .agt-steps li { border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .agt-steps li:last-child { border-bottom: 0; }
 .agt-steps button { display: grid; grid-template-columns: 40px minmax(0, 1fr) 18px; align-items: center; gap: 8px; width: 100%; min-height: 54px; padding: 0; border: 0; background: none; text-align: left; font: 500 17px/1.3 var(--sans); color: #a3a3a3; cursor: pointer; transition: color .3s, transform .12s; }
+.agt-step-t { display: inline-block; transition: transform .3s var(--em); }
 .agt-steps button:active { transform: translateY(1px); }
-.agt-steps button:focus-visible { outline: 2px solid #f5f5f5; outline-offset: 2px; border-radius: 8px; }
-@media (hover: hover) { .agt-steps button:hover { color: #e5e5e5; } }
+.agt-steps button:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; border-radius: 8px; }
+@media not all and (pointer: coarse) { .agt-steps button:hover { color: #e5e5e5; } .agt-steps button:hover .agt-step-t { transform: translateX(6px); } }
 .agt-step-n { font-size: 13px; color: #737373; transition: color .3s; }
-.agt-step-ok { color: #f5f5f5; opacity: 0; transform: scale(.6); transition: opacity .3s, transform .4s cubic-bezier(.16, 1, .3, 1); }
+.agt-step-ok { color: #fafafa; opacity: 0; transform: scale(.6); transition: opacity .3s, transform .4s var(--em); }
 .agt-steps li.done button { color: #d4d4d4; }
 .agt-steps li.done .agt-step-ok { opacity: 1; transform: none; }
 .agt-steps li.on button { color: #fff; }
 .agt-steps li.on .agt-step-n { color: #fff; }
+/* one cell holds every step (so it is as tall as the tallest); the old one is gone before the new one shows */
 .agt-detail { display: grid; margin: 0 22px 22px; padding: 18px 20px; border-radius: 16px; background: rgba(255, 255, 255, .05); }
-.agt-step-b { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1), visibility 0s .3s; }
-.agt-step-b.on { opacity: 1; visibility: visible; transform: none; transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.agt-step-b { grid-area: 1 / 1; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .14s cubic-bezier(0, 0, .2, 1), transform .14s cubic-bezier(0, 0, .2, 1), visibility 0s .14s; }
+.agt-step-b.on { opacity: 1; visibility: visible; transform: none; transition: opacity .3s var(--em) .14s, transform .3s var(--em) .14s, visibility 0s .14s; }
 .agt-step-d { margin: 0; padding-bottom: 10px; font-size: 15px; line-height: 1.5; color: #a3a3a3; }
 .agt-out { padding-top: 4px; }
-.agt-req { display: none; margin: 0 0 6px; font-size: 13px; line-height: 1.55; color: #e5e5e5; overflow-wrap: anywhere; }
-.agt-req.on { display: block; }
+/* a request line: the whole line keeps its place (ghost), the written part lies over it */
+.agt-req { position: relative; margin: 0 0 6px; font-size: 13px; line-height: 1.55; color: #e5e5e5; word-break: break-all; } /* greedy breaks: a written prefix wraps exactly where the whole line does */
 .agt-req b { display: inline-block; min-width: 44px; margin-right: 4px; font-weight: 600; color: #fff; }
+.agt-req-g { visibility: hidden; }
+.agt-req-t { position: absolute; inset: 0; visibility: hidden; }
+.agt-req.on .agt-req-t, .agt-req.full .agt-req-t { visibility: visible; }
+html:not(.js) .agt-req-g { visibility: visible; }
+html:not(.js) .agt-req-t { display: none; }
+/* JS off: the run's final frame (every step ticked, the last one open) */
+html:not(.js) .agt-run-n { display: none; }
+html:not(.js) .agt-run-nf { display: inline-block; }
+html:not(.js) .agt-steps .agt-step-ok { opacity: 1; transform: none; }
+html:not(.js) .agt-steps li button { color: #d4d4d4; }
+html:not(.js) .agt-step-b { opacity: 0; visibility: hidden; }
+html:not(.js) .agt-step-b:last-child { opacity: 1; visibility: visible; transform: none; }
 
-/* ---------- 2. install: one line large, the rest as quiet rows ---------- */
+/* ---------- 2. install: one line large, written once; the rest as quiet rows ---------- */
 .agt-install-in { align-items: start; row-gap: 32px; }
 .agt-install-l { grid-column: 1 / 6; }
 .agt-install-l .v2a-head { max-width: 16ch; }
@@ -58,56 +120,73 @@
 .agt-one { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 0 18px; border-bottom: 1px solid var(--ink); }
 .agt-one code { font-size: clamp(1.625rem, 2.6vw, 2.25rem); font-weight: 400; letter-spacing: -.02em; color: var(--ink); overflow-wrap: anywhere; }
 .agt-one-p { color: #737373; user-select: none; }
+.agt-one-c { position: relative; display: inline-block; }
+.agt-one-t { position: absolute; left: 0; top: 0; white-space: nowrap; }
+html.js .agt-one-g { visibility: hidden; }
+html:not(.js) .agt-one-t { display: none; }
+.agt-caret { display: inline-block; width: 0; height: 1em; margin-left: 2px; vertical-align: -.12em; border-left: 2px solid currentColor; animation: agt-blink 1s steps(1) infinite; }
+.agt-caret.off { display: none; }
+@keyframes agt-blink { 50% { opacity: 0; } }
 .agt-one-n { margin: 12px 0 18px; font-size: 13px; color: #737373; }
 .agt-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(0, 0, 0, .1); font-size: 14px; }
-.agt-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); opacity: 0; transform: translateY(6px); transition: opacity .3s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.agt-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid rgba(0, 0, 0, .1); opacity: 0; transform: translateY(6px); transition: opacity .3s var(--em), transform .3s var(--em); }
 .agt-row.on { opacity: 1; transform: none; }
+html:not(.js) .agt-row { opacity: 1; transform: none; }
 .agt-gap { height: 18px; }
 .agt-cmd { color: var(--ink); }
 .agt-c { color: #737373; }
 
-/* ---------- 3. the script ---------- */
+/* ---------- 4. the script, a plain numbered code block (#headless) ---------- */
 .agt-script { position: relative; background: #f5f5f5; padding-top: clamp(72px, 11vw, 188px); }
-.agt-script-head { margin-bottom: clamp(48px, 5vw, 72px); }
+.agt-script-head { margin-bottom: clamp(40px, 4vw, 56px); }
+.agt-script-head .v2a-head { margin: 0; }
 .agt-sc-lede { margin-top: 14px; max-width: 44ch; color: #525252; }
-.agt-track { position: relative; }
-.agt-ed { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 24px; align-items: center; }
-.agt-index { gap: 10px !important; }
-.agt-index { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-.agt-index li button { position: relative; width: 100%; display: grid; grid-template-columns: 36px 1fr 16px; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px; border: 0; border-radius: 16px; background: none; text-align: left; font: 400 17px/1.3 var(--sans); color: #525252; cursor: pointer; transition: background-color .3s, color .3s, transform .09s; }
-.agt-index li button > span:nth-child(2) { display: inline-block; transform-origin: 0 50%; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
-.agt-index li.on button > span:nth-child(2) { transform: scale(1.53); } /* the step the run has reached grows from 17px to 26px */
+.agt-ed { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
+.agt-index { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.agt-index li button { position: relative; width: 100%; display: grid; grid-template-columns: 36px minmax(0, 1fr) auto 16px; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px; border: 0; border-radius: 16px; background: none; text-align: left; font: 400 17px/1.3 var(--sans); color: #525252; cursor: pointer; transition: background-color .3s, color .3s, transform .09s; }
+.agt-ix-t { display: inline-block; transform-origin: 0 50%; transition: transform .3s var(--em); }
+.agt-index li.on .agt-ix-t { transform: scale(1.53); } /* the step on stage grows from 17px to 26px */
+.agt-ix-ln { font-size: 12px; color: #525252; opacity: 0; transform: translateX(-6px); transition: opacity .3s var(--em), transform .3s var(--em); }
 .agt-index li button:active { transform: scale(.97); }
-@media (hover: hover) { .agt-index li button:hover { color: var(--ink); background: #ededed; } }
+@media not all and (pointer: coarse) {
+  .agt-index li button:hover { color: var(--ink); background: #ededed; }
+  .agt-index li button:hover .agt-ix-ln { opacity: 1; transform: none; }
+  .agt-index li:not(.on) button:hover .agt-ix-t { transform: translateX(4px); }
+}
 .agt-index li button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.agt-index li button:focus-visible .agt-ix-ln { opacity: 1; transform: none; }
 .agt-ix-n { font-size: 13px; }
-.agt-ix-ok { opacity: 0; transform: scale(.6); transition: opacity .3s, transform .3s var(--ease); }
-.agt-index li.done button { color: #404040; }
-.agt-index li.done .agt-ix-ok { opacity: 1; transform: none; color: var(--ink); }
 .agt-index li.on button { color: var(--ink); }
+.agt-index li.on .agt-ix-ln { opacity: 1; transform: none; }
 .agt-file { border-radius: 28px; background: #0a0a0a; overflow: hidden; box-shadow: 0 80px 140px -70px rgba(0, 0, 0, .45), 0 0 0 1px rgba(0, 0, 0, .92); }
-.agt-file-bar { display: flex; align-items: center; gap: 14px; height: 52px; padding: 0 14px 0 20px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.agt-file-bar { display: flex; align-items: center; gap: 14px; height: 52px; padding: 0 10px 0 20px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .agt-file-bar .x-mono { font-size: 13px; color: #d4d4d4; }
-.agt-file-ln { margin-left: auto; color: #a3a3a3 !important; }
+.agt-file-bar .agt-file-n { margin-left: auto; color: #a3a3a3; }
 .agt-file-bar .x-copy { background: #171717; border-color: rgba(255, 255, 255, .14); color: #d4d4d4; }
-.agt-code { position: relative; height: 560px; overflow: auto; padding: 18px 0 26px; scrollbar-width: thin; scrollbar-color: #262626 transparent; }
+.agt-file .agt-ctl { width: 40px; height: 40px; }
+.agt-code { position: relative; height: 440px; overflow: hidden auto; padding: 18px 0 18px; scrollbar-width: thin; scrollbar-color: #262626 transparent; overscroll-behavior: contain; }
+.agt-code:focus-visible { outline: 2px solid #fafafa; outline-offset: -4px; }
 .agt-code pre { position: relative; margin: 0; font: 400 14px/1.75 var(--mono); color: #d4d4d4; }
-.agt-band { position: absolute; left: 0; right: 0; top: 18px; background: linear-gradient(90deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .03)); border-left: 2px solid #f5f5f5; transition: transform .16s var(--ease), height .16s var(--ease), opacity .3s; pointer-events: none; }
+.agt-band { position: absolute; left: 0; right: 0; top: 18px; background: linear-gradient(90deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .03)); border-left: 2px solid #fafafa; transition: transform .3s var(--em), height .3s var(--em), opacity .3s; pointer-events: none; }
 .agt-ln { display: grid; grid-template-columns: 52px 1fr; }
 .agt-num { padding-right: 18px; text-align: right; color: #737373; user-select: none; }
-.agt-src { padding-right: 26px; white-space: pre-wrap; overflow-wrap: anywhere; opacity: .5; transition: opacity .3s; }
-.agt-ln.ran .agt-src { opacity: 1; }
+.agt-src { display: block; padding-right: 26px; white-space: pre-wrap; overflow-wrap: anywhere; opacity: .6; transition: opacity .3s var(--em); }
+/* the chosen step's lines in full ink */
+.agt-ln.cur .agt-src { opacity: 1; }
 .agt-src .c { color: #a3a3a3; }
 .agt-src .s { color: #e5e5e5; }
 .agt-src .k { color: #fff; font-weight: 600; }
 .agt-src .n { color: #d4d4d4; }
+/* under the code: the step's requests write themselves, then its answer rises (one cell, as tall as the tallest) */
+.agt-resp { display: grid; padding: 16px 22px 18px; border-top: 1px solid rgba(255, 255, 255, .08); background: #171717; }
+.agt-resp-b { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .14s cubic-bezier(0, 0, .2, 1), visibility 0s .14s; }
+.agt-resp-b.on { opacity: 1; visibility: visible; transition: opacity .3s var(--em) .14s, visibility 0s .14s; }
+.agt-resp .agt-req { font-size: 12.5px; }
+.agt-resp-a { margin: 8px 0 0; font-size: 14px; line-height: 1.5; color: #fafafa; }
 .agt-note { margin: 28px 0 0; padding-bottom: clamp(56px, 6vw, 88px); max-width: 72ch; font-size: 16px; line-height: 1.55; color: #404040; }
-@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
-  .agt-track { height: 230svh; }
-  .agt-pin { position: sticky; top: 0; height: 100svh; box-sizing: border-box; display: flex; align-items: center; padding: 72px 0 104px; } /* the foot stays clear for the ask bar */
-  .agt-code { height: min(560px, calc(100svh - 260px)); overflow: hidden; }
-  .agt-band { transition: transform .1s linear, height .1s linear, opacity .3s; }
-}
+/* JS off: every step's answer listed under the file */
+html:not(.js) .agt-resp-b { grid-area: auto; opacity: 1; visibility: visible; padding-bottom: 12px; }
+html:not(.js) .agt-src { opacity: 1; }
 
 /* ---------- 4. the prompt ---------- */
 .agt-prompt-in { align-items: start; }
@@ -115,34 +194,60 @@
 .agt-prompt-l .v2a-head { margin: 0; max-width: 12ch; }
 .agt-pr-lede { margin-top: 24px; color: #404040; }
 .agt-links { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 28px; }
-.agt-paper { grid-column: 7 / 13; position: relative; border-radius: 28px; background: #fff; border: 1px solid rgba(0, 0, 0, .08); box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .3); overflow: hidden; }
-.agt-paper-bar { display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 0 14px 0 24px; border-bottom: 1px solid rgba(0, 0, 0, .08); }
-.agt-paper-bar .x-mono { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); }
-.agt-paper-body { max-height: 520px; overflow-y: auto; scrollbar-width: thin; }
+.agt-paper { grid-column: 7 / 13; position: relative; border-radius: 28px; background: #fff; border: 1px solid rgba(0, 0, 0, .08); box-shadow: 0 60px 120px -60px rgba(0, 0, 0, .3); overflow: hidden; transition: transform .4s var(--em); }
+.agt-paper::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .22); opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); pointer-events: none; }
+.agt-paper-bar { display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 0 10px 0 24px; border-bottom: 1px solid rgba(0, 0, 0, .08); }
+.agt-paper-bar > .x-mono { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); }
+.agt-paper-acts { display: flex; align-items: center; gap: 6px; }
+.agt-paper .agt-ctl { width: 40px; height: 40px; }
+.agt-paper .x-copy { transition: translate .3s var(--em), background-color .2s, color .2s, border-color .2s; }
+@media not all and (pointer: coarse) {
+  .agt-paper:hover { transform: translateY(-4px); }
+  .agt-paper:hover::after { opacity: 1; }
+  .agt-paper:hover .x-copy { translate: 0 -2px; background: #0a0a0a; border-color: #0a0a0a; color: #fff; }
+}
+.agt-paper-body { height: 520px; overflow-y: auto; scrollbar-width: thin; }
 .agt-paper-body:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: 0 0 28px 28px; }
 .agt-paper pre { margin: 0; padding: 26px 28px 32px; font: 400 14.5px/1.75 var(--mono); color: var(--ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.agt-paper .agt-caret { height: 1.1em; margin: 0 -2px 0 0; vertical-align: text-bottom; animation-duration: .8s; }
+.agt-rest { visibility: hidden; }
 
-/* ---------- 5. questions, the one action ---------- */
-.agt-faq { padding-top: 0; }
-.agt-faq-in { align-items: start; }
-.agt-faq-l { grid-column: 1 / 5; position: sticky; top: 110px; }
-.agt-faq-l .v2a-head { margin: 0; }
-.agt-faq-r { grid-column: 6 / 13; }
+/* ---------- 2. questions, as the live conversation (agents-index/LiveChat.css) ---------- */
+.agt-ask { padding-bottom: clamp(40px, 6vw, 96px); }
+.agt-prompt { padding-top: clamp(56px, 8vw, 140px); }
+
+/* ---------- 6. proof: the page's own figures, quiet, in one row ---------- */
+.agt-proof { padding: clamp(72px, 9vw, 116px) 0; border-top: 1px solid rgba(0, 0, 0, .08); }
+.agt-proof-row { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1.1fr 1.25fr 1.25fr 1fr; }
+.agt-proof-row li { padding: 4px 24px; border-left: 1px solid rgba(0, 0, 0, .1); }
+.agt-proof-row li:first-child { padding-left: 0; border-left: 0; }
+.agt-fig { display: flex; flex-direction: column; gap: 10px; }
+.agt-fig .x-stat-n { order: -1; min-height: 1.4em; font-size: 13px; color: #737373; }
+.agt-fig .x-stat-v { display: block; font: 220 clamp(2.5rem, 4.2vw, 4rem)/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
+.agt-fig .x-stat-l { max-width: 24ch; font-size: 14px; line-height: 1.45; color: #525252; }
+
+/* ---------- 7. the Band's five ticks, landing above the ask ---------- */
+.agt .x-band-act .agt-ticks { order: -1; }
+.agt-ticks { display: flex; gap: 10px; }
+.agt-ticks i { position: relative; overflow: hidden; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); color: #0a0a0a; }
+.agt-ticks i::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #fafafa; transform: scale(0); transition: transform .4s var(--em); }
+.agt-ticks svg { position: relative; z-index: 1; opacity: 0; transform: scale(.5); transition: opacity .3s .1s, transform .4s var(--em) .1s; }
+.agt-ticks i.on::after { transform: none; }
+.agt-ticks i.on svg { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .agt *, .agt *::before, .agt *::after { animation: none !important; }
-  .agt-step-b, .agt-tl { transition: none; }
-  .agt-tl { opacity: 1; }
+  .agt-step-b, .agt-resp-b, .agt-row, .agt-src { transition: none !important; }
 }
 
 /* ---------- phones ---------- */
 @media (max-width: 900px) {
   .agt-hero { padding: 96px 0 72px; }
-  .agt-bg { width: 100%; height: 520px; bottom: auto; }
-  .agt-bg::after { background: linear-gradient(0deg, #000 6%, rgba(0, 0, 0, .55) 55%, rgba(0, 0, 0, .3)); }
+  .agt-bg { left: auto; right: -14%; top: 40px; width: 78%; height: 300px; bottom: auto; -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 98%), linear-gradient(90deg, transparent 0, #000 30%); mask-image: linear-gradient(180deg, #000 55%, transparent 98%), linear-gradient(90deg, transparent 0, #000 30%); -webkit-mask-composite: source-in; mask-composite: intersect; }
   .agt-hero-copy { padding-top: 8px; }
+  .agt-hero-copy::before { inset: -40px -16px -24px -40px; background: radial-gradient(closest-side, rgba(0, 0, 0, .82), rgba(0, 0, 0, .62) 60%, rgba(0, 0, 0, 0)); }
   .agt-detail { margin: 0 14px 14px; padding: 14px; }
-  .agt-index li.on button > span:nth-child(2) { transform: none; }
+  .agt-index li.on .agt-ix-t { transform: none; }
   .agt-one code { font-size: 1.375rem; }
   .agt-hero-in { row-gap: 40px; }
   .agt-run { border-radius: 22px; }
@@ -150,29 +255,32 @@
   .agt-steps button { font-size: 16px; grid-template-columns: 34px minmax(0, 1fr) 18px; min-height: 52px; }
   .agt-step-d { font-size: 14px; }
   .agt-req { font-size: 12px; }
-  .agt-ctl { width: 44px; height: 44px; }
+  .agt-run .agt-ctl, .agt-file .agt-ctl, .agt-paper .agt-ctl { width: 44px; height: 44px; }
   .agt-install-r { margin-top: 32px; }
-  .agt-term { border-radius: 22px; }
-  .agt-term-body { font-size: 13px; padding: 18px; min-height: 0; }
   .agt-script { padding-top: 120px; }
-  .agt-ed { grid-template-columns: 1fr; }
+  .agt-ed { grid-template-columns: minmax(0, 1fr); }
   .agt-index { position: relative; flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 6px; margin: 0 -16px; padding: 0 16px; }
   .agt-index::-webkit-scrollbar { display: none; }
   .agt-index li { flex: none; }
-  .agt-index li button { width: auto; grid-template-columns: auto auto 16px; min-height: 46px; background: #fff; border-color: rgba(0, 0, 0, .08); white-space: nowrap; font-size: 14px; }
-  .agt-index li.on button { transform: none; }
+  .agt-index li button { width: auto; grid-template-columns: auto auto 16px; min-height: 46px; background: #fff; white-space: nowrap; font-size: 14px; }
+  .agt-ix-ln { display: none; }
+  .agt-index li.on button { transform: none; box-shadow: inset 0 0 0 1.5px #0a0a0a; }
   .agt-file { border-radius: 22px; }
-  .agt-code { height: 480px; }
+  .agt-code { height: 340px; }
   .agt-code pre { font-size: 13px; }
   .agt-ln { grid-template-columns: 34px 1fr; }
   .agt-num { padding-right: 10px; }
   .agt-src { padding-right: 14px; }
+  .agt-resp { padding: 14px 16px 16px; }
   .agt-note { font-size: 15px; padding-bottom: 96px; }
-  .agt-prompt-l, .agt-faq-l { position: static; }
+  .agt-prompt-l { position: static; }
   .agt-paper { margin-top: 32px; border-radius: 22px; }
-  .agt-paper-body { max-height: 420px; }
+  .agt-paper-body { height: 420px; }
   .agt-paper pre { font-size: 13.5px; padding: 18px; }
-  .agt-faq-l { margin-bottom: 20px; }
+  .agt-proof-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 40px; }
+  .agt-proof-row li { padding: 0 0 0 16px; }
+  .agt-proof-row li:nth-child(odd) { padding-left: 0; border-left: 0; }
+  .agt-fig .x-stat-v { font-size: 2.25rem; }
   .agt .x-arrow { min-height: 44px; }
   .agt .x-copy { min-height: 44px; padding-inline: 14px; }
 }

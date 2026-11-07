@@ -2,8 +2,8 @@
 
 Page file: `components/pages/cloud/Telemetry.jsx` · gallery: `docs/gallery/telemetry/` · metric id: `cta_click:telemetry.primary`
 
-Open copy questions for James: "Mode" (`c4_mode`); the copyable config.yaml and builder.yaml are a standard OpenTelemetry collector config with `${CEILING}`/`${BACKEND}` placeholders written by the builder, not text Hanzo published: approve them, or the Copy button comes out. Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/telemetry.md`): none.
+Open copy questions for James: the config.yaml and builder.yaml files (their names, keys and `${CEILING}`/`${BACKEND}` placeholders) and the builder's group labels "signals", "protocols", "processors" are visible text written for this page: a standard OpenTelemetry collector config, not text Hanzo published. They are NOT in `content/ui-strings.json`; approve them, or the config window and the Copy button come out. The stage names in the strip and the collector at rest ("OTLP in", "pipelines", "batching", "memory ceiling", "OTLP out") are the same kind of question.
+Shared changes requested (`docs/requests/telemetry.md`): the `FooterHTML` hydration mismatch (red "1 Issue" badge on fresh loads, all pages); the phone header going quiet while a page's own ask is on screen.
 Forks this page deleted: the yellow boxes and code highlights (greys now), the label on the headline, the dark chapters next to the dark band (light now).
 
 Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
@@ -15,7 +15,7 @@ Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` 
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Persona is a platform engineer putting a collector in front of a backend; the one ask is Hanzo's "View on GitHub" (`data-cta` primary in the hero, "close" as the later solid), metric `cta_click:telemetry.primary`. `lib/cta.js` is not merged yet, so the label is the live page's own. h1 count 1. no prices on the live page. Every button changes something on screen.
+Done here: Persona is a platform engineer putting a collector in front of a backend; the one ask is Hanzo's "View on GitHub" (`data-cta` primary in the hero, "close" in the band), metric `cta_click:telemetry.primary`. One solid per screen, checked by screenshot at every 70% scroll step: desktop, the hero's "View on GitHub" is solid while the header's "Try Hanzo" is an outline, then the header carries "View on GitHub" solid, and goes quiet again while the band's "View on GitHub" is in view; phone (≤700px), the header keeps Hanzo's solid "Try Hanzo" and the page's two "View on GitHub" buttons are outlined. `lib/cta.js` is not merged yet, so the label is the live page's own. h1 count 1. No prices on the live page. Every button changes something on screen.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -23,7 +23,7 @@ Done here: Persona is a platform engineer putting a collector in front of a back
 - [ ] Breadcrumb at depth 2 or more (n/a: /telemetry is depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" targets `#main`. 4 links in main, all through `A` or `Cta`. `python3 scripts/parity.py /telemetry` reports every live link present. No breadcrumb: the page sits at depth 1.
+Done here: `<main id="main">`; the layout's "Skip to content" targets `#main`. 4 links in main, all through `A` or `Cta`. `python3 scripts/parity.py /telemetry` reports every live link present. No breadcrumb: the page sits at depth 1.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,15 +33,15 @@ Done here: `<main id="main" data-ask="off">`; the layout's "Skip to content" tar
 - [x] Ends in proof strip, `Band`, footer
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: no card on this page opens another page)
 
-Done here: Hero is split (title on 8 columns, line and action on 4, the pipe rising under); the object is the OTLP pipe: traces, metrics and logs enter, batch in the collector and leave in batches, so the signals moving through the pipe moves within the first second. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Telemetry" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → six chapters beside the config file (light, pinned) → closing band with "your config" (dark). The live page has no proof strip, so it ends on the band and the footer. The band ends on the page's own object: the collector at rest (OTLP in → collector → OTLP out) on top of "Your config", redrawn by its toggles, with "Put it in front of your backend" and its ask riding beside it (sticky on desktop) so the band never shows an empty half.
+Done here: Hero is split (title on 8 columns, line and action on 4, the pipe rising under); the object is the OTLP pipe: traces, metrics and logs enter, batch in the collector and leave in batches, so the signals moving through the pipe moves within the first second; the incoming and outgoing span share one grid cell on the dotted line, so no span lands on a second row. The hero holds for 125svh on desktop and the chapters' head follows 27px after it, so no screen between them is half blank. `PageHero` is not merged; the existing equivalent (`StageHero` or the page's own hero with the same line-mask cut-in, 700 ms ease-emphasis) is used, and the mono caption sits under the h1. JS off: h1 "Hanzo Telemetry" at opacity 1, 0 hidden headings or paragraphs. Rooms: hero (light) → six chapters beside the config file (light, pinned) → closing band with "your config" (dark). The live page has no proof strip, so it ends on the band and the footer. The band ends on the page's own object: the collector at rest (OTLP in → collector → OTLP out) on top of "Your config", redrawn by its toggles, with "Put it in front of your backend" and its ask riding beside it (sticky on desktop). On desktop the copy takes 4 columns and "Your config" 8, in two inner columns (collector at rest and toggles left, the config right), so the band has no empty black half. The shared Finale's "Get Telemetry" row below keeps its own layout.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label
+- [x] Sticky ask in header after the hero (desktop, same label); phone: header keeps "Try Hanzo", the shared bar may carry "View on GitHub"
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, close*, deploy (* = solid). The header carries the sticky ask at every width; the page bar is off (`data-ask="off"`) because the critic's shared note (15:00) fails any pill seen over content. Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
+Done here: 0 `.x-btn` without `data-cta` in main; CTAs found: primary*, close*, deploy (* = solid). Desktop: once the hero's "View on GitHub" leaves view the shared header's button reads "View on GitHub" (solid), and it turns quiet while the band's twin is on screen. Phone: the header keeps "Try Hanzo"; the shared bar carries "View on GitHub" only where nothing sits under it (a heavy walk at 375×812 saw it twice, both over empty chapter margin). Copy is the kit `Copy`, which copies the prompt string it shows. 1 `data-thumb` in main.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -57,7 +57,7 @@ Done here: No partner logos; product names appear as text only. Parity holds eve
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /telemetry`: 0 missing
 
-Done here: Small text: 0 runs under 13px on desktop, 0 under 14px on the phone (mono capitals excepted). Sizes follow the deck: h1 52px (40 phone), section heads 26px (including the band's "Put it in front of your backend" and "Get Telemetry"), chapter h3 21px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the config file is the chapter object; the agent prompt in the band. Parity: 0 missing.
+Done here: Small text (every text node in main, measured after a full scroll): 0 runs under 13px on desktop, 0 under 14px on the phone, mono capitals excepted; the only smaller glyph is the 11px ✓ inside the config toggles (an icon, not text). The collector at rest is 13px desktop, 14px phone. Sizes follow the deck: h1 52px (40 phone), section heads 26px (including the band's "Put it in front of your backend" and "Get Telemetry"), chapter h3 21px, lede 20px, body 15px, figures 64px Air, growing only in their moment. Lede 44ch, body 66ch, headings balanced. Code: the config file is the chapter object; the agent prompt in the band. Parity: 0 missing.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)` and changes fill or border (
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: read the collector's config as you scroll (pinned scene). Supporting: batch filling (time), the chapter arrival (a span runs the pipeline strip to the lit stage in 1.2 s, the lit lines write in by clip-path 80 ms apart, a caret blinks 5 times and stops; on phones each stacked chapter plays it once as it comes into view), config pills (state; the collector at rest above them strikes through a signal or processor you switch off). `scripts/variety.py` OK. Kinds: idle (the hero collector), time (write-in, caret), state (pills, chapter swap), pointer (hover a signal in the hero and only that kind flows in), with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
+Done here: Signature: read the collector's config as you scroll (pinned scene). Supporting: batch filling (time), the chapter arrival (a span runs the pipeline strip to the lit stage in 1.2 s, the lit lines write in by clip-path 80 ms apart, a caret blinks 5 times and stops; then a second span keeps running the strip to the lit stage until Pause, in every chapter: on desktop it follows the chapter index of the pinned stage, on phones each stacked chapter runs it while it is in view; chapter 05 shows builder.yaml with the config.yaml it builds dimmed under it, so its window stays full), config pills (state; the collector at rest above them strikes through a signal or processor you switch off). `scripts/variety.py` OK. Kinds: idle (the hero collector), time (write-in, caret), state (pills, chapter swap), pointer (hover a signal in the hero and only that kind flows in), with scroll only in the pinned scene. Timers are timeout chains (`useTick`), no `setInterval`. Reduced motion (`useCalm`) renders the settled frame. No springs: every transition is 300 ms ease-emphasis or shorter.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -100,7 +100,7 @@ Done here: 0 videos. The moving objects are drawn in HTML and SVG; each loop ove
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 378px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
+Done here: The chapter rail sits under the chapter copy (columns 9–12), clear of the config window on every desktop chapter (window right edge 821px, rail from 943px). Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 after scrolling the whole page. The primary ask's bottom edge sits at 378px on a 667px screen. Pinned scenes stack below 900px; every hover state also answers a tap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -109,7 +109,7 @@ Done here: Overflow 0px at 375 and 0px at 320. 0 controls under 44px at 375 afte
 - [x] One h1; no heading skips; names start with visible text
 - [x] Keyboard reaches every control
 
-Done here: Lowest measured text contrast 7.11:1 (0 runs flagged). Headings 1233333322 with 0 skips. Pause controls: the hero pipe and each chapter (one shared switch, `aria-pressed`). Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
+Done here: Contrast measured on every visible text node at each 600px scroll step against its nearest opaque background: lowest 7.11:1 on desktop, 4.54:1 on the phone (a hero signal chip), 0 under 4.5:1. Unlit strip stages are #525252 on white (7.8:1); code lines, line numbers and placeholders are #a3a3a3 on #0f0f0f. Headings 1233333322 with 0 skips. Pause controls: the hero pipe and each chapter (one shared switch, `aria-pressed`). Every input has a label or a register name; nothing validates, so there is no error to focus. Controls are native buttons, links and inputs.
 
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
@@ -117,7 +117,7 @@ Done here: Lowest measured text contrast 7.11:1 (0 runs flagged). Headings 12333
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop
 
-Done here: `curl /telemetry/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. Layout shift over a full wheel scroll (16:28, `scripts/motion.mjs` and a PerformanceObserver walk): 0.007–0.010 at 1470×801, 0.005–0.016 at 375×812 (the code window holds its 20-line height, so builder.yaml no longer re-centres the stage). 0 console errors at both widths (0 desktop, 0 phone).
+Done here: `curl /telemetry/` returns the h1 in the HTML. Demos run only while on screen (`useInView`) and stop when paused or off screen. No fetch, poller or third-party script on the page. Layout shift (PerformanceObserver, a 6 s hero dwell then a wheel walk in 240px steps, cookie note dismissed): 0.0009 at 1470×801 and 0.0000 at 375×812, with and without reduced motion; a plain 70%-step walk measured 0.0036 desktop, 0.0000 phone. 0 page console errors in those runs. The shared footer's intermittent hydration badge is requested, not this page's.
 
 ## 14. SEO and machine files
 - [x] Title and description match live (or are listed for James)
@@ -157,4 +157,4 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/telemetry.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Telemetry.jsx`. Last critic verdict on file: 6/10 (walked an earlier version); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Telemetry.jsx` (to carry the critic's score). Last critic verdict on file: 7/10 (walked before these round-2 fixes); this version waits for the next walk.

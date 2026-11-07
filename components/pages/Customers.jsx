@@ -2,31 +2,21 @@
 // Persona: enterprise buyer in the Buy journey, checking what Hanzo has launched before talking to it
 // Goal: see what Hanzo built and what each launch sold, then talk to Hanzo
 // CTA: "Talk to us" (/contact), data-cta customers.hero / customers.close; metric contact_sales_submit
-// Signature: the launch stage (desktop: a pinned stage; phones: a sticky figure strip under the year rail), one in, one out
+// Signature: word-light (Words light up): Hanzo's lede, set as the page's long statement right under the headline, lights word by word as it is read
+// Entrances: cursor-lens, underline-sweep, curtain-rise, magnet-gather, rack-focus
 // Beyond: a year index over Hanzo's own launch list that narrows the index to one year
-// V2: 8/10 phone index now a scene (sticky figure strip swaps with the row crossing the middle, 150ms out then 300ms in), JS-off stacks both cases on phones too, press .97 throughout
-/* /customers (v3.2, the re-review's fixes). No hues, no eyebrows. A two-line kinetic headline with its lede and
-   its one ask side by side; one big case plate coloured only by the case's own picture, whose progress line starts the
-   moment the curtain lifts and which opens into its story; every launch as a scene: the rows scroll past a pinned stage
-   that brings in each launch's logo and figures as its row crosses the middle (or under the pointer), a year filter
-   that really narrows the list; Hanzo's builders as a calm row of names; a dark close where the launch figures slide by.
-   Persona: enterprise buyer in the Buy journey, checking what Hanzo has launched before talking to it (PLAN 1.1).
-   Goal: see what Hanzo built and what each launch sold, then talk to Hanzo.
-   CTA: "Talk to us" (/contact) beside the lede, in the shared sticky ask bar (data-thumb) and in the close;
-   data-cta customers.hero / customers.close; metric contact_sales_submit.
-   Signature: the launch stage. Scroll the index and each launch's logo and figures rise into a pinned stage as its row
-   reaches the middle, the last one leaving first (150ms out, then 300ms in); point at a row and the stage answers at
-   once. Phones: a slim figure strip sticks under the year rail and swaps to the figure of the row crossing the middle
-   (same copy, 150ms out then 300ms in, ease-emphasis); rows also read in (name to ink, figures settle once).
-   Supporting (3): masked headline cut-in once, after the curtain; the case plate's one turn (wipe, kit Tabs pill); the
-   close's figure rows sliding with the scroll. State: the year filter closes the list up with a layout glide.
-   Beyond: a year index over Hanzo's own launch list: each year shows its launches as dots, and a tap narrows the index
-   to that year (tap it again for every launch).
-   Deletes: the pointer preview that covered its own row, the hand-rolled case tabs (kit Tabs now), the "01"/"02"
-   marks, the seven backer tiles, the closing Sigil (third Sigil room among the company pages), the plate's 30% start
-   threshold, data-morph on the plate (Morph times out site-wide; the plate opens by doorway). */
+// V2: 8/10 motion map (7 Nov): the statement lights word by word, five sections arrive five ways (lens, sweep, curtain, gather, focus), the pinned stage and the sticky phone strip are gone (rows carry their own figures, which rise as they are read), scale rests at h1 52 / headings 26 / names 21
+/* /customers (v4, MOTION-MAP). No hues, no eyebrows.
+   Order: the headline and its ask (it opens out of a round lens; a lens then follows the cursor over it), the
+   statement (Hanzo's lede, lit word by word as it is read: the signature), the case plate (its key words underlined in
+   sequence on arrival; it still turns Damon, KANOA, Damon, then rests, and opens into its story), every launch (a year
+   filter and rows that rise from below like curtains; each row's figures rise as the row reaches the middle), Hanzo's
+   builders (scattered names pulled together), and the dark close (it pulls into focus; the launch figures slide by).
+   Kept: every hover and press, the plate's turn and line, the year filter's gliding pill and layout glide, the figure
+   rises, the close's sliding figures. Deleted: the pinned launch stage and the phone's sticky figure strip (the map
+   gives this page no `split`), the line-mask cut-in on the close heading, the lede's and plate's fade-ups. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useScroll, useTransform } from 'motion/react';
 import { useCalm } from '../ui';
 import { useRouter } from 'next/navigation';
 import { A, Img, Tabs } from '../kit';
@@ -34,11 +24,14 @@ import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
 import { openDoor } from './doorway';
+import { useEnterAll, WordLight, Lens } from './customers/enter';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './Customers.css';
 
 const EASE = [0.16, 1, 0.3, 1];
+const H1 = ['Products Hanzo', 'built and launched'];
+const LEDE = 'Hanzo built the store, ran the ads and found the audience for each of these launches. Here is what we did and what each one sold.';
 const CASES = [
   { name: 'Damon Motorcycles', year: '2020', d: 'Ran the CES reveal and the preorder campaign: AI-written ad sets, show-floor targeting, video and email.', to: '/customers/damon-motorcycles', img: '/customers/damon-motorcycles/cover.webp', alt: 'The Damon Hypersport', logo: '/logos/customers/damon-motorcycles.svg', n: '$8.4M', w: 'in bikes sold in 30 days' },
   { name: 'KANOA', year: '2015', d: 'Built the site and store, then ran paid acquisition, email and the preorder campaign.', to: '/customers/kanoa', img: '/customers/kanoa/athlete.webp', alt: 'An athlete wearing KANOA earphones', logo: '/logos/customers/kanoa.png', n: '$7M+', w: 'raised in preorders' },
@@ -66,8 +59,8 @@ const door = (e, to, router) => {
   openDoor(e, to, router, '#0a0a0a');
   setTimeout(() => document.querySelectorAll('[data-door]').forEach((d) => { if (!d.dataset.landing) d.remove(); }), 640 + 700);
 };
-// JS off: both cases show stacked and readable; the figures on phones stand in place
-const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-strip{display:none!important}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
+// JS off: both cases show stacked and readable; the row figures stand in place
+const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
 const FIGS = LAUNCHES.flatMap((l) => l.f.map(([n]) => n));
 
 // Hanzo's own list, as live shows it (the same names and links as /investors; a shared module is the Data chat's, PLAN 2.5)
@@ -75,6 +68,9 @@ const BACKERS = [
   ['https://aws.amazon.com', 'amazon', 'Amazon'], ['https://www.digitalocean.com', 'digitalocean', 'DigitalOcean'], ['https://cloud.google.com', 'google', 'Google'],
   ['https://azure.microsoft.com', 'microsoft', 'Microsoft'], ['https://www.nvidia.com', 'nvidia', 'NVIDIA'], ['https://nebius.com', 'nebius', 'Nebius'],
 ];
+// magnet-gather: where each name starts, scattered (fixed values, so server and client agree)
+const SCATTER = [[-160, -70, -9], [120, 90, 7], [-60, 120, 5], [200, -60, -6], [-220, 40, 8], [80, -110, -5], [160, 70, 9]];
+const scatter = (k) => { const [x, y, r] = SCATTER[k % SCATTER.length]; return { '--k': k, '--mx': x + 'px', '--my': y + 'px', '--mr': r + 'deg' }; };
 
 /* A picture from Hanzo's media that steps aside for its fallback when it cannot load (PLAN 2.17 media failure). */
 function Pic({ fallback = null, ...p }) {
@@ -122,7 +118,8 @@ function Plate() {
               <motion.span className="xcu-case-txt" initial={false} animate={{ opacity: i === at ? 1 : 0 }}
                 transition={i === at ? { duration: 0.4, delay: 0.25, ease: EASE } : { duration: 0.15 }}>
                 <span className="xcu-case-top">
-                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span className="xcu-alt">{c.name}</span>} />
+                  {/* a missing logo leaves the corner to the year: the h3 below already names the case, never twice */}
+                  <Pic className="xcu-mark" src={c.logo} alt="" w={180} h={28} fallback={<span />} />
                   <span className="vc-kick vc-num">{c.year}</span>
                 </span>
                 <span className="xcu-case-in">
@@ -148,55 +145,18 @@ function Plate() {
   );
 }
 
-/* The launch stage: the logo and figures of the launch being read, rising in as the last one leaves. */
-function Stage({ l, list }) {
-  return (
-    <div className="xcu-st" aria-hidden="true">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={l.id} className="xcu-st-in" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } }}
-          exit={{ opacity: 0, y: -16, transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] } }}>
-          <span className="xcu-st-top">
-            <span className="xcu-st-logo">{l.logo ? <Pic src={'/logos/customers/' + l.logo} alt="" w={200} h={40} fallback={<b>{l.name}</b>} /> : <b>{l.name}</b>}</span>
-            <span className="vc-kick vc-num">{l.year || ''}</span>
-          </span>
-          {l.f.length > 0
-            ? <span className="xcu-st-f">{l.f.map(([n, w], k) => <span key={w} className={(k ? 'b' : 'a') + (n.length > 8 ? ' long' : '')}><b className="vc-num">{n}</b><span>{w}</span></span>)}</span>
-            : <span className="xcu-st-f"><span className="a nm"><b>{l.name}</b><span>{l.kind}</span></span></span>}
-        </motion.div>
-      </AnimatePresence>
-      <span className="xcu-st-dots">{list.map((x) => <i key={x.id} className={x.id === l.id ? 'on' : ''} />)}</span>
-    </div>
-  );
-}
-
-/* Phones: a slim strip that sticks under the year rail and carries the figure of the row crossing the middle, swapping
-   as the desktop stage does (the last one rises out in 150ms, then the next rises in, 300ms ease-emphasis). */
-function Strip({ l, calm }) {
-  const [n, w] = l.f.length ? l.f[0] : [l.name, l.kind];
-  return (
-    <div className="xcu-strip" aria-hidden="true">
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.span key={l.id} className={'xcu-strip-in' + (l.f.length ? '' : ' nm')}
-          initial={calm ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: { duration: calm ? 0 : 0.3, ease: EASE } }}
-          exit={calm ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: -16, transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] } }}>
-          <b className="vc-num">{n}</b><span>{w}</span>
-        </motion.span>
-      </AnimatePresence>
-    </div>
-  );
-}
-
 function Every() {
-  const calm = useCalm();
+  const box = useRef(null);
   const [year, setYear] = useState(null);
   const shown = year ? ORDER.filter((l) => l.year === year) : ORDER;
   const [at, setAt] = useState(ORDER[0].id);
   const [read, setRead] = useState(() => new Set());
   const rows = useRef({});
+  useEnterAll(box, '[data-e="curtain"]');
   useEffect(() => { setRead((r) => (r.has(at) ? r : new Set(r).add(at))); }, [at]);
   useEffect(() => { setAt(shown[0].id); }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // the row crossing the middle of the screen is the one being read
+    // the row crossing the middle of the screen is the one being read: its figures rise into place (once)
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(e.target.id); }), { rootMargin: '-50% 0px -50% 0px' });
     shown.forEach((l) => rows.current[l.id] && io.observe(rows.current[l.id]));
     return () => io.disconnect();
@@ -204,16 +164,16 @@ function Every() {
   const cur = shown.find((l) => l.id === at) || shown[0];
   const rail = useRef(null);
   useEffect(() => {
-    // phones: the sticky year rail keeps the year being read in view
+    // phones: the year rail keeps the year being read in view
     const r = rail.current, c = r && r.querySelector('button.here');
     if (c && r.scrollWidth > r.clientWidth) r.scrollTo({ left: Math.max(0, c.offsetLeft - 20), behavior: 'smooth' });
   }, [cur.year]);
   return (
-    <section className="vc-sec xcu-every" id="every" aria-labelledby="xcu-every-h">
+    <section className="vc-sec xcu-every" id="every" aria-labelledby="xcu-every-h" ref={box}>
       <noscript dangerouslySetInnerHTML={NOJS} />
       <div className="vc-grid xcu-every-g">
-        <h2 id="xcu-every-h" className="vc-headline">Every launch</h2>
-        <div className="xcu-years" role="group" aria-labelledby="xcu-every-h" ref={rail}>
+        <h2 id="xcu-every-h" className="vc-headline" data-e="curtain">Every launch</h2>
+        <div className="xcu-years" role="group" aria-labelledby="xcu-every-h" ref={rail} data-e="curtain">
           {YEARS.map((g) => {
             const n = LAUNCHES.filter((l) => l.year === g).length;
             const on = year === g;
@@ -226,11 +186,10 @@ function Every() {
             );
           })}
         </div>
-        <Strip l={cur} calm={calm} />
         <p className="x-sr" role="status">{year ? `${year}: ${shown.length} ${shown.length === 1 ? 'launch' : 'launches'}` : ''}</p>
         <ol className="xcu-index">
           {ORDER.map((l) => (
-            <motion.li layout="position" transition={{ duration: 0.3, ease: EASE }} key={l.id} id={l.id}
+            <motion.li layout="position" transition={{ duration: 0.3, ease: EASE }} key={l.id} id={l.id} data-e="curtain"
               ref={(el) => { rows.current[l.id] = el; }} className={'xcu-row' + (l.id === cur.id ? ' on' : '') + (read.has(l.id) ? ' read' : '')}
               hidden={!!year && l.year !== year} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setAt(l.id); }}>
               <span className="xcu-row-y vc-num">{l.year || <span aria-hidden="true">—</span>}</span>
@@ -239,11 +198,10 @@ function Every() {
                 <span className="xcu-kind">{l.kind}</span>
               </div>
               <p className="xcu-row-d">{l.d}</p>
-              {l.f.length > 0 && <dl className="xcu-row-f">{l.f.map(([n, w]) => <div key={w}><dt className="vc-num">{n}</dt><dd>{w}</dd></div>)}</dl>}
+              {l.f.length > 0 ? <dl className="xcu-row-f">{l.f.map(([n, w]) => <div key={w}><dt className="vc-num">{n}</dt><dd>{w}</dd></div>)}</dl> : <span className="xcu-row-f0" aria-hidden="true" />}
             </motion.li>
           ))}
         </ol>
-        <div className="xcu-aside"><Stage l={cur} list={shown} /></div>
       </div>
     </section>
   );
@@ -257,13 +215,13 @@ function Close() {
   const b = useTransform(scrollYProgress, [0, 1], ['-22%', '0%']);
   const half = Math.ceil(FIGS.length / 2);
   return (
-    <section className="xcu-close" data-room="dark" aria-labelledby="xcu-close-h" ref={ref}>
+    <section className="xcu-close" data-room="dark" data-e="focus" aria-labelledby="xcu-close-h" ref={ref}>
       <div className="xcu-figs" aria-hidden="true">
         <motion.span style={{ x: a }}>{[...FIGS.slice(0, half), ...FIGS.slice(0, half)].map((n, i) => <b key={i}>{n}</b>)}</motion.span>
         <motion.span style={{ x: b }}>{[...FIGS.slice(half), ...FIGS.slice(half)].map((n, i) => <b key={i}>{n}</b>)}</motion.span>
       </div>
       <div className="vc-grid xcu-close-g">
-        <MaskLines id="xcu-close-h" lines={['Launch with us']} className="vc-display" />
+        <h2 id="xcu-close-h" className="vc-display">Launch with us</h2>
         <A to="/contact" className="xcu-cta lt" data-thumb="Talk to us" data-cta="customers.close">Talk to us</A>
       </div>
     </section>
@@ -271,19 +229,25 @@ function Close() {
 }
 
 export default function Customers() {
+  const root = useRef(null);
+  useEnterAll(root, '.xcu-cases, .xcu-wall, .xcu-close');
   return (
-    <main className="vc xcu" style={{ '--acc': '#0a0a0a' }}>
+    <main className="vc xcu" style={{ '--acc': '#0a0a0a' }} ref={root}>
       <section className="xcu-hero" aria-label="Customers" data-ask-name="Customers">
         <div className="vc-grid xcu-hero-g">
-          <MaskLines as="h1" id="xcu-h1" now delay={0.05} lines={['Products Hanzo', 'built and launched']} className="vc-display xcu-h1" />
-          <div className="xcu-hero-f xcu-in">
-            <p className="vc-lede xcu-lede">Hanzo built the store, ran the ads and found the audience for each of these launches. Here is what we did and what each one sold.</p>
+          <MaskLines as="h1" id="xcu-h1" now delay={0.05} lines={H1} className="vc-display xcu-h1" />
+          <Lens lines={H1} />
+          <div className="xcu-hero-f">
             <A to="/contact" className="xcu-cta" data-thumb="Talk to us" data-cta="customers.hero">Talk to us</A>
           </div>
         </div>
       </section>
 
-      <section className="xcu-cases xcu-in2" aria-labelledby="xcu-cs">
+      <section className="xcu-say" aria-label="Customers">
+        <div className="vc-grid"><WordLight text={LEDE} className="vc-lede xcu-lede" /></div>
+      </section>
+
+      <section className="xcu-cases" aria-labelledby="xcu-cs">
         <div className="vc-wrap"><Plate /></div>
       </section>
 
@@ -293,9 +257,9 @@ export default function Customers() {
         <div className="vc-grid xcu-back-g">
           <h2 id="xcu-back-h" className="vc-headline">Backed by builders.</h2>
           <ul className="xcu-wall">
-            <li className="ts"><A to="https://www.techstars.com" aria-label="Techstars"><Pic src="/logos/partners/techstars.svg" alt="Techstars logo" w={160} h={34} fallback={<span className="xcu-alt">Techstars</span>} /></A></li>
-            {BACKERS.map(([u, f, n]) => (
-              <li key={f}><A to={u}><Pic src={`/logos/partners/${f}.svg`} alt={n + ' logo'} w={140} h={28} fallback={<span className="xcu-alt">{n}</span>} /></A></li>
+            <li className="ts" style={scatter(0)}><A to="https://www.techstars.com" aria-label="Techstars"><Pic src="/logos/partners/techstars.svg" alt="Techstars logo" w={160} h={34} fallback={<span className="xcu-alt">Techstars</span>} /></A></li>
+            {BACKERS.map(([u, f, n], k) => (
+              <li key={f} style={scatter(k + 1)}><A to={u}><Pic src={`/logos/partners/${f}.svg`} alt={n + ' logo'} w={140} h={28} fallback={<span className="xcu-alt">{n}</span>} /></A></li>
             ))}
           </ul>
         </div>

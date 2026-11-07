@@ -141,7 +141,7 @@
 .tl2-code, .tl2-ln em { color: #a3a3a3; }
 .tl2-ln b { color: #d4d4d4; }
 /* chapter 05: config.yaml dimmed under builder.yaml, so the window stays full */
-.tl2-ln.tl2-ghost { color: #737373; }
+.tl2-ln.tl2-ghost, .tl2-ln.tl2-ghost em { color: #a3a3a3; }
 .tl2-ln.tl2-ghost-h { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, .08); color: #a3a3a3; }
 /* the collector at rest: 13px desktop, 14px phone */
 .tl2-rest { font-size: 13px; }
@@ -151,7 +151,7 @@
   .tl2 .l2-stage { height: 125svh; }
   .tl2 .l2-pin-head { padding-top: 27px; }
   /* the rail sits under the chapter copy (right), clear of the config window */
-  .tl2 .l2-pin.flip .l2-rail { left: auto; right: 0; }
+  .tl2 .l2-pin.flip .l2-rail { grid-column: 9 / span 4; }
   /* the close: the config spans the band beside a narrower copy column, in two columns of its own */
   .tl2 .l2-band-copy { grid-column: 1 / span 4; }
   .tl2 .l2-band-obj { grid-column: 5 / span 8; }
@@ -160,6 +160,92 @@
   .tl2 .tl2-yc-out { grid-column: 2; grid-row: 1 / span 5; margin-top: 0; }
   .tl2 .tl2-yc-out pre { max-height: 520px; }
 }
+/* ---------- motion-map build (7 Nov): the living graph + five entrances, each its own, no shared reveal ---------- */
+
+/* 1. domino: the hero collector's three columns tip into place one after another */
+.js .tl2-pipe .tl2-col { transform-origin: 0 100%; animation: tl2-domino .9s cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(.3s + var(--i, 0) * .18s); }
+@keyframes tl2-domino { from { transform: rotate(-24deg) translateY(-14px); opacity: 0; } 50% { opacity: 1; } to { transform: none; opacity: 1; } }
+
+/* 2. the graph room (signature) and its ink-spread: an uneven blot opens from the left of the room */
+.tl2-gsec { padding-block: clamp(44px, 6vw, 88px); }
+.js .tl2-ink:not([data-in]) .tl2-gsec { clip-path: var(--b0); }
+.tl2-ink[data-in] .tl2-gsec { clip-path: var(--b1); transition: clip-path 1.5s cubic-bezier(.16, 1, .3, 1); }
+.tl2-graph-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; margin-bottom: 10px; }
+.tl2-graph-cap { margin: 0; font-size: 14px; line-height: 1.5; color: #a3a3a3; }
+.tl2-graph-cap b { font-weight: 606; color: #fafafa; }
+.tl2-graph-cap i { font-style: normal; color: #737373; }
+.tl2 .tl2-graph .l2-pause.tl2-graph-pause { position: static; flex: none; }
+.tl2-graph-svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.tl2-gl { stroke: rgba(255, 255, 255, .18); stroke-width: 1.5; transition: stroke .3s cubic-bezier(0, 0, .2, 1); }
+.tl2-gl.on { stroke: #fafafa; }
+.tl2-gd { fill: #fafafa; opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+.tl2-gd.on { opacity: 1; }
+.tl2-gn { cursor: pointer; outline: none; }
+.tl2-gn .hit { fill: transparent; }
+.tl2-gn .dot { fill: #000; stroke: rgba(255, 255, 255, .45); stroke-width: 1.5; transition: fill .3s cubic-bezier(0, 0, .2, 1), stroke .3s cubic-bezier(0, 0, .2, 1); }
+.tl2-gn.c .dot { fill: #262626; }
+.tl2-gn.on .dot { fill: #fafafa; stroke: #fafafa; }
+.tl2-gn text { fill: #a3a3a3; font-family: var(--mono); transition: fill .3s cubic-bezier(0, 0, .2, 1); }
+.tl2-gn.on text { fill: #fafafa; }
+.tl2-gn.sel text { font-weight: 606; }
+.tl2-gn:focus-visible .dot { stroke: #fafafa; stroke-width: 4; }
+
+/* 3. the six facts, and text-mask-film: a signal film plays through the heading's letters, then the type settles */
+.tl2-fh { position: relative; max-width: none; }
+.tl2-fh-film { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; opacity: 0; }
+.tl2-fh-film text { font-family: inherit; font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
+.tl2-fh-t { transition: opacity .6s cubic-bezier(0, 0, .2, 1) 1.8s; }
+.js .tl2-fh:not([data-in]) .tl2-fh-t { opacity: 0; }
+.tl2-fh[data-in] .tl2-fh-film { animation: tl2-film-v 2.6s linear both; }
+@keyframes tl2-film-v { 0% { opacity: 0; } 8% { opacity: 1; } 72% { opacity: 1; } 100% { opacity: 0; } }
+.tl2-fh-row { animation: tl2-film var(--s, 1.4s) linear 3 both; animation-delay: var(--d, 0s); animation-play-state: paused; }
+.tl2-fh[data-in] .tl2-fh-row { animation-play-state: running; }
+@keyframes tl2-film { from { transform: translateX(-128px); } to { transform: translateX(0); } }
+.tl2-fl { list-style: none; margin: 44px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 44px; }
+.tl2-fl li { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 10px; padding: 27px 0; border-top: 1px solid rgba(0, 0, 0, .1); }
+.tl2-fl li > :not(.tl2-fl-n) { grid-column: 2; }
+.tl2-fl-n { grid-row: 1 / span 3; margin: 0; padding-top: 4px; font-size: 13px; color: #525252; }
+.tl2-fl h3 { margin: 0; font-size: 21px; font-weight: 497; letter-spacing: -.01em; }
+.tl2-fl p { margin: 10px 0 0; font-size: 16px; line-height: 1.55; color: #525252; max-width: 60ch; text-wrap: pretty; }
+.tl2-fl .tl2-key { margin-top: 12px; font-size: 13px; color: #737373; }
+
+/* 4. the config, read fact by fact, and magnet-gather: its lines are pulled together from scattered */
+.tl2-cfg { padding-top: 0; }
+.tl2-cfg-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.tl2-cfg-keys button { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: #525252; font-size: 14px; cursor: pointer; transition: background .2s cubic-bezier(0, 0, .2, 1), color .2s, border-color .2s, transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .tl2-cfg-keys button:hover { border-color: var(--ink); color: var(--ink); } }
+.tl2-cfg-keys button:active { transform: scale(.97); }
+.tl2-cfg-keys button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.tl2 .tl2-cfg-keys .l2-pause.tl2-cfg-pause { position: static; margin-left: auto; }
+.tl2-cfg-t { margin: 22px 0 14px; font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
+.js .tl2-mg:not([data-in]) .tl2-ln { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; }
+.tl2-mg[data-in] .tl2-ln { transition: transform 1s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 30ms), opacity .6s cubic-bezier(0, 0, .2, 1) calc(var(--i, 0) * 30ms), color .35s, background .35s; }
+
+/* 5. the close, and shutter: white bars close from the top and bottom, then open on the dark band */
+.tl2-shut { position: relative; }
+.tl2-shut-b { position: absolute; left: 0; right: 0; z-index: 5; height: 50%; background: #fff; pointer-events: none; transform: scaleY(0); }
+.tl2-shut-b.t { top: 0; transform-origin: 50% 0; }
+.tl2-shut-b.b { bottom: 0; transform-origin: 50% 100%; }
+.js .tl2-shut:not([data-in]) .tl2-shut-b { transform: scaleY(.6); }
+.tl2-shut[data-in] .tl2-shut-b { animation: tl2-shutter 1.3s cubic-bezier(.4, 0, .2, 1) both; }
+@keyframes tl2-shutter { 0% { transform: scaleY(.6); } 35%, 50% { transform: scaleY(1); } 100% { transform: scaleY(0); } }
+
+@media (max-width: 900px) {
+  .tl2-fl { grid-template-columns: minmax(0, 1fr); margin-top: 27px; }
+  .tl2-fl li { grid-template-columns: 34px minmax(0, 1fr); padding: 22px 0; }
+  .tl2-fl p, .tl2-fl .tl2-key, .tl2-fl-n, .tl2-graph-cap { font-size: 14px; }
+  .tl2-fl p { font-size: 15px; }
+  .tl2-cfg-t { font-size: 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .tl2-pipe .tl2-col { animation: none; }
+  .tl2-gsec, .js .tl2-ink:not([data-in]) .tl2-gsec { clip-path: none; }
+  .tl2-fh-film { display: none; }
+  .js .tl2-fh .tl2-fh-t { opacity: 1; transition: none; }
+  .js .tl2-mg .tl2-ln { transform: none; opacity: 1; }
+  .tl2-shut-b { display: none; }
+}
+
 /* phones: the header keeps Hanzo's solid "Try Hanzo", so the page's own "View on GitHub" is outlined (one solid) */
 @media (max-width: 700px) {
   .tl2 .l2-stage .l2-acts .x-btn.solid { background: transparent; color: var(--ink); border-color: rgba(10, 10, 10, .3); }

@@ -1,0 +1,44 @@
+'use client';
+/* /playground's own entrances (motion map, 7 Nov): each main section arrives its own way, once, as it enters view.
+   useEnter(ref) arms a section after hydration (so JS off and the server HTML show the final state) and fires it the
+   first time it is in view; reduced motion never arms. CSS in Playground.css keys off [data-enter=armed|in].
+   useScramble(ref, selector, on): decodes each target's text from scrambled characters to Hanzo's words, left to right;
+   the final text is the server text, restored exactly. */
+import { useEffect, useState } from 'react';
+
+export function useEnter(ref, amount = 0.25) {
+  const [st, setSt] = useState(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    setSt('armed');
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSt('in'); io.disconnect(); } }, { threshold: amount });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, amount]);
+  return st;
+}
+
+const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/';
+export function useScramble(ref, selector, on, ms = 1100) {
+  useEffect(() => {
+    if (!on) return;
+    const nodes = [...(ref.current?.querySelectorAll(selector) || [])]
+      .map((el) => el.firstChild).filter((n) => n && n.nodeType === 3 && n.nodeValue.trim());
+    const finals = nodes.map((n) => n.nodeValue);
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (t) => {
+      const p = Math.min(1, (t - t0) / ms);
+      nodes.forEach((n, k) => {
+        const f = finals[k], lit = Math.floor(f.length * Math.min(1, p * 1.15 - k * 0.04));
+        let s = f.slice(0, Math.max(0, lit));
+        for (let i = Math.max(0, lit); i < f.length; i++) s += f[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        n.nodeValue = p >= 1 ? f : s;
+      });
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); nodes.forEach((n, k) => { n.nodeValue = finals[k]; }); };
+  }, [ref, selector, on, ms]);
+}

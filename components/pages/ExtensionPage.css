@@ -537,3 +537,133 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-rows .xe-row-a, .xe-rows li.yours .xe-row-a, .xe-rows li .x-btn, .xe-rows li.yours .x-btn { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 6px; }
   .xe .xe-builds-l { position: static; }
 }
+
+/* round 6 (critic round 4) */
+/* Hanzo's own "Browser extension" label, a caption under the lede (never above the h1) */
+.xe-kick { margin: -6px 0 0; font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: #737373; }
+/* the hero's text links: the underline draws in and the arrow nudges, 150 ms ease-out */
+.xe-links .x-arrow span { position: relative; background: none; }
+.xe-links .x-arrow span::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; transition: transform .15s var(--xe-out); }
+.xe-links .x-arrow svg { transition: transform .15s var(--xe-out); }
+@media (hover: hover) {
+  .xe-links .x-arrow:hover span { text-decoration: none; }
+  .xe-links .x-arrow:hover span::after { transform: scaleX(1); }
+  .xe-links .x-arrow:hover svg { transform: translateX(4px); }
+}
+.xe-links .x-arrow:focus-visible span::after { transform: scaleX(1); }
+/* the switcher's dot rides with the browser you pick */
+.xe-mine { flex: none; }
+/* the chapter pictures: flat tiles on one room tone, no outline (no stray hairline at the wipe's edge) */
+.xe-vis:not(.xe-text) { box-shadow: none; background: #f5f5f5; }
+.xe .av-sc-t .av-head { font-size: 21px; line-height: 1.2; letter-spacing: -.015em; }
+/* "Read a page as text": its three rows are there before the wipe arrives; the values type in once it is shown */
+.js .xe-text .xe-outs li { opacity: 1; transform: none; }
+.js .xe-text .xe-type { clip-path: none; }
+.xe-text.on .xe-type { animation: xe-typed2 calc(var(--n) * 24ms) steps(var(--n)) calc(var(--d) * .35) backwards; }
+@keyframes xe-typed2 { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+/* file names never break mid-name: one line, an ellipsis on a narrow screen */
+.xe-zips li > span.x-mono { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
+.xe-zips em { flex: none; }
+.xe-zips { min-width: 0; max-width: 100%; }
+@media (max-width: 599px) { .xe-build { padding: 24px 20px; } .xe-fork { width: 100%; } }
+/* browser rows: one ask style, every size shown; your browser's row is marked by a filled dot and bold weight */
+.xe-row-sz { opacity: 1; transform: none; }
+.xe-rows li.yours .av-title { font-weight: 606; }
+.xe-rows li.yours .x-arrow { font-weight: 606; }
+.xe-yours-dot { display: inline-block; width: 8px; height: 8px; margin-right: 10px; border-radius: 50%; background: #0a0a0a; vertical-align: .12em; }
+.xe-rows .x-arrow span { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+/* get started: one quiet hairline strip */
+.xe-proof { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 17px 44px; align-items: center; padding: 27px 0; border-top: 1px solid rgba(0, 0, 0, .1); border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.xe-proof-l { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.xe-proof-r { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 24px; }
+.xe-proof-h { margin: 0; font-size: 17px; font-weight: 497; letter-spacing: -.01em; color: #0a0a0a; }
+.xe-proof-row { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; font-size: 13px; color: #525252; }
+.xe-proof-row li { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+.xe-proof-row li + li::before { content: '·'; margin: 0 10px; color: #a3a3a3; }
+.xe-proof-row a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: text-decoration-thickness .15s var(--xe-out); }
+@media (hover: hover) { .xe-proof-row a:hover { text-decoration-thickness: 2px; } }
+@media (max-width: 899px) {
+  .xe-proof { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 24px 0; }
+  .xe-proof-r { gap: 0 20px; }
+  .xe-proof-row { flex-direction: column; align-items: flex-start; }
+  .xe-proof-row li { min-height: 32px; }
+  .xe-proof-row li + li::before { display: none; }
+  /* the hero on a phone: the switcher first, then the window at true size, its film whole and framed, the panel under it */
+  .xe-deal { order: 0; margin: 0 0 17px; justify-content: flex-start; }
+  .xe-stack { aspect-ratio: auto; height: 640px; }
+  .xe-page img { flex: none; width: 100%; height: 160px; }
+  .xe-probe { left: 6px; top: 32px; width: calc(100% - 12px); height: 172px; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { top: calc(7% + 292px); }
+  .xe-stack.f-safari .xe-pclip { top: calc(7% + 264px); }
+}
+@media (max-width: 359px) {
+  .xe-deal { gap: 6px; }
+  .xe-deal-tabs button { padding: 0 11px; font-size: 14px; }
+  .xe-stack { height: 680px; aspect-ratio: auto; }
+  .xe-page img { height: 160px; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { top: calc(7% + 292px); }
+  .xe-stack.f-safari .xe-pclip { top: calc(7% + 264px); }
+}
+@media (prefers-reduced-motion: reduce) { .xe-text .xe-type { clip-path: none !important; } }
+
+/* ---------- round 7 (critic round 5) ---------- */
+/* the hero ring: its box comes from the picture (set in JS), the CSS only draws it */
+.xe-probe { border-radius: 16px; }
+/* the hero's 01–05 steps: each at least 44px wide */
+.xe-panel { padding-inline: 16px; }
+.xe-steps { grid-template-columns: repeat(5, minmax(44px, 1fr)); gap: 4px; }
+/* how it works: a fill that ends at the lit stop's dot (its end measured into --fx / --fy), under the running light */
+.xe-fill { position: absolute; inset: 0; background: rgba(255, 255, 255, .55); transform: translateX(calc(-100% + var(--fx, 0px))); transition: transform .4s var(--xe-in); }
+@media (max-width: 599px) { .xe-fill { transform: translateY(calc(-100% + var(--fy, 0px))); } }
+@media (prefers-reduced-motion: reduce) { .xe-run { display: none; } }
+/* pointing at a stop answers on the stop too: its dot grows and its name underlines */
+.xe-path li > button b { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 6px; text-decoration-thickness: 1px; transition: color .15s var(--xe-out), text-decoration-color .15s var(--xe-out); }
+@media (hover: hover) {
+  .xe-path li > button:hover b { text-decoration-color: currentColor; }
+  .xe-path li:has(> button:hover)::before { transform: scale(1.4); }
+}
+/* text links: a visible hover that is not opacity: the underline shows and thickens, the arrow moves 3px (150 ms) */
+.xe .x-arrow span { background: none; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: text-decoration-color .15s var(--xe-out), text-decoration-thickness .15s var(--xe-out); }
+.xe-links .x-arrow span::after { display: none; }
+.xe .x-arrow svg { transition: transform .15s var(--xe-out); }
+.xe .xe-rows .x-arrow span { text-decoration-color: currentColor; }
+@media (hover: hover) {
+  .xe .x-arrow:hover span { text-decoration: underline; text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+  .xe .x-arrow:hover svg { transform: translateX(3px); }
+}
+.xe .x-arrow:focus-visible span { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+/* the closing band carries "Get started" as one quiet caption row under its ask */
+.xe-band-meta { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 27px; padding-top: 17px; border-top: 1px solid rgba(0, 0, 0, .1); width: min(100%, 860px); font-size: 12px; color: #525252; }
+.xe-bm { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 20px; margin: 0; }
+.xe .xe-band .xe-bm, .xe .xe-band .xe-bm * { font-size: 12px; line-height: 1.4; color: #525252; }
+.xe .xe-band .xe-bm .xe-bm-h, .xe .xe-band .xe-bm a, .xe .xe-band .xe-bm a * { color: #0a0a0a; }
+.xe-bm-h { color: #0a0a0a; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.xe-bm .x-arrow { min-height: 44px; font-family: inherit; font-weight: 500; }
+.xe-bm-a { display: inline-flex; align-items: center; min-height: 44px; color: #0a0a0a; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: text-decoration-thickness .15s var(--xe-out); }
+@media (hover: hover) { .xe-bm-a:hover { text-decoration-thickness: 2px; } }
+/* the file names wrap whole on a phone: the name breaks at its hyphens and dots, the size gets its own line */
+@media (max-width: 599px) {
+  .xe-zips li { flex-wrap: wrap; align-items: flex-start; padding: 12px 0; row-gap: 2px; }
+  .xe-zips li > span.xe-zip-n { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.4; }
+  .xe-zips em { flex-basis: 100%; padding-left: 30px; }
+  .xe-bm { flex-direction: column; gap: 0; }
+}
+/* the phone hero: one flat window right under its browser switch. The windows behind fade out instead of fanning past the
+   screen's edges, and picking a browser swaps the front window flat in 300 ms (CSS outranks the fan's inline transforms) */
+@media (max-width: 899px) {
+  .xe-deal { width: 100%; margin: 0 0 10px; gap: 8px; }
+  .xe-deal-tabs { flex: 1; min-width: 0; }
+  .xe-deal-tabs button { flex: 1; justify-content: center; padding: 0 10px; }
+  .xe-stack { height: 600px; }
+  .xe-win { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; transform: none !important; opacity: 0 !important; transition: opacity .3s var(--xe-move); }
+  .xe-win.front { opacity: 1 !important; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { left: 0; right: 0; bottom: 0; top: 292px; }
+  .xe-stack.f-safari .xe-pclip { top: 264px; }
+}
+@media (max-width: 359px) {
+  .xe-stack { height: 640px; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { top: 292px; }
+  .xe-stack.f-safari .xe-pclip { top: 264px; }
+  .xe-deal-tabs button { padding: 0 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .xe-win { transition: none !important; } }

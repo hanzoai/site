@@ -1,10 +1,16 @@
 'use client';
 /* Persona: anyone weighing Hanzo's products (developers, teams, people who chat). Goal: start a first chat. CTA: "Open Chat" → /chat?skip=login. Metric: first_chat.
    Platform features. V2: 8/10 the self-playing keyboard is the hero object (display above, ten keys in three clusters); then three product rooms, each with Hanzo's own film (Enso for Chat, Zen for Dev, Iro for Design) beside its features as rows that open one at a time and step by themselves; each room opens its product; the close holds the three film cards and the one ask; greys only, colour from Hanzo's media.
-   Motion budget: signature = the self-playing keyboard; supporting = Settle (stage), rows that step and open (state), films (idle), magnetic primary.
-   No springs, no live AI call (MASTER 3.3): the footer keeps Hanzo's own chat box.
+   V2 (motion map, 7 Nov): the three product rooms now ride one sideways gallery (h-gallery) instead of stacking; Settle and the hero rise are gone; five page-local entrances (features/enter.*).
+   Signature: h-gallery. The three product rooms (Hanzo Chat, Hanzo Dev, Hanzo Design & Cloud, each with its film) sit on one
+   horizontal track; on wide screens the gallery holds the screen while vertical scroll moves the track sideways, then
+   lets go (focus inside a room scrolls to it); on phones it is a swipe rail with scroll-snap (no pin); reduced motion stacks them.
+   Entrances: pixel-resolve (hero words), grid-wave (the keyboard's keys, by distance from the pointer), tilt-3d-hover (Hanzo Chat room's film),
+   underline-sweep (Hanzo Dev room's heading and rows), spring-snap (Hanzo Design & Cloud room).
+   Motion budget: signature = the sideways gallery; supporting = the self-playing keyboard (approved demo, kept), rows that step and open (state), films (idle), magnetic primary.
+   No live AI call (MASTER 3.3): the footer keeps Hanzo's own chat box. The one spring is the spring-snap entrance.
    Colour: none in the UI (0 hues); colour arrives only through Hanzo's model films. One page pause stops the films and the rows; the display has its own.
-   Signature: Hanzo's ten features are keycaps on one keyboard, set in three clusters (Hanzo Chat, Hanzo Dev, Hanzo
+   Keyboard: Hanzo's ten features are keycaps on one keyboard, set in three clusters (Hanzo Chat, Hanzo Dev, Hanzo
    Design & Cloud). It plays itself, a key pressing every couple of seconds and its feature lighting on the display
    above; press a key, tap it, or type 1 to 0 to play it yourself.
    Beyond: find the feature for a job. Type what you need (a PDF, a refactor, your voice) and the keys whose own
@@ -16,13 +22,14 @@ import { EASE, Magnetic } from '../ui';
 import { A } from '../kit';
 import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
 import LineMask from '../v2/x-gauss/LineMask';
-import Settle from '../v2/Settle';
 import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
 import usePhoneAsk from './usePhoneAsk';
+import useFeaturesEnter from './features/enter';
 import './Features.css';
+import './features/enter.css';
 
 const GROUPS = [
   ['Hanzo Chat', 'Default', [
@@ -49,6 +56,7 @@ const pad = (n) => String(n).padStart(2, '0');
 /* Hanzo's own model films: Enso routes Hanzo Chat, Zen codes in Hanzo Dev, Iro draws on the Design canvas. */
 const FILMS = ['enso', 'zen', 'iro'];
 const TO = ['/chat', '/dev', '/design'];
+const ENTER = ['tilt', 'sweep', 'snap']; // each room's entrance (features/enter.css)
 
 function Instrument() {
   const [at, setAt] = useState(0);
@@ -81,7 +89,7 @@ function Instrument() {
   }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
   const k = KEYS[at];
   return (
-    <div className="xft-inst" ref={box}>
+    <div className="xft-inst" ref={box} data-enter="wave">
       <div className="xft-screen" aria-live={mine ? 'polite' : 'off'}>
         <div className="xft-screen-top">
           <span className="x-mono">{k.g}{k.tag ? ` · ${k.tag}` : ''}</span>
@@ -129,20 +137,22 @@ function Hero() {
   return (
     <section className="xft-hero" aria-labelledby="xft-h1" data-morph-target>
       <div className="w2-wrap">
-        <div className="xft-top">
+        {/* pixel-resolve: an SVG mosaic whose block size enter.js steps down to sharp */}
+        <svg className="xft-px-defs" aria-hidden="true" focusable="false"><filter id="xft-px" x="0" y="0" width="1" height="1"><feFlood x="9" y="9" width="1" height="1" /><feComposite width="18" height="18" /><feTile result="a" /><feComposite in="SourceGraphic" in2="a" operator="in" /><feMorphology operator="dilate" radius="9" /></filter></svg>
+        <div className="xft-top" data-enter="pixel">
           <div>
             <LineMask as="h1" id="xft-h1" now className="w2-display xft-h1" lines={['Everything you need to', 'chat, build and ship.']} />
             <p className="xft-kick x-mono">Platform Features</p>
           </div>
-          <motion.div className="xft-top-r" initial={{ y: 14 }} animate={{ y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
+          <div className="xft-top-r">
             <p className="w2-lede xft-lede">Explore Hanzo Chat, Dev, and Studio — intelligent model routing, repo-scale coding agents, and unified cloud APIs.</p>
             <div className="xft-acts">
               <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta" data-thumb="Open Chat" data-cta="features.hero">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
               <A to="/dev" className="xft-tlink">Launch Dev</A>
             </div>
-          </motion.div>
+          </div>
         </div>
-        <Settle from={1.02} lift={10}><Instrument /></Settle>
+        <Instrument />
       </div>
     </section>
   );
@@ -165,21 +175,24 @@ function Product({ gi }) {
   }, [row, seen, calm, mine, paused, fs.length]);
   const pick = (i) => { setMine(true); setRow(i); };
   return (
-    <section ref={ref} className={'xft-prod p' + gi} aria-labelledby={'xft-p' + gi} style={{ '--r': row }} {...(gi === 1 ? { 'data-room': 'dark' } : {})}>
+    <section ref={ref} className={'xft-prod p' + gi} aria-labelledby={'xft-p' + gi} style={{ '--r': row }} data-enter={ENTER[gi]} {...(gi === 1 ? { 'data-room': 'dark' } : {})}>
       <div className="w2-wrap xft-prod-in">
         <div className="xft-prod-w">
           <h2 id={'xft-p' + gi} className="w2-headline xft-prod-h"><A to={TO[gi]}>{g}</A></h2>
           {tag && <p className="xft-prod-tag x-mono">{tag}</p>}
           <ol className="xft-rows">
-            {fs.map(([t, d], i) => (
-              <li key={t} className={row === i ? 'on' : ''}>
-                <button type="button" aria-expanded={row === i} onClick={() => pick(i)} onFocus={() => pick(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') pick(i); }}>
+            {fs.map(([t], i) => (
+              <li key={t} className={row === i ? 'on' : ''} style={{ '--i': i }}>
+                <button type="button" aria-pressed={row === i} aria-controls={'xft-d' + gi} onClick={() => pick(i)} onFocus={() => pick(i)}>
                   <span className="x-mono">{pad(i + 1)}</span><b>{t}</b>
                 </button>
-                <div className="xft-row-d"><p>{d}</p></div>
               </li>
             ))}
           </ol>
+          {/* one panel holds every description in the same cell, so it is as tall as the longest and never moves the page */}
+          <div className="xft-desc" id={'xft-d' + gi} aria-live="polite">
+            {fs.map(([t, d], i) => <p key={t} className={row === i ? 'on' : ''} aria-hidden={row !== i}>{d}</p>)}
+          </div>
         </div>
         <div className="xft-film-w">
           <A to={TO[gi]} className="xft-film" tabIndex={-1} aria-hidden="true">
@@ -209,14 +222,29 @@ function Band() {
   );
 }
 
+/* The sideways gallery (h-gallery): the three rooms on one track. Wide screens: the section is tall and its stage
+   sticks while vertical scroll moves the track (enter.js writes --gx); phones: a swipe rail with scroll-snap. */
+function Gallery() {
+  return (
+    <div className="xft-gal">
+      <div className="xft-gal-stage">
+        <div className="xft-gal-track">{GROUPS.map((x, gi) => <Product key={gi} gi={gi} />)}</div>
+        <span className="xft-gal-bar" aria-hidden="true"><i /></span>
+      </div>
+    </div>
+  );
+}
+
 export default function Features() {
   usePhoneAsk();
+  const root = useRef(null);
+  useFeaturesEnter(root);
   return (
-    <main id="main" className="xft w2 gx">
+    <main id="main" className="xft w2 gx" ref={root}>
       <NoJs />
       <noscript><style>{'.xft-feat:not(:first-child){display:none!important}'}</style></noscript>
       <Hero />
-      {GROUPS.map((x, gi) => <Product key={gi} gi={gi} />)}
+      <Gallery />
       <Band />
     </main>
   );

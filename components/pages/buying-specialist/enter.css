@@ -1,0 +1,45 @@
+/* /buying-specialist entrances (see enter.js). Start states only under html.js and no-preference, so server HTML,
+   JS off and reduced motion show the final state. Each plays once when enter.js adds .in. */
+@media (prefers-reduced-motion: no-preference) {
+  /* 2 rack-focus: each promise pulls into focus from a blur, the second a beat after the first */
+  html.js [data-enter=rack-focus] .xbs-item { filter: blur(18px); opacity: 0; transform: scale(1.06); transition: filter .7s cubic-bezier(.2, .7, .2, 1), opacity .45s ease-out, transform .7s cubic-bezier(.2, .7, .2, 1); }
+  html.js [data-enter=rack-focus] .xbs-item + .xbs-item { transition-delay: .14s; }
+  html.js [data-enter=rack-focus].in .xbs-item { filter: none; opacity: 1; transform: none; }
+
+  /* 3 swing-door: double doors, the left hinged on its left edge, the right on its right edge */
+  html.js [data-enter=swing-door] { perspective: 1400px; }
+  html.js [data-enter=swing-door] .xbs-item { opacity: 0; transform: rotateY(-78deg); transform-origin: 0 50%; transition: transform .7s cubic-bezier(.2, .9, .3, 1.08), opacity .3s ease-out; }
+  html.js [data-enter=swing-door] .xbs-item + .xbs-item { transform: rotateY(78deg); transform-origin: 100% 50%; transition-delay: .1s; }
+  html.js [data-enter=swing-door].in .xbs-item { opacity: 1; transform: none; }
+
+  /* 4 tile-flip: a 6x4 grid of dark tiles flips over to form each card, then the card's picture shows; the words flip
+     down from their top edge */
+  html.js [data-enter=tile-flip] .xbs-tiles { display: grid; }
+  html.js [data-enter=tile-flip] .xbs-pcard { transition: background-color 0s .62s; }
+  html.js [data-enter=tile-flip]:not(.in) .xbs-pcard { background-color: transparent; }
+  html.js [data-enter=tile-flip] .xbs-tiles i { transform: rotateX(90deg); transition: transform .4s cubic-bezier(.2, .8, .2, 1) calc(var(--t) * 10ms); }
+  html.js [data-enter=tile-flip].in .xbs-tiles i { transform: none; }
+  html.js [data-enter=tile-flip] .xbs-pcard > .xbs-scene { opacity: 0; transition: opacity .3s ease-out .5s; }
+  html.js [data-enter=tile-flip].in .xbs-pcard > .xbs-scene { opacity: 1; }
+  html.js [data-enter=tile-flip] .xbs-item > :is(strong, span) { display: block; transform: perspective(600px) rotateX(-90deg); transform-origin: 50% 0; opacity: 0; transition: transform .5s cubic-bezier(.2, .8, .2, 1), opacity .3s; }
+  html.js [data-enter=tile-flip] .xbs-item > span { transition-delay: .08s; }
+  html.js [data-enter=tile-flip] .xbs-item + .xbs-item > :is(strong, span) { transition-delay: .16s; }
+  html.js [data-enter=tile-flip].in .xbs-item > :is(strong, span) { transform: none; opacity: 1; }
+
+  /* 5 split-merge: the band's headline comes in as two halves from left and right and merges into one line */
+  html.js [data-enter=split-merge] .xbs-band-h > span { transition: transform .7s cubic-bezier(.2, .8, .2, 1), opacity .4s ease-out; }
+  html.js [data-enter=split-merge]:not(.in) .xbs-band-h > .a { transform: translateX(-28vw); opacity: 0; }
+  html.js [data-enter=split-merge]:not(.in) .xbs-band-h > .b { transform: translateX(28vw); opacity: 0; }
+  html.js [data-enter=split-merge] .xbs-band-rest { transition: opacity .4s ease-out .55s, transform .4s ease-out .55s; }
+  html.js [data-enter=split-merge]:not(.in) .xbs-band-rest { opacity: 0; transform: translateY(10px); }
+
+  /* the scenes' own arrival loops wait until their section is in */
+  html.js [data-enter]:not(.in) .xbs-pcard * { animation-play-state: paused; }
+}
+.xbs-tiles { display: none; position: absolute; inset: 0; z-index: 0; grid-template: repeat(4, 1fr) / repeat(6, 1fr); pointer-events: none; }
+.xbs-tiles i { background: #0a0a0a; backface-visibility: hidden; }
+/* the split headline: half a is the left half of the line, half b (a copy, hidden from readers) the right half */
+.xbs-band-h { position: relative; display: grid; }
+.xbs-band-h > span { grid-area: 1 / 1; }
+.xbs-band-h > .a { clip-path: inset(-20% 50% -20% -20%); }
+.xbs-band-h > .b { clip-path: inset(-20% -20% -20% 50%); }

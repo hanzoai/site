@@ -45,8 +45,7 @@
 @keyframes cli-rise { from { transform: translate3d(0, 105%, 0); } }
 /* page-local line mask for the h2s (cli/Cut.jsx); the server HTML is the final frame */
 .cli-cut-m { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
-.cli-cut-l { display: block; transition: transform .7s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms); }
-.js .cli-cut:not(.in) .cli-cut-l { transform: translate3d(0, 108%, 0); }
+.cli-cut-l { display: block; } /* the h2s sit still: the five section entrances carry the arrival (docs/MOTION-MAP.md), not a line mask on every heading */
 /* the one white solid on the black room (not the room's grey fill) */
 .cli .cli-hero .x-btn.solid { background: #fff; border-color: #fff; color: #0a0a0a; }
 @media (hover: hover) { .cli .cli-hero .x-btn.solid:hover { background: #e5e5e5; border-color: #e5e5e5; } }
@@ -81,14 +80,40 @@
 .cli-status p::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #f5f5f5; }
 
 /* paste and ship: the prompt is the big line (8), the label beside it (4) */
-.cli-paste { padding: clamp(96px, 10vw, 160px) 0 0; }
+.cli-paste { padding: clamp(72px, 8vw, 116px) 0; margin-bottom: clamp(44px, 5vw, 72px); }
 .cli-paste .av-grid { align-items: end; }
 .cli-prompt { grid-column: 1 / span 8; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 24px; align-items: end; padding-top: 28px; border-top: 1px solid var(--ink); }
 .cli-prompt code { font: 500 21px/1.45 var(--mono); letter-spacing: -.02em; color: var(--ink); overflow-wrap: anywhere; }
 .cli-prompt .x-copy { height: 44px; padding: 0 18px; font-size: 14px; }
 .cli-prompt-k { grid-column: 1 / -1; font-size: 13px; color: var(--faint); }
+@media (min-width: 900px) { .cli-prompt-caret { display: none; } } /* phone only: there it is the one mover between the hero and the tree; on desktop the tree's caret is already in view */
 .cli-paste-r { grid-column: 10 / -1; display: flex; flex-direction: column; gap: 10px; }
 .cli-paste-r .av-body { font-size: 17px; }
+
+/* the signature: a before / after slider. Left of the divider, the commands as a pile of flags; right of it, the same commands as the tree.
+   The after layer is clipped from the divider (clip-path), the divider moves by transform: nothing reflows while it is dragged. */
+.cli-cmp { --x: 50%; position: relative; height: clamp(360px, 30vw, 440px); margin-top: clamp(44px, 5vw, 72px); border-radius: var(--r-hero); overflow: hidden; background: var(--card); user-select: none; -webkit-user-select: none; touch-action: pan-y; cursor: ew-resize; }
+.cli-cmp-a, .cli-cmp-b { position: absolute; inset: 0; padding: clamp(24px, 3vw, 44px); }
+.cli-cmp-b { background: #fff; box-shadow: inset 0 0 0 1px var(--line); clip-path: inset(0 0 0 var(--x)); border-radius: inherit; }
+.cli-cmp-k { position: absolute; top: 18px; font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.cli-cmp-a .cli-cmp-k { left: 22px; }
+.cli-cmp-b .cli-cmp-k { right: 22px; color: var(--ink); }
+.cli-cmp-pile { margin: 28px 0 0; width: min(100%, 1000px); display: flex; flex-wrap: wrap; align-content: flex-start; gap: 2px 14px; font-size: clamp(15px, 1.45vw, 21px); line-height: 1.6; letter-spacing: -.02em; color: #737373; }
+.cli-cmp-pile span { display: inline-block; transform: translate3d(0, calc(var(--r) * 2px), 0) rotate(calc(var(--r) * 1.1deg)); white-space: nowrap; }
+.cli-cmp-pile span:nth-child(3n) { color: #525252; }
+.cli-cmp-pile span:nth-child(4n + 1) { color: #404040; }
+.cli-cmp-tree { list-style: none; margin: 28px 0 0 auto; padding: 0; width: max-content; max-width: 100%; font-size: clamp(13px, 1.05vw, 15px); line-height: 1.75; color: var(--ink); }
+.cli-cmp-tree li { display: flex; gap: 0; white-space: pre; }
+.cli-cmp-tree li.root { font-weight: 600; }
+.cli-cmp-tree .g { color: #a3a3a3; }
+.cli-cmp-tree b { font-weight: 600; min-width: 8ch; }
+.cli-cmp-tree .l { color: var(--soft); overflow: hidden; text-overflow: ellipsis; }
+.cli-cmp-bar { position: absolute; inset: 0; pointer-events: none; transform: translate3d(calc(var(--x) - 50%), 0, 0); }
+.cli-cmp-bar::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); }
+.cli-cmp-h { position: absolute; left: 50%; top: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: #fff; pointer-events: auto; cursor: ew-resize; touch-action: none; transition: transform var(--dur-press) var(--ease-out-expo); }
+.cli-cmp.held .cli-cmp-h { transform: scale(.94); }
+.cli-cmp-h:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 2px #fff; }
+@media (hover: hover) { .cli-cmp:hover .cli-cmp-h { transform: scale(1.06); } .cli-cmp.held .cli-cmp-h { transform: scale(.94); } }
 
 /* the resource tree */
 .cli-what-top { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 28px; align-items: end; }
@@ -188,7 +213,7 @@
 /* get started: the builder (5) and the script (7) */
 .cli-start { padding-top: 0; }
 .cli-start .av-grid { align-items: start; }
-.cli-start-l { grid-column: 1 / span 5; position: sticky; top: 96px; display: flex; flex-direction: column; gap: 18px; }
+.cli-start-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 18px; }
 .cli-start-links { display: flex; flex-wrap: wrap; gap: 0 28px; }
 .cli-add { display: flex; flex-direction: column; margin-top: 28px; }
 .cli-add-k { margin: 0 0 12px; font-size: 15px; font-weight: 500; color: var(--soft); }
@@ -215,10 +240,8 @@
 .cli-c { color: var(--faint); }
 .cli-ln { color: var(--ink); }
 .cli .cli-blk-cp { height: 44px; padding: 0 12px; font-size: 13px; }
-/* the script's arrival: its blocks wipe in one after another while the line count rolls up from 0 */
+/* the script's line count rolls up from 0 as it arrives (inside the curtain-rise), then from old to new on every add */
 .cli-roll { display: inline-block; min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
-.js .cli-script:not(.in) .cli-blk { clip-path: inset(0 100% 0 0); }
-.js .cli-script.in .cli-blk { transition: clip-path .5s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 90ms); }
 
 /* the repository */
 .cli-get-sec { padding-top: 0; padding-bottom: 0; }
@@ -310,7 +333,15 @@
   .cli-status p { align-items: flex-start; }
   .cli-status p::before { margin-top: 7px; }
 
-  .cli-paste { padding-top: 88px; }
+  .cli-paste { padding: 56px 0; }
+  .cli-cmp { height: 380px; margin-top: 36px; border-radius: 24px; }
+  .cli-cmp-a, .cli-cmp-b { padding: 22px 16px; }
+  .cli-cmp-k { top: 14px; }
+  .cli-cmp-a .cli-cmp-k { left: 16px; } .cli-cmp-b .cli-cmp-k { right: 16px; }
+  .cli-cmp-pile { font-size: 13px; gap: 4px 8px; }
+  .cli-cmp-tree { font-size: 14px; line-height: 1.8; }
+  .cli-cmp-tree .l { display: none; }
+  .cli-cmp-tree b { min-width: 0; }
   .cli-paste .av-grid { row-gap: 24px; }
   .cli-paste-r { order: -1; }
   .cli-prompt { grid-template-columns: minmax(0, 1fr); }

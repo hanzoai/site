@@ -3,28 +3,38 @@
 // Goal: see a secret sealed on the client, rotated deliberately and every read recorded.
 // CTA: Open KMS (kms.hero, kms.mid, kms.close).
 // Metric: cta_click kms.hero
-// Signature: a secret, sealed and rotated: the vault seals, rotates, refuses a stale writer and records the read.
-// Beyond: Seal one yourself: real AES-256-GCM under an HKDF-SHA256 key in the browser.
+// Signature: spotlight
+// Beyond: Sealed on your machine: type into DATABASE_PASSWORD and real AES-256-GCM under an HKDF-SHA256 key seals it in the browser.
 /* KMS (v2, archetype A Launch).
-   V2: 8/10 Round 2: the vault holds one height through its loop (fixed version stack and log, rows slide by transform,
-   no layout re-flow) and tilts 2.5 degrees to a fine pointer; "What it holds" pins a rule panel that redraws per rule
-   (seal chain, kms run, refused write, the agent's read, the clients, will not boot) with a masked 01 / 06 caption,
-   rows hover-fill and take the panel, 44svh each; captions moved under their headings; the dark room opens from a
-   rounded card, its one big figure is "Every read recorded" and the rest count in small; GitHub is a text link.
-   Signature: a secret, sealed and rotated. DATABASE_PASSWORD goes through Hanzo's chain (Argon2id, HKDF-SHA256,
+   V2: 8/10 Motion map: spotlight — the pinned "What it holds" rule panel is gone; its six rules are six sealed secrets in
+   a dark vault right under the hero: a light (the cursor, a tap on touch, Tab on a keyboard; left alone it glides cell
+   to cell, pausable) unseals what is under it - the rule's title and its picture - and the readout beside it gives
+   that rule in full. Sections enter five ways (kms/entrances.jsx): the hero vault's pieces gather like magnets, the
+   vault opens through blinds, the seal box swings in on a pendulum, the dark room's tiles lift in a wave from the
+   cursor, the tail arrives stretched by the scroll and relaxes. The h1 line cut-in, the vault's scroll settle, the
+   dark room's scroll-opened card and its figure rise are removed (one entrance per section, nothing repeated).
+   Earlier, Round 3: the tail is one KMS screen instead of three quiet white sections: on a quiet room the example
+   console sits over the vault's own secret (DATABASE_PASSWORD v4 and its fingerprint) and the secret follows the
+   console - hover, click or Enter on a project, or left alone it steps through the projects by pressing the console's
+   own rows, with a hairline timing each step and a pause; the agent prompt sits beside it (wrapping, not clipped) and
+   the related links are one hairline row under both; then one quiet Get KMS. The Beyond block uses only Hanzo's words
+   (Sealed on your machine, the organization key line, DATABASE_PASSWORD as the field label; no IV, no prose of ours).
+   Also: one 1152px container for every section; the pinned chapter h2 at 26px over 21px rule h3s; the phone pause
+   clear of the production tag and the refused chip inside its box; 44px phone targets on the console and the close;
+   a fade on the phone terminal's right edge; Documentation fills on hover and presses to .98.
+   Round 2 (kept): the vault holds one height through its loop and tilts to a fine pointer.
+   Hero object (kept): a secret, sealed and rotated. DATABASE_PASSWORD goes through Hanzo's chain (Argon2id, HKDF-SHA256,
    AES-256-GCM) and comes out as ciphertext; then it is rotated - each write names the version it replaces, so a second
    writer holding the old version is refused - and the read lands in the append-only record under the agent's name.
-   Supporting: kinetic title lines; the vault settles on scroll (Stage); the six rules scroll past one pinned panel that
-   redraws for the rule you are reading; the dark room opens from a card as it is reached.
-   Beyond: "Seal one yourself" - type a value and your browser seals it with AES-256-GCM under a key derived with
+   Beyond: "Sealed on your machine" - type a value and your browser seals it with AES-256-GCM under a key derived with
    HKDF-SHA256 (WebCrypto), so you watch the ciphertext and the key never leaves the page; Argon2id, the passphrase step,
-   is named but not run here, and that is said.
+   is shown struck through because it is not run here.
    Greys only, from Hanzo's deck. Every word and link is Hanzo's. */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, CodeBlock } from '../../kit';
 import { Console, useLive } from './Frame';
-import { Lines, Lift } from '../../v2/LiftStage';
+import { useArrive, gather, Blinds, Pendulum, GridWave, Stretch } from './kms/entrances';
 import GetIt from '../../v2/GetIt';
 import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
@@ -92,7 +102,7 @@ function Vault() {
     <div className="lp-host km-tilt" onPointerMove={lean} onPointerLeave={rest}>
     <LivePause paused={paused} onToggle={togglePause} className="km-pause" />
     <div className="km-vault" ref={ref} aria-hidden="true">
-      <div className="km-secret">
+      <div className="km-secret km-mg" style={gather(2, 0.25)}>
         <p className="km-host">kms.hanzo.ai</p>
         <p className="km-path">DATABASE_PASSWORD <span>production</span></p>
         <p className={'km-val' + (sealed ? ' sealed' : '')}>{sealed ? noise(32, v) : '••••••••••••••••'}</p>
@@ -102,7 +112,7 @@ function Vault() {
         <p className="km-client">the organization key stays on the client</p>
       </div>
       <div className="km-side">
-        <div className="km-vers">
+        <div className="km-vers km-mg" style={gather(3, 0.25)}>
           <Versions v={v} top={ver + 1} />
           <AnimatePresence>
             {t === 5 && (
@@ -112,7 +122,7 @@ function Vault() {
             )}
           </AnimatePresence>
         </div>
-        <ul className="km-log">
+        <ul className="km-log km-mg" style={gather(4, 0.25)}>
           {t >= 6 && <li key={'r' + ver} className="in"><i className="a" />read · agent checkout-web</li>}
           {t >= 4 && <li key={'w' + ver} className="in"><i />rotate · v{v}</li>}
           <li><i />read · payments-api</li>
@@ -126,8 +136,8 @@ function Vault() {
 /* Beyond: seal one yourself (WebCrypto: HKDF-SHA256 then AES-256-GCM; the key is random and never leaves). */
 const b64 = (u8) => btoa(String.fromCharCode(...u8));
 function Seal() {
-  const [val, setVal] = useState('correct horse battery staple');
-  const [out, setOut] = useState({ ct: '', iv: '' });
+  const [val, setVal] = useState('');
+  const [out, setOut] = useState({ ct: '' });
   const [err, setErr] = useState('');
   const master = useRef(null);
   useEffect(() => {
@@ -139,8 +149,8 @@ function Seal() {
         const key = await S.deriveKey({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(16), info: new TextEncoder().encode('organization') }, master.current, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
         const iv = crypto.getRandomValues(new Uint8Array(12));
         const ct = new Uint8Array(await S.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(val)));
-        if (on) setOut({ ct: b64(ct), iv: b64(iv) });
-      } catch { if (on) setErr('This browser cannot seal here.'); }
+        if (on) setOut({ ct: b64(ct) });
+      } catch { if (on) setErr('—'); } // no WebCrypto: an em dash, not a sentence of our own
     })();
     return () => { on = false; };
   }, [val]);
@@ -148,20 +158,17 @@ function Seal() {
     <section className="v2-sec km-seal">
       <div className="v2-wrap v2-grid">
         <div className="km-seal-l">
-          <h2 className="v2-headline">Seal one yourself</h2>
-          <p className="v2-kick acc km-cap">Sealed before it leaves you</p>
-          <p className="v2-body">Your browser seals what you type with AES-256-GCM, under a key derived with HKDF-SHA256 that never leaves this page. Nothing is sent. KMS starts one step earlier, with Argon2id turning a passphrase into the key; browsers do not offer Argon2id, so here the key is random.</p>
+          <h2 className="v2-headline">Sealed on your machine</h2>
+          <p className="v2-body km-seal-d">The organization key stays on the client.</p>
         </div>
-        <div className="km-seal-box v2-obj">
-          <label className="km-seal-k" htmlFor="km-in">value</label>
-          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} spellCheck={false} autoComplete="off" suppressHydrationWarning />
+        <Pendulum className="km-seal-box v2-obj">
+          <label className="km-seal-k" htmlFor="km-in">DATABASE_PASSWORD</label>
+          <input id="km-in" value={val} onChange={(e) => setVal(e.target.value)} maxLength={200} placeholder="••••••••" spellCheck={false} autoComplete="off" suppressHydrationWarning />
           <div className="km-seal-chain" aria-hidden="true">
             <span className="off">Argon2id</span><i /><span>HKDF-SHA256</span><i /><span>AES-256-GCM</span>
           </div>
-          <p className="km-seal-k">ciphertext</p>
           <p className="km-ct" aria-live="polite">{err || out.ct}</p>
-          <p className="km-seal-k">iv <span>{out.iv}</span></p>
-        </div>
+        </Pendulum>
       </div>
     </section>
   );
@@ -176,12 +183,12 @@ const RULES = [
   ['Fail closed, or do not start', 'Every call carries a Hanzo IAM token verified against a cached JWKS; HMAC and alg none are refused outright. The organization comes from the verified token, never from a field the caller sets. Outside development the daemon will not boot without an issuer, an audience and a JWKS URL — there is no accidental open mode. A secret can be marked so that any agent read waits for a person to approve it, or is refused.'],
 ];
 
-/* One rule as a picture, built from the vault's own parts and the rule's own words. Lines arrive one by one. */
+/* One rule as a picture, built from the vault's own parts and the rule's own words (spans: it sits inside a button). */
 function Scene({ i }) {
-  const L = (k, cls, body) => <p key={k} className={'km-sc-l ' + (cls || '')} style={{ '--d': k }}>{body}</p>;
+  const L = (k, cls, body) => <span key={k} className={'km-sc-l ' + (cls || '')}>{body}</span>;
   const pages = [
     [
-      <div key="c" className="km-sc-chain">{CHAIN.map((c, k) => <span key={c} style={{ '--d': k }}><i />{c}</span>)}</div>,
+      <span key="c" className="km-sc-chain">{CHAIN.map((c) => <span key={c}><i />{c}</span>)}</span>,
       L(3, 'q', 'the organization key stays on the client'),
     ],
     [
@@ -200,7 +207,7 @@ function Scene({ i }) {
       L(2, 'log on', <><i className="a" />read · agent checkout-web</>),
     ],
     [
-      <div key="k" className="km-sc-chips">{['CLI', 'Go', 'Node', 'Python', 'ZAP'].map((c, k) => <span key={c} style={{ '--d': k }}>{c}</span>)}</div>,
+      <span key="k" className="km-sc-chips">{['CLI', 'Go', 'Node', 'Python', 'ZAP'].map((c) => <span key={c}>{c}</span>)}</span>,
       L(5, 'q', 'kms.hanzo.ai'),
     ],
     [
@@ -210,65 +217,143 @@ function Scene({ i }) {
       L(3, 'stop', <>daemon · <b>will not boot</b></>),
     ],
   ];
-  return <div className={'km-sc km-sc-' + i}>{pages[i]}</div>;
+  return <span className={'km-sc km-sc-' + i}>{pages[i]}</span>;
 }
 
-/* The caption under the panel: the rule number cuts in through a mask, never two digits over each other. */
-function Roll({ to }) {
-  const t = String(to).padStart(2, '0');
-  return (
-    <span className="km-roll">
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={t} initial={{ y: '105%' }} animate={{ y: '0%' }} exit={{ y: '-105%' }} transition={{ duration: 0.4, ease: EASE }}>{t}</motion.span>
-      </AnimatePresence>
-    </span>
-  );
-}
-
-function Rule({ i, t, d, on, onAt }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.35 }); // phones: the rule's picture draws when it is reached
-  useEffect(() => {
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && onAt(i), { rootMargin: '-45% 0px -45% 0px' });
-    io.observe(ref.current);
-    return () => io.disconnect();
-  }, [i, onAt]);
-  return (
-    <li ref={ref} className={'km-rule' + (on ? ' on' : '') + (seen ? ' seen' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && onAt(i)}>
-      <span className="km-rule-n">{String(i + 1).padStart(2, '0')}</span>
-      <h3 className="v2-headline">{t}</h3>
-      <p className="v2-body">{d}</p>
-      <div className="km-rule-pic" aria-hidden="true"><Scene i={i} /></div>
-    </li>
-  );
-}
-
+/* The signature: a dark vault of six sealed secrets, one per rule. A light (the cursor; a tap on touch; Tab on a
+   keyboard; left alone it glides cell to cell, pausable) unseals whatever is under it: the cell's ciphertext gives way
+   to the rule's title and its picture, and the readout beside the vault gives that rule in full. The light is two
+   radial masks per cell (seal out, contents in) placed by CSS variables, so nothing reflows while it moves. */
 function Holds() {
+  const [sec, arrived] = useArrive(0.12);
+  const box = useRef(null);
+  const cells = useRef([]);
+  const geo = useRef([]);
+  const calm = useReducedMotion();
+  const seen = useInView(box, { amount: 0.2 });
+  const [paused, togglePause] = usePause();
   const [at, setAt] = useState(0);
-  const [lap, setLap] = useState(0); // the panel redraws its rule each time the hairline finishes crossing
-  const onAt = useCallback((i) => setAt(i), []);
+  const s = useRef({ x: 0, y: 0, tx: 0, ty: 0, at: 0, goal: 0, hand: false, next: 0, init: false });
+
+  const paint = useCallback((x, y) => {
+    const b = box.current;
+    if (!b) return;
+    b.style.setProperty('--lx', x.toFixed(1) + 'px');
+    b.style.setProperty('--ly', y.toFixed(1) + 'px');
+    let hit = -1, best = Infinity;
+    geo.current.forEach((c, i) => {
+      if (x >= c.x && x <= c.x + c.w && y >= c.y && y <= c.y + c.h) { hit = i; best = -1; return; }
+      if (best < 0) return;
+      const d = (x - c.x - c.w / 2) ** 2 + (y - c.y - c.h / 2) ** 2;
+      if (d < best) { best = d; hit = i; }
+    });
+    if (hit >= 0 && hit !== s.current.at) { s.current.at = hit; setAt(hit); }
+  }, []);
+  const centre = (i) => { const c = geo.current[i]; return c ? [c.x + c.w / 2, c.y + c.h / 2] : [0, 0]; };
+
+  // measure the cells (their offsets place each cell's masks), and keep the light on its cell through a resize
+  useEffect(() => {
+    const b = box.current;
+    if (!b) return;
+    const measure = () => {
+      geo.current = cells.current.map((c) => {
+        c.style.setProperty('--cx', c.offsetLeft + 'px');
+        c.style.setProperty('--cy', c.offsetTop + 'px');
+        return { x: c.offsetLeft, y: c.offsetTop, w: c.offsetWidth, h: c.offsetHeight };
+      });
+      const st = s.current;
+      if (!st.init || !st.hand) {
+        const [x, y] = centre(st.init ? st.goal : 0);
+        st.tx = x; st.ty = y;
+        if (!st.init || calm) { st.x = x; st.y = y; }
+        st.init = true;
+      }
+      paint(st.x, st.y);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(b);
+    return () => ro.disconnect();
+  }, [paint, calm]);
+
+  // the light glides toward its target; left alone it visits the cells in turn and breathes a little on each
+  useEffect(() => {
+    if (calm || !seen) return;
+    const st = s.current;
+    let raf = 0, last = performance.now();
+    if (!st.next) st.next = last + 2600;
+    const loop = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (!st.hand && !paused) {
+        if (now > st.next) { st.next = now + 3600; st.goal = (st.goal + 1) % RULES.length; }
+        const [cx, cy] = centre(st.goal);
+        st.tx = cx + Math.sin(now / 1300) * 14;
+        st.ty = cy + Math.cos(now / 1700) * 10;
+      }
+      const k = 1 - Math.exp(-dt * (st.hand ? 10 : 3.2));
+      const nx = st.x + (st.tx - st.x) * k, ny = st.y + (st.ty - st.y) * k;
+      if (Math.abs(nx - st.x) + Math.abs(ny - st.y) > 0.05) { st.x = nx; st.y = ny; paint(nx, ny); }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [calm, seen, paused, paint]);
+
+  // the hand takes the light for good: a mouse leads it, a tap or click places it, focus brings it to that cell
+  const hand = (x, y) => {
+    const st = s.current;
+    st.hand = true; st.tx = x; st.ty = y;
+    if (calm) { st.x = x; st.y = y; paint(x, y); }
+  };
+  const point = (e) => { const r = box.current.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+
   return (
-    <section className="v2-sec km-holds">
-      <div className="v2-wrap v2-grid">
-        <div className="km-holds-l">
-          <div className="km-pin">
-            <h2 className="v2-title km-holds-h">What it holds and how it holds it</h2>
-            <p className="v2-body km-holds-lede">A secret is a value under a path, a name and an environment, inside one organization. That is the whole model.</p>
-            <div className="km-panel" aria-hidden="true">
-              <p className="km-panel-h">DATABASE_PASSWORD <span>production</span></p>
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.div key={at} className="km-panel-b" initial={{ clipPath: 'inset(0% 0% 100% 0%)' }} animate={{ clipPath: 'inset(0% 0% 0% 0%)' }} exit={{ clipPath: 'inset(100% 0% 0% 0%)' }} transition={{ duration: 0.4, ease: EASE }}>
-                  <Scene key={lap} i={at} />
-                </motion.div>
-              </AnimatePresence>
-              <i key={'run' + at} className="km-panel-run" onAnimationIteration={() => setLap((n) => n + 1)} />
-            </div>
-            <p className="km-num" aria-hidden="true"><Roll to={at + 1} /><span className="km-num-of">/ 06</span></p>
+    <section ref={sec} className="km-holds v2-dark" data-room="dark">
+      <Blinds on={arrived} />
+      <div className="v2-wrap km-holds-g">
+        <div className="km-holds-head">
+          <h2 className="v2-headline km-holds-h">What it holds and how it holds it</h2>
+          <p className="v2-body km-holds-lede">A secret is a value under a path, a name and an environment, inside one organization. That is the whole model.</p>
+        </div>
+        <div className="km-vaultroom">
+          <LivePause paused={paused} onToggle={togglePause} dark inline className="km-field-pause" />
+          <div
+            ref={box}
+            className="km-field"
+            onPointerMove={(e) => e.pointerType !== 'touch' && hand(...point(e))}
+            onClick={(e) => e.detail > 0 && hand(...point(e))}
+          >
+            {RULES.map(([t], i) => (
+              <button
+                key={t}
+                type="button"
+                ref={(el) => { cells.current[i] = el; }}
+                className={'km-cell' + (at === i ? ' lit' : '')}
+                aria-label={t}
+                aria-describedby={'km-rd' + i}
+                aria-pressed={at === i}
+                onFocus={(e) => { if (e.currentTarget.matches(':focus-visible')) hand(...centre(i)); }}
+              >
+                <span className="km-cell-n">{String(i + 1).padStart(2, '0')}</span>
+                <span className="km-cell-seal" aria-hidden="true">{[0, 1, 2, 3].map((k) => <span key={k}>{noise(22, i * 4 + k + 7)}</span>)}</span>
+                <span className="km-cell-open" aria-hidden="true">
+                  <span className="km-cell-t">{t}</span>
+                  <Scene i={i} />
+                </span>
+              </button>
+            ))}
           </div>
         </div>
-        <ol className="km-rules">
-          {RULES.map(([t, d], i) => <Rule key={t} i={i} t={t} d={d} on={at === i} onAt={onAt} />)}
-        </ol>
+        <div className="km-read">
+          {RULES.map(([t, d], i) => (
+            <div key={t} id={'km-rd' + i} className={'km-read-i' + (at === i ? ' on' : '')}>
+              <p className="km-read-n"><b>{String(i + 1).padStart(2, '0')}</b> / 06</p>
+              <h3 className="v2-title">{t}</h3>
+              <p className="v2-body">{d}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -287,21 +372,14 @@ kms rotate DATABASE_PASSWORD
 # Find the ones that already escaped, here and in git history
 kms scan`;
 
-/* The dark room: enters as a rounded card inside the gutters and opens to full width as it is reached. */
+/* The dark room: its tiles lift away in a wave from the cursor as it arrives (grid-wave). */
 function Disk() {
-  const ref = useRef(null);
-  const figs = useRef(null);
-  const calm = useReducedMotion();
-  const counted = useInView(figs, { once: true, amount: 0.4 });
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
-  const clip = useTransform(scrollYProgress, (p) => {
-    const k = 1 - Math.min(1, Math.max(0, p));
-    return `inset(0px calc(var(--km-gut) * ${k.toFixed(3)}) round ${(24 * k).toFixed(1)}px)`;
-  });
+  const [ref, on] = useArrive(0.2);
   return (
-    <motion.section ref={ref} className="km-disk v2-dark" data-room="dark" style={calm ? undefined : { clipPath: clip }}>
+    <section ref={ref} className="km-disk v2-dark" data-room="dark">
+      <GridWave on={on} />
       <div className="v2-wrap">
-        <ul ref={figs} className={'km-figs' + (counted ? ' on' : '')}>
+        <ul className="km-figs">
           {FIGS.map(([a, b], i) => <li key={a} className={b ? '' : 'big'} style={{ '--d': i }}><b><span>{a}</span></b>{b && <span>{b}</span>}</li>)}
         </ul>
         <div className="km-disk-g">
@@ -314,7 +392,7 @@ function Disk() {
           <CodeBlock code={CLI} label="terminal" className="km-cli" />
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -355,10 +433,9 @@ function Ship() {
     return () => clearTimeout(id);
   }, [at, run]);
   const svc = SVC[at];
-  const agent = svc === 'checkout-web';
   return (
     <section className="v2-sec km-ship">
-      <div className="v2-wrap km-ship-g">
+      <Stretch className="v2-wrap km-ship-g">
         <div className="km-ship-c" ref={ref}>
           <div
             ref={wrap}
@@ -377,17 +454,17 @@ function Ship() {
               <span className="km-key-name">DATABASE_PASSWORD<em>production</em></span>
               <span className="km-key-v"><b>v4</b>{noise(10, 4)}</span>
               <span className="km-key-read">
-                <i className={agent ? 'a' : ''} />
+                <i />
                 <span className="km-roll km-key-roll">
                   <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span key={svc} initial={{ y: '105%' }} animate={{ y: '0%' }} exit={{ y: '-105%' }} transition={{ duration: 0.4, ease: EASE }}>
-                      read · {agent ? 'agent ' : ''}{svc}
+                      {svc}
                     </motion.span>
                   </AnimatePresence>
                 </span>
               </span>
-              {!calm && <i key={'run' + at + (run ? 'r' : 'h')} className={'km-key-run' + (run ? '' : ' held')} />}
             </div>
+            {!calm && <i key={'run' + at + (run ? 'r' : 'h')} className={'km-key-run' + (run ? '' : ' held')} aria-hidden="true" />}
           </div>
           <div className="km-ship-cap">
             <p className="v2-title">Example project. Every name in it is one you would give your own.</p>
@@ -408,7 +485,7 @@ function Ship() {
             ))}
           </ul>
         </nav>
-      </div>
+      </Stretch>
     </section>
   );
 }
@@ -418,23 +495,23 @@ export default function Kms() {
     <main className="v2 km">
       <section className="km-hero">
         <div className="v2-wrap km-hero-t">
-          <Lines as="h1" className="v2-display km-h1" lines={['Hanzo KMS']} data-morph-target="" />
+          <h1 className="v2-display km-h1" data-morph-target="">Hanzo KMS</h1>
           <div className="km-hero-row">
-            <p className="v2-lede km-sub v2-in" style={{ animationDelay: '.3s' }}>Secrets management</p>
-            <div className="v2-acts">
+            <p className="v2-lede km-sub km-mg" style={gather(0)}>Secrets management</p>
+            <div className="v2-acts km-mg" style={gather(1)}>
               <Cta to="https://kms.hanzo.ai" id="kms.hero" thumb>Open KMS</Cta>
               <Cta to="https://docs.hanzo.ai/docs/openapi/kms/" kind="quiet" id="kms.documentation">Documentation</Cta>
             </div>
           </div>
         </div>
-        <Lift className="v2-wrap km-lift" from={1.1} y={40} origin="50% 0%" offset={['start end', 'start 0.25']}>
+        <div className="v2-wrap km-lift">
           <Vault />
-        </Lift>
+        </div>
       </section>
 
-      <Seal />
-
       <Holds />
+
+      <Seal />
 
       <Disk />
 

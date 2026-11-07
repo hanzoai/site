@@ -4,19 +4,20 @@
    Metric: app_handoff
    Goal: see a flow run node by node, find out how it is published and run, then open Flow
    CTA: Open Flow -> https://flow.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta flow.hero / flow.close)
-   Signature: the canvas, running. Hanzo's own components (a document loader, a text splitter, a vector store, a
-   retriever, a model, an output parser) are wired on a full-bleed dotted canvas with "Hanzo Flow" sitting among them;
-   a run leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned appears on it.
-   The inspector on the canvas follows the run and carries its Pause.
-   Beyond: "Step through it" yourself. In the playground (the one dark room), play, pause, or take the flow one node at
-   a time (next, previous, or pick a step); the inspector is the object there, large: the node, what it received, the
-   hand-off travelling its wire, and what it returned streaming in, the way Hanzo says you find the node that gave the
-   strange answer. The REST card opens into the same flow published three ways (REST, JSON, MCP) as tabs.
-   One graph, three readings: the hero's running cards (tap one to hold the run there), the pinned build-up drawn as a
-   compact diagram, and the playground as the inspector alone, so the six nodes are never reprinted the same way.
+   Signature: the canvas, running. Hanzo's own component kinds (its library list: document loaders, text splitters,
+   vector stores, retrievers, Models, output parsers) are wired on a full-bleed dotted canvas beside "Hanzo Flow"; a run
+   leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned shows on it.
+   This is the only place the pipeline is drawn. Hover a node and it lifts and shows the other side of what it does.
+   Beyond: the playground, in the one dark room and nowhere else: play, pause, or take the flow one node at a time
+   (previous, next, or pick a step); what each node received and returned is the object, large, streaming in.
+   Chapters: each of Hanzo's six features gets its own object on the pinned board, built from its own sentence
+   (components/pages/apps/flow/FlowPanels.jsx): the library's palette, a node opened to its Python class, the node that
+   caused it opened with a strange answer, several agents with retrieval underneath, a flow published three ways, a flow
+   exported with the wiring and not the secrets. The fact cards open into their own object (every kind a Python class,
+   the three ways as tabs, the terminal).
    Not only scroll: the run is idle motion; the playground answers the hand; the facts open (state); chapters are scroll.
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
-V2: 8/10 round 3: the pipeline no longer repeats four times (hero cards run and answer a tap; the pinned build-up is a compact diagram; the playground is its inspector, large, with the returned value streaming in; no chip chain in the close); phones get one pinned scene where the mini-graph builds and one chapter swaps in at a time, nothing behind it; no gap before the stage; one Deploy, one GitHub row, one hanzoai chip; "Run it locally first" settles to 26px so the close is the one big line; hero nodes keep the 16px gutter at 320
+V2: 8/10 round 5: the six-step chain is told twice only (the hero graph and the playground); chapter 03 opens one node, the node that caused it, with a strange answer drawn broken, no six-step list; the pinned stage fills and centres in the screen on desktop and phone (no dead band under it); the hero graph fills its screen with its pause and counter under node 06 inside the graph, and reduced motion shows the run finished (06 / 06, no pause); the playground's returned value is 32px, centred, with a running bar instead of an empty slot; received and returned never share the slot for a frame; Previous/Next fill and Documentation draws its underline on hover; done steps read white on graphite; the Keys chips fit at 375; the Python sheet says "Python class" once and no opened card repeats its chapter; the closing line rests at 26–32px; deck greys on this page
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
@@ -49,7 +50,7 @@ const NODES = [
 ];
 // where each node sits on a canvas (% of its width and height): desktop, then phone
 const LAY = {
-  hero: [[[52, 17], [70, 11], [88, 20], [87, 46], [69, 40], [52, 49]], [[25, 37], [75, 37], [75, 54], [25, 54], [25, 71], [75, 71]]],
+  hero: [[[52, 25], [70, 17], [88, 28], [87, 57], [69, 51], [52, 62]], [[25, 37], [75, 37], [75, 54], [25, 54], [25, 71], [75, 71]]],
   snake: [[[17, 18], [50, 18], [83, 18], [83, 64], [50, 64], [17, 64]], [[22, 16], [78, 16], [78, 50], [22, 50], [22, 84], [78, 84]]],
   // the phone's pinned mini-graph: two rows of three, compact nodes
   mini: [[[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]], [[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]]],
@@ -168,13 +169,18 @@ function Hero() {
   const [ref, live, calm] = useLive(0.2);
   const [hold, setHold] = useState(false);
   const [s, setS] = useRun(live, calm, !hold);
+  // reduced motion is known only in the browser; taken after mount so the server HTML and first render match
+  const [still, setStill] = useState(false);
+  useEffect(() => setStill(!!calm), [calm]);
   // tap or click a node: the run holds there, that node lit with what it returned
   const pick = (k) => { setHold(true); setS(2 * k + 1); };
   return (
     <section ref={ref} className="fl-hero" aria-labelledby="fl-h1">
       <Graph lay="hero" s={s} lit={hold ? nodeOf(s) : -1} pick={pick} />
       {/* the run's own pause (WCAG 2.2.2): icon only, its name from the register; pressed while held */}
-      <button type="button" className="fl-hold" onClick={() => setHold(!hold)} aria-label="Pause" aria-pressed={hold}><Ico k={hold ? 'play' : 'pause'} /><span className="fl-hold-n x-mono" aria-hidden="true">{two(nodeOf(s) + 1)} / 06</span></button>
+      {/* it sits on the canvas under node 06, inside the graph; under reduced motion the run is shown finished and the
+          control is only its counter, out of the tab order */}
+      <button type="button" className="fl-hold" onClick={() => setHold(!hold)} aria-label="Pause" aria-pressed={hold} tabIndex={still ? -1 : undefined} aria-hidden={still || undefined}><Ico k={hold ? 'play' : 'pause'} /><span className="fl-hold-n x-mono" aria-hidden="true">{two(nodeOf(s) + 1)} / 06</span></button>
       <div className="fl-hero-in">
         <div className="bz-wrap">
           <div className="fl-copy">
@@ -258,7 +264,7 @@ function Playground() {
             <div className="fl-pg-io">
               <p><span className="x-mono">received</span><b>{NODES[i].r}</b></p>
               <i className={'fl-pg-flow' + (s % 2 && s < END ? ' go' : '') + (done ? ' done' : '')} aria-hidden="true"><em key={s} /></i>
-              <p><span className="x-mono">returned</span><b className={done ? 'out' : 'wait'}>{done ? <Typed key={i} text={NODES[i].o} calm={calm} /> : '…'}</b></p>
+              <p><span className="x-mono">returned</span><b className={done ? 'out' : 'wait'}>{done ? <span className="fl-pg-v"><Typed key={i} text={NODES[i].o} calm={calm} /></span> : <i className="fl-pg-wait" aria-hidden="true" />}</b></p>
             </div>
           </div>
           <div className="fl-pg-bot">
@@ -311,9 +317,10 @@ const Term = ({ copy }) => (
 );
 
 const FACTS = [
-  { id: 'py', f: 'Python', t: 'Every component', d: 'A component is a Python class. Edit it in the browser and the change is live on the next run — no rebuild, no plugin format, no waiting for someone to add the parameter you need.', x: <div className="fl-pylib" aria-hidden="true">{['Models', 'vector stores', 'document loaders', 'text splitters', 'output parsers', 'memory', 'retrievers', 'toolkits'].map((t) => <span key={t}><b>{t}</b><em className="x-mono">Python class</em></span>)}</div> },
-  { id: 'rest', f: 'REST', t: 'Or JSON, or MCP', d: 'As a REST endpoint, as JSON your Python app loads directly, or as an MCP server — after which the flow is a tool your coding agent can call.', x: <Ways /> },
-  { id: 'port', f: ':7860', t: 'On your machine', d: 'uv pip install hanzoflow, then uv run hanzoflow run. It opens on 127.0.0.1:7860. Docker works too.', x: <Term /> },
+  // the opened cards show their own object only; the sentences they would repeat are already on the page above
+  { id: 'py', f: 'Python', t: 'Every component', x: <div className="fl-pylib-w"><div className="fl-pylib" aria-hidden="true">{['Models', 'vector stores', 'document loaders', 'text splitters', 'output parsers', 'memory', 'retrievers', 'toolkits'].map((t) => <span key={t}><b>{t}</b></span>)}</div><p className="fl-pylib-k x-mono">Python class</p></div> },
+  { id: 'rest', f: 'REST', t: 'Or JSON, or MCP', x: <Ways /> },
+  { id: 'port', f: ':7860', t: 'On your machine', x: <Term /> },
   { id: 'mit', f: 'MIT', t: 'Self-hosted' },
 ];
 

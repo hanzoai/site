@@ -41,21 +41,50 @@
 /* hovers apply wherever the pointer is not a finger (a mouse, a trackpad, a stylus), not only where (hover: hover) reports */
 @media (hover: hover), not all and (pointer: coarse) { .eo-l:hover { text-decoration: underline; } }
 .eo-l:active { transform: translateY(1px); }
-/* the tier rail answers a hover: the row steps in and its number darkens (transform only, no layout jump) */
-#eo-tiers .lv-ch-rail button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--ease); }
-#eo-tiers .lv-ch-rail button .mb-tnum { transition: color .15s cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover), not all and (pointer: coarse) {
-  #eo-tiers .lv-ch-rail button:hover { color: var(--ink); transform: translateX(6px); }
-  #eo-tiers .lv-ch-rail button:hover .mb-tnum { color: var(--ink); }
+
+/* the signature: particles form Enso's ring (canvas beside Hanzo's spec heading) */
+.eo-form-in { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 27px; align-items: center; }
+.eo-form-t { grid-column: 1 / 6; }
+.eo-form-t .lv-p { margin-top: 17px; }
+.eo-dots { grid-column: 6 / 14; display: block; width: 100%; max-width: 640px; justify-self: end; aspect-ratio: 1; touch-action: pan-y; cursor: crosshair; }
+
+/* the tiers: three plain sections, picture and words side by side, alternating */
+.eo-tiers { padding: clamp(32px, 4vw, 64px) 0 clamp(72px, 8vw, 128px); }
+.eo-tier + .eo-tier { margin-top: clamp(56px, 7vw, 112px); }
+.eo-tier { perspective: 1600px; }
+.eo-tier-in { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 27px; align-items: center; transform-origin: 50% 0; }
+.eo-tier-art { grid-column: 1 / 8; position: relative; aspect-ratio: 5 / 4; border-radius: 24px; overflow: hidden; background: #000; }
+.eo-tier-t { grid-column: 9 / 14; }
+.eo-tier.flip .eo-tier-art { grid-column: 7 / 14; order: 2; }
+.eo-tier.flip .eo-tier-t { grid-column: 1 / 6; }
+.eo-tier-h { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); }
+.eo-tier-b { margin-top: 17px; font-size: 16px; line-height: 1.6; color: #525252; max-width: 44ch; }
+.eo-tier-b p { margin: 0; }
+.eo-tier-b > * + * { margin-top: 16px; }
+
+/* ---------- the five entrances (start states only with JS and motion allowed; data-in is the final state) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. fold-out: each tier unfolds like paper from its top edge */
+  html.js .eo-tier .eo-tier-in { transition: transform .9s cubic-bezier(.16, 1, .3, 1), opacity .5s ease; }
+  html.js .eo-tier:not([data-in]) .eo-tier-in { transform: rotateX(-78deg); opacity: 0; }
+  /* 2. cursor-lens: the router room opens through a lens on the pointer (Enso.jsx lens()); closed until then */
+  html.js .eo-lens:not([data-in]) { clip-path: circle(0 at 50% 30%); }
+  /* 3. ink-spread: the model cards appear through a spreading blot (Enso.jsx ink()) */
+  html.js .eo-ink:not([data-in]) { clip-path: circle(0 at 32% 38%); }
+  /* 4. word-shuffle: the GPQA heading's words swap into place (Enso.jsx shuffle()) */
+  .eo-shuffle .eo-w { display: inline-block; }
+  /* 5. orbit-in: the band's headline and ask swing in on wide arcs from opposite sides and land */
+  html.js .eo-orbit .x-band h2, html.js .eo-orbit .x-band-act { transition: rotate 1.1s cubic-bezier(.16, 1, .3, 1), translate 1.1s cubic-bezier(.16, 1, .3, 1); }
+  html.js .eo-orbit .x-band h2 { transform-origin: 50% 160%; }
+  html.js .eo-orbit .x-band-act { transform-origin: 50% -260%; transition-delay: .12s; }
+  html.js .eo-orbit:not([data-in]) .x-band h2 { rotate: -24deg; translate: 0 40px; }
+  html.js .eo-orbit:not([data-in]) .x-band-act { rotate: 30deg; translate: 0 30px; }
 }
-#eo-tiers .lv-ch-rail button:active { transform: translateX(6px) scale(.97); transition-duration: .09s; }
-/* the tiers not being read keep their links out of reach once their words have faded (no stacked invisible links) */
-#eo-tiers[data-live] .lv-ch-t:not([data-on]) .eo-l { visibility: hidden; transform: scale(0); transition: visibility 0s .3s, transform 0s .3s; }
+/* the shared room reveal (scroll-scrubbed clip) gives way to the lens */
+.eo-live.lv-room { animation: none; }
+.eo-orbit .x-band { overflow: hidden; }
 
 /* the dark room */
-.eo-live .lv-h { max-width: 22ch; color: #fafafa; }
-.eo-live .lv-p { color: #a3a3a3; }
-.eo-live .eo-spec-ring { color: #fafafa; }
 .eo-all { margin: 32px 4px 0; }
 .eo-all .x-arrow { position: relative; color: #f5f5f5; }
 /* 44px tall targets on the small text links (a positioned ::after, no layout change) */
@@ -112,11 +141,7 @@
 .eo-figs.lv-stats > .x-stat:first-child .x-stat-v { font-size: clamp(5rem, 9vw, 8.5rem); font-weight: 220; letter-spacing: -.05em; color: var(--ink); }
 .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 32px; font-weight: 400; letter-spacing: -.02em; color: var(--ink); }
 .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-l { font-size: 15px; }
-/* the spec heading carries Enso's ring, breathing: a slow sway and swell, never a spin (stops with the page pause and reduced motion) */
-.eo-spec-h { display: flex; align-items: center; gap: 18px; }
-.eo-spec-ring { flex: none; width: 44px; height: 44px; color: var(--ink); animation: eo-breathe 5s cubic-bezier(.65, 0, .35, 1) infinite alternate; }
-@keyframes eo-breathe { from { transform: rotate(-14deg) scale(.88); } to { transform: rotate(14deg) scale(1); } }
-[data-mpaused] .eo-spec-ring, [data-mpaused] .eo-enso { animation-play-state: paused; }
+[data-mpaused] .eo-enso { animation-play-state: paused; }
 .eo-plotwrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; margin-top: clamp(72px, 8vw, 120px); }
 .eo-plot { width: 100%; height: auto; overflow: visible; }
 .eo-grid { stroke: rgba(0, 0, 0, .07); }
@@ -165,7 +190,8 @@ html:not(.js) .eo-disc-a { display: none; }
 .js .eo-table[data-open] .eo-results { animation: eo-open .4s var(--ease) both; }
 @keyframes eo-open { from { opacity: 0; transform: translateY(-8px); } }
 .eo-gpqa.lv-sec { padding-bottom: clamp(48px, 5vw, 80px); }
-.lv:has(.eo-head) .eo-gpqa + .mc.lv-sec { padding-top: clamp(48px, 5vw, 80px); } /* no dead white band between the drawer and the cards */
+.lv:has(.eo-head) .eo-ink .mc.lv-sec { padding-bottom: clamp(48px, 5vw, 80px); } /* no dead white band between the cards and the GPQA story */
+.lv:has(.eo-head) .eo-ink + .eo-gpqa.lv-sec { padding-top: clamp(48px, 5vw, 80px); }
 .eo-sort { display: flex; gap: 8px; margin-bottom: 14px; }
 .eo-sortb { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--soft); font: 500 14px var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
 @media (hover: hover), not all and (pointer: coarse) { .eo-sortb:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); } }
@@ -191,7 +217,11 @@ html:not(.js) .eo-disc-a { display: none; }
   .eo-figs.lv-stats > .x-stat:first-child .x-stat-v { font-size: 72px; }
   .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-v { font-size: 26px; }
   .eo-figs.lv-stats > .x-stat:not(:first-child) .x-stat-n { font-size: 14px; }
-  .eo-spec-ring { width: 34px; height: 34px; }
+  .eo-form-in, .eo-tier-in { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .eo-form-t, .eo-dots, .eo-tier-art, .eo-tier-t, .eo-tier.flip .eo-tier-art, .eo-tier.flip .eo-tier-t { grid-column: 1; }
+  .eo-tier.flip .eo-tier-art { order: 0; }
+  .eo-dots { justify-self: center; max-width: 420px; }
+  .eo-tier-art { aspect-ratio: 4 / 5; }
   .eo-read { position: static; }
   .eo-tick, .eo-axis { font-size: 40px; }
   .eo-axis { font-size: 34px; }
@@ -200,4 +230,4 @@ html:not(.js) .eo-disc-a { display: none; }
   .eo-dot circle:first-of-type { r: 13px; }
   .eo-dot.enso circle:first-of-type { r: 16px; }
 }
-@media (prefers-reduced-motion: reduce) { .eo-enso, .eo-spec-ring { animation: none; } .eo-lane[data-hit]::after { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .eo-enso { animation: none; } .eo-lane[data-hit]::after { animation: none; } }

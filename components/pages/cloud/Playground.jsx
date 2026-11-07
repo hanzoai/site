@@ -16,16 +16,16 @@
    phrase marks its token, the magnetic ask; state = kind tabs, curl/python, pause; arrival = the cut-in title, the
    timed wipe into the dark room; scroll = the Stage settle and the scrubbed sentence.
    Every word and link is Hanzo's; the meter shows proportions, not measured figures. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion, useInView, useTransform } from 'motion/react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useReducedMotion, useTransform } from 'motion/react';
 import { Copy } from '../../ui';
 import { Paste, useLive } from './Frame';
-import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
 import RelatedCards from '../../v2/RelatedCards';
 import { A, Img, Film } from '../../kit';
+import { useEnter, useScramble } from '../playground/enter';
 import './Playground.css';
 
 const PLAY = 'https://platform.hanzo.ai/playground';
@@ -205,61 +205,166 @@ function marked(code, mark) {
   });
 }
 
-function FirstRequest() {
-  const ref = useRef(null);
+/* ---------- the signature: drag to explore. The Playground's parts (the first request, the curl and Python, the eight
+   kinds, the models) lie on one endless canvas the visitor pans with a pointer or a finger, and throws with inertia.
+   Each part wraps around the board, so there is no edge; tapping a phrase glides to where its token is marked. ---------- */
+const DESK = { W: 2400, H: 1200, at: {
+  say: [60, 64], curl: [600, 52], py: [1300, 84],
+  k0: [60, 420], k1: [250, 420], k2: [440, 420], k3: [630, 420], k4: [860, 470], k5: [1050, 470], k6: [1240, 470], k7: [1430, 470],
+  m0: [1880, 120], m1: [2040, 120], m2: [2200, 120], m3: [1880, 330], m4: [2040, 330], m5: [2200, 330], m6: [1880, 540], m7: [2040, 540], m8: [2200, 540],
+} };
+// phones pan sideways only (the finger's vertical stroke scrolls the page), so the small board is one long strip
+const SMALL = { W: 2000, H: 1200, at: {
+  say: [16, 20], curl: [360, 20], py: [980, 20],
+  k0: [16, 250], k1: [166, 250], k2: [16, 410], k3: [166, 410], k4: [360, 290], k5: [510, 290], k6: [660, 290], k7: [810, 290],
+  m0: [1470, 20], m1: [1610, 20], m2: [1750, 20], m3: [1470, 196], m4: [1610, 196], m5: [1750, 196], m6: [1470, 372], m7: [1610, 372], m8: [1750, 372],
+} };
+const mod = (a, n) => ((a % n) + n) % n;
+const MINI = [Chat, Completions, Decisions, Embeddings];
+
+function Explore() {
+  const sec = useRef(null), view = useRef(null), items = useRef({});
+  const enter = useEnter(sec, 0.3);
   const calm = useReducedMotion();
-  const [live, setLive] = useState(false); // JS off: an ordinary section with both panes in reading order
-  useEffect(() => setLive(true), []);
-  const [at, setAt] = useState(0); // 0..2 the three parts, 3 the whole request in Python
-  const [hv, setHv] = useState(null); // a phrase under a fine pointer marks its token
-  const [auto, setAuto] = useState(null); // on arrival the sentence reads itself once: a key, a model name, a message
-  const seen = useInView(ref, { amount: 0.3, once: true });
-  useEffect(() => {
-    if (!seen || calm) return;
-    const ts = [0, 1, 2].map((i) => setTimeout(() => setAuto(i), 400 + i * 1200));
-    ts.push(setTimeout(() => setAuto(null), 400 + 3 * 1200));
-    return () => ts.forEach(clearTimeout);
-  }, [seen, calm]);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => { const i = Math.min(3, Math.floor(p * 4 * 0.999)); setAt((v) => (v === i ? v : i)); });
-  const jump = (i) => {
-    setHv(null); setAuto(null);
-    const el = ref.current; if (!el) return;
-    const y = el.getBoundingClientRect().top + scrollY + ((i + 0.5) / 4) * (el.offsetHeight - innerHeight);
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) }) : scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
+  const [small, setSmall] = useState(false);
+  const [sel, setSel] = useState(0); // 0..2 a part of the sentence, 3 the whole request in Python
+  const [hv, setHv] = useState(null);
+  const [auto, setAuto] = useState(null);
+  const L = small ? SMALL : DESK;
+  const Lr = useRef(L); Lr.current = L; // the rAF loop reads the current board
+  const st = useRef({ x: 0, y: 0, vx: 0, vy: 0, drag: null, moved: false, goal: null, touched: false, raf: 0, seen: false });
+
+  const place = () => {
+    const s = st.current, v = view.current, L = Lr.current; if (!v) return;
+    const vw = v.clientWidth, vh = v.clientHeight;
+    for (const [k, el] of Object.entries(items.current)) {
+      if (!el) continue;
+      const [x0, y0] = L.at[k];
+      let X = mod(x0 + s.x, L.W), Y = mod(y0 + s.y, L.H);
+      if (X > vw + 40) X -= L.W; if (Y > vh + 40) Y -= L.H;
+      el.style.transform = `translate3d(${X.toFixed(1)}px, ${Y.toFixed(1)}px, 0)`;
+    }
+    v.style.backgroundPosition = `${mod(s.x, 24).toFixed(1)}px ${mod(s.y, 24).toFixed(1)}px`;
   };
-  const show = hv ?? auto ?? at;
-  const tab = show === 3 ? 1 : 0;
+  const loop = () => {
+    const s = st.current;
+    if (!s.drag) {
+      if (s.goal) { // a glide to a part (tap a phrase, or the arrow keys)
+        const dx = s.goal[0] - s.x, dy = s.goal[1] - s.y;
+        s.x += dx * 0.12; s.y += dy * 0.12;
+        if (Math.abs(dx) + Math.abs(dy) < 0.6) { s.x = s.goal[0]; s.y = s.goal[1]; s.goal = null; }
+      } else if (Math.abs(s.vx) + Math.abs(s.vy) > 0.05) { s.x += s.vx; s.y += s.vy; s.vx *= 0.94; s.vy *= 0.94; } // the throw
+      else if (!s.touched && s.seen && !calm) { s.x -= 0.35; } // untouched: the board drifts by itself
+      else { s.vx = s.vy = 0; place(); s.raf = 0; return; }
+    }
+    place();
+    s.raf = requestAnimationFrame(loop);
+  };
+  const wake = () => { if (!st.current.raf) st.current.raf = requestAnimationFrame(loop); };
+
+  useEffect(() => { const m = matchMedia('(max-width: 899px)'); const f = () => setSmall(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
+  useLayoutEffect(place); // every render re-applies the board's offset
+  useEffect(() => {
+    const v = view.current; if (!v) return;
+    const io = new IntersectionObserver(([e]) => { st.current.seen = e.isIntersecting; if (e.isIntersecting) wake(); }, { threshold: 0.2 });
+    io.observe(v);
+    return () => { io.disconnect(); cancelAnimationFrame(st.current.raf); st.current.raf = 0; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { // on arrival the sentence reads itself once: a key, a model name, a message
+    if (enter !== 'in' || calm) return;
+    const ts = [0, 1, 2].map((i) => setTimeout(() => setAuto(i), 1100 + i * 1200));
+    ts.push(setTimeout(() => setAuto(null), 1100 + 3 * 1200));
+    return () => ts.forEach(clearTimeout);
+  }, [enter, calm]);
+
+  const down = (e) => {
+    if (e.button > 0) return;
+    const s = st.current;
+    s.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: s.x, sy: s.y, t: performance.now(), lx: e.clientX, ly: e.clientY };
+    s.moved = false; s.goal = null; s.vx = s.vy = 0; s.touched = true;
+  };
+  const move = (e) => {
+    const s = st.current, d = s.drag; if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x, dy = e.pointerType === 'touch' ? 0 : e.clientY - d.y;
+    if (!s.moved && Math.hypot(dx, dy) > 6) { s.moved = true; view.current.setPointerCapture?.(e.pointerId); view.current.dataset.drag = ''; }
+    if (!s.moved) return;
+    const now = performance.now(), dt = Math.max(8, now - d.t);
+    s.vx = ((e.clientX - d.lx) / dt) * 16; s.vy = e.pointerType === 'touch' ? 0 : ((e.clientY - d.ly) / dt) * 16;
+    d.t = now; d.lx = e.clientX; d.ly = e.clientY;
+    s.x = d.sx + dx; s.y = d.sy + dy; place();
+  };
+  const up = (e) => {
+    const s = st.current; if (!s.drag || s.drag.id !== e.pointerId) return;
+    s.drag = null; delete view.current.dataset.drag; wake();
+  };
+  const click = (e) => { if (st.current.moved) { e.preventDefault(); e.stopPropagation(); st.current.moved = false; } };
+  const glideTo = (k) => { // bring a part to the middle of the view
+    const s = st.current, v = view.current, el = items.current[k]; if (!v || !el) return;
+    const [x0, y0] = L.at[k];
+    const gx = (v.clientWidth - el.offsetWidth) / 2 - x0, gy = small ? s.y : Math.min(40, (v.clientHeight - el.offsetHeight) / 2) - y0;
+    const near = (a, g, n) => g + Math.round((a - g) / n) * n; // the nearest copy of that spot on the endless board
+    s.goal = [near(s.x, gx, L.W), near(s.y, gy, L.H)]; s.touched = true; s.vx = s.vy = 0;
+    if (calm) { s.x = s.goal[0]; s.y = s.goal[1]; s.goal = null; place(); } else wake();
+  };
+  const key = (e) => {
+    const k = { ArrowLeft: [120, 0], ArrowRight: [-120, 0], ArrowUp: [0, 120], ArrowDown: [0, -120] }[e.key];
+    if (!k || e.target !== view.current) return;
+    e.preventDefault();
+    const s = st.current; s.touched = true; s.goal = [(s.goal?.[0] ?? s.x) + k[0], (s.goal?.[1] ?? s.y) + k[1]];
+    if (calm) { s.x = s.goal[0]; s.y = s.goal[1]; s.goal = null; place(); } else wake();
+  };
+
+  const show = hv ?? auto ?? sel;
+  const pick = (i) => { setHv(null); setAuto(null); setSel(i); glideTo(i === 3 ? 'py' : 'curl'); };
   const peek = (i) => (e) => e.pointerType === 'mouse' && setHv(i);
+  const put = (k) => (el) => { items.current[k] = el; };
+  const pos = (k) => ({ transform: `translate3d(${L.at[k][0]}px, ${L.at[k][1]}px, 0)` });
+  const tiles = small ? 36 : 60;
+
   return (
-    <section ref={ref} className="pg-first" data-live={live || undefined}>
-      <div className="pg-first-stick">
-        <div className="lx-wrap pg-first-grid">
-          <div className="pg-first-copy">
-            <h2 className="lx-title pg-first-h">Then the same request from code</h2>
+    <section ref={sec} className="pg-ex" data-enter={enter || undefined}>
+      <div className="lx-wrap pg-ex-head">
+        <h2 className="lx-title pg-ex-h">Then the same request from code</h2>
+      </div>
+      <div className="lx-wrap pg-ex-wrap">
+        <div ref={view} className="pg-cv-view" role="region" aria-label="Playground" tabIndex={0}
+          onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onClickCapture={click} onKeyDown={key}>
+          <div className="pg-cv-item pg-say" ref={put('say')} style={pos('say')}>
             <p className="pg-anat" data-at={show} onPointerLeave={() => setHv(null)}>
               {PARTS.map(([t], i) => (
                 <span key={t} className="pg-g">
-                  <button type="button" className={'pg-ph' + (show === i ? ' on' : '') + (show === 3 ? ' all' : '')} onClick={() => jump(i)} onPointerEnter={peek(i)} aria-pressed={at === i}>{t}</button>{i === 0 ? ',' : i === 1 ? ', and' : ''}
+                  <button type="button" className={'pg-ph' + (show === i ? ' on' : '') + (show === 3 ? ' all' : '')} onClick={() => pick(i)} onPointerEnter={peek(i)} aria-pressed={sel === i}>{t}</button>{i === 0 ? ',' : i === 1 ? ', and' : ''}
                 </span>
               ))}{' '}
-              <button type="button" className={'pg-ph' + (show === 3 ? ' on' : '')} onClick={() => jump(3)} onPointerEnter={peek(3)} aria-pressed={at === 3}>is the whole first request.</button>
+              <button type="button" className={'pg-ph' + (show === 3 ? ' on' : '')} onClick={() => pick(3)} onPointerEnter={peek(3)} aria-pressed={sel === 3}>is the whole first request.</button>
             </p>
           </div>
-          <div className="pg-req">
-            <div className="pg-req-bar">
-              <i /><i /><i />
-              <div className="pg-req-tabs">
-                <button type="button" className={tab === 0 ? 'on' : ''} aria-pressed={tab === 0} onClick={() => jump(0)}>curl</button>
-                <button type="button" className={tab === 1 ? 'on' : ''} aria-pressed={tab === 1} onClick={() => jump(3)}>python</button>
-              </div>
-              <Copy text={tab ? PY : CURL} />
-            </div>
-            <div className="pg-req-panes">
-              <div className="pg-req-pane" data-on={tab === 0 || undefined} inert={live && tab !== 0 ? true : undefined}><p className="pg-req-l">One request</p><pre><code>{marked(CURL, show < 3 ? PARTS[show][1] : null)}<i className="pg-caret" aria-hidden="true" /></code></pre></div>
-              <div className="pg-req-pane" data-on={tab === 1 || undefined} inert={live && tab !== 1 ? true : undefined}><p className="pg-req-l">The Python client</p><pre><code>{marked(PY, 'HANZO_API_KEY')}<i className="pg-caret" aria-hidden="true" /></code></pre></div>
-            </div>
+          <div className="pg-cv-item pg-req pg-req-curl" ref={put('curl')} style={pos('curl')}>
+            <div className="pg-req-bar"><i /><i /><i /><span className="pg-req-n">curl</span><Copy text={CURL} /></div>
+            <div className="pg-req-pane"><p className="pg-req-l">One request</p><pre><code>{marked(CURL, show < 3 ? PARTS[show][1] : null)}<i className="pg-caret" aria-hidden="true" /></code></pre></div>
           </div>
+          <div className="pg-cv-item pg-req pg-req-py" ref={put('py')} style={pos('py')}>
+            <div className="pg-req-bar"><i /><i /><i /><span className="pg-req-n">python</span><Copy text={PY} /></div>
+            <div className="pg-req-pane"><p className="pg-req-l">The Python client</p><pre><code>{marked(PY, show === 3 ? 'HANZO_API_KEY' : null)}</code></pre></div>
+          </div>
+          {MODES.map((m, i) => {
+            const Mini = MINI[i];
+            return (
+              <div key={m} className="pg-cv-item pg-kind" ref={put('k' + i)} style={pos('k' + i)}>
+                <div className="pg-kind-art" aria-hidden="true">
+                  {Mini ? <div className="pg-kind-mini"><Mini /></div> : <Img src={`/models/${MODEL[i]}.webp`} alt="" w={1200} h={1500} />}
+                </div>
+                <p className="pg-kind-n"><span>{m}</span><b>{MODEL[i]}</b></p>
+              </div>
+            );
+          })}
+          {MODELS.map(([n, m], i) => (
+            <A key={m} to={'/' + m} className="pg-cv-item pg-cv-model" ref={put('m' + i)} style={pos('m' + i)} draggable={false}>
+              <Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} />
+              <span>{n}</span>
+            </A>
+          ))}
+          {enter && <div className="pg-flip" aria-hidden="true" style={{ '--c': small ? 6 : 10 }}>{Array.from({ length: tiles }).map((_, i) => { const c = small ? 6 : 10, r = Math.floor(i / c), q = i % c; return <i key={i} style={{ '--d': ((r + q) * 45) + 'ms' }} />; })}</div>}
         </div>
       </div>
     </section>
@@ -313,6 +418,33 @@ function HeroStage({ children }) {
   );
 }
 
+/* entrance 3, cover-slide: related rides up over the bottom of the canvas */
+function Covers({ children }) {
+  const ref = useRef(null);
+  const enter = useEnter(ref, 0.05);
+  return <div ref={ref} className="pg-cover" data-enter={enter || undefined}>{children}</div>;
+}
+/* entrance 4, scramble: the dark room's words and the model names decode out of scrambled characters */
+function Room() {
+  const ref = useRef(null);
+  const enter = useEnter(ref, 0.3);
+  useScramble(ref, '.cf-paste-t, .cf-paste-d, .cf-paste-k, .pg-tile-n', enter === 'in');
+  return (
+    <section ref={ref} className="lx-dark pg-paste pg-room" data-room="dark" data-enter={enter || undefined}>
+      <div className="lx-wrap pg-paste-grid">
+        <Paste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." className="lx-paste" />
+        <Wall />
+      </div>
+    </section>
+  );
+}
+/* entrance 5, swing-door: the close swings in on a vertical hinge at its left edge */
+function Door({ children }) {
+  const ref = useRef(null);
+  const enter = useEnter(ref, 0.2);
+  return <div ref={ref} className="pg-door" data-enter={enter || undefined}>{children}</div>;
+}
+
 const REL = [['CLI', '/cli'], ['Desktop', '/desktop'], ['API Keys', '/cloud/api-keys']];
 
 export default function Playground() {
@@ -332,18 +464,13 @@ export default function Playground() {
         </div>
       </section>
 
-      <FirstRequest />
+      <Explore />
 
-      <ClipWipe dark className="pg-paste">
-        <div className="lx-wrap pg-paste-grid">
-          <Paste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." className="lx-paste" />
-          <Wall />
-        </div>
-      </ClipWipe>
+      <Covers><RelatedCards className="pg-rel" items={REL} /></Covers>
 
-      <RelatedCards className="pg-rel" items={REL} />
+      <Room />
 
-      <LaunchClose name="Playground" tag="Hands-on sandbox for every product" seed="playground" data={[8, 3]} ask={['Open the Playground', PLAY]} cta="playground.close" />
+      <Door><LaunchClose name="Playground" tag="Hands-on sandbox for every product" seed="playground" data={[8, 3]} ask={['Open the Playground', PLAY]} cta="playground.close" /></Door>
     </main>
   );
 }

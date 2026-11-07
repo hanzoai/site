@@ -12,11 +12,18 @@
    platforms follow; type a value that has drifted out of the design system and the typecheck fails instead of shipping.
    Not only scroll: the frames change by themselves (idle), the editor and the platform cards answer the hand (state);
    Stage and chapters are the scroll half.
-   Motion: the four frames in step (signature) + the run (the same four pinned, one state per chapter) + platform cards that open.
-V2: 8/10 round 4: one object, many states. The hero's four frames ARE the pinned stage (no second device row): the opening cycles the props, then 01 wires the one source to the four with their render tags, 02 flips the brand token on all four, 03 collapses every screen to the flat rule, 04 takes the card apart into YStack/Text/Button with the kit's primitives under it, 05 rolls each new state across the four in a wave while the buttons press themselves. Phones keep the stage pinned and swap only the words; counters agree (01–05 / 06, the dark room 06 / 06); no invented words (token names only from the page's code scale, typecheck by shape, aria from ui-strings); each opened platform carries its own chapter's sentence; cards share one baseline and lift; the ask leans to the pointer; code scrolls instead of wrapping. Round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
+   Motion: the four frames in step (hero) + the compare slider (signature) + platform cards that open.
+// Motion map: signature compare; entrances split-merge, velocity-skew, domino, cursor-lens, grow-from-point
+   (docs/MOTION-MAP.md, 7 Nov: no pinned chapter scene on this page. The hero's four still cycle the props; the signature
+   is a divider the visitor drags across one window, Hanzo's source on one side and the platform it renders on the other;
+   the five chapters are plain rows, each with its own object. Entrances, in page order: the compare's two halves split
+   and merge; the chapter list leans with scroll speed; the editor's rows tip in like dominoes; a lens sweeps the
+   platform cards and then follows the pointer; the close grows from the last point clicked.)
+V2: 8/10 motion map: the pinned five-chapter stage is replaced by the compare signature (drag, touch, arrow keys; 50% under reduced motion) and five plain chapter rows with their own objects (render targets, the token flip, the flat rule, the primitives, the wave); five page-local entrances in the map's order, final state in the server HTML. Round 6: phone hero keeps 44px before the stage and the pinned grid leads with the object (the heading and its 0N / 06 above the two frames, the chapter's paragraph under them), so the code bar and devices are on the first screen at 375 and start at 536 of 640 at 320; render tags hang under their frames (never over a card inside a window, measured at 1470, 375, 320); token names only $4 and $8 (Hanzo's own code), no "9:41" clock; the iOS card shows its sheet at rest; the picker's closing field shows the value the YStack takes; the opened Desktop's sidebar at 10–13px; opened cards carry only words about their platform (web: the atomic-CSS sentence; the rest name and sub-label); "Get GUI" and its prompt start on one line, the h2 first; the lit chip and the cards answer hover (the sub-label slides up for the woken props). Round 5: phone rail art sized to its box (never over a card's name, 375 and 320); the hero props first change at ~0.8 s; each stage step gets ~1.08 screens so a one-screen wheel lands on all five; on phones the words sit above the pinned frames so they leave first; card→sheet morph crossfades the flying card's content (no stretch); cards tilt and wake (their props take the next state) when pointed at or focused; phone stage h2 21 over h3 17, the lit step title grows and settles; the playground's typed value is an empty dashed slot in its chip row and the typecheck sits on the closing line; the phone terminal scrolls with an edge fade; hero ask hovers #262626 and presses 1px. Round 4: one object, many states. The hero's four frames ARE the pinned stage (no second device row): the opening cycles the props, then 01 wires the one source to the four with their render tags, 02 flips the brand token on all four, 03 collapses every screen to the flat rule, 04 takes the card apart into YStack/Text/Button with the kit's primitives under it, 05 rolls each new state across the four in a wave while the buttons press themselves. Phones keep the stage pinned and swap only the words; counters agree (01–05 / 06, the dark room 06 / 06); no invented words (token names only from the page's code scale, typecheck by shape, aria from ui-strings); each opened platform carries its own chapter's sentence; cards share one baseline and lift; the ask leans to the pointer; code scrolls instead of wrapping. Round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
    Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { useEnter, useGrowFromPoint, useVelocitySkew, useLens } from './gui/GuiMotion';
 import { A, Cta } from '../../kit';
 import BizLines from '../../v2/BizLines';
 import { EASE_OUT_EXPO } from '../../../lib/motion';
@@ -34,14 +41,13 @@ const INK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
 const SHAPE = { ...SPR, backgroundColor: INK, color: INK };
 const ARRIVE = { duration: 0.3, ease: EASE_OUT_EXPO };
 
-/* the tokens the shorthands accept */
-const SPACE = { $2: 8, $3: 12, $4: 16, $6: 24 };
-/* token names only from the scale the page's own code uses ($4, $8): no invented names */
-const BG = { $2: '#ffffff', $4: '#e5e5e5', $8: '#0a0a0a' };
+/* the tokens the shorthands accept: only the two Hanzo's own code uses ($4 and $8), no invented names */
+const SPACE = { $4: 16, $8: 28 };
+const BG = { $4: '#ffffff', $8: '#0a0a0a' };
 const INKY = '$8';
-const ROUND = { $2: 6, $4: 14, $8: 26 };
+const ROUND = { $4: 10, $8: 24 };
 const TOK = { p: SPACE, bg: BG, rounded: ROUND };
-const PRESETS = [{ p: '$4', bg: '$2', rounded: '$4' }, { p: '$6', bg: '$4', rounded: '$8' }, { p: '$3', bg: '$8', rounded: '$2' }];
+const PRESETS = [{ p: '$4', bg: '$4', rounded: '$4' }, { p: '$8', bg: '$4', rounded: '$8' }, { p: '$4', bg: '$8', rounded: '$8' }];
 const PLAT = [['iOS', 'Native', 'ios'], ['Android', 'Native', 'android'], ['Web', 'Atomic CSS', 'web'], ['Desktop', 'macOS · Win · Linux', 'desk']];
 const OK = (k, val) => TOK[k][val] !== undefined;
 
@@ -83,14 +89,14 @@ function Flat({ v }) {
 function Dev({ k, v, parts, tag, flat, delay, children }) {
   return (
     <div className="gu-dev"><div className={'gu-frame gu-' + k}>
-      {k === 'ios' && <><i className="gu-island" aria-hidden="true" /><span className="gu-sb x-mono" aria-hidden="true">9:41</span></>}
-      {k === 'android' && <><i className="gu-hole" aria-hidden="true" /><span className="gu-sb x-mono" aria-hidden="true">9:41</span><i className="gu-gest" aria-hidden="true" /></>}
+      {/* a neutral status bar: the island or camera hole only, no invented time */}
+      {k === 'ios' && <i className="gu-island" aria-hidden="true" />}
+      {k === 'android' && <><i className="gu-hole" aria-hidden="true" /><i className="gu-gest" aria-hidden="true" /></>}
       {(k === 'web' || k === 'desk') && (
         <div className="gu-bar" aria-hidden="true"><span className="gu-lights"><i /><i /><i /></span>{k === 'web' ? <span className="gu-url" /> : <span className="gu-wt">Welcome</span>}</div>
       )}
       <div className={'gu-scr' + (flat ? ' flat' : '')}>{children || (flat ? <Flat v={v} /> : <Welcome v={v} parts={parts} delay={delay} />)}</div>
-      {tag && <span className="gu-tag x-mono">{tag}</span>}
-    </div></div>
+    </div>{tag && <span className="gu-tag x-mono">{tag}</span>}</div>
   );
 }
 
@@ -129,13 +135,14 @@ function Bar({ v, hold, setHold, off }) {
 }
 
 /* Cycles the presets (or a given list of them) while on and on screen. */
-function useCycle(on, ms = 2600, list = PRESETS) {
+function useCycle(on, ms = 2600, list = PRESETS, first = ms) {
   const [i, setI] = useState(0);
+  const n = useRef(0); // how many changes so far: the first comes sooner (first), then every ms
   useEffect(() => {
     if (!on) return;
-    const t = setTimeout(() => setI((n) => (n + 1) % list.length), ms);
+    const t = setTimeout(() => { n.current += 1; setI((k) => (k + 1) % list.length); }, n.current ? ms : first);
     return () => clearTimeout(t);
-  }, [i, on, ms, list.length]);
+  }, [i, on, ms, first, list.length]);
   return list[i % list.length];
 }
 const WAVE = [PRESETS[1], PRESETS[2]]; // chapter 05 never rests on the plain default card
@@ -153,7 +160,12 @@ function Pull({ children }) {
   return <span ref={ref} className="gu-pull" onPointerMove={move} onPointerLeave={() => { if (ref.current) ref.current.style.translate = ''; }}>{children}</span>;
 }
 
+/* The hero: the title, the one ask, and the four frames in step under the code bar, cycling the props by themselves
+   (the first change lands at ~0.8 s). Not pinned: the stage scrolls away with the hero. */
 function Hero() {
+  const [hold, setHold] = useState(false);
+  const [seen, live] = useLive(0.15);
+  const v = useCycle(live && !hold, 2600, PRESETS, 800);
   return (
     <section className="gu-hero" aria-labelledby="gu-h1">
       <div className="bz-wrap gu-top">
@@ -162,6 +174,12 @@ function Hero() {
         <div className="bz-acts gu-acts">
           <Pull><Cta to={GH} id="gui.hero" thumb>View on GitHub</Cta></Pull>
         </div>
+      </div>
+      <div ref={seen}>
+        <Settle className="bz-wrap gu-stage">
+          <Bar v={v} hold={hold} setHold={setHold} />
+          <Four v={v} cls="gu-hero-four" />
+        </Settle>
       </div>
     </section>
   );
@@ -178,46 +196,128 @@ const PROPS = [
 ];
 const PRIMS_USED = ['YStack', 'Text', 'Button'];
 
-/* The run: the hero's four frames ARE the pinned stage. Before the pin they cycle the props under the title (the
-   opening); once pinned, each of the five chapters puts the one object in its own state:
-   01 one codebase: the four, tagged with what each renders to, wired to the one source above them;
-   02 tokens: the brand flips to the ink token on every platform at once;
-   03 compile-time CSS: each screen collapses to the flat rule the compiler emits;
-   04 primitives: the card comes apart into YStack, Text and Button, the kit's primitives listed under it;
-   05 animated: the props change by themselves, the new state rolling across the four in a wave.
-   Phones keep the same stage pinned (two frames) and swap only the words. With JS off nothing pins and every chapter reads. */
-function Run() {
+/* The chapters keep their states, each as its own object beside its words:
+   01 one codebase: the four platforms and what each renders to; 02 tokens: the same card in the light and the ink token;
+   03 compile-time CSS: the flat rule the compiler emits; 04 primitives: the card in its parts, the kit's primitives under
+   it; 05 animated: the props change by themselves while it is on screen. */
+/* Hanzo's own Welcome source, quoted from the page's install block (CODE, below) */
+const SRC = [
+  ['k', 'export function Welcome() {'],
+  ['', '  return ('],
+  ['t', '    <YStack space="$4" padding="$4">'],
+  ['t', '      <Text size="$8">Hello, Hanzo</Text>'],
+  ['t', '      <Button>Get started</Button>'],
+  ['t', '    </YStack>'],
+  ['', '  )'],
+  ['k', '}'],
+];
+
+/* The signature (compare): one window, a divider the visitor drags across it. Left of the divider is the one source
+   Hanzo's code writes; right of it is what that source renders on a platform (the platform turns by itself while the
+   window is on screen: iOS, Android, Web, Desktop). Mouse and touch drag the divider anywhere in the window; the
+   handle is a slider (arrow keys 5%, Home/End). On arrival it glides once to show it moves; reduced motion rests at 50%. */
+function Compare() {
   const box = useRef(null);
-  const [step, setStep] = useState(-1);
-  const [hold, setHold] = useState(false);
-  const [seen, live] = useLive(0.15);
-  const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => setStep(p <= 0.002 ? -1 : Math.min(4, Math.floor((p / 0.94) * 5))));
-  const intro = useCycle(live && !hold && step === -1);
-  const wave = useCycle(live && !hold && step === 4, 1500, WAVE);
-  const v = step === -1 ? intro : step === 4 ? wave : step === 1 ? PRESETS[2] : PRESETS[0];
-  const lit = Math.max(step, 0);
+  const wrap = useRef(null);
+  const [x, setX] = useState(50);
+  const [p, setP] = useState(0);
+  const touched = useRef(false);
+  const [seen, live] = useLive(0.3);
+  useEnter(wrap);
+  useEffect(() => {
+    if (!live) return;
+    const t = setTimeout(() => setP((n) => (n + 1) % PLAT.length), 2400);
+    return () => clearTimeout(t);
+  }, [live, p]);
+  // the one invitation: the divider glides 50 → 34 → 66 → 50 the first time the window is on screen
+  useEffect(() => {
+    if (!live || touched.current) return;
+    const steps = [34, 66, 50];
+    const ts = steps.map((s, i) => setTimeout(() => { if (!touched.current) setX(s); }, 900 + i * 700));
+    return () => ts.forEach(clearTimeout);
+  }, [live]);
+  const at = (clientX) => {
+    const b = box.current.getBoundingClientRect();
+    setX(Math.max(0, Math.min(100, ((clientX - b.left) / b.width) * 100)));
+  };
+  const down = (e) => {
+    touched.current = true;
+    box.current.dataset.dragging = '';
+    box.current.setPointerCapture?.(e.pointerId);
+    at(e.clientX);
+  };
+  const move = (e) => { if (box.current.dataset.dragging !== undefined) at(e.clientX); };
+  const up = () => { if (box.current) delete box.current.dataset.dragging; };
+  const key = (e) => {
+    const d = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5 }[e.key];
+    if (d !== undefined) { e.preventDefault(); touched.current = true; setX((v) => Math.max(0, Math.min(100, v + d))); }
+    if (e.key === 'Home') { e.preventDefault(); touched.current = true; setX(0); }
+    if (e.key === 'End') { e.preventDefault(); touched.current = true; setX(100); }
+  };
+  const k = PLAT[p][2];
   return (
-    <section ref={box} className="gu-run" aria-labelledby="gu-run-h" data-step={step}>
-      <div ref={seen} className="gu-run-pin">
-        <Settle className="bz-wrap gu-stage">
-          <Bar v={v} hold={hold} setHold={setHold} off={step !== -1 && step !== 4} />
-          <Four v={v} step={step} cls="gu-hero-four" />
-          <ul className="gu-prims x-mono" aria-hidden="true">{PRIMS.map((t) => <li key={t} className={PRIMS_USED.includes(t) ? 'on' : ''}>{t}</li>)}</ul>
-        </Settle>
-        <div className="bz-wrap gu-run-copy">
-          <h2 id="gu-run-h" className="bz-headline gu-run-h">Build it once. Ship it everywhere.</h2>
-          <ol className="gu-run-list">
-            {PROPS.slice(0, 5).map(([t, d], i) => (
-              <li key={t} className={'gu-run-i' + (lit === i ? ' on' : '')} aria-current={lit === i && step >= 0 ? 'step' : undefined}>
-                <h3 className="gu-run-t">{t}</h3>
-                <p className="bz-body">{d}</p>
-                <p className="gu-run-n x-mono">{`${String(i + 1).padStart(2, '0')} / ${String(PROPS.length).padStart(2, '0')}`}</p>
-              </li>
-            ))}
-          </ol>
+    <div ref={wrap} className="bz-wrap gu-cmp-wrap" data-entrance="split-merge">
+      <div ref={(n) => { box.current = n; seen.current = n; }} className="gu-cmp" style={{ '--x': x + '%' }}
+        onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+        <div className="gu-cmp-b" aria-hidden="true">
+          <div className="gu-cmp-dev" data-k={k}><PlatScreen k={k} v={PRESETS[1]} /></div>
+          <p className="gu-cmp-plat x-mono">{PLAT.map(([n, , kk]) => <span key={kk} className={kk === k ? 'on' : ''}>{n}</span>)}</p>
+        </div>
+        <div className="gu-cmp-a" aria-hidden="true">
+          <pre className="x-mono">{SRC.map(([c, l], i) => <span key={i} className={c ? 'gu-src-' + c : ''}>{l + '\n'}</span>)}</pre>
+        </div>
+        <div className="gu-cmp-h" role="slider" tabIndex={0} aria-labelledby="gu-run-h" aria-valuemin={0} aria-valuemax={100}
+          aria-valuenow={Math.round(x)} onKeyDown={key}>
+          <i aria-hidden="true" />
         </div>
       </div>
+    </div>
+  );
+}
+
+/* Each chapter's own object: what the one component turns into for that idea. */
+function ChapterObj({ i, live }) {
+  const wave = useCycle(live, 1500, WAVE);
+  if (i === 0) return (
+    <ul className="gu-ch-targets">{PLAT.map(([t, s, k]) => <li key={k}><b>{t}</b><span className="x-mono">{s}</span></li>)}</ul>
+  );
+  if (i === 1) return <div className="gu-ch-pair"><Welcome v={PRESETS[0]} /><Welcome v={PRESETS[2]} /></div>;
+  if (i === 2) return <div className="gu-ch-flat"><Flat v={PRESETS[1]} /></div>;
+  if (i === 3) return (
+    <div className="gu-ch-parts"><Welcome v={PRESETS[0]} parts />
+      <ul className="gu-ch-prims x-mono">{PRIMS.map((p) => <li key={p} className={PRIMS_USED.includes(p) ? 'on' : ''}>{p}</li>)}</ul></div>
+  );
+  return <div className="gu-ch-wave"><Welcome v={wave} /></div>;
+}
+
+function Chapter({ i, t, d }) {
+  const [ref, live] = useLive(0.4);
+  return (
+    <li ref={ref} className="gu-ch" style={{ '--i': i }}>
+      <div className="gu-ch-copy">
+        <h3 className="gu-ch-t">{t}</h3>
+        <p className="bz-body">{d}</p>
+        <p className="gu-ch-n x-mono">{`${String(i + 1).padStart(2, '0')} / ${String(PROPS.length).padStart(2, '0')}`}</p>
+      </div>
+      <div className="gu-ch-obj"><ChapterObj i={i} live={live} /></div>
+    </li>
+  );
+}
+
+/* Build it once: the signature, then the five chapters as plain rows that lean with the scroll. */
+function Build() {
+  const list = useRef(null);
+  useEnter(list);
+  useVelocitySkew(list);
+  return (
+    <section className="bz-sec gu-build" aria-labelledby="gu-run-h">
+      <div className="bz-wrap gu-build-top">
+        <h2 id="gu-run-h" className="bz-headline">Build it once. Ship it everywhere.</h2>
+      </div>
+      <Compare />
+      <ol ref={list} className="bz-wrap gu-chs" data-entrance="velocity-skew">
+        {PROPS.slice(0, 5).map(([t, d], i) => <Chapter key={t} i={i} t={t} d={d} />)}
+      </ol>
     </section>
   );
 }
@@ -230,9 +330,13 @@ function Editor() {
     setDraft((d) => ({ ...d, [k]: val }));
     if (OK(k, val)) setV((o) => ({ ...o, [k]: val }));
   };
+  // a chip sets the token and clears anything typed: the field only ever holds what the visitor typed
+  const pick = (k, val) => { setDraft((d) => ({ ...d, [k]: undefined })); setV((o) => ({ ...o, [k]: val })); };
   const bad = Object.entries(draft).filter(([k, val]) => !OK(k, val));
+  const room = useRef(null);
+  useEnter(room);
   return (
-    <section className="bz-sec gu-api" data-room="dark" aria-labelledby="gu-api-h">
+    <section ref={room} className="bz-sec gu-api" data-room="dark" aria-labelledby="gu-api-h" data-entrance="domino">
       <div className="bz-wrap bz-grid gu-api-top">
         <h2 id="gu-api-h" className="bz-headline">The shorthands are the API</h2>
         <p className="bz-body">{PROPS[5][1]}</p>
@@ -245,17 +349,21 @@ function Editor() {
               <label className="x-mono" id={'gu-lb-' + k} htmlFor={'gu-in-' + k}>{k}=</label>
               <div className="gu-opts" role="radiogroup" aria-labelledby={'gu-lb-' + k}>
                 {Object.keys(TOK[k]).map((o) => (
-                  <button key={o} type="button" role="radio" aria-checked={v[k] === o && !(draft[k] && !OK(k, draft[k]))} onClick={() => set(k, o)} className="x-mono">{o}</button>
+                  <button key={o} type="button" role="radio" aria-checked={v[k] === o && !(draft[k] && !OK(k, draft[k]))} onClick={() => pick(k, o)} className="x-mono">{o}</button>
                 ))}
+                {/* the value the YStack takes right now, shown in the field that closes the row; type over it and a value
+                    that has drifted out of the design system fails the typecheck */}
+                <input id={'gu-in-' + k} className={'x-mono' + (draft[k] && !OK(k, draft[k]) ? ' bad' : '')} value={draft[k] ?? ''} placeholder={v[k]} onChange={(e) => set(k, e.target.value)} spellCheck="false" autoComplete="off" />
               </div>
-              <input id={'gu-in-' + k} className={'x-mono' + (draft[k] && !OK(k, draft[k]) ? ' bad' : '')} value={draft[k] ?? v[k]} onChange={(e) => set(k, e.target.value)} spellCheck="false" autoComplete="off" />
             </div>
           ))}
-          <p className="gu-ed-k x-mono">{'/>'}</p>
-          {/* the typecheck, by shape: a tick while every value is a token; a cross and the drifted value once one is not */}
-          <p className={'gu-tc x-mono' + (bad.length ? ' bad' : '')} aria-live="polite">
-            <i aria-hidden="true">{bad.length ? '✕' : '✓'}</i>
-            {bad.length > 0 && <s>{bad.map(([k, val]) => `${k}="${val}"`).join(' ')}</s>}
+          {/* the typecheck sits on the closing line, by shape: a tick while every value is a token; a cross and the drifted value once one is not */}
+          <p className="gu-ed-k gu-ed-end x-mono">
+            <span>{'/>'}</span>
+            <span className={'gu-tc' + (bad.length ? ' bad' : '')} aria-live="polite">
+              {bad.length > 0 && <s>{bad.map(([k, val]) => `${k}="${val}"`).join(' ')}</s>}
+              <i aria-hidden="true">{bad.length ? '✕' : '✓'}</i>
+            </span>
           </p>
         </div>
         <figure className="gu-api-one"><Dev k="web" v={v} /></figure>
@@ -282,10 +390,10 @@ export function Welcome() {
 /* Each platform's own screen, built only from the kit's words: iOS a sheet rising, Android a list of the primitives,
    Web a form, Desktop a split pane. `live` (in the opened panel) cycles the tokens so the screen keeps answering. */
 const PRIMS = ['Stack', 'XStack', 'YStack', 'Text', 'Button', 'Sheet', 'Dialog'];
-/* which chapter's words each opened platform carries: native for the phones, the primitives for the Android list,
-   compile-time CSS for the web, tokens for the desktop's split pane */
-const PANEL = { ios: 0, android: 3, web: 2, desk: 1 };
-function PlatScreen({ k, v }) {
+/* an opened platform carries only words that are about that platform: the web gets Hanzo's atomic-CSS sentence (its
+   own sub-label); the phones and the desktop carry their name and Hanzo's sub-label alone */
+const PANEL = { web: 2 };
+function PlatScreen({ k, v, wake }) {
   if (k === 'ios') return (
     <Dev k="ios" v={v}>
       <div className="gu-s gu-s-ios"><span className="gu-s-bars" aria-hidden="true"><i /><i /><i /></span>
@@ -294,12 +402,12 @@ function PlatScreen({ k, v }) {
   );
   if (k === 'android') return (
     <Dev k="android" v={v}>
-      <div className="gu-s gu-s-list">{PRIMS.slice(0, 5).map((t, i) => <span key={t} className={'gu-li' + (i === 2 ? ' on' : '')}><b>{t}</b><i aria-hidden="true" /></span>)}</div>
+      <div className="gu-s gu-s-list">{PRIMS.slice(0, 5).map((t, i) => <span key={t} className={'gu-li' + (i === (wake ? 4 : 2) ? ' on' : '')}><b>{t}</b><i aria-hidden="true" /></span>)}</div>
     </Dev>
   );
   if (k === 'web') return (
     <Dev k="web" v={v}>
-      <div className="gu-s gu-s-form"><span className="gu-t">Hello, Hanzo</span><span className="gu-field" aria-hidden="true"><i /></span><span className="gu-field short" aria-hidden="true" /><span className="gu-b gu-b-solid">Get started</span></div>
+      <div className={'gu-s gu-s-form' + (wake ? ' wake' : '')}><span className="gu-t">Hello, Hanzo</span><span className="gu-field" aria-hidden="true"><i /></span><span className="gu-field short" aria-hidden="true" /><span className="gu-b gu-b-solid">Get started</span></div>
     </Dev>
   );
   return (
@@ -324,35 +432,57 @@ function useBackCloses(ref) {
     let ours = false;
     const layer = () => box.querySelector('.bz-open-layer');
     const pop = () => { if (!ours) return; ours = false; layer()?.querySelector('.bz-open-x')?.click(); };
+    // while a card flies to its sheet and back, its own content is hidden and fades back once it has landed,
+    // so nothing inside it is stretched by the morph (a crossfade, not a counter-scale)
+    let t;
     const mo = new MutationObserver(() => {
       const open = !!layer();
-      if (open && !ours) { ours = true; history.pushState({ guOpen: 1 }, ''); }
-      else if (!open && ours) { ours = false; if (history.state?.guOpen) history.back(); }
+      if (open && !ours) { ours = true; clearTimeout(t); box.classList.add('gu-morph'); history.pushState({ guOpen: 1 }, ''); }
+      else if (!open && ours) { ours = false; clearTimeout(t); t = setTimeout(() => box.classList.remove('gu-morph'), 640); if (history.state?.guOpen) history.back(); }
     });
     mo.observe(box, { childList: true, subtree: true });
     addEventListener('popstate', pop);
-    return () => { mo.disconnect(); removeEventListener('popstate', pop); };
+    return () => { clearTimeout(t); mo.disconnect(); removeEventListener('popstate', pop); };
   }, [ref]);
 }
 
-/* A card's device tilts toward the pointer (2.5° at most, fine pointers only, flat on leave). */
-function Tilt({ children }) {
+/* A card's device: it tilts toward the pointer (2.5° at most, fine pointers only, flat on leave), and wakes while the
+   card is pointed at or focused: its props take the next state once (the list moves to Button, the form fills). */
+function CardDev({ k }) {
   const ref = useRef(null);
+  const [wake, setWake] = useState(false);
   useEffect(() => {
     const el = ref.current, card = el && el.closest('.gu-plat');
-    if (!card || !matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const move = (e) => { const r = card.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5; el.style.transform = `perspective(900px) rotateY(${(x * 5).toFixed(2)}deg) rotateX(${(-y * 5).toFixed(2)}deg)`; };
-    const leave = () => { el.style.transform = ''; };
-    card.addEventListener('pointermove', move); card.addEventListener('pointerleave', leave);
-    return () => { card.removeEventListener('pointermove', move); card.removeEventListener('pointerleave', leave); };
+    if (!card) return;
+    const on = () => setWake(true), off = () => setWake(false);
+    card.addEventListener('focus', on); card.addEventListener('blur', off);
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!fine) return () => { card.removeEventListener('focus', on); card.removeEventListener('blur', off); };
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const move = (e) => {
+      if (calm) return;
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      el.style.transform = `perspective(900px) rotateY(${(x * 5).toFixed(2)}deg) rotateX(${(-y * 5).toFixed(2)}deg)`;
+    };
+    const enter = () => setWake(true);
+    const leave = () => { el.style.transform = ''; setWake(false); };
+    card.addEventListener('pointerenter', enter); card.addEventListener('pointermove', move); card.addEventListener('pointerleave', leave);
+    return () => {
+      card.removeEventListener('focus', on); card.removeEventListener('blur', off);
+      card.removeEventListener('pointerenter', enter); card.removeEventListener('pointermove', move); card.removeEventListener('pointerleave', leave);
+    };
   }, []);
-  return <span ref={ref} className="gu-plat-dev" aria-hidden="true">{children}</span>;
+  return <span ref={ref} className="gu-plat-dev" aria-hidden="true"><PlatScreen k={k} v={wake ? PRESETS[1] : PRESETS[0]} wake={wake} /></span>;
 }
 
 /* Drop it in: the install and the code, and the four platforms as cards that open into their device. */
 function Ship() {
   const box = useRef(null);
+  const lens = useRef(null);
   useBackCloses(box);
+  useEnter(lens);
+  useLens(lens);
   return (
     <section ref={box} className="bz-sec gu-ship" aria-labelledby="gu-ship-h">
       <div className="bz-wrap bz-grid gu-ship-top">
@@ -364,18 +494,20 @@ function Ship() {
           <Code tabs={[{ k: 'terminal', code: CODE }]} light mark="pnpm add @hanzo/gui" />
         </div>
       </div>
-      <div className="bz-wrap">
+      <div ref={lens} className="bz-wrap gu-lens-wrap" data-entrance="cursor-lens">
+        <i className="gu-lens" aria-hidden="true" />
         <BizOpen className="gu-plats" cardClass="gu-plat" items={PLAT.map(([t, s, k]) => ({
           id: k,
           className: 'gu-plat-' + k,
-          card: <><Tilt><PlatScreen k={k} v={PRESETS[0]} /></Tilt><span className="gu-plat-t"><b>{t}</b><span>{s}</span></span></>,
+          /* the sub-label and, on hover or focus, the props the woken device has just taken share one line */
+          card: <><CardDev k={k} /><span className="gu-plat-t"><b>{t}</b><span className="gu-plat-sw"><span className="gu-plat-s">{s}</span><span className="gu-plat-p x-mono" aria-hidden="true">{['p', 'bg', 'rounded'].map((p) => <span key={p}>{p}="{PRESETS[1][p]}"</span>)}</span></span></span></>,
           panel: (
             <div className="gu-pp">
               <PlatLive k={k} />
               <div className="gu-pp-copy">
                 <h3 className="bz-headline">{t}</h3>
                 <p className="gu-pp-s x-mono">{s}</p>
-                <p className="bz-body">{PROPS[PANEL[k]][1]}</p>
+                {PANEL[k] !== undefined && <p className="bz-body">{PROPS[PANEL[k]][1]}</p>}
               </div>
             </div>
           ),
@@ -410,8 +542,10 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 
 /* The close: one sentence at Display size, the one ask, one text row. */
 function End() {
+  const ref = useRef(null);
+  useGrowFromPoint(ref);
   return (
-    <section className="bz-sec gu-end" aria-labelledby="gu-end-h">
+    <section ref={ref} className="bz-sec gu-end" aria-labelledby="gu-end-h" data-entrance="grow-from-point">
       <div className="bz-wrap">
         <div className="gu-end-main">
           <h2 id="gu-end-h" className="bz-display md">The design system that ships your product</h2>
@@ -428,7 +562,7 @@ export default function Gui() {
     <main className="bz gu">
       <span data-ask-name="Hanzo GUI" hidden />
       <Hero />
-      <Run />
+      <Build />
       <Editor />
       <Ship />
       <GetGui />

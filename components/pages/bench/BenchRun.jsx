@@ -104,13 +104,117 @@ function readout(c, i, col = 0) {
 }
 const rowsOf = (c) => (!c ? 0 : c.kind === 'trend' ? c.points.length : c.kind === 'one' ? 1 : c.rows.length);
 
-/* bar widths: to scale from zero, or on a log scale when the figures span orders of magnitude */
-function scaler(vals) {
+/* bar widths: to scale from zero, or on a log scale when the figures span orders of magnitude; inv turns a width back
+   into the figure it stands for (the race's counters read it) */
+function scaleOf(vals) {
   const v = vals.filter((x) => x != null && x > 0);
-  if (!v.length) return () => 0;
+  if (!v.length) return { w: () => 0, inv: () => 0 };
   const lo = Math.min(...v), hi = Math.max(...v);
-  if (hi / lo > 50) { const a = Math.log10(lo), b = Math.log10(hi); return (x) => (x > 0 ? (Math.log10(x) - a + 0.25) / (b - a + 0.25) : 0); }
-  return (x) => (x > 0 ? x / hi : 0);
+  if (hi / lo > 50) {
+    const a = Math.log10(lo), b = Math.log10(hi), k = b - a + 0.25;
+    return { w: (x) => (x > 0 ? (Math.log10(x) - a + 0.25) / k : 0), inv: (p) => (p > 0 ? Math.pow(10, p * k + a - 0.25) : 0) };
+  }
+  return { w: (x) => (x > 0 ? x / hi : 0), inv: (p) => p * hi };
+}
+const scaler = (vals) => scaleOf(vals).w;
+
+/* ---------- the race: every lane leaves the start together on one clock, at the true ratio of its figure, and stops
+   on its own value; the counters on the lanes (and the card's big figure) count with it ---------- */
+const NUMRE = /\d[\d,]*(?:\.\d+)?/;
+const FS = ' '; // figure space: a counting number keeps its finished width (tabular numerals), nothing jumps
+function counted(s, f) {
+  const m = NUMRE.exec(s);
+  if (!m || f >= 1) return s;
+  const raw = m[0], n = parseFloat(raw.replace(/,/g, ''));
+  let dec = (raw.split('.')[1] || '').length;
+  if (!dec && n < 10) dec = 1; // "~1 MB" counts through tenths rather than sitting at 0 for the whole race
+  const x = n * Math.max(0, f);
+  let t = raw.includes(',') ? x.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : x.toFixed(dec);
+  if (t.length < raw.length) t = FS.repeat(raw.length - t.length) + t;
+  return s.slice(0, m.index) + t + s.slice(m.index + raw.length);
+}
+const setText = (el, s) => { if (el && el.firstChild && el.firstChild.nodeType === 3 && el.firstChild.nodeValue !== s) el.firstChild.nodeValue = s; };
+const clock = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+
+/* the lanes of the card as it is drawn now: [element, final width, counter element, figure, fraction(p)] */
+function lanesOf(box, c, col) {
+  const out = [];
+  if (c.kind === 'bars') {
+    const sc = scaleOf(c.rows.map((r) => r.cells[col].v));
+    box.querySelectorAll('.xbr-bars li').forEach((li, i) => {
+      const cell = c.rows[i] && c.rows[i].cells[col];
+      if (!cell) return;
+      const w = Math.max(0.004, sc.w(cell.v));
+      out.push({ i, bar: li.querySelector('.xbr-bar'), w, val: li.querySelector('.xbr-v'), s: cell.s, frac: (p) => (cell.v ? sc.inv(Math.min(p, w)) / cell.v : 1) });
+    });
+  } else if (c.kind === 'versus') {
+    box.querySelectorAll('.xbr-bars li').forEach((li, i) => {
+      const r = c.rows[i];
+      if (!r) return;
+      const hi = Math.max(r.a.v, r.b.v) || 1;
+      [['a', '.ba', '.va'], ['b', '.bb', '.vb']].forEach(([k, b, v]) => {
+        const w = Math.max(0.004, r[k].v / hi);
+        out.push({ i: k === 'a' ? i : -1, bar: li.querySelector('.xbr-bar' + b), w, val: li.querySelector('.xbr-v' + v), s: r[k].s, frac: (p) => Math.min(p, w) / w });
+      });
+    });
+  } else if (c.kind === 'one') {
+    const m = NUMRE.exec(c.s);
+    const n = m ? parseFloat(m[0].replace(/,/g, '')) : 1;
+    const unit = Math.pow(10, Math.ceil(Math.log10(n || 1)));
+    const w = Math.max(0.004, n / unit);
+    out.push({ i: 0, bar: box.querySelector('.xbr-one-k'), w, val: box.querySelector('.xbr-one-v'), s: c.s, frac: (p) => Math.min(p, w) / w });
+    out.push({ i: -1, bar: box.querySelector('.xbr-one-u'), w: 1, frac: () => 1 });
+  }
+  return out;
+}
+
+/* run the race once over the card in `box`; returns a function that stops it at the finish */
+function runRace(box, c, col, own, done) {
+  const trend = c.kind === 'trend';
+  const D = trend ? 2300 : c.kind === 'one' ? 2400 : 2700;
+  let raf = 0, t0 = 0, over = false;
+  const ro = () => { const els = box.querySelectorAll('.xbr-ro-v'); const el = els[els.length - 1]; return el && el.getAttribute('data-k') === String(own) ? el : null; };
+  let frame;
+  if (trend) {
+    const n = c.points.length, span = c.hi - c.lo || 1;
+    const X = (i) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v) => ((v - c.lo) / span) * 100;
+    const lis = [...box.querySelectorAll('.xbr-tr-pts li')];
+    const path = box.querySelector('.xbr-tr-line path');
+    // the revisions rise off the axis together along their dates; the line between them takes its shape as they climb
+    frame = (p) => {
+      const cur = c.points.map((pt) => Math.min(c.lo + p * span, pt.v));
+      lis.forEach((li, i) => { li.style.bottom = Y(cur[i]) + '%'; setText(li.querySelector('.xbr-tr-val'), counted(c.points[i].val, cur[i] / c.points[i].v)); });
+      if (path) path.setAttribute('d', cur.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - Y(v)).toFixed(2)).join(' '));
+      const r = ro(), o = c.points[own];
+      if (r && o) setText(r, counted(o.val, cur[own] / o.v));
+    };
+  } else {
+    const lanes = lanesOf(box, c, col);
+    frame = (p) => {
+      lanes.forEach((l) => {
+        if (l.bar) l.bar.style.setProperty('--xbr-r', Math.min(p, l.w));
+        if (l.val) setText(l.val, counted(l.s, p >= l.w ? 1 : l.frac(p)));
+      });
+      const r = ro(), o = lanes.find((l) => l.i === own);
+      if (r && o) setText(r, counted(o.s, p >= o.w ? 1 : o.frac(p)));
+    };
+  }
+  const end = () => {
+    if (over) return;
+    over = true;
+    cancelAnimationFrame(raf);
+    frame(1);
+    done();
+  };
+  frame(0);
+  const tick = (t) => {
+    if (!t0) t0 = t;
+    const k = Math.min(1, (t - t0) / D);
+    frame(clock(k));
+    if (k < 1) raf = requestAnimationFrame(tick); else end();
+  };
+  raf = requestAnimationFrame(tick);
+  return end;
 }
 const isLog = (vals) => { const v = vals.filter((x) => x != null && x > 0); return v.length > 1 && Math.max(...v) / Math.min(...v) > 50; };
 
@@ -132,7 +236,7 @@ function Readout({ c, walk, col = 0 }) {
       <span className="xbr-ro-l">{r[0]}</span>
       <span className="xbr-ro-vw">
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.b key={k + '|' + col + '|' + r[1]} className={'xbr-ro-v v2f-num' + (r[1].length > 10 ? ' long' : r[1].length > 7 ? ' mid' : '')} initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.28, ease: EASE } }} transition={{ duration: 0.6, ease: EASE }}>{r[1]}</motion.b>
+          <motion.b key={k + '|' + col + '|' + r[1]} data-k={k} className={'xbr-ro-v v2f-num' + (r[1].length > 10 ? ' long' : r[1].length > 7 ? ' mid' : '')} initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.28, ease: EASE } }} transition={{ duration: 0.6, ease: EASE }}>{r[1]}</motion.b>
         </AnimatePresence>
       </span>
       <span className="xbr-ro-s x-mono">{r[2]}</span>
@@ -141,13 +245,15 @@ function Readout({ c, walk, col = 0 }) {
 }
 const hoverRow = (k) => dispatchEvent(new CustomEvent('xbr-hover', { detail: k }));
 
-/* pause or replay the playhead (WCAG 2.2.2: anything that moves for more than 5 s can be stopped) */
-function Walker({ walk, n }) {
-  const playing = usePlaying(walk);
+/* stop the race and the playhead, or run the race again (WCAG 2.2.2: anything that moves for more than 5 s can be
+   stopped) */
+function Walker({ walk, racing, onStop, onReplay }) {
+  const walking = usePlaying(walk);
   const calm = useReducedMotion();
-  if (calm || n < 2) return null;
+  const playing = racing || walking;
+  if (calm) return null;
   return (
-    <button type="button" className="xbr-walk" aria-label={ui(playing ? 'pause' : 'replay')} aria-pressed={!playing} onClick={() => (playing ? walk.stop() : walk.start(n))}>
+    <button type="button" className="xbr-walk" aria-label={ui(playing ? 'pause' : 'replay')} aria-pressed={!playing} onClick={() => (playing ? onStop() : onReplay())}>
       {playing
         ? <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M7 4.5v11M13 4.5v11" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
         : <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M15.5 10a5.5 5.5 0 1 1-1.6-3.9M15.5 4v3.6h-3.6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>}
@@ -155,30 +261,59 @@ function Walker({ walk, n }) {
   );
 }
 
-/* ---------- the signature: the table that turns into its chart ---------- */
+/* ---------- the signature: the race. Hanzo's own table turns into lanes that leave the start together and run at the
+   true ratios of the page's figures (on a log scale where they span orders of magnitude), then settle on Hanzo's
+   value; Kai's revisions climb off the axis together along their dates; a single figure counts up against its own
+   unit. The replay control runs it again; reduced motion shows the finish. ---------- */
 function Turn({ c, walk, slug }) {
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const [chart, setChart] = useState(false);
   const [col, setCol] = useState(0);
+  const [armed, setArmed] = useState(false); // lanes held on the start line, then racing
+  const [won, setWon] = useState(0);
   const turned = useRef(false);
+  const stopRace = useRef(null);
   const walkAt = useAt(walk);
   const pin = usePin(walk);
   const at = pin >= 0 ? pin : walkAt;
   const own = anchorOf(c);
+  const n = rowsOf(c);
+  const timers = useRef([]);
+  const later = (f, ms) => timers.current.push(setTimeout(f, ms));
+  useEffect(() => () => { timers.current.forEach(clearTimeout); stopRace.current && stopRace.current(); }, []);
+  // the race: arm (lanes back to the start), let the card turn or the dots fall to the axis, then run on one clock
+  const race = (k = col) => {
+    stopRace.current && stopRace.current();
+    timers.current.forEach(clearTimeout); timers.current = [];
+    walk.stop();
+    setChart(true);
+    setArmed(true);
+    later(() => {
+      if (!box.current) return;
+      stopRace.current = runRace(box.current, c, k, own, () => {
+        stopRace.current = null;
+        setArmed(false);
+        setWon((x) => x + 1);
+        play('done');
+        later(() => walk.start(n), 1600); // then the playhead reads the rows, as before
+      });
+    }, c.kind === 'trend' ? 700 : 260);
+  };
+  const halt = () => { if (stopRace.current) stopRace.current(); timers.current.forEach(clearTimeout); timers.current = []; walk.stop(); };
   useEffect(() => {
     if (calm) { setChart(true); return; }
     if (!seen || turned.current) return;
-    const t = setTimeout(() => { turned.current = true; setChart(true); }, 1100);
-    return () => clearTimeout(t);
-  }, [seen, calm]);
+    turned.current = true;
+    race();
+  }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
   const id = 'xbr-turn-' + slug;
   const view = (
     <div className="xbr-turn-v" role="group" aria-label="View">
       <span className="xbr-turn-vb" aria-hidden="true" style={{ transform: chart ? 'translateX(100%)' : 'none' }} />
       {[['table', false], ['chart', true]].map(([k, v]) => (
-        <button key={k} type="button" aria-pressed={chart === v} aria-label={ui(k)} onClick={() => { turned.current = true; setChart(v); }}>
+        <button key={k} type="button" aria-pressed={chart === v} aria-label={ui(k)} onClick={() => { turned.current = true; if (v) { if (!chart) race(); } else { halt(); setChart(false); } }}>
           {v ? <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 16.5h14M5.5 14V9M10 14V5M14.5 14v-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
             : <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>}
         </button>
@@ -193,9 +328,9 @@ function Turn({ c, walk, slug }) {
   if (c.kind === 'trend') {
     const n = c.points.length, span = c.hi - c.lo || 1;
     const X = (i) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v) => ((v - c.lo) / span) * 100;
-    const d = c.points.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - Y(p.v)).toFixed(2)).join(' ');
+    const d = c.points.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - (armed ? 0 : Y(p.v))).toFixed(2)).join(' ');
     body = (
-      <div className={'xbr-tr' + (chart ? ' chart' : '')}>
+      <div className={'xbr-tr' + (chart ? ' chart' : '') + (armed ? ' racing' : '')}>
         <div className="xbr-tr-axes" aria-hidden="true">
           {c.ticks.map((t) => <span key={t} className="xbr-tick" style={{ bottom: Y(parseFloat(t)) + '%' }}>{t}</span>)}
           {c.base && <span className="xbr-base" style={{ bottom: Y(c.base.v) + '%' }}><em>{c.base.s}</em></span>}
@@ -203,7 +338,7 @@ function Turn({ c, walk, slug }) {
         </div>
         <ol className="xbr-tr-pts">
           {c.points.map((p, i) => (
-            <motion.li key={p.s} layout={!calm} transition={SPRING} className={at % n === i ? 'lit' : ''} style={chart ? { left: X(i) + '%', bottom: Y(p.v) + '%' } : undefined}>
+            <motion.li key={p.s} layout={!calm} transition={SPRING} className={at % n === i ? 'lit' : ''} style={chart ? { left: X(i) + '%', bottom: (armed ? 0 : Y(p.v)) + '%' } : undefined}>
               <button type="button" aria-label={p.s} onClick={() => pick(i)} onPointerEnter={near(i)} onPointerLeave={away}>
                 <motion.span layout={calm ? false : 'position'} transition={SPRING} className="xbr-tr-who">{p.who}</motion.span>
                 <motion.span layout={calm ? false : 'position'} transition={SPRING} className="xbr-tr-val x-mono">{p.val}</motion.span>
@@ -219,11 +354,11 @@ function Turn({ c, walk, slug }) {
   } else if (c.kind === 'versus') {
     const s = c.rows.map((r) => Math.max(r.a.v, r.b.v) || 1);
     body = (
-      <div className={'xbr-bars vs' + (chart ? ' chart' : '')}>
+      <div className={'xbr-bars vs' + (chart ? ' chart' : '') + (armed ? ' racing' : '')}>
         <div className="xbr-bars-h x-mono"><span><i className="xbr-key a" />{c.heads[0]}</span><span><i className="xbr-key b" />{c.heads[1]}</span></div>
         <ul>
           {c.rows.map((r, i) => (
-            <li key={i} className={at % c.rows.length === i ? 'lit' : ''} onPointerEnter={near(i)} onPointerLeave={away} onClick={() => pick(i)}>
+            <li key={i} className={(at % c.rows.length === i ? 'lit' : '') + (i === own && won ? ' won' : '')} data-won={i === own ? won : undefined} onPointerEnter={near(i)} onPointerLeave={away} onClick={() => pick(i)}>
               <span className="xbr-bl">{r.label}</span>
               <i className="xbr-bar ba" style={{ '--xbr-w': Math.max(0.004, r.a.v / s[i]) }} /><b className="xbr-v va x-mono">{r.a.s}</b>
               <i className="xbr-bar bb" style={{ '--xbr-w': Math.max(0.004, r.b.v / s[i]) }} /><b className="xbr-v vb x-mono">{r.b.s}</b>
@@ -238,16 +373,16 @@ function Turn({ c, walk, slug }) {
     // the value column is as wide as its longest figure, so every bar runs on the same track and no figure wraps
     const vw = Math.max(...c.rows.map((r) => String(r.cells[col].s || '').length), 3) + 1;
     body = (
-      <div className={'xbr-bars' + (chart ? ' chart' : '')} style={{ '--xbr-vw': vw + 'ch' }}>
+      <div className={'xbr-bars' + (chart ? ' chart' : '') + (armed ? ' racing' : '')} style={{ '--xbr-vw': vw + 'ch' }}>
         {c.cols.length > 1 && (
           <div className="xbr-cols" role="group" aria-label={c.head0}>
-            {c.cols.map((k, j) => <button key={k.name} type="button" aria-pressed={col === j} onClick={() => { setCol(j); walk.stop(); play('tick'); turned.current = true; setChart(true); }}>{k.name}</button>)}
+            {c.cols.map((k, j) => <button key={k.name} type="button" aria-pressed={col === j} onClick={() => { setCol(j); play('tick'); turned.current = true; if (calm) setChart(true); else race(j); }}>{k.name}</button>)}
           </div>
         )}
         <div className="xbr-bars-h x-mono"><span>{c.head0}</span><span>{c.cols[col].name}{chart && isLog(vals) ? ' · ' + ui('log') : ''}</span></div>
         <ul>
           {c.rows.map((r, i) => (
-            <li key={i} className={(at % c.rows.length === i ? 'lit' : '') + (i === own ? ' own' : '') + (r.cells[col].v == null ? ' none' : '')} onPointerEnter={near(i)} onPointerLeave={away} onClick={() => pick(i)}>
+            <li key={i} className={(at % c.rows.length === i ? 'lit' : '') + (i === own ? ' own' : '') + (i === own && won ? ' won' : '') + (r.cells[col].v == null ? ' none' : '')} data-won={i === own ? won : undefined} onPointerEnter={near(i)} onPointerLeave={away} onClick={() => pick(i)}>
               <span className="xbr-bl">{r.label}</span>
               <i className="xbr-bar ba" style={{ '--xbr-w': Math.max(0.004, w(r.cells[col].v)) }} />
               <motion.b layout={calm ? false : 'position'} transition={SPRING} className="xbr-v va x-mono">{r.cells[col].s}</motion.b>
@@ -293,7 +428,7 @@ function Parts({ c, walk, j }) {
   const [x, y] = String(r.cells[j].s).trim().split(' of ').map(num);
   const cols = Math.ceil(Math.sqrt(y * 1.5));
   return (
-    <div ref={box} className="xbr-ch-v xbr-parts" data-on={seen ? '' : undefined} aria-hidden="true">
+    <div ref={box} className="xbr-ch-v xbr-parts" data-seen={seen ? '' : undefined} aria-hidden="true">
       <div className="xbr-parts-g" style={{ '--c': cols }}>
         {Array.from({ length: y }, (_, i) => <i key={i} className={i < x ? 'on' : ''} style={{ '--i': i }} />)}
       </div>
@@ -324,7 +459,7 @@ function Scale({ c, walk }) {
   } else return null;
   const r = readout(c, k);
   return (
-    <div ref={box} className="xbr-ch-v xbr-scale" data-on={seen ? '' : undefined} aria-hidden="true">
+    <div ref={box} className={'xbr-ch-v xbr-scale' + (c.kind === 'bars' ? ' xbr-bars-sq' : '')} data-seen={seen ? '' : undefined} aria-hidden="true">
       <div className="xbr-scale-b">
         {sq.map((q, i) => <i key={i} className={'xbr-sq ' + q.t} style={{ '--s': Math.max(0.012, q.s), '--i': i }} />)}
       </div>
@@ -403,6 +538,17 @@ function Facts({ n }) {
   );
 }
 
+/* the facts as a strip under the stage: its rules draw across, one after another, when it is reached */
+function FactsStrip({ n }) {
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.4, once: true });
+  return (
+    <section ref={box} className="xbr-facts-s" data-seen={seen ? '' : undefined} aria-label={clean(textOf(n.c.find((k) => k && k.t === 'dt')))}>
+      <div className="v2f-wrap"><Facts n={n} /></div>
+    </section>
+  );
+}
+
 /* ---------- beyond: ask the source ---------- */
 const ISO = (s) => (s ? s.replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : '');
 const Play = () => <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M7 4.5v11l9-5.5z" fill="currentColor" /></svg>;
@@ -420,7 +566,8 @@ function Typed({ text, delay = 0 }) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [text, delay, calm]);
-  return <span ref={ref}>{text}</span>;
+  // the finished text holds the room's height from the start (unseen), the typed text lies over it: nothing below moves
+  return <span className="xbr-ty"><span className="xbr-ty-g" aria-hidden="true">{text}</span><span ref={ref} className="xbr-ty-o">{text}</span></span>;
 }
 /* the reply as the page already transcribes it: the run ids the page links, then its own figures. It types itself once
    when the room is reached (a demo that plays and rests); a press replays it and, only if api.hanzo.ai answers within
@@ -650,11 +797,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
         )}
       </section>
 
-      {facts && (
-        <section className="xbr-facts-s" aria-label={clean(textOf(facts.n.c.find((k) => k && k.t === 'dt')))}>
-          <div className="v2f-wrap"><Facts n={facts.n} /></div>
-        </section>
-      )}
+      {facts && <FactsStrip n={facts.n} />}
 
       {lead && (
         <section className="xbr-figs v2f-sec" aria-labelledby={'xbr-latest-' + doc.slug}>

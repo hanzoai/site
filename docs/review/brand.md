@@ -1,38 +1,38 @@
 # /brand — James-eye review
 
-Verdict: 7/10
-First complaint: "I open it and it's a white page for a second or two. Then the title comes in, then the words, then the drawing. Show me the mark straight away."
+Verdict: 8/10
+First complaint: "The top half is lovely, the logo builds itself and the 01, 02, 03 scene is proper. Then Typography and Components go flat. It's a spec table and some boxes, it reads like a docs page."
 
-Walked 2026-11-07 16:45 UTC, HEAD ca765e59, at 1470x801 and 375x812 (first visit and reload, with screenshots at 0.2, 1, 3, 6 and 8 s and pixel-diffed; a wheel and touch scroll of the whole page; hover and press on the primary; a click or tap on all 17 controls in main, with the clipboard on and off; reduced motion; JS off; taste.py and parity.py).
+Walked 7 Nov 2026 16:55 UTC, HEAD 042dd418, at 1470x801 and 375x812 (isMobile, hasTouch). First screen captured at 0.2/1/3/6 s plus a reload, then wheel-scrolled the full page in 160px steps with about 0.65 s dwell. Hovered, pressed and tapped the hero asks, the pause button, the swatches, the White/Black toggle, the weight slider, the component buttons and the email copy. Also checked layout-shift entries, reduced motion (walked in the viewport, not only fullPage) and JS off. `taste.py` OK (2 files), `parity.py /brand` OK (text 76/76, links 4/4).
 
 ## What works
-- The hero is the mark's own construction drawing, full-bleed with no frame. The guides draw, the five pieces land, the compass keeps turning slowly (about 0.2 to 1.5% pixel change every 2 s after it settles) and the pieces lean toward the pointer. It has a pause control (aria-pressed toggles).
-- Principles are a real pinned scene. 01, 02 and 03 replace each other with one big numeral and its own material: a lone mark, the Brand Glow sphere, a grid of marks.
-- The colour room is black, with no hue anywhere. The gray strip opens from one bar into six. Swatches copy the real hex (verified on phone: `#404040`) and show a tick only when the copy succeeds. The White/Black contrast board has a gliding pill and draws its pass/fail as shapes.
-- The type specimen is the signature. A screen-filling "Aa" sweeps its weight once, then the slider is yours (895 to 189 on a tap). The scale rows answer on hover.
-- The components bench works: buttons press, the card hovers, and copying brand@hanzo.ai really copies.
-- The primary hover darkens (#0a0a0a to #2c2c2e) with no opacity fade. Press scales to 0.98 with no layout jump. "Download Assets" scrolls to #assets, and the header ask turns into "Download Assets" after the hero.
-- No console errors or page errors at either size. No horizontal scroll (scrollWidth equals the viewport). Nothing under 44px on phone. taste.py OK, parity 76/76 text, 4/4 links.
-- Reduced motion shows the final mark with nothing running (0 running animations after the walk). JS off is fully legible.
+- The hero object is the brand itself. The Hanzo mark sits on a construction grid with a tick-ring, breaks into its five pieces and reassembles, and a construction line keeps rotating. Pixel change is about 5% per second through the first 6 s, and it still drifts at idle (0.2%/1.5 s). It is not dead.
+- The pinned "Minimal / Elegant / Consistent" stage is one idea per screen. A huge 01, 02 or 03 shares the screen with one object each (the mark, a chrome sphere, a 4x4 mark grid) while the panel changes. That is real one-in-one-out.
+- The colour section is a working tool. Swatches widen on hover, the White/Black toggle flips the contrast list with a sliding pill (aria-pressed updates), and the stage goes true black to tell the story. Monochrome only; no hue anywhere.
+- The "Aa" weight slider changes the specimen live on desktop drag and on phone keyboard input.
+- Asks: "Download Assets" is solid black. On hover it lifts to #2c2c2e, on press it scales to 0.98, and the opacity stays at 1. On desktop the header ask becomes "Download Assets" once you scroll. "Press Kit" is a quiet outline.
+- No console errors or page errors at either size, with or without JS. CLS is about 0.0002 (header only), and the h1 box stays put once fonts load. There is no horizontal scroll (scrollWidth equals clientWidth at both sizes). There is no kicker above the h1 or any h2.
+- With JS off, every section is legible and fully laid out. With reduced motion, the hero and every section show their final state when walked.
 
 ## The 11 answers
-1. It sells within 5 s: the name, a one-line lede, Download Assets and the mark. Not within 1 s. On a first visit at 1470 the stage was empty at 0.2, 1 and even 3 s in one run (0% change). On a reload the h1 only starts to cut in at about 1.5 s, the lede reaches full opacity at about 2.1 s and the drawing comes after that. The MaskLines h1 waits 0.5 s plus the curtain, the lede waits for `useArrived()` plus 0.45 s, and the drawing waits for the same gate. Even on a fast production load, nothing is on screen for at least the first half second. Phone was better (the h1 was there at 1 s) but showed nothing else.
-2. It is mostly one-in-one-out. The hero, then the pinned 01/02/03, then the colour room, the specimen, the bench and the assets each take their own screen. The colour room runs long on desktop (about 2,300px: brand colours, grays, the board, gradients) and reads a little like a document there.
-3. Yes. Every section has a real object: the drawing, the numerals with their marks or sphere, the swatches, the board, the gradients, the "Aa" specimen, live components, and the asset tiles with the marks.
-4. Yes. There is one solid ask, "Download Assets", and the header carries it after the hero. "Try Hanzo" is outlined while the hero ask is on screen. Nothing page-owned floats over content (the cookie card is shared). The scale has rhythm: one big thing per screen (the numerals, "Aa"), 44px heads, 26px h3s, small mono captions.
-5. Yes on every control in main. The gray swatches give no visible feedback when the clipboard is blocked. That is by design: no fake "Copied".
-6. No overlap, clipping or horizontal scroll at either size. The off-screen SVG guides are clipped by the hero. There is no font swap. The blank-then-cut-in hero is a delayed entrance, not a layout shift.
-7. It feels like apple.com product pages (the pinned principles, one idea per screen) with an osply/hamol editorial specimen. Both motions are present.
-8. Yes. The hero medium is a construction drawing, not a photo, card or terminal, and the signature (the variable-weight specimen) is its own.
-9. Mostly covered. Parts 1 to 12 are visible on the page. Part 17 is good with JS off. I did not audit the coverage card.
-10. No banned tells: no hue, no eyebrow over a headline, no gradient text, no fade-on-hover. The contrast board is 3 equal tiles per row across two rows on desktop. It reads as a results grid, not "three icon boxes", but it is the closest thing to the tell.
-11. The copy is untouched (parity 76/76, 4/4).
-
-Shared (not counted): the cookie consent card sits over the lower hero and over every phone screen until it is dismissed, and the arrival curtain gates the hero.
+1. Yes. The title, the sub and two asks are readable at once, and the mark starts assembling inside 1 s.
+2. Through Principles and Colour, yes: a pinned stage, then a black colour scene. From Typography down it becomes a document: a sticky left title beside a long right-hand table, then Components as a grid of boxes.
+3. Mostly. The hero mark, the 01-03 objects, the swatches and toggle, the Aa specimen and the asset tiles all count. The Typography table is text rows. Components is live buttons and badges, which is honest but plain.
+4. One ask, in Hanzo's words, sits in the header ("Try Hanzo", which becomes "Download Assets" on desktop scroll). Scale has rhythm in the top half: one huge numeral, a medium heading, small body. The lower half is all medium. The only thing floating over content is the shared cookie banner (not counted). On phone it covers about a quarter of the screen until dismissed.
+5. Hover and press answer: the asks, the swatches (widen), the type rows (rule darkens), the ghost and primary buttons (background change, no fade) and the toggle. On swatch and email copy I saw no visible "copied" confirmation. Headless clipboard may be blocked, so recheck in a real browser.
+6. I found no overlap or clipping at rest at either size. One mid-scroll frame on phone caught the toggle pill partway through its slide, offset from its label; at rest it is aligned. With reduced motion on desktop, the gray strip still sits transformed (translateX -313px) until it is scrolled into view, so it still animates in.
+7. The top half is apple.com product-page logic: a pinned scene, huge numerals, the product (the mark) as hero. The construction-grid hero has some osply/hamol restraint. The lower half has no reference motion.
+8. Yes. Its hero medium is a self-building logo construction, and its signature is the 01/02/03 pinned stage plus the black colour lab. Unlikely to be confused with a neighbour.
+9. Visible parts are covered: skip link, progress bar, sticky header with sound toggle, hero, sections, ask band, contact, footer with ask bar, consent, no-JS, reduced motion. I did not audit the full 18 checklist line by line.
+10. No hue, gradient text, Inter, kicker, fading buttons or cursor glow. Borderline: the asset card's three equal logo tiles in a row, and the three gradient tiles (unequal widths, so it passes).
+11. Yes. Parity is 76/76 text and 4/4 links.
 
 ## Fixes (in order)
-1. Put something on the first frame. Server-render the drawing's guides and circle, already visible or drawing from 0 ms. Take the h1 delay from 0.5 s to about 0.1 s and stop gating the lede and actions on `useArrived()` plus 0.45 s, so the stage is never white. Re-check that the 0.2 s and 1 s frames differ at both sizes.
-2. With JS off, hide the hero pause button (`.xbr-pause`) or have the NOJS style remove it. It shows but does nothing.
-3. Tighten the desktop colour room so it reads as one scene, for example by letting the board replace the gray strip as you go rather than stacking. Consider an asymmetric board layout instead of a 3-across grid of equal tiles.
-4. Trim the roughly 200px of empty white between the assets band and the footer on desktop.
-5. Minor: in the 01 principle panel, the top and bottom hairlines start about 22px right of the panel's left edge. Align them.
+1. Give Typography a moment, not a table. Pin the "Aa" specimen and let each row (Heading 1 to Caption) set the specimen's size and weight as it passes, one in, one out, so the table scrubs the object instead of stacking under it.
+2. Make Components a stage rather than a box grid. Show one live component at a time (button, then card, then badge) with a real hover and press demo, or at least stagger and scale them so they are not all medium at once.
+3. Show a visible copied state (a check plus a tick sound) on swatch copy and on the email copy button, and confirm it in a real browser.
+4. Under reduced motion, render the gray strip and other scroll-revealed pieces in their final layout without the transform.
+5. Vary the three asset tiles (the active variant larger, or reveal them one by one on hover) so they do not read as three equal boxes.
+6. On phone the email copy button wraps onto its own line under the address; keep it inline.
+
+Shared (not counted): the cookie banner floats over content at both sizes, covering a lot of the phone screen until dismissed (`x-cookie`). The dev-server font preload warnings for Zen/ZenMono are not this page's own.
