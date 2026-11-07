@@ -1,61 +1,79 @@
 'use client';
-/* KeynoteStage: the Stage hero (VISION motion 2). Huge type plays in line by line; the hero object starts huge and
-   settles into its place as you scroll (scale and position only), like an apple.com product page.
+/* KeynoteStage: the Stage hero (VISION motion 2). Huge type cuts in line by line at first paint; the hero object
+   starts big and settles into its place as you scroll (scale and position only), like an apple.com product page.
    Owned by the Cloud 1 chat.
    Usage:
      <KeynoteStage kick="AI inference engine" title={['Hanzo Engine']} lede="…" acts={[['Get started', '/docs'], ['GitHub', url]]}
-                   look="split" from={1.32}>
+                   look="split" from={1.12} cta="engine.hero">
        <MyProductUI />
      </KeynoteStage>
    - look: 'split' (title on 8 columns, lede and actions on the right 4, the object full width below) or
            'side' (title and lede on 5 columns, the object on 7 bleeding to the right edge).
    - from: the object's starting scale (1.1–1.25). Phones use a gentler start automatically. Do not use motion
      layoutId/layout animations inside the object (the scroll scale breaks layout projection); use CSS state.
-   - acts: [label, to]; the first is the primary (magnetic, and the phone thumb bar's action). meta: a small line under.
-   - title: an array of lines. Keep each line 12–18 characters so it breaks strongly.
-   Reduced motion: the object is simply in place. Nothing animates off screen. */
-import { useRef } from 'react';
+   - acts: [label, to]; the first is the page's one ask (solid, magnetic, data-thumb for the sticky ask bar, data-cta).
+   - kick: Hanzo's small label. It is never set above the h1 (a banned tell); it sits under the actions with meta.
+   - pause: true gives the object Hanzo's pause control (WCAG 2.2.2). Read it in the demo with useStagePause() and run
+     JS loops only while !paused; CSS loops inside the object pause by themselves.
+   Everything on the first screen arrives by CSS at first paint, without waiting for the page's script; with JS off it
+   simply stands in place. Reduced motion: the object is in place. */
+import { createContext, useContext, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
-import { EASE, Magnetic } from '../ui';
+import { Magnetic } from '../ui';
 import { A } from '../kit';
 import KeynoteLines from './KeynoteLines';
 import { useWide } from './KeynoteChapters';
 import './Keynote.css';
 import './KeynoteStage.css';
 
-export default function KeynoteStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '' }) {
+const Paused = createContext(false);
+/* true while the visitor has paused the hero's live demo */
+export const useStagePause = () => useContext(Paused);
+
+export default function KeynoteStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '', cta = 'hero', pause = true }) {
   const sec = useRef(null);
   const calm = useReducedMotion();
   const wide = useWide();
+  const [paused, setPaused] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end start'] });
   const f = wide ? from : 1 + (from - 1) * 0.25;
   const scale = useTransform(p, [0, 0.42], [f, 1], { clamp: true });
-  const y = useTransform(p, [0, 0.42], [wide ? (look === 'side' ? '6%' : '8%') : '4%', '0%'], { clamp: true });
-  const fade = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 } };
+  const y = useTransform(p, [0, 0.42], [wide ? (look === 'side' ? '4%' : '5%') : '3%', '0%'], { clamp: true });
   return (
-    <section ref={sec} className={`kns ${look} ${className}`} data-morph-target="">
+    <section ref={sec} className={`kns ${look} ${className}`} data-morph-target="" data-paused={paused ? '' : undefined}>
       <div className="kn-wrap kn-grid kns-g">
         <div className="kns-t">
-          {kick && <motion.p className="kn-kick ac" {...(calm ? {} : fade)} transition={{ duration: 0.8, ease: EASE }}>{kick}</motion.p>}
-          <KeynoteLines as="h1" mount className={'kn-display ' + size} lines={title} delay={0.08} />
+          <KeynoteLines as="h1" mount className={'kn-display ' + size} lines={title} delay={0.04} />
         </div>
         <div className="kns-r">
-          {lede && <motion.p className="kn-lede" {...(calm ? {} : fade)} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>{lede}</motion.p>}
+          {lede && <p className="kn-lede kns-in" style={{ '--d': '.3s' }}>{lede}</p>}
           {acts.length > 0 && (
-            <motion.div className="kn-acts kns-acts" {...(calm ? {} : fade)} transition={{ duration: 0.9, ease: EASE, delay: 0.48 }}>
+            <div className="kn-acts kns-acts kns-in" style={{ '--d': '.42s' }}>
               {acts.map(([t, to], i) => i === 0
-                ? <Magnetic key={t} strength={0.22}><A to={to} className="kn-btn solid" data-thumb={t}>{t}</A></Magnetic>
+                ? <Magnetic key={t} strength={0.22}><A to={to} className="kn-btn solid" data-thumb={t} data-cta={cta}>{t}</A></Magnetic>
                 : <A key={t} to={to} className="kn-btn">{t}</A>)}
-            </motion.div>
+            </div>
           )}
-          {meta && <motion.div className="kns-meta" {...(calm ? {} : fade)} transition={{ duration: 0.9, ease: EASE, delay: 0.6 }}>{meta}</motion.div>}
+          {(kick || meta) && (
+            <div className="kns-meta kns-in" style={{ '--d': '.54s' }}>
+              {kick && <p className="kn-kick kns-k">{kick}</p>}
+              {meta}
+            </div>
+          )}
         </div>
         <div className="kns-obj-wrap">
-        <motion.div className="kns-obj-in" initial={calm ? false : { opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.25 }}>
-          <motion.div className="kns-obj" style={calm ? undefined : { scale, y }}>
-            {children}
-          </motion.div>
-        </motion.div>
+          <div className="kns-obj-in">
+            <motion.div className="kns-obj" style={calm ? undefined : { scale, y }}>
+              <Paused.Provider value={paused}>{children}</Paused.Provider>
+            </motion.div>
+          </div>
+          {pause && (
+            <button type="button" className="kn-pause kns-pause" aria-pressed={paused} aria-label={paused ? 'Play the demo' : 'Pause the demo'} onClick={() => setPaused((v) => !v)}>
+              {paused
+                ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
+                : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
+            </button>
+          )}
         </div>
       </div>
     </section>
