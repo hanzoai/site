@@ -3,10 +3,10 @@
 // Beyond: Cut the network: make an agent in the page, pin its model on your machine or on Hanzo Cloud, pull the wire and watch which one keeps running and where its keys and data stay
 // Persona: a developer who wants agents running on their own machine, with their own keys, offline if need be
 // Goal: see the app build something real in the first screen, then download it
-// CTA: "Download" (docs.hanzo.ai/docs/apps/desktop): the hero's one solid with data-thumb, the sticky ask bar, the closing band
+// CTA: "Download" (docs.hanzo.ai/docs/apps/desktop): the hero's one solid with data-thumb (the shared header carries it once the hero leaves), and the closing band's one solid
 // Metric: desktop_download (data-cta desktop-download, desktop-download-end)
 /* Hanzo Desktop (Launch: the app window is the hero).
-   V2: 8/10 round 2: deck scale (h1 52, heads 26); no labels over headlines; h1, lede, the one ask and the whole window fit 1470×801 and 375×812 and it starts building at once; one solid per screen, one closing band; Hanzo's own lines instead of placeholder bars; no springs, no floats, no shadows on objects; the black room opens from a card; hidden states scoped to JS; 44px phone targets
+   V2: 8/10 round 3: no bar or empty field left anywhere: the window's right pane is the file itself (gateway/limit.go, line by line) and the test run ("$ go test ./gateway", "Tests pass."); the chapter panes carry the job, MCP and "Local model" rows and real sub-lines that ink in over grey text; greys only, status as shape and word; JS off shows every word (notes open, spec inline); the page ends on "Download it and build one" with one solid
    Motion: signature = the window assembling and building (a step loop that stops off screen; the ask is written into a
    text node). Supporting: pinned chapters with wipes (components/v2/AppScenes), line-masked headline, magnetic ask.
    Greys only; every word is Hanzo's; the job in the window is Hanzo's example. */
@@ -50,8 +50,8 @@ const CODE = [
   'package gateway',
   '',
   '// 100 req/min per key',
-  'func Limit(next http.Handler) http.Handler {',
-  '  return rate.PerKey(100, time.Minute, next)',
+  'func Limit(h http.Handler) http.Handler {',
+  '  return rate.PerKey(100, time.Minute, h)',
   '}',
 ];
 

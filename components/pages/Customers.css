@@ -109,6 +109,9 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-st-dots { display: flex; gap: 6px; padding: 0 32px 28px; }
 .xcu-st-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .16); transition: background-color .3s, transform .3s var(--ease); }
 .xcu-st-dots i.on { background: var(--xi); transform: scale(1.35); }
+/* idle: the launch being read breathes in the stage's dot row while you read it (one slow mover in view) */
+.xcu-st-dots i.on::after { content: ''; display: block; width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 0 1px var(--xi); animation: xcu-breathe 2.4s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes xcu-breathe { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(2.6); opacity: 0; } }
 
 /* 3. backed by builders: a calm row of names, as live shows them, no boxes */
 .xcu-back { padding-top: clamp(96px, 10vw, 160px); }
@@ -178,5 +181,6 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 @media (prefers-reduced-motion: reduce) {
   .xcu-in, .xcu-in2 { animation: none; }
   .xcu-line u.run { animation: none; transform: scaleX(1); }
+  .xcu-st-dots i.on::after { animation: none; opacity: 0; }
   .xcu-row-f dt, .xcu-row-f dd { transform: none !important; transition: none; }
 }

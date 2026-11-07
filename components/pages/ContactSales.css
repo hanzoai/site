@@ -37,7 +37,10 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-progress b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
 /* every step shares one cell, so the stage is the tallest step's height from the start: nothing grows as you go */
 .xcs-stage { position: relative; display: grid; margin-top: 27px; }
-.xcs-step { grid-area: 1 / 1; align-self: start; }
+.xcs-step { grid-area: 1 / 1; align-self: start; position: relative; }
+/* the demo's typed answer: drawn over the empty first field, never its value (aria-hidden, no pointer) */
+.xcs-ghost { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; display: flex; align-items: center; padding: 0 17px; font: 400 16px/1.5 var(--sans); color: var(--ink); pointer-events: none; white-space: nowrap; overflow: hidden; }
+.xcs-chips li.xcs-demo-chip { color: var(--ink2); }
 .xcs-step label { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; cursor: text; }
 .xcs-q { font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; line-height: 1.1; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
 .xcs-choose { font-size: 17px; color: var(--muted); }
@@ -83,6 +86,10 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 /* 2. what Enterprise includes: five giant numerals you light and add to your enquiry */
 .xcs-inc-h { grid-column: 1 / 5; align-self: start; position: sticky; top: 120px; display: flex; flex-direction: column; gap: 28px; }
 .xcs-inc-l { grid-column: 5 / 13; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+/* every row presses (.98, 90ms) and a click or tap anywhere on it adds it; on a press the numeral inks at once */
+.xcs-inc-l li { cursor: pointer; -webkit-tap-highlight-color: transparent; transform-origin: 50% 50%; transition: transform var(--d-press) var(--e-out); }
+.xcs-inc-l li:active { transform: scale(.98); }
+.xcs-inc-l li:active .xcs-inc-n { color: var(--ink); transition-duration: var(--d-press); }
 .xcs-inc-l li { display: grid; grid-template-columns: clamp(120px, 13vw, 188px) minmax(0, 1fr) auto; align-items: center; gap: 27px; padding: 27px 0; border-top: 1px solid var(--line); }
 .xcs-inc-n { font: 220 clamp(72px, 9vw, 112px)/.9 var(--sans); letter-spacing: -.03em; color: #d4d4d4; transition: color var(--d-slow) var(--e-out), transform var(--d-base) var(--e-io); }
 .xcs-inc-l li.lit .xcs-inc-n { color: var(--muted); transform: translateX(10px); }

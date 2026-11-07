@@ -42,7 +42,8 @@ const PLACES = [
 
 /* ---------- the boundary: geometry ---------- */
 // The map is built at its closest zoom and scaled down, so the workspace is crisp when the camera arrives.
-const WIN = [640, 430], STEP = 64;
+// walls 48px apart (were 64) and a taller window: the first screen at 1470×801 now holds 240px+ of the log writing
+const WIN = [640, 470], STEP = 48;
 const MAP = [WIN[0] + STEP * 8, WIN[1] + STEP * 8];
 const ring = (i) => [MAP[0] - STEP * 2 * i, MAP[1] - STEP * 2 * i];
 const P0 = 0.15, L = (1 - P0) / 4; // the arrival, then four chapters
@@ -96,10 +97,11 @@ function Workspace({ at }) {
   const [n, setN] = useState(7);
   useEffect(() => {
     if (!seen || calm) return;
-    const ts = [900, 2300, 3700].map((ms) => setTimeout(() => setN((v) => v + 1), ms));
-    return () => ts.forEach(clearTimeout);
+    // the first row lands at 0.9 s, then the log keeps writing at a calm pace while it is on screen
+    let t = setTimeout(function tick() { setN((v) => v + 1); t = setTimeout(tick, 2600); }, 900);
+    return () => clearTimeout(t);
   }, [seen, calm]);
-  const rows = Array.from({ length: 8 }, (_, k) => ({ id: n - k, r: LOG[mod(n - k, LOG.length)] }));
+  const rows = Array.from({ length: 9 }, (_, k) => ({ id: n - k, r: LOG[mod(n - k, LOG.length)] }));
   return (
     <div className="xe-win" ref={ref} aria-hidden="true">
       <div className="xe-win-bar">
@@ -118,7 +120,7 @@ function Workspace({ at }) {
           <div className="xe-cols"><span>Who</span><span>From where</span><span>What</span><span>Status</span></div>
           <div className="xe-rows">
             {rows.map(({ id, r }, k) => (
-              <div key={id} className={'xe-r' + (k === 0 && id > 7 ? ' new' : '') + (k > 6 ? ' gone' : '')} style={{ transform: `translateY(${k * ROW}px)` }}>
+              <div key={id} className={'xe-r' + (k === 0 && id > 7 ? ' new' : '') + (k > 7 ? ' gone' : '')} style={{ transform: `translateY(${k * ROW}px)` }}>
                 <span className="xe-actor"><i>{r[0][0]}</i><span>{r[0]}</span></span>
                 <span className="xe-from">{r[1]}</span>
                 <code>{r[2]}</code>
@@ -277,6 +279,8 @@ function PauseFilm() {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const [off, setOff] = useState(false);
+  const [up, setUp] = useState(false); // the server cannot know reduced motion: decide after hydration, so both renders match
+  useEffect(() => setUp(true), []);
   const first = useRef(true);
   useEffect(() => {
     const v = ref.current?.parentElement?.querySelector('video');
@@ -288,7 +292,7 @@ function PauseFilm() {
     v.addEventListener('play', hold);
     return () => v.removeEventListener('play', hold);
   }, [off]);
-  if (calm) return null; // under reduced motion the film never plays: its poster stands
+  if (calm && up) return null; // under reduced motion the film never plays: its poster stands
   return (
     <button ref={ref} type="button" className="xe-pause" aria-pressed={off} aria-label="Pause" onClick={() => setOff((o) => !o)}>
       {off ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>
@@ -676,9 +680,18 @@ function Questions() {
   );
 }
 
+// The hero ships in place in the server HTML (h1 lines and lede visible, nothing translated out). Once React has
+// hydrated, a class plays the line-mask cut-in; on a slow first load (past 1.2 s) the words simply stay where they are.
+let played = false;
 export default function Enterprise() {
+  const [cut, setCut] = useState(false);
+  useEffect(() => {
+    const late = !played && performance.now() > 1200;
+    played = true;
+    if (!late) setCut(true);
+  }, []);
   return (
-    <main className="xe">
+    <main className={'xe' + (cut ? ' xe-cut' : '')}>
       <Boundary />
       <Security />
       <Includes />
