@@ -213,6 +213,11 @@ function Gpqa() {
     addEventListener('hashchange', byHash);
     return () => { el.removeEventListener('beforematch', show); removeEventListener('hashchange', byHash); };
   }, []);
+  // React writes hidden as a boolean, so the drawer sets "until-found" itself; the server sends it open (JS off reads every row)
+  useEffect(() => {
+    const el = drawer.current;
+    if (open) el.removeAttribute('hidden'); else el.setAttribute('hidden', 'until-found');
+  }, [open]);
   const m = OTHERS[sel];
   const rows = [...GPQA].sort(sort === 'score' ? (a, b) => b[1] - a[1] : (a, b) => a[2] - b[2]);
   const frontier = ENSO.map((g) => `${px(g[2])},${py(g[1])}`).join(' ');
@@ -290,7 +295,7 @@ function Gpqa() {
             <span className="eo-disc-t">GPQA Diamond</span>
             <span className="eo-disc-a">{open ? 'Close' : 'Show all'}<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></span>
           </button>
-          <div id="eo-results" className="eo-results" ref={drawer} hidden={open ? undefined : 'until-found'}>
+          <div id="eo-results" className="eo-results" ref={drawer}>
             <div className="eo-sort" role="group" aria-label="Sort">
               <button type="button" className="eo-sortb" aria-pressed={sort === 'score'} onClick={() => setSort('score')}>By score</button>
               <button type="button" className="eo-sortb" aria-pressed={sort === 'cost'} onClick={() => setSort('cost')}>By cost</button>

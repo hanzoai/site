@@ -160,6 +160,8 @@
 @media (hover: hover), not all and (pointer: coarse) { .eo-disc:hover .eo-disc-a { color: var(--ink); } .eo-disc:hover .eo-disc-a svg { transform: rotate(90deg); } }
 .eo-table[data-open] .eo-disc-a svg { transform: rotate(45deg); }
 .eo-results { padding: 8px 0 32px; }
+html.js .eo-table:not([data-open]) .eo-results { content-visibility: hidden; padding: 0; } /* closed from first paint, before the drawer sets hidden="until-found" */
+html:not(.js) .eo-disc-a { display: none; }
 .js .eo-table[data-open] .eo-results { animation: eo-open .4s var(--ease) both; }
 @keyframes eo-open { from { opacity: 0; transform: translateY(-8px); } }
 .eo-gpqa.lv-sec { padding-bottom: clamp(56px, 6vw, 96px); }
