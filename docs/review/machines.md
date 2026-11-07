@@ -1,43 +1,80 @@
 # /machines — James-eye review
 
 Verdict: 6/10
-First complaint: "The top is lovely, the cards wake up and the price rolls in, but the moment I scroll it turns into a spec sheet: nine huge numbers all the same size shouting at me, then big empty white gaps and boxes that do nothing when I touch them."
+First complaint: "The hero's whole idea is that the price rolls in, and two times out of three it rolls in a big white dash. I'm watching a quote machine that has no quote."
 
-Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812 (full scroll walk with idle a/b frames at every stop, video, 14 desktop and 13 phone hovers, 11 desktop and 5 phone clicks; my own probes: load frames every 100 ms, hero primary hover and press, size-tab hover, tile and list hover, idle diff on the tiles, the pinned chapter transition, reduced motion, JS off, and 375x812, 375x667 and 320x640 first screens).
+Walked 7 Nov 2026 on the dev server at 1470x801 and 375x812. I ran the recorder twice, because `Machines.jsx` was saved again at 16:54 in the middle of the first walk: 2x and 4x went from derived prices ($6.96, $5,081...) to em dashes. Everything below is the current build. I scrolled every stop at both sizes and checked each a/b pair for idle motion. I took 150 ms arrival frames and 100 ms frames through a pinned-chapter change. I hovered and pressed the hero ask, clicked all three size tabs (and tapped them on the phone), hovered a use tile and a related row, and did a 45-stop Tab crawl. I also checked reduced motion, JS off, 320px overflow, parity and taste.
 
-Frames: [hero quote](machines/d-hero-quote.jpg), [spec wall](machines/d-spec-wall.jpg), [phone stacked console](machines/p-stacked-console.jpg).
+Frames: [hero at 4x, quote is a dash](machines/r2-hero-dash.jpg) · [pinned console repeating the step text](machines/r2-pin-echo.jpg) · [phone: step text, then the same text again in a card](machines/r2-phone-steps.jpg)
 
 ## What works
-- **The hero object is a real idea.** A rack of four H100 cards sits in the black room next to a `POST /v1/compute/machines` dryRun console. Every 4 s it cycles 1x, 2x, 4x on its own: that many cards light, the body rewrites to `"2x H100"`, and $3.48 rolls to $6.96 to $13.92 with the hour, working-day and month figures rolling under it. The size pill glides (layoutId). It has a pause control, and it settles under reduced motion (`getAnimations()` empty, hero unchanged over 4.5 s). This is the page's signature, and it is the one part James would call premium.
-- Something moves within 1 s: the lede rises, the rack settles out of its 1.12 scale and the first card lights before 1000 ms (`d/first-0ms` vs `first-1000ms`).
-- The pinned "How renting one works" scene works on desktop. The left text swaps 01/06 to 06/06, the console number and rows change, and the dots track progress.
-- Colour is clean: no hue anywhere, and the card LED is grey, not the green the file comment still claims.
-- Parity: `text 106/106, links 7/7`. CLS 0.0004 desktop and 0.0003 phone. No horizontal overflow at 375 or 320. Console: only the known FooterHTML hydration mismatch.
-- Phone first screen passes: h1 is 40px, the primary's bottom is at 369px, and the rack starts at 420px (426 at 375x667), so there is far more than 80px of product inside 660.
+- The hero object is real and on-idea. It is a rack of four H100 cards beside a `POST /v1/compute/machines` dryRun console. Every 4 s it moves to the next size on its own: that many cards light, the request body rewrites itself, and the gliding size pill (layoutId) follows. Tabs answer a click within 500 ms, and it has a pause control. At 1x it is excellent: $3.48 at 84px, then an hour, a working day and a month as $3.48 / $27.84 / $2,540, all above the fold at 1470x801.
+- The spec section has one big thing: "80GB HBM3" at 64px counts up from 10 once as the solo card lights. The CPU and storage figures sit beside it as quiet hairline rows. The scale rhythm is right here.
+- "How renting one works" is a true pinned stage. The left column swaps step 01 to 06 and the console on the right streams its lines in by line mask (500 ms, ease-emphasis, 120 ms stagger). My 100 ms frames show a clean cut, with no crossfade mush.
+- The tiles in "When you want a whole machine" tilt under the mouse and run their diagram on hover. On touch they run once they are in view. Related rows fill #f5f5f5 on hover.
+- It is clean on the mechanics:
+  - CLS 0.0005 on desktop and 0 on phone. No horizontal overflow at 375 or 320.
+  - Headings are 52 / 26 / 21px, and there is one h1.
+  - Parity is OK (text 106/106, links 7/7) and taste is OK.
+  - Under reduced motion there are 0 animations after 3.5 s and the hero freezes on 1x.
+  - With JS off, 5,605 characters of text are present.
+  - The Tab crawl shows a 2px focus ring on every stop and no invisible stops.
+  - The only console error is the known FooterHTML hydration mismatch, which is shared chrome.
 
 ## The 11 answers
-1. **Sells in 5 s, moves in 1 s?** Mostly. The h1, lede and ask read at once, and the demo is moving by 1 s. But at 1470x801 the hero's own moment, the 84px `$3.48 / h`, sits at y 726 to 815: it is cut by the fold, and the cookie card covers it too (shared chrome). The rack also bleeds off the left edge and the quote card off the right (`.mc-rent` right edge 1485 on a 1470 viewport), which reads as cropped rather than composed. The h1 cut-in was not caught in my 100 ms samples (already at rest at 650 ms), so the arrival is effectively a fade.
-2. **One in, one out, or a document?** It is a document after the hero. Section padding is 161.7px top and bottom on every `v2-sec`, so each section break is about 320px of empty paper (`d/screen-01`, `screen-10`, `screen-12`). Specs, use tiles, the "Whose machine it is" list, Paste and ship and Related all just sit there. The pinned scene is the only scrolled moment. On the phone, 17 of 22 stops are still frames.
-3. **A real visual in every section?** The hero: yes. Pinned scene: a console, but every step is the same two or three grey and black bars, with about 150px of empty white above them in the panel (`d/screen-03`). Use tiles: small drawn diagrams (cards, bars, queue, agent-machine): fine, but static. Tech specs, "Whose machine it is" and Related: text only, no object.
-4. **One ask, nothing floating; scale rhythm?** There is one ask label ("Try Hanzo") in the header, the hero and the close, and nothing of the page floats. But the hero's two buttons both read as solid: the primary is `#f5f5f7` and the secondary "View Documentation" is pure `#ffffff`, so on black **the secondary is the brighter of the two**. Scale has no rhythm in the middle. Tech specs set **nine figures at 55.86px/600** in three equal columns: everything big at once, the exact thing James rejects. Headings are inconsistent: the h2 "How renting one works" is **21px** while its own step h3s are about 32px (hierarchy upside down). The other h2s are 32, 26 and 44px.
-5. **Every hover and press answers?** No. Desktop hover is dead on 8 of 14 targets. The size tabs show no hover change (`#a3a3a3` both before and after). Use tiles show no change at all (transform none, same bg, no shadow), nor do the "Whose machine" items or the related links' text block. The hero primary's hover is `#f5f5f7` to `#fff`, invisible on black. Press is fine (scale 0.98). Phone: 12 of 13 tap targets show no style change, and the 1x H100 tap did not respond when already selected.
-6. **Overlap, font swap, layout shift?** No CLS and no font swap. During the chapter swap the outgoing and incoming step text sit on top of each other for a frame ("Price it before you buy it" over ghosted step-1 text, `d/screen-04-a`, `screen-05-a`): a messy crossfade, not a line-mask cut. The Paste and ship prompt is clipped mid-word at 1470 ("hanzo visor machin"). The cookie card (shared) covers the price at 1470x801 and a quarter of the phone screen.
-7. **Which reference, and is its motion there?** apple.com product page: product as hero, a pinned scene where one panel changes. The pin is there; Apple's scrubbed build-up and the huge-type moment are not. Nothing from osply, hamol or grubogrubo (no pointer-aware detail, no asymmetry): every section after the hero is a centred or symmetric grid.
-8. **Different from neighbours?** The hero (rack plus live quote) is its own. The back half is the cloud family template: `PinChapters` is shared with Gateway, Guard and Hsm, and `ShipPrompt` plus `GetIt` (the contour-line "Get Machines" band with the License pill) close this page and about eight other cloud pages identically.
-9. **18 parts covered?** Partly. Gate gaps: literal hex all through `Machines.css` (Part 7 requires tokens only), with off-deck Apple greys (`#f5f5f7`, `#1c1c1e`, `#111112`, `#161617`, `#2c2c2e`, `#e3e3e6`) that are not in the brand-deck ramp. There is no pointer kind of motion at all (Part 9 mix: idle, state, scroll and arrival are present; pointer is missing). No objection or proof strip sits near the primary (Part 1/3). The file comment still says "Accent: green".
-10. **Banned tells?** Everything big at once (the spec wall). Three equal columns in a row, three times: Tech specs, "Whose machine it is" (01/02/03) and Related capabilities. Fake macOS traffic-light dots on the step console (an AI-template tell). No hue, gradient text, Inter or kicker above the h1: "High-Performance Computing" was correctly moved below it.
-11. **Copy untouched?** The page copy, yes (parity 106/106). But the step console adds words Hanzo never wrote and that are not in `content/ui-strings.json`: "may you launch?", "debited while up", "a row per card", "fleet" (three times), "nothing", "separate". The hero quote for 2x and 4x shows figures that are not in `content/live/machines.json` ($6.96, $55.68, $5,081, $13.92, $111, $10,162, 160 GB, 320 GB). They are derived from $3.48, and the rounding is inconsistent: `$55.68` keeps its cents but `$111` drops them (it should be $111.36).
+1. **Sells in 5 s; moves within 1 s?** On desktop it sells: the h1, a one-line lede, the ask and a live price are all on the first screen. Within 1 s the only motion is the rack's small scroll-settle (Lift from 1.04). I could not see an h1 line cut-in at 150 ms sampling: the h1 is fully set by the first painted frame. The first real idle event is the size change at 4 s. On the phone the quote is below the fold, so the first screen at 375x812 is the h1, the ask, four rack cards and the top of the console. The signature number is not visible.
+2. **One in, one out, or a document?** It works for three screens: hero, then the spec moment, then the pinned chapters. After that it turns into a document:
+   - a 2x2 grid of four equal tiles, each with a title, a sentence and three bullets;
+   - three numbered hairline rows of paragraphs ("Whose machine it is");
+   - a prompt block and three related rows.
+
+   On the phone, the six chapters become six stacked pairs of paragraph plus console, and the page is 13,877px tall.
+3. **A real object in every section?** Hero: yes. Specs: yes. Chapters: half a yes. The console has no product content of its own: every line is lifted from the paragraph beside it ("returns the price and creates nothing", "Unbinding is separate"). You read each step twice, once in Zen and once in Zen Mono (frame 2). Tiles: small diagrams, fine. "Whose machine it is": no object at all, only text rows. Close: the hero rack again, waking four cards. It is the same object, so it doesn't count as a new moment.
+4. **One ask, sticky header, nothing floating; scale rhythm?**
+   - Desktop: yes. The header ask goes quiet while the hero's solid "Try Hanzo" is visible, then fills once you scroll. Nothing floats over the content.
+   - Phone: the header "Try Hanzo" stays solid ink (rgb 10,10,10) while the hero's solid white "Try Hanzo" sits on the same screen. That is two solid fills (shared header behaviour, noted only).
+   - Scale is mostly right: 52 h1, 84 price, 64 VRAM, 26 heads, 21 h3.
+   - The exception: when the quote shows "—" at 84px, the biggest thing on screen is a dash.
+5. **Hover and press answer, no jumps?** Hover: yes on desktop. The ask lifts 2px, the tabs glide, the tiles tilt and the rows fill. Press: no. The probe read the ask's transform while the mouse button was held, and it stays at translateY(-2px), the hover lift. There is no press scale or 1px drop (kit `Cta`, shared). There is no hover-to-tell-you-something detail beyond the tiles.
+   - The related-row hover fill runs 12px past the right gutter (row box 374 to 1458px against the 1446px gutter edge). On the phone the rows run 4 to 371px against a 16px gutter.
+   - "Deploy to Cloud" in the close is a 21px-tall touch target on the phone.
+6. **Overlap, font swap, layout shift?** No overlap at either size and CLS ≈ 0. With JS off, the hero lede sits at partial opacity and about 10px low: the `.v2-in` entry never completes, so `html:not(.js)` does not reach the final state. The lede is still readable. On the phone the hero quote row "a working day" wraps onto 2 lines, which drops its value below the other two.
+7. **Which reference, and is its motion there?** apple.com product pages: a pinned chapter stage and the product as the hero. That motion is present and good. There is nothing of synchronized.studio or osply (no editorial asymmetry and no pointer-aware detail past the tiles). The anthropic "benchmarks as hero figures" idea is the right one for the quote, but the quote is empty for 2 of 3 sizes.
+8. **Different from neighbours?** The hero medium (rack plus dryRun console) is its own. Below the hero, the page shares the cloud-family skeleton: `PinChapters` and `ShipPrompt` also appear in Gateway, Guard, Hsm, Iam, Idv, Insights and Ingress, and the tiles → rows → prompt → close order is the same. Only the hero and the spec moment are distinctive.
+9. **18 parts covered?** Mostly. Gaps I measured:
+   - `<main>` has no `id="main"`, so the skip link "Skip to content" has nowhere to land.
+   - The canonical is `https://hanzo.ai/machines/`, with a trailing slash. MASTER part 2 says no trailing slash (shared metadata).
+   - The press state is missing.
+   - JS-off does not reach the final state.
+   - There is no objection or answer strip near the ask. Hanzo's own "Scoped to your organization / Bring your own account" copy is the page's answer, but it sits four screens down.
+10. **Banned tells?** None outright. Greys only, no pill above an h1 or h2, no Inter, no glow. Close calls:
+   - The four equal tiles, each with an explaining sentence and three bullets, are the "explaining sentence under every tile" pattern.
+   - The consoles carry both a raised shadow and an outline.
+11. **Copy untouched?** Yes: parity 106/106 text and 7/7 links. The console fragments are verbatim slices of Hanzo's step text. Nothing is invented, but every fragment is a repeat.
 
 ## Fixes (in order)
-1. **Break the spec wall** (`Machines.jsx` `SPECS` section, `Machines.css` `.mc-col dd`). Make it one big figure at a time: the H100's `80GB HBM3` at 64px as the moment, and the other eight at 21 to 26px in a hairline list. Better still, tie it to the rack: the active card's specs count up once next to it as it lights. Drop the three-equal-column grid for an 8/5 split (heading left, figures right).
-2. **Fix the hero ask weight** (`.mc-acts`). Make "View Documentation" the text or quiet ask (no white fill, ink-on-black link with an underline) so the primary is the only solid fill. Give the primary a hover that shows on black (a 1px inner ring or a 2px rise), not `#f5f5f7` to `#fff`.
-3. **Bring the price above the fold at 1470x801.** Cut `.mc-hero` top padding and the `Lift` start (`from={1.12}`) so `$3.48 / h` sits fully inside 801 (it is at 726 to 815 now), and stop the rack and quote bleeding off both edges (`.mc-rent` right 1485 on 1470).
-4. **Close the dead gaps.** Section padding is 161.7px top and bottom on every section, about 320px of void at each break. Use the deck's alternation (one 116px, one 188px) and overlap the next object by 40px so one thing comes in as one goes out.
-5. **Make every tile and row answer** (`.mc-tile`, `.mc-own-i`, `.mc-sizes button`, `ShipPrompt` related links). Use hover inside `@media (hover:hover)`. Tiles: their diagram runs (the training cards fill, the serving bars breathe, the queue slot moves, the agent-machine link draws), plus a 2.5° tilt on fine pointers. Size tabs: the ink lifts to `#fafafa` on hover. Own list: a row hover fill. That also adds the missing pointer kind of motion.
-6. **Give the pinned console one changing object, not six sets of bars** (`StepCon`). Keep one console and let the call change in it (request line, then response line streaming in), using only words from the step text. Remove the invented labels ("may you launch?", "debited while up", "a row per card", "fleet"), or move them into `content/ui-strings.json` with a copy question on the card. Drop the traffic-light dots. Replace the opacity crossfade of the step text with the line-mask cut so two steps never overlap.
-7. **Fix the heading scale.** Make "How renting one works" an h2 at 26px with the step h3s at 21px, not the other way round, and set the other h2s to the same 26px resting size (they are 32 and 26 now).
-8. **Trace the derived figures** for 2x and 4x to Hanzo's live dry-run (or list them as a copy question), and use one rounding rule: `$111.36`, not `$111`.
-9. **Make the back half its own.** The `ShipPrompt` and `GetIt` close is identical across the cloud family. Give Machines' closing band its own object (the lit rack at rest, or the 4x quote) instead of the shared contour lines, and fix the clipped prompt line (wrap it, or fade it under a "more" mask).
-10. **Hygiene.** Swap the literal hex in `Machines.css` for `tokens.css` values; the off-deck Apple greys (`#f5f5f7`, `#1c1c1e`, `#161617`, `#2c2c2e`, `#e3e3e6`) go to deck greys (`#f5f5f5`, `#171717`, `#262626`, `#e4e4e7`). Delete the stale "Accent: green" comments in both files.
+1. **Stop the hero spending 8 of every 12 seconds on dashes** (`Machines.jsx`, `SIZES`, `Rent`). The em dashes are honest, but they kill the signature. Do one of these:
+   - auto-cycle only the cards and the request body, and keep the 1x quote ($3.48, 80 GB, $27.84, $2,540) on screen as the quote for the one size Hanzo prices;
+   - or, for 2x and 4x, swap the 84px figure for a small grey "—" line at caption size, and let the cards and the JSON carry the change.
 
-Shared-chrome notes (not scored): the cookie card covers the hero price at 1470x801 and about 200px of the 375x812 screen; near the page end a second header strip appears mid-viewport above the footer, and the header briefly greys at y 95 (`d/screen-13-a`, `screen-14-a`).
+   A dash must never take the 84px hero slot. If the live price list really carries 2x/4x prices, cite them; otherwise leave them out.
+2. **Give the chapter console its own content instead of echoing the paragraph** (`CALLS`, `StepCon`). Use Hanzo's request and response shapes that already exist on the page:
+   - step 01: the 1x/2x/4x size list;
+   - step 02: the dryRun body plus $3.48 / h;
+   - step 05: the GPU rows;
+   - step 06: the agent/machine pair from the tile art.
+
+   Where no such shape exists, drop the streamed prose lines and show only the ask line. On the phone (under 900px), set the console as one sticky panel above the six steps, or stack the six steps without a console. Do not print every sentence twice.
+3. **Turn the lower half from a document into moments.** "When you want a whole machine" should be one tile in focus at a time: a rail with 14 to 18% peek and scroll-snap, or the 4 diagrams as tabs with the bullets inside. It should not be four equal boxes of text. "Whose machine it is" needs an object: for example, the three rows drive one small org / account / region diagram that changes per hovered or focused row.
+4. **Make the close its own moment**, not the hero rack again (`Close`). For example, the rack can end lit at the size the visitor last chose in the hero. That needs a shared `at` from `Rent`, through a module-level store or context. Then the close remembers the choice instead of repeating the hero.
+5. **First second:** make the h1 line-mask cut-in (`Lines`) visibly run after hydration, and start the first size step sooner (`useSteps(3, 4000, ...)`: the first tick at about 1.2 s, then 4 s). On the phone, shorten the rack (`.mc-rack` under 899px: 2 cards visible, or tighter rows) so that the $3.48 quote reaches the first 812px screen.
+6. **Small fixes:**
+   - add `id="main"` to `<main className="v2 mc">`;
+   - finish `.v2-in` under `html:not(.js)` (opacity 1, no offset);
+   - on the phone, give "a working day" `white-space: nowrap` or a smaller dt, so the three quote values share one baseline;
+   - give "Deploy to Cloud" in `.mc-close-acts` a 44px hit area;
+   - inset the `ShipPrompt` related-row hover fill to the gutter (page-local override in `Machines.css` under `.mc-ship`, or a request in `docs/requests/machines.md`).
+7. **Shared, request only (not scored):**
+   - the kit `Cta` has no press state (it should press to scale .97 or translateY(1px) in 90 ms);
+   - on the phone, the header ask stays solid while the hero's solid ask is visible;
+   - the canonical has a trailing slash.
