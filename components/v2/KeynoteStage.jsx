@@ -9,7 +9,8 @@
      </KeynoteStage>
    - look: 'split' (title on 8 columns, lede and actions on the right 4, the object full width below) or
            'side' (title and lede on 5 columns, the object on 7 bleeding to the right edge).
-   - from: the object's starting scale (1.15–1.4). Phones use a gentler start automatically.
+   - from: the object's starting scale (1.1–1.25). Phones use a gentler start automatically. Do not use motion
+     layoutId/layout animations inside the object (the scroll scale breaks layout projection); use CSS state.
    - acts: [label, to]; the first is the primary (magnetic, and the phone thumb bar's action). meta: a small line under.
    - title: an array of lines. Keep each line 12–18 characters so it breaks strongly.
    Reduced motion: the object is simply in place. Nothing animates off screen. */
@@ -22,7 +23,7 @@ import { useWide } from './KeynoteChapters';
 import './Keynote.css';
 import './KeynoteStage.css';
 
-export default function KeynoteStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.18, children, className = '', size = '' }) {
+export default function KeynoteStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '' }) {
   const sec = useRef(null);
   const calm = useReducedMotion();
   const wide = useWide();

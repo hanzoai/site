@@ -83,7 +83,6 @@ function Term() {
         <div className="en-verbs" role="tablist" aria-label="Verbs">
           {VERBS.map((v, i) => (
             <button key={v} type="button" role="tab" aria-selected={at === i} onClick={() => choose(i)}>
-              {at === i && <motion.span layoutId="en-verb" className="en-verb-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
               <span>{v}</span>
             </button>
           ))}
@@ -253,7 +252,7 @@ export default function Engine() {
         lede="The inference engine, in one binary"
         acts={[['View on GitHub', 'https://github.com/hanzoai']]}
         meta={<span>Apache-2.0 · CUDA · Metal · CPU</span>}
-        from={1.2}
+        from={1.12}
       >
         <Term />
       </KeynoteStage>
