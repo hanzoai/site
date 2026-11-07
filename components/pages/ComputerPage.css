@@ -320,6 +320,7 @@
   .cp-cap-top { flex-wrap: wrap; padding: 4px 4px 8px 0; gap: 8px; }
   .cp-cap-k { flex: 1 1 calc(100% - 60px); font-size: 15px; }
   .cp-tabs { flex: 1 1 100%; justify-content: space-between; }
+  .cp-count { display: none; }
   .cp-tabs li { flex: 1 1 0; }
 
   .cp-vis { min-height: 420px; border-radius: 20px; padding: 20px; }
