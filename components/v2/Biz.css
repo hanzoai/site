@@ -27,6 +27,14 @@
 .bz-obj { position: relative; border-radius: 28px; background: #fff; border: 1px solid rgba(0, 0, 0, .08); box-shadow: 0 1px 1px rgba(0, 0, 0, .03), 0 40px 90px -40px rgba(0, 0, 0, .28), 0 80px 140px -90px rgba(0, 0, 0, .2); overflow: hidden; }
 .bz-card { border-radius: 16px; background: var(--card); }
 
+/* the shared code pane (cloud/Frame.jsx Code) in greys on every Business page: 0 UI hues, weight tells parts apart */
+.bz .cf-code .s { color: #d1d1d6; } .bz .cf-code .k { color: #fff; font-weight: 600; } .bz .cf-code .c { color: #8e8e93; }
+.bz .cf-code.light .s { color: var(--hz-600, #48484a); } .bz .cf-code.light .k { color: var(--ink); font-weight: 600; } .bz .cf-code.light .c { color: var(--hz-400, #86868b); }
+.bz .cf-mark { background: var(--hz-100, #e8e8ed); color: inherit; border-radius: 4px; box-shadow: none; }
+.bz .cf-code:not(.light) .cf-mark { background: rgba(255, 255, 255, .14); }
+.bz .cf-code.light .cf-mark { background-image: none; background-color: var(--hz-100, #e8e8ed); }
+.bz .cf-paste-k, .bz .x-copy-t, .bz .cf-code-k { font-size: 13px; }
+
 /* BizLines: line-masked kinetic type. The hero plays a CSS cut-in (no JS needed); others cut in when seen. */
 .bz-line { display: block; overflow: hidden; padding: .04em 0 .12em; margin: -.04em 0 -.12em; }
 .bz-line > span { display: block; transition: transform 1.05s var(--ease) calc(var(--d, 0s) + var(--i, 0) * 70ms); }
@@ -46,7 +54,7 @@
 .bz-ch.flip .bz-ch-stage { grid-column: 6 / span 7; }
 .bz-ch.flip .bz-ch-list { grid-column: 1 / span 4; }
 .bz-ch-i { min-height: 78svh; display: flex; flex-direction: column; justify-content: center; gap: 22px; transition: opacity .6s var(--ease), transform .8s var(--ease); }
-.bz-ch.live .bz-ch-i:not(.on) { opacity: .16; transform: translateY(18px); } /* dimmed only once JS runs, so JS-off reads every chapter */
+.bz-ch.live:not(.stacked) .bz-ch-i:not(.on) { opacity: .16; transform: translateY(18px); } /* dimmed only once JS runs, so JS-off reads every chapter */
 .bz-ch-i .bz-headline { font-size: clamp(32px, 3.2vw, 48px); max-width: 14ch; }
 /* JAMES.md: nothing above a headline, so the chapter number reads under it (DOM order stays number first) */
 .bz-ch-i > .bz-headline { order: 0; } .bz-ch-i > .bz-kick { order: 1; } .bz-ch-i > * { order: 2; }
@@ -88,13 +96,15 @@
   .bz-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); --g: 16px; }
   .bz-sec { padding: 120px 0; }
   .bz-headline { font-size: clamp(32px, 9.6vw, 40px); }
-  .bz-kick, .bz-ch-meta { font-size: 14px; }
+  .bz-kick, .bz-ch-meta, .bz .cf-paste-k, .bz .x-copy-t, .bz .cf-code-k { font-size: 14px; }
   .bz-acts .x-btn { height: 48px; }
   .bz-ch-grid { display: block; }
-  .bz-ch-stage { top: 56px; height: auto; min-height: 0; padding: 12px 0 14px; z-index: 2; background: #fff; box-shadow: 0 18px 24px -18px rgba(0, 0, 0, .12); }
-  .bz-ch.dark .bz-ch-stage { background: #0a0a0a; }
-  .bz-ch-list { padding: 8svh 0 18svh; }
-  .bz-ch-i { min-height: 64svh; gap: 16px; }
+  .bz-ch-stage { position: static; height: auto; min-height: 0; padding: 12px 0 14px; }
+  .bz-ch-list { padding: 24px 0 0; }
+  .bz-ch-i { min-height: 0; gap: 16px; padding: 48px 0; border-top: 1px solid var(--line); }
+  .bz-ch-i:first-child { border-top: 0; }
+  .bz-ch.dark .bz-ch-i { border-color: rgba(255, 255, 255, .12); }
+  .bz-ch-own { order: -5 !important; margin-bottom: 12px; }
   .bz-ch-i .bz-headline { font-size: 32px; }
   .bz-ch-meta { margin-top: 14px; }
   .bz-sheet { top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 88svh; border-radius: 28px; transform: translateY(calc(100% + 16px)); }
@@ -105,7 +115,7 @@
   .bz-open-card { padding: 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bz-ch-i, .bz-ch.live .bz-ch-i:not(.on) { transition: none; transform: none; }
+  .bz-ch-i, .bz-ch.live:not(.stacked) .bz-ch-i:not(.on) { transition: none; transform: none; }
   .bz-lines.now .bz-line > span { animation: none; }
   .bz-line > span { transition: none; }
   .bz-sheet, .bz-sheet-back { transition: none !important; }
