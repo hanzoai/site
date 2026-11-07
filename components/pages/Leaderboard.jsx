@@ -17,7 +17,7 @@
    state (scale pill, sheet, rolling totals) and scroll (pinned receipt, dark-room wipe, bars drawing, headline masks).
    One ask, Hanzo's "Open bounties": in the hero, sticky after it (AskBar on desktop, the thumb bar on phones), at the close.
    Every name and figure is Hanzo's.
-   V2: 8/10 podium hero with a self-adding tape, editorial ranks, wiped dark token room, earn rules as pinned chapters building a receipt, calculator with a rolling total; greys only, one sticky ask. */
+   V2: 8/10 podium hero with a self-adding tape and a pause control, ranks, wiped dark token room, earn rules as pinned chapters building a receipt, calculator, closing Band; MASTER scale rhythm (52/26/64, one 84px moment per screen), greys only, deck easing. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
@@ -82,6 +82,21 @@ function Roll({ v, className = '' }) {
   );
 }
 
+/* A list that reads itself: while it is on screen, one row at a time is lit (every 2.8s); off screen or under reduced
+   motion it rests. Returns [ref, lit index]. */
+function useReader(n, every = 2800) {
+  const ref = useRef(null);
+  const on = useInView(ref, { amount: 0.1 });
+  const calm = useReducedMotion();
+  const [lit, setLit] = useState(-1);
+  useEffect(() => {
+    if (!on || calm) return;
+    const t = setTimeout(() => setLit((v) => (v + 1) % n), lit < 0 ? 600 : every);
+    return () => clearTimeout(t);
+  }, [on, calm, lit, n, every]);
+  return [ref, lit];
+}
+
 /* The tape: one hunter's total, added line by line. */
 function Tape({ h }) {
   const t = fromTokens(h[5]);
@@ -117,6 +132,10 @@ function Podium() {
   return (
     <div className="xlb-pod pf-obj" ref={ref}>
       <div className="xlb-pod-top">
+        {/* MASTER part 12: a roster that moves by itself gets a pause control, first in the DOM */}
+        <button type="button" className="xlb-pause" aria-pressed={mine} aria-label="Pause" onClick={() => setMine((v) => !v)}>
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{mine ? <path d="M5 3.5v9l7-4.5z" fill="currentColor" /> : <path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />}</svg>
+        </button>
         <b>Top bug hunters &amp; builders</b>
         <span className="pf-mono">217 orgs · 140.1M tokens</span>
       </div>
@@ -173,6 +192,7 @@ function Hero() {
 }
 
 function Contributors() {
+  const [rowsRef, lit] = useReader(HUNTERS.length, 1600);
   return (
     <section className="pf-sec xlb-con" aria-labelledby="xlb-con-h">
       <div className="pf-wrap pf-grid">
@@ -191,9 +211,9 @@ function Contributors() {
             </ul>
           </DetailSheet>
         </header>
-        <ol className="xlb-rows">
+        <ol className="xlb-rows" ref={rowsRef}>
           {HUNTERS.map((h) => (
-            <li key={h[1]} className="xlb-row">
+            <li key={h[1]} className={'xlb-row' + (lit === HUNTERS.indexOf(h) ? ' lit' : '')}>
               <span className="xlb-rank pf-mono">{h[0]}</span>
               <span className="xlb-row-m">
                 <b className="pf-title">{h[1]}</b>
@@ -213,6 +233,7 @@ function Tokens() {
   const [scale, setScale] = useState('Log');
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.2 });
+  const [readRef, lit] = useReader(ORGS.length, 1500);
   const top = ORGS[0][3];
   const w = (t) => (scale === 'Log' ? Math.log10(t) / Math.log10(top) : t / top);
   return (
@@ -236,9 +257,10 @@ function Tokens() {
             </button>
           ))}
         </div>
+        <div ref={readRef}>
         <ol className="xlb-board" ref={ref}>
           {ORGS.map(([who, badge, req, t], i) => (
-            <li key={who} className={'xlb-org' + (i === 0 ? ' lead' : '')}>
+            <li key={who} className={'xlb-org' + (i === 0 ? ' lead' : '') + (lit === i ? ' lit' : '')}>
               <span className="xlb-org-r pf-mono">#{i + 1}</span>
               <span className="xlb-org-m"><b>{who}</b><span>{badge}</span><span className="xlb-req">{req}</span></span>
               <span className="xlb-bar" aria-hidden="true"><motion.i style={{ '--w': w(t) }} initial={{ scaleX: 0 }} animate={seen ? { scaleX: w(t) } : {}} transition={{ duration: 0.9, ease: EASE, delay: seen ? i * 0.06 : 0 }} /></span>
@@ -246,6 +268,7 @@ function Tokens() {
             </li>
           ))}
         </ol>
+        </div>
       </div>
     </SceneWipe>
   );
