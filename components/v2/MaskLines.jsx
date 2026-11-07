@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import './ProofScale.css';
+import NoJs from '../NoJs';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -29,7 +30,7 @@ export default function MaskLines({ as = 'h2', lines, className = '', delay = 0,
   return (
     <Tag ref={ref} id={id} className={className} style={style}>
       {/* JS off: the lines stand in place (an !important rule beats the inline start transform) */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.pf-mask-in{transform:none!important}</style>' }} />
+      <NoJs css={'<style>.pf-mask-in{transform:none!important}</style>'} />
       {lines.map((l, i) => (
         <span key={i} className="pf-mask-l">
           <motion.span

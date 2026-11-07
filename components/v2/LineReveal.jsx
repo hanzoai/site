@@ -10,6 +10,7 @@
    - delay: seconds before the first line. Needs components/v2/ProgramScale.css for the .xp-l masks. */
 import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
+import SharedNoJs from '../NoJs';
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -39,5 +40,5 @@ export default function LineReveal({ lines, as = 'h2', className = '', id, delay
 /* With JavaScript off nothing animates, so every element shows its final state. */
 const NOJS = '<style>.xp [style]{transform:none!important;opacity:1!important;clip-path:none!important}.xpc{height:auto!important;padding:96px 0}.xpc-pin{display:none!important}.xpc-story{display:block!important;width:min(100% - 48px,1440px);margin:0 auto}.xpc-rail-p{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}.xpc-sstage{position:relative;height:340px;margin-bottom:24px}.xpc-dots{display:none}</style>';
 export function NoJs() {
-  return <noscript dangerouslySetInnerHTML={{ __html: NOJS }} />;
+  return <SharedNoJs css={NOJS} />;
 }
