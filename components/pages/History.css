@@ -48,31 +48,29 @@
 .xhi-you-y { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.03em; color: var(--ink); }
 .xhi-you-a .xhi-plate { grid-column: auto; grid-row: auto; aspect-ratio: 16 / 9; opacity: 1; transform: none; }
 
-/* 3. the journey: one pinned scene, scrubbed (Signature) */
-.xhi-j-intro { padding-bottom: clamp(48px, 6vw, 88px); }
-.xhi-j-intro .v2s-kick { margin-bottom: 24px; }
-.xhi-j-l { align-self: end; }
-.xhi-scrub { position: relative; height: calc(var(--n) * 62svh + 100svh); }
-.xhi-stage { position: sticky; top: 60px; height: calc(100svh - 60px); display: grid; grid-template-rows: minmax(0, 1fr) auto; overflow: hidden; }
-.xhi-stage-g { position: relative; display: grid; padding-top: clamp(16px, 3vh, 40px); min-height: 0; }
-.xhi-odo-w { position: absolute; top: clamp(8px, 2vh, 28px); left: 0; z-index: 1; display: grid; gap: 4px; pointer-events: none; }
+/* 2. the journey: the statement that lights as it is read (Signature), then the years as plain rows */
+.xhi-j-head { display: grid; gap: 10.5px; }
+.xhi-stmt { margin: clamp(32px, 4vw, 56px) 0 0; max-width: 30ch; font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; line-height: 1.28; letter-spacing: -.02em; color: var(--ink); text-wrap: pretty; cursor: default; }
+/* unlit words stay readable: ink at 58% on white is #717171 (no darker than #737373 allows) */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .xhi-w { opacity: .58; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
+  html.js .xhi-w.lit { opacity: 1; }
+}
 .xhi-cut { display: grid; font-size: clamp(72px, 7.6vw, 112px); font-weight: 220; line-height: .9; letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; overflow: hidden; padding-bottom: .05em; }
 .xhi-cut > span { grid-area: 1 / 1; transform: translateY(108%); transition: transform .18s cubic-bezier(.4, 0, .2, 1); }
 .xhi-cut > span.past { transform: translateY(-108%); }
 .xhi-cut > span.on { transform: none; transition: transform .45s cubic-bezier(.16, 1, .3, 1) .1s; }
-.xhi-cut.you { font-size: 64px; margin-bottom: 6px; }
-.xhi-odo-era { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); padding-left: .4em; }
-.xhi-years { display: grid; min-height: 0; }
-.xhi-yr { grid-area: 1 / 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: calc(clamp(72px, 7.6vw, 112px) + 40px) minmax(0, 1fr); column-gap: var(--v2-gut); min-height: 0; }
-.xhi-yr-n { display: none; }
-.xhi-plate { grid-column: 1 / 6; grid-row: 2; align-self: start; position: relative; width: 100%; max-height: 100%; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden; background: #f5f5f5; display: grid; place-items: center; }
+.xhi-years { display: grid; gap: clamp(56px, 6vw, 88px); margin-top: clamp(40px, 5vw, 72px); }
+.xhi-yr { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: start; scroll-margin-top: 96px; padding-top: 22px; border-top: 1px solid var(--hair); }
+.xhi-yr-n { grid-column: 1 / 3; margin: 0; font-size: 44px; font-weight: 220; line-height: .9; letter-spacing: -.04em; color: var(--ink); }
+.xhi-plate { grid-column: 3 / 7; align-self: start; position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden; background: #f5f5f5; display: grid; place-items: center; }
 .xhi-plate-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: #0a0a0a; opacity: .6; }
 .xhi-plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s var(--ease); }
 .xhi-plate.logo img { inset: 22% 18%; width: 64%; height: 56%; object-fit: contain; }
 .xhi-plate.logo img.two { inset: auto 30% 8% 30%; width: 40%; height: 18%; }
 .xhi-plate.ok img { opacity: 1; }
 .xhi-plate video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.xhi-yr-t { grid-column: 7 / 13; grid-row: 1 / 3; align-self: center; display: grid; gap: 12px; padding-bottom: 12px; }
+.xhi-yr-t { grid-column: 7 / 13; align-self: start; display: grid; gap: 12px; }
 .xhi-yr-b { justify-self: start; margin-top: -4px; display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--hair); font: 500 13px/1 var(--mono); color: var(--ink); }
 .xhi-yr-t .v2s-headline { font-size: 26px; max-width: 22ch; }
 .xhi-yr-l { margin: 0; font-size: 15.5px; line-height: 1.5; color: var(--soft); max-width: 66ch; }
@@ -84,19 +82,14 @@
 .xhi-posts { display: flex; flex-wrap: wrap; gap: 0 20px; margin: 0; }
 .xhi-posts a { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; }
 @media (hover: hover) { .xhi-posts a:hover { text-decoration: underline; text-underline-offset: 4px; } }
-/* one in, one out */
-.xhi-yr .xhi-yr-t, .xhi-yr .xhi-plate { opacity: 0; transform: translateY(24px); transition: opacity .15s cubic-bezier(.4, 0, .2, 1), transform .3s cubic-bezier(.4, 0, .2, 1); }
-.xhi-yr.past .xhi-yr-t, .xhi-yr.past .xhi-plate { transform: translateY(-36px); }
-.xhi-yr .xhi-plate { transform: translateY(36px) scale(.97); }
-.xhi-yr.past .xhi-plate { transform: translateY(-36px) scale(.97); }
-.xhi-yr.on .xhi-yr-t, .xhi-yr.on .xhi-plate { opacity: 1; transform: none; transition: opacity .35s cubic-bezier(.16, 1, .3, 1) .08s, transform .5s cubic-bezier(.16, 1, .3, 1) .06s; } /* the next year is never more than 0.1 s behind the last */
-.xhi-rail2 { position: relative; padding: 14px 0 clamp(88px, 12vh, 104px); } /* clear of the ask bar */
-.xhi-rail2-l { position: absolute; left: 0; right: 0; top: 18px; height: 2px; background: var(--hair); }
-.xhi-rail2-l b { position: absolute; inset: 0; background: var(--acc); transform-origin: 0 50%; }
-.xhi-rail2 ol { list-style: none; margin: 0; padding: 6px 0 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
-.xhi-rail2 button { width: 100%; min-height: 48px; padding: 8px 0 0; border: 0; background: none; font: 500 13px/1 var(--mono); letter-spacing: .04em; color: var(--faint); cursor: pointer; text-align: left; transition: color .3s var(--ease); }
+/* the rail of years: a jump index over the rows; the year in view is ink, the ones read are body grey */
+.xhi-rail2 { margin-top: clamp(40px, 5vw, 72px); }
+.xhi-rail2 ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); border-top: 2px solid var(--hair); }
+.xhi-rail2 button { position: relative; width: 100%; min-height: 48px; padding: 12px 0 0; border: 0; background: none; font: 500 13px/1 var(--mono); letter-spacing: .04em; color: var(--faint); cursor: pointer; text-align: left; transition: color .3s var(--ease); }
+.xhi-rail2 button::before { content: ''; position: absolute; left: 0; right: 4px; top: -2px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
 .xhi-rail2 button.past { color: var(--soft); }
 .xhi-rail2 button.on { color: var(--ink); }
+.xhi-rail2 button.past::before, .xhi-rail2 button.on::before { transform: none; }
 @media (hover: hover) { .xhi-rail2 button:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; } }
 
 /* 4. your year (Beyond) */
@@ -156,15 +149,14 @@
   .xhi-cut.hero { font-size: clamp(84px, 26vw, 112px); }
   .xhi-eras p { font-size: 14.5px; }
   .xhi-clip { width: min(80vw, 340px); min-height: 0; }
-  .xhi-scrub { height: auto; }
-  .xhi-stage { position: static; height: auto; overflow: visible; display: block; }
-  .xhi-years { gap: 72px; }
-  .xhi-yr { grid-area: auto; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: 17px; }
-  .xhi-yr-n { display: block; margin: 0; font-size: 64px; font-weight: 220; line-height: .9; letter-spacing: -.06em; color: var(--ink); }
-  .xhi-plate, .xhi-yr-t { grid-column: 1; grid-row: auto; }
-  .xhi-yr .xhi-yr-t, .xhi-yr .xhi-plate { opacity: 1; transform: none; transition: none; }
+  .xhi-stmt { font-size: 21px; line-height: 1.4; }
+  .xhi-years { gap: 56px; }
+  .xhi-yr { grid-template-columns: minmax(0, 1fr); gap: 17px; }
+  .xhi-yr-n, .xhi-plate, .xhi-yr-t { grid-column: 1; }
   .xhi-yr-t .v2s-headline { font-size: 21px; }
-  .xhi-rail2 { display: none; }
+  /* the rail on a phone: two rows of years, every year still one tap away */
+  .xhi-rail2 ol { grid-template-columns: repeat(7, minmax(0, 1fr)); row-gap: 4px; border-top: 0; }
+  .xhi-rail2 li { border-top: 2px solid var(--hair); }
   .xhi-you-in input { width: 4.2ch; }
   .xhi-you-a { min-height: 600px; }
   .xhi-prin-h { position: static; }
@@ -172,5 +164,5 @@
   .xhi-fde-l { grid-template-columns: 1fr 1fr; row-gap: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xhi-cut > span, .xhi-yr .xhi-yr-t, .xhi-yr .xhi-plate, .xhi-clip { transition: none; }
+  .xhi-cut > span, .xhi-clip, .xhi-rail2 button::before { transition: none; }
 }

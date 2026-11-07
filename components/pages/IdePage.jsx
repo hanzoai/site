@@ -3,34 +3,35 @@
 // Goal: open the IDE.
 // CTA: Open the IDE (ide.hero; the close repeats it in the Band).
 // Metric: cta_click ide.hero
-// Signature: an editor that remembers: real code, memories surfacing in its gutter, the editor settling as you scroll.
+// Signature: terminal (docs/MOTION-MAP.md): the Get started terminal, second screen, runs Hanzo's own start script command by command with each tool's real output; the visitor picks the next command (components/pages/ide/Terminal.jsx).
+// Entrances: venetian-type (hero: kicker, h1 lines, lede, asks slide in from alternating sides), spring-snap (Get started: heading and terminal snap in from opposite sides with a spring overshoot), blinds (What is Hanzo IDE: venetian strips open over it), rack-focus (What Hanzo IDE does: each promise pulls focus from a blur), tilt-3d-hover (It remembers: the memory cards land tilted, then lean toward the pointer). components/pages/ide/enter.js + enter.css.
 // Beyond: Tell it something: file one thing about your project in a memory and watch it fade and come back.
 /* Hanzo IDE.
-   V2: 8/10 the deck scale (h1 52, sections 26, one statement that grows while it is the moment); real code in a live editor with a pause control, memories surfacing in its gutter from the first second; the workbench exploding off its Rust engine, three pinned chapters, one dark room that opens from a rounded card, a start script that types itself, kit Cta and Band, related apps that open into their pages. Greys only.
+   V2: 8/10 motion map (7 Nov): the pinned hero Stage and the pinned A2Chapters scene are gone (plain hero with the live editor, three promises as quick page-local rows); a live terminal moves up to the second screen; five page-local entrances replace the shared line-mask cut-in and A2Grow. Greys only.
    Persona: a developer choosing an AI editor. Goal: open the IDE. CTA: Open the IDE (ide.hero, sticky in the ask bar).
    Metric: cta_click on ide.hero and ide.close (data-cta; the event layer is the conductor's).
-   Signature: an editor that remembers. The hero object is the workbench itself: it starts huge and settles as you
-   scroll (Stage), while a cursor walks the code and memories surface in the gutter beside the lines they belong to,
-   the impact radius of a change glows through the file and the agent panel runs Hanzo's example session (live).
-   Then the workbench lifts off its Rust engine as two planes (exploded view, scrubbed); the three promises are pinned
-   chapters whose picture changes (memory, call graph, sandbox); the one dark room holds the memory tiers.
+   The hero object is the workbench itself, in normal flow under the asks: a cursor walks the code and memories
+   surface in the gutter beside the lines they belong to, the impact radius of a change glows through the file and the
+   agent panel runs Hanzo's example session (live, from the finished frame). Then the terminal runs the start script;
+   the workbench lifts off its Rust engine as two planes (exploded view, scrubbed); the three promises sit as rows with
+   their pictures (memory, call graph, sandbox); the one dark room holds the memory tiers.
    Beyond: "Tell it something" - write one thing about your project, file it as what happened, what is true or how
    things are done here, and watch it sit in that memory, fading when unused and coming back at full strength when
    you recall it. Nothing is saved or sent. Greys only (docs/JAMES.md). Every word is Hanzo's, and the editor's text is
    Hanzo's own start script from this page. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Cta, Band } from '../kit';
 import A2Paste from '../v2/A2Paste';
-import A2Chapters from '../v2/A2Chapters';
-import useNarrow from '../v2/A2Narrow';
 import A2Pause from '../v2/A2Pause';
-import A2Grow from '../v2/A2Grow';
 import { MOVE } from '../v2/A2Motion';
 import '../v2/A2.css';
 import usePhoneAsk from './usePhoneAsk';
+import Terminal from './ide/Terminal';
+import useIdeEnter from './ide/enter';
 import './IdePage.css';
+import './ide/enter.css';
 
 const IDE = 'https://ide.hanzo.ai';
 const GH = 'https://github.com/hanzoai/ide';
@@ -46,9 +47,9 @@ const IMPACT = [4, 5, 6, 7];
 const LAST = SCRIPT_LINES.length - 1;
 const SESSION = [['$', 'hanzo'], ['>', 'deploy the gateway to staging'], ['·', 'reading the project'], ['✓', 'gateway is on staging']];
 const ramp = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
-/* Lines: the page's own line-mask cut-in (700 ms, 60 ms apart, ease-emphasis), done in CSS so the server paint and the
-   client agree under every preference (the shared A2Lines branches on reduced motion while rendering). `now` cuts in
-   on first paint; otherwise when the heading reaches the screen. Reduced motion and JS off show the final lines. */
+/* Lines: a heading set line by line, the same spans on the server and the client (no preference branch while
+   rendering, unlike the shared A2Lines). `vt` gives each line its side for the hero's venetian-type entrance
+   (ide/enter.css); elsewhere the lines simply sit. */
 /* Room: the dark room that enters as a rounded card inside the gutters and opens to full width as it is reached (as
    the shared A2Room), with no preference branch while rendering: phones and reduced motion open it in CSS. */
 function Room({ className = '', children, ...rest }) {
@@ -58,13 +59,11 @@ function Room({ className = '', children, ...rest }) {
   return <motion.section ref={ref} className={'a2-dark ide-room ' + className} data-room="dark" style={{ clipPath: clip }} {...rest}>{children}</motion.section>;
 }
 
-function Lines({ lines, as = 'h2', className = '', now, id }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.3 });
+function Lines({ lines, as = 'h2', className = '', id, vt }) {
   const Tag = as;
   return (
-    <Tag className={className + ' ide-lines' + (now || seen ? ' go' : '')} id={id} ref={ref}>
-      {lines.map((l, i) => <span className="ide-ln" key={i} style={{ '--i': i }}><span>{l}</span>{i < lines.length - 1 ? ' ' : null}</span>)}
+    <Tag className={className + ' ide-hl'} id={id}>
+      {lines.map((l, i) => <span className={'ide-ln' + (vt != null ? ' ide-vt' : '')} key={i} style={vt != null ? { '--i': vt + i, '--s': (vt + i) % 2 ? 1 : -1 } : undefined}><span>{l}</span>{i < lines.length - 1 ? ' ' : null}</span>)}
     </Tag>
   );
 }
@@ -88,7 +87,7 @@ function Editor() {
     let alive = true, h = 0;
     const end = LAST + 6;
     const tick = (v) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= end ? 0 : v + 1), v >= end ? 4200 : 520); };
-    tick(0);
+    tick(end); // it holds the finished frame the server painted, then replays: memories never vanish on arrival
     return () => { alive = false; clearTimeout(h); };
   }, [seen, calm, paused]);
   const cursor = Math.min(t, LAST);
@@ -142,55 +141,25 @@ function Editor() {
   );
 }
 
-/* Stage: the words first, the editor beneath the buttons (never over them); as you scroll it rises into place and
-   settles from a little larger to its own size, while the words make way. */
-function Stage() {
-  const ref = useRef(null);
-  const copy = useRef(null);
-  const obj = useRef(null);
-  const sy = useMotionValue(0); // how far the editor rises as you scroll: it rests under the buttons in normal flow (no jump on hydration)
-  const ss = useMotionValue(1); // how much larger it starts (never wider than the screen)
-  const narrow = useNarrow();
-  const calm = useReducedMotion();
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const [ready, setReady] = useState(false); // the server and the first client paint agree; preferences apply after mount
-  useEffect(() => setReady(true), []);
-  const still = ready && (calm || narrow);
-  useEffect(() => {
-    const m = () => {
-      const c = copy.current, o = obj.current;
-      if (!c || !o) return;
-      sy.set(Math.max(0, o.offsetTop - 96)); // it rises from under the buttons to just below the header
-      ss.set(Math.min(1.04, (innerWidth - 48) / o.offsetWidth));
-    };
-    m();
-    addEventListener('resize', m);
-    return () => removeEventListener('resize', m);
-  }, [sy, ss]);
-  const k = (v) => (still ? 1 : ramp(v, 0, 0.55));
-  const scale = useTransform([p, ss], ([v, s0]) => (still ? 1 : s0 + (1 - s0) * k(v)));
-  const y = useTransform([p, sy], ([v, up]) => (still ? 0 : -up * k(v)));
-  const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.04, 0.3))); // functions: an accelerated scroll fade does not clamp
-  const lift = useTransform(p, (v) => (still ? 0 : -160 * ramp(v, 0, 0.3)));
-  const cap = useTransform(p, (v) => (still ? 1 : ramp(v, 0.5, 0.62)));
+/* The hero: the words, then the live editor under the asks, in normal flow (no pin, no scroll scrub). The words
+   arrive venetian-type from the first paint (.ide-in is in the server HTML); the editor is the self-running demo. */
+function Hero() {
   return (
-    <section className="ide-stage" ref={ref} aria-labelledby="ide-h1">
-      <div className="ide-stick">
-        <motion.div className="a2-wrap ide-copy" style={{ opacity: fade, y: lift }} ref={copy}>
-          <p className="a2-kick"><b>Hanzo IDE</b> · Developers</p>
-          <Lines as="h1" id="ide-h1" className="a2-display ide-h1" lines={['An IDE that remembers', 'your codebase']} now />
-          <div className="ide-copy-row">
-            <p className="a2-lede">The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
-            <div className="a2-acts"><Cta to={IDE} id="ide.hero" thumb>Open the IDE</Cta><Cta to={GH} kind="link">View on GitHub</Cta></div>
-          </div>
-        </motion.div>
-        <motion.div className="ide-obj" style={{ scale, y }} ref={obj}>
-          <Editor />
-          <motion.div className="ide-under" style={{ opacity: cap }}>
-            <p>Open source (Apache 2.0). The VS Code workbench on a Rust engine. Open VSX extensions run as they are.</p>
-            <p>Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
-          </motion.div>
-        </motion.div>
+    <section className="ide-stage ide-in" data-enter="venetian-type" aria-labelledby="ide-h1">
+      <div className="a2-wrap ide-copy">
+        <p className="a2-kick ide-vt" style={{ '--i': 0, '--s': -1 }}><b>Hanzo IDE</b> · Developers</p>
+        <Lines as="h1" id="ide-h1" className="a2-display ide-h1" lines={['An IDE that remembers', 'your codebase']} vt={1} />
+        <div className="ide-copy-row">
+          <p className="a2-lede ide-vt" style={{ '--i': 3, '--s': 1 }}>The editor you already know, on a Rust engine that is ours. The agent keeps a memory of your project across sessions, reads the call graph before it changes a line, and runs every tool in a sandbox.</p>
+          <div className="a2-acts ide-vt" style={{ '--i': 4, '--s': -1 }}><Cta to={IDE} id="ide.hero" thumb>Open the IDE</Cta><Cta to={GH} kind="link">View on GitHub</Cta></div>
+        </div>
+      </div>
+      <div className="ide-obj">
+        <Editor />
+        <div className="ide-under">
+          <p>Open source (Apache 2.0). The VS Code workbench on a Rust engine. Open VSX extensions run as they are.</p>
+          <p>Example project. Every name in it is one you would give your own. <A to="/home">Open in the console</A></p>
+        </div>
       </div>
     </section>
   );
@@ -220,13 +189,14 @@ function Planes() {
 function Engine() {
   return (
     <section className="a2-sec ide-engine" aria-labelledby="ide-engine-h">
-      <div className="a2-wrap a2-grid">
+      <div className="a2-wrap a2-grid ide-blinds" data-enter="blinds">
         <div className="ide-engine-copy">
           <p className="a2-kick">What is Hanzo IDE</p>
-          <A2Grow to={1.55}><Lines id="ide-engine-h" className="a2-display s" lines={['The workbench you know,', 'on an engine', 'that is ours']} /></A2Grow>
+          <Lines id="ide-engine-h" className="a2-display s" lines={['The workbench you know,', 'on an engine', 'that is ours']} />
           <p className="a2-body">The editor surface, the extension model and the keybindings are the ones you use today. Everything under them is Rust: the agent loop, the memory, the indexing, the sandbox.</p>
         </div>
         <div className="ide-engine-vis"><Planes /></div>
+        <span className="ide-slats" aria-hidden="true">{Array.from({ length: 9 }).map((_, i) => <i key={i} style={{ '--i': i }} />)}</span>
       </div>
     </section>
   );
@@ -275,8 +245,25 @@ function Picture({ i }) {
   );
 }
 
+/* The three promises as plain rows (no pin): each pulls focus as it arrives (rack-focus), and its picture's own
+   arrivals wait for it. */
 function Promises() {
-  return <A2Chapters label="What Hanzo IDE does" items={WHAT.map(([, t, d]) => ({ t, d }))} visual={(i) => <Picture i={i} />} />;
+  return (
+    <section className="a2-sec ide-pro" aria-label="What Hanzo IDE does">
+      <div className="a2-wrap ide-pro-list">
+        {WHAT.map(([n, t, d], i) => (
+          <article key={n} className={'a2-grid ide-pro-row' + (i % 2 ? ' flip' : '')} data-enter="rack-focus">
+            <div className="ide-pro-copy">
+              <p className="ide-pro-n x-mono">{n}</p>
+              <h3 className="a2-headline">{t}</h3>
+              <p className="a2-body">{d}</p>
+            </div>
+            <div className="ide-pro-vis" aria-hidden="true"><Picture i={i} /></div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 let MID = 1;
@@ -309,11 +296,11 @@ function Teach() {
             <button type="submit" className="ide-add" disabled={!text.trim()} aria-label="Remember it"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>
           </form>
         </div>
-        <div className="ide-teach-g">
+        <div className="ide-teach-g" data-enter="tilt-3d-hover">
           {MEMS.map(([, k, d], i) => {
             const list = mems.filter((m) => m.k === i);
             return (
-              <div key={k} className={'ide-teach-c k-' + k}>
+              <div key={k} className={'ide-teach-c k-' + k} data-tilt="" style={{ '--i': i, '--s': i - 1 }}>
                 <p className="ide-teach-k"><span className="x-mono">{k}</span> {d}</p>
                 {list.length ? (
                   <ul>{list.map((m) => (

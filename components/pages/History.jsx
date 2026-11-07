@@ -1,24 +1,26 @@
 'use client';
-/* History, v3 (Story archetype, editorial). Ink, greys and silvers only (JAMES.md 7); colour comes from Hanzo's own media.
+/* History, v4 (Story archetype, editorial; motion map, 7 Nov). Ink, greys and silvers only (JAMES.md 7); colour comes
+   from Hanzo's own media.
    First screen: "Sovereign intelligence since 2014." at display size with the lede and one ask under it; beside it, the
    object: a giant year that runs from 2014 to 2026 by itself while the four eras' bars fill in turn.
-   Signature: the timeline scrub. The year-by-year history is one pinned scene: your scroll cuts a giant year into its
-   line (the old year rises out, the new one rises in), and each year's story comes in as the last one goes out, its
-   plate (the customer's picture or logo, or its figure where Hanzo has none) beside it. A rail of thirteen years tracks
-   where you are; any year is one click away. On a phone the years simply stack.
-   Supporting (three): the hero's years run by themselves, each era's bar filling as the giant year is cut in (time);
-   the press clippings as a rail you throw sideways (pointer, drag with inertia); "Your year" cuts its year in (state).
+   Second screen, the Signature (word-light): Hanzo's own statement of the history ("Built with hundreds of venture-funded
+   startups ...") set large, lighting word by word as it is read (scroll, wheel, keys or touch; a press on a word lights
+   it up to there). Under it the thirteen years as plain, quick rows (no pinned scene): each year's figure, plate, story,
+   posts and the rest of its story one press away; the rail of years above them jumps to any year and marks the one in view.
+   Then the press clippings (a rail you throw sideways), "Your year", the principles and the Hanzo FDE close.
+   Entrances (history/enter.css, page-local): domino, cover-slide, page-curl, explode-gather, split-merge.
    Beyond: "Your year": type the year you started and the card cuts to what Hanzo was building then, with its posts.
    Every word, figure and link is Hanzo's (content/live/history.json). */
 // Persona: a buyer or investor checking Hanzo's record (arrives from /about, the footer or search)
 // Goal: see twelve years of shipped work, year by year, and trust it
 // CTA: Explore Our History (#timeline) in the hero; Talk to Hanzo FDE in the sticky ask bar and the closing Band
 // Metric: contact_sales_submit via the Band (data-cta="history.*")
-// Signature: the timeline scrub: one pinned scene where your scroll cuts a giant year into its line as each year's story comes in and the last goes out
+// Signature: word-light: Hanzo's statement of its history lights word by word as it is read (second screen, over the years)
+// Entrances: domino (the years and their rail), cover-slide (track record), page-curl (your year), explode-gather (the Zen of Hanzo principles), split-merge (Hanzo FDE steps)
 // Beyond: your year: type the year you started and the card cuts to what Hanzo was building then, with its posts
-// V2: 7/10 critic round 3: wordmark plates for the years whose pictures are not mirrored, a lighter first screen (one era's line at a time), your year never jumps, 26px year figures, FDE steps as captions (no numeral run), 44px links
+// V2: motion map: the pinned 13-year scrub and its odometer year are gone (the years are plain rows, every word, link and plate kept, the rail stays as a jump index); the statement lights word by word; five page-local entrances; the years come straight after the hero, the clippings after them
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { A, Cta, Img, Film } from '../kit';
 import UI from '../../content/ui-strings.json';
 import StoryClose from './StoryClose';
@@ -28,7 +30,9 @@ import '../v2/system.css';
 import { YEARS, ERAS } from './historyData';
 import './story.css';
 import usePhoneAsk from './usePhoneAsk';
+import useHistoryEnter from './history/enter';
 import './History.css';
+import './history/enter.css';
 
 const TL = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -95,7 +99,7 @@ function Hero() {
   );
 }
 
-/* ---------- 2. track record: press clippings on a rail you throw ---------- */
+/* ---------- 3. track record: press clippings on a rail you throw (after the years) ---------- */
 const CLIPS = [
   ['2014', 'Building business software since 2014, with AI and machine learning in commercial use from the start and GPT models in production by 2019. Founded as Crowdstart and renamed Hanzo in 2016. The first customer, SKULLY, raised $1M in about 45 hours, the fastest fully funded campaign on Indiegogo.', [['TechCrunch, 2014', 'https://techcrunch.com/2014/08/14/the-skully-smart-helmet-is-the-fastest-funded-indiegogo-campaign-to-hit-1m/'], ['SKULLY', '/customers#skully']]],
   ['120,000 ETH', 'The first blockchain-native commerce platform, 2017: the Unikrn ICO raised over 120,000 ETH across regulated jurisdictions.', [['Crunchbase News, 2017', 'https://news.crunchbase.com/startups/found-ico-makes-sense/'], ['Unikrn on Hanzo', '/customers#unikrn']]],
@@ -130,7 +134,7 @@ function Record() {
     animate(x, want, { type: 'spring', stiffness: 300, damping: 30 });
   };
   return (
-    <section className="v2s-sec xhi-rec" aria-labelledby="xhi-rec-h">
+    <section className="v2s-sec xhi-rec" aria-labelledby="xhi-rec-h" data-enter="cover-slide">
       <div className="v2s-wrap v2s-head xhi-rec-head">
         <h2 id="xhi-rec-h" className="v2s-headline">Shipping for venture-funded companies since 2014</h2>
         <p className="v2s-cap">Track record</p>
@@ -153,7 +157,7 @@ function Record() {
   );
 }
 
-/* ---------- 3. the journey: one pinned scene, scrubbed year by year (Signature) ---------- */
+/* ---------- 2. the journey: the statement that lights as it is read (Signature), then the years as plain rows ---------- */
 /* the year, cut into its line: the old year rises out of the mask as the new one rises in (no rolling digits) */
 function YearCut({ at, className = '' }) {
   return (
@@ -184,7 +188,7 @@ function Plate({ y, on }) {
 function Year({ y, i, at }) {
   const on = i === at;
   return (
-    <article className={'xhi-yr' + (on ? ' on' : i < at ? ' past' : '')} aria-labelledby={'xhi-y' + y.year} inert={!on ? true : undefined} data-y={i}>
+    <article className={'xhi-yr' + (on ? ' on' : '')} aria-labelledby={'xhi-y' + y.year} data-y={i} data-enter="domino">
       <p className="xhi-yr-n v2s-num">{y.year}</p>
       <Plate y={y} on={on} />
       <div className="xhi-yr-t">
@@ -207,54 +211,51 @@ function Year({ y, i, at }) {
   );
 }
 
+/* Hanzo's statement of its history, one span per word (rendered here, the same on server and client) */
+const STATEMENT = 'Built with hundreds of venture-funded startups: billions in client revenue and two that went public on Nasdaq in 2024, from our first customer SKULLY to the sovereign AI cloud today.';
+const WORDS = STATEMENT.split(' ');
+
 function Journey() {
   const ref = useRef(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const [at, setAt] = useState(0);
-  const [pinned, setPinned] = useState(true);
-  useEffect(() => { const m = matchMedia('(max-width: 900px)'); const f = () => setPinned(!m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
-  useMotionValueEvent(p, 'change', (v) => { const k = Math.max(0, Math.min(N - 1, Math.floor(v * N * 0.999))); setAt((a) => (a === k ? a : k)); });
-  const era = ERAS.reduce((a, e, k) => (at >= e[3] ? k : a), 0);
+  // the year nearest the middle of the screen is the one the rail marks
+  useEffect(() => {
+    const box = ref.current;
+    if (!box) return undefined;
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.y); }), { rootMargin: '-45% 0px -45% 0px' });
+    box.querySelectorAll('.xhi-yr').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
   const jump = (i) => {
-    const el = ref.current;
+    const el = ref.current?.querySelector(`.xhi-yr[data-y="${i}"]`);
     if (!el) return;
-    const top = el.getBoundingClientRect().top + scrollY;
-    const y = top + ((i + 0.5) / N) * (el.offsetHeight - innerHeight);
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: 'smooth' });
+    const y = el.getBoundingClientRect().top + scrollY - 96;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (window.__lenis && !still) window.__lenis.scrollTo(y, { duration: 1 });
+    else scrollTo({ top: y, behavior: still ? 'auto' : 'smooth' });
   };
   return (
-    <>
-      <section className="v2s-sec tight xhi-j-intro" aria-labelledby="xhi-tl">
-        <div className="v2s-wrap v2s-head side">
+    <section className="v2s-sec xhi-j" id="timeline" ref={ref} style={{ '--n': N }} aria-labelledby="xhi-tl">
+      <div className="v2s-wrap">
+        <div className="xhi-j-head">
           <h2 id="xhi-tl" className="v2s-headline">Year by year: 2014 to today</h2>
           <p className="v2s-cap">Full History</p>
-          <p className="v2s-lede xhi-j-l">Built with hundreds of venture-funded startups: billions in client revenue and two that went public on Nasdaq in 2024, from our first customer SKULLY to the sovereign AI cloud today.</p>
         </div>
-      </section>
-      <section className="xhi-scrub" id="timeline" ref={ref} style={{ '--n': N }} aria-label="Year by year">
-        <div className="xhi-stage">
-          <div className="v2s-wrap xhi-stage-g">
-            {pinned && (
-              <div className="xhi-odo-w">
-                <YearCut at={at} />
-                <span className="xhi-odo-era">{ERAS[era][1]}</span>
-              </div>
-            )}
-            <div className="xhi-years">
-              {YEARS.map((y, i) => <Year key={y.year} y={y} i={i} at={pinned ? at : i} />)}
-            </div>
-          </div>
-          <div className="v2s-wrap xhi-rail2">
-            <i className="xhi-rail2-l" aria-hidden="true"><motion.b style={{ scaleX: p }} /></i>
-            <ol>
-              {YEARS.map((y, i) => (
-                <li key={y.year}><button type="button" className={i === at ? 'on' : i < at ? 'past' : ''} aria-current={i === at ? 'step' : undefined} onClick={() => jump(i)}>{y.year}</button></li>
-              ))}
-            </ol>
-          </div>
+        <p className="xhi-stmt" data-wl="">
+          {WORDS.map((w, i) => <span key={i}><span className="xhi-w">{w}</span>{i < WORDS.length - 1 ? ' ' : ''}</span>)}
+        </p>
+        <nav className="xhi-rail2" aria-label="Year by year">
+          <ol data-enter="domino">
+            {YEARS.map((y, i) => (
+              <li key={y.year} style={{ '--k': i }}><button type="button" className={i === at ? 'on' : i < at ? 'past' : ''} aria-current={i === at ? 'step' : undefined} onClick={() => jump(i)}>{y.year}</button></li>
+            ))}
+          </ol>
+        </nav>
+        <div className="xhi-years">
+          {YEARS.map((y, i) => <Year key={y.year} y={y} i={i} at={at} />)}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 
@@ -282,7 +283,7 @@ function Yours() {
             <button type="button" aria-label="Year after" onClick={() => step(1)}>+</button>
           </div>
         </div>
-        <div className="v2s-c-8-12 xhi-you-a" aria-live="polite">
+        <div className="v2s-c-8-12 xhi-you-a" aria-live="polite" data-enter="page-curl">
           {y ? (
             <>
               <Plate key={y.year} y={y} on />
@@ -309,6 +310,9 @@ const PRINCIPLES = [
   ['First Principles Thinking', 'See the invisible, do the impossible. Boil problems down to their essence and solve them in fundamentally better ways.'],
 ];
 
+/* where each principle's fragments start (px, px, deg): flung outwards from the list's centre */
+const SHARDS = [[-110, -70, -7], [120, -80, 6], [-140, 10, 5], [150, 20, -6], [-100, 90, 8], [110, 100, -5]];
+
 function Principles() {
   return (
     <section className="v2s-sec xhi-prin" aria-labelledby="xhi-prin-h">
@@ -319,9 +323,9 @@ function Principles() {
           <p className="v2s-lede">The principles the company argues from when a decision is close.</p>
           <TL to="/philosophy">Explore the full Zen manifesto</TL>
         </div>
-        <ol className="v2s-c-6-12 xhi-prin-l">
+        <ol className="v2s-c-6-12 xhi-prin-l" data-enter="explode-gather">
           {PRINCIPLES.map(([t, d], i) => (
-            <li key={t}>
+            <li key={t} style={{ '--k': i, '--dx': SHARDS[i][0] + 'px', '--dy': SHARDS[i][1] + 'px', '--dr': SHARDS[i][2] + 'deg' }}>
               <span className="v2s-num">{String(i + 1).padStart(2, '0')}</span>
               <h3 className="v2s-title">{t}</h3>
               <p>{d}</p>
@@ -348,7 +352,7 @@ function Fde() {
       cta="history.band"
       note={
         <>
-          <ol className="xhi-fde-l">
+          <ol className="xhi-fde-l" data-enter="split-merge">
             {FDE.map(([t, d], i) => (
               <li key={t}>
                 <span className="v2s-num">{String(i + 1).padStart(2, '0')}</span>
@@ -366,13 +370,15 @@ function Fde() {
 
 export default function History() {
   usePhoneAsk();
+  const root = useRef(null);
+  useHistoryEnter(root);
   return (
-    <main id="main" className="xhi v2s">
-      {/* JavaScript off: every line shows at rest, and the years stack */}
-      <noscript><style>{'.xhi .v2-line>span,.xhi-hero-side{transform:none!important;opacity:1!important}.xhi-era-bar b{transform:none!important}.xhi-scrub{height:auto!important}.xhi-stage{position:static!important;height:auto!important;overflow:visible!important;display:block!important}.xhi-years{gap:96px}.xhi-yr{grid-area:auto!important}.xhi-yr .xhi-yr-t,.xhi-yr .xhi-plate{opacity:1!important;transform:none!important}.xhi-yr-n{display:block!important}.xhi-odo-w,.xhi-rail2{display:none!important}'}</style></noscript>
+    <main id="main" className="xhi v2s" ref={root}>
+      {/* JavaScript off: every line shows at rest (entrance starts and unlit words exist only under html.js) */}
+      <noscript><style>{'.xhi .v2-line>span,.xhi-hero-side{transform:none!important;opacity:1!important}.xhi-era-bar b{transform:none!important}'}</style></noscript>
       <Hero />
-      <Record />
       <Journey />
+      <Record />
       <Yours />
       <Principles />
       <Fde />
