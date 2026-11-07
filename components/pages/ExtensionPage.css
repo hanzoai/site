@@ -564,6 +564,8 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
 /* file names never break mid-name: one line, an ellipsis on a narrow screen */
 .xe-zips li > span.x-mono { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; overflow-wrap: normal; }
 .xe-zips em { flex: none; }
+.xe-zips { min-width: 0; max-width: 100%; }
+@media (max-width: 599px) { .xe-build { padding: 24px 20px; } .xe-fork { width: 100%; } }
 /* browser rows: one ask style, every size shown; your browser's row is marked by a filled dot and bold weight */
 .xe-row-sz { opacity: 1; transform: none; }
 .xe-rows li.yours .av-title { font-weight: 606; }
