@@ -37,9 +37,10 @@
 .sn2-issue .l2-pause { top: 54px; right: 14px; }
 .sn2-col-pause { top: 84px !important; right: 24px !important; }
 .sn2-col { position: relative; }
-.sn2-col-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - var(--x-top, 60px)); min-height: 600px; overflow: hidden; }
+/* the room is a plain section now (no pin, no scroll scrub): it plays by itself while it is on screen */
+.sn2-col-pin { position: relative; min-height: min(100svh, 880px); padding-block: clamp(96px, 10vw, 160px); overflow: hidden; display: grid; align-items: center; }
 .sn2-cv { position: absolute; inset: 0; width: 100%; height: 100%; }
-.sn2-col-in { position: relative; height: 100%; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
+.sn2-col-in { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; }
 .sn2-col-copy { grid-column: 1 / span 5; position: relative; z-index: 2; padding: 32px 0; }
 .sn2-col-in::before { content: ''; position: absolute; inset: 0 auto 0 -50vw; width: calc(50vw + 46%); z-index: 1; background: linear-gradient(90deg, #000 72%, transparent); pointer-events: none; }
 .sn2-col-copy .l2-head { max-width: 14ch; }
@@ -56,13 +57,14 @@
 .sn2-card.done .sn2-card-n em { opacity: 1; transform: none; }
 .sn2-card-f { margin: 22px 0 0; padding-top: 18px; border-top: 1px solid rgba(255, 255, 255, .1); font-size: 13px; color: #a3a3a3; }
 
-/* Facts 02–06: sheets that stack */
-.sn2-sheets { padding-block: clamp(120px, 14vw, 200px) clamp(24px, 3vw, 48px); }
-.sn2-sheet { position: sticky; top: calc(88px + var(--i) * 18px); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; margin-bottom: 14vh; padding: clamp(36px, 4vw, 64px); border-radius: 24px; background: #fff; box-shadow: 0 -1px 0 rgba(0, 0, 0, .1), 0 -16px 40px -32px rgba(0, 0, 0, .18); }
+/* Facts 02–06: plain sheets in two runs (no sticky stacking) */
+.sn2-sheets.glitch { padding-block: clamp(120px, 14vw, 200px) 0; }
+.sn2-sheets.curl { padding-block: 16px clamp(24px, 3vw, 48px); }
+.sn2-sheet { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; margin-bottom: 16px; padding: clamp(36px, 4vw, 64px); border-radius: 24px; background: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
 /* alternate sheets put the picture first, so five facts do not read as one layout five times */
-.sn2-sheet:nth-child(even) .sn2-sheet-copy { grid-column: 8 / span 5; grid-row: 1; }
-.sn2-sheet:nth-child(even) .sn2-pic { grid-column: 1 / span 6; grid-row: 1; }
-.sn2-sheet:nth-child(even) { background: #f5f5f5; }
+.sn2-sheet.alt .sn2-sheet-copy { grid-column: 8 / span 5; grid-row: 1; }
+.sn2-sheet.alt .sn2-pic { grid-column: 1 / span 6; grid-row: 1; }
+.sn2-sheet.alt { background: #f5f5f5; box-shadow: none; }
 .sn2-sheet:last-child { margin-bottom: 0; }
 .sn2-sheet-copy { grid-column: 1 / span 5; }
 .sn2-sheet-copy .l2-ch-n { margin-top: 14px; }
@@ -111,13 +113,13 @@
   .sn2-hist { grid-column: 1 / -1; height: 48px; }
   .sn2-code code { font-size: 14px; }
   .sn2-map { display: none; }
-  .sn2-col-pin { position: relative; top: auto; height: auto; min-height: 0; padding-block: 120px; }
+  .sn2-col-pin { min-height: 0; padding-block: 120px; display: block; }
   .sn2-col-in { display: block; }
   .sn2-col-in::before { display: none; }
   .sn2-card { margin-top: 56px; padding: 26px; }
   .sn2-card-n b { font-size: 44px; }
-  .sn2-sheets { padding-block: 120px 64px; }
-  .sn2-sheet { position: relative; top: auto; display: block; min-height: 0; margin-bottom: 16px; padding: 28px 22px; }
+  .sn2-sheets.glitch { padding-block: 120px 0; }
+  .sn2-sheet { display: block; min-height: 0; margin-bottom: 16px; padding: 28px 22px; }
   .sn2-pic { margin-top: 36px; }
   .sn2-trace p { grid-template-columns: 74px 1fr; }
   .sn2-rel-bars { height: 180px; gap: 8px; }
@@ -125,10 +127,6 @@
   .sn2-acc li { height: 60px; font-size: 17px; padding: 0 16px; }
   .sn2-tag, .sn2-unres, .sn2-card-f, .sn2-host, .sn2-acc li em, .sn2-k, .sn2-cron, .sn2-trace span, .sn2-rt-row p, .sn2-fsl { font-size: 14px !important; }
   .sn2-rt-out { font-size: 17px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sn2-col-pin { position: relative; top: auto; height: auto; padding-block: 160px; }
-  .sn2-sheet { position: relative; top: auto; margin-bottom: 16px; }
 }
 
 /* sheet pictures play once when their sheet lands (JS only; with JS off they are simply there) */
@@ -173,4 +171,58 @@ html.js .sn2-end.in .sn2-end-h i { transform: scaleY(var(--h)); }
 /* the close's object: the resolved frame wraps rather than clipping its chip */
 .sn2-end .sn2-code { height: auto; min-height: 56px; padding: 12px 16px; flex-wrap: wrap; }
 .sn2-end .sn2-code code { position: static; margin: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.4; }
-@media (max-width: 900px) { .sn2-sheets { padding-block: 120px 24px; } .sn2-end .sn2-code .sn2-map { display: none; } }
+@media (max-width: 900px) { .sn2-sheets.curl { padding-block: 0 24px; } .sn2-end .sn2-code .sn2-map { display: none; } }
+
+/* ---------- signature: decode (glyph cells keep each glyph's measured width, so nothing reflows) ---------- */
+.sn2-dw { white-space: nowrap; }
+.sn2-dc { display: inline-block; text-align: center; }
+.sn2-dec { cursor: default; }
+
+/* ---------- entrances, once each (JS off: all visible; reduced motion: the final state) ---------- */
+/* 1 hero: typewriter */
+html.js .sn2-tw:not(.go) { visibility: hidden; }
+.sn2-caret { display: inline-block; width: .06em; height: .8em; margin-right: -.06em; vertical-align: -.02em; background: currentColor; animation: sn2-blink .5s steps(1) infinite; }
+@keyframes sn2-blink { 50% { opacity: 0; } }
+
+/* 2 the dark room: conveyor (each line rides in from the right on one belt, at one speed, and stops) */
+html.js .sn2-col .sn2-belt { transform: translateX(72vw); opacity: 0; }
+html.js .sn2-col.in .sn2-belt { transform: none; opacity: 1; transition: transform .5s cubic-bezier(.4, 0, .2, 1), opacity .15s cubic-bezier(0, 0, .2, 1); transition-delay: calc(var(--d) * 110ms); }
+
+/* 3 facts 02–04: glitch-in (a short monochrome slice glitch, then still) */
+html.js .sn2-sheet.glitch:not(.in) { opacity: 0; }
+html.js .sn2-sheet.glitch.in { animation: sn2-glitch .4s steps(1, end) both; }
+.sn2-sheet.glitch::after { content: ''; position: absolute; left: 0; right: 0; top: 30%; height: 10%; z-index: 3; background: #0a0a0a; opacity: 0; pointer-events: none; }
+html.js .sn2-sheet.glitch.in::after { animation: sn2-glitch-bar .4s steps(1, end) both; }
+@keyframes sn2-glitch {
+  0% { opacity: 1; clip-path: inset(38% 0 48% 0); transform: translateX(-18px); }
+  14% { clip-path: inset(8% 0 74% 0); transform: translateX(12px); }
+  28% { clip-path: inset(60% 0 18% 0); transform: translateX(-8px); }
+  42% { clip-path: inset(0 0 56% 0); transform: translateX(6px); }
+  56% { clip-path: inset(24% 0 0 0); transform: translateX(-3px); }
+  70% { clip-path: inset(0); transform: translateX(2px); }
+  84%, 100% { opacity: 1; clip-path: inset(0); transform: none; }
+}
+@keyframes sn2-glitch-bar { 0% { opacity: 1; top: 52%; } 28% { opacity: 1; top: 18%; height: 4%; } 56% { opacity: 1; top: 70%; height: 6%; } 70%, 100% { opacity: 0; } }
+
+/* 4 facts 05–06: page-curl (a grey surface curls away from the bottom-right corner to show the sheet) */
+@property --sn2-c { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+.sn2-sheet.curl::before, .sn2-sheet.curl::after { content: ''; position: absolute; inset: 0; pointer-events: none; --sn2-c: 0%; }
+html.js .sn2-sheet.curl::after { z-index: 3; background: #ededed; --sn2-c: 200%; clip-path: polygon(0 0, var(--sn2-c) 0, 0 var(--sn2-c)); }
+html.js .sn2-sheet.curl::before { z-index: 4; --sn2-c: 200%; background: linear-gradient(135deg, #fafafa 30%, #d4d4d4); clip-path: polygon(calc(var(--sn2-c) - 100%) 100%, calc(var(--sn2-c) - 100%) calc(var(--sn2-c) - 100%), 100% calc(var(--sn2-c) - 100%)); }
+html.js .sn2-sheet.curl.in::before, html.js .sn2-sheet.curl.in::after { --sn2-c: 0%; transition: --sn2-c .5s cubic-bezier(.4, 0, .2, 1); }
+
+/* 5 the close: slot-roll (each word rolls down through three reels into place) */
+html.js .sn2-roll:not(.go) { visibility: hidden; }
+.sn2-slot { display: inline-block; clip-path: inset(0 -.3em -.18em -.3em); }
+.sn2-reel { position: relative; display: inline-block; transform: translateY(-300%); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+.sn2-reel.on { transform: none; }
+.sn2-reel-up { position: absolute; left: 0; top: 100%; display: flex; flex-direction: column; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .sn2-tw:not(.go), html.js .sn2-roll:not(.go) { visibility: visible; }
+  html.js .sn2-col .sn2-belt { transform: none; opacity: 1; transition: none; }
+  html.js .sn2-sheet.glitch:not(.in) { opacity: 1; }
+  html.js .sn2-sheet.glitch.in, html.js .sn2-sheet.glitch.in::after { animation: none; }
+  html.js .sn2-sheet.curl::before, html.js .sn2-sheet.curl::after { display: none; }
+  .sn2-caret { animation: none; }
+}
