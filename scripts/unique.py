@@ -113,6 +113,14 @@ def main():
             print("\n".join(l for l in r.stdout.splitlines() if l.startswith("FAIL")))
             print("unique: motion overdone on the page(s) above - see docs/DESIGN.md 'Motion: varied and restrained'.")
             return 1
+    # James's two most repeated complaints (UI hues, a label above the headline), on every page file touched since 7 Nov 06:00
+    styled = [str(p) for p in (COMPONENTS / "pages").rglob("*") if p.suffix in (".jsx", ".css") and p.stat().st_mtime > 1794031200]
+    if styled:
+        r = subprocess.run([sys.executable, str(HZ / "scripts" / "taste.py"), *styled], capture_output=True, text=True)
+        if r.returncode:
+            print("\n".join(l for l in r.stdout.splitlines() if l.startswith("TASTE FAIL")))
+            print("unique: James's taste rules broken above - see docs/JAMES.md (0 UI hues; no label above a headline).")
+            return 1
     return 0
 
 if __name__ == "__main__":
