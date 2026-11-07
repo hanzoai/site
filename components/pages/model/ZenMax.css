@@ -15,9 +15,17 @@
 .zx-acts .x-btn { height: 48px; padding: 0 27px; font-size: 16px; font-weight: 606; }
 
 /* Stage. --k (1 → 0) and --s0 (the cover scale) drive the card and the name; the settled card is 8 of 13 columns */
-.zx-stage { position: relative; height: 240svh; margin-top: -60px; } /* under the 60px header: pinned from the first frame */
+.zx-stage { position: relative; height: 140svh; margin-top: -60px; } /* under the 60px header: pinned from the first frame; the settle ends as the promises arrive */
+/* --s the card's scale, --l0 its resting left, --lk its left at --k. --edge is the left edge of the visible film: it wipes
+   from the screen's left to the resting left while --k runs 1 → .8, so the film leaves the words before the card shrinks
+   and the two never share pixels after that (the card clips everything left of --edge). */
 .zx-stage-pin {
   --k: 1; --s0: 2.26; --c: min(100vw - 2 * var(--zx-gut), 1152px); --gap: calc((100vw - var(--c)) / 2); --cw: calc(var(--c) * 8 / 13 - 6px);
+  --s: calc(1 + (var(--s0) - 1) * var(--k));
+  --l0: calc(100vw - var(--gap) - var(--cw));
+  --lk: calc(var(--l0) - var(--k) * (4vw + var(--l0)));
+  --edge: calc(-4vw + clamp(0, (1 - var(--k)) * 5, 1) * (4vw + var(--l0)));
+  --top: calc(14svh + (60px - 14svh) * var(--k));
   position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; /* the white the name blends against */
 }
 @media (max-width: 1300px) { .zx-stage-pin { --s0: 2.05; } }
@@ -28,10 +36,17 @@
   position: absolute; top: 14svh; right: var(--gap); width: var(--cw); height: 46svh; border-radius: 20px; overflow: hidden; background: #000;
   transform-origin: 0 0;
   transform: translate(calc((-4vw - (100vw - var(--gap) - var(--cw))) * var(--k)), calc((60px - 14svh) * var(--k))) scale(calc(1 + (var(--s0) - 1) * var(--k)));
+  clip-path: inset(0 0 0 max(0px, (var(--edge) - var(--lk)) / var(--s)) round calc(20px / var(--s)));
 }
 .zx-card .zx-film { width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; background: #000; }
 .zx-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(20deg, rgba(0, 0, 0, .6), rgba(0, 0, 0, 0) 52%); } /* a gradient under the words, never a dimmed film */
-.zx-pause { position: absolute; z-index: 2; top: calc(60svh + 17px); right: var(--gap); display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid currentColor; border-radius: 999px; background: transparent; color: #fff; mix-blend-mode: difference; cursor: pointer; transition: transform var(--zx-fast) var(--zx-out); }
+/* the pause sits 17px inside the visible film's bottom-right corner at every --k (the corner is clamped to the screen) */
+.zx-pause-at {
+  position: absolute; z-index: 2; left: 0; top: 0; mix-blend-mode: difference;
+  transform: translate(calc(min(var(--lk) + var(--cw) * var(--s), 100vw) - 61px), calc(min(var(--top) + 46svh * var(--s), 100svh) - 61px));
+}
+.zx-pause { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid currentColor; border-radius: 999px; background: transparent; color: #fff; cursor: pointer; transition: transform var(--zx-fast) var(--zx-out), background-color var(--zx-fast) var(--zx-out); }
+@media (hover: hover) { .zx-pause:hover { transform: scale(1.1); background-color: rgba(255, 255, 255, .1); } }
 .zx-pause:active { transform: scale(.97); transition-duration: var(--zx-press); }
 .zx-pause:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 .zx-stage-t { position: relative; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 9svh; pointer-events: none; }
@@ -47,32 +62,68 @@
   .js .zx-acts[data-over] .x-btn.solid { background: #f5f5f5; border-color: #f5f5f5; color: #0a0a0a; }
   .zx-acts .x-arrow { color: #fff; mix-blend-mode: difference; } /* the link reads on the film and on white */
 }
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (hover: hover) { .js .zx-acts[data-over] .x-btn.solid:hover { background: #fff; border-color: #fff; } }
+/* on the film the ask inverts to ink with a white ring on hover, so the answer reads against the moving picture */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (hover: hover) { .js .zx-acts[data-over] .x-btn.solid:hover { background: #0a0a0a; border-color: #fff; color: #fff; } }
 .zx-crumb ol { display: flex; gap: 10.5px; margin: 27px 0 0; padding: 0; list-style: none; font-size: 13px; }
 .zx-crumb li + li::before { content: '/'; margin-right: 10.5px; opacity: .55; }
 .zx-crumb a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; display: inline-flex; min-height: 24px; align-items: center; }
 
-/* the promises: heading left (5 of 13), line right (8 of 13) */
-.zx-prom { padding: var(--zx-pad) 0; }
+/* the promises: the router drawing (8 of 13, pinned) beside the four rows (5 of 13); the row at mid-screen sets it */
+.zx-prom { padding: 72px 0 116px; }
+.zx-prom-g { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); gap: 44px; }
+.zx-prom-art { position: sticky; top: calc(50svh - 200px); align-self: start; }
 .zx-prom-l { list-style: none; padding: 0; margin-block: 0; }
-.zx-prom-l li { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; align-items: baseline; padding: 27px 0 44px; border-top: 1px solid var(--zx-line); }
+.zx-prom-l li { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 34svh; padding: 27px 0; border-top: 1px solid var(--zx-line); }
 .zx-prom-l li:last-child { border-bottom: 1px solid var(--zx-line); }
-.zx-prom-l h2 { margin: 0; display: flex; align-items: baseline; gap: 17px; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; }
+.zx-prom-l li::after { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--zx-ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--zx-slower) var(--zx-emph); } /* a hairline draws across the row in view and under the pointer */
+.zx-prom-l li[data-on]::after { transform: none; }
+@media (hover: hover) { .zx-prom-l li:hover::after { transform: none; } }
+.zx-prom-l h2 { margin: 0; display: flex; align-items: baseline; gap: 17px; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; transition: color var(--zx-base) var(--zx-out); }
 .zx-idx { flex: none; font: 606 12px/1 var(--mono); letter-spacing: .14em; color: var(--zx-quiet); }
-.zx-prom-l p { margin: 0; max-width: 44ch; font-size: 21px; line-height: 1.38; color: var(--zx-muted); }
+.zx-prom-l p { margin: 10.5px 0 0 46px; max-width: 36ch; font-size: 17px; line-height: 1.5; color: var(--zx-muted); transition: color var(--zx-base) var(--zx-out); }
+@media (min-width: 900px) { .js .zx-prom-l li:not([data-on]) h2, .js .zx-prom-l li:not([data-on]) p { color: var(--zx-quiet); } }
+
+/* the router drawing: one quiet-room card, five stacked layers in one viewBox */
+.zx-rt { position: relative; aspect-ratio: 640 / 440; border-radius: 24px; background: var(--zx-room); overflow: hidden; }
+.zx-rt-l { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.zx-rt path, .zx-rt-node { fill: none; stroke: var(--zx-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.zx-rt-fan { clip-path: inset(0 84% 0 0); transition: clip-path var(--zx-slower) var(--zx-emph); }
+.zx-rt[data-seen] .zx-rt-fan { clip-path: inset(0); }
+.zx-rt-fan path { transition: opacity var(--zx-slow) var(--zx-move); }
+.zx-rt:not([data-at='0']) .zx-rt-fan path:not(.pick) { opacity: .18; }
+.zx-rt-src, .zx-rt-dot, .zx-rt-lit, .zx-rt-fill, .zx-rt-term, .zx-rt-caret { fill: var(--zx-ink); }
+.zx-rt-ring { fill: none; stroke: var(--zx-ink); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; }
+.zx-rt[data-seen] .zx-rt-ring { animation: zx-pulse 2.4s var(--zx-out) 3; } /* the one name breathes three times on arrival */
+@keyframes zx-pulse { from { opacity: .5; transform: scale(.65); } to { opacity: 0; transform: scale(1.35); } }
+.zx-rt-dot { opacity: 0; transition: transform var(--zx-slower) var(--zx-emph), opacity var(--zx-fast) var(--zx-out); }
+.zx-rt:not([data-at='0']) .zx-rt-dot { opacity: 1; transform: translateX(224px); }
+.zx-rt-lit { opacity: 0; transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(.3); transition: opacity var(--zx-base) var(--zx-out), transform var(--zx-slow) var(--zx-emph); }
+.zx-rt:not([data-at='0']) .zx-rt-lit { opacity: 1; transform: none; transition-delay: .3s; }
+.zx-rt-ctx { opacity: 0; transition: opacity var(--zx-base) var(--zx-out); }
+.zx-rt-track { fill: rgba(0, 0, 0, .08); }
+.zx-rt-fill { transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(0); transition: transform var(--zx-slower) var(--zx-emph); }
+.zx-rt:is([data-at='2'], [data-at='3']) .zx-rt-ctx { opacity: 1; }
+.zx-rt:is([data-at='2'], [data-at='3']) .zx-rt-fill { transform: none; transition-delay: .15s; }
+.zx-rt-tool { clip-path: inset(0 33% 0 0); transition: clip-path var(--zx-slower) var(--zx-emph); }
+.zx-rt[data-at='3'] .zx-rt-tool { clip-path: inset(0); }
+.zx-rt .zx-rt-chev { stroke: #fafafa; }
+.zx-rt-code { fill: rgba(255, 255, 255, .55); }
+.zx-rt-caret { fill: #fafafa; }
+.zx-rt[data-at='3'] .zx-rt-caret { animation: zx-blink 1s steps(1) .5s 4; } /* blinks four times, then rests lit */
+@keyframes zx-blink { 50% { opacity: 0; } }
 
 /* the rack chapters: steps 5 of 13, the pinned panel 8 of 13 */
 .zx-dep { padding: 0 0 var(--zx-pad); }
 .zx-dep-head { padding-bottom: 44px; }
 .zx-h2 { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
 .zx-under { margin-top: 10.5px; }
-.zx-ch { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; }
+.zx-ch { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; margin-top: -84px; } /* the panel rises 40px beside the head (MASTER 3: old and new overlap by 40px) */
 .zx-steps { padding: 6svh 0 10svh; }
 .zx-step { min-height: 78svh; display: flex; flex-direction: column; justify-content: center; padding-right: 27px; opacity: .22; transition: opacity var(--zx-slow) var(--zx-move); }
 .zx-step[data-on] { opacity: 1; }
 .zx-step-t { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
 .zx-four { color: var(--zx-ink); }
-.zx-pin { position: sticky; top: 14svh; align-self: start; margin-top: 6svh; }
+.zx-pin { position: sticky; top: 14svh; align-self: start; }
 .zx-panel { border-radius: 24px; background: #0a0a0a; color: #fafafa; overflow: hidden; }
 .zx-bar { display: flex; align-items: center; justify-content: space-between; gap: 10.5px; padding: 10.5px 17px 10.5px 10.5px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
 .zx-seg { display: flex; gap: 4px; padding: 6px; border-radius: 12px; background: #171717; }
@@ -87,7 +138,7 @@
 .zx-racks { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); gap: 17px; padding: 27px 27px 17px; }
 .zx-rack-a { position: relative; }
 .zx-rack { display: grid; gap: 10.5px; }
-.zx-slot { border-radius: 12px; background: rgba(255, 255, 255, .03); }
+.zx-slot { min-width: 0; border-radius: 12px; background: rgba(255, 255, 255, .03); }
 .zx-rack.twin .zx-slot { background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .03) 0 6px, transparent 6px 12px); }
 .zx-srv { display: grid; gap: 10.5px; padding: 10.5px 12px 12px; border-radius: 12px; background: rgba(255, 255, 255, .06); }
 .zx-srv-n { font: 606 12px/1 var(--mono); letter-spacing: .14em; color: rgba(255, 255, 255, .55); }
@@ -110,8 +161,18 @@
 /* Beyond: the sheet, on the quiet room; totals over their columns, the DataTable under them */
 .zx-spec { padding: var(--zx-pad) 0; background: var(--zx-room); }
 .zx-figs, .zx-srcs { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 5fr); gap: 27px; }
+/* the picked server's total is the one big figure; the other rests at half size and grows in when its column is
+   picked (a preview to three quarters while its column is under the pointer). Scale only, so nothing reflows. */
 .zx-fig { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--zx-quiet); transition: color var(--zx-base) var(--zx-out); }
+.zx-fig > span { display: inline-block; transform-origin: 0 100%; transform: scale(.5); transition: transform var(--zx-slower) var(--zx-emph); }
 .zx-fig[data-on] { color: var(--zx-ink); }
+.zx-fig[data-on] > span { transform: none; }
+.zx-fig[data-peek] { color: var(--zx-muted); }
+.zx-fig[data-peek] > span { transform: scale(.75); }
+@media (hover: hover) and (pointer: fine) {
+  .zx-sheet:has(thead th:nth-child(2) .zx-col[aria-pressed='false']:hover) tbody tr > :nth-child(2),
+  .zx-sheet:has(thead th:nth-child(3) .zx-col[aria-pressed='false']:hover) tbody tr > :nth-child(3) { background-color: rgba(0, 0, 0, .04); }
+}
 .zx-sheet { margin-top: 27px; background: transparent; }
 .zx-sheet table { width: 100%; table-layout: fixed; }
 .zx-sheet caption { caption-side: top; padding: 0 0 17px; text-align: left; font-size: 13px; color: var(--zx-muted); }
@@ -155,11 +216,15 @@
   .zx-sub { font-size: 17px; }
   .zx-sub.zx-blend { color: var(--zx-muted); }
   .zx-crumb ol { margin-top: 17px; }
-  .zx-card { position: relative; order: 2; top: auto; right: auto; width: calc(100% - 2 * var(--zx-gut)); height: auto; aspect-ratio: 4 / 5; max-height: 45svh; margin: 27px auto 0; transform: none; }
-  .zx-pause { top: auto; bottom: 10.5px; right: calc(var(--zx-gut) + 10.5px); }
-  .zx-prom-l li { grid-template-columns: minmax(0, 1fr); gap: 10.5px; padding: 27px 0 27px; }
-  .zx-prom-l p { font-size: 17px; }
-  .zx-ch { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .zx-card { position: relative; order: 2; top: auto; right: auto; width: calc(100% - 2 * var(--zx-gut)); height: auto; aspect-ratio: 4 / 5; max-height: 45svh; margin: 27px auto 0; transform: none; clip-path: none; }
+  .zx-pause-at { top: auto; left: auto; bottom: 10.5px; right: calc(var(--zx-gut) + 10.5px); transform: none; }
+  .zx-prom { padding: 72px 0; }
+  .zx-prom-g { grid-template-columns: minmax(0, 1fr); gap: 17px; }
+  .zx-prom-art { position: static; }
+  .zx-rt { border-radius: 20px; }
+  .zx-prom-l li { min-height: 0; padding: 27px 0; }
+  .zx-prom-l p { margin-left: 0; }
+  .zx-ch { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 0; }
   .zx-pin { order: -1; position: static; margin-top: 0; }
   .zx-steps { padding: 17px 0 0; }
   .zx-step { min-height: 0; opacity: 1; padding: 27px 0 0; }
@@ -175,9 +240,9 @@
   .zx-gpus i { height: 12px; border-radius: 2px; }
   .zx-foot { padding: 4px 17px 17px; gap: 10.5px; }
   .zx-num { font-size: 44px; }
-  .zx-plan { flex-wrap: nowrap; overflow-x: auto; width: 100%; scrollbar-width: none; }
-  .zx-plan::-webkit-scrollbar { display: none; }
-  .zx-plan-l { flex: none; margin: 0 6px 0 0; white-space: nowrap; }
+  .zx-plan { width: 100%; min-width: 0; } /* wraps (the base rule): every planning button whole, nothing past the card */
+  .zx-racks { max-width: 100%; min-width: 0; }
+  .zx-slot { min-width: 0; overflow: hidden; } /* a server slides in inside its own slot */
   .zx-figs, .zx-srcs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 17px; }
   .zx-figs > span:first-child, .zx-srcs > span:first-child { display: none; }
   .zx-fig { font-size: 32px; }
@@ -194,7 +259,9 @@
 @media (prefers-reduced-motion: reduce) {
   .zx-stage { height: auto; }
   .zx-stage-pin { --k: 0 !important; height: 100svh; min-height: 640px; }
-  .zx-step, .zx-gpus i, .zx-brk, .zx-domain, .zx-col, .zx-drawer-b i, .zx-fig { transition: none; }
+  .zx-step, .zx-gpus i, .zx-brk, .zx-domain, .zx-col, .zx-drawer-b i, .zx-fig, .zx-fig > span { transition: none; }
   .zx-drawer-p li { animation: none; }
+  .zx-rt *, .zx-rt-l, .zx-prom-l li::after, .zx-prom-l h2, .zx-prom-l p, .zx-pause { transition: none !important; animation: none !important; }
+  .zx-rt-fan { clip-path: none; }
 }
 @media (prefers-reduced-motion: reduce) and (max-width: 899px) { .zx-stage-pin { height: auto; min-height: 0; } }
