@@ -47,6 +47,7 @@
 .lx-ghost:active { transform: scale(.97); transition-duration: .09s; }
 .lx-text { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); font: 500 16px/1 var(--sans); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(0, 0, 0, .3); transition: text-decoration-color .15s var(--e-out); }
 .lx-dark .lx-text { text-decoration-color: rgba(255, 255, 255, .4); }
+.lx-text:active { transform: scale(.97); transition: transform .09s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) {
   .lx-cta:hover { background: #262626; }
   .lx-dark .lx-cta:hover { background: #fff; }
@@ -65,6 +66,8 @@
 .lx .cf-code .s { color: #d4d4d4 !important; }
 .lx .cf-code.light .s { color: #404040 !important; }
 .lx .cf-code .c { color: #a3a3a3 !important; }
+.lx .cf-code.light .c { color: #737373 !important; } /* 4.74:1 on white; #a3a3a3 is for black only */
+.lx .x-copy:active { transform: scale(.97) !important; transition-duration: .09s; }
 .lx .cf-dot.b { background: #737373 !important; box-shadow: none !important; }
 .lx .cf-dot.r { background: var(--ink) !important; }
 .lx .cf-paste-box, .lx .cf-code { box-shadow: none !important; }

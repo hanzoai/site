@@ -41,6 +41,7 @@
   .lx-pin-d { font-size: 16px; margin-top: 10px; line-height: 1.48; }
   .lx-pin-it { font-size: 32px; }
   .lx-pin-il { font-size: 16px; margin-top: 12px; }
-  .lx-pin-rail { order: -1; gap: 2px; }
+  .lx-pin-rail { order: -1; gap: 3px; pointer-events: none; }
+  .lx-pin-rail button { flex: 1 1 0; width: auto; min-width: 0; height: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .lx-pin[data-live] .lx-pin-step { transition: opacity .01s; transform: none !important; } .lx-pin-rail i { transition: none; } }
