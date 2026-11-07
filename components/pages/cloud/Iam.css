@@ -26,20 +26,22 @@
 .ia-seg { position: absolute; top: 6.5px; right: 50%; width: 100%; height: 1px; background: #d4d4d4; }
 .ia-seg i { position: absolute; inset: 0; background: #0a0a0a; transform: scaleX(0); transform-origin: 0 50%; transition: transform 520ms var(--ia-io); }
 .ia-st.on .ia-seg i { transform: scaleX(1); }
-.ia-lab { max-width: 12ch; font: 500 13px/1.35 var(--mono); color: #737373; transition: color 300ms var(--ia-out); }
+.ia-lab { max-width: 15ch; font: 500 13px/1.35 var(--mono); color: #737373; overflow-wrap: normal; word-break: normal; hyphens: none; transition: color 300ms var(--ia-out); }
 .ia-st.on .ia-lab { color: #0a0a0a; }
+.ia-w + .ia-w::before { content: '·'; margin: 0 .5em; }
 .ia-st:first-child .ia-lab { font: 497 21px/1.1 var(--sans); letter-spacing: -.02em; }
+/* JWKS: the last station lands as a tick */
+.ia-st:last-child .ia-dot { display: grid; place-items: center; color: #fafafa; }
+.ia-st:last-child .ia-dot svg { opacity: 0; }
+.ia-st:last-child .ia-dot path { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset 400ms var(--ia-io) 120ms; }
+.ia-st:last-child.on .ia-dot { transform: scale(1.6); }
+.ia-st:last-child.on .ia-dot svg { opacity: 1; transform: scale(.62); }
+.ia-st:last-child.on .ia-dot path { stroke-dashoffset: 0; }
 
-/* the token assembles under the line: header, payload, the signature (at RS256), then the JWKS tick */
-.ia-jwt { display: grid; grid-template-columns: 2fr 5fr 3fr 44px; align-items: center; gap: 8px; }
-.ia-part { position: relative; height: 16px; border-radius: 99px; background: #e4e4e4; overflow: hidden; }
-.ia-part i { position: absolute; inset: 0; border-radius: inherit; background: #737373; transform: scaleX(0); transform-origin: 0 50%; transition: transform 500ms var(--ia-io); }
-.ia-part.g i { background: #0a0a0a; }
-.ia-part.on i { transform: scaleX(1); }
-.ia-ok { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 99px; background: #fff; color: #0a0a0a; opacity: .35; transform: scale(.9); transition: opacity 300ms var(--ia-out), transform 300ms var(--ia-em); }
-.ia-ok path { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset 400ms var(--ia-io) 100ms; }
-.ia-ok.on { opacity: 1; transform: none; }
-.ia-ok.on path { stroke-dashoffset: 0; }
+/* the caption: Hanzo's own sentence for the part the line has reached; three lines reserved so nothing moves */
+.ia-say { margin: 0; min-height: calc(3 * 1.4em); font-size: 19px; line-height: 1.4; letter-spacing: -.01em; color: #0a0a0a; text-wrap: pretty; }
+.ia-say span { display: block; animation: ia-say 400ms var(--ia-em) both; }
+@keyframes ia-say { from { opacity: 0; transform: translateY(8px); } }
 .ia-pause { top: 16px; right: 16px; z-index: 2; }
 
 /* the eight facts: pinned for about two and a half screens; the rail starts and ends with a card in the middle */
@@ -101,12 +103,12 @@
 .ia-fam-x:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
 @media (hover: hover) { .ia-fam-x:hover { background: rgba(255, 255, 255, .14); color: #fafafa; } }
 .ia-fam-track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); row-gap: 32px; }
-.ia-fam-track li { position: relative; display: grid; place-items: center; height: 56px; }
+.ia-fam-track li { position: relative; display: grid; place-items: center; height: 72px; }
 .ia-fam-seg { position: absolute; top: 50%; right: 50%; width: 100%; height: 1px; background: rgba(255, 255, 255, .14); }
 .ia-fam-track li.spent .ia-fam-seg, .ia-fam-track li.live .ia-fam-seg { background: rgba(255, 255, 255, .55); }
-.ia-tok { position: relative; z-index: 1; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 99px; background: #171717; color: inherit; cursor: pointer; transition: transform 150ms var(--ia-out); }
+.ia-tok { position: relative; z-index: 1; display: grid; place-items: center; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 99px; background: #171717; color: inherit; cursor: pointer; transition: transform 150ms var(--ia-out); }
 .ia-fam-box.dead .ia-tok { background: #262626; }
-.ia-tok i { position: relative; display: block; width: 22px; height: 22px; border-radius: 99px; transition: background-color 300ms var(--ia-out), box-shadow 300ms var(--ia-out), transform 300ms var(--ia-em); }
+.ia-tok i { position: relative; display: block; width: 28px; height: 28px; border-radius: 99px; transition: background-color 300ms var(--ia-out), box-shadow 300ms var(--ia-out), transform 300ms var(--ia-em); }
 li.slot .ia-tok { cursor: default; }
 li.slot .ia-tok i { width: 6px; height: 6px; background: rgba(255, 255, 255, .14); }
 li.live .ia-tok i { background: #fafafa; animation: ia-pulse 1.8s var(--ia-io) infinite; }
@@ -138,7 +140,7 @@ button.ia-tok:disabled { cursor: default; }
   .ia-st.on .ia-seg i { transform: scaleY(1); }
   .ia-lab { max-width: none; font-size: 14px; }
   .ia-st:first-child .ia-lab { font-size: 21px; }
-  .ia-jwt { grid-template-columns: 2fr 5fr 3fr 44px; gap: 6px; }
+  .ia-say { font-size: 17px; min-height: calc(4 * 1.4em); }
   /* the facts stack: every one in the page's own scroll, lit as it crosses the middle of the screen */
   .ia-fr { height: auto; padding: 72px 0 24px; }
   .ia-fr-stage { position: static; height: auto; overflow: visible; display: block; }
@@ -147,7 +149,7 @@ button.ia-tok:disabled { cursor: default; }
   .ia-card { width: 100%; height: auto; min-height: 0; transform: none; }
   .ia-card-big { font-size: 32px; }
   .ia-card[data-on] .ia-card-big span { transform: scale(1.25); }
-  .ia-card-d { opacity: .55; transform: none; }
+  .ia-card-d { opacity: 1; transform: none; }
   .ia .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   .ia .sp-rel-a { flex-wrap: wrap; gap: 4px 12px; }
   .ia .sp-rel-a span { flex-basis: 100%; order: 3; }
@@ -167,7 +169,9 @@ button.ia-tok:disabled { cursor: default; }
   .ia-fr-rail { flex-wrap: wrap; width: auto; padding: 0 24px; max-width: 1488px; margin-inline: auto; transform: none !important; }
   .ia-card, .ia-card[data-on] { transform: none; height: auto; min-height: 380px; }
   .ia-card-d { opacity: 1; transform: none; }
-  .ia-obj { color: #0a0a0a; }
+  .ia-obj, .ia-card-big { color: #0a0a0a; }
+  .ia-card[data-on] .ia-card-big span { transform: none; }
   .ia-obj path { stroke-dashoffset: 0; transition: none; }
+  .ia-say span { animation: none; }
   li.live .ia-tok i { animation: none; }
 }

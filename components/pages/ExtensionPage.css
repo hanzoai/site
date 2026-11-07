@@ -300,22 +300,29 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
   .xe-card p { font-size: 14px; line-height: 1.45; }
   .xe-steps button { gap: 5px; }
 }
-@media (max-width: 359px) {
-  .xe-stack { aspect-ratio: 3 / 5; }
-  .xe-pclip, .xe-stack.f-safari .xe-pclip { top: 36%; }
-  .xe-page img { height: 16%; }
-  .xe-deal { margin-top: 17px; }
-  .xe-deal-tabs button { padding: 0 14px; }
+/* phones up to 599: the path runs down a left rail (one stop per row, dots clear of the numbers), and the chapter
+   pictures keep their full height whatever the motion setting (the hub's chips sit around it, so it needs the room) */
+@media (max-width: 599px) {
   .xe-path { grid-template-columns: minmax(0, 1fr); row-gap: 0; margin-top: 44px; padding-left: 28px; }
-  .xe-path li { padding: 0 0 27px; gap: 6px; }
+  .xe-path li { padding: 0 0 17px; gap: 6px; }
   .xe-path li::before { left: -32px; top: 4px; }
   .xe-path li::after { left: -39px; top: -3px; }
+  .xe-path li > button { flex-direction: row; align-items: baseline; gap: 12px; padding: 0 0 6px; }
+  .xe-path li b { font-size: 17px; }
   .xe-track { left: 0; top: 0; bottom: 0; right: auto; width: 2px; height: auto; }
   .xe-run { animation-name: xe-run-v; }
   .xe-run i { width: 2px; height: 120px; background: linear-gradient(180deg, #fafafa, rgba(255, 255, 255, 0)); }
   .xe-vis { min-height: 380px; }
   .xe-tools { --r: 112px; min-height: 360px; }
   .xe-sat b { height: 36px; padding: 0 12px; font-size: 14px; }
+}
+@media (max-width: 359px) {
+  .xe-stack { aspect-ratio: 3 / 5; }
+  .xe-pclip, .xe-stack.f-safari .xe-pclip { top: 36%; }
+  .xe-page img { height: 16%; }
+  .xe-deal { margin-top: 17px; }
+  .xe-deal-tabs button { padding: 0 14px; }
+  .xe-tools { --r: 100px; }
   .xe-text { grid-template-columns: minmax(0, 1fr); padding: 20px; }
   .xe-arrow { width: 2px; height: 27px; justify-self: center; }
   .xe-arrow::after { right: -4px; top: auto; bottom: 0; transform: rotate(135deg); }
@@ -466,6 +473,41 @@ html:not(.js) .xe-card { margin-bottom: 17px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .js .xe-stack, .xe-peek .xe-win { animation: none; }
+}
+
+/* round 5: the line-masked headlines, CSS only, so the server HTML and the first client render are the same */
+.xe-ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.xe-cut { display: block; }
+.js .xe-cut:not(.now) { transform: translateY(108%); }
+.js .xe-cut.go { transform: none; transition: transform .7s var(--xe-in) var(--d); }
+.js .xe-cut.now { animation: xe-cut .7s var(--xe-in) var(--d) both; }
+@keyframes xe-cut { from { transform: translateY(108%); } }
+@media (prefers-reduced-motion: reduce) { .js .xe-cut, .js .xe-cut:not(.now) { transform: none; } }
+
+/* your browser's row: a strong ink outline, not a second solid (the header holds the solid ask here) */
+.xe .xe-rows .x-btn.xe-lead { border-color: #0a0a0a; box-shadow: inset 0 0 0 1px #0a0a0a; color: #0a0a0a; transition: background .15s var(--xe-out), transform .09s var(--xe-out); }
+.xe .xe-rows .x-btn.xe-lead:active { transform: scale(.98); }
+
+/* get started: one card, the docs ask on the left and the repo on the right */
+.xe .xe-card2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px 44px; align-items: end; width: 100%; padding: clamp(27px, 4vw, 44px); }
+.xe-card2 .xe-start { grid-column: auto; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.xe-card2 .xe-card2-i { margin-bottom: 10px; }
+.xe-card2-r { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding-left: clamp(0px, 3vw, 44px); border-left: 1px solid rgba(0, 0, 0, .1); }
+.xe-card2-r > p { margin: 0; font-size: 16px; color: #525252; }
+
+/* text links answer: the underline draws in from the left and the arrow moves (transform only, 150 ms) */
+.xe .x-arrow span { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .15s var(--xe-out); }
+.xe .x-arrow svg { transition: transform .15s var(--xe-out); }
+.xe .x-arrow:active { transform: translateY(1px); }
+@media (hover: hover) {
+  .xe .x-arrow:hover span { text-decoration: none; background-size: 100% 1px; }
+  .xe .xe-rows .x-btn.xe-lead:hover { background: #f5f5f5; }
+}
+.xe .x-arrow:focus-visible span { background-size: 100% 1px; }
+
+@media (max-width: 899px) {
+  .xe .xe-card2 { grid-template-columns: minmax(0, 1fr); align-items: start; padding: 24px 20px; }
+  .xe-card2-r { padding: 24px 0 0; border-left: 0; border-top: 1px solid rgba(0, 0, 0, .1); }
 }
 @media (max-width: 1199px) {
   .xe-use { grid-template-columns: 72px minmax(0, 1fr); }

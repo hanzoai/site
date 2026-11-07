@@ -14,7 +14,14 @@
 .fl-intro { display: flex; flex-direction: column; gap: 24px; }
 .fl-intro .bz-acts { gap: 8px 28px; }
 .fl-intro .bz-lede { color: var(--ink); max-width: 30ch; }
-.fl-hero-insp { position: absolute; z-index: 2; left: 61%; top: 64%; }
+/* the run's own pause, on the canvas: an icon and the run's counter in their own slots, nothing crowding them */
+.fl-hold { position: absolute; z-index: 3; right: clamp(16px, 4vw, 32px); bottom: 40px; display: inline-flex; align-items: center; gap: 12px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #ffffff; color: var(--ink); font: inherit; cursor: pointer; transition: border-color .15s cubic-bezier(0, 0, .2, 1), transform .09s; }
+.fl-hold svg { flex: none; }
+.fl-hold-n { font-size: 13px; color: var(--soft); font-variant-numeric: tabular-nums; min-width: 6ch; text-align: right; }
+@media (hover: hover) { .fl-hold:hover { border-color: var(--ink); } }
+.fl-hold:active { transform: scale(.97); }
+.fl-hold:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.fl-hold[aria-pressed='true'] { border-color: var(--ink); }
 
 /* the graph */
 .fl-g { position: relative; --nw: 212px; }
@@ -37,15 +44,32 @@ button.fl-node:active { scale: .97; }
 .fl-node-n { flex: none; font-size: 12px; font-weight: 606; letter-spacing: .06em; color: var(--faint); transition: color .3s; }
 .fl-node.run .fl-node-n, .fl-node.done .fl-node-n, .fl-node.lit .fl-node-n { color: var(--ink); }
 .fl-node-h { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.fl-node-h b { font-size: 14px; font-weight: 606; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
-.fl-node-o { display: block; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.35; color: var(--faint); }
-.fl-node-o em { font-style: normal; margin-right: 8px; color: #d4d4d4; }
+.fl-node-h b { display: block; font-size: 14px; font-weight: 606; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
+/* Hanzo writes its component kinds in lower case inside a sentence; as a node's name it takes a first capital */
+.fl-node-h b::first-letter, .fl-pg-node b::first-letter, .fl-pg-steps b::first-letter, .fl-pg-io b::first-letter, .flp-lib li span::first-letter { text-transform: uppercase; }
+.fl-node, .fl-node b, .fl-node-o { overflow-wrap: normal; word-break: normal; hyphens: none; }
+/* received and returned share one box, so swapping them never changes the card's size */
+.fl-node-o { display: grid; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; line-height: 1.35; color: var(--faint); }
+.fl-node-o > span { grid-area: 1 / 1; transition: opacity .3s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(0, 0, .2, 1); }
+.fl-node-o .fl-io-o { opacity: 0; transform: translateY(4px); }
+.fl-node-o.is-out .fl-io-r { opacity: 0; transform: translateY(-4px); }
+.fl-node-o.is-out .fl-io-o { opacity: 1; transform: none; }
+.fl-node-o em { font-style: normal; color: #737373; }
 .fl-node.done .fl-node-o { color: var(--ink); }
 .fl-node.done .fl-node-o em { color: var(--ink); font-weight: 606; }
 .fl-node.run { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(0, 0, 0, .08); }
 .fl-node.lit { border-color: var(--ink); border-width: 1.5px; box-shadow: 0 0 0 5px rgba(0, 0, 0, .08); }
 .fl-node-bar { position: absolute; left: 0; bottom: 0; width: 100%; height: 3px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
-@media (hover: hover) { .fl-hero button.fl-node:hover { border-color: rgba(0, 0, 0, .4); } }
+/* a hover tells you something: the card lifts, outlines in ink and shows the other side of what it does (what it
+   returned before it has run, what it received after) */
+@media (hover: hover) {
+  .fl-hero button.fl-node:hover { border-color: var(--ink); translate: -50% calc(-50% - 3px); box-shadow: 0 0 0 4px rgba(0, 0, 0, .06); }
+  .fl-hero button.fl-node:hover .fl-node-o { color: var(--ink); }
+  .fl-hero button.fl-node:hover .fl-node-o em { color: var(--ink); font-weight: 606; }
+  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-r, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-o { opacity: 0; transform: translateY(-4px); }
+  .fl-hero button.fl-node:hover .fl-node-o:not(.is-out) .fl-io-o, .fl-hero button.fl-node:hover .fl-node-o.is-out .fl-io-r { opacity: 1; transform: none; }
+}
+.fl-hero button.fl-node { transition: border-color .3s, box-shadow .3s, translate .3s cubic-bezier(.16, 1, .3, 1), opacity .4s, scale .4s cubic-bezier(.16, 1, .3, 1); }
 /* compact nodes: the pinned build-up and the phone's mini-graph draw only the index and the name, so they read as
    a diagram being built, not a second copy of the hero's running cards */
 .fl-compact .fl-node { gap: 0; padding: 10px 12px; border-radius: 12px; }
@@ -54,19 +78,6 @@ button.fl-node:active { scale: .97; }
 .fl-node.run .fl-node-bar { animation: fl-bar .9s linear forwards; }
 @keyframes fl-bar { to { transform: scaleX(1); } }
 
-/* the inspector: what one node received and returned */
-.fl-insp { width: 320px; padding: 18px 20px 14px; border-radius: 24px; background: #0a0a0a; color: #e9e9e9; box-shadow: none; }
-.fl-insp-k { display: flex; align-items: center; gap: 14px; margin: 0 0 10px; font-size: 13px; color: #737373; }
-.fl-insp-k span + span { margin-left: auto; }
-.fl-hold { flex: none; display: grid; place-items: center; width: 44px; height: 44px; margin: -8px -8px -8px 0; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .18); background: #171717; color: #f5f5f5; cursor: pointer; transition: border-color .15s, transform .09s; }
-@media (hover: hover) { .fl-hold:hover { border-color: rgba(255, 255, 255, .45); } }
-.fl-hold:active { transform: scale(.97); }
-.fl-hold:focus-visible { outline: 2px solid #f5f5f5; outline-offset: 2px; }
-.fl-insp h3 { margin: 0 0 8px; font-size: 17px; font-weight: 606; letter-spacing: -.01em; color: #ffffff; }
-.fl-insp p { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0; padding: 10px 0; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 16px; }
-.fl-insp p span { font-size: 13px; color: #737373; }
-.fl-insp p b { font-weight: 497; text-align: right; }
-.fl-insp p b.out { padding: 3px 9px; border-radius: 8px; background: #f5f5f5; color: #0a0a0a; }
 
 /* chapters: the graph pinned on its board and built one node per chapter; the inspector under it */
 .flc { position: relative; padding-top: clamp(56px, 6vw, 88px); }
@@ -84,7 +95,94 @@ button.fl-node:active { scale: .97; }
 .flc-bar { flex: 1; height: 1px; background: var(--bz-track); overflow: hidden; }
 .flc-bar i { display: block; height: 100%; background: var(--bz-ink); transform-origin: 0 50%; }
 .flc-mini { display: none; }
-.fl-ch-stage { display: flex; flex-direction: column; gap: 16px; }
+/* the chapters' boards: one object per chapter (FlowPanels), on the same dotted board; each plays once as it arrives */
+.flp-board { position: relative; height: min(52svh, 460px); border-radius: 28px; border: 1px solid var(--line); background: var(--dots), #fafafa; overflow: hidden; }
+.flp-board.compact { height: 220px; border-radius: 20px; margin: 12px 0 0; }
+.flp { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: clamp(24px, 3vw, 44px); --e: cubic-bezier(.16, 1, .3, 1); }
+.flp .x-mono { font-size: 13px; letter-spacing: .04em; }
+@keyframes flp-in { from { opacity: 0; transform: translateY(10px); } }
+@keyframes flp-draw { from { transform: scaleX(0); } }
+@keyframes flp-ink { to { background: var(--ink); border-color: var(--ink); color: #ffffff; } }
+/* 01 the library */
+.flp-lib ul { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.flp-lib li { display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line); background: #ffffff; font-size: 16px; font-weight: 497; animation: flp-in .5s var(--e) both; animation-delay: calc(var(--i) * 90ms); }
+.flp-lib li i { width: 8px; height: 8px; border-radius: 2px; background: var(--ink); }
+.flp-lib li.mine { border-style: dashed; border-color: rgba(0, 0, 0, .35); animation: flp-in .5s var(--e) both, flp-ink .4s var(--e) forwards; animation-delay: calc(var(--i) * 90ms), 1.4s; }
+.flp-lib li.mine i { background: currentColor; }
+/* 02 open any node */
+.flp-open { flex-direction: row; align-items: center; gap: 0; }
+.flp-open-node { flex: none; display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--ink); background: #ffffff; font-size: 15px; }
+.flp-open-node span { font-size: 12px; font-weight: 606; }
+.flp-open-node b { display: block; font-weight: 606; }
+.flp-open-node b::first-letter { text-transform: uppercase; }
+.flp-open-wire { flex: 0 0 clamp(28px, 5vw, 64px); height: 2px; background: var(--ink); transform-origin: 0 50%; animation: flp-draw .5s var(--e) both .2s; }
+.flp-open-class { flex: 1; min-width: 0; display: flex; flex-direction: column; border-radius: 18px; background: #0a0a0a; color: #f5f5f5; overflow: hidden; animation: flp-in .5s var(--e) both .45s; }
+.flp-open-h { margin: 0; padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, .1); color: #a3a3a3; }
+.flp-open-row { display: flex; align-items: center; gap: 4px; margin: 0; padding: 14px 18px; border-bottom: 1px solid rgba(255, 255, 255, .08); font: 497 15px/1.3 var(--mono); }
+.flp-open-row.add { background: #171717; animation: flp-in .5s var(--e) both 1.1s; }
+.flp-caret { display: inline-block; width: 2px; height: 1.1em; background: #f5f5f5; animation: fl-blink 1.1s steps(1) infinite; }
+.flp-open-live { display: flex; align-items: center; gap: 8px; margin: 0; padding: 14px 18px; font-size: 15px; color: #ffffff; animation: flp-in .5s var(--e) both 1.6s; }
+/* 03 step through it */
+.flp-steps ol { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; list-style: none; margin: 0; padding: 0; }
+.flp-steps li { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 0 12px; border-radius: 14px; border: 1px solid var(--line); background: #ffffff; animation: flp-in .4s var(--e) both; animation-delay: calc(var(--i) * 220ms); }
+.flp-steps li b { font-size: 14px; font-weight: 606; }
+.flp-tk { width: 60%; height: 3px; border-radius: 2px; background: var(--ink); transform-origin: 0 50%; animation: flp-draw .3s var(--e) both; animation-delay: calc(var(--i) * 220ms + 180ms); }
+.flp-steps li.bad { border: 1.5px solid var(--ink); box-shadow: 0 0 0 5px rgba(0, 0, 0, .08); }
+.flp-steps li.bad .flp-tk + .flp-tk { background: transparent; border: 1.5px dashed var(--ink); height: 4px; }
+/* the legend for the two ticks under each step: the first is what it received, the second what it returned */
+.flp-steps-k { display: flex; gap: 28px; margin: 16px 0 0; color: var(--soft); }
+.flp-steps-k span { display: inline-flex; align-items: center; gap: 8px; }
+.flp-steps-k i { width: 20px; height: 3px; border-radius: 2px; background: var(--ink); }
+.flp-steps-k span + span i { height: 0; border-top: 3px solid var(--ink); background: none; }
+.flp-steps-found { display: flex; align-items: center; gap: 10px; align-self: flex-start; margin: 20px 0 0 calc(4 / 6 * 100%); translate: -24px 0; font-size: 16px; font-weight: 606; animation: flp-in .5s var(--e) both 1.6s; }
+.flp-steps-found i { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); }
+/* 04 multi-agent: three agents on one canvas, two messages hopping between them, retrieval underneath */
+.flp-agents { align-items: stretch; justify-content: flex-start; gap: 0; }
+.flp-agents-row { position: relative; display: flex; justify-content: space-between; align-items: center; margin: 8% 12% 0; height: 44px; }
+.flp-agents-row::before { content: ''; position: absolute; left: 22px; right: 22px; top: 50%; border-top: 1.6px dashed var(--ink); }
+.flp-agent { position: relative; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--ink); background: #ffffff; animation: flp-in .5s var(--e) both; }
+.flp-agent::after { content: ''; position: absolute; inset: 12px; border-radius: 50%; background: var(--ink); }
+.flp-agent.b { animation-delay: .12s; }
+.flp-agent.c { animation-delay: .24s; }
+.flp-msg { position: absolute; left: 22px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--ink); opacity: 0; animation: flp-hop 2.6s cubic-bezier(.4, 0, .2, 1) infinite .6s; }
+.flp-msg.m2 { animation-delay: 1.9s; }
+@keyframes flp-hop { 0% { opacity: 0; left: 22px; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; left: calc(100% - 32px); } }
+.flp-agents-k { margin: 18px 0 0; text-align: center; color: var(--soft); }
+.flp-agents-ret { display: flex; align-items: center; gap: 10px; height: 44px; margin: auto 0 0; padding: 0 16px; border-radius: 12px; background: var(--ink); color: #ffffff; animation: flp-in .5s var(--e) both .5s; }
+.flp-agents-ret i { width: 8px; height: 8px; border-radius: 2px; background: #ffffff; opacity: .55; }
+.flp-agents-ret span { margin-left: auto; color: #ffffff; }
+/* 05 publish it three ways */
+.flp-pub { flex-direction: row; align-items: center; gap: 0; }
+.flp-pub-src { flex: none; display: grid; place-items: center; width: 112px; height: 112px; border-radius: 20px; background: var(--ink); color: #ffffff; font-size: 17px; }
+.flp-pub ul { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px; list-style: none; margin: 0; padding: 0; }
+/* the spine the three outputs branch from, so each wire visibly leaves the flow */
+.flp-pub ul::before { content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; border-left: 2px solid var(--ink); transform-origin: 50% 50%; animation: flp-spine .4s var(--e) both .2s; }
+@keyframes flp-spine { from { transform: scaleY(0); } }
+.flp-pub:has(li span) ul::before { bottom: 48px; }
+.flp-pub li { display: flex; flex-wrap: wrap; align-items: center; gap: 0 14px; animation: flp-in .5s var(--e) both; animation-delay: calc(.3s + var(--i) * 240ms); }
+.flp-pub li i { flex: 0 0 clamp(28px, 5vw, 64px); height: 2px; background: var(--ink); transform-origin: 0 50%; animation: flp-draw .4s var(--e) both; animation-delay: calc(.3s + var(--i) * 240ms); }
+.flp-pub li b { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--ink); background: #ffffff; font-size: 15px; font-weight: 497; }
+.flp-pub li span { flex-basis: 100%; padding: 8px 0 0 calc(clamp(28px, 5vw, 64px) + 14px); font-size: 15px; color: var(--soft); animation: flp-in .5s var(--e) both 1.3s; }
+/* 06 keys stay out of the flow */
+.flp-keys { flex-direction: row; align-items: center; gap: 0; }
+.flp-keys-graph { flex: none; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.flp-keys-n { display: inline-flex; align-items: center; gap: 8px; width: 104px; height: 32px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: #ffffff; font-size: 12px; color: var(--soft); }
+.flp-keys-n i { width: 8px; height: 8px; border-radius: 2px; background: var(--ink); }
+.flp-keys-ref { margin: 0; padding: 8px 12px; border-radius: 8px; border: 1.5px dashed var(--ink); background: #ffffff; color: var(--ink); }
+.flp-keys-arrow { flex: 0 0 clamp(28px, 5vw, 64px); height: 2px; margin: 0 4px; background: var(--ink); transform-origin: 0 50%; animation: flp-draw .4s var(--e) both .3s; }
+.flp-keys-out { flex: 1; min-width: 0; border-radius: 18px; border: 1px solid var(--line); background: #ffffff; overflow: hidden; animation: flp-in .5s var(--e) both .5s; }
+.flp-keys-h { margin: 0; padding: 14px 18px; border-bottom: 1px solid var(--line); color: var(--soft); }
+.flp-keys-row { display: flex; align-items: center; gap: 10px; margin: 0; padding: 14px 18px; font-size: 16px; font-weight: 497; }
+.flp-keys-row + .flp-keys-row { border-top: 1px solid var(--line); }
+.flp-keys-row.no { color: var(--soft); animation: flp-in .5s var(--e) both 1s; }
+.flp-dots { letter-spacing: .1em; text-decoration: line-through; text-decoration-thickness: 2px; color: var(--ink); }
+/* the Python sheet: every kind in the library, each a Python class */
+.fl-pylib { display: flex; flex-wrap: wrap; gap: 8px; }
+.fl-pylib span { display: inline-flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; background: #ffffff; border: 1px solid var(--line); }
+.fl-pylib b { display: block; font-size: 15px; font-weight: 497; }
+.fl-pylib b::first-letter { text-transform: uppercase; }
+.fl-pylib em { font-style: normal; font-size: 12px; color: var(--soft); }
+.fl-ways-src { flex: none; display: grid; place-items: center; height: 56px; padding: 0 18px; border-radius: 12px; background: var(--ink); color: #ffffff; font-size: 15px; }
 .fl-board { height: min(46svh, 420px); border-radius: 28px; border: 1px solid var(--line); background: var(--dots), #fafafa; --nw: 176px; }
 .fl-ch-insp { width: 100%; padding: 18px 24px; border-radius: 24px; }
 .fl-ch-insp > div { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: center; }
@@ -106,7 +204,7 @@ button.fl-node:active { scale: .97; }
 
 /* beyond: the playground, the one dark room */
 .fl-play { background: #171717; color: #fafafa; }
-.bz-sec.fl-play { padding-top: clamp(72px, 7vw, 116px); }
+.bz-sec.fl-play { padding-top: clamp(56px, 6vw, 88px); padding-bottom: clamp(56px, 6vw, 88px); }
 .fl-play-top { display: flex; flex-direction: column; gap: 22px; margin-bottom: clamp(32px, 3.5vw, 48px); }
 .fl-play .bz-display, .fl-play .bz-headline { color: #ffffff; }
 .fl-pg { border-radius: 28px; background: #0f0f0f; border: 1px solid rgba(255, 255, 255, .1); box-shadow: none; overflow: hidden; }
@@ -145,7 +243,9 @@ button.fl-node:active { scale: .97; }
 .fl-pg-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
 .fl-pg-steps button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; min-height: 60px; padding: 10px 12px 12px; border: 0; border-radius: 12px; background: #171717; color: #a3a3a3; font: 497 14px/1.2 var(--sans); text-align: left; cursor: pointer; overflow: hidden; transition: background .3s, color .3s; }
 .fl-pg-steps button span { font-size: 13px; color: #737373; }
-.fl-pg-steps button b { font-weight: 497; line-height: 1.2; max-width: 100%; text-wrap: balance; }
+/* every tab reserves two lines, so a long name never makes its tab taller than the rest */
+.fl-pg-steps button b { display: block; min-height: 2.4em; font-weight: 497; line-height: 1.2; max-width: 100%; text-wrap: balance; overflow-wrap: normal; hyphens: none; }
+.fl-pg-steps button.done:not(.on) span { color: #d4d4d4; }
 .fl-facts-sec { padding-bottom: clamp(56px, 6vw, 96px); }
 .fl-pg-steps button::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #f5f5f5; transform: scaleX(0); transform-origin: 0 50%; transition: transform .4s var(--ease); }
 .fl-pg-steps button.done::after { transform: none; }
@@ -160,12 +260,15 @@ button.fl-node:active { scale: .97; }
 .fl-pg-node { display: flex; align-items: baseline; gap: 16px; margin: 0; }
 .fl-pg-node span { font-size: 13px; color: #737373; font-variant-numeric: tabular-nums; }
 .fl-pg-node b { font-size: 21px; font-weight: 497; letter-spacing: -.01em; color: #f5f5f5; }
-.fl-pg-io { display: grid; grid-template-columns: minmax(0, 1fr) minmax(64px, 160px) minmax(0, 1.3fr); align-items: end; gap: 28px; }
+.fl-pg-io { display: grid; grid-template-columns: minmax(0, 1fr) minmax(64px, 160px) minmax(0, 1.3fr); align-items: start; gap: 28px; }
+.fl-pg-io .fl-pg-flow { align-self: center; margin-top: 30px; }
 .fl-pg-io p { display: flex; flex-direction: column; gap: 14px; margin: 0; min-width: 0; }
 .fl-pg-io p > span { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #737373; }
-.fl-pg-io b { font-size: 32px; font-weight: 497; letter-spacing: -.03em; line-height: 1.05; color: #ffffff; text-wrap: balance; }
-.fl-pg-io b.out { align-self: flex-start; padding: 6px 16px 10px; border-radius: 16px; background: #f5f5f5; color: #0a0a0a; font-size: 44px; }
-.fl-pg-io b.wait { color: #404040; font-size: 44px; }
+.fl-pg-io b { display: block; box-sizing: border-box; min-height: 110px; font-size: 32px; font-weight: 497; letter-spacing: -.03em; line-height: 1.05; color: #ffffff; text-wrap: balance; overflow-wrap: normal; hyphens: none; }
+/* "…" and the returned chip occupy the same box (same padding, same reserved two lines), so the controls below never bob */
+.fl-pg-io b.out, .fl-pg-io b.wait { align-self: flex-start; padding: 6px 16px 10px; border-radius: 16px; font-size: 44px; }
+.fl-pg-io b.out { background: #f5f5f5; color: #0a0a0a; }
+.fl-pg-io b.wait { background: transparent; color: #404040; }
 .fl-ghost { color: transparent; }
 .fl-pg-flow { position: relative; display: block; height: 2px; margin-bottom: 20px; background: rgba(255, 255, 255, .16); }
 .fl-pg-flow::after { content: ''; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left-color: rgba(255, 255, 255, .4); border-right: 0; }
@@ -265,7 +368,14 @@ button.fl-node:active { scale: .97; }
 .fl-out { color: #737373; }
 .fl-caret { display: inline-block; width: .5em; height: 1.05em; margin-left: .3em; vertical-align: -.18em; background: #f5f5f5; animation: fl-blink 1.1s steps(1) infinite; }
 @keyframes fl-blink { 50% { opacity: 0; } }
-.fl-getsec { padding-bottom: 0; }
+.fl-getsec { padding-top: clamp(40px, 4vw, 64px); padding-bottom: 0; }
+/* the chapters' heading sits on its stage: the run starts right under it instead of a screen-centred board far below */
+@media (min-width: 901px) {
+  .flc-stage { justify-content: flex-start; height: auto; }
+  .flc-run { margin-top: -48px; }
+  /* the last chapter still reaches the middle of the screen; no empty screen after it */
+  .flc-list { padding-bottom: 6svh; }
+}
 .fl-getsec .bz-grid { align-items: start; }
 .fl-get { grid-column: 1 / span 4; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
 .fl-get-links { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 8px; }
@@ -274,16 +384,39 @@ button.fl-node:active { scale: .97; }
 
 @media (max-width: 1199px) and (min-width: 901px) {
   .fl-hero .fl-g { --nw: 176px; }
-  .fl-hero-insp { left: 56%; width: 300px; }
 }
 @media (max-width: 900px) {
-  .fl-hero { height: 830px; }
+  .fl-hero { height: 920px; }
   .fl-hero-in { align-items: flex-start; padding: 36px 0 0; }
   .fl-hero-in > .bz-wrap::before { display: none; }
   .fl-copy { max-width: none; }
   .fl-copy { gap: 18px; }
   .fl-intro { gap: 20px; }
-  .fl-hero-insp { left: 16px; right: 16px; top: auto; bottom: 28px; width: auto; }
+  .fl-hold { bottom: 24px; }
+  /* the chapter boards on a phone: one compact object under the header, the chapter's words swapping beneath it */
+  .flp-board.compact { height: 236px; }
+  .compact .flp { padding: 16px; }
+  .compact .flp .x-mono { font-size: 12px; }
+  .compact .flp-lib ul { gap: 6px; }
+  .compact .flp-lib li { height: 32px; padding: 0 10px; gap: 8px; font-size: 14px; border-radius: 10px; }
+  .compact .flp-open { flex-direction: column; align-items: stretch; }
+  .compact .flp-open-node, .compact .flp-open-wire { display: none; }
+  .compact .flp-open-h, .compact .flp-open-row, .compact .flp-open-live { padding: 10px 14px; font-size: 14px; }
+  .compact .flp-steps ol { gap: 6px; }
+  .compact .flp-steps li { padding: 10px 0 8px; border-radius: 10px; }
+  .compact .flp-steps li b { font-size: 12px; }
+  .compact .flp-steps-found { margin-left: 0; translate: none; font-size: 14px; }
+  .compact .flp-agents-row { margin: 18px 8% 0; }
+  .compact .flp-pub-src { width: 72px; height: 72px; font-size: 14px; border-radius: 14px; }
+  .compact .flp-pub ul { gap: 8px; }
+  .compact .flp-pub li i { flex-basis: 20px; }
+  .compact .flp-pub li b { padding: 6px 10px; font-size: 13px; }
+  .compact .flp-pub li span { padding-left: 34px; font-size: 13px; }
+  .compact .flp-keys { flex-direction: column; align-items: stretch; gap: 10px; }
+  .compact .flp-keys-graph { flex-direction: row; align-items: center; gap: 6px; }
+  .compact .flp-keys-n { width: 36px; height: 24px; }
+  .compact .flp-keys-arrow { display: none; }
+  .compact .flp-keys-h, .compact .flp-keys-row { padding: 8px 14px; font-size: 14px; }
   .fl-g { --nw: 142px; }
   .fl-hero .fl-g { --nw: min(142px, calc(50vw - 40px)); }
   .fl-g.fl-minibd { --nw: calc((100vw - 2 * clamp(16px, 4vw, 32px)) / 3 - 12px); }
@@ -335,6 +468,8 @@ button.fl-node:active { scale: .97; }
   .fl-pg-io p { gap: 8px; }
   .fl-pg-io b { font-size: 26px; }
   .fl-pg-io b.out, .fl-pg-io b.wait { font-size: 32px; }
+  .fl-pg-io b { min-height: 84px; }
+  .fl-pg-io .fl-pg-flow { margin-top: 0; align-self: start; }
 
   .fl-wires { display: none; }
   .fl-strip::before { content: ''; position: absolute; left: 0; top: 24px; bottom: 24px; border-left: 1.6px dashed rgba(0, 0, 0, .3); }
@@ -370,4 +505,8 @@ button.fl-node:active { scale: .97; }
   .flc-i { transition: none !important; }
   .flc.live .flc-i:not(.on) { opacity: 1; transform: none; }
   .fl-node, .fl-edges g, .fl-fact .bz-fig { transition: none; }
+  /* the chapter boards rest on their final frame */
+  .flp, .flp * { animation: none !important; }
+  .flp-lib li.mine { background: var(--ink); border-color: var(--ink); border-style: solid; color: #ffffff; }
+  .flp-msg { display: none; }
 }
