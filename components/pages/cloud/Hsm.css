@@ -73,7 +73,7 @@
 /* the signature: the spotlight room. A black room that enters as a rounded card inside the gutters and opens to full
    width (clip-path set by scroll in Hsm.jsx). The module on the left, the first five facts in normal flow on the right
    (nothing pins). A soft light follows the cursor; the fact under it comes to full ink and lights its plate. */
-.hc { position: relative; overflow: hidden; background: #000; color: #fafafa; }
+.hc { position: relative; overflow: clip; background: #000; color: #fafafa; }
 .hc-light { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .hc-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); column-gap: 24px; align-items: center; padding-block: clamp(72px, 9vw, 116px); }
 .hc-vis { position: relative; height: clamp(440px, 44vw, 620px); }
@@ -110,7 +110,8 @@
 .hs-vendors button:active { transform: scale(.98); }
 .hs-vendors button[aria-selected='true'] { color: #fafafa; }
 .hs-vendors button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
-@media (hover: hover) { .hs-vendors button:not([aria-selected='true']):hover { color: #0a0a0a; background: #f5f5f5; } }
+@media (hover: hover) { .hs-vendors button:not([aria-selected='true']):hover { color: #0a0a0a; background: #f5f5f5; } .hs-vendors button[aria-selected='true']:hover .hs-vendor-bg { background: #404040; } }
+.hs-vendor-bg { transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
 .hs-vendor-bg { position: absolute; inset: 0; border-radius: 999px; background: #0a0a0a; }
 .hs-vendor-t { position: relative; }
 .hs-ch .hm { --plate: #171717; --edge: rgba(255, 255, 255, .16); --ink2: #f5f5f5; }
@@ -125,26 +126,19 @@
 /* paste and ship: its own stage. The prompt keys in once in a graphite card; Copy answers when the line is whole. */
 .hs .sp.v2-sec { padding: clamp(72px, 8vw, 116px) 0 0; }
 .hs .sp-h { margin: 0 0 17px; font-size: 26px; line-height: 1.15; }
-/* sticky-stack: two cards in one column. As the section is scrolled past, the words card sticks near the top and the
-   prompt card rides up and sticks just below it, stacking onto it. */
-.hs-stack { display: flex; flex-direction: column; gap: 27px; max-width: 880px; }
+.hs-stack { display: flex; flex-direction: column; gap: 17px; max-width: 1120px; }
 .hs-card { margin: 0; border-radius: 20px; }
 .hs-card-1 { padding: 28px 28px 30px; background: #f5f5f5; }
 .hs-card-1 .sp-d { margin: 0; }
 .hs-ship-card { margin: 0; border-radius: 20px; background: #171717; color: #fafafa; overflow: hidden; }
-@media (prefers-reduced-motion: no-preference) {
-  .js .hs-stack { padding-bottom: 32svh; }
-  .js .hs-card { position: sticky; }
-  .js .hs-card-1 { top: calc(var(--x-top, 64px) + 24px); z-index: 1; }
-  .js .hs-card-2 { top: calc(var(--x-top, 64px) + 24px + 84px); z-index: 2; box-shadow: 0 -18px 40px -24px rgba(0, 0, 0, .35); }
-}
+/* the two cards stand in flow (no sticking, so the prompt card never rides over the words); they rise in on arrival */
 .hs-ship-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 20px; border-bottom: 1px solid rgba(255, 255, 255, .1); font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 .hs-ship-card .x-copy { min-width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 16px; border: 0; border-radius: 999px; font: 500 13px/1 var(--sans); letter-spacing: 0; text-transform: none; background: rgba(255, 255, 255, .08); color: #fafafa; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .hs-ship-card .x-copy:hover { background: rgba(255, 255, 255, .16); } }
 .hs-ship-card .x-copy:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }
 .hs-ship-card.done .x-copy { animation: hs-ready .9s cubic-bezier(.16, 1, .3, 1) both; }
 @keyframes hs-ready { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .45); } 100% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0); } }
-.hs-ship-card pre { margin: 0; padding: 24px 20px 28px; font: 500 clamp(15px, 1.3vw, 19px)/1.6 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; color: #fafafa; }
+.hs-ship-card pre { margin: 0; padding: clamp(24px, 3vw, 44px) clamp(20px, 3vw, 44px); min-height: 4.6em; font: 500 clamp(15px, 1.8vw, 26px)/1.5 var(--mono); letter-spacing: -.01em; white-space: pre-wrap; overflow-wrap: anywhere; color: #fafafa; }
 .hs-ship-card pre:focus-visible { outline: 2px solid #fafafa; outline-offset: -4px; }
 .hs-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .hs-rest { visibility: hidden; }
@@ -177,25 +171,28 @@
   .hs .x-btn.solid:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0, 0, 0, .45); }
 }
 .hs .x-btn.solid:active { transform: translateY(1px); box-shadow: none; }
-/* the paused glyph keeps full ink on hover (the shared hover grey would hide the white play mark) */
-@media (hover: hover) { .hs .lx-pause[aria-pressed='true']:hover { background: #262626; color: #fff; } }
+/* paused, the play mark is ink on white, as the pause mark is while playing; hover greys the white a little */
+.hs .lx-pause[aria-pressed='true'] { background: #fff; color: #0a0a0a; }
+@media (hover: hover) { .hs .lx-pause:hover, .hs .lx-pause[aria-pressed='true']:hover { background: #ededed; color: #0a0a0a; } }
 
 @media (max-width: 900px) {
   .hm { --s: 150px; --gk: .62; }
   .hm-labels li { left: calc(50% + var(--s) * .5); max-width: 130px; font-size: 12px; gap: 6px; }
   .hm-labels li i { width: 16px; }
   .hs-hero-grid { min-height: 0; padding-block: 32px 44px; }
-  .hs-hero-obj { height: 400px; }
-  .hs-sign .hm { --s: 170px; }
+  .hs-hero-obj { height: 360px; }
+  .hs-sign .hm { --s: 180px; }
   /* phone hero: the callouts sit on the stack's edges (bytes above its left shoulder, the signature below its right),
      the stack centred at its true size */
   .hs-io { font-size: 12px; padding: 10px 12px; }
-  .hs-io.in { left: 2%; top: calc(50% - 150px); transform: none; }
-  .hs-io.out { right: 2%; top: calc(50% + 98px); bottom: auto; transform: none; }
+  .hs-io.in { left: 0; top: calc(50% - 96px); transform: none; }
+  .hs-io.out { right: 0; top: calc(50% + 56px); bottom: auto; transform: none; }
   .hs-call { left: 56px; font-size: 13px; gap: 8px; }
   /* phone room: the module on top, the five facts under it; tap a fact to place the light */
-  .hc-in { display: block; padding-block: 56px 64px; }
-  .hc-vis { height: clamp(220px, 36svh, 300px); }
+  .hc-in { display: block; padding-block: 24px 40px; }
+  /* one stage: the module sticks under the header while the facts scroll up beneath it */
+  .hc-vis { position: sticky; top: var(--x-top, 64px); z-index: 2; height: clamp(220px, 36svh, 300px); margin-inline: -16px; background: linear-gradient(#000 88%, rgba(0, 0, 0, 0)); }
+  .hc-copy { position: relative; z-index: 1; padding-bottom: 6svh; }
   .hc-copy { padding-top: 16px; }
   .hc-art { padding: 20px 16px 22px; margin: 0 -16px; }
   .hc-t { font-size: 21px; }
@@ -233,7 +230,7 @@
   .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-t, .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-d, .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-vis { transform: translateX(-64px); }
   .js [data-entrance='venetian-type']:not([data-in]) .hs-pick-n, .js [data-entrance='venetian-type']:not([data-in]) .hs-vendors { transform: translateX(64px); }
   .hs-pick-n.vt-l { transition-delay: .06s; } .hs-pick-d.vt-l { transition-delay: .12s; } .hs-vendors.vt-l { transition-delay: .18s; } .hs-pick-vis.vt-l { transition-delay: .24s; }
-  /* 4 sticky-stack: the cards stick and stack as you scroll (the sticky offsets above); on arrival each card rises a little */
+  /* 4 stack: on arrival the words card rises, then the prompt card rises onto the stack under it */
   .hs-card { transition: transform .6s cubic-bezier(.16, 1, .3, 1), opacity .5s cubic-bezier(0, 0, .2, 1); }
   .js [data-entrance='sticky-stack']:not([data-in]) .hs-card { transform: translateY(40px); opacity: 0; }
   .hs-card-2 { transition-delay: .12s; }
@@ -268,3 +265,8 @@
 /* the live object's pause control, docked to the module: bottom-left, on the call line */
 .hs-hero-obj .lp-host { position: relative; height: 100%; }
 .hs .hs-pause { top: auto; right: auto; left: 0; bottom: 14px; }
+
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  /* a phone's room is far taller than the screen: it pulls back from a little closer, never from black */
+  .js .hc-in[data-entrance]:not([data-in]) { transform: scale(1.08); opacity: 0; }
+}
