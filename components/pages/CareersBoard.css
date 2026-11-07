@@ -146,6 +146,7 @@
 .xcb-sheet-t { font-size: clamp(26px, 2.2vw, 32px); line-height: 1.12; letter-spacing: -.02em; }
 .xcb-sheet.last .xcb-sheet-t { font-size: clamp(26px, 2.2vw, 32px); max-width: 22ch; }
 .xcb-sheet-d { font-size: 17px; }
+.xcb-sheet-in { min-height: min(50svh, 460px); }
 .xcb-pos-h { gap: 14px; }
 .xcb-int-h { gap: 18px; }
 .xcb-perks-hd { row-gap: 12px; }
@@ -172,7 +173,6 @@
   .xcb-perk-big { font-size: 88px; }
   .xcb-perk-l li { grid-template-columns: 40px minmax(0, 1fr); padding: 28px 0; scroll-margin-top: 220px; }
   .xcb-tools { padding-top: 16px; gap: 4px; }
-  .xcb-know { margin-right: -20px; }
   .xcb-deck { padding-top: 48px; }
   .xcb-sheet { top: calc(72px + var(--i) * 10px); margin-bottom: 8svh; }
   .xcb-sheet-in { min-height: 0; padding: 26px; gap: 24px; border-radius: 24px; }

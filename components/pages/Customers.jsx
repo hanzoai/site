@@ -67,7 +67,7 @@ const door = (e, to, router) => {
   setTimeout(() => document.querySelectorAll('[data-door]').forEach((d) => { if (!d.dataset.landing) d.remove(); }), 640 + 700);
 };
 // JS off: both cases show stacked and readable; the figures on phones stand in place
-const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-strip{display:none!important}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
+const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-strip{display:none!important}.xcu-row-f>div{opacity:1!important}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
 const FIGS = LAUNCHES.flatMap((l) => l.f.map(([n]) => n));
 
 // Hanzo's own list, as live shows it (the same names and links as /investors; a shared module is the Data chat's, PLAN 2.5)

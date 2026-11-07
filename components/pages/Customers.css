@@ -14,7 +14,7 @@
 .vc.xcu .xcu-h1.vc-display { font-size: 52px; line-height: 1.04; letter-spacing: -.03em; }
 .vc.xcu .vc-headline, .vc.xcu .xcu-close .vc-display { font-size: 26px; line-height: 1.15; letter-spacing: -.02em; }
 
-/* the one ask: solid ink pill (white in the dark room); press is .98, hover darkens and the arrow-free label lifts 1px */
+/* the one ask: solid ink pill (white in the dark room); press is .97 (90ms), hover darkens */
 .xcu-cta { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 28px; border-radius: 999px; background: var(--xi); color: #fff; font: 500 16px/1 var(--sans); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
 .xcu-cta.lt { background: #fff; color: #0a0a0a; }
 @media (hover: hover) { .xcu-cta:hover { background: #262626; } .xcu-cta.lt:hover { background: #e5e5e5; } }
@@ -107,12 +107,12 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-st-f { display: flex; flex-direction: column; gap: 20px; }
 .xcu-st-f > span { display: flex; flex-direction: column; gap: 8px; }
 .xcu-st-f b { white-space: nowrap; }
-.xcu-st-f .a b { font-size: clamp(52px, 6vw, 84px); font-weight: 220; letter-spacing: -.03em; line-height: .9; font-variant-numeric: tabular-nums; color: var(--xi); }
-.xcu-st-f .b b { font-size: clamp(28px, 3vw, 40px); font-weight: 220; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--xi); }
-.xcu-st-f .a.long b { font-size: clamp(36px, 3.5vw, 52px); }
-.xcu-st-f .nm b { white-space: normal;  font-size: clamp(32px, 3.4vw, 52px); font-weight: 497; letter-spacing: -.035em; }
+.xcu-st-f .a b { align-self: flex-start; transform-origin: 0 100%; font-size: clamp(48px, 4.4vw, 64px); font-weight: 220; letter-spacing: -.03em; line-height: .9; font-variant-numeric: tabular-nums; color: var(--xi); }
+.xcu-st-f .b b { font-size: clamp(21px, 2vw, 26px); font-weight: 220; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--xi); }
+.xcu-st-f .a.long b { font-size: clamp(36px, 3vw, 44px); }
+.xcu-st-f .nm b { white-space: normal; font-size: 32px; font-weight: 497; letter-spacing: -.025em; }
 .xcu-st-f span span { font-size: 16px; color: var(--sec); }
-.xcu-st-dots { display: flex; gap: 6px; padding: 0 32px 28px; }
+.xcu-st-dots { display: flex; gap: 6px; margin-top: auto; padding: 0 32px 28px; }
 .xcu-st-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .16); transition: background-color .3s, transform .3s var(--ease); }
 .xcu-st-dots i.on { background: var(--xi); transform: scale(1.35); }
 /* idle: the launch being read breathes in the stage's dot row while you read it (one slow mover in view) */
@@ -141,6 +141,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 
 @media (max-width: 899px) {
   .xcu-hero { padding-top: 96px; }
+  .vc.xcu .xcu-h1.vc-display { font-size: 40px; }
   .xcu-hero-g { row-gap: 22px; }
   .xcu-hero-f { gap: 22px; }
   .xcu-cases { padding-top: 32px; }
@@ -170,7 +171,10 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-row-d { grid-column: 2; }
   .xcu-row.on .xcu-row-n h3 { transform: none; }
   .xcu-row-f { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; grid-column: 2; display: flex; flex-direction: column; gap: 14px; }
-  .xcu-row-n h3 { transition: color .3s cubic-bezier(0, 0, .2, 1); }
+  .xcu-row-n h3 { font-size: 17px; transition: color .3s cubic-bezier(0, 0, .2, 1); }
+  /* one number once per screen: the strip carries the row being read's first figure, so the row's own copy steps back */
+  .xcu-row-f > div:first-child { transition: opacity .3s cubic-bezier(.4, 0, .2, 1); }
+  .xcu-row.on .xcu-row-f > div:first-child { opacity: 0; }
   .xcu-row:not(.read) .xcu-row-n h3 { color: #737373; }
   .xcu-row-f > div { overflow: hidden; }
   .xcu-row-f dt, .xcu-row-f dd { transform: translateY(110%); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }

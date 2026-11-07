@@ -146,7 +146,7 @@ function Paste() {
     <section className="cli-paste">
       <div className="av-wrap av-grid">
         <div className="cli-prompt">
-          <code>{text}</code>
+          <code>{text}<span className="cli-caret cli-prompt-caret" aria-hidden="true" /></code>
           <Copy text={text} />
           <span className="cli-prompt-k x-mono">Agent prompt</span>
         </div>
