@@ -607,7 +607,7 @@ export default function Analytics() {
             </ol>
             <div className="kn-acts">
               <Cta to="/login" id="analytics.script">Try Hanzo</Cta>
-              <Cta to="/contact-sales" kind="quiet" id="analytics.script-2">Request Demo</Cta>
+              <Cta to="/contact-sales" kind="link" id="analytics.script-2">Request Demo</Cta>
               <KeynoteSheet label="A script, then an API" title="A script, then an API"><ApiSheet /></KeynoteSheet>
             </div>
             <p className="an-nocard">No credit card required.</p>
@@ -664,8 +664,8 @@ export default function Analytics() {
 
       <KeynoteClose light className="an-close" name="Analytics" tag="Product analytics on your data" lead="Get started with Analytics" cta="analytics.close">
         <div className="kn-acts an-close-l">
-          <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" kind="quiet" id="analytics.close-docs">Read the docs</Cta>
-          <Cta to="https://github.com/hanzoai" kind="quiet" id="analytics.close-github">View on GitHub</Cta>
+          <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" kind="link" id="analytics.close-docs">Read the docs</Cta>
+          <Cta to="https://github.com/hanzoai" kind="link" id="analytics.close-github">View on GitHub</Cta>
         </div>
       </KeynoteClose>
     </main>
