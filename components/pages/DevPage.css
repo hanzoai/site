@@ -52,7 +52,7 @@
 .xdv-term { position: relative; border-radius: 24px; background: #0a0a0a; color: #fafafa; overflow: hidden; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
 .xdv-term-bar { display: flex; align-items: center; gap: 7px; min-width: 0; padding: 6px 8px 6px 20px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .xdv-term-bar i { width: 12px; height: 12px; flex: none; border-radius: 50%; background: #404040; }
-.xdv-term-bar b { min-width: 0; margin-left: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 500; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #a3a3a3; }
+.xdv-term-bar .xdv-term-t { min-width: 0; margin-left: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 500; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #a3a3a3; }
 .xdv-info { flex: none; min-width: 44px; height: 44px; margin-left: auto; border: 0; border-radius: 10px; background: none; color: #a3a3a3; font: 500 13px/1 var(--mono); cursor: pointer; transition: background-color .15s, color .15s, transform .09s; }
 .xdv-info:active { transform: scale(.97); }
 @media (hover: hover) { .xdv-info:hover { color: #fafafa; background: rgba(255, 255, 255, .08); } }
@@ -75,7 +75,7 @@
 @keyframes xdv-pulse { 50% { opacity: .45; } }
 .xdv-term-foot { display: flex; gap: 8px; align-items: center; min-width: 0; padding: 12px 22px 14px; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 12px; color: #a3a3a3; }
 .xdv-foot-h { margin-left: 16px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: rgba(255, 255, 255, .55); }
-.xdv-term-foot em { margin-left: auto; flex: none; font-style: normal; color: #a3a3a3; }
+.xdv-term-foot .xdv-foot-r { margin-left: auto; flex: none; font-style: normal; color: #a3a3a3; }
 
 /* the file pane: the diff lands here */
 .xdv-file { display: flex; flex-direction: column; min-width: 0; background: #0f0f0f; border-left: 1px solid rgba(255, 255, 255, .08); }
@@ -271,7 +271,7 @@
 .xdv-ladder li button { position: relative; display: grid; grid-template-columns: 44px 1fr; align-items: center; width: 100%; height: 52px; padding: 0 18px; border: 0; border-radius: 14px; background: none; text-align: left; font: inherit; color: #737373; cursor: pointer; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
 .xdv-ladder li button > :not(.xdv-rung-bg) { position: relative; }
 .xdv-ladder li button:active { transform: scale(.97); }
-.xdv-ladder li b { font-size: 1.0625rem; font-weight: 497; letter-spacing: -.01em; }
+.xdv-ladder li .xdv-rung-t { font-size: 1.0625rem; font-weight: 497; letter-spacing: -.01em; }
 .xdv-ladder li.on button { color: var(--ink); }
 .xdv-ladder li button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .xdv-rung-bg { position: absolute; inset: 0; border-radius: 14px; background: #f2f2f2; }
@@ -319,6 +319,8 @@
 .xdv-in-r { grid-column: 8 / 14; display: grid; gap: 14px; }
 .xdv-in-r .v2a-title { max-width: 30ch; }
 .xdv-way-p { margin-top: 16px; outline: none; }
+/* the $ prompt drawn by CSS, so each install line stays one plain line of text */
+.xdv-way-code .x-codeblock-l:not(.c)::before { content: '$ '; color: #737373; user-select: none; }
 .xdv-way-p p { margin: 12px 0 0; font-size: 15px; color: var(--mute); }
 .xdv-in-links { display: flex; flex-wrap: wrap; gap: 0 22px; }
 
@@ -350,7 +352,7 @@
 .xdv-read summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; padding: 16px 0; cursor: pointer; list-style: none; }
 .xdv-read summary::-webkit-details-marker { display: none; }
 .xdv-read summary > span { display: flex; flex-direction: column; gap: 4px; }
-.xdv-read summary b { font-size: 1.0625rem; font-weight: 497; color: var(--ink); }
+.xdv-read summary .xdv-read-t { font-size: 1.0625rem; font-weight: 497; color: var(--ink); }
 .xdv-read summary span span { font-size: 15px; color: var(--mute); }
 .xdv-read summary i { font-style: normal; font-size: 24px; font-weight: 300; color: var(--mute); transition: transform .3s var(--ease); }
 .xdv-read[open] summary i { transform: rotate(45deg); }
@@ -438,7 +440,7 @@
   /* the phone terminal says its whole name: the three lights step aside, the caps tighten */
   .xdv-term-bar { padding-left: 14px; }
   .xdv-term-bar > i { display: none; }
-  .xdv-term-bar b { margin-left: 0; letter-spacing: .06em; }
+  .xdv-term-bar .xdv-term-t { margin-left: 0; letter-spacing: .06em; }
   /* the race figure's glyphs keep clear of the line under it */
   .xdv-race-h { gap: 18px; }
 }

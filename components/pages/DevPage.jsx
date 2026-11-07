@@ -31,7 +31,8 @@ import './DevPage.css';
 const OPEN = '/login?next=%2Fdev';
 const DOCS = 'https://docs.hanzo.ai/docs/dev';
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
-const Lk = ({ to, children, id }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{children} <i className="xdv-ar">→</i></Cta>;
+// the arrow sits in the label's own text, as Hanzo prints it ("Getting started →"); bare: Hanzo prints no arrow ("Read the docs")
+const Lk = ({ to, children, id, bare }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{bare ? children : children + ' →'}</Cta>;
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 /* the kit's demo control reads reduced motion while rendering; render it only once mounted, so the server HTML and the
    first client render agree (a control is no use before scripts anyway) */
@@ -147,7 +148,7 @@ function Session() {
     <div className="xdv-term" ref={box}>
       <div className="xdv-term-bar">
         <i aria-hidden="true" /><i aria-hidden="true" /><i aria-hidden="true" />
-        <b className="x-mono">Hanzo Dev · Coding agent</b>
+        <span className="x-mono xdv-term-t">Hanzo Dev · Coding agent</span>
         <button type="button" className="xdv-info" aria-expanded={info} aria-controls="xdv-demo" onClick={() => setInfo(!info)}>(i)</button>
         <Ctl demo={demo} className="dark xdv-ctl" />
       </div>
@@ -171,7 +172,7 @@ function Session() {
         <File stage={stage} pre={!live} />
       </div>
       <ul className="x-sr">{DIFF.map(([, s], i) => <li key={i}>{s}</li>)}</ul>
-      <div className="xdv-term-foot x-mono"><span>auto</span><span>·</span><span>enso-auto</span><span className="xdv-foot-h">{HIGHLIGHTS[3]}</span><em>@acme/api (main)</em></div>
+      <div className="xdv-term-foot x-mono"><span>auto</span><span>·</span><span>enso-auto</span><span className="xdv-foot-h">{HIGHLIGHTS[3]}</span><span className="xdv-foot-r">@acme/api (main)</span></div>
     </div>
   );
 }
@@ -188,7 +189,7 @@ function Hero() {
           <p className="xdv-lede">Hanzo Dev is a coding agent. It reads your repository, makes the change, runs the tests and shows you the diff — in your terminal, on the web, in the cloud and in Slack.</p>
           <div className="xdv-acts">
             <Cta to={OPEN} id="dev.hero" thumb size="lg">Open Dev</Cta>
-            <Lk to={DOCS} id="dev.docs">Read the docs</Lk>
+            <Lk to={DOCS} id="dev.docs" bare>Read the docs</Lk>
             <Lk to="https://github.com/hanzoai/dev" id="dev.github">Explore GitHub examples</Lk>
           </div>
         </div>
@@ -373,7 +374,7 @@ function Places() {
               <div className={'xdv-pl-art ' + g} aria-hidden="true"><Scene g={g} /></div>
               <div className="xdv-pl-txt">
                 <h3>{name}</h3>
-                {tag && <code className="xdv-tag">{tag}</code>}
+                {tag && <span className="xdv-tag">{tag}</span>}
                 <p>{d}</p>
               </div>
             </Play>
@@ -454,7 +455,7 @@ function How() {
                   <button type="button" aria-pressed={i === rung} aria-controls="xdv-rung" onClick={() => setRung(i)} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setRung(i); }} onFocus={() => setRung(i)}>
                     {i === rung && <motion.span layoutId="xdv-rung-bg" className="xdv-rung-bg" transition={EZ} />}
                     <span className="xdv-rung-n x-mono">{String(i + 1).padStart(2, '0')}</span>
-                    <b>{name}</b>
+                    <span className="xdv-rung-t">{name}</span>
                   </button>
                 </li>
               ))}
@@ -536,7 +537,7 @@ function Setup() {
             <Tabs id="xdv-way" tabs={WAYS.map(([w]) => w)} value={way} onChange={setWay} label="One line, three ways." size="lg" />
             {WAYS.map(([w, c, d], i) => (
               <TabPanel key={w} id="xdv-way" i={i} value={way} className="xdv-way-p">
-                <CodeBlock code={c} label={w} prompt />
+                <CodeBlock code={c} label={w} className="xdv-way-code" />
                 <p>{d}</p>
               </TabPanel>
             ))}
@@ -545,7 +546,7 @@ function Setup() {
             <p className="v2a-title">Then sign in. Hanzo IAM links the machine to your account.</p>
             <CodeBlock code={SIGNIN} label="bash" />
             <div className="xdv-in-links">
-              <Lk to="https://github.com/hanzoai/dev/releases/tag/v0.7.7" id="dev.release">Latest release v0.7.7</Lk>
+              <Lk to="https://github.com/hanzoai/dev/releases/tag/v0.7.9" id="dev.release">Latest release v0.7.9</Lk>
               <Lk to={DOCS} id="dev.start">Getting started</Lk>
             </div>
           </div>
@@ -600,7 +601,7 @@ function Source() {
           <Faq items={QA} multi />
           <details className="xdv-read">
             <summary>
-              <span><b>The agent, its controller, its source.</b><span>Where to start, what Dev thinks with, and the code.</span></span>
+              <span><span className="xdv-read-t">The agent, its controller, its source.</span><span>Where to start, what Dev thinks with, and the code.</span></span>
               <i aria-hidden="true">+</i>
             </summary>
             <p className="v2a-folio">Read</p>
@@ -645,13 +646,14 @@ export default function DevPage() {
   return (
     <main className="xdv">
       <Hero />
-      <Places />
-      <How />
+      {/* Hanzo's own order: the proof, where it runs, then how to install and sign in, before how it thinks */}
       <Race />
+      <Places />
       <Setup />
+      <How />
       <Source />
       <Paste />
-      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<><Cta kind="quiet" to={GO} id="dev.close-go" className="xdv-go">Get Hanzo Dev, $8/month</Cta><Lk to={DOCS} id="dev.close-docs">Read the docs</Lk></>} />
+      <Band title="Describe the change. Dev ships it." action="Open Dev" to={OPEN} note={<><Cta kind="quiet" to={GO} id="dev.close-go" className="xdv-go">Get Hanzo Dev, $8/month</Cta><Lk to={DOCS} id="dev.close-docs" bare>Read the docs</Lk></>} />
     </main>
   );
 }

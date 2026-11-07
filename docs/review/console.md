@@ -1,5 +1,5 @@
 # /console — James-eye review
-Ready: 2026-11-07 phone Keys chip no longer sits on its scope line; phone canvas is one sideways swipe row (page still scrolls under a finger, tallest card fits); hero views centre their object in the pane (no dead pane) and the phone Projects view is no longer clipped; stacked heading fades out under the canvas card; pressed module tab and Revoke answer hover. taste OK, parity 93/93 + 14/14, unique OK, check.mjs 0 errors / 0 Next issues / no overflow / 0 overlaps at 1470 and 375.
+Was ready (7 Nov), withdrawn 8 Nov: copycheck.mjs shows Hanzo lines missing (docs/COPY-RULE.md). 2026-11-07 phone Keys chip no longer sits on its scope line; phone canvas is one sideways swipe row (page still scrolls under a finger, tallest card fits); hero views centre their object in the pane (no dead pane) and the phone Projects view is no longer clipped; stacked heading fades out under the canvas card; pressed module tab and Revoke answer hover. taste OK, parity 93/93 + 14/14, unique OK, check.mjs 0 errors / 0 Next issues / no overflow / 0 overlaps at 1470 and 375.
 
 Verdict: 7/10
 First complaint: "You show me the same console window three times, and when I type in the search the word snaps in half: 'Usa' on one line, 'ge' under it. And on the phone the little window cuts its own text off."
