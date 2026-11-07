@@ -36,6 +36,12 @@ export default function RootLayout({ children }) {
         {/* both faces preload, and both use font-display: block, so text paints once in Zen: no visible swap */}
         <link rel="preload" href="/fonts/Zen-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
         <link rel="preload" href="/fonts/ZenMono-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
+        {/* html.js is set before first paint when JS runs, so pages can hide entrance states only then:
+            .js .my-step:not(.on) { opacity: 0 }  →  with JS off every step stays readable */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* JS off: every word is legible. Entrance states written into the server HTML (opacity 0, a rising transform, a
+            clip) are cleared, so readers and crawlers without JS see the final page (PLAN 2.3 "server-rendered text") */}
+        <noscript><style>{'main [style*="opacity:0"],main [style*="opacity: 0"]{opacity:1!important}main [style*="translate"],main [style*="transform"]{transform:none!important;translate:none!important}main [style*="clip-path"]{clip-path:none!important}main [style*="visibility:hidden"]{visibility:visible!important}.x-rv{opacity:1!important;transform:none!important}'}</style></noscript>
       </head>
       <body>
         {/* the first tab stop: jumps past the header to the page */}

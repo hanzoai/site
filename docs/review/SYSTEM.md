@@ -211,6 +211,12 @@ export default function Page() { return <><JsonLd route="/your/path" /><YourPage
 - **`useCalm()`** from `components/ui.jsx` is true under reduced motion and follows the setting live.
 - **Language menu.** Choosing a language no longer flips `<html lang>` or `dir`, because the content is English.
 
+## 11b. JS off: every word legible (PLAN 2.3, P1)
+
+- **Inline entrance states are cleared for you.** With JS off, a `<noscript>` rule clears every entrance state written inline into the server HTML: Motion's `initial={{ opacity: 0, y }}`, clip-paths and `visibility: hidden`.
+- **States your own CSS hides are yours to fix.** This covers chapter text shown one at a time, captions waiting for a scroll, and `opacity: 0` set in a class. Scope them to JS: `html.js` is set before first paint whenever JS runs. Write `.js .my-step:not(.on) { opacity: 0 }`, not `.my-step:not(.on) { opacity: 0 }`.
+- **Reviews count these.** On /api, /compare, /metrics and the home chapters, 8 to 16 text blocks are still invisible with JS off for this reason.
+
 ## 12. States: 404, error, loading
 
 - **404 hardening:** a malformed address cannot crash the 404, and "Go back" appears only when there is a page to go back to.
