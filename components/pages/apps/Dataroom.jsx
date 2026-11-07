@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, More, Cta } from '../../kit';
 import { useLive } from '../cloud/Frame';
+import { useCalm } from '../../ui';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
@@ -61,7 +62,8 @@ const PauseI = ({ held }) => (held
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
 function Live() {
-  const [ref, seen, calm] = useLive(0.25);
+  const [ref, seen] = useLive(0.25);
+  const calm = useCalm(); // hydration-safe: false on the server and first paint, then the visitor's setting
   const [held, setHeld] = useState(false);
   const live = seen && !held;
   const [s, setS] = useState(4);
