@@ -242,7 +242,7 @@ function News() {
             <OrbitItem key={t} i={i} go={go} data-i={i} className={i === at ? 'on' : ''}>
               <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') hold(i); }} onFocus={() => hold(i)} onBlur={free}>
                 <span className="xpe-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <span className="xpe-tt">{keep(t)}</span>
+                <span className="xpe-tt">{t}</span>
                 <span className="xpe-ts vc-num">{dd}</span>
                 <span className="xpe-ts2">{ss}</span>
                 <span className="xpe-go" aria-hidden="true">{ARROW}</span>
@@ -291,7 +291,7 @@ function Contact() {
           <p className="xpe-tel vc-num">+1 (424) 335-0550</p>
         </div>
         <div className="xpe-contact-a">
-          <address>Hanzo AI, Inc.<br />1 Ferry Building<br />San Francisco, CA 94105<br />United States</address>
+          <address><span>Hanzo AI, Inc.</span><br /><span>1 Ferry Building</span><br /><span>San Francisco, CA 94105</span><br /><span>United States</span></address>
           <h3 className="vc-kick">Headquarters</h3>
         </div>
       </StackDrop>
@@ -299,7 +299,8 @@ function Contact() {
   );
 }
 
-const PARTNERS = [['Techstars', '/press/partners/techstars/techstars.png', 'Logo (PNG)'], ['NVIDIA', '/press/partners/nvidia/nvidia.svg', 'Logo (SVG)'], ['Google Cloud', '/press/partners/googlecloud/googlecloud.svg', 'Logo (SVG)'], ['AWS', '/press/partners/aws/aws.svg', 'Logo (SVG)'], ['DigitalOcean', '/press/partners/digitalocean/digitalocean.svg', 'Logo (SVG)'], ['Nebius', '/press/partners/nebius/nebius.svg', 'Logo (SVG)']];
+// [name, Hanzo's download path (its link, kept word for word), label, the logo this repo mirrors for display]
+const PARTNERS = [['Techstars', '/press/partners/techstars/techstars.png', 'Logo (PNG)', '/logos/partners/techstars.svg'], ['NVIDIA', '/press/partners/nvidia/nvidia.svg', 'Logo (SVG)', '/logos/partners/nvidia.svg'], ['Google Cloud', '/press/partners/googlecloud/googlecloud.svg', 'Logo (SVG)', '/logos/partners/google.svg'], ['AWS', '/press/partners/aws/aws.svg', 'Logo (SVG)', '/logos/partners/amazon.svg'], ['DigitalOcean', '/press/partners/digitalocean/digitalocean.svg', 'Logo (SVG)', '/logos/partners/digitalocean.svg'], ['Nebius', '/press/partners/nebius/nebius.svg', 'Logo (SVG)', '/logos/partners/nebius.svg']];
 
 function BrandAssets() {
   const [k, , ref] = useBeat(PARTNERS.length, 160, 0.3);
@@ -314,14 +315,14 @@ function BrandAssets() {
         </div>
         <A to="/brand" className="xpe-guide" ref={gref}>
           <span className={'xpe-guide-p' + (g > 0 ? ' in' : '')} aria-hidden="true"><Mark size={56} /></span>
-          <span className="xpe-guide-t"><b>Brand Guidelines</b><span>View Brand Guidelines <i>{ARROW}</i></span></span>
+          <span className="xpe-guide-t"><span className="xpe-guide-n">Brand Guidelines</span><span className="xpe-guide-l"><span>View Brand Guidelines</span> <i>{ARROW}</i></span></span>
         </A>
         <h3 className="vc-title xpe-h3">Partner Assets</h3>
         <ul className="xpe-partners" ref={ref}>
-          {PARTNERS.map(([n, f, l], i) => (
+          {PARTNERS.map(([n, f, l, logo], i) => (
             <li key={n} className={i < k ? 'in' : ''}>
-              <span className="xpe-p-img"><Pic src={f} alt={n} w={140} h={32} fallback={<span className="xpe-p-alt" aria-hidden="true">{n.slice(0, 1)}</span>} /></span>
-              <b>{n}</b>
+              <span className="xpe-p-img"><Pic src={logo} alt={n} w={140} h={32} fallback={<span className="xpe-p-alt" aria-hidden="true">{n.slice(0, 1)}</span>} /></span>
+              <span className="xpe-p-n">{n}</span>
               <a href={f} download aria-label={n + ' ' + l}><span>{l}</span>{DOWN}</a>
             </li>
           ))}
