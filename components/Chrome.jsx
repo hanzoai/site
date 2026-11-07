@@ -1,6 +1,6 @@
 'use client';
 /* The shell every page shares (mounted once in app/layout.jsx; pages import nothing from here except Marquee):
-   - Smooth: Lenis weighted scrolling, the site-wide reduced-motion policy (MotionConfig reducedMotion="user"),
+   - Smooth: Lenis weighted scrolling (fine pointers, loaded after first paint), the site-wide reduced-motion policy (MotionConfig reducedMotion="user"),
      [data-off] on any <main> section that is off screen (pause your CSS loops with `[data-off] .x { animation-play-state: paused }`),
      and every new page starting at its top.
    - Progress, Header, Footer: the scroll bar and the behaviour of Hanzo's own header and footer (their HTML is
@@ -11,7 +11,6 @@
    - After every in-site navigation, focus moves to the new page's <main> h1 (tabindex -1, no ring, no scroll). */
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import Lenis from 'lenis';
 import { motion, MotionConfig, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
 import { animate, scroll } from 'motion';
 import Nav from './Nav';
@@ -20,11 +19,17 @@ import { onDomChange } from '../lib/domwatch';
 
 /* Smooth, weighted scrolling (Lenis) and one motion policy for the whole page. */
 export function Smooth({ children }) {
+  // Lenis loads after first paint (it is not needed to read the page) and only for fine pointers: touch keeps native
+  // scrolling, which Lenis would not change anyway (PLAN 2.13: Lenis off the first-load path, skip touch)
   useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const l = new Lenis({ autoRaf: true, lerp: 0.105, wheelMultiplier: 0.9, anchors: true });
-    window.__lenis = l;
-    return () => { l.destroy(); window.__lenis = null; };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(pointer: fine)').matches) return;
+    let l = null, dead = false;
+    import('lenis').then(({ default: Lenis }) => {
+      if (dead) return;
+      l = new Lenis({ autoRaf: true, lerp: 0.105, wheelMultiplier: 0.9, anchors: true });
+      window.__lenis = l;
+    });
+    return () => { dead = true; l?.destroy(); window.__lenis = null; };
   }, []);
   // every section pauses its animations while it is off screen
   useEffect(() => {
