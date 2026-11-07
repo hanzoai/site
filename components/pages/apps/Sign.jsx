@@ -10,9 +10,9 @@
    (PinChapters), Open (sheets). Colour: none (0 UI hues); ink and greys. Self-running demos carry a pause button.
    One dark room: "Send the first one". Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion, useInView } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
-import { A, Tick, Img } from '../../kit';
+import { A, Tick, Img, Flap } from '../../kit';
 import { useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
@@ -95,11 +95,17 @@ function Story() {
   const [auto, setAuto] = useState(0);
   const [top, setTop] = useState(true);
   useEffect(() => {
-    const on = () => { const t = scrollY <= 24; setTop(t); if (!t) setAuto(0); };
+    const on = () => { setTop(scrollY <= 24); };
     on();
     addEventListener('scroll', on, { passive: true });
     return () => removeEventListener('scroll', on);
   }, []);
+  // the hand-over is a visible rewind, one step every 140 ms (03 → 02 → 01), never a cut back to the blank page
+  useEffect(() => {
+    if (top || auto === 0) return;
+    const t = setTimeout(() => setAuto((v) => Math.max(0, v - 1)), 140);
+    return () => clearTimeout(t);
+  }, [top, auto]);
   useEffect(() => {
     if (!(live && !paused && ch === 0 && top)) return;
     const t = setTimeout(() => setAuto((v) => (v + 1) % 5), 1900);
@@ -123,7 +129,7 @@ function Story() {
         chapters={[{ rail: false, node: hero }, ...STEPS.map(([t, d]) => ({ t, b: <p>{d}</p> }))]}
         visual={(at) => {
           if (at !== ch) setTimeout(() => setCh(at), 0);
-          const step = calm ? 4 : at === 0 ? auto : at - 1;
+          const step = calm ? 4 : at === 0 || auto > 0 ? auto : at - 1;
           return (
             <div className="sg-desk w2-object">
               <div className="sg-desk-bar"><p className="sg-desk-k x-mono">Document signing</p><span className="sg-pause">{pauseBtn}</span></div>
@@ -131,7 +137,7 @@ function Story() {
               <Page at={step} />
               <div className="sg-desk-r" aria-hidden="true">
                 <p className="x-mono">{String(step + 1).padStart(2, '0')} / 05</p>
-                <b>{STEPS[step][0]}</b>
+                {at === 0 && <b>{STEPS[step][0]}</b>}{/* in the chapters the step's name is the heading beside it, said once */}
               </div>
               <p className="x-sr">01 / 05 02 / 05 03 / 05 04 / 05 05 / 05</p>
             </div>
@@ -282,8 +288,27 @@ const PLANS = [
   ['Enterprise', 'Custom', '', 'For organizations with advanced security and compliance needs.', ['Contact Sales', '/contact-sales'], ['Everything in Business', 'Dedicated infrastructure', 'Custom SLA', 'On-premise deployment', 'Compliance certifications', 'Dedicated account manager', '24/7 phone support']],
 ];
 
+/* The fork, drawn: upstream's line runs on, Hanzo's branch leaves it and carries on beside it (draws in once when
+   reached; both ends are the two repositories named in the links above). */
+function Fork() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.6 });
+  return (
+    <div className={'sg-fork' + (seen ? ' in' : '')} ref={ref} aria-hidden="true">
+      <svg viewBox="0 0 640 140">
+        <path className="up" d="M8 40 H632" pathLength="1" />
+        <path className="me" d="M160 40 C 230 40, 250 104, 330 104 H632" pathLength="1" />
+        <circle cx="8" cy="40" r="5" className="dot" /><circle cx="160" cy="40" r="7" className="node" /><circle cx="632" cy="104" r="7" className="node me-end" />
+      </svg>
+      <p className="x-mono"><span>documenso/documenso</span><span>hanzoai/esign</span></p>
+    </div>
+  );
+}
+
 function Cost() {
-  const [run, setRun] = useState(null); // nothing dimmed until you choose: 0 run it yourself, 1 we run it
+  const [run, setRun] = useState(1); // 0 run it yourself, 1 we run it (the default: the hosted plans, Community stays legible)
+  const plansRef = useRef(null);
+  const seen = useInView(plansRef, { once: true, amount: 0.4 }); // the prices flip in once, the first time they are reached
   return (
     <section className="w2-sec sg-cost">
       <div className="w2-wrap">
@@ -298,14 +323,14 @@ function Cost() {
             </div>
           </div>
         </div>
-        <div className="sg-plans">
+        <div className="sg-plans" ref={plansRef}>
           {PLANS.map(([t, price, per, d, [cta, to], li], i) => {
             const lit = run === null ? true : run === 0 ? i === 0 : i > 0;
             return (
               <div key={t} className={'sg-plan' + (i === 2 ? ' pop' : '') + (lit ? '' : ' dim')}>
                 {i === 2 && <span className="sg-pop">Most Popular</span>}
                 <h3>{t}</h3>
-                <p className="sg-price"><b className={price.startsWith('$') ? 'w2-fig' : 'sg-word'}>{price}</b>{per && <span>{per}</span>}</p>
+                <p className="sg-price"><b className={price.startsWith('$') ? 'w2-fig' : 'sg-word'}>{seen ? <Flap value={price} className="sg-flap" /> : price}</b>{per && <span>{per}</span>}</p>
                 <p className="sg-plan-d">{d}</p>
                 <A to={to} className="w2-ghost sg-plan-a">{cta}</A>
                 <ul>{li.map((x) => <li key={x}>{x}</li>)}</ul>
@@ -319,6 +344,7 @@ function Cost() {
             <p className="w2-body">Hanzo Sign is built on <A to="https://documenso.com">Documenso</A>, an open-source document signing platform, under the AGPL.</p>
             <p className="w2-body">The upstream project is named here and in the licence, because naming what you forked is required and is a different act from branding yourself with it. Run our build, or run your own — the whole thing is a TypeScript application over Postgres, and you can read every line that touches a document before you trust it with one.</p>
             <div className="sg-oss-links"><A to={REPO} className="w2-ghost">hanzoai/esign <i aria-hidden="true">↗</i></A><A to="https://github.com/documenso/documenso" className="w2-ghost">Upstream: documenso/documenso <i aria-hidden="true">↗</i></A></div>
+            <Fork />
           </div>
         </div>
       </div>

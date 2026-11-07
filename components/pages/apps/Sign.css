@@ -245,6 +245,29 @@ html.js .sg-lines.up i:nth-child(8) { animation-delay: 420ms; } html.js .sg-line
 .sg-cards .w2-oc-k { position: absolute; left: 24px; top: 22px; }
 @media (max-width: 899px) { .sg-cards .w2-oc-card { min-height: 104px; } .sg-cards .w2-oc-k { position: static; } }
 
+/* plans: the prices flip in once when reached; resting at 44px so no four big figures shout at once */
+.sg-price b { font-size: 44px; }
+.sg-flap span { background: none !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+@media (hover: hover) { .sg-run button:not([aria-pressed='true']):hover { color: var(--ink); background: rgba(255, 255, 255, .6); } }
+.sg-run button:active { transform: scale(.97); }
+/* the fork line under Built on Open Source */
+.sg-fork { margin-top: 40px; }
+.sg-fork svg { display: block; width: 100%; height: auto; overflow: visible; }
+.sg-fork path { fill: none; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.2s cubic-bezier(.4, 0, .2, 1); }
+.sg-fork .up { stroke: #a3a3a3; }
+.sg-fork .me { stroke: var(--ink); stroke-width: 2.5; transition-delay: .5s; }
+.sg-fork .dot { fill: #a3a3a3; }
+.sg-fork .node { fill: var(--ink); opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1) 1.5s; }
+.sg-fork .node:not(.me-end) { transition-delay: .4s; }
+.sg-fork.in path { stroke-dashoffset: 0; }
+.sg-fork.in .node { opacity: 1; }
+.sg-fork p { display: flex; justify-content: space-between; margin: 10px 0 0; font-size: 13px; color: #525252; }
+html:not(.js) .sg-fork path { stroke-dashoffset: 0; } html:not(.js) .sg-fork .node { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .sg-fork path { stroke-dashoffset: 0; transition: none; } .sg-fork .node { opacity: 1; transition: none; } }
+/* signer chips never wrap their name */
+.sg-track p span, .sg-track b { white-space: nowrap; }
+.sg-track { min-width: max-content; }
+
 /* the close's ledger: one statement and one ask on the left, Hanzo's other lines as hairline rows on the right */
 .sg-first-links li.sg-get { display: grid; margin: 0; padding: 20px 0; border-top: 1px solid rgba(255, 255, 255, .12); }
 .sg-first-links .sg-get-meta { margin-top: 8px; }
