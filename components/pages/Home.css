@@ -114,6 +114,8 @@
   .hv-obj[data-ready] .hv-arrive, .hv-obj[data-ready] .hv-phone { animation: none; }
   .hv-race, .hv-pareto { clip-path: none !important; }
   .hv .hv-screen { position: relative; inset: auto; min-height: 420px; }
+  .hv .x-band .x-word, .hv .x-band p, .hv .x-band-act { opacity: 1 !important; filter: none !important; transform: none !important; }
+  .hv-logo span { position: static; opacity: 1; transform: none; margin-top: 6px; }
 }
 /* JS off: every word legible, the hero in plain flow with the phone as its object */
 @media (scripting: none) {
@@ -127,6 +129,10 @@
   .hv [style*="opacity:0"], .hv [style*="opacity: 0"] { opacity: 1 !important; }
   .hv .x-cal-grid2 i { opacity: 1 !important; transform: none !important; }
   .hv-pause { display: none; }
+  .hv-race, .hv-pareto { clip-path: none !important; }
+  .hv .hv-screen { position: relative; inset: auto; min-height: 420px; }
+  .hv .x-band .x-word, .hv .x-band p, .hv .x-band-act { opacity: 1 !important; filter: none !important; transform: none !important; }
+  .hv-logo span { position: static; opacity: 1; transform: none; margin-top: 6px; }
 }
 
 /* ---------- proof walls: still rows of logos (PLAN-COMPONENTS 2.5) ---------- */
@@ -484,4 +490,14 @@
   .hv-plan > span[aria-hidden] { display: none; }
   .hv-plan-b { align-self: stretch; }
   .hv-price-head .x-tablist { width: 100%; }
+}
+
+/* ---------- type floor (JAMES.md, PLAN-COMPONENTS 2.6): 13 px on desktop, 14 px on a phone ---------- */
+.hv .hv-tile-tags span, .hv .x-copy, .hv .x-setup-main b, .hv .x-code-t, .hv .x-save, .hv .x-seats span, .hv .x-seats small { font-size: 13px; }
+@media (max-width: 899px) {
+  .hv .v2-kicker, .hv .hv-install-k, .hv .hv-tile-kick, .hv .hv-tile-tags span, .hv .x-copy, .hv .hv-or2, .hv .x-setup-main,
+  .hv .x-setup-main b, .hv .hv-step-n, .hv .hv-step-t span, .hv .hv-script, .hv .x-code-t, .hv .hv-run-title, .hv .hv-cost .x-mono,
+  .hv .hv-vol span, .hv .hv-lane-v, .hv .x-plot-hint, .hv .x-plot-src, .hv .hv-stat-k, .hv .hv-cal-k, .hv .x-cal-f, .hv .x-plan-sub,
+  .hv .x-plan-note, .hv .x-plan-l p, .hv .x-price-u, .hv .x-seats span, .hv .x-seats small, .hv .x-save, .hv .hv-logo span, .hv .hv-way-n,
+  .hv .x-seats b, .hv .hv-terms, .hv .x-plot-read span, .hv .x-seg button { font-size: 14px; }
 }
