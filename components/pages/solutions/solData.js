@@ -88,7 +88,7 @@ export function solutionDoc(slug) {
   const all = SLUGS();
   const sibs = (doc.more ? doc.more.links : []).map((l) => l.href.split('/').pop()).filter((s) => l2(s) && all.includes(s)).map((s) => {
     const d = baseDoc(s);
-    return { slug: s, href: d.route, title: d.title, label: d.label, i: all.indexOf(s), first: d.reel && d.reel.steps[0] ? d.reel.steps[0].title : '', n: [d.reel ? d.reel.steps.length : 0, d.runs ? d.runs.items.length : 0] };
+    return { slug: s, href: d.route, title: d.title, label: d.label, i: all.indexOf(s), film: d.reel ? d.reel.slug : null, first: d.reel && d.reel.steps[0] ? d.reel.steps[0].title : '', n: [d.reel ? d.reel.steps.length : 0, d.runs ? d.runs.items.length : 0] };
   });
   return { ...doc, i: all.indexOf(slug), sibs };
 }
