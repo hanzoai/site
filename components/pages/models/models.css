@@ -522,3 +522,16 @@
 .xmf-launch-g .xmf-launch-t, .xmf-launch-g .xmf-figs { grid-column: 1 / 9; }
 .xmf-launch-g .xmf-obj { grid-column: 9 / 14; }
 .xmf-obj-id code { font-size: 14px; }
+
+/* Copy (model ID, quick start, the guest terminal): 44px targets with a legible label; ink on white, white-78% on graphite */
+.xmf .x-copy { height: 44px; min-width: 44px; padding: 0 17px; justify-content: center; background: #fff; border-color: rgba(0, 0, 0, .15); color: #0a0a0a; font-size: 14px; transition: border-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xmf .x-copy:hover { border-color: rgba(0, 0, 0, .4); } }
+.xmf-quick .x-copy, .xmf-term .x-copy { background: transparent; border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .78); }
+@media (hover: hover) { .xmf-quick .x-copy:hover, .xmf-term .x-copy:hover { color: #fafafa; border-color: rgba(255, 255, 255, .4); } }
+
+/* Hanzo's own models: the hero object is the model's film (over its poster), its words in white */
+.xmf-obj.film { background: #000; }
+.xmf-obj-film { position: absolute; inset: 0; display: block; }
+.xmf-obj.film .xmf-crumbs, .xmf-obj.film .xmf-crumbs a, .xmf-obj.film .xmf-crumbs span, .xmf-obj.film .xmf-obj-l { color: rgba(255, 255, 255, .78); }
+.xmf-obj.film .xmf-crumbs [aria-current] { color: #fafafa; }
+.xmf-obj.film :focus-visible { outline-color: #fafafa; box-shadow: 0 0 0 6px #000; }

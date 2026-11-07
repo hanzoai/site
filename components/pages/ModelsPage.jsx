@@ -77,12 +77,12 @@ const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
 
 /* ---------- 1. the hero: Hanzo's model grid, exactly as live hanzo.ai draws it (docs/refs/hanzo-model-cards/SPEC.md) ----
    Enso tall in column 1 over both rows, Kai Zen Iro Koma over Oto Koe Uta Mori; #000 cards, 20px radii, the measured
-   tilt. Enso's film plays while it is on screen; a light moves through the other eight by itself (one at a time, so two
-   films at most), and the card under the pointer or focus plays instead. A click lifts the card into its page. */
+   tilt. Enso's film plays while it is on screen; the card under the pointer or focus plays too (two films at most).
+   A click lifts the card into its page. */
 const GRID = ['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
 const clamp = (v) => Math.min(1, Math.max(0, v));
 
-function GridCard({ m, i, play, open, setLit, setHeld }) {
+function GridCard({ m, i, play, open, setLit }) {
   const tilt = useSpecTilt();
   const big = i === 0;
   return (
@@ -95,11 +95,11 @@ function GridCard({ m, i, play, open, setLit, setHeld }) {
         data-cursor=""
         aria-label={`${m.name}: ${m.desc}`}
         onClick={(e) => open(e, e.currentTarget, m.slug)}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !big) { setLit(i); setHeld(true); } }}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !big) setLit(i); }}
         onPointerMove={tilt.onPointerMove}
-        onPointerLeave={() => { tilt.onPointerLeave(); setHeld(false); }}
-        onFocus={() => { if (!big) setLit(i); setHeld(true); }}
-        onBlur={() => setHeld(false)}
+        onPointerLeave={() => { tilt.onPointerLeave(); setLit(0); }}
+        onFocus={() => { if (!big) setLit(i); }}
+        onBlur={() => setLit(0)}
       >
         <Film slug={m.slug} play={play} />
         <span className="xmo-card-top" aria-hidden="true">
@@ -115,15 +115,8 @@ function GridCard({ m, i, play, open, setLit, setHeld }) {
 
 function Stage() {
   const open = useOpen();
-  const calm = useReducedMotion();
-  const stop = usePaused();
-  const [lit, setLit] = useState(1);
-  const [held, setHeld] = useState(false);
-  useEffect(() => {
-    if (calm || stop || held) return;
-    const t = setTimeout(() => setLit((i) => (i % 8) + 1), 2600); // one step, then this effect schedules the next
-    return () => clearTimeout(t);
-  }, [calm, stop, held, lit]);
+  // no timer (MASTER 4.3): Enso's film is the first-second mover; a second film plays only under the pointer or focus
+  const [lit, setLit] = useState(0);
   const go = 'https://platform.hanzo.ai/api-keys';
   return (
     <section className="xmo-stage" aria-labelledby="xmo-h1">
@@ -142,7 +135,7 @@ function Stage() {
         </div>
         <ul className="xmo-grid" data-swipe-own data-cursor="">
           {GRID.map((slug, i) => (
-            <GridCard key={slug} m={bySlug[slug]} i={i} play={i === 0 || lit === i} open={open} setLit={setLit} setHeld={setHeld} />
+            <GridCard key={slug} m={bySlug[slug]} i={i} play={i === 0 || lit === i} open={open} setLit={setLit} />
           ))}
         </ul>
         <div className="xmo-grid-cap"><span className="x-mono">Models</span><FilmPause /></div>
@@ -264,8 +257,9 @@ function Figures() {
           <ul className="xmo-suites">{SUITES.map((s) => <li key={s}>{s}</li>)}</ul>
           <Lk to="/kai#benchmarks">Kai: decisions and their benchmarks</Lk>
         </header>
+        {/* the figure has its own box (room for its ×1.75 peak above it); the label sits on the line below, never beside */}
         <div className="xmo-fig-big" ref={big}>
-          <motion.p className="xmo-num x-mono" style={{ scale: grow }}><MaskFig>11</MaskFig></motion.p>
+          <div className="xmo-num-box"><motion.p className="xmo-num x-mono" style={{ scale: grow }}><MaskFig>11</MaskFig></motion.p></div>
           <p className="xmo-num-k">Suites won · Kai vs Jev</p>
         </div>
         {DUELS.map((d, i) => (
@@ -350,9 +344,11 @@ COUNT.all = Object.values(COUNT).reduce((a, b) => a + b, 0);
 
 /* A catalogue card: Hanzo's model card (SpecCard). Its name flies into the model page's h1 (morph); the id and Hanzo's
    rate are its mono line, the context window and modalities its pills. */
+/* ids and endpoints break only after a "/" (never mid-word) */
+const slashes = (t) => String(t).split('/').flatMap((x, i) => (i ? [<wbr key={i} />, '/' + x] : [x]));
 function MCard({ to, name, id, ctx, d, tags, rate }) {
   const r = !rate || rate[2] == null ? null : rate[2] === 0 && rate[3] === 0 ? 'Free' : `${cost(rate, 2)} in · ${cost(rate, 3)} out`;
-  return <SpecCard to={to} title={name} desc={d} meta={<><span>{id}</span>{r && <><br /><b>{r}</b></>}</>} tags={[...(ctx ? [ctx] : []), ...tags]} />;
+  return <SpecCard hush to={to} title={name} desc={d} meta={<><span>{slashes(id)}</span>{r && <><br /><b>{r}</b></>}</>} tags={[...(ctx ? [ctx] : []), ...tags]} />;
 }
 
 /* A creative model's card: its film waits as a still and plays while the pointer (or focus) is on it; it opens into
@@ -363,7 +359,7 @@ function Tile({ m }) {
   const [slug, name, id, d, kind, ep] = m;
   return (
     <SpecCard to={'/' + slug} slug={slug} play={on} onHot={setOn} card={slug} onOpen={(e, el) => open(e, el, slug)}
-      title={name} desc={d} meta={<><span>{id}</span><br /><span>{ep}</span></>} tags={['Research preview', kind]} />
+      title={name} desc={d} meta={<><span>{id}</span><br /><span>{slashes(ep)}</span></>} tags={['Research preview', kind]} />
   );
 }
 
@@ -423,7 +419,7 @@ function Catalogue({ at, makers }) {
     ), (
       <ul className="xmo-cards">
         {ZEN.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id))}
-        <li><SpecCard to="/zen/7" title="Zen 7" meta={<><span>zen7</span><br /><b>Request access</b></>} desc="The next open-weight generation after Zen 6, in research preview." tags={['Research preview']} /></li>
+        <li><SpecCard hush to="/zen/7" title="Zen 7" meta={<><span>zen7</span><br /><b>Request access</b></>} desc="The next open-weight generation after Zen 6, in research preview." tags={['Research preview']} /></li>
       </ul>
     )],
     ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,
@@ -730,6 +726,24 @@ function Related() {
   );
 }
 
+/* ---------- 10. the close: the page's own words and its one ask, in a black room with Enso's film ---------- */
+function Close() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.3 });
+  return (
+    <section className="xmo-close" data-room="dark" aria-labelledby="xmo-close-h" ref={ref}>
+      <div className="x-wrap xmo-close-g">
+        <div className="xmo-close-t">
+          <h2 id="xmo-close-h">Frontier AI families</h2>
+          <p>Proprietary and open weight models for text, decisions, video, image, and more — one account, one API key.</p>
+          <div className="xmo-acts"><Cta to="https://platform.hanzo.ai/api-keys" id="models.close">Get API key</Cta></div>
+        </div>
+        <A to="/enso" className="xmo-close-film" data-cursor="" tabIndex={-1} aria-hidden="true"><Film slug="enso" play={seen} /></A>
+      </div>
+    </section>
+  );
+}
+
 export default function ModelsPage({ makers }) {
   const near = useRef(null);
   const go = useInView(near, { once: true, margin: '0px 0px 600px 0px' });
@@ -746,6 +760,7 @@ export default function ModelsPage({ makers }) {
       <Try />
       <First />
       <Related />
+      <Close />
     </main>
   );
 }

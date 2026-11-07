@@ -7,6 +7,7 @@
 .kns-r { grid-column: 8 / span 5; align-self: end; display: flex; flex-direction: column; gap: 17px; }
 .kns-obj-wrap { grid-column: 1 / -1; position: relative; }
 .kns-obj { transform-origin: 50% 0; }
+.kns-acts .x-arrow { min-height: 44px; }
 .kns-meta { display: flex; align-items: center; gap: 12px; }
 .kns-meta-t { display: flex; flex-direction: column; gap: 4px; font: 500 13px/1.45 var(--mono); color: var(--quiet); letter-spacing: .02em; }
 .kns-meta-t a { color: var(--body); }
