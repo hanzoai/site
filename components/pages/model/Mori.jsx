@@ -167,7 +167,7 @@ function Viewport() {
       <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={leave} />
       <div className="mr-hud mr-tl">
         <p className="mb-mono">SDF ➔ QUAD MESH: 245,820 TRIS</p>
-        <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" />SPINNING · 360°</p>
+        <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" /><span>SPINNING · 360°</span></p>
       </div>
       <div className="mr-hud mr-tr">
         <p className="mb-mono">PBR CHANNELS: ALBEDO · NORMAL · ROUGHNESS · METALLIC</p>
