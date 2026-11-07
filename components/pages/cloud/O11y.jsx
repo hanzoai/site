@@ -118,6 +118,8 @@ function Pivot() {
 const TABS = ['Traces', 'Metrics', 'Logs', 'Exceptions', 'Alerts', 'OTLP'];
 const ROUTES = ['PagerDuty', 'Opsgenie', 'Slack', 'Teams', 'email', 'webhook'];
 const Q = 'rate(http_requests_total[5m])';
+// the same query, allowed to break only between its tokens (never inside a word) where the pane is narrow
+const QW = <>rate(<wbr />http_requests_total<wbr />[5m])</>;
 const TRACES = [['GET /v1/checkout', 0.94, 1], ['POST /v1/chat', 0.62], ['GET /v1/cart', 0.41], ['POST /v1/embed', 0.33], ['GET /v1/search', 0.22]];
 const LOGROWS = [['info', 'api', 'request received', 1], ['info', 'db', 'query plan: seq scan', 1], ['warn', 'api', 'waited on db', 1], ['info', 'auth', 'token verified'], ['info', 'payments', 'charge created']];
 
@@ -169,7 +171,7 @@ function Suite({ step, intro }) {
               {TABS.map((t, i) => { const y = (i + 0.5) * 100; return <path key={t} pathLength="1" style={{ '--i': i }} d={`M0 ${y} C55 ${y} 45 300 100 300`} />; })}
             </svg>
           </span>
-          <code className="ob-one-q">{Q}</code>
+          <code className="ob-one-q">{QW}</code>
         </div>
         <div className="ob-pane ob-trs ob-live" data-on={on(0)}>
           {TRACES.map(([n, w, hot], i) => (
@@ -177,7 +179,7 @@ function Suite({ step, intro }) {
           ))}
         </div>
         <div className="ob-pane ob-live ob-met" data-on={on(1)}>
-          <code className="ob-q">{Q}</code>
+          <code className="ob-q">{QW}</code>
           <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="ob-chart">
             <path d="M0 30 C10 26 16 28 24 22 S38 12 48 18 62 30 72 20 88 8 100 12" />
             <path className="b" d="M0 34 C12 33 20 31 30 32 S50 28 60 30 80 26 100 28" />

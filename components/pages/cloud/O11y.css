@@ -6,12 +6,24 @@
 
 /* hero: the black room, its head on the 8/5 split (h1 left, lede and ask right, bottom-aligned), the window below; the
    room stops partway down the window */
-.ob-hero { padding: clamp(32px, 12svh, 140px) 0 0; position: relative; isolation: isolate; background: transparent !important; }
+.ob-hero { padding: clamp(32px, 8svh, 120px) 0 0; position: relative; isolation: isolate; background: transparent !important; }
 .ob-hero::before { content: ''; position: absolute; z-index: -1; inset: 0 0 clamp(120px, 13vw, 210px) 0; background: #000; }
 .ob-hero-head { display: grid; grid-template-columns: 8fr 5fr; column-gap: clamp(32px, 5vw, 72px); align-items: end; }
 .ob-hero-r { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
 .ob-sub { max-width: 30ch; }
 .ob-stage { margin-top: clamp(32px, 3.4vw, 48px); }
+/* desktop: the pinned suite tucks 120px under the hero (the hero paints above it), so its window peeks ~56px under
+   the first screen at 1470×801 */
+@media (min-width: 900px) {
+  .ob-hero { z-index: 1; }
+  .ob-pin { margin-top: -120px; }
+}
+/* the hero ask answers: a deck-silver fill and the arrow steps 4px on; press .97 (the kit's) */
+.ob .ob-cta svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .ob .ob-hero .ob-cta:hover { background: #e4e4e7; }
+  .ob .ob-hero .ob-cta:hover svg { transform: translateX(4px); }
+}
 .ob .ob-stage .lx-settle-clip { background: #171717; box-shadow: none; }
 
 /* the pivot: a window with its own bar, the waterfall on the left, the opened span on the right */
@@ -79,7 +91,7 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 .ob-tabs button { position: relative; z-index: 1; height: 40px; padding: 0 2px; white-space: nowrap; border: 0; border-radius: 999px; background: none; font: 500 13px/1 var(--sans); color: #a3a3a3; cursor: pointer; touch-action: manipulation; transition: color .15s cubic-bezier(0, 0, .2, 1), background-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .ob-tabs button:active { transform: scale(.97); transition-duration: .09s; }
 .ob-tabs button.on { color: #fafafa; }
-@media (hover: hover) { .ob-tabs button:not(.on):hover { color: #fafafa; background: rgba(255, 255, 255, .05); } }
+@media (hover: hover) { .ob-tabs button:not(.on):hover { color: #fafafa; background: rgba(255, 255, 255, .14); } }
 .ob-tab-ink { position: absolute; z-index: 0; top: 0; bottom: 0; left: 0; width: calc(100% / 6); border-radius: 999px; background: #404040; transition: transform .4s cubic-bezier(.4, 0, .2, 1), opacity .3s cubic-bezier(0, 0, .2, 1); }
 .ob-suite[data-step='intro'] .ob-tab-ink { opacity: 0; }
 .ob-suite[data-step='intro'] .ob-tabs button { color: rgba(255, 255, 255, .78); }
@@ -95,7 +107,7 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 .ob-one-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .ob-one-lines path { fill: none; stroke: #fafafa; stroke-width: 1.4; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .9s cubic-bezier(.4, 0, .2, 1); }
 .ob-pane[data-on] .ob-one-lines path { stroke-dashoffset: 0; transition-delay: calc(.2s + var(--i) * 60ms); }
-.ob-one-q { align-self: center; padding: 22px; border-radius: 16px; background: #262626; color: #fafafa; font: 500 16px/1.45 var(--mono); overflow-wrap: anywhere; }
+.ob-one-q { align-self: center; padding: 22px; border-radius: 16px; background: #262626; color: #fafafa; font: 500 16px/1.45 var(--mono); overflow-wrap: normal; word-break: keep-all; }
 /* traces: the bars draw as the chapter arrives */
 .ob-tr { display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 16px; height: 50px; border-bottom: 1px solid rgba(255, 255, 255, .08); font: 500 14px/1 var(--mono); color: #a3a3a3; }
 .ob-tr b { display: block; height: 10px; border-radius: 6px; background: #525252; transform-origin: 0 50%; transform: scaleX(0); }
@@ -152,7 +164,8 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 .ob-otlp-grid[data-keep='otlp'] .ob-spec .lx-spec-v { text-decoration-color: #0a0a0a; }
 .ob-keep { margin-top: 44px; }
 .ob-keep .lx-kick { color: #525252; font-size: 13px; }
-.ob-keep-c { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.ob-keep-c { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 16px; }
+.ob-keep-c button { white-space: nowrap; }
 /* a chip is a hairline at rest; the chosen one is a white fill with ink words and a dot (never a second solid);
    hover inks the hairline and the word */
 .ob-keep-c button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: 999px; border: 0; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); background: transparent; font: 500 15px/1.3 var(--sans); color: #525252; text-align: left; cursor: pointer; touch-action: manipulation; transition: background-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
@@ -225,6 +238,12 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
 
 @media (max-width: 899px) {
   .ob-hero { padding: 24px 0 0; }
+  /* phone: the header's "Try Hanzo" is the one solid on the first screen; the hero ask is quiet (a hairline) */
+  .ob .ob-hero .ob-cta { background: transparent; color: #fafafa; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55); }
+  @media (hover: hover) { .ob .ob-hero .ob-cta:hover { background: rgba(255, 255, 255, .14); } }
+  /* phone: the keep chips become rows (a long one wraps inside a row, never inside a pill) */
+  .ob-keep-c { align-items: stretch; }
+  .ob-keep-c button { white-space: normal; border-radius: 12px; font-size: 14px; }
   .ob-hero::before { bottom: 120px; }
   .ob-hero-head { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
   .ob-hero-r { gap: 20px; }
@@ -257,6 +276,7 @@ button.ob-pv-row:active { transform: scale(.97); transition-duration: .09s; }
   .ob-src { grid-template-rows: repeat(3, 40px); }
   .ob-one-tabs li, .ob-src li { font-size: 14px; padding-right: 6px; }
   .ob-one-q, .ob-dst { padding: 12px; font-size: 14px; border-radius: 12px; }
+  .ob-one-q { padding: 10px; }
   .ob-dst b { font-size: 15px; }
   .ob-tr { grid-template-columns: 142px minmax(0, 1fr); gap: 10px; height: 38px; font-size: 14px; white-space: nowrap; }
   .ob-tr:nth-child(n + 5) { display: none; }
