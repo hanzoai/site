@@ -6,7 +6,7 @@
    Goal: see one mention turn into finished, verified work, then start a bot.
    CTA: "Try Hanzo" (hanzo.bot), the one solid button, in the hero, the ask bar and the closing Band.
    Metric: signup_start
-   V2: 8/10 round 3: headline left, the live org chart right and running in the first screen; one ask with text links; no labels over headlines (drawer case labels now under their h3); "more bots" folded under the slider; Get Bot / Deploy to Cloud before the questions so the page ends on the Band; drawers print in place with JS off; memoji and logos from hanzo.ai
+   V2: 8/10 round 4: no hydration mismatch under reduced motion (useCalm); the h1 cuts in by CSS from first paint and the demo carries on from the server's finished case; phone shows the @mention on the first screen with one solid; install is one object (the terminal types while the three steps light); Get Bot is a repo card, Questions arrive as messages; tool tiles fall back to monograms; the 19 kinds run as one rail
    Motion: signature = the live org chart (packets route person → bot → verifier, the thread fills beneath). Supporting:
    five pinned chapters with clip wipes (components/v2/AppScenes), line-masked headline, a magnetic ask. Greys only; colour
    comes from Hanzo's memoji and connector logos. Bot faces are Hanzo's memoji, with a drawn face beneath in case a picture
@@ -17,6 +17,7 @@ import { Copy, Magnetic, Lines } from '../ui';
 import { A, More, Faq, Cta, Img } from '../kit';
 import Scenes from '../v2/AppScenes';
 import Sheet from '../v2/AppSheet';
+import useCalm from '../v2/useCalm';
 import { WORKFLOWS, TOOLS } from './Bot.data';
 import { play } from '../../lib/sound';
 import '../v2/AppType.css';
@@ -28,8 +29,9 @@ const CREW = [['dev', 'Dev', 'Software'], ['qa', 'Qa', 'Quality'], ['cyber', 'Cy
 function Pic({ src, alt = '', className = '' }) {
   const ref = useRef(null);
   const [bad, setBad] = useState(false);
-  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, [src]);
-  return bad ? null : <Img ref={ref} src={src} alt={alt} w={64} h={64} className={className} onError={() => setBad(true)} />;
+  const [ok, setOk] = useState(false); // shown only once it has really loaded, so a blocked picture never flashes a broken icon
+  useEffect(() => { const i = ref.current; if (i && i.complete) (i.naturalWidth ? setOk(true) : setBad(true)); }, [src]);
+  return bad ? null : <Img ref={ref} src={src} alt={alt} w={64} h={64} className={'bt-pic' + (ok ? ' ok ' : ' ') + className} onLoad={() => setOk(true)} onError={() => setBad(true)} />;
 }
 
 /* A bot's face: Hanzo's memoji for that bot, over a little drawn screen with two eyes that shows if the picture can't load. */
@@ -41,6 +43,7 @@ function Face({ k = '', size, id }) {
 /* ---------- the signature: the org chart ---------- */
 const BEAT = [650, 1200, 1500, 1050, 500]; // ms from beat b to b + 1: ask, run to the bot, it answers, hand to the verifier, verified
 const HOLD = 3700;
+const FIRST = 900; // the server's finished case holds this long before the next mention runs
 const CYCLE = BEAT.reduce((a, b) => a + b, 0) + HOLD;
 const R = 12;
 
@@ -70,25 +73,25 @@ function Packet({ pts, dur, v }) {
 
 function Org() {
   const [at, setAt] = useState(0);
-  const [b, setB] = useState(5); // the server and reduced motion show the finished handoff
+  const [b, setB] = useState(5); // the server paints the finished handoff; the demo carries on from it, never wipes it
+  const [first, setFirst] = useState(true); // the first case is the server's: it stays, then the next case plays
   const [mine, setMine] = useState(false);
   const [paused, setPaused] = useState(false);
   const [g, setG] = useState(null);
   const box = useRef(null), chart = useRef(null), ask = useRef(null), row = useRef(null);
   const seen = useInView(box, { amount: 0.3 });
-  const calm = useReducedMotion();
+  const calm = useCalm(); // false on the server and the first client render, so both match
   const live = seen && !calm && !paused;
   const w = WORKFLOWS[at];
   const pi = CREW.findIndex((c) => c[0] === w.primary.id), vi = CREW.findIndex((c) => c[0] === w.verifier.id);
 
-  useEffect(() => { if (!calm) setB(0); }, [calm]);
   useEffect(() => {
     if (!live) return;
     if (b < 5) { const t = setTimeout(() => { setB(b + 1); if (b === 4 && mine) play('done'); }, BEAT[b]); return () => clearTimeout(t); }
     if (mine) return;
-    const t = setTimeout(() => { setAt((a) => (a + 1) % WORKFLOWS.length); setB(0); }, HOLD);
+    const t = setTimeout(() => { setAt((a) => (a + 1) % WORKFLOWS.length); setB(0); setFirst(false); }, first ? FIRST : HOLD);
     return () => clearTimeout(t);
-  }, [b, live, mine]);
+  }, [b, live, mine, first]);
   // measure the chart in its own (unscaled) pixels, so the wires stay true at any size
   useEffect(() => {
     const c = chart.current; if (!c) return;
@@ -103,7 +106,7 @@ function Org() {
     return () => ro.disconnect();
   }, [at]);
 
-  const pick = (i) => { setAt(i); setB(calm ? 5 : 0); setMine(true); };
+  const pick = (i) => { setAt(i); setB(calm ? 5 : 0); setMine(true); setFirst(false); };
   const key = (e, i) => {
     const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
     const j = (i + n + WORKFLOWS.length) % WORKFLOWS.length; pick(j);
@@ -137,7 +140,7 @@ function Org() {
             <path d={route(r2)} className={'bt-w-on v' + (b >= 3 ? ' on' : '')} />
           </svg>
         )}
-        <motion.div key={'ask' + at} className="bt-ask" ref={ask} initial={calm ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+        <motion.div key={'ask' + at} className="bt-ask" ref={ask} initial={first || calm ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
           <p className="bt-who"><span className="bt-ini">{w.human.initials}</span><b>{w.human.name}</b><span>{w.human.time}</span></p>
           <p className="bt-say">{w.human.before}<b className="bt-at">{w.human.mention}</b>{w.human.after}</p>
         </motion.div>
@@ -188,7 +191,7 @@ function Org() {
             <button type="button" role="tab" aria-selected={i === at} tabIndex={i === at ? 0 : -1} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}>
               {i === at && <motion.span layoutId="bt-tab" className="bt-tab-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
               <span className="bt-tab-c"># {x.channel}</span>
-              {i === at && !mine && !calm && <i key={'t' + at} className={'bt-tab-t' + (live ? '' : ' paused')} style={{ animationDuration: CYCLE + 'ms' }} aria-hidden="true" />}
+              {i === at && !mine && !calm && <i key={'t' + at} className={'bt-tab-t' + (live ? '' : ' paused')} style={{ animationDuration: (first ? FIRST : CYCLE) + 'ms' }} aria-hidden="true" />}
             </button>
           </li>
         ))}
@@ -197,12 +200,40 @@ function Org() {
   );
 }
 
+/* Phones keep the header's "Try Hanzo" solid; while the hero's own solid is on screen the header's reads as an outline
+   (the shell's html[data-ask=quiet], as /bounty does), so one solid shows at a time. */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const mq = matchMedia('(max-width: 700px)');
+    const el = document.querySelector('main.bt [data-cta="bot-hero-try"]');
+    if (!el) return;
+    let mine = false, vis = false;
+    const apply = () => {
+      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine) { delete H.dataset.ask; mine = false; }
+    };
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
+    io.observe(el);
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms));
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
+const H1 = ['Teammates', 'you can hand', 'real work to.'];
+
 function Hero() {
+  useOneSolidOnPhone();
   return (
     <section className="bt-hero" aria-labelledby="bt-h1">
       <div className="av-wrap bt-hero-g">
         <div className="bt-hero-l">
-          <Lines as="h1" id="bt-h1" className="bt-h1" play="load" lines={['Teammates', 'you can hand', 'real work to.']} />
+          {/* the h1 cuts in line by line from first paint (CSS), so it never waits for hydration */}
+          <h1 id="bt-h1" className="bt-h1">
+            <span className="x-sr">{H1.join(' ')}</span>
+            {H1.map((l, i) => <span key={l} className="bt-h1-ln" aria-hidden="true"><span style={{ '--i': i }}>{l}</span></span>)}
+          </h1>
           <p className="bt-lede">Give a bot a job. It has its own computer, signs in to your tools the way you do, and comes back when the work is done. On your machine, in our cloud, or both.</p>
           <div className="bt-ask-row">
             <Magnetic strength={0.2}><Cta to="https://hanzo.bot" id="bot-hero-try" thumb size="lg">Try Hanzo</Cta></Magnetic>
@@ -470,7 +501,7 @@ function Tools() {
           </div>
           {TOOLS.map(([c, list], i) => (
             <ul key={c} id={'bt-tc' + i} role="tabpanel" aria-labelledby={'bt-tt' + i} className="bt-names" hidden={i !== cat}>
-              {list.map(([f, n]) => <li key={f}><span className="bt-logo"><Pic src={`https://hanzo.ai/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
+              {list.map(([f, n]) => <li key={f}><span className="bt-logo"><b aria-hidden="true">{n.replace(/[^A-Za-z0-9]/g, '').slice(0, 1)}</b><Pic src={`https://hanzo.ai/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
             </ul>
           ))}
         </div>
@@ -491,28 +522,79 @@ function Tools() {
 const STEPS3 = [['Name it and give it a job', 'Say what you want done, in plain words.'], ['Sign it in to your tools', 'Once. It keeps the access it needs and nothing more.'], ['Let it work', 'It comes back when it is done, or when it needs you.']];
 const PASTE = 'Read https://hanzo.ai/skill.md and use Hanzo Bot in my project. Start with: hanzo bot runs list';
 
+/* One object that changes: the terminal types the two commands while the three steps light in turn
+   (step 1 with the install, step 2 with the onboard, step 3 as the caret waits). The server paints every line typed;
+   a visitor only ever sees it type, because it empties itself on mount while still below the fold. */
+const CMDS = ['npm install -g @hanzo/bot', 'hanzo-bot onboard --install-daemon'];
+const TYPE_MS = 38;
+
+function InstallStage() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.45 });
+  const calm = useCalm();
+  const [k, setK] = useState(3); // characters typed: 3 = all done (the server's frame)
+  const [n, setN] = useState([CMDS[0].length, CMDS[1].length]);
+  const [step, setStep] = useState(-1);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (el.getBoundingClientRect().top > innerHeight) { setK(0); setN([0, 0]); setStep(0); }
+    setReady(true);
+  }, []);
+  useEffect(() => {
+    if (!ready || !seen || calm || k >= 3) return;
+    if (k < 2) {
+      const want = CMDS[k].length;
+      if (n[k] < want) { const t = setTimeout(() => setN((v) => v.map((x, j) => (j === k ? x + 1 : x))), n[k] === 0 ? 500 : TYPE_MS); return () => clearTimeout(t); }
+      const t = setTimeout(() => { setK(k + 1); setStep(k + 1); }, 900);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => { setK(3); play('done'); }, 1600);
+    return () => clearTimeout(t);
+  }, [ready, seen, calm, k, n]);
+  const again = () => { if (calm) return; setK(0); setN([0, 0]); setStep(0); };
+  const lit = (i) => (k >= 3 ? true : i <= step);
+  return (
+    <div className="av-grid bt-inst" ref={ref}>
+      <div className="bt-inst-l">
+        <h2 className="av-head">On your Mac in two commands</h2>
+        <p className="av-body">Node 22 or newer, on macOS or Linux. The second command walks you through your model, channels and skills, and keeps the gateway running in the background.</p>
+        <div className="bt-inst-links"><More to="https://docs.hanzo.bot/docs/install">Install guide</More><More to="https://github.com/hanzoai/bot">View on GitHub</More></div>
+        <div className="bt-start">
+          <h3 className="bt-start-h">Three steps</h3>
+          <span className="x-mono bt-cap">How it starts</span>
+          <ol className="bt-start-r">
+            {STEPS3.map(([t, d], i) => (
+              <li key={t} className={(lit(i) ? 'lit' : '') + (k < 3 && i === step ? ' now' : '')}>
+                <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><b>{t}</b><span>{d}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+      <div className={'bt-term-big' + (k < 3 ? ' run' : '')}>
+        <div className="bt-term-bar"><i /><i /><i /><span className="x-mono">terminal</span>
+          <button type="button" className="bt-again" onClick={again} aria-label="Type it again" data-sound="tick" disabled={k < 3}>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.55M13 2.5V5h-2.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <Copy text={CMDS.join('\n')} />
+        </div>
+        <pre className="x-mono">
+          <span className="bt-ps">$ </span>{CMDS[0].slice(0, n[0])}{k === 0 && <i className="bt-caret on" />}{'\n'}
+          {(k >= 1) && <><span className="bt-ps">$ </span>{CMDS[1].slice(0, n[1])}{k === 1 && <i className="bt-caret on" />}{'\n'}</>}
+          {(k >= 2) && <><span className="bt-ps">$ </span><i className="bt-caret" /></>}
+        </pre>
+      </div>
+    </div>
+  );
+}
+
 function Install() {
   return (
     <section className="av-sec bt-inst-sec" id="install">
       <div className="av-wrap">
-        <div className="av-grid bt-inst">
-          <div className="bt-inst-l">
-            <h2 className="av-head">On your Mac in two commands</h2>
-            <p className="av-body">Node 22 or newer, on macOS or Linux. The second command walks you through your model, channels and skills, and keeps the gateway running in the background.</p>
-            <div className="bt-inst-links"><More to="https://docs.hanzo.bot/docs/install">Install guide</More><More to="https://github.com/hanzoai/bot">View on GitHub</More></div>
-          </div>
-          <div className="bt-term-big">
-            <div className="bt-term-bar"><i /><i /><i /><span className="x-mono">terminal</span><Copy text={'npm install -g @hanzo/bot\nhanzo-bot onboard --install-daemon'} /></div>
-            <pre className="x-mono"><span className="bt-ps">$ </span>npm install -g @hanzo/bot{'\n'}<span className="bt-ps">$ </span>hanzo-bot onboard --install-daemon{'\n'}<span className="bt-ps">$ </span><i className="bt-caret" /></pre>
-          </div>
-        </div>
-        <div className="bt-start">
-          <h3 className="bt-start-h">Three steps</h3>
-          <ol className="bt-start-r">
-            {STEPS3.map(([t, d], i) => <li key={t}><span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><b>{t}</b><span>{d}</span></li>)}
-          </ol>
-          <span className="x-mono bt-cap">How it starts</span>
-        </div>
+        <InstallStage />
         <div className="bt-paste">
           <div className="bt-paste-l">
             <p className="av-title">Paste and ship</p>
@@ -560,13 +642,13 @@ function Pricing() {
         <div className="bt-price-l">
           <h2 className="av-head">Included in plans from $15</h2>
           <p className="av-body">Each plan below includes resident cloud bots. Or run Hanzo Bot free on your own machine.</p>
-          <div className="bt-need">
+          <div className="bt-need" style={{ '--f': (n - 1) / 9 }}>
             <label htmlFor="bt-n">How many resident bots do you need?</label>
             <div className="bt-need-fig" aria-hidden="true">
               <span className="av-num">{n}</span>
               <span className="bt-need-faces">{CREW.slice(0, 10).map(([id], i) => <span key={id} className={'bt-nf' + (i < n ? ' on' : '')}><Face size={24} id={id} /></span>)}</span>
             </div>
-            <input id="bt-n" data-sound="tick" type="range" min="1" max="10" step="1" value={n} onChange={(e) => setN(+e.target.value)} style={{ '--f': (n - 1) / 9 }} aria-valuetext={`${n} ${n === 1 ? 'bot' : 'bots'}: ${PLANS[k][0]}`} />
+            <input id="bt-n" data-sound="tick" type="range" min="1" max="10" step="1" value={n} onChange={(e) => setN(+e.target.value)} aria-valuetext={`${n} ${n === 1 ? 'bot' : 'bots'}: ${PLANS[k][0]}`} />
             <output htmlFor="bt-n" className="x-mono"><b>{n}</b> {n === 1 ? 'bot' : 'bots'} → <b>{PLANS[k][0]}</b>, {PLANS[k][1]} / month</output>
           </div>
           <div className="bt-fleet-l" id="additional-bots">
@@ -642,18 +724,29 @@ const QA = [
 
 /* ---------- before the close: the repo and Deploy to Cloud, then questions, then related ---------- */
 function More2() {
+  const qref = useRef(null);
+  const asked = useInView(qref, { once: true, amount: 0.6 });
   return (
     <section className="av-sec tight bt-more2" id="faq">
       <div className="av-wrap av-grid">
         <div className="bt-get">
-          <p className="av-title">Get Bot</p>
-          <p className="av-body">Connect your AI agents to every messaging channel</p>
-          <dl className="bt-meta2"><div><dt>License:</dt><dd>MIT</dd></div><div><dt>Source</dt><dd><A to="https://github.com/hanzoai/bot" className="bt-src">hanzoai/bot</A> <span className="x-mono">5 stars</span></dd></div></dl>
-          <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="bot-deploy">Deploy to Cloud</Cta>
+          <div className="bt-repo">
+            <div className="bt-repo-top">
+              <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>
+              <p className="av-title">Get Bot</p>
+            </div>
+            <p className="av-body">Connect your AI agents to every messaging channel</p>
+            <span className="bt-repo-f" aria-hidden="true">{CREW.map(([id]) => <Face key={id} size={30} id={id} />)}</span>
+            <dl className="bt-meta2"><div><dt>License:</dt><dd>MIT</dd></div><div><dt>Source</dt><dd><A to="https://github.com/hanzoai/bot" className="bt-src">hanzoai/bot</A> <span className="x-mono bt-star"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 1.5l1.9 4 4.3.5-3.2 2.9.9 4.3L8 11l-3.9 2.2.9-4.3L1.8 6l4.3-.5z" fill="currentColor" /></svg>5 stars</span></dd></div></dl>
+            <Cta to="https://platform.hanzo.ai/deploy" kind="link" id="bot-deploy">Deploy to Cloud</Cta>
+          </div>
         </div>
         <div className="bt-qa">
           <h2 className="av-head">Questions</h2>
-          <p className="av-body">{QA.slice(0, 3).map(([q]) => q).join(' ')}</p>
+          <div className={'bt-asks' + (asked ? ' on' : '')} ref={qref}>
+            <p className="av-body bt-qs">{QA.slice(0, 3).map(([q], i) => <span key={q} style={{ '--i': i }}>{q}{i < 2 ? ' ' : ''}</span>)}</p>
+            <span className="bt-qs-bot" aria-hidden="true"><Face k="p" size={34} id="su" /><span className="bt-dots"><i /><i /><i /></span></span>
+          </div>
           <Sheet trigger="bt-open" label="Read all ten answers" kick="FAQ" title="Questions">
             <Faq items={QA} />
           </Sheet>
@@ -672,7 +765,7 @@ function More2() {
 /* ---------- the one closing Band ---------- */
 function Close() {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm(); // after mount only, so the server's clip-path and the first client render match
   // the black room arrives as a rounded card inside the gutters and opens to the full width as it is reached
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);
