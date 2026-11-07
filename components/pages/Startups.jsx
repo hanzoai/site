@@ -75,7 +75,7 @@ function Ladder() {
         <h2 id="xst-prog-h" className="xp-kick">The program</h2>
         <ol className="xst-ladder">
           {PROGRAM.map(([t, d], i) => (
-            <motion.li key={t} className={'r' + i} initial={{ y: 80 + i * 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true, amount: 0.3 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: i * 0.1 }}>
+            <motion.li key={t} className={'r' + i} initial={{ y: 80 + i * 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}>
               <span className="xst-rung x-mono">{String(i + 1).padStart(2, '0')} / 03</span>
               <h3 className="xp-head">{t}</h3>
               <p className="xp-body">{d}</p>
@@ -97,7 +97,7 @@ function Match({ c }) {
   return (
     <aside className="xst-match" aria-label="Your match" aria-live="polite">
       <div className="xst-match-top">
-        <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#737373" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} /></svg>
+        <svg viewBox="0 0 36 36" width="40" height="40" aria-hidden="true"><circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,.14)" strokeWidth="3" /><motion.circle cx="18" cy="18" r="15" fill="none" stroke="#737373" strokeWidth="3" strokeLinecap="round" transform="rotate(-90 18 18)" initial={false} animate={{ pathLength: done / 5 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></svg>
         <div><b className="xst-co">{c.company.trim() || 'Company name'}</b><span className="x-mono">{done} / 5 · {stage || 'Select stage'}</span></div>
       </div>
       <div className={'xst-track' + (credits ? ' credits' : '')}>

@@ -218,7 +218,7 @@ function Apply({ track, setTrack }) {
                 <div className="xgr-tracks" role="radiogroup" aria-labelledby="xgr-track-l" onKeyDown={keys}>
                   {TRACKS.map(([k, label], i) => (
                     <button key={k} id={'xgr-t-' + i} type="button" role="radio" aria-checked={track === k} tabIndex={track === k ? 0 : -1} onClick={() => setTrack(k)}>
-                      {track === k && <motion.span layoutId="xgr-track" className="xgr-track-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                      {track === k && <motion.span layoutId="xgr-track" className="xgr-track-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                       <span>{label}</span>
                     </button>
                   ))}

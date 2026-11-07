@@ -87,7 +87,7 @@ function Roll({ v }) {
   return (
     <span className="xbs-roll">
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.18 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{v}</motion.span>
+        <motion.span key={v} initial={{ y: '70%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-70%', opacity: 0, transition: { duration: 0.18 } }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{v}</motion.span>
       </AnimatePresence>
     </span>
   );
@@ -129,7 +129,7 @@ function Promises() {
     if (!v || !t) return;
     const min = Math.min(0, v.clientWidth - t.scrollWidth);
     const w = t.firstElementChild ? t.firstElementChild.getBoundingClientRect().width + 24 : 400;
-    animate(x, Math.max(min, Math.min(0, x.get() - d * w)), { type: 'spring', stiffness: 300, damping: 30 });
+    animate(x, Math.max(min, Math.min(0, x.get() - d * w)), { duration: 0.3, ease: [0.16, 1, 0.3, 1] });
   };
   return (
     <section className="xp-sec xbs-why" aria-label="The fastest path in.">

@@ -51,7 +51,6 @@
 .xlr-route-bg { position: absolute; inset: -1px; border-radius: 999px; background: var(--xp-accent); }
 .xlr-route-l { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 4px; }
 .xlr-route-l li { position: relative; display: flex; align-items: center; gap: 14px; padding: 12px 0; }
-.xlr-route-l li:not(:last-child)::after { content: ''; position: absolute; left: 13px; top: 42px; bottom: -10px; width: 2px; background: rgba(0, 161, 155, .5); }
 .xlr-route-l .x-mono { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--hz-950); color: #fff; font-size: 13px; }
 .xlr-route-l a { color: #fff; font-size: 18px; font-weight: 500; text-decoration: none; }
 .xlr-route-l a:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--xp-accent); }

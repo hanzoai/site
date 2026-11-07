@@ -58,7 +58,7 @@ function PullRequest() {
       </div>
       <div className="xfo-pr-row">
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.span key={merged ? 'm' : 'o'} className={'xfo-badge' + (merged ? ' merged' : '')} initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{PR_ICON}{merged ? 'Merged' : 'Open'}</motion.span>
+          <motion.span key={merged ? 'm' : 'o'} className={'xfo-badge' + (merged ? ' merged' : '')} initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{PR_ICON}{merged ? 'Merged' : 'Open'}</motion.span>
         </AnimatePresence>
         <span className={'xfo-btn' + (s === 1 ? ' press' : '') + (merged ? ' done' : '')}>{merged ? '✓' : 'Merge'}</span>
       </div>
@@ -115,7 +115,7 @@ function Scene() {
             <h2 id="xfo-lv-h" className="xp-head xfo-lv-h">Founder levels</h2>
             <p className="xfo-big xp-fig" aria-hidden="true">
               <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span key={merged} initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{merged}</motion.span>
+                <motion.span key={merged} initial={{ y: '60%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-60%', opacity: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>{merged}</motion.span>
               </AnimatePresence>
             </p>
             <p className="xfo-big-u x-mono" aria-hidden="true">merged pull requests</p>
@@ -154,7 +154,7 @@ function Mine() {
             <div><span>lines merged</span><span className="xfo-st"><button type="button" onClick={() => step(setLines, lines, -250, 100000)} disabled={!lines} aria-label="Fewer lines merged">−</button><output className="x-mono" aria-live="polite">{lines.toLocaleString('en-US')}</output><button type="button" onClick={() => step(setLines, lines, 250, 100000)} aria-label="More lines merged">+</button></span></div>
           </div>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.p key={l} className={'xfo-mine-r' + (l >= 0 ? ' on' : '')} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }} aria-live="polite">
+            <motion.p key={l} className={'xfo-mine-r' + (l >= 0 ? ' on' : '')} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} aria-live="polite">
               {l < 0 ? <><b>{LEVELS[0][0]}</b><span>{LEVELS[0][2]}</span></> : <><b>{LEVELS[l][0]} · {LEVELS[l][1]}</b><span>{LEVELS[l][3]}</span></>}
             </motion.p>
           </AnimatePresence>
@@ -180,7 +180,7 @@ function Repos() {
           {items.length ? (
             <ul>
               {items.map((it, i) => (
-                <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30, delay: i * 0.06 }}>
+                <motion.li key={it.url} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: i * 0.06 }}>
                   <a href={it.url} target="_blank" rel="noopener noreferrer"><span className="x-mono">{`${it.repo}#${it.number}`}</span><b>{it.title}</b><i aria-hidden="true">↗</i></a>
                 </motion.li>
               ))}
@@ -218,7 +218,7 @@ function Claim() {
         <div className="xfo-claim-r">
           <AnimatePresence mode="wait" initial={false}>
             {st === 'sent' ? (
-              <motion.div key="sent" className="xfo-sent" role="status" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+              <motion.div key="sent" className="xfo-sent" role="status" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
                 <span className="xfo-sent-i" aria-hidden="true">{PR_ICON}</span>
                 <b>Sent.</b>
                 <p>A Hanzo admin checks the merge and writes to {f.email.trim()} once the Pro time is granted.</p>
