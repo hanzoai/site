@@ -141,6 +141,8 @@
 .xsc-ask { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(24px, 7vw, 120px); align-items: end; margin-top: clamp(160px, 16vw, 240px); padding-top: 64px; border-top: 1px solid rgba(255, 255, 255, .14); }
 .xsc-ask .pf-display { max-width: 11ch; }
 .xsc-ask .pf-lede { margin-bottom: 32px; }
+.xsc-ask-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; }
+.xsc-dark .x-arrow { color: #f5f5f7; }
 .pf-btn.xsc-light { background: #f5f5f7; border-color: #f5f5f7; color: #0a0a0a; }
 .pf-btn.xsc-light:hover { background: #fff; }
 .pf-btn.xsc-light:focus-visible { outline-color: #f5f5f7; }
