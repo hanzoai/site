@@ -28,7 +28,7 @@ const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0
 const LOOKS = {
   rise: { s: [1.08, 1], y: ['2svh', '-24svh'], x: ['0%', '0%'], clip: [0, 0] },
   split: { s: [1.06, 1], y: ['2svh', '-18svh'], x: ['0%', '0%'], clip: [0, 0] },
-  side: { s: [1.16, 1], y: ['6svh', '0svh'], x: ['22%', '0%'], clip: [0, 0] },
+  side: { s: [1.08, 1], y: ['3svh', '0svh'], x: ['12%', '0%'], clip: [0, 0] },
   frame: { s: [1.08, 1], y: ['0svh', '0svh'], x: ['0%', '0%'], clip: [0, 1] },
 };
 

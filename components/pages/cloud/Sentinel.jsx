@@ -1,18 +1,22 @@
 'use client';
 /* Sentinel (v2, Cloud 4 chat). Archetype A, Launch: a side Stage hero with the issue view → one dark scene where the
-   events collapse → five stacked sheets → close. Accent: issue violet.
+   events collapse → five stacked sheets → Get Sentinel → closing band. Ink, greys and white only.
+   Persona: an engineer whose frontend and services throw errors they can't reproduce. Goal: read the migration docs.
+   CTA: "Read the docs" (hero, ask bar, close; data-cta primary / close). Metric: cta_click:sentinel.primary.
    V2: 8/10 the issue view as the hero, ten thousand events collapsing into one issue as you scroll, the facts as stacking sheets
    Signature: ten thousand events become one issue. In a pinned dark room, exceptions rain down a canvas; as you scroll
    they are pulled into a single issue card and its count climbs with them (scrubbed; on phones it plays when seen).
    Beyond: "Route an alert". Choose what happened (new issue, regression, spike), where it goes and which tracker opens
    the ticket, and the rule reads back as a sentence: only the destinations and trackers Hanzo names.
-   Motion: scroll scrub (signature) + canvas rain + the hero's ticking issue + magnetic primary. Every word and link is
+   Motion: scroll scrub (signature) + canvas rain (idle, with Pause) + the hero's ticking issue (idle, with Pause) + the
+   alert router and stacked sheets (state, scroll). Labels sit under their headlines. Every word and link is
    Hanzo's; the error, its frames and its counts are made-up examples. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
-import { useLive, useEvery } from './Frame';
+import { useEvery } from './Frame';
+import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
 import { useWide } from '../../v2/useWide';
@@ -26,7 +30,7 @@ const CRUMBS = ['navigation /cart', 'click “Apply code”', 'fetch POST /disco
 /* The Stage object: the issue as Sentinel shows it, live. Events arrive (the count and the last bar grow), the top frame
    resolves through the source map, and the breadcrumbs line up under it. */
 function Issue() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live, , paused, toggle] = useDemo(0.05);
   const calm = useCalm();
   const [n, setN] = useState(4211);
   const [bars, setBars] = useState(() => Array.from({ length: 28 }, (_, i) => 0.18 + rnd(i + 3) * 0.5 + (i > 20 ? (i - 20) * 0.04 : 0)));
@@ -35,6 +39,7 @@ function Issue() {
   const resolved = calm || Math.floor(t / 22) % 2 === 1;
   return (
     <div className="l2-obj sn2-issue" ref={ref} aria-hidden="true">
+      <PauseBtn paused={paused} onClick={toggle} />
       <div className="sn2-top">
         <span className="sn2-dots"><i /><i /><i /></span>
         <span className="l2-mono sn2-host">sentry.hanzo.ai</span>
@@ -81,7 +86,7 @@ function Collapse() {
   const cv = useRef(null);
   const card = useRef(null);
   const num = useRef(null);
-  const [ref, live] = useLive(0.15);
+  const [ref, live, , paused, toggle] = useDemo(0.15);
   const calm = useCalm();
   const wide = useWide();
   const pin = wide && !calm;
@@ -103,7 +108,7 @@ function Collapse() {
       const p = calm ? 1 : pin ? Math.min(1, scrollYProgress.get() * 1.25) : Math.min(1, ((t % 8) / 4.5));
       const cr = card.current.getBoundingClientRect(), r = c.getBoundingClientRect();
       const cx = cr.left - r.left, cy = cr.top - r.top;
-      g.fillStyle = '#9d86ff';
+      g.fillStyle = '#d1d1d6';
       for (const q of P) {
         const k = ease((p - q.d) / 0.5);
         const rx = q.x * w, ry = ((q.y + t * q.v) % 1) * h * 1.1 - h * 0.05;
@@ -117,20 +122,21 @@ function Collapse() {
       if (shown !== last && num.current) { num.current.textContent = shown.toLocaleString('en-US'); last = shown; }
       card.current.style.setProperty('--k', String(Math.min(1, Math.max(0, (p - 0.35) / 0.55))));
       if (p >= 0.98 !== doneR.current) { doneR.current = p >= 0.98; setDone(doneR.current); }
-      if (!calm) raf = requestAnimationFrame(draw);
+      if (!calm && live) raf = requestAnimationFrame(draw);
     };
-    if (live || calm) raf = requestAnimationFrame(draw);
+    raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, [live, calm, pin, scrollYProgress]);
+  }, [live, calm, pin, scrollYProgress, paused]);
   return (
     <section className="l2-dark sn2-col" data-room="dark" ref={scene} style={pin ? { height: '260svh' } : undefined}>
       <div className="sn2-col-pin" ref={ref}>
+        <PauseBtn paused={paused} onClick={toggle} className="dk sn2-col-pause" />
         <canvas ref={cv} className="sn2-cv" aria-hidden="true" />
         <div className="l2-wrap sn2-col-in">
           <div className="sn2-col-copy">
             <h2 className="l2-head">Enough context to fix it without asking</h2>
-            <p className="l2-ch-n">01 / 06</p>
             <h3 className="l2-title">One issue, not ten thousand events</h3>
+            <p className="l2-ch-n">01 / 06</p>
             <p className="l2-body">Identical exceptions collapse into a single issue with a count and a first-seen date. Minified frontend frames are resolved through your source maps, and the breadcrumbs leading up to the throw come with it, so you read what the person did rather than guessing.</p>
           </div>
           <div className={'sn2-card' + (done ? ' done' : '')} ref={card} aria-hidden="true">
@@ -186,7 +192,7 @@ function Pic({ i }) {
     </div>
   );
   if (i === 3) return (
-    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a}><i style={{ background: `hsl(${255 + k * 22} 70% ${62 - k * 6}%)` }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
+    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a}><i style={{ background: ['#0a0a0a', '#3a3a3c', '#6e6e73', '#a1a1a6'][k] }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
   );
   if (i === 4) return <Route />;
   return (
@@ -215,8 +221,8 @@ function Sheets() {
         {FACTS.map(([t, d], i) => (
           <article key={t} className="sn2-sheet" style={{ '--i': i }}>
             <div className="sn2-sheet-copy">
-              <p className="l2-ch-n">{String(i + 2).padStart(2, '0')} / 06</p>
               <h3 className="l2-head">{t}</h3>
+              <p className="l2-ch-n">{String(i + 2).padStart(2, '0')} / 06</p>
               <p className="l2-body">{d}</p>
             </div>
             <div className="sn2-pic" aria-hidden={i === 3 ? undefined : true}><Pic i={i + 1} /></div>
@@ -229,7 +235,7 @@ function Sheets() {
 
 export default function Sentinel() {
   return (
-    <main className="l2-page sn2" style={{ '--ac': '#7a5af8' }}>
+    <main className="l2-page sn2">
       <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>
