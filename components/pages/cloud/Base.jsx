@@ -78,7 +78,7 @@ function Admin() {
   const run = live && view === 0 && !paused && hov === null;
   useEffect(() => {
     if (!run) return;
-    const t = setTimeout(() => setN((v) => v + 1), 2600);
+    const t = setTimeout(() => setN((v) => v + 1), n === 9 ? 600 : 2600); // the first record lands within a second
     return () => clearTimeout(t);
   }, [run, n]);
   return (
@@ -109,7 +109,7 @@ function Admin() {
                   <div key={id} className={'bs-tr' + (i === 0 ? ' new' : '') + (hov === id ? ' hov' : '')} onMouseEnter={() => setHov(id)}>
                     <code>{hex(id)}</code>
                     <span><i style={{ width: 38 + ((id * 29) % 50) + '%' }} /></span>
-                    <span className="bs-au"><b /><i style={{ width: 30 + ((id * 17) % 40) + '%' }} /></span>
+                    <span className="bs-au"><b /><code>{hex(id * 7 + 3).slice(0, 4)}</code></span>
                     <span><em className={id % 3 ? 'on' : ''} /></span>
                   </div>
                 ))}
