@@ -30,7 +30,7 @@ Done here: Parity shows 34/34 links; each of the 31 rows keeps its paper or HIP 
 - [x] Hero: the desk of six title pages is the one big thing; h1 52px by line mask; nothing above it ("Research" is a caption under it)
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per screen: desk, 19 (the moment), the index, the statement
-- [x] Ends in the dark room's closing link (github.com/hanzoai), then the footer
+- [x] The dark room's link (github.com/hanzoai) now comes second, with the statement; the page ends on the index, then the footer
 - [x] Sheets and rows open into the paper's full title page (shared element, 600 ms in-out); Back/Esc closes
 
 Done here: First screen at 1470×801: the headline, lede and one ask on clean paper at the left (5 of 13 columns), the desk of six title pages to the right (no sheet touches the text), a one-line caption under the desk; JS off measured 0 of 149 blocks hidden at 1470 and 375.
@@ -78,13 +78,13 @@ Done here: Ink only (#0a0a0a, #525252, #737373, #d4d4d4, #f5f5f5, #fafafa); the 
 Done here: Hovers fill (rows from the left, 400 ms; kinds; bars; ↗) and the row's sheet tilts 2°; no lift, slide or scale on hover.
 
 ## 9. Motion and interaction
-- [x] Signature scroll word reveal; supporting: line-mask (headings, figures), the open (600 ms in-out); 0 fade-ups
-- [x] Kinds: idle (desk lift), pointer (fills, tilt), state (open, re-flow), scroll (word reveal, dark room) under half
+- [x] Signature `word-light` (MOTION-MAP), on the second screen; supporting: the desk and the open (600 ms in-out), a line-mask cut-in on the h1 and the figures only; 0 fade-ups
+- [x] Kinds: idle (desk lift), pointer (fills, tilt), state (open, re-flow), scroll (the statement lighting, dark room) under half
 - [x] The desk moves without input; every control answers
 - [x] Reduced motion: the desk holds still, the statement shows in full; no `setInterval`
 - [x] n/a: sound is a shared kit, not wired here
 
-Done here: Signature: the desk — pointing at a sheet holds it lifted (one at a time) and pressing opens it into its title page (600 ms); supporting: line-mask cut-ins, the month in the rail following your reading, the statement's scroll reveal. Deck timings only, no springs; `variety.py` OK. Reduced motion: the final state with no hydration mismatch (the reveal and the cut-ins apply the setting after hydration; checked: 0 console errors at 375 and 1470 with reduced motion).
+Done here: Signature: words light up. The open-source statement moved from the page's end to the second screen, in the dark room straight after the desk: its 45 words wait at white 22% and each brightens on its own stretch of the scroll (about two words wide), so a reading head travels the sentence from the moment it enters (statement top at 88% of the viewport) until it sits mid-screen; scrolling back dims them again; the link and its comma light as one word. The "Open source" heading no longer cuts in. Supporting: the desk (pointing at a sheet lifts it, pressing opens it into its title page, 600 ms), line-mask cut-ins on the h1 and the figures, the month in the rail following your reading. The hero's captions now share one cell (hidden ones keep their place), so the walk moves nothing on phones (CLS while scrolling 0 at 375 and 320, was 0.027 and 0.046; 0.0009 at 1470). Deck timings only, no springs; `variety.py` OK. Reduced motion: the final state with no hydration mismatch (the reveal and the cut-ins apply the setting after hydration; checked: 0 console errors at 375 and 1470 with reduced motion).
 
 ## 10. Media
 - [x] n/a: no Hanzo photo or film on the live page; the objects are typeset title pages
@@ -117,7 +117,7 @@ Done here: The desk cycle pauses from its own control and stops when a visitor p
 - [x] No poller; the desk timer stops off screen
 - [x] Filming and checks run in the cloud
 
-Done here: Motion is transform, opacity and clip-path; the one scroll-linked effect is the word reveal.
+Done here: Motion is transform, opacity and clip-path; the scroll-linked effects are the statement lighting word by word (the signature) and the dark room's opening.
 
 ## 14. SEO and machine files
 - [x] Title and description unchanged (`app/research/page.jsx`)

@@ -3,7 +3,7 @@
 // Goal: see an honest status, which mechanism protects what, check each control, and reach Hanzo's security team
 // CTA: Talk to Security Team -> /contact (hero; the shared ask bar after it; the closing band) · data-cta="security.hero" / "security.band"
 // Metric: contact_sales_submit (enterprise buyers, MASTER §1) via cta_click on security.hero and security.band
-// Signature: none by design (MASTER §4.2, an honest status) — the six layers check themselves once as the page arrives, then the controls read as a calm document you select from
+// Signature: decode (MOTION-MAP). The controls' names resolve out of scrambled characters as the hero's status pass checks each layer; below, the chosen layer's name and its mechanism terms (HKDF-SHA256, TLS 1.3, ML-KEM-768 …) resolve as it is chosen; a fine pointer re-scrambles them. Used on those names and terms only, never on headings.
 // Beyond: "Reviewer's worksheet" — tick each control as you check it; the count stays in this browser, and at six of six the page hands over Hanzo's own next step, Schedule Security Review
 /* Security, brought to MASTER §4.2: an honest status, easy to verify. The first screen is the headline, the ask, the
    status in Hanzo's words ("Continual internal audits, with the report on request") and the six layers from the edge to
@@ -13,8 +13,10 @@
    find, and the closing band with the same ask. Hanzo's deck only: ink and greys, colour only from Hanzo's koma image.
    Scale has rhythm (ProofRhythm): h1 52, headings 26, figures 64; one big thing per screen (the map, the plate's figure,
    the rack, the statement, the closing line at 84).
-   Motion (no springs): the line-mask cut-in (arrival), the one-time status pass (time), the gliding layer pill and the
-   plate crossfade (state), pointer answers on every control, and the black room's entry (the one scroll-linked move).
+   Motion (no springs): signature, decode (security/Decode.jsx) on the controls' names and mechanism terms, as the
+   one-time status pass lands on each layer and as a layer is chosen. Supporting: a line-mask cut-in on the h1 and the
+   closing line only, the gliding layer pill and the plate crossfade (state), pointer answers on every control, and the
+   black room's entry (the one scroll-linked move).
    Conflict noted on the card: MASTER §4.2 also lists DPA, subprocessors and security.txt for /security; on hanzo.ai those
    live on /trust, and the split is not ours to merge, so /security links /trust for them and adds no copy.
    V2: 8/10 calm honest-status rebuild in ink: status pass in the hero, the controls as a selectable document with the worksheet, quiet proof, one black room ending on the same ask. */
@@ -25,6 +27,7 @@ import { A, Cta, More } from '../kit';
 import MaskLines from './proof/MaskLines';
 import SceneWipe from './proof/SceneWipe';
 import Sheet from './security/Sheet';
+import Decode from './security/Decode';
 import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
@@ -76,7 +79,7 @@ function Map({ pick }) {
             <span className="xsc-mp" aria-hidden="true">{i === 5 && <img src="/models/koma.webp" alt="" width="172" height="120" />}</span>
             <button type="button" className="xsc-ml" onClick={() => pick(i)}>
               <span className="pf-mono">{pad(i)}</span>
-              <span className="xsc-ml-t">{t}<span className="xsc-ml-m pf-mono" aria-hidden="true">{MECH[i].items.map((m) => (Array.isArray(m) ? m[0] : m)).join(' · ')}</span></span>
+              <span className="xsc-ml-t"><Decode text={t} run={i < n} hold host=".xsc-ml" dur={480} /><span className="xsc-ml-m pf-mono" aria-hidden="true"><Decode text={MECH[i].items.map((m) => (Array.isArray(m) ? m[0] : m)).join(' · ')} run={i < n} host=".xsc-ml" /></span></span>
               <Check />
             </button>
           </li>
@@ -113,14 +116,18 @@ function Hero({ pick }) {
 }
 
 /* ---------- the controls, a calm document you select from ---------- */
-function Mech({ m }) {
-  if (m.kind === 'chips') return <ul className="xsc-chips">{m.items.map((c) => <li key={c}>{c}</li>)}</ul>;
-  if (m.kind === 'rules') return <ul className="xsc-rules">{m.items.map(([a, b]) => <li key={a}><span>{a}</span><b>{b}</b></li>)}</ul>;
-  if (m.kind === 'path') return <ol className="xsc-path">{m.items.map((c) => <li key={c}>{c}</li>)}</ol>;
-  return <div className="xsc-strike"><ul>{m.items.map((c) => <li key={c}><s>{c}</s></li>)}</ul><p><span aria-hidden="true">→</span> {m.foot}</p></div>;
+/* the mechanism terms resolve when their layer is chosen; each scrambles again under a fine pointer */
+function Mech({ m, on }) {
+  const D = (t) => <Decode text={t} run={on} host="li" dur={560} />;
+  if (m.kind === 'chips') return <ul className="xsc-chips">{m.items.map((c) => <li key={c}>{D(c)}</li>)}</ul>;
+  if (m.kind === 'rules') return <ul className="xsc-rules">{m.items.map(([a, b]) => <li key={a}><span>{D(a)}</span><b>{D(b)}</b></li>)}</ul>;
+  if (m.kind === 'path') return <ol className="xsc-path">{m.items.map((c) => <li key={c}>{D(c)}</li>)}</ol>;
+  return <div className="xsc-strike"><ul>{m.items.map((c) => <li key={c}><s>{D(c)}</s></li>)}</ul><p><span aria-hidden="true">→</span> {D(m.foot)}</p></div>;
 }
 
 function Layers({ at, setAt }) {
+  const stk = useRef(null);
+  const seen = useInView(stk, { amount: 0.4, once: true });
   const [ok, setOk] = useState([]); // the reviewer's ticks, kept in this browser only
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); if (Array.isArray(v)) setOk(v.filter((i) => i >= 0 && i < 6)); } catch {} }, []);
   const tick = (i) => setOk((o) => {
@@ -160,7 +167,7 @@ function Layers({ at, setAt }) {
         </div>
         <div className="xsc-layers-r">
           {/* the hero's six layers, carried down: the chosen one lifts out of the stack and its mechanism sits beside it */}
-          <div className="xsc-stk" aria-hidden="true">
+          <div className="xsc-stk" aria-hidden="true" ref={stk}>
             <ol className="xsc-stk-s">
               {CONTROLS.map(([t], i) => (
                 <li key={t} style={{ '--i': i }} className={(i === 5 ? 'core' : '') + (ok.includes(i) ? ' ok' : '')} data-on={at === i} onClick={() => setAt(i)}>
@@ -172,8 +179,8 @@ function Layers({ at, setAt }) {
               {CONTROLS.map(([t], i) => (
                 <div key={t} data-on={at === i}>
                   <span className="pf-mono xsc-stk-n">{pad(i)} / 06</span>
-                  <b className="pf-title">{t}</b>
-                  <Mech m={MECH[i]} />
+                  <b className="pf-title"><Decode text={t} run={seen && at === i} dur={560} /></b>
+                  <Mech m={MECH[i]} on={seen && at === i} />
                 </div>
               ))}
             </div>
@@ -214,7 +221,7 @@ function Infra() {
     <section className="pf-sec xsc-infra" aria-labelledby="xsc-infra-h">
       <div className="pf-wrap xsc-infra-g">
         <div>
-          <MaskLines id="xsc-infra-h" className="pf-head" lines={['What runs underneath']} />
+          <h2 id="xsc-infra-h" className="pf-head">What runs underneath</h2>
           <p className="pf-kick xsc-cap">Infrastructure</p>
           <p className="pf-body">Workloads sit in hardware-virtualised machines on managed Kubernetes, in data centres with physical access control and redundant power. Secrets never reach a manifest — they are fetched from Hanzo KMS at boot, and outside development a service refuses to start without a verified issuer, audience and key set rather than falling back to running open.</p>
         </div>
@@ -288,7 +295,7 @@ function Dark() {
       <div className="pf-sec">
         <div className="pf-wrap xsc-ent-g">
           <div>
-            <MaskLines className="pf-head" lines={['If you are the one', 'who has to sign off']} />
+            <h2 className="pf-head">If you are the one who has to sign off</h2>
             <p className="pf-kick xsc-cap">Enterprise</p>
           </div>
           <div>
@@ -347,7 +354,7 @@ export default function Security() {
   return (
     <main className="xsc pf-r">
       {/* JS off: every control's words and plate stand stacked, and the black room is simply there */}
-      <NoJs css=".xsc-panel,.xsc-stk-m>div{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:24px}.pf-wipe>div[aria-hidden]{clip-path:none!important}.xsc-rack li{--on:1}" />
+      <NoJs css=".xsc-panel,.xsc-stk-m>div{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:24px}.pf-wipe>div[aria-hidden]{clip-path:none!important}.xsc-rack li{--on:1}.xdc-fx{display:none!important}.xdc>.xdc-t{opacity:1!important}" />
       <Hero pick={pick} />
       <Layers at={at} setAt={setAt} />
       <Infra />

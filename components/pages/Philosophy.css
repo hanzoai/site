@@ -63,27 +63,61 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 .xph-premise-t .pf-body + .pf-body { margin-top: 20px; }
 .xph-that { margin: 40px 0 0; padding-top: 20px; border-top: 1px solid var(--ink); display: inline-block; font-size: 17px; font-weight: 497; letter-spacing: -.012em; color: var(--ink); }
 
-/* laws: the intro, then the pinned chapters */
-.xph-laws-in { padding-bottom: 0; }
-/* no blank screens: the laws heading sits close above its pinned scene, the premise ends where its words end */
-.xph-laws-in.pf-sec { padding-top: clamp(56px, 6vw, 96px); }
+/* laws: the signature, a timeline you drag; the hexagram builds beside the law in hand */
+.xph-laws.pf-sec { padding: clamp(56px, 5vw, 72px) 0 clamp(56px, 7vw, 116px); border-top: 1px solid var(--line); }
 .xph-premise.pf-sec { padding-bottom: clamp(48px, 5vw, 80px); }
-.xph-laws-h { max-width: 12ch; }
-.xph-laws .pf-head { max-width: 14ch; }
-.xph-law-stage { display: grid; justify-items: start; gap: 56px; padding-left: 6%; }
-.xph-law-hx { --w: 300px; display: flex; flex-direction: column-reverse; gap: calc(var(--w) * .07); }
+.xph-laws-top { align-items: end; }
+.xph-laws-t { grid-column: 1 / 8; }
+.xph-laws-hint { grid-column: 9 / 13; justify-self: end; margin: 0; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #737373; font-variant-numeric: tabular-nums; }
+.xph-laws-g { margin-top: clamp(32px, 3.4vw, 48px); align-items: center; }
+.xph-law-stage { grid-column: 1 / 6; display: grid; justify-items: start; gap: 24px; }
+.xph-law-hx { --w: clamp(200px, 17vw, 260px); display: flex; flex-direction: column-reverse; gap: calc(var(--w) * .07); }
 .xph-law-row { position: relative; width: var(--w); }
+.xph-law-n { position: absolute; left: calc(100% + 20px); top: 50%; transform: translate3d(0, -50%, 0); font-size: 13px; font-weight: 500; color: #737373; opacity: 0; transition: opacity .3s cubic-bezier(.4, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1); }
+.xph-law-row[data-on='true'] .xph-law-n { opacity: 1; }
+.xph-law-row[data-hot='true'] .xph-law-n { color: var(--ink); }
+.xph-law-cap { min-height: 2.6em; }
+/* the panel: all five laws share one cell (the tallest sets the height), the one in hand shows */
+.xph-law-panel { grid-column: 7 / 13; display: grid; }
+.xph-law-p { grid-area: 1 / 1; align-self: center; display: grid; gap: 16px; opacity: 0; visibility: hidden; transform: translate3d(0, 16px, 0); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1), visibility 0s linear .15s; }
+/* the outgoing law leaves in 150 ms; the incoming one arrives after it (300 ms, ease-emphasis), so they never overprint */
+.xph-law-p[data-on='true'] { opacity: 1; visibility: visible; transform: none; transition: opacity .3s cubic-bezier(.16, 1, .3, 1) .12s, transform .3s cubic-bezier(.16, 1, .3, 1) .12s, visibility 0s; }.xph-law-k { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #737373; }
+.xph-law-p .xph-law-t { font-size: 32px; letter-spacing: -.024em; line-height: 1.12; max-width: 18ch; }
+/* the strip: a rail, five ticks, a thumb drawn as one whole line; labels under each law */
+.xph-tl { --p: 0; margin-top: clamp(32px, 3.4vw, 48px); padding-bottom: 8px; overflow-x: clip; }
+.xph-tl-track { position: relative; height: 56px; margin: 0 22px; cursor: grab; touch-action: pan-y; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+.xph-tl[data-drag='true'] .xph-tl-track { cursor: grabbing; }
+.xph-tl-rail { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, .14); }
+.xph-tl-rail i { position: absolute; inset: -0.5px 0; background: var(--ink); transform-origin: 0 50%; transform: scaleX(var(--p)); transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
+.xph-tl-tick { position: absolute; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .3); background: #fff; transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1); }
+.xph-tl-tick[data-on='true'] { background: var(--ink); border-color: var(--ink); }
+/* the thumb rides a full-width carrier moved by transform (never `left`), so moving it is never a layout shift */
+.xph-tl-run { position: absolute; inset: 0; pointer-events: none; transform: translate3d(calc(var(--p) * 100%), 0, 0); transition: transform .3s cubic-bezier(.4, 0, .2, 1); }
+.xph-tl-thumb { position: absolute; top: 50%; left: 0; width: 44px; height: 44px; margin: -22px 0 0 -22px; display: grid; place-items: center; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .14), 0 8px 24px -10px rgba(0, 0, 0, .18); transition: transform 90ms cubic-bezier(0, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1); }
+.xph-tl-thumb .xph-hl { --w: 22px; width: 22px; }
+.xph-tl[data-drag='true'] .xph-tl-rail i, .xph-tl[data-drag='true'] .xph-tl-run { transition-duration: 0s; }
+.xph-tl[data-drag='true'] .xph-tl-thumb { transform: scale(.94); }
+.xph-tl[data-drag='true'] .xph-tl-thumb .xph-hl { --part: 3px; }
+@media (hover: hover) { .xph-tl-track:hover .xph-tl-thumb { box-shadow: 0 0 0 1px var(--ink), 0 8px 24px -10px rgba(0, 0, 0, .18); } .xph-tl-track:hover .xph-tl-thumb .xph-hl { --part: 3px; } }
+.xph-tl-track:focus-visible .xph-tl-thumb { outline: 2px solid var(--ink); outline-offset: 3px; }
+.xph-tl-stops { position: relative; list-style: none; height: 64px; margin: 4px 22px 0; padding: 0; }
+.xph-tl-stops li { position: absolute; top: 0; width: 20%; transform: translate3d(-50%, 0, 0); }
+.xph-tl-stops li:first-child { transform: translate3d(-22px, 0, 0); }
+.xph-tl-stops li:last-child { transform: translate3d(calc(-100% + 22px), 0, 0); }
+.xph-tl-stops button { width: 100%; min-height: 44px; display: grid; justify-items: center; gap: 6px; padding: 4px 6px; border: 0; background: none; text-align: center; font: inherit; color: #737373; cursor: pointer; border-radius: 8px; transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xph-tl-stops li:first-child button { justify-items: start; text-align: left; }
+.xph-tl-stops li:last-child button { justify-items: end; text-align: right; }
+.xph-tl-stops .pf-mono { font-size: 13px; }
+.xph-tl-name { font-size: 14px; line-height: 1.3; text-wrap: balance; }
+.xph-tl-stops li[data-on='true'] button { color: var(--ink); }
+@media (hover: hover) { .xph-tl-stops button:hover { color: var(--ink); } }
+.xph-tl-stops button:active { transform: scale(.97); }
 .xph-law-row .xph-hl::before { content: ''; position: absolute; inset: 0; border-radius: calc(var(--w) * .018); background: rgba(0, 0, 0, .06); transition: opacity .4s cubic-bezier(.4, 0, .2, 1); }
 .xph-law-row[data-on='true'] .xph-hl::before { opacity: 0; }
 .xph-law-row .xph-hl i { opacity: 0; transition: opacity .4s cubic-bezier(.4, 0, .2, 1), transform .8s cubic-bezier(.4, 0, .2, 1); }
 .xph-law-row[data-on='true'] .xph-hl i { opacity: 1; }
 .xph-law-row[data-hot='true'][data-on='true'] .xph-hl { animation: xph-breathe 2.4s cubic-bezier(.4, 0, .2, 1) 3; }
 @keyframes xph-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
-.xph-law-lab { position: absolute; left: calc(100% + 32px); top: 50%; width: 250px; display: flex; gap: 12px; align-items: baseline; font-size: 17px; line-height: 1.25; color: #737373; white-space: normal; opacity: 0; transform: translate3d(-10px, -50%, 0); transition: opacity .4s cubic-bezier(.4, 0, .2, 1), transform .4s cubic-bezier(.4, 0, .2, 1), color .3s cubic-bezier(0, 0, .2, 1); }
-.xph-law-lab b { font-size: 13px; font-weight: 500; color: #737373; }
-.xph-law-row[data-on='true'] .xph-law-lab { opacity: 1; transform: translate3d(0, -50%, 0); }
-.xph-law-row[data-hot='true'] .xph-law-lab { color: var(--ink); }
-.xph-law-row[data-hot='true'] .xph-law-lab b { color: var(--ink); }
 .xph-law-cap { margin: 0; display: grid; justify-items: start; gap: 8px; font-size: 21px; font-weight: 497; letter-spacing: -.012em; color: var(--ink); opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity .5s cubic-bezier(.16, 1, .3, 1), transform .5s cubic-bezier(.16, 1, .3, 1); }
 .xph-law-cap span { font-size: 13px; font-weight: 500; letter-spacing: .08em; color: #737373; }
 .xph-law-cap[data-on='true'] { opacity: 1; transform: none; }
@@ -246,7 +280,7 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 /* the belief statement, filling in word by word */
 .xph-whole { padding-top: clamp(96px, 10vw, 160px); }
 .xph-whole-t { max-width: 18ch; margin: 0; }
-.xph-w { display: inline; }
+.xph-whole-b { color: #737373; }
 
 /* the close: the one dark room */
 .xph-close { color: #fafafa; }
@@ -267,8 +301,6 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 
 @media (max-width: 1200px) {
   .xph-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .xph-law-stage { padding-left: 0; }
-  .xph-law-lab { width: 170px; }
 }
 
 @media (max-width: 900px) {
@@ -303,16 +335,23 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
   .xph-one { grid-column: 1 / -1; justify-items: start; margin-top: 48px; --w: min(240px, 64vw); }
   .xph-premise-h, .xph-premise-t { grid-column: 1 / -1; }
   .xph-premise-t { margin-top: 24px; }
-  .xph-laws-in, .xph-laws-in.pf-sec { padding-top: 64px; }
-  .xph-laws .pf-pin-flat-c { border-top: 1px solid var(--line); padding-top: 40px; }
-  .xph-laws .pf-pin-flat-c + .pf-pin-flat-c { margin-top: 64px; }
-  .xph-law-stage { padding-left: 0; gap: 28px; }
-  .xph-law-hx { --w: 120px !important; }
-  .xph-law-lab { left: calc(100% + 18px); width: calc(100vw - 120px - 18px - 40px); font-size: 14px; }
-  .xph-law-row[data-on='true']:not([data-hot='true']) .xph-law-lab { opacity: 0; }
-  .xph-law-cap { font-size: 20px; }
-  .xph-law-cap:not([data-on='true']) { display: none; }
+  .xph-laws-t, .xph-laws-hint { grid-column: 1 / -1; }
+  .xph-laws-hint { justify-self: start; margin-top: 16px; font-size: 14px; }
+  /* phone: the hexagram and its caption sit beside each other above the law, the strip below at full width */
+  .xph-laws-g { margin-top: 32px; }
+  .xph-law-stage { grid-column: 1 / -1; grid-template-columns: auto minmax(0, 1fr); align-items: end; gap: 0 48px; }
+  .xph-law-hx { --w: 104px; }
+  .xph-law-n { left: calc(100% + 12px); font-size: 12px; }
+  .xph-law-cap { font-size: 17px; min-height: 0; }
   .xph-law-cap span { font-size: 14px; }
+  .xph-law-panel { grid-column: 1 / -1; margin-top: 32px; }
+  .xph-law-p { align-self: start; gap: 12px; }
+  .xph-law-p .xph-law-t { font-size: 24px; }
+  .xph-law-k { font-size: 14px; }
+  .xph-tl { margin-top: 32px; }
+  .xph-tl-name { display: none; }
+  .xph-tl-stops { height: 48px; }
+  .xph-tl-stops .pf-mono { font-size: 14px; }
   .xph-pat-t, .xph-pat-l { grid-column: 1 / -1; }
   .xph-pat-l { font-size: 17px; }
   .xph-views { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
@@ -352,6 +391,6 @@ button.xph-hl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .xph-hl i, .xph-law-lab, .xph-law-cap, .xph-hand, .xph-stack-l a::before { transition-duration: .01s !important; }
+  .xph-hl i, .xph-law-n, .xph-law-cap, .xph-law-p, .xph-tl-rail i, .xph-tl-run, .xph-hand, .xph-stack-l a::before { transition-duration: .01s !important; }
   .xph-one .xph-one-l i, .xph-g1 .xph-one-l i, .xph-law-row .xph-hl, .xph-hl.hot::after { animation: none !important; }
 }

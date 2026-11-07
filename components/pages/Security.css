@@ -251,6 +251,18 @@
   .xsc .x-copy { min-height: 44px; }
 }
 
+/* decode, the signature: the real words keep their place (and their reading) while the scramble is drawn over them, so
+   nothing reflows; a word scrambles in its own face, and the overlay never wraps wider than the word's box */
+.xdc { position: relative; display: inline-block; max-width: 100%; vertical-align: top; }
+.xdc-fx { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; }
+.xdc[data-one] > .xdc-fx { white-space: nowrap; }
+.xdc[data-run] > .xdc-t { opacity: 0; }
+.xdc-fx { font-variant-ligatures: none; }
+/* an inline-block does not inherit its parent's strike-through: draw it on the words and on the scramble */
+.xsc-strike s .xdc-t, .xsc-strike s .xdc-fx { text-decoration: line-through; text-decoration-color: var(--ink); text-decoration-thickness: 1.5px; }
+/* a name still waiting for its check reads quieter than a resolved one */
+.xsc-map-st li:not(.ok) .xdc[data-run] > .xdc-fx { opacity: .55; }
+
 /* the sheet is a native dialog inside the black room: its contents read in ink on paper */
 .xsc-dark .pf-sheet .x-arrow { color: var(--ink); }
 .xsc-dark .pf-sheet :focus-visible { outline-color: var(--ink); }

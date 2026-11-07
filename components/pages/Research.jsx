@@ -3,15 +3,15 @@
 // Goal: find the paper, specification or standard they need and read it at its source
 // CTA: Explore papers.hanzo.ai ↗ -> https://papers.hanzo.ai (hero, data-cta="research.hero", data-thumb) · each opened title page: Read on papers.hanzo.ai (data-cta="research.reader") · closing link: github.com/hanzoai (data-cta="research.close")
 // Metric: cta_click on research.hero and research.reader (a papers.hanzo.ai or hips.hanzo.ai click), research.close for GitHub (MASTER: researchers, a GitHub click)
-// Signature: the desk of title pages: point at a sheet and it lifts, press it and it opens into its full title page (Morph, 600 ms); every index row opens the same way.
+// Signature: word-light. The second screen is the open-source statement in the dark room, lighting word by word as it is read (each word brightens on its own stretch of the scroll, and dims again going back) (MOTION-MAP `word-light`). The desk of title pages and the opening title page stay as the hero's supporting moves.
 // Beyond: "When it was published". The papers' own dates become a bar per month (each bar is a count of Hanzo's list, nothing more); press a month and the index narrows to what came out then.
 /* Research. Its idea is the paper itself, typeset.
-   V2: 8/10 a Story page on Hanzo's scale rhythm: the six newest title pages spread as a desk across the first screen (the one big thing) with a 52px headline over its lower left, one sheet lifting at a time and any sheet opening into its full title page; the library at a glance (19 as the screen's moment), an editorial index that re-flows, every row opening the same way; the open-source statement revealed word by word in the one dark room; deck easing only, nothing floating, every word legible with JavaScript off.
+   A Story page on Hanzo's scale rhythm: the six newest title pages spread as a desk across the first screen (the one big thing) with a 52px headline over its lower left, one sheet lifting at a time and any sheet opening into its full title page; then, second, the open-source statement lighting word by word in the one dark room (the signature); the library at a glance (19 as the screen's moment), an editorial index that re-flows, every row opening the same way; deck easing only, nothing floating, every word legible with JavaScript off.
    One idea per screen, one big thing each: the desk (one sheet lifts within a second, then every few seconds; point at a
-   sheet and it rises too, press it and it opens; a pause control stops the cycle), the count of papers, the index (a rail
-   of kinds and a search beside an editorial list), the statement in the dark room.
-   Motion: signature, the desk and the open (a sheet or a row → its title page, 600 ms in-out). Supporting: line-mask
-   cut-ins (headings and figures), the month that follows your reading in the index rail, the statement's scroll reveal. Idle: the desk lifting one sheet at a time (pausable). Pointer: rows fill from
+   sheet and it rises too, press it and it opens; a pause control stops the cycle), the statement in the dark room, the
+   count of papers, the index (a rail of kinds and a search beside an editorial list).
+   Motion: signature, the statement lighting word by word as it is read. Supporting: the desk and the open (a sheet or a
+   row → its title page, 600 ms in-out), a line-mask cut-in on the h1 and the figures only, the month that follows your reading in the index rail. Idle: the desk lifting one sheet at a time (pausable). Pointer: rows fill from
    the left (400 ms), their sheet tilts 2°, bars and kinds fill. State: the list re-flows, the title page opens. Deck
    timings only (150 ms hover, 300 ms state, 400 ms moves, 600 ms open), no springs or overshoot. Ink only.
    Every word, date and link is Hanzo's. */
@@ -327,7 +327,10 @@ function Reader({ it, lid, close }) {
   );
 }
 
-/* ---------- the close, in the one dark room: the statement revealed word by word (the signature) ---------- */
+/* ---------- the signature, the second screen, in the one dark room: the open-source statement lights word by word
+   as it is read. Each word has its own short stretch of the scroll (about two words wide), so a reading head moves
+   through the sentence: words ahead wait at white 22%, the word being read brightens, words behind stay lit. Scroll
+   back and they dim again. ---------- */
 const OPEN_A = 'The systems described in these papers are open source. The cloud, the gateway, the agent runtime and the infrastructure around them are developed in the open at';
 const OPEN_B = ', and the platform pays the open-source authors whose work runs on it.';
 function Word({ p, a, b, calm, children }) {
@@ -340,20 +343,20 @@ function Open() {
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false); // the server cannot know the setting: apply it after hydration, so markup matches
   useEffect(() => setCalm(!!rm), [rm]);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.55'] });
+  // the statement itself is the target: it starts lighting as it enters and is whole by the time it sits mid-screen
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.88', 'end 0.58'] });
   const a = OPEN_A.split(' '), b = OPEN_B.slice(2).split(' ');
   const n = a.length + 1 + b.length;
-  const W = (i, child) => <Word key={i} p={scrollYProgress} a={i / n} b={(i + 1.6) / n} calm={calm}>{child}</Word>;
+  const W = (i, child) => <Word key={i} p={scrollYProgress} a={(i / n) * 0.94} b={((i + 2) / n) * 0.94} calm={calm}>{child}</Word>;
   const link = <A to="https://github.com/hanzoai">github.com/hanzoai</A>;
   return (
     <SceneWipe className="xrs-open" label="Open source">
-      <div className="pf-sec" ref={ref}>
+      <div className="pf-sec">
         <div className="pf-wrap pf-grid xrs-open-g">
-          <MaskLines as="h2" className="pf-head xrs-open-h" lines={['Open source']} />
-          <p className="xrs-open-t">
+          <h2 className="pf-head xrs-open-h">Open source</h2>
+          <p className="xrs-open-t" ref={ref}>
             {a.map((w, i) => W(i, w + ' '))}
-            {W(a.length, link)}
-            {', '}
+            {W(a.length, <>{link}{', '}</>)}
             {b.map((w, i) => W(a.length + 1 + i, w + (i < b.length - 1 ? ' ' : '')))}
           </p>
           <div className="xrs-open-a"><A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="research.close">github.com/hanzoai</A></div>
@@ -375,11 +378,11 @@ export default function Research() {
   return (
     <main id="main" className="xrs pf-r">
       {/* JavaScript off: all six hero captions are listed, and nothing waits on a script to be seen */}
-      <NoJs css=".xrs-w{opacity:1!important}.xrs-cap[hidden]{display:grid!important}.xrs-caps{display:grid!important;gap:14px}.xrs-cap{grid-area:auto!important}.xrs-deal-b,.xrs-all,.xrs-now{display:none!important}.xrs-rows li[hidden]{display:block!important}" />
+      <NoJs css=".xrs-w{opacity:1!important}.xrs-cap[hidden]{display:grid!important;visibility:visible!important}.xrs-caps{display:grid!important;gap:14px}.xrs-cap{grid-area:auto!important}.xrs-deal-b,.xrs-all,.xrs-now{display:none!important}.xrs-rows li[hidden]{display:block!important}" />
       <Hero open={(it, from, lid) => setOpen({ it, from, lid })} openLid={open ? open.lid : null} />
+      <Open />
       <Glance mon={mon} pickMonth={pickMonth} />
       <Library mon={mon} setMon={setMon} open={(it, from) => setOpen({ it, from, lid: key(it) })} openKey={open ? open.lid : null} />
-      <Open />
       <AnimatePresence>{open && <Reader key={open.lid} it={open.it} lid={open.lid} close={close} />}</AnimatePresence>
     </main>
   );

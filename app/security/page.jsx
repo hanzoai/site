@@ -1,4 +1,4 @@
-// Signature: none by design (MASTER §4.2, an honest status) — the six layers check themselves once as the page arrives, then the controls read as a calm document you select from
+// Signature: decode. The controls' names resolve out of scrambled characters as the hero's status pass checks each layer, and the chosen layer's mechanism terms (HKDF-SHA256, TLS 1.3, ML-KEM-768 …) resolve as it is chosen; hovering re-scrambles them
 // Beyond: reviewer's worksheet — tick each control as you check it, the count stays in this browser, and at six of six the page hands over Hanzo's own next step, Schedule Security Review
 import Security from '../../components/pages/Security';
 import JsonLd from '../../components/JsonLd';

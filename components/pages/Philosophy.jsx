@@ -3,27 +3,26 @@
 // Goal: understand the premise and the five laws, then open the 64 patterns and read the ones that fit their system
 // CTA: Explore the 64 patterns -> #patterns (hero, data-cta="philosophy.hero", data-thumb) · closing link: Explore Hanzo -> / (data-cta="philosophy.close")
 // Metric: cta_click on philosophy.close (Story: the page's own closing link), with philosophy.hero as the lead indicator
-// Signature: the belief statement reveals word by word as you scroll, ink rising out of grey (Story, MASTER §4.4).
+// Signature: timeline. The five operating laws on a strip you drag (or tap, or step with the arrow keys): the law under the thumb takes the panel and the hexagram beside it gains a line per law, its sixth line never settling (MOTION-MAP `timeline`).
 // Beyond: "Change a line". Press any line of the hero hexagram and it flips, yin to yang, becoming the hexagram that change makes — its number, name and trigrams read from Hanzo's own sixty-four.
 /* Philosophy: the Zen of Hanzo, told as a chapter book. Its idea is change itself, drawn in lines.
-   V2: 8/10 a Story page on Hanzo's scale rhythm: the hexagram is the one big thing of the first screen (walking the sixty-four, changing at a press) over a 52px headline; the premise as the screen's moment; the five laws pinned beside one building hexagram; the 64 as a quiet index whose every pattern opens in a sheet; the belief statement revealed word by word; deck easing only, nothing floating, every word legible with JavaScript off.
+   A Story page on Hanzo's scale rhythm: the hexagram is the one big thing of the first screen (walking the sixty-four, changing at a press) over a 52px headline; then the five laws on a timeline you drag; the premise as a moment; the 64 as a quiet index whose every pattern opens in a sheet; the belief statement set still; deck easing only, nothing floating, every word legible with JavaScript off.
    One idea per screen, one big thing each: the hero hexagram (huge, centred, its name and trigrams either side, the
    lines that changed marked with a dot, any line you press flips), the 52px headline, caption, ask and lede at its
-   foot; the premise sentence as the screen's moment beside one line that keeps opening and closing; the five laws as
-   chapters that pin while a hexagram builds beside them, a line per law, its last line never settling; the 64 as a
+   foot; the five laws on a draggable strip, a hexagram building a line per law beside the law in hand, its last line
+   never settling; the premise sentence beside one line that keeps opening and closing; the 64 as a
    quiet index (sequence, 8 x 8 matrix, or by lens) where every pattern opens into a sheet with its principle, practice
    and question; how we build, the method ring stepping round until you point; the stack; the questions, each beside
-   its trigram; the belief statement as the signature; the close in the one dark room, 1 → 2 → 8 → 64.
-   Motion: signature, the scroll word reveal. Supporting: line-masked headings, the pinned laws, the view pill gliding
-   (300 ms, ease-emphasis). Idle: the hero walk (with its pause control), the premise line, the laws' last line and one lap of the method ring, each ending at rest. Pointer: lines
+   its trigram; the belief statement; the close in the one dark room, 1 → 2 → 8 → 64.
+   Motion: signature, the laws timeline (no pinned scene, no scroll scrub). Supporting: a line-mask cut-in on the h1, the
+   premise and the stanza only, the view pill gliding (300 ms, ease-emphasis). Idle: the hero walk (with its pause control), the premise line, the laws' last line and one lap of the method ring, each ending at rest. Pointer: lines
    part their strokes under the pointer (James's "strokes parting"), rows and tiles fill. State: the sheet rises.
    The one dark room enters as a rounded card and opens to full width (MASTER §3.1 rooms). Deck timings only: 150 ms hover, 300 ms state, 400 ms fills, 800 ms line art; no springs, no overshoot.
    Ink only: hierarchy is alpha steps of black and white. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
 import MaskLines from './proof/MaskLines';
-import PinScenes from '../v2/PinScenes';
 import SceneWipe from './proof/SceneWipe';
 import NoJs from '../NoJs';
 import LivePause, { usePause } from '../v2/LivePause';
@@ -143,7 +142,7 @@ function Premise() {
   );
 }
 
-/* ---------- the five laws: chapters that pin, a hexagram building itself beside them ---------- */
+/* ---------- the five laws: a timeline you drag, a hexagram building itself beside it ---------- */
 const LAWS = [
   ['See the system clearly', 'Understand the current condition before prescribing action.'],
   ['Separate what changes independently', 'Do not bind together concepts that evolve for different reasons.'],
@@ -154,53 +153,118 @@ const LAWS = [
 const LAST = HEX[63]; // Before Completion: the hexagram that is never finished
 const BUILD = lines(LAST);
 
-function LawStage({ at }) {
+/* The hexagram that the timeline builds: one line per law, bottom to top; on the fifth law the sixth line arrives and
+   never settles (it flips six times, then rests as Before Completion). */
+function LawStage({ at, calm }) {
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
-  const calm = useReducedMotion();
   const [flick, setFlick] = useState(BUILD[5]);
   const [flips, setFlips] = useState(0);
   const done = at >= 4;
+  useEffect(() => { if (!done) setFlips(0); }, [done]);
   useEffect(() => {
-    if (!done || calm || !live || flips >= 6) return; // it changes six times, then rests as Before Completion
+    if (!done || calm || !live || flips >= 6) return;
     const t = setTimeout(() => { setFlick((v) => 1 - v); setFlips((n) => n + 1); }, 1100);
     return () => clearTimeout(t);
   }, [done, calm, live, flips]);
   const ls = [...BUILD.slice(0, 5), done ? flick : BUILD[5]];
   const drawn = at + 1 + (done ? 1 : 0);
-  const [main, sub] = split(LAST[1]);
+  const [, sub] = split(LAST[1]);
   return (
     <div className="xph-law-stage" ref={ref}>
-      <div className="xph-law-hx" style={{ '--w': 'clamp(240px, 27vw, 400px)' }} aria-hidden="true">
+      <div className="xph-law-hx" aria-hidden="true">
         {ls.map((y, i) => (
           <div key={i} className="xph-law-row" data-on={i < drawn} data-hot={i === (done ? 5 : at)}>
             <span className={'xph-hl ' + (y ? 'yang' : 'yin')}><i /><i /></span>
-            <span className="xph-law-lab"><b className="pf-mono">{pad(i + 1)}</b>{i < 5 ? LAWS[i][0] : `${LAST[0]} · ${main}`}</span>
+            <b className="pf-mono xph-law-n">{i < 5 ? pad(i + 1) : LAST[0]}</b>
           </div>
         ))}
       </div>
-      <p className="xph-law-cap" data-on={done} aria-hidden="true">{LAST[4]}<span className="pf-mono">{LAST[0]} · {sub}</span></p>
+      <p className="xph-law-cap" data-on={done}>{LAST[4]}<span className="pf-mono">{LAST[0]} · {sub}</span></p>
     </div>
   );
 }
 
+/* Signature: the five laws on a timeline you drag. The strip runs law 01 to law 05; the thumb follows the finger or
+   pointer anywhere along it (or the arrow keys), the law under it takes the panel, and the hexagram beside it gains a
+   line per law. On release the thumb settles on the nearest law (300 ms, ease-in-out). It plays through once by itself
+   when first seen, until the visitor takes it. */
 function Laws() {
+  const ref = useRef(null);
+  const track = useRef(null);
+  const seen = useInView(ref, { amount: 0.45 });
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // after hydration, so server and client markup match
+  useEffect(() => setCalm(!!rm), [rm]);
+  const [pos, setPos] = useState(0); // 0..4, continuous while dragging
+  const [drag, setDrag] = useState(false);
+  const [mine, setMine] = useState(false);
+  const at = Math.round(pos);
+  useEffect(() => {
+    if (mine || calm || !seen || at >= 4) return;
+    const t = setTimeout(() => setPos((p) => Math.min(4, Math.round(p) + 1)), at === 0 ? 1400 : 2600);
+    return () => clearTimeout(t);
+  }, [mine, calm, seen, at]);
+  const fromX = (x) => {
+    const r = track.current.getBoundingClientRect();
+    return Math.max(0, Math.min(4, ((x - r.left) / r.width) * 4));
+  };
+  const down = (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    setMine(true); setDrag(true);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    setPos(fromX(e.clientX));
+  };
+  const move = (e) => { if (drag) setPos(fromX(e.clientX)); };
+  const up = () => { if (!drag) return; setDrag(false); setPos((p) => Math.round(p)); };
+  const go = (n) => { setMine(true); setPos(Math.max(0, Math.min(4, n))); };
+  const key = (e) => {
+    const k = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
+    if (k) { e.preventDefault(); go(at + k); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(4); }
+  };
   return (
-    <>
-      <section className="pf-sec xph-laws-in" aria-labelledby="xph-laws-h">
-        <div className="pf-wrap">
-          <MaskLines as="h2" id="xph-laws-h" className="pf-display m xph-laws-h" lines={['Five operating', 'laws']} />
-          <p className="pf-mono xph-cap">The synthesis</p>
+    <section className="pf-sec xph-laws" ref={ref} aria-labelledby="xph-laws-h">
+      <div className="pf-wrap">
+        <div className="pf-grid xph-laws-top">
+          <div className="xph-laws-t">
+            <h2 className="pf-head xph-laws-h" id="xph-laws-h">Five operating laws</h2>
+            <p className="pf-mono xph-cap">The synthesis</p>
+          </div>
+          <p className="pf-mono xph-laws-hint" aria-hidden="true">Drag the line · {pad(at + 1)} / 05</p>
         </div>
-      </section>
-      <PinScenes
-        className="xph-laws"
-        label="Five operating laws"
-        per={70}
-        chapters={LAWS.map(([t, d]) => ({ title: t, body: <p className="pf-lede">{d}</p> }))}
-        visual={(at) => <LawStage at={at} />}
-      />
-    </>
+        <div className="pf-grid xph-laws-g">
+          <LawStage at={at} calm={calm} />
+          <div className="xph-law-panel" aria-live="polite">
+            {LAWS.map(([t, d], i) => (
+              <article key={t} className="xph-law-p" data-on={i === at} aria-hidden={i !== at}>
+                <span className="pf-mono xph-law-k">Law {pad(i + 1)}</span>
+                <h3 className="pf-title xph-law-t">{t}</h3>
+                <p className="pf-lede">{d}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+        <div className="xph-tl" data-drag={drag} style={{ '--p': pos / 4 }}>
+          <div ref={track} className="xph-tl-track" role="slider" tabIndex={0} aria-label="Five operating laws" aria-valuemin={1} aria-valuemax={5} aria-valuenow={at + 1} aria-valuetext={`Law ${at + 1}: ${LAWS[at][0]}`}
+            onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onLostPointerCapture={up} onKeyDown={key}>
+            <span className="xph-tl-rail" aria-hidden="true"><i /></span>
+            {LAWS.map((_, i) => <span key={i} className="xph-tl-tick" data-on={i <= pos + 0.001} style={{ left: (i / 4) * 100 + '%' }} aria-hidden="true" />)}
+            <span className="xph-tl-run" aria-hidden="true"><span className="xph-tl-thumb"><span className="xph-hl yang"><i /><i /></span></span></span>
+          </div>
+          <ol className="xph-tl-stops">
+            {LAWS.map(([t], i) => (
+              <li key={t} style={{ left: (i / 4) * 100 + '%' }} data-on={i === at}>
+                <button type="button" tabIndex={-1} onClick={() => go(i)} aria-label={`Law ${i + 1}: ${t}`}>
+                  <span className="pf-mono">{pad(i + 1)}</span><span className="xph-tl-name">{t}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -532,25 +596,12 @@ function Change() {
   );
 }
 
-/* ---------- the belief statement, filling in word by word as you read it ---------- */
-const WHOLE = 'The Zen of Hanzo is not a promise that systems will remain still. It is a method for building systems that remain whole while everything changes.';
-function Word({ p, a, b, calm, children }) {
-  const o = useTransform(p, [a, b], [0.14, 1]);
-  return <motion.span className="xph-w" style={{ opacity: calm ? 1 : o }}>{children}</motion.span>;
-}
+/* ---------- the belief statement: set still, in full ink (the timeline is this page's motion) ---------- */
 function Whole() {
-  const ref = useRef(null);
-  const rm = useReducedMotion();
-  const [calm, setCalm] = useState(false); // applied after hydration, so the server's word spans and the client's match
-  useEffect(() => setCalm(!!rm), [rm]);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.45'] });
-  const words = WHOLE.split(' ');
   return (
-    <section className="pf-sec xph-whole" ref={ref}>
+    <section className="pf-sec xph-whole">
       <div className="pf-wrap">
-        <h2 className="pf-moment xph-whole-t">
-          {words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.6) / words.length} calm={calm}>{w}{i < words.length - 1 ? ' ' : ''}</Word>)}
-        </h2>
+        <h2 className="pf-moment xph-whole-t">The Zen of Hanzo is not a promise that systems will remain still. <span className="xph-whole-b">It is a method for building systems that remain whole while everything changes.</span></h2>
       </div>
     </section>
   );
@@ -585,11 +636,11 @@ function Close() {
 export default function Philosophy() {
   return (
     <main id="main" className="xph pf-r">
-      {/* JavaScript off: the word reveal is full ink, every view and all 64 patterns are laid out in the page, tiles show their principle */}
-      <NoJs css=".xph-w{opacity:1!important}#panel-matrix,#panel-lenses,.xph-hint{display:block!important}#panel-matrix,#panel-lenses{margin-top:96px}.xph-mx-side{position:static!important}.xph-tile-s>span{grid-area:auto!important;opacity:1!important;transform:none!important}.xph-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin-top:96px}.xph-sheet .xph-sheet-nav{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}.xph-sheet .pf-sheet-top{padding:0 0 20px!important}.xph-sheet .pf-sheet-body{overflow:visible!important;padding:0!important}.xph-sheet [hidden]{display:block!important;margin-top:56px}" />
+      {/* JavaScript off: the five laws are laid out one under another and the strip is hidden, every view and all 64 patterns are laid out in the page, tiles show their principle */}
+      <NoJs css=".xph-law-p{position:static!important;opacity:1!important;transform:none!important;visibility:visible!important;margin-bottom:32px}.xph-law-panel{display:block!important;height:auto!important}.xph-tl,.xph-laws-hint{display:none!important}.xph-law-row .xph-hl i{opacity:1!important}#panel-matrix,#panel-lenses,.xph-hint{display:block!important}#panel-matrix,#panel-lenses{margin-top:96px}.xph-mx-side{position:static!important}.xph-tile-s>span{grid-area:auto!important;opacity:1!important;transform:none!important}.xph-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin-top:96px}.xph-sheet .xph-sheet-nav{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}.xph-sheet .pf-sheet-top{padding:0 0 20px!important}.xph-sheet .pf-sheet-body{overflow:visible!important;padding:0!important}.xph-sheet [hidden]{display:block!important;margin-top:56px}" />
       <Hero />
-      <Premise />
       <Laws />
+      <Premise />
       <Patterns />
       <Method />
       <Stack />

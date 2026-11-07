@@ -1,3 +1,4 @@
+// Signature: timeline. The five operating laws on a strip you drag; the law in hand takes the panel and a hexagram gains a line per law.
 import Philosophy from '../../components/pages/Philosophy';
 import JsonLd from '../../components/JsonLd';
 

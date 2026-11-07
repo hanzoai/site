@@ -78,13 +78,13 @@ Done here: Ink only; changing lines are marked by a dot, not a colour; the dark 
 Done here: Hovers fill or part the hexagram's strokes (James's "strokes parting", 2–6px); no lift or scale on hover; presses scale .97. The pattern sheet is a native `<dialog>` (`showModal()`): focus trapped, Esc and the backdrop close it, focus returns to the cell that opened it; checked headless: opening it leaves `scrollY` unchanged and the closed sheet draws nothing (0×0) at 1470 and 375.
 
 ## 9. Motion and interaction
-- [x] Signature scroll word reveal; supporting: line-mask headings, pinned laws, gliding view pill (300 ms ease-emphasis); 0 fade-ups
-- [x] Kinds: idle (hero walk, premise line, laws' last line, one lap of the method ring), pointer (strokes part, fills), state (sheet, pill), scroll (word reveal, pinned laws) under half
+- [x] Signature `timeline` (MOTION-MAP): the five laws on a strip you drag; supporting: a line-mask cut-in on the h1, premise and stanza only, gliding view pill (300 ms ease-emphasis); 0 fade-ups, no pinned scene, no scroll scrub
+- [x] Kinds: idle (hero walk, the laws timeline playing through once, premise line, laws' last line, one lap of the method ring), pointer and touch (drag the strip, strokes part, fills), state (sheet, pill); nothing is scroll-driven
 - [x] The hero moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] n/a: sound is a shared kit, not wired on this page
 
-Done here: Deck timings only (150 ms hover, 300 ms state, 400 ms fills, 800 ms line art), no springs or overshoot; `variety.py` OK.
+Done here: The pinned laws scene (PinScenes) and the scroll word reveal of the belief statement are gone. The second screen is the signature: a timeline of the five operating laws; dragging the thumb (pointer or finger, `touch-action: pan-y`), tapping a law's number or pressing ← → / Home / End moves it, the law under it takes the panel (outgoing 150 ms, incoming 300 ms ease-emphasis) and the hexagram beside it gains one line per law, the sixth (64 · Before Completion) flipping six times on law 05; on release it settles on the nearest law in 300 ms ease-in-out. It plays 01 → 05 once by itself when first seen until touched; the thumb moves by transform only (CLS 0.001 desktop, 0.0006 phone while scrolling). The belief statement is now set still in ink and grey. Deck timings only, no springs or overshoot; `variety.py` OK.
 
 ## 10. Media
 - [x] n/a: the page has no Hanzo photo or film; its objects are drawn (hexagrams, ring)
@@ -100,7 +100,7 @@ Done here: Every object is drawn in HTML and CSS (the hexagram is 6 rows of two 
 - [x] Every target 44px or more; tiles and rows answer taps
 - [x] Primary ask above the fold at 375 (moved above the lede)
 
-Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; pinned laws stack as chapters. Nothing overlaps at 375 (the old closed-sheet overlap is gone; scrollWidth 375). The patterns open on the Matrix view (one 8×8 object) instead of eight rows of tiles; tile titles wrap instead of colliding at 1470.
+Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; the laws timeline sets a 104px hexagram beside its caption, the law below, and the strip at full width with 44px number stops (drag with a finger). Nothing overlaps at 375 (the old closed-sheet overlap is gone; scrollWidth 375). The patterns open on the Matrix view (one 8×8 object) instead of eight rows of tiles; tile titles wrap instead of colliding at 1470.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text #0a0a0a / #525252 / #737373 on white, #525252 on #f5f5f5
@@ -109,7 +109,7 @@ Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 
 - [x] One h1; h2 per section, h3 in groups and the sheet
 - [x] Keyboard reaches every line, tile, tab, cell and step
 
-Done here: The hero walk has a pause button; the premise line, the laws' last line and the method ring stop after a few cycles; `aria-live` speaks only after a visitor changes a line.
+Done here: The hero walk has a pause button; the laws strip is a `role="slider"` (arrow keys, Home, End) with its value read as the law's name; the premise line, the laws' last line and the method ring stop after a few cycles; `aria-live` speaks only after a visitor changes a line.
 
 ## 13. Performance and engineering
 - [x] h1 and the hexagram in server HTML

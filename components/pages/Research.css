@@ -57,7 +57,8 @@
 .xrs-deal button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .xrs-caps { display: grid; }
 .xrs-cap { grid-area: 1 / 1; margin: 0; display: grid; gap: 6px; text-align: right; }
-.xrs-cap[hidden] { display: none; }
+/* every caption keeps its place in the one cell, so the tallest sets the height and the walk never moves the page */
+.xrs-cap[hidden] { display: grid; visibility: hidden; }
 .xrs-cap .pf-mono { font-size: 13px; color: var(--ink); letter-spacing: .06em; }
 .xrs-cap b { font-size: 16px; font-weight: 560; line-height: 1.25; letter-spacing: -.01em; }
 .xrs-cap small { display: none; }

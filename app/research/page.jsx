@@ -1,4 +1,4 @@
-// Signature: the desk of title pages: point at a sheet and it lifts, press it and it opens into its full title page; every index row opens the same way
+// Signature: word-light. The second screen is the open-source statement lighting word by word as it is read; the desk of title pages (point to lift, press to open) stays in the hero
 // Beyond: when it was published — the papers' own dates as one bar per month; press a month and the index narrows to what Hanzo published then
 import Research from '../../components/pages/Research';
 import JsonLd from '../../components/JsonLd';
