@@ -1,0 +1,258 @@
+/* Hanzo's shared system: tokens, component states, the ask bar, accessibility. Loaded once by app/layout.jsx, after
+   globals.css and before any page CSS, so a page rule always wins over these defaults.
+   HOW TO USE (full list in docs/review/SYSTEM.md):
+   - Colour: the grey and silver deck only (0 UI hues). Use var(--hz-50 … --hz-950), the silvers, or the room tokens
+     var(--room-bg / -surface / -ink / -soft / -faint / -line / -fill). Put data-room="dark" on a dark section and every
+     room token (and the focus ring, and solid buttons) flips for it. Colour comes only from Hanzo's own media.
+   - Motion: var(--ease-out-expo / --ease-calm / --ease-soft / --ease-in) and var(--dur-press … --dur-reveal); the same
+     values live in lib/motion.js for Motion. Animate transform, opacity, clip-path and filter only.
+   - States: .x-btn, .x-arrow, .x-link, .x-card, .x-tablist, .x-table, .x-skel answer hover, press, focus, loading
+     (aria-busy="true"), disabled (disabled or aria-disabled="true") and selected (aria-pressed / aria-selected /
+     aria-current / data-selected). Nothing fades on hover, nothing jumps.
+   - Utilities: .x-tnum (tabular figures), .x-cv (skip off-screen rendering), .x-vh (visually hidden), .x-ratio. */
+
+/* ---------- fonts: no visible swap ----------
+   Zen and Zen Mono load with font-display: block and are preloaded (app/layout.jsx), so text paints once, in Zen. If a
+   very slow network ever outlasts the block period, these metric-matched stand-ins (measured in Chromium against Zen:
+   width 104.5%, ascent 101%, descent 30%) take the same box, so the swap moves nothing. */
+@font-face { font-family: 'Zen Fallback'; src: local('Arial'), local('ArialMT'), local('Liberation Sans'); size-adjust: 104.51%; ascent-override: 96.64%; descent-override: 28.71%; line-gap-override: 0%; }
+@font-face { font-family: 'Zen Mono Fallback'; src: local('Courier New'), local('CourierNewPSMT'), local('Liberation Mono'); size-adjust: 99.98%; ascent-override: 101.02%; descent-override: 30.01%; line-gap-override: 0%; }
+
+/* ---------- the brand deck: greys and silvers ---------- */
+:root {
+  --hz-black: #000; --hz-950: #0a0a0b; --hz-900: #141416; --hz-850: #1c1c1e; --hz-800: #2c2c2e; --hz-700: #3a3a3c;
+  --hz-600: #48484a; --hz-500: #6e6e73; --hz-400: #86868b; --hz-300: #a1a1a6; --hz-200: #c7c7cc; --hz-150: #d2d2d7;
+  --hz-100: #e8e8ed; --hz-50: #f5f5f7; --hz-white: #fff;
+  --silver-hi: #f4f4f6; --silver: #d4d5d9; --silver-lo: #9b9ca2; --silver-deep: #5d5e63;
+  /* a brushed-metal surface for an object (a chip, a medal, a hairline), never for text */
+  --silver-sheen: linear-gradient(135deg, #f4f4f6 0%, #c9cacf 38%, #eeeef0 55%, #a7a8ae 100%);
+  --silver-edge: linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, .08));
+
+  /* the room you are in (light by default; [data-room=dark] flips it) */
+  --room-bg: #fff; --room-surface: #f5f5f7; --room-raised: #fff;
+  --room-ink: #0a0a0b; --room-soft: #6e6e73; --room-faint: #86868b;
+  --room-line: rgba(0, 0, 0, .08); --room-line-strong: rgba(0, 0, 0, .16);
+  --room-fill: rgba(0, 0, 0, .04); --room-fill-strong: rgba(0, 0, 0, .08);
+  --focus: #0a0a0b;
+  --btn-solid-bg: var(--ink, #0a0a0a); --btn-solid-ink: #fff; --btn-solid-hover: #2c2c2e;
+
+  /* motion (lib/motion.js holds the same numbers for Motion) */
+  --ease-out-expo: cubic-bezier(.16, 1, .3, 1); --ease-calm: cubic-bezier(.33, 1, .68, 1);
+  --ease-soft: cubic-bezier(.22, 1, .36, 1); --ease-in: cubic-bezier(.7, 0, .84, 0);
+  --dur-press: .1s; --dur-hover: .2s; --dur-exit: .25s; --dur-fade: .4s; --dur-enter: .6s; --dur-reveal: 1.1s;
+
+  /* type (BRIEF-v3 §6) */
+  --fs-display: clamp(48px, 8.7vw, 128px); --fs-h2: clamp(32px, 4.5vw, 56px); --fs-lede: clamp(19px, 1.8vw, 24px);
+  --fs-body: 17px; --fs-chrome: 13px; --fs-figure: clamp(56px, 6.5vw, 96px);
+  --lh-display: 1.02; --lh-h2: 1.07; --lh-lede: 1.33; --lh-body: 1.47;
+
+  /* space and shape */
+  --gutter: clamp(24px, 3.45vw, 72px); --air: clamp(120px, 15vw, 240px); --hit: 44px; --row: 56px;
+  --r-card: 28px; --r-ctl: 999px; --r-sm: 12px;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .05), 0 0 0 1px rgba(0, 0, 0, .04);
+  --shadow-2: 0 24px 48px -28px rgba(0, 0, 0, .28);
+  --shadow-pop: 0 40px 100px -30px rgba(0, 0, 0, .35);
+
+  /* layers */
+  --z-ask: 70; --z-sheet: 985; --z-skip: 2147483001;
+}
+[data-room=dark] {
+  --room-bg: #0a0a0b; --room-surface: #141416; --room-raised: #1c1c1e;
+  --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-faint: #86868b;
+  --room-line: rgba(255, 255, 255, .14); --room-line-strong: rgba(255, 255, 255, .26);
+  --room-fill: rgba(255, 255, 255, .06); --room-fill-strong: rgba(255, 255, 255, .12);
+  --focus: #f5f5f7;
+  --btn-solid-bg: #f5f5f7; --btn-solid-ink: #0a0a0b; --btn-solid-hover: #fff;
+}
+[data-room=light] {
+  --room-bg: #fff; --room-surface: #f5f5f7; --room-raised: #fff;
+  --room-ink: #0a0a0b; --room-soft: #6e6e73; --room-faint: #86868b;
+  --room-line: rgba(0, 0, 0, .08); --room-line-strong: rgba(0, 0, 0, .16);
+  --room-fill: rgba(0, 0, 0, .04); --room-fill-strong: rgba(0, 0, 0, .08);
+  --focus: #0a0a0b;
+  --btn-solid-bg: #0a0a0b; --btn-solid-ink: #fff; --btn-solid-hover: #2c2c2e;
+}
+
+/* ---------- focus: one ring, in the room's ink ---------- */
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+:focus:not(:focus-visible) { outline: none; }
+header[data-x-dark='true'] { --focus: #f5f5f7; }
+
+/* ---------- skip link: the first tab stop ---------- */
+.x-skip { position: fixed; left: 12px; top: 10px; z-index: var(--z-skip); padding: 12px 18px; border-radius: var(--r-ctl); background: var(--hz-950); color: #fff; font: 500 14px/1 var(--sans); text-decoration: none; transform: translateY(-160%); transition: transform var(--dur-hover) var(--ease-calm); }
+.x-skip:focus, .x-skip:focus-visible { transform: none; outline: 2px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 5px var(--hz-950); }
+main:focus, .x-main-mark:focus { outline: none; }
+.x-main-mark { height: 0; scroll-margin-top: 72px; }
+
+/* ---------- buttons (.x-btn, Btn, Go) ---------- */
+.x-btn { position: relative; transition: background-color var(--dur-hover) var(--ease-soft), border-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo), box-shadow var(--dur-hover) var(--ease-soft); -webkit-tap-highlight-color: transparent; }
+.x-btn:not(.solid):hover { background-color: var(--hz-50); border-color: rgba(0, 0, 0, .16); }
+.x-btn.solid { background-color: var(--btn-solid-bg); border-color: var(--btn-solid-bg); color: var(--btn-solid-ink); }
+.x-btn.solid:hover { background-color: var(--btn-solid-hover); border-color: var(--btn-solid-hover); }
+.x-btn:active { transform: scale(.98); transition-duration: 0s; }
+/* selected: the choice you made reads inverted, not tinted */
+.x-btn[aria-pressed='true'], .x-btn[aria-current='page'], .x-btn[data-selected] { background-color: var(--room-ink); border-color: var(--room-ink); color: var(--room-bg); }
+/* loading: the label keeps its width and a ring turns in its place */
+.x-btn[aria-busy='true'] { color: transparent !important; pointer-events: none; }
+.x-btn[aria-busy='true']::after { content: ''; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; border: 1.6px solid currentColor; border-color: var(--room-ink) transparent var(--room-ink) var(--room-ink); animation: x-turn .7s linear infinite; }
+.x-btn.solid[aria-busy='true']::after { border-color: var(--btn-solid-ink) transparent var(--btn-solid-ink) var(--btn-solid-ink); }
+/* disabled: quiet, still legible, no hover or press */
+.x-btn:disabled, .x-btn[aria-disabled='true'] { cursor: not-allowed; background-color: var(--room-fill); border-color: transparent; color: var(--room-faint); transform: none; box-shadow: none; }
+.x-btn.solid:disabled, .x-btn.solid[aria-disabled='true'] { background-color: var(--room-fill-strong); color: var(--room-soft); }
+@keyframes x-turn { to { transform: rotate(1turn); } }
+
+/* round icon buttons, copy chips, the arrow link */
+.x-round, .x-copy, .x-replay { transition: background-color var(--dur-hover) var(--ease-soft), border-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
+.x-round:hover, .x-copy:hover { background-color: var(--hz-50); }
+.x-round:active, .x-copy:active, .x-replay:active { transform: scale(.94); transition-duration: 0s; }
+.x-round:disabled, .x-round[aria-disabled='true'] { opacity: .4; cursor: not-allowed; transform: none; }
+.x-arrow { transition: transform var(--dur-press) var(--ease-out-expo); }
+.x-arrow:active { transform: translateY(1px); }
+.x-arrow[aria-disabled='true'] { color: var(--room-faint); pointer-events: none; }
+
+/* ---------- text links ---------- */
+/* .x-link: an underline that draws in from the left on hover, and stays for the page you are on */
+.x-link { color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .35s var(--ease-out-expo), color var(--dur-hover); padding-bottom: 1px; }
+.x-link:hover, .x-link:focus-visible, .x-link[aria-current='page'] { background-size: 100% 1px; }
+.x-link:active { transform: translateY(1px); display: inline-block; }
+.x-link[aria-disabled='true'] { color: var(--room-faint); pointer-events: none; }
+
+/* ---------- cards ---------- */
+/* .x-card on any <a>, <button> or <article>: hairline, lift on hover, give on press, ring when chosen */
+.x-card { position: relative; display: block; border-radius: var(--r-card); background: var(--room-surface); border: 1px solid var(--room-line); color: var(--room-ink); text-decoration: none; transition: transform .25s var(--ease-out-expo), border-color var(--dur-hover) var(--ease-soft), box-shadow .25s var(--ease-out-expo), background-color var(--dur-hover) var(--ease-soft); -webkit-tap-highlight-color: transparent; }
+.x-card:is(a, button) { cursor: pointer; }
+.x-card:is(button) { font: inherit; text-align: inherit; width: 100%; }
+@media (hover: hover) and (pointer: fine) {
+  .x-card:is(a, button, [tabindex]):hover { transform: translateY(-5px); border-color: var(--room-line-strong); }
+  :not([data-room=dark]) > .x-card:is(a, button, [tabindex]):hover { box-shadow: var(--shadow-2); }
+}
+.x-card:is(a, button, [tabindex]):active { transform: translateY(-2px) scale(.98); transition-duration: var(--dur-press); }
+.x-card:focus-visible { outline-offset: 4px; }
+.x-card[aria-selected='true'], .x-card[aria-current='page'], .x-card[data-selected] { border-color: var(--room-ink); box-shadow: 0 0 0 1px var(--room-ink); }
+.x-card[aria-busy='true'] { pointer-events: none; }
+.x-card[aria-disabled='true'] { opacity: .5; pointer-events: none; }
+.x-card.inv { background: var(--room-ink); color: var(--room-bg); border-color: var(--room-ink); } /* the one odd tile (Von Restorff): inverted, never coloured */
+
+/* ---------- tabs (kit <Tabs>) ---------- */
+.x-tablist { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: var(--r-ctl); background: var(--room-fill); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.x-tablist::-webkit-scrollbar { display: none; }
+.x-tab { position: relative; flex: none; height: 36px; padding: 0 16px; border: 0; border-radius: var(--r-ctl); background: none; color: var(--room-soft); font: 500 14px/1 var(--sans); cursor: pointer; white-space: nowrap; transition: color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); -webkit-tap-highlight-color: transparent; }
+.x-tab:hover { color: var(--room-ink); }
+.x-tab:active { transform: scale(.97); transition-duration: 0s; }
+.x-tab[aria-selected='true'] { color: var(--room-ink); }
+.x-tab:disabled, .x-tab[aria-disabled='true'] { color: var(--room-faint); opacity: .5; cursor: not-allowed; }
+.x-tab:focus-visible { outline-offset: -2px; }
+.x-tab-t { position: relative; z-index: 1; }
+.x-tab-pill { position: absolute; inset: 0; border-radius: inherit; background: var(--room-raised); box-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 0 0 1px rgba(0, 0, 0, .04); }
+[data-room=dark] .x-tab-pill { box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
+.x-tablist.lg .x-tab { height: 44px; padding: 0 20px; font-size: 15px; }
+@media (pointer: coarse) { .x-tab { min-height: 44px; } }
+[role=tabpanel]:focus-visible { outline-offset: 8px; border-radius: 16px; }
+
+/* ---------- sheets (kit <Sheet>) ---------- */
+.x-sheet2-wrap { position: fixed; inset: 0; z-index: var(--z-sheet); display: flex; justify-content: flex-end; }
+.x-sheet2-scrim { position: absolute; inset: 0; background: rgba(10, 10, 11, .42); }
+.x-sheet2 { position: relative; width: min(560px, 100%); height: 100%; display: flex; flex-direction: column; background: var(--room-bg); color: var(--room-ink); box-shadow: -40px 0 100px -40px rgba(0, 0, 0, .4); overscroll-behavior: contain; }
+.x-sheet2.wide { width: min(880px, 100%); }
+.x-sheet2-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 28px 28px 16px; }
+.x-sheet2-head h2 { margin: 0; font-size: clamp(24px, 2.4vw, 32px); font-weight: 560; letter-spacing: -.025em; line-height: 1.1; }
+.x-sheet2-kick { display: block; margin: 0 0 10px; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--room-faint); }
+.x-sheet2-x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--room-line); background: var(--room-raised); color: var(--room-ink); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
+.x-sheet2-x:hover { background: var(--room-fill-strong); }
+.x-sheet2-x:active { transform: scale(.94); }
+.x-sheet2-body { flex: 1; min-height: 0; overflow-y: auto; padding: 0 28px 40px; overscroll-behavior: contain; }
+@media (max-width: 700px) {
+  .x-sheet2-wrap { align-items: flex-end; }
+  .x-sheet2, .x-sheet2.wide { width: 100%; height: auto; max-height: 88svh; border-radius: 22px 22px 0 0; box-shadow: 0 -30px 80px -30px rgba(0, 0, 0, .4); padding-bottom: env(safe-area-inset-bottom); }
+  .x-sheet2-head { padding: 8px 20px 12px; }
+  .x-sheet2-body { padding: 0 20px 28px; }
+}
+
+/* ---------- tables ---------- */
+/* <div class="x-table-wrap"><table class="x-table">… mark the subject column's cells with data-subject */
+.x-table-wrap { position: relative; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+.x-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 15px; line-height: 1.4; color: var(--room-ink); font-feature-settings: 'tnum'; }
+.x-table caption { caption-side: bottom; padding-top: 14px; text-align: left; font-size: 12.5px; color: var(--room-faint); }
+.x-table th, .x-table td { padding: 16px 18px; text-align: left; border-bottom: 1px solid var(--room-line); white-space: nowrap; }
+.x-table thead th { position: sticky; top: 0; z-index: 2; background: var(--room-bg); font: 500 12.5px/1.2 var(--sans); color: var(--room-soft); }
+.x-table tbody th { position: sticky; left: 0; z-index: 1; background: var(--room-bg); font-weight: 500; }
+.x-table thead th:first-child { left: 0; z-index: 3; }
+.x-table td.num, .x-table th.num { text-align: right; }
+.x-table [data-subject] { background-color: var(--room-fill); font-weight: 600; }
+.x-table thead [data-subject] { color: var(--room-ink); }
+.x-table tbody tr { transition: background-color var(--dur-hover) var(--ease-soft); }
+@media (hover: hover) and (pointer: fine) { .x-table tbody tr:hover > * { background-color: var(--room-fill); } .x-table tbody tr:hover > [data-subject] { background-color: var(--room-fill-strong); } }
+.x-table tr[aria-selected='true'] > *, .x-table tr[data-selected] > * { background-color: var(--room-fill-strong); }
+.x-table .x-gap { color: var(--room-faint); } /* an honest gap: "—" where a model has no score */
+
+/* ---------- loading, empty, error ---------- */
+/* .x-skel: a fixed-height placeholder that holds the exact box the content will take (no shift when it arrives) */
+.x-skel { position: relative; display: block; overflow: hidden; border-radius: 10px; background: var(--room-fill-strong); }
+.x-skel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, var(--room-fill-strong), transparent); transform: translateX(-100%); animation: x-shimmer 1.4s var(--ease-soft) infinite; }
+.x-skel-line { height: 1em; margin: .35em 0; border-radius: 6px; }
+@keyframes x-shimmer { to { transform: translateX(100%); } }
+.x-state { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: clamp(28px, 4vw, 48px); border-radius: var(--r-card); border: 1px dashed var(--room-line-strong); color: var(--room-ink); }
+.x-state.center { align-items: center; text-align: center; }
+.x-state-t { margin: 0; font-size: 19px; font-weight: 560; letter-spacing: -.015em; }
+.x-state-d { margin: 0; max-width: 52ch; font-size: 15px; line-height: 1.5; color: var(--room-soft); }
+.x-state.error { border-style: solid; }
+.x-state .x-state-mark { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--room-fill-strong); color: var(--room-soft); }
+
+/* ---------- forms (Hanzo's own fields, not browser defaults) ---------- */
+.x-field { display: flex; flex-direction: column; gap: 8px; }
+.x-field > label, .x-field-l { font-size: 13px; font-weight: 500; color: var(--room-soft); }
+.x-input2 { height: 48px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--room-line-strong); background: var(--room-raised); color: var(--room-ink); font: 400 16px/1.2 var(--sans); transition: border-color var(--dur-hover), box-shadow var(--dur-hover); -webkit-appearance: none; appearance: none; }
+textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize: vertical; line-height: 1.5; }
+.x-input2::placeholder { color: var(--room-faint); }
+.x-input2:hover { border-color: var(--room-soft); }
+.x-input2:focus-visible { outline: none; border-color: var(--room-ink); box-shadow: 0 0 0 1px var(--room-ink); }
+.x-input2[aria-invalid='true'] { border-color: var(--room-ink); border-style: dashed; }
+.x-input2:disabled { background: var(--room-fill); color: var(--room-faint); cursor: not-allowed; }
+.x-field-msg { font-size: 13px; color: var(--room-soft); min-height: 1.3em; }
+
+/* ---------- utilities ---------- */
+.x-tnum { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
+.x-vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+/* long sections far below the fold skip layout and paint until they near the screen; give the expected height */
+.x-cv { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+.x-ratio { position: relative; aspect-ratio: var(--ratio, 16 / 9); overflow: hidden; }
+.x-ratio > img, .x-ratio > video, .x-ratio > picture > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.x-media { display: block; max-width: 100%; height: auto; background: var(--room-fill); }
+
+/* ---------- Hanzo's header: its ask never fades, and it steps back while the ask bar carries the ask ---------- */
+header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { transition: background-color var(--dur-hover) var(--ease-soft), color var(--dur-hover) var(--ease-soft), box-shadow var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
+header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); }
+header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
+html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+html[data-ask=on] header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--hover, rgba(0, 0, 0, .05)); }
+
+/* ---------- the ask bar (components/Ask.jsx): one solid ask, after the hero, on every page and width ---------- */
+.x-ask { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: var(--z-ask); display: flex; align-items: center; gap: 6px; padding: 6px 6px 6px 18px; border-radius: var(--r-ctl); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .06); translate: -50% 0; max-width: calc(100vw - 32px); }
+.x-ask[data-tone=dark] { --room-raised: #1c1c1e; --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-line: rgba(255, 255, 255, .14); --room-fill-strong: rgba(255, 255, 255, .12); --btn-solid-bg: #f5f5f7; --btn-solid-ink: #0a0a0b; --btn-solid-hover: #fff; --focus: #f5f5f7; box-shadow: 0 18px 50px -18px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .04); }
+.x-ask-name { border: 0; background: none; color: inherit; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 9px; margin-right: 10px; font: 560 14px/1 var(--sans); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30ch; }
+.x-ask-name svg { flex: none; transition: transform .35s var(--ease-out-expo); }
+.x-ask-name:hover svg { transform: translateY(-2px); }
+.x-ask-name span { overflow: hidden; text-overflow: ellipsis; }
+.x-ask-s { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 0; background: none; color: var(--room-soft); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
+.x-ask-s:hover { background: var(--room-fill-strong); color: var(--room-ink); }
+.x-ask-s:active { transform: scale(.92); }
+.x-ask-a { flex: none; display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px 0 20px; border-radius: var(--r-ctl); background: var(--btn-solid-bg); color: var(--btn-solid-ink); font: 560 14.5px/1 var(--sans); text-decoration: none; white-space: nowrap; transition: background-color var(--dur-hover) var(--ease-soft), transform var(--dur-press) var(--ease-out-expo); }
+.x-ask-a:hover { background: var(--btn-solid-hover); }
+.x-ask-a:active { transform: scale(.98); transition-duration: 0s; }
+.x-ask-a i { font-style: normal; display: inline-block; transition: transform .35s var(--ease-out-expo); }
+.x-ask-a:hover i { transform: translateX(3px); }
+.x-ask-note { margin-left: 4px; margin-right: 8px; font-size: 12px; color: var(--room-faint); white-space: nowrap; }
+@media (max-width: 900px) {
+  /* phones: a full-width bar under the thumb, 52 px targets */
+  .x-ask { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); translate: none; max-width: none; padding: 0; gap: 8px; border: 0; background: none; box-shadow: none; }
+  .x-ask-name, .x-ask-note { display: none; }
+  .x-ask-s { width: 52px; height: 52px; background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .35); }
+  .x-ask-a { flex: 1; justify-content: space-between; height: 52px; padding: 0 22px; font-size: 16px; box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .55); }
+}
+
+/* ---------- reduced motion: final states, no travel ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .01ms !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
+  .x-skel::after { display: none; }
+  .x-btn[aria-busy='true']::after { animation: x-turn 1.6s linear infinite !important; } /* a loading ring is information, not decoration */
+}
