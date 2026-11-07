@@ -25,7 +25,7 @@
 @keyframes xbg-wave { from { opacity: 0; transform: scale(.5); } }
 
 /* 4. page-curl: a cover over each card's picture peels away from its bottom-right corner, its fold catching light */
-.xbg-next .xbg-card-art::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(135deg, var(--room-bg) 0 58%, #e4e4e7 72%, #a1a1aa 100%); clip-path: polygon(0 0, 0 0, 0 0); }
+.xbg-next .xbg-card-art::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(135deg, var(--room-bg) 0 58%, #e4e4e7 72%, #a3a3a3 100%); clip-path: polygon(0 0, 0 0, 0 0); }
 .xbg-enter .xbg-next:not([data-in]) .xbg-card-art::after { clip-path: polygon(0 0, 220% 0, 0 220%); }
 .xbg-next[data-in='1'] .xbg-card-art::after { animation: xbg-curl 700ms cubic-bezier(.65, 0, .35, 1) both; }
 .xbg-next[data-in='1'] li + li .xbg-card-art::after { animation-delay: 160ms; }

@@ -168,7 +168,7 @@ function Panel({ go }) {
   const hold = () => { if (!held) { setHeld(true); setCab(at); } };
   const back = () => {
     setHeld(true); setStep(0);
-    requestAnimationFrame(() => jacks.current[at]?.focus());
+    setTimeout(() => jacks.current[at]?.focus(), 0); // focus after the re-render
   };
 
   // the arrival (desktop): the cable alone sweeps Sales → Dispatch → Support → Press → Sales after the h1 has landed,
