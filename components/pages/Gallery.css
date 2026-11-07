@@ -20,10 +20,11 @@
 .xga-plaque-d b { display: block; margin-bottom: 4px; font: 497 17px/1.25 var(--sans); color: #fafafa; }
 .xga-pause { position: absolute; right: 12px; top: 12px; z-index: 3; }
 
-.xga-frame { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 8px; text-align: left; border: 0; border-radius: 20px; background: #fff; color: #0a0a0a; cursor: pointer; box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 24px 44px -34px rgba(0, 0, 0, .4); transition: transform .3s var(--eio), box-shadow .3s var(--eio); }
+/* the lift and the press use the individual translate/scale properties, which compose with motion's inline transform */
+.xga-frame { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 8px; text-align: left; border: 0; border-radius: 20px; background: #fff; color: #0a0a0a; cursor: pointer; box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 24px 44px -34px rgba(0, 0, 0, .4); transition: translate .3s var(--eio), scale .15s var(--eo), box-shadow .3s var(--eio); }
 .xga-frame:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; }
-.xga-frame:active { transform: scale(.98); transition-duration: .09s; }
-.xga-frame.lit { transform: translateY(-4px); box-shadow: 0 1px 0 rgba(0, 0, 0, .06), 0 36px 60px -30px rgba(0, 0, 0, .5); }
+.xga-frame.lit { translate: 0 -4px; }
+.xga-frame:active { scale: .98; transition: translate .3s var(--eio), scale 90ms var(--eo), box-shadow .3s var(--eio); }
 .xga-plaque { grid-row: 1 / 4; }
 .f0 { grid-column: 5 / 9; grid-row: 1 / 5; }
 .f1 { grid-column: 9 / 13; grid-row: 1 / 3; }
@@ -205,12 +206,16 @@
 @media (max-width: 899px) {
   .xga-view-art .xga-r { zoom: 1.4; }
   .xga .xga-mini { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; }
-  .xga .xga-mini .xga-mini-f { transform: none; height: 120px; overflow: hidden; }
+  .xga .xga-mini .xga-mini-f { transform: none; height: 132px; overflow: hidden; }
   .xga .xga-mini-f .xga-r { zoom: .7; justify-content: flex-start; padding-top: 28px; }
 }
 /* the prompt box hugs its prompt; the room is short */
 .xga-term-t { min-height: 0; padding: 28px; font-size: clamp(16px, 1.5vw, 21px); }
-.xga-paste { padding: clamp(56px, 6vw, 88px) 0 !important; }
+/* the room is short (beats the shared .w2-sec padding), and the box is the object: the prompt at 21px */
+.xga .w2-sec.xga-paste { padding-block: clamp(56px, 6vw, 88px) !important; }
+.xga .xga-term-t { min-height: 200px; align-content: center; font-size: clamp(17px, 1.5vw, 21px); }
+.xga .xga-term { background: #f5f5f5; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
+.xga .xga-term-bar { background: transparent; }
 .xga-term .x-copy { min-height: 44px; padding-inline: 14px; }
 
 /* the close: the dark room, with the wall in miniature */
@@ -219,14 +224,15 @@
 .xga-band-r { display: flex; flex-direction: column; gap: 28px; padding-bottom: 12px; }
 .xga-band .xga-acts .x-arrow { color: #fafafa; }
 .xga-mini { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 44px; }
-.xga-mini-f { position: relative; height: 112px; border-radius: 12px; background: #171717; overflow: hidden; transition: transform .3s var(--eio); }
-.xga-mini-f .xga-r { zoom: .62; padding: 12px; }
+.xga-mini-f { position: relative; height: 136px; border-radius: 12px; background: #171717; overflow: hidden; transition: transform .3s var(--eio); }
+.xga-mini-f .xga-r { zoom: .62; padding: 26px 12px 12px; justify-content: flex-start; }
 .xga-mini-f:nth-child(odd) { transform: translateY(14px); }
 @media (hover: hover) { .xga-mini-f:hover { transform: translateY(-4px); } }
 
 @media (prefers-reduced-motion: reduce) {
   .xga-caret.on { animation: none; }
   .xga-r, .xga-r *, .xga-frame, .xga-move-x { transition: none !important; }
+  .xga-frame.lit { translate: none; }
 }
 @media (max-width: 899px) {
   .xga-wall-sec { padding-top: 96px; }

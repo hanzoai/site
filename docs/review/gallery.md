@@ -1,4 +1,7 @@
 # /gallery — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). Frames press (.98) and the lit one lifts 4px for real (individual scale/translate, measured), closing the viewer no longer moves the page, the Moves window rises into place by its own scroll position, the prompt room is short with the prompt box as its object, and the miniature wall's first tile clears its chrome and is whole on phone. taste/unique/parity OK (text 32/32, links 5/5); 0 console errors from the page (the one shared footer hydration warning shows on /agents too), no overflow/overlap at 1470x801 and 375x812.
+
 Verdict: 7/10
 First complaint: "It's tidy now and the wall is alive, but as I scroll it's still one block and then the next. The prompt bit is a big empty white room with one line in it, and when I click a tile it doesn't press. Nothing gives under my finger."
 

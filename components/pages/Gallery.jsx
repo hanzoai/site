@@ -9,7 +9,7 @@
    its link straight to its place.
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Cta } from '../kit';
 import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
@@ -154,7 +154,7 @@ function Wall() {
   const step = (f) => setOpen((v) => { const n = typeof f === 'function' ? f(v) : f; if (n !== from) setStepped(true); return n; });
   const close = () => { if (stepped) setLit(open); setOpen(-1); };
   const [origin, setOrigin] = useState('50% 50%');
-  const gone = () => { setFrom(-1); setStepped(false); document.getElementById('xga-f' + lit)?.focus(); }; // focus lands on the template you closed on
+  const gone = () => { setFrom(-1); setStepped(false); document.getElementById('xga-f' + lit)?.focus({ preventScroll: true }); }; // focus lands on the template you closed on, and the page stays put
   const openFrom = (i, el) => {
     const r = el.getBoundingClientRect(); // the viewer's box is centred in the screen: its origin is the frame's centre
     const w = Math.min(1100, innerWidth - 48), h = Math.min(innerHeight - 48, 640);
@@ -273,6 +273,11 @@ const MOVES = [
    (until you pick one), and every move keeps its link straight to its place. */
 function Moves() {
   const ref = useRef(null);
+  const obj = useRef(null);
+  // the window rises into place as it comes up the screen (driven by its own position, so it is seen on both sizes)
+  const { scrollYProgress } = useScroll({ target: obj, offset: ['start end', 'start 35%'] });
+  const oy = useTransform(scrollYProgress, [0, 1], [80, 0]);
+  const os = useTransform(scrollYProgress, [0, 1], [0.94, 1]);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
   const paused = usePaused();
@@ -300,8 +305,7 @@ function Moves() {
             </li>
           ))}
         </ol>
-        <Settle from={0.94} lift={40}>
-        <div className="xga-moves-obj" aria-hidden="true">
+        <motion.div ref={obj} className="xga-moves-obj" aria-hidden="true" style={calm ? undefined : { y: oy, scale: os }}>
           <span className="xga-moves-bar"><i /><i /><i /><b className="x-mono">hanzo-apps/gallery</b></span>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={at} className={'xga-moves-st' + (at === 0 ? ' dk' : '')} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
@@ -309,8 +313,7 @@ function Moves() {
             </motion.div>
           </AnimatePresence>
           <span className="xga-moves-dots">{MOVES.map((m, i) => <i key={i} className={at === i ? 'on' : ''} />)}</span>
-        </div>
-        </Settle>
+        </motion.div>
       </div>
     </section>
   );
