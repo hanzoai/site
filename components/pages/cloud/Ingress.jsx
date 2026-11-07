@@ -8,7 +8,10 @@
    clip-path scene changes (WipeScenes), each scene in its own tint.
    Beyond: "Chain your own pipeline" - press Hanzo's middleware to add it, drag (or use the arrows) to change the order,
    and a request walks the chain top to bottom each time it changes.
-   Accent: blue, from the port light. Every word and link is Hanzo's; hostnames are examples. */
+   Greys only (Hanzo's deck). Every word and link is Hanzo's; hostnames are examples.
+   Persona: a platform engineer choosing what sits on ports 80 and 443 of a Kubernetes cluster.
+   Goal: see routes, certificates and middleware handled from what they already wrote, without restarts.
+   CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useState } from 'react';
 import { motion, AnimatePresence, Reorder } from 'motion/react';
 import { A } from '../../kit';
@@ -38,6 +41,7 @@ function Board() {
   const cert = phase >= 2 || calm;
   return (
     <div className="ig-board" ref={ref} aria-hidden="true">
+      <p className="ig-board-t"><i />hanzoai/ingress</p>
       <div className="ig-col">
         <p className="ig-k">host · path</p>
         {ROUTES.map(([h, p], i) => (
@@ -117,8 +121,8 @@ function Pipeline() {
     <section className="ig-pipe v2-dark" data-room="dark">
       <div className="v2-wrap v2-grid">
         <div className="ig-pipe-l">
-          <p className="v2-kick acc">Middleware you compose by annotation</p>
           <h2 className="v2-display s">Chain your own pipeline</h2>
+          <p className="v2-kick acc ig-pipe-cap">Middleware you compose by annotation</p>
           <p className="v2-lede">Name one in an annotation, or chain several into a named pipeline and name that.</p>
           <div className="ig-pipe-pick" role="group" aria-label="Middleware">
             {MW.map((m) => <button key={m} type="button" aria-pressed={chain.includes(m)} onClick={() => toggle(m)}>{m}</button>)}
@@ -152,16 +156,15 @@ export default function Ingress() {
       <section className="ig-hero">
         <div className="v2-wrap v2-grid ig-hero-t">
           <div className="ig-hero-l">
-            <p className="v2-kick acc">hanzoai/ingress</p>
             <Lines as="h1" className="v2-display ig-h1" lines={['Hanzo', 'Ingress']} data-morph-target="" />
           </div>
           <div className="ig-ports" aria-hidden="true"><span>:80</span><span>:443</span></div>
           <div className="ig-hero-b">
-            <p className="v2-lede ig-sub">The entry point of a Kubernetes cluster</p>
-            <A to="https://github.com/hanzoai" className="v2-btn solid">View on GitHub</A>
+            <p className="v2-lede ig-sub v2-in" style={{ animationDelay: '.3s' }}>The entry point of a Kubernetes cluster</p>
+            <A to="https://github.com/hanzoai" className="v2-btn solid v2-in" style={{ animationDelay: '.42s' }} data-thumb="View on GitHub" data-cta="ingress-view-on-github">View on GitHub</A>
           </div>
         </div>
-        <Lift className="v2-wrap ig-lift" from={1.12} y={30} origin="50% 0%" offset={['start end', 'start 0.18']}>
+        <Lift className="v2-wrap ig-lift" from={1.05} y={20} origin="50% 0%" offset={['start end', 'start 0.4']}>
           <Board />
         </Lift>
       </section>
@@ -188,11 +191,11 @@ export default function Ingress() {
         )}
       />
 
-      <Pipeline />
-
       <ShipPrompt name="Ingress" prompt="Read https://hanzo.ai/skill.md and use Hanzo Ingress in my project. Start with: hanzo ingress routes list" flip />
 
-      <GetIt name="Ingress" tag="K8s ingress + static plugin" seed="ingress" data={[80, 443, 6]} lead="Get started with Hanzo Ingress" />
+      <Pipeline />
+
+      <GetIt name="Ingress" tag="K8s ingress + static plugin" seed="ingress" data={[80, 443, 6]} lead="Get started with Hanzo Ingress" ask={['View on GitHub', 'https://github.com/hanzoai', 'ingress-view-on-github']} />
     </main>
   );
 }
