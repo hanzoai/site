@@ -21,8 +21,8 @@
 @media (max-width: 900px) {
   .w2-pin { height: auto; padding: 24px 0 64px; }
   .w2-pin-stick { position: relative; height: auto; display: block; overflow: visible; }
-  .w2-pin-grid { display: flex; flex-direction: column; gap: 0; }
-  .w2-pin-visual { position: sticky; top: 60px; z-index: 2; order: -1; padding: 8px 0 16px; background: var(--bg, #fff); }
+  .w2-pin-grid { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  .w2-pin-visual { position: sticky; top: 60px; z-index: 2; order: -1; padding: 8px 0 16px; background: #fff; }
   .w2-pin.w2-dark .w2-pin-visual { background: #050506; }
   .w2-pin-words { display: block; }
   .w2-pin-rail { display: none; }
