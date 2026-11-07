@@ -98,9 +98,11 @@ function Card({ r, onClose }) {
       removeEventListener('keydown', esc);
       html.classList.remove('x-lock');
       window.__lenis && window.__lenis.start();
-      back && back.focus && back.focus({ preventScroll: true });
+      // focus goes back to the row that opened the card (found by its name: the row may have re-rendered meanwhile)
+      const row = document.querySelector('.xos-open[data-row="' + CSS.escape(r.name) + '"]');
+      (row || back) && (row || back).focus && (row || back).focus({ preventScroll: true });
     };
-  }, [onClose]);
+  }, [onClose, r.name]);
   const url = src === 'gh' ? r.href : r.forge;
   const cmd = url ? `git clone ${url}.git` : '';
   return (
@@ -408,7 +410,7 @@ export default function OrgPage({ doc }) {
                     <motion.div layoutId={'xos-' + r.name} className="xos-row" transition={MORPH}>
                       <span className="xos-no x-mono" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
                       <div className="xos-row-m">
-                        <button type="button" className="xos-open" onClick={() => setOpen(r.name)} aria-haspopup="dialog">
+                        <button type="button" className="xos-open" data-row={r.name} onClick={() => setOpen(r.name)} aria-haspopup="dialog">
                           <span className="xos-name"><Name name={r.name} /></span>
                         </button>
                         {r.desc && <p className="xos-desc">{r.desc}</p>}
@@ -457,7 +459,9 @@ export default function OrgPage({ doc }) {
       {doc.extra.map((e, i) => <section className="v2f-sec" key={i}><div className="v2f-wrap"><Loose nodes={e.nodes} /></div></section>)}
 
       {near.length > 0 && (
-        <section className="xos-near" aria-label={every ? every.label : doc.name}>
+        // the next organizations go straight to their page (the site's page-turn stage would hold a blank page with a
+        // card title that cannot land on a differently sized headline)
+        <section className="xos-near" aria-label={every ? every.label : doc.name} data-no-morph>
           <div className="v2f-wrap">
             {every && <p className="xos-near-h"><A to={every.href} className="x-arrow"><span>{every.label}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A></p>}
             <FamNext items={near} label={every ? every.label : doc.name} />

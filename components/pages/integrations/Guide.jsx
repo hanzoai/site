@@ -136,7 +136,7 @@ export default function Guide({ doc, emojis }) {
       </section>
 
       {doc.more && (
-        <section className="v2f-sec tight xig-more" aria-labelledby="xig-more-h">
+        <section className="v2f-sec tight xig-more" aria-labelledby="xig-more-h" data-no-morph>
           <div className="v2f-wrap">
             <FamLines as="h2" id="xig-more-h" play="view" text={doc.more.title} className="v2f-head xig-more-h" />
             <FamNext items={near.slice(0, 6)} label={doc.more.title} className="xig-next" />
