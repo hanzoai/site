@@ -288,8 +288,7 @@ Source: `original/brand-deck.html` and `hanzo.css`, from `@hanzo/design` (commit
 
 **Type.** Zen for everything; Zen Mono for labels, code and figures; never a third face.
 - Weights: Air 220 (largest figures), Regular 400 (body), Book 497 (every heading), Medium 606 (UI emphasis).
-- Scale in px (add no size): 12, 13, 16, 17, 21, 26, 32, 40, 52, 64, 84, 112.
-- H1 `clamp(52px, 7vw, 84px)`, line height 1.02, tracking -0.035em. Section heading `clamp(36px, 5.3vw, 64px)`, 1.02, -0.035em, two-tone (first clause ink, rest `#737373` or `#525252`; the words do not change). Closing line `clamp(40px, 6.6vw, 84px)`. Statement `clamp(22px, 2.6vw, 32px)`, one per page (two at most). Lead `clamp(17px, 1.5vw, 21px)`, 1.45. Body 17px, 1.55. Hero figure `clamp(72px, 13vw, 112px)`, Air, 0.9, tabular, -0.03em. Row figure `clamp(28px, 3vw, 40px)`, Air.
+- **Scale has rhythm** (James, 7 Nov): some things big, some medium, some small. Some start small and grow as you scroll or act; some start big and shrink as things happen. Never everything big at once: one big thing per screen, the rest medium and small, with room around it. Resting sizes follow live hanzo.ai (h1 52px, section headings 26px, figures 64px); a thing grows past that only while it is the moment, then settles back. The home hero is live hanzo.ai's own hero, kept exactly. Sizes in px: 12, 13, 14, 16, 17, 21, 26, 32, 44, 52, 64, 84, 112. H3 17px; lede 20–21px; body 14–16px; captions 12–13px; model card titles 22px, Enso 44px (`SPEC.md`).
 - Eyebrows: 11 to 12px Zen Mono capitals, Medium, tracking 0.14em, ink or grey. Fine on captions, tags, table heads and figure labels; never directly above an h1 or h2.
 - At most 3 sizes among headline, lede and body in one viewport.
 
@@ -306,12 +305,12 @@ Source: `original/brand-deck.html` and `hanzo.css`, from `@hanzo/design` (commit
 
 ### 3.2 James's taste rules (`JAMES.md`)
 
-1. **Display type reads like a logo:** big and tight, h1 line height 1.05 or less at 72px and up.
-2. **One live object on a quiet stage** in every section: a real product UI, a film, a canvas, an SVG, a giant numeral, a logo wall. An icon alone fails.
+1. **Scale has rhythm** (James, 7 Nov): some things big, some medium, some small. Some start small and grow as you scroll or act; some start big and shrink as things happen. Never everything big at once: one big thing per screen, the rest medium and small, with room around it. Resting sizes follow live hanzo.ai (h1 52px, section headings 26px, figures 64px); a thing grows past that only while it is the moment, then settles back. The home hero is live hanzo.ai's own hero, kept exactly.
+2. **One live object on a quiet stage** in every section: a real product UI, a film, a canvas, an SVG, a figure, a logo wall. An icon alone fails.
 3. **Authored motion, not fade-ups, and not only scroll** (part 9): line-mask cut-ins, scrubbed strips, pinned stages where one panel changes, cards that open into their page, one 3D or WebGL moment where it earns its place.
 4. **One thing in, one thing out.** Detail lives in things you open. Not a document.
 5. **Every tap answers:** hover and press change more than opacity, with no layout jump, and the hover tells you something (a number, a preview).
-6. **One solid ask** in Hanzo's words, in the header and the sticky bar after the hero, at every width.
+6. **One solid ask** in Hanzo's words, in the sticky header at every width. No floating pill bar or panel over content on desktop; on phones a slim bottom bar only where it never covers content or the page's own ask.
 7. **Neighbouring pages differ** in hero medium, layout and signature.
 8. **References show up,** with the measured values in `docs/refs/<site>/`: synchronized.studio, apple.com, osply.co, hamol.studio, grubogrubo.com, chatgpt.com/business/enterprise, anthropic.com launch, motion.dev.
 
@@ -322,7 +321,9 @@ Source: `original/brand-deck.html` and `hanzo.css`, from `@hanzo/design` (commit
 - A framed or boxed static hero, blacked-out or filtered photos, stock imagery, abstract-gradient or icon-grid heroes.
 - A visible font swap, layout shift, or overlap at 1470×801 or 375×812. Browser-default controls. Unverifiable claims.
 - Purple-to-blue gradients, gradient text, emojis in headings, Inter, a coloured stripe down a card, low-contrast dark mode, three icon boxes in a row, Lucide everywhere, untouched shadcn.
-- A badge, pill or eyebrow above a headline.
+- A badge, pill or eyebrow above a headline (exception: the home hero is live hanzo.ai's own hero, kept exactly).
+- Everything big at once: fonts and numbers in your face with no small or medium around them.
+- Anything floating over content: a pill bar, a cursor-following label ("Open"), a panel covering text.
 - A cursor beam or glow, buttons that fade on hover, serif italic accent words, grain over a gradient.
 - Any rewrite of Hanzo's copy. Any live AI call from the page (demos are scripted from real Hanzo content).
 

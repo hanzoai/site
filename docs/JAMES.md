@@ -20,8 +20,8 @@ Sources:
 - "Go deeper, not bigger." Every one of the 18 parts of a website, and every element inside them, must be considered on every page (see the component master plan).
 
 ## What he reliably likes, applied to Hanzo
-1. **Display type that reads like a logo.** Big and tight, with h1 line height 1.05 or less at 72px and up.
-2. **One live object on a quiet stage.** Every section has something to look at: a real product UI, a film, a canvas, an SVG, a giant numeral or a logo wall. An icon alone fails.
+1. **Scale has rhythm** (James, 7 Nov): some things big, some medium, some small. Some start small and grow as you scroll or act; some start big and shrink as things happen. Never everything big at once: one big thing per screen, the rest medium and small, with room around it. Resting sizes follow live hanzo.ai (h1 52px, section headings 26px, figures 64px); a thing grows past that only while it is the moment, then settles back. The home hero is live hanzo.ai's own hero, kept exactly.
+2. **One live object on a quiet stage.** Every section has something to look at: a real product UI, a film, a canvas, an SVG, a figure or a logo wall. An icon alone fails.
 3. **Authored motion,** not fade-ups:
    - Headlines cut into their line.
    - Scrubbed strips.
@@ -31,7 +31,7 @@ Sources:
    - Cards that open into their page (synchronized.studio).
    - One 3D or WebGL moment where it earns its place.
 4. **Every tap answers.** Hover and press change something other than opacity, with no layout jump. Press is translateY(1px) or a scale of 0.98, and the hover detail tells you something (a number, a preview).
-5. **One solid ask in Hanzo's words.** It sits in the header and in a sticky bar after the hero at every width. Never 3 or more equal buttons.
+5. **One solid ask in Hanzo's words,** in the sticky header. Nothing floats over content: no pill bar on desktop, no cursor-following label. Never 3 or more equal buttons.
 6. **Many real visuals at once.** A block of 4 or more real Hanzo images or videos on screen together where the page has them (model media, product UI).
 7. **Colour = Hanzo's live palette, nothing else.** (James, 7 Nov: "Hanzo's website is their brand deck… that's all the colours they use.") The values are in `docs/original/brand-deck.html`, read from Hanzo's own `@hanzo/design` tokens: monochrome, true black, white type, colour only as state, never as decoration. Use the deck's neutral ramp only, enforced by `scripts/taste.py`. Eyebrow labels in 11-12px Zen Mono capitals are Hanzo's own system, so they are allowed in ink or grey only. Earlier wording here: Hanzo's logo is black and white, so the UI has 0 brand hues: greys, silvers, blacks and whites (his "brand deck"). Colour arrives only through Hanzo's own media and model imagery. This replaced the earlier "one accent per page" rule.
 8. **Variation.** Neighbouring pages differ in hero medium, layout and signature move.
@@ -57,6 +57,7 @@ Sources:
 11. **Hanzo's black model cards are copied exactly.** The size, grid, type, pills, video and pointer-tilt are in `docs/refs/hanzo-model-cards/SPEC.md`, measured from live hanzo.ai.
 
 ## What he reliably rejects (a page with any of these fails)
+- **In your face:** everything big at once, no small or medium; a floating bar or cursor label covering text.
 - **Clutter:** walls of text, explaining sentences under every tile, 3 equal boxes in a row, overload.
 - **A dead page:** nothing moves without input, or only fade-ups.
 - **Repeated colours or one tone across pages.**
@@ -101,7 +102,7 @@ Walk the page as him, moving, at 1470×801 and at 375×812, at full frame rate. 
 1. Does the first screen sell in 5 seconds, and does something move within 1 second without input?
 2. As you scroll, does one thing come in as one goes out, or is it a document?
 3. Does every section hold a real visual object?
-4. Is there one ask in Hanzo's words, and is it sticky after the hero?
+4. Is there one ask in Hanzo's words, in the sticky header, with nothing floating over content? Does scale have rhythm (big, medium, small; growing and shrinking), never everything big at once?
 5. Does every hover and press answer, with no jumps?
 6. Do overlaps, a font swap or layout shift appear anywhere, on desktop or phone?
 7. Which reference does it feel like, and is that reference's motion actually there?
