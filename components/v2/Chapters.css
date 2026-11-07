@@ -7,7 +7,7 @@
 .v2-ch-vis { position: relative; border-radius: 28px; overflow: hidden; background: #fff; cursor: pointer; transform-origin: 50% 100%; }
 .v2-ch-index { display: none; }
 
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .v2-ch { height: calc(100svh + var(--v2-n) * var(--v2-step) * 100svh); }
   .v2-ch-in { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; padding-top: 60px; box-sizing: border-box; }
   .v2-ch-grid { width: 100%; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: 1fr auto; column-gap: var(--v2-gut); height: min(76svh, 700px); position: relative; }
@@ -28,10 +28,13 @@
   .v2-ch-index button[aria-current]::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 50%; background: var(--v2-accent); vertical-align: 2px; }
 }
 
-@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+@media (max-width: 899px), (prefers-reduced-motion: reduce), (scripting: none) {
   .v2-ch-item { display: flex; flex-direction: column; gap: 28px; padding-bottom: 96px; }
   .v2-ch-item:last-child { padding-bottom: 0; }
   .v2-ch-vis { order: -1; border: 1px solid rgba(0, 0, 0, .08); box-shadow: var(--v2-shadow); }
   .v2-ch-count { margin-bottom: 14px; }
   .v2-ch-body { margin-top: 18px; }
 }
+
+/* JS off: every chapter shown, no wipe left half-done */
+@media (scripting: none) { .v2-ch-vis { clip-path: none !important; transform: none !important; } .v2-ch-text { opacity: 1 !important; transform: none !important; } }
