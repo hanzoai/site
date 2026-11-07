@@ -135,3 +135,4 @@
   .xft-ui-node { padding: 8px 10px; font-size: 13px; }
   .xft-ch-list span { font-size: 15px; }
 }
+@media (max-width: 900px) { .xft-screen-top, .xft-cl-h, .xft-cl-h span, .xft-kick, .xft-cap { font-size: 14px; } }

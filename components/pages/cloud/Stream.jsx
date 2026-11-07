@@ -170,7 +170,7 @@ function OneLine() {
 
 export default function Stream() {
   return (
-    <main className="l2-page st2" style={{ '--ac': '#12b5a6' }}>
+    <main className="l2-page st2" style={{ '--ac': '#a3a3a3' }}>
       <StageHero look="frame" dark kick="Kafka Wire Protocol" title="Hanzo Stream" sub="A Kafka port in front of Hanzo PubSub" acts={[['GitHub', GHS]]}>
         <Tape />
       </StageHero>
@@ -180,7 +180,7 @@ export default function Stream() {
         name="Stream"
         head="Point the bootstrap server at it"
         lede="The clients stay as they are. The cluster underneath them goes away."
-        acts={[['View on GitHub', GHS]]}
+        ask={['View on GitHub', GHS]}
         prompt="Read https://hanzo.ai/skill.md and use Hanzo Stream in my project."
         tag="Event stream"
         repo={['hanzoai/stream', GHS]}

@@ -2,7 +2,7 @@
 /* Flow (v2, archetype A "Launch"): the canvas is the hero, and a run travels it.
    Persona: a developer building an AI workflow (retrieval, a model, a parser) who wants to ship it as an API
    Goal: see a flow run node by node, find out how it is published and run, then open Flow
-   CTA: Open Flow -> https://flow.hanzo.ai (hero, sticky AskBar on desktop, the site's ask bar on phones, close; data-thumb, data-cta)
+   CTA: Open Flow -> https://flow.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: the canvas, running. Hanzo's own components (a document loader, a text splitter, a vector store, a
    retriever, a model, an output parser) are wired on a full-bleed dotted canvas with "Hanzo Flow" sitting among them;
    a run leaves each node as a pulse that travels its edge to the next, the node runs, and what it returned appears on it.
@@ -24,7 +24,6 @@ import { Paste, useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
-import AskBar from '../../v2/AskBar';
 import './Flow.css';
 
 const APP = 'https://flow.hanzo.ai';
@@ -391,30 +390,15 @@ function End() {
   );
 }
 
-/* The sticky ask after the hero: v2 AskBar on desktops (the lead's bar), and data-dock there tells the site's own ask bar
-   (components/Ask.jsx) to stand aside, so a desktop never shows two bars and phones keep the site's thumb bar. */
-function Sticky(props) {
-  const [desk, setDesk] = useState(false);
-  useEffect(() => {
-    const mq = matchMedia('(min-width: 901px)');
-    const f = () => setDesk(mq.matches);
-    f();
-    mq.addEventListener('change', f);
-    return () => mq.removeEventListener('change', f);
-  }, []);
-  return <div data-dock={desk ? '' : undefined} style={{ display: 'contents' }}><AskBar {...props} /></div>;
-}
-
 export default function Flow() {
   return (
-    <main className="bz fl">
+    <main className="bz fl" data-ask-name="Hanzo Flow">
       <Hero />
       <Chapters />
       <Playground />
       <Facts />
       <GetFlow />
       <End />
-      <Sticky title="Hanzo Flow" label="Open Flow" to={APP} />
     </main>
   );
 }

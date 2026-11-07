@@ -2,7 +2,7 @@
 /* Cap Table (v2, archetype A "Launch" told like a model launch; greys and ink only, JAMES.md 7).
    Persona: a founder or finance lead about to raise, who needs to know what the next round does to the table (metric signup_click)
    Goal: see the founders' fully diluted share move with the price, then start with Hanzo
-   CTA: Try Hanzo -> /login (hero, sticky AskBar, phone thumb bar, close; data-thumb, data-cta)
+   CTA: Try Hanzo -> /login (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: a round you run before you agree to it. The number is the hero: the founders' fully diluted share,
    gigantic and live, beside the example company's table it comes from. The pre-money price drifts by itself (pause it
    on its own button, or drag it), the SAFE converts at its cap or its discount, the new investor's shares appear, the
@@ -22,7 +22,6 @@ import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
-import AskBar from '../../v2/AskBar';
 import { SPRING } from '../../../lib/motion';
 import './Captable.css';
 
@@ -378,7 +377,7 @@ export default function Captable() {
   const [pre, setPre] = useState(12_000_000);
   const [mine, setMine] = useState(false);
   return (
-    <main className="bz ct">
+    <main className="bz ct" data-ask-name="Cap Table">
       <Hero pre={pre} setPre={setPre} mine={mine} setMine={setMine} />
       <BizChapters label="A round, run first" className="ct-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Stage at={at} pre={pre} />}>
         <header className="bz-wrap bz-grid ct-ch-head">
@@ -391,7 +390,6 @@ export default function Captable() {
       <Plans />
       <Ways />
       <End />
-      <AskBar title="Cap Table" label="Try Hanzo" to="/login" />
     </main>
   );
 }

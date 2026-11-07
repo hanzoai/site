@@ -2,7 +2,7 @@
 /* Console (v2, archetype A "Launch"): one admin for everything you run, shown as the shell itself.
    Persona: a developer or operator running Hanzo services for an organization (keys, usage, apps, models)
    Goal: watch the console's modules open one by one, find anything by typing, then open the console
-   CTA: Open Console -> https://platform.hanzo.ai (hero, sticky AskBar on desktop, the site's ask bar on phones, close; data-thumb, data-cta)
+   CTA: Open Console -> https://platform.hanzo.ai (hero, the site's sticky ask bar at every width, close; data-thumb, data-cta)
    Signature: the shell, driving itself. The console window fills the dark hero: its command palette types a module's
    name, the module opens in the shell (projects, keys, usage, apps, models, organization) and plays its own moment (a
    build finishes, a key is revoked, usage records land, an app gets an identity and a store, your own provider
@@ -26,7 +26,6 @@ import { Paste, Code, useLive } from '../cloud/Frame';
 import BizStage from '../../v2/BizStage';
 import BizChapters from '../../v2/BizChapters';
 import BizOpen from '../../v2/BizOpen';
-import AskBar from '../../v2/AskBar';
 import './ConsolePage.css';
 
 const APP = 'https://platform.hanzo.ai';
@@ -543,30 +542,15 @@ function End() {
   );
 }
 
-/* The sticky ask after the hero: v2 AskBar on desktops (the lead's bar), and data-dock there tells the site's own ask bar
-   (components/Ask.jsx) to stand aside, so a desktop never shows two bars and phones keep the site's thumb bar. */
-function Sticky(props) {
-  const [desk, setDesk] = useState(false);
-  useEffect(() => {
-    const mq = matchMedia('(min-width: 901px)');
-    const f = () => setDesk(mq.matches);
-    f();
-    mq.addEventListener('change', f);
-    return () => mq.removeEventListener('change', f);
-  }, []);
-  return <div data-dock={desk ? '' : undefined} style={{ display: 'contents' }}><AskBar {...props} /></div>;
-}
-
 export default function ConsolePage() {
   return (
-    <main className="bz cs">
+    <main className="bz cs" data-ask-name="Hanzo Console">
       <Hero />
       <Chapters />
       <Find />
       <Client />
       <GetConsole />
       <End />
-      <Sticky title="Hanzo Console" label="Open Console" to={APP} />
     </main>
   );
 }

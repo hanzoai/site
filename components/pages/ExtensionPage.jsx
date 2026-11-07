@@ -400,7 +400,7 @@ function Get() {
 export default function ExtensionPage() {
   const { build, win } = useBrowser();
   return (
-    <main className="av xe" style={{ '--ac': '#00a6a6' }}>
+    <main className="av xe" style={{ '--ac': '#737373' }}>
       <Hero mineWin={win} />
       <How />
       <Scenes label="More of the extension" items={CHAPTERS} tone={['#ffffff', '#f3f9f9', '#f5f5f7']} />

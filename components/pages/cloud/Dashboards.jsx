@@ -317,7 +317,7 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden=
 
 export default function Dashboards() {
   return (
-    <main className="kn db" style={{ '--ac': '#ffcc00', '--ac-ink': '#0a0a0a' }}>
+    <main className="kn db" style={{ '--ac': '#d4d4d4', '--ac-ink': '#0a0a0a' }}>
       <KeynoteStage
         look="split"
         size="md"

@@ -48,6 +48,8 @@
 .bz-ch-i { min-height: 78svh; display: flex; flex-direction: column; justify-content: center; gap: 22px; transition: opacity .6s var(--ease), transform .8s var(--ease); }
 .bz-ch.live .bz-ch-i:not(.on) { opacity: .16; transform: translateY(18px); } /* dimmed only once JS runs, so JS-off reads every chapter */
 .bz-ch-i .bz-headline { font-size: clamp(32px, 3.2vw, 48px); max-width: 14ch; }
+/* JAMES.md: nothing above a headline, so the chapter number reads under it (DOM order stays number first) */
+.bz-ch-i > .bz-headline { order: 0; } .bz-ch-i > .bz-kick { order: 1; } .bz-ch-i > * { order: 2; }
 .bz-ch-meta { display: flex; align-items: center; gap: 16px; margin-top: 28px; font: 500 13px/1 var(--mono); letter-spacing: .08em; color: var(--faint); }
 .bz-ch-bar { flex: 1; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
 .bz-ch-bar i { display: block; height: 100%; background: var(--acc); transform-origin: 0 50%; }
@@ -60,7 +62,7 @@
 .bz-sheet-btn svg { color: var(--acc); transition: transform .4s var(--ease); }
 .bz-sheet-btn:hover svg { transform: rotate(90deg); }
 .bz-sheet-back { position: fixed; inset: 0; z-index: 940; background: rgba(10, 10, 10, .32); opacity: 0; visibility: hidden; transition: opacity .35s var(--ease), visibility 0s .35s; }
-.bz-sheet { position: fixed; z-index: 950; top: 12px; right: 12px; bottom: 12px; width: min(620px, calc(100vw - 24px)); background: #fff; border-radius: 28px; box-shadow: 0 40px 120px -30px rgba(0, 0, 0, .45); display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); visibility: hidden; transition: transform .5s var(--ease), visibility 0s .5s; outline: none; }
+.bz-sheet { color: var(--ink); text-align: left; position: fixed; z-index: 950; top: 12px; right: 12px; bottom: 12px; width: min(620px, calc(100vw - 24px)); background: #fff; border-radius: 28px; box-shadow: 0 40px 120px -30px rgba(0, 0, 0, .45); display: flex; flex-direction: column; transform: translateX(calc(100% + 24px)); visibility: hidden; transition: transform .5s var(--ease), visibility 0s .5s; outline: none; }
 .bz-sheet-wrap[data-open='true'] .bz-sheet-back { opacity: 1; visibility: visible; transition: opacity .35s var(--ease); }
 .bz-sheet-wrap[data-open='true'] .bz-sheet { transform: none; visibility: visible; transition: transform .55s var(--ease); }
 .bz-sheet-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 22px 18px 32px; border-bottom: 1px solid var(--line); }

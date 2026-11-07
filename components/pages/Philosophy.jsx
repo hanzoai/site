@@ -15,7 +15,7 @@
    alpha steps of black and white (JAMES.md 7).
    Motion: signature, the changing line (the hexagram's lines flipping: hero, laws, the premise's one line, the close).
    Supporting: line-masked headings, the scroll word reveal of the belief statement, the pattern sheet that opens.
-   Idle: the hero walk, the premise line, the laws' last line. Pointer: press a line, tiles lift, the method hand
+   Idle: the hero walk, the premise line, the laws' last line, the method ring stepping round until you point at a step. Pointer: press a line, tiles lift, the method hand
    follows, stack rows fill. State: the view pill glides (layoutId), the sheet rises.
    Signature: the five laws pin as chapters while one hexagram builds itself beside them, a line per law, and its last line never stops changing.
    Beyond: "Change a line". Press any line of the hero hexagram and it flips, yin to yang, becoming the hexagram that change makes — its number, name and trigrams read from Hanzo's own sixty-four.
@@ -409,8 +409,18 @@ const METHOD = [['Observe', 'Identify the actual condition of the system.'], ['S
 
 function Method() {
   const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false); // once the visitor points at a step, the cycle is theirs
+  const calm = useReducedMotion();
+  const ref = useRef(null);
+  const live = useInView(ref, { amount: 0.4 });
+  useEffect(() => {
+    if (mine || calm || !live) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % 8), 2600);
+    return () => clearTimeout(t);
+  }, [at, mine, calm, live]);
+  const take = (i) => { setMine(true); setAt(i); };
   return (
-    <section className="pf-sec xph-method">
+    <section className="pf-sec xph-method" ref={ref}>
       <div className="pf-wrap pf-grid xph-method-g">
         <div className="xph-method-l">
           <h2 className="pf-head">How we build</h2>
@@ -428,7 +438,7 @@ function Method() {
         <ol className="xph-steps">
           {METHOD.map(([t, d], i) => (
             <li key={t} data-on={i === at}>
-              <button type="button" aria-pressed={i === at} onClick={() => setAt(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setAt(i)} onFocus={() => setAt(i)}>
+              <button type="button" aria-pressed={i === at} onClick={() => take(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && take(i)} onFocus={() => take(i)}>
                 <span className="pf-mono">{pad(i + 1)}</span>
                 <h3>{t}</h3>
                 <p>{d}</p>

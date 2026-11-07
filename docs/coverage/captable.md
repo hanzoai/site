@@ -2,14 +2,14 @@
 
 Page file: `components/pages/apps/Captable.jsx` · gallery: `docs/gallery/captable/`
 
-1. **Strategy and conversion.** One ask, Hanzo's "Try Hanzo" (/login): solid in the hero, in the sticky AskBar, on the phone thumb bar and as the one solid button in the close. "Documentation", the plan CTAs, "Contact Sales", "Deploy to Cloud" and the GitHub links are text links.
+1. **Strategy and conversion.** One ask, Hanzo's "Try Hanzo" (/login): solid in the hero, in the sticky site ask bar, on the phone thumb bar and as the one solid button in the close. "Documentation", the plan CTAs, "Contact Sales", "Deploy to Cloud" and the GitHub links are text links.
 2. **Information architecture and navigation.** Hanzo's header and footer are unchanged. Order: the number (what the table says), six instruments as chapters, the term sheet, the waterfall, plans, where it comes from and the ways in, the close.
 3. **First impression and page narrative.** Like a model launch: the founders' fully diluted share is the hero figure, gigantic and live, beside the example company's table it is computed from. At 1470×801 the figure, the bar and the whole table show; at 375×812 the table starts under the ask inside the first 660px.
-4. **Conversion system.** `data-thumb="Try Hanzo"` and `data-cta="primary"` on the hero ask; `data-cta="primary"` on the close; `AskBar title="Cap Table"` as the last child of main. One solid button per screen.
+4. **Conversion system.** `data-thumb="Try Hanzo"` and `data-cta="primary"` on the hero ask; `data-cta="primary"` on the close; `site ask bar title="Cap Table"` as the last child of main. One solid button per screen.
 5. **Trust and proof.** Every figure is computed from the example company's inputs, which are shown and labelled ("Example company. Every number in it is an input you would give your own."). No invented claims.
 6. **Content presentation (copy untouched).** Parity 103/103 text, 7/7 links. The ten clauses live in "Read the term sheet"; plans open into their own panels; the chapters hold the six steps. No label sits above a headline.
 7. **Visual design system.** Biz grammar. Holders are ink and three greys; the founders' row is the inked one; the waterfall inverts the founders' card. No hues. One dark room: the waterfall.
-8. **UI component library.** Kit `A`, `More`; v2 `BizLines`, `BizChapters`, `BizSheet`, `BizOpen`, `AskBar`. Styled sliders, pause button, chips and rows.
+8. **UI component library.** Kit `A`, `More`; v2 `BizLines`, `BizChapters`, `BizSheet`, `BizOpen`, the site's ask bar (`components/Ask.jsx`). Styled sliders, pause button, chips and rows.
 9. **Motion and interaction.**
    - Idle: the pre-money price drifts and the round re-runs (signature); the figure rolls digit by digit; a pause button stops it.
    - Scroll: six sticky chapters light the table rows they explain.

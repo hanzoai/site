@@ -250,7 +250,7 @@ function Start() {
 
 export default function Billing() {
   return (
-    <main className="l2-page bl2" style={{ '--ac': '#0f9d58' }}>
+    <main className="l2-page bl2" style={{ '--ac': '#737373' }}>
       <StageHero look="split" kick="Billing & Metering" title="Hanzo Billing" sub="Subscriptions, usage, invoices. Charge a fixed price, charge for what someone used, or charge for both on the same invoice. Plans, prices, meters, coupons and credits are separate objects, so a pricing change is a new price rather than a migration — and your servers never hold a card number to do any of it." acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Machine />
       </StageHero>

@@ -37,7 +37,7 @@
 .ts-dst span { grid-column: 1 / -1; font-size: 13px; color: #a1a1a6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ts-dst b { font-size: 20px; font-weight: 500; letter-spacing: -.03em; }
 .ts-dst em { align-self: center; font-style: normal; font-size: 13px; color: #86868b; }
-.ts-ok { position: absolute; left: 24px; bottom: 18px; margin: 0; padding: 8px 12px; border-radius: 999px; background: var(--acc); color: #1a1200; font-size: 13px; }
+.ts-ok { position: absolute; left: 24px; bottom: 18px; margin: 0; padding: 8px 12px; border-radius: 999px; background: var(--acc); color: #0f0f0f; font-size: 13px; }
 
 
 /* the lede, as a statement */
@@ -129,3 +129,4 @@
   .ts-w b { font-size: 40px; }
   .ts-ed-bar span, .ts-src span, .ts-dst span, .ts-dst em, .ts-ok, .ts-w em, .ts-ev > p, .ts-v-k, .ts-v-row.h { font-size: 14px; }
 }
+@media (max-width: 900px) { .ts-name { font-size: 14px; } .ts-ed pre { font-size: 14px !important; } }

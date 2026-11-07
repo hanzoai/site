@@ -408,7 +408,7 @@ function Zen() {
 
 /* ---------- 6. the dark room: open source, deterministic safety, and the commits as they land ---------- */
 const COMMITS = [
-  ['hanzoai/ui', 'Merge pull request #299 from hanzoai/fix/footer-signature-no-crop', 'b44e122', 'Nov 6, 06:04 UTC', 'https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a'],
+  ['hanzoai/ui', 'Merge pull request #737373 from hanzoai/fix/footer-signature-no-crop', 'b44e122', 'Nov 6, 06:04 UTC', 'https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a'],
   ['hanzoai/desktop', 'chore(desktop): finalize 1.1.53 skin, guest/LSA integration, and UI primitive repairs', 'ddfcd04', 'Nov 6, 05:53 UTC', 'https://github.com/hanzoai/desktop/commit/ddfcd04565afa1b27a6480fd7fc2a9de0ec84e94'],
   ['hanzoai/desktop', 'Update css', 'e749213', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/e7492134d79dc3c7c1def579a2305cba7c8092f5'],
   ['hanzoai/desktop', "feat(desktop): hanzo.ai's app stack, macOS window controls, and the window's own skin", '421d4f2', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/421d4f233bd6516367293b496c6000c3a2219cde'],

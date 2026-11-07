@@ -406,3 +406,8 @@ a.cs-chip:hover { border-color: rgba(0, 0, 0, .25); }
   .cs-dot.b { animation: none; }
   .cs-chain li, .cs-link, .cs-key-b { transition: none; }
 }
+
+/* the shared code pane in greys (its default colours are hues) */
+.cs .cf-code .s { color: #d1d1d6; }
+.cs .cf-code .k { color: #fff; font-weight: 600; }
+.cs .cf-mark { background-image: linear-gradient(rgba(255, 255, 255, .2), rgba(255, 255, 255, .2)); }

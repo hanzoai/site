@@ -25,7 +25,7 @@
 .api-con-main { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 14px; margin-top: 14px; }
 .api-ret { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: clamp(24px, 3vw, 44px); border-radius: 20px; border: 1px solid var(--line); min-height: clamp(260px, 26vw, 380px); }
 .api-ret-k { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--faint); }
-.api-ret-k b { width: 8px; height: 8px; border-radius: 50%; background: #30d158; box-shadow: 0 0 0 4px rgba(48, 209, 88, .16); }
+.api-ret-k b { width: 8px; height: 8px; border-radius: 50%; background: #a3a3a3; box-shadow: 0 0 0 4px rgba(163, 163, 163, .16); }
 .api-desc { margin: 0; flex: 1; max-width: 30ch; font-size: clamp(24px, 2.5vw, 36px); line-height: 1.22; letter-spacing: -.028em; color: var(--ink); text-wrap: pretty; }
 .api-doc { display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 18px; border-radius: 999px; background: #fff; border: 1px solid var(--line); font: 500 15px/1 var(--sans); color: var(--ink); text-decoration: none; }
 .api-doc:hover { border-color: rgba(0, 0, 0, .25); }
@@ -77,7 +77,7 @@
 .api-id-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .api-id-card { display: flex; flex-direction: column; gap: 14px; padding: 24px 22px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 20px 40px -24px rgba(0, 0, 0, .25); }
 .api-id-card span { font-size: 15px; color: var(--soft); overflow-wrap: anywhere; }
-.api-id-drop { position: relative; color: #d70015 !important; }
+.api-id-drop { position: relative; color: #262626 !important; }
 .api-id-drop::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; }
 .api-id.on .api-id-drop::after { animation: api-strike 4.8s var(--av-ease) infinite; }
 @keyframes api-strike { 0%, 30% { transform: scaleX(0); } 42%, 90% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
@@ -110,9 +110,9 @@
 .api-gw-in i { position: absolute; left: 0; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--ac); opacity: 0; }
 .api-gw.on .api-gw-in i { animation: api-run 2.4s linear infinite; }
 .api-gw.on .api-gw-in i:nth-child(2) { animation-delay: 1.2s; }
-.api-gw-in i.back { background: #ff3b30; }
+.api-gw-in i.back { background: #737373; }
 .api-gw.on .api-gw-in i.back { animation: api-back 7.2s var(--av-ease) infinite; }
-.api-gw-in em { position: absolute; left: 50%; top: 16px; translate: -50% 0; font-style: normal; font-size: 13px; font-weight: 600; white-space: nowrap; color: #d70015; opacity: 0; }
+.api-gw-in em { position: absolute; left: 50%; top: 16px; translate: -50% 0; font-style: normal; font-size: 13px; font-weight: 600; white-space: nowrap; color: #262626; opacity: 0; }
 .api-gw.on .api-gw-in em { animation: api-tag 7.2s var(--av-ease) infinite; }
 @keyframes api-run { from { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } to { transform: translateX(48px); opacity: 0; } }
 @keyframes api-back { 0%, 62% { transform: translateX(48px); opacity: 0; } 66% { opacity: 1; } 80% { transform: translateX(0); opacity: 1; } 84%, 100% { transform: translateX(0); opacity: 0; } }

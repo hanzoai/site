@@ -110,7 +110,7 @@ function Activity() {
       </div>
       <div className="an-chart" ref={box} onPointerMove={move} onPointerLeave={() => setAt(-1)}>
         <svg viewBox={`0 0 ${wh[0]} ${wh[1]}`} aria-hidden="true">
-          <defs><linearGradient id="an-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#30d158" stopOpacity=".26" /><stop offset="1" stopColor="#30d158" stopOpacity="0" /></linearGradient></defs>
+          <defs><linearGradient id="an-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#a3a3a3" stopOpacity=".26" /><stop offset="1" stopColor="#a3a3a3" stopOpacity="0" /></linearGradient></defs>
           {[0.25, 0.5, 0.75].map((g) => <line key={g} x1="0" x2={wh[0]} y1={g * wh[1]} y2={g * wh[1]} className="an-grid" />)}
           <motion.path d={area} fill="url(#an-g)" initial={calm ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 0.9 }} />
           <motion.path d={line} className="an-line" initial={calm ? false : { pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2.4, ease: EASE, delay: 0.5 }} />
@@ -523,7 +523,7 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 
 export default function Analytics() {
   return (
-    <main className="kn an" style={{ '--ac': '#30d158' }}>
+    <main className="kn an" style={{ '--ac': '#a3a3a3' }}>
       <KeynoteStage
         look="side"
         size="md"

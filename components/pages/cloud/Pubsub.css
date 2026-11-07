@@ -1,5 +1,5 @@
 /* PubSub v2. Accent: azure, the colour of a delivered message. The hero is the page's one dark room. */
-.ps { --acc: #0a7cff; --acc-soft: #eaf3ff; --warn: #ff9f0a; }
+.ps { --acc: #737373; --acc-soft: #f2f2f2; --warn: #a3a3a3; }
 
 /* hero: poster, the bus between the kicker and a giant title */
 .ps-hero { background: radial-gradient(1100px 600px at 62% 46%, #10131c 0%, #0a0a0a 68%); min-height: calc(100svh - 60px); display: flex; }
@@ -13,7 +13,7 @@
 .ps-bus { display: grid; grid-template-columns: minmax(0, 3.2fr) minmax(40px, 1fr) minmax(0, 4fr) minmax(56px, 1.2fr) minmax(0, 3.4fr); align-items: center; min-height: 300px; }
 .ps-node { position: relative; }
 .ps-k { margin: 0 0 14px; font: 500 13px/1 var(--mono); letter-spacing: .08em; color: #8e8e93; }
-.ps-msg { display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 18px; background: #f5f5f7; color: #0a0a0a; box-shadow: 0 24px 60px -24px rgba(10, 124, 255, .55); }
+.ps-msg { display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 18px; background: #f5f5f7; color: #0a0a0a; box-shadow: 0 24px 60px -24px rgba(115, 115, 115, .55); }
 .ps-msg b { font: 600 15px/1 var(--mono); }
 .ps-msg span { font: 500 14px/1 var(--mono); color: #6e6e73; }
 .ps-wire { width: 100%; height: 220px; overflow: visible; }
@@ -28,8 +28,8 @@
 .ps-sub { display: flex; justify-content: space-between; align-items: center; height: 60px; padding: 0 18px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .1); background: #111115; transition: border-color .4s, background-color .4s; }
 .ps-sub b { font: 500 15px/1 var(--mono); color: #f5f5f7; }
 .ps-sub span { font: 500 14px/1 var(--mono); color: #6e6e73; font-variant-numeric: tabular-nums; }
-.ps-sub.got { border-color: rgba(10, 124, 255, .55); background: #0e1522; }
-.ps-sub span.ack, .ps-rows .ack em { color: #4da3ff; }
+.ps-sub.got { border-color: rgba(115, 115, 115, .55); background: #0e1522; }
+.ps-sub span.ack, .ps-rows .ack em { color: #a3a3a3; }
 .ps-sub span.wait, .ps-rows .wait em { color: var(--warn); }
 .ps-one { display: inline-flex; gap: 6px; }
 .ps-one i { width: 22px; height: 22px; border-radius: 7px; background: #24242a; transition: background-color .3s; }
@@ -63,7 +63,7 @@
 .ps-rows p { margin: 0; display: grid; grid-template-columns: 1fr auto 130px; align-items: center; gap: 14px; height: 58px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--line); font: 500 15px/1 var(--mono); color: var(--ink); }
 .ps-rows span { color: var(--faint); font-size: 14px; }
 .ps-rows em { font-style: normal; font-size: 14px; color: var(--soft); text-align: right; }
-.ps-rows p.wait { border-color: rgba(255, 159, 10, .5); }
+.ps-rows p.wait { border-color: rgba(163, 163, 163, .5); }
 .ps-dup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .ps-dup span { height: 34px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 10px; background: #f2f2f4; font: 500 13px/1 var(--mono); color: var(--soft); }
 .ps-dup span.twice { text-decoration: line-through; opacity: .45; }
@@ -130,7 +130,7 @@
   .ps-bus { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 0; }
   .ps-wire { height: 34px; width: 2px; justify-self: center; }
   .ps-wire path { display: none; }
-  .ps-wire { background: linear-gradient(var(--acc), rgba(10, 124, 255, .1)); border-radius: 2px; }
+  .ps-wire { background: linear-gradient(var(--acc), rgba(115, 115, 115, .1)); border-radius: 2px; }
   .ps-msg { padding: 16px; }
   .ps-seqs { padding: 10px; gap: 5px; }
   .ps-seqs span { height: 48px; font-size: 14px; }
