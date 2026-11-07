@@ -15,7 +15,7 @@ import { useOpener } from '../../Opener';
 import Launch, { Lines, film } from '../../v2/Launch';
 import Chapters from '../../v2/x-cray/Chapters';
 import ModelCards from './ModelCards';
-import ModelFilm from '../../v2/ModelFilm';
+import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import { C, ORDER, FIELDS } from './creative';
 import { Glyph } from './Studio';
 import { arrows } from './live';
@@ -29,8 +29,8 @@ function Head({ slug }) {
       <Lines id={'cr-h-' + slug} lines={[d.head]} />
       <p className="lv-lede">{d.desc}</p>
       <div className="lv-acts">
-        <Cta to={'/research-access?models=' + slug} id={slug + '-hero-access'} thumb>Request access</Cta>
-        <Cta to="/design" kind="quiet" id={slug + '-hero-design'}>Try it in Design</Cta>
+        <Cta to={'/research-access?models=' + slug} id={slug + '.hero'} thumb>Request access</Cta>
+        <Cta to="/design" kind="quiet" id={slug + '.hero-design'}>Try it in Design</Cta>
       </div>
       <p className="lv-crumb"><span>{d.kind}</span><span>{d.ver}</span></p>
     </>
@@ -109,11 +109,12 @@ function Map({ slug }) {
   const [f, setF] = useState(first);
   const [mine, setMine] = useState(false);
   const [play, setPlay] = useState(null);
+  const paused = usePaused();
   useEffect(() => {
-    if (!seen || mine || calm) return;
+    if (!seen || mine || calm || paused) return;
     const t = setInterval(() => setF((x) => (x + 1) % FIELDS.length), 3200);
     return () => clearInterval(t);
-  }, [seen, mine, calm]);
+  }, [seen, mine, calm, paused]);
   const [, list] = FIELDS[f];
   return (
     <section className="lv-sec cr-map" ref={box} aria-labelledby={'cr-map-' + slug}>
@@ -183,7 +184,7 @@ function Preview({ slug }) {
         <div className="cr-pre-r">
           <p className="lv-p">Samples of {d.name}&apos;s own output publish only after blind review, so the pictures here are illustrations. A studio can apply now to test it in its own pipeline.</p>
           <div className="lv-acts">
-            <Cta to={'/research-access?models=' + slug} kind="quiet" id={slug + '-preview-access'}>Request access</Cta>
+            <Cta to={'/research-access?models=' + slug} kind="quiet" id={slug + '.preview'}>Request access</Cta>
             <More to="/models">Every model</More>
           </div>
           <p className="lv-side"><A to="/beta/research">Research preview</A></p>
@@ -209,7 +210,7 @@ export default function Creative({ slug, shape, aim, over, headClass, demo, firs
   const d = C[slug];
   const caps = <Caps slug={slug} flip={flip} />;
   return (
-    <Launch slug={slug} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '-hero-access' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
+    <Launch slug={slug} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
       {first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}
       <Fits slug={slug} flip={flip} />
       <Map slug={slug} />
