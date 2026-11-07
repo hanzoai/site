@@ -335,7 +335,30 @@ a.pay-chip:active { transform: scale(.97); }
   .pay-end-row .bz-lede, .pay-end-go { grid-column: 1 / -1; justify-self: start; }
   .pay-end-go { margin-top: 24px; }
 }
+/* the hero phone fits the first desktop screen, Pay → succeeded included */
+@media (min-width: 900px) {
+  .pay-phone.big { --t-fig: 52px; font-size: 16px; }
+  .pay-phone.big .pay-phone-in { height: 30.5em; padding-top: 2.8em; gap: .8em; }
+  .pay-phone.big .pay-amt { padding-bottom: .7em; }
+  .pay-phone.big .pay-try li { gap: .5em; padding-inline: .9em; }
+  .pay-phone.big .pay-try li b { font-size: 13px; }
+}
+/* on phones the outcome sits under the amount, so "succeeded" lands inside the first 812px */
+@media (max-width: 899px) {
+  .pay-phone.big .pay-scr-wrap { order: 2; }
+  .pay-phone.big .pay-phone-in { height: 34em; }
+}
+/* the methods light one by one the first time the list is reached (JS on only; JS off they are ink) */
+html.js .pay-co-methods li { color: var(--bz-track); transition: color .4s var(--bz-out); transition-delay: calc(var(--i) * 110ms); }
+html.js .pay-co-methods.lit li { color: var(--bz-ink); }
+@media (hover: hover) { .pay-co-methods.lit li { transition-delay: 0s; } .pay-co-methods.lit li:hover { color: var(--bz-muted); } }
+/* the four cases deal in as one list */
+html.js .pay-cases .pay-case { opacity: 0; transform: translate3d(0, 24px, 0); transition: opacity .5s var(--bz-emph), transform .5s var(--bz-emph); }
+html.js .pay-cases .pay-case.c1 { transition-delay: 60ms; } html.js .pay-cases .pay-case.c2 { transition-delay: 120ms; } html.js .pay-cases .pay-case.c3 { transition-delay: 180ms; }
+html.js .pay-cases.lit .pay-case { opacity: 1; transform: none; }
+.pay-move-bar input:focus-visible { outline: 2px solid #fff; outline-offset: 6px; border-radius: 16px; }
 @media (prefers-reduced-motion: reduce) {
+  html.js .pay-co-methods li, html.js .pay-cases .pay-case { transition: none; }
   .pay-cat, .pay-lede, .pay-side, .pay-acts, .pay-rise { animation: none; }
   .pay-move-dots i::after, .pay-move-figs b { transition: none; }
 }

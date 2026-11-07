@@ -81,7 +81,8 @@
 .xbr-bl { grid-area: l; font-size: 15px; line-height: 1.35; color: var(--ink); overflow-wrap: anywhere; }
 .xbr-bar { grid-area: ba; display: block; height: 12px; border-radius: 6px; background: var(--ink); transform-origin: left; transform: scaleX(0); transition: transform .9s var(--ease); }
 .xbr-bar.bb { grid-area: bb; background: rgba(0, 0, 0, .16); }
-.xbr-bars li:not(.lit) .xbr-bar.ba { background: #8e8e93; }
+.xbr-bars li:not(.lit) .xbr-bar.ba { background: #a3a3a3; }
+.xbr-bars li.own .xbr-bar.ba { background: var(--ink); }
 .xbr-bars.chart .xbr-bar { transform: scaleX(var(--xbr-w)); }
 .xbr-bars.chart li:nth-child(2) .xbr-bar { transition-delay: .04s; } .xbr-bars.chart li:nth-child(3) .xbr-bar { transition-delay: .08s; } .xbr-bars.chart li:nth-child(n+4) .xbr-bar { transition-delay: .12s; }
 .xbr-v { grid-area: va; justify-self: end; font-size: 15px; font-weight: 500; white-space: nowrap; color: var(--ink); }
@@ -285,9 +286,15 @@
   .xbr-meta { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0 16px; padding-top: 8px; }
   .xbr-acts .x-mag, .xbr-acts .v2f-btn { width: 100%; }
   .xbr-crumb, .xbr-kicker { font-size: 14px; }
-  .xbr-stage-o { margin-top: 32px; }
-  .xbr-turn { padding: 18px 16px 20px; }
-  .xbr-turn-g { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .xbr-stage-o { margin-top: 20px; }
+  .xbr-top-g { row-gap: 14px; }
+  /* phone: Hanzo's figure leads the card, its controls sit between it and the table */
+  .xbr-turn { padding: 16px 16px 20px; display: flex; flex-direction: column; }
+  .xbr-turn-g { display: contents; }
+  .xbr-turn-g > .xbr-ro { order: 1; padding-bottom: 12px; }
+  .xbr-turn-h { order: 2; margin-bottom: 12px; }
+  .xbr-turn-b { order: 3; }
+  .xbr-ro-l { height: auto; }
   .xbr-ro-vw { height: 64px; }
   .xbr-ro.big .xbr-ro-vw { height: 64px; }
   .xbr-ro-v { font-size: 52px; }
@@ -326,6 +333,23 @@
   .xbr-ro-t::after { transform: none; }
   .xbr-bar, .xbr-tr-line, .xbr-turn-vb { transition: none !important; }
 }
+
+/* a chapter with no table of its own: its contour field, the section's name set small in its corner */
+.xbr-ch-fig { position: relative; min-height: 420px; }
+.xbr-ch-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: currentColor; opacity: .5; }
+.xbr-ch-fig .xbr-ch-q { position: absolute; left: 0; bottom: 0; padding: clamp(24px, 3vw, 40px); font-size: 21px; max-width: 18ch; }
+/* chapter tables fit their cell: cells wrap instead of running off the right edge */
+.xbr-ch-v .x-table th, .xbr-ch-v .x-table td, .xbr-one-t .x-table th, .xbr-one-t .x-table td { white-space: normal; overflow-wrap: anywhere; min-width: 0; padding: 12px 14px; font-size: 14px; }
+.xbr-ch-v .x-table thead th, .xbr-one-t .x-table thead th { white-space: nowrap; }
+/* the detail sheet opens below the site header, so its title and close stay in view */
+@media (min-width: 901px) { .xbr .v2f-sheet-p { top: 72px; } }
+/* the source's reply: the run ids the page links, then the page's own figures */
+.xbr-src-reply { display: grid; gap: 18px; }
+.xbr-src-reply pre { margin: 0; font-size: 14px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.xbr-src-json { color: #a3a3a3; }
+.xbr-src-figs { color: #fafafa; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .1); }
+/* sibling cards say where they go: their figure darkens and the title underlines */
+@media (hover: hover) { .xbr-next a:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
 
 /* kit parts in this template: DataTable (captured tables), CodeBlock (commands), Cta (asks) */
 .xbr-dt { max-width: 100%; }

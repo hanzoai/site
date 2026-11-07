@@ -6,27 +6,28 @@
    Signature: the six reasons Hanzo builds are tiles that open. Click one and the tile itself grows into a full sheet
    (shared-element morph, synchronized.studio); previous / next turn through the six inside it; it folds back on close.
    Supporting (three): the frontier draws itself and answers the pointer; the startups figure counts up on a rising
-   staircase of figures; the core team's commits land in the one dark middle room, the newest pulsing.
+   staircase of figures; the Zen of Hanzo is the one pinned scene, the scroll turning its six principles one at a time.
    Beyond: "Pick two? Keep all four." The lede's four trade-offs as switches; nothing switches anything else off, and
    each shows the line on this page that holds it.
    Every word, figure and link is Hanzo's (content/live/about.json). */
 // Persona: a buyer, founder or engineer checking who is behind Hanzo (arrives from the footer, /history or search)
 // Goal: believe the team and its record, then start building
-// CTA: Get Started (/pricing) in the hero, after the track record and in the sticky ask; the close repeats the careers ask
+// CTA: Get Started (/pricing) in the hero and in the sticky ask ("Start Building" after the track record is a text link); the close is the careers ask
 // Metric: signup_start (data-cta="about.*")
 // Signature: six reasons Hanzo builds as tiles that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
-// V2: 7/10 critic round 2 (phone commit dates, founders' empty boxes, length, ghost axes, phone hero); all fixed, re-review pending
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+// V2: 8/10 round 5: hero idles after the draw (head breathes, a reader walks the curve; CSS, paused off screen); founders are side-by-side plate cards that draw in; lede never shifts; tiles and every text link answer a hover; phone frontier under the h1
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
 import { A, Cta, Img, Tabs, TabPanel } from '../kit';
 import StoryClose from './StoryClose';
+import StoryPause from './StoryPause';
 import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
-import Lines from '../v2/Lines';
 import StorySheet from './StorySheet';
+import Zen from './AboutZen';
 import '../v2/system.css';
 import './story.css';
 import './About.css';
@@ -52,15 +53,8 @@ const AXES = [
 const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
 
 function Frontier() {
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.2 });
-  const calm = useReducedMotion();
-  const p = useMotionValue(0); // the same on server and client; reduced motion jumps it to the end before first paint
-  useLayoutEffect(() => { if (calm) p.set(1); }, [calm, p]);
-  const hx = useTransform(p, (v) => X(v));
-  const hy = useTransform(p, (v) => Y(f(v)));
-  const ax = useTransform(p, [0.25, 0.6], [0, 1]);
-  const ts = useTransform(p, [0.24, 0.3], [0, 1]); // Techstars '17 lands as the head passes 2017
+  // the curve, its four ghost axes, Techstars '17 and the head all draw by CSS from first paint (About.css, xab-draw):
+  // nothing waits on hydration, JS off shows the same film, and reduced motion shows the drawn frontier at rest
   // pointer: the hand reads the year under it, on the curve
   const hand = useMotionValue(-1);
   const cx = useTransform(hand, (t) => X(Math.max(0, t)));
@@ -74,60 +68,100 @@ function Frontier() {
     const y = Math.round(2014 + t * 12);
     setYr((v) => (v === y ? v : y));
   };
-  // idle: the curve draws itself, holds at the frontier, and draws again; only while it is on screen
+  // after the draw it stays alive by CSS: the head breathes and a reader glides along the curve while no hand is on it.
+  // Off screen both pause (a class set on the element, never React state, so the server HTML is the same)
+  const wrap = useRef(null);
   useEffect(() => {
-    if (calm) { p.set(1); return; }
-    if (!seen) return;
-    // draws once (about 4 s) and rests at the frontier: nothing on the page loops past 5 s (WCAG 2.2.2)
-    const c = animate(p, 1, { duration: 4, ease: [0.16, 1, 0.3, 1] });
-    return () => c.stop();
-  }, [seen, calm, p]);
+    const el = wrap.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => el.classList.toggle('off', !e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div className={'xab-front-w' + (yr ? ' read' : '')} ref={ref} onPointerMove={move} onPointerLeave={() => setYr(null)}>
+    <div className={'xab-front-w' + (yr ? ' read' : '')} ref={wrap} onPointerMove={move} onPointerLeave={() => setYr(null)}>
       <svg className="xab-front-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax meet" role="img" aria-label="The Pareto frontier: intelligence, speed, deterministic safety and equitable cost, advancing together from 2014 to 2026">
         {[0.25, 0.5, 0.75, 1].map((v) => <line key={v} x1={0} x2={W} y1={Y(v)} y2={Y(v)} className="xab-grid" />)}
         <line x1={0} x2={W} y1={Y(0)} y2={Y(0)} className="xab-base" />
         {YEARS.map((yr) => { const x = X((yr - 2014) / 12); return <g key={yr} className="xab-tick"><line x1={x} x2={x} y1={Y(0)} y2={Y(0) + 10} /><text x={x} y={H - 18} textAnchor="middle">{yr}</text></g>; })}
         {AXES.map((a) => (
           <g key={a.name}>
-            <motion.path d={a.d} className="xab-ghost" style={{ pathLength: p }} />
-            <motion.text x={a.lx} y={a.ly} className="xab-axis" style={{ opacity: ax }}>{a.name}</motion.text>
+            <path d={a.d} className="xab-ghost" pathLength={1} />
+            <text x={a.lx} y={a.ly} className="xab-axis">{a.name}</text>
           </g>
         ))}
-        <motion.path d={FRONT} className="xab-line" style={{ pathLength: p }} />
-        <motion.g className="xab-ts" style={{ opacity: ts }}>
+        <path d={FRONT} className="xab-line" pathLength={1} />
+        <g className="xab-ts">
           <circle cx={X(0.25)} cy={Y(f(0.25))} r="7" />
           <line x1={X(0.25)} x2={X(0.25)} y1={Y(f(0.25)) - 14} y2={Y(f(0.25)) - 46} />
           <text x={X(0.25)} y={Y(f(0.25)) - 58} textAnchor="middle">Techstars ’17</text>
-        </motion.g>
+        </g>
         <motion.g className="xab-hand" style={{ x: cx }} aria-hidden="true">
           <line x1="0" x2="0" y1={PT - 10} y2={Y(0)} />
           <text x="10" y={PT + 8}>{yr}</text>
         </motion.g>
         <motion.circle className="xab-hand-dot" r="8" cx={cx} cy={cy} />
-        <motion.g style={{ x: hx, y: hy }}>
+        {/* idle: a reader walks the curve from 2014 to the frontier, slowly, until a hand takes over */}
+        <g className="xab-glide" style={{ offsetPath: `path('${FRONT}')` }} aria-hidden="true">
+          <line x1="0" x2="0" y1="-18" y2="18" />
+          <circle r="6" />
+        </g>
+        {/* the head rides the curve on a CSS motion path, in step with the line's dash */}
+        <g className="xab-ride" style={{ offsetPath: `path('${FRONT}')` }}>
           <circle r="26" className="xab-halo" />
           <circle r="10" className="xab-head" />
-        </motion.g>
+        </g>
       </svg>
     </div>
   );
 }
 
 /* ---------- 1. the first screen ---------- */
+/* Phones keep Hanzo's "Try Hanzo" solid in the header; while this hero's own solid ask is on screen the header's
+   button reads as an outline (the same html[data-ask=quiet] the shell sets on desktop), so one solid shows at a time
+   (the /bounty pattern). */
+function useOneSolidOnPhone() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const mq = matchMedia('(max-width: 700px)');
+    const el = document.querySelector('main.xab [data-cta="about.hero"]');
+    if (!el) return;
+    let mine = false, vis = false;
+    const apply = () => {
+      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      else if (mine) { delete H.dataset.ask; mine = false; }
+    };
+    const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
+    io.observe(el);
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    mq.addEventListener('change', apply);
+    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+  }, []);
+}
+
+const H1 = ['Chasing the', 'Pareto Frontier', 'of AI'];
+
 function Hero() {
+  useOneSolidOnPhone();
+  // WCAG 2.2.2 (MASTER part 12): the hero's idle loops (the breathing head, the reader walking the curve) can be paused;
+  // the button is first in the hero, tucked into the plot's lower right corner, and hidden under reduced motion
+  const [paused, setPaused] = useState(false);
   return (
-    <section className="xab-hero" aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
+    <section className={'xab-hero' + (paused ? ' paused' : '')} aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
+      <StoryPause paused={paused} onToggle={() => setPaused((v) => !v)} className="xab-pause" />
       <div className="v2s-wrap xab-hero-top">
-        <Lines as="h1" id="xab-h1" className="v2s-display xab-h1" now delay={0.05} stagger={0.06} lines={['Chasing the', 'Pareto Frontier', 'of AI']} />
-        <motion.div className="xab-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.55 }}>
+        {/* the h1 cuts in line by line from first paint (CSS, never waiting on hydration) */}
+        <h1 id="xab-h1" className="v2s-display xab-h1">
+          {H1.map((l, i) => <span key={l} className="xab-h1-ln"><span style={{ '--i': i }}>{l}{i < H1.length - 1 ? ' ' : ''}</span></span>)}
+        </h1>
+        <div className="xab-hero-side">
           <p className="v2s-lede">From SKULLY and open-source commerce, through Techstars ’17, to 1700+ open repositories and the sovereign AI cloud today — advancing intelligence, speed, deterministic safety, and equitable cost together.</p>
           <div className="v2s-acts">
             <Cta to="/pricing" id="about.hero" thumb>Get Started</Cta>
             <TL to="/history">Our History</TL>
             <TL to="/open-source">Open Source</TL>
           </div>
-        </motion.div>
+        </div>
       </div>
       <Frontier />
     </section>
@@ -317,7 +351,7 @@ function Record() {
         <div className="v2s-grid xab-rec-foot">
           <p className="v2s-body v2s-c-1-7">From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
           <div className="v2s-acts v2s-c-8-12 xab-rec-acts">
-            <Cta to="/pricing" id="about.record">Start Building</Cta>
+            <TL to="/pricing">Start Building</TL>
             <TL to="/history">Read Our Full History</TL>
             <TL to="/customers">Customer Stories</TL>
           </div>
@@ -333,31 +367,39 @@ const FOUNDERS = [
   { name: 'Zach Kelling', mono: 'ZK', img: '/authors/zach-kelling-portrait.jpg', role: 'Chief Technology Officer and founder', bio: 'Builds Hanzo’s AI cloud, its engine runtimes and its agent frameworks. A long-time open-source author.', links: [['Website', 'https://zeekay.io'], ['X', 'https://x.com/zeekay'], ['GitHub', 'https://github.com/zeekay'], ['LinkedIn', 'https://www.linkedin.com/in/zeekay/']] },
 ];
 
-function Portrait({ p }) {
+function Portrait({ p, has }) {
   const img = useRef(null);
-  const [state, setState] = useState('wait');
+  const [state, setState] = useState(has ? 'wait' : 'none');
   useEffect(() => { const el = img.current; if (el?.complete) setState(el.naturalWidth ? 'ok' : 'none'); }, []);
+  if (!has) return (
+    <figure className="xab-pic none" role="img" aria-label={p.name}>
+      <Sigil seed={p.name} className="xab-pic-sigil" />
+      <span className="xab-mono" aria-hidden="true">{p.mono}</span>
+    </figure>
+  );
   return (
     <figure className={'xab-pic ' + state}>
-      {/* when the portrait cannot load: the designed fallback, a contour field from the founder's name, initials in the corner */}
-      {state === 'none' && <Sigil seed={p.name} className="xab-pic-sigil" />}
+      {/* until the portrait has loaded (and whenever it cannot): the designed fallback, a contour field from the founder's name, initials in the corner */}
+      {state !== 'ok' && <Sigil seed={p.name} className="xab-pic-sigil" />}
       <span className="xab-mono" aria-hidden="true">{p.mono}</span>
       <Img ref={img} src={p.img} alt={p.name} w={640} h={800} onLoad={() => setState('ok')} onError={() => setState('none')} />
     </figure>
   );
 }
 
-function Founders() {
+function Founders({ portraits = [] }) {
   return (
     <section className="v2s-sec tight xab-people" aria-label="Founders">
       <div className="v2s-wrap xab-people-g">
         {FOUNDERS.map((p, i) => (
           <article key={p.name} className={'xab-person' + (i ? ' two' : '')}>
-            <Portrait p={p} />
-            <h3 className="v2s-headline">{p.name}</h3>
-            <p className="xab-role">{p.role}</p>
-            <p className="v2s-body">{p.bio}</p>
-            <ul className="xab-socials">{p.links.map(([l, to]) => <li key={l}><A to={to}>{l} <span aria-hidden="true">↗</span></A></li>)}</ul>
+            <Portrait p={p} has={portraits.includes(p.img)} />
+            <div className="xab-person-t">
+              <h3 className="v2s-headline">{p.name}</h3>
+              <p className="xab-role">{p.role}</p>
+              <p className="v2s-body">{p.bio}</p>
+              <ul className="xab-socials">{p.links.map(([l, to]) => <li key={l}><A to={to}>{l} <span aria-hidden="true">↗</span></A></li>)}</ul>
+            </div>
           </article>
         ))}
       </div>
@@ -365,58 +407,7 @@ function Founders() {
   );
 }
 
-/* ---------- 5. the Zen of Hanzo: an index and its plate ---------- */
-const ZEN = [
-  ['Enable the Underdog', 'Enable others to win. Democratize technology so small businesses and startups can compete with industry giants.'],
-  ['Data-Driven Everything', 'Let data be your guide. Embrace analytics and AI as the foundation of decision-making.'],
-  ['Open Innovation', 'Be open, share often. Openness accelerates growth—both for the company and its community.'],
-  ['Adaptability', 'Pivot with purpose. There is no failure, only feedback. Move quickly and strike in new directions when opportunity calls.'],
-  ['Customer-Centric Growth', 'Treat each client as a long-term partner and guide them to success.'],
-  ['First Principles Thinking', 'See the invisible, do the impossible. Boil problems down to their essence and solve them in fundamentally better ways.'],
-];
-
-function Zen() {
-  const [at, setAt] = useState(0);
-  const [hold, setHold] = useState(false);
-  const box = useRef(null);
-  const pick = (i) => { setAt(i); setHold(true); };
-  return (
-    <section className="v2s-sec xab-zen" id="zen" aria-labelledby="xab-zen-h">
-      <div className="v2s-wrap">
-        <div className="v2s-head side xab-zen-head">
-          <h2 id="xab-zen-h" className="v2s-display xab-zen-h">The Zen of Hanzo</h2>
-          <p className="v2s-cap">Operating Principles</p>
-          <div className="xab-zen-l">
-            <p className="v2s-lede">The principles the company argues from when a decision is close.</p>
-            <Link2 to="/philosophy">Explore the full Zen manifesto</Link2>
-          </div>
-        </div>
-        <div className="v2s-grid xab-zen-g" ref={box} onPointerLeave={() => setHold(false)}>
-          <ol className="v2s-c-1-6 xab-zen-list">
-            {ZEN.map(([t, d], i) => (
-              <li key={t} className={i === at ? 'on' : ''}>
-                <button type="button" aria-pressed={i === at} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} onFocus={() => pick(i)}>
-                  <span className="v2s-num" aria-hidden="true">{pad(i + 1)}</span>
-                  <b>{t}</b>
-                </button>
-                <p className="xab-zen-d">{d}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="v2s-c-7-12 xab-zen-plate" aria-hidden="true">
-            {ZEN.map(([t, d], i) => (
-              <div key={t} className={'xab-zen-card' + (i === at ? ' on' : '')}>
-                <span className="xab-zen-n v2s-num">{pad(i + 1)}</span>
-                <b className="v2s-title">{t}</b>
-                <p className="v2s-lede">{d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+/* ---------- 5. the Zen of Hanzo: a pinned scene (AboutZen.jsx) ---------- */
 
 /* ---------- 6. the dark room: open source, deterministic safety, and the commits as they land ---------- */
 const COMMITS = [
@@ -583,7 +574,7 @@ function Careers() {
           <p className="v2s-label">Careers at Hanzo</p>
           <ol className="xab-roles" onPointerLeave={() => setOn(-1)}>
             {ROLES.map(([t, d], i) => (
-              <li key={t} className={on === i ? 'on' : ''} onPointerEnter={() => setOn(i)} onFocus={() => setOn(i)} onBlur={() => setOn(-1)} tabIndex={0}>
+              <li key={t} className={on === i ? 'on' : ''} onPointerEnter={() => setOn(i)}>
                 <span className="v2s-num" aria-hidden="true">{pad(i + 1)}</span>
                 <div><h3 className="v2s-title">{t}</h3><p>{d}</p></div>
               </li>
@@ -611,15 +602,14 @@ function Careers() {
   );
 }
 
-export default function About() {
+export default function About({ portraits = [] }) {
   return (
     <main id="main" className="xab v2s">
-      {/* JavaScript off: every line and the curve show at rest */}
-      <noscript><style>{'.xab .v2-line>span,.xab-hero-side{transform:none!important;opacity:1!important}.xab-line{stroke-dasharray:none!important}.xab-ghost{display:none}'}</style></noscript>
+      {/* JavaScript off needs nothing: the hero's cut-in and the frontier's draw are CSS and run from first paint */}
       <Hero />
       <Why />
       <Record />
-      <Founders />
+      <Founders portraits={portraits} />
       <Zen />
       <Open />
       <Research />

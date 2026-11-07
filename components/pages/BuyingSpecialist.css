@@ -1,21 +1,23 @@
 /* ---------- ai buying specialist (v2, grey deck) ---------- */
-.xbs-desk { padding: clamp(40px, 6vw, 96px) 0 clamp(120px, 14vw, 220px); }
+.xbs-desk { padding: clamp(40px, 6vw, 96px) 0 clamp(72px, 8vw, 128px); }
 .xbs-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 112px); align-items: start; }
 .xbs-chat { min-width: 0; display: flex; flex-direction: column; min-height: min(80svh, 860px); }
 .xbs-intro { padding-top: clamp(16px, 3vw, 48px); }
-/* phone only: the sheet's members and price under the greeting, a tap away from the sheet */
+/* phone only: the sheet's members and price under the greeting, with its ask, all on the first screen */
 .xbs-mini { display: none; }
 .xbs-h1 { max-width: none; }
 .xbs-lede { margin-top: 32px; max-width: 46ch; }
 .xbs-asks { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px; }
-.xbs-asks button { min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 16px/1 var(--sans); color: var(--ink); cursor: pointer; transition: border-color .2s var(--xp-ease), color .2s var(--xp-ease); }
-@media (hover: hover) { .xbs-asks button:hover { border-color: var(--hz-950); background: var(--hz-50); } }
-.xbs-asks button:focus-visible { outline: 2px solid var(--xp-accent); outline-offset: 2px; }
+.xbs-asks button { min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 16px/1 var(--sans); color: var(--ink); cursor: pointer; transition: border-color .2s var(--xp-ease), background-color .2s var(--xp-ease), translate .2s var(--xp-ease); }
+/* chips: every one answers hover (translate, so Motion's inline transform cannot cancel it) and press */
+@media (hover: hover) { .xbs-asks button:hover { border-color: var(--hz-950); background: var(--hz-50); translate: 0 -1px; } }
+.xbs-asks button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .xbs-legal { margin: 14px 0 0; font-size: 14px; color: var(--faint); text-align: center; }
 .xbs-legal a { color: var(--soft); text-decoration: underline; text-underline-offset: 2px; }
 
 /* the conversation */
 .xbs-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.xbs-log li { scroll-margin-top: 96px; }
 .xbs-log li.me { justify-self: end; max-width: 85%; padding: 12px 18px; border-radius: 18px 18px 4px 18px; background: var(--xp-accent); color: #fff; font-size: 17px; line-height: 1.5; }
 .xbs-log li.me p { margin: 0; }
 .xbs-log li.ai { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; }
@@ -31,86 +33,35 @@
 .xbs-bubble code { font: .9em var(--mono); padding: 2px 6px; border-radius: 4px; background: rgba(0, 0, 0, .06); }
 .xbs-dots { font-size: 14px; color: var(--soft); padding-top: 6px; animation: xbs-sh 1.4s var(--ease) infinite alternate; }
 @keyframes xbs-sh { from { opacity: .45; } to { opacity: 1; } }
-.xbs-quote { padding: 20px; border-radius: 18px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; display: grid; gap: 14px; }
-.xbs-quote-h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
-.xbs-quote-h b { font-size: 16px; }
-.xbs-quote-h span { font-size: 13px; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--hz-950); color: #fff; }
-.xbs-quote-g { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.xbs-quote-g > div { display: grid; gap: 4px; padding: 12px 14px; border-radius: 12px; background: var(--card); }
-.xbs-quote-g span { font-size: 13px; color: var(--soft); }
-.xbs-quote-g b { font-size: 24px; font-weight: 600; }
-.xbs-quote-g small, .xbs-tot small { font: 400 13px var(--sans); color: var(--soft); }
-.xbs-quote-a { display: flex; flex-wrap: wrap; gap: 8px; }
-.xbs-plans { display: flex; flex-wrap: wrap; gap: 6px; }
-.xbs-plans a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; color: var(--ink); text-decoration: none; transition: background .15s, border-color .15s; }
-@media (hover: hover) { .xbs-plans a:hover { background: var(--card); border-color: var(--hz-300); } }
-.xbs-plans a:active { transform: scale(.97); }
+/* after an answer: one ask for the plan it proposes (the card beside has moved to it) and one text link */
+.xbs-plans { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 24px; padding-left: 4px; }
+.xbs-plans .x-arrow { min-height: 44px; font-weight: 500; }
+.xbs-call { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: var(--soft); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line); transition: color .2s var(--xp-ease), text-decoration-color .2s var(--xp-ease); }
+@media (hover: hover) { .xbs-call:hover { color: var(--ink); text-decoration-color: currentColor; } }
+.xbs-call:active { translate: 0 1px; }
 
 /* the composer stays under the thumb */
 .xbs-composer { position: relative; z-index: 5; display: flex; align-items: center; margin-top: auto; padding-top: 28px; }
 .xbs-composer input { width: 100%; height: 56px; padding: 0 60px 0 22px; border-radius: 28px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 400 16px/1 var(--sans); color: var(--ink); outline: none; transition: border-color .15s var(--ease); }
 .xbs-composer input:focus { border-color: var(--xp-accent); }
-.xbs-composer button { position: absolute; right: 6px; bottom: 6px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--xp-accent); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.xbs-composer button { position: absolute; right: 6px; bottom: 6px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--xp-accent); color: #fff; display: grid; place-items: center; cursor: pointer; transition: transform .1s, background-color .2s; }
+@media (hover: hover) { .xbs-composer button:hover:not(:disabled) { background: var(--hz-700); } }
+.xbs-composer button:active:not(:disabled) { transform: scale(.97); }
 .xbs-composer button:disabled, .xbs-composer input:disabled { opacity: .55; }
 .xbs-composer button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-/* the quote sheet: the hero object */
-.xbs-side { position: sticky; top: 96px; }
-.xbs-sheet { border-radius: 24px; background: #0a0a0a; color: #fafafa; padding: clamp(24px, 2.8vw, 36px); display: grid; gap: 22px; }
-.xbs-sheet-h { display: flex; justify-content: space-between; align-items: baseline; }
-.xbs-sheet-h b { font: 497 21px/1.2 var(--sans); letter-spacing: -.015em; }
-.xbs-sheet-h span { font-size: 12.5px; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: #f5f5f7; color: #0a0a0b; }
-.xbs-sheet-h { gap: 12px; flex-wrap: wrap; }
-.xbs-seats { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; }
-.xbs-seats i { aspect-ratio: 1; border-radius: 3px; background: rgba(255, 255, 255, .07); transition: background .35s var(--xp-ease), transform .35s var(--xp-ease); }
-.xbs-seats i.s { transform: scale(1.04); }
-.xbs-seats i.s { background: rgba(255, 255, 255, .6); }
-.xbs-range { width: 100%; height: 28px; accent-color: #f5f5f7; cursor: pointer; }
+/* the quote sheet: the hero object, sized to fit under the header at 801px */
+.xbs-side { position: sticky; top: 84px; }
+.xbs-sheet { border-radius: 24px; background: #0a0a0a; color: #fafafa; padding: clamp(22px, 2.2vw, 30px); display: grid; gap: 14px; }
+.xbs-sheet-h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; }
+.xbs-sheet-h b { font: 497 18px/1.2 var(--sans); letter-spacing: -.01em; }
+.xbs-sheet-h span { font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: #f5f5f7; color: #0a0a0b; }
 .xbs-team { margin: 0; font-size: 14px; color: #a1a1a6; }
 .xbs-team b { font: 220 64px/1 var(--sans); letter-spacing: -.04em; color: #fafafa; margin-right: 8px; }
-.xbs-tot { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.xbs-tot > div { padding: 18px; border-radius: 16px; background: rgba(255, 255, 255, .06); }
-.xbs-tot dt { font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #a1a1a6; }
-.xbs-tot dd { margin: 10px 0 0; font: 497 32px/1 var(--sans); letter-spacing: -.03em; font-feature-settings: 'tnum'; }
-.xbs-tot dd.xbs-sub { margin-top: 8px; font: 400 14px var(--sans); letter-spacing: 0; color: #a1a1a6; }
-.xbs-tot small { font: 400 14px var(--sans); letter-spacing: 0; color: #a1a1a6; }
-.xbs-more { justify-self: center; margin-top: -6px; min-height: 44px; font-size: 15px; color: #f5f5f7; }
-
-/* the promises: one ledger */
-.xbs-ledger { list-style: none; margin: 0; padding: 8px clamp(24px, 3vw, 40px); }
-.xbs-ledger li { display: grid; grid-template-columns: 56px minmax(0, 5fr) minmax(0, 7fr); gap: 8px 24px; align-items: baseline; padding: 24px 0; border-bottom: 1px solid var(--line); transition: background .15s; }
-.xbs-ledger li:last-child { border-bottom: 0; }
-.xbs-ledger .xp-title { font-size: 21px; }
-.xbs-ledger .xp-body { color: var(--soft); }
-.xbs-card-n { font-size: 13px; color: var(--hz-500); }
-@media (hover: hover) { .xbs-ledger li:hover .xbs-card-n { color: var(--ink); } }
-
-@media (prefers-reduced-motion: reduce) { .xbs-dots { animation: none; } }
-@media (max-width: 900px) {
-  .xbs-desk { padding: 24px 0 88px; }
-  .xbs-grid { grid-template-columns: 1fr; }
-  .xbs-chat { min-height: 0; }
-  .xbs-side { position: static; }
-  .xbs-mini { display: flex; justify-content: space-between; align-items: baseline; margin-top: 24px; padding: 16px 20px; border-radius: 16px; background: #0a0a0a; color: #a3a3a3; font-size: 13px; text-decoration: none; }
-  .xbs-mini b { font: 497 26px/1 var(--sans); color: #fafafa; margin-right: 6px; }
-  .xbs-mini:active { transform: scale(.97); }
-  .xbs-asks button { width: 100%; text-align: left; }
-  .xbs-quote-g, .xbs-tot { grid-template-columns: 1fr; }
-  .xbs-log li.me { max-width: 92%; }
-  .xbs-seats { grid-template-columns: repeat(10, 1fr); }
-  .xbs-ledger li { grid-template-columns: 40px 1fr; }
-  .xbs-ledger .xp-body { grid-column: 2; }
-  .xbs-team b { font-size: 52px; }
-  .xbs-tot dd { font-size: 26px; }
-}
-
-.xbs-composer button { transition: transform .1s, background-color .2s; }
-@media (hover: hover) { .xbs-composer button:hover:not(:disabled) { background: var(--hz-700); } }
-.xbs-composer button:active:not(:disabled) { transform: scale(.97); }
-.xbs-start { width: 100%; height: 48px; font-size: 16px; }
-.xbs-roll { display: inline-grid; overflow: clip; vertical-align: bottom; }
-.xbs-roll > span { grid-area: 1 / 1; }
-/* the members slider, drawn: a light track, the filled part, a 24px thumb, a 44px hit area */
+.xbs-seats { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; }
+.xbs-seats i { aspect-ratio: 1; border-radius: 3px; background: rgba(255, 255, 255, .07); transition: background .35s var(--xp-ease), transform .35s var(--xp-ease); }
+.xbs-seats i.s { transform: scale(1.04); background: rgba(255, 255, 255, .6); }
+/* the members slider, drawn: a light track, a 24px thumb, a 44px hit area */
 .xbs-range { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; }
 .xbs-range:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 22px; }
 .xbs-range::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .16); }
@@ -119,5 +70,144 @@
 .xbs-range::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: #f5f5f7; box-shadow: 0 0 0 6px rgba(255, 255, 255, .12); transition: transform .15s; }
 .xbs-range::-moz-range-thumb { width: 24px; height: 24px; border: 0; border-radius: 50%; background: #f5f5f7; box-shadow: 0 0 0 6px rgba(255, 255, 255, .12); }
 .xbs-range:active::-webkit-slider-thumb { transform: scale(1.12); }
-.xbs-desk { padding-bottom: clamp(72px, 8vw, 128px) !important; }
-.xbs-why { padding-top: clamp(56px, 6vw, 96px) !important; }
+.xbs-tot { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.xbs-tot.one { grid-template-columns: 1fr; }
+.xbs-tot > div { padding: 14px 16px; border-radius: 16px; background: rgba(255, 255, 255, .06); }
+/* both labels hold two lines, so the two prices share one baseline whether or not "(RECOMMENDED)" wraps */
+.xbs-tot dt { font: 500 12px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #a1a1a6; min-height: 2.6em; }
+.xbs-tot.one dt { min-height: 0; }
+.xbs-tot dd { margin: 8px 0 0; font: 497 32px/1 var(--sans); letter-spacing: -.03em; font-feature-settings: 'tnum'; }
+.xbs-tot dd.xbs-sub { margin-top: 8px; font: 400 14px/1.35 var(--sans); letter-spacing: 0; color: #a1a1a6; }
+.xbs-tot small { font: 400 14px var(--sans); letter-spacing: 0; color: #a1a1a6; }
+.xbs-start { width: 100%; height: 48px; font-size: 16px; }
+.xbs-more { justify-self: center; margin-top: -6px; min-height: 44px; font-size: 15px; color: #f5f5f7; }
+.xbs-roll { position: relative; display: inline-grid; overflow: clip; vertical-align: bottom; } /* relative: the leaving figure is clipped by its own box */
+.xbs-roll > span { grid-area: 1 / 1; }
+
+/* the promises: one dark sheet that changes with the promise, beside the ledger; each scene is the page's own UI */
+.xbs-why { padding-top: clamp(56px, 6vw, 96px); }
+.xbs-why-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 112px); align-items: start; }
+.xbs-stage-w { position: sticky; top: calc(var(--x-top, 60px) + 48px); }
+.xbs-stage { position: relative; border-radius: 24px; background: #0a0a0a; color: #fafafa; padding: clamp(24px, 2.8vw, 36px); aspect-ratio: 5 / 4; display: grid; grid-template-rows: 1fr auto; overflow: hidden; }
+.xbs-scene { display: grid; align-content: center; gap: 18px; min-height: 0; }
+.xbs-pips { display: flex; gap: 6px; }
+.xbs-pips i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .16); transition: background .3s var(--xp-ease), transform .3s var(--xp-ease); }
+.xbs-pips i.on { background: #f5f5f7; transform: scale(1.2); }
+.xbs-sx { margin: 0; font-size: 13px; color: #a1a1a6; }
+.xbs-sx b { font: 220 40px/1 var(--sans); letter-spacing: -.03em; color: #fafafa; margin-right: 6px; }
+.xbs-sg { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; }
+.xbs-sg i { aspect-ratio: 1; border-radius: 3px; background: rgba(255, 255, 255, .08); }
+.xbs-sg i.s { background: rgba(255, 255, 255, .62); }
+.xbs-sg.sweep i.s { animation: xbs-in .5s var(--xp-ease) both; animation-delay: calc(var(--k) * 14ms); }
+@keyframes xbs-in { from { transform: scale(.4); background: rgba(255, 255, 255, .08); } }
+.xbs-sp { margin: 0; font: 497 52px/1 var(--sans); letter-spacing: -.035em; font-feature-settings: 'tnum'; }
+.xbs-sp small, .xbs-mt small { font: 400 15px var(--sans); letter-spacing: 0; color: #a1a1a6; }
+/* scene: the rate tiles, the annual one picked */
+.xbs-mt { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.xbs-mt > div { display: grid; gap: 10px; align-content: start; padding: 16px; border-radius: 14px; background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px transparent; transition: box-shadow .3s var(--xp-ease); }
+.xbs-mt > div.on { box-shadow: inset 0 0 0 1.5px #f5f5f7; }
+.xbs-mt > div > span { font-size: 11px; line-height: 1.3; letter-spacing: .08em; text-transform: uppercase; color: #a1a1a6; min-height: 2.6em; }
+.xbs-mt b { font: 497 28px/1 var(--sans); letter-spacing: -.03em; font-feature-settings: 'tnum'; }
+.xbs-save { animation: xbs-glint 2.8s var(--ease-calm, ease) infinite alternate; }
+@keyframes xbs-glint { from { transform: scale(1); } to { transform: scale(1.05); } }
+/* scene: the slider moving by itself */
+.xbs-mr { position: relative; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .16); margin: 6px 12px 4px 0; }
+.xbs-mr b { display: block; height: 100%; border-radius: 3px; background: #f5f5f7; transition: width .4s var(--xp-ease); }
+.xbs-mr-t { position: absolute; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; background: #f5f5f7; box-shadow: 0 0 0 5px rgba(255, 255, 255, .12); transition: left .4s var(--xp-ease); }
+/* scenes: the chat, small */
+.xbs-mchat { display: grid; gap: 12px; }
+.xbs-mme { justify-self: end; max-width: 80%; margin: 0; padding: 9px 14px; border-radius: 14px 14px 4px 14px; background: #f5f5f7; color: #0a0a0b; font-size: 14px; line-height: 1.4; animation: xbs-up .5s var(--xp-ease) both; }
+.xbs-mai { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; animation: xbs-up .5s var(--xp-ease) .5s both; }
+.xbs-av.dk { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .2); color: #f5f5f7; }
+.xbs-mans { display: grid; gap: 10px; justify-items: start; min-width: 0; }
+.xbs-mb { margin: 0; padding: 10px 14px; border-radius: 4px 14px 14px 14px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12); font-size: 14px; line-height: 1.5; color: #e4e4e7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.xbs-mb strong { color: #fafafa; }
+.xbs-mpill { display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .3); font-size: 13px; color: #fafafa; animation: xbs-up .5s var(--xp-ease) 1s both; }
+.xbs-mlink { margin: 0 0 0 42px; font-size: 13px; color: #a1a1a6; text-decoration: underline; text-underline-offset: 3px; animation: xbs-up .5s var(--xp-ease) 1.3s both; }
+.xbs-mwait { margin: 0 0 0 42px; font-size: 13px; color: #a1a1a6; animation: xbs-sh 1.4s var(--ease) infinite alternate; }
+@keyframes xbs-up { from { opacity: 0; transform: translateY(8px); } }
+/* scene: the composer, a question typing itself, the privacy line under it */
+.xbs-mcomp { display: grid; gap: 12px; }
+.xbs-min { position: relative; display: flex; align-items: center; height: 52px; padding: 0 56px 0 18px; border-radius: 26px; background: #f5f5f7; color: #0a0a0b; font-size: 15px; overflow: hidden; }
+.xbs-mtype { display: inline-block; overflow: hidden; white-space: nowrap; border-right: 2px solid #0a0a0b; padding-right: 2px; animation: xbs-type 3.6s steps(30) infinite; max-width: 100%; }
+@keyframes xbs-type { 0% { width: 0; } 60%, 100% { width: 100%; } }
+.xbs-msend { position: absolute; right: 5px; top: 5px; width: 42px; height: 42px; border-radius: 50%; background: #0a0a0b; color: #f5f5f7; display: grid; place-items: center; font-style: normal; font-size: 16px; }
+.xbs-mlegal { margin: 0; text-align: center; font-size: 13px; color: #a1a1a6; }
+[data-off] .xbs-stage *, [data-off] .xbs-stage *::after { animation-play-state: paused; }
+
+.xbs-ledger { list-style: none; margin: 0; padding: 0; }
+.xbs-ledger li { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 8px 20px; align-items: baseline; padding: 28px 0; border-bottom: 1px solid var(--line); cursor: default; outline: none; }
+.xbs-ledger li:first-child { padding-top: 0; }
+.xbs-ledger li:last-child { border-bottom: 0; }
+.xbs-ledger .xp-title { font-size: 21px; color: var(--soft); transition: color .3s var(--xp-ease); }
+.xbs-ledger .xp-body { grid-column: 2; color: var(--soft); }
+.xbs-ledger li.on .xp-title { color: var(--ink); }
+/* the marker: a small grey dot that grows into an ink dot on the promise the sheet is showing */
+.xbs-mark { justify-self: center; align-self: center; width: 10px; height: 10px; border-radius: 50%; background: var(--ink); transform: scale(.5); opacity: .3; transition: transform .3s var(--xp-ease), opacity .3s var(--xp-ease); }
+.xbs-ledger li.on .xbs-mark { transform: scale(1); opacity: 1; }
+@media (hover: hover) { .xbs-ledger li:hover .xp-title { color: var(--ink); } .xbs-ledger li:hover .xbs-mark { opacity: .7; } }
+
+.xbs-pcard { display: none; }
+
+/* The dark objects (quote sheet, phone quote, promise cards) take the dark room's tokens page-locally, without
+   data-room="dark": that attribute would also turn the shared header dark over this white page. */
+.xbs-ink {
+  --room-bg: #0a0a0b; --room-surface: #141416; --room-raised: #1c1c1e;
+  --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-faint: #86868b;
+  --room-line: rgba(255, 255, 255, .14); --room-line-strong: rgba(255, 255, 255, .26);
+  --room-fill: rgba(255, 255, 255, .06); --room-fill-strong: rgba(255, 255, 255, .12);
+  --focus: #f5f5f7; --xp-accent: #f5f5f7;
+  --btn-solid-bg: #f5f5f7; --btn-solid-ink: #0a0a0b; --btn-solid-hover: #fff;
+}
+
+/* One solid at a time from the first paint (the /affiliate move): the header's ask is outlined on this route until
+   the page's hook says none of its own solid asks is on screen (html[data-xbs-solid]). */
+html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[href="https://hanzo.ai/signup"],
+html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+
+/* the phone bar under the thumb */
+.xbs-dock { display: none; }
+.xbs-mini-bar { display: none; }
+@media (prefers-reduced-motion: reduce) { .xbs-dots, .xbs-mwait { animation: none; } .xbs-mtype { animation: none; width: 100%; } }
+@media (max-width: 900px) {
+  .xbs-desk { padding: 24px 0 88px; }
+  .xbs-grid { grid-template-columns: 1fr; }
+  .xbs-chat { min-height: 0; }
+  .xbs-side { position: static; }
+  .xbs-lede { margin-top: 24px; }
+  .xbs-mini { display: grid; gap: 14px; margin-top: 20px; padding: 16px 16px 16px 20px; border-radius: 18px; background: #0a0a0a; }
+  .xbs-mini-q { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; row-gap: 12px; color: #a3a3a3; font-size: 13px; text-decoration: none; }
+  .xbs-mini-q b { font: 497 26px/1 var(--sans); color: #fafafa; margin-right: 6px; }
+  .xbs-mini-q:active { translate: 0 1px; }
+  .xbs-mini-bar { display: block; flex-basis: 100%; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, .14); overflow: hidden; }
+  .xbs-mini-bar b { display: block; height: 100%; background: #f5f5f7; transform-origin: left; transition: transform .6s var(--xp-ease); }
+  .xbs-mini-go { height: 44px; }
+  .xbs-asks { margin-top: 28px; }
+  .xbs-asks button { width: 100%; text-align: left; }
+  .xbs-tot { grid-template-columns: 1fr; }
+  .xbs-tot dt { min-height: 0; }
+  .xbs-log li.me { max-width: 92%; }
+  .xbs-seats { grid-template-columns: repeat(10, 1fr); }
+  .xbs-team b { font-size: 52px; }
+  .xbs-tot dd { font-size: 26px; }
+  /* pinned scenes stack under 900px: the sticky stage goes, each promise carries its own card */
+  .xbs-why-g { grid-template-columns: 1fr; gap: 0; }
+  .xbs-stage-w { display: none; }
+  .xbs-pcard { display: block; grid-column: 1 / -1; margin-top: 18px; padding: 20px; border-radius: 20px; background: #0a0a0a; color: #fafafa; overflow: hidden; }
+  .xbs-ledger li .xp-title { color: var(--ink); }
+  .xbs-ledger li .xbs-mark { transform: scale(1); opacity: 1; }
+  .xbs-scene { gap: 12px; }
+  .xbs-sp { font-size: 40px; }
+  .xbs-sx b { font-size: 32px; }
+  .xbs-sg { gap: 4px; grid-template-columns: repeat(20, 1fr); }
+  .xbs-mt b { font-size: 22px; }
+  .xbs-mb { -webkit-line-clamp: 4; font-size: 13px; }
+  .xbs-mme { font-size: 13px; }
+}
+@media (max-width: 700px) {
+  .xbs-dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--line); }
+  .xbs-dock-q { display: flex; align-items: center; gap: 4px; min-height: 44px; font-size: 13px; color: var(--soft); text-decoration: none; white-space: nowrap; }
+  .xbs-dock-q b { font: 497 18px/1 var(--sans); color: var(--ink); }
+  .xbs-dock-q b:nth-of-type(2) { margin-left: 8px; }
+  .xbs-dock-go { flex: none; }
+}

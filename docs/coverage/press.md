@@ -21,6 +21,7 @@ Forks this page deleted:
 - The six partner boxes.
 - The page tokens that overrode deck.css's greys.
 - The aria-label-only "Press & Media" and "Leadership".
+- The pointer-riding news card (now a still column beside the index), the six-column partner logo row (now hairline rows with their downloads), the three-column channel grid (now one numbered index).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -66,7 +67,7 @@ Done here: `data-cta` is on press.hero, press.kit, press.zip, press.mail, press.
 ## 5. Trust and proof
 - [x] No seal, no invented number. Logo permission is an open question.
 - [x] Every figure traces to Hanzo's live copy (2016, San Francisco, CA, Hanzo AI, Inc., Techstars ’17, every news line)
-- [x] Partners appear as one stationary greyscale row with a hairline above, not boxes
+- [x] Partners appear as stationary greyscale hairline rows (logo, name, its download), not boxes
 - [ ] n/a: Privacy link (no form)
 
 Done here: the facts and the boilerplate are word for word from hanzo.ai.
@@ -85,7 +86,7 @@ Done here: text 83/83, links 20/20. Every Hanzo label is visible:
 ## 7. Visual design system
 - [x] `taste.py` passes; only deck greys
 - [x] No label above a headline. All captions sit below.
-- [x] Never box plus shadow. Only the floating kit plates and the pointer card take the deck's floating shadow. The tiles and the guidelines card are flat fills, and the channels are a hairline list.
+- [x] Never box plus shadow. Only the floating kit plates take the deck's floating shadow. The news column, the tiles and the guidelines card are flat fills; the partners and channels are hairline lists (no three equal boxes anywhere).
 - [x] One icon set; no icon in a rounded box (the channel icon circles are gone)
 - [x] Differs from neighbours: a stack that turns into a spread on scroll, which /brand, /investors and /contact don't have
 
@@ -104,17 +105,18 @@ Done here: the copy buttons are 48px icons with an aria-label, and they sit besi
 
 ## 9. Motion and interaction
 - [x] One signature, 3 supporting, 1 fade-up (the lede and asks, in CSS)
-- [x] At least 3 kinds: arrival, scroll (the stage fan-out and the belief line), pointer (the news card), state (copy and download ticks, the email mask)
+- [x] At least 3 kinds, scroll under half: arrival (line masks), scroll (the stage fan-out, the belief line), time (the email types itself, the partner hairlines draw one by one, the channel index walks 01 to 09 once, the team plates open, the phone news card walks the six stories once; each runs once in view, then rests), idle (the plate sheen), pointer (row focus steps the others back; plates, partners and channels answer hover), state (the news column swaps its story with a 300 ms rise and a progress hairline, copy and download ticks, the email mask)
 - [x] Something moves without input; every control answers
-- [x] Reduced motion shows the final state (plain words, settled facts and email, the stage flat); no `setInterval`
+- [x] Reduced motion shows the final state (plain words, settled facts, the full email with its copy button, drawn hairlines, open plates, the stage flat). The one `setInterval` (`useBeat`) runs only in view, never under reduced motion, and clears itself at its last step.
 - [ ] n/a: sound (kit not merged)
 
 Done here:
-- Signature: the belief line. 60 words go from opacity .16 to 1 with the scroll.
+- Signature: the kit deals out. The three press-kit plates sit as one stack beside the h1 and fan out into the kit spread as the pinned stage scrolls (230svh, ease-in-out); a sheen crosses the dark plate three times, then rests. No other page makes this move (the word fill is shared with Philosophy and Research, so it is demoted).
 - Supporting:
-  - the h1 line mask;
-  - the stack fanning out (pinned, 230svh, ease-in-out with the scroll);
-  - the news card, 300 ms ease-out, placed 32 px past the headline's real text edge and moved on focus as well as on pointer.
+  - line masks (the h1, every section head, the team names);
+  - the belief line, demoted: 60 words go from opacity .16 to 1 with the scroll, then the facts settle;
+  - one time beat per section below the news (the email typed with a caret, copy appearing after the last letter; partner hairlines drawn 160 ms apart; the channel index walking 01 to 09 once until pointed at; the team plates opening by clip; the guidelines mark drawing in);
+  - the news index: a still dark column beside it holds the story in focus (`01 / 06` at 64px Air, a progress hairline, the summary and date rising in at 300 ms). Focus follows the pointer, the keyboard, or, untouched, the row crossing the middle of the screen. Nothing follows the cursor.
 - No springs.
 
 ## 10. Media
@@ -138,12 +140,12 @@ Done here: on phones the stage lies flat. The dark plate spans the width, light 
   - #a3a3a3 on #000: 8.3:1
   - white 78% on #000: about 13:1
   - #525252 on white: 7.8:1
-- [x] Pause control: n/a. Nothing loops; every motion is scroll-linked or plays once.
+- [x] Pause control: n/a. Nothing loops forever; the hero plate's sheen crosses three times (about 14 s) and rests, off under reduced motion.
 - [ ] n/a: forms
 - [x] One h1, no heading skips
-- [x] Keyboard reaches every control; focusing a news row places its card beside that row (checked: 16 px under the row top)
+- [x] Keyboard reaches every control; focusing a news row shows that story in the still column
 
-Done here: the pointer card is `aria-hidden`, because the summary it repeats is in the DOM.
+Done here: the news column is `aria-hidden`, because the summary it repeats is in the DOM.
 
 ## 13. Performance and engineering
 - [x] h1 in server HTML
@@ -172,7 +174,7 @@ Done here: n/a.
 Done here: n/a.
 
 ## 17. States and resilience
-- [x] Failed logo: its name shows. Failed portrait: a Sigil plate. Download: draws a tick.
+- [x] Failed logo: an initial in a hairline circle beside its name. Failed portrait: a black Sigil plate with the leader's initials at 64px Air; the name (26px) and role (CEO, CTO, from the boilerplate) always sit under each plate, so the team never reads as empty boxes. Download: draws a tick.
 - [x] Blocked media leaves a complete page with no console errors
 - [ ] n/a: no submit
 - [x] A thrown island does not blank the page
@@ -199,7 +201,9 @@ Done here: Playwright ran with hanzo.ai blocked, and the console was clean.
   - 44px email;
   - the shared bar requested.
 
-  The re-review is pending.
+  Third review (7/10) fixes: section heads rest at 26-32px and the h1 at 44-64px, with one big thing per screen (kit, facts at 64, the news figure, the email, the team plates); the lower half has a beat per section (above); phone news shows titles and dates with one dark card under the list walking the stories, its height held by invisible copies so nothing shifts (CLS 0.005); "10-54%" kept whole by CSS; the copy button waits for the typed email; the signature is the kit dealing out.
+
+  Second review (6/10) fixes: grids became lists (channels one numbered index, partners hairline rows with downloads beside), the news card is pinned in a still column instead of riding with the pointer, the team shows names and roles under Sigil plates, and plates, copy icons, email and every download answer hover and press. The re-review is pending.
 
 Done here: Playwright checks:
 - plates end at identity (the spread);

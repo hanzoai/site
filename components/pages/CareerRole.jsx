@@ -26,8 +26,12 @@
    Scale (MASTER 3.1): h1 52 (40 phone), section heads 26, ledes 20, body 16–17, figures 64 (the deck numeral, the
    fit counts); the total beside the form grows past 64 only while it crosses the middle (FamGrow). The sheet is
    outlined, never outlined and shadowed; the one dark room is the application.
-   V2: 8/10 hero is the deck's own white sheet (numeral, tags, line, contents) landing where you clicked it; ink only;
-   no eyebrows; sticky apply; chapter book; three-step apply in the dark room; sibling roles drag and open. */
+   Arrival from /careers: the clicked sheet's title and numeral fly onto this h1 and numeral (careers/door.js).
+   Idle on the first screen: the contour drifts, the contents' hairlines draw in once and their counts fill once.
+   Hanzo object per team: only roles whose words name Hanzo's models get renders (no Engine render exists in public/).
+   V2: 8/10 grey deck for every member (no hue); tags under the title; hero sheet with the contents plate fully in the
+   first screen at 1470×801, alive on arrival; chapters read with JS off (html.js scoped); the why and apply rooms each
+   hold a drifting contour; three-step apply in the dark room; sibling roles drag and open. No sticky ask (careers). */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../ui';
@@ -38,7 +42,7 @@ import FamChapters from '../v2/FamChapters';
 import FamNext from '../v2/FamNext';
 import FamGrow from '../v2/FamGrow';
 import { ui } from '../v2/famUi';
-import { useArrival } from './doorway';
+import { useSheetLanding } from './careers/door';
 import '../v2/fam.css';
 import './CareerRole.css';
 
@@ -127,8 +131,23 @@ function Steps({ f, role }) {
   );
 }
 
+/* the contents' counts fill once on arrival (0 up to the chapter's count, staggered), then rest at the true value;
+   the server HTML and reduced motion carry the true value */
+function Count({ n, i }) {
+  const [v, setV] = useState(n);
+  useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let k = 0, t;
+    setV(0);
+    const step = () => { k += 1; setV(Math.min(n, k)); if (k < n) t = setTimeout(step, 150); };
+    t = setTimeout(step, 700 + i * 120);
+    return () => clearTimeout(t);
+  }, [n, i]);
+  return <em className="x-mono" aria-hidden="true" data-fill={v === n ? '' : undefined}>{v}</em>;
+}
+
 export default function CareerRole({ role, no, peers = [] }) {
-  useArrival();
+  useSheetLanding();
   const chapters = role.blocks.filter((b) => !b.cards.length);
   const why = role.blocks.find((b) => b.cards.length);
   const total = chapters.reduce((k, b) => k + b.items.length, 0);
@@ -252,7 +271,7 @@ export default function CareerRole({ role, no, peers = [] }) {
                   <li key={t}>
                     <a href={i < chapters.length ? '#xcj-ch-' + i : i === toc.length - 1 ? '#apply' : '#xcj-why'} onClick={tocAt(i)}>
                       <span className="x-mono">{nn(i + 1)}</span><b>{t}</b>
-                      {i < chapters.length && chapters[i].items.length > 0 && <em className="x-mono" aria-hidden="true">{chapters[i].items.length}</em>}
+                      {i < chapters.length && chapters[i].items.length > 0 && <Count n={chapters[i].items.length} i={i} />}
                     </a>
                   </li>
                 ))}
@@ -269,6 +288,8 @@ export default function CareerRole({ role, no, peers = [] }) {
           <div className="v2f-wrap v2f-grid">
             <div className="xcj-why-l">
               <FamLines as="h2" play="view" id="xcj-why-h" text={why.title} className="v2f-head" />
+              {/* the section's object: the role's contour, drifting by itself (one idle mover on this screen) */}
+              <div className="xcj-why-s" aria-hidden="true"><Sigil seed={'/careers/' + role.slug + '/why'} data={[why.cards.length, total]} /></div>
             </div>
             <ol className="xcj-why-r">
               {why.cards.map(([t, d], i) => (
@@ -295,6 +316,7 @@ export default function CareerRole({ role, no, peers = [] }) {
               </p>
             )}
             <p className="xcj-note">{role.form.note.text} <a href={role.form.note.href}>{role.form.note.mail}</a></p>
+            <div className="xcj-apply-s" aria-hidden="true"><Sigil seed={'/careers/' + role.slug + '/apply'} data={[role.form.fields.length, total]} /></div>
           </div>
           <div className="xcj-apply-r"><Steps f={role.form} role={role} /></div>
         </div>

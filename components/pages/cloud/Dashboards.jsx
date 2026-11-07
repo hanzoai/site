@@ -17,9 +17,10 @@
    the alert line you drag sits on the same chart, so the alert and the chart cannot disagree (Hanzo's own claim).
    Every word and link is Hanzo's; chart values are drawn, not measured, and print no numbers. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../../kit';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import { useCalm } from '../../ui';
+import KeynoteStage, { useStagePause } from './SafeStage';
 import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import ExampleConsole from './ExampleConsole';
@@ -30,7 +31,7 @@ import './Dashboards.css';
 function useSeen(amount = 0.25) {
   const ref = useRef(null);
   const seen = useInView(ref, { amount });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   return [ref, seen && !calm];
 }
 /* steps through n every ms while run; choosing one by hand stops the cycle (timeouts, no setInterval) */
@@ -216,7 +217,7 @@ function Fly({ p, k, on, calm, children }) {
    and the breakpoint picks one, so nothing swaps after hydration; with JS off the wide layout simply stacks. */
 function Build() {
   const run = useRef(null);
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
   const [at, setAt] = useState(0);
   useMotionValueEvent(p, 'change', (v) => setAt(Math.min(5, Math.max(0, Math.floor(v * 6 * 0.9999)))));

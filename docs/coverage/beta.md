@@ -14,7 +14,7 @@ Forks this page deleted: the forked `x-btn solid` Apply buttons (now kit `Cta`),
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header comment in `app/beta/page.jsx` names Persona, Goal, CTA, Metric `signup_start`, Signature, Beyond. One solid per screen: kit `Cta` "Apply" (`beta.hero`, and one per opened pass `beta.<pass>`); the header's Try Hanzo turns outline while it is on screen. No copy questions.
+Done here: Header comment in `app/beta/page.jsx` names Persona, Goal, CTA, Metric `signup_start`, Signature, Beyond. One solid per screen: kit `Cta` "Apply" (`beta.hero`, and one per opened pass `beta.<pass>`); the header's Try Hanzo turns outline while it is on screen, on desktop (the shell) and on the phone (page-local `html[data-ask=quiet]` while the hero Apply is seen, as /bounty does). No copy questions.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -32,7 +32,7 @@ Done here: One `<main>` from the layout; links via `A`/`Cta`; parity links 4/4 (
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: the passes open into their sheet by shared-element morph (layoutId), not to a new page; the product tiles link to their own pages.
 
-Done here: No label above the h1. "Get there first." (52px) with Hanzo's line and Apply; the film strip below is the one big thing and plays within 1 s. `PageHero` is not in the kit yet, so the hero is page-local (left open). The page ends on its own dark close (Feedback 52px, Book a call 26px over Kai's film; the room arrives as a rounded card that opens to full width, then the lines cut in) then the footer; kit `Band` takes one action, this close has two (left open). JS off: films show posters, every line is in place.
+Done here: No label above the h1. "Get there first." (52px) on the left with Hanzo's line and Apply on the right in one row (desktop), so the five tiles sit whole in the 1470×801 first screen (y 259 to 702); the tiles are in the server HTML with their posters (no fade, they only land the last 24px), so a first visit is never blank; the film strip is the one big thing and plays within 1 s. White between rooms is about 100px (rail to passes) and 74px (passes to the close). `PageHero` is not in the kit yet, so the hero is page-local (left open). The page ends on its own dark close (Feedback 52px, Book a call 26px over Kai's film; the room arrives as a rounded card that opens to full width, then the lines cut in) then the footer; kit `Band` takes one action, this close has two (left open). JS off: films show posters, every line is in place.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -74,7 +74,7 @@ Done here: `taste.py` passes (greys only); nothing above a headline; tiles 24 ra
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the forked `x-btn solid` Apply buttons (now kit `Cta`), the portal div sheet with a hand-made focus loop (now a native `<dialog>`), raw `<video>` (now kit `Film`), the floating `data-cursor` label, hover lifts and image zooms. listed below
 
-Done here: Kit `Cta` states; pass tiles answer hover (art drifts up 16px, "+" turns), press .97 in 90ms, focus ring; the opened pass is a native `<dialog>` via `showModal()`: focus goes to Close, Esc, the scrim, Close and Back close it, focus returns to the pass.
+Done here: Kit `Cta` states; the five product tiles answer hover (Kai, Enso, Zen: the film steps up 12px; Dev rewrites its diff and Studio runs its cut again; the hairline turns from faint to grey; the ↗ joins the name), press .97 in 90ms, focus ring; pass tiles answer hover (art drifts up 16px, "+" turns), press .97 in 90ms, focus ring; the opened pass is a native `<dialog>` via `showModal()`: focus goes to Close, Esc, the scrim, Close and Back close it, focus returns to the pass.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states; pass tiles answer hover (art drifts up 16px, "+" tu
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: the pass grows into its sheet (layout morph, 0.6s standard ease). Time: the films play; Dev and Studio sketches come alive. Pointer: art drift on tiles and passes. Scroll: the passes clip in once (0.5s, 60ms apart); the close lines cut in from their mask (0.7s, 60ms). No springs; reduced motion shows final states.
+Done here: Signature: the pass grows into its sheet (layout morph, 0.6s standard ease). Time: the films play; Dev and Studio sketches come alive. Pointer: art drift on tiles and passes; Dev and Studio replay their sketch on hover. Scroll: the passes clip in once (0.5s, 60ms apart); the close lines cut in from their mask (0.7s, 60ms). No springs; reduced motion shows final states and pins the rail (no scroll scale or drop), with no hydration mismatch.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set
@@ -91,7 +91,7 @@ Done here: Signature: the pass grows into its sheet (layout morph, 0.6s standard
 - [x] Budgets met; nothing missing; alt on every image
 - [x] No dimmed or filtered photo; 4+ real visuals together where the page has them
 
-Done here: Kit `Film` and `Img` only, posters set; Kai, Enso and Zen films play muted, inline; a pause control beside the row stops all of them; at most 2 films play at once on the phone.
+Done here: Kit `Film` and `Img` only, posters set; Kai, Enso and Zen films play muted, inline; a pause control beside the row stops all of them; at most 2 films play at once on the phone; with JS off the browser's own video controls are hidden, posters only. Design partner: Dev's window sits on the right under the "+" (20px clear), the words keep the left; on the phone the window sits below the "+" and 76px above the title.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -99,7 +99,7 @@ Done here: Kit `Film` and `Img` only, posters set; Kai, Enso and Zen films play 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: 375×812: films on the first screen, Apply full width above the fold, passes stack, the close sets 32/21; no horizontal scroll at 320; targets 44px+.
+Done here: 375×812: films on the first screen, Apply full width above the fold and the only solid there (the header's Try Hanzo is outlined while it shows), passes stack, the close sets 32/21; no horizontal scroll at 320; targets 44px+.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -156,4 +156,4 @@ Done here: Static Hanzo copy; a film that fails leaves its poster; the sheet is 
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/beta.md` verdict 8 or more
 
-Done here: `data-cta` ids `beta.hero`, `beta.a`, `beta.b`, `beta.c` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/beta.md` 7/10 capped on the card format and the close scale, both fixed here.
+Done here: `data-cta` ids `beta.hero`, `beta.a`, `beta.b`, `beta.c` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/beta.md` 7/10 capped on the card format and the close scale (both fixed: 18-part card, close 52/26), product tiles without hover (fixed: drift, replay, hairline, press) and raw `<video>` (fixed: kit `Film`). Round 2 (7/10): phone double solid, rail cut by the fold and blank on first visit, white gaps, Design partner crowding, JS-off controls and reduced-motion scale: all fixed.

@@ -1,14 +1,17 @@
 'use client';
-/* /contact-sales. V2: 8/10 Utility, in ink and greys only: a huge kinetic "Talk to sales" beside one question at a
-   time, set big, on a card set into a slow grey contour field that redraws with each answer you give; your answers
-   gather as chips; what Enterprise includes as five giant numerals you add to your enquiry; the launches Hanzo built
-   as a slow logo rail with a pause; a closing Band with the same one ask.
+/* /contact-sales. V2: 7/10 Utility, in ink and greys only: a huge kinetic "Talk to sales" beside one question at a
+   time, set big, on a card set into a slow grey contour field that redraws with each answer you give; the conversation
+   plays itself once before anyone types; your answers gather as chips; what Enterprise includes as five giant numerals
+   whose rows press and add on a tap; the launches Hanzo built as a slow logo rail with a pause; a closing Band whose
+   one "Talk to sales" glides back to the card, then the footer.
    Persona: an enterprise buyer weighing data residency and vendor consolidation.
    Goal: send a qualified enquiry. CTA: "Talk to sales" (the form; data-cta contact-sales.submit). Metric: contact_sales_submit.
    Signature: the enquiry is a conversation. One question per screen of the card, set large; Enter (or the arrow) moves
    on, the answer slides away up and the next question rises, a progress line glides along, and the contour field
-   around the card redraws for every answer. It is still one real form in the page and sends exactly what hanzo.ai
-   sends (POST https://api.hanzo.ai/v1/marketing/leads, the shape in content/forms.json).
+   around the card redraws for every answer. Before anyone types it plays once from Hanzo's field labels ("Full name"
+   types in, lifts away, "Work email" rises, a chip lands, rest, back to the empty form). It is still one real form in
+   the page and sends exactly what hanzo.ai sends (POST https://api.hanzo.ai/v1/marketing/leads, the shape in
+   content/forms.json). Motion is ease-emphasis cubic-bezier(.16,1,.3,1) at 300ms; no springs in this file.
    Supporting (3): masked kinetic headline, once; the contour field answering the form (Sigil); the logo rail.
    Beyond: the five things Enterprise includes can be added to your enquiry, from the last question's five numerals
    or straight from the giant numerals below. They are kept apart from your own words and joined into the note only
@@ -75,6 +78,45 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
   const refs = useRef({});
   const first = useRef(true);
   const calm = useReducedMotion();
+  /* the demo: before anyone types, the conversation plays once from Hanzo's own field labels. "Full name" types into the
+     first field (an aria-hidden overlay, never the field's value), lifts away, "Work email" rises, a chip lands, a rest,
+     then the empty live form returns. It never submits, never writes the draft and never moves focus; the first
+     pointer, key or focus on the card ends it at once. Reduced motion: no demo. */
+  const [demo, setDemo] = useState(null); // { at, text, chip } while it plays
+  const live = useRef({});
+  live.current = { v, at, adds, state };
+  const timers = useRef([]);
+  const done = useRef(false);
+  const stopDemo = () => { done.current = true; timers.current.forEach(clearTimeout); timers.current = []; setDemo(null); };
+  useEffect(() => {
+    if (calm || !hyd || done.current) return;
+    const el = card.current;
+    if (!el) return;
+    const later = (ms, f) => timers.current.push(setTimeout(f, ms));
+    const fresh = () => { const s = live.current; return s.state === 'idle' && s.at === 0 && !s.adds.length && !Object.values(s.v).some(Boolean); };
+    let tries = 0;
+    const play = () => {
+      if (done.current) return;
+      if (!fresh()) { done.current = true; return; } // a restored draft or an early answer: nothing to show
+      if (document.documentElement.classList.contains('x-arriving') && tries++ < 12) { later(300, play); return; }
+      done.current = true;
+      const word = STEPS[0].label;
+      let t = 0;
+      setDemo({ at: 0, text: '', chip: null });
+      for (let k = 1; k <= word.length; k++) later((t += 80), () => setDemo({ at: 0, text: word.slice(0, k), chip: null }));
+      later((t += 500), () => setDemo({ at: 1, text: word, chip: null })); // the answer lifts away, the next question rises
+      later((t += 420), () => setDemo({ at: 1, text: word, chip: word })); // a chip lands
+      later((t += 1800), () => { timers.current = []; setDemo(null); }); // rest, then back to the empty live form
+    };
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); later(700, play); } }, { threshold: 0.5 });
+    io.observe(el);
+    const stop = () => { if (!done.current || timers.current.length) stopDemo(); };
+    el.addEventListener('pointerdown', stop);
+    el.addEventListener('focusin', stop);
+    el.addEventListener('keydown', stop);
+    return () => { io.disconnect(); timers.current.forEach(clearTimeout); timers.current = []; el.removeEventListener('pointerdown', stop); el.removeEventListener('focusin', stop); el.removeEventListener('keydown', stop); };
+  }, [calm, hyd]); // eslint-disable-line react-hooks/exhaustive-deps
+  const shown = demo ? demo.at : at; // the step on screen (the demo only moves pictures; focus and inert follow `at`)
   useEffect(() => {
     if (first.current) { first.current = false; return; }
     const el = refs.current[STEPS[at].name];
@@ -175,13 +217,13 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
       ) : (
         <form aria-labelledby="xcs-h1" method="post" noValidate onSubmit={submit} className="xcs-form">
           <div className="xcs-top" aria-hidden="true">
-            <i className="xcs-progress"><motion.b initial={false} animate={{ scaleX: (at + 1) / STEPS.length }} transition={T} /></i>
+            <i className="xcs-progress"><motion.b initial={false} animate={{ scaleX: (shown + 1) / STEPS.length }} transition={T} /></i>
           </div>
           <div className="xcs-stage">
             {STEPS.map((s, i) => (
-              <motion.div key={s.name} className={'xcs-step' + (i === at ? ' on' : '') + (bad === i ? ' bad' : '')} initial={false}
-                animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -16 : 16 }}
-                transition={{ duration: i === at ? 0.3 : 0.15, ease: EASE, delay: i === at ? 0.06 : 0 }}
+              <motion.div key={s.name} className={'xcs-step' + (i === shown ? ' on' : '') + (bad === i ? ' bad' : '')} initial={false}
+                animate={i === shown ? { opacity: 1, y: 0 } : { opacity: 0, y: i < shown ? -16 : 16 }}
+                transition={{ duration: i === shown ? 0.3 : 0.15, ease: EASE, delay: i === shown ? 0.06 : 0 }}
                 {...(hyd && i !== at ? { 'aria-hidden': true, inert: true } : {})}>
                 <label htmlFor={s.type === 'size' ? undefined : 'xcs-' + s.name} id={'xcs-l-' + s.name}>
                   <span className="xcs-q">{s.label}</span>
@@ -189,6 +231,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
                   {bad === i && <span className="xcs-bang" role="alert" aria-label={s.label}><Bang /></span>}
                 </label>
                 {field(s)}
+                {i === 0 && demo && <span className="xcs-ghost" aria-hidden="true">{demo.text}</span>}
               </motion.div>
             ))}
           </div>
@@ -202,9 +245,11 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
           <div className="xcs-acts">
             <ul className="xcs-chips" aria-live="polite">
               <AnimatePresence initial={false}>
-                {brief.map((b) => (
-                  <motion.li key={'b' + b} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={T}>{b}</motion.li>
+                {/* ease-emphasis 300ms for the entry and the layout glide alike: no spring anywhere */}
+                {(demo ? [] : brief).map((b) => (
+                  <motion.li key={'b' + b} layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ ...T, layout: T }}>{b}</motion.li>
                 ))}
+                {demo?.chip && <motion.li key="demo" className="xcs-demo-chip" aria-hidden="true" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={T}>{demo.chip}</motion.li>}
               </AnimatePresence>
             </ul>
             <div className="xcs-btns">
@@ -279,8 +324,20 @@ export default function ContactSales() {
     try { sessionStorage.setItem(DRAFT, JSON.stringify({ v: rest, adds, at })); } catch {}
   }, [v, adds, at]);
   const sizeAt = SIZES.findIndex(([k]) => k === v.size);
+  const calm = useReducedMotion();
+  // the Band's "Talk to sales" glides back up to the card and puts you in the question you are on (no reload, no jump)
+  const back = (e) => {
+    const a = e.target.closest?.('.x-band a[href*="#xcs-form"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;
+    e.preventDefault();
+    const card = document.getElementById('xcs-form');
+    if (!card) return;
+    card.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' });
+    const f = card.querySelector('.xcs-step.on input:not([type=radio]), .xcs-step.on textarea, .xcs-step.on input:checked, .xcs-step.on input[type=radio]');
+    setTimeout(() => f?.focus({ preventScroll: true }), calm ? 0 : 900);
+  };
   return (
-    <main className="vc xcs" style={{ '--acc': '#0a0a0a' }} data-ask-name="Talk to sales">
+    <main className="vc xcs" style={{ '--acc': '#0a0a0a' }} data-ask-name="Talk to sales" onClickCapture={back}>
       <section className="xcs-hero vc-scene" aria-labelledby="xcs-h1">
         <div className="vc-grid xcs-hero-g">
           <div className="xcs-copy">
@@ -315,7 +372,9 @@ export default function ContactSales() {
             {INCLUDES.map((t, i) => {
               const on = adds.includes(i);
               return (
-                <li key={t} className={(on ? 'on' : '') + (lit === i ? ' lit' : '')} onPointerEnter={() => setLit(i)} onPointerLeave={() => setLit(-1)}>
+                // the whole row answers: a .98 press, and a click or tap anywhere on it adds it (the + stays the keyboard control)
+                <li key={t} className={(on ? 'on' : '') + (lit === i ? ' lit' : '')} onPointerEnter={() => setLit(i)} onPointerLeave={() => setLit(-1)}
+                  onClick={(e) => { if (!e.target.closest('button')) toggle(i); }}>
                   <span className="xcs-inc-n vc-num" aria-hidden="true">{two(i + 1)}</span>
                   <span className="xcs-inc-t">{t}</span>
                   {/* adds to the enquiry where you are: no focus move, no step change */}

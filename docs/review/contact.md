@@ -1,42 +1,41 @@
 # /contact — James-eye review
 
 Verdict: 7/10
-First complaint: "The top's good now. But the bottom half is a list of giant names, big, big, big, nothing small. And on my laptop 'Talk to sales' is gone the moment I scroll."
+First complaint: "The patch panel's lovely, then I scroll into Visit and it's all big at once: 'Visit' and the address are the same huge size beside a giant clock, and on my phone the community bit is a pale grey smudge stuck under the header with a name peeking out above it. It looks unfinished."
 
-Walked 7 Nov at about 14:45 UTC (after the 14:45 refresh), page file at `94acb12` (`components/pages/Contact.jsx`, `Contact.css`), on main plus the Company branch. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Judged by `JAMES.md` and `MASTER.md` (Utility, §4.5). Stills: `review/contact/desktop-walk.jpg`, `review/contact/phone-walk.jpg`. This replaces the 6/10 review of `f33ebae`.
+Walked at build `e3f60107` (the dev server on :4180). Playwright with video at 1470×801 and at 375×812 (isMobile, hasTouch, 2x). On desktop I watched the first 3 s untouched (stills every 500 ms), hovered and clicked all four jacks, copied hello@hanzo.ai, wheel-scrolled 250 px at a time with 450 ms dwells, hovered three community rows and the Band ask. On the phone I tapped every pill and Copy, rejected the cookie card, then scrolled 220 px at a time to the footer. I also checked 375×667, 320 width, reduced motion and JS off, and ran a PerformanceObserver for CLS, a hue scan, a check for labels above headings, and tap-target and fixed-layer probes. `parity.py /contact`: OK, text 29/29, links 15/15. `taste.py` on Contact.jsx, Contact.css and app/contact/page.jsx: OK (3 checked). Stills: `docs/review/contact/desktop-walk.jpg`, `docs/review/contact/phone-walk.jpg`.
 
 ## What works
-- The recolour is clean: ink, greys and white only, with no labels over the headlines (`taste.py` passes).
-- The patch panel is still the page's own idea. After the curtain, the cable sweeps the four sockets once and lands back on Sales, and the Sales route never moves. The routes no longer switch by themselves.
-- At 1470×801 the h1, lede and "Talk to sales" sit above the fold (button at y=655). On the phone the jacks are a swipe row, so the Sales route and its button fit the first screen.
-- "Visit" is a real object: the address beside a big live San Francisco clock in the one dark room. The page now ends on a closing Band, "Bring Hanzo to your company." with one solid "Talk to sales".
-- JS off: 0 hidden text (it was 11 of 19). Reduced motion: 0 running animations. No layout shift, no tap target under 44px. Parity: text 29/29, links 15/15.
+- **The hero is the page's own idea, and it is alive.** The h1 cuts in at about 0.5 s. Once it lands, the cable lifts out of Sales and seats in Dispatch, then Support, then Press, then back in Sales, on a 400 ms ease-emphasis with no overshoot, and the Sales route and its "Talk to sales" never move. After that it hangs and sways. Hovering a jack makes the wire lean toward it, and the jack's label swaps to its action ("Talk to sales", "Subscribe to newsletter", "Get support", "hello@hanzo.ai"), so the hover tells you something. Clicking swaps the route with a short rise. It is the best moment on the page and nothing like its neighbours.
+- **The copy feedback is right.** Copy turns into a drawn tick with a visible "Copied" (role=status) at both sizes. The clipboard really held the address.
+- **The live clock.** The San Francisco dial ticks, the time reads "8:33 AM PST", and the hands only appear on the first tick. Idle movement that is not scroll.
+- **The community index has rhythm on desktop.** Names are 26 px over 13 px mono addresses, the row you are on grows 1.3× and settles, the arrow nudges, and the plate's 40–52 px name rises in with a redrawn contour.
+- **Clean on the rest:** CLS 0.0008 on desktop and 0 on the phone. Horizontal overflow is 0 at 1470, 375 and 320. The hue scan found nothing. No label or eyebrow sits above any h1 or h2 (the only preceding siblings are the MaskLines `<noscript>` styles). Reduced motion shows the final state with 0 running animations. JS off stacks all four routes, readable. On a 375×667 phone the primary's bottom edge is at 657 px, inside the fold. Every target in the page body is 44 px or more.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Yes. "How can we help?", four lines and the cable sweeping once. After the sweep the hero rests; only the clock keeps time further down.
-2. **One in, one out, or a document?** Better: panel, dark clock room, community, Band. But the community section is one long list of nine giant names, which reads as a list, not a scene.
-3. **A real visual object in every section?** Yes: panel, clock, contour plate, Band.
-4. **One ask, sticky after the hero?** Phone: yes, a slim "Talk to sales" bar, though it sits over the community rows (it covers "GitHub" and "X" as they pass). Desktop: no. After the hero the only solid is the header's "Try Hanzo", a different ask. Under MASTER §3.2 rule 6 the page's ask must live in the sticky header at every width.
-5. **Every hover and press answers, no jumps?** Yes on desktop: a jack hover shows its line's action, and press is .98. On the phone the copy button shows nothing visible when tapped.
-6. **Overlaps, font swap, layout shift?** None at 1470. On the phone, the community plate rides at the top while the rows slide under it, and it shows the same word as the row beneath ("Discord" over "Discord"), so the big word appears twice.
-7. **Which reference, is its motion there?** grubogrubo and hamol: whole-row contact links and playful, restrained micro-motion. Yes.
-8. **Different from neighbours?** The object is its own. The hero frame (left Display headline, right object) is still shared with /contact-sales, /support, /press, /investors, /brand and /careers.
-9. **18 parts (MASTER §2)?** See the card check below.
-10. **Banned tells?** One, plus a token break:
-    - **Everything big at once** in the community section: nine names at about 40px, one per row, with nothing medium or small beside them. The mono address lines that gave it a small layer were deleted.
-    - **Token break:** the cable and the plate name use springs (`stiffness 140, damping 16` overshoots). MASTER §3.1 says no springs, no overshoot.
-11. **Copy untouched?** Yes (parity clean).
+1. **Sells in 5 s, moves within 1 s?** Yes. "How can we help?" plus a route with "Talk to sales" is the whole story, and the h1 cut-in starts at about 0.5 s, followed by the cable sweep.
+2. **One thing in, one out?** Mostly yes. There are four rooms: the hero, the black Visit room (it opens from a rounded card to full width as it arrives), the community index, then the Band. The weak link is Visit, which is one room holding three big things.
+3. **A real visual object in every section?** Yes for the hero (the panel and cable), Visit (the clock) and the Band. The community plate is the weakest object. On desktop it is a pale contour drawing that only gets meaning from the big name over it. On the phone the name is removed, so it is a 16:5 grey strip of faint rings that says nothing.
+4. **One ask, nothing floating, scale rhythm?** There is one solid page ask ("Talk to sales", `data-cta="contact.hero"`). The desktop header changes to "Talk to sales" once the hero ask leaves view (seen at scroll 750 and later). Nothing floats on desktop, and the phone showed no ask bar at any step. Scale is where it slips: the h1 is 84 px (rest 52), "Visit" and "Join the community" are 64 px (rest 26), and the Band heading is 88 px. In the Visit room "Visit" and "1 Ferry Building" sit at the **same** 64 px, stacked, beside a 440 px dial with a 32 px time under it. That is the "everything big at once" screen James named.
+5. **Every hover and press answers, no jumps?** Yes. Jacks lean the wire, peek their action and press at .97. Rows grow 1.3× and nudge their arrow. Copy draws a tick. The Band button changes on hover. None of it shifts layout.
+6. **Overlaps, font swap, layout shift?** No overlaps and no shift. One sloppy edge on the phone: the sticky plate's white mat starts at 60 px, but the glass header lets the row above show through. "LinkedIn" was caught half-visible between the header and the plate (frame `p-09`). The "1 Issue" badge is a FooterHTML hydration mismatch from shared chrome, not this page's fault.
+7. **Which reference, and is its motion there?** It reads as a hamol and osply editorial index (asymmetric list, a pointer-aware plate, restrained micro-motion), and that motion is present. Nothing Apple-like, which is fine for a Utility page.
+8. **Different from its neighbours?** Yes. A patch panel with a cable is its own hero medium. /contact-sales is a form, and no other page has this cable.
+9. **All 18 parts covered?** The card has all 18 `## N.` headings, each with a filled `Done here:` (details under the card check).
+10. **Banned tells?** No hue, gradient text, Inter, eyebrow over a heading, cursor glow or fading buttons. `data-cursor="Open"` sits on the community rows, but no cursor component reads it (no label appeared on hover), so it is dead markup rather than a tell. The borderline one is "everything big at once" in the Visit room (answer 4).
+11. **Copy untouched?** Yes. Parity is 29/29 text and 15/15 links, and the mono addresses are the links' own URLs (aria-hidden; the card lists them as a question for James).
 
-## Card check (`docs/coverage/contact.md`)
-- **Format.** The card is 18 numbered paragraphs, not the template's `## 1.` to `## 18.` headings with `Done here:` lines, so the board cannot count it as 18 of 18.
-- **Part 4 is false at 1470.** It claims the ask bar rises "after the hero at every width". On desktop no bar or header ask appeared; only "Try Hanzo".
-- **Part 9 conflicts with MASTER §3.1.** "Seats it in the next on a spring" breaks the no-springs rule.
-- **Part 12 is unverified.** "Reports through `role=status`": no visible confirmation on a phone tap.
-- **Verdict capped at 7** for the false Part 4.
+## Card check
+The format is valid: 18 `## N.` headings in order, each with a `Done here:` line, and the three lines above part 1 (copy questions, shared requests, deleted forks) are present. Spot-checks:
+- "Horizontal overflow 0px at 1470 and 375": **true** (also 0 at 320).
+- "visible 'Copied' … role status … at 1470 and on a 375 tap": **true**, measured at both.
+- "Primary ask above the fold at 375×667": **true**, bottom edge at 657 px.
+- "header … 'Talk to sales' … from scroll 600": **true**. It still read "Try Hanzo" (outlined) at about 500 and "Talk to sales" by 750.
+- "the slim 'Talk to sales' bar rested once (scroll 1800)" on the phone: **not reproduced**. No fixed bar appeared at any of 24 scroll steps once the cookie card was dismissed. It is stale rather than false (the bar's behaviour belongs to shared chrome), so it does not cap the verdict, but the line should be updated.
+- "Console errors 0": one hydration error appeared under load, traced to shared `FooterHTML`'s `__html`. It is not this page's fault, and the card's claim stands for page code.
 
 ## Fixes (in order)
-1. **Put "Talk to sales" in the sticky header** at every width (the page's `data-thumb` label in the header slot, solid once the hero button leaves). Drop the floating bar on desktop. On the phone, keep the slim bar only if the page reserves space so it never covers a row.
-2. **Give the community list rhythm.** Bring the names down to the section-heading size (26px). Let only the row you are on grow, then settle back. On the phone, drop the duplicate name from the sticky plate (or the plate itself) so "Discord" is not shown twice.
-3. **Replace the springs** on the cable and the plate name with `ease-emphasis` at 300 to 400ms. The plug still seats; it just does not bounce.
-4. **Show "Copied"** (or a tick) when hello@hanzo.ai is copied on a phone, using the register string.
-5. **Rewrite the card in the template format** (`## 1.` to `## 18.`, each with a `Done here:` line) and correct Part 4.
+1. **Calm the Visit room's scale.** Give it one big thing: the clock. Set "Visit" at the resting section-heading size and keep "1 Ferry Building" clearly smaller than or distinct from it (they are now the same 64 px, stacked). The dial can stay the moment. Bring the page's resting headings toward JAMES.md's 52 px h1 and 26 px section headings, so growth is earned rather than the default.
+2. **Make the phone community plate earn its place, or drop it.** The 16:5 grey strip of faint rings pinned under the header carries no information without its name. Either give it the name in a way that does not duplicate the active row (for example, have the active row's own name be the only one, and remove the pinned strip), or let it scroll away with the heading. Also close the gap so no row shows through between the glass header and the mat (`p-09`: "LinkedIn" peeking).
+3. **Give the desktop plate more meaning than a faint contour.** At rest it reads as a blank quiet tile with a word. Raise the contour contrast a step on the deck ramp, or let the redraw on row change be the visible event (a draw-on stroke rather than a 300 ms cross-fade), so the "plate follows the row" moment is actually seen.
+4. Housekeeping: remove the dead `data-cursor="Open"` from the community links (a cursor label is a banned tell if the shared cursor ever starts reading it), and update the card's phone ask-bar line to what the page does now.

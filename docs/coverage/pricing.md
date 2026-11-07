@@ -3,7 +3,7 @@
 Page file: `components/pages/Pricing.jsx` (+ `Pricing.css`) · gallery: `docs/gallery/pricing/` · metric id: `cta_click` on `pricing.free`, `pricing.go`, `pricing.pro`
 
 Open copy questions for James: the pricing source of truth (no `lib/plans.js` yet; prices are Hanzo's strings in the page); the dead pricing-button destinations (Dev, Max, Ultra and Team have no checkout link on Hanzo's page; they offer "Chat with buying specialist" until James names one).
-Shared changes requested (`docs/requests/pricing.md`): none. Waiting on shared owners for `lib/cta.js`, `lib/plans.js`, `PageHero` and `tokens.css`; the page uses page-local deck values until then.
+Shared changes requested (`docs/requests/pricing.md`): the phone header ask outlined while a page's solid ask shows; the Band's blur reveal and double keyboard stop. Waiting on shared owners for `lib/cta.js`, `lib/plans.js`, `PageHero` and `tokens.css`; the page uses page-local deck values until then.
 Forks this page deleted: the dark "recommended" Pro and Team cards, three solid buttons in a row, the page-local tab bar (now kit `Tabs`), hand-written tables (now kit `DataTable`), the reading-row stripe, the duplicate "Pay as you go" price line, the invented helper sentences, the roll-up-from-$0 arrival.
 
 ## 1. Strategy and conversion
@@ -13,7 +13,7 @@ Forks this page deleted: the dark "recommended" Pro and Team cards, three solid 
 - [x] No dead or self-looping button; n/a for `lib/plans.js` (not merged yet)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Plan columns work as a picker. The lowest plan (Free) is selected by default and is the only solid ask; pointing previews a column, and a click or focus selects it. At 1470×801 the three asks sit level at y=765, inside the first screen.
+Done here: Plan columns work as a picker. The lowest plan (Free) is selected by default and is the page's only solid ask; pointing previews a column, and a click or focus selects it. On desktop the shared header ask drops to an outline while it shows; on phones the shared header keeps its solid "Try Hanzo" (shared header, not this file), so the phone's first screen shows two solid fills until the shared owner changes it. Only the visible tab's asks carry `data-thumb`; measured on the first screen: Personal 1 solid (Free) at 1470 and 375, Team 1 at 1470; the API tab at 1470 shows 2 (header and "Get API Key") because the shared `Ask.jsx` reads the page ask once per route (requested, `docs/requests/pricing.md` item 3).
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the shell's `#main` mark sits before the page's `<main>`)
@@ -31,7 +31,7 @@ Done here: Parity shows 5/5 links. Kit `Tabs` (Personal, Team, API) sync to `#te
 - [x] Ends in `Band`, then the footer
 - [x] Card-to-page: the plan's "Compare plans" grows a sheet out of its column (the page's Morph moment)
 
-Done here: Prices are visible at once with no roll from 0. The Pro column takes its first step at 1 s. JS off: 0 invisible text blocks (checked), and the Pro column shows only Pro (no misprice).
+Done here: Prices are visible at once with no roll from 0. Within 0.2 s at both sizes Hanzo's model art (Enso, Zen, Kai) deals in beside the lede ("every model on one bill"), then each card lifts once in turn and rests on Enso by 4.3 s; the Pro column takes its first step at 1 s. JS off: 0 invisible text blocks (checked), and the Pro column shows only Pro (no misprice).
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -93,12 +93,12 @@ Done here: The signature is the odometer: 300 ms, rolling only between real pric
 - **Arrival:** the h1 cut-in.
 
 ## 10. Media
-- [x] n/a: no image or film on this page (the earlier Enso art behind the Pro card is gone with the dark card)
+- [x] Kit `Img` only, sized (320×240 and 192×240), Enso with `priority`
 - [x] n/a: no video
-- [x] n/a: no image
-- [x] n/a: no photo
+- [x] Three webp files already in `public/models/`; decorative (`aria-hidden`, `alt=""`)
+- [x] No dimmed or filtered photo: the art shows as Hanzo made it
 
-Done here: The plan sheet and its rolling figures are the object. The page loads no media at all.
+Done here: The hero strip shows Hanzo's own Enso, Zen and Kai art (the families the plans name) as black 20px cards; it is the page's only colour. The plan sheet and its rolling figures stay the main object.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -107,7 +107,7 @@ Done here: The plan sheet and its rolling figures are the object. The page loads
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- **Phone:** the first ask's bottom sits at 601 on 375×812. The columns stack with hairlines.
+- **Phone:** the art strip is 60px tall at 375 so the Free card starts inside the first screen; trust links and the band's link are 44px tall on phones (probe: no target under 44px except desktop-only links). The API tab's model families fold to one open (`<details>`), and "The rates" shows three with the other five behind "Read more"; measured page height on the API tab: 7,392px at 1470 and 10,799px at 375 (still long on phones: every rate and model row is Hanzo's copy and stays). The columns stack with hairlines.
 - **Compare sheet:** shows one plan at a time on phones, picked from a switch over it.
 
 ## 12. Accessibility (WCAG 2.2 AA)
@@ -125,7 +125,7 @@ Done here: Prices sit in `aria-live="polite"`. The steppers are named groups. Th
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop (filmed in the cloud)
 
-Done here: Motion is transform and opacity only. The ladder's timers live only while the card is on screen.
+Done here: Motion is transform and opacity only. The ladder's timers live only while the card is on screen. The page's only images are the three hero model-art webp files (Enso with `priority`), sized; they answer the plan picker (Free lights Enso and Zen, every other plan all three).
 
 ## 14. SEO and machine files
 - [x] Title and description match `content/pages.json`

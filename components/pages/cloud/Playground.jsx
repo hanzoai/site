@@ -1,9 +1,8 @@
 'use client';
 /* Playground, v2 launch page (Cloud 3).
-   V2: 8/10 Split Stage hero with the Playground itself running eight kinds of run, opening on Iro developing so the
-   first screen has Hanzo's own colour; hover a kind to preview it, pause to hold it; the "a key, a model name, and a
-   message" sentence as a pinned scene whose lit phrase marks its token in the real request (hover marks it too); one
-   dark room; related cards that open; grey UI, colour only from the model media.
+   V2: 8/10 the Playground runs eight kinds of run in a hero window that arrives once (no snap) inside a drawn hairline;
+   each kind shows its own model (Iro, Koma, Oto, Kai); the first-request sentence runs itself once (a key, a model
+   name, a message, 1.2 s apart) in a 240svh scene with a live caret; no springs, deck greys and radii, header ask solid.
    Signature: the playground, running. Eight kinds of run (chat to vision) take turns in one window, each drawing its own
    kind of answer on Hanzo's own model media (Iro develops, Koma's film plays, Kai's subject is found), with the run's
    tokens and cost filling beside it; hover a kind to preview it, tap it to hold it.
@@ -18,10 +17,9 @@
    timed wipe into the dark room; scroll = the Stage settle and the scrubbed sentence.
    Every word and link is Hanzo's; the meter shows proportions, not measured figures. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion, useInView, useTransform } from 'motion/react';
 import { Copy } from '../../ui';
-import { Paste, useLive, useSteps } from './Frame';
-import SettleStage from '../../v2/SettleStage';
+import { Paste, useLive } from './Frame';
 import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
@@ -33,9 +31,21 @@ import './Playground.css';
 const PLAY = 'https://platform.hanzo.ai/playground';
 const EASE = [0.16, 1, 0.3, 1];
 const MODES = ['Chat', 'Completions', 'Decisions', 'Embeddings', 'Image', 'Video', 'Audio', 'Vision'];
+const MODEL = ['zen', 'zen', 'zen', 'zen', 'iro', 'koma', 'oto', 'kai']; // the model each kind runs on: the media it shows
 const FIRST = 4; // the window opens on Image, so the first screen carries Iro's own colour; the tabs keep Hanzo's order
 // relative run shape for the meter bars only: [tokens in, tokens out, time]; never shown as numbers
 const RUN = [[0.3, 0.6, 0.2], [0.4, 0.9, 0.3], [0.5, 0.1, 0.1], [0.35, 0, 0.05], [0.45, 0, 0.55], [0.5, 0, 0.95], [0.4, 0, 0.35], [0.6, 0.45, 0.25]];
+/* the kinds take turns; a kind you pick holds for two turns, then the window carries on by itself */
+function useSteps(n, ms, live) {
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!live) return;
+    const t = setTimeout(() => { setMine(false); setAt((v) => (v + 1) % n); }, mine ? ms * 2 : ms);
+    return () => clearTimeout(t);
+  }, [at, live, mine, n, ms]);
+  return [at, (i) => { setAt(i); setMine(true); }, mine];
+}
 const rnd = (i) => { const x = Math.sin(i * 91.7) * 43758.5453; return x - Math.floor(x); };
 
 function Chat() {
@@ -55,11 +65,11 @@ function Completions() {
 function Decisions() {
   return (
     <svg className="pg-tree" viewBox="0 0 320 200" aria-hidden="true">
-      <motion.path d="M160 40 C160 90 80 90 80 150" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.3 }} />
-      <motion.path d="M160 40 C160 90 240 90 240 150" className="on" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.3 }} />
+      <motion.path d="M160 40 C160 90 80 90 80 150" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.3, ease: EASE }} />
+      <motion.path d="M160 40 C160 90 240 90 240 150" className="on" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.3, ease: EASE }} />
       <circle cx="160" cy="34" r="12" className="root" />
-      <motion.circle cx="80" cy="158" r="12" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.9, type: 'spring', stiffness: 300, damping: 18 }} />
-      <motion.circle cx="240" cy="158" r="12" className="pick" initial={{ scale: 0 }} animate={{ scale: [0, 1.25, 1] }} transition={{ delay: 1.1, duration: 0.6 }} />
+      <motion.circle cx="80" cy="158" r="12" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.9, duration: 0.3, ease: EASE }} />
+      <motion.circle cx="240" cy="158" r="12" className="pick" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.1, duration: 0.3, ease: EASE }} />
     </svg>
   );
 }
@@ -88,8 +98,16 @@ function Video({ paused }) {
   useEffect(() => { const v = box.current?.querySelector('video'); if (!v) return; if (paused) v.pause(); else v.play?.().catch(() => {}); }, [paused]);
   return <div className="pg-vid" ref={box}><Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} /><i className="pg-head" /></div>;
 }
-function Audio() {
-  return <div className="pg-wave">{Array.from({ length: 56 }).map((_, i) => <i key={i} style={{ animationDelay: `${-rnd(i) * 1.2}s`, height: `${24 + rnd(i + 3) * 76}%` }} />)}</div>;
+/* Audio: Oto's own film, with the waveform it is singing drawn along its foot */
+function Audio({ paused }) {
+  const box = useRef(null);
+  useEffect(() => { const v = box.current?.querySelector('video'); if (!v) return; if (paused) v.pause(); else v.play?.().catch(() => {}); }, [paused]);
+  return (
+    <div className="pg-aud" ref={box}>
+      <Film src="/models/oto.webm" poster="/models/oto.webp" w={1200} h={1500} />
+      <div className="pg-wave">{Array.from({ length: 56 }).map((_, i) => <i key={i} style={{ animationDelay: `${-rnd(i) * 1.2}s`, height: `${24 + rnd(i + 3) * 76}%` }} />)}</div>
+    </div>
+  );
 }
 function Vision() {
   return (
@@ -113,24 +131,34 @@ function Window() {
   const cur = hov ?? at;
   const choose = (i) => { setHov(null); chooseRaw((i - FIRST + MODES.length) % MODES.length); };
   const Canvas = CANVAS[cur];
+  const strip = useRef(null);
+  useEffect(() => { // phones: keep the lit kind inside the tab strip
+    const s = strip.current, b = s?.children[cur]; if (!s || !b || s.scrollWidth <= s.clientWidth) return;
+    s.scrollTo({ left: b.offsetLeft - (s.clientWidth - b.offsetWidth) / 2, behavior: calm ? 'auto' : 'smooth' });
+  }, [cur, calm]);
+  const key = (e) => {
+    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : e.key === 'Home' ? -cur : e.key === 'End' ? MODES.length - 1 - cur : 0;
+    if (!d) return; e.preventDefault();
+    const n = (cur + d + MODES.length) % MODES.length; choose(n); strip.current?.children[n]?.focus();
+  };
   const [tin, tout, secs] = RUN[cur];
   const bars = [['Tokens in', tin], ['Tokens out', tout], ['Time', secs], ['Cost', Math.min(1, (tin + tout) * 0.6 + secs * 0.5)]];
   return (
     <div className={'pg-win' + (paused ? ' paused' : '')} ref={ref}>
       <div className="pg-bar">
         <LivePause paused={paused} onToggle={pause} className="pg-pause" />
-        <i /><i /><i /><span>Playground</span><b>zen</b>
+        <i /><i /><i /><span>Playground</span><b>{MODEL[cur]}</b>
       </div>
-      <div className="pg-modes" role="tablist" aria-label="Kind of run" onPointerLeave={() => setHov(null)}>
+      <div className="pg-modes" role="tablist" aria-label="Kind of run" ref={strip} onKeyDown={key} onPointerLeave={() => setHov(null)}>
         {MODES.map((m, i) => (
-          <button key={m} type="button" role="tab" aria-selected={cur === i} onClick={() => choose(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)}>
-            {cur === i && <motion.i layoutId="pg-mode" className="pg-mode-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+          <button key={m} type="button" role="tab" id={'pg-k' + i} aria-controls="pg-run" tabIndex={cur === i ? 0 : -1} aria-selected={cur === i} onClick={() => choose(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)}>
+            {cur === i && <motion.i layoutId="pg-mode" className="pg-mode-bg" transition={{ duration: 0.3, ease: EASE }} />}
             <span>{m}</span>
-            {cur === i && !mine && run && <em key={raw} className="pg-mode-t" />}
+            {cur === i && run && <em key={raw + (mine ? 'h' : '')} className="pg-mode-t" style={mine ? { animationDuration: '7.6s' } : undefined} />}
           </button>
         ))}
       </div>
-      <div className="pg-body">
+      <div className="pg-body" role="tabpanel" id="pg-run" aria-labelledby={'pg-k' + cur}>
         <div className="pg-canvas" aria-hidden="true">
           <div className="pg-stagebox">
             {calm ? <div className="pg-cv"><Canvas paused /></div> : (
@@ -143,7 +171,7 @@ function Window() {
         </div>
         <aside className="pg-run" aria-label="This run">
           <p className="pg-run-k">Run · {MODES[cur]}</p>
-          <div className="pg-model"><span>Model</span><b>zen</b></div>
+          <div className="pg-model"><span>Model</span><b>{MODEL[cur]}</b></div>
           <ul className="pg-meter">
             {bars.map(([l, v], i) => <li key={l} className={i === 3 ? 'cost' : ''}><span>{l}</span><i><b key={cur} style={{ '--v': v, '--d': 0.3 + i * 0.12 + 's' }} /></i></li>)}
           </ul>
@@ -184,15 +212,23 @@ function FirstRequest() {
   useEffect(() => setLive(true), []);
   const [at, setAt] = useState(0); // 0..2 the three parts, 3 the whole request in Python
   const [hv, setHv] = useState(null); // a phrase under a fine pointer marks its token
+  const [auto, setAuto] = useState(null); // on arrival the sentence reads itself once: a key, a model name, a message
+  const seen = useInView(ref, { amount: 0.3, once: true });
+  useEffect(() => {
+    if (!seen || calm) return;
+    const ts = [0, 1, 2].map((i) => setTimeout(() => setAuto(i), 400 + i * 1200));
+    ts.push(setTimeout(() => setAuto(null), 400 + 3 * 1200));
+    return () => ts.forEach(clearTimeout);
+  }, [seen, calm]);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => { const i = Math.min(3, Math.floor(p * 4 * 0.999)); setAt((v) => (v === i ? v : i)); });
   const jump = (i) => {
-    setHv(null);
+    setHv(null); setAuto(null);
     const el = ref.current; if (!el) return;
     const y = el.getBoundingClientRect().top + scrollY + ((i + 0.5) / 4) * (el.offsetHeight - innerHeight);
     window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) }) : scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
   };
-  const show = hv ?? at;
+  const show = hv ?? auto ?? at;
   const tab = show === 3 ? 1 : 0;
   const peek = (i) => (e) => e.pointerType === 'mouse' && setHv(i);
   return (
@@ -220,8 +256,8 @@ function FirstRequest() {
               <Copy text={tab ? PY : CURL} />
             </div>
             <div className="pg-req-panes">
-              <div className="pg-req-pane" data-on={tab === 0 || undefined}><p className="pg-req-l">One request</p><pre><code>{marked(CURL, show < 3 ? PARTS[show][1] : null)}</code></pre></div>
-              <div className="pg-req-pane" data-on={tab === 1 || undefined}><p className="pg-req-l">The Python client</p><pre><code>{marked(PY, 'HANZO_API_KEY')}</code></pre></div>
+              <div className="pg-req-pane" data-on={tab === 0 || undefined} inert={live && tab !== 0 ? true : undefined}><p className="pg-req-l">One request</p><pre><code>{marked(CURL, show < 3 ? PARTS[show][1] : null)}<i className="pg-caret" aria-hidden="true" /></code></pre></div>
+              <div className="pg-req-pane" data-on={tab === 1 || undefined} inert={live && tab !== 1 ? true : undefined}><p className="pg-req-l">The Python client</p><pre><code>{marked(PY, 'HANZO_API_KEY')}<i className="pg-caret" aria-hidden="true" /></code></pre></div>
             </div>
           </div>
         </div>
@@ -250,7 +286,7 @@ function Wall() {
       <ul className="pg-wall-grid">
         {MODELS.map(([n, m], i) => (
           <li key={m}>
-            <A to={'/' + m} className={'pg-tile' + (i === at ? ' on' : '')} data-cursor="Open"
+            <A to={'/' + m} className={'pg-tile' + (i === at ? ' on' : '')}
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setHand(true); setAt(i); } }} onFocus={() => setAt(i)}>
               <Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} className="pg-tile-img" data-morph />
               {i === at && live && !calm && !paused && <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} className="pg-tile-film" />}
@@ -259,6 +295,20 @@ function Wall() {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/* the hero window arrives once in CSS from first paint (so the server frame and the first client frame agree: no snap),
+   then eases back a little as the hero leaves */
+function HeroStage({ children }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 30%', 'end start'] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.96]);
+  return (
+    <div ref={ref} className="pg-stage">
+      <motion.div className="pg-stage-in" style={calm ? undefined : { scale }}>{children}</motion.div>
     </div>
   );
 }
@@ -278,7 +328,7 @@ export default function Playground() {
               <A to="/api" className="lx-ghost">Read the API</A>
             </div>
           </div>
-          <SettleStage from={1.08} lift={48} className="pg-stage"><Window /></SettleStage>
+          <HeroStage><Window /></HeroStage>
         </div>
       </section>
 

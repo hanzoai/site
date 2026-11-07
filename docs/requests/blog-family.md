@@ -1,0 +1,4 @@
+# Request from /blog/* (blog-family)
+
+1. **Intermittent hydration mismatch in `FooterHTML` (shared chrome).** On some loads (5 of 10 in a run that screenshots 200 ms after the h1 appears, 7 Nov 16:25) React logs "A tree hydrated but some attributes of the server rendered HTML didn't match": the diff is `FooterHTML`'s `dangerouslySetInnerHTML.__html` (`<footer class="is_View _paddingInline-_platformweb_page-gutter …"`), server and client strings differ. Seen on every /blog post and with reduced motion; not from the post template. It shows Next's red "1 Issue" badge. Owner: shared shell.
+2. **Phone one-solid rule is page-local twice now** (/bounty and /blog/* both set `html[data-ask=quiet]` while their own solid ask is on screen). Worth moving into the shell so every page with `data-thumb` gets it.
