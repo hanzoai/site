@@ -289,30 +289,23 @@ function Figures() {
 
 /* ---------- prices (used by the catalogue's cards and the price list) ---------- */
 const dollars = (v) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3) : v.toFixed(2)));
-const cost = (r, i) => (r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
-// a model's own rate as one line; null when Hanzo prints none for it (never a guessed price)
-const rateLine = (r) => (!r || r[2] == null ? null : r[2] === 0 && r[3] === 0 ? 'Free' : `${cost(r, 2)} in · ${cost(r, 3)} out`);
-/* Each catalogue model's "Use it now": Hanzo Chat, where Hanzo's own model pages send "Try in Chat". A sibling of the
+/* GA item 15: the models whose price Hanzo itself prints, checked against the snapshots (7 Nov):
+   content/live/models/hanzo/<id>.json ("$0.330 in · $1.65 out, per million tokens"), the maker pages under
+   content/live/models/<lab>/, content/live/models.json's price list and /pricing's API tab. Zen6, Zen6 Flash,
+   Claude Fable 5, GPT-3.5 Turbo 0613, Grok 4.20, the rest of the Zen6 family, Zen Embedding 3, the creative models and
+   Zen 7 print no price of their own, so the cards and the price list show none ("—"). Never a guessed price. */
+const PRICED = new Set(['enso', 'enso-flash', 'enso-pro', 'enso-ultra', 'zen5', 'zen5-pro', 'zen5-coder', 'zen5-flash', 'zen5-mini',
+  'zen-vl', 'zen-embedding', 'zen-guard', 'kai', 'google/gemini-2.5-pro', 'deepseek/deepseek-chat', 'meta/muse-glimmer-30b', 'cohere/command-a']);
+const cost = (r, i) => (!PRICED.has(r[0]) || r[2] == null ? '—' : r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
+const side = (v) => (v === 0 ? 'Free' : dollars(v));
+// a model's own rate as one line, the way Hanzo's model pages print it ("$0.021 in · Free out"); null without a source
+const rateLine = (r) => (!r || !PRICED.has(r[0]) || r[2] == null ? null : r[2] === 0 && r[3] === 0 ? 'Free' : `${side(r[2])} in · ${side(r[3])} out`);
+/* Each catalogue model's "Use it now": /chat, where Hanzo's own model pages send "Try in Chat". A sibling of the
    card (never inside its link), set on the card's foot by CSS. */
-const CHAT = 'https://hanzo.ai/chat';
+const CHAT = '/chat';
 const Use = ({ id, name }) => <Cta to={CHAT} kind="quiet" size="sm" id={'models.use.' + id} className="xmo-use" aria-label={`Use ${name} now in Hanzo Chat`}>Use it now</Cta>;
 const ctxOf = (n) => (n == null ? '—' : n >= 950000 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1000) + 'K');
 
-/* api.hanzo.ai's live rates, asked once when the catalogue comes near; the printed rates stay when it is out of reach */
-function useLive(go) {
-  const [live, setLive] = useState({});
-  useEffect(() => {
-    if (!go) return;
-    const ctl = new AbortController();
-    fetch('https://api.hanzo.ai/v1/models', { signal: ctl.signal }).then((r) => r.json()).then((j) => {
-      const m = {};
-      (j.data || []).forEach((x) => { const p = x.pricing; if (p && p.input_per_million != null) m[x.id] = [p.input_per_million, p.output_per_million, x.context_window ?? null]; });
-      setLive(m);
-    }).catch(() => {});
-    return () => ctl.abort();
-  }, [go]);
-  return (r) => (live[r[0]] ? [r[0], r[1], live[r[0]][0], live[r[0]][1], live[r[0]][2] ?? r[4]] : r);
-}
 const ALL = Object.fromEntries([...ROWS, ...OTHERS].map((r) => [r[0], r]));
 
 /* ---------- 5. the catalogue ---------- */
@@ -424,7 +417,7 @@ function Every({ makers }) {
   );
 }
 
-function Catalogue({ at, makers }) {
+function Catalogue({ makers }) {
   const [fam, setFam] = useState('all');
   const sec = useRef(null);
   // a chip brings the catalogue's top back under the header, so the re-flowed family is what you see
@@ -436,7 +429,7 @@ function Catalogue({ at, makers }) {
   const open = useOpen();
   const paused = usePaused();
   const show = (f) => fam === 'all' || fam === f;
-  const card = (id, name, ctx, d, tags, to, f) => <li key={id}><Thumb fam={f} seed={id} /><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} /><Use id={id} name={name} /></li>;
+  const card = (id, name, ctx, d, tags, to, f) => <li key={id}><Thumb fam={f} seed={id} /><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id]} /><Use id={id} name={name} /></li>;
   const groups = [
     ['enso', <Head slug="enso" title="Enso models" link={<Lk to="/enso" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'enso')}>Enso: the router, its presets and its runs</Lk>} />,
       <ul className="xmo-cards">{ENSO.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id, 'enso'))}</ul>],
@@ -451,7 +444,7 @@ function Catalogue({ at, makers }) {
       </ul>
     )],
     ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,
-      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><Thumb fam="kai" /><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} />{ALL[k.id] && <Use id={k.id} name={k.name} />}</li>)}</ul>],
+      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><Thumb fam="kai" /><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id]} />{ALL[k.id] && <Use id={k.id} name={k.name} />}</li>)}</ul>],
     ['creative', <Head title="Creative models" link={<Lk to="/design">Make something in Design</Lk>}><p>Video, images, 3D, sound effects, voice and music, each its own model, in research preview.</p></Head>,
       <ul className="xmo-cards tiles">{CREATIVE.map((m) => <li key={m[0]}><Tile m={m} /><Use id={m[0]} name={m[1]} /></li>)}</ul>],
     ['labs', <Head title="Flagships from other labs" art={<Sigil seed="/models#labs" data={[LABS.length, 2e6, 164e3]} className="xmo-gh-sigil" still={paused} />} link={<Lk to="#priced">Every model, priced</Lk>} />,
@@ -498,8 +491,8 @@ function Catalogue({ at, makers }) {
 const LENS = [['all', 'Everything'], ['ours', 'Ours'], ['free', 'Free'], ['under', 'Under $1 / M out'], ['million', '1M context']];
 const keep = {
   all: () => true, ours: () => true,
-  free: (r) => r[2] === 0 && r[3] === 0,
-  under: (r) => r[3] != null && r[3] < 1,
+  free: (r) => PRICED.has(r[0]) && r[2] === 0 && r[3] === 0,
+  under: (r) => PRICED.has(r[0]) && r[3] != null && r[3] < 1,
   million: (r) => r[4] != null && r[4] >= 950000,
 };
 const FOLD = 10;
@@ -510,7 +503,7 @@ function Priced({ at }) {
   const mine = ROWS.map(at).filter(keep[lens]);
   const theirs = lens === 'ours' ? [] : OTHERS.map(at).filter(keep[lens]);
   const n = mine.length + theirs.length;
-  const topOut = Math.log10(Math.max(...[...mine, ...theirs].map((r) => r[3] || 0)) * 100 + 1) || 1;
+  const topOut = Math.log10(Math.max(...[...mine, ...theirs].map((r) => (PRICED.has(r[0]) && r[3]) || 0)) * 100 + 1) || 1;
   let k = 0;
   const row = (r, to) => {
     const fold = !all && k++ >= FOLD;
@@ -518,7 +511,7 @@ function Priced({ at }) {
       <motion.tr key={r[0]} layout="position" hidden={fold} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>
         <td><A to={to} className="xmo-row-n"><b>{r[1]}</b><code>{r[0]}</code></A></td>
         <td className="x-mono" data-label="In $/M">{cost(r, 2)}</td>
-        <td className="x-mono" data-label="Out $/M"><span className="xmo-out">{cost(r, 3)}<i className="xmo-bar" aria-hidden="true"><b style={{ transform: `scaleX(${r[3] ? Math.max(0.03, Math.log10(r[3] * 100 + 1) / topOut) : 0})` }} /></i></span></td>
+        <td className="x-mono" data-label="Out $/M"><span className="xmo-out">{cost(r, 3)}<i className="xmo-bar" aria-hidden="true"><b style={{ transform: `scaleX(${PRICED.has(r[0]) && r[3] ? Math.max(0.03, Math.log10(r[3] * 100 + 1) / topOut) : 0})` }} /></i></span></td>
         <td className="x-mono" data-label="Context">{ctxOf(r[4])}</td>
       </motion.tr>
     );
@@ -773,9 +766,7 @@ function Close() {
 }
 
 export default function ModelsPage({ makers }) {
-  const near = useRef(null);
-  const go = useInView(near, { once: true, margin: '0px 0px 600px 0px' });
-  const at = useLive(go);
+  const at = (r) => r; // the snapshot's own rates (GA item 15: no live or guessed price)
   return (
     <main className="xmo">
       <CopyStatus />
@@ -783,8 +774,7 @@ export default function ModelsPage({ makers }) {
       <Families />
       <Versus />
       <Figures />
-      <div ref={near} aria-hidden="true" />
-      <Catalogue at={at} makers={makers} />
+      <Catalogue makers={makers} />
       <Priced at={at} />
       <Try />
       <First />
