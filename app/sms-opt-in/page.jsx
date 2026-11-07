@@ -11,6 +11,7 @@ import JsonLd from '../../components/JsonLd';
 export const metadata = {
   title: 'Get Hanzo text messages — Hanzo AI',
   description: 'Opt in to receive two-factor authentication codes, account and security alerts, and transactional notifications by SMS.',
+  robots: { index: false, follow: true }, // MASTER part 14: sms-opt-in is noindex,follow, outside the sitemap
 };
 
 export default function Page() {

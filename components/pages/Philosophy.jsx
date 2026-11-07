@@ -20,12 +20,12 @@
    The one dark room enters as a rounded card and opens to full width (MASTER §3.1 rooms). Deck timings only: 150 ms hover, 300 ms state, 400 ms fills, 800 ms line art; no springs, no overshoot.
    Ink only: hierarchy is alpha steps of black and white. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, More } from '../kit';
-import MaskLines from '../v2/MaskLines';
+import MaskLines from './proof/MaskLines';
 import PinScenes from '../v2/PinScenes';
-import SceneWipe from '../v2/SceneWipe';
+import SceneWipe from './proof/SceneWipe';
+import NoJs from '../NoJs';
 import LivePause, { usePause } from '../v2/LivePause';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
@@ -229,36 +229,44 @@ function Detail({ h }) {
 
 /* One sheet for all sixty-four (the kit's DetailSheet look): every pattern is in the page, the chosen one shows; the
    arrows or ← → step to its neighbours in King Wen order. */
+// a native <dialog> (showModal: fixed, backdrop, focus trapped, Esc closes, nothing drawn while closed), which is what
+// the kit's DetailSheet.css positions; the closed dialog's words stay in the server HTML
 function PatternSheet({ sel, setSel }) {
   const open = sel !== null;
-  const [host, setHost] = useState(null);
+  const [shown, setShown] = useState(false); // drives the slide (data-open); the dialog itself opens a frame earlier
+  const dlg = useRef(null);
   const close = useRef(null);
   const back = useRef(null);
-  useEffect(() => setHost(document.body), []);
   useEffect(() => {
-    if (!open) return;
-    back.current = document.activeElement;
+    const d = dlg.current;
+    if (!d) return;
+    if (!open) {
+      setShown(false);
+      const t = setTimeout(() => { if (d.open) d.close(); const b = back.current; b?.focus?.({ preventScroll: true }); }, 420);
+      return () => clearTimeout(t);
+    }
+    back.current = back.current && d.open ? back.current : document.activeElement;
+    if (!d.open) d.showModal();
+    const raf = requestAnimationFrame(() => setShown(true));
     const l = window.__lenis;
     l?.stop();
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
-    const t = setTimeout(() => close.current?.focus(), 60);
+    const t = setTimeout(() => close.current?.focus({ preventScroll: true }), 60);
     const key = (e) => {
-      if (e.key === 'Escape') setSel(null);
-      else if (e.key === 'ArrowRight') setSel((s) => (s + 1) % 64);
+      if (e.key === 'ArrowRight') setSel((s) => (s + 1) % 64);
       else if (e.key === 'ArrowLeft') setSel((s) => (s + 63) % 64);
     };
     addEventListener('keydown', key);
-    return () => {
-      clearTimeout(t); removeEventListener('keydown', key); l?.start(); document.documentElement.style.overflow = prev;
-      const b = back.current; setTimeout(() => b?.focus?.({ preventScroll: true }), 30);
-    };
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); removeEventListener('keydown', key); l?.start(); document.documentElement.style.overflow = prev; };
   }, [open, setSel]);
   const cur = sel ?? 0;
-  const sheet = (
-    <div className="pf-sheet xph-sheet" data-open={open} aria-hidden={host ? !open : undefined}>
-      <div className="pf-sheet-scrim" onClick={() => setSel(null)} />
-      <div className="pf-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="xph-sheet-h" inert={host ? !open : undefined} data-lenis-prevent>
+  return (
+    <dialog ref={dlg} className="pf-sheet xph-sheet" data-open={shown} aria-labelledby="xph-sheet-h"
+      onCancel={(e) => { e.preventDefault(); setSel(null); }}
+      onClick={(e) => { if (e.target === dlg.current) setSel(null); }}>
+      <NoJs css="dialog.xph-sheet{display:block!important;position:static!important;width:auto!important;height:auto!important;margin:24px 0!important;background:none!important}.xph-sheet .pf-sheet-x{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important}" />
+      <div className="pf-sheet-panel" data-lenis-prevent>
         <div className="pf-sheet-top">
           <div>
             <p className="pf-title" id="xph-sheet-h">{HEX[cur][0]} / 64</p>
@@ -274,9 +282,8 @@ function PatternSheet({ sel, setSel }) {
           {HEX.map((h, i) => <div key={i} id={'xph-d-' + i} hidden={i !== cur}><Detail h={h} /></div>)}
         </div>
       </div>
-    </div>
+    </dialog>
   );
-  return host ? createPortal(sheet, host) : sheet;
 }
 
 function Tile({ h, i, open }) {
@@ -368,7 +375,7 @@ const VIEWS = ['Sequence', 'Matrix', 'Lenses'];
 const HINTS = ['All sixty-four, in the traditional King Wen order.', 'The eight forces above and below — every pairing is one condition.', 'The same patterns, read through four modern minds.'];
 
 function Patterns() {
-  const [view, setView] = useState('Sequence');
+  const [view, setView] = useState('Matrix'); // the 64 as one 8×8 object first; Sequence is a tab away
   const [sel, setSel] = useState(null);
   const keys = (e) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
@@ -563,7 +570,7 @@ export default function Philosophy() {
   return (
     <main id="main" className="xph pf-r">
       {/* JavaScript off: the word reveal is full ink, every view and all 64 patterns are laid out in the page, tiles show their principle */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xph-w{opacity:1!important}#panel-matrix,#panel-lenses,.xph-hint{display:block!important}#panel-matrix,#panel-lenses{margin-top:96px}.xph-mx-side{position:static!important}.xph-tile-s>span{grid-area:auto!important;opacity:1!important;transform:none!important}.xph-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin-top:96px}.xph-sheet .pf-sheet-scrim,.xph-sheet .xph-sheet-nav{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}.xph-sheet .pf-sheet-top{padding:0 0 20px!important}.xph-sheet .pf-sheet-body{overflow:visible!important;padding:0!important}.xph-sheet [hidden]{display:block!important;margin-top:56px}</style>' }} />
+      <NoJs css=".xph-w{opacity:1!important}#panel-matrix,#panel-lenses,.xph-hint{display:block!important}#panel-matrix,#panel-lenses{margin-top:96px}.xph-mx-side{position:static!important}.xph-tile-s>span{grid-area:auto!important;opacity:1!important;transform:none!important}.xph-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin-top:96px}.xph-sheet .xph-sheet-nav{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}.xph-sheet .pf-sheet-top{padding:0 0 20px!important}.xph-sheet .pf-sheet-body{overflow:visible!important;padding:0!important}.xph-sheet [hidden]{display:block!important;margin-top:56px}" />
       <Hero />
       <Premise />
       <Laws />

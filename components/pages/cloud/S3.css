@@ -97,6 +97,17 @@ html.js .s3-strip { animation: s3-up .3s var(--lx-ease) both; }
 .s3-cells i.p { background: #fff; box-shadow: inset 0 0 0 2.5px #0a0a0a; }
 .s3-cells i.x { background: none; box-shadow: none; outline: 1.5px dashed #737373; outline-offset: -1.5px; }
 .s3-cells b { margin-left: 12px; color: #0a0a0a; }
+/* chapter 3 plays it rather than showing it: the four go dark one after another, then "still reads" lands */
+.s3-cells i.x { animation: s3-lose 1.6s var(--e-io, cubic-bezier(.4, 0, .2, 1)) both; }
+.s3-cells i.x:nth-of-type(n) { animation-delay: calc(var(--k, 0) * 180ms + 300ms); }
+.s3-cells b { animation: s3-land .4s cubic-bezier(.16, 1, .3, 1) both 1.4s; }
+@keyframes s3-lose { 0%, 20% { background: #0a0a0a; outline-color: transparent; } 100% { background: none; outline-color: #737373; } }
+@keyframes s3-land { from { opacity: 0; transform: translate3d(0, 8px, 0); } }
+/* a refused fifth tap: the tile nudges sideways once; the ten that survive stay bright (never disabled-grey) */
+.s3-vol.no { animation: s3-no .3s cubic-bezier(.4, 0, .2, 1); }
+@keyframes s3-no { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+.s3-read { white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .s3-cells i.x, .s3-cells b, .s3-vol.no { animation: none; } }
 
 /* the black room: the figures at their resting 64px (the room's one big thing), then the prompt */
 .s3-room { padding: clamp(72px, 11vw, 188px) 0; }

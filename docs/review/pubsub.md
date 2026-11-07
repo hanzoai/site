@@ -1,0 +1,42 @@
+# /pubsub — James-eye review
+
+Verdict: 7/10
+First complaint: "The top is lovely: the message drops in and fans out on its own. Then I scroll and it's still the Realtime page: heading on the left, a black box with a round pause on the right, six times over. You made the box black, but you didn't bring the bus down. And on my phone the box is a third empty while bits of the demo are hidden."
+
+Walked 7 Nov on main after `ac9f298f` ("the hero's black bus carried into the chapters…"), fresh, without relying on the earlier review. Playwright, moving: 1470×801 (wheel in quarter-steps of 260px, ~0.9 s dwell, 38 stops to the footer) and 375×812 (isMobile, hasTouch, smooth `scrollBy` in 300px steps, 37 stops), each with video recorded, 8 frames over the first 6 s with no input, then hover and press on the hero ask, hover across the stream cells, a click on an inspector row (it scrolled 864 → 3685 to chapter 04), a click on "no acks" in chapter 02. Also reduced motion, JS off, an isolated load for console errors, and the neighbours /realtime, /datastore and /stream at the same scroll depth. Non-localhost POSTs blocked. Stills: `review/pubsub/desktop-hero-replay.jpg`, `review/pubsub/desktop-chapter.jpg`, `review/pubsub/phone-walk.jpg`.
+
+## What works
+- The hero is the product doing its job by itself. Within half a second the next message drops into EVENTS, its cell turns white, the three wires draw down; audit goes "↻ redelivered" then acks; the queue group lights one of three. It kept going for the full 6 s with no input. Nothing above the h1; the h1 block is now vertically centred against the bus, so the left half is no longer an empty quadrant.
+- Hover tells you a number: pointer on 39 lights 39–43 and the bus toolbar reads "replay · from #39 → #43". Exactly James's "the hover tells you something".
+- Phone hero fixed: all three wires fan over three subscribers side by side (`phone-walk` shows the chapter; the hero frame shows the full fan at 375).
+- Controls all answer: hero ask presses to scale .97; inspector rows fill #262626 on hover and scroll to their chapter; the ack switch's pill glides and the rows change to "delivered, delivered, delivered" with Hanzo's clause underneath (`aria-live`).
+- Quiet room anchored: "Publish and Subscribe" now sits at the top beside "Paste and ship" and the prompt; the 4222 / Replay / Durable / Replicas row follows.
+- Desktop ask is right: header "Try Hanzo" is outlined while the hero's white "GitHub" is on screen, then the header becomes a solid "GitHub", and goes outlined again while the close's solid "GitHub" is in view. One solid at a time.
+- Numbers: CLS 0.005 desktop, 0.010 phone; no horizontal scroll (1470/1470, 375/375); reduced motion 0 running animations after 3.5 s; JS off 0 of 34 headings/paragraphs hidden. Parity 82/82 text, 2/2 links; taste OK; unique OK.
+
+## The 11 answers
+1. **Sells in 5 s, moves within 1 s?** Yes. "Hanzo PubSub / The bus everything else rides / GitHub" beside a bus that publishes and fans out before you've read the line.
+2. **One in, one out, or a document?** One in, one out through the hero and the six pinned chapters. After them it turns into a document: quiet room (prompt + four equal spec words), a static code split, the close. The chapter intro ("More than pub/sub") is a big white left half with only the six dashes in it for a full screen.
+3. **A real object in every section?** Yes: bus, inspector, prompt, spec row, events.go, the Sigil card. Desktop panels are better sized than before, but Object Store still leaves ~80px of black under "watch · changed". On phone every panel sits in a fixed 35svh box whose bottom third is empty, while the CSS hides content to make it fit (overview rows 04–06, the third ack row, the duplicate-collapsed line, the ack clause, instance 3).
+4. **One ask, nothing floating; scale rhythm?** Desktop: yes, nothing fixed over content apart from the shared cookie card. Phone: the shared header keeps a solid "Try Hanzo" beside the hero's solid "GitHub" (shared header, not held against the page); no phone bottom bar appeared in this walk. Scale: hero big, chapters medium (32px titles), spec words 44px Air, close grows "Get PubSub" to its moment. Still no big moment in the middle third.
+5. **Every hover and press answers, no jumps?** Yes on everything tried. Small note: the hero ask's hover goes #fafafa → #fff on black, which you can barely see; the press carries it.
+6. **Overlaps, font swap, layout shift?** None from the page. The red "1 Issue" badge (hydration attribute mismatch) appeared in the long recorded walks while other critics loaded the server; an isolated load of /pubsub (and of /realtime) logged 0 console errors, so not held against the page.
+7. **Which reference, is its motion there?** Apple product page: pinned stage, one panel changes, really there. motion.dev patterns: layoutId pill, line-mask cut-in, wires drawing as line art. Osply/hamol editorial asymmetry after the hero: not really; the lower half is the shared cloud layout.
+8. **Different from its neighbours?** The hero, yes; a top-down fan-out is its own, and /stream (its closest sibling) leads with a horizontal partition marquee, so the first screens now differ. The chapters, no: /realtime's chapter is heading + "01 / 08" + dashes on the left, a card with a black header strip, a dot title and a round pause on the right. /pubsub's is the same arrangement with the card fully black. Side by side, only the card contents and fill differ.
+9. **18 parts?** Card exists, 18/18 `Done here:` filled; see Card check.
+10. **Banned tells?** None. No hue, no eyebrow above the h1 ("NATS JetStream" is the bus's own toolbar), no gradient text, no glow, no fade-on-hover, no three equal boxes (the subscriber trio is the object, not a feature grid).
+11. **Copy untouched?** Yes, parity clean.
+
+## Card check
+`docs/coverage/pubsub.md`: 18 headings, every `Done here:` filled, three lines on top, MASTER format. Checked against the page:
+- True: parity and links, the two 44px pauses, `aria-pressed` switches with a gliding pill, replay hover naming the range, rows that open their chapter, reduced motion settled, JS off legible, desktop one-solid header behaviour, phone fan with three wires, ask above the fold at 375. Part 1 now honestly says the phone header keeps a solid "Try Hanzo".
+- Overstated: part 7 says "the chapters' inspector is the hero's bus carried down … so the pinned chapters read as this page's object rather than the outlined white box /realtime and /datastore share". It is a separate black card in the same position and shape as /realtime's; the bus itself is not carried. The commit message repeats the claim.
+- Part 11 "the inspector sits in a fixed 35svh window so chapter words never move" is true, but it doesn't mention that phone hides demo content to fit that window.
+No cap applied; the misstatements are noted.
+
+## To reach 8
+- **Carry the actual bus into the chapters, or give them a layout no other cloud page has.** The hero already has every piece the chapters need: the EVENTS cells, the three wires, the three subscribers, the toolbar line. Pin that object and let each chapter change what it does (cells shrink to a retention window and a consumer cursor walks them; the ack switch makes the dashed redelivery appear on the wire; a bucket collapses a key's cells into its last value; the queue group picks one instance; a payload splits into chunks along the wire; an account wall drops between subscribers). That is the one thing that separates this page from /realtime and gives the middle its big moment.
+- **Phone chapters: show the whole demo, size the box to it.** Stop hiding overview rows 04–06, the third ack row, the duplicate line and instance 3 while the 35svh box sits a third empty. Let the window fit the panel, or lay rows tighter so all of it shows.
+- **Give the chapter intro something to look at on the left.** "More than pub/sub" holds a full screen with only six grey dashes under it; start the first chapter sooner or let the intro carry the bus's settled state.
+- **After the chapters, one moment that isn't a document.** The spec row and events.go are static; e.g. let events.go highlight the line the bus just did (Publish, Fetch, Ack) as you arrive, or let the four spec words land one by one from the bus. Keep it within the motion budget.
+- **Correct part 7 of the card** to describe what is there, not "the bus carried down", until it is.

@@ -21,10 +21,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
-import { A, More } from '../kit';
-import MaskLines from '../v2/MaskLines';
-import SceneWipe from '../v2/SceneWipe';
-import DetailSheet from '../v2/DetailSheet';
+import { A, Cta, More } from '../kit';
+import MaskLines from './proof/MaskLines';
+import SceneWipe from './proof/SceneWipe';
+import Sheet from './security/Sheet';
+import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Security.css';
@@ -75,7 +76,7 @@ function Map({ pick }) {
             <span className="xsc-mp" aria-hidden="true">{i === 5 && <img src="/models/koma.webp" alt="" width="172" height="120" />}</span>
             <button type="button" className="xsc-ml" onClick={() => pick(i)}>
               <span className="pf-mono">{pad(i)}</span>
-              <span className="xsc-ml-t">{t}</span>
+              <span className="xsc-ml-t">{t}<span className="xsc-ml-m pf-mono" aria-hidden="true">{MECH[i].items.map((m) => (Array.isArray(m) ? m[0] : m)).join(' · ')}</span></span>
               <Check />
             </button>
           </li>
@@ -94,7 +95,7 @@ function Hero({ pick }) {
           <p className="pf-kick xsc-cap">Security Architecture</p>
           <p className="pf-lede">Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</p>
           <div className="xsc-acts">
-            <A to="/contact" className="pf-btn solid" data-thumb="Talk to Security Team" data-cta="security.hero">Talk to Security Team</A>
+            <Cta to="/contact" id="security.hero" thumb>Talk to Security Team</Cta>
             <More to="https://docs.hanzo.ai/docs/cli/security">Security Documentation</More>
           </div>
           <p className="xsc-audit">
@@ -158,22 +159,28 @@ function Layers({ at, setAt }) {
           {ok.length === 6 && <More to="/contact-sales">Schedule Security Review</More>}
         </div>
         <div className="xsc-layers-r">
-          <div className="xsc-plates" aria-hidden="true">
-            {CONTROLS.map(([t], i) => (
-              <div key={t} className={'xsc-plate' + (i === 5 ? ' core' : '')} data-on={at === i}>
-                {i === 5 && <img src="/models/koma.webp" alt="" width="640" height="440" />}
-                <div className="xsc-plate-in">
-                  <span className="pf-figure">{pad(i)}</span>
+          {/* the hero's six layers, carried down: the chosen one lifts out of the stack and its mechanism sits beside it */}
+          <div className="xsc-stk" aria-hidden="true">
+            <ol className="xsc-stk-s">
+              {CONTROLS.map(([t], i) => (
+                <li key={t} style={{ '--i': i }} className={(i === 5 ? 'core' : '') + (ok.includes(i) ? ' ok' : '')} data-on={at === i} onClick={() => setAt(i)}>
+                  <span className="xsc-mp">{i === 5 && <img src="/models/koma.webp" alt="" width="172" height="120" />}</span>
+                </li>
+              ))}
+            </ol>
+            <div className="xsc-stk-m">
+              {CONTROLS.map(([t], i) => (
+                <div key={t} data-on={at === i}>
+                  <span className="pf-mono xsc-stk-n">{pad(i)} / 06</span>
                   <b className="pf-title">{t}</b>
                   <Mech m={MECH[i]} />
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           <div className="xsc-panels">
             {CONTROLS.map(([t, d], i) => (
               <div key={t} id={'xsc-p-' + i} role="tabpanel" aria-labelledby={'xsc-tab-' + i} className="xsc-panel" data-on={at === i} inert={at !== i}>
-                <p className="pf-kick xsc-panel-n">{pad(i)} / 06</p>
                 <p className="pf-body">{d}</p>
                 <button type="button" className={'xsc-tick' + (ok.includes(i) ? ' on' : '')} aria-pressed={ok.includes(i)} onClick={() => tick(i)}>
                   <Check s={14} />
@@ -193,6 +200,16 @@ const RACK = ['Hardware-virtualised machines, one tenant to a boundary', 'Errors
 const OPTIONS = [['Run it where you like', 'Our cloud, your cluster, your rack'], ['Scales to nothing', 'Idle should cost what idle is worth'], ['Your region', 'Pin the data and keep it there']];
 
 function Infra() {
+  const ref = useRef(null);
+  const live = useInView(ref, { amount: 0.5, once: true });
+  const calm = useReducedMotion();
+  const [up, setUp] = useState(0); // units powered on, 0..4; it stops at 4
+  useEffect(() => {
+    if (calm) { setUp(4); return; }
+    if (!live || up >= 4) return;
+    const t = setTimeout(() => setUp((v) => v + 1), up === 0 ? 150 : 400);
+    return () => clearTimeout(t);
+  }, [live, up, calm]);
   return (
     <section className="pf-sec xsc-infra" aria-labelledby="xsc-infra-h">
       <div className="pf-wrap xsc-infra-g">
@@ -201,9 +218,9 @@ function Infra() {
           <p className="pf-kick xsc-cap">Infrastructure</p>
           <p className="pf-body">Workloads sit in hardware-virtualised machines on managed Kubernetes, in data centres with physical access control and redundant power. Secrets never reach a manifest — they are fetched from Hanzo KMS at boot, and outside development a service refuses to start without a verified issuer, audience and key set rather than falling back to running open.</p>
         </div>
-        <ol className="xsc-rack">
+        <ol className="xsc-rack" ref={ref} style={{ '--up': up }}>
           {RACK.map((t, i) => (
-            <li key={t}>
+            <li key={t} style={{ '--on': i < up ? 1 : 0 }} data-up={i < up}>
               <span className="xsc-u pf-mono" aria-hidden="true">U{i + 1}</span>
               <span className="xsc-rack-t">{t}</span>
               <span className="xsc-bay" aria-hidden="true"><i /><i /><i /></span>
@@ -215,6 +232,34 @@ function Infra() {
   );
 }
 
+const PLACES = ['Our cloud', 'your cluster', 'your rack']; // Hanzo's own words, from "Our cloud, your cluster, your rack"
+function Where() {
+  const ref = useRef(null);
+  const live = useInView(ref, { amount: 0.6, once: true });
+  const calm = useReducedMotion();
+  const [at, setAt] = useState(0);
+  const [own, setOwn] = useState(false); // once pressed, the visitor drives it
+  useEffect(() => {
+    if (calm) { setAt(2); return; }
+    if (!live || own || at >= 2) return;
+    const t = setTimeout(() => setAt((v) => v + 1), 900);
+    return () => clearTimeout(t);
+  }, [live, at, own, calm]);
+  return (
+    <div className="xsc-where" ref={ref} style={{ '--at': at }}>
+      <div className="xsc-where-s" aria-hidden="true">{[0, 1, 2, 3, 4, 5].map((i) => <i key={i} style={{ '--i': i }} className={i === 5 ? 'core' : ''} />)}</div>
+      <div className="xsc-where-b" role="group" aria-label={OPTIONS[0][0]}>
+        {PLACES.map((p, i) => (
+          <button key={p} type="button" aria-pressed={at === i} onClick={() => { setOwn(true); setAt(i); }}>
+            <span className="xsc-where-pad" aria-hidden="true" />
+            <span className="pf-mono">{p}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function None() {
   return (
     <section className="pf-sec xsc-none" aria-labelledby="xsc-none-h">
@@ -222,6 +267,7 @@ function None() {
         <div>
           <h2 id="xsc-none-h" className="xsc-none-h">Or none of our infrastructure at all</h2>
           <p className="pf-lede">Every piece named on this page is a binary you can run yourself. The strongest answer to a question about our infrastructure is that you do not have to use it.</p>
+          <Where />
         </div>
         <ol className="xsc-opts">
           {OPTIONS.map(([t, d], i) => (
@@ -249,13 +295,13 @@ function Dark() {
             <p className="xsc-big">Bring the control you are required to demonstrate and we will show you the code that implements it, or tell you plainly that it does not exist yet. A control we cannot point at is one you should not put your name to.</p>
             <p className="pf-body">Where a requirement is not met, the honest options are usually self-hosting, a dedicated deployment, or waiting. Our engineers will say which one applies rather than selling you the gap.</p>
             <div className="xsc-comes">
-              <DetailSheet label="What comes with Enterprise" title="What comes with Enterprise">
+              <Sheet label="What comes with Enterprise" title="What comes with Enterprise">
                 <p>An engineer who has read your deployment, retention you set rather than inherit, and somebody to answer the questionnaire your procurement team is about to send.</p>
                 <ul className="xsc-comes-l">
                   {COMES.map((t) => <li key={t}><Check /><span>{t}</span></li>)}
                 </ul>
                 <More to="/contact-sales">Contact Sales</More>
-              </DetailSheet>
+              </Sheet>
             </div>
           </div>
         </div>
@@ -276,7 +322,7 @@ function Dark() {
           <div className="xsc-ask-r">
             <p className="pf-lede">Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure.</p>
             <div className="xsc-ask-acts">
-              <A to="/contact" className="pf-btn solid xsc-light" data-cta="security.band">Talk to Security Team</A>
+              <Cta to="/contact" id="security.band" className="xsc-light">Talk to Security Team</Cta>
               <More to="/contact-sales">Schedule Security Review</More>
             </div>
             <p className="xsc-note"><A to="/login">Try Hanzo</A> · <A to="https://docs.hanzo.ai/docs/cli/security">Read the security documentation</A></p>
@@ -301,7 +347,7 @@ export default function Security() {
   return (
     <main className="xsc pf-r">
       {/* JS off: every control's words and plate stand stacked, and the black room is simply there */}
-      <noscript dangerouslySetInnerHTML={{ __html: '<style>.xsc-panel,.xsc-plate{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:24px}.pf-wipe>div[aria-hidden]{clip-path:none!important}</style>' }} />
+      <NoJs css=".xsc-panel,.xsc-stk-m>div{opacity:1!important;transform:none!important;grid-area:auto!important;pointer-events:auto!important;margin-top:24px}.pf-wipe>div[aria-hidden]{clip-path:none!important}.xsc-rack li{--on:1}" />
       <Hero pick={pick} />
       <Layers at={at} setAt={setAt} />
       <Infra />

@@ -3,10 +3,10 @@
 // Beyond: Cut the network: make an agent in the page, pin its model on your machine or on Hanzo Cloud, pull the wire and watch which one keeps running and where its keys and data stay
 // Persona: a developer who wants agents running on their own machine, with their own keys, offline if need be
 // Goal: see the app build something real in the first screen, then download it
-// CTA: "Download" (docs.hanzo.ai/docs/apps/desktop): the hero's one solid with data-thumb, the sticky ask bar, the closing band
+// CTA: "Download" (docs.hanzo.ai/docs/apps/desktop): the hero's one solid with data-thumb (the shared header carries it once the hero leaves), and the closing band's one solid
 // Metric: desktop_download (data-cta desktop-download, desktop-download-end)
 /* Hanzo Desktop (Launch: the app window is the hero).
-   V2: 8/10 round 2: deck scale (h1 52, heads 26); no labels over headlines; h1, lede, the one ask and the whole window fit 1470×801 and 375×812 and it starts building at once; one solid per screen, one closing band; Hanzo's own lines instead of placeholder bars; no springs, no floats, no shadows on objects; the black room opens from a card; hidden states scoped to JS; 44px phone targets
+   V2: 8/10 round 3: no bar or empty field left anywhere: the window's right pane is the file itself (gateway/limit.go, line by line) and the test run ("$ go test ./gateway", "Tests pass."); the chapter panes carry the job, MCP and "Local model" rows and real sub-lines that ink in over grey text; greys only, status as shape and word; JS off shows every word (notes open, spec inline); the page ends on "Download it and build one" with one solid
    Motion: signature = the window assembling and building (a step loop that stops off screen; the ask is written into a
    text node). Supporting: pinned chapters with wipes (components/v2/AppScenes), line-masked headline, magnetic ask.
    Greys only; every word is Hanzo's; the job in the window is Hanzo's example. */
@@ -15,7 +15,7 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Mark, Magnetic } from '../ui';
 import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
-import Lines from '../v2/x-edison/AppLines';
+import Lines from './desktop/Lines';
 import Scenes from '../v2/AppScenes';
 import Sheet from '../v2/AppSheet';
 import '../v2/AppType.css';
@@ -44,6 +44,16 @@ const MSGS = [
 ];
 // the run log beside the thread: Hanzo's own steps from the thread, each with its state drawn as a shape
 const STEPS = [['Read 14 files.', 5], ['gateway/limit.go', 6], ['100 req/min per key', 7], ['Tests pass.', 8]];
+
+// the file the thread names, drawn as the file: gateway/limit.go, 100 req/min per key (the visual of Hanzo's own example)
+const CODE = [
+  'package gateway',
+  '',
+  '// 100 req/min per key',
+  'func Limit(h http.Handler) http.Handler {',
+  '  return rate.PerKey(100, time.Minute, h)',
+  '}',
+];
 
 const Tick = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
@@ -132,10 +142,13 @@ function Window({ os }) {
               </li>
             ))}
           </ol>
-          <div className="dk-test">
-            <span className="x-mono">100 req/min per key</span>
-            <i className="dk-test-bar"><b /></i>
-            <span className="dk-pass"><Tick />Tests pass</span>
+          <pre className="dk-code x-mono">
+            {CODE.map((l, i) => <span key={i} className={'dk-ln' + (l.startsWith('//') ? ' cm' : '')} style={{ '--l': i }}><em>{i + 1}</em>{l || ' '}</span>)}
+          </pre>
+          <div className="dk-test x-mono">
+            <span className="dk-test-cmd">$ go test ./gateway</span>
+            <span className="dk-test-out">ok  gateway  100 req/min per key</span>
+            <span className="dk-pass"><Tick />Tests pass.</span>
           </div>
         </div>
       </div>
@@ -188,14 +201,19 @@ const POINTS = [
   ['MCP is how it reaches your tools', 'Agents speak the Model Context Protocol, so a tool you have already connected elsewhere works here without a second integration written for this app.'],
 ];
 
+// a line of real text that is always there in grey and inks itself in when its chapter plays (never an empty bar)
+const Ink = ({ children, className = '' }) => (
+  <span className={'dk-ink ' + className}><span className="dk-ink-b">{children}</span><span className="dk-ink-t">{children}</span></span>
+);
+
 function Scaffold({ on }) {
   return (
     <div className={'dk-vis dk-new' + (on ? ' on' : '')} aria-hidden="true">
       <div className="dk-pane">
         <div className="dk-new-h"><span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b>Desktop</b></span><span className="dk-run"><i />Running</span></div>
-        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><span className="dk-wipe">{MSGS[0][1]}</span></span></div>
+        <div className="dk-fld f1"><em className="x-mono">job</em><span className="dk-val"><Ink className="dk-wipe">{MSGS[0][1]}</Ink><i className="dk-caret dk-job-caret" /></span></div>
         <div className="dk-fld f2"><em className="x-mono">tools</em><span className="dk-val"><span className="dk-chip">MCP</span></span></div>
-        <div className="dk-fld f3"><em className="x-mono">model</em><span className="dk-val"><span className="dk-chip ac">Local</span></span></div>
+        <div className="dk-fld f3"><em className="x-mono">model</em><span className="dk-val"><span className="dk-chip ac">Local model</span></span></div>
       </div>
     </div>
   );
@@ -218,13 +236,14 @@ function PerAgent({ on }) {
 
 function Together({ on }) {
   const lines = ['Read 14 files.', 'Wrote gateway/limit.go', 'Tests pass.'];
+  const SUBS = ['gateway · payments', '100 req/min per key', 'one place, every route'];
   return (
     <div className={'dk-vis dk-tog' + (on ? ' on' : '')} aria-hidden="true">
       <div className="dk-flow">
         {lines.map((l, i) => (
           <div key={l} className="dk-pane dk-node" style={{ '--i': i }}>
             <span className="dk-pane-h"><span className="dk-ico"><Mark size={13} /></span><b className="x-mono">{l}</b></span>
-            <i className="dk-node-bar"><b /></i>
+            <Ink className="dk-node-sub x-mono">{SUBS[i]}</Ink>
             <span className="dk-node-ok"><Tick /></span>
           </div>
         ))}

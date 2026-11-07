@@ -21,7 +21,8 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-route { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 48px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 17px; }
 .xcs-route span { color: var(--ink2); transition: color var(--d-fast) var(--e-out); }
 .xcs-route b { display: inline-flex; font-weight: 606; transition: transform var(--d-base) var(--e-io); }
-@media (hover: hover) { .xcs-route:hover b { transform: translateX(-6px); } .xcs-route:hover span { color: var(--ink); } }
+.xcs-route span { display: inline-block; transition: color var(--d-fast) var(--e-out), transform var(--d-base) var(--e-em); }
+@media (hover: hover) { .xcs-route:hover b { transform: translateX(-6px); } .xcs-route:hover span { color: var(--ink); transform: translateX(6px); } }
 .xcs-alt { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink2); max-width: 520px; }
 .xcs-ai { font-weight: 606; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; white-space: nowrap; transition: text-underline-offset var(--d-base) var(--e-out); }
 @media (hover: hover) { .xcs-ai:hover { text-decoration-thickness: 2px; text-underline-offset: 6px; } }
@@ -37,7 +38,10 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 .xcs-progress b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
 /* every step shares one cell, so the stage is the tallest step's height from the start: nothing grows as you go */
 .xcs-stage { position: relative; display: grid; margin-top: 27px; }
-.xcs-step { grid-area: 1 / 1; align-self: start; }
+.xcs-step { grid-area: 1 / 1; align-self: start; position: relative; }
+/* the demo's typed answer: drawn over the empty first field, never its value (aria-hidden, no pointer) */
+.xcs-ghost { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; display: flex; align-items: center; padding: 0 17px; font: 400 16px/1.5 var(--sans); color: var(--ink); pointer-events: none; white-space: nowrap; overflow: hidden; }
+.xcs-chips li.xcs-demo-chip { color: var(--ink2); }
 .xcs-step label { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; cursor: text; }
 .xcs-q { font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; line-height: 1.1; letter-spacing: -.025em; color: var(--ink); text-wrap: balance; }
 .xcs-choose { font-size: 17px; color: var(--muted); }
@@ -83,6 +87,10 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 /* 2. what Enterprise includes: five giant numerals you light and add to your enquiry */
 .xcs-inc-h { grid-column: 1 / 5; align-self: start; position: sticky; top: 120px; display: flex; flex-direction: column; gap: 28px; }
 .xcs-inc-l { grid-column: 5 / 13; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+/* every row presses (.98, 90ms) and a click or tap anywhere on it adds it; on a press the numeral inks at once */
+.xcs-inc-l li { cursor: pointer; -webkit-tap-highlight-color: transparent; transform-origin: 50% 50%; transition: transform var(--d-press) var(--e-out); }
+.xcs-inc-l li:active { transform: scale(.98); }
+.xcs-inc-l li:active .xcs-inc-n { color: var(--ink); transition-duration: var(--d-press); }
 .xcs-inc-l li { display: grid; grid-template-columns: clamp(120px, 13vw, 188px) minmax(0, 1fr) auto; align-items: center; gap: 27px; padding: 27px 0; border-top: 1px solid var(--line); }
 .xcs-inc-n { font: 220 clamp(72px, 9vw, 112px)/.9 var(--sans); letter-spacing: -.03em; color: #d4d4d4; transition: color var(--d-slow) var(--e-out), transform var(--d-base) var(--e-io); }
 .xcs-inc-l li.lit .xcs-inc-n { color: var(--muted); transform: translateX(10px); }
@@ -100,7 +108,8 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
 @keyframes xcs-rail { to { transform: translateX(-50%); } }
 .xcs-logo { flex: none; display: grid; place-items: center; width: 200px; height: 88px; color: var(--ink); text-decoration: none; }
 .xcs-logo img { max-height: 30px; max-width: 128px; width: auto; height: auto; object-fit: contain; filter: grayscale(1); opacity: .6; transition: opacity var(--d-base) var(--e-out); }
-@media (hover: hover) { .xcs-logo:hover img { opacity: 1; } .xcs-logo:hover span { color: var(--ink); } }
+.xcs-logo > * { transition: transform var(--d-base) var(--e-em), opacity var(--d-base) var(--e-out), color var(--d-base) var(--e-out); }
+@media (hover: hover) { .xcs-logo:hover img { opacity: 1; } .xcs-logo:hover span { color: var(--ink); } .xcs-logo:hover > * { transform: translateY(-4px); } }
 .xcs-logo.bad img { display: none; }
 .xcs-logo span { font: 497 21px/1 var(--sans); letter-spacing: -.02em; color: var(--muted); transition: color var(--d-base) var(--e-out); }
 

@@ -2,7 +2,7 @@
 
 Page file: `components/pages/Brand.jsx` (+ `Brand.css`) · gallery: `docs/gallery/brand/` · metric id: `cta_click brand.hero` (one contact click: the assets ZIP)
 
-Open copy questions for James: the aria strings Pause, Replay, Copy, Font weight, Background and the three WCAG verdict names (`WCAG AA 4.5:1`, `WCAG AA 3:1`, `below WCAG AA`) wait for approval in `content/ui-strings.json`; Hanzo's "Success Badge" sample is shown in greys with a tick, because the deck allows no green.
+Open copy questions for James: the aria strings Pause, Replay, Copy, Font weight, Background and the three WCAG verdict names (`WCAG AA 4.5:1`, `WCAG AA 3:1`, `below WCAG AA`) wait for approval in `content/ui-strings.json`; the WCAG verdict shapes are new (computed from Hanzo's hex values, no new visible words or figures; the earlier ratios, the 560 / 100 / 900 readout and the bench echo are gone): keep them only with James's yes; Hanzo's "Success Badge" sample is shown in greys with a tick, because the deck allows no green.
 Shared changes requested (`docs/requests/brand.md`): mirror `/press/hanzo-press-kit.zip` into `public/` (the dev server proxies it from hanzo.ai; a static export would 404).
 Forks this page deleted: the forked `Btn` hero and contact buttons (now the kit's `Cta`); the kit `Copy` replaced by a copy control that never ticks on a failed write; the card hero /press shared.
 
@@ -71,7 +71,7 @@ Done here: Parity is 76/76 text and 4/4 links. "Design System" and "Design Princ
 - [x] Differs from neighbours in hero medium and room order
 
 Done here:
-- `taste.py` passes (2 checked). The `Brand.css` tokens are the deck ramp (#0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #f5f5f5, #ededed, #171717, #262626, #fafafa, #000) and `company/deck.css` sets the type: headings at weight 497, h1 clamp(52px, 7vw, 84px).
+- `taste.py` passes (3 checked). `Brand.css` declares its colours once on `.xbr`, aliasing `company/deck.css` (--ink, --ink2, --muted, --quiet, --tile, --line, --float, --e-em) where it has them; no literal hex or rgba below that block, and the JSX `--acc` and badge tick use tokens. The ramp is the deck's (#0a0a0a, #525252, #737373, #a3a3a3, #d4d4d4, #f5f5f5, #ededed, #171717, #262626, #fafafa, #000) and `company/deck.css` sets the type: headings at weight 497, h1 clamp(52px, 7vw, 84px).
 - Two dark surfaces, not back to back: the colour room and the assets card.
 
 ## 8. UI component library
@@ -83,6 +83,7 @@ Done here:
 
 Done here:
 - Press is scale .97 at 90 ms on the swatches, the bench and the copy. Hovers sit inside `@media (hover:hover)`: the gray swatch widens (flex-grow), the big swatches lift their name, the inactive segment lightens, Link Button's underline drops and brand@hanzo.ai thickens.
+- The background segment is a gliding pill (layoutId, 300 ms ease-emphasis) with a .97 press.
 - The focus ring is ink with a white halo (white with a black halo in the colour room).
 
 ## 9. Motion and interaction
@@ -94,7 +95,8 @@ Done here:
 
 Done here:
 - Signature: the specimen's weight sweeps once (200 → 900 → 560, 4.6 s) when it is 60% in view, then the slider takes over.
-- Supporting: line masks, the hero drawing (draw, lean, compass with Pause) and the pinned principles.
+- Supporting: line masks, the hero drawing (draw, lean, compass with Pause; its ticks fade in after their circle draws) and the pinned principles.
+- One in, one out in the colour room: when the contrast board is 60% in view, Hanzo Black glides in under the six grays (the segment's pill slides across, every verdict flips), then Hanzo White comes back at 3.6 s and the switch is yours. Once; a tap stops it; reduced motion skips it.
 - There are no springs (ease-emphasis 300 ms for the hand, 800 ms for the landing). The kinds are idle, pointer, state, arrival and scroll (2 of 5).
 
 ## 10. Media
@@ -112,7 +114,7 @@ Done here: The assets panel shows the three logo plates the ZIP holds (mark on b
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- At 375 the h1, lede and both asks come first and the drawing follows. The principles stack with their numerals, the swatches go 2 across and the contrast list 1 column.
+- At 375 the h1, lede and both asks come first and the drawing follows inside the first screen (84px top, 260px drawing; the mark builds at y 566 to 597 of 812). All six grays show in the 2-column grid (the fan is desktop only; the press stays). The principles stack with their numerals, the swatches go 2 across and the contrast list 1 column.
 - At 360 and under, the assets headline is 30px and the segment labels do not wrap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
@@ -130,7 +132,7 @@ Done here: The heading order is h1, then h2 (each principle, Color Palette, Typo
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop
 
-Done here: The one continuous mover (the compass) runs only while the hero is seen. The tick coordinates are rounded so the server and browser markup match (no hydration warning).
+Done here: The one continuous mover (the compass) runs only while the hero is seen. The tick coordinates are rounded so the server and browser markup match (no hydration warning). No markup depends on reduced motion: the Pause button always renders (CSS hides it under reduce) and the drawing's `on` class is set after mount; 0 console errors at 1470 and 375, with and without reduced motion.
 
 ## 14. SEO and machine files
 - [x] Title and description match live
@@ -162,6 +164,6 @@ Done here: All figures are computed or static, so there is no loading state. The
 - [x] `data-cta` on every primary (through `Cta`)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: `docs/review/brand.md` was 6/10; every listed fix is done, awaiting re-review
+- [ ] Review read: `docs/review/brand.md` round 2 was 7/10; all six fixes are done, awaiting re-review
 
-Done here: The review's six fixes are done in its order: the arrival after the curtain and a live hero; scenes instead of a list; JS off; the signature in view; the hero split from /press; and the tidy list (except the ZIP mirror, which is requested). Gallery: `docs/gallery/brand/`.
+Done here: Round 4 (7/10) fixes: the hero is whole on the first frame. Guides, circle, ticks and the assembled mark are plain server SVG, the lede and asks are visible in the server HTML with a transform-only rise, and the h1 cuts in from 0 ms in 0.6 s, even under the curtain. On cold loads at 1470 and 375 the 0.2 s frame shows the h1 (offset 2 to 10px), the lede and the mark. useArrived now only starts the idle life: the mark parts along its guides once and closes, the compass turns, the pieces lean. JS off hides Pause. The desktop colour room is one scene of 1,376px (was about 2,300): swatches on 8 of 13 columns, the contrast board as one column of rows on the other 5 (no 3-across tiles), gradients below, and a ring marks the brand swatch the board stands on. 88px from the assets band to the footer (was about 220). The 01 panel's hairline follows PinScenes' 28px corners. Round 3 (7/10) fixes: the slider's --p is no longer a React style (CSS rests it at 57.5%, the weight writes it after mount; the input has suppressHydrationWarning against screenshot tools' caret style), so no hydration diff points into Brand.jsx on 8 cold loads screenshotted at 0.1/0.3/0.6 s (the remaining badge is the shared FooterHTML, requested); h1 52px (40px phone), principle h2s, Color Palette, Typography, Components and the assets headline 44px (28px phone), so the numeral, swatches and "Aa" lead; the gaps before Typography and Components are 118px and about 170px (were 235 and 470), and "Need brand assistance?" sits level with the card's headline; Card Title, Secondary and Link Button hovers are visible; the 02 panel is a quiet room with the Brand Glow as a disc, so the page has two dark rooms (colour room, assets card), not back to back. Round 2 (7/10) fixes: all six phone grays (fan triggered by the strip, desktop only); no hydration error under reduced motion; big swatch title at line-height 1.05; Components to the assets band now 72 + 72px (was 235 + 206); the mark builds in the first phone screen; hovers on the gradient cards (lift), scale rows (ink rule, name nudges) and the ZIP row (pill fill). Earlier, re-walked 7 Nov (v3-): fixed the colour room's "Brand Colors", "Gray Scale" and "Gradients" h3s, which deck.css's `.vc .vc-title` had set ink on black (now #fafafa); added the colour swap scene. The review's six fixes are done in its order: the arrival after the curtain and a live hero; scenes instead of a list; JS off; the signature in view; the hero split from /press; and the tidy list (except the ZIP mirror, which is requested). Gallery: `docs/gallery/brand/` (v3-desktop.jpg, v3-phone.jpg, v3-colour-swap.jpg, v3-desktop-walk.webm).

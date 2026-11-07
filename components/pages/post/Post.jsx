@@ -9,7 +9,7 @@
    Signature: the reading thread. A margin rail holds the chapter you are in as a numeral that hands over to the next,
    and a spine that fills as you read, each chapter a knot (on a phone, a reading bar that opens the contents).
    Beyond: minutes left. The post's own stated read time counts down as you read, and any chapter is one press away.
-   V2: 8.5/10 MASTER rework: film or Sigil card beside the title on screen one with the post's ask (critic: "the picture only starts when I scroll"), resting scale 52/26/64, 768px reading column, kit CodeBlock/Tabs/Img/Film/Cta, closing Band, no springs, no cursor labels */
+   V2: 8/10 round 3: one ask everywhere (header outlined from first paint while the post's own ask shows; on phones the ask rides in the chapter bar and the shared rising bar never floats over text); "Back to Blog / <chip>" breadcrumb under the h1; each post's data sets its rhythm (a figures post mirrors the scene, counts its figures with the scroll and keeps its rail on the right); synthesis parts lead with one large film and list the rest. Round 2: CSS title cut-in, poster drift, chapter gists, counter on every scroll */
 // Persona: a developer or founder reading Hanzo's thinking (arrives from /blog, search or a shared link)
 // Goal: finish the post, understand its one idea, take the post's own next step
 // CTA: the post's first closing link as the one solid ask (hero, data-thumb, data-cta "blog-post.hero"), repeated in the closing Band
@@ -21,6 +21,7 @@ import { motion, AnimatePresence, useMotionValueEvent, useScroll, useTransform }
 import { EASE } from '../../ui';
 import { A, Band, Cta, CodeBlock, Film as KitFilm, Img, Tabs, TabPanel } from '../../kit';
 import Sigil from '../../Sigil';
+import Gist, { gist } from './Gist';
 import Life from './Life';
 import Frontier from './Frontier';
 import './Post.css';
@@ -60,13 +61,16 @@ function Code({ tabs, id }) {
   );
 }
 
-/* role · name · note between hairlines; a part with its own Hanzo film shows it */
+/* role · name · note, asymmetric: the first part leads, large, with its own Hanzo film playing; the rest follow as a
+   list beside it, each with its film's still (or its Sigil when it has no film) as a small mark */
 function Parts({ cards }) {
   return (
-    <ul className="xbg-parts" style={{ '--n': Math.min(cards.length, 3) }}>
+    <ul className="xbg-parts" style={{ '--rest': Math.max(1, cards.length - 1) }}>
       {cards.map(([role, name, note], i) => (
-        <li key={name + i}>
-          {FILMS.includes(name.toLowerCase()) && <Film slug={name.toLowerCase()} className="xbg-part-film" />}
+        <li key={name + i} className={i === 0 ? 'lead' : ''}>
+          {i === 0
+            ? (FILMS.includes(name.toLowerCase()) && <Film slug={name.toLowerCase()} className="xbg-part-film" />)
+            : <span className="xbg-part-mark" aria-hidden="true">{FILMS.includes(name.toLowerCase()) ? <Img src={film(name.toLowerCase(), 'webp')} alt="" w={1200} h={1500} /> : <Sigil seed={'part-' + name} data={[name.length, note.length]} className="xbg-sigil" />}</span>}
           <b className="xbg-name">{name}</b>
           <span className="xbg-role x-mono">{role}</span>
           <span className="xbg-note">{note}</span>
@@ -85,17 +89,17 @@ function Block({ b, i, doc, next }) {
   return null;
 }
 
-/* the title, word by word out of a mask, once (700 ms, 55 ms apart) */
+/* the title, word by word out of a mask, once (700 ms, 55 ms apart). A CSS animation, so it runs from first paint
+   instead of waiting for hydration; reduced motion shows it at rest. */
 function Title({ text }) {
   const words = text.split(' ');
   return (
     <h1 id="xbg-h1" className="xbg-h1" data-morph-target>
-      <noscript><style>{'.xbg-wi{transform:none!important}'}</style></noscript>
       <span className="x-sr">{text}</span>
       {words.map((w, i) => (
         <Fragment key={i}>
           <span className="xbg-wm" aria-hidden="true">
-            <motion.span className="xbg-wi" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.05 + i * 0.055 }}>{w}</motion.span>
+            <span className="xbg-wi" style={{ '--i': i }}>{w}</span>
           </span>
           {i < words.length - 1 ? ' ' : ''}
         </Fragment>
@@ -109,7 +113,47 @@ function Title({ text }) {
    the measured slot), the title steps back and the post's figures settle onto the film. Phones (under 900px), reduced
    motion and no-JS get the same parts stacked. The header turns dark only once the plate fills the screen. */
 const PIN = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
-function Stage({ doc, nums, ask }) {
+
+/* One solid at a time, from the first paint (the /affiliate pattern): Post.css draws the header's ask outlined on a post
+   unless <html> carries data-xbg-solid. This hook sets that flag only while none of the post's own solid asks (the hero
+   ask, the phone chapter bar's ask, the closing Band's) is on screen, so the header is solid exactly when the post's
+   ask is not, at every width, and there is no solid-to-outline flash in the first second. */
+const OWN_ASKS = 'main.xbg [data-cta="blog-post.hero"], main.xbg [data-cta="blog-post.bar"], main.xbg .x-band .x-btn.solid';
+function useQuietHeader() {
+  useEffect(() => {
+    const H = document.documentElement;
+    const asks = [...document.querySelectorAll(OWN_ASKS)];
+    if (!asks.length || typeof IntersectionObserver === 'undefined') return;
+    const vis = new Set();
+    // the hero ask fades out as the pinned plate opens (data-gone): faded counts as gone
+    const apply = () => {
+      const on = [...vis].some((el) => !el.closest('[data-gone="true"]'));
+      if (on) delete H.dataset.xbgSolid; else H.dataset.xbgSolid = '';
+    };
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => (e.isIntersecting && e.boundingClientRect.width ? vis.add(e.target) : vis.delete(e.target)));
+      apply();
+    });
+    asks.forEach((a) => io.observe(a));
+    addEventListener('scroll', apply, { passive: true });
+    return () => { io.disconnect(); removeEventListener('scroll', apply); delete H.dataset.xbgSolid; };
+  }, []);
+}
+
+/* a plate figure counted up by the scroll as the plate opens (posts whose plate holds figures); the string is Hanzo's */
+function ScrubFig({ value, p, from, to }) {
+  const m = /^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/.exec(value);
+  const mv = useTransform(p, (v) => {
+    if (!m) return value;
+    const k = Math.min(1, Math.max(0, (v - from) / (to - from)));
+    if (k >= 1) return value;
+    const n = parseFloat(m[2].replace(/,/g, '')), dec = (m[2].split('.')[1] || '').length;
+    const x = n * (1 - Math.pow(1 - k, 3));
+    return m[1] + (m[2].includes(',') ? x.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : x.toFixed(dec)) + m[3];
+  });
+  return <motion.span aria-hidden="true">{mv}</motion.span>;
+}
+function Stage({ doc, nums, ask, alt }) {
   const ref = useRef(null), plate = useRef(null), slot = useRef(null);
   const box = useRef({ t: 120, r: 32, b: 72, l: 520 });
   const [pin, setPin] = useState(false);
@@ -146,7 +190,7 @@ function Stage({ doc, nums, ask }) {
     if (v.paused) { v.play().catch(() => {}); setPaused(false); } else { v.pause(); setPaused(true); }
   };
   return (
-    <section className={'xbg-stage' + (doc.film ? ' film' : '')} ref={ref} aria-labelledby="xbg-h1">
+    <section className={'xbg-stage' + (doc.film ? ' film' : '')} ref={ref} aria-labelledby="xbg-h1" data-ask-hide>
       <div className="xbg-stage-in">
         <motion.div className="xbg-plate-in" ref={plate} style={pin ? { clipPath } : undefined}>
           {doc.film && (
@@ -163,7 +207,7 @@ function Stage({ doc, nums, ask }) {
                 <ul className={'xbg-facts' + (figs ? ' figs' : '')} style={{ '--n': doc.facts.length > 3 ? 2 : doc.facts.length }}>
                   {doc.facts.map(([role, name, note], i) => (
                     <li key={name + i}>
-                      <b className="xbg-fig">{name}</b>
+                      <b className="xbg-fig" aria-label={pin && alt ? name : undefined}>{pin && alt ? <ScrubFig value={name} p={p} from={0.46} to={0.8} /> : name}</b>
                       <span className="xbg-role x-mono">{role}</span>
                       <span className="xbg-note">{note}</span>
                     </li>
@@ -176,9 +220,16 @@ function Stage({ doc, nums, ask }) {
         <motion.div className="xbg-cover" style={pin ? { opacity: coverO, y: coverY } : undefined}>
           <div className="xbg-w xbg-cover-g">
             <div className="xbg-cover-t">
-              <A to={doc.back.href} className="xbg-back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{doc.back.label}</span></A>
               <Title text={doc.title} />
-              <p className="xbg-meta x-mono"><span className="xbg-chip">{doc.chip}</span><span>{doc.date}</span><span>{doc.read}</span></p>
+              <div className="xbg-meta x-mono">
+                <nav aria-label="Breadcrumb" className="xbg-crumbs">
+                  <ol>
+                    <li><A to={doc.back.href} className="xbg-back"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>{doc.back.label}</span></A></li>
+                    <li aria-current="page" className="xbg-chip">{doc.chip}</li>
+                  </ol>
+                </nav>
+                <span>{doc.date}</span><span>{doc.read}</span>
+              </div>
               <p className="xbg-lede">{doc.lede}</p>
               {ask && <div className="xbg-ask"><Cta to={ask.href} id="blog-post.hero" thumb>{ask.label}</Cta></div>}
             </div>
@@ -191,21 +242,32 @@ function Stage({ doc, nums, ask }) {
 }
 
 /* the reading thread: the chapter numeral, the spine and its knots, the minutes left; a reading bar on phones */
-function Thread({ doc, chapters, body }) {
+function Thread({ doc, chapters, body, ask }) {
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
-  const left = useRef(null), leftP = useRef(null);
+  const left = useRef(null), leftP = useRef(null), leftS = useRef(null);
   const { scrollYProgress: fill } = useScroll({ target: body, offset: ['start 40%', 'end 85%'] });
   const say = (v) => { const m = Math.ceil(doc.minutes * (1 - v) - 0.05); return v > 0.985 ? 'Finished' : (m < 1 ? 'Under a minute' : m + ' min') + ' left'; };
-  // the chapter you are in: the last heading above 40% of the screen (read on scroll, so fast jumps never skip one)
-  const hs = useRef([]);
-  useEffect(() => { hs.current = [...document.querySelectorAll('.xbg [data-knot]')]; }, []);
+  // the chapter you are in: the last heading above 60% of the screen, read on every scroll (not only while the body's
+  // progress moves, which stops near the end and left the counter one chapter behind); finished means the last chapter
+  const done = useRef(false);
+  useEffect(() => {
+    const hs = [...document.querySelectorAll('.xbg [data-knot]')];
+    const read = () => {
+      const line = innerHeight * 0.6;
+      let n = hs.reduce((k, h, i) => (h.getBoundingClientRect().top < line ? i : k), 0);
+      if (done.current) n = hs.length - 1;
+      setAt((a) => (a === n ? a : n));
+    };
+    read();
+    addEventListener('scroll', read, { passive: true });
+    addEventListener('resize', read);
+    return () => { removeEventListener('scroll', read); removeEventListener('resize', read); };
+  }, []);
   useMotionValueEvent(fill, 'change', (v) => {
     const s = say(v);
-    [left.current, leftP.current].forEach((el) => { if (el && el.textContent !== s) el.textContent = s; });
-    const line = innerHeight * 0.4;
-    const n = hs.current.reduce((k, h, i) => (h.getBoundingClientRect().top < line ? i : k), 0);
-    setAt((a) => (a === n ? a : n));
+    done.current = v > 0.985;
+    [left.current, leftP.current, leftS.current].forEach((el) => { if (el && el.textContent !== s) el.textContent = s; });
   });
   const list = (tap) => (
     <ol className="xbg-knots">
@@ -234,14 +296,20 @@ function Thread({ doc, chapters, body }) {
         </div>
       </aside>
       <div className="xbg-bar">
-        <button type="button" className="xbg-bar-b" aria-expanded={open} aria-controls="xbg-sheet" onClick={() => setOpen((o) => !o)}>
-          <span className="xbg-bar-n x-mono">{pad(at + 1)}</span>
-          <span className="xbg-bar-t">{chapters[at] ? chapters[at].h.text : doc.title}</span>
-          <span className="xbg-bar-m x-mono" ref={leftP}>{say(0)}</span>
-          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" className={open ? 'up' : ''}><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </button>
+        <div className="xbg-bar-row">
+          <button type="button" className="xbg-bar-b" aria-expanded={open} aria-controls="xbg-sheet" onClick={() => setOpen((o) => !o)}>
+            <span className="xbg-bar-n x-mono">{pad(at + 1)}</span>
+            <span className="xbg-bar-t">{chapters[at] ? chapters[at].h.text : doc.title}</span>
+            <span className="xbg-bar-m x-mono" ref={leftP}>{say(0)}</span>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" className={open ? 'up' : ''}><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          {ask && <Cta to={ask.href} id="blog-post.bar" size="sm" className="xbg-bar-ask">{ask.label}</Cta>}
+        </div>
         <motion.span className="xbg-bar-line" aria-hidden="true" style={{ scaleX: fill }} />
-        <div id="xbg-sheet" className="xbg-sheet" hidden={!open}>{list(true)}</div>
+        <div id="xbg-sheet" className="xbg-sheet" hidden={!open}>
+          {ask && <p className="xbg-sheet-m x-mono"><span>{doc.read}</span><span ref={leftS}>{say(0)}</span></p>}
+          {list(true)}
+        </div>
       </div>
     </>
   );
@@ -253,7 +321,7 @@ const Chevron = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidde
 function End({ doc, cta, sources }) {
   return (
     <>
-      <section className="xbg-end" aria-label={doc.back.label}>
+      <section className="xbg-end" aria-label={doc.back.label} data-ask-hide>
         <div className="xbg-w">
           {sources && (
             <aside className="xbg-src" aria-label={sources.label}>
@@ -299,14 +367,22 @@ export default function Post({ doc }) {
     else if (b.k === 'sources') sources = b;
     else if (chapters.length) chapters[chapters.length - 1].blocks.push({ b, i });
   });
+  chapters.forEach((c) => { c.gist = gist(c.blocks); });
   const nums = [doc.minutes, doc.title.length];
+  const ask = cta && cta.links[0];
+  // each post's own data sets its rhythm: a post whose plate holds figures (Kai) mirrors the scene (film card on the
+  // left, title on the right, figures counted up by the scroll, the reading rail on the right); a post whose plate
+  // names products (Pareto) keeps the card on the right and the rail on the left; a post without a film keeps its Sigil
+  const alt = !!doc.film && doc.facts.length > 0 && doc.facts.every((c) => /\d/.test(c[1]));
+  useQuietHeader();
+  // data-ask-hide: the post's ask lives inline (hero, phone chapter bar, Band), so the shared rising bar never floats over it
   return (
-    <main className="xbg">
-      <Stage doc={doc} nums={nums} ask={cta && cta.links[0]} />
+    <main className={'xbg' + (alt ? ' alt' : '')}>
+      <Stage doc={doc} nums={nums} ask={ask} alt={alt} />
 
-      <section className="xbg-body">
+      <section className="xbg-body" data-ask-hide>
         <div className="xbg-w xbg-room">
-          <Thread doc={doc} chapters={chapters} body={body} />
+          <Thread doc={doc} chapters={chapters} body={body} ask={ask} />
           <article className="xbg-text" ref={body}>
             {chapters.map((c, n) => (
               <section key={c.h.id} className="xbg-ch" aria-labelledby={c.h.id}>
@@ -314,7 +390,12 @@ export default function Post({ doc }) {
                   <span className="xbg-num x-mono" aria-hidden="true">{pad(n + 1)}</span>
                   <h2 id={c.h.id} tabIndex={-1} className="xbg-h2" data-knot>{c.h.text}</h2>
                 </header>
-                {c.blocks.map(({ b, i }) => (doc.body[i - 1] && doc.body[i - 1].k === 'figure' && doc.body[i - 1].kind === 'life' && b.k === 'p' ? null : <Block key={i} b={b} i={i} doc={doc} next={doc.body[i + 1]} />))}
+                {c.blocks.map(({ b, i }, k) => (doc.body[i - 1] && doc.body[i - 1].k === 'figure' && doc.body[i - 1].kind === 'life' && b.k === 'p' ? null : (
+                  <Fragment key={i}>
+                    <Block b={b} i={i} doc={doc} next={doc.body[i + 1]} />
+                    {c.gist && c.gist.after === k && <Gist g={c.gist} />}
+                  </Fragment>
+                )))}
               </section>
             ))}
           </article>

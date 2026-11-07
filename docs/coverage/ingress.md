@@ -2,8 +2,8 @@
 
 Page file: `components/pages/cloud/Ingress.jsx` · gallery: `docs/gallery/ingress/` · metric id: `cta_click ingress.hero`
 
-Open copy questions for James: none.
-Shared changes requested (`docs/requests/ingress.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
+Open copy questions for James (UI strings the page shows that are in neither `content/live/ingress.json` nor `content/ui-strings.json`; no register entry fits, so the live wording stays and each is a question): (1) "Chain your own pipeline" (the Beyond's h2); (2) "No middleware: straight to the backend." (empty-chain state); (3) "request" and (4) "backend" (the two ends of the chain); (5) "health check failed · out of rotation" and (6) "recovered · back in rotation" (the hero board's backend note, condensed from Hanzo's "taken out of rotation and put back when it recovers"); (7) "certificate…" (the board's pending state); (8) the board's labels "host · path", "middleware", "backends", "from disk · no pod". Round 2 dropped the duplicate "Middleware you compose by annotation" caption under "Chain your own pipeline" (it stays as scene 03's h3).
+Shared changes requested (`docs/requests/ingress.md`): the phone header ask swap (second solid fill), the cookie card over the hero board, ShipPrompt's 32px Copy (wants 44px), GetIt's h2/caption/tag spacing. Still waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, Frame `useEvery` (now `useTick`)
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -33,7 +33,7 @@ Done here: Parity 29/29 text and 2/2 links; Hanzo's header and footer are untouc
 - [x] Ends in one close in Hanzo's words ("Get Ingress" with the ask), then the footer
 - [x] The h1 is the `data-morph-target`, so cards elsewhere open into it
 
-Done here: The first screen is the name, Hanzo's line, the ask, ports 80 and 443 as figures (64px), and one live object: a routing board (titled hanzoai/ingress) where requests arrive by host and path, pass middleware and land on backends; a backend leaves rotation and comes back; a new hostname gets its certificate. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks.
+Done here: The first screen is the name, Hanzo's line, the ask, ports 80 and 443 as figures (64px), and one live object: a routing board (titled hanzoai/ingress) where requests arrive by host and path, pass middleware and land on backends; a backend leaves rotation and comes back; a new hostname gets its certificate. The h1 (52px, 40px on phones) cuts in by CSS line mask at first paint, so it moves in under 1 s with no script; a headless JS-off pass found 0 hidden text blocks (entrance states hide only under `html.js`). Round 2: the empty "What happens at the edge" screen is gone (the h2 rides in the first wipe scene), and the black room enters as a rounded card (inset 32px, radius 28) that opens to full width as it reaches 25% of the viewport.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` in the page
@@ -66,7 +66,7 @@ Done here: Parity 29/29 text and 2/2 links. Section labels sit under their headi
 - ~~One icon set~~ n/a: no icons beyond the kit's
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Greys from Hanzo's deck only; one dark room (Chain your own pipeline). Hex literals remain in page CSS because `tokens.css` is not on main yet (listed below).
+Done here: Greys from Hanzo's deck only; one dark room (Chain your own pipeline). Round 2 swapped the off-deck #f5f5f7, #161617, #2c2c2e for #f5f5f5, #171717, #262626; board tiles are flat (a 2px ring only when hit) and the scene card keeps the floating shadow with no outline. Deck hex literals remain in page CSS because `tokens.css` is not on main yet.
 
 ## 8. UI component library
 - [x] Every control has hover (inside `@media (hover:hover)`), press .97, focus-visible, disabled
@@ -75,16 +75,16 @@ Done here: Greys from Hanzo's deck only; one dark room (Chain your own pipeline)
 - [x] Inputs 16px or larger; no bare `:hover` in the page CSS
 - [x] Forks this page deleted: listed above
 
-Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`; segmented controls get a grey veil on hover and press .97 from `v2scale.css`.
+Done here: Kit `Cta`, `CodeBlock`, `Copy` and Cloud 3's `LivePause`. Round 2, the dark room: off chips hover to a 40% white border and #fafafa text, on chips to #fafafa; the ↑/↓ buttons hover to white 14%; chips and arrows press to scale(.97) in 90 ms; focus is a 2px white ring with a black halo. Walk: 13/14 desktop hovers answer (the 14th is a disabled ↑).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups (`variety.py` OK)
 - [x] At least 3 kinds of movement; scroll-linked is half or less
 - [x] Something moves without input; every control answers
 - [x] Reduced motion shows the final state; no `setInterval` in the page (timers are `setTimeout` chains)
-- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, tabs, radios and pause toggles tick (radios carry `data-sound="tick"`), copy chimes; the demos loop while seen and never finish, so no done chime
+- [x] Sound only on the listed moments, through the one kit (`lib/sound.js`, wired by `components/Sound.jsx`): the ask taps, the pause toggle and the middleware chips tick (`aria-pressed`, `data-sound="tick"`), the ↑/↓ reorder buttons and a finished drag tick, copy chimes; the board loops while seen and never finishes, so no done chime
 
-Done here: Signature: the routing board, live. Idle: the board routes a request a second while on screen. State: middleware chips add and drag-reorder (keyboard arrows too), and a request walks the chain on each change. Scroll: the six scenes wipe up over each other while the section pins; the 80/443 scene is the one figure allowed to grow (112px). No springs: every move is ease-emphasis at 300 ms.
+Done here: Signature: the routing board, live. Idle: the board routes a request a second while on screen. Time (round 2): each of the six scenes plays its drawing once as it is wiped in, then rests: the three sources slide up under `networking.k8s.io/v1 Ingress` and `default IngressClass` ticks on; the lock shackle draws and closes, then "Let's Encrypt" and "wildcards included" arrive; the chips arrive 60 ms apart (the `--d` index) and a request passes through the black ones; the hollow pod empties and refills; the four paths type in one after another; 80 and 443 settle. State: middleware chips add and drag-reorder (keyboard arrows too), and a request dot steps down the chain on each change, lighting each row it passes. Scroll: the six scenes wipe up while the section pins, and when the scroll stops mid-wipe the stage settles (600 ms) to the nearest whole scene, so two scenes never rest half-drawn. Walk: idle change at all 8 desktop stops in the scene band (was 2 of 8). Reduced motion: every drawing is its final frame, no settle.
 
 ## 10. Media
 - ~~`Film` and `Pic` only~~ n/a: no photo or film on Hanzo's page
@@ -100,7 +100,7 @@ Done here: Product objects are drawn in HTML and CSS from Hanzo's words; the clo
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: At 375: the scenes stack one after another with no pin; the board drops the middle wire; the pipeline stacks under its chips. Measured: ask bottom at 446 of 667; pinned scenes stack under 900px, nothing floats over text.
+Done here: At 375: the scenes stack one after another with no pin and each drawing plays when half of it is on screen; the board keeps the request path, with the middleware as one compact 13px row between hosts and backends (round 2); the pipeline stacks under its chips and the room is open full width. Measured: ask bottom at 446 of 667; pinned scenes stack under 900px, nothing floats over text.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white and #f5f5f5, #a3a3a3 and white on black
@@ -155,6 +155,6 @@ Done here: A headless JS-off pass shows every word; reduced motion stops each de
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: no `docs/review/ingress.md` yet
+- [x] Review read: `docs/review/ingress.md` (7/10), fixes 1-8 done page-local, fix 9 filed in `docs/requests/ingress.md`
 
-Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (desktop film and phone stills).
+Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (desktop film and phone stills; round 2: `round2-desktop.jpg`, `round2-desktop-pipeline.jpg`, `round2-phone.jpg`).

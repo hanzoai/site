@@ -1,5 +1,11 @@
 'use client';
-/* /customers. V2: 8/10 (v3.1, the review's fixes). No hues, no eyebrows. A two-line kinetic headline with its lede and
+// Persona: enterprise buyer in the Buy journey, checking what Hanzo has launched before talking to it
+// Goal: see what Hanzo built and what each launch sold, then talk to Hanzo
+// CTA: "Talk to us" (/contact), data-cta customers.hero / customers.close; metric contact_sales_submit
+// Signature: the launch stage (desktop: a pinned stage; phones: a sticky figure strip under the year rail), one in, one out
+// Beyond: a year index over Hanzo's own launch list that narrows the index to one year
+// V2: 8/10 phone index now a scene (sticky figure strip swaps with the row crossing the middle, 150ms out then 300ms in), JS-off stacks both cases on phones too, press .97 throughout
+/* /customers (v3.2, the re-review's fixes). No hues, no eyebrows. A two-line kinetic headline with its lede and
    its one ask side by side; one big case plate coloured only by the case's own picture, whose progress line starts the
    moment the curtain lifts and which opens into its story; every launch as a scene: the rows scroll past a pinned stage
    that brings in each launch's logo and figures as its row crosses the middle (or under the pointer), a year filter
@@ -10,8 +16,8 @@
    data-cta customers.hero / customers.close; metric contact_sales_submit.
    Signature: the launch stage. Scroll the index and each launch's logo and figures rise into a pinned stage as its row
    reaches the middle, the last one leaving first (150ms out, then 300ms in); point at a row and the stage answers at
-   once. Phones: rows read in as they reach the middle (name to ink, figures settle out of their mask, once) under a
-   sticky year rail that marks the year you are reading.
+   once. Phones: a slim figure strip sticks under the year rail and swaps to the figure of the row crossing the middle
+   (same copy, 150ms out then 300ms in, ease-emphasis); rows also read in (name to ink, figures settle once).
    Supporting (3): masked headline cut-in once, after the curtain; the case plate's one turn (wipe, kit Tabs pill); the
    close's figure rows sliding with the scroll. State: the year filter closes the list up with a layout glide.
    Beyond: a year index over Hanzo's own launch list: each year shows its launches as dots, and a tap narrows the index
@@ -20,7 +26,8 @@
    marks, the seven backer tiles, the closing Sigil (third Sigil room among the company pages), the plate's 30% start
    threshold, data-morph on the plate (Morph times out site-wide; the plate opens by doorway). */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
+import { useCalm } from '../ui';
 import { useRouter } from 'next/navigation';
 import { A, Img, Tabs } from '../kit';
 import Sigil from '../Sigil';
@@ -60,7 +67,7 @@ const door = (e, to, router) => {
   setTimeout(() => document.querySelectorAll('[data-door]').forEach((d) => { if (!d.dataset.landing) d.remove(); }), 640 + 700);
 };
 // JS off: both cases show stacked and readable; the figures on phones stand in place
-const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}</style>' };
+const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-strip{display:none!important}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
 const FIGS = LAUNCHES.flatMap((l) => l.f.map(([n]) => n));
 
 // Hanzo's own list, as live shows it (the same names and links as /investors; a shared module is the Data chat's, PLAN 2.5)
@@ -87,7 +94,7 @@ function Plate() {
   const [steps, setSteps] = useState(0);
   const [mine, setMine] = useState(false);
   const seen = useInView(box, { amount: 0.12 });
-  const calm = useReducedMotion();
+  const calm = useCalm();
   const rest = mine || calm || steps >= CASES.length;
   const run = ok && seen && !rest;
   useEffect(() => {
@@ -162,7 +169,25 @@ function Stage({ l, list }) {
   );
 }
 
+/* Phones: a slim strip that sticks under the year rail and carries the figure of the row crossing the middle, swapping
+   as the desktop stage does (the last one rises out in 150ms, then the next rises in, 300ms ease-emphasis). */
+function Strip({ l, calm }) {
+  const [n, w] = l.f.length ? l.f[0] : [l.name, l.kind];
+  return (
+    <div className="xcu-strip" aria-hidden="true">
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span key={l.id} className={'xcu-strip-in' + (l.f.length ? '' : ' nm')}
+          initial={calm ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0, transition: { duration: calm ? 0 : 0.3, ease: EASE } }}
+          exit={calm ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: -16, transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] } }}>
+          <b className="vc-num">{n}</b><span>{w}</span>
+        </motion.span>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function Every() {
+  const calm = useCalm();
   const [year, setYear] = useState(null);
   const shown = year ? ORDER.filter((l) => l.year === year) : ORDER;
   const [at, setAt] = useState(ORDER[0].id);
@@ -201,6 +226,7 @@ function Every() {
             );
           })}
         </div>
+        <Strip l={cur} calm={calm} />
         <p className="x-sr" role="status">{year ? `${year}: ${shown.length} ${shown.length === 1 ? 'launch' : 'launches'}` : ''}</p>
         <ol className="xcu-index">
           {ORDER.map((l) => (
