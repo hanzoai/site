@@ -2,8 +2,9 @@
 // Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
 // Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, which is the page's own claim (no second base URL) made visible, and it copies as curl
 /* Hanzo API, v2 (Archetype F, developer: the request is the hero).
-   V2: 8/10 round 2: headline and live console side by side so the path types and the answer streams in the first screen at 1470×801; console height fixed (no phone jump); no labels over headlines; one ask, repeated at the close; real lines in the chapters; styled endpoint list instead of a native select
+   V2: 8/10 round 2 (MASTER): headline at 52px beside the live console in the first screen; console walks once, pauses, never moves the page; no labels over headlines; one ask at hero and close; real lines in chapters; kit media; no springs
    Persona: a developer who has used the OpenAI API and wants every Hanzo capability behind one key.
+   Metric: api_key_created (data-cta api-hero-key, api-close-key).
    Goal: see that one base URL and one key reach every endpoint, then get a key.
    CTA: "Get an API key, free" (hero, sticky ask bar, closing row); "OpenAPI Reference" as the quiet second.
    Motion: signature = the live console (path types, answer streams, model film plays). Supporting: pinned chapters
@@ -12,7 +13,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
-import { A, Cta } from '../kit';
+import { A, Cta, Img, Film } from '../kit';
 import Lines from '../v2/x-edison/AppLines';
 import Scenes from '../v2/AppScenes';
 import '../v2/AppType.css';
@@ -47,14 +48,14 @@ const KEY = 'Authorization: Bearer <your key>';
 function Console() {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
+  const [held, setHeld] = useState(false); // the pause control
   const calm = useReducedMotion();
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.25 });
   const path = useRef(null);
   const desc = useRef(null);
-  const vid = useRef(null);
   const [done, setDone] = useState(true);
-  const live = seen && !calm;
+  const live = seen && !calm && !held;
   useEffect(() => {
     const [, p, d] = HERO[at];
     if (!live) { if (path.current) path.current.textContent = p; if (desc.current) desc.current.textContent = d; setDone(true); return; }
@@ -76,17 +77,23 @@ function Console() {
     t = setTimeout(typeP, 240);
     return () => { alive = false; clearTimeout(t); };
   }, [at, live]);
+  // the walk runs once through all eight, then rests on the first (MASTER: demos end at rest)
+  const [walked, setWalked] = useState(false);
   useEffect(() => {
-    if (mine || !live) return;
-    const t = setTimeout(() => setAt((v) => (v + 1) % HERO.length), 5800);
+    if (mine || !live || walked) return;
+    const t = setTimeout(() => { if (at === HERO.length - 1) { setWalked(true); setAt(0); } else setAt(at + 1); }, 4600);
     return () => clearTimeout(t);
-  }, [at, mine, live]);
-  useEffect(() => { const v = vid.current; if (!v) return; if (live) v.play().catch(() => {}); else v.pause(); }, [at, live]);
+  }, [at, mine, live, walked]);
   const pick = (i) => { setAt(i); setMine(true); };
   const [m, p, d, doc, model] = HERO[at];
   return (
-    <div className="api-con av-obj" ref={box}>
+    <div className={'api-con av-obj' + (held ? ' held' : '')} ref={box}>
       <div className="api-con-bar">
+        <button type="button" className="api-pause" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((h) => !h)}>
+          {held
+            ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg>
+            : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
+        </button>
         <span className="api-meth x-mono">{m}</span>
         <span className="api-url x-mono">
           <span className="api-host">https://api.hanzo.ai</span>
@@ -110,8 +117,8 @@ function Console() {
         <div className="api-model">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div key={model} className="api-model-in" initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8, ease: EASE }}>
-              <img src={`/models/${model}.webp`} alt="" />
-              <video ref={vid} src={`/models/${model}.webm`} muted loop playsInline preload="metadata" aria-hidden="true" />
+              <Img src={`/models/${model}.webp`} alt="" w={1200} h={1500} />
+              {!held && <Film src={`/models/${model}.webm`} poster={`/models/${model}.webp`} w={1200} h={1500} />}
             </motion.div>
           </AnimatePresence>
           <span className="api-model-k x-mono">{model}</span>
@@ -121,9 +128,9 @@ function Console() {
         {HERO.map(([mm, pp], i) => (
           <li key={pp}>
             <button type="button" role="tab" aria-selected={at === i} onClick={() => pick(i)}>
-              {at === i && <motion.span layoutId="api-chip" className="api-chip-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              {at === i && <motion.span layoutId="api-chip" className="api-chip-bg" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="x-mono">{mm + ' ' + pp}</span>
-              {at === i && !mine && live && <i key={'t' + at} className="api-chip-t" aria-hidden="true" />}
+              {at === i && !mine && live && !walked && <i key={'t' + at} className="api-chip-t" aria-hidden="true" />}
             </button>
           </li>
         ))}
@@ -271,7 +278,7 @@ function Call() {
   const [k, setK] = useState(0);
   const [m, p, , doc] = ALL[k];
   const method = m.split(' ')[0], path = p.split(' · ')[0];
-  const curl = `curl -X ${method} https://api.hanzo.ai${path} -H "Authorization: Bearer <your key>"`;
+  const curl = `curl -X ${method} https://api.hanzo.ai${path} \\\n  -H "Authorization: Bearer <your key>"`;
   return (
     <div className="api-call">
       <p className="api-call-k" id="api-call-k">Endpoint</p>
@@ -282,10 +289,7 @@ function Call() {
           </button>
         ))}
       </div>
-      <pre className="api-call-line"><code>
-        <span className={'api-call-m m-' + method.toLowerCase()}>{method}</span> <span className="api-call-host">https://api.hanzo.ai</span><motion.span key={path} className="api-call-path" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 0.45, ease: EASE }}>{path}</motion.span>{'\n'}
-        <span className="api-call-host">Authorization: Bearer &lt;your key&gt;</span>
-      </code></pre>
+      <pre className="api-call-line" tabIndex={0} aria-label="Request"><code><span className="api-call-host">curl -X </span><span className="api-call-m">{method}</span><span className="api-call-host"> https://api.hanzo.ai</span><motion.span key={path} className="api-call-path" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 0.4, ease: EASE }}>{path}</motion.span><span className="api-call-host">{' \\\n  -H "Authorization: Bearer <your key>"'}</span></code></pre>
       <div className="api-call-f"><Copy text={curl} label="Copy as curl" /><A to={DOCS + doc}>Body and parameters ↗</A></div>
     </div>
   );
@@ -336,7 +340,7 @@ function Table() {
             <div className="api-seg" role="tablist" aria-label="Method">
               {FILTERS.map((x, i) => (
                 <button key={x} type="button" role="tab" aria-selected={f === i} onClick={() => setF(i)}>
-                  {f === i && <motion.span layoutId="api-seg" className="api-seg-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                  {f === i && <motion.span layoutId="api-seg" className="api-seg-bg" transition={{ duration: 0.3, ease: EASE }} />}
                   <span>{x}</span>
                 </button>
               ))}
