@@ -276,7 +276,7 @@ function Apply({ track, setTrack }) {
               ))}
             </dl>
           </div>
-          <p className="xgr-mail">Or email us directly at <a href="mailto:careers@hanzo.ai">careers@hanzo.ai</a></p>
+          <p className="xgr-mail"><span>Or email us directly at</span> <a href="mailto:careers@hanzo.ai">careers@hanzo.ai</a></p>
         </div>
         <AnimatePresence mode="wait" initial={false}>
           {done ? (

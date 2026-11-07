@@ -152,7 +152,7 @@ function Scene() {
                 <h3 className="xp-head xfo-lv-n">{n}</h3>
                 <p className="xp-body">{req}</p>
                 <div className="xfo-pour"><motion.i style={{ scaleX: pinned ? (i ? fill2 : fill1) : (lvl >= i ? 1 : 0) }} /></div>
-                <p className="xfo-lv-e"><span aria-hidden="true">✓</span>{e}</p>
+                <p className="xfo-lv-e"><span aria-hidden="true">✓</span><span className="xfo-lv-et">{e}</span></p>
               </li>
             ))}
           </ol>
@@ -273,11 +273,11 @@ function Claim() {
               </motion.div>
             ) : (
               <motion.form key="form" ref={form} className="xfo-form" noValidate onSubmit={send} exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}>
-                <Field className="wide" label="Email of your Hanzo account" name="email" type="email" required autoComplete="email" aria-required="true" aria-invalid={bad('email')} error={why('email')} value={f.email} onChange={on('email')} />
+                <Field className="wide" label={<span>Email of your Hanzo account</span>} name="email" type="email" required autoComplete="email" aria-required="true" aria-invalid={bad('email')} error={why('email')} value={f.email} onChange={on('email')} />
                 <Field label="Name" name="name" autoComplete="name" value={f.name} onChange={on('name')} />
-                <Field label="GitHub username" name="github" autoComplete="username" required pattern="[A-Za-z0-9\-]{1,39}" aria-required="true" aria-invalid={bad('github')} error={why('github')} placeholder="octocat" value={f.github} onChange={on('github')} />
-                <Field className="wide" label="Merged pull request" name="pull" type="url" required pattern="https://github\.com/.+/pull/[0-9]+.*" aria-required="true" aria-invalid={bad('pull')} error={why('pull')} placeholder="https://github.com/hanzoai/ui/pull/1" value={f.pull} onChange={on('pull')} />
-                {st === 'refused' && <p className="xfo-refused" ref={out} tabIndex={-1} role="alert">Write to <a href={c.mail}>{SUPPORT}</a> with the address of the pull request.</p>}
+                <Field label={<span>GitHub username</span>} name="github" autoComplete="username" required pattern="[A-Za-z0-9\-]{1,39}" aria-required="true" aria-invalid={bad('github')} error={why('github')} placeholder="octocat" value={f.github} onChange={on('github')} />
+                <Field className="wide" label={<span>Merged pull request</span>} name="pull" type="url" required pattern="https://github\.com/.+/pull/[0-9]+.*" aria-required="true" aria-invalid={bad('pull')} error={why('pull')} placeholder="https://github.com/hanzoai/ui/pull/1" value={f.pull} onChange={on('pull')} />
+                {st === 'refused' && <p className="xfo-refused" ref={out} tabIndex={-1} role="alert"><span>Write to</span> <a href={c.mail}>{SUPPORT}</a> <span>with the address of the pull request.</span></p>}
                 <div className="xfo-send-row">
                   <Cta type="submit" id="founder.claim" busy={st === 'sending'} className="xp-cta xfo-send">Send the claim</Cta>
                   <A to="https://hanzo.ai/privacy" className="xfo-priv">Privacy Policy</A>
@@ -295,7 +295,7 @@ const QA = [
   ['Who grants the Pro time, and when?', 'A Hanzo admin, by hand, once the pull request has merged and you have sent it with the form on this page. Nothing grants it automatically.'],
   ['Which pull requests count?', `One a maintainer merges into a public repository of ${ORGS.join(', ')}. Level 2 is three merged pull requests, or 1,000 lines merged.`],
   ['Does a bounty pay?', 'No. A bounty is an issue scoped for an outside fix, and the points it names are reputation, not money. Its merged fix counts toward a level like any other pull request.'],
-  ['Where do I ask about a claim?', <>Write to <a href={`mailto:${SUPPORT}`}>{SUPPORT}</a> with the address of the pull request.</>],
+  ['Where do I ask about a claim?', <><span>Write to</span> <a href={`mailto:${SUPPORT}`}>{SUPPORT}</a> <span>with the address of the pull request.</span></>],
 ];
 
 export default function Founder() {
