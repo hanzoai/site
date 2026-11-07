@@ -1,27 +1,158 @@
-# /risk coverage (PLAN-COMPONENTS areas 2.1–2.18)
+# /risk coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/apps/Risk.jsx` · gallery: `docs/gallery/risk/` · Persona: enterprise buyer (fraud, AML, trust and safety) · Goal and metric: `contact_sales_submit` · CTA: "Talk to us" → /contact-sales
+Page file: `components/pages/apps/Risk.jsx` (+ `Risk.css`) · gallery: `docs/gallery/risk/` · metric id: `contact_sales_submit`
 
-1. **Strategy and conversion.** One ask, Hanzo's "Talk to us": solid in the hero (`data-thumb`, `data-cta="risk.hero"`), carried by the shared ask bar after the hero, and again as the first of the three "Next" cards at the close (`data-cta="risk.close"`, outlined so only one solid shows per screen).
-2. **Information architecture and navigation.** Hanzo's header and footer unchanged. Order: the dial (hero), the two faces as one statement, where it stands today, three pinned chapters (compliance, lifecycle, agents), what it decides on, the dark room (your data, your model), rules and platforms, how it connects and plans, what it is not and next. Links to /commerce, /idv, /guard, /analytics, /api and the source stay in Hanzo's sentences.
-3. **First impression and page narrative.** Headline cuts in line by line; the live dial sits under it and is already deciding within a second (needle, score, action). After that, one idea per screen: the statement, the two faces, then pinned chapters where the words hold and the case file, the stage track and the four-fact lanes change beside them.
-4. **Conversion system.** One solid per viewport: the hero ask, then the shared ask bar (the header's Try Hanzo turns outline while it shows). No same-page hrefs.
-5. **Trust and proof.** Every status reads by word and shape (a filled chip for available now, a hollow ring for in development). The dial says "Illustration. No figure on this page is a customer result." No seals, no invented numbers.
-6. **Content presentation (copy untouched).** Parity 114/114 text, 7/7 links. No label above any headline: "Risk" now sits inside the dial as its name; chapter tags sit under the words. The six AML capabilities, the three stages and the agents argument open from buttons into sheets; the four "decides on" cards open into sheets; all text stays in the HTML.
-7. **Visual design system.** v2 scale (`components/v2/Scale.css`). 0 UI hues (JAMES.md): the hot side of the dial is grey with an ink tick, "summon a person" is an inverted ink chip, lanes and stops are ink. Hero object 28px radius, cards 16px. One dark room.
-8. **UI component library.** Kit `A`, `Magnetic`; v2 `Settle`, `OpenSheet` (`OpenCards`, `Detail`), `x-gauss/PinChapters`, `x-gauss/LineMask`, `x-gauss/Pause`, `x-gauss/NoJs`; shared `Sigil`. Stage tabs are `role=tablist`; fact toggles are `role=switch`. No browser-default controls.
-9. **Motion and interaction.**
-   - Idle: the dial walks the stages and sets signals to neutral by itself; the case file fills step by step; the lifecycle track walks its stages; the lanes route a caller.
-   - Pointer: magnetic ask; reasons and buttons press at .98/.99; cards lift and their plus turns; the Sigil leans to the mouse.
-   - State: tabs, toggles and the attribution (set a signal to neutral and the score drops); sheets morph out of their card.
-   - Scroll: the dial settles (Stage) and the chapters pin. Scroll is under half of the page's motion.
-   - Every self-running demo has a pause button (WCAG 2.2.2); decorative CSS loops run once.
-10. **Media.** No Hanzo photography belongs to this page; its objects are product UI (dial, case file, track, lanes, endpoint) and the shared Sigil, seeded with the page's own figures (5-year clock, 20 rules, 4 tiers, 3 stages).
-11. **Mobile and responsive.** At 375px the dial's gauge peeks under the ask on the first screen; chapters stack with their visual pinned above the words; sheets rise from the bottom; targets are 44px or more; no sideways scroll.
-12. **Accessibility.** One h1. Live score and action are `aria-live`. Sheets trap focus, Esc closes, focus returns. Pause buttons are `aria-pressed` with a label. JS off: `NoJs` shows every word and stacks the chapters.
-13. **Performance and engineering.** Transform, opacity and clip only. Every loop stops off screen (`useLive`) and when paused.
-14. **SEO and machine files.** Metadata and JSON-LD unchanged (`app/risk/page.jsx`).
-15. **Catalogue and product pages.** Does not apply.
-16. **Developer experience.** The endpoint paths (/v1/aml, /v1/risk, POST /v1/event) are shown as product UI; no code to copy on this page.
-17. **States and resilience.** Static Hanzo copy, no live data; no loading or error state needed. Reduced motion shows the final dial.
-18. **Measurement and handover.** `data-cta` on both asks. Filmed into `docs/gallery/risk/`.
+Open copy questions for James: dial labels not in `content/ui-strings.json` ("the line", "action", "reasons · tap one to set it back to neutral", "stage: '<stage>'", "Illustration. No figure on this page is a customer result."); chapter visual captions ("alert → case", "same call · same record · same model", "N of 4 facts"); the closing band repeats the h1's words.
+Shared changes requested: `docs/requests/templates.md` (covers every Business 2 page).
+Forks this page deleted: the framed dial card and its corner name, the 76px score and the ±weights (no invented digits), the floating dial and chapter pauses, the "+"-only openers (now labelled with Hanzo's words), the 26px caps "Next", the black "summon a person" pill (now underlined ink), every spring, the colour comments, the inert `data-cursor` attributes.
+
+## 1. Strategy and conversion
+- [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
+- [x] One solid fill per viewport; "Talk to us" → /contact-sales
+- [x] One h1; clear in 5 seconds
+- [x] No dead button
+- [x] Copy questions listed
+
+Done here: gate: 1 h1, max 1 solid per viewport; the close has its own band with the solid ask.
+
+## 2. Information architecture and navigation
+- [x] One `<main id="main">`; shared skip link
+- [x] Every link through `A`
+- [x] n/a breadcrumb
+- [x] Link parity 0 removed
+
+Done here: parity links 7/7.
+
+## 3. First impression and page narrative
+- [x] Sells in 5 s; the needle and action move within 2.2 s
+- [x] h1 CSS cut-in painted by the server; nothing above it
+- [x] JS off legible
+- [x] Hero gauge → statement and two faces → three chapters → cards → dark room → rules → plans → what it is not → band
+- [x] Ends on a band ("Talk to us"), then footer
+- [x] n/a Morph
+
+Done here: one big thing per screen: the gauge in the hero, the 44px endpoints under a 32px statement, the 64px-free plans.
+
+## 4. Conversion system
+- [x] Kit `A` + `.w2-cta`
+- [x] Sticky ask "Talk to us" (`data-thumb`)
+- [x] n/a copy button
+- [x] `data-cta` on hero (`risk.hero`), band (`risk.close`) and the Next card (`risk.next`)
+
+Done here: hero and band both carry `data-thumb="Talk to us"`.
+
+## 5. Trust and proof
+- [x] No logo, seal or invented number (the score digits and weights are gone)
+- [x] Figures traced: twenty rules, five-year clock, four sanction lists (Hanzo's)
+- [x] n/a marquees
+- [x] n/a submit
+
+Done here: the dial is labelled an illustration in Hanzo's words.
+
+## 6. Content presentation (copy untouched)
+- [x] Phone text 14px+ (mono capitals 12px)
+- [x] Measures held; long opener labels wrap with the "+" unsquashed
+- [x] Sheets via OpenSheet (focus trapped)
+- [x] `parity.py /risk`: 0 missing
+
+Done here: parity `text 114/114 links 7/7`.
+
+## 7. Visual design system
+- [x] `taste.py` passes (0 hues)
+- [x] No label above a headline ("Next" is a 12px mono caption above its links, not a headline)
+- [x] Tiles flat; the chapter visuals float
+- [x] One icon set
+- [x] Differs from neighbours: an unframed gauge, not a desk or window
+
+Done here: gate hues [].
+
+## 8. UI component library
+- [x] Hover in `@media (hover:hover)`, press .98, focus-visible
+- [x] Stage tabs take arrow keys; facts are switches
+- [x] Sheets trap Tab and return focus
+- [x] No bare `:hover`
+- [x] Forks deleted: listed above
+
+Done here: fact switches get an ink border on hover.
+
+## 9. Motion and interaction
+- [x] Signature (the live dial), supporting: Settle, PinChapters, sheets; 0 fade-ups
+- [x] Idle (dial, chapter visuals, event stream), pointer (reasons, switches), state (sheets), arrival (h1)
+- [x] Moves without input; every control answers
+- [x] Reduced motion rests; no springs
+- [x] n/a sound (shared kit)
+
+Done here: the action word holds a two-line box at both widths, so nothing under the dial moves when it flips.
+
+## 10. Media
+- [x] n/a images; Sigil drawing in Next
+- [x] n/a video
+- [x] n/a
+- [x] n/a
+
+Done here: one Sigil (seed hanzo-risk) beside Next.
+
+## 11. Mobile and responsive
+- [x] 375×812 and 1470×801 pass with no overlap
+- [x] No horizontal scroll at 320
+- [x] Targets 44px+
+- [x] Primary above the fold at 375×667
+
+Done here: the phone gauge stays full width (`align-items: stretch`); the dial pause sits beside the stage tabs.
+
+## 12. Accessibility (WCAG 2.2 AA)
+- [x] Contrast measured
+- [x] Pause beside the stage tabs, under the chapter visual, beside the event stream
+- [x] n/a forms
+- [x] One h1; h2/h3 order
+- [x] Keyboard reaches every control
+
+Done here: the dial's result is `aria-live` only after the visitor acts.
+
+## 13. Performance and engineering
+- [x] h1 in server HTML
+- [x] No images
+- [x] No poller, no third party
+- [x] Nothing heavy on James's laptop
+
+Done here: one client island.
+
+## 14. SEO and machine files
+- [x] Title and description from `content/pages.json`
+- [x] Canonical from shared layout
+- [x] `<JsonLd route="/risk" />`
+- [x] Cards open sheets
+
+Done here: `app/risk/page.jsx`.
+
+## 15. Catalogue and product pages
+- [x] n/a
+- [x] Cards open into sheets
+- [x] n/a
+- [x] n/a (nothing priced)
+
+Done here: n/a.
+
+## 16. Developer experience
+- [x] Endpoints shown as Hanzo writes them (/v1/aml, /v1/risk, POST /v1/event)
+- [x] n/a config
+- [x] n/a terminal
+- [x] No version
+
+Done here: n/a beyond the endpoints.
+
+## 17. States and resilience
+- [x] Dial: every reason neutral reads "allow"; switches: none or all facts
+- [x] Blocked network: complete page, no console errors
+- [x] n/a submit
+- [x] n/a
+
+Done here: look.cjs both widths errors none.
+
+## 18. Measurement and handover
+- [x] `data-cta` on every primary
+- [x] Nothing identifier-bearing
+- [x] `V2:` line in `app/risk/page.jsx`
+- [ ] Review 8 or more (re-review pending)
+
+Done here: previous review 6/10; fixes 1–5 and 8 addressed, 6 partly (dark room loops, gaps listed), 7 addressed (unframed gauge).
