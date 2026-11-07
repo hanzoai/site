@@ -23,6 +23,7 @@
 .xlg2-read { position: relative; display: flex; flex-direction: column; gap: 14px; animation: xlg2-in var(--reveal) var(--out) both; }
 @keyframes xlg2-in { from { opacity: 0; transform: translateY(14px); } }
 .xlg2-read-n { font-size: clamp(88px, 8vw, 128px); color: var(--ink); }
+.xlg2-read-h { font-size: clamp(32px, 3vw, 44px); font-weight: 600; letter-spacing: -.035em; line-height: 1.04; max-width: 14ch; }
 .xlg2-read-t { margin: 0; max-width: 34ch; font-size: 17px; line-height: 1.5; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .xlg2-read-bar { display: block; height: 2px; width: 100%; border-radius: 2px; background: rgba(0, 0, 0, .1); overflow: hidden; position: relative; }
 .xlg2-read-bar::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; animation: xlg2-bar 3.4s linear both; }
@@ -62,6 +63,10 @@
 .xlg2-prose li::marker { color: var(--muted); }
 .xlg2-prose blockquote { border-left: 0; border-radius: 16px; }
 .xlg2 .xlg-tw { border-radius: 16px; max-width: none; }
+/* type floor 13px (PLAN-COMPONENTS 2.6): code in prose and in tables, e.g. the cookie names */
+.xlg2-prose code, .xlg2 .xlg-tw code { font-size: max(13px, .86em); }
+.xlg2 .xlg-tw table, .xlg2 .xlg-tw td { font-size: 15px; }
+@media (max-width: 900px) { .xlg2-prose code, .xlg2 .xlg-tw code { font-size: 14px; } }
 .xlg2 .xlg-tw tbody tr:hover, .xlg2 .xlg-tw tbody tr:focus-within { background: #f5f5f7; }
 .xlg2 .xlg-tw tbody tr:hover td:first-child { box-shadow: none; }
 
@@ -78,6 +83,7 @@
   .xlg2-cover { grid-template-columns: 1fr; }
   .xlg2-cover-l { min-height: 240px; padding: 22px; border-right: 0; border-bottom: 1px solid var(--hair); }
   .xlg2-read-n { font-size: 72px; }
+  .xlg2-read-h { font-size: 28px; }
   .xlg2-read-t { font-size: 16px; -webkit-line-clamp: 3; }
   .xlg2-ix { padding: 8px 20px 20px; }
   .xlg2-ix ol { columns: 1; }

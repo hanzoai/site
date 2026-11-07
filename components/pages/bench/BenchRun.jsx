@@ -43,24 +43,36 @@ const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
 const textOf = (n) => (n && typeof n === 'object' ? n.c.map(textOf).join('') : n || '');
 const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 
-/* the playhead: one index the card and every chapter read; ticks only while the tab is visible */
+/* the playhead: one index the card and every chapter read. It walks the rows once (a demo plays and rests,
+   PLAN-COMPONENTS 2.9) and comes back to Hanzo's first row; the card's pause control stops or replays it. It ticks
+   only while the tab is visible. */
 function makeWalk() {
-  let i = 0, n = 1, id = 0, hold = 0;
+  let i = 0, n = 1, id = 0, hold = 0, left = 0, on = false;
   const subs = new Set();
   const emit = () => subs.forEach((f) => f());
+  const stop = () => { clearInterval(id); on = false; emit(); };
   return {
     get: () => i,
+    playing: () => on,
     sub: (f) => { subs.add(f); return () => subs.delete(f); },
     set: (k, pause = 0) => { i = k; if (pause) hold = Date.now() + pause; emit(); },
+    stop,
     start: (count) => {
       n = Math.max(1, count);
       clearInterval(id);
-      id = setInterval(() => { if (document.hidden || Date.now() < hold) return; i = (i + 1) % n; emit(); }, 1900);
+      if (n < 2) return () => {};
+      left = n; on = true; emit();
+      id = setInterval(() => {
+        if (document.hidden || Date.now() < hold) return;
+        i = (i + 1) % n; left -= 1;
+        if (left <= 0) { i = 0; stop(); } else emit();
+      }, 1900);
       return () => clearInterval(id);
     },
   };
 }
 const useAt = (walk) => useSyncExternalStore(walk.sub, walk.get, () => 0);
+const usePlaying = (walk) => useSyncExternalStore(walk.sub, walk.playing, () => false);
 
 /* what the playhead reads at row i: [row, figure, what the figure is] */
 function readout(c, i) {
@@ -85,6 +97,7 @@ const isLog = (vals) => { const v = vals.filter((x) => x != null && x > 0); retu
 /* the live readout: the row the playhead is on, its figure huge */
 function Readout({ c, walk, big }) {
   const at = useAt(walk);
+  const playing = usePlaying(walk);
   const r = readout(c, at);
   if (!r) return null;
   const n = rowsOf(c);
@@ -97,9 +110,22 @@ function Readout({ c, walk, big }) {
         </AnimatePresence>
       </span>
       <span className="xbr-ro-s x-mono">{r[2]}</span>
-      {n > 1 && <span className="xbr-ro-n x-mono">{String((at % n) + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}</span>}
-      {n > 1 && <i className="xbr-ro-t" key={at} />}
+      {n > 1 && <i className={'xbr-ro-t' + (playing ? '' : ' rest')} key={at} />}
     </div>
+  );
+}
+
+/* pause or replay the playhead (WCAG 2.2.2: anything that moves for more than 5 s can be stopped) */
+function Walker({ walk, n }) {
+  const playing = usePlaying(walk);
+  const calm = useReducedMotion();
+  if (calm || n < 2) return null;
+  return (
+    <button type="button" className="xbr-walk" aria-label={ui(playing ? 'pause' : 'replay')} aria-pressed={!playing} onClick={() => (playing ? walk.stop() : walk.start(n))}>
+      {playing
+        ? <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M7 4.5v11M13 4.5v11" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
+        : <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M15.5 10a5.5 5.5 0 1 1-1.6-3.9M15.5 4v3.6h-3.6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+    </button>
   );
 }
 
@@ -210,7 +236,7 @@ function Turn({ c, walk, slug }) {
     <figure ref={box} id={id} className={'xbr-turn v2f-obj' + (c.kind === 'one' ? ' one' : '')}>
       <figcaption className="xbr-turn-h">
         <span className="v2f-kick">{c.metric || c.title}</span>
-        {c.kind !== 'one' && view}
+        {c.kind !== 'one' && <div className="xbr-turn-ctl"><Walker walk={walk} n={rowsOf(c)} />{view}</div>}
       </figcaption>
       <div className="xbr-turn-g">
         {c.kind !== 'one' && <Readout c={c} walk={walk} />}
