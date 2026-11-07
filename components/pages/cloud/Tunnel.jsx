@@ -34,6 +34,7 @@ import Finale from '../../v2/Finale';
 import Peel from './tunnel/Peel';
 import { useEnter, scatter } from './tunnel/enter';
 import './Tunnel.css';
+import ArtCard from './ArtCard';
 
 /* count-roll: a two-digit number whose digits roll down into place as the facts arrive (the real number is read out) */
 function Roll({ n }) {
@@ -240,13 +241,14 @@ function Facts() {
         <div className="tn2-facts-l">
           <h2 className="l2-display m tn2-facts-h">For the things that need a real URL</h2>
           <p className="tn2-facts-at" aria-hidden="true"><span key={at}>{String(at + 1).padStart(2, '0')}<small> / 06</small></span></p>
+          <ArtCard slug="iro" className="tn2-art" />
         </div>
         <ol className="tn2-list" ref={list}>
           {[1, 2, 3, 5].map((i) => (
             <li key={i} data-i={i} className={at === i ? 'on' : undefined} style={{ '--li': i }}>
               <h3 className="l2-title">{FACTS[i][0]}</h3>
               <span className="l2-ch-n"><Roll n={i + 1} /> / 06</span>
-              <p className="l2-body">{i === 1 ? FACTS[i][1].split('--name').flatMap((s, k) => (k ? [<span key={k} className="tn2-nb">--name</span>, s] : [s])) : FACTS[i][1]}</p>
+              <p className="l2-body">{FACTS[i][1]}</p>
               {i === 1 && <div className="tn2-name-in-list"><Name /></div>}
               {i === 2 && <Print />}
               {i === 3 && <Gate />}

@@ -1,5 +1,6 @@
 # /tunnel: James-eye review (third walk)
 
+Ready: 8 Nov 23:27, copycheck missing 0 of 28 (captured page), Hanzo's images kept. 'You get a random token by default…' reads as one sentence again (balanced wrap keeps --name whole), and Hanzo's Iro art stands under the 02 / 06 counter. taste/unique/parity OK (38/38); 0 console errors, no overlap at 1470 and 375.
 
 Reviewed: main @ `0fa3c9ed`. The last page commit is `5ebd0fae` (16:45 UTC), and the tree is clean for the page files.
 Walked 7 Nov, about 16:50 to 17:05 UTC, on the dev server at 1470×801 and 375×812 (Playwright Chromium), moving.
