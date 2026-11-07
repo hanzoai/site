@@ -21,10 +21,11 @@ const KAI = [
   ['Claude Fable 5.1', 11.13, 55.65],
 ];
 /* the claim rests at 64px and grows while it crosses the middle of the screen, then settles (MASTER 3.1) */
-function useMoment() {
+function useMoment(at) {
   const ref = useRef(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const scale = useTransform(p, [0.2, 0.42, 0.58, 0.8], [1, 1.45, 1.45, 1]);
+  // side by side, the two claims share a scroll position: Enso has the first half of the pass, Kai the second
+  const scale = useTransform(p, at, [1, 1.45, 1.45, 1]);
   return [ref, scale];
 }
 const money = (v) => (v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US') : '$' + v.toFixed(2));
@@ -43,7 +44,7 @@ function EnsoLane({ row, i, vol }) {
 }
 
 function Enso() {
-  const [ref, scale] = useMoment();
+  const [ref, scale] = useMoment([0.14, 0.26, 0.38, 0.47]);
   const [exp, setExp] = useState(0); // 10^exp thousand questions
   const raw = useMotionValue(1000);
   const vol = raw;
@@ -72,7 +73,7 @@ function Enso() {
 }
 
 function Kai() {
-  const [ref, scale] = useMoment();
+  const [ref, scale] = useMoment([0.5, 0.6, 0.72, 0.82]);
   const max = 11.13 + 55.65;
   return (
     <div className="hv-cost">
