@@ -1,9 +1,9 @@
 'use client';
 /* Registry, v2 launch page (Cloud 3).
-   V2: 8/10 Object-left Stage hero where a docker push asks IAM first and the token travels to the terminal, scrubbable
-   by pointer (hover a step to see it) and pausable; the section's own statement opens the pinned repository view with a
-   token that expires on its own; the dockerconfigjson secret deleted in the one dark room; related as an index of cards
-   that open; one ask; grey only, status read by ✓ / ! marks and weight.
+   V2: 8/10 one outlined window where a docker push asks IAM first, runs once (~9 s) and rests on the signed image with a
+   blinking prompt and Replay; the chapters' object is the image itself, a stack of layer plates that each fact acts on
+   (token lands, org claims it, signature docks, a tag slides off), not a second window; the dark room's heading is the
+   switch's name and strikes through when pressed; header ask left solid; every control answers.
    Signature: a push that asks IAM first. docker push meets a 401 that names Hanzo IAM, a short-lived token travels from
    IAM to the client, the registry checks its signature, the layers go up, and the image lands in the org's repository
    with its cosign signature beside it as an ordinary artifact.
@@ -12,9 +12,10 @@
    Persona: Developer. Goal: read the source, then push a first image with an IAM token.
    CTA: "View Source" → https://github.com/hanzoai (data-cta registry.hero, registry.close; the site's sticky ask bar
    carries the same words from data-thumb). Metric: api_key_created.
-   Motion: idle = the push and the building console; pointer = hovering a step of the push shows that moment, the
-   magnetic ask; state = the secret switch and its rows, pause; arrival = the cut-in title, the timed wipe into the
-   dark room; scroll = the Stage settle and the pinned repository view (where the intro's token runs out on its own).
+   Motion: idle = the push (once), the resting caret, the stack's slow float, the building console; pointer = hovering
+   (or tapping, on a phone) a step of the push shows that moment, the magnetic ask; state = the secret switch, its rows
+   and the struck heading, pause and replay; arrival = the cut-in title, the timed wipe into the dark room; scroll = the
+   Stage settle and the pinned layer stack (where the intro's token runs out on its own).
    Every word and link is Hanzo's; repository and people names are examples. */
 import { useEffect, useState } from 'react';
 import { Paste, Code, useLive } from './Frame';
@@ -45,19 +46,29 @@ function Push() {
   const [ref, live, calm] = useLive(0.3);
   const [paused, pause] = usePause();
   const [t, setT] = useState(0); // 0 push, 1 401, 2 token, 3 signature checked, 4 layers, 5 pushed, 6 signed
-  const [hov, setHov] = useState(null); // a step under a fine pointer shows that moment
+  const [hov, setHov] = useState(null); // a step under a fine pointer (or a tap on a phone) shows that moment
   useEffect(() => { if (calm) setT(6); }, [calm]);
+  // the push runs once (about 9 s), then rests on the signed image; Replay runs it again
   useEffect(() => {
-    if (calm || !live || paused || hov !== null) return;
-    const id = setTimeout(() => setT((v) => (v >= 6 ? 0 : v + 1)), WAIT[t]);
+    if (calm || !live || paused || hov !== null || t >= 6) return;
+    const id = setTimeout(() => setT((v) => v + 1), WAIT[t]);
     return () => clearTimeout(id);
   }, [t, live, calm, paused, hov]);
   const s = hov ?? t;
-  const peek = (i) => ({ 'data-step': i, onPointerEnter: (e) => e.pointerType === 'mouse' && setHov(i) });
+  const peek = (i) => ({
+    'data-step': i,
+    onPointerEnter: (e) => e.pointerType === 'mouse' && setHov(i),
+    onClick: () => setHov((h) => (h === i ? null : i)),
+  });
   const st = (i) => (s >= i ? ' in' : '') + (s === i ? ' now' : '');
+  const done = t >= 6 && !calm;
   return (
-    <div className="rg-push" ref={ref} data-t={s} onPointerLeave={() => setHov(null)}>
-      <LivePause paused={paused} onToggle={pause} className="rg-pause" />
+    <div className={'rg-push' + (done ? ' done' : '')} ref={ref} data-t={s} onPointerLeave={(e) => e.pointerType === 'mouse' && setHov(null)}>
+      {done
+        ? <button type="button" className="lx-pause rg-pause rg-replay" aria-label="Replay" onClick={() => { setHov(null); setT(0); }}>
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3.2 8a4.8 4.8 0 1 0 1.5-3.5M3 2.5v3h3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+        : <LivePause paused={paused} onToggle={pause} className="rg-pause" />}
       <div className="rg-term" aria-hidden="true">
         <div className="rg-term-bar"><i /><i /><i /><span>terminal</span></div>
         <div className="rg-term-body">
@@ -67,6 +78,7 @@ function Push() {
               <div key={i} className="rg-layer"><span>layer {i + 1}</span><i><b style={{ transitionDuration: (0.9 + w) + 's', transitionDelay: s >= 4 && hov === null ? i * 0.18 + 's' : '0s' }} /></i></div>
             ))}
           </div>
+          <p className={'rg-caret' + (s >= 6 ? ' in' : '')}>$ <i /></p>
         </div>
         <div className="rg-iamchip"><span className="rg-iam-k">Hanzo IAM</span><b className="rg-token">token</b></div>
       </div>
@@ -91,11 +103,29 @@ function Push() {
 const CLIENTS = ['docker', 'podman', 'buildkit', 'skopeo', 'crane'];
 const PEOPLE = [['ana', 'push'], ['kai', 'push'], ['lee', 'pull'], ['sam', 'revoked']];
 
+/* The image itself, not another window: its layers drawn as a stack of plates seen from above. Each chapter does one
+   thing to the same stack (the token lands on it, the org claims it, the signature and attestation dock beside it,
+   a tag slides off and its blobs are reclaimed), and the chapter's detail reads beneath it as a caption. */
+function Stack() {
+  return (
+    <div className="rg-iso" aria-hidden="true">
+      <div className="rg-iso-s">
+        {[0, 1, 2, 3].map((i) => <i key={i} className="rg-pl" style={{ '--z': i }} />)}
+        <i className="rg-pl rg-pl-top" style={{ '--z': 4 }} />
+        <i className="rg-pl rg-pl-sig" style={{ '--z': 4 }} />
+        <i className="rg-pl rg-pl-att" style={{ '--z': 3 }} />
+        <i className="rg-pl rg-pl-tok" style={{ '--z': 7 }} />
+      </div>
+      <p className="rg-iso-n">oci.hanzo.ai / <b>acme</b> / api</p>
+    </div>
+  );
+}
+
 function Repo({ step, intro }) {
   const on = (i) => (!intro && step === i) || undefined;
   return (
     <div className="rg-rv" data-step={intro ? 'intro' : step}>
-      <div className="rg-rv-bar"><span className="rg-rv-dots"><i /><i /><i /></span><span className="rg-rv-path">oci.hanzo.ai / <b>acme</b> / api</span></div>
+      <Stack />
       <div className="rg-rv-panes" aria-hidden="true">
         <div className="rg-rv-pane rg-ttl" data-on={intro || undefined}>
           <div className="rg-ttl-tok">
@@ -156,19 +186,13 @@ const FACTS = [
 
 // [row, the dockerconfigjson way, the IAM way]: both sides are Hanzo's phrases from this page
 const SWAP = [
-  ['The credential', 'a password living in a dockerconfigjson secret', 'a short-lived token minted by your Hanzo IAM login'],
   ['Adding a teammate', 'a secret copied into a second', 'one grant in one place'],
   ['Someone leaves', 'a separate registry account to remember when they leave', 'one place to revoke someone'],
 ];
 
-function Swap() {
-  const [gone, setGone] = useState(false);
+function Swap({ gone }) {
   return (
     <div className={'rg-swap' + (gone ? ' on' : '')}>
-      <button type="button" className="rg-swap-b" aria-pressed={gone} onClick={() => setGone((g) => !g)}>
-        <span className="rg-swap-sw" aria-hidden="true"><i /></span>
-        <span className="rg-swap-l">Delete the dockerconfigjson secret</span>
-      </button>
       <dl className="rg-swap-t">
         {SWAP.map(([k, a, b]) => (
           <div key={k} className="rg-swap-r">
@@ -178,6 +202,29 @@ function Swap() {
           </div>
         ))}
       </dl>
+    </div>
+  );
+}
+
+/* the dark room: the heading is the instruction and the switch carries it out (the switch is named by the heading,
+   so the words are said once); pressed, the heading strikes through and IAM's way wipes in row by row */
+function DelRoom() {
+  const [gone, setGone] = useState(false);
+  return (
+    <div className={'lx-wrap rg-del-grid' + (gone ? ' on' : '')}>
+      <div className="rg-del-l">
+        <h2 className="lx-headline rg-del-h" id="rg-del-h">Delete the dockerconfigjson secret</h2>
+        <button type="button" className="rg-swap-b" aria-pressed={gone} aria-labelledby="rg-del-h" onClick={() => setGone((g) => !g)}>
+          <span className="rg-swap-sw" aria-hidden="true"><i /></span>
+        </button>
+        <p className="lx-lede">Put a token IAM mints in its place, and let it expire on its own. There is nothing left to rotate.</p>
+        <div className="rg-del-acts">
+          <A to="https://docs.hanzo.ai/docs/openapi/registry/" className="lx-ghost">Quickstart<Arr /></A>
+          <A to="/iam" className="lx-text">About IAM</A>
+        </div>
+      </div>
+      <Code title="Registry terminal" tabs={[{ k: 'terminal', code: '$ hanzo login oci.hanzo.ai\n# IAM mints a short-lived token\n$ docker push oci.hanzo.ai/acme/api:v1.2.3' }]} className="rg-code" />
+      <Swap gone={gone} />
     </div>
   );
 }
@@ -208,18 +255,7 @@ export default function Registry() {
       />
 
       <ClipWipe dark className="rg-del">
-        <div className="lx-wrap rg-del-grid">
-          <div className="rg-del-l">
-            <h2 className="lx-headline">Delete the dockerconfigjson secret</h2>
-            <p className="lx-lede">Put a token IAM mints in its place, and let it expire on its own. There is nothing left to rotate.</p>
-            <div className="rg-del-acts">
-              <A to="https://docs.hanzo.ai/docs/openapi/registry/" className="lx-ghost">Quickstart<Arr /></A>
-              <A to="/iam" className="lx-text">About IAM</A>
-            </div>
-          </div>
-          <Code title="Registry terminal" tabs={[{ k: 'terminal', code: '$ hanzo login oci.hanzo.ai\n# IAM mints a short-lived token\n$ docker push oci.hanzo.ai/acme/api:v1.2.3' }]} className="rg-code" />
-          <Swap />
-        </div>
+        <DelRoom />
       </ClipWipe>
 
       <section className="lx-sec rg-con">

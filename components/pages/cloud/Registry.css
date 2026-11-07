@@ -2,43 +2,52 @@
    step carries ✓, a refusal carries !, a deleted tag or revoked person is struck through, an org is set in weight.
    Hover lives in (hover: hover); press is .98 or 1px. */
 
-/* one solid button per screen (PLAN 0.9): the header's "Try Hanzo" stays outlined on this page */
-html:has(main.rg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+/* the one solid ask: the header's button is left to the shared Ask (outlined only while "View Source" is on screen,
+   then it carries "View Source" solid for the rest of the page) */
 
 /* hero: the push on the left, the words on the right */
-.rg-hero { padding: clamp(40px, 4.4vw, 80px) 0 clamp(120px, 13vw, 200px); }
+.rg-hero { padding: clamp(24px, 3.2vw, 48px) 0 64px; }
+/* the first screen holds the window and the words, centred, with the next section peeking under it */
 .rg-hero-grid { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(32px, 4.5vw, 80px); align-items: center; }
 .rg-h1 { margin: 0; }
-.rg-lede { margin-top: 28px; font-size: 17px; max-width: 46ch; }
+.rg-lede { margin-top: 24px; font-size: 16px; line-height: 1.6; max-width: 44ch; color: #525252; }
 .rg-cta { margin-top: 32px; }
 
 /* the push: one window, the terminal dark on the left, the registry light on the right */
-.rg-push { position: relative; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); min-height: 460px; }
+.rg-push { position: relative; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); min-height: min(560px, calc(100svh - 64px - 140px)); border-radius: 24px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); }
+.rg-push [data-step] { cursor: default; }
 .rg .rg-pause { top: 6px; right: 8px; }
-.rg-term { position: relative; background: #0b0b0c; color: #e9e9ec; display: flex; flex-direction: column; }
+.rg-replay svg { transition: transform .4s cubic-bezier(.16, 1, .3, 1); }
+@media (hover: hover) { .rg-replay:hover svg { transform: rotate(-60deg); } }
+.rg-term { position: relative; background: #0a0a0a; color: #e5e5e5; display: flex; flex-direction: column; }
 .rg-term-bar { display: flex; align-items: center; gap: 7px; height: 56px; padding: 0 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
-.rg-term-bar i { width: 11px; height: 11px; border-radius: 50%; border: 1px solid #48484a; }
-.rg-term-bar span { margin-left: 10px; font: 500 13px/1 var(--mono); color: #a1a1a6; }
+.rg-term-bar i { width: 11px; height: 11px; border-radius: 50%; border: 1px solid #404040; }
+.rg-term-bar span { margin-left: 10px; font: 500 13px/1 var(--mono); color: #a3a3a3; }
 .rg-term-body { padding: 22px 22px 80px; flex: 1; }
-.rg-term-body p { position: relative; margin: 0 0 6px; padding: 5px 8px 5px 30px; border-radius: 8px; font: 400 14px/1.45 var(--mono); color: #d1d1d6; opacity: .3; transition: opacity .35s, background-color .25s, color .25s; }
+.rg-term-body p { position: relative; margin: 0 0 6px; padding: 5px 8px 5px 30px; border-radius: 8px; font: 400 14px/1.45 var(--mono); color: #d4d4d4; opacity: .3; transition: opacity .35s, background-color .25s, color .25s; }
 .rg-term-body p.in { opacity: 1; }
 .rg-term-body p.now { background: rgba(255, 255, 255, .07); color: #fff; }
 /* the marks: ✓ checked, ! refused; the first line is the prompt */
 .rg-term-body p::before { position: absolute; left: 8px; top: 5px; width: 16px; text-align: center; font-weight: 600; }
-.rg-term-body p.ok::before { content: '✓'; color: #f5f5f7; }
-.rg-term-body p.warn::before { content: '!'; color: #0b0b0c; background: #f5f5f7; border-radius: 50%; width: 16px; height: 16px; line-height: 16px; font-size: 12px; top: 7.5px; }
+.rg-term-body p.ok::before { content: '✓'; color: #f5f5f5; }
+.rg-term-body p.warn::before { content: '!'; color: #0a0a0a; background: #f5f5f5; border-radius: 50%; width: 16px; height: 16px; line-height: 16px; font-size: 12px; top: 7.5px; }
 .rg-term-body p.warn { font-weight: 600; }
+.rg-term-body p.rg-caret { margin-top: 14px; padding-left: 8px; color: #d4d4d4; opacity: 0; }
+.rg-term-body p.rg-caret.in { opacity: 1; }
+/* at rest the prompt waits for the next command: the caret blinks (the window's one idle mover) */
+.rg-caret i { display: inline-block; width: 8px; height: 16px; vertical-align: -3px; background: #d4d4d4; animation: rg-blink 1.1s steps(2, jump-none) infinite; }
+@keyframes rg-blink { 50% { opacity: 0; } }
 .rg-layers { margin-top: 18px; display: grid; gap: 10px; padding: 8px 8px 8px 30px; border-radius: 8px; transition: background-color .25s; }
 .rg-layers.now { background: rgba(255, 255, 255, .07); }
-.rg-layer { display: grid; grid-template-columns: 70px 1fr; gap: 12px; align-items: center; font: 400 13px/1 var(--mono); color: #a1a1a6; }
-.rg-layer i { display: block; height: 6px; border-radius: 6px; background: #2c2c2e; overflow: hidden; }
-.rg-layer b { display: block; height: 100%; background: #f5f5f7; transform: scaleX(0); transform-origin: 0 50%; transition-property: transform; transition-timing-function: cubic-bezier(.4, 0, .2, 1); }
+.rg-layer { display: grid; grid-template-columns: 70px 1fr; gap: 12px; align-items: center; font: 400 13px/1 var(--mono); color: #a3a3a3; }
+.rg-layer i { display: block; height: 6px; border-radius: 6px; background: #262626; overflow: hidden; }
+.rg-layer b { display: block; height: 100%; background: #f5f5f5; transform: scaleX(0); transform-origin: 0 50%; transition-property: transform; transition-timing-function: cubic-bezier(.4, 0, .2, 1); }
 .rg-push[data-t='4'] .rg-layer b, .rg-push[data-t='5'] .rg-layer b, .rg-push[data-t='6'] .rg-layer b { transform: scaleX(1); }
 .rg-iamchip { position: absolute; right: 18px; bottom: 18px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-.rg-iam-k { padding: 7px 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); font: 500 13px/1 var(--mono); color: #d1d1d6; }
-.rg-token { padding: 6px 11px; border-radius: 999px; background: #f5f5f7; color: #0b0b0c; font: 600 13px/1 var(--mono); opacity: 0; transform: translate(0, 0) scale(.8); transition: opacity .3s, transform 1s cubic-bezier(.16, 1, .3, 1); }
-.rg-push[data-t='2'] .rg-token { opacity: 1; transform: translate(-150px, -150px) scale(1); }
-.rg-push[data-t='3'] .rg-token { opacity: 0; transform: translate(-260px, -200px) scale(.9); }
+.rg-iam-k { padding: 7px 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); font: 500 13px/1 var(--mono); color: #d4d4d4; }
+.rg-token { padding: 6px 11px; border-radius: 999px; background: #f5f5f5; color: #0a0a0a; font: 600 13px/1 var(--mono); opacity: 0; transform: translate(0, 0) scale(.8); transition: opacity .3s, transform 1s cubic-bezier(.16, 1, .3, 1); }
+.rg-push[data-t='2'] .rg-token { opacity: 1; transform: translate(0, 0) scale(1); }
+.rg-push[data-t='3'] .rg-token { opacity: 0; transform: translate(150px, -12px) scale(.9); }
 .rg-repo { background: #fff; display: flex; flex-direction: column; }
 .rg-repo-bar { display: flex; align-items: center; height: 56px; padding: 0 64px 0 24px; border-bottom: 1px solid var(--line); background: #fafafa; font: 500 14px/1 var(--sans); color: var(--ink); white-space: nowrap; }
 .rg-repo-in { flex: 1; padding: 22px 24px 24px; display: flex; flex-direction: column; }
@@ -53,30 +62,55 @@ html:has(main.rg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 /* the signature hangs off its image */
 .rg-repo li.sig { margin-left: 22px; }
 .rg-repo li.sig.in span { color: var(--ink); font-weight: 600; }
-.rg-repo li.now { box-shadow: inset 0 0 0 1.5px var(--ink), 0 10px 24px -14px rgba(0, 0, 0, .4); }
+.rg-repo li.now { box-shadow: inset 0 0 0 1.5px var(--ink); }
 .rg-org { margin: auto 0 0; padding-top: 18px; font-size: 14px; color: var(--muted); }
 
-/* the repository view (chapters) */
-.rg-rv { background: #fff; border-radius: 28px; overflow: hidden; box-shadow: 0 0 0 1px var(--line), 0 40px 100px -40px rgba(0, 0, 0, .25); }
-.rg-rv-bar { display: flex; align-items: center; gap: 16px; height: 58px; padding: 0 22px; border-bottom: 1px solid var(--line); }
-.rg-rv-dots { display: inline-flex; gap: 7px; }
-.rg-rv-dots i { width: 11px; height: 11px; border-radius: 50%; background: #e3e3e6; }
-.rg-rv-path { font: 500 14px/1 var(--mono); color: var(--muted); }
-.rg-rv-path b { color: var(--ink); font-weight: 700; padding: 3px 6px; border-radius: 6px; transition: background-color .3s, color .3s; }
-.rg-rv[data-step='1'] .rg-rv-path b { background: var(--ink); color: #fff; }
-.rg-rv-panes { display: grid; padding: 30px; min-height: 380px; }
+/* the chapters' object: the image as a stack of layers (no window chrome; the page's quiet white is its stage) */
+.rg-rv { display: grid; gap: 8px; }
+.rg-iso { position: relative; height: 300px; display: grid; place-items: center; }
+.rg-iso-s { position: relative; width: 190px; height: 190px; transform-style: preserve-3d; transform: rotateX(58deg) rotateZ(-45deg); animation: rg-bob 6s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
+@keyframes rg-bob { from { translate: 0 -5px; } to { translate: 0 5px; } }
+.rg-pl { --gap: 20px; position: absolute; inset: 0; border-radius: 16px; background: #e5e5e5; transform: translateZ(calc(var(--z) * var(--gap))); transition: transform .6s cubic-bezier(.16, 1, .3, 1), opacity .4s, background-color .4s; }
+.rg-pl:nth-child(2) { background: #d4d4d4; }
+.rg-pl:nth-child(3) { background: #a3a3a3; }
+.rg-pl:nth-child(4) { background: #737373; }
+.rg-pl-top { background: #f2f2f2; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
+.rg-pl-sig, .rg-pl-att { inset: 62% 24% -4% 24%; background: #fafafa; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .16); opacity: 0; border-radius: 10px; }
+.rg-pl-tok { inset: 34%; border-radius: 999px; background: #0a0a0a; }
+.rg-iso-n { position: absolute; left: 0; right: 0; bottom: 8px; margin: 0; text-align: center; font: 500 14px/1 var(--mono); color: #737373; }
+.rg-iso-n b { color: #0a0a0a; font-weight: 700; padding: 3px 6px; border-radius: 6px; transition: background-color .3s, color .3s; }
+/* intro: the token hovers high over the stack while its time runs out */
+.rg-rv[data-step='intro'] .rg-pl-tok { transform: translateZ(170px); }
+/* 0: the token comes down onto the stack and the push spreads its layers apart */
+.rg-rv[data-step='0'] .rg-pl { --gap: 30px; }
+.rg-rv[data-step='0'] .rg-pl-tok { transform: translateZ(152px) scale(.9); }
+/* 1: the org claims the image: the top plate turns ink */
+.rg-rv[data-step='1'] .rg-pl-top { background: #0a0a0a; box-shadow: none; }
+.rg-rv[data-step='1'] .rg-iso-n b { background: #0a0a0a; color: #fff; }
+.rg-rv:not([data-step='intro']):not([data-step='0']) .rg-pl-tok { opacity: 0; transform: translateZ(60px) scale(.6); }
+/* 2: the signature and the attestation dock beside the image, in the same repository */
+.rg-rv[data-step='2'] .rg-pl-sig { opacity: 1; transform: translate(0, 110px) translateZ(80px); }
+.rg-rv[data-step='2'] .rg-pl-att { opacity: 1; transform: translate(0, 110px) translateZ(40px); transition-delay: .12s; }
+/* 3: /v2/: the stack stands squared up, every client reads the same layers */
+.rg-rv[data-step='3'] .rg-pl { --gap: 14px; }
+/* 4: a tag comes off: one layer slides out and its blobs are reclaimed */
+.rg-rv[data-step='4'] .rg-pl:nth-child(3) { transform: translate(-150px, 0) translateZ(40px); opacity: 0; transition-delay: .3s; }
+/* 5: one directory of people: the stack folds flat under one account */
+.rg-rv[data-step='5'] .rg-pl { --gap: 8px; }
+.rg-rv-panes { display: grid; padding: 0 8px; min-height: 250px; }
 .rg-rv-pane { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 12px; opacity: 0; transform: translateY(14px); transition: opacity .35s, transform .55s cubic-bezier(.16, 1, .3, 1); pointer-events: none; }
 .rg-rv-pane[data-on] { opacity: 1; transform: none; transition-delay: .08s; }
 .rg-rv-foot { margin: auto 0 0; font: 500 14px/1.3 var(--mono); color: var(--muted); }
 .rg-k { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 /* the intro: a token that runs out on its own */
 .rg-ttl { justify-content: center; gap: 22px; }
+.rg-ttl .rg-repos { display: none; }
 .rg-ttl-tok { display: grid; gap: 12px; padding: 28px; border-radius: 20px; background: var(--card); }
-.rg-ttl-tok b { font: 500 clamp(44px, 4.6vw, 68px)/1 var(--mono); letter-spacing: -.04em; color: var(--ink); text-decoration: line-through 3px; text-decoration-color: transparent; transition: color .4s, text-decoration-color .4s; }
-.rg-ttl-bar { display: block; height: 8px; border-radius: 8px; background: #e3e3e6; overflow: hidden; }
+.rg-ttl-tok b { font: 500 32px/1 var(--mono); letter-spacing: -.04em; color: var(--ink); text-decoration: line-through 3px; text-decoration-color: transparent; transition: color .4s, text-decoration-color .4s; }
+.rg-ttl-bar { display: block; height: 8px; border-radius: 8px; background: #e5e5e5; overflow: hidden; }
 .rg-ttl-bar i { display: block; height: 100%; border-radius: 8px; background: var(--ink); transform-origin: 0 50%; transition: transform .4s; }
 .rg-rv[data-step='intro'] .rg-ttl-bar i { transform: scaleX(0); transition: transform 5s linear .5s; }
-.rg-rv[data-step='intro'] .rg-ttl-tok b { color: #6e6e73; text-decoration-color: currentColor; transition-delay: 5.5s; }
+.rg-rv[data-step='intro'] .rg-ttl-tok b { color: #737373; text-decoration-color: currentColor; transition-delay: 5.5s; }
 .rg-hs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .rg-hs li { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 14px; padding: 13px 16px; border-radius: 12px; background: var(--card); font: 500 14px/1 var(--mono); color: var(--ink); opacity: 0; transform: translateX(-12px); transition: opacity .35s, transform .5s cubic-bezier(.16, 1, .3, 1); }
 .rg-rv[data-step='0'] .rg-hs li { opacity: 1; transform: none; transition-delay: calc(.1s + var(--i) * 90ms); }
@@ -85,7 +119,7 @@ html:has(main.rg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .rg-hs li.ok b::before { content: '✓'; }
 .rg-hs li.warn b::before { content: '!'; width: 18px; height: 18px; line-height: 18px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 12px; }
 .rg-hs li.warn { background: #fff; box-shadow: inset 0 0 0 1.5px var(--ink); }
-.rg-scope { padding: 20px; border-radius: 16px; background: #f2f2f4; display: grid; gap: 10px; }
+.rg-scope { padding: 20px; border-radius: 16px; background: #f2f2f2; display: grid; gap: 10px; }
 .rg-scope code { font: 500 18px/1.2 var(--mono); color: var(--ink); }
 .rg-scope code b { font-weight: 700; }
 .rg-repos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -117,36 +151,42 @@ html:has(main.rg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .rg-people i { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: #fff; font: 500 14px/1 var(--mono); font-style: normal; text-transform: uppercase; }
 .rg-people span { font: 500 13px/1 var(--mono); color: var(--muted); }
 .rg-people li.off { background: none; box-shadow: inset 0 0 0 1px var(--line); }
-.rg-people li.off i { background: #fff; color: var(--muted); box-shadow: inset 0 0 0 1.5px #aeaeb2; }
+.rg-people li.off i { background: #fff; color: var(--muted); box-shadow: inset 0 0 0 1.5px #a3a3a3; }
 .rg-people li.off b { text-decoration: line-through 2px; color: var(--muted); font-weight: 400; }
 .rg-people li.off span { color: var(--ink); font-weight: 600; }
 
 /* the dark room */
-.rg-del { padding: clamp(150px, 16vw, 240px) 0; }
+.rg-del { padding: clamp(96px, 11vw, 160px) 0; }
 .rg-del-grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 5vw, 80px); align-items: center; }
-.rg-del-l .lx-headline { max-width: 12ch; }
-.rg-del-l .lx-lede { margin-top: 24px; color: #a1a1a6; }
+.rg-del-l .lx-headline { max-width: 12ch; font-size: 44px; line-height: 1.08; text-decoration: line-through 3px; text-decoration-color: transparent; transition: text-decoration-color .4s, color .4s; }
+.rg-del-grid.on .rg-del-h { text-decoration-color: currentColor; color: #a3a3a3; }
+.rg-del-l .rg-swap-b { margin-top: 24px; }
+.rg-del-l .lx-lede { margin-top: 24px; color: #a3a3a3; }
+/* every control in the room answers (fill, underline, press) */
+.rg-del .lx-ghost, .rg-del .lx-text { transition: background-color .15s, color .15s, text-decoration-thickness .15s, transform 90ms; }
+.rg-del .lx-ghost:active, .rg-del .lx-text:active { transform: scale(.97); }
+@media (hover: hover) {
+  .rg-del .lx-ghost:hover { background: #fafafa; color: #0a0a0a; }
+  .rg-del .lx-text:hover { text-decoration: underline 2px; text-underline-offset: 5px; }
+}
 .rg-del-acts { display: flex; gap: 12px 24px; flex-wrap: wrap; align-items: center; margin-top: 36px; }
 .rg-code pre { font-size: 16px; }
 .rg-swap { grid-column: 1 / -1; margin-top: clamp(48px, 6vw, 88px); padding-top: clamp(32px, 4vw, 48px); border-top: 1px solid rgba(255, 255, 255, .12); }
-.rg-swap-b { display: inline-flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 22px 0 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22); background: none; color: #f5f5f7; font: 500 16px/1.2 var(--sans); text-align: left; cursor: pointer; touch-action: manipulation; transition: border-color .25s, background-color .25s, transform .12s var(--lx-ease); }
+.rg-swap-b { display: inline-flex; align-items: center; gap: 14px; min-height: 52px; padding: 0 10px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22); background: none; color: #f5f5f5; font: 500 16px/1.2 var(--sans); text-align: left; cursor: pointer; touch-action: manipulation; transition: border-color .25s, background-color .25s, transform .12s var(--lx-ease); }
 .rg-swap-b:active { transform: scale(.98); }
-@media (hover: hover) { .rg-swap-b:hover { border-color: rgba(255, 255, 255, .6); background: rgba(255, 255, 255, .05); } .rg-swap-b:hover .rg-swap-sw i { transform: translateX(4px); } .rg-swap.on .rg-swap-b:hover .rg-swap-sw i { transform: translateX(14px); } }
-.rg-swap-sw { position: relative; flex: none; width: 48px; height: 30px; border-radius: 999px; background: #2c2c30; transition: background-color .3s; }
-.rg-swap-sw i { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #f5f5f7; transition: transform .45s cubic-bezier(.34, 1.4, .64, 1), background-color .3s; }
-.rg-swap.on .rg-swap-sw { background: #f5f5f7; }
-.rg-swap.on .rg-swap-sw i { transform: translateX(18px); background: #0a0a0a; }
-/* pressed: the instruction is done, so it is struck through */
-.rg-swap-l { text-decoration: line-through 2px; text-decoration-color: transparent; transition: text-decoration-color .35s; }
-.rg-swap.on .rg-swap-l { text-decoration-color: currentColor; }
+@media (hover: hover) { .rg-swap-b:hover { border-color: rgba(255, 255, 255, .6); background: rgba(255, 255, 255, .05); } .rg-swap-b:hover .rg-swap-sw i { transform: translateX(4px); } .rg-del-grid.on .rg-swap-b:hover .rg-swap-sw i { transform: translateX(14px); } }
+.rg-swap-sw { position: relative; flex: none; width: 48px; height: 30px; border-radius: 999px; background: #262626; transition: background-color .3s; }
+.rg-swap-sw i { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #f5f5f5; transition: transform .3s cubic-bezier(.16, 1, .3, 1), background-color .3s; }
+.rg-del-grid.on .rg-swap-sw { background: #f5f5f5; }
+.rg-del-grid.on .rg-swap-sw i { transform: translateX(18px); background: #0a0a0a; }
 /* the rows: a ledger, read left to right, not three boxes */
 .rg-swap-t { margin: 28px 0 0; display: grid; border-top: 1px solid rgba(255, 255, 255, .12); }
 .rg-swap-r { display: grid; grid-template-columns: minmax(160px, 3fr) 9fr; align-items: baseline; gap: 24px; padding: 26px 0; border-bottom: 1px solid rgba(255, 255, 255, .12); }
-.rg-swap-r dt { font: 500 13px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #a1a1a6; }
+.rg-swap-r dt { font: 500 13px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; }
 .rg-swap-r dd { grid-area: 1 / 2; margin: 0; font-size: clamp(21px, 2vw, 30px); line-height: 1.25; letter-spacing: -.02em; }
-.rg-swap-r .was { color: #a1a1a6; text-decoration: line-through 2px; text-decoration-color: transparent; transition: text-decoration-color .3s, opacity .3s; }
-.rg-swap-r .now { color: #f5f5f7; clip-path: inset(0 100% 0 0); transition: clip-path .7s cubic-bezier(.76, 0, .24, 1); }
-.rg-swap.on .was { text-decoration-color: #f5f5f7; opacity: 0; transition-delay: 0s, .35s; }
+.rg-swap-r .was { color: #a3a3a3; text-decoration: line-through 2px; text-decoration-color: transparent; transition: text-decoration-color .3s, opacity .3s; }
+.rg-swap-r .now { color: #f5f5f5; clip-path: inset(0 100% 0 0); transition: clip-path .7s cubic-bezier(.76, 0, .24, 1); }
+.rg-swap.on .was { text-decoration-color: #f5f5f5; opacity: 0; transition-delay: 0s, .35s; }
 .rg-swap.on .now { clip-path: inset(0 0 0 0); }
 .rg-swap.on .rg-swap-r:nth-child(2) .now { transition-delay: .08s; }
 .rg-swap.on .rg-swap-r:nth-child(3) .now { transition-delay: .16s; }
@@ -161,7 +201,16 @@ html:has(main.rg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 .rg-rel { padding-top: clamp(40px, 5vw, 80px); }
 .rg-start { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 32px 0; margin-bottom: 64px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .rg-rel .lx-rel-grid[data-n='3'] { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-.rg-rel .lx-rel-grid[data-n='3'] .lx-rel-card { grid-template-columns: 280px minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; padding: 0 28px 0 0; min-height: 150px; }
+.rg-rel .lx-rel-h { font-size: 13px; }
+.rg .lx-pin-k { font-size: 13px; }
+.rg .lx-con .cf-con-title { transition: color .15s; text-underline-offset: 3px; }
+.rg .lx-close .lx-text, .rg .lx-close-repo { transition: color .15s, transform 90ms; text-underline-offset: 4px; }
+.rg .lx-con .cf-con-title:active, .rg .lx-close .lx-text:active, .rg .lx-close-repo:active { transform: scale(.97); }
+@media (hover: hover) {
+  .rg .lx-con .cf-con-title:hover { color: #0a0a0a; text-decoration: underline 1px; }
+  .rg .lx-close .lx-text:hover, .rg .lx-close-repo:hover { color: #0a0a0a; text-decoration: underline 2px; }
+}
+.rg-rel .lx-rel-grid[data-n='3'] .lx-rel-card { grid-template-columns: 160px minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; padding: 0 28px 0 0; min-height: 150px; }
 .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-art { grid-column: 1; grid-row: 1 / span 2; height: 100%; min-height: 150px; margin: 0; border-bottom: 0; border-right: 1px solid var(--line); }
 .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-t { grid-column: 2; grid-row: 1; align-self: end; padding-left: 32px; }
 .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-d { grid-column: 2; grid-row: 2; align-self: start; padding-left: 32px; padding-top: 6px; }
@@ -170,32 +219,60 @@ html:has(main.rg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
 @media (max-width: 900px) {
   .rg-hero { padding: 24px 0 96px; }
   .rg-hero-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .rg-hero-grid { min-height: 0; }
   .rg-stage { order: 2; }
   .rg-lede { margin-top: 16px; font-size: 16px; }
   .rg-cta { margin-top: 22px; }
-  .rg-push { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .rg-push { grid-template-columns: minmax(0, 1fr); min-height: 0; border-radius: 20px; }
+  /* phone: the registry is a strip over the terminal, so the image lands on screen while it is pushed */
+  .rg-repo { order: -1; }
+  .rg-repo-bar { height: 52px; }
+  .rg-repo-k, .rg-repo-n { display: none; }
+  .rg-repo ul { grid-template-columns: 1fr 1fr; }
+  .rg-repo li.sig { margin-left: 0; }
+  .rg-repo li.sig b { display: none; }
+  .rg-term-bar { height: 44px; }
+  .rg-term-body p { margin-bottom: 2px; padding-top: 4px; padding-bottom: 4px; }
+  .rg-layers { margin-top: 8px; gap: 8px; }
   .rg-repo-bar { padding-left: 16px; }
   .rg-term-bar span, .rg-layer, .rg-iam-k, .rg-token, .rg-k, .rg-repo-k, .rg-people span, .rg-swap-r dt, .rg .x-copy-t, .rg .cf-code-k { font-size: 14px; }
   .rg-term-body { padding: 14px 10px 70px; }
   .rg-term-body p { font-size: 14px; padding-left: 28px; }
-  .rg-push[data-t='2'] .rg-token { transform: translate(-60px, -120px) scale(1); }
-  .rg-push[data-t='3'] .rg-token { transform: translate(-100px, -160px) scale(.9); }
+  .rg-push[data-t='2'] .rg-token { transform: none; }
+  .rg-push[data-t='3'] .rg-token { transform: translate(0, -24px) scale(.9); }
+  /* phone: the stack and one short caption fit the pinned window (40svh) */
+  .rg-rv { gap: 4px; }
+  .rg-iso { height: 150px; }
+  .rg-iso-s { width: 92px; height: 92px; }
+  .rg-iso-n { bottom: 0; }
+  .rg-pl { --gap: 10px; border-radius: 10px; }
+  .rg-rv[data-step='0'] .rg-pl { --gap: 14px; }
+  .rg-rv[data-step='3'] .rg-pl { --gap: 7px; }
+  .rg-rv[data-step='5'] .rg-pl { --gap: 4px; }
+  .rg-rv[data-step='intro'] .rg-pl-tok { transform: translateZ(84px); }
+  .rg-rv[data-step='0'] .rg-pl-tok { transform: translateZ(74px) scale(.9); }
+  .rg-rv[data-step='2'] .rg-pl-sig { transform: translate(0, 54px) translateZ(44px); }
+  .rg-rv[data-step='2'] .rg-pl-att { transform: translate(0, 54px) translateZ(22px); }
+  .rg-rv[data-step='4'] .rg-pl:nth-child(3) { transform: translate(-72px, 0) translateZ(20px); }
+  .rg-rv-pane { gap: 8px; }
+  .rg-rv-foot, .rg-scope + .rg-repos, .rg-hs li:nth-child(n+4), .rg-arts li.att, .rg-tags li:nth-child(3), .rg-people li:nth-child(n+3), .rg-store span { display: none; }
+  .rg-hs li, .rg-arts li, .rg-tags li, .rg-repos li { padding-top: 10px; padding-bottom: 10px; }
+  .rg-scope { padding: 14px; }
+  .rg-ttl-tok { padding: 16px; gap: 8px; }
+  .rg-rel .lx-rel-h, .rg .lx-pin-k, .rg .cf-paste-k, .rg .lx-close-facts, .rg .lx-close-facts a { font-size: 14px; }
+  .rg-del-l .lx-headline { font-size: 32px; }
   .rg-repo-in { padding: 14px 16px 16px; }
   .rg-repo-n { margin: 8px 0 12px; font-size: 22px; }
   .rg-repo li { padding: 11px 12px; }
   .rg-repo li:nth-child(3), .rg-org { display: none; }
-  .rg-rv { border-radius: 22px; }
-  .rg-rv-bar { height: 50px; padding: 0 16px; }
-  .rg-rv-dots { display: none; }
-  .rg-rv-panes { padding: 16px; min-height: 0; }
-  .rg-ttl-tok { padding: 20px; }
-  .rg-ttl-tok b { font-size: 40px; }
+  .rg-rv-panes { padding: 0; min-height: 0; }
+  .rg-ttl-tok b { font-size: 26px; }
   .rg-ttl .rg-repos { display: none; }
   .rg-hs li { grid-template-columns: 92px 1fr; padding: 10px 12px; font-size: 14px; }
-  .rg-hs li:nth-child(4) { display: none; }
   .rg-repos li:nth-child(3), .rg-people li:nth-child(4) { display: none; }
   .rg-arts li { padding: 13px; font-size: 14px; }
-  .rg-v2 .lx-num { font-size: 56px; }
+  .rg-v2 .lx-num { font-size: 44px; }
+  .rg-clients { margin-top: 8px; }
   .rg-clients li { padding: 10px 13px; font-size: 14px; }
   .rg-tags li { padding: 12px; font-size: 14px; }
   .rg-people li { padding: 8px 12px; }
@@ -209,11 +286,13 @@ html:has(main.rg) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .rg .lx-con .cf-con-title { display: inline-flex; align-items: center; min-height: 44px; }
   .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-card { grid-template-columns: 96px minmax(0, 1fr) auto; padding-right: 18px; min-height: 104px; }
   .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-art { min-height: 104px; }
-  .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-t { padding-left: 18px; font-size: 26px; }
+  .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-t { padding-left: 18px; font-size: 21px; }
   .rg-rel .lx-rel-grid[data-n='3'] .lx-rel-d { padding-left: 18px; font-size: 15px; }
   .rg-start { margin-bottom: 40px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rg-swap-r .now, .rg-swap-r .was, .rg-swap-sw, .rg-swap-sw i, .rg-token, .rg-layer b, .rg-swap-l { transition: none; }
+  .rg-iso-s, .rg-caret i { animation: none; }
+  .rg-pl, .rg-del-l .lx-headline { transition: none; }
+  .rg-swap-r .now, .rg-swap-r .was, .rg-swap-sw, .rg-swap-sw i, .rg-token, .rg-layer b { transition: none; }
   .rg-ttl-bar i, .rg-ttl-tok b { transition: none !important; }
 }
