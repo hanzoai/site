@@ -13,7 +13,7 @@ Forks this page deleted: the page's own buttons and text links (now kit `Cta`); 
 - [x] No dead or self-looping button
 - [x] Open copy questions listed, none decided
 
-Done here: "Read the latest" (solid, the newest post) in the masthead; the closing link "Every post" (hanzo.blog) in the Band; "hanzo.blog" and "Read the docs" are text links.
+Done here: one solid on the page body: "Every post" (hanzo.blog) in the Band; "Read the latest" (the newest post) is outlined in the masthead and solid only in the sticky header; "hanzo.blog" and "Read the docs" are text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`
@@ -82,7 +82,7 @@ Done here: index buttons `aria-pressed`; strip bars are buttons with spoken coun
 - [x] Reduced motion final states; no `setInterval`
 - [x] n/a: sound is the shared kit's
 
-Done here: signature = the self-turning cover (silver curtain on the timer's turn only); its pause button has its own column and works by click (tested: the cover held for 8 s); choosing a month makes the post count grow to 1.75× and settle at 64px.
+Done here: signature = the self-turning cover (silver curtain on the timer's turn only); its pause button has its own column and works by mouse click (tested 7 Nov: elementFromPoint hits the button, `aria-pressed="true"`, the cover held 8 s). Below the cover: the on-site trio rises in on arrival and its art tilts up to 2.5° toward a fine pointer; the post count counts up 0 → 24 at 1.75× when the contents are reached and settles at 64px (and grows again on a month press); an idle silver light runs across the strip's bars every 8 s; each contents row slides in on arrival while its dotted leader draws to the date.
 
 ## 10. Media
 - [x] kit `Img` for the Kai art; Sigil fields elsewhere
@@ -90,7 +90,7 @@ Done here: signature = the self-turning cover (silver curtain on the timer's tur
 - [x] Decorative art `aria-hidden`
 - [x] No dimmed photo
 
-Done here: Hanzo's Kai art on the two Kai cover stories; one contour field per post title, paused off screen.
+Done here: Hanzo's Kai art on the two Kai cover stories and on the on-site Kai card; one contour field per post title, paused off screen.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass
@@ -98,7 +98,7 @@ Done here: Hanzo's Kai art on the two Kai cover stories; one contour field per p
 - [x] 44px strip bars (the strip scrolls sideways), 44px links
 - [x] Ask above the fold at 375×667
 
-Done here: plate above the story, index as a swipe rail, month headers stick under the header and clear the first row; tags follow summaries on phone.
+Done here: plate above the story (343px wide with four corners at 375, aspect 4:3), then the story, the pause, and the index as a swipe rail (the index sits in the single column; it no longer forces a second one); the "All 24" pill sits on its own row under the bars; cover headline links are at least 44px tall; month headers stick under the header; tags follow summaries on phone.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a, #525252 on white; white 78% in the Band
@@ -107,7 +107,7 @@ Done here: plate above the story, index as a swipe rail, month headers stick und
 - [x] One h1; months are labelled sections
 - [x] Keyboard: index, strip, All 24, pause
 
-Done here: the carousel is `aria-roledescription="carousel"`, inactive stories `inert` and `aria-hidden`.
+Done here: the carousel is `aria-roledescription="carousel"`, inactive stories `inert` and `aria-hidden`; outline H1 → H2 (cover stories) → H2 "Posts on hanzo.ai" (visually hidden, on the trio) → H2 Contents → H2 Band, no skipped level; no nowrap on the h1; under reduced motion the pause is hidden and the index takes the full row (no indent).
 
 ## 13. Performance and engineering
 - [x] h1 in server HTML
@@ -149,4 +149,4 @@ Done here: reduced motion: no turning, no curtain, bars at rest; JS off: masthea
 - [x] `V2:` line in the page file
 - [ ] Review read: `docs/review/blog.md` verdict 6/10, fixes pushed, re-review pending
 
-Done here: `docs/review/blog.md` (critic round 2: 6/10); its five fixes pushed (pause, phone plate and strip, a figure moment and Kai art below the fold, Contents aligned, cover headlines are h2).
+Done here: `docs/review/blog.md` (6/10 at 9afbb4b); round 3 fixed the phone cover grid (round 2 had left the index on columns 2/-1, which broke the 375 cover), made the masthead ask outlined, gave the trio a heading, tilt and arrival, added the count-up moment, the idle bar sweep and row arrival, aligned Contents with its caption and closed the gaps. Proof: `docs/gallery/blog/v3-*`.
