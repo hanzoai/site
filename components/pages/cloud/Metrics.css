@@ -314,7 +314,8 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-row.head { height: 34px; font-size: 12px; }
   .mt-grid .mt-row:nth-child(6), .mt-grid .mt-row:nth-child(8) { display: none; }
   /* chapter three on a phone: the label columns replace name and value, so the tick lands on a column you can see */
-  .mt-tab[data-step='2'] .mt-row { grid-template-columns: 74px 1fr 1fr .8fr; }
+  .mt-tab[data-step='2'] .mt-row { grid-template-columns: 74px .8fr 1.3fr .8fr; } /* /v1/search reads whole at 320 and up */
+  @media (max-width: 360px) { .mt-tab[data-step='2'] .mt-row { gap: 6px; padding: 0 12px; font-size: 12px; grid-template-columns: 64px .8fr 1.3fr .8fr; } .mt-tab[data-step='2'] .mt-row.head { font-size: 11px; letter-spacing: .06em; } }
   .mt-tab[data-step='2'] .mt-row .c-name, .mt-tab[data-step='2'] .mt-row .c-value { display: none; }
   .mt-tab[data-step='2'] .mt-row .c-model, .mt-tab[data-step='2'] .mt-row .c-route { display: block; }
   .mt-lab { gap: 12px; }

@@ -674,7 +674,7 @@ function End() {
         </div>
         <ul className="jn-rows">
           <li><A to={GH} className="jn-row"><b>View on GitHub</b><span className="x-mono"><Gh />hanzoai</span><Arrow /></A></li>
-          <li><A to="https://platform.hanzo.ai/deploy" className="jn-row"><b>Get Jin</b><span>Multimodal foundation model <i className="x-mono">License: Apache-2.0</i></span><em>Deploy to Cloud</em><Arrow /></A></li>
+          <li><A to="https://platform.hanzo.ai/deploy" className="jn-row"><b>Get Jin</b><span><span>Multimodal foundation model</span> <i className="x-mono">License: Apache-2.0</i></span><em><span>Deploy to Cloud</span></em><Arrow /></A></li>
           <li className="jn-row-sheet">
             <Sheet label="See Table 1" kick="Table 1" title="What is in the repository">
               <DataTable className="jn-table" caption="Table 1" cols={[{ key: 'a', label: '' }, { key: 'b', label: '' }]} rows={TABLE.map(([a, b]) => ({ a, b }))} />

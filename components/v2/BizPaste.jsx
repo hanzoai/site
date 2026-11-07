@@ -19,7 +19,7 @@ export default function BizPaste({ name, prompt, api, dark, className = '' }) {
           {api && <span className="cf-api"><i>api</i>{api}</span>}
           <Copy text={prompt} />
         </div>
-        <pre className="cf-paste-code"><code>{prompt}</code><span className="cf-caret" aria-hidden="true" /></pre>
+        <pre className="cf-paste-code"><code><span>{prompt}</span></code><span className="cf-caret" aria-hidden="true" /></pre>
       </div>
     </div>
   );

@@ -150,8 +150,11 @@ const LOG = [
 /* the whole sentence, its own clause in ink and the rest quiet */
 function Said({ s, k }) {
   const at = s.indexOf(k);
-  if (at < 0) return s;
-  return <>{s.slice(0, at)}<b>{k}</b>{s.slice(at + k.length)}</>;
+  if (at < 0) return <span>{s}</span>;
+  // each piece is its own leaf span (scripts/copycheck.mjs reads leaves, joined by a space), so a break falls only at a
+  // space: punctuation right after the key stays with it
+  const pre = s.slice(0, at), m = s.slice(at + k.length).match(/^[^\s]*/)[0], post = s.slice(at + k.length + m.length);
+  return <>{pre && <span>{pre}</span>}<b><span>{k + m}</span></b>{post && <span>{post}</span>}</>;
 }
 
 const Ev = ({ tag, hi }) => (

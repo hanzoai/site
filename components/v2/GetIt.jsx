@@ -23,7 +23,7 @@ export default function GetIt({ name, tag, seed, data = [], license = 'Apache-2.
           {tag && <p className="v2-lede gi-tag">{tag}</p>}
           <div className="gi-meta">
             {license && <span className="gi-chip"><span>License:</span> {license}</span>}
-            {repo && <A to={repo[1]} className="gi-chip"><Gh />{repo[0]}{stars && <em>{stars}</em>}</A>}
+            {repo && <A to={repo[1]} className="gi-chip"><Gh /><span style={{ color: 'inherit' }}>{repo[0]}</span>{stars && <em>{stars}</em>}</A>}
           </div>
           {children}
           {ask ? (

@@ -428,10 +428,10 @@ function Room() {
             <div className="mt-paste-box">
               <div className="mt-paste-bar">
                 <span className="mt-paste-k">Agent prompt</span>
-                <span className="mt-api"><i>api</i>/v1/event/insights</span>
+                <span className="mt-api"><i>api</i><span>/v1/event/insights</span></span>
                 <span className="mt-copy" onClickCapture={send}><Copy text={PROMPT} /></span>
               </div>
-              <pre className="mt-paste-code"><code>{PROMPT}</code><span className="mt-caret" aria-hidden="true" /></pre>
+              <pre className="mt-paste-code"><code><span>{PROMPT}</span></code><span className="mt-caret" aria-hidden="true" /></pre>
             </div>
           </div>
           <nav className="mt-rel" aria-label="Related capabilities">
@@ -491,7 +491,7 @@ function Room() {
               </div>
             </div>
             <div className="mt-con-foot">
-              <span>api.hanzo.ai<b>/v1/event/insights</b></span>
+              <span><span>api.hanzo.ai</span><b><span>/v1/event/insights</span></b></span>
               <A to="https://hanzo.team/" className="mt-con-open">Open in the console ↗</A>
             </div>
           </div>
