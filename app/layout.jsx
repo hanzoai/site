@@ -4,7 +4,8 @@
      that gives it its canonical link, share card (Open Graph, X) and schema.org data.
    - Styles load in this order: Hanzo's hanzo.css, globals.css, system.css (tokens and states), then the page's own CSS,
      so a page rule always wins.
-   - Layers mounted once here: arrival, progress, morph (page transitions), the ask bar, the phone layer, the cursor. */
+   - Layers mounted once here: arrival, progress, morph (page transitions), the ask bar, the sound kit, the phone
+     layer, the cursor. */
 import './globals.css';
 import './system.css';
 import { Smooth, Progress, Header, Footer } from '../components/Chrome';
@@ -13,6 +14,7 @@ import { OpenerProvider } from '../components/Opener';
 import Morph from '../components/Morph';
 import Phone from '../components/Phone';
 import Ask from '../components/Ask';
+import Sound from '../components/Sound';
 import Cursor from '../components/Cursor';
 import { ARRIVE } from '../components/arrival';
 
@@ -54,6 +56,7 @@ export default function RootLayout({ children }) {
             <Morph />
             <Phone />
             <Ask />
+            <Sound />
             <Cursor />
             <div className="x-page">
               <HeaderHTML />

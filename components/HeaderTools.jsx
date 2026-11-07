@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
+import { play } from '../lib/sound';
 
 const EASE = [0.16, 1, 0.3, 1];
 const UP = { API: 1, CLI: 1, DNS: 1, HSM: 1, IAM: 1, IDE: 1, KMS: 1, MCP: 1, MQ: 1, UI: 1, GUI: 1, S3: 1, ZAP: 1, IDV: 1, SDKS: 'SDKs', O11Y: 'O11y' };
@@ -297,6 +298,7 @@ export default function HeaderTools({ headerRef }) {
 
   useEffect(() => {
     if (open !== 'search') return;
+    play('pop'); // ⌘K opening (JAMES rule 10)
     window.__lenis?.stop();
     return () => window.__lenis?.start();
   }, [open]);
