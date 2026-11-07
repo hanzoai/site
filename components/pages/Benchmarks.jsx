@@ -10,15 +10,16 @@
    Supporting (three): headlines that rise out of their masks; Kai against Jev, the "try it" board whose eleven rows glide
    into their new order when you switch the metric, the view or the sort; and pinned chapter scenes (Kai beyond the
    suites, then Zen 6 in the black room, where scrolling sweeps the context dial from 8K to 10M tokens).
-   V2: 8/10 rebuilt to MASTER: scale with rhythm (h1 52, headings 26, figures 64, one 84px moment a screen; the frontier is the big thing and settles), a 4-beat pinned Kai story, a Zen dark room that opens from a rounded card, every table in a sheet, deck palette only, deck timings with no springs, nothing floating over content, one ask (Start on Hanzo Cloud).
+   V2: 8/10 round 2: page-local (+) sheets fixed to the viewport, hidden and inert when closed (no sideways shove, Esc closes and returns focus, no shadow band); long lists fold behind (+) counts and phone panels swipe (29→25 screens desktop, 47→34 phone); hero lede and ask arrive after the h1; opaque sub-nav; dial number in a fixed box (no shift); CodeBlock command; no colour emoji; no hydration diff.
    Every word and figure is Hanzo's (hanzo.ai/benchmarks and its research API). */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE } from '../ui';
-import { A, More, Cta, DataTable } from '../kit';
+import { A, More, Cta, DataTable, CodeBlock } from '../kit';
 import MaskLines from '../v2/MaskLines';
 import PinScenes from '../v2/PinScenes';
-import DetailSheet from '../v2/DetailSheet';
+import Sheet from './benchmarks/Sheet';
+import NoJs from '../NoJs';
 import SceneWipe from '../v2/SceneWipe';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
@@ -140,6 +141,17 @@ function useWalk(n, on = true, ms = 1800) {
   return [ref, calm ? -1 : k, root, pick];
 }
 
+/* A fold under a long list: the list shows its head, the press shows the rest (every row is in the HTML all along).
+   It names only a count, so no words are added to Hanzo's. */
+function Fold({ n, open, set, controls }) {
+  return (
+    <button type="button" className="xbm-fold" aria-expanded={open} aria-controls={controls} onClick={() => set(!open)}>
+      <i aria-hidden="true"><svg viewBox="0 0 16 16" width="13" height="13"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg></i>
+      <span className="x-mono">{open ? '−' : '+'}{n}</span>
+    </button>
+  );
+}
+
 /* The sheet's contents carry the page's scope (its colours and type), since a sheet lives outside the page. */
 const In = ({ children }) => <div className="xbm-in">{children}</div>;
 
@@ -205,7 +217,7 @@ const HEAD = [
   ['~3,665 tok/s', 'Speed · Prefill · Zen 6 on NVIDIA Grace-Blackwell', 'Decode ~70 tok/s · 141.2 tok/s with DFlash2 · 46.29× prefill & 78.57× decode at 1M context (99.8% KV pruned) · measured by Hanzo on Nov 4, 2026.', '#zen'],
 ];
 
-const NOJS = '<style>.xbm-stage.run{height:auto!important}.xbm-stage.run .xbm-stage-stick{position:static!important;height:auto!important;overflow:visible!important;padding:120px 0 80px}.xbm-stage.run .xbm-stage-head{position:static!important;opacity:1!important;transform:none!important}.xbm-stage.run .xbm-stage-grid{height:auto!important;margin-top:72px;padding-top:0!important}.xbm-stage-cap,.xbm-stage-obj{opacity:1!important;transform:none!important}.xbm-pt circle:first-child{opacity:1!important;transform:none!important}.xbm-bar b{transform:scaleX(var(--f))!important}.xbm-stack{gap:32px}.xbm-stack-i{grid-area:auto!important;opacity:1!important;transform:none!important}.xbm-mb,.xbm-b477,.xbm-b477-l{opacity:1!important;transform:none!important}.xbm-facets{height:auto!important;opacity:1!important}.xbm-sc{padding-bottom:0!important}.xbm-read{position:static!important;display:block!important;opacity:1!important;transform:none!important;width:auto!important;max-width:none!important;margin:0!important;padding:6px 0!important;background:none!important;color:inherit!important;box-shadow:none!important;border-top:1px solid rgba(0,0,0,.08)}.xbm-read span{color:#6e6e73!important}</style>';
+const NOJS = '<style>.xbm-stage-aside>*{opacity:1!important;transform:none!important}.xbm-stage.run{height:auto!important}.xbm-stage.run .xbm-stage-stick{position:static!important;height:auto!important;overflow:visible!important;padding:120px 0 80px}.xbm-stage.run .xbm-stage-head{position:static!important;opacity:1!important;transform:none!important}.xbm-stage.run .xbm-stage-grid{height:auto!important;margin-top:72px;padding-top:0!important}.xbm-stage-cap,.xbm-stage-obj{opacity:1!important;transform:none!important}.xbm-pt circle:first-child{opacity:1!important;transform:none!important}.xbm-bar b{transform:scaleX(var(--f))!important}.xbm-stack{gap:32px}.xbm-stack-i{grid-area:auto!important;opacity:1!important;transform:none!important}.xbm-mb,.xbm-b477,.xbm-b477-l{opacity:1!important;transform:none!important}.xbm-facets{height:auto!important;opacity:1!important}.xbm-sc{padding-bottom:0!important}.xbm-read{position:static!important;display:block!important;opacity:1!important;transform:none!important;width:auto!important;max-width:none!important;margin:0!important;padding:6px 0!important;background:none!important;color:inherit!important;box-shadow:none!important;border-top:1px solid rgba(0,0,0,.08)}.xbm-read span{color:#6e6e73!important}</style>';
 
 function Stage() {
   const ref = useRef(null), stick = useRef(null), head = useRef(null), slot = useRef(null);
@@ -214,6 +226,15 @@ function Stage() {
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
   useEffect(() => setMounted(true), []);
+  // the lede, meta and ask arrive after the h1 has cut in (same wait as MaskLines: the arrival curtain lifts first)
+  const [inn, setInn] = useState(false);
+  useEffect(() => {
+    if (!document.documentElement.classList.contains('x-arriving')) { setInn(true); return; }
+    const go = () => setInn(true);
+    addEventListener('hz-arrived', go, { once: true });
+    const t = setTimeout(go, 4000);
+    return () => { removeEventListener('hz-arrived', go); clearTimeout(t); };
+  }, []);
   const run = !(mounted && (calm || !wide));
   const S = useMotionValue(1), DX = useMotionValue(0), DY = useMotionValue(0);
   useEffect(() => {
@@ -250,9 +271,9 @@ function Stage() {
   return (
     <section ref={ref} className={'xbm-stage ' + (run ? 'run' : 'flat')} data-ready={ready ? 'true' : undefined} aria-labelledby="xbm-h1">
       {/* JS off: the stage lies flat, and nothing that starts hidden or offset stays that way */}
-      <noscript dangerouslySetInnerHTML={{ __html: NOJS }} />
+      <NoJs css={NOJS} />
       <div ref={stick} className="xbm-stage-stick">
-        <motion.div ref={head} className="pf-wrap xbm-stage-head" style={run ? { opacity: headO, y: headY } : undefined}>
+        <motion.div ref={head} className="pf-wrap xbm-stage-head" data-in={inn ? 'true' : undefined} style={run ? { opacity: headO, y: headY } : undefined}>
           <div className="xbm-stage-hgrid">
             <MaskLines as="h1" id="xbm-h1" className="pf-display xbm-h1" lines={['Intelligence,', 'cost and speed,', 'each measured.']} amount={0.1} />
             <div className="xbm-stage-aside">
@@ -416,15 +437,15 @@ function Enso() {
           <p className="xbm-cap">Enso · intelligence per dollar</p>
           <p className="pf-body">Accuracy against what the run cost at list prices, on a log axis, for each board where Enso’s router is on the frontier. Every point is a research run, read when the page opens, and its cost is the tokens it records on the whole question set at the price list’s rate for its own model id. The dashed line joins the runs no other run beats on both.</p>
           <div className="xbm-opens">
-            <DetailSheet label="The 12 runs as a table" ghost kicker="GPQA Diamond · 12 runs" title="The frontier, one benchmark at a time" wide>
+            <Sheet label="The 12 runs as a table" ghost kicker="GPQA Diamond · 12 runs" title="The frontier, one benchmark at a time" wide>
               <In>
                 <Table caption="The 12 runs as a table" head={['System', 'Accuracy', 'Run cost', 'Tag, date', 'Pareto']} rows={D.RUNS.map((r) => [r.sys, r.acc, r.cost, <>{r.tag} · {r.date}</>, r.pareto ? 'yes' : ''])} />
                 <p className="xbm-note">One benchmark at a time: the frontier is drawn only among runs of the same benchmark, never across two. Filled points are Pareto-efficient — no other run scores higher for less. Hanzo&apos;s router is the large point in the brightest ink, labelled in bold; the single models are grey. A run&apos;s cost is the input and output tokens it records on the whole question set at the price list&apos;s rate for its own model id, the router&apos;s included, at list prices, Nov 6, 2026. Hover or tab to a point for its record.</p>
               </In>
-            </DetailSheet>
-            <DetailSheet label="Every system on GPQA Diamond" ghost title="Every system on GPQA Diamond" wide>
+            </Sheet>
+            <Sheet label="Every system on GPQA Diamond" ghost title="Every system on GPQA Diamond" wide>
               <In><Systems /></In>
-            </DetailSheet>
+            </Sheet>
           </div>
         </div>
         <figure id="frontier" className="pf-obj xbm-enso-obj">
@@ -473,6 +494,7 @@ function Duel({ r, i }) {
 
 function Kai() {
   const [ref, seen] = useSeen(0.25);
+  const [all, setAll] = useState(false);
   return (
     <section className="pf-sec xbm-kai" id="kai">
       <div className="pf-wrap xbm-kai-g">
@@ -481,19 +503,19 @@ function Kai() {
           <p className="xbm-cap">Kai · decisions</p>
           <p className="pf-body">Each task was fixed on 2026-10-15. The frozen harness&apos;s suites Kai leads are below.</p>
           <div className="xbm-opens">
-            <DetailSheet label="Decision Suite" ghost title="Decision Suite: Kai wins 16 of 16 tasks against Jev" wide>
+            <Sheet label="Decision Suite" ghost title="Decision Suite: Kai wins 16 of 16 tasks against Jev" wide>
               <In>
                 <div className="xbm-duel-h" aria-hidden="true"><span>Task</span><span>Kai / Jev</span><span>Runs</span></div>
                 <ol className="xbm-duels">{D.SUITE.map((r, i) => <Duel key={r.t} r={r} i={i} />)}</ol>
                 <p className="xbm-note">Accuracy unless a row names its measure; the same questions to both models. Each row names its data and links its runs.</p>
                 <p className="xbm-rerun"><span>Re-run any row</span><More to="https://github.com/hanzoai/benchmarks/blob/main/decision/SUITE.md">hanzoai/benchmarks decision/SUITE.md</More></p>
               </In>
-            </DetailSheet>
+            </Sheet>
           </div>
         </div>
         <div className="xbm-kai-vis">
-        <span className="pf-figure xbm-kai-n" aria-hidden="true">16 of 16</span>
-        <ol className="xbm-tiles" ref={ref} aria-label="Decision Suite, Kai against Jev">
+        <button type="button" className="pf-figure xbm-kai-n" aria-expanded={all} aria-controls="xbm-tiles" onClick={() => setAll((v) => !v)}>16 of 16</button>
+        <ol id="xbm-tiles" className={'xbm-tiles' + (all ? ' all' : '')} ref={ref} aria-label="Decision Suite, Kai against Jev">
           {D.SUITE.map((r, i) => (
             <li key={r.t} className="xbm-tile">
               <span className="xbm-tile-t">{r.t}</span>
@@ -503,6 +525,7 @@ function Kai() {
             </li>
           ))}
         </ol>
+        <Fold n={D.SUITE.length - 4} open={all} set={setAll} controls="xbm-tiles" />
         </div>
       </div>
     </section>
@@ -540,7 +563,8 @@ function Board() {
   }, [ece, sort]);
   const max = ece ? 0.5 : 100;
   const [ref, seen] = useSeen(0.15);
-  const [wref, w, whold, wpick] = useWalk(D.BOARD.length);
+  const [all, setAll] = useState(false);
+  const [wref, w, whold, wpick] = useWalk(all ? D.BOARD.length : 5);
   return (
     <section className="pf-sec xbm-lead" aria-labelledby="xbm-lead-h">
       <div className="pf-wrap">
@@ -554,9 +578,9 @@ function Board() {
             <div className="xbm-won">
               <span className="pf-figure">11</span>
               <p className="xbm-won-k"><b>Suites won · Kai vs Jev</b> AG News, DAIR Emotion, Banking77, Support triage, Email spam, Phishing, Toxicity, RAG relevance, Model routing, Typed decisions, MASSIVE, 51 languages. Every row a research run of kai-1.4 and of Jev on the same questions; mean accuracy across these 11 suites 84.4% against 76.6%.</p>
-              <DetailSheet label="Evidence behind the rows" ghost title="Evidence behind the rows" wide>
+              <Sheet label="Evidence behind the rows" ghost title="Evidence behind the rows" wide>
                 <In><Evidence /></In>
-              </DetailSheet>
+              </Sheet>
             </div>
           </div>
           <div className="xbm-ctl">
@@ -570,7 +594,7 @@ function Board() {
               : <><b className="x-mono">11</b> suites won · mean accuracy across these 11 suites <b className="x-mono">84.4%</b> against <span className="x-mono">76.6%</span></>}
           </p>
           {ece && <p className="xbm-ece">Calibration error (ECE): lower is better.</p>}
-          <ol ref={wref} {...whold} className={'xbm-rows xbm-turn s' + (w & 1) + ' ' + view.toLowerCase()} aria-label={'Kai against Jev, ' + metric}>
+          <ol ref={wref} {...whold} id="xbm-rows" className={'xbm-rows xbm-turn s' + (w & 1) + ' ' + view.toLowerCase() + (all ? ' all' : '')} aria-label={'Kai against Jev, ' + metric}>
             {rows.map((r, i) => {
               const win = r.gap > 0;
               return (
@@ -586,6 +610,7 @@ function Board() {
               );
             })}
           </ol>
+          <Fold n={D.BOARD.length - 5} open={all} set={setAll} controls="xbm-rows" />
           <ul className="xbm-foot">
             <li>Every cell a research run of kai-1.4 and of Jev, on the same questions.</li>
             <li>Accuracy: higher is better; a lead is in percentage points.</li>
@@ -791,16 +816,16 @@ function KaiMore() {
       title: 'Yes or no, read from the state',
       body: <>
         <p className="pf-body">Production Kai answers a yes/no question with a reader trained for it. The tests below are the ones it leads Jev on, both models given the same questions and the same rows.</p>
-        <DetailSheet label="Test" ghost title="Yes or no, read from the state">
+        <Sheet label="Test" ghost title="Yes or no, read from the state">
           <In><Table caption="Yes or no, read from the state" head={['Test', 'Kai', 'Jev']} rows={D.YESNO.map(([t, k, j]) => [t, <b key="k">{k}</b>, j])} /><p className="xbm-note">Kai is kai-1.2, read 2026-10-08; Jev is typesafe/jev-1.13 through the API, read 2026-10-06. Hanzo-measured; harness private.</p></In>
-        </DetailSheet>
+        </Sheet>
       </>,
     },
     {
       title: 'The trolley problem, decided on the counts',
       body: <>
         <p className="pf-body">Kai does not weigh lives by preference. Its policy acts on the counts it grounds from the scene, and escalates to a person where it cannot ground them. On trolley-bench&apos;s 5,240 setups, scored by the article&apos;s own rules, the checks below are the ones Kai leads Jev on; every check is lower is better, and GPT-6 Luna&apos;s recorded answers stand beside both.</p>
-        <DetailSheet label="trolley-bench" ghost title="The trolley problem, decided on the counts" wide>
+        <Sheet label="trolley-bench" ghost title="The trolley problem, decided on the counts" wide>
           <In>
             <Table caption="The trolley problem, decided on the counts" head={['Check', 'Kai', 'Jev', 'GPT-6 Luna']} rows={D.TROLLEY.map(([t, k, j, g]) => [t, <b key="k">{k}</b>, j, g])} />
             <p className="xbm-note">Kai is kai-1.8 through its nio/harm@1 policy, read 2026-10-20; Jev is typesafe/jev-1.13 and GPT-6 Luna is gpt-6-luna, each the benchmark&apos;s recorded answers. zachlandes/trolley-bench at cde97d7. Hanzo-scored by the article&apos;s rules; the scorer reproduces the article&apos;s numbers from the recorded answers.</p>
@@ -808,7 +833,7 @@ function KaiMore() {
             <Table caption="14,832 sealed trolley-structured scenes" head={['Family', 'Scenes', 'Coverage', 'Accuracy', 'Wrong']} rows={D.FAMILIES} />
             <p className="xbm-note">ground-8, read 2026-10-20 at the qualified floor. Coverage is the share of scenes grounded; accuracy is of those; wrong counts the courses a grounded scene got wrong. Hanzo-measured; the sealed set is private.</p>
           </In>
-        </DetailSheet>
+        </Sheet>
       </>,
     },
     {
@@ -816,14 +841,14 @@ function KaiMore() {
       body: <>
         <span id="coding-agent" className="xbm-anchor" />
         <p className="pf-body">Hanzo Dev, with Kai and Enso Flash on api.hanzo.ai, against native Claude Code on held-out repository repairs. Each task is one fault its visible test fails on, and counts as solved only when a hidden verifier passes. Speed is the paired wall time over the tasks both solved.</p>
-        <DetailSheet label="coding.repair" ghost title="Verified coding-agent performance" wide>
+        <Sheet label="coding.repair" ghost title="Verified coding-agent performance" wide>
           <In>
             <Table caption="Verified coding-agent performance" head={['Tasks both solved, by how Hanzo Dev settled them', 'Tasks', 'Speed', '95% interval']} rows={D.SETTLED} />
             <Table caption="Hanzo Dev, with Kai and Enso Flash on api.hanzo.ai" head={['Agent', 'Median seconds', 'Model calls a task']} rows={D.AGENTS} />
             <p className="xbm-note">The fastest tasks are settled by a search with no model call: it tries single-token edits of the kinds these faults are drawn from against the visible test alone, and never reads a hidden test or the fault. These results are specific to this benchmark, one attempt a task; they are not a claim about general-purpose coding.</p>
             <p className="xbm-runl">Research runs of <code>coding.repair</code> on split <code>held</code>, ended 2026-10-15, harness commit <code>8e966be</code>: GET /v1/research/runs?benchmark=coding.repair.</p>
           </In>
-        </DetailSheet>
+        </Sheet>
       </>,
     },
     {
@@ -863,9 +888,9 @@ function KaiTools() {
             <h2 className="pf-head">Agent tools</h2>
             <p className="pf-body">Tool handlers in Hanzo MCP, each run on the same cases as the handler it replaced. Each row says what decides it, rules, BM25 or Kai, as its run records. A rate is shown with its count.</p>
             <div className="xbm-opens">
-              <DetailSheet label="Handler" ghost title="Agent tools" wide>
+              <Sheet label="Handler" ghost title="Agent tools" wide>
                 <In><div className="xbm-toolgrid">{D.TOOLS.map((x) => <ToolTable key={x.split} x={x} />)}</div></In>
-              </DetailSheet>
+              </Sheet>
             </div>
           </div>
           <VisTools />
@@ -906,9 +931,12 @@ function Dial({ progress, on = true, from = 1 / 3, to = 2 / 3 }) {
     <div className="xbm-dial" ref={ref} onClick={() => setHold(true)} onFocusCapture={() => setHold(true)} onBlurCapture={() => setHold(false)}>
       <div className="xbm-dial-read">
         <p className="xbm-dial-k">Context length</p>
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.p key={at} className="xbm-dial-n" initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -24, opacity: 0 }} transition={SPRING}>{r[0]}</motion.p>
-        </AnimatePresence>
+        {/* a fixed box: the old and the new length cross inside it, absolutely placed, so nothing around them moves */}
+        <div className="xbm-dial-nb">
+          <AnimatePresence initial={false}>
+            <motion.p key={at} className="xbm-dial-n" initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -24, opacity: 0 }} transition={SPRING}>{r[0]}</motion.p>
+          </AnimatePresence>
+        </div>
         <p className="xbm-dial-s">{r[1]}</p>
         <div className="xbm-dial-x">
           <div><span>Prefill</span><b>{r[2]}</b><i className="xbm-gauge"><motion.em animate={{ scaleX: r[3] / maxP }} transition={SPRING} /></i></div>
@@ -916,8 +944,10 @@ function Dial({ progress, on = true, from = 1 / 3, to = 2 / 3 }) {
         </div>
         <p className="xbm-dial-k">against full attention</p>
       </div>
-      <div className="xbm-dial-ctl">
-        <input type="range" min={0} max={D.LSA.length - 1} step={1} value={at} onChange={(e) => setAt(+e.target.value)} aria-label="Context length" aria-valuetext={r[0] + ' tokens'} style={{ '--p': (at / (D.LSA.length - 1)) * 100 + '%' }} />
+      {/* the fill is set on the wrapper, not the input: a screenshot taken before hydration (Playwright hides the caret with an
+          inline style on every input) would otherwise read as a hydration mismatch; the inputs also carry suppressHydrationWarning */}
+      <div className="xbm-dial-ctl" style={{ '--p': ((at / (D.LSA.length - 1)) * 100).toFixed(2) + '%' }}>
+        <input type="range" min={0} max={D.LSA.length - 1} step={1} value={at} onChange={(e) => setAt(+e.target.value)} aria-label="Context length" aria-valuetext={r[0] + ' tokens'} suppressHydrationWarning />
         <ol className="xbm-dial-ticks">{D.LSA.map((l, i) => <li key={l[0]}><button type="button" className={i === at ? 'on' : ''} onClick={() => setAt(i)} aria-label={l[0] + ' tokens'}>{l[0]}</button></li>)}</ol>
       </div>
     </div>
@@ -995,12 +1025,12 @@ function Zen() {
       </>,
     },
     {
-      title: 'Subquadratic Ultra-Long Context',
+      title: <>Subquadratic <span className="xbm-nb">Ultra-Long Context</span></>,
       body: <>
         <p className="xbm-paper"><A to="https://papers.hanzo.ai/zen6-latent-sparse-attention/">Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention →</A></p>
-        <DetailSheet label="Context length" ghost title="Zen 6 throughput & Latent Sparse Attention" wide>
+        <Sheet label="Context length" ghost title="Zen 6 throughput & Latent Sparse Attention" wide>
           <In><Table caption="Zen 6 throughput & Latent Sparse Attention" head={['Context length', 'Hardware · method', 'Prefill', 'Decode']} rows={D.LSA.map((l) => [l[0], l[1], l[2], l[4]])} /></In>
-        </DetailSheet>
+        </Sheet>
       </>,
     },
   ];
@@ -1019,6 +1049,13 @@ function Zen() {
 }
 
 /* ---------- 8. Agent harness ---------- */
+/* mono stroke marks for the three lanes (Hanzo's colour emoji would bring a hue in; the words stay) */
+const ICP = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' };
+const LANE_IC = {
+  bolt: <svg viewBox="0 0 16 16" width="12" height="12"><path d="M9 1.5 3.5 9H8l-1 5.5L12.5 7H8z" {...ICP} /></svg>,
+  gear: <svg viewBox="0 0 16 16" width="12" height="12"><circle cx="8" cy="8" r="2.2" {...ICP} /><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6 5 5M11 11l1.4 1.4M3.6 12.4 5 11M11 5l1.4-1.4" {...ICP} /></svg>,
+  slow: <svg viewBox="0 0 16 16" width="12" height="12"><circle cx="8" cy="8" r="6" {...ICP} /><path d="M8 4.5V8l2 1.5" {...ICP} /></svg>,
+};
 function Lane({ k, ic, name, x, p, running, figs, desc, tone }) {
   const xr = useRef(x);
   xr.current = x;
@@ -1076,7 +1113,7 @@ function Race() {
           <h3 className="pf-head">Agent Code Intelligence: The Race</h3>
           <p className="pf-body">How Hanzo Dev and Hanzo MCP accelerate agentic code comprehension compared to traditional raw-file reading and containerized local RAG stacks (Qdrant + Ollama). Benchmarked across production multi-language repositories.</p>
         </div>
-        <DetailSheet label="Architecture" ghost title="Agent Code Intelligence: The Race" wide>
+        <Sheet label="Architecture" ghost title="Agent Code Intelligence: The Race" wide>
           <In>
             <Table caption="Agent Code Intelligence: The Race" head={['Architecture', 'Latency', 'Tool Turns', 'Tokens Injected', 'Token Savings', 'Speedup']} className="xbm-race-t" rows={[
               ['Traditional Agent (Grep + Whole File Reads)', sc.trad.latency, sc.trad.turns, sc.trad.tokens.toLocaleString('en-US'), 'Baseline', '1.0×'],
@@ -1090,7 +1127,7 @@ function Race() {
               <A to="https://api.hanzo.ai/v1/benchmark/leaderboard?benchmark=code-rag-navigation">GET /v1/benchmark/leaderboard?benchmark=code-rag-navigation</A>
             </p>
           </In>
-        </DetailSheet>
+        </Sheet>
       </div>
       <div className="xbm-race-tabs" role="tablist" aria-label="Race scenario">
         {D.RACE.map((r, i) => (
@@ -1113,13 +1150,13 @@ function Race() {
             {running ? 'Racing...' : 'Run Race Simulation'}
           </button>
         </div>
-        <Lane k="HANZO NATIVE" ic="⚡" name="hanzo dev + hanzo-mcp" x={sc.hanzo} p={p[0]} running={running} tone="me"
+        <Lane k="HANZO NATIVE" ic={LANE_IC.bolt} name="hanzo dev + hanzo-mcp" x={sc.hanzo} p={p[0]} running={running} tone="me"
           figs={<><span>{sc.hanzo.turns} turn</span><span>{sc.hanzo.tokens.toLocaleString('en-US')} tokens (<strong>{sc.hanzo.savings} saved</strong>)</span></>}
           desc={<>{sc.hanzo.detail} <strong>Zero Docker, Zero background model daemons</strong></>} />
-        <Lane k="LOCAL RAG" ic="⚙️" name="Qdrant Container + Ollama (phi3 / mxbai)" x={sc.rag} p={p[1]} running={running} tone="mid"
+        <Lane k="LOCAL RAG" ic={LANE_IC.gear} name="Qdrant Container + Ollama (phi3 / mxbai)" x={sc.rag} p={p[1]} running={running} tone="mid"
           figs={<><span>{sc.rag.turns} turn{sc.rag.turns > 1 ? 's' : ''}</span><span>{sc.rag.tokens.toLocaleString('en-US')} tokens</span></>}
           desc={<>{sc.rag.detail} <strong>Requires 16 GB RAM + Docker daemon</strong></>} />
-        <Lane k="TRADITIONAL AGENT" ic="🐌" name="Claude Code / Cursor (Raw Grep + File Reads)" x={sc.trad} p={p[2]} running={running} tone="slow"
+        <Lane k="TRADITIONAL AGENT" ic={LANE_IC.slow} name="Claude Code / Cursor (Raw Grep + File Reads)" x={sc.trad} p={p[2]} running={running} tone="slow"
           figs={<><span>{sc.trad.turns} turns</span><span>{running ? <motion.span>{tok}</motion.span> : sc.trad.tokens.toLocaleString('en-US')} tokens</span></>}
           desc={<><span>{running ? <>Active Step: <em>{sc.trad.steps[stepI]}</em></> : sc.trad.detail}</span><span className="xbm-burn">{running ? 'Burning prompt tokens...' : 'Context saturated (blowup)'}</span><span className="x-sr">Burning prompt tokens...</span></>} />
       </div>
@@ -1217,9 +1254,9 @@ function Platform() {
         <div className="xbm-plat-h">
           <h3 className="pf-title">Platform, agents, and sandboxes</h3>
           <p className="pf-body">What an agent costs at rest, what a live one costs to wake, and what a sandbox costs to start.</p>
-          <DetailSheet label="Platform bench" ghost title="Platform, agents, and sandboxes">
+          <Sheet label="Platform bench" ghost title="Platform, agents, and sandboxes">
             <In><p>A live agent here is a goroutine: it shares one address space with every other, and nothing about it is an isolation boundary. Code that has to be isolated gets a microVM. The goroutine timings are the median of one pass on an Apple M4 Max, 16 cores. Every figure here is transcribed from the harness&apos;s README rather than read from a run file, and each page names the command that prints it.</p></In>
-          </DetailSheet>
+          </Sheet>
         </div>
         <ul className="xbm-spec">
           {D.PLATFORM.map(([v, t, to]) => (
@@ -1247,7 +1284,7 @@ function Methods() {
           <h2 className="pf-head">How every number was taken</h2>
           <p className="xbm-cap">Methods</p>
           <div className="xbm-opens">
-            <DetailSheet label="Methodology" ghost title="Methodology" wide>
+            <Sheet label="Methodology" ghost title="Methodology" wide>
               <In>
                 <ol className="xbm-laws">
                   {D.METHODS.map(([b, t], i) => (
@@ -1258,18 +1295,18 @@ function Methods() {
                   ))}
                 </ol>
               </In>
-            </DetailSheet>
+            </Sheet>
           </div>
         </div>
         <div className="xbm-meth-r">
           <div className="xbm-cmd">
             <p>The memory and code panels regenerate from the committed runs on a fresh clone:</p>
-            <div className="xbm-cmd-l"><code>{cmd}</code><CopyBtn text={cmd} /></div>
+            <CodeBlock code={cmd} prompt className="xbm-cmd-cb" />
           </div>
           <div className="xbm-papers">
             <h3 className="pf-title">The research</h3>
             <p className="pf-body">Every paper the library publishes. A benchmark’s own page names the paper that reports it, where one does. Specifications are the <A to="https://hips.hanzo.ai">HIPs</A>.</p>
-            <DetailSheet label="papers.hanzo.ai" ghost title="The research" wide>
+            <Sheet label="papers.hanzo.ai" ghost title="The research" wide>
               <In>
                 <ol className="xbm-plist">
                   {D.PAPERS.map((p, i) => (
@@ -1277,7 +1314,7 @@ function Methods() {
                   ))}
                 </ol>
               </In>
-            </DetailSheet>
+            </Sheet>
           </div>
         </div>
       </div>
@@ -1285,14 +1322,6 @@ function Methods() {
   );
 }
 
-function CopyBtn({ text }) {
-  const [ok, setOk] = useState(false);
-  return (
-    <button type="button" className="xbm-copy" onClick={async () => { try { await navigator.clipboard.writeText(text); } catch { return; /* blocked: never claim it copied */ } setOk(true); setTimeout(() => setOk(false), 2000); }}>
-      <span aria-live="polite">{ok ? 'Copied' : 'Copy'}</span>
-    </button>
-  );
-}
 
 /* ---------- 11. the shelf: every run, re-ordering, filtering and comparing ---------- */
 const ORDERS = ['Newest', 'Largest lead', 'Benchmark', 'Value'];
@@ -1307,6 +1336,8 @@ function Shelf() {
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState([]);
+  const [all, setAll] = useState(false);
+  const [ix, setIx] = useState(false);
   const apply = (search) => {
     const s = new URLSearchParams(search);
     const n = {};
@@ -1347,7 +1378,7 @@ function Shelf() {
           {D.VIEWS.map(([t, to]) => <a key={t} href={to} onClick={(e) => go(e, to)}>{t}</a>)}
         </div>
         <div className="xbm-find">
-          <label className="xbm-search"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search the shelf" aria-label="Search the shelf" /></label>
+          <label className="xbm-search"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search the shelf" aria-label="Search the shelf" suppressHydrationWarning /></label>
           <button type="button" className={'xbm-fbtn' + (open ? ' on' : '')} aria-expanded={open} aria-controls="xbm-facets" onClick={() => setOpen((v) => !v)}>Filters{nf ? <b>{nf}</b> : null}</button>
         </div>
         <motion.div id="xbm-facets" className="xbm-facets" initial={false} animate={open ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }} inert={!open} aria-hidden={!open}>
@@ -1364,11 +1395,11 @@ function Shelf() {
           </div>
         </motion.div>
         <p className="xbm-count" aria-live="polite"><b className="x-mono">{rows.length}</b> of 166 results, 24 benchmarks{nf || q ? <button type="button" onClick={() => { setF({}); setQ(''); }}>Clear</button> : null}</p>
-        <ol className="xbm-shelf-l" aria-label="Results">
+        <ol id="xbm-shelf-l" className={'xbm-shelf-l' + (all || nf || q ? ' all' : '')} aria-label="Results">
           <AnimatePresence initial={false}>
             {rows.map((r) => (
               <motion.li key={r.id} layout initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.15, ease: [0, 0, 0.2, 1] } }} transition={SPRING} className={'xbm-sr' + (pick.includes(r.id) ? ' on' : '')}>
-                <label className="xbm-chk"><input type="checkbox" checked={pick.includes(r.id)} onChange={() => sel(r)} aria-label={`Compare ${r.t}, ${r.sys.replace(/ vs .*/, '')}`} /><i aria-hidden="true" /></label>
+                <label className="xbm-chk"><input type="checkbox" checked={pick.includes(r.id)} onChange={() => sel(r)} aria-label={`Compare ${r.t}, ${r.sys.replace(/ vs .*/, '')}`} suppressHydrationWarning /><i aria-hidden="true" /></label>
                 <span className="xbm-sr-t"><A to={r.to}>{r.t}</A><span className="xbm-sr-s">{r.sys.replace(/ vs (.*)$/, '')}{/ vs /.test(r.sys) && <span className="xbm-vs"> vs {r.sys.split(' vs ')[1]}</span>}</span><small>{r.product} · {r.category} · {r.measure}</small></span>
                 <span className="xbm-sr-v"><b className="x-mono">{r.val}</b><small className="x-mono">{r.base}</small></span>
                 <span className={'xbm-win' + (r.result === 'Win' ? '' : ' no')} aria-label={r.result}>{r.result === 'Win' && <Up />}<span>{r.result}</span></span>
@@ -1383,6 +1414,7 @@ function Shelf() {
             <More to={API}>Show all 166</More>
           </div>
         )}
+        {rows.length > 6 && !nf && !q && <Fold n={rows.length - 6} open={all} set={setAll} controls="xbm-shelf-l" />}
         {rows.length > 0 && <div className="xbm-showall"><More to={API}>Show all 166</More></div>}
         <AnimatePresence>
           {picked.length > 0 && (
@@ -1394,7 +1426,13 @@ function Shelf() {
         </AnimatePresence>
 
         <div className="xbm-index">
-          <h3 className="pf-title">Every benchmark page</h3>
+          <h3 className="pf-title xbm-ix-t">
+            <button type="button" className="xbm-ix-fold" aria-expanded={ix} aria-controls="xbm-ix" onClick={() => setIx((v) => !v)}>
+              <span>Every benchmark page</span>
+              <i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg></i>
+            </button>
+          </h3>
+          <motion.div id="xbm-ix" className="xbm-ix-wrap" initial={false} animate={ix ? { height: 'auto' } : { height: 0 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} inert={!ix}>
           <div className="xbm-index-g">
             {D.PAGES.map(([prod, to, list]) => (
               <div key={prod} className="xbm-ix">
@@ -1403,6 +1441,7 @@ function Shelf() {
               </div>
             ))}
           </div>
+          </motion.div>
         </div>
       </div>
     </section>
