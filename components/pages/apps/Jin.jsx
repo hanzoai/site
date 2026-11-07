@@ -463,7 +463,8 @@ function Paper() {
                 </div>
                 {i === BREAK && <Fig i={i} keys={key} />}
               </section>,
-              i !== BREAK && <Fig key={t + '-f'} i={i} keys={key} plate staged={staged} on={at === i} />,
+              // while chapter 3 is read, plate a leaves still showing its last figure
+              i !== BREAK && <Fig key={t + '-f'} i={i} keys={key} plate staged={staged} on={at === i || (at === BREAK && i === BREAK - 1)} />,
             ];
           });
           // a run of the pinned stage is its own box, so its plate unpins where the run ends
@@ -674,6 +675,7 @@ function usePhoneAsk() {
       const btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
       if (!mq.matches || !main || !btn) { main?.removeAttribute('data-ask'); return; }
       main.setAttribute('data-ask', 'off');
+      H.dataset.jnAsk = ''; // Jin.css: the header's spacing tightens a little so the longer label fits at 375
       if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }
       const asks = [...document.querySelectorAll('main [data-cta="jin.hero"], main [data-cta="jin.close"]')];
       const seen = new Map();
@@ -688,7 +690,7 @@ function usePhoneAsk() {
       off = () => {
         io.disconnect();
         btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); btn.removeAttribute('data-cta');
-        delete H.dataset.ask;
+        delete H.dataset.ask; delete H.dataset.jnAsk;
       };
     };
     const t = setTimeout(start, 300);

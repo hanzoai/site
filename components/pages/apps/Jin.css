@@ -327,9 +327,12 @@
   .c1 .jn-h { font-size: 36px; }
   .c2 .jn-h, .c4 .jn-h { font-size: 26px; }
   .jn-stage > .jn-pfig { padding: 8px 0 0; }
+  /* a hairline opens each chapter (its figure or its numeral, whichever comes first), so the pairs read as units */
+  .jn-stage > .jn-pfig[data-fig="3"], .jn-stage > .jn-pfig[data-fig="5"] { margin-top: 0; padding-top: 48px; border-top: 1px solid var(--bz-line); }
+  .jn-stage > .jn-ch.c4 { border-top: 1px solid var(--bz-line); }
+  .jn-stage > .jn-pfig[data-fig="0"] { padding-bottom: 24px; }
   .jn-pfig[data-fig="1"]::before { inset: -8px -100vmax 0; }
   .c1::before { inset: 0 -100vmax; }
-  .jn-pfig:not([data-fig="1"]) + .jn-ch, .jn-ch + .jn-pfig { border-top: 0; }
   .jn-svg.wide .lt { font-size: 32px; }
   /* the legend is one line: "Figure N", then the lettered keys in a strip that slides sideways */
   .jn-mfig figcaption { gap: 14px; align-items: center; }
@@ -352,6 +355,13 @@
   .jn-dlg { inset: auto 8px 8px 8px; width: auto; max-height: 88svh; }
   @keyframes jn-dlg-in { from { transform: translateY(calc(100% + 16px)); } }
   @keyframes jn-dlg-out { to { transform: translateY(calc(100% + 16px)); } }
+}
+/* phones: the header carries "Read the docs" after the hero (Jin.jsx usePhoneAsk sets html[data-jn-ask]); its gaps
+   tighten by a few px so the longer label fits beside the logo, search and language at 375 */
+@media (max-width: 700px) {
+  html[data-jn-ask] header[data-slot=masthead] { padding-inline: 16px; gap: 2px; }
+  html[data-jn-ask] header[data-slot=masthead] :has(> a[data-x-ask]) { gap: 2px; }
+  html[data-jn-ask] header[data-slot=masthead] a[data-x-ask] { padding: 0 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .jn-hero-fig { animation: none; }

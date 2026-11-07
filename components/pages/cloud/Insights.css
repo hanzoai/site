@@ -107,7 +107,7 @@
 .in-said b { font-weight: inherit; color: var(--ink); }
 
 /* the product view: a flat tile, the tool names as its own sub-nav, the view below */
-.in-ui { display: grid; grid-template-rows: auto 1fr; min-height: 380px; border-radius: 16px; background: var(--w3); overflow: hidden; }
+.in-ui { align-self: stretch; display: grid; grid-template-rows: auto 1fr; min-height: 380px; border-radius: 16px; background: var(--w3); overflow: hidden; }
 .in-ui-nav { display: flex; flex-wrap: wrap; gap: 0 4px; padding: 0 12px; border-bottom: 1px solid var(--line); }
 .in-ui-nav button { position: relative; min-height: 44px; padding: 0 10px; border: 0; background: none; font: 500 13px/1 var(--mono); color: var(--soft); cursor: pointer; transition: color .15s var(--eo); }
 .in-ui-nav button::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ez); }
@@ -159,7 +159,7 @@
 .in-reach { display: grid; grid-template-columns: repeat(24, 4px); gap: 3px; align-items: end; height: 20px; }
 .in-reach i { height: 8px; border-radius: 2px; background: var(--s3); transform-origin: bottom; transition: transform .4s var(--ez), background .3s var(--eio); }
 .in-reach i.on { background: var(--ink); transform: scaleY(2.5); transition-delay: calc(var(--d) * 12ms); }
-.in-row-k { grid-template-columns: 1fr auto; margin-top: 8px; border-top: 1px solid var(--line); }
+.in-v-fl .in-row-k { grid-template-columns: 1fr auto; margin-top: 8px; border-top: 1px solid var(--line); }
 .in-v-fl.off .in-row-k { color: var(--ink); }
 
 /* replay and heatmap: line art */

@@ -1,23 +1,24 @@
 'use client';
 /* How to use Kai (/kai/guide). Page type: Developer (MASTER 4.6): a typewriter terminal as the hero, Copy beside the key ask.
-   Chapters: the session; the three question types as a spec sheet; the code in three languages on a Quiet room (kit
-   Tabs + CodeBlock, opening on Python); the limits beside a light request checker; the recipes as a stage in the one
-   black room; the move from Jev as a light diff; the benchmark as the proof strip; a closing band in the page's words.
+   Chapters: the session; the three question types as a spec sheet; the code in three tabs on a Quiet room (kit
+   Tabs + CodeBlock, opening on the pip tab, each block capped at 12 lines with Show all) beside the shape of one call;
+   the limits one at a time beside a light request checker; the recipes as a stage in the one black room; the move from
+   Jev as a light diff; the benchmark as the proof strip; a closing band in the page's words.
    Signature: the session runs itself, once. The guide's own curl request types into a terminal, then the response
-   streams back in its documented shape (id, model, routing, usage with output_tokens 0, an answer per question,
-   state_hash, latency_ms) with no values made up, then it rests. Text goes into one text node through a ref; the
-   terminal starts empty with JS on (full text with JS off and under reduced motion); a pause / replay control sits in
-   its bar; its box never changes size.
-   Beyond: the request checker. Pick a limit and the checker loads that case (101 questions, a 3,982-token state, a
-   state past 32,768, kai-1.4); drag the rulers to check your own request and see its input price at $0.021 per million
-   tokens beside Jev's $0.042. Its verdict box always holds the tallest answer, so nothing below it moves.
-   V2: 8.5/10 Review round 2: two dark surfaces only (hero terminal, recipes room), code/checker/diff now light; code opens on Python so the curl shows once; recipes as a self-advancing stage with pause; glyphs loop in turn, row hover fill; Price lights the cost line; rulers SSR-stable (no hydration badge); proof strip + Quiet closing band; hero tightened to 38%, noscript out of the h1. */
+   streams back line by line in its documented shape (field names from the guide, every missing value an em dash), then
+   it rests on the answer: the request dims, usage and answers centre in the window and light in turn. The terminal
+   starts empty with JS on (full text with JS off; the settled view under reduced motion); a pause / replay control sits
+   in its bar; its box never changes size.
+   Beyond: the request checker. Pick a limit and the checker loads that case; switch the model, snap the state ruler to
+   the guide's four points (1,024 · 3,982 · 32,768 · past 32,768) and the questions to up to 100 or 101, and read the
+   guide's own verdict. No figure is worked out: the price line is the guide's $0.021 and Jev's $0.042.
+   V2: 8.5/10 Review round 3: limits one at a time (label row, one sentence slot, the rest hidden="until-found", opens by hash, find-in-page and the checker walk, no shift); hero rests on usage + answers lit with the request dimmed (reduced motion renders that view); phone hero h1, caption, lede, ask, then a 45svh terminal with unwrapped JSON; code capped at 12 lines + Show all, right-edge fade, call-shape diagram; type h3s 21px; tabs synced to #curl/#python/#typescript and remembered; 44px hero Copy and "The runs" line; phone chips equal width; page colours named once in .kg; copy-rule pass: no derived prices or status words, tab names from the guide's install lines, recipe index as ticks. */
 // Persona: Developer wiring Kai decisions into a pipeline (MASTER 1: developers).
 // Goal: copy the request, then get a key and send a first POST /v1/decisions.
 // CTA: Get an API key (Cta solid, data-cta kai-guide.hero, data-thumb), repeated at the close (kai-guide.close).
 // Metric: api_key_created
 // Signature: the session runs itself once: the guide's curl request typing into a terminal and its response shape streaming back
-// Beyond: the request checker, driven by the limit you pick or by your own rulers, priced against Jev
+// Beyond: the request checker, driven by the limit you pick or by your own choices, in the guide's own figures
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { motion, useInView, useReducedMotion } from 'motion/react';
