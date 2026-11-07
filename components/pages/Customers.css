@@ -17,8 +17,8 @@
 
 /* arrival without JS: CSS keyframes play even when scripts never run, so no text waits on hydration */
 @keyframes xcu-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-.xcu-in { animation: xcu-up .9s var(--ease) .5s both; }
-.xcu-in2 { animation: xcu-up 1.2s var(--ease) .25s both; }
+.xcu-in { animation: xcu-up .8s var(--ease) .95s both; }
+.xcu-in2 { animation: xcu-up 1s var(--ease) 1.15s both; } /* the h1 leads (MaskLines, 0.5s), then lede and ask, then the plate */
 html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused; }
 
 /* 1. hero: the headline, then its lede and its ask side by side; 2. the case plate, its own section */
@@ -28,13 +28,16 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-hero-f { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 24px 48px; }
 .xcu-lede { max-width: 44ch; }
 .xcu-cases { padding-top: clamp(40px, 3.6vw, 56px); }
-.xcu-plate { position: relative; aspect-ratio: 16 / 8.4; border-radius: 28px; overflow: hidden; background: linear-gradient(160deg, #262626 0%, #0a0a0a 55%, #000000 100%); }
+.xcu-plate { position: relative; aspect-ratio: 16 / 8.4; border-radius: 20px; overflow: hidden; background: linear-gradient(160deg, #262626 0%, #0a0a0a 55%, #000000 100%); }
 .xcu-line { position: absolute; z-index: 4; left: clamp(24px, 3vw, 48px); right: clamp(24px, 3vw, 48px); top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; pointer-events: none; }
 .xcu-line i { position: relative; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .22); overflow: hidden; }
 .xcu-line u { position: absolute; inset: 0; background: #fff; transform-origin: 0 50%; }
 .xcu-line u.run { transform: scaleX(0); animation: xcu-fill 5.2s linear forwards; }
 @keyframes xcu-fill { to { transform: scaleX(1); } }
 .xcu-case { position: absolute; inset: 0; background: inherit; }
+.xcu-case.t0 { background: linear-gradient(160deg, #262626 0%, #0a0a0a 58%, #000000 100%); }
+.xcu-case.t1 { background: linear-gradient(200deg, #525252 0%, #262626 42%, #0a0a0a 100%); }
+.xcu-case.t1 .xcu-ph-s { color: rgba(255, 255, 255, .45); }
 .xcu-case-a { position: absolute; inset: 0; display: block; color: #fff; text-decoration: none; }
 .xcu-case-txt { position: absolute; inset: 0; display: block; }
 .xcu-ph { position: absolute; inset: 0; display: block; }
@@ -42,11 +45,11 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 @media (hover: hover) { .xcu-case-a:hover .xcu-ph img { transform: scale(1.06); } }
 .xcu-ph-s { position: absolute; inset: 0; color: rgba(255, 255, 255, .34); }
 .xcu-ph-s canvas { width: 100%; height: 100%; display: block; }
-.xcu-ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, .66) 100%); }
+.xcu-ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .6) 0%, rgba(0, 0, 0, .3) 48%, rgba(0, 0, 0, 0) 72%); }
 .xcu-case-top { position: absolute; left: clamp(24px, 3vw, 48px); right: clamp(24px, 3vw, 48px); top: clamp(36px, 3.6vw, 52px); display: flex; justify-content: space-between; align-items: center; }
 .xcu-case-top .vc-kick { color: rgba(255, 255, 255, .82); }
 .xcu-mark { display: block; height: 28px; width: auto; max-width: 180px; object-fit: contain; filter: brightness(0) invert(1); background: transparent !important; }
-.xcu-case-in { position: absolute; left: clamp(24px, 3vw, 48px); right: clamp(24px, 3vw, 48px); bottom: clamp(24px, 3vw, 48px); display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) auto; column-gap: 24px; align-items: end; }
+.xcu-case-in { position: absolute; left: clamp(24px, 3vw, 48px); right: clamp(24px, 3vw, 48px); top: clamp(88px, 8vw, 112px); display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr) auto; column-gap: 24px; align-items: start; }
 .xcu-fig { display: flex; flex-direction: column; gap: 14px; }
 .xcu-fig b { font: 220 clamp(72px, 13vw, 112px)/.9 var(--sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .xcu-fig span { font: 606 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .86); }
@@ -69,14 +72,14 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-years button b { font-weight: 497; }
 .xcu-years button[aria-pressed='true'], .xcu-years button.here { color: var(--ink2); }
 @media (hover: hover) { .xcu-years button:hover { color: var(--ink2); } }
-.xcu-years button:active { transform: scale(.98); }
+.xcu-years button:active { transform: scale(.97); }
 .xcu-years button > .xcu-pill { position: absolute; inset: 0; border-radius: 999px; background: var(--sunk); }
 .xcu-dots { display: inline-flex; gap: 4px; }
 .xcu-dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .55; }
 .xcu-index { grid-column: 1 / 9; grid-row: 2; align-self: start; list-style: none; margin: 0; padding: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
 .xcu-row { position: relative; isolation: isolate; display: grid; grid-template-columns: 72px minmax(0, 5fr) minmax(0, 5fr); column-gap: 24px; align-items: start; padding: 44px 0; border-top: 1px solid rgba(0, 0, 0, .1); transition: opacity .4s var(--ease); }
 .xcu-row[hidden] { display: none; }
-.xcu-row::before { content: ''; position: absolute; inset: 0 -24px; border-radius: 16px; background: var(--raised); opacity: 0; transition: opacity .35s var(--ease); z-index: -1; }
+.xcu-row::before { content: ''; position: absolute; inset: 0 -12px 0 -24px; border-radius: 16px; background: var(--raised); opacity: 0; transition: opacity .35s var(--ease); z-index: -1; }
 .xcu-row-y { font: 500 15px/2.2 var(--mono); color: var(--mut); transition: color .3s; }
 .xcu-row-n { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .xcu-row-n h3 { margin: 0; font-size: clamp(26px, 2.8vw, 40px); font-weight: 497; letter-spacing: -.035em; line-height: 1.05; transition: transform .5s var(--ease); }
@@ -88,7 +91,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-row.on .xcu-row-n h3 { transform: translateX(8px); }
 @media (hover: hover) { .xcu-row:hover::before { opacity: 1; } }
 .xcu-aside { grid-column: 9 / 13; grid-row: 2; align-self: stretch; }
-.xcu-st { position: sticky; top: calc(50svh - 220px); height: 440px; display: flex; flex-direction: column; border-radius: 28px; background: var(--raised); overflow: hidden; }
+.xcu-st { position: sticky; top: calc(50svh - 220px); height: 440px; display: flex; flex-direction: column; border-radius: 24px; background: var(--raised); overflow: hidden; }
 .xcu-st-in { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 32px; }
 .xcu-st-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 44px; }
 .xcu-st-logo img { display: block; max-height: 36px; max-width: 180px; width: auto; object-fit: contain; filter: grayscale(1) brightness(.15); background: transparent !important; }
@@ -96,9 +99,11 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-st-top .vc-kick { color: var(--mut); }
 .xcu-st-f { display: flex; flex-direction: column; gap: 20px; }
 .xcu-st-f > span { display: flex; flex-direction: column; gap: 8px; }
+.xcu-st-f b { white-space: nowrap; }
 .xcu-st-f .a b { font-size: clamp(52px, 6vw, 84px); font-weight: 220; letter-spacing: -.03em; line-height: .9; font-variant-numeric: tabular-nums; color: var(--ink2); }
 .xcu-st-f .b b { font-size: clamp(28px, 3vw, 40px); font-weight: 220; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink2); }
-.xcu-st-f .nm b { font-size: clamp(32px, 3.4vw, 52px); font-weight: 497; letter-spacing: -.035em; }
+.xcu-st-f .a.long b { font-size: clamp(36px, 3.5vw, 52px); }
+.xcu-st-f .nm b { white-space: normal;  font-size: clamp(32px, 3.4vw, 52px); font-weight: 497; letter-spacing: -.035em; }
 .xcu-st-f span span { font-size: 16px; color: var(--sec); }
 .xcu-st-dots { display: flex; gap: 6px; padding: 0 32px 28px; }
 .xcu-st-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(0, 0, 0, .16); transition: background-color .3s, transform .3s var(--ease); }
@@ -114,7 +119,7 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 .xcu-wall img { height: 28px; width: auto; max-width: 160px; object-fit: contain; filter: grayscale(1) brightness(.25); opacity: .7; transition: opacity .3s, filter .3s; background: transparent !important; }
 .xcu-wall li.ts img { height: 34px; }
 @media (hover: hover) { .xcu-wall a:hover { color: var(--ink2); } .xcu-wall a:hover img { opacity: 1; filter: grayscale(1) brightness(0); } }
-.xcu-wall a:active { transform: scale(.98); }
+.xcu-wall a:active { transform: scale(.97); }
 
 /* 4. the one dark room: Hanzo's launch figures slide past each other as it scrolls by */
 .xcu-close { position: relative; overflow: hidden; background: #000000; color: #f5f5f5; padding: clamp(160px, 18vw, 260px) 0; }
@@ -129,8 +134,9 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-hero-g { row-gap: 22px; }
   .xcu-hero-f { gap: 22px; }
   .xcu-cases { padding-top: 32px; }
-  .xcu-plate { aspect-ratio: 4 / 5.4; border-radius: 24px; }
-  .xcu-case-in { grid-template-columns: minmax(0, 1fr); row-gap: 18px; }
+  .xcu-plate { aspect-ratio: 4 / 5.4; border-radius: 20px; }
+  .xcu-case-in { grid-template-columns: minmax(0, 1fr); row-gap: 18px; top: auto; bottom: 24px; }
+  .xcu-ph::after { background: linear-gradient(180deg, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, .66) 100%); }
   .xcu-go { display: none; }
   .xcu-fig b { font-size: 72px; }
   .xcu-case-d { font-size: 15px; }
@@ -148,6 +154,12 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
   .xcu-row-d { grid-column: 2; }
   .xcu-row.on .xcu-row-n h3 { transform: none; }
   .xcu-row-f { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; grid-column: 2; display: flex; flex-direction: column; gap: 14px; }
+  .xcu-row-n h3 { transition: color .3s cubic-bezier(0, 0, .2, 1); }
+  .xcu-row:not(.read) .xcu-row-n h3 { color: #737373; }
+  .xcu-row-f > div { overflow: hidden; }
+  .xcu-row-f dt, .xcu-row-f dd { transform: translateY(110%); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+  .xcu-row-f dd { transition-delay: 60ms; }
+  .xcu-row.read .xcu-row-f dt, .xcu-row.read .xcu-row-f dd { transform: none; }
   .xcu-row-f dt { font-size: 40px; font-weight: 220; letter-spacing: -.03em; line-height: 1; color: var(--ink2); font-variant-numeric: tabular-nums; }
   .xcu-row-f dd { margin: 6px 0 0; font-size: 15px; color: var(--sec); }
   .xcu-row-y { line-height: 1.6; }
@@ -159,4 +171,5 @@ html.x-arriving .xcu-in, html.x-arriving .xcu-in2 { animation-play-state: paused
 @media (prefers-reduced-motion: reduce) {
   .xcu-in, .xcu-in2 { animation: none; }
   .xcu-line u.run { animation: none; transform: scaleX(1); }
+  .xcu-row-f dt, .xcu-row-f dd { transform: none !important; transition: none; }
 }
