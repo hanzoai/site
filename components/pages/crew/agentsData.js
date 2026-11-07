@@ -51,6 +51,7 @@ export function agentsDoc(slug) {
             nav: find(surface, tag('nav')).c.filter(isN).map((a) => ({ label: T(find(a, tag('em'))), href: a.a.href, current: !!a.a['aria-current'] })),
             turns: findAll(surface, slot('surface-turn')).map((b, i) => ({ who: i ? 'enso' : 'you', text: T(b) })),
             endpoint: T(foot), open: go && { label: T(go), href: live.includes('https://hanzo.team/') && go.a.href === '/home' ? 'https://hanzo.team/' : go.a.href },
+            home: go && go.a.href === '/home' ? '/home' : null, // the server copy's console link; the window's title bar keeps it
             caption: T(find(surface, tag('figcaption'))),
           };
         })(),
@@ -71,7 +72,12 @@ export function agentsDoc(slug) {
         more: links(s, (a) => slot('text')(a))[0] || null });
     } else if (shots.length) {
       const url = findAll(s, (n) => n.t === 'span' && slot('text')(n)).map(T);
-      doc.sections.push({ k: 'room', ...h, actions: links(s), url: url[0], caption: T(findAll(s, (n) => n.t === 'p' && slot('text')(n)).pop()), shots });
+      // the screenshot's own description names what the room shows; it draws the room while the picture loads
+      const said = (shots[0] && shots[0].alt) || '';
+      const runs = /runs\s*[—-]\s*(.+?),\s*each done/.exec(said);
+      const to = /message box to (\w+)/.exec(said);
+      doc.sections.push({ k: 'room', ...h, actions: links(s), url: url[0], caption: T(findAll(s, (n) => n.t === 'p' && slot('text')(n)).pop()), shots,
+        sketch: runs && to ? { runs: runs[1].split(/,\s*/), to: to[1] } : null });
     } else if (pre) {
       const bar = find(s, (n) => n.t === 'span' && slot('text')(n) && !find(pre, (k) => k === n));
       doc.sections.push({ k: 'code', ...h, lang: T(bar), lines: code(pre), actions: links(s) });

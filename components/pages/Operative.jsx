@@ -1,93 +1,112 @@
 'use client';
-/* Operative. Computer use, in a container.
-   Signature: the container opens. Its doors swing back on the first screen to show what is inside: a desktop with no
-   monitor, worked by the model's four hands in turn (it sees the screen, the model reads it, the cursor moves, the keys
-   press). Further down one docker run starts it: the command types itself and the four ports light up one by one.
-   Beyond: "Which way in?" Say what matters most to you and the provider that gives it lights up with its one
-   environment variable and its command, while the container in the middle stays the same, as Hanzo says it does.
+/* Operative. V2: 8/10 a live desktop worked by four hands as the hero, the container exploding into its six layers as you scroll, one docker run that types itself, four providers with one variable, one dark room for the loop.
+   Signature: the container comes apart. Pinned on screen, the image is a stack of six slabs pressed into one box;
+   as you scroll the box explodes upward layer by layer (scrubbed, transform only), and each layer lights with what
+   it is (Xvfb · X11, the ports, the objective, bash · edit, the allowlist, API · Bedrock · Vertex) while its words
+   come in beside it. The hero object is the desktop inside the container, worked by its four hands in turn
+   (screen vision, the model reading, the cursor, the keys). One docker run types itself and the four ports light.
+   The one dark room is the loop: plans, acts, looks at the result, goes again, and you can interrupt it.
+   Beyond: "Which way in?" Choose the provider and only the one environment variable in the command changes; the
+   container, desktop and tools stay identical, as Hanzo says. Accent: tide blue, Hanzo's own art colour.
    Every word, port and command is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { Copy, Mark } from '../ui';
 import { A, Go, More } from '../kit';
-import Sigil from '../Sigil';
-import { Get, useLive, useEvery, useSteps } from './cloud/Frame';
+import A2Lines from '../v2/A2Lines';
+import '../v2/A2.css';
 import './Operative.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const EASE = [0.16, 1, 0.3, 1];
 const HANDS = ['Screen Vision', 'Multimodal Models', 'Cursor Control', 'Keyboard Actions'];
-// where the cursor goes on the little desktop, as fractions of the screen
-const AIM = [[0.18, 0.3], [0.62, 0.22], [0.72, 0.66], [0.3, 0.72]];
+const AIM = [[0.2, 0.3], [0.62, 0.24], [0.7, 0.64], [0.34, 0.7]]; // where the cursor goes, as fractions of the screen
+
+function useLive(ref, amount = 0.2) {
+  const seen = useInView(ref, { amount });
+  const calm = useReducedMotion();
+  return [seen && !calm, calm];
+}
+function useSteps(n, ms, live) {
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  useEffect(() => {
+    if (!live || mine) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
+    return () => clearTimeout(t);
+  }, [at, live, mine, n, ms]);
+  return [at, (i) => { setAt(i); setMine(true); }];
+}
 
 /* The desktop inside the box, worked by one hand at a time. */
-function Desk({ at, beat }) {
+function Desk({ at }) {
   const [x, y] = AIM[at];
   return (
     <div className={'xov-desk h' + at} aria-hidden="true">
-      <div className="xov-desk-bar"><i /><i /><i /><span className="x-mono">Xvfb :1</span></div>
-      <div className="xov-win">
-        <div className="xov-win-bar"><i /><i /><i /></div>
-        <img src="/models/iro.webp" alt="" />
-        <div className="xov-win-text"><i /><i /><i /></div>
-        <div className="xov-win-btn">OK</div>
+      <div className="xov-desk-bar"><i /><i /><i /><span className="x-mono">Xvfb :1</span><span className="x-mono xov-desk-r">localhost:6080</span></div>
+      <div className="xov-desk-in">
+        <img className="xov-wall" src="/models/iro.webp" alt="" />
+        <div className="xov-win">
+          <div className="xov-win-bar"><i /><i /><i /></div>
+          <div className="xov-win-body">
+            <div className="xov-win-text"><i /><i /><i /><i /></div>
+            <div className="xov-field"><span className="xov-typed" /><b /></div>
+            <div className="xov-win-btn">OK</div>
+          </div>
+        </div>
+        <div className="xov-scan" />
+        <div className="xov-read"><Mark size={14} /><i /><i /><i /></div>
+        <div className="xov-keys">{['Esc', 'Tab', 'Ctrl', '⌘', 'Enter'].map((k, i) => <b key={k} style={{ '--k': i }}>{k}</b>)}</div>
+        {/* the layer is the screen's size, so a % translate is a % of the screen: the cursor moves by transform only */}
+        <motion.div className="xov-aim-w" animate={{ x: x * 100 + '%', y: y * 100 + '%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+          <span className="xov-aim"><svg viewBox="0 0 20 20" width="22" height="22"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="#0a0a0a" stroke="#fff" strokeWidth="1.2" strokeLinejoin="round" /></svg><span className="xov-ring" key={at} /></span>
+        </motion.div>
       </div>
-      <div className="xov-scan" />
-      <div className="xov-model"><img src="/models/iro.webp" alt="" /><i /><i /><i /></div>
-      <div className="xov-keys">{['Esc', 'Tab', 'Ctrl', '⌘', 'Enter'].map((k, i) => <b key={k} style={{ '--k': i }}>{k}</b>)}</div>
-      <motion.div className="xov-aim" animate={{ x: x * 100 + '%', y: y * 100 + '%' }} transition={{ type: 'spring', stiffness: 90, damping: 16 }}>
-        <svg viewBox="0 0 20 20" width="20" height="20"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="#0a0a0a" stroke="#fff" strokeWidth="1.2" strokeLinejoin="round" /></svg>
-        <span className="xov-ring" key={at + '-' + beat} />
-      </motion.div>
     </div>
   );
 }
 
 function Hero() {
-  const [ref, live] = useLive(0.12);
-  const [at, choose] = useSteps(4, 2600, live);
-  const [beat, setBeat] = useState(0);
-  const pick = (i) => { choose(i); setBeat((b) => b + 1); };
-  const calm = useReducedMotion();
-  const line = (t, d) => <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span></span>;
+  const ref = useRef(null);
+  const [live] = useLive(ref, 0.15);
+  const [at, choose] = useSteps(4, 2400, live);
   return (
     <section className="xov-hero" ref={ref} aria-labelledby="xov-h1">
-      <div className="x-wrap xov-hero-grid">
-        <div className="xov-hero-copy">
-          <motion.p className="x-kick" {...up(0)}>Computer use, in a container</motion.p>
-          <h1 id="xov-h1" className="xov-h1">{line('Hanzo', 0.05)}{line('Operative', 0.16)}</h1>
-          <motion.p className="xov-lede" {...up(0.35)}>A container with a Linux desktop inside it, and a model driving that desktop by screenshot, mouse and keyboard.</motion.p>
-          <motion.div className="xov-acts" {...up(0.48)}>
-            <motion.a href="#get-started" className="x-btn solid" data-thumb="Get Started" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>Get Started</motion.a>
-            <Go to="https://docs.hanzo.ai">View Docs</Go>
-          </motion.div>
+      <div className="a2-wrap a2-grid xov-top">
+        <div className="xov-top-l">
+          <p className="a2-kick"><b>Computer use, in a container</b></p>
+          <A2Lines as="h1" id="xov-h1" className="a2-display xov-h1" lines={['Hanzo', 'Operative']} now />
         </div>
-        <div className="xov-box">
-          <div className="xov-in">
-            <Desk at={at} beat={beat} />
+        <div className="xov-top-r">
+          <p className="a2-lede">A container with a Linux desktop inside it, and a model driving that desktop by screenshot, mouse and keyboard.</p>
+          <div className="a2-acts">
+            <a href="#get-started" className="x-btn solid" data-thumb="Get Started">Get Started</a>
+            <Go to="https://docs.hanzo.ai">View Docs</Go>
           </div>
-          {/* the doors swing back once; nothing keeps moving inside a 3D layer */}
-          <motion.div className="xov-door l" initial={calm ? false : { rotateY: 0 }} animate={{ rotateY: -104 }} transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1], delay: 0.5 }} aria-hidden="true" />
-          <motion.div className="xov-door r" initial={calm ? false : { rotateY: 0 }} animate={{ rotateY: 104 }} transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1], delay: 0.5 }} aria-hidden="true" />
-          <p className="xov-tagline x-mono" aria-hidden="true">ghcr.io/hanzoai/operative:latest</p>
+        </div>
+      </div>
+      <motion.div className="a2-wrap xov-stage" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.25 }}>
+        <div className="xov-crate">
+          <span className="xov-crate-tag x-mono">ghcr.io/hanzoai/operative:latest</span>
+          <Desk at={at} />
         </div>
         <div className="xov-hands">
           <p className="xov-hands-k"><span>The container&apos;s hands</span><span className="x-mono">{String(at + 1).padStart(2, '0')} / 04</span></p>
           <ul>
             {HANDS.map((h, i) => (
               <li key={h}>
-                <button type="button" aria-pressed={at === i} onClick={() => pick(i)}>
-                  {at === i && <motion.span layoutId="xov-hand" className="xov-hand-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                  <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{h}</b>
+                <button type="button" aria-pressed={at === i} className={at === i ? 'on' : ''} onClick={() => choose(i)}>
+                  <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{h}</b><i key={at === i ? 'on' : 'off'} />
                 </button>
               </li>
             ))}
           </ul>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
 
+/* What is in the container: six slabs pressed into one box, exploding apart as you scroll. */
 const INSIDE = [
   ['A desktop in the image', 'Xvfb and X11 give the container a screen with no monitor attached, so a real window manager and real applications run inside it.', 'Xvfb · X11'],
   ['Watch it work', 'VNC on 5900 for a native client, noVNC on 6080 in a browser, and the control page on 8501. You see the cursor move as it moves.', '5900 · 6080 · 8501'],
@@ -97,44 +116,52 @@ const INSIDE = [
   ['Where the model comes from', 'The API directly, AWS Bedrock, or Google Vertex — chosen with an environment variable. The container is the same in all three cases.', 'API · Bedrock · Vertex'],
 ];
 
-/* The image as a stack of layers: the one you choose lifts out of the stack and says what it is. */
 function Inside() {
-  const [ref, live] = useLive(0.12);
-  const [at, choose] = useSteps(INSIDE.length, 3000, live);
-  const [beat, setBeat] = useState(0);
-  const pick = (i) => { choose(i); setBeat((b) => b + 1); };
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const [on, setOn] = useState(0);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const e = useTransform(p, (v) => (calm ? 1 : Math.min(1, Math.max(0, v / 0.14)))); // how far apart the slabs are
+  useMotionValueEvent(p, 'change', (v) => setOn(Math.min(5, Math.max(0, Math.floor(((v - 0.1) / 0.9) * 6)))));
+  const go = (k) => {
+    const el = ref.current;
+    const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * (0.1 + (k + 0.5) * 0.15);
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
+  };
   return (
-    <section className="x-sec xov-inside" ref={ref} aria-labelledby="xov-in">
-      <div className="x-wrap">
-        <header className="xov-head">
-          <h2 id="xov-in">What is in the container</h2>
-          <p>A screen, a way to watch it, and the tools the model drives it with</p>
-        </header>
-        <div className="xov-inside-grid">
-          <div className="xov-stack" aria-hidden="true">
+    <section className="xov-inside" ref={ref} aria-labelledby="xov-in">
+      <div className="xov-inside-stick">
+        <div className="a2-wrap a2-grid xov-inside-grid">
+          <div className="xov-inside-copy">
+            <p className="a2-kick">What is in the container</p>
+            <h2 id="xov-in" className="a2-headline">A screen, a way to watch it, and the tools the model drives it with</h2>
+            <ol className="xov-list">
+              {INSIDE.map(([t, d], i) => (
+                <li key={t} className={i === on ? 'on' : ''}>
+                  <button type="button" aria-current={i === on ? 'step' : undefined} onClick={() => go(i)}>
+                    <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><b>{t}</b>
+                  </button>
+                  <p>{d}</p>
+                </li>
+              ))}
+            </ol>
+            <p className="xov-oss">Open Source on <A to="https://github.com/hanzoai">GitHub</A></p>
+          </div>
+          <motion.div className="xov-stack" aria-hidden="true" style={{ '--e': e }}>
             {INSIDE.map(([t, , k], i) => (
-              <div key={t} className={'xov-slab' + (i === at ? ' on' : '') + (i < at ? ' past' : '')} style={{ '--i': i }}>
-                <span className="x-mono">{k}</span><i key={i === at ? beat : 'x'} />
+              <div key={t} className={'xov-slab' + (i === on ? ' on' : '')} style={{ '--i': i }}>
+                <span className="x-mono">{k}</span>
               </div>
             ))}
-          </div>
-          <ol className="xov-list">
-            {INSIDE.map(([t, d], i) => (
-              <li key={t} className={i === at ? 'on' : ''}>
-                <button type="button" aria-pressed={i === at} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && i !== at && choose(i)}>
-                  <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
-                  <span><b>{t}</b><span>{d}</span></span>
-                </button>
-              </li>
-            ))}
-          </ol>
+            <div className="xov-base x-mono">ghcr.io/hanzoai/operative:latest</div>
+          </motion.div>
         </div>
-        <p className="xov-oss">Open Source on <A to="https://github.com/hanzoai">GitHub</A></p>
       </div>
     </section>
   );
 }
 
+/* One docker run: the two commands type themselves, then the four ports come up one by one. */
 const PULL = 'docker pull ghcr.io/hanzoai/operative:latest';
 const RUN = 'docker run -e ANTHROPIC_API_KEY -p 8501:8501 -p 6080:6080 -p 5900:5900 -p 8080:8080 -it ghcr.io/hanzoai/operative:latest';
 const PORTS = [['8501', 'the control page'], ['6080', 'noVNC, in a browser'], ['5900', 'VNC, for a native client'], ['8080', '']];
@@ -144,78 +171,64 @@ const USAGE = [
   ['Or through Vertex', 'docker run -e API_PROVIDER=vertex -e VERTEX_REGION -e VERTEX_PROJECT_ID …'],
   ['Keep the session between runs', 'docker run -v $HOME/.anthropic:/home/operative/.anthropic …'],
 ];
+const REQ = ['Docker. Nothing else installed on the host', 'A key for the API, Bedrock, or Vertex', 'Four ports free: 8501, 6080, 5900, 8080', 'Give the container the fewest privileges that work'];
 
-/* One docker run: the two commands type themselves into the terminal, then the ports come up one by one. */
 function Run() {
-  const [ref, live, calm] = useLive(0.35);
+  const ref = useRef(null);
+  const [live, calm] = useLive(ref, 0.35);
   const pull = useRef(null), run = useRef(null);
   const [lit, setLit] = useState(4);
   const [go, setGo] = useState(0);
-  const done = useRef(-1); // types once per replay; leaving the screen half-way restores it and types again next time
-  useEffect(() => {
+  const done = useRef(-1);
+  useEffect(() => { // typing writes to text nodes, not React state
     if (!live || calm || done.current === go) return;
     let i = 0, t = 0;
     const all = PULL.length + RUN.length;
     setLit(0);
-    const draw = () => {
-      if (!pull.current) return;
-      pull.current.textContent = PULL.slice(0, i);
-      run.current.textContent = i > PULL.length ? RUN.slice(0, i - PULL.length) : '';
-    };
-    const step = () => {
+    const draw = () => { if (!pull.current) return; pull.current.textContent = PULL.slice(0, i); run.current.textContent = i > PULL.length ? RUN.slice(0, i - PULL.length) : ''; };
+    const typing = () => {
       const was = i;
       i = Math.min(all, i + 2);
       draw();
-      if (i < all) t = setTimeout(step, was < PULL.length && i >= PULL.length ? 500 : 18); // a beat between pull and run
-      else { let p = 0; const lightNext = () => { p += 1; setLit(p); if (p < 4) t = setTimeout(lightNext, 420); else done.current = go; }; t = setTimeout(lightNext, 300); }
+      if (i < all) t = setTimeout(typing, was < PULL.length && i >= PULL.length ? 500 : 18);
+      else { let k = 0; const next = () => { k += 1; setLit(k); if (k < 4) t = setTimeout(next, 420); else done.current = go; }; t = setTimeout(next, 300); }
     };
     draw();
-    t = setTimeout(step, 400);
+    t = setTimeout(typing, 400);
     return () => { clearTimeout(t); setLit(4); if (pull.current) { pull.current.textContent = PULL; run.current.textContent = RUN; } };
   }, [live, calm, go]);
   return (
-    <section className="x-sec xov-run" id="get-started" ref={ref} aria-labelledby="xov-run">
-      <div className="x-wrap">
-        <header className="xov-head">
-          <h2 id="xov-run">One docker run</h2>
-          <p>Nothing is installed on your machine. The desktop, the tools and the agent are all inside the image</p>
-        </header>
-        <div className="xov-run-grid">
-          <div className="xov-install">
-            <div className="xov-install-h">
-              <h3>Installation</h3>
-              <button type="button" className="xov-replay" onClick={() => setGo((g) => g + 1)} aria-label="Replay the install">Replay</button>
-            </div>
-            <ol className="xov-steps">
-              <li><span className="xov-n">1</span><p>Pull the image</p><code className="x-mono xov-type"><span className="xov-ghost" aria-hidden="true">$ {PULL}</span><span><span className="xov-p">$</span> <span ref={pull}>{PULL}</span></span></code></li>
-              <li><span className="xov-n">2</span><p>Run it with your key and the four ports</p><code className="x-mono xov-type"><span className="xov-ghost" aria-hidden="true">$ {RUN}_</span><span><span className="xov-p">$</span> <span ref={run}>{RUN}</span><i className="xov-caret" /></span></code></li>
-              <li><span className="xov-n">3</span><p>Open localhost:8501 and type an objective</p></li>
-            </ol>
-            <Copy text={PULL + '\n' + RUN} label="Copy Installation Commands" />
-          </div>
-          <Rise className="xov-ports" delay={0.1} aria-label="The four ports, lit as the container starts">
-            <div className="xov-crate">
-              <span className="x-mono">operative</span>
-              {PORTS.map(([p, what], i) => (
-                <div key={p} className={'xov-port' + (i < lit ? ' on' : '')}>
-                  <i /><b className="x-mono">{p}</b>{what && <span>{what}</span>}
-                </div>
-              ))}
-            </div>
-          </Rise>
+    <section className="a2-sec xov-run" id="get-started" ref={ref} aria-labelledby="xov-run">
+      <div className="a2-wrap">
+        <div className="a2-grid xov-run-head">
+          <A2Lines id="xov-run" className="a2-display m xov-run-h" lines={['One docker run']} />
+          <p className="a2-lede xov-run-l">Nothing is installed on your machine. The desktop, the tools and the agent are all inside the image</p>
         </div>
-        <div className="xov-run-more">
+        <div className="a2-grid xov-run-grid">
+          <div className="xov-term">
+            <div className="xov-term-bar"><i /><i /><i /><b>Installation</b><button type="button" className="xov-replay" onClick={() => setGo((g) => g + 1)} aria-label="Replay the install">Replay</button></div>
+            <ol className="xov-steps">
+              <li><span className="xov-n x-mono">1</span><p>Pull the image</p><code className="x-mono xov-type"><span className="xov-ghost" aria-hidden="true">$ {PULL}</span><span><span className="xov-p">$</span> <span ref={pull}>{PULL}</span></span></code></li>
+              <li><span className="xov-n x-mono">2</span><p>Run it with your key and the four ports</p><code className="x-mono xov-type"><span className="xov-ghost" aria-hidden="true">$ {RUN}_</span><span><span className="xov-p">$</span> <span ref={run}>{RUN}</span><i className="xov-caret" /></span></code></li>
+              <li><span className="xov-n x-mono">3</span><p>Open localhost:8501 and type an objective</p></li>
+            </ol>
+            <div className="xov-term-f"><Copy text={PULL + '\n' + RUN} label="Copy Installation Commands" /></div>
+          </div>
+          <div className="xov-ports" aria-label="The four ports, lit as the container starts">
+            <span className="x-mono xov-ports-k">operative</span>
+            {PORTS.map(([p, what], i) => (
+              <div key={p} className={'xov-port' + (i < lit ? ' on' : '')}><i /><b className="a2-fig">{p}</b>{what && <span>{what}</span>}</div>
+            ))}
+          </div>
+        </div>
+        <div className="a2-grid xov-run-more">
           <div className="xov-req">
-            <h3>System Requirements</h3>
-            <ul>
-              {['Docker. Nothing else installed on the host', 'A key for the API, Bedrock, or Vertex', 'Four ports free: 8501, 6080, 5900, 8080', 'Give the container the fewest privileges that work'].map((r) => <li key={r}><span className="xov-chk" aria-hidden="true">✓</span><span>{r}</span></li>)}
-            </ul>
+            <h3 className="a2-title">System Requirements</h3>
+            <ul>{REQ.map((r) => <li key={r}><span className="xov-chk" aria-hidden="true">✓</span><span>{r}</span></li>)}</ul>
           </div>
           <div className="xov-usage">
-            <h3>Basic Usage</h3>
-            <ul>
-              {USAGE.map(([t, c]) => <li key={t}><p>{t}</p><code className="x-mono">{c}</code></li>)}
-            </ul>
+            <h3 className="a2-title">Basic Usage</h3>
+            <ul>{USAGE.map(([t, c]) => <li key={t}><p>{t}</p><code className="x-mono">{c}</code></li>)}</ul>
           </div>
         </div>
         <p className="xov-warn">Computer use is beta, and instructions written into a web page or an image can try to talk to the model as if they were you. Limit outbound traffic to domains you name, and ask for a human yes before anything with consequences outside the container.</p>
@@ -224,34 +237,42 @@ function Run() {
   );
 }
 
+/* Which way in: the four providers; only the one variable in the command changes. */
 const WAYS = [
-  { k: 'Hanzo', by: 'The default', rec: true, pts: ['Runs through api.hanzo.ai', 'Every run shows up in the console with its cost', 'Bring a Hanzo key, or one you already have'], set: 'Pick the model in the sidebar', cmd: 'docker run -e HANZO_API_KEY …', why: 'Every run shows up in the console with its cost' },
-  { k: 'Direct', by: 'Straight to the model vendor', pts: ['No Hanzo in the request path', 'Your existing key and your existing bill', 'Nothing here to log the run for you'], set: 'Set API_PROVIDER=anthropic', cmd: 'docker run -e API_PROVIDER=anthropic …', why: 'Your existing key and your existing bill' },
-  { k: 'Bedrock', by: 'Inside your AWS account', pts: ['Reads your local AWS profile', 'Stays in the region you name', 'For when the model must not leave your account'], set: 'Set API_PROVIDER=bedrock', cmd: 'docker run -e API_PROVIDER=bedrock -e AWS_PROFILE …', why: 'For when the model must not leave your account' },
-  { k: 'Vertex', by: 'Inside your Google Cloud project', pts: ['Application default credentials', 'Names a region and a project id', 'Same container, same desktop, same tools'], set: 'Set API_PROVIDER=vertex', cmd: 'docker run -e API_PROVIDER=vertex -e VERTEX_PROJECT_ID …', why: 'Inside your Google Cloud project' },
+  { k: 'Hanzo', by: 'The default', rec: true, pts: ['Runs through api.hanzo.ai', 'Every run shows up in the console with its cost', 'Bring a Hanzo key, or one you already have'], set: 'Pick the model in the sidebar', env: '-e HANZO_API_KEY …' },
+  { k: 'Direct', by: 'Straight to the model vendor', pts: ['No Hanzo in the request path', 'Your existing key and your existing bill', 'Nothing here to log the run for you'], set: 'Set API_PROVIDER=anthropic', env: '-e API_PROVIDER=anthropic …' },
+  { k: 'Bedrock', by: 'Inside your AWS account', pts: ['Reads your local AWS profile', 'Stays in the region you name', 'For when the model must not leave your account'], set: 'Set API_PROVIDER=bedrock', env: '-e API_PROVIDER=bedrock -e AWS_PROFILE …' },
+  { k: 'Vertex', by: 'Inside your Google Cloud project', pts: ['Application default credentials', 'Names a region and a project id', 'Same container, same desktop, same tools'], set: 'Set API_PROVIDER=vertex', env: '-e API_PROVIDER=vertex -e VERTEX_PROJECT_ID …' },
 ];
 
-/* Which way in: the four providers around one container that never changes. */
 function Ways() {
-  const [ref, live] = useLive(0.12);
+  const ref = useRef(null);
+  const [live] = useLive(ref, 0.2);
   const [at, choose] = useSteps(4, 3400, live);
-  const w = WAYS[at];
   return (
-    <section className="x-sec xov-ways" ref={ref} aria-labelledby="xov-ways">
-      <div className="x-wrap">
-        <header className="xov-head">
-          <h2 id="xov-ways">Where the model comes from</h2>
-          <p>One environment variable decides. The container, the desktop and the tools are identical in all four cases</p>
-        </header>
-        <div className="xov-ask">
-          <p className="xov-ask-k">Which way in? What matters most</p>
-          <div className="xov-ask-row" role="radiogroup" aria-label="What matters most">
-            {WAYS.map((v, i) => <button key={v.k} type="button" role="radio" aria-checked={at === i} onClick={() => choose(i)}>{v.why}</button>)}
-          </div>
-          <div className="xov-ask-out" aria-live="polite">
-            <span className="xov-ask-env x-mono"><AnimatePresence mode="popLayout" initial={false}><motion.span key={at} initial={{ y: 18, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -18, opacity: 0 }} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>{w.k} · {w.set}</motion.span></AnimatePresence></span>
-            <span className="xov-ask-box" aria-hidden="true"><i /><b className="x-mono">operative</b></span>
-          </div>
+    <section className="a2-sec xov-ways" ref={ref} aria-labelledby="xov-ways">
+      <div className="a2-wrap">
+        <div className="xov-ways-head">
+          <p className="a2-kick">Which way in?</p>
+          <A2Lines id="xov-ways" className="a2-display s" lines={['Where the model', 'comes from']} />
+          <p className="a2-lede">One environment variable decides. The container, the desktop and the tools are identical in all four cases</p>
+        </div>
+        <div className="xov-seg" role="radiogroup" aria-label="Provider">
+          {WAYS.map((v, i) => (
+            <button key={v.k} type="button" role="radio" aria-checked={at === i} onClick={() => choose(i)}>
+              {at === i && <motion.span layoutId="xov-seg" className="xov-seg-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+              <span>{v.k}</span>
+            </button>
+          ))}
+        </div>
+        <div className="xov-cmd x-mono" aria-live="polite">
+          <span className="xov-p">$</span> docker run{' '}
+          <span className="xov-env">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span key={at} initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-100%', opacity: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>{WAYS[at].env}</motion.span>
+            </AnimatePresence>
+          </span>{' '}
+          <span className="xov-same">ghcr.io/hanzoai/operative:latest</span>
         </div>
         <div className="xov-cards">
           {WAYS.map((v, i) => (
@@ -263,7 +284,7 @@ function Ways() {
               </button>
               <ul>{v.pts.map((p) => <li key={p}>{p}</li>)}</ul>
               <p className="xov-card-set">{v.set}</p>
-              <code className="x-mono">{v.cmd}</code>
+              <code className="x-mono">docker run {v.env}</code>
             </div>
           ))}
         </div>
@@ -273,41 +294,44 @@ function Ways() {
   );
 }
 
+/* The one dark room: the loop as huge type, and a hand to stop it. */
 const LOOP = ['plans', 'acts', 'looks at the result', 'goes again'];
 
-/* Watching it in a browser: the loop runs until you interrupt it. */
 function Action() {
-  const [ref, live] = useLive(0.3);
-  const [k, setK] = useState(0);
+  const ref = useRef(null);
+  const [live] = useLive(ref, 0.3);
   const [held, setHeld] = useState(false);
-  useEvery(1500, live && !held, () => setK((v) => (v + 1) % 8));
-  const step = k % 4;
+  const [k, setK] = useState(0);
+  useEffect(() => {
+    if (!live || held) return;
+    const t = setInterval(() => setK((v) => (v + 1) % 4), 1500);
+    return () => clearInterval(t);
+  }, [live, held]);
   return (
-    <section className="x-sec xov-act" data-room="dark" ref={ref} aria-labelledby="xov-act">
-      <div className="x-wrap xov-act-grid">
-        <div>
-          <h2 id="xov-act">See Operative in Action</h2>
-          <p>Watch as Hanzo Operative uses multimodal AI to router interfaces, complete tasks, and solve problems autonomously.</p>
-          <div className="xov-loop">
-            {LOOP.map((l, i) => <span key={l} className={i === step ? 'on' : ''}>{l}</span>)}
-          </div>
+    <section className="a2-sec a2-dark xov-act" data-room="dark" ref={ref} aria-labelledby="xov-act">
+      <div className="a2-wrap a2-grid">
+        <div className="xov-act-copy">
+          <h2 id="xov-act" className="a2-headline">See Operative in Action</h2>
+          <p className="a2-body">Watch as Hanzo Operative uses multimodal AI to router interfaces, complete tasks, and solve problems autonomously.</p>
           <div className="xov-act-links">
             <button type="button" className="xov-hold" aria-pressed={held} onClick={() => setHeld((h) => !h)}>{held ? 'Resume' : 'Interrupt'}</button>
             <More to="https://docs.hanzo.ai">View more examples →</More>
           </div>
         </div>
-        <Rise className="xov-browser" delay={0.1}>
+        <ol className="xov-loop" aria-label="The loop">
+          {LOOP.map((l, i) => <li key={l} className={(i === k ? 'on' : '') + (held ? ' held' : '')}><span className="x-mono">{String(i + 1).padStart(2, '0')}</span>{l}</li>)}
+        </ol>
+        <div className="xov-browser" aria-hidden="true">
           <div className="xov-browser-bar"><i /><i /><i /><span className="x-mono">localhost:6080</span><em>Demo Video</em></div>
-          <div className={'xov-screen s' + step + (held ? ' held' : '')} aria-hidden="true">
+          <div className={'xov-screen s' + k + (held ? ' held' : '')}>
             <img src="/models/iro.webp" alt="" />
-            <div className="xov-plan">{['Open the browser', 'Find the field', 'Type the objective', 'Check the screen'].map((t, i) => <i key={t} className={i <= (k >> 1) % 4 ? 'done' : ''} />)}</div>
             <div className="xov-shot" />
-            <motion.div className="xov-aim big" animate={{ x: AIM[(k >> 1) % 4][0] * 100 + '%', y: AIM[(k >> 1) % 4][1] * 100 + '%' }} transition={{ type: 'spring', stiffness: 70, damping: 15 }}>
-              <svg viewBox="0 0 20 20" width="22" height="22"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="#fff" stroke="#0a0a0a" strokeWidth="1.2" strokeLinejoin="round" /></svg>
+            <motion.div className="xov-aim-w" animate={{ x: AIM[k][0] * 100 + '%', y: AIM[k][1] * 100 + '%' }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
+              <span className="xov-aim"><svg viewBox="0 0 20 20" width="24" height="24"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="#fff" stroke="#0a0a0a" strokeWidth="1.2" strokeLinejoin="round" /></svg></span>
             </motion.div>
             {held && <span className="xov-paused x-mono">interrupted</span>}
           </div>
-        </Rise>
+        </div>
       </div>
     </section>
   );
@@ -317,21 +341,26 @@ const SOCIAL = [['Star on GitHub', 'https://github.com/hanzoai'], ['Join Discord
 
 function Watch() {
   return (
-    <section className="x-sec xov-watch">
-      {/* the page's own numbers, the four ports, shape this field */}
-      <Sigil seed="operative" data={[8501, 6080, 5900, 8080]} className="xov-sigil" />
-      <div className="x-wrap xov-watch-grid">
-        <div>
-          <h2>Run it and watch</h2>
-          <p>The most useful hour you can spend with computer use is the first one, watching where it gets stuck.</p>
+    <section className="a2-sec xov-watch" aria-labelledby="xov-watch">
+      <div className="a2-wrap a2-grid">
+        <div className="xov-watch-copy">
+          <A2Lines id="xov-watch" className="a2-display s" lines={['Run it', 'and watch']} />
+          <p className="a2-lede">The most useful hour you can spend with computer use is the first one, watching where it gets stuck.</p>
         </div>
-        <ul className="xov-social">
-          {SOCIAL.map(([t, to], i) => <li key={t}><A to={to} className="xov-soc"><span>{t}</span><i aria-hidden="true">↗</i></A></li>)}
-        </ul>
+        <ul className="xov-social">{SOCIAL.map(([t, to]) => <li key={t}><A to={to} className="xov-soc"><span>{t}</span><i aria-hidden="true">↗</i></A></li>)}</ul>
       </div>
-      <div className="x-wrap xov-read">
-        <h2>Read before you run it</h2>
-        <div className="xov-acts"><Go to="https://docs.hanzo.ai" solid>Read the docs</Go><Go to="https://github.com/hanzoai">View on GitHub</Go></div>
+      <div className="a2-wrap a2-grid xov-end">
+        <div className="xov-read-b">
+          <h2 className="a2-title">Read before you run it</h2>
+          <div className="a2-acts"><Go to="https://docs.hanzo.ai" solid>Read the docs</Go><Go to="https://github.com/hanzoai">View on GitHub</Go></div>
+        </div>
+        <div className="xov-get">
+          <h2>Get Operative</h2>
+          <p>Computer-use harness</p>
+          <p className="xov-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
+          <p className="xov-get-cmd x-mono" aria-hidden="true">{PULL}</p>
+          <Go to="https://platform.hanzo.ai/deploy" solid>Deploy to Cloud</Go>
+        </div>
       </div>
     </section>
   );
@@ -339,14 +368,13 @@ function Watch() {
 
 export default function Operative() {
   return (
-    <main className="xov">
+    <main className="a2 xov" style={{ '--acc': '#2f6bff' }} data-acc-btn="">
       <Hero />
       <Inside />
       <Run />
       <Ways />
       <Action />
       <Watch />
-      <Get name="Operative" tag="Computer-use harness"><p className="xov-get x-mono" aria-hidden="true">{PULL}<i /></p></Get>
     </main>
   );
 }

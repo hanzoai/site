@@ -1,62 +1,77 @@
 'use client';
-/* PinChapters: the Apple product-page backbone. The section pins for one screen per chapter; the words stay put
-   while one chapter comes in as the last goes out, and the visual beside them changes with the chapter.
+/* PinChapters (v2; owned by the Platform + Cloud chat). Apple's sticky chapter scene: the words pin on the left while
+   the picture on the right changes, and one chapter comes in as the last goes out (the picture wipes up from below as
+   the old one leaves through the top; the words make a short rise). Scroll drives it; the numbered index jumps to a
+   chapter and shows how far through it you are. Keyboard focus inside a chapter scrolls to it.
+   Phones (≤ 900px) and reduced motion get a plain vertical story: every chapter in flow, words then picture.
+
    Usage:
-     <PinChapters id="how" label="How it works" chapters={[{ k: 'Kicker', t: 'Headline', b: <p>…</p> }, …]}
-       visual={(i, mine) => <YourVisual at={i} />} />
-   - visual(i) renders the pinned object for chapter i (the same object, changing, reads best).
-   - Every chapter's words are always in the page (find-in-page, screen readers); only the active one is shown.
-   - The numbered rail jumps to a chapter. Phones: the visual pins on top and the chapters scroll under it.
-   - Reduced motion: chapters swap without travel. Owned by the Business 2 chat. */
-import { useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
+     <PinChapters label="Planes" className="my-pc" chapters={[
+       { id: 'compute', tab: 'Compute', copy: <MyWords />, visual: <MyPicture /> }, …
+     ]} />
+   - Every chapter is in the HTML at all times (inactive ones are faded, never removed), so parity holds.
+   - Theme with CSS on your className: --pc-acc (index accent), --pc-per (scroll length per chapter, default 90vh). */
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useMotionValueEvent, useTransform } from 'motion/react';
 import './PinChapters.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
-export default function PinChapters({ id, label, chapters, visual, className = '', flip = false }) {
-  const ref = useRef(null);
+export default function PinChapters({ chapters, label, className = '' }) {
+  const track = useRef(null);
   const n = chapters.length;
   const [at, setAt] = useState(0);
-  const calm = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (v) => setAt(Math.min(n - 1, Math.max(0, Math.floor(v * n * 0.999)))));
-  const go = (i) => {
-    const el = ref.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + scrollY + ((el.offsetHeight - innerHeight) * (i + 0.5)) / n;
-    window.__lenis ? window.__lenis.scrollTo(top, { duration: 1.1 }) : scrollTo({ top, behavior: 'smooth' });
+  const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] });
+  const local = useTransform(scrollYProgress, (v) => clamp(v * n - Math.min(n - 1, Math.floor(v * n))));
+  useMotionValueEvent(scrollYProgress, 'change', (v) => {
+    const i = Math.min(n - 1, Math.max(0, Math.floor(v * n)));
+    setAt((a) => (a === i ? a : i));
+  });
+  const pinned = useRef(true);
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)');
+    const on = () => { pinned.current = !mq.matches; };
+    on();
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  const go = (i, smooth = true) => {
+    const el = track.current;
+    if (!el || !pinned.current) return;
+    const top = el.getBoundingClientRect().top + scrollY;
+    const y = top + (el.offsetHeight - innerHeight) * ((i + 0.35) / n);
+    if (window.__lenis) window.__lenis.scrollTo(y, { immediate: !smooth, force: true });
+    else scrollTo({ top: y, behavior: smooth ? 'smooth' : 'auto' });
   };
   return (
-    <section ref={ref} id={id} aria-label={label} className={'w2-pin' + (flip ? ' flip' : '') + ' ' + className} style={{ '--n': n }}>
-      <div className="w2-pin-stick">
-        <div className="w2-wrap w2-pin-grid">
-          <div className="w2-pin-words">
-            <ol className="w2-pin-rail" aria-label="Chapters">
-              {chapters.map((c, i) => (
-                <li key={i}>
-                  <button type="button" aria-current={at === i ? 'step' : undefined} onClick={() => go(i)}>
-                    <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
-                    <i aria-hidden="true"><motion.b initial={false} animate={{ scaleX: at > i ? 1 : at === i ? 0.5 : 0 }} transition={{ duration: 0.5, ease: EASE }} /></i>
-                  </button>
-                </li>
-              ))}
-            </ol>
-            <div className="w2-pin-texts">
-              {chapters.map((c, i) => (
-                <motion.article key={i} className={'w2-pin-t' + (at === i ? ' on' : '')} initial={false}
-                  animate={calm ? { opacity: at === i ? 1 : 0 } : { opacity: at === i ? 1 : 0, y: at === i ? 0 : at > i ? -48 : 48 }}
-                  transition={{ duration: at === i ? 0.7 : 0.35, ease: EASE, delay: at === i ? 0.12 : 0 }}>
-                  {c.k && <p className="w2-kicker acc">{c.k}</p>}
-                  <h2 className="w2-headline">{c.t}</h2>
-                  <div className="w2-pin-b">{c.b}</div>
-                </motion.article>
-              ))}
+    <div ref={track} className={'pc ' + className} style={{ '--pc-n': n }}>
+      <div className="pc-stage">
+        <div className="pc-grid">
+          <nav className="pc-idx" aria-label={label}>
+            {chapters.map((c, i) => (
+              <button key={c.id} type="button" className={i === at ? 'on' : ''} aria-current={i === at ? 'step' : undefined} onClick={() => go(i)}>
+                <span className="pc-n">{String(i + 1).padStart(2, '0')}</span>
+                <span className="pc-t">{c.tab}</span>
+                {i === at && (
+                  <motion.i layoutId={'pc-bar-' + (label || 'x')} className="pc-bar" transition={{ type: 'spring', stiffness: 300, damping: 30 }} aria-hidden="true">
+                    <motion.b style={{ scaleX: local }} />
+                  </motion.i>
+                )}
+              </button>
+            ))}
+          </nav>
+          {chapters.map((c, i) => (
+            <div key={c.id} id={c.id} className="pc-copy" style={{ '--i': i }} data-on={i === at} data-past={i < at} onFocus={() => i !== at && go(i, false)}>
+              {c.copy}
             </div>
-          </div>
-          <div className="w2-pin-visual">{visual(at)}</div>
+          ))}
+          {chapters.map((c, i) => (
+            <div key={c.id + '-v'} className="pc-vis" style={{ '--i': i }} data-on={i === at} data-past={i < at}>
+              {c.visual}
+            </div>
+          ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

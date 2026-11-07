@@ -1,24 +1,29 @@
 'use client';
-/* LineMask: kinetic type. Each line rises out of its own mask, once.
-   Usage: <LineMask as="h1" className="w2-display" lines={['One risk plane', 'for accounts,']} />
-   - now: play on mount (heroes); otherwise it plays the first time it is on screen.
-   - The full text is one string for screen readers; the masked lines are aria-hidden.
-   Reduced motion: lines are simply there. Owned by the Business 2 chat. */
-import { motion, useReducedMotion } from 'motion/react';
-import './Scale.css';
+/* LineMask: kinetic type, played once. Each line rises out of its own mask (VISION motion 4).
+   Usage: <LineMask as="h1" className="lx-display" lines={['Hanzo', 'Metrics']} />  — plays on mount (a hero);
+          <LineMask lines={[...]} inView />                                         — plays when first scrolled to.
+   The whole sentence is in the HTML from the start; reduced motion shows it set. Owned by Cloud 3. */
+import { useRef } from 'react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import './LaunchType.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 
-export default function LineMask({ as = 'h2', lines, className = '', now = false, delay = 0, id }) {
-  const Tag = motion[as];
+export default function LineMask({ lines, as = 'h2', className = '', delay = 0, inView = false, stagger = 0.09, ...rest }) {
+  const ref = useRef(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
-  const play = now ? { initial: 'h', animate: 's' } : { initial: 'h', whileInView: 's', viewport: { once: true, amount: 0.6 } };
+  const go = !inView || seen;
+  const Tag = as;
   return (
-    <Tag id={id} className={'w2-mask ' + className} {...(calm ? {} : play)} variants={{ h: {}, s: { transition: { staggerChildren: 0.09, delayChildren: delay } } }}>
-      <span className="x-sr">{lines.join(' ')}</span>
+    <Tag ref={ref} className={className} {...rest}>
       {lines.map((t, i) => (
-        <span key={i} className="x-line" aria-hidden="true">
-          <motion.span className="x-line-in" variants={{ h: { y: '108%' }, s: { y: 0, transition: { duration: 1.1, ease: EASE } } }}>{t}</motion.span>
+        <span className="lx-line" key={i}>
+          <motion.span
+            initial={calm ? false : { y: '108%' }}
+            animate={go ? { y: 0 } : undefined}
+            transition={{ duration: 1.05, ease: EASE, delay: delay + i * stagger }}
+          >{t}</motion.span>
         </span>
       ))}
     </Tag>

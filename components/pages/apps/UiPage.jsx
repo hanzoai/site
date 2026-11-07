@@ -12,9 +12,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
 import { A } from '../../kit';
 import { Paste, Code, useLive, useEvery } from '../cloud/Frame';
-import LineMask from '../../v2/LineMask';
+import LineMask from '../../v2/x-gauss/LineMask';
 import Settle from '../../v2/Settle';
-import PinChapters from '../../v2/PinChapters';
+import PinChapters from '../../v2/x-gauss/PinChapters';
 import '../../v2/Scale.css';
 import './UiPage.css';
 

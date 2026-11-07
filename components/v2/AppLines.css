@@ -1,0 +1,34 @@
+/* v2 type for the Apps launch pages (VISION.md "The v2 system"). Owner: the Wave 1 Apps chat.
+   Display 128/96/80 → 56/48 on phones, weight 600, line height .92, tracking -.05em. Headline 56 → 36. Title 28.
+   Lede 24/21. Body 19/17 at 60–68ch. Kicker: Zen Mono 13, caps, .12em. */
+.v2a-lines { margin: 0; text-wrap: balance; }
+.v2a-line { display: block; overflow: hidden; padding: .06em 0 .12em; margin: -.06em 0 -.12em; }
+.v2a-line-in { display: block; will-change: auto; }
+.v2a-line.soft { color: var(--faint); }
+
+.v2a-display { font-size: clamp(3.5rem, 8.2vw, 8rem); font-weight: 600; line-height: .92; letter-spacing: -.05em; color: var(--ink); }
+.v2a-display.md { font-size: clamp(3rem, 6.6vw, 6rem); }
+.v2a-display.sm { font-size: clamp(3rem, 5.6vw, 5rem); }
+.v2a-head { font-size: clamp(2.25rem, 3.9vw, 3.5rem); font-weight: 600; line-height: 1; letter-spacing: -.045em; color: var(--ink); }
+.v2a-title { font-size: clamp(1.4rem, 1.95vw, 1.75rem); font-weight: 600; line-height: 1.15; letter-spacing: -.03em; color: var(--ink); margin: 0; }
+.v2a-lede { font-size: clamp(1.3125rem, 1.65vw, 1.5rem); line-height: 1.42; letter-spacing: -.012em; color: var(--soft); margin: 0; max-width: 34ch; text-wrap: pretty; }
+.v2a-body { font-size: clamp(1.0625rem, 1.3vw, 1.1875rem); line-height: 1.55; color: var(--soft); margin: 0; max-width: 64ch; text-wrap: pretty; }
+.v2a-kick { margin: 0 0 22px; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.v2a-fig { font-family: var(--sans); font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: -.055em; line-height: .86; }
+
+/* the v2 grid: 12 columns, 1440 max, 24px gutters */
+.v2a-wrap { width: min(100% - 64px, 1440px); margin-inline: auto; }
+.v2a-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+.v2a-sec { padding: clamp(120px, 15vw, 240px) 0; position: relative; }
+
+@media (max-width: 900px) {
+  .v2a-wrap { width: calc(100% - 32px); }
+  .v2a-display { font-size: clamp(2.9rem, 13.6vw, 3.5rem); }
+  .v2a-display.md, .v2a-display.sm { font-size: clamp(2.6rem, 12vw, 3rem); }
+  .v2a-head { font-size: clamp(2rem, 9.4vw, 2.25rem); }
+  .v2a-lede { font-size: 1.1875rem; }
+  .v2a-grid { grid-template-columns: minmax(0, 1fr); }
+  .v2a-grid > * { grid-column: 1 / -1 !important; }
+  .v2a-sec { padding: 120px 0; }
+  .v2a-kick { font-size: 13px; margin-bottom: 16px; }
+}

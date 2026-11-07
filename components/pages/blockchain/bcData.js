@@ -56,7 +56,7 @@ export function productDoc(slug) {
   const rel = 'blockchain/' + slug;
   if (slug === 'directory') return directoryDoc();
   const secs = sections(load(rel)).map(flow);
-  const doc = { slug, route: '/' + rel, kind: 'product', blocks: [] };
+  const doc = { slug, route: '/' + rel, kind: 'product', i: SLUGS().indexOf(slug), blocks: [] };
   secs.forEach((f, i) => {
     const h2 = (f.find((x) => x.k === 'h2') || {}).text || '';
     if (i === 0) {
@@ -118,7 +118,7 @@ export function directoryDoc() {
     if (marks.length) cards.push({ name, id: spans.find((s) => /^Chain ID:/.test(s)) || null, kind: spans.filter((s) => !/^Chain ID:/.test(s)).slice(-1)[0] || '', marks });
   }
   return {
-    slug: 'directory', route: '/' + rel, kind: 'directory',
+    slug: 'directory', route: '/' + rel, kind: 'directory', i: SLUGS().indexOf('directory'),
     label: (all.find((x) => x.k === 'span' && all.indexOf(x) < all.indexOf(h1)) || {}).text || 'Chain Resource Directory',
     title: h1 ? h1.text : '', lede: (all.find((x) => x.k === 'p') || {}).text || '',
     search: (/placeholder="([^"]*)"/.exec(html) || [])[1] || null,
@@ -162,4 +162,4 @@ export function overviewDoc() {
 }
 
 /* every product's supported chains, for "which products run on my chain" */
-export const coverage = () => SLUGS().filter((s) => s !== 'directory').map((s) => { const d = productDoc(s); return { slug: s, href: d.route, name: d.hero ? d.hero.title : s, chains: d.chains }; }).filter((p) => p.chains.length);
+export const coverage = () => SLUGS().filter((s) => s !== 'directory').map((s) => { const d = productDoc(s); return { slug: s, href: d.route, name: d.hero ? d.hero.title : s, chains: d.chains, i: d.i, claim: d.hero ? d.hero.claim : '' }; }).filter((p) => p.chains.length);

@@ -36,55 +36,60 @@ export default function ProviderShelf({ doc }) {
   const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
   return (
     <main className="xmf xmf-prov">
-      <section className="xmf-hero" aria-labelledby="xmf-h1">
-        <div className="x-wrap xmf-hero-g">
-          <div className="xmf-hero-t">
-            <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
-              <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
-            </motion.nav>
-            <h1 id="xmf-h1" className="xmf-h1" data-morph-target>
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
-            </h1>
-            {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
-            <motion.div className="xmf-acts" {...up(0.42)}>
-              {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
-            </motion.div>
-          </div>
-          <motion.div className="xmf-read xmf-read-p" initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}>
-            <div className="xmf-read-art">
-              <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" />
-              <p className="xmf-read-big xmf-count">
-                <b>{Number.isFinite(n) ? <Count to={n} /> : null}</b>
-                <span className="xmf-k x-mono"> {Number.isFinite(n) ? word : doc.count}</span>
-              </p>
+      <section className="xmf-launch xmf-maker" aria-labelledby="xmf-h1">
+        <div className="xmf-art" aria-hidden="true">
+          <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" />
+        </div>
+        <div className="x-wrap xmf-launch-in">
+          <div className="xmf-maker-g">
+            <div className="xmf-launch-t">
+              <motion.nav className="xmf-crumbs" aria-label="Breadcrumb" {...up(0)}>
+                <span><A to="/models">Models</A></span><span><span className="x-mono" aria-current="page">{doc.name}</span></span>
+              </motion.nav>
+              <h1 id="xmf-h1" className={'xmf-name ' + (doc.h1.length <= 24 ? 'm' : 'l')} data-morph-target>
+                <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
+              </h1>
+              {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
+              <motion.div className="xmf-acts" {...up(0.42)}>
+                {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn xmf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
+              </motion.div>
             </div>
-            {doc.guest.code && (
-              <div className="xmf-guest">
-                <div className="xmf-guest-h">
-                  {doc.guest.title && <b>{doc.guest.title}</b>}
-                  {doc.guest.key && <code className="x-mono">{doc.guest.key}</code>}
-                  {doc.guest.note && <span>{doc.guest.note}</span>}
-                </div>
+            {/* the maker's count is the hero figure */}
+            <motion.p className="xmf-maker-n" {...up(0.2)}>
+              <b>{Number.isFinite(n) ? <Count to={n} /> : null}</b>
+              <span className="x-mono">{Number.isFinite(n) ? word : doc.count}</span>
+            </motion.p>
+          </div>
+          {doc.guest.code && (
+            <motion.div className="xmf-guest" {...up(0.5)}>
+              <div className="xmf-guest-h">
+                {doc.guest.title && <b>{doc.guest.title}</b>}
+                {doc.guest.key && <code className="x-mono">{doc.guest.key}</code>}
+                {doc.guest.note && <span>{doc.guest.note}</span>}
                 {doc.guest.prompt && <p>{doc.guest.prompt}</p>}
-                <div className="xmf-term">
-                  <div className="xmf-term-h"><span className="x-mono">{doc.guest.label}</span><Copy text={doc.guest.code} /></div>
-                  <pre tabIndex={0}><code>{doc.guest.code}</code></pre>
-                </div>
               </div>
-            )}
-          </motion.div>
+              <div className="xmf-term">
+                <div className="xmf-term-h"><span className="x-mono"><i aria-hidden="true" />{doc.guest.label}</span><Copy text={doc.guest.code} /></div>
+                <pre tabIndex={0}><code>{doc.guest.code}</code></pre>
+              </div>
+            </motion.div>
+          )}
         </div>
       </section>
 
       {plotted > 1 && (
-        <section className="x-sec xmf-among" aria-label="Context window and output rate">
+        <section className="xmf-sec xmf-among" aria-labelledby="xmf-among-h">
           <div className="x-wrap">
+            <header className="xmf-sh">
+              <p className="xmf-kick">{doc.name}</p>
+              <h2 id="xmf-among-h">Context window and output rate</h2>
+            </header>
             <Field points={cards} here={null} label={`${doc.name} models by context window and output rate`} />
           </div>
         </section>
       )}
 
-      <section className="x-sec xmf-shelf" id="shelf">
+      <section className="xmf-sec xmf-shelf" id="shelf">
         <div className="x-wrap">
           <div className="xmf-shelf-bar">
             <div className="xmf-seg" role="group" aria-label="Sort">

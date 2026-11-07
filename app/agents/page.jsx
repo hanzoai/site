@@ -1,3 +1,5 @@
+// Signature: an agent signs itself up live, the five steps lighting as it reaches each request
+// Beyond: who is installing, the install block keeps only the lines your path needs
 import AgentsPage from '../../components/pages/AgentsPage';
 import JsonLd from '../../components/JsonLd';
 

@@ -1,0 +1,48 @@
+/* Keynote: the v2 type, space and colour tokens for Apple-grade launch pages (docs/VISION.md, "The v2 system").
+   Owned by the Cloud 1 chat. Imported by every components/v2/Keynote*.jsx, so a page that uses one piece has them all.
+   How to use: put className="kn" on the page's <main> and set its one accent there: style={{ '--ac': '#ff453a' }}.
+   Then use the classes below instead of inventing sizes: at most three sizes per screen. */
+.kn { --ac: #0a84ff; --ac-ink: #fff; --kn-r: 28px; --kn-rc: 16px; --kn-g: 24px; --kn-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 40px 80px -40px rgba(0, 0, 0, .22); background: #fff; color: var(--ink); overflow-x: clip; }
+.kn-wrap { width: min(100% - 48px, 1440px); margin-inline: auto; }
+.kn-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--kn-g); }
+.kn-sec { padding: clamp(120px, 15vw, 240px) 0; position: relative; }
+
+.kn-display { margin: 0; font-size: clamp(56px, 8.9vw, 128px); font-weight: 600; line-height: .92; letter-spacing: -.05em; text-wrap: balance; }
+.kn-display.md { font-size: clamp(48px, 6.7vw, 96px); }
+.kn-display.sm { font-size: clamp(48px, 5.6vw, 80px); }
+.kn-headline { margin: 0; font-size: clamp(36px, 3.9vw, 56px); font-weight: 600; line-height: 1.02; letter-spacing: -.04em; max-width: 16ch; text-wrap: balance; }
+.kn-title { margin: 0; font-size: clamp(22px, 1.95vw, 28px); font-weight: 600; line-height: 1.15; letter-spacing: -.025em; text-wrap: balance; }
+.kn-lede { margin: 0; font-size: clamp(19px, 1.67vw, 24px); line-height: 1.4; letter-spacing: -.012em; color: var(--soft); max-width: 36ch; text-wrap: pretty; }
+.kn-body { margin: 0; font-size: clamp(17px, 1.32vw, 19px); line-height: 1.58; color: var(--soft); max-width: 64ch; text-wrap: pretty; }
+.kn-body b, .kn-lede b { color: var(--ink); font-weight: 600; }
+.kn-kick { margin: 0; font: 500 13px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.kn-kick.ac { color: var(--ac); }
+.kn-fig { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+.kn-ac { color: var(--ac); }
+.kn-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.kn-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 16px/1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .2s, background .2s; }
+.kn-btn:hover { border-color: rgba(0, 0, 0, .2); }
+.kn-btn.solid { background: var(--ink); border-color: var(--ink); color: #fff; }
+.kn-btn.solid:hover { background: #262626; }
+.kn-btn:focus-visible { outline: 2px solid var(--ac); outline-offset: 3px; }
+.kn-hair { height: 1px; background: var(--line); border: 0; margin: 0; }
+
+/* a hero object: crisp product UI, 28px radius, soft long shadow, no glass */
+.kn-obj { border-radius: var(--kn-r); background: #fff; border: 1px solid rgba(0, 0, 0, .08); box-shadow: var(--kn-shadow); overflow: hidden; }
+.kn-obj.ink { background: #0b0b0c; border-color: rgba(255, 255, 255, .08); color: #f5f5f7; }
+
+@media (max-width: 900px) {
+  .kn-wrap { width: min(100% - 32px, 1440px); }
+  .kn-grid { column-gap: 16px; }
+  .kn-sec { padding: 120px 0; }
+  .kn-display { font-size: clamp(48px, 14vw, 56px); }
+  .kn-display.md, .kn-display.sm { font-size: 48px; }
+  .kn-headline { font-size: 36px; }
+  .kn-kick { font-size: 14px; }
+  .kn-btn { min-height: 48px; }
+}
+
+/* KeynoteLines */
+.knl-in { display: block; }
+.knl-row { display: block; overflow: hidden; padding: .02em 0 .1em; margin: -.02em 0 -.1em; }
+.knl-t { display: inline-block; will-change: auto; }

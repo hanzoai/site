@@ -11,7 +11,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/rea
 import { EASE, Copy, Magnetic } from '../ui';
 import { A } from '../kit';
 import SetupMenu from '../SetupMenu';
-import LineMask from '../v2/LineMask';
+import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
 import { OpenCards } from '../v2/OpenSheet';
 import '../v2/Scale.css';

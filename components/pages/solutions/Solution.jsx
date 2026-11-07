@@ -1,21 +1,29 @@
 'use client';
-/* One solution (/solutions/<team, industry or use case>, 18 pages, one template). The first screen is this
-   solution's own reel: its model's film, its label and its jobs, over a contour field seeded from its name and counts.
-   Signature: the reel. The jobs play one after another on the film, each with a progress line like a story; it pauses
-   while you hover or focus it; press a job (or a segment) to jump to it.
+/* One solution (/solutions/<team, industry or use case>, 18 pages, one template), read as a launch. The first screen
+   is one sentence at display size and the solution's own film as the hero object, which starts close and settles into
+   place as you scroll, with the products it runs on riding along its foot.
+   Signature: the jobs as a scroll-scrubbed build-up. Each job the solution does is one chapter: its words pin on the
+   left while the film re-frames on the right, one shot wiping in as the last goes out, and the story bar over the shot
+   fills one segment per job, so the solution assembles itself as you scroll.
    Beyond: the overlap finder. Pick another team or industry and see which products the two share and which each adds,
-   so a buyer with more than one team sees what one account covers. */
+   so a buyer with more than one team sees what one account covers.
+   V2: 8/10 Stage hero with the film settling, jobs as sticky wipe chapters, products as one account object, calm trust list, siblings as cards that open into their page, one accent per member. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE } from '../../ui';
 import { A } from '../../kit';
-import Sigil from '../../Sigil';
 import { Loose } from '../models/parts';
 import { media } from '../../../lib/models';
+import FamLines from '../../v2/FamLines';
+import FamStage from '../../v2/FamStage';
+import FamChapters from '../../v2/FamChapters';
+import FamNext from '../../v2/FamNext';
+import { accentAt } from '../../v2/famAccent';
+import '../../v2/fam.css';
 import './solutions.css';
+import './Solution.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const pad = (n) => String(n).padStart(2, '0');
+const ARROW = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* a model's film: the still at once, the film only while on screen */
 export function Film({ slug, className = '' }) {
@@ -36,7 +44,7 @@ export function Film({ slug, className = '' }) {
   );
 }
 
-/* the jobs, playing like stories on the film */
+/* the jobs, playing like stories on the film (the /solutions index uses it) */
 export function useReel(n, box, ms = 5200) {
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
@@ -51,31 +59,19 @@ export function useReel(n, box, ms = 5200) {
   return { at, setAt, run, hold: { onPointerEnter: () => setHeld(true), onPointerLeave: () => setHeld(false), onFocus: () => setHeld(true), onBlur: () => setHeld(false) } };
 }
 
-function Reel({ reel, at, setAt, run, hold, box }) {
-  const n = reel.steps.length;
+/* one job's shot: the film's still, framed anew for each job, with the story bar over it */
+const FRAMES = [['50% 50%', 1.08], ['12% 18%', 1.85], ['88% 72%', 1.6], ['30% 92%', 2.1], ['78% 14%', 1.7], ['50% 62%', 2.4]];
+function Shot({ slug, k, n, label }) {
+  const [p, s] = FRAMES[k % FRAMES.length];
   return (
-    <div className="xsl-reel" ref={box} {...hold}>
-      <Film slug={reel.slug} />
-      <span className="xsl-scrim" aria-hidden="true" />
-      <div className="xsl-reel-top">
-        <div className="xsl-segs" aria-hidden="true">
-          {reel.steps.map((s, i) => (
-            <button key={i} type="button" tabIndex={-1} onClick={() => setAt(i)}>
-              <i className={i < at ? 'done' : i === at ? (run ? 'run' : 'done') : ''} key={i === at ? 'r' + at + run : 'k'} style={{ animationDuration: '5.2s' }} />
-            </button>
-          ))}
-        </div>
-        <div className="xsl-reel-meta"><span>{reel.label}</span><span className="x-mono" aria-live="off">{pad(at + 1)} / {pad(n)}</span></div>
+    <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s }}>
+      {slug && <img src={media(slug, 'webp')} alt="" decoding="async" loading="lazy" />}
+      <span className="xs2-shot-scrim" />
+      <div className="xs2-shot-top">
+        <div className="xs2-shot-bar">{Array.from({ length: n }, (_, i) => <i key={i} className={i < k ? 'done' : i === k ? 'cur' : ''} />)}</div>
+        <span className="x-mono">{label}</span>
       </div>
-      <div className="xsl-panes">
-        {reel.steps.map((s, i) => (
-          <div key={s.title} className={'xsl-pane' + (i === at ? ' on' : '')} aria-hidden={i !== at}>
-            <span className="xsl-pane-t">{s.title}</span>
-            {s.text && <p>{s.text}</p>}
-          </div>
-        ))}
-      </div>
-      {reel.names.length > 0 && <div className="xsl-names">{reel.names.map((m) => <span key={m}>{m}</span>)}</div>}
+      <b className="xs2-shot-n">{pad(k + 1)}</b>
     </div>
   );
 }
@@ -88,11 +84,11 @@ function Overlap({ here, sibs, data }) {
   const mine = here.filter((p) => !theirs.includes(p));
   const only = theirs.filter((p) => !here.includes(p));
   return (
-    <div className="xsl-ovl">
-      <div className="xsl-ovl-pick" role="group" aria-label="Compare with">
+    <div className="xsl-ovl xs2-ovl">
+      <div className="xsl-ovl-pick" role="group" aria-label="Compare with" data-swipe-own>
         {sibs.map((s) => (
           <button key={s.href} type="button" aria-pressed={s.href === pick} onClick={() => setPick(s.href)}>
-            {s.href === pick && <motion.span layoutId="xsl-ovl" className="xsl-ovl-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            {s.href === pick && <motion.span layoutId="xsl-ovl" className="xsl-ovl-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
             <span>{s.label}</span>
           </button>
         ))}
@@ -109,76 +105,76 @@ function Overlap({ here, sibs, data }) {
 }
 
 export default function Solution({ doc, data }) {
-  const box = useRef(null);
-  const n = doc.reel ? doc.reel.steps.length : 0;
-  const r = useReel(n, box);
-  const sibs = doc.more ? doc.more.links.filter((l) => /^\/solutions\/[^/]+$/.test(l.href) && data[l.href.split('/').pop()]) : [];
+  const reel = doc.reel;
+  const n = reel ? reel.steps.length : 0;
+  const sibLinks = doc.more ? doc.more.links.filter((l) => /^\/solutions\/[^/]+$/.test(l.href) && data[l.href.split('/').pop()]) : [];
+  const otherLinks = doc.more ? doc.more.links.filter((l) => !doc.sibs.some((s) => s.href === l.href)) : [];
   const here = doc.runs ? doc.runs.items.map((x) => x.name) : [];
-  const nums = [n, here.length, ...(doc.capacity ? doc.capacity.rows.map((row) => parseFloat(row[2])) : [])];
+  const cards = doc.sibs.map((s) => {
+    const l = doc.more.links.find((x) => x.href === s.href);
+    return { href: s.href, kicker: l ? l.label : s.label, title: s.title, meta: s.first, seed: s.href, data: s.n, acc: accentAt(s.i) };
+  });
   return (
-    <main className="xsl">
-      <section className="xsl-hero" aria-labelledby="xsl-h1">
-        <Sigil seed={doc.route} data={nums} className="xsl-sigil" />
-        <div className="x-wrap xsl-hero-g">
-          <div className="xsl-hero-t">
-            {doc.label && <motion.p className="xsl-pill x-mono" {...up(0)}>{doc.label}</motion.p>}
-            <h1 id="xsl-h1" className="xsl-h1" data-morph-target>
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.06 }}>{doc.title}</motion.span></span>
-            </h1>
-            <motion.p className="xsl-lede" {...up(0.28)}>{doc.lede}</motion.p>
-            <motion.div className="xsl-acts" {...up(0.4)}>
-              {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
-            </motion.div>
-            {doc.reel && (
-              <motion.ol className="xsl-jobs" {...up(0.5)}>
-                {doc.reel.steps.map((s, i) => (
-                  <li key={s.title}>
-                    <button type="button" aria-expanded={i === r.at} onClick={() => r.setAt(i)}>
-                      <span className="x-mono">{pad(i + 1)}</span><span>{s.title}</span>
-                    </button>
-                  </li>
-                ))}
-              </motion.ol>
-            )}
+    <main className="xsl xs2 v2f" style={{ '--acc': accentAt(doc.i) }}>
+      <section className="xs2-hero" aria-labelledby="xs2-h1">
+        <div className="v2f-wrap v2f-grid xs2-hero-g">
+          <div className="xs2-hero-t">
+            {doc.label && <p className="v2f-kick acc xs2-kick">{doc.label}</p>}
+            <FamLines as="h1" id="xs2-h1" text={doc.title} className="v2f-display xs2-h1" data-morph-target />
           </div>
-          {doc.reel && (
-            <motion.div initial={{ opacity: 0, y: 30, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1.2, ease: EASE, delay: 0.12 }}>
-              <Reel reel={doc.reel} box={box} {...r} />
-            </motion.div>
-          )}
+          <div className="xs2-hero-r">
+            <p className="v2f-lede">{doc.lede}</p>
+            <div className="xs2-acts">
+              {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'v2f-btn' + (i ? '' : ' acc')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
+            </div>
+          </div>
         </div>
+        {reel && (
+          <div className="v2f-wrap">
+            <FamStage className="xs2-stage" from={1.1}>
+              <div className="xs2-film">
+                <Film slug={reel.slug} />
+                <span className="xs2-film-scrim" aria-hidden="true" />
+                <div className="xs2-film-top" aria-hidden="true"><span className="x-mono">{reel.label}</span><span className="x-mono">{pad(1)} — {pad(n)}</span></div>
+                {reel.names.length > 0 && <div className="xs2-names" data-swipe-own>{reel.names.map((m) => <span key={m}>{m}</span>)}</div>}
+              </div>
+            </FamStage>
+          </div>
+        )}
       </section>
 
-      {doc.runs && (
-        <section className="x-sec xsl-runs">
-          <div className="x-wrap">
-            <header className="xsl-sh"><h2>{doc.runs.title}</h2>{doc.runs.lede && <p>{doc.runs.lede}</p>}</header>
-            <ul className="xsl-prods">
-              {doc.runs.items.map((p, i) => (
-                <motion.li key={p.href} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.7, ease: EASE, delay: (i % 3) * 0.06 }}>
-                  <A to={p.href} className="xsl-prod">
-                    <span className="xsl-prod-n x-mono">{pad(i + 1)}</span>
-                    <b data-morph>{p.name}</b>
-                    <span className="xsl-prod-t">{p.text}</span>
-                    <i aria-hidden="true">→</i>
-                  </A>
-                </motion.li>
-              ))}
-            </ul>
-            <div className="xsl-links">{doc.runs.links.map((l) => <A key={l.href} to={l.href} className="x-arrow">{l.label}</A>)}</div>
-          </div>
-        </section>
+      {reel && n > 0 && (
+        <FamChapters
+          id="xs2-jobs"
+          className="xs2-jobs"
+          label={reel.label}
+          items={reel.steps.map((s, k) => ({
+            key: s.title,
+            name: s.title,
+            text: (
+              <div className="xs2-ch-t">
+                <p className="v2f-kick acc">{pad(k + 1)} / {pad(n)}</p>
+                <h2 className="v2f-head">{s.title}</h2>
+                {s.text && <p className="v2f-body">{s.text}</p>}
+              </div>
+            ),
+            visual: <Shot slug={reel.slug} k={k} n={n} label={reel.label} />,
+          }))}
+        />
       )}
 
       {doc.capacity && (
-        <section className="x-sec xsl-cap">
-          <div className="x-wrap">
-            <header className="xsl-sh"><h2>{doc.capacity.title}</h2>{doc.capacity.lede && <p>{doc.capacity.lede}</p>}</header>
+        <section className="v2f-sec xs2-cap" aria-labelledby="xs2-cap-h">
+          <div className="v2f-wrap v2f-grid">
+            <header className="xs2-side">
+              <FamLines as="h2" id="xs2-cap-h" play="view" className="v2f-head" text={doc.capacity.title} />
+              {doc.capacity.lede && <p className="v2f-lede">{doc.capacity.lede}</p>}
+            </header>
             {doc.capacity.rows.length > 0 && (
-              <div className="xsl-table" role="region" aria-label={doc.capacity.title} tabIndex={0}>
+              <div className="xs2-cap-t v2f-obj" role="region" aria-label={doc.capacity.title} tabIndex={0}>
                 <table>
                   <thead><tr>{doc.capacity.head.map((h, i) => <th key={i} scope="col">{h || <span className="xsl-sr">GPU</span>}</th>)}</tr></thead>
-                  <tbody>{doc.capacity.rows.map((row) => <tr key={row[0]}>{row.map((c, i) => (i ? <td key={i} className="x-mono">{c}</td> : <th key={i} scope="row">{c}</th>))}</tr>)}</tbody>
+                  <tbody>{doc.capacity.rows.map((row) => <tr key={row[0]}>{row.map((c, i) => (i ? <td key={i} className={i === 2 ? 'xs2-big' : 'x-mono'}>{c}</td> : <th key={i} scope="row">{c}</th>))}</tr>)}</tbody>
                 </table>
               </div>
             )}
@@ -186,37 +182,75 @@ export default function Solution({ doc, data }) {
         </section>
       )}
 
-      {doc.security && (
-        <section className="x-sec xsl-sec">
-          <div className="x-wrap">
-            <header className="xsl-sh"><h2>{doc.security.title}</h2></header>
-            <div className="xsl-sec-g">
-              {doc.security.items.map((s) => <div key={s.title} className="xsl-sec-i"><h3>{s.title}</h3><p>{s.text}</p></div>)}
-            </div>
-            <div className="xsl-links">{doc.security.links.map((l) => <A key={l.href} to={l.href} className="x-arrow">{l.label}</A>)}</div>
+      {doc.runs && (
+        <section className="v2f-sec xs2-runs" aria-labelledby="xs2-runs-h">
+          <div className="v2f-wrap v2f-grid">
+            <header className="xs2-side">
+              <FamLines as="h2" id="xs2-runs-h" play="view" className="v2f-head" text={doc.runs.title} />
+              {doc.runs.lede && <p className="v2f-lede">{doc.runs.lede}</p>}
+              <div className="xs2-links">{doc.runs.links.map((l) => <A key={l.href} to={l.href} className="x-arrow"><span>{l.label}</span>{ARROW}</A>)}</div>
+            </header>
+            <ol className="xs2-stack v2f-obj">
+              {doc.runs.items.map((p, i) => (
+                <li key={p.href}>
+                  <A to={p.href} className="xs2-row">
+                    <span className="xs2-row-n x-mono">{pad(i + 1)}</span>
+                    <b data-morph>{p.name}</b>
+                    <span className="xs2-row-t">{p.text}</span>
+                    <i aria-hidden="true">{ARROW}</i>
+                  </A>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
       )}
 
-      {doc.extra.map((e, i) => <section className="x-sec" key={i}><div className="x-wrap"><Loose nodes={e.nodes} /></div></section>)}
+      {doc.security && (
+        <section className="v2f-sec xs2-trust" aria-labelledby="xs2-trust-h">
+          <div className="v2f-wrap v2f-grid">
+            <header className="xs2-trust-h">
+              <FamLines as="h2" id="xs2-trust-h" play="view" className="v2f-display small" text={doc.security.title} />
+            </header>
+            <div className="xs2-trust-r">
+              <ul className="xs2-proof">
+                {doc.security.items.map((s, i) => (
+                  <li key={s.title}>
+                    <span className="x-mono xs2-proof-n">{pad(i + 1)}</span>
+                    <div><h3 className="v2f-title">{s.title}</h3><p className="v2f-body">{s.text}</p></div>
+                  </li>
+                ))}
+              </ul>
+              <div className="xs2-links">{doc.security.links.map((l) => <A key={l.href} to={l.href} className="x-arrow"><span>{l.label}</span>{ARROW}</A>)}</div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {doc.extra.map((e, i) => <section className="v2f-sec" key={i}><div className="v2f-wrap"><Loose nodes={e.nodes} /></div></section>)}
 
       {doc.more && (
-        <section className="x-sec xsl-more">
-          <div className="x-wrap">
-            <header className="xsl-sh"><h2>{doc.more.title}</h2></header>
-            <ul className="xsl-chips">{doc.more.links.map((l) => <li key={l.href}><A to={l.href}>{l.label}</A></li>)}</ul>
-            {sibs.length > 0 && here.length > 0 && <Overlap here={here} sibs={sibs} data={data} />}
+        <section className="v2f-sec xs2-more" aria-labelledby="xs2-more-h">
+          <div className="v2f-wrap">
+            <header className="xs2-more-h">
+              <FamLines as="h2" id="xs2-more-h" play="view" className="v2f-head" text={doc.more.title} />
+              <div className="xs2-links">{otherLinks.map((l) => <A key={l.href} to={l.href} className="x-arrow"><span>{l.label}</span>{ARROW}</A>)}</div>
+            </header>
+            <FamNext items={cards} label={doc.more.title} />
+            {sibLinks.length > 0 && here.length > 0 && <Overlap here={here} sibs={sibLinks} data={data} />}
           </div>
         </section>
       )}
 
       {doc.band && (
-        <section className="xsl-band" data-room="dark">
-          <Film slug={doc.reel && doc.reel.slug} className="xsl-band-film" />
-          <div className="x-wrap">
-            <h2>{doc.band.title}</h2>
-            {doc.band.lede && <p>{doc.band.lede}</p>}
-            <div className="xsl-acts">{doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'x-btn' + (i ? '' : ' solid')}>{a.label}</A>)}</div>
+        <section className="xs2-band" data-room="dark">
+          <Film slug={reel && reel.slug} className="xs2-band-film" />
+          <div className="v2f-wrap v2f-grid xs2-band-g">
+            <h2 className="v2f-display small xs2-band-h">{doc.band.title}</h2>
+            <div className="xs2-band-r">
+              {doc.band.lede && <p className="v2f-lede">{doc.band.lede}</p>}
+              <div className="xs2-acts">{doc.band.actions.map((a, i) => <A key={a.label} to={a.href} className={'v2f-btn' + (i ? ' ghost' : ' light')}>{a.label}</A>)}</div>
+            </div>
           </div>
         </section>
       )}

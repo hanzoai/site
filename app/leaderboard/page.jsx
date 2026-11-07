@@ -1,4 +1,4 @@
-// Signature: every rank is a sum you can open: the podium cycles its three hunters and each score adds itself up on a paper tape.
+// Signature: every total is a sum that adds itself up: the podium's tape re-adds each hunter's score, then the four ways to earn pin as chapters while a receipt builds a total line by line.
 // Beyond: your points, worked out with the page's own rules, and where your tokens would sit on the global board.
 import Leaderboard from '../../components/pages/Leaderboard';
 import JsonLd from '../../components/JsonLd';

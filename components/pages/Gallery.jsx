@@ -13,7 +13,7 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/rea
 import { EASE, Copy, Magnetic } from '../ui';
 import { A } from '../kit';
 import Sigil from '../Sigil';
-import LineMask from '../v2/LineMask';
+import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
 import '../v2/Scale.css';
 import './Gallery.css';
