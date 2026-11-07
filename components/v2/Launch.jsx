@@ -61,11 +61,17 @@ export const poly = (pts) => (t, W, H, wide) => {
   return `polygon(${out.join(',')})`;
 };
 // aim helper: the film's subject sits at (fx, fy) of the 4:5 frame (fractions); land it on (tx, ty) px at zoom z.
-// Returns [dx, dy, z] for Launch's aim. Keep the settled shape inside the zoomed, panned film.
-export const focus = (fx, fy, tx, ty, z = 1.14) => (W, H) => {
+// box = [l, t, r, b], the settled shape's bounds in px: the pan is held back so the zoomed film always covers it.
+// Returns [dx, dy, z] for Launch's aim.
+export const focus = (fx, fy, tx, ty, z = 1.14, box) => (W, H) => {
   const s0 = Math.max(W / 1200, H / 1500), iw = 1200 * s0, ih = 1500 * s0;
   const px = fx * iw - (iw - W) / 2, py = fy * ih - (ih - H) / 2, cx = W / 2, cy = H / 2;
-  return [tx - (cx + (px - cx) * z), ty - (cy + (py - cy) * z), z];
+  let dx = tx - (cx + (px - cx) * z), dy = ty - (cy + (py - cy) * z);
+  if (box) {
+    dx = Math.min(Math.max(dx, box[2] - cx - cx * z), box[0] - cx + cx * z);
+    dy = Math.min(Math.max(dy, box[3] - cy - cy * z), box[1] - cy + cy * z);
+  }
+  return [dx, dy, z];
 };
 // densify a closed outline so the opening frame stays a full cover (n points per edge)
 export const dense = (V, n = 6) => V.flatMap((a, i) => { const b = V[(i + 1) % V.length]; return Array.from({ length: n }, (_, k) => [lerp(a[0], b[0], k / n), lerp(a[1], b[1], k / n)]); });
@@ -90,13 +96,15 @@ export default function Launch({ slug, accent, ink, shape, aim, over, head, head
   const [on, setOn] = useState(false);
   const [size, setSize] = useState(null);
   const calm = useReducedMotion();
+  const [still, setStill] = useState(false); // set after mount: the server cannot know, and hydration keeps its attributes
+  useEffect(() => setStill(!!calm), [calm]);
   const i = MODELS.findIndex((x) => x.slug === slug);
   const next = MODELS[(i + 1) % MODELS.length];
 
   const { scrollYProgress: p } = useScroll({ target: stage, offset: ['start 60px', 'end end'] });
-  const t = useTransform(p, (v) => (calm ? 1 : clamp01(v / 0.8)));
+  const t = useTransform(p, (v) => (still ? 1 : clamp01(v / 0.8)));
   const clip = useTransform(t, (v) => (!size || v <= 0.002 ? 'none' : shape(settle(v), size.W, size.H, size.wide)));
-  const zoom = useTransform(t, (v) => { const a = size && aim ? aim(size.W, size.H, size.wide) : null; return 1 + (((a && a[2]) || 1.14) - 1) * v; });
+  const zoom = useTransform(t, (v) => { if (!size) return 1; const a = aim ? aim(size.W, size.H, size.wide) : null; return 1 + (((a && a[2]) || 1.14) - 1) * v; });
   // aim: the camera pans the film so its subject sits inside the settled shape ([dx, dy] px at t = 1, per layout)
   const pan = (k) => (v) => { if (!size || !aim) return 0; const a = aim(size.W, size.H, size.wide); return (a ? a[k] : 0) * settle(v); };
   const panX = useTransform(t, pan(0));
@@ -118,7 +126,7 @@ export default function Launch({ slug, accent, ink, shape, aim, over, head, head
   useFilms(root);
 
   return (
-    <main className="x-model lv" ref={root} style={{ '--ac': accent, '--ac-ink': ink || accent }} data-calm={calm ? '' : undefined}>
+    <main className="x-model lv" ref={root} style={{ '--ac': accent, '--ac-ink': ink || accent }} data-calm={still ? '' : undefined}>
       <section className="lv-stage" ref={stage} data-hero={slug} data-ready={ready ? '' : undefined} aria-label={label || m.name}>
         <div className="lv-pin" ref={pin}>
           <motion.div className="lv-film" style={{ clipPath: clip }}>

@@ -152,10 +152,10 @@ function Roll() {
   );
 }
 
-// the film splits into Uta's four stems: four faders of different heights, rising from one floor
+// the film splits into Uta's four stems: four faders rising left to right from one floor
 const STEMS = (t, W, H, wide) => {
   const x0 = wide ? W * 0.5 : W * 0.06, x1 = wide ? W * 0.94 : W * 0.94, B = wide ? H * 0.9 : H * 0.47, gap = wide ? 18 : 10;
-  const tops = wide ? [0.24, 0.42, 0.1, 0.33] : [0.14, 0.25, 0.06, 0.19];
+  const tops = wide ? [0.5, 0.36, 0.22, 0.08] : [0.3, 0.22, 0.14, 0.06]; // a crescendo, rising with the film's fan of lines
   const bw = (x1 - x0 - 3 * gap) / 4, M = Math.max(W, H) * 0.5;
   const pts = [];
   tops.forEach((f, i) => {
@@ -172,7 +172,7 @@ export default function Uta() {
       accent="#e0a106"
       ink="#8f6500"
       shape={STEMS}
-      aim={(W, H, wide) => (wide ? focus(0.8, 0.55, W * 0.72, H * 0.55, 1.2) : focus(0.8, 0.55, W / 2, H * 0.3, 1.6))(W, H)}
+      aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.7, H * 0.5, 1.1, [W * 0.5, H * 0.08, W * 0.94, H * 0.9]) : focus(0.75, 0.5, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47]))(W, H)}
       headClass="ut-v2"
       first="demo"
       demo={
