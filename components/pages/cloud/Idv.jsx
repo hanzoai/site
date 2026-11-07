@@ -83,7 +83,9 @@ function Board() {
   useEffect(() => {
     const r = rail.current, b = r && r.children[v];
     if (!r || !b || r.scrollWidth <= r.clientWidth) return;
-    r.scrollTo({ left: Math.max(0, b.offsetLeft - 16), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    const inView = b.offsetLeft >= r.scrollLeft && b.offsetLeft + b.offsetWidth <= r.scrollLeft + r.clientWidth * 0.82;
+    if (inView) return;
+    r.scrollTo({ left: v === 0 ? 0 : Math.max(0, b.offsetLeft - 16), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }, [v]);
   return (
     <div className="lp-host">
@@ -105,7 +107,7 @@ function Board() {
         <div className="iv-line"><motion.i key={shown} initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, ease: EASE }} /></div>
         <div className="iv-vslot">
           <AnimatePresence mode="wait" initial={false}>
-            <motion.div key={shown} className={'iv-verdict ' + k} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.16 } }} transition={{ duration: 0.5, ease: EASE, delay: peek === null ? 0.5 : 0.1 }}>
+            <motion.div key={shown} className={'iv-verdict ' + k} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.12 } }} transition={{ duration: 0.45, ease: EASE, delay: peek === null ? 0.2 : 0.05 }}>
               <p className="iv-vn">{name}</p>
               <p className="iv-how">{how}</p>
               <p className="iv-says">{k === 'ok' && TICK}<span>{verdict}</span></p>
@@ -269,8 +271,8 @@ const FACTS = [
 function Sheet({ i, t, d, Obj, next }) {
   const { scrollYProgress } = useScroll({ target: next, offset: ['start end', 'start start'] });
   const last = i === FACTS.length - 1;
-  const fade = useTransform(scrollYProgress, [0.1, 0.28], [1, last ? 1 : 0]);
-  const sink = useTransform(scrollYProgress, [0.1, 0.5], [1, last ? 1 : 0.96]);
+  const fade = useTransform(scrollYProgress, [0.32, 0.46], [1, last ? 1 : 0]);
+  const sink = useTransform(scrollYProgress, [0.3, 0.7], [1, last ? 1 : 0.96]);
   return (
     <motion.article className={'iv-sheet s' + (i + 1)} style={{ '--k': i, scale: sink }}>
       <motion.div className="iv-sheet-in" style={{ opacity: fade }}>

@@ -1,7 +1,8 @@
 /* FnUses (prefix fn-uc / fn-uo): see FnUses.jsx. Deck values only: ink, greys, white; flat fills, no outline plus
    shadow; radii 6/8/12/16/24/999; motion is transform and opacity only; loops run only while the case is in front and
    on screen. With JS off the four cases simply stand stacked with their points. */
-.fn-uc { position: relative; padding: clamp(44px, 6vw, 72px) 0 clamp(72px, 8vw, 116px); }
+/* no top padding: the pinned stage centres itself in the screen, which is already the section's breathing room */
+.fn-uc { position: relative; padding: 0 0 clamp(72px, 8vw, 116px); }
 .fn-uc-g { align-items: center; row-gap: 27px; }
 .fn-uc-l { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 44px; }
 .fn-uc-h { display: flex; flex-direction: column; gap: 17px; }
@@ -172,7 +173,7 @@
      them, now downward) */
   .fn-uo-api, .fn-uo-gpu, .fn-uo-stream { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 6px; }
   .fn-uo-api .fn-uo-col, .fn-uo-gpu .fn-uo-col { flex-direction: row; }
-  .fn-uo-lane, .fn-uo-lane.wide { width: 28px; min-width: 0; margin: 13px 0; transform: rotate(90deg); }
+  .fn-uo-lane, .fn-uo-lane.wide { width: 40px; min-width: 0; margin: 19px 0; transform: rotate(90deg); }
   .fn-uo-box { flex-direction: row; gap: 10px; }
   .fn-uo-pods { grid-template-columns: repeat(6, 18px); gap: 5px; }
   .fn-uo-bars { height: 40px; }

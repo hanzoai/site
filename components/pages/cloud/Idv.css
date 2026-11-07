@@ -223,6 +223,7 @@
      one screen; the fields follow */
   .iv-forge-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .iv-pane.in { order: -1; display: flex; flex-direction: column; }
+  .iv-pane.in .v2-kick { order: -2; }
   .iv-pane.in .iv-ctl { order: -1; }
   .iv-pane.in .iv-ctl .iv-seg { margin-top: 0; }
   .iv-pane.in .iv-fields { margin-top: 10px; }

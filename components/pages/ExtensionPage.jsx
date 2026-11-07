@@ -120,7 +120,7 @@ function Chrome({ k, open, toggle, front }) {
     <div className={'xe-bar s-' + k}>
       <div className="xe-strip" aria-hidden="true">
         <span className="xe-dots"><i /><i /><i /></span>
-        <span className="xe-tab"><Mark size={10} /><span>Hanzo Extension</span></span>
+        <span className="xe-tab"><Mark size={10} /><span>Hanzo</span></span>
         <span className="xe-tab dim"><span>Hanzo Chat</span></span>
       </div>
       <div className="xe-tool">{nav}{k === 'firefox' && <span className="xe-shield" aria-hidden="true" />}{url}<span className="xe-puz" aria-hidden="true" />{ext}</div>
@@ -178,7 +178,7 @@ function Stack({ mineWin }) {
             <button key={k} type="button" role="tab" aria-selected={front === k} onClick={() => deal(k)}>
               {front === k && <motion.span layoutId="xe-deal" className="xe-deal-bg" transition={GLIDE} />}
               <span className="xe-deal-n">{n}</span>
-              {mineWin === k && <i className="xe-mine" aria-hidden="true" />}
+              {front === k && <motion.i layoutId="xe-mine" className="xe-mine" aria-hidden="true" transition={GLIDE} />}
             </button>
           ))}
         </div>
@@ -196,7 +196,6 @@ function Stack({ mineWin }) {
                 <div className="xe-page">
                   <span className="xe-page-nav" aria-hidden="true"><Mark size={12} /><b>Hanzo</b></span>
                   <Img src={'/models/' + ['koma', 'zen', 'uta'][wi] + '.webp'} w={1200} h={1500} alt="" priority={isFront && wi === 0} />
-                  <span className="xe-page-t" aria-hidden="true"><b>Hanzo Extension</b><span>Your browser, as a tool an agent can use.</span></span>
                 </div>
                 <span className="xe-probe" aria-hidden="true" />
               </div>
@@ -214,7 +213,7 @@ function Stack({ mineWin }) {
             <div className="xe-cards">
               {POINTS.map(([t, d], i) => (
                 <div key={t} className={'xe-card' + (i === at ? ' on' : i < at ? ' past' : '')} aria-hidden={i !== at}>
-                  <h2 className="xe-card-t">{t}</h2>
+                  <p className="xe-card-t">{t}</p>
                   <p>{d}</p>
                 </div>
               ))}
@@ -243,6 +242,7 @@ function Hero({ mineWin }) {
         <div className="xe-hero-l">
           <Lines as="h1" id="xe-h1" className="av-display xe-h1" lines={['Hanzo Extension']} now delay={0.05} />
           <p className="av-lede">Your browser, as a tool an agent can use.</p>
+          <p className="xe-kick x-mono">Browser extension</p>
           <div className="xe-acts">
             <Cta to={REL} id="extension-download" thumb size="lg" {...brief}>Download Extension</Cta>
             <div className="xe-links">
@@ -400,14 +400,13 @@ function Builds({ mine }) {
         </div>
         <ul className="xe-rows">
           {order.map(([k, t, d, cta]) => (
-            <motion.li key={k} layout transition={DEAL} className={(k === mine ? 'yours' : '') + (k === show ? ' hot' : '')}
+            <motion.li key={k} layout transition={DEAL} className={(k === lead ? 'yours' : '') + (k === show ? ' hot' : '')}
               onPointerEnter={(e) => e.pointerType === 'mouse' && setHot(k)} onFocus={() => setHot(k)} onClick={() => setHot(k)}>
-              <h3 className="av-title">{t}</h3>
+              <h3 className="av-title">{k === lead && <i className="xe-yours-dot" aria-hidden="true" />}{t}</h3>
               <p>{d}</p>
-              {/* your browser's row leads with a strong outlined ask: the header carries the one solid "Download Extension" here */}
-              {k === lead
-                ? <Cta to={REL} id={'extension-build-' + k} kind="quiet" className="xe-lead" {...brief}>{cta}</Cta>
-                : <span className="xe-row-a"><Cta to={REL} id={'extension-build-' + k} kind="link">{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>}
+              {/* one ask style for every row: a text link with its size beside it; your browser's row is marked by a filled dot
+                  and bold weight (the header carries the one solid "Download Extension" here) */}
+              <span className="xe-row-a"><Cta to={REL} id={'extension-build-' + k} kind="link" {...(k === lead ? brief : {})}>{cta}</Cta>{SIZE[k] && <em className="xe-row-sz x-mono">{SIZE[k]}</em>}</span>
             </motion.li>
           ))}
         </ul>
@@ -499,25 +498,23 @@ function Uses() {
 /* ---------- before the end: the docs, the repo and the spec ---------- */
 function Get() {
   return (
-    <section className="av-sec tight xe-get">
-      {/* one card, two halves: the docs ask on the left, the repo on the right; no lone heading beside empty space */}
+    <section className="av-sec tight xe-get" aria-labelledby="xe-get-h">
+      {/* one quiet hairline strip: the docs on the left, the repo's proof and the deploy link on the right; the closing band
+          below stays the single solid ask */}
       <div className="av-wrap">
-        <div className="xe-card2">
-          <div className="xe-start">
-            <span className="xe-card2-i"><Mark size={24} /></span>
-            <h2 className="av-head">Get started with Extension</h2>
+        <div className="xe-proof">
+          <div className="xe-proof-l">
+            <h2 className="av-head" id="xe-get-h">Get started with Extension</h2>
             <Cta to={DOCS} id="extension-docs" kind="link">Read the docs</Cta>
           </div>
-          <div className="xe-card2-r">
-            <h2 className="av-title">Get Extension</h2>
-            <p>Browser extension + MCP bridge</p>
-            <dl className="xe-meta x-mono">
-              <div><dt>License:</dt><dd>Apache-2.0</dd></div>
-              <div><dd><A to="https://github.com/hanzoai" data-cta="extension-repo">hanzoai</A></dd></div>
-            </dl>
-            <div className="xe-card2-a">
-              <Cta to="https://platform.hanzo.ai/deploy" id="extension-deploy" kind="quiet">Deploy to Cloud</Cta>
-            </div>
+          <div className="xe-proof-r">
+            <h3 className="xe-proof-h">Get Extension</h3>
+            <ul className="xe-proof-row x-mono">
+              <li>Browser extension + MCP bridge</li>
+              <li><span>License:</span> <span>Apache-2.0</span></li>
+              <li><A to="https://github.com/hanzoai" data-cta="extension-repo">hanzoai</A></li>
+            </ul>
+            <Cta to="https://platform.hanzo.ai/deploy" id="extension-deploy" kind="link">Deploy to Cloud</Cta>
           </div>
         </div>
       </div>
@@ -548,7 +545,7 @@ export default function ExtensionPage() {
     <main className="av xe" style={{ '--ac': '#737373' }}>
       <Hero mineWin={win} />
       <How />
-      <Scenes label="Hanzo Extension" items={CHAPTERS} tone={['#ffffff', '#f5f5f5', '#fafafa']} />
+      <Scenes label="Hanzo Extension" items={CHAPTERS} />
       <Builds mine={build} />
       <Uses />
       <Get />

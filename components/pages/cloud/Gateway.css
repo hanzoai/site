@@ -227,7 +227,7 @@
 /* hero: the lede and asks sit on the h1's baseline; the landed requests get their own lane at the top right, so the
    card walking through the gate never crosses them; the lane leans toward a fine pointer */
 .gw-hero-r { padding-bottom: 6px; }
-.gw-log { top: 24px; right: 24px; transform: none; gap: 8px; }
+.gw-log { top: 24px; right: 88px; transform: none; gap: 8px; }
 .gw-log li { padding: 9px 12px; }
 .gw-lane { transition: transform .5s cubic-bezier(.16, 1, .3, 1); transform-origin: 50% 50%; }
 .gw-req { margin-top: -100px; }
@@ -259,6 +259,9 @@
   .gw .gw-tog[aria-checked='true']:hover .gw-tog-ui { background: #fafafa; }
 }
 
+/* related rows: straight hairlines (a rounded row bent the ends of its bottom border) */
+.gw .sp-rel-a { border-radius: 0; margin: 0; padding-inline: 0; }
+
 /* one section-padding step between blocks, not two */
 .gw .v2-sec.gw-ship, .gw .v2-sec.gw-proj, .gw .v2-sec.gw-relsec { padding-top: clamp(64px, 6vw, 104px); padding-bottom: clamp(64px, 6vw, 104px); }
 .gw .v2-sec.gw-proj { padding-top: 0; }
@@ -282,6 +285,8 @@
 
 @media (max-width: 900px) {
   .gw-req { margin-top: -112px; }
+  /* "Hanzo Cloud /v1" sits up by the pause, clear of the card's path */
+  .gw-side.r { top: 38px; bottom: auto; left: 84px; }
   .gw-forge { padding: 64px 0; }
   .gw-forge-head { margin-bottom: 24px; }
   .gw-proj-t { padding-bottom: 20px; border-top: 0; }

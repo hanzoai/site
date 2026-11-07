@@ -4,9 +4,9 @@
 // CTA: Read the docs (gateway.hero, gateway.close).
 // Metric: cta_click gateway.hero
 // Signature: the gate, running: one request at a time checked, stripped, stamped or turned away (429) across a full-width lane.
-// Beyond: Forge one yourself: pick a credential and fake headers, see what the service behind the gate receives.
+// Beyond: chapter 02, opened: pick a credential and fake headers, see what every service behind the gate receives.
 /* Gateway (v2, archetype A Launch).
-   V2: 8/10 round 3: six chapters are six scenes that act their rule out (JWKS check, headers struck and written, an empty route map, buckets draining to a 429, a ping that stops at the process, the gateway sliding into the cloud binary); phone pins one short scene under the header while the words swap; dots name their chapter; reduced motion shows every final frame; Settle and the growing statement carry no inline style before mount (no hydration mismatch); prompt wraps under its api line; related rows preview where they go.
+   V2: 8/10 round 4: phone chapters carry their own scene above their words (nothing pinned over text); landed requests get their own lane so the card never crosses them; the lane leans 2.5° to a fine pointer; the statement cuts in by its line; the dark room is chapter 02 opened (no repeated heading or sentence, real switches); Paste and ship sits beside the console, Related capabilities closes the page; larger scenes, one section-padding step, hovers on console rows, icons and the close's links; Hanzo's case on every label.
    Signature: the gate, running across the whole screen. One request at a time arrives from the left carrying a token and
    a forged X-Org-Id; at the gate the token is checked against JWKS, the forged header is torn off, the real identity is
    stamped on from the claims and the request walks through to Hanzo Cloud. A token bucket on the gate drains with each

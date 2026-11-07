@@ -98,7 +98,8 @@
 
 /* ---------- chapters ---------- */
 .fn .knc-count { font-size: 13px; }
-.fn-ch .knc-head { padding-top: 72px; }
+/* one section-padding step between the hero and the chapters' heading (the hero's own bottom padding), not two */
+.fn-ch .knc-head { padding-top: 17px; }
 .fn-ch-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--kn-g); align-items: end; row-gap: 27px; }
 .fn-ch-hw { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 10px; }
 .fn-join { grid-column: 7 / -1; display: flex; align-items: center; gap: 10px; padding-bottom: 6px; }
@@ -190,7 +191,7 @@
 .fn-tr-l li { padding: 14px 6px; border-radius: 12px; background: #f5f5f5; text-align: center; font: 400 13px/1.2 var(--mono); color: #0a0a0a; white-space: nowrap; }
 .fn-tr-lines { width: 100%; height: clamp(160px, 26svh, 280px); overflow: visible; }
 .fn-tr-lines path { fill: none; stroke: #0a0a0a; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.fn-tr-h { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 44px; border-radius: 16px; background: #0a0a0a; color: #fafafa; }
+.fn-tr-h { position: relative; margin-top: -18px; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 24px 44px; border-radius: 16px; background: #0a0a0a; color: #fafafa; }
 .fn-tr-h b { font: 606 21px/1 var(--mono); }
 .fn-tr-h span { font-size: 14px; color: #a3a3a3; }
 
