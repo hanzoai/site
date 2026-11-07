@@ -11,6 +11,7 @@
        visual={(at, intro) => <Board step={at} />} // ONE object that changes state per chapter (at ≥ 0; intro true first)
        flip                                        // object on the left
        per={80}                                    // svh of scroll per chapter
+       objH={34}                                   // phones: the object's window height in svh (default 40)
      />
    Desktop: 5/7 split. Phone: the object on top, the words below, still one at a time. The rail of ticks scrolls to a
    chapter (keyboard too). JS off: the scene unpins and every chapter reads in order. Reduced motion: swaps, no
@@ -22,7 +23,7 @@ import './PinnedChapters.css';
 
 const pad = (n) => String(n).padStart(2, '0');
 
-export default function PinnedChapters({ steps, visual, label = 'Chapters', flip, per = 80, className = '', id, dark, intro }) {
+export default function PinnedChapters({ steps, visual, label = 'Chapters', flip, per = 80, className = '', id, dark, intro, objH }) {
   const ref = useRef(null);
   const n = steps.length;
   const lead = intro ? 1 : 0;
@@ -51,7 +52,7 @@ export default function PinnedChapters({ steps, visual, label = 'Chapters', flip
     </article>
   );
   return (
-    <section ref={ref} id={id} className={`lx-pin ${flip ? 'flip' : ''} ${dark ? 'lx-dark' : ''} ${className}`} style={{ '--n': total, '--per': per + 'svh' }} data-room={dark ? 'dark' : undefined} data-live={live || undefined}>
+    <section ref={ref} id={id} className={`lx-pin ${flip ? 'flip' : ''} ${dark ? 'lx-dark' : ''} ${className}`} style={{ '--n': total, '--per': per + 'svh', ...(objH ? { '--objh': objH + 'svh' } : {}) }} data-room={dark ? 'dark' : undefined} data-live={live || undefined}>
       <div className="lx-pin-stick">
         <div className="lx-wrap lx-pin-grid">
           <div className="lx-pin-copy">

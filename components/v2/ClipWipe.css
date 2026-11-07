@@ -1,10 +1,10 @@
 .lx-wipe { position: relative; background: transparent !important; }
 /* bg and content are both positioned with z-index auto: they paint in order, the room's content on top, and neither
    makes a stacking context, so fixed sheets inside still rise above the header */
-.lx-wipe-bg { position: absolute; inset: 0; background: var(--wipe, #0a0a0a); }
+.lx-wipe-bg { position: absolute; inset: 0; background: var(--wipe, #000); }
 .lx-wipe:not(.lx-dark) .lx-wipe-bg { background: var(--wipe, var(--card)); }
-.lx-wipe-in { position: relative; transition: opacity .5s .25s; }
-.lx-wipe[data-wipe='armed'] .lx-wipe-bg { clip-path: inset(5% 14px 0 round 44px); }
+.lx-wipe-in { position: relative; transition: opacity .3s .12s cubic-bezier(0, 0, .2, 1); }
+.lx-wipe[data-wipe='armed'] .lx-wipe-bg { clip-path: inset(5% 14px 0 round 24px); }
 .lx-wipe[data-wipe='armed'] .lx-wipe-in { opacity: 0; }
 .lx-wipe[data-wipe='play'] .lx-wipe-bg { animation: lx-wipe .9s cubic-bezier(.76, 0, .24, 1) both; }
-@keyframes lx-wipe { from { clip-path: inset(5% 14px 0 round 44px); } to { clip-path: inset(0 0 0 round 0); } }
+@keyframes lx-wipe { from { clip-path: inset(5% 14px 0 round 24px); } to { clip-path: inset(0 0 0 round 0); } }
