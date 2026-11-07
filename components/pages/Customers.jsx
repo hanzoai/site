@@ -1,17 +1,25 @@
 'use client';
-/* Customers. Signature: a full-bleed gallery of the case studies that you drag (it drifts by itself until you do); each
-   case opens into its story. Then every launch on one timeline, a big year that turns as you read down it.
-   Beyond: a year scrubber over 2015–2020 that counts the launches of each year from Hanzo's own list; drag or tap a year
-   to jump to it. Every word, figure and link is Hanzo's; the two case figures come from their own case studies. */
+/* /customers. V2: 8/10 Story + catalogue: a two-line kinetic headline over one huge case plate that swaps Damon and
+   KANOA by itself and opens into the case study; every launch as an editorial index; a calm logo belt; one dark room.
+   Accent: Pacific teal.
+   Signature: the case plate. One case fills a 28px plate (cover, logo, its figure as a hero numeral); left alone it wipes
+   to the other case; click it and the picture opens into its story (Morph, synchronized.studio). The plate widens to
+   the full grid as it reaches you.
+   Supporting (3): masked kinetic headline, once; the plate's scroll-widening (stage); the logo belt.
+   Beyond: a year index over Hanzo's own launch list: each year shows how many launches it holds, and a tap narrows the
+   index to that year. Every word, figure and link is Hanzo's; the two case figures come from their own case studies. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Words } from '../ui';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A } from '../kit';
+import MaskLines from './company/MaskLines';
+import '../v2/vc-type.css';
 import './Customers.css';
 
+const EASE = [0.16, 1, 0.3, 1];
+
 const CASES = [
-  { name: 'Damon Motorcycles', year: '2020', d: 'Ran the CES reveal and the preorder campaign: AI-written ad sets, show-floor targeting, video and email.', to: '/customers/damon-motorcycles', img: '/customers/damon-motorcycles/cover.webp', alt: 'The Damon Hypersport', logo: '/logos/customers/damon-motorcycles.svg', n: '$8.4M', w: 'in bikes sold in 30 days' },
-  { name: 'KANOA', year: '2015', d: 'Built the site and store, then ran paid acquisition, email and the preorder campaign.', to: '/customers/kanoa', img: '/customers/kanoa/athlete.webp', alt: 'An athlete wearing KANOA earphones', logo: '/logos/customers/kanoa.png', n: '$7M+', w: 'raised in preorders' },
+  { name: 'Damon Motorcycles', year: '2020', d: 'Ran the CES reveal and the preorder campaign: AI-written ad sets, show-floor targeting, video and email.', to: '/customers/damon-motorcycles', img: '/customers/damon-motorcycles/cover.webp', alt: 'The Damon Hypersport', logo: '/logos/customers/damon-motorcycles.svg', n: '$8.4M', w: 'in bikes sold in 30 days', tone: 'a' },
+  { name: 'KANOA', year: '2015', d: 'Built the site and store, then ran paid acquisition, email and the preorder campaign.', to: '/customers/kanoa', img: '/customers/kanoa/athlete.webp', alt: 'An athlete wearing KANOA earphones', logo: '/logos/customers/kanoa.png', n: '$7M+', w: 'raised in preorders', tone: 'b' },
 ];
 
 const LAUNCHES = [
@@ -28,206 +36,118 @@ const LAUNCHES = [
   { id: 'keek-social', name: 'Personas Social', kind: 'AI platform', d: 'Built the recommendation, moderation and creator tools inside Keek.', f: [], logo: 'keek-social.svg' },
 ];
 
-// the timeline reads in years; launches the page gives no year sit together at the end, in Hanzo's order
+// the index reads in years; launches the page gives no year sit together at the end, in Hanzo's order
 const UNDATED = 'Undated';
 const GROUPS = [...new Set(LAUNCHES.map((l) => l.year || UNDATED))].sort((a, b) => (a === UNDATED) - (b === UNDATED) || a.localeCompare(b));
 const BY = Object.fromEntries(GROUPS.map((g) => [g, LAUNCHES.filter((l) => (l.year || UNDATED) === g)]));
-
-/* The case gallery: drag it sideways; idle, it drifts from one case to the next and back. A drag never opens a case. */
-function Gallery() {
-  const rail = useRef(null);
-  const track = useRef(null);
-  const x = useMotionValue(0);
-  const [min, setMin] = useState(0);
-  const [mine, setMine] = useState(false);
-  const moved = useRef(false);
-  const seen = useInView(rail, { amount: 0.3 });
-  const calm = useReducedMotion();
-
-  useEffect(() => {
-    const m = () => setMin(Math.min(0, rail.current.clientWidth - track.current.scrollWidth));
-    m();
-    const ro = new ResizeObserver(m);
-    ro.observe(rail.current);
-    return () => ro.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (mine || calm || !seen || !min) return;
-    let stop = false, c;
-    const swing = async () => {
-      while (!stop) {
-        c = animate(x, min, { duration: 9, ease: [0.45, 0, 0.55, 1] }); await c; if (stop) break;
-        c = animate(x, 0, { duration: 9, ease: [0.45, 0, 0.55, 1] }); await c;
-      }
-    };
-    const t = setTimeout(swing, 1400);
-    return () => { stop = true; clearTimeout(t); c && c.stop(); };
-  }, [mine, calm, seen, min, x]);
-
-  return (
-    <div className="xcu-rail" ref={rail} data-drag="">
-      <motion.ul className="xcu-track" ref={track} style={{ x }} drag="x" dragConstraints={{ left: min, right: 0 }} dragElastic={0.08}
-        onPointerDown={() => { moved.current = false; setMine(true); }}
-        onDragStart={() => { moved.current = true; rail.current.setAttribute('data-no-morph', ''); }} // the morph layer listens first; this keeps a drag from opening a case
-        onClickCapture={(e) => { if (moved.current) { e.preventDefault(); e.stopPropagation(); } setTimeout(() => rail.current?.removeAttribute('data-no-morph'), 0); }}
-        aria-label="Case studies">
-        {CASES.map((c, i) => (
-          <li key={c.name} className="xcu-case">
-            <A to={c.to} className="xcu-case-a" draggable={false} data-cursor="Open">
-              <span className="xcu-ph" data-morph>
-                <img src={c.img} alt={c.alt} draggable={false} loading={i ? 'lazy' : 'eager'} />
-              </span>
-              <span className="xcu-case-top"><img className="xcu-mark" src={c.logo} alt="" draggable={false} /><span className="x-mono">{c.year}</span></span>
-              <span className="xcu-case-in">
-                <span className="xcu-fig"><b>{c.n}</b><span>{c.w}</span></span>
-                <h3>{c.name}</h3>
-                <span className="xcu-case-d">{c.d}</span>
-                <span className="xcu-open">Read the case study<i aria-hidden="true">→</i></span>
-              </span>
-            </A>
-          </li>
-        ))}
-        <li className="xcu-case xcu-more">
-          <a href="#every" className="xcu-case-a" draggable={false}>
-            <span className="xcu-more-n x-mono">{String(LAUNCHES.length + CASES.length).padStart(2, '0')}</span>
-            <span className="xcu-more-t">Every launch</span>
-            <i aria-hidden="true">↓</i>
-          </a>
-        </li>
-      </motion.ul>
-    </div>
-  );
-}
-
-function Hero() {
-  return (
-    <section className="xcu-hero" aria-labelledby="xcu-h1">
-      <div className="x-wrap">
-        <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>Customers</motion.p>
-        <h1 id="xcu-h1" className="xcu-h1">
-          {['Products Hanzo', 'built and launched'].map((t, i) => (
-            <span className="x-line" key={t}><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.05 + i * 0.12 }}>{t}</motion.span></span>
-          ))}
-        </h1>
-        <motion.p className="xcu-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
-          Hanzo built the store, ran the ads and found the audience for each of these launches. Here is what we did and what each one sold.
-        </motion.p>
-        <motion.h2 className="xcu-k2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.5 }}>Case studies</motion.h2>
-      </div>
-      <motion.div initial={{ opacity: 0, x: 80 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.3 }}>
-        <Gallery />
-      </motion.div>
-    </section>
-  );
-}
-
-function Launch({ l, onSeen }) {
-  const ref = useRef(null);
-  const lit = useInView(ref, { margin: '-40% 0px -50% 0px' });
-  useEffect(() => { if (lit) onSeen(l.year || UNDATED); }, [lit]); // eslint-disable-line react-hooks/exhaustive-deps
-  return (
-    <article ref={ref} id={l.id} className={'xcu-launch' + (lit ? ' lit' : '')}>
-      <div className="xcu-l-head">
-        {l.logo ? <img className="xcu-mark" src={'/logos/customers/' + l.logo} alt="" loading="lazy" /> : <span className="xcu-mark-t" aria-hidden="true">{l.name}</span>}
-        <span className="xcu-kind">{l.kind}</span>
-      </div>
-      <h3>{l.name}{l.year && <span className="x-mono">{l.year}</span>}</h3>
-      <p>{l.d}</p>
-      {l.f.length > 0 && (
-        <dl>{l.f.map(([n, w]) => <div key={w}><dt>{n}</dt><dd>{w}</dd></div>)}</dl>
-      )}
-    </article>
-  );
-}
-
-/* The scrubber: one stop per year, its launch count from the list; drag along it or tap a year to go there. */
-function Scrub({ at, go }) {
-  const bar = useRef(null);
-  const i = GROUPS.indexOf(at);
-  const pick = (e) => {
-    const r = bar.current.getBoundingClientRect();
-    const k = Math.max(0, Math.min(GROUPS.length - 1, Math.round(((e.clientX - r.left) / r.width) * (GROUPS.length - 1))));
-    go(GROUPS[k]);
-  };
-  return (
-    <div className="xcu-scrub" ref={bar} onPointerDown={(e) => { if (e.pointerType !== 'mouse' || e.button === 0) { bar.current.setPointerCapture(e.pointerId); pick(e); } }}
-      onPointerMove={(e) => { if (bar.current.hasPointerCapture(e.pointerId)) pick(e); }} data-drag="">
-      <i className="xcu-scrub-line" aria-hidden="true"><motion.b animate={{ scaleX: i / (GROUPS.length - 1) }} transition={{ type: 'spring', stiffness: 220, damping: 30 }} /></i>
-      {GROUPS.map((g, k) => (
-        <button key={g} type="button" className={'xcu-stop' + (g === at ? ' on' : '')} style={{ left: (k / (GROUPS.length - 1)) * 100 + '%' }}
-          onClick={() => go(g)} aria-label={`${g}: ${BY[g].length} ${BY[g].length === 1 ? 'launch' : 'launches'}`} aria-current={g === at ? 'step' : undefined}>
-          <span className="xcu-stop-dots" aria-hidden="true">{BY[g].map((l) => <i key={l.id} />)}</span>
-          <span className="xcu-stop-y x-mono">{g}</span>
-          {g === at && <span className="xcu-stop-live" aria-hidden="true" />}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function Timeline() {
-  const [at, setAt] = useState(GROUPS[0]);
-  const go = (g) => {
-    const el = document.getElementById('xcu-y-' + g);
-    if (!el) return;
-    const y = el.getBoundingClientRect().top + scrollY - 150;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
-  };
-  return (
-    <section className="x-sec xcu-every" id="every" aria-labelledby="xcu-every-h">
-      <div className="x-wrap">
-        <header className="xcu-every-head">
-          <Words text="Every launch" as="h2" />
-          <Scrub at={at} go={go} />
-        </header>
-        <div className="xcu-tl">
-          <div className="xcu-year" aria-hidden="true">
-            <div className="xcu-year-in">
-              <span className="xcu-live" />
-              {GROUPS.map((g) => (
-                <motion.span key={g} className="xcu-year-n" initial={false} animate={g === at ? { y: 0, opacity: 1 } : { y: GROUPS.indexOf(g) < GROUPS.indexOf(at) ? '-60%' : '60%', opacity: 0 }} transition={{ duration: 0.6, ease: EASE }}>{g}</motion.span>
-              ))}
-            </div>
-          </div>
-          <div className="xcu-groups">
-            {GROUPS.map((g) => (
-              <div key={g} className="xcu-group" id={'xcu-y-' + g}>
-                <p className="xcu-group-y x-mono">{g}</p>
-                {BY[g].map((l) => <Launch key={l.id} l={l} onSeen={setAt} />)}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+const ORDER = GROUPS.flatMap((g) => BY[g]);
 
 const BACKERS = [
   ['https://aws.amazon.com', 'amazon', 'Amazon'], ['https://www.digitalocean.com', 'digitalocean', 'DigitalOcean'], ['https://cloud.google.com', 'google', 'Google'],
   ['https://azure.microsoft.com', 'microsoft', 'Microsoft'], ['https://www.nvidia.com', 'nvidia', 'NVIDIA'], ['https://nebius.com', 'nebius', 'Nebius'],
 ];
 
-function Backers() {
+/* a picture that steps aside when it cannot load, so the tinted plate behind it reads as intended */
+function Img({ className, fallback = null, ...p }) {
+  const [bad, setBad] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []); // failed before hydration
+  if (bad) return fallback;
+  return <img ref={ref} className={className} {...p} onError={() => setBad(true)} />;
+}
+
+/* The signature: one case at a time on a big plate; it wipes to the next by itself, and opens into its story. */
+function Plate() {
+  const box = useRef(null);
+  const [at, setAt] = useState(0);
+  const [mine, setMine] = useState(false);
+  const seen = useInView(box, { amount: 0.25 });
+  const calm = useReducedMotion();
+  useEffect(() => {
+    if (mine || calm || !seen) return;
+    const t = setTimeout(() => setAt((v) => (v + 1) % CASES.length), 5200);
+    return () => clearTimeout(t);
+  }, [at, mine, calm, seen]);
+  const { scrollYProgress } = useScroll({ target: box, offset: ['start end', 'start 0.25'] });
+  const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1]);
   return (
-    <section className="x-sec xcu-back" aria-labelledby="xcu-back-h">
-      <div className="x-wrap xcu-back-grid">
-        <div>
-          <Words text="Backed by builders." as="h2" />
-          <Rise className="xcu-ts">
-            <A to="https://www.techstars.com" className="xcu-ts-a" aria-label="Techstars"><img src="/logos/partners/techstars.svg" alt="Techstars logo" /></A>
-          </Rise>
+    <div className="xcu-stage" ref={box}>
+      <motion.div className="xcu-plate" style={{ scale }}>
+        {CASES.map((c, i) => (
+          <motion.div key={c.name} className={'xcu-case ' + c.tone} aria-hidden={i !== at ? true : undefined} inert={i !== at}
+            initial={false}
+            animate={{ clipPath: i === at ? 'inset(0% 0% 0% 0%)' : 'inset(0% 0% 0% 100%)', zIndex: i === at ? 2 : 1 }}
+            transition={{ clipPath: { duration: i === at ? 1.1 : 0.01, delay: i === at ? 0 : 1.1, ease: [0.76, 0, 0.24, 1] } }}>
+            <A to={c.to} className="xcu-case-a">
+              <span className="xcu-ph" data-morph><Img src={c.img} alt={c.alt} loading={i ? 'lazy' : 'eager'} /></span>
+              <span className="xcu-case-top">
+                <Img className="xcu-mark" src={c.logo} alt="" fallback={<span className="xcu-alt">{c.name}</span>} />
+                <span className="vc-kick vc-num">{c.year}</span>
+              </span>
+              <span className="xcu-case-in">
+                <span className="xcu-fig"><b className="vc-num">{c.n}</b><span>{c.w}</span></span>
+                <span className="xcu-case-r">
+                  <h3>{c.name}</h3>
+                  <span className="xcu-case-d">{c.d}</span>
+                  <span className="xcu-open">Read the case study<i aria-hidden="true">→</i></span>
+                </span>
+              </span>
+            </A>
+          </motion.div>
+        ))}
+      </motion.div>
+      <div className="xcu-tabs" role="tablist" aria-label="Case studies">
+        {CASES.map((c, i) => (
+          <button key={c.name} type="button" role="tab" aria-selected={i === at} onClick={() => { setMine(true); setAt(i); }}>
+            <span className="vc-num">{String(i + 1).padStart(2, '0')}</span>
+            <b>{c.name}</b>
+            <i aria-hidden="true">{i === at && <u key={at + (mine ? 'm' : '')} className={mine || calm ? 'done' : 'run'} />}</i>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Row({ l, off }) {
+  return (
+    <li id={l.id} className="xcu-row" hidden={off}>
+      <span className="xcu-row-y vc-num">{l.year || '—'}</span>
+      <div className="xcu-row-n">
+        <h3>{l.name}</h3>
+        <span className="vc-kick acc">{l.kind}</span>
+        {l.logo && <span className="xcu-row-logo" aria-hidden="true"><Img src={'/logos/customers/' + l.logo} alt="" loading="lazy" /></span>}
+      </div>
+      <p className="xcu-row-d">{l.d}</p>
+      <div className="xcu-row-f">
+        {l.f.length > 0 && <dl>{l.f.map(([n, w]) => <div key={w}><dt className="vc-num">{n}</dt><dd>{w}</dd></div>)}</dl>}
+      </div>
+    </li>
+  );
+}
+
+function Every() {
+  const [year, setYear] = useState(null);
+  const rows = year ? BY[year] : ORDER;
+  return (
+    <section className="vc-sec xcu-every" id="every" aria-labelledby="xcu-every-h">
+      <div className="vc-grid xcu-every-g">
+        <h2 id="xcu-every-h" className="vc-display s">Every launch</h2>
+        <div className="xcu-years" role="group" aria-label="Launches by year">
+          <button type="button" aria-pressed={!year} onClick={() => setYear(null)}><b>All</b><span className="vc-num">{LAUNCHES.length}</span></button>
+          {GROUPS.map((g) => (
+            <button key={g} type="button" aria-pressed={year === g} onClick={() => setYear(year === g ? null : g)}
+              aria-label={`${g}: ${BY[g].length} ${BY[g].length === 1 ? 'launch' : 'launches'}`}>
+              <b className="vc-num">{g}</b>
+              <span className="xcu-dots" aria-hidden="true">{BY[g].map((l) => <i key={l.id} />)}</span>
+            </button>
+          ))}
         </div>
-        <div className="xcu-belt" aria-label="Clouds">
-          <ul className="xcu-belt-in">
-            {[0, 1].map((k) => BACKERS.map(([u, f, n]) => (
-              <li key={k + f} aria-hidden={k ? true : undefined}>
-                <A to={u} tabIndex={k ? -1 : undefined}><img src={`/logos/partners/${f}.svg`} alt={k ? '' : n + ' logo'} /></A>
-              </li>
-            )))}
-          </ul>
-        </div>
+      </div>
+      <div className="vc-wrap">
+        <ol className="xcu-index" aria-live="polite">
+          {ORDER.map((l) => <Row key={l.id} l={l} off={!rows.includes(l)} />)}
+        </ol>
       </div>
     </section>
   );
@@ -235,14 +155,45 @@ function Backers() {
 
 export default function Customers() {
   return (
-    <main className="xcu">
-      <Hero />
-      <Timeline />
-      <Backers />
-      <section className="xcu-close" data-room="dark">
-        <div className="x-wrap xcu-close-in">
-          <Words text="Launch with us" as="h2" />
-          <Rise delay={0.15}><A to="/contact" className="xcu-close-a" data-thumb="Talk to us"><span>Talk to us</span><i aria-hidden="true">→</i></A></Rise>
+    <main className="vc xcu" style={{ '--acc': '#0e9f8e' }}>
+      <section className="xcu-hero" aria-labelledby="xcu-h1">
+        <div className="vc-grid xcu-hero-g">
+          <motion.p className="vc-kick xcu-k" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>Customers</motion.p>
+          <MaskLines as="h1" id="xcu-h1" now delay={0.05} lines={['Products Hanzo', 'built and launched']} className="vc-display xcu-h1" />
+          <motion.p className="vc-lede xcu-lede" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, ease: EASE, delay: 0.6 }}>
+            Hanzo built the store, ran the ads and found the audience for each of these launches. Here is what we did and what each one sold.
+          </motion.p>
+          <motion.h2 className="vc-kick acc xcu-k2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, ease: EASE, delay: 0.75 }}>Case studies</motion.h2>
+        </div>
+        <motion.div className="vc-wrap" initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.3 }}>
+          <Plate />
+        </motion.div>
+      </section>
+
+      <Every />
+
+      <section className="vc-sec xcu-back" aria-labelledby="xcu-back-h">
+        <div className="vc-grid xcu-back-g">
+          <div className="xcu-back-h">
+            <h2 id="xcu-back-h" className="vc-headline">Backed by builders.</h2>
+            <A to="https://www.techstars.com" className="xcu-ts" aria-label="Techstars"><Img src="/logos/partners/techstars.svg" alt="Techstars logo" fallback={<span className="xcu-alt">Techstars</span>} /></A>
+          </div>
+          <div className="xcu-belt" aria-label="Clouds">
+            <ul className="xcu-belt-in">
+              {[0, 1].map((k) => BACKERS.map(([u, f, n]) => (
+                <li key={k + f} aria-hidden={k ? true : undefined}>
+                  <A to={u} tabIndex={k ? -1 : undefined}><Img src={`/logos/partners/${f}.svg`} alt={k ? '' : n + ' logo'} fallback={<span className="xcu-alt">{n}</span>} /></A>
+                </li>
+              )))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="xcu-close" data-room="dark" aria-labelledby="xcu-close-h">
+        <div className="vc-grid xcu-close-g">
+          <MaskLines id="xcu-close-h" lines={['Launch with us']} className="vc-display" />
+          <A to="/contact" className="xcu-close-a" data-thumb="Talk to us"><span>Talk to us</span><i aria-hidden="true">→</i></A>
         </div>
       </section>
     </main>
