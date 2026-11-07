@@ -121,7 +121,7 @@ function Roll() {
         </div>
       </div>
       <div className="ut-status">
-        <b className="mb-tnum">96 BPM</b><b>D MINOR</b>
+        <span className="ut-key mb-tnum">96 BPM · D MINOR</span>
         <span className="mb-mono mb-live ut-live" data-off={play ? undefined : ''} aria-hidden={play ? undefined : 'true'}>STREAMING ACTIVE</span>
         <span className="ut-tc mb-tnum"><span>01:</span><span ref={sec}>30</span>.<span ref={cs}>10</span> <span className="ut-of">/ 03:45.00</span></span>
         {/* our own control words are not Hanzo's copy, so these render icon-only with the word as the accessible name */}
@@ -152,13 +152,13 @@ function Roll() {
       </div>
       <div className="ut-flow">
         <span className="mb-mono">TIMELINE FLOW:</span>
-        <b>CHORUS [BAR 17-32]</b>
+        <b><span>CHORUS [BAR 17-32]</span></b>
         <span className="ut-bar"><i ref={flow} /></span>
       </div>
       <div className="ut-cue">
         <figure className="ut-mon">
           {/* one continuous mover at a time: while the roll plays, the monitor rests on its frame; pause the roll and the film plays */}
-          {play ? <Img src={film('uta', 'webp')} w={1200} h={1500} /> : <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />}
+          {play ? <Splash /> : <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />}
           <figcaption><span className="mb-mono mb-live">PLAYING · 4K 60FPS</span><span className="mb-mono">CINEMA SCORE</span><span className="mb-mono">SURROUND 7.1.4</span></figcaption>
         </figure>
         <div className="ut-cue-t">
@@ -169,6 +169,13 @@ function Roll() {
       </div>
     </div>
   );
+}
+
+// Hanzo's own picture on the monitor (its alt, word for word); if hanzo.ai's image can't load, Uta's still stands in
+const SPLASH = 'https://hanzo.ai/images/creative/uta-splash.jpg';
+function Splash() {
+  const [bad, setBad] = useState(false);
+  return <Img src={bad ? film('uta', 'webp') : SPLASH} alt="Uta Live Philharmonic Orchestra and Music Video Trailer" w={1600} h={1000} onError={() => setBad(true)} />;
 }
 
 // the film splits into Uta's four stems: four faders rising left to right from one floor
