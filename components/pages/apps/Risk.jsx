@@ -119,8 +119,9 @@ function Hero() {
 /* Where this is today: the lede said once, as a statement, with the two faces as objects under it. Their long words open
    from the + into sheets. */
 function Faces() {
+  const [ref, live] = useLive(0.2);
   return (
-    <section className="w2-sec rk-say" aria-labelledby="rk-today">
+    <section className={'w2-sec rk-say' + (live ? ' on' : '')} aria-labelledby="rk-today" ref={ref}>
       <div className="w2-wrap">
         <h2 id="rk-today" className="w2-headline rk-today-h">Where this is today</h2>
         <p className="rk-say-p">
@@ -305,8 +306,9 @@ function OnArt({ i }) {
 }
 
 function DecidesOn() {
+  const [ref, live] = useLive(0.15);
   return (
-    <section className="w2-sec rk-on">
+    <section className={'w2-sec rk-on' + (live ? ' on' : '')} ref={ref}>
       <div className="w2-wrap">
         <div className="rk-split">
           <h2 className="w2-headline">What it decides on</h2>
@@ -411,7 +413,7 @@ const TIERS = [
 
 /* How it connects, drawn: your system sends what it knows, Risk returns a decision; the processor is never touched. */
 function Flow() {
-  const [ref, live] = useLive(0.4);
+  const [ref, live] = useLive(0.2);
   return (
     <div className={'rk-flow' + (live ? ' on' : '')} ref={ref} aria-hidden="true">
       <span className="rk-flow-n x-mono">your system</span>
@@ -424,8 +426,11 @@ function Flow() {
 }
 
 function ConnectPlans() {
+  const [ref, live] = useLive(0.1);
+  const [tier, setTier] = useState(3);
+  useEvery(1600, live, () => setTier((v) => (v + 1) % 4));
   return (
-    <section className="w2-sec rk-plans">
+    <section className="w2-sec rk-plans" ref={ref}>
       <div className="w2-wrap">
         <div className="rk-conn">
           <div>
@@ -445,7 +450,7 @@ function ConnectPlans() {
         </div>
         <ol className="rk-ladder">
           {TIERS.map(([t, d], i) => (
-            <li key={t} style={{ '--h': 52 + i * 16 + '%' }}>
+            <li key={t} className={i === tier ? 'on' : ''} style={{ '--h': 52 + i * 16 + '%' }}>
               <span className="rk-ladder-n x-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
               <h3>{t}</h3>
               <p>{d}</p>
@@ -458,15 +463,16 @@ function ConnectPlans() {
 }
 
 function Not() {
+  const [ref, live] = useLive(0.2);
+  const [g, setG] = useState(-1);
+  useEvery(1500, live, () => setG((v) => (v + 1) % 4));
   return (
-    <section className="w2-sec rk-not">
+    <section className="w2-sec rk-not" ref={ref}>
       <div className="w2-wrap rk-not-grid">
         <div>
           <h2 className="w2-headline">What this is not</h2>
           <ul className="rk-gaps" aria-label="Three unmet requirements">
-            <li>There is no report workflow</li>
-            <li>There is no filing clock</li>
-            <li>There is no confidentiality marking on a case</li>
+            {['There is no report workflow', 'There is no filing clock', 'There is no confidentiality marking on a case'].map((x, i) => <li key={x} className={i === g ? 'on' : ''}>{x}</li>)}
           </ul>
           <Detail label="Three unmet requirements" title="What this is not">
           <p>Hanzo does not process payments — your processor does, and <A to="/commerce">Hanzo Commerce</A> owns the money plane. There is no dispute-network integration today: Risk assembles the evidence, you submit it. No figure on this page is a customer result, because the decide plane has not carried customer traffic yet. When it has, the numbers here will be ours and measured.</p>
