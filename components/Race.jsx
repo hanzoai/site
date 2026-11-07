@@ -29,6 +29,8 @@ function Lane({ t, max, who, ms, done, label, hi }) {
 function Run({ kicker, big, decimals, cap, note, title, lanes, extra, link, flip }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
+  const fig = useRef(null);
+  const centre = useInView(fig, { margin: '-25% 0px -25% 0px' }); // the figure itself holds the middle of the screen
   const calm = useReducedMotion();
   const max = Math.max(...lanes.map((l) => l.ms));
   const t = useMotionValue(0);
@@ -46,7 +48,7 @@ function Run({ kicker, big, decimals, cap, note, title, lanes, extra, link, flip
     <article className={'hv-run v2-grid' + (flip ? ' flip' : '')} ref={ref}>
       <div className="hv-run-fig">
         {/* the figure rests at 64px and grows only while its race is the moment, then settles (MASTER 3.1) */}
-        <motion.p className="v2-figure hv-run-big" initial={false} animate={{ scale: racing ? 1.6 : 1 }} transition={{ duration: 0.5, ease: EASE }}><Count to={big} decimals={decimals} suffix="×" duration={1.2} /></motion.p>
+        <motion.p ref={fig} className="v2-figure hv-run-big" initial={false} animate={{ scale: racing && centre ? 1.6 : 1 }} transition={{ duration: 0.5, ease: EASE }}><Count to={big} decimals={decimals} suffix="×" duration={1.2} /></motion.p>
         <p className="hv-cap hv-run-cap">{cap}</p>
         <p className="v2-kicker hv-run-k">{kicker}</p>
         <p className="hv-run-note">{note}</p>
