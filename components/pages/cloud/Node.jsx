@@ -1,6 +1,6 @@
 'use client';
 /* Node, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief).
-   V2: 8/10 One machine's life: the node settles from big to its place on the 8/5 split beside the 52px title and runs itself (up, joined, hardware reported, jobs lighting the five levels of work, roots settling on Lux), tilts a degree or two toward your pointer and takes a job of whatever level you point at; the figures are the one big thing of the next screen; six reasons play in one pinned graphite terminal; a quiet room to put a machine on the fabric; deck greys, flat surfaces, no springs.
+   V2: 8/10 Round 4 (review 7/10): the h1 now cuts in after the page is painted (it used to finish before first paint); the machine shows its own process (pid, network, the level it is serving) instead of /network's peer lines; the hero-to-Why band is ~120px, not ~300; the figures roll and settle once on entry; the pinned stage is 48svh a chapter (was 76), sits higher, and each chapter plays a 2.8s scripted beat when it arrives (command keyed in, chips one by one, bars filling, models/route/placement lit in turn, declared struck then attested ringed, the node driving itself up/join/stop once, roots appended to Lux) and rests on a blinking prompt; under 900px the scene stacks, one terminal per chapter at true height; Copy swaps to the tick and "Copied" together; text links part their stroke, Node docs' arrow nudges.
    Persona: Developer with a machine to lend (a compute provider).
    Goal: run a node.
    CTA: "Run a Node" → https://docs.hanzo.ai/docs/proof-of-ai/node-operator (data-cta node.hero, node.close; the site's
@@ -15,9 +15,10 @@
    or stops by its recorded pid while the other process that happens to share the name keeps running.
    Motion (1 signature + 3): idle = the machine's own loop (the one continuous mover, pausable); pointer = the machine
    tilting toward a fine pointer (2.5° at most, eased 300ms), a level you point at taking a job, the magnetic close;
-   time = the terminal's lines staged in per chapter; state = the drive control, the levels sheet rising; arrival = the
-   cut-in title, the timed wipe into the quiet room; scroll (under half) = the stage settling from big to its place and
-   the pinned terminal.
+   time = each chapter's scripted beat on the terminal (one frame scheduler, plays once, rests on a blinking prompt);
+   state = the drive control, the levels sheet rising, the Copy confirm; arrival = the cut-in title, the figures
+   settling, the timed wipe into the quiet room; scroll (under half) = the stage settling from big to its place and
+   the pinned terminal (stacked under 900px).
    Every word and link is Hanzo's; hashes and bars are drawn, not measured. */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
@@ -192,7 +193,7 @@ function useBeat(key, run, calm) {
 
 /* a string keyed in a character at a time from at, at 50ms a character; the rest of it holds its room unseen */
 function Keyed({ text, b, at }) {
-  const n = Math.max(0, Math.min(text.length, Math.floor((b - at) / 0.05)));
+  const n = b >= BEAT ? text.length : Math.max(0, Math.min(text.length, Math.floor((b - at) / 0.05)));
   return <>{text.slice(0, n)}<span className="nd-ghost">{text.slice(n)}</span></>;
 }
 
@@ -204,7 +205,7 @@ function Screen({ step, drive, b }) {
       <p className="c"><span>$</span> <Keyed text="hanzo fabric up" b={b} at={0.1} /></p>
       <p className={R(1, 'o')}>reports what it can serve</p>
       <div className="nd-t-hw">{HW.map((h, i) => <b key={h} className={R(1.25 + i * 0.3)}>{h}</b>)}</div>
-      <p className={R(2.1, 'o')}>the cluster routes to it <em><Keyed text="on that basis" b={b} at={2.2} /></em></p>
+      <p className={R(1.95, 'o')}>the cluster routes to it <em><Keyed text="on that basis" b={b} at={2.05} /></em></p>
       {rest}
     </>
   );

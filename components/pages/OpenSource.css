@@ -64,6 +64,10 @@
 /* the hint speaks to a pointer; on touch there is none, so it steps aside (the sky still pans and opens by tap) */
 @media (hover: none) { .xos-hint { display: none; } }
 
+/* seams between paper sections: the next object enters while the last is still on screen (golden steps 116 + 72, not 188 + 188) */
+.pf-r .xos-after .pf-sec { padding: clamp(72px, 8vw, 116px) 0; }
+.pf-r .xos-after .pf-sec + .pf-sec { padding-top: 72px; }
+
 /* the sticky local band (in-page, opaque, under Hanzo's header) */
 .xos-local { position: sticky; top: 60px; z-index: 10; background: #ffffff; border-bottom: 1px solid var(--hair); }
 .xos-local-in { display: flex; align-items: center; gap: 17px; min-height: 56px; }
@@ -87,6 +91,7 @@
 .xos-eco button:active, .xos-chips button:active { transform: scale(.97); }
 .xos-eco button[aria-selected='true'], .xos-chips button[aria-selected='true'] { color: #ffffff; }
 .xos-eco button[aria-selected='true'] .pf-mono, .xos-chips button[aria-selected='true'] .pf-mono { color: rgba(255, 255, 255, .55); }
+@media (hover: hover) { .xos-eco button[aria-selected='true']:hover .pf-mono, .xos-chips button[aria-selected='true']:hover .pf-mono { color: #fafafa; } }
 .xos-eco button:focus-visible, .xos-chips button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; box-shadow: 0 0 0 4px #ffffff; }
 .xos-pub-g { align-items: start; }
 .xos-pub-a { grid-column: 1 / span 5; }
