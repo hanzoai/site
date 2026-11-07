@@ -6,7 +6,7 @@
 // Signature: the module, exploded: a plate stack that signs in the hero and opens layer by layer as the facts are read.
 // Beyond: Pick your module: where its key lives, threshold signing and ML-DSA-65 per module, in Hanzo's words.
 /* HSM (v2, archetype A Launch).
-   V2: 8/10 The module signs in the hero while its provider changes under one interface, then explodes plate by plate in the dark room; pick-your-module answers per module; greys only, one ask.
+   V2: 8/10 round 2: the hero paints at its final size (lede and ask on screen at once) and recedes on scroll; chapter counters are captions under the words, dots name their step; pick-your-module is one 8/5 sheet whose plate stack, name and words change per tab (phone: a snapping rail); no white bands; deck greys only, one ask.
    Signature: the module, exploded. One hardware module drawn as a stack of plates (the handle Hanzo holds, the
    boundary, the key, the firmware, the module itself). In the hero it is closed and signing: key id and bytes go in, a
    signature comes out, and the module under the interface changes (AWS KMS, Azure Key Vault, Google Cloud KMS, a Zymbit
@@ -19,11 +19,11 @@
    Persona: a security or platform engineer who already owns key hardware (a cloud KMS or a Zymbit module).
    Goal: see that the key never leaves the hardware and that the module is a line of configuration.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { A, Cta } from '../../kit';
+import { useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import { Cta } from '../../kit';
 import { useLive, useSteps } from './Frame';
-import { Lines, Lift } from '../../v2/LiftStage';
+import { Lines } from '../../v2/LiftStage';
 import PinChapters from '../../v2/x-hypatia/PinChapters';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
@@ -34,6 +34,21 @@ import './Hsm.css';
 const EASE = [0.16, 1, 0.3, 1];
 const MODULES = ['AWS KMS', 'Azure Key Vault', 'Google Cloud KMS', 'Zymbit · PKCS#11'];
 const LAYERS = ['handle', 'boundary', 'key', 'firmware', 'module'];
+
+/* The hero object's settle, page-local: it paints at its final size (server and client agree, nothing snaps at load),
+   then eases back and down a little as the hero scrolls away, so the module recedes as the chapters arrive. */
+function Settle({ children, className }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.2', 'end start'] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 48]);
+  return (
+    <div ref={ref} className={className}>
+      <motion.div style={calm ? undefined : { scale, y, transformOrigin: '50% 30%' }}>{children}</motion.div>
+    </div>
+  );
+}
 
 /* The module: five plates in one 3D stack. gap opens it; lit picks the plate in the light; labels sit on leader lines. */
 function Module({ gap = 14, lit = [2], labels = {}, base, shares, small }) {
@@ -142,16 +157,34 @@ function Pick() {
             </button>
           ))}
         </div>
-        <dl className="hs-pick-p" id="hs-pick-p" role="tabpanel" aria-live="polite">
-          {[['The key', key], ['Threshold signing', thr], ['ML-DSA-65', pq]].map(([t, d]) => (
-            <div key={t}>
-              <dt>{t}</dt>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.dd key={at + t} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.12 } }} transition={{ duration: 0.45, ease: EASE }}>{d}</motion.dd>
-              </AnimatePresence>
+        {/* one sheet split 8/5: the module you picked (its name on the bottom plate) and where its key lives, large;
+            threshold signing and ML-DSA-65 as hairline rows beside it. Every tab changes the plate, the name and the words. */}
+        <div className="hs-pick-p" id="hs-pick-p" role="tabpanel" aria-live="polite">
+          <div className="hs-pick-main">
+            <div className="hs-pick-obj" aria-hidden="true">
+              <Module gap={18} lit={[4]} base={PICK[at][0]} shares={at === 3} small />
             </div>
-          ))}
-        </dl>
+            <dl className="hs-pick-key">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.p key={'n' + at} className="hs-pick-name" aria-hidden="true" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>{PICK[at][0]}</motion.p>
+              </AnimatePresence>
+              <dt>The key</dt>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.dd key={'k' + at} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>{key}</motion.dd>
+              </AnimatePresence>
+            </dl>
+          </div>
+          <dl className="hs-pick-rows">
+            {[['Threshold signing', thr], ['ML-DSA-65', pq]].map(([t, d]) => (
+              <div key={t}>
+                <dt>{t}</dt>
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.dd key={at + t} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE }}>{d}</motion.dd>
+                </AnimatePresence>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
     </section>
   );
@@ -167,9 +200,9 @@ export default function Hsm() {
             <p className="v2-body hs-lede v2-in" style={{ animationDelay: '.3s' }}>One interface to the key hardware you already trust — AWS KMS, Azure Key Vault, Google Cloud KMS, or a Zymbit module over PKCS#11. Generate keys, sign with them, and unwrap with them, without the private material ever reaching your process.</p>
             <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}><Cta to="https://github.com/hanzoai" id="hsm.hero" thumb>View on GitHub</Cta></div>
           </div>
-          <Lift className="hs-hero-obj" from={1.06} y={16} origin="50% 50%" offset={['start end', 'start 0.3']}>
+          <Settle className="hs-hero-obj">
             <Sign />
-          </Lift>
+          </Settle>
         </div>
       </section>
 

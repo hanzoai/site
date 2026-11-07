@@ -6,7 +6,7 @@
 // Signature: the gate, running: one request at a time checked, stripped, stamped or turned away (429) across a full-width lane.
 // Beyond: Forge one yourself: pick a credential and fake headers, see what the service behind the gate receives.
 /* Gateway (v2, archetype A Launch).
-   V2: 8/10 One request at a time checked, stripped, stamped or turned away (429) at the gate across a full-width lane; the six rules pinned beside a request inspector; forge-one-yourself as the dark room; greys only, 52px h1, one ask.
+   V2: 8/10 round 2: the lane is the same inset card from first paint (no server/client snap, no hydration mismatch) and recedes as you leave; a request already in flight and a landed result at 0 s; the statement grows as it crosses the screen over its own request lane; chapter counters under the titles and each rule's figure lands big and settles; deck greys only; hovers that answer; 44px targets.
    Signature: the gate, running across the whole screen. One request at a time arrives from the left carrying a token and
    a forged X-Org-Id; at the gate the token is checked against JWKS, the forged header is torn off, the real identity is
    stamped on from the claims and the request walks through to Hanzo Cloud. A token bucket on the gate drains with each
@@ -19,11 +19,11 @@
    Persona: a developer or platform engineer putting a service behind api.hanzo.ai.
    Goal: see, in one request, that the token is checked once at the edge and identity is written, not trusted.
    CTA: Read the docs (hero, the sticky ask bar and the close; one solid button per screen). */
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { Console, useLive } from './Frame';
-import { Lines, Lift } from '../../v2/LiftStage';
+import { Lines } from '../../v2/LiftStage';
 import PinChapters from '../../v2/x-hypatia/PinChapters';
 import ShipPrompt from '../../v2/ShipPrompt';
 import GetIt from '../../v2/GetIt';
@@ -40,7 +40,7 @@ function Lane() {
   const [ref, seen] = useLive(0.25);
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
-  const [n, setN] = useState(0);
+  const [n, setN] = useState(1); // one request has already landed, so the log is never empty
   const [phase, setPhase] = useState(0);
   const [bucket, setBucket] = useState(4);
   const limited = bucket === 0;
@@ -83,7 +83,7 @@ function Lane() {
         <span>Token bucket</span>
         <div>{[0, 1, 2, 3].map((i) => <motion.i key={i} animate={{ opacity: i < left ? 1 : 0.14, scaleY: i < left ? 1 : 0.5 }} transition={{ duration: 0.3, ease: EASE }} />)}</div>
       </div>
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         <motion.div
           key={n}
           className="gw-req"
@@ -93,7 +93,7 @@ function Lane() {
           transition={{ x: { duration: phase === 0 ? 1.0 : 0.95, ease: EASE }, opacity: { duration: gone ? 0.7 : 0.4, delay: gone ? 0.25 : 0 } }}
         >
           <p className="gw-req-top"><b>GET</b> api.hanzo.ai/v1/…<span>{who}</span></p>
-          <p className={'gw-h' + (phase >= 1 && !limited ? ' ok' : '')}>Authorization: Bearer <em>JWT</em>
+          <p className={'gw-h' + (phase >= 1 && !limited ? ' ok' : '')}><span>Authorization: Bearer <em>JWT</em></span>
             {phase >= 1 && !limited && <motion.span className="gw-chip" initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }}>✓ JWKS</motion.span>}
           </p>
           <AnimatePresence>
@@ -141,11 +141,11 @@ const BIG = ['JWKS ✓', 'sub · owner · roles', '/* → Hanzo Cloud', '429 · 
 function Inspector({ at }) {
   return (
     <div className="gw-insp v2-obj" aria-hidden="true">
-      <div className="gw-insp-bar"><span className="gw-insp-dots"><i /><i /><i /></span><span>api.hanzo.ai</span><b>{String(at + 1).padStart(2, '0')}</b></div>
+      <div className="gw-insp-bar"><span className="gw-insp-dots"><i /><i /><i /></span><span>api.hanzo.ai</span><b>{String(at + 1).padStart(2, '0')} / {String(RULES.length).padStart(2, '0')}</b></div>
       <div className="gw-insp-body">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={at} className="gw-insp-in" initial="in" animate="on" exit="out" variants={{ out: { opacity: 0, y: -14, transition: { duration: 0.18 } } }}>
-            <motion.p className={'gw-big' + (at === 3 ? ' x' : '')} variants={{ in: { opacity: 0, y: 30 }, on: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } }}>{BIG[at]}</motion.p>
+            <motion.p className={'gw-big' + (at === 3 ? ' x' : '')} variants={{ in: { opacity: 0, scale: 1.45 }, on: { opacity: 1, scale: 1, transition: { opacity: { duration: 0.3 }, scale: { duration: 0.9, ease: EASE, delay: 0.35 } } } }}>{BIG[at]}</motion.p>
             <ul className="gw-insp-rows">
             {PROOF[at].map(([a, b, k], j) => (
               <motion.li key={a} className={k} variants={{ in: { opacity: 0, y: 22 }, on: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE, delay: 0.06 + j * 0.06 } } }}>
@@ -191,11 +191,11 @@ function Forge() {
           <div className="gw-pane">
             <p className="v2-kick">You send</p>
             <ul className="gw-forge-hs">
-              {cred < 2 && <li className="gw-forge-auth">Authorization: Bearer <em>{jwt ? 'JWT' : 'API key'}</em></li>}
+              {cred < 2 && <li className="gw-forge-auth"><span>Authorization: Bearer <em>{jwt ? 'JWT' : 'API key'}</em></span></li>}
               {FAKE.map(([h], i) => (
                 <li key={h}>
                   <label className="gw-tog">
-                    <input type="checkbox" checked={fake[i]} onChange={() => setFake((f) => f.map((v, k) => (k === i ? !v : v)))} />
+                    <input type="checkbox" suppressHydrationWarning checked={fake[i]} onChange={() => setFake((f) => f.map((v, k) => (k === i ? !v : v)))} />
                     <span className="gw-tog-ui" aria-hidden="true" />
                     <span>{h}: <em>anything</em></span>
                   </label>
@@ -212,7 +212,7 @@ function Forge() {
                   <motion.li key={h} className="gone" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>{h}: anything <span>stripped</span></motion.li>
                 ))}
                 {jwt && FAKE.filter(([, c]) => c).map(([h, c], i) => (
-                  <motion.li key={'w' + h} className="set" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.05 * i }}>{h} <em>← {c}</em></motion.li>
+                  <motion.li key={'w' + h} className="set" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.05 * i }}><span>{h} <em>← {c}</em></span></motion.li>
                 ))}
               </AnimatePresence>
             </ul>
@@ -228,6 +228,48 @@ function Forge() {
   );
 }
 
+/* The hero lane as the same inset card from first paint: no transform until you scroll. As the hero leaves, the card
+   recedes a little (scale and lift tied to scroll only), so the server frame and the client frame are identical. */
+function Settle({ children, className }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const still = useRef(false);
+  useEffect(() => { still.current = !!calm; }, [calm]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.3', 'end start'] });
+  const scale = useTransform(scrollYProgress, (p) => (still.current ? 1 : 1 - 0.06 * Math.min(1, Math.max(0, p))));
+  const y = useTransform(scrollYProgress, (p) => (still.current ? 0 : -40 * Math.min(1, Math.max(0, p))));
+  return (
+    <div ref={ref} className={className}>
+      <motion.div style={{ scale, y, transformOrigin: '50% 0%' }}>{children}</motion.div>
+    </div>
+  );
+}
+
+/* The statement: it grows as it crosses the middle of the screen, then settles back, over a one-line request lane where
+   a forged header is torn off at the gate and the org id that walks through is the one Gateway wrote. */
+function Say() {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  const still = useRef(false);
+  const k = useRef(0.42); // 44px grows toward 64px on desktop; a phone grows a little (32px toward 38px)
+  useEffect(() => { still.current = !!calm; k.current = innerWidth < 900 ? 0.18 : 0.42; }, [calm]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const grow = useTransform(scrollYProgress, (p) => (still.current ? 1 : 1 + k.current * Math.max(0, 1 - Math.abs(p - 0.5) / 0.3)));
+  return (
+    <section className="v2-sec gw-say" ref={ref}>
+      <div className="v2-wrap v2-grid">
+        <motion.h2 className="v2-display m gw-say-h" style={{ scale: grow, transformOrigin: '0% 100%' }}>Nothing downstream has to ask who is calling</motion.h2>
+        <p className="v2-lede gw-say-l">Gateway answers that once, at the edge, so every service behind it can read an org id and believe it.</p>
+        <div className="gw-rail" aria-hidden="true">
+          <span className="gw-rail-end">client</span>
+          <span className="gw-rail-line"><i className="gw-rail-gate" /><span className="gw-rail-mov"><b className="gw-rail-dot"><em className="gw-rail-in">X-Org-Id: anything</em><em className="gw-rail-out">X-Org-Id ← owner</em></b></span></span>
+          <span className="gw-rail-end r">Hanzo Cloud <b>/v1</b></span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Gateway() {
   return (
     <main className="v2 gw">
@@ -237,24 +279,19 @@ export default function Gateway() {
             <Lines as="h1" className="v2-display gw-h1" lines={['Hanzo', 'Gateway']} data-morph-target="" />
           </div>
           <div className="gw-hero-r">
-            <p className="v2-lede gw-sub v2-in" style={{ animationDelay: '.3s' }}>The trust boundary in front of the API</p>
-            <div className="v2-acts v2-in" style={{ animationDelay: '.42s' }}>
+            <p className="v2-lede gw-sub v2-in" style={{ animationDelay: '.17s' }}>The trust boundary in front of the API</p>
+            <div className="v2-acts v2-in" style={{ animationDelay: '.23s' }}>
               <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/gateway" id="gateway.hero" thumb>Read the docs</Cta>
               <Cta to="https://github.com/hanzoai" kind="quiet" id="gateway.view-on-github">View on GitHub</Cta>
             </div>
           </div>
         </div>
-        <Lift className="gw-lift" from={1.08} y={24} origin="50% 30%" offset={['start end', 'start 0.4']}>
+        <Settle className="gw-lift">
           <Lane />
-        </Lift>
+        </Settle>
       </section>
 
-      <section className="v2-sec gw-say">
-        <div className="v2-wrap v2-grid">
-          <h2 className="v2-display m gw-say-h">Nothing downstream has to ask who is calling</h2>
-          <p className="v2-lede gw-say-l">Gateway answers that once, at the edge, so every service behind it can read an org id and believe it.</p>
-        </div>
-      </section>
+      <Say />
 
       <PinChapters className="gw-ch" label="How Gateway decides" items={RULES} look="right" visual={(at) => <Inspector at={at} />} />
 

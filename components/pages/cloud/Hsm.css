@@ -1,6 +1,6 @@
-/* HSM v2. Accent: copper (the module). One dark room: the exploded chapters. */
-.hs { --acc: #0a0a0a; --glow: #525252; }
-.hs .v2-dark, .hs [data-room='dark'] { --acc: #f5f5f7; --glow: #e5e5e5; }
+/* HSM v2. Greys only (Hanzo's deck). One dark room: the exploded chapters. */
+.hs { --acc: #0a0a0a; --glow: #525252; --btn-solid-hover: #262626; }
+.hs .v2-dark, .hs [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
 
 /* the module: five plates in one isometric stack */
 .hm { --s: clamp(200px, 21vw, 300px); --plate: #fff; --edge: rgba(0, 0, 0, .08); --ink2: #0a0a0a; --gk: 1; position: relative; width: 100%; height: 100%; }
@@ -8,7 +8,7 @@
 .hm-plate { position: absolute; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); box-sizing: border-box; border-radius: 28px; background: var(--plate); border: 1px solid var(--edge); z-index: calc(10 + var(--z)); transform: rotateX(58deg) rotateZ(-42deg) translateZ(calc(var(--z) * var(--gap) * var(--gk))); transition: transform .95s cubic-bezier(.16, 1, .3, 1), border-color .5s, box-shadow .5s, background .5s; box-shadow: 0 30px 40px -24px rgba(0, 0, 0, .28); }
 .hm-boundary { background: transparent; border: 2px dashed var(--edge); box-shadow: none; }
 .hm-handle { background: rgba(255, 255, 255, .55); }
-.hm-key { display: grid; place-items: center; background: #1d1d1f; border-color: #1d1d1f; }
+.hm-key { display: grid; place-items: center; background: #171717; border-color: #171717; }
 .hm-core { position: relative; width: 44%; height: 44%; }
 .hm-core i { position: absolute; inset: 0; border-radius: 999px; background: radial-gradient(circle at 40% 40%, #d4d4d4, var(--glow) 45%, var(--acc)); box-shadow: 0 0 40px 6px rgba(163, 163, 163, .55); transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
 .hm-core.split i { transform: scale(.48); }
@@ -16,7 +16,7 @@
 .hm-core.split i:nth-child(2) { transform: translate(62%, -40%) scale(.48); }
 .hm-core.split i:nth-child(3) { transform: translate(0, 66%) scale(.48); }
 .hm-grid { position: absolute; inset: 14%; border-radius: 12px; background-image: linear-gradient(var(--edge) 1px, transparent 1px), linear-gradient(90deg, var(--edge) 1px, transparent 1px); background-size: 18px 18px; }
-.hm-module { display: grid; place-items: center; background: linear-gradient(135deg, #f5f5f7, #e9e9e9); }
+.hm-module { display: grid; place-items: center; background: linear-gradient(135deg, #f5f5f5, #e9e9e9); }
 .hm-name { font: 600 clamp(15px, 1.5vw, 22px)/1.1 var(--sans); letter-spacing: -.02em; color: var(--ink2); text-align: center; padding: 0 12%; }
 .hm-plate.lit { border-color: var(--glow); box-shadow: 0 0 0 1px var(--glow), 0 0 60px -6px rgba(163, 163, 163, .6); }
 .hm-boundary.lit { box-shadow: 0 0 60px -10px rgba(163, 163, 163, .5); }
@@ -26,15 +26,18 @@
 .hm-labels li.lit { color: var(--glow); }
 @keyframes hm-in { from { opacity: 0; transform: translate(-10px, -50%); } }
 
-/* hero: light, copy left, the module signing on the right */
-.hs-hero { padding: clamp(96px, 7.4vw, 116px) 0 clamp(80px, 8vw, 120px); }
+/* hero: light, copy left, the module signing on the right. Lede and ask are on screen from the first frame: they rise,
+   they never wait at opacity 0. */
+.hs-hero { padding: clamp(96px, 7.4vw, 116px) 0 clamp(44px, 5vw, 72px); }
 .hs-hero-grid { align-items: center; min-height: min(70svh, 640px); }
 .hs-hero-copy { grid-column: 1 / span 5; }
 .hs-h1 { margin: 0 0 24px; }
 .hs-lede { margin-bottom: 36px; max-width: 44ch; }
+.hs .hs-hero .v2-in { animation-name: hs-rise; }
+@keyframes hs-rise { from { transform: translate3d(0, 16px, 0); } }
 .hs-hero-obj { grid-column: 6 / -1; height: clamp(420px, 38vw, 560px); }
 .hs-hero-obj > div { height: 100%; }
-.hs-sign { position: relative; height: 100%; border-radius: 28px; background: radial-gradient(60% 60% at 50% 55%, rgba(163, 163, 163, .16), transparent 70%), #f5f5f7; overflow: hidden; }
+.hs-sign { position: relative; height: 100%; border-radius: 28px; background: radial-gradient(60% 60% at 50% 55%, rgba(163, 163, 163, .16), transparent 70%), #f5f5f5; overflow: hidden; }
 .hs-sign .hm { --s: clamp(200px, 21vw, 300px); }
 .hs-io { position: absolute; top: 50%; margin: 0; padding: 12px 16px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 14px 30px -14px rgba(0, 0, 0, .25); font: 500 14px/1 var(--mono); white-space: nowrap; }
 .hs-io.in { left: 6%; transform: translateY(-160%); }
@@ -43,33 +46,78 @@
 .hs-call span { color: var(--faint); }
 .hs-call b { color: var(--ink); font-weight: 600; display: inline-block; }
 
-/* chapters: the black room */
-.hs-ch-k { margin-top: 12px; color: #a3a3a3; }
-.hs-ch .pc-n { color: var(--glow); }
-.hs-ch .hm { --plate: #161617; --edge: rgba(255, 255, 255, .16); --ink2: #f5f5f7; }
+/* chapters: the black room. The "01 / 06" counter is a caption under the words (nothing sits above a heading), and the
+   room's name sits in one caption row beside the dots. */
+.hs-ch .pc-art { display: flex; flex-direction: column; }
+.hs-ch .pc-n { order: 3; margin: 20px 0 0; color: rgba(255, 255, 255, .55); }
+.hs-ch .pc-vis-m { order: 4; }
+.hs-ch .pc-copy { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 12px; }
+.hs-ch .pc-copy > * { grid-column: 1 / -1; }
+.hs-ch .pc-copy > .pc-dots { grid-column: 1; }
+.hs-ch .pc-copy > .hs-ch-k { grid-column: 2; margin: 40px 0 0; color: rgba(255, 255, 255, .55); }
+.hs-ch .pc-arts { margin-top: 0; }
+.hs-ch .hm { --plate: #171717; --edge: rgba(255, 255, 255, .16); --ink2: #f5f5f5; }
 .hs-ch .hm-handle { background: rgba(255, 255, 255, .05); }
-.hs-ch .hm-module { background: linear-gradient(135deg, #2c2c2e, #1c1c1e); }
+.hs-ch .hm-module { background: linear-gradient(135deg, #262626, #171717); }
 .hs-ch .hm-key { background: #000; border-color: rgba(255, 255, 255, .12); }
 .hs-ch .hm-plate { box-shadow: 0 30px 40px -24px rgba(0, 0, 0, .8); }
 .hs-ch .hm-plate.lit { box-shadow: 0 0 0 1px var(--glow), 0 0 70px -6px rgba(163, 163, 163, .55); }
+.hs-ch .pc-dots button { position: relative; }
 .hs-ch .pc-dots button[aria-current] i { background: var(--glow); }
+/* each dot names its step on hover, in the chapter's own title */
+.hs-ch .pc-dots button::after { content: attr(aria-label); position: absolute; left: 50%; bottom: calc(100% + 6px); width: max-content; max-width: 220px; padding: 6px 10px; border-radius: 8px; background: #262626; color: #fafafa; font: 500 12px/1.3 var(--sans); text-align: left; opacity: 0; transform: translate(-50%, 4px); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); pointer-events: none; z-index: 2; }
+@media (hover: hover) {
+  .hs-ch .pc-dots button:hover i { background: rgba(255, 255, 255, .78); transform: scale(1.75); }
+  .hs-ch .pc-dots button:hover::after { opacity: 1; transform: translate(-50%, 0); }
+}
+.hs-ch .pc-dots button:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
 .hs-exp { position: relative; height: 100%; }
 .hs-exp .hm { transform: translateX(-10%); }
 
+/* paste and ship, then pick your module: one quiet stretch, no white band between them */
+.hs .sp.v2-sec { padding-bottom: 0; }
+.hs .sp .x-copy { min-width: 84px; height: 36px; justify-content: center; }
+@media (hover: hover) { .hs .sp .x-copy:hover { background: rgba(255, 255, 255, .16); color: #fff; box-shadow: none; } }
+.hs .sp .x-codeblock pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.hs-pick.v2-sec { padding-top: 72px; }
+
 /* pick your module */
-.hs-pick-head { align-items: end; margin-bottom: 56px; row-gap: 24px; }
+.hs-pick-head { align-items: end; margin-bottom: 44px; row-gap: 24px; }
 .hs-pick-hl { grid-column: 1 / span 7; }
 .hs-pick-f { grid-column: 9 / -1; padding-bottom: 8px; }
-.hs-pick-tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; border-radius: 999px; background: #f5f5f7; width: max-content; max-width: 100%; box-sizing: border-box; }
-.hs-pick-tabs button { position: relative; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: none; font: 500 16px/1 var(--sans); color: var(--soft); cursor: pointer; }
+.hs-pick-tabs { display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: #f5f5f5; width: max-content; max-width: 100%; box-sizing: border-box; }
+.hs-pick-tabs button { position: relative; flex: none; min-height: 48px; padding: 0 22px; border: 0; border-radius: 999px; background: none; font: 500 16px/1 var(--sans); color: var(--soft); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
+.hs-pick-tabs button:active { transform: scale(.97); }
 .hs-pick-tabs button[aria-selected='true'] { color: var(--ink); }
 .hs-pick-tabs button:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+@media (hover: hover) { .hs-pick-tabs button:not([aria-selected='true']):hover { color: var(--ink); background: rgba(0, 0, 0, .05); } }
 .hs-tab-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .12); }
 .hs-tab-t { position: relative; }
-.hs-pick-p { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 40px 0 0; }
-.hs-pick-p > div { padding: 32px; border-radius: 28px; background: #f5f5f7; min-height: 240px; }
-.hs-pick-p dt { margin-bottom: 20px; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--acc); }
-.hs-pick-p dd { margin: 0; font-size: clamp(19px, 1.6vw, 23px); line-height: 1.4; letter-spacing: -.015em; color: var(--ink); text-wrap: pretty; }
+
+/* the panel: one sheet, 8 to 5. The picked module on its own plate stack, the key in large type; the rest as rows. */
+.hs-pick-p { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); margin: 27px 0 0; border-radius: 24px; background: #f5f5f5; overflow: hidden; }
+.hs-pick-main { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: center; gap: 17px; padding: 27px 27px 27px 0; }
+.hs-pick-obj { position: relative; height: 300px; }
+.hs-pick-obj .hm { --s: 150px; }
+.hs-pick-obj .hm-name { font-size: 14px; }
+.hs-pick-key { margin: 0; }
+.hs-pick-name { margin: 0 0 17px; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; color: var(--ink); }
+.hs-pick-key dt, .hs-pick-rows dt { margin-bottom: 10px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
+.hs-pick-key dd { margin: 0; font-size: 21px; line-height: 1.4; letter-spacing: -.015em; color: var(--ink); text-wrap: pretty; }
+.hs-pick-rows { margin: 0; padding: 10px 27px; border-left: 1px solid rgba(0, 0, 0, .1); display: grid; align-content: center; }
+.hs-pick-rows > div { padding: 22px 0; }
+.hs-pick-rows > div + div { border-top: 1px solid rgba(0, 0, 0, .1); }
+.hs-pick-rows dd { margin: 0; font-size: 16px; line-height: 1.55; color: #262626; text-wrap: pretty; }
+
+/* the close: the contour fills its room; the chips and the text link answer */
+.hs .gi { padding-bottom: clamp(72px, 8vw, 116px); }
+.hs .gi-art { transform: scale(1.12); }
+@media (hover: hover) {
+  .hs .gi-chip { transition: border-color .15s cubic-bezier(0, 0, .2, 1), background-color .15s cubic-bezier(0, 0, .2, 1); }
+  .hs a.gi-chip:hover { background: #f5f5f5; }
+  .hs .x-arrow svg { transition: transform .15s cubic-bezier(0, 0, .2, 1); }
+  .hs .x-arrow:hover svg { transform: translateX(4px); }
+}
 
 @media (max-width: 900px) {
   .hm { --s: 150px; --gk: .62; }
@@ -83,10 +131,24 @@
   .hs-io.out { right: 4%; top: auto; bottom: 74px; transform: none; }
   .hs-exp .hm { transform: translateX(-18%); }
   .hs-ch .pc-vis { height: 48svh; }
-  .hs-pick-tabs { border-radius: 24px; width: auto; }
-  .hs-pick-tabs button { min-height: 44px; padding: 0 14px; font-size: 15px; }
-  .hs-pick-p { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .hs-pick-p > div { min-height: 0; padding: 24px; }
+  .hs-ch .pc-copy { display: block; }
+  .hs-ch .pc-copy > .hs-ch-k { display: none; }
+  /* the tabs: one rail that scrolls sideways and snaps, the next tab peeking at the edge */
+  .hs-pick-tabs { width: auto; margin-inline: calc(var(--gutter, 16px) * -1); padding: 5px var(--gutter, 16px); border-radius: 0; background: none; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: 16px; scrollbar-width: none; }
+  .hs-pick-tabs::-webkit-scrollbar { display: none; }
+  .hs-pick-tabs button { min-height: 44px; padding: 0 16px; font-size: 15px; scroll-snap-align: start; background: #f5f5f5; }
+  .hs-pick-p { grid-template-columns: minmax(0, 1fr); border-radius: 20px; }
+  .hs-pick-main { grid-template-columns: minmax(0, 1fr); padding: 0 20px 20px; gap: 0; }
+  .hs-pick-obj { height: 200px; }
+  .hs-pick-obj .hm { --s: 110px; }
+  .hs-pick-name { font-size: 21px; }
+  .hs-pick-key dd { font-size: 17px; }
+  .hs-pick-rows { padding: 0 20px 10px; border-left: 0; }
+  .hs-pick-rows > div:first-child { border-top: 1px solid rgba(0, 0, 0, .1); }
+  .hs .gi-art { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs-ch .pc-dots button::after { transition: none; }
 }
 
 /* the live object's pause control */
