@@ -23,8 +23,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import Sigil from '../Sigil';
-import { A } from '../kit';
-import { Nodes, CopyLink, split } from './DocNodes';
+import { A, DataTable } from '../kit';
+import { Nodes, Node, CopyLink, split } from './DocNodes';
 import { useArrival } from './doorway';
 import FamLines from '../v2/FamLines';
 import FamStage from '../v2/FamStage';
@@ -128,6 +128,25 @@ function Rail({ toc, active, art }) {
   );
 }
 
+/* Hanzo's tables, through the kit's one DataTable: every cell as written (links kept), the first column the row
+   header; the caption is the section's own heading */
+const isEl = (k) => k && typeof k === 'object';
+const textOf = (n) => (isEl(n) ? n.c.map(textOf).join('') : n || '');
+function Table({ n, caption }) {
+  const rowsOf = (sec) => (sec ? sec.c.filter((r) => isEl(r) && r.t === 'tr') : []);
+  const thead = n.c.find((k) => isEl(k) && k.t === 'thead');
+  const tbody = n.c.find((k) => isEl(k) && k.t === 'tbody') || n;
+  const head = rowsOf(thead)[0];
+  const heads = head ? head.c.filter(isEl).map((th) => textOf(th).replace(/\s+/g, ' ').trim()) : [];
+  const body = rowsOf(tbody).filter((r) => r.c.some((k) => isEl(k) && (k.t === 'td' || k.t === 'th')) && r !== head);
+  const width = Math.max(heads.length, ...body.map((r) => r.c.filter(isEl).length));
+  const cols = Array.from({ length: width }, (_, j) => ({ key: 'c' + j, label: heads[j] || '' }));
+  const rows = body.map((r) => Object.fromEntries(r.c.filter(isEl).map((td, j) => ['c' + j, <Nodes key={j} nodes={td.c} />])));
+  return <DataTable caption={caption || heads.join(' · ')} cols={cols} rows={rows} className="xlg2-dt" />;
+}
+/* a section's nodes, with its tables through DataTable */
+const Prose = ({ nodes, caption }) => nodes.map((n, i) => (isEl(n) && n.t === 'table' ? <Table key={i} n={n} caption={caption} /> : <Node key={i} n={n} />));
+
 function Section({ s, i, on }) {
   const [num, text] = s.title ? split(s.title) : [null, null];
   return (
@@ -139,7 +158,7 @@ function Section({ s, i, on }) {
           <CopyLink id={s.id} />
         </h2>
       )}
-      <div className="xlg-prose xlg2-prose"><Nodes nodes={s.nodes} /></div>
+      <div className="xlg-prose xlg2-prose"><Prose nodes={s.nodes} caption={s.title} /></div>
     </section>
   );
 }
@@ -225,6 +244,7 @@ export default function LegalDoc({ doc, peek = {} }) {
     art.current.querySelectorAll('table').forEach((t) => {
       const heads = [...t.querySelectorAll('thead th')].map((th) => th.textContent.trim());
       t.querySelectorAll('tbody tr').forEach((tr) => [...tr.children].forEach((td, j) => { if (heads[j]) td.setAttribute('data-col', heads[j]); }));
+      const w = t.closest('.x-table-wrap'); if (w) { w.setAttribute('data-cards', ''); w.setAttribute('data-cursor', ''); }
     });
     // the page's metric: a click on one of the document's own contact addresses
     art.current.querySelectorAll('a[href^="mailto:"]').forEach((a) => a.setAttribute('data-cta', 'legal.contact'));
@@ -236,13 +256,15 @@ export default function LegalDoc({ doc, peek = {} }) {
     <main className="v2f xlg xlg-doc xlg2" data-ask="off">
       <section className="xlg2-stage" aria-labelledby="xlg-h1">
         <div className="v2f-wrap v2f-grid xlg2-top">
-          <FamLines as="h1" id="xlg-h1" className={'v2f-display xlg2-h1' + size} text={doc.title} data-morph-target />
-          <div className="xlg2-side">
-            <p className="v2f-lede xlg2-lede">{doc.lede}</p>
+          <div className="xlg2-head">
+            <FamLines as="h1" id="xlg-h1" className={'v2f-display xlg2-h1' + size} text={doc.title} data-morph-target />
             <div className="xlg-meta xlg2-meta">
               {doc.meta.length > 0 && <Nodes nodes={doc.meta} />}
               <p className="xlg2-up"><A to="/legal" className="v2f-link">{doc.kicker}</A></p>
             </div>
+          </div>
+          <div className="xlg2-side">
+            <p className="v2f-lede xlg2-lede">{doc.lede}</p>
           </div>
         </div>
         <div className="v2f-wrap xlg2-stage-o">
