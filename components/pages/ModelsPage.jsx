@@ -1,22 +1,27 @@
 'use client';
-// Signature: the stage that opens. Enso's film fills the first screen, then pulls back as you scroll into a wall of all nine flagship films; every film and every card opens into its own page (the WebGL opener for flagships, the morph for model sheets).
-// Beyond: the compare tray. Pin up to three models from anywhere in the catalogue and a tray rises with their context window and their rates side by side, from Hanzo's own price list.
-/* Models, v2 (docs/VISION.md, archetype C: catalogue), chaptered so one idea holds the screen at a time:
-   1 Stage. Enso's film, huge, settles into the wall of nine as you scroll (phones: a swipe rail).
-   2 Three families, the page's one dark room. The words pin; the film changes under a clip wipe (Apple chapters).
-   3 Enso vs Zen as a calm two-column spec.
-   4 Kai's decision benchmarks as hero figures (the anthropic.com launch reference).
-   5 The catalogue. Chips re-flow the families, each family's head pins while its cards pass, every card opens.
-   6 Every model priced, ten rows until you open the rest.
-   7 Try any model: the request swaps its model string by itself until you choose.
-   8 Your first request, in four languages.   9 Related, as an editorial index.
-   Motion: the signature (stage + open), a clip wipe, chip re-flow and count-up. No fade-ups.
-   Every word, id, rate and link is Hanzo's (rates refresh from api.hanzo.ai when it answers). */
+// Persona: Developer choosing a model (and the buyer comparing labs). Goal: find the model, open its page. CTA: "Get API key" (platform.hanzo.ai/api-keys). Metric: api_key_created.
+// Signature: the wall that opens. The first screen is all nine flagship films; scrolling flies into Enso until its film is the next chapter, and every film and every card opens into its own page (the WebGL opener for flagships, the morph for model sheets).
+// Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from here, findable with Ctrl-F, so no page of the 544 is an orphan.
+/* Models, v2 (docs/VISION.md archetype C, docs/JAMES.md, docs/PLAN-COMPONENTS.md 5.4 and 2.15), one idea per screen:
+   1 The wall: nine films at once (at least six cards above the fold), the light moving through them by itself;
+     scroll flies into Enso. Phones: a swipe rail.
+   2 Three families, the one dark room: the words pin, the film changes under a clip wipe.
+   3 Enso vs Zen as a two-column spec with each family's film.  4 Kai's benchmarks as hero figures.
+   5 The catalogue: chips re-flow the families, each family's head pins beside its cards, every card opens; then the
+     collapsed list of every model and maker.  6 Every model priced (ten rows, the rest a press away).
+   7 Try any model: the request swaps its model by itself.  8 Your first request.  9 Related, over a drifting Sigil.
+   Motion mix: idle (films, the moving light, the self-switching request, the Sigil), pointer (hover plays a film,
+   the Sigil leans to the cursor), state (chips re-flow, tabs, the open), arrival (headline cut-in, count-up), scroll
+   (the fly-in and the pinned families). One pause stops everything that moves by itself.
+   No UI hue: greys, black and white; colour arrives only through the films. Every word, id, rate and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { EASE, Count, Copy } from '../ui';
 import { A } from '../kit';
 import { useOpener } from '../Opener';
+import Sigil from '../Sigil';
+import AskBar from '../v2/AskBar';
+import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
 import { media, bySlug } from '../../lib/models';
 import './ModelsPage.css';
 
@@ -29,7 +34,7 @@ const Lk = ({ to, children, className = '', ...r }) => {
     ? <a href={to} className={'xmo-lk ' + className} {...r}>{inner}</a>
     : <A to={to} className={'xmo-lk ' + className} {...r}>{inner}</A>;
 };
-const Btn = ({ to, children, solid }) => <A to={to} className={'x-btn xmo-btn' + (solid ? ' solid' : '')}>{children}</A>;
+const Btn = ({ to, children, solid, ...r }) => <A to={to} className={'x-btn xmo-btn' + (solid ? ' solid' : '')} {...r}>{children}</A>;
 
 /* Opens a flagship's own page with the lifted-picture transition; its close button flies back to this card. */
 function useOpen() {
@@ -49,29 +54,8 @@ function useWide() {
   return wide;
 }
 
-/* A model's film: the still is there at once; the film plays only while asked to and on screen. */
-function Film({ slug, play = true, className = '' }) {
-  const v = useRef(null);
-  const [seen, setSeen] = useState(false);
-  useEffect(() => {
-    const el = v.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.2 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  useEffect(() => {
-    const el = v.current;
-    if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (play && seen) { if (el.preload === 'none') el.preload = 'auto'; el.play().catch(() => {}); } else el.pause();
-  }, [play, seen]);
-  return (
-    <span className={'xmo-film ' + className} aria-hidden="true">
-      <img src={media(slug, 'webp')} alt="" loading="lazy" decoding="async" />
-      <video ref={v} src={media(slug, 'webm')} muted loop playsInline preload="none" onPlaying={(e) => e.currentTarget.classList.add('on')} />
-    </span>
-  );
-}
+/* A model's film in its box: the poster at once, the clip only while asked and on screen (two at most on the page). */
+const Film = ({ slug, play = true, className = '' }) => <span className={'xmo-film ' + className} aria-hidden="true"><ModelFilm slug={slug} play={play} /></span>;
 
 /* Left and right arrows move through a row of tabs. */
 const arrows = (n, set) => (e) => {
@@ -89,55 +73,55 @@ const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
   <T key={t} className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: delay + i * 0.08 }}>{t}</motion.span></T>
 ));
 
-/* ---------- 1. stage: one film, then the wall of nine ---------- */
+/* ---------- 1. the wall: nine films, then the fly-in to Enso ---------- */
 const WALL = ['kai', 'zen', 'iro', 'koma', 'enso', 'oto', 'koe', 'uta', 'mori']; // Enso holds the middle
-const K = 1 / 3; // the wall settles at a third of its first-screen size
+const K = 1 / 3; // the wall is laid out at fly-in size and shown at a third of it, so every picture is drawn smaller than laid out
 const eio = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp = (v) => Math.min(1, Math.max(0, v));
-const scaleAt = (v) => Math.pow(K, eio(clamp(v / 0.72)));
+const scaleAt = (v) => Math.pow(K, 1 - eio(clamp(v / 0.72)));
 
 function Stage() {
   const ref = useRef(null);
   const open = useOpen();
   const calm = useReducedMotion();
   const wide = useWide();
+  const stop = usePaused();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const s = useTransform(p, scaleAt);
+  // as the camera flies in, the eight around Enso leave: edges first, then corners
   const near = useTransform(p, (v) => clamp((0.56 - scaleAt(v)) / 0.16));
   const far = useTransform(p, (v) => clamp((0.48 - scaleAt(v)) / 0.12));
-  const [settled, setSettled] = useState(false);
-  const [shown, setShown] = useState(false);
+  const [zoom, setZoom] = useState(false);
   const [lit, setLit] = useState(4);
   const [held, setHeld] = useState(false);
-  useMotionValueEvent(p, 'change', (v) => { setSettled(v > 0.7); setShown(scaleAt(v) < 0.5); });
-  // once the wall has settled, the light moves through the nine films by itself; a hovered film keeps it.
-  // On phones the wall is a rail: whichever film is on screen plays.
+  useMotionValueEvent(p, 'change', (v) => setZoom(scaleAt(v) > 0.45));
+  // the light moves through the nine by itself while the wall is whole; a hovered or focused film keeps it
   useEffect(() => {
-    if (calm || held || !wide || !settled) return;
-    const t = setInterval(() => setLit((i) => (i + 1) % WALL.length), 2800);
+    if (calm || stop || held || zoom || !wide) return;
+    const t = setInterval(() => setLit((i) => (i + 1) % WALL.length), 2600);
     return () => clearInterval(t);
-  }, [calm, held, wide, settled]);
-  const at = wide && !settled ? 4 : lit;
+  }, [calm, stop, held, zoom, wide]);
+  const at = zoom ? 4 : lit;
+  const go = 'https://platform.hanzo.ai/api-keys';
   return (
     <section className="xmo-stage" ref={ref} aria-labelledby="xmo-h1">
       <div className="xmo-pin">
         <div className="x-wrap xmo-stage-g">
           <div className="xmo-intro">
-            <motion.p className="xmo-kick" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, ease: EASE }}>Models</motion.p>
             <h1 id="xmo-h1" className="xmo-display"><Lines lines={['Frontier AI', 'families']} delay={0.05} /></h1>
             <motion.p className="xmo-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}>
               Proprietary and open weight models for text, decisions, video, image, and more — one account, one API key.
             </motion.p>
             <motion.div className="xmo-acts" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.48 }}>
-              <Btn to="https://platform.hanzo.ai/api-keys" solid>Get API key</Btn>
-              <a className="x-btn xmo-btn" href="#families">Every model</a>
+              <Btn to={go} solid data-thumb="" data-cta="models.hero">Get API key</Btn>
+              <Lk to="#families" className="quiet">Every model</Lk>
             </motion.div>
           </div>
           <div className="xmo-area">
-            <motion.ul className={'xmo-wall' + (shown ? ' shown' : '')} style={{ scale: s }} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.15 }} data-swipe-own>
+            <motion.ul className={'xmo-wall' + (zoom ? ' zoom' : '')} style={{ scale: s }} data-swipe-own>
               {WALL.map((slug, i) => {
                 const m = bySlug[slug];
-                const ring = i === 4 ? null : i % 2 ? near : far; // edges arrive first, corners after
+                const ring = i === 4 ? null : i % 2 ? near : far;
                 return (
                   <motion.li key={slug} className={'xmo-tile' + (i === 4 ? ' c' : '') + (at === i ? ' lit' : '')} style={ring ? { opacity: ring } : undefined}>
                     <a
@@ -154,15 +138,16 @@ function Stage() {
                       <Film slug={slug} play={!wide || at === i} />
                       <span className="xmo-tile-shade" aria-hidden="true" />
                       <span className="xmo-tile-t" aria-hidden="true">
-                        {m.kicker && <em>{m.kicker}</em>}
                         <b>{m.name}</b>
                         <span>{m.desc}</span>
+                        {m.kicker && <em>{m.kicker}</em>}
                       </span>
                     </a>
                   </motion.li>
                 );
               })}
             </motion.ul>
+            <FilmPause className="xmo-pause" />
           </div>
         </div>
       </div>
@@ -182,21 +167,18 @@ function Families() {
   const open = useOpen();
   const wide = useWide();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const { scrollYProgress: enter } = useScroll({ target: ref, offset: ['start end', 'start 60px'] });
-  // the room arrives as a rounded panel and opens to full bleed as it reaches the top
-  const clipPath = useTransform(enter, (v) => { const k = 1 - clamp(v); return `inset(0px ${(k * 3.2).toFixed(2)}vw round ${(k * 32).toFixed(1)}px)`; });
   const [on, setOn] = useState(0);
   useMotionValueEvent(p, 'change', (v) => setOn(Math.min(2, Math.floor(clamp(v) * 3.0001))));
   return (
     <section className="xmo-fam" ref={ref} data-room="dark" aria-labelledby="xmo-fam-h">
       <div className="xmo-fam-pin">
-        <motion.div className="xmo-fam-bg" style={{ clipPath }} aria-hidden="true" />
+        <div className="xmo-fam-bg" aria-hidden="true" />
         <div className="x-wrap xmo-fam-g">
           <header className="xmo-fam-head">
-            <p className="xmo-kick">Three families</p>
             <h2 id="xmo-fam-h" className="xmo-fam-h">
               {FAM.map((f, i) => <span key={f.slug} className={on === i ? 'on' : ''}>{`${f.name} ${f.verb}. `}</span>)}
             </h2>
+            <p className="xmo-tag">Three families</p>
           </header>
           <ol className="xmo-fam-list">
             {FAM.map((f, i) => (
@@ -228,17 +210,20 @@ const VS = [
   { k: 'zen', name: 'Zen', tag: 'Open weights · Zoo Labs Foundation', items: ['Free to download and self-host', 'Or call it on Hanzo Cloud', 'From a 501(c)(3) non-profit'], to: '/zen' },
 ];
 function Versus() {
+  const [hot, setHot] = useState(null);
   return (
     <section className="xmo-sec xmo-vs" aria-labelledby="xmo-vs-h">
       <div className="x-wrap xmo-vs-g">
         <header>
-          <p className="xmo-kick">Enso vs Zen</p>
           <h2 id="xmo-vs-h" className="xmo-headline">Proprietary orchestration, on open foundations</h2>
+          <p className="xmo-tag">Enso vs Zen</p>
         </header>
         <div className="xmo-vs-t" role="table" aria-label="Enso and Zen compared">
           <div className="xmo-vs-r head" role="row">
             {VS.map((c) => (
-              <div key={c.k} role="columnheader" className={'xmo-vs-c ' + c.k}>
+              <div key={c.k} role="columnheader" className={'xmo-vs-c ' + c.k} onPointerEnter={() => setHot(c.k)} onPointerLeave={() => setHot(null)}>
+                {/* each family's own film: still until the pointer (or a tap) asks it to play */}
+                <A to={c.to} className="xmo-vs-film" tabIndex={-1} aria-hidden="true" onFocus={() => setHot(c.k)}><Film slug={c.k} play={hot === c.k} /></A>
                 <h3>{c.name}</h3>
                 <p>{c.tag}</p>
               </div>
@@ -271,8 +256,8 @@ function Figures() {
     <section className={'xmo-sec xmo-fig' + (seen ? ' on' : '')} ref={ref} aria-labelledby="xmo-fig-h">
       <div className="x-wrap xmo-fig-g">
         <header className="xmo-fig-head">
-          <p className="xmo-kick">Decision Benchmarks</p>
           <h2 id="xmo-fig-h" className="xmo-headline">Ahead of Jev on 11 suites</h2>
+          <p className="xmo-tag">Decision Benchmarks</p>
           <ul className="xmo-suites">{SUITES.map((s) => <li key={s}>{s}</li>)}</ul>
           <Lk to="/kai#benchmarks">Kai: decisions and their benchmarks</Lk>
         </header>
@@ -296,7 +281,7 @@ function Figures() {
   );
 }
 
-/* ---------- prices (used by the catalogue's cards, the compare tray and the price list) ---------- */
+/* ---------- prices (used by the catalogue's cards and the price list) ---------- */
 // id, name, in $/M, out $/M, context. Hanzo's catalogue as api.hanzo.ai lists it; refreshed in the browser when the gateway answers.
 const ROWS = [
   ['enso', 'Enso', 0.33, 1.65, 900000], ['enso-auto', 'Enso', 0.33, 1.65, 900000], ['enso-flash', 'Enso Flash', 0.33, 1.65, 900000],
@@ -377,12 +362,12 @@ const CHIPS = [['all', 'All'], ['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai'],
 const COUNT = { enso: ENSO.length, zen: ZEN.length + 1, kai: KAI.length, creative: CREATIVE.length, labs: LABS.length };
 COUNT.all = Object.values(COUNT).reduce((a, b) => a + b, 0);
 
-/* A model card: its name is the link (and what flies into the model's page); its rate sits under it, and it can be
-   pinned to the compare tray. */
-function MCard({ to, name, id, ctx, d, tags, rate, cmp }) {
+/* A model card: its name is the link (and what flies into the model's page, one tab stop per card); the context
+   window is its figure and Hanzo's rate sits under it. */
+function MCard({ to, name, id, ctx, d, tags, rate }) {
   const r = !rate || rate[2] == null ? null : rate[2] === 0 && rate[3] === 0 ? 'Free' : `${cost(rate, 2)} in · ${cost(rate, 3)} out`;
   return (
-    <article className={'xmo-mc' + (cmp && cmp.on ? ' picked' : '')}>
+    <article className="xmo-mc">
       <div className="xmo-mc-top">
         <h3><A to={to} className="xmo-mc-a" data-morph>{name}</A></h3>
         {ctx && <b className="xmo-mc-ctx x-mono">{ctx}</b>}
@@ -391,23 +376,22 @@ function MCard({ to, name, id, ctx, d, tags, rate, cmp }) {
       {d && <p className="xmo-mc-d">{d}</p>}
       <div className="xmo-mc-f">
         <span className="xmo-mc-tags">{tags.map((t) => <span key={t}>{t}</span>)}</span>
-        {r && <span className="xmo-mc-rate x-mono" title="Per million tokens">{r}</span>}
-        {cmp && (
-          <button type="button" className="xmo-mc-cmp" aria-pressed={cmp.on} aria-label={`${cmp.on ? 'Remove' : 'Add'} ${name} ${cmp.on ? 'from' : 'to'} compare`} onClick={cmp.toggle} disabled={!cmp.on && cmp.full}>
-            <i aria-hidden="true">{cmp.on ? '✓' : '+'}</i><span>Compare</span>
-          </button>
-        )}
+        {r && <span className="xmo-mc-rate x-mono">{r}</span>}
+        <i className="xmo-mc-go" aria-hidden="true">→</i>
       </div>
     </article>
   );
 }
 
+/* A creative model's tile: its film waits as a still and plays while the pointer (or focus) is on it. */
 function Tile({ m }) {
   const open = useOpen();
+  const [on, setOn] = useState(false);
   const [slug, name, id, d, kind, ep] = m;
   return (
-    <a href={'/' + slug} className="xmo-ct" data-card={slug} data-cursor="Open" onClick={(e) => open(e, e.currentTarget, slug)}>
-      <Film slug={slug} />
+    <a href={'/' + slug} className="xmo-ct" data-card={slug} data-cursor="Open" onClick={(e) => open(e, e.currentTarget, slug)}
+      onPointerEnter={() => setOn(true)} onPointerLeave={() => setOn(false)} onFocus={() => setOn(true)} onBlur={() => setOn(false)}>
+      <Film slug={slug} play={on} />
       <span className="xmo-ct-shade" aria-hidden="true" />
       <span className="xmo-ct-t">
         <span className="xmo-ct-top"><b>{name}</b><i className="x-mono">{id}</i></span>
@@ -431,7 +415,29 @@ function Head({ slug, title, children, link }) {
   );
 }
 
-function Catalogue({ at }) {
+/* Beyond: every model page and every maker page, one press away. Collapsed by default under Hanzo's own "Every model",
+   a native disclosure, so find-in-page opens it and the links are in the HTML for crawlers and agents. */
+function Every({ makers }) {
+  if (!makers || !makers.length) return null;
+  return (
+    <details className="xmo-every" id="every">
+      <summary>
+        <span className="xmo-every-t">Every model</span>
+        <i aria-hidden="true" />
+      </summary>
+      <div className="xmo-every-g">
+        {makers.map((m) => (
+          <section key={m.slug} className="xmo-every-m" aria-label={m.name}>
+            <A to={m.href} className="xmo-every-h">{m.name}</A>
+            {m.models.length > 0 && <ul>{m.models.map((x) => <li key={x.href}><A to={x.href}>{x.name}</A></li>)}</ul>}
+          </section>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+function Catalogue({ at, makers }) {
   const [fam, setFam] = useState('all');
   const sec = useRef(null);
   // a chip brings the catalogue's top back under the header, so the re-flowed family is what you see
@@ -440,15 +446,9 @@ function Catalogue({ at }) {
     const top = sec.current.getBoundingClientRect().top + scrollY - 60;
     if (scrollY > top + 4) (window.__lenis ? window.__lenis.scrollTo(top, { duration: 0.9 }) : scrollTo({ top, behavior: 'smooth' }));
   };
-  const [picks, setPicks] = useState([]);
   const open = useOpen();
   const show = (f) => fam === 'all' || fam === f;
-  const cmp = (id) => (ALL[id] ? {
-    on: picks.includes(id),
-    full: picks.length >= 3,
-    toggle: () => setPicks((p) => (p.includes(id) ? p.filter((x) => x !== id) : p.length < 3 ? [...p, id] : p)),
-  } : null);
-  const card = (id, name, ctx, d, tags, to) => <li key={id}><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} cmp={cmp(id)} /></li>;
+  const card = (id, name, ctx, d, tags, to) => <li key={id}><MCard to={to} name={name} id={id} ctx={ctx} d={d} tags={tags} rate={ALL[id] && at(ALL[id])} /></li>;
   const groups = [
     ['enso', <Head slug="enso" title="Enso models" link={<Lk to="/enso" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'enso')}>Enso: the router, its presets and its runs</Lk>} />,
       <ul className="xmo-cards">{ENSO.map(([id, name, ctx, d, tags]) => card(id, name, ctx, d, tags, '/models/hanzo/' + id))}</ul>],
@@ -470,13 +470,12 @@ function Catalogue({ at }) {
       </ul>
     )],
     ['kai', <Head slug="kai" title="Kai decision models" link={<Lk to="/kai" onClick={(e) => open(e, e.currentTarget.closest('.xmo-gh').querySelector('.xmo-gh-film'), 'kai')}>Kai: decisions and their benchmarks</Lk>} />,
-      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} cmp={cmp(k.id)} /></li>)}</ul>],
+      <ul className="xmo-cards">{KAI.map((k) => <li key={k.name}><MCard to={k.to} name={k.name} id={k.id} ctx={k.ctx} d={k.d} tags={k.tags} rate={ALL[k.id] && at(ALL[k.id])} /></li>)}</ul>],
     ['creative', <Head title="Creative models" link={<Lk to="/design">Make something in Design</Lk>}><p>Video, images, 3D, sound effects, voice and music, each its own model, in research preview.</p></Head>,
       <ul className="xmo-cards tiles">{CREATIVE.map((m) => <li key={m[0]}><Tile m={m} /></li>)}</ul>],
     ['labs', <Head title="Flagships from other labs" link={<Lk to="#priced">Every model, priced</Lk>} />,
       <ul className="xmo-cards">{LABS.map(([id, name, ctx, d]) => card(id, name, ctx, d, ['text'], '/models/' + id))}</ul>],
   ];
-  const picked = picks.map((id) => at(ALL[id]));
   return (
     <section className="xmo-sec xmo-cat" id="families" aria-label="The model catalogue" ref={sec}>
       <div className="xmo-chipbar">
@@ -489,7 +488,6 @@ function Catalogue({ at }) {
               </button>
             ))}
           </div>
-          <p className="xmo-chip-n x-mono" aria-live="polite">{`${COUNT[fam]} models`}</p>
         </div>
       </div>
       <div className="x-wrap">
@@ -509,39 +507,9 @@ function Catalogue({ at }) {
             </motion.div>
           ))}
         </AnimatePresence>
+        <Every makers={makers} />
       </div>
-      <Tray picked={picked} drop={(id) => setPicks((p) => p.filter((x) => x !== id))} clear={() => setPicks([])} />
     </section>
-  );
-}
-
-/* Beyond: the compare tray, rising from the bottom with up to three pinned models side by side. */
-function Tray({ picked, drop, clear }) {
-  const top = (i) => Math.max(...picked.map((r) => r[i] || 0)) || 1;
-  const bar = (r, i) => <i className="xmo-tray-bar" aria-hidden="true"><b style={{ transform: `scaleX(${r[i] ? Math.max(0.02, r[i] / top(i)) : 0})` }} /></i>;
-  return (
-    <AnimatePresence>
-      {picked.length > 0 && (
-        <motion.aside className="xmo-tray" aria-label="Compare" initial={{ y: '110%' }} animate={{ y: 0 }} exit={{ y: '110%', transition: { duration: 0.3, ease: EASE } }} transition={SPRING} data-no-morph>
-          <div className="xmo-tray-h">
-            <b>Compare</b>
-            <span className="x-mono">{`${picked.length} / 3`}</span>
-            <button type="button" onClick={clear}>Clear</button>
-          </div>
-          <div className="xmo-tray-g" style={{ '--n': picked.length }}>
-            <dl className="xmo-tray-k" aria-hidden="true"><dt>Model</dt><dd>Context</dd><dd>In $/M</dd><dd>Out $/M</dd></dl>
-            {picked.map((r) => (
-              <motion.dl key={r[0]} layout className="xmo-tray-c" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE }}>
-                <dt><span>{r[1]}</span><code className="x-mono">{r[0]}</code><button type="button" aria-label={`Remove ${r[1]}`} onClick={() => drop(r[0])}>×</button></dt>
-                <dd><b className="x-mono">{ctxOf(r[4])}</b>{bar(r, 4)}</dd>
-                <dd><b className="x-mono">{cost(r, 2)}</b>{bar(r, 2)}</dd>
-                <dd><b className="x-mono">{cost(r, 3)}</b>{bar(r, 3)}</dd>
-              </motion.dl>
-            ))}
-          </div>
-        </motion.aside>
-      )}
-    </AnimatePresence>
   );
 }
 
@@ -568,9 +536,9 @@ function Priced({ at }) {
     return (
       <motion.tr key={r[0]} layout="position" hidden={fold} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>
         <td><A to={to} className="xmo-row-n"><b>{r[1]}</b><code>{r[0]}</code></A></td>
-        <td className="x-mono">{cost(r, 2)}</td>
-        <td className="x-mono"><span className="xmo-out">{cost(r, 3)}<i className="xmo-bar" aria-hidden="true"><b style={{ transform: `scaleX(${r[3] ? Math.max(0.03, Math.log10(r[3] * 100 + 1) / topOut) : 0})` }} /></i></span></td>
-        <td className="x-mono">{ctxOf(r[4])}</td>
+        <td className="x-mono" data-label="In $/M">{cost(r, 2)}</td>
+        <td className="x-mono" data-label="Out $/M"><span className="xmo-out">{cost(r, 3)}<i className="xmo-bar" aria-hidden="true"><b style={{ transform: `scaleX(${r[3] ? Math.max(0.03, Math.log10(r[3] * 100 + 1) / topOut) : 0})` }} /></i></span></td>
+        <td className="x-mono" data-label="Context">{ctxOf(r[4])}</td>
       </motion.tr>
     );
   };
@@ -579,8 +547,8 @@ function Priced({ at }) {
       <div className="x-wrap">
         <div className="xmo-pr-g">
           <header>
-            <p className="xmo-kick">Priced</p>
             <h2 id="xmo-pr-h" className="xmo-headline">Every model, and what it costs</h2>
+            <p className="xmo-tag">Priced</p>
             <p className="xmo-body">Dollars per million tokens, in and out, from the live catalog.</p>
             <Lk to="https://docs.hanzo.ai/docs/models">How models are called and billed</Lk>
           </header>
@@ -596,7 +564,7 @@ function Priced({ at }) {
               </div>
               <p className="xmo-n x-mono" aria-live="polite">{`${n} models.`}</p>
             </div>
-            <div className={'xmo-table' + (all ? ' all' : '')}>
+            <div className={'xmo-table' + (all ? ' all' : '')} id="xmo-prices">
               <table>
                 <thead><tr><th scope="col">Model</th><th scope="col">In $/M</th><th scope="col">Out $/M</th><th scope="col">Context</th></tr></thead>
                 <tbody>
@@ -608,8 +576,8 @@ function Priced({ at }) {
               </table>
             </div>
             {n > FOLD && (
-              <button type="button" className="xmo-more" aria-expanded={all} onClick={() => setAll((v) => !v)}>
-                <span>{all ? 'Show fewer' : `Show all ${n}`}</span><i aria-hidden="true">{all ? '−' : '+'}</i>
+              <button type="button" className="xmo-more" aria-expanded={all} aria-controls="xmo-prices" aria-label={all ? `Show ${FOLD}` : `Show all (${n})`} onClick={() => setAll((v) => !v)}>
+                <i aria-hidden="true" className={all ? 'on' : ''} />
               </button>
             )}
           </div>
@@ -632,6 +600,7 @@ function Try() {
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
+  const stop = usePaused();
   const pick = (i) => { setK(i); setMine(true); };
   const r = REQ[k];
   return (
@@ -642,7 +611,7 @@ function Try() {
           <p className="xmo-lede sm">Test any model directly on the gateway. Switch models by changing one string.</p>
           <p className="xmo-body">Sign in to chat with Enso, Zen, or any model on the endpoint. Pick a model, start a thread, billed to your account and kept private.</p>
           <div className="xmo-acts">
-            <Btn to="https://platform.hanzo.ai/api-keys" solid>Get free API key</Btn>
+            <Btn to="https://platform.hanzo.ai/api-keys" solid data-cta="models.try">Get free API key</Btn>
             <Btn to="/chat">Open Hanzo Chat</Btn>
           </div>
         </header>
@@ -665,12 +634,12 @@ function Try() {
               <button key={q.tab} type="button" role="tab" aria-selected={k === i} tabIndex={k === i ? 0 : -1} onClick={() => pick(i)}>
                 {k === i && <motion.span layoutId="xmo-tab" className="xmo-tab-bg" transition={SPRING} />}
                 <span>{q.tab}</span>
-                {k === i && !mine && !calm && seen && <i className="xmo-tab-bar" aria-hidden="true" onAnimationEnd={() => setK((v) => (v + 1) % REQ.length)} />}
+                {k === i && !mine && !calm && !stop && seen && <i className="xmo-tab-bar" aria-hidden="true" onAnimationEnd={() => setK((v) => (v + 1) % REQ.length)} />}
               </button>
             ))}
           </div>
           {/* all three descriptions are in the page; the chosen one is shown */}
-          <div className="xmo-req-d" aria-live="polite">
+          <div className="xmo-req-d" aria-live={mine ? 'polite' : 'off'}>
             {REQ.map((q, i) => (
               <div key={q.tab} className={i === k ? 'on' : ''} aria-hidden={i !== k}>
                 <p>{q.d}</p>
@@ -682,7 +651,7 @@ function Try() {
             <span className="xmo-effort">High</span>
             <span className="xmo-gate">
               <A to="/chat" className="x-btn sm">Log in</A>
-              <A to="https://platform.hanzo.ai/api-keys" className="x-btn sm solid">Sign up for free</A>
+              <A to="https://platform.hanzo.ai/api-keys" className="x-btn sm">Sign up for free</A>
             </span>
             <span className="xmo-send" aria-hidden="true">↑</span>
           </div>
@@ -799,8 +768,10 @@ const RELATED = [
 function Related() {
   return (
     <section className="xmo-sec xmo-rel" aria-labelledby="xmo-rel-h">
+      {/* the page's own contour field drifts behind the index and leans toward the pointer */}
+      <Sigil seed="/models#related" data={[RELATED.length, COUNT.all]} className="xmo-rel-sigil" />
       <div className="x-wrap">
-        <p className="xmo-kick" id="xmo-rel-h">Related capabilities</p>
+        <h2 className="xmo-headline" id="xmo-rel-h">Related capabilities</h2>
         <ul>
           {RELATED.map(([t, d, to], i) => (
             <li key={t}>
@@ -813,7 +784,7 @@ function Related() {
   );
 }
 
-export default function ModelsPage() {
+export default function ModelsPage({ makers }) {
   const near = useRef(null);
   const go = useInView(near, { once: true, margin: '0px 0px 600px 0px' });
   const at = useLive(go);
@@ -824,11 +795,12 @@ export default function ModelsPage() {
       <Versus />
       <Figures />
       <div ref={near} aria-hidden="true" />
-      <Catalogue at={at} />
+      <Catalogue at={at} makers={makers} />
       <Priced at={at} />
       <Try />
       <First />
       <Related />
+      <AskBar title="Models" label="Get API key" to="https://platform.hanzo.ai/api-keys" />
     </main>
   );
 }
