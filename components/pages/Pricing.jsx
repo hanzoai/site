@@ -148,7 +148,7 @@ function Plan({ name, d, price, sub, cta, note, head, items, open, sel, pick, cl
   );
 }
 
-function ProCard({ open, sel, pick }) {
+function ProCard({ open, sel, pick, active }) {
   const ref = useRef(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
@@ -184,7 +184,7 @@ function ProCard({ open, sel, pick }) {
       {vary((q) => <p className="xpr-d">{q.d}</p>, 'r-d')}
       <div className="xpr-price" aria-live="polite"><Odometer value={'$' + p.price} /><span className="xpr-u">USD/month</span></div>
       <p className="xpr-sub">Billed monthly</p>
-      {vary((q) => (q.to ? <Cta to={q.to} kind={sel ? 'solid' : 'quiet'} size="lg" id="pricing.pro" className="xpr-cta" thumb={sel}>Try Hanzo</Cta> : <Cta to={HELP} kind="quiet" size="lg" id="pricing.help" className="xpr-cta">Chat with buying specialist</Cta>), 'xpr-r-cta')}
+      {vary((q) => (q.to ? <Cta to={q.to} kind={sel ? 'solid' : 'quiet'} size="lg" id="pricing.pro" className="xpr-cta" thumb={active && sel}>Try Hanzo</Cta> : <Cta to={HELP} kind="quiet" size="lg" id="pricing.help" className="xpr-cta">Chat with buying specialist</Cta>), 'xpr-r-cta')}
       <p className="xpr-note">No commitment · Cancel anytime</p>
       {vary((q) => (
         <div className="xpr-inc">
@@ -207,15 +207,14 @@ const Trust = () => (
   </div>
 );
 
-function Personal({ open }) {
-  const [sel, setSel] = useState(0);
+function Personal({ open, sel, setSel, active }) {
   const k = (i) => (sel === i ? 'solid' : 'quiet');
   return (
     <>
       <div className="xpr-plans">
-        <Plan name="Free" d="Chat and build with Hanzo, free." price={<span className="xpr-free">No card needed</span>} cta={<Cta to="/signup" kind={k(0)} size="lg" id="pricing.free" className="xpr-cta" thumb={sel === 0}>Try Hanzo</Cta>} note="Instant access · Free forever" items={FREE.slice(0, 4)} open={(e) => open(e, 0)} sel={sel === 0} pick={() => setSel(0)} />
-        <Plan name="Go" d="Your everyday AI development toolkit, with access to every model and more included usage." price={<><Odometer value="$8" /><span className="xpr-u">USD/month</span></>} sub="Billed monthly" cta={<Cta to={PAY('go')} kind={k(1)} size="lg" id="pricing.go" className="xpr-cta" thumb={sel === 1}>Try Hanzo</Cta>} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={GO.slice(0, 4)} open={(e) => open(e, 1)} sel={sel === 1} pick={() => setSel(1)} />
-        <ProCard open={open} sel={sel === 2} pick={() => setSel(2)} />
+        <Plan name="Free" d="Chat and build with Hanzo, free." price={<span className="xpr-free">No card needed</span>} cta={<Cta to="/signup" kind={k(0)} size="lg" id="pricing.free" className="xpr-cta" thumb={active && sel === 0}>Try Hanzo</Cta>} note="Instant access · Free forever" items={FREE.slice(0, 4)} open={(e) => open(e, 0)} sel={sel === 0} pick={() => setSel(0)} />
+        <Plan name="Go" d="Your everyday AI development toolkit, with access to every model and more included usage." price={<><Odometer value="$8" /><span className="xpr-u">USD/month</span></>} sub="Billed monthly" cta={<Cta to={PAY('go')} kind={k(1)} size="lg" id="pricing.go" className="xpr-cta" thumb={active && sel === 1}>Try Hanzo</Cta>} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={GO.slice(0, 4)} open={(e) => open(e, 1)} sel={sel === 1} pick={() => setSel(1)} />
+        <ProCard open={open} sel={sel === 2} active={active} pick={() => setSel(2)} />
       </div>
       <Trust />
     </>
@@ -235,7 +234,7 @@ function Stepper({ label, n, set, min, max }) {
   );
 }
 
-function Team() {
+function Team({ active }) {
   const [sel, setSel] = useState(0);
   const [bill, setBill] = useState('Annual');
   const yr = bill === 'Annual';
@@ -272,7 +271,7 @@ function Team() {
               <Stepper label="Premium seat" n={prem} set={setP} min={Math.max(0, 2 - std)} max={100 - std} />
             </div>
           </div>
-          <div className="xpr-r-cta"><Cta to={HELP} kind={sel === 0 ? 'solid' : 'quiet'} size="lg" id="pricing.team" className="xpr-cta" thumb={sel === 0}>Chat with buying specialist</Cta></div>
+          <div className="xpr-r-cta"><Cta to={HELP} kind={sel === 0 ? 'solid' : 'quiet'} size="lg" id="pricing.team" className="xpr-cta" thumb={active && sel === 0}>Chat with buying specialist</Cta></div>
           <div className="xpr-note xpr-note-l">
             <p>Standard &amp; Premium seats · From 2 members</p>
             <p>Organizations can mix Standard and Premium seats · Cancel anytime</p>
@@ -287,7 +286,7 @@ function Team() {
           <p className="xpr-d">For large businesses operating at scale</p>
           <p className="xpr-price word">Seat price + usage at API rates</p>
           <p className="xpr-sub">US$20/seat/month, billed annually, 20 seat minimum. Usage cost scales with model and task.</p>
-          <div className="xpr-r-cta"><Cta to="/enterprise/start" kind={sel === 1 ? 'solid' : 'quiet'} size="lg" id="pricing.enterprise" className="xpr-cta" thumb={sel === 1}>Get Enterprise plan</Cta></div>
+          <div className="xpr-r-cta"><Cta to="/enterprise/start" kind={sel === 1 ? 'solid' : 'quiet'} size="lg" id="pricing.enterprise" className="xpr-cta" thumb={active && sel === 1}>Get Enterprise plan</Cta></div>
           <p className="xpr-note"><A to={HELP} className="xpr-alt">Chat with buying specialist</A></p>
           <div className="xpr-inc">
             <p className="xpr-inc-h">What’s included</p>
@@ -415,7 +414,7 @@ function Models() {
   );
 }
 
-function Api() {
+function Api({ active }) {
   return (
     <>
       <div className="xpr-plans two">
@@ -424,7 +423,7 @@ function Api() {
           <p className="xpr-d">Direct metered access to all frontier models, coding agents, and tools with zero commitments.</p>
           <p className="xpr-price word">Metered per token &amp; second</p>
           <p className="xpr-sub" aria-hidden="true" />
-          <div className="xpr-r-cta"><Cta to="/dev" size="lg" id="pricing.api.key" className="xpr-cta" thumb>Get API Key</Cta></div>
+          <div className="xpr-r-cta"><Cta to="/dev" size="lg" id="pricing.api.key" className="xpr-cta" thumb={active}>Get API Key</Cta></div>
           <p className="xpr-note">Instant access · No minimum spend</p>
           <div className="xpr-inc"><p className="xpr-inc-h">What’s included</p><List items={['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts']} /></div>
         </article>
@@ -462,15 +461,30 @@ function Api() {
           <h3 id="xpr-rates-h">The rates</h3>
           <p>Every rate here is the price you pay: the one on your bill, and the one your usage page shows.</p>
         </header>
-        <ul className="xpr-rates">
-          {RATES.map(([n, v, note]) => (
-            <li key={n}>
-              <b>{n}</b>
-              <span className="xpr-rate">{v.map((x) => <span key={x}>{x}</span>)}</span>
-              <span className="xpr-rate-n">{note}</span>
-            </li>
-          ))}
-        </ul>
+        {/* the first three rates show; the rest fold behind the register's "Read more" (every rate stays in the HTML) */}
+        <div>
+          <ul className="xpr-rates">
+            {RATES.slice(0, 3).map(([n, v, note]) => (
+              <li key={n}>
+                <b>{n}</b>
+                <span className="xpr-rate">{v.map((x) => <span key={x}>{x}</span>)}</span>
+                <span className="xpr-rate-n">{note}</span>
+              </li>
+            ))}
+          </ul>
+          <details className="xpr-faq-more xpr-rates-more">
+            <summary><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {RATES.length - 3}</span></summary>
+            <ul className="xpr-rates">
+              {RATES.slice(3).map(([n, v, note]) => (
+                <li key={n}>
+                  <b>{n}</b>
+                  <span className="xpr-rate">{v.map((x) => <span key={x}>{x}</span>)}</span>
+                  <span className="xpr-rate-n">{note}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </div>
       </section>
 
       <section className="xpr-ch" aria-labelledby="xpr-win-h">
@@ -540,21 +554,15 @@ const QA = [
 ];
 
 /* ---------- the hero object: the models the bill covers, as Hanzo's own art ---------- */
-// "every model on one bill": Enso, Zen and Kai (the three families the plans name) deal onto the page, then each is lit
-// once in turn and the strip rests on Enso. Pointing lifts a card and names it. Hanzo's media is the only colour.
+// "every model on one bill": Enso, Zen and Kai deal onto the page, then the strip answers the plan you pick with the
+// models that plan's own lines name: Free lights "Enso Free and Zen Free"; Go and every plan above it light "Every model,
+// including Enso Ultra and Kai". A model the plan does not cover rests low and small (never dimmed). Hanzo's media is the only colour.
 const ART = [['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai']];
-function Art() {
-  const calm = useReducedMotion();
-  const [on, setOn] = useState(-1);
-  useEffect(() => {
-    if (calm) { setOn(0); return; }
-    const ts = [700, 1900, 3100, 4300].map((ms, k) => setTimeout(() => setOn(k % 3), ms));
-    return () => ts.forEach(clearTimeout);
-  }, [calm]);
+function Art({ lit }) {
   return (
     <div className="xpr-art" aria-hidden="true">
       {ART.map(([s, n], i) => (
-        <span key={s} className={'xpr-art-c' + (i === 0 ? ' big' : '')} style={{ '--i': i }} data-on={on === i}>
+        <span key={s} className={'xpr-art-c' + (i === 0 ? ' big' : '')} style={{ '--i': i }} data-on={lit.includes(i)}>
           <Img src={`/models/${s}.webp`} w={i ? 192 : 320} h={240} priority={i === 0} />
           <b>{n}</b>
         </span>
@@ -568,6 +576,8 @@ const TABS = ['Personal', 'Team', 'API'];
 
 export default function Pricing() {
   const [tab, setTab] = useState(0);
+  const [sel, setSel] = useState(0); // the personal plan picked (Free by default, the lowest)
+  const artOn = tab === 0 && sel === 0 ? [0, 1] : [0, 1, 2];
   const [src, setSrc] = useState(null);
   const [lit, setLit] = useState(-1);
   useEffect(() => {
@@ -589,7 +599,7 @@ export default function Pricing() {
         <div className="xpr-w xpr-hero-g">
           <h1 id="xpr-h1" className="xpr-h1"><span className="xpr-cut"><span>Pricing</span></span></h1>
           <p className="xpr-lede">Start free, every model on one bill.</p>
-          <Art />
+          <Art lit={artOn} />
         </div>
       </section>
       <div className="xpr-room">
@@ -597,9 +607,9 @@ export default function Pricing() {
           <div className="xpr-w"><Tabs id="xpr-plans" label="Plans" tabs={TABS} value={tab} onChange={pick} size="lg" /></div>
         </div>
         <div className="xpr-w xpr-panels">
-          <TabPanel id="xpr-plans" i={0} value={tab}><Personal open={open} /></TabPanel>
-          <TabPanel id="xpr-plans" i={1} value={tab}><Team /></TabPanel>
-          <TabPanel id="xpr-plans" i={2} value={tab}><Api /></TabPanel>
+          <TabPanel id="xpr-plans" i={0} value={tab}><Personal open={open} sel={sel} setSel={setSel} active={tab === 0} /></TabPanel>
+          <TabPanel id="xpr-plans" i={1} value={tab}><Team active={tab === 1} /></TabPanel>
+          <TabPanel id="xpr-plans" i={2} value={tab}><Api active={tab === 2} /></TabPanel>
         </div>
       </div>
 

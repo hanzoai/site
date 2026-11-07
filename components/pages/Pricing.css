@@ -26,7 +26,8 @@
 .xpr-art-c.big { width: 168px; }
 .xpr-art-c img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .xpr-art-c b { position: absolute; left: 12px; bottom: 10px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #fafafa; opacity: .55; transition: opacity .3s var(--eo); }
-.xpr-art-c[data-on='true'] { transform: translate3d(0, -16px, 0); }
+.xpr-art-c { transform-origin: 50% 100%; transform: scale(.82); }
+.xpr-art-c[data-on='true'] { transform: translate3d(0, -12px, 0); }
 .xpr-art-c[data-on='true'] b { opacity: 1; }
 @media (hover: hover) and (pointer: fine) { .xpr-art-c:hover { transform: translate3d(0, -16px, 0) rotate(-2.5deg); } .xpr-art-c:hover b { opacity: 1; } }
 @keyframes xpr-deal { from { opacity: 0; translate: 0 24px; } }
@@ -212,13 +213,14 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
 .xpr-ends { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; margin-top: 36px; }
 
 /* questions, and the closing band */
-.xpr-faq { padding: var(--pad) 0; }
+.xpr-faq { padding: clamp(56px, 6vw, 96px) 0 var(--pad); }
 .xpr-faq .xpr-stick { top: 100px; }
 .xpr-faq .x-faq + .x-faq { border-top: 0; }
 .xpr-faq .x-faq button { font-size: 17px; font-weight: 497; }
 .xpr-faq-more > summary { display: flex; align-items: center; min-height: 56px; border-bottom: 1px solid var(--line); list-style: none; cursor: pointer; font: 606 13px/1 var(--mono); letter-spacing: .08em; color: var(--ink); }
 .xpr-faq-more > summary::-webkit-details-marker { display: none; }
 .xpr-faq-more[open] > summary { display: none; }
+.xpr-rates-more > summary { margin-top: 8px; }
 .xpr-faq-more > summary { gap: 12px; padding: 0 12px; margin: 0 -12px; border-radius: 8px; transition: background-color .15s var(--eo); }
 .xpr-faq-n { color: var(--soft); transition: transform .15s var(--eo); }
 .xpr-faq-more > summary:active { transform: scale(.98); }
@@ -271,5 +273,5 @@ html:not(.js) .xpr-var:not(:first-child) { display: none; }
   .xpr-wins li:nth-child(1) .xpr-stair { --w: 100%; }
   .xpr-wins li:nth-child(2) .xpr-stair { --w: 65%; }
   .xpr-wins li:nth-child(3) .xpr-stair { --w: 30%; }
-  .xpr-faq { padding: 120px 0 80px; }
+  .xpr-faq { padding: 56px 0 80px; }
 }

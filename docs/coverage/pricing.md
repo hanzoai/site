@@ -13,7 +13,7 @@ Forks this page deleted: the dark "recommended" Pro and Team cards, three solid 
 - [x] No dead or self-looping button; n/a for `lib/plans.js` (not merged yet)
 - [x] Open copy questions for James listed, none decided
 
-Done here: Plan columns work as a picker. The lowest plan (Free) is selected by default and is the page's only solid ask; pointing previews a column, and a click or focus selects it. On desktop the shared header ask drops to an outline while it shows; on phones the shared header keeps its solid "Try Hanzo" (shared header, not this file), so the phone's first screen shows two solid fills until the shared owner changes it.
+Done here: Plan columns work as a picker. The lowest plan (Free) is selected by default and is the page's only solid ask; pointing previews a column, and a click or focus selects it. On desktop the shared header ask drops to an outline while it shows; on phones the shared header keeps its solid "Try Hanzo" (shared header, not this file), so the phone's first screen shows two solid fills until the shared owner changes it. Only the visible tab's asks carry `data-thumb`; measured on the first screen: Personal 1 solid (Free) at 1470 and 375, Team 1 at 1470; the API tab at 1470 shows 2 (header and "Get API Key") because the shared `Ask.jsx` reads the page ask once per route (requested, `docs/requests/pricing.md` item 3).
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the shell's `#main` mark sits before the page's `<main>`)
@@ -107,7 +107,7 @@ Done here: The hero strip shows Hanzo's own Enso, Zen and Kai art (the families 
 - [x] Primary ask above the fold at 375×667
 
 Done here:
-- **Phone:** the art strip is 60px tall at 375 so the Free card starts inside the first screen; trust links and the band's link are 44px tall on phones (probe: no target under 44px except desktop-only links). The API tab's model families fold to one open (`<details>`), so the API tab no longer runs 9,000px. The columns stack with hairlines.
+- **Phone:** the art strip is 60px tall at 375 so the Free card starts inside the first screen; trust links and the band's link are 44px tall on phones (probe: no target under 44px except desktop-only links). The API tab's model families fold to one open (`<details>`), and "The rates" shows three with the other five behind "Read more"; measured page height on the API tab: 7,392px at 1470 and 10,799px at 375 (still long on phones: every rate and model row is Hanzo's copy and stays). The columns stack with hairlines.
 - **Compare sheet:** shows one plan at a time on phones, picked from a switch over it.
 
 ## 12. Accessibility (WCAG 2.2 AA)
@@ -125,7 +125,7 @@ Done here: Prices sit in `aria-live="polite"`. The steppers are named groups. Th
 - [x] No poller; no third-party request
 - [x] Nothing heavy run on James's laptop (filmed in the cloud)
 
-Done here: Motion is transform and opacity only. The ladder's timers live only while the card is on screen.
+Done here: Motion is transform and opacity only. The ladder's timers live only while the card is on screen. The page's only images are the three hero model-art webp files (Enso with `priority`), sized; they answer the plan picker (Free lights Enso and Zen, every other plan all three).
 
 ## 14. SEO and machine files
 - [x] Title and description match `content/pages.json`
