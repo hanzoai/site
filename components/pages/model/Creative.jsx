@@ -16,7 +16,7 @@ import Launch, { Lines, film } from '../../v2/Launch';
 import Chapters from '../../v2/x-cray/Chapters';
 import ModelCards from './ModelCards';
 import ModelFilm, { usePaused } from '../../v2/ModelFilm';
-import { C, ORDER, FIELDS } from './creative';
+import { C, ORDER, FIELDS } from './creativeData';
 import { Glyph } from './Studio';
 import { arrows } from './live';
 import './Creative.css';

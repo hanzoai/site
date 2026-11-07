@@ -3,7 +3,7 @@
    window its demo lives in (studio.hanzo.ai / <model>), the three spec rows, and the live glyph each model's lists
    wear (a tiny loop in that model's medium). Each model arranges them its own way. */
 import { A } from '../../kit';
-import { C } from './creative';
+import { C } from './creativeData';
 
 export function CHead({ slug, dark, split, className = '' }) {
   const d = C[slug];

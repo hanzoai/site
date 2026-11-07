@@ -18,7 +18,7 @@ import { Film, Img, Cta } from '../../kit';
 import { Studio } from './Studio';
 import { Scene } from './Creative';
 import Launch, { lerp, film, focus, Lines } from '../../v2/Launch';
-import { C } from './creative';
+import { C } from './creativeData';
 import { Scrub, Iris, Tilt, Fits, Close } from './uta/Motion';
 import { useLoop, fit, audio, tone, burst, hush, arrows } from './live';
 import { midi } from './Uta.midi.mjs';

@@ -15,7 +15,7 @@ import { Magnetic } from '../../../ui';
 import ModelFilm from '../../../v2/ModelFilm';
 import ModelCards from '../ModelCards';
 import { film } from '../../../v2/Launch';
-import { C } from '../creative';
+import { C } from '../creativeData';
 import './motion.css';
 
 const d = C.uta;
