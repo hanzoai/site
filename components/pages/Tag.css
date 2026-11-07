@@ -1,5 +1,6 @@
 /* ---------- /tag: Hanzo Tag, the mention map (xtg-) ---------- */
 .xtg { --tg-pink: #f472b6; }
+/* v2 (James 7 Nov): the a2 grammar from components/v2/A2.css; overrides for this page sit at the end of the file */
 
 /* hero: copy and the moment on the left, the map on the right */
 .xtg-hero { position: relative; padding: clamp(28px, 4vw, 56px) 0 clamp(72px, 9vw, 128px); }
@@ -278,4 +279,59 @@
   .xtg-cross-h, .xtg-cross-c { display: none; }
   .xtg-cross-v { left: 6px; }
   .xtg-see-train { font-size: 14px; }
+}
+
+/* ---------- v2 overrides ---------- */
+.xtg-hero { padding: clamp(112px, 14vh, 156px) 0 clamp(96px, 10vw, 150px); }
+.xtg-top { align-items: end; row-gap: 28px; margin-bottom: clamp(48px, 5vw, 72px); }
+.xtg-copy { grid-area: auto; grid-column: 1 / span 8; }
+.xtg-copy .a2-kick { margin-bottom: 28px; }
+.xtg-copy .a2-kick b { color: var(--acc); font-weight: 600; }
+.xtg-h1 { max-width: none; font-size: clamp(44px, 5.56vw, 80px) !important; }
+.xtg-top-r { grid-column: 9 / span 4; }
+.xtg-top-r .a2-lede { font-size: clamp(17px, 1.35vw, 20px); margin-bottom: 28px; }
+.xtg-docs { margin: 20px 0 0; }
+.xtg-hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: 'map moment'; grid-template-rows: auto; gap: 24px; align-items: stretch; }
+.xtg-map { border-radius: var(--r-hero); box-shadow: var(--a2-shadow); }
+.xtg-field { width: min(100%, 700px); }
+.xtg-ring { border-color: var(--acc); }
+.xtg-node.core { background: var(--acc); box-shadow: 0 24px 48px -16px color-mix(in srgb, var(--acc) 70%, transparent); }
+.xtg-node.core span { color: rgba(255, 255, 255, .8); }
+.xtg-node.core::after { border-color: color-mix(in srgb, var(--acc) 50%, transparent); }
+.xtg-moment { height: auto; min-height: 520px; padding: 28px; border-radius: var(--r-hero); }
+.xtg-m-k { font-size: 13px; }
+.xtg-msg-t { font-size: 15.5px; }
+.xtg-head { max-width: 900px; margin-bottom: clamp(48px, 5vw, 80px); }
+.xtg-head .a2-kick { margin-bottom: 24px; }
+.xtg-head .a2-lede { margin-top: 28px; }
+.xtg-head.dark .a2-kick { color: var(--acc); }
+.xtg-quad li i { color: var(--acc) !important; }
+.xtg-setup { background: #fdf6fa; }
+.xtg-setup-h h2 { font-size: clamp(44px, 5.56vw, 80px); }
+.xtg-wire-l b { background: var(--acc); }
+.xtg-wire li.on .xtg-wire-n { background: var(--acc); border-color: var(--acc); }
+.xtg-idx-l button { min-height: 64px; font-size: 19px; }
+.xtg-idx-l button[aria-selected='true'] span { color: var(--acc); }
+.xtg-idx-t { background: var(--acc); }
+.xtg-idx-r { border-radius: var(--r-hero); padding: 44px; }
+.xtg-see-l button[aria-checked='true'] { background: var(--acc); border-color: var(--acc); color: #fff; }
+.xtg-see-l button[aria-checked='true'] i { border-color: #fff; box-shadow: inset 0 0 0 4px var(--acc), inset 0 0 0 9px #fff; }
+.xtg-see-t { background: #fff; }
+.xtg-see-a { border-radius: var(--r-hero); }
+.xtg-cross-h b, .xtg-cross-v b { background: var(--acc); }
+.xtg-close { position: relative; overflow: hidden; }
+.xtg-close-in { position: relative; align-items: end; row-gap: 48px; margin-top: 0; }
+.xtg-close-copy { grid-column: 1 / span 8; }
+.xtg-close-copy .a2-display { max-width: 18ch; }
+.xtg-close-copy .a2-lede { margin: 28px 0 36px; }
+.xtg-get { grid-column: 10 / span 3; position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding: 36px; border-radius: var(--r-hero); background: var(--acc); color: #fff; overflow: hidden; }
+.xtg-get-at { position: absolute; right: -10px; top: -40px; font-size: 180px; font-weight: 700; line-height: 1; color: rgba(255, 255, 255, .18); }
+.xtg-get h2 { position: relative; margin: 0; font-size: clamp(28px, 2.6vw, 38px); font-weight: 600; letter-spacing: -.04em; color: #fff; }
+.xtg-get .x-btn.solid { background: #fff !important; color: #000; border-color: #fff !important; }
+@media (max-width: 900px) {
+  .xtg-hero { padding-top: 112px; }
+  .xtg-h1 { font-size: clamp(40px, 11.6vw, 48px) !important; }
+  .xtg-hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'map' 'rail' 'moment'; gap: 16px; }
+  .xtg-moment { min-height: 400px; padding: 18px; }
+  .xtg-get { padding: 28px; }
 }
