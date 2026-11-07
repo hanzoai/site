@@ -102,7 +102,7 @@ Done here: phone composition stacks the hero with the frontier cropped at true s
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white, #525252 on #f5f5f5, #a3a3a3 and white 78% on black
-- [x] The hero's idle loops (halo breathe, curve reader) are small, low-contrast and pause off screen; reduced motion stops them (James asked for an alive first screen; noted against WCAG 2.2.2, which wants a pause control for loops over 5 s)
+- [x] The hero's idle loops (halo breathe, curve reader) have a pause control (WCAG 2.2.2, MASTER part 12): a 44px quiet `StoryPause` button ("Pause", `aria-pressed`), first in the hero's DOM, tucked into the plot's lower right corner; it pauses both by class. They also pause off screen, and under reduced motion they never run and the button is hidden
 - [x] n/a: no forms
 - [x] One h1; h2 per section, h3 inside; names start with visible text
 - [x] Keyboard reaches every control (tiles, sheet arrows, tabs, switches, Zen index); the role rows are no longer empty tab stops

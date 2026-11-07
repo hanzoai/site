@@ -22,6 +22,7 @@ import { motion, useInView, useMotionValue, useReducedMotion, useTransform } fro
 import { Count } from '../ui';
 import { A, Cta, Img, Tabs, TabPanel } from '../kit';
 import StoryClose from './StoryClose';
+import StoryPause from './StoryPause';
 import Sigil from '../Sigil';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
@@ -142,8 +143,12 @@ const H1 = ['Chasing the', 'Pareto Frontier', 'of AI'];
 
 function Hero() {
   useOneSolidOnPhone();
+  // WCAG 2.2.2 (MASTER part 12): the hero's idle loops (the breathing head, the reader walking the curve) can be paused;
+  // the button is first in the hero, tucked into the plot's lower right corner, and hidden under reduced motion
+  const [paused, setPaused] = useState(false);
   return (
-    <section className="xab-hero" aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
+    <section className={'xab-hero' + (paused ? ' paused' : '')} aria-labelledby="xab-h1" data-ask-name="About" data-morph-target>
+      <StoryPause paused={paused} onToggle={() => setPaused((v) => !v)} className="xab-pause" />
       <div className="v2s-wrap xab-hero-top">
         {/* the h1 cuts in line by line from first paint (CSS, never waiting on hydration) */}
         <h1 id="xab-h1" className="v2s-display xab-h1">
