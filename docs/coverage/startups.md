@@ -34,7 +34,7 @@ Done here: `<main id="main">` added this pass; every outbound link is the kit `A
 - [x] Card-to-page links use Morph (n/a: no cards open into pages)
 
 Done here: the split-flap $150,000 flips within the first second and again every 6.5 s while on screen; the caption "Techstars ’17 — built for founders" now sits under the h1. Then the ladder climbs once by itself, the application with its live match card, and the dark "Not venture-backed?" close.
-
+ 7 Nov (Ready pass): the hero card is one quiet outline (no lift shadow) and the program peeks 40px under the hero; the close enters as a rounded card inside the gutters and opens to full width as it arrives, about half as tall, holding the free track as its object (Everyone starts free, Start in minutes, its four uses lighting in turn).
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
 - [x] Sticky ask in header and bar after the hero, same label
@@ -85,7 +85,7 @@ Done here: the two selects are now `Choice` radio groups (one tab stop, arrow ke
 - [x] Sound only on the listed moments, through the one kit (n/a: none of the listed moments here)
 
 Done here: signature is the match card assembling as you fill the form (state); supporting: the flap board (idle, time), the ladder climbing once and following pointer/focus (time, pointer), line-masked headlines (arrival). Timers are `setTimeout` only; reduced motion shows every rung at full size.
-
+ 7 Nov: the figure card leans up to 2.5 degrees toward a fine pointer and eases flat on leave; the live card keeps a reading line under its track at rest; stage and investor chips show a visible hover (#e4e4e7 with a darker edge).
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no photos or films on the live page)
 - [x] At most 2 videos playing; pause button on loops over 5 s (n/a)
@@ -101,7 +101,7 @@ Done here: the live page has no media; the visual objects are the flap board, th
 - [x] Primary ask above the fold at 375×667
 
 Done here: at 375 the counter sits above the asks and "Apply for credits" ends at y 519; no horizontal overflow; every control is 44px+ except the inline Privacy Policy link inside its sentence.
-
+ 7 Nov: the phone strip grows to fit its 'n / 5 · stage' line (it was clipped by 3px).
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
 - [x] Pause control on every moving item (n/a: the flap and ladder stop by themselves; nothing loops past 5 s without rest)
@@ -110,7 +110,7 @@ Done here: at 375 the counter sits above the asks and "Apply for credits" ends a
 - [x] Keyboard reaches every control
 
 Done here: resting rung text is #737373 on white (4.74:1); each radio group is labelled by its legend; the honeypot is `tabIndex=-1` and `aria-hidden`.
-
+ 7 Nov: an empty required field is marked aria-invalid, its message sits under it (aria-describedby), and a network failure shows Hanzo's 'Something went wrong. Please try again.' instead of the browser's text.
 ## 13. Performance and engineering
 - [x] h1 and LCP element in server HTML
 - [x] JS and CSS inside budget; every image and video sized

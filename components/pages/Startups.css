@@ -202,3 +202,43 @@ html.js .xst-submit.later { display: none; }
   .xst-f input, .xst-f select, .xst-f textarea { font-size: 16px; }
   .xst-uses span span, .xst-byo-t span span, .xst-fine, .xst-match-top .x-mono, .xst-track .x-mono { font-size: 14px; }
 }
+
+/* Ready pass (7 Nov) */
+/* hero: one quiet card (outline, no lift shadow) that leans toward a fine pointer; the program peeks under it */
+.xst-fig { box-shadow: none; transition: border-color .3s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { .xst-fig:hover { border-color: rgba(0, 0, 0, .2); } }
+.xst-hero { padding-bottom: 40px; }
+.xst.xp .xst-prog { padding-top: 24px; }
+/* stage and investor chips: a hover you can see */
+@media (hover: hover) { .xst-chips button:hover, .xst-uses button:hover, .xst-byo-t:hover { background: #e4e4e7; border-color: rgba(0, 0, 0, .3); } }
+/* errors sit under the field they belong to */
+.xst-err-i { margin: 8px 0 0; font-size: 14px; line-height: 1.4; color: #404040; }
+.xst-err-i::before { content: '— '; color: var(--ink); }
+.xst-f [aria-invalid='true'], .xst-chips[aria-invalid='true'] button { border-color: var(--ink); }
+/* the close: shorter, and it holds the free track as its object */
+.xst.xp .xst-not { padding: clamp(64px, 7vw, 104px) 0; }
+.xst-not .xp-grid { align-items: center; }
+.xst-not-h { grid-row: 1; }
+.xst-free { grid-column: 1 / span 5; grid-row: 2; display: grid; gap: 6px; padding: 24px; border-radius: 22px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); }
+.xst-not-r { grid-row: 2; }
+.xst-free > .x-mono { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #a3a3a3; }
+.xst-free b { font-size: 26px; font-weight: 500; letter-spacing: -.025em; color: #fafafa; }
+.xst-free p { margin: 0 0 12px; font-size: 15px; color: #a3a3a3; }
+.xst-free ul { list-style: none; margin: 0; padding: 12px 0 0; display: grid; gap: 8px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.xst-free li { display: grid; grid-template-columns: 120px minmax(0, 1fr); align-items: center; gap: 12px; font-size: 13px; color: #737373; transition: color .3s cubic-bezier(.4, 0, .2, 1); }
+.xst-free li i { display: block; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .1); position: relative; overflow: hidden; }
+.xst-free li i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--w); border-radius: inherit; background: #525252; transform-origin: 0 50%; transform: scaleX(.35); transition: transform .9s cubic-bezier(.16, 1, .3, 1), background-color .3s; }
+.xst-free li.on { color: #fafafa; }
+.xst-free li.on i::after { transform: scaleX(1); background: #fafafa; }
+@media (max-width: 899px) {
+  .xst-match { height: auto; min-height: 56px; }
+  .xst-free, .xst-not-r, .xst-not-h { grid-column: 1 / -1; grid-row: auto; }
+  .xst-free { order: 2; }
+  .xst-free li { grid-template-columns: 104px minmax(0, 1fr); }
+}
+/* the live card stays live at rest: a reading line runs under the track while it waits for your next answer */
+.xst-match .xst-track { position: relative; overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  .xst-match .xst-track::after { content: ''; position: absolute; left: 0; bottom: 0; width: 30%; height: 2px; background: rgba(255, 255, 255, .35); animation: xst-scan 3.2s cubic-bezier(.4, 0, .2, 1) infinite; }
+}
+@keyframes xst-scan { from { transform: translateX(-100%); } to { transform: translateX(340%); } }

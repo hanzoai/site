@@ -12,7 +12,7 @@
    POST https://api.hanzo.ai/v1/form/public/hanzo.startups-apply/responses with the same answers, token and hidden
    source. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValue, animate } from 'motion/react';
 import { A, Tick } from '../kit';
 import LineReveal from '../v2/LineReveal';
 import { ui } from '../v2/famUi';
@@ -68,6 +68,16 @@ function Board() {
 }
 
 function Hero() {
+  // the figure card leans up to 2.5° toward a fine pointer and settles on leave (touch and reduced motion: still)
+  const tilt = useRef(null);
+  const rx = useMotionValue(0), ry = useMotionValue(0);
+  const fine = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lean = (e) => {
+    const el = tilt.current; if (!el || !fine()) return;
+    const r = el.getBoundingClientRect();
+    rx.set(-(((e.clientY - r.top) / r.height) * 2 - 1) * 2.5); ry.set((((e.clientX - r.left) / r.width) * 2 - 1) * 2.5);
+  };
+  const rest = () => { animate(rx, 0, { duration: 0.3, ease: [0, 0, 0.2, 1] }); animate(ry, 0, { duration: 0.3, ease: [0, 0, 0.2, 1] }); };
   return (
     <section className="xst-hero" aria-labelledby="xst-h1">
       <div className="xp-wrap xp-grid">
@@ -82,7 +92,7 @@ function Hero() {
             </div>
           </motion.div>
         </div>
-        <motion.div className="xst-fig" initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
+        <motion.div className="xst-fig" ref={tilt} onPointerMove={lean} onPointerLeave={rest} style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }} initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}>
           <span className="xst-fig-k x-mono" aria-hidden="true">Up to</span>
           <Board />
           <span className="xst-fig-u x-mono" aria-hidden="true">in credits</span>
@@ -176,18 +186,19 @@ function Match({ c }) {
   );
 }
 
-function Field({ id, label, opt, req, children }) {
+function Field({ id, label, opt, req, err, children }) {
   return (
     <div className="xst-f">
       <label htmlFor={id}>{label}{opt && <span> {opt}</span>}{req && <i aria-hidden="true"> *</i>}</label>
       {children}
+      {err && <p className="xst-err-i" id={id + '-e'} role="alert">{err}</p>}
     </div>
   );
 }
 
 /* One choice from a short list, as pills on the page instead of a browser menu: an APG radio group (arrow keys move
    and choose, one tab stop), the same values the select sent. The hint is Hanzo's own placeholder, shown until chosen. */
-function Choice({ id, label, req, hint, opts, value, set }) {
+function Choice({ id, label, req, hint, opts, value, set, err }) {
   const box = useRef(null);
   const key = (e, i) => {
     const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
@@ -201,13 +212,14 @@ function Choice({ id, label, req, hint, opts, value, set }) {
   return (
     <fieldset className="xst-set xst-choice">
       <legend id={id + '-l'}>{label}{req && <i aria-hidden="true"> *</i>} <span className="xst-hint" aria-hidden={!!value}>{value ? '' : hint}</span></legend>
-      <div className="xst-chips" role="radiogroup" aria-labelledby={id + '-l'} aria-required={req || undefined} ref={box} id={id}>
+      <div className="xst-chips" role="radiogroup" aria-labelledby={id + '-l'} aria-required={req || undefined} aria-invalid={err ? true : undefined} aria-describedby={err ? id + '-e' : undefined} ref={box} id={id}>
         {opts.map(([v, l], i) => (
           <button key={v} type="button" role="radio" aria-checked={value === v} tabIndex={(cur < 0 ? i === 0 : i === cur) ? 0 : -1} onClick={() => set(v)} onKeyDown={(e) => key(e, i)}>
             <i aria-hidden="true" className="xst-dot" />{l}
           </button>
         ))}
       </div>
+      {err && <p className="xst-err-i" id={id + '-e'} role="alert">{err}</p>}
     </fieldset>
   );
 }
@@ -220,7 +232,10 @@ function Apply() {
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState(null);
-  const on = (e) => { setErr(null); setC({ ...c, [e.target.name]: e.target.value }); };
+  const [bad, setBad] = useState(null); // the field the message belongs to: it is marked invalid and the message sits under it
+  const on = (e) => { setErr(null); setBad(null); setC({ ...c, [e.target.name]: e.target.value }); };
+  const inv = (id) => (bad === id ? { 'aria-invalid': true, 'aria-describedby': id + '-e' } : {});
+  const fe = (id) => (bad === id ? err : null);
   // the form in three steps; Next checks only the step you are on and takes you to the first field it needs
   const [step, setStep] = useState(0);
   const formTop = () => document.getElementById('apply')?.querySelector('.xst-steps')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -229,7 +244,7 @@ function Apply() {
   const next = () => {
     const miss = step === 0 ? need0() : null;
     if (miss) {
-      setErr(miss[1]);
+      setErr(miss[1]); setBad(miss[0]);
       setTimeout(() => (document.querySelector(`#${miss[0]} [role=radio]`) || document.getElementById(miss[0]))?.focus(), 0);
       return;
     }
@@ -246,9 +261,10 @@ function Apply() {
       // the first invalid field takes focus, so the message and the place to fix it are together
       const id = !c.company.trim() ? 'company' : !c.contactName.trim() ? 'contactName' : !okEmail(c.email) ? 'email' : !c.stage ? 'stage' : 'building';
       setTimeout(() => (document.querySelector(`#${id} [role=radio]`) || document.getElementById(id))?.focus(), 0);
+      setBad(id);
       return setErr(m);
     }
-    setBusy(true); setErr(null);
+    setBusy(true); setErr(null); setBad(null);
     try {
       if (!c.hp) { // a filled trap is a bot: it is thanked and nothing is sent
         const r = await fetch('https://api.hanzo.ai/v1/form/public/hanzo.startups-apply/responses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body(c, w.current)) });
@@ -259,7 +275,7 @@ function Apply() {
         }
       }
       setSent(true);
-    } catch (x) { setErr(x instanceof Error ? x.message : 'Something went wrong. Please try again.'); } finally { setBusy(false); }
+    } catch (x) { setErr(x instanceof Error && !(x instanceof TypeError) ? x.message : 'Something went wrong. Please try again.'); } // a network failure gets Hanzo's sentence, never the browser's finally { setBusy(false); }
   };
   return (
     <section className="xp-sec xst-apply" id="apply" aria-labelledby="xst-apply-h">
@@ -284,16 +300,16 @@ function Apply() {
                 <div className="xst-steps" aria-hidden="true">{[0, 1, 2].map((i) => <i key={i} className={i < step ? 'done' : i === step ? 'on' : ''} />)}<span className="x-mono">{pad(step + 1)} / 03</span></div>
                 <div className={'xst-step' + (step === 0 ? ' on' : '')}>
                 <div className="xst-row">
-                  <Field id="company" label="Company name" req><input id="company" name="company" type="text" required value={c.company} onChange={on} placeholder="Acme AI" autoComplete="organization" /></Field>
+                  <Field id="company" err={fe('company')} label="Company name" req><input id="company" name="company" {...inv('company')} type="text" required value={c.company} onChange={on} placeholder="Acme AI" autoComplete="organization" /></Field>
                   <Field id="website" label="Website"><input id="website" name="website" type="text" value={c.website} onChange={on} placeholder="https://acme.ai" autoComplete="url" /></Field>
                 </div>
                 <div className="xst-row">
-                  <Field id="contactName" label="Your name" req><input id="contactName" name="contactName" type="text" required value={c.contactName} onChange={on} placeholder="Jane Smith" autoComplete="name" /></Field>
-                  <Field id="email" label="Work email" req><input id="email" name="email" type="email" required value={c.email} onChange={on} placeholder="jane@acme.ai" autoComplete="email" /></Field>
+                  <Field id="contactName" err={fe('contactName')} label="Your name" req><input id="contactName" name="contactName" {...inv('contactName')} type="text" required value={c.contactName} onChange={on} placeholder="Jane Smith" autoComplete="name" /></Field>
+                  <Field id="email" err={fe('email')} label="Work email" req><input id="email" name="email" {...inv('email')} type="email" required value={c.email} onChange={on} placeholder="jane@acme.ai" autoComplete="email" /></Field>
                 </div>
                 <div className="xst-row">
                   <Field id="role" label="Your role"><input id="role" name="role" type="text" value={c.role} onChange={on} placeholder="Co-founder & CEO" autoComplete="organization-title" /></Field>
-                  <Choice id="stage" label="Company stage" req hint="Select stage" opts={STAGES} value={c.stage} set={(v) => { setErr(null); setC((p) => ({ ...p, stage: v })); }} />
+                  <Choice id="stage" label="Company stage" req hint="Select stage" err={fe('stage')} opts={STAGES} value={c.stage} set={(v) => { setErr(null); setBad(null); setC((p) => ({ ...p, stage: v })); }} />
                 </div>
                 </div>
                 <div className={'xst-step' + (step === 1 ? ' on' : '')}>
@@ -314,7 +330,7 @@ function Apply() {
                 </div>
                 </div>
                 <div className={'xst-step' + (step === 2 ? ' on' : '')}>
-                <Field id="building" label="What are you building?" req><textarea id="building" name="building" required rows={4} value={c.building} onChange={on} placeholder="Describe your product, who it is for, and where you are today..." /></Field>
+                <Field id="building" err={fe('building')} label="What are you building?" req><textarea id="building" name="building" {...inv('building')} required rows={4} value={c.building} onChange={on} placeholder="Describe your product, who it is for, and where you are today..." /></Field>
                 <fieldset className="xst-set">
                   <legend>How will you use Hanzo?</legend>
                   <div className="xst-uses">
@@ -346,7 +362,7 @@ function Apply() {
                 </div>
                 </div>
                 <div className="xst-trap" aria-hidden="true"><label htmlFor="hp">Do not fill this in</label><input id="hp" name="hp" type="text" tabIndex={-1} autoComplete="off" value={c.hp} onChange={on} /></div>
-                <AnimatePresence>{err && <motion.p className="xst-err" role="alert" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{err}</motion.p>}</AnimatePresence>
+                <AnimatePresence>{err && !bad && <motion.p className="xst-err" role="alert" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>{err}</motion.p>}</AnimatePresence>
                 <div className="xst-nav">
                   {/* "Next" and "Previous" await James's yes in the register, so they are arrows with those names, and
                       the next step's number */}
@@ -371,15 +387,49 @@ export default function Startups() {
       <Hero />
       <Ladder />
       <Apply />
-      <section className="xp-sec xp-dark xst-not" data-room="dark" aria-labelledby="xst-not-h">
+      <Not />
+    </main>
+  );
+}
+
+/* The free track as the close's object: the card the application starts on, its four uses lighting in turn the way
+   metered use moves between them (idle; still under reduced motion). Every word is already on the page. */
+function Free() {
+  const ref = useRef(null);
+  const seen = useInView(ref, { amount: 0.4 });
+  const calm = useReducedMotion();
+  const [k, setK] = useState(0);
+  useEffect(() => {
+    if (!seen || calm) return;
+    const t = setInterval(() => setK((v) => (v + 1) % USES.length), 1600);
+    return () => clearInterval(t);
+  }, [seen, calm]);
+  return (
+    <div className="xst-free" ref={ref} aria-hidden="true">
+      <span className="x-mono">Everyone starts free.</span>
+      <b>Start in minutes</b>
+      <p>Creating an account is free.</p>
+      <ul>{USES.map(([id, l], i) => <li key={id} className={i === k ? 'on' : ''}><span>{l}</span><i style={{ '--w': [64, 38, 52, 28][i] + '%' }} /></li>)}</ul>
+    </div>
+  );
+}
+
+function Not() {
+  const ref = useRef(null);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.35'] });
+  const clip = useTransform(p, [0, 1], ['inset(0px 24px round 28px)', 'inset(0px 0px round 0px)']);
+  return (
+    <>
+      <motion.section ref={ref} style={{ clipPath: clip }} className="xp-sec xp-dark xst-not" data-room="dark" aria-labelledby="xst-not-h">
         <div className="xp-wrap xp-grid">
           <LineReveal onView id="xst-not-h" className="xp-display md xst-not-h" lines={['Not venture-backed?']} />
+          <Free />
           <div className="xst-not-r">
             <p className="xp-lede">You do not need to qualify to build. Start free and pay only for what you use, or create an Enterprise plan for your team.</p>
             <div className="xst-acts"><A to="https://platform.hanzo.ai" className="xp-cta">Start free</A><A to="/enterprise/start" className="xp-ghost">Create Enterprise plan</A></div>
           </div>
         </div>
-      </section>
-    </main>
+      </motion.section>
+    </>
   );
 }
