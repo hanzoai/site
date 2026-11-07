@@ -125,8 +125,9 @@ function Topology() {
   return (
     <div className="wd2-topo">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{PATH.map(([a, b]) => <line key={a + '-' + b} className={lit(a, b) ? 'on' : ''} x1={NODES[a][1]} y1={NODES[a][2]} x2={NODES[b][1]} y2={NODES[b][2]} />)}</svg>
-      {NODES.map(([t, x, y], i) => (
-        <button key={t} type="button" className={'wd2-node l2-mono' + (i === 4 || i === 5 ? ' m' : '') + (i === hot ? ' on' : '')} style={{ left: x + '%', top: y + '%' }} onClick={() => (i === 4 || i === 5) && setHot(i)} onMouseEnter={() => (i === 4 || i === 5) && setHot(i)} tabIndex={i === 4 || i === 5 ? 0 : -1} aria-label={i === 4 || i === 5 ? `Trace a request to ${t}` : t}>{t}</button>
+      {NODES.map(([t, x, y], i) => (i === 4 || i === 5
+        ? <button key={t} type="button" className={'wd2-node l2-mono m' + (i === hot ? ' on' : '')} style={{ left: x + '%', top: y + '%' }} onClick={() => setHot(i)} onMouseEnter={() => setHot(i)} aria-pressed={i === hot}>{t}</button>
+        : <span key={t} className="wd2-node l2-mono" style={{ left: x + '%', top: y + '%' }}>{t}</span>
       ))}
     </div>
   );
@@ -185,7 +186,7 @@ function Room() {
 
 export default function World() {
   return (
-    <main id="main" className="l2-page wd2">
+    <main id="main" className="l2-page wd2" data-ask="off">
       <StageHero look="side" dark kick="world.hanzo.ai" title="Hanzo World" sub="World Monitor — global AI-system observability" acts={[['Open World Monitor', 'https://world.hanzo.ai'], ['Documentation', 'https://docs.hanzo.ai/docs/cli/world']]}>
         <Hero />
       </StageHero>

@@ -252,6 +252,84 @@
       "where": "/integrations/* editor: finish the typing at once (icon)",
       "reason": "control label (WCAG 2.2.2)",
       "needs_james": true
+    },
+    "c4_restart_pod": {
+      "string": "Restart the pod",
+      "where": "/auto hero editor: icon button that reschedules the pod so the two runs can be compared",
+      "reason": "control label (icon only)",
+      "needs_james": true
+    },
+    "c4_fewer": {
+      "string": "Fewer",
+      "where": "/visor fleet builder: icon button, one machine fewer",
+      "reason": "control label (icon only)",
+      "needs_james": true
+    },
+    "c4_more_machines": {
+      "string": "More",
+      "where": "/visor fleet builder: icon button, one machine more",
+      "reason": "control label (icon only)",
+      "needs_james": true
+    },
+    "c4_machines": {
+      "string": "Machines",
+      "where": "/visor fleet builder: name of the count group",
+      "reason": "group name (screen readers)",
+      "needs_james": true
+    },
+    "c4_launch": {
+      "string": "Launch",
+      "where": "/visor fleet builder: name of the dry run or launch toggle group",
+      "reason": "group name (screen readers)",
+      "needs_james": true
+    },
+    "c4_publish_price": {
+      "string": "Publish a new price",
+      "where": "/billing plans chapter: icon button that adds a price to the plan",
+      "reason": "control label (icon only)",
+      "needs_james": true
+    },
+    "c4_reset": {
+      "string": "Reset",
+      "where": "/billing plans chapter: icon button that returns to one price",
+      "reason": "control label (icon only)",
+      "needs_james": true
+    },
+    "c4_search_mode": {
+      "string": "Search mode",
+      "where": "/search hero: name of the Text, Vector, RRF, RAG tab list",
+      "reason": "group name (screen readers)",
+      "needs_james": true
+    },
+    "c4_plan_fits": {
+      "string": "Which plan fits",
+      "where": "/search pricing: name of the projects and docs sliders",
+      "reason": "group name (screen readers)",
+      "needs_james": true
+    },
+    "c4_mode": {
+      "string": "Mode",
+      "where": "/sentinel or /telemetry builder: name of a mode toggle group",
+      "reason": "group name (screen readers)",
+      "needs_james": true
+    },
+    "c4_category": {
+      "string": "Category",
+      "where": "/automations: name of the category chips group",
+      "reason": "group name (screen readers)",
+      "needs_james": true
+    },
+    "c4_projects": {
+      "string": "Projects",
+      "where": "example console (/search, /billing): name of the project list",
+      "reason": "group name (screen readers)",
+      "needs_james": true
+    },
+    "c4_products": {
+      "string": "Products",
+      "where": "example console (/search, /billing): name of the product icon rail",
+      "reason": "group name (screen readers)",
+      "needs_james": true
     }
   }
 }

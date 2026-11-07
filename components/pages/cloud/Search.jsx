@@ -216,7 +216,7 @@ function How() {
           <p className="l2-lede">Content in, ranked results out, and a model over the top if you want one.</p>
           <HowBar at={at} />
           <div className="se2-con-open">
-            <Drawer label="See the example console" title="Search console">
+            <Drawer label="Console" title="Hanzo Search">
               <Console name="Search" api="/v1/search" side={[['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']]} />
               <p className="se2-note">Example project. Every name in it is one you would give your own.</p>
             </Drawer>
@@ -329,7 +329,7 @@ function EndBar() {
 
 export default function Search() {
   return (
-    <main id="main" className="l2-page se2">
+    <main id="main" className="l2-page se2" data-ask="off">
       <StageHero look="rise" kick="Hybrid Search + RAG" title="Hanzo Search" sub="Keyword and meaning in the same query" acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Ask />
       </StageHero>

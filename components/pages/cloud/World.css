@@ -40,7 +40,7 @@
 .wd2-topo line { stroke: rgba(255, 255, 255, .14); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: stroke .3s; }
 .wd2-topo line.on { stroke: #fafafa; stroke-width: 2.5; }
 .wd2-node { position: absolute; transform: translate(-50%, -50%); padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); background: #171717; color: #a3a3a3; font-size: 13px; white-space: nowrap; cursor: default; }
-.wd2-node.m { cursor: pointer; color: #f5f5f5; min-height: 36px; }
+.wd2-node.m { cursor: pointer; color: #fafafa; min-width: 44px; min-height: 44px; display: grid; place-items: center; }
 .wd2-node.on { background: #fafafa; border-color: #fafafa; color: #000; font-weight: 606; }
 @media (hover: hover) { .wd2-node.m:hover { border-color: rgba(255, 255, 255, .5); } }
 .wd2-node.m:focus-visible { outline: 2px solid #fafafa; outline-offset: 2px; }

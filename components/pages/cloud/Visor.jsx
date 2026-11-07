@@ -32,7 +32,7 @@ function Fleet() {
   useEffect(() => { if (calm) setT(6); }, [calm]);
   useEffect(() => {
     if (calm || !live) return;
-    const id = setTimeout(() => setT((v) => (v >= 7 ? 0 : v + 1)), [1100, 1400, 1500, 650, 650, 1000, 2800, 500][t]);
+    const id = setTimeout(() => setT((v) => (v >= 7 ? 0 : v + 1)), [500, 1400, 1500, 650, 650, 1000, 2800, 500][t]);
     return () => clearTimeout(id);
   }, [t, live, calm]);
   const n = Math.max(0, Math.min(3, t - 2));
@@ -167,7 +167,7 @@ function Name() {
 
 export default function Visor() {
   return (
-    <main id="main" className="l2-page vs2">
+    <main id="main" className="l2-page vs2" data-ask="off">
       <StageHero look="side" flip kick="hanzoai/visor" title="Hanzo Visor" sub="Machines from several clouds, through one API" acts={[['View on GitHub', GH]]}>
         <Fleet />
       </StageHero>

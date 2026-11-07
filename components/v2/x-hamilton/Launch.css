@@ -24,7 +24,7 @@
 .l2-page h1, .l2-page h2, .l2-page h3, .l2-page h4 { color: inherit; }
 
 /* material: hero objects 28px, cards 16px, hairlines, long soft shadows, silver for objects */
-.l2-obj { position: relative; border-radius: 24px; background: #fff; border: 1px solid var(--hair); box-shadow: 0 2px 4px rgba(0, 0, 0, .03), 0 48px 120px -48px rgba(0, 0, 0, .32); overflow: hidden; }
+.l2-obj { position: relative; border-radius: 24px; background: #fff; border: 1px solid var(--hair); overflow: hidden; }
 .l2-card { border-radius: 16px; }
 .l2-dark { background: #000; color: #fafafa; }
 .l2-dark .l2-lede, .l2-dark .l2-body { color: rgba(255, 255, 255, .78); }
@@ -159,7 +159,7 @@
 .l2-chip span, .l2-chip em { font-style: normal; color: var(--muted); }
 @media (hover: hover) { a.l2-chip:hover { border-color: currentColor; } }
 a.l2-chip:active { transform: scale(.98); }
-.l2-pr { border-radius: 24px; background: #171717; color: #f5f5f5; padding: 10px; border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 48px 120px -48px rgba(0, 0, 0, .5); }
+.l2-pr { border-radius: 24px; background: #171717; color: #f5f5f5; padding: 10px; border: 1px solid rgba(255, 255, 255, .1); }
 .l2-pr-h { padding: 18px 18px 16px; }
 .l2-pr-h p { margin: 0; }
 .l2-pr-t { font-size: 17px; font-weight: 606; letter-spacing: -.01em; }
@@ -257,3 +257,15 @@ a.l2-chip:active { transform: scale(.98); }
 .l2-con-open { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .12); color: var(--ink); text-decoration: none; font: 500 14px/1 var(--sans); transition: border-color .2s, transform var(--dur-press, .1s) var(--ease); }
 .l2-con-open:active { transform: scale(.98); }
 @media (hover: hover) { .l2-con-open:hover { border-color: var(--ink); } }
+
+/* Targets and the shared code pane, held to the deck inside Cloud 4 pages (MASTER parts 7, 11, 12) */
+.l2-page .x-arrow { min-height: 44px; display: inline-flex; align-items: center; }
+.l2-page .x-copy { height: 44px; padding: 0 16px; font-size: 13px; }
+.l2-page .cf-code { background: #0a0a0a; color: #ededed; box-shadow: none; }
+.l2-page .cf-code-bar > i { background: #404040; }
+.l2-page .cf-code-bar .x-copy { background: #171717; color: #d4d4d4; }
+.l2-page .cf-code-k { font-size: 13px; color: #a3a3a3; }
+.l2-page .cf-code.light { background: #fff; color: #171717; box-shadow: none; }
+.l2-page .cf-code.light .cf-code-bar > i { background: #e4e4e7; }
+.l2-page .cf-code.light .cf-code-k { color: #525252; }
+@media (max-width: 700px) { .l2-page .x-copy { font-size: 14px; } }

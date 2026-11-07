@@ -2,7 +2,7 @@
 /* Drawer — "see the spec": detail lives in a sheet you open (Cloud 4 chat; VISION.md "one idea per screen").
    Usage: <Drawer label="See the console" title="Example console">…detail…</Drawer>
    A button opens a sheet from the right (from the bottom on phones). Escape, the scrim and × close it; focus moves into
-   the sheet and back to the button. The sheet's content is always in the HTML (inert while closed), so nothing is lost. */
+   the sheet, Tab stays inside it, and focus returns to the button. The sheet's content is always in the HTML (inert while closed), so nothing is lost. */
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './x-hamilton/Launch.css';
@@ -17,7 +17,14 @@ export default function Drawer({ label, title, children, className = '' }) {
     if (!open) return;
     window.__lenis?.stop();
     const t = setTimeout(() => sheet.current?.querySelector('.l2-sheet-x')?.focus(), 60);
-    const key = (e) => { if (e.key === 'Escape') setOpen(false); };
+    const key = (e) => {
+      if (e.key === 'Escape') { setOpen(false); return; }
+      if (e.key !== 'Tab' || !sheet.current) return; // keep focus inside the sheet while it is open
+      const f = [...sheet.current.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+      if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && (document.activeElement === f[f.length - 1] || !sheet.current.contains(document.activeElement))) { e.preventDefault(); f[0].focus(); }
+    };
     addEventListener('keydown', key);
     return () => { clearTimeout(t); removeEventListener('keydown', key); window.__lenis?.start(); btn.current?.focus({ preventScroll: true }); };
   }, [open]);

@@ -12,7 +12,7 @@
    in place, with the request link beside it.
    Motion: the dock dropping apps in (signature, time, pausable) + chip pill and card re-flow (state).
    Every word and link is Hanzo's. */
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, Cta } from '../../kit';
@@ -120,6 +120,11 @@ function Canvas() {
   const canvas = useRef(null);
   const add = (t) => setFlow((f) => (f.length >= 3 ? [t] : [...f.filter((x) => x !== t), t]));
   useTick(1600, live && !mine, () => { add(DOCK[k.current % DOCK.length]); k.current += 5; });
+  useEffect(() => { // the first drop lands within a second of arriving
+    if (!live || mine) return;
+    const t = setTimeout(() => { add(DOCK[k.current % DOCK.length]); k.current += 5; }, 450);
+    return () => clearTimeout(t);
+  }, [live]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="am2-stage" ref={ref}>
       <div className="am2-dock-wrap">
@@ -255,7 +260,7 @@ function NotHere() {
 
 export default function Automations() {
   return (
-    <main id="main" className="l2-page am2">
+    <main id="main" className="l2-page am2" data-ask="off">
       <Hero />
       <Catalog />
       <NotHere />

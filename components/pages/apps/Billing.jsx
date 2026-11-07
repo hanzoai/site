@@ -236,7 +236,7 @@ function Start() {
             <p className="l2-body">Report what someone used, and let the invoice read the meter at the end of the period.</p>
             <div className="l2-acts"><Cta to={DOCS} id="start" size="lg">Read the docs</Cta><Cta to={GH} kind="link" id="start-github">View on GitHub</Cta></div>
           </div>
-          <Drawer label="Open the example console" title="Billing console">
+          <Drawer label="Open in the console" title="Hanzo Billing">
             <Console name="Billing" api="/v1/billing" light side={[['Billing', '/billing'], ['Metrics', '/metrics'], ['Dashboards', '/dashboards'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions'], ['Annotation Queues', '/cloud/annotation-queues']]} />
             <p className="bl2-note">Example project. Every name in it is one you would give your own.</p>
           </Drawer>
@@ -252,7 +252,7 @@ function Start() {
 
 export default function Billing() {
   return (
-    <main id="main" className="l2-page bl2">
+    <main id="main" className="l2-page bl2" data-ask="off">
       <StageHero look="split" kick="Billing & Metering" title="Hanzo Billing" sub="Subscriptions, usage, invoices. Charge a fixed price, charge for what someone used, or charge for both on the same invoice. Plans, prices, meters, coupons and credits are separate objects, so a pricing change is a new price rather than a migration — and your servers never hold a card number to do any of it." acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Machine />
       </StageHero>
