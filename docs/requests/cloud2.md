@@ -55,6 +55,9 @@ Invented strings inside shared components (not this group's files):
   pages' "Paste and ship" prompt) turns the sticky header dark while it passes under it, over a white page. Asked for: only real
   dark rooms carry `data-room="dark"`.
 
+- Missing route: `/aup` (Hanzo's "usage policy" link on /help/privacy/model-training, kept as Hanzo's href) returns 404 on this
+  server and lands on `/`. Asked for: the `/aup` page or a redirect owned by the legal/routes chat.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
