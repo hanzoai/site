@@ -23,7 +23,7 @@ Done here: `Pubsub.jsx` and `app/pubsub/page.jsx` open with Persona (Developer),
 - [x] Breadcrumb at depth 2 or more (n/a: depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: Every link is the kit `A`. `parity.py /pubsub`: 2/2 links. The chapters are reached by scroll (the pinned rail's own ticks); the earlier inspector rows that scrolled to a chapter are gone with the inspector.
+Done here: Every link is the kit `A`. `parity.py /pubsub`: 2/2 links. The six facts are a plain numbered list read in order (no pinned rail).
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,7 +33,7 @@ Done here: Every link is the kit `A`. `parity.py /pubsub`: 2/2 links. The chapte
 - [x] Ends in proof strip, `Band`, footer (the close is `LaunchClose`: "Get PubSub" grows 26 → 64px beside the page's Sigil)
 - [x] Card-to-page links use Morph; title lands within 12px (n/a: no card)
 
-Done here: The first screen is the page's one black room: h1 (52px), "The bus everything else rides", "GitHub" bottom-left, and the whole bus right (publish → stream EVENTS → three subscribers). The server frame is a settled fan-out; within 0.45 s the next message drops in, its sequence lights and the wires draw (`fs-audit.cjs`: 107,058 changed px in 0.9 s, 70,703 on phone; nothing above the h1). `c3nojs.cjs`: 0 hidden text runs with JS off. Order: black hero, pinned chapters (tall), quiet room, white code split, close.
+Done here: The first screen is the page's one black room: h1 (52px), "The bus everything else rides", "GitHub" bottom-left, and the globe right with the stream tray, three subscribers and the ack switch under it. The server frame is a settled fan-out; within 0.45 s the next message is published and its arc draws. Order: black hero (globe), white code split ("Put it between your services"), the six facts as a numbered list, quiet room (prompt, 4222 spec), close.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (the kit's `lx-cta` stands in at 48px until `Cta` lands)
@@ -84,7 +84,7 @@ Done here: The start and ack switches (`aria-pressed`, a pill that glides 300 ms
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit (n/a: the shared sound kit has not landed)
 
-Done here: Signature: one message fanning out (idle), the wires drawing as line art in 800 ms. Supporting: the gliding pill (`layoutId`), the line-mask cut-in; `variety.py` OK. Kinds: idle (the hero bus and the chapter bus), pointer (replay preview under the cursor, magnetic close ask), state (switches, rows), arrival (h1 cut-in, wires, the timed quiet-room wipe), scroll (pinned chapters, "Get PubSub" growing). Tweens only; 0 springs, 0 `setInterval`; reduced motion shows the settled fan-out.
+Done here: Signature `globe` (MOTION-MAP, 7 Nov): in the hero a dark planet drawn as a graticule on one canvas (`pubsub/PsGlobe.jsx`) carries PubSub's own story. A publish on events.user.signup pulses in one place, its arc draws to the stream EVENTS in another (the square rings and the tray's newest sequence lights), three arcs fan out to analytics, audit and the one queue-group member picked, acks fly home on higher dashed arcs, and under "ack every" audit is redelivered once (dashed, then acked). The globe turns to follow each hop and sways slowly between them. Drag spins it (sideways on touch, so vertical swipes still scroll; it lets go with inertia, then turns back to the message), and hovering a place lights its arcs and names it with its state in the toolbar. The ack switch (a gliding pill, `layoutId`) re-runs the fan-out under Hanzo's three choices. The pinned six chapters (PinnedChapters + ChapterBus) are gone: the six facts are one plain numbered list ("01 / 06"…) with no reveal; the quiet room's timed wipe is gone too, so the h1 cut-in is the page's one reveal. Kinds: idle (the fan-out), pointer (drag, place hover, replay preview over the sequences, magnetic close ask), state (ack switch, pause), arrival (h1 cut-in), scroll ("Get PubSub" growing). Tweens only, 0 springs; the loop is one rAF that runs only while the globe is seen and unpaused. Reduced motion (read after hydration) shows the settled fan-out with every arc and ack drawn, still; drag still turns it. JS off hides the empty canvas; the tray and subscribers still read. Checked at 1470×801, 375×812 and 320: 0 console or page errors (reduced motion too), CLS ≤ 0.003, no sideways scroll.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no Hanzo photo or film for PubSub)
@@ -133,7 +133,7 @@ Done here: `app/pubsub/page.jsx` takes `metadata` from `content/pages.json` uned
 - [x] Every maker and model page linked in the DOM (n/a)
 - [x] One price figure everywhere (n/a: the free-tier line appears once)
 
-Done here: Cloud product anatomy: identity (h1, line), the product at work (bus), openable features (six chapters on the pinned bus, two switches), the 4222 spec, the close.
+Done here: Cloud product anatomy: identity (h1, line), the product at work (the globe and its bus), features (six numbered facts, the ack switch), the 4222 spec, the close.
 
 ## 16. Developer experience
 - [x] One `CodeBlock`; copy equals display (Frame's `Code` and `Paste` copy exactly what they show)
