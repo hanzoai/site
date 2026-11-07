@@ -1,6 +1,6 @@
 /* /support (prefix xsp-). Hanzo's deck only (MASTER.md 3.1): the neutral ramp, Book 497 headings, 48px buttons, a
    56px field with 17px text, deck curves (no springs), flat surfaces (a hairline, never with a shadow).
-   Tokens come from components/pages/company/deck.css on .vc. */
+   Tokens come from components/pages/company/deck.css on .vc. The five entrances are at the end of this file. */
 .xsp { overflow-x: clip; }
 .xsp ::selection { background: rgba(0, 0, 0, .1); }
 .xsp :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
@@ -10,19 +10,27 @@
 .xsp-go { display: inline-flex; }
 .xsp-pane .x-btn { transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out); }
 @media (hover: hover) { .xsp-pane .x-btn.solid:hover { background: #262626; border-color: #262626; } }
-/* Utility entries, 0.4s (MASTER 4.5), in CSS so JS off still shows every word; they wait for the page's go (after the
-   arrival curtain has cleared the top), then follow the h1 */
-.xsp-in { animation: xsp-in .4s var(--e-em) .3s both paused; }
-.xsp-up { animation: xsp-up .4s var(--e-em) .15s both paused; }
-.xsp[data-go] .xsp-in, .xsp[data-go] .xsp-up { animation-play-state: running; }
-@keyframes xsp-in { from { opacity: 0; } }
-@keyframes xsp-up { from { opacity: 0; transform: translateY(24px); } }
 
-/* 1. one line of display type; the pill and its answer; the six ways, live */
+/* 1. the h1 and its lede (8 and 5, bottom-aligned); the help-finder: the question screens left, the summary right */
 .xsp-hero { padding: clamp(72px, 9vw, 116px) 0 clamp(72px, 11vw, 116px); }
-.xsp-hero-g { row-gap: 44px; align-items: start; }
-.xsp-head { grid-column: 1 / -1; }
-.xsp-main { grid-column: 1 / 8; display: flex; flex-direction: column; gap: 17px; }
+.xsp-hero-g { row-gap: 44px; align-items: end; }
+.xsp .xsp-h1 { position: relative; grid-column: 1 / 8; font-size: clamp(40px, 5vw, 52px); }
+.xsp-card { display: inline-block; }
+.xsp-lede { grid-column: 8 / 13; margin: 0; }
+.xsp-room { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: start; }
+.xsp-ask { grid-column: 1 / 8; display: flex; flex-direction: column; gap: 17px; }
+.xsp-answer { grid-column: 8 / 13; }
+
+/* the two questions as two hairlines: the one you are on, and the one answered, are ink */
+.xsp-steps { display: flex; gap: 6.5px; }
+.xsp-steps i { flex: 1; height: 2px; border-radius: 2px; background: #e5e5e5; transition: background-color var(--d-slow) var(--e-io); }
+.xsp-steps i.on { background: var(--ink); }
+/* one screen at a time: the rail slides; it is clipped (never a scroll box, so focus cannot pull it), with room for rings */
+.xsp-track { overflow: clip; margin: -6px; }
+.xsp-rail { display: flex; transform: translateX(calc(var(--step, 0) * -100%)); transition: transform var(--d-slower) var(--e-io); }
+.xsp-q { flex: 0 0 100%; min-width: 0; padding: 6px; transition: opacity var(--d-slow) var(--e-io); }
+.xsp-ask[data-step='1'] .xsp-q1, .xsp-ask[data-step='0'] .xsp-q2 { opacity: 0; }
+
 .xsp-search { display: flex; align-items: center; gap: 13px; height: 56px; padding: 0 6px 0 20px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink2); transition: border-color var(--d-fast) var(--e-out), box-shadow var(--d-fast) var(--e-out); }
 @media (hover: hover) { .xsp-search:hover { border-color: rgba(0, 0, 0, .3); } }
 /* the pill carries the one focus ring (ink, with a white halo), concentric with it; the field inside draws none */
@@ -31,61 +39,103 @@
 .xsp-search svg { flex: none; }
 .xsp-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; font: 400 17px/1 var(--sans); color: var(--ink); caret-color: var(--ink); }
 .xsp-search input::-webkit-search-cancel-button { display: none; }
-.xsp-pause { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
-.xsp-pause:active { transform: scale(.97); }
-@media (hover: hover) { .xsp-pause:hover { border-color: rgba(0, 0, 0, .4); } }
+.xsp-pause, .xsp-next, .xsp-back { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xsp-next { background: var(--ink); border-color: var(--ink); color: #fff; }
+.xsp-pause:active, .xsp-next:active, .xsp-back:active { transform: scale(.97); }
+@media (hover: hover) {
+  .xsp-pause:hover, .xsp-back:hover { border-color: rgba(0, 0, 0, .4); }
+  .xsp-next:hover { background: #262626; border-color: #262626; }
+  .xsp-next:hover svg { transform: translateX(2px); }
+}
+.xsp-next svg { transition: transform var(--d-base) var(--e-io); }
 
+/* screen 2: the six ways as the choices, ranked by your words; the best is ink, the one you picked is filled */
+.xsp-q2 { display: flex; flex-direction: column; gap: 10.5px; }
+.xsp-back { width: 40px; height: 40px; }
+.xsp-ways { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6.5px; }
+.xsp-way { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 10.5px; min-height: 56px; padding: 10px 17px; border-radius: 16px; border: 1px solid transparent; background: var(--quiet); color: var(--muted); font: 497 17px/1.2 var(--sans); letter-spacing: -.01em; text-align: left; cursor: pointer; transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xsp-way span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xsp-way svg { transition: transform var(--d-base) var(--e-io); }
+.xsp-way.match { color: var(--ink2); }
+.xsp-way.best { color: var(--ink); border-color: var(--ink); }
+.xsp-way.picked { background: var(--ink); border-color: var(--ink); color: #fff; }
+.xsp-way:active { transform: scale(.98); }
+@media (hover: hover) { .xsp-way:hover { color: var(--ink); background: var(--tile); } .xsp-way.picked:hover { background: #262626; color: #fff; } .xsp-way:hover svg { transform: translateX(4px); } }
+
+/* the summary: your words, the way, its one action */
 .xsp-answer { position: relative; overflow: hidden; padding: clamp(27px, 3vw, 44px); background: #fff; border: 1px solid var(--line); border-radius: 28px; }
+.xsp-said { display: flex; align-items: center; gap: 10px; height: 0; margin: 0; overflow: hidden; opacity: 0; font: 400 16px/1.3 var(--mono); color: var(--ink); min-width: 0; transition: height var(--d-base) var(--e-io), margin var(--d-base) var(--e-io), opacity var(--d-fast) var(--e-out); }
+.xsp-said.on { height: 22px; margin-bottom: 17px; opacity: 1; }
+.xsp-said svg { flex: none; }
+.xsp-said span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xsp-panes { position: relative; display: grid; }
 .xsp-pane { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 17px; pointer-events: none; visibility: hidden; transition: visibility 0s linear .15s; }
 /* only the shown answer takes a tap, from the first paint (before hydration too) */
 .xsp-pane.on { pointer-events: auto; visibility: visible; transition: none; }
-.xsp-answer-t { margin: 0; max-width: 14ch; font-size: clamp(32px, 3.6vw, 52px); font-weight: 497; line-height: 1.02; letter-spacing: -.035em; color: var(--ink); }
-.xsp-answer-d { margin: 0; max-width: 44ch; font-size: clamp(17px, 1.5vw, 21px); line-height: 1.45; color: var(--ink2); text-wrap: pretty; }
-.xsp-subj { display: flex; align-items: center; gap: 10px; margin: 0; font: 400 16px/1.3 var(--mono); color: var(--ink); min-width: 0; }
-.xsp-subj span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xsp .xsp-answer-t { margin: 0; max-width: 14ch; font-size: clamp(26px, 2.6vw, 32px); font-weight: 497; line-height: 1.02; letter-spacing: -.035em; color: var(--ink); }
+.xsp-answer-d { margin: 0; max-width: 44ch; font-size: 17px; line-height: 1.45; color: var(--ink2); text-wrap: pretty; }
 .xsp-answer-a { margin-top: 10.5px; display: flex; flex-wrap: wrap; align-items: center; gap: 13px 27px; }
-
-.xsp-side { grid-column: 8 / 13; display: flex; flex-direction: column; gap: 27px; }
-.xsp-doors { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-.xsp-doors li { border-top: 1px solid var(--line); background: #fff; transition: opacity var(--d-base) var(--e-out); }
-/* rows never fade below 4.5:1: the rest stay the deck's muted grey (#737373), a matching row reads #525252, the answer ink */
-.xsp-doors li.match .xsp-door { color: var(--ink2); }
-.xsp-door { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 13px; min-height: 64px; padding: 10px 4px; color: var(--muted); text-decoration: none; transition: color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
-.xsp-door:active { transform: scale(.98); }
-.xsp-door-t { font-size: clamp(21px, 2vw, 26px); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; transition: transform var(--d-base) var(--e-io); }
-.xsp-door svg { color: var(--muted); transition: transform var(--d-base) var(--e-io), color var(--d-fast) var(--e-out); }
-.xsp-doors li.best .xsp-door { color: var(--ink); }
-.xsp-doors li.best .xsp-door-t { transform: translateX(6px); }
-.xsp-doors li.best svg { color: var(--ink); }
-@media (hover: hover) { .xsp-door:hover { color: var(--ink); } .xsp-door:hover svg { transform: translateX(4px); color: var(--ink); } }
 
 /* 2. the closing Band (kit), set on the deck here: Book 497 closing line, the deck's text greys, a 48px ask */
 .xsp .x-band { padding: clamp(72px, 11vw, 188px) 0; }
-.xsp .x-band h2 { font-size: clamp(40px, 6.6vw, 84px); font-weight: 497; line-height: 1.02; letter-spacing: -.035em; color: #fafafa; max-width: 20ch; }
+.xsp .x-band h2 { font-size: clamp(32px, 4vw, 52px); font-weight: 497; line-height: 1.02; letter-spacing: -.035em; color: #fafafa; max-width: 20ch; }
 .xsp .x-band .x-btn.solid { height: 48px; padding: 0 27px; background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+/* the Band's own entrance is the page's tilt (5), so the kit's word-by-word reveal and rise stand still here */
+.xsp .x-band .x-word, .xsp .x-band .x-band-act { opacity: 1 !important; transform: none !important; filter: none !important; }
 .xsp-note { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.45; color: #a3a3a3; }
+/* the closing room's object: the six doors as one quiet row of destinations (hover underlines, press .97) */
+.xsp-band-doors { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 4px; margin-top: 28px; }
+.xsp-band-doors a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; color: #a3a3a3; font-size: 14px; text-decoration: none; transition: color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xsp-band-doors a + a::before { content: '·'; margin-right: 14px; color: rgba(255, 255, 255, .3); }
+@media (hover: hover) { .xsp-band-doors a:hover { color: #fafafa; text-decoration: underline; text-underline-offset: 4px; } }
+.xsp-band-doors a:active { transform: scale(.97); }
 
 @media (max-width: 899px) {
   .xsp-hero { padding: 88px 0 72px; }
   .xsp-hero-g { row-gap: 27px; }
-  .xsp-side { display: contents; }
-  .xsp-side .vc-lede { order: 1; grid-column: 1 / -1; }
-  .xsp-main { order: 2; }
-  .xsp-side .xsp-doors { order: 3; grid-column: 1 / -1; margin-top: 10px; }
+  .xsp-room { grid-template-columns: minmax(0, 1fr); row-gap: 27px; }
+  .xsp-ask, .xsp-answer { grid-column: 1 / -1; }
   .xsp-answer { padding: 24px 20px; border-radius: 24px; }
-  .xsp-answer-t { font-size: 32px; }
-  .xsp-answer-d { font-size: 17px; }
+  .xsp-way { padding: 10px 13px; font-size: 16px; }
 }
+
+/* the tiles of entrance 4 exist only while it can play */
+.xsp-tiles { display: none; }
+
+/* ---------- the five entrances, each once, as its section first reaches the screen (Support.jsx useEnter) ----------
+   The hidden start states exist only with JS on and motion allowed; JS off or reduced motion: everything at rest. */
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. card-deal: the h1's words start stacked on a deck at the line's end and are dealt to their places, 60ms apart */
+  html.js .xsp-deal:not([data-in]) .xsp-card { opacity: 0; transform: translate(var(--dx, 0px), calc(var(--dy, 0px) + 16px)) rotate(var(--r, 0deg)); }
+  .xsp-deal[data-in] .xsp-card { animation: xsp-deal var(--d-slower) var(--e-em) calc(var(--i) * 60ms + 60ms) backwards; }
+  /* 2. cursor-lens: a round lens opens from the pointer; inside it the words settle from magnified to their size */
+  html.js .xsp-lens:not([data-in]) { clip-path: circle(0 at var(--lx, 0) var(--ly, 50%)); }
+  .xsp-lens[data-in] { animation: xsp-lens var(--d-slower) var(--e-em) .2s backwards; transform-origin: var(--lx, 0) var(--ly, 50%); }
+  /* 3. fold-out: the question screens unfold from a hinge along their top edge, like paper */
+  html.js .xsp-fold:not([data-in]) { opacity: 0; transform: perspective(1200px) rotateX(-72deg); }
+  .xsp-fold[data-in] { transform-origin: 50% 0; animation: xsp-fold var(--d-slower) var(--e-em) .3s backwards; }
+  /* 4. tile-flip: a grid of tiles flips in, diagonal by diagonal, to form the answer card, then the answer shows */
+  html.js .xsp-tiles { position: absolute; inset: 0; z-index: 2; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(4, 1fr); pointer-events: none; perspective: 900px; }
+  html.js .xsp-tiles i { background: var(--card); transform: rotateY(90deg); }
+  html.js .xsp-flip:not([data-in]) { border-color: transparent; }
+  html.js .xsp-flip:not([data-in]) > :not(.xsp-tiles) { opacity: 0; }
+  .xsp-flip[data-in] .xsp-tiles { animation: xsp-tiles-off var(--d-base) var(--e-out) 1.05s both; }
+  .xsp-flip[data-in] .xsp-tiles i { animation: xsp-tile var(--d-base) var(--e-em) calc(var(--d) * 60ms + .3s) both; }
+  .xsp-flip[data-in] > :not(.xsp-tiles) { animation: xsp-show var(--d-base) var(--e-out) 1s backwards; }
+  .xsp-flip[data-in] { transition: border-color var(--d-base) var(--e-out) 1s; }
+  /* 5. tilt-3d-hover: the Band arrives tilted back in 3D and levels, then leans toward a fine pointer (2.5deg) */
+  .xsp-tilt { perspective: 1600px; }
+  .xsp-tilt > .x-band { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform var(--d-base) var(--e-out); }
+  html.js .xsp-tilt:not([data-in]) > .x-band { opacity: 0; transform: translateY(24px) rotateX(18deg) rotateY(-8deg); }
+  .xsp-tilt[data-in] > .x-band { animation: xsp-tilt var(--d-slower) var(--e-em) backwards; }
+}
+@keyframes xsp-deal { from { opacity: 0; transform: translate(var(--dx, 0px), calc(var(--dy, 0px) + 16px)) rotate(var(--r, 0deg)); } 30% { opacity: 1; } }
+@keyframes xsp-lens { from { clip-path: circle(0 at var(--lx, 0) var(--ly, 50%)); transform: scale(1.18); } to { clip-path: circle(150% at var(--lx, 0) var(--ly, 50%)); transform: none; } }
+@keyframes xsp-fold { from { opacity: 0; transform: perspective(1200px) rotateX(-72deg); } 40% { opacity: 1; } to { transform: perspective(1200px) rotateX(0); } }
+@keyframes xsp-tile { from { transform: rotateY(90deg); } to { transform: rotateY(0); } }
+@keyframes xsp-tiles-off { to { opacity: 0; visibility: hidden; } }
+@keyframes xsp-show { from { opacity: 0; } }
+@keyframes xsp-tilt { from { opacity: 0; transform: translateY(24px) rotateX(18deg) rotateY(-8deg); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .xsp-in, .xsp-up { animation: none; }
+  .xsp-rail, .xsp-q, .xsp-steps i, .xsp-said { transition: none; }
 }
-/* the closing room's object: the six doors as one quiet row of destinations (hover fills, press .97) */
-.xsp-band-doors { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 28px; }
-.xsp-band-doors a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .16); color: #fafafa; font-size: 14px; text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) { .xsp-band-doors a:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .4); } }
-.xsp-band-doors a:active { transform: scale(.97); }
-/* deck rhythm: the h1 and the band's line rest at 52; the answer title is the medium thing */
-.xsp .xsp-h1 { font-size: clamp(40px, 5vw, 52px); }
-.xsp .x-band h2 { font-size: clamp(32px, 4vw, 52px); }
-.xsp .xsp-answer-t { font-size: clamp(26px, 2.6vw, 32px); }

@@ -1,25 +1,30 @@
 'use client';
-/* Sentinel (v2, Cloud 4 chat). Archetype A, Launch: a side Stage hero with the issue view → one dark scene where the
-   events collapse → five stacked sheets → Get Sentinel → closing band. Ink, greys and white only.
+/* Sentinel (v2, Cloud 4 chat). Archetype A, Launch: a side Stage hero with the issue view → the dark room where the
+   events collapse (it plays by itself) → five facts as plain sheets in two runs → Get Sentinel → closing band. Ink, greys
+   and white only.
    Persona: an engineer whose frontend and services throw errors they can't reproduce. Goal: read the migration docs.
    CTA: "Read the docs" (hero, header ask, close; data-cta primary / close).
    Metric: cta_click:sentinel.primary
-   V2: 8/10 the issue view as the hero; ten thousand events rain into one issue (the rain never crosses the words); facts as stacking sheets that alternate and play once, the alert router builds a rule by itself; the close shows the fix landing at a release
-   Signature: ten thousand events become one issue. In a pinned dark room, exceptions rain down a canvas; as you scroll
-   they are pulled into a single issue card and its count climbs with them (scrubbed; on phones it plays when seen).
+   V2: 8/10 no more pinned room or stacking sheets: the page decodes (headlines and figures resolve out of scrambled characters, the minified frame decodes into its source line), the rain room plays by itself, and each section enters its own way
+   Signature: decode. Headlines and figures resolve out of scrambled characters as they arrive (the hero's error, the
+   room's headings and its "1 issue", each fact's heading and number, the close); the issue's top frame decodes from the
+   minified line into checkout/cart.ts:42 each time the source map resolves it; hovering any of them (a tap on touch)
+   re-scrambles it and it decodes again. Text only changes in place: every glyph keeps its width, so nothing reflows.
+   Entrances: 1 hero = typewriter (the h1 types itself with a caret); 2 the dark room = conveyor (its lines and the card
+   ride in from the right one after another); 3 facts 02–04 = glitch-in (each sheet arrives in a short monochrome slice
+   glitch, then holds); 4 facts 05–06 = page-curl (a grey surface curls away from the bottom-right corner); 5 the close =
+   slot-roll (its headings roll down into place word by word, like reels).
    Beyond: "Route an alert". Choose what happened (new issue, regression, spike), where it goes and which tracker opens
    the ticket, and the rule reads back as a sentence: only the destinations and trackers Hanzo names.
-   Motion: scroll scrub (signature) + canvas rain (idle, with Pause) + the hero's ticking issue (idle, with Pause) + the
-   alert router and stacked sheets (state, scroll). Labels sit under their headlines. Every word and link is
-   Hanzo's; the error, its frames and its counts are made-up examples. */
+   Motion: decode (signature) + canvas rain (idle, with Pause) + the hero's ticking issue (idle, with Pause) + the
+   alert router (state) + five entrances, each once. Every word and link is Hanzo's; the error, its frames and its counts
+   are made-up examples. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useInView } from 'motion/react';
+import { useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
-import { EASE } from '../../ui';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import StageHero from '../../v2/StageHero';
 import Finale from '../../v2/Finale';
-import { useWide } from '../../v2/useWide';
 import './Sentinel.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/guides/migrate/sentry';
@@ -27,8 +32,154 @@ const GH = 'https://github.com/hanzoai';
 const rnd = (i) => { const x = Math.sin(i * 51.7) * 9301.3; return x - Math.floor(x); };
 const CRUMBS = ['navigation /cart', 'click “Apply code”', 'fetch POST /discount', 'exception'];
 
+/* ---------- decode (page-local): text nodes are split into fixed-width glyph cells while they scramble, then the
+   original text nodes are put back, so React's DOM and the final typography are untouched. ---------- */
+const GLY = 'ABCDEFGHJKLMNPRSTUVXYZabdeghknopqrsuvxyz0123456789#%&*+=<>/';
+const still = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const glyph = () => GLY[Math.floor(Math.random() * GLY.length)];
+const isGlyph = (ch) => /[0-9A-Za-zÀ-ɏ]/.test(ch);
+
+function split(el) {
+  const nodes = [];
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push(n);
+  const cells = [], pairs = [];
+  nodes.forEach((n) => {
+    const box = document.createElement('span');
+    box.className = 'sn2-dt';
+    n.nodeValue.split(/(\s+)/).forEach((part) => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) { box.appendChild(document.createTextNode(part)); return; }
+      const word = document.createElement('span');
+      word.className = 'sn2-dw';
+      for (const ch of part) { const c = document.createElement('span'); c.className = 'sn2-dc'; c.textContent = ch; word.appendChild(c); cells.push([c, ch]); }
+      box.appendChild(word);
+    });
+    n.parentNode.replaceChild(box, n);
+    pairs.push([box, n]);
+  });
+  cells.forEach(([c]) => { c.style.width = c.getBoundingClientRect().width + 'px'; });
+  return { cells, undo: () => pairs.forEach(([box, n]) => box.parentNode && box.parentNode.replaceChild(n, box)) };
+}
+
+function decode(el, dur = 700) {
+  if (!el || el.__busy || still()) return;
+  el.__busy = true;
+  const { cells, undo } = split(el);
+  const n = cells.length, t0 = performance.now();
+  const at = cells.map((_, i) => dur * (0.2 + 0.8 * (i / Math.max(1, n - 1))) * (0.85 + rnd(i + n) * 0.15));
+  let last = 0;
+  const step = (now) => {
+    const t = now - t0;
+    if (now - last > 48 || t >= dur) {
+      last = now;
+      cells.forEach(([c, ch], i) => { c.textContent = t >= at[i] || !isGlyph(ch) ? ch : glyph(); });
+    }
+    if (t < dur) requestAnimationFrame(step);
+    else { undo(); el.__busy = false; }
+  };
+  cells.forEach(([c, ch]) => { if (isGlyph(ch)) c.textContent = glyph(); });
+  requestAnimationFrame(step);
+}
+
+/* entrance 1, typewriter: the glyphs appear one by one behind a caret (hidden until typed, so nothing reflows) */
+function type(el, gap = 70) {
+  if (!el || el.__busy) return;
+  if (still()) { el.classList.add('go'); return; }
+  el.__busy = true;
+  const { cells, undo } = split(el);
+  cells.forEach(([c]) => { c.style.visibility = 'hidden'; });
+  const caret = document.createElement('i');
+  caret.className = 'sn2-caret';
+  caret.setAttribute('aria-hidden', 'true');
+  el.classList.add('go');
+  let k = 0;
+  const put = () => {
+    if (k < cells.length) {
+      const [c] = cells[k++];
+      c.style.visibility = '';
+      c.after(caret);
+      setTimeout(put, gap);
+    } else setTimeout(() => { caret.remove(); undo(); el.__busy = false; }, 900);
+  };
+  setTimeout(put, 260);
+}
+
+/* entrance 5, slot-roll: each word rolls down through three scrambled reels into place */
+function roll(el, delay = 0) {
+  if (!el || el.__busy) return;
+  if (still()) { el.classList.add('go'); return; }
+  el.__busy = true;
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push(n);
+  const pairs = [], reels = [];
+  nodes.forEach((n) => {
+    const box = document.createElement('span');
+    box.className = 'sn2-dt';
+    n.nodeValue.split(/(\s+)/).forEach((part) => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) { box.appendChild(document.createTextNode(part)); return; }
+      const mask = document.createElement('span');
+      mask.className = 'sn2-slot';
+      const r = document.createElement('span');
+      r.className = 'sn2-reel';
+      r.appendChild(document.createTextNode(part));
+      const col = document.createElement('span');
+      col.className = 'sn2-reel-up';
+      col.setAttribute('aria-hidden', 'true');
+      for (let j = 0; j < 3; j++) { const row = document.createElement('span'); row.textContent = [...part].map((ch) => (isGlyph(ch) ? glyph() : ch)).join(''); col.appendChild(row); }
+      r.appendChild(col);
+      mask.appendChild(r);
+      box.appendChild(mask);
+      reels.push(r);
+    });
+    n.parentNode.replaceChild(box, n);
+    pairs.push([box, n]);
+  });
+  el.classList.add('go');
+  reels.forEach((r, i) => { r.style.transitionDelay = delay + i * 60 + 'ms'; });
+  requestAnimationFrame(() => requestAnimationFrame(() => reels.forEach((r) => r.classList.add('on'))));
+  setTimeout(() => { pairs.forEach(([box, n]) => box.parentNode && box.parentNode.replaceChild(n, box)); el.__busy = false; }, delay + reels.length * 60 + 560);
+}
+
+/* <Dec>: decodes once when it arrives (or types / rolls, for the entrances), and re-scrambles on hover or tap */
+function Dec({ as: T = 'span', className = '', arrive = 'decode', children, ...rest }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let io;
+    if (arrive === 'type') type(el);
+    else if (arrive) {
+      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); arrive === 'roll' ? roll(el) : decode(el); } }, { threshold: 0.6 });
+      io.observe(el);
+    }
+    const hover = (e) => { if (e.pointerType !== 'touch') decode(el, 520); };
+    const tap = (e) => { if (e.pointerType === 'touch') decode(el, 520); };
+    el.addEventListener('pointerenter', hover);
+    el.addEventListener('pointerdown', tap);
+    return () => { io && io.disconnect(); el.removeEventListener('pointerenter', hover); el.removeEventListener('pointerdown', tap); };
+  }, [arrive]);
+  return <T ref={ref} className={'sn2-dec' + (arrive === 'type' ? ' sn2-tw' : arrive === 'roll' ? ' sn2-roll' : '') + (className ? ' ' + className : '')} {...rest}>{children}</T>;
+}
+
+/* adds .in once the element is a quarter on screen (each section's entrance) */
+function useEnter(amount = 0.25) {
+  const ref = useRef(null);
+  const [inn, setIn] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setIn(true); io.disconnect(); } }, { threshold: amount });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [amount]);
+  return [ref, inn];
+}
+
 /* The Stage object: the issue as Sentinel shows it, live. Events arrive (the count and the last bar grow), the top frame
-   resolves through the source map, and the breadcrumbs line up under it. */
+   decodes through the source map, and the breadcrumbs line up under it. */
 function Issue() {
   const [ref, live, , paused, toggle] = useDemo(0.05);
   const calm = useCalm();
@@ -49,21 +200,19 @@ function Issue() {
           <span className="sn2-tag l2-mono">TypeError</span>
           <span className="sn2-unres l2-mono">unresolved</span>
         </div>
-        <p className="sn2-msg">Cannot read properties of undefined</p>
+        <Dec as="p" className="sn2-msg">Cannot read properties of undefined</Dec>
         <div className="sn2-stats">
           <p><b className="l2-fig">{n.toLocaleString('en-US')}</b><span>events</span></p>
-          <p><b className="l2-fig">1</b><span>issue</span></p>
+          <p><Dec as="b" className="l2-fig">1</Dec><span>issue</span></p>
           <div className="sn2-hist">{bars.map((h, i) => <i key={i} style={{ transform: `scaleY(${h})` }} className={i === bars.length - 1 ? 'now' : ''} />)}</div>
         </div>
         <div className="sn2-frame">
           <p className="sn2-k l2-mono">Top frame</p>
           <div className="sn2-code">
-            <AnimatePresence initial={false}>
-              {/* crossfade, never a blank bar */}
-              {resolved
-                ? <motion.code key="r" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}><b>checkout/cart.ts:42</b> · applyDiscount()</motion.code>
-                : <motion.code key="m" className="min" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>main.3f9a.js:1:88213 · t.a()</motion.code>}
-            </AnimatePresence>
+            {/* the source map resolving IS the decode: the minified frame scrambles into the source line */}
+            {resolved
+              ? <Dec as="code" key="r"><b>checkout/cart.ts:42</b> · applyDiscount()</Dec>
+              : <Dec as="code" key="m" className="min">main.3f9a.js:1:88213 · t.a()</Dec>}
             <span className={'sn2-map l2-mono' + (resolved ? ' on' : '')}>source map</span>
           </div>
         </div>
@@ -76,23 +225,21 @@ function Issue() {
   );
 }
 
-/* Signature: the events rain down a canvas and, as the scene is scrolled (or, on phones, as it plays), they are pulled
-   into one issue; the card's count is written straight into its text node. */
+/* The dark room: the events rain down a canvas and are pulled into one issue, by themselves (4.5 s, a hold, again);
+   the card's count is written straight into its text node. */
 const N = 900;
 const P = Array.from({ length: N }, (_, i) => ({ x: rnd(i), y: rnd(i + 1777), v: 0.05 + rnd(i + 31) * 0.12, d: rnd(i + 99) * 0.42, jx: rnd(i + 5), jy: rnd(i + 8) }));
 const ease = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : 1 - Math.pow(1 - u, 3));
 
 function Collapse() {
-  const scene = useRef(null);
   const cv = useRef(null);
   const card = useRef(null);
   const copy = useRef(null);
   const num = useRef(null);
-  const [ref, live, , paused, toggle] = useDemo(0.15);
+  const one = useRef(null);
+  const [ref, live, , paused, toggle] = useDemo(0.25);
   const calm = useCalm();
-  const wide = useWide();
-  const pin = wide && !calm;
-  const { scrollYProgress } = useScroll({ target: scene, offset: ['start start', 'end end'] });
+  const [scene, inn] = useEnter(0.2);
   const [done, setDone] = useState(false);
   const doneR = useRef(false);
   useEffect(() => {
@@ -106,8 +253,8 @@ function Collapse() {
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, w, h);
       const t = (now - t0) / 1000;
-      // the scroll drives it on desktop; on phones it plays for 4.5 s, holds, then plays again
-      const p = calm ? 1 : pin ? Math.min(1, scrollYProgress.get() * 1.25) : Math.min(1, ((t % 8) / 4.5));
+      // it plays by itself: 1 s of rain, 4.5 s of collapse, a hold, then again
+      const p = calm ? 1 : Math.min(1, Math.max(0, ((t % 9) - 1) / 4.5));
       const cr = card.current.getBoundingClientRect(), r = c.getBoundingClientRect();
       const cx = cr.left - r.left, cy = cr.top - r.top;
       // the rain never falls through the words: particles still in the air skip the copy's box
@@ -128,30 +275,32 @@ function Collapse() {
       }
       g.globalAlpha = 1;
       const shown = Math.round(Math.min(1, p / 0.95) * 10000);
-      if (shown !== last && num.current) { num.current.textContent = shown.toLocaleString('en-US'); last = shown; }
+      if (shown !== last && num.current && !num.current.__busy) { num.current.textContent = shown.toLocaleString('en-US'); last = shown; }
       card.current.style.setProperty('--k', String(Math.min(1, Math.max(0, (p - 0.35) / 0.55))));
       if (p >= 0.98 !== doneR.current) { doneR.current = p >= 0.98; setDone(doneR.current); }
       if (!calm && live) raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, [live, calm, pin, scrollYProgress, paused]);
+  }, [live, calm, paused]);
+  // the figure decodes as the events land in it
+  useEffect(() => { if (done) decode(one.current, 600); }, [done]);
   return (
-    <section className="l2-dark sn2-col" data-room="dark" ref={scene} style={pin ? { height: '260svh' } : undefined}>
+    <section className={'l2-dark sn2-col' + (inn ? ' in' : '')} data-room="dark" ref={scene}>
       <div className="sn2-col-pin" ref={ref}>
         <PauseBtn paused={paused} onClick={toggle} className="dk sn2-col-pause" />
         <canvas ref={cv} className="sn2-cv" aria-hidden="true" />
         <div className="l2-wrap sn2-col-in">
           <div className="sn2-col-copy" ref={copy}>
-            <h2 className="l2-head">Enough context to fix it without asking</h2>
-            <h3 className="l2-title">One issue, not ten thousand events</h3>
-            <p className="l2-ch-n">01 / 06</p>
-            <p className="l2-body">Identical exceptions collapse into a single issue with a count and a first-seen date. Minified frontend frames are resolved through your source maps, and the breadcrumbs leading up to the throw come with it, so you read what the person did rather than guessing.</p>
+            <Dec as="h2" className="l2-head sn2-belt" style={{ '--d': 0 }}>Enough context to fix it without asking</Dec>
+            <Dec as="h3" className="l2-title sn2-belt" style={{ '--d': 1 }}>One issue, not ten thousand events</Dec>
+            <Dec as="p" className="l2-ch-n sn2-belt" style={{ '--d': 2 }}>01 / 06</Dec>
+            <p className="l2-body sn2-belt" style={{ '--d': 3 }}>Identical exceptions collapse into a single issue with a count and a first-seen date. Minified frontend frames are resolved through your source maps, and the breadcrumbs leading up to the throw come with it, so you read what the person did rather than guessing.</p>
           </div>
-          <div className={'sn2-card' + (done ? ' done' : '')} ref={card} aria-hidden="true">
+          <div className={'sn2-card sn2-belt' + (done ? ' done' : '')} style={{ '--d': 2 }} ref={card} aria-hidden="true">
             <span className="sn2-tag l2-mono">TypeError</span>
             <p className="sn2-card-m">Cannot read properties of undefined</p>
-            <p className="sn2-card-n"><b ref={num} className="l2-fig">10,000</b><span>events</span><em className="l2-mono">1 issue</em></p>
+            <p className="sn2-card-n"><b ref={num} className="l2-fig">10,000</b><span>events</span><em ref={one} className="l2-mono">1 issue</em></p>
             <p className="sn2-card-f l2-mono">first seen · source map · breadcrumbs</p>
           </div>
         </div>
@@ -178,7 +327,7 @@ function Route() {
   useEffect(() => {
     if (!seen || calm || mine) return;
     const plan = [() => setW(2), () => setD(3), () => setK(0), () => setW(0), () => setD(1), () => setK(2)];
-    const ids = plan.map((f, i) => setTimeout(f, 500 + i * 900));
+    const ids = plan.map((f, i) => setTimeout(f, 900 + i * 900));
     return () => ids.forEach(clearTimeout);
   }, [seen, calm, mine]);
   const pick = (list, at, set, label) => (
@@ -234,15 +383,15 @@ const FACTS = [
   ['A fork, and it says so', 'Sentinel is a fork of Sentry, used under the Functional Source License with attribution kept current. Sentry is a trademark of Functional Software, Inc., and Sentinel is neither affiliated with nor endorsed by them. Naming what you forked is not the same as branding yourself with it.'],
 ];
 
-/* Facts 02–06 as sheets that stack: each one slides up and rests a little below the last. */
-function Sheet({ i, t, d }) {
+/* Facts 02–06 as plain sheets; facts 02–04 glitch in, 05–06 are uncovered by a page curl. */
+function Sheet({ i, t, d, how }) {
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.55 });
+  const seen = useInView(ref, { once: true, amount: 0.3 });
   return (
-    <article ref={ref} className={'sn2-sheet' + (seen ? ' in' : '')} style={{ '--i': i }}>
+    <article ref={ref} className={'sn2-sheet ' + how + (i % 2 ? ' alt' : '') + (seen ? ' in' : '')} style={{ '--i': i }}>
       <div className="sn2-sheet-copy">
-        <h3 className="l2-head">{t}</h3>
-        <p className="l2-ch-n">{String(i + 2).padStart(2, '0')} / 06</p>
+        <Dec as="h3" className="l2-head">{t}</Dec>
+        <Dec as="p" className="l2-ch-n">{String(i + 2).padStart(2, '0') + ' / 06'}</Dec>
         <p className="l2-body">{d}</p>
       </div>
       <div className="sn2-pic" aria-hidden={i === 3 ? undefined : true}><Pic i={i + 1} /></div>
@@ -250,11 +399,11 @@ function Sheet({ i, t, d }) {
   );
 }
 
-function Sheets() {
+function Sheets({ from, to, how }) {
   return (
-    <section className="sn2-sheets">
+    <section className={'sn2-sheets ' + how}>
       <div className="l2-wrap">
-        {FACTS.map(([t, d], i) => <Sheet key={t} i={i} t={t} d={d} />)}
+        {FACTS.slice(from, to).map(([t, d], k) => <Sheet key={t} i={from + k} t={t} d={d} how={how} />)}
       </div>
     </section>
   );
@@ -280,14 +429,23 @@ function Resolved() {
 }
 
 export default function Sentinel() {
+  // entrance 5 also rolls the band's own "Get Sentinel" heading and tag (rendered by the shared Finale) as they arrive
+  const root = useRef(null);
+  useEffect(() => {
+    const els = root.current ? [...root.current.querySelectorAll('.l2-band .l2-get-name, .l2-band .l2-get-tag')] : [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); roll(e.target); } }), { threshold: 0.9 });
+    els.forEach((el) => { el.classList.add('sn2-roll'); io.observe(el); });
+    return () => io.disconnect();
+  }, []);
   return (
-    <main id="main" className="l2-page sn2">
-      <StageHero look="side" kick="sentry.hanzo.ai" title="Hanzo Sentinel" sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
+    <main id="main" className="l2-page sn2" ref={root}>
+      <StageHero look="side" kick="sentry.hanzo.ai" title={<Dec arrive="type">Hanzo Sentinel</Dec>} sub="Error tracking and performance monitoring" acts={[['Read the docs', DOCS], ['View on GitHub', GH]]}>
         <Issue />
       </StageHero>
       <Collapse />
-      <Sheets />
-      <Finale name="Sentinel" head="Get started with Hanzo Sentinel" ask={['Read the docs', DOCS]} links={[['View on GitHub', GH]]} object={<Resolved />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." tag="Error tracking" license="BSL-1.1" />
+      <Sheets from={0} to={3} how="glitch" />
+      <Sheets from={3} to={5} how="curl" />
+      <Finale name="Sentinel" head={<Dec arrive="roll">Get started with Hanzo Sentinel</Dec>} ask={['Read the docs', DOCS]} links={[['View on GitHub', GH]]} object={<Resolved />} prompt="Read https://hanzo.ai/skill.md and use Hanzo Sentinel in my project." tag="Error tracking" license="BSL-1.1" />
     </main>
   );
 }

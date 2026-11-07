@@ -66,13 +66,13 @@ function useWalk(n, box, ms) {
    already used twice (or was just used) takes the next of Hanzo's nine model films. */
 const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
 function spread(list) {
-  const used = {};
-  let prev = null;
+  // all nine films once before any repeats (a tile keeps its own film when it is still free), then the same again:
+  // a repeat is nine tiles later, never in the same or the next row
+  const used = new Set();
   return list.map((f0) => {
-    const ok = (x) => x && (used[x] || 0) < 2 && x !== prev;
-    const f = ok(f0) ? f0 : FILMS.find(ok);
-    used[f] = (used[f] || 0) + 1;
-    prev = f;
+    if (used.size === FILMS.length) used.clear();
+    const f = f0 && !used.has(f0) ? f0 : FILMS.find((x) => !used.has(x));
+    used.add(f);
     return f;
   });
 }
