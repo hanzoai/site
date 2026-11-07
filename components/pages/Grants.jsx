@@ -39,7 +39,7 @@ function Hero() {
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
             <p className="xp-lede xgr-lede">Free API credits, GPU compute, and Hanzo Team access for open-source contributors, academic PhD researchers, and research interns.</p>
             <div className="xgr-acts">
-              <Cta to="#apply" id="grants.hero" thumb className="xp-cta">Apply for a Grant</Cta>
+              <Cta to="/grants#apply" id="grants.hero" thumb className="xp-cta">Apply for a Grant</Cta>
               <A to="/careers#internships" className="xgr-link">Academic Internships</A>
             </div>
           </motion.div>
@@ -153,7 +153,7 @@ function Sheet({ way, i, n, pick, p }) {
           <h3 className="xp-display sm xgr-way-t">{t}</h3>
           <p className="xp-lede xgr-way-d">{d}</p>
           <div className="xgr-way-a">
-            <Cta to="#apply" kind="quiet" id={'grants.' + k} onClick={() => pick(k)} className="xp-ghost">{cta}</Cta>
+            <Cta to="/grants#apply" kind="quiet" id={'grants.' + k} onClick={() => pick(k)} className="xp-ghost">{cta}</Cta>
             <A to={to} className="xgr-link">{more}</A>
           </div>
         </div>

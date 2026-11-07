@@ -75,7 +75,7 @@ function Hero() {
           <motion.div initial={{ y: 16 }} animate={{ y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
             <p className="xp-lede xfo-lede">A merged pull request in a public Hanzo repository earns Pro time, granted by hand by a Hanzo admin.</p>
             <div className="xfo-acts">
-              <Cta to="#claim" id="founder.hero" thumb className="xp-cta">Claim a merged pull request</Cta>
+              <Cta to="/founder#claim" id="founder.hero" thumb className="xp-cta">Claim a merged pull request</Cta>
               <A to="/bounty" className="xfo-link">Find an issue</A>
             </div>
           </motion.div>

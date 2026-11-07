@@ -70,7 +70,7 @@ function Hero() {
           <motion.div className="xhi-hero-side" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}>
             <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today.</p>
             <div className="v2s-acts">
-              <Cta to="#timeline" kind="link" id="history.hero">Explore Our History</Cta>
+              <Cta to="/history#timeline" kind="link" id="history.hero">Explore Our History</Cta>
               <TL to="/about">About Hanzo</TL>
               <TL to="/open-source">Open Source</TL>
             </div>

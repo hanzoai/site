@@ -288,3 +288,17 @@
   .xgn-src-flags { font-size: 16px; gap: 4px 14px; margin-top: 56px; }
   .xgn-code-top .x-mono, .xgn-cap, .xgn-count, .xgn-prompt-k, .xgn-win-k { font-size: 14px; }
 }
+
+/* critic round 3 (7 Nov) */
+.xgn-hero { padding-top: 0; }
+.xgn-src { padding-bottom: clamp(56px, 6vw, 88px) !important; }
+@media (prefers-reduced-motion: reduce) { .xgn-pause { display: none !important; } }
+.xgn-rail-cmd { display: none; }
+@media (max-width: 899px) {
+  /* the command rides at the foot of the screen while the switches scroll by */
+  .xgn-rail-cmd { display: block; position: sticky; bottom: 12px; z-index: 3; margin: 16px 0 0; padding: 12px 16px; border-radius: 14px; background: #0a0a0a; color: #fafafa; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); }
+  /* the agents as a two-row rail with a peek, not a 1,900px wall */
+  .xgn-keys { grid-template-columns: none; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-auto-columns: 42%; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; padding-bottom: 4px; }
+  .xgn-keys > li { scroll-snap-align: start; }
+  .xgn-key { min-height: 56px; }
+}
