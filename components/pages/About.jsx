@@ -6,17 +6,17 @@
    Signature: the six reasons Hanzo builds are tiles that open. Click one and the tile itself grows into a full sheet
    (shared-element morph, synchronized.studio); previous / next turn through the six inside it; it folds back on close.
    Supporting (three): the frontier draws itself and answers the pointer; the startups figure counts up on a rising
-   staircase of figures; the core team's commits land in the one dark middle room, the newest pulsing.
+   staircase of figures; the Zen of Hanzo is the one pinned scene, the scroll turning its six principles one at a time.
    Beyond: "Pick two? Keep all four." The lede's four trade-offs as switches; nothing switches anything else off, and
    each shows the line on this page that holds it.
    Every word, figure and link is Hanzo's (content/live/about.json). */
 // Persona: a buyer, founder or engineer checking who is behind Hanzo (arrives from the footer, /history or search)
 // Goal: believe the team and its record, then start building
-// CTA: Get Started (/pricing) in the hero, after the track record and in the sticky ask; the close repeats the careers ask
+// CTA: Get Started (/pricing) in the hero and in the sticky ask ("Start Building" after the track record is a text link); the close is the careers ask
 // Metric: signup_start (data-cta="about.*")
 // Signature: six reasons Hanzo builds as tiles that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
-// V2: 7/10 critic round 2 (phone commit dates, founders' empty boxes, length, ghost axes, phone hero); all fixed, re-review pending
+// V2: 8/10 round 3: Zen is now a pinned scene (scroll turns the six, one in one out); founders are Sigils, never grey slabs; one solid ask per section; names at 26px; phone log, tabs and hero labels mended
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
@@ -27,6 +27,7 @@ import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import Lines from '../v2/Lines';
 import StorySheet from './StorySheet';
+import Zen from './AboutZen';
 import '../v2/system.css';
 import './story.css';
 import './About.css';
@@ -317,7 +318,7 @@ function Record() {
         <div className="v2s-grid xab-rec-foot">
           <p className="v2s-body v2s-c-1-7">From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
           <div className="v2s-acts v2s-c-8-12 xab-rec-acts">
-            <Cta to="/pricing" id="about.record">Start Building</Cta>
+            <TL to="/pricing">Start Building</TL>
             <TL to="/history">Read Our Full History</TL>
             <TL to="/customers">Customer Stories</TL>
           </div>
@@ -333,27 +334,33 @@ const FOUNDERS = [
   { name: 'Zach Kelling', mono: 'ZK', img: '/authors/zach-kelling-portrait.jpg', role: 'Chief Technology Officer and founder', bio: 'Builds Hanzo’s AI cloud, its engine runtimes and its agent frameworks. A long-time open-source author.', links: [['Website', 'https://zeekay.io'], ['X', 'https://x.com/zeekay'], ['GitHub', 'https://github.com/zeekay'], ['LinkedIn', 'https://www.linkedin.com/in/zeekay/']] },
 ];
 
-function Portrait({ p }) {
+function Portrait({ p, has }) {
   const img = useRef(null);
-  const [state, setState] = useState('wait');
+  const [state, setState] = useState(has ? 'wait' : 'none');
   useEffect(() => { const el = img.current; if (el?.complete) setState(el.naturalWidth ? 'ok' : 'none'); }, []);
+  if (!has) return (
+    <figure className="xab-pic none" role="img" aria-label={p.name}>
+      <Sigil seed={p.name} className="xab-pic-sigil" />
+      <span className="xab-mono" aria-hidden="true">{p.mono}</span>
+    </figure>
+  );
   return (
     <figure className={'xab-pic ' + state}>
-      {/* when the portrait cannot load: the designed fallback, a contour field from the founder's name, initials in the corner */}
-      {state === 'none' && <Sigil seed={p.name} className="xab-pic-sigil" />}
+      {/* until the portrait has loaded (and whenever it cannot): the designed fallback, a contour field from the founder's name, initials in the corner */}
+      {state !== 'ok' && <Sigil seed={p.name} className="xab-pic-sigil" />}
       <span className="xab-mono" aria-hidden="true">{p.mono}</span>
       <Img ref={img} src={p.img} alt={p.name} w={640} h={800} onLoad={() => setState('ok')} onError={() => setState('none')} />
     </figure>
   );
 }
 
-function Founders() {
+function Founders({ portraits = [] }) {
   return (
     <section className="v2s-sec tight xab-people" aria-label="Founders">
       <div className="v2s-wrap xab-people-g">
         {FOUNDERS.map((p, i) => (
           <article key={p.name} className={'xab-person' + (i ? ' two' : '')}>
-            <Portrait p={p} />
+            <Portrait p={p} has={portraits.includes(p.img)} />
             <h3 className="v2s-headline">{p.name}</h3>
             <p className="xab-role">{p.role}</p>
             <p className="v2s-body">{p.bio}</p>
@@ -365,58 +372,7 @@ function Founders() {
   );
 }
 
-/* ---------- 5. the Zen of Hanzo: an index and its plate ---------- */
-const ZEN = [
-  ['Enable the Underdog', 'Enable others to win. Democratize technology so small businesses and startups can compete with industry giants.'],
-  ['Data-Driven Everything', 'Let data be your guide. Embrace analytics and AI as the foundation of decision-making.'],
-  ['Open Innovation', 'Be open, share often. Openness accelerates growth—both for the company and its community.'],
-  ['Adaptability', 'Pivot with purpose. There is no failure, only feedback. Move quickly and strike in new directions when opportunity calls.'],
-  ['Customer-Centric Growth', 'Treat each client as a long-term partner and guide them to success.'],
-  ['First Principles Thinking', 'See the invisible, do the impossible. Boil problems down to their essence and solve them in fundamentally better ways.'],
-];
-
-function Zen() {
-  const [at, setAt] = useState(0);
-  const [hold, setHold] = useState(false);
-  const box = useRef(null);
-  const pick = (i) => { setAt(i); setHold(true); };
-  return (
-    <section className="v2s-sec xab-zen" id="zen" aria-labelledby="xab-zen-h">
-      <div className="v2s-wrap">
-        <div className="v2s-head side xab-zen-head">
-          <h2 id="xab-zen-h" className="v2s-display xab-zen-h">The Zen of Hanzo</h2>
-          <p className="v2s-cap">Operating Principles</p>
-          <div className="xab-zen-l">
-            <p className="v2s-lede">The principles the company argues from when a decision is close.</p>
-            <Link2 to="/philosophy">Explore the full Zen manifesto</Link2>
-          </div>
-        </div>
-        <div className="v2s-grid xab-zen-g" ref={box} onPointerLeave={() => setHold(false)}>
-          <ol className="v2s-c-1-6 xab-zen-list">
-            {ZEN.map(([t, d], i) => (
-              <li key={t} className={i === at ? 'on' : ''}>
-                <button type="button" aria-pressed={i === at} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} onFocus={() => pick(i)}>
-                  <span className="v2s-num" aria-hidden="true">{pad(i + 1)}</span>
-                  <b>{t}</b>
-                </button>
-                <p className="xab-zen-d">{d}</p>
-              </li>
-            ))}
-          </ol>
-          <div className="v2s-c-7-12 xab-zen-plate" aria-hidden="true">
-            {ZEN.map(([t, d], i) => (
-              <div key={t} className={'xab-zen-card' + (i === at ? ' on' : '')}>
-                <span className="xab-zen-n v2s-num">{pad(i + 1)}</span>
-                <b className="v2s-title">{t}</b>
-                <p className="v2s-lede">{d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+/* ---------- 5. the Zen of Hanzo: a pinned scene (AboutZen.jsx) ---------- */
 
 /* ---------- 6. the dark room: open source, deterministic safety, and the commits as they land ---------- */
 const COMMITS = [
@@ -583,7 +539,7 @@ function Careers() {
           <p className="v2s-label">Careers at Hanzo</p>
           <ol className="xab-roles" onPointerLeave={() => setOn(-1)}>
             {ROLES.map(([t, d], i) => (
-              <li key={t} className={on === i ? 'on' : ''} onPointerEnter={() => setOn(i)} onFocus={() => setOn(i)} onBlur={() => setOn(-1)} tabIndex={0}>
+              <li key={t} className={on === i ? 'on' : ''} onPointerEnter={() => setOn(i)}>
                 <span className="v2s-num" aria-hidden="true">{pad(i + 1)}</span>
                 <div><h3 className="v2s-title">{t}</h3><p>{d}</p></div>
               </li>
@@ -611,7 +567,7 @@ function Careers() {
   );
 }
 
-export default function About() {
+export default function About({ portraits = [] }) {
   return (
     <main id="main" className="xab v2s">
       {/* JavaScript off: every line and the curve show at rest */}
@@ -619,7 +575,7 @@ export default function About() {
       <Hero />
       <Why />
       <Record />
-      <Founders />
+      <Founders portraits={portraits} />
       <Zen />
       <Open />
       <Research />

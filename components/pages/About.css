@@ -3,7 +3,7 @@
 .xab .v2s-sec { padding-block: clamp(72px, 8vw, 116px); } /* one idea per screen without the long walk between them */
 
 /* 1. first screen: display type, the lede tucked beside the short last line, the frontier full-bleed below */
-.xab-hero { --h1: clamp(40px, 3.6vw, 52px); position: relative; min-height: calc(100svh - 76px); display: flex; flex-direction: column; padding-top: clamp(40px, 7vh, 88px); }
+.xab-hero { --h1: clamp(40px, 3.6vw, 52px); position: relative; min-height: calc(100svh - 76px - 56px); display: flex; flex-direction: column; padding-top: clamp(40px, 7vh, 88px); }
 .xab-hero-top { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: end; }
 .xab-h1 { grid-column: 1 / 9; grid-row: 1; font-size: var(--h1); }
 .xab-h1 em, .xab-h1 .v2s-it { padding-right: .04em; }
@@ -97,6 +97,7 @@
 
 /* 3. track record: three figures that climb like the frontier */
 .xab-why { padding-bottom: clamp(72px, 8vw, 128px); }
+@media (min-width: 901px) { .xab .xab-why { padding-top: 24px; } } /* the next idea peeks under the first screen */
 .xab-rec { padding-top: clamp(72px, 8vw, 128px); }
 .xab-figs { margin: clamp(48px, 6vw, 88px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--v2-gut); align-items: start; }
 .xab-figs > div { display: grid; gap: 14px; padding-top: 64px; border-top: 1px solid var(--ink); } /* room for a figure while it grows */
@@ -120,13 +121,14 @@
 .xab-person.two { grid-column: 8 / 13; margin-top: 116px; }
 .xab-person .v2s-headline { margin-top: 22px; font-size: 26px;}
 .xab-role { margin: 0; font: 500 13px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--soft); }
-.xab-person .v2s-headline { font-size: clamp(36px, 3.6vw, 52px); }
 .xab-pic { position: relative; margin: 0; aspect-ratio: 4 / 5; border-radius: 24px; overflow: hidden; background: #f5f5f5; }
 .xab-pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s var(--ease); }
 .xab-pic.ok img { opacity: 1; }
 .xab-pic.none img { display: none; }
 .xab-mono { position: absolute; left: 20px; bottom: 18px; font-size: 26px; font-weight: 497; line-height: 1; letter-spacing: -.02em; color: var(--ink); }
 .xab-pic-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: #0a0a0a; opacity: .55; }
+.xab-pic.wait .xab-pic-sigil, .xab-pic.none .xab-pic-sigil { animation: xab-sig-in .9s var(--ease) both; }
+@keyframes xab-sig-in { from { opacity: 0; } to { opacity: .55; } }
 .xab-pic.ok .xab-mono { opacity: 0; }
 .xab-socials { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 22px; }
 .xab-socials a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; font-size: 16px; font-weight: 500; color: var(--ink); text-decoration: none; }
@@ -135,17 +137,22 @@
 /* 5. the Zen of Hanzo: an index and its plate */
 .xab-zen-h { font-size: 26px; }
 .xab-zen-l { grid-column: 9 / 13; grid-row: 1; align-self: end; display: grid; gap: 18px; padding-bottom: 10px; }
-.xab-zen-g { margin-top: 72px; align-items: start; }
+.xab-zen-g { margin-top: clamp(32px, 5vh, 56px); align-items: start; }
 .xab-zen-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
 .xab-zen-list li { border-bottom: 1px solid var(--hair); }
-.xab-zen-list button { display: flex; align-items: baseline; gap: 22px; width: 100%; min-height: 72px; padding: 18px 0; border: 0; background: none; color: var(--faint); text-align: left; cursor: pointer; font: inherit; transition: color .35s var(--ease); }
+.xab-zen-list button { display: flex; align-items: baseline; gap: 22px; width: 100%; min-height: 64px; padding: 16px 0; border: 0; background: none; color: var(--faint); text-align: left; cursor: pointer; font: inherit; transition: color .35s var(--ease); }
 .xab-zen-list button span { font: 500 14px/1 var(--mono); letter-spacing: .06em; }
 .xab-zen-list button b { font-size: 21px; font-weight: 497; letter-spacing: -.03em; line-height: 1.1; transition: transform .5s var(--ease); }
 .xab-zen-list li.on button { color: var(--ink); }
 .xab-zen-list li.on button b { transform: translateX(10px); }
 .xab-zen-list li.on button span { color: var(--acc); }
-.xab-zen-d { display: none; margin: 0 0 20px; font-size: 17px; line-height: 1.5; color: var(--soft); }
-.xab-zen-plate { position: sticky; top: 120px; display: grid; min-height: 420px; }
+.xab-zen-d { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; } /* read by screen readers; the plate shows it */
+/* the pinned scene: the section is a track six steps long; the stage holds still inside it while the scroll turns the principles */
+.xab-zen.v2s-sec { padding-block: 0; height: calc(100svh + 6 * 30svh); }
+.xab-zen-pin { position: sticky; top: 0; height: 100svh; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; padding: 88px 0 40px; }
+.xab-zen-plate { position: relative; display: grid; min-height: 400px; }
+.xab-zen-bar { position: absolute; left: clamp(32px, 4vw, 56px); right: clamp(32px, 4vw, 56px); bottom: clamp(28px, 3vw, 44px); height: 2px; background: rgba(10, 10, 11, .1); border-radius: 2px; overflow: hidden; }
+.xab-zen-bar i { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; }
 /* the plate stays; its words change: the old principle leaves first, then the new one rises in (never two at once) */
 .xab-zen-plate { border-radius: 24px; background: #f5f5f5; }
 .xab-zen-card { grid-area: 1 / 1; align-self: stretch; display: grid; align-content: start; gap: 22px; padding: clamp(32px, 4vw, 56px); opacity: 0; transform: translateY(-10px); transition: opacity .16s cubic-bezier(.7, 0, .84, 0), transform .16s cubic-bezier(.7, 0, .84, 0); pointer-events: none; }
@@ -155,14 +162,15 @@
 .xab-zen-card .v2s-lede { color: var(--ink); max-width: 32ch; font-size: 21px; line-height: 1.4; letter-spacing: -.01em; }
 
 /* 6. the dark room */
-.xab-open { background: #0a0a0a; color: #f5f5f5; --ink: #f5f5f5; --soft: #a3a3a3; --faint: #737373; --hair: rgba(255, 255, 255, .12); }
+.xab-open { border-radius: clamp(24px, 3vw, 40px); margin-inline: clamp(8px, 1vw, 16px); background: #0a0a0a; color: #f5f5f5; --ink: #f5f5f5; --soft: #a3a3a3; --faint: #737373; --hair: rgba(255, 255, 255, .12); }
 .xab-open-h { font-size: 26px; max-width: none; }
 .xab-dim { color: #737373; }
 .xab-open-g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); row-gap: 48px; align-items: start; margin-top: 72px; }
 .xab-panes { grid-column: 1 / 6; display: grid; gap: 28px; align-content: start; }
 .xab-panes .x-tablist { justify-self: start; }
 .xab-open-g > .xab-log { grid-column: 6 / 13; margin-top: 0; }
-.xab-open-g .xab-log li { grid-template-columns: 128px minmax(0, 1fr) 128px; font-size: 13.5px; }
+.xab-open-g .xab-log li { grid-template-columns: 128px minmax(0, 1fr) max-content; font-size: 13.5px; }
+.xab-log time { white-space: nowrap; }
 .xab-open-g .xab-log li code { display: none; }
 .xab-pane { display: grid; gap: 16px; align-content: start; }
 .xab-pane[hidden] { display: none; }
@@ -172,12 +180,12 @@
 .xab-pane li::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: #d4d4d4; }
 .xab-pane li b { color: #f5f5f5; font-weight: 497; }
 .xab-open .x-arrow { color: #fafafa; }
-.xab-log { margin-top: clamp(80px, 10vw, 144px); border-radius: 24px; background: #171717; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 60px 120px -40px rgba(0, 0, 0, .8); overflow: hidden; }
+.xab-log { margin-top: clamp(80px, 10vw, 144px); border-radius: 24px; background: #171717; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08); overflow: hidden; }
 .xab-log-h { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px 24px; padding: 24px clamp(20px, 3vw, 36px); border-bottom: 1px solid var(--hair); }
 .xab-log-h .v2s-title { font-size: clamp(18px, 1.5vw, 22px); color: #f5f5f5; }
 .xab-log-h p { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font: 500 14px/1.3 var(--mono); color: var(--soft); }
 .xab-log-h b { color: #f5f5f5; font-weight: 500; }
-.xab-log-h a { color: #d4d4d4; }
+.xab-log-h a { display: inline-flex; align-items: center; min-height: 44px; color: #d4d4d4; }
 .xab-live { width: 8px; height: 8px; border-radius: 50%; background: #f5f5f5; box-shadow: 0 0 0 0 rgba(255, 255, 255, .5); }
 @keyframes xab-live { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .45); } 100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
 .xab-log ul { list-style: none; margin: 0; padding: 8px 0; }
@@ -230,7 +238,7 @@
 .xab-car-g { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: center; }
 .xab-car-g > .v2s-label { grid-column: 1 / 3; align-self: start; padding-top: 30px; }
 .xab-roles { grid-column: 3 / 8; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
-.xab-roles li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; padding: 26px 0; border-bottom: 1px solid var(--hair); cursor: default; outline-offset: 4px; }
+.xab-roles li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; padding: 26px 0; border-bottom: 1px solid var(--hair); cursor: default; }
 .xab-roles li > span { font: 500 14px/1.8 var(--mono); color: var(--soft); transition: color .3s var(--ease); }
 .xab-roles li h3 { transition: transform .5s var(--ease); }
 .xab-roles li.on h3 { transform: translateX(8px); }
@@ -255,7 +263,10 @@
   .xab-hero-side { grid-row: 2; margin-top: 28px; gap: 22px; }
   .xab-front-w { margin-top: 32px; min-height: 0; }
   .xab-front-svg { max-height: none; }
-  .xab-axis, .xab-tick text, .xab-ts text, .xab-ts line { display: none; }
+  /* the frontier cropped at true scale; its labels set larger in SVG units so they read at about 13px */
+  .xab-tick text { font-size: 28px; }
+  .xab-axis { font-size: 26px; }
+  .xab-ts text, .xab-ts line { display: none; }
   .xab-front-w { flex-direction: column; align-items: stretch; }
   .xab-picks ul { grid-template-columns: 1fr 1fr; }
   .xab-picks li, .xab-picks li + li { padding: 22px 16px 18px 0; border-left: 0; }
@@ -282,18 +293,28 @@
   .xab-rec-acts { justify-content: flex-start; }
   .xab-people-g { grid-template-columns: minmax(0, 1fr); row-gap: 72px; }
   .xab-person, .xab-person.two { grid-column: 1; margin-top: 0; }
-  .xab-zen-list button { min-height: 60px; padding: 16px 0 6px; }
-  .xab-zen-list button b { font-size: 24px; }
+  /* the pinned scene on a phone: the plate on top, the six as a row of numbers under it */
+  .xab-zen.v2s-sec { height: calc(100svh + 6 * 26svh); }
+  .xab-zen-pin { padding: 76px 0 24px; justify-content: flex-start; }
+  .xab-zen-g { margin-top: 24px; display: flex; flex-direction: column-reverse; align-items: stretch; gap: 8px; }
+  .xab-zen-list { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 0; }
+  .xab-zen-list li { border: 0; }
+  .xab-zen-list button { justify-content: center; min-height: 44px; padding: 0; border-top: 2px solid var(--hair); transition: color .35s var(--ease), border-color .35s var(--ease); }
+  .xab-zen-list li.on button { border-top-color: var(--ink); }
+  .xab-zen-list button b { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .xab-zen-list li.on button b { transform: none; }
-  .xab-zen-d { display: block; padding-left: 46px; }
-  .xab-zen-plate { display: none; }
+  .xab-zen-plate { display: grid; min-height: 0; height: 330px; }
+  .xab-zen-card { padding: 28px 24px 40px; gap: 14px; }
+  .xab-zen-n { font-size: 52px; }
+  .xab-zen-card .v2s-lede { font-size: 18px; }
+  .xab-zen-bar { left: 24px; right: 24px; bottom: 22px; }
   .xab-open-g { grid-template-columns: minmax(0, 1fr); }
   .xab-panes, .xab-open-g > .xab-log { grid-column: 1; }
   .xab-pic { aspect-ratio: 1; max-width: 72%; }
   .xab-open-g .xab-log li { grid-template-columns: minmax(0, 1fr) auto; }
   .xab-panes .x-tablist { flex-wrap: wrap; border-radius: 24px; }
   .xab-front-w { overflow: hidden; }
-  .xab-front-svg { width: 200%; max-width: none; margin-left: -92%; } /* the frontier cropped at true scale, not shrunk */
+  .xab-front-svg { width: 200%; max-width: none; margin-left: -100%; } /* the frontier cropped at true scale, not shrunk */
   .xab-tile-art { height: 38%; top: 16px; translate: none; }
   .xab-tile-t { max-width: 100%; padding-right: 56px; }
   .xab-log li { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; font-size: 14px; }
@@ -307,7 +328,8 @@
   .xab-car-g > * { grid-column: 1 !important; }
   .xab-car-g > .v2s-label { padding-top: 0; }
   .xab-roles li { grid-template-columns: 40px minmax(0, 1fr); }
-  .xab-zen-l { grid-row: 3; }
+  .xab-zen-l { grid-row: 3; gap: 4px; }
+  .xab-open { margin-inline: 6px; border-radius: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .xab-halo, .xab-live, .xab-picks li.hint .xab-sw::before { animation: none; }
