@@ -98,7 +98,7 @@ Done here: Enso (Hanzo Chat), Zen (Hanzo Dev) and Iro (Design & Cloud) films are
 - [x] Targets 44px+
 - [x] Primary above the fold at 375×667
 
-Done here (8 Nov): the three rooms ride one sideways gallery on wide screens and a swipe rail on phones (scroll-snap, never pinned). On phones every film is 16:9 and each room has its own order: Chat film then rows, Dev words then a film strip, Design title then film then rows (one `@media (max-width: 899px)` block in Features.css). On desktop the Design room reads title, wide film, then its two rows and the description. Room descriptions announce only after a hand picks a row (`aria-live` off while they step); the description crossfade lets the old line go before the new one lands. The spring-snap entrance now lands on a hard ease-out with no overshoot.
+Done here: (8 Nov) the three rooms ride one sideways gallery on wide screens and a swipe rail on phones (scroll-snap, never pinned). On phones every film is 16:9 and each room has its own order: Chat film then rows, Dev words then a film strip, Design title then film then rows (one `@media (max-width: 899px)` block in Features.css). On desktop the Design room reads title, wide film, then its two rows and the description. Room descriptions announce only after a hand picks a row (`aria-live` off while they step); the description crossfade lets the old line go before the new one lands. The spring-snap entrance now lands on a hard ease-out with no overshoot.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: display text #d4d4d4 / #a3a3a3 on #0a0a0a
