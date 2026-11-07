@@ -1,65 +1,55 @@
 # /solutions/: James-eye review
 Verdict: 7/10
-First complaint: "It's seventeen black boxes with the same five or six pictures in them. The diamond one is on Finance, Design, Cybersecurity, Financial services, Law and Government. Click one and it goes black for a second and then you're on a different page."
+First complaint: "The top's nice, the card flicks through the teams. Then it's a long wall of black boxes, and the pictures aren't even theirs: click Industries and Cybersecurity suddenly has Finance's diamond. And on my phone, opening one leaves a black slab over the header."
 
-Walked 2026-11-07 16:20-16:45 UTC on the dev server at 1470x801 and 375x812 (isMobile, hasTouch), moving. Before timing I warmed /solutions/engineering/, /law/ and /retail/. Page 200, parity 47/47 text and 20/20 links, CLS 0.0002 desktop and 0.0000 phone, h1 box steady from first paint. 0 console errors across 8 cold loads.
+Walked 2026-11-07 on the dev server at 1470x801 and 375x812, moving (scroll walk, frames 700 ms apart, hover/press probes, tab filter, two tiles opened per size after warming /solutions/finance/ and /solutions/data/, Back, 4 cold loads).
 
 ## The 11 answers
-1. **5 s / 1 s.**
-   - Sells: the h1 is 52px (40px on phone), with a lede, Try Hanzo and Contact sales.
-   - Moves within 1 s: the hero card deck rotates by itself (01/07 Finance to 02/07 Data, with a progress hairline and a pause button), and its art is live.
-   - Frames 700 ms apart differ. Phone shows h1, lede, both asks and about 290px of the deck inside 812px.
-2. **In and out.**
-   - Hero, then the filter, then the grid, then the Reserved tier black band (84px, the one big moment), then the footer.
-   - The grid reads as a wall: 17 tiles over about 2,500px at desktop, and 17 rows of 72px on phone.
-   - The tile whose row crosses the viewport centre swaps its sentence for the 5-line mono list. That is the only in/out inside the wall.
-   - The walk flags motion at stops 0 to 6 (the art moves). Only the footer is still.
-3. **Visual objects.** Every section has one: the deck, the tile art, the band ring. But the 17 tiles share about 6 drawings:
-   - diamond stack ×6
-   - sphere ×2 (Data, Research)
-   - ring ×2 (Operations, Agents)
-   - frames ×2 (Sales, Retail)
-   - mesh ×2 (Engineering, Education)
-   - Marketing, Healthcare and Content creation each have their own.
+1. **Sells in 5 s, moves in 1 s: yes.**
+   - The h1 is cut in by line mask (mid-mask at 400 ms; 52px desktop, 40px phone). The lede and asks fade in under it.
+   - The hero card is the object: it cycles 01 to 07 teams about every 4 s (01, 02, 03 at t=0, 2, 6 s), with ambient art and a progress line. Pause control at 44px.
+   - The h1 sits low on desktop: its bottom is at 59% of the viewport, against a brief of about 38%. Phone is 36%, fine.
+2. **One in, one out: half.**
+   - Hero, then a 17-tile grid, then the Reserved band. The grid is about 2,450px of black tiles, all 397px tall, six rows. Tiles only rise in (translateY 18px to 0). Nothing pins or scrubs, and nothing leaves as the next thing arrives.
+   - There is a dead white stretch of about 290px between the hero card and the Teams/Industries/Use cases row.
+3. **Real visual in every section: yes, but repeated.**
+   - Every tile has idle ambient art (Finance art differs over 700 ms). But there are only about 8 motifs for 17 tiles, assigned by slot. Diamond: Finance/Design; ring: Operations/Cybersecurity; mountain: Marketing/Financial services.
+   - The art follows the slot, not the solution: under Industries, Cybersecurity takes the diamond that Finance had. The pictures say nothing about the item.
+4. **One ask, rhythm: mostly.**
+   - Header "Try Hanzo" is quiet while the hero ask is in view, then solid on desktop. Nothing floats over content.
+   - The hero has a solid Try Hanzo and an outlined pill for Contact sales. The brief wants a text secondary.
+   - Scale: wide tiles have 40px titles and narrow ones about 26px, and Reserved is 84px. That is real big/medium/small.
+   - Shared: on phone the header "Try Hanzo" is always solid, which competes with the hero ask (shared chrome).
+5. **Hover/press: yes.**
+   - Primary hover goes #0a0a0a to #262626, press is scale .97. The secondary gets a #f5f5f5 fill.
+   - Tile hover shows a white arrow disc, art at scale 1.18 and the five Hanzo capability lines (the hover tells you something). Press is scale .972.
+   - The tabs have a pill that moves to the chosen tab. The grid is blank for about 150 ms mid-filter.
+6. **Overlap, swap, shift: transitions only.**
+   - Static: CLS 0.0003 desktop and 0 phone. No horizontal overflow, no font swap seen.
+   - Phone open (Data): the row grows to a full-screen black card over the header, which is right. Then at about 1.2 s the destination is up but a black slab still covers the header and the h1. It fades through grey and clears at about 1.6 s.
+   - Desktop Back at 150 ms: the header is drawn mid-screen at y=418 over a grey wash for a frame.
+   - Phone Back lands at scrollY 0, so the place in the list is lost. Desktop restores near the place (700 vs about 600).
+7. **Reference: synchronized.studio, partly there.**
+   - Desktop open (Finance): the tile expands to the viewport (about 1 s) and its art becomes the destination's art band. That is the right idea.
+   - The tile title shrinks from 40px to about 17px and vanishes. It never lands on the h1 "Hanzo for finance teams" at 159,220 (brief: within 12px). Landing totals about 1.0 to 1.5 s, against 600 ms in the brief.
+8. **Differs from neighbours: moderately.**
+   - Same text-left, object-right hero as /integrations and /enterprise. The object here is a cycling dark card, against an orbit there and a nested diagram on /enterprise. The tile wall is its own.
+9. **18 parts: gaps.**
+   - Catalogue screen 1 asks for a search, and there is none. The counts are only superscripts (07/07/03), with no focal count figure.
+   - No proof strip before the closing Band. Morph exists, but the title hand-off is missing.
+   - Phone list rows look right (thumb plus 44px arrow); 0 targets in main under 44px on phone.
+10. **Banned tells: none found.**
+    - Monochrome throughout, Zen font, no badge above the h1, no hue.
+    - The "TEAMS 01 / 07" mono label above the card title is inside the object, not above a headline.
+11. **Copy: untouched.** parity.py: text 47/47, links 20/20.
 
-   Everything is the same black tile. This is "too many repeats" in his words.
-4. **Ask and scale.**
-   - The header has one ask. Nothing floats over content on desktop.
-   - Scale: h1 52, tile titles 40 and 26 alternating with the tile width, mono 13, band 84. The rhythm holds.
-   - The Catalogue brief's hero figure (the exact count, plus search) is missing. The counts show only as 07/07/03 superscripts on the filter.
-   - Shared issue (not this page's): on phone the header's Try Hanzo is always solid, so the first screen has two solid fills.
-5. **Hover and press.**
-   - Primary: on hover the background goes #0a0a0a to #262626; press scales to 0.974.
-   - Tile: on hover the product list and a white arrow disc appear; press scales to 0.97. No tilt (computed transform none).
-   - Filter tab: a grey pill glides under Industries. The grid re-flows with a layout animation and renumbers 01/07 to 07/07.
-   - No jumps.
-6. **Overlap and shift.**
-   - The Engineering tile (06/17, wide, right column) has a square black corner poking out past its 20px radius at the top right. It is there at rest and on hover.
-   - The hero deck's sphere art sits behind the white lede on Data (desktop and phone).
-   - Mid-filter (150 ms) the tiles overlap during the layout move. That is acceptable as transition.
-7. **Reference.** synchronized.studio is present but rough. Two opens:
-   - **Desktop**, Engineering and Law tiles: the tile grows to a full-viewport black stage with the title at top left (Engineering at 209,204). The URL changes at 0.89 to 1.02 s, and the destination is settled at 1.0 to 1.2 s. The art is upscaled and soft while it grows. The destination's hero band is the same art (good), but the title lands as a cut, not a move: the stage says "Engineering", and the h1 "Hanzo for engineering teams" sits at 159,220. For about one frame the rising band clips the h1's second line.
-   - **Phone**, the Law row: a 48px thumbnail jumps to a full-screen black "Law" stage. The page appears at about 0.9 to 1.0 s, with the art as the band under the h1. Underneath the stage the destination opens at the old scroll offset (h1 at y -1507), then scrolls itself to the top over about 700 ms. The stage hides this.
-   - **Back**: no reverse morph. For about 150 ms the header and grid slide up from y 560 over white, then the grid is restored at scrollY 1113.
-   - The 700 ms hold cap is exceeded on both.
-8. **Neighbours.** It matches PAGES.md: a three-way selector, and the hover previews the list. Its look (dark art tiles) is the same family as /models' black cards. A distinct medium: the self-rotating deck.
-9. **18 parts.** Present: one h1, breadcrumb n/a at depth 1, numbered 01/17 grid, filter pill, Morph, band, footer. Missing: the count/search hero (part 15 and §4.3) and the Back reverse (part 3). Other parts were not audited.
-10. **Banned tells.** None found:
-    - no hue
-    - no eyebrow over the h1 (the TEAMS label sits inside the deck card, not above a heading)
-    - no fade-on-hover buttons
-    - no glow
-11. **Copy.** Untouched: parity 47/47, links 20/20.
+Console: 0 errors on 4 of 4 cold loads (2 desktop, 2 phone). A hydration warning and Startups.jsx parse errors seen once were another page's hot recompile, not this page.
 
 ## Fixes (in order)
-1. Give each of the 17 tiles its own drawing (seed or vary the Sigil/art per slug). No drawing should appear more than twice, and the diamond should not repeat in neighbouring tiles. Break the all-black wall: let one row per screen be a wide feature tile, and set some art on the silver room.
-2. Tighten the open:
-   - The stage title should move to the destination h1's box (within 12px) instead of cutting from "Engineering" to "Hanzo for engineering teams".
-   - Cap the black hold at 600 ms (prefetch the route on pointerenter so the URL is ready).
-   - Draw the art at full resolution instead of upscaling the tile bitmap.
-   - Reverse on Back, instead of the 150 ms white slide with the header mid-screen.
-3. Add the Catalogue hero figure: 17 (the exact count from content/pages.json) with search, near the h1. Keep the filter pill.
-4. Polish:
-   - Clip the Engineering tile's art to its radius (overflow: hidden plus border-radius on the art layer).
-   - Move the deck's sphere off the lede on Data (gradient under the text, or offset the art).
-   - On phone, use a slower row-to-stage open from the thumbnail's own box, so the 48px picture visibly grows.
+1. **Give each solution its own art, keyed by slug, not by slot.** The picture should stay with the item when filtering, and no motif should appear twice among the 7 shown under a tab.
+2. **Fix the open hand-off.** Morph the tile title into the destination h1 (within 12px), cut the land to about 600 ms, and on phone clear the ghost before the header and h1 paint. Make Back reverse cleanly: no mid-screen header frame, and keep the list position on phone.
+3. **Break the black wall.** Close the 290px gap above the tabs. Then either vary the tile heights by row, or let one tile per row grow or pin as it reaches centre, so the grid has one moment instead of 2,450px of equal fade-ups.
+4. **Polish:**
+   - Make Contact sales a text link.
+   - Lift the desktop h1 toward 38% of the viewport.
+   - Add the catalogue search and a focal count, if Hanzo's copy supports them.
