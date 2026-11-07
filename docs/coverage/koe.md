@@ -168,4 +168,10 @@ Done here: JS off shows every word. Reduced motion shows the calm layout: the fu
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [ ] Review read: `docs/review/koe.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`: first screens `desktop-1470.png` and `phone-375.png`, filmed sheets `d-sheet-01.jpg` and `p-sheet-01.jpg`, plus the earlier desktop film and phone stills. This card is refreshed after each review.
+Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`:
+- settled first screens: `desktop-1470.png`, `phone-375.png` and `phone-375x667-cookie.png`;
+- two drawn chapter panels: `chapter-2-clone.png` and `chapter-3-visemes.png`;
+- filmed sheets: `d-sheet-01.jpg` and `p-sheet-01.jpg`;
+- the earlier desktop film and phone stills.
+
+The filmed walk measured 0 still screens on desktop. On phone the only still screen is the one right after the tool taps Pause. This card is refreshed after each review.

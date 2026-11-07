@@ -48,6 +48,17 @@ html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup
 }
 .ko-v2 [data-cta='koe.hero-design']:active svg { transform: translateX(6px); }
 
+/* the stage's pause disc and the chapter rail answer with more than a border tint */
+.lv:has(.ko-v2) .lv-pause { transition: background-color .15s cubic-bezier(0, 0, .2, 1), border-color .15s cubic-bezier(0, 0, .2, 1), color .15s cubic-bezier(0, 0, .2, 1), transform .12s cubic-bezier(0, 0, .2, 1); }
+.ko-caps .lv-ch-rail button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) {
+  .lv:has(.ko-v2) .lv-pause:hover { background: #fafafa; border-color: #fafafa; color: #0a0a0a; }
+  .ko-caps .lv-ch-rail button:hover { transform: translateX(4px); }
+  .lv:has(.ko-v2) .lv-name-ask .x-btn:hover, .ko-v2 .x-btn.solid:hover { transform: translateY(-1px); }
+}
+.lv:has(.ko-v2) .lv-name-ask .x-btn:active, .ko-v2 .x-btn.solid:active { transform: scale(.97); }
+.ko-caps .lv-ch-rail button:active { transform: scale(.97); }
+
 /* the name stays: once the film has settled, "Koe" (the h1) rests above the headline on desktop and in the white band
    above the pill on phones, rising in as the headline does */
 .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] { opacity: 1 !important; transform: none !important; top: auto; bottom: calc(50% + 96px); left: auto; right: max(24px, calc((100% - var(--wrap)) / 2)); width: min(50%, 620px); max-width: none; margin: 0; padding: 0; }
