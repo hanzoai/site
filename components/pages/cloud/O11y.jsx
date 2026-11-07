@@ -11,12 +11,13 @@
 //   Teams, email or a webhook) and the part of O11y that keeps it lights up with its own object.
 // Supporting (3): the line-masked title (arrival); the pinned suite, the same dark window walking one request through
 //   six parts, each pane drawing itself as it arrives (scroll, state); the timed wipe into the OTLP room (time).
-//   Kinds: idle (the pivot and its playhead, the console's build), pointer (span preview, magnetic ask), state (suite
+//   Kinds: idle (the pivot and its playhead, the suite's clock, playhead and log caret, the console's build), pointer (span preview, magnetic ask), state (suite
 //   tabs, keep chips, held span, pause and replay), arrival (cut-in, wipe), scroll (settle, pinned suite, close).
 // Scale: the h1 at 52 is the first screen's one big thing; the window settles 1.06 → 1; chapter titles 32 beside one
 //   64px figure; a thousand rows fold into one and its count settles from big to 64; "Get O11y" grows 26 → 64.
-// V2: 8/10 dark waterfall hero that runs once and rests; the suite is that same window walking the request;
-//   one ask (hero, site bar, close); deck greys, flat surfaces, no springs, no cursor labels.
+// V2: 8/10 dark waterfall hero that runs once and rests; the suite is that same window walking the request and stays
+//   live while you read (a UTC clock, a playhead over traces and metrics, a log caret); every lit tab, tick and chip
+//   answers hover; one ask (hero, header, close); deck greys, flat surfaces, no springs, no cursor labels.
 // Every word and link is Hanzo's; span names, log lines and the query are examples.
 import { useEffect, useRef, useState } from 'react';
 import { Paste, useLive } from './Frame';
@@ -120,6 +121,23 @@ const Q = 'rate(http_requests_total[5m])';
 const TRACES = [['GET /v1/checkout', 0.94, 1], ['POST /v1/chat', 0.62], ['GET /v1/cart', 0.41], ['POST /v1/embed', 0.33], ['GET /v1/search', 0.22]];
 const LOGROWS = [['info', 'api', 'request received', 1], ['info', 'db', 'query plan: seq scan', 1], ['warn', 'api', 'waited on db', 1], ['info', 'auth', 'token verified'], ['info', 'payments', 'charge created']];
 
+// the suite's clock: a live UTC readout in the window's bar, ticking only while the window is on screen (the one idle
+// mover in the pinned scene beside the playhead); it renders after mount, so the server HTML and hydration agree
+function Clock() {
+  const [ref, live, calm] = useLive(0.1);
+  const [now, setNow] = useState(null);
+  useEffect(() => {
+    setNow(new Date());
+    if (!live || calm) return;
+    let id;
+    const tick = () => { const d = new Date(); setNow(d); id = setTimeout(tick, 1000 - d.getMilliseconds()); };
+    id = setTimeout(tick, 1000 - new Date().getMilliseconds());
+    return () => clearTimeout(id);
+  }, [live, calm]);
+  const t = now ? now.toISOString().slice(11, 19) : '';
+  return <span className="ob-clock" ref={ref} aria-hidden="true"><i />{t}</span>;
+}
+
 function Suite({ step, intro }) {
   const ref = useRef(null);
   const on = (i) => (!intro && step === i) || undefined;
@@ -135,6 +153,7 @@ function Suite({ step, intro }) {
     <div className="ob-suite" data-step={intro ? 'intro' : step} ref={ref}>
       <div className="ob-suite-bar">
         <span className="ob-suite-host">o11y.hanzo.ai</span>
+        <Clock />
         {!intro && <span className="ob-tab-now" aria-hidden="true" key={step}><i />{TABS[step]}</span>}
         <div className="ob-tabs" role="group" aria-label="O11y, part by part">
           {TABS.map((t, i) => <button key={t} type="button" className={on(i) ? 'on' : ''} aria-pressed={!!on(i)} onClick={() => jump(i)}>{t}</button>)}
@@ -152,12 +171,12 @@ function Suite({ step, intro }) {
           </span>
           <code className="ob-one-q">{Q}</code>
         </div>
-        <div className="ob-pane ob-trs" data-on={on(0)}>
+        <div className="ob-pane ob-trs ob-live" data-on={on(0)}>
           {TRACES.map(([n, w, hot], i) => (
             <div key={n} className={'ob-tr' + (hot ? ' hot' : '')} style={{ '--i': i, '--obw': w }}><span>{n}</span><b /></div>
           ))}
         </div>
-        <div className="ob-pane" data-on={on(1)}>
+        <div className="ob-pane ob-live ob-met" data-on={on(1)}>
           <code className="ob-q">{Q}</code>
           <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="ob-chart">
             <path d="M0 30 C10 26 16 28 24 22 S38 12 48 18 62 30 72 20 88 8 100 12" />
@@ -170,6 +189,7 @@ function Suite({ step, intro }) {
           {LOGROWS.map(([lv, s, m, hot], i) => (
             <div key={i} className={'ob-log' + (hot ? ' hot' : '')} style={{ '--i': i }}><span className={'lv ' + lv}>{lv}</span><span>{s}</span><span>{m}</span></div>
           ))}
+          <div className="ob-tail"><b /></div>
         </div>
         <div className="ob-pane" data-on={on(3)}>
           <div className="ob-ex">
