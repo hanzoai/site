@@ -26,7 +26,8 @@ import { useEffect, useRef, useState, Fragment } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
 import { A, More, Cta } from '../../kit';
-import { Code, useLive } from '../cloud/Frame';
+import { useLive } from '../cloud/Frame';
+import { Copy } from '../../ui';
 import BizLines from '../../v2/BizLines';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
@@ -286,7 +287,7 @@ function Behind() {
         <div className="pay-ch-h">
           <h2 id="pay-behind-h" className="bz-headline">What sits behind the one integration</h2>
         </div>
-        <p className="bz-body"><span className="pay-cat x-mono">Unified Payments Suite</span>Each processor has its own API, its own idea of an error, and its own webhook format. This normalises all three, so your code sees one shape whichever of them took the payment.</p>
+        <div className="bz-body pay-ch-body"><span className="pay-cat x-mono">Unified Payments Suite</span><p>Each processor has its own API, its own idea of an error, and its own webhook format. This normalises all three, so your code sees one shape whichever of them took the payment.</p></div>
       </header>
       <ol className="bz-wrap pay-steps" aria-label="A payment, routed">
         {STEPS.map(([t, d], i) => (
@@ -316,6 +317,31 @@ const payment = await hanzo.payments.create({
 console.log(payment.status);    // 'succeeded'
 console.log(payment.connector); // 'adyen'`;
 
+/* The code pane, page-local so each of Hanzo's code tokens stays one piece of text (the shared pane splits
+   "payment.status" and "// 'succeeded'" into finer spans): a line is its command word, its plain code, its strings
+   and its trailing comment, each a flat span; the comment that ends in `mark` is picked out. Styled by Frame.css. */
+function PayCode({ text, mark }) {
+  const line = (l) => {
+    const at = l.indexOf('//');
+    const src = at < 0 ? l : l.slice(0, at), com = at < 0 ? '' : l.slice(at);
+    const out = [];
+    src.split(/('[^']*')/).forEach((p, i) => {
+      if (!p) return;
+      if (i % 2) { out.push(<span key={'s' + i} className="s">{p}</span>); return; }
+      const m = i === 0 && p.match(/^(\s*)([\w.]+)(.*)$/s);
+      if (m && m[2]) { out.push(<span key={'k' + i} className="k">{m[1] + m[2]}</span>); if (m[3]) out.push(<span key={'r' + i}>{m[3]}</span>); } else out.push(<span key={'p' + i}>{p}</span>);
+    });
+    if (com) out.push(mark && com.includes(mark) ? <span key="c" className="c">{com.replace(mark, '')}<mark className="cf-mark">{mark}</mark></span> : <span key="c" className="c">{com}</span>);
+    return out;
+  };
+  return (
+    <div className="cf-code light">
+      <div className="cf-code-bar"><i /><i /><i /><span className="cf-code-k">javascript</span><Copy text={text} /></div>
+      <div className="cf-code-body"><pre><code>{text.split('\n').map((l, j) => <span key={j} className="cf-ln">{line(l)}{'\n'}</span>)}</code></pre></div>
+    </div>
+  );
+}
+
 const PIPE = ['Approval rates, cost and latency compared across processors, on one screen.', '3D Secure where the issuer asks for it, without a second integration.', 'Open source, so the routing logic is readable before you trust it.'];
 const DEV = [['Easy to Implement', 'Quick integration with just a few lines of code, with SDKs for all major programming languages.'], ['Comprehensive Documentation', 'Detailed guides, API reference, and code examples to help you integrate Hanzo Payments quickly.'], ['Explore Our APIs', 'Get started with quickstart guides, examples, and developer tools.']];
 
@@ -340,7 +366,7 @@ function OneApi({ amt }) {
             </BizSheet>
           </div>
         </div>
-        <div className="pay-api-code"><Code tabs={[{ k: 'javascript', code: code(amt) }]} light mark="'adyen'" /></div>
+        <div className="pay-api-code"><PayCode text={code(amt)} mark="'adyen'" /></div>
         <div className="pay-pipe">
           <h3 className="bz-title">What you can see once it is one pipe</h3>
           <ul>{PIPE.map((t) => <li key={t}><Check /><span>{t}</span></li>)}</ul>
@@ -390,7 +416,7 @@ function Checkout() {
             </ul>
           </div>
           <ul className="pay-co-lines">
-            {CO_LINES.map((t, i) => <li key={t} className={kind < 0 ? '' : (i === 0 ? kind === 0 : kind === 1) ? 'on' : 'off'} style={{ '--i': i }}><span className="x-mono">{two(i + 1)}</span>{t}</li>)}
+            {CO_LINES.map((t, i) => <li key={t} className={kind < 0 ? '' : (i === 0 ? kind === 0 : kind === 1) ? 'on' : 'off'} style={{ '--i': i }}><span className="x-mono">{two(i + 1)}</span><span className="pay-co-lt">{t}</span></li>)}
           </ul>
         </div>
       </div>
@@ -585,8 +611,8 @@ function Further() {
         <div className="pay-fur">
           <h2 id="pay-fur-h" className="bz-title">Explore Further</h2>
           <p className="bz-body">The API reference, and the guide to putting the checkout on your site.</p>
-          <A to={API} className="pay-fur-a"><b>API Reference</b><span>Detailed documentation on all Hanzo Payments APIs and integration options.</span><em>View API Docs →</em></A>
-          <A to={QUICK} className="pay-fur-a"><b>Checkout Integration</b><span>Step-by-step guide to integrating Hanzo Payments checkout into your website or app.</span><em>Integration Guide →</em></A>
+          <A to={API} className="pay-fur-a"><span className="pay-fur-t">API Reference</span><span>Detailed documentation on all Hanzo Payments APIs and integration options.</span><span className="pay-fur-go">View API Docs →</span></A>
+          <A to={QUICK} className="pay-fur-a"><span className="pay-fur-t">Checkout Integration</span><span>Step-by-step guide to integrating Hanzo Payments checkout into your website or app.</span><span className="pay-fur-go">Integration Guide →</span></A>
         </div>
         <div className="pay-get">
           <h3 className="pay-get-h">Get Payments</h3>

@@ -92,6 +92,7 @@
 .pay-ch-h { grid-column: 1 / span 7; }
 .pay-ch-head > .bz-body { grid-column: 8 / span 5; }
 .pay-ch-head .pay-cat { margin-top: 12px; }
+.pay-ch-body p { margin: 0; }
 .pay-chs { --gap: clamp(32px, 4vw, 64px); display: flex; align-items: center; gap: var(--gap); }
 .pay-route { flex: 1; min-width: 0; max-width: 400px; display: flex; flex-direction: column; }
 .pay-wire { display: flex; align-items: center; height: 44px; margin: 0 0 16px calc(-1 * var(--gap)); }
@@ -155,7 +156,7 @@
 .pay-co-lines { grid-column: 8 / span 5; list-style: none; margin: 0; padding: 0; }
 .pay-co-lines li { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--bz-line); font-size: 16px; line-height: 1.5; color: var(--bz-muted); transition: color .2s var(--bz-out), border-color .2s var(--bz-out); }
 .pay-co-lines li:last-child { border-bottom: 1px solid var(--bz-line); }
-.pay-co-lines li span { font-size: 13px; color: var(--bz-ink); padding-top: 3px; transition: color .2s var(--bz-out); }
+.pay-co-lines li span.x-mono { font-size: 13px; color: var(--bz-ink); padding-top: 3px; transition: color .2s var(--bz-out); }
 .pay-co-lines li.on { color: var(--bz-ink); border-top-color: var(--bz-ink); }
 .pay-co-lines li.off, .pay-co-lines li.off span { color: var(--bz-track); }
 /* while a group of methods is pointed at, the other group steps back to grey */
@@ -265,9 +266,9 @@ html.js .pay-tax.in .pay-tc-li > span { opacity: 1; transform: none; }
 .pay-fur > .bz-body { margin-bottom: 12px; }
 .pay-fur-a { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin: 0 -16px; padding: 20px 16px; border-top: 1px solid var(--bz-line); color: var(--bz-ink); text-decoration: none; transition: background-color .15s var(--bz-out); }
 .pay-fur-a:last-child { border-bottom: 1px solid var(--bz-line); }
-.pay-fur-a b { font-size: 17px; font-weight: 497; }
+.pay-fur-a .pay-fur-t { font-size: 17px; font-weight: 497; color: var(--bz-ink); }
 .pay-fur-a span { font-size: 16px; line-height: 1.5; color: var(--bz-muted); }
-.pay-fur-a em { font-style: normal; font-size: 16px; font-weight: 497; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.pay-fur-a .pay-fur-go { font-size: 16px; font-weight: 497; color: var(--bz-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 @media (hover: hover) { .pay-fur-a:hover { background-color: var(--bz-room); } }
 .pay-fur-a:active { background-color: var(--bz-tile); }
 .pay-get { grid-column: 8 / span 5; align-self: end; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -293,7 +294,7 @@ a.pay-chip:active { transform: scale(.97); }
   .pay-hero { padding-top: 88px; }
   .pay-hero-grid { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 20px; }
   .pay-lede { order: 1; margin: 0; text-align: center; max-width: 28ch; font-size: 17px; }
-  .pay .x-mono, .pay .bz-kick, .pay-cat, .pay-track-k, .pay-track button > span, .pay-note .pay-note-t, .pay-hub-k, .pay-proc span, .pay-tag, .pay-co-lines li span, .pay-case-f, .pay-move-k, .pay-move-figs span, .pay-move-key, .pay-cp-k, .pay-cp-h { font-size: 14px; }
+  .pay .x-mono, .pay .bz-kick, .pay-cat, .pay-track-k, .pay-track button > span, .pay-note .pay-note-t, .pay-hub-k, .pay-proc span, .pay-tag, .pay-co-lines li span.x-mono, .pay-case-f, .pay-move-k, .pay-move-figs span, .pay-move-key, .pay-cp-k, .pay-cp-h { font-size: 14px; }
   .pay-side { display: contents; }
   .pay-acts { order: 2; justify-content: center; animation: pay-fade .5s var(--bz-emph) both .4s; }
   .pay-stage { order: 3; width: 100%; margin-top: 12px; }
