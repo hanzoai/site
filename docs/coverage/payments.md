@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices on this page)
 - [x] Open copy questions for James listed, none decided
 
-Done here: the top comment carries Persona, Goal, CTA, `Metric: signup_start`, Signature and Beyond; "Try Hanzo" → /login is the only solid fill (hero, then the close), the audit counts 1 solid button in the first 1470×801 view. `lib/cta.js` does not exist yet, so the label is Hanzo's own hero label, noted above.
+Done here: the top comment carries Persona, Goal, CTA, `Metric: signup_start`, Signature and Beyond; "Try Hanzo" → /login: the header's "Try Hanzo" is the one solid fill (docs/review/SYSTEM.md §5), so the page's own hero and close asks with the same words are quiet (outlined) kit Ctas. `lib/cta.js` does not exist yet, so the label is Hanzo's own hero label, noted above.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the layout's main and skip link, untouched)
@@ -41,7 +41,7 @@ Done here: the h1 "Hanzo Payments" cuts in by CSS line mask (no JS), the caption
 - [x] Copy button copies exactly the displayed text; failure never says Copied (the kit `Code` copy)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: hero `<Cta to="/login" id="payments.hero" thumb>`, close `<Cta id="payments.close">`, "Explore APIs" is `<Cta kind="link" id="payments.apis">`; the header carries the same "Try Hanzo" on desktop and the phone bar reads the hero's `data-thumb`. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
+Done here: hero `<Cta kind="quiet" to="/login" id="payments.hero" thumb>`, close `<Cta kind="quiet" id="payments.close">`, "Explore APIs" is `<Cta kind="link" id="payments.apis">`; the header carries the same "Try Hanzo" on desktop and the phone bar reads the hero's `data-thumb`. "Explore APIs", "API Reference", "Deploy to Cloud" and "Contact Sales" are text links.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -57,7 +57,7 @@ Done here: the only figures are Hanzo's code sample (amount 2000, $20.00, order 
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /payments`: 0 missing
 
-Done here: parity 139/139 text, 6/6 links. The phone audit's only sub-14px text is 12px Zen Mono capitals and the 13.5px code pane (MASTER part 6); code is the kit `Code`, the spec and checkout lists live in `BizSheet` drawers.
+Done here: parity 139/139 text, 6/6 links. On phones every label is 14px; only the 13.5px code pane is smaller (MASTER part 6); code is the kit `Code`, the spec and checkout lists live in `BizSheet` drawers.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens

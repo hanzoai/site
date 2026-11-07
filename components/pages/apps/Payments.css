@@ -266,7 +266,7 @@ a.pay-chip:active { transform: scale(.97); }
   .pay-hero { padding-top: 88px; }
   .pay-hero-grid { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 20px; }
   .pay-lede { order: 1; margin: 0; text-align: center; max-width: 28ch; font-size: 17px; }
-  .pay .x-mono, .pay-track button > span, .pay-co-lines li span, .pay-case-f { font-size: 14px; }
+  .pay .x-mono, .pay .bz-kick, .pay-cat, .pay-track-k, .pay-track button > span, .pay-note .pay-note-t, .pay-hub-k, .pay-proc span, .pay-tag, .pay-co-lines li span, .pay-case-f, .pay-move-k, .pay-move-figs span, .pay-move-key, .pay-cp-k, .pay-cp-h { font-size: 14px; }
   .pay-side { display: contents; }
   .pay-acts { order: 2; justify-content: center; animation: pay-fade .5s var(--bz-emph) both .4s; }
   .pay-stage { order: 3; width: 100%; margin-top: 12px; }
@@ -293,6 +293,7 @@ a.pay-chip:active { transform: scale(.97); }
   .pay-api-code { margin-top: 44px; }
   .pay-api-code .cf-code { border-radius: 16px; }
   .pay-api-code .cf-code-body { padding: 16px 16px 20px; }
+  .pay-api-code pre { font-size: 14px; }
   .pay-pipe { display: flex; flex-direction: column; gap: 14px; margin-top: 72px; }
   .pay-pipe li { font-size: 16px; padding: 16px 0; }
 
