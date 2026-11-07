@@ -321,9 +321,6 @@
 /* h3s rest below the 32px section h2s they sit under */
 .xsd-pick-p h3, .xsd-lib h3 { font-size: clamp(21px, 1.8vw, 26px); font-weight: 497; letter-spacing: -.02em; }
 
-/* the orgs draw in row by row as the dark room opens */
-.xsd-table .xsd-tr:not(.xsd-th) { opacity: 0; transform: translateY(12px); transition: opacity .5s cubic-bezier(0, 0, .2, 1) calc(var(--i, 0) * 90ms + 120ms), transform .7s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 90ms + 120ms), background-color .25s; }
-.xsd-table.in .xsd-tr { opacity: 1; transform: none; }
 /* idle, the finder types a path and the wall answers: the modules it names stay ink, the rest step back */
 .xsd-modlist .xsd-mod { transition: color .35s cubic-bezier(0, 0, .2, 1), background .2s; }
 .xsd-modlist.ghost .xsd-mod:not(.lit) { color: #a3a3a3; }
@@ -331,9 +328,39 @@
 .xsd-lib.lead { grid-template-rows: auto auto 1fr auto; }
 .xsd-lib.lead .xsd-cmd { order: 1; background: rgba(255, 255, 255, .08); }
 .xsd-lib.lead p:last-child { align-self: end; max-width: 24ch; font-size: clamp(20px, 1.7vw, 26px); line-height: 1.3; letter-spacing: -.01em; color: #fafafa; }
-@media (prefers-reduced-motion: reduce) { .xsd-table .xsd-tr:not(.xsd-th) { opacity: 1; transform: none; transition: none; } }
 @media (max-width: 900px) {
   .xsd-lib.lead { grid-template-rows: none; }
   .xsd-lib.lead p:last-child { font-size: 18px; }
 }
 @media (hover: hover) { .xsd-modlist.ghost .xsd-mod:hover { color: var(--ink); } }
+
+/* ---------- section entrances (MOTION-MAP /sdks), played once by useEnter in Sdks.jsx ---------- */
+.xsd-tilt { transform-origin: 50% 0; }
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. scroll-tilt: the picker arrives leaning back on rotateX and levels out (then leans with the scroll's speed) */
+  .js .xsd-pick[data-enter]:not([data-in]) { opacity: 0; transform: perspective(1400px) rotateX(22deg) translateY(40px); }
+  .js .xsd-pick[data-in]:not([data-done]) { transform-origin: 50% 0; animation: xsd-tilt 1s cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes xsd-tilt { 0% { opacity: 0; transform: perspective(1400px) rotateX(22deg) translateY(40px); } 30% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+  /* 2. fold-out: the org rows unfold from their top edge like paper, one after another, as the dark room opens */
+  .js .xsd-table[data-enter]:not([data-in]) .xsd-tr:not(.xsd-th) { opacity: 0; }
+  .js .xsd-table[data-in]:not([data-done]) .xsd-tr:not(.xsd-th) { transform-origin: 50% 0; animation: xsd-fold .7s cubic-bezier(.2, .7, .2, 1) calc(var(--i, 0) * 110ms) both; }
+  @keyframes xsd-fold { 0% { opacity: 0; transform: perspective(900px) rotateX(-82deg); } 35% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+  /* 3. inertia-drag: the flagship cards are thrown in from the right, coast and settle with a small give */
+  .js .xsd-ai-grid[data-enter]:not([data-in]) > * { opacity: 0; }
+  .js .xsd-ai-grid[data-in]:not([data-done]) > * { animation: xsd-throw 1.1s cubic-bezier(.06, .8, .18, 1) both; }
+  .js .xsd-ai-grid[data-in] > :nth-child(2) { animation-delay: 70ms; }
+  .js .xsd-ai-grid[data-in] > :nth-child(3) { animation-delay: 140ms; }
+  @keyframes xsd-throw { 0% { opacity: 0; transform: translateX(240px); } 12% { opacity: 1; } 78% { transform: translateX(-6px); } 100% { opacity: 1; transform: none; } }
+
+  /* 4. pendulum: the finder swings in from a pivot above its centre and settles */
+  .js .xsd-find[data-enter]:not([data-in]) { opacity: 0; }
+  .js .xsd-find[data-in]:not([data-done]) { transform-origin: 50% -240px; animation: xsd-swing 1.3s cubic-bezier(.3, .6, .3, 1) both; }
+  @keyframes xsd-swing { 0% { opacity: 0; transform: rotate(-9deg); } 20% { opacity: 1; } 45% { transform: rotate(4deg); } 68% { transform: rotate(-1.6deg); } 86% { transform: rotate(.5deg); } 100% { opacity: 1; transform: none; } }
+
+  /* 5. invert-flash: the close arrives inverted for a beat, flickers once, then holds on paper */
+  .js .xsd-close[data-enter]:not([data-in]) > .a2-wrap { opacity: 0; }
+  .js .xsd-close[data-in]:not([data-done]) { animation: xsd-invert .7s linear both; }
+  @keyframes xsd-invert { 0% { filter: invert(1); } 22% { filter: invert(1); } 34% { filter: invert(0); } 46% { filter: invert(.9); } 58%, 100% { filter: invert(0); } }
+}

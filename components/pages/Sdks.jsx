@@ -2,14 +2,14 @@
 // Signature: peel the layers: the OpenAPI document, the generated Cloud SDK, the hand-written AI + Agents library and your application lift apart in 3D on the second screen and close again; drag across to peel it by hand, pick a layer and it rises out and explains itself.
 // Beyond: the hero console flips one request OpenAI ⇄ Anthropic, re-typing only the lines that differ; pick your language and its install line, registry, docs and org line up in one place; and a Go import path you can type to find.
 /* SDKs.
-   V2: 8/10 code as the hero: the console flips OpenAI ⇄ Anthropic re-setting only the lines that differ and fits the phone column; the peel stack; the org rows draw in as the dark room opens; the flagship Python card leads with Node and Rust stacked beside it; the Go finder's idle typing lights its modules in the wall.
+   V2: 8/10 code as the hero: the console flips OpenAI ⇄ Anthropic re-setting only the lines that differ and fits the phone column; the peel stack; the org rows draw in as the dark room opens; the flagship Python card leads with Node and Rust stacked beside it; the Go finder's idle typing lights its modules in the wall; section entrances scroll-tilt, fold-out, inertia-drag, pendulum, invert-flash.
    Persona: a developer choosing a client library. Goal: call the API from their language. CTA: API reference (sdks.hero).
    Metric: cta_click on sdks.hero and sdks.close (data-cta; the event layer is the conductor's).
    SDKs. The first screen is the gateway's own request, written three ways and spoken two ways: the console flips
    between the OpenAI and Anthropic dialects by itself (until you take over), and only the lines that change between
    them are re-set, so the difference reads at a glance (base URL, header, max_tokens). Every sample is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useVelocity, useTransform, useSpring } from 'motion/react';
 import { EASE, Copy } from '../ui';
 import { A, Cta, More } from '../kit';
 import A2Paste from '../v2/A2Paste';
@@ -363,6 +363,11 @@ function Official() {
   const calm = useReducedMotion();
   const [mine, setMine] = useState(false); // the first touch takes over for good
   const setK = (v) => { setMine(true); setK0(v); };
+  // scroll-tilt: the picker leans back on rotateX with the speed of the scroll and levels out when it stops
+  const [tiltOn, setTiltOn] = useState(false); // after hydration and only when motion is welcome
+  useEffect(() => setTiltOn(!calm), [calm]);
+  const { scrollY } = useScroll();
+  const tilt = useSpring(useTransform(useVelocity(scrollY), [-2600, 0, 2600], [-7, 0, 7], { clamp: true }), { stiffness: 170, damping: 26 });
   // once on arrival the picker walks Hanzo's six languages by itself (one lap, then rests on the first)
   const [step, setStep] = useState(0);
   useEffect(() => {
@@ -374,7 +379,8 @@ function Official() {
     <section className="a2-sec xsd-off" aria-labelledby="xsd-off-h" ref={ref}>
       <div className="a2-wrap">
         <Head kicker="SDKs & Libraries" title="Official Cloud SDKs" lede="Use our official SDKs to integrate Cloud into your application" id="xsd-off-h" />
-        <div className="xsd-pick">
+        <motion.div className="xsd-tilt" style={tiltOn ? { rotateX: tilt, transformPerspective: 1400 } : undefined}>
+        <div className="xsd-pick" data-enter="scroll-tilt">
           <div className="xsd-pick-l" role="tablist" aria-label="Language" aria-orientation="vertical">
             {OFFICIAL.map(([n], i) => (
               <button key={n} type="button" role="tab" id={'xsd-ot' + i} aria-controls={'xsd-op' + i} aria-selected={k === i} onClick={() => setK(i)} onKeyDown={(e) => { if (e.key === 'ArrowDown') setK((k + 1) % 6); if (e.key === 'ArrowUp') setK((k + 5) % 6); }} onPointerEnter={() => setMine(true)}>
@@ -400,21 +406,18 @@ function Official() {
             ))}
           </div>
         </div>
+        </motion.div>
       </div>
     </section>
   );
 }
 
 function Orgs() {
-  // the rows draw in one by one, top to bottom, as the dark room opens
-  const tab = useRef(null);
-  const seen = useInView(tab, { amount: 0.25, once: true });
   return (
     <section className="a2-sec a2-dark xsd-orgs" data-room="dark" aria-labelledby="xsd-orgs-h">
-      <NoJs css=".xsd-table .xsd-tr{opacity:1!important;transform:none!important}" />
       <div className="a2-wrap">
         <Head dark kicker="Per-language orgs" title="A home for every ecosystem" lede="Each language has its own org holding the generated cloud SDK, an AI + agents library and the split-out packages. Every one of them ships the same six runnable examples — prove the key works, one completion, balance and usage, a store round-trip, create and run an agent, list the tools — so knowing one language's set is enough to navigate another's." id="xsd-orgs-h" />
-        <div className={'xsd-table' + (seen ? ' in' : '')} ref={tab} role="table" aria-label="Per-language orgs">
+        <div className="xsd-table" data-enter="fold-out" role="table" aria-label="Per-language orgs">
           <div className="xsd-tr xsd-th" role="row">{['Language', 'Org', 'Install', 'sdk', 'docs', 'ai'].map((h) => <span key={h} role="columnheader">{h}</span>)}</div>
           {ORGS.map(([l, flag, org, cmd, sdk, docs, ai], i) => (
             <div key={l} className="xsd-row" style={{ '--i': i }}>
@@ -439,7 +442,7 @@ function Flagship() {
     <section className="a2-sec xsd-ai" aria-labelledby="xsd-ai-h">
       <div className="a2-wrap">
         <Head kicker="AI + Agents SDK" title="The flagship AI library" lede="Models, agents, tools, memory, and MCP — hand-crafted, not generated. Python leads; Rust and Node follow." id="xsd-ai-h" />
-        <div className="xsd-ai-grid">
+        <div className="xsd-ai-grid" data-enter="inertia-drag">
           {AI.map(([l, repo, cmd, d], i) => (
             <div key={l} className={'xsd-lib' + (i === 0 ? ' lead' : '')}>
               <div className="xsd-lib-top"><h3>{l}</h3><em>GA</em></div>
@@ -481,7 +484,7 @@ function Mods() {
     <section className="a2-sec xsd-mods" aria-labelledby="xsd-mods-h" ref={box}>
       <div className="a2-wrap">
         <Head kicker="Go modules" title="Served at hanzo.ai" lede="Each module has a page at its import path, with its source and its reference." id="xsd-mods-h" />
-        <label className="xsd-find">
+        <label className="xsd-find" data-enter="pendulum">
           <span className="x-mono">hanzo.ai/</span>
           <span className="xsd-find-f">
             <input type="text" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Find a Go module by its import path" autoComplete="off" spellCheck={false} />
@@ -504,7 +507,7 @@ function Mods() {
 /* The close: one line, one ask (ink on paper; the orgs are the page's one dark room). */
 function Close() {
   return (
-    <section className="a2-sec xsd-close" aria-label="API reference">
+    <section className="a2-sec xsd-close" aria-label="API reference" data-enter="invert-flash">
       <div className="a2-wrap xsd-close-in">
         <p className="a2-display xsd-close-h" aria-hidden="true">SDKs for every language</p>
         <div className="a2-acts"><Cta to="https://docs.hanzo.ai/docs/openapi/" id="sdks.close">API reference</Cta><A to="https://docs.hanzo.ai/docs/sdks" className="x-arrow"><span>SDKs docs →</span></A></div>
@@ -513,9 +516,32 @@ function Close() {
   );
 }
 
+/* ---------- section entrances (MOTION-MAP /sdks: scroll-tilt, fold-out, inertia-drag, pendulum, invert-flash),
+   page-local. One observer marks each [data-enter] once with data-in when a quarter of it (or of the screen) is in view;
+   Sdks.css plays the entrance it names. Start states live in the CSS under html.js and prefers-reduced-motion:
+   no-preference, so the server markup is final and JS off or reduced motion show everything at rest. ---------- */
+function useEnter(root) {
+  useEffect(() => {
+    const els = [...(root.current?.querySelectorAll('[data-enter]') || [])];
+    if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
+    const timers = [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting || (e.intersectionRatio < 0.25 && e.intersectionRect.height < innerHeight * 0.25)) return;
+      const el = e.target;
+      el.dataset.in = '';
+      io.unobserve(el);
+      timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800));
+    }), { threshold: [0, 0.1, 0.25, 0.5] });
+    els.forEach((el) => io.observe(el));
+    return () => { io.disconnect(); timers.forEach(clearTimeout); };
+  }, [root]);
+}
+
 export default function Sdks() {
+  const root = useRef(null);
+  useEnter(root);
   return (
-    <main className="a2 xsd">
+    <main ref={root} className="a2 xsd">
       <Hero />
       <Peel />
       <A2Paste name="SDKs" text={PROMPT} />
