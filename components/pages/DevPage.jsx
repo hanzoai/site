@@ -519,8 +519,22 @@ const WAYS = [
 ];
 const SIGNIN = 'dev login                 # pick an account: Hanzo is the default\ndev login --hanzo         # straight to your Hanzo account\ndev login --with-api-key  # or paste a Hanzo API key, hidden';
 
+/* Dev's latest release, read from GitHub in the browser as hanzo.ai does; RELEASE is the last one seen (8 Nov) */
+const RELEASE = 'v0.7.10';
+function useRelease() {
+  const [tag, setTag] = useState(RELEASE);
+  useEffect(() => {
+    const c = new AbortController();
+    fetch('https://api.github.com/repos/hanzoai/dev/releases/latest', { signal: c.signal })
+      .then((r) => (r.ok ? r.json() : null)).then((j) => { if (/^v\d+\.\d+\.\d+$/.test(j?.tag_name || '')) setTag(j.tag_name); }).catch(() => {});
+    return () => c.abort();
+  }, []);
+  return tag;
+}
+
 function Setup() {
   const [way, setWay] = useState(0);
+  const tag = useRelease();
   return (
     // entrance 4 (slot-roll): the heading's letters roll up into place like a slot machine
     <In as="section" kind="slot-roll" amount={0.25} className="v2a-sec xdv-setup" id="install" aria-labelledby="xdv-in-h">
@@ -546,7 +560,7 @@ function Setup() {
             <p className="v2a-title">Then sign in. Hanzo IAM links the machine to your account.</p>
             <CodeBlock code={SIGNIN} label="bash" />
             <div className="xdv-in-links">
-              <Lk to="https://github.com/hanzoai/dev/releases/tag/v0.7.9" id="dev.release">Latest release v0.7.9</Lk>
+              <Lk to={"https://github.com/hanzoai/dev/releases/tag/" + tag} id="dev.release">{"Latest release " + tag}</Lk>
               <Lk to={DOCS} id="dev.start">Getting started</Lk>
             </div>
           </div>
