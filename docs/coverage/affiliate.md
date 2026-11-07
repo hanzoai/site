@@ -74,7 +74,7 @@ Done here: `taste.py` passes (greys only: `#0a0a0a`, `#525252`, `--hz-*`); nothi
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: the forked xp-cta button colours (now kit `Cta` sized by `.xp-cta`), the hand-rolled case tabs (now kit `Tabs`), the browser-window hero and its placeholder bars, every invented label. listed below
 
-Done here: Kit `Cta` states (hover fill, press .98, focus ring, busy on hand-off); kit `Tabs` with arrow keys; the rule panel has a visible focus ring; no browser-default controls.
+Done here: Kit `Cta` states (hover fill, press .98, focus ring, busy on hand-off); kit `Tabs` with arrow keys; the rule panel has a 2px light focus ring; the in-text hello@hanzo.ai and "referral" links thicken and drop their underline on hover; chapter dots have a 44px hit area; no browser-default controls.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -83,7 +83,7 @@ Done here: Kit `Cta` states (hover fill, press .98, focus ring, busy on hand-off
 - [x] Reduced motion shows the final state; no `setInterval`
 - ~~Sound only on the listed moments, through the one kit~~ n/a: the shared sound kit is not on main yet; nothing page-local plays sound.
 
-Done here: Signature: sticky chapters (scroll). Time: the link writes itself once. Pointer: the link tilts up to 2.5° and Apply reveals hello@hanzo.ai on hover. State: rule tabs glide; the chapter object changes. Idle: the rule diagrams draw themselves. Ease-emphasis, no springs; reduced motion shows final states.
+Done here: Signature: sticky chapters (scroll). Time: the link writes itself once. Pointer: the link tilts up to 2.5° and Apply reveals hello@hanzo.ai on hover. State: rule tabs glide; the chapter object changes. Idle: after the link is written its caret keeps a slow blink and the `<code>` mark re-runs every 8 s (only while the link is on screen, none under reduced motion); the rule diagrams draw themselves. Ease-emphasis, no springs; reduced motion shows final states.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the objects are drawn (link, request, thread, diagrams).

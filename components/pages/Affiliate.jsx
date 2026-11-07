@@ -28,13 +28,14 @@ const RULES = ['first touch', 'one affiliate per org', 'never your own'];
 function Link() {
   const box = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.4 });
+  const live = useInView(box, { amount: 0.2 }); // the idle beat runs only while the link is on screen
   const tilt = useTilt(2.5, 'rgba(255,255,255,0)');
   // the link writes itself once (CSS from the first paint, so nothing is wiped and retyped and it is whole by about 1 s)
   return (
     <section className="xaf-link" aria-label={LINK}>
       <noscript><style>{'.xaf-lnk-t,.xaf-lnk-code{animation:none!important}.xaf-caret{display:none}.xaf .xpc-story{width:min(100% - 2 * clamp(16px, 4vw, 32px),1152px)!important}@media (min-width:901px){.xaf .xpc-rail-p{grid-template-columns:repeat(2,minmax(0,1fr))!important}}'}</style></noscript>
       <div className="xp-wrap" ref={box}>
-        <motion.div className={'xaf-link-in' + (seen ? ' on' : '')} style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
+        <motion.div className={'xaf-link-in' + (seen ? ' on' : '') + (live ? ' live' : '')} style={{ rotateX: tilt.rx, rotateY: tilt.ry, transformPerspective: 1600 }} {...tilt.on} aria-hidden="true">
           <span className="xaf-lnk"><span className="xaf-lnk-t">{LINK.slice(0, 22)}</span><b className="xaf-caret" /></span>
           <span className="xaf-lnk-code">&lt;code&gt;</span>
         </motion.div>
