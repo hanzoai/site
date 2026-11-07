@@ -1,6 +1,7 @@
 'use client';
 /* /brand. Story page (treated so; MASTER 4), Hanzo's deck only.
-   V2: 8/10 (round 2: six grays on phone, no reduced-motion hydration error, mark in the first phone screen, hovers on
+   V2: 8/10 (round 3: no page hydration diff, h1 at 52 and section heads at 44 so the objects lead, gaps closed,
+   card and specimen hovers, the 02 panel quiet so two dark rooms. Round 2: six grays on phone, no reduced-motion hydration error, mark in the first phone screen, hovers on
    gradients, scale rows and the ZIP row, no slack after Components. 7 Nov re-walk: colour-room h3s visible again on black, the contrast board swaps White to Black and back
    once in view with a gliding pill, compass ticks arrive after their circle, CSS colours on deck tokens.)
    A brand book that is a drawing, in Hanzo's own black, white and greys. The hero is the mark's
@@ -160,6 +161,7 @@ const Numeral = ({ i }) => (
   <div className={'xbr-num n' + i}>
     {i === 2 && <span className="xbr-num-grid" aria-hidden="true">{Array.from({ length: 16 }, (_, k) => <MarkSvg key={k} s={26} />)}</span>}
     {i === 0 && <span className="xbr-num-mark" aria-hidden="true"><MarkSvg s={30} /></span>}
+    {i === 1 && <span className="xbr-num-glow" aria-hidden="true" />}
     <span className="xbr-num-n vc-num"><b>{String(i + 1).padStart(2, '0')}</b> / 03</span>
   </div>
 );
@@ -298,7 +300,14 @@ function Type() {
   const live = useInView(spec, { amount: 0.6 }); // the specimen itself, well on screen: the sweep is seen whole
   const fw = useTransform(w, (v) => Math.round(v));
   const swept = useRef(false);
-  useEffect(() => w.on('change', (v) => setVal(Math.round(v))), [w]);
+  // The track fill (--p) is never a React style: the CSS rests it at 560's 57.5% in the server HTML, and after mount
+  // the weight writes it straight to the input, so nothing the sweep changes can differ from the server markup.
+  const range = useRef(null);
+  useEffect(() => w.on('change', (v) => {
+    const r = Math.round(v);
+    setVal(r);
+    if (range.current) range.current.style.setProperty('--p', ((r - 100) / 8) + '%');
+  }), [w]);
   useEffect(() => {
     if (mine || calm || !live || swept.current) return;
     swept.current = true; // one sweep (under 5 s, WCAG 2.2.2), then it rests at 560 and the slider is yours
@@ -315,8 +324,9 @@ function Type() {
         <div className="xbr-spec" ref={spec}>
           <motion.p className="xbr-spec-a" style={{ fontWeight: fw }} aria-hidden="true">Aa</motion.p>
           <div className="xbr-spec-c">
-            <input type="range" min={100} max={900} step={1} value={val} aria-label="Font weight"
-              onChange={(e) => { setMine(true); w.stop(); w.set(+e.target.value); }} style={{ '--p': ((val - 100) / 8) + '%' }} />
+            {/* suppressHydrationWarning: screenshot tools write an inline caret style onto inputs before hydration */}
+            <input ref={range} suppressHydrationWarning type="range" min={100} max={900} step={1} value={val} aria-label="Font weight"
+              onChange={(e) => { setMine(true); w.stop(); w.set(+e.target.value); }} />
           </div>
         </div>
         <ol className="xbr-scale">
