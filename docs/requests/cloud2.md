@@ -22,6 +22,10 @@ The /guard fixer saw the same mismatch on the footer shell too (`data-x-shell="f
 against a live `<footer class="is_View …">`), and the /gui fixer found a second one in `components/v2/BizStage` (under
 reduced motion it renders a transform on the server and none in the browser; owner Business 1 chat). /gui now uses its own `Settle`.
 
+**Reviewer note (found by the /gateway fixer):** Playwright's `page.screenshot()` hides the text caret by injecting a style on
+inputs. A screenshot taken before React hydrates (the "0 s" frame) therefore causes a hydration mismatch of its own, which is
+what most critics saw as the badge. Take screenshots with `{ caret: 'initial' }`, or after hydration, before counting it.
+
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
 "Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
