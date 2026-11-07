@@ -1,19 +1,22 @@
 'use client';
 /* Integrations. Its idea is the hub: one base URL, and every tool Hanzo has a guide for already speaks to it.
-   V2: 8/10 Rebuilt as a catalogue that opens: hub hero, the starter as a big live editor, 19 tool cards in family chips that re-flow, each card opening into its guide, the agent prompt in the one dark room.
-   Signature: cards that open. Nineteen big tool cards, filtered by family chips that re-flow the grid; press one and its
-   title flies into the guide's headline (Morph navigation, data-morph on the title), the synchronized.studio move.
-   Supporting: the hub in the hero (the 19 badges circling https://api.hanzo.ai/v1, holding still and naming the tool
-   under your hand), the starter editor that switches Python, TypeScript and Go on its own, and the dark room arriving
-   as a widening panel (SceneWipe).
+   V2: 8/10 Catalogue rebuilt: the hub turning by itself as the hero, the starter as a big editor that switches language on its own, 19 numbered tool cards behind family chips with a gliding pill, each opening into its guide, the agent prompt in the one dark room; greys only, one ask.
+   Signature: cards that open. Nineteen numbered tool cards (01 / 19), filtered by family chips whose pill glides and
+   whose grid re-flows; press one and its title flies into the guide's headline (Morph navigation, data-morph on the
+   title), the synchronized.studio move.
+   Supporting: the hub in the hero (19 badges circling https://api.hanzo.ai/v1 by themselves, holding still and naming
+   the tool under your hand), the starter editor that switches Python, TypeScript and Go on its own, and the dark
+   room arriving as a widening panel (SceneWipe).
    Beyond: "Find your tool": type a tool, a language or a family; the chips' counts and the grid narrow as you type.
    Every word, link and line of code is Hanzo's (hanzo.ai/integrations). */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
-import { A } from '../../kit';
+import { A, More } from '../../kit';
 import { Loose } from '../models/parts';
 import SceneWipe from '../../v2/SceneWipe';
+import MaskLines from '../../v2/MaskLines';
+import AskBar from '../../v2/AskBar';
 import '../../v2/ProofScale.css';
 import './IntegrationsIndex.css';
 
@@ -76,7 +79,7 @@ function Starter({ samples, base }) {
             </button>
           ))}
         </div>
-        <Copy text={samples[on].text} />
+        <Copy text={samples[on].text} className="xii-copy" />
       </div>
       <div className="xii-win-b">
         {samples.map((s, i) => (
@@ -143,7 +146,7 @@ function Catalogue({ groups }) {
                 <motion.li key={c.href} layout={!calm} hidden={!on} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.2 } }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
                   <A to={c.href} className="xii-card" data-cursor="Open">
                     <span className="xii-card-e" aria-hidden="true">{c.emoji}</span>
-                    <span className="xii-card-fam pf-mono">{c.fam}</span>
+                    <span className="xii-card-fam pf-mono" aria-hidden="true">{String(cards.indexOf(c) + 1).padStart(2, '0')} / {cards.length}</span>
                     <b className="xii-card-n" data-morph>{c.name}</b>
                     <span className="xii-card-d">{c.desc}</span>
                     <span className="xii-card-f">
@@ -168,11 +171,12 @@ export default function IntegrationsIndex({ doc }) {
       <section className="xii-hero" aria-labelledby="xin-h1">
         <div className="pf-wrap pf-grid xii-hero-g">
           <div className="xii-hero-a">
-            {doc.label && <p className="pf-kick xii-in" style={{ '--i': 0 }}>{doc.label}</p>}
             <h1 id="xin-h1" className="pf-display xii-h1 xii-in" style={{ '--i': 1 }} data-morph-target>{doc.title}</h1>
             <p className="pf-lede xii-lede xii-in" style={{ '--i': 2 }}><Loose nodes={doc.lede} /></p>
             <div className="xii-acts xii-in" style={{ '--i': 3 }}>
-              {doc.actions.map((a, i) => <A key={a.label} to={a.href} className={'pf-btn' + (i ? '' : ' solid')} {...(i ? {} : { 'data-thumb': '' })}>{a.label}</A>)}
+              {doc.actions.map((a, i) => (i
+                ? <More key={a.label} to={a.href}>{a.label}</More>
+                : <A key={a.label} to={a.href} className="pf-btn solid xii-ask" data-thumb={a.label}>{a.label}</A>))}
             </div>
           </div>
           <div className="xii-hero-b">
@@ -194,17 +198,18 @@ export default function IntegrationsIndex({ doc }) {
           <div className="pf-sec">
             <div className="pf-wrap pf-grid">
               <div className="xii-paste-a">
-                <p className="pf-kick">{doc.paste.kicker}</p>
-                <p className="pf-head xii-paste-l">{doc.paste.lede}</p>
+                <MaskLines as="h2" className="pf-display s xii-paste-h" lines={[doc.paste.kicker]} />
+                <p className="pf-lede xii-paste-l">{doc.paste.lede}</p>
               </div>
               <div className="xii-prompt">
-                <div className="xii-prompt-h"><span className="pf-mono">{doc.paste.label}</span><Copy text={doc.paste.code} label="Copy the agent prompt" /></div>
+                <div className="xii-prompt-h"><span className="pf-mono">{doc.paste.label}</span><Copy text={doc.paste.code} label="Copy the agent prompt" className="xii-copy" /></div>
                 <pre tabIndex={0}><code><span className="xii-caret" aria-hidden="true">›</span>{doc.paste.code}</code></pre>
               </div>
             </div>
           </div>
         </SceneWipe>
       )}
+      <AskBar title={doc.label || 'Integrations'} label={doc.actions[0].label} to={doc.actions[0].href} />
     </main>
   );
 }

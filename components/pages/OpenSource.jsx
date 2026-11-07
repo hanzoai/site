@@ -1,21 +1,21 @@
 'use client';
-/* Open source. Its idea is the scale of it, made literal.
-   V2: 8/10 Stage hero: the constellation opens zoomed into Hanzo and pulls back to all three galaxies as you scroll, then Hanzo, Lux and Zoo as pinned chapters with a swapping commit-year dashboard, totals as hero figures, org cards that open, a signed charter.
-   Signature: the sky pulls back — 2,247 repositories as points of light, first close up inside the Hanzo galaxy, then,
-   as you scroll, the camera pulls back until Lux and Zoo come into frame and the scale is read out in huge figures.
-   It drifts on its own; drag it to pan, point at a cluster for its organization, click to open it.
-   Supporting: the three ecosystems as pinned chapters (PinScenes) whose year of commits re-lights cell by cell,
-   line-masked headlines (MaskLines), and the charter signed with a drawn line.
+/* Open source. Its idea is the scale of it, made literal: a catalogue of 2,247 repositories you can open.
+   V2: 8/10 Catalogue rebuilt: a living sky of every repository as the hero (the camera pulls back on arrival, clusters open their org), the three ecosystems as a tabbed live dashboard, totals as hero figures, numbered org cards that open, a signed charter; greys only, one ask.
+   Signature: cards that open. Every organization is a numbered card (01 / 37) that opens into its own page, and in the
+   hero every cluster of light is one of them: point at it for its name, press it to open it.
+   Supporting: the sky drifting and twinkling by itself (it pulls back from inside Hanzo to all three galaxies when
+   you arrive), the ecosystem tabs whose pill glides while the year of commits re-lights cell by cell, and the
+   charter signed with a drawn line.
    Beyond: "Contribute in your language". Pick a language and see the featured repositories written in it across
    Hanzo, Lux and Zoo, and how much of each ecosystem's repositories it is, from Hanzo's own language shares.
    Every figure is Hanzo's, as its build read GitHub and its forge. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { A } from '../kit';
+import { motion, useInView, useReducedMotion } from 'motion/react';
+import { A, More } from '../kit';
 import { href } from '../../lib/route';
 import MaskLines from '../v2/MaskLines';
-import PinScenes from '../v2/PinScenes';
 import DetailSheet from '../v2/DetailSheet';
+import AskBar from '../v2/AskBar';
 import { ECO, TOTAL, ORGS } from './openSourceData';
 import './OpenSource.css';
 
@@ -23,12 +23,6 @@ const num = (s) => parseInt(String(s).replace(/,/g, ''), 10) || 0;
 const NAMES = ['Hanzo', 'Lux', 'Zoo'];
 const clamp = (v) => Math.max(0, Math.min(1, v));
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-
-function useWide() {
-  const [wide, setWide] = useState(true);
-  useEffect(() => { const m = matchMedia('(min-width: 901px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
-  return wide;
-}
 
 /* ---------- the constellation ---------- */
 function build() {
@@ -63,8 +57,8 @@ function build() {
   return { clusters, dots, gal };
 }
 
-/* The sky. stage (a MotionValue 0..1, or null): how far the camera has pulled back. */
-function Sky({ pull, staged }) {
+/* The sky. On arrival the camera pulls back from inside Hanzo to all three galaxies (2.8s, once); then it drifts. */
+function Sky() {
   const wrap = useRef(null);
   const cv = useRef(null);
   const labs = useRef([]);
@@ -74,8 +68,7 @@ function Sky({ pull, staged }) {
   const calm = useReducedMotion();
   const [hot, setHot] = useState(null);
   const st = useRef({ ox: 0, oy: 0, vx: 0, vy: 0, drag: null, moved: 0, hot: -1, s: 1, z: 1, w: 0, h: 0, t: 0, cx: 0, cy: 0, phone: false });
-  const stagedRef = useRef(staged);
-  stagedRef.current = staged;
+  const born = useRef(0);
 
   useEffect(() => {
     const c = cv.current, ctx = c.getContext('2d');
@@ -94,31 +87,34 @@ function Sky({ pull, staged }) {
     const draw = (t) => {
       S.t = t;
       if (!S.drag) { S.ox += S.vx; S.oy += S.vy; S.vx *= 0.93; S.vy *= 0.93; }
-      // the camera: close inside Hanzo, pulling back to the three galaxies as the stage scrolls
-      const e = stagedRef.current && pull ? ease(clamp((pull.get() - 0.06) / 0.6)) : 1;
-      S.z = S.phone ? 1 : 2.3 - 1.5 * e;
+      // the camera: close inside Hanzo, pulling back to the three galaxies once, on arrival
+      if (!born.current && t) born.current = t;
+      const e = calm || !t ? 1 : ease(clamp((t - born.current - 250) / 2800));
+      S.z = (S.phone ? 1.05 : 0.62) + (S.phone ? 0.9 : 1.4) * (1 - e);
       S.s = S.base * S.z;
-      S.cx = S.w * (S.phone ? 0.5 : 0.7 - 0.15 * e);
-      S.cy = S.h * (S.phone ? 0.52 : 0.55 - 0.1 * e);
+      S.cx = S.w * (S.phone ? 0.5 : 0.7);
+      S.cy = S.h * (S.phone ? 0.5 : 0.44);
       const drift = calm ? 0 : Math.sin(t / 5200) * 14, s = S.s;
       const X = (x) => S.cx + (x + S.ox + drift) * s, Y = (y) => S.cy + (y + S.oy + Math.cos(t / 6100) * 8 * (calm ? 0 : 1)) * s;
       ctx.clearRect(0, 0, S.w, S.h);
       const sz = Math.max(1.2, 2.1 * S.base * Math.sqrt(S.z));
+      const big = sz * 1.5;
       for (let lv = 0; lv < 5; lv++) {
-        ctx.fillStyle = lv === 4 ? '#a593ff' : shades[lv];
+        ctx.fillStyle = lv === 4 ? '#ffffff' : shades[lv];
         for (const d of world.dots) {
           const tw = calm ? 0 : ((Math.floor(t / 900 + d[3]) % 9) === 0 ? 1 : 0);
           const on = S.hot === d[4] ? 4 : Math.min(3, d[2] + tw);
           if (on !== lv) continue;
-          ctx.fillRect(X(d[0]) - sz / 2, Y(d[1]) - sz / 2, sz, sz);
+          const q = lv === 4 ? big : sz;
+          ctx.fillRect(X(d[0]) - q / 2, Y(d[1]) - q / 2, q, q);
         }
       }
       if (S.hot >= 0) {
         const h = world.clusters[S.hot];
-        ctx.strokeStyle = 'rgba(165,147,255,.7)'; ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.arc(X(h.x), Y(h.y), h.r * s + 6, 0, Math.PI * 2); ctx.stroke();
       }
-      const lo = clamp((e - 0.55) / 0.35);
+      const lo = clamp((e - 0.6) / 0.4);
       world.gal.forEach((g, i) => { const el = labs.current[i]; if (el) { el.style.transform = `translate(${X(g.x)}px, ${Y(g.y) - 30}px)`; el.style.opacity = String(lo); } });
       if (hotEl.current && S.hot >= 0) { const h = world.clusters[S.hot]; hotEl.current.style.transform = `translate(${X(h.x)}px, ${Y(h.y) - h.r * s - 14}px)`; }
     };
@@ -126,9 +122,8 @@ function Sky({ pull, staged }) {
     const loop = (t) => { draw(t); raf = requestAnimationFrame(loop); };
     if (live && !calm) raf = requestAnimationFrame(loop); else draw(0);
     S.redraw = () => draw(S.t);
-    const unsub = calm && pull ? pull.on('change', () => draw(S.t)) : null;
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); unsub?.(); };
-  }, [live, calm, world, pull]);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, [live, calm, world]);
 
   const pick = (e) => {
     const S = st.current, b = cv.current.getBoundingClientRect();
@@ -170,47 +165,30 @@ function Sky({ pull, staged }) {
   );
 }
 
-/* ---------- hero: a stage that pulls back ---------- */
+/* ---------- hero: the sky, and the count ---------- */
 const HERO_STATS = [['1,733', 'Original public repositories'], ['37', 'Organizations holding them'], ['732,288', 'Commits, past year'], ['5,125', 'GitHub stars']];
 
 function Hero() {
-  const run = useRef(null);
-  const wide = useWide();
-  const calm = useReducedMotion();
-  const staged = wide && !calm;
-  const gate = useMotionValue(1);
-  useEffect(() => { gate.set(staged ? 1 : 0); }, [staged, gate]);
-  const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
-  const aO = useTransform([p, gate], ([v, g]) => (g ? 1 - clamp((v - 0.1) / 0.22) : 1));
-  const aY = useTransform([p, gate], ([v, g]) => (g ? -90 * ease(clamp((v - 0.04) / 0.32)) : 0));
-  const bO = useTransform([p, gate], ([v, g]) => (g ? clamp((v - 0.5) / 0.2) : 1));
-  const bY = useTransform([p, gate], ([v, g]) => (g ? 40 * (1 - ease(clamp((v - 0.5) / 0.25))) : 0));
-  const aV = useTransform(aO, (v) => (v < 0.02 ? 'hidden' : 'visible'));
-  const bV = useTransform(bO, (v) => (v < 0.02 ? 'hidden' : 'visible'));
   return (
     <section className="xos-hero" data-room="dark" aria-labelledby="xos-h1">
-      <div className="xos-run" ref={run}>
-        <div className="xos-stick">
-          <Sky pull={p} staged={staged} />
-          <div className="pf-wrap xos-hero-c">
-            <motion.div className="xos-hero-a" style={{ opacity: aO, y: aY, visibility: aV }}>
-              <p className="pf-kick xos-in" style={{ '--i': 0 }}>Open Source First</p>
-              <MaskLines as="h1" id="xos-h1" className="pf-display xos-h1" lines={['Building in the', 'open.']} delay={0.05} />
-              <p className="pf-lede xos-lede xos-in" style={{ '--i': 2 }}>We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to.</p>
-              <div className="xos-acts xos-in" style={{ '--i': 3 }}>
-                <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l">View on GitHub</A>
-                <A to="https://github.com/hanzoai" className="pf-btn xos-btn-d">Star Our Repos</A>
-              </div>
-            </motion.div>
-            <motion.div className="xos-hero-b" style={{ opacity: bO, y: bY, visibility: bV }}>
-              <dl className="xos-hstats">
-                {HERO_STATS.map(([v, k]) => (
-                  <div key={k}><dd>{v}</dd><dt>{k}</dt></div>
-                ))}
-              </dl>
-              <p className="xos-hint" aria-hidden="true">Drag to pan · point at a cluster · click to open it</p>
-            </motion.div>
+      <Sky />
+      <div className="pf-wrap xos-hero-c">
+        <div className="xos-hero-a">
+          <MaskLines as="h1" id="xos-h1" className="pf-display xos-h1" lines={['Building in the', 'open.']} delay={0.05} />
+          <p className="xos-cap xos-in" style={{ '--i': 1 }}>Open Source First</p>
+          <p className="pf-lede xos-lede xos-in" style={{ '--i': 2 }}>We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to.</p>
+          <div className="xos-acts xos-in" style={{ '--i': 3 }}>
+            <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l" data-thumb="View on GitHub">View on GitHub</A>
+            <More to="https://github.com/hanzoai">Star Our Repos</More>
           </div>
+        </div>
+        <div className="xos-hero-b xos-in" style={{ '--i': 4 }}>
+          <dl className="xos-hstats">
+            {HERO_STATS.map(([v, k]) => (
+              <div key={k}><dd>{v}</dd><dt>{k}</dt></div>
+            ))}
+          </dl>
+          <p className="xos-hint" aria-hidden="true">Drag to pan · point at a cluster · click to open it</p>
         </div>
       </div>
     </section>
@@ -219,7 +197,7 @@ function Hero() {
 
 /* ---------- what we publish: one chapter per ecosystem ---------- */
 const MONTHS = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-const LANGC = ['#7a5cff', '#9a85ff', '#b8a9ff', '#d3c9ff', '#e8e2ff', '#d8d8de'];
+const LANGC = ['#0a0a0a', '#3a3a3c', '#6e6e73', '#98989d', '#c7c7cc', '#e5e5ea'];
 
 function Dash({ at }) {
   const e = ECO[at];
@@ -292,30 +270,48 @@ function EcoSheet({ e, i }) {
 }
 
 function Publish() {
-  const chapters = ECO.map((e, i) => ({
-    kicker: `0${i + 1} · ${ORGS[i].sub}`,
-    title: NAMES[i],
-    body: (
-      <>
-        <ul className="xos-stats">
-          {e.stats.map(([k, v, s], j) => (
-            <li key={j}><A to={e.statTo[j]}><span className="xos-st-k">{k}</span><b className="pf-mono">{v}</b><span className="xos-st-s">{s}</span></A></li>
-          ))}
-        </ul>
-        <EcoSheet e={e} i={i} />
-      </>
-    ),
-  }));
+  const [at, setAt] = useState(0);
+  const keys = (e) => {
+    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (!k) return;
+    const n = (at + k + 3) % 3;
+    setAt(n);
+    document.getElementById('xos-t-' + n)?.focus();
+  };
   return (
-    <>
-      <section className="pf-sec tight xos-pub-in" id="publish">
-        <div className="pf-wrap pf-grid">
-          <MaskLines className="pf-display s xos-pub-h" lines={['What we', 'publish']} />
+    <section className="pf-sec xos-pub" id="publish" aria-labelledby="xos-pub-h">
+      <div className="pf-wrap">
+        <div className="pf-grid xos-pub-top">
+          <MaskLines as="h2" id="xos-pub-h" className="pf-display s xos-pub-h" lines={['What we', 'publish']} />
           <p className="pf-lede xos-pub-l">Read from GitHub by every build: the year of commits, the languages and the repositories of each ecosystem, then every organization.</p>
         </div>
-      </section>
-      <PinScenes className="xos-pin" label="What we publish, ecosystem by ecosystem" chapters={chapters} per={85} visual={(at) => <Dash at={at} />} />
-    </>
+        <div className="xos-eco" role="tablist" aria-label="Ecosystem" onKeyDown={keys}>
+          {NAMES.map((n, i) => (
+            <button key={n} id={'xos-t-' + i} type="button" role="tab" aria-selected={at === i} aria-controls={'xos-p-' + i} tabIndex={at === i ? 0 : -1} onClick={() => setAt(i)}>
+              {at === i && <motion.span layoutId="xos-eco-pill" className="xos-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+              <span className="xos-eco-n">{n}</span><span className="pf-mono">{ECO[i].stats[3][1]}</span>
+            </button>
+          ))}
+        </div>
+        <div className="pf-grid xos-pub-g">
+          <div className="xos-pub-a">
+            {ECO.map((e, i) => (
+              <div key={i} id={'xos-p-' + i} role="tabpanel" aria-labelledby={'xos-t-' + i} hidden={at !== i} className="xos-panel">
+                <h3 className="pf-head xos-eco-h">{NAMES[i]}</h3>
+                <p className="xos-cap">{ORGS[i].sub}</p>
+                <ul className="xos-stats">
+                  {e.stats.map(([k, v, sub], j) => (
+                    <li key={j}><A to={e.statTo[j]}><b className="pf-mono">{v}</b><span className="xos-st-k">{k}</span><span className="xos-st-s">{sub}</span></A></li>
+                  ))}
+                </ul>
+                <EcoSheet e={e} i={i} />
+              </div>
+            ))}
+          </div>
+          <div className="xos-pub-b"><Dash at={at} /></div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -325,8 +321,7 @@ function Totals() {
     <section className="pf-sec xos-total">
       <div className="pf-wrap pf-grid">
         <header className="xos-total-h">
-          <p className="pf-kick">The sum</p>
-          <h2 className="pf-head">Total across Hanzo</h2>
+          <MaskLines as="h2" className="pf-head" lines={['Total across Hanzo']} />
           <p className="pf-body">Aggregate open-source activity counted from the forge and GitHub.</p>
           <p className="xos-grants"><A to="/grants">OSS &amp; research credit grants →</A></p>
         </header>
@@ -352,11 +347,12 @@ function Orgs() {
     <section className="pf-sec xos-orgs" aria-labelledby="xos-orgs-h">
       <div className="pf-wrap">
         <div className="xos-orgs-top">
-          <h2 className="pf-head" id="xos-orgs-h">Every organization</h2>
+          <MaskLines as="h2" id="xos-orgs-h" className="pf-display s" lines={['Every organization']} />
           <div className="xos-chips" role="tablist" aria-label="Ecosystem" onKeyDown={keys}>
             {ORGS.map((x, i) => (
               <button key={x.name} id={'xos-og-' + i} type="button" role="tab" aria-selected={g === i} aria-controls={'xos-op-' + i} tabIndex={g === i ? 0 : -1} onClick={() => setG(i)}>
-                {x.name}<span className="pf-mono">{x.orgs.length}</span>
+                {g === i && <motion.span layoutId="xos-org-pill" className="xos-pill" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />}
+                <span className="xos-eco-n">{x.name}</span><span className="pf-mono">{x.orgs.length}</span>
               </button>
             ))}
           </div>
@@ -370,13 +366,14 @@ function Orgs() {
               <ul className="xos-ocards">
                 {top.map((o, j) => (
                   <li key={o.login} style={{ '--j': j }}>
-                    <A to={'/oss/' + o.login} className="xos-ocard">
+                    <A to={'/oss/' + o.login} className="xos-ocard" data-cursor="Open">
+                      <span className="xos-oc-i pf-mono" aria-hidden="true">{String(j + 1).padStart(2, '0')} / {x.orgs.length}</span>
                       <span className="xos-oc-top"><b data-morph>{o.name}</b><small className="pf-mono">{o.login}</small></span>
                       <span className="xos-oc-n"><b className="pf-mono">{o.repos.split(' ')[0]}</b> {o.repos.split(' ').slice(1).join(' ')}</span>
                       <span className="xos-oc-bar" aria-hidden="true"><i style={{ transform: `scaleX(${Math.max(0.02, num(o.repos) / max)})` }} /></span>
                       <span className="xos-oc-f pf-mono"><span>{o.commits || ''}</span><span title="GitHub stars">★ {o.stars}</span></span>
                       {o.desc && <span className="xos-oc-d">{o.desc}</span>}
-                      <span className="xos-oc-go" aria-hidden="true">Open</span>
+                      <span className="xos-oc-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                     </A>
                   </li>
                 ))}
@@ -425,7 +422,7 @@ function Built() {
     <section className="pf-sec xos-built" aria-labelledby="xos-built-h">
       <div className="pf-wrap">
         <div className="xos-built-top">
-          <h2 className="pf-head" id="xos-built-h">What Hanzo is built on</h2>
+          <MaskLines as="h2" id="xos-built-h" className="pf-display s" lines={['What Hanzo is', 'built on']} />
           <p className="pf-body">The projects our platform actually runs on, each with its licence and the people who maintain it.</p>
         </div>
         <ul className="xos-tiles">
@@ -462,8 +459,8 @@ function Charter() {
     <section className="pf-sec xos-charter" aria-labelledby="xos-ch-h">
       <div className="pf-wrap pf-grid">
         <header className="xos-ch-h">
-          <p className="pf-kick">Charter</p>
-          <MaskLines id="xos-ch-h" className="pf-display s" lines={['Our Stewardship', 'Commitments']} />
+          <MaskLines as="h2" id="xos-ch-h" className="pf-display s" lines={['Our Stewardship', 'Commitments']} />
+          <p className="xos-cap">Charter</p>
           <p className="pf-lede">We hold ourselves to explicit, public commitments — not vague marketing language.</p>
         </header>
         <div className="xos-ch-body">
@@ -503,17 +500,15 @@ function Contribute() {
     <section className="pf-sec xos-con" aria-labelledby="xos-con-h">
       <div className="pf-wrap pf-grid">
         <div className="xos-con-a">
-          <p className="pf-kick">Join the Community</p>
           <MaskLines as="h2" id="xos-con-h" className="pf-display" lines={['Contribute']} />
+          <p className="xos-cap">Join the Community</p>
           <p className="pf-lede">We welcome contributions of all kinds: code, documentation, bug reports and feature requests.</p>
           <div className="xos-con-acts">
             <A to="https://github.com/hanzoai" className="pf-btn solid">Start Contributing</A>
-            <A to="https://discord.gg/XthHQQj" className="pf-btn">Join Discord</A>
           </div>
-          <p className="xos-con-note"><A to="/founder">Founder Program</A></p>
+          <p className="xos-con-note"><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
         </div>
         <div className="xos-con-b" aria-label="Contribute in your language">
-          <p className="pf-kick">In your language</p>
           <div className="xos-langchips" role="radiogroup" aria-label="Language">
             {LANGS.map((l) => (
               <button key={l} type="button" role="radio" aria-checked={lang === l} onClick={() => setLang(l)}>{l}</button>
@@ -549,6 +544,7 @@ export default function OpenSource() {
       <Built />
       <Charter />
       <Contribute />
+      <AskBar title="Open source" label="View on GitHub" to="https://github.com/hanzoai" />
     </main>
   );
 }
