@@ -27,9 +27,9 @@ const CARDS = [
 // sentences); every need has three steps, so the trace keeps one fixed height and never moves the page.
 const NEEDS = [
   { tab: 'Open weights', steps: [
-    [-1, 'open', 'Open weights'],
     [0, 'desc', CARDS[0].desc, 'yes'],
     [0, 'size', CARDS[0].size],
+    [0, 'mods', CARDS[0].mods],
   ], pick: [0] },
   { tab: CARDS[1].mods, steps: [
     [0, 'mods', CARDS[0].mods, 'no'],
@@ -130,9 +130,11 @@ const ARCH = (t, W, H, wide) => {
 function CardArt({ ci, open, z, on }) {
   const c = CARDS[ci];
   return (
-    <div className="ze-art" style={{ '--z': z }}>
-      <Img src={film('zen', 'webp')} w={1200} h={1500} />
-      <ModelFilm slug="zen" play={on} />
+    <div className={'ze-art' + (open ? ' ze-art-sig' : '')} style={{ '--z': z }}>
+      {open ? <Sigil seed="/zen/open-weights" data={[6, 27.3, 5.95]} className="ze-sigart" /> : <>
+        <Img src={film('zen', 'webp')} w={1200} h={1500} />
+        <ModelFilm slug="zen" play={on} />
+      </>}
       {open ? (
         <div className="ze-open" aria-hidden="true">
           {CARDS.map((k) => <p key={k.code}><code>{k.code}</code><span>{k.name}</span></p>)}

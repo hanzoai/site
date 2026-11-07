@@ -13,7 +13,7 @@ Forks this page deleted: our spec table and headings, raw `.x-btn` asks (now `Ct
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: model page, prices are the model's own)
 - [x] Open copy questions for James listed, none decided
 
-Done here: `app/zen/page.jsx` carries Persona, Goal, CTA, Metric `signup_start`, Signature and Beyond. The one solid ask "Try Hanzo" (/login) is solid (white on the film) on the first screen while the header ask stays quiet, solid beside the settled headline, then solid in the closing band (`zen.band`); the header turns solid only once the page's ask leaves view. One h1 ("Zen") is in the server HTML.
+Done here: `app/zen/page.jsx` carries Persona, Goal, CTA, Metric `signup_start`, Signature and Beyond. The one solid ask "Try Hanzo" (/login): on desktop the page's own ask fills (white on the film, then ink beside the settled headline) while the shared header goes quiet, and the header is solid when no page ask is on screen; on phones the header carries the solid and the page's asks are outlined; the closing band's ask (`zen.band`) is solid. One h1 ("Zen") is in the server HTML.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -39,7 +39,7 @@ Done here: Zen's own film plays full-bleed under the h1 cut-in within the first 
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button on this page)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: "Try Hanzo" appears 4 times: the header, the first-screen ask (white fill on the film), the settled headline and the closing band; the chapters and the trace cards no longer repeat it. The header's "Try Hanzo" is the one solid fill from arrival to the closing band at both widths; the first-screen and settled-headline asks are outlined and carry no `data-thumb`, so the header never goes quiet early. The closing band's ask (`zen.band`, `data-thumb`) is solid while the header is quiet. `data-cta` ids: `zen.first`, `zen.hero`, `zen.band`. The settled headline's links stay out of the tab order (`visibility: hidden`) until the headline shows.
+Done here: "Try Hanzo" appears 4 times: the header, the first-screen ask (white fill on the film), the settled headline and the closing band; the chapters and the trace cards no longer repeat it. One solid "Try Hanzo" per screen, in step with the shared header: on desktop the shared `Ask.jsx` quiets the header (`html[data-ask=quiet]`) while a page "Try Hanzo" is on screen, and the page's own ask then fills (white on the film, ink beside the settled headline); when no page ask is on screen the header is the solid one. On phones (≤700px) the header stays solid and the page's first-screen and headline asks stay outlined. Measured by sampling every 300px of scroll at 1470 and 375: exactly one solid "Try Hanzo" at each stop after arrival (the first ~0.5 s, while the first-screen ask fades in, can show none). The closing band's ask (`zen.band`, `data-thumb`) is solid while the header is quiet. `data-cta` ids: `zen.first`, `zen.hero`, `zen.band`. The settled headline's links stay in the tab order; focusing one scrolls the stage to its settled point so it shows.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
