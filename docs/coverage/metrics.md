@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices)
 - [x] Open copy questions for James listed, none decided
 
-Done here: The Persona/Goal/CTA/Metric/Signature/Beyond lines head `Metrics.jsx` and `app/metrics/page.jsx`. `Metrics.css` outlines the header's "Try Hanzo" page-locally (`html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup']`, as /o11y and /playground do), so "View on GitHub" is the one solid on the first screen at 1470×801 and 375×812 (`docs/gallery/metrics/d-first.png`, `p-first.png`). Further down, the site header's own "View on GitHub" thumb ask is the only solid; at the close it steps aside for the close's ask.
+Done here: The Persona/Goal/CTA/Metric/Signature/Beyond lines head `Metrics.jsx` and `app/metrics/page.jsx`. `Metrics.css` outlines the header's "Try Hanzo" page-locally (`html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup']`, as /o11y and /playground do), so "View on GitHub" is the one solid on the first screen at 1470×801 and 375×812 (`docs/gallery/metrics/d-first.png`, `p-first.png`). Further down, the site header's own "View on GitHub" thumb ask is the only solid; at the close it steps aside for the close's ask. Round 4: chapter 03's pressed label pills are white with an ink ring (no fill), so the header ask stays the one solid fill there.
 
 ## 2. Information architecture and navigation
 - [x] One `<main>`; skip link reaches it (the layout's skip link)
@@ -23,7 +23,7 @@ Done here: The Persona/Goal/CTA/Metric/Signature/Beyond lines head `Metrics.jsx`
 - [x] Breadcrumb at depth 2 or more (n/a: depth 1)
 - [x] Link parity: 0 removed, 0 unexpected
 
-Done here: Every link renders through kit `A`: the two asks, the console title, the console's eight product links, "Open in the console ↗", the Logs card and the repo link. `parity.py /metrics`: 59/59 text, 12/12 links.
+Done here: Every link renders through kit `A`: the two asks, the console title, the console's eight product links, "Open in the console ↗", the Logs row and the repo link. `parity.py /metrics`: 59/59 text, 12/12 links.
 
 ## 3. First impression and page narrative
 - [x] Sells in 5 s; something moves within 1 s without input
@@ -33,7 +33,7 @@ Done here: Every link renders through kit `A`: the two asks, the console title, 
 - [x] Ends in a close, `Band`, footer (`LaunchClose`: Sigil, "Get Metrics", the one ask, licence, repo)
 - [x] Card-to-page links use Morph
 
-Done here: The first screen is the 52px h1, the lede, the ask, the toolbar and the chart tile; the line draws in over 1.4 s and slides on. The first spike lands about 1.9 s in, after the line has drawn, and the flag and the dashed cursor ride it left while its traces are open (`d-first.png`). The blank runs are shorter: the hero's bottom padding is 32–48px (was up to 120), the related card's top 56–96px, and the close's bottom 56–96px. With JS off, the h1 and all six chapters render visible in reading order (checked with JavaScript disabled). The Logs card carries `data-morph`.
+Done here: The first screen is the 52px h1, the lede, the ask, the toolbar and the chart tile; the line draws in over 1.4 s and slides on. The first spike lands about 1.9 s in, after the line has drawn, and the flag and the dashed cursor ride it left while its traces are open (`d-first.png`). The blank runs are shorter: the hero's bottom padding is 32–48px (was up to 120), the related card's top 56–96px, and the close's bottom 56–96px. With JS off, the h1 and all six chapters render visible in reading order (checked with JavaScript disabled). The Logs card carries `data-morph`. Round 4: the chapters are a stage, not a spreadsheet: 01 the kinds arrive from three stacks, 02 the query bar turns black and the rows step back, 03 a label column exists only once ticked (the grid grows a column per tick), 04 the spike row opens into its chart and the traces for that window, 05 the query folds into a kept rule, 06 org b and org c slide out. Each chapter is 60svh of scroll (was 78), so the scene is about 4 screens.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (the kit's `lx-cta`)
@@ -66,7 +66,7 @@ Done here: Parity is 59/59 text and 12/12 links. "Agent prompt" is now 12px Zen 
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: `taste.py` reports OK. "01 / 06" now sits under each chapter title (`<h3>` then `<p class="lx-kick mt-ch-k">`), never above. The page no longer loads `Frame.css`, `PinnedChapters.css` or `LaunchConsole.css`: the chapter scene, the prompt and the console are styled in `Metrics.css` with deck values only (#0a0a0a, #0f0f0f, #171717, #262626, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #f5f5f5, #fafafa). The black room's console is Metrics' own chart set dark, not the shared four-service console.
+Done here: `taste.py` reports OK. "01 / 06" now sits under each chapter title (`<h3>` then `<p class="lx-kick mt-ch-k">`), never above. The page no longer loads `Frame.css`, `PinnedChapters.css` or `LaunchConsole.css`: the chapter scene, the prompt and the console are styled in `Metrics.css` with deck values only (#0a0a0a, #0f0f0f, #171717, #262626, #525252, #737373, #a3a3a3, #d4d4d4, #e4e4e7, #f5f5f5, #fafafa). The black room's console is Metrics' own chart set dark, not the shared four-service console. Round 4: the /o11y template is broken at the tail: no full-width RelatedCards, the Logs link is a hairline row inside the black room under the prompt, and the close h2 is 52px (40 on phones), never above the h1.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -75,7 +75,7 @@ Done here: `taste.py` reports OK. "01 / 06" now sits under each chapter title (`
 - [x] Inputs 16px or larger (n/a: none); no bare `:hover`
 - [x] Forks this page deleted: listed at the top
 
-Done here: Every hover is inside `@media (hover: hover)`. "hanzoai/metrics 4 stars" gets a #f2f2f2 fill and a darker underline on hover and scales to .97 on press. The console title, product icons, "Open in the console ↗", service rows and the chart tile all answer on hover and press at .97 (the chart at .99). The selected split tab gets an outline on hover. In Playwright with hover enabled, every one of these changes on hover. A 60-stop Tab crawl at 1470 never lands on an invisible element.
+Done here: Every hover is inside `@media (hover: hover)`. "hanzoai/metrics 4 stars" gets a #f2f2f2 fill and a darker underline on hover and scales to .97 on press. The console title, product icons, "Open in the console ↗", service rows and the chart tile all answer on hover and press at .97 (the chart at .99). The selected split tab gets an outline on hover. In Playwright with hover enabled, every one of these changes on hover. A 60-stop Tab crawl at 1470 never lands on an invisible element. Round 4: the split tabs' pill glides (one pseudo-element moved by transform, 300ms); the console "Building" status is a hollow dot that fills and empties instead of a spinner; the Logs row slides its arrow on hover and presses 1px.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques
@@ -84,7 +84,7 @@ Done here: Every hover is inside `@media (hover: hover)`. "hanzoai/metrics 4 sta
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Idle: the chart line slides by one CSS `translateX` loop, and a spike under the cursor comes about every 5.7 s (comments in both files now say "about every six seconds"). Time: each chapter plays its states once when it comes into view, one beat every 0.9 s, then rests: 01 lights metric, trace, log; 02 swaps PromQL ↔ builder; 03 ticks per-route then per-tenant until you tap; 04 grows the spike row, then its trace and log; 05 brings in "alert rule"; 06 scopes to org a and fades org b, then org c. In the black room, the prompt's query crosses the wire and lands on the line, rides it, and opens its traces. checkout-web builds once and chimes through `lib/sound` (`play('done')`). Pointer: the crosshair and the magnetic close ask. Scroll: only which desktop chapter is on and "Get Metrics" growing. Per-screen probe (`still.cjs`): 0 of 14 desktop screens still. On phone, every page screen moves; only the shared Related card and the footer are still. Reduced motion: 0 running animations after 3 s, with the spike set under the cursor and the console built.
+Done here: Idle: the chart line slides by one CSS `translateX` loop, and a spike under the cursor comes about every 5.7 s (comments in both files now say "about every six seconds"). Time: each chapter plays its states once when it comes into view, one beat every 0.9 s, then rests: 01 lights metric, trace, log; 02 swaps PromQL ↔ builder; 03 ticks per-route then per-tenant until you tap; 04 grows the spike row, then its trace and log; 05 brings in "alert rule"; 06 scopes to org a and fades org b, then org c. In the black room, the prompt's query crosses the wire and lands on the line, rides it, and opens its traces. checkout-web builds once and chimes through `lib/sound` (`play('done')`). Pointer: the crosshair and the magnetic close ask. Scroll: only which desktop chapter is on and "Get Metrics" growing. Per-screen probe (`still.cjs`): 0 of 14 desktop screens still. On phone, every page screen moves; only the shared Related card and the footer are still. Reduced motion: 0 running animations after 3 s, with the spike set under the cursor and the console built. Round 4 signature (motion map: flip-board): the mode in the query bar is a strip of split-flap tiles; each change (one query, PromQL, builder, kept as a rule, org from your token) flips the tiles down left to right; fixed width, so nothing moves beside it.
 
 ## 10. Media
 - [x] `Film` and `Pic` only (n/a: no Hanzo photo or film)
@@ -100,7 +100,7 @@ Done here: The chart's `LivePause` is first in its toolbar's markup (before the 
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Under 900px nothing pins. Each chapter renders its own table above its words with no sticky, and each table plays its chapter once when 55% of it is in view. In chapter 03, the model and route columns replace name and value on phone, so the tick lands on a column you can see. Every word stays. scrollWidth is 375 at 375 and 320 at 320. The console stacks under the prompt with 44px rows and one column of services.
+Done here: Under 900px nothing pins. Each chapter renders its own table above its words with no sticky, and each table plays its chapter once when 55% of it is in view. In chapter 03, the model and route columns replace name and value on phone, so the tick lands on a column you can see. Every word stays. scrollWidth is 375 at 375 and 320 at 320. The console stacks under the prompt with 44px rows and one column of services. Round 4: under 900px one table sticks under the header (top 60px, white runs up under the glass) and the chapter crossing the middle of the screen drives it; the 7 per-chapter copies are gone. At 320 the toolbar stacks (host and pause, query, split, legend), split tabs are 44px tall, scrollWidth 320 with nothing clipped in the page (the shared header's "Try Hanzo" clips at 320: shared chrome). check.mjs flags text sliding under the sticky table on phone: by design, the active chapter sits below it.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -125,7 +125,7 @@ Done here: Each series is drawn once, two windows wide, and slid by one CSS anim
 - [x] `<JsonLd route>` parses
 - [x] Every card is a real link
 
-Done here: `app/metrics/page.jsx` takes `metadata` from `content/pages.json` unedited and renders `<JsonLd route="/metrics" />`. The Logs card is a real `<a href="/cloud/logs">`.
+Done here: `app/metrics/page.jsx` takes `metadata` from `content/pages.json` unedited and renders `<JsonLd route="/metrics" />`. The Logs row is a real `<a href="/cloud/logs">`.
 
 ## 15. Catalogue and product pages
 - [x] Model card (n/a: not a catalogue page)
@@ -133,7 +133,7 @@ Done here: `app/metrics/page.jsx` takes `metadata` from `content/pages.json` une
 - [x] Maker pages linked (n/a)
 - [x] One price figure (n/a: no prices)
 
-Done here: This is a cloud product page in its own order: the live chart, the table that plays per chapter, the black room where the prompt's query lands on Metrics' own chart, one related card, the close.
+Done here: This is a cloud product page in its own order: the live chart, the table that plays per chapter, the black room where the prompt's query lands on Metrics' own chart, the Logs row inside the black room, the close.
 
 ## 16. Developer experience
 - [x] Copy equals display
@@ -141,7 +141,7 @@ Done here: This is a cloud product page in its own order: the live chart, the ta
 - [x] Terminal pauses and ends on a static frame (the console builds once and has a pause)
 - [x] No hand-typed version number
 
-Done here: The agent prompt's Copy writes exactly the displayed string, and copying it also sends the query to the console again. No version numbers appear.
+Done here: The agent prompt's Copy writes exactly the displayed string, and copying it also sends the query to the console again. No version numbers appear. Round 4: "/v1/event/insights" is never ellipsised: `.mt-api` wraps instead.
 
 ## 17. States and resilience
 - [x] Loading, empty, error, offline (n/a: nothing is fetched)
@@ -157,4 +157,4 @@ Done here: Paused, held, reduced-motion and JS-off states each look intentional.
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/metrics.md` (6/10 at `648b7985`), Fixes 1–6 addressed
 
-Done here: Fix 1: chapters play by themselves, desktop and phone. Fix 2: the black room is Metrics' chart set dark, and "Paste and ship" is 17px under the 26px head. Fix 3: one solid. Fix 4: numbers under titles, hidden steps inert, unpinned under 900px. Fix 5: pause first, the console builds once and has a pause, "Agent prompt" is mono capitals, the repo link and console title answer, and this card is corrected. Fix 6: translateX instead of path rewrites, and `useLive` on the chart tile. Gallery: `d-first.png`, `p-first.png`, `d.jpg`, `p.jpg`, `d-sheet-01/04/07.jpg`, `p-sheet-01.jpg`, `room-d.png` and `d.mp4`.
+Done here: Fix 1: chapters play by themselves, desktop and phone. Fix 2: the black room is Metrics' chart set dark, and "Paste and ship" is 17px under the 26px head. Fix 3: one solid. Fix 4: numbers under titles, hidden steps inert, unpinned under 900px. Fix 5: pause first, the console builds once and has a pause, "Agent prompt" is mono capitals, the repo link and console title answer, and this card is corrected. Fix 6: translateX instead of path rewrites, and `useLive` on the chart tile. Gallery: `d-first.png`, `p-first.png`, `d.jpg`, `p.jpg`, `d-sheet-01/04/07.jpg`, `p-sheet-01.jpg`, `room-d.png` and `d.mp4`. Round 4: review (7/10) fixes 1, 2, 3, 5, 6, 7 done; 4 (phone header ask) stays filed in `docs/requests/metrics.md`; 8 is shared (FooterHTML). Proof `docs/gallery/metrics/round4-*.jpg`.

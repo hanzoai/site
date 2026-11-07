@@ -1,6 +1,7 @@
 'use client';
 /* Metrics, v2 launch page (Cloud 3).
-   V2: 8/10 the chapters play by themselves (each runs its table once, then rests) and stack under 900px; the black room is Metrics' own console (the chart, set dark: the prompt's query lands on the line and opens its traces; one build, then rest); the line slides by transform; one solid fill per screen.
+   Round 4: the chapters are a stage (each changes the table itself: stacks arrive, the query bar takes over, a column grows per label, the spike opens into its chart and traces, the query folds into a rule, two orgs slide out) and the mode is a split-flap flip board (motion map: flip-board); one sticky table on phones; the Logs link moved into the black room; close h2 52px.
+   Earlier: the chapters play by themselves (each runs its table once, then rests) and stack under 900px; the black room is Metrics' own console (the chart, set dark: the prompt's query lands on the line and opens its traces; one build, then rest); the line slides by transform; one solid fill per screen.
    Signature: the spike that opens. Three series stream across the chart, split by the label you pick; about every six
    seconds a spike rises, the cursor lands on it and the traces for that window open beside it, because they were never
    in a different system. Click the chart to hold a moment and keep its traces open.
@@ -205,6 +206,18 @@ function useBeat(key, live, calm) {
   return p;
 }
 
+/* The flip board (the page's signature): a departure-board strip of tiles. When the value changes, each tile whose
+   letter changes flips down to the new one, left to right. Padded to a fixed width, so nothing beside it moves. */
+const BOARD = 19; // the longest mode, "org from your token"
+function Flip({ text, n = BOARD, className = '' }) {
+  const s = text.padStart(n, ' ');
+  return (
+    <span className={'mt-board ' + className} role="img" aria-label={text}>
+      {[...s].map((c, j) => <i key={j + ':' + c} className={c === ' ' ? 'sp' : undefined} style={{ '--j': Math.max(0, j - (n - text.length)) }} aria-hidden="true">{c === ' ' ? '' : c}</i>)}
+    </span>
+  );
+}
+
 function Table({ step, on, auto }) {
   const [ref, live, calm] = useLive(0.55); // plays once most of the table is in view, so the reader sees it play
   const p = useBeat(step, live, calm);
@@ -222,7 +235,7 @@ function Table({ step, on, auto }) {
   const rule = step === 4 && p >= 2, scoped = step === 5 && p >= 1;
   const mode = step === 1 ? (alt ? 'builder' : 'PromQL') : rule ? 'kept as a rule' : scoped ? 'org from your token' : 'one query';
   return (
-    <div className="mt-tab" ref={ref} data-step={intro ? 'intro' : step} data-beat={p}>
+    <div className="mt-tab" ref={ref} data-step={intro ? 'intro' : step} data-beat={p} style={step === 2 ? { '--cm': picked.includes('model') ? '.6fr' : '0fr', '--cr': picked.includes('route') ? '1fr' : '0fr', '--ct': picked.includes('tenant') ? '.6fr' : '0fr' } : undefined}>
       <div className="mt-tab-bar">
         <span className="mt-dots" aria-hidden="true"><i /><i /><i /></span>
         <span className="mt-store">Hanzo Datastore</span>
@@ -235,7 +248,7 @@ function Table({ step, on, auto }) {
         ) : (
           <code>{step >= 2 && step <= 4 ? by : ''}rate(http_requests_total[5m]){scoped ? '{tenant="org a"}' : ''}</code>
         )}
-        <span className="mt-mode" key={mode}>{mode}</span>
+        <Flip text={mode} className="mt-mode" />
       </div>
       <div className="mt-grid" role="table" aria-label="Metrics, logs and traces as rows in one column store">
         <div className="mt-row head" role="row">
@@ -252,7 +265,7 @@ function Table({ step, on, auto }) {
           const gone = (step === 5 && ((tenant === 'org b' && p >= 2) || (tenant === 'org c' && p >= 3))) || (intro && kind !== 'metric');
           const grown = step === 3 && i === 0 && p >= 1;
           return (
-            <div key={i} role="row" className={'mt-row' + (hot ? ' hot' : '') + (gone ? ' gone' : '') + (grown ? ' spike' : '')} style={{ '--i': i }}>
+            <div key={i} role="row" className={'mt-row r-' + kind + (hot ? ' hot' : '') + (gone ? ' gone' : '') + (grown ? ' spike' : '')} style={{ '--i': i }}>
               <span role="cell" className="c-kind"><i className={'k-' + kind} />{kind}</span>
               <span role="cell" className="c-name">{name}</span>
               <span role="cell" className="c-value"><b style={{ transform: `scaleX(${grown ? 1 : intro && !hot ? 0.06 : v})` }} /></span>
@@ -262,6 +275,14 @@ function Table({ step, on, auto }) {
             </div>
           );
         })}
+        <div className={'mt-tab-spike' + (step === 3 && p >= 2 ? ' on' : '')} aria-hidden="true">
+          <svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M0 30 L18 28 L30 31 L42 27 L50 29 L56 6 L62 28 L74 26 L86 29 L100 27" /></svg>
+          <ol className="mt-fall">
+            {SPANS.map(([n, x, w], k) => (
+              <li key={n} style={{ '--i': k }}><span className="mt-sn">{n}</span><span className="mt-sb"><b style={{ left: x + '%', width: w + '%' }} /></span></li>
+            ))}
+          </ol>
+        </div>
       </div>
     </div>
   );

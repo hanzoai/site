@@ -290,7 +290,8 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-ch-grid { grid-template-columns: minmax(0, 1fr); }
   .mt-ch-steps { gap: 48px; }
   .mt-ch-grid { gap: 32px; align-items: start; }
-  .mt-ch:not([data-pin]) .mt-ch-obj { position: sticky; top: 64px; z-index: 2; order: -1; padding: 8px 0 12px; background: #fff; }
+  /* the one table sticks under the header; white runs up under the glass header, so no line shows between them */
+  .mt-ch:not([data-pin]) .mt-ch-obj { position: sticky; top: 60px; z-index: 2; order: -1; padding: 8px 0 12px; background: #fff; box-shadow: 0 -60px 0 #fff; }
   .mt-ch:not([data-pin]) .mt-ch-steps { gap: 30svh; padding-bottom: 20svh; }
   .mt-ch:not([data-pin]) .mt-ch-step[data-at='next'], .mt-ch:not([data-pin]) .mt-ch-step[data-at='past'] { opacity: .35; }
   .mt-ch:not([data-pin]) .mt-ch-step { transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
@@ -359,3 +360,65 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-legend { flex-wrap: wrap; gap: 8px 12px; }
   .mt-q { overflow-wrap: anywhere; }
 }
+
+/* ---------- the flip board: the mode in the query bar is a strip of split-flap tiles; a changed tile flips down ---------- */
+.mt-board { flex: none; display: inline-flex; gap: 2px; perspective: 300px; animation: none; }
+.mt-board i { position: relative; display: inline-grid; place-items: center; width: 13px; height: 22px; border-radius: 3px; background: #0a0a0a; color: #fafafa; font: 500 12px/1 var(--mono); font-style: normal; text-transform: uppercase; transform-origin: 50% 0; backface-visibility: hidden; }
+.mt-board i::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255, 255, 255, .18); }
+.mt-board i.sp { background: transparent; }
+.mt-board i.sp::after { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .mt-board i:not(.sp) { animation: mt-flap .42s cubic-bezier(.3, .7, .3, 1) both; animation-delay: calc(var(--j) * 28ms); }
+}
+@keyframes mt-flap { 0% { transform: rotateX(-92deg); background: #262626; } 70% { transform: rotateX(10deg); } 100% { transform: none; } }
+
+/* ---------- the stage: each chapter changes the object, not one row ---------- */
+.mt-row:not(.head) { transition: opacity .4s cubic-bezier(0, 0, .2, 1), background-color .3s cubic-bezier(0, 0, .2, 1), transform .6s cubic-bezier(.16, 1, .3, 1); }
+.mt-grid { position: relative; transition: opacity .4s cubic-bezier(0, 0, .2, 1); }
+.mt-tab-q { transition: background-color .4s cubic-bezier(.4, 0, .2, 1), color .4s cubic-bezier(.4, 0, .2, 1), box-shadow .4s cubic-bezier(.4, 0, .2, 1); }
+.mt-tab-q code { transition: color .4s cubic-bezier(.4, 0, .2, 1); }
+/* 01, one store: the three kinds arrive from three stacks (metrics from the left, traces from above, logs from the right) */
+.mt-tab[data-step='0'][data-beat='0'] .mt-row.r-metric, .mt-tab[data-step='0'] .mt-row.r-metric:not(.hot) { transform: translateX(-56px); opacity: .12; }
+.mt-tab[data-step='0'] .mt-row.r-trace:not(.hot) { transform: translateY(-36px); opacity: .12; }
+.mt-tab[data-step='0'] .mt-row.r-log:not(.hot) { transform: translateX(56px); opacity: .12; }
+/* 02, PromQL or the builder: the query bar is the object; the rows step back */
+.mt-tab[data-step='1'] .mt-grid { opacity: .28; }
+.mt-tab[data-step='1'] .mt-tab-q { background: #0a0a0a; color: #fafafa; }
+.mt-tab[data-step='1'] .mt-tab-q code { color: #fafafa; }
+.mt-tab[data-step='1'] .mt-pills i { background: #262626; color: #fafafa; }
+.mt-tab[data-step='1'] .mt-board i { background: #fafafa; color: #0a0a0a; }
+.mt-tab[data-step='1'] .mt-board i::after { background: rgba(0, 0, 0, .14); }
+.mt-tab[data-step='1'] .mt-board i.sp { background: transparent; }
+/* 03, labels: a label column exists only once it is ticked; the grid grows a column per tick */
+@media (min-width: 900px) {
+  .mt-row { transition-property: opacity, background-color, transform, grid-template-columns; }
+  .mt-tab[data-step='2'] .mt-row { grid-template-columns: 96px 1.8fr .9fr var(--cm, .6fr) var(--cr, 1fr) var(--ct, .6fr); }
+  .mt-tab[data-step='2'] .mt-row > span { min-width: 0; }
+}
+/* 04, the number leads somewhere: the spike row opens into its chart and the traces for that window */
+.mt-tab-spike { position: absolute; z-index: 2; left: 1px; right: 1px; top: 94px; bottom: 1px; border-radius: 0 0 23px 23px; display: grid; grid-template-rows: 1fr auto; gap: 14px; padding: 14px 24px 18px; background: #fff; border-top: 1px solid rgba(0, 0, 0, .1); clip-path: inset(0 0 100% 0); visibility: hidden; transition: clip-path .6s cubic-bezier(.16, 1, .3, 1), visibility 0s .6s; }
+.mt-tab-spike.on { clip-path: inset(0); visibility: visible; transition: clip-path .6s cubic-bezier(.16, 1, .3, 1), visibility 0s; }
+.mt-tab-spike svg { width: 100%; height: 100%; min-height: 80px; overflow: visible; }
+.mt-tab-spike svg { clip-path: inset(0 100% 0 0); transition: clip-path 1.1s cubic-bezier(.4, 0, .2, 1) .2s; }
+.mt-tab-spike.on svg { clip-path: inset(0 -2% 0 0); }
+.mt-tab-spike path { fill: none; stroke: #0a0a0a; stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.mt-tab-spike.on .mt-sb b { transform: scaleX(1); transition-delay: calc(.5s + var(--i) * 80ms); }
+.mt-tab-spike .mt-fall li { color: var(--ink); }
+/* 05, alerts are saved queries: the query folds down into a kept rule, the rows step back */
+.mt-tab[data-step='4'][data-beat='2'] .mt-grid { opacity: .28; }
+.mt-tab[data-step='4'][data-beat='2'] .mt-tab-q { background: #f5f5f5; box-shadow: inset 0 0 0 1.5px #0a0a0a; }
+@media (prefers-reduced-motion: no-preference) { .mt-tab[data-step='4'][data-beat='2'] .mt-tab-q code { display: inline-block; transform-origin: 50% 0; animation: mt-fold .6s cubic-bezier(.16, 1, .3, 1) both; } }
+@keyframes mt-fold { from { transform: perspective(500px) rotateX(-70deg); opacity: 0; } }
+/* 06, scoped to your org: org b and org c slide out of the table */
+.mt-row.gone { opacity: .06; transform: translateX(40px); }
+/* the chapter words sit right above the rail, not a screen-half away from it */
+.mt-ch[data-pin] .mt-ch-step { align-self: end; }
+/* phones keep the query bar to the query: the board stays on wider screens */
+@media (max-width: 899px) { .mt-board { display: none; } }
+@media (max-width: 899px) {
+  .mt-tab-spike { top: 80px; gap: 8px; padding: 10px 16px 12px; }
+  .mt-tab-spike svg { min-height: 40px; }
+  .mt-tab-spike .mt-fall { gap: 6px; }
+  .mt-tab-spike .mt-fall li { height: 22px; grid-template-columns: 128px 1fr; }
+}
+@media (max-width: 899px) { .mt-tab-spike { border-radius: 0 0 15px 15px; } }
