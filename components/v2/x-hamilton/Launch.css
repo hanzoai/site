@@ -139,7 +139,8 @@
 
 /* ---------- Finale: one dark ending (closing line + ask + object, Get X, related links) ---------- */
 .l2-fin-before { padding-block: clamp(96px, 10vw, 160px) 0; }
-.l2-band { text-align: left; padding-block: clamp(96px, 11vw, 168px) clamp(72px, 8vw, 112px); }
+.l2-band { position: relative; text-align: left; padding-block: clamp(96px, 11vw, 168px) clamp(72px, 8vw, 112px); }
+.l2-band-obj { color: var(--ink); }
 .l2-band-top { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 48px; align-items: center; }
 .l2-band-copy { grid-column: 1 / span 6; }
 .l2-band-obj { grid-column: 8 / span 5; }
