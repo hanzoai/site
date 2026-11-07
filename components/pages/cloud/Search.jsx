@@ -2,7 +2,10 @@
 /* Search (v2, Cloud 4 chat). Archetype A, Launch: Stage hero → four chapters → a dark "how it works" room driven by its
    three steps → frameworks → pricing with a fit-finder → Get Search → one closing band. Ink, greys and white only.
    Persona: a developer adding search to their docs or product. Goal: read the docs and create an index.
-   CTA: "Read the docs" (hero, sticky header on desktop, close; data-cta primary / close).
+   CTA: "Read the docs" (hero solid, data-thumb; data-cta primary / close). Desktop: the shared header outlines its
+   "Try Hanzo" while a "Read the docs" is on screen and carries "Read the docs" solid once the hero ask scrolls away.
+   Phone (≤700px): the header keeps a solid "Try Hanzo", so the hero's "Read the docs" sits quiet (outlined) and the
+   shared slim bar carries it after the hero; one solid per viewport at both widths.
    Metric: api_key_created (developers, MASTER §1).
    V2: 8/10 a Spotlight-size search types on arrival and settles; one query answered four ways in pinned chapters (phone pictures run when seen); the dark room runs its three steps by itself (pausable, hover holds); the close replays the hero query centred under one merged rank; page-scoped deck tokens, 44px phone targets
    Signature: one query, four answers. "Kubernets" types itself into a search bar the size of the screen, and as you scroll
@@ -296,12 +299,11 @@ const DOCN = [1000, 5000, 10000, 25000, 50000, 100000, 250000, 1000000];
 const k = (n) => (n >= 1000000 ? n / 1000000 + 'M' : n >= 1000 ? n / 1000 + 'k' : String(n));
 
 /* Beyond: set projects and docs per project; the plan whose limits cover both lights up. */
-const fillOf = (el, i, n) => el && el.style.setProperty('--p', (i / (n - 1)) * 100 + '%');
+const fillOf = (i, n) => ({ '--p': (i / (n - 1)) * 100 + '%' }); // rendered inline so server and client agree
 
 function Pricing() {
   const [p, setP] = useState(3);
   const [d, setD] = useState(2);
-  const pr = useRef(null), dr = useRef(null);
   const box = useRef(null);
   const seen = useInView(box, { amount: 0.6, once: true });
   const calm = useCalm();
@@ -315,7 +317,6 @@ function Pricing() {
     t = setTimeout(go, 200);
     return () => clearTimeout(t);
   }, [seen, calm]);
-  useEffect(() => { fillOf(pr.current, p, PROJ.length); fillOf(dr.current, d, DOCN.length); }, [p, d]);
   const proj = PROJ[p], docs = DOCN[d];
   const fit = PLANS.findIndex(([, , , , , [mp, md]]) => proj <= mp && docs <= md);
   return (
@@ -326,8 +327,8 @@ function Pricing() {
           <p className="l2-body">Pay for hosted search, vector, and AI. Self-host Meilisearch free forever.</p>
           <div className="se2-fit" role="group" aria-label="Which plan fits" ref={box} onPointerDown={() => { touched.current = true; }} onKeyDown={() => { touched.current = true; }}>
             <p className="l2-kick">Which plan fits</p>
-            <label><span>Projects</span><b className="l2-mono">{proj}</b><input ref={pr} className="l2-range" type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
-            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input ref={dr} className="l2-range" type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
+            <label><span>Projects</span><b className="l2-mono">{proj}</b><input className="l2-range" style={fillOf(p, PROJ.length)} type="range" min="0" max={PROJ.length - 1} value={p} onChange={(e) => setP(+e.target.value)} aria-valuetext={proj + ' projects'} /></label>
+            <label><span>Docs per project</span><b className="l2-mono">{k(docs)}</b><input className="l2-range" style={fillOf(d, DOCN.length)} type="range" min="0" max={DOCN.length - 1} value={d} onChange={(e) => setD(+e.target.value)} aria-valuetext={k(docs) + ' docs per project'} /></label>
             <p className="se2-fit-r" aria-live="polite"><span className="l2-mono">fits</span> <b>{PLANS[fit][0]}</b></p>
           </div>
         </div>
@@ -389,7 +390,7 @@ const SIDE = [['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], [
 
 export default function Search() {
   return (
-    <main id="main" className="l2-page se2" data-ask="off">
+    <main id="main" className="l2-page se2">
       <StageHero look="rise" kick="Hybrid Search + RAG" title="Hanzo Search" sub="Keyword and meaning in the same query" acts={[['Read the docs', DOCS], ['GitHub', GH]]}>
         <Ask />
       </StageHero>
