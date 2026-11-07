@@ -8,7 +8,8 @@
    Metric: api_key_created.
    Signature: one machine, up. hanzo fabric up starts the node; it joins the fabric, reports the hardware it can serve,
    work is routed to it and each job lights its level on the five-level ladder that scales a provider's share, and
-   batches settle as Merkle roots on Lux. It loops by itself while seen (pause in its toolbar); point at a level and the
+   batches settle as Merkle roots on Lux. It runs once by itself while seen (about nine seconds) and rests serving; play in
+   its toolbar replays it; point at a level and the
    node takes a job of that level and settles a root for it.
    Beyond: drive it. In chapter five press up, join or stop: the node starts on the active network, switches and starts,
    or stops by its recorded pid while the other process that happens to share the name keeps running.
@@ -36,7 +37,8 @@ const LEVELS = ['embeddings and small models', 'chat-sized models', 'large and m
 const HW = ['Consumer cards', 'datacenter accelerators', 'Apple Silicon'];
 const HEX = '0123456789abcdef';
 const root = (n) => { let x = (n * 2654435761) >>> 0; return '0x' + Array.from({ length: 8 }, () => { x = (x * 1103515245 + 12345) >>> 0; return HEX[(x >>> 16) & 15]; }).join('') + '…'; };
-const JOBS = [1, 0, 2, 4, 1, 3, 0, 2];
+const JOBS = [1, 0, 2, 4];
+const END = 3 + JOBS.length * 2 - 1; // up, starting, joined, then four jobs lit and settled: about nine seconds, once
 const pad = (n) => String(n).padStart(2, '0');
 
 /* ---------- the hero object: one machine ---------- */
@@ -47,11 +49,12 @@ function Machine() {
   const [pick, setPick] = useState(-1); // a level the pointer has routed a job to
   const [extra, setExtra] = useState(0); // roots settled for those jobs
   useEffect(() => {
-    if (calm) { setT(9); return; }
-    if (!live || paused || pick >= 0) return;
-    const id = setTimeout(() => setT((v) => (v >= 3 + JOBS.length * 2 ? 3 : v + 1)), t === 0 ? 700 : t < 3 ? 1000 : 1150);
+    if (calm) { setT(END); return; }
+    if (!live || paused || pick >= 0 || t >= END) return; // MASTER §4.1: it runs once, then rests serving; play replays
+    const id = setTimeout(() => setT((v) => v + 1), t === 0 ? 700 : t < 3 ? 1000 : 950);
     return () => clearTimeout(id);
   }, [t, live, calm, paused, pick]);
+  const toggle = () => { if (t >= END) { setT(0); setExtra(0); if (paused) pause(); } else pause(); };
   const route = (i) => { setPick(i); setExtra((x) => x + 1); if (t < 3) setT(3); };
   const status = t === 0 ? 'stopped' : t === 1 ? 'starting' : t === 2 ? 'joined' : 'serving';
   const k = t >= 3 ? Math.floor((t - 3) / 2) % JOBS.length : -1;
@@ -63,7 +66,7 @@ function Machine() {
   return (
     <div className="nd-mac" ref={ref} data-status={status}>
       <div className="nd-mac-top">
-        <LivePause paused={paused} onToggle={pause} inline className="nd-pause" />
+        <LivePause paused={paused || t >= END} onToggle={toggle} inline className="nd-pause" />
         <span className="nd-led" aria-hidden="true" />
         <span className="nd-mac-n">hanzod</span>
         <span className="nd-status" aria-live="polite">{status}</span>
@@ -76,11 +79,10 @@ function Machine() {
         </div>
         <div className="nd-cell nd-net">
           <p className="nd-k">joins the fabric</p>
-          <svg viewBox="0 0 120 70" aria-hidden="true" className={t >= 2 ? 'on' : ''}>
-            {[[60, 35, 18, 14], [60, 35, 104, 12], [60, 35, 22, 58], [60, 35, 100, 60], [18, 14, 22, 58], [104, 12, 100, 60]].map(([a, b, c, d], i) => <line key={i} x1={a} y1={b} x2={c} y2={d} style={{ transitionDelay: i * 0.06 + 's' }} />)}
-            {[[18, 14], [104, 12], [22, 58], [100, 60]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="5" />)}
-            <circle cx="60" cy="35" r="9" className="me" />
-          </svg>
+          {/* the machine's own view of the fabric: one transport to each peer it can see, drawn in as it joins (no map: that is /network's) */}
+          <ul className={'nd-peers' + (t >= 2 ? ' on' : '')} aria-hidden="true">
+            {['peer 03', 'peer 05', 'peer 06'].map((p, i) => <li key={p} style={{ '--i': i }}><span>hanzod</span><i><b /></i><span>{p}</span></li>)}
+          </ul>
           <p className="nd-k2">peer-to-peer</p>
         </div>
         <div className="nd-cell nd-lv">

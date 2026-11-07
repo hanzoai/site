@@ -7,8 +7,8 @@
    carries the same label from data-thumb).
    Metric: api_key_created.
    Signature: an object, kept. An object breaks into ten data shards and four parity shards that fly to fourteen volume
-   servers; any four go dark and the object still reads, back from the ten that are left. It loops by itself while seen
-   (pause first in the stage's toolbar). Scale rhythm: the object starts whole and big, shrinks to fourteen shards as
+   servers; any four go dark and the object still reads, back from the ten that are left. It runs twice by itself while
+   seen (about ten seconds) and rests reading; play, first in the stage's toolbar, replays it. Scale rhythm: the object starts whole and big, shrinks to fourteen shards as
    they leave, and fills back when it reads.
    Beyond: lose four yourself. Tap any volume servers dark, up to the four Hanzo says can be lost, and watch the object
    keep reading whichever four you choose; point at a volume first and it names the shard it holds; Replay hands the
@@ -55,11 +55,12 @@ function Kept() {
   const [hov, setHov] = useState(null); // the volume a fine pointer is on
   useEffect(() => {
     if (calm) { setPhase(3); return; }
-    if (!live || pick || paused || hov !== null) return;
+    // MASTER §4.1: it runs twice through (two different fours lost, about ten seconds), then rests reading; play replays
+    if (!live || pick || paused || hov !== null || (cycle >= 1 && phase === 3)) return;
     // the very first break-up starts within half a second, so the first screen is moving before you look for it
     const t = setTimeout(() => {
       if (phase === 3) { setPhase(0); setCycle((c) => c + 1); } else setPhase(phase + 1);
-    }, phase === 0 && cycle === 0 ? 450 : [1500, 1800, 1300, 2600][phase]);
+    }, phase === 0 && cycle === 0 ? 450 : [1300, 1500, 1200, 2000][phase]);
     return () => clearTimeout(t);
   }, [phase, cycle, live, calm, pick, paused, hov]);
   const auto = useMemo(() => new Set(Array.from({ length: N }, (_, i) => i).sort((a, b) => hash(a + cycle * N) - hash(b + cycle * N)).slice(0, 4)), [cycle]);
@@ -71,11 +72,12 @@ function Kept() {
     setPhase(next.size ? 3 : 1);
   };
   const reads = phase === 3;
+  const rest = !calm && (!!pick || (cycle >= 1 && phase === 3)); // settled: by hand, or after its two runs
   const live1 = (i) => phase >= 1 && !(phase >= 2 && lost.has(i));
   return (
     <div className="s3-kept" ref={ref} data-phase={phase}>
       <div className="s3-bar">
-        <LivePause paused={paused} onToggle={pause} inline className="s3-pause" />
+        <LivePause paused={paused || rest} onToggle={() => { if (rest) { setPick(null); setPhase(0); setCycle(0); if (paused) pause(); } else pause(); }} inline className="s3-pause" />
         <p className="lx-kick s3-name">Storage</p>
         <div className="s3-legend" aria-hidden="true">
           <span><i />ten data shards</span><span><i className="p" />four parity</span><span><i className="x" />four can be lost</span>

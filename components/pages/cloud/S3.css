@@ -59,6 +59,10 @@
 .s3 .lx-pin-k { order: 1; margin-top: 12px; }
 .s3 .lx-pin-d { order: 2; }
 
+/* every text link presses (the kit's lx-text has no :active) */
+.s3 .lx-text { transition: text-decoration-color .15s var(--e-out), transform .15s var(--e-out); }
+.s3 .lx-text:active { transform: translateY(1px); transition-duration: .09s; }
+
 /* the chapters' diagram: a hairline on paper; a lit role is outlined in ink, a quiet one a flat grey tile */
 .s3-roles { border-radius: 24px; border: 1px solid var(--line); overflow: hidden; }
 .s3-dia { position: relative; height: min(380px, 44svh); margin: 0 4%; }
