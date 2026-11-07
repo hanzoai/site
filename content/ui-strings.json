@@ -162,6 +162,72 @@
       "where": "/products/* console: runs Hanzo's own request again (icon)",
       "reason": "control label",
       "needs_james": true
+    },
+    "named_here": {
+      "string": "Named on this page",
+      "where": "/blockchain/* chain finder: the tick when this product names the chain (icon-only until approved)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "not_named_here": {
+      "string": "Not named on this page",
+      "where": "/blockchain/* chain finder: the dash when it does not",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "others_name": {
+      "string": "Other products that name",
+      "where": "/blockchain/* chain finder: the count of other products (followed by the chain's name)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "kind": {
+      "string": "Kind",
+      "where": "/blockchain/directory kind filter group",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "marked": {
+      "string": "Marked",
+      "where": "/blockchain/directory card sheet: a product marked for the chain",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "not_marked": {
+      "string": "Not marked",
+      "where": "/blockchain/directory: a product not marked for the chain",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "no_match": {
+      "string": "No chain matches.",
+      "where": "/blockchain/directory empty state (shown as an empty frame with this as its accessible name until approved)",
+      "reason": "status message",
+      "needs_james": true
+    },
+    "int_only": {
+      "string": "Only the Hanzo lines",
+      "where": "/integrations/* editor and chapters: dims every line that does not point at Hanzo (switch, icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "int_hits": {
+      "string": "lines point at Hanzo",
+      "where": "/integrations/* switch: read after the count (2 of 9 …)",
+      "reason": "accessibility",
+      "needs_james": true
+    },
+    "int_copy": {
+      "string": "Copy",
+      "where": "/integrations/* editor and chapters: copy the sample (icon)",
+      "reason": "control label",
+      "needs_james": true
+    },
+    "int_copy_base": {
+      "string": "Copy base URL",
+      "where": "/integrations/* editor side pane (icon)",
+      "reason": "control label",
+      "needs_james": true
     }
   }
 }
