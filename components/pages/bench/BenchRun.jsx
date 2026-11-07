@@ -52,16 +52,20 @@ const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 /* the playhead: one index the card and every chapter read. It walks the rows once (a demo plays and rests,
    PLAN-COMPONENTS 2.9) and comes back to Hanzo's first row; the card's pause control stops or replays it. It ticks
    only while the tab is visible. */
+/* The playhead only lights rows; the card's big figure stays on Hanzo's own row (the page's claim) unless the reader
+   picks a row, and a pick stops the walk for good. */
 function makeWalk() {
-  let i = 0, n = 1, id = 0, hold = 0, left = 0, on = false;
+  let i = 0, n = 1, id = 0, hold = 0, left = 0, on = false, pin = -1;
   const subs = new Set();
   const emit = () => subs.forEach((f) => f());
   const stop = () => { clearInterval(id); on = false; emit(); };
   return {
     get: () => i,
+    pinned: () => pin,
     playing: () => on,
     sub: (f) => { subs.add(f); return () => subs.delete(f); },
     set: (k, pause = 0) => { i = k; if (pause) hold = Date.now() + pause; emit(); },
+    pick: (k) => { clearInterval(id); on = false; pin = k; i = k; emit(); },
     stop,
     start: (count) => {
       n = Math.max(1, count);
@@ -78,14 +82,24 @@ function makeWalk() {
   };
 }
 const useAt = (walk) => useSyncExternalStore(walk.sub, walk.get, () => 0);
+const usePin = (walk) => useSyncExternalStore(walk.sub, walk.pinned, () => -1);
 const usePlaying = (walk) => useSyncExternalStore(walk.sub, walk.playing, () => false);
 
-/* what the playhead reads at row i: [row, figure, what the figure is] */
-function readout(c, i) {
+/* Hanzo's own row: the first row that names Hanzo or one of its models, else the table's first row */
+const HANZO = /hanzo|\bzen|enso|\bkai/i;
+function anchorOf(c) {
+  if (!c) return 0;
+  const labels = c.kind === 'trend' ? c.points.map((p) => p.who) : c.kind === 'one' ? [c.label] : c.rows.map((r) => r.label);
+  const k = labels.findIndex((l) => HANZO.test(String(l)));
+  return k < 0 ? 0 : k;
+}
+
+/* what the card reads at row i: [row, figure, what the figure is]; on a multi-column table, the column in view */
+function readout(c, i, col = 0) {
   if (!c) return null;
   if (c.kind === 'trend') { const p = c.points[i % c.points.length]; return [p.who, p.val, p.when]; }
   if (c.kind === 'versus') { const r = c.rows[i % c.rows.length]; return [r.label, r.a.s, c.heads[0]]; }
-  if (c.kind === 'bars') { const r = c.rows[i % c.rows.length]; return [r.label, r.cells[0].s, c.cols[0].name]; }
+  if (c.kind === 'bars') { const r = c.rows[i % c.rows.length]; const k = Math.min(col, r.cells.length - 1); return [r.label, r.cells[k].s, c.cols[k].name]; }
   return [c.label, c.s, c.head];
 }
 const rowsOf = (c) => (!c ? 0 : c.kind === 'trend' ? c.points.length : c.kind === 'one' ? 1 : c.rows.length);
@@ -100,26 +114,28 @@ function scaler(vals) {
 }
 const isLog = (vals) => { const v = vals.filter((x) => x != null && x > 0); return v.length > 1 && Math.max(...v) / Math.min(...v) > 50; };
 
-/* the live readout: the row the playhead is on, its figure huge */
-function Readout({ c, walk, big }) {
-  const at = useAt(walk);
-  const playing = usePlaying(walk);
-  const r = readout(c, at);
+/* the card's figure: Hanzo's own row, huge; a row the reader points at or picks takes its place. It rolls only when
+   the reader changes the row or the column, never by itself. */
+function Readout({ c, walk, col = 0 }) {
+  const pin = usePin(walk);
+  const [hover, setHover] = useState(-1);
+  useEffect(() => { const f = (e) => setHover(e.detail); addEventListener('xbr-hover', f); return () => removeEventListener('xbr-hover', f); }, []);
+  const k = hover >= 0 ? hover : pin >= 0 ? pin : anchorOf(c);
+  const r = readout(c, k, col);
   if (!r) return null;
-  const n = rowsOf(c);
   return (
-    <div className={'xbr-ro' + (big ? ' big' : '')} aria-hidden="true">
+    <div className="xbr-ro" aria-hidden="true">
       <span className="xbr-ro-l">{r[0]}</span>
       <span className="xbr-ro-vw">
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.b key={at + '|' + r[1]} className={'xbr-ro-v v2f-num' + (r[1].length > 10 ? ' long' : r[1].length > 7 ? ' mid' : '')} initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.28, ease: EASE } }} transition={{ duration: 0.6, ease: EASE }}>{r[1]}</motion.b>
+          <motion.b key={k + '|' + col + '|' + r[1]} className={'xbr-ro-v v2f-num' + (r[1].length > 10 ? ' long' : r[1].length > 7 ? ' mid' : '')} initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '-100%', transition: { duration: 0.28, ease: EASE } }} transition={{ duration: 0.6, ease: EASE }}>{r[1]}</motion.b>
         </AnimatePresence>
       </span>
       <span className="xbr-ro-s x-mono">{r[2]}</span>
-      {n > 1 && <i className={'xbr-ro-t' + (playing ? '' : ' rest')} key={at} />}
     </div>
   );
 }
+const hoverRow = (k) => dispatchEvent(new CustomEvent('xbr-hover', { detail: k }));
 
 /* pause or replay the playhead (WCAG 2.2.2: anything that moves for more than 5 s can be stopped) */
 function Walker({ walk, n }) {
@@ -143,7 +159,10 @@ function Turn({ c, walk, slug }) {
   const [chart, setChart] = useState(false);
   const [col, setCol] = useState(0);
   const turned = useRef(false);
-  const at = useAt(walk);
+  const walkAt = useAt(walk);
+  const pin = usePin(walk);
+  const at = pin >= 0 ? pin : walkAt;
+  const own = anchorOf(c);
   useEffect(() => {
     if (calm) { setChart(true); return; }
     if (!seen || turned.current) return;
@@ -162,7 +181,9 @@ function Turn({ c, walk, slug }) {
       ))}
     </div>
   );
-  const pick = (i) => walk.set(i, 8000);
+  const pick = (i) => { hoverRow(-1); walk.pick(i); };
+  const near = (i) => (e) => { if (e.pointerType === 'mouse') hoverRow(i); };
+  const away = () => hoverRow(-1);
 
   let body = null;
   if (c.kind === 'trend') {
@@ -179,7 +200,7 @@ function Turn({ c, walk, slug }) {
         <ol className="xbr-tr-pts">
           {c.points.map((p, i) => (
             <motion.li key={p.s} layout={!calm} transition={SPRING} className={at % n === i ? 'lit' : ''} style={chart ? { left: X(i) + '%', bottom: Y(p.v) + '%' } : undefined}>
-              <button type="button" aria-label={p.s} onClick={() => pick(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)}>
+              <button type="button" aria-label={p.s} onClick={() => pick(i)} onPointerEnter={near(i)} onPointerLeave={away}>
                 <motion.span layout={calm ? false : 'position'} transition={SPRING} className="xbr-tr-who">{p.who}</motion.span>
                 <motion.span layout={calm ? false : 'position'} transition={SPRING} className="xbr-tr-val x-mono">{p.val}</motion.span>
                 <motion.span layout={calm ? false : 'position'} transition={SPRING} className="xbr-tr-when">{p.when}</motion.span>
@@ -198,7 +219,7 @@ function Turn({ c, walk, slug }) {
         <div className="xbr-bars-h x-mono"><span><i className="xbr-key a" />{c.heads[0]}</span><span><i className="xbr-key b" />{c.heads[1]}</span></div>
         <ul>
           {c.rows.map((r, i) => (
-            <li key={i} className={at % c.rows.length === i ? 'lit' : ''} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} onClick={() => pick(i)}>
+            <li key={i} className={at % c.rows.length === i ? 'lit' : ''} onPointerEnter={near(i)} onPointerLeave={away} onClick={() => pick(i)}>
               <span className="xbr-bl">{r.label}</span>
               <i className="xbr-bar ba" style={{ '--xbr-w': Math.max(0.004, r.a.v / s[i]) }} /><b className="xbr-v va x-mono">{r.a.s}</b>
               <i className="xbr-bar bb" style={{ '--xbr-w': Math.max(0.004, r.b.v / s[i]) }} /><b className="xbr-v vb x-mono">{r.b.s}</b>
@@ -214,13 +235,13 @@ function Turn({ c, walk, slug }) {
       <div className={'xbr-bars' + (chart ? ' chart' : '')}>
         {c.cols.length > 1 && (
           <div className="xbr-cols" role="group" aria-label={c.head0}>
-            {c.cols.map((k, j) => <button key={k.name} type="button" aria-pressed={col === j} onClick={() => { setCol(j); turned.current = true; setChart(true); }}>{k.name}</button>)}
+            {c.cols.map((k, j) => <button key={k.name} type="button" aria-pressed={col === j} onClick={() => { setCol(j); walk.stop(); play('tick'); turned.current = true; setChart(true); }}>{k.name}</button>)}
           </div>
         )}
         <div className="xbr-bars-h x-mono"><span>{c.head0}</span><span>{c.cols[col].name}{chart && isLog(vals) ? ' · ' + ui('log') : ''}</span></div>
         <ul>
           {c.rows.map((r, i) => (
-            <li key={i} className={(at % c.rows.length === i ? 'lit' : '') + (r.cells[col].v == null ? ' none' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} onClick={() => pick(i)}>
+            <li key={i} className={(at % c.rows.length === i ? 'lit' : '') + (i === own ? ' own' : '') + (r.cells[col].v == null ? ' none' : '')} onPointerEnter={near(i)} onPointerLeave={away} onClick={() => pick(i)}>
               <span className="xbr-bl">{r.label}</span>
               <i className="xbr-bar ba" style={{ '--xbr-w': Math.max(0.004, w(r.cells[col].v)) }} />
               <motion.b layout={calm ? false : 'position'} transition={SPRING} className="xbr-v va x-mono">{r.cells[col].s}</motion.b>
@@ -245,7 +266,7 @@ function Turn({ c, walk, slug }) {
         {c.kind !== 'one' && <div className="xbr-turn-ctl"><Walker walk={walk} n={rowsOf(c)} />{view}</div>}
       </figcaption>
       <div className="xbr-turn-g">
-        {c.kind !== 'one' && <Readout c={c} walk={walk} />}
+        {c.kind !== 'one' && <Readout c={c} walk={walk} col={col} />}
         <LayoutGroup id={id}><div className="xbr-turn-b">{body}</div></LayoutGroup>
       </div>
     </figure>
@@ -333,36 +354,52 @@ function Typed({ text, delay = 0 }) {
   }, [text, delay, calm]);
   return <span ref={ref}>{text}</span>;
 }
+/* the reply as the page already transcribes it: the run ids the page links, then its own figures. It types itself once
+   when the room is reached (a demo that plays and rests); a press replays it and, only if api.hanzo.ai answers within
+   6 s, swaps in the raw record. A failed read never shows: the transcribed reply stays (MASTER part 17). */
+function snapOf(doc) {
+  const c = doc.chart;
+  const rows = !c ? [] : c.kind === 'trend' ? c.points.map((p) => [p.who, p.val]) : c.kind === 'one' ? [[c.label, c.s]]
+    : c.kind === 'versus' ? c.rows.map((r) => [r.label, r.a.s]) : c.rows.map((r) => [r.label, r.cells[0].s]);
+  return { ids: (doc.source && doc.source.ids) || [], rows: rows.slice(0, 8) };
+}
 function Source({ doc }) {
   const src = doc.source;
-  const [st, setSt] = useState({ k: 'idle' });
+  const calm = useReducedMotion();
+  const room = useRef(null);
+  const seen = useInView(room, { amount: 0.35, once: true });
+  const snap = useMemo(() => snapOf(doc), [doc]);
+  const [st, setSt] = useState({ k: 'idle', n: 0 });
+  useEffect(() => { if (seen && src) setSt((s) => (s.k === 'idle' ? { k: 'ok', n: 1 } : s)); }, [seen, src]);
   const ask = async () => {
-    setSt({ k: 'load' });
+    setSt((s) => ({ k: 'ok', n: s.n + 1 }));
+    const ab = new AbortController();
+    const t = setTimeout(() => ab.abort(), 6000);
     try {
-      const r = await fetch(src.url, { headers: { accept: 'application/json' } });
-      if (!r.ok) throw new Error(String(r.status));
+      const r = await fetch(src.url, { headers: { accept: 'application/json' }, signal: ab.signal });
+      if (!r.ok) return;
       const j = await r.json();
       const all = Array.isArray(j.data) ? j.data : [];
       // a benchmark-wide query answers with every run; keep the runs this page links, in its order
       const want = src.ids.length > 1 ? src.ids : null;
       const runs = want ? want.map((id) => all.find((x) => x.id === id)).filter(Boolean) : all.slice(0, 6);
-      setSt(runs.length ? { k: 'ok', runs } : { k: 'none' });
-    } catch (e) {
-      setSt({ k: 'err', e: String(e.message || e) });
-    }
+      if (runs.length) setSt((s) => ({ k: 'live', n: s.n, runs }));
+    } catch { /* unreachable: the transcribed reply stays */ } finally { clearTimeout(t); }
   };
+  const reply = '{ "data": [\n' + snap.ids.map((id) => '  "' + id + '"').join(',\n') + '\n] }';
+  const figs = snap.rows.map(([l, v]) => l + '  ' + v).join('\n');
   const shown = src ? src.url.replace(/^https:\/\//, '') : '';
   return (
     <FamRoom className="xbr-src" aria-label={src ? 'api.hanzo.ai' : doc.command}>
-      <div className="v2f-wrap v2f-grid xbr-src-g">
+      <div ref={room} className="v2f-wrap v2f-grid xbr-src-g">
         <div className="xbr-src-l">
           {src ? (
             <>
               <p className="xbr-src-u x-mono"><b>GET</b> <span>{shown}</span></p>
               <div className="xbr-src-acts">
                 <Magnetic>
-                  <button type="button" className="xbr-ask" onClick={ask} disabled={st.k === 'load'} aria-label={ui('read_run')} aria-busy={st.k === 'load'}>
-                    <i className={'xbr-ask-d' + (st.k === 'load' ? ' on' : '')} aria-hidden="true" /><Play />
+                  <button type="button" className="xbr-ask" onClick={ask} aria-label={ui('read_run')}>
+                    <i className="xbr-ask-d" aria-hidden="true" /><Play />
                   </button>
                 </Magnetic>
                 <a className="xbr-raw" href={src.url} target="_blank" rel="noopener noreferrer" aria-label="JSON"><Braces /></a>
@@ -371,14 +408,18 @@ function Source({ doc }) {
           ) : (
             doc.command && <Cmd text={doc.command} />
           )}
-          <p className="x-sr" aria-live="polite">{st.k === 'load' ? ui('loading') : st.k === 'err' ? ui('failed') : ''}</p>
         </div>
         <div className="xbr-src-r">
           <div className="xbr-term">
             <div className="xbr-term-h" aria-hidden="true"><i /><i /><i /><span className="x-mono">{src ? 'api.hanzo.ai' : 'shell'}</span></div>
             <div className="xbr-term-b" data-lenis-prevent>
-              {st.k === 'load' && <div className="xbr-skel" aria-hidden="true">{[0, 1, 2].map((i) => <i key={i} style={{ '--k': i }} />)}</div>}
-              {st.k === 'ok' && (
+              {src && st.k !== 'live' && (
+                <div className="xbr-src-reply x-mono" key={st.n}>
+                  <pre className="xbr-src-json">{st.k === 'idle' || calm ? reply : <Typed text={reply} />}</pre>
+                  {!!figs && <pre className="xbr-src-figs">{st.k === 'idle' || calm ? figs : <Typed text={figs} delay={reply.length * 14 + 200} />}</pre>}
+                </div>
+              )}
+              {st.k === 'live' && (
                 <ol className="xbr-runs">
                   {st.runs.map((r, i) => (
                     <li key={r.id} style={{ '--k': i }}>
@@ -393,9 +434,7 @@ function Source({ doc }) {
                   ))}
                 </ol>
               )}
-              {st.k === 'idle' && <div className="xbr-src-wait x-mono" aria-hidden="true">{src ? '{ "data": [ … ] }' : '$ ' + (doc.command || '')}<i className="xbr-caret" /></div>}
-              {st.k === 'err' && <div className="xbr-src-wait x-mono" aria-hidden="true">{st.e}</div>}
-              {st.k === 'none' && <div className="xbr-src-wait x-mono" aria-hidden="true">{'{ "data": [] }'}</div>}
+              {!src && <div className="xbr-src-wait x-mono" aria-hidden="true">{'$ ' + (doc.command || '')}<i className="xbr-caret" /></div>}
             </div>
           </div>
         </div>
@@ -498,7 +537,8 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
       visual: table ? (
         <div className="xbr-ch-v v2f-obj"><Table n={table.n} caption={s.title} /></div>
       ) : (
-        <div className={'xbr-ch-v xbr-ch-fig ' + TONES[k % TONES.length]}>{c ? <Readout c={c} walk={walk} big /> : <p className="xbr-ch-q">{s.title}</p>}</div>
+        // no table in this section: its own contour field (seeded from the section), so each figure is said once, on the card
+        <div className={'xbr-ch-v xbr-ch-fig ' + TONES[k % TONES.length]}><Sigil seed={'bench/' + doc.slug + '/' + s.title} data={seedData} className="xbr-ch-sig" /><p className="xbr-ch-q" aria-hidden="true">{s.title}</p></div>
       ),
     };
   };
@@ -510,7 +550,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
         <Sigil seed={'bench/' + doc.slug} data={seedData} className="xbr-sigil" />
         <div className="v2f-wrap v2f-grid xbr-top-g">
           <div className="xbr-head">
-            <FamLines as="h1" id={'xbr-h1-' + doc.slug} className={'v2f-display xbr-h1' + size} text={doc.title} data-morph-target />
+            <FamLines as="h1" id={'xbr-h1-' + doc.slug} className={'v2f-display xbr-h1' + size} text={doc.title} settle={false} data-morph-target />
             <div className="xbr-meta">
               {doc.crumb && <p className="xbr-crumb"><Nodes nodes={doc.crumb.c} /></p>}
               {doc.kicker && <p className="xbr-kicker x-mono"><Nodes nodes={doc.kicker.c} /></p>}
@@ -578,7 +618,6 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
               <div className="xbr-one-l">
                 <FamLines as="h2" play="view" id={'xbr-s-' + doc.slug} className="v2f-display small" text={s.title} />
                 {l && <div className="v2f-body"><Block b={l} /></div>}
-                {c && <div className="xbr-one-ro"><Readout c={c} walk={walk} /></div>}
               </div>
               <div className="xbr-one-r">
                 {table && <div className="v2f-obj xbr-one-t"><Table n={table.n} caption={s.title} /></div>}

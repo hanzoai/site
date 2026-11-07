@@ -1,32 +1,53 @@
-# /agents/* (template) — James-eye review
-
-Reviewed 2026-11-07, walked moving at 1470x801 and 375x812. Members walked: `/agents/crew/` and `/agents/sdk/`. Coverage card checked: `docs/coverage/agents-family.md` (the family's card; `docs/coverage/agents.md` covers the /agents index page, not this template).
-
-Verdict: 6.5/10
-
-First complaint: "I open the page and the headline isn't there. There's a word 'AGENTS', a button and a ring of grey letters for two seconds before it tells me what I'm looking at. And then a red error badge in the corner."
-
-Proof: `docs/review/agents/desktop-first.jpg` (crew at 1 s, warm load: no h1, no lede), `phone-first.jpg` (sdk phone hero, settled), `desktop-walk.jpg` (sdk sheets: the "01" card reads blank), `phone-walk.jpg` (crew close: faces row breaks onto two ragged lines).
+# /agents — James-eye review
+Reviewed: 2026-11-07 16:40 UTC, walked at 1470x801 and 375x812 (touch). I filmed it with motion.mjs (shots/agents/d.webm, p.webm and the sheets) and ran my own Playwright walks: idle, hover, press, step click, FAQ, JS off and reduced motion.
+Verdict: 5/10
+First complaint: "The top's nice, the little run ticks through by itself. Then I scroll and it's a document. Code, more code, a big block of text, questions. Nothing comes in, nothing goes out, it just sits there. And why does the box in the hero keep getting taller?"
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Half. Both members serve the h1 inside a line mask with an inline `style="transform:translateY(110%)"` and the lede with inline `opacity:0` in the server HTML, so nothing reads until JS hydrates. On a warm load, crew at 500 ms, 1 s and 2 s shows only the "AGENTS" caption, "Launch a bot" and a static ring (01 / 10, no name). The h1 lands between 2 and 4 s, and the ring jumps to a larger radius at the same moment. SDK is the same: at 300 ms the console has already played but there is no h1. Once settled, both heroes sell well: the crew ring passes the turn by itself (Antje, Dev, Einstein, about every 3 s), and the SDK console types its three turns.
-2. **One in, one out?** Mostly yes on desktop. Crew has a pinned stage where chapter one hands to chapter two ("People and agents. One workspace.") while the ring stays and re-centres on a new seat. Then comes the black Bots room, then the close. SDK has the hero, then stacked sheets (01 to 03), the parts grid, the graphite code room and the close. On phone, SDK's "parts you would otherwise write yourself" becomes six numbered paragraphs in a row with no object: a document.
-3. **A real object in every section?** Yes on desktop: the ring, the Bots room UI, the face row, the console, the sheets, the contour SVG, the code block and the install terminal. But on this server every face and room avatar is a grey letter disc ("D", "D" twice) or a blank white square in the room list, because the pictures 404. The card says they load through the dev proxy on localhost; here they did not, and what a person sees is a placeholder look. On phone the SDK parts list loses its SVG.
-4. **One ask, sticky after the hero?** Yes. Crew uses "Launch a bot" and SDK uses "Read the docs". The header swaps to the page's ask after the hero, and on SDK phone the shared bar carries it. Scale has rhythm: 52px h1, 26px sections, 17px h3, 12px mono, and the 44px "Write the first one" only at the close. The 64px mono "01/02/03" sheet numbers are the one big thing in their screen. Crew's phone has no bottom ask bar while SDK's does, so the template is inconsistent with itself.
-5. **Every hover and press answers?** Yes for nearly everything. 25/25 crew and 27/27 SDK controls change on hover (fill, underline, ring), and presses scale to about .97. The ring's find works: typing "fey" dims the other seats and gives Feynman the turn, and no match shows "—". The room's Dark/Light toggle flips the room. Gaps: the close faces row (10 links) shows no hover change; the "Find an agent" field shows the **browser's default blue search-cancel ×**; and the SDK sheets "01" click left the DOM unchanged.
-6. **Overlap, font swap, layout shift?** CLS is tiny (0.0006 crew desktop, 0.0004 SDK desktop, 0 on phone) and comes from the shared header. There is no horizontal overflow. But: (a) the hero ring visibly resizes at hydration (radius grows about 25px and the seats move), and the h1 appears late (see 1). (b) **A hydration mismatch on crew reproduces 2 of 3 clean reloads**: the kit `Field` "Find an agent" gets a different `useId` on server and client (`htmlFor="_R_ckqatpesneculb_"` vs `"_R_1ijaatpesneculb_"`). That is the red "1 Issue" badge. The SDK badge seen in the first walk did not reproduce in 3 reloads, so it is not counted. (c) Phone crew close: the 10 overlapping face discs wrap, and "V Z" start left of the 16px gutter (x≈8), with a ragged second line.
-7. **Which reference, and is its motion there?** apple.com: a pinned stage where one panel changes (crew chapters, SDK sheets), and the product as the hero (the SDK console). motion.dev: the layoutId ink on the console nav. The motion is there and is not only scroll: idle (ring, console), state (ink, hub swap, theme toggle), pointer (seat takes the turn) and arrival. The apple polish is not: the crew stage leaves about 380px of dead white below the ring before the black room, and the SDK graphite room parks its heading "Two agents and a router" at the bottom-left, about 550px below the top of the code.
-8. **Different from its neighbours?** Yes. The ring and the console are different hero media, and both differ from the /agents index's black film room. Within the template the two members share a skeleton (stage, room, close) but each has its own object and moment, which is right for a family.
-9. **All 18 parts covered?** The card (`agents-family.md`) has 18 of 18 headings filled. These claims are false or overstated on the page: §3 "h1 never at opacity 0" (it is masked out with an inline transform until hydration, and the lede is inline `opacity:0`), §3 and §12 "JS off: legible" (an inline style beats a stylesheet fallback, so the hero headline will not show without JS unless `!important` is used), §17 "no console errors" (hydration mismatch on crew), and §11 "no overlap" (the phone face row). §10 says the pictures load on localhost, and they did not here.
-10. **Banned tells?** One: a browser-default control (the blue webkit search-cancel × in the find field). There is no hue, no label above a headline (captions sit under), no gradient text and no floating pill on desktop.
-11. **Copy untouched?** Yes. `parity.py`: crew text 31/31, links 12/12; SDK text 94/94, links 13/13.
+1. **First screen, 5 seconds, motion within 1 s.** Mostly yes. The five-step run plays on its own (01/05 to 05/05, ticks, pause/replay), and the glass-frame art behind it is alive. But the film shows a black stage with only the art for about 2 s before the h1, body copy and asks cut in, and the desktop d-sheet-01 starts on a blank white frame. The body copy sits on top of the frame art at both widths ("A small… over… No" at 1470; "API key… No" at 375), so the art is behind words that need to be read.
+2. **One in, one out, or a document?** It is a document. After the hero, motion.mjs reports STILL on screens 2 to 7 at 1470 (6 still screens) and 9 of 11 at 375. The pinned "five steps" stage is 2,400 px tall and only moves a line highlight and the step label size. d-sheet-06 shows 12 identical frames (4 s of scrolling with nothing changing). Install, Prompt and FAQ only fade in.
+3. **A real visual object in every section?** Partly. Hero: the live run plus the frame art. Install: a large `$ npm i -g hanzo` with a command list. Script: a code window. Prompt: a text block in a card. FAQ: nothing. Band: type only. Three sections in a row have mono text as their only object, so it reads as one object repeated.
+4. **One ask, in the sticky header, nothing floating; scale rhythm.**
+   - The ask is not one. At 1470 the header says "Try Hanzo" on the first screen, the hero says "Sign up headless", and after scrolling the header swaps to "Sign up headless". At 375 the header stays "Try Hanzo" for the whole page.
+   - The cookie banner floats over content at the bottom centre of every screen on both widths (on the phone it covers the hero run).
+   - Scale is fine: h1 52, h2 26, the install command big, and the 88 px band line as the one big moment.
+5. **Does every hover and press answer?** No. The primary ask's hover brightens the fill and its press is scale 0.98 (good). Copy buttons answer, and so do the step rows in the script stage. These do not:
+   - "Read the docs" in the hero barely changes (about 1 px of underline), and DEAD in the band.
+   - "Agents SDK" and "llms.txt" are DEAD on one pass and give a 1-pixel change on another; "Book a call" also changes about 1 pixel.
+   - The FAQ rows ("Can an agent sign up…", "How do I keep…", "Which tools…") are DEAD.
+   - The pinned step list rows (01, 02, 04) are DEAD; they only change through scroll.
+   - The prompt card is DEAD.
+   In total motion.mjs counts 15 dead controls at 1470. Clicking hero step 02 jumps to 02/05 but shows ticks on all five rows, so the state reads as wrong.
+6. **Overlaps, font swap, layout shift?** Yes:
+   - **The hero run card grows.** At 1470 it is about 478 px tall at load and about 530 to 550 px as the steps run (bottom edge from 626 to 699).
+   - **Text overlaps on the phone.** In the hero run's description, the outgoing and incoming step texts sit on top of each other mid-crossfade ("POST /v1/chat/completions…" over "…token. It is"), shown in p-scroll-01.
+   - **Layout shift.** motion.mjs measures CLS 0.024 at 1470; my walk measured 0.012.
+   - **No overlap of header, hero and buttons.** The h1 box is stable (52 px).
+7. **Which reference, and is its motion there?** It wants to be an Apple pinned scene for the five-step script. The pin is there, but the scene barely changes: no scrubbed reveal of each request and no response landing. An anthropic.com-style launch with figures as the hero is absent. Pointer-aware detail (osply/hamol) is absent beyond the primary button.
+8. **Different from its neighbours?** Yes, the hero is its own: a stack of glass frames plus a self-running step console. Below the hero, the install, code and prompt blocks look like every other developer page.
+9. **The 18 parts.**
+   - **Matches the brief.** The MASTER /agents brief is met literally: hero, the #headless sequence as a numbered code block, the AgentPrompt, the Band, and a terminal demo with pause and a static final frame.
+   - **Missing.** The 4.1 Launch frame's "proof" screen. No figure or count-up anywhere.
+   - **Broken without JS.** The band's "No human required." stays blurred and unreadable, and the pinned script section leaves a screen-tall empty grey void.
+   - **Broken with reduced motion.** A React hydration error ("server rendered HTML didn't match", Pause vs Replay button in the hero run) puts a red "1 Issue" badge on screen in dev.
+10. **Banned tells?** None hard. The palette is monochrome; there are no gradients, no Inter and no kicker over the h1. "FOR AGENTS" sits in the terminal chrome and "—— INSTALL" / "—— HEADLESS" sit below their headings, which is allowed. The floating cookie bar is the "floating over content" smell.
+11. **Copy untouched?** It appears so. All headings and body text read as Hanzo's own. I did not diff against the original.
 
-## Fixes (ordered, most important first)
-- **Hero headline must be readable before JS.** In the server HTML, render `.x-line-in` at `transform:none` and the lede at full opacity. Start the cut-in only after hydration, by adding the `translateY(110%)` start state in a `.js` class or effect on the client before animating, not as an inline SSR style. Same for both members. The h1 must be the first thing seen at 500 ms, not at 2 to 4 s.
-- **Kill the crew hydration mismatch.** The kit `Field` ("Find an agent") renders in a different tree position on server and client, so its `useId` differs (`_R_ckqatpesneculb_` vs `_R_1ijaatpesneculb_`). Render the stage chapter-two panel identically on the server (same branch and order, hide with CSS or `inert`, not with a conditional render), so the red badge goes.
-- **Stop the ring jumping at hydration.** The SSR ring radius and seat positions differ from the client's (the seats move about 25px outward, and the turn name appears only then). Render the same geometry on the server, with "Antje / 01 / 10" already in the centre.
-- **Replace the placeholders.** Grey letter discs ("D", "D") and blank white avatar squares in the Bots room list read as unfinished. If Hanzo's faces cannot load, use the Sigil or a designed mark per agent, and never two identical "D" discs side by side. Fix the phone close row: 10 discs at 375 must fit one line (smaller overlap, or a horizontal snap rail) and never start outside the 16px gutter.
-- **Remove the browser-default search-cancel ×** on the find field (`::-webkit-search-cancel-button { appearance:none }`) and give it the kit's own clear button, 44px.
-- **Tighten the dead space.** On crew desktop, the gap of about 380px between the end of the stage and the black room should go. On SDK, move "Two agents and a router" and its asks up to align with the top of the code (8/5 split, bottom-aligned with the lead, as MASTER §3 says). The sheet stack should not show a card that is only "01" over a blank body: let the covered sheet keep its title visible, or offset the stack so each card's h3 shows.
-- **Phone SDK parts list needs an object.** Six numbered paragraphs in a row is a document. Keep the contour SVG above the list at phone width, or make the six a swipe rail with one open at a time.
-- **Make the template consistent.** Crew phone has no bottom ask bar while SDK phone does. Pick one behaviour for the family. Add a hover answer to the close face links (a lift or the name), as on the ring seats.
+## Fixes (ranked)
+1. **Make the pinned "five steps" stage a real scene.**
+   - As each step pins, scrub the step's lines into view and stream that step's response under the code (token, key, `"ready"`, deposit address), so the scroll changes something you can see every 100 px.
+   - Cut the dead first 4 s of the pin.
+   - Without JS, render the stage unpinned so there is no empty void.
+2. **Fix the hero run card height.** Reserve the description panel's height for the tallest step, so the card never grows from 478 to 550 px. Crossfade the step descriptions in one grid cell with the outgoing text fully gone before the new one shows: no superimposed text on the phone.
+3. **One ask in the header, everywhere.** Have "Sign up headless" in the sticky header from the first frame at both widths, or keep "Try Hanzo" everywhere, but not one word on the first screen and another after scroll. The phone header never swaps today.
+4. **Give every remaining control an answer that is not opacity:**
+   - "Read the docs" (hero and band), "Agents SDK", "llms.txt", "Book a call": move the arrow and draw the underline.
+   - FAQ rows: rotate the plus and shift the row tint.
+   - Pinned step rows: preview that step's line number on hover; click to scrub to it.
+   - Prompt card: lift the Copy affordance on hover.
+5. **Fix the hydration mismatch in the hero run** (Pause on the server vs Replay on the client under reduced motion). It throws a page error and shows the dev issue badge.
+6. **Bring the hero copy in with the h1, not about 2 s after a black frame.** Land the headline cut-in within 1 s and start the run at 01/05, not on a pre-ticked 05/05 frame. Fix the step click so a jump to 02 does not tick 03 to 05.
+7. **Add the proof beat from MASTER 4.1.** One quiet row of real numbers already in the copy (Kai at $0.021 per million input tokens, a 24-hour deposit address, the five requests), with count-ups. It breaks the run of mono text blocks and gives the page a figure moment.
+8. **Give the band one more alive thing,** for example the "No human required." line cutting in with the run's final tick. Fix its no-JS state, where the headline stays blurred.
+9. **Move the hero frame art off the body copy.** Keep it clear of the paragraph at both widths, or put a gradient under the text; no art behind words that need reading.
+10. **Dock the cookie consent to the bottom edge** (a full-width slim bar, or a corner on desktop) so it stops floating over the hero run on the phone.
