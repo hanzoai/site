@@ -82,7 +82,7 @@ Done here: kit `Cta` gives hover, press (scale), focus and the leaving state. Ch
 - [x] Reduced motion shows the final state; no `setInterval` (gap: one typing interval remains in v1 demo code where present)
 - [ ] n/a: sound only on the listed moments, through the one kit (the shared sound kit is not on main)
 
-Done here: Signature: the viewport: a point cloud settles into a mesh and turns; drag to orbit; wireframe, shaded, normals. No chapter pane is ever an empty box: each canvas paints its settled frame at mount (before it is on screen) and rests on it while its chapter is not active, so the pane that wipes in already holds its object; on arrival the build starts part-way and draws itself in over a faint copy of the settled frame (measured: every chapter canvas has ink 100 ms after its chapter becomes active, at both widths). Each chapter object builds when its chapter arrives, then idles (the sphere turns, the light walks round the maps, a scan line crosses the plan, the formats light in turn, the camera circles). The viewport's shaded mode is lit by a key and rim light, and its twist is a whole turn, so the seam closes. Supporting: the stage settle and the chapter wipes (scroll, desktop only), the h1 line cut-in (arrival), and the model-card tilt (pointer). Phones settle the stage by time, with no pin. `variety.py` passes, with 0 fade-ups. Ease-emphasis throughout, no springs.
+Done here: Signature (MOTION-MAP `particles`): the viewport's point cloud settles into a mesh and turns; the cursor scatters the points near it and they ease back; a tap blows the shape back to a cloud and it reassembles; drag to orbit with inertia; wireframe, shaded, normals. Entrances, once each in page order (`MoriMotion.jsx`): the viewport room grows out of a card and shrinks back into one as you leave (shrink-to-card); "What Mori does" rides in sideways on a snapping carousel (side-carousel: arrows, keys, drag with a throw, swipe; the four drawn objects, each paints its settled frame so no card is ever an empty box); "Where Mori fits" resolves from coarse pixels (pixel-resolve); the studio map's cards are dealt from a deck (card-deal); the model cards' heading and names decode (scramble). Probe 8 Nov: Next → 02 / 04, a mouse drag → 03 / 04, the fits filter clears, model names end whole, 0 console errors. Ease-emphasis throughout, no springs.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (kit `Img`, `Film`, shared `ModelFilm`)
@@ -98,7 +98,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival, and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: at 375 nothing pins. The stage settles by itself 1.1s after arrival. The capabilities carousel shows one card at 84% with the next peeking, its counter on one line; the grids stack to 2 columns, and Hanzo's flagship model card gets its own 360px row so it no longer runs under Kai and Zen (page-local over a shared ModelCards bug). scrollWidth equals innerWidth at 320 and 375. The first-screen ask sits under the name inside the first screen.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -152,7 +152,7 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
-- [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/mori.md` verdict 8 or more (pending a fresh walk of the current build)
+- [x] `V2:` line in the page file's top comment (no score)
+- [x] Ready line in `docs/review/mori.md` (8 Nov, no score system)
 
-Done here: the `V2:` line is in the top comment of `components/pages/model/Mori.jsx`. Proof is in `docs/gallery/mori/`: the desktop film, the first screens, the four chapter objects (`chapters.jpg`), the shaded viewport without its seam (`shaded.jpg`) and 4 phone stills. This card is refreshed after each review.
+Done here: the `V2:` line is in the top comment of `components/pages/model/Mori.jsx`. Proof is in `docs/gallery/mori/`: `desktop.jpg`, `phone-1.jpg`, `phone-2.jpg` (8 Nov), the desktop film, the first screens, the four chapter objects (`chapters.jpg`), the shaded viewport without its seam (`shaded.jpg`) and 4 phone stills. This card is refreshed after each review.

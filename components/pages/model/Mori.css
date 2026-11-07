@@ -33,7 +33,7 @@
   .mr-modes { left: 14px; right: 14px; bottom: 18px; }
   .mr-headwrap { position: static; padding-top: 36px; }
 }
-@media (prefers-reduced-motion: reduce) { .mr-cv { cursor: default; } }
+@media (prefers-reduced-motion: reduce) { .mr-cv { cursor: default; } .mr-shrink { transform: none !important; border-radius: 0 !important; } .mr-card-art { transition: none; } }
 
 /* Mori's own ask is the one solid fill while it is on screen, at every width (the header steps back to an outline
    then: Ask.jsx on desktop, usePhoneAsk in Mori.jsx on phones): white on the film, ink beside the settled cube; hover
@@ -75,7 +75,7 @@ main:has([data-hero='mori']) .cr-band-note a:active { transform: translateY(1px)
 .mr-caps-sh { display: flex; align-items: flex-end; justify-content: space-between; gap: 17px; margin: 0 0 27px; }
 .mr-caps-sh .lv-side { margin: 6px 0 0; }
 .mr-caps-nav { display: flex; align-items: center; gap: 10.5px; }
-.mr-caps-n { font: 606 13px/1 var(--mono); letter-spacing: .14em; color: #737373; min-width: 7ch; text-align: center; }
+.mr-caps-n { font: 606 13px/1 var(--mono); letter-spacing: .14em; color: #737373; min-width: 7ch; text-align: center; white-space: nowrap; }
 .mr-caps-b { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: #0a0a0a; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s; }
 .mr-caps-b:disabled { color: #a3a3a3; cursor: default; }
 .mr-caps-b:not(:disabled):active { transform: scale(.97); }
@@ -103,3 +103,8 @@ main:has([data-hero='mori']) .cr-fits { padding-bottom: clamp(44px, 6vw, 72px); 
 main:has([data-hero='mori']) .cr-map { padding-top: clamp(44px, 6vw, 72px); }
 /* type floor on this page: the mono labels rest at 13px, not 12 (the model-card pills keep SPEC.md's 11px) */
 main:has([data-hero='mori']) :is(.lv-crumb, .lv-side, .cr-fit-n, .cr-fit-k, .lv-ch-rail button) { font-size: 13px; }
+
+/* Hanzo's model cards under 1100px: the flagship cell is 340/360px tall but the grid's rows are 220px, so it ran under
+   the next row (shared ModelCards.css, requested in docs/requests/mori.md); here its row is given its own height */
+@media (max-width: 1100px) { main:has([data-hero=mori]) .mc-grid { grid-template-rows: 340px; } }
+@media (max-width: 640px) { main:has([data-hero=mori]) .mc-grid { grid-template-rows: 360px; } }
