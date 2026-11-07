@@ -92,7 +92,10 @@ function Lane() {
   const cw = 420;
   // the card's resting place (x 0) is centred on the gate by CSS, so the server HTML and the first client frame agree
   const toLedger = `${Math.round(((wd / 2 - 32 - 130) / cw) * 100)}%`;
-  const x = limited ? (phase >= 2 ? '-140%' : '0%') : phase >= 4 ? (wide ? toLedger : '170%') : '0%';
+  // on a phone the lane runs top to bottom: the card is checked above the gate line, then drops through it into the
+  // Hanzo Cloud ledger underneath (a 429 goes back up)
+  const x = !wide ? '0%' : limited ? (phase >= 2 ? '-140%' : '0%') : phase >= 4 ? toLedger : '0%';
+  const y = wide ? 0 : limited ? (phase >= 2 ? -120 : 0) : phase >= 4 ? 262 : 0;
   const gone = limited ? phase >= 2 : phase >= 4;
   const enter = (v) => (boot.current ? false : v);
   return (
@@ -122,10 +125,10 @@ function Lane() {
         <motion.div
           key={n}
           className="gw-req"
-          initial={{ x: '-210%', opacity: 0 }}
-          animate={{ x, opacity: gone ? 0 : 1, scale: !limited && phase >= 4 && wide ? 0.56 : 1 }}
+          initial={wide ? { x: '-210%', opacity: 0 } : { y: -24, opacity: 0 }}
+          animate={{ x, y, opacity: gone ? 0 : 1, scale: !limited && phase >= 4 ? (wide ? 0.56 : 0.5) : 1 }}
           exit={{ opacity: 0, transition: { duration: 0.15 } }}
-          transition={{ x: { duration: phase === 0 ? 1.0 : 1.0, ease: [0.4, 0, 0.2, 1] }, scale: { duration: 1.0, ease: [0.4, 0, 0.2, 1] }, opacity: { duration: gone ? 0.35 : 0.4, delay: gone ? 0.7 : 0 } }}
+          transition={{ x: { duration: 1.0, ease: [0.4, 0, 0.2, 1] }, y: { duration: 1.0, ease: [0.4, 0, 0.2, 1] }, scale: { duration: 1.0, ease: [0.4, 0, 0.2, 1] }, opacity: { duration: gone ? 0.35 : 0.4, delay: gone ? 0.7 : 0 } }}
         >
           <p className="gw-req-top"><b>api.hanzo.ai</b> <i className="gw-tk">/*</i><span>{who}</span></p>
           <p className={'gw-h' + (phase >= 1 && !limited ? ' ok' : '')}><span><em>JWT</em></span>
@@ -137,6 +140,8 @@ function Lane() {
             )}
           </AnimatePresence>
           <div className="gw-stamps">
+            {/* before the gate writes them, the three identity headers are empty slots waiting on the claims */}
+            {!limited && phase < 3 && ['X-User-Id', 'X-Org-Id', 'X-Roles'].map((h) => <p key={'g' + h} className="gw-h ghost">{h} <em>←</em></p>)}
             {!limited && phase >= 3 && [['X-User-Id', 'sub'], ['X-Org-Id', 'owner'], ['X-Roles', 'roles']].map(([h, c], i) => (
               <motion.p key={h} className="gw-h set" initial={enter({ opacity: 0, x: -14 })} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.07 }}>{h} <em>← {c}</em></motion.p>
             ))}
