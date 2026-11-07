@@ -1,16 +1,19 @@
 'use client';
-/* Hanzo API. Signature: the endpoint explorer. The first screen is one huge address line: the method lights, the path
-   types itself after https://api.hanzo.ai, and what the endpoint returns streams in beneath it, with the model that
-   serves it playing beside. It walks all eight on its own; choose one and it is yours. In the dark room, requests
-   travel through the one gateway to every service, and a rejected one comes back as a 429 with a Retry-After. The
-   core endpoints are a routing table you can filter.
-   Beyond: "Same host, same key". Pick any endpoint and its request line rebuilds: only the path wipes in, the host and
-   the bearer header never change, which is the page's own claim (no second base URL) made visible. Copies as curl.
+// Signature: The request is the hero: a big API console types each endpoint's path after https://api.hanzo.ai and streams back what it returns, the model that serves it playing beside, then settles into the page as you scroll
+// Beyond: Same host, same key: pick any endpoint and only the path wipes in; the host and the bearer header never change, which is the page's own claim (no second base URL) made visible, and it copies as curl
+/* Hanzo API, v2 (Archetype F, developer: the request is the hero).
+   V2: 8/10 Stage console types and streams all eight endpoints; How it fits together is four pinned chapters with live UI; one dark room for the base URL; endpoints are rows that open
+   Motion: signature = the live console (path types, answer streams). Supporting: Stage settle, pinned chapters with
+   clip wipes (components/v2/AppScenes), line-masked headline. Accent: cobalt, from the console's method pill.
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE, Rise, Copy } from '../ui';
-import { A, Go, SecHead } from '../kit';
+import { EASE, Copy, Magnetic } from '../ui';
+import { A, Go } from '../kit';
+import Lines from '../v2/AppLines';
+import Stage from '../v2/AppStage';
+import Scenes from '../v2/AppScenes';
+import '../v2/AppType.css';
 import './ApiPage.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/openapi/';
@@ -33,84 +36,86 @@ const MORE = [
   ['GET', '/v1/billing/balance · /v1/billing/usage', 'What is left, and what was spent. Usage is recorded per call and attributed to the organization on the token, so a bill can be traced back to the request that caused it.', 'billing/get-billing-usage'],
   ['GET', '/v1/tools', 'The tools your organization can call over REST or MCP. An agent picks from this list, and so can you — it is the same catalog either way.', 'tool'],
 ];
+const ALL = [...HERO.map(([m, p, d, doc]) => [m, p, d, doc]), ...MORE];
 const n8 = (i) => String(i + 1).padStart(2, '0') + ' / 08';
+const KEY = 'Authorization: Bearer <your key>';
 
-/* The address line: the path types, the answer streams, the model plays. */
-function Explorer() {
-  const [at, setAtS] = useState(0);
+/* ---------- the hero console: the path types, the answer streams, the model plays ---------- */
+function Console() {
+  const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const calm = useReducedMotion();
   const box = useRef(null);
-  const seen = useInView(box, { amount: 0.3 });
+  const seen = useInView(box, { amount: 0.25 });
   const path = useRef(null);
   const desc = useRef(null);
   const vid = useRef(null);
-  const [typed, setTyped] = useState(true);
+  const [done, setDone] = useState(true);
   const live = seen && !calm;
-  // type the path, then stream the description, writing straight to the text nodes
   useEffect(() => {
     const [, p, d] = HERO[at];
-    if (!live) { if (path.current) path.current.textContent = p; if (desc.current) desc.current.textContent = d; setTyped(true); return; }
-    let alive = true, t = 0;
-    setTyped(false);
+    if (!live) { if (path.current) path.current.textContent = p; if (desc.current) desc.current.textContent = d; setDone(true); return; }
+    let alive = true, t = 0, i = 0, w = 0;
     const words = d.split(' ');
-    let i = 0, w = 0;
-    if (path.current) path.current.textContent = '';
-    if (desc.current) desc.current.textContent = '';
+    setDone(false);
+    path.current.textContent = '';
+    desc.current.textContent = '';
     const typeP = () => {
       if (!alive) return;
-      if (i <= p.length) { path.current && (path.current.textContent = p.slice(0, i++)); t = setTimeout(typeP, 34); return; }
-      setTyped(true);
-      t = setTimeout(stream, 220);
+      if (i <= p.length) { path.current.textContent = p.slice(0, i++); t = setTimeout(typeP, 30); return; }
+      setDone(true);
+      t = setTimeout(stream, 200);
     };
     const stream = () => {
       if (!alive) return;
-      if (w <= words.length) { desc.current && (desc.current.textContent = words.slice(0, w++).join(' ')); t = setTimeout(stream, 38); }
+      if (w <= words.length) { desc.current.textContent = words.slice(0, w++).join(' '); t = setTimeout(stream, 34); }
     };
-    t = setTimeout(typeP, 200);
+    t = setTimeout(typeP, 240);
     return () => { alive = false; clearTimeout(t); };
   }, [at, live]);
   useEffect(() => {
     if (mine || !live) return;
-    const t = setTimeout(() => setAtS((v) => (v + 1) % HERO.length), 5600);
+    const t = setTimeout(() => setAt((v) => (v + 1) % HERO.length), 5800);
     return () => clearTimeout(t);
   }, [at, mine, live]);
   useEffect(() => { const v = vid.current; if (!v) return; if (live) v.play().catch(() => {}); else v.pause(); }, [at, live]);
-  const pick = (i) => { setAtS(i); setMine(true); };
+  const pick = (i) => { setAt(i); setMine(true); };
   const [m, p, d, doc, model] = HERO[at];
   return (
-    <div className="api-x" ref={box}>
-      <div className="api-line">
+    <div className="api-con av-obj" ref={box}>
+      <div className="api-con-bar">
         <span className="api-meth x-mono">{m}</span>
         <span className="api-url x-mono">
           <span className="api-host">https://api.hanzo.ai</span>
           <span className="api-path" ref={path}>{p}</span>
-          <span className={'api-caret' + (typed ? ' idle' : '')} aria-hidden="true" />
+          <span className={'api-caret' + (done ? ' idle' : '')} aria-hidden="true" />
         </span>
         <A to={DOCS + doc} className="api-send" aria-label={'Docs: ' + p}>
-          <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </A>
       </div>
-      <div className="api-out">
+      <p className="api-con-key x-mono" aria-hidden="true">{KEY}</p>
+      <div className="api-con-main">
         <div className="api-ret">
-          <span className="api-ret-k x-mono">{n8(at)}</span>
+          <span className="api-ret-k x-mono"><b aria-hidden="true" />{n8(at)}</span>
           <p className="api-desc" aria-live="polite"><span ref={desc}>{d}</span></p>
           <A to={DOCS + doc} className="api-doc">Docs <span aria-hidden="true">↗</span></A>
         </div>
         <div className="api-model">
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div key={model} className="api-model-in" initial={{ opacity: 0, scale: 1.06 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.7, ease: EASE }}>
+            <motion.div key={model} className="api-model-in" initial={{ opacity: 0, scale: 1.08 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8, ease: EASE }}>
               <img src={`/models/${model}.webp`} alt="" />
               <video ref={vid} src={`/models/${model}.webm`} muted loop playsInline preload="metadata" aria-hidden="true" />
             </motion.div>
           </AnimatePresence>
+          <span className="api-model-k x-mono">{model}</span>
         </div>
       </div>
       <ol className="api-chips" role="tablist" aria-label="Endpoints">
         {HERO.map(([mm, pp], i) => (
           <li key={pp}>
             <button type="button" role="tab" aria-selected={at === i} onClick={() => pick(i)}>
-              {at === i && <motion.span layoutId="api-chip" className="api-chip-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+              {at === i && <motion.span layoutId="api-chip" className="api-chip-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
               <span className="x-mono">{mm + ' ' + pp}</span>
               {at === i && !mine && live && <i key={'t' + at} className="api-chip-t" aria-hidden="true" />}
             </button>
@@ -124,63 +129,98 @@ function Explorer() {
 function Hero() {
   return (
     <section className="api-hero" aria-labelledby="api-h1">
-      <div className="x-wrap">
-        <div className="api-top">
-          <div>
-            <motion.p className="x-kick" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }}>API</motion.p>
-            <motion.h1 id="api-h1" className="api-h1" initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 1.1, ease: EASE }}>One API for models, agents and tools</motion.h1>
+      <div className="av-wrap">
+        <div className="api-top av-grid">
+          <div className="api-top-l">
+            <p className="av-kick"><b>API</b></p>
+            <Lines as="h1" id="api-h1" className="av-display api-h1" lines={['One API for', 'models, agents', 'and tools']} now delay={0.1} />
           </div>
-          <motion.div className="api-side" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.3 }}>
-            <p className="api-lede">Every Hanzo capability answers under one base URL, behind one key.</p>
-            <div className="api-acts">
-              <Go to="https://platform.hanzo.ai/api-keys" solid>Get an API key, free</Go><i hidden data-thumb="Get an API key, free" data-href="https://platform.hanzo.ai/api-keys" />
+          <div className="api-top-r">
+            <p className="av-lede">Every Hanzo capability answers under one base URL, behind one key.</p>
+            <div className="av-acts">
+              <Magnetic strength={0.25}><Go to="https://platform.hanzo.ai/api-keys" solid>Get an API key, free</Go></Magnetic>
+              <i hidden data-thumb="Get an API key, free" data-href="https://platform.hanzo.ai/api-keys" />
               <Go to={DOCS}>OpenAPI Reference ↗</Go>
             </div>
-          </motion.div>
+          </div>
         </div>
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.35 }}>
-          <Explorer />
-        </motion.div>
+        <Stage className="api-stage" data-morph-target="">
+          <Console />
+        </Stage>
       </div>
     </section>
   );
 }
 
+/* ---------- paste and ship: copy one line into any agent ---------- */
 function Paste() {
   const text = 'Read https://hanzo.ai/skill.md and use Hanzo API in my project.';
   return (
     <section className="api-paste">
-      <div className="x-wrap">
-        <div className="api-paste-in">
-          <div>
-            <p className="api-paste-k">Paste and ship</p>
-            <p className="api-paste-d">Paste this into any agent. It reads the skill manifest and calls API from there.</p>
-          </div>
-          <div className="api-prompt">
-            <span className="api-prompt-k x-mono">Agent prompt</span>
-            <code>{text}</code>
-            <Copy text={text} />
-          </div>
+      <div className="av-wrap av-grid">
+        <div className="api-paste-l">
+          <p className="av-title">Paste and ship</p>
+          <p className="av-body">Paste this into any agent. It reads the skill manifest and calls API from there.</p>
+        </div>
+        <div className="api-prompt">
+          <span className="av-kick">Agent prompt</span>
+          <code>{text}</code>
+          <Copy text={text} />
         </div>
       </div>
     </section>
   );
 }
 
-/* The one gateway: requests run in from your app, out to every service; now and then one is turned back with a 429. */
-const SERVICES = ['/v1/chat/completions', '/v1/images/generations', '/v1/videos/generations', '/v1/agents', '/v1/sandbox', '/v1/tools'];
+/* ---------- How it fits together: four pinned chapters, each with its own live UI ---------- */
+const PATHS = ALL.map(([, p]) => p.split(' · ')[0]);
 
-function Gateway() {
+function KeyBill({ on }) {
   return (
-    <div className="api-gw" aria-hidden="true">
-      <div className="api-gw-app"><b>Your app</b><span className="x-mono">Authorization: Bearer &lt;your key&gt;</span></div>
-      <div className="api-gw-in"><i /><i /><i className="back" /><em className="x-mono">429 · Retry-After</em></div>
-      <div className="api-gw-gate"><span className="x-mono">https://api.hanzo.ai/v1</span></div>
-      <ul className="api-gw-out">
-        {SERVICES.map((s, i) => (
-          <li key={s} style={{ '--i': i }}>
-            <span className="api-wire"><i /></span>
-            <span className="api-svc x-mono">{s}</span>
+    <div className={'api-vis api-bill' + (on ? ' on' : '')} aria-hidden="true">
+      <p className="api-vis-key x-mono">{KEY}</p>
+      <ul>
+        {PATHS.slice(0, 8).map((p, i) => (
+          <li key={p} style={{ '--i': i }}><span className="x-mono">{p}</span><i><b /></i></li>
+        ))}
+      </ul>
+      <div className="api-bill-sum"><span className="x-mono">/v1/billing/usage</span><i><b /></i></div>
+    </div>
+  );
+}
+
+function Identity({ on }) {
+  return (
+    <div className={'api-vis api-id' + (on ? ' on' : '')} aria-hidden="true">
+      <div className="api-id-col">
+        <span className="av-kick">Client</span>
+        <div className="api-id-card">
+          <span className="x-mono">{KEY}</span>
+          <span className="x-mono api-id-drop">identity headers</span>
+        </div>
+      </div>
+      <div className="api-id-gate"><span className="x-mono">https://api.hanzo.ai/v1</span><i className="api-id-pk" /></div>
+      <div className="api-id-col">
+        <span className="av-kick">Downstream</span>
+        <div className="api-id-card">
+          <span className="x-mono">verified token</span>
+          <span className="x-mono api-id-new">identity headers</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Generated({ on }) {
+  return (
+    <div className={'api-vis api-gen' + (on ? ' on' : '')} aria-hidden="true">
+      <div className="api-gen-h"><span className="av-kick">OpenAPI</span><span className="av-kick">Client</span></div>
+      <ul>
+        {PATHS.slice(0, 9).map((p, i) => (
+          <li key={p} style={{ '--i': i }}>
+            <span className="x-mono">{p}</span>
+            <svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <span className="x-mono">{p}</span>
           </li>
         ))}
       </ul>
@@ -188,7 +228,44 @@ function Gateway() {
   );
 }
 
-/* Beyond: one request line; picking an endpoint changes only the path */
+const SERVICES = ['/v1/chat/completions', '/v1/images/generations', '/v1/videos/generations', '/v1/agents', '/v1/sandbox', '/v1/tools'];
+function Gateway({ on }) {
+  return (
+    <div className={'api-vis api-gw' + (on ? ' on' : '')} aria-hidden="true">
+      <div className="api-gw-app"><b>Your app</b><span className="x-mono">{KEY}</span></div>
+      <div className="api-gw-in"><i /><i /><i className="back" /><em className="x-mono">429 · Retry-After</em></div>
+      <div className="api-gw-gate"><span className="x-mono">https://api.hanzo.ai/v1</span></div>
+      <ul className="api-gw-out">
+        {SERVICES.map((s, i) => (
+          <li key={s} style={{ '--i': i }}><span className="api-wire"><i /></span><span className="api-svc x-mono">{s}</span></li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const FITS = [
+  { kick: 'Billing', title: 'One key, one bill', body: <p className="av-body">A single key authenticates every endpoint, and usage meters to the organization it belongs to. Spend is attributed in one place instead of once per service.</p>, visual: (on) => <KeyBill on={on} /> },
+  { kick: 'Gateway', title: 'Identity is the gateway’s to state', body: <p className="av-body">Every request passes a gateway that throws away the identity headers a client sent and writes them again from the verified token. Nothing downstream has to wonder whether an org id came from a token or from a curl flag.</p>, visual: (on) => <Identity on={on} /> },
+  { kick: 'Clients', title: 'Generated, not hand-written', body: <p className="av-body">The clients come from the OpenAPI document this API serves, and their method names are its operation ids. A client is checkable against a release rather than against somebody’s memory.</p>, visual: (on) => <Generated on={on} /> },
+  { kick: '/v1', title: 'Every route lives under /v1', body: <p className="av-body">Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.</p>, visual: (on) => <Gateway on={on} /> },
+];
+
+function Fits() {
+  return (
+    <>
+      <section className="api-fits-in">
+        <div className="av-wrap">
+          <p className="av-kick">Under the hood</p>
+          <Lines as="h2" className="av-display s api-fits-h" lines={['How it fits', 'together']} />
+        </div>
+      </section>
+      <Scenes label="How it fits together" items={FITS} />
+    </>
+  );
+}
+
+/* ---------- the dark room: the one base URL, and the Beyond request line ---------- */
 function Call() {
   const [k, setK] = useState(0);
   const [m, p, , doc] = ALL[k];
@@ -196,12 +273,14 @@ function Call() {
   const curl = `curl -X ${method} https://api.hanzo.ai${path} -H "Authorization: Bearer <your key>"`;
   return (
     <div className="api-call">
-      <label className="api-call-k x-mono" htmlFor="api-call-sel">Endpoint</label>
-      <select id="api-call-sel" value={k} onChange={(e) => setK(+e.target.value)}>
-        {ALL.map(([mm, pp], i) => <option key={pp} value={i}>{mm.split(' ')[0]} {pp.split(' · ')[0]}</option>)}
-      </select>
+      <div className="api-call-top">
+        <label className="av-kick" htmlFor="api-call-sel">Endpoint</label>
+        <select id="api-call-sel" value={k} onChange={(e) => setK(+e.target.value)}>
+          {ALL.map(([mm, pp], i) => <option key={pp} value={i}>{mm.split(' ')[0]} {pp.split(' · ')[0]}</option>)}
+        </select>
+      </div>
       <pre className="api-call-line"><code>
-        <span className={'api-row-m m-' + method.toLowerCase()}>{method}</span> <span className="api-call-host">https://api.hanzo.ai</span><motion.span key={path} className="api-call-path" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 0.45, ease: EASE }}>{path}</motion.span>{'\n'}
+        <span className={'api-call-m m-' + method.toLowerCase()}>{method}</span> <span className="api-call-host">https://api.hanzo.ai</span><motion.span key={path} className="api-call-path" initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0% 0 0)' }} transition={{ duration: 0.45, ease: EASE }}>{path}</motion.span>{'\n'}
         <span className="api-call-host">Authorization: Bearer &lt;your key&gt;</span>
       </code></pre>
       <div className="api-call-f"><Copy text={curl} label="Copy as curl" /><A to={DOCS + doc}>Body and parameters ↗</A></div>
@@ -211,123 +290,95 @@ function Call() {
 
 function Base() {
   return (
-    <section className="x-sec api-dark" data-room="dark">
-      <div className="x-wrap">
-        <div className="api-base">
-          <div>
-            <h2 className="api-base-h">Base URL</h2>
-            <Rise className="api-big">
-              <span className="x-mono">https://api.hanzo.ai/v1</span>
-              <Copy text="https://api.hanzo.ai/v1" />
-            </Rise>
-            <p className="api-copy">
+    <section className="av-sec api-dark av-dark" data-room="dark">
+      <div className="av-wrap">
+        <h2 className="av-kick api-base-h">Base URL</h2>
+        <div className="api-big">
+          <span className="x-mono api-big-url">https://api.hanzo.ai<span className="av-ac">/v1</span></span>
+          <Copy text="https://api.hanzo.ai/v1" />
+        </div>
+        <div className="av-grid api-base-g">
+          <div className="api-base-l">
+            <p className="av-lede">
               Authenticate with a bearer token: <code>Authorization: Bearer &lt;your key&gt;</code>. Keys are created and revoked in the <A to="https://platform.hanzo.ai/api-keys">console</A>, and revoking one there is what stops it working.
             </p>
-            <p className="api-copy">
-              Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.
-            </p>
-            <Call />
           </div>
-          <Rise delay={0.1}><Gateway /></Rise>
+          <div className="api-base-r"><Call /></div>
         </div>
       </div>
     </section>
   );
 }
 
-/* The core endpoints as a routing table: filter by method or by path. */
-const ALL = [...HERO.map(([m, p, d, doc]) => [m, p, d, doc]), ...MORE];
+/* ---------- the core endpoints: a list you filter; each row opens to say what it does ---------- */
 const FILTERS = ['All', 'POST', 'GET'];
 
 function Table() {
   const [f, setF] = useState(0);
   const [q, setQ] = useState('');
+  const [open, setOpen] = useState(0);
   const rows = ALL.filter(([m, p, d]) => (f === 0 || m.includes(FILTERS[f])) && (!q || (p + ' ' + d).toLowerCase().includes(q.toLowerCase())));
   return (
-    <section className="x-sec api-core">
-      <div className="x-wrap">
-        <SecHead kicker="Reference" title="Core endpoints" lede="A few of the ones people reach for first. Every parameter and error shape is in the reference." />
-        <div className="api-tools">
-          <div className="api-seg" role="tablist" aria-label="Method">
-            {FILTERS.map((x, i) => (
-              <button key={x} type="button" role="tab" aria-selected={f === i} onClick={() => setF(i)}>
-                {f === i && <motion.span layoutId="api-seg" className="api-seg-bg" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                <span>{x}</span>
-              </button>
-            ))}
+    <section className="av-sec api-core">
+      <div className="av-wrap av-grid">
+        <div className="api-core-l">
+          <p className="av-kick">Reference</p>
+          <h2 className="av-head">Core endpoints</h2>
+          <p className="av-body">A few of the ones people reach for first. Every parameter and error shape is in the reference.</p>
+          <div className="api-tools">
+            <div className="api-seg" role="tablist" aria-label="Method">
+              {FILTERS.map((x, i) => (
+                <button key={x} type="button" role="tab" aria-selected={f === i} onClick={() => setF(i)}>
+                  {f === i && <motion.span layoutId="api-seg" className="api-seg-bg" transition={{ type: 'spring', stiffness: 300, damping: 30 }} />}
+                  <span>{x}</span>
+                </button>
+              ))}
+            </div>
+            <label className="api-q">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="/v1/…" aria-label="Filter endpoints" />
+            </label>
+            <span className="api-count x-mono av-num">{rows.length} / {ALL.length}</span>
           </div>
-          <label className="api-q">
-            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="/v1/…" aria-label="Filter endpoints" />
-          </label>
-          <span className="api-count x-mono">{rows.length} / {ALL.length}</span>
         </div>
-        <motion.ul className="api-rows" layout>
-          <AnimatePresence initial={false}>
-            {rows.map(([m, p, d, doc]) => (
-              <motion.li key={p} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.4, ease: EASE }}>
-                <A to={DOCS + doc} className="api-row">
-                  <span className="api-row-p x-mono">{p}</span>
+        <ul className="api-rows">
+          {rows.map(([m, p, d, doc]) => {
+            const k = ALL.findIndex((r) => r[1] === p);
+            const isOpen = open === k;
+            return (
+              <li key={p} className={isOpen ? 'open' : ''}>
+                <button type="button" className="api-row" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? -1 : k)}>
                   <span className={'api-row-m x-mono m-' + m.split(' ')[0].toLowerCase()}>{m}</span>
-                  <span className="api-row-d">{d}</span>
-                  <span className="api-row-go" aria-hidden="true">↗</span>
-                </A>
-              </motion.li>
-            ))}
-          </AnimatePresence>
+                  <span className="api-row-p x-mono">{p}</span>
+                  <span className="api-row-x" aria-hidden="true" />
+                </button>
+                <div className="api-row-d">
+                  <p>{d}</p>
+                  <A to={DOCS + doc} className="api-doc">Docs <span aria-hidden="true">↗</span></A>
+                </div>
+              </li>
+            );
+          })}
           {rows.length === 0 && <li className="api-none">No endpoint matches. <button type="button" onClick={() => { setQ(''); setF(0); }}>Show all</button></li>}
-        </motion.ul>
+        </ul>
       </div>
     </section>
   );
 }
 
-/* How it fits: three drawings that draw themselves. */
-const FITS = [
-  ['One key, one bill', 'A single key authenticates every endpoint, and usage meters to the organization it belongs to. Spend is attributed in one place instead of once per service.', 'M6 32a8 8 0 1 1 16 0a8 8 0 1 1-16 0M22 32h34M46 32v8M54 32v6'],
-  ['Identity is the gateway’s to state', 'Every request passes a gateway that throws away the identity headers a client sent and writes them again from the verified token. Nothing downstream has to wonder whether an org id came from a token or from a curl flag.', 'M4 20h20M4 32h20M4 44h20M8 16l12 8M8 28l12 8M30 12v40M36 26h24M36 38h24'],
-  ['Generated, not hand-written', 'The clients come from the OpenAPI document this API serves, and their method names are its operation ids. A client is checkable against a release rather than against somebody’s memory.', 'M8 10h18l6 6v32H8zM26 10v6h6M32 30h8M44 18h14v10H44zM44 36h14v10H44zM40 23v18'],
-];
-
-function Fit({ f, i }) {
-  const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.6 });
-  return (
-    <div className="api-fit">
-      <svg ref={ref} viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
-        <motion.path d={f[2]} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={seen ? { pathLength: 1 } : {}} transition={{ duration: 1.4, ease: EASE, delay: 0.1 + i * 0.12 }} />
-      </svg>
-      <h3>{f[0]}</h3>
-      <p>{f[1]}</p>
-    </div>
-  );
-}
-
-function Fits() {
-  return (
-    <section className="x-sec api-fits">
-      <div className="x-wrap">
-        <SecHead title="How it fits together" />
-        <div className="api-fit-row">{FITS.map((f, i) => <Fit key={f[0]} f={f} i={i} />)}</div>
-      </div>
-    </section>
-  );
-}
-
+/* ---------- next: two doors ---------- */
 function Next() {
   return (
-    <section className="x-sec api-next">
-      <div className="x-wrap">
-        <SecHead title="Next" />
+    <section className="av-sec tight api-next">
+      <div className="av-wrap">
+        <h2 className="av-kick">Next</h2>
         <div className="api-next-row">
-          {[['API reference', 'Every endpoint, parameter and response shape.', DOCS], ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart']].map(([t, d, to], i) => (
-            <div key={t}>
-              <A to={to} className="api-next-a">
-                <span className="api-next-t">{t}</span>
-                <span className="api-next-d">{d}</span>
-                <span className="api-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="22" height="22"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-              </A>
-            </div>
+          {[['API reference', 'Every endpoint, parameter and response shape.', DOCS], ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart']].map(([t, d, to]) => (
+            <A key={t} to={to} className="api-next-a">
+              <span className="av-head api-next-t">{t}</span>
+              <span className="av-body">{d}</span>
+              <span className="api-next-go" aria-hidden="true"><svg viewBox="0 0 16 16" width="24" height="24"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+            </A>
           ))}
         </div>
       </div>
@@ -337,12 +388,12 @@ function Next() {
 
 export default function ApiPage() {
   return (
-    <main className="api">
+    <main className="av api" style={{ '--ac': '#3355ff' }}>
       <Hero />
       <Paste />
+      <Fits />
       <Base />
       <Table />
-      <Fits />
       <Next />
     </main>
   );
