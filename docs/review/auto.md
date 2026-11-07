@@ -1,55 +1,30 @@
 # /auto — James-eye review
 
-Reviewed 2026-11-07, walked moving at 1470x801 and 375x812 (Playwright, wheel 400px every 700 ms, rest shots 1 s apart, hover and press on 11 controls). Proof: `docs/review/auto/desktop-first.jpg`, `desktop-walk.jpg`, `phone-first.jpg`, `phone-walk.jpg`.
+Reviewed 7 Nov 2026 (round 3 walk), walked moving at 1470x801 and 375x812 (Playwright, wheel steps of 400px every 700ms, rest shots, hover/press/click on every control, 8 lone reloads for hydration).
 
-Verdict: 6.5/10
+Verdict: 7/10
 
-First complaint: "The editor at the top is a good idea, then the page goes quiet. A list of headings, some grey bars in a black box, letters in white tiles, four words in a row. It's tidy, but it reads like a template for a docs page, not a product you want to open."
+First complaint: "The one thing that proves it, restarting the pod, is sitting under the fold, and then that black figures room is mostly empty with a box that never finishes drawing. It's clean, but it looks like the /automations page again."
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** Mostly. At 1.0 s the two runs are already stepping (step 3/5, Postgres filled). "Hanzo Auto" plus "Workflow automation in one binary" plus the editor sells it. But at 300 ms the stage is blank white below the header. The hero spreads into three columns: h1 at left, a 17px lede stranded mid-screen at x≈747, the asks hard right. With about 230px of empty headroom above the h1 (top 298px), the eye has no path. The "record vs goroutine" difference only shows when a pod is rescheduled, every other run, so in the first 5 s you see two identical lanes stepping together.
-2. **One in, one out?** No, it reads as a document. Hero, then a 6-row accordion, then a black figures room, then a tile grid, then the band. Nothing pins, nothing hands over to the next object. Between the editor and "A run that survives the restart" there is a dead white gap of about 250px with nothing in it (desktop-s01).
-3. **A real object in every section?** Partly. Hero: yes, a real editor with two lanes. Accordion: the open item's visual is a toy. "Watch it live" is a black box with "server-sent events" and four grey skeleton bars, and "Durable execution" is three grey rows plus a "record" bar. Figures room: four words plus a small dashed "container" diagram, fine. Connectors: 12 white tiles with a single mono letter as the "logo" (S Slack, G GitHub, G Gmail, G Google Sheets). That is a plain box, not an object.
-4. **One ask, sticky after the hero?** One solid fill per viewport holds: "Open Auto" in the hero, then "Open Auto" inverted in the band. The page bar is off, so nothing floats over content. Good. Scale: h1 52, section h2 26, the open accordion title grows to 44 in its moment, figures 64. Rhythm is there, though the figures room puts four 64px words side by side, and on phone "Apache" fills its column to the gutter edge.
-5. **Every hover and press answers?** Mostly. Primary darkens and presses at 0.98. Pause, accordion, connector tiles, Copy and close all change fill or border and press at about 0.97. Weak spots:
-   - "Documentation" and "Deploy to Cloud" showed no measured change in background, colour or border on hover. Only the press moves 1px; if the arrow moves, it is very small.
-   - "Restart the pod" sits at opacity 0.4 most of the time, so it looks disabled. It still works when pressed (the "POD RESCHEDULED" overlay appears) and does not change on hover.
-6. **Overlap, font swap, layout shift?** CLS 0.0002 on desktop and 0 on phone. No horizontal overflow at 375 or 1470. No font swap seen.
-   - On the first walk (both sizes) a hydration-mismatch console error fired, along with the red "1 Issue" badge. Five later loads did not reproduce it, so it is intermittent. Check it.
-   - Pause control is 36x36 on desktop.
-7. **Which reference, and is its motion there?** Nearest is an apple.com product page "one idea, product as hero", but none of apple's pinned scrubbed scene is here. There's nothing from osply/hamol (no asymmetric editorial scale, no pointer-aware detail) and no tilt, magnetic or cursor-aware light. Motion kinds:
-   - idle: the hero lanes;
-   - state: the accordion grow, connector tiles adding to a 1-2-3 chain;
-   - time: the scripted run;
-   - arrival: the h1 cut-in.
-   - Pointer motion is missing and nothing is tied to scroll, so the page is varied but thin.
-8. **Different from its neighbours?** Only just. /automations also opens light with a mono caption under the h1, a dotted flow canvas with a pause button, and a grid of connector tiles. /auto's two-lane race is its own idea, but the rest of the page shares /automations' vocabulary (canvas, tiles, chain chips).
-9. **All 18 parts covered?** The card has 18 headings, each with a Done-here line. Claims that do not match the page:
-   - Part 9 says "scroll only in the pinned scene"; I found no pinned scene.
-   - Part 10 says each loop has "a 44px pause button"; it is 36px at 1470.
-   - Part 16 ticks "Terminal pauses and ends on a static frame", but there is no terminal.
-   - Part 12 admits a measured 1.41:1 contrast run and calls it mid-transition. Re-measure at rest.
-10. **Banned tells?**
-    - A "lazy look" in the connector tiles: single-letter glyphs in plain white boxes.
-    - Skeleton bars as the "Watch it live" visual.
-    - The fake window chrome (three grey dots) on the editor is a cliché but tolerable.
-    - No hue, no eyebrow above the h1 (the AUTO.HANZO.AI caption sits below it), no gradient text and no Inter.
-11. **Copy untouched?** As far as I can see. Headings and body match the live wording. "Restart the pod" is used only as an aria-label and is listed as a copy question.
+1. **Sells in 5 seconds, moves within 1 second?** Yes. "Hanzo Auto", the AUTO.HANZO.AI caption, the lede and "Open Auto" read at once; the two-lane race is already stepping at 1.0 s (record step 2/5, goroutine step 2/5) and by 2.0 s the "POD RESCHEDULED" line cuts across and the goroutine lane drops to step 1/5. But at 1470x801 the editor's bottom bar with the "Restart the pod" button sits at y 793-837 (phone: 786-830), so the control that makes the point is off the first screen on both sizes, and about 360px of the first screen is h1/lede/asks before the editor starts.
+2. **One in, one out?** Mostly. Hero race, then the six-row index with one row open running its own mini, then the pinned black figures room, the connectors on quiet grey, the black band. The index reads like an FAQ accordion: one big open row and five grey 26px rows, with a ~250px empty left column under the open row's three-line body.
+3. **A real object in every section?** Yes: the flow editor, a live mini in every opened row (record ticks, run log from two triggers, draft vs published), the figures plus the container drawing, the numbered connector chain, the agent prompt card. The figures room is the weakest: four words on hairlines and the container outline, with ~200px of empty black above and ~250px below.
+4. **One ask, sticky after the hero?** Yes. "Open Auto" is the only solid in the hero and in the band; the header carries "Try Hanzo" (shared). Nothing floats over content. Scale rhythm is good: h1 52px, section heads 26px, the open index row grows to ~44px and the others stay 26px, figures at 64px Air. The figures room has four equal 64px words in four equal columns, which is "everything the same size" for that screen.
+5. **Every hover and press answers?** Yes. Open Auto: ink to rgb(44,44,46) and scale .98 on press. Documentation: transparent to #f5f5f5 and a 1px press. Restart: white to ink fill, the icon turns, the lane restarts. Index rows: title grey to ink, plus button fills, the row opens and its mini starts. Connector rows: fill #e4e4e7, a number badge, and the left chain re-flows (Notion pressed: chain became Stripe, Airtable, Notion). The editor leans with the pointer. Copy puts exactly the displayed prompt on the clipboard, but the confirmation is only a tiny tick squeezed next to the copy icon; the label never changes.
+6. **Overlap, font swap, layout shift?** CLS 0.0002 desktop, 0 phone; no horizontal overflow at either size; no font swap seen; nothing overlaps. **But a hydration error on this page's own element reproduces:** "Hydration failed... `<motion.p className="l2-lede" initial={{opacity:0,y:16}}>`" at `components/pages/apps/Auto.jsx (143-144) @ Hero`, with the red "1 Issue" badge. Seen on both walk loads and in 2 of 7 lone desktop reloads (0 of 4 lone phone reloads). Also the container outline in the figures room rests with its bottom edge open (desktop) and as two loose stroke fragments (phone, at rest).
+7. **Which reference, and is its motion there?** apple.com product page: the product as the hero, one pinned scene (the figures room, 210svh) where words cut in. The pinned scene is there but is the thinnest part of the page; no idea changes inside it beyond four words appearing and a box drawing.
+8. **Different from its neighbours?** Partly. /automations opens with the same composition: h1 top-left, solid ask on the right, then a wide rounded frame holding a node chain with a pause button bottom-right. The objects differ (a two-lane race here vs connector tiles there), but at a glance the first screens are siblings.
+9. **All 18 parts covered?** The card has 18 parts filled. Claims I checked hold: parity 53/53 text, 4/4 links; primary ask bottom at 357px at 375x667; 44px pause controls; no overflow; tilt on the editor. Claims that do not hold: part 13 "0 console errors" and "hyd.js shows 0 on repeat loads" (the hero lede mismatch reproduces, see 6); part 9 "reduced motion renders the settled frame": at 375x667 with reduced motion, 18 animations were still running at 2.5 s (rule: `getAnimations()` empty after 3 s; recheck at 3 s).
+10. **Banned tells?** None of the hard ones: no hue, no gradient text, no eyebrow above a headline (the caption sits under the h1), no floating pill. Soft tells: the three grey "window dots" on the editor chrome; the goroutine lane's finished "done" node is white text on a mid-grey fill (low contrast) at the end of each run.
+11. **Copy untouched?** Yes, parity OK 53/53 text, 4/4 links.
 
 ## Fixes (ordered, most important first)
-- **Make the hero race show the difference in the first 5 seconds.** Reschedule the pod on the first run, around 2.5 s, not every other run. The goroutine lane should visibly drop back to "step 1/5" while the record lane holds "step 3/5". Replace the full grey scrim over both lanes (it blacks out the object) with a short hairline "pod rescheduled" marker across the lanes. Show "Restart the pod" at full ink, not 0.4, so people see it is pressable, and give it a hover fill.
-- **Replace the toy visuals inside the accordion.** "Watch it live" needs an actual event stream: mono lines arriving one by one from the run (`step.started`, `step.done`…) built from the editor's own nodes, not 4 grey bars. "Durable execution" should show the record rows filling with a tick per step, then surviving a restart. Each open item should hold one small live object, not a static box.
-- **Give the connector grid real marks.** Use the mirrored product logos (greyscale, 20–24px), or failing permission, drop the letter glyphs and make the tiles quiet text rows. Make the 1-2-3 chain at left a drawn path (hairline connectors that draw in 300 ms) so adding a tile visibly re-flows a workflow.
-- **Tighten the hero and close the dead gaps.**
-  - Pull the h1 baseline up to about 38% of 100svh; it sits at about 44% now, with roughly 230px of blank headroom.
-  - Put the lede under the h1 in the left column, not stranded centre-screen. Keep the asks right, aligned to the h1's baseline, so the hero reads h1, then lede, then ask, then editor.
-  - Cut the about 250px empty band between the editor and "A run that survives the restart" so the next section peeks into the hero (56px).
-- **Add one pointer move and one scroll-tied move, then fix the small breaks.**
-  - Add a pointer-aware detail, for example the editor tilting up to 2.5° or a node lighting under the cursor on fine pointers. Add one scrubbed or pinned moment, for example the figures room counting or cutting in each word as it is reached.
-  - Phone:
-    - Stack the two lanes so both are visible side by side as compact 5-dot rows; today only one lane fits a screen and the comparison is lost.
-    - Size "Apache" down so it clears the column gutter.
-  - Desktop:
-    - Make the pause button 44px.
-    - Chase the intermittent hydration-mismatch error and its red badge.
-  - Card: correct the part 9, 10 and 16 claims.
+- **Kill the hydration mismatch on the hero lede** (`Auto.jsx` 143-144, `motion.p.l2-lede` with `initial={{opacity:0,y:16}}`). Server and client must render the same element; render the final state in HTML (no `opacity:0` start in SSR) or use the same `m.p` on both. It shows the red badge and contradicts the card.
+- **Get "Restart the pod" onto the first screen** at 1470x801 and 375x812. It sits at y 793 (desktop) and 786 (phone). Tighten the hero: the h1 top is 180px; pull the editor up ~100px (h1 near 120-140px, asks beside the lede, not on their own row) or move the restart control into the editor's top bar beside "published" and the pause button.
+- **Fill or shorten the figures room.** About 450px of empty black around four equal words, and the container outline never closes at rest (bottom open on desktop, loose fragments on phone). Close the drawing by the end of the pin, cut the pin height (210svh feels long for four words), and give the screen one big thing: let the word in its moment grow past 64px and the others settle smaller, instead of four equal columns.
+- **Separate from /automations' first screen.** Same h1-left/ask-right/rounded-frame layout. Give /auto its own composition, e.g. the editor as the full-bleed object with the h1 over its top-left, or the race lanes running edge to edge without the framed window (and drop the three window dots).
+- **Make the index less of an accordion.** The open row leaves ~250px of empty left column under a three-line body; put the row's mini beside the title (top-aligned) or let the body column hold the step list, and shorten the closed rows to 56-64px so the open one is clearly the moment.
+- **Copy confirmation:** swap the label to Hanzo's existing confirmation word (or the register's) and the icon to a tick for ~1.5 s; right now a 10px tick crowds the copy icon and "Copy" never changes.
+- **Contrast of the finished goroutine "done" node** (white on mid grey) and **reduced motion**: confirm `getAnimations()` is empty at 3 s at 375x667.
+- Shared, not this page's fault: the header glass shows a grey smear when a dark object (the index minis) passes under it; worth a request to the header owner.

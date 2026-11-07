@@ -1,6 +1,6 @@
 'use client';
 /* Analytics.
-   V2: 8/10 Round 2: the hero's "Try Hanzo" is the first screen's solid (desktop), the dashboard fits the grid, section gaps cut to 48–88px, report cards lift and play their picture on hover, chips and link asks answer, security drawn as a settings panel and an audit document, community led by a repo card whose contribution grid fills in, "referrer" no longer clipped.
+   V2: 8/10 Round 3: own hero (title across, the dashboard a full-width stage below with no window chrome, its pause in the board's strip; h1 baseline ~33%, reports peek 56px; copy and stage present at first paint); security switches are real role=switch toggles; one ask pair in the script with the API as a text disclosure; sheets lose the equal-button rows and the 64px non-numbers; phone reports are a snap rail.
    Persona: Developer who runs sites (and the team lead choosing an analytics tool).
    Goal: start Hanzo Analytics (try it, or ask for a demo).
    CTA: "Try Hanzo" → /login (data-cta analytics.hero, data-thumb for the ask bar; again as analytics.script after the
@@ -9,8 +9,9 @@
    Signature: "From a visit to a number". Three pinned chapters whose pictures are built by the scroll itself: the
    funnel's steps rise one by one until the cliff step stands hollow, the retention cohorts fill in week by week, and
    revenue bars climb beside the traffic line that produced them, split by channel and campaign.
-   Supporting: the Stage hero (the dashboard settles as you scroll; its activity line draws and its figures settle by
-   CSS at first paint, never counting through other digits; the realtime list ticks while seen, with the Stage's pause),
+   Supporting: the split Stage hero (the full-width dashboard settles as you scroll; its activity line draws and its
+   figures settle by CSS at first paint, never counting through other digits; the realtime list ticks while seen, with
+   the board's own pause in its top strip),
    report cards that open in place into their own living picture, and the anomaly line drawing itself in the dark room.
    Motion kinds: idle (realtime list, line draws), pointer (the chart's hairline names the hour, the magnetic ask),
    time (a visit every 2.4 s), state (cards open, questions, Apply, language tabs), arrival (title cut-in, figures
@@ -18,11 +19,11 @@
    Beyond: "Ask it as a question". Pick the question you actually have (who is on the site right now, where the drop
    is, whether anyone came back...) and the report card that answers it opens; each question is the report's own words.
    Every word, figure and link is Hanzo's; pages and referrers in the realtime list are examples (as the dashboard says). */
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, Cta, CodeBlock, Tabs, TabPanel } from '../../kit';
-import KeynoteStage, { useStagePause } from '../../v2/KeynoteStage';
+import KeynoteStage from '../../v2/KeynoteStage';
 import KeynoteOpen from '../../v2/KeynoteOpen';
 import KeynoteChapters from '../../v2/KeynoteChapters';
 import KeynoteRoom from '../../v2/KeynoteRoom';
@@ -59,12 +60,14 @@ const VISITS = [['/pricing', 'google'], ['/docs/start', 'github.com'], ['/', 'ne
 /* Hanzo's three figures, exactly as printed: they settle into place (a line mask), they never count */
 const KPIS = [['Users', '127,543', '+12.4% vs last week'], ['Conversion Rate', '4.87%', '+0.8% vs last week'], ['Revenue', '$45,892', '+15.2% vs last week']];
 const pt = (h, i) => [(i / 23) * 100, 100 - h];
+/* the board's own live switch (the demo's pause lives in the board's top strip, not under the ask) */
+const Paused = createContext(false);
 
 /* the realtime list: a new visit slides in on top, the rest move down a row (transform only, no layout animation) */
 function Realtime({ live }) {
   const [k, setK] = useState(0);
   const ul = useRef(null);
-  const paused = useStagePause();
+  const paused = useContext(Paused);
   useTick(2400, live && !paused, () => setK((v) => v + 1));
   useLayoutEffect(() => {
     const el = ul.current;
@@ -154,9 +157,19 @@ function Activity() {
 
 function Board() {
   const [ref, live] = useSeen(0.25);
+  const [paused, setPaused] = useState(false);
   return (
-    <div className="kn-obj an-board" ref={ref}>
-      <div className="an-bar"><i /><i /><i /><span>Hanzo Analytics Dashboard</span><em>example</em></div>
+    <div className="kn-obj an-board" ref={ref} data-paused={paused ? '' : undefined}>
+      <div className="an-bar">
+        <button type="button" className="an-live-btn" aria-pressed={paused} aria-label="Pause" onClick={() => setPaused((v) => !v)}>
+          {paused
+            ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
+            : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
+        </button>
+        <span>Hanzo Analytics Dashboard</span><em>example</em>
+        <p className="kn-kick an-bar-k">Web analytics you host yourself</p>
+      </div>
+      <Paused.Provider value={paused}>
       <div className="an-kpis">
         {KPIS.map(([t, v, ch], i) => (
           <div key={t} className="an-kpi">
@@ -170,6 +183,7 @@ function Board() {
         <Activity />
         <Realtime live={live} />
       </div>
+      </Paused.Provider>
     </div>
   );
 }
@@ -526,8 +540,8 @@ function ApiSheet() {
       </ul>
       <div className="kn-acts">
         <Cta to="https://docs.hanzo.ai/docs/analytics" kind="quiet" id="analytics.api-docs">View Documentation</Cta>
-        <Cta to="https://docs.hanzo.ai/docs/openapi" kind="quiet" id="analytics.api-ref">API Reference</Cta>
-        <Cta to="https://github.com/hanzoai/insights" kind="quiet" id="analytics.api-examples">Example Projects</Cta>
+        <Cta to="https://docs.hanzo.ai/docs/openapi" kind="link" id="analytics.api-ref">API Reference</Cta>
+        <Cta to="https://github.com/hanzoai/insights" kind="link" id="analytics.api-examples">Example Projects</Cta>
       </div>
     </div>
   );
@@ -538,9 +552,22 @@ const FEATS = ['End-to-end encryption', 'Data residency controls', 'Custom data 
 function SecPanel() {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
+  const [on, setOn] = useState(() => FEATS.map(() => true));
+  const [touched, setTouched] = useState(false);
+  const flip = (i) => {
+    setTouched(true);
+    setOn((v) => v.map((x, j) => (j === i ? !x : x)));
+    dispatchEvent(new CustomEvent('hz-sound', { detail: 'tick' }));
+  };
   return (
-    <ul ref={ref} className="kn-obj an-feats" data-in={seen ? '' : undefined}>
-      {FEATS.map((f, i) => <li key={f} style={{ '--an-i': i }}><span>{f}</span><i className="an-sw" aria-hidden="true" /></li>)}
+    <ul ref={ref} className="kn-obj an-feats" data-in={seen ? '' : undefined} data-touched={touched ? '' : undefined}>
+      {FEATS.map((f, i) => (
+        <li key={f} style={{ '--an-i': i }}>
+          <button type="button" role="switch" aria-checked={on[i]} onClick={() => flip(i)}>
+            <span>{f}</span><i className="an-sw" aria-hidden="true" />
+          </button>
+        </li>
+      ))}
     </ul>
   );
 }
@@ -585,13 +612,14 @@ export default function Analytics() {
   return (
     <main className="kn an">
       <KeynoteStage
-        look="side"
-        kick="Web analytics you host yourself"
-        title={['Hanzo', 'Analytics']}
+        look="split"
+        className="an-hero"
+        title={['Hanzo Analytics']}
         lede="Traffic, sessions and revenue for the sites you run, in a dashboard you can read without training."
         acts={[['Try Hanzo', '/login'], ['Request Demo', '/contact-sales']]}
         cta="analytics.hero"
-        from={1.06}
+        from={1.08}
+        pause={false}
       >
         <Board />
       </KeynoteStage>
@@ -653,9 +681,10 @@ export default function Analytics() {
             <div className="kn-acts">
               <Cta to="/login" kind="quiet" id="analytics.script">Try Hanzo</Cta>
               <Cta to="/contact-sales" kind="link" id="analytics.script-2">Request Demo</Cta>
-              <KeynoteSheet label="A script, then an API" title="A script, then an API"><ApiSheet /></KeynoteSheet>
             </div>
             <p className="an-nocard">No credit card required.</p>
+            {/* the API is a text disclosure under the ask pair, so the pair is the only ask here */}
+            <div className="an-disc"><KeynoteSheet label="A script, then an API" title="A script, then an API"><ApiSheet /></KeynoteSheet></div>
           </div>
           <div className="an-add-o"><Script /></div>
         </div>
@@ -686,11 +715,11 @@ export default function Analytics() {
                 <p className="kn-lede">Hanzo Analytics is fully open-source, fostering innovation and collaboration among thousands of global developers.</p>
                 <div className="kn-acts">
                   <Cta to="https://docs.hanzo.ai" kind="quiet" id="analytics.oss-docs">View Docs</Cta>
-                  <Cta to="https://github.com/hanzoai" kind="quiet" id="analytics.oss-repo">View Repository</Cta>
+                  <Cta to="https://github.com/hanzoai" kind="link" id="analytics.oss-repo">View Repository</Cta>
                 </div>
                 <h3 className="an-h3">Open Source</h3>
                 <p className="an-oss-p">Hanzo Analytics is fully open source, with a vibrant community of developers contributing from around the world. Join us on GitHub to collaborate on the future of analytics.</p>
-                <div className="kn-acts"><Cta to="https://github.com/hanzoai/insights" kind="quiet" id="analytics.oss-github">GitHub Repo</Cta></div>
+                <div className="kn-acts"><Cta to="https://github.com/hanzoai/insights" kind="link" id="analytics.oss-github">GitHub Repo</Cta></div>
                 <ul className="an-stats">{[['M+', 'Downloads'], ['K+', 'GitHub Stars'], ['', 'Contributors']].map(([a, b]) => <li key={b}><b className={'kn-fig' + (a ? '' : ' none')}>{a || <span aria-hidden="true">—</span>}</b><span>{b}</span></li>)}</ul>
               </div>
             </KeynoteSheet>

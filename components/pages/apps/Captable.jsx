@@ -13,9 +13,11 @@
    founders' share is not their percentage, which Hanzo says is exactly where it becomes visible. The exit price grows
    from 64px to 84px only while the hand is on it.
    Motion: the running round (idle, signature) + the figure settling (scroll) + sticky chapters lighting rows (scroll)
-   + plan cards that open (state, BizOpen); the exit price and the round answer the hand (pointer). Tweens only.
+   + plan cards that open (state, BizOpen); the exit price and the round answer the hand (pointer); the fork drawing
+   draws its two lines once in view. Tweens only.
    All inputs are an example company's, labelled as such; the arithmetic is the real thing. Every word and link is Hanzo's.
-V2: 8/10 on the deck: h1 52, headings 26, the founders' share settles 112→64 as you scroll beside its live table; six chapters light rows, the term sheet opens as a sheet, the waterfall is the one black room, plans open into panels, one ask
+   Phones: one compact table pins under the header and the six chapters scroll under it (captable/PhoneSteps.jsx).
+V2: 8/10 r2: the round moves at 450ms, the exit price grows clear of its label, phone chapters pin one table, 188px max bands, the fork drawn as an object, every row answers hover
 */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
@@ -25,6 +27,7 @@ import BizLines from '../../v2/BizLines';
 import BizChapters from '../../v2/BizChapters';
 import BizSheet from '../../v2/BizSheet';
 import BizOpen from '../../v2/BizOpen';
+import PhoneSteps from './captable/PhoneSteps';
 import { EASE_OUT_EXPO } from '../../../lib/motion';
 import './Captable.css';
 
@@ -109,13 +112,16 @@ const PauseIcon = ({ on }) => (on
 function Hero({ pre, setPre, mine, setMine }) {
   const [ref, live, calm] = useLive(0.3);
   const dir = useRef(1);
+  const ran = useRef(false);
   useEffect(() => {
     if (!live || mine) return;
+    // the first step lands at 450ms so the page is visibly alive inside a second; then one every 1.3s
     const t = setTimeout(() => {
+      ran.current = true;
       let n = pre + dir.current * 500_000;
       if (n > 24_000_000 || n < 6_000_000) { dir.current *= -1; n = pre + dir.current * 500_000; }
       setPre(n);
-    }, 1300);
+    }, ran.current ? 1300 : 450);
     return () => clearTimeout(t);
   }, [pre, live, mine, setPre]);
   // the moment: the figure starts at 112px (scale 1.75 of its resting 64px) and settles as the page scrolls
@@ -222,7 +228,7 @@ function TermSheet() {
                 ))}
               </ol>
             </BizSheet>
-            <span className="ct-sign" aria-hidden="true"><i>×</i></span>
+            <span className="ct-sign" aria-hidden="true"><em className="x-mono">Hanzo Cap Table</em></span>
           </div>
         </div>
       </div>
@@ -336,6 +342,29 @@ function Plans() {
 
 const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
+/* The fork, drawn: upstream captableinc/captable runs on top, hanzoai/captable branches off it and sends work back
+   (Hanzo's "we contribute back"). The two lines draw in once, when the drawing is on screen. */
+function Fork() {
+  const [ref, live, calm] = useLive(0.5);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => { if (live || calm) setSeen(true); }, [live, calm]);
+  const up = [40, 120, 200, 280, 360, 440];
+  const me = [260, 330, 440];
+  return (
+    <div ref={ref} className={'ct-fork' + (seen ? ' in' : '')}>
+      <div className="ct-fork-l up"><More to={UP}>Upstream: captableinc/captable</More></div>
+      <svg className="ct-fork-svg" viewBox="0 0 480 104" aria-hidden="true">
+        <path className="ct-fork-up" d="M8 22H472" pathLength="1" />
+        <path className="ct-fork-me" d="M120 22C170 22 166 82 216 82H472" pathLength="1" />
+        <path className="ct-fork-back" d="M330 82C372 82 368 22 410 22" pathLength="1" />
+        {up.map((x, i) => <circle key={'u' + x} className="ct-fork-d up" cx={x} cy="22" r="6" style={{ '--i': i }} />)}
+        {me.map((x, i) => <circle key={'m' + x} className="ct-fork-d me" cx={x} cy="82" r="6" style={{ '--i': i + 3 }} />)}
+      </svg>
+      <div className="ct-fork-l me"><More to={REPO}>hanzoai/captable</More></div>
+    </div>
+  );
+}
+
 /* Where it comes from and the ways in: quiet rows before the close. */
 function Ways() {
   return (
@@ -344,9 +373,9 @@ function Ways() {
         <div className="ct-oss">
           <h2 id="ct-oss-h" className="bz-title">Built on Open Source</h2>
           <p className="bz-body">Hanzo Cap Table is built on <A to={UP}>Captable, Inc.</A> (OpenCap), the open-source alternative to Carta, Pulley, and AngelList. We contribute back to the community and extend it with Hanzo IAM integration, e-signing, and enterprise features.</p>
-          <div className="ct-links"><More to={REPO}>hanzoai/captable</More><More to={UP}>Upstream: captableinc/captable</More></div>
+          <Fork />
           <div className="ct-get">
-            <h3 className="ct-get-h">Get Captable</h3>
+            <h3 className="ct-get-h"><Gh />Get Captable</h3>
             <p>Cap table + equity management</p>
             <div className="ct-chips">
               <span className="ct-chip"><span>License:</span> Apache-2.0</span>
@@ -387,16 +416,29 @@ function End() {
 export default function Captable() {
   const [pre, setPre] = useState(12_000_000);
   const [mine, setMine] = useState(false);
+  // phones get one pinned compact table with the chapters scrolling under it (decided after mount, like BizChapters)
+  const [phone, setPhone] = useState(false);
+  useEffect(() => {
+    const q = matchMedia('(max-width: 900px)');
+    const f = () => setPhone(q.matches);
+    f();
+    q.addEventListener('change', f);
+    return () => q.removeEventListener('change', f);
+  }, []);
+  const steps = STEPS.map(([t, d]) => ({ t, d }));
+  const head = (
+    <header className="bz-wrap bz-grid ct-ch-head">
+      <h2 className="bz-headline">The instruments, modelled</h2>
+      <p className="bz-lede">A spreadsheet can hold these numbers. It cannot tell you what they become at the next price.</p>
+    </header>
+  );
   return (
     <main className="bz ct">
       <span data-ask-name="Hanzo Cap Table" hidden />
       <Hero pre={pre} setPre={setPre} mine={mine} setMine={setMine} />
-      <BizChapters label="A round, run first" className="ct-ch" items={STEPS.map(([t, d]) => ({ t, d }))} stage={(at) => <Stage at={at} pre={pre} />}>
-        <header className="bz-wrap bz-grid ct-ch-head">
-          <h2 className="bz-headline">The instruments, modelled</h2>
-          <p className="bz-lede">A spreadsheet can hold these numbers. It cannot tell you what they become at the next price.</p>
-        </header>
-      </BizChapters>
+      {phone
+        ? <PhoneSteps label="A round, run first" items={steps} stage={(at) => <Stage at={at} pre={pre} />}>{head}</PhoneSteps>
+        : <BizChapters label="A round, run first" className="ct-ch" items={steps} stage={(at) => <Stage at={at} pre={pre} />}>{head}</BizChapters>}
       <TermSheet />
       <Waterfall pre={pre} />
       <Plans />
