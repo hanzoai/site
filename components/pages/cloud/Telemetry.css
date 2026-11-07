@@ -151,7 +151,7 @@
   .tl2 .l2-stage { height: 125svh; }
   .tl2 .l2-pin-head { padding-top: 27px; }
   /* the rail sits under the chapter copy (right), clear of the config window */
-  .tl2 .l2-pin.flip .l2-rail { left: auto; right: 0; }
+  .tl2 .l2-pin.flip .l2-rail { grid-column: 9 / span 4; }
   /* the close: the config spans the band beside a narrower copy column, in two columns of its own */
   .tl2 .l2-band-copy { grid-column: 1 / span 4; }
   .tl2 .l2-band-obj { grid-column: 5 / span 8; }

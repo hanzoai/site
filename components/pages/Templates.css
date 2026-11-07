@@ -285,3 +285,67 @@
 .xtp-ghost[data-k='Business'] .xtp-ghost-row, .xtp-ghost[data-k='Web3'] .xtp-ghost-row { grid-template-columns: 1fr 1fr; }
 .xtp-ghost[data-k='Business'] .xtp-ghost-row i:nth-child(3), .xtp-ghost[data-k='Web3'] .xtp-ghost-row i:nth-child(3) { display: none; }
 .xtp-note, .xtp-ps { user-select: none; -webkit-user-select: none; } /* Copy gives exactly the selectable text: the commands */
+
+/* v2.5 (round 2 of the James-eye walk) */
+/* a broken or blocked preview paints its own drawn page (the image's ::before only renders when the image fails):
+   no broken-image icon and no alt text at any moment, with or without JS. JS then swaps in the fuller drawn page. */
+.xtp-shot img::before, .xtp-tile-img img::before {
+  content: attr(data-t); position: absolute; inset: 0; display: flex; align-items: center; padding: 0 6%;
+  background:
+    linear-gradient(#d4d4d4, #d4d4d4) 6% 7% / 16% 6px no-repeat,
+    linear-gradient(#d4d4d4, #d4d4d4) 78% 7% / 7% 5px no-repeat, linear-gradient(#d4d4d4, #d4d4d4) 88% 7% / 7% 5px no-repeat,
+    linear-gradient(#e5e5e5, #e5e5e5) 6% 92% / 28% 20% no-repeat, linear-gradient(#e5e5e5, #e5e5e5) 50% 92% / 28% 20% no-repeat, linear-gradient(#e5e5e5, #e5e5e5) 94% 92% / 28% 20% no-repeat,
+    #f5f5f5;
+  font: 500 clamp(18px, 7cqw, 84px)/.95 var(--sans); letter-spacing: -.045em; color: #0a0a0a;
+}
+
+/* the back windows show only their bars: no footer, no ask, so nothing stacks down the deck's right edge */
+.xtp-card:not(.front) .xtp-foot { visibility: hidden; }
+
+/* first screen: the deck owns the right two thirds, the headline and the ask stand beside it (no grey stage) */
+@media (min-width: 900px) {
+  .xtp-hero-g { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(24px, 3vw, 48px); align-items: center; }
+  .xtp-hero-g .xtp-top { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; margin: 0 !important; }
+  .xtp-hero-g .xtp-h1 { font-size: clamp(52px, 5.4vw, 84px); }
+  .xtp-hero-g .xtp-top-r { padding: 0; }
+}
+.xtp-stage { background: transparent !important; padding: 0 !important; border-radius: 0; }
+.xtp-stage .xtp-deckwrap { max-width: none; }
+.xtp-pause.in { position: absolute; left: 0; top: 0; right: auto; translate: none; z-index: 60; }
+
+/* the wall drifts: each preview scrolls slowly down its own page, out of step, only while the wall is in view */
+/* drift uses `translate`, so the tile's hover zoom (`transform`) still answers on top of it */
+@keyframes xtp-drift { 0%, 15% { translate: 0 0; } 85%, 100% { translate: 0 -5%; } }
+.xtp-shelf .xtp-tile-img img, .xtp-shelf .xtp-tile-img .xtp-ghost { animation: xtp-drift 16s var(--ease) infinite alternate; animation-play-state: paused; }
+.xtp-tile-img img { height: 106% !important; }
+.xtp-shelf.here .xtp-tile-img img, .xtp-shelf.here .xtp-tile-img .xtp-ghost { animation-play-state: running; }
+.xtp-shelf .w2-oc > li:nth-child(3n+2) .xtp-tile-img :is(img, .xtp-ghost) { animation-delay: -5s; }
+.xtp-shelf .w2-oc > li:nth-child(3n) .xtp-tile-img :is(img, .xtp-ghost) { animation-delay: -10s; }
+.xtp-tiles .w2-oc-card:active { transform: scale(.98); }
+@media (hover: hover) { .xtp-kinds button:hover { background: rgba(255, 255, 255, .7); } }
+
+/* the terminal types: the untyped rest is in the HTML in transparent ink, so the block never changes size */
+.xtp-rest { color: transparent; }
+.xtp-l[data-wait] .xtp-ps { color: transparent; }
+.xtp-term-t { animation: xtp-cut .3s var(--ease) both; }
+@keyframes xtp-cut { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* the close: the window in front, small, above the line and the ask */
+.xtp-band-win { display: block; width: min(320px, 80vw); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); text-decoration: none; transition: transform .3s var(--ease); }
+.xtp-band-win .xtp-bar { height: 30px; }
+.xtp-band-win .xtp-url { font-size: 12px; }
+.xtp-band-win .xtp-tile-img { border-radius: 0; }
+.xtp-band-win .xtp-tile-img img, .xtp-band-win .xtp-ghost { animation: xtp-scroll 14s var(--ease) infinite alternate; }
+
+@media (max-width: 899px) {
+  /* one row: the readout, ←, the count, →, the pause; the dots give way to the arrows on a phone */
+  .xtp-nav { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .xtp-front { flex: 1 1 100%; }
+  .xtp-dots { display: none; }
+  /* the shared header carries the solid ask on a phone, so the page's own asks are outlined there */
+  .xtp .w2-cta { background: transparent !important; color: #0a0a0a !important; box-shadow: inset 0 0 0 1px rgba(10, 10, 10, .3); }
+  .xtp-setup2 button, .xtp-setup2 .x-setup-main, .xtp-setup2 a { min-height: 44px; }
+}
+@media (max-width: 899px) and (hover: hover) { .xtp .w2-cta:hover { background: rgba(0, 0, 0, .04) !important; } }
+@media (max-width: 399px) { .xtp-bar .xtp-kind { display: none; } .xtp-url { text-overflow: clip; } }
+@media (prefers-reduced-motion: reduce) { .xtp-shelf .xtp-tile-img :is(img, .xtp-ghost), .xtp-band-win :is(img, .xtp-ghost), .xtp-term-t { animation: none; } }

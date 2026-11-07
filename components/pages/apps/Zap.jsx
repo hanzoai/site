@@ -8,16 +8,16 @@
    Beyond: sidecars or one daemon. Set how many agents you run and count the tool-server processes each topology starts
    for the three servers of the example: one beside every agent, or one zapd in front of them. Structure only, no timings,
    because Hanzo publishes none.
-   Motion budget: signature = the pointer and the walking parser; supporting = Stage (Settle), Open (packets as sheets),
+   Motion budget: signature = the pointer and the walking parser; supporting = Stage (Settle, page-local), Open (packets as sheets),
    typing (the terminal). No springs. Colour: none (0 UI hues): the pointer and the walked text are white and silver in the
    dark room. Pause buttons sit in each object's own bar or control row. One dark room: the hero. Every word and link is Hanzo's. */
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
 import { A, Img } from '../../kit';
 import { useLive, useEvery, useSteps } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
-import Settle from '../../v2/Settle';
+import Settle from './zap/Settle'; // page-local: the shared v2/Settle mismatches on hydration under reduced motion
 import { OpenCards } from '../../v2/OpenSheet';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
@@ -176,6 +176,18 @@ function Why() {
     return () => ul.removeEventListener('scroll', f);
   }, [span]);
   useEffect(() => { track.current?.querySelectorAll('.zp-packets > li').forEach((li, i) => li.classList.toggle('on', i === on)); }, [on]);
+  // keyboard: focusing a packet on the pinned stage scrolls the page to the point where that packet has landed (the
+  // inverse of the scrub), so the wire carries it into view; the stick never scrolls sideways (overflow: clip in CSS)
+  const focusIn = (e) => {
+    if (!span) return;
+    const li = e.target.closest?.('.zp-packets > li'); if (!li) return;
+    const i = [...li.parentElement.children].indexOf(li); if (i < 0) return;
+    const s = sec.current; const top = s.getBoundingClientRect().top + scrollY;
+    const run = s.offsetHeight - innerHeight;
+    s.querySelector('.zp-why-stick').scrollLeft = 0;
+    scrollTo({ top: top + run * (i / (WHY.length - 1)), behavior: 'instant' });
+    setOn(i);
+  };
   return (
     <section ref={sec} className={'zp-why' + (span ? ' pinned' : '')} style={span ? { height: `calc(100svh + ${span}px)` } : undefined}>
       <div className="zp-why-stick">
@@ -184,7 +196,7 @@ function Why() {
             <LineMask as="h2" className="w2-display s" lines={['Why bother']} />
             <p className="w2-lede">JSON over HTTP is fine until a hundred agents are calling the same tools. Then the cost is the copies, and the fix is to stop making them.</p>
           </div>
-          <div className="zp-why-track" ref={track}>
+          <div className="zp-why-track" ref={track} onFocus={focusIn}>
             <motion.div style={span ? { x } : undefined}>
               <OpenCards cols={4} className="zp-packets" items={WHY.map(([t, d], i) => ({ id: 'zp-' + i, k: String(i + 1).padStart(2, '0'), t, art: <Hdr n={i} />, body: <p>{d}</p> }))} />
             </motion.div>
@@ -248,7 +260,9 @@ function Running() {
         </div>
         <div className="zp-term">
           <div className="zp-term-bar"><i /><i /><i /><span className="x-mono">Terminal</span><Copy text={lines.filter((l) => l.startsWith('$')).map((l) => l.slice(2)).join('\n')} /><span className="zp-pause">{pauseBtn}</span></div>
-          <pre className="x-mono">{lines.map((l, i) => <span key={i} className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '')}>{l.startsWith('$ ') ? <><span className="zp-ps">$ </span>{l.slice(2)}</> : l}{'\n'}</span>)}</pre>
+          {/* every line keeps its row (no wrapping, a fixed height), and the cursor sits at the end of the typed line:
+              the line break lives outside the line's span, so the cursor never opens an extra row */}
+          <pre className="x-mono" tabIndex={0} role="region" aria-label="Terminal">{lines.map((l, i) => <Fragment key={i}><span className={(l.startsWith('#') ? 'c' : '') + (i < k ? ' in' : '') + (i === k - 1 ? ' last' : '')}>{l.startsWith('$ ') ? <><span className="zp-ps">$ </span>{l.slice(2)}</> : l}</span>{i < lines.length - 1 ? '\n' : ''}</Fragment>)}</pre>
         </div>
       </div>
     </section>
@@ -297,7 +311,8 @@ function Fleet() {
       <div className="zp-topos">
         <div className="zp-topo">
           <p className="zp-topo-k">An MCP server beside every agent</p>
-          <div className="zp-procs" aria-hidden="true">{box(Math.min(side, 300), 'p')}</div>
+          {/* few agents: big squares fill the box; many: they shrink to fit (the box keeps one height, nothing moves) */}
+          <div className="zp-procs" aria-hidden="true" style={{ '--sz': side <= 6 ? '40px' : side <= 12 ? '28px' : side <= 27 ? '19px' : side <= 60 ? '13px' : '10px' }}>{box(Math.min(side, 300), 'p')}</div>
           <p className="zp-topo-n x-mono"><b>{side}</b> tool-server processes · {n - 1} more of each</p>
         </div>
         <div className="zp-topo one">
@@ -344,6 +359,9 @@ function Diagram() {
 }
 
 function Built() {
+  // the scale moment: N:1 and 1:M arrive at hero size, hold, then settle to figure size (the 0 stays medium, MASTER part 5)
+  const stats = useRef(null);
+  const seen = useInView(stats, { once: true, amount: 0.6 });
   return (
     <section className="w2-sec tight zp-built">
       <div className="w2-wrap">
@@ -351,9 +369,9 @@ function Built() {
           <LineMask as="h2" className="w2-headline" lines={['How it is put together']} />
           <p className="w2-lede">Many agents on one side, many tool servers on the other, one address in the middle.</p>
         </div>
-        <ul className="zp-stats">
+        <ul className={'zp-stats' + (seen ? ' seen' : '')} ref={stats}>
           {[['N:1', 'Every agent, one address'], ['1:M', 'One schema over every backend'], ['0', 'Copies of the same tool server']].map(([k, d]) => (
-            <li key={d}><LineMask as="p" className="w2-fig zp-fig" lines={[k]} /><span>{d}</span></li>
+            <li key={d} className={k === '0' ? 'zero' : undefined}><LineMask as="p" className="w2-fig zp-fig" lines={[k]} /><span>{d}</span></li>
           ))}
         </ul>
         <div className="zp-built-grid">
