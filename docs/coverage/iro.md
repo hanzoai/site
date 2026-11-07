@@ -55,7 +55,7 @@ Done here: Hanzo's own research-preview note (samples publish only after blind r
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /iro`: 0 missing
 
-Done here: parity text 51/51, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 10px mono capitals (SPEC). Tables: n/a: no table on this page. Headings use `text-wrap: balance`. C1: model-card pills are back to SPEC's 10px mono capitals (weight 400), in `ModelCards.css` and the field map's `Creative.css`.
+Done here: parity text 51/51, links 4/4. Section headings rest at 26px, the settled headline at 44px, body 16px, ledes 20px. Mono captions are 12-13px; Hanzo's model-card pills are 10px mono capitals (SPEC). Tables: n/a: no table on this page. Headings use `text-wrap: balance`. C1: model-card pills are back to SPEC's 10px mono capitals (weight 400), in `ModelCards.css` and the field map's `Creative.css`. Copy check (offline, 8 Nov rule): missing 0 of 37 lines; Hanzo's static readout line is kept word for word for readers, beside the live counter.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens (deck values only; `tokens.css` not on main)

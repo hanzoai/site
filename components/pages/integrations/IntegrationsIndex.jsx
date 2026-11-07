@@ -17,7 +17,7 @@ import { Copy } from '../../ui';
 import { A, More } from '../../kit';
 import { Loose } from '../models/parts';
 import Logo from './logos';
-import { landAtTop } from './intParts';
+import { landAtTop, Leaf } from './intParts';
 import '../../v2/ProofScale.css';
 import '../../v2/ProofRhythm.css';
 import './IntegrationsIndex.css';
@@ -358,7 +358,7 @@ function Paste({ doc }) {
     place(e.clientX - r.left, e.clientY - r.top);
     setLensOn(true);
   };
-  const code = <code><span className="xii-caret" aria-hidden="true">›</span>{doc.paste.code}</code>;
+  const code = <code><span className="xii-caret" aria-hidden="true">›</span><span>{doc.paste.code}</span></code>;
   return (
     <section className="xii-paste" data-room="dark" aria-label={word} ref={room}>
       <div className="pf-sec">
@@ -398,7 +398,7 @@ export default function IntegrationsIndex({ doc, previews }) {
                 {doc.title.split(/ (?=everything)/).map((l, i, a) => <span key={i} className="xii-h1-l"><span style={{ '--i': i }}>{l}</span>{i < a.length - 1 ? ' ' : null}</span>)}
               </h1>
             </div>
-            <p className="pf-lede xii-lede xii-in" style={{ '--i': 2 }}><Loose nodes={doc.lede} /></p>
+            <p className="pf-lede xii-lede xii-in" style={{ '--i': 2 }}><Leaf nodes={doc.lede} /></p>
             <div className="xii-acts xii-in" style={{ '--i': 3 }}>
               {doc.actions.map((a, i) => (i
                 ? <More key={a.label} to={a.href}>{a.label}</More>

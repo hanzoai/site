@@ -30,7 +30,7 @@ import FamStage from '../../v2/FamStage';
 import FamChapters from '../../v2/FamChapters';
 import FamNext from '../../v2/FamNext';
 import { ui } from '../../v2/famUi';
-import { Editor, CodeCard, Only, landAtTop } from './intParts';
+import { Editor, CodeCard, Only, landAtTop, Leaf } from './intParts';
 import Logo from './logos';
 import './guide.css';
 
@@ -56,7 +56,7 @@ export default function Guide({ doc, emojis }) {
       </div>
       <div className="xig-cfg">
         <p className="xig-base"><strong>Base URL:</strong> <span className="xig-base-u"><code className="x-mono">{doc.base}</code><Copy text={doc.base} label={ui('int_copy_base')} /></span></p>
-        {doc.keyLine && <p className="xig-key"><Loose nodes={doc.keyLine} /></p>}
+        {doc.keyLine && <p className="xig-key"><Leaf nodes={doc.keyLine} /></p>}
       </div>
     </>
   );

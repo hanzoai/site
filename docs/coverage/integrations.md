@@ -55,7 +55,7 @@ Done here: the only figure is the count of Hanzo's own guides (19 cards). The ba
 - [x] Tables, FAQ, tabs and code use the kit parts — page-local APG tabs and code block until `Tabs`/`CodeBlock` merge
 - [x] `python3 scripts/parity.py /integrations`: 0 missing
 
-Done here: parity 71/71 text, 21/21 links. Body 14–16px; mono 12px only for numbers and file captions.
+Done here: parity 71/71 text, 21/21 links. Body 14–16px; mono 12px only for numbers and file captions. Copy check (offline, 8 Nov rule): missing 0 of 40 lines; loose runs inside Hanzo's rich lede and the agent prompt sit in their own spans.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens

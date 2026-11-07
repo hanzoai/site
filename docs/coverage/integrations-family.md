@@ -64,7 +64,7 @@ Done here: The proof is Hanzo's own working code, with the lines that point at H
 - [x] Code in one window component; tabs in the chapter window
 - [x] `python3 scripts/parity.py`: langchain 92/92, cursor 77/77, docker 95/95, python 101/101 text; 23/23 links each
 
-Done here: On phones every code line wraps, so Hanzo's lines read whole instead of being cut mid-URL. C1: on a phone a wrapped line hangs under its own indent (+2ch), so an indent never stands alone on a row; on desktop a line longer than the window fades at its right edge instead of being cut flush (cursor's `models` line).
+Done here: On phones every code line wraps, so Hanzo's lines read whole instead of being cut mid-URL. C1: on a phone a wrapped line hangs under its own indent (+2ch), so an indent never stands alone on a row; on desktop a line longer than the window fades at its right edge instead of being cut flush (cursor's `models` line). Copy check (offline, 8 Nov rule): missing 0 on anthropic-sdk (38), docker (38), cursor (41), python (38), langchain (48); the key line's loose runs sit in their own spans.
 
 ## 7. Visual design system
 - [x] `taste.py` passes (3 files). Only deck greys appear (`#fbfbfb`, `#e5e5e5`, `#a3a3a3`, `#404040`, `#262626`, `#171717`, `#0f0f0f`, `#0a0a0a`, `#000`) and white or black alpha steps

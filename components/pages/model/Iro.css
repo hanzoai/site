@@ -12,7 +12,7 @@
 .ir-tl { top: 14px; left: 14px; }
 .ir-bl { bottom: 14px; left: 14px; }
 /* round 2: the step count never re-wraps the line, the window fits the screen, the tags sit off the picture on phones */
-.ir-bl span { display: inline-block; min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
+.ir-bl .ir-n { display: inline-block; min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
 .ir-tag { white-space: nowrap; }
 .ir-frame { container-type: size; aspect-ratio: auto; width: 100%; height: max(420px, min(calc(100svh - 330px), 560px)); }
 .ir-bl .ir-cfg { display: inline; min-width: 0; }

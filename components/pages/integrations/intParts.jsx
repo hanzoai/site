@@ -8,6 +8,13 @@ import { useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
 import { ui } from '../../v2/famUi';
 import { play } from '../../../lib/sound';
+import { Loose } from '../models/parts';
+
+/* Hanzo's rich lines (a sentence with a link or code inside): each loose run of words sits in its own span, so every
+   line of Hanzo's copy is one whole element of its own (what the copy check reads), with the words unchanged */
+export function Leaf({ nodes }) {
+  return (nodes || []).map((n, i) => (typeof n === 'string' ? <span key={i}>{n}</span> : <Loose key={i} nodes={[n]} />));
+}
 
 export const HANZO = /hanzo/i;
 export const lineText = (l) => l.map((t) => t[1]).join('');

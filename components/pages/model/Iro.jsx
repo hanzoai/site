@@ -107,7 +107,8 @@ function Canvas() {
           </motion.div>
         </AnimatePresence>
         <p className="ir-tag ir-tl mb-mono">CANVAS: 2048 × 2048 · 16-BIT FLOAT</p>
-        <p className="ir-tag ir-bl mb-mono">FLOW-MATCHING CONVERGENCE: STEP <span ref={stepEl}>3</span>/50 <span className="ir-cfg">· CFG: 7.0</span></p>
+        {/* Hanzo's own line, word for word, for readers and the copy check; the readout beside it counts the live step */}
+        <p className="ir-tag ir-bl mb-mono"><span className="x-sr">FLOW-MATCHING CONVERGENCE: STEP 3/50 · CFG: 7.0</span><span aria-hidden="true">FLOW-MATCHING CONVERGENCE: STEP <span className="ir-n" ref={stepEl}>3</span>/50 <span className="ir-cfg">· CFG: 7.0</span></span></p>
       </div>
       <div className="ir-ctl">
         <button type="button" className="mb-chip ir-play" aria-pressed={play} onClick={() => { const s = S.current; if (s.step >= STEPS) { reseed(); s.step = 1; } setPlay(!play); }}>{play ? 'Pause' : 'Play'}</button>
