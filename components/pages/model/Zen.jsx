@@ -4,11 +4,12 @@
    fact off the two model cards beside it (that row lights up), and the answer lands on its card. It runs three needs
    in turn; pick one by hand, or step through it yourself.
    Beyond: the trace is a chooser built only from Zen's own facts (local use, video, price), and the family tiles
-   below lead to every Zen model, Zen 7 and Zen 6 Max with each one's living sigil. */
+   below lead to every Zen model, Zen 7 and Zen 6 Max with each one's living sigil.
+   V2: 6/10 trace fills fixed slots with Hanzo's card words (CLS 0), no-blur closing band, solid first-screen ask, fewer price repeats */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { EASE } from '../../ui';
-import { A, More, Cta, Img, Stat, Band } from '../../kit';
+import { useInView, useReducedMotion } from 'motion/react';
+import { Magnetic } from '../../ui';
+import { A, More, Cta, Img, Stat } from '../../kit';
 import Sigil from '../../Sigil';
 import { arrows } from './live';
 import Launch, { Lines, lerp, film } from '../../v2/Launch';
@@ -21,23 +22,24 @@ const CARDS = [
   { name: 'Zen 6 Flash', code: 'zen6-flash', desc: 'The compact build of Zen 6, for local and low-cost use.', size: 'Packed ternary, 5.95 GB', mods: 'Text and images', wb: 'https://platform.hanzo.ai/workbench?model=zen6-flash' },
   { name: 'Zen 6', code: 'zen6', desc: 'The open-weight flagship for agentic coding and multimodal work.', size: '27.3B dense', mods: 'Text, images and video', wb: 'https://platform.hanzo.ai/workbench?model=zen6' },
 ];
-// each step reads one row of a card: [card, row, words, verdict]; the words are Hanzo's
+// each step reads one row of a card: [card, row, words, verdict]. Every word is Hanzo's own card copy (no composed
+// sentences); every need has three steps, so the trace keeps one fixed height and never moves the page.
 const NEEDS = [
-  { tab: 'Runs on my machine', steps: [
-    [-1, 'open', 'Open weights: download the weights, or call them on Hanzo Cloud.'],
-    [0, 'desc', 'Zen 6 Flash is the compact build of Zen 6, for local and low-cost use.', 'yes'],
-    [0, 'size', 'Its weights: Packed ternary, 5.95 GB.'],
+  { tab: 'Open weights', steps: [
+    [-1, 'open', 'Download the weights, or call them on Hanzo Cloud.'],
+    [0, 'desc', CARDS[0].desc, 'yes'],
+    [0, 'size', CARDS[0].size],
   ], pick: [0] },
-  { tab: 'Reads video', steps: [
-    [0, 'mods', 'Zen 6 Flash reads Text and images.', 'no'],
-    [1, 'mods', 'Zen 6 reads Text, images and video.', 'yes'],
-    [1, 'desc', 'The open-weight flagship for agentic coding and multimodal work.'],
+  { tab: CARDS[1].mods, steps: [
+    [0, 'mods', CARDS[0].mods, 'no'],
+    [1, 'mods', CARDS[1].mods, 'yes'],
+    [1, 'desc', CARDS[1].desc],
   ], pick: [1] },
-  { tab: 'Lowest price', steps: [
-    [0, 'price', 'Zen 6 Flash: $2.28 in · $7.26 out, per 1M tokens.'],
-    [1, 'price', 'Zen 6: $2.28 in · $7.26 out, per 1M tokens.'],
-    [-1, 'price', 'The same price: either one.', 'yes'],
-  ], pick: [0, 1] },
+  { tab: CARDS[0].size, steps: [
+    [1, 'size', CARDS[1].size, 'no'],
+    [0, 'size', CARDS[0].size, 'yes'],
+    [0, 'desc', CARDS[0].desc],
+  ], pick: [0] },
 ];
 
 function Console() {
@@ -67,29 +69,23 @@ function Console() {
   return (
     <div className="ze-console mb-panel" ref={box}>
       <div className="ze-trace">
-        <div className="ze-tabs" role="tablist" aria-label="What you need" onKeyDown={arrows}>
+        <div className="ze-tabs" role="tablist" aria-label="Zen" onKeyDown={arrows}>
           {NEEDS.map((k, i) => <button key={k.tab} type="button" role="tab" aria-selected={i === n} className="mb-chip" onClick={() => pick(i)}>{k.tab}</button>)}
         </div>
-        <p className="mb-mono ze-think"><span className="ze-dot" data-on={!done ? '' : undefined} />{done ? 'Answer' : 'Reasoning'}</p>
-        <ol className="ze-steps" aria-live={mine ? 'polite' : 'off'}>
-          <AnimatePresence initial={false}>
-            {need.steps.slice(0, Math.min(step, len)).map((s, i) => (
-              <motion.li key={n + '-' + i} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={{ duration: 0.5, ease: EASE }} data-v={s[3]}>
-                <span className="ze-n mb-tnum">{String(i + 1).padStart(2, '0')}</span>
-                <span>{s[2]}</span>
-              </motion.li>
-            ))}
-          </AnimatePresence>
-          {!done && step > 0 && <li className="ze-wait" aria-hidden="true"><span className="ze-n">··</span><span className="ze-dots"><i /><i /><i /></span></li>}
+        <p className="ze-think" aria-hidden="true"><span className="ze-dot" data-on={!done ? '' : undefined} /><span className="ze-dots" data-on={!done && step > 0 ? '' : undefined}><i /><i /><i /></span></p>
+        {/* every slot is in the DOM from the start at a fixed height; a step fills its slot by opacity and transform only */}
+        <ol className="ze-steps" aria-live={mine ? 'polite' : 'off'} key={n}>
+          {need.steps.map((s, i) => (
+            <li key={i} data-v={s[3]} data-in={i < Math.min(step, len) ? '' : undefined} aria-hidden={i < Math.min(step, len) ? undefined : 'true'}>
+              <span className="ze-n mb-tnum">{String(i + 1).padStart(2, '0')}</span>
+              <span>{s[2]}</span>
+            </li>
+          ))}
         </ol>
-        <AnimatePresence>
-          {done && (
-            <motion.p className="ze-answer" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }}>
-              {need.pick.map((ci) => <code key={ci}>{CARDS[ci].code}</code>)}
-            </motion.p>
-          )}
-        </AnimatePresence>
-        <button type="button" className="ze-step" onClick={() => { setMine(true); setStep(step > len ? 0 : step + 1); }}>{step > len ? 'Replay' : 'Next step'}</button>
+        <p className="ze-answer" data-in={done ? '' : undefined} aria-hidden={done ? undefined : 'true'}>
+          {need.pick.map((ci) => <code key={ci}>{CARDS[ci].code}</code>)}
+        </p>
+        <button type="button" className="ze-step" onClick={() => { setMine(true); setStep(step > len ? 0 : step + 1); }}>{step > len ? 'Replay' : 'Next'}</button>
       </div>
       <ul className="ze-cards">
         {CARDS.map((c, ci) => (
@@ -145,7 +141,6 @@ function CardArt({ ci, open, z, on }) {
           <p className="ze-mcard-h"><b>{c.name}</b><code>{c.code}</code></p>
           <p className="ze-mcard-big mb-tnum">{c.size}</p>
           <p className="ze-mcard-m">{c.mods}</p>
-          <p className="ze-mcard-p mb-tnum"><b>$2.28</b> in <b>$7.26</b> out</p>
         </div>
       )}
     </div>
@@ -155,7 +150,6 @@ function CardArt({ ci, open, z, on }) {
 const cardBody = (c) => (
   <>
     <p>{c.desc}</p>
-    <p className="ze-ch-price mb-tnum"><b>$2.28</b> <span>in · per 1M tokens</span> <b>$7.26</b> <span>out</span></p>
     <p className="ze-ch-specs"><span>{c.size}</span><span>{c.mods}</span><span>Open weights</span></p>
     <p className="ze-ch-acts">
       <A to="/login" className="ze-l">Try Hanzo</A>
@@ -183,7 +177,7 @@ export default function Zen() {
           <Lines id="ze-h" lines={['Open models.', 'Yours to run.']} />
           <p className="lv-lede">The open-weight family behind Hanzo. Download the weights, or call them on Hanzo Cloud.</p>
           <div className="lv-acts">
-            <Cta kind="quiet" to="/login" id="zen.hero" thumb>Try Hanzo</Cta>
+            <Cta to="/login" id="zen.hero" thumb>Try Hanzo</Cta>
             <Cta to="https://platform.hanzo.ai" kind="link" id="zen.hero-platform">API Platform</Cta>
             <More to="https://github.com/zenlm">Docs on GitHub</More>
           </div>
@@ -223,7 +217,15 @@ export default function Zen() {
         </div>
       </section>
       <ModelCards slug="zen" />
-      <Band title="Open models. Yours to run." action="Try Hanzo" to="/login" />
+      {/* the closing band, page-local: the same words as the kit Band, cut in by line mask (no blur), final with JS off */}
+      <section className="x-band ze-band" data-room="dark" aria-label="Zen">
+        <div className="x-wrap">
+          <Lines reveal lines={['Open models.', 'Yours to run.']} />
+          <div className="x-band-act">
+            <Magnetic><Cta to="/login" id="zen.band" thumb>Try Hanzo</Cta></Magnetic>
+          </div>
+        </div>
+      </section>
     </Launch>
   );
 }
