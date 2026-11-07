@@ -11,7 +11,7 @@
    + the track chip gliding.
    0 UI hues. The form sends what hanzo.ai sends. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, AnimatePresence, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Field, Tick } from '../kit';
 import Sigil from '../Sigil';
 import LineReveal, { NoJs } from '../v2/LineReveal';
@@ -36,22 +36,22 @@ function Hero() {
       <div className="xp-wrap xp-grid">
         <div className="xgr-copy">
           <LineReveal as="h1" id="xgr-h1" className="xp-display md" lines={['Open Source & Research', 'Credit Grants']} />
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}>
+          <div className="xgr-rise">{/* CSS rise from the server HTML: never waits for JS, never starts invisible */}
             <p className="xp-lede xgr-lede">Free API credits, GPU compute, and Hanzo Team access for open-source contributors, academic PhD researchers, and research interns.</p>
             <div className="xgr-acts">
               <Cta to="/grants#apply" id="grants.hero" thumb className="xp-cta">Apply for a Grant</Cta>
               <A to="/careers#internships" className="xgr-link">Academic Internships</A>
             </div>
-          </motion.div>
+          </div>
         </div>
-        <motion.div className="xgr-art" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+        <div className="xgr-art xgr-rise late">
           <svg className="xgr-static" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{[40, 72, 104, 136, 168, 200, 232].map((r) => <ellipse key={r} cx="230" cy="210" rx={r * 1.15} ry={r * 0.85} fill="none" stroke="currentColor" strokeOpacity=".22" />)}</svg>
           <Sigil key={paused ? 'still' : 'live'} seed="grants" data={[2137, 122, 4]} className="xgr-sigil" still={paused} />
           <span className="xgr-art-k x-mono">Grants &amp; Research</span>
           <button type="button" className="xgr-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((v) => !v)}>
             {paused ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg> : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>}
           </button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -93,6 +93,20 @@ const GETS = [
   ['Frontier Checkpoints & Infra', 'Early access to Zen foundation models, Kai decision models, Enso routing policies, and distributed training / evaluation clusters.'],
 ];
 
+/* one row of the ledger: it lights, and its tick draws, as it scrolls into view */
+function Get({ t, d, i }) {
+  const ref = useRef(null);
+  const on = useInView(ref, { once: true, amount: 0.9 });
+  return (
+    <li ref={ref} className={on ? 'on' : ''}>
+      <span className="xgr-gets-n x-mono">{pad(i + 1)}</span>
+      <h3 className="xp-title">{t}</h3>
+      <p className="xp-body">{d}</p>
+      <span className="xgr-gets-t">{on && <Tick />}</span>
+    </li>
+  );
+}
+
 function Gets() {
   return (
     <section className="xp-sec tight xgr-gets" aria-labelledby="xgr-gets-h">
@@ -101,14 +115,8 @@ function Gets() {
           <h2 id="xgr-gets-h" className="xp-head">What Grant Recipients &amp; Interns Receive</h2>
           <p className="xp-lede">Compute, models, and workspaces to ship open research and open-source software.</p>
         </div>
-        <ul className="xgr-gets-g xp-obj">
-          {GETS.map(([t, d], i) => (
-            <li key={t}>
-              <span className="xgr-gets-n"><Tick delay={i * 0.06} /></span>
-              <h3 className="xp-title">{t}</h3>
-              <p className="xp-body">{d}</p>
-            </li>
-          ))}
+        <ul className="xgr-gets-g xgr-sheetlist">
+          {GETS.map(([t, d], i) => <Get key={t} t={t} d={d} i={i} />)}
         </ul>
       </div>
     </section>
@@ -297,6 +305,10 @@ export default function Grants() {
       <Gets />
       <Ways pick={setTrack} />
       <Apply track={track} setTrack={setTrack} />
+      {/* a quiet end in the page's own words: the scale behind the grants */}
+      <section className="xgr-proof" aria-label="Open Source Contributor Grants">
+        <div className="xp-wrap xgr-proof-in"><p className="x-mono">2,137+ repositories · 122 organizations</p><A to="/open-source" className="xgr-link">Explore Repositories</A></div>
+      </section>
     </main>
   );
 }

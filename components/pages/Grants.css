@@ -92,6 +92,26 @@ html.js .xgr-static { display: none; }
 .xgr-how { padding-top: clamp(56px, 6vw, 88px) !important; }
 .xgr-gets { padding-top: clamp(72px, 8vw, 116px) !important; padding-bottom: clamp(56px, 6vw, 88px) !important; }
 .xgr-file dl > div:not(.on):not(:nth-child(-n + 3)) { display: none; }
+/* round 5: the hero rises from the server HTML (no JS wait), the ledger is one sheet whose rows light, tighter rooms, a quiet end */
+.xgr-rise { animation: xgr-rise .5s cubic-bezier(.16, 1, .3, 1) .3s both; }
+.xgr-rise.late { animation-delay: .2s; }
+@keyframes xgr-rise { from { transform: translateY(16px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .xgr-rise { animation: none; } }
+.xgr-how { padding-bottom: clamp(40px, 5vw, 72px) !important; }
+.xgr-ways { padding-top: clamp(72px, 8vw, 116px) !important; }
+.xgr-sheetlist { padding: 8px 28px !important; border-radius: 24px; background: #f5f5f5 !important; }
+.xgr-sheetlist li { grid-template-columns: 40px 1fr 24px; }
+.xgr-sheetlist li .xgr-gets-n { font-size: 12px; color: #737373; padding-top: 4px; }
+.xgr-sheetlist li .xp-title, .xgr-sheetlist li .xp-body { transition: color .4s cubic-bezier(0, 0, .2, 1); }
+.xgr-sheetlist li:not(.on) .xp-title { color: #737373; }
+.xgr-sheetlist li .xgr-gets-t { grid-column: 3; grid-row: 1; color: #0a0a0a; }
+.xgr-sheetlist li::before { inset: 0 -12px; }
+@media (hover: hover) { .xgr-sheetlist li:hover::before { background: #ededed; } }
+.xgr-sheet-o { justify-content: flex-start; }
+.xgr-err a { display: inline-block; padding: 12px 0; margin: -12px 0; }
+.xgr-proof { padding: 0 0 clamp(72px, 8vw, 116px); }
+.xgr-proof-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 28px; border-top: 1px solid rgba(0, 0, 0, .1); }
+.xgr-proof-in .x-mono { margin: 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #525252; }
 .xgr-way-m { margin: 0; font-size: 14px; color: var(--soft); }
 .xgr-sheet.s1 .xgr-way-m { color: #a3a3a3; }
 .xgr-way-t { color: inherit !important; max-width: 18ch; font-size: 32px !important; letter-spacing: -.025em; }
