@@ -1,168 +1,149 @@
-# /support — James-eye review
+# /support — James-eye review (re-run)
 
-Verdict: 6/10
-First complaint: "I click into the search to try it and a square box draws itself inside the round pill. Then the first letter I type tells me to email support. Searching is the only thing this page does, so it has to feel finished. And on my phone the big number runs straight through 'Documentation'."
+Verdict: 7/10
+First complaint: "On my phone the line under the headline turns up before the headline does, with a big white hole where the search and the answer should be, and then they pop in. Then the little demo types 'support ticket' and nothing happens. Answering as you type is the one trick this page has, and it never shows me."
 
-Walked 7 Nov, about 14:33 to 14:50 UTC. Page file at `e512a64` (`components/pages/Support.jsx`, `Support.css`), HEAD `127b2e2`. Filmed moving at 1470×801 and 375×812 on a first visit (with the curtain) and a return visit: a wheel scroll with a dwell on every screen, hover and press on desktop, taps and typing on the phone. Also checked 320 wide, JS off, reduced motion, and a phone return visit at 4× CPU.
+Walked 7 Nov, about 15:00 to 15:27 UTC. The page file is at `24d2adc` (`components/pages/Support.jsx`, `Support.css`) and HEAD is `dc3a706`; nothing on this page's path changed during the walk. I filmed it moving at 1470×801 and 375×812 (isMobile, hasTouch), on a first visit and a return visit (`hz-arrived` set):
+- a scroll with a dwell on every screen;
+- hover and press on desktop, taps on the phone;
+- typing whole words, partial words, words that match nothing and long queries, plus Enter.
+
+I also checked 320×640, 375×667, JS off, reduced motion, a Tab crawl, a 4× CPU phone return visit, and /contact and /contact-sales side by side.
 
 Stills:
-- `review/support/desktop-walk.jpg`. Top row: one second after the curtain, the pill typing; the demo on Documentation, with two list rows indented; one letter "g" typed, showing the square focus box in the pill and the answer already "Email us". Bottom row: the Community row hovered, previewing in the card; "refund xyz" with no match, as an email with the words for its subject; the dark room.
-- `review/support/phone-walk.jpg`. The demo typing; "System Status" running into "03"; "Documentation" across "02" and the focus box, at 320; "billing" with "06" under the words; the dark room with the ask bar.
+- `review/support/desktop-walk.jpg`.
+  - Top row: the arrival (h1 cutting in, card rising); the demo holding "support ticket", where two words are marked and nothing else changes; the Community row hovered and previewing in the card; "api key" answered by Documentation.
+  - Bottom row: "refund xyz" turning into the email with your words as the subject; reduced motion with a Pause button that does nothing; the first Tab stop on the hero ask, a square ink box around a round button; the closing Band, with no ask bar after the hero.
+- `review/support/phone-walk.jpg`, first visit, left to right:
+  - first paint: the lede and the list, no h1, and a 250px hole;
+  - the h1 is in and the hole is still there;
+  - the card lands and the demo types;
+  - "api key";
+  - "refund xyz";
+  - reduced motion with the dead Pause;
+  - the list ending into the Band, with no bar.
+
+## What changed since 6/10 (each checked again)
+- **The focus ring in the pill is fixed.** Clicking or tapping the field gives the input outline none and box-shadow none. The pill carries one concentric ring (1px ink plus a 5px white halo). There is no square box inside the pill at either width.
+- **The numerals are gone.** Nothing crosses the titles at 375 or 320. All six titles end inside the card (title right edge 334, card edge 355 at 375; 279 and 300 at 320).
+- **Typing is calm.** I logged every key:
+  - "g" and "gi" keep the Help Center, and "git" gives GitHub after the 300ms settle;
+  - "api" waits, then "api " gives Documentation with "API" marked;
+  - "status pa" stays on System Status the whole way;
+  - "tickets" finds the Help Center with "ticket." marked;
+  - "discord" gives Community and "bug" gives GitHub;
+  - "refund xyz" and "qqqq" become "Email us", with `mailto:support@hanzo.ai?subject=refund%20xyz`, the subject shown in the card, and the live region saying "Email us".
+  
+  No flash of the no-match state appears at any first letter.
+- **The demo no longer changes the ask.** I sampled every 120ms from load to 11s: the solid read "Open Help Center" throughout, on both widths and both visits. Pointing at the card stops the demo at once (the pill clears and Pause goes).
+- **The preview stays reachable.** Moving from the Community row to the card's button lands on "Join the community" (`https://discord.gg/XthHQQj`). Leaving the hero returns the card to the Help Center.
+- **The marks no longer move words.** CLS is 0.0000 in every run: desktop first and return visits, the phone, through the demo and through 16 typed queries.
+- **One row is marked best.** With no match, the "Email us" row is ink.
+- **Buttons are kit `Go`** and the page ends on the kit `Band`.
 
 ## What works
-- **The idea is right, and it is this page's own.** You get one line of display type ("How can we help?" in Zen at 132px, line height 0.92), a search pill and the answer under it. Type "api key" and the card becomes Documentation with "API" marked. "discord" gives Community, "bug" gives GitHub and "status" gives System Status. Words that match nothing turn the card into "Email us", with your words as the subject (`mailto:support@hanzo.ai?subject=refund%20xyz`). It is the clearest page in the company family.
-- **Fits both screens.** At 1470×801 the h1, the pill, the card and "Open Help Center" all fit (button bottom at y=686), with the lede and all six rows beside them. At 375×812 the order is h1, lede, pill, then card, and the button ends at y=672.
-- **Something moves without input.**
-  - The six rows fade in 0.6–1.0s after the curtain starts to lift, and the pill starts typing at about 0.95s.
-  - Between lift+1s and lift+2s the first screen changes by about 25,600 px.
-  - The dark room's contour field drifts slowly (about 5,700 px/s) and it is the only continuous mover there.
-- **State and pointer motion.**
-  - The list re-orders on a spring as you type.
-  - The giant numeral springs to the door shown.
-  - Pointing at a row previews that door in the card. The row inks, slides 6px and nudges its arrow 4px.
-- **Press and hover on the buttons.** The solid goes from #0a0a0a to #3a3a3c, and press scales it to .98. Rows also press to .98. The enterprise link's underline brightens on hover.
-- **Colour.** Ink, greys and white only. Matched words get a light grey fill with an ink underline.
-- **Sticky ask.** After the hero, the "Support · Open Help Center" bar arrives at both widths, and the header's "Try Hanzo" turns outline.
+- **The idea is right and still this page's own.** It is one line of display type, a search pill, an answer under it, and the six doors beside it as a live list. Enter on a match opens that door ("status" then Enter opens status.hanzo.ai in a new tab). It is the clearest page in the company family.
+- **Fit.**
+  - At 1470×801: h1 171–273 (84px, line height 1.02); pill 306–362; card 379–675 with "Open Help Center" ending at y=630; lede and six rows to the right (to y=754).
+  - At 375×812 the order is h1 (41px, one line), lede, pill, then card, and the button ends at y=590. That is also above the fold at 375×667.
+- **Hover and press answer.**
+  - A row inks, slides 6px and moves its arrow 4px, and the card previews that door.
+  - The solid goes to #262626 and scales 1.02, and presses to 0.97.
+  - The pill border inks from 10% to 30% black on hover.
+  - The list re-orders on a 300ms ease when a finished word ranks a new door first.
+- **Colour.** Ink, deck greys and white only. `taste.py`: OK.
 - **States.**
-  - JS off: all six answers are stacked and readable with their buttons, then the list and the enterprise line (0 hidden, 0 inert).
-  - Reduced motion: no demo, no arrivals, and 0 animations running after 4s.
-  - The demo has a Pause control, and pressing or focusing the pill stops it.
-- **Engineering checks pass:**
+  - JS off: all six answers are stacked and visible with their buttons, plus the pill, the list and the Band (0 hidden). No sideways scroll.
+  - Reduced motion: no demo, and `getAnimations()` is empty after 4s.
+  - Before hydration only the shown pane takes taps (`visibility` from the server CSS).
+- **Engineering.**
   - No sideways scroll at 320 or 375.
-  - Every phone target is 44px or more (rows are 64px).
-  - No font swap. CLS is 0.014 on a desktop first visit and 0.002 on the phone (see 6).
+  - No phone target under 44px (rows are 64px).
+  - No font swap.
   - Parity is 24/24 text and 6/6 links.
-  - Every answer button carries `data-cta` (support.answer.1–6), plus support.enterprise.
-  - Both files have the Persona/Goal/CTA header.
+  - `data-cta` support.answer.1–6, and `data-thumb` on the first.
+  - Console: 0 errors across 14 clean loads. The hydration mismatches I first saw come from Playwright's caret-hiding screenshots during hydration (3 of 3 runs with it, 0 of 6 without), so they are not this page's.
 
 ## The 11 answers
-1. **Sells in 5 seconds, moves within 1 second?** The words sell, and things move. Two faults:
-   - **The h1 cut-in plays under the curtain.** `MaskLines` starts on `hz-arrived`, which is the moment the curtain begins to lift. The curtain's edge uncovers the h1 about 560–700ms later, when at most 2px of the 128px rise is left. A first visit never sees the headline cut in. Only the card's rise is half-seen as the black uncovers it.
-   - **The ask does not hold still.** The demo types "support ticket", then "API references", then "incident history", and the card follows. On a first visit:
-     - the solid reads "Read the docs" from about 5.0s to 8.2s after the lift;
-     - then it reads "View status" from about 9.2s to 12.2s;
-     - it rests on "Open Help Center" at about 12.3s.
+1. **Sells in 5 seconds, moves within 1 second?** On desktop, yes. The h1 cuts in by CSS 0.55s after first paint. On a warm load the card rises with it and the list follows (0.4s entries). Two faults:
+   - **The tool waits for JavaScript.** `.xsp-up` (the pill, the card, the primary) and `.xsp-in` (the lede and list) are paused at opacity 0 until `data-go`, and `data-go` is set only after hydration by `useGo()`. `useGo()` waits for an arrival curtain that never runs on /support: `arrival.js` returns unless the path is `/`. So the LCP element (the answer's description) is opacity 0 until JS arrives:
+     - LCP was 2.7s on a warm desktop load and 4.7s on a phone first visit (dev build);
+     - at 4× CPU the first paint was at 696ms and the card was still invisible until 2,783ms.
+   - **The phone arrival is out of order.** At ≤899px, `.xsp-side { display: contents }` throws away the side's entrance, so the lede and the list paint at once. The h1 rises 0.55s later, and the pill and card fill a 250px hole only once JS lands. In the film:
+     - first paint at 1.4s shows the lede, a hole and the rows;
+     - the h1 arrives at about 2.0s;
+     - the card arrives at 3.1s.
+     
+     The lede leads its own headline, and the header's "Try Hanzo" flips from solid to outline when the card finally shows.
+2. **One in, one out, or a document?** Neither. It is a tool, then the closing Band, then the footer (document 2,649px on desktop). That is right for a help page. The Band's line is the only scroll moment, and it is the kit's own reveal.
+3. **A real visual object in every section?** The hero has working product UI: the pill, the answer card and the live list. The Band is the standard closing room. No Hanzo media exists for /support, so this is not penalised.
+4. **One ask, sticky after the hero?** One solid in the hero, in Hanzo's words, and it no longer changes under you. But **the ask bar never appears at either width**, because the shared bar yields to `.x-band`:
+   - On desktop the Band starts at y=870 in an 801px window, so it is on screen before "Open Help Center" (bottom 630) scrolls away.
+   - On the phone the Band enters at scroll 303 and the hero ask leaves at about 526.
 
-     So for about 6 of the first 12 seconds the one solid is a different verb. A pointer resting on the button found three different links in 13s, and hovering the card or the button does not pause the demo. This is the /contact complaint again, softened because the visitor can see the pill causing it.
-2. **One in, one out, or a document?** Neither. It is a tool, then one closing line, then the footer.
-   - On desktop the page has two screens: the hero, then the dark enterprise room.
-   - Scrolling brings nothing in. The enterprise line has no entrance, and the room's only motion is the contour drift.
-   - Nothing is pinned and nothing is scrubbed.
-
-   Short is right for a help page, but the one scroll moment is dead.
-3. **A real visual object in every section?** Yes.
-   - Hero: the pill, the answer card with its giant numeral, and the live list. All of it is product UI that works.
-   - Dark room: the Sigil contour canvas.
-
-   No Hanzo media exists for this page, so this is not penalised.
-4. **One ask, sticky after the hero?** Yes, the bar and the header outline at both widths. In the hero itself, see 1: the solid changes verb during the demo. With JS off there are six stacked solids, which is a fair fallback.
-5. **Every hover and press answers, no jumps?** The buttons and rows do (see What works). The faults are all in the signature:
-   - **The preview can't be acted on.** Leaving the list resets the card. So moving from the "Community" row to its "Join the community" button arrives on "Open Help Center" (https://hanzo.help).
-   - **The first letter answers.** One letter ("g") is not a search term, so the card jumps to "Email us" with "g" as the subject and the solid becomes "Email support@hanzo.ai". At "gi" it becomes GitHub, so every query opens with a flash of the no-match state.
-   - **Answers flicker mid-word.** "status pa" shows Help Center ("pa" matches "path"), then "status pag" goes back to System Status.
-   - **Plurals miss.** "tickets" gives "Email us", because only the query's prefix is matched, so "tickets" fails on "ticket".
-   - **The ↵ circle is not a button.** It looks like a 56px submit button (48px on the phone) and inks when there is a match, but it is an `aria-hidden` `<kbd>`. Clicking or tapping it does nothing, and on the phone the tap even takes focus away from the field.
-   - **The pill has no hover.** Its border stays at 10% black; only focus answers.
-   - **Two rows marked best.** During the demo, Help Center and the shown door both get the ink and the 6px indent (`top = (hit && at === 0) || i === best`).
-   - **The answer's own row looks disabled.** With no match, the "Email us" row is dimmed to 38% like the rows that missed.
-6. **Overlaps, font swap, layout shift?**
-   - **Phone: the numeral collides with the answer.**
-     - At 375 the numeral spans x 251–337. "Documentation" ends at x=287 and "System Status" at x=275, so both run into "02"/"03".
-     - The Help Center and Email us descriptions run across "01" and "06".
-     - At 320 the numeral spans x 196–282, and four of the six titles cross it.
-
-     On desktop the numeral sits clear of the words.
-   - **The search's focus ring.** `.xsp :focus-visible` (0,2,0) beats `.xsp-search input { outline: none }` (0,1,1). Clicking or tapping the field therefore draws a 2px ink, 8px-radius rectangle with a 5px white halo around the input. The result is a square box inside the round pill, with its halo cutting the pill's border, on top of the pill's own focus-within ring. It shows at both widths, every time someone uses the page.
-   - **Layout shift from the demo's marks.**
-     - CLS is 0.014 on a desktop first visit.
-     - Its biggest shift (0.012) comes from the demo: each mark adds 2px of padding on each side. Marking "incident history" pushes "Check" down to the next line.
-     - The phone is 0.002. No font swap.
-   - **Before hydration, a tap opens email.**
-     - The hidden panes are `opacity:0` but stacked in one grid cell, and the last one (Email us) is on top.
-     - So until hydration sets `inert`, a tap on the visible "Open Help Center" hits the invisible `mailto:support@hanzo.ai`.
-     - On a phone return visit at 4× CPU this lasted from first paint (574ms) to 1,722ms.
-   - **The h1 waits for JS.** On a return visit, the server HTML has it at `translateY(105%)` (MaskLines), so it is blank until hydration and LCP waits for JS.
-   - **Console.** Clean in nine of the ten runs that logged it. The tenth, a desktop return visit, logged one React hydration-attribute mismatch that four reruns did not repeat. It is not attributed to this page.
-7. **Which reference, and is its motion there?**
-   - Its true kin is support.apple.com's "How can we help?" with search, which is not on his list.
-   - The osply/hamol micro-motion is there: the numeral spring, the list re-order spring and the row slide.
-   - Apple's persistent ask is there (the bar).
-   - Apple's pinned or scrubbed scenes are not.
-   - synchronized.studio's card opening into its page is not: all six doors leave the site in a new tab.
-8. **Different from its neighbours?** Mostly yes. /contact, /contact-sales, /press and /careers each set a 2–4-line h1 on the left with an object card on the right. /support is one full-width line over a search pill, with its own signature. It shares two kit pieces with them: a white 28px shadowed card (title, line, solid) and a dark room over a contour field. /contact opens on the same sentence, "How can we help?". That is Hanzo's copy, so it is James's call, but two pages now greet him identically.
-9. **18 areas (PLAN-COMPONENTS)?** See below. `docs/coverage/support.md` exists, but several claims are wrong or overstated:
-   - **"Cuts in … after the site's arrival curtain lifts."** It starts as the lift starts and is done before the h1 is uncovered.
-   - **"Each re-ranks the list."** The demo only dims the list; the order never changes (by design, per the code comment).
-   - **"There is one solid per viewport."** True at rest, but during the demo that solid is three different asks.
-   - **"Typing writes straight to the input (no state per character); state changes only on whole words."** True for the demo only. Your own typing sets state on every key and re-ranks from the second letter, and the first letter alone turns the answer into "Email us".
-   - **"Pointing at … a door previews it in the answer card."** True, but the preview is dropped before the pointer can reach its button.
-   - **"The focus ring is ink with a white halo."** On the search field, that ring is the square box inside the pill.
-   - **Nothing mentions** the numeral overlap at 375 or 320, or the tap that lands on the hidden mailto before hydration.
-10. **Banned tells?** None of the list:
-    - no eyebrow ("Support" is now the search landmark's name);
+   I scrolled both in 360px steps with a dwell and saw no bar. After the hero, the solid on screen is the Band's "Email support@hanzo.ai". For a page this short that is defensible, but the card claims the bar arrives, and it does not.
+5. **Every hover and press answers, no jumps?** Yes for the pointer (see What works). The keyboard has two faults:
+   - **Two Tab stops per ask, the first a square box.** The kit `Go` wraps its link in a `motion.span` with `whileTap`, which makes it `tabindex="0"`. Tab from the field lands on that span first. The page's own `.xsp :focus-visible` draws a 2px ink rectangle with a white halo around the round button, and Enter there does nothing (no popup). The second Tab reaches the link. The Band's ask does the same.
+   - **The Band ask's ring is lost on black.** `.xsp :focus-visible` also reaches the Band, so the ring there is a 2px ink outline on #000 (invisible) plus a 5px white halo that merges into the #fafafa button. MASTER part 8 asks for white with a black halo on dark rooms.
+6. **Overlaps, font swap, layout shift?** There are no overlaps at 1470×801, 375×812 or 320×640. CLS is 0 everywhere and there is no font swap. The "shift" left is the phone's arrival hole from 1.
+7. **Which reference, and is its motion there?** Its true kin is still support.apple.com's "How can we help?" with search, which is not on his list.
+   - The osply/hamol micro-motion is there: the row slide, the arrow nudge, the list re-order and the pane lift.
+   - Apple's persistent ask is not (see 4).
+   - Nothing opens into a page: every door leaves the site.
+   - **The self-running demo no longer demonstrates anything.** It types "support ticket", which keeps the Help Center: the card does not change and the list does not move. The only visible results are two small marks and the "Email us" row darkening a shade, because "support@hanzo.ai" matches. So the idle moment shows the page answering nothing. The fix for the old complaint went too far.
+8. **Different from its neighbours?** Yes.
+   - /contact: a 2-line h1 on the left and a plug-board card on the right.
+   - /contact-sales: an h1 and a form card.
+   - /support: one full-width line over a pill and card, with the live list on the right.
+   
+   /contact and /support both open on Hanzo's "How can we help?". It is listed on the card as a copy question.
+9. **18 areas?** See below. `docs/coverage/support.md` is mostly accurate now. The wrong claims:
+   - **"The h1 cuts in once the curtain has cleared the top (550ms after it starts lifting)."** There is no curtain on /support; the 550ms branch in `useGo` never runs.
+   - **"h1 and LCP element in server HTML" / "no `opacity:0` on the LCP element."** The LCP element is the answer's description, and it is opacity 0 until hydration.
+   - **"`data-thumb` … drives the shared ask bar after the hero."** The bar never shows at either width.
+   - **"Focus ring visible on every stop of a Tab crawl."** The first stop on each ask is the square box around the round button (see 5), and the Band's ring is lost on black.
+   - **"Pause control on every moving item."** It is true with motion on. Under reduced motion the Pause is a dead button (see the 18 areas).
+10. **Banned tells?** None:
+    - nothing above the h1;
     - no hue;
-    - no gradient text (the dark room's gradient only dims behind the text, which is allowed);
+    - no gradient text;
     - Zen, not Inter;
-    - no `title=` in the page;
-    - no button that fades on hover.
-
-    Borderline: the input's square focus box reads like a browser-default control.
-11. **Copy untouched?** Nothing lost (24/24, 6/6). The demo phrases are Hanzo's own words from the descriptions. Visible things that are not on hanzo.ai/support:
-    - **The giant numerals "01"–"06".** They are decorative and `aria-hidden`, but /contact's 01–04 were flagged, so they need James's yes too.
-    - **The ↵ glyphs.** One sits in the pill and one in every answer button.
-    - **The placeholder.** It repeats the h1, so once the demo rests, "How can we help?" is on the first screen twice.
-
-    `parity.py` is one-way and does not catch additions.
+    - no `title=`;
+    - no button that fades on hover;
+    - no icon boxes.
+11. **Copy untouched?** Parity is 24/24 and 6/6. The numerals, the ↵ glyphs and the repeated placeholder are gone. The demo phrase is Hanzo's own words.
 
 ## Missing from the 18 areas
-- **2.1 / 2.4 Conversion:**
-  - The demo changes the one solid for about 6s of the first 12s, with no pause on hover.
-  - The hover preview's button can't be reached.
-  - The first letter of any query flashes "Email support@hanzo.ai".
-- **2.3 First impression:**
-  - The h1 cut-in is spent under the curtain.
-  - **Page ending:** there is no closing Band. The enterprise line is the last word but arrives without an entrance and carries no solid.
-- **2.6 Content:** the 01–06 numerals, the ↵ glyphs, and the placeholder that repeats the h1.
-- **2.7 Visual:**
-  - the numeral collides with the titles and descriptions at 375 and 320;
-  - the square focus box in the pill;
-  - two rows marked best during the demo;
-  - the answer's own row is dimmed when nothing matches.
-- **2.8 Components:**
-  - Six raw `.x-btn solid` instead of `Go`/`Cta` (§4 gate 2).
-  - No `PageHero` or `Band`.
-  - The ↵ `<kbd>` is styled as a control but is not one.
-- **2.9 Motion:**
-  - The marks' padding re-flows the text (one shift of 0.012).
-  - The answer flickers within a word.
-- **2.11 Mobile:**
-  - The numeral overlaps (see 2.7).
-  - Tapping the ↵ circle is dead and drops focus from the field.
-- **2.12 Accessibility:**
-  - The solid changes by itself with no hover pause. Pause exists, but only as a button in the pill.
-  - With no match, the live region says nothing (`hit ? … : ''`), so screen readers never hear that the answer became "Email us".
-  - The focus indicator on the field is a ring inside a ring.
-- **2.13 Performance:**
-  - On return visits the h1 is masked in the server HTML until hydration.
-  - The "no state per character" claim does not hold for real typing.
-- **2.17 States:** before hydration, the invisible Email pane takes taps meant for "Open Help Center".
+- **2.3 First impression.**
+  - The pill, the card and the primary (the LCP element) sit at opacity 0 until hydration, behind a curtain gate that never applies here.
+  - On the phone the lede and the list paint before the h1, with a 250px hole for the card.
+- **2.4 Conversion.** No ask bar at either width (the Band blocks it). The card says otherwise.
+- **2.8 Components.**
+  - Under reduced motion the Pause button is an orphaned server node. The server renders it because `useReducedMotion()` is null there. The client never renders it, and the node has no React fiber. So it stays in the pill, takes a Tab stop, is announced as "Pause", and clicking it does nothing (checked: still present after the click).
+  - The kit `Go` adds a dead, square-ringed Tab stop before each ask. That is a kit fault, but this page's focus rule draws the square.
+- **2.9 Motion.** The idle demo doesn't show the signature (no re-rank, no answer change).
+- **2.12 Accessibility.**
+  - The Band ask's focus ring is ink on black.
+  - There are two stops per ask.
+  - The reduced-motion Pause is dead.
+- **2.13 Performance.** LCP is gated on JS (2.7s desktop warm, 4.7s phone first visit, dev build).
+- **2.3 Rhythm (minor).** On desktop the Band starts at y=870, so nothing peeks below the first screen; MASTER asks for a 56px peek.
 
 ## Fixes (in order)
-1. **Fix the field's focus.** Add `.xsp-search input:focus-visible { outline: none; box-shadow: none }`. Let `.xsp-search:focus-within` carry the only ring: the ink border plus a halo, concentric with the pill.
-2. **Keep the numeral off the words on the phone.** At 900px and below, move it to the bottom-right corner of the card beside the button, or reserve room for it (`padding-right` on the title and description equal to its width). Check all six at 320.
-3. **Make typing calm.**
-   - Ignore a one-letter query: keep the current answer.
-   - Re-rank on finished words, as the coverage says, or after about 300ms idle.
-   - Show the "Email us" fallback only when a finished word matches nothing.
-   - Let a query word also match when it starts with a page word (so "tickets" finds "ticket"), with a minimum of 4 letters.
-4. **Don't change the ask under the pointer.** Pause the demo on `pointerenter`/`focusin` anywhere in `.xsp-main` and the list. Start the h1 cut-in when the curtain has cleared, not when it starts to lift (for example, on `#x-arrive`'s `transitionend`, or about 650ms after `hz-arrived`), so a first visit sees the headline cut in.
-5. **Keep the preview reachable.** Reset `peek` on leaving the whole hero grid, not the list, so "Join the community" can be clicked once it is shown.
-6. **Make ↵ honest.** Either make it the form's real submit button (icon-only, with an aria-label from `ui-strings.json`) or drop the circle so it reads as a key hint.
-7. **Stop the marks from moving words.** Draw the mark with `box-shadow` (or a background with no side padding), so "Check" stays on its line.
-8. **Fix the states:**
-   - Give inactive panes `pointer-events: none` in the server HTML (and `visibility: hidden` once faded), so an early tap hits what is visible.
-   - Mark only `i === best` as best.
-   - Keep the answer's row ink when nothing matches.
-   - Have the live region name "Email us" on no match.
-9. **Give the ending a moment.** Let the enterprise line cut in on scroll (MaskLines without `now`), so scrolling brings one thing in. Build the buttons with `Go`/`Cta`.
-10. **Ask James.** Get his yes on the 01–06 numerals, the ↵ glyphs and the placeholder that repeats the h1. Otherwise remove them.
+1. **Paint the tool at first paint.**
+   - Drop the `data-go` gate and `useGo`'s curtain branch, since no curtain runs here.
+   - Run `.xsp-up` and `.xsp-in` as plain CSS entries timed just after the h1 (for example 0.65s and 0.8s delays, as MaskLines does). Keep `html.x-arriving` pausing them as the other company pages do, in case a curtain ever comes.
+   - On the phone, give the lede and `.xsp-doors` their own entry classes, so `display: contents` stops cancelling them and the lede never lands before the h1.
+2. **Let the demo show the trick, once.** Type one phrase in Hanzo's words that re-ranks, such as "incident history" from System Status's line:
+   - the list re-orders and the card shows that door for the hold (about 2.5s);
+   - then it clears back to the Help Center and rests;
+   - it plays once, and the pointer and focus stops already in place make the old ask-swapping complaint moot.
+   
+   If you keep "support ticket", the page's idle moment demonstrates nothing.
+3. **Kill the dead Pause under reduced motion.** Render it only after hydration (`{hyd && playing && …}`), or hide it under `prefers-reduced-motion` in CSS, so the server never ships a control the client won't own.
+4. **One Tab stop per ask, with a round ring.**
+   - File `docs/requests/support.md` for the kit: `Go`'s `motion.span` needs `tabIndex={-1}`, or the tap scale should move onto the `<a>`.
+   - Meanwhile set `.xsp .x-go:focus-visible { outline: none; box-shadow: none }`, so the stop at least draws no square.
+   - Give the Band its dark-room ring: `.xsp .x-band :focus-visible { outline-color: #fafafa; box-shadow: 0 0 0 5px #000 }`.
+5. **Correct the card.** Remove the curtain claim, the ask-bar claim, the LCP claim and the "every stop" focus claim. Decide on the missing bar and note the decision: the Band's email ask is the ask after the hero on a page this short.
+6. **Optional: let the Band peek on desktop.** Trim the hero's bottom padding so about 56px of the black shows under the first screen at 1470×801.
