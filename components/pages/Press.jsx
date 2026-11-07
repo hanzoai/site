@@ -21,7 +21,8 @@
    Deletes: the second copy of the kit plates (the stack becomes the spread), the 3×3 channel tiles and their icon
    circles, the six partner boxes, the page tokens that overrode deck.css's greys, the hidden-only "Press & Media" and
    "Leadership" (now captions under their headings), springs, filters on photos. */
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import LivePause, { usePause } from '../v2/LivePause';
 import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Img } from '../kit';
@@ -121,7 +122,7 @@ function KitPlate({ i, t, p, m, tick }) {
     <li className={'xpe-kitc-w ' + kind} style={{ zIndex: 3 - i }}>
       <motion.a href={KIT} download className="xpe-kp" aria-label={'Download Press Kit: ' + title} style={{ x, y, scale: s, rotate: r }}>
         <Plate kind={kind} />
-        <span className="xpe-fmt">{fmt.split(', ').map((f) => <i key={f}>{f}</i>)}<span className="x-sr">{fmt}</span></span>
+        <motion.span className="xpe-fmt" style={i ? { opacity: o } : undefined}>{fmt.split(', ').map((f) => <i key={f}>{f}</i>)}<span className="x-sr">{fmt}</span></motion.span>
       </motion.a>
       <motion.span className="xpe-kitc-t" style={{ opacity: o }}><h2 className="vc-title">{title}</h2><span>{desc}</span></motion.span>
     </li>
@@ -196,11 +197,11 @@ function Word({ p, a, b, children }) {
 function Belief({ text }) {
   const ref = useRef(null);
   const calm = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'end 0.55'] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.9', 'end 0.85'] });
   const words = text.split(' ');
   return (
     <p ref={ref} className="xpe-boiler">
-      {calm ? text : words.map((w, i) => <Word key={i} p={scrollYProgress} a={i / words.length} b={(i + 1.5) / words.length}>{w}</Word>)}
+      {calm ? text : words.map((w, i) => <Word key={i} p={scrollYProgress} a={(i / words.length) * 0.8} b={Math.min(0.92, ((i + 1.5) / words.length) * 0.8)}>{w}</Word>)}
     </p>
   );
 }
@@ -244,14 +245,16 @@ function News() {
   const [at, setAt] = useState(0);
   const [pointing, setPointing] = useState(false);
   const calm = useReducedMotion();
-  const [narrow, setNarrow] = useState(false);
-  const [ck, , cref] = useBeat(NEWS.length - 1, 2400, 0.6); // phone: under the list, the card walks the six stories once
-  useLayoutEffect(() => {
-    const m = matchMedia('(max-width: 899px), (hover: none)');
-    const f = () => setNarrow(m.matches); f();
-    m.addEventListener('change', f);
-    return () => m.removeEventListener('change', f);
-  }, []);
+  // idle: while the card is in view and nothing holds it, it keeps walking the six stories slowly (4 s each);
+  // pointer and focus hold it, the pause control stops it, reduced motion never starts it
+  const [paused, pause] = usePause();
+  const cref = useRef(null);
+  const cardIn = useInView(cref, { amount: 0.5 });
+  useEffect(() => {
+    if (calm || paused || !cardIn) return undefined;
+    const id = setInterval(() => { if (!box.current?.dataset.hold) setAt((a) => (a + 1) % NEWS.length); }, 4000);
+    return () => clearInterval(id);
+  }, [calm, paused, cardIn]);
   useLayoutEffect(() => {
     const rows = box.current ? [...box.current.querySelectorAll('.xpe-feed li')] : [];
     const ob = new IntersectionObserver((es) => {
@@ -262,7 +265,7 @@ function News() {
   }, []);
   const hold = (i) => { box.current.dataset.hold = '1'; setPointing(true); setAt(i); };
   const free = () => { delete box.current.dataset.hold; setPointing(false); };
-  const cur = narrow ? ck : at;
+  const cur = at;
   const [d, , s] = NEWS[cur];
   return (
     <section className="vc-sec xpe-news" aria-labelledby="xpe-news-h">
@@ -284,10 +287,11 @@ function News() {
             </li>
           ))}
         </ol>
-        <aside className="xpe-card" aria-hidden="true" ref={cref}>
-          <span className="xpe-card-n vc-num"><b>{String(cur + 1).padStart(2, '0')}</b> / {String(NEWS.length).padStart(2, '0')}</span>
-          <span className="xpe-card-bar"><i style={{ transform: `scaleX(${(cur + 1) / NEWS.length})` }} /></span>
-          <span className="xpe-card-st">
+        <aside className="xpe-card" ref={cref}>
+          {!calm && <LivePause paused={paused} onToggle={pause} dark className="xpe-pause" />}
+          <span className="xpe-card-n vc-num" aria-hidden="true"><b>{String(cur + 1).padStart(2, '0')}</b> / {String(NEWS.length).padStart(2, '0')}</span>
+          <span className="xpe-card-bar" aria-hidden="true"><i style={{ transform: `scaleX(${(cur + 1) / NEWS.length})` }} /></span>
+          <span className="xpe-card-st" aria-hidden="true">
             {NEWS.map(([dd, tt, ss]) => <span key={tt} className="xpe-card-b xpe-card-z"><span className="xpe-card-tt">{keep(tt)}</span><span className="xpe-card-s">{ss}</span><span className="vc-kick vc-num">{dd}</span></span>)}
           <AnimatePresence mode="wait" initial={false}>
             <motion.span key={cur} className="xpe-card-b" initial={calm ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={calm ? undefined : { opacity: 0, y: -10 }} transition={{ duration: 0.3, ease: EASE }}>
