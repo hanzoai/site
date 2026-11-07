@@ -1,17 +1,21 @@
 'use client';
 /* Persona: buyers, security and legal reviewers, and users checking their terms. Goal: reach the right document in one step. CTA: none (legal pages carry no ask; PLAN-COMPONENTS 2.4), so the ask bar is off. Metric: document open (data-cta legal.doc.<slug>).
-   /legal, the Trust Center. V2: 8/10 one paper language from top to bottom: the pile deals (out on top, under, the next forward), the status is a stamped sheet beside a 21px statement, the index reads small and exact (21px titles, 44px chips in one row on phones, a filter that re-deals its rows), the ladder, and the contact sheet that shows the address you point at; h1 near 38%, no dead gaps, deck tokens only
-   Signature: the documents as a stack of paper that deals itself. Every few seconds the top sheet travels out on top, then
-   slides in under the pile, and the next document comes forward, each with its own address on hanzo.ai/legal.
-   Beyond: "Find the one you need". Filter the twelve documents by kind (Agreements, Policies, Notices and registers)
-   in a ruled index; each row previews its address on hover and opens into its document.
-   Motion budget (Utility: one delight plus three): signature = the dealing pile, echoed by the index's reading lamp
-   (one row lit at a time, once through); supporting = line-mask cut-ins (h1, lede, headings), the index rows (rise once,
-   re-deal on a filter change), the ladder growing. No springs. Colour: none (0 UI hues).
-   One pause (beside the pile and at the end of the chip bar) stops the deal and the lamp. Every word and link is Hanzo's;
-   the stamp on the pile and the contact sheet repeats Hanzo's own "Status: draft, pending counsel." as decoration.
-   Ledger: deletes the 3-up grey boxes, the second black pill, the sepia accent, the invented "draft · pending counsel"
-   stamp, the stage settle, the status ping, the lede's own rise, the 32px statement wall and the 350px gaps. */
+   /legal, the Trust Center. V2: 9/10 motion-map pass (7 Nov): the twelve documents are rows that open in place (hover, tap or keys) into Hanzo's own sentence and address; each of the five rooms arrives its own way (ripple, grid wave, cursor trail, scramble, ink spread); the pile still deals; no line-mask cut-ins, no lamp
+   Signature: rows-open. The document index is a tight list of kind and title; a row opens in place into its detail
+   panel (Hanzo's own line for that document and its address, which opens it). A resting mouse opens the row under it
+   (only on a real move, so rows sliding under a still pointer never cascade), a tap or Enter/Space toggles it, the arrow
+   keys walk the rows, and the first row of the list stands open so the pattern shows itself. The arrow at the row's end
+   still opens the document in one step.
+   Entrances: ripple, grid-wave, cursor-trail, scramble, ink-spread (one per room, in order, once each, page-local:
+   hero = rings spread from its centre and its parts arrive outward; intro = a grid of paper tiles lifts in a wave from
+   the cursor; index = a trail of dots runs from the cursor down the list and lays each row; how = the heading and the
+   ladder's labels decode out of scrambled letters; contact = an ink-blot mask spreads from the contact sheet).
+   Kept: the dealing pile (out on top, under, the next forward) with its pause, the stamped status sheet, the chips that
+   re-deal their rows, the growing ladder, the contact sheet that shows the address you point at. 0 UI hues.
+   Every word and link is Hanzo's; the stamp on the pile and the contact sheet repeats Hanzo's own
+   "Status: draft, pending counsel." as decoration.
+   Ledger: deletes the reading lamp and its second pause (the rows open instead), the line-mask cut-ins, the 3-up grey
+   boxes, the second black pill, the sepia accent, the invented stamp, the stage settle, the status ping. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { EASE } from '../ui';
@@ -20,8 +24,8 @@ import { A } from '../kit';
 import { Nodes } from './DocNodes';
 import { useArrival } from './doorway';
 import { useLive, useEvery } from './cloud/Frame';
-import LineMask from '../v2/x-gauss/LineMask';
 import NoJs from '../v2/x-gauss/NoJs';
+import PlainNoJs from '../NoJs';
 import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
 import './LegalIndex.css';
@@ -30,6 +34,7 @@ const LADDER = [['service-only', 'by default'], ['private improvement'], ['resea
 /* Hanzo's own line for a document, as plain text (its note, without the leading dash) */
 const flat = (n) => (typeof n === 'string' ? n : n && n.c ? n.c.map(flat).join('') : '');
 const lineOf = (it) => it.note.map(flat).join('').replace(/^\s*—\s*/, '').trim();
+const slugOf = (href) => href.split('/').filter(Boolean).pop();
 /* the first bold phrase in Hanzo's status note ("Status: draft, pending counsel."), used verbatim as the sheets' stamp */
 const firstStrong = (nodes) => {
   for (const n of nodes || []) {
@@ -46,8 +51,52 @@ function useCalm() {
   return calm;
 }
 
-/* the page's one pause (WCAG 2.2.2): it stops the deal and the index's reading lamp together; the same 44px control as
-   the shared Pause, shown beside the pile and at the end of the chip bar */
+/* ---------- entrances (page-local) ----------
+   The server paints every room in its true layout. html.js (set before first paint) holds each room's first frame in
+   LegalIndex.css; the first time the room reaches the screen, play(el) runs and data-in lets the room settle. Reduced
+   motion: data-in at once, no frames. JavaScript off: html:not(.js), so nothing is ever held. */
+const ptr = { x: -1, y: -1 }; // the last place a pointer was (viewport px); -1 = none yet (touch, keyboard)
+const calmNow = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function useEnter(play) {
+  const ref = useRef(null);
+  const run = useRef(play);
+  run.current = play;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (calmNow() || !('IntersectionObserver' in window)) { el.setAttribute('data-in', ''); el.setAttribute('data-done', ''); return; }
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      if (run.current) run.current(el);
+      el.setAttribute('data-in', '');
+    }, { rootMargin: '0px 0px -12% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
+
+/* e4 scramble: letters scramble and decode into the real words, left to right (spaces hold their place) */
+const GLYPHS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function scramble(els) {
+  els.forEach((el, n) => {
+    const real = el.textContent;
+    const box = el.closest('[data-scr-box]');
+    if (box && !box.style.height) box.style.height = box.offsetHeight + 'px'; // the decode never reflows the room
+    let f = -n * 3; // each label starts a beat after the one before
+    const frames = 18;
+    const t = setInterval(() => {
+      f++;
+      if (f < 0) return;
+      const done = Math.floor((f / frames) * real.length);
+      el.textContent = real.split('').map((c, i) => (c === ' ' || i < done ? c : GLYPHS[(Math.random() * GLYPHS.length) | 0])).join('');
+      if (f >= frames) { clearInterval(t); el.textContent = real; if (box) box.style.height = ''; }
+    }, 42);
+  });
+}
+
+/* the page's one pause (WCAG 2.2.2): it stops the deal; the same 44px control as the shared Pause */
 function PauseBtn({ paused, set }) {
   return (
     <button type="button" className="w2-pause" style={{ position: 'relative', right: 'auto', top: 'auto' }} aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => set((p) => !p)}>
@@ -76,7 +125,7 @@ function Stack({ docs, stamp, paused, setPaused }) {
   const order = docs.map((_, i) => (i - top + docs.length) % docs.length);
   const last = docs.length - 1;
   return (
-    <div className="lgi-stack" ref={ref}>
+    <div className="lgi-stack lgi-rip-a" style={{ '--r': 0 }} ref={ref}>
       <div className="lgi-pile">
         {docs.map((it, i) => {
           const leaving = i === out;
@@ -108,34 +157,110 @@ function Stack({ docs, stamp, paused, setPaused }) {
   );
 }
 
-function Card({ it, group, lit }) {
+/* e2 grid-wave: a grid of paper tiles over the intro; they lift in a wave by their distance from the cursor (or, with
+   no pointer yet, from the top centre), uncovering the statement and the status sheet */
+const COLS = 12, ROWS = 5;
+function gridWave(sec) {
+  const g = sec.querySelector('.lgi-grid');
+  if (!g) return;
+  const b = g.getBoundingClientRect();
+  const ox = ptr.x >= 0 ? ptr.x - b.left : b.width / 2;
+  const oy = ptr.x >= 0 ? ptr.y - b.top : 0;
+  const far = Math.hypot(Math.max(ox, b.width - ox), Math.max(oy, b.height - oy)) || 1;
+  [...g.children].forEach((t, i) => {
+    const cx = ((i % COLS) + 0.5) * (b.width / COLS), cy = (Math.floor(i / COLS) + 0.5) * (b.height / ROWS);
+    t.style.setProperty('--d', Math.round((Math.hypot(cx - ox, cy - oy) / far) * 620) + 'ms');
+  });
+}
+
+/* ---------- the signature: rows that open ---------- */
+function Row({ it, group, open, onOpen, onToggle, onKey }) {
+  const slug = slugOf(it.href);
   const note = it.note.map((n, k) => (k === 0 && typeof n === 'string' ? n.replace(/^\s*—\s*/, '') : n));
+  const rest = useRef(0);
+  useEffect(() => () => clearTimeout(rest.current), []);
+  // a resting mouse opens the row under it; only a real move counts (movement 0 = the row slid under a still pointer)
+  const move = (e) => {
+    if (e.pointerType !== 'mouse' || open || (!e.movementX && !e.movementY)) return;
+    clearTimeout(rest.current);
+    rest.current = setTimeout(onOpen, 140);
+  };
   return (
-    <A to={it.href} className={'lgi-card' + (lit ? ' lit' : '')} data-cta={'legal.doc.' + it.href.split('/').filter(Boolean).pop()}>
-      <span className="lgi-card-k x-mono">{group}</span>
-      <span className="lgi-card-t" data-morph>{it.title}</span>
-      <span className="lgi-card-d"><span className="lgi-dash" aria-hidden="true">—</span> <Nodes nodes={note} /></span>
-      <span className="lgi-card-u x-mono" aria-hidden="true">hanzo.ai{it.href}</span>
-      <span className="lgi-card-go" aria-hidden="true">
-        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-      </span>
-    </A>
+    <div className={'lgi-row' + (open ? ' open' : '')} onPointerMove={move} onPointerLeave={() => clearTimeout(rest.current)}>
+      <div className="lgi-row-h">
+        <button type="button" className="lgi-row-b" aria-expanded={open} aria-controls={'lgi-p-' + slug} onClick={onToggle} onKeyDown={onKey}>
+          <span className="lgi-card-k x-mono">{group}</span>
+          <span className="lgi-card-t" data-morph>{it.title}</span>
+          <span className="lgi-row-x" aria-hidden="true"><i /><i /></span>
+        </button>
+        <A to={it.href} className="lgi-card-go" tabIndex={-1} aria-hidden="true" data-cta={'legal.doc.' + slug}>
+          <svg viewBox="0 0 16 16" width="16" height="16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </A>
+      </div>
+      <div className="lgi-row-p" id={'lgi-p-' + slug} role="region" aria-label={it.title} inert={!open}>
+        <div className="lgi-row-pi">
+          <p className="lgi-card-d"><Nodes nodes={note} /></p>
+          <A to={it.href} className="lgi-row-go" data-cta={'legal.doc.' + slug}>
+            <span className="x-mono">hanzo.ai{it.href}</span>
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </A>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function Catalogue({ groups, paused, setPaused }) {
+/* e3 cursor-trail: a short trail of ink dots starts where the cursor is (or at the list's left edge), runs down the
+   list row by row and lays each row as it passes; a pointer moving over the list pulls the trail along with it */
+function trail(sec) {
+  const list = sec.querySelector('.lgi-list');
+  const dots = sec.querySelector('.lgi-trail');
+  if (!list || !dots) return;
+  const lis = [...list.querySelectorAll('.lgi-group:not([hidden]) .lgi-cards > li')];
+  const lb = list.getBoundingClientRect();
+  let x = ptr.x >= 0 ? Math.min(Math.max(ptr.x - lb.left, 24), lb.width - 24) : 24;
+  const put = (px, py) => { dots.style.setProperty('--x', px + 'px'); dots.style.setProperty('--y', py + 'px'); };
+  const y0 = lis[0] ? lis[0].offsetTop + 30 : 0;
+  dots.style.transition = 'none';
+  put(x, y0);
+  dots.getBoundingClientRect();
+  dots.style.transition = '';
+  sec.setAttribute('data-trail', '');
+  let k = 0;
+  const lay = (upTo) => { while (k < lis.length && lis[k].offsetTop <= upTo) lis[k++].setAttribute('data-t', ''); };
+  const follow = (e) => {
+    if (e.pointerType !== 'mouse') return;
+    const r = list.getBoundingClientRect();
+    put(e.clientX - r.left, e.clientY - r.top);
+    lay(e.clientY - r.top);
+  };
+  list.addEventListener('pointermove', follow);
+  const step = setInterval(() => {
+    if (k >= lis.length) {
+      clearInterval(step);
+      list.removeEventListener('pointermove', follow);
+      setTimeout(() => { sec.removeAttribute('data-trail'); sec.setAttribute('data-done', ''); }, 420);
+      return;
+    }
+    const li = lis[k];
+    x += (k % 2 ? -1 : 1) * Math.min(90, lb.width * 0.08);
+    put(x, li.offsetTop + li.offsetHeight / 2);
+    li.setAttribute('data-t', '');
+    k++;
+  }, 95);
+}
+
+function Catalogue({ groups }) {
   const [on, setOn] = useState('all');
   const calm = useCalm();
-  // the reading lamp: while the index is on screen, it lights one row at a time (its address shows, its arrow turns
-  // ink), once through the list, the way the pile deals its sheets. It hides while a pointer is over the list (the
-  // hover takes over), the shared pause stops it, and keyboard focus on a row puts it out for good.
-  const [box, seen] = useLive(0.1);
-  const [lit, setLit] = useState(-1);
-  const [done, setDone] = useState(false);
-  const stop = () => { if (!done) { setDone(true); setLit(-1); } };
   const [stuck, setStuck] = useState(false);
   const pin = useRef(null);
   const list = useRef(null);
+  const all = groups.flatMap((g) => g.items.map((it) => ({ ...it, g })));
+  const showing = all.filter((x) => on === 'all' || x.g.id === on).map((x) => x.href);
+  // one row stands open: the first of the list, until the reader opens another
+  const [open, setOpen] = useState(showing[0]);
+  const sec = useEnter(trail);
   // the chip bar draws its hairline only once it is stuck under the header
   useEffect(() => {
     const el = pin.current; if (!el) return;
@@ -147,24 +272,37 @@ function Catalogue({ groups, paused, setPaused }) {
   useEffect(() => {
     if (first.current) { first.current = false; return; }
     if (calm || !list.current) return;
-    list.current.querySelectorAll('.lgi-group:not([hidden]) .lgi-card').forEach((el, i) => {
+    list.current.querySelectorAll('.lgi-group:not([hidden]) .lgi-row').forEach((el, i) => {
       if (el.animate) el.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 150, delay: Math.min(i, 8) * 30, easing: 'cubic-bezier(0,0,.2,1)', fill: 'backwards' });
     });
   }, [on, calm]);
-  const all = groups.flatMap((g) => g.items.map((it) => ({ ...it, g })));
-  const showing = all.filter((x) => on === 'all' || x.g.id === on).map((x) => x.href);
-  useEvery(1300, seen && !paused && !done && !calm, () => setLit((k) => { if (k + 1 >= showing.length) { setDone(true); return -1; } return k + 1; }));
-  const litHref = lit >= 0 ? showing[lit] : null;
   // #agreements, #policies … pick their chip
   useEffect(() => {
-    const pick = () => { const h = location.hash.slice(1); if (groups.some((g) => g.id === h)) setOn(h); };
+    const pick = () => { const h = location.hash.slice(1); if (groups.some((g) => g.id === h)) choose(h, true); };
     pick(); addEventListener('hashchange', pick);
     return () => removeEventListener('hashchange', pick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groups]);
-  const choose = (id) => { if (id !== on) { setOn(id); setLit(-1); play('tick'); } };
+  function choose(id, quiet) {
+    if (id === on) return;
+    setOn(id);
+    const firstOf = all.find((x) => id === 'all' || x.g.id === id);
+    if (firstOf) setOpen(firstOf.href);
+    if (!quiet) play('tick');
+  }
+  const toggle = (href) => { setOpen((o) => (o === href ? null : href)); play('tick'); };
+  // the arrow keys walk the rows (Home and End jump), focus stays on the row buttons
+  const walk = (e) => {
+    const keys = { ArrowDown: 1, ArrowUp: -1, Home: -99, End: 99 };
+    if (!(e.key in keys) || !list.current) return;
+    const bs = [...list.current.querySelectorAll('.lgi-group:not([hidden]) .lgi-row-b')];
+    const i = bs.indexOf(e.currentTarget);
+    const j = Math.max(0, Math.min(bs.length - 1, i + keys[e.key]));
+    if (j !== i) { e.preventDefault(); bs[j].focus(); }
+  };
   return (
-    <section className="w2-sec lgi-cat">
-      <div className="w2-wrap" ref={box} onFocus={(e) => e.target.closest('.lgi-card') && stop()}>
+    <section className="w2-sec lgi-cat" ref={sec}>
+      <div className="w2-wrap">
         <span ref={pin} className="lgi-pin" aria-hidden="true" />
         <div className="lgi-chips" data-stuck={stuck || undefined}>
           <div className="lgi-chips-r">
@@ -175,17 +313,17 @@ function Catalogue({ groups, paused, setPaused }) {
               </button>
             ))}
           </div>
-          {!done && <span className="lgi-chips-p"><PauseBtn paused={paused} set={setPaused} /></span>}
         </div>
-        <div ref={list}>
+        <div ref={list} className="lgi-list">
+          <span className="lgi-trail" aria-hidden="true">{[0, 1, 2, 3, 4, 5].map((i) => <i key={i} style={{ '--i': i }} />)}</span>
           {groups.map((g) => (
             <div key={g.id} className="lgi-group" hidden={!(on === 'all' || on === g.id)}>
               <h2 className="x-sr">{g.title}</h2>
               <ul className="lgi-cards">
-                {g.items.map((it, i) => (
-                  <motion.li key={it.href} initial={{ y: 16 }} whileInView={{ y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: (i % 4) * 0.06 }}>
-                    <Card it={it} group={g.title} lit={it.href === litHref} />
-                  </motion.li>
+                {g.items.map((it) => (
+                  <li key={it.href}>
+                    <Row it={it} group={g.title} open={open === it.href} onOpen={() => setOpen(it.href)} onToggle={() => toggle(it.href)} onKey={walk} />
+                  </li>
                 ))}
               </ul>
             </div>
@@ -201,22 +339,49 @@ function Ladder() {
     <ol className="lgi-ladder" aria-hidden="true">
       {LADDER.map(([t, s], i) => (
         <motion.li key={t} style={{ '--k': i, originY: 1 }} initial={{ scaleY: 0.3 }} whileInView={{ scaleY: 1 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.8, ease: EASE, delay: i * 0.08 }}>
-          <span className="lgi-step-n x-mono">0{i + 1}</span><b>{t}</b>{s && <em>{s}</em>}
+          <span className="lgi-step-n x-mono">0{i + 1}</span><b data-scr>{t}</b>{s && <em data-scr>{s}</em>}
         </motion.li>
       ))}
     </ol>
   );
 }
 
+/* e5 ink-spread: an ink-blot mask, its edge wobbling, spreads from the contact sheet over the whole room */
+function blob(cx, cy, r, ph) {
+  const pts = [];
+  for (let i = 0; i < 28; i++) {
+    const a = (i / 28) * Math.PI * 2;
+    const k = 1 + 0.16 * Math.sin(3 * a + ph) + 0.09 * Math.sin(5 * a - ph * 1.7) + 0.05 * Math.sin(9 * a + ph * 0.6);
+    pts.push(Math.round(cx + Math.cos(a) * r * k) + 'px ' + Math.round(cy + Math.sin(a) * r * k) + 'px');
+  }
+  return 'polygon(' + pts.join(',') + ')';
+}
+function inkSpread(sec) {
+  const g = sec.querySelector('.lgi-contact-g');
+  const env = sec.querySelector('.lgi-env');
+  if (!g || !g.animate) return;
+  const b = g.getBoundingClientRect();
+  const e = env ? env.getBoundingClientRect() : b;
+  const cx = e.left - b.left + e.width / 2, cy = e.top - b.top + e.height / 2;
+  const R = Math.hypot(Math.max(cx, b.width - cx), Math.max(cy, b.height - cy)) * 1.25;
+  g.animate([
+    { clipPath: blob(cx, cy, 4, 0) },
+    { clipPath: blob(cx, cy, R * 0.22, 1.2), offset: 0.25 },
+    { clipPath: blob(cx, cy, R * 0.6, 2.3), offset: 0.6 },
+    { clipPath: blob(cx, cy, R, 3.1) },
+  ], { duration: 1300, easing: 'cubic-bezier(.3,.1,.3,1)', fill: 'backwards' });
+}
+
 /* Contact: the four addresses beside one last sheet from the pile; the sheet shows the address you point at or focus */
 function Contact({ contact, mail, title, stamp }) {
   const addr = mail.c.map((li) => flat({ c: li.c.slice(1) }).trim());
   const [at, setAt] = useState(-1);
+  const sec = useEnter(inkSpread);
   return (
-    <section className="w2-sec lgi-contact">
+    <section className="w2-sec lgi-contact" ref={sec}>
       <div className="w2-wrap lgi-contact-g">
         <div className="lgi-contact-l">
-          <LineMask as="h2" className="w2-headline" lines={[contact.title]} /><span id={contact.id} className="lgi-anchor" />
+          <h2 className="w2-headline">{contact.title}</h2><span id={contact.id} className="lgi-anchor" />
           <div className="lgi-sheet lgi-env" aria-hidden="true">
             <span className="lgi-sheet-u x-mono" key={at}>{at >= 0 ? addr[at] : 'hanzo.ai/legal'}</span>
             <b>{title}</b>
@@ -233,6 +398,21 @@ function Contact({ contact, mail, title, stamp }) {
   );
 }
 
+function How({ how }) {
+  const sec = useEnter((el) => scramble([...el.querySelectorAll('[data-scr]')]));
+  return (
+    <section className="w2-sec lgi-how" ref={sec}>
+      <div className="w2-wrap lgi-how-g">
+        <div>
+          <h2 className="w2-headline" data-scr-box><span className="x-sr">{how.title}</span><span aria-hidden="true" data-scr>{how.title}</span></h2><span id={how.id} className="lgi-anchor" />
+          <div className="lgi-prose lgi-how-p"><Nodes nodes={how.nodes} /></div>
+        </div>
+        <Ladder />
+      </div>
+    </section>
+  );
+}
+
 export default function LegalIndex({ d }) {
   useArrival();
   const [paused, setPaused] = useState(false);
@@ -243,22 +423,33 @@ export default function LegalIndex({ d }) {
   const contact = d.rest.find((g) => g.id === 'contact');
   const other = d.rest.filter((g) => g !== how && g !== contact);
   const mail = contact && contact.nodes.find((n) => n.t === 'ul');
+  // e1 ripple: the hero is the first screen, so it plays from first paint in CSS (no wait for a script)
+  const intro = useEnter(gridWave);
+  // the last place the pointer was: the grid wave and the trail start from it
+  useEffect(() => {
+    const at = (e) => { ptr.x = e.clientX; ptr.y = e.clientY; };
+    addEventListener('pointermove', at, { passive: true });
+    addEventListener('pointerdown', at, { passive: true });
+    return () => { removeEventListener('pointermove', at); removeEventListener('pointerdown', at); };
+  }, []);
+  const lines = d.title.split(' & ').map((t, i, a) => (i < a.length - 1 ? t + ' & ' : t));
   return (
     <main id="main" className="lgi w2 gx" data-ask="off">
       <NoJs />
-      <noscript><style>{'.lgi-pause,.lgi-chips-p{display:none!important}'}</style></noscript>
+      <PlainNoJs css=".lgi-pause{display:none!important}" />
       <section className="lgi-hero" aria-labelledby="lgi-h1" data-morph-target>
+        <span className="lgi-rings" aria-hidden="true"><i /><i /><i /></span>
         <div className="w2-wrap lgi-hero-g">
           <div className="lgi-hero-copy">
-            <LineMask as="h1" id="lgi-h1" now className="w2-display lgi-h1" lines={d.title.split(' & ').map((t, i, a) => (i < a.length - 1 ? t + ' &' : t))} />
-            <p className="lgi-kick x-mono">{d.kicker}</p>
-            <LineMask as="p" now delay={0.3} className="w2-lede lgi-lede" lines={[d.lede]} />
+            <h1 id="lgi-h1" className="w2-display lgi-h1 lgi-rip-a" style={{ '--r': 1 }}>{lines.map((t, i) => <span key={i} className="lgi-h1-l">{t}</span>)}</h1>
+            <p className="lgi-kick x-mono lgi-rip-a" style={{ '--r': 2 }}>{d.kicker}</p>
+            <p className="w2-lede lgi-lede lgi-rip-a" style={{ '--r': 3 }}>{d.lede}</p>
           </div>
           <Stack docs={docs} stamp={stamp} paused={paused} setPaused={setPaused} />
         </div>
       </section>
 
-      <section className="w2-sec lgi-intro">
+      <section className="w2-sec lgi-intro" ref={intro}>
         <div className="w2-wrap lgi-intro-g">
           <div className="lgi-big"><Nodes nodes={[first]} /></div>
           {/* the status as a sheet on the desk: Hanzo's note, its first bold phrase set as the stamp */}
@@ -266,22 +457,13 @@ export default function LegalIndex({ d }) {
             <span className="lgi-sheet-u x-mono" aria-hidden="true">hanzo.ai/legal</span>
             <div className="lgi-prose"><Nodes nodes={status} /></div>
           </div>
+          <span className="lgi-grid" aria-hidden="true">{Array.from({ length: COLS * ROWS }, (_, i) => <i key={i} />)}</span>
         </div>
       </section>
 
-      <Catalogue groups={d.groups} paused={paused} setPaused={setPaused} />
+      <Catalogue groups={d.groups} />
 
-      {how && (
-        <section className="w2-sec lgi-how">
-          <div className="w2-wrap lgi-how-g">
-            <div>
-              <LineMask as="h2" className="w2-headline" lines={[how.title]} /><span id={how.id} className="lgi-anchor" />
-              <div className="lgi-prose lgi-how-p"><Nodes nodes={how.nodes} /></div>
-            </div>
-            <Ladder />
-          </div>
-        </section>
-      )}
+      {how && <How how={how} />}
 
       {other.map((g) => (
         <section className="w2-sec lgi-other" key={g.id}>

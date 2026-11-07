@@ -1,0 +1,39 @@
+/* The /models family's live race (Race.jsx): greys and ink only; Hanzo's own lanes (.me) run in ink, the rest in
+   the deck's mid grey. Bars scale from the left (transform only), counters in tabular mono. */
+.rc { --rc-ink: #0a0a0a; --rc-dim: #a3a3a3; --rc-track: #f2f2f2; --rc-line: rgba(0, 0, 0, .1); --rc-quiet: #737373; color: var(--rc-ink); }
+.rc.dark { --rc-ink: #fafafa; --rc-dim: #737373; --rc-track: #262626; --rc-line: rgba(255, 255, 255, .14); --rc-quiet: #a3a3a3; }
+.rc-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 17px; padding-bottom: 17px; border-bottom: 1px solid var(--rc-ink); }
+.rc-seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.rc-seg button { position: relative; min-height: 44px; padding: 0 17px; border: 1px solid var(--rc-line); border-radius: 999px; background: transparent; color: var(--rc-quiet); font: 500 14px/1 var(--sans); cursor: pointer; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
+.rc-seg button[aria-pressed='true'] { color: #fff; border-color: transparent; }
+.rc.dark .rc-seg button[aria-pressed='true'] { color: #0a0a0a; }
+.rc-seg button:active { transform: scale(.97); }
+.rc-seg button > span:last-child { position: relative; }
+.rc-seg-bg { position: absolute; inset: -1px; border-radius: inherit; background: var(--rc-ink); }
+@media (hover: hover) { .rc-seg button:not([aria-pressed='true']):hover { color: var(--rc-ink); } }
+.rc-clock { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; min-width: 8ch; justify-content: flex-end; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--rc-quiet); }
+.rc-clock i { width: 6px; height: 6px; border-radius: 50%; background: var(--rc-dim); transition: background .2s; }
+.rc-clock i.on { background: var(--rc-ink); animation: rc-blink .5s steps(2) infinite; }
+@keyframes rc-blink { 50% { opacity: .25; } }
+.rc-again { width: 44px; height: 44px; display: inline-grid; place-items: center; border: 1px solid var(--rc-line); border-radius: 50%; background: transparent; color: var(--rc-ink); font-size: 18px; cursor: pointer; transition: transform .3s cubic-bezier(.16, 1, .3, 1), border-color .15s; }
+@media (hover: hover) { .rc-again:hover { border-color: var(--rc-ink); transform: rotate(-90deg); } }
+.rc-again:active { transform: scale(.94); }
+.rc :focus-visible { outline: 2px solid var(--rc-ink); outline-offset: 3px; }
+.rc-lanes { margin: 0; padding: 0; list-style: none; }
+.rc-lane { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr) 11ch; align-items: center; gap: 17px; min-height: 52px; border-bottom: 1px solid var(--rc-line); }
+.rc-name { min-width: 0; font-size: 15px; line-height: 1.3; color: var(--rc-quiet); overflow-wrap: anywhere; }
+.rc-name a { color: inherit; text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }
+@media (hover: hover) { .rc-name a:hover { color: var(--rc-ink); text-decoration: underline 1px; text-underline-offset: 3px; } }
+.rc-lane.me .rc-name { color: var(--rc-ink); font-weight: 500; }
+.rc-track { position: relative; display: block; height: 10px; border-radius: 999px; background: var(--rc-track); overflow: hidden; }
+.rc-track i { position: absolute; inset: 0; border-radius: inherit; background: var(--rc-dim); transform-origin: 0 50%; }
+.rc-lane.me .rc-track i { background: var(--rc-ink); }
+.rc-v { justify-self: end; font-size: 15px; font-weight: 400; font-variant-numeric: tabular-nums; color: var(--rc-quiet); white-space: nowrap; }
+.rc-lane.done .rc-v { color: var(--rc-ink); font-weight: 600; }
+@media (max-width: 640px) {
+  .rc-lane { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: 4px 12px; padding: 8px 0 14px; }
+  .rc-track { grid-column: 1 / -1; grid-row: 2; }
+  .rc-clock { margin-left: 0; }
+  .rc-seg button { padding: 0 14px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .rc-clock i.on { animation: none; } .rc-again { transition: none; } }
